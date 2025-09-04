@@ -1,185 +1,130 @@
-Return-Path: <linux-kernel+bounces-801306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89344B44391
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A00B44393
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D651AA06D39
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2874C3A764F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E7A2F3C0C;
-	Thu,  4 Sep 2025 16:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A632DD60E;
+	Thu,  4 Sep 2025 16:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Lc/cYZNb"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kgyaR8IP"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F031F2C45
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622A9225408
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004384; cv=none; b=KlxYbBcYUeDYqaFrjiLVHb3LUlkyk9ZhL32eqAahY8YcmNqY9olUSwNSW/GQ4r+1JE7f8UZNTgTwfRjGBwVV2s4wms20XwMWiNIVhGbSWS1VZzdJX3Rv/2LTkYBCYgDU6C7Tml/uBwGTcZxv8aMEMUMsIcY+X2RPAy7P7XR6p8Q=
+	t=1757004422; cv=none; b=QfsTZQjzgeQBYEQ3gBhI4KfEaFiLATsCKtE13LuGHWCkUOBDMTN1s9wwuCXgJR2yjffROmkeXkXKfo57LThfRh0QItFoEZohJTvkDaEon3AgwQpwBjOhyW92kOYaD4F+BUPZgtjJg7S9XbJgsWpqMrkKmQeldj8ciPFGEZbH29I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757004384; c=relaxed/simple;
-	bh=yeig2/h6+JzCj8J11pJs7VODI2hn7tsgFbunC4RZtuw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MAq63vbf2JrB0esm9pt6JBCXdOkLO0eA2bSp01j8xRYijHKk3JjGsXeduDIH8cBQrGUsdlAP1B64I3VqQBQfvugmvvI412BIzIPFQTP7MSK44aJxLej+VtEvEQUEXITcuoy+NErSVT0sARugAHfEMf7wvCXTpeNsiJGl78FxIdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Lc/cYZNb; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24b157ba91bso2380505ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:46:22 -0700 (PDT)
+	s=arc-20240116; t=1757004422; c=relaxed/simple;
+	bh=XyYgBJVgBAsJN38h3vgYTMUi63M/my5o6qAE9zBoffM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t9nFoM6Q3268F/0vbIUDjAWkMGKtsD5oAWDM15/rPZ6Pa7/p3ntT+3iBMI0vf5YZ66V5zA8Yrew8PGhQLOBth6e51hO18vpvFeKvX12gSUepg7Ge8s+xBlLt3hqwzzNkSSYYsalFdZ1azc6O6QgM+7GtbdyWykDjW02YK50T90g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kgyaR8IP; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b83ae1734so8341995e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757004382; x=1757609182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757004419; x=1757609219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=esdQfPQXbS6WrJkjrbmIf4YcFmqNl+DroIr0Wz/5KiE=;
-        b=Lc/cYZNbgaQ0l4SMf9I64auH60EIJpJOdNYKo7E3QctflA/cI3bOors2/cguIvOr5p
-         YgkK3kjmp/F+hz44Trvy2nS91heWvDdpQ40Fmyeg8T6lqB4A4opQ/kruoi6vCklMtDX3
-         MZXkfYlZedggCJ7J0Q7mIAHE/E4ckwLM7HfgcjbSkesNpt9SNnGwbGapqmH3LOfc5A0i
-         vnc7w1F4MmBxHfkedD4AJzKwtnYOgeMoqrEpvf6ojDKd7+SFZ9KaWKIX6YuovvEBztVI
-         J5VJWd50VjWilEW9xgSgWShY98eFEOaqPNs9Grrpo+iKOrU38PTSnINJR1hnKqfoaaaV
-         mqRg==
+        bh=X/WLNsuxQtqsn76Kxw2dv+Lj7uczL3CnU17b0jUez3A=;
+        b=kgyaR8IPxn5H+0BryabHkpZiETtEngos2DtgPQZP4Nqz7ktaT/7SAVL+3Nckd3T7sL
+         tamIJ3BAR8Njz63x0yf7d6NdPk6za37X+yMFY8Y4dlQ9M67x+Q6lufy/1WSwqs98uGg7
+         kmrmTdl1Fn+WHxkC22+nG+l3arD/UywZja6xHoY6CIYpiliMjyzF8aju7S0hCwi9A6ty
+         OWo7cAB2IssKBYJ3U2QFogLaYve5mbnI1SBPkv6Beg6E1AySz4XgFbJJJMt9uCJnhtS1
+         6kQ51C6Qe43qpFW5MlNGqkDV8Y9/ceQO0U4S5S/WwNvCTS9sx0u8WEkddLjnn8cJ75SQ
+         n7vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757004382; x=1757609182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757004419; x=1757609219;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=esdQfPQXbS6WrJkjrbmIf4YcFmqNl+DroIr0Wz/5KiE=;
-        b=OZgUnHMDFSsiAjgPTuluTxQM76IekVI/ottgcKh8Xj6mL3M8hRfQQUWdmgHjGrASw9
-         JRJtnS2/DF9JFBov7nvb9xB+8S9M+dYKWEVTQT32/HGESdCMsYzgZjAHzdKjB0F/FNvQ
-         597oLKn2SbVHsSC9+6ftL7nGV3L4dOh98Af+VWOOjIPbQ66EZ4NJL0rMTkQF7L3BTLyb
-         h0YPw19Txy540PLjjpi1GmcJwj3EhgaNF0jlB+fb9m+0all0rR26lwA+ARdd0R3Y7pyc
-         ffYv85TPIBONh8pYkt2Q4mvi6DxOYCTv4D1LKX58E6AE6HUMVajHMawZASqZ9dSfseVg
-         m/1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbHDfeLOUYJGGlJcGWazZrOJgn3R2fNZtcFvqNYNaPeY+g4h6Upmy3fAxBJH03zXGqLoYDF2Ye78xk+0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8zgPMQkPme0w8jXnxJ5P0E3QAH4XfRqJW3jvshkb523ETGKSJ
-	r0kFhEI8EzM/mIWi+DpVw6H3Ykxfbe9dZDDOgVrEOjuJQ0oDbn7g/rgQAwup6Z3UbgQ97BgpPFF
-	opm7BpviR9IvY+moGoAT9cd0o26k0IoSrNlc997Ix3w==
-X-Gm-Gg: ASbGnctpiRYSJ9+fsgXjs1WzqXG3Fe7uTK1nTVQfkpNdNYFWxiaOkpXBpEox16rVmA+
-	hM0mzYa9DwZjeXPh9lV1ZGCYuHmw/51qzfW+Xeo7NebMlqLQlxDD0IThYbc2LP8dq+lL2OX5a6w
-	9HYqX5/cyMuXrr3TXAX3OW8U9433Xy1Izan5na4R6U2qEsJs6ejM05iQjWzeD4WmS9FYoRGbNnx
-	KOVZrylKQKS
-X-Google-Smtp-Source: AGHT+IGrZNSK0knOxEHf6PsWEDnTsqGXLr9ZT4FDcu0e0+A+rMw9hJbAM6Q+b2AWs6Aec9Wiln+LuYk7mvryiLvgOqg=
-X-Received: by 2002:a17:902:ce8c:b0:24c:7bc8:a51c with SMTP id
- d9443c01a7336-24c7bc8a879mr52655195ad.9.1757004381611; Thu, 04 Sep 2025
- 09:46:21 -0700 (PDT)
+        bh=X/WLNsuxQtqsn76Kxw2dv+Lj7uczL3CnU17b0jUez3A=;
+        b=BpYnvwn8TM5UX+nTN76jYKRHj1o557dLu3efS3bth3t40MN8yMGHI0cKeNLB6PFi4o
+         ts8CBjGcQgQdd+9efPO0x4q9E8AFmIEa40ggfVN8ccZgj8KdX5MBYxco/gcZG42WrCB7
+         T7bG4r6FNkIi6VNwwF4Thnuga8pD3raM6EecjZL53Q1SAaio4KUU+og7gAbDONPie63D
+         qbYYlqRV5nULyvrcjuyw+5PdOG4gA/0wWAJJcbOutnRCpEcPp1z6GkJ2R72/5n7IWVxD
+         8UZ8s4AyPIaAzdnX2qqIuzOeOvsbJvIVC/aucXpGW/nizbCh3ss7YXWrs2ooaA+/VVve
+         9LPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDcsIpd+CNNo92PqGtgrsEpca2uhIdcmNk8X/KGUJkd6kr3EkBkG74AqyNMExWgsTRSAa8aLanFqR7KBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnZCDzgoLODFhyaNvABz+/+d3KNNwkk1lgOdH1iVh+Fz08dq72
+	LobGHiwb7AnjVhXzsWGQX2RPWJ2bq5PQjyydS/ksJDDbXL9iMpoZTiwbcyJkYpWeeQc=
+X-Gm-Gg: ASbGncujArPnidGVxlwynzZj5X+94I+a1o1qM8t1c+wH8ECrxnsgztgrLBzqFlDMD2i
+	dQSKS4sYjsbnR83bBFnrM3nRWznpvinStTX37Lu6wufhl92FGj6m5WEeD8hqw8ot3oJKsZ0yBwR
+	87odkPmXiJ3tOi1YYnPCY0ML6U3nTMDxWdolDkHwY2mbDpJrKJnCeTFc49oEX3cZOc3S/fzcOAR
+	IT5mJdtcns7u3e4Lx7tt2xHBfT7p66sR76mOnRBk/azrcKd6Sc0Nv58r95Ow2FykJuQseH8urku
+	FAA4qiILPIQLVtrHL59/PpYfCnsTXTNz8W5LCx+XRDvfjLDNvD+QCUc+YdQU+zEMKrkXn5SbF1o
+	z+OWUZ36iJZQilozU+QVulqd3j/i2ZhCrKWzciimLCx8rHdfI8McDcnnbjQ==
+X-Google-Smtp-Source: AGHT+IHQrf0VDJOnlLROwb3iKPchiTJtb5FWTd611Hy/KSG8kw1XqXuDzj8LP0/63OVGDYFX4XRwGA==
+X-Received: by 2002:a05:600c:548a:b0:45c:b5f7:c6e4 with SMTP id 5b1f17b1804b1-45cb5f7c9fcmr59378955e9.35.1757004418578;
+        Thu, 04 Sep 2025 09:46:58 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:f602:3644:5f38:7200])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b7e7f14bbsm299010215e9.8.2025.09.04.09.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 09:46:58 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <20250825-meson-clk-cleanup-24-v2-0-0f402f01e117@baylibre.com>
+References: <20250825-meson-clk-cleanup-24-v2-0-0f402f01e117@baylibre.com>
+Subject: Re: [PATCH v2 00/12] clk: amlogic: clock controllers clean-up and
+ factorisation
+Message-Id: <175700441776.3567508.13329203268479696099.b4-ty@baylibre.com>
+Date: Thu, 04 Sep 2025 18:46:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com> <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
- <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
-In-Reply-To: <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 4 Sep 2025 09:46:08 -0700
-X-Gm-Features: Ac12FXxn_8Ji6Q7m7oxenDDgFiIonvxO9qeRpHFqvVppbyILUhbyHtFsJ57ZCzw
-Message-ID: <CADUfDZot=DxWjERupMofRuyvK3jKx79yQUOSniqT4uhMac2dbw@mail.gmail.com>
-Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu, Sep 4, 2025 at 7:52=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> On Wed, Sep 3, 2025 at 4:30=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
-> >
-> > On 9/3/25 3:55 PM, syzbot ci wrote:
-> > > syzbot ci has tested the following series
-> > >
-> > > [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-> > > https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestor=
-age.com
-> > > * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
-> > > * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_cl=
-one_buffers()
-> > > * [PATCH 3/4] io_uring: factor out uring_lock helpers
-> > > * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSU=
-ER
-> > >
-> > > and found the following issue:
-> > > WARNING in io_handle_tw_list
-> > >
-> > > Full report is available here:
-> > > https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
-> > >
-> > > ***
-> > >
-> > > WARNING in io_handle_tw_list
-> > >
-> > > tree:      linux-next
-> > > URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/n=
-ext/linux-next
-> > > base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-> > > arch:      amd64
-> > > compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976=
--1~exp1~20250708183702.136), Debian LLD 20.1.8
-> > > config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d8=
-8ed4fd2/config
-> > > syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b67=
-24c23addd/syz_repro
-> > >
-> > > ------------[ cut here ]------------
-> > > WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_urin=
-g.h:127 [inline], CPU#1: iou-sqp-6294/6297
-> > > WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_=
-uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
-> > > Modules linked in:
-> > > CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 P=
-REEMPT(full)
-> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debia=
-n-1.16.2-1 04/01/2014
-> > > RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
-> > > RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
-> > > Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc =
-2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e=
-9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
-> > > RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
-> > > RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
-> > > RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
-> > > RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
-> > > R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
-> > > R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
-> > > FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:000000000=
-0000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
-> > > Call Trace:
-> > >  <TASK>
-> > >  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
-> > >  io_sq_tw io_uring/sqpoll.c:244 [inline]
-> > >  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
-> > >  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
-> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> > >  </TASK>
-> >
-> > Probably the sanest thing to do here is to clear
-> > IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
-> > allow it, it'll be impossible to uphold the locking criteria on both th=
-e
-> > issue and register side.
->
-> Yup, I was thinking the same thing. Thanks for taking a look.
+Applied to clk-meson (clk-meson-next), thanks!
 
-On further thought, IORING_SETUP_SQPOLL actually does guarantee a
-single issuer. io_uring_enter() already avoids taking the uring_lock
-in the IORING_SETUP_SQPOLL case because it doesn't issue any SQEs
-itself. Only the SQ thread does that, so it *is* the single issuer.
-The assertions I added in io_ring_ctx_lock()/io_ring_ctx_unlock() is
-just unnecessarily strict. It should expect current =3D=3D
-ctx->sq_data->thread in the IORING_SETUP_SQPOLL case.
+[01/12] clk: amlogic: drop meson-clkcee
+        https://github.com/BayLibre/clk-meson/commit/e256a6602aa0
+[02/12] clk: amlogic: add probe helper for mmio based controllers
+        https://github.com/BayLibre/clk-meson/commit/480197ceece7
+[03/12] clk: amlogic: use probe helper in mmio based controllers
+        https://github.com/BayLibre/clk-meson/commit/d7c001bd76b7
+[04/12] clk: amlogic: aoclk: use clkc-utils syscon probe
+        https://github.com/BayLibre/clk-meson/commit/2aeeb649ead2
+[05/12] clk: amlogic: move PCLK definition to clkc-utils
+        https://github.com/BayLibre/clk-meson/commit/32ee5475f7e3
+[06/12] clk: amlogic: drop CLK_SET_RATE_PARENT from peripheral clocks
+        https://github.com/BayLibre/clk-meson/commit/cf03071b7c3f
+[07/12] clk: amlogic: pclk explicitly use CLK_IGNORE_UNUSED
+        https://github.com/BayLibre/clk-meson/commit/c3f369363a13
+[08/12] clk: amlogic: introduce a common pclk definition
+        https://github.com/BayLibre/clk-meson/commit/aaee6f3bce3f
+[09/12] clk: amlogic: use the common pclk definition
+        https://github.com/BayLibre/clk-meson/commit/b7358d14f176
+[10/12] clk: amlogic: add composite clock helpers
+        https://github.com/BayLibre/clk-meson/commit/955e18baeb93
+[11/12] clk: amlogic: align s4 and c3 pwm clock descriptions
+        https://github.com/BayLibre/clk-meson/commit/9bada5ff4bf7
+[12/12] clk: amlogic: c3-peripherals: use helper for basic composite clocks
+        https://github.com/BayLibre/clk-meson/commit/01f3a6d1d59b
 
-Best,
-Caleb
+Best regards,
+--
+Jerome
+
 
