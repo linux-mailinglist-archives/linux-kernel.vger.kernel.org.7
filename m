@@ -1,137 +1,178 @@
-Return-Path: <linux-kernel+bounces-800026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D31BB4329A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C87BB4329C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EAB3BB941
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480D83BACDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823227604E;
-	Thu,  4 Sep 2025 06:38:37 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C999C27586E;
-	Thu,  4 Sep 2025 06:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A16F27780E;
+	Thu,  4 Sep 2025 06:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TEEa2VkP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C1823D7EC;
+	Thu,  4 Sep 2025 06:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967916; cv=none; b=uHS44a6MSA/w4A3K8x513+Y0mslKoD8O7nG7iohfb6E4jbSHlTEVOKjepd76MIyqZ4ywdgCVpu4CZavr3TXUfsNNQLpPFbCKGFbf9Eryhs0ix9ny1r8pHKbUzGWjXF/uI7CMGRzEce9w2qfwKyMdU1bA4GWKmqEYzRm20Nt6dH4=
+	t=1756967937; cv=none; b=s2hLqEZv21Xpk3nJn3ScOWH825aBoJUgFw169UoEA/pTCZ/L91GqBpml9j6h0Iq0hcHEicZH8Pzc3wi0wAd0GXkzCXUvnZX7J1JtiLutDP0JCxW7XT8Xyxsuvtdh/diJUqtOb6rrqXzulvZWYS0Fl7sVawROclqAsztct4hmD94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967916; c=relaxed/simple;
-	bh=W5vE5WeHG2HQjSKkH4tpgmk3A7OE8K28nDCuKd5sGUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kuncksquDDxVqcllJBYuBEdB+/o/tRj0RyUR9Y4wvw65pHcxjsQlXNsJjjw8gyVLVJ5rIZywOLKKdq8XHaJdnbhZHDDQIrlVltEeKkF7Rbs8bsOFHPKu5/yGFCkwKH6bvsZneY0u6NQEA76IGNtR5sqMZXkyeBLQLmEuUpTS1YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgDn_Q7ZM7loFFDIAA--.33248S2;
-	Thu, 04 Sep 2025 14:38:19 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	linux-phy@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>
-Subject: [PATCH v3 2/3] dt-bindings: phy: eswin: Document for EIC7700 SoC SATA PHY
-Date: Thu,  4 Sep 2025 14:38:15 +0800
-Message-Id: <20250904063815.1537-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250904063427.1954-1-luyulin@eswincomputing.com>
-References: <20250904063427.1954-1-luyulin@eswincomputing.com>
+	s=arc-20240116; t=1756967937; c=relaxed/simple;
+	bh=mpimo695aXQfzG5brAJcrTJCFlxU223RcVt2D69ZLV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhfxQKEEIKemBUKfRo2+dkD0ThqehUZ5gJp4yW9jOUJus/oOdp/g9/B0KAgpKKp9RUYy4COCBuoxyVK2lYJwE6md8R0SZ5Vvc+1Y/tOktAtfs1syrCWMt9YuSwOVGiHEYg2P8lx6i9yczqkD8T27AJKfplvtWvjN9yOOyDDiL+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TEEa2VkP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=V2XVkscTs+i5+vJ4MKvvhrBrD/Sub/SqyCqSzizvVaI=; b=TEEa2VkPTiHLXKQrgzL4vG3QGH
+	gaGelYhttVsACG0Oxs7GvaX1pKbt9vf/ogJSTh7jCe67bdXmvGAHLL6R4TFru0IQdfxzjaygKBkoi
+	cPZ/vInmWvN9w3pJ7k8u6s/D9pCM4SgicC975q5p7GW+kKYCn2g3HuN7TjzB9wiTFrIuprW0p9JKE
+	vo0OLncH+axpSmIImS0pJdSIq220xc0FDW/rXZ4IYrNblbUOwgFe4ZP3sgP80fEJPUsTceVC+OXPK
+	bV2LTSSXu4+XsieyC/CIOaJ03D7WvHybOtbqZfsRXxZl628Yys0i72q+o17rgodLPRr6Cro4dYAtt
+	b/sNSGRQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu3c9-0000000EDik-0fUS;
+	Thu, 04 Sep 2025 06:38:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E43A63002BF; Thu, 04 Sep 2025 08:38:32 +0200 (CEST)
+Date: Thu, 4 Sep 2025 08:38:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/18] x86/hw_breakpoint: introduce
+ arch_reinstall_hw_breakpoint() for atomic context
+Message-ID: <20250904063832.GT4067720@noisy.programming.kicks-ass.net>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-6-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgDn_Q7ZM7loFFDIAA--.33248S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur15Ww4xXw1rWFyUXF4DCFg_yoW8GFy3pa
-	1kGrykWFnaqr1Ik39xJ3W0kF13Jws7uFWYvrs7K3WUtrn8J3Z5ta1ak3WYv3WUAF48Way5
-	XFZIga43Aw4UA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRJPE-UUUUU=
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904002126.1514566-6-wangjinchao600@gmail.com>
 
-Add document for the SATA phy on the EIC7700 SoC platform,
-describing its usage.
+On Thu, Sep 04, 2025 at 08:21:02AM +0800, Jinchao Wang wrote:
+> Introduce arch_reinstall_hw_breakpoint() to update hardware breakpoint
+> parameters (address, length, type) without freeing and reallocating the
+> debug register slot.
+> 
+> This allows atomic updates in contexts where memory allocation is not
+> permitted, such as kprobe handlers.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  arch/x86/include/asm/hw_breakpoint.h |  1 +
+>  arch/x86/kernel/hw_breakpoint.c      | 50 ++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+> index 0bc931cd0698..bb7c70ad22fe 100644
+> --- a/arch/x86/include/asm/hw_breakpoint.h
+> +++ b/arch/x86/include/asm/hw_breakpoint.h
+> @@ -59,6 +59,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+>  
+>  
+>  int arch_install_hw_breakpoint(struct perf_event *bp);
+> +int arch_reinstall_hw_breakpoint(struct perf_event *bp);
+>  void arch_uninstall_hw_breakpoint(struct perf_event *bp);
+>  void hw_breakpoint_pmu_read(struct perf_event *bp);
+>  void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
+> diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+> index b01644c949b2..89135229ed21 100644
+> --- a/arch/x86/kernel/hw_breakpoint.c
+> +++ b/arch/x86/kernel/hw_breakpoint.c
+> @@ -132,6 +132,56 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Reinstall a hardware breakpoint on the current CPU.
+> + *
+> + * This function is used to re-establish a perf counter hardware breakpoint.
+> + * It finds the debug address register slot previously allocated for the
+> + * breakpoint and re-enables it by writing the address to the debug register
+> + * and setting the corresponding bits in the debug control register (DR7).
+> + *
+> + * It is expected that the breakpoint's event context lock is already held
+> + * and interrupts are disabled, ensuring atomicity and safety from other
+> + * event handlers.
+> + */
+> +int arch_reinstall_hw_breakpoint(struct perf_event *bp)
+> +{
+> +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> +	unsigned long *dr7;
+> +	int i;
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	for (i = 0; i < HBP_NUM; i++) {
+> +		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+> +
+> +		if (*slot == bp)
+> +			break;
+> +	}
+> +
+> +	if (WARN_ONCE(i == HBP_NUM, "Can't find a matching breakpoint slot"))
+> +		return -EINVAL;
+> +
+> +	set_debugreg(info->address, i);
+> +	__this_cpu_write(cpu_debugreg[i], info->address);
+> +
+> +	dr7 = this_cpu_ptr(&cpu_dr7);
+> +	*dr7 |= encode_dr7(i, info->len, info->type);
+> +
+> +	/*
+> +	 * Ensure we first write cpu_dr7 before we set the DR7 register.
+> +	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+> +	 */
+> +	barrier();
+> +
+> +	set_debugreg(*dr7, 7);
+> +	if (info->mask)
+> +		amd_set_dr_addr_mask(info->mask, i);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(arch_reinstall_hw_breakpoint);
 
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
----
- .../bindings/phy/eswin,eic7700-sata-phy.yaml  | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+Yeah, I think not. For one this is an almost verbatim copy of
+arch_install_hw_breakpoint() with zero re-use. Surely you've been taught
+better?
 
-diff --git a/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
-new file mode 100644
-index 000000000000..d914cb4402d8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
-@@ -0,0 +1,36 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/eswin,eic7700-sata-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SoC SATA PHY
-+
-+maintainers:
-+  - Yulin Lu <luyulin@eswincomputing.com>
-+  - Huan He <hehuan1@eswincomputing.com>
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-sata-phy
-+
-+  "#phy-cells":
-+    const: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - "#phy-cells"
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sata-phy@50440300 {
-+        compatible = "eswin,eic7700-sata-phy";
-+        reg = <0x50440300 0x40>;
-+        #phy-cells = <0>;
-+    };
--- 
-2.25.1
-
+And why would we want to export guts like this?
 
