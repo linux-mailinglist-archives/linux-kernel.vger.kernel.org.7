@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-801059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70444B43F3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3681B43F5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2098E587D7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7477C152E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB3D33EB12;
-	Thu,  4 Sep 2025 14:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3425C286D57;
+	Thu,  4 Sep 2025 14:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YusnVBW3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f93Yo6WQ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E241C321F59;
-	Thu,  4 Sep 2025 14:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310DB1DFDB8;
+	Thu,  4 Sep 2025 14:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996588; cv=none; b=lD5gzgRuBe8cK+7uKiMDNvsbx4UV8EaXFQYfMrAn5cUulavabARX52ByvbRBL02bWNzr1AAP6kchvaws5hLjBAwkdpbkeMbTm/tAouRke59a9r1k75/raZXe35gzjUszAt8O7U2yrgp5SWl39dJb18/esnnd2nb6fCWcj36x7U0=
+	t=1756996686; cv=none; b=s/ODp2vG72/JW9wxFd2J3g4T+aLojZZIVMas1/uI+fJ0nzp4s9t4dpHbCTQob4T6hKP4RrudOqc84LnWVlCDWzJMewXUjQOQ4954SCDW4FTLIJPHlQH3BtrG1PFniu9x5EqSxwhghJeu2evOCd2WkYyOCnWgG6yntiWUL0WuFE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996588; c=relaxed/simple;
-	bh=ozx+RH6touGKnITr2UNCEuP987PD7jBqjfOVoDVKJuI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CaTtZZF3xr6zU2YqmTyrV51aztcVGwS1Ff6kj/xbg6sAxEamn2OyEXFnz9dIx7WTpyemM7cODOsjgn4JjcomW3Xch/HB2EDGuYieX0Jlvq0ZVAccGN2EFekDM9Xhcp38pKcE8FS8hLugnmQjTxN84nh831gWSotwyr3EJVu1Yns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YusnVBW3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18075C4CEF0;
-	Thu,  4 Sep 2025 14:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756996587;
-	bh=ozx+RH6touGKnITr2UNCEuP987PD7jBqjfOVoDVKJuI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YusnVBW3rIwLL+tTh4HXcG66Ne6hIE1eup25E/jWDrboS3qBIKOicSwg5M7JNNYDi
-	 5Po4kllo8zC1cBnqABuYmmEBJ2GIJmyE2S+oa737RogVLV/IXCJCBpMdXScBzUmhaj
-	 W8v6oqoxwrR/eu2SJRgqv8vqQ26fahsu0YI6/Hc0gQ3DCAIBAfRGc84VvUiepN38oR
-	 kt0zsmaOowSBwaDXElBZMsH3EQZ3LGrH//IqWuNGpD/B/dJ3GKvO1t0QOJikMPlGPE
-	 yOXIqKW9BUxIhYdKYj/ta5nOamMb7QWWMFkBWXLk8AVRKKYA8sQV1Rd4+RufOrcbcw
-	 cxU4DWvDmVuHQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Santhosh Kumar K <s-k6@ti.com>
-Cc: <miquel.raynal@bootlin.com>,  <broonie@kernel.org>,  <vigneshr@ti.com>,
-  <marex@denx.de>,  <computersforpeace@gmail.com>,
-  <grmoore@opensource.altera.com>,  <theo.lebrun@bootlin.com>,
-  <linux-spi@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <praneeth@ti.com>,  <p-mantena@ti.com>,  <a-dutta@ti.com>,
-  <u-kumar1@ti.com>,  Pratyush Yadav <pratyush@kernel.org>,
-  <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/4] spi: cadence-quadspi: Flush posted register writes
- before DAC access
-In-Reply-To: <20250904133130.3105736-3-s-k6@ti.com>
-References: <20250904133130.3105736-1-s-k6@ti.com>
-	<20250904133130.3105736-3-s-k6@ti.com>
-Date: Thu, 04 Sep 2025 16:36:24 +0200
-Message-ID: <mafs0tt1ithcn.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756996686; c=relaxed/simple;
+	bh=GuK9J3MneFwPzbwDB0BBKu3kuuMX32Rmipt8p+5YdHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZzu2vgfc5HIUrdMWBrCNRAS0ywljQe48PPwqMDK1fLdVPOeGePNLbHEOJoaR5FkSu3s9RZaFkgVGILhwNG2CXS3lwntbmTmyTlzyGdEfAkn+wZoxVceJrScpeRwqdgXiAiadoMvGdad/gEbe/8SI91abZEvhUJllPTUj4hRUS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f93Yo6WQ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-772301f8a4cso1538463b3a.3;
+        Thu, 04 Sep 2025 07:38:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756996684; x=1757601484; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hIXnFpgK2P/uUPvA6WgkrL2qP19IF4VUwFF0Y71+IU=;
+        b=f93Yo6WQu37Uh9WuIKxhq6hNUWBIKKDJFt4ZQVfqq77ws8PfOZnvQI/C52LvLdgbhv
+         gk4hbOUSknngEH/hX5CV69hWQigj1DXaQE/GBcyXSuCoHKlqNlRPqEERaS2hdmfswYsy
+         LT7jTjzgnx8t2gxaWS5shccLPeH6yKoemb6kMpVjNHjRXBQZvrJ1Bs0ZOl3m83v4iiAT
+         QB9VYumehmuLMGMiIwHcMmMCD96MwcPPrigwuA3tSuP7dKS1Tm9FC9OHfy/rdSQtPZx3
+         zN1fD6+KSScjcIuxajyqLRqHs+K5mUvUng0VxKklZj6QdStOG1UZEc8lyvcq8UCrwEru
+         hlgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756996684; x=1757601484;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4hIXnFpgK2P/uUPvA6WgkrL2qP19IF4VUwFF0Y71+IU=;
+        b=MxQPKhYMHwRVMi5Z0ljXpsaM4Kvq2dzQPmuKPDfOLztB922GFYT5XvMChyoXGbejsO
+         ui5UjLRGpi2OUu+hv6WHZAjePTFrRepXM3ncGSYEFJY+0tgSokTQ3s+pleYilwurQXtu
+         0yAd/a4uliil1V5elGilrA6HAZ1/TN1yxjXOfRjJvKQa29JvPKHxdXfpUEr9E5HjruqU
+         8eOcLpnr6v85kctn+JFCUURnoys1/oqnCzHZ4UxKL5goTS0eNuSg5WY6NEL7tOK7nbjc
+         jeqjE3dgpoCeBb9WGVivREPS6VIYNpNavD67+zUy8Nnbqr6sTX5EywzMPLKSOGpwQ+rG
+         EWbw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+mTlpaS4HQhs6XxzBA25S7pRaHlSC7/LsNkk5rZ9wkxNWOeepZEA6QoeXF48Tryt3swDT1Bbf8nJhZlA@vger.kernel.org, AJvYcCWjpjKbtHXorZMtLvCMeHSEjaPjrR51yvHnQH1Z49fT6X2bzA1bIzbxV+6mNcKq31S29r1eawqH/e04hw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9ywklynR6BcgAKdrlVGRWKvtVOy1VcMnzyE4LFrISlRSAmymy
+	m9cHIzQKIokkBeyPGAXOW2dZ2rB6OEGWSGhWrs3DpfnER5lyJqlKB7xY
+X-Gm-Gg: ASbGncuqJI87KAPGfYdkkPgT833xUsHWzi9BKuxVelSplfvYITCA0EI311BwrFoaGTr
+	anV9MtX/X2b8PLn52RbQBzdr5AJnetXf4F4Q/yqa/G49d7iIeOoQewvfuip0gd1UyWM31yvLt2U
+	JBAr73Djl1pfPUPwjCWJAGEvnc7V+TyJ8cr/cF6zY8eSH/xheeQjdOwtpAAa6/HgE5h0bE7QHXz
+	/XHQdWow6crSJQsyUvkISA7p9QaThKdZrdeu5iEN1kSQvEB5vQoET4xsVSgOjBUZiOnHdStP2eR
+	gXByZ6fPGLYXv43EssntgP/Mo1y2RbWVXHyjrd7EuSZfk9zmNvOL6MymyZQX5drPsxrsa3quOQA
+	PvYb0S54++tOq2oGXm2t4n0frWE+TK1zKQQ==
+X-Google-Smtp-Source: AGHT+IHr7asjdV/VUMhsI1xXNsQH3WgFHSKaIJaT2rG5DICdHHEhNrevUzDKT3MSck9pNDyFMCPpwQ==
+X-Received: by 2002:a05:6a21:32a5:b0:249:c68f:7ac6 with SMTP id adf61e73a8af0-249c68f938bmr5870521637.20.1756996684342;
+        Thu, 04 Sep 2025 07:38:04 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:463b:8ef9:3432:4c09])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e5b44sm19238520b3a.88.2025.09.04.07.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 07:38:03 -0700 (PDT)
+Date: Thu, 4 Sep 2025 07:38:01 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Christoffer Sandberg <cs@tuxedo.de>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: i8042 - add TUXEDO InfinityBook Pro Gen10 AMD to
+ i8042 quirk table
+Message-ID: <wy4rqtj2xszioqfxamhpxjzdlk3azn2tt2ilv7lweaaplpi5cl@lkf244ubywnz>
+References: <20250826142646.13516-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826142646.13516-1-wse@tuxedocomputers.com>
 
-On Thu, Sep 04 2025, Santhosh Kumar K wrote:
+On Tue, Aug 26, 2025 at 04:26:06PM +0200, Werner Sembach wrote:
+> From: Christoffer Sandberg <cs@tuxedo.de>
+> 
+> Occasionally wakes up from suspend with missing input on the internal
+> keyboard. Setting the quirks appears to fix the issue for this device as
+> well.
+> 
+> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+> Cc: stable@vger.kernel.org
 
-> From: Pratyush Yadav <pratyush@kernel.org>
->
-> cqspi_read_setup() and cqspi_write_setup() program the address width as
-> the last step in the setup. This is likely to be immediately followed by
-> a DAC region read/write. On TI K3 SoCs the DAC region is on a different
-> endpoint from the register region. This means that the order of the two
-> operations is not guaranteed, and they might be reordered at the
-> interconnect level. It is possible that the DAC read/write goes through
-> before the address width update goes through. In this situation if the
-> previous command used a different address width the OSPI command is sent
-> with the wrong number of address bytes, resulting in an invalid command
-> and undefined behavior.
->
-> Read back the size register to make sure the write gets flushed before
-> accessing the DAC region.
->
-> Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
-> CC: stable@vger.kernel.org
-> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
-> Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
-
-Same as the previous,
-
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-
-[...]
+Applied, thank you.
 
 -- 
-Regards,
-Pratyush Yadav
+Dmitry
 
