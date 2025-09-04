@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-801410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0C4B444B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D61B444BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70573A1A64
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7CE1895593
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8BA31A56D;
-	Thu,  4 Sep 2025 17:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419B031AF1C;
+	Thu,  4 Sep 2025 17:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evZN+BCJ"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LM51+XH5"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C633128CC;
-	Thu,  4 Sep 2025 17:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2CA31A56A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008193; cv=none; b=tlvUE25LIyQSFUAgjQyf/AVngdlO8u8Rz42EdwHiQn8M5+ko7+Fm9x026zXk2uBSLZmFRznH8CcLFLTi0ADviwdk5V7esa7yWbvSLfB93K/ibxyQiQneyXKke8BUGaJ50QncE12J87iudeMlYNgqyicDtyC/iV3MdcXkYAx6dtU=
+	t=1757008199; cv=none; b=GcUTvaG6H6fwTJoVkfrPTw28201PgctNpAM2JcyIASHTfTS0TGDwVZD209rP57oQZ/FTWR6xc4kEltVrgPNBXUevVZfN3X7CoFff2Y4njz/dhFcQKeDfJZ8LsG4pWZfxAZkyLjHI5NXuM0utPO00DLtaDOl3UBy8oWNOo08VykA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008193; c=relaxed/simple;
-	bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQK8SSpOAsEXT9DhacEYyrjhZ1xD4jbBgsuTVTgb54UhzOM+dY1g6ZNAJ3DQOL8rMxlXB/inibZQAqNl11uyUZidNF3yst1Smr5WJcb2hbeqryRuaDs6k8Tqxa7ytwdmoGebWwR36NVsEYnMtx0B09/K0xhAm2RI7d9k27/L0iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evZN+BCJ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f92d60ddso11847731fa.3;
-        Thu, 04 Sep 2025 10:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757008189; x=1757612989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-        b=evZN+BCJIrgR+DFdcgMy45ij4uajXQHpNyY0ZPYu9d5yBAclw/pTXYbVubo1sgdXYO
-         UR+6Rplh67axriipwjwwBF725VAr7SqPEhh5tcBCjbR0RZLXnij5T08kxByLeCIWkzww
-         1PYsQ0S989CGAuErYyg+g0FCJi4RoKpKiKU7igmRlmi2F28sOY/zLoO5CuTnXvsNK7uu
-         hjuIVSITORjZBhzYkljF7bDmIBrmS1XS4KsikEmDWszPRW/0+J/LK6WsOhNtACbMMQnG
-         A8uVpVlAV85u20brieWTkYwZ0qRKny3PcWLMftRThPH+xnrOuQCq1aMfqLXL8d0f3guG
-         uvig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757008189; x=1757612989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OwhFp6QY2B9dXyCDZ9mtktpC15PTprmIsEgeb1yOCg=;
-        b=NDAYs9xozJQrik89fceWegPJ/C+gWKKhgy4qae78acaimy4jnAwi69uGFPp8lPqIG6
-         ggju94B1t8JGxGeTM6WQPvHUrNI/6uXWDndphNbuWLihs8TjPY4REcurPUKgDMxkQlIA
-         EUT3molCyBGaz1COd2t8Hvqskcl3gRc6A4JJWgg96LN1KbOGLkb2KRWmLJOneDOgQLy6
-         ZMAT7c2FP1Q6LBaU1duvxK4ZDk7Q8fFqCQXd+fjNL/meq//rocOgbQntNaVMMlzKfSXO
-         DcGh0DWCWBrsQ8FW8bRvtSJXIEWcw3CTKrucyYuGMwWkal5BLd+3WOWgxG603ndlyRfY
-         DjGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUo5WgbL8rTWkg5Iz1nw3v3/CvxFPveyClnqYIHeynA3aUwOwXZ1X1NdwZiV1ysUBLeUoE1/rkCi40Q@vger.kernel.org, AJvYcCV/EFKP9dUkDK8nWmJZqdNGsvDQVV0Mh7yj8U0OnalJb0ckm1oOtsifPzEGY3po8/CjQR4ILZx47oR7U9s5@vger.kernel.org, AJvYcCVPZIJJ1uIF306B8RmiTuZ+eawhSncjO2ykBB4wj9VRSuMzwIOJxsq6PLPagr3bFrH+lPI4xlrL8rg=@vger.kernel.org, AJvYcCWms9lW7sdtS0hapVIOWS4RrQbKMuy6kK6vT3TH3gmFOStLpd1E+JL5qhCUsq8nDTOdWyklrZkpNK/w4x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp9es5ACgbxxZg5BkHS2RgT6Aiv6K2/UuHLdeLQykPLUjv6uRm
-	hD3nEpP9LSfG3twV7/Wfua/CBVJEzoBiWqwZ7Obc6sY7qTfbN2vPzazjHRpf1Ce5cLry4EMZu9x
-	y4eSp8mgxLEl6Qpa7A2q5Dl7h6MkQXXU=
-X-Gm-Gg: ASbGncttFGYTp75UoTIe7oHt19nh8GR7lckiV0vILVfT5pNwDBkar1wTBQxcZo9aUH4
-	s2uCB84OVxPK2+ud+PGHwZAWxSEUaapZyZ01XcVfSHWLaY4w5vEI36SOG2eQOEQhisqcpX/7SAs
-	WevErVYEoQgcPYGeWTxMcUW2UDAzU9CHGFlnUZovfR29gKBdYlYOCk8Pph0F5ITzvx8CNPU3jQY
-	XynMiU=
-X-Google-Smtp-Source: AGHT+IH7QIHZ0cpl1bQSa5L4Bb5DytTvCb/2gvt8Gsq4gOq49faXMoYH00vGZ0ZJuXaKzDud/8jnwgq3KDUTQ3B7Nx0=
-X-Received: by 2002:a2e:a4d8:0:b0:32a:6e20:7cdb with SMTP id
- 38308e7fff4ca-336ca997e26mr43184441fa.17.1757008188845; Thu, 04 Sep 2025
- 10:49:48 -0700 (PDT)
+	s=arc-20240116; t=1757008199; c=relaxed/simple;
+	bh=P75rCZPVw96u/xm3axOzWQ8A/0dUeO3HwLrPeDSqxzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=u/HyRGq4Di+CCuubfP6l26RkVEJYrlGqv3EiH/Ua2BcTcf5y9GkoCHJDGuBwc8QtXY71rDdVIpPtC5ZSyAdpPx8YYcRzpHhasclcWejxBqCFOjvOzYZr70lctUpVRScL+NtebFH6AhoHySdhh3KTWoPUkzMelpWt5R00Hh8ZrhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LM51+XH5; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250904174955euoutp0154a271ddce85286ba2756e05c30b56de~iJaUJgeVv2505425054euoutp01z
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:49:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250904174955euoutp0154a271ddce85286ba2756e05c30b56de~iJaUJgeVv2505425054euoutp01z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757008195;
+	bh=xDLKHxEV4hBOubU1hA0pF3KKCXpZ9u6NZsKj3VxloXA=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=LM51+XH5yTExcGU88pRP1td8ngDXTxUnoaAgoRNqnWz/70AD7Ccf55vCTccn3Y1e1
+	 skSBgRtje2OwcDcspXfx8EsJZppo7vJ3/+u1tFeWyH17BrFvQenRtdMJZdKVqqmnWh
+	 TlsVqtdLkH5CDFGLBHQqW2Gd8LOWK5bee0Juq7IE=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904174953eucas1p17f0b6acef323d0a44b84b8ab177041cb~iJaS00zsD2322323223eucas1p1H;
+	Thu,  4 Sep 2025 17:49:53 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904174952eusmtip2cc300941d5463e8178ab6192d3bf54a1~iJaRhhG0z0094500945eusmtip2X;
+	Thu,  4 Sep 2025 17:49:52 +0000 (GMT)
+Message-ID: <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
+Date: Thu, 4 Sep 2025 19:49:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250902-glittering-toucan-of-feminism-95fd9f@kuoka> <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
- <47c7adc9-fa91-4d4e-9be4-912623c627d6@kernel.org> <CALHNRZ8rxyRvb1GCifeXRKjPkkBE+sK6VnPc2nS01iZV_NcjaQ@mail.gmail.com>
- <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
-In-Reply-To: <08062eb7-1b7d-4fc3-86ea-af70069065eb@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 4 Sep 2025 12:49:37 -0500
-X-Gm-Features: Ac12FXymL814iB6fXAOm_7ikLix-XDwcIFwbTiMJt5Sq938zGMyGgX9ZoGVSnow
-Message-ID: <CALHNRZ-iGASiVknUFJXJ8OkYYrG+0VMTistreDAG38WytHmEPQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on Tegra186/Tegra194
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU
+ flag on ARM64 SoCs
+To: Peter Griffin <peter.griffin@linaro.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
+	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ingo
+	Molnar <mingo@kernel.org>, Will McVicker <willmcvicker@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, John Stultz
+	<jstultz@google.com>, kernel-team@android.com, youngmin.nam@samsung.com,
+	hoony.yu@samsung.com
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250904174953eucas1p17f0b6acef323d0a44b84b8ab177041cb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f
+X-EPHeader: CA
+X-CMS-RootMailID: 20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f
+References: <CGME20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f@eucas1p1.samsung.com>
+	<20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org>
 
-On Thu, Sep 4, 2025 at 3:19=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On 04.09.2025 17:32, Peter Griffin wrote:
+> This patch addresses a regression reported in [1] whereby CPU hotplug now
+> fails on little CPUs (for reasons that aren't fully understood) for Arm
+> 32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
 >
-> On 03/09/2025 08:37, Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 1:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >>
-> >> On 02/09/2025 18:51, Aaron Kling wrote:
-> >>> On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>>>
-> >>>> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
-> >>>>> This series borrows the concept used on Tegra234 to scale EMC based=
- on
-> >>>>> CPU frequency and applies it to Tegra186 and Tegra194. Except that =
-the
-> >>>>> bpmp on those archs does not support bandwidth manager, so the scal=
-ing
-> >>>>> iteself is handled similar to how Tegra124 currently works.
-> >>>>>
-> >>>>
-> >>>> Three different subsystems and no single explanation of dependencies=
- and
-> >>>> how this can be merged.
-> >>>
-> >>> The only cross-subsystem hard dependency is that patches 5 and 6 need
-> >>> patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
-> >>> operate as expected, but there should not be compile compile or probe
-> >>> failures if those are out of order. How would you expect this to be
-> >>> presented in a cover letter?
-> >>
-> >> Also, placing cpufreq patch between two memory controller patches mean=
-s
-> >> you really make it more difficult to apply it for the maintainers.
-> >> Really, think thoroughly how this patchset is supposed to be read.
-> >
-> > This is making me more confused. My understanding was that a series
-> > like this that has binding, driver, and dt changes would flow like
-> > that: all bindings first, all driver changes in the middle, and all dt
+> Note: This patch makes an assumption that the exynos_mct driver is only
+> used on Arm 32/64 bit SoCs.
 >
-> You mix completely independent subsystems, that's the main problem.
-> Don't send v3 before you understand it or we finish the discussion here.
+> Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
+> Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> Hi Marek & Krzysztof,
+>      
+> Can you test this patch on your Exynos5422 based boards and see if it
+> resolves the issue Marek reported of CPU hot plug failing on the little
+> cores of Exynos 5422 based boards?
 >
-> > changes last. Are you suggesting that this should be: cpufreq driver
-> > -> bindings -> memory drivers -> dt? Are the bindings supposed to be
-> > pulled with the driver changes? I had understood those to be managed
-> > separately.
-> What does the submitting patches doc in DT say?
+> Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
+> SoC) to test on. I can confirm CPU hotplug is functional on the little
+> cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
 
-The only relevant snippet I see is:
-"The Documentation/ portion of the patch should come in the series
-before the code implementing the binding."
+This is a duplicate of 
+https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
 
-I had got it in my head that all bindings should go first as a
-separate subsystem, not just docs. I will double check all series
-before sending new revisions.
+and yes, it fixes the reported issue.
 
-Aaron
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> Thanks,
+>
+> Peter
+> ---
+> ---
+>   drivers/clocksource/exynos_mct.c | 13 +++++++++++--
+>   1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 62febeb4e1decec7f5db104db395884824563915..91d79b73a96a7e8a354d803c2b497bcde92af8d8 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -532,6 +532,16 @@ static int __init exynos4_timer_resources(struct device_node *np)
+>   	return 0;
+>   }
+>   
+> +/*
+> + * For reasons that aren't fully understood IRQF_PERCPU breaks CPU hotplug on
+> + * little cores of ARM 32 bit SoCs like Exynos5422 used in OdroidXU3/4 boards.
+> + */
+> +#if defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
+> +#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING | IRQF_PERCPU)
+> +#elif defined(CONFIG_ARM)
+> +#define MCT_IRQ_FLAGS (IRQF_TIMER | IRQF_NOBALANCING)
+> +#endif
+> +
+>   /**
+>    * exynos4_timer_interrupts - initialize MCT interrupts
+>    * @np: device node for MCT
+> @@ -602,8 +612,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+>   			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
+>   			if (request_irq(mct_irq,
+>   					exynos4_mct_tick_isr,
+> -					IRQF_TIMER | IRQF_NOBALANCING |
+> -					IRQF_PERCPU,
+> +					MCT_IRQ_FLAGS,
+>   					pcpu_mevt->name, pcpu_mevt)) {
+>   				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
+>   									cpu);
+>
+> ---
+> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+> change-id: 20250904-exynos-mct-arm32-cpuhp-regression-14f321e4a591
+>
+> Best regards,
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
