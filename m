@@ -1,288 +1,230 @@
-Return-Path: <linux-kernel+bounces-801471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C0B4455C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F516B44576
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 540FB7AFC53
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:26:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E33F7B2631
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326B2343207;
-	Thu,  4 Sep 2025 18:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB42343218;
+	Thu,  4 Sep 2025 18:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdKchDH5"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QuszCFXf"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964A42FABE2;
-	Thu,  4 Sep 2025 18:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757010482; cv=none; b=BK+dzvqExUxGEBuNV2qZo/rH55WMla5CIladrYVos+SEu37LxZ4tWvfO1t5/0kO1ha36OlzgogAr1AVYzAG36YtPL/geVIxEAb7BmJ62eYly4zXOFqEKE5JU6/0UViFIBDx2P3zKH9uio7VcdkDKGKj6/Ag+r2lwjjTYucE/A4k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757010482; c=relaxed/simple;
-	bh=ffLIQ3FaiYZNtElI4OJ0F2JYmjc0S5H12kcNdyc3VUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lpFt5LTcIXYzZyIq3nPLbUXZDsQs0Dl58sN1bNGc0qh9eCyNbXNP9XRNSBiDPR2tfHa47qTJhwcrtU/HymLiNyLmjD0zhg/D5Cy+5A6c5/NbGbUUuD1kBHpbz3A6BfVxR/SRVf8x5zM0jtrXMW9REZdidREuIshGxttroaWFugA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdKchDH5; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24884d9e54bso14148555ad.0;
-        Thu, 04 Sep 2025 11:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757010480; x=1757615280; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UFcf01DXYxJozGudqNMPPaA6uZcECj7e/1HGQreU6Co=;
-        b=LdKchDH5Ieo8UHm+OxDkaWV9tHB1S/h0gbwh0SrD6r1Y5MElY60NZSzaKdiwUocLB+
-         dOljdj0Zc9fiiGhv5YgeNsOI1YwWi4xdFb39/YMrF1SfiEMvvgIirJR1GY1ytGEO1mBU
-         49TZrdBuLq5dDvoWaw1LhKh2oKh6QQ1UvPczVL5UpKq6gdq5Lz61GiweEf1s9f1VRFxT
-         dWFujhEXsnEahdez6x+fDTWuQ1luCVumbGdQjd9n6+adhRifd7gF/b3drmMYVYRWEFTq
-         Ctow3b1yAY8V0WTWBYNl+LLGtsDu9WO/f5LAVqPIIWOzigrT12kPmiMiblUzgwBeiiVI
-         MX2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757010480; x=1757615280;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UFcf01DXYxJozGudqNMPPaA6uZcECj7e/1HGQreU6Co=;
-        b=XksGs2emezw7bpgVUHYt53FbGUrKlm12U9qz5Uj3waZOMUBzIQk5vcoABtIl/foi8u
-         00CP6tRQP8xgw5LPJdSfz2qiQKG3s1RulJg7IIz0pdkpY2TG6HJ+Rx2Z0WK90LnVFE08
-         LZvVnnBO4QnCodVIs6WJQM8QVMET4at5pIzZk4mAscH5mxRxwoqyRwz6l1n+70dW+U2y
-         8dd7Ox+T1Bj+0tI8fVf9NDQ7utCnQCr5p3I8ggAYxiFk8HHVd7s8K56LLDMi5Jo1CxM5
-         VIyCGr/QnVPKCXqc4s9y/u6HOuNX05gXS4kHtAO2c8Lf9l1dYF+mJRhEsdlTzva6sBtC
-         zveA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSLL0VhbZKz1hx2h8nvSXN2zI6tkLgOGN+Sn6vjpEdYwQUieikmy7pAOIVZ2aMmh++oREvliHoIlQkSNGxxoFBP3Kr@vger.kernel.org, AJvYcCUhLZVoHozY45tpqBpyAbBi6B1Yf2FH+tuuBQlww1wH/pHrlwK68Y8LSPU1vlOpTRjiWqw=@vger.kernel.org, AJvYcCXtczmJvurJTmhLT6xmwUmthAIcC0V1C0tx7loimXwn8dl3+S2vSBS4Bu234YZy9eDdMFHMYXXspstNGu8o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOPTT4dDD47ZQUXSQelKYFmqVWQf7Q9xOj8/YDQ0WHH8q3vD63
-	RHvCocHAOhW13W0XHyOz+8P6R1Xmmg7VBVcYEHwARwLcRyLfateb1IAANd42KiBbTVPM7vsgqKX
-	CCtn3OhWdV8hU4h+ueIiDHkRJW6woGgI=
-X-Gm-Gg: ASbGncugtvj4u06r5kjuLX/U9pG1P0FVmUxeniAt8+pmm8rMA9iJ3dBPqHI4L1IW/nZ
-	AkXXcbzvVekSmJzihCBRT4+CC6dLlPjGjjEFqT/LDHWpU5cw5xTFD6/xTF+paYsdiuDajjJHHJu
-	VucbSrgzLaV5Cd+a0UBwLJnM60/3eBnzlxe1Xu5YfO0bJ2F31mY7HE9zK7QHb+eM7Y0NtZIS2s9
-	FRIh1/lKTZGzjdy0eHlrHU=
-X-Google-Smtp-Source: AGHT+IFmjG6A3aSE+CmXab8GXk/ptByCG1d6SNBMRp3QPcCj1+z42ojsmggSYN0fEMSk94BqMVxQdOUBFPWJh+K79Ng=
-X-Received: by 2002:a17:903:2309:b0:249:3781:38e3 with SMTP id
- d9443c01a7336-2494486f48fmr245916815ad.10.1757010479749; Thu, 04 Sep 2025
- 11:27:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33098319861;
+	Thu,  4 Sep 2025 18:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757010744; cv=fail; b=Mc6ZVJpeM3PMfROsX59Yrd7GaCpLHAq+Q2SUDpSYyGVQQQDL61EXDZU7FX3RS21/dkY97Na1eCCDK+nQDMbKfq1BJ+TVW1FsxAM+rXddy89Z1Nlo0qQVUcGqlLhFljiuwC9aryxwjkV1ic2RsoZf9VrEuXKEsbMkmnovzhoAeyk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757010744; c=relaxed/simple;
+	bh=DOp9eKAppWZSRBEvkU8P5sxdO32HmA8kUQ/KDE4styA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BF15TqbQkR0x4gb+fiHYIyqcSe1j0B0pMl3N48w2iHw5VX+iCaUguJ0c9+Dz7Eicq2JHjEr5CGtBXq7gLExUQm0vSPfvcDOjFsdUm25WGnf9DHb+lOnx5ob6BewkskawyAkOvBp2DJHnzNZHFUK39o6peOeWmWHzs+XMspyktH8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QuszCFXf; arc=fail smtp.client-ip=40.107.93.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B+KQDVLVpYiSny87Lh+SwYT3OfDhnHvOCcbPAAV6KWhp3HY022Hkvo7OogNghUzpEM3WwuQSL4hQism4cavGQcqVJWg+eMa3wYGq5noLBr7ivTmtYb9GSnqvFk+eBXEDm6IFbdauv7YlFvdfgu90eOQtS+ZqsZOHwGyugNV409J8xNZYXt6+MVda/pUK+LsZSB/gA6/wMCCup+2pR4CTfD/35hmOXWBHyA5zMcv2qYI5/OX5ujPEeih6xxCJ9mrT/D5fF4i5pz5u5NaplW8pUgFOWYaM4RH/z8LEXrHSh860mu0G83dGdroat0yiglcmdI91a3o8ElWCS5KZPFcSsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9HRVAsF3zrss498QiKgI9lbZtwa2ZhPt3SCJxxxnDTs=;
+ b=f+H+GvVrHlHkQXunLIKdwi5zjAxSn/UWwFaOMCEK7Jf1i4DEaLu0aDLyG1jhmrfVwKBhColTpXltagGVJJAHqgx9CS9bbdSlWZlFFHQ3ghIwTcMlv5i+81dUY8X74J3NoRX9mCDF2Q8H3j4Tb+rvcpMqQgiXacl0CzUo/rdIdSvSfj/N69OygvS+b1lATmJm0IbjeHLJxv1V1/cD9KZn6htBmCcbAzWovQb4+M4G+jNZogLHmsAGl/quVJOjZp7YDeff4+Qh2sMlE56xnwU9cx1pBz56SVO4jv0w7u5xGGSkBtR9SQLUoHnPGAJ6Yl+LF+zFXTQkOj8eLJW78DicJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9HRVAsF3zrss498QiKgI9lbZtwa2ZhPt3SCJxxxnDTs=;
+ b=QuszCFXfeddG6jcNOqYCYyov2tMQorb8kgMsqonKvVgN4OYeiyrfWBw7J6tDfPZ0Us7OGtj4sWxR+qi+q5/D26JTMjXrK91harnBwpHq1Lrub2lgkX/hGZocHt2oJqpfVJzYP7DQtBjWPg617VvjgjtoAnpg7eUMo3wJD38NQEJG/DBU334Cv35SyKTgEuiiJCXVuydfZr0ErJvtdSGxdSA4P6U35o+fQNRx4fMthQEMEDeS5FdB4WT5R10XWyyaQQagNH50gnXSa2H3kYRaqMpmpaH745xgQ3PxtlPHMCHBqfazcvxmAIttlpwtgHolLR1Bgdy05krvYLT8Y9/N0A==
+Received: from BN9PR03CA0222.namprd03.prod.outlook.com (2603:10b6:408:f8::17)
+ by DS0PR12MB7994.namprd12.prod.outlook.com (2603:10b6:8:149::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
+ 2025 18:32:19 +0000
+Received: from BL02EPF0001A0F9.namprd03.prod.outlook.com
+ (2603:10b6:408:f8:cafe::45) by BN9PR03CA0222.outlook.office365.com
+ (2603:10b6:408:f8::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Thu,
+ 4 Sep 2025 18:32:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF0001A0F9.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.14 via Frontend Transport; Thu, 4 Sep 2025 18:32:18 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 4 Sep
+ 2025 11:31:56 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 4 Sep 2025 11:31:56 -0700
+Received: from fedora.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 4 Sep 2025 11:31:53 -0700
+From: Carolina Jubran <cjubran@nvidia.com>
+To: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>, Kory Maincent
+	<kory.maincent@bootlin.com>, Kees Cook <kees@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Carolina Jubran
+	<cjubran@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Dragos Tatulea
+	<dtatulea@nvidia.com>
+Subject: [PATCH net] net: dev_ioctl: take ops lock in hwtstamp lower paths
+Date: Thu, 4 Sep 2025 21:28:06 +0300
+Message-ID: <20250904182806.2329996-1-cjubran@nvidia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720112133.244369-1-jolsa@kernel.org> <20250720112133.244369-10-jolsa@kernel.org>
- <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com> <aLlKJWRs5etuvFuK@krava>
-In-Reply-To: <aLlKJWRs5etuvFuK@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 4 Sep 2025 11:27:45 -0700
-X-Gm-Features: Ac12FXwZL9LiktKhjwvBuDGzti3AR3z8oS4Qg9Bvtj7egtgdX2ynkU-qrM7BF4U
-Message-ID: <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
-Subject: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22] uprobes/x86:
- Add uprobe syscall to speed up uprobe
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0F9:EE_|DS0PR12MB7994:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20449c7a-fc75-4130-df1d-08ddebe16137
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AoAimS9CvJ9yu+E5UpYpp13ugeFHXHNJscRI/tItlaN9dEuIjpgEQbPpmeT5?=
+ =?us-ascii?Q?fWcUv5VqRAWJdBsmv8/BgogrxFGmkTereXZJWCzaxO/jqRj/DISV2RDPNhu4?=
+ =?us-ascii?Q?+zAhwvwSCV70NoLvgrBkYkG1fsSMx9GIsC81OMEkwYo+pyDW5sfb+85VSzik?=
+ =?us-ascii?Q?t2FU0JkvoZm+VqFS7uyZSvMuKQlkdiwPrYVBU0xmxzyLUYzdiZ3CIHq1lcPS?=
+ =?us-ascii?Q?/XuM+ADnntOI2Pa/ITpvSS9Bxr8Blc4Da9XW5r8pO3+hUFW36O4gKLbW8g3L?=
+ =?us-ascii?Q?FAdtnkdhS3eG8mP0NxkTjjz8IhPLNbBIB3M7YDcQKs4s2t5QrQ53q112i4Hf?=
+ =?us-ascii?Q?3HAKqkH1YhYpT/G2SUcClWTt9IN0RS3Y9Q9NdwCa9i1MnM7zEOom19tdNMtv?=
+ =?us-ascii?Q?trqXBPibsFqPjGxKTx9KJFQJ4duFkTXIGMCEImSM0D6KtmN3Qs5QH4drsxy1?=
+ =?us-ascii?Q?Z/2ZxgNaDZWpojKB2AwcJhgKOY9H3rrlRZhry4t0BL4c0E1M3DCCekY9jGbk?=
+ =?us-ascii?Q?E0QT9hFh+jugOYs4Od837LW2Rt697oNeVoWbANzp6xcVAauzScY7NbN7EBgW?=
+ =?us-ascii?Q?dwDky/DrDwZwGlRRE/I3AvWxJGoOlMVx879hX7RyPMcPT1kVHxNiPWGuCQTd?=
+ =?us-ascii?Q?i+Uv+RuIvqbz68Dymyo0HjBVAE1kCCcCvyt4Zxut7BSw18p6T7JrHWogQR54?=
+ =?us-ascii?Q?TlKVzbhl6ae8h4E6/L/jZGp9gWCc5958yaZxC1pwT+DnvD6UcGfFv9965y8c?=
+ =?us-ascii?Q?cUWtdEvQLB7xM+9PWl9kwf/zDcZihBRC1qWHSzB1PUhA0UiJZefIySa4KtCy?=
+ =?us-ascii?Q?DS1H5Qu4nn23cwy8UUvZHTW9l9GYaIJL/84QL0myrncBT7uc0+90+eRslWxm?=
+ =?us-ascii?Q?ncHwreQYRkgF4F9OpMzmNIrqwMWbnTb769OWrhF24hDNw8wL8MXy2FITVDFG?=
+ =?us-ascii?Q?knDX6v0hvtUSGzhBQTenHG1yZciO/qtqR+UWKWGQCEvR/j2vvBVV/v8MDrRI?=
+ =?us-ascii?Q?aQD7z66BmoMf/vea76oVLIwZdX/UnhK9NrCIybcIZHp8dbr3dV/SI4Ka8kUX?=
+ =?us-ascii?Q?9yIhjxsF1EPQ70nrOWzGM8Pule3mInpu41+knVHMOypYQjbXmkE+Oy6Y9B1y?=
+ =?us-ascii?Q?w5c/hr2AjjPKgcsOiz+e4GfQP/gvycaGi1Y3A9LHe1YGsXQ1rVb4Xh4KULmr?=
+ =?us-ascii?Q?zkC3mXwbv9J/4euAST5rM5dYZkAjgDv/wFzDxxO54o2gzUZ7oslOnnKkS0Ox?=
+ =?us-ascii?Q?r42KWrDcLE7A7zK6JvUbn2pnKGYizVGOAww/h5fuaQcQlqtlGL81IWcje/ea?=
+ =?us-ascii?Q?Y+CdQOfW8Yl4wxxNaqrvy4qY6/hHtvMMo+HraJBwBHw9QzDL6hVaY7BQ0reH?=
+ =?us-ascii?Q?3JHqA+Sf1m3GKiUejaygWHNymlyx3KVD7a7tOlbaXsaYZNa72COEL1w9tip7?=
+ =?us-ascii?Q?y7Qf9n48vAJ3EHClgLk7J51VY84sJu7qZI9RdWhA+Onp1W+rJs9l2nYisfQF?=
+ =?us-ascii?Q?CB4bMPS78CuS0SBoVNpFxcHKJUWBw2XUy7Kz?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 18:32:18.5848
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20449c7a-fc75-4130-df1d-08ddebe16137
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0F9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7994
 
--- Andrii
+ndo hwtstamp callbacks are expected to run under the per-device ops
+lock. Make the lower get/set paths consistent with the rest of ndo
+invocations.
 
-On Thu, Sep 4, 2025 at 1:13=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> On Wed, Sep 03, 2025 at 11:24:31AM -0700, Andrii Nakryiko wrote:
-> > On Sun, Jul 20, 2025 at 4:23=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wr=
-ote:
-> > >
-> > > Adding new uprobe syscall that calls uprobe handlers for given
-> > > 'breakpoint' address.
-> > >
-> > > The idea is that the 'breakpoint' address calls the user space
-> > > trampoline which executes the uprobe syscall.
-> > >
-> > > The syscall handler reads the return address of the initial call
-> > > to retrieve the original 'breakpoint' address. With this address
-> > > we find the related uprobe object and call its consumers.
-> > >
-> > > Adding the arch_uprobe_trampoline_mapping function that provides
-> > > uprobe trampoline mapping. This mapping is backed with one global
-> > > page initialized at __init time and shared by the all the mapping
-> > > instances.
-> > >
-> > > We do not allow to execute uprobe syscall if the caller is not
-> > > from uprobe trampoline mapping.
-> > >
-> > > The uprobe syscall ensures the consumer (bpf program) sees registers
-> > > values in the state before the trampoline was called.
-> > >
-> > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
-> > >  arch/x86/kernel/uprobes.c              | 139 +++++++++++++++++++++++=
-++
-> > >  include/linux/syscalls.h               |   2 +
-> > >  include/linux/uprobes.h                |   1 +
-> > >  kernel/events/uprobes.c                |  17 +++
-> > >  kernel/sys_ni.c                        |   1 +
-> > >  6 files changed, 161 insertions(+)
-> > >
-> > > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/=
-syscalls/syscall_64.tbl
-> > > index cfb5ca41e30d..9fd1291e7bdf 100644
-> > > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > > @@ -345,6 +345,7 @@
-> > >  333    common  io_pgetevents           sys_io_pgetevents
-> > >  334    common  rseq                    sys_rseq
-> > >  335    common  uretprobe               sys_uretprobe
-> > > +336    common  uprobe                  sys_uprobe
-> > >  # don't use numbers 387 through 423, add new calls after the last
-> > >  # 'common' entry
-> > >  424    common  pidfd_send_signal       sys_pidfd_send_signal
-> > > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-> > > index 6c4dcbdd0c3c..d18e1ae59901 100644
-> > > --- a/arch/x86/kernel/uprobes.c
-> > > +++ b/arch/x86/kernel/uprobes.c
-> > > @@ -752,6 +752,145 @@ void arch_uprobe_clear_state(struct mm_struct *=
-mm)
-> > >         hlist_for_each_entry_safe(tramp, n, &state->head_tramps, node=
-)
-> > >                 destroy_uprobe_trampoline(tramp);
-> > >  }
-> > > +
-> > > +static bool __in_uprobe_trampoline(unsigned long ip)
-> > > +{
-> > > +       struct vm_area_struct *vma =3D vma_lookup(current->mm, ip);
-> > > +
-> > > +       return vma && vma_is_special_mapping(vma, &tramp_mapping);
-> > > +}
-> > > +
-> > > +static bool in_uprobe_trampoline(unsigned long ip)
-> > > +{
-> > > +       struct mm_struct *mm =3D current->mm;
-> > > +       bool found, retry =3D true;
-> > > +       unsigned int seq;
-> > > +
-> > > +       rcu_read_lock();
-> > > +       if (mmap_lock_speculate_try_begin(mm, &seq)) {
-> > > +               found =3D __in_uprobe_trampoline(ip);
-> > > +               retry =3D mmap_lock_speculate_retry(mm, seq);
-> > > +       }
-> > > +       rcu_read_unlock();
-> > > +
-> > > +       if (retry) {
-> > > +               mmap_read_lock(mm);
-> > > +               found =3D __in_uprobe_trampoline(ip);
-> > > +               mmap_read_unlock(mm);
-> > > +       }
-> > > +       return found;
-> > > +}
-> > > +
-> > > +/*
-> > > + * See uprobe syscall trampoline; the call to the trampoline will pu=
-sh
-> > > + * the return address on the stack, the trampoline itself then pushe=
-s
-> > > + * cx, r11 and ax.
-> > > + */
-> > > +struct uprobe_syscall_args {
-> > > +       unsigned long ax;
-> > > +       unsigned long r11;
-> > > +       unsigned long cx;
-> > > +       unsigned long retaddr;
-> > > +};
-> > > +
-> > > +SYSCALL_DEFINE0(uprobe)
-> > > +{
-> > > +       struct pt_regs *regs =3D task_pt_regs(current);
-> > > +       struct uprobe_syscall_args args;
-> > > +       unsigned long ip, sp;
-> > > +       int err;
-> > > +
-> > > +       /* Allow execution only from uprobe trampolines. */
-> > > +       if (!in_uprobe_trampoline(regs->ip))
-> > > +               goto sigill;
-> >
-> > Hey Jiri,
-> >
-> > So I've been thinking what's the simplest and most reliable way to
-> > feature-detect support for this sys_uprobe (e.g., for libbpf to know
-> > whether we should attach at nop5 vs nop1), and clearly that would be
->
-> wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,nop5
-> and store some info about that in the usdt's elf note, right?
->
+Kernel log:
+WARNING: CPU: 13 PID: 51364 at ./include/net/netdev_lock.h:70 __netdev_update_features+0x4bd/0xe60
+...
+RIP: 0010:__netdev_update_features+0x4bd/0xe60
+...
+Call Trace:
+<TASK>
+netdev_update_features+0x1f/0x60
+mlx5_hwtstamp_set+0x181/0x290 [mlx5_core]
+mlx5e_hwtstamp_set+0x19/0x30 [mlx5_core]
+dev_set_hwtstamp_phylib+0x9f/0x220
+dev_set_hwtstamp_phylib+0x9f/0x220
+dev_set_hwtstamp+0x13d/0x240
+dev_ioctl+0x12f/0x4b0
+sock_ioctl+0x171/0x370
+__x64_sys_ioctl+0x3f7/0x900
+? __sys_setsockopt+0x69/0xb0
+do_syscall_64+0x6f/0x2e0
+entry_SYSCALL_64_after_hwframe+0x4b/0x53
+...
+</TASK>
+....
+---[ end trace 0000000000000000 ]---
 
-Yes.
+Fixes: ffb7ed19ac0a ("net: hold netdev instance lock during ioctl operations")
+Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
+Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
 
-> libbpf will read usdt record and in case it has both nop1/nop5 and if
-> the sys_uprobe is detected, we will adjust usdt address to nop1 or nop5
->
+---
+ net/core/dev_ioctl.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-Yes.
+diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+index 9c0ad7f4b5d8..ad54b12d4b4c 100644
+--- a/net/core/dev_ioctl.c
++++ b/net/core/dev_ioctl.c
+@@ -464,8 +464,15 @@ int generic_hwtstamp_get_lower(struct net_device *dev,
+ 	if (!netif_device_present(dev))
+ 		return -ENODEV;
+ 
+-	if (ops->ndo_hwtstamp_get)
+-		return dev_get_hwtstamp_phylib(dev, kernel_cfg);
++	if (ops->ndo_hwtstamp_get) {
++		int err;
++
++		netdev_lock_ops(dev);
++		err = dev_get_hwtstamp_phylib(dev, kernel_cfg);
++		netdev_unlock_ops(dev);
++
++		return err;
++	}
+ 
+ 	/* Legacy path: unconverted lower driver */
+ 	return generic_hwtstamp_ioctl_lower(dev, SIOCGHWTSTAMP, kernel_cfg);
+@@ -481,8 +488,15 @@ int generic_hwtstamp_set_lower(struct net_device *dev,
+ 	if (!netif_device_present(dev))
+ 		return -ENODEV;
+ 
+-	if (ops->ndo_hwtstamp_set)
+-		return dev_set_hwtstamp_phylib(dev, kernel_cfg, extack);
++	if (ops->ndo_hwtstamp_set) {
++		int err;
++
++		netdev_lock_ops(dev);
++		err = dev_set_hwtstamp_phylib(dev, kernel_cfg, extack);
++		netdev_unlock_ops(dev);
++
++		return err;
++	}
+ 
+ 	/* Legacy path: unconverted lower driver */
+ 	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
+-- 
+2.38.1
 
-> I recall you said you might have an idea where to store this flag
-> in elf note.. or are we bumping the usdt's elf note n_type ?
->
-
-Neither. I was contemplating just to look whether there is nop5 after
-nop1 from libbpf side, which would probably always work reliably in
-practice, but, technically, might be misused if you artificially put
-nop5 after USDT() call and then jump into that nop5 from somewhere
-else. Then it would trigger USDT where it shouldn't.
-
-But I don't want to change n_type, as I want anyone else doing their
-own USDT parsing/attaching to work just as they used to.
-
-So, here's the current idea. USDT lays out three strings one after the
-other in ELF note: provider, \0, name, \0, args, \0. We also record
-total note data size there, so we know how much contents is there. I
-was thinking we can add just one extra \0 at the end (and if necessary
-we can treat that as 4th string with extra arguments in the future,
-who knows). If libbpf detects that extra \0, then we can be reasonably
-confident that nop5 is part of USDT and is safe to be used correctly.
-
-Unless there are some super paranoid USDT parsers out there, it should
-be nicely backwards compatible. Libbpf seems to not care right now
-about that extra zero, which is a good sign. readelf handles that just
-fine as well. So all good signs so far. I haven't tested anything else
-(bpftrace is currently broken for me w.r.t. USDT attachment even with
-old format, so I can't quickly check, please help, if you can).
-
-> thanks,
-> jirka
->
->
-> > to try to call uprobe() syscall not from trampoline, and expect some
-> > error code.
-> >
-> > How bad would it be to change this part to return some unique-enough
-> > error code (-ENXIO, -EDOM, whatever).
-> >
-> > Is there any reason not to do this? Security-wise it will be just fine,=
- right?
-> >
-> > > +
-> > > +       err =3D copy_from_user(&args, (void __user *)regs->sp, sizeof=
-(args));
-> > > +       if (err)
-> > > +               goto sigill;
-> > > +
-> > > +       ip =3D regs->ip;
-> > > +
-> >
-> > [...]
 
