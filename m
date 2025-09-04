@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-800468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D20B4380C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:10:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94308B43817
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24311B263F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C02C1C816F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B262FCC12;
-	Thu,  4 Sep 2025 10:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE082FB982;
+	Thu,  4 Sep 2025 10:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TKdel1x1"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XSTBQnft"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14C42FC875
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DDE2F83DC;
+	Thu,  4 Sep 2025 10:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980575; cv=none; b=lkaMP/v76sD0byGIuRoAX+JvJBfqpgIn4n3p/OdriSizhC5d8C2B+XeQd6+1l4ldDnc1k4TbK6/g+qq1stW3tL1V3Ivt8tzFcQOeK1RLQkc8lHijThXpHvvc1l+TuG46UEYWKnBnWrf2vpdwk6/q1HowXm3KOLo3i75+FYA5ZKs=
+	t=1756980654; cv=none; b=e0eqrw/ZPdXAvhPp3ewwZgVij4tHpFS/3tmv5scgeBRy/5OLwObQyAQ048XC8V/J2zBnOq+3bTjd28Wihb5yzQKrccRPIBLeusoQ04bwFI85Qb0TY3crHIkn0Pc6u8XCz75qr4uIArv4VBU6ITAH5z9c9xtnjudUJvVsoGmonAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980575; c=relaxed/simple;
-	bh=Z98sXNyNxBFjNP43LUOxz/hSd9EZq/hjQKXFmNZmhcE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Xu/5MhxWf1ifunRE1vE/vW8giUKpNXnO6iXJMYVWFFNfr0kMAH5hrnh98VHZM/AyVLxVgtFmDTDDdbibHqgPuDKDiw2NCeKiwE5A0ltwFelJpAV9quDjKplafI9GjwzqKVhmnFz7JMjGGejVimTGyHLDZlwj2+pQdC2+6P6S3MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TKdel1x1; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904100931epoutp045b8c40f73e3287aeb5b0be6d04a0fa7a~iDIU-4DnW1842718427epoutp04l
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:09:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904100931epoutp045b8c40f73e3287aeb5b0be6d04a0fa7a~iDIU-4DnW1842718427epoutp04l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756980571;
-	bh=NNCOKsku3jGQZIW1rjPQqO4AY7LjBwEb5L1n61T6Nys=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TKdel1x1yl5ccpn7yLkSFUxqKvDArpwhaUI0O5tQwYpnuKS1xqd5QncgYmKJ64WJi
-	 fd5+Ug/oGuxgcFxw1Xa6r1Ap3GowITAOZ8gdvfAk7dALvWetvR3lJCzbz3+p0NcMeF
-	 Y5STV2TB+FF6iwW+rhXN8bUAx2PZhFv0P4le8NtE=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250904100930epcas5p2c91a6734fdedf9d2765cc8288c91234c~iDIUcNZEF0566805668epcas5p2W;
-	Thu,  4 Sep 2025 10:09:30 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cHZvs3Nxbz3hhT3; Thu,  4 Sep
-	2025 10:09:29 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250904100928epcas5p3b02d748847905e62c897bc576b7ef948~iDISWDEAh0328503285epcas5p3x;
-	Thu,  4 Sep 2025 10:09:28 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250904100926epsmtip1f3e09235bbd83a12c3fd0c487201e546~iDIQuo_AL1187611876epsmtip1M;
-	Thu,  4 Sep 2025 10:09:26 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Faraz Ata'" <faraz.ata@samsung.com>, <andi.shyti@kernel.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<pritam.sutar@samsung.com>, <dev.tailor@samsung.com>
-In-Reply-To: <20250904072844.358759-1-faraz.ata@samsung.com>
-Subject: RE: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
- compatible
-Date: Thu, 4 Sep 2025 15:39:25 +0530
-Message-ID: <435b01dc1d83$ff8bde30$fea39a90$@samsung.com>
+	s=arc-20240116; t=1756980654; c=relaxed/simple;
+	bh=q0xjFKgA1oVufeQPUoXAmkmO47WBeoCpahTTRsgkiR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6Y8Be5wBrffDTNh3xGKzplT5ivfhwkccBhV2B3ZgafXI7xx/rCgfvSoym2nd4o/rsJ6C9coWhE63gRcpS15cFoO0mPyeepvZjpN0v0amV8Mp1EIlDWIc4yjZtfk/m2eB/PWkHVfMLmkgPPGoFM+YYLMlQUof/j2aAjmL+iypsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XSTBQnft; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id BCB6C208A0;
+	Thu,  4 Sep 2025 12:10:49 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 1UU3Ew3pXPsJ; Thu,  4 Sep 2025 12:10:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756980648; bh=q0xjFKgA1oVufeQPUoXAmkmO47WBeoCpahTTRsgkiR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XSTBQnftWTw5Waqb0LaFONAC+OOADo9mLP+BlBUs/gbK6ewyZIAB9nFN+f9mpImYk
+	 nL2acTDzMutg2GaKAos6V29QppDeYoVLWeeUFGYKTSA0Ebt6/F3GhbirdVTpStc6Af
+	 lsVX1+ZeBnougiAbxi3Ma33WAUlqaFmZgf/oPsnPJKfTd2K5llFOzRtb8WlGyj6Tc3
+	 Msa0Km1jWvsp8EWTKdyy3GCIJJnnAxe3+7iHW8RIdgBcSGwLa1EaqGk4AjzwTNUii3
+	 wNG57odu38jms6/e2aIdKTZJPkI+nJjkoy5sS3YpDmCYdJ4V1U0tmcicVoxzC6+m+u
+	 4Ni9uzE4n0Q4g==
+Date: Thu, 4 Sep 2025 10:10:01 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
+ contain invalid address
+Message-ID: <aLlleb271owHNIbt@pie>
+References: <20250904031222.40953-3-ziyao@disroot.org>
+ <20250904095457.GE372207@horms.kernel.org>
+ <20250904095657.GF372207@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMyl6jZ32DHOO134xOI05SqoiCOxQG1dU1GscgrbFA=
-Content-Language: en-us
-X-CMS-MailID: 20250904100928epcas5p3b02d748847905e62c897bc576b7ef948
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
-References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
-	<20250904072844.358759-1-faraz.ata@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904095657.GF372207@horms.kernel.org>
 
-Hi Faraz,
+On Thu, Sep 04, 2025 at 10:56:57AM +0100, Simon Horman wrote:
+> On Thu, Sep 04, 2025 at 10:54:57AM +0100, Simon Horman wrote:
+> > On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+> > > We must set the clk_phy pointer to NULL to indicating it isn't available
+> > > if the optional phy clock couldn't be obtained. Otherwise the error code
+> > > returned by of_clk_get() could be wrongly taken as an address, causing
+> > > invalid pointer dereference when later clk_phy is passed to
+> > > clk_prepare_enable().
+> > > 
+> > > Fixes: da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy")
+> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > 
+> > ...
+> > 
+> > Hi,
+> > 
+> > I this patch doesn't seem to match upstream code.
+> > 
+> > Looking over the upstream code, it seems to me that
+> > going into the code in question .clk_phy should
+> > be NULL, as bsp_priv it is allocated using devm_kzalloc()
+> > over in rk_gmac_setup()
+> > 
+> > While the upstream version of the code your patch modifies
+> > is as follows. And doesn't touch .clk_phy if integrated_phy is not set.
+> > 
+> >         if (plat->phy_node && bsp_priv->integrated_phy) {
+> >                 bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+> >                 ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+> >                 if (ret)
+> >                         return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+> >                 clk_set_rate(bsp_priv->clk_phy, 50000000);
+> >         }
+> > 
+> > Am I missing something?
+> 
+> Oops, I missed that da114122b831 is present in net-next (but not net).
+> Let me look over this a second time.
 
-> -----Original Message-----
-> From: Faraz Ata <faraz.ata=40samsung.com>
-> Sent: Thursday, September 4, 2025 12:59 PM
-> To: andi.shyti=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; alim.akhtar=40samsung.com
-> Cc: linux-i2c=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; rosa.pila=40samsung.com;
-> pritam.sutar=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com
-> Subject: =5BPATCH=5D dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
-> compatible
->=20
-> Add =22samsung,exynosautov920-hsi2c=22 dedicated compatible for HSI2C fou=
-nd
-> in ExynosAutov920 SoC.
->=20
-This is not complete; any new compatible should be complemented with driver=
- changes
-(User of the compatible) followed by dts change.
-Always send a complete set, also mentioning how the patch was tested.
-Best is to get patches reviewed internally before sending to community.
-=20
-> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml =7C 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> index 7ae8c7b1d006..207b95e392e5 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> =40=40 -38,6 +38,7 =40=40 properties:
->                - google,gs101-hsi2c
->                - samsung,exynos2200-hsi2c
->                - samsung,exynos850-hsi2c
-> +              - samsung,exynosautov920-hsi2c
->            - const: samsung,exynosautov9-hsi2c
->        - const: samsung,exynos5-hsi2c    =23 Exynos5250 and Exynos5420
->          deprecated: true
-> --
-> 2.34.1
+Oops, yes. Though this is a fix patch, it should target net-next instead
+of net since the commit causing problems hasn't landed in net. Sorry for
+the confusion.
 
-
+Best regards,
+Yao Zi
 
