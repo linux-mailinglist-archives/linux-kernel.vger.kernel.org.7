@@ -1,170 +1,122 @@
-Return-Path: <linux-kernel+bounces-800216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E88B434A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915EAB434D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 513714E159C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16601C821AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F682BD5A8;
-	Thu,  4 Sep 2025 07:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD442BE7B2;
+	Thu,  4 Sep 2025 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxwhBIOe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ppg+lKZn"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3163D242D92;
-	Thu,  4 Sep 2025 07:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859F42BE635;
+	Thu,  4 Sep 2025 07:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972409; cv=none; b=Ukk3zbeOEloJthkR/apqn0XHMoA/Z3YwTRY9O8s+Irn7ha1sFZozHEJh+iOPfxCaJ9qKq7gP5Dd0sqB78lz1PRVX9qQb5GT6kVMHhr67XDnj9LMLZJ+jhYkPwWzII6NZlFbCQHU17HPQrM/miyONrpvPcLIF8olXIpXO8bRU6fA=
+	t=1756972776; cv=none; b=dbA/cLV2bF8bgGb0XNncwqYLyba4rMrLXXJseNC+tXEAkLJk/sU/NXaamvBMAnzpCD7QHwJ5U1dwyMUfByVhgsNz3Ay3gIjxa/rOD8vIP9a/+keUVvdWWugqtqB1Ox0cFbWCyAepbpfoiCjrfD8wKh2DQ0scELZ64qtWkh+0VK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972409; c=relaxed/simple;
-	bh=9s/42F0Gq7Ks2NERTbJK59XBbcqqqLVgnwg8Gtc4l0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKJ+wZUpSBy1fxuCDfC8NhatQobWAF+gPgZxyIzzC23LxJUCmZOaC4HUfh6y4fhCKYZW6xCNZE0PzKeZP+cax8PTkKnJFDmMsJ0VzQjny1qwU2YIcD+COZ6yeVNvlFRJo/7+vbnnmBTVsQkGgGQ9fvTazj5eOdUO38BFFiCgGsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxwhBIOe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DDCBC4CEF0;
-	Thu,  4 Sep 2025 07:53:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756972408;
-	bh=9s/42F0Gq7Ks2NERTbJK59XBbcqqqLVgnwg8Gtc4l0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IxwhBIOeDcl3TPSFhg6NrQPBDzjSsxaX4s4BNTedSM+tS93dkU0Jh6RdNi09DyKMI
-	 lh3eGi6FZ2Y05CoTGFW31udOEs95ffqkS3T1XQ8BzUr9+uhOb7mgwrBeXVgUD/YpxW
-	 6b8ldhgXcnhbg0Z4aokfFb21JMI1ghjH5LqfKClA61raKRTh8xI/245t2/DcV0XFXI
-	 tuHt1jtvCPMbc/cDZVvFZAzoVAX920puzlM6miwtgmbbANyaLbl1SZRoDGMtt2z8RX
-	 LDfa09z5rfiF8Rc9AWFTs3CQsjxax8Pm8jkE5VHjyINOiWUtK+xJuYCHsyZacKcQ7+
-	 3mtpzRaDYc6ng==
-Message-ID: <214edb7a-2631-4f7f-9516-a38a3796cc0b@kernel.org>
-Date: Thu, 4 Sep 2025 09:53:25 +0200
+	s=arc-20240116; t=1756972776; c=relaxed/simple;
+	bh=OLHGYL2VYkLqPI5tT25FMVUxYYK7trdummRfW3EuY1M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSOA20C+7c5rCytqaSnUwIKyMTopwaVDxoB8QW9BbeIwgtXoe2ke3KsWQUU8Oj9l29enFeBR7EAvqaSxu7WQYOR+e5Q3b84Hhlvqx96zOXqcTBIXM8FLcQoO/hFxi6C6ym5sP30l2HQurXdvUHMLwWbHX7SeGmnxShJciAjhIFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ppg+lKZn; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756972774; x=1788508774;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OLHGYL2VYkLqPI5tT25FMVUxYYK7trdummRfW3EuY1M=;
+  b=ppg+lKZnxkJUVJS4J3Co7vB6s3yqP136TBKdZb+kvZ6BqnNmcB+5xa36
+   prPAXlbANqL4eC34D+QRC9S0LJKR7yyOunE0lWdCr0UjMCvns5J07OA19
+   ZlayqlaOnOZIyM5Afi0x/fijrat0S38BNkIFX/iYgllttA18fo3d/8Yhy
+   YdJJ7/3HYJ5pcT/jJJWTkftwZ0ctAeIwq2tVxs9oDwAwv1y1OHWsQ4nmC
+   Oe/fBruTDDp+kqHNqXShm7RCHVU9CBCUGTzBYzb/Q5iILSoje0dDDO6SW
+   9pYrMeds613TX709xd8wVvlNoLRVx5Pb3Kgieg09FZvRSLacI6BJvvIbM
+   Q==;
+X-CSE-ConnectionGUID: WO2Pu+71Q/qFJxgIkpaNTw==
+X-CSE-MsgGUID: AwdDj6oFQDuhD9MN31fgtg==
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="51778964"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Sep 2025 00:59:33 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 4 Sep 2025 00:59:13 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 4 Sep 2025 00:59:12 -0700
+Date: Thu, 4 Sep 2025 09:55:31 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+	<richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
+	<vladimir.oltean@nxp.com>, <viro@zeniv.linux.org.uk>,
+	<quentin.schulz@bootlin.com>, <atenart@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v3] phy: mscc: Stop taking ts_lock for tx_queue and
+ use its own lock
+Message-ID: <20250904075531.gcovqmarfan4vx7w@DEN-DL-M31836.microchip.com>
+References: <20250902121259.3257536-1-horatiu.vultur@microchip.com>
+ <20250903170558.73054e68@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: max310x: improve interrupt handling
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alexander Shiyan <shc_work@mail.ru>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250903170558.73054e68@kernel.org>
 
-On 03. 09. 25, 11:23, Tapio Reijonen wrote:
-> When there is a heavy load of receiving characters to all
-> four UART's, the warning 'Hardware RX FIFO overrun' is
-> sometimes detected.
-> The current implementation always service first UART3 until
-> no more interrupt and then service another UARTs.
+The 09/03/2025 17:05, Jakub Kicinski wrote:
+
+Hi Jakub,
+
 > 
-> This commit improve interrupt service routine to handle all
-> interrupt sources, e.g. UARTs when a global IRQ is detected.
+> On Tue, 2 Sep 2025 14:12:59 +0200 Horatiu Vultur wrote:
+> > -     len = skb_queue_len(&ptp->tx_queue);
+> > +     len = skb_queue_len_lockless(&ptp->tx_queue);
+> >       if (len < 1)
+> >               return;
+> >
+> >       while (len--) {
+> > -             skb = __skb_dequeue(&ptp->tx_queue);
+> > +             skb = skb_dequeue(&ptp->tx_queue);
+> >               if (!skb)
+> >                       return;
 > 
-> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
-> ---
->   drivers/tty/serial/max310x.c | 21 ++++++++++++++++-----
->   1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-> index ce260e9949c3c268e706b2615d6fc01adc21e49b..3234ed7c688ff423d25a007ed8b938b249ae0b82 100644
-> --- a/drivers/tty/serial/max310x.c
-> +++ b/drivers/tty/serial/max310x.c
-> @@ -824,15 +824,26 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
->   
->   	if (s->devtype->nr > 1) {
->   		do {
-> -			unsigned int val = ~0;
-> +			unsigned int val;
-> +			unsigned int global_irq = ~0;
-> +			int port;
->   
->   			WARN_ON_ONCE(regmap_read(s->regmap,
-> -						 MAX310X_GLOBALIRQ_REG, &val));
-> -			val = ((1 << s->devtype->nr) - 1) & ~val;
-> +				MAX310X_GLOBALIRQ_REG, &global_irq));
-> +
-> +			val = ((1 << s->devtype->nr) - 1) & ~global_irq;
+> Isn't checking len completely unnecessary? skb_dequeue() will return
+> null if the list is empty, which you are already handling.
 
-This is horrid. Use GENMASK() (or BIT() below) instead. Likely, you want 
-a local var storing the mask (the first part before the &).
+I don't think so, because if the skb doesn't match the sig then the skb
+is added back to the tx_queue.
 
->   			if (!val)
->   				break;
-> -			if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
-> -				handled = true;
-> +
-> +			do {
-> +				port = fls(val) - 1;
-> +				if (max310x_port_irq(s, port) == IRQ_HANDLED)
-> +					handled = true;
-> +
-> +				global_irq |= 1 << port;
-> +				val = ((1 << s->devtype->nr) - 1) & ~global_irq;
-> +			} while (val);
+/* Valid signature but does not match the one of the
+ * packet in the FIFO right now, reschedule it for later
+ * packets.
+ */
+skb_queue_tail(&ptp->tx_queue, skb);
 
-Actually, does it have to be from the end? I am thinking of 
-for_each_and_bit()...
 
->   		} while (1);
->   	} else {
->   		if (max310x_port_irq(s, 0) == IRQ_HANDLED)
+Then if we change to check until skb_dequeue returns NULL we might be in
+an infinite loop.
 
-thanks,
+> --
+> pw-bot: cr
+
 -- 
-js
-suse labs
+/Horatiu
 
