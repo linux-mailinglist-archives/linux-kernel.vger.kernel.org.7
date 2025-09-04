@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-800416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974E2B43761
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CE6B43768
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070F51C23513
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6492A1C23D32
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DE22F83A1;
-	Thu,  4 Sep 2025 09:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642A42F83B3;
+	Thu,  4 Sep 2025 09:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQyHvkBa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBNl3NYw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FF02C159A;
-	Thu,  4 Sep 2025 09:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84762C159A;
+	Thu,  4 Sep 2025 09:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756978952; cv=none; b=UvR7fOtDe/fLqyiHC9RxuRntIebAeOcsDYvNpBYrusC5dT/aWK7Eob3J7wo13GCNLVgm8maVxqdgCdTD17w/2REyUkWVMpVsBZhl3+YxFhaaTFt9gqdDyCy9ZrmJ6UW6XJQTE34DPXGExhIR8Anr7nPKtAdY0NdK1iA+I8FZgOc=
+	t=1756979038; cv=none; b=R/lzKqVtX6v7hLlLOfVABEsan9qawjuyT5INivtmP8E6duNxe3IA8YlWawGlNooSf/KbtGuAW+Rzm3DtGdvOwcLzbnEvOq2YtumFDsJkdUj8CtxbAmhIgzyoES/sdnjUC3B+omb5RRweCIU1EBvf4M35yNXevjnYTg2kO8uIXHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756978952; c=relaxed/simple;
-	bh=GkDnuWOdz/TX4GGvL75O/nvs+H4WJw80rQUSnb3ZIgM=;
+	s=arc-20240116; t=1756979038; c=relaxed/simple;
+	bh=dlvokrYqw2ENIIfE5lI0Cm7ifWvoG3ffcnaaMWGVZ78=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W4vEPB0P/xAINGw9f2udYuyuwi0TXTG7oVJAnVj5YFrt7jyZTi5wkWItizZBRaVGSAXXYV7yH3DYcydAWTppWlbZ2l4Ucov5eXqJHJtINTSypiYzvybaOKtPwCO9xQrcjxqHsrKCKhJ08J1uMzSUCpNzhckNtKH+IdAmct7b3b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQyHvkBa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DDEC4CEF0;
-	Thu,  4 Sep 2025 09:42:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MnVD/Spr/Y3Q1kOdsFbgEZ2xYGPV6e+xBvsRlJMsWwHzQ/ynmOHt1dJBq1iLJb2vA1eOuNS2owUopky+2gDJSucT/r0wy4BNfad9UinsA+HPC43OT+zGqF+Dc5EjEdPuRK1A6P+dWRwy3e67H+5De5BbWqW5sLsC58HuxEM/6fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBNl3NYw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3D5C4CEF0;
+	Thu,  4 Sep 2025 09:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756978952;
-	bh=GkDnuWOdz/TX4GGvL75O/nvs+H4WJw80rQUSnb3ZIgM=;
+	s=k20201202; t=1756979038;
+	bh=dlvokrYqw2ENIIfE5lI0Cm7ifWvoG3ffcnaaMWGVZ78=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dQyHvkBacLkDH1Jmn8PM9g+Tv3V/P1Gd4wmJ1Okge6yEDvFYhMU/s50kaNGEOp0Uy
-	 c1A7E9IQ1ReSXF2XxkG5vHKmYTCAJv8xPMdxaiAY13tfdhg+J7HnHbaj48a8akh++1
-	 px5Pex58MZFxeCz/PDWbWi7xPHzhBCSXmI7B9UjjmsBPRMwzCLJDjNtL7rNMgGSTFg
-	 1txx+tDSPMm652JYg2mxvVdyFBKz/SPwy4OiHmprJK+lJx/3eDQjllq0wuZxdjnXtP
-	 R9BLGhOAdnqCxRhd+kEZfX0ZuacsCrKRMph0YrvlBPEz2D0bLTv81wCvYxHNSV39oJ
-	 sNVQwo4FOHGTg==
-Message-ID: <87857202-b436-4476-9384-67566126d844@kernel.org>
-Date: Thu, 4 Sep 2025 11:42:25 +0200
+	b=XBNl3NYwZTNS3lACsmAjlFcyrHqOKLqvvJAJx2IUaWCDLRW22i4nq1Of6GUS/EwE9
+	 k3Z1T352tAGdb9eauHF4xXUjSepCsGeACWO7fgBn5Wcw9BiiZ11Y80p9KMRgZOtnBc
+	 p7jm7/F4shgF8AaGI+cOHHxA0606l7ZkVEpPPU7Lp/alD+sf4oHqYhKPYJ/PxaiUNx
+	 HJS33LfJV55eVeCGfmk7mJcyvEFkuYgPwkCTWjrWQ7As8l7EfrJ7vRaY7qbvQdb4G6
+	 L69EB06bjCpSBaeF8Gk2GP6wDhSJm02AS8SMIJV031RmbsjOa/97yqDisuZA51RIkF
+	 TlAtnoOkMJKag==
+Message-ID: <2c7fefb2-9a0c-451f-84f6-dc5a19707699@kernel.org>
+Date: Thu, 4 Sep 2025 11:43:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
- m.szyprowski@samsung.com, s.nawrocki@samsung.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
- <20250904-interesting-lovely-ringtail-38bbef@kuoka>
- <000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
+ linux-gpio@vger.kernel.org, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
+ <alsi@bang-olufsen.dk>
+References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
+ <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
+ <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
+ <aLlBAuYoHIJZLfiE@pengutronix.de>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,52 +108,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
+In-Reply-To: <aLlBAuYoHIJZLfiE@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/09/2025 09:51, Pritam Manohar Sutar wrote:
-> Hi Krzysztof,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 04 September 2025 12:18 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com;
->> andre.draszik@linaro.org; peter.griffin@linaro.org; kauschluss@disroot.org;
->> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
->> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
->> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
->> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
->> ExynosAutov920 HS phy compatible
->>
->> On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote:
->>> Document support for the USB20 phy found on the ExynosAutov920 SoC.
->>> The
->>> USB20 phy is functionally identical to that on the Exynos850 SoC, so
->>> no driver changes are needed to support this phy. However, add a
->>> dedicated compatible string for USB20 phy found in this SoC.
+On 04/09/2025 09:34, Sascha Hauer wrote:
+> On Thu, Sep 04, 2025 at 09:18:13AM +0200, Krzysztof Kozlowski wrote:
+>> On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
+>>> Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+>>> Generator With One PLL, Four Differential Outputs, Two Inputs, and
+>>> Internal EEPROM.
 >>>
->>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+>>> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+>>> ---
+>>>  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
+>>>  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
+>>>  2 files changed, 222 insertions(+)
+>>>
 >>
->> You just dropped all tags without explaining why.
+>> I don't understand what is happening here.
+>>
+>> Patch changed in weird and unexplained way - nothing in the changelog
+>> explains dropping SPDX - and does not pass even checkpatch.
 > 
-> Regretted inconvenience. 
+> I removed the SPDX by accident, will add it back of course.
 > 
-> There were significant changes in supplies' names in driver and schemas 
-> (patch-set v8). This led to make changes in patch no 5.  And review for 
-> these changes is needed.  Hence, removed RB tag in this patch-set. 
-> 
-> There was a ask for the same https://lore.kernel.org/linux-phy/000401dc18cd$ec02a1b0$c407e510$@samsung.com/#:~:text=Let%20me%20know%2C%20because%20of%20above%20changes%2C%20should%20be%20removing%20your%20%0A%27reviewed%2Dby%27%20tag%20from%20patch%201%20and%203.
-> 
+> Other than that, what's weird? Changelog says I now use the pinctrl
+> subsystem to configure pins. OK, that also changes the binding, I could
+> have mentioned that explicitly, sorry for that.
 
-
-Where in the changelog you explained why you dropped the tags?
+There were four patches before, now there are two and changelog says
+only about pinctrl to configure pins. That's very vague and you expect
+me to decipher what changed in the bindings.
 
 Best regards,
 Krzysztof
