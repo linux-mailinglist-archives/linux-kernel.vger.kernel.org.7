@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-801611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3EBB44791
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39735B44793
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74FE31CC234A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600C2A4783F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6CA2853E0;
-	Thu,  4 Sep 2025 20:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2F32820D5;
+	Thu,  4 Sep 2025 20:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VrwqXBbk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKwADUHL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C221D283FE0;
-	Thu,  4 Sep 2025 20:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CD9283FE0;
+	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757018488; cv=none; b=utJwU7Zvb0k9LDRcd0AeFCmHtF7as8XOf3YtlK+Dmjj70dFD3ZevVBjnS8Q3phdhyObaCSG/6l8rv8wGva8qGlBqythd9RNfYd0A7kqPbjpP41lvG1quWFXV798AtL7WnYLJ4Kv79ESryaYXB1eDE4rlkCm1GeY1305ISr0Y8Q8=
+	t=1757018512; cv=none; b=IqUvfkifgPaZxicCbiAFnxmfv+H+QmGePh9ugNeXal1ch7Jqu/DHwHMQdqZGiYaOYHYpHcNrCX/tAvjvEWDYSoQCVxZa8G4nYjA+9g3wTCWoqDT6LCspE9GtNVpxSrO8KPsY8u+yv+J3gLOj9bQS34LrYnySvnVYXHj3n58miaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757018488; c=relaxed/simple;
-	bh=7NlxVxrUFLXMa6eTik+qh4oyZVc2MJmJxeFt7s7o8HM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pmr4B7DIL2DtY5ICWAjnUfhPGmNKbjGCc9gODYPFZ8NSQo34Er1qOmCMmuksiB3eWmrWe6VNv1DrZO6i8VjnlYQaBjktb0RUnNBL1EjXtsZpYZFm5i4YlzUMtnkriCKRRCejM4KqvMsxBBUUkRltK84v1Kpp0L/Lp5uukrCwH5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VrwqXBbk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ehH1eUx008m5MVJTxOKYqVtqxBplrIOaivTvD49Nq0Y=; b=VrwqXBbky4VoLSvwMPttpVzFeB
-	z3CqLptYdktmb9NVPIAZ+Rw+WEiZANptCjsclvs+qTOjhmcPXtJIICTD6i0Uyi05rm0I+fe++tfj9
-	cSWE8FJ9gHSy4EijGNhoHdvdzQrOS/xli29vyl+p9uJ0dy7EIsoxt2se1e5+QDcK2R9y/QQP2Wk+a
-	QKVWxyNedJQGcGc345ArjXYga2vhfbqE63YmA0gwHR6VTUTdNHG5NbZVfYuaPythz1acs7Zr5dMl1
-	StfKjJQmio6v3LHqUSDwqENjqftRIP8gy/g0n3e27dkZsQMHClj8H1e/SH6ttn15YMXzikgpkE8Tj
-	kCJnFlaA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuGli-00000006ly7-0YwG;
-	Thu, 04 Sep 2025 20:41:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C5CA8300220; Thu, 04 Sep 2025 22:41:17 +0200 (CEST)
-Date: Thu, 4 Sep 2025 22:41:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v1] perf build: Revert "enable -fno-strict-aliasing"
-Message-ID: <20250904204117.GC4067720@noisy.programming.kicks-ass.net>
-References: <20250904174430.1414548-1-irogers@google.com>
+	s=arc-20240116; t=1757018512; c=relaxed/simple;
+	bh=cpIiOlznt8sZKfQDmwpFVIZ0b/IXFuqamad14tuawyQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p0WI2Kmb5XOen7qhuSgBcv1mfnXX8qmLIAFAmWPbHomePkgTzgAG9LHCmJoUwyCTpw4bBT17aKybX1N5T+n+Y/2S50KcmI8C7HAAbZtUjszuPfiTJAygOXclGX6o/e272MztxhgzSTgsufspeqZ/BDarYD7O7Y3uljIPRNHeeOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKwADUHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CA06C4CEF0;
+	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757018512;
+	bh=cpIiOlznt8sZKfQDmwpFVIZ0b/IXFuqamad14tuawyQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=sKwADUHLo3ks9friZqtdLMkmO2KiOGoMGDaEe4LIUtx9wmrlG4stt8+rnZhUZriyd
+	 KgJjgTRqW03EOlkle82OmL6O6FmskNIYZVfExH+1TfJ4MwUx8qia0t4O+tt1RHr6yS
+	 OqCWD7zkGpMYSJT21xFz0qEFJbdcONI76Re5e8BxGfs0asSIHH/7SLIVo+TVrI1p0U
+	 Q6RHuyLUrv4beI03rah/RyI+B9nJVWacVLRjdnukl+dSnqR+0Jw73r9IBk/JMqq/zL
+	 o3/2iaIgVfFGWTLvrMAsZCLNljYlmKEOJl6WeYc51lUgLKJU97gQJ4n258RpmQcV+u
+	 zH7HslZBMFssA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A78CA1002;
+	Thu,  4 Sep 2025 20:41:52 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Thu, 04 Sep 2025 22:41:44 +0200
+Subject: [PATCH v2] dt-bindings: extcon: linux,extcon-usb-gpio: GPIO must
+ be provided
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904174430.1414548-1-irogers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250904-yaml-extcon-usb-gpio-v2-1-a5c4afa496c3@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIAIf5uWgC/4WNQQ6CMBBFr0Jm7ZgypFVceQ/DgtYRJlFK2kpAw
+ t2tXMD81fvJf3+FyEE4wqVYIfAkUfyQgQ4FuL4dOka5ZwZSpFVFNS7t64k8J+cHfEeL3SgeSZf
+ WGE1E5xPk6Rj4IfOuvTWZe4nJh2V/mcpf+0c4lZhTK1Mb1lWr7FVmSUf3gWbbti8mkUwKtgAAA
+ A==
+X-Change-ID: 20250329-yaml-extcon-usb-gpio-251b66522287
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1393; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=38o5l+Gd5d4+Zkxmiu4BB0zsyw4fWa9j1Br5WQIrDCY=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoufmPMszQV/vhPettuncRzuRf3JM93viHJZSlO
+ o6rS08QHdyJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaLn5jwAKCRBgAj/E00kg
+ ct8MD/sEYLadRUK+M64Y8KLwkwKTy+Cw9A8/l5d/rXwyGH+cMl5XxV66eS6NPBPHHjXlhIxFfVX
+ uw4gYIfxETbo8A+SvddLtij4awSMqKnj9S/7R0VmwtMSyPlKjp7gxZL5a160E02PVXHykLeHFiA
+ My0jE/FHguyArG+RVy9lZAw3K6o8mYpe89v1aRJb5vNUYnw5DTgPPHMgk2jv7H1e9vj4WDqSK3B
+ y+98ZNzuheG4RCx4k1bbkCVXYHs5gepo5J5UYXZJpYTK5mOKBnkXioIscdm8lXPNALAKThpMtan
+ MfcKNylmdcEu9kh6sNcNpGmfGL0o+uE1S+aiS7SXuEr2Cm9A/zBWg9ahEE0QVdPR7tRzTxf8f0e
+ zCWmmG5CEfzqUPdF7dT8qHzAPi4b5NuXvxtXcMGqv8YJLBiN5BOkqw2vEkQxdNz5OGUt2ZdKP0U
+ s2+ptBOz4ulFhU21vznXRE14GPiEmGPYBpDtmjhjw6r2PV7n5Vs9MFKLxP3xKApkiWeXxRWZ1Jk
+ FWbloHF2NR1e7oSyPTteBwpRwJJ0v+AyP+cjKSfmU7u0A4sKMIO5BqrF9IMkJlDej3bfwnGadJ+
+ oawdsy12rsiKa2vH6Yb/VKxTRw7ZDCgx4tlrDpQPL/jXM4CQTI8++EDFFBQ4N0c75IB+X7mwcDr
+ /3Zt8iIocpxv7yQ==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Thu, Sep 04, 2025 at 10:44:30AM -0700, Ian Rogers wrote:
-> This reverts commit 55a18d2f3ff7 ("perf build: enable
-> -fno-strict-aliasing"). With (get|put)_unaligned_* using memcpy
-> -fno-strict-aliasing is no longer necessary as memcpys are assumed to
-> possibly alias.
+From: David Heidelberg <david@ixit.cz>
 
-I don't think this is a good idea. Much of tools/ includes kernel
-headers and various kernel code, all of which is written in the
-understanding that this (often called broken) C language feature does
-not exist.
+Without providing either ID or VBUS GPIO the driver is not able to operate.
+Original text binding says:
+  "Either one of id-gpio or vbus-gpio must be present."
 
-As such, I would strongly suggest all of tools is built with
--fno-strict-aliasing.
+Fixes: 79a31ce03f41 ("dt-bindings: extcon: convert extcon-usb-gpio.txt to yaml format")
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Changes in v2:
+- Rebased and added Conor A-b.
+- Link to v1: https://lore.kernel.org/r/20250329-yaml-extcon-usb-gpio-v1-1-190696e53a0b@ixit.cz
+---
+ Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> This patch needs:
-> https://lore.kernel.org/lkml/20250722215754.672330-1-irogers@google.com/
-> which have been merged into the tip timers/vdso branch.
-> ---
->  tools/perf/Makefile.config | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 5a5832ee7b53..306b8334b788 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -19,10 +19,6 @@ detected_var = $(shell echo "$(1)=$($(1))" >> $(OUTPUT).config-detected)
->  CFLAGS := $(EXTRA_CFLAGS) $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
->  HOSTCFLAGS := $(filter-out -Wnested-externs,$(EXTRA_WARNINGS))
->  
-> -# This is required because the kernel is built with this and some of the code
-> -# borrowed from kernel headers depends on it, e.g. put_unaligned_*().
-> -CFLAGS += -fno-strict-aliasing
-> -
->  # Enabled Wthread-safety analysis for clang builds.
->  ifeq ($(CC_NO_CLANG), 0)
->    CFLAGS += -Wthread-safety
-> -- 
-> 2.51.0.355.g5224444f11-goog
-> 
+diff --git a/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+index 8856107bdd33b8654812ab9c97e85e23dc2ef75a..8f29d333602b95fe5ccd8464aa64e2d1f0c1c781 100644
+--- a/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
++++ b/Documentation/devicetree/bindings/extcon/linux,extcon-usb-gpio.yaml
+@@ -25,6 +25,12 @@ properties:
+ required:
+   - compatible
+ 
++anyOf:
++  - required:
++      - id-gpios
++  - required:
++      - vbus-gpios
++
+ additionalProperties: false
+ 
+ examples:
+
+---
+base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+change-id: 20250329-yaml-extcon-usb-gpio-251b66522287
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
+
 
