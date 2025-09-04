@@ -1,207 +1,206 @@
-Return-Path: <linux-kernel+bounces-800275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCE6B435B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2AB435AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426061BC5BE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5D181BC59C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F722C11CE;
-	Thu,  4 Sep 2025 08:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFC12C11E7;
+	Thu,  4 Sep 2025 08:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AatXNMpd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHQtgma0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC012C159F;
-	Thu,  4 Sep 2025 08:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F6F2C0F93;
+	Thu,  4 Sep 2025 08:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974398; cv=none; b=ZVRGwLaPHmtW1KpqtNghw5vjCAOFOgZRwdX408+P2dYRG2H4/txuGnXnGZ0hymp/Gm2Rk4+X3/zvLR9f53emz8YyLwy7y9a+2p2dkiF1kXA96Yu/inLBvekAz4O0wmjdeQoq9PiMdaCSoyuerI6XOhF7ill8TFSlfDObF2/GLew=
+	t=1756974393; cv=none; b=sDQzwAzGvwYNZ5qkVrfXEHtszN2FhcXS7bsg6FLyMA/pOL657K7o0tC3Hbtp1IoObakpz5jPYMWITwUY0bYkByqrPtOeqVQnZNqt1zyFnuPvuI3FNqQ4RCDgxVbaAaoEAx+jbYSeoGqP8axqO4aVVQ2sV2SbZABnA40ixsnSd3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974398; c=relaxed/simple;
-	bh=KiOh2uBTfc1uSnmgSJDFnlxePjzNJJmQUIgDA/MModc=;
+	s=arc-20240116; t=1756974393; c=relaxed/simple;
+	bh=7Q+nT/bnhhDANIjFfQauFWMujYDGmFiqlcOY3hhxGc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNlOpkAew+Ld895VJTDuDu/LQxBzFmRImPEdcMc9FcdJ7YFBgAmVenkx8Xk433SuuOPuw9p4YbGhlB7ogamwyB09RBwSXTI50BKKrRZx/VYP6NtA1aM2HJQZXmaPoOoxafzfEjH9O70Tl8dhFSD1gujsrW2LqhYNRrRz82yGT1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AatXNMpd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Lo3cE001416;
-	Thu, 4 Sep 2025 08:25:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=SeIWyYthFKXTM+YzvniBzV+/iCysms
-	58rjuwsZBdr+w=; b=AatXNMpdEkN2p+2NFIfEo7YsQ7blIS/sOV5zwIS2X0/ANz
-	LoSCKWXxbPVBg0YTCW4eiz5+ev5IT2oa/HGeWFtnwMpkgBeZZkLyPQvItkpXTvvn
-	+Wnw7rH4H5pzf+q8MORGeI2EievntsBqq1ik9EaCFDF4gkUYiSJvbu4k2oXsg2iN
-	iLYme5ChMH4sP+HRd64Jw3Xsjjm96r9ChUUnfp9eWP6KSbYe7Lk8v25oxiHtJTNU
-	I5eoEUV+IbLxdPZHecvIt+KcqH8HrWVwRMbCu99KEVq1fw7aEPr3q5zz6wlttws6
-	Ql4JckMAVL9WcwJDhfnU4RFxrvKRaFCVDtrhb/ug==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48wshf4q7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 08:25:54 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5848NHHr015391;
-	Thu, 4 Sep 2025 08:25:53 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48wshf4q7u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 08:25:53 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5848NBpc009015;
-	Thu, 4 Sep 2025 08:25:52 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48vdumkbsw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 04 Sep 2025 08:25:52 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5848Pm9t50594086
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 4 Sep 2025 08:25:48 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E20320049;
-	Thu,  4 Sep 2025 08:25:48 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C60B2004E;
-	Thu,  4 Sep 2025 08:25:43 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.109.219.153])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  4 Sep 2025 08:25:43 +0000 (GMT)
-Date: Thu, 4 Sep 2025 13:55:40 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Hari Bathini <hbathini@linux.ibm.com>
-Cc: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sachinpb@linux.ibm.com, venkat88@linux.ibm.com, andrii@kernel.org,
-        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
-        iii@linux.ibm.com, shuah@kernel.org
-Subject: Re: [PATCH bpf-next v2 5/5] selftests/bpf: Fix arena_spin_lock
- selftest failure
-Message-ID: <aLlNBK9Zm+N4zarF@linux.ibm.com>
-References: <20250829165135.1273071-1-skb99@linux.ibm.com>
- <20250829165135.1273071-6-skb99@linux.ibm.com>
- <46243c40-8e5e-47d3-97bd-71f29eeb0127@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoAfuKN9Y5PWdCVFTPKOV9YWJ5xDPbPzyN8jagh6FAg71A13QCEqVIs1cy4YldM+5emf+NXYiIFEDmJjnTey6Pwui71Z89D4IGDXIC9T3hzhm8zjljKuIxWaUvxrQA6ikCofJ7OH/gPKcZEA9QiEjbx8kY4fQ7xzI8z+0JCUs/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHQtgma0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BEDC4CEF0;
+	Thu,  4 Sep 2025 08:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756974393;
+	bh=7Q+nT/bnhhDANIjFfQauFWMujYDGmFiqlcOY3hhxGc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHQtgma0KMC/sQAXrWK3UnD7mPIQbRzm5JjQZ1SUJa8wM+4MsBPYTwpxP6vi8G1jq
+	 ljPkPU0tcpV43L1bTSdqHDx9/gOANqTjI0YEWT65PYj+Ixh42IJwtYJSE1LgFqiE9D
+	 rthMClIIkP2afuwcsWquze6zKujWhxlASSf7Hn7JybqV6ehLJdnP4EZuRFkmXPN1xj
+	 jfQuGpxMcpbWydlgYoY8VvoiPAfIYVVuoevt+XcqDsMaFfBll3WIdFSeaBoPNAV8fC
+	 l5v5viJpYoVVG8Hg7zBS9NvqIlW2CgVzAAe5TxayMa/wLLi7O9eS2QxFOTt/luapQY
+	 Rz0Vx8mOJ7mwg==
+Date: Thu, 4 Sep 2025 10:26:30 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?5p2o5a2Z6L+Q?= <yangsunyun1993@gmail.com>
+Cc: syyang <syyang@lontium.com>, robh@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, 
+	jonas@kwiboo.se, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Subject: Re: [PATCH v2 1/2] This patch adds a new device tree binding
+ documentation.
+Message-ID: <20250904-aromatic-loon-of-honeydew-f7861e@kuoka>
+References: <175691717884.2393851.6340903042726389490.robh@kernel.org>
+ <20250904022524.1748587-1-syyang@lontium.com>
+ <042523f7-2b75-4a04-8e0b-d1019ab84987@kernel.org>
+ <CAFQXuNZpLBP3=MGmRRpwJu43ZtkNhrTzh8kOwFgKy20rqFiG7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <46243c40-8e5e-47d3-97bd-71f29eeb0127@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RIaLeL1eD_hlIa3O9svCbxgdhcOrJBBE
-X-Authority-Analysis: v=2.4 cv=do3bC0g4 c=1 sm=1 tr=0 ts=68b94d12 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=0I_jKKNEayZCK3l2YkoA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: xVaDW9JNJ5EePgooQO8eO--XqDgpJDEK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDA0MCBTYWx0ZWRfX93lrJIM42Ssl
- C3RH4XOSoegosRkEX4fFsX4JVD5gltG4+WPHFeK+qfPumk0lWzGPZpEICFLx/x76ysgw9kwvbdQ
- tGZ4V/Oi9LLwT7SpaWBiu0Nk1rP3mls3ogGmEbORkg0tsu77h5Vgz6Mnk3QTY0CyMem688nwADH
- HvFI2xRn0CIEadsQ0Y1nH0MVhc9lfh6a3hNusd/iiNFuP+fScJErQTEkgjxKM+swLcZ29DIpP27
- nNc7cRTeQ+/ymm75jjn90Ls3cWOfk+/gEq8P2yPzCNjsIkksFu5FD6ruHgFhFQQNn6sXtjtH7mH
- iqmwZLhZUlWewGFAQ86cQlv2IXx2a3ljwPWIR2bdIpMinQUl176vtwQbrn4R1SdKzZyWFfOuzUO
- B9PiPMgS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020040
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFQXuNZpLBP3=MGmRRpwJu43ZtkNhrTzh8kOwFgKy20rqFiG7Q@mail.gmail.com>
 
-On Thu, Sep 04, 2025 at 01:39:31PM +0530, Hari Bathini wrote:
-> 
-> 
-> On 29/08/25 10:21 pm, Saket Kumar Bhaskar wrote:
-> > For systems having CONFIG_NR_CPUS set to > 1024 in kernel config
-> > the selftest fails as arena_spin_lock_irqsave() returns EOPNOTSUPP.
-> > 
-> > The selftest is skipped incase bpf program returns EOPNOTSUPP,
-> > with a descriptive message logged.
-> > 
-> > Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> > ---
-> >   .../selftests/bpf/prog_tests/arena_spin_lock.c      | 13 +++++++++++++
-> >   tools/testing/selftests/bpf/progs/arena_spin_lock.c |  5 ++++-
-> >   2 files changed, 17 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-> > index 0223fce4db2b..1ec1ca987893 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
-> > @@ -40,8 +40,13 @@ static void *spin_lock_thread(void *arg)
-> >   	err = bpf_prog_test_run_opts(prog_fd, &topts);
-> >   	ASSERT_OK(err, "test_run err");
-> > +
-> > +	if (topts.retval == -EOPNOTSUPP)
-> > +		goto end;
-> > +
-> >   	ASSERT_EQ((int)topts.retval, 0, "test_run retval");
-> > +end:
-> >   	pthread_exit(arg);
-> >   }
-> > @@ -63,6 +68,7 @@ static void test_arena_spin_lock_size(int size)
-> >   	skel = arena_spin_lock__open_and_load();
-> >   	if (!ASSERT_OK_PTR(skel, "arena_spin_lock__open_and_load"))
-> >   		return;
-> > +
-> >   	if (skel->data->test_skip == 2) {
-> >   		test__skip();
-> >   		goto end;
-> > @@ -86,6 +92,13 @@ static void test_arena_spin_lock_size(int size)
-> >   			goto end_barrier;
-> >   	}
-> > +	if (skel->data->test_skip == 2) {
-> > +		printf("%s:SKIP: %d CPUs exceed the maximum supported by arena spinlock\n",
-> > +		       __func__, get_nprocs());
-> > +		test__skip();
-> > +		goto end_barrier;
-> > +	}
-> > +
-> >   	ASSERT_EQ(skel->bss->counter, repeat * nthreads, "check counter value");
-> >   end_barrier:
-> > diff --git a/tools/testing/selftests/bpf/progs/arena_spin_lock.c b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-> > index c4500c37f85e..a475b974438e 100644
-> > --- a/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-> > +++ b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
-> > @@ -37,8 +37,11 @@ int prog(void *ctx)
-> >   #if defined(ENABLE_ATOMICS_TESTS) && defined(__BPF_FEATURE_ADDR_SPACE_CAST)
-> >   	unsigned long flags;
-> > -	if ((ret = arena_spin_lock_irqsave(&lock, flags)))
-> > +	if ((ret = arena_spin_lock_irqsave(&lock, flags))) {
-> > +		if (ret == -EOPNOTSUPP)
-> > +			test_skip = 2;
-> >   		return ret;
-> 
-> test_skip being set to `1` when the test runs seems counter intuitive.
-> How about setting test_skip to `0` when run conditions are met
-> and test_skip=1 if run conditions are not met and
-> test_skip=2 when operation is not supported?
-> 
-> - Hari
-That seems reasonable to me, but right now -EOPNOTSUPP is also
-returned when run condition is not met i.e.:
+On Thu, Sep 04, 2025 at 04:08:30PM +0800, =E6=9D=A8=E5=AD=99=E8=BF=90 wrote:
+> > > +
+> > > +description: |
+> >
+> > Do not need '|' unless you need to preserve formatting.
+> >
+> Both lontium,lt9211.yaml and lontium,lt9611.yaml use "|", so please
+> confirm if they need to be removed.
 
-  if (CONFIG_NR_CPUS > 1024)
-                return -EOPNOTSUPP;
+Add code which is needed, not code which you found somewhere. Why '|' is
+needed here?
 
-So do we really need test_skip = 2 ?
+>=20
+> > > +  The LT9611C are bridge devices which convert DSI to HDMI
+> >
+> > Why this cannot be added to lt9611 binding? Commit msg should clearly
+> > answer that.
+> >
+> The lt9611 and lt9611c are chips of different specifications, and
+> their related parameters are different.
+> The VDD-supply of lt9611c is 1.2V; the vdd-supply of lt9611uxc is also
+> 1.2V, while the vdd-supply of lt9611 is 1.8V.
+> Now lt9611 and lt9611uxc are connected together. I'm not sure if this
+> is a problem.
+> If this lt9611c can also be bound to lt9611, and if you think it's
+> okay, then I have no problem.
 
-Thanks,
-Saket
+It is not a problem.
+
+>=20
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - lontium,lt9611c
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#sound-dai-cells":
+> >
+> > Missing dai-common ref.
+> >
+> I don't understand .   I referred to:
+> Documentation/devicetree/bindings/display/bridge/ite,it6505.yaml
+> Documentation/devicetree/bindings/display/bridge/lontium,lt9611.yaml
+>=20
+
+
+You call this device a DAI, so your binding should reference dai-common
+schema, like every other one. You can check simple codecs for examples.
+
+
+> > > +    const: 0
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  reset-gpios:
+> > > +    maxItems: 1
+> > > +    description: GPIO connected to active high RESET pin.
+> > > +
+> > > +  vdd-supply:
+> > > +    description: Regulator for 1.2V MIPI phy power.
+> > > +
+> > > +  vcc-supply:
+> > > +    description: Regulator for 3.3V IO power.
+> > > +
+> > > +  ports:
+> > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > +
+> > > +    properties:
+> > > +      port@0:
+> > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > +        description:
+> > > +          Primary MIPI port-1 for MIPI input
+> > > +
+> > > +      port@1:
+> > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > +        description:
+> > > +          Additional MIPI port-2 for MIPI input, used in combination
+> > > +          with primary MIPI port-1 to drive higher resolution displa=
+ys
+> > > +
+> > > +      port@2:
+> > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > +        description:
+> > > +          HDMI port for HDMI output
+> > > +
+> > > +    required:
+> > > +      - port@0
+> > > +      - port@2
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +  - vdd-supply
+> > > +  - vcc-supply
+> > > +  - ports
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/gpio/gpio.h>
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    i2c10 {
+> > > +      #address-cells =3D <1>;
+> > > +      #size-cells =3D <0>;
+> > > +
+> > > +      hdmi-bridge@41 {
+> > > +        compatible =3D "lontium,lt9611c";
+> > > +        reg =3D <0x41>;
+> > > +        #sound-dai-cells =3D <0>;
+> > > +        interrupts-extended =3D <&pio 128 GPIO_ACTIVE_HIGH>;
+> > > +        reset-gpios =3D <&pio 127 GPIO_ACTIVE_HIGH>;
+> > > +        vdd-supply =3D <&lt9611_1v2>;
+> > > +        vcc-supply =3D <&lt9611_3v3>;
+> > > +        status =3D "okay";
+> >
+> > Nope, drop.
+> >
+> remove  status =3D "okay"  ?
+
+Yes. Instead of asking me, you can try to think about possibilities.
+Ask yourself yourself - why do you need it here? What changes if you
+have it? What changes if you drop it? Why reviewer asks for it - maybe
+there is something behind. That way you will learn more about this.
+
+I suggest to go through the slides of my OSSE25 talk about DT for
+beginners.
+
+Best regards,
+Krzysztof
+
 
