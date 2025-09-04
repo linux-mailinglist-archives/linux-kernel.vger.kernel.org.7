@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-800934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19D3B43DDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8897EB43DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72887188B0D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C176F3B53FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E3E2FE05D;
-	Thu,  4 Sep 2025 13:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C61305E05;
+	Thu,  4 Sep 2025 13:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=carnegierobotics.com header.i=@carnegierobotics.com header.b="I7F26DmQ"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TD2e84ab"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07EC80B;
-	Thu,  4 Sep 2025 13:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCB82D6621
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994299; cv=none; b=d2A30Ar8bHH3CM8cJo/UtQT1nrrr2zoV8osd2KlEA2uJcxMVOrDv8Kn9oIxeFz/Yijf6VJtMLxG6Yt3EQ99Jl8bKF9R6tiyZQ9r68F/N7JlgSdFPZGcQ7vHTfzspbEMoHUh3TLK48tmUVXYzCgrdfhY/hCQd6ap/raR5R1OYgsM=
+	t=1756994305; cv=none; b=GE3MJESw71vL72t6TR5uzrkdjRUdHclxsF2/3GrF4jSpG5oKBlam0gXLiRgb/r74zx1Ysmfy12c/4cyjKQOwEFPVMAyW4EQIzd5qCPqJ2mABLjxK0M1evkmaoqbWjVkcQssJkSpyApGff1Y2ji7CgkpwQrm/uwUskpCql5BE7uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994299; c=relaxed/simple;
-	bh=FyQVmPKdaT/PkJs991N1QlbU0kzmR4Goz8EZy4SUIfc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=alddWk7X7p3ICjj9lrpUntz0OI+s1H1yJp9z8AufA5VN9YHLMIgCjKulXIdpJqXEVKCV5PjlJuElwyh/9GF2mEO5bgrUdbNiWhBOFT3TONJMvE4AFkjL5qnavo0TJv8ut679DotQJlsAPc3xGA4tley2u4SOLcw5iEbIDGOO1po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=carnegierobotics.com; spf=pass smtp.mailfrom=carnegierobotics.com; dkim=pass (2048-bit key) header.d=carnegierobotics.com header.i=@carnegierobotics.com header.b=I7F26DmQ; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=carnegierobotics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carnegierobotics.com
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cHgzq4bhVzN6mZQ;
-	Thu,  4 Sep 2025 13:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	carnegierobotics.com; h=mime-version:content-transfer-encoding
-	:content-id:content-type:content-type:user-agent
-	:content-language:accept-language:in-reply-to:references
-	:message-id:date:date:subject:subject:from:from:received
-	:received:received:received; s=mr01; t=1756994292; x=1759586293;
-	 bh=FyQVmPKdaT/PkJs991N1QlbU0kzmR4Goz8EZy4SUIfc=; b=I7F26DmQGMGN
-	qcUlbaTOfTGGTb7WTY0C2mX/XcXYhXxmHcgpG2wqtLwOMs5NzTSigVSV9DngDhaM
-	fppQyQ56DT714bZybEiFTeoJ4F7B9MESGB/mXwDhTF4WbDntcIlHuPclLhp51c6z
-	UuV9bhCnYD08rzJrIqZ5VCsppuH+AFkWlefWMlRsg9/mQY5PgczYn4xFT7T3022h
-	68Nl57eMcZeK2MV4UDxe4jSp5/npsDS8IYH7Aic+jBm9JeWwYnmQ57ouzqYa5UNB
-	+GsdAbGJYxt+gmulPyJEN7mqVjKwgNenUovyx0Mgk6QVKZAXMnTvqBJKPiEtB/MO
-	4MZYfjIxJw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10026) with LMTP
- id I6mZOXEt8Ygy; Thu,  4 Sep 2025 13:58:12 +0000 (UTC)
-Received: from mail.carnegierobotics.com (static-108-39-229-99.pitbpa.fios.verizon.net [108.39.229.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by 004.mia.mailroute.net (Postfix) with ESMTPS id 4cHgzW0GdJzN6tLD;
-	Thu,  4 Sep 2025 13:57:57 +0000 (UTC)
-Received: from CRL-PGH-EX19-1.crl.local (10.1.7.176) by
- CRL-PGH-EX19-1.crl.local (10.1.7.176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.33; Thu, 4 Sep 2025 09:57:56 -0400
-Received: from CRL-PGH-EX19-1.crl.local ([fe80::81d6:ea84:15d9:67d4]) by
- CRL-PGH-EX19-1.crl.local ([fe80::81d6:ea84:15d9:67d4%7]) with mapi id
- 15.02.1544.033; Thu, 4 Sep 2025 09:57:56 -0400
-From: Woody Douglass <wdouglass@carnegierobotics.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 0/2] regulator: pf530x: NXP PF530x regulator driver
-Thread-Topic: [PATCH v5 0/2] regulator: pf530x: NXP PF530x regulator driver
-Thread-Index: AQHcHaPqZda73QNCTk6YbkyJSCwBkA==
-Date: Thu, 4 Sep 2025 13:57:56 +0000
-Message-ID: <3c45fe88-c9f4-4606-87bc-726f262998cc@carnegierobotics.com>
-References: <20250902-pf530x-v5-0-658c403e6a52@carnegierobotics.com>
-In-Reply-To: <20250902-pf530x-v5-0-658c403e6a52@carnegierobotics.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <16527651E44B1D40B1FE0E60E4D730F8@crl.local>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1756994305; c=relaxed/simple;
+	bh=8pcinqgMIZxfWHXEht2qh36JiGk/vHy4x2DTtHokKs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ihvvghT/y04/YK+ytnbQCosizbl798C2dvzCuKXO7lsiVUDuEmN98ZimNc7eFX8aoWDQCF11vM2uQ4RfQ2L/tYLIl/ua3i0EI6njprT1o7v1RzjSqMB/wvLlPyhw4AXyHTNjcXTcjp1brpEpi2xdmqRB+6bk3Ytxfw7qWTYOo44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TD2e84ab; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849Y4ho005051
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 13:58:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Lk8hEdBosykMJy5XLeywfmQ3
+	hkUqyOwk4iBgoodWgA0=; b=TD2e84ab6Uy7j1qvU3KxN7qsmVRvPOwf5dSF4mJf
+	95Pm0uyl6IhgpqZ/iX+vfEl+KPs9g9LeLabUNy07iyrHwhMeuHk50WyrmFkptf4p
+	jJrZp36gzZmqQ0X1b9bFJ2qbOBSQtI8mAYDu4bxKDYqzs7ZRTevExLPRpLSFzkIC
+	W2wAMczzc9vGAC2R18tY+/VHCiPcvlXGveMXNFLfO5sDR7DaEeHA6Rqvm35bTCQu
+	yRBMEdy/5eBId3ScJj8H/ilW/GoyTl33gjVAp28bAf2WUrmX658kdoqimDcFlSYX
+	aBEYD1Z+0oV0HESYDE+hTRkelNRjHwsejDc6sp5ntfEwsw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s7ra3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 13:58:23 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b49666c8b8so20959781cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:58:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756994302; x=1757599102;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lk8hEdBosykMJy5XLeywfmQ3hkUqyOwk4iBgoodWgA0=;
+        b=GHs7fU5htvodXmYa4I/TJ52QockrRY8YP0A2Ba2T2BbMiO15H0tdWid0W8l4n2r/kH
+         WlsWkTldqKP1DY3WIcjy5fxYYq+4OHrCJNidq30V62Uyr/kgxlNWwAUfcW+/0zRsBz8J
+         OSRUu/BJ1zmC/cwXKXdMClAIM5tNrvonPgkFkDtm057dUl8q5WqbzLHX9sqvBwUsASt8
+         eVqnAMpj3UpM9JW1xtvVFvnWn2m8zr6IzzfnK2UVuj3YG4kYun+RatTf/Wa7zZhV71Qr
+         TUae4OjB/wgVILVMyHVQf2dO3csHJIZoHG2tvVGpsVlRZ1l9hVr8pP+l7VXHWnH/gLum
+         wlHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNQLTvtShsyF1E+8y5qgGzrVn0E8oaqob7YGmQyzZonypWLJct8x3VAnL0gD1Ojoo5OeiEZP5Q4Dsw764=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznL1C9j6XC1AYFq7zhSBB3RQsxGfVfsp61KJ80EVGQc4cmWUCN
+	ftnUxNdF+nBdb8qvp4Z5cb7xHok8B2ZrUYskMzjKxMOrn1x2+8hdqHottau0D20YblTJsOe8Fd9
+	IR2j0fZbeyva/x1Kg0/W6BklcgCWkLb1j8ySw0skmi5ps89b194wKPcApI4fNK5BKCtc=
+X-Gm-Gg: ASbGncu+uOTT652kme/BqGmNhSIvtuHPbV8Or8FHx+9U9AjRMEngO7yfM44fV07E81r
+	bqspCUpFeaKMgONgw7I/QH9n6bm9fRVKmDtANhkQDYf5b45uyvuQ4IeHzfZdtrtHkUaV1vlv0vO
+	WclMVh/BG0HQbJmX6QMuELBx9FPnYEz3Su5egW4oUXkc1f8M/xHmvdVWRnzF+pc9KPb8sR7deC0
+	J/Q0omFvirsBWu03fT9JrVynoKvN1/3wkdGdvAqNTup3jz6decTeRWqEF47xmuXoxt1esoE7Yvo
+	qBzccztJyZcdyDypHep7XIKYJJZGkbeUAa8VcGUsJENeThBQUrcjQi8KRmX8jPl1T8ey0A8EemW
+	b+xp2rpWMrIt70Ou8qFbJcV6Fsn2mk4jmL0FPYRpvyfF/HxPdlSGc
+X-Received: by 2002:ac8:59cd:0:b0:4b2:8ac4:ef4a with SMTP id d75a77b69052e-4b31dd2126dmr208884801cf.65.1756994302159;
+        Thu, 04 Sep 2025 06:58:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOwIoZdKCnb8w1m3GAfoE0S6ahe48XHy+4go65RZaBELSpnCxA4DhortdmwPw0TwHA5cpPww==
+X-Received: by 2002:ac8:59cd:0:b0:4b2:8ac4:ef4a with SMTP id d75a77b69052e-4b31dd2126dmr208884421cf.65.1756994301497;
+        Thu, 04 Sep 2025 06:58:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c503edsm15199401fa.10.2025.09.04.06.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:58:20 -0700 (PDT)
+Date: Thu, 4 Sep 2025 16:58:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+Message-ID: <eneg3nxaatpiqvujxnvfexwdgb7mufoi3qn6pjsxh42e4n3tqz@npvgjdh5cu5h>
+References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+ <20250904-hamoa_initial-v9-3-d73213fa7542@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-hamoa_initial-v9-3-d73213fa7542@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX2ayRuUzVlv+p
+ PsMumH6FppeT/ukX4phjN292bqiAffwU10539J4iTWq5ylsbRMpZZ4rEopRyuuE67Qooi7MwB+A
+ 6aYGJ59AN2pmYaJN4WmTWY0v5jmqYsOWD9tXfUsHUOVYKUsxZ4NhoWN/cs+QULy+PiSp7iTfcDt
+ bYUObyVnDxF7ELLNyNXCUxsQfnacmiIWVG92JaER4Ojg6JJspVCr/XmdEagjU1LyZYwc6/xHiGA
+ KpKX4Yu6j6vvn2oRWs8aks2CV7CRWNCD+36l8Wjo7L5X2S53PPcMsQP5epiK5JDMOpTZMYIZk7c
+ spMWUaKvgztLOyia1q8IJAn3rz9OSEtTVUsBTqHzmoSTBwxCgQw2yd2/ONkuuokl1kbZMvuIj+y
+ CxWbYgv4
+X-Proofpoint-GUID: SO4g-Kk5X78AHiNlumKh9OVBQgqo14CW
+X-Proofpoint-ORIG-GUID: SO4g-Kk5X78AHiNlumKh9OVBQgqo14CW
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b99aff cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=kMu10WXGbiujYwnt40gA:9
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-QWxsLA0KDQpXaGVuIGkgc3VibWl0dGVkIHRoaXMgcGF0Y2gsIEkgZ290IGEgYnVuY2ggb2YgInVu
-c29saWNpdGVkIG1haWwiIGJvdW5jZXMgZnJvbSBnbWFpbC4gTXkgDQpAY2FybmVnaWVyb2JvdGlj
-cy5jb20gYWRkcmVzcyBpcyBhbiBleGNoYW5nZSBzZXJ2ZXIgd2l0aCBubyBleHBvc2VkIHNtdHAs
-IHNvIGkgaGF2ZSB0bw0Kc2VuZCBwYXRjaGVzIHdpdGggYGdpdCBzZW5kLWVtYWlsYCB2aWEgYW4g
-ZW52ZWxvcGUgc2VuZGVyIChnaXRAZG91Z2xhc3MuZGV2KS4gSSBzdXNwZWN0IA0KdGhpcyBpcyB3
-aGF0IGNhdXNlZCB0aGlzLiBJJ20gc29ycnkgZm9yIHRoZSBpbmNvbnZlbmllbmNlOyBwYXRjaCB2
-NSBzdGlsbCBzZWVtcyB0byBiZSANCm9uIHRoZSBsa21sIGFyY2hpdmUuDQoNClRoYW5rIHlvdSwN
-Cldvb2Ryb3cgRG91Z2xhc3MNCg0K
+On Thu, Sep 04, 2025 at 03:48:34PM +0800, Yijie Yang wrote:
+> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+> embedded system capable of booting to UART.
+> 
+> This change enables the following peripherals on the carrier board:
+> - UART
+> - On-board regulators
+> - USB Type-C mux
+> - Pinctrl
+> - Embedded USB (EUSB) repeaters
+> - NVMe
+> - pmic-glink
+> - USB DisplayPorts
+> - Bluetooth
+
+WiFi
+
+> - Graphic
+> - Audio
+> 
+> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+> <quic_shuaz@quicinc.com>, and Yongxing Mou (USB DisplayPorts)
+> <quic_yongmou@quicinc.com>.
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile          |    1 +
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1248 ++++++++++++++++++++++++++++
+>  2 files changed, 1249 insertions(+)
+
+> +
+> +&gpu {
+> +	status = "okay";
+> +};
+> +
+> +&gpu_zap_shader {
+> +	firmware-name = "qcom/x1e80100/gen70500_zap.mbn";
+> +};
+
+Why do we have DSPs in the SoM, while GPU is enabled only in the board
+file?
+
+> +
+
+-- 
+With best wishes
+Dmitry
 
