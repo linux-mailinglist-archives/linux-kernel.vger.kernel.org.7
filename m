@@ -1,214 +1,195 @@
-Return-Path: <linux-kernel+bounces-799991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB488B4321F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:15:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D02EB43225
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA853BFC79
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A3A1C24B08
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA30423D7F4;
-	Thu,  4 Sep 2025 06:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E759259CA5;
+	Thu,  4 Sep 2025 06:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0gUBPr6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSZm5JM5"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A9A2AE8E
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98A24A069;
+	Thu,  4 Sep 2025 06:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756966535; cv=none; b=AIcWSl0SystFOrkMSE4xAyXW90Yy9Yezd4ft/lQ9z8nD1jKms8gWYWu7fIezI0ZwGUAMrZgrIfUmtAXSLgsQH+Sb6RkNcMRZdFecmaTI1bUNBlQ9MEpdd/HjrY0dh/o3GqopVTEZYcWeLvhm9Mb3SITA/tSxrDStZRGjPwTM6WQ=
+	t=1756966560; cv=none; b=Cu/pp5QwPYbgzsSJe4F0kVNPy3nQBDzo1fowZ/YhyfHZyrXrFHq3OTAXfYoNUGxuODul6+hEoTamJKKztfzZtlrN4OdqKzGR5byl7jEtlZvmUikcocks2r+zjeD2+TpZZBS17Jhyl4Y8Ixg77zt5xPGwExvgYs0gumRZdYWDMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756966535; c=relaxed/simple;
-	bh=de/26pIi8ZVUH/cI3pYurkeaVmj4hmtGKW0JsiTPvWM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=iKnL/FYSBrt/NiOE4X9D0jIEo4aprSf4fL40A6eIzeByRToidwyLdD50yZAfXXt3LxYyNqfPuLRvpKNQfjXzsXPF7ZiNehuLmDW0YthoqO5d9mRopbPrXHjOgmpLfKwriWJTW2bksvbDFULF/aT/cDDvGMkrlsZ6Mret2Reg/Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0gUBPr6; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756966534; x=1788502534;
-  h=date:from:to:cc:subject:message-id;
-  bh=de/26pIi8ZVUH/cI3pYurkeaVmj4hmtGKW0JsiTPvWM=;
-  b=T0gUBPr6vQBthLaKbZ+2ftliv47jcu4tU2cLOMpYVXVxTs9kY1T9V4vc
-   wvr4/LggCv5JvMH17FZ5dTy6QDgMFirGTiRkklXMI7evf4+A0dA2JaAsf
-   20BTonico4W80T9v7CP7CLAxmGn+xAXg5oizeh1JkSJj8RdXu0LVsok7a
-   CfNhy3DF/sbupoPN38lAIr4yKGJSWQ13Uyoc51XM+Ft7lRh+tGx1Bl4zr
-   MWhuxzRJa+r3qET2QvKzQj1okWieC+N/sh3pY3zCs6jqLvXKHBBZza2ci
-   yRu5F8JeBrtI3s0rO0s9DBkvhmTf9dS/O7mMHgaQ1r+qxCnpyHvQADsD3
-   g==;
-X-CSE-ConnectionGUID: 2JcnQ9WLSXWWNy60go1Gug==
-X-CSE-MsgGUID: 8LVRQ+ohRvOEN8N0xNlJSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="58994119"
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="58994119"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 23:15:33 -0700
-X-CSE-ConnectionGUID: S0MHELlFS/KR/GkHiJ+fPg==
-X-CSE-MsgGUID: 7hjf+83XQWqrsLsQKpnUsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
-   d="scan'208";a="176139489"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 03 Sep 2025 23:15:32 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uu3Fp-0004qv-2j;
-	Thu, 04 Sep 2025 06:15:29 +0000
-Date: Thu, 04 Sep 2025 14:15:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- 1ed628f80ef58fb609e632679e69b87c5c3bdcf5
-Message-ID: <202509041403.Noc7hgSq-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1756966560; c=relaxed/simple;
+	bh=prej2Dk0aUjjO8xjjG0H5c17ggcOQuXgsx1QKzQZCWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZZG0Fn/7FzkzH1ykOD2QLJLDLODG8gV6XIMkNX1838sq7e+g3oiCqejjF4gghqrbcast/fvMmuJ9csyInLF4Krdph/2i1RtlrMF1QJMW/tyZxXimmluIp3W2USVoKY+RSKRtMBx9c+z5GqzKIujHlEeVy7e2+ujJWrA4SZSQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSZm5JM5; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0475ce7f41so128843666b.1;
+        Wed, 03 Sep 2025 23:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756966557; x=1757571357; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HmOvqGHiZR3oT513KZSDuYlalXY/WYls0uiqjHaczM4=;
+        b=aSZm5JM59ugAM/dOcXK8ijiofHvyzyyaB3v4oCqtGQYgmCWjwO8IEBN2wITAomDutC
+         dzaJd19nI+psNDHvdKFyYnoOKFblIYkNSq6b2mFcWdKg5C0/M3zLXwSoQG2tH0f7ieRM
+         S6Se6hvZ+hs+AhBkkW1ypPDFv69fANfxLbvqCs3o1KM9FJMg4JygTW4neuE9RCloqwDQ
+         z/jHK1HYuF5yxdcaja53W/D28qz6TvbAYGKK5nrIUmTMVxbo+iiB/Wl2jAiqyc45SgbL
+         tOCygnuHVQ1/65sRiADMrqRE1NIzQi3IoFl+DxCvpG1glYvkqp3XtTpYipMWge/zzV5K
+         1FVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756966557; x=1757571357;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HmOvqGHiZR3oT513KZSDuYlalXY/WYls0uiqjHaczM4=;
+        b=ii81fYCWg5MUHtppCepEr33utZ91KUaBPVe+ckTAUfAThB2YSvXgKfLJSPPEAZJekK
+         m+/jupPLLsyzg9rExD5bwyT75Kzj95Y1pvlQMWvBjp5na7A5VjbDbKUXfyKHoXnyUzhF
+         reAacYsGKKSKbacjoCOiz8Wzq6phQ3GJ0FKhyaqtSrs8XIEXK0hT3IZ+ASINgh3AtUUa
+         loQWFhsi/z5EJILxmz3b8Nfv+uG3vQ421+ihpC7QcfnW+vSj6IwOjJsjFIwbFOTEWfXw
+         tz0VfKKmnYmwwm+DoXjLvYdo8UfDhYrqI7ibJIbV/74vUxso/HGB+H0OPfwkjfrlvVZ1
+         0jBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxAfLF/rjFey9vU7Sq15x1KeDdXu/iDlrueS9GcdN4OJTTo95lbBn1BZ2F0huX7lVU6MOe9m55UK8TU6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya5C76EXoxQekrk0pO8YjixQsvxxEmafVESKwM5HAewYD0oVxC
+	sR7uZvOMj50KbxPYL2RrmcLndeFRnzKPDuZl23bft5JzCe8h8EoYhU4B
+X-Gm-Gg: ASbGncvFF+K51LmV8z6VMgOIIe+q5O1EHk/o74Dasq5RNRbVdmlmOjsJu4ZX68kuVwL
+	RA1V08raoi1fJoVna9jU+ZZlT0S7hpHE6vqmhw/yfVihDQLMGDdUNG24R3Zs87m0NLlDJJVU5T2
+	6LoGLBQRiSUatnaOK+Bgp7iLwuKVRv6ss5QsaW3eCtOu//vydfSyH5IQs2dGXMFG0fbNU0bWLtk
+	C+J0AYj/YKEkzAoDhkVw9iyf9nUrWySxr+nwgz3vtA+c55XYxVxIrVDuPVy8pbYdBQuuzQtdlsf
+	p30IlABdUDRiG2fQs7DUcgBCybnbgymh6pMap1SBIobBhwbPIYDqvegjtTqql9h5VIFgmKsDN9v
+	bdehgWTNv84nGl/1ZS5YB5DRQ4HKjg8NFvBMcxmqCSW089uEptnFHtev7E/56C6L3zu8EdXTa5E
+	n7uttef8GNByym902fsqBKXZFGaVe02ymFC3z1kYVF3j3oz2GOgaXfxOHHk7wKRrr3mEaFIclXz
+	E8C0l8G
+X-Google-Smtp-Source: AGHT+IFe7I4td4ovEFFq3DeDtfBpbV1Za0u/GxQEz1vPTnTkR5Lho4bgpnmHJLkGYCUQwswiBPzW+A==
+X-Received: by 2002:a17:907:7e8d:b0:b04:2a50:3c13 with SMTP id a640c23a62f3a-b042a5061aemr1262429266b.6.1756966556538;
+        Wed, 03 Sep 2025 23:15:56 -0700 (PDT)
+Received: from ?IPV6:2003:ea:8f1f:b00:1062:8af8:2f20:2501? (p200300ea8f1f0b0010628af82f202501.dip0.t-ipconnect.de. [2003:ea:8f1f:b00:1062:8af8:2f20:2501])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b0467f47d4csm359895466b.11.2025.09.03.23.15.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 23:15:56 -0700 (PDT)
+Message-ID: <d78dd279-54ed-46c3-b0b1-09c0be04557a@gmail.com>
+Date: Thu, 4 Sep 2025 08:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] r8169: set EEE speed down ratio to 1
+To: ChunHao Lin <hau@realtek.com>, nic_swsd@realtek.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904021123.5734-1-hau@realtek.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20250904021123.5734-1-hau@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: 1ed628f80ef58fb609e632679e69b87c5c3bdcf5  Merge branch into tip/master: 'locking/urgent'
+On 9/4/2025 4:11 AM, ChunHao Lin wrote:
+> EEE speed down ratio (mac ocp 0xe056[7:4]) is used to control EEE speed down
+> rate. The larger this value is, the more power can save. But it actually save
+> less power then expected, but will impact compatibility. So set it to 1 (mac
+> ocp 0xe056[7:4] = 0) to improve compatibility.
+> 
+Hi Hau,
 
-elapsed time: 1366m
+what kind of speed is this referring to? Some clock, or link speed, or ..?
+Is EEE speed down a Realtek-specific feature?
 
-configs tested: 122
-configs skipped: 5
+Are there known issues with the values used currently? Depending on the
+answer we might consider this a fix.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Heiner
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250903    gcc-15.1.0
-arc                   randconfig-002-20250903    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250903    clang-22
-arm                   randconfig-002-20250903    clang-16
-arm                   randconfig-003-20250903    clang-22
-arm                   randconfig-004-20250903    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250903    gcc-8.5.0
-arm64                 randconfig-002-20250903    gcc-11.5.0
-arm64                 randconfig-003-20250903    clang-22
-arm64                 randconfig-004-20250903    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250903    gcc-9.5.0
-csky                  randconfig-002-20250903    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250903    clang-22
-hexagon               randconfig-002-20250903    clang-18
-i386                             allmodconfig    gcc-13
-i386                              allnoconfig    gcc-13
-i386                             allyesconfig    gcc-13
-i386        buildonly-randconfig-001-20250903    gcc-13
-i386        buildonly-randconfig-002-20250903    gcc-13
-i386        buildonly-randconfig-003-20250903    clang-20
-i386        buildonly-randconfig-004-20250903    clang-20
-i386        buildonly-randconfig-005-20250903    clang-20
-i386        buildonly-randconfig-006-20250903    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250903    gcc-15.1.0
-loongarch             randconfig-002-20250903    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                   sb1250_swarm_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250903    gcc-10.5.0
-nios2                 randconfig-002-20250903    gcc-10.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250903    gcc-13.4.0
-parisc                randconfig-002-20250903    gcc-15.1.0
-parisc64                         alldefconfig    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc               randconfig-001-20250903    gcc-8.5.0
-powerpc               randconfig-002-20250903    gcc-8.5.0
-powerpc               randconfig-003-20250903    gcc-14.3.0
-powerpc                     tqm8548_defconfig    clang-22
-powerpc64             randconfig-001-20250903    clang-22
-powerpc64             randconfig-002-20250903    clang-22
-powerpc64             randconfig-003-20250903    clang-22
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv             nommu_k210_sdcard_defconfig    gcc-15.1.0
-riscv                 randconfig-001-20250903    gcc-8.5.0
-riscv                 randconfig-002-20250903    gcc-9.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250903    gcc-8.5.0
-s390                  randconfig-002-20250903    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                         ap325rxa_defconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250903    gcc-12.5.0
-sh                    randconfig-002-20250903    gcc-10.5.0
-sh                   sh7724_generic_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250903    gcc-11.5.0
-sparc                 randconfig-002-20250903    gcc-15.1.0
-sparc64               randconfig-001-20250903    gcc-8.5.0
-sparc64               randconfig-002-20250903    gcc-11.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-13
-um                    randconfig-001-20250903    gcc-13
-um                    randconfig-002-20250903    clang-18
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250903    clang-20
-x86_64      buildonly-randconfig-002-20250903    clang-20
-x86_64      buildonly-randconfig-003-20250903    clang-20
-x86_64      buildonly-randconfig-004-20250903    gcc-13
-x86_64      buildonly-randconfig-005-20250903    clang-20
-x86_64      buildonly-randconfig-006-20250903    gcc-13
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250903    gcc-11.5.0
-xtensa                randconfig-002-20250903    gcc-14.3.0
+> Signed-off-by: ChunHao Lin <hau@realtek.com>
+> ---
+>  drivers/net/ethernet/realtek/r8169_main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+> index 9c601f271c02..e5427dfce268 100644
+> --- a/drivers/net/ethernet/realtek/r8169_main.c
+> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+> @@ -3409,7 +3409,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+>  		r8168_mac_ocp_modify(tp, 0xd412, 0x0fff, sw_cnt_1ms_ini);
+>  	}
+>  
+> -	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0070);
+> +	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+>  	r8168_mac_ocp_modify(tp, 0xe052, 0x6000, 0x8008);
+>  	r8168_mac_ocp_modify(tp, 0xe0d6, 0x01ff, 0x017f);
+>  	r8168_mac_ocp_modify(tp, 0xd420, 0x0fff, 0x047f);
+> @@ -3514,7 +3514,7 @@ static void rtl_hw_start_8117(struct rtl8169_private *tp)
+>  		r8168_mac_ocp_modify(tp, 0xd412, 0x0fff, sw_cnt_1ms_ini);
+>  	}
+>  
+> -	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0070);
+> +	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+>  	r8168_mac_ocp_write(tp, 0xea80, 0x0003);
+>  	r8168_mac_ocp_modify(tp, 0xe052, 0x0000, 0x0009);
+>  	r8168_mac_ocp_modify(tp, 0xd420, 0x0fff, 0x047f);
+> @@ -3715,7 +3715,7 @@ static void rtl_hw_start_8125_common(struct rtl8169_private *tp)
+>  	r8168_mac_ocp_modify(tp, 0xc0b4, 0x0000, 0x000c);
+>  	r8168_mac_ocp_modify(tp, 0xeb6a, 0x00ff, 0x0033);
+>  	r8168_mac_ocp_modify(tp, 0xeb50, 0x03e0, 0x0040);
+> -	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0030);
+> +	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+>  	r8168_mac_ocp_modify(tp, 0xe040, 0x1000, 0x0000);
+>  	r8168_mac_ocp_modify(tp, 0xea1c, 0x0003, 0x0001);
+>  	if (tp->mac_version == RTL_GIGA_MAC_VER_70 ||
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
