@@ -1,149 +1,213 @@
-Return-Path: <linux-kernel+bounces-801510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2A6B445EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408E5B445E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DC53A44AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8617583FDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F82626738D;
-	Thu,  4 Sep 2025 18:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC4C26E173;
+	Thu,  4 Sep 2025 18:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KqSC/YVX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="lzrKdoY4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MOlxFmiI"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F156A258CE9
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A5F267AF6;
+	Thu,  4 Sep 2025 18:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012252; cv=none; b=s/R3nXhtAa94B9kREfI+9MsUtNo+yT6TvNQDExUkGC3UMlrnvF7txaKr/ALArnE6J/8nR9bokkkUNEN0CnPxytW9BuCLMevzsG4rYKCR1wqE7EhigsrEYFopMX23qRW+rsY/IcEfYhHBqRR8wKFYVs1Bofg9cqFcXkoiTXRRxfc=
+	t=1757012201; cv=none; b=V6ydmWuLNGbB//0xksOCqA0eISi1SUbIkF1wmktAha9x74sgwrnYS1pEiLWU+5yyWeR9Z3pID4CkRLHIIMa/aXcRrOTMdjvWs5wfl0fnfOfhmaOHSCahy4F1NdfgPniWkm4gb6Dw5rJAejxNGLGy9sEC0dUL2eFW3cglkClpXaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012252; c=relaxed/simple;
-	bh=KhNsHMrf/sqhKR9sqHXIW82i5pCmcA37pzNT3Ot6msA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ecq8YoaYVN+Z0IgLxcVX1H4mFffIWu0l2AXY3KYsEU2/4qvnYuSugIO5kwG4biaV+2otB+tiVOHwsMnTdCLooidsUe1YQpj86RRp107PbY56Z5P9smuE56uqKYivDEMsHpFhOQ+aCkLd71V2oydG0/rzCW/zjbUR4NR+woY4yqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KqSC/YVX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757012250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DmCH56rhjiTxUbJSVCbpismgDUwi7/9oaxfTAsfdf3k=;
-	b=KqSC/YVXuwks0ZLlMlvoaYJQ3MnzF/e8zeSO0jcR39aZFw9bivRc7Nc64fU7WdDW6FhQAQ
-	khq083UwuN95nncYgZBrpxzpY4f7jW7zmNR+/ITDuIzVS9wY8Z8TTCfESqNiC1vZJr9Tz3
-	cnXQf8rs4foxp7N0y1M1QvE4nuTbKM8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-Y0I7RuJ5P4C1Do2xTWLcJg-1; Thu,
- 04 Sep 2025 14:57:26 -0400
-X-MC-Unique: Y0I7RuJ5P4C1Do2xTWLcJg-1
-X-Mimecast-MFC-AGG-ID: Y0I7RuJ5P4C1Do2xTWLcJg_1757012242
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A87B1800357;
-	Thu,  4 Sep 2025 18:57:22 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 14EC31800446;
-	Thu,  4 Sep 2025 18:57:16 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  4 Sep 2025 20:56:00 +0200 (CEST)
-Date: Thu, 4 Sep 2025 20:55:54 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Jiri Olsa <olsajiri@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
- uprobe when ip is changed
-Message-ID: <20250904185553.GB23718@redhat.com>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-3-jolsa@kernel.org>
- <20250903112648.GC18799@redhat.com>
- <aLicCjuqchpm1h5I@krava>
- <20250904084949.GB27255@redhat.com>
- <aLluB1Qe6Y9B8G_e@krava>
- <20250904112317.GD27255@redhat.com>
- <CAADnVQ+DHGc8R0Tdxf7eUj1R0TDGHXLwk5D4i_0==2_rfXGbfw@mail.gmail.com>
- <CAEf4BzbxjRwxhJTLUgJNwR-vEbDybBpawNsRb+y+PiDsxzT=eA@mail.gmail.com>
+	s=arc-20240116; t=1757012201; c=relaxed/simple;
+	bh=+8yYrN9eZg46gNH7uB5YrYrugTVxjxh4HzNwHnrPdkc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=fzA4ENSD1G1iVqb2W52mLWFZpv9XRbPEPpy1KsQnmDkSGas9x05kfDQ/FUB5bFY3DQt9WkxSgzwpksDDUp8YU1BnMsM6gSF5h0aTRYiZWXjREuCnBOnwSaSPMrFWqChDJ2nbGsV1VFvtrApZILlVWD+/Xwd3ysN9S8YLSPHTeF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=lzrKdoY4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MOlxFmiI; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9AF82EC0266;
+	Thu,  4 Sep 2025 14:56:37 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Thu, 04 Sep 2025 14:56:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1757012197;
+	 x=1757098597; bh=7rzgU6/+xZPjOX1WExw5X2Safwl0wrZ8s4OUB4n+T4s=; b=
+	lzrKdoY4RXoZYIOSzL1zRt3ov+2mI3ng8ht5UikURkuG5rmJSkPUCOTs8JXXgY67
+	xjcunljgJgVL218DysfG1jTi14D0aUTMPSK4s910KentdF1oiwtSXcpHLPqJZHSu
+	9S1QKEQUpzPQnpAU73oKMHp2bpvwcEh4LrtZiFCJd8l4H9ltfI0ySmeBNy3qYzc7
+	9bOQI+I7fmzoQoxpXXIwQolLEtvQSkMsIg0/4J2fq5YFarS/sKeg+bGJaabR6kxg
+	mVJ86GjJXCvRiZjpRJcdY5SNtDExfLvfPL+pX3Lu09Coyyj+3ASRDaS+eyX2zB+u
+	a/pcscmh7H62zzUnI9WJ8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757012197; x=
+	1757098597; bh=7rzgU6/+xZPjOX1WExw5X2Safwl0wrZ8s4OUB4n+T4s=; b=M
+	OlxFmiIPvxSU/oDSlanMmImcNr8eWRk64kQpqv+12v9zTpU5rkxIX5pB2gOHJzp8
+	RrXYw4X1ON+WvMS9X0cVHBap/JOpHeLDR27SjxoQgXjPumcvKkOfClsJ+2O2/bgB
+	GUF70alkrnM5B6HV5JMt4xVWGpsxsNsR8bOhoZ732BVQAITF7+UQ8Potk5547myk
+	PlFI0nuWeBUWu6/ZUxa2zBWbaRbnRwFxeGJ6qiJYQ7vI9kNf4F9vAk2KWc0n9Xon
+	h+hGwmDIE8sf1UH0TJlXCeoLdOVBHj9mXRkwiYf9XDgVMqNOTwidN+2SaKg2zh3A
+	+nMFjq9eUwT/OxVPHqTwg==
+X-ME-Sender: <xms:5OC5aGBFmhwp6koGHj6-xjfzuh-IqcLf_VBw6XpZYC0JCVvbpR7Mzg>
+    <xme:5OC5aAjmeUScbnss4AsYArx60cG8mw_oC81XoI6kKuDI6zuF2zncLXHbAyLzclRe7
+    KJyucYcUWocOVdUZK8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhkucfr
+    vggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqe
+    enucggtffrrghtthgvrhhnpefhuedvheetgeehtdehtdevheduvdejjefggfeijedvgeek
+    hfefleehkeehvdffheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggp
+    rhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvrhgvkh
+    hjohhhnhdrtghlrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhh
+    rdgvnhhgrdgsrhdprhgtphhtthhopegrnhguvghrshhsohhnsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    hhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhonhhrrgguhigstghioh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrh
+    gvsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:5OC5aLpUcBHmQYc76N1Gwun1b6jafEN_ctWEu4v5VzaDwlDLm77u_Q>
+    <xmx:5OC5aAhLZzYRa7zeWbx33A82psAapANHW27wH0KqhR8odPU_tYXRWw>
+    <xmx:5OC5aCZuKuQZKyoIZsaZaCeT1bRVrilZbqXn52TosN3HlEe2resgDw>
+    <xmx:5OC5aAlIDpQXPeOtxvnwK2F_grRXDOFA0PAGBf8tnu8xzp8PnsUjEQ>
+    <xmx:5eC5aNvYwlgegQRoz1S-cXSuW8HAXhDkcLPsSMAdBGtu14F7zyvNmDeF>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2CC642CE0072; Thu,  4 Sep 2025 14:56:36 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbxjRwxhJTLUgJNwR-vEbDybBpawNsRb+y+PiDsxzT=eA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-ThreadId: A0cV_uEw7IB3
+Date: Thu, 04 Sep 2025 14:56:07 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Sebastian Reichel" <sre@kernel.org>
+Cc: "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Hans de Goede" <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ linux-arm-msm@vger.kernel.org
+Message-Id: <ec295b0c-4a65-4cfe-8d38-99c5c4db9099@app.fastmail.com>
+In-Reply-To: 
+ <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+ <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
+ <ea0b329e-ab3e-4655-8f27-e7a74784302a@app.fastmail.com>
+ <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
+Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 09/04, Andrii Nakryiko wrote:
+Hi Sebastian,
+
+On Mon, Sep 1, 2025, at 12:10 PM, Sebastian Reichel wrote:
+> Hello Mark,
 >
-> On Thu, Sep 4, 2025 at 8:02 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Thu, Sep 4, 2025 at 4:26 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > On 09/04, Jiri Olsa wrote:
-> > > >
-> > > >
-> > > > ok, got excited too soon.. so you meant getting rid of is_unique
-> > > > check only for this patch and have just change below..  but keep
-> > > > the unique/exclusive flag from patch#1
-> > >
-> > > Yes, this is what I meant,
-> > >
-> > > > IIUC Andrii would remove the unique flag completely?
-> > >
-> > > Lets wait for Andrii...
-> >
-> > Not Andrii, but I see only negatives in this extra flag.
-> > It doesn't add any safety or guardrails.
-> > No need to pollute uapi with pointless flags.
+> On Mon, Sep 01, 2025 at 09:48:39AM -0400, Mark Pearson wrote:
+>> On Sun, Aug 31, 2025, at 5:28 PM, Sebastian Reichel wrote:
+>> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
+>> > is in theory compatible with ThinkPad ACPI. On Linux the system
+>> > is booted with device tree, which is not supported by the ThinkPad
+>> > ACPI driver. Also most of the hardware compatibility is handled
+>> > via ACPI tables, which are obviously not used when booting via
+>> > device tree. Thus adding DT compatibility to the existing driver
+>> > is not worth it (almost no code sharing).
+>> >
+>> > The driver currently exposes features, which are not available
+>> > via other means:
+>> >
+>> >  * Extra Keys
+>> >  * System LEDs
+>> >  * Keyboard Backlight Control
+>> >
+>> > The driver has been developed by reading the ACPI DSDT. There
+>> > are some more features around thermal control, which are not
+>> > yet supported by the driver.
+>> >
+>> 
+>> Thanks for working on this - it's great.
 >
-> +1. I think it's fine to just have something like
+> It's a personal scratch your own itch project, as I daily drive the
+> machine.
 >
-> if (unlikely(instruction_pointer(regs) != bp_vaddr))
->       goto out;
+>> I'll see if I can get the EC spec so I can do some checking on the
+>> values (I thought I had it already, but I can't find it). If this
+>> file can be used for other platforms then it might be good to
+>> rename the file to not be specific to the t14s? I'm curious if it
+>> can be used on the X13s or the Yoga platform.
 >
-> after all uprobe callbacks were processed. Even if every single one of
-> them modify IP, the last one that did that wins.
+> Maybe. I only have the T14s (apart of my older Intel/AMD ThinkPads,
+> which use the ACPI driver). The ACPI DSDT functions completley
+> abstract the lowlevel I2C interface, so in theory every ThinkPad
+> could have a completley different EC and still use the same ACPI
+> driver. So this needs to be checked per-device. Hopefully the low
+> level interface is similar in those, so that we don't need to spam
+> the kernel tree with multiple different EC drivers :)
+>
+Looks like you're right to make this platform specific. At least for now it looks like the definitions are tied to the platform.
+Strange as we have a common spec on the x86 Thinkpads, but at least for now this is t14s Qualcomm specific.
 
-OK. If any consumer can change regs->ip, then I can only repeat:
+>> Couple of notes
+>>  - I do agree it doesn't make sense to add this to thinkpad_acpi.
+>>    That file is too big anyway.
+>>  - If there are other pieces like this where some detail of the
+>>    platform is needed, please do let me know. I never got enough
+>>    time to work on this platform directly, and it wasn't in our
+>>    Linux program, but I do have access and support from the
+>>    platform team for getting details on it. If I can help, so not
+>>    too much reverse engineering is needed, I'm happy to.
+>
+> Thanks for the offer.
+>
+I did get back some details - not quite as much as I wanted, but enough to confirm that all your definitions look correct.
+Main point of interest is they didn't send me the BL2 details - so not sure if that is needed?
 
-	Yes... but what if we there are multiple consumers? The 1st one changes
-	instruction_pointer, the next is unaware. Or it may change regs->ip too...
+> I would be interested in bits around system suspend. Right now
+> support on X1E is limited to sending the CPU into suspend. Much of
+> the machine seems to be still powered. Right now the keyboard
+> backlight and all the status LEDs stay on and the LID + power led
+> does not go into the typical breathing pattern. Additionally I had
+> to disable wakeup capabilities for the EC interrupt, as closing the
+> LID generates an event and thus an interrupt, which wakes the
+> system. Obviousy that is undesired from user's perspective. My guess
+> is, that there might be some register to mask events, but I haven't
+> found it so far. Alternatively the EC might mask them automatically
+> when the system is send into suspend, which I also have not yet
+> figured out :) The only bit I know is, that EC register 0xE0 is
+> involved in modern standby.
+>
+I still have some more digging to do here I'm afraid.
 
-> Others (if they care)
-> can detect this.
+> Apart from that and (probably) unrelated to the EC: I noticed that
+> accessing the built-in webcam (with the X1E camera patches from
+> Bryan O'Donoghue) does not enable the status LED. It would be
+> nice if you can check how that is wired, so that it can be enabled
+> when a camera stream is started.
+>
+Ack. Don't know the details on that yet.
 
-How? If the the consumer which changes regs->ip is not the 1st one?
-
-That said. If you guys don't see a problem - I won't even try to argue.
-
-As I said many times, I have no idea how people actually use uprobes ;)
-
-Oleg.
-
+Mark
 
