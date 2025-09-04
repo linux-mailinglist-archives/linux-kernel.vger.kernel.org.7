@@ -1,173 +1,309 @@
-Return-Path: <linux-kernel+bounces-800184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5337BB4345C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16564B43462
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DB143A41F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3453AA0DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9856E2BD030;
-	Thu,  4 Sep 2025 07:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1225B29E10C;
+	Thu,  4 Sep 2025 07:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="Qa/594VY"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXFY2ORo"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BB72BD001
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535C29B78E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971517; cv=none; b=B2YGZQs2wMg1lN0GeBsiyeyKdOIMPQ9e1ykXAI2DuVhnbH5ezWCZO2gBIzac7DfZkSHdm3jHRPNXOF7VkOr8chNr5hOEAcHohB+u+puOquHxVSQ6nm/wn90VnUO0J3s91wKkogpqQkqpl4D/iQNQPooFQqvGSMv/lpz3x5DZ9Ks=
+	t=1756971623; cv=none; b=CYm9xvGBj5Z6ye5LJ8bzNzPqL1Eto4iyMW1wP+YSMT9bbp2Mxka/7zrClBQl2r0FzE0zIPXpXsUJ84ah8Be6afe0yqliUra2nu0ds3dc0/l3kIplHANvoeasWZpASK+dXQrL8ZRpGlqy82enBKrRULcqqgPwLcnArE5DvtnA/Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756971517; c=relaxed/simple;
-	bh=FbWK51zuCaG8lucEmAI2mMSW2LMRM66FMsNCbZr0bsY=;
+	s=arc-20240116; t=1756971623; c=relaxed/simple;
+	bh=eIrVK0Ias59Ag2uJFqdtEy6fMXL6YCiM1AsRPYnGXT8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i8UbZ38XbtSy4UlqMbHA5znHvyCJiq9dvVr8fNmjgO7Z0Qa0YDn3G+Tb1FDFaaofeGowQ/Ukm7sOju0JQH2D6WYnBAD0LF+91lgASHpSOeDuTUv8hOR0eGwjOm84OiAMiJFT0izNJoFcETS+vuFoBI6bm29WlslBaRJWv4APqBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=Qa/594VY; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d605c6501so7602867b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 00:38:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=OMVD30Kvd//5D4h1bEi83d3JLQGGXcVu8eAZ/cGjWQBi62B3o7jQcindH2C1uCiLHH5VXf9zQvGgKWcRns2zejcWSjF5GaT+3IIa8HaqE3FC/gZsD4vCHJ+aUImVlDiAh1GjbbDL171OaD+HkvNaqdMqICwEWmuQ5/tdfIPLwvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXFY2ORo; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f76454f69so715410e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 00:40:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1756971513; x=1757576313; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756971619; x=1757576419; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GgZhEVyr6juMKHl8gJtC0+SUexeCcUE2zJAQWjvjjYs=;
-        b=Qa/594VY144d8eUYeEDOopGKk3mz6bShQeBJSj5P6Oto5M+ZRqTfxQm3Qp33/XBEBa
-         P7smKXEjdRdAppPabTCgPQo7QUyVETn4IjTmnrFj6qvQJm9EHps2b2csd9hWzoBPBTgw
-         N8UlV03MKStQ1UDYreW0y3JXmssm1g4ygTT976J0dzDc4NTbEYlAisFlGJS+85avHpSv
-         9ePHF7bvn2V+HNfDtLPOZIuBVoclRi+e94IzxyR/q0aqJYB6crD8YE7tk/ee/6SOXvqd
-         QXZYHL38NMZ3VOC+gFgtK4WdAoSK4uHeEuRFRcQZ6Sthsq8ghezsgBd8j48e/3Q9HxZo
-         L7hg==
+        bh=gc4Uqem+8ZkBxn4yFNp/DFtrvsE3WtaNmDYF+RPTg2U=;
+        b=kXFY2ORoPNbM8s8K5h1oL/TM6v/2d1h09xY+jQ2fbHxL2n6b54RhHl8VjA9R3+Hn50
+         /R4VYTIlnFrAR0fG38AUshr17rp6mA9Cj30GxGkYiAALq/mqut2/FRsbhHWegYj7FILI
+         0E8eGOMoBlSwTjeDoDArXBB8TguXf1+ly+HSx2rGBzL7WjjXzR4d77tZjFwGzXqcUjf7
+         DomJrfN5Z7wMrO16v4BsG9L60OHEBR1JMdqigQdUgzjfyec22axj/g47EvI3a2W+4GhV
+         H0GhMRX2cGWqZ88a9El/ufZA2D0IO5uJJqteiSc9eDbupjP8DstY5aNEqudhUjDPPX5m
+         ce2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756971513; x=1757576313;
+        d=1e100.net; s=20230601; t=1756971619; x=1757576419;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GgZhEVyr6juMKHl8gJtC0+SUexeCcUE2zJAQWjvjjYs=;
-        b=njNeRShjAJxZXBEJFKw800/YAEaqq33EK5ZDmmkotIbI+LjYg8i8u+KdiAT+ZE+w9n
-         KxIsPjOq/Fzf2nWptgiEenNRA+LQIBFvUfSSGXkwamhGeLFPh0DyuzECYAqdUgmCDXi/
-         SeXKViIpyoqfjXR0cdLsBazIFjDFsMFxvUyNUb8/98B0ZultijkVK7jFTnHj3+6txECu
-         ec9pq9QNa5ZQhMVcmKYqx0tHJ2EmIoOHCN+cNut5I0Gx/K5/CxR0R5qJGIoeRNLO6Rfs
-         uO9xk9y33MZm6GPV3B7u5SnLRGOo+6OIDfyi9bi1owdlRtiMFz22UQe4lHLsC4t1FMdp
-         j1aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcvqP9KYFHdvYsG/RefO2W+n7gL6iIeg3ntqoP52G4gviAMIzoZ+hWUKQX9e01tESj7jNcud8vxU22MEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVlpwn9lPT3gzRyXXQJ2eWo+XKh5HKFgyV5ijqbwU98BHg2wEh
-	wDlTCp5m9smwbBVoKlivFsRQplFb1bRn43DtwvvXnFyTwbbngTpVrvXTqEOFhstUxMDVhya95UM
-	p+0Fej1tOHSCZBc0jqs7+r/AAyyLCcqmJNErIz9pjwQ==
-X-Gm-Gg: ASbGncv9PV3tzqJThxsI/QbxVp4X9P5Q0Q/Ii8CFokL1HDtnfQ5blRUS6Rk90MzieDQ
-	xBCqB8tmWfZVhXr4io8+Owt2FAKjRzXYSf0uNnEPKx3RnJDeoT7vvhNkdD7DTXh/HbglJJ37QSQ
-	Xt+umnEZZam76TTGJmZH0gpv4VefYWCoIxsgahOvdjzUAMNXt9i5ZRP1bJe2Q8tLXeaESO6k5SP
-	Sxaarvto1w=
-X-Google-Smtp-Source: AGHT+IHAqMzaONaSYMHfHIGLX6FXI5tM+wIyElctL+Mo7Yefx4I8BbosB/7EjveV6AmnpmC/MA9KKw31I0NQom67AQc=
-X-Received: by 2002:a05:690c:312:b0:723:8ccd:6898 with SMTP id
- 00721157ae682-7238ccd7709mr174479327b3.10.1756971512980; Thu, 04 Sep 2025
- 00:38:32 -0700 (PDT)
+        bh=gc4Uqem+8ZkBxn4yFNp/DFtrvsE3WtaNmDYF+RPTg2U=;
+        b=aoqQRxRq2KV/fk7WYqcYG8GnvZ7NIYFnD7W71s2epdrgNaqgidC0aroZusSm10UuK1
+         qA7pkuKVA+MHAoZNYHhhfmU1aVOUzeZMk446kBsFLiwUWPejBMHp4NW2+gBCpRnzWFww
+         v733g+aSnUijmT64rdU3r1oS2xxm5u3jiAv4tNWb1AnvZtv6y4jC9LxeJHDfAcKIV+8x
+         d46BhUUYVL+9D+kfEkNnbA7sN/k0Vjl+1fPURPx5B/Fj3QNrD/Brjg1vPlBspUsdcKj2
+         gHrqZlR5Tgwws29qaEg4aD4xcrHZ1Dgbryp5qAv6apjVZn0eD62AODzcuFPU2B4XhGq6
+         sOUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1NXI2m95WhGMATKEL8N16C0XC7TcSVDL00DVyoOU9E9Arfy8rdPIL4xX75bbNZKlH+qzfiKX/WCEsQnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKOmysjeEsdelS8AmwYuLf6FKJ/65OxLAKtEFqm0BrPqS6Kb7J
+	CICrDiPihfkcWePm427yB/gQkMn7Q10FhZvUo/o4upW26n9xYGD/at9eb7uhQA43yOVqEhrwpZY
+	t8SKT0quSvFRsPx6NNqV0ssQLfXo/94s=
+X-Gm-Gg: ASbGncthpIoLrtwbrRTdzsBsMVKjhO6mdgueRd24AU0UdWVsFzGpMP6HTJnQWUAFQxV
+	JDlM0rYnfh89V9zlb5XEncOuwhnjNblEW+kZjPBo+H0WnKwVT+hdN1YsgeBj1YpjFwPoewgVNsG
+	05w4bSOFAqwLvFpBrrUnlIDZ52e8TQyi89pLcJM8HrECuoH15xFcdKGmRvu4+Nnk3O5M/SDNfHF
+	cBkMUAxKVFHwLejDA==
+X-Google-Smtp-Source: AGHT+IFtKLMUsLlir53WfPNlbjKgCEI3v/cBnmaMPUS1x4ZY1q62JCePqOMT8TCsGgjP/1nER3lDVi/ovnSdN9S9Tmc=
+X-Received: by 2002:a05:6512:32cb:b0:55a:c9f0:a019 with SMTP id
+ 2adb3069b0e04-55f708bff09mr5606251e87.23.1756971618983; Thu, 04 Sep 2025
+ 00:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
- <a07b0ebf-25e7-48ba-a1da-2c04fc0e027f@app.fastmail.com> <20250903165931.GA3288670@ax162>
-In-Reply-To: <20250903165931.GA3288670@ax162>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Thu, 4 Sep 2025 15:38:21 +0800
-X-Gm-Features: Ac12FXwiXF9IvfBYbe4zzNOtF-jes20CBabfcX8-C-vzxRaxmAjm9PLipHmDVBM
-Message-ID: <CAH1PCMYWWkThMosDMW=wZZWZ8d_c4_zQWhJOJPKe354LPiV1bA@mail.gmail.com>
-Subject: Re: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14:
- error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	dmaengine@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Vinod Koul <vkoul@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Benjamin Copeland <benjamin.copeland@linaro.org>
+References: <20250813074201.6253-1-pranav.tyagi03@gmail.com>
+In-Reply-To: <20250813074201.6253-1-pranav.tyagi03@gmail.com>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Thu, 4 Sep 2025 13:10:11 +0530
+X-Gm-Features: Ac12FXw6nDps7DJxYy_LzV6LDUJK7V4swqmVewZj6bbPCr9Vj57XurgMlvy4sAs
+Message-ID: <CAH4c4jJ1AO6Eovw9xBmKeBG7W8ueWy+7q_g20hDN4YmWTHdpdA@mail.gmail.com>
+Subject: Re: [PATCH v4] futex: don't leak robust_list pointer on exec race
+To: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, 
+	dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com, 
+	linux-kernel@vger.kernel.org
+Cc: jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 12:59=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
+On Wed, Aug 13, 2025 at 1:12=E2=80=AFPM Pranav Tyagi <pranav.tyagi03@gmail.=
+com> wrote:
 >
-> On Wed, Sep 03, 2025 at 02:04:10PM +0200, Arnd Bergmann wrote:
-> > On Wed, Sep 3, 2025, at 12:08, Naresh Kamboju wrote:
-> >
-> > > Build error:
-> > > drivers/dma/mmp_pdma.c:1188:14: error: shift count >=3D width of type
-> > > [-Werror,-Wshift-count-overflow]
-> > >  1188 |         .dma_mask =3D DMA_BIT_MASK(64),   /* force 64-bit DMA
-> > > addr capability */
-> > >       |                     ^~~~~~~~~~~~~~~~
-> > > include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT=
-_MASK'
-> > >    73 | #define DMA_BIT_MASK(n) (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n=
-))-1))
-> > >       |                                                      ^ ~~~
-> >
-> > I see two separate issues:
-> >
-> > 1. The current DMA_BIT_MASK() definition seems unfortunate, as the
-> > '(n) =3D=3D 64' check is meant to avoid this problem, but I think this
-> > only works inside of a function, not in a static structure definition.
+> sys_get_robust_list() and compat_get_robust_list() use
+> ptrace_may_access() to check if the calling task is allowed to access
+> another task's robust_list pointer. This check is racy against a
+> concurrent exec() in the target process.
 >
-> Right, this is one of our longest outstanding issues :/
+> During exec(), a task may transition from a non-privileged binary to a
+> privileged one (e.g., setuid binary) and its credentials/memory mappings
+> may change. If get_robust_list() performs ptrace_may_access() before
+> this transition, it may erroneously allow access to sensitive information
+> after the target becomes privileged.
 >
-> https://github.com/ClangBuiltLinux/linux/issues/92
-> https://github.com/llvm/llvm-project/issues/38137
+> A racy access allows an attacker to exploit a window
+> during which ptrace_may_access() passes before a target process
+> transitions to a privileged state via exec().
 >
-> This only happens at global scope.
+> For example, consider a non-privileged task T that is about to execute a
+> setuid-root binary. An attacker task A calls get_robust_list(T) while T
+> is still unprivileged. Since ptrace_may_access() checks permissions
+> based on current credentials, it succeeds. However, if T begins exec
+> immediately afterwards, it becomes privileged and may change its memory
+> mappings. Because get_robust_list() proceeds to access T->robust_list
+> without synchronizing with exec() it may read user-space pointers from a
+> now-privileged process.
 >
-> > This could perhaps be avoided by replacing the ?: operator with
-> > __builtin_choose_expr(), but that likely causes other build failures.
+> This violates the intended post-exec access restrictions and could
+> expose sensitive memory addresses or be used as a primitive in a larger
+> exploit chain. Consequently, the race can lead to unauthorized
+> disclosure of information across privilege boundaries and poses a
+> potential security risk.
 >
-> Yeah, that makes the problem worse somehow even though GCC says the
-> non-taken option should not be evaluated...
+> Take a read lock on signal->exec_update_lock prior to invoking
+> ptrace_may_access() and accessing the robust_list/compat_robust_list.
+> This ensures that the target task's exec state remains stable during the
+> check, allowing for consistent and synchronized validation of
+> credentials.
 >
->   drivers/dma/mmp_pdma.c:1188:14: error: shift count >=3D width of type [=
--Werror,-Wshift-count-overflow]
->    1188 |         .dma_mask =3D DMA_BIT_MASK(64),   /* force 64-bit DMA a=
-ddr capability */
->         |                     ^~~~~~~~~~~~~~~~
->   include/linux/dma-mapping.h:73:70: note: expanded from macro 'DMA_BIT_M=
-ASK'
->      73 | #define DMA_BIT_MASK(n) __builtin_choose_expr((n) =3D=3D 64, ~0=
-ULL, (1ULL<<(n))-1)
->         |                                                                =
-      ^ ~~~
->   drivers/dma/mmp_pdma.c:1323:27: error: shift count >=3D width of type [=
--Werror,-Wshift-count-overflow]
->    1323 |                 dma_set_mask(pdev->dev, DMA_BIT_MASK(64));
->         |                                         ^~~~~~~~~~~~~~~~
->   include/linux/dma-mapping.h:73:70: note: expanded from macro 'DMA_BIT_M=
-ASK'
->      73 | #define DMA_BIT_MASK(n) __builtin_choose_expr((n) =3D=3D 64, ~0=
-ULL, (1ULL<<(n))-1)
->         |                                                                =
-      ^ ~~~
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> Suggested-by: Jann Horn <jann@thejh.net>
+> Link: https://lore.kernel.org/linux-fsdevel/1477863998-3298-5-git-send-em=
+ail-jann@thejh.net/
+> Link: https://github.com/KSPP/linux/issues/119
+> ---
+> changed in v4:
+> - added task_robust_list() function
+> changed in v3:
+> - replaced RCU with scoped_guard(rcu)
+> - corrected error return type cast
+> - added IS_ENABLED(CONFIG_COMPAT) for ensuring compatability
+> - removed stray newlines and unnecessary line breaks
+> changed in v2:
+> - improved changelog
+> - helper function for common part of compat and native syscalls
+>
+>  kernel/futex/syscalls.c | 108 +++++++++++++++++++++-------------------
+>  1 file changed, 58 insertions(+), 50 deletions(-)
+>
+> diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
+> index 4b6da9116aa6..0da33abc2f17 100644
+> --- a/kernel/futex/syscalls.c
+> +++ b/kernel/futex/syscalls.c
+> @@ -39,6 +39,58 @@ SYSCALL_DEFINE2(set_robust_list, struct robust_list_he=
+ad __user *, head,
+>         return 0;
+>  }
+>
+> +static inline void __user *task_robust_list(struct task_struct *p, bool =
+compat)
+> +{
+> +#ifdef CONFIG_COMPAT
+> +       if (compat)
+> +               return p->compat_robust_list;
+> +#endif
+> +       return p->robust_list;
+> +}
+> +
+> +static void __user *get_robust_list_common(int pid, bool compat)
+> +{
+> +       struct task_struct *p;
+> +       void __user *head;
+> +       unsigned long ret;
+> +
+> +       p =3D current;
+> +
+> +       scoped_guard(rcu) {
+> +               if (pid) {
+> +                       p =3D find_task_by_vpid(pid);
+> +                       if (!p)
+> +                               return (void __user *)ERR_PTR(-ESRCH);
+> +               }
+> +               get_task_struct(p);
+> +       }
+> +
+> +       /*
+> +        * Hold exec_update_lock to serialize with concurrent exec()
+> +        * so ptrace_may_access() is checked against stable credentials
+> +        */
+> +       ret =3D down_read_killable(&p->signal->exec_update_lock);
+> +       if (ret)
+> +               goto err_put;
+> +
+> +       ret =3D -EPERM;
+> +       if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+> +               goto err_unlock;
+> +
+> +       head =3D task_robust_list(p, compat);
+> +
+> +       up_read(&p->signal->exec_update_lock);
+> +       put_task_struct(p);
+> +
+> +       return head;
+> +
+> +err_unlock:
+> +       up_read(&p->signal->exec_update_lock);
+> +err_put:
+> +       put_task_struct(p);
+> +       return (void __user *)ERR_PTR(ret);
+> +}
+> +
+>  /**
+>   * sys_get_robust_list() - Get the robust-futex list head of a task
+>   * @pid:       pid of the process [zero for current task]
+> @@ -49,36 +101,14 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
+>                 struct robust_list_head __user * __user *, head_ptr,
+>                 size_t __user *, len_ptr)
+>  {
+> -       struct robust_list_head __user *head;
+> -       unsigned long ret;
+> -       struct task_struct *p;
+> -
+> -       rcu_read_lock();
+> -
+> -       ret =3D -ESRCH;
+> -       if (!pid)
+> -               p =3D current;
+> -       else {
+> -               p =3D find_task_by_vpid(pid);
+> -               if (!p)
+> -                       goto err_unlock;
+> -       }
+> +       struct robust_list_head __user *head =3D get_robust_list_common(p=
+id, false);
+>
+> -       ret =3D -EPERM;
+> -       if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+> -               goto err_unlock;
+> -
+> -       head =3D p->robust_list;
+> -       rcu_read_unlock();
+> +       if (IS_ERR(head))
+> +               return PTR_ERR(head);
+>
+>         if (put_user(sizeof(*head), len_ptr))
+>                 return -EFAULT;
+>         return put_user(head, head_ptr);
+> -
+> -err_unlock:
+> -       rcu_read_unlock();
+> -
+> -       return ret;
+>  }
+>
+>  long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
+> @@ -455,36 +485,14 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
+>                         compat_uptr_t __user *, head_ptr,
+>                         compat_size_t __user *, len_ptr)
+>  {
+> -       struct compat_robust_list_head __user *head;
+> -       unsigned long ret;
+> -       struct task_struct *p;
+> -
+> -       rcu_read_lock();
+> -
+> -       ret =3D -ESRCH;
+> -       if (!pid)
+> -               p =3D current;
+> -       else {
+> -               p =3D find_task_by_vpid(pid);
+> -               if (!p)
+> -                       goto err_unlock;
+> -       }
+> -
+> -       ret =3D -EPERM;
+> -       if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
+> -               goto err_unlock;
+> +       struct compat_robust_list_head __user *head =3D get_robust_list_c=
+ommon(pid, true);
+>
+> -       head =3D p->compat_robust_list;
+> -       rcu_read_unlock();
+> +       if (IS_ERR(head))
+> +               return PTR_ERR(head);
+>
+>         if (put_user(sizeof(*head), len_ptr))
+>                 return -EFAULT;
+>         return put_user(ptr_to_compat(head), head_ptr);
+> -
+> -err_unlock:
+> -       rcu_read_unlock();
+> -
+> -       return ret;
+>  }
+>  #endif /* CONFIG_COMPAT */
+>
+> --
+> 2.49.0
 >
 
-Thanks Nathan for the information here and above.
+Hi,
 
-> > Guodong, how about a patch to drop all the custom dma_mask handling
-> > and instead just use dma_set_mask_and_coherent(DMA_BIT_MASK(64))
-> > or dma_set_mask_and_coherent(DMA_BIT_MASK(32)) here? Instead of
-> > passing the mask in the mmp_pdma_ops, you can replace it e.g. with
-> > a 'bool addr64' flag, or an 'int dma_width' number that
-> > gets passed into the DMA_MASK_MASK().
->
+Gentle ping. I am looking forward to any suggestions on this patch and
+would be more than happy to make any necessary changes.
 
-Thanks, Arnd. I'll send a patch to clean up and simplify the logic.
-
-> If this works, I think it is worth pursuing to avoid this bogus
-> warning/error.
->
-> Cheers,
-> Nathan
+Regards
+Pranav Tyagi
 
