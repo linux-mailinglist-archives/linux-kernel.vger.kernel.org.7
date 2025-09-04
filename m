@@ -1,207 +1,138 @@
-Return-Path: <linux-kernel+bounces-800736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913E7B43B57
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479D9B43B5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6D858631F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17ED5863F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91762C0F7E;
-	Thu,  4 Sep 2025 12:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34F62D94B9;
+	Thu,  4 Sep 2025 12:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="siqJtgiG"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CcbWdzhk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620AC80B;
-	Thu,  4 Sep 2025 12:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988277; cv=none; b=FV18/KMyMQ8e18swUwd/MQaCJBQNEaGGWoHeQrLivl0jC+PeTohBhGJ7AGVGfwOkKTG/D/b+iERXTPGnih3vGgkeUfg+8a/bApCzaMztC5Q1RNBd9UU2GRf//p3IO2+rvHy6t59mxeNVWRTleUTxtiShXDQgbKLmY6WfTze/a30=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988277; c=relaxed/simple;
-	bh=TcOrLFLpypXvUgjowvIOnT2/Dmenmavzvy+eyQgltYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVGimN/20A81DSwh/RWQuIEmrFZnr3lCDRquLbE+TRapuvYHhDU+lDP7BiKP82gE3fGVnDZQhBg6rIACSIPnUIVu8SQZosDYF6+PGhS19jumwqv0jV4B4Ub60+DfUM9puQqGIwkUWCVcyap447uTOPwUV3la4hyiziUwQWfLSKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=siqJtgiG; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 9E56F4E40C78;
-	Thu,  4 Sep 2025 12:17:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6E067606BB;
-	Thu,  4 Sep 2025 12:17:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B81991C22DD67;
-	Thu,  4 Sep 2025 14:17:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756988271; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=t/n8mgu1NcsMenEqleBAZW4KHVuETZmKFRKweMFl7Qg=;
-	b=siqJtgiGVy5Dw9CFR3sIroCRgf/251lGKM88dhDkeoFDcHhT1UkPUnnlfmseegquDhB8bX
-	LtvM3QW40NRJOdXznJ8HiRRCqDF9BW0ePQ1QMJZF/MbCfTBVflorm2eYZDIo1pt3kZZFBk
-	wT8W5ZgyBAlXYjghw3gNRITskxCQTQ07H1yxVfg+bNTDDV5+YDvnay34pymaLMo8Yhecy1
-	91Qo5Si5NosTsueK4K4bC+Jbz/MCsZqMpGFDtaiRUaryfWG+ZpAtBZvJfHFA6GB75W4b7e
-	hhVyfL8FGWinVA8/qQgTMCI348224Tgor35Og+oSNFGUCnffTcxqQ52QhpC6bw==
-Date: Thu, 4 Sep 2025 14:17:37 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Alexander Kurz <akurz@blala.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-input@vger.kernel.or, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] Drivers: mc13783: remove deprecated mc13xxx_irq_ack()
-Message-ID: <20250904121737ed8f8114@mail.local>
-References: <20250811064358.1659-1-akurz@blala.de>
- <20250902102036.GE2163762@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784CD27E7DA;
+	Thu,  4 Sep 2025 12:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756988327; cv=pass; b=AzKid7oqIPfjGkb1DXeV/0JG/ICm00LT77P4zVGjIRuQAgFppX7GOpDK5Wq8q5TzZ9lIbY7ElAaVGsYkivSkQRGmNkVRZHRtRxga34BbXgR1zwAqRxC/Jx5A8kT7zFApMVJtDKjxZzfXLXNwZl8zI7j3IYFKvukQU+ntqcgz8EQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756988327; c=relaxed/simple;
+	bh=dhFHlGyMZvzaUto2hCu/vOiTWfaGlSNWDhXXaQMo8Rg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=t8Iulvl18mk+wR952CvHqXwyLRz8XVNvaM785O4XhXNjsnrJ0CHzh36JRFDTOzB1nnAr1wCHoueF06h2ryWVzofMbnAueKrzWiqwBxu3ynWymeXMA9f3m+pXrkC+q39qYSD07wQZDoZ7H5QVwUVNKH3FjFf+w527uc6u6JxbT7s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CcbWdzhk; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756988285; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dRrG0fSjtlDhA2wpZb/kkJ90v5z8fd633NamFcld3UZEVJk3xcXcPUXA+/6a9DtAfesRkrEVYlLUZwyt20G3s2E6AIewYLaub3GClVVw19mhTJN0PxsI64IQIiOHNHipbSG7zQioLiLcqr28520tkVuqj44sVhSR6s/gMDWQmTg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756988285; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PniDd8q7i51dKDLDoV+CziCPP+VbPskOVJVwBIuSbJs=; 
+	b=fv1h7ar0s65z2e667eev8zqRanYWlk2yBzeAH1+7M2ZLPPswtsS3ZPwdCN+QxQuBNyqVn8RlYXYWo92/5ffKrvpMOc2xSMareG8XoT/z4z/aqJNHrRne9mzTFRm2oQSTvEez767qYII02nBGZXl2woYze8Qq34gMYc5VuCTIDQs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756988285;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=PniDd8q7i51dKDLDoV+CziCPP+VbPskOVJVwBIuSbJs=;
+	b=CcbWdzhk0XFj3QidRCbUytsNfv3eoWGRHTFWMULxH21M2z3MQTWaRO317j2EpryK
+	vUnFL3h9Fc6/ZfEyVP54zVXorltzA7/HgwU827+BM8ObAwZs/N/S61Xd4UJVbomSMgd
+	yWqWdpWFV31nzfIWWjfeFpcWZ3r1wLpHyus3FuWA=
+Received: by mx.zohomail.com with SMTPS id 1756988284509936.693694341028;
+	Thu, 4 Sep 2025 05:18:04 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902102036.GE2163762@google.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 03/14] rust: drm: gem: Drop Object::SIZE
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-4-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 09:17:49 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Asahi Lina <lina+kernel@asahilina.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DEAC44E1-9037-4609-A53F-0BBBDCC576A0@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-4-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 02/09/2025 11:20:36+0100, Lee Jones wrote:
-> On Mon, 11 Aug 2025, Alexander Kurz wrote:
-> 
-> > mc13xxx_irq_ack() got deprecated and became dead code with commit
-> > 10f9edaeaa30 ("mfd: mc13xxx: Use regmap irq framework for interrupts").
-> > It should be safe to remove it now.
-> > 
-> > Signed-off-by: Alexander Kurz <akurz@blala.de>
-> > ---
-> >  drivers/input/misc/mc13783-pwrbutton.c |  1 -
-> >  drivers/input/touchscreen/mc13783_ts.c |  4 ----
-> 
-> >  drivers/rtc/rtc-mc13xxx.c              | 13 -------------
-> 
-> RTC review / Ack please.
-
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 
-> 
-> >  include/linux/mfd/mc13xxx.h            |  6 ------
-> >  4 files changed, 24 deletions(-)
-> > 
-> > diff --git a/drivers/input/misc/mc13783-pwrbutton.c b/drivers/input/misc/mc13783-pwrbutton.c
-> > index 1c7faa9b7afe..b83d762ae2e9 100644
-> > --- a/drivers/input/misc/mc13783-pwrbutton.c
-> > +++ b/drivers/input/misc/mc13783-pwrbutton.c
-> > @@ -57,7 +57,6 @@ static irqreturn_t button_irq(int irq, void *_priv)
-> >  	struct mc13783_pwrb *priv = _priv;
-> >  	int val;
-> >  
-> > -	mc13xxx_irq_ack(priv->mc13783, irq);
-> >  	mc13xxx_reg_read(priv->mc13783, MC13783_REG_INTERRUPT_SENSE_1, &val);
-> >  
-> >  	switch (irq) {
-> > diff --git a/drivers/input/touchscreen/mc13783_ts.c b/drivers/input/touchscreen/mc13783_ts.c
-> > index 33635da85079..47b8da00027f 100644
-> > --- a/drivers/input/touchscreen/mc13783_ts.c
-> > +++ b/drivers/input/touchscreen/mc13783_ts.c
-> > @@ -42,8 +42,6 @@ static irqreturn_t mc13783_ts_handler(int irq, void *data)
-> >  {
-> >  	struct mc13783_ts_priv *priv = data;
-> >  
-> > -	mc13xxx_irq_ack(priv->mc13xxx, irq);
-> > -
-> >  	/*
-> >  	 * Kick off reading coordinates. Note that if work happens already
-> >  	 * be queued for future execution (it rearms itself) it will not
-> > @@ -137,8 +135,6 @@ static int mc13783_ts_open(struct input_dev *dev)
-> >  
-> >  	mc13xxx_lock(priv->mc13xxx);
-> >  
-> > -	mc13xxx_irq_ack(priv->mc13xxx, MC13XXX_IRQ_TS);
-> > -
-> >  	ret = mc13xxx_irq_request(priv->mc13xxx, MC13XXX_IRQ_TS,
-> >  		mc13783_ts_handler, MC13783_TS_NAME, priv);
-> >  	if (ret)
-> > diff --git a/drivers/rtc/rtc-mc13xxx.c b/drivers/rtc/rtc-mc13xxx.c
-> > index e7b87130e624..2494d13fd767 100644
-> > --- a/drivers/rtc/rtc-mc13xxx.c
-> > +++ b/drivers/rtc/rtc-mc13xxx.c
-> > @@ -137,10 +137,6 @@ static int mc13xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> >  	}
-> >  
-> >  	if (!priv->valid) {
-> > -		ret = mc13xxx_irq_ack(priv->mc13xxx, MC13XXX_IRQ_RTCRST);
-> > -		if (unlikely(ret))
-> > -			goto out;
-> > -
-> >  		ret = mc13xxx_irq_unmask(priv->mc13xxx, MC13XXX_IRQ_RTCRST);
-> >  	}
-> >  
-> > @@ -208,10 +204,6 @@ static int mc13xxx_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-> >  	if (unlikely(ret))
-> >  		goto out;
-> >  
-> > -	ret = mc13xxx_irq_ack(priv->mc13xxx, MC13XXX_IRQ_TODA);
-> > -	if (unlikely(ret))
-> > -		goto out;
-> > -
-> >  	s1970 = rtc_tm_to_time64(&alarm->time);
-> >  
-> >  	dev_dbg(dev, "%s: %s %lld\n", __func__, alarm->enabled ? "on" : "off",
-> > @@ -239,12 +231,9 @@ static int mc13xxx_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-> >  static irqreturn_t mc13xxx_rtc_alarm_handler(int irq, void *dev)
-> >  {
-> >  	struct mc13xxx_rtc *priv = dev;
-> > -	struct mc13xxx *mc13xxx = priv->mc13xxx;
-> >  
-> >  	rtc_update_irq(priv->rtc, 1, RTC_IRQF | RTC_AF);
-> >  
-> > -	mc13xxx_irq_ack(mc13xxx, irq);
-> > -
-> >  	return IRQ_HANDLED;
-> >  }
-> >  
-> > @@ -293,8 +282,6 @@ static int __init mc13xxx_rtc_probe(struct platform_device *pdev)
-> >  
-> >  	mc13xxx_lock(mc13xxx);
-> >  
-> > -	mc13xxx_irq_ack(mc13xxx, MC13XXX_IRQ_RTCRST);
-> > -
-> >  	ret = mc13xxx_irq_request(mc13xxx, MC13XXX_IRQ_RTCRST,
-> >  			mc13xxx_rtc_reset_handler, DRIVER_NAME, priv);
-> >  	if (ret)
-> > diff --git a/include/linux/mfd/mc13xxx.h b/include/linux/mfd/mc13xxx.h
-> > index f372926d5894..dd46fe424a80 100644
-> > --- a/include/linux/mfd/mc13xxx.h
-> > +++ b/include/linux/mfd/mc13xxx.h
-> > @@ -31,12 +31,6 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx,
-> >  		unsigned int mode, unsigned int channel,
-> >  		u8 ato, bool atox, unsigned int *sample);
-> >  
-> > -/* Deprecated calls */
-> > -static inline int mc13xxx_irq_ack(struct mc13xxx *mc13xxx, int irq)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> >  static inline int mc13xxx_irq_request_nounmask(struct mc13xxx *mc13xxx, int irq,
-> >  					       irq_handler_t handler,
-> >  					       const char *name, void *dev)
-> > -- 
-> > 2.39.5
-> > 
-> 
-> -- 
-> Lee Jones [李琼斯]
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Drive-by fix, it doesn't seem like anything actually uses this =
+constant
+> anymore.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> rust/kernel/drm/gem/mod.rs | 5 +----
+> 1 file changed, 1 insertion(+), 4 deletions(-)
+>=20
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index 80940ed11368d..b27b9fbf28bbb 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -12,7 +12,7 @@
+>     prelude::*,
+>     types::{ARef, AlwaysRefCounted, Opaque},
+> };
+> -use core::{mem, ops::Deref, ptr::NonNull};
+> +use core::{ops::Deref, ptr::NonNull};
+>=20
+> /// A type alias for retrieving a [`Driver`]s [`DriverFile`] =
+implementation from its
+> /// [`DriverObject`] implementation.
+> @@ -197,9 +197,6 @@ pub struct Object<T: DriverObject + Send + Sync> {
+> }
+>=20
+> impl<T: DriverObject> Object<T> {
+> -    /// The size of this object's structure.
+> -    pub const SIZE: usize =3D mem::size_of::<Self>();
+> -
+>     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =3D =
+bindings::drm_gem_object_funcs {
+>         free: Some(Self::free_callback),
+>         open: Some(open_callback::<T>),
+> --=20
+> 2.50.0
+>=20
+>=20
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
 
