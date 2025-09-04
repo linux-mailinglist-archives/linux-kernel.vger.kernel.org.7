@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-801696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8095FB448FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:02:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55B3B4492A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E230B1CC1F2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:02:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5571CC353C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD40B2D73B1;
-	Thu,  4 Sep 2025 22:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7402FB624;
+	Thu,  4 Sep 2025 22:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oi0Wl36p"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="p6gks5LY"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970942857F8;
-	Thu,  4 Sep 2025 22:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8E32E9EC1;
+	Thu,  4 Sep 2025 22:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757023347; cv=none; b=g3O1cDHtWHUUSiY7134uJm7HO6IRZ5upijbPFXZu8CjaYOsN0jYC5Po8+kea8lGdC+vhSTpDhoUpM2ccmj+ebvMtk38ogWH/NbfJS27zQyxdHfoJ0TNn1TlY02hdKXl1zsK0X9Muc4VuWk/m5xs1h82LEtmFhxLKg3KqkHJgl7Y=
+	t=1757023415; cv=none; b=J5u1HisWEf/VthIDfr8HZ6SfJKgPdA8Lov47nwYnu9ij1CmulyvVDRNA5BirMZR7G/eS6WVWr00DM8eiJ30L/0XCRSF9WWAspJ3/RVx4vQ3HgZVTH5Tdwb69TnWseOSZ/SYtEx67eC4yRNwftdx1sdAZVTAKqXXYnIYHGgfdNmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757023347; c=relaxed/simple;
-	bh=h7IL8BxWrdOW+yOwf1b00Bh8pl/Z4Lrq2TAiijwMumk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sVRTp0NiSVwKaQzDMdPt43bEtItiviNOdIRhS8qzZLbXjux7J1mbPt90ddyYGVb1eQJEFQKS3bUxbInsblAHl2QdklCacjHFgsUVRdsv39C44ReLRB8Aj3n83UHOPvhqMcG4ygys/qTFm+g0+7zAWGUbUsvUPNk+uw/sW/u3+yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oi0Wl36p; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PgAxJ6qYG6jFQyK0yTKMM5oVnK/RmutQxy4iOqYUHvk=; b=oi0Wl36pA6MMcWep9ogbt4VUQ1
-	vRkPwua8PqJxBcF/sWE1dvDnmQlRuQn4j1aYgl1Qx9K9ANa/SCn55E+oxnfu3O3GPVzcC/SjloY5i
-	YA5dBBnQrkIOvLrPih/NWodus/4tQ0IrQd+lsTeOkUc6Dr2o8q6TqoQYw46mAMuNoaM4nqG1jcqA2
-	XLECrXUSdhSueinDHSWe6kQWG9SSnK3EVtSvP1GfFmXhYTV/iqOuakeeGZzuQdjI6afXb/MVGVyuE
-	BvG1w1Kau1iHUBY0eww45/z/WFHZ5eZMr8DUA7YNYYmHO7VKBNvXeZHMIpfxe38vAp5R9GfJxqf7I
-	48ugg5ww==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuI27-00000007fkq-1AhT;
-	Thu, 04 Sep 2025 22:02:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7731A300220; Fri, 05 Sep 2025 00:02:19 +0200 (CEST)
-Date: Fri, 5 Sep 2025 00:02:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Shuah Khan <shuah@kernel.org>,
-	sched-ext@lists.linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luigi De Matteis <ldematteis123@gmail.com>
-Subject: Re: [PATCH 07/16] sched_ext: Add a DL server for sched_ext tasks
-Message-ID: <20250904220219.GS3245006@noisy.programming.kicks-ass.net>
-References: <20250903095008.162049-1-arighi@nvidia.com>
- <20250903095008.162049-8-arighi@nvidia.com>
- <aLidEvX41Xie5kwY@slm.duckdns.org>
- <20250903200822.GO4067720@noisy.programming.kicks-ass.net>
- <aLin8VayVsYyKXze@slm.duckdns.org>
- <20250903205646.GR4067720@noisy.programming.kicks-ass.net>
- <20250904202858.GN4068168@noisy.programming.kicks-ass.net>
- <aLoH_5TfiTGgQsb0@slm.duckdns.org>
+	s=arc-20240116; t=1757023415; c=relaxed/simple;
+	bh=jFLTdQ0cGKkgHRD4y4SQu258pzqgYDTrDQqFmjeFWTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HZBh8I7a0EIzri7SBC853kiZuw7fdT0xc9xClgaAMn/IgTkeRxLWzFu9AGD/aaC1++eM6TFbYDFR08B1bGaxcN5iiP2jqHU7UEvdhckTCRBoCD8hiUpnseLQiYXcOmUVn9icdClRrHuXROaT0e5AhZLWg79aHdfS2FE19sK0f4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=p6gks5LY; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757023398;
+	bh=jFLTdQ0cGKkgHRD4y4SQu258pzqgYDTrDQqFmjeFWTg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p6gks5LYm1fRkaP9FgEE4fMc2O5qO7+vv+jsjsAOQFofN0NNO+IySsN+IS3mseRJk
+	 ZA4Jlgv8nr4oaQaSdXvnq4ETmW4FBzcj7vJ11kO5PHIJ5fyVl3y65teurWRAJG1ETw
+	 zzOpwg6I6TXz5B/gFhTyO3b5fYqDnpN6eGEjW3iM2438REMLsyJ86z5w6+00nO/0/S
+	 ATOfw6cKkGcV60lPd8LsbZ5anWn+ATsb08C67mvRCx43Rl28JlfqXPDPAKKT0RA09r
+	 BEsGzTH5VRoWGUWxPDL4TqJtlLUUSpS8CRZ3CgYwOmTzERZMkayyZ3Xv0kqBsMRJWq
+	 b6C5yGMS8Nhsg==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id B80F06039C;
+	Thu,  4 Sep 2025 22:03:18 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 278C2202849; Thu, 04 Sep 2025 22:02:55 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC net-next 00/14] wireguard: netlink: ynl conversion
+Date: Thu,  4 Sep 2025 22:02:34 +0000
+Message-ID: <20250904-wg-ynl-rfc@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLoH_5TfiTGgQsb0@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 11:43:27AM -1000, Tejun Heo wrote:
-> Hello, Peter.
-> 
-> On Thu, Sep 04, 2025 at 10:28:58PM +0200, Peter Zijlstra wrote:
-> ...
-> >   RUNNABLE:
-> >   1) hold both source and target rq->lock.
-> ...
-> > Now, assuming you have a locking order like:
-> > 
-> >  p->pi_lock
-> >    rq->lock
-> >      dsq->lock
-> > 
-> > When you do something like:
-> > 
-> >   __schedule()
-> >     raw_spin_lock(rq->lock);
-> >     next = pick_next_task() -> pick_task_scx()
-> >       raw_spin_lock(dsq->lock);
-> > 
-> > Then you are, in effect, in the RUNNABLE 1) case above. You hold both
-> > locks. Nothing is going to move your task around while you hold that
-> > dsq->lock. That task is on the dsq, anybody else wanting to also do
-> > anything with that task, will have to first take dsq->lock.
-> >
-> > Therefore, at this point, it is perfectly fine to do:
-> > 
-> > 	set_task_cpu(cpu_of(rq)); // move task here
-> > 
-> > There is no actual concurrency. The only thing there is is
-> > set_task_cpu() complaining you're not following the rules -- but you
-> > are, it just doesn't know -- and we can fix that.
-> 
-> I can't convince myself this is safe. For example, when task_rq_lock()
-> returns, it should guarantee that the rq that the task is currently
-> associated with is locked and the task can't go anywhere. However, as
-> task_rq_lock() isn't interlocked with dsq lock, this won't hold true. I
-> think this will break multiple things subtly - e.g. the assumptions that
-> task_call_func() makes in the comment wouldn't hold anymore,
-> task_sched_runtime()'s test of task_on_rq_queued() would be racy, and so on.
-> 
-> ie. Operations protected by deq/enq pair would be fine but anything which is
-> protected only by task_rq_lock/unlock() would become racy, right?
+This series contains the wireguard changes needed to adopt
+an YNL-based generated netlink code.
 
-Yeah, let me go audit all that in the morning. Because it would save a
-lot of pain if we can make this work.
+This RFC series is posted for reference, as it is referenced
+from the current v1 series of ynl preparations, which has to
+go in before this series can be submitted for net-next.
+
+This series applies on top of this series:
+https://lore.kernel.org/netdev/20250904-wg-ynl-prep@fiberby.net/
+
+Asbjørn Sloth Tønnesen (14):
+  wireguard: netlink: use WG_KEY_LEN in policies
+  wireguard: netlink: validate nested arrays in policy
+  netlink: specs: add specification for wireguard
+  netlink: specs: wireguard: add remaining checks
+  uapi: wireguard: use __*_A_MAX in enums
+  uapi: wireguard: move enum wg_cmd
+  uapi: wireguard: move flag enums
+  uapi: wireguard: generate header with ynl-gen
+  wireguard: netlink: convert to split ops
+  wireguard: netlink: rename netlink handlers
+  wireguard: netlink: generate netlink code
+  netlink: specs: wireguard: alternative to wireguard_params.h
+  wireguard: netlink: enable strict genetlink validation
+  tools: ynl: add sample for wireguard
+
+ Documentation/netlink/specs/wireguard.yaml | 289 +++++++++++++++++++++
+ MAINTAINERS                                |   3 +
+ drivers/net/wireguard/Makefile             |   1 +
+ drivers/net/wireguard/netlink.c            |  73 ++----
+ drivers/net/wireguard/netlink_gen.c        |  77 ++++++
+ drivers/net/wireguard/netlink_gen.h        |  29 +++
+ include/uapi/linux/wireguard.h             | 202 +++-----------
+ tools/net/ynl/samples/.gitignore           |   1 +
+ tools/net/ynl/samples/wireguard.c          | 104 ++++++++
+ 9 files changed, 559 insertions(+), 220 deletions(-)
+ create mode 100644 Documentation/netlink/specs/wireguard.yaml
+ create mode 100644 drivers/net/wireguard/netlink_gen.c
+ create mode 100644 drivers/net/wireguard/netlink_gen.h
+ create mode 100644 tools/net/ynl/samples/wireguard.c
+
+-- 
+2.51.0
+
 
