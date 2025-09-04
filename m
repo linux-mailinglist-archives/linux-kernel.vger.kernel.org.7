@@ -1,109 +1,88 @@
-Return-Path: <linux-kernel+bounces-801622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9190B447C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E9B447D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD72E5A2486
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 908865A596C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1064A2882A6;
-	Thu,  4 Sep 2025 20:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A29288C2A;
+	Thu,  4 Sep 2025 20:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H3Xl6pC/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zolpVgXI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED92286433;
-	Thu,  4 Sep 2025 20:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3F5277035;
+	Thu,  4 Sep 2025 20:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757019153; cv=none; b=Rn8ciQi/KXikAD/OmQUnYKKT1Q3FFn32ic4tocf0O1seGVlG/Ces7/SF5fl4hceb4ZpabhwiVwUXwfCrgeYUbnbjKvy/wpmCuJ3xzyOBQ5rGBBIhM3oRRW7c6NBe5TD4Q5JTGufGQtTFrCeZt14xOQ+LdXn449OSqNdAKmCpeFY=
+	t=1757019354; cv=none; b=jGN2bbuJCLse7TgllNvn2OBVddLkOd5dmxCtNon1+RvfycdvQTZ473FjESPwvfqI7zxo4T1VGEZ+dHZPGk6jbyVbJi5+3Gtywgg+xb8PJwVr/Lm5Gx/w1oTnOs8W199wI/9JnNg3QdX/KjSflO71u7Ep43mFw6zpprKddXmUsXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757019153; c=relaxed/simple;
-	bh=3lUVBgg/kWwURX6v3PMIdV7uR18An5Ib4m2797p+Uf4=;
+	s=arc-20240116; t=1757019354; c=relaxed/simple;
+	bh=lOieOaxJl/HJ6EZFMGwfqQSswUxr+WjnasHapA8ngN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSjNS0J/GX9qGVf9VsVX4QA5UuREYgLGEJ878y1bbU1jmDIXoH39f62HFZLwyj8XWzXP+fW5UWvEr9FgWl7BxktVT1FuNdQZYbmSFVrB+hFqvSXATHRL8+UzFINa20zhZKuHUwS6KYdIWINbrMybOiqVJ0Ixais6PjTtNQSsFm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H3Xl6pC/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Zzsg6pYUBT0eIBQxzcjd+VfUK6eOdYXPPnSdRguLLFY=; b=H3Xl6pC/jn93I6QVoggXqeoTnx
-	iPy077+s088Q/PXPpkwQ82G28q1gHFnPhQCh0mdySjwLEiN/AlndgVLShmTGOfdrP3y42X3rDEtfX
-	cXWx78rkYJNW6CbaOAC5MFfsoWyHoxa5FdUkRF074QacKHnGDf6pCPHb4l9jJ+PeN14A7JLifnAso
-	wwXu0WUYX4RPm6B0hs7g3p34OpDfRrOKWlkXhlapMy0DfIGBEMb1+vgYarz0br7iQrIN6Dld82+7G
-	TP5twayBZO5iKO+8P2C5NlGYkOKt4As1kggJR5R5gMpyll0a3Ln9JZk9gic+hQjjN7fNpfE1b2ulM
-	SSeBjWNQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuGwE-00000004Puf-3FUv;
-	Thu, 04 Sep 2025 20:52:23 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4D77D300220; Thu, 04 Sep 2025 22:52:10 +0200 (CEST)
-Date: Thu, 4 Sep 2025 22:52:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
- uprobes/x86: Add uprobe syscall to speed up uprobe
-Message-ID: <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
-References: <20250720112133.244369-1-jolsa@kernel.org>
- <20250720112133.244369-10-jolsa@kernel.org>
- <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLlKJWRs5etuvFuK@krava>
- <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
- <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
- <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBh8m1OWrjTYd7qYsDtD07SDgAMGDaVgelbKNpa+ljRdszNAWIqlO7M1Pssa6d4vPCeJCcJ3u/PcCWj3LS4RAIWmfLiOhOElcYJmJ6ltnPr+pvQxRso+qA/kcGe1iMFLEIFTb8WAhkkv/kBFWl80fy6l52gygBZfXYAoO5VJ+5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zolpVgXI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ICwp4WEpf+oje9C4vXRf3yiDN+RkViycSqnmJpw1338=; b=zolpVgXIc9rGkw3MzPrMLI8sBs
+	bbt2dCAz58ipYDX+/TOV6lQHt/X/j8Gj3Ac06PsyUJMtXK0kkrzh1PZg5pt5iGKGVqJCeFzLB5zhR
+	z9WkSeYjlYmIBtWIJkIBn0Rj5gpVbU93qVAv40k5Of3Pnd5wazSZbHKhowTCYtfzI/rA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uuGzd-007Gtc-TD; Thu, 04 Sep 2025 22:55:41 +0200
+Date: Thu, 4 Sep 2025 22:55:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 8/9] net: pcs: rzn1-miic: Add per-SoC control
+ for MIIC register unlock/lock
+Message-ID: <fc103af7-0558-46bf-a668-d4d815ae704e@lunn.ch>
+References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250904114204.4148520-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
+In-Reply-To: <20250904114204.4148520-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Sep 04, 2025 at 01:49:49PM -0700, Andrii Nakryiko wrote:
-> On Thu, Sep 4, 2025 at 1:35 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Thu, Sep 04, 2025 at 11:27:45AM -0700, Andrii Nakryiko wrote:
-> >
-> > > > > So I've been thinking what's the simplest and most reliable way to
-> > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
-> > > > > whether we should attach at nop5 vs nop1), and clearly that would be
-> > > >
-> > > > wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,nop5
-> > > > and store some info about that in the usdt's elf note, right?
-> >
-> > Wait, what? You're doing to emit 6 bytes and two nops? Why? Surely the
-> > old kernel can INT3 on top of a NOP5?
-> >
-> 
-> Yes it can, but it's 2x slower in terms of uprobe triggering compared
-> to nop1. 
+> -static void miic_reg_writel(struct miic *miic, int offset, u32 value)
+> +static inline void miic_unlock_regs(struct miic *miic)
+> +{
 
-Why? That doesn't really make sense.
+Please don't use inline in C files. The compiler should decide.
 
-I realize its probably to late to fix the old kernel not to be stupid --
-this must be something stupid, right? But now I need to know.
+       Andrew
 
