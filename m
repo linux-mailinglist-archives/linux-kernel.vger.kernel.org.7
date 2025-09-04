@@ -1,216 +1,136 @@
-Return-Path: <linux-kernel+bounces-800939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43669B43DED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CF4B44EA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C5D7A573E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C1A1C27900
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF43305043;
-	Thu,  4 Sep 2025 14:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B842E5418;
+	Fri,  5 Sep 2025 07:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AuGUuNxS"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LanMLjyt"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EC22172D;
-	Thu,  4 Sep 2025 14:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9766F267B01
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994436; cv=none; b=KXE98Hv3+E+bDe9/XsK8JqxfL+TJmeGibNUEqdFHlG5opmhXFg3T8kODMV4zsKEkPvfuSez/Z+55+cLDZUIWj00SFWRrNZ1+CXfhTc4L3WhOTqJ5GcYMrF/4MwCNCx6PMxxCI3LqgJexQs5zzs8d9tsqEXrsElhlET/M26KLXWs=
+	t=1757055789; cv=none; b=jn8X9atTXVyQD3R3QrFuseQgK9QJSYqbzckQj48NOjhzyi6cVF3vRuvwi+PF/XvDcbOAxk6yN2s6nLBsXhBbPoYgRbHc8cuuFMVv607Uc6D358XOddgk8/jhqz1BqPdtDvCS0z058AqWlNjUCBPTJy7tRtt1dOHheZBEVZPX9fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994436; c=relaxed/simple;
-	bh=BKBOcbU8gLSyiJEZrgL6nEaRg/ajHC/VSrb++0xnuyk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=INcomYBPdgjh54z85Rr7dcVR9IzFEigy+bJmsiMsWC/cj4WBMru+7s1xXV3GCUD66uIc//VE85bVp7v49ETvjjO9Xy2ST7HQamsNmGTTgXq7OtWM4k6F/QC/TiOjL6ejl3ZPPsZ2svV+RYV2FePX/p8KedtlNHerzzG6LvTBEUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AuGUuNxS; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MW0Q1jd9adc0m6VL8nlpW0J6Gu0gI2JKZg94zm/mgTM=; b=AuGUuNxSrEK5m4O0mhW40Qvt+w
-	MKhqITk8Fdj9vLwvIzYxwnEa4QeS65rV/VUbB7Z03fCdc568UD09m0eQd1Qm1fLflmvQs7YUhAZzD
-	D/cWLPGAUuvOr6mGkpCbSyPAQB0O1yLR/lpxFZZIC73SP9k4l2rjjRAFnhxLBnjzB1GLVjxlK+SVJ
-	xHQvJaM45nTFWSd9XaN4j28W10q6kuyOmj3PoDyL5X1xHgncVdgYiN+dph0jJEin9cD/zc17DnpTW
-	9B7GyKK05pIcsgVhGajfj6JOCw7u72na+IGE89F9BJv7ds2+YYZ4dICP2on0aHkxHqWcGIGoiob73
-	LpK1scHA==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uuAVd-006oSh-Vp; Thu, 04 Sep 2025 16:00:18 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
- <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,  Matt
- Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
-  kernel-dev@igalia.com,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v5 1/2] fuse: new work queue to periodically
- invalidate expired dentries
-In-Reply-To: <CAJfpegtfeCJgzSLOYABTaZ7Hec6JDMHpQtxDzg61jAPJcRZQZA@mail.gmail.com>
-	(Miklos Szeredi's message of "Thu, 4 Sep 2025 12:20:46 +0200")
-References: <20250828162951.60437-1-luis@igalia.com>
-	<20250828162951.60437-2-luis@igalia.com>
-	<CAJfpegtfeCJgzSLOYABTaZ7Hec6JDMHpQtxDzg61jAPJcRZQZA@mail.gmail.com>
-Date: Thu, 04 Sep 2025 15:00:12 +0100
-Message-ID: <87y0qul3mb.fsf@wotan.olymp>
+	s=arc-20240116; t=1757055789; c=relaxed/simple;
+	bh=M0kgVMJ5M8ah0syzCnzrBsACqouPGlm+i84IeJsH2nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=s8XUA/89c3E9HXyn6l+D6/2jFjMeZ8Nh2NQlCxH1yklf7bwGtVzGF/hXzdBq/DDYpO+jR1mZI3aiEo2niD8iDFhAeFMtcXBJ5UNqenXTEnfnlIUt4v9jB+M3WGJ38ADgNiiYW4XHc/N1AN+izn2KSqFHQOAneCFbVadlgXDkHp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LanMLjyt; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905070303epoutp03336874fe5ae4ad29e11f476b0a59aef3~iUOz42rA52973129731epoutp03L
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905070303epoutp03336874fe5ae4ad29e11f476b0a59aef3~iUOz42rA52973129731epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757055783;
+	bh=OAAOXwu6dxhlhz8ZeLKplpuPuUMZ/fENswb8u8XzY4I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LanMLjyt7o+oqdO1YVm5iowAelwUR7ZEg4s5w/ENmE+JzJw1FO1z8YOM99c4FxoZw
+	 sbF98vqYRC2QvK9yLq9B+4Ux3Z+7ztB6CSDAIkq3tPhIMLzOeCVF+PBQsSOWx8gkgm
+	 vhrelRdRJQIWQ9OLlPNh/+xWU58Hv89MAjRurqlU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250905070302epcas5p3cd95bb191c8188ebc06bfbcda0f61cc9~iUOzd2o0F1224012240epcas5p3F;
+	Fri,  5 Sep 2025 07:03:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cJ6kG66FGz2SSKd; Fri,  5 Sep
+	2025 07:03:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250904140124epcas5p35f8c2e657d953b841f10dab10c8c8b30~iGSzTRCj62082920829epcas5p3P;
+	Thu,  4 Sep 2025 14:01:24 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904140123epsmtip1b8caab67b020ff0c5c6315fb4a4fa10f~iGSyEvKf22159221592epsmtip1N;
+	Thu,  4 Sep 2025 14:01:23 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:31:18 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 04/20] nvdimm/label: CXL labels skip the need for
+ 'interleave-set cookie'
+Message-ID: <1296674576.21757055782845.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a05bbfe7-dec6-4858-8f9f-9f80deda48ae@intel.com>
+X-CMS-MailID: 20250904140124epcas5p35f8c2e657d953b841f10dab10c8c8b30
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----6Bw0j5KOoRaxZeQKOp2dAcC2OKT3No9WZFWhMG37wfGsvvbi=_ea9e8_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e@epcas5p4.samsung.com>
+	<20250730121209.303202-5-s.neeraj@samsung.com>
+	<a05bbfe7-dec6-4858-8f9f-9f80deda48ae@intel.com>
 
-Hi Miklos,
+------6Bw0j5KOoRaxZeQKOp2dAcC2OKT3No9WZFWhMG37wfGsvvbi=_ea9e8_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-On Thu, Sep 04 2025, Miklos Szeredi wrote:
-
-> On Thu, 28 Aug 2025 at 18:30, Luis Henriques <luis@igalia.com> wrote:
+On 15/08/25 02:02PM, Dave Jiang wrote:
 >
->> +#define HASH_BITS      12
 >
-> Definitely too large.  My gut feeling gives 5, but it obviously
-> depends on a lot of factors.
-
-Right, to be honest I didn't spent a lot of time thinking about the
-correct value for this constant.  But sure, 5 seems to be much more
-reasonable.
-
->> +               schedule_delayed_work(&dentry_tree_work,
->> +                                     secs_to_jiffies(num));
->
-> secs_to_jiffues() doesn't check overflow.  Perhaps simplest fix would
-> be to constrain parameter to unsigned short.
-
-Sounds good, thanks.
-
->> +MODULE_PARM_DESC(inval_wq,
->> +                "Dentries invalidation work queue period in secs (>=3D =
-5).");
->
-> __stringify(FUSE_DENTRY_INVAL_FREQ_MIN)
->
->> +       if (!inval_wq && RB_EMPTY_NODE(&fd->node))
->> +               return;
->
-> inval_wq can change to zero, which shouldn't prevent removing from the rb=
-tree.
-
-Maybe I didn't understood your comment, but isn't that what's happening
-here?  If the 'fd' is in a tree, it will be removed, independently of the
-'inval_wq' value.
-
->> +static void fuse_dentry_tree_work(struct work_struct *work)
->> +{
->> +       struct fuse_dentry *fd;
->> +       struct rb_node *node;
->> +       int i;
->> +
->> +       for (i =3D 0; i < HASH_SIZE; i++) {
->> +               spin_lock(&dentry_hash[i].lock);
->> +               node =3D rb_first(&dentry_hash[i].tree);
->> +               while (node && !need_resched()) {
->
-> Wrong place.
->
->> +                       fd =3D rb_entry(node, struct fuse_dentry, node);
->> +                       if (time_after64(get_jiffies_64(), fd->time)) {
->> +                               rb_erase(&fd->node, &dentry_hash[i].tree=
-);
->> +                               RB_CLEAR_NODE(&fd->node);
->> +                               spin_unlock(&dentry_hash[i].lock);
->
-> cond_resched() here instead.
-
-/me slaps himself.
-
->> +                               d_invalidate(fd->dentry);
->
-> Okay, so I understand the reasoning: the validity timeout for the
-> dentry expired, hence it's invalid.  The problem is, this is not quite
-> right.  The validity timeout says "this dentry is assumed valid for
-> this period", it doesn't say the dentry is invalid after the timeout.
->
-> Doing d_invalidate() means we "know the dentry is invalid", which will
-> get it off the hash tables, giving it a "(deleted)" tag in proc
-> strings, etc.  This would be wrong.
-
-Understood.  Thanks a lot for taking the time to explain it.  This makes
-it clear that using d_invalidate() here is incorrect, of course.
-
-> What we want here is just get rid of *unused* dentries, which don't
-> have any reference.  Referenced ones will get revalidated with
-> ->d_revalidate() and if one turns out to be actually invalid, it will
-> then be invalidated with d_invalidate(), otherwise the timeout will
-> just be reset.
->
-> There doesn't seem to be a function that does this, so new
-> infrastructure will need to be added to fs/dcache.c.  Exporting
-> shrink_dentry_list() and to_shrink_list() would suffice, but I wonder
-> if the helpers should be a little higher level.
-
-OK, I see how the to_shrink_list() and shrink_dentry_list() pair could
-easily be used here.  This would even remove the need to do the
-unlock/lock in the loop.
-
-(By the way, I considered using mutexes here instead.  Do you have any
-thoughts on this?)
-
-What I don't understand in your comment is where you suggest these helpers
-could be in a higher level.  Could you elaborate on what exactly you have
-in mind?
-
->> +void fuse_dentry_tree_cleanup(void)
->> +{
->> +       struct rb_node *n;
->> +       int i;
->> +
->> +       inval_wq =3D 0;
->> +       cancel_delayed_work_sync(&dentry_tree_work);
->> +
->> +       for (i =3D 0; i < HASH_SIZE; i++) {
->
-> If we have anything in there at module remove, then something is
-> horribly broken.  A WARN_ON definitely suffices here.
->
->> --- a/fs/fuse/fuse_i.h
->> +++ b/fs/fuse/fuse_i.h
->> @@ -54,6 +54,12 @@
->>  /** Frequency (in jiffies) of request timeout checks, if opted into */
->>  extern const unsigned long fuse_timeout_timer_freq;
+>On 7/30/25 5:11 AM, Neeraj Kumar wrote:
+>> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
+>> set configuration instead of interleave-set cookie used in previous LSA
+>> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
+>> so skip its usage for CXL LSA 2.1 format
 >>
->> +/*
->> + * Dentries invalidation workqueue period, in seconds.  It shall be >=
-=3D 5
->
-> If we have a definition of this constant, please refer to that
-> definition here too.
->
->> @@ -2045,6 +2045,10 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/namespace_devs.c | 3 ++-
+>>  drivers/nvdimm/region_devs.c    | 5 +++++
+>>  2 files changed, 7 insertions(+), 1 deletion(-)
 >>
->>         fuse_abort_conn(fc);
->>         fuse_wait_aborted(fc);
->> +       /*
->> +        * XXX prune dentries:
->> +        * fuse_dentry_tree_prune(fc);
->> +        */
+>> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+>> index bdf1ed6f23d8..5b73119dc8fd 100644
+>> --- a/drivers/nvdimm/namespace_devs.c
+>> +++ b/drivers/nvdimm/namespace_devs.c
+>> @@ -1692,7 +1692,8 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
+>>  	int rc = 0;
+>>  	u16 i;
+>>
+>> -	if (cookie == 0) {
+>> +	/* CXL labels skip the need for 'interleave-set cookie' */
 >
-> No need.
+>This comment doesn't make sense to me. If it's a CXL label, we continue to execute. There's no skipping. Or are you trying to say if it's CXL label, then checking of cookie value is unnecessary? But the cookie value still is being used later on. Maybe a bit more comments on what's going on here would be helpful.
+>
+>DJ
 
-Yeah, I wasn't totally sure this would really be required here.
+Yes Dave, For CXL label cookie value is not required. Its being used for
+non CXL labels only. Sure, I will elaborate the comments in next patch-set.
 
-And again, thanks a lot for your review, Miklos!
 
-Cheers,
---=20
-Lu=C3=ADs
+Regards,
+Neeraj
+
+------6Bw0j5KOoRaxZeQKOp2dAcC2OKT3No9WZFWhMG37wfGsvvbi=_ea9e8_
+Content-Type: text/plain; charset="utf-8"
+
+
+------6Bw0j5KOoRaxZeQKOp2dAcC2OKT3No9WZFWhMG37wfGsvvbi=_ea9e8_--
+
 
