@@ -1,104 +1,149 @@
-Return-Path: <linux-kernel+bounces-799765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5C0B43001
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:49:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61804B42FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 949F2174EC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0174878CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8331E0083;
-	Thu,  4 Sep 2025 02:49:04 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381CF1FDE09;
+	Thu,  4 Sep 2025 02:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqmfuwO0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B773C01;
-	Thu,  4 Sep 2025 02:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723B21F8ADD;
+	Thu,  4 Sep 2025 02:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756954144; cv=none; b=S0UDu0+2p5+tVlsLwUsp18cti1UOMLEx6Q9aBrdpjJKwH6BztbWQA+c6/CPf8gn9IiJhndSL/5SUrpCikcdhD/Smec6jyEtIZjrPfiBcRwd+PIQGbRO6Cl2e4cq+jFZe140c+uezCsULNWGBK94K4oFsiHUkOkk3mZApDR16LD4=
+	t=1756953797; cv=none; b=Hnn3bJq1dd8G8Mw+ZJEYyHJfb/DFGdcjCKxSNYa+LKlf6gsTdNGXtl2CnFtpMb42wwV/+LY4SHhWbeL3pKK/yVJcP5AWV110T7lLcgOV62Lc0oDCmLj5sjsPA0jwL7TsY0DQTIzlsIFnyjs+dH+sP1FGYjB4GQx4BV9AhZ7vq+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756954144; c=relaxed/simple;
-	bh=e3bnh0cUUPgQ+9p447dFnwUN08OvIQ4v1sgxWtPlerA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HdHz5ebiigluJMmI9oBK57Nj7HQpecABSLHtrRJC8Do2E7zY/2RXjzJrY3VO9prV5KTMuROpMTiUaMWM+jwKhjTXhYZCc9bX4u2Ca8xl/RW4/iHZizIZbdASZBcDkH7xnwNA6FCLNAIJqqI+tcZ48eDuW1rOshhJ448Qjh1lUP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cHP7Z6Fs1zKHMbK;
-	Thu,  4 Sep 2025 10:48:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C4DAF1A0E81;
-	Thu,  4 Sep 2025 10:48:58 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY0Y_rho0tRIBQ--.8034S4;
-	Thu, 04 Sep 2025 10:48:58 +0800 (CST)
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	npitre@baylibre.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	yangerkun@huawei.com,
-	wozizhi@huaweicloud.com
-Subject: [PATCH -next] tty/vt: Add missing return value for VT_RESIZE in vt_ioctl()
-Date: Thu,  4 Sep 2025 10:39:55 +0800
-Message-Id: <20250904023955.3892120-1-wozizhi@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1756953797; c=relaxed/simple;
+	bh=UIH7ADUUQjVWgw2DD5w8NGuzPpDVd4VV6TWvbS74P2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kArYOxC431EZCYXLTxfFs3Li3YXAeZIsRIZJGwwHjSe06YuWsItehTqO9cDvqrncApax1I2flEAZ8tY8LOWrMD4MDgbjXNRR4F2qMFBqQnwrtXSogHMRugi5GpLRBxXl8S/ml9zElOZucS6ZMHwg9hOqr3bzQGZ1qfjFm8+eF4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqmfuwO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B7AC4CEE7;
+	Thu,  4 Sep 2025 02:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756953797;
+	bh=UIH7ADUUQjVWgw2DD5w8NGuzPpDVd4VV6TWvbS74P2c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TqmfuwO07Nelf4xjhnWrMpQ2PEzf5mEuLZs+QOvwBhfbKX/q7MBBdl7IkPtTfbkZ6
+	 Uiiy787F3ckcVY1iezpNznJojVOk8r/kGHEu7Z2hl/sb9By2/v2Ykl5l3RcCbDjF3G
+	 Z7x9zd5VVi8WJ/hXHC9Cnj73HvaGwGh+kI1OKsqx8XYdiCN6AuPHQ2E36Bkc2G7BPr
+	 Be85zhNh2Ta3NDYttIN6BPU+A4rLjHSGq4L2gCdKl7c+NEkRTvfoe+AcOJlMov7hVb
+	 +KQPNhV+M1HRwCFxiElqglUd0oaylEFwW5W/3UdXngV5gCJUirfFxxu3uu8cduL8BO
+	 KpaN359HULjRA==
+Message-ID: <b3d5773d-c573-4491-b799-90405a8af6a9@kernel.org>
+Date: Thu, 4 Sep 2025 11:40:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for
+ fixed BARs
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org
+Cc: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Wang Jiang <jiangwang@kylinos.cn>, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncY0Y_rho0tRIBQ--.8034S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7XrW7tr1fCFy3WryDKFyUJrb_yoW3AFb_G3
-	4xXw1xtw1kAa1Yqw10vr429rZIvw4v9Fn7Xr42qasxJ3y7Xw1xCr92vFyfJr1rJr48tFyk
-	CFZ3Jr9Ikr47KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb48FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
-	U==
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-In vt_ioctl(), the handler for VT_RESIZE always returns 0, which prevents
-users from detecting errors. Add the missing return value so that errors
-can be properly reported to users like vt_resizex().
+On 9/4/25 11:37 AM, Marek Vasut wrote:
+> Currently, the test allocates BAR sizes according to fixed table
+> bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 } . This
+> does not work with controllers which have fixed size BARs, like
+> Renesas R-Car V4H PCIe controller, which has BAR4 size limited
+> to 256 Bytes, which is much less than 131072 currently requested
+> by this test.
+> 
+> Adjust the test such, that in case a fixed size BAR is detected
+> on a controller, minimum of requested size and fixed size BAR
+> size is used during the test instead.
+> 
+> This helps with test failures reported as follows:
+> "
+> pci_epf_test pci_epf_test.0: requested BAR size is larger than fixed size
+> pci_epf_test pci_epf_test.0: Failed to allocate space for BAR4
+> "
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Frank Li <Frank.Li@nxp.com>
+> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Cc: Wang Jiang <jiangwang@kylinos.cn>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index e091193bd8a8a..d9c950d4c9a9e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -1022,7 +1022,8 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+>  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
+>  	enum pci_barno bar;
+>  	const struct pci_epc_features *epc_features = epf_test->epc_features;
+> -	size_t test_reg_size;
+> +	size_t test_reg_size, test_bar_size;
+> +	u64 bar_fixed_size;
+>  
+>  	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
+>  
+> @@ -1050,7 +1051,13 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+>  		if (bar == test_reg_bar)
+>  			continue;
+>  
+> -		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
+> +		test_bar_size = bar_size[bar];
+> +
+> +		bar_fixed_size = epc_features->bar[bar].fixed_size;
+> +		if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size)
+> +			test_bar_size = min(bar_size[bar], bar_fixed_size);
 
-Signed-off-by: Zizhi Wo <wozizhi@huaweicloud.com>
----
- drivers/tty/vt/vt_ioctl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I think this can be simplified to:
 
-diff --git a/drivers/tty/vt/vt_ioctl.c b/drivers/tty/vt/vt_ioctl.c
-index c9f11c4bd9fe..28993a3d0acb 100644
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -908,7 +908,9 @@ int vt_ioctl(struct tty_struct *tty,
- 
- 			if (vc) {
- 				/* FIXME: review v tty lock */
--				__vc_resize(vc_cons[i].d, cc, ll, true);
-+				ret = __vc_resize(vc_cons[i].d, cc, ll, true);
-+				if (ret)
-+					return ret;
- 			}
- 		}
- 		break;
+		if (epc_features->bar[bar].type == BAR_FIXED)
+			test_bar_size = epc_features->bar[bar].fixed_size;
+		else
+			test_bar_size = bar_size[bar];
+
+because if the bar type is BAR_FIXED, then the size of the bar can only be its
+fixed size.
+
+> +
+> +		base = pci_epf_alloc_space(epf, test_bar_size, bar,
+>  					   epc_features, PRIMARY_INTERFACE);
+>  		if (!base)
+>  			dev_err(dev, "Failed to allocate space for BAR%d\n",
+
+
 -- 
-2.39.2
-
+Damien Le Moal
+Western Digital Research
 
