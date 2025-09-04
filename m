@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-800281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3CDB435C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC01B435C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66675E1DB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182F65A1127
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F492C158A;
-	Thu,  4 Sep 2025 08:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65F2C028F;
+	Thu,  4 Sep 2025 08:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mpO702DB"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FBQibgZv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6207A2BE65B;
-	Thu,  4 Sep 2025 08:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F832F775;
+	Thu,  4 Sep 2025 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974567; cv=none; b=Cd/BGjXBFgPx8iBv+j6lKD1pOUVWDqW38omsd/uC7rdzILLGVAvqqw7Phj/p9z1PvfWrXXnryMWyIHCEuQCkKR6XCv0TYSQH9HMd83YUKVNgFYqb2xf69PjQbO0dl3x2Kzj8LBS/5PJ9JbPvPowFehSqskjxiLYm1F6wpbhvi4o=
+	t=1756974653; cv=none; b=t/drxuFhl6C/RNtfcgZKzDjjwM1cmVTOESx9YCzDilB9O7Byzcvz4IoXTa9laJL/i9yRfUITyNxXgB+tYMqwQz+mP4cSImAL7itxNccXFqCmlWvuW70TnRDW4TbdrTosynCpcBPqAmh9o8FCnMrvBsBlFktu8PQL9N7cwyzVmpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974567; c=relaxed/simple;
-	bh=DsH+z8ZqcfRIqx8ipGPbLvscXJDw/h8yLf5Us8UAL2o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eYeoDBtHs8jOPuj0tLNnB2acFvONFqTR25Al1UQ4T77AYL4zr7NB0R5ocduBg5ihM1s9gqbnCYIad4UfF5gGbKPXJ1NhVHYJeHUnVLrdiwXNwKsDv7VG4CskvNxHTtBjEdmfNuGhpOJZyQDfOrz0H0w39xD4HLZ3xTQksereNNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mpO702DB; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5848TKKm3034493;
-	Thu, 4 Sep 2025 03:29:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756974560;
-	bh=PF+871OBmr63RAEPuWLxRZTj4+NEuwut1XCKOb5POuY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=mpO702DBP25ljkQ+SVuEah13rOMzvpKRuH+2kPRFz61umuLhJwpQ9LPDtQIMuwtDK
-	 mDr3kUAlo8lFZVNq5Bpn6vE1UOb6Q79fuewv+sdilWEy499LSERMF5uB2JiWWQJ31E
-	 PDw5+OsC50+kt5DSSNCERydSZG60DykGqP5gQ3NY=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5848TKJu734742
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 03:29:20 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 03:29:20 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 03:29:20 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5848TJWF2972113;
-	Thu, 4 Sep 2025 03:29:19 -0500
-Date: Thu, 4 Sep 2025 13:59:18 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Akashdeep Kaur <a-kaur@ti.com>
-CC: <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vishalm@ti.com>, <sebin.francis@ti.com>
-Subject: Re: [PATCH v3 1/3] arm64: dts: ti: k3-am62p5-sk: Remove the unused
- cfg in USB1_DRVVBUS
-Message-ID: <20250904082918.3jn2mcvnpwhbly4b@lcpd911>
-References: <20250902071917.1616729-1-a-kaur@ti.com>
- <20250902071917.1616729-2-a-kaur@ti.com>
+	s=arc-20240116; t=1756974653; c=relaxed/simple;
+	bh=MsF1HR3chZW/DsuL6znagb7Yadd+L8PV3E//3Vse2Aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aO8rV6ZD3cCcpXe8XVnpsyx3DXc5A2sHHQoLKv9tSec4+Rflwza3Voa7octRGgSFsGBSliTiQ9dxxV2t0R5ZpC47h+TAAUu22tyrL7tYwO4NAPYvu51LsbXAdPiJNwFHV0WFGxneHKBXqReQrZOMI+PC6mAgYq3L6Sf4oMesoQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FBQibgZv; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756974652; x=1788510652;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MsF1HR3chZW/DsuL6znagb7Yadd+L8PV3E//3Vse2Aw=;
+  b=FBQibgZvRQg7AswJLwi3zHy+H+OQ7/S6rbZgavJburtLWhSSIIYIuSjr
+   /80+mEhhniddRaC+Q9klOCgAgoTxasHPNR0XJpzDNZpuWPQ2v2SWB1/11
+   Ub+vq6znqb45TGzAF07Hpu5wF7eZSw+XWWrQ3iKbeyU+hf0nuuIrgwJem
+   bkwNVajBS5AW9SAhlGzUkFTou77ZILSvYui9EI9WAo2E5G8YygEFH2x1s
+   LAx+u2xxSEsGGctLiAHBwblaoJpo63wTPOgLV6scuAA5RN3Za+/8GwFrb
+   O8GFqMN7vGlBxqDx2A3gjIiKC9xsE5AExQcKzKTwbxDPVf06BEO7yOKeB
+   g==;
+X-CSE-ConnectionGUID: LeV1r7zkRb6hJx1zKA4bPg==
+X-CSE-MsgGUID: 1Iy4a2YbTcOnyWhslgbOiA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="76908978"
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="76908978"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:30:52 -0700
+X-CSE-ConnectionGUID: HYfq4vrQQwikTfgDBeAQxw==
+X-CSE-MsgGUID: d267pWpoSLaa865mT0NTUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,237,1751266800"; 
+   d="scan'208";a="171410140"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 01:30:46 -0700
+Message-ID: <6fc69050-bd96-401f-8226-947b94a1f027@linux.intel.com>
+Date: Thu, 4 Sep 2025 16:30:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250902071917.1616729-2-a-kaur@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 19/23] KVM: TDX: Pass down pfn to
+ split_external_spt()
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
+ dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
+ ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
+ david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
+ thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
+ fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094537.4732-1-yan.y.zhao@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807094537.4732-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sep 02, 2025 at 12:49:15 +0530, Akashdeep Kaur wrote:
-> After the SoC has entered the DeepSleep low power mode, USB1 can be used
-> to wakeup the SoC based on USB events triggered by USB devices. This
-> requires that the pin corresponding to the Type-A connector remains pulled
-> up even after the SoC has entered the DeepSleep low power mode.
-> For that, either DeepSleep pullup configuration can be selected or the pin
-> can have the same configuration that it had when SoC was in active mode.
-> But, in order for DeepSleep configuration to take effect, the DeepSleep
-> control bit has to be enabled.
-> Remove the unnecessary DeepSleep state configuration from USB1_DRVBUS pin,
-> as the DeepSleep control bit is not set and the active configuration is
-> sufficient to keep the pin pulled up. This simplifies the setup and removes
-> redundant configuration.
-> 
-> This reverts commit 115290c112952db27009668aa7ae2f29920704f0.
-> 
-> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+
+
+On 8/7/2025 5:45 PM, Yan Zhao wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Pass down pfn to kvm_x86_ops::split_external_spt(). It is required for
+> handling Dynamic PAMT in tdx_sept_split_private_spt().
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
 > ---
->  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> index 899da7896563..e8f0ac2c55e2 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-> @@ -360,7 +360,7 @@ AM62PX_IOPAD(0x01b0, PIN_OUTPUT, 2) /* (G20) MCASP0_ACLKR.UART1_TXD */
->  
->  	main_usb1_pins_default: main-usb1-default-pins {
->  		pinctrl-single,pins = <
-> -			AM62PX_IOPAD(0x0258, PIN_INPUT | PIN_DS_PULLUD_ENABLE | PIN_DS_PULL_UP, 0) /* (G21) USB1_DRVVBUS */
-> +			AM62PX_IOPAD(0x0258, PIN_INPUT, 0) /* (G21) USB1_DRVVBUS */
+> RFC v2:
+> - Pulled from
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git tdx/dpamt-huge.
+> - Rebased on top of TDX huge page RFC v2 (Yan)
+> ---
+>   arch/x86/include/asm/kvm_host.h | 3 ++-
+>   arch/x86/kvm/mmu/tdp_mmu.c      | 6 +++++-
+>   arch/x86/kvm/vmx/tdx.c          | 3 ++-
+>   3 files changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 6cb5b422dd1d..6b6c46c27390 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1841,7 +1841,8 @@ struct kvm_x86_ops {
+>   
+>   	/* Split the external page table into smaller page tables */
+>   	int (*split_external_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> -				  void *external_spt, bool mmu_lock_shared);
+> +				  kvm_pfn_t pfn_for_gfn, void *external_spt,
+> +				  bool mmu_lock_shared);
+>   
+>   	bool (*has_wbinvd_exit)(void);
+>   
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 62a09a9655c3..eb758aaa4374 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -389,11 +389,15 @@ static int split_external_spt(struct kvm *kvm, gfn_t gfn, u64 old_spte,
+>   			      u64 new_spte, int level, bool shared)
+>   {
+>   	void *external_spt = get_external_spt(gfn, new_spte, level);
+> +	kvm_pfn_t pfn_for_gfn = spte_to_pfn(old_spte);
+>   	int ret;
+>   
+>   	KVM_BUG_ON(!external_spt, kvm);
+>   
+> -	ret = kvm_x86_call(split_external_spt)(kvm, gfn, level, external_spt, shared);
+> +	ret = kvm_x86_call(split_external_spt)(kvm, gfn, level,
+> +					       pfn_for_gfn, external_spt,
+> +					       shared);
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+It can save one line by moving "pfn_for_gfn" up.
 
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+> +
+>   	return ret;
+>   }
+>   /**
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 71115058e5e6..24aa9aaad6d8 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1941,7 +1941,8 @@ static int tdx_spte_demote_private_spte(struct kvm *kvm, gfn_t gfn,
+>   }
+>   
+>   static int tdx_sept_split_private_spt(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> -				      void *private_spt, bool mmu_lock_shared)
+> +				      kvm_pfn_t pfn_for_gfn, void *private_spt,
+> +				      bool mmu_lock_shared)
+>   {
+>   	struct page *page = virt_to_page(private_spt);
+>   	int ret;
+
 
