@@ -1,142 +1,143 @@
-Return-Path: <linux-kernel+bounces-799932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450B1B43161
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:51:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72868B43163
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5765E19ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9286816C4AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EE427FB1F;
-	Thu,  4 Sep 2025 04:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E4244685;
+	Thu,  4 Sep 2025 04:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+DOnwEq"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vc0qXbbq"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7521527E076
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEEE226CFF
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 04:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756961262; cv=none; b=b+KdkUEV2R2kwaUXWna1fqU85MehdcRKVQjZNoHOW9bpokMERWalynXvTIC21bMOVOsOyAESdLR0q+pXcSYMSvgBBtpqC2ebB1SXklShyEd5JOwH1Q/hOyxzWxmwF1ci38TTokDpDXPbqxSEPyB77irExBgm/YxI4/MnBVTpSXs=
+	t=1756961298; cv=none; b=YaFx2PCRVNUhe5n9G5SlnfadEdYziMAptpllHXQ1ZQK2x1jROOhEWlWNN9Ck0obuzxn1SRRrEWRmgnb8TMFfAWlreOk5moUTtwqFs3zlr9BhvHvOOhnzPhS3RxfJtK2nw+h65/GozW4fV28et2koD8Yj86Yl5HGtqVYo4J1fRfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756961262; c=relaxed/simple;
-	bh=RistnuAgHd4NCL4l0yE6lEPBFwvSNadT93kj/NUVg6M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=TgvKDO76E1OGhgbELCA7Bxz0TbsSVaV1fnsxpTwsssjfF8SaFvQwc6J67D/AaHQzsYFV0iAHMPba8tWlVLenNhHm6FEc0DtUw9OcB7GNkD2mg+71Gspt7WukYfWxBC55fhO5ANInOgwiK0jvep7juA/XW1jF6wVdnrU5LnZXHTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p+DOnwEq; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24cc4458e89so7475215ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:47:40 -0700 (PDT)
+	s=arc-20240116; t=1756961298; c=relaxed/simple;
+	bh=5gGSzTrvBBYF22J+UUhj6V0Z7NBjpjQbuN932TPUw/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QysS133bDzGq0gk12HelFSu3HjutdNbxjfNT03jyAfsHGqnQXTH9Ot+aWYUYgFjuUbHGaWbbnP83qiCSenxo9k8zl4CDKNDA6RSGSTN5DEYCOXdl3yaSWLqh2LjSDc/9CFqpx0hYIvLPLexL1K1mSaeX1eKcnZfrdfTPTWUh6Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vc0qXbbq; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77287fb79d3so604233b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 21:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756961260; x=1757566060; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VgqEItY9A2DTGkflolDC2RygmVecc1iPe1xmOKI5+pQ=;
-        b=p+DOnwEqjd3OMbeS4uKh98kWBw3mEHnKD5ZV/irmAvW2uLtDkahIHubQEU0zKIwx8J
-         PuWw5P6dfpyz7goXYgN9A8KbuwHEWAT2H8i/cZDQm8MZR+9nNM+HPcTKElkVEU9Unrck
-         IQ7F89IiC77r8HFhs58liJ9LUUQRe3LEpu6BEY1ulhfsSsKCO5ZoPBuhvLT3cOQXXmm+
-         JUQNdy30pDZ3h8MsBlZrVYkhQmIRnHZDmj13DPtCPunJRCHx7tKGeQGxXCtnUkJC/3YU
-         m5Nsiy7+Xalyzi8MzwI5h6IF7g1+Jt9/Apmpa3+wqigeH0qh37sBU4UZS5z3yazy8j9c
-         aZbg==
+        d=linaro.org; s=google; t=1756961296; x=1757566096; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=F0p1lwqdDVIJVajGYr/mU8WzHwecynjQcLCSTh1yP2k=;
+        b=Vc0qXbbqg4iG4etZL+d2nLUyI/JMQTR2wHfnmHPMYK1Yu07ywvR2LUjgyNJ2yVQhVH
+         YYKpymhfzY/1WiW3iWlbOBkM3I1kQLCwuikqyubfHfb98AoLnTwwD4N1d4qz3QhuxJcT
+         RuaJfp8dvymvCHI6ikMZjC7yZLcNPp6lRJUky6XnDt+M7AgUaRweoohjMqboLU8YTbDD
+         u+C3bMvo7fZqSLjJH+IPrETS3Gd5++Optu7ni1zUjU5VYvvectwlHqk9iFSJ/KLxt5u3
+         ixZx/KxkcyePdPYOQvOlJZ9ikQWI6pO/dDW+Jaf9Kqmt4+WLdMzcG9xnQVeFBSHLwV3n
+         cDhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756961260; x=1757566060;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1756961296; x=1757566096;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgqEItY9A2DTGkflolDC2RygmVecc1iPe1xmOKI5+pQ=;
-        b=FXTxw7i7PGV/eQ/JasweELQzRatI9Xf9SFLgQsNCw8rEOm2nMcKtmciJbxvXin+C5J
-         +7q1tS274nx4xs60p+4DCP7NhHDVxx08/t2qs80IYBdyNTrjQFRYQp6l/mZeSGenWKRD
-         r7e+XL7p8zXgO5RO36Mi9RBamjfOluOtVVW3vjmWqO8DsGQwh0WFij3RbM2b4pDPGlNs
-         tf4ibfmWLuv/q+cPUQwkDNTj+u4/s92Sql5zDBFylcc2CA5crTs9NvfHJjEimbUKOZ72
-         6Xp8Qnn3fyfSgfgI54XARO+6au28y1oXFpns1xU/1ku2p0JWCx/DnTjwO4VC7r8skIBB
-         hXsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5rSd+4t9LXV4oYPutQdpFNGoZ5WWlbWo4R/EcI9y4XdBn/GPoegij333DtOpksSfLwtRIyVo8zLy5iRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXcIyR5ORZ9igBcPc3XxdDUha86dkRG/EetmTrLQM0/BK/8ceC
-	SK6MAdLfODh86tZ4BSnUBYA36PvVqMsrP9sZFzOd5VGHw2HqQSa711jJC82cY6jVwb38R2VP6RI
-	kIeUc1Iy5/A==
-X-Google-Smtp-Source: AGHT+IF0wYPqg7zlSl1qx2A5P6s9Rtb4ovc11SlDLv1+Ceku358dlTNxKQe5YNKmsHdiFgykM9R6GbvmqjAn
-X-Received: from plbkz7.prod.google.com ([2002:a17:902:f9c7:b0:248:7327:44b8])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f0d:b0:249:f16:f080
- with SMTP id d9443c01a7336-24944afb3ccmr226252725ad.52.1756961259744; Wed, 03
- Sep 2025 21:47:39 -0700 (PDT)
-Date: Wed,  3 Sep 2025 21:46:53 -0700
-In-Reply-To: <20250904044653.1002362-1-irogers@google.com>
+        bh=F0p1lwqdDVIJVajGYr/mU8WzHwecynjQcLCSTh1yP2k=;
+        b=VB0SXRV8kGWzQ72NnWUm6RgA69c5dnMGXNNolcG2mvccTR6Yq8ROEt+V78fw3Pg1Sx
+         ZI2tdxKWyQ2A+Kwrfo8siBC1htMLI0Xf8UNE/Sf2+56NNIne+/BY6xiun+SQN4MR0DvR
+         x/mYeql9JeO8M3TLRs21dwN5Er48OBGrI2WDdkLyRbahmHVGEE91t6aVQagrLCFHaUs0
+         fiNk/hqkje6alF3wHq7Q1bpi22NGOKy8ZGuEPJEmnx1ut3pfA1y+1RzDWItCKEuV2+ml
+         SOAvc8wqshGcfYPhS1r96YctMHEe02mzHKAxSOpBQzFurqUYpzXYMlXk7B5w0Q9jmjUE
+         y5sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXf5VmyNcxhAuM87ukC7z2P1RQlizSb3MjuSogbn+fARLtpqxbDBeuYu8VAnoFt+Zks1bopN6aMo8SuUuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzftraJk7Zkc+R7N5JDg+4V6FjP2ZhhoYasGnD7375nxwgqHpV+
+	9As3yCSLmsYfTP/6RV7Y6b7bKQCwmCuAkiRllBEbVKm3lxckhsv/FvkOQnyyXXMMMyo=
+X-Gm-Gg: ASbGncsm0oN9wsyfIxASUd5HdhwAiEXFbxyfK+kfx19/Bp3l2CedTIjHX8gMe2B500n
+	TneRDAt1PMRL/1kUlFxO/7QuB8CdL/1ycjin0U+ny8I3otRCta//uIGXgkCqejT6iT4artk9h5Y
+	dQ99mnF8wumXc5oHuwIwzNNdqLPTzDk5vlXjA9DcYK6xN6LbnEadrQQRNUIHfbLPRFlQF4uYXYK
+	H0yqCWNlhNAPDn+IXhHVZxNuxRA2KwOV7zElD/B7vPTsJ4apSLAhfBZOi5yPZkVHYvIdA1IfXLO
+	go7okjDkanWTTGZdeYx8gzP4J8J0NHKzAixh6ZPLKcRXMBh4HL20AvTdD4NhBihImk0ORgaDKDP
+	WfYw0no/2XKeZ1H5EqUFRfbacZLI/07A/8uE=
+X-Google-Smtp-Source: AGHT+IFBkCuheM4gA9HcZq48WmM/cf+Qe1YyWVvICeZp8J+0dhqzifPOHeuJCWtafRAvrmuY9BL5ow==
+X-Received: by 2002:a05:6a21:33a9:b0:247:76e4:d8e0 with SMTP id adf61e73a8af0-24776e4d9dfmr6750375637.31.1756961295905;
+        Wed, 03 Sep 2025 21:48:15 -0700 (PDT)
+Received: from localhost ([122.172.87.183])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd48cesm24273848a91.19.2025.09.03.21.48.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 21:48:15 -0700 (PDT)
+Date: Thu, 4 Sep 2025 10:18:12 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even
+ without frequency table
+Message-ID: <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
+References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
+ <20250904032210.92978-3-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904044653.1002362-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904044653.1002362-23-irogers@google.com>
-Subject: [PATCH v6 22/22] perf jevents: Add mesh bandwidth saturation metric
- for Intel
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Perry Taylor <perry.taylor@intel.com>, 
-	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904032210.92978-3-zhangzihuan@kylinos.cn>
 
-Memory bandwidth saturation from CBOX/CHA events present in
-broadwellde, broadwellx, cascadelakex, haswellx, icelakex, skylakex
-and snowridgex.
+On 04-09-25, 11:22, Zihuan Zhang wrote:
+> Currently, cpufreq_frequency_table_verify() simply returns when the driver’s
+> frequency table is missing (policy->freq_table == NULL).
+> This means that cpufreq_verify_within_cpu_limits() is not invoked in such
+> cases, leaving policy->min and policy->max unchecked.
+> 
+> Some cpufreq drivers handle this manually by calling
+> cpufreq_verify_within_cpu_limits() even when no frequency table is present,
+> in order to ensure the policy stays within CPU limits.
+> 
+> To avoid this inconsistency and potential misuse, make
+> cpufreq_generic_frequency_table_verify() always call
+> cpufreq_verify_within_cpu_limits(), regardless of whether policy->freq_table
+> is available. This unifies the behavior across all drivers and makes the helper
+> safe to use universally.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/cpufreq/freq_table.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
+> index d5111ee56e38..f4b05dcc479b 100644
+> --- a/drivers/cpufreq/freq_table.c
+> +++ b/drivers/cpufreq/freq_table.c
+> @@ -105,6 +105,7 @@ EXPORT_SYMBOL_GPL(cpufreq_frequency_table_verify);
+>   */
+>  int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_data *policy)
+>  {
+> +	cpufreq_verify_within_cpu_limits(policy);
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/intel_metrics.py | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+So if we have a freq-table, we will call this twice now. Why make it
+bad for the existing users ?
 
-diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index e639e8998d87..36b6c4704522 100755
---- a/tools/perf/pmu-events/intel_metrics.py
-+++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -1009,6 +1009,22 @@ def UncoreMemBw() -> Optional[MetricGroup]:
-   ], description = "Memory Bandwidth")
- 
- 
-+def UncoreMemSat() -> Optional[Metric]:
-+  try:
-+    clocks = Event("UNC_CHA_CLOCKTICKS", "UNC_C_CLOCKTICKS")
-+    sat = Event("UNC_CHA_DISTRESS_ASSERTED.VERT", "UNC_CHA_FAST_ASSERTED.VERT",
-+                "UNC_C_FAST_ASSERTED")
-+  except:
-+    return None
-+
-+  desc = ("Mesh Bandwidth saturation (% CBOX cycles with FAST signal asserted, "
-+          "include QPI bandwidth saturation), lower is better")
-+  if "UNC_CHA_" in sat.name:
-+    desc = ("Mesh Bandwidth saturation (% CHA cycles with FAST signal asserted, "
-+            "include UPI bandwidth saturation), lower is better")
-+  return Metric("lpm_mem_sat", desc, d_ratio(sat, clocks), "100%")
-+
-+
- def UncoreUpiBw() -> Optional[MetricGroup]:
-   try:
-     upi_rds = Event("UNC_UPI_RxL_FLITS.ALL_DATA")
-@@ -1071,6 +1087,7 @@ def main() -> None:
-       UncoreDir(),
-       UncoreMem(),
-       UncoreMemBw(),
-+      UncoreMemSat(),
-       UncoreUpiBw(),
-   ])
- 
+And then the name of this function, it is all about freq-table. If it
+isn't there, not sure we should call it at all.
+
+>  	if (!policy->freq_table)
+>  		return -ENODEV;
+>  
+> -- 
+> 2.25.1
+
 -- 
-2.51.0.338.gd7d06c2dae-goog
-
+viresh
 
