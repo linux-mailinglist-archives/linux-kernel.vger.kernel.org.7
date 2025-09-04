@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-800226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D0CB434DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C84B434DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C207A8DD0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:58:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87E954E542C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987462C028A;
-	Thu,  4 Sep 2025 07:59:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EEA2C027D;
-	Thu,  4 Sep 2025 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6683970824;
+	Thu,  4 Sep 2025 08:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhSHOWo/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDACC2BEC2D;
+	Thu,  4 Sep 2025 08:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756972784; cv=none; b=YejrmtK4hmhfXNfuEnMQu/VTx4BOfbie8EFS5xMiaus3Oieur1HrNSxgwmXbT7Jez3PsT4JjPpACikG0DpYHm1wrzdcTz9/H12HcHC4C/bAD7mC1GWzSggxTcxgRf+VycXDCM7XF/TQMtjFdrQGOw20sbRkR1B0PKjacbuZrxHY=
+	t=1756972802; cv=none; b=fWDiZp5NG8tmQPe8Kph/7kGEl1MdMEKRWpzhM37YWTVB0nUNRJ9v6ofeUZJCKfZNWNs93MsU13u369PtyDbeXpxlpXgN2J7trADV8ux4aLi6kl5YQHR/yNt5AGrqKcgavmpsMZXjrCXe3bwLNPospL8K/HdsL+Kbq3KCx9PR+a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756972784; c=relaxed/simple;
-	bh=BEpL8T3pVthq/Brupqx6F0B7Tu7nfWohdKOdIfMO5T8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LuejpcjVHHjuxKrvkFIN8c6Uti8v9k7U2rpt/gIcU3VuUSfWVPKQXbpHgByYUYs9QbD/HwSYS1pd0cggi0ffXOveLsuKHSdkMR32bbKEf+5gUxT19oTyb5jU4SQYVXsRFt0pTQyl++w4zQso9DmcoR4FGThdF/7n7d3vZE0SrzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F0C61596;
-	Thu,  4 Sep 2025 00:59:33 -0700 (PDT)
-Received: from [10.57.60.120] (unknown [10.57.60.120])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 941673F63F;
-	Thu,  4 Sep 2025 00:59:40 -0700 (PDT)
-Message-ID: <3069755e-770b-4fb7-806e-7a55cc84e26c@arm.com>
-Date: Thu, 4 Sep 2025 08:59:50 +0100
+	s=arc-20240116; t=1756972802; c=relaxed/simple;
+	bh=LTfSK6bm0uoDmpF/XmAaaSZU4qORee0HC7EH0q/Ptpk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Ues39li9bGVEJrlZmys2vr74EDUNQIcNG3NK9Z8tuucFDhBWH3+aWwxCxFitCBdh4SNq5/L7pHhNY3VVANM1ptxY1hODY5ZOe875gHgpaBMiDWz1rGtvGaOXulvbiP+uPGTnhd8i7luobxVAeiiQnxwIEQZjfpKxZVKenZLYRPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhSHOWo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB477C4CEF4;
+	Thu,  4 Sep 2025 08:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756972802;
+	bh=LTfSK6bm0uoDmpF/XmAaaSZU4qORee0HC7EH0q/Ptpk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZhSHOWo/nxz9p8qppx08leARXGv7SpENcwjjT9yby0I4mZ39+1CH7CFBRNQxkzeBY
+	 GQwkWxk2Jpv6PgtUiS4wO+2h1KZ7x6DRJR24z/DALys7/pn+xVXtpABUjg8FbG0/og
+	 Vb+uIXtwVnTIilN2tQRjo2yaHPqS3YoHzteWKATnn4UNY0l6CzKKDX2xz3aen6PMrU
+	 2fnUfRj4piQjjMJrZhJ6KoGHaXlI2DXrolM+nRt84Q5r7/dEY/bq3k+Jf/c7PFZPLM
+	 ceIjRAC+LJ6GbIAKmcEV9SQcRvvu1faD7eD3r0+j61JK3R6Zm2EsW3tpum/4R3NzcZ
+	 fTeg5HpkVDCEA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB8EB383C25A;
+	Thu,  4 Sep 2025 08:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: k3_j72xx_bandgap: register sensors with hwmon
-To: Michael Walle <mwalle@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20250828124042.1680853-1-mwalle@kernel.org>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250828124042.1680853-1-mwalle@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
+ device_register fail
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175697280674.1344869.4481080369917304414.git-patchwork-notify@kernel.org>
+Date: Thu, 04 Sep 2025 08:00:06 +0000
+References: <20250901063537.1472221-1-wangliang74@huawei.com>
+In-Reply-To: <20250901063537.1472221-1-wangliang74@huawei.com>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, kuniyu@google.com, kay.sievers@vrfy.org,
+ gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On 8/28/25 13:40, Michael Walle wrote:
-> Make the sensors available in the hwmon subsystem (if
-> CONFIG_THERMAL_HWMON is enabled).
+On Mon, 1 Sep 2025 14:35:37 +0800 you wrote:
+> When device_register() return error in atm_register_sysfs(), which can be
+> triggered by kzalloc fail in device_private_init() or other reasons,
+> kmemleak reports the following memory leaks:
 > 
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->   drivers/thermal/k3_j72xx_bandgap.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> unreferenced object 0xffff88810182fb80 (size 8):
+>   comm "insmod", pid 504, jiffies 4294852464
+>   hex dump (first 8 bytes):
+>     61 64 75 6d 6d 79 30 00                          adummy0.
+>   backtrace (crc 14dfadaf):
+>     __kmalloc_node_track_caller_noprof+0x335/0x450
+>     kvasprintf+0xb3/0x130
+>     kobject_set_name_vargs+0x45/0x120
+>     dev_set_name+0xa9/0xe0
+>     atm_register_sysfs+0xf3/0x220
+>     atm_dev_register+0x40b/0x780
+>     0xffffffffa000b089
+>     do_one_initcall+0x89/0x300
+>     do_init_module+0x27b/0x7d0
+>     load_module+0x54cd/0x5ff0
+>     init_module_from_file+0xe4/0x150
+>     idempotent_init_module+0x32c/0x610
+>     __x64_sys_finit_module+0xbd/0x120
+>     do_syscall_64+0xa8/0x270
+>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
-> index a36289e61315..d9ec3bf19496 100644
-> --- a/drivers/thermal/k3_j72xx_bandgap.c
-> +++ b/drivers/thermal/k3_j72xx_bandgap.c
-> @@ -20,6 +20,8 @@
->   #include <linux/delay.h>
->   #include <linux/slab.h>
->   
-> +#include "thermal_hwmon.h"
-> +
->   #define K3_VTM_DEVINFO_PWR0_OFFSET		0x4
->   #define K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK	0xf0
->   #define K3_VTM_TMPSENS0_CTRL_OFFSET		0x300
-> @@ -513,6 +515,8 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->   			ret = PTR_ERR(ti_thermal);
->   			goto err_free_ref_table;
->   		}
-> +
-> +		devm_thermal_add_hwmon_sysfs(bgp->dev, ti_thermal);
->   	}
->   
->   	platform_set_drvdata(pdev, bgp);
+> [...]
+
+Here is the summary with links:
+  - [net] net: atm: fix memory leak in atm_register_sysfs when device_register fail
+    https://git.kernel.org/netdev/net/c/0a228624bcc0
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-LGTM,
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
