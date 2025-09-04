@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-800510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72577B43894
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEADB43896
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96EB61C81F48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE031BC2D28
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B7C2FA0F7;
-	Thu,  4 Sep 2025 10:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383D2ED15F;
+	Thu,  4 Sep 2025 10:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xL9Ja/u5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZXs/IIfl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dtC4k+RO"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36271D432D;
-	Thu,  4 Sep 2025 10:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0B22E3E9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756981261; cv=none; b=Gmt58t2NelFLBF6SfPhT8tGnzcqxKReU9Os6BffwGdzYrsAjiYsK7Hfk2opu3EZL53ByvQc/GCQ8J4UQlXtbCpzhW8qJqi59YAm+SBcE0YUG3T7DA3s8TW2qdHf/BxqPMF6E4zbBZpV2EZhjiOnIknYCEIXjpEIaCRYE0YpfiIY=
+	t=1756981329; cv=none; b=H8FCofP1Iw+yQaTeasoKLOBiH56VswgxSa+IkoWqLlacX8jhWShYuKIWuLrZ4PouzT//JsHYJXkBoTZqZuf1zSi951Hx84DCcsdoFGsE9aANO6bBSDEF/iACwpZqFSyZxwS+llPzWTTdPGKwxspnzGtUe5EcGHkXNvOr2tdInW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756981261; c=relaxed/simple;
-	bh=bq5CTFtIi1VN2s5gJ3WNt7YS8aY6jsvi7q7T8nGCTpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNeJk8Kcu0oHUk+K1e0k4gROWgSonkY+JJJR7BT2eqCfS2lJSNwkoM/2N/LpDJP5MyD0caFtGiWQfC4Ggxnf4Tl5t9JtvLPyWA2XdTJOmxCX1k5Jmr73+7t33Zko5DPYmQE/B1xKA9oglPz1UMhrSMYXI6z17ElDYMbUKQDEDGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xL9Ja/u5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZXs/IIfl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 4 Sep 2025 12:20:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756981258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mo/GCBNNEoLa3zRVufE+F+aOMHPopqUOJZVpt8Nx0fw=;
-	b=xL9Ja/u5RbIIxp11jEzcYX3nXisPaSlKLMWTaSVc4vvh+E+Fgeu+Tzdo5mvLQ8Kr3XlXvq
-	X6N3rOPfPoO5wPhIbtC7v9Qm9GYoa0keabxS2K1MPmuhdRi0y6vTn2YWZ2DNjlO/12W0lk
-	PISOLndWcyoU9r2eUGSFDgFu5Emu5BU6vr2xNRmbCxDYiJ1d1+HRLhCrrptf9vUXj6wArw
-	tDc9ERtbH99Q8CCR4s6d9E8vNyDRvbwZEp8X3v23RQa2KSP5fQBJMQVmXU3cajtfs/vyqT
-	HwZ51ldkPVt2mDqqsFBcJmNVGs4qqFzj3dgRhKSK96yxEqJIfBpJn+QnRT9yaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756981258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mo/GCBNNEoLa3zRVufE+F+aOMHPopqUOJZVpt8Nx0fw=;
-	b=ZXs/IIfl67CHO4ioq2N/iL7XZByCS2NkQ94C204C8uFo4igB48rxhIPT7Z1wlfCAe8IrqI
-	TAdr/GpcbmvKxZBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>,
-	tglx@linutronix.de
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	mingo@redhat.com, perex@perex.cz, syzkaller-bugs@googlegroups.com,
-	tiwai@suse.com, x86@kernel.org
-Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
-Message-ID: <20250904102056.YCByXJXj@linutronix.de>
-References: <68b1f3ab.a70a0220.f8cc2.00f0.GAE@google.com>
- <68b2406a.a00a0220.1337b0.001e.GAE@google.com>
+	s=arc-20240116; t=1756981329; c=relaxed/simple;
+	bh=8tFDp5B828+ijVc2o8d07iFvW8uCL7mdBZj+JaNrshM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=gi2NfGu5LJHHcMXOPXyXj5hGfQ2LpwHI5NLbI7Z7ULls4mV46BzCLJczrJjBVqlkQF/o1oSSNhIOomOUndKrZXUYrXJ7AbD5+7PRVf0CNgEf+WkSSWZebxCPxl63wN68YGCfXZHDw+6rkGvuVzLWdsMOh02g8515mmhyDE1eZN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dtC4k+RO; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250904102204epoutp03e385dd3f6626528a42c69f5635ee7980~iDTShZs571368513685epoutp03M
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 10:22:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250904102204epoutp03e385dd3f6626528a42c69f5635ee7980~iDTShZs571368513685epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756981324;
+	bh=iSP1hOZ0AsVWU04bWbtB20mHDgaN9TSqIhbjaBRHRyQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=dtC4k+ROPg66f9lY1NsNI0wkpkKWkj1gTW5yRJduCxfBnOEsKH4wmdjUM/PyQn0SO
+	 vEUC1TELplS2e5ut9rgeOU523Cht2Yp5bREFpQXb0+FMVgIWIPVjLC75CGrg0FBDCw
+	 31FxD3UbtbGr3e9BLqrEgmgvP3KJ4K+ypQOG8iB4=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250904102203epcas5p2b0df51eeea6ec050252650f41b15b480~iDTR7ag6b1396913969epcas5p2r;
+	Thu,  4 Sep 2025 10:22:03 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cHbBL4fQ3z6B9m4; Thu,  4 Sep
+	2025 10:22:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904102201epcas5p2b0faaa8e8b9f42d99b4cfe51b76ad30b~iDTQVvWuh0469504695epcas5p2e;
+	Thu,  4 Sep 2025 10:22:01 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250904102158epsmtip1ead7e955e4664fff710c39fa1f568ca0~iDTNWxioq1828118281epsmtip1H;
+	Thu,  4 Sep 2025 10:21:58 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <87857202-b436-4476-9384-67566126d844@kernel.org>
+Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Thu, 4 Sep 2025 15:51:57 +0530
+Message-ID: <001001dc1d85$c0d56a60$42803f20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <68b2406a.a00a0220.1337b0.001e.GAE@google.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcB8lF0oAGjtHpaA19Hw4WzwQPd4A==
+Content-Language: en-in
+X-CMS-MailID: 20250904102201epcas5p2b0faaa8e8b9f42d99b4cfe51b76ad30b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
+References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
+	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
+	<20250903073827.3015662-2-pritam.sutar@samsung.com>
+	<20250904-interesting-lovely-ringtail-38bbef@kuoka>
+	<000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
+	<87857202-b436-4476-9384-67566126d844@kernel.org>
 
-On 2025-08-29 17:06:02 [-0700], syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit d2d6422f8bd17c6bb205133e290625a564194496
-> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Date:   Fri Sep 6 10:59:04 2024 +0000
-> 
->     x86: Allow to enable PREEMPT_RT.
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12db5634580000
-> start commit:   07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11db5634580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16db5634580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=10b4363fb0f46527f3f3
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10307262580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17110242580000
-> 
-> Reported-by: syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com
-> Fixes: d2d6422f8bd1 ("x86: Allow to enable PREEMPT_RT.")
+Hi Krzysztof,
 
-This is unfortunate. There is nothing that sound did wrong, it is rather
-special softirq handling in this case. We don't see this often because
-it requires that a timer is cancelled at the time it is running.
-The assumption made by sound is that spin_lock_irq() also disables
-softirqs. This is not the case on PREEMPT_RT.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 04 September 2025 03:12 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
+oot.org;
+> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 HS phy compatible
+>=20
+> On 04/09/2025 09:51, Pritam Manohar Sutar wrote:
+> > Hi Krzysztof,
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 04 September 2025 12:18 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com=
+;
+> >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
+> >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> >> igor.belwon=40mentallysanemainliners.org;
+> >> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> >> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> >> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> >> linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
+> >> dev.tailor=40samsung.com; faraz.ata=40samsung.com;
+> >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> >> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy=
+:
+> >> add
+> >> ExynosAutov920 HS phy compatible
+> >>
+> >> On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote:
+> >>> Document support for the USB20 phy found on the ExynosAutov920 SoC.
+> >>> The
+> >>> USB20 phy is functionally identical to that on the Exynos850 SoC, so
+> >>> no driver changes are needed to support this phy. However, add a
+> >>> dedicated compatible string for USB20 phy found in this SoC.
+> >>>
+> >>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >>
+> >> You just dropped all tags without explaining why.
+> >
+> > Regretted inconvenience.
+> >
+> > There were significant changes in supplies' names in driver and
+> > schemas (patch-set v8). This led to make changes in patch no 5.  And
+> > review for these changes is needed.  Hence, removed RB tag in this patc=
+h-set.
+> >
+> > There was a ask for the same https://lore.kernel.org/linux-
+> phy/000401dc18cd=24ec02a1b0=24c407e510=24=40samsung.com/=23:=7E:text=3DLe=
+t%20me%
+> 20know%2C%20because%20of%20above%20changes%2C%20should%20be%20
+> removing%20your%20%0A%27reviewed%2Dby%27%20tag%20from%20patch%
+> 201%20and%203.
+> >
+>=20
+>=20
+> Where in the changelog you explained why you dropped the tags?
 
-The hunk below avoids the splat. Adding local_bh_disable() to
-spin_lock_irq() would cure it, too. It would also result in random
-synchronisation points across the kernel leading to something less
-usable.
-The imho best solution would to get rid of softirq_ctrl.lock which has
-been proposed
-	https://lore.kernel.org/all/20250901163811.963326-4-bigeasy@linutronix.de/
+Along with supplies' names, there were similar commit messages=20
+for patch no 1, 3 as patch no 5 (v7). (though, they were explaining=20
+schema more than h/w). Changed commit messages of the=20
+patch no 1, 3, 5 (v7) as per reference commits and would like=20
+to get them reviewed again, so did not add RB for patch 1 and 3,
+which you had given RB (in v7).=20
 
-Comments?
+Forgot to add these details for dropping the RB tags in changelog.=20
+Do I need to send v9 by retaining RB for patch 1 and 3?
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -84,19 +84,24 @@ void snd_pcm_group_init(struct snd_pcm_group *group)
- }
- 
- /* define group lock helpers */
--#define DEFINE_PCM_GROUP_LOCK(action, mutex_action) \
-+#define DEFINE_PCM_GROUP_LOCK(action, bh_lock, bh_unlock, mutex_action) \
- static void snd_pcm_group_ ## action(struct snd_pcm_group *group, bool nonatomic) \
- { \
--	if (nonatomic) \
-+	if (nonatomic) { \
- 		mutex_ ## mutex_action(&group->mutex); \
--	else \
--		spin_ ## action(&group->lock); \
-+	} else { \
-+		if (IS_ENABLED(CONFIG_PREEMPT_RT) && bh_lock)	\
-+			local_bh_disable();			\
-+		spin_ ## action(&group->lock);			\
-+		if (IS_ENABLED(CONFIG_PREEMPT_RT) && bh_unlock)	\
-+			local_bh_enable();			\
-+	}							\
- }
- 
--DEFINE_PCM_GROUP_LOCK(lock, lock);
--DEFINE_PCM_GROUP_LOCK(unlock, unlock);
--DEFINE_PCM_GROUP_LOCK(lock_irq, lock);
--DEFINE_PCM_GROUP_LOCK(unlock_irq, unlock);
-+DEFINE_PCM_GROUP_LOCK(lock, 0, 0, lock);
-+DEFINE_PCM_GROUP_LOCK(unlock, 0, 0, unlock);
-+DEFINE_PCM_GROUP_LOCK(lock_irq, 1, 0, lock);
-+DEFINE_PCM_GROUP_LOCK(unlock_irq, 0, 1, unlock);
- 
- /**
-  * snd_pcm_stream_lock - Lock the PCM stream
+>=20
+> Best regards,
+> Krzysztof
 
 
-Sebastian
+Thank you.
+
+Regards,
+Pritam
+
 
