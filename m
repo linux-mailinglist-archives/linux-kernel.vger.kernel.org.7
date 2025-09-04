@@ -1,171 +1,212 @@
-Return-Path: <linux-kernel+bounces-801691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309B6B448D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:52:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2AAB448DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9EE1CC21B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C1B487D42
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1092D0605;
-	Thu,  4 Sep 2025 21:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAC72D0C8F;
+	Thu,  4 Sep 2025 21:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mcYRQTsi"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IJfGXiuP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74D02C21F6;
-	Thu,  4 Sep 2025 21:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF81FF1C4;
+	Thu,  4 Sep 2025 21:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757022756; cv=none; b=L3nvXj6o2QUTcFS8dRI5oZFM5VU22l9tg9qAbYqBL+ti9we7LYXx4iWn6M4VuGvXYXcbTVEkBsJgnZ1NSgrYp4XXPcCp6e2qiZ6h84Hyi8Z/jSi71tMPdHDt2DIvo3iwKFTLFhQbxC8wQImOoLTtDsQI7f8bKbgEwp23PqD9X4s=
+	t=1757022989; cv=none; b=OnsUTqXxmob+FgYVFbWBOfIzG61nuQavtOzsINMbbkQfgjRhSEfoCxIO5QQYrs59aTMddAr5DZhrDUpg0u2dsZ+N4jtQ+o62r2ca0+SorN66AX9BVLqfSv+HnCNdMEB8SnpdYcnaYCbTI8UcorP5Y/LcpZohz0UQeDuV96KFZlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757022756; c=relaxed/simple;
-	bh=Wwb7gLuPH5i2MVOO8a0ZF1bZVeRY0sNVbcFPH0tOyUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T2X1lGydTxcoWppKBX5D4kPWErsPMrtDm5IHj0vfAixpv4NvkAu8HKIdhGtjglyMI8twkKDYZc7XuHEffC8OtTUGjDAq2q+yXwydx3vgbfVYQgJXqZp8yW6kNXX3N9YZITQcIzH4MeLcbtBJ44kt0JvVYyJ9S+5BnWPq66/MvTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mcYRQTsi; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D2DCE1A0DC0;
-	Thu,  4 Sep 2025 21:52:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9B063606C4;
-	Thu,  4 Sep 2025 21:52:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 26E03102F0F1B;
-	Thu,  4 Sep 2025 23:52:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757022748; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=VhdwOIRNIGUQjVektyYqHZFliftV2xljBQytyUGG8AY=;
-	b=mcYRQTsidacdxu16HyA4ytNGA6KapP94Uja9WvEe+/TuVE0a0pj9Q1EPehDG+B50qSYahQ
-	4UHc67bGoXqiUdGHbhQb69APflPOywZ3mUqoJO/e7VMf2KMR0HyYeybzKpmGYIP1pn4M2P
-	Z29bFQRPLprAuG9UCqCQsD6fWy9R4142c5IkTX3hSTf4qL8aYdkaaSqs4Y2QZEOeFNiojO
-	qfQEuUnvCTScyF9mOcr0e9FlAbyCX0n5aAkhnWgW25mNeSQI0ocXDxWSaM+c+Nbi78VHDP
-	GuXdC5LkLK1RR4dakRHjyn1JEBlyyTB4fxWyGyaFkiIK8hMdDY4QkhZEC/yqIw==
-Date: Thu, 4 Sep 2025 23:52:25 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Carolina Jubran <cjubran@nvidia.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Stanislav Fomichev
- <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>, Kees Cook
- <kees@kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>, Dragos
- Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net] net: dev_ioctl: take ops lock in hwtstamp lower
- paths
-Message-ID: <20250904235155.7b2b3379@kmaincent-XPS-13-7390>
-In-Reply-To: <20250904182806.2329996-1-cjubran@nvidia.com>
-References: <20250904182806.2329996-1-cjubran@nvidia.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757022989; c=relaxed/simple;
+	bh=L/P5mw1/tc0gdUyAQQ+lBPQ6BxMzsjBLoolFiNatBaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHVPwNmTWuJ0WBxZznmrbBFHobKZiwlniDIWSkQzqEQJTUuIF3+EpPKU0hd1tM7rFtEOhCKrcp50b9qU5VXHhiXWBO0nmwYg32jbJ3luDsay60VubsDqVaYW3G2ztFUHN7Fo8+vmmNYi55YBmjQ6UEz+OVErWEioyjH6BtTSrCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IJfGXiuP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=lzhyIwjwWywttDaGiy4pz/S4UDwmvvFMEO+MHVhj9eQ=; b=IJfGXiuPPmLvDobdJlenXnt04Q
+	Qt5i/cGzTZHmrq5oLf1Pua+bRItuL2A9xm2SP+8vY2m1FQZ0rLJJqbgt1AIjKX443bYoxQ6ABV/oO
+	aKBWSvhE29u5J331TGASb/EsHOoDTx+5VIqGoKGckptu28IdvE9mkOIiB+iPw0SPW/hKLv5FQv5Dz
+	qjKDPz+IpsM3GNO1/rFmxoklNbUPPgdM8kYhsMHqV63ivXo2Qc63u54NAllrgVEMIyzPchevzxosJ
+	isPZGsBEHDd/+GfToVpznFjfHnjeQjCUDzIWBL/PMZyzdpVd5E4DinWHvpBeKiXrqV/nuc6XS9mvl
+	vvtvcAbg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuHwI-00000007bSj-2i3v;
+	Thu, 04 Sep 2025 21:56:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DD24C300220; Thu, 04 Sep 2025 23:56:17 +0200 (CEST)
+Date: Thu, 4 Sep 2025 23:56:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
+ uprobes/x86: Add uprobe syscall to speed up uprobe
+Message-ID: <20250904215617.GR3245006@noisy.programming.kicks-ass.net>
+References: <20250720112133.244369-1-jolsa@kernel.org>
+ <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLlKJWRs5etuvFuK@krava>
+ <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
+ <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
+ <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
+ <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
+ <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
 
-On Thu, 4 Sep 2025 21:28:06 +0300
-Carolina Jubran <cjubran@nvidia.com> wrote:
+On Thu, Sep 04, 2025 at 02:44:03PM -0700, Andrii Nakryiko wrote:
+> On Thu, Sep 4, 2025 at 1:52 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Sep 04, 2025 at 01:49:49PM -0700, Andrii Nakryiko wrote:
+> > > On Thu, Sep 4, 2025 at 1:35 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Thu, Sep 04, 2025 at 11:27:45AM -0700, Andrii Nakryiko wrote:
+> > > >
+> > > > > > > So I've been thinking what's the simplest and most reliable way to
+> > > > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
+> > > > > > > whether we should attach at nop5 vs nop1), and clearly that would be
+> > > > > >
+> > > > > > wrt nop5/nop1.. so the idea is to have USDT macro emit both nop1,nop5
+> > > > > > and store some info about that in the usdt's elf note, right?
+> > > >
+> > > > Wait, what? You're doing to emit 6 bytes and two nops? Why? Surely the
+> > > > old kernel can INT3 on top of a NOP5?
+> > > >
+> > >
+> > > Yes it can, but it's 2x slower in terms of uprobe triggering compared
+> > > to nop1.
+> >
+> > Why? That doesn't really make sense.
+> >
+> 
+> Of course it's silly... It's because nop5 wasn't recognized as one of
+> the emulated instructions, so was handled through single-stepping.
 
-> ndo hwtstamp callbacks are expected to run under the per-device ops
-> lock. Make the lower get/set paths consistent with the rest of ndo
-> invocations.
->=20
-> Kernel log:
-> WARNING: CPU: 13 PID: 51364 at ./include/net/netdev_lock.h:70
-> __netdev_update_features+0x4bd/0xe60 ...
-> RIP: 0010:__netdev_update_features+0x4bd/0xe60
-> ...
-> Call Trace:
-> <TASK>
-> netdev_update_features+0x1f/0x60
-> mlx5_hwtstamp_set+0x181/0x290 [mlx5_core]
-> mlx5e_hwtstamp_set+0x19/0x30 [mlx5_core]
+*groan*
 
-Where does these two functions come from? They are not mainline.
-Else LGTM.
+> > I realize its probably to late to fix the old kernel not to be stupid --
+> > this must be something stupid, right? But now I need to know.
+> 
+> Jiri fixed this, but as you said, too late for old kernels. See [0]
+> for the patch that landed not so long ago.
+> 
+>   [0] https://lore.kernel.org/all/20250414083647.1234007-1-jolsa@kernel.org/
 
-> dev_set_hwtstamp_phylib+0x9f/0x220
-> dev_set_hwtstamp_phylib+0x9f/0x220
-> dev_set_hwtstamp+0x13d/0x240
-> dev_ioctl+0x12f/0x4b0
-> sock_ioctl+0x171/0x370
-> __x64_sys_ioctl+0x3f7/0x900
-> ? __sys_setsockopt+0x69/0xb0
-> do_syscall_64+0x6f/0x2e0
-> entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> ...
-> </TASK>
-> ....
-> ---[ end trace 0000000000000000 ]---
->=20
-> Fixes: ffb7ed19ac0a ("net: hold netdev instance lock during ioctl operati=
-ons")
-> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
-> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
-> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
->=20
-> ---
->  net/core/dev_ioctl.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->=20
-> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> index 9c0ad7f4b5d8..ad54b12d4b4c 100644
-> --- a/net/core/dev_ioctl.c
-> +++ b/net/core/dev_ioctl.c
-> @@ -464,8 +464,15 @@ int generic_hwtstamp_get_lower(struct net_device *de=
-v,
->  	if (!netif_device_present(dev))
->  		return -ENODEV;
-> =20
-> -	if (ops->ndo_hwtstamp_get)
-> -		return dev_get_hwtstamp_phylib(dev, kernel_cfg);
-> +	if (ops->ndo_hwtstamp_get) {
-> +		int err;
-> +
-> +		netdev_lock_ops(dev);
-> +		err =3D dev_get_hwtstamp_phylib(dev, kernel_cfg);
-> +		netdev_unlock_ops(dev);
-> +
-> +		return err;
-> +	}
-> =20
->  	/* Legacy path: unconverted lower driver */
->  	return generic_hwtstamp_ioctl_lower(dev, SIOCGHWTSTAMP, kernel_cfg);
-> @@ -481,8 +488,15 @@ int generic_hwtstamp_set_lower(struct net_device *de=
-v,
->  	if (!netif_device_present(dev))
->  		return -ENODEV;
-> =20
-> -	if (ops->ndo_hwtstamp_set)
-> -		return dev_set_hwtstamp_phylib(dev, kernel_cfg, extack);
-> +	if (ops->ndo_hwtstamp_set) {
-> +		int err;
-> +
-> +		netdev_lock_ops(dev);
-> +		err =3D dev_set_hwtstamp_phylib(dev, kernel_cfg, extack);
-> +		netdev_unlock_ops(dev);
-> +
-> +		return err;
-> +	}
-> =20
->  	/* Legacy path: unconverted lower driver */
->  	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
+Ooh, that suggests we do something like so:
 
 
-
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 0a8c0a4a5423..223f8925097b 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -309,6 +309,29 @@ static int uprobe_init_insn(struct arch_uprobe *auprobe, struct insn *insn, bool
+ 	return -ENOTSUPP;
+ }
+ 
++static bool insn_is_nop(struct insn *insn)
++{
++	return insn->opcode.nbytes == 1 && insn->opcode.bytes[0] == 0x90;
++}
++
++static bool insn_is_nopl(struct insn *insn)
++{
++	if (insn->opcode.nbytes != 2)
++		return false;
++
++	if (insn->opcode.bytes[0] != 0x0f || insn->opcode.bytes[1] != 0x1f)
++		return false;
++
++	if (!insn->modrm.nbytes)
++		return false;
++
++	if (X86_MODRM_REG(insn->modrm.bytes[0]) != 0)
++		return false;
++
++	/* 0f 1f /0 - NOPL */
++	return true;
++}
++
+ #ifdef CONFIG_X86_64
+ 
+ struct uretprobe_syscall_args {
+@@ -1158,29 +1181,6 @@ void arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+ 	mmap_write_unlock(mm);
+ }
+ 
+-static bool insn_is_nop(struct insn *insn)
+-{
+-	return insn->opcode.nbytes == 1 && insn->opcode.bytes[0] == 0x90;
+-}
+-
+-static bool insn_is_nopl(struct insn *insn)
+-{
+-	if (insn->opcode.nbytes != 2)
+-		return false;
+-
+-	if (insn->opcode.bytes[0] != 0x0f || insn->opcode.bytes[1] != 0x1f)
+-		return false;
+-
+-	if (!insn->modrm.nbytes)
+-		return false;
+-
+-	if (X86_MODRM_REG(insn->modrm.bytes[0]) != 0)
+-		return false;
+-
+-	/* 0f 1f /0 - NOPL */
+-	return true;
+-}
+-
+ static bool can_optimize(struct insn *insn, unsigned long vaddr)
+ {
+ 	if (!insn->x86_64 || insn->length != 5)
+@@ -1428,17 +1428,13 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
+ 	insn_byte_t p;
+ 	int i;
+ 
+-	/* x86_nops[insn->length]; same as jmp with .offs = 0 */
+-	if (insn->length <= ASM_NOP_MAX &&
+-	    !memcmp(insn->kaddr, x86_nops[insn->length], insn->length))
++	if (insn_is_nop(insn) || insn_is_nopl(insn))
+ 		goto setup;
+ 
+ 	switch (opc1) {
+ 	case 0xeb:	/* jmp 8 */
+ 	case 0xe9:	/* jmp 32 */
+ 		break;
+-	case 0x90:	/* prefix* + nop; same as jmp with .offs = 0 */
+-		goto setup;
+ 
+ 	case 0xe8:	/* call relative */
+ 		branch_clear_offset(auprobe, insn);
 
