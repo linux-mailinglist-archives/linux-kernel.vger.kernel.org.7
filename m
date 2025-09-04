@@ -1,56 +1,79 @@
-Return-Path: <linux-kernel+bounces-799750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFB5B42FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:36:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516F3B42FD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877B27AB536
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCD1681DA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA41F8723;
-	Thu,  4 Sep 2025 02:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0F51F8ADD;
+	Thu,  4 Sep 2025 02:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p6FvC+TD"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A2C2628D;
-	Thu,  4 Sep 2025 02:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sS4tqdLc";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="U/e93ogn"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BD42628D;
+	Thu,  4 Sep 2025 02:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756953371; cv=none; b=Pg0Pkph8oqwCEtw4AHXkLvBsPCjqt6duj4rLKDrYaXJD1xf+VUf1gktY8ZtB6vAWjjXXWgd1CsIFrbsKztorLMDmiXBxZU+ZoGbC1YMATdZ1ewM477u/Fy1EcTt4TTqHDvpg7hgiYAUKJQsaTM3IGCbpMeEbBi4w+hRzu4vTbNE=
+	t=1756953510; cv=none; b=gu2hVbg4rIRXB2iNkzZgoUbpfuIj528KzCClj50x8TccPJCZGDGArHXwCiMDxWRfB1eaUpkIQnPvPMn8MjRPmS/sO8qCCa7jR2MH6rVJsOnk3aiy57YjFbCCQCixGiE1uOfSqI+oln0nG7vtk/RlLRf7Q4IgOzy3mzvGPEqtKfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756953371; c=relaxed/simple;
-	bh=QYB0IwUTuhhfZsNHmrxJTL4PzEY0ll1fj8+65L1JXCU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=K5Nc39dkzxryvdWtd74Iba8h89RkV6nEnRyLWSLYJ9WPNwuezpVSOIydfifvUgELWMLG557wMqbVUDdsB07U35QOP6k26GO0E7YOmDo17ORJXH8aM0lXXcU+yoYHdpxOV3+x6X8KoCSmB++kp1tPwYnhCciyn7KOe4JqwR3wnRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p6FvC+TD; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=OA9Vb3cQLRUlQnsE8aU2oWch3B/9d5PL/UyP8KxyixU=;
-	b=p6FvC+TDTsHn02SaoSc7W0s3qv4oN05oNSmpAkaEUn8x6odhydSF1Td8Spj+3Q
-	HKI3Ik+vmt0uf0MNJywkmyZ1ks6tJQeuNSDQSE674L/94FKMRtVM2aem0q6lCJkV
-	jhPZxHAaMmjQZaLuNVXuQKfK2LNPd4EZSJQyA3/XOOe6Q=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wAXU7n5+rhoYiz7Fw--.21177S2;
-	Thu, 04 Sep 2025 10:35:39 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: kerneljasonxing@gmail.com,
-	willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v10 1/2] net: af_packet: remove last_kactive_blk_num field
-Date: Thu,  4 Sep 2025 10:35:37 +0800
-Message-Id: <20250904023537.934715-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756953510; c=relaxed/simple;
+	bh=FdbeB+yV5/C5kxBua8uMen1dPsCyQQKz7pW1D60oLSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZBanICEgeQ7qlrLedlxdLxHPdmMosaSMQ/iEfmBdYzfw/0EbG6BvVTYkdfnMOehiTmuAOGRnvnJI/gVjg5wGJAE6oilH2RObtv/n2dPcXzK4pZLi5t6qBIk7xiSM/f9R2hqztfkCyURXN//t0pEdToaNdxEWOAEGRXZvmZl83AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sS4tqdLc; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=U/e93ogn; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cHNvN4nBrz9srJ;
+	Thu,  4 Sep 2025 04:38:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756953504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7Avc2qjUFUbqIM0SvA74SfMpAPpoaNpwHHVCU9A6Trc=;
+	b=sS4tqdLcv+7ouTuTra9c+WTMdY0zY15kmf3vsZwDEQ8+g4acYHHS7H+xu7EuEvj9HsCWOU
+	LurUPa50lRyvR3fVj15YQZeliAmqp9js1hCAfAAD5vh+NUtELHAgIiDMTKKz8xj+7cuOA4
+	DCUbOR5Ec1xpzIUuyV7e7H56336m6Af7YPDwwcEPDbixRlbLwkgjkOLQxycqbe08+6Acsr
+	m1ePCGZWslF9/oCKlNV8aggcRTyohtTMf0cWkqyoxw/y/RYgSQ9kX/MvTHBzmUn5Fj9EGC
+	yLxQ/IJV0yH/WIsK2uai835nbouP4IDrXPniXYTWqYpUc0xvgmW70iZxhOkg7w==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756953502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7Avc2qjUFUbqIM0SvA74SfMpAPpoaNpwHHVCU9A6Trc=;
+	b=U/e93ognuVVrfaawXGDYkNx5uyoeBH2ynAR9Jql4MsYVl0KWzHzeaFZI94ewyIMjyvVmzT
+	OkPFyQD37C+cpBkocHxdzLoB2SITf+Lrdp1NJQrLQU4R1fsoZtWwoK2nWnjh++fDciG7vG
+	p8J5feVSqew3tKl2hUyT0mP5YkE9ls9jNVIAUDqMBXEr0T8Yt/oFr5k0lOAzTnfRTdtW/n
+	dLmOySqwiWd+B3qo5jAfREdkPnrKIQ9td5CYa1W4oMoW53rfeS31pN24VOEQ+oZUNeEDjL
+	DWYCvRSg08OzifnMGdHtxIQbz17WipUyqy2CpajYCcA9YRVsIo2nZbhky1B05A==
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Wang Jiang <jiangwang@kylinos.cn>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for fixed BARs
+Date: Thu,  4 Sep 2025 04:37:39 +0200
+Message-ID: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,69 +82,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXU7n5+rhoYiz7Fw--.21177S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zry8CFyUtw4kZry3ZFWxXrb_yoW8Zw1kpa
-	yrKF13Cw1DWa1jq3ZrZwn7XryfXw15AF15GrZ5Jry3Ca48XFyIyF9avFW3WFW0vrsxKanI
-	qF48G34rAw1q9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRRHqcUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiJQC+Cmi4+UUtBgAAsW
+X-MBO-RS-ID: 7ba099bd9488c476be4
+X-MBO-RS-META: um6ezw575iyqc6idttayuar7n9fmxtpx
 
-On Thu, Sep 4, 2025 at 10:09 +0800 Jason Xing <kerneljasonxing@gmail.com> wrote:
+Currently, the test allocates BAR sizes according to fixed table
+bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 } . This
+does not work with controllers which have fixed size BARs, like
+Renesas R-Car V4H PCIe controller, which has BAR4 size limited
+to 256 Bytes, which is much less than 131072 currently requested
+by this test.
 
-> > Consider the following case:
-> > (before applying this patch)
-> > cpu0                                  cpu1
-> > tpacket_rcv
-> >   ...
-> >     prb_dispatch_next_block
-> >       prb_freeze_queue (R = 1)
-> >                                       prb_retire_rx_blk_timer_expired
-> >                                         L != K
-> >                                           _prb_refresh_rx_retire_blk_timer
-> >                                             refresh timer
-> >                                             set L = K
-> 
-> I do not think the above can happen because:
-> 1) tpacket_rcv() owns the sk_receive_queue.lock and then calls
-> packet_current_rx_frame()->__packet_lookup_frame_in_block()->prb_dispatch_next_block()
-> 2) the timer prb_retire_rx_blk_timer_expired() also needs to acquire
-> the same lock first.
-> 
-> > (after applying this patch)
-> > cpu0                                  cpu1
-> > tpacket_rcv
-> >   ...
-> >     prb_dispatch_next_block
-> >       prb_freeze_queue (R = 1)
-> >                                       prb_retire_rx_blk_timer_expired
-> >                                         !forzen is 0
-> >                                           check prb_curr_blk_in_use
-> >                                             if true
-> >                                               same as (before apply)
-> >                                             if false
-> >                                               prb_open_block
-> > Before applying this patch, prb_retire_rx_blk_timer_expired will do nothing
-> > but refresh timer and set L = K in the case above. After applying this
-> > patch, it will check prb_curr_blk_in_use and call prb_open_block if
-> > user-space caught up.
-> 
-> The major difference after this patch is that even if L != K we would
-> call prb_open_block(). So I think the key point is that this patch
-> provides another checkpoint to thaw the might-be-frozen block in any
-> case. It doesn't have any effect because
-> __packet_lookup_frame_in_block() has the same logic and does it again
-> without this patch when detecting the ring is frozen. The patch only
-> advances checking the status of the ring.
+Adjust the test such, that in case a fixed size BAR is detected
+on a controller, minimum of requested size and fixed size BAR
+size is used during the test instead.
 
+This helps with test failures reported as follows:
+"
+pci_epf_test pci_epf_test.0: requested BAR size is larger than fixed size
+pci_epf_test pci_epf_test.0: Failed to allocate space for BAR4
+"
 
-In the prb_dispatch_next_block function, after executing prb_freeze_queue, it
-directly returns without executing prb_open_block. As a result, tpacket_rcv
-completes and exits the lock, and then callback executes while (L != K).
-Perhaps my diagram did not convey this clearly. I think it might be better to
-use your description above to replace the flowchart representation.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>
+Cc: Wang Jiang <jiangwang@kylinos.cn>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/pci/endpoint/functions/pci-epf-test.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-
-Thanks
-Xin Zhao
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index e091193bd8a8a..d9c950d4c9a9e 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -1022,7 +1022,8 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+ 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
+ 	enum pci_barno bar;
+ 	const struct pci_epc_features *epc_features = epf_test->epc_features;
+-	size_t test_reg_size;
++	size_t test_reg_size, test_bar_size;
++	u64 bar_fixed_size;
+ 
+ 	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
+ 
+@@ -1050,7 +1051,13 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+ 		if (bar == test_reg_bar)
+ 			continue;
+ 
+-		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
++		test_bar_size = bar_size[bar];
++
++		bar_fixed_size = epc_features->bar[bar].fixed_size;
++		if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size)
++			test_bar_size = min(bar_size[bar], bar_fixed_size);
++
++		base = pci_epf_alloc_space(epf, test_bar_size, bar,
+ 					   epc_features, PRIMARY_INTERFACE);
+ 		if (!base)
+ 			dev_err(dev, "Failed to allocate space for BAR%d\n",
+-- 
+2.50.1
 
 
