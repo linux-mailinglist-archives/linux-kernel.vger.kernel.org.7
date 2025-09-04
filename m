@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-801313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A13B4439B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:51:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527D1B443A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA2E16499D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2703BA2AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C1830DD31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D9E30DEC9;
 	Thu,  4 Sep 2025 16:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DNhDEVQA"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o25e4wto"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B193002CA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D827FD7C
 	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757004627; cv=none; b=C3CxenG0lGRU5l2Ob/ub0s6SpJzREMvRkw5YaHugLwYUp1aOSP9hq7un8JPFJjJQM8HmxtB0klLh6KWSbCe//ZOYdJpVSqLHlH8NeNVBG6TzzyhsphZexlXlVj1bVpgDexUKOd7pGLFu4Wh2MBMhgGFUI45NhKbrscBfJfumOVI=
+	t=1757004627; cv=none; b=WbrHL1XxfNAKUsDlAslZ9TvdWqFZbQGwDLiJwMPZ1+JNno8UfBcWWyZxQcwXuGQiRo3gdi/6vG5PYgM2f9x6H5XlKDK2ici/SVp2zZbEhSPvsEWKF4AQY1ICiVdeWS2yatb0Kji1GIl7ImL6j3LQ7a+rWddZIrY3aCVI6Y/j8x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757004627; c=relaxed/simple;
-	bh=447gL5s3Qlc0E1RSVvmti7+ioS1OzqnrKgqZ++Ifw5A=;
+	bh=DVpfp1V5U+zmdZD5x0TGGmHec3RE56P4hJzLGkhqAok=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lPtBGeF3wmzEu51q8H0g/FMA9f/pXl5Dz/pHh7CwiSizpWRgfR5lPBapYfDbBTuyECj94lNTIOMBFUkSM6OX1L8aMLOXLDRlADWIJ38Ak6hqNxIdauZalbs0vZfjWhyllWIUhPvhP8tyfEFLFrsdiwPCnIH4h+2uqaFSj15MiZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DNhDEVQA; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=OQpwodu3cgzBxEZbhbhXO3EUQmTf89dvapNIYsrAzUKaJN//gPk2s0X+Y1onougwA279LpWSfVX77h4hYtj6p8inA64pl02rNP5KQ3YorqMH9xm4Th0iuwgqcarwm7s2rtyNQtzPIp6S+xIPEMLN2Z1wLuYL98ZC9aCo3aLuu9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o25e4wto; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45cb5dbda9cso7873295e9.2
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45dd5c1b67dso1203655e9.2
         for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757004622; x=1757609422; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757004623; x=1757609423; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfap2+ubjo5zfmqv6T4m9WzCW6yNVmlGYmEl7oHz2RM=;
-        b=DNhDEVQAh50LYHT1rU/GE4zfsozUr92vuZFjozCBvRA2gYrs9A7B9kfzXKF0S8nqTY
-         CWKtjKRYXKcenEgCwlN2K1ie/PbE8gipnkyd3US6wX5gkpYBr+dzgJrlQsFYUF+fCfZA
-         ZnmhjmUPlJ02mwQeZNk60nJsduLg+YfACmk4YE+K2K3bcL4V5AXlo4DHevXMVJMZ2bYY
-         OuyDeFHWDdc9fSzoV2L9ojFq//JIuZaBbu22+68ogtGSnUazvVbGvFkuVtMVZJiaSDi9
-         0jLKhJUC9FOkTgC7vY6zegtkDDFDRMqIuqUQvJzQWpK7korBhXMl2p+8xRxrIg57vp2+
-         c3CQ==
+        bh=rqniLRQ1WhMUGHKyeRbk6ymh9mMKakd5DBqcVK6FLkY=;
+        b=o25e4wtoaUpQ5XiGDJrT2auO55Klsn12q3z+NiwSEGm/HXy0zVRSnykTzPh+JJZYIT
+         m3tmoVgcfEUwCJpkJqmQA+Iym/XoAXalgvI85/X7B9VppO9qUcCAF0cZcNKvMc6KCyEL
+         Ymn+N07U98qNNzsljev1CfqjDgvijV3s5zm3gCIBZbAmHvumtDjApbwPXKA9mMiWI8aj
+         CjL4DTiNlgAGsJai0oFR+lM90mBt9NLGfMEQjwTeLGrJUH/AABQsbsy5G7VL440mjYig
+         pprDlYlfyxeDDQ40+ih2wS8T+aSXRaXhXWBP6ZUbgWXyi1l9NMZWpJjkEv8looKtyKOo
+         ya6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1757004623; x=1757609423;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfap2+ubjo5zfmqv6T4m9WzCW6yNVmlGYmEl7oHz2RM=;
-        b=VMRIVr7R5LBOn27wXoypcig7m1W5Fp6XX0PZNwwPZxfhvp9szAmOBc4y81L1OtRWbz
-         HzPUdC+jvqDjzdGexHbcJMtFailRy9IhsiP1pnQoUxnCSJ0t4oYhqiM8bE9PKrHq3SNN
-         2bCB8JDtlpYCO0Q9fBsNTxRG8npE8i7AzpztGAEWIU46oEz1Oqqim9rzmU6ZEFydyp4i
-         sdn/cK9B7KD1qJ73W6ddXOR4r2w6K1UDQFhIjlYj6Xy4hXd83ttNby9A92ykreGjI+gQ
-         V4pA4jlNsrsAmbhWrgFdBdg794rqxr06Se5HTtLSItU878x4+/XWP0sslT/4BQG1Jrae
-         eY9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVoy10FzB8eWitCkqhAYTxI9vbDOPUTmv8ojnuew+eACFoaXdjnh7hLhJiUM1uljT1QQcUSYl22PoIEzpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy7lEevWDgvTUVFRJte9iquPQix3tTvY6Yr4WHZpX6ZCGviUki
-	Yas05XeQ0XFoyzUXT1xh1jtjijJGlDAFGdiU9KiKH4Dx7TrmQidozLMN74AAeXWlKRX+Wg==
-X-Google-Smtp-Source: AGHT+IHjF/qnlRebLVPdq/8OvLWLcw8/vOqRLjP6eNUCx+jkwXJ3+NmN+7k6lLUv+HSrYd16bHQ4/0k=
-X-Received: from wmbez15.prod.google.com ([2002:a05:600c:83cf:b0:45d:d3ef:abb8])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4ece:b0:45b:97e0:22ad
- with SMTP id 5b1f17b1804b1-45d5160105bmr47315985e9.24.1757004622550; Thu, 04
- Sep 2025 09:50:22 -0700 (PDT)
-Date: Thu,  4 Sep 2025 16:50:08 +0000
+        bh=rqniLRQ1WhMUGHKyeRbk6ymh9mMKakd5DBqcVK6FLkY=;
+        b=mSfyJDDNe7YJ3u1AkE3DNGqEYNS2nrwojIUou9kjKH55wp0A0CjpEz3naNBwrDfBvz
+         X7sE3NRYUNu7nJtSUCAHWGDDZ8724GBbA7C4qHpolkKO46t3SNJBF3Xhjb3tRz1hGRXe
+         wVYjL2mZ1PSaF/lwrd3/BPOJMnREExwizYBwxlJjv4f2u60xvOTvRp6NlpyCEpMo8fy8
+         Dne9AG0aFMtPZYAEfwpcTB5ucfAoT63ktRbEqllcSaDVqvgyM9FhQC8NpRtg2+ttJWoi
+         boVBhZy+uBSFhhzGfl6zdHACot+qS/e1Bphn91ETwIag8IJtUiufJuuvUD/9P5Bqm6k/
+         YccA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYqKDIWxUKW0RnOk5q1/CrMHFco2Znng71hOu3pOuf7IIM92IQzWnnLZQ2iDuyg8Mdggj9ZlBgLrvl+sM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPfVxCNGGeHX/0SiLE37GYXKSvWGIb8FkwucmLGfoU80Tq1Psk
+	AuZRgANWCwivoIGPI8uOdpXbt5lQWuWmaJWOFkQu1SQc+mmmMFDpBdTrCIXd2Y9DV+4ImA==
+X-Google-Smtp-Source: AGHT+IFUJMbhrhmmfsVCGPz0fLLygzvdgSlU5jlelnMP2OikigZ82bKz27U2sGewnv2ESRYylDWSh+Q=
+X-Received: from wmer2.prod.google.com ([2002:a05:600c:4342:b0:45d:d1f2:48ba])
+ (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1914:b0:45b:88d6:8dbe
+ with SMTP id 5b1f17b1804b1-45b88d6939amr157411045e9.7.1757004623428; Thu, 04
+ Sep 2025 09:50:23 -0700 (PDT)
+Date: Thu,  4 Sep 2025 16:50:09 +0000
 In-Reply-To: <20250904165015.3791895-1-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250904165015.3791895-1-bqe@google.com>
 X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250904165015.3791895-5-bqe@google.com>
-Subject: [PATCH v15 4/5] rust: add find_bit_benchmark_rust module.
+Message-ID: <20250904165015.3791895-6-bqe@google.com>
+Subject: [PATCH v15 5/5] rust: add dynamic ID pool abstraction for bitmap
 From: Burak Emir <bqe@google.com>
 To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
 Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
@@ -88,290 +88,287 @@ Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Microbenchmark protected by a config FIND_BIT_BENCHMARK_RUST,
-following `find_bit_benchmark.c` but testing the Rust Bitmap API.
+This is a port of the Binder data structure introduced in commit
+15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
+Rust.
 
-We add a fill_random() method protected by the config in order to
-maintain the abstraction.
+Like drivers/android/dbitmap.h, the ID pool abstraction lets
+clients acquire and release IDs. The implementation uses a bitmap to
+know what IDs are in use, and gives clients fine-grained control over
+the time of allocation. This fine-grained control is needed in the
+Android Binder. We provide an example that release a spinlock for
+allocation and unit tests (rustdoc examples).
 
-The sample output from the benchmark, both C and Rust version:
-
-find_bit_benchmark.c output:
-```
-Start testing find_bit() with random-filled bitmap
-[  438.101937] find_next_bit:                  860188 ns, 163419 iterations
-[  438.109471] find_next_zero_bit:             912342 ns, 164262 iterations
-[  438.116820] find_last_bit:                  726003 ns, 163419 iterations
-[  438.130509] find_nth_bit:                  7056993 ns,  16269 iterations
-[  438.139099] find_first_bit:                1963272 ns,  16270 iterations
-[  438.173043] find_first_and_bit:           27314224 ns,  32654 iterations
-[  438.180065] find_next_and_bit:              398752 ns,  73705 iterations
-[  438.186689]
-               Start testing find_bit() with sparse bitmap
-[  438.193375] find_next_bit:                    9675 ns,    656 iterations
-[  438.201765] find_next_zero_bit:            1766136 ns, 327025 iterations
-[  438.208429] find_last_bit:                    9017 ns,    656 iterations
-[  438.217816] find_nth_bit:                  2749742 ns,    655 iterations
-[  438.225168] find_first_bit:                 721799 ns,    656 iterations
-[  438.231797] find_first_and_bit:               2819 ns,      1 iterations
-[  438.238441] find_next_and_bit:                3159 ns,      1 iterations
-```
-
-find_bit_benchmark_rust.rs output:
-```
-[  451.182459] find_bit_benchmark_rust:
-[  451.186688] Start testing find_bit() Rust with random-filled bitmap
-[  451.194450] next_bit:                       777950 ns, 163644 iterations
-[  451.201997] next_zero_bit:                  918889 ns, 164036 iterations
-[  451.208642] Start testing find_bit() Rust with sparse bitmap
-[  451.214300] next_bit:                         9181 ns,    654 iterations
-[  451.222806] next_zero_bit:                 1855504 ns, 327026 iterations
-```
-
-Here are the results from 32 samples, with 95% confidence interval.
-The microbenchmark was built with RUST_BITMAP_HARDENED=n and run on a
-machine that did not execute other processes.
-
-Random-filled bitmap:
-+-----------+-------+-----------+--------------+-----------+-----------+
-| Benchmark | Lang  | Mean (ms) | Std Dev (ms) | 95% CI Lo | 95% CI Hi |
-+-----------+-------+-----------+--------------+-----------+-----------+
-| find_bit/ | C     |    825.07 |        53.89 |    806.40 |    843.74 |
-| next_bit  | Rust  |    870.91 |        46.29 |    854.88 |    886.95 |
-+-----------+-------+-----------+--------------+-----------+-----------+
-| find_zero/| C     |    933.56 |        56.34 |    914.04 |    953.08 |
-| next_zero | Rust  |    945.85 |        60.44 |    924.91 |    966.79 |
-+-----------+-------+-----------+--------------+-----------+-----------+
-
-Rust appears 5.5% slower for next_bit, 1.3% slower for next_zero.
-
-Sparse bitmap:
-+-----------+-------+-----------+--------------+-----------+-----------+
-| Benchmark | Lang  | Mean (ms) | Std Dev (ms) | 95% CI Lo | 95% CI Hi |
-+-----------+-------+-----------+--------------+-----------+-----------+
-| find_bit/ | C     |     13.17 |         6.21 |     11.01 |     15.32 |
-| next_bit  | Rust  |     14.30 |         8.27 |     11.43 |     17.17 |
-+-----------+-------+-----------+--------------+-----------+-----------+
-| find_zero/| C     |   1859.31 |        82.30 |   1830.80 |   1887.83 |
-| next_zero | Rust  |   1908.09 |       139.82 |   1859.65 |   1956.54 |
-+-----------+-------+-----------+--------------+-----------+-----------+
-
-Rust appears 8.5% slower for next_bit, 2.6% slower for next_zero.
-
-In summary, taking the arithmetic mean of all slow-downs, we can say
-the Rust API has a 4.5% slowdown.
+The implementation does not permit shrinking below capacity below
+BITS_PER_LONG.
 
 Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-Reviewed-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+Suggested-by: Yury Norov <yury.norov@gmail.com>
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Burak Emir <bqe@google.com>
 ---
- MAINTAINERS                     |   1 +
- lib/Kconfig.debug               |  13 ++++
- lib/Makefile                    |   1 +
- lib/find_bit_benchmark_rust.rs  | 104 ++++++++++++++++++++++++++++++++
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/bitmap.rs           |  15 +++++
- 6 files changed, 135 insertions(+)
- create mode 100644 lib/find_bit_benchmark_rust.rs
+ MAINTAINERS            |   1 +
+ rust/kernel/id_pool.rs | 226 +++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs     |   1 +
+ 3 files changed, 228 insertions(+)
+ create mode 100644 rust/kernel/id_pool.rs
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index b2cef0e9c256..444aa282b8cd 100644
+index 444aa282b8cd..f838135932f5 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -4307,6 +4307,7 @@ M:	Alice Ryhl <aliceryhl@google.com>
- M:	Burak Emir <bqe@google.com>
- R:	Yury Norov <yury.norov@gmail.com>
+@@ -4309,6 +4309,7 @@ R:	Yury Norov <yury.norov@gmail.com>
  S:	Maintained
-+F:	lib/find_bit_benchmark_rust.rs
+ F:	lib/find_bit_benchmark_rust.rs
  F:	rust/kernel/bitmap.rs
++F:	rust/kernel/id_pool.rs
  
  BITOPS API
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index dc0e0c6ed075..386232d81a0e 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2607,6 +2607,19 @@ config FIND_BIT_BENCHMARK
- 
- 	  If unsure, say N.
- 
-+config FIND_BIT_BENCHMARK_RUST
-+	tristate "Test find_bit functions in Rust"
-+	depends on RUST
-+	help
-+	  This builds the "find_bit_benchmark_rust" module. It is a micro
-+          benchmark that measures the performance of Rust functions that
-+          correspond to the find_*_bit() operations in C. It follows the
-+          FIND_BIT_BENCHMARK closely but will in general not yield same
-+          numbers due to extra bounds checks and overhead of foreign
-+          function calls.
-+
-+	  If unsure, say N.
-+
- config TEST_FIRMWARE
- 	tristate "Test firmware loading via userspace interface"
- 	depends on FW_LOADER
-diff --git a/lib/Makefile b/lib/Makefile
-index 392ff808c9b9..96a83b937a60 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -62,6 +62,7 @@ obj-y += hexdump.o
- obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
- obj-y += kstrtox.o
- obj-$(CONFIG_FIND_BIT_BENCHMARK) += find_bit_benchmark.o
-+obj-$(CONFIG_FIND_BIT_BENCHMARK_RUST) += find_bit_benchmark_rust.o
- obj-$(CONFIG_TEST_BPF) += test_bpf.o
- test_dhry-objs := dhry_1.o dhry_2.o dhry_run.o
- obj-$(CONFIG_TEST_DHRY) += test_dhry.o
-diff --git a/lib/find_bit_benchmark_rust.rs b/lib/find_bit_benchmark_rust.rs
+ M:	Yury Norov <yury.norov@gmail.com>
+diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
 new file mode 100644
-index 000000000000..6bdc51de2f30
+index 000000000000..a41a3404213c
 --- /dev/null
-+++ b/lib/find_bit_benchmark_rust.rs
-@@ -0,0 +1,104 @@
++++ b/rust/kernel/id_pool.rs
+@@ -0,0 +1,226 @@
 +// SPDX-License-Identifier: GPL-2.0
-+//! Benchmark for find_bit-like methods in Bitmap Rust API.
 +
-+use kernel::alloc::flags::GFP_KERNEL;
-+use kernel::bindings;
-+use kernel::bitmap::BitmapVec;
-+use kernel::error::{code, Result};
-+use kernel::prelude::module;
-+use kernel::time::{Instant, Monotonic};
-+use kernel::ThisModule;
-+use kernel::{pr_cont, pr_err};
++// Copyright (C) 2025 Google LLC.
 +
-+const BITMAP_LEN: usize = 4096 * 8 * 10;
-+// Reciprocal of the fraction of bits that are set in sparse bitmap.
-+const SPARSENESS: usize = 500;
++//! Rust API for an ID pool backed by a [`BitmapVec`].
 +
-+/// Test module that benchmarks performance of traversing bitmaps.
-+struct Benchmark();
++use crate::alloc::{AllocError, Flags};
++use crate::bitmap::BitmapVec;
 +
-+fn test_next_bit(bitmap: &BitmapVec) {
-+    let time = Instant::<Monotonic>::now();
-+    let mut cnt = 0;
-+    let mut i = 0;
++const BITS_PER_LONG: usize = bindings::BITS_PER_LONG as usize;
 +
-+    while let Some(index) = bitmap.next_bit(i) {
-+        cnt += 1;
-+        i = index + 1;
-+        // CONFIG_RUST_BITMAP_HARDENED enforces strict bounds.
-+        if i == BITMAP_LEN {
-+            break;
++/// Represents a dynamic ID pool backed by a [`BitmapVec`].
++///
++/// Clients acquire and release IDs from unset bits in a bitmap.
++///
++/// The capacity of the ID pool may be adjusted by users as
++/// needed. The API supports the scenario where users need precise control
++/// over the time of allocation of a new backing bitmap, which may require
++/// release of spinlock.
++/// Due to concurrent updates, all operations are re-verified to determine
++/// if the grow or shrink is sill valid.
++///
++/// # Examples
++///
++/// Basic usage
++///
++/// ```
++/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
++/// use kernel::id_pool::IdPool;
++///
++/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
++/// for i in 0..64 {
++///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
++/// }
++///
++/// pool.release_id(23);
++/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
++///
++/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
++/// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
++/// pool.grow(resizer);
++///
++/// assert_eq!(pool.acquire_next_id(0), Some(64));
++/// # Ok::<(), Error>(())
++/// ```
++///
++/// Releasing spinlock to grow the pool
++///
++/// ```no_run
++/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
++/// use kernel::sync::{new_spinlock, SpinLock};
++/// use kernel::id_pool::IdPool;
++///
++/// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
++///     let mut pool = guarded_pool.lock();
++///     loop {
++///         match pool.acquire_next_id(0) {
++///             Some(index) => return Ok(index),
++///             None => {
++///                 let alloc_request = pool.grow_request();
++///                 drop(pool);
++///                 let resizer = alloc_request.ok_or(AllocError)?.realloc(GFP_KERNEL)?;
++///                 pool = guarded_pool.lock();
++///                 pool.grow(resizer)
++///             }
++///         }
++///     }
++/// }
++/// ```
++pub struct IdPool {
++    map: BitmapVec,
++}
++
++/// Indicates that an [`IdPool`] should change to a new target size.
++pub struct ReallocRequest {
++    num_ids: usize,
++}
++
++/// Contains a [`BitmapVec`] of a size suitable for reallocating [`IdPool`].
++pub struct PoolResizer {
++    new: BitmapVec,
++}
++
++impl ReallocRequest {
++    /// Allocates a new backing [`BitmapVec`] for [`IdPool`].
++    ///
++    /// This method only prepares reallocation and does not complete it.
++    /// Reallocation will complete after passing the [`PoolResizer`] to the
++    /// [`IdPool::grow`] or [`IdPool::shrink`] operation, which will check
++    /// that reallocation still makes sense.
++    pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
++        let new = BitmapVec::new(self.num_ids, flags)?;
++        Ok(PoolResizer { new })
++    }
++}
++
++impl IdPool {
++    /// Constructs a new [`IdPool`].
++    ///
++    /// A capacity below [`BITS_PER_LONG`] is adjusted to
++    /// [`BITS_PER_LONG`].
++    ///
++    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
++    #[inline]
++    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
++        let num_ids = core::cmp::max(num_ids, BITS_PER_LONG);
++        let map = BitmapVec::new(num_ids, flags)?;
++        Ok(Self { map })
++    }
++
++    /// Returns how many IDs this pool can currently have.
++    #[inline]
++    pub fn capacity(&self) -> usize {
++        self.map.len()
++    }
++
++    /// Returns a [`ReallocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
++    ///
++    /// The capacity of an [`IdPool`] cannot be shrunk below [`BITS_PER_LONG`].
++    ///
++    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
++    /// use kernel::id_pool::{ReallocRequest, IdPool};
++    ///
++    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
++    /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
++    /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
++    /// pool.shrink(resizer);
++    /// assert_eq!(pool.capacity(), kernel::bindings::BITS_PER_LONG as usize);
++    /// # Ok::<(), AllocError>(())
++    /// ```
++    #[inline]
++    pub fn shrink_request(&self) -> Option<ReallocRequest> {
++        let cap = self.capacity();
++        // Shrinking below [`BITS_PER_LONG`] is never possible.
++        if cap <= BITS_PER_LONG {
++            return None;
 +        }
-+    }
-+
-+    let delta = time.elapsed();
-+    pr_cont!(
-+        "\nnext_bit:           {:18} ns, {:6} iterations",
-+        delta.as_nanos(),
-+        cnt
-+    );
-+}
-+
-+fn test_next_zero_bit(bitmap: &BitmapVec) {
-+    let time = Instant::<Monotonic>::now();
-+    let mut cnt = 0;
-+    let mut i = 0;
-+
-+    while let Some(index) = bitmap.next_zero_bit(i) {
-+        cnt += 1;
-+        i = index + 1;
-+        // CONFIG_RUST_BITMAP_HARDENED enforces strict bounds.
-+        if i == BITMAP_LEN {
-+            break;
++        // Determine if the bitmap can shrink based on the position of
++        // its last set bit. If the bit is within the first quarter of
++        // the bitmap then shrinking is possible. In this case, the
++        // bitmap should shrink to half its current size.
++        let Some(bit) = self.map.last_bit() else {
++            return Some(ReallocRequest {
++                num_ids: BITS_PER_LONG,
++            });
++        };
++        if bit >= (cap / 4) {
++            return None;
 +        }
++        let num_ids = usize::max(BITS_PER_LONG, cap / 2);
++        Some(ReallocRequest { num_ids })
 +    }
 +
-+    let delta = time.elapsed();
-+    pr_cont!(
-+        "\nnext_zero_bit:      {:18} ns, {:6} iterations",
-+        delta.as_nanos(),
-+        cnt
-+    );
-+}
-+
-+fn find_bit_test() {
-+    pr_err!("Benchmark");
-+    pr_cont!("\nStart testing find_bit() Rust with random-filled bitmap");
-+
-+    let mut bitmap = BitmapVec::new(BITMAP_LEN, GFP_KERNEL).expect("alloc bitmap failed");
-+    bitmap.fill_random();
-+
-+    test_next_bit(&bitmap);
-+    test_next_zero_bit(&bitmap);
-+
-+    pr_cont!("\nStart testing find_bit() Rust with sparse bitmap");
-+
-+    let mut bitmap = BitmapVec::new(BITMAP_LEN, GFP_KERNEL).expect("alloc sparse bitmap failed");
-+    let nbits = BITMAP_LEN / SPARSENESS;
-+    for _i in 0..nbits {
-+        // SAFETY: __get_random_u32_below is safe to call with any u32 argument.
-+        let bit =
-+            unsafe { bindings::__get_random_u32_below(BITMAP_LEN.try_into().unwrap()) as usize };
-+        bitmap.set_bit(bit);
-+    }
-+
-+    test_next_bit(&bitmap);
-+    test_next_zero_bit(&bitmap);
-+    pr_cont!("\n");
-+}
-+
-+impl kernel::Module for Benchmark {
-+    fn init(_module: &'static ThisModule) -> Result<Self> {
-+        find_bit_test();
-+        // Return error so test module can be inserted again without rmmod.
-+        Err(code::EINVAL)
-+    }
-+}
-+
-+module! {
-+    type: Benchmark,
-+    name: "find_bit_benchmark_rust",
-+    authors: ["Burak Emir <bqe@google.com>"],
-+    description: "Module with benchmark for bitmap Rust API",
-+    license: "GPL v2",
-+}
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 7bb575043c86..5d58316f871e 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -67,6 +67,7 @@
- #include <linux/pm_opp.h>
- #include <linux/poll.h>
- #include <linux/property.h>
-+#include <linux/random.h>
- #include <linux/refcount.h>
- #include <linux/regulator/consumer.h>
- #include <linux/sched.h>
-diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-index 9235808dc03c..6e0824579781 100644
---- a/rust/kernel/bitmap.rs
-+++ b/rust/kernel/bitmap.rs
-@@ -252,6 +252,21 @@ pub fn new(nbits: usize, flags: Flags) -> Result<Self, AllocError> {
-     pub fn len(&self) -> usize {
-         self.nbits
-     }
-+
-+    /// Fills this `Bitmap` with random bits.
-+    #[cfg(CONFIG_FIND_BIT_BENCHMARK_RUST)]
-+    pub fn fill_random(&mut self) {
-+        // SAFETY: `self.as_mut_ptr` points to either an array of the
-+        // appropriate length or one usize.
-+        unsafe {
-+            bindings::get_random_bytes(
-+                self.as_mut_ptr().cast::<ffi::c_void>(),
-+                usize::div_ceil(self.nbits, bindings::BITS_PER_LONG as usize)
-+                    * bindings::BITS_PER_LONG as usize
-+                    / 8,
-+            );
++    /// Shrinks pool by using a new [`BitmapVec`], if still possible.
++    #[inline]
++    pub fn shrink(&mut self, mut resizer: PoolResizer) {
++        // Between request to shrink that led to allocation of `resizer` and now,
++        // bits may have changed.
++        // Verify that shrinking is still possible. In case shrinking to
++        // the size of `resizer` is no longer possible, do nothing,
++        // drop `resizer` and move on.
++        let Some(updated) = self.shrink_request() else {
++            return;
++        };
++        if updated.num_ids > resizer.new.len() {
++            return;
 +        }
++
++        resizer.new.copy_and_extend(&self.map);
++        self.map = resizer.new;
 +    }
- }
- 
- impl Bitmap {
++
++    /// Returns a [`ReallocRequest`] for growing this [`IdPool`], if possible.
++    ///
++    /// The capacity of an [`IdPool`] cannot be grown above [`i32::MAX`].
++    #[inline]
++    pub fn grow_request(&self) -> Option<ReallocRequest> {
++        let num_ids = self.capacity() * 2;
++        if num_ids > i32::MAX.try_into().unwrap() {
++            return None;
++        }
++        Some(ReallocRequest { num_ids })
++    }
++
++    /// Grows pool by using a new [`BitmapVec`], if still necessary.
++    ///
++    /// The `resizer` arguments has to be obtained by calling [`Self::grow_request`]
++    /// on this object and performing a [`ReallocRequest::realloc`].
++    #[inline]
++    pub fn grow(&mut self, mut resizer: PoolResizer) {
++        // Between request to grow that led to allocation of `resizer` and now,
++        // another thread may have already grown the capacity.
++        // In this case, do nothing, drop `resizer` and move on.
++        if resizer.new.len() <= self.capacity() {
++            return;
++        }
++
++        resizer.new.copy_and_extend(&self.map);
++        self.map = resizer.new;
++    }
++
++    /// Acquires a new ID by finding and setting the next zero bit in the
++    /// bitmap.
++    ///
++    /// Upon success, returns its index. Otherwise, returns [`None`]
++    /// to indicate that a [`Self::grow_request`] is needed.
++    #[inline]
++    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
++        let next_zero_bit = self.map.next_zero_bit(offset);
++        if let Some(nr) = next_zero_bit {
++            self.map.set_bit(nr);
++        }
++        next_zero_bit
++    }
++
++    /// Releases an ID.
++    #[inline]
++    pub fn release_id(&mut self, id: usize) {
++        self.map.clear_bit(id);
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 586be7f246eb..9b8a6c386c52 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -90,6 +90,7 @@
+ pub mod firmware;
+ pub mod fmt;
+ pub mod fs;
++pub mod id_pool;
+ pub mod init;
+ pub mod io;
+ pub mod ioctl;
 -- 
 2.51.0.355.g5224444f11-goog
 
