@@ -1,132 +1,188 @@
-Return-Path: <linux-kernel+bounces-800325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E796B4364F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3543B43653
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABE93B67B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7312D1B23C6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD962D0638;
-	Thu,  4 Sep 2025 08:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9D32264B1;
+	Thu,  4 Sep 2025 08:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JSp2pW1X"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bj9GJCC/"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5442D0C70
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188724167F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756975952; cv=none; b=rJW+837mUQRVYuAqVGll2ISTvDIIqpXwNcrHdPfnjduvW/48dbVRnOX9rGMLNOF+11OMIZEJBjIyNn6XhBlNK9cvNkMQ7ppyV8U7cXW9gLxYSnPe8gmFogseQRgDr+uUJ6mTOMnNiCpJPYZugK7WTogSVOFXXwJlMZW3AWD4Mjk=
+	t=1756976053; cv=none; b=iFmW0JPIR5jLp80+mzGwrsZWqBgqirAue49iV1i8k7wrq3Bo1lN6wCk0+WexJmmhNpqGg2kgfiRQPA6pvEV7zuPpKoK8hHUEL6elIBJRysyZAqlue4n8P/eZTaxZKdfX6Q1QSuRiVTiEnSqFeIRNjoVDbbzJ8/1fEwauFjoFsys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756975952; c=relaxed/simple;
-	bh=qjZa4YKZFgevyucA5IS3M7gwJDXEq9cxnfkjLJMJsNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qio3B1lJipOZVKrpRcmSiI/Zl+u4DkdeD1vSYjZu7Pyz6y/uv94uQb9m4dryk05/tLJ9HcU4+YFsVWAGDp57CJXzUGWvahg4w8fE9nRyGl0Jd6aj0x+voP2RqI90B/2+ftl2Uhx1W1HJ6nmxfho+pIy4+LgiSR20hjq1BymLupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JSp2pW1X; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7da4101fso2438975e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:52:30 -0700 (PDT)
+	s=arc-20240116; t=1756976053; c=relaxed/simple;
+	bh=mqwfnzwdPC+2dqnEr2ojVooFfW44hUm7NW1fZIerdNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l3bCNeFEsMM0G+5S1Yx0QZdpm2uvK4xu+9pYh+s6FJXWhFt5hH7C3FiMvRStV9WlxCVTTMx7fqGou9NosEFsC1D8HBvK818yIcZIxBpJluh5H/pVvoHwhwEDF1H4BY3CIYkLg21tT/9Ucz+wSRazd0OfSeSvk/TVNjAWaUEx5tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bj9GJCC/; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-729c10746edso1775806d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756975949; x=1757580749; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gK6n/g/HuSb43cbH0cdIC2KH3XWzF+uMZuIHFj3Zpo=;
-        b=JSp2pW1XWgx5EWNvIZ9CENaCNQS8HjxNimipmNAdi5cRHXsC4qw1FTX9S5XoK36wtQ
-         9wxxRe04oFWsaazBDrCg/LtQr4q04+OFmGJBWZzwvZCc1qOsLxl7CBPJkvV3xSxoQOc7
-         zdWKOlan3lXDekPXeyRJ/R7ryQBPz5ORHIx4ilryzkwIXZqSGbV4f/EqFz51yZmhbPQb
-         yqK9Jho5cch7HNH3MMP0DfudbbtxxlJ7IGjSZ0mNzH6fCaJhTMDvYh5eBui+C/F0yuLn
-         CEbOZfHK6mv4lXTQJyDE/ljrvL1LuQtzQ8rsMJAHpKB4r8qALJaWUKUgsI/cy31lVmOE
-         mzeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756975949; x=1757580749;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1756976051; x=1757580851; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7gK6n/g/HuSb43cbH0cdIC2KH3XWzF+uMZuIHFj3Zpo=;
-        b=WNsr2UXjgKR7cUbeoAnvqvirWcXpXHMi4BsEwtC940bM5J6f9iCVwkY/YNnv3DDv0/
-         Fl2w+5n97tWTbnEH0G/J0ArFdMTlF6hdcJHk/UgEo96aJLlfGNxiL7+kBIa0gVeqbsOF
-         91HdgxT3YuLdxrZT/qaBppTIl5WBNW/2QXkyLSJ07yYJO2UFBbDcr1YZFd1OnJ34ZfZC
-         tVgRpf3QxWcjuu8cts/I6IC4pSC/m9bOojRFjh097Y0CJKxb01fPgSfM5nc3pSamu95L
-         OqM66eQIJGji/ObOF/rKq9m0oQz9RdKznbqEo3wwIFny/MmIQ89enzYmjYpn3FBf8M9E
-         yhjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmXZmXY66Db47uH40C+6NblnWF7DEoLOn9kEkorQlZgm8e3TQfDSlY5TsEViFPlUfUuinNGtdGewJ7Yno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQpPMi1ZilfO0QH2aW9mFTnxmMrjbnBoMixMKOIWrE7RLLzGU6
-	myXQssTsz987Nqwjiv6knjkicR4b6KFwrcRS3LG8g/6alkSmr2C3lvQwq88jcMQqrsQ=
-X-Gm-Gg: ASbGnctuHqXCia9wIgI9h070Q8dPf4PM9GGMtFrL39YIhZH5mfeoOWoDRpfaC/Cs+kN
-	JeRwBCDdUvAxMrV3OQ9yY+b+ZAL/TIJLNm6jcRuo7anY6/V9Kq70LOcY56BDu8lt9GaWY5QuD0J
-	v+Hie/TzjW7AWw8/r7SSKmgo3jjXh4DCn5vtOer8w73a5jnddU7jFUntBprtgR3shrX7e5ZZmVt
-	hSpGC4spNP/RJzCx7yX2dVclV681V7rF4uJM/lUOmnNxwbvcUMQp5YP9ShXKum5tHk34OyFnold
-	Gqqzrs5AcQ7NCryksbLdPG2v+rN7O9a/1krimi2exvS/Qs4HGE7ekh7zfq/U1IGmwjFZtd8ZTKZ
-	3FFFc+p/OwelAcI/dAqUJLtsmcr1mZwXV
-X-Google-Smtp-Source: AGHT+IHtO9lhAj+5b+dFwSvHFWLll5r95zkvUmodvWJ+Fdu92nqESPLKzmEOTmjK13cRmo2Ta3LMHg==
-X-Received: by 2002:a05:600c:5253:b0:45d:98be:ee91 with SMTP id 5b1f17b1804b1-45d98bef030mr24615585e9.9.1756975949013;
-        Thu, 04 Sep 2025 01:52:29 -0700 (PDT)
-Received: from linaro.org ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d7ac825b88sm13968312f8f.7.2025.09.04.01.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 01:52:28 -0700 (PDT)
-Date: Thu, 4 Sep 2025 11:52:26 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Johan Hovold <johan@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: Add missing TCSR refclk to the
- DP PHYs
-Message-ID: <qlqsefvnibw4esm5wz7khmyfdnszn5veinfb3k2w67f5v73kry@rzclmu57ybdh>
-References: <20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org>
- <20250903-phy-qcom-edp-add-missing-refclk-v2-3-d88c1b0cdc1b@linaro.org>
- <34d9e8eb-e0f4-47e9-a731-fe50e932fea1@oss.qualcomm.com>
+        bh=9VicjXT4pdNAgXdUSH6UsBDRLh+o/JYSTnI74S8PEYQ=;
+        b=Bj9GJCC/CAdL5wyTDFY9eemfix8LX6IxXPKVm0pv9hGApoZzca9QcM4YpkMwV9xla9
+         GjMnjGS95D2vIjMYmhxgRjsIVbWNEFFwL0pGO2wJ27myvV186qoVT8CJQp4D8snLmuVC
+         8YAtQjPrNEe8c6CH8ZJNz+mLfvQhZOJKltF5p5qFtigv23oo3vgTGzxcWKx74dX8NRua
+         G6QnEq9w3zpiziIz0ZDyz0CbuHmNGHiWjZFZemPOyY4RZbdJLKvMejJ5r1Atx6PqsXdj
+         EnvGlwtzTEjnI8i7I97+m/W5eFKECJyMjJ49Bl+jquYZQcYalX9YcF0tzLcMa0gt6KHQ
+         bWqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756976051; x=1757580851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9VicjXT4pdNAgXdUSH6UsBDRLh+o/JYSTnI74S8PEYQ=;
+        b=P0wk33jDPade7WALt6JMWGs+DcRcLhD4k7Ln4fGKp96uZXgyAIIj86Tn6nAcrxLxwk
+         S64w7yOmzFl+QOmRQjGdLujlS3FU+8C2QcAQrqJu2F/ugUYvvgJmD5s4iMWRZwW/iq9f
+         kRewZcYmyK8JrGuAcsl8QcECbJwA/9yQnLS0/971hTMROr+kKK1FA3kYIbPBJWEmfEOC
+         mEoGcq1hl88S2zNLJOaKuLModqNUCzZlFUhcvoSbbzE/xkoMkNlELnQdOODDDMVX/Jh0
+         Uv6gYsDgdVIi0O0qtaZnZvB5VEALwcKRN/AFXLC2Z9P2aVH4DmVjXd9mdmM3m1LtUI2S
+         M+4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaMGzB53w4BHq6nYxyqosrxq8bRHoJobJhtlPJAAZrin0+bPo/rxwLCHzD/kmHiJYinOJXOUcPwmyGpfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq5k78Ti7EUt+tLSGtr2bOLtiB5Ca3fM9MPCRa+NAVVgB/6+d/
+	whnI+9HnNoWzyQFhFbush4iuCyTinrwLhkcw8S1B2YKK1SLOtgbaiOdQczdhdXbxbgSdzTxCb7l
+	aL0z+355oqB24Rn0B5Go3241Kw1lln3GDxQg4gJiN
+X-Gm-Gg: ASbGncuMjH9MY+4Tn+IcS+md9hrnnSlAWkwa2IwqCGyxHH1pUjB92qxSJQ0tMK6+6Ai
+	6BsyY4z7JfEURjrBy+PTI/kykOSBBl36SUzUA83dMl+KapB6cYFAfHfpqZyRIq/kCgLar6wCDIr
+	/PSo6ALTMun8rgMOKCXPR5acUiU9ITwPBfebHPsrn+U3K8G8thjr60OHLdbjXduSUGq6/IP0enR
+	q5nnLJX2PRqd2ZSLQKTMP326qSrZWOit3K4RAp+sww=
+X-Google-Smtp-Source: AGHT+IGe+3QGfd9IKV2sPPBcSKIkB+warv0bCWnhX474CyKZjMxan/mTdhVbYwwEQVkV0lnKX5ceY3UjV6CSO+x3hLI=
+X-Received: by 2002:a05:6214:19eb:b0:723:255a:9168 with SMTP id
+ 6a1803df08f44-7232569d525mr82498246d6.4.1756976050489; Thu, 04 Sep 2025
+ 01:54:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34d9e8eb-e0f4-47e9-a731-fe50e932fea1@oss.qualcomm.com>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-6-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250901164212.460229-6-ethan.w.s.graham@gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 4 Sep 2025 10:53:32 +0200
+X-Gm-Features: Ac12FXzGXGcfd1LWU7AL2P0uHHVI9Cjfbatglasugt3XjpaIrqiLrO1UVJEntQs
+Message-ID: <CAG_fn=VBbSqb07-pbbEw7F=SP5_t74Re7ki0+ZS=mBm2S9BehA@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 5/7] kfuzztest: add ReST documentation
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
+	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
+	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-09-04 10:40:36, Konrad Dybcio wrote:
-> On 9/3/25 2:37 PM, Abel Vesa wrote:
-> > The DP PHYs on X1E80100 need the refclk which is provided
-> > by the TCSR CC. So add it to the PHYs.
-> > 
-> > Cc: stable@vger.kernel.org # v6.9
-> 
-> You want to backport this to 6.9, but you also want to backport
-> the driver patch to 6.10, "meh"
-> 
-> I'm not sure it makes sense to backport functionally, as this would
-> only exhibit issues if:
-> 
-> a) the UEFI did no work to enable the refclk
-> or:
-> b) unused cleanup would happen
-> 
-> but the board would not survive booting with b) in v6.9, at least
-> it wouldn't have display  - see Commit b60521eff227 ("clk: qcom:
-> gcc-x1e80100: Unregister GCC_GPU_CFG_AHB_CLK/GCC_DISP_XO_CLK")
-> 
-> and a) is not something we'd hit on any of the upstream-supported
-> targets
+On Mon, Sep 1, 2025 at 6:43=E2=80=AFPM Ethan Graham <ethan.w.s.graham@gmail=
+.com> wrote:
+>
+> From: Ethan Graham <ethangraham@google.com>
+>
+> Add Documentation/dev-tools/kfuzztest.rst and reference it in the
+> dev-tools index.
+>
+> Signed-off-by: Ethan Graham <ethangraham@google.com>
+Acked-by: Alexander Potapenko <glider@google.com>
 
-You are correct.
+Some nits below.
 
-However, HW-wise, this clock is there and is needed, regardless
-if UEFI leaves it enabled or not. So it makes sense to go all the way
-back to 6.9 and fix it.
+> +Macros ``FUZZ_TEST``, `KFUZZTEST_EXPECT_*`` and ``KFUZZTEST_ANNOTATE_*``=
+ embed
 
+Nit: missing second backtick before KFUZZTEST_EXPECT_
+
+
+> +Input Format
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +KFuzzTest targets receive their inputs from userspace via a write to a d=
+edicated
+> +debugfs ``/sys/kernel/debug/kfuzztest/<test-name>/input``.
+
+Nit: "debugfs file"?
+
+> +- Padding and Poisoning: The space between the end of one region's data =
+and the
+> +  beginning of the next must be sufficient for padding. In KASAN builds,
+> +  KFuzzTest poisons this unused padding, allowing for precise detection =
+of
+> +  out-of-bounds memory accesses between adjacent buffers. This padding s=
+hould
+> +  be at least ``KFUZZTEST_POISON_SIZE`` bytes as defined in
+> +  `include/linux/kfuzztest.h``.
+
+Nit: missing leading backtick.
+
+> +
+> +KFuzzTest Bridge Tool
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The kfuzztest-bridge program is a userspace utility that encodes a rando=
+m byte
+
+Nit: do we need backticks around kfuzztest-bridge?
+
+> +This tool is intended to be simple, both in usage and implementation. It=
+s
+> +structure and DSL are sufficient for simpler use-cases. For more advance=
+d
+> +coverage-guided fuzzing it is recommended to use syzkaller which impleme=
+nts
+> +deeper support for KFuzzTest targets.
+
+Nit: please add a link to syzkaller.
+
+> +
+> +The textual format is a human-readable representation of the region-base=
+d binary
+> +format used by KFuzzTest. It is described by the following grammar:
+> +
+> +.. code-block:: text
+> +
+> +       schema     ::=3D region ( ";" region )* [";"]
+> +       region     ::=3D identifier "{" type+ "}"
+
+Don't types need to be separated with spaces?
+
+> +       type       ::=3D primitive | pointer | array | length | string
+> +       primitive  ::=3D "u8" | "u16" | "u32" | "u64"
+> +       pointer    ::=3D "ptr" "[" identifier "]"
+> +       array      ::=3D "arr" "[" primitive "," integer "]"
+> +       length     ::=3D "len" "[" identifier "," primitive "]"
+> +       string     ::=3D "str" "[" integer "]"
+> +       identifier ::=3D [a-zA-Z_][a-zA-Z1-9_]*
+> +       integer    ::=3D [0-9]+
+> +
+> +Pointers must reference a named region. To fuzz a raw buffer, the buffer=
+ must be
+
+Maybe insert a paragraph break between these two sentences?
+
+> +.. code-block:: text
+> +
+> +       my_struct { ptr[buf] len[buf, u64] }; buf { arr[u8, n] };
+> +
+> +Where ``n`` is some integer value defining the size of the byte array in=
+side of
+
+s/Where/, where/ ?
 
