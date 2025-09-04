@@ -1,111 +1,117 @@
-Return-Path: <linux-kernel+bounces-800183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F7EB4344F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFACB4346F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186D9188A1E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AE33A8597
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7244F2BE7B8;
-	Thu,  4 Sep 2025 07:34:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63C52BD58C;
+	Thu,  4 Sep 2025 07:44:06 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F129E113
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A87D29DB6A;
+	Thu,  4 Sep 2025 07:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971282; cv=none; b=cC5rYMwqO3fYugW5bDjN0QWhjeTCtqzm+obmwMYm1Kv6qBITfZiijFxzjHcv8Xudc4d1ZE7YQtGgD9/kBeCz1L5QKKryLn1w1HZzLVkPhHZLLbBhr7b7AuBqm8yW0GekvHT+T9pjUi0txpv+DzIpqF0g3r74LuSPcBVh/rqYSIE=
+	t=1756971846; cv=none; b=BG5RuMte6Ov04fY7TPFChuZck7DDTxAvLZpwWK+NbMf23lN1VxPLRsC8RDvwrjJEOrwXj+7v/9G9Bj0gEs5vR1Y/zfKBknF9HxSGNAHvUB/iRojo/eZQZukvYfe0DmovCsboUxcIVKJVD/lnP8DIx9O1igLWDnyKwVV7zOfcnmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756971282; c=relaxed/simple;
-	bh=9Lfs7x06aYUGDh170BRagUu5k+P060o70Hk6IG+sLGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4OzsS/ijb6EPe3wfmxLnzbIAauQQCjZBz3Of+rzWA883d7r+KFgANFQZeBHGrXmnNS817TGbr8Tk70IgMFr5JAyNuAAob27bwP4C+4/8KV9P/IKwM4Al0oo64qjfWOqe4oXRRkqTKe5A/wUWt6RL2s+8dXtsXSRmlqRpA9NUHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uu4UF-0006Gq-DD; Thu, 04 Sep 2025 09:34:27 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uu4UE-003gug-3D;
-	Thu, 04 Sep 2025 09:34:27 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uu4UE-0025QG-2n;
-	Thu, 04 Sep 2025 09:34:26 +0200
-Date: Thu, 4 Sep 2025 09:34:26 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v6 1/2] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <aLlBAuYoHIJZLfiE@pengutronix.de>
-References: <20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de>
- <20250903-clk-cdce6214-v6-1-b2cc0a6f282b@pengutronix.de>
- <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
+	s=arc-20240116; t=1756971846; c=relaxed/simple;
+	bh=CsW6iKaT0dqbRQAoLV1BC4Wm0MVZ0vVh0FMg/XPVnjI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j24aWdqT2HfBN+t4rvizFl7x+Y+u2W+lQd594U++QlNYhs32c8n/SVTJU3V5Y4v0Mc7zHuGD663kGWYCR5WvtMuBGywvp1UdaHOfksU3oAv3H6KGvMJHLHKSUsj8lug/E8yzjuG+VSZJ8s4mtJ1T/H4RntwAq2Mm3Q0Nq2xvXNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cHWgv5mW1zKHNKK;
+	Thu,  4 Sep 2025 15:43:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B47CD1A084B;
+	Thu,  4 Sep 2025 15:43:55 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDXIY45Q7loCzJgBQ--.13338S4;
+	Thu, 04 Sep 2025 15:43:55 +0800 (CST)
+From: linan666@huaweicloud.com
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	pmenzel@molgen.mpg.de,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH v3] md: prevent incorrect update of resync/recovery offset
+Date: Thu,  4 Sep 2025 15:34:52 +0800
+Message-Id: <20250904073452.3408516-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-arboreal-upbeat-iguana-aebba6@kuoka>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXIY45Q7loCzJgBQ--.13338S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Gr48Gw1rGr15Jry5Ww15Jwb_yoW8Jr17pF
+	Z7CFyakr15Xr47ArWUZ34UZFyrZw1xtryUCryUuw1DZ3WxKwnrtFWqganrXFyqgws5AFWj
+	q3s5Jan8ZaykAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU5g4SUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Thu, Sep 04, 2025 at 09:18:13AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Sep 03, 2025 at 03:55:45PM +0200, Sascha Hauer wrote:
-> > Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
-> > Generator With One PLL, Four Differential Outputs, Two Inputs, and
-> > Internal EEPROM.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> >  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 198 +++++++++++++++++++++
-> >  include/dt-bindings/clock/ti,cdce6214.h            |  24 +++
-> >  2 files changed, 222 insertions(+)
-> > 
-> 
-> I don't understand what is happening here.
-> 
-> Patch changed in weird and unexplained way - nothing in the changelog
-> explains dropping SPDX - and does not pass even checkpatch.
+From: Li Nan <linan122@huawei.com>
 
-I removed the SPDX by accident, will add it back of course.
+In md_do_sync(), when md_sync_action returns ACTION_FROZEN, subsequent
+call to md_sync_position() will return MaxSector. This causes
+'curr_resync' (and later 'recovery_offset') to be set to MaxSector too,
+which incorrectly signals that recovery/resync has completed, even though
+disk data has not actually been updated.
 
-Other than that, what's weird? Changelog says I now use the pinctrl
-subsystem to configure pins. OK, that also changes the binding, I could
-have mentioned that explicitly, sorry for that.
+To fix this issue, skip updating any offset values when the sync action
+is FROZEN. The same holds true for IDLE.
 
-Sascha
+Fixes: 7d9f107a4e94 ("md: use new helpers in md_do_sync()")
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+v3: add INTR flag, otherwise resync_min/max will be updated incorrectly.
+v2: fix typo.
 
+ drivers/md/md.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index e78f80d39271..f926695311a2 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9397,6 +9397,11 @@ void md_do_sync(struct md_thread *thread)
+ 	}
+ 
+ 	action = md_sync_action(mddev);
++	if (action == ACTION_FROZEN || action == ACTION_IDLE) {
++		set_bit(MD_RECOVERY_INTR, &mddev->recovery);
++		goto skip;
++	}
++
+ 	desc = md_sync_action_name(action);
+ 	mddev->last_sync_action = action;
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.39.2
+
 
