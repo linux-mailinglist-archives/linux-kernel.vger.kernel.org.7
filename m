@@ -1,215 +1,462 @@
-Return-Path: <linux-kernel+bounces-801090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB19B43FBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9D1B44EAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33971C27AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE3B21C27B92
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C9305076;
-	Thu,  4 Sep 2025 14:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1ED2EBDD0;
+	Fri,  5 Sep 2025 07:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lxf00XAy"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B/4N1nWd"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A68A2FE079
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F32D46CE
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756997719; cv=none; b=B1eqdbXP9NnOzPPQIb2RIZNZTs+k+dcp2bQkaxplFPwq26HLp1Qs17Xq0oppXQaBNiEwQndDJtbRmGDCbUlg/RfqLG6pQnVwN8PHSz8sM2OxkM3r1VfdTZoSkhblJnFQeSeIXVmnFHvLosIw8msXc0x3x/E4FB7VU3FkhayW/kU=
+	t=1757055790; cv=none; b=n72mNT6B1sAl71ZGV3QYCi12QWd+CKRYcUMd3eQlbKCvactc2eKppFB03cMu+l7wdlbAqlH0Q1/Vd4GrwBC2vjLw/zGwvfEXXUoDXcnkBCJBKtcPVzN6j9nb8fqpscT8zQbfuJjnn8rDWZwkZpjiKfU/M5Jyy40PyVdKBxb+0vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756997719; c=relaxed/simple;
-	bh=Vu50VlHWhfu3eDefeWuGH5QtkTImEmYPu7LJliPOI3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+9beokBhv9mkF56Mr/awMRt3+N6SjpS4483rdXByl7hRFVy4yhoQU0xoOyKgNjLGVgh4Dq/zx7ZjXDOkpBVoaWHM3renWWkLvI7Ceh6eMqjXTLnS8z9TkYCnBJjgUI84s51DLtTBAig3a3BEhbxwXXnezhrz4WffKrWnTNrPjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lxf00XAy; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso8353155e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756997714; x=1757602514; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OlzbqxHWks8OMO9kY1WhKs2DQhBZN9bk1DhejlkzldE=;
-        b=lxf00XAydxGfWNl8D/4mSxyB8n64OsVedzdwNgjBDsNO8Rr/3ZFKdY17p1PGoZPnVC
-         XdErfDpi/c/FXzIn2B1MfjBytn7rupAyj3idtanPlxnzOYqeCpOoSL9rfAnwdQZ6+AyQ
-         y7Qc/dDeKT2Q6oMJf1bHXJ2P6X+5pcw29TLGtFziN++A/IhlpP2R/LxkoeTO9qczknTI
-         1HG6T2nn7NDY5Rxl9LerMHxdoldKIwlonPpuXL4+e3qlnxYeWhjWKTaQLljAyIYF7IeN
-         H2VI8rHDtv8I0cjfb0g50EEJOKkAA9FaLBc1UvsocB1pp+eTwkValJWGSvFMuyJf4jMC
-         lG1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756997714; x=1757602514;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OlzbqxHWks8OMO9kY1WhKs2DQhBZN9bk1DhejlkzldE=;
-        b=wKDUu74HzXLfVkd3SOQ9eK8Yp9ZIZRUtsp78DB0nEZeIV5C9vEMVKMClpgD6fpmwJP
-         s6UJAK5rlesduPncp5cC/lZQeX8yRry3uxgiMmwARFMmU6xD+5i3DqkCGdRsaPZ3h7fB
-         ghtV3KWg81ovDvB29fXelymHQIaj1Tyu0uiyTFEFVQMFetNWvr0w4S/+/f/wwSNoYX+b
-         vXSOnSgFeMreMHMqhBjokk0A1muq3NalgbF92HLM18EJv2WPlV6K6Rb8W66rF/y3QUxQ
-         HWjZWfVUVnTCTt8IfQuPjZ1fWfHLCgZZVe9dvnmTd/3l+BJvfRA1Ww4JJQil8rfVhD3u
-         f5cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwjSMyjiMD0RSPJ3gjIQFTabGYXnAVgddPS0Z1QDdaS9WXChFHDXn6wAE2RvN5LMaIJD3RBbZA1x7MhyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCcGhcrJpnFxzZdAwBvcx6TdlrPoV6GgaDGL/VGn210ptl1GSQ
-	bESHAgS9hV4TebSIpztZ+vU3cJ2BlgMciGEDdjv+F+dRqGV3cVh8N1r1VlQeShliITA=
-X-Gm-Gg: ASbGnct+toAK4V74IcaFOosoHD1PosxACRkWAB92PLcqAEteiEIcmx8nFVmoRHQf/An
-	KfbSG+qXUM71zBykM9yGwCwvULfmC5U/YvI5uUYMKB4iG+xpV+0VIyjlIUpu43iI9ByycQqMAd+
-	RCxdJAjpMvfeE2CA1VokCi/GfvylzcP0Xv+IYW9WlTwJ4jJXodSfOTQf+Zz/FxHmyTG83Xwc4D+
-	XF6sZL7x8cxvg8I1vFhx8GRNs8bieWEd3HX0TN1aN6z3T1jWv22iOfxO1r3aTug2QR0LUUeiDd0
-	auQFm+VH8JN3iFfWBqGmFc6bfJp4bbfWTaMNuxClvgFmMh+lZcgTbZ7sN3wISzv/VT47tjHmXUQ
-	kD1rfNqFcjCMpvvKugWthXYUNuYFpyDQKB8Wqgpin3QAgCEhu6Rm/M+7PoHL0fV4Byou4KrBYcf
-	EdQ2aS3vXFHG1ZB/fo1hgEcDNNhXFZhQ==
-X-Google-Smtp-Source: AGHT+IEixMJCnnfMVOoArT0KYVH589lpzYoFEz4huosDWAyl6UjmSw3YUn36sGdFNnJEB8MI8ecY0g==
-X-Received: by 2002:a05:600c:4513:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-45b8554eb6amr152243325e9.13.1756997713622;
-        Thu, 04 Sep 2025 07:55:13 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm287110985e9.19.2025.09.04.07.55.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 07:55:13 -0700 (PDT)
-Message-ID: <b7d81122-6da4-405e-a370-c621131ff90a@linaro.org>
-Date: Thu, 4 Sep 2025 15:55:09 +0100
+	s=arc-20240116; t=1757055790; c=relaxed/simple;
+	bh=M6nuY/WcaCI3oh3Gzs0vDb936kps5Vh/NStz3zKwobU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=V6w/LbmuoIicnuHcN4GExnuNvd37uIxMucI7VMJzIhdxLLK1yqs8j2z/wU/2SPZPEuOPc1nPi8nafh2HmSX2BP0E5BlxmRRpK3R9HqEh6aFOMEhkVObDr30nEj83mFREl/6VMh5tboeVc5hZorEdCJsZF2ij9UyKuZGkWiKJaqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=B/4N1nWd; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905070305epoutp03062f6e570232611ca42d46cdabb7544b~iUO1ciuCo3272132721epoutp03P
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905070305epoutp03062f6e570232611ca42d46cdabb7544b~iUO1ciuCo3272132721epoutp03P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757055785;
+	bh=S49l/pXCpRHJzfcOGW9tRWJJWT7z47WyvFxIk0G8/Fk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B/4N1nWdUjTJfefD0jEqq/v3vaOKxPVIA0t4v76soz9XBIxu63BCKVfDMJRRg7UkK
+	 Q7VI8txEafh53F+8Gl39C3wBew/M2dBGe5C6HKKiV08pmwWrp4woQK9vBBDE6EEGVG
+	 +qKI6M30vbKEJy6ccGnR/8zMO4P7jLxm/xwaDVQ8=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250905070304epcas5p370c98a3235bd4c0a577df78cff53c418~iUO1BApl-3104231042epcas5p3G;
+	Fri,  5 Sep 2025 07:03:04 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cJ6kJ3htvz3hhTB; Fri,  5 Sep
+	2025 07:03:04 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904145526epcas5p25642ef881f7c608a1d093e3e78d3f660~iHB_S_1sd0980409804epcas5p2u;
+	Thu,  4 Sep 2025 14:55:26 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904145525epsmtip16361a1be448841943f3927c9bc64768a~iHB9J03pi2016120161epsmtip1Z;
+	Thu,  4 Sep 2025 14:55:25 +0000 (GMT)
+Date: Thu, 4 Sep 2025 20:25:20 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 14/20] cxl/region: Add devm_cxl_pmem_add_region() for
+ pmem region creation
+Message-ID: <148912029.181757055784505.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] i2c: qcom-cci: Add OPP table support and enforce
- FAST_PLUS requirements
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>,
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
- <20250904-topic-cci_updates-v1-4-d38559692703@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250904-topic-cci_updates-v1-4-d38559692703@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <54012143-0925-4e76-a1e9-0092e10b8c84@intel.com>
+X-CMS-MailID: 20250904145526epcas5p25642ef881f7c608a1d093e3e78d3f660
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_ea8fe_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121241epcas5p3e5708a89d764d1de9322fd759f921de0
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121241epcas5p3e5708a89d764d1de9322fd759f921de0@epcas5p3.samsung.com>
+	<20250730121209.303202-15-s.neeraj@samsung.com>
+	<54012143-0925-4e76-a1e9-0092e10b8c84@intel.com>
 
-On 04/09/2025 15:31, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The CCI clock has voltage requirements, which need to be described
-> through an OPP table.
-> 
-> The 1 MHz FAST_PLUS mode requires the CCI core clock runs at 37,5 MHz
-> (which is a value common across all SoCs), since it's not possible to
-> reach the required timings with the default 19.2 MHz rate.
-> 
-> Address both issues by introducing an OPP table and using it to vote
-> for the faster rate.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->   drivers/i2c/busses/i2c-qcom-cci.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
-> index 74fedfdec3ae4e034ec4d946179e963c783b5923..d6192e2a5e3bc4d908cba594d1910a41f3a41e9c 100644
-> --- a/drivers/i2c/busses/i2c-qcom-cci.c
-> +++ b/drivers/i2c/busses/i2c-qcom-cci.c
-> @@ -10,6 +10,7 @@
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
->   #include <linux/pm_runtime.h>
->   
->   #define CCI_HW_VERSION				0x0
-> @@ -121,6 +122,7 @@ struct cci_data {
->   	struct i2c_adapter_quirks quirks;
->   	u16 queue_size[NUM_QUEUES];
->   	struct hw_params params[3];
-> +	bool fast_mode_plus_supported;
+------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_ea8fe_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-that is a very long name for a flag
+On 19/08/25 05:30PM, Dave Jiang wrote:
+>
+>
+>On 7/30/25 5:12 AM, Neeraj Kumar wrote:
+>> devm_cxl_pmem_add_region() is used to create cxl region based on region
+>> information scanned from LSA.
+>>
+>> devm_cxl_add_region() is used to just allocate cxlr and its fields are
+>> filled later by userspace tool using device attributes (*_store()).
+>>
+>> Inspiration for devm_cxl_pmem_add_region() is taken from these device
+>> attributes (_store*) calls. It allocates cxlr and fills information
+>> parsed from LSA and calls device_add(&cxlr->dev) to initiate further
+>> region creation porbes
+>>
+>> Renamed __create_region() to cxl_create_region() and make it an exported
+>> routine. This will be used in later patch to create cxl region after
+>> fetching region information from LSA.
+>>
+>> Also created some helper routines and refactored dpa_size_store(),
+>> commit_store() to avoid duplicate code usage in devm_cxl_pmem_add_region()
+>
+>"Some helper routines are created to...."
+>
+>I would drop the "Also"
 
->   };
->   
->   struct cci {
-> @@ -466,9 +468,22 @@ static const struct i2c_algorithm cci_algo = {
->   	.functionality = cci_func,
->   };
->   
-> +static unsigned long cci_desired_clk_rate(struct cci *cci)
-> +{
-> +	if (cci->data->fast_mode_plus_supported)
-> +		return 37500000ULL;
-> +
-> +	return 19200000ULL;
+Sure Dave, I will drop it in next patch-set
 
-what's 32 bits between friends ?
+>
+>
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/cxl/core/core.h   |   1 +
+>>  drivers/cxl/core/port.c   |  29 ++++++----
+>>  drivers/cxl/core/region.c | 118 +++++++++++++++++++++++++++++++++-----
+>>  drivers/cxl/cxl.h         |  12 ++++
+>>  4 files changed, 134 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+>> index 2669f251d677..80c83e0117c6 100644
+>> --- a/drivers/cxl/core/core.h
+>> +++ b/drivers/cxl/core/core.h
+>> @@ -94,6 +94,7 @@ int cxl_dpa_free(struct cxl_endpoint_decoder *cxled);
+>>  resource_size_t cxl_dpa_size(struct cxl_endpoint_decoder *cxled);
+>>  resource_size_t cxl_dpa_resource_start(struct cxl_endpoint_decoder *cxled);
+>>  bool cxl_resource_contains_addr(const struct resource *res, const resource_size_t addr);
+>> +ssize_t resize_or_free_dpa(struct cxl_endpoint_decoder *cxled, u64 size);
+>>
+>>  enum cxl_rcrb {
+>>  	CXL_RCRB_DOWNSTREAM,
+>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>> index 29197376b18e..ba743e31f721 100644
+>> --- a/drivers/cxl/core/port.c
+>> +++ b/drivers/cxl/core/port.c
+>> @@ -243,16 +243,9 @@ static ssize_t dpa_size_show(struct device *dev, struct device_attribute *attr,
+>>  	return sysfs_emit(buf, "%pa\n", &size);
+>>  }
+>>
+>> -static ssize_t dpa_size_store(struct device *dev, struct device_attribute *attr,
+>> -			      const char *buf, size_t len)
+>> +ssize_t resize_or_free_dpa(struct cxl_endpoint_decoder *cxled, u64 size)
+>
+>Maybe it should be called cxl_realloc_dpa()? More comments later on...
 
-> +}
-> +
->   static int __maybe_unused cci_suspend_runtime(struct device *dev)
->   {
->   	struct cci *cci = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = dev_pm_opp_set_rate(dev, 0);
-> +	if (ret)
-> +		return ret;
->   
->   	clk_bulk_disable_unprepare(cci->nclocks, cci->clocks);
->   
-> @@ -484,6 +499,10 @@ static int __maybe_unused cci_resume_runtime(struct device *dev)
->   	if (ret)
->   		return ret;
->   
-> +	ret = dev_pm_opp_set_rate(dev, cci_desired_clk_rate(cci));
-> +	if (ret)
-> +		return ret;
-> +
->   	cci_init(cci);
->   
->   	return 0;
-> @@ -588,6 +607,19 @@ static int cci_probe(struct platform_device *pdev)
->   	if (ret < 0)
->   		return ret;
->   
-> +	ret = devm_pm_opp_set_clkname(dev, "cci");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* OPP table is optional */
-> +	ret = devm_pm_opp_of_add_table(dev);
-> +	if (ret && ret != -ENODEV)
-> +		return dev_err_probe(dev, ret, "invalid OPP table in device tree\n");
-> +
-> +	ret = dev_pm_opp_set_rate(dev, cci_desired_clk_rate(cci));
-> +	if (ret)
-> +		return ret;
-> +
->   	/* Interrupt */
->   
->   	ret = platform_get_irq(pdev, 0);
-> @@ -775,6 +807,7 @@ static const struct cci_data cci_v2_data = {
->   		.trdhld = 3,
->   		.tsp = 3
->   	},
-> +	.fast_mode_plus_supported = true,
->   };
->   
->   static const struct of_device_id cci_dt_match[] = {
-> 
+Sure Dave, I will rename it to cxl_realloc_dpa().
 
-LGTM
+>
+>>  {
+>> -	struct cxl_endpoint_decoder *cxled = to_cxl_endpoint_decoder(dev);
+>> -	unsigned long long size;
+>> -	ssize_t rc;
+>> -
+>> -	rc = kstrtoull(buf, 0, &size);
+>> -	if (rc)
+>> -		return rc;
+>> +	int rc;
+>>
+>>  	if (!IS_ALIGNED(size, SZ_256M))
+>>  		return -EINVAL;
+>> @@ -262,9 +255,23 @@ static ssize_t dpa_size_store(struct device *dev, struct device_attribute *attr,
+>>  		return rc;
+>>
+>>  	if (size == 0)
+>> -		return len;
+>> +		return 0;
+>> +
+>> +	return cxl_dpa_alloc(cxled, size);
+>> +}
+>> +
+>> +static ssize_t dpa_size_store(struct device *dev, struct device_attribute *attr,
+>> +			      const char *buf, size_t len)
+>> +{
+>> +	struct cxl_endpoint_decoder *cxled = to_cxl_endpoint_decoder(dev);
+>> +	unsigned long long size;
+>> +	ssize_t rc;
+>> +
+>> +	rc = kstrtoull(buf, 0, &size);
+>> +	if (rc)
+>> +		return rc;
+>>
+>> -	rc = cxl_dpa_alloc(cxled, size);
+>> +	rc = resize_or_free_dpa(cxled, size);
+>>  	if (rc)
+>>  		return rc;
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index eef501f3384c..8578e046aa78 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -703,6 +703,23 @@ static int free_hpa(struct cxl_region *cxlr)
+>>  	return 0;
+>>  }
+>>
+>> +static ssize_t resize_or_free_region_hpa(struct cxl_region *cxlr, u64 size)
+>> +{
+>> +	int rc;
+>> +
+>> +	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
+>> +	rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem);
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	if (size)
+>> +		rc = alloc_hpa(cxlr, size);
+>> +	else
+>> +		rc = free_hpa(cxlr);
+>> +
+>> +	return rc;
+>> +}
+>
+>I think it's better to have 2 helper functions rather a single ambiguous one here. alloc_region_hpa() and free_region_hpa(). More on why later.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Sure, I will handle it accordingly.
+
+>
+>> +
+>>  static ssize_t size_store(struct device *dev, struct device_attribute *attr,
+>>  			  const char *buf, size_t len)
+>>  {
+>> @@ -714,15 +731,7 @@ static ssize_t size_store(struct device *dev, struct device_attribute *attr,
+>>  	if (rc)
+>>  		return rc;
+>>
+>> -	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
+>> -	if ((rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem)))
+>> -		return rc;
+>> -
+>> -	if (val)
+>> -		rc = alloc_hpa(cxlr, val);
+>> -	else
+>> -		rc = free_hpa(cxlr);
+>> -
+>> +	rc = resize_or_free_region_hpa(cxlr, val);
+>>  	if (rc)
+>>  		return rc;
+>>
+>> @@ -2569,6 +2578,76 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+>>  	return ERR_PTR(rc);
+>>  }
+>>
+>> +static struct cxl_region *
+>> +devm_cxl_pmem_add_region(struct cxl_root_decoder *cxlrd,
+>> +			 int id,
+>> +			 enum cxl_partition_mode mode,
+>> +			 enum cxl_decoder_type type,
+>> +			 struct cxl_pmem_region_params *params,
+>> +			 struct cxl_decoder *cxld)
+>> +{
+>> +	struct cxl_port *root_port;
+>> +	struct cxl_region *cxlr;
+>> +	struct cxl_endpoint_decoder *cxled;
+>> +	struct cxl_region_params *p;
+>> +	struct device *dev;
+>> +	int rc;
+>> +
+>> +	cxlr = cxl_region_alloc(cxlrd, id);
+>I think you can use __free() here to drop all the gotos.
+>
+>struct cxl_region *cxlr __free(put_cxl_region) = cxl_region_alloc(cxlrd, id);
+>
+>Just make sure to 'return no_free_ptr(cxlr)' at the successful end.
+
+Sure Dave, Thanks for your suggestion. I will handle it accordingly in
+next patch-set.
+
+>
+>
+>> +	if (IS_ERR(cxlr))
+>> +		return cxlr;
+>> +	cxlr->mode = mode;
+>> +	cxlr->type = type;
+>> +
+>> +	dev = &cxlr->dev;
+>> +	rc = dev_set_name(dev, "region%d", id);
+>> +	if (rc)
+>> +		goto err;
+>> +
+>> +	p = &cxlr->params;
+>> +	p->uuid = params->uuid;
+>> +	p->interleave_ways = params->nlabel;
+>> +	p->interleave_granularity = params->ig;
+>> +
+>> +	if (resize_or_free_region_hpa(cxlr, params->rawsize))
+>> +		goto err;
+>
+>Given this is _add_region(), it really should only be calling alloc_region_hpa() and not have to deal with free. Maybe a check before this and make sure params->rawsize is not 0 is needed.
+
+Sure, Let me re-look at it.
+
+>
+>> +
+>> +	cxled = to_cxl_endpoint_decoder(&cxld->dev);
+>> +	if (resize_or_free_dpa(cxled, 0))
+>Given that resize_or_free_dpa() always frees, is this call necessary here?
+
+Yes, Its required here as in first call to resize_or_free_dpa(), we are
+just freeing dpa and returning as its size is 0. But anyway, Let me
+double check it here.
+
+>
+>> +		goto err;
+>> +
+>> +	if (cxl_dpa_set_part(cxled, CXL_PARTMODE_PMEM))
+>> +		goto err;
+>> +
+>> +	if (resize_or_free_dpa(cxled, params->rawsize))
+>
+>Seems like it can be called once here instead and it'll just free and then re-allocate whatever size in params->rawsize.
+
+Sure, I will re-look at it
+
+>
+>> +		goto err;
+>> +
+>> +	/* Attaching only one target due to interleave_way == 1 */
+>Is it missing a check of interleave_ways here? Also maybe additional comments on why support iw==1 only?
+
+Sure, I will look at this and update the comments properly.
+
+>
+>> +	if (attach_target(cxlr, cxled, params->position, TASK_INTERRUPTIBLE))
+>> +		goto err;
+>> +
+>> +	if (__commit(cxlr))
+>> +		goto err;
+>> +
+>> +	rc = device_add(dev);
+>> +	if (rc)
+>> +		goto err;
+>> +
+>> +	root_port = to_cxl_port(cxlrd->cxlsd.cxld.dev.parent);
+>> +	rc = devm_add_action_or_reset(root_port->uport_dev,
+>> +			unregister_region, cxlr);
+>> +	if (rc)
+>> +		return ERR_PTR(rc);
+>> +
+>> +	dev_dbg(root_port->uport_dev, "%s: created %s\n",
+>> +		dev_name(&cxlrd->cxlsd.cxld.dev), dev_name(dev));
+>> +	return cxlr;
+>> +
+>> +err:
+>> +	put_device(dev);
+>> +	return ERR_PTR(rc);
+>> +}
+>> +
+>>  static ssize_t __create_region_show(struct cxl_root_decoder *cxlrd, char *buf)
+>>  {
+>>  	return sysfs_emit(buf, "region%u\n", atomic_read(&cxlrd->region_id));
+>> @@ -2586,8 +2665,10 @@ static ssize_t create_ram_region_show(struct device *dev,
+>>  	return __create_region_show(to_cxl_root_decoder(dev), buf);
+>>  }
+>>
+>> -static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+>> -					  enum cxl_partition_mode mode, int id)
+>> +struct cxl_region *cxl_create_region(struct cxl_root_decoder *cxlrd,
+>> +				     enum cxl_partition_mode mode, int id,
+>> +				     struct cxl_pmem_region_params *params,
+>
+>Maybe name it pmem_params to avoid confusion with cxl region params.
+>
+>> +				     struct cxl_decoder *cxld)
+>>  {
+>>  	int rc;
+>>
+>> @@ -2609,8 +2690,14 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+>>  		return ERR_PTR(-EBUSY);
+>>  	}
+>>
+>> -	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
+>> +	if (params)
+>> +		return devm_cxl_pmem_add_region(cxlrd, id, mode,
+>> +				CXL_DECODER_HOSTONLYMEM, params, cxld);
+>> +	else
+>
+>'else' not needed here. Just directly return.
+
+Thanks Dave, I will fix it in next patch-set.
+
+>
+>> +		return devm_cxl_add_region(cxlrd, id, mode,
+>> +				CXL_DECODER_HOSTONLYMEM);
+>>  }
+>> +EXPORT_SYMBOL_NS_GPL(cxl_create_region, "CXL");
+>>
+>>  static ssize_t create_region_store(struct device *dev, const char *buf,
+>>  				   size_t len, enum cxl_partition_mode mode)
+>> @@ -2623,7 +2710,7 @@ static ssize_t create_region_store(struct device *dev, const char *buf,
+>>  	if (rc != 1)
+>>  		return -EINVAL;
+>>
+>> -	cxlr = __create_region(cxlrd, mode, id);
+>> +	cxlr = cxl_create_region(cxlrd, mode, id, NULL, NULL);
+>>  	if (IS_ERR(cxlr))
+>>  		return PTR_ERR(cxlr);
+>>
+>> @@ -3414,8 +3501,9 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>>  	struct cxl_region *cxlr;
+>>
+>>  	do {
+>> -		cxlr = __create_region(cxlrd, cxlds->part[part].mode,
+>> -				       atomic_read(&cxlrd->region_id));
+>> +		cxlr = cxl_create_region(cxlrd, cxlds->part[part].mode,
+>> +					 atomic_read(&cxlrd->region_id),
+>> +					 NULL, NULL);
+>>  	} while (IS_ERR(cxlr) && PTR_ERR(cxlr) == -EBUSY);
+>>
+>>  	if (IS_ERR(cxlr)) {
+>> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+>> index 6edcec95e9ba..129db2e49aa7 100644
+>> --- a/drivers/cxl/cxl.h
+>> +++ b/drivers/cxl/cxl.h
+>> @@ -865,6 +865,10 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled);
+>>  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+>>  void cxl_region_discovery(struct cxl_port *port);
+>> +struct cxl_region *cxl_create_region(struct cxl_root_decoder *cxlrd,
+>> +				     enum cxl_partition_mode mode, int id,
+>> +				     struct cxl_pmem_region_params *params,
+>> +				     struct cxl_decoder *cxld);
+>>  #else
+>>  static inline bool is_cxl_pmem_region(struct device *dev)
+>>  {
+>> @@ -890,6 +894,14 @@ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
+>>  static inline void cxl_region_discovery(struct cxl_port *port)
+>>  {
+>>  }
+>> +static inline struct cxl_region *
+>> +cxl_create_region(struct cxl_root_decoder *cxlrd,
+>> +		  enum cxl_partition_mode mode, int id,
+>> +		  struct cxl_pmem_region_params *params,
+>> +		  struct cxl_decoder *cxld)
+>> +{
+>> +	return NULL;
+>
+>return ERR_PTR(-EOPNOTSUPP);
+
+Sure Dave, I will fix it
+
+
+Regards,
+Neeraj
+
+------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_ea8fe_
+Content-Type: text/plain; charset="utf-8"
+
+
+------kMDsK0IEhKoUUkzyxABlnve5J-Otg2bCPR2yRM97vA1oUAWq=_ea8fe_--
+
 
