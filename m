@@ -1,151 +1,93 @@
-Return-Path: <linux-kernel+bounces-800127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6695B433B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:22:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE38B433BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF08585CF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A291899F94
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A929B79A;
-	Thu,  4 Sep 2025 07:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiAO/8dj"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DABDD531;
-	Thu,  4 Sep 2025 07:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2366929BD92;
+	Thu,  4 Sep 2025 07:22:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2201929B8FE;
+	Thu,  4 Sep 2025 07:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756970538; cv=none; b=qERaGFvS+0Ts1UjPzI2S2zs/3diJ478bjFIYh1I1uuSmS+Lqzy4UMcMj+9pBr3TZb8eLfUkUq/1blYou4iAFTDuHHXZgWZzK8zrIU4l1n2wf3y10xtNGRqlOmGg810k9E8OG4xs4+fsBDsQijNjJQC/vFXvGQAsZ5Q0DuhHLwHU=
+	t=1756970544; cv=none; b=MdpirfqrIs8AuMPA1v/VzUbxjPfP8YOossYU3Ozl4UYPsVDs5NTl+6fTeMyPkGW/Sr96rrqc1C9A0xZ7X3LYeY4YjEU+hWm7ufLz9qUjZ8Oftaugy7d/QyylUfORMqzXnAQFyqSiLlEEmS+fffGTo2YM8g8Ji3mfstZ+3kzh2Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756970538; c=relaxed/simple;
-	bh=RyWCIrsgET8kslvpMGuw9gArjjQ1Zyz1qGo8PdRMxBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBKXYMU6UtKfdwKKQxWB//hxgkooOZ3AZnPjY3KRtIxPVixA7U10u12m/nUPaQoIO8RM16UfJ0nRlyy8iL5lz3pKXnbFCn5hHVP9arxjlEPSfvjI14qbV8/mDEH62V5tbSVdow+HPnszQs/EOGIlmniRs2xA9TLx5BeOjX8F+f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiAO/8dj; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d2564399a5so363681f8f.1;
-        Thu, 04 Sep 2025 00:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756970535; x=1757575335; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7xkYk10jYxxNS+x7WRe35lpSvnGGZC6S/4eKOH88rmU=;
-        b=NiAO/8djCXDvW67W4n38nmrvjuR/G8kthy/c7PRIZKDGjUriXaxziRFmbZjquKVBwZ
-         T7u7T2LP5XGeZK8gaUCYLpxslpyoEZ54wJiIF+CI8wvXhqCZm1I0ekBXVgmxcZNulKVR
-         ufqAVu49KqGigWwt1+ELvHPNsc8A/hgvKLa6NEl9guz7OuRp88bAatvy6rDanjE5lf+s
-         Ztgib08NSDKwbAkopgVkGgzsYXvkA7iiUa1MB2JRxxKryj8hFJrRwJ+ya2qcd88I6OUb
-         YGB6GqIICB7SwmcSeFsaRFmx2gyY9GXPZVJ6vb1rU4Im+TB4UtvMYdJlMlkFn7xjQ6fQ
-         N+mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756970535; x=1757575335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7xkYk10jYxxNS+x7WRe35lpSvnGGZC6S/4eKOH88rmU=;
-        b=nrIAGHYO0fEaT+338fz86sBFobyKKoQ1qL38X016/++D9dcOB16KuQP47Gm8X9jpdA
-         lxLW5JWU5SP0qpzkY1NABEsg9LvbaPckEojMuQA8doStwME2Xik/LU3qd7tYUcXMoWJZ
-         iazRhoUx1rkgPtkfEV2GztZdQnDAqCjjZMYx1lwG53+DFsyPzgjW10KM8bnm1HhKsxHS
-         5gwOTrLicFD1GdkU2bG7V38DJ+wwwRbmQ32zNr2/GkEQfXC9pPuM6NEr5KiwOJ3WVWXN
-         0u0GZY5u6sWYXjG5A1u1sZNEmHzX0O9aoFLnYiCkCRqoirW+uHTeTZ2EOBvFsCI4f9Eb
-         d1PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUazC8VxPJxpDtCGNd9bBGLm1IqZ7rgVSsBbRK4aIVzsgtC3ZgXY6qFLAmyNWjeUydQPRGqHRTQ1IzFaDwp79Y=@vger.kernel.org, AJvYcCVVuAd6SbsX3NyQtzcGogNfbi0SuBnaeZOKN8oMt5mBOPo84qKfo6CLo2JaBvhGh3kFvyOhWuV6QgeE@vger.kernel.org, AJvYcCXI4wuOgCUD4Mov1sTmBqDBsoUZcqaVcQAATyfOji9X00JYUttwdflNTy3OYo00RoqnM/NGSGIWwe6bqi2C@vger.kernel.org, AJvYcCXdqZF3Z7ZnOzENiMA4k8HALvDpX7+Tt8GIUcFr/FDdQpquBP/WGhtIC750HEcWCJpYIFZr6D7UhlLJQbhKEX2jJ9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgQc2UAqIpOZ7wdI+dNX5VeHbTOQ/S/gXPLDBYjy0ag5gHxsfA
-	gJ8wweE1H9JGUDBGPG9eotS94iXkBARS+cGRLQ8wqwY0CvptZ9Hwk1d06F3pxNJFgPMFZWvvq+s
-	t6hTq11kTfBLMtqsMsKdOzcgHrmpK7UQ=
-X-Gm-Gg: ASbGnctBn6p4ymGGeZs9uAfSq+1H3zkWk8XAD+m94BYW+o3FOAY9QOGOtP1YICGxp+5
-	86d7NBcstQEnUT/y8vR+hlcPWADo/9a36Z8vfXp3Sbrii7YcENLqzq6VwKy0YHf9sbn2PuiLLzZ
-	KThHDxYqO0mYMIIiY2pEBP4dDSadaVLg9myS9PMy019noLbKqAK+xqD4ymlbVBD8xjxU0kEs7Wa
-	SzMdnw=
-X-Google-Smtp-Source: AGHT+IH4ScoC3WTLnEoHbynJDRFmSpztapTFDWI9D5R9ZcuYD+nzV3+iFBGFGYBQeD9KR3MKQ7hSuiXtmpt9Xct62Pc=
-X-Received: by 2002:a05:6000:2504:b0:3df:4fd3:6e95 with SMTP id
- ffacd0b85a97d-3df4fd3743dmr3510437f8f.34.1756970535418; Thu, 04 Sep 2025
- 00:22:15 -0700 (PDT)
+	s=arc-20240116; t=1756970544; c=relaxed/simple;
+	bh=8xhKGC5h+8ruU65eyfF72QFoZWvuqMYGLgBhcCI8mt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zh304pYEkrtba5uICgBApXLsNMc/+pj1iCy7M3rituQJgF6O+QIracHQGyPxpPf+fHzPNhcoYNHra50/3IaQQBuI2asldJBY0xnaK5EX37NPkAO3tZWFBrG2ZSxWRcML2hdt+uvUJqKSdvr4SLzl3Do0aBamXh3gy/v8OYuRt+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0583C1596;
+	Thu,  4 Sep 2025 00:22:14 -0700 (PDT)
+Received: from [10.57.60.120] (unknown [10.57.60.120])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F6D93F694;
+	Thu,  4 Sep 2025 00:22:21 -0700 (PDT)
+Message-ID: <4f0c03aa-bdb5-4a30-b81c-59e0e68313be@arm.com>
+Date: Thu, 4 Sep 2025 08:22:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250820202322.2051969-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 4 Sep 2025 08:21:49 +0100
-X-Gm-Features: Ac12FXzk_nCuYd0etn5cQ2l2wyLXHuC4HYD3WUBKlR1R8iDwZrQcgWjyM69DAdM
-Message-ID: <CA+V-a8sJXyw298cZFyezqnyHsAroz5A0T5d6mv+4PAtHk=DJtA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] Add watchdog driver support for RZ/T2H and RZ/N2H SoCs
-To: Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Conor Dooley <conor+dt@kernel.org>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] thermal: gov_step_wise: Clarify cooling logic
+ description comment
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+References: <12745610.O9o76ZdvQC@rafael.j.wysocki>
+ <4690596.LvFx2qVVIh@rafael.j.wysocki>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <4690596.LvFx2qVVIh@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Wim,
 
-On Wed, Aug 20, 2025 at 9:23=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Hi All,
->
-> This patch series adds watchdog driver support for the Renesas RZ/T2H
-> (R9A09G077) and RZ/N2H (R9A09G087) SoCs. The necessary device tree
-> bindings and driver modifications are included.
->
-> v3->v4:
-> - Updated commit message for patch 1/6 to include an example node.
-> - Added reviewed-by from Geert for patch 1/6.
->
-> v2->v3:
-> - Fixed commit header for the patches rzv2h_wdt->rzv2h
-> - Added reviewed-by from Wolfram
-> - Merged "watchdog: rzv2h_wdt: Make reset controller optional"
->   patch with "watchdog: rzv2h: Make "oscclk" and reset controller optiona=
-l"
-> - Dropped patch "watchdog: rzv2h: Set min_timeout based on
->   max_hw_heartbeat_ms" instead updated the period for RZ/T2H.
-> - Updated rzv2h_of_data structure to include tops and timeout_cycles
->   for RZ/T2H.
->
-> v1->v2:
-> - Dropped items from clock-names and instead added maxItems: 1.
-> - Added reviewed-by from Rob.
->
-> v1: https://lore.kernel.org/all/20250707200111.329663-1-prabhakar.mahadev=
--lad.rj@bp.renesas.com/
-> v2: https://lore.kernel.org/all/20250729155915.67758-1-prabhakar.mahadev-=
-lad.rj@bp.renesas.com/
-> v3: https://lore.kernel.org/all/20250804195723.3963524-1-prabhakar.mahade=
-v-lad.rj@bp.renesas.com/
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (6):
->   dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
->   watchdog: rzv2h: Obtain clock-divider and timeout values from OF match
->     data
->   watchdog: rzv2h: Make "oscclk" and reset controller optional
->   watchdog: rzv2h: Add support for configurable count clock source
->   watchdog: rzv2h: Add support for RZ/T2H
->   watchdog: rzv2h: Improve error strings and add newlines
->
-Gentle ping.
 
-Cheers,
-Prabhakar
+On 8/25/25 14:28, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The cooling logic description comment next to the get_target_state()
+> definition is slightly ambiguous in what it means by "lower cooling
+> state", so clarify that by replacing the ambuguous phrase with "the
+> minimum applicable cooling state".
+> 
+> No functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   drivers/thermal/gov_step_wise.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/drivers/thermal/gov_step_wise.c
+> +++ b/drivers/thermal/gov_step_wise.c
+> @@ -23,8 +23,8 @@
+>    *    b. if the trend is THERMAL_TREND_DROPPING, do nothing
+>    * If the temperature is lower than a trip point,
+>    *    a. if the trend is THERMAL_TREND_RAISING, do nothing
+> - *    b. if the trend is THERMAL_TREND_DROPPING, use lower cooling
+> - *       state for this trip point, if the cooling state already
+> + *    b. if the trend is THERMAL_TREND_DROPPING, use the minimum applicable
+> + *       cooling state for this trip point, or if the cooling state already
+>    *       equals lower limit, deactivate the thermal instance
+>    */
+>   static unsigned long get_target_state(struct thermal_instance *instance,
+> 
+> 
+> 
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
