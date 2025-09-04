@@ -1,147 +1,137 @@
-Return-Path: <linux-kernel+bounces-800427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE8FB4377D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB854B4377F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F304544E80
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763EB189D6AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243A72F747B;
-	Thu,  4 Sep 2025 09:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2642F83C3;
+	Thu,  4 Sep 2025 09:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDP4Wvyr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ji4B1n1Z"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EBD2E6CA2;
-	Thu,  4 Sep 2025 09:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE652E62D1;
+	Thu,  4 Sep 2025 09:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756979297; cv=none; b=l2e/hHVw7NbwVVA8bvJveDKJ6yOh9MRzzJlUCwUUO6BOksJIQD1nbt7h9quSYPzodDEAmWU/h21w1r8on0+Yz3v7k2VO0dO9e0OShx5EPD0UyF4Pcca/WM5kFC7JFR47T1hhrVwl033VuDMM5/VTCcWxFAluJS60Y5QW0TyYPbs=
+	t=1756979315; cv=none; b=nLk5Vdme2XkeQjkeJGgq1HYzge8KE981kD1gHkRKo5dC6ndobVhcGWM92UMabNsXhyii858ipiJppLrghVWLlJ3uwsH54/mdR7qA9igZ2s+/oZtsh3TRNgIY5FloPUn07zzLqlW78BW19IWL9p6sgT0sMpVMb/TuCGgix9H7Aqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756979297; c=relaxed/simple;
-	bh=eSK9XpQ23zppfzTJkuW3CQJXuqNrz1bU7qRgZXGB6tA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+/WAfQhH0J3G4QD9DdM6uvNWsihHbt1IjxfDcn8LKAtFfEM707FeBdWzw+sya0KkMLgsX1KibBt62lP0+TC+8pfpfbRg7Z00N4gRiTLcWRMU7dIVH7EhMYTiFuH+l/aumShHjYstkXjL/mJCyFJhnSJuFP0U2L1Ns05YrInOF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDP4Wvyr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC20BC4CEF0;
-	Thu,  4 Sep 2025 09:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756979294;
-	bh=eSK9XpQ23zppfzTJkuW3CQJXuqNrz1bU7qRgZXGB6tA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rDP4WvyryzO4sa/Jyu5jua8sQDsuV+qInwPTVj6okz3LCzBF0dEmdIU5msYpvRp/O
-	 1ItTTQrhEzEHsVjYizYLG1BJrmNtTRj/0yGK6mNVwL37e4DnzzJvv0ilif5AgGbPBJ
-	 B+M9BRtRlX31AnHpEZrhpmd3mGBMH2afIkuP5MLi5A+X9OlSMLc1KGyd0wcMaeFevp
-	 70KuGyTgINlFo5RmGDHWa4maYSHLNnTimpH1shcGHe0trz+qj6CpsupX29e7Oumr4o
-	 0yF90bZ0YSbEVFx8bj2H7ulmnEAOTeEL42ZWRSBsRK2ScG/+cWUERKY5LnCwKNN3H7
-	 9sveRObNMb2sQ==
-Message-ID: <79452f68-c231-4bf2-a4ea-e3dce9b78e2e@kernel.org>
-Date: Thu, 4 Sep 2025 18:48:12 +0900
+	s=arc-20240116; t=1756979315; c=relaxed/simple;
+	bh=sSwkUYF31EYfDWUi1ekgZrvpYkbnG+yUu343gN42CB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CABUOedoLfAovkxP/+oYARDFoAuxRF3ktRIem2Mgi4SOA8V+356ERIx4Sqw3yCvtIUK4c22cZGmCQHFDThyhJnIF6xdZPqwRsicn/em6KtwAbLkokxFNQJcfXZW9GTffLlIcAC7Iwvk3bLzZkmAv9NQENCCmVqMPgVDdME8d0xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ji4B1n1Z; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-32326e20aadso865609a91.2;
+        Thu, 04 Sep 2025 02:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756979313; x=1757584113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IurcVIvDmIouCP1bc4ecxaPSklAYPP27lDW3IVEMq8=;
+        b=ji4B1n1ZeIOvEnmtihxYnxPG/TBXF4jPvs7SO/4wcwnOtJ9aC/ekqJGppLiDTIdzZ8
+         wxrCTvkY47Ahp10kSQjrHchgD2MOosc9ec2EuE29rAPwHFBKAIk0HBWlyz9G2Mw2sLif
+         M3bETKkxyQzArWfIjZmuBHIMfw41Ddpr+BnvmkDguKoaxzFSmRq2fBXVRl6nMW10MI2O
+         d6LvyQ5kODqdNl2KNws6Wlz370O5DPb84xzrlFth1ELYmVWwnOdTF+jeNzksMePrKRJk
+         N38zJaL/FdjwjHxmhM5gT+jTLN2TPlmWadmE365tvrHWskphia0KWmg18Pu8O5frRl5s
+         v6Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756979313; x=1757584113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1IurcVIvDmIouCP1bc4ecxaPSklAYPP27lDW3IVEMq8=;
+        b=lxjsG9p4cN6WkJEMSqCDG8a7dRerpyKTRPqMmqLeOd8ArWUGK76D/7OwrrgXjmrrPJ
+         xfKY5UMPM8qXq6sAe1zF8bMkHPXjGgAmtWb9B/3ZJRfq3XzqypcLSA8U0pNW8wkCL/YS
+         LsyCyQqS9akxJjGVGupe8CitfC1JzW5GRN0GX+RE/60HwIjXKKCRB582bOn76TvBJIb8
+         LQR6qyxpPgIFnTGjXH1VKlxQzoLJ06C32ll59RsTuGLHaC4xdi64F5I/5V3O/3c1ASTm
+         E4uAAiHyeyRk9P8bp42nsKTW2LDGJ43gdd2qYn431OR0fwdrx1w5ghKfodGhMrO4faJe
+         0H2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV55d26uDV4roLS+0lxke903YykNKEoP5n0U6il14bxpqm3P8hi7tbFUDUvuJpyILzo7fQ=@vger.kernel.org, AJvYcCWRDeM2piQYgAjcmZQq8khu80UAkiMLwXMjw9uNcEB74k8l/j08j/h4XXJzR6S4vnTe7cfF/3im8vfrkSDI@vger.kernel.org, AJvYcCWyHjOiwqPRTFzrmq6N2gJ64pZLxMd9HdAOYDHn1tjEj1IiAQQmL4MCBQsxWgxW528C4rDclcFvE4i9+1OY/xwE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxig6BqUDSp7zfb02niM7swp7kCCDNyXRtQ+VJ5PauPzdJq6Dmv
+	QrgdtySqGzAIhYUaE7zhD5R8csO62ly1lnsxxmoh5Tt2i4AckDSO+aWf
+X-Gm-Gg: ASbGncsqK5bXPkuhYdg/cZ/+eU/pnXae/yxqzrHrYghjyEsYPnyPS3d/NQwy61h95n1
+	GUik7b6UhertqcE0gYpAMcUXmwdipyKTA8iUlX8y8mhyclsayAr1baHRlznsywpSRHOTnbsO/hn
+	ZnB5Yw1aW7CZga49+wjh3/MaP6VtAw2fvnzWIksOr2yxGvX9SyriewK4qDF/H5H73MQj6uN53qe
+	fF7lu0Gnbiaw9GAyzH+ZVtU53Bea/b8mcvk4O0dM5wydHcXBnQVg804xi+y316BFAsTqtK/i6VJ
+	vlL9xtPdNqdnFnq9T9kEtfKOJqCCjRD6VJ4jWUBTSj25haIgCN43PIKA/CiFddnIsQNHm735ldx
+	kmrnrnElpwtEb7NWYA6EdxKeM
+X-Google-Smtp-Source: AGHT+IEjJvp6rZMEUJSWcF25yiJN1Bj1VOnRLqvBit6RxKK7N20DSMX22/c7VA4ex8hcWLfqNlRIIw==
+X-Received: by 2002:a17:90b:1dcc:b0:31e:7410:a4d7 with SMTP id 98e67ed59e1d1-328156e473cmr24241658a91.33.1756979312777;
+        Thu, 04 Sep 2025 02:48:32 -0700 (PDT)
+Received: from days-ASUSLaptop ([50.7.253.114])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e1c8e07bsm7668990a91.4.2025.09.04.02.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 02:48:32 -0700 (PDT)
+Date: Thu, 4 Sep 2025 17:48:21 +0800
+From: Dong Yang <dayss1224@gmail.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: pbonzini@redhat.com, shuah@kernel.org, anup@brainfault.org,
+	atish.patra@linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] KVM: riscv: selftests: Enable supported test cases
+Message-ID: <aLlf6ZQ1uNjs8XS+@days-ASUSLaptop>
+References: <cover.1756710918.git.dayss1224@gmail.com>
+ <20250902-9cc0d0dad59ba680062dbbf8@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/21] can: netlink: remove comment in can_validate()
-To: Oliver Hartkopp <socketcan@hartkopp.net>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
- <20250903-canxl-netlink-prep-v1-7-904bd6037cd9@kernel.org>
- <b1bf6cc5-f972-4163-8619-e04b887e2d32@hartkopp.net>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <b1bf6cc5-f972-4163-8619-e04b887e2d32@hartkopp.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-9cc0d0dad59ba680062dbbf8@orel>
 
-On 04/09/2025 at 15:51, Oliver Hartkopp wrote:
-> Hi Vincent,
+On Tue, Sep 02, 2025 at 10:36:10AM -0500, Andrew Jones wrote:
+> On Mon, Sep 01, 2025 at 03:35:48PM +0800, dayss1224@gmail.com wrote:
+> > From: Dong Yang <dayss1224@gmail.com>
+> > 
+> > Add supported KVM test cases and fix the compilation dependencies.
+> > ---
+> > Changes in v3:
+> > - Reorder patches to fix build dependencies
+> > - Sort common supported test cases alphabetically
+> > - Move ucall_common.h include from common header to specific source files
+> > 
+> > Changes in v2:
+> > - Delete some repeat KVM test cases on riscv
+> > - Add missing headers to fix the build for new RISC-V KVM selftests
+> > 
+> > Dong Yang (1):
+> >   KVM: riscv: selftests: Add missing headers for new testcases
+> > 
+> > Quan Zhou (2):
+> >   KVM: riscv: selftests: Use the existing RISCV_FENCE macro in
+> >     `rseq-riscv.h`
+> >   KVM: riscv: selftests: Add common supported test cases
+> > 
+> >  tools/testing/selftests/kvm/Makefile.kvm                    | 6 ++++++
+> >  tools/testing/selftests/kvm/access_tracking_perf_test.c     | 1 +
+> >  tools/testing/selftests/kvm/include/riscv/processor.h       | 1 +
+> >  .../selftests/kvm/memslot_modification_stress_test.c        | 1 +
+> >  tools/testing/selftests/kvm/memslot_perf_test.c             | 1 +
+> >  tools/testing/selftests/rseq/rseq-riscv.h                   | 3 +--
+> >  6 files changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > -- 
+> > 2.34.1
 > 
-> On 03.09.25 10:50, Vincent Mailhol wrote:
->> The comment in can_validate() is just paraphrasing the code. When
->> adding CAN XL, updating this comment would add some overhead work for
->> no clear benefit.
+> In the future please CC previous reviewers on the entire series
+> (particularly when they have reviewed the entire previous series).
+Okay, I will pay attention to this in the future. Thanks.
 > 
-> I generally see that the code introduced by yourself has nearly no comments.
-
-I tend to disagree. While it is true that I added no C-style comment blocks, I
-added a ton of error messages which I would argue are documentation.
-
-For example, this code:
-
-	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
-	 * must be set and vice-versa
-	 */
-	if ((tdc_auto || tdc_manual) != !!data_tdc)
-		return -EOPNOTSUPP;
-
-was transformed into:
-
-	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
-	 * must be set and vice-versa
-	 */
-	if ((tdc_auto || tdc_manual) && !data_tdc) {
-		NL_SET_ERR_MSG(extack, "TDC parameters are missing");
-		return -EOPNOTSUPP;
-	}
-	if (!(tdc_auto || tdc_manual) && data_tdc) {
-		NL_SET_ERR_MSG(extack, "TDC mode (auto or manual) is missing");
-		return -EOPNOTSUPP;
-	}
-
-Which I think is a huge improvement on the documentation. And this has real
-value because the user do not have to look at the source code anymore to
-understand why an
-
-  ip link set can ...
-
-returned an error.
-
-> E.g. if you look at the [PATCH 12/21] can: netlink: add
-> can_ctrlmode_changelink() the comments introduced by myself document the
-> different steps as we had problems with the complexity there and it was hard to
-> review either.
-
-Those comments are still here.
-
-> I would like to motivate you to generally add more comments.
-This is a refactoring series. I kept all existing comments except of one and
-then added a more comments in the form of error message. I am not adding code,
-just moving it around, so I do not really get why I should be adding even more
-comments to the existing code.
-
-> When people (like me) look into that code that they haven't written themselves
-> and there is not even a hint of "what's the idea of what we are doing here" then
-> the code is hard to follow and to review.
-
-Is this an issue in my code refactoring or an issue with the existing code?
-
-> We definitely don't need a full blown documentation on top of each function. But
-> I like this comment you want to remove here and I would like to have more of it,
-> so that people get an impression what they will see in the following code.
-
-
-Yours sincerely,
-Vincent Mailhol
-
+> For the series,
+> 
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
