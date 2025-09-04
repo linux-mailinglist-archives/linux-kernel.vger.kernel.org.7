@@ -1,218 +1,148 @@
-Return-Path: <linux-kernel+bounces-801021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86603B43ED5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40653B43ED0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D28FC7BDD08
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467C3A0262D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9593074AB;
-	Thu,  4 Sep 2025 14:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="L3WYwSCT"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011071.outbound.protection.outlook.com [40.107.130.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD482307ADD;
-	Thu,  4 Sep 2025 14:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756996158; cv=fail; b=B3NpsM0MQ9LWGQugj00xDKYwpM6/94ZQsAc10HczEk69o5DTv8K6giZN24ddAxfgrA/4OQ36v9qQ1cxJrgJAHVHFN32mBgyshLAucS3O71e71UUx7Y6y/xEXS31Aur1c+f5S5phqhQwtBdjWyZtueNJXhXAWh9K+Ve/ZF9zbg4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756996158; c=relaxed/simple;
-	bh=sbwOHE6GtW724lR0gir7jMNZX3lMzqLRZxFrYgOJnWE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evTX56cRDNHKAysqD8wUQEkizDizof8f9gqZaJCDTdvS/IkC9ANpF/DUmSAm/l5H4hSFAPsBBzLHQyjiy1YEh9IhfqnHjW6v5/fog7IwnUt/J0Vx95VXz+nTnCmXGGzOhv48cS0aw7D4qUFjIsUBOuNVyKTNgDQppiM2OUdySn0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=L3WYwSCT; arc=fail smtp.client-ip=40.107.130.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D64Z9Lur+ciJH+BsNrniAR+5y8uKqS3kkawzQPUhAQwm4K9GXJeBLp3U8ho+53HULSgjXGVfiUG3Dbh5FJAspBzCbhVSop/GyGe9hu3t4zTFrgnJAXqohw/XF5m6SQXMrj+xqebAXSyP7bLkuvwjJSo7/t8dhqSgepFbHyoz5nThkh8AATtFMayKprCuaEd+4UIakgVtWj/YQiTpw8I8cb90FxVbHUSKuNepPeIvztqQiCWT9Bvx0+zoF8gxSE4vLTWeqIZ0DqTOUjDCIya8ZvGuAzMLOYlc/hFcY+jSuw4g4bbUxaWO/t7U2w7rRAc1X6Y4Lc7fNx3itkicWh/d6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I9XuFjQYH7zkwT/vUCHWyQ6fWYvOgOMbcp7P/Xgr2gI=;
- b=wqXGu9Z7YnfTv0AVGe3VETJnpU5lB3Cdzbm0MFBglR2bRN07VaLjajW4XFlt2w9m1KygW9ZfDiWRNGfMWprUVAOmP+k8sgrByYQFmUAJCnfhvGtKFWm65Pm8aIxXvgcjkEH5qvzAHpd7ieaTHpqfxpCzRJ1yDeJFvSCg6CqcUnRAvIeSeyazArx5jVnmujvJIFliET6Wvg7zt4NP+qJ0gzC7PTmB+xUxNCcjB81cffVB/0HHerTUVv+8Irm4rFWnHbSI//u74XbWscCHY31M0+Bb0Pel4HYIXe0WRR+0FbmMW2MgFr3R31NEVF+Iyl6HRooRqW+EIsMJ+2i7AHKOoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=arm.com smtp.mailfrom=axis.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I9XuFjQYH7zkwT/vUCHWyQ6fWYvOgOMbcp7P/Xgr2gI=;
- b=L3WYwSCTArwuRMqJczRKEwBrNzsG/oD3s/CKN5fn7W3iuhZc6a6Q3ZZyQFm9+DeeQFOs44KN2WLSDnXBXEM8B2Rn5RibVn1YS3O/Hk9EzU4f6ANNB4He7RHrQSiYlO5pebaQxID1S6dBvZ6I50T6HeIgtBQoyXb3kdSVbuClKkk=
-Received: from AS4P195CA0048.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:65a::23)
- by AM0PR02MB5939.eurprd02.prod.outlook.com (2603:10a6:208:187::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 14:29:13 +0000
-Received: from AM4PEPF00025F97.EURPRD83.prod.outlook.com
- (2603:10a6:20b:65a:cafe::f1) by AS4P195CA0048.outlook.office365.com
- (2603:10a6:20b:65a::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.18 via Frontend Transport; Thu,
- 4 Sep 2025 14:29:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00025F97.mail.protection.outlook.com (10.167.16.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9115.0 via Frontend Transport; Thu, 4 Sep 2025 14:29:13 +0000
-Received: from se-mail02w.axis.com (10.20.40.8) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58; Thu, 4 Sep
- 2025 16:29:09 +0200
-Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 4 Sep 2025 16:29:09 +0200
-Received: from pc36611-1939.se.axis.com (pc36611-1939.se.axis.com [10.88.125.175])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id DD8981490;
-	Thu,  4 Sep 2025 16:29:09 +0200 (CEST)
-Received: by pc36611-1939.se.axis.com (Postfix, from userid 363)
-	id D823D601BA; Thu,  4 Sep 2025 16:29:09 +0200 (CEST)
-Date: Thu, 4 Sep 2025 16:29:09 +0200
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Ravi Patel <ravi.patel@samsung.com>, <jesper.nilsson@axis.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
-	<ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
-	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<smn1196@coasia.com>, <shradha.t@samsung.com>, <inbaraj.e@samsung.com>,
-	<swathi.ks@samsung.com>, <hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v4 4/6] arm64: dts: exynos: axis: Add initial ARTPEC-8
- SoC support
-Message-ID: <aLmiNQIsgBuDfLcX@axis.com>
-References: <20250901051926.59970-1-ravi.patel@samsung.com>
- <CGME20250901054254epcas5p24db87bd64fc57a25b17c51e608f15e7b@epcas5p2.samsung.com>
- <20250901051926.59970-5-ravi.patel@samsung.com>
- <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4993F30FC15;
+	Thu,  4 Sep 2025 14:29:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082B2307ADD
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756996189; cv=none; b=LWz+nmwHeR6fxr4/qYwF0VkmfdNY/bPC2iJbWEfmK5hii8vBpq64WqknE2WxZjkkij7gmlHkLNj4cmueQiWCqYEMz5wDbqITt39u/fW145dKzeDhaOz9DNG7IseixOgx8TJCOl3j/oF9qOqqtgn0ihrsvOWQUqhHF74I/2gQs4o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756996189; c=relaxed/simple;
+	bh=3BCN/NZHgi2IOo6S6L3PYTbZhbqyQnoRvjPPz3UJlL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uql/TeyShcfszS4l0fVJijAg+bJ+j5Vo+LwNm03YtvhRwBcVToV21N8POMuc3Ge+B8an0OH2hblzZFl/SHaBzyyAsDPU2SDbIyx0S70eYgYW/vhGu7KK3xYDYJh8d85nJKf90Cu0mEdbVcjPO42bUtvEu2e7KZ/hOMq6wTFX3HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABDF81596;
+	Thu,  4 Sep 2025 07:29:38 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5E763F63F;
+	Thu,  4 Sep 2025 07:29:45 -0700 (PDT)
+Date: Thu, 4 Sep 2025 15:29:42 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Paul Benoit <paul@os.amperecomputing.com>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] firmware: smccc: Fix Arm SMCCC SOC_ID name call
+Message-ID: <20250904-powerful-futuristic-tench-bcebd4@sudeepholla>
+References: <20250902172053.304911-1-andre.przywara@arm.com>
+ <20250903-great-savvy-bloodhound-38c1ca@sudeepholla>
+ <20250903-loutish-orangutan-of-experience-3dcfda@sudeepholla>
+ <cc8000c0-e457-4bfc-94de-aeeddacab23b@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F97:EE_|AM0PR02MB5939:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9791b69-f702-453b-cd20-08ddebbf6bf4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NUaa3e1Hv+PChXMbjqD2G3PVhS4+jM2MfDbef7UCK4LpxfrfMIIr3ixK3+Qz?=
- =?us-ascii?Q?khcqCld95+KFpJZbD7u5UDu53VXrRTxy5V4IOy2x3AI4Io22M6iF+pwpRHEE?=
- =?us-ascii?Q?8rpIqIqTrxzofwxhNCUcU1B0F1NEDDbXpJzrhfJzZCmlFKted56vyIfibCAa?=
- =?us-ascii?Q?FnB+7bd7aDRwosrJteiJKZq8E8Sd48NFtNMamosZnQ1lpKvJZfC51qgvjJ8v?=
- =?us-ascii?Q?hQubnds1FaJbrNngV/P3Z03jzIDFcAnuoGf9n7ryGMPUeEeGC++P01c5H47s?=
- =?us-ascii?Q?fEV7QQSLZ6x71PHHWSDpiOwyjDZ6ySDBGe0gQo5yrYfY9TJpBKMfKuEECwHj?=
- =?us-ascii?Q?G8omDPXAwt1BCVAET64OEspTU4yckgHBbmrKrG0LwBNH3V+mHkKaH3NWI9gS?=
- =?us-ascii?Q?dvJggpTyCLntIdiNAUIRUS6ZQCK+fv3AocysNI96WZh6UL7Dt41ZUm+PXEEm?=
- =?us-ascii?Q?Krso1carUzuEduBs+VJjmqDSJBe89X99vXPPuok/mfSKqozFF8q6zNjAEkDU?=
- =?us-ascii?Q?730up0wa+udBsL7VvpNTPCe5gjdIxhSSNHf4q6E4yKb6RxE7bE1kIGyp/EE4?=
- =?us-ascii?Q?7tqD3jlXWN2fwl+W/L6UWlfGxhBagiS2qmMkCTsu9yMwCYQEHNsUrDPFUmO2?=
- =?us-ascii?Q?UqIEK83hVz52/+QlLl48yfe5Z2FFg+mQLcrCmDC7enXRsLZbDP8EhABlFIN6?=
- =?us-ascii?Q?+zbmP7kNF89ZUBSr+cWS4irmjlshdfHSwxgVtm4//7750JCOB/1LTWhZsPmP?=
- =?us-ascii?Q?pfb5/SGNpO7HnZMCCfQOBsVjvv4NKVph1lITOxaBDYKnYHLsrQJpYzefWyt8?=
- =?us-ascii?Q?eHJKKgJeEeF/J2Hd+SiR9JDuxjZmBMJT8gTi4hiHNf4KwqA3M0/tlg6BwMe+?=
- =?us-ascii?Q?3OH8WscwOpKACtBsIJCXOp6bofNO72nMmOuYHZPCst8f2LO5S/+mpr07qfsT?=
- =?us-ascii?Q?tilBt2vhOHFmJaD/5f7CsFlZPHZjTbSd/Jqt9PzAVZqMKLHqCrR83mYKcLgf?=
- =?us-ascii?Q?PExlGz9SgB8SjGvH2/lfiRkD7ZfuWf1rcTn1UyLTjNTOxjoBHwhoV5tKFKB4?=
- =?us-ascii?Q?15qNkFdhbHSmnHPKafmsSDp2T0WWXBjGMdyVAZqN0Z8QB6kjOlylDoDWcNzv?=
- =?us-ascii?Q?45i0Ei22hfvMdvIW94oSeaIbyDequ/cCodQO1bNVHFUdHQoSID3yJZOBqVYZ?=
- =?us-ascii?Q?UfTeIaNNyO/uT0FlDtwvZtADFSAeQc3jUu7Arheb3n2cowUao8ypk425R1hR?=
- =?us-ascii?Q?zAC22+UnIeA4bbNgl6wN9kPyiMgb54PEcW/K3ULe9tjQRLfBjBWLCih2/xUu?=
- =?us-ascii?Q?yHw9rRIJhwbtFPBIWsJq92TIn4fjbeeaZP8wbAqaZ7nKnvVKgVBlBc6Fal/l?=
- =?us-ascii?Q?jopLfPfl0HcMT3/UJ81F2pS2Co79/jfHftBYSSW9iaKY4sVQzaVB4A7bfCe0?=
- =?us-ascii?Q?TFegCNRvypLQttmMw5v1sWpAbCIJKLKitSdPORo3OfEUEJRyk1SetcO1osyF?=
- =?us-ascii?Q?u0xjCYH5xgxnu5yihN4fTF9OWoMdZFsXEejG?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:29:13.8531
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9791b69-f702-453b-cd20-08ddebbf6bf4
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F97.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR02MB5939
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cc8000c0-e457-4bfc-94de-aeeddacab23b@os.amperecomputing.com>
 
-On Thu, Sep 04, 2025 at 03:43:14PM +0200, Krzysztof Kozlowski wrote
-> On 01/09/2025 07:19, Ravi Patel wrote:
-> > From: SungMin Park <smn1196@coasia.com>
+On Wed, Sep 03, 2025 at 05:38:44PM -0400, Paul Benoit wrote:
+> On 9/3/2025 10:49 AM, Sudeep Holla wrote:
+> > On Wed, Sep 03, 2025 at 03:23:58PM +0100, Sudeep Holla wrote:
+> > > On Tue, Sep 02, 2025 at 06:20:53PM +0100, Andre Przywara wrote:
+> > > > Commit 5f9c23abc477 ("firmware: smccc: Support optional Arm SMCCC SOC_ID
+> > > > name") introduced the SOC_ID name string call, which reports a human
+> > > > readable string describing the SoC, as returned by firmware.
+> > > > The SMCCC spec v1.6 describes this feature as AArch64 only, since we rely
+> > > > on 8 characters to be transmitted per register. Consequently the SMCCC
+> > > > call must use the AArch64 calling convention, which requires bit 30 of
+> > > > the FID to be set. The spec is a bit confusing here, since it mentions
+> > > > that in the parameter description ("2: SoC name (optionally implemented for
+> > > > SMC64 calls, ..."), but still prints the FID explicitly as 0x80000002.
+> > > > But as this FID is using the SMC32 calling convention (correct for the
+> > > > other two calls), it will not match what mainline TF-A is expecting, so
+> > > > any call would return NOT_SUPPORTED.
+> > > > 
+> > > 
+> > > Good catch and I must admit I completely missed it inspite of discussing
+> > > 32b vs 64b FID around the same time this was introduced.
+> > > 
+> > > > Add a 64-bit version of the ARCH_SOC_ID FID macro, and use that for the
+> > > > SoC name version of the call.
+> > > > 
+> > > > Fixes: 5f9c23abc477 ("firmware: smccc: Support optional Arm SMCCC SOC_ID name")
+> > > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > > > ---
+> > > > Hi,
+> > > > 
+> > > > as somewhat expected, this now fails on an Ampere machine, which
+> > > > reported a string in /sys/devices/soc0/machine before, but is now missing
+> > > > this file.
+> > > > Any idea what's the best way to handle this? Let the code try the 32-bit
+> > > > FID, when the 64-bit one fails? Or handle this as some kind of erratum?
+> > > > 
+> > > 
+> > > Not sure about it yet. Erratum seems good option so that we can avoid
+> > > others getting it wrong too as they might just run the kernel and be happy
+> > > if the machine sysfs shows up as we decided to do fallback to 32b FID.
+> > > 
+> > > I will start a discussion to get the spec updated and pushed out and see
+> > > how that goes.
+> > > 
+> > > The change itself looks good and happy to get it merged once we know
+> > > what is the best approach(erratum vs fallback).
+> > > 
 > > 
-> > Add initial device tree support for Axis ARTPEC-8 SoC.
+> > Looking at the SMCCC spec(DEN0028 v1.6 G Edition) ->
+> > Section 7.4.6 Implementation responsibilities
 > > 
-> > This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+> > If implemented, the firmware:
+> > ...
+> > • must not implement SoC_ID_type == 2 for SMC32.
+> > • can optionally implement SoC_ID_type == 2 for SMC64 (Function ID 0xC000_0002),
+> > ...
 > > 
-> > Signed-off-by: SungMin Park <smn1196@coasia.com>
-> > Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> > ---
-> >  MAINTAINERS                                   |  12 +
-> >  arch/arm64/Kconfig.platforms                  |   7 +
-> >  arch/arm64/boot/dts/exynos/Makefile           |   1 +
-> >  .../boot/dts/exynos/axis/artpec-pinctrl.h     |  36 +++
-> >  .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi | 120 +++++++++
-> >  arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  | 244 ++++++++++++++++++
-> >  6 files changed, 420 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
-> >  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+> > So Ampere is not spec conformant here and hence I prefer to handle it as
+> > erratum. Hopefully we can use SOC_ID version and revision to keep the scope
+> > of erratum confined to smallest set of platforms.
 > > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fe168477caa4..4d0c1f10ffd4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4102,6 +4102,18 @@ S:	Maintained
-> >  F:	Documentation/devicetree/bindings/sound/axentia,*
-> >  F:	sound/soc/atmel/tse850-pcm5142.c
+> > Paul,
 > > 
-> > +AXIS ARTPEC ARM64 SoC SUPPORT
-> > +M:	Jesper Nilsson <jesper.nilsson@axis.com>
-> > +M:	Lars Persson <lars.persson@axis.com>
-> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > +L:	linux-samsung-soc@vger.kernel.org
-> > +L:	linux-arm-kernel@axis.com
-> > +S:	Maintained
-> > +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
-> > +F:	arch/arm64/boot/dts/exynos/axis/
-> > +F:	drivers/clk/samsung/clk-artpec*.c
-> > +F:	include/dt-bindings/clock/axis,artpec*-clk.h
+> > Thoughts ?
+> > 
 > 
-> Some official ack would be nice for this, but I also remember we earlier
-> emails, so I will take it as is.
+> Am I correctly understanding that, if the SMC64 SOC_ID Name call fails,
+> rather than an unconditional fallback to the SMC32 call, the SMC32
+> fallback would only be occurring under the proposed erratum?
+>
 
-Sure, that is a reasonable request,
+Correct, if we have unconditional fallback to the SMC32 call, then there
+is a chance that this issue gets carried into newer Ampere systems as f/w
+gets copied as well as other vendors will also not notice the issue if
+they make similar mistake as the kernel silent makes a SMC32 call.
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+We do need details of  the SoC revision and version for which we need to
+apply this workaround/erratum.
 
-> Best regards,
-> Krzysztof
+> I brought this issue up at a weekly team meeting today, and I'll also be
+> communicating with the Ampere Computing firmware team regarding this
+> issue.
 
-/^JN - Jesper Nilsson
+Thanks!
+
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Regards,
+Sudeep
 
