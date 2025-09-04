@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-800350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D019B436A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:08:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FA0B436AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE8F3B4429
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:08:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D49F17BA4E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8AF2DF145;
-	Thu,  4 Sep 2025 09:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DB52E1C5C;
+	Thu,  4 Sep 2025 09:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RVSBI4qi"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TMBW675y"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DF12C2343;
-	Thu,  4 Sep 2025 09:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66222DF6F6;
+	Thu,  4 Sep 2025 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976908; cv=none; b=tW/YXzNyY44/SoQaoGQn5OSu0tffL+pfzUm+VuKaupScP/GGxS2pXcYqpDkEV5vUE4WanvEEBHKdbZyEis3YsrIQz+2Ai9crYKmmfB2EF9AcAE/iifQkncKazSLZSDj9rAKnBdH47DQ0GAhDp2ms+n5Y2NvRwnAx9swnUylZkrw=
+	t=1756976951; cv=none; b=ipIsbcEMatMK0imTrBIEN1GT6zamEVdS0ToOEPYWZlRyP96a9knSwiwWWnMfhCW7I8EYsJqq60KgnF/Qja2kB+bwBWZfZ1qCObvBni27OFUdAUU1FwEI0kwOyYS/ahgZJYXKL7DmVqySVrGjJmpzK1NgQsPujfs3Mv39pmkHI1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976908; c=relaxed/simple;
-	bh=znHciAzO/yzlymIkccfnvZC3KRxuQndHbYL5aRt7RX8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o1rX6gcE5gUIRZ8lDNBM9KW4pkxhtzyM5Af6OMJwr1Q4kPzCRmOSr7XBNs95n196Sv4DMPLbtSTuslvZ/bXCsOsaMkk3KWmLPlEte4Tz+LBaXPhBbkqTrZxUlKUPgjZ/nSdwb3ZUynBVD17yWq/fH+424Rm0t5hTUdFTTXZrsJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RVSBI4qi; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58498G0E3436146;
-	Thu, 4 Sep 2025 04:08:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756976896;
-	bh=IjjhoKB/ImG3OuG9t915vQoJ+GWmj1wL2LkncRTXzfI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=RVSBI4qiPm40Xgj7fvM8dVo18wh+hMra0ZuQnURCxIBR2ms0vEg4/CH9XD2NTFJ0K
-	 r7SuhHv99WP8ZBTZ6XOGI4P469HycYRgllky85MLxtCFJ/WOOqKVcbrUGxmKG3LYyd
-	 5N7wbHpXNwGbtZWIgPQaB2QmFsreLLbAYRNBdp+4=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58498FtS3705362
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 04:08:16 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 04:08:15 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 04:08:15 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58498Epc3022684;
-	Thu, 4 Sep 2025 04:08:15 -0500
-Date: Thu, 4 Sep 2025 14:38:14 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-CC: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-        Marc Kleine-Budde
-	<mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vishal Mahaveer
-	<vishalm@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sebin Francis
-	<sebin.francis@ti.com>,
-        Kendall Willis <k-willis@ti.com>, Akashdeep Kaur
-	<a-kaur@ti.com>,
-        Simon Horman <horms@kernel.org>,
-        Vincent MAILHOL
-	<mailhol.vincent@wanadoo.fr>,
-        <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 3/4] can: m_can: Return ERR_PTR on error in allocation
-Message-ID: <20250904090814.nsphr76ixnc4mck6@lcpd911>
-References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com>
- <20250820-topic-mcan-wakeup-source-v6-12-v9-3-0ac13f2ddd67@baylibre.com>
+	s=arc-20240116; t=1756976951; c=relaxed/simple;
+	bh=G/J06Q7pmBlKJjTl3EXiNLMWxSy8VxCDwe2a+IgycIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=syMUpAGxeKrDvveUHA8oehdrBrin12YlOUN8V9KN2UDvU7SAdRwPzRHQH1h/M0W/IOwAvOnDgj6NVewI7NP//iguPthw35ke+9k1sP+0B5pPWlfyNWwLEEMRO1OS7w01PO8Xr0cndqacjevKf3PVwdWVPyO0VtFRvE05dF0hchU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TMBW675y; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=X8lJPPz3uM+KxHe0Nl9wRADaXsNsKIAR64B5GXSwg2c=; b=TMBW675yw/+89loQ095MXEB8Z+
+	IAvtY7OTS48P8otGdOUX5t3gH7wg1hgnvRzxzqQvG/POQ+aE6xCHUjEYcWYq35Q89VMtEcU6rPvei
+	xS05RYuyHvCCXwJDs0XdEZnyNqXZKva4VndSsUtO6g9k1y2SydxgOYwtmJNDoCXeT/rqV9Q+vCVZ4
+	0s1+e6W5wEsKpMXogMG6EX7nktGMcJEvZGVqfd8KX6M4ZIEgiPVBZkBJ7tqDToOE907Mfk26Yhnlx
+	jPsLlSrjtg5c2O80LpZayRU5vOKpI9VV83hdMP6qv493DrjKaz4BR96anUG2OyE+ICXZEKaA/TsXp
+	I00k4Uhg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uu5hw-002YvI-25;
+	Thu, 04 Sep 2025 17:08:38 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 04 Sep 2025 17:08:37 +0800
+Date: Thu, 4 Sep 2025 17:08:37 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: mhiramat@kernel.org, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+Message-ID: <aLlXFQaRmKaCeXTG@gondor.apana.org.au>
+References: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
+ <3005966.e9J7NaK4W3@7940hx>
+ <aLfCa1FkLc3T4QI3@gondor.apana.org.au>
+ <5038598.31r3eYUQgx@7940hx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250820-topic-mcan-wakeup-source-v6-12-v9-3-0ac13f2ddd67@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <5038598.31r3eYUQgx@7940hx>
 
-On Aug 20, 2025 at 14:42:27 +0200, Markus Schneider-Pargmann wrote:
-> We have more detailed error values available, return them in the core
-> driver and the calling drivers to return proper errors to callers.
+On Thu, Sep 04, 2025 at 11:37:35AM +0800, Menglong Dong wrote:
+>
+> Yeah, I understand what you mean. I noticed this, and that's why
+> I added the rcu_read_lock() for rhashtable_lookup() only.
 > 
-> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> ---
->  drivers/net/can/m_can/m_can.c          | 6 +++---
->  drivers/net/can/m_can/m_can_pci.c      | 4 ++--
->  drivers/net/can/m_can/m_can_platform.c | 4 ++--
->  drivers/net/can/m_can/tcan4x5x-core.c  | 4 ++--
->  4 files changed, 9 insertions(+), 9 deletions(-)
-> 
+> Maybe it is to obtain better performance? Just guess ;)
+> And hlist_for_each_entry_rcu() also uses rcu_dereference_raw().
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+I did some digging and this appears to be the source of the
+rcu_dereference_raw call:
 
+commit 3120438ad68601f341e61e7cb1323b0e1a6ca367
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Mon Feb 22 17:04:48 2010 -0800
+
+    rcu: Disable lockdep checking in RCU list-traversal primitives
+
+    The theory is that use of bare rcu_dereference() is more prone
+    to error than use of the RCU list-traversal primitives.
+    Therefore, disable lockdep RCU read-side critical-section
+    checking in these primitives for the time being.  Once all of
+    the rcu_dereference() uses have been dealt with, it may be time
+    to re-enable lockdep checking for the RCU list-traversal
+    primitives.
+
+So I don't think there is a good reason to use rcu_dereference_raw
+here at all.
+
+Cheers,
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
