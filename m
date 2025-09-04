@@ -1,209 +1,207 @@
-Return-Path: <linux-kernel+bounces-800887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC54B43D58
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:35:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16301B43D60
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EABF1C8215C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D254C3BBD39
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FFE30499B;
-	Thu,  4 Sep 2025 13:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4B8305074;
+	Thu,  4 Sep 2025 13:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Sw1j+vVA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UsJjKoTY"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511FA2FD1A6
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992911; cv=none; b=dZgNA/HDJeCB9FhX+ajN73Ve8Rh4IDAl1HGnyleMfe8jWDN4Rnex5mhei+AgwqAZVPuwE7UGtamXgySugpyNsSdQudtOBb6Qbhsb/vmRBNnHIPQEAvHBI0PoFrf/wKs1+GuUEiWkExAn+ZFXxY8n4gSX7g1SLs3vBIjfUcMRZ/Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992911; c=relaxed/simple;
-	bh=mNw4NPJv7jfExJEaKhRJuxPTUkc0hirhY7JArHV4h90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDdaJZHq258a24698qB0fp5mDQtsKqcTww+6nijh6fP4Pj/hzj8KemqkpzkbYOaE0ypndr4waIlDu6feW2oHxUEUBsuSC7TmyB4KYXMPKu/ko45YRvYRhjvjjH63xeflTjdOuzJEIuE04J76Qfi+KOxVjXPeLkUHTOxSgWzhyxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Sw1j+vVA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X7PJ032155
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 13:35:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OPxYfslCOHAID8SwXwG5fuaFBZwwpSGhUdIFauIo1JE=; b=Sw1j+vVAiPFzQ5kk
-	VZ6QxScya+uHCTspldly+ltI7VOtyAO+fwpG/mfGEfNBIngjzlf4BKj9IUK1D9WP
-	c77xC+M6IVj9SRNrNi4O/chNKqy3lQ2pEZnrNmTYfqN7NFTM2Z49+nBq5cMoaky0
-	nSHf+u8W9h/1Woavt+BZ8WI7xrstxuudIBigaaMGixM2z9SZMn9Qj3pe6tI2Jk2E
-	dzuzKc8aZVOhvPJjsFCqUQade9bqJbJEokDZu2BgS+Wodgh49KiXqk189L4bPCs4
-	0JJrAPvTp9pJ5M8jnotkLAsFsaxHD3aO4sN0s04DQwwBguUW4E25DrKSUmEmXbLZ
-	R2YHUA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpfrgy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 13:35:08 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-718c2590e94so35346126d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:35:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756992908; x=1757597708;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPxYfslCOHAID8SwXwG5fuaFBZwwpSGhUdIFauIo1JE=;
-        b=tZrCP/zWxaX2so4Z/1q8cb0lg+GUfyj2u9OK5A0v50veThuvC523CWSr0xQ/FkCrMD
-         UhdAy5y82Wdky0ltgU+1YowqsP27AhoyZQqyzTXTtMPU1MBGOLw1V7W9ET90XnKcM3lX
-         vQTqJTdDD4Xy2fC7HDdIzYAu22k2egkQTGwUOEG9F2A1LBvpunD+D9ZklhvDHWb7Yz6i
-         zcjn8u8acIMJAQfWccdtnr3FEfPJ1RJ8A/YEl56VgX3KMjEcnfstGGfpvwXm87kAneaT
-         2StXSzEH55jeiJSDtFtJLELgQuv47UjDCcUxSInoKudHlNVl3V9ECqVdBdwXGRuGkl38
-         hgAw==
-X-Forwarded-Encrypted: i=1; AJvYcCURPTQw4lbdIXQbqp69y/nWwVoktDgVXj7wr8SqudGbo7mmFlwatkq9gcN73bS/ZEkzr4KFkDBI+PTffro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhrENH06MySRrnNwNbnHBl5HL3jACqSy8ZbsolOANwbW9woGJd
-	ZddIgULZkTSir7rDsRzfwCfc5cTL+sVMpxbOFFrMth1cY2hCvMK3nKVT/gjAwS5qfNAM2iDWE+w
-	1SX6SCmwsQmGdHfdwJjIcdxjEztrC4nr6LcBJikmM/tylvmk3ApFLzUGe0OtnVV6aiMU=
-X-Gm-Gg: ASbGncvZrXHXSgxNmpCN/0TQWzTfL0o3M+4nml+rz/Xwn2Zsfz3i8kDrGtmj/19TxhA
-	hDKzO0T7Yas2Jo7acnq9gUiEg7vofZIcWzm3spxo5jJ82qVx2Iv3vNAF6zEiq8NjJIseWpU/fgM
-	cpT6m6HW8Q3loQjBPEXQgRrOXw0/LXmQdQzViF1Vgj2IEwJDT/J0huVofnovrWwPEfnnHwJ0yJa
-	ocYuAVJVb1LCdX97zjnzcQNh199/kr+CQ46aSvizreJ1DIv1ZMbWjrejtLNofcq7FOiJZGEBn5S
-	y+oY5TEkaaVwiUBIVOU3rcvO+/hhfwXBpA8VCbfMwdZNGkqVefq7Uz8d6C5t4S3zSDBcn5AnNkJ
-	RUQvZG3meY0YoKHEqtw80XThxMCpjlxlINrKASFJOfvIrJphRl0BL
-X-Received: by 2002:ad4:5b88:0:b0:70d:f64e:d49e with SMTP id 6a1803df08f44-70fa99538d7mr217622536d6.23.1756992907789;
-        Thu, 04 Sep 2025 06:35:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/pjp1F9a67cZt9KewNwhTZVwINluKfADfpH0CCTf4H3LNZ9T9PTZyP8kwGKz/Y999D34yNQ==
-X-Received: by 2002:ad4:5b88:0:b0:70d:f64e:d49e with SMTP id 6a1803df08f44-70fa99538d7mr217621666d6.23.1756992907150;
-        Thu, 04 Sep 2025 06:35:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfaae4sm1239147e87.99.2025.09.04.06.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:35:06 -0700 (PDT)
-Date: Thu, 4 Sep 2025 16:35:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
-Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and
- SDC pin configuration
-Message-ID: <tqm4sxoya3hue7mof3uqo4nu2b77ionmxi65ewfxtjouvn5xlt@d6ala2j2msbn>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
- <rxd4js6hb5ccejge2i2fp2syqlzdghqs75hb5ufqrhvpwubjyz@zwumzc7wphjx>
- <c82d44af-d107-4e84-b5ae-eeb624bc03af@oss.qualcomm.com>
- <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE212FF15B;
+	Thu,  4 Sep 2025 13:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756992950; cv=pass; b=i3h31AGRWd7Cmoy3zku5M/fnWTQds4wZuIY599fQA23tp5r6vW+dc7c87L/K3Xy5T1TSSz8mb1hl2zQybDMekhxXC23bCdoOilESmwiAvGA45vAy2xnl6qKO6S61EAtQLJj3XB6DGISaN0mZyjT42uv+9wZYd62f5tjw6laoz7o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756992950; c=relaxed/simple;
+	bh=nPk9ZOXqvwoqWRAeTf74Qvfb/iFRVJTM6jVqOIXTPUk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=auV0LSbTA00WoyjAstBtXmykU6oSsf6Kq2DDAaEwJdNRkkqs0d/Cg0w9JLWwB2taHIqhWZzGuaNYAr4bqPtOza6HfTspzbpFvMXD/Lh7S4MahsK4zGcihgiJACpoOWviJELYV0ADpGTfBJKrA/07W+Uuh+bZochXJe5zLMwq6gs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UsJjKoTY; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756992924; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XDjhWHa4NmN0rbRoKzcTFdfJ8XYbE0/NfMze/eLl+ScNVXSFTyTW/9B8yG20U7WxXAqn/0ttZ9K3IIvlIS6EIo7aSP+7AkfzCSbaHxwojn/8jbGsPUZY3U5MaHncXgWAlGjEfqjhOlAdty5yKqiA90cEv+50lRI48Kdlq0pysy0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756992924; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BDP7uwNrDy2L82t2/eHdfQJEVvQlEfERp6xLzY9YInM=; 
+	b=Rkz4B8gGPJIIikNnVuiC9W1AbtGfp4jJ7TXvO8Rkd0ntZn+ibnXZIaVAFkRFyIWyMcGMNVYW7yp6e7tX6JtM9lyijzXL0o1QnY3ngTv/ObJf8gNFWXKO19CmZVKYwlWVfcsXFic8oV8aLkvwgqkdeW/wSEITLGRzMCGD+KBUaiM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756992924;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=BDP7uwNrDy2L82t2/eHdfQJEVvQlEfERp6xLzY9YInM=;
+	b=UsJjKoTYefuGH+/A8dOzjmVdktkPOr7NxfdR3BrNcsADvs7Kai8hnyRuD770lPGS
+	6WEhqGlEjaA4FhYMJs0durFPB9iZzOs6elB1fclJq+Ag1QVrznljQdzu1EiGXj1H64I
+	q+txlE2KryahxIOW1DLWeB7Pm8wm1yVx/gD4JQq8=
+Received: by mx.zohomail.com with SMTPS id 1756992922006491.6688209679671;
+	Thu, 4 Sep 2025 06:35:22 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
-X-Proofpoint-GUID: 7WWRTwcIcnAU2-OHuZf0Bun4gNyBLLqg
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b9958c cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=QCn0C3cCROmBCoviGrEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 7WWRTwcIcnAU2-OHuZf0Bun4gNyBLLqg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX31i8kd3fmDpW
- FmFnma2Pt6F2tpGbC3FwhS4D5vujUi8F34uBcINFDUY/FMYf62eU+U4iZbo3n+5skr2Zlq0eE/F
- O+nTKqek/g7Q9ajJsbSsitX3q40oSmJRfHD1aEJMgNx2opbJLuWiQFxRfXRE8VFyzrkZKAywd5G
- +Zhhgl94ikTyfixYm5NDSvUEKilhjGkxSQ7sGvzr7doUm93Xxb8RkcMBZWpjVHJbHW3VoAgbcY6
- ZdwcP0zKSre/6PRIQBWQXejY99cvIQaFzxoDrrVDw847vNxdN9b0ojHQqUZHbNlRi1OKnZu8VXL
- OWD3aj9wrBRYyQc06yg9DtVS9SjoKT2dl4mAT7p72v3JJTf69dle2mLRjY+pJLoY9caB9654nhf
- IJ8hCqqZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_04,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 08/14] drm/gem/shmem: Extract drm_gem_shmem_release()
+ from drm_gem_shmem_free()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-9-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 10:35:05 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A6150946-73B6-43AE-B12C-B0E692E9E3A5@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-9-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Sep 03, 2025 at 09:58:33PM +0530, Wasim Nazir wrote:
-> On Wed, Sep 03, 2025 at 06:12:59PM +0200, Konrad Dybcio wrote:
-> > On 8/27/25 3:20 AM, Dmitry Baryshkov wrote:
-> > > On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
-> > >> From: Monish Chunara <quic_mchunara@quicinc.com>
-> > >>
-> > >> Introduce the SDHC v5 controller node for the Lemans platform.
-> > >> This controller supports either eMMC or SD-card, but only one
-> > >> can be active at a time. SD-card is the preferred configuration
-> > >> on Lemans targets, so describe this controller.
-> > >>
-> > >> Define the SDC interface pins including clk, cmd, and data lines
-> > >> to enable proper communication with the SDHC controller.
-> > >>
-> > >> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > >> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > >> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > >> ---
-> > >>  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
-> > >>  1 file changed, 70 insertions(+)
-> > >>
-> > >> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > >> index 99a566b42ef2..a5a3cdba47f3 100644
-> > >> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > >> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> > >> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
-> > >>  			};
-> > >>  		};
-> > >>  
-> > >> +		sdhc: mmc@87c4000 {
-> > >> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
-> > >> +			reg = <0x0 0x087c4000 0x0 0x1000>;
-> > >> +
-> > >> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-> > >> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
-> > >> +			interrupt-names = "hc_irq", "pwr_irq";
-> > >> +
-> > >> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> > >> +				 <&gcc GCC_SDCC1_APPS_CLK>;
-> > >> +			clock-names = "iface", "core";
-> > >> +
-> > >> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
-> > >> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
-> > >> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
-> > >> +
-> > >> +			iommus = <&apps_smmu 0x0 0x0>;
-> > >> +			dma-coherent;
-> > >> +
-> > >> +			resets = <&gcc GCC_SDCC1_BCR>;
-> > >> +
-> > >> +			no-sdio;
-> > >> +			no-mmc;
-> > >> +			bus-width = <4>;
-> > > 
-> > > This is the board configuration, it should be defined in the EVK DTS.
-> > 
-> > Unless the controller is actually incapable of doing non-SDCards
-> > 
-> > But from the limited information I can find, this one should be able
-> > to do both
-> > 
-> 
-> It’s doable, but the bus width differs when this controller is used for
-> eMMC, which is supported on the Mezz board. So, it’s cleaner to define
-> only what’s needed for each specific usecase on the board.
 
-`git grep no-sdio arch/arm64/boot/dts/qcom/` shows that we have those
-properties inside the board DT. I don't see a reason to deviate.
 
--- 
-With best wishes
-Dmitry
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> At the moment the way that freeing gem shmem objects is not ideal for =
+rust
+
+This does not read very well IMHO.
+
+> bindings. drm_gem_shmem_free() releases all of the associated memory =
+with a
+> gem shmem object with kfree(), which means that for us to correctly =
+release
+> a gem shmem object in rust we have to manually drop all of the =
+contents of
+> our gem object structure in-place by hand before finally calling
+> drm_gem_shmem_free() to release the shmem resources and the allocation =
+for
+> the gem object.
+>=20
+> Since the only reason this is an issue is because of =
+drm_gem_shmem_free()
+> calling kfree(), we can fix this by splitting drm_gem_shmem_free() out =
+into
+> itself and drm_gem_shmem_release(), where drm_gem_shmem_release() =
+releases
+> the various gem shmem resources without freeing the structure itself. =
+With
+> this, we can safely re-acquire the KBox for the gem object's memory
+> allocation and let rust handle cleaning up all of the other struct =
+members
+> automatically.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> drivers/gpu/drm/drm_gem_shmem_helper.c | 23 ++++++++++++++++++-----
+> include/drm/drm_gem_shmem_helper.h     |  1 +
+> 2 files changed, 19 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c =
+b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index b20a7b75c7228..50594cf8e17cc 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -175,13 +175,13 @@ struct drm_gem_shmem_object =
+*drm_gem_shmem_create_with_mnt(struct drm_device *de
+> EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
+>=20
+> /**
+> - * drm_gem_shmem_free - Free resources associated with a shmem GEM =
+object
+> - * @shmem: shmem GEM object to free
+> + * drm_gem_shmem_release - Release resources associated with a shmem =
+GEM object.
+> + * @shmem: shmem GEM object
+>  *
+> - * This function cleans up the GEM object state and frees the memory =
+used to
+> - * store the object itself.
+> + * This function cleans up the GEM object state, but does not free =
+the memory used to store the
+> + * object itself. This function is meant to be a dedicated helper for =
+the Rust GEM bindings.
+>  */
+> -void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+> +void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem)
+> {
+> struct drm_gem_object *obj =3D &shmem->base;
+>=20
+> @@ -208,6 +208,19 @@ void drm_gem_shmem_free(struct =
+drm_gem_shmem_object *shmem)
+> }
+>=20
+> drm_gem_object_release(obj);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_release);
+> +
+> +/**
+> + * drm_gem_shmem_free - Free resources associated with a shmem GEM =
+object
+> + * @shmem: shmem GEM object to free
+> + *
+> + * This function cleans up the GEM object state and frees the memory =
+used to
+> + * store the object itself.
+> + */
+> +void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+> +{
+> + drm_gem_shmem_release(shmem);
+> kfree(shmem);
+> }
+> EXPORT_SYMBOL_GPL(drm_gem_shmem_free);
+> diff --git a/include/drm/drm_gem_shmem_helper.h =
+b/include/drm/drm_gem_shmem_helper.h
+> index 235dc33127b9a..589f7bfe7506e 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -112,6 +112,7 @@ struct drm_gem_shmem_object =
+*drm_gem_shmem_create(struct drm_device *dev, size_t
+> struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct =
+drm_device *dev,
+>   size_t size,
+>   struct vfsmount *gemfs);
+> +void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem);
+> void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem);
+>=20
+> void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object =
+*shmem);
+> --=20
+> 2.50.0
+>=20
+>=20
+
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
