@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-801838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19927B44A90
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCF9B44A93
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BF31C84EE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C4954717F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A61A2D7DCD;
-	Thu,  4 Sep 2025 23:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6112C2EBDC4;
+	Thu,  4 Sep 2025 23:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s2q6tezP"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lr5mwcDc"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC66D1A76BB
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C721A76BB
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757029829; cv=none; b=Wdl63SBQx7Vt1Ja5jIrq+d+Fwx6A3/YA0y8O4hHgGWZ172mbFU9Y8byucda4lNZDednMiOubQ/JkKiKYypswDIoJWC7wCmo/fOFVYMnnZDM6G4s4BmyeUT3+G71n++jKdTmFssT4J4K3cmGxnWtnu1QQkEM8SOejubdl33Ki6To=
+	t=1757030012; cv=none; b=tSN3Z803UeipJ/BGfHXvdknIphCR1UPFXI0e/cMTCm/sYLk98B9ASsbSNn2VsleeCmSywfHzg2E4zeY/WFV1Q7J1Ao9lrgangUenYq3KHQSIenyMPqLXVw9tGDX7oeiJGH5V+qN9cxzrSOo6UY0Lvt/SxZFDp8sx9m+dpaOXkQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757029829; c=relaxed/simple;
-	bh=cJRcgXduiHSal19odhrqMAyc1h/5FcDcOd6A03wo4FE=;
+	s=arc-20240116; t=1757030012; c=relaxed/simple;
+	bh=ARjshwFHraYNzT52NQIi496JSATEGl22eDhyWbgT7iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tE4lf5gj6enuoxizXur8Q09ebITWnTfpsPiLAPC82PWg0nKOdsXZNhw/dZPGUPIsqIaciQtOFMc4e1DkpmGv4m/tNXBYB4aS1keKDYLaDkPSTpsdrnBSPCr6H/WXfee7pNomfNaIw7GiycC2VSDPz4wWxgnkOqAUIE+ScsL5c/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s2q6tezP; arc=none smtp.client-ip=91.218.175.189
+	 Content-Type:Content-Disposition:In-Reply-To; b=HyDMON+4mtVErlnCkkep9q1h3xCz9EUaV6Km5/UP60pflalLqdcAz9H7yRraFcPnlLTL4VVFA6eNJw8eDR6Pi8AaOZBmEF8W/QQsbOHDrVrkzkbkY8CyB3gMQhWKiJ3qqiNfOJGuNX0DllaCxxdEFycQY1m7wdiUrFzwe4aLVJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lr5mwcDc; arc=none smtp.client-ip=95.215.58.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 4 Sep 2025 16:50:20 -0700
+Date: Thu, 4 Sep 2025 16:53:03 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757029825;
+	t=1757029991;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EcoOi63+8ErVCjATfSW78fVTOIe8m0/lvvNKJAzSLt8=;
-	b=s2q6tezPZeSmesxSDgaE8+n9vbDTU0MO+2z+vXbPRt63svdVgoDc7UT3UpTt8DErPzsBX3
-	NNNgUFCG0/CBwrrH/pfNyidiqF5MIc5F/hYr8KQoD7Ar9MYzP4muLgM9puSLmNvYcgi+2g
-	ggq1GbrnOO9tWPypkcNpVLh64Ra0yes=
+	bh=/2RtdVXkTODsXddtzD5LID5X8DGXKOHDe70pXEgZ9X8=;
+	b=lr5mwcDcyNFZleBt/+LopcJ4pLfJXlGwW5bnE8uS1XZKSmmuBC4G07KILcJn20ZL7g4cOP
+	ZR4Exm0UGHKG0GsaUOHJRMlkkd3X1e1sCQCp0u2MJAo8lvFUlBJVRtQSuwh0EH8zBIGM3E
+	nzKPyB1gUIHwtEwilh7Cq5YJPr34iAY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Shakeel Butt <shakeel.butt@linux.dev>
-To: zhongjinji <zhongjinji@honor.com>
-Cc: mhocko@suse.com, rientjes@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
-	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, surenb@google.com, 
-	liulu.liu@honor.com, feng.han@honor.com
-Subject: Re: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA
- maple tree in reverse order
-Message-ID: <llxw4jc4okxjxjcco5vacqiushvr642u2lto5sml3vc6wlqboe@lyfqb5anihq6>
-References: <20250903092729.10611-1-zhongjinji@honor.com>
- <20250903092729.10611-3-zhongjinji@honor.com>
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Vishal Moola <vishal.moola@gmail.com>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm/show_mem: Dump the status of the mem alloc
+ profiling  before printing
+Message-ID: <6bbrnimtosca457kn3hatu2tqvhx6mfrswgxwes6jo2w54cuxa@kq3nem4jtlis>
+References: <cover.1756897825.git.pyyjason@gmail.com>
+ <d7998ea0ddc2ea1a78bb6e89adf530526f76679a.1756897825.git.pyyjason@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +61,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903092729.10611-3-zhongjinji@honor.com>
+In-Reply-To: <d7998ea0ddc2ea1a78bb6e89adf530526f76679a.1756897825.git.pyyjason@gmail.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 03, 2025 at 05:27:29PM +0800, zhongjinji wrote:
-> Although the oom_reaper is delayed and it gives the oom victim chance to
-> clean up its address space this might take a while especially for
-> processes with a large address space footprint. In those cases
-> oom_reaper might start racing with the dying task and compete for shared
-> resources - e.g. page table lock contention has been observed.
+On Wed, Sep 03, 2025 at 04:16:13AM -0700, Yueyang Pan wrote:
+> This patch prints the status of the memory allocation profiling
+> before __show_mem actually prints the detailed allocation info.
+> This way will let us know the `0B` we saw in allocation info is
+> because the profiling is disabled or the allocation is actually
+> 0B.
 > 
-> Reduce those races by reaping the oom victim from the other end of the
-> address space.
-> 
-> It is also a significant improvement for process_mrelease(). When a process
-> is killed, process_mrelease is used to reap the killed process and often
-> runs concurrently with the dying task. The test data shows that after
-> applying the patch, lock contention is greatly reduced during the procedure
-> of reaping the killed process.
-> 
-> Without the patch:
-> |--99.74%-- oom_reaper
-> |  |--76.67%-- unmap_page_range
-> |  |  |--33.70%-- __pte_offset_map_lock
-> |  |  |  |--98.46%-- _raw_spin_lock
-> |  |  |--27.61%-- free_swap_and_cache_nr
-> |  |  |--16.40%-- folio_remove_rmap_ptes
-> |  |  |--12.25%-- tlb_flush_mmu
-> |  |--12.61%-- tlb_finish_mmu
-> 
-> With the patch:
-> |--98.84%-- oom_reaper
-> |  |--53.45%-- unmap_page_range
-> |  |  |--24.29%-- [hit in function]
-> |  |  |--48.06%-- folio_remove_rmap_ptes
-> |  |  |--17.99%-- tlb_flush_mmu
-> |  |  |--1.72%-- __pte_offset_map_lock
-> |  |--30.43%-- tlb_finish_mmu
-> 
-> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
 
 Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
