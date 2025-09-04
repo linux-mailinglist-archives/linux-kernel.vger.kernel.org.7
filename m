@@ -1,499 +1,139 @@
-Return-Path: <linux-kernel+bounces-800648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82045B43A1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B85B439FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47353177A5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7141C82746
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F5E301486;
-	Thu,  4 Sep 2025 11:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="TSdOItAX"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA152FCC10;
+	Thu,  4 Sep 2025 11:24:27 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D177E301032;
-	Thu,  4 Sep 2025 11:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03742FCC16
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756985210; cv=none; b=n3CVPjw4Qn2qPT9A9asNoJKBf5yy26hsyGDo1bSjb9aiE4BEG773lCj5qB2+ynL9ssrUVzYvRul6aHjwaiCU3WgvYsOxa0jI/gXchNVZuE5bXbCeFNpna1DqxjhA/YSW8myAzeT86QWC3Vehcguku3L2gazRCnPDb+78saB3Uco=
+	t=1756985067; cv=none; b=o6dn9oF0fKDy461+U8M8bLT20F19UAM7hfZguEX+RQMlpgRZgRSaxX6mu/L4KUwJPG8TbeWhC7tFlSmUtJKB0MqGMV+3qKE6AFFAG/UKQxrj+RIUa0RV8wSscPYAK0n5xHb4tJuI8cHuJVl/DDCTxKWCMwpA0Dj9RMqvu7DDgNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756985210; c=relaxed/simple;
-	bh=/BxnAULJgPkNvYevkmWQFn8D4wkrGxlkenA1wHhvWo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lpo3yOixHKS3SDXv5C6anq2TRYH4ThMfpuRaNIwMaFP0V8BcwocB6Ku17r1kTJaUhAaRUKqyUIgM4oH+qR9vWjlB7PYUaHfkR8UoC1SbeyRXIye5PiDh2tlspATBYg08Jn3s9fcFa/lAH6pHABrTlSx7NrgM/u1r26i/DEIT59o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=TSdOItAX; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=vXb8mTCa12E7PD5ud6pKJPyr7dPjDCXvT3tWLQPFbjE=; b=TSdOItAX/FXacAbGYZbdpr+xH+
-	JYJ72snoQvToduIAZcq/QeTUGWfO/ssacvtseRh/1tFjPYErbDYXOq8NU3HnNsByB8lhAGlJ8eKDh
-	iNge23+YmwW2XYpvuqwI1fRJTZD6QMZaqccnQkLXKuAVAz4cerLDyg3mxnv4X2qZBssvg4zdASK1p
-	svAnKgz31Z2DNcwvjPUmJgio3hdH1+dlFf2WHTnRqU8QUSv9fTx1oAA0aXctFSM2/V53jzt89lqAM
-	Jib1avTSx7hXydBfi7E38l7ua7ezuZfrs/U55aPuFlXrVfV8n055RdwYA1I5POuoOXmTKto5fZ6kk
-	Yo9CpEPA==;
-Received: from [122.175.9.182] (port=19521 helo=cypher.couthit.local)
-	by server.couthit.com with esmtpa (Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1uu870-0000000CONA-1w6e;
-	Thu, 04 Sep 2025 07:26:42 -0400
-From: Parvathi Pudi <parvathi@couthit.com>
-To: danishanwar@ti.com,
-	rogerq@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	ssantosh@kernel.org,
-	richardcochran@gmail.com,
-	m-malladi@ti.com,
-	s.hauer@pengutronix.de,
-	afd@ti.com,
-	michal.swiatkowski@linux.intel.com,
-	jacob.e.keller@intel.com,
-	horms@kernel.org,
-	johan@kernel.org,
-	alok.a.tiwari@oracle.com,
-	m-karicheri2@ti.com,
-	s-anna@ti.com,
-	glaroque@baylibre.com,
-	saikrishnag@marvell.com,
-	kory.maincent@bootlin.com,
-	diogo.ivo@siemens.com,
-	javier.carrasco.cruz@gmail.com,
-	basharath@couthit.com,
-	parvathi@couthit.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vadim.fedorenko@linux.dev,
-	bastien.curutchet@bootlin.com,
-	pratheesh@ti.com,
-	prajith@ti.com,
-	vigneshr@ti.com,
-	praneeth@ti.com,
-	srk@ti.com,
-	rogerq@ti.com,
-	krishna@couthit.com,
-	pmohan@couthit.com,
-	mohan@couthit.com
-Subject: [PATCH net-next v15 5/5] net: ti: icssm-prueth: Adds IEP support for PRUETH on AM33x, AM43x and AM57x SOCs
-Date: Thu,  4 Sep 2025 16:53:36 +0530
-Message-ID: <20250904112523.694288-6-parvathi@couthit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250904101729.693330-1-parvathi@couthit.com>
-References: <20250904101729.693330-1-parvathi@couthit.com>
+	s=arc-20240116; t=1756985067; c=relaxed/simple;
+	bh=XIxJWp5jwgkd/x7EAs6Yb9l1Rxb0JLWprLhzApVoMW8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nmjIYy/cOyQXtInC8lPDZNE6E1mW7YvtMc7SIFhERFGgJ+1Ac0XZuTQyOFs1QD338v4ogqrpWAyChx9KS6qrQH9plDqYgAqBQuxlLbmI8Q7ngr+etRrgVxl6cMw7GVA/Apc6Ad2uRs+1OrTXxG7/4MkA/nDwj+CN0OJkIFiec/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3f65e91bfa9so20317745ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:24:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756985065; x=1757589865;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jVRXauSRvqty3E4JUfh3G8bM2Mvnct/XdFmYtu4QSq0=;
+        b=gVwCxG01+A17ojQKd9TM2yUjVo/hs2fp0OonnLkR8TKUw+r89PoZi/xai6WLBdbWyf
+         oo6+G6o3BN5Fw6SJsBjzBAT36atjAyAQ2RkfT9dI7dAZ7ErMK6yXJwv8CsIMOUMs2PQZ
+         VnIHVzjVOBuAXlnemgu3rTz0GdTNspPljCgeVjzvaf39gwWKiQLnGSxotoOo9rEaYOGL
+         RXPO/NxT+BtPnB9+Svtt/DWGqb6v2+wWIqscCgQznhY4mfeq1bUHv8RqJ9pTVcBDlSlW
+         PbchFIZ6VVLphB99RV1IypYYv4o5ETIDEQrY2sCawRYxODAQUWiucMj/k897iXusOnih
+         XcRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXG5497y4lCqIFRU6/TUcCwXH57TXyZAIGG7QZh2UprSZLeOAEoip/z3F5B/wgibs51ncyBrxlreFpPGm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7zaIik0JVkzhip9L8fxQmysH17fnJsyz/oWQVtkXCxzgUop9T
+	gZp2LPGgxwP+GXRT6+3gnYXkkGa3kOoOSyXJbl8bEhBE7k6uoeUO6g7zZ9mCk8NbF/xnTrmNE0L
+	RD45v8YCBb9WU1mdIPed9vKUxax6nP3Xz3XYi3xMVdSppfFWEpJGfK9hjB38=
+X-Google-Smtp-Source: AGHT+IGt6o9ZLvAXT3Dmw29yW7aii9EEHtCOfepySmQ4fXe/lAEnyriCWeXfF4yitxfZnvv4BV6Yr3oRLqMrvVskKgdpkK9YiwtO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
-X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-Received: by 2002:a05:6e02:12ce:b0:3e5:4e4f:65df with SMTP id
+ e9e14a558f8ab-3f400475c29mr309315895ab.9.1756985064883; Thu, 04 Sep 2025
+ 04:24:24 -0700 (PDT)
+Date: Thu, 04 Sep 2025 04:24:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b976e8.050a0220.192772.0004.GAE@google.com>
+Subject: [syzbot] [bcachefs?] WARNING in bch2_recovery_pass_want_ratelimit
+From: syzbot <syzbot+3bf8b0169d7fcc0ebcd5@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Added API hooks for IEP module (legacy 32-bit model) to support
-timestamping requests from application.
+Hello,
 
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
-Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+syzbot found the following issue on:
+
+HEAD commit:    c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a9ce34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=385d836f07b5a70d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3bf8b0169d7fcc0ebcd5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c8bc81a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9c0190a39aee/vmlinux-c8bc81a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc2b728f9900/bzImage-c8bc81a5.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3bf8b0169d7fcc0ebcd5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5373 at fs/bcachefs/recovery_passes.c:174 bch2_recovery_pass_want_ratelimit+0x1d8/0x290 fs/bcachefs/recovery_passes.c:174
+Modules linked in:
+CPU: 0 UID: 0 PID: 5373 Comm: bch-copygc/loop Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_recovery_pass_want_ratelimit+0x1d8/0x290 fs/bcachefs/recovery_passes.c:174
+Code: fd 40 20 eb eb 0e e8 17 04 6b fd eb 05 e8 10 04 6b fd 31 db 89 d8 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc cc e8 f9 03 6b fd 90 <0f> 0b 90 e9 d1 fe ff ff e8 eb 03 6b fd 48 c7 c7 80 c1 79 8e 48 89
+RSP: 0018:ffffc9000d326cb0 EFLAGS: 00010293
+RAX: ffffffff8454b747 RBX: 000000000000000e RCX: ffff888033b9a440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffff888055f8eb5c R09: 0000000000000003
+R10: ffff888055f8eb5b R11: ffffed100abf1d6c R12: dffffc0000000000
+R13: dffffc0000000000 R14: ffff888052e00000 R15: 1ffff92001a64da5
+FS:  0000000000000000(0000) GS:ffff88808d20d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000002140 CR3: 00000000334f3000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ recovery_pass_needs_set+0x9a/0x510 fs/bcachefs/recovery_passes.c:302
+ bch2_run_explicit_recovery_pass+0x3f/0xd0 fs/bcachefs/recovery_passes.c:416
+ bch2_check_bucket_backpointer_mismatch+0x634/0x690 fs/bcachefs/backpointers.c:1220
+ __bch2_move_data_phys+0x17a7/0x1c50 fs/bcachefs/move.c:922
+ bch2_evacuate_bucket+0x228/0x3a0 fs/bcachefs/move.c:1082
+ bch2_copygc+0x3be3/0x4510 fs/bcachefs/movinggc.c:234
+ bch2_copygc_thread+0x97a/0xe00 fs/bcachefs/movinggc.c:409
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
- drivers/net/ethernet/ti/icssg/icss_iep.c      | 101 ++++++++++++++++++
- drivers/net/ethernet/ti/icssm/icssm_prueth.c  |  74 ++++++++++++-
- drivers/net/ethernet/ti/icssm/icssm_prueth.h  |   2 +
- .../net/ethernet/ti/icssm/icssm_prueth_ptp.h  |  85 +++++++++++++++
- 4 files changed, 260 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_ptp.h
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
-index d8c9fe1d98c4..ec085897edf0 100644
---- a/drivers/net/ethernet/ti/icssg/icss_iep.c
-+++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
-@@ -982,11 +982,112 @@ static const struct icss_iep_plat_data am654_icss_iep_plat_data = {
- 	.config = &am654_icss_iep_regmap_config,
- };
- 
-+static const struct icss_iep_plat_data am57xx_icss_iep_plat_data = {
-+	.flags = ICSS_IEP_64BIT_COUNTER_SUPPORT |
-+		 ICSS_IEP_SLOW_COMPEN_REG_SUPPORT,
-+	.reg_offs = {
-+		[ICSS_IEP_GLOBAL_CFG_REG] = 0x00,
-+		[ICSS_IEP_COMPEN_REG] = 0x08,
-+		[ICSS_IEP_SLOW_COMPEN_REG] = 0x0c,
-+		[ICSS_IEP_COUNT_REG0] = 0x10,
-+		[ICSS_IEP_COUNT_REG1] = 0x14,
-+		[ICSS_IEP_CAPTURE_CFG_REG] = 0x18,
-+		[ICSS_IEP_CAPTURE_STAT_REG] = 0x1c,
-+
-+		[ICSS_IEP_CAP6_RISE_REG0] = 0x50,
-+		[ICSS_IEP_CAP6_RISE_REG1] = 0x54,
-+
-+		[ICSS_IEP_CAP7_RISE_REG0] = 0x60,
-+		[ICSS_IEP_CAP7_RISE_REG1] = 0x64,
-+
-+		[ICSS_IEP_CMP_CFG_REG] = 0x70,
-+		[ICSS_IEP_CMP_STAT_REG] = 0x74,
-+		[ICSS_IEP_CMP0_REG0] = 0x78,
-+		[ICSS_IEP_CMP0_REG1] = 0x7c,
-+		[ICSS_IEP_CMP1_REG0] = 0x80,
-+		[ICSS_IEP_CMP1_REG1] = 0x84,
-+
-+		[ICSS_IEP_CMP8_REG0] = 0xc0,
-+		[ICSS_IEP_CMP8_REG1] = 0xc4,
-+		[ICSS_IEP_SYNC_CTRL_REG] = 0x180,
-+		[ICSS_IEP_SYNC0_STAT_REG] = 0x188,
-+		[ICSS_IEP_SYNC1_STAT_REG] = 0x18c,
-+		[ICSS_IEP_SYNC_PWIDTH_REG] = 0x190,
-+		[ICSS_IEP_SYNC0_PERIOD_REG] = 0x194,
-+		[ICSS_IEP_SYNC1_DELAY_REG] = 0x198,
-+		[ICSS_IEP_SYNC_START_REG] = 0x19c,
-+	},
-+	.config = &am654_icss_iep_regmap_config,
-+};
-+
-+static bool am335x_icss_iep_valid_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case ICSS_IEP_GLOBAL_CFG_REG ... ICSS_IEP_CAPTURE_STAT_REG:
-+	case ICSS_IEP_CAP6_RISE_REG0:
-+	case ICSS_IEP_CMP_CFG_REG ... ICSS_IEP_CMP0_REG0:
-+	case ICSS_IEP_CMP8_REG0 ... ICSS_IEP_SYNC_START_REG:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static const struct regmap_config am335x_icss_iep_regmap_config = {
-+	.name = "icss iep",
-+	.reg_stride = 1,
-+	.reg_write = icss_iep_regmap_write,
-+	.reg_read = icss_iep_regmap_read,
-+	.writeable_reg = am335x_icss_iep_valid_reg,
-+	.readable_reg = am335x_icss_iep_valid_reg,
-+};
-+
-+static const struct icss_iep_plat_data am335x_icss_iep_plat_data = {
-+	.flags = 0,
-+	.reg_offs = {
-+		[ICSS_IEP_GLOBAL_CFG_REG] = 0x00,
-+		[ICSS_IEP_COMPEN_REG] = 0x08,
-+		[ICSS_IEP_COUNT_REG0] = 0x0c,
-+		[ICSS_IEP_CAPTURE_CFG_REG] = 0x10,
-+		[ICSS_IEP_CAPTURE_STAT_REG] = 0x14,
-+
-+		[ICSS_IEP_CAP6_RISE_REG0] = 0x30,
-+
-+		[ICSS_IEP_CAP7_RISE_REG0] = 0x38,
-+
-+		[ICSS_IEP_CMP_CFG_REG] = 0x40,
-+		[ICSS_IEP_CMP_STAT_REG] = 0x44,
-+		[ICSS_IEP_CMP0_REG0] = 0x48,
-+
-+		[ICSS_IEP_CMP8_REG0] = 0x88,
-+		[ICSS_IEP_SYNC_CTRL_REG] = 0x100,
-+		[ICSS_IEP_SYNC0_STAT_REG] = 0x108,
-+		[ICSS_IEP_SYNC1_STAT_REG] = 0x10c,
-+		[ICSS_IEP_SYNC_PWIDTH_REG] = 0x110,
-+		[ICSS_IEP_SYNC0_PERIOD_REG] = 0x114,
-+		[ICSS_IEP_SYNC1_DELAY_REG] = 0x118,
-+		[ICSS_IEP_SYNC_START_REG] = 0x11c,
-+	},
-+	.config = &am335x_icss_iep_regmap_config,
-+};
-+
- static const struct of_device_id icss_iep_of_match[] = {
- 	{
- 		.compatible = "ti,am654-icss-iep",
- 		.data = &am654_icss_iep_plat_data,
- 	},
-+	{
-+		.compatible = "ti,am5728-icss-iep",
-+		.data = &am57xx_icss_iep_plat_data,
-+	},
-+	{
-+		.compatible = "ti,am4376-icss-iep",
-+		.data = &am335x_icss_iep_plat_data,
-+	},
-+	{
-+		.compatible = "ti,am3356-icss-iep",
-+		.data = &am335x_icss_iep_plat_data,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, icss_iep_of_match);
-diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
-index 3ffa5523663a..c3f114e79742 100644
---- a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
-+++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
-@@ -30,6 +30,7 @@
- 
- #include "icssm_prueth.h"
- #include "../icssg/icssg_mii_rt.h"
-+#include "../icssg/icss_iep.h"
- 
- #define OCMC_RAM_SIZE		(SZ_64K)
- 
-@@ -883,6 +884,48 @@ static int icssm_emac_request_irqs(struct prueth_emac *emac)
- 	return ret;
- }
- 
-+static void icssm_ptp_dram_init(struct prueth_emac *emac)
-+{
-+	void __iomem *sram = emac->prueth->mem[PRUETH_MEM_SHARED_RAM].va;
-+	u64 temp64;
-+
-+	writew(0, sram + MII_RX_CORRECTION_OFFSET);
-+	writew(0, sram + MII_TX_CORRECTION_OFFSET);
-+
-+	/* Initialize RCF to 1 (Linux N/A) */
-+	writel(1 * 1024, sram + TIMESYNC_TC_RCF_OFFSET);
-+
-+	/* This flag will be set and cleared by firmware */
-+	/* Write Sync0 period for sync signal generation in PTP
-+	 * memory in shared RAM
-+	 */
-+	writel(200000000 / 50, sram + TIMESYNC_SYNC0_WIDTH_OFFSET);
-+
-+	/* Write CMP1 period for sync signal generation in PTP
-+	 * memory in shared RAM
-+	 */
-+	temp64 = 1000000;
-+	memcpy_toio(sram + TIMESYNC_CMP1_CMP_OFFSET, &temp64, sizeof(temp64));
-+
-+	/* Write Sync0 period for sync signal generation in PTP
-+	 * memory in shared RAM
-+	 */
-+	writel(1000000, sram + TIMESYNC_CMP1_PERIOD_OFFSET);
-+
-+	/* Configures domainNumber list. Firmware supports 2 domains */
-+	writeb(0, sram + TIMESYNC_DOMAIN_NUMBER_LIST);
-+	writeb(0, sram + TIMESYNC_DOMAIN_NUMBER_LIST + 1);
-+
-+	/* Configure 1-step/2-step */
-+	writeb(1, sram + DISABLE_SWITCH_SYNC_RELAY_OFFSET);
-+
-+	/* Configures the setting to Link local frame without HSR tag */
-+	writeb(0, sram + LINK_LOCAL_FRAME_HAS_HSR_TAG);
-+
-+	/* Enable E2E/UDP PTP message timestamping */
-+	writeb(1, sram + PTP_IPV4_UDP_E2E_ENABLE);
-+}
-+
- /**
-  * icssm_emac_ndo_open - EMAC device open
-  * @ndev: network adapter device
-@@ -905,9 +948,18 @@ static int icssm_emac_ndo_open(struct net_device *ndev)
- 
- 	icssm_prueth_emac_config(emac);
- 
-+	if (!prueth->emac_configured) {
-+		icssm_ptp_dram_init(emac);
-+		ret = icss_iep_init(prueth->iep, NULL, NULL, 0);
-+		if (ret) {
-+			netdev_err(ndev, "Failed to initialize iep: %d\n", ret);
-+			goto iep_exit;
-+		}
-+	}
-+
- 	ret = icssm_emac_set_boot_pru(emac, ndev);
- 	if (ret)
--		return ret;
-+		goto iep_exit;
- 
- 	ret = icssm_emac_request_irqs(emac);
- 	if (ret)
-@@ -931,6 +983,10 @@ static int icssm_emac_ndo_open(struct net_device *ndev)
- rproc_shutdown:
- 	rproc_shutdown(emac->pru);
- 
-+iep_exit:
-+	if (!prueth->emac_configured)
-+		icss_iep_exit(prueth->iep);
-+
- 	return ret;
- }
- 
-@@ -1447,12 +1503,19 @@ static int icssm_prueth_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	prueth->iep = icss_iep_get(np);
-+	if (IS_ERR(prueth->iep)) {
-+		ret = PTR_ERR(prueth->iep);
-+		dev_err(dev, "unable to get IEP\n");
-+		goto netdev_exit;
-+	}
-+
- 	/* register the network devices */
- 	if (eth0_node) {
- 		ret = register_netdev(prueth->emac[PRUETH_MAC0]->ndev);
- 		if (ret) {
- 			dev_err(dev, "can't register netdev for port MII0");
--			goto netdev_exit;
-+			goto iep_put;
- 		}
- 
- 		prueth->registered_netdevs[PRUETH_MAC0] =
-@@ -1486,6 +1549,10 @@ static int icssm_prueth_probe(struct platform_device *pdev)
- 		unregister_netdev(prueth->registered_netdevs[i]);
- 	}
- 
-+iep_put:
-+	icss_iep_put(prueth->iep);
-+	prueth->iep = NULL;
-+
- netdev_exit:
- 	for (i = 0; i < PRUETH_NUM_MACS; i++) {
- 		eth_node = prueth->eth_node[i];
-@@ -1554,6 +1621,9 @@ static void icssm_prueth_remove(struct platform_device *pdev)
- 						 &prueth->mem[i]);
- 	}
- 
-+	icss_iep_put(prueth->iep);
-+	prueth->iep = NULL;
-+
- 	pruss_put(prueth->pruss);
- 
- 	if (prueth->eth_node[PRUETH_MAC0])
-diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.h b/drivers/net/ethernet/ti/icssm/icssm_prueth.h
-index f5b6b1e99bd4..8e7e0af08144 100644
---- a/drivers/net/ethernet/ti/icssm/icssm_prueth.h
-+++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.h
-@@ -14,6 +14,7 @@
- #include <linux/remoteproc/pruss.h>
- 
- #include "icssm_switch.h"
-+#include "icssm_prueth_ptp.h"
- 
- /* ICSSM size of redundancy tag */
- #define ICSSM_LRE_TAG_SIZE	6
-@@ -238,6 +239,7 @@ struct prueth {
- 	struct pruss_mem_region mem[PRUETH_MEM_MAX];
- 	struct gen_pool *sram_pool;
- 	struct regmap *mii_rt;
-+	struct icss_iep *iep;
- 
- 	const struct prueth_private_data *fw_data;
- 	struct prueth_fw_offsets *fw_offsets;
-diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth_ptp.h b/drivers/net/ethernet/ti/icssm/icssm_prueth_ptp.h
-new file mode 100644
-index 000000000000..e0bf692beda1
---- /dev/null
-+++ b/drivers/net/ethernet/ti/icssm/icssm_prueth_ptp.h
-@@ -0,0 +1,85 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2020-2021 Texas Instruments Incorporated - https://www.ti.com
-+ */
-+#ifndef PRUETH_PTP_H
-+#define PRUETH_PTP_H
-+
-+#define RX_SYNC_TIMESTAMP_OFFSET_P1		0x8    /* 8 bytes */
-+#define RX_PDELAY_REQ_TIMESTAMP_OFFSET_P1	0x14   /* 12 bytes */
-+
-+#define DISABLE_PTP_FRAME_FORWARDING_CTRL_OFFSET 0x14	/* 1 byte */
-+
-+#define RX_PDELAY_RESP_TIMESTAMP_OFFSET_P1	0x20   /* 12 bytes */
-+#define RX_SYNC_TIMESTAMP_OFFSET_P2		0x2c   /* 12 bytes */
-+#define RX_PDELAY_REQ_TIMESTAMP_OFFSET_P2	0x38   /* 12 bytes */
-+#define RX_PDELAY_RESP_TIMESTAMP_OFFSET_P2	0x44   /* 12 bytes */
-+#define TIMESYNC_DOMAIN_NUMBER_LIST		0x50   /* 2 bytes */
-+#define P1_SMA_LINE_DELAY_OFFSET		0x52   /* 4 bytes */
-+#define P2_SMA_LINE_DELAY_OFFSET		0x56   /* 4 bytes */
-+#define TIMESYNC_SECONDS_COUNT_OFFSET		0x5a   /* 6 bytes */
-+#define TIMESYNC_TC_RCF_OFFSET			0x60   /* 4 bytes */
-+#define DUT_IS_MASTER_OFFSET			0x64   /* 1 byte */
-+#define MASTER_PORT_NUM_OFFSET			0x65   /* 1 byte */
-+#define SYNC_MASTER_MAC_OFFSET			0x66   /* 6 bytes */
-+#define TX_TS_NOTIFICATION_OFFSET_SYNC_P1	0x6c   /* 1 byte */
-+#define TX_TS_NOTIFICATION_OFFSET_PDEL_REQ_P1	0x6d   /* 1 byte */
-+#define TX_TS_NOTIFICATION_OFFSET_PDEL_RES_P1	0x6e   /* 1 byte */
-+#define TX_TS_NOTIFICATION_OFFSET_SYNC_P2	0x6f   /* 1 byte */
-+#define TX_TS_NOTIFICATION_OFFSET_PDEL_REQ_P2	0x70   /* 1 byte */
-+#define TX_TS_NOTIFICATION_OFFSET_PDEL_RES_P2	0x71   /* 1 byte */
-+#define TX_SYNC_TIMESTAMP_OFFSET_P1		0x72   /* 12 bytes */
-+#define TX_PDELAY_REQ_TIMESTAMP_OFFSET_P1	0x7e   /* 12 bytes */
-+#define TX_PDELAY_RESP_TIMESTAMP_OFFSET_P1	0x8a   /* 12 bytes */
-+#define TX_SYNC_TIMESTAMP_OFFSET_P2		0x96   /* 12 bytes */
-+#define TX_PDELAY_REQ_TIMESTAMP_OFFSET_P2	0xa2   /* 12 bytes */
-+#define TX_PDELAY_RESP_TIMESTAMP_OFFSET_P2	0xae   /* 12 bytes */
-+#define TIMESYNC_CTRL_VAR_OFFSET		0xba   /* 1 byte */
-+#define DISABLE_SWITCH_SYNC_RELAY_OFFSET	0xbb   /* 1 byte */
-+#define MII_RX_CORRECTION_OFFSET		0xbc   /* 2 bytes */
-+#define MII_TX_CORRECTION_OFFSET		0xbe   /* 2 bytes */
-+#define TIMESYNC_CMP1_CMP_OFFSET		0xc0   /* 8 bytes */
-+#define TIMESYNC_SYNC0_CMP_OFFSET		0xc8   /* 8 bytes */
-+#define TIMESYNC_CMP1_PERIOD_OFFSET		0xd0   /* 4 bytes */
-+#define TIMESYNC_SYNC0_WIDTH_OFFSET		0xd4   /* 4 bytes */
-+#define SINGLE_STEP_IEP_OFFSET_P1		0xd8   /* 8 bytes */
-+#define SINGLE_STEP_SECONDS_OFFSET_P1		0xe0   /* 8 bytes */
-+#define SINGLE_STEP_IEP_OFFSET_P2		0xe8   /* 8 bytes */
-+#define SINGLE_STEP_SECONDS_OFFSET_P2		0xf0   /* 8 bytes */
-+#define LINK_LOCAL_FRAME_HAS_HSR_TAG		0xf8   /* 1 bytes */
-+#define PTP_PREV_TX_TIMESTAMP_P1		0xf9  /* 8 bytes */
-+#define PTP_PREV_TX_TIMESTAMP_P2		0x101  /* 8 bytes */
-+#define PTP_CLK_IDENTITY_OFFSET			0x109  /* 8 bytes */
-+#define PTP_SCRATCH_MEM				0x111  /* 16 byte */
-+#define PTP_IPV4_UDP_E2E_ENABLE			0x121  /* 1 byte */
-+
-+enum {
-+	PRUETH_PTP_SYNC,
-+	PRUETH_PTP_DLY_REQ,
-+	PRUETH_PTP_DLY_RESP,
-+	PRUETH_PTP_TS_EVENTS,
-+};
-+
-+#define PRUETH_PTP_TS_SIZE		12
-+#define PRUETH_PTP_TS_NOTIFY_SIZE	1
-+#define PRUETH_PTP_TS_NOTIFY_MASK	0xff
-+
-+/* Bit definitions for TIMESYNC_CTRL */
-+#define TIMESYNC_CTRL_BG_ENABLE    BIT(0)
-+#define TIMESYNC_CTRL_FORCED_2STEP BIT(1)
-+
-+static inline u32 icssm_prueth_tx_ts_offs_get(u8 port, u8 event)
-+{
-+	return TX_SYNC_TIMESTAMP_OFFSET_P1 + port *
-+		PRUETH_PTP_TS_EVENTS * PRUETH_PTP_TS_SIZE +
-+		event * PRUETH_PTP_TS_SIZE;
-+}
-+
-+static inline u32 icssm_prueth_tx_ts_notify_offs_get(u8 port, u8 event)
-+{
-+	return TX_TS_NOTIFICATION_OFFSET_SYNC_P1 +
-+		PRUETH_PTP_TS_EVENTS * PRUETH_PTP_TS_NOTIFY_SIZE * port +
-+		event * PRUETH_PTP_TS_NOTIFY_SIZE;
-+}
-+
-+#endif /* PRUETH_PTP_H */
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
