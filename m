@@ -1,196 +1,238 @@
-Return-Path: <linux-kernel+bounces-801825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AF1B44A67
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:26:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1613FB44A6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5481C253D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C8027B3410
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C8D2F6573;
-	Thu,  4 Sep 2025 23:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD3E2F6599;
+	Thu,  4 Sep 2025 23:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="19iNBcz2"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ly5Ism6I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DEB2F6171
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C660D2F6565;
+	Thu,  4 Sep 2025 23:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757028358; cv=none; b=l6lraH5Zpc+raMWe7RfQBuXbCg1ULuCZzwEQM0/iKXHUR/4r+PlnxIGBawzWBPVrSB6+UnhCY+uAeSK6qEWmrYJwYobAMLmLNFG1YhVxiUw5OwCMB+KB5cggHxZ3U+Nh1fyq/isIsUGzF2ZoqrSscWRAZsZVfVyhCqAcNSULN98=
+	t=1757028483; cv=none; b=qJdkcmyZHpVwKgB1qWdplqWvQW/oEBFj1O6IVGXSlwImjxLOLU9CaVMz5ozdCzP1/5MS4AdZv9XKlYRWQG8FvLRS01nPphIIzhhO8/vp1TlgKSkzmNywhHb+/but9i/94MAlqaqFxVCc2/Q6Of0+Z3YuQjUwuH1UfNYHM2MKK8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757028358; c=relaxed/simple;
-	bh=0z4W131kc7IZA/MZBmrE2/S7QjivMLpZDRe6D8mSq1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g5CGQzwIWet2OXEljvVXkx4XwqqdgJ3bsUOwI+xcfVbANh/pk8mA/JWqqaPs1fJ0EnTA9JP/HuMk7974jkegR2z1Jv7aB+Yrno5IWtppG9BgFfLAzAhEYn8UjG39KPrt+WIh43U8KBgYvgQbPjuZzxBtaT3DW2+kOkqZSDq2+4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=19iNBcz2; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e98a18faa25so1625706276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757028355; x=1757633155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7xozTMnAUTSGP/OIsr+6T7j3/FSd9yXb5HKJfOm++2A=;
-        b=19iNBcz2azO0oyiCCxgYHGPJ+qjLi2CdjGHUPwd+s4x58zywNc+7ZN2ENqrAuXQQI/
-         Y+yJNbuDnkkHKHTEpL09rVvZ1C1zbfPIHpV+9O6lMSNbAuk8Am1swNihkoTrG9JjzuEM
-         SIUy1rRntwRrctbAb2bJckwCeS8Nc2kJYNHnEhdcbVQGqznq0J9sJrH+tXxRO8GBEYxa
-         r2TCjb/w01CdpgbJTJjsbmODokw2G6SY4CxXXZKOCVNHoPbnVSFnrI89t5R5TIvOH8K/
-         o2kMg8pfqo6RKHHSa5foK3s+UAYAuOGg/w+lUKQ00h7Pjh2hn7Rtv3myyhgwrk7+vHiL
-         Pewg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757028355; x=1757633155;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xozTMnAUTSGP/OIsr+6T7j3/FSd9yXb5HKJfOm++2A=;
-        b=XXVg7P8YW3IbwU0rRI9cQNkSVQOA/QCfHv4oum4DV3qai7TUnIKQfB8iykFW81pge1
-         cx1i/NJ3VvxhSQHZUxWrHWaX6UGLeqQ47Dp1tzAMSSL5A14gRcvrl8vHIJRV4pEqoGIh
-         A2SsOdB24XJanzrytBqlvcd6Eu6GnYlRxjpfXXAJ+4d84eTyyT8dpMpvE2kSLBOGg/+q
-         6b3yF5PIaVBxEXHMrjwEtZ72VeqEJdBkDJkqGzj+mOxsSjxKMuSN1JOlY3eWazjNCiw1
-         Fm0ZK4PibFtGhP6Vb2I2qOSptFVBxBZGQtDBMU8lFubscIzCG5GACr7GngHqOEOlyr/g
-         6gBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcRf7W14Rps+3QYqTRbkYX7H6pIjZDKR55ZONo5nvSdjwIqrsFLxjnKX7vRHGtbkYvldEILKFTUGjW6I0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM5U3Fh5QnTE4f6ofKtk5Ydnb5L5vlpl+8gZsI4gQJWsi6BjXW
-	vBkMSrCJlEBld4kPWxtkHpgLU5euDDdZHCMr7bycwaZmT+8Y9YXBTmZp9l4VK22o3JQ=
-X-Gm-Gg: ASbGncuwbs/d2kYFatM5Pihw6HaKu9/Jyn+KKcdWEm4bAKOExiayG1ySos8KU7YrdfY
-	FHa8crSAnGDf7Tz1qQPP8xmbkTaVYqH81kDQYNsQOv4GnPVyvMv0+PyjIko1NfPRsq37nzcHb3S
-	PDOGhPR9vtX4+tmIR0q3wNGdfBMuqUgkaAD6yJWVNqqh8EZCdLWsecHN2TPWiENT4e1peaNdhUz
-	adhp/s56XNlKEjSqHYAc9Lbo6U8h68gbtZFQYDoD/5fZAv5KFCGm6n8IKOkXYin4iGTVLy2PoSy
-	G2cmpR+2szbA4xP/23gyKDL9GSxC/PybEO6fVg1CFZZRH7D+Urz5/fbwAhfjxCXlQ2dcNRqoK1p
-	BXlCkgQc/CHzrnWGriuXQit+5vHXY
-X-Google-Smtp-Source: AGHT+IHYyMuPItddACX1ADJHnCstSzAXvHPDxAQjNdgUGdiE0877dFLHUdUXWRUOoRlz4okMbYYr6A==
-X-Received: by 2002:a05:6902:158c:b0:e90:6ed1:ec51 with SMTP id 3f1490d57ef6-e98a578c92cmr23210220276.14.1757028355311;
-        Thu, 04 Sep 2025 16:25:55 -0700 (PDT)
-Received: from [10.0.3.24] ([50.227.229.138])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9d6a5cdb43sm1149951276.8.2025.09.04.16.25.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 16:25:54 -0700 (PDT)
-Message-ID: <d3c5e370-5d60-4f00-9f92-d783e0e4a051@kernel.dk>
-Date: Thu, 4 Sep 2025 17:25:54 -0600
+	s=arc-20240116; t=1757028483; c=relaxed/simple;
+	bh=ly5f5L034OBshPPmHWgiZrq2nVBBsbg/Jf7vHlaQUWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFLV0JW4yjEwuXEwHg1PyKc9Efm0WASOO4iwHSYHQ9dBOFS9BKuexEI9oFyGj7vEGnvZPKbPABf5ytp6GZQWlNNSDUhLo6V4X5ciWdkHssnpUZJgabE3ljz5vH40EeZ5v+Eu+C+t7vs+QLN+JmWz8I5uzuaUwSkharMoiwTh+9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ly5Ism6I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1D8C4CEF0;
+	Thu,  4 Sep 2025 23:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757028483;
+	bh=ly5f5L034OBshPPmHWgiZrq2nVBBsbg/Jf7vHlaQUWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ly5Ism6IqfIlvxasm57hCAO7wUxPD9JsMjU0KImRbjVR+rs9WCTTPAdwYEBlS51vZ
+	 4HFd3FLX/dY+XQm/OVs+D5ir6Gn87BiClCtZP4SZC2rKUdWsfK2tYs+10JGD/Nl42u
+	 Io4OE8+9SndISpcNgIahX/a8B5NmRi+elc1Hkgwt0QQLdkVvuSAROE7JP/PvsytowB
+	 in8swEKTSxL+mwG6+dsVtOnEvIaZMwMfe10nwj6RoXnaEVd7IPOZvyZXLC175mnvBm
+	 vXkw/6HkOffPJzWFll3xM2y3zY7GaQAPukOWVl6uAtEw6TcQf+OZYICggA7THrhYp+
+	 f6+LRhbzTxL4g==
+Date: Fri, 5 Sep 2025 01:28:00 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: akhilrajeev@nvidia.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+	ldewangan@nvidia.com, digetx@gmail.com, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] i2c: tegra: Add support for SW mutex register
+Message-ID: <l4po62bw6672xpaabkbvu6snyg4hrgcdxaijpt6evizortwjok@jwg2asezj3cb>
+References: <20250828055933.496548-1-kkartik@nvidia.com>
+ <20250828055933.496548-5-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot ci] Re: io_uring: avoid uring_lock for
- IORING_SETUP_SINGLE_ISSUER
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-References: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
- <26aa509e-3070-4f6b-8150-7c730e05951d@kernel.dk>
- <CADUfDZpTtLjyQjURhTOND5XbdJOSEduDLdSuyUJVk_OKG9HVGA@mail.gmail.com>
- <CADUfDZot=DxWjERupMofRuyvK3jKx79yQUOSniqT4uhMac2dbw@mail.gmail.com>
- <CADUfDZq-x3t6gfzAg8kxe8oNezDwYKggkeZ4o1Jw-Q1smjh6aQ@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CADUfDZq-x3t6gfzAg8kxe8oNezDwYKggkeZ4o1Jw-Q1smjh6aQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828055933.496548-5-kkartik@nvidia.com>
 
-On 9/4/25 10:50 AM, Caleb Sander Mateos wrote:
-> On Thu, Sep 4, 2025 at 9:46?AM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
->>
->> On Thu, Sep 4, 2025 at 7:52?AM Caleb Sander Mateos
->> <csander@purestorage.com> wrote:
->>>
->>> On Wed, Sep 3, 2025 at 4:30?PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 9/3/25 3:55 PM, syzbot ci wrote:
->>>>> syzbot ci has tested the following series
->>>>>
->>>>> [v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
->>>>> https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
->>>>> * [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
->>>>> * [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
->>>>> * [PATCH 3/4] io_uring: factor out uring_lock helpers
->>>>> * [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
->>>>>
->>>>> and found the following issue:
->>>>> WARNING in io_handle_tw_list
->>>>>
->>>>> Full report is available here:
->>>>> https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
->>>>>
->>>>> ***
->>>>>
->>>>> WARNING in io_handle_tw_list
->>>>>
->>>>> tree:      linux-next
->>>>> URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
->>>>> base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
->>>>> arch:      amd64
->>>>> compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->>>>> config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
->>>>> syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
->>>>>
->>>>> ------------[ cut here ]------------
->>>>> WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
->>>>> WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
->>>>> Modules linked in:
->>>>> CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full)
->>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
->>>>> RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
->>>>> RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
->>>>> Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
->>>>> RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
->>>>> RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
->>>>> RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
->>>>> RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
->>>>> R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
->>>>> R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
->>>>> FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
->>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
->>>>> Call Trace:
->>>>>  <TASK>
->>>>>  tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
->>>>>  io_sq_tw io_uring/sqpoll.c:244 [inline]
->>>>>  io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
->>>>>  ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
->>>>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>>>  </TASK>
->>>>
->>>> Probably the sanest thing to do here is to clear
->>>> IORING_SETUP_SINGLE_ISSUER if it's set with IORING_SETUP_SQPOLL. If we
->>>> allow it, it'll be impossible to uphold the locking criteria on both the
->>>> issue and register side.
->>>
->>> Yup, I was thinking the same thing. Thanks for taking a look.
->>
->> On further thought, IORING_SETUP_SQPOLL actually does guarantee a
->> single issuer. io_uring_enter() already avoids taking the uring_lock
->> in the IORING_SETUP_SQPOLL case because it doesn't issue any SQEs
->> itself. Only the SQ thread does that, so it *is* the single issuer.
->> The assertions I added in io_ring_ctx_lock()/io_ring_ctx_unlock() is
->> just unnecessarily strict. It should expect current ==
->> ctx->sq_data->thread in the IORING_SETUP_SQPOLL case.
+Hi Kartik,
+
+On Thu, Aug 28, 2025 at 11:29:32AM +0530, Kartik Rajput wrote:
+> Add support for SW mutex register introduced in Tegra264 to provide
+> an option to share the interface between multiple firmwares and/or
+> VMs.
+
+You could add a short description on how to use the mutex
+register here.
+
+> However, the hardware does not ensure any protection based on the
+> values. The driver/firmware should honor the peer who already holds
+> the mutex.
 > 
-> Oh, but you are totally correct about needing the mutex to synchronize
-> between issue on the SQ thread and io_uring_register() on other
-> threads. Yeah, I don't see an easy way to avoid taking the mutex on
-> the SQ thread unless we disallowed io_uring_register() completely.
-> Clearing IORING_SETUP_SINGLE_ISSUER seems like the best option for
-> now.
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 
-Right - I don't disagree that SQPOLL is the very definition of "single
-issuer", but it'll still have to contend with the creating task doing
-other operations that they would need mutual exclusion for. I don't
-think clearing SINGLE_ISSUER on SQPOLL is a big deal, it's not like it's
-worse off than before. It's just not getting the same optimizations that
-the !SQPOLL single issuer path would get.
+...
 
--- 
-Jens Axboe
+> @@ -381,6 +391,73 @@ static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+>  	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+>  }
+>  
+> +static int tegra_i2c_mutex_acquired(struct tegra_i2c_dev *i2c_dev)
+
+this is a bool function.
+
+> +{
+> +	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
+> +	u32 val, id;
+> +
+> +	val = readl(i2c_dev->base + reg);
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +
+> +	if (id != I2C_SW_MUTEX_ID_CCPLEX)
+> +		return 0;
+> +
+> +	return 1;
+
+return id != I2C_SW_MUTEX_ID_CCPLEX;
+
+> +}
+> +
+> +static int tegra_i2c_mutex_trylock(struct tegra_i2c_dev *i2c_dev)
+
+I think this can be bool.
+
+> +{
+> +	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
+> +	u32 val, id;
+> +
+> +	val = readl(i2c_dev->base + reg);
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +	if (id != 0 && id != I2C_SW_MUTEX_ID_CCPLEX)
+> +		return 0;
+> +
+> +	val = FIELD_PREP(I2C_SW_MUTEX_REQUEST, I2C_SW_MUTEX_ID_CCPLEX);
+> +	writel(val, i2c_dev->base + reg);
+> +
+> +	return tegra_i2c_mutex_acquired(i2c_dev);
+> +}
+> +
+> +static int tegra_i2c_mutex_lock(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	int locked;
+
+I guess this can be bool.
+
+> +	int ret;
+> +
+> +	if (i2c_dev->atomic_mode)
+> +		ret = read_poll_timeout_atomic(tegra_i2c_mutex_trylock, locked, locked,
+> +					       USEC_PER_MSEC, I2C_SW_MUTEX_TIMEOUT_US,
+> +					       false, i2c_dev);
+> +	else
+> +		ret = read_poll_timeout(tegra_i2c_mutex_trylock, locked, locked, USEC_PER_MSEC,
+> +					I2C_SW_MUTEX_TIMEOUT_US, false, i2c_dev);
+> +
+> +	if (!tegra_i2c_mutex_acquired(i2c_dev))
+> +		dev_warn(i2c_dev->dev, "failed to acquire mutex\n");
+
+I would try a few times before giving up.
+
+Besides, is there a chance where ret is '0' and the mutex is not
+acquired? If so, we are not signalling error if the mutex is not
+acquired, but I think we should.
+
+I would do:
+
+	if (...)
+		ret = ...
+	else
+		ret = ...
+	
+	if (ret)
+		return ret;
+
+	if (!tegra_i2c_mutex_acquired(i2c_dev)) {
+		dev_warn(i2c_dev->dev, "failed to acquire mutex\n");
+		return -ESOMETHING;
+	}
+
+	return 0;
+
+Makes sense?
+
+> +
+> +	return ret;
+> +}
+> +
+> +static int tegra_i2c_mutex_unlock(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
+> +	u32 val, id;
+> +
+> +	val = readl(i2c_dev->base + reg);
+> +
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +	if (id && id != I2C_SW_MUTEX_ID_CCPLEX) {
+> +		dev_warn(i2c_dev->dev, "unable to unlock mutex, mutex is owned by: %u\n", id);
+> +		return -EPERM;
+
+I would try a few times before giving up.
+
+> +	}
+> +
+> +	writel(0, i2c_dev->base + reg);
+> +
+> +	return 0;
+> +}
+> +
+>  static void tegra_i2c_mask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>  {
+>  	u32 int_mask;
+> @@ -1422,6 +1499,13 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>  		return ret;
+>  	}
+>  
+> +
+
+no need for this extra blank line.
+
+> +	if (i2c_dev->hw->has_mutex) {
+
+I would put this check in tegra_i2c_mutex_lock() and _unlock() in
+order to avoid two level indentation here.
+
+> +		ret = tegra_i2c_mutex_lock(i2c_dev);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	for (i = 0; i < num; i++) {
+>  		enum msg_end_type end_type = MSG_END_STOP;
+>  
+> @@ -1451,6 +1535,12 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>  			break;
+>  	}
+>  
+> +	if (i2c_dev->hw->has_mutex) {
+> +		ret = tegra_i2c_mutex_unlock(i2c_dev);
+> +		if (ret)
+> +			return ret;
+
+We are skipping pm_runtime_put(), though.
+
+Thanks,
+Andi
+
+> +	}
+> +
+>  	pm_runtime_put(i2c_dev->dev);
+>  
+>  	return ret ?: i;
 
