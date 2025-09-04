@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-801485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EC8B4459B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92314B4459F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856C6A00DC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49345A00F2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEE82FE04B;
-	Thu,  4 Sep 2025 18:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B079D3112DF;
+	Thu,  4 Sep 2025 18:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JmULmFZW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pUKuYwzv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD322FDC26
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03352FDC26
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757011102; cv=none; b=s7ko/x+y5RU6kYdt8NBRVv1ZlLk6JTCefik8t1kRS+g4YlwYqnYEAMjU2kqf9BxcJkIyeFVUWrZou7vQ3VlJSnFaMgt956vnfstrWHQSjEplsq3F6AAzRv/DustRpJtnnw8dF0NVWCXXGPtdS549mutACWdW0X0D6PIJ2OhzLTI=
+	t=1757011160; cv=none; b=I+cl6CYPOmMT6RLh7ji/2QfP7gn05g2F5slYYErs+aGcUaMEPtlDkbpnQByTBZVCDewsH9kfAM4XrBieH21uhvJ4h4oMLz1zesnUw3pbo7g0i6oi+RI3lv3XQmKdJFmoNkFn6R+WEMChIQEnqfbaEch+9/j3FIhjBepSAV0+hSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757011102; c=relaxed/simple;
-	bh=NiRdYiiiRV4FWalVTr1Q5z0gH4g/vvAfsEWsd3OUJ5o=;
+	s=arc-20240116; t=1757011160; c=relaxed/simple;
+	bh=8/MK1xQAeLBWcNZwrwLd8CntYlqvCN0pwOtNjjpT6ZA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8Xg/mpeV7Oui1BViIeaLbbvEwBV6wn/YqlzymJh6BvLSu9heJWtd94/U8XAV7aRL0vaKwZboZ2+aWIwV+5vFpwmpL/vlG8bzFXHv+ggpZRxxhqvogWN3cY8+57P4Fj+qhXFxcY75PiHBR/RxTj3RQ+Hb3sQTu05g4F8gCwB3Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JmULmFZW; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=JGyL9If4euXMfyhWgrI0KoM7Ylf7V5vYAfRWR1cPEJx4s4EFCZw4DzANr9/9hMjynNSIIQIteSLn8a25VOHLbui0KhNuv+qFxp6CYeF7/kjB/85PZvHXl2fMgP89xWihbNln4OSt1OrwlqrSZPIeBQSNW5sUyeVs6cOTw9IhxzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pUKuYwzv; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X9Dx032214
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 18:38:19 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849X9NI022185
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 18:39:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rssL+6G8FN5LG7LMUBKmTSBofG0KyOBvcSbrEws4HPo=; b=JmULmFZW6lZ/mKn0
-	8itMKEbCHe7M2BP6t61xJmYFLLjfXs5zmAMyU2y001q6fNpmcmUoZ/0GYH/A2xFU
-	PwyJYF0C7iYAGmoP7UirkGTXNa1luXd9TkR5j33MI2lJts6LypbEkCipyTuc00Dt
-	xekHIPqR2m7VZgqCLW/xzOfR8bxHnQYN6lMkvlgW9hl+BsFjwqruVd0qfsMvwk25
-	KTJM9++3Dq6IPMYZ78d/C3QXrKOu7mP5S7uBn+k4ejlOFsS+9yEG4yqUdIsMw3RB
-	Ks/NtjjC1yFH/25mQ55X7d2tM71NP+LWM02FCBU1cPWO44M66D6sPlcXvakoF5M2
-	U6IQ2A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpgqqq-1
+	nn1s1cmBrSFFysEaJTYBo/i8fM15yQYFa7TnS6bqPa8=; b=pUKuYwzvgy5mPAG1
+	g47p4h4g7JfiSoMpdvi8U/i/P8t1Fm2QeKguuxHSm1Ap9c5xRQTOaOTTK2WG/g89
+	b6vgaT7PJDl9PQVv4hJV019kB5+94eAF8iWIO59/I6bLKac8RM76rGMPbvupprAe
+	xDuRSeTTd4niCrn+FPuwv/sHsXKpxQgf10xgpdFICh90LUF3a+zcBNDTNirem8Yn
+	/tL2NfQ8QllvIsjRO5vk7IW/fVzhSeJGA3SJO4j7AWHdQdyeIcK/GoNSJ+LYjHRB
+	j+tlH23jH4nbX53XUUAET2u+kG62cjPkcVpU3OMbj9QHqEKyR6xWO3hYQpkOfqqO
+	fcKS6Q==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk98cn4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:38:19 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24c99bd543aso20425715ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:38:19 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:39:16 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24458345f5dso17184345ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:39:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757011098; x=1757615898;
+        d=1e100.net; s=20230601; t=1757011156; x=1757615956;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rssL+6G8FN5LG7LMUBKmTSBofG0KyOBvcSbrEws4HPo=;
-        b=nhbpIxowLcyff7dXtp4fjVYrGBKtPA96UQR9/XLz+xxkpKMmqldnzmG6PGNln+MZL3
-         wbbvCvnegcSFbTLlz4maMBrqwv6zHWFtW1BCuUCJCAv/k1pBmOtYcHLd6Y4cUKopzvu0
-         GO5VZ8JAvaaTkZZCizI4ZXrwdtDKcghmVrzvVuZ9XtzoorW5bjG8bF9TVqOKcYmkUrCN
-         au9lPk0K57d/nKZK12QzePd3YrQ3I/k30Jo46TWprQzrE+30iK7asjk52vhW+bSRcVCh
-         5uUSkhjTMDuS51ETeOMY8fXbyZfoDHE7ZmkcB2CGrG55kd9Yr2oY9iapz5QdAweOFwuK
-         eSmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSzQn3pTyHSaEdtdoCpAcfmkSda4IOknT5ekNG/rhKdCCf9/PmM3Rb6wsWhPuPDQh4b03BikH5xKUAeYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+7E60dV+F/pebuGbvlaSGzxhWzsuvsPyIRmtRguubYlW/WDgH
-	vT46i205inrDErTZApR7J2zk6a2CKT1KnQi5+pBs+1r5bPggGAtaELT1lVJADGI//j354B1CtH2
-	E17YdPRdsYouAUdVxLLrUVtI+NF6zeGo8lV6FHioUfVPO5QtwJAfzC0LlufhEnicWGfk=
-X-Gm-Gg: ASbGncsq0LX5N8bsIeLGP+AFE3EEMSDwiN/SDW5TgOgFh5ldEImb3hlo2+H7bn+IJ05
-	N9lcrPkmjsYAj8kOQ0uVUUcDpW+EfOLTQT34yioSlKaK/MQv7+IkHr/oQ3AcoHVE/2CPjEVPSHD
-	q4iM+hr7n7yIfCvzrtXJA3snqR5CqpWSU5oSXWsPALinr8iFtPzoB56nHWuzAeQdUgK/YhsdS1Q
-	aagjcdQe40GjFN6DU9mKEyNISEniXyM7ACVXljJmMIZbH2IIdpVQnukHsfvoN5v1uZWUxp2sMVg
-	RWO2bZOm5aiYNw1RBRbqHtWExW8JlGP3KlbpXFBeG3eLH1TJ4tuuy7npw2Yg2vZEdATaapQL+0w
-	Z+SrQM990+F26DSNvnMPHQg==
-X-Received: by 2002:a17:902:f542:b0:24b:1741:1a43 with SMTP id d9443c01a7336-24b17411e77mr130690685ad.58.1757011097869;
-        Thu, 04 Sep 2025 11:38:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGrGZXs3Bk5vSSAzqcnUJQ1gGAx5Q/kY4Q2C+c3W9OYcx0iHZD5nnEJBxA6I/4YYx/XY+RokQ==
-X-Received: by 2002:a17:902:f542:b0:24b:1741:1a43 with SMTP id d9443c01a7336-24b17411e77mr130690365ad.58.1757011097364;
-        Thu, 04 Sep 2025 11:38:17 -0700 (PDT)
+        bh=nn1s1cmBrSFFysEaJTYBo/i8fM15yQYFa7TnS6bqPa8=;
+        b=Nk6Gsa647cSyJ4wr+aofhBoYVy3Mb1fO+ln4jlEMl+wfNZS8SyzXKCPmgU0tp8KVVU
+         A8SegmgjvDQqhPq7qx8C9mBZt1m5krorR2HFfvz5i4HM1V8uZiI9EKDM+wEAz44myz4q
+         OCnm71HycybioXGUh584YgtAgmDPNkCxtkwIR2emAoJPuy+b7IeXS/UNbhhVs77PrR7y
+         qIjR/sx/6C+cjy3R466NGcdR9LSsI9ivX7hoOI8F/sn40ZA0nRvJfuli1MVUo6UX+xtS
+         JQ+XfvyeglNDZGoamRUk7g5Hw8ERId6k9ChJWr9gjTKVTH7Du5ppaimebV/5dXclWrmO
+         cz/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5U4ZcJdmiSOR1PcHa373F5T5tXpLz/HU+eVKZRpKDMJFfDye52qo3NFj7mOI7wYtKr03yurHAvDfppoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsEkSD66IbKNtjXK8GrSJVoyCHMIu5AUP+4KpOxOexgAOQS7We
+	jSR/G2+tw/ie4Adfu9k3jwAQjZJ5YJgoEyOEQdlyMJKvfGMn5IvQsfJiQh7OKi7MZ3jzxYFw0cu
+	Ft+LiUdTud6sLPc1DOdctgXnaCjX6+qvRNy9rBjRb47nu+jcBkCrSQ+7IF2gKi9nVbDI=
+X-Gm-Gg: ASbGncvsjHjGnLzsJictl80yQtsA5m6eNHJ0wJ1eVKGhaUadS/e3zg8QqfJjWMLMeI5
+	C2rMxqhYSi2go2Vgs4+LnKBDZi1u7ChVbIK5n0j+SLK5nMQmB9KnW3v1k/L4KN2C4VD1rXPZXyz
+	bY5mQehHFx6HcFsbZSRTMHyVKxz9+Q97R9x51yaz1TCjKCzG+sPuNLn2m4tZ2t5azAG4djaRHmT
+	Ew6mTVz2ma7YS5MP8WhlK5fXt7LtpPHjKx9Cwme0uCNls9w7sg+d8EAXaV9jBF8dIhjZDPsEM10
+	b8baoQsT6VbMD0t1tRCg1znXmhnlN4NB5WOrRJQ3BQkNgM8W77lXG5ugmBWjhkBVV4/eLq0KYxN
+	61/FSqMjTj94THYJNUyY21w==
+X-Received: by 2002:a17:903:2343:b0:24c:9c5c:30b7 with SMTP id d9443c01a7336-24c9c5c318amr78060525ad.47.1757011155840;
+        Thu, 04 Sep 2025 11:39:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGt8vlrmccO/zKDOpTjvGT8zqU0R03/eoM8Qk0vuGXWCzN2nGB8EZel9xPgSfcY7c/FvHbGw==
+X-Received: by 2002:a17:903:2343:b0:24c:9c5c:30b7 with SMTP id d9443c01a7336-24c9c5c318amr78060015ad.47.1757011155125;
+        Thu, 04 Sep 2025 11:39:15 -0700 (PDT)
 Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ce9dd9373sm5748535ad.85.2025.09.04.11.38.16
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9304b7eesm50520415ad.102.2025.09.04.11.39.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 11:38:16 -0700 (PDT)
-Message-ID: <c2d810bc-bdba-464b-9a05-49ca2e1c773b@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 11:38:16 -0700
+        Thu, 04 Sep 2025 11:39:14 -0700 (PDT)
+Message-ID: <d312c946-38e1-4ab1-b038-19239d10720a@oss.qualcomm.com>
+Date: Thu, 4 Sep 2025 11:39:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] drm/msm/dpu: use standard functions in
- _dpu_format_populate_plane_sizes_ubwc()
+Subject: Re: [PATCH 01/12] drm/msm/disp: set num_planes to 1 for interleaved
+ YUV formats
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
         Rob Clark <robin.clark@oss.qualcomm.com>,
         Dmitry Baryshkov
@@ -102,180 +102,84 @@ To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
- <20250705-dpu-formats-v1-12-40f0bb31b8c8@oss.qualcomm.com>
+ <20250705-dpu-formats-v1-1-40f0bb31b8c8@oss.qualcomm.com>
 Content-Language: en-US
 From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <20250705-dpu-formats-v1-12-40f0bb31b8c8@oss.qualcomm.com>
+In-Reply-To: <20250705-dpu-formats-v1-1-40f0bb31b8c8@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: zKxfmq-7FGUq9aTMPGG-a5V2dtcSXMcl
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b9dc9b cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=vPUQ5TvUw8t84cJzJAUA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: zKxfmq-7FGUq9aTMPGG-a5V2dtcSXMcl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX/maYTdQ80xQQ
- MA4vQ/Er4ZsVg0FS0rrtDEy0Kfj1IkhZwfwibEbMP1pu8GAPzsZ/JlwD/n3a6hO9VJF5AzRCS55
- 0+VnSibYZzzNlb4F1JL+Q7IsXIjg0K+llT0SV7OKL5Lsk+2BvCNTSHiztjC3tlqCnW0WckHXNF8
- pD2/sWk6Esu4bpkGw6TUUurDqjbWTbUxUwNGL7at4H5nGbzfQRBLtiRbqe6Cz4a2xizscHqBU4a
- qz68qokvxkL83ovIeagXgMQ6KThs3D4hRXFYc01cHqWTqLhUTuy7F72KMC6EDHwSj+kisTWfWV2
- X1F6eqh/ZfdZsqIyJEDb6lmBTqTddbP+l4Bpt7yDB79OlLB23+absSjAFqEELYtEyrcKjq1goqG
- 9aX4Vmtk
+X-Proofpoint-GUID: QRsv8tnVexeN49FWVPjH2ZLsv0_VbEWc
+X-Proofpoint-ORIG-GUID: QRsv8tnVexeN49FWVPjH2ZLsv0_VbEWc
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b9dcd4 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=k66G2MeTsQAVc7QBSiAA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfXx5BjvW8ELvRA
+ KdBBRrsYxQ/AE9itcpzbFDR4bFeOhwfjWRX445wji7MmTczM6+cHeNrorZKBuH8jZeyvcI9GItE
+ upMOLIZn3/lXJd3ScnesBahmPo9Tum0sTrkZydYYfNQQTNfkQ7j+xNUxcnIeP2mnFoNXjUUjV7J
+ yCY6f2bCOLn//8FduPU9luJfR8ES9HfuhUYuN9BF+bBshSj1BrCCyd1OvltO5PfMDj6sZi0rtY8
+ mwYqEtQSoO3PBZtu2Z/Vrylvr09HE/m4YlV4MGwhUsg8DnSchA14rEZt2eGBaMbjq2FqYMLYmGc
+ 5y6e9xVZ3Iih9hpmHAhaDL0gsqcC5O1IAsCuOzzWktXzsVHdWVaqrmsqIl8PRNuNKe4DgNj6uff
+ Csg1sR5i
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-04_06,2025-09-04_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
 
 
 On 7/4/2025 7:47 PM, Dmitry Baryshkov wrote:
-> The _dpu_format_populate_plane_sizes_ubwc() used MSM_MEDIA_ALIGN() and
-> MSM_MEDIA_ROUNDUP(), macros inherited from the previous implementation,
-> msm_media_info.h. Replace them with the standard Linux macros,
-> round_up() and DIV_ROUND_UP() respectively.
+> Interleaved YUV formats use only one plane for all pixel data. Specify
+> num_planes = 1 for those formats. This was left unnoticed since
+> _dpu_format_populate_plane_sizes_linear() overrides layout->num_planes.
 > 
+> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+
 > ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c | 62 ++++++++++++-----------------
->   1 file changed, 26 insertions(+), 36 deletions(-)
+>   drivers/gpu/drm/msm/disp/mdp_format.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> index 67bc5a6eeb43dcf113dea9eccdb778cd52b1ad40..6a0426ed1460c5af4822844d7a7b0c51739df875 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> @@ -10,16 +10,6 @@
->   #include "dpu_kms.h"
->   #include "dpu_formats.h"
+> diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
+> index 426782d50cb49d57a0db0cff3a4bb50c5a0b3d1a..eebedb1a2636e76996cf82847b7d391cb67b0941 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp_format.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp_format.c
+> @@ -479,25 +479,25 @@ static const struct msm_format mdp_formats[] = {
+>   		0, BPC8, BPC8, BPC8,
+>   		C2_R_Cr, C0_G_Y, C1_B_Cb, C0_G_Y,
+>   		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+> -		MDP_FETCH_LINEAR, 2),
+> +		MDP_FETCH_LINEAR, 1),
 >   
-> -#ifndef MSM_MEDIA_ALIGN
-> -#define MSM_MEDIA_ALIGN(__sz, __align) (((__align) & ((__align) - 1)) ?\
-> -	((((__sz) + (__align) - 1) / (__align)) * (__align)) :\
-> -	(((__sz) + (__align) - 1) & (~((__align) - 1))))
-> -#endif
-> -
-> -#ifndef MSM_MEDIA_ROUNDUP
-> -#define MSM_MEDIA_ROUNDUP(__sz, __r) (((__sz) + ((__r) - 1)) / (__r))
-> -#endif
-> -
->   #define DPU_UBWC_PLANE_SIZE_ALIGNMENT	4096
+>   	INTERLEAVED_YUV_FMT(UYVY,
+>   		0, BPC8, BPC8, BPC8,
+>   		C1_B_Cb, C0_G_Y, C2_R_Cr, C0_G_Y,
+>   		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+> -		MDP_FETCH_LINEAR, 2),
+> +		MDP_FETCH_LINEAR, 1),
 >   
->   /*
-> @@ -80,57 +70,57 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   		    fmt->pixel_format == DRM_FORMAT_P010) {
->   			if (MSM_FORMAT_IS_DX(fmt)) {
->   				if (fmt->flags & MSM_FORMAT_FLAG_UNPACK_TIGHT) {
-> -					stride = MSM_MEDIA_ALIGN(fb->width, 192);
-> -					stride = MSM_MEDIA_ALIGN(stride * 4 / 3, 256);
-> +					stride = round_up(fb->width, 192);
-
-Hi Dmitry,
-
-It seems like the usage of round_up() here might be incorrect -- the 
-docs say "round up to next specified power of 2".
-
-Maybe we should use roundup() instead here?
-
-The rest of the patch LGTM.
-
-Thanks,
-
-Jessica Zhang
-
-> +					stride = round_up(stride * 4 / 3, 256);
->   					y_tile_width = 48;
->   				} else {
-> -					stride = MSM_MEDIA_ALIGN(fb->width * 2, 256);
-> +					stride = round_up(fb->width * 2, 256);
->   					y_tile_width = 32;
->   				}
+>   	INTERLEAVED_YUV_FMT(YUYV,
+>   		0, BPC8, BPC8, BPC8,
+>   		C0_G_Y, C1_B_Cb, C0_G_Y, C2_R_Cr,
+>   		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+> -		MDP_FETCH_LINEAR, 2),
+> +		MDP_FETCH_LINEAR, 1),
 >   
-> -				sclines = MSM_MEDIA_ALIGN(fb->height, 16);
-> +				sclines = round_up(fb->height, 16);
->   				y_tile_height = 4;
->   			} else {
-> -				stride = MSM_MEDIA_ALIGN(fb->width, 128);
-> +				stride = round_up(fb->width, 128);
->   				y_tile_width = 32;
+>   	INTERLEAVED_YUV_FMT(YVYU,
+>   		0, BPC8, BPC8, BPC8,
+>   		C0_G_Y, C2_R_Cr, C0_G_Y, C1_B_Cb,
+>   		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+> -		MDP_FETCH_LINEAR, 2),
+> +		MDP_FETCH_LINEAR, 1),
 >   
-> -				sclines = MSM_MEDIA_ALIGN(fb->height, 32);
-> +				sclines = round_up(fb->height, 32);
->   				y_tile_height = 8;
->   			}
->   		}
->   
->   		layout->plane_pitch[0] = stride;
-> -		layout->plane_size[0] = MSM_MEDIA_ALIGN(layout->plane_pitch[0] *
-> +		layout->plane_size[0] = round_up(layout->plane_pitch[0] *
->   			sclines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   
->   		layout->plane_pitch[1] = stride;
-> -		layout->plane_size[1] = MSM_MEDIA_ALIGN(layout->plane_pitch[1] *
-> +		layout->plane_size[1] = round_up(layout->plane_pitch[1] *
->   			sclines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   
->   		if (!meta)
->   			return 0;
->   
-> -		y_meta_stride = MSM_MEDIA_ROUNDUP(fb->width, y_tile_width);
-> -		layout->plane_pitch[2] = MSM_MEDIA_ALIGN(y_meta_stride, 64);
-> +		y_meta_stride = DIV_ROUND_UP(fb->width, y_tile_width);
-> +		layout->plane_pitch[2] = round_up(y_meta_stride, 64);
->   
-> -		y_meta_scanlines = MSM_MEDIA_ROUNDUP(fb->height, y_tile_height);
-> -		y_meta_scanlines = MSM_MEDIA_ALIGN(y_meta_scanlines, 16);
-> -		layout->plane_size[2] = MSM_MEDIA_ALIGN(layout->plane_pitch[2] *
-> +		y_meta_scanlines = DIV_ROUND_UP(fb->height, y_tile_height);
-> +		y_meta_scanlines = round_up(y_meta_scanlines, 16);
-> +		layout->plane_size[2] = round_up(layout->plane_pitch[2] *
->   			y_meta_scanlines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   
-> -		uv_meta_stride = MSM_MEDIA_ROUNDUP((fb->width+1)>>1, y_tile_width / 2);
-> -		layout->plane_pitch[3] = MSM_MEDIA_ALIGN(uv_meta_stride, 64);
-> +		uv_meta_stride = DIV_ROUND_UP((fb->width+1)>>1, y_tile_width / 2);
-> +		layout->plane_pitch[3] = round_up(uv_meta_stride, 64);
->   
-> -		uv_meta_scanlines = MSM_MEDIA_ROUNDUP((fb->height+1)>>1, y_tile_height);
-> -		uv_meta_scanlines = MSM_MEDIA_ALIGN(uv_meta_scanlines, 16);
-> -		layout->plane_size[3] = MSM_MEDIA_ALIGN(layout->plane_pitch[3] *
-> +		uv_meta_scanlines = DIV_ROUND_UP((fb->height+1)>>1, y_tile_height);
-> +		uv_meta_scanlines = round_up(uv_meta_scanlines, 16);
-> +		layout->plane_size[3] = round_up(layout->plane_pitch[3] *
->   			uv_meta_scanlines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   	} else {
->   		unsigned int rgb_scanlines, rgb_meta_scanlines, rgb_meta_stride;
->   
-> -		layout->plane_pitch[0] = MSM_MEDIA_ALIGN(fb->width * fmt->bpp, 256);
-> -		rgb_scanlines = MSM_MEDIA_ALIGN(fb->height, 16);
-> -		layout->plane_size[0] = MSM_MEDIA_ALIGN(layout->plane_pitch[0] *
-> +		layout->plane_pitch[0] = round_up(fb->width * fmt->bpp, 256);
-> +		rgb_scanlines = round_up(fb->height, 16);
-> +		layout->plane_size[0] = round_up(layout->plane_pitch[0] *
->   			rgb_scanlines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   
->   		if (!meta)
-> @@ -139,13 +129,13 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   		/* uAPI leaves plane[1] empty and plane[2] as meta */
->   		layout->num_planes += 1;
->   
-> -		rgb_meta_stride = MSM_MEDIA_ROUNDUP(fb->width, 16);
-> -		layout->plane_pitch[2] = MSM_MEDIA_ALIGN(rgb_meta_stride, 64);
-> +		rgb_meta_stride = DIV_ROUND_UP(fb->width, 16);
-> +		layout->plane_pitch[2] = round_up(rgb_meta_stride, 64);
->   
-> -		rgb_meta_scanlines = MSM_MEDIA_ROUNDUP(fb->height, 4);
-> -		rgb_meta_scanlines = MSM_MEDIA_ALIGN(rgb_meta_scanlines, 16);
-> +		rgb_meta_scanlines = DIV_ROUND_UP(fb->height, 4);
-> +		rgb_meta_scanlines = round_up(rgb_meta_scanlines, 16);
->   
-> -		layout->plane_size[2] = MSM_MEDIA_ALIGN(layout->plane_pitch[2] *
-> +		layout->plane_size[2] = round_up(layout->plane_pitch[2] *
->   			rgb_meta_scanlines, DPU_UBWC_PLANE_SIZE_ALIGNMENT);
->   	}
->   
+>   	/* 3 plane YUV */
+>   	PLANAR_YUV_FMT(YUV420,
 > 
 
 
