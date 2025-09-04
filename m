@@ -1,207 +1,144 @@
-Return-Path: <linux-kernel+bounces-800922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D51B43DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F93B43DC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85A9CA04E0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B239A056EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557223002C3;
-	Thu,  4 Sep 2025 13:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A0F2D63F8;
+	Thu,  4 Sep 2025 13:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jJUAFgrg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uo7/mkCM"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC72EFD81
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67702EFD81
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993953; cv=none; b=hdG2Gk6wsfEJwSrueln3HnAsauI85KMdGbuUW9IgcWHBwxiGWXEy53ALtuPBlMh0Pq9BNWh+wcxiOJ7odE0DW+b6UVYKrWdbwPdwRAUfrXCNZv4SZvctOGf8vEOiAKWZSP2VrYRASsn6i2b6c/rWoqaoY5FJ/PLx5akJN3mCP8g=
+	t=1756993959; cv=none; b=rK3LBL13vUIGu2UcvB1cteZRq6yR4jZFMgM4bgVEtsqgwVY56opDyGYQftM6KvMdfzu7ZlPuNM/GPOb/TKbGzvewtMfwzQ+HkZtNiPN2pOflQcFwVdBbMBPwqoZYCG6OYCwFyXZZ1f1AdZhukqtO6F3To59sHE7Pf4xGNPza4Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993953; c=relaxed/simple;
-	bh=HIX4eku98Wc54feYB0CQVeLO6u4tKzM8o896BSZOplE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iC8SH56ycIos2lLY0R9DUqMVfBCPUquf83j0qzZ5S060S981bE3IQoPjOoYE8n1FDXzNUBONitFGn1KShghl9Ur/q7errJ/kso45uzfO8BJzAPYq5x6wywzazOlYOAJvZPgR7xwad0GQ3XSFaO0VOF02ytBiF4ICf03xiPTF+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jJUAFgrg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5849XMDE022487
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 13:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N4tKvhnJISTCkWgQtCnG+ZlZTaMj9wRAoIAEATKuC6g=; b=jJUAFgrgLl1eO0XE
-	H435B9ors58IzgB9fud572oJwSlLJJ1zz1V3r3g0JZEvX6XMeB1ezvMYv3sg7VFa
-	z2pUlv8pMnc2ozaaGDPlq+R/FpPUsOgpYYjtzXrwO1hn9N1fAarSrjDbRGw8WqlW
-	DiyKjciWFQsKfz9Lr/Ts97u+vGK1tzkJ9Jt7aYEzoaDvXEreEoQ+xiDt+UNkpysT
-	Aq45yYvWMiQx+MzI4Nc0zdIYMeIvHSPDyBZo4AKIsgD0Fd5zDhYC7CP2Q9b3zhDy
-	TkeuZAMAzzz5AogPNNg9YwuqPzXH9osD0I7LnHSsPuiFLxvmQW/yfnKV818qGrMg
-	+fP6rQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk97gyg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 13:52:31 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7296c012f6bso10656046d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:52:31 -0700 (PDT)
+	s=arc-20240116; t=1756993959; c=relaxed/simple;
+	bh=3NwszQXseQQQXeeJGJavuLZanWPf2ITI4unb8s3kOxU=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EnjLEqQoy0SOLLOSBeRja4XBxtI9UAGgs8ZMkuBIWvmWrbN7VC8f78xMsXzZOEHZhdAONJ62XOGD/+ziCtU6XVjFeBdK2RJFcHjTlkuNd16UIajrhe3DzGFX07DbluFliOg8CZG9IIuhkN7vyTZzMCw0A3PZLYdUFyvBk6EQehc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uo7/mkCM; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7a5cff3so12562166b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756993956; x=1757598756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=btcWU0VuzOuAgLeIG+yfqqa6yIJ2YjDjsE9sHz0/HqU=;
+        b=uo7/mkCMBMbhmjZXyJZwsb3IMr2GZaUH6Lp1aHCKgd2lgbUDIAQ9HyfeoK89c6mYsV
+         FQmIA5itggLEv/2LM+hgXvSG+KJw53C7N+GCGbwLjxs7zb8Aau9QIzAddcXGF8h/NDpp
+         iypbsnYk5enf914MUMhdAEHRWbj1uMqCOqTczgn0uK/PgqI/QlbcDWTPCNy/lwp5xnRL
+         VRqDjItE5X2masn5RzvRz1hAi/00E2pLYmnDmPhaBhXSohaqc9kPNhKLNa4FN+OIEGsD
+         MiW3DZf2mwxY4nKabuBWH+Q9mXDBjshoSZ/OwpNFLsopRLOsx2kdG/Vtmq7fh8zdRKtZ
+         Iw8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756993950; x=1757598750;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4tKvhnJISTCkWgQtCnG+ZlZTaMj9wRAoIAEATKuC6g=;
-        b=CQN7+g/RwWHVvOGR5NlY440aJj4yqkUl4JEjLvz/IyJfGGFpX6fBeyDfmrlsLCo1rc
-         2OMLp1DRg6Ar9Im3P0rp4PJnIrIELhWLewXI2ZmgIuSuB1hCuHdTYly56YLmzFW/ypn8
-         +hl45kB4VUHHOF5gfWJnz0582h508e19EucZ5xP45tvqrnsV45WODQemFON6as/w/Vvl
-         VDbS96buzQ3J54yAXdEQ4PY2SrNAFNOm5H1SBRlYJLAydE3wSIDbxB7hYjXa07hyLTd9
-         1Nxj+UaWpewQjL/LvIbOzT8ca2ewT6tWbI7yMbQKrTxj55YlsSsETeL0U/G6ws+GCq7e
-         SnRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/lP0+bv2YGU3lPhRr6h1IMcwJfjCCudHNyvCkIcTj6GmAHIki3wOhri8aQPXcepw5oH4LFRLTW2ViU8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz6pDNjRW/NeHQbhDtbLpn/h7RJFHC0iHheGDgyq36I5m2CIKQ
-	dGfHmwZAErsJVWo6SP4lD6+maRlcpBeaw1D3fi5YNRWLiQtfUKGM2vXQNmgzc2DitX5BpFPxcxc
-	3N/40I8gDZDaTwdsMSHzUnNL4tW1hvtXAuw0eYS/44pk9bvN2NLNHqWAx0G0aINTBtxV8DlEOdP
-	0=
-X-Gm-Gg: ASbGnct5GxWPCy3ahJ8nqChpigUJuryVwSeRKQ+ndFupzg4QrqQG4vhObN5uOcEtT5e
-	7mmbYRge5KxqhRoFn5sBNcfCCYQZPvki9Xm1svxTDgCoQy+Y21SMvBsHT+0sdBeMpBFaxp0jkdq
-	gZItvlTI4naHhBULtD2mPm8Vk1ttE8liJ4UPsSl3SypM1M0abkNUthmJq6A2vy4P/cDEjU8Kh4f
-	bSMuYkUj1qcnyDJR5uHUoX/2YcWo9VYBj6PddL5PMcPz0l2XsBWJ7s+OMPK33RzJMak4/v2FCAw
-	uQhQgRTR7+Lbi7rDFvH8U42rURr2ATpekpqrR1oMynKYEXoJtdiflooDcY/w47aXbK1O1zxEnp7
-	QP0vx60PNBJlpuNGlFp3K5kSkOXhpmPlfy/RwlhTqS70VvhKFzV26
-X-Received: by 2002:a05:6214:21c8:b0:725:16ca:a76a with SMTP id 6a1803df08f44-72516caace5mr71502026d6.3.1756993949801;
-        Thu, 04 Sep 2025 06:52:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0EbzO3RGw4eqBINrGkwEPKwOp5hhL8Lt3eiyZMY3NmrRXVtmOrj8S+YObl1fR76T6Vkoa2A==
-X-Received: by 2002:a05:6214:21c8:b0:725:16ca:a76a with SMTP id 6a1803df08f44-72516caace5mr71501656d6.3.1756993949282;
-        Thu, 04 Sep 2025 06:52:29 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608aba7e15sm1241448e87.52.2025.09.04.06.52.28
+        d=1e100.net; s=20230601; t=1756993956; x=1757598756;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=btcWU0VuzOuAgLeIG+yfqqa6yIJ2YjDjsE9sHz0/HqU=;
+        b=F0wkqqtqgOkAsqFDjCuNuqbVgJpZ1dhJBk21xX0TrVyfLBiynEajbsOUcgx6K7Dz4h
+         NVO1Gb28G3Xhfn4XS5oRQ/iZzFp1ss+N724uTd299t+kQIBl5WUzghC/rxe3BPXTYd4+
+         Ng4d2Y+RUyqLutKmHAE/ie9Tx0PltdDmEc8JzRfPLFjJljVV9KW8iOC8PdYwH4A3FrpN
+         KKpe9Gvtzg+T+eQo+C1SBOMKKD3z38inu7ZvljhXSYh/rpoZGV6FzXoBunoePZQD/mHX
+         iQB65PhNpQvUp2s68zr2qIywHoc/MeXpMQMhP2/oHmcLFUkTdedMD+pN8esfR5Q0xBDD
+         5ajQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYp1HtU6RWI38NawjcaOfbaOtAEix3z2hQ8SPYu2ZoKfnPNJ4+XqdM5dPnL5BxdBjYPU68+ArfQS1WMJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy75GrNeq4vnDxPkjyzYxh1B1GI1bWEjVquVId44hgkHPf5jf9n
+	uoBDPhcf+Yi4nh+xbqySZ+yEfV63gYbm4qfTfGLyt0WYPHZ257ufj2A/zQi/W3Z87bo=
+X-Gm-Gg: ASbGncuIYrQHtWrKue/qkmwrDsHx+vXwUixQRwTqlwLLHc0V+5YYd08z+qxRywqIYzZ
+	hAINWeYy+WFyxBtMSuZRJz2wacc5ELEn0b3+WuzLXdkTVn96XmpZK/CbztIpXb/xG4eb/pgHr6j
+	OmzU6Nskb1I+X4ezrbVBduKTyPdTBCh7hozqNtPQCpy0puCn8LrWjjNav9Age7kT6uY9j07AphT
+	eDWAAXX4RUTSrQQLgS9Vv7/VmbM4p3O6OnafmdTb1PNqDtXYV+F+Qe8rZ5qPCjAtgtkTnnzZfpO
+	SyM3uyoxbDP+vflv6dhssdzJWcCAR322pI5qHWX87t+GEBVZMyzUApkQRwniUlyqk5YYQKWePva
+	RbU6wHziQ4P0hIuSi+O65PbSopuwssKdXTqJNKLub9Zht
+X-Google-Smtp-Source: AGHT+IGxy5J+mJ4+0BEKnBNp9VUSoH6e3U4hVID7ehFNf4mXYRzdLprSxcjyWEkmC59UjmMtXNp89Q==
+X-Received: by 2002:a17:907:3c95:b0:afe:ee31:4b93 with SMTP id a640c23a62f3a-aff0e28a1demr1113990466b.0.1756993956037;
+        Thu, 04 Sep 2025 06:52:36 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff0a591819sm1510983766b.41.2025.09.04.06.52.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:52:28 -0700 (PDT)
-Date: Thu, 4 Sep 2025 16:52:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v9 2/3] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
-Message-ID: <2o2ypmxo6wbohrb5edkj27ueqpgbqhsnqu4ofzfubtfwg7vyri@mdsu4ca63fr5>
-References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
- <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
+        Thu, 04 Sep 2025 06:52:35 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Antoine Tenart <atenart@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: dts: amazon: alpine-v2: Add default GIC address cells
+Date: Thu,  4 Sep 2025 15:52:29 +0200
+Message-ID: <175699390854.173213.4164297632935011607.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250822133423.312621-3-krzysztof.kozlowski@linaro.org>
+References: <20250822133423.312621-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1214; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject:message-id; bh=mTvDTEmCZQDDB+2UJw6Cuuz2PPTXZClmk5Fcayc9wdk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBouZmdjVXCiwMI1+8HWYwfY1OmAqwZX2PCuS2Am
+ qQA0WNGfUCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLmZnQAKCRDBN2bmhouD
+ 18nFD/4hacdutq3aPcL/HzldUTkzIr6fLTPd2jMXK7X8qFzeKNFn/bNz+4kXuslVGJM6usDAVEt
+ 5jaHH2au1HhjqLKmw2m/hHr99ir1A2ttA5MjC1ctaY0RiaCgtyzEdSl5I8zb/ZTOO3YPZ+dsTzf
+ pEcKOYUZ7btniQjURKwWK2qtYtbFKvYwgySWtgABKFb2VmNeBTvJs2q0CZat/vFthELkxT+kg2z
+ 4zisVch7q44u7Ie11kav/Vla/Xfh9eN1iNQCfiw4N4YLrGMEQzG/WaaCBLh6V5+Gq1AadcBktar
+ yAyMejJCQ3K6WEjqkRmIhjA6PTNysuXY7iVib0xHWJmfIUTU60KbzMYj7bxP44cg0K2Q7aASStg
+ KVO/cS2daFpwl5Fb+pNWawtJh+gc4FUZ2mg/+2Cxrsq3fCblNh7V3qkNA53a0XSqskQPVVfpmXT
+ UQquzncilBE9uTFzMVFnS4lAWI6U0maKBz5dvT6mjxL/TQC2pkaX2kKt3MALv1rL7kvfYZLuJtt
+ jbzlGx3Aosy6ad5dLqoueG7AGOoyyVa/S5i9fVhYvTTuqeZHzRwkGAyHJDMciP9Zkp5NP3IhY0m
+ ji8P6sD5cp+zvFBcNiCoE6hPzLWAhLftpgvhUZQmYonzz1exI8oFxLJHaCUZSh+7rxLkEg2Ci+L x9f85n7Uf9JpsbQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
-X-Proofpoint-GUID: 11C1z9ota4OPUBs9QnWwrEgU4EqFIZUt
-X-Proofpoint-ORIG-GUID: 11C1z9ota4OPUBs9QnWwrEgU4EqFIZUt
-X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b9999f cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=PhgHo22kut4TJJxNvVMA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX/1qbOT9pmkFH
- 5LJ8+3qM/r6ynnJSKdwFiJrkHT/s31GYTrAYAjM5gRqPBnObzDdfiNQM18TWzKUj3pkOlYCMNqW
- 4FB8z9E8jb5qgZB0o3XPhKTqDWSf4fFg12vtA2vb93EceZmNulcZ+3WgfgT2VkK9ZVtVvuzqnqG
- yiTxcqu6zYntb7mr+nvayGJIhMDuSva982/U0jbYH5bM/CVJERMzjIq9K3PhLAabxBu0aCpi9vp
- UxSLZvyd2xDlvHRBa1aDglukgtzYPn706E2aue4dizsOMnEFA3y/NpxO3SBJzSsnIRii+YKYlgD
- CW6lx54wPFJdy9OFs0W/kaFvAY/a1KFrkgFTi/fRSdkkvZHLpsR80c0iy2U/RS0XZn9c64Vd5Ui
- 0l9r1GTM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300042
 
-On Thu, Sep 04, 2025 at 03:48:33PM +0800, Yijie Yang wrote:
-> The HAMOA-IOT-SOM is a compact computing module that integrates a System
-> on Chip (SoC) — specifically the x1e80100 — along with essential
-> components optimized for IoT applications. It is designed to be mounted on
-> carrier boards, enabling the development of complete embedded systems.
+
+On Fri, 22 Aug 2025 15:34:24 +0200, Krzysztof Kozlowski wrote:
+> Add missing address-cells 0 to GIC interrupt node to silence W=1
+> warning:
 > 
-> This change enables the following components:
-
-Documentation/process/submitting-patches.rst, "[This patch] makes xyzzy
-do frot".
-
-> - Regulators on the SOM
-> - Reserved memory regions
-> - PCIe6a and its PHY
-> - PCIe4 and its PHY
-> - USB0 through USB6 and their PHYs
-> - ADSP, CDSP
-> - WLAN, Bluetooth (M.2 interface)
-
-No, you don't. WiFi and BT are not present on the SoM.
-
+>   alpine-v2.dtsi:138.4-139.33: Warning (interrupt_map): /soc/pci@fbc00000:interrupt-map:
+>     Missing property '#address-cells' in node /soc/interrupt-controller@f0200000, using 0 as fallback
 > 
-> Written in collaboration with Yingying Tang (PCIe4 and WLAN)
-> <quic_yintang@quicinc.com>.
-
-Co-developed-by, Signed-off-by.
-
+> Value '0' is correct because:
+> 1. GIC interrupt controller does not have children,
+> 2. interrupt-map property (in PCI node) consists of five components and
+>    the fourth component "parent unit address", which size is defined by
+>    '#address-cells' of the node pointed to by the interrupt-parent
+>    component, is not used (=0)
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 609 ++++++++++++++++++++++++++++
->  1 file changed, 609 insertions(+)
+> [...]
 
-> +
-> +&usb_1_ss0 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_ss0_dwc3 {
-> +	dr_mode = "otg";
-> +	usb-role-switch;
 
-Please check with Johan or any other X1E8 developers and make this into
-a platform default.
+No one picked these up, so I grabbed them. Please let me know if someone else
+wants to take it.
 
-> +};
-> +
-> +&usb_1_ss0_hsphy {
-> +	vdd-supply = <&vreg_l3j_0p8>;
-> +	vdda12-supply = <&vreg_l2j_1p2>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_ss0_qmpphy {
-> +	vdda-phy-supply = <&vreg_l2j_1p2>;
-> +	vdda-pll-supply = <&vreg_l1j_0p8>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_ss1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_ss1_dwc3 {
-> +	dr_mode = "otg";
-> +	usb-role-switch;
-> +};
-> +
+Applied, thanks!
 
-The same.
+[1/2] arm64: dts: amazon: alpine-v2: Add default GIC address cells
+      https://git.kernel.org/krzk/linux-dt/c/b32a24f21283fbc86922006cc7d19fd23f70b8b8
+[2/2] arm64: dts: amazon: alpine-v3: Add default GIC address cells
+      https://git.kernel.org/krzk/linux-dt/c/3d1963e503d752ba33446ad056435c687f6d8d83
 
+Best regards,
 -- 
-With best wishes
-Dmitry
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
