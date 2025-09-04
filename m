@@ -1,277 +1,170 @@
-Return-Path: <linux-kernel+bounces-800255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B54B4355E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C14B4356A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42CF1C83693
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2656F3A373E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B2E2356C9;
-	Thu,  4 Sep 2025 08:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5112C08D4;
+	Thu,  4 Sep 2025 08:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzS0OIkJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="KUwYP7X/"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09B62BDC13;
-	Thu,  4 Sep 2025 08:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7086B28934F;
+	Thu,  4 Sep 2025 08:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973828; cv=none; b=Gl/OvRPsK8pTWlXVfbjyKvwbPYsR0W4WHJdi03TjkAqaB6WffcPKmx37MVN3Fd1QYfWsqgBP7MPzH4US/4Aot9Tu1H8PFdpokrS9SdXrXMfegXipY+7L0NYJ2Scq9WTwmsI3gZcvZ3eOE0Yz+U3PF6Jk9crWESxl0EITPhfW5MM=
+	t=1756973879; cv=none; b=NNSvi9i29PihlUq1jFQYCJ6gRTilHGyXj/2YAjJNu744fFEoEJGfONw3a6jMa7KORfeBhAN1kdWlFvJbqK7ZEIx3BSl2Lak/ohtuLlVr7jxYo8sKHkb0OS9gOqz/1C8ex/DGS+mMdLI2vrqyITqQeZLV7HPaEnBsAnpjKNRm79I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973828; c=relaxed/simple;
-	bh=F7eR2YP5D7/sCGzQjeS8yBp1r9PNrYYMLqBfkaCETAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LitUqYhGeQkhkuhBNRBIMVvUnMfoNF8GiYzzg7vlW+7Za3qg5OBVlTSZ/1q45NiV03WHyAuJStSiKIZYnW/GmkFVx4NM1K3FvY6w846UyNLLSK6w48prNhKX7ybmQMhmtlnwn80eExJGayyQsccIR+N/ApeoWVDuDeRyQVYcU+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzS0OIkJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06D2C4CEF1;
-	Thu,  4 Sep 2025 08:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756973827;
-	bh=F7eR2YP5D7/sCGzQjeS8yBp1r9PNrYYMLqBfkaCETAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzS0OIkJTmcFGrcza21OtHx+duiy+CKHaqJu+I260FftI8oSlXL6CMO437QmpttCo
-	 5Qk6KMPKW+ZPCY8otukVcPoUeum0yvnfH3BYh6N220PWc+q/qEXcgeINpPd2WlctBO
-	 ziOUX4eZCTk9j9H+VZSpMuoNQJJssC8rJd1ooEBmbNJDCrSc8QUss/hUVAcTgOqGym
-	 AKh6XHLWHHq77CNMl07VfErDNjrFze5mB7arRJlIC5htfYjoElHEr6wtQ3YmA6flkL
-	 E2U3qWYtswhoYulaoz0ILQ2HdbvS4MzdleOT9PYu+wgsFiZ5omKXc1kebNPVIrLWv2
-	 /+CssXk4kFPBw==
-Date: Thu, 4 Sep 2025 10:17:04 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] memory: tegra210: Support interconnect framework
-Message-ID: <20250904-aloof-cow-of-speed-ad5fe5@kuoka>
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-5-e0d534d4f8ea@gmail.com>
+	s=arc-20240116; t=1756973879; c=relaxed/simple;
+	bh=iB8zf4ILLJtrhXWACql/9RfpikVB1vZodKodgHO7l2M=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=q7Je1wpqpOQcAFE229981K/ijP7BqWME44sM0cLIiMwHeBf4lAJ0tDwzvvK8nMsYbGqiQS5uTSrkHJ7QnFWRKswot/FA1VfYfDtl2KQrYUwmKdiHcWhBWf2UTqILQW4IBhl3VOfAhQNV6DxLvhWyGR+4AIWN3G99MhQLHM3o5xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=KUwYP7X/; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756973864;
+	bh=gkJTf2c1jzQR5OVVEr7uU0ySLW7GWWkeJTjOv6J6hGk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=KUwYP7X/0SLY51bF3laX/H+jmhb3g25s0lnndGhL2sGBD/M1PSJO4wAlcMju7HbZv
+	 Fx5ehgaLpPbaSMiWKFYyVf9Nx4MrFUVUv5WBxPFe1hOgVmpjE1W2+gTWvPqzge98Db
+	 ZnASVxnepi0RAb8fvDR9UGavce7uhwHwX4uYDgfE=
+Received: from SSOC3-SH.company.local ([58.33.109.195])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 45E044AB; Thu, 04 Sep 2025 16:17:30 +0800
+X-QQ-mid: xmsmtpt1756973850tuug394uz
+Message-ID: <tencent_2B678DA920124B08854638A6BE68746CCC05@qq.com>
+X-QQ-XMAILINFO: N2bAIxLK0elnhXEhPkfXE/RSi6PihdH4cXUbzQ0GGcOAG32Qhxgni3WQaKSVHI
+	 pRmntZwJtpUeAE507+g9Q3g63Y1T3y/vhMZD89SZnn3YZU02ZWLUFmBVRDfAOZlJ+uc9J5bcvgIs
+	 zJ4nqLuVLpnWZTqtVjLJ3Bht2UOxsZDhcmRX22rY+43hd/4aZkfRamGs2A08Z33vlXXykWuMwSH+
+	 0ZnJcBS3ey5ABVx8sojnRJMubsSHhFtfJKzU6Y8kULz4hitlNKsSMZL0WUX8+67ioGjd7S5Vmyls
+	 xWUDbLrpEK7J54PYb4/Whw/24gpXmpAkfifO60NUDScQQ5SHIdarpFRKVcFd0WFM5aUgt3kUsMoO
+	 SrLctRWZOORFmz7165O4nVhiX3RoAwyJ26IfYO+JIgbI5/t3XaA1ZxD27xsJhxxVGn/ebkcR76v7
+	 34GTasWshqzU9DT35H8u3PhYYCcYVEDmtiXm8DYOqELECFBgSPPPLxzehYvcAqJbvxubG5YHDPLf
+	 p4wKJZ/FKyLHjpag+h6boHAQylzevEgsTDhpm94z3VHosp5lWqzRLkhUBBguCM927sbgdt5QjGun
+	 3gc9oj89FEXWdrfWobXcm6TqZw6ub1whPa/PXB+91E4lldSViMrh5GVnfwITqcbyL7lCuTaBKlG1
+	 gfhAWSx40P16RvU6XDYteu7PKjs5YYeAsVqwfNHXuZZz5OOvL9e9dcm+/6eL3n8cS3Yi14ZR3X3D
+	 DDouRsD/ehhXjU6AU2NAMoz9dTZVWGFhLNF/r9iCIF81MmYGC7Kc9FQ2DB19hqQXDTDf6Ah3OMqo
+	 GyxScuPL6sxvUP0dmhEExoWd78A9/7dvofok+bCZBOKpOY/lRN8gajzTYnMdRtOGH+RvoQk0VWG0
+	 aKJhrIcoplhIIl7k8RthT2oOmfAZ3eSKgx6Ur7za3/jEheYTA7nzgsOz4Z4DAYHNY/qblYSdVjzy
+	 RCLziPTySMPuin2F9eEgSkYTdYk05TfkPgQXzj3imHCs0TgoXXPOAQS6720M0x
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Han Guangjiang <gj.han@foxmail.com>
+To: yukuai1@huaweicloud.com,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org (open list:BLOCK LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: hanguangjiang@lixiang.com,
+	fanggeng@lixiang.com,
+	yangchen11@lixiang.com,
+	liangjie@lixiang.com
+Subject: [PATCH v2] blk-throttle: fix access race during throttle policy activation
+Date: Thu,  4 Sep 2025 16:17:26 +0800
+X-OQ-MSGID: <20250904081727.3975758-1-gj.han@foxmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
+References: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903-t210-actmon-v2-5-e0d534d4f8ea@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 03, 2025 at 02:50:11PM -0500, Aaron Kling wrote:
-> This makes mc and emc interconnect providers and allows for dynamic
-> memory clock scaling.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/memory/tegra/Kconfig             |   1 +
->  drivers/memory/tegra/tegra210-emc-core.c | 274 ++++++++++++++++++++++++++++++-
->  drivers/memory/tegra/tegra210-emc.h      |  23 +++
->  drivers/memory/tegra/tegra210.c          |  81 +++++++++
->  4 files changed, 377 insertions(+), 2 deletions(-)
+From: Han Guangjiang <hanguangjiang@lixiang.com>
 
-Patch #3 was memory, patch #4 was soc, patch #5 is memory, so that
-mixup pattern continues.
+On repeated cold boots we occasionally hit a NULL pointer crash in
+blk_should_throtl() when throttling is consulted before the throttle
+policy is fully enabled for the queue. Checking only q->td != NULL is
+insufficient during early initialization, so blkg_to_pd() for the
+throttle policy can still return NULL and blkg_to_tg() becomes NULL,
+which later gets dereferenced.
 
-Please address the earlier feedback.
+ Unable to handle kernel NULL pointer dereference
+ at virtual address 0000000000000156
+ ...
+ pc : submit_bio_noacct+0x14c/0x4c8
+ lr : submit_bio_noacct+0x48/0x4c8
+ sp : ffff800087f0b690
+ x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
+ x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
+ x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
+ x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
+ x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
+ x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
+ x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
+ x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
+ x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
+ x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
+ Call trace:
+  submit_bio_noacct+0x14c/0x4c8
+  verity_map+0x178/0x2c8
+  __map_bio+0x228/0x250
+  dm_submit_bio+0x1c4/0x678
+  __submit_bio+0x170/0x230
+  submit_bio_noacct_nocheck+0x16c/0x388
+  submit_bio_noacct+0x16c/0x4c8
+  submit_bio+0xb4/0x210
+  f2fs_submit_read_bio+0x4c/0xf0
+  f2fs_mpage_readpages+0x3b0/0x5f0
+  f2fs_readahead+0x90/0xe8
 
-> 
-> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-> index fc5a277918267ee8240f9fb9efeb80275db4790b..2d0be29afe2b9ebf9a0630ef7fb6fb43ff359499 100644
-> --- a/drivers/memory/tegra/Kconfig
-> +++ b/drivers/memory/tegra/Kconfig
-> @@ -55,6 +55,7 @@ config TEGRA210_EMC
->  	tristate "NVIDIA Tegra210 External Memory Controller driver"
->  	depends on ARCH_TEGRA_210_SOC || COMPILE_TEST
->  	select TEGRA210_EMC_TABLE
-> +	select PM_OPP
->  	help
->  	  This driver is for the External Memory Controller (EMC) found on
->  	  Tegra210 chips. The EMC controls the external DRAM on the board.
-> diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-> index e96ca4157d48182574310f8caf72687bed7cc16a..f12e60b47fa87d629505cde57310d2bb68fc87f3 100644
-> --- a/drivers/memory/tegra/tegra210-emc-core.c
-> +++ b/drivers/memory/tegra/tegra210-emc-core.c
-> @@ -13,6 +13,7 @@
->  #include <linux/module.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
->  #include <linux/slab.h>
->  #include <linux/thermal.h>
->  #include <soc/tegra/fuse.h>
-> @@ -1569,6 +1570,79 @@ static int tegra210_emc_set_rate(struct device *dev,
->  	return 0;
->  }
->  
+Tighten blk_throtl_activated() to also require that the throttle policy
+bit is set on the queue:
 
-...
+  return q->td != NULL &&
+         test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
 
-> @@ -1758,6 +1832,193 @@ static void tegra210_emc_debugfs_init(struct tegra210_emc *emc)
->  			    &tegra210_emc_debug_temperature_fops);
->  }
->  
-> +static inline struct tegra210_emc *
-> +to_tegra210_emc_provider(struct icc_provider *provider)
-> +{
-> +	return container_of(provider, struct tegra210_emc, icc_provider);
-> +}
-> +
-> +static struct icc_node_data *
-> +emc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
-> +{
-> +	struct icc_provider *provider = data;
-> +	struct icc_node_data *ndata;
-> +	struct icc_node *node;
-> +
-> +	/* External Memory is the only possible ICC route */
-> +	list_for_each_entry(node, &provider->nodes, node_list) {
-> +		if (node->id != TEGRA_ICC_EMEM)
-> +			continue;
-> +
-> +		ndata = kzalloc(sizeof(*ndata), GFP_KERNEL);
-> +		if (!ndata)
-> +			return ERR_PTR(-ENOMEM);
-> +
-> +		/*
-> +		 * SRC and DST nodes should have matching TAG in order to have
-> +		 * it set by default for a requested path.
-> +		 */
-> +		ndata->tag = TEGRA_MC_ICC_TAG_ISO;
-> +		ndata->node = node;
-> +
-> +		return ndata;
-> +	}
-> +
-> +	return ERR_PTR(-EPROBE_DEFER);
-> +}
-> +
-> +static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
-> +{
-> +	struct tegra210_emc *emc = to_tegra210_emc_provider(dst->provider);
-> +	unsigned long long peak_bw = icc_units_to_bps(dst->peak_bw);
-> +	unsigned long long avg_bw = icc_units_to_bps(dst->avg_bw);
-> +	unsigned long long rate = max(avg_bw, peak_bw);
-> +	const unsigned int ddr = 2;
+This prevents blk_should_throtl() from accessing throttle group state
+until policy data has been attached to blkgs.
 
-Just use defines in top part for this.
+Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
+Co-developed-by: Liang Jie <liangjie@lixiang.com>
+Signed-off-by: Liang Jie <liangjie@lixiang.com>
+Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
+---
+v2:
+ - remove the comment about freeze queue in blk_should_throtl()
+ - Retitle: "blk-throttle: fix access race during throttle policy activation"
+---
+ block/blk-throttle.h | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> +	int err;
-> +
-> +	/*
-> +	 * Tegra210 memory layout can be 1 channel at 64-bit or 2 channels
-> +	 * at 32-bit each. Either way, the total bus width will always be
-> +	 * 64-bit.
-> +	 */
-> +	const unsigned int dram_data_bus_width_bytes = 64 / 8;
-
-Same here.
-
-> +
-> +	/*
-> +	 * Tegra210 EMC runs on a clock rate of SDRAM bus. This means that
-> +	 * EMC clock rate is twice smaller than the peak data rate because
-> +	 * data is sampled on both EMC clock edges.
-> +	 */
-> +	do_div(rate, ddr * dram_data_bus_width_bytes);
-> +	rate = min_t(u64, rate, U32_MAX);
-> +
-> +	err = emc_set_min_rate(emc, rate, EMC_RATE_ICC);
-> +	if (err)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_emc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
-> +{
-> +	*avg = 0;
-> +	*peak = 0;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_emc_interconnect_init(struct tegra210_emc *emc)
-> +{
-> +	const struct tegra_mc_soc *soc = emc->mc->soc;
-> +	struct icc_node *node;
-> +	int err;
-> +
-> +	emc->icc_provider.dev = emc->dev;
-> +	emc->icc_provider.set = emc_icc_set;
-> +	emc->icc_provider.data = &emc->icc_provider;
-> +	emc->icc_provider.aggregate = soc->icc_ops->aggregate;
-> +	emc->icc_provider.xlate_extended = emc_of_icc_xlate_extended;
-> +	emc->icc_provider.get_bw = tegra_emc_icc_get_init_bw;
-> +
-> +	icc_provider_init(&emc->icc_provider);
-> +
-> +	/* create External Memory Controller node */
-> +	node = icc_node_create(TEGRA_ICC_EMC);
-> +	if (IS_ERR(node)) {
-> +		err = PTR_ERR(node);
-> +		goto err_msg;
-> +	}
-> +
-> +	node->name = "External Memory Controller";
-> +	icc_node_add(node, &emc->icc_provider);
-> +
-> +	/* link External Memory Controller to External Memory (DRAM) */
-> +	err = icc_link_create(node, TEGRA_ICC_EMEM);
-> +	if (err)
-> +		goto remove_nodes;
-> +
-> +	/* create External Memory node */
-> +	node = icc_node_create(TEGRA_ICC_EMEM);
-> +	if (IS_ERR(node)) {
-> +		err = PTR_ERR(node);
-> +		goto remove_nodes;
-> +	}
-> +
-> +	node->name = "External Memory (DRAM)";
-> +	icc_node_add(node, &emc->icc_provider);
-> +
-> +	err = icc_provider_register(&emc->icc_provider);
-> +	if (err)
-> +		goto remove_nodes;
-> +
-> +	return 0;
-> +
-> +remove_nodes:
-> +	icc_nodes_remove(&emc->icc_provider);
-> +err_msg:
-> +	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_emc_opp_table_init(struct tegra210_emc *emc)
-> +{
-> +	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
-> +	struct dev_pm_opp *opp;
-> +	unsigned long rate;
-> +	int opp_token, err, max_opps, i;
-> +
-> +	err = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
-> +	if (err < 0) {
-> +		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
-> +		return err;
-> +	}
-> +	opp_token = err;
-> +
-> +	err = dev_pm_opp_of_add_table(emc->dev);
-> +	if (err) {
-> +		if (err == -ENODEV)
-> +			dev_err(emc->dev, "OPP table not found, please update your device tree\n");
-
-So this looks like the actual ABI break.
-
-Best regards,
-Krzysztof
+diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+index 3b27755bfbff..fbf97c531c48 100644
+--- a/block/blk-throttle.h
++++ b/block/blk-throttle.h
+@@ -156,7 +156,7 @@ void blk_throtl_cancel_bios(struct gendisk *disk);
+ 
+ static inline bool blk_throtl_activated(struct request_queue *q)
+ {
+-	return q->td != NULL;
++	return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
+ }
+ 
+ static inline bool blk_should_throtl(struct bio *bio)
+@@ -164,11 +164,6 @@ static inline bool blk_should_throtl(struct bio *bio)
+ 	struct throtl_grp *tg;
+ 	int rw = bio_data_dir(bio);
+ 
+-	/*
+-	 * This is called under bio_queue_enter(), and it's synchronized with
+-	 * the activation of blk-throtl, which is protected by
+-	 * blk_mq_freeze_queue().
+-	 */
+ 	if (!blk_throtl_activated(bio->bi_bdev->bd_queue))
+ 		return false;
+ 
+-- 
+2.25.1
 
 
