@@ -1,207 +1,180 @@
-Return-Path: <linux-kernel+bounces-800890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16301B43D60
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:36:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902F1B43D5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D254C3BBD39
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEF21897E79
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4B8305074;
-	Thu,  4 Sep 2025 13:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2840D3054CF;
+	Thu,  4 Sep 2025 13:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UsJjKoTY"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ws0Zkilc"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013003.outbound.protection.outlook.com [40.107.159.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE212FF15B;
-	Thu,  4 Sep 2025 13:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597303054C8;
+	Thu,  4 Sep 2025 13:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.3
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992950; cv=pass; b=i3h31AGRWd7Cmoy3zku5M/fnWTQds4wZuIY599fQA23tp5r6vW+dc7c87L/K3Xy5T1TSSz8mb1hl2zQybDMekhxXC23bCdoOilESmwiAvGA45vAy2xnl6qKO6S61EAtQLJj3XB6DGISaN0mZyjT42uv+9wZYd62f5tjw6laoz7o=
+	t=1756992918; cv=fail; b=cJuCtujLYhor9BZ+i7vcGZpu3310+lhgB5OosVL29FYssib027zJUozwTIgwqZzhiWEdj+89zLzrzoakoQSOnYPxxuhjmUaQ087lIR+16v5euSfi8d0MWbWZ5yWN7bUs4YyoIx3DfOp57cm3CbRlEegSng4zNl8hsh5UQfouAk0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992950; c=relaxed/simple;
-	bh=nPk9ZOXqvwoqWRAeTf74Qvfb/iFRVJTM6jVqOIXTPUk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=auV0LSbTA00WoyjAstBtXmykU6oSsf6Kq2DDAaEwJdNRkkqs0d/Cg0w9JLWwB2taHIqhWZzGuaNYAr4bqPtOza6HfTspzbpFvMXD/Lh7S4MahsK4zGcihgiJACpoOWviJELYV0ADpGTfBJKrA/07W+Uuh+bZochXJe5zLMwq6gs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UsJjKoTY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756992924; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XDjhWHa4NmN0rbRoKzcTFdfJ8XYbE0/NfMze/eLl+ScNVXSFTyTW/9B8yG20U7WxXAqn/0ttZ9K3IIvlIS6EIo7aSP+7AkfzCSbaHxwojn/8jbGsPUZY3U5MaHncXgWAlGjEfqjhOlAdty5yKqiA90cEv+50lRI48Kdlq0pysy0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756992924; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BDP7uwNrDy2L82t2/eHdfQJEVvQlEfERp6xLzY9YInM=; 
-	b=Rkz4B8gGPJIIikNnVuiC9W1AbtGfp4jJ7TXvO8Rkd0ntZn+ibnXZIaVAFkRFyIWyMcGMNVYW7yp6e7tX6JtM9lyijzXL0o1QnY3ngTv/ObJf8gNFWXKO19CmZVKYwlWVfcsXFic8oV8aLkvwgqkdeW/wSEITLGRzMCGD+KBUaiM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756992924;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=BDP7uwNrDy2L82t2/eHdfQJEVvQlEfERp6xLzY9YInM=;
-	b=UsJjKoTYefuGH+/A8dOzjmVdktkPOr7NxfdR3BrNcsADvs7Kai8hnyRuD770lPGS
-	6WEhqGlEjaA4FhYMJs0durFPB9iZzOs6elB1fclJq+Ag1QVrznljQdzu1EiGXj1H64I
-	q+txlE2KryahxIOW1DLWeB7Pm8wm1yVx/gD4JQq8=
-Received: by mx.zohomail.com with SMTPS id 1756992922006491.6688209679671;
-	Thu, 4 Sep 2025 06:35:22 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1756992918; c=relaxed/simple;
+	bh=nuBGgppLHHFD7sG4IgOnh2g+XQyWH8yRE5FY6oVP9x4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ah2qxMLnzNS++ZWP40nvDoLl63mpedbVLZm6acmi/Qio3YhxtjUZ+w2mwI1CJTb7dJ8ra/bqORl803JmF7q5W+b//e4lFTVkVVNhZKOcRC1oUT/XPSoJhFadtf6PzeJfqqmyIQCAqMaKisDHRAuhczMnD1H6hhjFH1eWYrlG78k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ws0Zkilc; arc=fail smtp.client-ip=40.107.159.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G3J1Q622mzWFEnEU3adedxJuLsQjA3tG7NXLBllGP+qgAYvJNciCmaSESl2Ff/teeQY/MPVYIZ4exv1pYNH9bTmNVmOLba6oT4R1HtSzxOSua1pXKyMEO4IBLIDYd14LJJa0p+lKc+XFvk1p9k8uhJajuWigRAaqgx+lJOsFNtJXAMKForcRQfIMp25s/BcBCZT81PzISJYUzwqqlqYONfrf/oFUnOCNdmXxaCSirSXvtJHcMv64m4pyiH72YmsbUpGcwU29zflqaLVV4kXgfwt4MoUjY6z1VjzPxpMUgKcaPtpC+TjmCY22MP5Nt0x1UOPh0iJ4r6bOdwxeWzsWJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7C4806exYRY3N7qN/+Z4pwjrdu0wMop5tNsxD9FWvYA=;
+ b=ApFfRkKRrtNPcYR5lBUDo7vjWHkxzjfbVVg12LElggZF4QEZDcEOegq0VU1fmWA6wD1h4La4UvIzd2zFLjj1Tg9I34tPNl+bKw2IKtpuZaj11uw8vTnnkR5TMDExRgalYcKJoEyYitNr7NtZE1sdsndSHLA38S4yVQCFIw37CMGb/3LabS37siwwHqcxCx2trhxbhD4Ohe0rWJOK7HwEAvroZn5btYWIuCV4hlWtRj3sFNYGcbDCVCw/mH/LrnONxq9gMq0WhKAH5NwdL7PD7kr7aQlvlg2npAkNmcM0R7ESbcpANAok3IcW9g5083/vZjnKkkdZogWE5isXKYHr4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7C4806exYRY3N7qN/+Z4pwjrdu0wMop5tNsxD9FWvYA=;
+ b=Ws0ZkilcuRDYR57+Cs+4dCmcVoFTA4VGHyjMAJq/bZA8dEIRJmYZ1h7Y154+Ic8nrRbio+ZC2UapRzoJ7o1FRdxx+HYppxC4InEPIyFPLKa4eGuNtrO9Q3qyGGwcp6OY7QU+BT6w0OTic34Xvn85GNHMLd+xDI23Qufdwqngvkf+V4jQzIEPy5qZ/Gn3bGgPOcEZU1A/8fn7N3VxySHTiCUzG9rL/sQvH4C8YIBjKSMXYTyQ3LH0jd3jsREo/GEvoDIrylh8ZVnGO0KW/b90B7KmmMfzXg32zcmqDiqhpG4TKjwNKagEiYQ3GMqcztty4jrgDpBd5pj5puhdDb+2vg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA1PR04MB10296.eurprd04.prod.outlook.com (2603:10a6:102:44a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
+ 2025 13:35:12 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
+ 13:35:12 +0000
+Date: Thu, 4 Sep 2025 16:35:09 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	xiaoning.wang@nxp.com, Frank.Li@nxp.com, yangbo.lu@nxp.com,
+	christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH net-next 3/3] ptp: qoriq: covert to use generic
+ interfaces to set loopback mode
+Message-ID: <20250904133509.cnhihr4x6vgehv5p@skbuf>
+References: <20250903083749.1388583-1-wei.fang@nxp.com>
+ <20250903083749.1388583-1-wei.fang@nxp.com>
+ <20250903083749.1388583-4-wei.fang@nxp.com>
+ <20250903083749.1388583-4-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903083749.1388583-4-wei.fang@nxp.com>
+ <20250903083749.1388583-4-wei.fang@nxp.com>
+X-ClientProxiedBy: BE1P281CA0174.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:66::20) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 08/14] drm/gem/shmem: Extract drm_gem_shmem_release()
- from drm_gem_shmem_free()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-9-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 10:35:05 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A6150946-73B6-43AE-B12C-B0E692E9E3A5@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-9-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA1PR04MB10296:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7a94547-c299-4df4-d66a-08ddebb7dfb6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|376014|7416014|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ksYtqAyGWKTnH39iVJY3bu41p3UzW34+kV76XsJuqMHRdNu2w+4pBn3Bsxbe?=
+ =?us-ascii?Q?QtZUeA6kOectlnoMhk5kPpXF9zH1dvhftmu94+Bi0M2sfHQQqJm4IsvFTcgI?=
+ =?us-ascii?Q?eKQqS5fOudmZdpqPHCzN1k1axGDp70M3J9v76odYHjiF1Qf+7tY31bf1Q9Gs?=
+ =?us-ascii?Q?JyLHbFuNmm52IdjRTQepJrenRL/eLsbB8azLkhFOlE903w3JyeAzpjTDWnDa?=
+ =?us-ascii?Q?MCKzkYMbjqiRSUTn+bwLHLDmfGFLjXLcluZRl8Je5gkWuWi5E/tfkkAX53Rz?=
+ =?us-ascii?Q?uz35h5NcH4AssUT3P0GpHREEOl8ONdR8Z1sg0hA7BA7P0+CQpgtd3+LZ1WSS?=
+ =?us-ascii?Q?dsCWqNcoonflC2yNe11cZwhaaWkfq719MCtixF2r1fUTuiolNMfujxtrMyHF?=
+ =?us-ascii?Q?CUGzAQ+LnaMb8XiMtqvGAbS/bQ44eDTVDGI2bxx19O/Mn5XiGZFmBV9J3NG5?=
+ =?us-ascii?Q?13JlSE7cmVIxQ5/PIRq1VrO34PUBUjPXz3xltnmwG6Oijabt9uDoCs0Db7Jx?=
+ =?us-ascii?Q?Yt1z3bBx5bu2gud1qDBoflhk/uNGjMSHo9ykbJeOzkUPNc5alZNqSZ9+Dmx8?=
+ =?us-ascii?Q?p5hV5XvyDwAkPnWovTAgV1efPcWvzrjPfpFsrIIg9K6fc076vgSufu0PRn3l?=
+ =?us-ascii?Q?+zlnJf93Za/+M8q2omXxeflLYiPZUl4t288WnJnpaMZ7JpgKt+Yy6VAjBpje?=
+ =?us-ascii?Q?nzdBPjP+uSfzFW9s5U65nAMiaHvt2S0lHYhUl1QcWk3p0Zcpy6AEYNkpZetJ?=
+ =?us-ascii?Q?tROz7ZkcSzHve2EtbVpKXTamG+2+UgMk6CY7/tTNTBNPj2sQEv00pUgzec9E?=
+ =?us-ascii?Q?beYjfH6skBoXMsB63SNZVwWls04nXwFubQiOQojYBsYXGP5Soq9XTTiYhsUk?=
+ =?us-ascii?Q?tGqQaARLCpqEa1eN+7PlerQgB+j9Wp8dVBmBRutFPr7kEuWHRd4Xwmc/W8Vh?=
+ =?us-ascii?Q?UMV42BUdb25cQ04stNoL1xpeiojP2GaRNLddmhqWQapz8m2BRsdXO+A/ZT+D?=
+ =?us-ascii?Q?KXctYlVc0yHm+gaPOI4Moxv39HTcY1+rComuLBCc+a+7cheOVU6b7NJB1DSM?=
+ =?us-ascii?Q?ZRznixpXxeuewAdIJPhGlsbss84d+OJKVPcZ822O96JA1t6WlOQ0bXkLoqRf?=
+ =?us-ascii?Q?9sjFqDe8RTLBZfv+VnqNowoC4q9tjOj85KW8U5Z5MO7M3SnE2MADBMRIoZgW?=
+ =?us-ascii?Q?vuxmi/SePK9y6z+dDChmt4A2zUYB3G+yQq4ZFuDgBWsPr42KScRHl/QBzl1e?=
+ =?us-ascii?Q?djDqx5/qmGiqRzQ7HpKglosWkHCdwx6i76hAMreSOQ1akxzx8Saiz0xvmIYj?=
+ =?us-ascii?Q?OiuMAf8Ahh4Hjb94EgtJQNzqiXyab9RkO2x2/WtGFsljLEI7MaN+12OIPKhz?=
+ =?us-ascii?Q?g4xeG5VMeSwDKPT8NoDk+yCRg5VXIYy+tfHReZfshEIEw7PDOVWeZtWVE52u?=
+ =?us-ascii?Q?J8lcjJhWnj4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(7416014)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eACENHuCWew6MoyM0fTma7NoyJIRil/MO3S6+cW98MkmZCBCX6WQjN3qhn0X?=
+ =?us-ascii?Q?HxrMAGzXWK9ZWMhrItr8bD/nqCrhyGzY36w+LvEGLnMKGJVXNEBkNg33WwE7?=
+ =?us-ascii?Q?68j0YWhxyzQLIifiegu7RpaU9/Ia5WnlFBMkonCTPgd1aElBcjM12FqOau1k?=
+ =?us-ascii?Q?AgnJw/UyEVKK0NGTgZ00WHVYd1yqu03XO4nnVnPJIKmP5FGlUwbPwUEFnEEN?=
+ =?us-ascii?Q?+bG6gE9qyzUPUU3PJ4NSa8obaFykJ56JcOmblzybz+MWiopOIzrflwM40OR1?=
+ =?us-ascii?Q?GhWLF7tRiU4bWgr+s2nxssNzbO49wFqwQAnMSWRC9T9p8Kxy9Htir9hKX6yR?=
+ =?us-ascii?Q?gGB9Z2ot1gSUBbVzeNgoVaCofwCEyyai5RCLytu4y/llTS4YbJwGwBZ7Wcho?=
+ =?us-ascii?Q?9POIgtC0VfdzAJum3YNtzKZEDi6RaJJKRH1GVR6RJk2A7MUSiL4yDzc9e2l2?=
+ =?us-ascii?Q?xUjf+l8RuJMO5NF6/iQYmH6Xk4iDqf+5eU1kcaXPi5/TlvdjfW0PTF+rvwx4?=
+ =?us-ascii?Q?K0KvnDsll327iZRt75zkrEwsRjfA5GXCbbMZpB1qOD4tqEPRW4/Ztvx11ZLz?=
+ =?us-ascii?Q?ry5tFcSqRWroyjq7K/P+x55bhXfmSR7A+h7VD6GUAQHxYbv48xBQOaZHM1up?=
+ =?us-ascii?Q?rEFnl4d7CVXFXA27pbXZWMHAJd3mqonJeY5dwUAcjiE9Jl7U6/yZlZzbLA74?=
+ =?us-ascii?Q?09fq5TYfIoos1mgCJMsYKoYywJg+KltZ9v8he7FFtobbzHBF67lc7b4s1fu0?=
+ =?us-ascii?Q?TR2oEyjFmYp4SqpUgxzyPH3YfDHtlUfA/yFETmpTwKFSeKNSeawat1D2l6gv?=
+ =?us-ascii?Q?Fx960vGVCaJKOWxJH9UYliTo+TRleJoLu6lAuGnhCfFE/7V/zWr/eZ9zoIbE?=
+ =?us-ascii?Q?AAFUBt09j+R6/lancGsDqNKvL22WX3Etnz2JwEg5mdE8tosFl1AKlcaCs5bO?=
+ =?us-ascii?Q?X7urGxoEnpO86E/krCRJN1HYgY5A8j/gm1FAyLXlotMa5lKyfq9SbIsRO9RW?=
+ =?us-ascii?Q?qvtA0ueGjvPCiUHIb/O9OB4shhB7H+RL82uK81+8TV5jstf9AvPGE3j3vsdF?=
+ =?us-ascii?Q?l74NWieEQU1A8fumHtCwROk2ZcSTRguaMhHmmiLHqLaVX3x/7eBGc6qPNexS?=
+ =?us-ascii?Q?eULaKcLi3kf3uIJGKILZ+RKgFhcmu2uTuKI3lBJp/CVzOh6KUb4DSmsHsfV9?=
+ =?us-ascii?Q?XOkUZdEV8UDScokn/sbYM0O1t1TbTNSiDbjDhhyeKKzMJWva/wCCTCL36oJp?=
+ =?us-ascii?Q?lhSup+UqcjWlzYce4fOOmo0CmZCQfiLz10wi8NlwArtkX77RSP+H4+1nav0D?=
+ =?us-ascii?Q?p6buQilZl18vvOvj6jz1u3qs9WBGuQPorhMGObgMZqEV3pfk7j6HauPVylGy?=
+ =?us-ascii?Q?nrIkfQ3IKYfAhYW88j71+oj9xyGkDDLAXoGJCDwusMxTuUIc9QVP9cVTScF9?=
+ =?us-ascii?Q?dz8e1a0Z5w0Rw7AAESIHe44NjThCjZLmXst1CLQpllHFBOPrzp5YByksFOnh?=
+ =?us-ascii?Q?ltfAD4Z6BipuoqTSsgqwZaL2bN22IPFLo6RetzXK7LLQkPqWXjzGtZPXI6gC?=
+ =?us-ascii?Q?+HpsVLobJnmpgXn7FJr0StmFsCuDvpdL99MNBH5AN/F9N5x3Jey8inSetE1e?=
+ =?us-ascii?Q?x7YMI5HeYFDA/0zThVntZ3tPNelsZ/xym19c7xiDYo85SlsY+cQp3jiBhljW?=
+ =?us-ascii?Q?itlC4w=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7a94547-c299-4df4-d66a-08ddebb7dfb6
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 13:35:12.3017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5Bx2HiQJCvo8H+YYfMuZpjVMvnH41zC0zkZCkk4dhT/HIMHygoZrNi9tQm+5IbI9vj8m0YAR0y5Ladc+9oI23Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10296
 
+On Wed, Sep 03, 2025 at 04:37:49PM +0800, Wei Fang wrote:
+> Since the generic debugfs interfaces for setting the periodic pulse
+> signal loopback have been added to the ptp_clock driver, so covert the
 
+s/covert/convert/
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> At the moment the way that freeing gem shmem objects is not ideal for =
-rust
+Also, 'since' doesn't go along with 'so'. You can remove either word.
 
-This does not read very well IMHO.
-
-> bindings. drm_gem_shmem_free() releases all of the associated memory =
-with a
-> gem shmem object with kfree(), which means that for us to correctly =
-release
-> a gem shmem object in rust we have to manually drop all of the =
-contents of
-> our gem object structure in-place by hand before finally calling
-> drm_gem_shmem_free() to release the shmem resources and the allocation =
-for
-> the gem object.
->=20
-> Since the only reason this is an issue is because of =
-drm_gem_shmem_free()
-> calling kfree(), we can fix this by splitting drm_gem_shmem_free() out =
-into
-> itself and drm_gem_shmem_release(), where drm_gem_shmem_release() =
-releases
-> the various gem shmem resources without freeing the structure itself. =
-With
-> this, we can safely re-acquire the KBox for the gem object's memory
-> allocation and let rust handle cleaning up all of the other struct =
-members
-> automatically.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> vendor-defined debugfs interfaces to the generic interfaces.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
-> drivers/gpu/drm/drm_gem_shmem_helper.c | 23 ++++++++++++++++++-----
-> include/drm/drm_gem_shmem_helper.h     |  1 +
-> 2 files changed, 19 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c =
-b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> index b20a7b75c7228..50594cf8e17cc 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -175,13 +175,13 @@ struct drm_gem_shmem_object =
-*drm_gem_shmem_create_with_mnt(struct drm_device *de
-> EXPORT_SYMBOL_GPL(drm_gem_shmem_create_with_mnt);
->=20
-> /**
-> - * drm_gem_shmem_free - Free resources associated with a shmem GEM =
-object
-> - * @shmem: shmem GEM object to free
-> + * drm_gem_shmem_release - Release resources associated with a shmem =
-GEM object.
-> + * @shmem: shmem GEM object
->  *
-> - * This function cleans up the GEM object state and frees the memory =
-used to
-> - * store the object itself.
-> + * This function cleans up the GEM object state, but does not free =
-the memory used to store the
-> + * object itself. This function is meant to be a dedicated helper for =
-the Rust GEM bindings.
->  */
-> -void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
-> +void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem)
-> {
-> struct drm_gem_object *obj =3D &shmem->base;
->=20
-> @@ -208,6 +208,19 @@ void drm_gem_shmem_free(struct =
-drm_gem_shmem_object *shmem)
-> }
->=20
-> drm_gem_object_release(obj);
-> +}
-> +EXPORT_SYMBOL_GPL(drm_gem_shmem_release);
-> +
-> +/**
-> + * drm_gem_shmem_free - Free resources associated with a shmem GEM =
-object
-> + * @shmem: shmem GEM object to free
-> + *
-> + * This function cleans up the GEM object state and frees the memory =
-used to
-> + * store the object itself.
-> + */
-> +void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
-> +{
-> + drm_gem_shmem_release(shmem);
-> kfree(shmem);
-> }
-> EXPORT_SYMBOL_GPL(drm_gem_shmem_free);
-> diff --git a/include/drm/drm_gem_shmem_helper.h =
-b/include/drm/drm_gem_shmem_helper.h
-> index 235dc33127b9a..589f7bfe7506e 100644
-> --- a/include/drm/drm_gem_shmem_helper.h
-> +++ b/include/drm/drm_gem_shmem_helper.h
-> @@ -112,6 +112,7 @@ struct drm_gem_shmem_object =
-*drm_gem_shmem_create(struct drm_device *dev, size_t
-> struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct =
-drm_device *dev,
->   size_t size,
->   struct vfsmount *gemfs);
-> +void drm_gem_shmem_release(struct drm_gem_shmem_object *shmem);
-> void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem);
->=20
-> void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object =
-*shmem);
-> --=20
-> 2.50.0
->=20
->=20
 
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Tested-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
