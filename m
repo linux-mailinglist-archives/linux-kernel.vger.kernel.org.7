@@ -1,207 +1,143 @@
-Return-Path: <linux-kernel+bounces-800081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828C3B4332F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB21FB43334
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E7718969AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E594684113
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657172BEFFF;
-	Thu,  4 Sep 2025 06:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2660A28642A;
+	Thu,  4 Sep 2025 06:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jOJzRI/B"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZatjNClD"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A104285CA1
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EBB2874E4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968937; cv=none; b=JBb5CgfAzMJwBvZoP8oF08solFiQayanJk0n41DSnz2Y0aQU2TBU7+o040MCA0kEh1Sg7z10qTCVTUkjHy4NCZRGJ0OlXxyI8YmlJ9sNCQDaqXLC2+Z/Pgj96hPPavVIXdsnaww96N20KPAYf4wefb56kdDOg91hzPZEAsJyMcU=
+	t=1756968984; cv=none; b=BjincbQYA3tqd2Q1b+TQzgdN4u0+iGrN/bW2EUT6ool3yyefe50rf5NdPYXy/FAj0ndKHrKy0ct3z0MbkXwNs32XLFK0gVK96UPXrrMOTKc7c5W+EmC0XQOEs56AGsmFjUD2e1se0Qd9Fbm/fjEaYNYlQbnq9RSxLFdBijm5VgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968937; c=relaxed/simple;
-	bh=n5R2ZA5nD4duw34bOYSLZZY4wDHfqasy7+07P7hy0UE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HT8PFWTgorPJSb0RPKfylRC7Y/0anIOLiHrhoAoliYfuNIc2AsF6scteb9kADWnS9jqbjWhnErQJeaFTwkRqqfK0P7M+5xapoNKBgETeGKBFQumOQu2vL3AE/xcPuxgZmVDasz8Gkm83G5Y/sMLtOPgJSZALnw/D5jHs8pLEvMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jOJzRI/B; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-327b5e7f2f6so851051a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:55:35 -0700 (PDT)
+	s=arc-20240116; t=1756968984; c=relaxed/simple;
+	bh=+jM2IX9YMvgKOzlDNA7D7HKUcXHwlAxrld3bjm7TAGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J0igSSCZQLaKgeO9eDp644nTxbrz4iwW/9+XLiUbeorh7L3zBc0rsXuofDinjVNJ9w7ylSwJXEikMxZWxrCJgAZjEsTtuqn/gGyAYtxVJDMAHzvyWpcE+jYY9PMgXlgez7+l8ihU626in4l+IgedTUHjQbymKCjDBiSBP3zB5gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZatjNClD; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d1bf79d7acso411865f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:56:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756968935; x=1757573735; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4yB9yOXY7Gz8M5J2AkG68rpmry/ggMKSfTcUt8sHdGE=;
-        b=jOJzRI/BfWsq5s7ff1vcKDdyHqZUZoGAhuR0iY/PJ1OwlkQdcg5Xm+vafLj/f9kQly
-         004hN2ekrmD7gcHCZmHICgaiRXvRFznTDTDxTQ2NhXjgNRizzpMptfWhYcM0sZSdAJyX
-         gCLab0nOW+FmOgsof/w1JZ7XzKueeNdmAAla5q+hySBqIA3W99PZUWqbSlXLqJhF3h2g
-         iNMrvVExEDKRCI99lL9uC+PmyhLqMMa7W85O7kHC1qI68a9ZxuZJme0uiX4YPAq0cfJd
-         u7oJCJ8mNZ/9VI9LSUWt6VXmx47rSHOyeyKpBabuk5KSFf43PHS0v7hoc6+wVoACMDSD
-         pYzA==
+        d=linaro.org; s=google; t=1756968980; x=1757573780; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A7W+MHt4m6RVZcMRRD040CxW9PQRGlDxO7dLPVoTn8U=;
+        b=ZatjNClD4NdSb6p/YXRVkD8WTsvJjLUfQ6hDBkDZsYaYzj3QYO2HLU/cgghT61lMoS
+         JJvb4ISr/bKYnyS6iQQT0tBWiyc8vkoIlJ8i6+aTts6rEvLv8jbH8Oh/9oWOC+6Z9jrP
+         +JUXrXBh0OcDJ/fiyOAxLbnQS8QrT1dV0KuRM7lytGuyt8DZRonCK7Ogx8xO4z6DDMbx
+         AniWYv+yIE44dNjIitlrehLb4ytiKSZglEay8G1kEWA1O9vSmXpkhpywLf8zORn6//uW
+         fE0W+IkgdvCmgCFbLeoGljXvFoXaIsLVT4d/NEXQVJAzniEFQyy8vRxLOL6K/T/Lphmw
+         XjoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756968935; x=1757573735;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4yB9yOXY7Gz8M5J2AkG68rpmry/ggMKSfTcUt8sHdGE=;
-        b=olWPJfA1MhgOPvq2LlFcCZx/JN38sDSZJB1bC2MJVpD9pkoBEu6S7u1LGmxpt16N+b
-         UaykTObPsIvpvMzeEkKaYALAsjpIp2iMguJm0VwJxF/M/DYZavWMB4Y3+Z20pjxk06FO
-         02Hq7xHSCOpTrMg8TpzoW+IQUolvkCfTVgmHVD4W4mMAa6Uqhlj+jVPv6aP92O8OmlKP
-         5ZG4q/VQw7dJ0GIboti7pqcPJXWxDbSaoAKCzdXect2QaXP8PewBwRLeHZEN2scfZNUX
-         bRPMi0kPaGwGetHrr7Tkm0CaHOfYIKbD9ttpoPywV9QYQSol9v5WFrPIR7jzhonVA4tv
-         zd8g==
-X-Gm-Message-State: AOJu0Yyja/s18DDRf4I3iUtk2k/wgmCoQLSearTNgn/CIBLqoNcIH/dA
-	f5R2Q8VUcLtLrwUCEA2l0CwpkJj46QrCWeWEIjCkeoeWUIJBthxOu73hXyMTjbewF2yURmDnq2+
-	I5w==
-X-Google-Smtp-Source: AGHT+IFpJtOTBtEH30kjlV9qshasFJ6VZRx9xb8RK+RSnnYf1AYHxgBz5mEyM5mVxSvYniQwjkKBo72C8w==
-X-Received: from pjh5.prod.google.com ([2002:a17:90b:3f85:b0:325:7c49:9cce])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2ecc:b0:329:e3dc:db6c
- with SMTP id 98e67ed59e1d1-329e3dcdc0bmr11848843a91.23.1756968935487; Wed, 03
- Sep 2025 23:55:35 -0700 (PDT)
-Date: Wed,  3 Sep 2025 23:54:51 -0700
-In-Reply-To: <20250904065453.639610-1-sagis@google.com>
+        d=1e100.net; s=20230601; t=1756968980; x=1757573780;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A7W+MHt4m6RVZcMRRD040CxW9PQRGlDxO7dLPVoTn8U=;
+        b=P6HdA22XbaurHwwjXQOxt/JTkGJ9tZAbGpOtQ2FSSi2PVEXDySQm0Oc/C+KNBxbsCZ
+         TO/NSDoFYmgiIRpAB3z0fFEJWhEtbw61O4xtBZrMEj6C9khg4vetLeRn/1ZSQqA4uhal
+         4Ir8Ghr/W8sf+8iyge4yOlThw008iO2IJiioGR//9JDbLMMC4YApccIA5jpLxM0vyQo7
+         xmR60KTr3MkKjRtUE/rrlGPO9XW6zLkkAT2z4rOSVAZKPeihOWk1z4cZVv7Uu9eze2E0
+         50Mdtaezxi9NwS0YLQQsitt+PVJoaf2BjuIHLTLsCKAL41yOrcMop26vUUCD1NAG35sI
+         eqFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUFHkpfipCGxWtaL9YcXVdzC8pLidqlryMc5WfI79gFcaWL91jUYfOtkWSIsFJjxBuLoWy+eMTPaiDYEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIoyJn/3RJRF0J5MoV0RPvzGNhhDCUd8UCnON+q68uaIg9WgwC
+	VuJMONrpzRb4+VNizEiJ7NlmSDbSMH6X0iZ416wApRLrSXtz8lEKRR9p14pbnGyQHfdvnmkZ0uD
+	P6kze
+X-Gm-Gg: ASbGnctqBiMlIY4cJAeFMmiE0TcnMyQKGeQ6+r/x++8yhtPNZZ6Np7Fynzz6wKQdoVq
+	yLmy66lnYDu0RgD69og8P+V2BNN8QOm5F6TWo/3z7IgH+KSlD0TWSW48LjcsTvqn+vgs/0s3X7q
+	6MPdJv0Ytz96YAzyYkqIKwyApQ0DF3BT3g3/EMxQslIXXC5YPXja+2yE6zPsmhUTZWAIDK96meI
+	kEncx9T9waRo48su8+EBNiB2ViP60lKlFdroETOcpZY5bnD3ZMPKls78JkkvcUkRZQCE7gdb50i
+	/e7aNeboJwtaFwJOFmrknhqYi60nfj7XcdbN+LxrvXf/zk+ER/PMvM8fp4BzllHGM8jUrFbifks
+	duzI7BUwP+GY9nV1KWcT09so=
+X-Google-Smtp-Source: AGHT+IHrlWEGIp2jfPvPNYCuVdAm78L04cC7Ows1hq2QFUYr3F3uBfqzroHI+RRBQ1DT0GzNgdWAmw==
+X-Received: by 2002:a05:6000:2410:b0:3d8:e1de:7e4f with SMTP id ffacd0b85a97d-3d8e1edc849mr7713856f8f.21.1756968980518;
+        Wed, 03 Sep 2025 23:56:20 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm15256075f8f.58.2025.09.03.23.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 23:56:19 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH 0/3] phy: qcom: edp: Add support for Glymur platform
+Date: Thu, 04 Sep 2025 09:55:50 +0300
+Message-Id: <20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250904065453.639610-1-sagis@google.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904065453.639610-22-sagis@google.com>
-Subject: [PATCH v10 21/21] KVM: selftests: Add TDX lifecycle test
-From: Sagi Shahar <sagis@google.com>
-To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPY3uWgC/x3NwQ6CMAyA4VchPdtkmyEyX8V4mLRCE2G1EwMhv
+ LuLx+/y/zsUNuEC12YH468UyXOFPzXQj2keGIWqIbjQuujOqOOG7z5PyKSYiHB4bdNiWBbVbB8
+ MqfP+QjE8ugi1osZPWf+H2/04fqXvaLtxAAAA
+X-Change-ID: 20250903-phy-qcom-edp-add-glymur-support-2a8117d92b89
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1007; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=+jM2IX9YMvgKOzlDNA7D7HKUcXHwlAxrld3bjm7TAGs=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBouTgDQFMOO1/9mhrp0khsNUjrwKGAFRw3CHW07
+ Hih9CyAHpmJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaLk4AwAKCRAbX0TJAJUV
+ VmTXD/4zu1EOD49T4qwPcqvkip86WFCaFmszidMLCD93/3N4woAbLZB8JdxI9eARWU6Zem3C3lt
+ yfdiv9Q7HGdjWWfV/ODOm0t/jDeQGAAZeq8hr3Vd4g1gTu/bCN6Y5xceXFN03tQpWd3amXWoLOi
+ 3zd9kAZRHVbhWK9TKfuwZOT3YL7cru7WgYbiF/zgNU60V25aDradkYLqHr7mcWmn+w5opiawp8C
+ PcRNxTXFCUA6qhzChaxD681voDzUsJXUks4Eg78ii9z26niuCy1NCNYo2cukISD6x3Pv21I1Wg0
+ IpOhTWYt35FtvX/OsS9nwYlhw4cZsh5ALi+4xj4aC3/+sVZSlMCS9t5DjXG/dARqQ+S1cleu//P
+ JGWiZOeYNJ8/vqv0FkiVzucsQ1nF81BIX8tXw+fD9kykg7aA5ZvXhL/wUjb/9emetL/Tkuaibct
+ MPi+if842R8FDDfcW0yX5/mW3i3fWnQFq7T1Y5tMO3CtzheLdFcHiBLk0FtxtfhMs+gFL2IZ0Vu
+ z3ND2HzuA5Ud2B0dqBcME4QSCr/+1npIXHFIJDwklM9NALKGsxRT8xo3NE2qQDLMhFZwbxhSdgI
+ PL1FfUbrmF2GSGKUrg2YVFFzAN3q1LnyF7GviTDdpAbnLUUAMTHLb0S1l6+AbqUzgmG31GYnXAW
+ cjsoAyH2v97Y7sA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Adding a test to verify TDX lifecycle by creating a simple TD.
+The Glymur platform implements the eDP/DP PHY version 8.
+Add the necessary registers, rework the driver to accommodate
+this new version and add the Glymur specific configuration data.
 
-Signed-off-by: Sagi Shahar <sagis@google.com>
+This patchset depends on:
+https://lore.kernel.org/all/20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org/
+
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- tools/testing/selftests/kvm/Makefile.kvm      |  1 +
- .../selftests/kvm/include/x86/tdx/tdx_util.h  | 10 ++++++
- .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 18 +++++++++++
- tools/testing/selftests/kvm/x86/tdx_vm_test.c | 31 +++++++++++++++++++
- 4 files changed, 60 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/tdx_vm_test.c
+Abel Vesa (3):
+      dt-bindings: phy: Add DP PHY compatible for Glymur
+      phy: qcom-qmp: qserdes-com: Add some more v8 register offsets
+      phy: qcom: edp: Add Glymur platform support
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 1a73e08c8437..1a76e9fa45d6 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -155,6 +155,7 @@ TEST_GEN_PROGS_x86 += rseq_test
- TEST_GEN_PROGS_x86 += steal_time
- TEST_GEN_PROGS_x86 += system_counter_offset_test
- TEST_GEN_PROGS_x86 += pre_fault_memory_test
-+TEST_GEN_PROGS_x86 += x86/tdx_vm_test
- 
- # Compiled outputs used by test targets
- TEST_GEN_PROGS_EXTENDED_x86 += x86/nx_huge_pages_test
-diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-index 2467b6c35557..775ca249f74d 100644
---- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-+++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-@@ -11,6 +11,14 @@ static inline bool is_tdx_vm(struct kvm_vm *vm)
- 	return vm->type == KVM_X86_TDX_VM;
- }
- 
-+/*
-+ * Verify that TDX is supported by KVM.
-+ */
-+static inline bool is_tdx_enabled(void)
-+{
-+	return !!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_TDX_VM));
-+}
-+
- /*
-  * TDX ioctls
-  */
-@@ -72,5 +80,7 @@ void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vcpu *vcpu);
- void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_code);
- 
- void vm_tdx_finalize(struct kvm_vm *vm);
-+struct kvm_vm *vm_tdx_create_with_one_vcpu(void *guest_code,
-+					   struct kvm_vcpu **vcpu);
- 
- #endif // SELFTESTS_TDX_TDX_UTIL_H
-diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-index d5df2de81a75..a2764f5d687c 100644
---- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-+++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-@@ -334,3 +334,21 @@ void vm_tdx_finalize(struct kvm_vm *vm)
- 	load_td_private_memory(vm);
- 	vm_tdx_vm_ioctl(vm, KVM_TDX_FINALIZE_VM, 0, NULL);
- }
-+
-+struct kvm_vm *vm_tdx_create_with_one_vcpu(void *guest_code,
-+					   struct kvm_vcpu **vcpu)
-+{
-+	struct vm_shape shape = {
-+		.mode = VM_MODE_DEFAULT,
-+		.type = KVM_X86_TDX_VM,
-+	};
-+	struct kvm_vm *vm;
-+	struct kvm_vcpu *vcpus[1];
-+
-+	vm = __vm_create_with_vcpus(shape, 1, 0, guest_code, vcpus);
-+	*vcpu = vcpus[0];
-+
-+	vm_tdx_finalize(vm);
-+
-+	return vm;
-+}
-diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-new file mode 100644
-index 000000000000..a9ee489eea1a
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "kvm_util.h"
-+#include "tdx/tdx_util.h"
-+#include "ucall_common.h"
-+#include "kselftest_harness.h"
-+
-+static void guest_code_lifecycle(void)
-+{
-+	GUEST_DONE();
-+}
-+
-+TEST(verify_td_lifecycle)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	struct ucall uc;
-+
-+	vm = vm_tdx_create_with_one_vcpu(guest_code_lifecycle, &vcpu);
-+
-+	vcpu_run(vcpu);
-+	TEST_ASSERT_EQ(get_ucall(vcpu, &uc), UCALL_DONE);
-+
-+	kvm_vm_free(vm);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	TEST_REQUIRE(is_tdx_enabled());
-+	return test_harness_run(argc, argv);
-+}
+ .../devicetree/bindings/phy/qcom,edp-phy.yaml      |   2 +
+ drivers/phy/qualcomm/phy-qcom-edp.c                | 239 ++++++++++++++++++++-
+ drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v8.h |  12 ++
+ 3 files changed, 246 insertions(+), 7 deletions(-)
+---
+base-commit: ab918b506f0121423beef123577d5071eebf9218
+change-id: 20250903-phy-qcom-edp-add-glymur-support-2a8117d92b89
+
+Best regards,
 -- 
-2.51.0.338.gd7d06c2dae-goog
+Abel Vesa <abel.vesa@linaro.org>
 
 
