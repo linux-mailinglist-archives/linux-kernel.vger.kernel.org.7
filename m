@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-800044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2364FB432BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF54EB432BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FA23B72D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 942A01890F20
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C63C279789;
-	Thu,  4 Sep 2025 06:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9599E280331;
+	Thu,  4 Sep 2025 06:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TypBgGCp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LV+1vr5T"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2B277C8A;
-	Thu,  4 Sep 2025 06:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6422E27FB3A;
+	Thu,  4 Sep 2025 06:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968280; cv=none; b=MRuFK5kE4EpjEHDywB9N+eYs7KPnmpfAeiADV1krz4d7qcJUw33tf6XmzLS+ibdANOce1NKKVk0OxPSXlHsXBYBnAihi1hBmRTUadR0rFG7dIwaYo4tWu+5kiUuyjY3JyiLyjNqh7wIMi2WIceZmX3vLHopg1QOkVkVIcBxNpvA=
+	t=1756968317; cv=none; b=jpJ6EKZ+Y3xJN9Rhc8NryxZ/StOvU0ORrASxX7TjX5NaU/K4ThmRO0y+bxq0lXtr5GwceXw6eHKkOHgJxD2EpwVcw2yO5haLR5oEyRCnBmns+he+ku93AfgfCQMEhdusCXTqJO1eRnvaGtyUY9H2w3KSj5bm6MxrY6ije3v1mGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968280; c=relaxed/simple;
-	bh=w7mBXlGrJ7ClDm3km3OkaDU5N9eX5xsGj4iZnVdAGaw=;
+	s=arc-20240116; t=1756968317; c=relaxed/simple;
+	bh=y6AssyltUEJd/EJo8LBycypmE5jb0bS6gHIzXyIwEOU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYNkZmO8zsTY2vQASg3q1sTii65wATgeOVGZdJIduTXchdL2lgDP9xXBORzA8VwbTsbpy42XH/W3KNqLu7ilbzfuLjZptwoBszIWMyrEFzgra1uGIDtR5HHQedXujoPmgEDMIp0axNVsHivIDP+QaotvJGK6yJ9/neZZyCdxALc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TypBgGCp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6787AC4CEF0;
-	Thu,  4 Sep 2025 06:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756968280;
-	bh=w7mBXlGrJ7ClDm3km3OkaDU5N9eX5xsGj4iZnVdAGaw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TypBgGCpCRPTCUzG5Jwtud08PBVYzfSznk7yHnk6L5dn+xO3DbURmKS+k99KqqWRd
-	 99ESFk2prm33FRYte8tnG+DwOf915d3qzKCyM7vazOdALl1IAk4wJtppo+nMB3S/nf
-	 DB6xqyOsaTw5urdoDohYxDTikBU5xd/PChIKlMDjUPgsHSo1zIJZb6UUnG0VS0OYio
-	 lfmfzx05hZng/y9c4oKyuGI7x1mT2Ve8In64Rl67MHe7IiYXnaIbAFmlcgFWfieVLQ
-	 nYuE9vSMGLm3X+P9KyyujVTdNjvkPg28mRTXuh6hu62kVis1CdRuJIV4u3qbEtXUVw
-	 wpoYM1T7Sq+IQ==
-Date: Wed, 3 Sep 2025 20:44:39 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Exit early on hotplug
- events during attach
-Message-ID: <aLk1V2MEkD7uMgsA@slm.duckdns.org>
-References: <20250904055716.87268-1-arighi@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyx33gjAvAQ7s5OCKCOeyOxxdynAIvJLKY7b4Ya7wUfbN4XSXlPApAijq+MPLLjpqUofEjyGx8Z35cO2/N3xz0qY7hC9E4Q7SHHZCUFo+LZtWMBTfatJridceRcAi7B6hNPA8NvLk+7HjmWClMXjHqaHfG+iVH/TSqpGZ/k6sJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LV+1vr5T; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gZmrHXi/l2Bu3uwxMTV4r6fmpaXludQwzjRHMWeCses=; b=LV+1vr5TnEbOLwYDucpF+T7OIM
+	LWIWn5X6Bnn9lXD+SOBNZPAjiFQE9u79hY8ceIoaYVBB+rG4wxes3Rm2SIO/T9SMXtDz1WDDJMAgR
+	sEqyVAiZ8dOIT3rwh/d00dqxQja9pydA/vSzSy2tGohH0cMhzwqcl2EOSnawGlVX5x1IoMtLugTxx
+	knHvZleoFEyGIIr00wSpr62kKCud3XmrUPYtIXF21hHRhmNQqk8Cn3ZbMtE3wh9dH+km5SACk+lgx
+	OZSQvvdwMxJdlJ327jl9dk44f6BgII0+XrrASFOQRMxTzEYlx2jX3U6L47hw44gV4EoJHUl0mah0s
+	hU3DEftg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu3iD-00000004IW4-1Zu6;
+	Thu, 04 Sep 2025 06:44:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 78BB03002BF; Thu, 04 Sep 2025 08:44:48 +0200 (CEST)
+Date: Thu, 4 Sep 2025 08:44:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/18] perf/hw_breakpoint: add arch-independent
+ hw_breakpoint_modify_local()
+Message-ID: <20250904064448.GU4067720@noisy.programming.kicks-ass.net>
+References: <20250904002126.1514566-1-wangjinchao600@gmail.com>
+ <20250904002126.1514566-7-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,20 +84,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250904055716.87268-1-arighi@nvidia.com>
+In-Reply-To: <20250904002126.1514566-7-wangjinchao600@gmail.com>
 
-On Thu, Sep 04, 2025 at 07:57:16AM +0200, Andrea Righi wrote:
-> There is no need to complete the entire scx initialization if a
-> scheduler is failing to be attached due to a hotplug event.
+On Thu, Sep 04, 2025 at 08:21:03AM +0800, Jinchao Wang wrote:
+> Introduce hw_breakpoint_modify_local() as a generic helper to modify an
+> existing hardware breakpoint. The function invokes
+> hw_breakpoint_arch_parse() and delegates the reinstall step to the
+> architecture via arch_reinstall_hw_breakpoint().
 > 
-> Exit early to avoid unnecessary work and simplify the attach flow.
+> A weak default implementation of arch_reinstall_hw_breakpoint() is
+> provided, returning -EOPNOTSUPP on architectures without support.
 > 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> This makes the interface arch-independent while allowing x86 (and others)
+> to provide their own implementation.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  include/linux/hw_breakpoint.h |  1 +
+>  kernel/events/hw_breakpoint.c | 18 ++++++++++++++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/include/linux/hw_breakpoint.h b/include/linux/hw_breakpoint.h
+> index db199d653dd1..9453b5bdb443 100644
+> --- a/include/linux/hw_breakpoint.h
+> +++ b/include/linux/hw_breakpoint.h
+> @@ -67,6 +67,7 @@ extern int
+>  modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *attr,
+>  				bool check);
+>  
+> +int hw_breakpoint_modify_local(struct perf_event *bp, struct perf_event_attr *attr);
+>  /*
+>   * Kernel breakpoints are not associated with any particular thread.
+>   */
+> diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+> index 8ec2cb688903..ff428739f71e 100644
+> --- a/kernel/events/hw_breakpoint.c
+> +++ b/kernel/events/hw_breakpoint.c
+> @@ -983,6 +983,24 @@ static void hw_breakpoint_del(struct perf_event *bp, int flags)
+>  	arch_uninstall_hw_breakpoint(bp);
+>  }
+>  
+> +int hw_breakpoint_modify_local(struct perf_event *bp, struct perf_event_attr *attr)
+> +{
+> +	int err;
+> +
+> +	err = hw_breakpoint_arch_parse(bp, attr, counter_arch_bp(bp));
+> +	if (err)
+> +		return err;
+> +
+> +	return arch_reinstall_hw_breakpoint(bp);
+> +}
+> +EXPORT_SYMBOL(hw_breakpoint_modify_local);
+> +
+> +/* weak fallback for arches without support */
+> +__weak int arch_reinstall_hw_breakpoint(struct perf_event *bp)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
 
-Applied to sched_ext/for-6.18.
+Again, so much fail :/
 
-Thanks.
+So we have:
 
--- 
-tejun
+{register,modify,unregister}_user_hw_breakpoint()
+
+and
+
+{register,unregister}_wide_hw_breakpoint()
+
+And you choose to extend this latter with hw_breakpoint_modify_local()
+instead of sticking with the naming scheme and say adding:
+
+modify_wide_hw_breakpoint_local().
+
+Also, again, that EXPORT is a fail, these other interfaces are all
+EXPORT_SYMBOL_GPL().
+
+Also note that modify_user_hw_breakpoint() doesn't seem to need new arch
+hooks. Yet you fail to explain why you think you do.
 
