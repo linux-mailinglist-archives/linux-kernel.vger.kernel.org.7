@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-801822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC428B44A5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:19:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D611B44A62
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC775A5674
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:19:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D56B7B0A36
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7B2F5463;
-	Thu,  4 Sep 2025 23:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F512F60D1;
+	Thu,  4 Sep 2025 23:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A9h/gTcS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FGop1r6j"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AE828152B
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A821296BD1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757027981; cv=none; b=faMM2/0cx7PPZM2P3OhR1GKOmdYM88ZCSbQUw/Z6PFbi3AZDsgFrGqKdamoMFRZV+rFUskEaqr5DKcFpJ89Qvx8hfipbTt89PPpggex2X1E+wPjTu5amH6QqeOCFfxxO4yJKTvGwv+V2RHTgB0KGf3UjMp+iPQT/IKylbGgpBWQ=
+	t=1757028045; cv=none; b=QrfTwHfwHiXfcDU0CG5oSDGtqywHvy/TZXkcxyXAcZijvzjBy0h1A4vqiWDmla9GPWAT+vNzZcorCScDRjrMUc9xBKpeJXnoxcEdBp4U67+dltkKo+KyxEXDgwYzn8tKZBwBBrg62lYf91f077vnmCBK6Vd9pjiR1ngW8NpSiSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757027981; c=relaxed/simple;
-	bh=lVhVvdSqQdDcgAl6HjJQ2cKMxYAw/vMcMBw5ZAY0S9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gridiyQc9EC2uZwYQFYtMzP7t6O/Sb3+5flzjmr3WiKlgKfZLTEkhhuJHGU/4RPAdJvpJhD5nnXZf2nPk0ycWkKXbI5Egpeie7vU/9PAnG69MKNgtH7vbMVEVn0fwgL+Xt+nNNFQbE/Owl/SspzU3d0cfN3ZltFQYJWf5kOoCcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A9h/gTcS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584JDYuS003803
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 23:19:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GjXzmroxVc7W3pRobSL6XDJ/1WKmFcemVZ9/sKNXNgc=; b=A9h/gTcSU2NuNCH2
-	f1Tc56bfvcRiCZecECQ/zqj7hAH6fNGp4QD2icBNHfp2+t3ZzVJyPwMRiUiG6XEE
-	J+iOCoKfSgMMCe+pYlBPcUBEpmH5VNiOzm6S+TjicLprMP3MLh/in+18l0uY/pwW
-	OkjB9Tme+J0hlriHHZdl8tCvpQU/x8jJvperowKG/+hOHWz7AVYkvqG7djqo/Ofc
-	lCxanKnv2gJI4JobWYoQqw3v8+xgd3nJdDCxbrxLJxE+3ZH5XM2bQ3IMEE8QChwX
-	hFng7MS0y5whtaDVEmzhgfdvjCpSn/6hC+Zpvr4WwESeJXzphEibAqhSX/OeHy1G
-	8Cm3MA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s97jq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:19:39 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b4e1675ba95so1268070a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:19:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757027979; x=1757632779;
+	s=arc-20240116; t=1757028045; c=relaxed/simple;
+	bh=ewALHqGy5tuuTChxZiDl3T7/UNGXb7XI/a+bgYYFYQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X2x7gKbMcZYKx64g8c1kithUhqmAQ1Sl2bNdJule2+TNB6f8uH5Uq0qLZfEqhqlY/kkDNoJKg1uJ2vam4lJdtu8kdELbu0DnAzpD+27JIJEY9vKSBWR7M4GzYmhnrhcyELMl4bwIbMo2oM+3AsEyiqFmLXUgripuA6F8MpQAGs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FGop1r6j; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d603a9cfaso16222997b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:20:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757028042; x=1757632842; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aRwZHhESXMYZyHSR6sI/Jb9sZA0hD8LgQNqFD43qiSc=;
+        b=FGop1r6jP5UNg6doJ1ld5yamCh5V3za9yUI6wJDbvP/rhYBS7p/GjJH7EXaMqcNIhy
+         1N/a/GiTERJMKrSy1vvJZul0iQb89o/KSEjEC8UZYU9dU8rFXBhrJWXMRamvdEzOhFhW
+         Vuveh74BlzEAODROfGYOHdmVi6vj04a2LGrJxGRxB/b+m43YlXJijOpkj6sNNSdfW4ED
+         djbOgmsn9gqVn2067Lm8UZilhL4QTZcmiR6lw0T4Cg8UliY4vP+OLOnbxfIUyrPkfMcw
+         ZAUZSwKK4iA3sN8l/wzmAFH3T/uGUcCuqZjWYlSWS6CI1jXAjtWvHAHyBg7FgPPQ9ORp
+         D52w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757028042; x=1757632842;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjXzmroxVc7W3pRobSL6XDJ/1WKmFcemVZ9/sKNXNgc=;
-        b=sGF+GiDYH6tf7MtzodXKLAqfqquGlE0YOE81UGNKzpEENrr+bmdAr+odeULZJCEjgT
-         WhgvQvNAvm80Nf71otgZVM0VrKgTJXEeDoUAlkJsoa5bWp6JBGO/oHrW8MZStciWV9ZF
-         t4vAXCCIUfoGLprHQUQZkDh/APpoXaJIkGpi17xcupdH//B9CSeK4O/j28e9H7ieDPBD
-         qEsDsXHfUgKeE2XOsFAcz6qXhtTE7oJMBLAw7vcCKswD90mXLAAg3XbhXw0WGKFfwxjC
-         sFGVx/JWIT44i708zjBAuiKWQYLRZkgedEvOuwdkUTFeXfqV5xKsWmzrakif09nPN/is
-         8Pwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU2lL3vVR47mecKvCUnCLHiGBR7nGwtuVcsYIyWSzA8S72/f9AMF27IKa0qpVjjYy3XwusNJVq7acE1DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyptFfQYYj8/KE6OJXs1FuORuCykCdj+gDp+e9hr9T3JMuVyeO7
-	KZEuOGm7CsjjDLUUID4oYuE/LotzPEE9IBZ1Jq1n3eK5+lAt5S9Ibdr2ZMf6hh5/9HT0Ak8MGnz
-	u1OnPxnRnka6dpw7EPur5gMlSkRCslF5i5abK2zileOy/38NGcHJd9epFnzzniOBcDMA=
-X-Gm-Gg: ASbGncuF23VS8iMoTYSUnBR/3pO4R9DUuZiqWI7wuitQY4NlNTNAtTz82yvVAIC0V+o
-	QVOka9ymn6jvlZnNnfNpoS+9umi0yEE+at0PxU5GRY5nrBlH6eZZluhSitLIB+0/Xsm0RP2J4VL
-	FVZo99aHi8K3u0jcsCCR2KC3SWPm2DblBVCMx/2N+huCgeblLE+/ql2NSvspXL+QP95bQdDzPlH
-	gILLU49EQD6Ro59iSjuSJK80FF3x8l84lGZC1P3U16Wvkk+J3od3JYtYRWxdR4hFrr055Z0uKI/
-	BhD1WNHXcx++UbU/mUYKyWgtIs8DO+a++0iR6SPf5VjgdQfpPUiQsIZypTShM2RrTwWjhVBhkMF
-	LZS7z4UMDxyALnhCGxQWNpA==
-X-Received: by 2002:a05:6a20:a122:b0:248:7e43:b6b8 with SMTP id adf61e73a8af0-24e7d6d06a1mr1953605637.3.1757027978783;
-        Thu, 04 Sep 2025 16:19:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrHCCGVk/XlfrJjM6BYUjkw3Vbu+2UMzqA2nRl5Xh8C+tfH4Qk8it3kQKN3uatJyzD/U8qDA==
-X-Received: by 2002:a05:6a20:a122:b0:248:7e43:b6b8 with SMTP id adf61e73a8af0-24e7d6d06a1mr1953575637.3.1757027978303;
-        Thu, 04 Sep 2025 16:19:38 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b8ba6e145sm3378630a91.22.2025.09.04.16.19.37
+        bh=aRwZHhESXMYZyHSR6sI/Jb9sZA0hD8LgQNqFD43qiSc=;
+        b=Fz88M/4xpg4muuAvSbZayjsTTLj8196Esi1pJD59H0Y+nL06LyrcdnlHGcHMXWjeNK
+         dVPEm6YfvbWGfHloijtqY9Vzz5fK4Cv9i2aC82Eqy72xgT/FMF8OgW7GpihgsDSwc7iK
+         WZHPnS1QQojTBgoFsiScg4XtULkzSh3cNJ6G9PIX9P55KglGxvNBcJU9KmLH71NTHA33
+         GNYP4/TmF3uZ16VbLw4NpAfMr8XKRlPb8zvSz4PTL84DMs1YUYnXP5ez+DjAPw1rZDZJ
+         T93AYfQk2I4EciNPPD7Z8WEK0Jm6uomEtUqNJWm1DXp+yOAW8iv76+BLHHY0g3IFy14U
+         0fCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkVS1q+VtZrVwmzbyXgNdUnYOpGS+TJjDihe946lSMNafmzpD6yIFOS8QkcZtAuYWJOjK6obm81esIigE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCm8zHFLe0wu7BHK33Z6/30qZDCRcWhlSk7UcGDrwGZfFLuQJd
+	sBho7ac0zUMbe0H6P4QnFdyfvRnNtyNNtSviV1z02ByeQlodWrYGzzZOChaa0E2WkEQ=
+X-Gm-Gg: ASbGnctXeaqrgC+FnRghY890O6pOvtizypU6y0olXDO03tmAqEQs25TKsUMTxBedcM+
+	2JjCbHrL6VVzRwG0d1+MmkaKhgco4PvD5jGwUzRQMGdWJQLzpTYE/pSdUaIIxysAcufUkXwosTW
+	3pm4E2XtGrd1D0BWcaSIdeDJzlMgZHk14hQbsCtOYKm60y4AHCiC3wtOqDVvg5YgM2L3aFHQDtF
+	4fQKCRKR9BkszKHRWMgBXlIp07puAaU2d2HHKXhnHXvi6Eo6rPLyfvZ5k7DfRhr28uaJnSYPIat
+	RzJDD/7PcTI6DHbMGU/bz1z8kDYHmcFgSyTEEAzPGh3YrFRVqfcBddnx+feCdshdGb8T+x8bVb3
+	88ifISgx3siAVpO4N7bd8XALe+248
+X-Google-Smtp-Source: AGHT+IGvbBhMOcXfylPm/9NSlvF5+lCTc4rsnucF8Y+pzJ+UJ37E30YkGhwUDgeXMdUu0Kd7n9YtCg==
+X-Received: by 2002:a05:690c:6f0f:b0:71f:df7e:2d0 with SMTP id 00721157ae682-722764ad026mr226492207b3.25.1757028042300;
+        Thu, 04 Sep 2025 16:20:42 -0700 (PDT)
+Received: from [10.0.3.24] ([50.227.229.138])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a832e435sm25422227b3.26.2025.09.04.16.20.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 16:19:37 -0700 (PDT)
-Message-ID: <29ae5bb3-092a-48fb-9d47-f23c92ac4616@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 16:19:37 -0700
+        Thu, 04 Sep 2025 16:20:41 -0700 (PDT)
+Message-ID: <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
+Date: Thu, 4 Sep 2025 17:20:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,124 +81,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] drm/msm/dpu: drop redundant num_planes assignment
- in _dpu_format_populate_plane_sizes*()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jordan Crouse <jordan@cosmicpenguin.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
- <20250705-dpu-formats-v1-10-40f0bb31b8c8@oss.qualcomm.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in
+ io_sqe_buffer_register
+To: syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>
+References: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
 Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <20250705-dpu-formats-v1-10-40f0bb31b8c8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX4LOUdkzZ264d
- /CAQpmhPJqd0AaJ3u7zTwmd8EyNJe3Zy62t1cKSiuREEovMyVGbcino/ovH9ixE1MaLaYbgSHUR
- ocsAXsfgZL339JDTyhSHueffmgEzSLcntTIjnxJdB+E0i83pSCQkW5CRaIaGJEDR/Vw61mewHrV
- HrYX4FEMph1VhPgUNUlamgXoE5g97mFimOeiuVJfNv+PpWKx5CCO5S1LQsSB5b6hYKUKQ5OwEfQ
- 89wNa/XLsySAbp32w9391zrpAAPci4lSzPWx/ZpJowdGl01m/qwYLuQRlYoojxTT9QeNbszC7AI
- JR62R32t2c+XP9NF+4FZ9lDcnPhxXx3P4ZiMJok6FU2r+Vx3yuXrRMFyEshmMJdAZrAQPcqEFp7
- pHy+ffGW
-X-Proofpoint-GUID: MUYd-0ifppJ9LNdcVSwYKy8QCuFhy7Wp
-X-Proofpoint-ORIG-GUID: MUYd-0ifppJ9LNdcVSwYKy8QCuFhy7Wp
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68ba1e8b cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=MRz67vdl03j5fkBFI1YA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_08,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-
-
-On 7/4/2025 7:47 PM, Dmitry Baryshkov wrote:
-> Drop redundant layout->num_planes assignments, using the value assigned
-> from the formats table. RGB UBWC formats need special handling: they use
-> two planes (per the format table), but the uAPI defines plane[1] as
-> empty.
+On 9/4/25 9:36 AM, syzbot wrote:
+> Hello,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c | 11 +++--------
->   1 file changed, 3 insertions(+), 8 deletions(-)
+> syzbot found the following issue on:
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> index 195a6b7c4075eef40e7a5d0fee208168421cee35..e1fb7fd3b0b97a38880bc80aec26003d65a3a310 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-> @@ -110,7 +110,6 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   		uint32_t y_meta_scanlines = 0;
->   		uint32_t uv_meta_scanlines = 0;
->   
-> -		layout->num_planes = 2;
->   		layout->plane_pitch[0] = VENUS_Y_STRIDE(color, fb->width);
->   		y_sclines = VENUS_Y_SCANLINES(color, fb->height);
->   		layout->plane_size[0] = MSM_MEDIA_ALIGN(layout->plane_pitch[0] *
-> @@ -124,7 +123,6 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   		if (!meta)
->   			return 0;
->   
-> -		layout->num_planes += 2;
->   		layout->plane_pitch[2] = VENUS_Y_META_STRIDE(color, fb->width);
->   		y_meta_scanlines = VENUS_Y_META_SCANLINES(color, fb->height);
->   		layout->plane_size[2] = MSM_MEDIA_ALIGN(layout->plane_pitch[2] *
-> @@ -138,8 +136,6 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   	} else {
->   		uint32_t rgb_scanlines, rgb_meta_scanlines;
->   
-> -		layout->num_planes = 1;
-> -
->   		layout->plane_pitch[0] = VENUS_RGB_STRIDE(color, fb->width);
->   		rgb_scanlines = VENUS_RGB_SCANLINES(color, fb->height);
->   		layout->plane_size[0] = MSM_MEDIA_ALIGN(layout->plane_pitch[0] *
-> @@ -148,7 +144,9 @@ static int _dpu_format_populate_plane_sizes_ubwc(
->   		if (!meta)
->   			return 0;
->   
-> -		layout->num_planes += 2;
-> +		/* uAPI leaves plane[1] empty and plane[2] as meta */
-> +		layout->num_planes += 1;
-> +
->   		layout->plane_pitch[2] = VENUS_RGB_META_STRIDE(color, fb->width);
->   		rgb_meta_scanlines = VENUS_RGB_META_SCANLINES(color, fb->height);
->   		layout->plane_size[2] = MSM_MEDIA_ALIGN(layout->plane_pitch[2] *
-> @@ -167,7 +165,6 @@ static int _dpu_format_populate_plane_sizes_linear(
->   
->   	/* Due to memset above, only need to set planes of interest */
->   	if (fmt->fetch_type == MDP_PLANE_INTERLEAVED) {
-> -		layout->num_planes = 1;
->   		layout->plane_size[0] = fb->width * fb->height * fmt->bpp;
->   		layout->plane_pitch[0] = fb->width * fmt->bpp;
->   	} else {
-> @@ -194,12 +191,10 @@ static int _dpu_format_populate_plane_sizes_linear(
->   				(fb->height / v_subsample);
->   
->   		if (fmt->fetch_type == MDP_PLANE_PSEUDO_PLANAR) {
-> -			layout->num_planes = 2;
->   			layout->plane_size[1] *= 2;
->   			layout->plane_pitch[1] *= 2;
->   		} else {
->   			/* planar */
-> -			layout->num_planes = 3;
->   			layout->plane_size[2] = layout->plane_size[1];
->   			layout->plane_pitch[2] = layout->plane_pitch[1];
->   		}
+> HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1785fe62580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f23e62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb6312580000
 > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+> BUG: KASAN: null-ptr-deref in PageCompound include/linux/page-flags.h:331 [inline]
+> BUG: KASAN: null-ptr-deref in io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+> BUG: KASAN: null-ptr-deref in io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+> Read of size 8 at addr 0000000000000000 by task syz.0.17/6020
+> 
+> CPU: 0 UID: 0 PID: 6020 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  kasan_report+0x118/0x150 mm/kasan/report.c:595
+>  check_region_inline mm/kasan/generic.c:-1 [inline]
+>  kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:200
+>  instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>  _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+>  PageCompound include/linux/page-flags.h:331 [inline]
+>  io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+>  io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+>  __io_sqe_buffers_update io_uring/rsrc.c:322 [inline]
+>  __io_register_rsrc_update+0x55e/0x11b0 io_uring/rsrc.c:360
+>  io_register_rsrc_update+0x196/0x1a0 io_uring/rsrc.c:391
+>  __io_uring_register io_uring/register.c:736 [inline]
+>  __do_sys_io_uring_register io_uring/register.c:926 [inline]
+>  __se_sys_io_uring_register+0x795/0x11b0 io_uring/register.c:903
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f99b1f8ebe9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f99b2d88038 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+> RAX: ffffffffffffffda RBX: 00007f99b21c5fa0 RCX: 00007f99b1f8ebe9
+> RDX: 00002000000003c0 RSI: 0000000000000010 RDI: 0000000000000003
+> RBP: 00007f99b2011e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f99b21c6038 R14: 00007f99b21c5fa0 R15: 00007ffeadfa5958
+>  </TASK>
+> ==================================================================
 
+This is from the mm-unstable changes in linux-next, adding David as I
+ran a quick bisect and it said:
+
+da6b34293ff8dbb78f8b9278c9a492925bbf1f87 is the first bad commit
+commit da6b34293ff8dbb78f8b9278c9a492925bbf1f87
+Author: David Hildenbrand <david@redhat.com>
+Date:   Mon Sep 1 17:03:40 2025 +0200
+
+    mm/gup: remove record_subpages()
+    
+    We can just cleanup the code by calculating the #refs earlier, so we can
+    just inline what remains of record_subpages().
+    
+    Calculate the number of references/pages ahead of times, and record them
+    only once all our tests passed.
+    
+    Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.com
+    Signed-off-by: David Hildenbrand <david@redhat.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+I won't personally have time to look into this until after the weekend,
+but as it's linux-next specific, not a huge deal right now.
+
+Note that there's also a similar report, which is the same thing:
+
+https://lore.kernel.org/all/68b9d130.a00a0220.eb3d.0008.GAE@google.com/
+
+which I marked as dupe of this one.
+
+-- 
+Jens Axboe
 
