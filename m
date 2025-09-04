@@ -1,280 +1,119 @@
-Return-Path: <linux-kernel+bounces-800632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CECB439F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344D7B43A06
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B7D5A369C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC32E5E3EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0F2FC00E;
-	Thu,  4 Sep 2025 11:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EC92FDC42;
+	Thu,  4 Sep 2025 11:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="FC7ObpRL"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hkKDReeY"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75052F39CB;
-	Thu,  4 Sep 2025 11:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5192FB61F;
+	Thu,  4 Sep 2025 11:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984952; cv=none; b=Yc0MV+ObYL6b+1a9trTFXi+DY5ui3xVX2IJWYU97mPqGay/9PdsqfSHF3yhsx9WAFPHPAXfQ8efolEF+6o9TKO6xbwCaapALOswfKf7dXgKKVXp6izTSSG2KsPgp4LRuoOFOqNBeIDFysCIW9kdByytkhGE+lLhJtfYgVwnu4v0=
+	t=1756984975; cv=none; b=HiOEEZIDvCrrS1FaB7OlbBTPWlRhzz6tJY1F7WtiNRqjZ0K4fKrFoMciEcnIXz6zEMKQS5Au2pyB6xa/WHEpQV8I9lf+n5zVX3IhuZItXqfPbiAvWKZppo69/5kQEL6c1G8UCp+aaXdRYVKSg62rG19Aihikl5Hg76gG98dhrw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984952; c=relaxed/simple;
-	bh=nb2w5PO/UakpEL4PsZ67h0/YfPhTc/JuAdrospcVW8E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ja7NqyYRJj1kEGZgQoTsJQJAnIXfEW0jyrEgacgTeN9D6GXaz3fJsnzw1udgelR2+yFKz8fwxvJL4iihmkihLe5P5v2VyetirjwjFMsILmrTfRXyaqoKXwKZQUTz7qgo/8nLjEilrhnIUCHGA3/kBbG8hF8fOBi3IEUMmXIN3SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=FC7ObpRL; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=JNhPkhYLjZGM2xHwZlcrLuFikmcX09zLHGx0YNWKfO0=;
-	t=1756984950; x=1758194550; b=FC7ObpRLnGlhKnxr4MTjzANNt3focQqBM3V3qOvrxuCHtiU
-	RbA+cwwzIP+IYoQfsGigKTh0hdzvKAB/J9NVms5/CtUG+KWFKHRnCYnuIsNZVF/M09MbGV/jYse2j
-	rSjAks1oGkkxA9KTsjkNl03pbgLDkxyri3Z35O6SIAjQJlgamr4BCc5EMTp6eJqR3/I4DKcJGX2Yp
-	C+PJj9Au7QBesAdnMwp8ZZXwDg3DQWWO6fJltQl/yN6ym2KbnY+ALvvBSP5POSmkzn5I1qn4JLNHi
-	IedezwWVn5YZ779KGTxq914YIk4k3t21O11ezOSsh91tvgg1utD6cSGKgE6Bcs+Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uu82n-0000000E5mY-453d;
-	Thu, 04 Sep 2025 13:22:22 +0200
-Message-ID: <88809ae495005b8295d0c46261041c73a225359f.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 01/22] wifi: nxpwifi: add 802.11n files
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Jeff Chen <jeff.chen_1@nxp.com>, linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, 
-	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de, 
-	brian.hsu@nxp.com
-Date: Thu, 04 Sep 2025 13:22:21 +0200
-In-Reply-To: <20250804154018.3563834-2-jeff.chen_1@nxp.com>
-References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
-	 <20250804154018.3563834-2-jeff.chen_1@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1756984975; c=relaxed/simple;
+	bh=jKnNzXk7or3L5xB1QdpCdHyLtAxhF5H128PygGuZMRk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DyHuBlFDNqGqkzwEoQdEk/BPas0/YyENjif3lot+cA5lv7DGALDz6KGCkRLhylKunHykbNWdUkBtnFi7RoDjm8L4RHYOyd/OtKbMe28EF3KXQWw5Px3eDdfvnXOyjGvqnT0yHisQ+gv3eAl1erf+juuA/n3I31GWZR1vsnKCidU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hkKDReeY; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584BMkJE3000155;
+	Thu, 4 Sep 2025 06:22:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756984966;
+	bh=Of4871CVYXNFMmAuQuYzFWLYXjthmqVo/Gg9annv4Ek=;
+	h=From:To:CC:Subject:Date;
+	b=hkKDReeYQFrIf5B2HNpRQGd/lEMzLCSywNOyL39pvOXOOG0wDx2FNWKjm/dz8or/h
+	 YZ7+MiesGGa6WBU9rdyjnffpDijFdvwjnAnSHrzoeNZavgnDdpJnO34nxb8n7AK28a
+	 pQ6uAJRAn+0VUXqhps31FRcejP2muQ/j+1R4bmsw=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584BMkax079760
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 4 Sep 2025 06:22:46 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
+ Sep 2025 06:22:45 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 06:22:45 -0500
+Received: from akashdeep-HP-Z2-Tower-G5-Workstation.dhcp.ti.com (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584BMf5w3176722;
+	Thu, 4 Sep 2025 06:22:42 -0500
+From: Akashdeep Kaur <a-kaur@ti.com>
+To: <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>, <vigneshr@ti.com>,
+        <d-gole@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>, <sebin.francis@ti.com>
+Subject: [PATCH v4 0/4] Remove unused bits from dts and add support for remaining pinctrl macros 
+Date: Thu, 4 Sep 2025 16:52:34 +0530
+Message-ID: <20250904112238.522591-1-a-kaur@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 2025-08-04 at 23:39 +0800, Jeff Chen wrote:
-> +static bool
-> +nxpwifi_is_tx_ba_stream_ptr_valid(struct nxpwifi_private *priv,
-> +				  struct nxpwifi_tx_ba_stream_tbl *tx_tbl_ptr)
-> +{
-> +	struct nxpwifi_tx_ba_stream_tbl *tx_ba_tsr_tbl;
-> +	bool ret =3D false;
-> +	int tid;
-> +
-> +	tid =3D tx_tbl_ptr->tid;
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(tx_ba_tsr_tbl, &priv->tx_ba_stream_tbl_ptr[tid]=
-, list) {
-> +		if (tx_ba_tsr_tbl =3D=3D tx_tbl_ptr) {
-> +			ret =3D true;
-> +			break;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +	return ret;
+This patch series cleans up the dts files to remove the pin control 
+DeepSleep configuration that does not take effect in hardware.
+This series also adds the remaining macros in the pin control file 
+supported by SoC so that any configuration can be used as per requirement 
+in dts files.
 
-that might be nicer with guard(rcu)() :)
+Link to Previous Versions:
+  -V1: https://lore.kernel.org/linux-arm-kernel/20250731115631.3263798-1-a-kaur@ti.com/
+  -V2: https://lore.kernel.org/linux-arm-kernel/20250901122835.3022850-1-a-kaur@ti.com/
+  -V3: https://lore.kernel.org/linux-arm-kernel/20250902071917.1616729-1-a-kaur@ti.com/
 
+Change Log:
+V1-> V2:
+  -Added the macros that were removed earlier for backward compatibility
+  -Fixed the indentation 
+  -Added documentation references in commit message
 
-> +/* This function returns the pointer to an entry in BA Stream
-> + * table which matches the given RA/TID pair.
-> + */
-> +struct nxpwifi_tx_ba_stream_tbl *
-> +nxpwifi_get_ba_tbl(struct nxpwifi_private *priv, int tid, u8 *ra)
-> +{
-> +	struct nxpwifi_tx_ba_stream_tbl *tx_ba_tsr_tbl, *found =3D NULL;
-> +
-> +	list_for_each_entry_rcu(tx_ba_tsr_tbl, &priv->tx_ba_stream_tbl_ptr[tid]=
-, list) {
-> +		if (ether_addr_equal_unaligned(tx_ba_tsr_tbl->ra, ra) &&
-> +		    tx_ba_tsr_tbl->tid =3D=3D tid) {
-> +			found =3D tx_ba_tsr_tbl;
-> +			break;
-> +		}
-> +	}
-> +	return found;
-> +}
+V2-> V3:
+  -Updated the commit message to be more descriptive and Clear
+  -Fixed errors introduced in previous version
 
-and this could just return directly out of the loop, and not need the
-'found' variable?
+V3->V4:
+  -Rearranged pinctrl macros so that all macros of same type are at same place 
+  -Removed any redundant macros added in previous versions of the series
+  -Added new commit to fix the missing existing macro definition
 
-> +	/* We don't wait for the response of this command */
-> +	ret =3D nxpwifi_send_cmd(priv, HOST_CMD_11N_ADDBA_REQ,
-> +			       0, 0, &add_ba_req, false);
-> +
-> +	return ret;
+Akashdeep Kaur (4):
+  arm64: dts: ti: k3-am62p5-sk: Remove the unused cfg in USB1_DRVVBUS
+  arm64: dts: ti: k3-am62x-sk-common: Remove the unused cfg in
+    USB1_DRVVBUS
+  arm64: dts: ti: k3-pinctrl: Add the remaining macros
+  arm64: dts: ti: k3-pinctrl: Fix the bug in existing macros
 
-doesn't need 'ret' either
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       |  2 +-
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  2 +-
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           | 51 +++++++++++++++++--
+ 3 files changed, 50 insertions(+), 5 deletions(-)
 
+-- 
+2.34.1
 
-> +int nxpwifi_send_delba(struct nxpwifi_private *priv, int tid, u8 *peer_m=
-ac,
-> +		       int initiator)
-> +{
-> +	struct host_cmd_ds_11n_delba delba;
-> +	int ret;
-> +	u16 del_ba_param_set;
-> +
-> +	memset(&delba, 0, sizeof(delba));
-> +
-> +	del_ba_param_set =3D tid << DELBA_TID_POS;
-> +
-> +	if (initiator)
-> +		del_ba_param_set |=3D IEEE80211_DELBA_PARAM_INITIATOR_MASK;
-> +	else
-> +		del_ba_param_set &=3D ~IEEE80211_DELBA_PARAM_INITIATOR_MASK;
-> +
-> +	delba.del_ba_param_set =3D cpu_to_le16(del_ba_param_set);
-> +	memcpy(&delba.peer_mac_addr, peer_mac, ETH_ALEN);
-> +
-> +	/* We don't wait for the response of this command */
-> +	ret =3D nxpwifi_send_cmd(priv, HOST_CMD_11N_DELBA,
-> +			       HOST_ACT_GEN_SET, 0, &delba, false);
-> +
-> +	return ret;
-
-same here
-
-> +/* This function sends delba to specific tid
-> + */
-> +void nxpwifi_11n_delba(struct nxpwifi_private *priv, int tid)
-> +{
-> +	struct nxpwifi_rx_reorder_tbl *rx_reor_tbl_ptr;
-> +
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(rx_reor_tbl_ptr, &priv->rx_reorder_tbl_ptr[tid]=
-, list) {
-> +		if (rx_reor_tbl_ptr->tid =3D=3D tid) {
-> +			dev_dbg(priv->adapter->dev,
-> +				"Send delba to tid=3D%d, %pM\n",
-> +				tid, rx_reor_tbl_ptr->ta);
-> +			nxpwifi_send_delba(priv, tid, rx_reor_tbl_ptr->ta, 0);
-> +			goto exit;
-> +		}
-> +	}
-> +exit:
-> +	rcu_read_unlock();
-
-guard() is nice to not have such patterns
-
-> +static inline u8
-> +nxpwifi_is_station_ampdu_allowed(struct nxpwifi_private *priv,
-> +				 struct nxpwifi_ra_list_tbl *ptr, int tid)
-> +{
-> +	struct nxpwifi_sta_node *node;
-> +	u8 ret;
-> +
-> +	rcu_read_lock();
-> +	node =3D nxpwifi_get_sta_entry(priv, ptr->ra);
-> +	if (unlikely(!node))
-> +		ret =3D false;
-> +	else
-> +		ret =3D (node->ampdu_sta[tid] !=3D BA_STREAM_NOT_ALLOWED) ? true : fal=
-se;
-> +	rcu_read_unlock();
-> +	return ret;
-
-
-also here with guard() you don't need the variable and it's probably
-easier to read/understand since it could just be
-
-guard(rcu)();
-node =3D ...;
-if (!node) return false;
-if (node->... =3D=3D NOT_ALLOWED) return false;
-return true;
-
-(modulo whitespace, obviously)
-
-> +}
-> +
-> +/* This function checks whether AMPDU is allowed or not for a particular=
- TID. */
-> +static inline u8
-> +nxpwifi_is_ampdu_allowed(struct nxpwifi_private *priv,
-> +			 struct nxpwifi_ra_list_tbl *ptr, int tid)
-
-"is allowed" sounds boolean, the function returns boolean, but is
-declared as returning u8.
-
-> +/* This function checks whether AMSDU is allowed or not for a particular=
- TID.
-> + */
-> +static inline u8
-> +nxpwifi_is_amsdu_allowed(struct nxpwifi_private *priv, int tid)
-
-
-same
-
-> +{
-> +	return (((priv->aggr_prio_tbl[tid].amsdu !=3D BA_STREAM_NOT_ALLOWED) &&
-> +		 (priv->is_data_rate_auto || !(priv->bitmap_rates[2] & 0x03)))
-> +		? true : false);
-
-might be nice to write that with multiple if statements perhaps, less
-obfuscated ;-)
-
-> +}
-> +
-> +/* This function checks whether a space is available for new BA stream o=
-r not.
-> + */
-> +static inline u8
-> +nxpwifi_space_avail_for_new_ba_stream(struct nxpwifi_adapter *adapter)
-
-same, since it doesn't return how much space is available, just bool
-
-> +/* This function checks whether associated station is 11n enabled
-> + */
-> +static inline int nxpwifi_is_sta_11n_enabled(struct nxpwifi_private *pri=
-v,
-> +					     struct nxpwifi_sta_node *node)
-
-
-and here it's int, which is probably not much better than u8 for what
-should be bool
-
-(I'd almost think you could even instruct an LLM to find these so I'm
-going to stop looking for them.)
-
-
-Side note on the comment style: we removed quite a while ago the special
-networking requirement for
-
- /* long ...
-  * comment
-  */
-
-so feel free to
-
- /*
-  * long ...
-  * comment
-  */
-
-as everywhere else in the kernel.
-
-
-But again I'm just briefly scanning through this (and will continue),
-I'm not going to really review it in depth.
-
-(One thing I also noticed is some misspellings of "MHz" as "Mhz", not
-sure where though.)
-
-johannes
 
