@@ -1,167 +1,95 @@
-Return-Path: <linux-kernel+bounces-801505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EE1B445DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4935EB445E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC78A43763
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6CF1BC09D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C58D3451B2;
-	Thu,  4 Sep 2025 18:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007B525A343;
+	Thu,  4 Sep 2025 18:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WGj/zXVY"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dK7WDNZB"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4BF343216
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1422244670;
+	Thu,  4 Sep 2025 18:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012068; cv=none; b=rVq1xvtspO401QtGtVuCypZjqphg30gnvkEcak32bE2b/mHs96QHcyeLops08p1+p/hsOjiw5+XksiDt8tdHRDFU/jaYYbth/UTikyBR9IVIHmWhdEup5UEjFwR9cHyV5mU6sSOcUUOioTtupM+6Prl8mkE2yJSgu/ogBk6rAN0=
+	t=1757012160; cv=none; b=d9mj2yJFv7riLd253Gyx5lGIDueckByWNlibg1tLp7V0dQNnKqy5iI146d7URzB6/bHoRdqDMeMd7tXx2m/pSl+5J3Wmk5gsKX+jbknO7ylcGG/ANDWjNotgfXL0sCp6TagifUAUzT8ZMbJZPlw1zmN0fTjsSEs25oJyZjxxnvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012068; c=relaxed/simple;
-	bh=USJiRxOlrfKNw9tm18/7QTC3dHtNRlb0VspI3nSkIVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChbfafsTvWk++GURRJiZAJeH3HInDLxZg5gItVN4/C6Nh6pHOt9fEiPKeGr01UKKMVEc1K54mGKCIEwN+uNYJbKl/cICTYC5mikUa9vQ1gLG5enpghPERAKVTx6eaqsfmfUp9QXfX61S/pSke2Eznwfeo6etBvKo0BUQ8wD7iqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WGj/zXVY; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-810e642c0bbso6435385a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:54:26 -0700 (PDT)
+	s=arc-20240116; t=1757012160; c=relaxed/simple;
+	bh=x+816UkHLyRvuKb/oS0wEATvXuUn8rJpVOodqIFEeMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sOoPRU/BjUiCxS0Ic3HSEaKFSSCAf5BHdJWuAwV4wvF0NiaY2xg7JYQis4aNrKOF5LcsirVrZTYxQ2Q5qlJa5Q2TTp+b+RvkD1cAf5lwnGWZ3kAczE07QFOSMuFrpxjYtLZEieR56NSH4B3FyiMmcoyxcv0R76DUZR8dl3Q6ds0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dK7WDNZB; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b042ec947e4so190856166b.0;
+        Thu, 04 Sep 2025 11:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1757012065; x=1757616865; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mzCtbkm/2+83HxTP0mUY++HNILHw+GWBJB56u05RJ5Y=;
-        b=WGj/zXVY5M+7Dy8sNST2S7nJsjivtyJWTec5CYA9XM6KNyv+64vwjB9zHPaRoXG6WP
-         ZUCsfJ2D8EpW227UbP/RIMNMhy7bvDzfWm6cHDMMzebLRz1MLy25HKzmFa6lvuj+wfpz
-         c4+YR2ubggb7wQAepm0Y7hElZMqngtU7V5yua1FshHDZXE4bMW1H7VbJg0OdKl0p3AI6
-         AsJHpviK9yeKNxvsvSJ7wCWkXbPqoFfcRpCZDEdX04F0iwHQFAsfKdBB8aZbhtG505f4
-         EbPDoOiKy4UJauAtgpaiQWp+vlUU/JwZgCh8D/laazPktUWq9ipnHyjmrZDoj+eRfyg+
-         v+DA==
+        d=gmail.com; s=20230601; t=1757012157; x=1757616957; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+816UkHLyRvuKb/oS0wEATvXuUn8rJpVOodqIFEeMc=;
+        b=dK7WDNZBerR+VPeVOCl3OIc33i2PTq8ifvQD0zu6i8wbdcy7tBnyN3SD3n+7P78qV6
+         SGYnIznMz4Go+hxf0DE/rgWgqcdd+ccbL7zioJ/URwzmd/CnOiTKzCZNQ0/Pz96ApU24
+         BL8wS8zR5Y6PPidnhi3MymOUWGca9JXhjeSsuqDgkei/2LZBHCcgPnkqhiHznCodLVH+
+         obceruzvEgfa+j3sL+hTWZfHN0+UdF++P+R5zoqQLs/HOSlaJ/npv1F3nmDwTYl7Md7g
+         /kIMrGgQ00c+IsCA5g0/f6F13DMcUuYz5ZLKsN0LEE+89PX/ZUL05onDpvr2Q/aSdFVx
+         NXtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757012065; x=1757616865;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mzCtbkm/2+83HxTP0mUY++HNILHw+GWBJB56u05RJ5Y=;
-        b=TqtHSYpmDQtvgPXUvwSxOr0YELvxdqe8bwyKEXn6d6cU0wql1yJvkB2Rw4Q8bFpwQt
-         9NejRNVZTDeTlKVS88aaNhkc9ucBrqtcl4v0OXFBskXO5XOEA3WhsUK/aVJQ9q2cleTt
-         PCJRH5IRTatjDhXdX27Wl9IBaCQS0h95Kl0KQbbgKjdB3PkOe62iTcuNQygtaCaAMmpH
-         Skpp9nzaOwpEGGMFmnMUIu9En7EGozwGMl0/CnDzd1e23DyzPDcXqUjiM2v068l/MRWX
-         psofiTIgSDij2200XwuusaBbz6/2/816anMvp4F0LfdqktCzmDiCeeDGvqpbKb3EF0Ia
-         qDuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXViIqOILeAu5/9LdCmtyYLJGdT+GqkSwkUN9DObRPJXxQTPi0SxPTYA5AUUKTgTZSaWwFXcPzvSlAHzx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUurPR4oWiq+11dznzN4bDT0gmTS+iVpbAtPf8XxOTpb50cow8
-	1aausoTvNRj5bDDXGWNb1jLiLFmhPn79xmAGKLyaIJan5gHE5ok4CA44G04uXjrClg==
-X-Gm-Gg: ASbGncsnbOSS1guXZ3QIU48G/PaQzUoNscmpHrUBkrY848i+4cSAHwIa0GDNjOZ9xx8
-	jSNyBpfp4ehYzKoIBDGv66zdFILo1+v+DmbWSBxxmn0bnytI2kKgZwJww47+XjrAqiOvDU/efxl
-	HY2CZeNxs0Cue+BsiQ6r2ICxaBea+N3HuqWE7PfdD2tzYkzNkSesmrEEfbND63yeN/SvlYwfScn
-	Vo1K84RudkZxwgcaEumZ888nmcWD/Db8usY1fgOLhDiW9hFGF36PQQ3+izZ0iwSm9HnmmOvERFS
-	LrQ9BhXDzcO8IiW2nS9dc69aIpOFIU7jQeQaWqLhWs9+xZ9W5b4lZ0JtWaqfPKr5mtj3LpnYzk4
-	VRtsd+oC6bWIB4krtwIpvL/uO5Wzo3arYmRL4XnUDw5y7/SBRG01na9icIT6h0Gi/psR4lLSmVb
-	YirMMEvlWu17M6oKRbmrqXI5q1QLUUQYvo
-X-Google-Smtp-Source: AGHT+IGHdeGzFWkN+ABRwUjtLifuMbybMpSCf6gseVTkXo1T+K9BVfbCoM+cFTPrAR5xZReiFuH/qQ==
-X-Received: by 2002:a05:620a:4095:b0:7f9:ad9a:1eec with SMTP id af79cd13be357-7ff2b0dc837mr2351006885a.42.1757012064604;
-        Thu, 04 Sep 2025 11:54:24 -0700 (PDT)
-Received: from rowland.harvard.edu (nat-65-112-8-27.harvard-secure.wrls.harvard.edu. [65.112.8.27])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aaac092dbsm326626485a.36.2025.09.04.11.54.23
+        d=1e100.net; s=20230601; t=1757012157; x=1757616957;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x+816UkHLyRvuKb/oS0wEATvXuUn8rJpVOodqIFEeMc=;
+        b=CSriK9JOjW6yPMWfPicZLserLvSP3cUoRQHV5jLQO0CRvfsrSjZUzQdJQ7Krh5By+o
+         iYaSvncd7ZV0fYLoakiw0h9Xoo7Qlv39Mp7aG4vDFjDGB5jNnDlXKvca8IMTUtdQmn55
+         CXpop7a+qr6YuwFfhCA5C6H+odO7Ny24546TmgHB7R5sntQbpEMWI4ygYgy2Rh47uz75
+         4YwrOGk6jFC+XiG4FWioZZX50vSgrNfygycbpiO8TDYtC55+J8ToVwmYq7o8tGB1ckcy
+         dWEHFXWTF6iTDB+FQYjJnAG/94ByQk4k+CYvzK5tLBQNcit2NpTEZc28Q67SRK0ER6IW
+         F6LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV385xp3fdDUY0duW2VnCyJ8/AdPHImHTnvn3TKda+HZUkkbhHexfjUwn6Hudxx+U0F/tkSDjkd2ModVjKLQS7ryv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwPetL5BrV9TKv74R5x20sV0/Ohnm4hm3QayKzB0oJHQB76oyS
+	ok5DmCZgiFdc+Ebz4/RUM9a7/0o9XVSHJOwSVeO1b/gLjbRbIG0h36Fd8hx9948=
+X-Gm-Gg: ASbGnctYDFiOeVSsMMIJd2GtevfT16aNZl0VCVrW8g6km0zD2c+qfOFvq8qIDWGP9WH
+	Bk8RJwhmqFUnf6U2jvjU3K1fyTm+p5mhxN2gtIGVxiKhnjw9t+XP6YMhoIUrrIrART4JrsrIfDJ
+	a62qsWAUKQCzLpJrZ6KxVBsvnGCXRCoXwSzD3AHUNud+zxx1pIqDEQGzWex8Bm6t/W2QnS/SZYe
+	wLTs7Vhb1nIfNqnIrGNmqCY/DPmD9SekEMQNHdBmJkHuFGD1fEhe7E2e5ZSTdnbEmT64hMxcXo2
+	FSzuT2nxy5SwMQx9VEZASEZ5qoB7xSgt8uZZJ/nqih36uMsE7woXgr5cYo/jZQzbN51vbBHiG0E
+	TbV8ym0AidPYUjLTHpyc+g1UN
+X-Google-Smtp-Source: AGHT+IH6hCkzixDEoXC066qWnrd9dEDM6/UFAPpWA4TgP+SASVOvp5vF42WuuOBc/0+HA8JSRaKHsQ==
+X-Received: by 2002:a17:907:7ba0:b0:af1:f259:254d with SMTP id a640c23a62f3a-b01d8a2fd7emr1924490366b.8.1757012156863;
+        Thu, 04 Sep 2025 11:55:56 -0700 (PDT)
+Received: from vova-pc ([46.161.125.182])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff12a6b404sm1509147666b.88.2025.09.04.11.55.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 11:54:24 -0700 (PDT)
-Date: Thu, 4 Sep 2025 14:54:21 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-Message-ID: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
-References: <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
- <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
- <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
- <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com>
- <38b706cc-5966-4766-9165-51935fdcd790@rowland.harvard.edu>
- <CAJZ5v0h=i9XF_SQMOhz3P+4SAH3Qy-r1oUiiw7Bp=PcRnJjVbQ@mail.gmail.com>
- <59951c2d-60e8-47a8-a43c-00b92e095043@rowland.harvard.edu>
- <CAJZ5v0i6aFarDU8OTZ_3VS9dp4SaqKJ0SuiN4gFSxrRoAAV5CQ@mail.gmail.com>
- <24a69e4d-2f10-43fb-81d4-f7eea44a6b8d@rowland.harvard.edu>
- <CAJZ5v0gUjgY45WFye5STJ7kv30O4rQ=23qkOsHEMSxfwg8jO4g@mail.gmail.com>
+        Thu, 04 Sep 2025 11:55:56 -0700 (PDT)
+Date: Thu, 4 Sep 2025 20:55:54 +0200
+From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+To: ferr.lambarginio@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	mark.rutland@arm.com, mhiramat@kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH v2] ftrace/samples: Fix function size computation
+Message-ID: <aLngumfBZLyxPgvO@vova-pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gUjgY45WFye5STJ7kv30O4rQ=23qkOsHEMSxfwg8jO4g@mail.gmail.com>
+In-Reply-To: <aK3d7vxNcO52kEmg@vova-pc>
 
-On Thu, Sep 04, 2025 at 07:34:22PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Sep 4, 2025 at 4:19 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > On Thu, Sep 04, 2025 at 04:08:47PM +0200, Rafael J. Wysocki wrote:
+Friendly ping.
 
-> > > Say this is not the case and say that the device is runtime-suspended
-> > > to start with.  Then the "suspend" callback has two choices: either
-> > > (1) it can runtime-resume the device before doing anything to it,
-> > > which will also cause the device's parent and suppliers to
-> > > runtime-resume, or (2) it can update the device's state without
-> > > resuming it.
-> > >
-> > > If it chooses (1), then "resume" is straightforward.  If it chooses
-> > > (2), "resume" may just reverse the changes made by "suspend" and
-> > > declare that the device is runtime-suspended.  And if it really really
-> > > wants to resume the device then, why not call runtime_resume() on it?
-> >
-> > That's what I meant by needing "cooperation from the driver".  The
-> > driver's ->resume callback needs to do this check to see which pathway
-> > to follow: (1) or (2).
-> 
-> Unless "suspend" always does the same thing, so it always does (1) or
-> it always does (2).
-> 
-> In that case, "resume" will know what to do without checking.
-
-It still has to check whether the device is runtime suspended.
-
-> I'd like to mention that if "suspend" chooses (2), it may need to
-> resume the suspended parent or suppliers to be able to access the
-> device even though the device itself won't be resumed.  I'm not sure
-> if (2) is really attractive then, though.
-
-True.
-
-> Also, in the example we've been considering so far, the assumption is
-> that B can just stay in runtime suspend, so why would it need to be
-> resumed by "resume"?  And if there is a specific reason for resuming
-> it, "resume" can just call runtime_resume() on it AFAICS.
-
-So it appears to boil down to this, as far as ->resume is concerned: At 
-the start of the callback routine, there should be something like:
-
-	if (pm_runtime_suspended(dev)) {
-		if (the device needs to be woken up) {
-			pm_runtime_resume(dev);
-			... whatever else is needed ...
-		}
-		return 0;
-	}
-
-If ->suspend is clever, it can clear or set the SMART_SUSPEND flag 
-according to whether the device will need to be woken up.  Then the 
-second conditional above will always be true whenever the callback runs, 
-so the test can be skipped.
-
-Alan Stern
-
+Best regards,
+Riabchun Vladimir
 
