@@ -1,86 +1,85 @@
-Return-Path: <linux-kernel+bounces-801400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563F2B4449A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D60B44499
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 19:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37BDC4E5F20
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A55482D15
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997AB308F07;
-	Thu,  4 Sep 2025 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044633115AF;
+	Thu,  4 Sep 2025 17:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ptx0ldxM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XhwL4Svj"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0E82135D7
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFB423278D
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 17:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757007733; cv=none; b=ofuDQKg6nhbxDXLkolfq0cz1FQ0OKLo+xsHK05rtq7tj1iIsQHeGgxHP9HyFwI30cgpXDDc98raCzyD/Np6V21VMhZrkVtNZAET8drsH3Yn2D7bZ7jDZvB/tNkE26m1V53ND4BTOfNl0v6M/2yB+xLp31YCG0ShoRC5njwd92zk=
+	t=1757007725; cv=none; b=gSk4KZ9p1s8rQ0qggZ5Gz/IySHN/kBy1Fgu/R7uZWDgZUtgNaVnRs5D9q65a2rzhqMVhevObIzS67A1rRxxYGdtE5mtJT4wnoXdJrUJiaKT2jsdsmGnnI/ftRjpYneiu9deBlKE7HRX27F2MVWcWR7kLaTSfkVRt2LCTjsuPaV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757007733; c=relaxed/simple;
-	bh=YBLqifw/BVRoi3wbhVwBK9rjcZq2l4LNyNSyEQBYhKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R9OBmj0slACBVisSmhFBPgFvQTIeeLaet0grNyqn6bELpaN/HYnbn/lC211TQg4169vN2UFgCLbB132ESzmEek4OC3jIgYdA1BOJGUYuhpcCUpQ25l+L78u4OT8Fzzhj9/GL4rqa+QgHAhDcj691k4Ne4+eFgSAwZT31C2gyqJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ptx0ldxM; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1757007725; c=relaxed/simple;
+	bh=yx0zBWaRu6cw3icG0CeXgREh0ynyNB3A8lzrt88/Qnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ii+bSzXTZp0vhb/AkMjR+Ty8VDtZaV1eZK/mB8i9EcmAo6i821cAMw0uJm67JKEmDOrW9qaY7vzxZYDlalHIKrM+8xCTSAShcGKWU9JP9NfV1HY5PnFQ2o8cf9CePgsVYTZ8DDT9Bljnr9fM9Bu+xMu5o6xvYetem1eNZdlKgSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XhwL4Svj; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757007725;
+	s=mimecast20190719; t=1757007722;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f3N6crPoAdBKvfRXAZf0tsFM2t5csRFa36K9pgtReHE=;
-	b=Ptx0ldxMX57qxRCcl8bgkyYuR0+eMrgwUrqqq7OcR1IfjebK9UClEQZujvnWq/WvRJrytQ
-	S+dXfc7cCxhNK/60Xeqqf6ZbHQfoapXKt25KUlTbMiieSkgS1vsG2T/ehjLM+h2DTYu3FT
-	Ua9DQ3TEozF7Yos0EbKtnNWmFpUyT8w=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=7OW0fmMmok+4qM9nyuF69XKa0Kr2dqRhaneU5e3QgPQ=;
+	b=XhwL4Svj2tcIQgwG5ZMfJYEoTHc9iQZhgosWaBcqcLOtYb4B4NiIF2+qcqIMESco+1y+nc
+	g5qL3VeuWsy0/OKeB6IN/0e1m7wMRE3li/EtowyJmL1FO6q4ENGbmEdf3tq1RvwXVgyVA7
+	LyG/nhfvcc3tsr/HQoKjPPWbXWySidE=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-249-sDHyH6o6O_yOPUxyyopsqA-1; Thu, 04 Sep 2025 13:42:05 -0400
-X-MC-Unique: sDHyH6o6O_yOPUxyyopsqA-1
-X-Mimecast-MFC-AGG-ID: sDHyH6o6O_yOPUxyyopsqA_1757007718
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so15705225e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 10:41:59 -0700 (PDT)
+ us-mta-417-P5eKQT1mPIiCGBNLo0uU3w-1; Thu, 04 Sep 2025 13:42:01 -0400
+X-MC-Unique: P5eKQT1mPIiCGBNLo0uU3w-1
+X-Mimecast-MFC-AGG-ID: P5eKQT1mPIiCGBNLo0uU3w_1757007721
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7fc5584a2e5so331187485a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 10:42:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757007718; x=1757612518;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757007721; x=1757612521;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3N6crPoAdBKvfRXAZf0tsFM2t5csRFa36K9pgtReHE=;
-        b=bXdMV9Y8ueKhtUFgnoFWH4hAZXwFvp02lHzOPdH8R3pVpZo5Cv+EtCHYL0LoaD3C2Q
-         XAu0GPhRlTsfKKB8R8FgExEclKNbDYWbZRh2SBc0SVFT30SrzTcoucbZqvqC4vS+6RuT
-         tzWJ19ahfHI2bwVO1rimDdAE6+QY3V8NUp/M3/OcCpH26dMfjMtaK62+g1neS/6d/kWB
-         Vr9MwUzTD2hlZhEUqXbJze9O73B96DYuBtqb2F31tSjheiF/INmdmBn3sOSYdOIbgPp1
-         leIedjluIvMdfQZ25+X9QMiZl+wG/dloHygEr+Vwf8rfdunaF9zRdnuI7iugL2Yxe6Bm
-         D9qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKu8jX7Jp17uL8F5KjK7DQPw8MdYb8G0NrU/jiVYicwWfpWc8konG4gTipGKb3C9dX0b2cNGRVvxYSD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7cfFu661SWMDBt9AC2cCnRUt0hdMmvm08ez7avto66mhj6HM7
-	zyY2/G6y2TYIxpHYt1MN1/YYo5PYQ2oMPgBv1pAShhm9ZeoSqu/QYU7hZb9mBuIPjEwBwIweO1O
-	ab1J0uI4NKzkOTjmzIQluGX5XUALDgYJ019RHWGuCNIxx2hQNiSRBVBI1Badldy3gxA==
-X-Gm-Gg: ASbGncvFGmVcERvcAnJbAEzqBCAwbfnTmk3qP9WYcLZLwynRyAnJqlXDmkWfyKQimA8
-	XtqKKQg2jn7k6oIouCYcfq6rFZQaD9pn8V31H5hAjcZA1/f/qMW1/o3yv/8ttcQQ37njbmPH5jP
-	pbcM63jw5VuI4vPnoPAQYrT218aFvahIy6BDSlO1H/wYy4/sa7/MTh3TCsZMxHSAGhgUx0/vA7g
-	sE0RjsM38hDavApaGm7xGGMEILHbBJfT+LMVb8pvQrPXCMUuwGmZh1aTrznb0QBb3VR7engrVz/
-	0bWUEKrxJ2A6g/0o+2ZM8r02jtwultZZwb8R5S1Tl6MfCpleBXyhg9W4jKr9iS2YBClbwnTLN83
-	v6NqqFGRPAZB5dVTzbNzlo3/RHx93aQCJpOER9s4mOK4Vx1qGFiQdwPBVsIT3X43G
-X-Received: by 2002:a05:6000:40da:b0:3d1:8458:cfcc with SMTP id ffacd0b85a97d-3e303ac3113mr462786f8f.25.1757007718530;
-        Thu, 04 Sep 2025 10:41:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhWxQ1e1FnlVyPFce58Z4egeuSg2pUvGK0fSYueuygdNQHvj/viR3FYzF08UC1nbW9K9KX5w==
-X-Received: by 2002:a05:6000:40da:b0:3d1:8458:cfcc with SMTP id ffacd0b85a97d-3e303ac3113mr462756f8f.25.1757007718024;
-        Thu, 04 Sep 2025 10:41:58 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:1e00:ce4c:be3:97b3:6587? (p200300d82f251e00ce4c0be397b36587.dip0.t-ipconnect.de. [2003:d8:2f25:1e00:ce4c:be3:97b3:6587])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc3fasm27988583f8f.5.2025.09.04.10.41.56
+        bh=7OW0fmMmok+4qM9nyuF69XKa0Kr2dqRhaneU5e3QgPQ=;
+        b=udogjlcG4naZrCp+JR0LFOqz9qzVrPlMygGFDgnBS9Wlx50pLNus/coIXLk+28Wgrs
+         hdCVljmNk11fureY/+7LnwF14ygRLWWNyosgzSUxfX53b6Istv2HGJvnKnB38t2NrAOv
+         Miwg9/GrwPgEMntE/h1VFxjrLwBLvHbqWfa0zVOtmqZbgk/IUPXJnuxUr6bSIESC25ng
+         qjibLChTsCH8SO6QllyzlaByLJGXVU/EeBU8acTahGAhwU3vA+gEmBPwaE5fIiFDoBPn
+         81hUVVTy69c5dUhLATW+0zJpHrxlyAKCg5X11/iIrtKMOS+zwiEBfPRVenQQxWT/pH8O
+         ou+A==
+X-Gm-Message-State: AOJu0YxKcADGtT1787VvzB6iZyECo22mQOfQQV/0Zr6FEWPgP1f+fwo8
+	cLi6Q5lp7k91tVl8wSZoCSmZRpWSHk8AzHB3OOb32yStMli6M4XcM4l8lZeimDOh9KOuEZB4O8h
+	20RIN3sF7/U+QUWPXrnzHlB2IhBJtVpjcO2dClXGp9nAi/yrFkQIrHglmxi1Ik9jii4DbBl8aHI
+	yUJZhgu9zXfkbIf0xWdUjUVIyNluidXuVWYwR+ht4BCvDh34sv
+X-Gm-Gg: ASbGncuWuk8whTdi8qI/i9lixZfyBAyuN1INCPIK6j8gLIY0mEWRwPJnu7DIJYAY11t
+	b1t61+z6bw0jaTXC7LGEBp+UKOVOFjFNRc2h6DH3OxIi8Ai7avTFFT58KFiEO/oGJ0ZxjuJyUo+
+	80qVH6YcMO6jgpxW/SBzcMj0mo7eaTqzFshQTqvxqmEJ0g3YYNjZsx2Dhr8P6hl/2PMqJVYjSF7
+	SbLoXYMH7x38sQLC1JnHSy3QoTn0jmc4cWcxJYbcsd8K4/4781X8dObcFMamBMP+wjoqo3pLNVA
+	YKqYGfK4JugyegdwBm6IwBw6jB2e45f4mrXzcH0=
+X-Received: by 2002:a05:620a:a510:b0:7ff:5a10:b461 with SMTP id af79cd13be357-7ff5a20085fmr1891880985a.81.1757007720501;
+        Thu, 04 Sep 2025 10:42:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKqJNBGWDVyE/ZYDYaZTm43V9zlufAPTiO2T2c77SZHFQK96cZUJ93g+qmbFuyaCQAipvPRg==
+X-Received: by 2002:a05:620a:a510:b0:7ff:5a10:b461 with SMTP id af79cd13be357-7ff5a20085fmr1891875985a.81.1757007719781;
+        Thu, 04 Sep 2025 10:41:59 -0700 (PDT)
+Received: from [10.26.1.94] ([66.187.232.136])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aa62c789esm315635085a.11.2025.09.04.10.41.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 10:41:57 -0700 (PDT)
-Message-ID: <84aad392-3bff-4f98-b612-5e9a046edb36@redhat.com>
-Date: Thu, 4 Sep 2025 19:41:55 +0200
+        Thu, 04 Sep 2025 10:41:59 -0700 (PDT)
+Message-ID: <342d698c-c352-4b2f-9e28-52e385cf6579@redhat.com>
+Date: Thu, 4 Sep 2025 13:41:58 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,124 +87,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
- minchan@kernel.org, kernel-team@android.com, android-mm@google.com,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250903232437.1454293-1-kaleshsingh@google.com>
- <827c844f-7106-4f62-a108-1f83544aa56e@lucifer.local>
- <43ryds7hzhs5bpaxznco7fppmakdb4f46agwtsc5erudqfoz2x@7y4jgbtft7jj>
- <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] intel_th: core: fix null pointer dereference in
+ intel_th_irq
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jerry Hoemann <jerry.hoemann@hpe.com>
+References: <20250825174554.925679-1-darcari@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <413ee338-1795-433c-b3d4-72c870488d95@lucifer.local>
+From: David Arcari <darcari@redhat.com>
+In-Reply-To: <20250825174554.925679-1-darcari@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04.09.25 19:33, Lorenzo Stoakes wrote:
-> On Thu, Sep 04, 2025 at 01:22:51PM -0400, Liam R. Howlett wrote:
->>>> diff --git a/mm/mremap.c b/mm/mremap.c
->>>> index e618a706aff5..793fad58302c 100644
->>>> --- a/mm/mremap.c
->>>> +++ b/mm/mremap.c
->>>> @@ -1040,7 +1040,7 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
->>>>   	 * We'd prefer to avoid failure later on in do_munmap:
->>>>   	 * which may split one vma into three before unmapping.
->>>>   	 */
->>>> -	if (current->mm->map_count >= sysctl_max_map_count - 3)
->>>> +	if (exceeds_max_map_count(current->mm, 4))
->>>>   		return -ENOMEM;
->>>
->>> In my version this would be:
->>>
->>> 	if (map_count_capacity(current->mm) < 4)
->>> 		return -ENOMEM;
->>>
->>
->> Someone could write map_count_capacity(current->mm) <= 4 and reintroduce
->> what this is trying to solve.  And with the way it is written in this
->> patch, someone could pass in the wrong number.
+
+Hi,
+
+On 8/25/25 1:45 PM, David Arcari wrote:
+> In certain cases intel_th_irq can reference a null entry in
+> the th->thdev array.  This results in the splat shown below.
+> The problem is that intel_th_output_enable() can modify the
+> thdev[] array at the same time intel_th_irq is referencing
+> the same array.  This can be fixed by disabling interrupts
+> during the call to intel_th_output_enable().
 > 
-> Right, but I think 'capacity' is pretty clear here, if the caller does something
-> silly then that's on them...
+> BUG: kernel NULL pointer dereference, address: 0000000000000304
+> Oops: Oops: 0000 [#1] SMP NOPTI
+> RIP: 0010:intel_th_irq+0x26/0x70 [intel_th]
+> Call Trace:
+>   <IRQ>
+>   ? show_trace_log_lvl+0x1b0/0x2f0
+>   ? show_trace_log_lvl+0x1b0/0x2f0
+>   ? __handle_irq_event_percpu+0x4a/0x180
+>   ? __die_body.cold+0x8/0x12
+>   ? page_fault_oops+0x148/0x160
+>   ? exc_page_fault+0x73/0x160
+>   ? asm_exc_page_fault+0x26/0x30
+>   ? intel_th_irq+0x26/0x70 [intel_th]
+>   __handle_irq_event_percpu+0x4a/0x180
+>   handle_irq_event+0x38/0x80
+> handle_fasteoi_irq+0x78/0x200
+> __common_interrupt+0x3e/0x90
+> common_interrupt+0x80/0xa0
+> </IRQ>
 > 
->>
->> I'm not sure this is worth doing.  There are places we allow the count
->> to go higher.
+> Fixes: a753bfcfdb1f ("intel_th: Make the switch allocate its subdevices")
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jerry Hoemann <jerry.hoemann@hpe.com>
+> Signed-off-by: David Arcari <darcari@redhat.com>
+> ---
+>   drivers/hwtracing/intel_th/core.c | 17 +++++++++++------
+>   1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> ...But yeah, it's kinda borderline as to how useful this is.
-> 
-> I _do_ however like the 'put map count in one place statically' rather than
-> having a global, so a minimal version of this could be to just have a helper
-> function that gets the sysctl_max_map_count, e.g.:
-> 
-> if (current->mm->mmap_count >= max_map_count() - 3)
+> diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+> index 47d9e6c3bac0..c6f6153fcc88 100644
+> --- a/drivers/hwtracing/intel_th/core.c
+> +++ b/drivers/hwtracing/intel_th/core.c
+> @@ -715,7 +715,9 @@ intel_th_subdevice_alloc(struct intel_th *th,
+>   int intel_th_output_enable(struct intel_th *th, unsigned int otype)
+>   {
+>   	struct intel_th_device *thdev;
+> -	int src = 0, dst = 0;
+> +	int src = 0, dst = 0, ret = 0;
+> +
+> +	disable_irq(th->irq);
+>   
+>   	for (src = 0, dst = 0; dst <= th->num_thdevs; src++, dst++) {
+>   		for (; src < ARRAY_SIZE(intel_th_subdevices); src++) {
+> @@ -730,7 +732,7 @@ int intel_th_output_enable(struct intel_th *th, unsigned int otype)
+>   
+>   		/* no unallocated matching subdevices */
+>   		if (src == ARRAY_SIZE(intel_th_subdevices))
+> -			return -ENODEV;
+> +			goto nodev;
+>   
+>   		for (; dst < th->num_thdevs; dst++) {
+>   			if (th->thdev[dst]->type != INTEL_TH_OUTPUT)
+> @@ -750,16 +752,19 @@ int intel_th_output_enable(struct intel_th *th, unsigned int otype)
+>   			goto found;
+>   	}
+>   
+> +nodev:
+> +	enable_irq(th->irq);
+>   	return -ENODEV;
+>   
+>   found:
+>   	thdev = intel_th_subdevice_alloc(th, &intel_th_subdevices[src]);
+>   	if (IS_ERR(thdev))
+> -		return PTR_ERR(thdev);
+> -
+> -	th->thdev[th->num_thdevs++] = thdev;
+> +		ret = PTR_ERR(thdev);
+> +	else
+> +		th->thdev[th->num_thdevs++] = thdev;
+>   
+> -	return 0;
+> +	enable_irq(th->irq);
+> +	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(intel_th_output_enable);
+>   
 
-I enjoy seeing sysctl_max_map_count hidden. But map_count_capacity() is 
-even more readable, so I like it.
+I suspect there may be a better approach to this problem, but I did
+want to add that after extensive testing this did resolve the issue.
 
-I don't complete like the "capacity" term, but I cannot think of 
-something better right now. Maybe something around "free" or 
-"remaining", not sure.
-
-I also don't completely like "map_count" (I know, I know, we call it 
-like that in structures), because it reminds me of the mapcount ... 
-talking somehow about "vmas" would be quite clear.
-
-Anyhow, just as an inspiration my 2 cents ...
-
--- 
-Cheers
-
-David / dhildenb
+-DA
 
 
