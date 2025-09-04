@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-799638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17250B42E68
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:49:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00FFB42E65
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831C61BC7003
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053E45E8424
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1120214D2B7;
-	Thu,  4 Sep 2025 00:49:10 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A905D19066B;
+	Thu,  4 Sep 2025 00:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4a+Hk3X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EBA29D0E;
-	Thu,  4 Sep 2025 00:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F239A14A9B;
+	Thu,  4 Sep 2025 00:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756946949; cv=none; b=j7AlEnLsaPfH3cIvNQrCWh0Ry0TX/3iq+utr6nuIO3fUnl/YDjlByj4zOwqn42AWGAggkgZ40IUPE9822/XB85G0KOtCefbFzKTI9npFKO213MI50eQFHHafwlvb41WHMzMmmd5BfILLGGMfFktJAgK7PJNPlx4txiC3nxi6YhQ=
+	t=1756946930; cv=none; b=B4UhAAsYDtQJ8IVdmJOMDgTPtCRxOKPENWjzWJTzKC/+CH+Rf9K2ZYv9b2v46Wku02RgBPVd3iCWaD6HvX+8oxoLwjWMlVmPtegf7TxI/RcNOQz30TTrHvGvUkq4FDa4YuV3sN7iGm4EqS8ANt2QAuee1RjG2Zx40jQWi/OCxhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756946949; c=relaxed/simple;
-	bh=28y1zIQyJiGZzQIxWbG5Hf7wSqA8bRW9Snz8MewVNoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VAIYoC3qcS9brMUbvayl8N0E1mu9T/ty5WDqvLLDPDvlgYv1eNKrvkmpgANA/3j4TkH1dklL7nzx4aI/Uj+Bp55zPDW0+qjhm3hEjmzVgNe7c3a/PWW4OWazab7HYwHcdkZcIV0UXT74cIK485o6gd6pFYaQPro59X7ys0YnP/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.18.168])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 62C68340D9E;
-	Thu, 04 Sep 2025 00:49:01 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	duje@dujemihanovic.xyz,
-	Guodong Xu <guodong@riscstar.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: (subset) [PATCH v5 0/8] dmaengine: mmp_pdma: Add SpacemiT K1 SoC support with 64-bit addressing
-Date: Thu,  4 Sep 2025 08:48:45 +0800
-Message-ID: <175681694608.479569.7465779228756094615.b4-ty@gentoo.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
-References: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
+	s=arc-20240116; t=1756946930; c=relaxed/simple;
+	bh=/eZokcjTYsgn7x3TN1nV0vQhMpWaAhi7YQj4lS/oW5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rte9gRCPFWtsNq4A0xwVoLJdQqSVdY39oC0axF5bkrqbVOexHKjlQ2Nxf1aTwFolZUjiwE4Ho/fZ7f0r6Ok84YIagISHMbZV3h+z1QF21WMWcDnagbUcadzd8jy7cX6zOLizms57S5Y+Tt56xdFgCC7iCHZ2F1nvDbYmMzauvLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4a+Hk3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F46C4CEE7;
+	Thu,  4 Sep 2025 00:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756946929;
+	bh=/eZokcjTYsgn7x3TN1nV0vQhMpWaAhi7YQj4lS/oW5w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f4a+Hk3XTjiN/mfxv9pyjGmIzHB8EyWE1g9mMRhBYpyErEFM2eLS2RLCNLZ9m+flb
+	 usBL3tioZb1jmbnGl2cnprJzZgY+7pXdM1pTdJM/l7LSADXMr8lVMlXEjMiGbORW+l
+	 ylL1uOUITFWfR5Vf2cQlWFj287PPpY3SnuOoIUMARaFXEEbDEiJfG2mlCm55uL15H7
+	 EeIpGd0/dS2PeLYfhNQl8FVow1ttEyNVHftFywOVWIkdDwukIuF755hy2naOdqX4iN
+	 mT+GB2IWk5KvmNBlsutFJjAZgnVXN8wIkBAU7y8uonErOB31WtsIKKO8H9zXSHUUsF
+	 U/aLizS4FgT5Q==
+Date: Wed, 3 Sep 2025 17:48:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: <namcao@linutronix.de>, <jacob.e.keller@intel.com>,
+ <christian.koenig@amd.com>, <sumit.semwal@linaro.org>, <sdf@fomichev.me>,
+ <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+ <ast@kernel.org>, <pabeni@redhat.com>, <edumazet@google.com>,
+ <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
+ <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: Re: [PATCH net-next v2 1/6] net: ti: icssg-prueth: Add functions to
+ create and destroy Rx/Tx queues
+Message-ID: <20250903174847.5d8d1c9f@kernel.org>
+In-Reply-To: <20250901100227.1150567-2-m-malladi@ti.com>
+References: <20250901100227.1150567-1-m-malladi@ti.com>
+	<20250901100227.1150567-2-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 1 Sep 2025 15:32:22 +0530 Meghana Malladi wrote:
+>  	if (!emac->xdpi.prog && !prog)
+>  		return 0;
+>  
+> -	WRITE_ONCE(emac->xdp_prog, prog);
+> +	if (netif_running(emac->ndev)) {
+> +		prueth_destroy_txq(emac);
+> +		prueth_destroy_rxq(emac);
+> +	}
+> +
+> +	old_prog = xchg(&emac->xdp_prog, prog);
+> +	if (old_prog)
+> +		bpf_prog_put(old_prog);
+> +
+> +	if (netif_running(emac->ndev)) {
+> +		ret = prueth_create_rxq(emac);
 
-On Fri, 22 Aug 2025 11:06:26 +0800, Guodong Xu wrote:
-> This patchset adds support for SpacemiT K1 PDMA controller to the existing
-> mmp_pdma driver. The K1 PDMA controller is compatible with Marvell MMP PDMA
-> but extends it with 64-bit addressing capabilities through LPAE (Long
-> Physical Address Extension) bit and higher 32-bit address registers (DDADRH,
-> DSADRH and DTADRH).
-> 
-> In v5, two smatch warnings reported by kernel test bot and Dan Carpenter were
-> fixed.
-> 
-> [...]
+shutting the device down and freeing all rx memory for reconfig is not
+okay. If the system is low on memory the Rx buffer allocations may fail
+and system may drop off the network. You must either pre-allocate or
+avoid freeing the memory, and just restart the queues.
 
-Applied, thanks!
-
-[6/8] riscv: dts: spacemit: Add PDMA node for K1 SoC
-      https://github.com/spacemit-com/linux/commit/81d79ad0ddcaeaf6136abe870b2386bde31b7ed4
-[7/8] riscv: dts: spacemit: Enable PDMA on Banana Pi F3 and Milkv Jupiter
-      https://github.com/spacemit-com/linux/commit/0e28eab0ca51282e3d14f3e2dba9fc92e3fddbe6
-
-Best regards,
--- 
-Yixun Lan
-
+> +		if (ret) {
+> +			netdev_err(emac->ndev, "Failed to create RX queue: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		ret = prueth_create_txq(emac);
+> +		if (ret) {
+> +			netdev_err(emac->ndev, "Failed to create TX queue: %d\n", ret);
+> +			prueth_destroy_rxq(emac);
+> +			emac->xdp_prog = NULL;
+> +			return ret;
+> +		}
+> +	}
+>  
+>  	xdp_attachment_setup(&emac->xdpi, bpf);
 
