@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-800159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C53B43437
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98243B4343F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CF377A1469
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED701C80809
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642F32C032C;
-	Thu,  4 Sep 2025 07:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9122D0C75;
+	Thu,  4 Sep 2025 07:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFHtWIoQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulOTGkLl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD6D2BE047;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3CE2BE630;
 	Thu,  4 Sep 2025 07:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971207; cv=none; b=o1yRfTCv7HXSOER6kROKj/T+e0gLvWpOUGRkg4ruDvwd/ekZsEv7Typ7RVl6fJhCN4y6BrER1mMy1SiEm4G0OigAhTXP+smLnzeDthwTCDObdbcz/+VLvhdWV0S5HywdUimydoRFE411ZbhY8sWJ0MYBTwTM2Y1tUOA/v7Y5NMU=
+	t=1756971207; cv=none; b=mfXTjoDUqSmmKEXCI6nNMDs8RcjTjEH0Fw9iQo1juCaglJTerqsfTBQXWAH3x5pgBBeYK9l17ogBeZSt8t/JgXV8be2jb/8faXPqCEhYcINQH1XitYINDOr6RiTT1WDyuY81sfGr/+SHZK90bs2iyj9BQU1pBvpbDL9VPk78B5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756971207; c=relaxed/simple;
-	bh=ZNNE9b19wje69qRgb12NqpyGw7VPdaWJOQjCEXZjJk0=;
+	bh=bVmM7VBx6Mz+IphxfOc+eSU514/9PatRnA7YynRL2jk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C8JSRJtfanSt3MFa9vc40A+DhfKrOcP2+uYYX6VCXHAak9q3RGym96Iun6Q1YP7H07s82aSiKB60CVjefNFxDCD1lkef/UAxc0rp4UWObfBUoX85ctGND3AUDOuYcKBQ2mGtyi4b5EGgEuTsR/a6M9Z+X0KO3A2/Zj4RSArxThg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFHtWIoQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92FD7C4CEF7;
+	 Content-Type:MIME-Version; b=L1AcLf/iw9yyMK07hkn3zKD9gIw23GddvxUxnGUlQ9J+8IedAizblKWwd5woW9ri6iNfc0N5exZ5Qu/oyZVcr06jZaxu7jNPHqrAxDfHPcJSB3glZ7FI+XAldZuqOQSI/brB5ijmslLCsrlGkSl7gUVhJMCTLqn3i0ceO9V9HJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulOTGkLl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 974E8C4CEFA;
 	Thu,  4 Sep 2025 07:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756971206;
-	bh=ZNNE9b19wje69qRgb12NqpyGw7VPdaWJOQjCEXZjJk0=;
+	bh=bVmM7VBx6Mz+IphxfOc+eSU514/9PatRnA7YynRL2jk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gFHtWIoQnELSsuWk18yCioYqGRCY7pb0GSTNyIyMRf8r1IRrecfC3yj6qTXGnzE2/
-	 YUrkzNEMbBEonxMHlD3dHSz8nUhjTVKj6M00zhD7UoMjR/hU/39CF29f9AvuWiI9sN
-	 OBv08m21YG933gwg1+pNYp1uAQM+bWCNhgycmq7noPy5Im9/3OyuQ+G281Uuh4Pi2T
-	 uxbGtcUIMV1DsLNfRVoYHq/oi3du84nsBj9wG8pKu8nW1lpz5oSRI+yUxuFfVEDkGE
-	 J7nj7otrmst6hsUVjJTAsdoYeqR047gr2H8TGQWAy65cUquuitQND1scjYWDS/JKPi
-	 OGwbhR2rg8c4w==
+	b=ulOTGkLlBHkuYAZ0YytF3LpXUWNw6JwdFfnngpAg/PI/v7Io9C8epoiCBaI63b3Cs
+	 C1t7go3ED4ftj8nO9lRItzSEkZKKyudJNuslp/0ktxrpQ48xSPNHXFUKd8XFXU94qr
+	 BMNIw+ToHahsVahA/Yt8hskWJrSv/0mDpJJIJmKvCIIFKbcedbN2siKDBvoUC+v7wo
+	 F5Yw5vAtiMAw6MeOzUV8f4EPpVN2oU3eifU4u1BtKzUvQjpXElpsHkSMWQCHBokuCI
+	 M3rpFqm3sHhq2wDKZ3LmvLqqcTZokIjf2nli07OybshHipDQjX1yT6mGAWaD/OJDIq
+	 Pzy4hojbMbXKw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uu4TE-00000009jPL-3DfW;
+	id 1uu4TE-00000009jPP-3KWH;
 	Thu, 04 Sep 2025 09:33:24 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Alex Shi <mchehab+huawei@kernel.org>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Federico Vaga <federico.vaga@vaga.pv.it>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/19] scripts: sphinx-pre-install: move it to tools/docs
-Date: Thu,  4 Sep 2025 09:33:04 +0200
-Message-ID: <68810fc1065bbe8ef1305041fb10fa632bb64dd3.1756969623.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v4 05/19] tools/docs: python_version: move version check from sphinx-pre-install
+Date: Thu,  4 Sep 2025 09:33:05 +0200
+Message-ID: <784ca5070326558220cc275deaa046a274badebe.1756969623.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756969623.git.mchehab+huawei@kernel.org>
 References: <cover.1756969623.git.mchehab+huawei@kernel.org>
@@ -72,204 +66,355 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-As we're reorganizing the place where doc scripts are located,
-move this one to tools/docs.
+The sphinx-pre-install code has some logic to deal with Python
+version, which ensures that a minimal version will be enforced
+for documentation build logic.
+
+Move it to a separate library to allow re-using its code.
 
 No functional changes.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/Makefile                             | 14 +++++++-------
- Documentation/doc-guide/sphinx.rst                 |  4 ++--
- Documentation/sphinx/kerneldoc-preamble.sty        |  2 +-
- .../translations/it_IT/doc-guide/sphinx.rst        |  4 ++--
- .../translations/zh_CN/doc-guide/sphinx.rst        |  4 ++--
- Documentation/translations/zh_CN/how-to.rst        |  2 +-
- MAINTAINERS                                        |  3 +--
- {scripts => tools/docs}/sphinx-pre-install         |  0
- 8 files changed, 16 insertions(+), 17 deletions(-)
- rename {scripts => tools/docs}/sphinx-pre-install (100%)
+ tools/docs/lib/python_version.py | 133 +++++++++++++++++++++++++++++++
+ tools/docs/sphinx-pre-install    | 120 +++-------------------------
+ 2 files changed, 146 insertions(+), 107 deletions(-)
+ create mode 100644 tools/docs/lib/python_version.py
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 5c20c68be89a..deb2029228ed 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -46,7 +46,7 @@ ifeq ($(HAVE_SPHINX),0)
- .DEFAULT:
- 	$(warning The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed and in PATH, or set the SPHINXBUILD make variable to point to the full path of the '$(SPHINXBUILD)' executable.)
- 	@echo
--	@$(srctree)/scripts/sphinx-pre-install
-+	@$(srctree)/tools/docs/sphinx-pre-install
- 	@echo "  SKIP    Sphinx $@ target."
+diff --git a/tools/docs/lib/python_version.py b/tools/docs/lib/python_version.py
+new file mode 100644
+index 000000000000..0519d524e547
+--- /dev/null
++++ b/tools/docs/lib/python_version.py
+@@ -0,0 +1,133 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# Copyright (c) 2017-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
++
++"""
++Handle Python version check logic.
++
++Not all Python versions are supported by scripts. Yet, on some cases,
++like during documentation build, a newer version of python could be
++available.
++
++This class allows checking if the minimal requirements are followed.
++
++Better than that, PythonVersion.check_python() not only checks the minimal
++requirements, but it automatically switches to a the newest available
++Python version if present.
++
++"""
++
++import os
++import re
++import subprocess
++import sys
++
++from glob import glob
++
++class PythonVersion:
++    """
++    Ancillary methods that checks for missing dependencies for different
++    types of types, like binaries, python modules, rpm deps, etc.
++    """
++
++    def __init__(self, version):
++        """��nitialize self.version tuple from a version string"""
++        self.version = self.parse_version(version)
++
++    @staticmethod
++    def parse_version(version):
++        """Convert a major.minor.patch version into a tuple"""
++        return tuple(int(x) for x in version.split("."))
++
++    @staticmethod
++    def ver_str(version):
++        """Returns a version tuple as major.minor.patch"""
++        return ".".join([str(x) for x in version])
++
++    def __str__(self):
++        """Returns a version tuple as major.minor.patch from self.version"""
++        return self.ver_str(self.version)
++
++    @staticmethod
++    def get_python_version(cmd):
++        """
++        Get python version from a Python binary. As we need to detect if
++        are out there newer python binaries, we can't rely on sys.release here.
++        """
++
++        kwargs = {}
++        if sys.version_info < (3, 7):
++            kwargs['universal_newlines'] = True
++        else:
++            kwargs['text'] = True
++
++        result = subprocess.run([cmd, "--version"],
++                                stdout = subprocess.PIPE,
++                                stderr = subprocess.PIPE,
++                                **kwargs, check=False)
++
++        version = result.stdout.strip()
++
++        match = re.search(r"(\d+\.\d+\.\d+)", version)
++        if match:
++            return PythonVersion.parse_version(match.group(1))
++
++        print(f"Can't parse version {version}")
++        return (0, 0, 0)
++
++    @staticmethod
++    def find_python(min_version):
++        """
++        Detect if are out there any python 3.xy version newer than the
++        current one.
++
++        Note: this routine is limited to up to 2 digits for python3. We
++        may need to update it one day, hopefully on a distant future.
++        """
++        patterns = [
++            "python3.[0-9]",
++            "python3.[0-9][0-9]",
++        ]
++
++        # Seek for a python binary newer than min_version
++        for path in os.getenv("PATH", "").split(":"):
++            for pattern in patterns:
++                for cmd in glob(os.path.join(path, pattern)):
++                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
++                        version = PythonVersion.get_python_version(cmd)
++                        if version >= min_version:
++                            return cmd
++
++        return None
++
++    @staticmethod
++    def check_python(min_version):
++        """
++        Check if the current python binary satisfies our minimal requirement
++        for Sphinx build. If not, re-run with a newer version if found.
++        """
++        cur_ver = sys.version_info[:3]
++        if cur_ver >= min_version:
++            ver = PythonVersion.ver_str(cur_ver)
++            print(f"Python version: {ver}")
++
++            return
++
++        python_ver = PythonVersion.ver_str(cur_ver)
++
++        new_python_cmd = PythonVersion.find_python(min_version)
++        if not new_python_cmd:
++            print(f"ERROR: Python version {python_ver} is not spported anymore\n")
++            print("       Can't find a new version. This script may fail")
++            return
++
++        # Restart script using the newer version
++        script_path = os.path.abspath(sys.argv[0])
++        args = [new_python_cmd, script_path] + sys.argv[1:]
++
++        print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
++
++        try:
++            os.execv(new_python_cmd, args)
++        except OSError as e:
++            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
+diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
+index 954ed3dc0645..d6d673b7945c 100755
+--- a/tools/docs/sphinx-pre-install
++++ b/tools/docs/sphinx-pre-install
+@@ -32,20 +32,10 @@ import subprocess
+ import sys
+ from glob import glob
  
- else # HAVE_SPHINX
-@@ -105,7 +105,7 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
- 	fi
++from lib.python_version import PythonVersion
  
- htmldocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var)))
+-def parse_version(version):
+-    """Convert a major.minor.patch version into a tuple"""
+-    return tuple(int(x) for x in version.split("."))
+-
+-
+-def ver_str(version):
+-    """Returns a version tuple as major.minor.patch"""
+-
+-    return ".".join([str(x) for x in version])
+-
+-
+-RECOMMENDED_VERSION = parse_version("3.4.3")
+-MIN_PYTHON_VERSION = parse_version("3.7")
++RECOMMENDED_VERSION = PythonVersion("3.4.3").version
++MIN_PYTHON_VERSION = PythonVersion("3.7").version
  
- # If Rust support is available and .config exists, add rustdoc generated contents.
-@@ -119,7 +119,7 @@ endif
- endif
  
- texinfodocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,texinfo,$(var),texinfo,$(var)))
+ class DepManager:
+@@ -235,95 +225,11 @@ class AncillaryMethods:
  
- # Note: the 'info' Make target is generated by sphinx itself when
-@@ -131,7 +131,7 @@ linkcheckdocs:
- 	@$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,linkcheck,$(var),,$(var)))
+         return None
  
- latexdocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,latex,$(var),latex,$(var)))
+-    @staticmethod
+-    def get_python_version(cmd):
+-        """
+-        Get python version from a Python binary. As we need to detect if
+-        are out there newer python binaries, we can't rely on sys.release here.
+-        """
+-
+-        result = SphinxDependencyChecker.run([cmd, "--version"],
+-                                            capture_output=True, text=True)
+-        version = result.stdout.strip()
+-
+-        match = re.search(r"(\d+\.\d+\.\d+)", version)
+-        if match:
+-            return parse_version(match.group(1))
+-
+-        print(f"Can't parse version {version}")
+-        return (0, 0, 0)
+-
+-    @staticmethod
+-    def find_python():
+-        """
+-        Detect if are out there any python 3.xy version newer than the
+-        current one.
+-
+-        Note: this routine is limited to up to 2 digits for python3. We
+-        may need to update it one day, hopefully on a distant future.
+-        """
+-        patterns = [
+-            "python3.[0-9]",
+-            "python3.[0-9][0-9]",
+-        ]
+-
+-        # Seek for a python binary newer than MIN_PYTHON_VERSION
+-        for path in os.getenv("PATH", "").split(":"):
+-            for pattern in patterns:
+-                for cmd in glob(os.path.join(path, pattern)):
+-                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
+-                        version = SphinxDependencyChecker.get_python_version(cmd)
+-                        if version >= MIN_PYTHON_VERSION:
+-                            return cmd
+-
+-    @staticmethod
+-    def check_python():
+-        """
+-        Check if the current python binary satisfies our minimal requirement
+-        for Sphinx build. If not, re-run with a newer version if found.
+-        """
+-        cur_ver = sys.version_info[:3]
+-        if cur_ver >= MIN_PYTHON_VERSION:
+-            ver = ver_str(cur_ver)
+-            print(f"Python version: {ver}")
+-
+-            # This could be useful for debugging purposes
+-            if SphinxDependencyChecker.which("docutils"):
+-                result = SphinxDependencyChecker.run(["docutils", "--version"],
+-                                                    capture_output=True, text=True)
+-                ver = result.stdout.strip()
+-                match = re.search(r"(\d+\.\d+\.\d+)", ver)
+-                if match:
+-                    ver = match.group(1)
+-
+-                print(f"Docutils version: {ver}")
+-
+-            return
+-
+-        python_ver = ver_str(cur_ver)
+-
+-        new_python_cmd = SphinxDependencyChecker.find_python()
+-        if not new_python_cmd:
+-            print(f"ERROR: Python version {python_ver} is not spported anymore\n")
+-            print("       Can't find a new version. This script may fail")
+-            return
+-
+-        # Restart script using the newer version
+-        script_path = os.path.abspath(sys.argv[0])
+-        args = [new_python_cmd, script_path] + sys.argv[1:]
+-
+-        print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
+-
+-        try:
+-            os.execv(new_python_cmd, args)
+-        except OSError as e:
+-            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
+-
+     @staticmethod
+     def run(*args, **kwargs):
+         """
+         Excecute a command, hiding its output by default.
+-        Preserve comatibility with older Python versions.
++        Preserve compatibility with older Python versions.
+         """
  
- ifeq ($(HAVE_PDFLATEX),0)
-@@ -144,7 +144,7 @@ else # HAVE_PDFLATEX
+         capture_output = kwargs.pop('capture_output', False)
+@@ -527,11 +433,11 @@ class MissingCheckers(AncillaryMethods):
+         for line in result.stdout.split("\n"):
+             match = re.match(r"^sphinx-build\s+([\d\.]+)(?:\+(?:/[\da-f]+)|b\d+)?\s*$", line)
+             if match:
+-                return parse_version(match.group(1))
++                return PythonVersion.parse_version(match.group(1))
  
- pdfdocs: DENY_VF = XDG_CONFIG_HOME=$(FONTS_CONF_DENY_VF)
- pdfdocs: latexdocs
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	$(foreach var,$(SPHINXDIRS), \
- 	   $(MAKE) PDFLATEX="$(PDFLATEX)" LATEXOPTS="$(LATEXOPTS)" $(DENY_VF) -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/scripts/check-variable-fonts.sh || exit; \
- 	   mkdir -p $(BUILDDIR)/$(var)/pdf; \
-@@ -154,11 +154,11 @@ pdfdocs: latexdocs
- endif # HAVE_PDFLATEX
+             match = re.match(r"^Sphinx.*\s+([\d\.]+)\s*$", line)
+             if match:
+-                return parse_version(match.group(1))
++                return PythonVersion.parse_version(match.group(1))
  
- epubdocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,epub,$(var),epub,$(var)))
+     def check_sphinx(self, conf):
+         """
+@@ -542,7 +448,7 @@ class MissingCheckers(AncillaryMethods):
+                 for line in f:
+                     match = re.match(r"^\s*needs_sphinx\s*=\s*[\'\"]([\d\.]+)[\'\"]", line)
+                     if match:
+-                        self.min_version = parse_version(match.group(1))
++                        self.min_version = PythonVersion.parse_version(match.group(1))
+                         break
+         except IOError:
+             sys.exit(f"Can't open {conf}")
+@@ -562,8 +468,8 @@ class MissingCheckers(AncillaryMethods):
+             sys.exit(f"{sphinx} didn't return its version")
  
- xmldocs:
--	@$(srctree)/scripts/sphinx-pre-install --version-check
-+	@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,xml,$(var),xml,$(var)))
+         if self.cur_version < self.min_version:
+-            curver = ver_str(self.cur_version)
+-            minver = ver_str(self.min_version)
++            curver = PythonVersion.ver_str(self.cur_version)
++            minver = PythonVersion.ver_str(self.min_version)
  
- endif # HAVE_SPHINX
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index 607589592bfb..932f68c53075 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -106,7 +106,7 @@ There's a script that automatically checks for Sphinx dependencies. If it can
- recognize your distribution, it will also give a hint about the install
- command line options for your distro::
+             print(f"ERROR: Sphinx version is {curver}. It should be >= {minver}")
+             self.need_sphinx = 1
+@@ -1304,7 +1210,7 @@ class SphinxDependencyChecker(MissingCheckers):
+             else:
+                 if self.need_sphinx and ver >= self.min_version:
+                     return (f, ver)
+-                elif parse_version(ver) > self.cur_version:
++                elif PythonVersion.parse_version(ver) > self.cur_version:
+                     return (f, ver)
  
--	$ ./scripts/sphinx-pre-install
-+	$ ./tools/docs/sphinx-pre-install
- 	Checking if the needed tools for Fedora release 26 (Twenty Six) are available
- 	Warning: better to also install "texlive-luatex85".
- 	You should run:
-@@ -116,7 +116,7 @@ command line options for your distro::
- 		. sphinx_2.4.4/bin/activate
- 		pip install -r Documentation/sphinx/requirements.txt
+         return ("", ver)
+@@ -1411,7 +1317,7 @@ class SphinxDependencyChecker(MissingCheckers):
+             return
  
--	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 468.
-+	Can't build as 1 mandatory dependency is missing at ./tools/docs/sphinx-pre-install line 468.
+         if self.latest_avail_ver:
+-            latest_avail_ver = ver_str(self.latest_avail_ver)
++            latest_avail_ver = PythonVersion.ver_str(self.latest_avail_ver)
  
- By default, it checks all the requirements for both html and PDF, including
- the requirements for images, math expressions and LaTeX build, and assumes
-diff --git a/Documentation/sphinx/kerneldoc-preamble.sty b/Documentation/sphinx/kerneldoc-preamble.sty
-index 5d68395539fe..16d9ff46fdf6 100644
---- a/Documentation/sphinx/kerneldoc-preamble.sty
-+++ b/Documentation/sphinx/kerneldoc-preamble.sty
-@@ -220,7 +220,7 @@
- 	    If you want them, please install non-variable ``Noto Sans CJK''
- 	    font families along with the texlive-xecjk package by following
- 	    instructions from
--	    \sphinxcode{./scripts/sphinx-pre-install}.
-+	    \sphinxcode{./tools/docs/sphinx-pre-install}.
- 	    Having optional non-variable ``Noto Serif CJK'' font families will
- 	    improve the looks of those translations.
- 	\end{sphinxadmonition}}
-diff --git a/Documentation/translations/it_IT/doc-guide/sphinx.rst b/Documentation/translations/it_IT/doc-guide/sphinx.rst
-index 1f513bc33618..a5c5d935febf 100644
---- a/Documentation/translations/it_IT/doc-guide/sphinx.rst
-+++ b/Documentation/translations/it_IT/doc-guide/sphinx.rst
-@@ -109,7 +109,7 @@ Sphinx. Se lo script riesce a riconoscere la vostra distribuzione, allora
- sar�� in grado di darvi dei suggerimenti su come procedere per completare
- l'installazione::
+         if not self.need_sphinx:
+             # sphinx-build is present and its version is >= $min_version
+@@ -1507,7 +1413,7 @@ class SphinxDependencyChecker(MissingCheckers):
+         else:
+             print("Unknown OS")
+         if self.cur_version != (0, 0, 0):
+-            ver = ver_str(self.cur_version)
++            ver = PythonVersion.ver_str(self.cur_version)
+             print(f"Sphinx version: {ver}\n")
  
--	$ ./scripts/sphinx-pre-install
-+	$ ./tools/docs/sphinx-pre-install
- 	Checking if the needed tools for Fedora release 26 (Twenty Six) are available
- 	Warning: better to also install "texlive-luatex85".
- 	You should run:
-@@ -119,7 +119,7 @@ l'installazione::
- 		. sphinx_2.4.4/bin/activate
- 		pip install -r Documentation/sphinx/requirements.txt
+         # Check the type of virtual env, depending on Python version
+@@ -1613,7 +1519,7 @@ def main():
  
--	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 468.
-+	Can't build as 1 mandatory dependency is missing at ./tools/docs/sphinx-pre-install line 468.
+     checker = SphinxDependencyChecker(args)
  
- L'impostazione predefinita prevede il controllo dei requisiti per la generazione
- di documenti html e PDF, includendo anche il supporto per le immagini, le
-diff --git a/Documentation/translations/zh_CN/doc-guide/sphinx.rst b/Documentation/translations/zh_CN/doc-guide/sphinx.rst
-index 23eac67fbc30..3375c6f3a811 100644
---- a/Documentation/translations/zh_CN/doc-guide/sphinx.rst
-+++ b/Documentation/translations/zh_CN/doc-guide/sphinx.rst
-@@ -84,7 +84,7 @@ PDF���LaTeX������
- ������������������������������������Sphinx������������������������������������������������������������������������
- ������������������::
+-    checker.check_python()
++    PythonVersion.check_python(MIN_PYTHON_VERSION)
+     checker.check_needs()
  
--	$ ./scripts/sphinx-pre-install
-+	$ ./tools/docs/sphinx-pre-install
- 	Checking if the needed tools for Fedora release 26 (Twenty Six) are available
- 	Warning: better to also install "texlive-luatex85".
- 	You should run:
-@@ -94,7 +94,7 @@ PDF���LaTeX������
- 		. sphinx_2.4.4/bin/activate
- 		pip install -r Documentation/sphinx/requirements.txt
- 
--	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 468.
-+	Can't build as 1 mandatory dependency is missing at ./tools/docs/sphinx-pre-install line 468.
- 
- ������������������������������html���PDF������������������������������������������������������LaTeX���������
- ���������������������������������Python���������html���������������������������������������������������������
-diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/translations/zh_CN/how-to.rst
-index ddd99c0f9b4d..714664fec308 100644
---- a/Documentation/translations/zh_CN/how-to.rst
-+++ b/Documentation/translations/zh_CN/how-to.rst
-@@ -64,7 +64,7 @@ Linux ��������������������������� Linux ���������������������������������������
- ::
- 
- 	cd linux
--	./scripts/sphinx-pre-install
-+	./tools/docs/sphinx-pre-install
- 
- ��� Fedora ���������������������������������::
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ef87548b8f88..06bbed30b788 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7310,7 +7310,6 @@ F:	scripts/lib/abi/*
- F:	scripts/lib/kdoc/*
- F:	tools/docs/*
- F:	tools/net/ynl/pyynl/lib/doc_generator.py
--F:	scripts/sphinx-pre-install
- X:	Documentation/ABI/
- X:	Documentation/admin-guide/media/
- X:	Documentation/devicetree/
-@@ -7345,7 +7344,7 @@ L:	linux-doc@vger.kernel.org
- S:	Maintained
- F:	Documentation/sphinx/parse-headers.pl
- F:	scripts/documentation-file-ref-check
--F:	scripts/sphinx-pre-install
-+F:	tools/docs/sphinx-pre-install
- 
- DOCUMENTATION/ITALIAN
- M:	Federico Vaga <federico.vaga@vaga.pv.it>
-diff --git a/scripts/sphinx-pre-install b/tools/docs/sphinx-pre-install
-similarity index 100%
-rename from scripts/sphinx-pre-install
-rename to tools/docs/sphinx-pre-install
+ # Call main if not used as module
 -- 
 2.51.0
 
