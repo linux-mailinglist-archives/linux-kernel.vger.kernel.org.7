@@ -1,148 +1,219 @@
-Return-Path: <linux-kernel+bounces-801573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5CFB446EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E437FB446F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DC1A40672
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05F516D6CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB8827A92B;
-	Thu,  4 Sep 2025 20:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B138B27AC4C;
+	Thu,  4 Sep 2025 20:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jPvWeScN"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvOkBsqE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4994C2737E0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 20:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B47277030;
+	Thu,  4 Sep 2025 20:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757016277; cv=none; b=ujknQLyxWx3WWmKZtSxsnFJ40u57hfIVFjYv2HQKkN3yjnHjv0DVQo/wtlpJ4Rsavv47LMoVeQZvYNiYhxqLvXvW6CZssUsMueNa6grNl7b/TTbigDTmwX1TCoOglfUs7fQZmNbENXfuTjrbZyWzSnVXnYsTKHNvSgNF+9W9vB8=
+	t=1757016393; cv=none; b=VoZuBtgI9G06s6xCR/2uoOmhfMKb4ulTLOVkdSCZHlQBpDDS6c9WTDILInL8T49jqkH08SKoIWvN1hy91vPLX/6X+F0x01BvUNjdd02t/ZAadz7DDl9PUHmA+9tIKwznT3m+xPT/lG7mWLQ0/bkWrTFf19pelzW7V7EsOE2PaOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757016277; c=relaxed/simple;
-	bh=9CtM8kOig8lhqQfkqBq4cGnzcIdZCxWezMouBG2wwGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hofmjVWRdqWAO3ln/2GsqkstkI79ZLN3GDowFPuWclhV8lDA4kgUZl07C8e4k4q6gdsbCckr1YjbrPnrldxzXvqmZpYp8Al3lWENbZPjYhs3fewZQ9/SqcVU0MsJn+InNn37/CZeHH5TZ4Nae/VqX/kmXog9WGH7KWZvjmV5+oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jPvWeScN; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=03uN
-	vgwUPEr5pFTjghRkW0v1kpVYYKwWd6HYjQaWs4w=; b=jPvWeScNBfdAuCiRqHB6
-	sxRkRcCUuHczF293rrs3sjddA/+gnkLukkz4I0jJMMxUDE1cP6vxkysGWImknBB1
-	TMpkn+UcHXPQV7DoToNgx0XqOgOYO6Zm0ahFzgfj+rfeSRTN1HMekeGp0xi5y1NG
-	Tk03wvaZQh/wzkNn0Wez6EPAuCkDTblPhnnkANfS19i6JEhBmeaWf/TWHdV9KcDQ
-	MXBuqI/2N0+Y6Beuz/RRqqqotswrxd8qyKfe7K/tUY2hqeIAfbgsZw4FNOV74/sK
-	Ae5l/CS7lpVAoWP9xBipfj7jPI3RUz98ZtNLsRBflD5VFEiHA197+nFQhfFh0pg4
-	gw==
-Received: (qmail 3780798 invoked from network); 4 Sep 2025 22:04:33 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2025 22:04:33 +0200
-X-UD-Smtp-Session: l3s3148p1@rs7NOv89wMsgAQnoAEbDAKz8Ugxpiihv
-Date: Thu, 4 Sep 2025 22:04:32 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Mohammad Gomaa <midomaxgomaa@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kenalba@google.com,
-	hbarnor@chromium.org, rayxu@google.com
-Subject: Re: [PATCH WIP v2] i2c: add tracepoints to aid debugging in
- i2c-core-base
-Message-ID: <aLnw0L3ncTsQm2eD@shikoro>
-References: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
+	s=arc-20240116; t=1757016393; c=relaxed/simple;
+	bh=8sflmMM9VERUA+boqGi1GL6vzSZZVoB8dkgxOo5XWdE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mabe0KdEIFeq+DiHJfKing5kFzpjK9u5BiXb6bN/VrDWnW36T/7hDXajZJmliEJ9rUXE6qMce6m1FL3xmp4LxS+QAAuj0CVD5tivUym3KZVLEMT+fHKz1Dd/qPkSCSdAOv6b/Oje7lULspOk2/R1dUWjiq9tiAOiTQ3W6LJKKtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvOkBsqE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61044C4CEF0;
+	Thu,  4 Sep 2025 20:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757016392;
+	bh=8sflmMM9VERUA+boqGi1GL6vzSZZVoB8dkgxOo5XWdE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YvOkBsqEiJQMrYCg5s3O05y+7UzRW9N5WIqKeVib4Cj6zb0e9W0KVF4vhOlEcbnRu
+	 3CUEsB16xTmbDkCaZpefKBt4PGkYkAF/Clgzg4/FXibqmrP/kbDqyQN4rEaDwTdNTB
+	 Rf+hbYuBs8kz72P3Rn8E7EDNYAJ7kYm4FL0qKzaSxUdzc53jYoIRuI5p+3JsiFsOX/
+	 SRiIxTfwGdu+4eYaslN1hA3hiObpdGF/bJuQ/69gsyPDMwSaPG9xwU+wFXOH1yMKOm
+	 OJYt3cYmBcqB9aHKKMjHq48NX1aZiRVsw4zdepgcPLBjHKqOrNWeXCzPknZLuFSvf8
+	 ykINLc6pMOHRA==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7456b27fac1so1563672a34.2;
+        Thu, 04 Sep 2025 13:06:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4VZ5bJweBRDzfxU9dZfIHcXGOPaJtKggcAlxG8n3txYlwEPW98jOz1Mc4C5vBEa3PgSopthcTdXI=@vger.kernel.org, AJvYcCXTOiUMUU70mXEdyg+LnJoBCynzrerpnXrBANKuauIImWdgO+XirRI3Nb4lwB0aK9qsmiog1Ehqzf83sdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz35crRml58WrelNUsnlq+FX9K7pv8Px0W6re0jDQBEBXHsg3Hy
+	cC8zkZwMOPnF4Qrospq9HyGH1lJ2UvXW9YXXtWlD9773Qd5ZAM+IxxYZrE/aqlFQfJX7T9KTY29
+	FccdzgQZ8O1DxyWECA/wA6eZd5iKixzU=
+X-Google-Smtp-Source: AGHT+IFmwswv9DnPxP2er9PFfSzw0atJNw24WOUl7SUel+Fn6ts15ddcSScUEhJejvARV/If4bjRsBN7UNW5wb65FpI=
+X-Received: by 2002:a05:6830:82f2:b0:746:d22b:11f2 with SMTP id
+ 46e09a7af769-746d22b1b32mr1430823a34.4.1757016391707; Thu, 04 Sep 2025
+ 13:06:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oLDJ+0ds4x0QP+bE"
-Content-Disposition: inline
-In-Reply-To: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
-
-
---oLDJ+0ds4x0QP+bE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250828034646.10700-1-tuhaowen@uniontech.com>
+In-Reply-To: <20250828034646.10700-1-tuhaowen@uniontech.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Sep 2025 22:06:20 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hekD1PyC4BrX7HCO2hTZhyTGSyjfQYXY5r5v3QMQfscw@mail.gmail.com>
+X-Gm-Features: Ac12FXxsZKiEN2e_hCBDWZMIH7MjBykmdvz6PA47uOJM9tbif_moxUYZYtvTyjA
+Message-ID: <CAJZ5v0hekD1PyC4BrX7HCO2hTZhyTGSyjfQYXY5r5v3QMQfscw@mail.gmail.com>
+Subject: Re: [RFC PATCH] PM: Add configurable sync timeout to prevent suspend hang
+To: tuhaowen <tuhaowen@uniontech.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Pavel Machek <pavel@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	huangbibo@uniontech.com, Saravana Kannan <saravanak@google.com>, 
+	Samuel Wu <wusamuel@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mohammad,
+On Thu, Aug 28, 2025 at 5:47=E2=80=AFAM tuhaowen <tuhaowen@uniontech.com> w=
+rote:
+>
+> When users initiate suspend while large file copy operations are in
+> progress (especially to USB storage devices), the system can appear to
+> hang with a black screen for an extended period. This occurs because
+> ksys_sync_helper() in the suspend path blocks until all pending I/O
+> operations complete, which can take several minutes for large file
+> transfers.
+>
+> This creates a poor user experience where the system appears
+> unresponsive, and users may force power off thinking the system has
+> crashed.
+>
+> This RFC proposes adding an optional timeout mechanism for the sync
+> operation during suspend. The implementation includes:
+>
+> - A configurable timeout (default: 60 seconds, disabled by default)
+> - Module parameters for runtime configuration:
+>   * sync_on_suspend_timeout_enable: Enable/disable the timeout feature
+>   * sync_on_suspend_timeout_ms: Configure timeout duration
+> - Uses a separate kernel thread to perform sync with timeout monitoring
+> - On timeout, suspend is aborted with clear error messaging
+> - Maintains backward compatibility (disabled by default)
+>
+> Questions for the community:
+>
+> 1. Is this approach acceptable for addressing the user experience issue?
+> 2. Are there better alternatives to handle long-running sync operations
+>    during suspend?
 
-On Sun, Aug 17, 2025 at 10:55:14AM +0300, Mohammad Gomaa wrote:
-> Add tracepoints to i2c-core-base.c file to help trace
-> and debug I2C device probe failures.
->=20
-> The new trace points are:
-> - i2c_device_probe_debug: records non-failure routines
->   e.g. IRQ 0.
-> - i2c_device_probe_complete: records failed & successful
->   probbes with appropriate trace message.
->=20
-> To support operation of these tracepoints an enum
-> was added that stores log message for debug and failure.
->=20
-> Signed-off-by: Mohammad Gomaa <midomaxgomaa@gmail.com>
+Yes, please see
+https://lore.kernel.org/linux-pm/20250821004237.2712312-1-wusamuel@google.c=
+om/
+
+> 3. Should the default timeout value be different?
+> 4. Any concerns with the implementation approach?
+>
+> The feature is disabled by default to ensure no regression in existing
+> behavior. When enabled, it allows users to abort suspend if sync takes
+> too long, providing immediate feedback rather than an apparent system
+> hang.
+>
+> Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
 > ---
-> Hello,
->=20
-> This patch adds tracepoints to i2c-core-base to aid with debugging I2C pr=
-obing failrues.
->=20
-> The motivation for this comes from my work in Google Summer of Code (GSoC=
-) 2025:
-> "ChromeOS Platform Input Device Quality Monitoring"
-> https://summerofcode.withgoogle.com/programs/2025/projects/uCdIgK7K
->=20
-> This is my first submission to the Linux kernel, so any feedback is welco=
-me.
-
-Welcome to Kernel hacking!
-
-I understand from the link above that this patch is intended for quality
-assurance. With automatic testing, you can find regression of firmware
-updates much easier.
-
-The drawback is that it is quite some code for such a niche use case.
-Also, I would think this code is very fragile because whenever the code
-path in probe changes, one must ensure that err_reason is still set
-accordingly. This adds maintenance burden.
-
-I wonder if you can't use the output in the kernel log to identify
-problems? We could add some if they are really missing. I know such
-strings are not static. Still, my gut feeling says some application
-should handle the complexity, not the kernel. Wouldn't we need a patch
-like this for each and every subsystem if we follow that route?
-
-Happy hacking,
-
-   Wolfram
-
---oLDJ+0ds4x0QP+bE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi58MwACgkQFA3kzBSg
-KbYRtw//f79DM39aMbcZLj/iJn0Rba+V2KLROUlT9cmx1NgvbVR2VSL1YqH/BRy/
-IbDnHHdEhVFFoS5gWGLT/szYUjoOdEKT/rwc5rEe7najMxAFQ//bp5td7T5UDH+m
-VRVzGENbhys7vPABI6KEQ5yrMLhvbTDpB/b2MDsVaNVUd4gfQQ2QwVNb+uUSKO7K
-Nio+MK/mf6+CXpRhStDr9edrx70lkFlmPj63APMka631k4CFwQPbAXismIs/kasn
-C77JWftI6jLSRJcZP2glQ0n5MfxFF87uzgl0ALiTDxSxXtlZksA3EpCIXuuAVxYO
-NZMrDAW5D40uHmRxRsXACptqSabh/yKUUg3AmHpl/SeRqeWThBjt/poXfTUFB9i9
-PH8Kr6PAn+DZEToMx2bsbXlkmxOn3NcexVfqhj5Zz8bBd7UJ/zauga9ACSaaVJAa
-haXoBnQd2Xanz1bzk/IxI3HPa7wYCE7oGfXK0ZptLt7YCNhn6uFc8hflCfPARLA9
-16Bhb5eksk7er5RgwaXrPGuZDImuctkNQP3UpkQsELYAFTTjy5+BqePgx06CoeIn
-YyXtdTBih25G04OxqhjRvY424wWCKb70SaaDHPjF2PLA/Mxn5nNHmgpuq1vTe3+j
-nC3QgT4l63VfMvTRAN3LO7w925hVrqHipmzyDHcEx6WBxjxyGhU=
-=hxUd
------END PGP SIGNATURE-----
-
---oLDJ+0ds4x0QP+bE--
+>  kernel/power/suspend.c | 56 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 55 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index 8eaec4ab1..feb1583c5 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -30,9 +30,25 @@
+>  #include <trace/events/power.h>
+>  #include <linux/compiler.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/completion.h>
+> +#include <linux/kthread.h>
+> +#include <linux/jiffies.h>
+>
+>  #include "power.h"
+>
+> +/* Sync timeout parameters */
+> +static bool sync_on_suspend_timeout_enable;
+> +module_param(sync_on_suspend_timeout_enable, bool, 0644);
+> +MODULE_PARM_DESC(sync_on_suspend_timeout_enable, "Enable sync timeout du=
+ring suspend (default: false)");
+> +
+> +static unsigned int sync_on_suspend_timeout_ms =3D 60000;
+> +module_param(sync_on_suspend_timeout_ms, uint, 0644);
+> +MODULE_PARM_DESC(sync_on_suspend_timeout_ms, "Sync timeout in millisecon=
+ds during suspend (default: 60000)");
+> +
+> +/* Sync timeout implementation */
+> +static struct completion sync_completion;
+> +static struct task_struct *sync_task;
+> +
+>  const char * const pm_labels[] =3D {
+>         [PM_SUSPEND_TO_IDLE] =3D "freeze",
+>         [PM_SUSPEND_STANDBY] =3D "standby",
+> @@ -61,6 +77,40 @@ static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
+>  enum s2idle_states __read_mostly s2idle_state;
+>  static DEFINE_RAW_SPINLOCK(s2idle_lock);
+>
+> +static int sync_thread_func(void *data)
+> +{
+> +       ksys_sync_helper();
+> +       complete(&sync_completion);
+> +       return 0;
+> +}
+> +
+> +static int suspend_sync_with_timeout(void)
+> +{
+> +       unsigned long timeout_jiffies;
+> +
+> +       if (!sync_on_suspend_timeout_enable) {
+> +               ksys_sync_helper();
+> +               return 0;
+> +       }
+> +
+> +       init_completion(&sync_completion);
+> +       sync_task =3D kthread_run(sync_thread_func, NULL, "suspend_sync")=
+;
+> +       if (IS_ERR(sync_task)) {
+> +               pr_warn("PM: Failed to create sync thread, performing syn=
+c directly\n");
+> +               ksys_sync_helper();
+> +               return 0;
+> +       }
+> +
+> +       timeout_jiffies =3D msecs_to_jiffies(sync_on_suspend_timeout_ms);
+> +       if (!wait_for_completion_timeout(&sync_completion, timeout_jiffie=
+s)) {
+> +               pr_warn("PM: Sync operation timed out after %u ms, aborti=
+ng suspend\n",
+> +                               sync_on_suspend_timeout_ms);
+> +               kthread_stop(sync_task);
+> +               return -ETIMEDOUT;
+> +       }
+> +       return 0;
+> +}
+> +
+>  /**
+>   * pm_suspend_default_s2idle - Check if suspend-to-idle is the default s=
+uspend.
+>   *
+> @@ -585,8 +635,12 @@ static int enter_state(suspend_state_t state)
+>
+>         if (sync_on_suspend_enabled) {
+>                 trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+> -               ksys_sync_helper();
+> +               error =3D suspend_sync_with_timeout();
+>                 trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+> +               if (error) {
+> +                       pr_err("PM: Sync timeout, aborting suspend\n");
+> +                       goto Unlock;
+> +               }
+>         }
+>
+>         pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
+tate]);
+> --
+> 2.20.1
+>
 
