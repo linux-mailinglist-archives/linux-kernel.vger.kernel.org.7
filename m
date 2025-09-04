@@ -1,118 +1,138 @@
-Return-Path: <linux-kernel+bounces-800634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF02B43A08
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:27:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84244B439FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E696863D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0FD07ADB95
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102482FE07D;
-	Thu,  4 Sep 2025 11:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527E72FF17D;
+	Thu,  4 Sep 2025 11:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WUAXQiZW"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XMokCMmm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF8E2FE04F;
-	Thu,  4 Sep 2025 11:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309C2FD7A7
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984982; cv=none; b=JwPqftYlxgCJmGRO/SjQbKATXGXU+I6vhrZ6eL8ZLAh7XlW5d6H68mcKFaDFI7sSLoCEw6yUlR4HymR0+ZT0Vz2lNKvLWDcdOkjJ7trOyZ06Sg7W0In+nrutvAnp2JBW/w8/m9Rvm6RHxFEbej6g7ZIVsZjbr0v7x4a0DuK6Rz0=
+	t=1756985097; cv=none; b=rxhy86j7cndMyJBr/lkrEacvdDb/u0zbsfrbFlLB6l/yHvi8rObN52oRPYcj4Ui6QeBehsCKzCQ4f7ncs6+KGbRSoJbUHbsbyFszq7emjg+UwGXodKQa4bQnphfy50wuQqZU9yjNL2B0tVlGqtfr/TCyeT8m9Pv+xSaJqIC1jzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984982; c=relaxed/simple;
-	bh=jy4P8UWYGHbFspF7iugtJuJkmFtynAOIkxNyhFJU0zU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aRGJ5cq2ppG6l7WhU9XvHtVRzT7PP9IH3fGfQVxL1gEKZg4IDQ8UZg5wuGsYaUt3ghfe4m3ot9tOrUPhMubGguHIqnVdmpHePjuliffpzINKgn+xrYNOuJd3fZVvmw6XbE+7Mi3mRuaKIsyp7T72Rw6dWp6s+F+PehIUkvmjQ1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WUAXQiZW; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584BMtb93000171;
-	Thu, 4 Sep 2025 06:22:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756984975;
-	bh=otDRlUkWg1EAiRuCq1NNN2J1DtOx7l367UeVek+CWEM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=WUAXQiZWiSR4tIFgwlCgDpWK/0Vt5NFTkmux46Q7GxinElGNoCLKJ03quPGjz75HE
-	 98IRYlm500yL7YFkv2R3+ChpQkg07CbOHCMcHRxAuI53hnl6eX2/KBZDwo/Jp9bc2C
-	 Bkbo+xuai77EJ8dAVHNN4N6lRZeKumLwXCixaRXk=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584BMtmh829576
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 06:22:55 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 06:22:54 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 06:22:54 -0500
-Received: from akashdeep-HP-Z2-Tower-G5-Workstation.dhcp.ti.com (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584BMf5x3176722;
-	Thu, 4 Sep 2025 06:22:50 -0500
-From: Akashdeep Kaur <a-kaur@ti.com>
-To: <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>, <vigneshr@ti.com>,
-        <d-gole@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <vishalm@ti.com>, <sebin.francis@ti.com>
-Subject: [PATCH v4 1/4] arm64: dts: ti: k3-am62p5-sk: Remove the unused cfg in USB1_DRVVBUS
-Date: Thu, 4 Sep 2025 16:52:35 +0530
-Message-ID: <20250904112238.522591-2-a-kaur@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904112238.522591-1-a-kaur@ti.com>
-References: <20250904112238.522591-1-a-kaur@ti.com>
+	s=arc-20240116; t=1756985097; c=relaxed/simple;
+	bh=kf+9HDiVeFZDHfJthh5dLpO1I207zVKh8nvH272oWPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h61yrVTuQeWc4is5XRPATN44T0a5fWZldPKxDJT3Xgaqit+32iJRc6a1i6qaGVsTVWRpG+8zP5vp8Gn5dZtBJiQQNclpoA+PpaiGwyg3xy+rzfOi6XQ4spCNm7ktSocjWDSYrCu3uIj6nPZi00Z/jqwRh4JIf2deb/ep2HYugRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XMokCMmm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756985095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NNlSWipseSmsVlx3oPXi/Dm4sWLczG9la9f/1OIiTnU=;
+	b=XMokCMmmVjvf4fBVvZrKqiWYm3tX69nSwgqtfjJcgZ8PUluCOII+80J6R5jAcn0ARjezdQ
+	IcQwCXFMjCQlU02RXo+xDF6FUv4z+lvPaXbyVAJq1JDt0cYX9wEPrKt/T5sWfJ5slNpUYk
+	3g81Zia5zlHIRjtQfnxYPAhzvgUHA+Q=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-nqnVc4rAM9WkkRaS95Gtzw-1; Thu,
+ 04 Sep 2025 07:24:49 -0400
+X-MC-Unique: nqnVc4rAM9WkkRaS95Gtzw-1
+X-Mimecast-MFC-AGG-ID: nqnVc4rAM9WkkRaS95Gtzw_1756985088
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E0D91800378;
+	Thu,  4 Sep 2025 11:24:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 481FE3002D26;
+	Thu,  4 Sep 2025 11:24:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  4 Sep 2025 13:23:25 +0200 (CEST)
+Date: Thu, 4 Sep 2025 13:23:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
+ uprobe when ip is changed
+Message-ID: <20250904112317.GD27255@redhat.com>
+References: <20250902143504.1224726-1-jolsa@kernel.org>
+ <20250902143504.1224726-3-jolsa@kernel.org>
+ <20250903112648.GC18799@redhat.com>
+ <aLicCjuqchpm1h5I@krava>
+ <20250904084949.GB27255@redhat.com>
+ <aLluB1Qe6Y9B8G_e@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLluB1Qe6Y9B8G_e@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-After the SoC has entered the DeepSleep low power mode, USB1 can be used
-to wakeup the SoC based on USB events triggered by USB devices. This
-requires that the pin corresponding to the Type-A connector remains pulled
-up even after the SoC has entered the DeepSleep low power mode.
-For that, either DeepSleep pullup configuration can be selected or the pin
-can have the same configuration that it had when SoC was in active mode.
-But, in order for DeepSleep configuration to take effect, the DeepSleep
-control bit has to be enabled.
-Remove the unnecessary DeepSleep state configuration from USB1_DRVBUS pin,
-as the DeepSleep control bit is not set and the active configuration is
-sufficient to keep the pin pulled up. This simplifies the setup and removes
-redundant configuration.
+On 09/04, Jiri Olsa wrote:
+>
+> On Thu, Sep 04, 2025 at 10:49:50AM +0200, Oleg Nesterov wrote:
+> > On 09/03, Jiri Olsa wrote:
+> > >
+> > > On Wed, Sep 03, 2025 at 01:26:48PM +0200, Oleg Nesterov wrote:
+> > > > On 09/02, Jiri Olsa wrote:
+> > > > >
+> > > > > If user decided to take execution elsewhere, it makes little sense
+> > > > > to execute the original instruction, so let's skip it.
+> > > >
+> > > > Exactly.
+> > > >
+> > > > So why do we need all these "is_unique" complications? Only a single
+> > > > is_unique/exclusive consumer can change regs->ip, so I guess handle_swbp()
+> > > > can just do
+> > > >
+> > > > 	handler_chain(uprobe, regs);
+> > > > 	if (instruction_pointer(regs) != bp_vaddr)
+> > > > 		goto out;
+> > >
+> > > hum, that's what I did in rfc [1] but I thought you did not like that [2]
+> > >
+> > > [1] https://lore.kernel.org/bpf/20250801210238.2207429-2-jolsa@kernel.org/
+> > > [2] https://lore.kernel.org/bpf/20250802103426.GC31711@redhat.com/
+> > >
+> > > I guess I misunderstood your reply [2], I'd be happy to drop the
+> > > unique/exclusive flag
+> >
+> > Well, but that rfc didn't introduce the exclusive consumers, and I think
+> > we agree that even with these changes the non-exclusive consumers must
+> > never change regs->ip?
+>
+> ok, got excited too soon.. so you meant getting rid of is_unique
+> check only for this patch and have just change below..  but keep
+> the unique/exclusive flag from patch#1
 
-This reverts commit 115290c112952db27009668aa7ae2f29920704f0.
+Yes, this is what I meant,
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> IIUC Andrii would remove the unique flag completely?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index 899da7896563..e8f0ac2c55e2 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -360,7 +360,7 @@ AM62PX_IOPAD(0x01b0, PIN_OUTPUT, 2) /* (G20) MCASP0_ACLKR.UART1_TXD */
- 
- 	main_usb1_pins_default: main-usb1-default-pins {
- 		pinctrl-single,pins = <
--			AM62PX_IOPAD(0x0258, PIN_INPUT | PIN_DS_PULLUD_ENABLE | PIN_DS_PULL_UP, 0) /* (G21) USB1_DRVVBUS */
-+			AM62PX_IOPAD(0x0258, PIN_INPUT, 0) /* (G21) USB1_DRVVBUS */
- 		>;
- 	};
- 
--- 
-2.34.1
+Lets wait for Andrii...
+
+Oleg.
 
 
