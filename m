@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-799993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377E0B43228
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:16:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337D2B4322E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0BF1C24B5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E750C544E2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594FE259C98;
-	Thu,  4 Sep 2025 06:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A525B1D2;
+	Thu,  4 Sep 2025 06:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="lKh6Aatz"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YQ0V4/o6"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52254243969;
-	Thu,  4 Sep 2025 06:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A9D2417D4
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756966599; cv=none; b=GGpEI7mu4UJZ2gLKnGoMDxY6VjMk6dzbKGtoHaje0qINptGQZ1rwN0decApJ53dG19lt9vUO/zyiC+TzB+KHLldChNQ3O1y9/ZxJRndcYE3hX59vDkHbMB2r6FogEahjqG/yqm2g4m0XafEwveGkWo6NINNrjA70mweyADx/2us=
+	t=1756966738; cv=none; b=B9DuIlt2OLI50cha4N8Uq/RylNNYYQUB9MzgduGntQ6J1crQSLjOXyzT0+0b0TiZX4DQkSwOg3fhs+/1tEBOUYqrXh1vQpXayQcZaH4CZrIa3F9IBi9HxQGobAGgSTkn5Wp9Agqf93yygnV3OvpQMpSFD0bzlNBevjA7aIf5yN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756966599; c=relaxed/simple;
-	bh=c2nW3/KugqyY7pq43bJf9Y2vSQqLlGEPOYwEur+SKZk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ErSrBsL+ru25drJTZR0uA7PUGAn4IhBjlZzIh0aadxwoPag1riAdYGIqZ3eZPGSYuvXsRXcu5V7rd51o4q/lFHyfSJzI4fRP7db8FoiGo+XPrnyyZmOZoACKaVFwf1VorMwMhHumCgfc8iHCnnhG6BQymnn0mKwybMqPtGTVwYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=lKh6Aatz; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1756966738; c=relaxed/simple;
+	bh=V+SCQTip4Jj4Bo7UqGS8PgqQeKkz3sa/LNgtAzDwCz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i+RO7VMC0bD/PUrDDCTivP1MnoCIgC6la2x0Y2TWs4hpKyLUp6tIjPz/6RlaeFFXSmOWiC3SGtiZfaUpACx8jFaYUr1Oy3zdYyoW4jOE2GQ74lMzLsGL4IUFnm7LEJ8Jv3uuhXOfTdGBzrOk/5KCVQ8nT1qhe8w5LseP8OaaCAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YQ0V4/o6; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-336d3e4df3eso5683311fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756966589;
-	bh=c2nW3/KugqyY7pq43bJf9Y2vSQqLlGEPOYwEur+SKZk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=lKh6Aatz5mv014BoB+Z+Ao7PJ5twnX2TKJP6xpJsTbGIBZpE/gqnk/JPmrOZWO7qF
-	 RrAx34nfvPXC9r/v4ZwCQVyfN5ADQLin7vTXjkChE1iy7S1lUC2ofUJ4ohyZj6JRaF
-	 kFcRurYGixKKJxzZnao9Fcf3RwGlgZkI445ur+A3h71l10nJiM0y8QaLOlmUV/NRly
-	 szJ0zNnCXUJHmDuHqFiYBOlCDi02PzjCVfuhLN3n3fuxw9QW9wFN7JeRVIFrjZgqzC
-	 6sLV0cFSjaEYF8gtBjorQpvmE+2j3O7TQF+aoU7AVerDMYV8CSzKSN4J9PdcauYyQG
-	 FaT4v7+MW0bzg==
-Received: from [192.168.72.161] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id DEF8D640B6;
-	Thu,  4 Sep 2025 14:16:27 +0800 (AWST)
-Message-ID: <b4891bd683d4802d6ab3c542b446c14081ecf8d6.camel@codeconstruct.com.au>
-Subject: Re: [PATCH net-next v28 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Adam Young <admiyo@os.amperecomputing.com>, Matt Johnston
- <matt@codeconstruct.com.au>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>
-Date: Thu, 04 Sep 2025 14:16:27 +0800
-In-Reply-To: <20250904040544.598469-2-admiyo@os.amperecomputing.com>
-References: <20250904040544.598469-1-admiyo@os.amperecomputing.com>
-	 <20250904040544.598469-2-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+        d=chromium.org; s=google; t=1756966735; x=1757571535; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7CQBkphJcdYBghhb0rqPa4FTq1gxFu4hiwbVOVVdraE=;
+        b=YQ0V4/o6wOwedE4WLJ0UhQs/S9981jM09Alpui5FQ8Fsxwot/cL1jZZyBmzbU1xJiQ
+         zNCmDYHwzYdMHZmTXYs+hyKNSQuFa2BSKZ2FJHI1e4bpLF+aAiLTZdd2L/UnMdsl6UJR
+         ElJCJtzpAFhrjbvgm5TIO+kvq27B7tnjvS7SU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756966735; x=1757571535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7CQBkphJcdYBghhb0rqPa4FTq1gxFu4hiwbVOVVdraE=;
+        b=oogkND4QKG/TPRKIvgQd8rCJCd5wIqguttqPm3KTq8IFaIVR4A3c3MDQwlvgubIJ4c
+         Sdgpa8aMCajUXsFPZqKyX3B0v4Q3D294dz7WL1Uhg54UnbTsjJK9jAkOCRK15kXHYv5s
+         EL0lRMN40mSzRo/0DQWCEdkYXA3Bcfpy0HI8R3yp0H2JAkE34YypSOmj3+Zby4PlZ0Gz
+         JdyttjlGT2kkyZudqIuqZ0o+PGZy8bchidc1YLiqVpo+fuZ/eHitWysqkY3e2d8OMGna
+         cMOcUIH41sDWSwKeJRFoQHdGm+yvC/pIyq/b8+yyBr6VTxRovaNYLBwKoLP6mCoHwg/t
+         EE6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFqvnfs7IQaNMdrYBGlauwRdOI2x3n3BjdzP09WJazepCxO66jl4o3z+vVoB2zbHmz18IfEEnH0iFrMUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLC5Co3lmAltGtOmhJRzN2IvGVTWKG1VT1SDnY2COYrPw6lV+y
+	c2vgBUcGTnWnXv72YDGFBYtWC0gDMnUMaRKksGKBrSLIy/I4des2V1i2c+imfp7OCEpgkXeNBV1
+	BMKdV+19VtfZPEZp4s7B7TQ5X1RbDWZMDb/wktEYT
+X-Gm-Gg: ASbGnctunn1iftMpx6KejG/xC4P+dTcu/tEeL1gzoYY2uHZM/vSktIBtrbuBe5dzfDh
+	Et74EU41guQbKG5+sKJI0yC9bJXrNFmEIi3facWJ4Y4unzmLQw+f3/W93UIcMHLxsbL8FzN5Bv3
+	0lg6Nq/cnEt+TZjGNXd2ljYcmYw58/jXgoIXJOqrCK68MXid3WD23gviJAEAQTBoUUw+cl5xdys
+	KWVCjxiDOY9IEwU2fBEiWa90UrbFExZVAl5XMCgIOXMtgUsj3OnjNxYOu0=
+X-Google-Smtp-Source: AGHT+IFmpIgZJkgG1TcnUjMeEXxa3OW2u+0iRL2YEUKOrf2DSwzSi6u1IDGdInKUk3OLck6UIHWPn37d12I2FT8Uhls=
+X-Received: by 2002:a2e:a991:0:b0:337:e585:8082 with SMTP id
+ 38308e7fff4ca-337e585814emr40485291fa.22.1756966734673; Wed, 03 Sep 2025
+ 23:18:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250820075405.1041838-1-wenst@chromium.org> <CAC=S1njQ5z2Ezz2OXDJ6Pk_9EEPgG3gu=Os7uFv6Lmdq0X77og@mail.gmail.com>
+In-Reply-To: <CAC=S1njQ5z2Ezz2OXDJ6Pk_9EEPgG3gu=Os7uFv6Lmdq0X77og@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 4 Sep 2025 14:18:43 +0800
+X-Gm-Features: Ac12FXyJUlQIqk0i4ipdL_cOK9k6d650IYlqwO_gxbw4GTZ_J2T6UQ6kDktMWOs
+Message-ID: <CAGXv+5GgGs5LEGJV4fpUpxOXC=_Fvo3CA4S10zZGxes9C2HrEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] media: mediatek: vcodec: Use spinlock for context list
+ protection lock
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Tomasz Figa <tfiga@chromium.org>, Fei Shao <fshao@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQWRhbSwKCllvdSBzZWVtIHRvIGhhdmUgbWlzc2VkIGFueSBmaXhlcyBmcm9tIEFsb2sncyBy
-ZXZpZXcgaGVyZS4KCkZ1cnRoZXIgY29tbWVudHMgaW5saW5lOgoKPiArc3RhdGljIGludCBtY3Rw
-X3BjY19uZG9fb3BlbihzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikKPiArewo+ICvCoMKgwqDCoMKg
-wqDCoHN0cnVjdCBtY3RwX3BjY19uZGV2ICptY3RwX3BjY19uZGV2ID0KPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgbmV0ZGV2X3ByaXYobmRldik7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBf
-cGNjX21haWxib3ggKm91dGJveCA9Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgICZtY3RwX3BjY19u
-ZGV2LT5vdXRib3g7Cj4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1jdHBfcGNjX21haWxib3ggKmlu
-Ym94ID0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqAgJm1jdHBfcGNjX25kZXYtPmluYm94Owo+ICsK
-PiArwqDCoMKgwqDCoMKgwqBvdXRib3gtPmNoYW4gPSBwY2NfbWJveF9yZXF1ZXN0X2NoYW5uZWwo
-Jm91dGJveC0+Y2xpZW50LCBvdXRib3gtPmluZGV4KTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoSVNf
-RVJSKG91dGJveC0+Y2hhbikpCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVy
-biBQVFJfRVJSKG91dGJveC0+Y2hhbik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGluYm94LT5jaGFu
-ID0gcGNjX21ib3hfcmVxdWVzdF9jaGFubmVsKCZpbmJveC0+Y2xpZW50LCBpbmJveC0+aW5kZXgp
-Owo+ICvCoMKgwqDCoMKgwqDCoGlmIChJU19FUlIoaW5ib3gtPmNoYW4pKSB7Cj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBjY19tYm94X2ZyZWVfY2hhbm5lbChvdXRib3gtPmNoYW4p
-Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gUFRSX0VSUihpbmJveC0+
-Y2hhbik7Cj4gK8KgwqDCoMKgwqDCoMKgfQo+ICsKPiArwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19u
-ZGV2LT5pbmJveC5jaGFuLT5yeF9hbGxvYyA9IG1jdHBfcGNjX3J4X2FsbG9jOwo+ICvCoMKgwqDC
-oMKgwqDCoG1jdHBfcGNjX25kZXYtPmluYm94LmNsaWVudC5yeF9jYWxsYmFjayA9IG1jdHBfcGNj
-X2NsaWVudF9yeF9jYWxsYmFjazsKPiArwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19uZGV2LT5vdXRi
-b3guY2hhbi0+bWFuYWdlX3dyaXRlcyA9IHRydWU7CgpGcm9tIHYyNToKCj4gTWlub3I6IHlvdSBo
-YXZlIHRoZSBjb252ZW5pZW5jZSB2YXJzIGZvciAtPmluYm94IGFuZCAtPm91dGJveCwgbWF5IGFz
-Cj4gd2VsbCB1c2UgdGhlbS4KCkFsc286IHlvdSdyZSBzZXR0aW5nIHRoZSBjbGllbnQgcnhfY2Fs
-bGJhY2sgKmFmdGVyKiBoYXZpbmcgc2V0IHVwIHRoZQpQQ0MgY2hhbm5lbC4gV29uJ3QgdGhpcyBy
-YWNlIHdpdGggUlggb24gdGhlIGluYm94PwoKPiArc3RhdGljIGludCBpbml0aWFsaXplX01UVShz
-dHJ1Y3QgbmV0X2RldmljZSAqbmRldikKPiArewo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBtY3Rw
-X3BjY19uZGV2ICptY3RwX3BjY19uZGV2ID0gbmV0ZGV2X3ByaXYobmRldik7Cj4gK8KgwqDCoMKg
-wqDCoMKgc3RydWN0IG1jdHBfcGNjX21haWxib3ggKm91dGJveDsKPiArwqDCoMKgwqDCoMKgwqBp
-bnQgbWN0cF9wY2NfbXR1Owo+ICsKPiArwqDCoMKgwqDCoMKgwqBvdXRib3ggPSAmbWN0cF9wY2Nf
-bmRldi0+b3V0Ym94Owo+ICvCoMKgwqDCoMKgwqDCoG91dGJveC0+Y2hhbiA9IHBjY19tYm94X3Jl
-cXVlc3RfY2hhbm5lbCgmb3V0Ym94LT5jbGllbnQsIG91dGJveC0+aW5kZXgpOwo+ICvCoMKgwqDC
-oMKgwqDCoG1jdHBfcGNjX210dSA9IG91dGJveC0+Y2hhbi0+c2htZW1fc2l6ZSAtIHNpemVvZihz
-dHJ1Y3QgcGNjX2hlYWRlcik7Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKElTX0VSUihvdXRib3gtPmNo
-YW4pKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gUFRSX0VSUihvdXRi
-b3gtPmNoYW4pOwoKWW91IGhhdmUgYWxyZWFkeSBkZXJlZmVyZW5jZWQgb3V0Ym94LT5jaGFuIGJl
-Zm9yZSB0aGlzIGNvbmZpdGlvbmFsLiBNb3ZlCnRoZSB1c2FnZSB0byBhZnRlciB0aGlzIGNoZWNr
-LgoKPiArCj4gK8KgwqDCoMKgwqDCoMKgcGNjX21ib3hfZnJlZV9jaGFubmVsKG1jdHBfcGNjX25k
-ZXYtPm91dGJveC5jaGFuKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRldiA9IG5l
-dGRldl9wcml2KG5kZXYpOwo+ICvCoMKgwqDCoMKgwqDCoG5kZXYtPm10dSA9IE1DVFBfTUlOX01U
-VTsKPiArwqDCoMKgwqDCoMKgwqBuZGV2LT5tYXhfbXR1ID0gbWN0cF9wY2NfbXR1Owo+ICvCoMKg
-wqDCoMKgwqDCoG5kZXYtPm1pbl9tdHUgPSBNQ1RQX01JTl9NVFU7Cj4gKwo+ICvCoMKgwqDCoMKg
-wqDCoHJldHVybiAwOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW50IG1jdHBfcGNjX2RyaXZlcl9hZGQo
-c3RydWN0IGFjcGlfZGV2aWNlICphY3BpX2RldikKPiArewo+ICvCoMKgwqDCoMKgwqDCoHN0cnVj
-dCBtY3RwX3BjY19sb29rdXBfY29udGV4dCBjb250ZXh0ID0gezB9Owo+ICvCoMKgwqDCoMKgwqDC
-oHN0cnVjdCBtY3RwX3BjY19uZGV2ICptY3RwX3BjY19uZGV2Owo+ICvCoMKgwqDCoMKgwqDCoHN0
-cnVjdCBkZXZpY2UgKmRldiA9ICZhY3BpX2Rldi0+ZGV2Owo+ICvCoMKgwqDCoMKgwqDCoHN0cnVj
-dCBuZXRfZGV2aWNlICpuZGV2Owo+ICvCoMKgwqDCoMKgwqDCoGFjcGlfaGFuZGxlIGRldl9oYW5k
-bGU7Cj4gK8KgwqDCoMKgwqDCoMKgYWNwaV9zdGF0dXMgc3RhdHVzOwo+ICvCoMKgwqDCoMKgwqDC
-oGNoYXIgbmFtZVszMl07Cj4gK8KgwqDCoMKgwqDCoMKgaW50IHJjOwo+ICsKPiArwqDCoMKgwqDC
-oMKgwqBkZXZfZGJnKGRldiwgIkFkZGluZyBtY3RwX3BjYyBkZXZpY2UgZm9yIEhJRCAlc1xuIiwK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYWNwaV9kZXZpY2VfaGlkKGFjcGlfZGV2
-KSk7Cj4gK8KgwqDCoMKgwqDCoMKgZGV2X2hhbmRsZSA9IGFjcGlfZGV2aWNlX2hhbmRsZShhY3Bp
-X2Rldik7Cj4gK8KgwqDCoMKgwqDCoMKgc3RhdHVzID0gYWNwaV93YWxrX3Jlc291cmNlcyhkZXZf
-aGFuZGxlLCAiX0NSUyIsIGxvb2t1cF9wY2N0X2luZGljZXMsCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJmNv
-bnRleHQpOwo+ICvCoMKgwqDCoMKgwqDCoGlmICghQUNQSV9TVUNDRVNTKHN0YXR1cykpIHsKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGV2X2VycihkZXYsICJGQUlMVVJFIHRvIGxv
-b2t1cCBQQ0MgaW5kZXhlcyBmcm9tIENSU1xuIik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHJldHVybiAtRUlOVkFMOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArCj4gK8KgwqDCoMKg
-wqDCoMKgc25wcmludGYobmFtZSwgc2l6ZW9mKG5hbWUpLCAibWN0cHBjYyVkIiwgY29udGV4dC5p
-bmJveF9pbmRleCk7Cj4gK8KgwqDCoMKgwqDCoMKgbmRldiA9IGFsbG9jX25ldGRldihzaXplb2Yo
-Km1jdHBfcGNjX25kZXYpLCBuYW1lLCBORVRfTkFNRV9QUkVESUNUQUJMRSwKPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBtY3RwX3BjY19zZXR1
-cCk7Cj4gK8KgwqDCoMKgwqDCoMKgaWYgKCFuZGV2KQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqByZXR1cm4gLUVOT01FTTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRl
-diA9IG5ldGRldl9wcml2KG5kZXYpOwo+ICsKPiArwqDCoMKgwqDCoMKgwqBtY3RwX3BjY19pbml0
-aWFsaXplX21haWxib3goZGV2LCAmbWN0cF9wY2NfbmRldi0+aW5ib3gsCj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGNvbnRleHQuaW5ib3hfaW5kZXgpOwo+ICvCoMKgwqDCoMKgwqDCoG1jdHBfcGNjX2luaXRpYWxp
-emVfbWFpbGJveChkZXYsICZtY3RwX3BjY19uZGV2LT5vdXRib3gsCj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNv
-bnRleHQub3V0Ym94X2luZGV4KTsKPiArwqDCoMKgwqDCoMKgwqBpZiAocmMpCj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdvdG8gZnJlZV9uZXRkZXY7CgoncmMnIGhhcyBuZXZlciBi
-ZWVuIHNldCBhdCB0aGlzIHBvaW50LgoKPiArCj4gK8KgwqDCoMKgwqDCoMKgbWN0cF9wY2NfbmRl
-di0+b3V0Ym94LmNsaWVudC50eF9kb25lID0gbWN0cF9wY2NfdHhfZG9uZTsKPiArwqDCoMKgwqDC
-oMKgwqBtY3RwX3BjY19uZGV2LT5hY3BpX2RldmljZSA9IGFjcGlfZGV2Owo+ICvCoMKgwqDCoMKg
-wqDCoG1jdHBfcGNjX25kZXYtPm5kZXYgPSBuZGV2Owo+ICvCoMKgwqDCoMKgwqDCoGFjcGlfZGV2
-LT5kcml2ZXJfZGF0YSA9IG1jdHBfcGNjX25kZXY7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGluaXRp
-YWxpemVfTVRVKG5kZXYpOwoKaW5pdGlhbGl6ZV9NVFUoKSBoYXMgYW4gaW50IHJldHVybiB2YWx1
-ZTsgZWl0aGVyIG1ha2UgdGhhdCB2b2lkLCBvcgpoYW5kbGUgdGhlIGVycm9yIGhlcmUuCgpDaGVl
-cnMsCgoKSmVyZW15Cg==
+Ping?
 
+On Wed, Aug 20, 2025 at 6:37=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
+:
+>
+> On Wed, Aug 20, 2025 at 3:54=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
+ wrote:
+> >
+> > Previously a mutex was added to protect the encoder and decoder context
+> > lists from unexpected changes originating from the SCP IP block, causin=
+g
+> > the context pointer to go invalid, resulting in a NULL pointer
+> > dereference in the IPI handler.
+> >
+> > Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
+> > context. This causes a big warning from the scheduler. This was first
+> > reported downstream on the ChromeOS kernels, but is also reproducible
+> > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even though
+> > the actual capture format is not supported, the affected code paths
+> > are triggered.
+> >
+
+We really should get this in as this triggers a very large and scary
+warning every time the encoder or decoder is used.
+
+
+ChenYu
+
+> > Since this lock just protects the context list and operations on it are
+> > very fast, it should be OK to switch to a spinlock.
+> >
+> > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect d=
+ecoder context list")
+> > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect e=
+ncoder context list")
+> > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> > Changes since v1:
+> > - Switched to _irqsave / _irqrestore variants even in helper only calle=
+d
+> >   by IRQ handler (Tomasz)
+> >
+> >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
+> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-----
+> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
+> >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  5 +++--
+> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-----
+> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
+> >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  5 +++--
+> >  7 files changed, 28 insertions(+), 20 deletions(-)
+>
+> Reviewed-by: Fei Shao <fshao@chromium.org>
 
