@@ -1,145 +1,198 @@
-Return-Path: <linux-kernel+bounces-800240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6463AB4350A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B67D7B4350E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390C31C82F98
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11B21C26500
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955772C0F87;
-	Thu,  4 Sep 2025 08:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lW0a6TEq"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0003A2BEC43;
-	Thu,  4 Sep 2025 08:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B336D2C08A1;
+	Thu,  4 Sep 2025 08:10:57 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169702C028B;
+	Thu,  4 Sep 2025 08:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756973424; cv=none; b=JE7FtqbFu9qdDRCieIin/xdLrGyl6JON9JNfdY3NuzOKqKMhEJJUVZU4eDyHCVWLuUCvFKSZzXNGYefxg0VAavXxl5U7EdyrwYQS8xMRHrjEKbtrcf3pSS6c5OWR3TMu+7ucx+u4OvxaGjWbq5L9sPeRX5FmLT4gA4k832kCTgI=
+	t=1756973457; cv=none; b=CtD+VPVXl9Keif7jNQyfIv7hzbAGzt3OiZ4ZdHZHhaSiLAEKMF44aHKNN8TiKCe64BNKh74UP34gRiLXC+O2l8bkYt41wFpgWHOMjPcbh8PmJbgROOHV7NiZ78/N7AoeKQbV5sz+EBS7EqAWuLUoOiGSzulhglAHcKoCs3ZyvmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756973424; c=relaxed/simple;
-	bh=Ea797uyOnJzCFKJU7Ps7JbEQc/YHyKb3Iu5+Q5E1xFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8VRSTbSJ5mNYZidmbK0PiyuamDRHA/rpNv5AFPb2KpIaI1mfOFDbkwYii6aPQpl7KgXoVCjPTzxXDrLlridoQYrK8qWPZzEWJf3FUCFV863sQ6YrMy03Nh1FKN3ZjDEF3Jo9BoIAJeebQw1vlJT36eXBtN+KJQqMkznhH899VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lW0a6TEq; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756973418; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=RkPE4ITy1+3CZ+iiMlih1L2trxJFck5ZWEM1kI6X8tA=;
-	b=lW0a6TEqMW/gxpynjxbVMkrKZ0lVIBWsTHlozUu5+G7wIpCOrSJ/W0Hdta01Q8HvSlBXjcWBbe7rm2is+D39HS+dRwQJrwQ4DVN7n/eQOP+2dpsSsNytpl7D4weryXQdVyvw0eB2doQ6Nce5v/7FhEAxZsLO90wOmRGq/gVJkXw=
-Received: from 30.221.148.63(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0WnEzvj8_1756973417 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Sep 2025 16:10:18 +0800
-Message-ID: <8d406a89-3937-4fa2-84a9-624db3c75c76@linux.alibaba.com>
-Date: Thu, 4 Sep 2025 16:10:17 +0800
+	s=arc-20240116; t=1756973457; c=relaxed/simple;
+	bh=qTz5Q3dBw3oX8QOJDlh3RtZii4ROKC8FKHxOsPE7448=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=duOXfV64ifX4rVRFl7MTCQ5zeHtvw1vWb+aos4lfnvpQNrpQI6mTADUhXsqxJQfHPSQiPELBKgLixw899PPTnJV5ckh4F/nrMD1bQxVpMYYIyHityAjp9cOLHprM7SlusEfNdQuhKX1Lw6m70PCEnN/qYCrl2+jwVtQ/+aLGzDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
+ ajax-webmail-app2 (Coremail) ; Thu, 4 Sep 2025 16:10:23 +0800 (GMT+08:00)
+Date: Thu, 4 Sep 2025 16:10:23 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
+To: "Manivannan Sadhasivam" <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+	johan+linaro@kernel.org, quic_schintav@quicinc.com,
+	shradha.t@samsung.com, cassel@kernel.org,
+	thippeswamy.havalige@amd.com, mayank.rana@oss.qualcomm.com,
+	inochiama@gmail.com, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v2 1/2] dt-bindings: PCI: eic7700: Add Eswin eic7700
+ PCIe host controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <nq3xoih7kbjdaxnwoduz3o2nxt2ikahbogqdraibznrlqwqw5r@ovjarka5eagm>
+References: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
+ <20250829082237.1064-1-zhangsenchuan@eswincomputing.com>
+ <nq3xoih7kbjdaxnwoduz3o2nxt2ikahbogqdraibznrlqwqw5r@ovjarka5eagm>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-To: Tejun Heo <tj@kernel.org>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <aLhykIPSGV1k_OG0@slm.duckdns.org>
- <cfe595a7-c20d-4891-aba1-35546c488024@linux.alibaba.com>
- <aLk_o0GUhC14T8f9@slm.duckdns.org>
-From: escape <escape@linux.alibaba.com>
-In-Reply-To: <aLk_o0GUhC14T8f9@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <9cb374f.cc7.19913c6dd06.Coremail.zhangsenchuan@eswincomputing.com>
+X-Coremail-Locale: en_US
+X-CM-TRANSID:TQJkCgA31pRvSblowVjIAA--.24043W
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAgEPBmi4b
+	dETlAABsg
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-
-
-在 2025/9/4 15:28, Tejun Heo 写道:
-> Hello,
->
-> On Thu, Sep 04, 2025 at 11:15:26AM +0800, escape wrote:
->> 在 2025/9/4 00:53, Tejun Heo 写道:
->>> Hello,
-> ...
->> As Ridong pointed out, in the current code, using CLONE_INTO_CGROUP
->> still requires holding the threadgroup_rwsem, so contention with fork
->> operations persists.
-> Sorry about my fumbling explanations repeatedly but this isn't true. On
-> cgroup2, if you create a cgroup, enable controllers and then seed it with
-> CLONE_INTO_CGROUP, threadgroup_rwsem is out of the picture. The only
-> remaining contention point is cgroup_mutex.
->
->> CLONE_INTO_CGROUP helps alleviate the contention between cgroup creation
->> and deletion, but its usage comes with significant limitations:
->>
->> 1. CLONE_INTO_CGROUP is only available in cgroup v2. Although cgroup v2
->> adoption is gradually increasing, many applications have not yet been
->> adapted to cgroup v2, and phasing out cgroup v1 will be a long and
->> gradual process.
->>
->> 2. CLONE_INTO_CGROUP requires specifying the cgroup file descriptor at the
->> time of process fork, effectively restricting cgroup migration to the
->> fork stage. This differs significantly from the typical cgroup attach
->> workflow. For example, in Kubernetes, systemd is the recommended cgroup
->> driver; kubelet communicates with systemd via D-Bus, and systemd
->> performs the actual cgroup attachment. In this case, the process being
->> attached typically does not have systemd as its parent. Using
->> CLONE_INTO_CGROUP in such a scenario is impractical and would require
->> coordinated changes to both systemd and kubelet.
-> A percpu rwsem (threadgroup_rwsem) was used instead of per-threadgroup
-> locking to avoid adding overhead to hot paths - fork and exit - because
-> cgroup operations were expected to be a lot colder. Now, threadgroup rwsem
-> is *really* expensive for the writers, so the trade-off could be a bit too
-> extreme for some use cases.
->
-> However, now that the most common usage pattern doesn't involve
-> threadgroup_rwsem, I don't feel too enthusiastic about adding hot path
-> overhead to work around usage patterns that we want to move away from. Note
-> that dynamic migrations have other more fundamental problems for stateful
-> resources and we generally want to move away from it. Sure, a single rwsem
-> operation in fork/exit isn't a lot of overhead but it isn't nothing either
-> and this will impact everybody.
->
-> Maybe we can make it a mount option so that use cases that still depend on
-> it can toggle it on? In fact, there's already favordynmods mount option
-> which seems like a good fit. Maybe put the extra locking behind that flag?
->
-> Thanks.
->
-Thank you for your reply.
-
-I agree that mounting with cgroupv2, creating a cgroup, enabling 
-controllers,
-and then seeding it with CLONE_INTO_CGROUP is an excellent solution. 
-However,
-we've encountered significant obstacles when applying this approach on some
-older systems. We are simultaneously working on enabling CLONE_INTO_CGROUP
-support in runc, systemd, and other components, but this will take some 
-time.
-This patch aims to alleviate the issue to some extent during this 
-transitional
-period.
-
-Regarding the impact of the extra rwsem operations on hot paths, I have 
-conducted
-performance testing. In cases where there is no contention on down_write,
-the UnixBench spawn test scores remain unaffected.
-
-The suggestion to use the favordynmods flag to control whether the extra 
-rwsem
-is used is excellent. I will incorporate this condition in the next 
-version of
-the patch.
-
-Thanks.
-
+CgoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiTWFuaXZhbm5hbiBTYWRo
+YXNpdmFtIiA8bWFuaUBrZXJuZWwub3JnPgo+IFNlbmQgdGltZTpNb25kYXksIDAxLzA5LzIwMjUg
+MTQ6MDQ6NTAKPiBUbzogemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5jb20KPiBDYzogYmhl
+bGdhYXNAZ29vZ2xlLmNvbSwgbHBpZXJhbGlzaUBrZXJuZWwub3JnLCBrd2lsY3p5bnNraUBrZXJu
+ZWwub3JnLCByb2JoQGtlcm5lbC5vcmcsIGtyemsrZHRAa2VybmVsLm9yZywgY29ub3IrZHRAa2Vy
+bmVsLm9yZywgbGludXgtcGNpQHZnZXIua2VybmVsLm9yZywgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
+bC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcsIHAuemFiZWxAcGVuZ3V0cm9uaXgu
+ZGUsIGpvaGFuK2xpbmFyb0BrZXJuZWwub3JnLCBxdWljX3NjaGludGF2QHF1aWNpbmMuY29tLCBz
+aHJhZGhhLnRAc2Ftc3VuZy5jb20sIGNhc3NlbEBrZXJuZWwub3JnLCB0aGlwcGVzd2FteS5oYXZh
+bGlnZUBhbWQuY29tLCBtYXlhbmsucmFuYUBvc3MucXVhbGNvbW0uY29tLCBpbm9jaGlhbWFAZ21h
+aWwuY29tLCBuaW5neXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRpbmcu
+Y29tLCBwaW5rZXNoLnZhZ2hlbGFAZWluZm9jaGlwcy5jb20KPiBTdWJqZWN0OiBSZTogW1BBVENI
+IHYyIDEvMl0gZHQtYmluZGluZ3M6IFBDSTogZWljNzcwMDogQWRkIEVzd2luIGVpYzc3MDAgUENJ
+ZSBob3N0IGNvbnRyb2xsZXIKPiAKPiBPbiBGcmksIEF1ZyAyOSwgMjAyNSBhdCAwNDoyMjozN1BN
+IEdNVCwgemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5jb20gd3JvdGU6Cj4gPiBGcm9tOiBT
+ZW5jaHVhbiBaaGFuZyA8emhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5jb20+Cj4gPiAKPiA+
+IEFkZCBEZXZpY2UgVHJlZSBiaW5kaW5nIGRvY3VtZW50YXRpb24gZm9yIHRoZSBFU1dJTiBFSUM3
+NzAwCj4gPiBQQ0llIGNvbnRyb2xsZXIgbW9kdWxlLHRoZSBQQ0llIGNvbnRyb2xsZXIgZW5hYmxl
+cyB0aGUgY29yZQo+ID4gdG8gY29ycmVjdGx5IGluaXRpYWxpemUgYW5kIG1hbmFnZSB0aGUgUENJ
+ZSBidXMgYW5kIGNvbm5lY3RlZAo+ID4gZGV2aWNlcy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
+WXUgTmluZyA8bmluZ3l1QGVzd2luY29tcHV0aW5nLmNvbT4KPiA+IFNpZ25lZC1vZmYtYnk6IFNl
+bmNodWFuIFpoYW5nIDx6aGFuZ3NlbmNodWFuQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+IC0tLQo+
+ID4gIC4uLi9iaW5kaW5ncy9wY2kvZXN3aW4sZWljNzcwMC1wY2llLnlhbWwgICAgICB8IDE0MiAr
+KysrKysrKysrKysrKysrKysKPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTQyIGluc2VydGlvbnMoKykK
+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L3BjaS9lc3dpbixlaWM3NzAwLXBjaWUueWFtbAo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BjaS9lc3dpbixlaWM3NzAwLXBjaWUueWFtbCBi
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wY2kvZXN3aW4sZWljNzcwMC1wY2ll
+LnlhbWwKPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLjY1
+ZjY0MDkwMmIxMQo+ID4gLS0tIC9kZXYvbnVsbAo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3BjaS9lc3dpbixlaWM3NzAwLXBjaWUueWFtbAo+ID4gQEAgLTAsMCAr
+MSwxNDIgQEAKPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9S
+IEJTRC0yLUNsYXVzZSkKPiA+ICslWUFNTCAxLjIKPiA+ICstLS0KPiA+ICskaWQ6IGh0dHA6Ly9k
+ZXZpY2V0cmVlLm9yZy9zY2hlbWFzL3BjaS9lc3dpbixlaWM3NzAwLXBjaWUueWFtbCMKPiA+ICsk
+c2NoZW1hOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiA+
+ICsKPiA+ICt0aXRsZTogRXN3aW4gRUlDNzcwMCBQQ0llIGhvc3QgY29udHJvbGxlcgo+ID4gKwo+
+ID4gK21haW50YWluZXJzOgo+ID4gKyAgLSBZdSBOaW5nIDxuaW5neXVAZXN3aW5jb21wdXRpbmcu
+Y29tPgo+ID4gKyAgLSBTZW5jaHVhbiBaaGFuZyA8emhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGlu
+Zy5jb20+Cj4gPiArCj4gPiArZGVzY3JpcHRpb246Cj4gPiArICBUaGUgUENJZSBjb250cm9sbGVy
+IG9uIEVJQzc3MDAgU29DLgo+ID4gKwo+ID4gK2FsbE9mOgo+ID4gKyAgLSAkcmVmOiAvc2NoZW1h
+cy9wY2kvcGNpLWhvc3QtYnJpZGdlLnlhbWwjCj4gPiArCj4gPiArcHJvcGVydGllczoKPiA+ICsg
+IGNvbXBhdGlibGU6Cj4gPiArICAgIGNvbnN0OiBlc3dpbixlaWM3NzAwLXBjaWUKPiA+ICsKPiA+
+ICsgIHJlZzoKPiA+ICsgICAgbWF4SXRlbXM6IDMKPiA+ICsKPiA+ICsgIHJlZy1uYW1lczoKPiA+
+ICsgICAgaXRlbXM6Cj4gPiArICAgICAgLSBjb25zdDogZGJpCj4gPiArICAgICAgLSBjb25zdDog
+Y29uZmlnCj4gPiArICAgICAgLSBjb25zdDogbWdtdAo+ID4gKwo+ID4gKyAgcmFuZ2VzOgo+ID4g
+KyAgICBtYXhJdGVtczogMwo+ID4gKwo+ID4gKyAgbnVtLWxhbmVzOgo+ID4gKyAgICBjb25zdDog
+NAo+ID4gKwo+ID4gKyAgJyNpbnRlcnJ1cHQtY2VsbHMnOgo+ID4gKyAgICBjb25zdDogMQo+ID4g
+Kwo+ID4gKyAgaW50ZXJydXB0czoKPiA+ICsgICAgbWF4SXRlbXM6IDkKPiA+ICsKPiA+ICsgIGlu
+dGVycnVwdC1uYW1lczoKPiA+ICsgICAgaXRlbXM6Cj4gPiArICAgICAgLSBjb25zdDogbXNpCj4g
+PiArICAgICAgLSBjb25zdDogaW50YQo+ID4gKyAgICAgIC0gY29uc3Q6IGludGIKPiA+ICsgICAg
+ICAtIGNvbnN0OiBpbnRjCj4gPiArICAgICAgLSBjb25zdDogaW50ZAo+ID4gKyAgICAgIC0gY29u
+c3Q6IGludGUKPiA+ICsgICAgICAtIGNvbnN0OiBpbnRmCj4gPiArICAgICAgLSBjb25zdDogaW50
+Zwo+ID4gKyAgICAgIC0gY29uc3Q6IGludGgKPiAKPiBXaGF0PyBBcmUgdGhlc2Ugc3RhbmRhcmQg
+SU5UeCBvciBzb21ldGhpbmcgZWxlc2U/IFBDSShlKSBzcGVjIGRlZmluZXMgb25seQo+IElOVHtB
+LUR9Lgo+IAoKRGVhciBNYW5pdmFubmFuCgpUaGFuayB5b3UgZm9yIHlvdXIgdGhvcm91Z2ggcmV2
+aWV3IC4KWW91IGFyZSByaWdodCwgdGhlIFBDSShlKSBzcGVjIGRlZmluZXMgb25seSBmb3VyIGxl
+Z2FjeSBJTlR4IGludGVycnVwdHMgKElOVEEjLCBJTlRCIywgSU5UQyMsICBJTlREIykuIApQQ0ko
+ZSkgc3BlYyBkZWZpbmVzIGFsc28gbWVudGlvbnMgdGhhdCBJTlRYIGludGVycnVwdHMgaGF2ZSB0
+d28gY29udHJvbCBzdGF0ZXMgKEFzc2VydF9JTlR4L0RlYXNzZXJ0X0lOVHggTWVzc2FnZSkuCklu
+IG91ciB5YW1sLCBpbnRhfmludGQgY29ycmVzcG9uZHMgdG8gQXNzZXJ0X0lOVEF+QXNzZXJ0X0lO
+VEQsIGFuZCBpbnRlfmludGggY29ycmVzcG9uZHMgdG8gRGVhc3NlcnRfSU5UQX5EZWFzc2VydF9J
+TlRELiAKTWF5IEkgYXNrIGlmIGludGV+aW50aCBuZWVkcyB0byBiZSByZW1vdmVkIG9yIGlmIHRo
+ZSBuYW1pbmcgbmVlZHMgdG8gYmUgc3RhbmRhcmRpemVkPyAKSSBzYXcgdGhhdCBpbiAic2lmaXZl
+LGZ1NzQwLXBjaWUueWFtbCIsIGludGVycnVwdC1uYW1lcyBvbmx5IHJldGFpbiBpbnRhIHRvIGlu
+dGQuCgo+ID4gKwo+ID4gKyAgaW50ZXJydXB0LW1hcDoKPiA+ICsgICAgbWF4SXRlbXM6IDQKPiA+
+ICsKPiA+ICsgIGludGVycnVwdC1tYXAtbWFzazoKPiA+ICsgICAgaXRlbXM6Cj4gPiArICAgICAg
+LSBjb25zdDogMAo+ID4gKyAgICAgIC0gY29uc3Q6IDAKPiA+ICsgICAgICAtIGNvbnN0OiAwCj4g
+PiArICAgICAgLSBjb25zdDogNwo+ID4gKwo+ID4gKyAgY2xvY2tzOgo+ID4gKyAgICBtYXhJdGVt
+czogNAo+ID4gKwo+ID4gKyAgY2xvY2stbmFtZXM6Cj4gPiArICAgIGl0ZW1zOgo+ID4gKyAgICAg
+IC0gY29uc3Q6IG1zdHIKPiA+ICsgICAgICAtIGNvbnN0OiBkYmkKPiA+ICsgICAgICAtIGNvbnN0
+OiBwY2xrCj4gPiArICAgICAgLSBjb25zdDogYXV4Cj4gPiArCj4gPiArICByZXNldHM6Cj4gPiAr
+ICAgIG1heEl0ZW1zOiAzCj4gPiArCj4gPiArICByZXNldC1uYW1lczoKPiA+ICsgICAgaXRlbXM6
+Cj4gPiArICAgICAgLSBjb25zdDogY2ZnCj4gPiArICAgICAgLSBjb25zdDogcG93ZXJ1cAo+ID4g
+KyAgICAgIC0gY29uc3Q6IHB3cmVuCj4gPiArCj4gPiArcmVxdWlyZWQ6Cj4gPiArICAtIGNvbXBh
+dGlibGUKPiA+ICsgIC0gcmVnCj4gPiArICAtIHJhbmdlcwo+ID4gKyAgLSBudW0tbGFuZXMKPiA+
+ICsgIC0gaW50ZXJydXB0cwo+ID4gKyAgLSBpbnRlcnJ1cHQtbmFtZXMKPiA+ICsgIC0gaW50ZXJy
+dXB0LW1hcC1tYXNrCj4gPiArICAtIGludGVycnVwdC1tYXAKPiA+ICsgIC0gJyNpbnRlcnJ1cHQt
+Y2VsbHMnCj4gPiArICAtIGNsb2Nrcwo+ID4gKyAgLSBjbG9jay1uYW1lcwo+ID4gKyAgLSByZXNl
+dHMKPiA+ICsgIC0gcmVzZXQtbmFtZXMKPiA+ICsKPiA+ICt1bmV2YWx1YXRlZFByb3BlcnRpZXM6
+IGZhbHNlCj4gPiArCj4gPiArZXhhbXBsZXM6Cj4gPiArICAtIHwKPiA+ICsgICAgc29jIHsKPiA+
+ICsgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDI+Owo+ID4gKyAgICAgICAgI3NpemUtY2VsbHMg
+PSA8Mj47Cj4gPiArCj4gPiArICAgICAgICBwY2llQDU0MDAwMDAwIHsKPiA+ICsgICAgICAgICAg
+ICBjb21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAtcGNpZSI7Cj4gPiArICAgICAgICAgICAgcmVn
+ID0gPDB4MCAweDU0MDAwMDAwIDB4MCAweDQwMDAwMDA+LAo+ID4gKyAgICAgICAgICAgICAgICAg
+IDwweDAgMHg0MDAwMDAwMCAweDAgMHg4MDAwMDA+LAo+ID4gKyAgICAgICAgICAgICAgICAgIDww
+eDAgMHg1MDAwMDAwMCAweDAgMHgxMDAwMDA+Owo+ID4gKyAgICAgICAgICAgIHJlZy1uYW1lcyA9
+ICJkYmkiLCAiY29uZmlnIiwgIm1nbXQiOwo+ID4gKyAgICAgICAgICAgICNhZGRyZXNzLWNlbGxz
+ID0gPDM+Owo+ID4gKyAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDI+Owo+ID4gKyAgICAgICAg
+ICAgICNpbnRlcnJ1cHQtY2VsbHMgPSA8MT47Cj4gPiArICAgICAgICAgICAgcmFuZ2VzID0gPDB4
+ODEwMDAwMDAgMHgwIDB4NDA4MDAwMDAgMHgwIDB4NDA4MDAwMDAgMHgwIDB4ODAwMDAwPiwKPiAK
+PiBJL08gQ1BVIHJhbmdlIHN0YXJ0cyBmcm9tIDB4MAo+IAo+IEFsc28sIEkgZG9uJ3QgdGhpbmsg
+eW91IG5lZWQgdG8gc2V0IHRoZSByZWxvY2F0YWJsZSBmbGFnIChiaXQgMzEpIGZvciBhbnkKPiBy
+ZWdpb25zLgoKaWYgY2Fubm90IHNldCB0aGUgcmVsb2NhdGFibGUgZmxhZyAoYml0IDMxKSBmb3Ig
+YW55IHJlZ2lvbnMuSXMgaXQgYXBwcm9wcmlhdGUgdG8gd3JpdGUgaXQgdGhpcyB3YXnvvJoKcmFu
+Z2VzID0gPDB4MDEwMDAwMDAgMHgwIDB4NDA4MDAwMDAgMHgwIDB4NDA4MDAwMDAgMHgwIDB4ODAw
+MDAwPiwKICAgICAgICAgPDB4MDIwMDAwMDAgMHgwIDB4NDEwMDAwMDAgMHgwIDB4NDEwMDAwMDAg
+MHgwIDB4ZjAwMDAwMD4sCiAgICAgICAgIDwweDQzMDAwMDAwIDB4ODAgMHgwMDAwMDAwMCAweDgw
+IDB4MDAwMDAwMDAgMHgyIDB4MDAwMDAwMDA+OwoKPiAKPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICA8MHg4MjAwMDAwMCAweDAgMHg0MTAwMDAwMCAweDAgMHg0MTAwMDAwMCAweDAgMHhmMDAwMDAw
+PiwKPiA+ICsgICAgICAgICAgICAgICAgICAgICA8MHhjMzAwMDAwMCAweDgwIDB4MDAwMDAwMDAg
+MHg4MCAweDAwMDAwMDAwIDB4MiAweDAwMDAwMDAwPjsKPiA+ICsgICAgICAgICAgICBidXMtcmFu
+Z2UgPSA8MHgwIDB4ZmY+Owo+ID4gKyAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2sgNTYyPiwK
+PiA+ICsgICAgICAgICAgICAgICAgICAgICA8JmNsb2NrIDU2Mz4sCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgPCZjbG9jayA1NjQ+LAo+ID4gKyAgICAgICAgICAgICAgICAgICAgIDwmY2xvY2sg
+NTY1PjsKPiAKPiBEb24ndCB5b3UgaGF2ZSBjbG9jayBkZWZpbml0aW9ucyBmb3IgdGhlc2UgdmFs
+dWVzPwo+IAoKT3VyIGNsb2NrIGFuZCByZXNldCBkcml2ZXJzIGhhdmUgdGhlIGRlZmluaXRpb25z
+IG9mIHRoZXNlIHZhbHVlcywgYnV0IHRoZSBjbG9jayBhbmQgcmVzZXQgZHJpdmVycyBhcmUgdW5k
+ZXIgcmV2aWV3LiAKQ3VycmVudGx5LCB0aGVzZSB2YWx1ZXMgY2FuIG9ubHkgYmUgcmVwbGFjZWQg
+YnkgY29uc3RhbnRzLgoKPiA+ICsgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJtc3RyIiwgImRi
+aSIsICJwY2xrIiwgImF1eCI7Cj4gPiArICAgICAgICAgICAgcmVzZXRzID0gPCZyZXNldCA4ICgx
+IDw8IDApPiwKPiA+ICsgICAgICAgICAgICAgICAgICAgICA8JnJlc2V0IDggKDEgPDwgMSk+LAo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgIDwmcmVzZXQgOCAoMSA8PCAyKT47Cj4gCj4gU2FtZSBo
+ZXJlLgo+IAo+ID4gKyAgICAgICAgICAgIHJlc2V0LW5hbWVzID0gImNmZyIsICJwb3dlcnVwIiwg
+InB3cmVuIjsKPiA+ICsgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDIyMD4sIDwxNzk+LCA8MTgw
+PiwgPDE4MT4sIDwxODI+LCA8MTgzPiwgPDE4ND4sIDwxODU+LCA8MTg2PjsKPiA+ICsgICAgICAg
+ICAgICBpbnRlcnJ1cHQtbmFtZXMgPSAibXNpIiwgImludGEiLCAiaW50YiIsICJpbnRjIiwgImlu
+dGQiLAo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJpbnRlIiwgImludGYiLCAi
+aW50ZyIsICJpbnRoIjsKPiA+ICsgICAgICAgICAgICBpbnRlcnJ1cHQtcGFyZW50ID0gPCZwbGlj
+PjsKPiA+ICsgICAgICAgICAgICBpbnRlcnJ1cHQtbWFwLW1hc2sgPSA8MHgwIDB4MCAweDAgMHg3
+PjsKPiA+ICsgICAgICAgICAgICBpbnRlcnJ1cHQtbWFwID0gPDB4MCAweDAgMHgwIDB4MSAmcGxp
+YyAxNzk+LAo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICA8MHgwIDB4MCAweDAgMHgy
+ICZwbGljIDE4MD4sCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwweDAgMHgwIDB4
+MCAweDMgJnBsaWMgMTgxPiwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgPDB4MCAw
+eDAgMHgwIDB4NCAmcGxpYyAxODI+Owo+ID4gKyAgICAgICAgICAgIGRldmljZV90eXBlID0gInBj
+aSI7Cj4gPiArICAgICAgICAgICAgbnVtLWxhbmVzID0gPDB4ND47Cj4gCj4gbml0OiBNb3N0IG9m
+IHRoZSBiaW5kaW5ncyBkZWZpbmUgbnVtLWxhbmVzIGFzIGRlY2ltYWwuCj4gCgoKCgpCZXN0IFJl
+Z2FyZHMsCgpTZW5jaHVhbiBaaGFuZwoKCg==
 
