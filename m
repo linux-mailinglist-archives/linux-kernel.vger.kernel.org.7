@@ -1,95 +1,63 @@
-Return-Path: <linux-kernel+bounces-800295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36650B435E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:37:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59EAB43602
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B91D582201
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F397C19C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4762C21DB;
-	Thu,  4 Sep 2025 08:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9562C2359;
+	Thu,  4 Sep 2025 08:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wI96XdEJ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="jZfw+Xcy"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4FD2C3266
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311C22D3734
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756975039; cv=none; b=aDsC8rZblfCdnoOiKxaf7ho6hzrMB95awlWK54FZzp+fhCLaS5GHlZbLFuiz/UxyxFE0GpuxVJ4MXh3fXUa0F+PwZH82GHi9PWagkz7tEzmU33317WRcvUFGaDGYKc+oMjEJoCJWkmVT9O4vlWfxuUHU8fw2hjkNa4r2bRVAMbA=
+	t=1756975078; cv=none; b=G3+hahTBDMPvjJ7x86F0i7WrNqlCGJbbqQLJpGpUP1KxCPc3ppIPYKK4nIk40Pp4KGssLaQFSrj23rS32mTcv5oMNgZntPssNZlsXz1PkDcriwLkeBwSWT45MM7lkKkX9nWsHQmjGjDeA7PleSy373ADu+430eTwy4HsyDSzfqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756975039; c=relaxed/simple;
-	bh=aAVhOAy0/IwEfcSAPp9ppgHMCgG8/TXN+Krhcl0WPdU=;
+	s=arc-20240116; t=1756975078; c=relaxed/simple;
+	bh=YDbfr7yaSc56Bv7K7wQUh9MIpwkhIpINVDhmf52rvhw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jlDtAIxB4GSSLKrjz9D17UiTB6+Bt3ptvW9xZ+pU2+ouNpvWHSvu8qiJ05d+fIqRa7JPnNwaNkMwb44mjI/PPqGXbFZMtizxNUL9X3nfVDXrTR+Eu0kugwfzU+v/yG8kN3eh20qb+X8GWISoDl9Md4lD2gndXWpcTzRDVkGixTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wI96XdEJ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b8e28b3c5so10323065e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 01:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756975036; x=1757579836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TvpDldbS6p0mFVJOieeQjela+t5WFiWiQauN+gr6YU=;
-        b=wI96XdEJBSIB2+O5feMmRh+gZvt9ZqBXzQ7I0eCmuZHDM4KG4g10fpOxxfgyhre4qN
-         00r4z3ABVe1Te5pIVV14k9z7D+cNsMYxc7Ir4MMb77NRu2sQ0Ms1+lRoqiJEkF76FPY3
-         6q+sQW55IghcXq5jJCRHRBcu2NKHXtWtmpus9yMEkpohAI4Kl/bSdg49sqM06LfoRkXv
-         n0KAue08z7cDbbum4UCubeIrYKrrKxw2hixnuvOl7DqwAoeQ3NEhrnM+DSSd52pVEatL
-         FBbNv3r4Ao8DjpU2z1BwOjn6CkgXUExYZPAC9c20lxQkws9lxNAYNDP7SEWOA+DPnQQd
-         c/9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756975036; x=1757579836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8TvpDldbS6p0mFVJOieeQjela+t5WFiWiQauN+gr6YU=;
-        b=czgBJmcFs0RprJZJw4Uee+S6QxA5NsbJxa+njXCCc+6j2/vdZl41t2ts/CKV8xvdFp
-         ETzS7Bnh81HfgLUmXAjzeUabxomzQ9vFMUsMfxWqAleVHpK/Wiud7GnSUNdtBkaoyJyg
-         kE/ataTQomx96LiL+d9QmVzHHXt6riFT3rkFMleNrAXOdvIpkKAER1nD/6UMeOHfT2X5
-         irLE515YPues9W8G+SYEPm4m85UssR7f5ssKEKXCyHbJITtx5LEXJ5EAzt+jQLZyJ9pL
-         odYdSN1se3xgJJddjyZIAKL/jH+TVRLp8jBrsyCkteV0OHoo0vEY9s/sdGW09fsgCO9e
-         LH6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKgOx0pwMocPvMHuObwSk//wCLsaCn7EBUZVvj+5GsRjLeELtqw2wdv89XaO40Lez0dq/WWSBS7rsXIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwES4LiMKy9nC8nmzencN2SsorBywZTVL3D56FLgHKtlZhz/e+u
-	hZIXBvjpFAL2zVJTPSBfPRdHBl9j65P+q78fQ+S/WjBd85J548eUFQBSTP+ZJXAfbow=
-X-Gm-Gg: ASbGnctY6LVqVt/Ca3VJ9078xpqCzj51W1nbze68MLYmmrRpzG7PDJHy1y3vf4ls7hK
-	Olon5QU4naUZN7m8fxr5HhB2ursKI/bWfC8KiSVFKhIHrv9iA682GbEjwlhvPMCab4bttt+Qa7M
-	QxmvtugvjTVS4+EJs0RaSaODjHJlIMdEr42r7e/3PNlbQL05wdu9ECYQwATX3Pp4o5XqaeD6qYx
-	VdR+KohHVURqi1jfKCN6xmAfi7g/BKyiboY4rrbUsmFeJYMveToS/ljeGgwYiZIdY1GEeBsMAAG
-	NVMCovepqADpp6l32eo+6/ZmzCwARDqADUM5xYmrC4+RhMDYgORoIFYo8BXgUHHnV+VDiR5c0PC
-	jjEsZtMVzk/Wb8bDeLoBsWo6MZ/sPHbHb
-X-Google-Smtp-Source: AGHT+IGYkXiZRUXlOQf3empsPbLwkG2nRtYg4Fk+8qLi58TcgS/9+AaJQqZP1jo3HcduMoYVw1R45A==
-X-Received: by 2002:a05:6000:1ac7:b0:3e0:854b:20f5 with SMTP id ffacd0b85a97d-3e0854b234bmr1369457f8f.21.1756975036044;
-        Thu, 04 Sep 2025 01:37:16 -0700 (PDT)
-Received: from linaro.org ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c22sm362172195e9.13.2025.09.04.01.37.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 01:37:15 -0700 (PDT)
-Date: Thu, 4 Sep 2025 11:37:13 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
-	Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: phy: qcom-edp: Add missing clock for
- X Elite
-Message-ID: <5dqyfunemo6jcj3c3nwmhbazfbackja5dpgsmu42sjzaxwbfok@rdwj3k7nsm2n>
-References: <20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org>
- <20250903-phy-qcom-edp-add-missing-refclk-v2-1-d88c1b0cdc1b@linaro.org>
- <11155d6c-cc11-4c5b-839b-2456e88fbb7f@oss.qualcomm.com>
- <20250903235138.GA3348310-robh@kernel.org>
- <1b92fe18-67bd-4fda-b7c2-952ed96aaa61@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6pIJ2iMXiYFnDxQaNNLqiCqzcmlu3Uuz8mycYIG3AsfBbHyPMD/VlcMd7RjsFnqiZXynp4R1PsbaZ1SzwRWpwlIQCaIcOUXS2Taz3MsNer4CSj2X5p4F8pdW0EqPpa24aLbAMVb4cCvYVTmSSOtKOqMc+ffOoW5DqPY/eQLAxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=jZfw+Xcy; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Date: Thu, 4 Sep 2025 10:37:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1756975072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZEwYkBxATBfFnEmHwCfGAJRtrHj8HkxkqVpkDpK++KE=;
+	b=jZfw+XcyPayo4oQt0R98U7vVc/V6srm5uvAn08jRQL5cd6hqVrDiS8Ovo8Y39MVlj74jev
+	kjSc0lT9bTj0OHVicevI0T3vtTvPvr7l3ge41RlPpS7Ipucw8X13Q5MqWAfcAb+gfiN+6z
+	RyxL/Z6BPwbx7HbTLd2BG4Awbk1J3J4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Shin Son <shin.son@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] thermal: exynos_tmu: Support new hardware and
+ update TMU interface
+Message-ID: <20250904083745.GA33254@l14.localdomain>
+References: <20250903073634.1898865-1-shin.son@samsung.com>
+ <CGME20250903073653epcas2p16e8bf815e604fdb63669271ad3071d96@epcas2p1.samsung.com>
+ <20250903073634.1898865-3-shin.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,49 +66,223 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1b92fe18-67bd-4fda-b7c2-952ed96aaa61@oss.qualcomm.com>
+In-Reply-To: <20250903073634.1898865-3-shin.son@samsung.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 25-09-04 10:11:26, Konrad Dybcio wrote:
-> On 9/4/25 1:51 AM, Rob Herring wrote:
-> > On Wed, Sep 03, 2025 at 03:37:25PM +0200, Konrad Dybcio wrote:
-> >> On 9/3/25 2:37 PM, Abel Vesa wrote:
-> >>> On X Elite platform, the eDP PHY uses one more clock called
-> >>> refclk. Add it to the schema.
-> >>>
-> >>> Cc: stable@vger.kernel.org # v6.10
-> >>> Fixes: 5d5607861350 ("dt-bindings: phy: qcom-edp: Add X1E80100 PHY compatibles")
-> >>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> >>> ---
-> >>>  .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 28 +++++++++++++++++++++-
-> >>>  1 file changed, 27 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> >>> index eb97181cbb9579893b4ee26a39c3559ad87b2fba..a8ba0aa9ff9d83f317bd897a7d564f7e13f6a1e2 100644
-> >>> --- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> >>> +++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-> >>> @@ -37,12 +37,15 @@ properties:
-> >>>        - description: PLL register block
-> >>>  
-> >>>    clocks:
-> >>> -    maxItems: 2
-> >>> +    minItems: 2
-> >>> +    maxItems: 3
-> >>>  
-> >>>    clock-names:
-> >>> +    minItems: 2
-> >>>      items:
-> >>>        - const: aux
-> >>>        - const: cfg_ahb
-> >>> +      - const: refclk
-> >>
-> >> "ref"?
-> > 
-> > Certainly more consistent with other QCom phy bindings.
+Hi Shin,
+
+On Wed, Sep 03, 2025 at 04:36:33PM +0900, Shin Son wrote:
+> The Exynos tmu driver's private data structure has been extended
+> to support the exynosautov920 hardware, which requires per-sensor interrupt
+> enablement and dual-zone handling:
 > 
-> That, and the name of a clock-names entry ending in 'clk' is simply
-> superfluous
+> - Add 'slope_comp' : compensation parameter below 25 degrees.
+> - Add 'calib_temp' : stores the fused calibaration temperature.
+> - Add 'tz_count' : reflects the new 1:2 hardware-to-thermal-zone ratio.
+> - Add 'valid_sensor_bitmap' : bitmap to enable interrupts
+> 			      for each valid sensor.
+> - Rename 'tzd' -> 'tzd_array' to register multiple thermal zones.
+> 
+> Since splitting this patch causes runtime errors during temperature
+> emulation or problems where the read temperature feature fails to
+> retrieve values, I have submitted it as a single commit. To add support
+> for the exynosautov920 to the exisiting TMU interface, the following
+> changes are included:
+> 
+> 1. Branch 'code_to_temp' and 'temp_to_code' for exynosautov920 SoC variant.
+> 2. Loop over 'tz_count' in critical-point setup.
+> 3. Introduce 'update_con_reg' for exynosautov920 control-register updates.
+> 4. Add exynosautov920-specific branch in 'exynos_tmu_update_temp' function.
+> 5. Skip high & low temperature threshold setup in exynosautov920.
+> 6. Enable interrupts via bitmap in 'exynosautov920_tmu_set_crit_temp'.
+> 7. Initialize all new members during 'exynosautov920_tmu_initialize'.
+> 8. Clear IRQs by iterating the bitamp in exynosautov920.
+> 9. Register each zone with 'devm_thermal_of_zone_register()'
+>    based on 'tz_count'.
+> 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 340 ++++++++++++++++++++++++---
+>  1 file changed, 303 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 47a99b3c5395..60d5ab33c593 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
 
-Yep. Will fix in v3.
+[ ... ]
 
-Thanks for reviewing.
+> +#define EXYNOSAUTOV920_TMU_REG_THRESHOLD(p)	(((p)) * 0x50 + 0x00D0)
+> +#define EXYNOSAUTOV920_TMU_REG_INTEN(p)		(((p)) * 0x50 + 0x00F0)
+> +#define EXYNOSAUTOV920_TMU_REG_INT_PEND(p)	(((p)) * 0x50 + 0x00F8)
+> +
+> +#define EXYNOSAUTOV920_CURRENT_TEMP_P1_P0	0x084
+> +#define EXYNOSAUTOV920_TMU_REG_EMUL_CON		0x0B0
+> +
+> +#define EXYNOSAUTOV920_TMU_REG_CONTROL		0x50
+> +#define EXYNOSAUTOV920_TMU_REG_CONTROL1		0x54
+> +#define EXYNOSAUTOV920_TMU_REG_AVG_CONTROL	0x58
+> +#define EXYNOSAUTOV920_TMU_SAMPLING_INTERVAL	0x70
+> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE0	0x74
+> +#define EXYNOSAUTOV920_TMU_REG_COUNTER_VALUE1	0x78
+> +
+> +#define EXYNOSAUTOV920_TMU_THERM_TRIP_EN_SHIFT	12
+
+There already is a EXYNOS_TMU_THERM_TRIP_EN_SHIFT constant with the
+same value. Is there some fundamental difference between
+EXYNOSAUTOV920_TMU_THERM_TRIP_EN_SHIFT and
+EXYNOS_TMU_THERM_TRIP_EN_SHIFT?
+
+> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_SHIFT		8
+> +#define EXYNOSAUTOV920_TMU_T_BUF_VREF_SEL_MASK		0x1f
+> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_SHIFT	3
+> +#define EXYNOSAUTOV920_TMU_T_BUF_SLOPE_SEL_MASK		0xf
+> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_MASK		0xf
+> +#define EXYNOSAUTOV920_TMU_NUM_PROBE_SHIFT		16
+> +#define EXYNOSAUTOV920_TMU_LPI_MODE_MASK		1
+> +#define EXYNOSAUTOV920_TMU_LPI_MODE_SHIFT		10
+> +
+> +#define EXYNOSAUTOV920_TMU_AVG_CON_UPDATE		0x0008011A
+> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE0_UPDATE	0x030003C0
+> +#define EXYNOSAUTOV920_TMU_COUNTER_VALUE1_UPDATE	0x03C0004D
+
+If I am not mistaken lowercase letters is preferred in defines. The
+file already has a mix, but let's not make it worse. Please change to
+0x03c0004d and so on in constants above.
+
+>  #define MCELSIUS	1000
+>  
+> +#define EXYNOS_DEFAULT_TZ_COUNT		1
+> +#define EXYNOS_MAX_TZ_COUNT		2
+> +
+>  enum soc_type {
+>  	SOC_ARCH_EXYNOS3250 = 1,
+>  	SOC_ARCH_EXYNOS4210,
+> @@ -133,6 +179,7 @@ enum soc_type {
+>  	SOC_ARCH_EXYNOS5420_TRIMINFO,
+>  	SOC_ARCH_EXYNOS5433,
+>  	SOC_ARCH_EXYNOS7,
+> +	SOC_ARCH_EXYNOSAUTOV920,
+>  };
+>  
+>  /**
+> @@ -150,6 +197,8 @@ enum soc_type {
+>   * @efuse_value: SoC defined fuse value
+>   * @min_efuse_value: minimum valid trimming data
+>   * @max_efuse_value: maximum valid trimming data
+> + * @slope_comp: allocated value of the slope compensation.
+> + * @calib_temp: calibration temperature of the TMU.
+>   * @temp_error1: fused value of the first point trim.
+>   * @temp_error2: fused value of the second point trim.
+>   * @gain: gain of amplifier in the positive-TC generator block
+> @@ -157,7 +206,9 @@ enum soc_type {
+>   * @reference_voltage: reference voltage of amplifier
+>   *	in the positive-TC generator block
+>   *	0 < reference_voltage <= 31
+> - * @tzd: pointer to thermal_zone_device structure
+> + * @tz_count: The allocated number of the thermal zone
+> + * @tzd_array: pointer array of thermal_zone_device structure
+> + * @valid_sensor_bitmap: The enabled sensor of the TMU device
+>   * @enabled: current status of TMU device
+>   * @tmu_set_low_temp: SoC specific method to set trip (falling threshold)
+>   * @tmu_set_high_temp: SoC specific method to set trip (rising threshold)
+> @@ -181,10 +232,14 @@ struct exynos_tmu_data {
+>  	u32 efuse_value;
+>  	u32 min_efuse_value;
+>  	u32 max_efuse_value;
+> +	u16 slope_comp;
+> +	u16 calib_temp;
+>  	u16 temp_error1, temp_error2;
+>  	u8 gain;
+>  	u8 reference_voltage;
+> -	struct thermal_zone_device *tzd;
+> +	u8 tz_count;
+> +	unsigned long valid_sensor_bitmap;
+> +	struct thermal_zone_device *tzd_array[EXYNOS_MAX_TZ_COUNT];
+>  	bool enabled;
+>  
+>  	void (*tmu_set_low_temp)(struct exynos_tmu_data *data, u8 temp);
+> @@ -208,10 +263,25 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+>  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+>  		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+>  
+> -	return (temp - EXYNOS_FIRST_POINT_TRIM) *
+> -		(data->temp_error2 - data->temp_error1) /
+> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+> -		data->temp_error1;
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+> +		if ((temp - EXYNOS_FIRST_POINT_TRIM) >= 0) {
+> +			return (temp - EXYNOS_FIRST_POINT_TRIM) *
+> +				(data->temp_error2 - data->temp_error1) /
+> +				(data->calib_temp - EXYNOS_FIRST_POINT_TRIM) +
+> +				data->temp_error1;
+> +		} else {
+> +			return ((temp - EXYNOS_FIRST_POINT_TRIM) *
+> +				(data->temp_error2 - data->temp_error1) /
+> +				(data->calib_temp - EXYNOS_FIRST_POINT_TRIM) *
+> +				((57 + data->slope_comp) * 1000 / 65)) / 1000 +
+> +				data->temp_error1;
+> +		}
+> +	} else {
+> +		return (temp - EXYNOS_FIRST_POINT_TRIM) *
+> +			(data->temp_error2 - data->temp_error1) /
+> +			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+> +			data->temp_error1;
+
+This is essentially the same as the first return in the
+SOC_ARCH_EXYNOSAUTOV920 path. How about putting
+EXYNOS_SECOND_POINT_TRIM in the calib_temp field for the non autov920
+SoCs, then we can simplify temp_to_code and code_to_temp to something
+more readable like:
+
+static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+{
+	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+
+	int coeff = (data->temp_error2 - data->temp_error1) /
+			(data->calib_temp - EXYNOS_FIRST_POINT_TRIM);
+
+	if (data->soc == SOC_ARCH_EXYNOSAUTOV920 &&
+	    temp < EXYNOS_FIRST_POINT_TRIM)
+		coeff *= (57 + data->slope_comp) * 1000 / 65)) / 1000;
+
+	return (temp - EXYNOS_FIRST_POINT_TRIM) * coeff + data->temp_error1;
+}
+
+>  }
+>  
+>  /*
+> @@ -223,10 +293,25 @@ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+>  	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+>  		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+>  
+> -	return (temp_code - data->temp_error1) *
+> -		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+> -		(data->temp_error2 - data->temp_error1) +
+> -		EXYNOS_FIRST_POINT_TRIM;
+> +	if (data->soc == SOC_ARCH_EXYNOSAUTOV920) {
+> +		if ((temp_code - data->temp_error1) >= 0) {
+> +			return (temp_code - data->temp_error1) *
+> +				(data->calib_temp - EXYNOS_FIRST_POINT_TRIM) /
+> +				(data->temp_error2 - data->temp_error1) +
+> +				EXYNOS_FIRST_POINT_TRIM;
+> +		} else {
+> +			return ((temp_code - data->temp_error1) *
+> +				(data->calib_temp - EXYNOS_FIRST_POINT_TRIM) /
+> +				(data->temp_error2 - data->temp_error1) *
+> +				(65 * 1000 / (57 + data->slope_comp))) / 1000 +
+> +				EXYNOS_FIRST_POINT_TRIM;
+> +		}
+> +	} else {
+> +		return (temp_code - data->temp_error1) *
+> +			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+> +			(data->temp_error2 - data->temp_error1) +
+> +			EXYNOS_FIRST_POINT_TRIM;
+> +	}
+
+Similar suggestion as for temp_to_code applies here as well.
+
+Best regards,
+Henrik Grimler
 
