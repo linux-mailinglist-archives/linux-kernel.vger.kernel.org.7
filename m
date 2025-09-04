@@ -1,430 +1,330 @@
-Return-Path: <linux-kernel+bounces-801675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758AEB448A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:35:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C49B448A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDA5584182
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69B41CC1AE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B663D2C08C2;
-	Thu,  4 Sep 2025 21:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1748C2C1589;
+	Thu,  4 Sep 2025 21:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mdqixAeo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUMUEcCv"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0536C2BDC2C
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 21:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8972C0289;
+	Thu,  4 Sep 2025 21:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021723; cv=none; b=iqGb3Pwb9YorUPMWvkMYlF+R296rXZM0uH5mf8IFnFX+7l/6G1lGCr0PxNgl800tahvTzCgmJEZdyF50pigKmOYKSOPtu7Pdm4KtTDov1AXoxjzmYFODqV1500OrkGEqzA4b7HNQqYIfZs90FGwSyhrR/YzYE97jyvUgd8nKqB4=
+	t=1757021743; cv=none; b=D45s1yECCaxQXyCyto1U8+hrgr3P0aUlQefwBvP8hMJ25L6wo2uS5yQgXWH2KR4qk3zdJSGjgTfySqbZ02m49pH7LXS2V6w4wfGK1q3q99DY1uQSTMXwP/97b0ie5bMNz0PYOtsIcCYRmfyVuaMK7/ryjK+mhLjuXMSWdR2HNo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021723; c=relaxed/simple;
-	bh=p5azPGRp8fKE0V5AF13q31U7ZbgOwVv7U572k0NlXhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFIWoxsc84+lLmg9/NLi11bpgXbqUrDAVpj9rw56cbSsDhvwuDslQkrq44tOP8BC3TrNK+jXPEjgeOROQM2WoLm3IdUnvQzm73/DH7NE2HVEUcay8g/EP1MJuJP3zY2bZMfcLYXwC1MRM3YuGjrlD59rCl9AQFGretIeKApREhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mdqixAeo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IdQrC003771
-	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 21:35:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1XSGHjK5H5x+hvh6MnHParrtMNDsdad7xw0PkjMbZ+g=; b=mdqixAeoCJkWbooj
-	iV81lDSVcjKJFNLnue60LYvsuNufsVhkyrkaHuZjCQ6xdYNP0O0KXjdv9VSrg0/Y
-	2U46AT+05RG7V4DeTZRgeoss2aKXORmiJ4Apy79wl7F1DhF1jUfQLRjU5aiN8+EY
-	8iOhu7ngq99teEifZeWsPCbYCe/Ow7tt710HQu6FDbfMfV6htbPCgfNXasAwRtYZ
-	OEa4srooUnaggtqJ+z6gYfZHNtB7slNFqhoA2PL2fVx5SYXD6fniBIyhfbIesPX+
-	SYYWl3K4zlwSwj0RUJWjJzlu6Q8biP0dNmLR2tUn4FF1+45ELwPLftvheg1mu9Od
-	/9Nlsg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s910x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 21:35:21 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-329ee88fb47so2319221a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 14:35:21 -0700 (PDT)
+	s=arc-20240116; t=1757021743; c=relaxed/simple;
+	bh=m9NnJCluKVTR11hVnQmXKzYllpPWfe3CilE8MG0CLyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNkr8emepxvT0uqhXIb2oSGf48QvUQQCIAyEblPeCt4+GVwa39ovM24TW8UwiQuHsjT/aOk4mXmUjYdNjhYX0NkrTizOB2B/E022RwUjfIHXMDGxsTZiojxdFg3VU3aDOMe154MvgDg7qqy4q8nliCsYL3XPAcll4lb3I9Hz2zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUMUEcCv; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96fc00ad79so1472612276.0;
+        Thu, 04 Sep 2025 14:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757021740; x=1757626540; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IvCBV4RAVElTtuBlztSRnmNbm0dDQBJMrO8cYnccOd4=;
+        b=kUMUEcCvbgyKiMBtA3TOdZKAkTSs59VATMCu04VpTnXFXgGFgubXwct1zemC/72jwb
+         RQNuhWpStWeWp8uQ1qlW81iKiQWQ6oTPBhcvGrSwUHPb730CBje0wghkmzRp3bM4VDu9
+         DNgC1xN9DK/VZbxdFUv7r8kT/piYSSsVS6+qJ8EcezQwEkPfnHcdDQQK7gyuq0BO4UWC
+         U77PsjifaDvSg0APe4i5RPDfj9XdRxLNUoqAloFc2R0gdRBuSpJChEzXb1fYhKOywwh2
+         +O+RdVCBGs5yywYMFL1yTSbHxD3+d8P+8Y0IojfXcVok9LcPdHdXzuPSxr0INJz2A5OX
+         Fs6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757021715; x=1757626515;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757021740; x=1757626540;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1XSGHjK5H5x+hvh6MnHParrtMNDsdad7xw0PkjMbZ+g=;
-        b=qEoEz8MGHey5JcTZji+W5O6DpL8l98QopDfmlJBMoEU9fDIGbOPHfz0It3i+zp5qP3
-         1Dx0rKaQCOtHHCK6AyTPLM0mYJ0fcetH1BYLf93/OpxRWpGn8VFzOWP2P8+r0LIFwxhC
-         Gdr7+0MlFzJ2KMEOF/IqfiC7gxXWm2ok2DnVEez/d4kx6zE3pqHrittKsvaYvVwKpsAP
-         Uzyey6MJOeNvcDXuzcIEqWdjJhy8WiCn0VTMNx6CeBLEHnCxHt/ReQcD8KA50/eqOAPO
-         mGL4COT3S0WG8w9y77k0DG2++/70mIg+SQLvesA+GqC47WOFaMdM9DxEIFncllLcHDoH
-         uWnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIdGUZwT1KDMAf7m9UhiLtKQiCtlhq/cladOsH8yeMV70ZqrmdqvZYvheXQQ5qhd2vKXpgRFPmOpyvoIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+6kCMUjN4N5Ued0hbZdyiQWRyP9oee3WincnaADiQlkpEEL+Z
-	n0pnLW8MwYNzkIVYTa82qasai2DPOGX1uZmZOf42JwrGPS9AUz92aa6xWJFaX4XEqZkIE/otQFI
-	QHeG7kFyFG7ccXVZC4wYBx4gQOLnaPzCTyD1qoU8qpxHz63TTVelbjpEFHOvT/qJ8FQg=
-X-Gm-Gg: ASbGncvnvj97o7NEl53myiGzCVWirkvMhRiH24jStdmFDKdrJyCBus4G/kaE1Ftuz4y
-	R3JIR/NtD1V8xQMm04OEC91H8KLi0AhcvmytSWm42qQvC2a5r7CwHySifuetxvgFetFIkWKfKfN
-	ufLUf199shgDa3IiCdHE7eQKDVdyV9r2xaKFee/CB9LoiMl7tuXs5Wi75DKN2+6DLhRUnQjCVWN
-	rbJtFlkbKdS1QMnjJJAbTRAXrGzBqIwo2onwrz95GlVnY357t/OzD9YDGAmzjilZeto6anxcphL
-	kCvwdpSZVUmACPe2Szr8JxfNTy6Fqnu/yRa+Tx5RuoJ5JwThKP9IMfCxvzsAYs2pOr5WsevySRB
-	3AhiTuXm2+petKGNyECooVw==
-X-Received: by 2002:a17:903:2383:b0:246:570:2d9a with SMTP id d9443c01a7336-24944b1fc6emr283192345ad.59.1757021714802;
-        Thu, 04 Sep 2025 14:35:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEp3igpntYcHLO4XqweUiLyIuxXfhO1KED/bu92vbMqGflTJz2eGcJkzb2pbmcEUuUIo7WMCQ==
-X-Received: by 2002:a17:903:2383:b0:246:570:2d9a with SMTP id d9443c01a7336-24944b1fc6emr283191985ad.59.1757021714309;
-        Thu, 04 Sep 2025 14:35:14 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccd76e157sm22652365ad.107.2025.09.04.14.35.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 14:35:13 -0700 (PDT)
-Message-ID: <c80e6933-8985-4da4-8498-66cedaa87b1f@oss.qualcomm.com>
-Date: Thu, 4 Sep 2025 14:35:14 -0700
+        bh=IvCBV4RAVElTtuBlztSRnmNbm0dDQBJMrO8cYnccOd4=;
+        b=YobDCVPnpcdnbk/if4Py4ppagevv/iVl1wJXXqt52Zpb3QHO3JPpjZYcNoHOdbXxVS
+         9AO4TsLX4/wBgoZokIGJx1/Z+xnAjv3nC88pL/W1KQGmUfX9sEPMUfazojhXT/5UN0V1
+         p4HA8aaIp6ghZXuZVfYpJqb6vVL8ZiG21l9kGdsXk78dJg5nAjzrEOVnGnOkmCSyDFD5
+         3s5hOq/gyupDswK21na3vxGHF45kr3TYgmf+EaAs0TqLw2KZGq9AYWoBcj1ZI9daE3gZ
+         lfd9/MKy1vdPFcARlZ7DLcSQ4Nes4XOaMnErf6TqeAcngLMlHeRpTnFLu7wfJAwENpWc
+         ln7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXa3nl8NBzu4s3LH2xP4EAlKxmcuaSxr77quF69jQTWo93gyclW/dmcItjHLZp3UOZxKjSkK/zSNSrQtcuGbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIIz07/HvHe1z90VkacSo8WkX0FD6aEAV7LlSbGR9UmSxUKtHq
+	eP8ZRqRfsTFuX3WtELK4qEEg+MgayZo82LceOu7fx2KbQFHvGzqNeO3e
+X-Gm-Gg: ASbGncsp2ruT4mpZxLm7tSLOVtv1mGNFx2OsQoPy02GCw2/XqS9J3syZDS8mnytHix3
+	MUw3UOLKty+kRAOhXM5tCxyjuGgroaAGc0ssBexgu89S+m8OGLQEgHvKKkpm4yt1GWj+Ey6tAxC
+	xUVZMCPuIxm0RCV0bPhDG7zW+S0y/m5ToxufFw6jRKgVIL5oulJwGeipFzo+Lqa/USPNnmz5sUL
+	ywiDlmjCb0LWPGVCpG+SgzpBD1cRVuigPFEAifLW0hbnxo0IVE5CMHx+OS2flhv3ucvG/0CtEQp
+	Wit/oq5K9YZAXUT8SIHqOjfihYZqSsbTVPrbAKvLDisBsHFgSTumVtCOAXpYEEbv07AWNQkDObB
+	NcvXoh0shCdkHj9sRXoNO9w==
+X-Google-Smtp-Source: AGHT+IGcjNZusnsLiR6R1wgbKQBrEhDGHmeQUz60B2AGaGgy+2NRFtq0i4WitkyqZVH+hfJ5zflfxw==
+X-Received: by 2002:a05:690e:424c:b0:5f3:319c:fec6 with SMTP id 956f58d0204a3-60175b91dfcmr3275590d50.11.1757021740093;
+        Thu, 04 Sep 2025 14:35:40 -0700 (PDT)
+Received: from localhost ([2601:347:100:5ea0:1218:85e4:58ab:e67f])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-5ff8ef2b4cdsm1726511d50.7.2025.09.04.14.35.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 14:35:39 -0700 (PDT)
+Date: Thu, 4 Sep 2025 17:35:38 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
+ structs
+Message-ID: <aLoGKilQPupPQkd2@yury>
+References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/12] drm/msm/disp: set num_planes and fetch_mode in
- INTERLEAVED_RGB_FMT
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jordan Crouse <jordan@cosmicpenguin.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
- <20250705-dpu-formats-v1-2-40f0bb31b8c8@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <20250705-dpu-formats-v1-2-40f0bb31b8c8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfXw5rwMDF4QqqU
- 7MPzQU66WoiEbmiwshc3GU+CDYb2Pef+8K9b0eE75fjh4rk16ICQG29IrCTFqa1gYnxZujuBuBk
- 1TIVAqBGW+LPLibiRcX0MfrhnIPKvfDaUnpVTf3jW9zHmYCvq1b0He5ljnQBMNYeyZP69j5534R
- LJ9bxKrQ3108fQ8jv6agRcRoAXjy49k0zAscTOxSsq5xTszE5vqXRDcnj3l9Xu7L0V5kosGU+Ms
- zue9IuGCmDlMcBKDShC6V4W8Rsob78a5f6NjpkH8FH51swgexDAk852qZH5Jg+eJRjzhY7dUpoZ
- cim6mrLI+EFHr3EWTV+vIOyoypWe/4fbLpoakyt65CPSA7wDqpnPGyMq1m2Dg1Tbl8qugMw857u
- 8vBfiaLg
-X-Proofpoint-GUID: Q-2UNoADcMs-poPaVngf1RLtEhDgKoIf
-X-Proofpoint-ORIG-GUID: Q-2UNoADcMs-poPaVngf1RLtEhDgKoIf
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68ba0619 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=2YQhiLfsl84BKudLmi8A:9
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_07,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250824135954.2243774-1-joelagnelf@nvidia.com>
 
+Hi Joel,
 
+(Thanks to John for referencing this.)
 
-On 7/4/2025 7:47 PM, Dmitry Baryshkov wrote:
-> All interleaved RGB formats use only 1 plane and MDP_FETCH_LINEAR.
-> Specify num_planes and fetch_mode directly in the macro and remove
-> unused parameters.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Sun, Aug 24, 2025 at 09:59:52AM -0400, Joel Fernandes wrote:
+> Add a minimal bitfield library for defining in Rust structures (called
+> bitstruct), similar in concept to bit fields in C structs.
 
-Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+So maybe name it bitfield? 
+
+> This will be used
+> for defining page table entries and other structures in nova-core.
+
+I think this is understatement, and this will find a broader use. :)
+
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+
+I agree with the others that this bitstruct is worth to live in core
+directory. I just merged bitmap wrapper in rust/kernel/bitmap.rs, and
+I think this one should go in rust/kernel/bitstruct.rs (or bitfield.rs?).
+
+Can you please consider this change for v2, and also add the new file in
+BITOPS API record in MAINTAINERS?
+
+A couple nits inline.
+
+Thanks,
+Yury
 
 > ---
->   drivers/gpu/drm/msm/disp/mdp_format.c | 114 ++++++++++++----------------------
->   1 file changed, 39 insertions(+), 75 deletions(-)
+>  drivers/gpu/nova-core/bitstruct.rs | 149 +++++++++++++++++++++++++++++
+>  drivers/gpu/nova-core/nova_core.rs |   1 +
+>  2 files changed, 150 insertions(+)
+>  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
-> index eebedb1a2636e76996cf82847b7d391cb67b0941..26be35572fd2ee7456401aa525cc36025bc52ee4 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp_format.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp_format.c
-> @@ -67,7 +67,7 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
->   #define MDP_TILE_HEIGHT_NV12	8
->   
->   #define INTERLEAVED_RGB_FMT(fmt, a, r, g, b, e0, e1, e2, e3, uc, alpha,   \
-> -bp, flg, fm, np)                                                          \
-> +bp, flg)                                                                  \
->   {                                                                         \
->   	.pixel_format = DRM_FORMAT_ ## fmt,                               \
->   	.fetch_type = MDP_PLANE_INTERLEAVED,                              \
-> @@ -80,9 +80,9 @@ bp, flg, fm, np)                                                          \
->   	.chroma_sample = CHROMA_FULL,                                     \
->   	.unpack_count = uc,                                               \
->   	.bpp = bp,                                                        \
-> -	.fetch_mode = fm,                                                 \
-> +	.fetch_mode = MDP_FETCH_LINEAR,                                   \
->   	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT | flg,                      \
-> -	.num_planes = np,                                                 \
-> +	.num_planes = 1,                                                  \
->   	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
->   }
->   
-> @@ -228,218 +228,182 @@ static const struct msm_format mdp_formats[] = {
->   	INTERLEAVED_RGB_FMT(ARGB8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		true, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(ABGR8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		true, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(XBGR8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		false, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBA8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		true, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRA8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		true, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRX8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		false, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(XRGB8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		false, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBX8888,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		false, 4, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGB888,
->   		0, BPC8, BPC8, BPC8,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, 0, 3,
-> -		false, 3, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 3, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGR888,
->   		0, BPC8, BPC8, BPC8,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
-> -		false, 3, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 3, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGB565,
->   		0, BPC5, BPC6, BPC5,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, 0, 3,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGR565,
->   		0, BPC5, BPC6, BPC5,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(ARGB1555,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(ABGR1555,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBA5551,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRA5551,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(XRGB1555,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(XBGR1555,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBX5551,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRX5551,
->   		BPC1A, BPC5, BPC5, BPC5,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(ARGB4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(ABGR4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBA4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRA4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		true, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(XRGB4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(XBGR4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(RGBX4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRX4444,
->   		BPC4A, BPC4, BPC4, BPC4,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		false, 2, 0,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 2, 0),
->   
->   	INTERLEAVED_RGB_FMT(BGRA1010102,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		true, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(RGBA1010102,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		true, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(ABGR2101010,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		true, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(ARGB2101010,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		true, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		true, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(XRGB2101010,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
-> -		false, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(BGRX1010102,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
-> -		false, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(XBGR2101010,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
-> -		false, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, MSM_FORMAT_FLAG_DX),
->   
->   	INTERLEAVED_RGB_FMT(RGBX1010102,
->   		BPC8A, BPC8, BPC8, BPC8,
->   		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
-> -		false, 4, MSM_FORMAT_FLAG_DX,
-> -		MDP_FETCH_LINEAR, 1),
-> +		false, 4, MSM_FORMAT_FLAG_DX),
->   
->   	/* --- RGB formats above / YUV formats below this line --- */
->   
-> 
+> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
+> new file mode 100644
+> index 000000000000..661a75da0a9c
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/bitstruct.rs
+> @@ -0,0 +1,149 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// bitstruct.rs — C-style library for bitfield-packed Rust structures
+> +//
+> +// A library that provides support for defining bit fields in Rust
+> +// structures to circumvent lack of native language support for this.
+> +//
+> +// Similar usage syntax to the register! macro.
+> +
+> +use kernel::prelude::*;
+> +
+> +/// Macro for defining bitfield-packed structures in Rust.
+> +/// The size of the underlying storage type is specified with #[repr(TYPE)].
+> +///
+> +/// # Example (just for illustration)
+> +/// ```rust
+> +/// bitstruct! {
+> +///     #[repr(u64)]
+> +///     pub struct PageTableEntry {
+> +///         0:0       present     as bool,
+> +///         1:1       writable    as bool,
+> +///         11:9      available   as u8,
+> +///         51:12     pfn         as u64,
+> +///         62:52     available2  as u16,
+> +///         63:63     nx          as bool,
+> +///     }
+> +/// }
 
+Is it possible to create overlapping fields? Should we allow that?
+(I guess yes.) Does your machinery handle it correctly now?
+
+If the answer is yes, can you add a test for it?
+
+> +/// ```
+> +///
+> +/// This generates a struct with methods:
+> +/// - Constructor: `default()` sets all bits to zero.
+> +/// - Field accessors: `present()`, `pfn()`, etc.
+> +/// - Field setters: `set_present()`, `set_pfn()`, etc.
+> +/// - Builder methods: `with_present()`, `with_pfn()`, etc.
+> +/// - Raw conversion: `from_raw()`, `into_raw()`
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct {
+> +    (
+> +        #[repr($storage:ty)]
+> +        $vis:vis struct $name:ident {
+> +            $(
+> +                $hi:literal : $lo:literal $field:ident as $field_type:tt
+> +            ),* $(,)?
+> +        }
+> +    ) => {
+> +        #[repr(transparent)]
+> +        #[derive(Copy, Clone, Default)]
+> +        $vis struct $name($storage);
+> +
+> +        impl $name {
+> +            /// Create from raw value
+> +            #[inline(always)]
+> +            $vis const fn from_raw(val: $storage) -> Self {
+> +                Self(val)
+> +            }
+> +
+> +            /// Get raw value
+> +            #[inline(always)]
+> +            $vis const fn into_raw(self) -> $storage {
+> +                self.0
+> +            }
+> +        }
+> +
+> +        impl core::fmt::Debug for $name {
+> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+> +                write!(f, "{}({:#x})", stringify!($name), self.0)
+> +            }
+> +        }
+> +
+> +        // Generate all field methods
+> +        $(
+> +            bitstruct_field_impl!($vis, $name, $storage, $hi, $lo, $field as $field_type);
+> +        )*
+> +    };
+> +}
+> +
+> +/// Helper to calculate mask for bit fields
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_mask {
+> +    ($hi:literal, $lo:literal, $storage:ty) => {{
+> +        let width = ($hi - $lo + 1) as usize;
+> +        let storage_bits = 8 * core::mem::size_of::<$storage>();
+
+Does this '8' mean BITS_PER_BYTE? If so, we've got BITS_PER_TYPE() macro. Can
+you use it here?
+
+> +        if width >= storage_bits {
+> +            <$storage>::MAX
+
+This is an attempt to make an out-of-boundary access. Maybe print a
+warning or similar? 
+
+I actually think that if user wants to make an out-of-boundary access,
+the best thing we can do is to keep the memory untouched. So, maybe
+return None here, or 0, and make sure that the upper code doesn't
+access it?
+
+> +        } else {
+> +            ((1 as $storage) << width) - 1
+> +        }
+> +    }};
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_field_impl {
+> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident as $field_type:tt) => {
+> +        impl $struct_name {
+> +            #[inline(always)]
+> +            $vis const fn $field(&self) -> $field_type {
+> +                let field_val = (self.0 >> $lo) & bitstruct_mask!($hi, $lo, $storage);
+> +                bitstruct_cast_value!(field_val, $field_type)
+> +            }
+> +        }
+> +        bitstruct_make_setters!($vis, $struct_name, $storage, $hi, $lo, $field, $field_type);
+> +    };
+> +}
+> +
+> +/// Helper macro to convert extracted value to target type
+> +///
+> +/// Special handling for bool types is required because the `as` keyword
+> +/// cannot be used to convert to bool in Rust. For bool fields, we check
+> +/// if the extracted value is non-zero. For all other types, we use the
+> +/// standard `as` conversion.
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_cast_value {
+> +    ($field_val:expr, bool) => {
+> +        $field_val != 0
+> +    };
+> +    ($field_val:expr, $field_type:tt) => {
+> +        $field_val as $field_type
+> +    };
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_write_bits {
+> +    ($raw:expr, $hi:literal, $lo:literal, $val:expr, $storage:ty) => {{
+> +        let mask = bitstruct_mask!($hi, $lo, $storage);
+> +        ($raw & !(mask << $lo)) | ((($val as $storage) & mask) << $lo)
+> +    }};
+> +}
+> +
+> +#[allow(unused_macros)]
+> +macro_rules! bitstruct_make_setters {
+> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident, $field_type:tt) => {
+> +        ::kernel::macros::paste! {
+> +            impl $struct_name {
+> +                #[inline(always)]
+> +                #[allow(dead_code)]
+> +                $vis fn [<set_ $field>](&mut self, val: $field_type) {
+> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
+> +                }
+> +
+> +                #[inline(always)]
+> +                #[allow(dead_code)]
+> +                $vis const fn [<with_ $field>](mut self, val: $field_type) -> Self {
+> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
+> +                    self
+> +                }
+> +            }
+> +        }
+> +    };
+> +}
+> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+> index cb2bbb30cba1..54505cad4a73 100644
+> --- a/drivers/gpu/nova-core/nova_core.rs
+> +++ b/drivers/gpu/nova-core/nova_core.rs
+> @@ -2,6 +2,7 @@
+>  
+>  //! Nova Core GPU Driver
+>  
+> +mod bitstruct;
+>  mod dma;
+>  mod driver;
+>  mod falcon;
+> -- 
+> 2.34.1
+> 
 
