@@ -1,223 +1,240 @@
-Return-Path: <linux-kernel+bounces-801245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89909B44298
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D81B4429E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFCD3B5C61
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324DA5A29D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1173122A807;
-	Thu,  4 Sep 2025 16:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9371023313E;
+	Thu,  4 Sep 2025 16:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVKR3Que"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1tWMB6P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A51422258E;
-	Thu,  4 Sep 2025 16:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002941; cv=none; b=a0j9iobPxB68xWr6WO1vJgo8EHWFYdc6DGKV7KwcRuezPCnNH7Tq/uG4S7bIdjB4ubgOLi5fXTIrxPXXpJp38TxZWbObDfAE7CHgZ5HXJIckOoRNUey1szFc+jHMviuGcwQKVVZrSB6eouNEmUTse/MeUp+jxa4nkMk0kjiz+tQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002941; c=relaxed/simple;
-	bh=HjBPjB5ArJqguGUkE7A/EfzLjoQtb89LG6iJJSddvYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JzcgOzSGTwY5oe0fVl+7LZBcpDH/NT4DYPbTjNUeTCv8ApsF1AkyqQHDc9tGXqd00k8z451G186otmZNYb6Fjqjc8z8a44C5vCRS4Wz/RKtZsbc/BWjw5kT/9MFmj5guD9dAMAxiHAxIyVBfN54ic7zVQ0qg3knxS2A54S5T4+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVKR3Que; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so4225344a12.1;
-        Thu, 04 Sep 2025 09:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757002938; x=1757607738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ln19k5HIVCTrZNYe3Hu/5sJk5ZWqRmSGUkTSvpX2syA=;
-        b=ZVKR3QuemWyPvEU3fdNj/r+WvPXU8Vx2ckJcFoIql5TZhh0GsTWPmOFP4Nuzs+I1vB
-         JNr0RM/Gs4XhKFq3DZ3kc+ZQ1pts828n/+Iv8Fy92LhWEZfLkElkmS7hTODkD5bKF0fg
-         d1sOlhsQSc5UcWJptt9hictEQSHsgCsrrYAjuBgC3s/8sFSdYPUQ9XYWazQv2l5xlW1c
-         wv+cfW8RdzluQS8exLb1UCniydRSBqRBT6FeKl/ZAbUJcajHpL68F5FFjBVWBwJ7CinC
-         kj+1G9lwCyUtLAprHEOL7uRIiGj/bEewZFsJJZ8viyxdJ50v1adcA8OudtSiBRO6KDd5
-         ixUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757002938; x=1757607738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ln19k5HIVCTrZNYe3Hu/5sJk5ZWqRmSGUkTSvpX2syA=;
-        b=d0+Ibgi3EB0LaqONmQNKeehpH3/fOd8Ik9mBCeuERxlxBoPSNTufilmAz8uouRVU50
-         Hx3HxtlwpFqml+dbMtkWp67CmDAHe5vtAbcGS3ISMTVhIEovBNBCAZJQj7QnI+bXvbim
-         JQc1WzcnhIH8QjzEKATUeGY9eCqO3BwmX4mqw6EXerGwHaQdWezdYugzaMILUXEkntIY
-         GMWsqDqZ+SHbQlbcfoY5R2pAObKP6RLy0lOot/jFTrfvAhsXiIo0PqhR9SVbL4dVnOdF
-         9ya/dCccjqMtkzTghSLyQ7q3c69XBeZjfimF36cQcBMecPr2jspn3Xu1XJsuw8dQMDj5
-         k4qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0f2uEZe/C1pp9JWK3VFLBt/q0jZdfU5XW+PzsRn683D/zMSrfT4ZupXMge83tBjVRB2Xss8XkBkdPSIWj@vger.kernel.org, AJvYcCWPDNT97c5W7F1EGYYBvaJQlUZTprStdSwFmDKDXD7M9DTtnT5Y3evf75RwTgkwY+UhShp7L/Kdm2wcDVDL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz72AWkxl4T8yF6Y8xw/9ay6IR56xpY1Lz2NNJjDhma+loWqSSX
-	OGfn4wgsi60n0LWX+bqSkyX1lUtF0bCRCbrAy5m6fF32kExjCkt0kJr3K37h4vHoEFd6YmK64D8
-	LHWlCTbeGnSd4E8H6y/OIenG0Q2werfg=
-X-Gm-Gg: ASbGncuneLnsTpr9vR9XWaGmPJLptx1HPwk6G7Tm1wwYOO3b3lwYCep67/DjD0nyyE/
-	zqn5A9wSNRPknGe3yC0L1PTLED/bZ6135eYA79Uk/sDqtS+h1e4gDxyy7FbMhuSeM91xWWQ+qC8
-	2dp9eLo2rHz6h2GfTXbgs4E0lQVdOp/sXlmZ2nrtngb4u05l0bwo9tsggQw9TZ4qjMaGHjvfOEl
-	MruDLtyu/xI3aFzxg==
-X-Google-Smtp-Source: AGHT+IHJi8UpPu8PzTuQMPgcR1ei63f/ToXw+JJAMwxnczWiy4DXVu6/hlnIKBLecG2Q0yk9yZZQ/Sp6LmPjYsuIPwA=
-X-Received: by 2002:a17:907:96ac:b0:af9:479b:8c80 with SMTP id
- a640c23a62f3a-b049307e70dmr31746366b.4.1757002937485; Thu, 04 Sep 2025
- 09:22:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317A42248AF;
+	Thu,  4 Sep 2025 16:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757003024; cv=fail; b=CT1BOr9f9Af1SgRIVXos1+T8wWXLZcjh11PO1Pcg7bziOVMRE6biUZiocUeVkt1dW+V2QJBzjlJ4GoykWDjxS3QuGV1Whk4D7Es4z/uVwJQkeVi6AAT1sd0W4JV8sM3IqN+BluEwonLXz42qQ81mUoPH6z0FrkAdhJMYvcPmblo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757003024; c=relaxed/simple;
+	bh=Vc2Z3IW3EceQPR+t8h8mvl1A4/62rdvTy08NXf4krJM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xo/KRAevlgnTfkr+BxdiNYHHa2j1fph66EqrWGeYn6F7/CoJyAtusaYpygFJSn4KwPflRTZ4HQocTYuJjR0wL4mVhxEvMrB77JF8qVdtTFyjQX1359x1vjOLfSPU5U5G7PF2uJ0f9pdJvAsz0TqDnZTR/v8ET/xkt80E+Kx5AgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1tWMB6P; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757003023; x=1788539023;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Vc2Z3IW3EceQPR+t8h8mvl1A4/62rdvTy08NXf4krJM=;
+  b=G1tWMB6PaKU2kAi2zrkATFS3mNUAIDCdeXuS7tc25gDe/Jb1aGCxBOir
+   5HZduiGHfOasBwiZZVkOXCL/NSTngzizBG6qZngoosQJxoCcUmb+G0XKM
+   8OsQtcgahyK4+1xHPMSIB9ElKWxvjhgbs9mmWZ1zXh0tJY27rZxUnWK+U
+   kFnOpQYZJkJENORB3n1ZKLEdripfCi5W21nO0akekiNH3jWGD7TY5t/Fd
+   v0+/8n7/YvRY6xyKsfAwIl0f4snAateGLu6gGNPcoM0okyCH/TGwWGuKb
+   CbMyd3XhIlluYYULDngncWClia6ald/tCIOm5B27Mb+B8UyDKkglpe9X6
+   g==;
+X-CSE-ConnectionGUID: unzlbP3TRB2hMtoJetNzEA==
+X-CSE-MsgGUID: X8JuNBEXTeiyzsAxQ/Kl1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="84780423"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="84780423"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:23:43 -0700
+X-CSE-ConnectionGUID: X4YzaqSLQgKWvO4B62rkRQ==
+X-CSE-MsgGUID: 09IpIBrDTTuLiBWuEWg3+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="172747930"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:23:42 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:23:41 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:23:41 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.56)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:23:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jePvFeDtM2jZzWN3hvGG95TJThm02TEslQUHp8BayFSUPO0kGXt1tvSOyqqUxZQLxbx80OCcXbMunnvklOyqFrM7cHBnCc4Pl9I5jvXpuWWjCCdO5Ly1RBQPOVlas/aoxr3EpaxZVMzkbbZjwrs9rDpNGBebxONDpgAiuFq8+ctN/OhH8I1uGl5wvBTi+IgXoQVH+Xx3w3dXlXPKSafXRHOtc/hpQqSyXNbptRYHD+81iJcdJbAIMhQw8kNuYqOF/aXewOXgggKt1tZS6eJrgOowgJYd1YSOpzc9LcCKX8JVrG36O+baJ2OgW6wGDEGDkIrD93UUFTiTQmdE2+OLMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2ZlGga6Y8STenY48Zm8P6kvk8N+gEnskZefiFe57ZwQ=;
+ b=mHY802d86Xk8tAxRNVYk0c3GZISwhzgq2UFQPQPEzhWHACEjLlC5SWENQSGFq/WdluK7mP62RjxsvDcQkXxOyZh2QrzKfdBfq50thZl9ELD/SoX3gNa1Ukt49lcdPxtZQYkkGnLD3lWpeSVzOGlJNMaEcG4foq5to7/7z59sdRtlQHptFRa/Rz4f+PxWED9TBt9kBRhG0/K7y/GMvPvumS8HgnvZs9XrVQRin08HxSTrLxb260T0keUV92opZ8EdbPcIdTXsxEKKV98ovO3ygRoMooRij0e0YNEC09uQjt9Wtgum+A0fBHo/yZqNfFf4e4O7960lab7JW5lpWznSFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
+ MN2PR11MB4646.namprd11.prod.outlook.com (2603:10b6:208:264::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.16; Thu, 4 Sep 2025 16:23:38 +0000
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
+ 16:23:38 +0000
+From: "R, Ramu" <ramu.r@intel.com>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
+	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
+	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
+ Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
+	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 09/13] idpf: implement
+ XDP_SETUP_PROG in ndo_bpf for splitq
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 09/13] idpf: implement
+ XDP_SETUP_PROG in ndo_bpf for splitq
+Thread-Index: AQHcFqWAu9c+Mgx7QUqpbn7R7WlmbLSDM00AgAAPduA=
+Date: Thu, 4 Sep 2025 16:23:38 +0000
+Message-ID: <DM4PR11MB645585459A220BDE380A25BF9800A@DM4PR11MB6455.namprd11.prod.outlook.com>
+References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+ <20250826155507.2138401-10-aleksander.lobakin@intel.com>
+ <PH0PR11MB5013593A9866105499C7ACC79600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB5013593A9866105499C7ACC79600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|MN2PR11MB4646:EE_
+x-ms-office365-filtering-correlation-id: 8226cac2-c917-48bc-8d27-08ddebcf678c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|7053199007;
+x-microsoft-antispam-message-info: =?us-ascii?Q?oo52yqWgKlyboAWq0xMQ35TfGBu9R+jonKQGYs4OQSxO1Z6myOgQw7P7yFY2?=
+ =?us-ascii?Q?V47Tk5VpZOPnKLu9LKKlDg1GMUgYKRrA/OHCkiaOnZ5Fb8+0G83p+ULirPjr?=
+ =?us-ascii?Q?8qQkWOUfdu5wNOS3R3kvjHEmFtLX+pTCivDSlRN1nI7QH3oq5sw0YoI5Adnb?=
+ =?us-ascii?Q?nphfwjeh/gb3LODOcnZZwqxJsxZtxpODRRBvlXK/E39dREOoz88L5V7S78wf?=
+ =?us-ascii?Q?uEWy0P8GMj5CdiSWEQDDqJxxCMiyEf8jGgo1GSimkAoLaHhxIylZwNbRiGVN?=
+ =?us-ascii?Q?G0USGspzWX3ajamdzDqGCHimNVvK2pthbDLK62cVdRuxyev8DYlkbr2dP3c7?=
+ =?us-ascii?Q?mXF4mSj/sj+BEh/YI7jS90bR9OL63f9vMeEQuAnkUUvTPUYCcMd8UeO1Yr3T?=
+ =?us-ascii?Q?y5hQwK/ioYxjqLFkEnjnNa1PC1Kav8wSRQh3oampTikSAVDdhQVi39Ai1zib?=
+ =?us-ascii?Q?CXEyIDRC2aVRgpi94snoQbrHseSrzM1UOxmVT4z5GC9LBUMjwE6/T1R9XhAB?=
+ =?us-ascii?Q?xR0Kp+KxklqDG2KRRwulFYBcOEMNU67tK00MF+v0VTkZMDdTQc3v3zfnQlpb?=
+ =?us-ascii?Q?E/R5WG7eBQC9jYqwEoARRabJ5NTc6FmUili8/dq02kfI6dY90WozfV91ysud?=
+ =?us-ascii?Q?s+RRGTPNHHVfwZyUJ1Mc7m5XpdwkEaQKB8ZN6CBUTMV+R6jZRwN3RfOgldwm?=
+ =?us-ascii?Q?qrXwN0e38J3JDuINHwBTnv9ni6rENwaRjfUve5aK1iMaV8BocHsQOvNM/e4L?=
+ =?us-ascii?Q?bj1z9WMI1HzvCvM3cejC/FWsow1msIays2MZvIWhFNF4bkfF6MSKpQiLPVZA?=
+ =?us-ascii?Q?8CSjodo9OiaqXzUIcq75ROk4bxTjFuuzhRyU+VDgbmuxssr6U5ZN0iPKn7zl?=
+ =?us-ascii?Q?IdHMuEsSh5K45Ef7C9hSC5/i705YJO0caSsp3dRGgjMG6+Rl5XEz5Iwn0RPq?=
+ =?us-ascii?Q?f1OBFwUDWrzAofufdf3AEjZ/gAVhDjFLi8Uv4J+0eLZCmQVI6ptxSkiel87j?=
+ =?us-ascii?Q?vjTRbxAxbCEQFK9baW5xj2ut/Gf0TAZOyrtURk4f1TMax33I8w2KTkPvDdqM?=
+ =?us-ascii?Q?/ff4eVvrEDxtmrteyXRUeCAnf1kPZ8gdj7+n58ArMwBqXRv6/ZHgxewv9y9T?=
+ =?us-ascii?Q?MDsv/AFZ3c3wx9jwzZfPblI1pHcgmn2V4a5HihAx7as0S1N4EPpoUIU3UQhn?=
+ =?us-ascii?Q?/1UIvZbAW34tTN6TDtH9C0Cp8C/mO0fj2E3Ed9bm07peN0wAYVXuP8Nbb0v4?=
+ =?us-ascii?Q?ZZgcvbAmEKLuR0qnayRC2FQTwKgcOaOhXb1iGh7TbcsVLcyGNUWRxFF39BFo?=
+ =?us-ascii?Q?kOlEm6irGnrjeZ00PODOkpD6ck7m1E+/znWmk7uWkHLYqllqBVoBIpI7FRYz?=
+ =?us-ascii?Q?/EM1rDyR4G9uNEtVPUfaR9+EypQ6SzfvcczeYS1Ha+jiTww+6w4XSYV0E3EL?=
+ =?us-ascii?Q?1fmzzHVl1rMrTJB1bSTF94JEDL4U5qRb32ZucWeZVYFbBvbLdoJdwQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5UJO77w88mUFfs8AViAOhrEL4gxsL32xJhhNeQsAKuS2h+TzwCgWjc6HPj97?=
+ =?us-ascii?Q?kQaCJEIpZlhfbAasBW1bizJ4rxhz2zVI2dgmZNpsK7NfgB9uHgd6LIbKpDNo?=
+ =?us-ascii?Q?g8Jk7E9MuZ5hr4CCpu7+HJx6IwtD+u3tRDqC+z88iXXs2hLPbjHnd7rCyVMu?=
+ =?us-ascii?Q?QUyceFiWDNbaIcXb70wQL99xytlvZfl7oil1Y8ZK/RJfHLqtBjY+x2X86xX2?=
+ =?us-ascii?Q?G5P3+5C+5Nv8+EKXtcMwTiptwxUZaFUreeQvsN9pxRshTr4k/BAJHtryDZNz?=
+ =?us-ascii?Q?VDJX+kBEBl2wb5Fi1h1nmE6x3sSIZoeK1Ac600xJWdfUvAw1Cha4u0LDAW9A?=
+ =?us-ascii?Q?y0bmRVcVb5tEbxrnpkemygwqwighqvsD8ORzOYdg5fohaeVdoRjS7LP+zG+t?=
+ =?us-ascii?Q?eJNWLlsMnA4Gw7PJDvG5MVL8NHHf05fmCOvf/a8q/Gy08UAqnfYLF486WNFJ?=
+ =?us-ascii?Q?wFOslVNxyVqGOXs1mNK5yk9ydKVxWjvI9qFn4XsMLowE5xW0RUlB5GUarJsM?=
+ =?us-ascii?Q?z2ofhf3NLqr/svDXkbkKkUYNivakVjp2gr+leGWrXXo6df0u0OdF2GRB1RWq?=
+ =?us-ascii?Q?qppJkOWQobS8hM25HoEFafzn6+lit/3oOVXMUD66mWFtrRb3Lb0ULWnQLJes?=
+ =?us-ascii?Q?qtzhenQnMAXb5VUNaS5dovRuKzRyARiWuqY4u/Jj1c8smTnHa6mw8+znD/OM?=
+ =?us-ascii?Q?quHBqkonGvXr3IGX6WGqrprOah6f+Oc1FLhH6ZZPVuI7zD8saCMul9LTJ2cp?=
+ =?us-ascii?Q?yKyNGoBIqM66HjPmCSONaX8ccHxyv+JkVRXHikv+SSBQjESdoygz84D1dWjz?=
+ =?us-ascii?Q?UDtkLqrff/seJCYH4QnfOENiijuKQtYec6+kKZXk7i7aAg5ScAy6XB76gF4Z?=
+ =?us-ascii?Q?NROycCO4Ni57vBFhiCKlavtoXaXC//MyUwKBNncc2eHIvh9nI8ilvVZ0aLO/?=
+ =?us-ascii?Q?UBxA8SrluLKrHHcBWsx2UXnQUdDPWhpWi5POfeR0XudePw5jnWEYi3sxjrNI?=
+ =?us-ascii?Q?PNEcbfUYt/a8HWifL+p9HevqoOO/kQxZEcRfi/JkeRdISsRPU7dyVc7eM82p?=
+ =?us-ascii?Q?u2vFqMw+LcOdoNDceDr4zGaeU3mmxiR8rDP/g7WZdmtRhl0wilq2nOGJYS2n?=
+ =?us-ascii?Q?+EO1lzujV9ysUq8l9dNLHxHGc2hj097B+bRz2GcYmovxCRhZwz+CuXyASSt6?=
+ =?us-ascii?Q?520WgZAdiazlfQu8m2FeOAFiPpqTpsXh1KTF9MY7qEaqqP49RDTx9yMY1cTE?=
+ =?us-ascii?Q?d6XRpoueFb3HU21xUT5GF62F98jdpzyFYU4pL4YzA96RRbK6oSMpYgphFenE?=
+ =?us-ascii?Q?vcItCstfRiu5eNaSQmh9iNMv4ngSxxpCzeDQqszrdsJwHV+9k8RtuzBEhqjq?=
+ =?us-ascii?Q?MDKaPgcP5RNBPtZ7wzb9tVMCEroYSDOyN+K1efUL/DRVpzcF4OgsvwiEnYTo?=
+ =?us-ascii?Q?ZaA0I9fVynITcM869Cpp9Em3B/EUnWoLB8C/MjjZg0VIzyp045uMAZThvwjK?=
+ =?us-ascii?Q?QWlEMaDMSvE4yUCbJYxMl/ViyhNk6l4iF5mysTfyNrtpq6t78WgvEXxv0GGN?=
+ =?us-ascii?Q?RSQb7zTuKpGFyX0JzZ0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
- <20250904154245.644875-1-mjguzik@gmail.com> <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
-In-Reply-To: <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 4 Sep 2025 18:22:04 +0200
-X-Gm-Features: Ac12FXwBugvq0QdQbGsOsp23BALPk_EtEydK0n6uUt0jZXkGwfPmz3oTa1qkJJc
-Message-ID: <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
-Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
- I_WILL_FREE usage
-To: Mark Tinguely <mark.tinguely@oracle.com>
-Cc: ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	josef@toxicpanda.com, joseph.qi@linux.alibaba.com, jlbec@evilplan.org, 
-	mark@fasheh.com, brauner@kernel.org, willy@infradead.org, david@fromorbit.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8226cac2-c917-48bc-8d27-08ddebcf678c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:23:38.4292
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 19fLLbDYlwzflVEBBLrjjq/VYVrZXJmj+eIjaApjsNzviQcnd7ZbPtNG9BW9nDbT4g9MUq6gydYyzW2hV1pBbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4646
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 4, 2025 at 6:15=E2=80=AFPM Mark Tinguely <mark.tinguely@oracle.=
-com> wrote:
->
-> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
-> > This postpones the writeout to ocfs2_evict_inode(), which I'm told is
-> > fine (tm).
-> >
-> > The intent is to retire the I_WILL_FREE flag.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
-> >
-> > btw grep shows comments referencing ocfs2_drop_inode() which are alread=
-y
-> > stale on the stock kernel, I opted to not touch them.
-> >
-> > This ties into an effort to remove the I_WILL_FREE flag, unblocking
-> > other work. If accepted would be probably best taken through vfs
-> > branches with said work, see https://urldefense.com/v3/__https://git.ke=
-rnel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs-6.18.inode.refco=
-unt.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKBMEyuV2=
-7h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
-> >
-> >   fs/ocfs2/inode.c       | 23 ++---------------------
-> >   fs/ocfs2/inode.h       |  1 -
-> >   fs/ocfs2/ocfs2_trace.h |  2 --
-> >   fs/ocfs2/super.c       |  2 +-
-> >   4 files changed, 3 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> > index 6c4f78f473fb..5f4a2cbc505d 100644
-> > --- a/fs/ocfs2/inode.c
-> > +++ b/fs/ocfs2/inode.c
-> > @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode=
-)
-> >
-> >   void ocfs2_evict_inode(struct inode *inode)
-> >   {
-> > +     write_inode_now(inode, 1);
-> > +
-> >       if (!inode->i_nlink ||
-> >           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
-> >               ocfs2_delete_inode(inode);
-> > @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
-> >       ocfs2_clear_inode(inode);
-> >   }
-> >
-> > -/* Called under inode_lock, with no more references on the
-> > - * struct inode, so it's safe here to check the flags field
-> > - * and to manipulate i_nlink without any other locks. */
-> > -int ocfs2_drop_inode(struct inode *inode)
-> > -{
-> > -     struct ocfs2_inode_info *oi =3D OCFS2_I(inode);
-> > -
-> > -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
-> > -                             inode->i_nlink, oi->ip_flags);
-> > -
-> > -     assert_spin_locked(&inode->i_lock);
-> > -     inode->i_state |=3D I_WILL_FREE;
-> > -     spin_unlock(&inode->i_lock);
-> > -     write_inode_now(inode, 1);
-> > -     spin_lock(&inode->i_lock);
-> > -     WARN_ON(inode->i_state & I_NEW);
-> > -     inode->i_state &=3D ~I_WILL_FREE;
-> > -
-> > -     return 1;
-> > -}
-> > -
-> >   /*
-> >    * This is called from our getattr.
-> >    */
-> > diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
-> > index accf03d4765e..07bd838e7843 100644
-> > --- a/fs/ocfs2/inode.h
-> > +++ b/fs/ocfs2/inode.h
-> > @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACH=
-E(struct inode *inode)
-> >   }
-> >
-> >   void ocfs2_evict_inode(struct inode *inode);
-> > -int ocfs2_drop_inode(struct inode *inode);
-> >
-> >   /* Flags for ocfs2_iget() */
-> >   #define OCFS2_FI_FLAG_SYSFILE               0x1
-> > diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
-> > index 54ed1495de9a..4b32fb5658ad 100644
-> > --- a/fs/ocfs2/ocfs2_trace.h
-> > +++ b/fs/ocfs2/ocfs2_trace.h
-> > @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inod=
-e);
-> >
-> >   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
-> >
-> > -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
-> > -
-> >   TRACE_EVENT(ocfs2_inode_revalidate,
-> >       TP_PROTO(void *inode, unsigned long long ino,
-> >                unsigned int flags),
-> > diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> > index 53daa4482406..e4b0d25f4869 100644
-> > --- a/fs/ocfs2/super.c
-> > +++ b/fs/ocfs2/super.c
-> > @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops =3D=
- {
-> >       .statfs         =3D ocfs2_statfs,
-> >       .alloc_inode    =3D ocfs2_alloc_inode,
-> >       .free_inode     =3D ocfs2_free_inode,
-> > -     .drop_inode     =3D ocfs2_drop_inode,
-> > +     .drop_inode     =3D generic_delete_inode,
-> >       .evict_inode    =3D ocfs2_evict_inode,
-> >       .sync_fs        =3D ocfs2_sync_fs,
-> >       .put_super      =3D ocfs2_put_super,
->
->
-> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
-> Doing the sync write_inode_now() should be fine in ocfs_evict_inode().
->
-> Question is ocfs_drop_inode. In commit 513e2dae9422:
->   ocfs2: flush inode data to disk and free inode when i_count becomes zer=
-o
-> the return of 1 drops immediate to fix a memory caching issue.
-> Shouldn't .drop_inode() still return 1?
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Alexander Lobakin
+> Sent: Tuesday, August 26, 2025 9:25 PM
+> To: intel-wired-lan@lists.osuosl.org
+> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
+> <michal.kubiak@intel.com>; Fijalkowski, Maciej
+> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
+> NXNE CNSE OSDT ITP Upstreaming
+> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH iwl-next v5 09/13] idpf: implement
+> XDP_SETUP_PROG in ndo_bpf for splitq
+>=20
+> From: Michal Kubiak <michal.kubiak@intel.com>
+>=20
+> Implement loading/removing XDP program using .ndo_bpf callback in the
+> split queue mode. Reconfigure and restart the queues if needed (!!old_pro=
+g
+> !=3D !!new_prog), otherwise, just update the pointers.
+>=20
+> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.h |  4 +-
+>  drivers/net/ethernet/intel/idpf/xdp.h       |  7 ++
+>  drivers/net/ethernet/intel/idpf/idpf_lib.c  |  1 +
+> drivers/net/ethernet/intel/idpf/idpf_txrx.c |  4 +
+>  drivers/net/ethernet/intel/idpf/xdp.c       | 97 +++++++++++++++++++++
+>  5 files changed, 112 insertions(+), 1 deletion(-)
+>=20
+Tested-by: R,Ramu <ramu.r@intel.com>
 
-generic_delete_inode is a stub doing just that.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
