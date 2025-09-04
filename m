@@ -1,286 +1,251 @@
-Return-Path: <linux-kernel+bounces-801242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA32B44290
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:20:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567C4B4428F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6641BC730D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E8F3BAEFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9656233D9C;
-	Thu,  4 Sep 2025 16:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1022A807;
+	Thu,  4 Sep 2025 16:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gOnlJOjf"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CwHSkGwi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037A727713
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757002816; cv=none; b=UwAcSoR6dc3gyd3zJAPBr4AX0+aIN7C2cY3FCau8viVfoa9Yn6UtKEFQwgDrRt0YOebtf1RqlCUi0D9jeZ0UrmzTINBRXEej4dXaQpWdfyv513iVUld4ewkfIgsu6NgHlnJUJEjcOr1I9PL/gT8mmTjc55bH49f6Xq8ZjoggclQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757002816; c=relaxed/simple;
-	bh=oSrD5LZfhiTCWWEOnz+EwIH9Y5NWdWGaTMnBwoCG7LU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=upIOyYJ3jjcCBDJ15LUBp9qtvHJxuODnu1nm4Te11URB9Kgz4/cAq3ago1qqD0cGOZ2pX3I5bXQ9in4U9RoxOoZdPWWytQlPlaFpAliTqdEpwEYOQxV7VDR6P0xHVJYj+lDkqOgp53dOQYVUnEZEf1+FvCIBBCWiVk9OPpDtYmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gOnlJOjf; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74542b1b2bcso7441a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:20:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757002812; x=1757607612; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tGm2zkf/9oCXstTLHB+DCMbzA3eLiIfoAHdNUhFK2K8=;
-        b=gOnlJOjfjONbPz0q0HnXf4qwvbSXT+8YNugvlKekqUrl40SSjXMtKSr54zeV/7I77G
-         VUxwwuqnDl2px3blUo6x08gDcHAVPV1tzUJ0p41+m7f/fvnE3o5nvoYcDU5bwB/NVbie
-         pNEgkbf1yWtuiuF2ExilPaE+uvSMa3rTvbCz8bDgHaqccj8k2+FW8mqwP5Vm0P5ZyOmH
-         v9PT08khsNHYGvDYEli1Sq14wxEwuE40KNohBsL8eDwK9AF43ndBuWSU513R6fvEkz+V
-         MYIi9nPyCdfIUDyGbLMXDy1o/kwzxV8FDIEVwpx4UH6O1UX19Ak+znXTqKTsd3NDx1+I
-         Gl8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757002812; x=1757607612;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tGm2zkf/9oCXstTLHB+DCMbzA3eLiIfoAHdNUhFK2K8=;
-        b=VJd1Hp23zNqS7ObuTZSIhzn8gBcaX4B42wXpm3ZjvTb1EZ3F3F3svgG65AKanrIOMz
-         NmQjkSVBFCb9wlDJ9DrozFL+aVBh+E2nipHopmukL9jr00vEh04bNQ/BUgLy2fAHZ5ar
-         ciTe4tbQ1e50pQ5l0mIQZMr3yB6ZQ7kCaL31+vVjz52BVNa911fn6zBVpJMmDo0X16MW
-         gzrQbWpcQFE5CbVdgt2tOhFiMUuh0UEOwAqIRfHlmwmJ5gKBMDKPVbTaDGBpr0COxdZk
-         nJWCY9DvdCuRLjDyyL5vVjj3dv3cCZ2/KEvRdI+mmnq0AFerHlUrVzz0RghxJkoL14h9
-         ZJsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi7D94JjJh8yNXqbcQBe2XJx8siFlhIK9OiJEcT6N3eRauaOH4fBSXNetMyI+xlx69/dqV1Hs67bZ7AeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgMQzcKPJEAQcK5SVZdGAQcZhRuv/i+IAmxa9BvNtbAYmhTUxW
-	jEpQ7tao13RNvIZ5TG20AJHE/4dOqp45FHvyaKEIz4i4zLk1tHgLkCBeTt1pPIzGeZI=
-X-Gm-Gg: ASbGncsW3jdD4FE+pnp9cWG8eHsLT57d+kzc5Zp6Yn7KftIWLYPeW5c2JfXglaeJ0b1
-	UIGc4xvmC8aRxYkO31RzjwLaCsy89+mlvjcO5/0B214Ukevpsdyvm1qRqD54YGOUFW/Oen7QlMR
-	bdcdjxl+FS7q2h2OlpOCd8ugKcBlaGClfN9tI6UG0Cqjhse+zVSQUpj84zNHrIRz3OZ2dhRTohZ
-	QWvdK4WMTlC6zkid24NZbNU3tAsxRfcqXSOuoIyVWvO2Y8hukJFPIVEIRQfxzkMvI6coTpvw1j/
-	T5jTNg7AOZIGepNbcxPUp9rHQwcBLhi48gY8oCSNuBv8gpp3kfm3Msg1981JZglIt/+2KbyZqoY
-	sBflv6LgBQHSk0yaGgz1tgUojrj6+
-X-Google-Smtp-Source: AGHT+IHhgRzYKeua/z36tVDbnAK6UMOmH+rcUGmHZ+yOFWcr95caq9un7W7t88zd/ILCeK5ed3wrsg==
-X-Received: by 2002:a05:6808:898b:b0:437:e7c1:7d91 with SMTP id 5614622812f47-437f7de1535mr9428497b6e.26.1757002812002;
-        Thu, 04 Sep 2025 09:20:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:a178:aa1c:68f0:444a])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61e357137d6sm1702491eaf.4.2025.09.04.09.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 09:20:11 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Thu, 04 Sep 2025 11:19:56 -0500
-Subject: [PATCH v2] iio: adc: ad7124: fix sample rate for multi-channel use
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19EA1F17E8;
+	Thu,  4 Sep 2025 16:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757002815; cv=fail; b=JDWQPx2tO1RWaXgIC7L5Yvy1AKcA3DSiiKC3ZO87iM5VkBiNgHuzLLnyHXgza9rNuRAHf3GYUCB1aunmLwA6Iww40zc1fahqsLZzLYw1AcgOBeECOqHqqW0q7kQW8XVtKTPAOPfukTBCZW7XCI6wdhXES2UN22E+nf0YtdaEvW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757002815; c=relaxed/simple;
+	bh=EkuBVate4u4jrbgK4WNWU57y0ZriciPzWBd0Uesqs4s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=h7klijlnHpYeY8iO8+S3rSrjYoHCP5pXwmyTcCDXbxkXngDFMlIgpMArfWWHYvZVpkdaTjFQITFOMbxj+awhTEMDF9ybC9HYqBq/4gyI86fo2oK9UleWG+OhOQdkno9HNUrGjZxCdr1J1prY+xeT9b8qo7TAkLIsOFLqax55vNI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CwHSkGwi; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757002813; x=1788538813;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=EkuBVate4u4jrbgK4WNWU57y0ZriciPzWBd0Uesqs4s=;
+  b=CwHSkGwiGdeNkgEshqAh/qg80CPC/gI+y0xThCF0XEe4npF/Xo+n9ptZ
+   zYA3QIxzDJFsDdlOlOj8OUlvwifFZJD2kcYewNvsQCUx0lmNUGgD+z+bk
+   HpKSlbQyZ0Zutdg8HjEDKOzHVL/1A3X3vGIKqZL8iEabc70ER+qRYyPYj
+   nF9uomJYHyLEI0GHg8AAcCH/+Xn7Ez+q+6UFjmeejx3dWrLbmtsROreQH
+   4KICOzajm9Gljn+VPWcJrsMhgQAVyPI3NXQt4sSrf5Rz0AjXnK4/b/bIr
+   fK1UZsKrJeWmFbZuFd1tPt9z++r9syJF6zpWz2vCiLZh6k0noi9KC85z0
+   A==;
+X-CSE-ConnectionGUID: 0vdAhvRiRGKN257T380znw==
+X-CSE-MsgGUID: dzgkFv2OQXqeGpD6T/jNeg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70725996"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="70725996"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:20:12 -0700
+X-CSE-ConnectionGUID: qyCCV0lJSbeCqdkkEKPn9Q==
+X-CSE-MsgGUID: GM+RWJXJRzOxUwLMjU1N+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="177159160"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 09:20:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:20:10 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 4 Sep 2025 09:20:10 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.49)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 4 Sep 2025 09:20:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ak24tnKBYyilBVdyKRhDQAjdvEQJOB5/NxYpB7PLDbr6AWP4I0Smh6MJ2OxZ5RBVOHobIN+vHIWu8ZcYCdT3sI9oeRpTBwf6xK0zJIQTEcaRs5KFEjQdG1FzrYRttMzx26wh+DcjupMbO0COd5N/T/yliUkIDANSvXrTzSxvwbDncn/DeVigTWc7JBgOL8DJCzfV1xf6IqVC+J6tItF5QaU1Gvw6MhuFArZkoReskkRWY/ryTBzQXFmc+scVQI+Ykm5SnWB3/eEyfw5wgZRdVarO7dYUg6UfSYYEvxy5ueWu1uGatdjqANSX78fUAOqdr1sp0xv386sN3wPVSKs8hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P0IRA1m1k2r9LeyTQU9KX2UFkj5+aJEFlxEa7xJ0qHw=;
+ b=IhSwRrtQrVcKWf2D5MgXyjQLAW+IfdZ416Xf7wgqz+4eIaAeGpo51Uj9YW3y9vjfEtTnyroQVJ6ljaaqCt1q7xbYkOwtXMlYFKoHV2H5mr/aqCYdtPSHELerCizMdNIp9q9WK3HV7U+ZoC6pqzm/mb9DoAG3ITok33Wp1++miIwKkHBZY4+Ir9WTSMKZTb85asPYHiGtEeZz6h7ZI1d44c2rtM0tzp8ZzInlwh7TZoUe+BDDmOwCKVXPdvXmCUFlnJxzanCV1GKaue9+PboT84S/EoCgnSjyXEKa+jGu24vDo9VsDX5gyi5/Es+wuT/jGLk2TWgwRU+nJKByb0Llww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com (2603:10b6:8:ba::17) by
+ PH0PR11MB5046.namprd11.prod.outlook.com (2603:10b6:510:3b::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.17; Thu, 4 Sep 2025 16:20:07 +0000
+Received: from DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425]) by DM4PR11MB6455.namprd11.prod.outlook.com
+ ([fe80::304a:afb1:cd4:3425%6]) with mapi id 15.20.9009.013; Thu, 4 Sep 2025
+ 16:20:07 +0000
+From: "R, Ramu" <ramu.r@intel.com>
+To: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+CC: "Lobakin, Aleksander" <aleksander.lobakin@intel.com>, "Kubiak, Michal"
+	<michal.kubiak@intel.com>, "Fijalkowski, Maciej"
+	<maciej.fijalkowski@intel.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Simon
+ Horman" <horms@kernel.org>, NXNE CNSE OSDT ITP Upstreaming
+	<nxne.cnse.osdt.itp.upstreaming@intel.com>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-next v5 11/13] idpf: add support for
+ XDP on Rx
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-next v5 11/13] idpf: add support
+ for XDP on Rx
+Thread-Index: AQHcFqWG56OfQItKFEi8SaipCJxm17SDM2QggAAOGkA=
+Date: Thu, 4 Sep 2025 16:20:07 +0000
+Message-ID: <DM4PR11MB6455AF2B4F45AF33B52DAE509800A@DM4PR11MB6455.namprd11.prod.outlook.com>
+References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+ <20250826155507.2138401-12-aleksander.lobakin@intel.com>
+ <PH0PR11MB5013E983FC06BF5A751C1F4D9600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+In-Reply-To: <PH0PR11MB5013E983FC06BF5A751C1F4D9600A@PH0PR11MB5013.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR11MB6455:EE_|PH0PR11MB5046:EE_
+x-ms-office365-filtering-correlation-id: 703c248b-da93-42d1-98ad-08ddebcee9b0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018|7053199007;
+x-microsoft-antispam-message-info: =?us-ascii?Q?gUsbCjcWMkQSh6eoy+iSsHbiojsPCikgtGL45SP5uSX+vHArfm3bwUkIaARR?=
+ =?us-ascii?Q?4e3XeNA2fGluUnUBD+nSFl+RlWXWYcbh1q7WJwyDXx/4jQvloaYe0Be8PLLW?=
+ =?us-ascii?Q?gUWeQX93Oh92BsSEiwT2zlQ+XPNckK1rhNi5Wq2Ry35v6HuLZLJUwMTuZQXb?=
+ =?us-ascii?Q?Jb7HKehT+ZSpRyVxYRfUYvbXZXbrtuzM3K9dVlKjFk9NapkJSd1oeIzo+rpO?=
+ =?us-ascii?Q?zVsApz9CS1sUZgTyT2lEgnRPs/S23BVb5UVgyAWWH6WsDoYmdi9yB7n+j+z2?=
+ =?us-ascii?Q?yrz2DuKdExsORYCuOs/tV2Pw57yibPOzj4vqmczswgoQPtLtleKscP3w0oLA?=
+ =?us-ascii?Q?nrmCIR2ie2tjRF/g+cU2ME83+R3IsEhnApvfZUQfYl9UYHK7sS4N0kuB2vBl?=
+ =?us-ascii?Q?/apRg8biKSJ5BgbENqI6Nmg4wYHS6GTsEnO5EnMD4gLShmzw8zsAYX24vvl1?=
+ =?us-ascii?Q?dEW87opDrtrGgYgJFTESox3JjB+rqAhzgQJ0olmAsJxINUWCyh+px+u/O5yG?=
+ =?us-ascii?Q?N2JPqMzfUX7sZrluG0s9mZpBoeVk6CgRc31Vbsvca9UXBp7JY2OsQ1N9/DIK?=
+ =?us-ascii?Q?3H+UnB51MTVTW9zFNtPCc77gMzv0P6rnvDewXUf3iJN5UFck0sSOzVXRqONP?=
+ =?us-ascii?Q?fGVkgzrtGyrbHAHdLlThUPA+ekaoTNYtvCURTFVekizBKxMy+lWEXoCI7/te?=
+ =?us-ascii?Q?Sy58XU8UAKiocy643xC67nCkPLzHi1fV54fnqQ2X8giHxwYBZzU5R805Gufr?=
+ =?us-ascii?Q?8gvL8V+t1oMIb2qrRJTBd2GCfgQV6fehie7NvxgZeYQvuP/dPTObBiTMqYuf?=
+ =?us-ascii?Q?QV46YWwPLA8UQXhkdxVkrUEwrx9eh6y0fHjbjZfmOwAbxP+HjA75LYyiwJr5?=
+ =?us-ascii?Q?0sG4XBaUxZuLNc3KGdg5Vmn9om7uIpu5x2YXkYaXyZbjpmY+PE2sffwmZE/s?=
+ =?us-ascii?Q?CMBfiixdhNACv53zChu9dWo6bS5Vc6XhCC9vig6DSsvl2F6kFGmPWrPsD3V4?=
+ =?us-ascii?Q?LX1uju34yijLo4RUEiMcz+Zn86zyZmbYPFSHolwReW9lLToJLv+mxaV0/nMi?=
+ =?us-ascii?Q?ecQn9+BtonmtiCmjkAu+KjGrK207UNogoxBu0WdsH+wI7hKuR23aJLqrnazd?=
+ =?us-ascii?Q?462K/0zO4MM0CatI3B1a9AE5if4ku2AZ5Z9WbRDp0Xq0Dxo1w64mDd5Dyqnc?=
+ =?us-ascii?Q?8O5chwgejfvUgoGYn4N+ycN9fbIvk+UY+YTSvqLMa+eGwxeib8I39YPNJr61?=
+ =?us-ascii?Q?IDJXGob/WsXEEDt3a/BJVOipk8TDQ3SBwx+MBu5xvW2peYq3qVreOUjSdD4X?=
+ =?us-ascii?Q?GlyMFSRDhMaXBNNf/ZOxfHFXuI66e2QSk2bzyFv2jIHJrjfbcIUyvjP8C6La?=
+ =?us-ascii?Q?U1v2judQpG0dti3GljXV9kY61eDIJO+9Dl8AHlllePOrOo/N1k0BNYdWbjQu?=
+ =?us-ascii?Q?jPnrFuP0UkwRvSKWK7VigP48POh9dq6S3UzCyLthiIdZLLrdWhMXnw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6455.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?4kye12WzRTFAVV2vvjpdUBS+NHtOo45+fmnv3bNiRBrARDLnN7mzP/uSx4bI?=
+ =?us-ascii?Q?gSU0Uy6V2g4hlo2v9Q70enU+MnYXX2uIWE/efCwI8M3R66ZPooSmGYRJomPh?=
+ =?us-ascii?Q?S7PQ3FN9sdqg8q02CTGzOhAI/rmL7GOD80Ag9ajJyroooGyHfZnlfeAbn4NH?=
+ =?us-ascii?Q?R5akiPd1ZJTqYSLNxfLZ1fF+JOoOQWI4moXrSH4Mx0Wp74Jh8u+EC4ouiSKD?=
+ =?us-ascii?Q?/8Zt2JwDrlhy9P/vMSJR/0nwxT05BlJ72UM1We9a59FJNwwMOkxwUifxO0FX?=
+ =?us-ascii?Q?kXLIjxrhK4NKU0wZdUJQa4XhPQiDLZHj9nUMSF7qeSC7v17wvxllWWiC78gM?=
+ =?us-ascii?Q?IHnNuTVJbjUBCyrKsg3+zABjd5lMyNdHmhWjS+NAGaGRUMEFLJfBMFaL5d8w?=
+ =?us-ascii?Q?pKnjl8/8TjpuDKoj1Xhl+aw88G55rJ3aqCVzVOQHXhJd6sv6h7oSvdVcdILS?=
+ =?us-ascii?Q?QHaS1Z8wuxLJwmeC3x7ORHZVKrpy4TmusRPpKyn6uPemcBFF6nG61+D5UbCs?=
+ =?us-ascii?Q?ESMzL+mgOtsYv/GKYNqWKmQ6g4uSFk4OqNcqhqk3GIcXMMkxHDn69isyGRsP?=
+ =?us-ascii?Q?g487eJhe/dVCFqoDSxWBRSM1F1ELj70Zirk+Rq25n9fXoOIytr2Z83KLXVXX?=
+ =?us-ascii?Q?WlpiibxEqo+g5VYDW6mIrE2N7XftDNfAArtptDkul6M9CrOVrYQWHip9vYKH?=
+ =?us-ascii?Q?5NkIj2S0G8V385/1soginmqw+hrcJ6Lw8RbWxEx4MFY8h1pU0Uz2YGrvaN2l?=
+ =?us-ascii?Q?7USz6UqOkrJgtehFKR+wQxu56LUIBr8+1CY1XF2nV/cphxzDuPgR4Bacfuq4?=
+ =?us-ascii?Q?86FhRm7sG+ECgLnK03bCiQBq2LNX0saaWegECJLJagKR/RK/cyrjkcRkGfrL?=
+ =?us-ascii?Q?fO1YMXZSk91/pV4/A4bs8iX9+qrnywkC8+CNVd8YaUTSHunIjntn91ynrLq/?=
+ =?us-ascii?Q?XvcrB6ffvj1mDS+e1y4E32y1LUdT7TFYa96URqWPR8CdqCzbdFSk1nsbOjfs?=
+ =?us-ascii?Q?Fu0hGxxJt0TxJgvvYAsARYUxFKGhvb8BYHLWlVs5C8UZcmHUdrrZ3B+tdXCf?=
+ =?us-ascii?Q?HSlH6IFZprHfWM/iyq9Y9alM0HB7qqdcdCBprSrkYhwmi6ZkM2w2q9+j+qGb?=
+ =?us-ascii?Q?ZW5PCXNboXMUzaC+0xeDf0nTiLR2U2RySokzSfCdz5QXNEyuarLM7vz2LdWz?=
+ =?us-ascii?Q?GekMpXpyK631HyS2vixun8+WZHFTNwx41qoUI/aITNlcxmHFqGOiqHnnK9zd?=
+ =?us-ascii?Q?iPWzIexvajLuuc3G/t4rHp+DhijgO3kVVYThAxxXZPNnRnYg8tesyojlAiLd?=
+ =?us-ascii?Q?9xTVd394t0BpIjkreAkgp4kzuSNGs89jHVzLonqewncUa54pgqZ2HVShyPuA?=
+ =?us-ascii?Q?aD4TYG3z39Q6JCBOLO52R0F25HLWA5X2Rneri+jZQrdqd/c29spSF12NLbjf?=
+ =?us-ascii?Q?spGiIDepNKsvrPQsnsJLD1TCATBIO+leRaGbf6rWAefOO2wZKRoVKQktzm9u?=
+ =?us-ascii?Q?K75pd1KbkU+FKx5dlVEwZvd6scUdlKNPdpydrxKEp8Feq5A4/Afo5F/VWNqW?=
+ =?us-ascii?Q?GbX64cWb6rTgEHvTaus=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIACu8uWgC/52OQY6DMAxFr4K8Hg8QMTOhq96jYpEEp7VESJukq
- Kji7nXpDWZhWd/28/9PyJSYMhyqJyRaOHOcRaivCtzFzGdCHkWDatRPo5VG5ohmdFJ/rerQ8wO
- zCVf0iW7oY8JwnwrjG55pQm2Vcp222rsG5Ok1kSC74Wn4aAHv4ls+Q7AmE7oYApdDJde5ThSib
- GuxrqUXns/wZi+cS0zrnn1pd/i/MZcWW/R67FyvGvPb90dr1oltom+JAsO2bS9vpiiHKwEAAA=
- =
-X-Change-ID: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7021; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=oSrD5LZfhiTCWWEOnz+EwIH9Y5NWdWGaTMnBwoCG7LU=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoubw04FF7FjxOyiOLqlnRJiirNnSa/iFefbsQj
- 8Dsx8UrZemJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaLm8NAAKCRDCzCAB/wGP
- wCFxB/48z09RE0GdDD3DJl3cqac93uCpkK7NofoFaYT4P8luNZ9pUaA4MQtzkIkbzRfxSh3xko1
- wfA+4VZNjpMmZk74lgQ+z7wopr7tXyC0A4dKqEQHSo1fPE2dQFZP151pl8MtVVhpq/CNpIe6nUP
- oDFK5AJbm9afrWs8R1wwjRfFMi/tS9GgQwDfcxBsPStyR6f04hGvOe9LIFpkHQwZxJ3iaXwNxTa
- aN1MbgQL5IGJUjZz0dW1jM0wlRc9stVGTvi/8C94LWVWlBePp28D2DgFL1l1fNHuSFwyzsY04Dz
- fiEl1t8rjvRNqoCATAiOH+HX7H+ZVsBhXe4p+Tx4X5BlElRj
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6455.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 703c248b-da93-42d1-98ad-08ddebcee9b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 16:20:07.2460
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mCVrHjSfuE8NmePHu3dn+exepo/3aP2JP3KSsO2Tb0K6dTuynCHIommjjxK5UhGqx608enrfmyCv86SW5x3Q8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5046
+X-OriginatorOrg: intel.com
 
-Change how the FS[10:0] field of the FILTER register is calculated to
-get consistent sample rates when only one channel is enabled vs when
-multiple channels are enabled in a buffered read.
-
-By default, the AD7124 allows larger sampling frequencies when only one
-channel is enabled. It assumes that you will discard the first sample or
-so to allow for settling time and then no additional settling time is
-needed between samples because there is no multiplexing due to only one
-channel being enabled. The conversion formula to convert between the
-sampling frequency and the FS[10:0] field is:
-
-    fADC = fCLK / (FS[10:0] x 32)
-
-which is what the driver has been using.
-
-On the other hand, when multiple channels are enabled, there is
-additional settling time needed when switching between channels so the
-calculation to convert between becomes:
-
-    fADC = fCLK / (FS[10:0] x 32 x (4 + AVG - 1))
-
-where AVG depends on the filter type selected and the power mode.
-
-The FILTER register has a SINGLE_CYCLE bit that can be set to force the
-single channel case to use the same timing as the multi-channel case.
-
-Before this change, the first formula was always used, so if all of the
-in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
-a buffered read with 1 channel enabled would result in the requested
-sampling frequency of 10 Hz. But when more than one channel was
-enabled, the actual sampling frequency would be 2.5 Hz per channel,
-which is 1/4 of the requested frequency.
-
-After this change, the SINGLE_CYCLE flag is now always enabled and the
-multi-channel formula is now always used. This causes the sampling
-frequency to be consistent regardless of the number of channels enabled.
-
-Technically, the sincx+sinc1 filter modes can't currently be selected
-so there is some temporarily dead code in ad7124_get_avg() until filter
-support is added.
-
-The AD7124_FILTER_FS define is moved while we are touching this to
-keep the bit fields in descending order to be consistent with the rest
-of the file.
-
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-This is one of those unfortunate cases where we are fixing a bug but we
-risk breaking userspace that may be depending on the buggy behavior.
-
-I intentionally didn't include a Fixes: tag for this reason.
-
-Given some of the other shortcomings of this driver, like using an
-integer IIO_CHAN_INFO_SAMP_FREQ value when it really needs to allow a
-fractional values, it makes me hopeful that no one is caring too much
-about the exact value of the sampling frequency. So I'm more willing
-than I would normally be to take a risk on making this change.
-
-[1] https://lore.kernel.org/linux-iio/20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com/
----
-Changes in v2:
-- Improved comment explaining why the new factor always applies.
-- Fixed merge conflict with iio/testing branch.
-- Replaced avg parameter with ad7124_get_avg() function.
-- Link to v1: https://lore.kernel.org/r/20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com
----
- drivers/iio/adc/ad7124.c | 49 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 44 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index c6435327d431e5f4ba28aa3332ec6eb90da7c83d..5121a4457feab0dd65766558b30c9f0c6e8d1bd4 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -93,10 +93,13 @@
- #define AD7124_CONFIG_PGA		GENMASK(2, 0)
- 
- /* AD7124_FILTER_X */
--#define AD7124_FILTER_FS		GENMASK(10, 0)
- #define AD7124_FILTER_FILTER		GENMASK(23, 21)
- #define AD7124_FILTER_FILTER_SINC4		0
- #define AD7124_FILTER_FILTER_SINC3		2
-+#define AD7124_FILTER_FILTER_SINC4_SINC1	4
-+#define AD7124_FILTER_FILTER_SINC3_SINC1	5
-+#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
-+#define AD7124_FILTER_FS		GENMASK(10, 0)
- 
- #define AD7124_MAX_CONFIGS	8
- #define AD7124_MAX_CHANNELS	16
-@@ -283,11 +286,36 @@ static u32 ad7124_get_fclk_hz(struct ad7124_state *st)
- 	return fclk_hz;
- }
- 
-+static int ad7124_get_avg(struct ad7124_state *st, unsigned int channel)
-+{
-+	/*
-+	 * The number of averaged samples depends on the selected filter and
-+	 * the current power mode.
-+	 */
-+	switch (st->channels[channel].cfg.filter_type) {
-+	case AD7124_FILTER_FILTER_SINC4_SINC1:
-+	case AD7124_FILTER_FILTER_SINC3_SINC1: {
-+		enum ad7124_power_mode power_mode =
-+			FIELD_GET(AD7124_ADC_CONTROL_POWER_MODE, st->adc_control);
-+
-+		switch (power_mode) {
-+		case AD7124_LOW_POWER:
-+			return 8;
-+		default:
-+			return 16;
-+		}
-+	}
-+	default:
-+		return 1;
-+	}
-+}
-+
- static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
- {
--	unsigned int fclk, odr_sel_bits;
-+	unsigned int fclk, avg, factor, odr_sel_bits;
- 
- 	fclk = ad7124_get_fclk_hz(st);
-+	avg = ad7124_get_avg(st, channel);
- 
- 	/*
- 	 * FS[10:0] = fCLK / (fADC x 32) where:
-@@ -295,8 +323,15 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
- 	 * fCLK is the master clock frequency
- 	 * FS[10:0] are the bits in the filter register
- 	 * FS[10:0] can have a value from 1 to 2047
-+	 * When multiple channels are enabled in the sequencer, the SINGLE_CYCLE
-+	 * bit is set and only one channel is enabled in the sequencer, or when
-+	 * a fast settling filter mode is enabled on any channel, there is an
-+	 * extra factor of (4 + AVG - 1) on all channels to allow for settling
-+	 * time. We ensure that at least one of these is always true so that we
-+	 * always use the same factor.
- 	 */
--	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
-+	factor = 32 * (4 + avg - 1);
-+	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
- 	if (odr_sel_bits < 1)
- 		odr_sel_bits = 1;
- 	else if (odr_sel_bits > 2047)
-@@ -306,7 +341,8 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
- 		st->channels[channel].cfg.live = false;
- 
- 	/* fADC = fCLK / (FS[10:0] x 32) */
--	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
-+	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
-+								factor);
- 	st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
- }
- 
-@@ -440,9 +476,12 @@ static int ad7124_write_config(struct ad7124_state *st, struct ad7124_channel_co
- 		return ret;
- 
- 	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
-+		AD7124_FILTER_SINGLE_CYCLE |
- 		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
- 	return ad7124_spi_write_mask(st, AD7124_FILTER(cfg->cfg_slot),
--				     AD7124_FILTER_FILTER | AD7124_FILTER_FS,
-+				     AD7124_FILTER_FILTER |
-+				     AD7124_FILTER_SINGLE_CYCLE |
-+				     AD7124_FILTER_FS,
- 				     tmp, 3);
- }
- 
-
----
-base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
-change-id: 20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-8b22c48b8fc0
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of
+> Alexander Lobakin
+> Sent: Tuesday, August 26, 2025 9:25 PM
+> To: intel-wired-lan@lists.osuosl.org
+> Cc: Lobakin, Aleksander <aleksander.lobakin@intel.com>; Kubiak, Michal
+> <michal.kubiak@intel.com>; Fijalkowski, Maciej
+> <maciej.fijalkowski@intel.com>; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
+> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Alexei Starovoitov <ast@kernel.org>; Daniel
+> Borkmann <daniel@iogearbox.net>; Simon Horman <horms@kernel.org>;
+> NXNE CNSE OSDT ITP Upstreaming
+> <nxne.cnse.osdt.itp.upstreaming@intel.com>; bpf@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [Intel-wired-lan] [PATCH iwl-next v5 11/13] idpf: add support fo=
+r XDP
+> on Rx
+>=20
+> Use libeth XDP infra to support running XDP program on Rx polling.
+> This includes all of the possible verdicts/actions.
+> XDP Tx queues are cleaned only in "lazy" mode when there are less than
+> 1/4 free descriptors left on the ring. libeth helper macros to define dri=
+ver-
+> specific XDP functions make sure the compiler could uninline them when
+> needed.
+>=20
+> Use __LIBETH_WORD_ACCESS to parse descriptors more efficiently when
+> applicable. It really gives some good boosts and code size reduction on
+> x86_64:
+>=20
+> XDP only: add/remove: 0/0 grow/shrink: 3/3 up/down: 5/-59 (-54) with XSk:
+> add/remove: 0/0 grow/shrink: 5/6 up/down: 23/-124 (-101)
+>=20
+> with the most demanding workloads like XSk xmit differing in up to 5-8%.
+>=20
+> Co-developed-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.h |   4 +-
+>  drivers/net/ethernet/intel/idpf/xdp.h       |  92 +++++++++++-
+>  drivers/net/ethernet/intel/idpf/idpf_lib.c  |   2 +
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.c |  23 +--
+>  drivers/net/ethernet/intel/idpf/xdp.c       | 147 +++++++++++++++++++-
+>  5 files changed, 248 insertions(+), 20 deletions(-)
+>=20
+Tested-by: R,Ramu <ramu.r@intel.com>
 
