@@ -1,133 +1,174 @@
-Return-Path: <linux-kernel+bounces-800324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86542B4364A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F39AB43644
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C361B23A2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6F816F696
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC262D23A4;
-	Thu,  4 Sep 2025 08:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RbmZqyvU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1F72264B1
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 08:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33572D0615;
+	Thu,  4 Sep 2025 08:50:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BAA2264B1;
+	Thu,  4 Sep 2025 08:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756975886; cv=none; b=BQ1CflWYb3VipUKYbbpitywGX9l4rMkJyjUvSxmtgDThoDVz7o15TgSwS/6fKH/mTWihcxjPtQcPrwB8NTfu5Vg01Pm2KFx9XaoPYuzkeFvSGo5B6tsckJe1zW69abXeTY3Zedb9154qe1YUgGqttjcYpvYdzJBxmqeF9h2HW5E=
+	t=1756975837; cv=none; b=G8FzDENmq/num87HIytfopESbIZX+2Nll1NYgjSK43szGff4DQJSj8x8qNFzg1NOkZvsOskstiYlpbxg0vpF+9gChHVMfzfHVkSfgB7UoRC8MycHK+xg3xEq1XelC+mob6Kmb6KYFHu2ko/Lvwwa8tUnXzNnmruJ6m3qo8aJfMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756975886; c=relaxed/simple;
-	bh=kd8rDK6t+wVjPKffuRs99409lYJP4hc4W7ZRJeOM6K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLUblBqfnJecjYVe/j9g8ULX7q4CQCSHC0YgILxsLglL8Lgs09fp3+NgPFCPMaR3UsJlA2WclOdlvvXnRlRT1dIb8x+KZRXEDuU0XImmzmcWCb37/FkZuItJBWXRPKqvgl1y7YTJqEAHBOIs7pjRz3KGzjpGan2MQdNnThJLcbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RbmZqyvU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756975884;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bt3LAXhgvrSLIKod81c7m7+ZTsO9TpO34qJq6parCmk=;
-	b=RbmZqyvUixE6PQopbcrGN4aEXW0xjTMlo2JiHby0mCDGXBAanZMKE36BhAdfXidnSvbzvt
-	k9xn3S2v3ljmKItODNXpP3VKlWEbjVXMKSq/dGKrFONM7WUOgvp437+CSzj8494gWeenNu
-	YpCPWAH4CFJx4ByCzbLmNbye47PtnWU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-479-r52OELBBN9CON0H9FJYDAw-1; Thu,
- 04 Sep 2025 04:51:20 -0400
-X-MC-Unique: r52OELBBN9CON0H9FJYDAw-1
-X-Mimecast-MFC-AGG-ID: r52OELBBN9CON0H9FJYDAw_1756975878
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7281818004D4;
-	Thu,  4 Sep 2025 08:51:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4FE2E1800446;
-	Thu,  4 Sep 2025 08:51:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  4 Sep 2025 10:49:56 +0200 (CEST)
-Date: Thu, 4 Sep 2025 10:49:50 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
- uprobe when ip is changed
-Message-ID: <20250904084949.GB27255@redhat.com>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
- <20250902143504.1224726-3-jolsa@kernel.org>
- <20250903112648.GC18799@redhat.com>
- <aLicCjuqchpm1h5I@krava>
+	s=arc-20240116; t=1756975837; c=relaxed/simple;
+	bh=eTaA6n3zLtqq6jVcDFfU6/plf0Xa3K2sPtxjA8dBorA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SuDAIwmALkpuRpEBiI10yZMOHvTPFmrg4AQCRTIEXOfSIAizR1RZ2XZcL6wtJTYMI9tOFWwkvy71izJILP2ChQ2SKLlUvRHDB2+SJ+AvAl89cEe6t9kaiR2xI7N+mIBjsj1GFNZ0chNvHICwHTKPB/u02uEFwoHh/VpVmTeQjsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA6881596;
+	Thu,  4 Sep 2025 01:50:25 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0F793F63F;
+	Thu,  4 Sep 2025 01:50:32 -0700 (PDT)
+Message-ID: <961258a0-3cc6-4935-a305-80bb2c2c0597@arm.com>
+Date: Thu, 4 Sep 2025 09:50:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLicCjuqchpm1h5I@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] coresight: tpda: fix the logic to setup the element
+ size
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tao Zhang <quic_taozha@quicinc.com>, Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: tingwei.zhang@oss.qualcomm.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250806080931.14322-1-jie.gan@oss.qualcomm.com>
+ <2f243b22-d8d3-4352-b226-aaf9ccfe825b@arm.com>
+ <a4382db3-115a-4d79-924a-08507e6e7b3e@oss.qualcomm.com>
+ <1cef4224-1f0a-4c51-937d-66823a22dec3@oss.qualcomm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <1cef4224-1f0a-4c51-937d-66823a22dec3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 09/03, Jiri Olsa wrote:
->
-> On Wed, Sep 03, 2025 at 01:26:48PM +0200, Oleg Nesterov wrote:
-> > On 09/02, Jiri Olsa wrote:
-> > >
-> > > If user decided to take execution elsewhere, it makes little sense
-> > > to execute the original instruction, so let's skip it.
-> >
-> > Exactly.
-> >
-> > So why do we need all these "is_unique" complications? Only a single
-> > is_unique/exclusive consumer can change regs->ip, so I guess handle_swbp()
-> > can just do
-> >
-> > 	handler_chain(uprobe, regs);
-> > 	if (instruction_pointer(regs) != bp_vaddr)
-> > 		goto out;
->
-> hum, that's what I did in rfc [1] but I thought you did not like that [2]
->
-> [1] https://lore.kernel.org/bpf/20250801210238.2207429-2-jolsa@kernel.org/
-> [2] https://lore.kernel.org/bpf/20250802103426.GC31711@redhat.com/
->
-> I guess I misunderstood your reply [2], I'd be happy to drop the
-> unique/exclusive flag
+On 04/09/2025 02:12, Jie Gan wrote:
+> 
+> 
+> On 9/3/2025 5:45 PM, Jie Gan wrote:
+>>
+>>
+>> On 9/3/2025 4:57 PM, Suzuki K Poulose wrote:
+>>> On 06/08/2025 09:09, Jie Gan wrote:
+>>>> Some TPDM devices support both CMB and DSB datasets, requiring
+>>>> the system to enable the port with both corresponding element sizes.
+>>>>
+>>>> Currently, the logic treats tpdm_read_element_size as successful if
+>>>> the CMB element size is retrieved correctly, regardless of whether
+>>>> the DSB element size is obtained. This behavior causes issues
+>>>> when parsing data from TPDM devices that depend on both element sizes.
+>>>>
+>>>> To address this, the function should explicitly fail if the DSB
+>>>> element size cannot be read correctly.
+>>>
+>>> But what is the device only has CMB ? Back when this was originally 
+>>
+>> We have CMB TPDM, DSB TPDM and CMB&&DSB TPDM.
+>>
+>>> merged, we raised this question and the answer was, "Only one is 
+>>> supported, not both." But this sounds like that is wrong.
+>>
+>> I think we may not answer the previous question clearly. But it 
+>> definitely has issue here.
+>>
+>>> Could we defer the "Warning" to the caller. i.e., Let the caller
+>>> figure out the if the DSB size is found and predicate that on the
+>>> DSB support on the TPDM.
+>>
+>> Understood, below codes will be added in the caller to check the error:
+>> if ((tpdm_data->dsb && !drvdata->dsb_esize) ||
+>>      (tpdm_data->cmb && !drvdata->cmb_esize))
+>>      goto err;
+>>
+>> Thanks,
+>> Jie
+>>
+> 
+> Hi Suzuki,
+> 
+> I've reviewed the logic here. It's not feasible for the caller to 
+> perform the check, since we first retrieve TPDM's drvdata, which adds 
+> complexity to the code. I believe it's better to handle this within the 
+> function itself.
+> 
+> We are expecting the element_size for cmb if the condition is true, as 
+> well as dsb:
+> if (tpdm_data->dsb)
+> ...
+> should obtain a valid element size for dsb.
+> ...
+> 
+> if (tpdm_data->cmb)
+> ...
+> should obtain a valid element size for cmb.
+> ...
+> 
 
-Well, but that rfc didn't introduce the exclusive consumers, and I think
-we agree that even with these changes the non-exclusive consumers must
-never change regs->ip?
+Ok, fair enough. Please resend the patch without the dependency on the 
+static TPDM patch. Given this is a fix, this could go in without waiting 
+for the new series.
 
-> > But if a non-exclusive consumer changes regs->ip, we have a problem
-> > anyway, right?
-> >
-> > We can probably add something like
-> >
-> > 		rc = uc->handler(uc, regs, &cookie);
-> > 	+	WARN_ON(!uc->is_unique && instruction_pointer(regs) != bp_vaddr);
-> >
-> > into handler_chain(), although I don't think this is needed.
+Suzuki
 
-Oleg.
+
+
+> Thanks,
+> Jie
+> 
+>>>
+>>> Suzuki
+>>>
+>>>>
+>>>> Fixes: e6d7f5252f73 ("coresight-tpda: Add support to configure CMB 
+>>>> element")
+>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>>> ---
+>>>>   drivers/hwtracing/coresight/coresight-tpda.c | 3 +++
+>>>>   1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
+>>>> hwtracing/coresight/coresight-tpda.c
+>>>> index 0633f04beb24..333b3cb23685 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>>>> @@ -71,6 +71,8 @@ static int tpdm_read_element_size(struct 
+>>>> tpda_drvdata *drvdata,
+>>>>       if (tpdm_data->dsb) {
+>>>>           rc = fwnode_property_read_u32(dev_fwnode(csdev->dev.parent),
+>>>>                   "qcom,dsb-element-bits", &drvdata->dsb_esize);
+>>>> +        if (rc)
+>>>> +            goto out;
+>>>>       }
+>>>>       if (tpdm_data->cmb) {
+>>>> @@ -78,6 +80,7 @@ static int tpdm_read_element_size(struct 
+>>>> tpda_drvdata *drvdata,
+>>>>                   "qcom,cmb-element-bits", &drvdata->cmb_esize);
+>>>>       }
+>>>> +out:
+>>>>       if (rc)
+>>>>           dev_warn_once(&csdev->dev,
+>>>>               "Failed to read TPDM Element size: %d\n", rc);
+>>>
+>>>
+>>
+> 
 
 
