@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-801585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D41B44732
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC245B44744
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164891605F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ED8A48394
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C127FB12;
-	Thu,  4 Sep 2025 20:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB9E27FD4A;
+	Thu,  4 Sep 2025 20:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3hoLTL5"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OUUuvBEx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC027A123;
-	Thu,  4 Sep 2025 20:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B492F27F18F;
+	Thu,  4 Sep 2025 20:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757017270; cv=none; b=ihCeBKsjDRTwQ9QYY+7SOZEpf8AnOeUmASbTQsJFZB5e4D2ZdmgicMXPolYwY27DoxjFSDN+Ufv1VwlvwESSlDN3jhQawZH0IJV2HvFFcfP4g6zjm56ZVY9hPuIAVMhXa4z2rYtxJDf6KpJDYZnACxuZXIeTTDHjnzFmxxbtP/Y=
+	t=1757017466; cv=none; b=H7AV45w5Sz9/2v49iFOfcXzMf2wZLz15slYDcJnGeMaOcBuMAOMQEG2xG1HaicCV9ZHNpw5csSGw8M48wo1ML/FZibrcHkF61kQJ3Vi81z/dQxEQ1WnUWWNNOODKZMTI4MCQErSXWPycJn9FmB4HbmQDxX6tcQSy5u9PIMsQ1j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757017270; c=relaxed/simple;
-	bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhmEGHTIy1ODw3bwWFsetLXhmxHS/ZjFvNi/MxtCCr5u+cm3pQnTPCo7AJXAOfz51eZcEiuGJ/S5sUj7iZp8HYr3MS/nyEBc3D5hYuXRalpZ/pnjPUpRkrtsZ7+tA+UpFzfjgtG/ZGa+1XfIk+nqxYxDdnFMnXjXQwytJeG/xn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3hoLTL5; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-244580523a0so15873715ad.1;
-        Thu, 04 Sep 2025 13:21:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757017268; x=1757622068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
-        b=g3hoLTL5uZOcJoIhsYn24yK6DXqOn8KmSzdUqmdNkep4ymDHncDMFQWefi9rPyn09i
-         Bhn3pW7W7C7MsqVA6Y/Q8YKcniG4NCQiCQ4F872rHXPAYbQuhLDfaw9WZhrQL77a82wL
-         2ACU0xhCY62TiP9PGPPAbbQBbb/VdM0GxsQLvaUTpPp8EDZSPCjLKWyJhm8RuRP7Ti5H
-         MOm8nr3FYtLeyGgNGg2HdeeUn2x1bKkkYUVNHi5by6MKB5UFYOmijbAxNgVM/+i7OBzn
-         PmCndNtksdFRrOy35Mip+j+zYZsedQ2iBPYUf4pDxvVNMfEyvDApANkpxJNQgdKyjN82
-         ptvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757017268; x=1757622068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5R73QwFGpxpwtcDAq2/wRoOXZRZTM7agVtz97/zJueA=;
-        b=vL14za3BQQQ8pooI5ffghBSrKX2NL6gzZXqyC1p87g9RyeBOR0EiZcRldlpvrTK2bM
-         IVdiBmyRW4riARSzDLqUONsKDb56eP6xsUFuaTTLZhr9R/Kd4PJKBM+hVbIYKSeO5JHx
-         EllWyVAr59DozxyFqEBLO1xwRyyvSWeUUOUGfFT+zAyyLP28bCV2c8YWX3QfCjiQiT07
-         zSYkWT3qo4hpOHp9fXcQb6NA/2qOVddKZwBDlayv78WcPLLBLhritriBs7vWd2gDykoY
-         vlxydwKNvQudXM7nX/Y0AKpfG9hk0q74EhHEWxez1y60WOzOGq3gyiWOhDvGuCZ13tv+
-         4XHw==
-X-Forwarded-Encrypted: i=1; AJvYcCW83128OGmXPXV1xtW5ZPmaRQgUyCKTN4pnXcsIMkPljl0SpyPgNUybu8A4GWyJ8nPBV4C1pa9B6Vn1ufI=@vger.kernel.org, AJvYcCXmZNiycOkQm4g0bNm8O+kaOtcuLwZit8NpqoKy5vyq11bH/qIRkfuOmlR2VHo+M/soQ2N9w25y9kHF0Hkk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvrWPLdAYTzkUT57uyF4qNdIEFe3sa6mE7QmGvQSxjF+SUeESA
-	S/dU+N6XmoBBfS4sr70epua25aa3riPf8Vp/8KqV1kFGLf2BCA/wKIrRK3UPZKvG62gh/Lsj2UZ
-	/RRa5OiuR/sHKuzSAVdzyJmnQAugFhiU=
-X-Gm-Gg: ASbGncuxTzNLFOHiHnOndnkbK/RYvs3tOMl62NCztxa7bsDfduR8q6VtgOA5D0wQLh3
-	G7U6ZlGOzfdgDJ96fM4QO5cjthuvvdeSAyUnCgXKGsEmrD5IfGLshGxllHmM44spLmpGtfCWl7+
-	+BNDk6/FcC4KHqBcMdsqAAkQUzzRA31YLSfYejUJptd/QtFRBae3h6Ra9Usx8mSfcpXEaycdC3j
-	JyXzOfJ7M/RrjSea0hTEF7w6rAdbxUg5BI9+w==
-X-Google-Smtp-Source: AGHT+IEI0YtwNUP5Ckeu7lnXmy0Rk28H9EZkLvS0yGrAkAdCynjENqi0zkQG7ZR9KNGK7GfDI0Z/fifzp2eGgX7XZqI=
-X-Received: by 2002:a17:903:37cb:b0:242:9bc6:6bc0 with SMTP id
- d9443c01a7336-24944b73618mr268496855ad.55.1757017268482; Thu, 04 Sep 2025
- 13:21:08 -0700 (PDT)
+	s=arc-20240116; t=1757017466; c=relaxed/simple;
+	bh=ixOAiIThvEesXbn13BqRjafXXa+iKY3A/F3J4/qErTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2JKe28tVsiSMjZWmfZxS8YxFLrO+XXiHIHD9SjlzppgVlaRwbGO8l3Ae69VshtBoLv7bkoVZxpCrGAUX85+vqFgcVod1ykTAgXKbZTqjdHXT8UW49eCq0MeUpgq2qSt9WJZQw/qC1osi108glrlGmXbgSxdxc9KI+BTyrdZ+3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OUUuvBEx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=lWUKJjZJ4aj3MBB1AnWcuAXu7/G0kSLyyAT1+UxRtww=; b=OUUuvBExyHRrVOF4DapYGn7ShO
+	uFuPYxPOXRbkKzhsGkxWuUNxigbpLDa8lwn9JNrdwPxecd0Xaisn0o6ATb9EevWR3F/xZeuQLDe0J
+	Eop3oZxclUIK265qZEtELnJVUMG9u/Fkef/UhLZboCvRzbFB3ozTz2/wCwI8EnIkABxc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uuGVB-007Gct-FK; Thu, 04 Sep 2025 22:24:13 +0200
+Date: Thu, 4 Sep 2025 22:24:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v2 5/9] net: pcs: rzn1-miic: move port range
+ handling into SoC data
+Message-ID: <ff99349e-6f42-470d-94bf-321dc6696e74@lunn.ch>
+References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250904114204.4148520-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
- <20250901164212.460229-8-ethan.w.s.graham@gmail.com> <CALrw=nGkk01xXG7S68FggsWQXygTXnXGz8AvseQuRE9K-OE0uA@mail.gmail.com>
-In-Reply-To: <CALrw=nGkk01xXG7S68FggsWQXygTXnXGz8AvseQuRE9K-OE0uA@mail.gmail.com>
-From: Ethan Graham <ethan.w.s.graham@gmail.com>
-Date: Thu, 4 Sep 2025 22:20:56 +0200
-X-Gm-Features: Ac12FXyXqZdTxVG6TdzkdqBvv0Mcwr4nVECn24stQHwKcyWRqz_jVg7upfdtHW8
-Message-ID: <CANgxf6xCfk9uDsGgqWqociv0Q2Ngu0_GBR0vzWHwOAowsO+CVw@mail.gmail.com>
-Subject: Re: [PATCH v2 RFC 7/7] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-To: Ignat Korchagin <ignat@cloudflare.com>
-Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com, 
-	brendan.higgins@linux.dev, davidgow@google.com, dvyukov@google.com, 
-	jannh@google.com, elver@google.com, rmoar@google.com, shuah@kernel.org, 
-	tarasmadan@google.com, kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
-	lukas@wunner.de, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904114204.4148520-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, Sep 3, 2025 at 10:58=E2=80=AFAM Ignat Korchagin <ignat@cloudflare.c=
-om> wrote:
-> nit: can I ask for another real example? AFAIK this subsystem is
-> rarely used (at least directly by users). However, one user-controlled
-> widely used parser terrifies me: load_script() function from
-> binfmt_script.c, which parses the shebang line for scripts. I would
-> really like to see what this framework can do to fuzz that.
+On Thu, Sep 04, 2025 at 12:41:59PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Define per-SoC miic_port_start and miic_port_max fields in struct
+> miic_of_data and use them to validate the device-tree "reg" port number
+> and to compute the driver's internal zero-based port index as
+> (port - miic_port_start). Replace uses of the hard-coded MIIC_MAX_NR_PORTS
+> with the SoC-provided miic_port_max when iterating over ports.
+> 
+> On RZ/N1 the MIIC ports are numbered 1..5, whereas RZ/T2H numbers its MIIC
+> ports 0..3. By making the port base and range part of the OF data the
+> driver no longer assumes a fixed numbering scheme and can support SoCs that
+> enumerate ports from either zero or one and that expose different numbers
+> of ports.
+> 
+> This change is preparatory work for adding RZ/T2H support.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for the suggestion! It looks like a promising target.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> I'm a bit worried about the scalability of defining one (visible)
-> config option per fuzz file/module. Is there a use-case, where a user
-> would want to enable some targets, but not the others? Can it be
-> unconditionally enabled and compiled only if CONFIG_KFUZZTEST=3Dy?
-
-That's a good point. I agree it's best to enable them all by default if
-CONFIG_KFUZZTEST=3Dy. A fuzzer can pick and choose which targets
-it wants to fuzz so there's no downside there. My original thought was
-to maintain consistency with how KUnit tests are built, but since
-KFuzzTest targets aren't executed directly it makes sense to diverge
-here.
+    Andrew
 
