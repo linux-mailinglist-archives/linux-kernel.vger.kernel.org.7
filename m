@@ -1,139 +1,253 @@
-Return-Path: <linux-kernel+bounces-800874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808A1B43D35
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:29:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCBB43D3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A53E188AF7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:29:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 718B37AE27E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDE8302CC8;
-	Thu,  4 Sep 2025 13:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3BC302779;
+	Thu,  4 Sep 2025 13:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="giQSzoqA"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cCDyB7iH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CA4302779
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992541; cv=none; b=hQkJCsi4whlY2F47shPg7iQDjQrCG85Gq+TQF3+aMZCxUGIXdO3DTmQgHCkqV4RSLgmDwZKUkW43vb9QiCu+w7ibUQLWstSQrvemUigsHrGU20egpEFK1IcVSdmIAgRDAytCrRqZGFQuYcfgFlhrGSscWjEW8RhXAZw5CJZr4Y0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992541; c=relaxed/simple;
-	bh=wqa7Ca/07c/im0pW7NjeH3wQc1LgXZaFgUeldip/esM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=npbP/kY0YiXVbagBN20FF9GQZhNsFtwTI/j8ESVVDZmLAu9UWRjZhLhpQRBjauUILAY+Du3mlqt2KrLQmOnZ8+IzHHavW5VvC85XyS4DjCYWYn8rKLgiZSUGD5C2YFXpx6ypq6SNKasrp5LberDumtbxDiUKq/UWsHBveyou4/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=giQSzoqA; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso9927105e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 06:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756992538; x=1757597338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwjkP+OkdyXJDv66oQ0CyedXSSfDjbG63ToGTcAWABQ=;
-        b=giQSzoqAO2QYW7G900Zd98DCdMmpI4p1e2u1BztSTvzN3wIzrnuq0gfhmWwIDNQFOl
-         QrCbEN/oYvDWn5uW0tGXNoYA1ZQ/0ziQoKeCyflqhPic3b+mT4euKRkolkYCexIxg+xX
-         GRlCUz5eEwiUyKBifI8TSHvH2I/e6bJWLlCwyk7rrihglcCWCqM0k+WPstmSuiLkLAr3
-         BISp2jWTCCaQnSBUJmUH8Et1oROjQ30BzzTPQDNrPcqiLmLDiHSraMJaZVFQ8vwMYQNe
-         esMpJ6Mph4Dkw8CmTJjea8A6bjc7SNyfuRnJNYSnXnXUOfqT1UidltYZbDkhfBIiOfk4
-         KbDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756992538; x=1757597338;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gwjkP+OkdyXJDv66oQ0CyedXSSfDjbG63ToGTcAWABQ=;
-        b=qgghgb+YOIDLUo4ccdslEIjlLn+bZborMwl0HhrVXJY02WsIJ18iBqSUOqByGeJMGH
-         g8EVGAYn9dKuuDczaUe2/qVU+ryfbADDzKUiRWzZxXZ/q6Re46xHSikI8zzWM82iNjXC
-         rKjOENmiZ0i1iFpd2ImB1GtELsd5ZMdlQRMyqrK2e3RMV8itmR+0bfNCge2+ghTtjbWp
-         bG3R97UrwSXCP9EO2uxUzQpSmWhCo/kmFlTiPPiJYA+PAmmgaedSOuHia5CgTTSKA1F1
-         zo9WoRFxje8ZV5TQDCp3t8BaH9nIR2ql+tdgojASLFczqtDl5GngwxpUydYLI6d0s4nt
-         XLXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsLaKfjJjBO4goAzZMzAuskSzBvtnlsK4QdxorXYGnFnv3SdTyptIQ9QSaqO3rLJSP7y/WQSY5CH40UG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRZrogr4ZKTMNJPwa1krCf2eOnhbOyjQEhGRglqfIws0dGX6se
-	bHRgDPoiacAkJQYj9Itno+hnUrOgz5Tulh1WCsEa4TNWSek9zrSWWiQGQzt6krhyXMo=
-X-Gm-Gg: ASbGncsh2jOwOovg90cilCeNZ8+DK4IRbA9LAfD6w7jv0qYAWXmrEaApSPVpohfs322
-	Fvvx4JwEFlmSn8RS9kSNNE7LFe9GQg0v0S6dThGnaMrRO55J1VPpjfno8nnruDvHDy4uALKXGzq
-	VyXb4DAAhUxN++IS9RvvUfsOtruuoQhmL+dNRJojReC0cLhjrjT8JOsf5WH1KUfzZsHyKz7if3o
-	LehPVyAwdHvB0buJOFQFRbe0XroLUJTsoKWxkF+5NYZduAcYNvTCUVPRdy4Ueo9eB+1ZSG6JjzL
-	Zjhujd6UkuNnDcCNixEuqQgpGsv36RQNbDn7PgMV4VVBu5qyzUVUK50pmeAD96emKVl94sVSFtF
-	8mI8dJWIzjDVpnImmmTKrIFuuSVMHhKAL2+O0M3Imf5RGNfZj98lQCg==
-X-Google-Smtp-Source: AGHT+IFc2iqk3tYMkm4EFxxL9R4GOj3DzOJyDOMOzUxuB34nLUq08b5Npz5Qy7crtT2kbpIf1kyDew==
-X-Received: by 2002:a05:600c:3b21:b0:45c:b6b1:29a7 with SMTP id 5b1f17b1804b1-45cb6b12b8fmr62352635e9.16.1756992538058;
-        Thu, 04 Sep 2025 06:28:58 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd0869b33sm34579425e9.9.2025.09.04.06.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:28:57 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Carlo Caione <ccaione@baylibre.com>, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250725074019.8765-1-johan@kernel.org>
-References: <20250725074019.8765-1-johan@kernel.org>
-Subject: Re: [PATCH] firmware: meson_sm: fix device leak at probe
-Message-Id: <175699253745.3375485.7091705423903700055.b4-ty@linaro.org>
-Date: Thu, 04 Sep 2025 15:28:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4FA1B3923;
+	Thu,  4 Sep 2025 13:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756992654; cv=pass; b=tGDEmAIqICzppHq1mCouyynEK+Bx44N0C6exonISTL4iUvMDeQxXacUZkX3HVzg6GL0tckXML0Y3etxtfsHthTOa+O9RQkrwkzF1j+GOkdI9S85lP0DCsRxJol8l1iTDBhjH4WpT4HvfcSSSzT65Pg+yl99By2mwwpFx4cBd8io=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756992654; c=relaxed/simple;
+	bh=9t/qObxwAQIJZWqPhMOAkEx+q3DHLR6ldA8acsg4YUc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=bR1Ys09pmgDVoKGiBFhYsG9evYfCVIzjABzDV90Ez8tXSJs7wgQQKKb9McrU2GQEzLigIGzKWNx2JY4/ejDh1m6bQzKgjgFYTdMEbOTTWAUgU8TZl+Ze8KvKchL1wHqpREYEgBHQJWxEzrc0RnWfjdEMQ+rMzuRs7387TdiTFzE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cCDyB7iH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756992619; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AspmHjs0J9N8R8aQtXbHzPdhHkih1Ukc2YC119QihtRgV6gqK3JNRvLNZHNIsZz6VN4o3J5FfHmWo+aoEWjxtGpbo59IhSPIMTmoQ9EriKfiwdyTm3OH6xDF26ltRB0K7Hba7GfWABALez3rCiWXoX+UkNO0ZHBHTbn/eo3HMZM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756992619; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Jt9TDRg9vypXcsn/2cLvRfCa62ax4BK86VzMaQ8tCLg=; 
+	b=jg8caw3SAd9Dz7SwScv+AAtwLqJLS4uKTcnA8uZBej6HEsgR82d5ykmCKx/zfwhqoiIHXPkEfG9TW9AHGWpsPhZzbx3R3Z3ksc0NxmqijoiyqhP5pIg0s6+zYbeZVESsiMZE9xo8G5OXgWLDlxbGBOXa9cN2SBPWJElCiFzyBB8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756992619;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Jt9TDRg9vypXcsn/2cLvRfCa62ax4BK86VzMaQ8tCLg=;
+	b=cCDyB7iHNwSeEaMsnx/InFLAiSAmoBw9OZeCtsghwiRm51grvh0wiJq51DuS/+lV
+	Qbc8gofk8gF6DB2qk6TR/5xbh5wwZIxtQXBEasc5wpxbCgS7Ha45muoLI03fxKAHEyT
+	RwsIvcnzgTppWR1l5fWFu7UIWd+CaAbsE0akmK3g=
+Received: by mx.zohomail.com with SMTPS id 1756992616735300.35543377674844;
+	Thu, 4 Sep 2025 06:30:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 07/14] drm/gem/shmem: Extract drm_gem_shmem_init() from
+ drm_gem_shmem_create()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-8-lyude@redhat.com>
+Date: Thu, 4 Sep 2025 10:29:59 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <891BE2DC-6B2D-409D-970C-F57BA7D86598@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-8-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Hi,
+Hi Lyude,
 
-On Fri, 25 Jul 2025 09:40:19 +0200, Johan Hovold wrote:
-> Make sure to drop the reference to the secure monitor device taken by
-> of_find_device_by_node() when looking up its driver data on behalf of
-> other drivers (e.g. during probe).
-> 
-> Note that holding a reference to the platform device does not prevent
-> its driver data from going away so there is no point in keeping the
-> reference after the helper returns.
-> 
-> [...]
+Did something happen here? All the indentation seems off.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.18/drivers)
+It looks ok when applied though.
 
-[1/1] firmware: meson_sm: fix device leak at probe
-      https://git.kernel.org/amlogic/c/8ece3173f87df03935906d0c612c2aeda9db92ca
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> With gem objects in rust, the most ideal way for us to be able to =
+handle
+> gem shmem object creation is to be able to handle the memory =
+allocation of
+> a gem object ourselves - and then have the DRM gem shmem helpers =
+initialize
+> the object we've allocated afterwards. So, let's spit out
+> drm_gem_shmem_init() from drm_gem_shmem_create() to allow for doing =
+this.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> drivers/gpu/drm/drm_gem_shmem_helper.c | 75 +++++++++++++++++---------
+> include/drm/drm_gem_shmem_helper.h     |  1 +
+> 2 files changed, 51 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c =
+b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index 5d1349c34afd3..b20a7b75c7228 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -48,28 +48,12 @@ static const struct drm_gem_object_funcs =
+drm_gem_shmem_funcs =3D {
+> .vm_ops =3D &drm_gem_shmem_vm_ops,
+> };
+>=20
+> -static struct drm_gem_shmem_object *
+> -__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool =
+private,
+> -       struct vfsmount *gemfs)
+> +static int __drm_gem_shmem_init(struct drm_device *dev, struct =
+drm_gem_shmem_object *shmem,
+> + size_t size, bool private, struct vfsmount *gemfs)
+> {
+> - struct drm_gem_shmem_object *shmem;
+> - struct drm_gem_object *obj;
+> + struct drm_gem_object *obj =3D &shmem->base;
+> int ret =3D 0;
+>=20
+> - size =3D PAGE_ALIGN(size);
+> -
+> - if (dev->driver->gem_create_object) {
+> - obj =3D dev->driver->gem_create_object(dev, size);
+> - if (IS_ERR(obj))
+> - return ERR_CAST(obj);
+> - shmem =3D to_drm_gem_shmem_obj(obj);
+> - } else {
+> - shmem =3D kzalloc(sizeof(*shmem), GFP_KERNEL);
+> - if (!shmem)
+> - return ERR_PTR(-ENOMEM);
+> - obj =3D &shmem->base;
+> - }
+> -
+> if (!obj->funcs)
+> obj->funcs =3D &drm_gem_shmem_funcs;
+>=20
+> @@ -81,7 +65,7 @@ __drm_gem_shmem_create(struct drm_device *dev, =
+size_t size, bool private,
+> }
+> if (ret) {
+> drm_gem_private_object_fini(obj);
+> - goto err_free;
+> + return ret;
+> }
+>=20
+> ret =3D drm_gem_create_mmap_offset(obj);
+> @@ -102,14 +86,55 @@ __drm_gem_shmem_create(struct drm_device *dev, =
+size_t size, bool private,
+>     __GFP_RETRY_MAYFAIL | __GFP_NOWARN);
+> }
+>=20
+> - return shmem;
+> -
+> + return 0;
+> err_release:
+> drm_gem_object_release(obj);
+> -err_free:
+> - kfree(obj);
+> + return ret;
+> +}
+>=20
+> - return ERR_PTR(ret);
+> +/**
+> + * drm_gem_shmem_init - Initialize an allocated object.
+> + * @dev: DRM device
+> + * @obj: The allocated shmem GEM object.
+> + *
+> + * Returns:
+> + * 0 on success, or a negative error code on failure.
+> + */
+> +int drm_gem_shmem_init(struct drm_device *dev, struct =
+drm_gem_shmem_object *shmem, size_t size)
+> +{
+> + return __drm_gem_shmem_init(dev, shmem, size, false, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gem_shmem_init);
+> +
+> +static struct drm_gem_shmem_object *
+> +__drm_gem_shmem_create(struct drm_device *dev, size_t size, bool =
+private,
+> +       struct vfsmount *gemfs)
+> +{
+> + struct drm_gem_shmem_object *shmem;
+> + struct drm_gem_object *obj;
+> + int ret =3D 0;
+> +
+> + size =3D PAGE_ALIGN(size);
+> +
+> + if (dev->driver->gem_create_object) {
+> + obj =3D dev->driver->gem_create_object(dev, size);
+> + if (IS_ERR(obj))
+> + return ERR_CAST(obj);
+> + shmem =3D to_drm_gem_shmem_obj(obj);
+> + } else {
+> + shmem =3D kzalloc(sizeof(*shmem), GFP_KERNEL);
+> + if (!shmem)
+> + return ERR_PTR(-ENOMEM);
+> + obj =3D &shmem->base;
+> + }
+> +
+> + ret =3D __drm_gem_shmem_init(dev, shmem, size, private, gemfs);
+> + if (ret) {
+> + kfree(obj);
+> + return ERR_PTR(ret);
+> + }
+> +
+> + return shmem;
+> }
+> /**
+>  * drm_gem_shmem_create - Allocate an object with the given size
+> diff --git a/include/drm/drm_gem_shmem_helper.h =
+b/include/drm/drm_gem_shmem_helper.h
+> index 92f5db84b9c22..235dc33127b9a 100644
+> --- a/include/drm/drm_gem_shmem_helper.h
+> +++ b/include/drm/drm_gem_shmem_helper.h
+> @@ -107,6 +107,7 @@ struct drm_gem_shmem_object {
+> #define to_drm_gem_shmem_obj(obj) \
+> container_of(obj, struct drm_gem_shmem_object, base)
+>=20
+> +int drm_gem_shmem_init(struct drm_device *dev, struct =
+drm_gem_shmem_object *shmem, size_t size);
+> struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device =
+*dev, size_t size);
+> struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct =
+drm_device *dev,
+>   size_t size,
+> --=20
+> 2.50.0
+>=20
+>=20
 
-These changes has been applied on the intermediate git tree [1].
-
-The v6.18/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
--- 
-Neil
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
