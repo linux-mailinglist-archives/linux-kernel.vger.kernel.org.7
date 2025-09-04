@@ -1,230 +1,208 @@
-Return-Path: <linux-kernel+bounces-800989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E98B43E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:20:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FB8B43E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8441C28573
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:21:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB184E5C1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95245307492;
-	Thu,  4 Sep 2025 14:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C7308F1F;
+	Thu,  4 Sep 2025 14:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="csebam9M"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011013.outbound.protection.outlook.com [52.101.65.13])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e2tERMA4"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13FF4A3C;
-	Thu,  4 Sep 2025 14:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756995630; cv=fail; b=QVH8jJkVHQ5BzHzohxYHZ8921+HrkX1vDhK8THIQaaNVuoFxzG+4RxX8WUrKL/auLORaXEaRrlCWwvVqBKnAkrc7l9E0Tu9WsBZgWy0N4UYnb0iK98u0De7gn0TWUFQUZYDReCuAOH5sNyRg6aumU9DMhY0GJOlX65oKqDk0B+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756995630; c=relaxed/simple;
-	bh=7tV72B1VBx9lLQJjce1ytBj26zcHoRSxQICGqS/b9og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MmRufUmgTjPLe05eT+ofzLt5MdiU3T0/ypLPVecaIf09rLwLPq6duXmBarLQ6UxKsGkySyzb5hiqDuMMx3/XDFyncv19vqjnANJpB3IKFIUM03qlX8puh5Br46W70E3aSbzTIGShOPoGDOyVn7iskXZ+mWLiY4RImJunMrFDBeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=csebam9M; arc=fail smtp.client-ip=52.101.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TBmKjBHth3exDux7PwBYC2FNlwsTz/vtrDlLML4P0YrmKjO+8yijB6OHSfqfXZQcAXMkC3Ti/nHa6FpUTyhhLp2ouw+AZjxYRAEogHhgHydPevyNITnFMG8kY7YYHslLrjdgJC7l1oX5YGtcxA1FEIqHDqUAtrfcVpVp41CBE7H4WDfNmpQHbF3XdDx+lCSwIAWvFz9zHslPW+sPRR8lz5lOXPpR6MyqxheRdOqQwiDIR3VS1x7RRiP9JEEvzZWhITeU/i1k5xfKHjn2IgNRU5dzmMJO+qUl3WIdBBuYlClS3yBxhKIRHHaf75t7xD2VhGha6OOHMgOiZmYcd6meYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oMwG5YPHM+hqYjjbOf6L2ODzJWCs4Q2W7IPQSonBseo=;
- b=Yk5mtZXTtvtz6xjy2sl0L1010g0p1XULv0qcweW981N+6OswNQx4pvCbg/v3SJlAJRKpibprfJqd3JnAAJWQY0d/gu++eH+2PGBhljzHq5b5Yz0mmHn1xTfOsPDmwvQNgn49wPWQEknBRj2fOaba3iwHf1jKlg5Xixhp4vG2rF49ULqMvImWpJ9OfoZFnQuYa0J0jawYsPwmhJmz5VdMouknqLqAi3x4zAsXdF46p0fuLiC4w0+BHemorO5Cz36yvJzduEjiArvtd1iUW/2wnO1jwtpci9QS2xLMFtfdvXuywyoyrofQb7qkaIBS1BELALZ+4v3Yq4PNqEnro6+/Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oMwG5YPHM+hqYjjbOf6L2ODzJWCs4Q2W7IPQSonBseo=;
- b=csebam9MnTrUbww0sHoZh8rAxOGa+JrRR6mG80AwNz+BDtmHfVj/i1U9BjB0WKQMYtBymVLXv2IbCdrH6OvCsa1f91Fq6jCOz347WJaD2z7AHlHEFpK+RuaUigw5pIlnlZADIQAB0n6Q/WlF4KwKaWQOiwQu4YNFwv9b4ZvAsLNUSFobN0AcFyO1Qz5CxA4DBgITacN7BX8S79F8+FFJPXrMMj0R2Xb3WgL2uaPqZ4Hvb9Vo9Rut74hLHH345SK8YAA/o+6INygp/BNiB7vZl2dj4l3xqeVblBt+oATFCspPwTan64PzVDd7USBM2RUGjp7yERPMUX7hC0CBnlvxuA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by DUZPR04MB9823.eurprd04.prod.outlook.com (2603:10a6:10:4d2::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 14:20:25 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%5]) with mapi id 15.20.9094.015; Thu, 4 Sep 2025
- 14:20:25 +0000
-Date: Thu, 4 Sep 2025 10:20:15 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aswath Govindraju <a-govindraju@ti.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
-	linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 5/9] phy: phy-can-transceiver: Propagate return value
- of gpiod_set_value_cansleep
-Message-ID: <aLmgH1O+xOrg/Zdy@lizhi-Precision-Tower-5810>
-References: <20250904-can-v5-0-23d8129b5e5d@nxp.com>
- <20250904-can-v5-5-23d8129b5e5d@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-can-v5-5-23d8129b5e5d@nxp.com>
-X-ClientProxiedBy: BYAPR03CA0005.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::18) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D3A308F1A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756995639; cv=none; b=qlK0tcKk8t7RtEyRLSPe9jr+CDTY+pFBtzxHpwYz2XEjLSZAL7HV8E5GWoq7mVcDHZu7/f81JRoReAvLPePKbFoaTZqbwSFDgkoWFrjEMY9YuOVZNta52ZzrriRmwcBivLHTfIqFaWClZNgQPGSbTC+dpCkbL/6YN4+WFKzqDjg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756995639; c=relaxed/simple;
+	bh=XJ7qFF3YQtPOr+SxeuSlG0flr7ZR89PoYywxEklkAOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=fJe++sMj3ZoPR5ZRsZBju2BuNjOPShrN1sbGL3Y/7SM3+DbNypBIwWJDtd70KLClm9W7WlJ0oiiwk1SxEJyChU5wrB4HInVbeKqD1/7/nRhd9BQL8px2uAJa3AB0wjTjopWzlnCbZ3jvaG0towiJcjlN8GFLUf4nrNIzU29goq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e2tERMA4; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250904142034epoutp04a435695ba9df77b0484e17b6ee1e4677~iGjiMUkbq3205732057epoutp04m
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:20:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250904142034epoutp04a435695ba9df77b0484e17b6ee1e4677~iGjiMUkbq3205732057epoutp04m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756995634;
+	bh=CxfA4XyH6dw5hP4xxwzAOR6RtkETdna2VHZuH9Ub5AM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e2tERMA4T9lNLyChiEz14eU2bJ7aQo2m6YhQ8gKQQLAkvcK2xk6yVWhSJPOU5Iimc
+	 vp0J6qISHlI7TQKmF+NmcaGU6ou59R3D9XN6WwVwtbSt3ZZhL4veayxnFGV8p26CQv
+	 eeygpcHH0ldinarWRATBj+8xl5YtXt2xt0csOC3c=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250904142034epcas5p31eebd69b25d09b92cfc0d6aab7b25ec9~iGjhlKpax2504725047epcas5p3E;
+	Thu,  4 Sep 2025 14:20:34 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHhTY1BzSz2SSKX; Thu,  4 Sep
+	2025 14:20:33 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142032epcas5p246cc9762014b89641568fd448ddd4356~iGjf14xEl2539225392epcas5p2e;
+	Thu,  4 Sep 2025 14:20:32 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904142031epsmtip1a82f3b5c8771f861e20eaf3845b22c6e~iGjesPMMV2731727317epsmtip1c;
+	Thu,  4 Sep 2025 14:20:30 +0000 (GMT)
+Date: Thu, 4 Sep 2025 19:50:23 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 06/20] nvdimm/region_label: Add region label deletion
+ routine
+Message-ID: <20250904142023.6zmgow6z5r6sjxcd@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DUZPR04MB9823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9eebc801-a243-418f-6dce-08ddebbe3099
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|19092799006|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MY7PWKtN1KxdLZFhlF7m8mML/Rl20pBxJ2lM6OZcT9BwRQerT1dFPm6FycRX?=
- =?us-ascii?Q?c0STiAycJ70lWLJaQnYnyfPjZzr2mwq0TolYiW+JyRs4dLGC9L2rRtyAJiq0?=
- =?us-ascii?Q?NIpXY4/xMQ+cjt88IZc0cKsK7QFsDFDQ3D+y/UKoP61WHVVPya9kWrfCTfMK?=
- =?us-ascii?Q?W9jXt89XawZfAMz6cIb5Y9gFmZCoLHWmSB61aSJ/QUNWJOnjo1MAuwKSroBY?=
- =?us-ascii?Q?0hLMuxfjenG3Ab5IFWuWiJWOjRCtoR0klHo492TC3IgGphVFfAis0dYoD0ny?=
- =?us-ascii?Q?z+D1OxhDf5X8nggn34IiYlR7onYQzrwGNFtgmx6dQQBtiCRtXMrWQYQpTbql?=
- =?us-ascii?Q?fYXxYF5QSqH8f5vdrLZzAyOnn4+ZRXUJsg9tXosmHwpWSne4/6ZgnVS43Wja?=
- =?us-ascii?Q?ll31F5lvJetV032S1i7yLJTU3A0F/igOxdEA5XB10Krz06GvCSMuyKNIPvc5?=
- =?us-ascii?Q?m+1CqV2KQla7Vc8rkZvZ2fY2CyzuN6FD6C3J3CUcHi43a2XKujfY4acSks2d?=
- =?us-ascii?Q?SUWhgZPhfF6ehB4aLspdE9OlOXxAjLlVN3c0EnGTnXT9ztFclu+zTJwvuStQ?=
- =?us-ascii?Q?e0S+tyIQIoEKkI5cRZW9KyRGjeODjwJXCYezufK+xTIjNBjl0YCcQwSwoVVI?=
- =?us-ascii?Q?lk5u08wrQkoC4t8flqZuVLI/qixSkf6sBblMOTBPmKQw5hCiQjzgGp+h832x?=
- =?us-ascii?Q?wKYl6zpHgj5sJcaZUQgsztAKybSN+Zw4djeGFDt9LM1/O1UJeW4/UaSit9cP?=
- =?us-ascii?Q?13h68DgYQ8ljUbqt5+xfrTtc5zVIg2CcVFbQpArR2J7u0eD453JH/itt/XDz?=
- =?us-ascii?Q?MaG7SVl2gOA8/562RXsNLFOqsvk7vCZ0YAEGRIrDP810xImMhZ/a9m8NieHI?=
- =?us-ascii?Q?LVhdt8WWhLKSXkI4OX8JMOp4aaH/x9Mw5Mxc6XW3OGZLY7AjMUGR8dK+pvWJ?=
- =?us-ascii?Q?0bfZzQnGh2W9otLVJvxouLx8iwqY/9TVADFR/ufpp3lN3bfJMiI51ytzXWeK?=
- =?us-ascii?Q?qUC8NmJOHCvkEOtbB4XZdAijehHRun4+ajbhY68k0PoqzV4GXaQw1IWldXf9?=
- =?us-ascii?Q?XTknoDF6G0qoLkuwPqx0K4gYlPcHe0B3ucJeUVUtUKKTdPu6aT7aMcDh34PE?=
- =?us-ascii?Q?b+RLMOCmlJx4WMXnB2JQlOjIxhud9L0FDM8S4H1UFDyZWpjCGcj8vrp+FLVs?=
- =?us-ascii?Q?kdSldK0pOFEgMbALTkJ1N6lUDv67dBdWVLZ6QFC8F3mwey2pR3jvInsC+srg?=
- =?us-ascii?Q?zUGahBjCvH/w/R8yttcqkXqEiH/zj+bbEldNTQotQnmp9+h3h39Q1vr2axdg?=
- =?us-ascii?Q?wZNwSWVifa0/VRVRNCZRgvITkmxWGbnn29Egv4cXxa5qtIJQ++h3TwQnMGHY?=
- =?us-ascii?Q?gPL+HibXxRuQnPO0K8SF7DAtVwjrYeHL4+HyEKkkybwA0AJGHsZDAT5kF18g?=
- =?us-ascii?Q?nrl5RAOn8gQ8uE7XJfjXInm+0xC+j4i1p2IXiTAoxJNNHpXDrZcptg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gvuh+RblMxBvpWnaVVSZ3EJ+uwrcge7jEpSeYbrir8P7kF34KSDWfL808zKr?=
- =?us-ascii?Q?9d4ohnh6DW+BGPIr2LZvBcYdn6ULJ4hv1xONTfeMij+FqiRa1xfe0k9C8cx6?=
- =?us-ascii?Q?WLX4M664/1f4PZbi0UVsDbb3kK1HPjArS6dXSoBgOAlCH8+klqfIsS2iuFMj?=
- =?us-ascii?Q?2J5s3H6p3KIm9MjTXM/ilm7h9mVXuMGpcTrqt4VKwT62iiCMyaBmUn1q2NYb?=
- =?us-ascii?Q?rUSQYAh9+JP7zb8y362QXCcY0lBwGwO/9TMFNEjFv9CubSwVda0qrDKecpaH?=
- =?us-ascii?Q?XlnEfX7JzxCARhamYrOmFrFJqaBDYL0vGzGVjtnpe6i8QiWBGNGA868g4pEz?=
- =?us-ascii?Q?xRVSAeBtWI9DQBxg4WCoSBUJlihP9ucn5wf11ahiU91gkTDiQ2OYPKaWybky?=
- =?us-ascii?Q?DbDrjtXjpLZBbbP5Bhyz7NQPwQraZISl6Wq+Kh02CZjkAbD72iA2pZy4PKkL?=
- =?us-ascii?Q?aFvTMnUdHAdlZi5qmx+ugBa7Fg1f5WxQEeIaCdPBF+quaTcBLjcF+6Ur/h2Z?=
- =?us-ascii?Q?hrzmg/hXHcb/8VXSPdBVQYSYvayT7psyFrb1iBrF4ifeKL/9m5UmoMO/ttX1?=
- =?us-ascii?Q?4FbKSzOdI3cBZzNqAOKmiQAJ3VhAbhB4PtLAfQo0r2YXvlK7TD2i6AGZGgk9?=
- =?us-ascii?Q?YvpNaoYTtehdtjnWeWp+G7UCcEMpY8+SyvPJ47CfrHOnZ1rfahVUWeUfvWq8?=
- =?us-ascii?Q?ox4+/d6ICUPuFw7eRRx6CvMxxVyZdTvedZDSLDP8b4fqyiDx6jaulF0e1F2K?=
- =?us-ascii?Q?dqJZjMTkqfTWaWtx7UGF7JX0PWnz0KkntU8shm7jfMwxnaw1+rEijcPEQgbT?=
- =?us-ascii?Q?JnZ7BcDT1tbDaOnOzDXAfAfQ7PPqZ5Z6BcFNYmdUEl0p2OdLqAO7ssvuxarS?=
- =?us-ascii?Q?DnUxhSn4KGPreTOIzUpgwy1V/GpGuim0qJRf4I+KxyKd+iJLriYIHHZZJ62O?=
- =?us-ascii?Q?Z60Aqe6Gnn0+6A7vGhG+xJbM6uQ0qq1FECCfCtgzMTqXJQGHyAVAz7YthS7t?=
- =?us-ascii?Q?8QOop0WIAgZvcJs8D6SW2M65w6mUdXEOkKwIe6a0xg64gY57e9F6dsyo3wtq?=
- =?us-ascii?Q?57Ivf4Pn4MkbYBQU0WRmpPEGhDmmoo/JoHjs3cj5UyLJ+ErVk9+uWwhg2aUW?=
- =?us-ascii?Q?2osf79Q9xKajnnxji93MN4PVeC78N74jkMGZ69yab4YYOrI1MIcLrOy8fbmR?=
- =?us-ascii?Q?14S59AgrpDiQ2amgfUVqn3D5eaMGVn7HXzQLptLNZKWS/GkFRfnfAJcnzeYd?=
- =?us-ascii?Q?MJCr3tvBCqfquURkCVRvCreFjym+uLaDtzKXH87DdkhT0yMrDOvYO6nxNvCx?=
- =?us-ascii?Q?0fPxOPqL32giC7R1P5dSgYeJ+DyktRMpb7TvlRCybJjS2viIzeKqYYBakNx2?=
- =?us-ascii?Q?ESuQ1bBE/z2So5MsnZmK+vWi7aiXzCUay404LW2OltzxoStT9PVcFsqHsSUn?=
- =?us-ascii?Q?1G1EoV2+DN2TN1v7OcLKhOdlAbsaIHTDP6dfcbbCChnkB4lGQmi8hLnpp/Mz?=
- =?us-ascii?Q?65/VHGJAGQktiEgU4eEV/hmWyJKXZYhkVqGcjqY2hpz8jkQHE/CcQwHF9MSf?=
- =?us-ascii?Q?UYzR+KSoqTIZs8f0hBCqpkB8+kTdjmmLgVzy7oav?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eebc801-a243-418f-6dce-08ddebbe3099
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 14:20:25.2012
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zot8uoa2yn+Wap2a+jNxokIDYOGOfzA+jQBfc/XeOlKSBLDC39c3uiX2rSGErsxBwEhKue8Eya901q87V5esIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9823
+In-Reply-To: <20250813155338.00007bcf@huawei.com>
+X-CMS-MailID: 20250904142032epcas5p246cc9762014b89641568fd448ddd4356
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead72_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121230epcas5p11650f090de55d0a2db541ee32e9a6fee
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121230epcas5p11650f090de55d0a2db541ee32e9a6fee@epcas5p1.samsung.com>
+	<20250730121209.303202-7-s.neeraj@samsung.com>
+	<20250813155338.00007bcf@huawei.com>
 
-On Thu, Sep 04, 2025 at 04:36:48PM +0800, Peng Fan wrote:
-> gpiod_set_value_cansleep might return failure, propagate the return value
-> of gpiod_set_value_cansleep to parent.
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead72_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Nit: require "()" for function. gpiod_set_value_cansleep().
+On 13/08/25 03:53PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:55 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> Added cxl v2.1 format region label deletion routine. This function is
+>> used to delete region label from LSA
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>> ---
+>>  drivers/nvdimm/label.c          | 77 ++++++++++++++++++++++++++++++---
+>>  drivers/nvdimm/label.h          |  6 +++
+>>  drivers/nvdimm/namespace_devs.c | 12 +++++
+>>  drivers/nvdimm/nd.h             |  9 ++++
+>>  include/linux/libnvdimm.h       |  1 +
+>>  5 files changed, 100 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 94f2d0ba7aca..be18278d6cea 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -1044,7 +1044,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>>  	return max(num_labels, old_num_labels);
+>>  }
+>>
+>> -static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>> +static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid,
+>> +		enum label_type ltype)
+>>  {
+>>  	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>>  	struct nd_label_ent *label_ent, *e;
+>> @@ -1068,8 +1069,23 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>>  		if (!nd_label)
+>>  			continue;
+>>  		active++;
+>> -		if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+>> -			continue;
+>> +
+>> +		switch (ltype) {
+>> +		case NS_LABEL_TYPE:
+>> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+>> +				continue;
+>> +
+>> +			break;
+>> +		case RG_LABEL_TYPE:
+>> +			if (!rgl_uuid_equal(&nd_label->rg_label, uuid))
+>> +				continue;
+>> +
+>> +			break;
+>> +		default:
+>> +			dev_err(ndd->dev, "Invalid label type\n");
+>> +			return 0;
+>
+>Given you pass in an enum and both elements are covered by other cases
+>shouldn't need a default here.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Thanks Jonathan, I will remove the default case in next patch-set
+
 >
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/phy/phy-can-transceiver.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
+>> +		}
+>> +
+>>  		active--;
+>>  		slot = to_slot(ndd, nd_label);
+>>  		nd_label_free_slot(ndd, slot);
 >
-> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-transceiver.c
-> index b7d75a78d9242e2003660a87d2d4c9f784aea523..ccb29e1dfe0d07005b4bcd8fefa2787292d921a0 100644
-> --- a/drivers/phy/phy-can-transceiver.c
-> +++ b/drivers/phy/phy-can-transceiver.c
-> @@ -46,23 +46,32 @@ static int can_transceiver_phy_power_on(struct phy *phy)
->  			return ret;
->  		}
->  	}
-> -	gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 0);
-> -	gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 1);
 >
-> -	return 0;
-> +	ret = gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 1);
->  }
 >
->  /* Power off function */
->  static int can_transceiver_phy_power_off(struct phy *phy)
->  {
->  	struct can_transceiver_phy *can_transceiver_phy = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 0);
-> +	if (ret)
-> +		return ret;
+>> @@ -1268,6 +1285,56 @@ int nd_pmem_region_label_update(struct nd_region *nd_region)
+>>  	return 0;
+>>  }
+>>
+>> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
+>> +{
+>> +	int i, rc;
+>> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+>> +	struct nd_label_ent *label_ent;
+>> +	int ns_region_cnt = 0;
+>> +
+>> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+>> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+>> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>> +
+>> +		/* Find non cxl format supported ndr_mappings */
+>> +		if (!ndd->cxl) {
+>> +			dev_info(&nd_region->dev, "Region label unsupported\n");
 >
-> -	gpiod_set_value_cansleep(can_transceiver_phy->standby_gpio, 1);
-> -	gpiod_set_value_cansleep(can_transceiver_phy->enable_gpio, 0);
->  	if (can_transceiver_phy->priv->mux_state)
-> -		mux_state_deselect(can_transceiver_phy->priv->mux_state);
-> +		ret = mux_state_deselect(can_transceiver_phy->priv->mux_state);
+>I'd go with "Unsupported region label".  The other way around kind of implies
+>a deficiency in the code, whereas point here is that new stuff may be added to
+>the spec that we don't yet understand.
+
+Sure, I will fix it in next patch-set
+
 >
-> -	return 0;
-> +	return ret;
->  }
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		/* Find if any NS label using this region */
+>> +		mutex_lock(&nd_mapping->lock);
 >
->  static const struct phy_ops can_transceiver_phy_ops = {
+>I'd go for guard here probably as the scope will mean it gets unlocked
+>at end of this loop step.
 >
-> --
-> 2.37.1
 >
+>		guard(mutex)(&nd_mapping->lock);
+
+Sure Jonathan, I will fix it in next patch-set
+
+Regards,
+Neeraj
+
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead72_
+Content-Type: text/plain; charset="utf-8"
+
+
+------At96h8_oYHqdM-HzD.Qv-z6Hqrsj5DpI3AOnKMLFsbTdazMP=_ead72_--
 
