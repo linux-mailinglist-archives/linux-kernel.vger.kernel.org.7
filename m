@@ -1,106 +1,205 @@
-Return-Path: <linux-kernel+bounces-800847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B99B43CEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA87B43CEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFB244E58F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF36F483FBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61502FE05F;
-	Thu,  4 Sep 2025 13:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0EE302CB0;
+	Thu,  4 Sep 2025 13:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hmo9ugWE"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KNz+Q+YD"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCDA2D5412
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD952EC57F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756992034; cv=none; b=hslRmfIcNlf8FGM2r+v+6gVfgN92+6rX89S0pWFXJs+FsrokaOVv6JPif4BmzVzPIObISEIj/yWGarDmYkxFjll0Bj9vnkhDaRtbMr6+/A4ePntksVRf0PX3++W5jnPGOIhIGUSU4Rkq0BvNX3hqlPX+skEkOhJI0RQXOL3xR7Y=
+	t=1756992036; cv=none; b=NVq76YkwFGqYZcBz0hRyemlk2ZoHKDu4liz55/i97LlFS2DKgUuV0t5rnGy4M465oKqmifuat5fdJbf8RFpAM1dV9HOgmedjE5UqdlOgdLt5kHMtmPImduQ7JL0k8keWjdv/gzjki5suNk6B2owskjjvGIE7g6c1A3nBpsY/LX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756992034; c=relaxed/simple;
-	bh=JtGzgsy6oukY89TC4x3BdzUwm4U+fpsrzqRZtTbttc0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlIzspxv5+PZxi/n/Nzrvekh0gUfd58z5Lyw5R4AW5qMwydTIPJElR7L6epLLXScHQpu/5M9vGIQy7gt5Hh9Y6m0LB4Vu2hGUPcxXwrGsth6azDQk9rnOmcePVytvaQTyHPpYNLSFQWlSZoc306UxUcUgnehHhmEpDPVPt2ULys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hmo9ugWE; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584DKCa53018785;
-	Thu, 4 Sep 2025 08:20:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756992012;
-	bh=45eHtpDotlSZ4Qptz8MiFsbC7Nu4LNeucm3H4hVzoTs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=hmo9ugWERdXPhwiCwkO4H1Epjj0dgKcrXJpDB/QT4tI7/lOoCeDbQnq9wI0/Y38Gf
-	 JswfjgmNEEeELwpJrOHMxpvFnbKFye2C+5R/Bn0WBMTUSVKerjCELffDfx0zd9bY0d
-	 Ve2PU/xeQxRTZtDOXiIQhMBBQIUSNNO0VFbwcRZs=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584DKCIK195307
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 08:20:12 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 08:20:12 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 08:20:12 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584DKA5s3021833;
-	Thu, 4 Sep 2025 08:20:11 -0500
-Date: Thu, 4 Sep 2025 18:50:10 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Guillaume La Roque <glaroque@baylibre.com>,
-	<""@lcpd911.smtp.subspace.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, <vigneshr@ti.com>,
-        Nishanth Menon
-	<nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo
-	<kristo@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH RESEND v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
- compilation support
-Message-ID: <20250904132010.veq2vimhhaj7l7wl@lcpd911>
-References: <20250902-timsi-v2-0-a5bf0f32905b@baylibre.com>
- <20250902-timsi-v2-2-a5bf0f32905b@baylibre.com>
+	s=arc-20240116; t=1756992036; c=relaxed/simple;
+	bh=5AKbQwsUPncT3DyHFx9ce2mjPef1ad44qvZo8cC5+Q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=uyRJQVs3HpaQeDeOyg1bQphmdC1LlTx8VW22+8rYVG4d5Xevf9w5mbDLNw379OoV5u4qPd3zFbF7Je26vPmbi3s/KDyfBcqzEaGR8jC7S0pRFL931lhrlemEExp/1i68w+o/OPrCWEOn+bWqdIoEz0Jcy3apmIpGbJo+yvtnUfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KNz+Q+YD; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250904132032epoutp03c60c6c76d98dbf62c0012d7c63b08341~iFvHbXBFp0555605556epoutp03a
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:20:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250904132032epoutp03c60c6c76d98dbf62c0012d7c63b08341~iFvHbXBFp0555605556epoutp03a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756992032;
+	bh=KECRwdTHVQgFJej4QtU1rPSiDdLIC54bdM0+YJwpqdA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KNz+Q+YDnCkgEo9uQ9BIglaHVIkiR1yR0FxHikpm1OmnLnhxpPxhf6tZ/Rw6LCQJ+
+	 /6UYvTB6Neho6WskCQopimGak4wppj2GVMgceUyQQ5N0YKyAiJgIgKqGnYujzpYSbP
+	 WrnXq2gGKQycg7AR7cLDc5Sw0V2UXbLacjCAu7nE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250904132032epcas5p20d5f2e1f991ac641e1dbd23a5cee3f2d~iFvHFzX8i2921829218epcas5p2b;
+	Thu,  4 Sep 2025 13:20:32 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cHg8H2Dlgz2SSKZ; Thu,  4 Sep
+	2025 13:20:31 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250904132030epcas5p26dacc2b33189a6af5cebd4c1820e0e40~iFvFUQjfD2207022070epcas5p26;
+	Thu,  4 Sep 2025 13:20:30 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250904132029epsmtip168ec6a5905233e2c8703797b32f2376c~iFvELStrL2710027100epsmtip1h;
+	Thu,  4 Sep 2025 13:20:29 +0000 (GMT)
+Date: Thu, 4 Sep 2025 18:50:23 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
+	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 01/20] nvdimm/label: Introduce NDD_CXL_LABEL flag to
+ set cxl label format
+Message-ID: <20250904131929.rcithhcixbwqxyss@test-PowerEdge-R740xd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20250813141218.0000091f@huawei.com>
+X-CMS-MailID: 20250904132030epcas5p26dacc2b33189a6af5cebd4c1820e0e40
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e248e_"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121223epcas5p1386bdf99a0af820dd4411fbdbd413cd5
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121223epcas5p1386bdf99a0af820dd4411fbdbd413cd5@epcas5p1.samsung.com>
+	<20250730121209.303202-2-s.neeraj@samsung.com>
+	<20250813141218.0000091f@huawei.com>
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e248e_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-In-Reply-To: <20250902-timsi-v2-2-a5bf0f32905b@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sep 02, 2025 at 16:43:50 +0200, Guillaume La Roque wrote:
-> Add module support to the TI SCI INTA MSI driver:
-> - Change Kconfig from bool to tristate to allow module compilation
-> - Add linux/module.h include for module functionality
-> - Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
-> 
-> This allows the driver to be compiled as a loadable kernel module
-> named ti_sci_inta_msi.
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  drivers/soc/ti/Kconfig           | 5 ++++-
->  drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
+On 13/08/25 02:12PM, Jonathan Cameron wrote:
+>On Wed, 30 Jul 2025 17:41:50 +0530
+>Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>
+>> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
+>> introduced in CXL 2.0 Spec, which contain region label along with
+>> namespace label.
+>>
+>> NDD_LABELING flag is used for namespace. Introduced NDD_CXL_LABEL
+>> flag for region label. Based on these flags nvdimm driver performs
+>> operation on namespace label or region label.
+>>
+>> NDD_CXL_LABEL will be utilized by cxl driver to enable LSA2.1 region
+>> label support
+>>
+>> Accordingly updated label index version
+>>
+>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+>Hi Neeraj,
+>
+>A few comments inline.
+>
+>> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+>> index 04f4a049599a..7a011ee02d79 100644
+>> --- a/drivers/nvdimm/label.c
+>> +++ b/drivers/nvdimm/label.c
+>> @@ -688,11 +688,25 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
+>>  		- (unsigned long) to_namespace_index(ndd, 0);
+>>  	nsindex->labeloff = __cpu_to_le64(offset);
+>>  	nsindex->nslot = __cpu_to_le32(nslot);
+>> -	nsindex->major = __cpu_to_le16(1);
+>> -	if (sizeof_namespace_label(ndd) < 256)
+>> +
+>> +	/* Set LSA Label Index Version */
+>> +	if (ndd->cxl) {
+>> +		/* CXL r3.2 Spec: Table 9-9 Label Index Block Layout */
+>> +		nsindex->major = __cpu_to_le16(2);
+>>  		nsindex->minor = __cpu_to_le16(1);
+>> -	else
+>> -		nsindex->minor = __cpu_to_le16(2);
+>> +	} else {
+>> +		nsindex->major = __cpu_to_le16(1);
+>> +		/*
+>> +		 * NVDIMM Namespace Specification
+>> +		 * Table 2: Namespace Label Index Block Fields
+>> +		 */
+>> +		if (sizeof_namespace_label(ndd) < 256)
+>> +			nsindex->minor = __cpu_to_le16(1);
+>> +		else
+>> +		 /* UEFI Specification 2.7: Label Index Block Definitions */
+>
+>Odd comment alignment. Either put it on the else so
+>		else /* UEFI 2.7: Label Index Block Defintions */
+>
+>or indent it an extra tab
+>
+>		else
+>			/* UEFI 2.7: Label Index Block Definitions */
+>			
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Thanks Jonathan, I will fix it in next patch-set
 
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+>> +			nsindex->minor = __cpu_to_le16(2);
+>> +	}
+>> +
+>>  	nsindex->checksum = __cpu_to_le64(0);
+>>  	if (flags & ND_NSINDEX_INIT) {
+>>  		unsigned long *free = (unsigned long *) nsindex->free;
+>
+>> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+>> index e772aae71843..0a55900842c8 100644
+>> --- a/include/linux/libnvdimm.h
+>> +++ b/include/linux/libnvdimm.h
+>> @@ -44,6 +44,9 @@ enum {
+>>  	/* dimm provider wants synchronous registration by __nvdimm_create() */
+>>  	NDD_REGISTER_SYNC = 8,
+>>
+>> +	/* dimm supports region labels (LSA Format 2.1) */
+>> +	NDD_CXL_LABEL = 9,
+>
+>This enum is 'curious'.  It combined flags from a bunch of different
+>flags fields and some stuff that are nothing to do with flags.
+>
+>Anyhow, putting that aside I'd either rename it to something like
+>NDD_REGION_LABELING (similar to NDD_LABELING that is there for namespace labels
+>or just have it a meaning it is LSA Format 2.1 and drop the fact htat
+>also means region labels are supported.
+>
+>Combination of a comment that talks about one thing and a definition name
+>that doesn't associate with it seems confusing to me.
+>
+>Jonathan
+>
+
+Sure, I will rename it in next patch-set
+
+Regards,
+Neeraj
+
+>
+>> +
+>>  	/* need to set a limit somewhere, but yes, this is likely overkill */
+>>  	ND_IOCTL_MAX_BUFLEN = SZ_4M,
+>>  	ND_CMD_MAX_ELEM = 5,
+>
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e248e_
+Content-Type: text/plain; charset="utf-8"
+
+
+------NUum2bl.CiaUPDLBlJLeOFPEqthXJjtuaYQe8aeKsoDg0nUl=_e248e_--
 
