@@ -1,405 +1,746 @@
-Return-Path: <linux-kernel+bounces-799588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B269DB42E05
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4074EB42E07
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3813D1899B25
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0981D5E0C68
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808541BC3F;
-	Thu,  4 Sep 2025 00:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FC072631;
+	Thu,  4 Sep 2025 00:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qLcnmkEl";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="QSVYkEga"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/64N9V/"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918F32F74A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 00:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756944891; cv=fail; b=f+5YIDrORhX4rg0qK5M4bUITP0HwADkZGYPsQEOP6YGuWVfEjZTGTgjMvvgkW4POgaouzSXJF+5y3SX7EL9tgZbw8dsdiKKr2XkwRO3ShQ7r2PxvuxFzZj+on63vQFjjXWpk1Yaqk3HQwde8r3JO0sxyuAtb/O6aU4YynxMUSto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756944891; c=relaxed/simple;
-	bh=QRvgiDQmOmIy/AThlf2ta4AhLDSgLqefnvOBcfNPxrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nzsYF0Tl6CVGPohFmCtcvzZgbOVjEDlf09kMnyzKHhgbQ7fwY3nboygRiXJejeD1SKyNkWROoUn+uZMVgobKaDOMtOUnO2kEdJTgo7j9XNsg6jrvaOVFMUVQFziqkZUePDYvTDjKC8mK0QHNj5v01uX0AzPLtWbAhRBKMYIr+lE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qLcnmkEl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=QSVYkEga; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Ndqjp008881;
-	Thu, 4 Sep 2025 00:14:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=48GennlgANH2TM6bdO
-	NYedOh1b8zXqkcZKC/vXactAk=; b=qLcnmkElZ3+V9nT8Gi8ShL6BAZeFT6HOcN
-	5gAksdMcEAIjQP/qvNdZ5cQwIoCcGSXNKj5q3tMnSCpmQDogDLHtnT7jeNRaz33b
-	2uAbi6rFlYA2sNVLHzgWg8FDEOs+c3r+X6m/3HIZAAqupNGBqeED2ZKcCaXucBJ4
-	DhGkDnh4xWTbCFCJUiQ2O/Fm4YEzQYf1xieTWwns9itEGsR5mUEE3hlcBviMiHUh
-	P64nNwpV/FG0Y/d7CxVwX16Pw4Sv+xsu10D2z3DCHU9U6vmk9hV8uhgjekb90nPX
-	MJuQSudtY3/8TO+YBouun7dU1SJmmpWxV71wkAJ55T6EzaO2eXLg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48xyhs80xg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 04 Sep 2025 00:14:03 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 583LHAWn040116;
-	Thu, 4 Sep 2025 00:13:58 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqrh18x4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 04 Sep 2025 00:13:58 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HlrZSy+/9qg/5YW8KS3lToufG+bXm7OgDVfRYwA+F3FjrU6Ndb449LSaXjob4IlNDUZ1qOfXb60AfwM4tLMdY+Glvj2PS4i2ZSEwvpo5XxChku2mrtiyVrv4lcwsI/SylC4gV3nUMasfWKnrQDotaWYXAeNij0V3ByXvlaftbuLi9qgpp/GJzBK1NO75CtCY7Fj6Du5SGpNbSqWPvjSbHkwqM4cZy71ZCu5mA34dEAZ6ybm9Jnsa6Ey/EZSLsmm2YMc4wJVC1Qm+E94rA002qJMZttPlGF6qdfoSob452d3vCXhyZQJh/NUxIVLtle6Hcm98H9BCUAFBHCalkMcjQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=48GennlgANH2TM6bdONYedOh1b8zXqkcZKC/vXactAk=;
- b=lSpy7g+rUafY9qbrZkDOJ8E3ZeMqVsuCZbEzY9x+sRDzI/QnTbeCJC/pAiWJbiv+FyEQQuELvyoIjzU763r5UEUMRWHpAznMbCd6PwwQGCvPW9oAL+e3u96ftkJRTC1PcqIWPZzg1I2Zg5aH9lRDBCxguecSpwPCCazVGXUrLiTWuWDK9CxLCaAE3lL7LTstRqhm4qrqKwOOCllhZu6ZeVV9fG2OZig6JoMjcWojU/OeiqvPZdfzgr3fzexr1iyX2qfZieb6HYB8vK7DvnEGyZdIU3lyGQ53RAP5Jtw17ecXjFl+l7OS2fth8NSmLpz9yXPdi+am91yTwbV3FspD8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4824B28;
+	Thu,  4 Sep 2025 00:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756944938; cv=none; b=R6Ir48IkJKs80rziXUZxzDKei3v6OUFL0aXlQg31+GguQI7C9GSvLLhKLCf9Eio0G9cQeCIzUjNUf7O6GKvVVM0s/kDzRBh+VrA5lUyb1oIuU476fQMkuX1p+M8DNyuwcMAPK11dQFVEoIv/jEke5aVnbJ6RJWZ7282997tEqfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756944938; c=relaxed/simple;
+	bh=V9F1JHqTWKQP22vqAVjVr7MPSHZhkhCaYUA4POc7hU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FD7TqGHYyPmyak70U0iJ4HXzPEMmez5jwm211kJJEs9aGQxLfsLhxTquRoImyLzFMGP6U824I4J1E4cZ1lcoMp6LnxOeIkd0lXmU4EIzAX0P/x+btouVVtpPUvnB7AD/He61F1u08WWof7uai2nEQiTe6u3cBs95qPOA89pXriA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/64N9V/; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-723ad237d1eso4907747b3.1;
+        Wed, 03 Sep 2025 17:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=48GennlgANH2TM6bdONYedOh1b8zXqkcZKC/vXactAk=;
- b=QSVYkEgaE03ZfIebOpAYe/QeDTzp+OLmX+r8j53+bScIJBlFpwMAUzfVtSiO6PqIZusa3dZwadKdH+o+kPEYsTM6RlrGfSlWRYmm3dLfwR1Ft3TYxV99c7tveFH/Sk3E8o6fqQjCnCVjnbjSw+tZwPOcKVkeVyUPobJHbD6qdc4=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by DS0PR10MB8079.namprd10.prod.outlook.com (2603:10b6:8:1f5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Thu, 4 Sep
- 2025 00:13:56 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9073.026; Thu, 4 Sep 2025
- 00:13:56 +0000
-Date: Wed, 3 Sep 2025 20:13:45 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-        Charan Teja Kalla <quic_charante@quicinc.com>,
-        shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
-        bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH 6/6] mm: Change dup_mmap() recovery
-Message-ID: <jr57bivqyzarzicmitzuz4unk5g6gytfnh5olmradn7nmei7yt@s35yr2zhknz5>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Charan Teja Kalla <quic_charante@quicinc.com>, shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org, 
-	Matthew Wilcox <willy@infradead.org>
-References: <20250815191031.3769540-1-Liam.Howlett@oracle.com>
- <20250815191031.3769540-7-Liam.Howlett@oracle.com>
- <de385044-e9a2-45a1-b74f-68ba80bba146@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de385044-e9a2-45a1-b74f-68ba80bba146@lucifer.local>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT3PR01CA0020.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:86::15) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+        d=gmail.com; s=20230601; t=1756944935; x=1757549735; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t0THgvxJFt5go/qGjp8zLHBZUwzKvN5XEJ2DksK1IT8=;
+        b=W/64N9V/WpYdfq/hun1dKNf0HCzq5VMaG9Xzi+pL9aNnbjeKoL0JWNXD63RL9beZdw
+         jvB9jrtoRUn6K28JhHB0Qaw1nJXlpVrbKT3jLT0RfvUDh/qF1kAUZTAEBiyIzGUiMNv2
+         El1vR74aEKoSp7X3vFX8U84oTuR8Exl1zB9GqNML+i+Sh8mp1as5SoRIdjd5RjNIF07L
+         fbICo4G5zPDouEovX6n1alC7rHyZ8y2PXJg7bKhidtXDC4ovKeXONrvVM7RFkMz/VLv4
+         v10O1b4btGHrQUOFT+MMklMXYj+vZJfkIoHHkF4SMRK1HMRVXE8Du2JbDtDh7Db14uNx
+         FEAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756944935; x=1757549735;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t0THgvxJFt5go/qGjp8zLHBZUwzKvN5XEJ2DksK1IT8=;
+        b=nKFSR545tP8AEKYVqzAnmxtK+HrKFhonclbgFuXrI2ynnAYVSw60g0CvpR5xPq/JEw
+         oOy8Iov+oNtbwmNG00olCK1KdtXn0xJz1raixFVo7SRUukB/1971eVZDn+Et4hLude6N
+         /P6bukC2tkEOJPH1oQZzARHX2ICr37INcrrNsBX6B9AbQsEaq70NqaPJTUv7PVNqU5UA
+         5PrlIq/HEdmOi1wTuIAkrRda1UfiEGuntUD2MgCkVyUO4fciKRguNyyV8LaYCTWCMXHS
+         xDCE0T3czaM7BZpi/Xkv5E4SD8HT9Ybbt4WiSYh/cYMtxuEPULTRZV+eTbBlDFnr/G71
+         KUXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeZ1pQA1MLw/uI6JbHq0Cm2IY9ZBj9PACcHsU87bDWrRXOjS86SOQ48qgArRZCZL1Jzs+gPj7tDGHdbY0=@vger.kernel.org, AJvYcCWpfQoinzDpoI8MNnak35pOWN1svrMpT6Bt+k5YlYoP1P+fQbMp4nVYqzZT4kahFYXg80VHNRqy@vger.kernel.org
+X-Gm-Message-State: AOJu0YybpWAeqFfxZWb/A055+CtUamAlCLOqqKgCg71TKNIFNqL1CqKy
+	0y4jUVIBrarYfSmxuzdmA53HHzVNFRODNPtAoTKKxPCYnyPWkE9w/T1m
+X-Gm-Gg: ASbGncvNxQZGKWV9+FqAlrNfbYJBbNqTmwZn7/BMIXNt4VCeYC82Lz83+cfXZkOhs7p
+	DB/y/GHAXFUab1lGDRqJRM78+9ssAH1NSQ3eKtj2fkl3oLTdjiLyxec91WaDRCmyzCU6M+acPT+
+	PZuzY+GJgth59WupNu38O+BOAs97/saMJKbpnDlcXQl+pxCP1LfEyM5LFsrohQvWj3vXAVpj2+v
+	eOAsdc/T2NRMbnDI8iodK18cSprALCUSBNriTUsu5Ssr8O5MT8rVD1ZSqdIH6qIO2+K2mD+L5Qf
+	IEHwgOoSlaT8L12VEn6cvwBR2RvEmtRDaOmtGaYLfm8x0h5azd53j0Jlfn7/XHPYX7SXkhJUFgN
+	cXCFENQo/nMrYbgw6KSM/s3Puu+uq+/Xlt49SWDwkj74BCvAr9wKTMDS9cQ==
+X-Google-Smtp-Source: AGHT+IGNkxHigKKQASBmsGk4a+hbWsQYyx36aNfGJG3PisCNlhbPCSYJiczOToxjNaReNmlC5wt/Lw==
+X-Received: by 2002:a05:690c:4444:b0:721:314a:e5ed with SMTP id 00721157ae682-72276399155mr220344517b3.20.1756944934172;
+        Wed, 03 Sep 2025 17:15:34 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:11::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a85647a3sm17438007b3.61.2025.09.03.17.15.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 17:15:33 -0700 (PDT)
+Date: Wed, 3 Sep 2025 17:15:31 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next 2/2] net: devmem: use niov array for token
+ management
+Message-ID: <aLjaIwkpO64rJtui@devvm11784.nha0.facebook.com>
+References: <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com>
+ <20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-2-d946169b5550@meta.com>
+ <CAHS8izPrf1b_H_FNu2JtnMVpaD6SwHGvg6bC=Fjd4zfp=-pd6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|DS0PR10MB8079:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22dd92f8-36c0-419c-4afd-08ddeb47f028
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Om/q8JKf8ZAoqQVXECcjTHOvuJgHaZyO17tQOaxDHTXGmg5UY1tiO8zDTyx5?=
- =?us-ascii?Q?XxxGMErZmEAEL9iB0vuz9ucpwWNVJ5Vs0xo2mvND9J1zthcRx3yBWdLGg1vt?=
- =?us-ascii?Q?0FnMiMKDY17DiQn53p+gMjNA6BTqShJA/+Nlh47fzcvs+lfncE2RAWiMW8Th?=
- =?us-ascii?Q?ys1u05BpXRfgkBawJ47zNEjd0XVj9x54P93aBM6O9NZ9vRe5N36exGb/PObb?=
- =?us-ascii?Q?WNmfIlBo+4y2leWWmVCehvDMx62bstEBHW6b2UG2awClzgy+OykQ9wY2N0vz?=
- =?us-ascii?Q?BkhtZ5nCCVIdeMFRU+0CCeSmqNJfAKMAu431xAdfgXbXfVLS1mFQhsjrc7HU?=
- =?us-ascii?Q?AiHoXGfWv90BEHy+OXjnydr7MMuhtmuEdAKqrxQlGffPFfsbfOq1rvo+vjIM?=
- =?us-ascii?Q?/4frAISIS35VMdc2LC4lxTnJtTXSuSw1I7rvv2ZDF5Y/hhAg9k6Q6GPU4gzO?=
- =?us-ascii?Q?tHv350WDONkU010h9VpIPRYy0WKAGCbGJhg2vsWJ1PlcXcAFo6hZCEqIkdAf?=
- =?us-ascii?Q?RtGgPckAuWVXve/R9+Lf4NagWIphJBOfq9uv6M5z2xCat96gPZ0KeaX4cOEw?=
- =?us-ascii?Q?atcJyK+t1pksFHKb4G5rpnvduAqAV8DwyOAeZsbsntaTSTkk3V9n5/QCzXRR?=
- =?us-ascii?Q?vytiWzLK1fhKYU4Z1mYzw66pJ/4Vfvma/QrwkhdYKtcwIfl5bWT1OaTkV7ZW?=
- =?us-ascii?Q?VhfMFbWY+UM+BTNGcXLKgRv9mfxDF7v5Ej97H4DeJyYxJEOFVkvSIEDdr7gS?=
- =?us-ascii?Q?IPg9m9/xAjOmu94XdYKKN1M7JxuYITbDATNrnpbBOAXWg64cixbRs97is0la?=
- =?us-ascii?Q?OtSkfnmFPRofKhiIGxU5mL0N43cTvPbbguySYvkOwJ/Ti/zkDOZkAucg5cWq?=
- =?us-ascii?Q?lP3PA8wSqM8hvsw+2ZmEoBO2HH3hId0pW+cNjCcFXOCzdnqvNwrCAbieDgtb?=
- =?us-ascii?Q?BMjHDCaap8jDyWPfxFXf+XTty3qEjJVVrtU9asMdJdYQwNNasy9lpUyweRxs?=
- =?us-ascii?Q?65MyiNAykIBsCjo0iIeiNHM/JggnDzChWUcAbpFNGmrEPbcUCOON4+lEqtxz?=
- =?us-ascii?Q?4kS+pQw/6FPQECSLrwf59n9WCoJPfEEVZ1pA2sPZxXsD3jIudKN/GOs35xMw?=
- =?us-ascii?Q?kmIsGW3C3JmQ7176Dmhf+RoHFZhUa8nQsDgcXmla9kfDaxm7SOvX5wzgugnC?=
- =?us-ascii?Q?eWo070PMEoG18Vrim9M7TNmCaGN4itan2TOwq2dvtmd7JSK+TjWhaQ+MbNuf?=
- =?us-ascii?Q?f/Cco8nPkr82UtPnuqzlX9FSCHg3/E3k3YYRPkDw541nPEvPWWLpBRAKoxIK?=
- =?us-ascii?Q?G4fxQvMxtNf4eUYwkYrKkIb//2UbHLt++5KXVPhyOii+HIEaVDehW8o4nxRe?=
- =?us-ascii?Q?0BBA3WGjmHP6VmCZl2S2kX59+uZ9L/0/KxVlAZxojoJ9Dz4lPn4YHuDu5rmG?=
- =?us-ascii?Q?GtX4Ku5TksE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vO/d+AJPOS/7MEf1Fmt2L1lHiPCA4oCvG6DPtwKufTdIe6NlHFv4e/C45SZM?=
- =?us-ascii?Q?4l1qTMAed+VtJq9sQ+KDe5BXnoRe7k/WUL6aHD6SDpP2zkyec8W//wdtpGjw?=
- =?us-ascii?Q?XDxDtoCJFrBy4FdtbGIS9W8epO3FG2pHnIZ7IUqMwGgd0LNOyKlA8E2yDI6o?=
- =?us-ascii?Q?PrTtm33mp0rpOY3h4JLr4uzqxu6CdqU2EVP5HoZgHgGIOnu02U8IFSSwlGLz?=
- =?us-ascii?Q?IQJbjQdgBr8W40eZ+Br1roz37ZnsXwk2dyzykj8GOQaVUnV8AgEoKnTZqDzo?=
- =?us-ascii?Q?+kjyKGUHTLUl6CzRoO7N6Spmi+Zd8jXd5XsFaDTsCaSXo4F9zp8NvdwqlVfD?=
- =?us-ascii?Q?kosFxeo2dYb1sRLh1d4o4NLjQXy+s52MX0rFkBjdGV9HSEDWQs8MfLG4NE0S?=
- =?us-ascii?Q?al/iWfu9PNrk931Of0xSrZzpYEMu3zgmEdF+B8FUoLrEIZXVjkZIPICNtnFl?=
- =?us-ascii?Q?mntdX8W4r7/M8F2y3l8HOP2gOp8unTI+at2uMtFlyz1M8e5+z7Uu1KsxTz3O?=
- =?us-ascii?Q?xBpUyK45X7mdkaPYE2LMhtv5J/lSa7T/9GfR4qUGMP4LJat9jOYsZ7s57lWH?=
- =?us-ascii?Q?UIVaCHUnZDqN0CB1FKMKuLzBasTwXJdT0/Rnc7tILZ/MvspEqZE1oDL06UsB?=
- =?us-ascii?Q?XZPH5SbYgu3A33kMUpyHlm3hMqXbxN8TO9KUAnohqSIA6NvW5lupwis6xrDu?=
- =?us-ascii?Q?0UoOBCiCzAPyRJDRwn9HzEJZQ6qYsAt8IxxfrqUiwef7lUR4Ye0KAgrTF/Iq?=
- =?us-ascii?Q?VvqPnzGQWbQew1vnn7O064xy5KULe3zqDDywJMcR5/u0qPBPdRIPtz+UWHnH?=
- =?us-ascii?Q?s+hQA+pZIKdIpGbglu32JZY6EKQlD/W5jHf5gTkTP8RH/zyjtyokJYkxqC8f?=
- =?us-ascii?Q?16XOiWnPqEMPHzD38o8aS1NBYCxTE0ukwkPbHQodb7Qo7+hDeZ8erex8q15S?=
- =?us-ascii?Q?9Dvj/r4CzljaPafqgkdXdwqLW4jZXgFPowQgwdiQwQKCW75Yzm+pJovKOGUZ?=
- =?us-ascii?Q?YyzQcxA46gDpAguZ8QoM5HBNjLwCWLztT7lIPUHeBcjCIlBBG/8NZyTq6cS9?=
- =?us-ascii?Q?6IkZhi8rQBsWjjSnL/+2uC9PIjT+/6qt0l1vpRB2XUn1v3U31ix5GSUISkhz?=
- =?us-ascii?Q?2Ng0gTWCR3UWEQdxkYeoyds9qEF1WcWo+WfLySL0BfMRVrh+SpcIFDAq0CUe?=
- =?us-ascii?Q?mSf17WI4QeILetMLDeeO7ZTadQI6u2MKoTxY/VeMbLDZ4XnVe5uh1m17c3IX?=
- =?us-ascii?Q?iMxL8XnnEK+39VLWLOmCTN2ajfSRN3+DSAvJR/VgI5wl3I7hVrPoMhkzfOST?=
- =?us-ascii?Q?gGVb6LwWq1kQephv7mKLBDlO1H9BwO8iNQPoZrUqYnC8J1MC/K9FP6oWjvyE?=
- =?us-ascii?Q?IFeZmy3K+R4xHPPdl6xyzsLEzYj3H0XfYXkP9dWj7W20kPoKI144PwXkuCBx?=
- =?us-ascii?Q?e0OB5vFj+uq6XzZ6SfSe6cXxj8iE4ngVn3IqP59PefNni+FA4myBd8lIVYN8?=
- =?us-ascii?Q?5+/zbBECvCV5tEMUP+c2jZ20Il7QayyV4G8Y9lu1Ey9zDKxNWZ7pWA9YfsIJ?=
- =?us-ascii?Q?+ewyiCzDHNvqB/WE9w9pcScyZF0XVhY/vVEnkJUP?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	afIvYQc9SFbfaZEcWchGyYTTPYAdyD+osgcKQazTfKhkC6RgOAWqE2Y/g4uGTw886dBwY+rwdulmUQTAFuDg/0rwujGuYcGh/h2nAub1gjxkFaecrdLA22EMiDbVYgd8+Hv8PxV5qdD5Sa3ofiRv0fLbSq7+10EOam/vwTcU7TkXGxlIQ9/XxD+pfFIUPiJh7pcZv3qP4EY31JbFpGNLjYLi8gx96khLFh27C3eD/0zXfpmooou+ih1ziFCXU4MyXHzlLeIDDinaJ+MFlcscfs3sMGSc61lZ8GpSWXR0ifVIjSPBGY/p+6OjPilEPjWqrqavubdi9dfCmrp39KWQ+Vb4ch03DwVPYrTTtBfES/GLEcjeSW0DKfXXAwNpGWoZPbfWgHGb5olDd+zat5MctZ1UfxUcbffrQYziUHd6p96eQRzG0Ar/2S44455Tg+mBJgyfmxCREmq4IlY/XoYewc0EAEUDU2UbadAhFFzvtEC7eMYhi148B9L873xnk8PR8CejPLPhUMgh2yBU+7CcBgFF+wILSFtDnfvy8iCL7Vuavh06ZxCtXJ1XY8KrLRLME9WBNkp+fPKvps/N1jTKaGkMSJ6Z9XQu/hF7n7wQx54=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22dd92f8-36c0-419c-4afd-08ddeb47f028
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 00:13:56.3167
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gOAZCYKta/dL8zr8ZrP4w9tYZ4pkUim1vyu+goFYXugmf8Zw3K6DIGr8mSVhfSkQ5yG0PY7mxO/E9M4Z/fi4CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8079
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_11,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509040000
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDIzOCBTYWx0ZWRfX0exdzel9xGy2
- 9/VJvod88wdZiCF2V6TGE3/FuBMYfqnkhnxABl36LcGZNsASWUWK6s0iH22UpIZcF+C2jD5v07E
- qxur5mmlTqPVhfGtE1yKJqb1nR3K/RITHLx/Az3C7r2PUcGkSLJCMLvw+UOyXhlVmSYDaiQQlWn
- KVJb6VNvQS642cjpqQgLBm3aoJJHAX4cLqOThE6HYMuQm5YR4V1jKQyhliphDUKRge3TVCLh3gH
- vhFHDBgE4A0qE4OWivl3uNKHi7YS4tC7qY6aJXV8Es89ULly1aLbPhhIx5Xvyf12tRm33zfzRtE
- 9kyZ96EFlvintOmu5TGxtitsW5pp6vf8R+1REDeIGu38kQGoJeP2vzhRURl6Vd2z8pj41IQIHl1
- EWcYgu4bRPzD3vb2jC2GJca5KDPqJw==
-X-Proofpoint-ORIG-GUID: 1YUQHn8Gvljja783l6R7HapcxSX0S2ZJ
-X-Authority-Analysis: v=2.4 cv=UeVRSLSN c=1 sm=1 tr=0 ts=68b8d9cb b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=qdUBQZRZxbIx8WG-YPcA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12068
-X-Proofpoint-GUID: 1YUQHn8Gvljja783l6R7HapcxSX0S2ZJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izPrf1b_H_FNu2JtnMVpaD6SwHGvg6bC=Fjd4zfp=-pd6w@mail.gmail.com>
 
-* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250819 16:34]:
-> On Fri, Aug 15, 2025 at 03:10:31PM -0400, Liam R. Howlett wrote:
-> > When the dup_mmap() fails during the vma duplication or setup, don't
-> > write the XA_ZERO entry in the vma tree.  Instead, destroy the tree and
-> > free the new resources, leaving an empty vma tree.
-> 
-> Yesss like it!
-> 
+On Wed, Sep 03, 2025 at 01:20:57PM -0700, Mina Almasry wrote:
+> On Tue, Sep 2, 2025 at 2:36 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
 > >
-> > Using XA_ZERO introduced races where the vma could be found between
-> > dup_mmap() dropping all locks and exit_mmap() taking the locks.  The
-> > race can occur because the mm can be reached through the other trees
-> > via successfully copied vmas and other methods such as the swapoff code.
-> 
-> Yeah god.
-> 
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
 > >
-> > XA_ZERO was marking the location to stop vma removal and pagetable
-> > freeing.  The newly created arguments to the unmap_vmas() and
-> > free_pgtables() serve this function.
-> 
-> Nice.
-> 
+> > Improve CPU performance of devmem token management by using page offsets
+> > as dmabuf tokens and using them for direct array access lookups instead
+> > of xarray lookups. Consequently, the xarray can be removed. The result
+> > is an average 5% reduction in CPU cycles spent by devmem RX user
+> > threads.
 > >
-> > Replacing the XA_ZERO entry use with the new argument list also means
-> > the checks for xa_is_zero() are no longer necessary so these are also
-> > removed.
+> 
+> Great!
+> 
+
+Hey Mina, thanks for the feedback!
+
+> > This patch changes the meaning of tokens. Tokens previously referred to
+> > unique fragments of pages. In this patch tokens instead represent
+> > references to pages, not fragments.  Because of this, multiple tokens
+> > may refer to the same page and so have identical value (e.g., two small
+> > fragments may coexist on the same page). The token and offset pair that
+> > the user receives uniquely identifies fragments if needed.  This assumes
+> > that the user is not attempting to sort / uniq the token list using
+> > tokens alone.
 > >
-> > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > A new restriction is added to the implementation: devmem RX sockets
+> > cannot switch dmabuf bindings. In practice, this is a symptom of invalid
+> > configuration as a flow would have to be steered to a different queue or
+> > device where there is a different binding, which is generally bad for
+> > TCP flows.
 > 
-> Ah finally the 'action' patch :)
+> Please do not assume configurations you don't use/care about are
+> invalid. Currently reconfiguring flow steering while a flow is active
+> works as intended today. This is a regression that needs to be
+> resolved. But more importantly, looking at your code, I don't think
+> this is a restriction you need to introduce?
 > 
-> Obviously my review is on the basis that you fixup the rebase etc.
+
+That's fair, let's see if we can lift it.
+
+> > This restriction is necessary because the 32-bit dmabuf token
+> > does not have enough bits to represent both the pages in a large dmabuf
+> > and also a binding or dmabuf ID. For example, a system with 8 NICs and
+> > 32 queues requires 8 bits for a binding / queue ID (8 NICs * 32 queues
+> > == 256 queues total == 2^8), which leaves only 24 bits for dmabuf pages
+> > (2^24 * 4096 / (1<<30) == 64GB). This is insufficient for the device and
+> > queue numbers on many current systems or systems that may need larger
+> > GPU dmabufs (as for hard limits, my current H100 has 80GB GPU memory per
+> > device).
+> >
+> > Using kperf[1] with 4 flows and workers, this patch improves receive
+> > worker CPU util by ~4.9% with slightly better throughput.
+> >
+> > Before, mean cpu util for rx workers ~83.6%:
+> >
+> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> > Average:       4    2.30    0.00   79.43    0.00    0.65    0.21    0.00    0.00    0.00   17.41
+> > Average:       5    2.27    0.00   80.40    0.00    0.45    0.21    0.00    0.00    0.00   16.67
+> > Average:       6    2.28    0.00   80.47    0.00    0.46    0.25    0.00    0.00    0.00   16.54
+> > Average:       7    2.42    0.00   82.05    0.00    0.46    0.21    0.00    0.00    0.00   14.86
+> >
+> > After, mean cpu util % for rx workers ~78.7%:
+> >
+> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> > Average:       4    2.61    0.00   73.31    0.00    0.76    0.11    0.00    0.00    0.00   23.20
+> > Average:       5    2.95    0.00   74.24    0.00    0.66    0.22    0.00    0.00    0.00   21.94
+> > Average:       6    2.81    0.00   73.38    0.00    0.97    0.11    0.00    0.00    0.00   22.73
+> > Average:       7    3.05    0.00   78.76    0.00    0.76    0.11    0.00    0.00    0.00   17.32
+> >
 > 
-> This broadly looks right but some various nits etc. below and will have
-> another look through on new revision - this whole area is pretty crazy!
+> I think effectively all you're doing in this patch is removing xarray
+> with a regular array, right? I'm surprised an xarray account for 5%
+> cpu utilization. I wonder if you have debug configs turned on during
+> these experiments. Can you perf trace what about the xarray is taking
+> so long? I wonder if we're just using xarrays improperly (maybe
+> hitting constant resizing slow paths or something), and a similar
+> improvement can be gotten by adjusting the xarray flags or what not.
 > 
+
+That is right.
+
+Here is some perf data gathered from:
+
+	perf record -a -g -F 99 -C 0-7 -- sleep 5
+
+RX queues pinned to 0-3 and kperf server pinned to 4-7.
+
+    11.25%  server       [kernel.kallsyms]                                      [k] tcp_recvmsg
+            |          
+             --10.98%--tcp_recvmsg
+                       bpf_trampoline_6442594803
+                       tcp_recvmsg
+                       inet6_recvmsg
+                       ____sys_recvmsg
+                       ___sys_recvmsg
+                       __x64_sys_recvmsg
+                       do_syscall_64
+                       entry_SYSCALL_64_after_hwframe
+                       __libc_recvmsg
+                       |          
+                        --2.74%--0x100000082
+
+     5.65%  server       [kernel.kallsyms]                                      [k] xas_store
+            |          
+             --5.63%--xas_store
+                       |          
+                       |--3.92%--__xa_erase
+                       |          sock_devmem_dontneed
+                       |          sk_setsockopt
+                       |          __x64_sys_setsockopt
+                       |          do_syscall_64
+                       |          entry_SYSCALL_64_after_hwframe
+                       |          __GI___setsockopt
+                       |          0x4f00000001
+                       |          
+                       |--0.94%--__xa_alloc
+                       |          tcp_recvmsg
+                       |          bpf_trampoline_6442594803
+                       |          tcp_recvmsg
+                       |          inet6_recvmsg
+                       |          ____sys_recvmsg
+                       |          ___sys_recvmsg
+                       |          __x64_sys_recvmsg
+                       |          do_syscall_64
+                       |          entry_SYSCALL_64_after_hwframe
+                       |          __libc_recvmsg
+                       |          
+                        --0.76%--__xa_cmpxchg
+                                  tcp_xa_pool_commit_locked
+                                  tcp_xa_pool_commit
+                                  tcp_recvmsg
+                                  bpf_trampoline_6442594803
+                                  tcp_recvmsg
+                                  inet6_recvmsg
+                                  ____sys_recvmsg
+                                  ___sys_recvmsg
+                                  __x64_sys_recvmsg
+                                  do_syscall_64
+                                  entry_SYSCALL_64_after_hwframe
+                                  __libc_recvmsg
+
+
+     [...]
+
+     1.22%  server       [kernel.kallsyms]                                      [k] xas_find_marked
+            |          
+             --1.19%--xas_find_marked
+                       __xa_alloc
+                       tcp_recvmsg
+                       bpf_trampoline_6442594803
+                       tcp_recvmsg
+                       inet6_recvmsg
+                       ____sys_recvmsg
+                       ___sys_recvmsg
+                       __x64_sys_recvmsg
+                       do_syscall_64
+                       entry_SYSCALL_64_after_hwframe
+                       __libc_recvmsg
+
+
+Here is the output from zcat /proc/config.gz | grep DEBUG | grep =y, I'm
+not 100% sure which may be worth toggling. I'm happy to rerun the
+experiments if any of these are suspicious looking:
+
+CONFIG_X86_DEBUGCTLMSR=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_BLK_DEBUG_FS=y
+CONFIG_BFQ_CGROUP_DEBUG=y
+CONFIG_CMA_DEBUGFS=y
+CONFIG_FW_LOADER_DEBUG=y
+CONFIG_PNP_DEBUG_MESSAGES=y
+CONFIG_SCSI_LPFC_DEBUG_FS=y
+CONFIG_MLX4_DEBUG=y
+CONFIG_INFINIBAND_MTHCA_DEBUG=y
+CONFIG_NFS_DEBUG=y
+CONFIG_SUNRPC_DEBUG=y
+CONFIG_DYNAMIC_DEBUG=y
+CONFIG_DYNAMIC_DEBUG_CORE=y
+CONFIG_DEBUG_BUGVERBOSE=y
+CONFIG_DEBUG_KERNEL=y
+CONFIG_DEBUG_MISC=y
+CONFIG_DEBUG_INFO=y
+CONFIG_DEBUG_INFO_DWARF4=y
+CONFIG_DEBUG_INFO_COMPRESSED_NONE=y
+CONFIG_DEBUG_INFO_BTF=y
+CONFIG_DEBUG_INFO_BTF_MODULES=y
+CONFIG_DEBUG_FS=y
+CONFIG_DEBUG_FS_ALLOW_ALL=y
+CONFIG_SLUB_DEBUG=y
+CONFIG_DEBUG_PAGE_REF=y
+CONFIG_ARCH_HAS_DEBUG_WX=y
+CONFIG_HAVE_DEBUG_KMEMLEAK=y
+CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=y
+CONFIG_ARCH_HAS_DEBUG_VIRTUAL=y
+CONFIG_DEBUG_MEMORY_INIT=y
+CONFIG_SCHED_DEBUG=y
+CONFIG_LOCK_DEBUGGING_SUPPORT=y
+CONFIG_CSD_LOCK_WAIT_DEBUG=y
+CONFIG_CSD_LOCK_WAIT_DEBUG_DEFAULT=y
+CONFIG_DEBUG_CGROUP_REF=y
+CONFIG_FAULT_INJECTION_DEBUG_FS=y
+
+
+For more context, I did a few other experiments before eventually
+landing on this patch:
+
+1) hacky approach - don't do any token management at all, replace dmabuf
+   token with 64-bit pointer to niov, teach recvmsg() /
+   sock_devmem_dontneed() to inc/dec the niov reference directly... this
+   actually reduced the CPU util by a very consistent 10%+ per worker
+   (the largest delta of all my experiements).
+
+2) keep xarray, but use RCU/lockless lookups in both recvmsg/dontneed.
+   Use page indices + xa_insert instead of xa_alloc. Acquire lock only if
+   lockless lookup returns null in recvmsg path. Don't erase in dontneed,
+   only take rcu_read_lock() and do lookup. Let xarray grow according to
+   usage and cleanup when the socket is destroyed. Surprisingly, this
+   didn't offer noticeable improvement.
+
+3) use normal array but no atomics -- incorrect, but saw good improvement,
+   despite possibility of leaked references.
+
+4) use a hashmap + bucket locks instead of xarray --  performed way
+   worse than xarray, no change to token
+
+> > Mean throughput improves, but falls within a standard deviation (~45GB/s
+> > for 4 flows on a 50GB/s NIC, one hop).
+> >
+> > This patch adds an array of atomics for counting the tokens returned to
+> > the user for a given page. There is a 4-byte atomic per page in the
+> > dmabuf per socket. Given a 2GB dmabuf, this array is 2MB.
+> >
+> > [1]: https://github.com/facebookexperimental/kperf
+> >
+> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 > > ---
-> >  mm/memory.c |  6 +-----
-> >  mm/mmap.c   | 39 ++++++++++++++++++++++++++++-----------
-> >  2 files changed, 29 insertions(+), 16 deletions(-)
+> >  include/net/sock.h       |   5 ++-
+> >  net/core/devmem.c        |  17 ++++----
+> >  net/core/devmem.h        |   2 +-
+> >  net/core/sock.c          |  24 +++++++----
+> >  net/ipv4/tcp.c           | 107 +++++++++++++++--------------------------------
+> >  net/ipv4/tcp_ipv4.c      |  40 +++++++++++++++---
+> >  net/ipv4/tcp_minisocks.c |   2 -
+> >  7 files changed, 99 insertions(+), 98 deletions(-)
 > >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 3346514562bba..8cd58f171bae4 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -387,8 +387,6 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
-> >  		 * be 0.  This will underflow and is okay.
-> >  		 */
-> >  		next = mas_find(mas, tree_max - 1);
-> > -		if (unlikely(xa_is_zero(next)))
-> > -			next = NULL;
+> > diff --git a/include/net/sock.h b/include/net/sock.h
+> > index 1e7f124871d2..70c97880229d 100644
+> > --- a/include/net/sock.h
+> > +++ b/include/net/sock.h
+> > @@ -573,7 +573,10 @@ struct sock {
+> >  #endif
+> >         struct rcu_head         sk_rcu;
+> >         netns_tracker           ns_tracker;
+> > -       struct xarray           sk_user_frags;
+> > +       struct {
+> > +               struct net_devmem_dmabuf_binding        *binding;
+> > +               atomic_t                                *urefs;
+> > +       } sk_user_frags;
 > >
-> >  		/*
-> >  		 * Hide vma from rmap and truncate_pagecache before freeing
-> > @@ -407,8 +405,6 @@ void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
-> >  		while (next && next->vm_start <= vma->vm_end + PMD_SIZE) {
-> >  			vma = next;
-> >  			next = mas_find(mas, tree_max - 1);
-> > -			if (unlikely(xa_is_zero(next)))
-> > -				next = NULL;
-> >  			if (mm_wr_locked)
-> >  				vma_start_write(vma);
-> >  			unlink_anon_vmas(vma);
-> > @@ -1978,7 +1974,7 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
-> >  				 mm_wr_locked);
-> >  		hugetlb_zap_end(vma, &details);
-> >  		vma = mas_find(mas, tree_end - 1);
-> > -	} while (vma && likely(!xa_is_zero(vma)));
-> > +	} while (vma);
-> >  	mmu_notifier_invalidate_range_end(&range);
+> 
+> AFAIU, if you made sk_user_frags an array of (unref, binding) tuples
+> instead of just an array of urefs then you can remove the
+> single-binding restriction.
+> 
+> Although, I wonder what happens if the socket receives the netmem at
+> the same index on 2 different dmabufs. At that point I assume the
+> wrong uref gets incremented? :(
+> 
+
+Right. We need some bits to differentiate bindings. Here are some ideas
+I've had about this, I wonder what your thoughts are on them:
+
+1) Encode a subset of bindings and wait for availability if the encoding
+space becomes exhausted. For example, we could encode the binding in 5
+bits for outstanding references across 32 bindings and 27 bits (512 GB)
+of dmabuf. If recvmsg wants to return a reference to a 33rd binding, it
+waits until the user returns enough tokens to release one of the binding
+encoding bits (at which point it could be reused for the new reference).
+
+2) opt into an extended token (dmabuf_token_v2) via sockopts, and add
+the binding ID or other needed information there.
+
+> One way or another the single-binding restriction needs to be removed
+> I think. It's regressing a UAPI that currently works.
+> 
+> >  #if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(CONFIG_MODULES)
+> >         struct module           *sk_owner;
+> > diff --git a/net/core/devmem.c b/net/core/devmem.c
+> > index b4c570d4f37a..50e92dcf5bf1 100644
+> > --- a/net/core/devmem.c
+> > +++ b/net/core/devmem.c
+> > @@ -187,6 +187,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+> >         struct dma_buf *dmabuf;
+> >         unsigned int sg_idx, i;
+> >         unsigned long virtual;
+> > +       gfp_t flags;
+> >         int err;
+> >
+> >         if (!dma_dev) {
+> > @@ -230,14 +231,14 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+> >                 goto err_detach;
+> >         }
+> >
+> > -       if (direction == DMA_TO_DEVICE) {
+> > -               binding->vec = kvmalloc_array(dmabuf->size / PAGE_SIZE,
+> > -                                             sizeof(struct net_iov *),
+> > -                                             GFP_KERNEL);
+> > -               if (!binding->vec) {
+> > -                       err = -ENOMEM;
+> > -                       goto err_unmap;
+> > -               }
+> > +       flags = (direction == DMA_FROM_DEVICE) ? __GFP_ZERO : 0;
+> > +
+> 
+> Why not pass __GFP_ZERO unconditionally?
+> 
+
+Seemed unnecessary for the TX side, though I see no problem adding it
+for the next rev.
+
+> > +       binding->vec = kvmalloc_array(dmabuf->size / PAGE_SIZE,
+> > +                                     sizeof(struct net_iov *),
+> > +                                     GFP_KERNEL | flags);
+> > +       if (!binding->vec) {
+> > +               err = -ENOMEM;
+> > +               goto err_unmap;
+> >         }
+> >
+> >         /* For simplicity we expect to make PAGE_SIZE allocations, but the
+> > diff --git a/net/core/devmem.h b/net/core/devmem.h
+> > index 2ada54fb63d7..d4eb28d079bb 100644
+> > --- a/net/core/devmem.h
+> > +++ b/net/core/devmem.h
+> > @@ -61,7 +61,7 @@ struct net_devmem_dmabuf_binding {
+> >
+> >         /* Array of net_iov pointers for this binding, sorted by virtual
+> >          * address. This array is convenient to map the virtual addresses to
+> > -        * net_iovs in the TX path.
+> > +        * net_iovs.
+> >          */
+> >         struct net_iov **vec;
+> >
+> > diff --git a/net/core/sock.c b/net/core/sock.c
+> > index 9a8290fcc35d..3a5cb4e10519 100644
+> > --- a/net/core/sock.c
+> > +++ b/net/core/sock.c
+> > @@ -87,6 +87,7 @@
+> >
+> >  #include <linux/unaligned.h>
+> >  #include <linux/capability.h>
+> > +#include <linux/dma-buf.h>
+> >  #include <linux/errno.h>
+> >  #include <linux/errqueue.h>
+> >  #include <linux/types.h>
+> > @@ -151,6 +152,7 @@
+> >  #include <uapi/linux/pidfd.h>
+> >
+> >  #include "dev.h"
+> > +#include "devmem.h"
+> >
+> >  static DEFINE_MUTEX(proto_list_mutex);
+> >  static LIST_HEAD(proto_list);
+> > @@ -1100,32 +1102,40 @@ sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+> >                 return -EFAULT;
+> >         }
+> >
+> > -       xa_lock_bh(&sk->sk_user_frags);
+> >         for (i = 0; i < num_tokens; i++) {
+> >                 for (j = 0; j < tokens[i].token_count; j++) {
+> > +                       struct net_iov *niov;
+> > +                       unsigned int token;
+> > +                       netmem_ref netmem;
+> > +
+> > +                       token = tokens[i].token_start + j;
+> > +                       if (WARN_ONCE(token >= sk->sk_user_frags.binding->dmabuf->size / PAGE_SIZE,
+> > +                                     "invalid token passed from user"))
+> > +                               break;
+> 
+> WARNs on invalid user behavior are a non-starter AFAIU. For one,
+> syzbot trivially reproduces them and files a bug. Please remove all of
+> them. pr_err may be acceptable for extremely bad errors. Invalid user
+> input is not worthy of WARN or pr_err.
+> 
+
+Gotcha, I did not know that. Sounds good to me.
+
+> > +
+> >                         if (++num_frags > MAX_DONTNEED_FRAGS)
+> >                                 goto frag_limit_reached;
+> > -
+> > -                       netmem_ref netmem = (__force netmem_ref)__xa_erase(
+> > -                               &sk->sk_user_frags, tokens[i].token_start + j);
+> > +                       niov = sk->sk_user_frags.binding->vec[token];
+> > +                       netmem = net_iov_to_netmem(niov);
+> 
+> So token is the index to both vec and sk->sk_user_frags.binding->vec?
+> 
+> xarrays are a resizable array. AFAIU what you're doing abstractly here
+> is replacing a resizable array with an array of max size, no? (I
+> didn't read too closely yet, I may be missing something).
+> 
+
+Yes, 100%.
+
+> Which makes me think either due to a bug or due to specifics of your
+> setup, xarray is unreasonably expensive. Without investigating the
+> details I wonder if we're constantly running into a resizing slowpath
+> in xarray code and I think this needs some investigation.
+> 
+
+Certainly possible, I found the result surprising myself, hence my
+experiment with a more read-mostly usage of xarray.
+
+> >
+> >                         if (!netmem || WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
+> >                                 continue;
+> >
+> > +                       if (WARN_ONCE(atomic_dec_if_positive(&sk->sk_user_frags.urefs[token])
+> > +                                               < 0, "user released token too many times"))
+> 
+> Here and everywhere, please remove the WARNs for weird user behavior.
+> 
+> > +                               continue;
+> > +
+> >                         netmems[netmem_num++] = netmem;
+> >                         if (netmem_num == ARRAY_SIZE(netmems)) {
+> > -                               xa_unlock_bh(&sk->sk_user_frags);
+> >                                 for (k = 0; k < netmem_num; k++)
+> >                                         WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+> >                                 netmem_num = 0;
+> > -                               xa_lock_bh(&sk->sk_user_frags);
+> 
+> You remove the locking but it's not clear to me why we don't need it
+> anymore. What's stopping 2 dontneeds from freeing at the same time?
+> I'm guessing it's because urefs are atomic so we don't need any extra
+> sync?
+> 
+
+Yes, atomic uref. The array itself doesn't change until the socket is
+destroyed.
+
+> >                         }
+> >                         ret++;
+> >                 }
+> >         }
+> >
+> >  frag_limit_reached:
+> > -       xa_unlock_bh(&sk->sk_user_frags);
+> >         for (k = 0; k < netmem_num; k++)
+> >                 WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+> >
+> > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> > index 40b774b4f587..585b50fa8c00 100644
+> > --- a/net/ipv4/tcp.c
+> > +++ b/net/ipv4/tcp.c
+> > @@ -261,6 +261,7 @@
+> >  #include <linux/memblock.h>
+> >  #include <linux/highmem.h>
+> >  #include <linux/cache.h>
+> > +#include <linux/dma-buf.h>
+> >  #include <linux/err.h>
+> >  #include <linux/time.h>
+> >  #include <linux/slab.h>
+> > @@ -475,7 +476,8 @@ void tcp_init_sock(struct sock *sk)
+> >
+> >         set_bit(SOCK_SUPPORT_ZC, &sk->sk_socket->flags);
+> >         sk_sockets_allocated_inc(sk);
+> > -       xa_init_flags(&sk->sk_user_frags, XA_FLAGS_ALLOC1);
+> > +       sk->sk_user_frags.binding = NULL;
+> > +       sk->sk_user_frags.urefs = NULL;
+> >  }
+> >  EXPORT_IPV6_MOD(tcp_init_sock);
+> >
+> > @@ -2386,68 +2388,6 @@ static int tcp_inq_hint(struct sock *sk)
+> >         return inq;
 > >  }
 > >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index eba2bc81bc749..5acc0b5f8c14a 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1288,7 +1288,7 @@ void exit_mmap(struct mm_struct *mm)
-> >  	arch_exit_mmap(mm);
+> > -/* batch __xa_alloc() calls and reduce xa_lock()/xa_unlock() overhead. */
+> > -struct tcp_xa_pool {
+> > -       u8              max; /* max <= MAX_SKB_FRAGS */
+> > -       u8              idx; /* idx <= max */
+> > -       __u32           tokens[MAX_SKB_FRAGS];
+> > -       netmem_ref      netmems[MAX_SKB_FRAGS];
+> > -};
+> > -
+> > -static void tcp_xa_pool_commit_locked(struct sock *sk, struct tcp_xa_pool *p)
+> > -{
+> > -       int i;
+> > -
+> > -       /* Commit part that has been copied to user space. */
+> > -       for (i = 0; i < p->idx; i++)
+> > -               __xa_cmpxchg(&sk->sk_user_frags, p->tokens[i], XA_ZERO_ENTRY,
+> > -                            (__force void *)p->netmems[i], GFP_KERNEL);
+> > -       /* Rollback what has been pre-allocated and is no longer needed. */
+> > -       for (; i < p->max; i++)
+> > -               __xa_erase(&sk->sk_user_frags, p->tokens[i]);
+> > -
+> > -       p->max = 0;
+> > -       p->idx = 0;
+> > -}
+> > -
+> > -static void tcp_xa_pool_commit(struct sock *sk, struct tcp_xa_pool *p)
+> > -{
+> > -       if (!p->max)
+> > -               return;
+> > -
+> > -       xa_lock_bh(&sk->sk_user_frags);
+> > -
+> > -       tcp_xa_pool_commit_locked(sk, p);
+> > -
+> > -       xa_unlock_bh(&sk->sk_user_frags);
+> > -}
+> > -
+> > -static int tcp_xa_pool_refill(struct sock *sk, struct tcp_xa_pool *p,
+> > -                             unsigned int max_frags)
+> > -{
+> > -       int err, k;
+> > -
+> > -       if (p->idx < p->max)
+> > -               return 0;
+> > -
+> > -       xa_lock_bh(&sk->sk_user_frags);
+> > -
+> > -       tcp_xa_pool_commit_locked(sk, p);
+> > -
+> > -       for (k = 0; k < max_frags; k++) {
+> > -               err = __xa_alloc(&sk->sk_user_frags, &p->tokens[k],
+> > -                                XA_ZERO_ENTRY, xa_limit_31b, GFP_KERNEL);
+> > -               if (err)
+> > -                       break;
+> > -       }
+> > -
+> > -       xa_unlock_bh(&sk->sk_user_frags);
+> > -
+> > -       p->max = k;
+> > -       p->idx = 0;
+> > -       return k ? 0 : err;
+> > -}
+> > -
+> >  /* On error, returns the -errno. On success, returns number of bytes sent to the
+> >   * user. May not consume all of @remaining_len.
+> >   */
+> > @@ -2456,14 +2396,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+> >                               int remaining_len)
+> >  {
+> >         struct dmabuf_cmsg dmabuf_cmsg = { 0 };
+> > -       struct tcp_xa_pool tcp_xa_pool;
+> >         unsigned int start;
+> >         int i, copy, n;
+> >         int sent = 0;
+> >         int err = 0;
 > >
-> >  	vma = vma_next(&vmi);
-> > -	if (!vma || unlikely(xa_is_zero(vma))) {
-> > +	if (!vma) {
-> >  		/* Can happen if dup_mmap() received an OOM */
-> >  		mmap_read_unlock(mm);
-> >  		mmap_write_lock(mm);
-> > @@ -1858,20 +1858,37 @@ __latent_entropy int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
-> >  		ksm_fork(mm, oldmm);
-> >  		khugepaged_fork(mm, oldmm);
-> >  	} else {
-> > +		unsigned long max;
+> > -       tcp_xa_pool.max = 0;
+> > -       tcp_xa_pool.idx = 0;
+> >         do {
+> >                 start = skb_headlen(skb);
 > >
-> >  		/*
-> > -		 * The entire maple tree has already been duplicated. If the
-> > -		 * mmap duplication fails, mark the failure point with
-> > -		 * XA_ZERO_ENTRY. In exit_mmap(), if this marker is encountered,
-> > -		 * stop releasing VMAs that have not been duplicated after this
-> > -		 * point.
-> > +		 * The entire maple tree has already been duplicated, but
-> > +		 * replacing the vmas failed at mpnt (which could be NULL if
-> > +		 * all were allocated but the last vma was not fully set up. Use
-> 
-> Missing ')'.
-
-Thanks.
-
-> 
-> > +		 * the start address of the failure point to clean up the half
-> > +		 * initialized tree.
-> 
-> NIT: Is 'half' correct? Maybe 'partially'?
-
-Thanks.
-
-> 
-> >  		 */
-> > -		if (mpnt) {
-> > -			mas_set_range(&vmi.mas, mpnt->vm_start, mpnt->vm_end - 1);
-> > -			mas_store(&vmi.mas, XA_ZERO_ENTRY);
-> > -			/* Avoid OOM iterating a broken tree */
-> > -			set_bit(MMF_OOM_SKIP, &mm->flags);
-> > +		if (!mm->map_count) {
-> > +			/* zero vmas were written to the new tree. */
-> > +			max = 0;
-> 
-> OK I guess this then will result in the intentional underflow thing, maybe
-> worth mentioning?
-
-No, nothing will happen as the if (max) will evaluate as false.
-
-> 
-> > +		} else if (mpnt) {
-> > +			/* mid-tree failure */
-> 
-> Partial?
-
-Right, thanks.
-
-> 
-> > +			max = mpnt->vm_start;
-> > +		} else {
-> > +			/* All vmas were written to the new tree */
-> > +			max = ULONG_MAX;
-> >  		}
+> > @@ -2510,8 +2447,11 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+> >                  */
+> >                 for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+> >                         skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+> > +                       struct net_devmem_dmabuf_binding *binding;
+> >                         struct net_iov *niov;
+> >                         u64 frag_offset;
+> > +                       size_t size;
+> > +                       u32 token;
+> >                         int end;
+> >
+> >                         /* !skb_frags_readable() should indicate that ALL the
+> > @@ -2544,13 +2484,35 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+> >                                               start;
+> >                                 dmabuf_cmsg.frag_offset = frag_offset;
+> >                                 dmabuf_cmsg.frag_size = copy;
+> > -                               err = tcp_xa_pool_refill(sk, &tcp_xa_pool,
+> > -                                                        skb_shinfo(skb)->nr_frags - i);
+> > -                               if (err)
 > > +
-> > +		/* Hide mm from oom killer because the memory is being freed */
-> > +		set_bit(MMF_OOM_SKIP, &mm->flags);
+> > +                               binding = net_devmem_iov_binding(niov);
+> > +
+> > +                               if (!sk->sk_user_frags.binding) {
+> > +                                       sk->sk_user_frags.binding = binding;
+> > +
+> > +                                       size = binding->dmabuf->size / PAGE_SIZE;
+> > +                                       sk->sk_user_frags.urefs = kzalloc(size,
+> > +                                                                         GFP_KERNEL);
+> > +                                       if (!sk->sk_user_frags.urefs) {
+> > +                                               sk->sk_user_frags.binding = NULL;
+> > +                                               err = -ENOMEM;
+> > +                                               goto out;
+> > +                                       }
+> > +
+> > +                                       net_devmem_dmabuf_binding_get(binding);
 > 
-> Obv. update to mm_flags_set(MMF_OOM_SKIP, mm);
+> It's not clear to me why we need to get the binding. AFAIR the way it
+> works is that we grab a reference on the net_iov, which guarantees
+> that the associated pp is alive, which in turn guarantees that the
+> binding remains alive and we don't need to get the binding for every
+> frag.
+> 
 
-Right, happened on rebase.
+Oh you are right, the chain of references will keep it alive at least
+until dontneed.
 
+> > +                               }
+> > +
+> > +                               if (WARN_ONCE(sk->sk_user_frags.binding != binding,
+> > +                                             "binding changed for devmem socket")) {
 > 
-> > +		if (max) {
-> > +			vma_iter_set(&vmi, 0);
-> > +			tmp = vma_next(&vmi);
-> > +			flush_cache_mm(mm);
-> > +			unmap_region(&vmi.mas, tmp, 0, max, max, NULL, NULL);
+> Remove WARN_ONCE. It's not reasonable to kernel splat because the user
+> reconfigured flow steering me thinks.
 > 
-> (An aside for the unmap_region() impl, maybe let's name the pg_max as
-> tree_max to make it consistent across both?)
-> 
-> Hm we could still use the mmap struct here if we put in vma.h. Just have to
-> set vmi, obv prev, next NULL.
-> 
-> So:
-> 
-> 	struct mmap_state map {
-> 		.vmi = &vmi,
-> 	}
-> 
-> 	unmap_region(&map, tmp, 0, max, max);
-> 
-> Possibly overkill and hopefully stack ok but makes other callers less
-> horrid.
-> 
-> Maybe also good to add a comment spelling out what each of these params do.
 
-So I've tried to do this cleanly but it hasn't worked out.  I think I'll
-add another struct to clean this up in another patch on this series.
+Sounds good.
 
-Thanks,
-Liam
+> > +                                       err = -EFAULT;
+> >                                         goto out;
+> > +                               }
+> > +
+> > +                               token = net_iov_virtual_addr(niov) >> PAGE_SHIFT;
+> > +                               binding->vec[token] = niov;
+> 
+> I don't think you can do this? I thought vec[token] was already == niov.
+> 
+> binding->vec should be initialized when teh binding is initialized,
+> not re-written on every recvmsg, no?
+> 
+
+Currently binding->vec is only initialized like that if direction ==
+DMA_TO_DEVICE, but now that you mention it I don't see why RX shouldn't
+also initialize upfront too.
+
+[...]
+
+> Thanks,
+> Mina
+
+Thanks again for the review, much appreciated!
+
+Best,
+Bobby
 
