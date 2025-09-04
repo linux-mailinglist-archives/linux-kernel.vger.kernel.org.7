@@ -1,119 +1,98 @@
-Return-Path: <linux-kernel+bounces-800273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95762B435A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC2CB4357E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8831BC55B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC663B63A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B752C11D9;
-	Thu,  4 Sep 2025 08:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB9D2C11E2;
+	Thu,  4 Sep 2025 08:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="a8WXWOTv"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqqCBMnD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F2E2877EE;
-	Thu,  4 Sep 2025 08:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A62C11C9;
+	Thu,  4 Sep 2025 08:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756974309; cv=none; b=tMvF8ZjCDiaTMRmiwvUGX8DdaNfadj7JYhUDdERc7N5iuxYRuLDTVtozRv2PaD+wnxJAsugHkzyrhYiTIhdyE8diSidYRe1mhXSN29png79VL7ZbpfRjRqp5Cm29abuBXe+lHDrtZO+MTLOVEU0XH5Yyo6elgZkLYlvLKxq1J/I=
+	t=1756974040; cv=none; b=EHeepf3L7hZFar6zDDsLFTkDin4cyvs8Z6hwERq3ushTJTmlBMQSlNXlzZ2zUmvtz1tkZr22rFSLZnz8c6x/f+HBEO3eFcH4bH9H/DRmX+n3uiF0c7VfflJ8YJhBc4xVz2423TDNDm2Xe8pNlyjlaopookwwCtFCUo9qMu5RAgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756974309; c=relaxed/simple;
-	bh=0w+xnx8GDzBkVH9MReXmk6GUPZ5qZuiT3Hfka7nZ3z4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=rMsVfuoO+u0efE5MQn/CaEu2r+Q9F3AESA19VrvAd1nHlTOdtNeyyn0sP3iqLXRF8o7N1Omk2tv8pzX04ApsDbT1BffQ1eBPwy/ufw3IYwqQcxGgyCRv3nbh46WmsRhR6olrO5iJzsD91wc2D8onkisPUgnCTtobW2lGhs3/Gts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=a8WXWOTv; arc=none smtp.client-ip=43.163.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756973995;
-	bh=7DN0jn8EFbvGagtqyUaHOSQPeNSavR6C85ONmpAUNNc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=a8WXWOTvRijQdEPpl+JiVWZmXQWN+VosqIrCO8GJAuvis3J3WSZ1zmIBLEdYzwEi+
-	 OdXqTSJyrCvej+/DNjqZurVkVziyLZ8Sx6ZzL2h+EEd9LE9ewMavLFfg2Sso85XFov
-	 4PNx5bctctOCJksSzdwCC1/M3zklWSLoInNomowI=
-Received: from SSOC3-SH.company.local ([58.33.109.195])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 4E5236EA; Thu, 04 Sep 2025 16:19:37 +0800
-X-QQ-mid: xmsmtpt1756973977tsvxx6u76
-Message-ID: <tencent_329AB29889A28A31719F322691C87E214C07@qq.com>
-X-QQ-XMAILINFO: NZa67OCgpTu6oc+56M+ZfTWjVoMuYGJi2nW9nhd25uQ8uEJ0hgY8nnHyG8p8A2
-	 AW3VIDJTXs7yDI7E2fjw5JORUw5U3Ic4t8lM10c/YEwxuCFKNaxVR9WptP33/bXb+buu0Hb3q9z6
-	 WqXo5ifbVzcYHjjhNDLWec3DSYEdQ4cuYIyXvgahGy89UFw6mDBS+kcWkw9kSw4wgolstVj4QHl1
-	 uQVyEhAdJCzZrnhi9hI1VU1w/Dbda5rPpMQsSpnUrAgJwkNmosTRSOXg73T4uLa9rwEVaTT/C2dW
-	 0x73pjmTv2qe7vKZFSZ3HQ33QwSbTL4jIuVPV4EuaT4i3ypj96tWpyx9ZbEXQgwybO9ZhS2V4OKR
-	 MTcNPfr6L7vTZzRuUERxMTjFFg25QCb7ts1TvQX2uG0vP8zOR+YA5A2B5fW8cvyl7UMTHVViFdMg
-	 4NbvQsxa2yaa81+J988I7KGuON59H1q7jxhZKyfgIUMVSS3Wvvbq1aHd5NxFowXR/S0P/1KrA8ah
-	 3Tw3Eb2fqcHdNIqT+6AM39JkmfLRUuP89lNqUe1xvbxbb4PSIm6ssQRVVJDqOVdiodYWkVz3JzLb
-	 aZYrNU5miF6a2Xq9oOsR5+UqINfglG+2FlfnqWrZ3zudCQ8VzebYb2lAeS6Fw4IA4BMvkZXrs8Bw
-	 2ObIlrp5Ax8Of+LOiHbH+mFO9VNvhUlsv/Q7ZXeqaqkRGN/+bCi9nliUhACdEd2j8kyEkHGL4Sx5
-	 vdnOE4biva4Sw3bzhMvYi/wW1LYV+CkyM5Q6vB1RgePRTJ2Yk+t/l7ezAju26vIEh/6R61f0c3tz
-	 hloXwzyjdlkWTP3AKVWy4m3boaKGdnLQ2FGmGhlGmd33vqYhoycQi5H4IMRRqRpGFvXfY/zMXZSa
-	 4hKPn+Z8j5+tqaUxXS0pJU/qKzIGIzo24f1rEFrVUN+GbTZt5FLsrB6FOoHgfdX/QIGoncxSoM5l
-	 gffXwPiQOKRayw3o3YgjxS8q8hMPR+EB1OeMqtprAUwndbTVQPGgvtNwcqUd14huCRZT9c90ysDr
-	 8npCOtew==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Han Guangjiang <gj.han@foxmail.com>
-To: yukuai1@huaweicloud.com
-Cc: axboe@kernel.dk,
-	fanggeng@lixiang.com,
-	gj.han@foxmail.com,
-	hanguangjiang@lixiang.com,
-	liangjie@lixiang.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangchen11@lixiang.com
-Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
-Date: Thu,  4 Sep 2025 16:19:37 +0800
-X-OQ-MSGID: <20250904081937.3979230-1-gj.han@foxmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
-References: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
+	s=arc-20240116; t=1756974040; c=relaxed/simple;
+	bh=E/uXjtRmkLmNWxnlDCw0CKhl5d3ycTzBEGah+pZZG60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rg7DOvfZPsUGd5cb6i4+oS9OSjZJ+AX8l/XEc7+H59ILGjtjSMBFWqaGr72OTeyNM6JOXuL4HEqWuPzqdhwJf/MNZcPnxLcm3sbBH6XWlRT8mUHYQ3t514ChqZMIDbZKo69eADMV07UE9fUuJLqW76kEtvl7x7BsZR7nC3nO5zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqqCBMnD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267BAC4CEF8;
+	Thu,  4 Sep 2025 08:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756974040;
+	bh=E/uXjtRmkLmNWxnlDCw0CKhl5d3ycTzBEGah+pZZG60=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KqqCBMnDPDme7cNPhAslqYiZtDfFK07Hdwq+nNPShaGNbzw1iySrcsxmWiw8b3mXX
+	 mUni9v82wen+gY8vSWCdOkeadysLVo1BINUN6DJ6fPpBznk409MAPFn+AfzLU8P5Q5
+	 QVujMnJs+Oo+vkLM2DN+ey1ICBF1PdbBDtwX53juy2uzXQ/S4fWXweZ351Ih7SkyjJ
+	 m7ANfaf7wYpwt2pLRPb5a1PnBYWeFOHsy63LakobGkDaiyGpEQT3UlWziFIjtPuLRn
+	 mGj34/jNAgmZ/GGZGO+86qrWS+bndJSAIUgasA9gv8V3wPsq+4aCOHuV1DAjIMgPi+
+	 yQlsI4Fce0kWQ==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b0454d63802so118338066b.2;
+        Thu, 04 Sep 2025 01:20:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVQxAkp3TCik99sqV65Qx+Wae2TmYbd1Y9DOMYGVHTGeS42D07mLpy9t7GA+P4kJ9OpHL+p22jwDW3n9dA@vger.kernel.org, AJvYcCXrYCi12TmBAXjV5u6Crt1aXFQ5fUaCjl3jEBq4tzUWIxV5195Ad/4vEbugl3RQNAPReOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMxbgwJgztQ45AbfJlUjXmFeeOEE7p0X1tonvHBTb91q3wxN+b
+	uedirrEL0cxiBvATH5nLdW3q6813lJsArc2hXzCIP4NdPxtnJ0LZTBdKDoVbJ8n+xn2Gu3wMZRT
+	L586pCc6CvWjyM6ag6s+BqVBlu7nJ6bk=
+X-Google-Smtp-Source: AGHT+IGykX2kjpwbJSz2Df4Q0dC+COJpNbeU+7c1CUdwCq32YXgec8hSk5QMYiD/hWmRbZ9Libc//QGLnc87pKR/9tM=
+X-Received: by 2002:a17:907:940a:b0:afe:f8cb:f8bc with SMTP id
+ a640c23a62f3a-b01d9732721mr1839905166b.35.1756974038671; Thu, 04 Sep 2025
+ 01:20:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <462e346b-424d-263d-19a8-766d578d9781@loongson.cn> <20250904081356.1310984-1-cuitao@kylinos.cn>
+In-Reply-To: <20250904081356.1310984-1-cuitao@kylinos.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 4 Sep 2025 16:20:26 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4QDs+zruvKVkDgWnMoObhoHiWOL7x4=Q2PRTnnqkNnsw@mail.gmail.com>
+X-Gm-Features: Ac12FXyzzZrpldD23M0o6vMPkPUzHye1yDSCXQYfZAqAKOkke_zz16jNhRDVV0s
+Message-ID: <CAAhV-H4QDs+zruvKVkDgWnMoObhoHiWOL7x4=Q2PRTnnqkNnsw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: KVM: remove unused returns.
+To: cuitao <cuitao@kylinos.cn>
+Cc: yangtiezhu@loongson.cn, kernel@xen0n.name, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, maobibo@loongson.cn, 
+	zhaotianrui@loongson.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Sep 4, 2025 at 4:14=E2=80=AFPM cuitao <cuitao@kylinos.cn> wrote:
+>
+> Thanks for the review.
+>
+> My initial idea was to remove the switch-case structure.
+> However, after checking the case value KVM_FEATURE_STEAL_TIME,
+> I found there are 13 parallel definitions=E2=80=94and it is unclear when
+> this part of the development will be completed later. Therefore,
+> I temporarily retained the switch-case structure.
+>
+> Now, I have updated the patch according to your suggestion:
+> - Replaced `switch` with `if` since there is only one case.
+> - Removed the redundant semicolon after the block.
+>
+> Please see the updated patch below.
+It has been applied, don't make useless effort.
+https://github.com/chenhuacai/linux/commit/f5d35375a6546bcc5d0993e3a48cdbc3=
+a7217544
 
-> Yes, however, this can be fixed very similar:
-> 
-> Set sq->parent_sq to NULL here, and add a helper parent_sq(q, sq):
-> 
-> if (sq->parent_sq)
->         return sq->parent_sq;
-> 
-> td_sq = &q->td->service_queue;
-> return sq == td_sq ? NULL : td_sq;
-> 
-> And sq_to_tg() need to be changed as well. So far, I'm not sure how many
-> code changes are required this way. We of course want a simple fix for
-> stable backport, but we definitely still want this kind of fix in future
-> release.
+Huacai
 
-We preliminarily tried implementing this approach. But the changes are 
-scattered and backport might be complex. So we provide a simple fix first.
-
-> Meanwhile, please remove the comment about freeze queue, turns out it
-> can't protect blk_throtl_bio() becasue q_usage_coutner is not grabbed
-> yet while issuing bio.
-
-As discussed before, we also removed some outdated comments in 
-blk_should_throtl().
-
-We just submitted v2 which includes the changes.
-
-We look forward to your feedback and suggestions on the v2 patch.
-
-Thanks,
-Han Guangjiang
-
+>
+> Thanks,
+> Tiezhu
 
