@@ -1,213 +1,170 @@
-Return-Path: <linux-kernel+bounces-801508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408E5B445E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D8B445E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8617583FDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019841CC3921
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC4C26E173;
-	Thu,  4 Sep 2025 18:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="lzrKdoY4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MOlxFmiI"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AE62586C8;
+	Thu,  4 Sep 2025 18:56:31 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A5F267AF6;
-	Thu,  4 Sep 2025 18:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E205A25A343
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757012201; cv=none; b=V6ydmWuLNGbB//0xksOCqA0eISi1SUbIkF1wmktAha9x74sgwrnYS1pEiLWU+5yyWeR9Z3pID4CkRLHIIMa/aXcRrOTMdjvWs5wfl0fnfOfhmaOHSCahy4F1NdfgPniWkm4gb6Dw5rJAejxNGLGy9sEC0dUL2eFW3cglkClpXaw=
+	t=1757012190; cv=none; b=rx/pn0f0bg3rpl275c4s3K6Lao4TQoFq2GlbbILQ+43FtGHmaEfByFnSM7lci2+mAKCm8/l0nnW8PDM/ZRamqYdD3D9q6Q7IFwl9UkKMupWrmreyMV5ubZ/ipuE0JLoG0x+mfYM6Rs/Ug5pzv69oAh9KAqMwVPjgVdjlLVtfReU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757012201; c=relaxed/simple;
-	bh=+8yYrN9eZg46gNH7uB5YrYrugTVxjxh4HzNwHnrPdkc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=fzA4ENSD1G1iVqb2W52mLWFZpv9XRbPEPpy1KsQnmDkSGas9x05kfDQ/FUB5bFY3DQt9WkxSgzwpksDDUp8YU1BnMsM6gSF5h0aTRYiZWXjREuCnBOnwSaSPMrFWqChDJ2nbGsV1VFvtrApZILlVWD+/Xwd3ysN9S8YLSPHTeF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=lzrKdoY4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MOlxFmiI; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9AF82EC0266;
-	Thu,  4 Sep 2025 14:56:37 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Thu, 04 Sep 2025 14:56:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1757012197;
-	 x=1757098597; bh=7rzgU6/+xZPjOX1WExw5X2Safwl0wrZ8s4OUB4n+T4s=; b=
-	lzrKdoY4RXoZYIOSzL1zRt3ov+2mI3ng8ht5UikURkuG5rmJSkPUCOTs8JXXgY67
-	xjcunljgJgVL218DysfG1jTi14D0aUTMPSK4s910KentdF1oiwtSXcpHLPqJZHSu
-	9S1QKEQUpzPQnpAU73oKMHp2bpvwcEh4LrtZiFCJd8l4H9ltfI0ySmeBNy3qYzc7
-	9bOQI+I7fmzoQoxpXXIwQolLEtvQSkMsIg0/4J2fq5YFarS/sKeg+bGJaabR6kxg
-	mVJ86GjJXCvRiZjpRJcdY5SNtDExfLvfPL+pX3Lu09Coyyj+3ASRDaS+eyX2zB+u
-	a/pcscmh7H62zzUnI9WJ8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757012197; x=
-	1757098597; bh=7rzgU6/+xZPjOX1WExw5X2Safwl0wrZ8s4OUB4n+T4s=; b=M
-	OlxFmiIPvxSU/oDSlanMmImcNr8eWRk64kQpqv+12v9zTpU5rkxIX5pB2gOHJzp8
-	RrXYw4X1ON+WvMS9X0cVHBap/JOpHeLDR27SjxoQgXjPumcvKkOfClsJ+2O2/bgB
-	GUF70alkrnM5B6HV5JMt4xVWGpsxsNsR8bOhoZ732BVQAITF7+UQ8Potk5547myk
-	PlFI0nuWeBUWu6/ZUxa2zBWbaRbnRwFxeGJ6qiJYQ7vI9kNf4F9vAk2KWc0n9Xon
-	h+hGwmDIE8sf1UH0TJlXCeoLdOVBHj9mXRkwiYf9XDgVMqNOTwidN+2SaKg2zh3A
-	+nMFjq9eUwT/OxVPHqTwg==
-X-ME-Sender: <xms:5OC5aGBFmhwp6koGHj6-xjfzuh-IqcLf_VBw6XpZYC0JCVvbpR7Mzg>
-    <xme:5OC5aAjmeUScbnss4AsYArx60cG8mw_oC81XoI6kKuDI6zuF2zncLXHbAyLzclRe7
-    KJyucYcUWocOVdUZK8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhkucfr
-    vggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqe
-    enucggtffrrghtthgvrhhnpefhuedvheetgeehtdehtdevheduvdejjefggfeijedvgeek
-    hfefleehkeehvdffheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggp
-    rhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvrhgvkh
-    hjohhhnhdrtghlrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhh
-    rdgvnhhgrdgsrhdprhgtphhtthhopegrnhguvghrshhsohhnsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhonhhrrgguhigstghioh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrh
-    gvsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:5OC5aLpUcBHmQYc76N1Gwun1b6jafEN_ctWEu4v5VzaDwlDLm77u_Q>
-    <xmx:5OC5aAhLZzYRa7zeWbx33A82psAapANHW27wH0KqhR8odPU_tYXRWw>
-    <xmx:5OC5aCZuKuQZKyoIZsaZaCeT1bRVrilZbqXn52TosN3HlEe2resgDw>
-    <xmx:5OC5aAlIDpQXPeOtxvnwK2F_grRXDOFA0PAGBf8tnu8xzp8PnsUjEQ>
-    <xmx:5eC5aNvYwlgegQRoz1S-cXSuW8HAXhDkcLPsSMAdBGtu14F7zyvNmDeF>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2CC642CE0072; Thu,  4 Sep 2025 14:56:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757012190; c=relaxed/simple;
+	bh=jB2rfBlXI0KkJ1zLVCcqRlAI+kHXxRER+mLzQEyMzug=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NOeMLgEW38qRJRRrTxKrB1X2PmL0BF1l+OcdBD1d0zuvz4UMpwUcPiWtzp3BuFFwcohPnO+gbcTxqh7RG+wqrdZbTebFawB+wXtHp77xNyX4eAuWwcFpocK5jcfswHV7EHg07MqxEdlnTZMH5QYmoEOpSO33slq/KmB7LXN7erI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3f42b6cf6b1so18093145ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 11:56:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757012188; x=1757616988;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/VE33VSoKEOrL6ZD9wabtHhy48BYqLCrHMaZLCCfhp8=;
+        b=YzG2pCZjw12M+wt/MYLY8iID0S60pGoS6hW7yWfXigQzeC3GKnGQ3Nfs2j2NWPGvn7
+         UdyOfeWgebzviSdGTTYRitl6h+7smmWrusKdH8esrlnIUqxnXP2rokj0yT6iJt60A+fn
+         zcuqnSWFK9j6ZTME67i7EBCTmAk5oGPqMPQ2NSuL3axik8NohcdkclWAmD+Xj+spT/rn
+         IwM5Tm5KiJTaSRv4rdv4LBJOgyn3YjiXMpMuEiw9ZsLhsgxm6hfPc6bthgbMnlEO2ELY
+         9GQXEz7lEv0ruuJJZYiFYr3bEO8bTFobJa7UaXbthgxR4EeZ7FeyExvPIKMd6wyQ5PSo
+         WIJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDwwZzVVAdJMDqkI91x5vk4aEQIL90BYKkA/1rG3F8xs+8wlU3fvQx1P9263D15baaomDTsNFFF0jfRdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+PZCBB87c12BC5oLy6YPjvPT8TnfBL5HDm4O3NhLy0YZIyIxm
+	3hIMANY0iZ2UI3+ukLWrb4ZPGTg93fOymLWT8qsHHJx+S8ebUIRqHH35hxtKSTPm8hzeLY4AVtJ
+	vOYgT34oXXk2Ip/GHv5ypVuszNacBcd2wXM9HCQf0v+JsFQUHUD3d+7H3/q4=
+X-Google-Smtp-Source: AGHT+IEIqGSnOjPqGGEOP6+o6ewLipRC5K/t7OoQxeZDoXfzg276OMR6fz3QI22W6j+Y6d7UcGZYohHPdEZozGrvN3N1OjWi5IA7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A0cV_uEw7IB3
-Date: Thu, 04 Sep 2025 14:56:07 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Sebastian Reichel" <sre@kernel.org>
-Cc: "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Hans de Goede" <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org
-Message-Id: <ec295b0c-4a65-4cfe-8d38-99c5c4db9099@app.fastmail.com>
-In-Reply-To: 
- <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
- <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
- <ea0b329e-ab3e-4655-8f27-e7a74784302a@app.fastmail.com>
- <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
-Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca4a:0:b0:3f2:1a77:4876 with SMTP id
+ e9e14a558f8ab-3f4024cb129mr325626485ab.26.1757012188003; Thu, 04 Sep 2025
+ 11:56:28 -0700 (PDT)
+Date: Thu, 04 Sep 2025 11:56:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b9e0db.050a0220.192772.000f.GAE@google.com>
+Subject: [syzbot] [net?] [usb?] KMSAN: uninit-value in lan78xx_reset
+From: syzbot <syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com>
+To: Rengarajan.S@microchip.com, Thangaraj.S@microchip.com, 
+	UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sebastian,
+Hello,
 
-On Mon, Sep 1, 2025, at 12:10 PM, Sebastian Reichel wrote:
-> Hello Mark,
->
-> On Mon, Sep 01, 2025 at 09:48:39AM -0400, Mark Pearson wrote:
->> On Sun, Aug 31, 2025, at 5:28 PM, Sebastian Reichel wrote:
->> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
->> > is in theory compatible with ThinkPad ACPI. On Linux the system
->> > is booted with device tree, which is not supported by the ThinkPad
->> > ACPI driver. Also most of the hardware compatibility is handled
->> > via ACPI tables, which are obviously not used when booting via
->> > device tree. Thus adding DT compatibility to the existing driver
->> > is not worth it (almost no code sharing).
->> >
->> > The driver currently exposes features, which are not available
->> > via other means:
->> >
->> >  * Extra Keys
->> >  * System LEDs
->> >  * Keyboard Backlight Control
->> >
->> > The driver has been developed by reading the ACPI DSDT. There
->> > are some more features around thermal control, which are not
->> > yet supported by the driver.
->> >
->> 
->> Thanks for working on this - it's great.
->
-> It's a personal scratch your own itch project, as I daily drive the
-> machine.
->
->> I'll see if I can get the EC spec so I can do some checking on the
->> values (I thought I had it already, but I can't find it). If this
->> file can be used for other platforms then it might be good to
->> rename the file to not be specific to the t14s? I'm curious if it
->> can be used on the X13s or the Yoga platform.
->
-> Maybe. I only have the T14s (apart of my older Intel/AMD ThinkPads,
-> which use the ACPI driver). The ACPI DSDT functions completley
-> abstract the lowlevel I2C interface, so in theory every ThinkPad
-> could have a completley different EC and still use the same ACPI
-> driver. So this needs to be checked per-device. Hopefully the low
-> level interface is similar in those, so that we don't need to spam
-> the kernel tree with multiple different EC drivers :)
->
-Looks like you're right to make this platform specific. At least for now it looks like the definitions are tied to the platform.
-Strange as we have a common spec on the x86 Thinkpads, but at least for now this is t14s Qualcomm specific.
+syzbot found the following issue on:
 
->> Couple of notes
->>  - I do agree it doesn't make sense to add this to thinkpad_acpi.
->>    That file is too big anyway.
->>  - If there are other pieces like this where some detail of the
->>    platform is needed, please do let me know. I never got enough
->>    time to work on this platform directly, and it wasn't in our
->>    Linux program, but I do have access and support from the
->>    platform team for getting details on it. If I can help, so not
->>    too much reverse engineering is needed, I'm happy to.
->
-> Thanks for the offer.
->
-I did get back some details - not quite as much as I wanted, but enough to confirm that all your definitions look correct.
-Main point of interest is they didn't send me the BL2 details - so not sure if that is needed?
+HEAD commit:    c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1342fa62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=845da2a9c105a0be
+dashboard link: https://syzkaller.appspot.com/bug?extid=62ec8226f01cb4ca19d9
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-> I would be interested in bits around system suspend. Right now
-> support on X1E is limited to sending the CPU into suspend. Much of
-> the machine seems to be still powered. Right now the keyboard
-> backlight and all the status LEDs stay on and the LID + power led
-> does not go into the typical breathing pattern. Additionally I had
-> to disable wakeup capabilities for the EC interrupt, as closing the
-> LID generates an event and thus an interrupt, which wakes the
-> system. Obviousy that is undesired from user's perspective. My guess
-> is, that there might be some register to mask events, but I haven't
-> found it so far. Alternatively the EC might mask them automatically
-> when the system is send into suspend, which I also have not yet
-> figured out :) The only bit I know is, that EC register 0xE0 is
-> involved in modern standby.
->
-I still have some more digging to do here I'm afraid.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> Apart from that and (probably) unrelated to the EC: I noticed that
-> accessing the built-in webcam (with the X1E camera patches from
-> Bryan O'Donoghue) does not enable the status LED. It would be
-> nice if you can check how that is wired, so that it can be enabled
-> when a camera stream is started.
->
-Ack. Don't know the details on that yet.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ec99afb47153/disk-c8bc81a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b0879d84349c/vmlinux-c8bc81a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a9a55e2d5763/bzImage-c8bc81a5.xz
 
-Mark
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+
+lan78xx 1-1:1.0 (unnamed net_device) (uninitialized): EEPROM is busy
+=====================================================
+BUG: KMSAN: uninit-value in lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+BUG: KMSAN: uninit-value in lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+BUG: KMSAN: uninit-value in lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+ lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+ lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+ lan78xx_probe+0x225c/0x3310 drivers/net/usb/lan78xx.c:4707
+ usb_probe_interface+0xd20/0x1460 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x4d4/0xdc0 drivers/base/dd.c:659
+ __driver_probe_device+0x268/0x380 drivers/base/dd.c:801
+ driver_probe_device+0x70/0x8b0 drivers/base/dd.c:831
+ __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:959
+ bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
+ __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1031
+ device_initial_probe+0x33/0x40 drivers/base/dd.c:1080
+ bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+ device_add+0x12a9/0x1c10 drivers/base/core.c:3689
+ usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
+ usb_probe_device+0x38d/0x690 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:-1 [inline]
+ really_probe+0x4d4/0xdc0 drivers/base/dd.c:659
+ __driver_probe_device+0x268/0x380 drivers/base/dd.c:801
+ driver_probe_device+0x70/0x8b0 drivers/base/dd.c:831
+ __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:959
+ bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
+ __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1031
+ device_initial_probe+0x33/0x40 drivers/base/dd.c:1080
+ bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
+ device_add+0x12a9/0x1c10 drivers/base/core.c:3689
+ usb_new_device+0x1062/0x20f0 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x54e0/0x7620 drivers/usb/core/hub.c:5952
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
+ worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
+ kthread+0xd59/0xf00 kernel/kthread.c:463
+ ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Local variable sig.i.i created at:
+ lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1092 [inline]
+ lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+ lan78xx_reset+0x77e/0x2cd0 drivers/net/usb/lan78xx.c:3241
+ lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+
+CPU: 1 UID: 0 PID: 7482 Comm: kworker/1:6 Tainted: G        W           syzkaller #0 PREEMPT(none) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: usb_hub_wq hub_event
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
