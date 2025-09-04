@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-800065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9778B432F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2162B432FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C86A165BDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC29F5E666D
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A54289374;
-	Thu,  4 Sep 2025 06:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A5928BAB9;
+	Thu,  4 Sep 2025 06:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+w1Kfw4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1EWDlQ8D"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A83A288517
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F43728934F
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 06:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756968912; cv=none; b=Ph9GkeJ1C0kmNCr1glqy6+vjegO5awj5bWn+I3ZlpRcNZD/OKydiMvfMGIXeK/Nv2yo4Ki5+g+32VX8RLbbm9iFUWUF+J4YlEgheuk/baGqHkZyVgoOx5KliuSVOBr1SA3jKwrleowYueZxvKs4++s9ljPXBjsoXDUUX/LJw9Xo=
+	t=1756968914; cv=none; b=hVtk4UZ0GSVqs4DAmxMJH7BMvMKouFtVthgicHwJlK0eYFyITbNX3yCJbWag3865T+SxrA+T6a0XUDcMhd9An56bHNhOYItlW3j0SIqxgEtdF8UhySfPXDxxVnMZARbQgeiGYh1G8wQ9RVH846fxvDptAAeRWRLoXIuTwEzct6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756968912; c=relaxed/simple;
-	bh=7B7lwBJ0jXTeacBWtIq12DWMmRMY2GhnIen+mcsaZ6A=;
+	s=arc-20240116; t=1756968914; c=relaxed/simple;
+	bh=jTAk0VRpOVV4bc0UhlAMxjyl0WAtBQgyMPsTPcfAW2Y=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=B7vu4Y78N07MxzBS+HTkoW8vFAIruHGTtpCmlSCsoSr8j62B2KhSIatHyaOJRiQaXyzE1vGT6acQQ57Ynpu5/HV3AR+hjgXLgdJ4T8y7yfH+geBMowSX/ywd7/y7w3h/Eh+i0AN4yiSq8L41CC/0dVniXmXMzJO5sCe7WUeo+I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p+w1Kfw4; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=kj5ZN049vvLMP+zAwBmcuXorpAG6PT8KidV4x0Q4QJYTMVAAP7uuE/MK8sGG/66xXc6zyewb0NMVoqfBooJwpkgYsvqwkp4DQXDb9z5mqw2HM7Q9jXDoTOuLWePLgQbIkAjEMfEmJHsW2qU7rDgQg7e2mbhG9YmBpAUUheksIsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1EWDlQ8D; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325ce108e45so630303a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:55:11 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445806b18aso9209935ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 23:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756968910; x=1757573710; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756968912; x=1757573712; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YEQCBMmqJuzc9aQAf9Qk31e/qZjHLfuJ8wSwcpoTOE=;
-        b=p+w1Kfw4AJE2YHaSQt0VziaJcUmWz9Aoebxp3sV9fagmd3xzJfAlRPIjcJkCvSgcKx
-         xU+SsWwcexxDf7/0iTkdoY4KzbM+TFrexXo5MaIitKHdSpwp+DWjVa0tg8ivWzvgavXh
-         tL4N5P6NZpGoo/Y9b6TCJ2m5QfJVm1q37m1AYyh6AUte4HT5MRIAotHYofcQbhwiS3uG
-         Lna48So6yOY0zQvyumfvzQmrX+CsUAIxNBAoZHuqFxTiDx+Hts27bmVVUVlrAY57jlJ0
-         +sAMCGDKzbQpiWedw2QVdxQ8wi7eDu6SB9Cu1k3+qNoD9ZDtGuKfBkIfTu2B32jNJnK2
-         W4Qw==
+        bh=2BNUyviqUil8XBJbXZDuQ3pKbq0VlqMJJavKpGuaG4I=;
+        b=1EWDlQ8DXnJpXX/L0K3Yobmk5UDc0JDWkin9dR8nha6JkLYuohLW+vT1v3qRZyMUNu
+         4Z2jkJQEGdHUsmPTG6E2W577bPvnDFbsYOnBPGncumnHRSKpEg6IlNp8nA2jxBzKkCcQ
+         7ZhaL3ly0abhZgpiQfgTFZRwocaX39b2UD5iOjIDCf139R87Iq8HPdcv6QhAg6ZGzlDq
+         Lg0ZU83dFU4he3Jq4GiTe/VmAsfFVG7YE+ocVRok2wnnGALThqEYBMwD7CXvLE11Z2sz
+         maEja5ANyXbFjmi6q/FvdRN0K1mxE5FbI6rQcbEaVneeKXoHGqkEuXC8+C1rs+TiBXAX
+         jXaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756968910; x=1757573710;
+        d=1e100.net; s=20230601; t=1756968912; x=1757573712;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YEQCBMmqJuzc9aQAf9Qk31e/qZjHLfuJ8wSwcpoTOE=;
-        b=o5qRLGbFx4vZFpMzBv38di8lu9IlQYGJaIYgx2f2wZlt6+hJghAHhqVf7L7kZInKCE
-         QVwJbvdrPyMRXzrp7ZgVY2hhmthmINOtVPKTxNdW8sOONKw3WXmvROjYLXHUwxH4HrbI
-         FknR02ExARPWGgsaHsnz8zW/1QqMV2xpgJjKt7OKXarpQQ4kPF21B+F0/ih1iq1EIKkY
-         jFg12SdtMit1WzJq+IFW/z8vIuKdQ0sT9CjKN3NjDPsSSITAofaVTHNuJmQeAx+OEuNz
-         PbsfbyEkfBnw8AjIzm9Zhg+fKwfTw60FSQar1EXOoeioMzSrrDYI1Wxfu6sh0xn4Vr7R
-         VLTA==
-X-Gm-Message-State: AOJu0YxbBZrzWkAnKW07bO22Rt0VkNdPPwtTMs1RVT3kQzkcmoFYaCY0
-	vSnzWufBo3BIt6aIG0MbZ83ABgYdCp4yRBRsgGzj1k55s9nSzunr5pGgKndBQk2dqoENT54RXRT
-	kaA==
-X-Google-Smtp-Source: AGHT+IE9YYmncisXydvkAn1sJlRRuLIxllELyPyRwTcYcKt7NlhRMcgbBqYTWjEB12Ff/oJCvryXlzSM4Q==
-X-Received: from pjh4.prod.google.com ([2002:a17:90b:3f84:b0:329:d461:98a4])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d8c:b0:32b:6132:5f99
- with SMTP id 98e67ed59e1d1-32b61326264mr6170784a91.15.1756968910496; Wed, 03
- Sep 2025 23:55:10 -0700 (PDT)
-Date: Wed,  3 Sep 2025 23:54:35 -0700
+        bh=2BNUyviqUil8XBJbXZDuQ3pKbq0VlqMJJavKpGuaG4I=;
+        b=VcKDYR7Xx0rRVOoMnDA8JF2C2Xmi/9XkrzoueVlLDKqeb/1uGIOSibFwJ2U40jJSpO
+         SmIF7Xq/+8/NJdZsK2HsVi6+IhunfyoN5IL7eHdRxXeiHtD/xthGjvL8GMS61nmUVyW0
+         EcbtIpwx6b8ixDJltcYQIovhEkPsh1P4FTaQMi5f4eMpbvLf6IV2GLynauXjzmb8OQ7z
+         xk8Z7IJRhwCboFw39sWF59Bg1oX6ojTpfY7/zt1ZPBXPWDCwNfQgJ7vZqNgHV4ziL+aq
+         OeR795JdNbEPEWrnmRNDZgkb2YooJWkn51qIw/gAHrHmq7OxAyS60FcYiDRQ4vRpYPM4
+         6k0Q==
+X-Gm-Message-State: AOJu0YzXZsMe7/iH6cTvh08K4ydcUvGgov06DuxATvviOAGCgLRfYSjR
+	/lZRmDPj1aukRgUB4jUC06ai7gybS5228aN6+RWo3EKBu+hNpsleMOC3UQPYrPiuocNPYdCLXUY
+	E1A==
+X-Google-Smtp-Source: AGHT+IH5hLY38bpfnaQsbJuP8cpIl0UsXd1oicIeqNFK0OMpEiH24w+v7AklRI93GhnSPuMBYNIePkxKxQ==
+X-Received: from plblm13.prod.google.com ([2002:a17:903:298d:b0:248:9b66:3356])
+ (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:28c:b0:248:811e:f873
+ with SMTP id d9443c01a7336-24944ab8f4bmr241345565ad.36.1756968912276; Wed, 03
+ Sep 2025 23:55:12 -0700 (PDT)
+Date: Wed,  3 Sep 2025 23:54:36 -0700
 In-Reply-To: <20250904065453.639610-1-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,9 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250904065453.639610-1-sagis@google.com>
 X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250904065453.639610-6-sagis@google.com>
-Subject: [PATCH v10 05/21] KVM: selftests: Expose segment definitons to
- assembly files
+Message-ID: <20250904065453.639610-7-sagis@google.com>
+Subject: [PATCH v10 06/21] KVM: selftests: Add kbuild definitons
 From: Sagi Shahar <sagis@google.com>
 To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
 	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
@@ -89,58 +88,43 @@ To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
 Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Move kernel segment definitions to a separate file which can be included
-from assembly files.
+Add kbuild.h that can be used by files under tools/
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Definitions are taken from the original definitions at
+include/linux/kbuild.h
+
+This is needed to expose values from c code to assembly code.
+
 Signed-off-by: Sagi Shahar <sagis@google.com>
 ---
- .../selftests/kvm/include/x86/processor_asm.h        | 12 ++++++++++++
- tools/testing/selftests/kvm/lib/x86/processor.c      |  5 +----
- 2 files changed, 13 insertions(+), 4 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/include/x86/processor_asm.h
+ tools/include/linux/kbuild.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 tools/include/linux/kbuild.h
 
-diff --git a/tools/testing/selftests/kvm/include/x86/processor_asm.h b/tools/testing/selftests/kvm/include/x86/processor_asm.h
+diff --git a/tools/include/linux/kbuild.h b/tools/include/linux/kbuild.h
 new file mode 100644
-index 000000000000..7e5386a85ca8
+index 000000000000..62e20ba9380e
 --- /dev/null
-+++ b/tools/testing/selftests/kvm/include/x86/processor_asm.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Used for storing defines used by both processor.c and assembly code.
-+ */
-+#ifndef SELFTEST_KVM_PROCESSOR_ASM_H
-+#define SELFTEST_KVM_PROCESSOR_ASM_H
++++ b/tools/include/linux/kbuild.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __TOOLS_LINUX_KBUILD_H
++#define __TOOLS_LINUX_KBUILD_H
 +
-+#define KERNEL_CS	0x8
-+#define KERNEL_DS	0x10
-+#define KERNEL_TSS	0x18
++#include <stddef.h>
 +
-+#endif  // SELFTEST_KVM_PROCESSOR_ASM_H
-diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-index 2a44831e0cc9..623168ea9a44 100644
---- a/tools/testing/selftests/kvm/lib/x86/processor.c
-+++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-@@ -7,6 +7,7 @@
- #include "test_util.h"
- #include "kvm_util.h"
- #include "processor.h"
-+#include "processor_asm.h"
- #include "sev.h"
- #include "tdx/tdx_util.h"
- 
-@@ -14,10 +15,6 @@
- #define NUM_INTERRUPTS 256
- #endif
- 
--#define KERNEL_CS	0x8
--#define KERNEL_DS	0x10
--#define KERNEL_TSS	0x18
--
- vm_vaddr_t exception_handlers;
- bool host_cpu_is_amd;
- bool host_cpu_is_intel;
++#define DEFINE(sym, val) \
++	asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" (val))
++
++#define BLANK() asm volatile("\n.ascii \"->\"" : : )
++
++#define OFFSET(sym, str, mem) \
++	DEFINE(sym, offsetof(struct str, mem))
++
++#define COMMENT(x) \
++	asm volatile("\n.ascii \"->#" x "\"")
++
++#endif /* __TOOLS_LINUX_KBUILD_H */
 -- 
 2.51.0.338.gd7d06c2dae-goog
 
