@@ -1,184 +1,129 @@
-Return-Path: <linux-kernel+bounces-801658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0BFB44872
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B74D6B44876
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F591C840D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A76A1C868BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 21:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAD82C0F6C;
-	Thu,  4 Sep 2025 21:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9512BF3C5;
+	Thu,  4 Sep 2025 21:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uYtXkufg"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pi8rd0wV"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186232BE050;
-	Thu,  4 Sep 2025 21:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5479E267733;
+	Thu,  4 Sep 2025 21:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757021110; cv=none; b=PBJJNaKEXUtWZaB/cpY+hov4jfOZ72lPw1CxpMt4IJaW0C52q20sKMwBXG/4XjhE13aT8r+oaKzECMK39jcZ4fQ+++zTM7dWdjcG4LJ6U4BdokwLrXubv5ZZCEubEj99hViEDqxSScj4vt5utqz9a1si1wPT0Cgkg9D2w94eZoM=
+	t=1757021280; cv=none; b=byFBvK6FfLrpFoPIAuwpUs1iWkALCCg2UUlQjAytCt96vTQhtHXgLa2DcrU23z6r/YXhuPNu8K5VXUPnzmoSulB+Ix/cy56fxp4P7X7ho287P8Ip220yHeSPdYoojKV4YZ5oh0kG9DAGHd8U23r9hh/7QivL07U+a0+Z3kZ5+5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757021110; c=relaxed/simple;
-	bh=dQThrLQFDn6/9HUHfoM9KqjetvzbcwKFUWuVunPKJdA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lby6y1uTnPq8GexdsNKnvI/+s9Pk/Y2ECCz7yJgNVLD/8LWMikExI1LkVGbiVVSzyI8mRE4fPwcEe92SDvf1xOQyM4VVb9lllce4YYXbW7QuWYNmg2sjE/fGRDJETYSphUDxDFv+UVbVUz/IIc3kGxxGZHxBxx9jI9MHMmJ+Sy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uYtXkufg; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 584LP0AP3603119;
-	Thu, 4 Sep 2025 16:25:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757021100;
-	bh=o3L77FAgZE7CyMiTKAGd3ndivBgklsA1s4OZmLaELQ8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uYtXkufgJCOYL2cOkcbj9+ijF9E5KsknZrKqnNCBtMpWNQPER+tZAaAyMt2bP40cj
-	 gvrBoy9zB2dgPnfj7BhMObJNAnD0nub/ln6NlAvarcnY6A5KDjN9PEnSg9f9GORvnb
-	 y68WSqRRdNC5aYVejnU2tvHNRuX9j8xjJa/hl/vQ=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 584LP0s21154231
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 4 Sep 2025 16:25:00 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 4
- Sep 2025 16:25:00 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 4 Sep 2025 16:25:00 -0500
-Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 584LOvlg3611150;
-	Thu, 4 Sep 2025 16:25:00 -0500
-From: Kendall Willis <k-willis@ti.com>
-To: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vigneshr@ti.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
-        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>,
-        <k-willis@ti.com>, <john.ogness@linutronix.de>,
-        <andriy.shevchenko@linux.intel.com>, <yujiaoliang@vivo.com>,
-        <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>
-Subject: [PATCH 3/3] serial: 8250: omap: Support wakeup pinctrl state on suspend
-Date: Thu, 4 Sep 2025 16:24:55 -0500
-Message-ID: <20250904212455.3729029-4-k-willis@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904212455.3729029-1-k-willis@ti.com>
-References: <20250904212455.3729029-1-k-willis@ti.com>
+	s=arc-20240116; t=1757021280; c=relaxed/simple;
+	bh=AcJVKOqTT/BgjT7rOyv5d5gV54Axr+D7z8q+qwG4J2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X+2JsJl5WyZ2eIkEmydDcvU7LFy8yOJAmPtqoFqXvt7O+v4n4eGitGf/AkxH+2AF9z/6cIs6+bJpJFJOJZdwxwQ2cM3p9vs3u5dLY5oOVit0JNQ+7Bw+uzmYWJ9eNOJYF+1zkS3b484LgI0Mg6lRlutwzBArJW+wAoT3edWQvp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pi8rd0wV; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e931c71a1baso2459246276.0;
+        Thu, 04 Sep 2025 14:27:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757021278; x=1757626078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZAhyMgWHgli1L97SLzvlHNq5Gve0sxhiqrZgeSuDMg=;
+        b=Pi8rd0wVaETczGeMbgqTLbO8VrWVH7DKZwURkXuQ9HOSlUjQ1ptr0xLCTvumToK6GS
+         OWJFCHALcKJPqq3AieC3Wbr42gU/hyvfkK+GTRYxXfZtpZVA8yPftMM5mLsMtIKNt5jm
+         e9oftZE5GU9Gv1kO2nHttURnJv0jxiN8KXsHPy5ZStfdiTlGyodwteBJmVugNTJMFl9q
+         AFmCvAwpMFvBmZTzzrvZ+1pA09eJQ2YGSVKG7oKj+Y59NAJLzdXdUdnO9LlHYShFArgC
+         s+7wj2jiI40XWflpqO18hf9AadKnNwGQzEz+PSGhQ/8RRb0UhL1NvLaR0TCfNjjKzHEn
+         ygEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757021278; x=1757626078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YZAhyMgWHgli1L97SLzvlHNq5Gve0sxhiqrZgeSuDMg=;
+        b=FfGd9mhIEtptQzlatZF0KNyP1w/tqmTQyDaRC98PADbo2nkIZo27k8BTpr4Nyzed9c
+         oV5LmBVbCKeb0+nY86R4JzgrnXuLTcIKv/aXU2LZHX1XuLNwteZqbSLRDxlPcKJnJKj0
+         R+uvtGBYjPj28CyEVpg2Vs5bdplMowOLOmDpWBRVy008mq9CdQ2OkhuofX5qfgDekNs7
+         pTUWZQdLPY9epId8F0UaWNHDl1yQid1dg8+H06mgHOEe2DJUbXn0sy8aalDNdbqLPRbo
+         GQA9myPNCnTzCG8UKpQOHpgFmK4dAQhq02LoWTodsf1049FtmyDAVXjs4PiVs0iIoLUj
+         uO3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtFC4kKXwFL3hs5MlL/wuXHLdIZzPryH9d/jDU1RCswfKV4XmhLGomE0q6we7AMryJrAH6WmrANwmk+b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwt+0kSHwBLE+uFvh20zmm0747jHf/KjcjFeKx33vzOYMye5l+
+	dVSJR1VndxySdNIcWYimNz81jHgEqHGnNPkRsf4GGrZLoDomwf2pFxrkqaP3nkt1JH5gC891vkn
+	V2h93/8gNIWwrFIVEeXq/ALL82meUHTg=
+X-Gm-Gg: ASbGncs6C4Cp4O8UnqIj0R9XrqcCFSvr+7Yqmxd8kzvG10Zsbu7gtSxShqLKVEapkUj
+	Ayk98cyc/zZt8wgGHbYERqMSyg6aWQu8LD998fYyb8JT2K0SeR094vqE7DChMvfpomX0PfhQ8V7
+	QNk3Gw4zRxGWtF4gA3s4qFocGwNz/D1etA7b035Tyqid+XNHQZXqpDRw1ngFJIGiUJzEzfLXTGh
+	kh9UKXfWb3EA2JKWbc2xZ01hNmIZPW8RrErp0vLw1lii0LaL5k3eIXguOBaAGT5XQ5YlhTcLZjC
+	God/Qg==
+X-Google-Smtp-Source: AGHT+IG5kicGLLVug/7HdBcLUIZ4WitDIRbTaowB+QZTucRNh6byweW0PquqDUq2n5YkoN9IARqxHd5isfF6SjopY+0=
+X-Received: by 2002:a53:d005:0:b0:5f3:319c:ff0b with SMTP id
+ 956f58d0204a3-60177dd0c51mr3713950d50.29.1757021278115; Thu, 04 Sep 2025
+ 14:27:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250904203834.3660-1-rosenp@gmail.com> <29a8a01e-48be-4057-a382-e75e68f00cf0@lunn.ch>
+In-Reply-To: <29a8a01e-48be-4057-a382-e75e68f00cf0@lunn.ch>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Thu, 4 Sep 2025 14:27:47 -0700
+X-Gm-Features: Ac12FXzZnUsC-2oPVL9pdksAOyPLfZvJYfrHPQ2l7YInbj94bcJ0VzTGdGiWjPY
+Message-ID: <CAKxU2N-3HvmYztoWs4ER7WhPhFHZt1PS9GN2RRGQP3b=KhNBXw@mail.gmail.com>
+Subject: Re: [PATCH net] net: lan966x: enforce phy-mode presence
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	"maintainer:MICROCHIP LAN966X ETHERNET DRIVER" <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-
-UART can be used as a wakeup source for am62 from suspend to ram states.
-To enable wakeup from UART am62 requires a wakeup flag being set in the
-pinctrl.
-
-If the device is marked as wakeup enabled, select the 'wakeup' pinctrl
-state on suspend and restore the default pinctrl state on resume.
-
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
- drivers/tty/serial/8250/8250_omap.c | 36 +++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index bb23afdd63f29..9e49ef48b851b 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -27,6 +27,8 @@
- #include <linux/pm_wakeirq.h>
- #include <linux/dma-mapping.h>
- #include <linux/sys_soc.h>
-+#include <linux/reboot.h>
-+#include <linux/pinctrl/consumer.h>
- 
- #include "8250.h"
- 
-@@ -145,6 +147,9 @@ struct omap8250_priv {
- 	spinlock_t rx_dma_lock;
- 	bool rx_dma_broken;
- 	bool throttled;
-+
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pinctrl_wakeup;
- };
- 
- struct omap8250_dma_params {
-@@ -1349,6 +1354,18 @@ static int omap8250_no_handle_irq(struct uart_port *port)
- 	return 0;
- }
- 
-+static int omap8250_select_wakeup_pinctrl(struct device *dev,
-+					  struct omap8250_priv *priv)
-+{
-+	if (IS_ERR_OR_NULL(priv->pinctrl_wakeup))
-+		return 0;
-+
-+	if (!device_may_wakeup(dev))
-+		return 0;
-+
-+	return pinctrl_select_state(priv->pinctrl, priv->pinctrl_wakeup);
-+}
-+
- static struct omap8250_dma_params am654_dma = {
- 	.rx_size = SZ_2K,
- 	.rx_trigger = 1,
-@@ -1573,6 +1590,11 @@ static int omap8250_probe(struct platform_device *pdev)
- 	priv->line = ret;
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
-+
-+	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
-+	if (!IS_ERR_OR_NULL(priv->pinctrl))
-+		priv->pinctrl_wakeup = pinctrl_lookup_state(priv->pinctrl, "wakeup");
-+
- 	return 0;
- err:
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
-@@ -1630,6 +1652,13 @@ static int omap8250_suspend(struct device *dev)
- 	struct uart_8250_port *up = serial8250_get_port(priv->line);
- 	int err = 0;
- 
-+	err = omap8250_select_wakeup_pinctrl(dev, priv);
-+	if (err) {
-+		dev_err(dev, "Failed to select wakeup pinctrl, aborting suspend %pe\n",
-+			ERR_PTR(err));
-+		return err;
-+	}
-+
- 	serial8250_suspend_port(priv->line);
- 
- 	err = pm_runtime_resume_and_get(dev);
-@@ -1651,6 +1680,13 @@ static int omap8250_resume(struct device *dev)
- 	struct uart_8250_port *up = serial8250_get_port(priv->line);
- 	int err;
- 
-+	err = pinctrl_select_default_state(dev);
-+	if (err) {
-+		dev_err(dev, "Failed to select default pinctrl state on resume: %pe\n",
-+			ERR_PTR(err));
-+		return err;
-+	}
-+
- 	if (uart_console(&up->port) && console_suspend_enabled) {
- 		err = pm_runtime_force_resume(dev);
- 		if (err)
--- 
-2.34.1
-
+On Thu, Sep 4, 2025 at 2:02=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Thu, Sep 04, 2025 at 01:38:34PM -0700, Rosen Penev wrote:
+> > The documentation for lan966x states that phy-mode is a required
+> > property but the code does not enforce this. Add an error check.
+> >
+> > Fixes: db8bcaad5393 ("net: lan966x: add the basic lan966x driver")
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/dr=
+ivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > index 7001584f1b7a..5d28710f4fd2 100644
+> > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > @@ -1199,6 +1199,9 @@ static int lan966x_probe(struct platform_device *=
+pdev)
+> >                       continue;
+> >
+> >               phy_mode =3D fwnode_get_phy_mode(portnp);
+> > +             if (phy_mode)
+> > +                     goto cleanup_ports;
+>
+> I think a dev_err_probe() would be good here to give a clue why the
+> interfce failed to prove.
+Probably. Although there are no other error messages in the surrounding cod=
+e.
+>
+>
+>     Andrew
+>
+> ---
+> pw-bot: cr
 
