@@ -1,321 +1,167 @@
-Return-Path: <linux-kernel+bounces-800900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8AEB43D7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC6AB43D7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 507507C3E93
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7F91C83A1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7A3304BC4;
-	Thu,  4 Sep 2025 13:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD644305074;
+	Thu,  4 Sep 2025 13:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="EqDhF7bJ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyE8UVOj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753F7302CC3;
-	Thu,  4 Sep 2025 13:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756993421; cv=pass; b=BcK0ARB5wYwQXamx37DgM6EBE5H9jw7SI9r4beAnMR1beSCMI+wCHssn7Ol3OzJ5corb5AnwDGR92Z5TCKqO2YUarUwFx0O+3FQeKh7+Kyi968gROzhrjXPXUhH7QkjOOuXhhRnG7mB9gT/rKN0hSrzpyjJzxtpASDWw615V5DM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756993421; c=relaxed/simple;
-	bh=3PvhRnUQs3Az1IPfNwGcm1ALNf5Pd3gXrjnWap2nMlw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=OlwrPgMHMzHIZ5+XsfdLqlR/ZTsznkoriqqPvqUOFHgGXQZDLLgg5yP6oEgmwqMqYl7w+KBh5Ry/Ndn48v5zavUBHrE1+Vt3h+zyKazt1z8goSlEuvFv5jCxBfx9vIrRzMVdKDG59M3ILmyHZyKHP5KuK3tefPCgGzJs4QEaYpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=EqDhF7bJ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756993394; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EM5RoJlDfidcoH0iXxABuN7m3OYlKGT+wnqNJELtbqkq7Bqy7YpsWx5iTdIimV/o5iOi3eYqpRJ8vVnjSpQ4AM7AzRFoDztrgj7bebQQxtOEPD+K6RJUs1QnnY64OUtKxuWPM5UWftPyD33C7V7g67OGJh+IjrKF+Wea+sSpjO8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756993394; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=v/CGpSbTX1swAaII5MzvS161EteBjkwE/loRHMWcMrE=; 
-	b=U3YK7nZm/bLjgDIxJubCTzRmhy5p13IsMKb0SruW0+Q5V//rs0TIDsyGg/FosfP0M8VZF0rWLsY+uKB88ujPhF0SRNXoPB0s/1jCFX1gU/fYMoKiXsEka0p01Cq+91pmNw5NW30d6TfXFOSs9IFIunaEIWBfCrf3Xf0QH0qrNCE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756993394;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=v/CGpSbTX1swAaII5MzvS161EteBjkwE/loRHMWcMrE=;
-	b=EqDhF7bJLuQAElm1IsjDZdxHLUV9Jb4oCgW/HpVLvppQ+9QJnyzs7qNzq0oQkPdZ
-	JNQ+tyjOgj5tB7VBcCmVWuUTRKRgsT1Kru3tliFQk4r1zAatMwCa7NwQgZw8OGu+t9s
-	k4WRNWnpFFmYc/cWSE90dqPgclkYNAS4CAzUGeeE=
-Received: by mx.zohomail.com with SMTPS id 1756993391488147.0851196413604;
-	Thu, 4 Sep 2025 06:43:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4330499B;
+	Thu,  4 Sep 2025 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756993404; cv=none; b=NwmpKZaVDFbMaSRS8GURA40TXPNPOmBPL/vaazv5pMCRkMGVErIcVPRPNbMloeyPGSPBO8DMbRf9UyKhXeHqLZVlRpwaufNrZQLLA5aVJhaS7NE6ky6zBY6PDaPRMw5fL4LcbsjMJZYEZXuAARhG9sKJgDFVgA0cjn5qOObkYPM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756993404; c=relaxed/simple;
+	bh=/9OWqx5QESRGHRCL0BQyhOtgreyfaYTGqx7ChEu5PaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hbRTk9TxC4omg7txy02+ArzUBZwaEDCIF7Mx5MDK8XLg6cZR8ZBELSbu5+HJ/PguGgIqiNzwtfth3KxBiNP0UUZtnJRQt6zaD968J2TNVE8v4jrBAXAof7LvQzSfMmIFqBeQPNoBxbOfzPMifZJOLOTM/pIbucqExhvNQKsGsAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyE8UVOj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0280AC4CEF0;
+	Thu,  4 Sep 2025 13:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756993403;
+	bh=/9OWqx5QESRGHRCL0BQyhOtgreyfaYTGqx7ChEu5PaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qyE8UVOjEPIjeyF7QEHLaeb3XpXfyUCJJCnebujOv1YfryOeGm+JF5KogZrQCD/YH
+	 iCHkpF38GXpRQdshJl2JwIgOxWUecuwQPFmJ35OBBIv3eGob4TFOxG5gY0IgtLnqPe
+	 Ng6Xnh+qgof4RcgEBn4SDMeWIMpjURrIPo1jXjvmlEHMepDhogWb24A9LjFeX3sQPW
+	 UY2iYzf/hGeivJAqKBVWsscsvK3ooH3k3EJVAFEeVXXnNDsuk+oF61czum4PKf5uWu
+	 9eutPfy46F0aYNSMJy9LnbkJjpaBU2QuPfVqAPkcbTdi9mWq0CeGR7XKIhinCDRqgw
+	 y/oB8JbHR+xbQ==
+Message-ID: <5543f849-2be7-459f-8600-d236625cc8f8@kernel.org>
+Date: Thu, 4 Sep 2025 15:43:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 09/14] rust: gem: Introduce DriverObject::Args
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-10-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 10:42:55 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Asahi Lina <lina+kernel@asahilina.net>,
- "open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <91A174DE-B7A1-4F35-ADAB-39873B17A3D4@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-10-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC
+ support
+To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
+ tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de
+Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
+ gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
+ smn1196@coasia.com, shradha.t@samsung.com, inbaraj.e@samsung.com,
+ swathi.ks@samsung.com, hrishikesh.d@samsung.com, dj76.yang@samsung.com,
+ hypmean.kim@samsung.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@axis.com, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20250901051926.59970-1-ravi.patel@samsung.com>
+ <CGME20250901054254epcas5p24db87bd64fc57a25b17c51e608f15e7b@epcas5p2.samsung.com>
+ <20250901051926.59970-5-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250901051926.59970-5-ravi.patel@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> This is an associated type that may be used in order to specify a =
-data-type
-> to pass to gem objects when construction them, allowing for drivers to =
-more
-
-This doesn=E2=80=99t read very well IMHO.
-
-> easily initialize their private-data for gem objects.
-
-nit: I think that "private data" doesn=E2=80=99t need a hyphen?
-
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
+On 01/09/2025 07:19, Ravi Patel wrote:
+> From: SungMin Park <smn1196@coasia.com>
+> 
+> Add initial device tree support for Axis ARTPEC-8 SoC.
+> 
+> This SoC contains 4 Cortex-A53 CPUs and several other peripheral IPs.
+> 
+> Signed-off-by: SungMin Park <smn1196@coasia.com>
+> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
 > ---
-> V3:
-> * s/BaseDriverObject/DriverObject/
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> drivers/gpu/drm/nova/gem.rs |  5 ++-
-> rust/kernel/drm/gem/mod.rs  | 75 +++++++++++++++++++++++++++++++++----
-> 2 files changed, 71 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-> index 10e3053f1a246..015cb56061a56 100644
-> --- a/drivers/gpu/drm/nova/gem.rs
-> +++ b/drivers/gpu/drm/nova/gem.rs
-> @@ -19,8 +19,9 @@ pub(crate) struct NovaObject {}
-> impl gem::DriverObject for NovaObject {
->     type Driver =3D NovaDriver;
->     type Object =3D gem::Object<Self>;
-> +    type Args =3D ();
->=20
-> -    fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, =
-Error> {
-> +    fn new(_dev: &NovaDevice, _size: usize, _args: Self::Args) -> =
-impl PinInit<Self, Error> {
->         try_pin_init!(NovaObject {})
->     }
-> }
-> @@ -34,7 +35,7 @@ pub(crate) fn new(dev: &NovaDevice, size: usize) -> =
-Result<ARef<gem::Object<Self
->             return Err(EINVAL);
->         }
->=20
-> -        gem::Object::new(dev, aligned_size)
-> +        gem::Object::new(dev, aligned_size, ())
->     }
->=20
->     /// Look up a GEM object handle for a `File` and return an =
-`ObjectRef` for it.
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index f901d4263ee87..fe6ff3762a504 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -6,13 +6,14 @@
->=20
-> use crate::{
->     alloc::flags::*,
-> -    bindings, drm,
-> +    bindings,
->     drm::driver::{AllocImpl, AllocOps},
-> +    drm::{self, private::Sealed},
->     error::{to_result, Result},
->     prelude::*,
->     types::{ARef, AlwaysRefCounted, Opaque},
-> };
-> -use core::{ops::Deref, ptr::NonNull};
-> +use core::{marker::PhantomData, ops::Deref, ptr::NonNull};
->=20
-> /// A type alias for retrieving a [`Driver`]s [`DriverFile`] =
-implementation from its
-> /// [`DriverObject`] implementation.
-> @@ -21,6 +22,26 @@
-> /// [`DriverFile`]: drm::file::DriverFile
-> pub type DriverFile<T> =3D drm::File<<<T as DriverObject>::Driver as =
-drm::Driver>::File>;
->=20
-> +/// A helper macro for implementing AsRef<OpaqueObject<=E2=80=A6>>
-> +macro_rules! impl_as_opaque {
-> +    ($type:ty where $tparam:ident : $tparam_trait:ident) =3D> {
-> +        impl<D, $tparam> =
-core::convert::AsRef<kernel::drm::gem::OpaqueObject<D>> for $type
-> +        where
-> +            D: kernel::drm::driver::Driver,
-> +            Self: kernel::drm::gem::DriverObject<Driver =3D D>,
-> +            Self: kernel::drm::gem::IntoGEMObject,
-> +            $tparam: $tparam_trait,
-> +        {
-> +            fn as_ref(&self) -> &kernel::drm::gem::OpaqueObject<D> {
-> +                // SAFETY: This cast is safe via our type invariant.
-> +                unsafe { &*((self.as_raw().cast_const()).cast()) }
-> +            }
-> +        }
-> +    };
-> +}
-> +
-> +pub(crate) use impl_as_opaque;
-> +
-> /// GEM object functions, which must be implemented by drivers.
-> pub trait DriverObject: Sync + Send + Sized {
->     /// Parent `Driver` for this object.
-> @@ -29,8 +50,15 @@ pub trait DriverObject: Sync + Send + Sized {
->     /// The GEM object type that will be passed to various callbacks.
->     type Object: AllocImpl;
->=20
-> +    /// The data type to use for passing arguments to =
-[`BaseDriverObject::new`].
-> +    type Args;
-> +
->     /// Create a new driver data object for a GEM object of a given =
-size.
-> -    fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl =
-PinInit<Self, Error>;
-> +    fn new(
-> +        dev: &drm::Device<Self::Driver>,
-> +        size: usize,
-> +        args: Self::Args,
-> +    ) -> impl PinInit<Self, Error>;
->=20
->     /// Open a new handle to an existing object, associated with a =
-File.
->     fn open(_obj: &Self::Object, _file: &DriverFile<Self>) -> Result {
-> @@ -42,7 +70,7 @@ fn close(_obj: &Self::Object, _file: =
-&DriverFile<Self>) {}
-> }
->=20
-> /// Trait that represents a GEM object subtype
-> -pub trait IntoGEMObject: Sized + super::private::Sealed + =
-AlwaysRefCounted {
-> +pub trait IntoGEMObject: Sized + Sealed + AlwaysRefCounted {
->     /// Returns a reference to the raw `drm_gem_object` structure, =
-which must be valid as long as
->     /// this owning object is valid.
->     fn as_raw(&self) -> *mut bindings::drm_gem_object;
-> @@ -233,11 +261,11 @@ impl<T: DriverObject> Object<T> {
->     };
->=20
->     /// Create a new GEM object.
-> -    pub fn new(dev: &drm::Device<T::Driver>, size: usize) -> =
-Result<ARef<Self>> {
-> +    pub fn new(dev: &drm::Device<T::Driver>, size: usize, args: =
-T::Args) -> Result<ARef<Self>> {
->         let obj: Pin<KBox<Self>> =3D KBox::pin_init(
->             try_pin_init!(Self {
->                 obj: Opaque::new(bindings::drm_gem_object::default()),
-> -                data <- T::new(dev, size),
-> +                data <- T::new(dev, size, args),
->                 // INVARIANT: The drm subsystem guarantees that the =
-`struct drm_device` will live
->                 // as long as the GEM object lives.
->                 dev: dev.into(),
-> @@ -289,7 +317,7 @@ extern "C" fn free_callback(obj: *mut =
-bindings::drm_gem_object) {
->     }
-> }
->=20
-> -impl<T: DriverObject> super::private::Sealed for Object<T> {}
-> +impl<T: DriverObject> Sealed for Object<T> {}
->=20
-> impl<T: DriverObject> Deref for Object<T> {
->     type Target =3D T;
-> @@ -313,6 +341,39 @@ impl<T: DriverObject> AllocImpl for Object<T> {
->     };
-> }
->=20
-> +impl_as_opaque!(Object<T> where T: DriverObject);
-> +
-> +/// A GEM object whose private-data layout is not known.
-> +///
-> +/// Not all GEM objects are created equal, and subsequently drivers =
-may occasionally need to deal
-> +/// with situations where they are working with a GEM object but have =
-no knowledge of its
-> +/// private-data layout.
-> +///
-> +/// It may be used just like a normal [`Object`], with the exception =
-that it cannot access
-> +/// driver-private data.
-> +///
-> +/// # Invariant
-> +///
-> +/// Via `#[repr(transparent)]`, this type is guaranteed to have an =
-identical data layout to
-> +/// `struct drm_gem_object`.
-> +#[repr(transparent)]
-> +pub struct OpaqueObject<T: =
-drm::Driver>(Opaque<bindings::drm_gem_object>, PhantomData<T>);
+>  MAINTAINERS                                   |  12 +
+>  arch/arm64/Kconfig.platforms                  |   7 +
+>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
+>  .../boot/dts/exynos/axis/artpec-pinctrl.h     |  36 +++
+>  .../boot/dts/exynos/axis/artpec8-pinctrl.dtsi | 120 +++++++++
+>  arch/arm64/boot/dts/exynos/axis/artpec8.dtsi  | 244 ++++++++++++++++++
+>  6 files changed, 420 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec8.dtsi
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..4d0c1f10ffd4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4102,6 +4102,18 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/sound/axentia,*
+>  F:	sound/soc/atmel/tse850-pcm5142.c
+> 
+> +AXIS ARTPEC ARM64 SoC SUPPORT
+> +M:	Jesper Nilsson <jesper.nilsson@axis.com>
+> +M:	Lars Persson <lars.persson@axis.com>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-samsung-soc@vger.kernel.org
+> +L:	linux-arm-kernel@axis.com
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/clock/axis,artpec*-clock.yaml
+> +F:	arch/arm64/boot/dts/exynos/axis/
+> +F:	drivers/clk/samsung/clk-artpec*.c
+> +F:	include/dt-bindings/clock/axis,artpec*-clk.h
 
-I=E2=80=99m not sure whether this belongs in this patch.
+Some official ack would be nice for this, but I also remember we earlier
+emails, so I will take it as is.
 
-I agree with the motivation, but where exactly is this used for now? I =
-don't
-see it being passed in a callback, for example. The only way to get one =
-would
-be through as_ref() IIUC, but who would call this and why?
-
-> +
-> +impl<T: drm::Driver> IntoGEMObject for OpaqueObject<T> {
-> +    unsafe fn from_raw<'a>(self_ptr: *mut bindings::drm_gem_object) =
--> &'a Self {
-> +        // SAFETY:
-> +        // - This cast is safe via our type invariant.
-> +        // - `self_ptr` is guaranteed to be a valid pointer to a gem =
-object by our safety contract.
-> +        unsafe { &*self_ptr.cast::<Self>().cast_const() }
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::drm_gem_object {
-> +        self.0.get()
-> +    }
-> +}
-> +
-> +impl<D: drm::Driver> Sealed for OpaqueObject<D> {}
-> +
-> pub(super) const fn create_fops() -> bindings::file_operations {
->     // SAFETY: As by the type invariant, it is safe to initialize =
-`bindings::file_operations`
->     // zeroed.
-> --=20
-> 2.50.0
->=20
-
+Best regards,
+Krzysztof
 
