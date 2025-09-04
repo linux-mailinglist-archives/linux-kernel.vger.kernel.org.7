@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-799958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E88B431A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:37:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E527B431AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9E56808C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:37:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98AE7B6CF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3698123D7C3;
-	Thu,  4 Sep 2025 05:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D5B242909;
+	Thu,  4 Sep 2025 05:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ke8g1+F2"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2RYYtDx"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134888F40
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 05:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7E18F40;
+	Thu,  4 Sep 2025 05:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756964225; cv=none; b=pVTRGPVam6yLUUKW4+jZfY+h0iHSjpGM1vzdV+OEODOW0PX3JbhN7wUcX7/fYjUOwkFn9PQJGKxIKgTQqutQ6I0qnNp29kS0MF3EU0oK56D6bnrpzijldFBSbhRG8uNIgXL8FGxuE9AX2QTexpIHTtj6hy7JwOq4I8eYhl0XnOc=
+	t=1756964437; cv=none; b=A/Y/XuGC4v38atPcLKjyVCb2j3skx9t4hzk8Wbm47/rBfBwpTNlpdfJ/yX8LhEAYsymIFQwAlTITTKnhXuDq4a6J7xa6e65K6NSIiA3eIb33ueC9UqHlXmPalpdjjCLIIB7kipefM9xST2LkVyVLip22PORhJewlcxNabb0eHZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756964225; c=relaxed/simple;
-	bh=b/a2yCMJq8KSVArlkt++a2zVi4wOLEM4CymEyHYWhJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LD4mZGpECZrsdF4VApuJo3wxGepUnzch2JFgcrkiKcBv6AVvdRfWGyFo5CQzH3nAEdIgm2zlRUkofJqn/kqrEV/8y82srLOO9/xRwDWkPV0zSxAc+396R4sLLyF38NzqPHwafVUshdOo9Ab0Q9PqEXZTclaILwLVxbOvaogE3aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ke8g1+F2; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-772301f8a4cso928210b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 22:37:03 -0700 (PDT)
+	s=arc-20240116; t=1756964437; c=relaxed/simple;
+	bh=OQ/E4y9kB3rGINfiUnkpCWTQCdSgM4fZZHZXppCOuaw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fsNuXNNgPLlWUPkMn0Id6q0ZlceHqa3f5JEwB9QxE37oDkXEy6JcUw8oW8C8kX1+QL/BqwBE8uO+YP3sEie+kOf5kwktX6k7C7dzDNzXNpYp4FFviWgJgtg/TZrIYKOL/ZyRiUbHz+ffCHpuQEmZUna6HOxKnUQCmaTBPNyqGi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2RYYtDx; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7723f0924a3so930419b3a.2;
+        Wed, 03 Sep 2025 22:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756964223; x=1757569023; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EBf1R6dd96LkyOGtYdweLqxruOgKvQ3zhyso28sYrAU=;
-        b=Ke8g1+F2ja9KN+Hn4KbFn5qyRDkNn7NZqmGsxVkt4n/EJc2gxEswOEk/4AHLE5QePw
-         6D5r+MNGaVIfedR2QUmYKJWc29OsApzzb42+3pArbH6VYRFc2GKevZBvFw9vIDyBFqlj
-         ZPkQ68+bx3OjyXvOim9lXqhz2dYwa4/yiaMudMfs7VvZirC3fWKRbCjwBGBavZQBCybk
-         1sAyBe6y3o1qXkwWMJzIqlo6VcVWf74TkLJXvIJ5u3D/QGMwWiUMlTShzf4RlRsiR/NV
-         kNJZ73HV9CZm2hNNeaVm253GvN6MJ3Pz8EcJ/1ILUy3yP7d8+HyVEp0/DF15qmEplfIl
-         Qdcw==
+        d=gmail.com; s=20230601; t=1756964435; x=1757569235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=shL2fhdQ891TB+Ct80rXzlQvWNofQxPpdzFt0NH7YFc=;
+        b=A2RYYtDxGCeGC04YbNDlUXVSmQz4Mxs9qgpewrUVW3UoTRltorKmYrdsZkS53qWsg9
+         K7dc1nMgfhKaDu96j/3U/Qmq+Q5sF8gznuT1TljBZBbb0AiBi8g9RYUAbWtR/iOrrcKm
+         NbvoeBeYWSjk614tD33mYFiIW2FjJLsgsFfOqtAyNmyUYqMEWukX1Ke0byVuu6s2XqOs
+         6/wajemTALyAi6DeZ0eSOIIJgcGyqC7Osw841Zjj1Q5qdplY0g9CKBxxyDk1HPqGcQIP
+         q9Xc7fYOTpQyQBM//xc7w3Q5++EkZhyH68XaV52hDdsgwY6EzyWSeAQBoHqKIO1RUSSv
+         TWDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756964223; x=1757569023;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBf1R6dd96LkyOGtYdweLqxruOgKvQ3zhyso28sYrAU=;
-        b=k7AIo1C77j+VDG1Zlg9YR9Ze5muga1lPwb1GnZxFeJnObZ0wz9beCncSNg0N1xTObC
-         XUv9xyzhg5YxXCMi4eJVSVLh9HsmvG8YityGAO43OimmjtrTNDkiLSIN15a5tIe65MFF
-         +W8Kbgo2Y0rJvol1lHSz1PbiVlg4YLqxtP0gA539R24k2lUG4iozgfVTk9mAhkSGfwjd
-         xEkmwbLiap507UnOKWdlI7xWkPE486BRluoujjRkcDXNR66nWWoWammBM1Dr4ngitju6
-         HpqVqij5QhoVrg3JibzZamrPj6MXmgXLlYaZC5oGm8eFEII73GI8vwJUVgAOI73Sc6OU
-         EvUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHzlUeHIsuro3Gq13E90Eg9XkANUYXw10hF9sWt1wflaaduzVOQ0z1mrFR784ybBJ6Y5vLrcw/xQcUmEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfpyiUxsljPJF2pld4oSOv0soib/YeYT/vaj96yGht6LQIqm2O
-	2S9Xregp08wUtGx8LzI5ygfiCDpRsQ4wn7haijdU0KwDT81MO4Blh4g54xWcxK3PLsg=
-X-Gm-Gg: ASbGncshkN/2MrlOG0ft8YVy6yxq2sYRfaLdalKXuNWlDcf6QYj0cMvb2WnXtD8NE8d
-	zUFmc95Si4yWhtTNhQsm2HVqY4jf807mByeQ2OT82R7avcjC665JM/9MJBO1tsIpV6XsegaYVpU
-	erF5zR9DfQVYXR6p1jDiR1V5WGaV3NMvg97hXHeH+X3kndHYOrY/BJQNjiHUmz2x67PunQD0LSS
-	/pYvWlpAjbggd9n9dchWFp6ufQ3uj6Jb+2rsm+nMzmz+vaSs2US02ltBXPJJL/8NiS/aov69nax
-	0D9o8BuliWwUUDhc0yeSL5zosEJCnuWlS9blNp9KvzpQXYPO/Bag1yVmlcDhp2n3V6n+Rdl9bcO
-	LLxoWy8ohYr3pYeceKxUWfA4O7Mt14UyC90A=
-X-Google-Smtp-Source: AGHT+IGYv9Ir/Bw5lHB3i4/uKJRbACnb4yPE53+Njb3AnK4qpxjJlR6XcFtBO92SmhPZXbDvwrNAgw==
-X-Received: by 2002:a17:902:e5cf:b0:242:8a45:a959 with SMTP id d9443c01a7336-24944ae5ff7mr238904595ad.47.1756964223270;
-        Wed, 03 Sep 2025 22:37:03 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037223d7sm173520045ad.32.2025.09.03.22.37.02
+        d=1e100.net; s=20230601; t=1756964435; x=1757569235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=shL2fhdQ891TB+Ct80rXzlQvWNofQxPpdzFt0NH7YFc=;
+        b=O5hd67RtKM1/F+SCQGhJxfcZmguH9Senp3e6P8JlYdVz+n7hDHhU7kCY/Gdcg2w0X7
+         9nY7zBZQPITUJq/IcIDJA2bIT/jasrDZpKg5FWAlSKj+a+k9RdJH+wv6liT12ENnyaR4
+         jDjX7tKvLu0M+Ihb3qNyDY/rBsqmjUkOggDJ/fIKT5zAH9Q1uUT+rmksQtAgg8CD/dea
+         XxHbM7shRotYIRmT9c37ylMX+Vg6EeEfRipufl6kLFntmxqoMJFvnvE9HhBeyfYr3RgO
+         1k2HASTDDeAEzlZXMcjKVcYCVxMwBm5LXghoSY5xpWe/j7HBVJ9u++8rSrabx09hvFOn
+         BAvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuXzjYo3pPsHHpjYBPyOfQkFqHOTT9vQ558nob7Wn4cQVZRIz1EuK9AzLz0Aqd0PqLwo48OY8Fy7Kgxfw=@vger.kernel.org, AJvYcCV8UPgD9zsl6CUQJSowdNjJn3pydVgy3h/SH65vARbbPAdB8HWrgXUlWf9VfV1003guWYnmwMGT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGzf7Eomp0pZa0eud5D7K3BdQRSSjG6lW36bAKPc739wsRbHlD
+	0geZLBv8KlBwBdMyM2DJhhPXlw69Q36Ma8xCHPMVxyUgdJdwgDOplcm+
+X-Gm-Gg: ASbGncvKxL17VFobOMq0BrOAImJ1ZLlSuuP0CqwqJS3RJF0hdRAYd2nNQDqI6Y44cX5
+	mjCUs1pXy/t3Fo+mCM0Juv+vffDY5DrU7C5pGlAMh6nOMMXu2vawBZlgoOnAn4XxhuOjeBNDbho
+	7XlRM3HWUosl00M+oH2QBYI/h59R8C9NlZbFlfHx+5aiwv/szem0pr/XjSPJREyGUSLjqJ6ewjv
+	WHiVvpsuzE5qT8I/Tx7QTIIBvPzfO+tlce9C8Y2l3uAYw5WeeK8RPR46DRN4Y0Hb657oBCXgyFh
+	yNxGJ9TVYbf3vjfkBlUEHg7Gc3H4nrvpzR+KqrKLEKBpJizrNQkrPFEnrfaBA+bi7eCPMkyQDRy
+	vIPT7Du0OtaiR2n1HqSeHXROxNjaisXCkkYhjr0+9OID8k72PlQ==
+X-Google-Smtp-Source: AGHT+IHCeFD6mwmHsPbVzqnf/RdZI2LdzxhJb+bn981uRs8UNNuSLX6ga1/IDq9eNX+swPfzo+kg7Q==
+X-Received: by 2002:a05:6300:210d:b0:243:aca2:e500 with SMTP id adf61e73a8af0-243d6f062d9mr25374936637.29.1756964434848;
+        Wed, 03 Sep 2025 22:40:34 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd366a909sm15568027a12.52.2025.09.03.22.40.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 22:37:02 -0700 (PDT)
-Date: Thu, 4 Sep 2025 11:07:00 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] cpufreq: Always enforce policy limits even
- without frequency table
-Message-ID: <20250904053700.abdkh23zwi5x65do@vireshk-i7>
-References: <20250904032210.92978-1-zhangzihuan@kylinos.cn>
- <20250904032210.92978-3-zhangzihuan@kylinos.cn>
- <20250904044812.cpadajrtz3mrz2ke@vireshk-i7>
- <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
+        Wed, 03 Sep 2025 22:40:34 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: dwlsalmeida@gmail.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH v2 RESEND] media: vidtv: initialize local pointers upon transfer of memory ownership
+Date: Thu,  4 Sep 2025 14:40:00 +0900
+Message-Id: <20250904054000.3848107-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <540469c3-9bc5-444e-87da-95dc27fc481b@kylinos.cn>
 
-On 04-09-25, 13:23, Zihuan Zhang wrote:
-> 在 2025/9/4 12:48, Viresh Kumar 写道:
-> > On 04-09-25, 11:22, Zihuan Zhang wrote:
-> > >   int cpufreq_generic_frequency_table_verify(struct cpufreq_policy_data *policy)
-> > >   {
-> > > +	cpufreq_verify_within_cpu_limits(policy);
-> > So if we have a freq-table, we will call this twice now. Why make it
-> > bad for the existing users ?
-> 
-> 
-> Just to clarify, in the third patch of this series we remove
-> cpufreq_generic_frequency_table_verify() from the table_verify path,
-> so cpufreq_verify_within_cpu_limits() is now only called here. There
-> won’t be any duplicate invocation for drivers that already have a
-> frequency table.
+vidtv_channel_si_init() creates a temporary list (program, service, event)
+and ownership of the memory itself is transferred to the PAT/SDT/EIT
+tables through vidtv_psi_pat_program_assign(),
+vidtv_psi_sdt_service_assign(), vidtv_psi_eit_event_assign().
 
-Maybe I wasn't clear enough.
+The problem here is that the local pointer where the memory ownership
+transfer was completed is not initialized to NULL. This causes the
+vidtv_psi_pmt_create_sec_for_each_pat_entry() function to fail, and
+in the flow that jumps to free_eit, the memory that was freed by
+vidtv_psi_*_table_destroy() can be accessed again by
+vidtv_psi_*_event_destroy() due to the uninitialized local pointer, so it
+is freed once again.
 
-int cpufreq_frequency_table_verify(...)
-{
-	cpufreq_verify_within_cpu_limits(...);
-        ...
-}
+Therefore, to prevent use-after-free and double-free vuln, local pointers
+must be initialized to NULL when transferring memory ownership.
 
-int cpufreq_generic_frequency_table_verify(...)
-{
-        cpufreq_verify_within_cpu_limits(...);
-        cpufreq_frequency_table_verify(...);
-        ...
-}
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+1d9c0edea5907af239e0@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1d9c0edea5907af239e0
+Fixes: 3be8037960bc ("media: vidtv: add error checks")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+v2: Improved patch description wording and CC stable mailing list
+- Link to v1: https://lore.kernel.org/all/20250822065849.1145572-1-aha310510@gmail.com/
+---
+ drivers/media/test-drivers/vidtv/vidtv_channel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-For a driver with a valid freq-table, we will call
-cpufreq_verify_within_cpu_limits() unnecessarily, isn't it ?
-
--- 
-viresh
+diff --git a/drivers/media/test-drivers/vidtv/vidtv_channel.c b/drivers/media/test-drivers/vidtv/vidtv_channel.c
+index f3023e91b3eb..3541155c6fc6 100644
+--- a/drivers/media/test-drivers/vidtv/vidtv_channel.c
++++ b/drivers/media/test-drivers/vidtv/vidtv_channel.c
+@@ -461,12 +461,15 @@ int vidtv_channel_si_init(struct vidtv_mux *m)
+ 
+ 	/* assemble all programs and assign to PAT */
+ 	vidtv_psi_pat_program_assign(m->si.pat, programs);
++	programs = NULL;
+ 
+ 	/* assemble all services and assign to SDT */
+ 	vidtv_psi_sdt_service_assign(m->si.sdt, services);
++	services = NULL;
+ 
+ 	/* assemble all events and assign to EIT */
+ 	vidtv_psi_eit_event_assign(m->si.eit, events);
++	events = NULL;
+ 
+ 	m->si.pmt_secs = vidtv_psi_pmt_create_sec_for_each_pat_entry(m->si.pat,
+ 								     m->pcr_pid);
+--
 
