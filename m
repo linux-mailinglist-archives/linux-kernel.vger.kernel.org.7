@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-801737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58360B4496F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:21:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED342B44971
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3FA5A1A45
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C30B189F823
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5020C2E8E0A;
-	Thu,  4 Sep 2025 22:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1352E2E9ECD;
+	Thu,  4 Sep 2025 22:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PkE2PpGk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jnpaY9Fo"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JFgrqhSR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3MLuI6hE"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9845B28C5B8
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62F92E8DE9
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 22:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757024440; cv=none; b=MsEiARD5YRgXKJNXUoCPelQZhW9YkqBQLmVBFG7NvVnCjEL3i/+J3ManQ8a4GojoBhOmxq4zekUTlf5p98qJqcX/dCt/dm0RAHNlRxvqJdWvNW7kbe+R4oqpOTIfdZWTRRF3vnK1Xxl0ZEbSRKog/vLvpZTw40+V2JnPyVwVbww=
+	t=1757024442; cv=none; b=F4IhLcNJsE4aKfpZlqOHIjdl58IpQI9xsgORv2TQz9s8/e93UcoPtODlxNHxH65iX6ZG5OrQZl0JTWwx6EgHMh10JMFxhOyIXJmAgHPy52gmOX8ucl1oMLTYaDoDAWCxOzEFlomTO1AN3WRPMjNtQe+b+TVWgMgQaPtfAOD//Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757024440; c=relaxed/simple;
-	bh=M0F9lq48tY1eLiktc/kxubRZIIQwwDaTHi0Vw8w9eFM=;
+	s=arc-20240116; t=1757024442; c=relaxed/simple;
+	bh=mLGmoy+8sQC4ByUNI23jaaR+os/SUOAVMkc9Uv/+ixc=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=HnMrEzg+0avWK7h5ScbUKXp0OcSwwhsuPcyHIBkJGcZQ4N+LBNAw6YrhPu02R0a0to7hIFheTSCjSmzrqjfitlmx+qvLF0/KDkF+Eip24xmEQR9V6BY/XTKQcn+3bJOHRuo/VWfUrQbTDTidwL5IBGO1x9FsSdQvhTmu9cX9vCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PkE2PpGk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jnpaY9Fo; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=XWdthsmJAGnOQlmz6O0TyUga/FdvkNxJODm30OJccvPKIMn6Ubq33/xwz6I3Ng6gCGmO58ZAMxWbKYnzQy2A0NBEljcida6HNVjSiIFFURncVniiazHdtPVGGJG7ZiVnXG+F1SMfSiPlmzg1UoVVlPEfSGAoWb9ARmdee6jb6ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JFgrqhSR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3MLuI6hE; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250904185719.196095367@linutronix.de>
+Message-ID: <20250904185719.261280930@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757024436;
+	s=2020; t=1757024438;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=rCu1whNcmDRJpAqNalSd+z2VWZFK+hTQpQgFQ2lvWdE=;
-	b=PkE2PpGkrwIv64m30CQgWzHxlcV2Ou/0tC/1UtpdGn1RnPgz1zSk+GLfwmBZE4CxD3axnM
-	6qHGsBYljMlo4iCsayON0DdxYSuq5RtJjpeMNog01FCLSLbYhi2gk8R0Up9hyBmBPTu+6E
-	swmTnSaywpbDko2GvM6D8BRFMdWJe0bpJDD3xoX2B3R0dm212OFX3U3YK6sIaMB1clT1rB
-	V1s0gP67SlsErG6N4zuw/0nLvTxdewdRy3WtSMpu0n19uM1pVMgHUyKu0rASsl8rfOXUkP
-	SX+0tosJcRcG8teQcBDCyus9ea+Z/5V3imfEXAvlZkAnq+olN/2OVbzmCgyJzg==
+	 references:references; bh=B7vLQ2oonr5UpS/A0J8VoSxOKB10lfCLowOJpVJzgfY=;
+	b=JFgrqhSRfuqZApQY6YMLIOW+vL1p/cE4wyt+GBpRUhGDgbOEfT2mYCnzVlHx0GFEze4l1I
+	PYe4lyvmKOe5BYeibHqJGh3Z1XfKBN8NIZcDB94SEW1gyh0PyOdJ1VIlMRMtE2MZC9tzet
+	CFlIc1YGDY1FhpU3HLD77ZLcAoxODc06/sIxy7A9s8siORMI0w3z8QrX969rD5S7E8UB/u
+	CO+mk8y0LvSpR47a3hUb3M2NLlldoMTw0rBuyF+JAVKILlCbCTQeN5qymPTOH8BvF4Vd/k
+	sMt4XD9UiBUkc/QCMII7ApMmlbAxX665Gt1gvkjmToS5VuOcbVtbK9EW4k08aw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757024436;
+	s=2020e; t=1757024438;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=rCu1whNcmDRJpAqNalSd+z2VWZFK+hTQpQgFQ2lvWdE=;
-	b=jnpaY9Fo7keTSgi2ZYQSaUXZQlWyUX54aZEgqtPWF17VMdFvfdn4Crl5lbzU2do6icYA1C
-	MZURRSFPKZ6CqLBQ==
+	 references:references; bh=B7vLQ2oonr5UpS/A0J8VoSxOKB10lfCLowOJpVJzgfY=;
+	b=3MLuI6hEX4nWwwYc+VHpgap14HqcCbZSGK/UCr7NG1RkgOdXfQMGrzeK0T2uPosXTl0ZJM
+	irul0oLbbw2lT0Cg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Michael Jeanson <mjeanson@efficios.com>,
@@ -69,8 +69,7 @@ Cc: Michael Jeanson <mjeanson@efficios.com>,
  Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>,
  Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [patch V3 01/37] rseq: Avoid pointless evaluation in
- __rseq_notify_resume()
+Subject: [patch V3 02/37] rseq: Condense the inline stubs
 References: <20250904185336.943880027@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,47 +78,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  5 Sep 2025 00:20:35 +0200 (CEST)
+Date: Fri,  5 Sep 2025 00:20:37 +0200 (CEST)
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-The RSEQ critical section mechanism only clears the event mask when a
-critical section is registered, otherwise it is stale and collects
-bits.
+Scrolling over tons of pointless
 
-That means once a critical section is installed the first invocation of
-that code when TIF_NOTIFY_RESUME is set will abort the critical section,
-even when the TIF bit was not raised by the rseq preempt/migrate/signal
-helpers.
+{
+}
 
-This also has a performance implication because TIF_NOTIFY_RESUME is a
-multiplexing TIF bit, which is utilized by quite some infrastructure. That
-means every invocation of __rseq_notify_resume() goes unconditionally
-through the heavy lifting of user space access and consistency checks even
-if there is no reason to do so.
-
-Keeping the stale event mask around when exiting to user space also
-prevents it from being utilized by the upcoming time slice extension
-mechanism.
-
-Avoid this by reading and clearing the event mask before doing the user
-space critical section access with interrupts or preemption disabled, which
-ensures that the read and clear operation is CPU local atomic versus
-scheduling and the membarrier IPI.
-
-This is correct as after re-enabling interrupts/preemption any relevant
-event will set the bit again and raise TIF_NOTIFY_RESUME, which makes the
-user space exit code take another round of TIF bit clearing.
-
-If the event mask was non-zero, invoke the slow path. On debug kernels the
-slow path is invoked unconditionally and the result of the event mask
-evaluation is handed in.
-
-Add a exit path check after the TIF bit loop, which validates on debug
-kernels that the event mask is zero before exiting to user space.
-
-While at it reword the convoluted comment why the pt_regs pointer can be
-NULL under certain circumstances.
+lines to find the actual code is annoying at best.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -129,172 +97,69 @@ Cc: Boqun Feng <boqun.feng@gmail.com>
 
 
 ---
- include/linux/irq-entry-common.h |    7 ++--
- include/linux/rseq.h             |   10 +++++
- kernel/rseq.c                    |   66 ++++++++++++++++++++++++++-------------
- 3 files changed, 58 insertions(+), 25 deletions(-)
+ include/linux/rseq.h |   47 ++++++++++++-----------------------------------
+ 1 file changed, 12 insertions(+), 35 deletions(-)
 ---
 
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -2,11 +2,12 @@
- #ifndef __LINUX_IRQENTRYCOMMON_H
- #define __LINUX_IRQENTRYCOMMON_H
- 
-+#include <linux/context_tracking.h>
-+#include <linux/kmsan.h>
-+#include <linux/rseq.h>
- #include <linux/static_call_types.h>
- #include <linux/syscalls.h>
--#include <linux/context_tracking.h>
- #include <linux/tick.h>
--#include <linux/kmsan.h>
- #include <linux/unwind_deferred.h>
- 
- #include <asm/entry-common.h>
-@@ -226,6 +227,8 @@ static __always_inline void exit_to_user
- 
- 	arch_exit_to_user_mode_prepare(regs, ti_work);
- 
-+	rseq_exit_to_user_mode();
-+
- 	/* Ensure that kernel state is sane for a return to userspace */
- 	kmap_assert_nomap();
- 	lockdep_assert_irqs_disabled();
 --- a/include/linux/rseq.h
 +++ b/include/linux/rseq.h
-@@ -66,6 +66,14 @@ static inline void rseq_migrate(struct t
- 	rseq_set_notify_resume(t);
+@@ -101,44 +101,21 @@ static inline void rseq_execve(struct ta
+ 	t->rseq_event_mask = 0;
  }
  
-+static __always_inline void rseq_exit_to_user_mode(void)
-+{
-+	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
-+		if (WARN_ON_ONCE(current->rseq && current->rseq_event_mask))
-+			current->rseq_event_mask = 0;
-+	}
-+}
-+
- /*
-  * If parent process has a registered restartable sequences area, the
-  * child inherits. Unregister rseq for a clone with CLONE_VM set.
-@@ -118,7 +126,7 @@ static inline void rseq_fork(struct task
- static inline void rseq_execve(struct task_struct *t)
- {
- }
+-#else
 -
-+static inline void rseq_exit_to_user_mode(void) { }
- #endif
+-static inline void rseq_set_notify_resume(struct task_struct *t)
+-{
+-}
+-static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+-					     struct pt_regs *regs)
+-{
+-}
+-static inline void rseq_signal_deliver(struct ksignal *ksig,
+-				       struct pt_regs *regs)
+-{
+-}
+-static inline void rseq_preempt(struct task_struct *t)
+-{
+-}
+-static inline void rseq_migrate(struct task_struct *t)
+-{
+-}
+-static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+-{
+-}
+-static inline void rseq_execve(struct task_struct *t)
+-{
+-}
++#else /* CONFIG_RSEQ */
++static inline void rseq_set_notify_resume(struct task_struct *t) { }
++static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
++static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
++static inline void rseq_preempt(struct task_struct *t) { }
++static inline void rseq_migrate(struct task_struct *t) { }
++static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
++static inline void rseq_execve(struct task_struct *t) { }
+ static inline void rseq_exit_to_user_mode(void) { }
+-#endif
++#endif  /* !CONFIG_RSEQ */
  
  #ifdef CONFIG_DEBUG_RSEQ
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -324,9 +324,9 @@ static bool rseq_warn_flags(const char *
- 	return true;
- }
- 
--static int rseq_need_restart(struct task_struct *t, u32 cs_flags)
-+static int rseq_check_flags(struct task_struct *t, u32 cs_flags)
- {
--	u32 flags, event_mask;
-+	u32 flags;
- 	int ret;
- 
- 	if (rseq_warn_flags("rseq_cs", cs_flags))
-@@ -339,17 +339,7 @@ static int rseq_need_restart(struct task
- 
- 	if (rseq_warn_flags("rseq", flags))
- 		return -EINVAL;
 -
--	/*
--	 * Load and clear event mask atomically with respect to
--	 * scheduler preemption and membarrier IPIs.
--	 */
--	scoped_guard(RSEQ_EVENT_GUARD) {
--		event_mask = t->rseq_event_mask;
--		t->rseq_event_mask = 0;
--	}
+ void rseq_syscall(struct pt_regs *regs);
 -
--	return !!event_mask;
-+	return 0;
- }
+-#else
+-
+-static inline void rseq_syscall(struct pt_regs *regs)
+-{
+-}
+-
+-#endif
++#else /* CONFIG_DEBUG_RSEQ */
++static inline void rseq_syscall(struct pt_regs *regs) { }
++#endif /* !CONFIG_DEBUG_RSEQ */
  
- static int clear_rseq_cs(struct rseq __user *rseq)
-@@ -380,7 +370,7 @@ static bool in_rseq_cs(unsigned long ip,
- 	return ip - rseq_cs->start_ip < rseq_cs->post_commit_offset;
- }
- 
--static int rseq_ip_fixup(struct pt_regs *regs)
-+static int rseq_ip_fixup(struct pt_regs *regs, bool abort)
- {
- 	unsigned long ip = instruction_pointer(regs);
- 	struct task_struct *t = current;
-@@ -398,9 +388,11 @@ static int rseq_ip_fixup(struct pt_regs
- 	 */
- 	if (!in_rseq_cs(ip, &rseq_cs))
- 		return clear_rseq_cs(t->rseq);
--	ret = rseq_need_restart(t, rseq_cs.flags);
--	if (ret <= 0)
-+	ret = rseq_check_flags(t, rseq_cs.flags);
-+	if (ret < 0)
- 		return ret;
-+	if (!abort)
-+		return 0;
- 	ret = clear_rseq_cs(t->rseq);
- 	if (ret)
- 		return ret;
-@@ -430,14 +422,44 @@ void __rseq_handle_notify_resume(struct
- 		return;
- 
- 	/*
--	 * regs is NULL if and only if the caller is in a syscall path.  Skip
--	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
--	 * kill a misbehaving userspace on debug kernels.
-+	 * If invoked from hypervisors or IO-URING, then @regs is a NULL
-+	 * pointer, so fixup cannot be done. If the syscall which led to
-+	 * this invocation was invoked inside a critical section, then it
-+	 * will either end up in this code again or a possible violation of
-+	 * a syscall inside a critical region can only be detected by the
-+	 * debug code in rseq_syscall() in a debug enabled kernel.
- 	 */
- 	if (regs) {
--		ret = rseq_ip_fixup(regs);
--		if (unlikely(ret < 0))
--			goto error;
-+		/*
-+		 * Read and clear the event mask first. If the task was not
-+		 * preempted or migrated or a signal is on the way, there
-+		 * is no point in doing any of the heavy lifting here on
-+		 * production kernels. In that case TIF_NOTIFY_RESUME was
-+		 * raised by some other functionality.
-+		 *
-+		 * This is correct because the read/clear operation is
-+		 * guarded against scheduler preemption, which makes it CPU
-+		 * local atomic. If the task is preempted right after
-+		 * re-enabling preemption then TIF_NOTIFY_RESUME is set
-+		 * again and this function is invoked another time _before_
-+		 * the task is able to return to user mode.
-+		 *
-+		 * On a debug kernel, invoke the fixup code unconditionally
-+		 * with the result handed in to allow the detection of
-+		 * inconsistencies.
-+		 */
-+		u32 event_mask;
-+
-+		scoped_guard(RSEQ_EVENT_GUARD) {
-+			event_mask = t->rseq_event_mask;
-+			t->rseq_event_mask = 0;
-+		}
-+
-+		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event_mask) {
-+			ret = rseq_ip_fixup(regs, !!event_mask);
-+			if (unlikely(ret < 0))
-+				goto error;
-+		}
- 	}
- 	if (unlikely(rseq_update_cpu_node_id(t)))
- 		goto error;
-
+ #endif /* _LINUX_RSEQ_H */
 
 
 
