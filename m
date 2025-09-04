@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-800837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0766B43CCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:14:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35A1B43CCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB55585498
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:14:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 778084E3D36
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588F430149F;
-	Thu,  4 Sep 2025 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kc1cN+MP"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5828C3002D8;
-	Thu,  4 Sep 2025 13:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308E1191F89;
+	Thu,  4 Sep 2025 13:15:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAF5301022
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991677; cv=none; b=cxgJqdXlndqtUXNRQMajqcjDv3i3U0C1vB3tzy5icHkE6NT5wwkQoyAlCnNHVDzHGh6Dwtg0YQ1rHO2BMLnpeAzyjlfOuU5qN7ho3sw2dJvQ0QDTQ0+ZGAgWky/ZnA6XMSII+6fugdKnHwiOGs/wE49vfI26cl+MdaL9QXaqjM8=
+	t=1756991709; cv=none; b=l7F5txvHE6UuYv+7bKYdEJgO7+R2N9GgIef+ATZZboPjf7fjT4Er2Z98zcAIv08Q0fukyPxUKvW1BVjF4Fqtfv/D4aYlErVlRO9RhCctYEOhJtsPx1Ie5PM5fCCE/in2cepZ8MPWfa28J5Ija7rAKl3SnNEkQ4htdicm1YxdmbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991677; c=relaxed/simple;
-	bh=dEe3oGeQMtPB8wuvNB8FBuJzRWiGuoUdh066kutEK9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktnGx/XCzJdpC84dj+k0FSjGUtV4mCniktwaZli2ge0e0+BKk8mAHdhItPW27ecdtkNcgBgadv6UCoinSmDoPKV5RMlZojuAMTpUKfbC7yJiM/9Bmt5mFibzXagll/6DDeleXfx6eqliJYkXIba6QARwwVNv9FRg37qKR8XV8H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kc1cN+MP; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d60528734so9010627b3.2;
-        Thu, 04 Sep 2025 06:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756991675; x=1757596475; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q1hNBrk05MCGZgtGPl87X/mVFXWaCSlKuwxFY/ixXTs=;
-        b=Kc1cN+MPsECYuBqqiz+XkzHcsAfajjM0Gc5nD9ypN/IESj1J9GuLpROzl7izJdWkVx
-         4o2tRHEeGR6eEBYJKCHzFNatU0dWdfGwPr9xBuTOQFDLH2SXu9EXN0TWRwvb+2S1Oc+X
-         UFEJJQaoT7DWyAuFDFMq7+tcwfk5mzjJlNl0CvwPsUvxns21bhQSGzTOS6HealAylnsH
-         cJnU7syFgIQ4TyjfCg23bOGGmQby5UZSVk/n6PXu6foU2aw2l9VxOaNa4kaHTH+9nsuJ
-         lPEQdgBHmMnxxpsnhgPu04KXumfDQugLZjVXPz9PkcRneRhm4qhWbBURZxqp3SddI4am
-         6wGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756991675; x=1757596475;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q1hNBrk05MCGZgtGPl87X/mVFXWaCSlKuwxFY/ixXTs=;
-        b=jfstJqUXMryJtxU0KPGWm80jXMxDD+5Bu+85fF7ADOkpO6dole0M+1qOkryGMUpU0W
-         KnMoe0ObuyJECz8k6zZX/Bhbkz4yqhVo/R/eDxmZoBAyNcEIFJWyJo2WDnzCeC7R/r2i
-         gBFbP7R+DSD4D0592/itmG+aNt6S6GU2byVlzoVu8y4tFtX6v67/mPoZ09xw05YKfuTY
-         vVumrC/TrB2Z66gjs5ehRhf8IeBel7YiLUJaC/HLbfjm0LLixycFLd8rsMfFkhD3Q8qm
-         FfsOnhYO4CaEsz+xvF6/XRB80huj8VfVZ4yyKlJhc5wcwR6nChWc+WUzesKzwn6ziKtJ
-         v4Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3SwIXV1/WWCRQORTcd3NCkjdqPzEArMRuRzYNSWpgDrkDBe/M+79CmC0TOA4s0QlwvlYAn6kP4SjfRnM=@vger.kernel.org, AJvYcCVLOl8CjGWV6DGnrW5aNTmDH4yI4XHDtpNTP6uqsWEfo87wKxGPJeuA8yIvOQ+Gqb182uQVtxFbGtdRwQ==@vger.kernel.org, AJvYcCVlxK038NgnVR/IONfTRO0gW/11gzJIcPEsf3SdpRpKOuliffGu66KgYDrpxKzxr3wdB5CY/snb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ+VsMFP5cIvR0X4HPPxXEMg1cuUSIVnExQedYepjvtZQmn9Y/
-	KjiqBGp7bFBszahRBGAP+xU+aQNRlHQuia61NqjSOdZpLB5Znugfv+pE6BLHYr3x
-X-Gm-Gg: ASbGncvUFUnlDN74QSfnb4f3DhVMOvUAkFVAPpeHVThBkLVqoCOTIWQ+caqLNY/3wK3
-	nc6bUAxMdGlPpLMChw46UbutO9rJSs24N5z8EFKC+BPNjaJCQrjeFas0f7QAovmkQJJNU5tUC/h
-	wnacQAtirNT6yXLMyxweKnC30NEwozkonXNh4krlrqdZcz0GljaTwREKKYsTAeTaavE1CaV8qdm
-	eMwUBsmHjtsR6xz/8HGWMsVwtaMQ1O1ph+Vjvxpz0dZHflk5xX+Lk8Jn9TyealnQBQCaAnY4Sig
-	yVh9uaRm8ULRMsPyMMg2/Pecf+qGDCwfCpKgJ0HQuKukW6NM+Cp+fRrjy1pG1u4jbU/Ob0eVOcw
-	ViAFW0rVIjh7dB+WEmBYoscnaq+PUvCmmi/9L+HcmjQ==
-X-Google-Smtp-Source: AGHT+IFNskK3EFi2xtyUCVxgOnvSd1XZWTDJnBX3UGI8lrc9DMhpnA8IpUMHa4JoiklpSdQDgNd34g==
-X-Received: by 2002:a05:690c:4513:b0:721:6a43:c960 with SMTP id 00721157ae682-722763cfc0amr199134677b3.21.1756991675072;
-        Thu, 04 Sep 2025 06:14:35 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a82d6ad1sm21418977b3.5.2025.09.04.06.14.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 06:14:34 -0700 (PDT)
-Date: Thu, 4 Sep 2025 06:14:31 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Carolina Jubran <cjubran@nvidia.com>
-Cc: Mark Bloch <mbloch@nvidia.com>, Paolo Abeni <pabeni@redhat.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Subject: Re: [PATCH net-next V2 1/3] ptp: Add ioctl commands to expose raw
- cycle counter values
-Message-ID: <aLmQt838Yt-Vu_bL@hoboy.vegasvil.org>
-References: <1755008228-88881-1-git-send-email-tariqt@nvidia.com>
- <1755008228-88881-2-git-send-email-tariqt@nvidia.com>
- <ca8b550b-a284-4afc-9a50-09e42b86c774@redhat.com>
- <1384ef6c-4c20-49fb-9a9f-1ee8b8ce012a@nvidia.com>
- <aLAouocTPQJezuzq@hoboy.vegasvil.org>
- <3f44187b-ce41-47e8-b8b1-1b0435beb779@nvidia.com>
+	s=arc-20240116; t=1756991709; c=relaxed/simple;
+	bh=yuK2F22uNiu3WpPR/1wG4I0Pa9KpQmCvCZIlxl4EiVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tzkBp3eo+uI0d6drz99JX6+pn0Izz5UvzxSOd5sFIGy+DBsc+AUSSyFKO0C/igR3Ny/AEDmYgTrr0hLRlGsQLbRpbZbl91SXOJ6iBmsAyIISzVSxlG3lvfeg/K8fGpnDgz7GaGwADZAU/2f8/kymeR10OTQUUb9umo3s94xD2VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C84F1756;
+	Thu,  4 Sep 2025 06:14:59 -0700 (PDT)
+Received: from [10.1.26.85] (e127648.arm.com [10.1.26.85])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A7213F6A8;
+	Thu,  4 Sep 2025 06:15:06 -0700 (PDT)
+Message-ID: <3dae6610-7a1f-459d-8280-3c8d00117495@arm.com>
+Date: Thu, 4 Sep 2025 14:15:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f44187b-ce41-47e8-b8b1-1b0435beb779@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH sched_ext/for-6.18] sched_ext: Fix NULL dereference in
+ scx_bpf_cpu_rq() warning
+To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>
+Cc: Jake Hillion <jakehillion@meta.com>, sched-ext@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250904125522.561737-1-arighi@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250904125522.561737-1-arighi@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 03:09:23PM +0300, Carolina Jubran wrote:
+On 9/4/25 13:55, Andrea Righi wrote:
+> When printing the deprecation warning for scx_bpf_cpu_rq(), we may hit a
+> NULL pointer dereference if the kfunc is called before a BPF scheduler
+> is fully attached, for example, when invoked from a BPF timer or during
+> ops.init():
 > 
-> On 28/08/2025 13:00, Richard Cochran wrote:
-> > On Mon, Aug 25, 2025 at 08:52:52PM +0300, Mark Bloch wrote:
-> > > 
-> > > On 19/08/2025 11:43, Paolo Abeni wrote:
-> > > > can we have a formal ack here?
+>  [   50.752775] BUG: kernel NULL pointer dereference, address: 0000000000000331
+>  ...
+>  [   50.764205] RIP: 0010:scx_bpf_cpu_rq+0x30/0xa0
+>  ...
+>  [   50.787661] Call Trace:
+>  [   50.788398]  <TASK>
+>  [   50.789061]  bpf_prog_08f7fd2dcb187aaf_wakeup_timerfn+0x75/0x1a8
+>  [   50.792477]  bpf_timer_cb+0x7e/0x140
+>  [   50.796003]  hrtimer_run_softirq+0x91/0xe0
+>  [   50.796952]  handle_softirqs+0xce/0x3c0
+>  [   50.799087]  run_ksoftirqd+0x3e/0x70
+>  [   50.800197]  smpboot_thread_fn+0x133/0x290
+>  [   50.802320]  kthread+0x115/0x220
+>  [   50.804984]  ret_from_fork+0x17a/0x1d0
+>  [   50.806920]  ret_from_fork_asm+0x1a/0x30
+>  [   50.807799]  </TASK>
+> 
+> Fix this by only printing the warning once the scheduler is fully
+> registered.
+> 
+> Fixes: 5c48d88fe0049 ("sched_ext: deprecation warn for scx_bpf_cpu_rq()")
+> Cc: Christian Loehle <christian.loehle@arm.com>
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>  kernel/sched/ext.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 489462290142a..04fefd34db238 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -6362,17 +6362,20 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
+>   */
+>  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+>  {
+> -	struct scx_sched *sch = scx_root;
+> +	struct scx_sched *sch;
+>  
+>  	if (!kf_cpu_valid(cpu, NULL))
+>  		return NULL;
+>  
+> -	if (!sch->warned_deprecated_rq) {
+> +	rcu_read_lock();
+> +	sch = rcu_dereference(scx_root);
+> +	if (sch && sch->warned_deprecated_rq) {
+>  		printk_deferred(KERN_WARNING "sched_ext: %s() is deprecated; "
+>  				"use scx_bpf_locked_rq() when holding rq lock "
+>  				"or scx_bpf_cpu_curr() to read remote curr safely.\n", __func__);
+>  		sch->warned_deprecated_rq = true;
+>  	}
+> +	rcu_read_unlock();
+>  
+>  	return cpu_rq(cpu);
+>  }
 
-Looks good to me.
-
-Thanks,
-Richard
+Ah yes of course.
+I guess the other ones that can happen during the actual lifetime
+of the scheduler have a likely(sch) around it, which we could
+add here as well.
 
