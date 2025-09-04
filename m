@@ -1,123 +1,92 @@
-Return-Path: <linux-kernel+bounces-800371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F81BB436E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:20:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C86BB436EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B8B3AE4F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE825E7A2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BD22EF662;
-	Thu,  4 Sep 2025 09:19:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A082EFD8F;
+	Thu,  4 Sep 2025 09:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqN8whEd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049362DFA26;
-	Thu,  4 Sep 2025 09:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C6428153C;
+	Thu,  4 Sep 2025 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977597; cv=none; b=IbyI0DfUtkjJo3TJhaPXsHbbAHCi320mdsZhh0QCru580OH78sdzS8z6qv1bPe0lHgCKYRKBoA4jnbYnjqGNqJQIVHs56oB4DVpN/pUU3CiT61ZPpPizR8wVtmXhSqbYQmCyoJvKAVanXgOZLAjSFuLWh9Kj/2OUj3Nv+tqwJ34=
+	t=1756977634; cv=none; b=ivPO0UC28j16XKKQXsmQRtPV3B/sFmvqJtvpYFhV/joGJ4teaAWZsKSv/JZq7eHjefO/aZNew7BE6TYkpNSweQ+lbjjncTj+todzKC3vY4/DisqNzsnmZ0dDNYcsD8TPvC8puHQRPYiY8bJvJG+mdgKpYiOb34sFvwJ4u4APF+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977597; c=relaxed/simple;
-	bh=gcxK35ct7x68sSLxRnUL8USHJPcYxUnjSbIyvrRLSPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BPUt/gJ1i9GLbFNTcrU8r964OJRsNqr0MQ5fktj1KZxuCyPtzkbn+WHKQV2ZBuxe7EqNmsPLGTrVviLZRmfzFfdZ7eu9Gna6wg2wyT2rP+fxmvINILq185+i4Mqxsla10ZXTGWa8T2yazlFvrjem9MwUJcGq9wqtLgiT2w1X/30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cHYpX5x5dzYQvHT;
-	Thu,  4 Sep 2025 17:19:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4FAC11A058E;
-	Thu,  4 Sep 2025 17:19:47 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY2xWblocc9nBQ--.16239S3;
-	Thu, 04 Sep 2025 17:19:47 +0800 (CST)
-Message-ID: <e4da9027-abb4-76d1-04df-fff9798baae1@huaweicloud.com>
-Date: Thu, 4 Sep 2025 17:19:45 +0800
+	s=arc-20240116; t=1756977634; c=relaxed/simple;
+	bh=pIaTpK25gjhy0I3MoReopJjl9vx8OfRgqgs85pzEqf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMSbfUd5oQ4nDaeIDdpVuK/skbqYHRyTX0zCeXJAv0fRKxCekZNPxPqMnKSLf8R/UCqowmcHLanctdhBmae/aR9m6UsdXngKuv4IHMshKATE/nhIAJsPD5ICRw35GjHKGHURU56FAp+8CLsLDqDZc//t+elNw95twmEMNInlCUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqN8whEd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1E4C4CEF1;
+	Thu,  4 Sep 2025 09:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756977634;
+	bh=pIaTpK25gjhy0I3MoReopJjl9vx8OfRgqgs85pzEqf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XqN8whEdCM58Vl2+xGqlQHW1Fx7byfe9PhOSrVQW4639OhPE2YdOW25P4eWoE7U4j
+	 sJgtwieKE8FH+L6wjE4zxr4zUjCemWzaG74vFtelwOJgmCFLcUmVGPCnJyE13fv76o
+	 dgcBp9+pyowRe/c4RdMRqWNMHlKvLANMB+GYyW5fph6BJPkFyl9+yOlhYlaql1VtZ5
+	 6QJAfuq+mhUd8lOe0FERlV2G6NzETJTa5/7QX+Lq/WIoJdyXdrinvComXegiUsKlHk
+	 +PU5D5SVloU6p7JMl13FDHIw4FL+3KQgWEiPObnDd3bXfNc6mbR1Bap8OEu4SsQq1f
+	 0J5eBeRm7yZDQ==
+Date: Thu, 4 Sep 2025 11:20:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+	Sari Khoury <sari.khoury@mobileye.com>
+Subject: Re: [PATCH 01/19] dt-bindings: soc: mobileye: rename to eyeq-olb.yaml
+Message-ID: <20250904-vivid-seal-from-nibiru-8c50b5@kuoka>
+References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
+ <20250903-clk-eyeq7-v1-1-3f5024b5d6e2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v7 md-6.18 11/11] md/md-llbitmap: introduce new lockless
- bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, xni@redhat.com,
- colyli@kernel.org, corbet@lwn.net, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hare@suse.de
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com, hailan@yukuai.org.cn
-References: <20250829080426.1441678-1-yukuai1@huaweicloud.com>
- <20250829080426.1441678-12-yukuai1@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250829080426.1441678-12-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY2xWblocc9nBQ--.16239S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF48ZFyUuF1DuFykCFW7Arb_yoW8JFWkpF
-	Z7K398CrZ8Ar4fuw1xJrWxZa4rZrWkZr1fKrWrt347Zr98Grn3WF1xKa1FgFyvyryxWF9I
-	vr4UKryrGr90kaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRB
-	Vb9UUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250903-clk-eyeq7-v1-1-3f5024b5d6e2@bootlin.com>
 
+On Wed, Sep 03, 2025 at 02:47:08PM +0200, Beno=C3=AEt Monin wrote:
+> Drop the 5 from the binding name as the OLB described in it are found
+> in multiple Mobileye eyeQ SoCs.
+>=20
+> The binding already contains entries for eyeQ6L and eyeQ6H OLBs
+> alongside the one for the eyeQ5.
+>=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
+> ---
+>  .../soc/mobileye/{mobileye,eyeq5-olb.yaml =3D> mobileye,eyeq-olb.yaml}  =
+  | 2 +-
 
+No, we don't do that. That's unneeded churn.
 
-在 2025/8/29 16:04, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Redundant data is used to enhance data fault tolerance, and the storage
-> method for redundant data vary depending on the RAID levels. And it's
-> important to maintain the consistency of redundant data.
-> 
-> Bitmap is used to record which data blocks have been synchronized and which
-> ones need to be resynchronized or recovered. Each bit in the bitmap
-> represents a segment of data in the array. When a bit is set, it indicates
-> that the multiple redundant copies of that data segment may not be
-> consistent. Data synchronization can be performed based on the bitmap after
-> power failure or readding a disk. If there is no bitmap, a full disk
-> synchronization is required.
-> 
-> Due to known performance issues with md-bitmap and the unreasonable
-> implementations:
-> 
->   - self-managed IO submitting like filemap_write_page();
->   - global spin_lock
-> 
-> I have decided not to continue optimizing based on the current bitmap
-> implementation, this new bitmap is invented without locking from IO fast
-> path and can be used with fast disks.
-> 
-> For designs and details, see the comments in drivers/md-llbitmap.c.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+If you wanted to rename, you could try when adding new compatibles. And
+maybe you even tried and received comment for that.
 
-LGTM
+NAK
 
-Reviewed-by: Li Nan <linan122@huawei.com>
-
--- 
-Thanks,
-Nan
+Best regards,
+Krzysztof
 
 
