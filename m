@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-801437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E52B444FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:03:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136A7B444FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E22E1BC42EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB693B9409
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719B634165E;
-	Thu,  4 Sep 2025 18:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70BC33EB0F;
+	Thu,  4 Sep 2025 18:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWyi0H/B"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="or71Y3L9"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CDB305E2C;
-	Thu,  4 Sep 2025 18:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADCC1D9663
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757008970; cv=none; b=e34puenMos1gpEZwtLy4FiZ0tc1BKqmfq0DRRrHYAhBlgnhgSEAeq9NbOAxMbAHE0Jovmdwc1Z9mEDkchxseJJSCOpxxuByJ1htGvd6MvqdGg1VayXKqPeoPnjEpOiEu3C51MOpKjFgVsf4TuWwCEBRHPgEMhLYkBSPRKeHJPH0=
+	t=1757009069; cv=none; b=s1dh8YTX4O13L8sIi3QrHR7VVjKUBszPc/i0T7F/SP38acdgb9JuqVD3Jx/cGox1TBLrrM2uhLcEdlN9SHOAoGaoG5iKxsf6gql56GP3KTnUaWjWet6mFA64yIkcEyxvAeysPUc1+Trv4/5RRCkNgM+yB7a3ZbNnbalS3tmKET8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757008970; c=relaxed/simple;
-	bh=9m2+Knp456ZCEyzvARIpHs11Vo3J1om399jUM7dRa3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZtOGK2OrMk8DJkTR3PzumXF70+kLKYgtwgVfmHxxTEf7tedUcq7fxy4lhfY88n/6HdYw88KwCA3YVIwofllF+2R6Qxqd0FWDrgrZ/ORhqiiiNBtzT09Ao+3Spu6JUKSm6H/eUlEvZeDtGqvd3bzQxlU/u97xjDlSbrpQZTTRs9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWyi0H/B; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24c786130feso12746125ad.2;
-        Thu, 04 Sep 2025 11:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757008969; x=1757613769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9m2+Knp456ZCEyzvARIpHs11Vo3J1om399jUM7dRa3A=;
-        b=EWyi0H/Bq6BabMFY83+/juvp4AimcmG/QjAADlLubz15ECNNXZynk98w6RgETUAPc5
-         8C6o+G9BzvuH7mWiQTmq6DrtvvMAEUc9FrWuNhSNXkwHqyiU2yGQPH+fPzSp5TacqScT
-         boXRjotu4f4PwlSL5wA7UEl1jndWAhRvRZD/G5qQdX56hAGxDhVUk+YSvRTxJrl91QDv
-         Fcc8zzQlECdkNGiNipkGXwP8Y7iNmwts7dQiW8EnGcpPgBE2G5RzQCav4cWgv0tFPuBW
-         CP/O+UAlgx84S/t4uPYk/BHe/h8y7nFxQPn9oO3xqIf28hY8T0BMHBakpXcEvwKgghgt
-         5VWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757008969; x=1757613769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9m2+Knp456ZCEyzvARIpHs11Vo3J1om399jUM7dRa3A=;
-        b=sAzwtzG7lRq2stJzzJsA0FRUvhZHDg/0AQI0pmBuBUlErm0vsWuTNlwToY7EsSLDBW
-         iRAgi+8lDRJnOIWr+gQZkC2aUjUXtK0AgoEh6qmf4H1CVzMkKTpH0WB7NdC8x3F7nt3o
-         6Kvwsj2SlhW84SDnkrslenNOmnRog7VCFgbxlKcxOcc8VBBYds6ZXOcKjQnXJNlk8QJH
-         YdHO2z+hfoS+0cAoD1Xe5dwbfk0nZ9TmnviMRH2odanjFRwUb17IYBvHC6zVk5PlFuzd
-         zzoIe/sdVpdnjIS8q8L4xN4taqeUVJO+Gwa2D50edD5HZupx4Kqzx5lgsjZOQ4AjnIox
-         rq0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPNHKETYSMEck+QZ7w4jllGrDi+c3MqANJao2QaKYBIK9AdlnKI36CsG56i3kefBBwtCzcqZt3dVy8cOYc@vger.kernel.org, AJvYcCW2bTyVlfpZtWd2zZz3cad+YYIDlTA9b+9Zu8dSumB0A+I0ir8dDqUjJgwRKw1vDYm8B2coB6ocYVv68xkCfY4=@vger.kernel.org, AJvYcCX6au/nIU6b4pEJB0YYdJd0Am7m7GclztTvAX6tm6KCtXecCnbQNKBc+e9KOsApVT+esLqE3CAV1yyHFfddl+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRSnQleaBrViV/gYMegagvvjUtiSW3xBv+5fQ+9l3okvVGsdmT
-	ycJCx1WFUMMJnxL5dco0iiBZDSs3tYuwHwdmtI//zC5RcQnjFy3vp/0Z
-X-Gm-Gg: ASbGncv4kjOmw77w5uRB9VhHhZfRUM702FabiaETHCLWc0MCyl8VG/vZISELC1pt7rW
-	xWby8nrS2DfAenCguNO+Sl+u6Vyqx0C7/EZ2mfgG7c7e/2sx96dl2He0UvIr4fm9lKN96vl1ozB
-	U1VacRcDRWVy5T3Zt/grPwPQMlJYmwq/Rv7vUbj30tY7px5GWWCFN8rnb0LQ+auC7sf/Nl9lEjk
-	qunZjPFh4zLt1gQBrTHMpqKH3zWZkF1Ro2dVuvKXiOCFS3zj1b5Hbjk/nPMO4bG7A8tVQLSR5m8
-	4OgH+bJDquBb96Yc35v7+2U9snfDhm+ATUIMWCVNUjdof/Ln1NX+VMpCEkFvpeRaDrR2zy0BhD8
-	OJU/mVckPPj1QT+Bk6GkSpvYZXQmV1xxPQbT1Johh3Us=
-X-Google-Smtp-Source: AGHT+IFt1YdwQYa6uf0UKpSYSWeB0rrSwFVcSYr7JUSX1VqIFL6DRixZ0NE42ePMXBIA1aWC7I59Wg==
-X-Received: by 2002:a17:903:283:b0:24c:e6a6:9e42 with SMTP id d9443c01a7336-24ce6a6b740mr14589495ad.27.1757008968372;
-        Thu, 04 Sep 2025 11:02:48 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b020a7cb5sm89280895ad.115.2025.09.04.11.02.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 11:02:47 -0700 (PDT)
-Date: Thu, 4 Sep 2025 14:02:45 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Burak Emir <bqe@google.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Carlos LLama <cmllamas@google.com>,
-	Pekka Ristola <pekkarr@protonmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v15 0/5] rust: adds Bitmap API, ID pool and bindings
-Message-ID: <aLnURXW_ZiX2iJd_@yury>
-References: <20250904165015.3791895-1-bqe@google.com>
+	s=arc-20240116; t=1757009069; c=relaxed/simple;
+	bh=DIZBWwEho42VtT5JhE7AAeiMpcUkrRGIBo+FRZdRkW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tJzDs5ptKegftNM9Pp5yPPj3FvcXGoXCEIBmQpt0dGN2CU/nYP9OVIq1j4plU1v9f9/7n4jW7g4VACkBUgyV5JJ/Tn5LLAMHqdOkbJM8cj7k+TPrLI8R4djutM06IiebcOD61XxrJiqm0niYlAc09vx9RwbJvkDZ7n7UOgcxm/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=or71Y3L9; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Message-ID: <3ec43f82-26ad-478d-8470-31ab4719cc2a@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1757009059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eqcJUFkw3lfYabmECLa0bCXwkv5VvVIV6gzH7YTUci4=;
+	b=or71Y3L9Fo+tKY03r0JQIZNejIO+T7cIUz51B2XLV1xQBqL0/RE/5TPmSmZZf/m/5Mm2BY
+	jNhAkntzH5Jtj5tKaH2mOKUSw8kUBfSEMDb5YCJKEnCkwTzwo57Te4yxs9mHTEPPqNQbSG
+	0LlZQZaMc0pNsA/BkOcAmJo7bqMr5EC+7BV8fu0ktMa/doMdbkZKp60Xp4d1Y6Q6X35wzh
+	CA7r9498ls+XIQgLap+5NknSq22j4TptwSYWELyCspMl7gGvW6r76TGDmToKXT05TyuMSC
+	8SpfJBvRi2GyBwWTXw4v8AFbCE3qgKtmN41C8thraW/Xd1SYF9eUYS9Sks+aoA==
+Date: Thu, 4 Sep 2025 20:04:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904165015.3791895-1-bqe@google.com>
+Subject: Re: [PATCH v1 01/10] drm: panel-orientation-quirks: Add AOKZOE A1 Pro
+To: Antheas Kapenekakis <lkml@antheas.dev>, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250904175025.3249650-1-lkml@antheas.dev>
+ <20250904175025.3249650-2-lkml@antheas.dev>
+Content-Language: en-US
+From: =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>
+Organization: Manjaro Community
+In-Reply-To: <20250904175025.3249650-2-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=philm@manjaro.org smtp.mailfrom=philm@manjaro.org
 
-On Thu, Sep 04, 2025 at 04:50:04PM +0000, Burak Emir wrote:
-> This series adds a Rust bitmap API for porting the approach from
-> commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
-> to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
+On 9/4/25 19:50, Antheas Kapenekakis wrote:
+> The AOKZOE A1 Pro has a portrait 16:10 panel, add a quirk for it.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index 3a218fb592ce..f5c7275cf026 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -179,6 +179,12 @@ static const struct dmi_system_id orientation_data[] = {
+>   		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Win600"),
+>   		},
+>   		.driver_data = (void *)&lcd720x1280_rightside_up,
+> +	}, {	/* AOKZOE A1 Pro */
+> +		.matches = {
+> +		 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AOKZOE"),
+> +		 DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "AOKZOE A1 Pro"),
+> +		},
+> +		.driver_data = (void *)&lcd1200x1920_leftside_up,
+>   	}, {	/* Asus T100HA */
+>   		.matches = {
+>   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
 
-Added in bitmap-for-next for testing. Thanks!
+Reviewed-by: Philip Müller <philm@manjaro.org>
+
+-- 
+Best, Philip
 
