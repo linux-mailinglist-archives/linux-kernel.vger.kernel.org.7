@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-801802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59147B44A02
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AD1B44A1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5933B71D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C0E51882F2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323E52F5307;
-	Thu,  4 Sep 2025 22:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D032EE262;
+	Thu,  4 Sep 2025 23:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzfKQRY5"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ndKRIeWU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61D92BE020;
-	Thu,  4 Sep 2025 22:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483FC2EB5DE
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757026610; cv=none; b=bVMI9xH+IOKwzz+jdvDUNLHTp3FHCRofxhlcem1RjTdloIj8PFXRrhBV63gnPJfDUZP3vUTbO63phBoDHQ8xiLlmZzjfZlVTAb1oRFys/r4Os/LX+y3cW09v6HEXDjDJwuNgcxBGnBRZk7XICbrVa/4FEnHMLVDSMxLUXCtpqUs=
+	t=1757027081; cv=none; b=AmGfa4sFnoe4WtVhP+ZkmFBY/gpGUl5RpT3Qk8gGScO75uPBco3rOHLhSU/57bjSP/0Q+5aZSQ9vET8CnFqz+Q2cIMl8ebUUAKHbpvZHi8U98i94aXpJ6PElt5isrT+pfkmsnrPT6YiogGSvwEIuYkDtV2Xoh49Vv/esJOqZDhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757026610; c=relaxed/simple;
-	bh=JYcdaBsJPM3aXP97DSmZE1zLWV6/mzt9FeGlt4RrHgc=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Aq9mkqccDs03z5TI0EgJUkxBduZAjiLp5i+JI6PRYB4iiE2VVjvBfAjpUli57Z3VrxoeIBWMOO4peeCF7VLxnqVDWb7En3DCv5sO+fVwFYY5mH4qiKtZzIrpv+87FH9nBDEIRSU2d6MwN7xsQHtaEgVRA0TWxefPqWlehWJ73fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzfKQRY5; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d6014810fso16734267b3.0;
-        Thu, 04 Sep 2025 15:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757026608; x=1757631408; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aZJsJ6Dias4aJk5oVm4edgReGaNhIOC6r9PNPMsZ5pk=;
-        b=YzfKQRY5H0yB6DPUD6x6Ov5OC5QO+QVUy8Zkkde45zkB8QhGPYvqFN14LiwCcegYfw
-         /ifoi42S0AsD6wnTgWLiAtXG6AWbhhFi7BBedlKm4b3QZDAAscsaeHNOlfoXU/rPnm1S
-         Z9vyAiHFZ+1GSy0Sc4FP19uMQ4Y70UZ7KsE2d/QQCBuChMBLO6/ErdJ/Oi/9l8Z2QETs
-         b5mrY7tzirXkwmKkqWZI3ZdvhO0iCnk7KKYf6fCsPfiNzRQ34sZvUQKKzJsIpY8u69Ue
-         bf2d4H6aot2su19k577urmj4cOs808ePUPtRPrKG47VC+OxXZdmGmie1T9pGYgCEPLOE
-         i6KA==
+	s=arc-20240116; t=1757027081; c=relaxed/simple;
+	bh=CaZoi7xlGTITN03Rjj7zYchtrmw8+uuybVBMH6eekaI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yi95kqEZmHQfDNNTm7r59aZA8OqMWRI0m6wIf+Yr7YivLvTN78oU5ckqRMMbPNvCaozeRcVjw9tRQT6jZGSTSJ32a/20NoXGNfJsFe+8LRj+8Hy0G75vSblq+ZYzHL3jHOS/tzG3ePk+bVvpcY3HhoA07xdmMmkoclR4lIux4yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ndKRIeWU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584HeMmp013631
+	for <linux-kernel@vger.kernel.org>; Thu, 4 Sep 2025 23:04:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JTGAHvO3dzWq+EoS5uNJA1yAwMH+0tq3Qa7fTg/qeOs=; b=ndKRIeWUxsKm4r9B
+	fkR9Vy4opdUjNOAoEUZCVRmZlDZuAKklzixJtOmrH8fKyqYbXmyPWsPHQTY4SUu8
+	MT+ksulpUrWVX40qXOYEKmL8Uw65PveiomSAnElpPjGbMaIfpwYpkEQpNB/6usos
+	Z5G7xCR+qq/3q4LOhnUrSWMzF2GX8243GvuRAQaRe+UTYI/JohHQaXBWOw92Fazw
+	YyeTL8VcvQnIPFKZoNSd8lAw3mJ3sS475UXikkpgQGiiExFkGvH99JKsOCwrdDMF
+	ktZxVHPlcAl96ALRYvdQ78+GwROlQzZlxiCbmFg6dM376m/I/KTwlsk7IMzEqw8T
+	u0UWyw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48w8wyd2ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:04:39 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-772642f9fa3so2479350b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 16:04:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757026608; x=1757631408;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1757027078; x=1757631878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aZJsJ6Dias4aJk5oVm4edgReGaNhIOC6r9PNPMsZ5pk=;
-        b=EjEr84bgGu6qNpeB15FKDhBi6W9zziBT01GbiB3BnPKEqANiEkAtB+itaQmreYGoQK
-         Tw53gzbnfmU4JNgHRn9H7nUv5kbNhg9NtADwY+IhFbnjJyHf1HXUsxa4GizHRaP7jykC
-         Jjtx0/qpCsjnkINQ5he79Flk8OIIojKEbxFRoYhT2SGvr9R9qCPzqKw10Hx648xOVp+p
-         /SJasn+sUDfVJDwp+CBgr2AQIgqvC3KmmuNiSW9bVLwbv2dWrG6IbAcQulfeGXIaL/hJ
-         3nSlssrbx4HWxTIDcsjASH3YN84d/6J0ycJLKuyssyRiRX6UTHTooixWMEdnLPKHD8cH
-         YB1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+CyvG32FLjWCM4qeMa+OU9GCj4fPfYxCsEkwtRbEnubs72XRDDNnRv1Q7TPxLeCBt2di2OvM6hjHRBot2@vger.kernel.org, AJvYcCV6h9VNVafkLEa9CIKyNV6lswKM3jgNotmluTtzWRJ5pHdqaKb3i+d+J/0pxggNGHJFNRA7YOi4fnd2sGg/@vger.kernel.org, AJvYcCVEJzr2VuKNe3TgQFQphJUOBEi1JqvKzpKHGkxI1tB+1BQ8gdi90mbHGlWEOKLVTWdb2fdNBQM/OSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjVYWmJlF2UbxtJdMOrwTVfvYFxAoksKMB9m2oLGMT5itrVchj
-	/MwUgc3FTsB5botE9tUqTx3tx26w8EDGFxZaik8c6WnnmbhLbsiHEvxQ
-X-Gm-Gg: ASbGncsVCmyuwxM+ybDv+nuGNFxnSmin5D+SQ/kqnYexduh3hbRcbiggDrpNFv44iJJ
-	LZMoqlKYc4LwquZhbVTcNs5bJOUoiStnEsf0hufNABgKRLLk68CxHRHCpaFIDy5GX0VCysdZeZB
-	Ra/hzrVL98qtfWccJPdX8bELisnaaKS7eVd+jp4w01uNqFwqCCdMPs3ulHt3It0ebp6o4UbTcyX
-	fMzXBATueSNzl6mI3Xxj34cbxhLuVLvhIeJ1JqYS6I5bwZ1BT6zb35rzFJD1SfZfPAny1UzCFd0
-	T+wQlSOv1HRtxmFnSEZOvqfWUq52+wG9vpJhS3b30cxawH/YT7kKQvamoL64/3qX/XUGKg59mTr
-	BHhKFNQx0mgSfceMJC9kDkbRny30TmZEdTdwT7nf/jhJIwNRax3P9Hv3mXC9U8fA=
-X-Google-Smtp-Source: AGHT+IEHGA0wsG9SM+lLIiJeqw57Hw+stWOBnY10zVsxOztzEXgl10NjAasmizVO1rfQqLWWpmuaDQ==
-X-Received: by 2002:a05:690c:6a03:b0:724:c055:3cf3 with SMTP id 00721157ae682-724c0553f47mr40845437b3.14.1757026606920;
-        Thu, 04 Sep 2025 15:56:46 -0700 (PDT)
-Received: from [192.168.1.209] (74.211.99.176.16clouds.com. [74.211.99.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a855a865sm24681447b3.54.2025.09.04.15.56.38
+        bh=JTGAHvO3dzWq+EoS5uNJA1yAwMH+0tq3Qa7fTg/qeOs=;
+        b=SLJy8tmyBkBqc56PrJub/KxCBgGlMfJ+uY/z0mewGwiFyLImX2L5Pk03Ae2pFm135l
+         Au3p3o0KYMOMZE5AmrAbHLS/VgpOYjjj7FKMzjlBIWhv69mY8uqB6lu5Kkj5Y40unyxn
+         OsLnuRN6lXRWzDFHGiGlsHvXYcireufxnpPfa7RPFi/WDVrzzKx7OM4HXxi1dEaYvXuj
+         mXdgFlwemNDmYv/Wzz8748fohO0t9FTEYdYYnXVHZ4TvEh1lUE/bHvhW9N1dZFFeRjsH
+         QM8WYsPzHtfGPsNSRIreyUd5f3bPm8DA548X+e/GlZQ7ANdk744+7eoYMnK8kqoyb9d4
+         foyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpozIJ8M7QtacyOLO8eS86dY5i/KqkLqniIn7Dn8v/bH3uwk7swKEDhDud9AnXgUHjo6cedA2g/Z//DYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHkWhwxn5FeAX3SFqdQ3dtrSSBRkE7VaINq5VFHCNVwHi0ItuG
+	JhfZiBQhMQY/c1PgHm2TC22TsiiHUvrgtLc2XAOqkfXDA7ApNjEhJ0wnD+dwwtxTpXFW3RXjkmr
+	CaWyVtb9MRCsnrliufvBYO6d92mrmexsnDCk1KEjHW3Gw8H+rIlblmRVAHoMG5ueTvoI=
+X-Gm-Gg: ASbGnctwKWGBAS9Cse3ACVIw/5+DTIFJ8GO+wKygjGquDH+olfTUDGasUWa2Rj4nbGP
+	r2+kNeWuzqbN4CzjIzISmOdnMQnGLUQrxoLHqayNzXN380QWiyEpV3D5q1lvFvSfgnt+Aciw09n
+	T/lB+/J/2WCMm1D+5m9pjgSqA2ZPmg7z+B2AosbIMtYfsayMMisk2wV5bJIPFo3+enqDVg4hFHV
+	HOZ0rVRSmKhHQlcyeKUKH+5ACCij0qmQqwyPSVSUEMWNyIcU69dN8U9xZoO5J+CaOEboIkxLa9V
+	X4aCEo4eOUaWQpp3jzHUxIl8jb0oWIWiC7oveKT2yNJX/P02sIEN2Z5EmZu8TOggheO15zlgF2x
+	XMiE/zfIh/J9zjDbNGnz2dw==
+X-Received: by 2002:a05:6a20:2585:b0:24e:3021:dbca with SMTP id adf61e73a8af0-24e7cc21f79mr1728274637.4.1757027077752;
+        Thu, 04 Sep 2025 16:04:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+iA5dJCDJ6EKl6d9KKQ/arjY5Bfhgn5AoMxnI2wmHjrjJTPiDNbZX78JO/uNCpw5DqrwAAA==
+X-Received: by 2002:a05:6a20:2585:b0:24e:3021:dbca with SMTP id adf61e73a8af0-24e7cc21f79mr1728238637.4.1757027077247;
+        Thu, 04 Sep 2025 16:04:37 -0700 (PDT)
+Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4edf7ed519sm14309145a12.28.2025.09.04.16.04.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 15:56:46 -0700 (PDT)
-From: Asuna <spriteovo@gmail.com>
-X-Google-Original-From: Asuna <SpriteOvO@gmail.com>
-Message-ID: <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
-Date: Fri, 5 Sep 2025 06:56:35 +0800
+        Thu, 04 Sep 2025 16:04:36 -0700 (PDT)
+Message-ID: <7ac0c9f2-754c-4ba3-bde1-fbde9f3aab33@oss.qualcomm.com>
+Date: Thu, 4 Sep 2025 16:04:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,154 +89,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
-To: Conor Dooley <conor@kernel.org>
-Cc: Jason Montleon <jmontleo@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Tejun Heo <tj@kernel.org>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Matthew Maurer <mmaurer@google.com>,
- Jeff Xu <jeffxu@chromium.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jan Hendrik Farr <kernel@jfarr.cc>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Christian Brauner <brauner@kernel.org>,
- Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-References: <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250903190806.2604757-1-SpriteOvO@gmail.com>
- <20250903190806.2604757-2-SpriteOvO@gmail.com>
- <20250904-sterilize-swagger-c7999b124e83@spud>
+Subject: Re: [PATCH 08/12] drm/msm/disp: drop PSEUDO_YUV_FMT_LOOSE_TILED
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jordan Crouse <jordan@cosmicpenguin.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
+ <20250705-dpu-formats-v1-8-40f0bb31b8c8@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <20250904-sterilize-swagger-c7999b124e83@spud>
+From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+In-Reply-To: <20250705-dpu-formats-v1-8-40f0bb31b8c8@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-> One thing - please don't send new versions
-> of patchsets in response to earlier versions or other threads. It
-> doesn't do you any favours with mailbox visibility.
-
-I apologize for this, I'm pretty much new to mailing lists, so I had 
-followed the step "Explicit In-Reply-To headers" [1] in doc. For future 
-patches I'll send them alone instead of replying to existing threads.
-
-[1]: 
-https://www.kernel.org/doc/html/v6.9/process/submitting-patches.html#explicit-in-reply-to-headers
-
-> Other than Zicsr/Zifencei that may need explicit handling in a dedicated
-> option, the approach here seems kinda backwards.
-> Individually these symbols don't actually mean what they say they do,
-> which is confusing: "recognises" here is true even when it may not be
-> true at all because TOOLCHAIN_HAS_FOO is not set. Why can these options
-> not be removed, and instead the TOOLCHAIN_HAS_FOO options grow a
-> "depends on !RUST || <condition>"?
-
-Yes, it's kinda "backwards", which is intentional, based on the 
-following considerations:
-
-1) As mentioned in rust/Makefile, filtering flags for libclang is a 
-hack, because currently bindgen only has libclang as backend, and 
-ideally bindgen should support GCC so that the passed CC flags are 
-supposed to be fully compatible. On the RISC-V side, I tend to think 
-that version checking for extensions for libclang is also a hack, which 
-could have been accomplished with just the cc-option function, ideally.
-
-2) Rust bindgen only "generates" FFI stuff, it is not involved in the 
-final assembly stage. In other words, it doesn't matter so much what 
-RISC-V extensions to turn on for bindgen (although it does have a little 
-impact, like some macro switches), it's more matter to CC.
-
-Therefore, I chose not to modify the original extension config 
-conditions so that if libclang doesn't support the CC flag for an 
-extension, then the Rust build is not supported, rather than treating 
-the extension as not supported.
-
-Nonetheless, it occurred to me as I was writing this reply that if GCC 
-implements a new extension in the future that LLVM/Clang doesn't yet 
-have, this could once again lead to a break in GCC+Rust build support if 
-the kernel decides to use the new extension. So it's a trade-off, you 
-guys decide, I'm fine with both.
-
-Regarding the name, initially I named it "compatible", and ended up 
-changed it to "recognize" before sending the patch. If we continue on 
-this path, I'm not sure what name is appropriate to use here, do you 
-guys have any ideas?
-
-> What does the libclang >= 17 requirement actually do here? Is that the
-> version where llvm starts to require that Zicsr/Zifencei is set in order
-> to use them? I think a comment to that effect is required if so. This
-> doesn't actually need to be blocking either, should just be able to
-> filter it out of march when passing to bindgen, no?
-
-libclang >= 17 starts recognizing Zicsr/Zifencei in -march, passing them 
-to -march doesn't generate an error, and passing them or not doesn't 
-have any real difference. (still follows ISA before version 20190608 -- 
-Zicsr/Zifencei are included in base ISA). I should have written a 
-comment there to avoid confusion.
-
-Reference commit in LLVM/Clang 22e199e6af ("[RISCV] Accept zicsr and 
-zifencei command line options")
-https://github.com/llvm/llvm-project/commit/22e199e6afb1263c943c0c0d4498694e15bf8a16
-
-> What about the case where TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI is not
-> set at all? Currently your patch is going to block rust in that case,
-> when actually nothing needs to be done at all - no part of the toolchain
-> requires understanding Zicsr/Zifencei as standalone extensions in this
-> case.
-
-This is a bug, I missed this case. So it should be corrected to:
-
-    config RUST_BINDGEN_LIBCLANG_RECOGNIZES_ZICSR_ZIFENCEI
-         def_bool y
-         depends on TOOLCHAIN_NEEDS_OLD_ISA_SPEC ||
-    !TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI ||
-    RUST_BINDGEN_LIBCLANG_VERSION >= 170000
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Ycq95xRf c=1 sm=1 tr=0 ts=68ba1b07 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=djW4e6U6kngvZURYzKAA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: gMe5BnafchzwXil06pl2bG1WyxE2GYsc
+X-Proofpoint-ORIG-GUID: gMe5BnafchzwXil06pl2bG1WyxE2GYsc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDEwMSBTYWx0ZWRfX+N+mnW2gH/Oa
+ lv8GWPPDH9EozIlMyOOTbVsy1wuNpBFT9ZZpfC5nfVgdVVhFRlJzs924UZQ8qckV/qHUDaFWA8l
+ lhsRZzra8FMIHwukhyerP+4Zw0bUkxdVO0WIJfDURsgeqWIsjkE+G52phbzQxBr/5r78dfxnYV7
+ vU+xkZ47RpXLrEMkYenvY/B6sU3xU+o8qcRJhretTXQs8LqyPNAAGz4HpWut00ARd8ml7FVrT8k
+ tJJqJw999ckyKIB2DvuYb4SXPzP7M8+eSghSbRtIOfonQhzk9f5QNURVh8jpXcYsWYNH03lzzIu
+ phqdFKp4MMoS+2nwK726U/6NfbZSXTioR7QDSDECLSbc+kJcSMr8tR4KQpKd9w6DbIV/Cdb6wZ+
+ VAQk/cIk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_08,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509010101
 
 
-> The TOOLCHAIN_NEEDS_OLD_ISA_SPEC handling I don't remember 100% how it
-> works, but if bindgen requires them to be set to use the extension
-> this will return true but do nothing to add the extensions to march?
-> That seems wrong to me.
-> I'd be fairly amenable to disabling rust though when used in combination
-> with gcc < 11.3 and gas >=2.36 since it's such a niche condition, rather
-> doing work to support it. That'd be effectively an inversion of your
-> first condition.
 
-The current latest version of LLVM/Clang still does not require explicit 
-Zicsr/Zifence to enable these two extensions, Clang just accepts them in 
--march and then silently ignores them.
+On 7/4/2025 7:47 PM, Dmitry Baryshkov wrote:
+> Drop PSEUDO_YUV_FMT_LOOSE_TILED(), the macro is unused.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Checking the usage of CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC:
+Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 
-    ifdef CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC
-    KBUILD_CFLAGS += -Wa,-misa-spec=2.2
-    KBUILD_AFLAGS += -Wa,-misa-spec=2.2
-    else
-    riscv-march-$(CONFIG_TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI) :=
-    $(riscv-march-y)_zicsr_zifencei
-    endif
+> ---
+>   drivers/gpu/drm/msm/disp/mdp_format.c | 20 --------------------
+>   1 file changed, 20 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
+> index 6f5af26d4e2d43414281197bf541e1ea3fe211f5..f949810567d83c5924f9dd127261e7d523921724 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp_format.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp_format.c
+> @@ -326,26 +326,6 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
+>   	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
+>   }
+>   
+> -#define PSEUDO_YUV_FMT_LOOSE_TILED(fmt, a, r, g, b, e0, e1, chroma,       \
+> -flg, fm, np, th)                                                          \
+> -{                                                                         \
+> -	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+> -	.fetch_type = MDP_PLANE_PSEUDO_PLANAR,                            \
+> -	.alpha_enable = 0,                                                \
+> -	.element = { (e0), (e1), 0, 0 },                                  \
+> -	.bpc_g_y = g,                                                     \
+> -	.bpc_b_cb = b,                                                    \
+> -	.bpc_r_cr = r,                                                    \
+> -	.bpc_a = a,                                                       \
+> -	.chroma_sample = chroma,                                          \
+> -	.unpack_count = 2,                                                \
+> -	.bpp = 2,                                                         \
+> -	.fetch_mode = fm,                                                 \
+> -	.flags = MSM_FORMAT_FLAG_UNPACK_ALIGN_MSB | flg,                  \
+> -	.num_planes = np,                                                 \
+> -	.tile_height = th                                                 \
+> -}
+> -
+>   #define PLANAR_YUV_FMT(fmt, bp, r, g, b, e0, e1, e2, chroma)              \
+>   {                                                                         \
+>   	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+> 
 
-It just uses -Wa to force an older ISA version to GAS. So the 
-RUST_BINDGEN_LIBCLANG_RECOGNIZES_ZICSR_ZIFENCEI I corrected above should 
-be fine now I guess? Or would you still prefer your idea of blocking 
-Rust if TOOLCHAIN_NEEDS_OLD_ISA_SPEC is true?
-
-(To be clear, the breaking changes regarding Zicsr/Zifence are since ISA 
-version 20190608, and versions 2.0, 2.1, 2.2 are older than 20190608)
-
-The only thing I'm confused about is that according to the comment of 
-TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI, GCC-12.1.0 bumped the default 
-ISA to 20191213, but why doesn't the depends-on have condition || 
-(CC_IS_GCC && GCC_VERSION >= 120100)?
-
-Thanks for your detailed review.
 
