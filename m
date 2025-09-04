@@ -1,160 +1,147 @@
-Return-Path: <linux-kernel+bounces-800712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2D1B43AE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14846B43AE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461503B73ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40B31BC312C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AB92FD7A8;
-	Thu,  4 Sep 2025 11:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760042FD7B8;
+	Thu,  4 Sep 2025 12:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ij9mIURC"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fR14sSbE"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CA42F9C2C;
-	Thu,  4 Sep 2025 11:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719FB2F3C01
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987090; cv=none; b=aaatqv/LbUG1Szm1sKkrRzsUZKxKM+6bl2MHTFFJMk+9eYN3a06QlgvGKwxumJPSDEOZMPffSRtEs1TlbQGt8Yhy0EDuKHewDmAeJ+eUbUc+qOtJpVDsRA4THqmQYRstXTKkuePmfgM7LTRm3Wjnwlc4GFKXGLP8Vj0hvYGvadM=
+	t=1756987199; cv=none; b=VlJfv9dOJwTtUXtDApsswfySptrye3FN7gp13US0jpyV1z8dp8UD3r9LA9udMKvUKOBnvbFMMYOj+duv5CRQ9oRRARIpzp337MbELLfWQFyO9x8/2aWsTgTbsnaaYWUD8fgdNxzRAbAo0WvJHMcYaQ/l7QcMxwZvpnHQK+kQ9ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987090; c=relaxed/simple;
-	bh=tATAdd7QzloSVi9rWZgMv3zaCJnGVv99/EXyM7XWqZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYVAvLaJz+VDDA32c6hS5iFJfvsub0b86erC7L2nV1YUxQM1+dY58fPlVqmVLO1qH3IJvOdky9uKjI16x65OQw+HQMN9SrFizsqLwAI7ZWOOryjIYjh027LYBBmzrJ9FrJ1VTr3VbVHRTrUQqlqdV+++tXeCva1nPfA2M735so0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ij9mIURC; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24cd340377dso2245195ad.1;
-        Thu, 04 Sep 2025 04:58:08 -0700 (PDT)
+	s=arc-20240116; t=1756987199; c=relaxed/simple;
+	bh=ZXNn7I+rDr8GQnTPEyxX8hDMbjRGz6pxIO5JVjmS4wM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eZqTGP/Q25iJfWy4dd/DBs1d9flyjRRNnvYANwfg5bzfGN+lpgh61vJGqQGHWydGxw5bvhedWTB1w65jLbSvutOnWBccXum2LYKT2S1+ViTInp2XjjVByTWAslgV5eiO9sJRFLSDNf8j5UUyMVAkz/TL0G0cYYHfyiWfomkPqj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fR14sSbE; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32b51b26802so862395a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756987088; x=1757591888; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8Pj9Rbb/L1TaHYcKBCDlyOBLhhs01TGFvbTqDDZZhC4=;
-        b=Ij9mIURCnDNbl9PlkZSEFe5Hx13d0fGoBEggh8cFMk2Ya3HSlf+xo2OBlsDl8EZZJZ
-         i4vmTdGKj/jDOb0s2G4h0bUL6Wk19ov8EOpqbvOCgipdRJN6v5zDqBtiQIUTjlcLq7zp
-         RCL5N5uDbE19Mi1OVjkW+p/Q0hgsobksG1Qm5T27zQ5lznlZgvXJAzVtM3kMXc6AUlWE
-         zORHjdVACxXcup+eIn5eArEmheGnp1OVyftTaNv22KBkAxA38r4NdqxHp0c1JAZ9sD85
-         8exC8ijJDCNg/cJbxw++zcj0C4VZERQgO9B4x0ivRtTvO3PFxvVRtdM2TvEOI+JMxh57
-         EPkQ==
+        d=google.com; s=20230601; t=1756987198; x=1757591998; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dto7K6eXvGSvhdBpztAXq5eWQrSsso/7rLd9mr1E24A=;
+        b=fR14sSbEaJim7HvVIfltSd3dXGIVPlqzLZlXm+98fIZfCb7atRyJ9jURKHdti7cM9N
+         V278HnrDVoN5Rowtj1GDcEA8T6l7PfWc5azsVXHksCEG1rqdtI4hTfxZdsU6CKu5Wf04
+         Ms0QB2xGwZC8WrJjuzxlYEBgVyKpyckcv9dWNn4a9Yw/GAdsLadKugmf2A8I0HYuPsaQ
+         OzQq6CiSKVTfFXj5QPQd15w1ss0JHCFAQuRhHI6WMMdlo8N55L8ScLh8X7ZRjKqDRTlD
+         d1givSFKeT4s67aQ8ZVuWZpc/J39V1gFxVIa/0iLAnWKUSmn5DvBvRbquGBSh69rP/ww
+         990Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756987088; x=1757591888;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Pj9Rbb/L1TaHYcKBCDlyOBLhhs01TGFvbTqDDZZhC4=;
-        b=Gg+Skln9AqRC/UlgB4L/Tm1xXXQSx51onaSG7IzjfFXC5ihCxjaKDGsPUBZGhefsRW
-         bBEi+WebYG57G3dwN3Fe7NfVNTW/rI1GxIo69cRnlbUjNNNM41YbwrJK1WC7wRQWj0ym
-         6MdagDSLp3DFX3BUd1Qztye1BejUSJO/6vpnogNepUaf9/nDsD3CBBfwZgR3sPjYXrCh
-         tIe5fTdLxO2v5PgnX7AcKkIY6n4RHvpJN4zASwX0hgYo/5wmWWiYJnLRZ3+6hLjiBrS0
-         tYFiCAz6g1nGLqd2AkxmhhZsJcTjJsKVzoFETGUFurJUSIHmCXrsU4b45iI0ga67JyOm
-         GZSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtQRaBC2T44Y6DmLYCyqC4mA7t3ofVM5JH46T4O7q6TIKqwBCY8Z/UAbilnsgTX2mkkhk8qrzdC1LAKMJ3@vger.kernel.org, AJvYcCV2cXNY+TYJeSnS8PPan2RSOuekB1CHYbFY61nlEb9qF+pcGp2Wz+VKmxv+ZSsPLCwUykPWydO4SbpP@vger.kernel.org, AJvYcCVJS1ec2Gr3YyvG6q6XQXrm2QTcFhba0YufGMHXdpLVzVN+AHuSF9poKjtHqC64ssjHlZMxh6eAM1vu73s=@vger.kernel.org, AJvYcCWNaxt0cu7odmz5m3zDdfFyBKH4WVu4JfHajv6V1pm2orcxDs9KYEjO6h0+ZaPxldV9GVoCUHXv/V/eQ3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrMW97ZVfHenRqMm0UC/TLJIEs7TtH6WEoGqpCAJKXz7wpIY8C
-	+0kLR+4GLzj4FXPpIwcsTdN3/63FUtO4jLgqrl7nCRls5cMNcB6TRcCA
-X-Gm-Gg: ASbGnctQiu6I5fEKD7oyLIO41Cdbne4coViKo0tdjN9+TiuNm+8KbadtL+FtFFR64YR
-	C/cJhDHebDqV1uzyX9k/+nNUHrmFL+Jv8XSdAMYA57a+5M2w+VjjD4kNwe2J39/tcWMRjxID7oP
-	b7l3sylBm3pj7a+sOIOuSAM2fKYrGhmVlyTP1h7xAftSixvukXSXWXDXdGqezaBSA8pHXdF/IOR
-	Ejuo95Yl3Z6PZBcnrSL/GHCEFqs9hfgUJktsXJWtn7q6PMFedu7ZzG/B//blw1w4ZjrRiB7BSxz
-	Js0lYZRzsYsppqLx65K+NN3Yj8xoOEv8hwxJJxx5b+sd8lV8PoTfIIlKly4wjbgmCndBKuPds2c
-	7L9aQh7rf3rHIeaR8ZxdPp70=
-X-Google-Smtp-Source: AGHT+IEywwoOozpv7rN+XI2LuxYw5YAulyQKJc60fWfypt28B7vos4U96NKKRXKORY1kAm/Eb5L6qg==
-X-Received: by 2002:a17:902:db03:b0:249:c66:199e with SMTP id d9443c01a7336-24944a177fbmr249151225ad.26.1756987088248;
-        Thu, 04 Sep 2025 04:58:08 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:463b:8ef9:3432:4c09])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037223d7sm182682615ad.32.2025.09.04.04.58.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 04:58:07 -0700 (PDT)
-Date: Thu, 4 Sep 2025 04:58:05 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Jonas =?utf-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] input: rmi4: fix RMI_2D clipping
-Message-ID: <75wc4lutipb7uszkqfuakjl7iqsygjif4df5phosifkgi3serc@t75jpefbbbcs>
-References: <20250903161947.109328-1-clamor95@gmail.com>
- <20250903161947.109328-2-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1756987198; x=1757591998;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Dto7K6eXvGSvhdBpztAXq5eWQrSsso/7rLd9mr1E24A=;
+        b=BTLXdmiNgWCIZRLGi/DJNA6wmmdSR3AiX2T0UxPqrKFCqfQAWgFPhpE1vIr6v+LCSA
+         e1g9s1t7AzhsrnGL8qd+eOblQkidXG3QIMYsFXj5YPHQSd9B73+7+NmOc7E9x++2MXWt
+         ppFQp26Up2ltdcTueGLhKgcrRmvzvY2UKERwF5ffDgn3RBN0qLiYvIE7Lg/b7CVrTLlB
+         9PeFMc73kGOeRZkaqsPK+UClZbie+ju9I8HZzy1CniGjNSb+sHqLfjcp8oAUT2M7MzLJ
+         PS7OThpxHr0IvhZ6Te2JVj005KjStZut1qHcwDA2LWCAL3ccimGk6Jt0wvVBr/ca0Dzc
+         K5rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMDP2mHiRqmZxHaXuNvSsC8HOZ+c0JWjvMXhFbeIpzVFk63LjK97enVvfXV3O14fJu/e3lBCVyr0moaTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXgJb7SmuqX2rjkBFi0KCL3yGeT8+lmZlQQtqL5nJ9SyudJPq9
+	OpHZB7yJewIsjwY243uwiNPOcF7kvIjUhxjN4bZMegs78/6Yi8eYyl4A9MT9JdH7ROqSv3Zbn4K
+	zW54zuA==
+X-Google-Smtp-Source: AGHT+IHP6++Ieg1NxgcxEx/LfHzuEBAPAP8bF6XQFVaVCxfhu7J+bDNjZtW76Vo5/SjfbbqGGuwo3OTmXSY=
+X-Received: from pjh5.prod.google.com ([2002:a17:90b:3f85:b0:325:7c49:9cce])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d03:b0:328:a89:71b8
+ with SMTP id 98e67ed59e1d1-328156e1238mr23720013a91.30.1756987197621; Thu, 04
+ Sep 2025 04:59:57 -0700 (PDT)
+Date: Thu, 4 Sep 2025 04:59:44 -0700
+In-Reply-To: <3268e953e14004d1786bf07c76ae52d98d0f8259.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903161947.109328-2-clamor95@gmail.com>
+Mime-Version: 1.0
+References: <aK4LamiDBhKb-Nm_@google.com> <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
+ <aLDo3F3KKW0MzlcH@google.com> <ea0d7f43d910cee9600b254e303f468722fa355b.camel@infradead.org>
+ <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk> <caf7b1ea18eb25e817af5ea907b2f6ea31ecc3e1.camel@infradead.org>
+ <aLIPPxLt0acZJxYF@google.com> <d74ff3c1c70f815a10b8743647008bd4081e7625.camel@infradead.org>
+ <aLcuHHfxOlaF5htL@google.com> <3268e953e14004d1786bf07c76ae52d98d0f8259.camel@infradead.org>
+Message-ID: <aLl_MAk9AT5hRuoS@google.com>
+Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
+ and host
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Paul Durrant <pdurrant@amazon.co.uk>, Fred Griffoul <fgriffo@amazon.co.uk>, 
+	Colin Percival <cperciva@tarsnap.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Svyatoslav,
+On Tue, Sep 02, 2025, David Woodhouse wrote:
+> On Tue, 2025-09-02 at 10:49 -0700, Sean Christopherson wrote:
+> >=20
+> > > So even if a VMM has set the TSC frequency VM-wide with KVM_SET_TSC_K=
+HZ
+> > > instead of doing it the old per- vCPU way, how can it get the results=
+ for a
+> > > specific VM?
+> >=20
+> > I don't see any need for userspace to query per-VM support.=C2=A0 What =
+I'm proposing
+> > is that KVM advertise the feature if the bare metal TSC is constant and=
+ the CPU
+> > supports TSC scaling.=C2=A0 Beyond that, _KVM_ doesn't need to do anyth=
+ing to ensure
+> > the guest sees a constant frequency, it's userspace's responsibility to=
+ provide
+> > a sane configuration.
+> >=20
+> > And strictly speaking, CPUID is per-CPU, i.e. it's architecturally lega=
+l to set
+> > per-vCPU frequencies and then advertise a different frequency in CPUID =
+for each
+> > vCPU.=C2=A0 That's all but guaranteed to break guests as most/all kerne=
+ls assume that
+> > TSC operates at the same frequency on all CPUs, but as above, that's us=
+erspace's
+> > responsibility to not screw up.
+>=20
+> Sure, but doesn't that make this whole thing orthogonal to the original
+> problem being solved? Because userspace still doesn't *know* the actual
+> effective TSC frequency, whether it's scaled or not.
 
-On Wed, Sep 03, 2025 at 07:19:45PM +0300, Svyatoslav Ryhel wrote:
-> From: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-> 
-> The physical max_y value was overridden with a clip_y_max value. This
-> caused problems when inverting/flipping the screen. Further it messed up
-> calculation of resolution.
-> 
-> Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/input/rmi4/rmi_2d_sensor.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/rmi4/rmi_2d_sensor.c b/drivers/input/rmi4/rmi_2d_sensor.c
-> index b7fe6eb35a4e..b4762b3c8b24 100644
-> --- a/drivers/input/rmi4/rmi_2d_sensor.c
-> +++ b/drivers/input/rmi4/rmi_2d_sensor.c
-> @@ -56,7 +56,7 @@ void rmi_2d_sensor_abs_process(struct rmi_2d_sensor *sensor,
->  		obj->x = min(sensor->max_x, obj->x);
->  
->  	if (axis_align->clip_y_high)
-> -		obj->y =  min(sensor->max_y, obj->y);
-> +		obj->y =  min(axis_align->clip_y_high, obj->y);
->  
->  	sensor->tracking_pos[slot].x = obj->x;
->  	sensor->tracking_pos[slot].y = obj->y;
-> @@ -149,13 +149,12 @@ static void rmi_2d_sensor_set_input_params(struct rmi_2d_sensor *sensor)
->  
->  		sensor->min_y = sensor->axis_align.clip_y_low;
->  		if (sensor->axis_align.clip_y_high)
-> -			sensor->max_y = min(sensor->max_y,
-> +			max_y = min(sensor->max_y,
+I thought the original problem being solved was that the _guest_ doesn't kn=
+ow the
+effective TSC frequency?  Userspace can already get the effectively TSC fre=
+quency
+via KVM_GET_TSC_KHZ, why do we need another uAPI to provide that?  (Honest =
+question,
+I feel like I'm missing something)
 
-I see that you want to have sensor->max_y to carry maximum coordinate
-the sensor is capable of reporting, so that flipping works properly. If
-this is the case you should also be deleting sensor->min_y and always
-use 0 in its place, otherwise there is inconsistency.
+> Or are you suggesting that we add the leaf (with unscaled values) in
+> KVM_GET_SUPPORTED_CPUID and *also* 'correct' the values if userspace
+> does pass that leaf to its guests, as I had originally proposed?
 
-You also need to deal with X coordinate in the similar fashion.
-
->  				sensor->axis_align.clip_y_high);
->  
->  		set_bit(EV_ABS, input->evbit);
->  
->  		max_x = sensor->max_x;
-> -		max_y = sensor->max_y;
-
-This makes max_y potentially uninitialized.
-
->  		if (sensor->axis_align.swap_axes)
->  			swap(max_x, max_y);
->  		input_set_abs_params(input, ABS_MT_POSITION_X, 0, max_x, 0, 0);
-
-I am unconvinced that using raw sensor coordinates to calculate
-resolution is a good idea. It has potential to regress existing users. 
-
-Thanks.
-
--- 
-Dmitry
+The effective guest TSC frequency should be whatever is reported in KVM_GET=
+_TSC_KHZ
+when done on a vCPU, modulo temporarily skewed results without hardware sca=
+ling.
+If that doesn't hold true, we should fix that.
 
