@@ -1,80 +1,110 @@
-Return-Path: <linux-kernel+bounces-800677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D6CB43A61
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:40:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15A5B43A99
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2083B4160
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:40:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA0A54E5784
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075C2FC00E;
-	Thu,  4 Sep 2025 11:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF102FC869;
+	Thu,  4 Sep 2025 11:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="R3B8G7As"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wweGs0AU"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BC32F998E;
-	Thu,  4 Sep 2025 11:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15732F49E7
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756985996; cv=none; b=VDyRG+4l3BhvJiCAciQQrf+s7civ4LVhzQOxckHMrp1Gn4xqi5yPOFIbrQnzFepw3lzkI5LpivN17C809gLyzfih0Ge829VO0NQ+jNP5wScI1oJ1+hI+s0MHfvoVlSC0OocxoYxw1p83auUbz96w7OOGfcgpn064AxIzHGuirFg=
+	t=1756986286; cv=none; b=SKRgHDSfjPi469Q5FDONBxHxjsdticcg/5UvvgSW+1H/9svxoGP7hO2g5zBr9CY1slNYkCtXmbHa6mckYHZLUctfJTs+yCiRaj+ZC/7CwJmxnSNJc6Wq96mG4IXkcmss+8JRrM99PzSlAi9Zny2h2znTvvfRm+rLjhWN1mBu0ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756985996; c=relaxed/simple;
-	bh=qzSb4XUnXE0Z3Hw7JSrtLP4whWoATEU8SE43VYpoE4c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WQ1RazsHw+EooLfkHCmfb2BFEB5JXcQyQCr0P2w4J7/smCHsN+Kl6WXioRvD36O6riWc1FWuOgULkzJCOfZAHl35008Q9HqHUYS7mZd0/MoN+7auPSGpcLso8HM3hkb8tu2Baj3qgYGkcJfO5laEyaG4O1BKdnBzUBR2kOvlkF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=R3B8G7As; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=qzSb4XUnXE0Z3Hw7JSrtLP4whWoATEU8SE43VYpoE4c=;
-	t=1756985994; x=1758195594; b=R3B8G7AsMP9qAzeS62L3xpVBnSkgfuxvkzotJ6F9xTTeH+x
-	Yl8v1LJSG/gzukMr4Cuo6z+lJ/d5tKKFN20UifPnPWlDxkasp8RLW5shq/z3Be7lhRFcT0rgOq/oW
-	KUUKYQWr+cdNX7oLk7/JX2btL/bCAr8e6B7wdeDjLQgMbqNI3pCpaDxP4x8cwC59zM7T0bW1sO+Qn
-	smcjDm3HBlfTLXkSxDwXJ3Z5cm5BjIOYrg7popWXLxtWczKH11CbWtqeI+Q538NIFVXx2PjAqA5a+
-	hKkXXC/uTTmBBqzJrHUv/kpfumgFE3rmzUuS63mMA4eb6zplISS6E7rdV6HnOB/g==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uu8Jk-0000000E7Ev-0dab;
-	Thu, 04 Sep 2025 13:39:52 +0200
-Message-ID: <88ecbc3ffcd33e88af23b746ec8b032d1f414824.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 00/22] wifi: nxpwifi: create nxpwifi to support iw61x
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Jeff Chen <jeff.chen_1@nxp.com>, linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, 
-	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de, 
-	brian.hsu@nxp.com
-Date: Thu, 04 Sep 2025 13:39:50 +0200
-In-Reply-To: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
-References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1756986286; c=relaxed/simple;
+	bh=0SvCWsO/EmvjlGbOFiORpjpydwP4uAT2dCEsnnP9ucs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VWf1eC0VgUY0cz5AR7novuDopErBl1dnLU2QuyrkomkVP/diUy9gUF30hNiHYtbTgUaBSgRk/C1E61EBnYuwK9hABqmtHNFhdwly0tmjb0prOKCk2hDUWCwIlSx/Hm4tdrhPavnRL6hSZUqF2a3cSKIQA17dS17h4280SG6mEVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wweGs0AU; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756986282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=q/KBYixzTNLwvMvXGKgDgIGZ5IDJw9DNQGrVTgunH3k=;
+	b=wweGs0AUebeqWDuIXbrUfaztEzaBXqwZKgzvD9tEzukR4rG7iVduRG/rZI3pCt9cBMc7I7
+	VuxCO7tImsH6ZaAthWrWGjRZaXIv4LLBmzetxsZSucLPBKkRzMz7S5rtfYl40UYZY+RTsv
+	6eKfxX36SUZhHK+1R5QKpRASX3YVN/k=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	"Bill O'Donnell" <bodonnel@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>,
+	Joel Granados <joel.granados@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Wei Liu <wei.liu@kernel.org>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] s390/debug: Replace kmalloc() + copy_from_user() with memdup_user_nul()
+Date: Thu,  4 Sep 2025 13:40:29 +0200
+Message-ID: <20250904114031.353365-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2025-08-04 at 23:39 +0800, Jeff Chen wrote:
-> This series adds a new full-MAC Wi-Fi driver `nxpwifi` to support NXP IW6=
-1x
-> chip family.
+Replace kmalloc() followed by copy_from_user() with memdup_user_nul() to
+improve and simplify debug_get_user_string(). Remove the manual
+NUL-termination.
 
-Anyway the other reason I was commenting - when it's merged it should
-just be a single patch, I think? So maybe provide a cover letter with a
-commit message suitable for the entire driver and Signed-off-by? Not
-sure how I should really handle this, tbh, but I guess that works.
+No functional changes intended.
 
-johannes
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/s390/kernel/debug.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index c62100dc62c8..6a26f202441d 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -1416,18 +1416,12 @@ static inline char *debug_get_user_string(const char __user *user_buf,
+ {
+ 	char *buffer;
+ 
+-	buffer = kmalloc(user_len + 1, GFP_KERNEL);
+-	if (!buffer)
+-		return ERR_PTR(-ENOMEM);
+-	if (copy_from_user(buffer, user_buf, user_len) != 0) {
+-		kfree(buffer);
+-		return ERR_PTR(-EFAULT);
+-	}
++	buffer = memdup_user_nul(user_buf, user_len);
++	if (IS_ERR(buffer))
++		return buffer;
+ 	/* got the string, now strip linefeed. */
+ 	if (buffer[user_len - 1] == '\n')
+ 		buffer[user_len - 1] = 0;
+-	else
+-		buffer[user_len] = 0;
+ 	return buffer;
+ }
+ 
+-- 
+2.51.0
+
 
