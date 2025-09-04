@@ -1,121 +1,165 @@
-Return-Path: <linux-kernel+bounces-800606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F416BB439C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEE1B439C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 705167AFD9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1741188EB6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619C42FC026;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB9F2FC87F;
 	Thu,  4 Sep 2025 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZdR2EzMX"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xJmO78dG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dxuOLcGa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800272A1B2;
-	Thu,  4 Sep 2025 11:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADD72F39CB;
+	Thu,  4 Sep 2025 11:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756984841; cv=none; b=JiRx/qlnGZIWkfIjC+2Er7x97Sgxu1Y0ZrcP9lwVYQaVUey71mCfbNJihRxmHeW10FTSdL4YBWMGXcM4NeTy9fxwQISyzhZonujZznXpNZblAgteUBfTyb6EshLgy4memwWuoINsnEDj8W7lmY+DzNDxiLrDUHvaxsf6FsSQWAA=
+	t=1756984842; cv=none; b=BvA/8OPuWZXq3WVIMpiNaEd2+9w4SH4ZMZAkUVCo0InJTSuNNHmlP9b78CxifpYRgEN/6gx1SS/mNkXmRasYOlHOOUCOdHd8yAo3lDoEp9cNe1XvW3G+ba//3qdlwQrhYNVjxUvhDtdAPGQX/mv70VUCVy94qQLGMVwAHRGJr6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756984841; c=relaxed/simple;
-	bh=VX1Qorr4cLCVKxPq56XPUJlujQHb0CreFY/Z5gKIYUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwRr/w4diFbu4WSc9edg+MeILlVOz2vyRVB7JZY72PQyEBMKlRNNuvjKvsX5rpCDaGBIq/QO43gD1kFiZOZYGhF6DpiiJ4ocn7Z0mHRTlyGPE0aB2lDsGqKBalL0ifXtdflOd2kQCBDEjPo5ox9I0HdogfGpS+lA2KmdkiB6cnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZdR2EzMX; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1919520575;
-	Thu,  4 Sep 2025 13:20:38 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id DiYsnYBqwS5a; Thu,  4 Sep 2025 13:20:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1756984837; bh=VX1Qorr4cLCVKxPq56XPUJlujQHb0CreFY/Z5gKIYUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZdR2EzMXKNwMV0GD4t+UBqKkew284HTouolI5UMo3Nzd8iCtUBbc/XUbI8E39Cmxd
-	 U6mxlFG727uVHvXfbvpDNK5TP58JclnlusDCngy9wBIFwF4lp7jtkCuKKLgUudAySd
-	 tF63jMXOwagGkOyOBNun2B1ceVUfRR/7nkWxrIVx4sdBepH91ZPRkBDsZLVnPR4qCO
-	 vFn0uecDRhRw7CF3vKHEht6yk/+RlYEEEQRybNW/Lg1ixSRPBVpaXs9Cqc2JRyRQiV
-	 37w/UvDUU7ZvZnIf7Lec27pnDu1/rCWKbBo3vaL9n30qr5wOAdycsW6f0i07gDAwKE
-	 mJ0WBo+ZnQAsQ==
-Date: Thu, 4 Sep 2025 11:20:28 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-Message-ID: <aLl1_AjVZus5wx0M@pie>
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <20250904103443.GH372207@horms.kernel.org>
- <aLluvYQ-i-Z9vyp7@shell.armlinux.org.uk>
- <b0f9d781-6b8f-49dd-bfa1-456a26d01290@rock-chips.com>
+	s=arc-20240116; t=1756984842; c=relaxed/simple;
+	bh=vH8OQO2zhTiU2L9n0ByWe7OQbc1NvYBW1mZuRH1VKnM=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=oApr7nznTHNVz2aGZHbDeEiLWwLiasZUhaC4cT3l+OADGxTa1nQTg41+bM7E+9sbWG5ykVdwYQxzse80kbH5rbrfZJUff2eQLCnnaR+Yt2GRCNnnW+k8ujBI4bBZ8L+gBWyhoE3qvl5sD4yobaU5UYtuLyD5KIPJaoNnY/0FvVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xJmO78dG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dxuOLcGa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 04 Sep 2025 11:20:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756984838;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=1VV5v4APnlO6JsG0BWoYhfYHX9oFBrp29imJ3fkiWvE=;
+	b=xJmO78dG1m2cxOSq2RcE8sHmxki61nfKWYQV00JoYiTzogGjxjXEBEcQcGTSPasqSXWHvx
+	UKdbm2VOMo+A8NbNvahLWVraub4NrVJ8+T0sqvC0sCONPXK8lNVBzE91WbL6DkYFu88/97
+	soiNyjHPDN1M7FUx735EAVZex5TR4qJ0T8j3+wvWxoCB/KmczvnLgkhmr6R7Re8nZHnquC
+	osHkcGAfyX6wAADFVyJn2jFmeCF6RUIshLMFzSbTrzbbNlWp04lIVYnEH2cfY2k0K35FBX
+	Vud81ZXV60BavQwsD9mhUxEd6s+JO/i+YMqbxoeoWFxEmDjPfuC2Z/0KGrNTfQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756984838;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=1VV5v4APnlO6JsG0BWoYhfYHX9oFBrp29imJ3fkiWvE=;
+	b=dxuOLcGa2/FIv8ukFlorlkU1zUmDbN3MA/iM7CDDARNwSaYNJAg7tXBw9YQsVT0CGs9BVM
+	HWvKW89DN3+LZMDA==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/apic] x86/apic/savic: Do not use snp_abort()
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0f9d781-6b8f-49dd-bfa1-456a26d01290@rock-chips.com>
+Message-ID: <175698483743.1920.18154640171454268117.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 06:58:12PM +0800, Chaoyi Chen wrote:
-> 
-> On 9/4/2025 6:49 PM, Russell King (Oracle) wrote:
-> > On Thu, Sep 04, 2025 at 11:34:43AM +0100, Simon Horman wrote:
-> > > Thanks, and sorry for my early confusion about applying this patch.
-> > > 
-> > > I agree that the bug you point out is addressed by this patch.
-> > > Although I wonder if it is cleaner not to set bsp_priv->clk_phy
-> > > unless there is no error, rather than setting it then resetting
-> > > it if there is an error.
-> > +1 !
-> > 
-> > > More importantly, I wonder if there is another bug: does clk_set_rate need
-> > > to be called in the case where there is no error and bsp_priv->integrated_phy
-> > > is false?
-> > I think there's another issue:
-> > 
-> > static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
-> > {
-> > ...
-> >          if (plat->phy_node) {
-> >                  bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+The following commit has been merged into the x86/apic branch of tip:
 
-This is the only invokation to of_clk_get() in the driver. Should we
-convert it to the devres-managed variant? And rk_gmac_remove could be
-simplified further.
+Commit-ID:     d4bc3b11c12b41fdb5650f5ad797de97f8dce869
+Gitweb:        https://git.kernel.org/tip/d4bc3b11c12b41fdb5650f5ad797de97f8d=
+ce869
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Wed, 03 Sep 2025 17:42:05 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 04 Sep 2025 13:12:51 +02:00
 
-> > ...
-> > 
-> > static void rk_gmac_remove(struct platform_device *pdev)
-> > {
-> > ...
-> >          if (priv->plat->phy_node && bsp_priv->integrated_phy)
-> >                  clk_put(bsp_priv->clk_phy);
-> > 
-> > So if bsp_priv->integrated_phy is false, then we get the clock but
-> > don't put it.
-> 
-> Yes! Just remove "bsp_priv->integrated_phy"
-> 
+x86/apic/savic: Do not use snp_abort()
 
-Cheers,
-Yao Zi
+This function is going away so replace the callsites with the equivalent
+functionality. Add a new SAVIC-specific termination reason. If more
+granularity is needed there, it will be revisited in the future.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/coco/sev/core.c            | 4 ++--
+ arch/x86/include/asm/sev-common.h   | 1 +
+ arch/x86/kernel/apic/x2apic_savic.c | 6 +++---
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index b64f430..e858e29 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -1129,7 +1129,7 @@ u64 savic_ghcb_msr_read(u32 reg)
+ 	if (res !=3D ES_OK) {
+ 		pr_err("Secure AVIC MSR (0x%llx) read returned error (%d)\n", msr, res);
+ 		/* MSR read failures are treated as fatal errors */
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 	}
+=20
+ 	__sev_put_ghcb(&state);
+@@ -1159,7 +1159,7 @@ void savic_ghcb_msr_write(u32 reg, u64 value)
+ 	if (res !=3D ES_OK) {
+ 		pr_err("Secure AVIC MSR (0x%llx) write returned error (%d)\n", msr, res);
+ 		/* MSR writes should never fail. Any failure is fatal error for SNP guest =
+*/
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 	}
+=20
+ 	__sev_put_ghcb(&state);
+diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-com=
+mon.h
+index 0020d77..01a6e4d 100644
+--- a/arch/x86/include/asm/sev-common.h
++++ b/arch/x86/include/asm/sev-common.h
+@@ -208,6 +208,7 @@ struct snp_psc_desc {
+ #define GHCB_TERM_SVSM_CAA		9	/* SVSM is present but CAA is not page aligned=
+ */
+ #define GHCB_TERM_SECURE_TSC		10	/* Secure TSC initialization failed */
+ #define GHCB_TERM_SVSM_CA_REMAP_FAIL	11	/* SVSM is present but CA could not =
+be remapped */
++#define GHCB_TERM_SAVIC_FAIL		12	/* Secure AVIC-specific failure */
+=20
+ #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+=20
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2api=
+c_savic.c
+index b846de0..dbc5678 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -363,7 +363,7 @@ static void savic_setup(void)
+ 	 */
+ 	res =3D savic_register_gpa(gpa);
+ 	if (res !=3D ES_OK)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+=20
+ 	native_wrmsrq(MSR_AMD64_SAVIC_CONTROL,
+ 		      gpa | MSR_AMD64_SAVIC_EN | MSR_AMD64_SAVIC_ALLOWEDNMI);
+@@ -376,13 +376,13 @@ static int savic_probe(void)
+=20
+ 	if (!x2apic_mode) {
+ 		pr_err("Secure AVIC enabled in non x2APIC mode\n");
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+ 		/* unreachable */
+ 	}
+=20
+ 	savic_page =3D alloc_percpu(struct secure_avic_page);
+ 	if (!savic_page)
+-		snp_abort();
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
+=20
+ 	return 1;
+ }
 
