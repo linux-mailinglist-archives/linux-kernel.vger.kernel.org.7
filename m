@@ -1,182 +1,224 @@
-Return-Path: <linux-kernel+bounces-800730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC61FB43B44
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A5AB43B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30EAB177BC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACAC76852CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764452D7DCD;
-	Thu,  4 Sep 2025 12:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800BD2DA777;
+	Thu,  4 Sep 2025 12:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XSBcXVvk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OPbPmlOw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674B2D0C9A
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E0E1B3923;
+	Thu,  4 Sep 2025 12:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988015; cv=none; b=Hu+Rf3/NNfLQlNbHcjNtQAYq2j/CSm/Et6VXsAlrQgAHwLxHbYe7dqPwe+lilBMilM191lucDY6PyNHly2iqe+oLT4CXTxE+iKflk3DkRvlfv3AP0jtxlklG9gUtHliWJgBMBuedGpJ7eGZtRlc9wUPr9ekrEFjeLTnTxvAAwSE=
+	t=1756988077; cv=none; b=ZijFrX/5atgj7LJKx3LllGhs1awkkJkr8sN4ZUhMbkNRg9FALYHc2XMyhnnCUYwxSP+W3jmX6Yfro4WW5QRSvIafoIVLt4D2AJvfn4dFpBtxDQeQGo4Ur0+wgK3CdeLX6SOz53Kbx1l1KvRMSyyZ5oLfPaa8tet9KT8hvlaBx+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988015; c=relaxed/simple;
-	bh=dGaxnwDc1UTsfN5tgg40DErGoAILkqkBdGg9Q5eHUVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YXpoX3ebUUilWTUc1NgLpTgY82b7TUjtccNczPtdgELi/eev+6SB4OjkJuhpzQ2pWOgr2mLDX2DoMi0WXL7an+fT6QL5mw6KX/F1OZ8nzQggaQn68/baP0QVpg0jtWyZQCXZ53tlnU3bhQ6SQNRg8Ta+k+b7tXOj9RTWeCiGBj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XSBcXVvk; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A8D1840E01BB;
-	Thu,  4 Sep 2025 12:13:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id X5Lfc-Z7aB7y; Thu,  4 Sep 2025 12:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756988007; bh=HwImBea0Pxd9tUsfNJTSFd6GGaQnM6wbr1zT9zpJBSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XSBcXVvkFmoPCNF1FMBpZWuDS7uTBwpL3WlRpb3eOnjQ9P/8NOjJu6Ing6L5mI9+f
-	 6wXxzDBpbA5p/N4RymAtuzixzsEIOXgMCyUozYfojrdGttRJhgzhKCSCoVp2BZOiaE
-	 WgWQeL0Wyifpu1tKvgTTK/bO29ik7/OOTSdirAjDTjasIIm+zp/bS8dXPLDV7j9I2V
-	 VYs3qXcwx4St+lNKbn87L5BE/JtcmyuY84Pgcgd3gQpUJgcemsqRpx3MsbkRh3LpoU
-	 dH9/s3CxrCmZJjB260BN4TQjyrkKRM1pF+3O7Q1vPmKr76Azruh3OgQEi3pZU1qoa0
-	 WQX8+SPSePhBIOLmWciFoAh0vIr5HJbdsHiiIuI6jKHmnSxZy+yyt6WvlVCp2K1eBm
-	 djZT+0tppyeLEnJGiaKeucduavAvL4Ql4cCQGit2ThGZG3lYG2IaX7BMyqTJDQxnXI
-	 okKBzPOzLHk8oTDWse+Rx71rfkRK85A6mK1gvrG9IdJieOUyr4MelkK64pMBEqX+S8
-	 p7T8XFcQhx81xAUcG2tAyP32xIV3phSZd0tNJ2p4TYqStQBsOKQUlchRp0UW9QAA+1
-	 wtvoCCha/b159RjELTV2FXwbKIK/M0TqyypNdBSMO7c16FNJQzTnJmEghAGLIb6Sz6
-	 1GOUecnRmpN9EMzCBzfUPsxc=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 502B740E00DA;
-	Thu,  4 Sep 2025 12:13:19 +0000 (UTC)
-Date: Thu, 4 Sep 2025 14:13:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, chao.gao@intel.com,
-	abusse@amazon.de
-Subject: Re: [PATCH v5 3/7] x86/microcode/intel: Establish staging control
- logic
-Message-ID: <20250904121318.GKaLmCXlU4kwhsxG9h@fat_crate.local>
-References: <20250813172649.15474-1-chang.seok.bae@intel.com>
- <20250823155214.17465-1-chang.seok.bae@intel.com>
- <20250823155214.17465-4-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1756988077; c=relaxed/simple;
+	bh=S976+RI28z8L0ngVOKl0KKy9BweTe97xDQCya7fxO7Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ut0RF/gYDAitlK8zx1+azgRAT44mSz/VrkOGKvCRig4vHBqEBKsxTegBSBHJB4HQm4/oz0yZ6jX0UsDYQM59vKKhgK/VjmtSuJp7cRXs4yZ6JPWt4ugt9ZESyRAp1PMaEfT55waN/HtVzaE8p6sC5O3UKos+EhTvlpIJ+QRJfDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OPbPmlOw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5843WueV023787;
+	Thu, 4 Sep 2025 12:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=e6RHa9
+	SvpLS1r4YPcIlCWhGU1cDHr37Zie6RCrM7oKo=; b=OPbPmlOwxBpRxHK+lFejae
+	xLuZC9DsMHdDFqiQryUM1ali2v7tRNWelIvNCqOqsiN9uH0LKIfYa02Ai11VT4rJ
+	gKmkTRJn2uC8Nrw/FLA2v9UlkfG0ZwDGPLiz/hRrMWG8teXLdN1rJpmKzxkVdUsP
+	M1ZTQ6BFP9k2zNJ0lCbGiS32iNNGXOvgEVxhgG+XfeX1sFdjnEyvg3RQbBE3VVLf
+	i+dml2FrpLJ118njsYXWwXfMIVlnZL0uZDQTSRSEXWV9kQ7Q7DG+Z+DyckFzb35p
+	6nEk2wka+OSqn7OjjUQ8wW4N90aOBIGehlxqNpT/tdOxEMmF1cwBGeC5L787d6sg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvg1m9g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 12:14:21 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 584BQU36021191;
+	Thu, 4 Sep 2025 12:14:20 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vcmpvcwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 12:14:20 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 584CEJaE22086182
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 4 Sep 2025 12:14:19 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F1B258058;
+	Thu,  4 Sep 2025 12:14:19 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7D9E58057;
+	Thu,  4 Sep 2025 12:14:16 +0000 (GMT)
+Received: from [9.111.14.114] (unknown [9.111.14.114])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  4 Sep 2025 12:14:16 +0000 (GMT)
+Message-ID: <5d2282ef995adddec86ae8e3240cd3f59f50b3e4.camel@linux.ibm.com>
+Subject: Re: [PATCH] s390/debug: Replace kmalloc() + copy_from_user() with
+ memdup_user_nul()
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+        Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger	
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Halil
+ Pasic	 <pasic@linux.ibm.com>,
+        "Bill O'Donnell" <bodonnel@redhat.com>,
+        Al Viro
+	 <viro@zeniv.linux.org.uk>,
+        Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>,
+        Joel Granados <joel.granados@kernel.org>
+Cc: Wei Liu <wei.liu@kernel.org>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 04 Sep 2025 14:14:16 +0200
+In-Reply-To: <20250904114031.353365-2-thorsten.blum@linux.dev>
+References: <20250904114031.353365-2-thorsten.blum@linux.dev>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=mQINBGHm3M8BEAC+MIQkfoPIAKdjjk84OSQ8erd2OICj98+GdhMQpIjHXn/RJdCZLa58k
+ /ay5x0xIHkWzx1JJOm4Lki7WEzRbYDexQEJP0xUia0U+4Yg7PJL4Dg/W4Ho28dRBROoJjgJSLSHwc
+ 3/1pjpNlSaX/qg3ZM8+/EiSGc7uEPklLYu3gRGxcWV/944HdUyLcnjrZwCn2+gg9ncVJjsimS0ro/
+ 2wU2RPE4ju6NMBn5Go26sAj1owdYQQv9t0d71CmZS9Bh+2+cLjC7HvyTHKFxVGOznUL+j1a45VrVS
+ XQ+nhTVjvgvXR84z10bOvLiwxJZ/00pwNi7uCdSYnZFLQ4S/JGMs4lhOiCGJhJ/9FR7JVw/1t1G9a
+ UlqVp23AXwzbcoV2fxyE/CsVpHcyOWGDahGLcH7QeitN6cjltf9ymw2spBzpRnfFn80nVxgSYVG1d
+ w75ksBAuQ/3e+oTQk4GAa2ShoNVsvR9GYn7rnsDN5pVILDhdPO3J2PGIXa5ipQnvwb3EHvPXyzakY
+ tK50fBUPKk3XnkRwRYEbbPEB7YT+ccF/HioCryqDPWUivXF8qf6Jw5T1mhwukUV1i+QyJzJxGPh19
+ /N2/GK7/yS5wrt0Lwxzevc5g+jX8RyjzywOZGHTVu9KIQiG8Pqx33UxZvykjaqTMjo7kaAdGEkrHZ
+ dVHqoPZwhCsgQARAQABtChOaWtsYXMgU2NobmVsbGUgPHNjaG5lbGxlQGxpbnV4LmlibS5jb20+iQ
+ JXBBMBCABBAhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAhkBFiEEnbAAstJ1IDCl9y3cr+Q/Fej
+ CYJAFAmesutgFCQenEYkACgkQr+Q/FejCYJDIzA//W5h3t+anRaztihE8ID1c6ifS7lNUtXr0wEKx
+ Qm6EpDQKqFNP+n3R4A5w4gFqKv2JpYQ6UJAAlaXIRTeT/9XdqxQlHlA20QWI7yrJmoYaF74ZI9s/C
+ 8aAxEzQZ64NjHrmrZ/N9q8JCTlyhk5ZEV1Py12I2UH7moLFgBFZsPlPWAjK2NO/ns5UJREAJ04pR9
+ XQFSBm55gsqkPp028cdoFUD+IajGtW7jMIsx/AZfYMZAd30LfmSIpaPAi9EzgxWz5habO1ZM2++9e
+ W6tSJ7KHO0ZkWkwLKicrqpPvA928eNPxYtjkLB2XipdVltw5ydH9SLq0Oftsc4+wDR8TqhmaUi8qD
+ Fa2I/0NGwIF8hjwSZXtgJQqOTdQA5/6voIPheQIi0NBfUr0MwboUIVZp7Nm3w0QF9SSyTISrYJH6X
+ qLp17NwnGQ9KJSlDYCMCBJ+JGVmlcMqzosnLli6JszAcRmZ1+sd/f/k47Fxy1i6o14z9Aexhq/UgI
+ 5InZ4NUYhf5pWflV41KNupkS281NhBEpChoukw25iZk0AsrukpJ74x69MJQQO+/7PpMXFkt0Pexds
+ XQrtsXYxLDQk8mgjlgsvWl0xlk7k7rddN1+O/alcv0yBOdvlruirtnxDhbjBqYNl8PCbfVwJZnyQ4
+ SAX2S9XiGeNtWfZ5s2qGReyAcd2nBna0KU5pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNjaG5lbGxlQ
+ GlibS5jb20+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAAstJ1IDCl9y
+ 3cr+Q/FejCYJAFAmesuuEFCQenEYkACgkQr+Q/FejCYJCosA/9GCtbN8lLQkW71n/CHR58BAA5ct1
+ KRYiZNPnNNAiAzjvSb0ezuRVt9H0bk/tnj6pPj0zdyU2bUj9Ok3lgocWhsF2WieWbG4dox5/L1K28
+ qRf3p+vdPfu7fKkA1yLE5GXffYG3OJnqR7OZmxTnoutj81u/tXO95JBuCSJn5oc5xMQvUUFzLQSbh
+ prIWxcnzQa8AHJ+7nAbSiIft/+64EyEhFqncksmzI5jiJ5edABiriV7bcNkK2d8KviUPWKQzVlQ3p
+ LjRJcJJHUAFzsZlrsgsXyZLztAM7HpIA44yo+AVVmcOlmgPMUy+A9n+0GTAf9W3y36JYjTS+ZcfHU
+ KP+y1TRGRzPrFgDKWXtsl1N7sR4tRXrEuNhbsCJJMvcFgHsfni/f4pilabXO1c5Pf8fiXndCz04V8
+ ngKuz0aG4EdLQGwZ2MFnZdyf3QbG3vjvx7XDlrdzH0wUgExhd2fHQ2EegnNS4gNHjq82uLPU0hfcr
+ obuI1D74nV0BPDtr7PKd2ryb3JgjUHKRKwok6IvlF2ZHMMXDxYoEvWlDpM1Y7g81NcKoY0BQ3ClXi
+ a7vCaqAAuyD0zeFVGcWkfvxYKGqpj8qaI/mA8G5iRMTWUUUROy7rKJp/y2ioINrCul4NUJUujfx4k
+ 7wFU11/YNAzRhQG4MwoO5e+VY66XnAd+XPyBIlvy0K05pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNj
+ aG5lbGxlQGdtYWlsLmNvbT6JAlQEEwEIAD4CGwEFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSds
+ ACy0nUgMKX3Ldyv5D8V6MJgkAUCZ6y64QUJB6cRiQAKCRCv5D8V6MJgkEr/D/9iaYSYYwlmTJELv+
+ +EjsIxXtneKYpjXEgNnPwpKEXNIpuU/9dcVDcJ10MfvWBPi3sFbIzO9ETIRyZSgrjQxCGSIhlbom4
+ D8jVzTA698tl9id0FJKAi6T0AnBF7CxyqofPUzAEMSj9ynEJI/Qu8pHWkVp97FdJcbsho6HNMthBl
+ +Qgj9l7/Gm1UW3ZPvGYgU75uB/mkaYtEv0vYrSZ+7fC2Sr/O5SM2SrNk+uInnkMBahVzCHcoAI+6O
+ Enbag+hHIeFbqVuUJquziiB/J4Z2yT/3Ps/xrWAvDvDgdAEr7Kn697LLMRWBhGbdsxdHZ4ReAhc8M
+ 8DOcSWX7UwjzUYq7pFFil1KPhIkHctpHj2Wvdnt+u1F9fN4e3C6lckUGfTVd7faZ2uDoCCkJAgpWR
+ 10V1Q1Cgl09VVaoi6LcGFPnLZfmPrGYiDhM4gyDDQJvTmkB+eMEH8u8V1X30nCFP2dVvOpevmV5Uk
+ onTsTwIuiAkoTNW4+lRCFfJskuTOQqz1F8xVae8KaLrUt2524anQ9x0fauJkl3XdsVcNt2wYTAQ/V
+ nKUNgSuQozzfXLf+cOEbV+FBso/1qtXNdmAuHe76ptwjEfBhfg8L+9gMUthoCR94V0y2+GEzR5nlD
+ 5kfu8ivV/gZvij+Xq3KijIxnOF6pd0QzliKadaFNgGw4FoUeZo0rQhTmlrbGFzIFNjaG5lbGxlIDx
+ uaWtzQGtlcm5lbC5vcmc+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAA
+ stJ1IDCl9y3cr+Q/FejCYJAFAmesuuEFCQenEYkACgkQr+Q/FejCYJC6yxAAiQQ5NAbWYKpkxxjP/
+ AajXheMUW8EtK7EMJEKxyemj40laEs0wz9owu8ZDfQl4SPqjjtcRzUW6vE6JvfEiyCLd8gUFXIDMS
+ l2hzuNot3sEMlER9kyVIvemtV9r8Sw1NHvvCjxOMReBmrtg9ooeboFL6rUqbXHW+yb4GK+1z7dy+Q
+ 9DMlkOmwHFDzqvsP7eGJN0xD8MGJmf0L5LkR9LBc+jR78L+2ZpKA6P4jL53rL8zO2mtNQkoUO+4J6
+ 0YTknHtZrqX3SitKEmXE2Is0Efz8JaDRW41M43cE9b+VJnNXYCKFzjiqt/rnqrhLIYuoWCNzSJ49W
+ vt4hxfqh/v2OUcQCIzuzcvHvASmt049ZyGmLvEz/+7vF/Y2080nOuzE2lcxXF1Qr0gAuI+wGoN4gG
+ lSQz9pBrxISX9jQyt3ztXHmH7EHr1B5oPus3l/zkc2Ajf5bQ0SE7XMlo7Pl0Xa1mi6BX6I98CuvPK
+ SA1sQPmo+1dQYCWmdQ+OIovHP9Nx8NP1RB2eELP5MoEW9eBXoiVQTsS6g6OD3rH7xIRxRmuu42Z5e
+ 0EtzF51BjzRPWrKSq/mXIbl5nVW/wD+nJ7U7elW9BoJQVky03G0DhEF6fMJs08DGG3XoKw/CpGtMe
+ 2V1z/FRotP5Fkf5VD3IQGtkxSnO/awtxjlhytigylgrZ4wDpSE=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250823155214.17465-4-chang.seok.bae@intel.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=behrUPPB c=1 sm=1 tr=0 ts=68b9829d cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=tag-m7oqSU3ZUGBMok8A:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: BupRsZYbHE9Pu0-hdeT3N7M9NdnKLzm2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX8sBnnCJFaM37
+ 6OnTIuMZqssx/ih/x7aPmcIKANXBwvywdTnCcYe7cNTPwDXNsBfmDGfKvOQeX/ulR8mucVj1+bI
+ /L4NdqiFxEz/HrcxWrwvKWtasg+wA3+pXpPO3QYy3wO2MBc+7TaDb9WGew8sQ3mWafoRIwKGarK
+ QVHKynYHXwvvqRP0nJBo2xPM0usUlxeuxWQBfSvm9X8clvn9zOd/eH5x/+1cP5TXkvCEmmwxQVr
+ WLOzoenEcIAEzvdlJSDBvAueDq8vHIHzbHEzaMSsKPe1ZVAGn1/Bn57aUlf/30eYfswm2VDKksC
+ RR7Zzw+A/U72YOvI0o4q8InFpPWsxQx6kzf+B0GT4+8sEuxjUm/0+oSJN8A8zIqFUeNDdSXq8fV
+ OrO0LqaD
+X-Proofpoint-GUID: BupRsZYbHE9Pu0-hdeT3N7M9NdnKLzm2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 spamscore=0 clxscore=1011 phishscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
-On Sat, Aug 23, 2025 at 08:52:06AM -0700, Chang S. Bae wrote:
-> When microcode staging is initiated, operations are carried out through
-> an MMIO interface. Each package has a unique interface specified by the
-> IA32_MCU_STAGING_MBOX_ADDR MSR, which maps to a set of 32-bit registers.
-> 
-> Prepare staging with the following steps:
-> 
->   1.  Ensure the microcode image is 32-bit aligned to match the MMIO
->       register size.
-> 
->   2.  Identify each MMIO interface based on its per-package scope.
-> 
->   3.  Invoke the staging function for each identified interface, which
->       will be implemented separately.
-> 
-> Also, define cpu_primary_thread_mask for the CONFIG_SMP=n case, allowing
-> consistent use when narrowing down primary threads to locate the
-> per-package interface.
-
-This paragraph is stale now and can go.
-
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index b65c3ba5fa14..0356155f9264 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -913,6 +913,8 @@
->  #define MSR_IA32_UCODE_WRITE		0x00000079
->  #define MSR_IA32_UCODE_REV		0x0000008b
->  
-> +#define MSR_IA32_MCU_STAGING_MBOX_ADDR	0x000007a5
-
-Doesn't look sorted to me.
-
-> +
->  /* Intel SGX Launch Enclave Public Key Hash MSRs */
->  #define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
->  #define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index 371ca6eac00e..d309fb1f058f 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -299,6 +299,54 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
->  	return size ? NULL : patch;
+On Thu, 2025-09-04 at 13:40 +0200, Thorsten Blum wrote:
+> Replace kmalloc() followed by copy_from_user() with memdup_user_nul() to
+> improve and simplify debug_get_user_string(). Remove the manual
+> NUL-termination.
+>=20
+> No functional changes intended.
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/s390/kernel/debug.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+> index c62100dc62c8..6a26f202441d 100644
+> --- a/arch/s390/kernel/debug.c
+> +++ b/arch/s390/kernel/debug.c
+> @@ -1416,18 +1416,12 @@ static inline char *debug_get_user_string(const c=
+har __user *user_buf,
+>  {
+>  	char *buffer;
+> =20
+> -	buffer =3D kmalloc(user_len + 1, GFP_KERNEL);
+> -	if (!buffer)
+> -		return ERR_PTR(-ENOMEM);
+> -	if (copy_from_user(buffer, user_buf, user_len) !=3D 0) {
+> -		kfree(buffer);
+> -		return ERR_PTR(-EFAULT);
+> -	}
+> +	buffer =3D memdup_user_nul(user_buf, user_len);
+> +	if (IS_ERR(buffer))
+> +		return buffer;
+>  	/* got the string, now strip linefeed. */
+>  	if (buffer[user_len - 1] =3D=3D '\n')
+>  		buffer[user_len - 1] =3D 0;
+> -	else
+> -		buffer[user_len] =3D 0;
+>  	return buffer;
 >  }
->  
-> +/*
-> + * Handle the staging process using the mailbox MMIO interface.
-> + * Return the result state.
-> + */
-> +static enum ucode_state do_stage(u64 mmio_pa)
-> +{
-> +	pr_debug_once("Staging implementation is pending.\n");
-> +	return UCODE_ERROR;
-> +}
-> +
-> +static void stage_microcode(void)
-> +{
-> +	unsigned int pkg_id = UINT_MAX;
-> +	enum ucode_state ret;
-> +	int cpu, err;
-> +	u64 mmio_pa;
-> +
-> +	if (!IS_ALIGNED(get_totalsize(&ucode_patch_late->hdr), sizeof(u32)))
-> +		return;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	/*
-> +	 * The MMIO address is unique per package, and all the SMT
-> +	 * primary threads are online here. Find each MMIO space by
-> +	 * their package ids to avoid duplicate staging.
-> +	 */
-> +	for_each_cpu(cpu, cpu_primary_thread_mask) {
-> +		if (topology_logical_package_id(cpu) == pkg_id)
-> +			continue;
+> =20
 
-<---- newline here.
+I like it, thanks!
 
-> +		pkg_id = topology_logical_package_id(cpu);
-> +
-> +		err = rdmsrq_on_cpu(cpu, MSR_IA32_MCU_STAGING_MBOX_ADDR, &mmio_pa);
-> +		if (WARN_ON_ONCE(err))
-> +			return;
-> +
-> +		ret = do_stage(mmio_pa);
-> +		if (ret != UCODE_OK) {
-> +			pr_err("Error: staging failed with %s for CPU%d at package %u.\n",
-> +			       ret == UCODE_TIMEOUT ? "timeout" : "error state",
-
-What does "error state" mean?
-
-Are we going to dump additional error state so that it is clear why it failed?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
