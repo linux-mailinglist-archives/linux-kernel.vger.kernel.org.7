@@ -1,223 +1,183 @@
-Return-Path: <linux-kernel+bounces-801463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5A5B44543
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:24:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBAAB44545
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3F8A441A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A93DB7AD700
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32773342C8A;
-	Thu,  4 Sep 2025 18:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A084D3431E3;
+	Thu,  4 Sep 2025 18:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gOBQeyTB"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2081.outbound.protection.outlook.com [40.107.96.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNQnfgMF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E007F223328
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 18:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757010238; cv=fail; b=Di2Zy5wo9OFqb6ZgnElvhAYrUGU2GhkuiWomZXEeTCCdI1mjf+6kT38qcJHw8M2jHnMmRjIzN81Ot5O7/ul3Gi9Bpc73qvQDPveXCCav0BpzBS8hnfg4dh2Sa1tpbQT0OhXWo9sfHVktqef8ztexzrTmU8Nj/TRhnez41H4ChTw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757010238; c=relaxed/simple;
-	bh=E3auvT9d6CCL0issofJ1/UsUylcm3asn3RI3RrMlgLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=C/ORxbzcj12uJeaPq+E6MVjkLdoYu45S0ye//UA2/WMjar+0bLmCofBtVhQmRobsIHmyEsrQkH+zn+CXlnEhGPCUfNaqo64dsx/0v8gv0GjSXeWairqEFA7uP2W+FIEXIhJ5renQEsbiG9YBOEsZDoi30E7vhBGI38XQSPe5E/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gOBQeyTB; arc=fail smtp.client-ip=40.107.96.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FLReoDKe9kMMvrgkM3qWDKmhH3ZtbI3zNwnkdjs2nMKgteYeHLYkZDE/KWzJnF/jupp10yInhlEEe3nWWiaY4IIebtZCmksO9PhclbjO7agPBfAgk+OAhGdluPgnCMN99FbbczJeDhMJweT96z/ck11XYw0MKtxTIIzZ0VlRrWGW72NNfGcEUSR4xqag4HUdC8Y1UMjIdbcrxrwlX2OA+CKlCDHJh3G77AKEvuxx/IKry+rXOKOON+yUczSZgs66fDPZ+1iaJZy5HbI6zPq0zpkSRyTtx1UNsHSCYI4CWM03LMI1aYlQD+TX8YoCxO2DAxakHN/PU1EEHBZOOyG9yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N80vT8OnXYZz035xo1Z9kfnwiWhjJo4909Vr6slvN60=;
- b=GWKhv17JIcnJbiFMQ+UDqqTGMltdrdmYKSFOfOLwGezEuCDkPiXtxLjIuIEceQYQBdwxZNfBN93I7hgzoKbj8+A2VghfIZFa7DGFfOJrl2pZvTBAcRG8mihi9IJJP0yk6uC0uP9+jRA1niTvtsSiI6CWcHdEybjc+zAmtemk9fUzi8ekfHAquLkLGEnkWVvOJFYw2wtqZDSxlmoa06ba9JY1MI9SI0yw/NryCaM7pQMm9mEGumSD+ReA1JhsCd4sJ8CicZyHtyONk1S61oLI+d8zdFyvQbRq/czAA9WV+eLmSxij73uRqDVt6ClNx92Aox/3gD9/z9j/lNCtOo/RPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N80vT8OnXYZz035xo1Z9kfnwiWhjJo4909Vr6slvN60=;
- b=gOBQeyTBK2ePkxf57OjgoqjU0sEIlTAxqxB42OxSgdVIXCWhHRdpAkZDRCClFzcTMh85+gBGbNG8Bljkm01uMRA8G5Zq6jSn/z+fv7gvZoZNtXxaTiiUFDLy/sGTJuRCvjtwtvX+jmo6BNmIt/RKQT6Yebwz8P2wheCcsqV1D6xvazpvAQJGJD868re/qwKUtxUD1ZoIkTFX39QDr60lVHGXbateVqSPwSMI74fB0GUmMS/9epD2vnw0tfZ1bsN7sx117wbtqYPCzEiUEwMvo33WtYqxfAVsJXVHEyuj7trmOpy2CVoxdUq8KoYWlqUF3cXX2/toQK25oz47L62T8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SN7PR12MB7954.namprd12.prod.outlook.com (2603:10b6:806:344::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 18:23:51 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 18:23:50 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	Jake Hillion <jakehillion@meta.com>,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 sched_ext/for-6.18] sched_ext: Fix NULL dereference in scx_bpf_cpu_rq() warning
-Date: Thu,  4 Sep 2025 20:23:48 +0200
-Message-ID: <20250904182348.107835-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI1P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:2::10) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DEB2356C9;
+	Thu,  4 Sep 2025 18:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757010352; cv=none; b=m9FWt7MaoWz7/4KuWHEIQcjK5J0L7uFMC5Nb3Y5qqv1+lQgw16i7CEaL0qCayDNmvldvO2SxLBbBgAE/CeAAZ4uRK89xhmWOIlWCe1KqgTzOYisLjM49AEui4o4QBE4XvmsVn2wk2qX62pvms2vXtlb2MEMeOZSVCpndSpWP0qQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757010352; c=relaxed/simple;
+	bh=fODPQuazUhzIXcrOVissOgZN6RxqkXm+I9fvTVso/kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IV3MJK+Z1s3dJ40xArHQkGlzqyJLEjBoP0RvruR/ImtiVQGGGNOeCsAcLYPwxaB0GcM1zyqrqGkuHkusnS5pT7V0+wDfgmB7ae0mCgws66d+iGxnzDj2T79xHHZLue8OPjiNxlP+yTIXTMQTzIwb2EgYMXqLDwrp0SVL8+BCyes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNQnfgMF; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757010351; x=1788546351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fODPQuazUhzIXcrOVissOgZN6RxqkXm+I9fvTVso/kw=;
+  b=iNQnfgMFu30X7Z6iatT6Y8SdN7cgRgjsQ2BNanemaMHz8A05/bNZrYHp
+   XtLbfjKkqTNUzI+8WmMRnksEeJtNDRdgKsJC4ReGRX9MkLyWFo9re8IV4
+   a40qvOZLpBPeOJZ2RoEmR46XqFepZywA28vuHnwgoDh8A7j7YwPulQgM2
+   +kqvKKmsL1n0E2E+UgFYacq8f9XZ9WJh+mOUcW1EvbJnjjTsWHlVt/fUM
+   94/OYLXd1gd1bVoBNbSuhGAUiVWHRna1rlvESzP9rAECIw/U1ZgGvdDp/
+   L9S5LWzeh7tJ+YXfbu1w0OkHvjReq4X5blaf5wc/DmKnbAvqw0r1UJOqJ
+   Q==;
+X-CSE-ConnectionGUID: 8ieNaqAGR86XoP76tI2uZw==
+X-CSE-MsgGUID: AhRTSthQQ2Sny6hyGLw2QA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="76815859"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="76815859"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:25:50 -0700
+X-CSE-ConnectionGUID: zBHdrTl7S9yy4bqqmzmJtg==
+X-CSE-MsgGUID: 4Vn3UJaJRUmjB7jTV0qmCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="176305149"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 04 Sep 2025 11:25:46 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuEeV-0005cN-1t;
+	Thu, 04 Sep 2025 18:25:43 +0000
+Date: Fri, 5 Sep 2025 02:25:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Adam Young <admiyo@os.amperecomputing.com>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v28 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+Message-ID: <202509050150.wt57Mjwg-lkp@intel.com>
+References: <20250904040544.598469-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SN7PR12MB7954:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9df5ee58-b06e-47cd-e085-08ddebe03269
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nAU2WkIQCOLYU9SylwRI6O34grZKs8brAIOcGRlQXwv3bd2opSyzhFEUN9FY?=
- =?us-ascii?Q?fdI639YJU73ohE1UHBuBXJs+Y006IxqxUeA9fHavxIIrtxwAaAL/HhDcjYVT?=
- =?us-ascii?Q?Ujwl0bw1Niyzg6eOtOaZ+DorMscBH/2XlXnNvfhjPvyCM7J3dKoaYYXditS4?=
- =?us-ascii?Q?K/L3rIt7C/FreGpaD2u6yuVnXEkDTKqYiuRfbymc4/qhJORUkm+Rzca+vqA8?=
- =?us-ascii?Q?vq4V/3M7ZftkFH5rDDlkkRSdlC0pEc/lvAhCAgP2P/cbzE0ZkIfEnpxRGCig?=
- =?us-ascii?Q?yvT1+kKNjEvnNo5YM5d4l2dFM7nsqTixmPHxAhFsgGrHj1n7G+3+dIrBdmAH?=
- =?us-ascii?Q?2ovILMUWHbySi1/J16Nmr8XyAJC+79f24Jqbo6Ty+OvZ3wTF1HIsWw1lb8Ef?=
- =?us-ascii?Q?ntKlU+oAyzi4NwrfqN7KyznqEaAWMe7jrO7zu/Q0tAW59d74U7EH8UkYIecR?=
- =?us-ascii?Q?L7+XFUh7bfIS3ZEI3Eu4vqUcy1fZdGJUHAnQgdzWStq283ZyvSO+wzIOlCEY?=
- =?us-ascii?Q?lCAy3DHqup3LBve/Uz024k8XrTher09VAoGrt9eBGDzbzpiSrVKARYw95Srx?=
- =?us-ascii?Q?AAs6ZX7Wh84HEbV44g3g4eraXjV3VxVeMLYxuYjvas6qPKi7PtQ0MpQIGa9H?=
- =?us-ascii?Q?P2ag0z2hGV/lTaA9Gw8DCGCrfNYp/MOQbrHtqurkZMp1WuZMqTBi7xqkV7h7?=
- =?us-ascii?Q?pUYv/VHEef9S1NJURX7HqHoLAlUVCOlgt9VG5w0OdLabWBF6vbg7reOrLMtB?=
- =?us-ascii?Q?FQiIPviUtcPRCGNrGVFjJFpe8K8o/pwpSd3MGsv1JCeCZ0PAkhQ/UMyNUF5n?=
- =?us-ascii?Q?qLtMIfFSXe/euqN+Zxda1909NWtwZA1lzdBbZs6Anw33WDow+CVsmxhmA48X?=
- =?us-ascii?Q?JlMN4LZF2AZxyvfhuAE5ZhWEEVyLJ5jAWRBD3NQW4JfHn0RkEEpjkLW88TwL?=
- =?us-ascii?Q?3HS6/+GPemk6rJQSaiJpDMoXRDIQYxz5f6D4ZW/2kKVr5ZUX1MfMQXlpZXLA?=
- =?us-ascii?Q?gyLnWyJVmnALIDi15djNf+prgDd/0FRa4QeqndIH8kpnJzGzUjvHx66tSAc3?=
- =?us-ascii?Q?gvBkzC/PHa1qWczLirdiJaQwHI0ulreTwnCWVkrOgqjjSNp0zVN0U9O9nnTx?=
- =?us-ascii?Q?h7evNi9CM9sDk4DwJxMrRgdVFtFVWLYx9IgvPEnaRIObd5HT8CKoc5SIzKd4?=
- =?us-ascii?Q?C9rcy3cRO/yrDjl+fiKmMPgvqGTgUKdllgow/Z9wgzW5K68GjMmyFRT54yJY?=
- =?us-ascii?Q?OMId4uu1kUh8G2rpBnacwYFOCx8i8wvdmpgEXKRIv+MdISrF2Cq2mRoZ2YzJ?=
- =?us-ascii?Q?XTkZpEAXZyLQmh6NyGux8PNgdaBbc6gBRZ0mQ7L4oiWK49S/bAoVDuyuFlhl?=
- =?us-ascii?Q?nhzRXYg6sHcyAi+Cfq2YYbZHBFiC/okKTYQP/HQ6OMgjr/QqJIHGu0mesvJE?=
- =?us-ascii?Q?b09GOxHceXE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BM7RQQ545KCmatc22fLmUWX5j+ZP0IdE0Q5BZjuAQi1nQTR29NGQLewWJlYU?=
- =?us-ascii?Q?NPL6GQn+0Ez7wnb0W8ncS2PXEJSYcIr+Au6PwM1j//lVmxiEkywoCld4mb9r?=
- =?us-ascii?Q?/T7dQ9KEyH7sWowFZmQVDKjcj2aW1XpMzXVfOZKV71cjNV7/dg4qgbNBPT0u?=
- =?us-ascii?Q?L994DnEfN/rRfqXzPnQig5MQVrxyfBVLQdkgag2Yrfwjq7je0zlqKqnb+lum?=
- =?us-ascii?Q?6HQP9xjqvsDk8ryoTWG0eFkTaaWjC7ILkP9utJt6ylA2+TOCcoc9n1X5RINE?=
- =?us-ascii?Q?iQ/rriFEpQCj9Xu8uLTnIl27Sur5ZSN9fa2oC/6KeLA80O47EDUD9oi/VOGC?=
- =?us-ascii?Q?6Iq1rfBi46u9SNZZWVgCLzWaNntj9OPs7kNMsVw+R9IbO5VNbexKb6KLRJKO?=
- =?us-ascii?Q?5yKtUCT+lpArYndTwGHxqDvQHlpE2+eeDLSxzstCGTaD1fM1tK9X70fWnzbx?=
- =?us-ascii?Q?nIkS7RJQGQME9YNYdSlXoJYvPhkWiPKXRibKPuZAp2G+TOzynvr2+GsAFb3+?=
- =?us-ascii?Q?S13tgWneOIwHaW0qcZk/Gbh05vmGnzI1wY0I1GQ4t6a9JUIuhM+ahToNZ8EF?=
- =?us-ascii?Q?njQ6AVWeDXPdKovJ6abRaTnJbeNrHNNXSvNOeRxt2RymxZoyCD5qhjQBo7e8?=
- =?us-ascii?Q?5pR4ww/5MXhgQkPbeFcp5ov6hTmQmbCeQqELoQdYvo22eAlb1nyEVCpIWgyM?=
- =?us-ascii?Q?IAz7k2cc7rCglu31wo0J23cCj0BQqwHcSFi0IWVGL1lAyIHS0m7B5nXeqnI0?=
- =?us-ascii?Q?D/2Ncat1z1iuQ7uX+wGEeIrbi1KxnQ9/V11dlwEcGmBjnWys/jT+JX6w2L4c?=
- =?us-ascii?Q?b21Kiza8ZCuAovP2wzc5PVFhHDsXUgsnb78mAVXCK7znuoyrFXy+IG3tnHjX?=
- =?us-ascii?Q?tQGV5SbZGudO9T4hakgbw5Y80ys/IKeqNwztfOAEGWRMN0ntvXEVHpmcBlhO?=
- =?us-ascii?Q?RSU1/JgwUZLFwYJ4liRZxYg7DMKgfuvoualz0PnoTatEjApsYdgE0dEOiqMO?=
- =?us-ascii?Q?1Z5Tlp6p/rxNrXHMljZKHQvNljqbBJaK/b4GCyEydCXcGCIhF4hj2b0h4SgE?=
- =?us-ascii?Q?Bpr7Dd5ze8pRmKnjJDILaG5NiEjm96KgHjLg2y1AX4c18i0O3uoxZ6SjrPTy?=
- =?us-ascii?Q?4b4vTjl0UM+Mhdx6+MyFGUjLPGu1BPVynY7vC9jasXvV5wZaV3EGozrdZtK4?=
- =?us-ascii?Q?ZupSnOVK+pgnz0hTf+bKaG7B+SMVAIM5CzDey4SkutJFoPaugrCEbTzibVft?=
- =?us-ascii?Q?hkIdpBCnuerfKDjd1zYgQoSBU+TJf61QVDqekEUAdyJL70K4bLo4YRgDsZ8O?=
- =?us-ascii?Q?sSco34n50dYOcVCjY1JOIsUmT7o6hehKJWw/yzm1qepFQ3Gu67QUItDCDvQ+?=
- =?us-ascii?Q?4vw09u2+fI0bYaacJbk/31BN93Q77jfXO4ks1fbe9D8LCqfxKFBGcppcH10F?=
- =?us-ascii?Q?2yXg0wWd+Y/mIwvJGc0seFmBKXgUyQzwrs2uPeSXKvhxQZj4wbS8VaakA57Y?=
- =?us-ascii?Q?ZD8NafgPkG37KDBxoUS6DRCZYbqcRos7n6MOvGsNp/ho5cyD1lrjyR9a8ycl?=
- =?us-ascii?Q?YumHl2DxamMYVYfhtGKDvKZ0hjxA2TfEV+RoF9wC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9df5ee58-b06e-47cd-e085-08ddebe03269
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 18:23:50.8753
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lIpXYp/OswgujSdjM5BouqTCoqqX5M2CDK8r8SKtX3P4YRYRh35AIYpnP+h1NJN0PttpCFi/bhWHmoeTzqbfsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7954
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904040544.598469-2-admiyo@os.amperecomputing.com>
 
-When printing the deprecation warning for scx_bpf_cpu_rq(), we may hit a
-NULL pointer dereference if the kfunc is called before a BPF scheduler
-is fully attached, for example, when invoked from a BPF timer or during
-ops.init():
+Hi Adam,
 
- [   50.752775] BUG: kernel NULL pointer dereference, address: 0000000000000331
- ...
- [   50.764205] RIP: 0010:scx_bpf_cpu_rq+0x30/0xa0
- ...
- [   50.787661] Call Trace:
- [   50.788398]  <TASK>
- [   50.789061]  bpf_prog_08f7fd2dcb187aaf_wakeup_timerfn+0x75/0x1a8
- [   50.792477]  bpf_timer_cb+0x7e/0x140
- [   50.796003]  hrtimer_run_softirq+0x91/0xe0
- [   50.796952]  handle_softirqs+0xce/0x3c0
- [   50.799087]  run_ksoftirqd+0x3e/0x70
- [   50.800197]  smpboot_thread_fn+0x133/0x290
- [   50.802320]  kthread+0x115/0x220
- [   50.804984]  ret_from_fork+0x17a/0x1d0
- [   50.806920]  ret_from_fork_asm+0x1a/0x30
- [   50.807799]  </TASK>
+kernel test robot noticed the following build warnings:
 
-Fix this by only printing the warning once the scheduler is fully
-registered.
+[auto build test WARNING on net-next/main]
 
-Fixes: 5c48d88fe0049 ("sched_ext: deprecation warn for scx_bpf_cpu_rq()")
-Cc: Christian Loehle <christian.loehle@arm.com>
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
-Changes in v2:
- - Do not incorrectly flip the logic (thanks Tejun)
- - Add likely() around sch (suggested by Christian)
- - Link to v1: https://lore.kernel.org/all/20250904125522.561737-1-arighi@nvidia.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Adam-Young/mctp-pcc-Implement-MCTP-over-PCC-Transport/20250904-120728
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250904040544.598469-2-admiyo%40os.amperecomputing.com
+patch subject: [PATCH net-next v28 1/1] mctp pcc: Implement MCTP over PCC Transport
+config: i386-buildonly-randconfig-005-20250905 (https://download.01.org/0day-ci/archive/20250905/202509050150.wt57Mjwg-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509050150.wt57Mjwg-lkp@intel.com/reproduce)
 
- kernel/sched/ext.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509050150.wt57Mjwg-lkp@intel.com/
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 489462290142a..3eb6be889da6d 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -6362,17 +6362,20 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
-  */
- __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
- {
--	struct scx_sched *sch = scx_root;
-+	struct scx_sched *sch;
- 
- 	if (!kf_cpu_valid(cpu, NULL))
- 		return NULL;
- 
--	if (!sch->warned_deprecated_rq) {
-+	rcu_read_lock();
-+	sch = rcu_dereference(scx_root);
-+	if (likely(sch) && !sch->warned_deprecated_rq) {
- 		printk_deferred(KERN_WARNING "sched_ext: %s() is deprecated; "
- 				"use scx_bpf_locked_rq() when holding rq lock "
- 				"or scx_bpf_cpu_curr() to read remote curr safely.\n", __func__);
- 		sch->warned_deprecated_rq = true;
- 	}
-+	rcu_read_unlock();
- 
- 	return cpu_rq(cpu);
- }
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/mctp/mctp-pcc.c:327:6: warning: variable 'rc' is uninitialized when used here [-Wuninitialized]
+     327 |         if (rc)
+         |             ^~
+   drivers/net/mctp/mctp-pcc.c:303:8: note: initialize the variable 'rc' to silence this warning
+     303 |         int rc;
+         |               ^
+         |                = 0
+   1 warning generated.
+
+
+vim +/rc +327 drivers/net/mctp/mctp-pcc.c
+
+   293	
+   294	static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
+   295	{
+   296		struct mctp_pcc_lookup_context context = {0};
+   297		struct mctp_pcc_ndev *mctp_pcc_ndev;
+   298		struct device *dev = &acpi_dev->dev;
+   299		struct net_device *ndev;
+   300		acpi_handle dev_handle;
+   301		acpi_status status;
+   302		char name[32];
+   303		int rc;
+   304	
+   305		dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
+   306			acpi_device_hid(acpi_dev));
+   307		dev_handle = acpi_device_handle(acpi_dev);
+   308		status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
+   309					     &context);
+   310		if (!ACPI_SUCCESS(status)) {
+   311			dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
+   312			return -EINVAL;
+   313		}
+   314	
+   315		snprintf(name, sizeof(name), "mctppcc%d", context.inbox_index);
+   316		ndev = alloc_netdev(sizeof(*mctp_pcc_ndev), name, NET_NAME_PREDICTABLE,
+   317				    mctp_pcc_setup);
+   318		if (!ndev)
+   319			return -ENOMEM;
+   320	
+   321		mctp_pcc_ndev = netdev_priv(ndev);
+   322	
+   323		mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
+   324					    context.inbox_index);
+   325		mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->outbox,
+   326					    context.outbox_index);
+ > 327		if (rc)
+   328			goto free_netdev;
+   329	
+   330		mctp_pcc_ndev->outbox.client.tx_done = mctp_pcc_tx_done;
+   331		mctp_pcc_ndev->acpi_device = acpi_dev;
+   332		mctp_pcc_ndev->ndev = ndev;
+   333		acpi_dev->driver_data = mctp_pcc_ndev;
+   334	
+   335		initialize_MTU(ndev);
+   336	
+   337		rc = mctp_register_netdev(ndev, NULL, MCTP_PHYS_BINDING_PCC);
+   338		if (rc)
+   339			goto free_netdev;
+   340	
+   341		return devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
+   342	free_netdev:
+   343		free_netdev(ndev);
+   344		return rc;
+   345	}
+   346	
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
