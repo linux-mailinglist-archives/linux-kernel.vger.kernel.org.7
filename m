@@ -1,404 +1,347 @@
-Return-Path: <linux-kernel+bounces-800457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7B3B437DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F03CB437DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8E57B627F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F57A1730DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915E92F90F6;
-	Thu,  4 Sep 2025 10:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4982F83BC;
+	Thu,  4 Sep 2025 10:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kB86vZ35"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdmcYFwk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CA82F8BDC;
-	Thu,  4 Sep 2025 10:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9C42D839E;
+	Thu,  4 Sep 2025 10:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980117; cv=none; b=Xy6HG//ZetAmPeln1zRdoLwMOOqzSnt5dLkmsszs1Ich25bXlvAFzGil8UAzVlkIL7c7YnjnW1AfeD3rq7JzIdatKmCaqPqhKw2x5Daol0kp9ulju3A/LjEAfBfLXroFpImyC4i0cIDCpXn4iecw4q8r26heiYncEi80UKthG1M=
+	t=1756980161; cv=none; b=G9mnQtahx0PW86MRYcbRQQulrKCPJJJFTqE0mM11N0cGjNC9lATDSJHyWUQz/x7iLBqqnh5GuhIL22ZMUzZ9KHdf6gy2IvYc56ThdsuoY6HX0Dob+Y3r0KA1kde30oCJnYJzhJ5KPsvO+4mfmHNPWdCsgY1wK3+S3WZrdcJpnyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980117; c=relaxed/simple;
-	bh=NI2gdVs45WVB1gFpA+90fTTDAN7mr3Doc1EeTEzIFSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DsPijDAbu441Bxaxp/7yniNGVfT2Eyuv7ci4qzWTHmmmz5OyyidlMVh6/faG5LCrGmy4tFyMCmRE6TAVaGwMV6fbqGjjdiqPCmloOToHFU0MHA2h1Cj+xs91ejo5Ww+K2z3fdqSKn0nECUNczXBJWgncmwFCm82OnzEP/VMRMqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kB86vZ35; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326793a85so577295a91.1;
-        Thu, 04 Sep 2025 03:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756980114; x=1757584914; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Ux6xZQMdjwKk/vRBn6PyB6Gtcuu2vGEScUhbUr4eb0=;
-        b=kB86vZ35y4Fe2clJkgnjRWOLM5lKzfXQsdOrTBi0zzR/4FYCqO+xr7bwj4k8XNI302
-         JNAKlpSYVem+XPiAe+irrGWgwg2rNk/Xw2Csn4FxuQtQh5zxMD9gbCXca7PDWQ1JXQ93
-         sJwQlnYLHajdHffzD2mAsDhWUTzYkNF6MfTL6KqH9Ud6vx2U3uj/Yxz8G561Q/E92WFj
-         IRzhv+iz2papt5tkuXTLOXCM4EUgDV2pzJjCGrW1WbjKrVIYAh3yzNFosbEnZgInqM7g
-         mX/rARZcWBW8NWUFsvKI+MmBLiNraxwgCDnHBIlVXfdfrXIcrGWRQ8hGBR5jPe/DE3gO
-         0sZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756980114; x=1757584914;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Ux6xZQMdjwKk/vRBn6PyB6Gtcuu2vGEScUhbUr4eb0=;
-        b=Pws9nVzRyDP7quCFhhzfL+wi03l/3KGP4dP/rqbOngwTIqxQ23WE3nZrltGcoqIZBq
-         Mp7FkudEcQ6cl7112qsBc5yX3pc7+H4/Np28Qbdl9qTBzYTC4SZacg8wa/OvbVM+aitb
-         ygaJcE+T/zWGH1hBH7EyGGWuOsxvEY7pfD06zYlV5rmnTbu0V+96VETBg5/bDCIuPP5l
-         hUXkRkQmz3ZZ/QizpjJUsWSZerHTWdpGE1gunf8uusixaWiG0TOv0JBfVximDR9RfwlI
-         Qy5sR6BtrOd0H9bbg10UAc3FzfKZoAFRJ8I3yGszEwOYOr5R1YphCvx6ke8VoRrXScmM
-         DfhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC/vWolXLWGCltZAmaRX+zjGn/X1v/9NxLCj5TSaWh1plZFhC9MefRBkrju0Ez7DTCeO9/Gj8KPO/gBpOjbQw=@vger.kernel.org, AJvYcCXp47d0FMOOY91yhjMo2G49TYKVOj5Eb/ATX6VAnmWcJPQSzX4Dhw1E4AZ6p1buEpcdueRcvRcaA8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysRqbM+Bnb58pDK3gJAbxCshxMapbpFjjbnPn8b+7jSy+Y49WR
-	RxEbmUS6mq5+qDaXkh1HwwVOJrlBDZiNMxdDHOM7SGM9nNxFczY0wGB4RepoQ8FrANQzaS9i
-X-Gm-Gg: ASbGncuHx3mIoZbk1O1kGC5+QdYkmVn5oeUQZ6bUYctLmn+j7nwIsCeUQmqJjxegxIW
-	Zzf2hYIMXZvB4C/lKJJrAr1LL5/9zmcyFasj/E12rom882qj9SFC4jS/eOUObycLaCpTt7rShh+
-	IM7kTobbjf99CfviAy7CjMlY/yD7ZI1XD3W4QntIw9Tq+1eePkbv+9k6xx2yQo1rI80V+myghDa
-	XPl+pdHPUGFKEzfc4f/fngAPHWxlnXLV+daIt89SuLm8wDfsU+Q/e/eYOG4wmNo7XWEhUuCIgAf
-	vEaqDYosOouwDR4yl0ZkMlltZ3ymuO1RK8cC4WQfT0pifxgJOpQ98HdP2u0uazty3LolamFtdLZ
-	WsGiXVIEhkkPhdbfeI+75oJo/GcbpOaZcaYPX5S67MPB94yw616TzRRf7cUXSejfAv9ZjEnqv
-X-Google-Smtp-Source: AGHT+IHLHyRU6l7Pn1nPlsndiEWAG9LdZv5Q0RUp1kZVGxs0uOrPf5/nJArGnEEw7dCPnZkk6gA/qw==
-X-Received: by 2002:a17:90b:3d8e:b0:327:e98b:6981 with SMTP id 98e67ed59e1d1-328156e566cmr22489264a91.36.1756980113417;
-        Thu, 04 Sep 2025 03:01:53 -0700 (PDT)
-Received: from nyaos.. (v133-18-108-210.vir.kagoya.net. [133.18.108.210])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b747c2d66sm3510656a91.28.2025.09.04.03.01.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 03:01:52 -0700 (PDT)
-From: ChenMiao <chenmiao.ku@gmail.com>
-To: Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>
-Cc: chenmiao <chenmiao.ku@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Sahil Siddiq <sahilcdq0@gmail.com>,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v4 4/4] openrisc: Add jump label support
-Date: Thu,  4 Sep 2025 10:00:52 +0000
-Message-ID: <20250904100109.688033-5-chenmiao.ku@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250904100109.688033-1-chenmiao.ku@gmail.com>
-References: <20250904100109.688033-1-chenmiao.ku@gmail.com>
+	s=arc-20240116; t=1756980161; c=relaxed/simple;
+	bh=G9oD2Jar+WBoNITD/6b8bDhkhI4zfLlgPeYmXoXP9PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWZxbPO6CyA7zAis1Gc46vjmwVCoOR0ni2C71+UTPTn1wGM1N348DAa7P85LyVY9SgR7PAUkiLedVNrRc36D9rlbmkpcC0I4yT6LhgaQn87+tOSYDa+pPOZW6ae3AyIinc1A0DV15Gq9cHhvY4hDRAs/XbThazLxFqksGX0FTj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdmcYFwk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F9DC4CEF0;
+	Thu,  4 Sep 2025 10:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756980160;
+	bh=G9oD2Jar+WBoNITD/6b8bDhkhI4zfLlgPeYmXoXP9PE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TdmcYFwkE7qw/EzVrYKlGzBUCbDRPeWVbHjSXhQfHXv021S4sW/xLPj/kH9giDCxp
+	 jeaKMKR2bDFrUduPep1e+YhWdsS115Fo1bUtmPAv2my6vC3JiArHmc8HQUl1OaXZre
+	 7X0gj1r5aKoXh/xmKjDOBLb0YpzvFI0KUf4464DKAKFh3HvPKYtjsdzxdeDG4rgqAM
+	 wB0kM0Dur57kZCyZ4tEGRmljxlm3YWQFmV2/iagbMNABQ0JFZKuzAx6xKsTG8mXXv3
+	 gMHoDFuWlyQzx/HdAhKhPDiHm5WXiCCkh4/DBuODPQOFHIDiXK505msl4YIfmTTu2H
+	 3LJrE1DZGnowg==
+Date: Thu, 4 Sep 2025 12:02:35 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jonathan Denose <jdenose@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
+	Sean O'Brien <seobrien@google.com>
+Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
+Message-ID: <vyhhm3x6nfdfw6gbgluq3sjr6bzamhear7nec6xdi5wfxq7wcz@cx2egj4yr5sp>
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+ <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
 
-From: chenmiao <chenmiao.ku@gmail.com>
+On Sep 02 2025, Jonathan Denose wrote:
+> On Mon, Aug 18, 2025 at 6:10 PM Jonathan Denose <jdenose@google.com> wrote:
+> >
+> > Hello,
+> >
+> > This is an updated implementation of the interface for controlling haptic
+> > touchpads.
+> >
+> > Below is an updated design proposal for the userspace and HID interfaces,
+> > modified from what one of my colleagues submitted in 2019 [0].
+> >
+> > We would appreciate any feedback you might have.
+> >
+> > Thank you,
+> >
+> > Jonathan Denose
+> > Chromium OS Team
+> >
+> > Background
+> > ==========
+> >
+> > There are multiple independent projects to develop a touchpad with force sensors
+> > and haptic actuators, instead of a traditional button.  These haptic touchpads
+> > have several advantages and potential uses; they allow clicking across the
+> > entire touchpad surface, adjusting the force requirement for clicks, haptic
+> > feedback initiated by UI, etc. Supporting these features will potentially
+> > require two new communication channels at the kernel level:
+> > * Control of haptic motor by the host
+> > * Force sensor data from device to host
+> >
+> > This document includes two related proposals:
+> > 1. HID design proposal, that hardware makers would need to implement
+> > 2. Kernel design proposal
+> >
+> > Objective
+> > ==========
+> >
+> > Develop a standard protocol to allow userspace applications to communicate with
+> > haptic touchpads, and minimize duplicated code and effort.
+> >
+> > Requirements:
+> > 1. Support UI-initiated haptic feedback.
+> > 2. Allow userspace to control when button press and button release haptic
+> >    effects are triggered. (Useful when detecting a false click, changing force
+> >    thresholds, or sending context-dependent effects).
+> > 3. Reveal force sensor readings to userspace applications.
+> > 4. Only allow OS-controlled haptic feedback for those systems which support it.
+> >
+> > Proposal
+> > ========
+> >
+> > In order to minimize duplicated effort, we propose standardized haptic touchpad
+> > support in the linux kernel.
+> >
+> > HID API
+> > -------
+> >
+> > Modes
+> > .....
+> >
+> > The haptic touchpad should be able to operate under two different modes.
+> >
+> > 1. Device-controlled mode
+> >
+> > The haptic touchpad should start up in "device-controlled mode"
+> > (HID_HAPTIC_MODE_DEVICE), meaning it acts as a normal touchpad. This means it
+> > should perform the press and release haptic feedback autonomously at predefined
+> > force thresholds, and send the appropriate BTN_* events.
+> >
+> > 2. Host-controlled mode
+> >
+> > Once the touchpad has been confirmed as supporting haptics (described in more
+> > detail in the the "Click and release control" section below), the device should
+> > enter "host-controlled mode" (HID_HAPTIC_MODE_HOST). In this mode userspace
+> > should take control. From here, userspace will take control over
+> > press/release haptic feedback, relying on the effects sent by the kernel.
+> >
+> > Multitouch
+> > ..........
+> >
+> > The HID API for multitouch reports should follow the Microsoft precision
+> > touchpad spec [1], with the following changes:
+> > * A tip pressure field [2] should be used to report the force. The physical unit
+> >   Type (Newtons or grams), exponent, and limits should be reported in the
+> >   report descriptor for the force field.
+> > * The device will always report the button state according to its predefined
+> >   force thresholds, even when not in device-controlled mode.
+> > * The device must expose a "simple haptic controller" logical collection
+> >   alongside the touchpad collection.
+> >
+> > Haptic control
+> > ..............
+> >
+> > The HID protocol described in HUTRR63[3] must be used.
+> >
+> > The following waveforms should be supported:
+> >
+> > | WAVEFORMNONE             | Implicit waveforms required by protocol           |
+> > | WAVEFORMSTOP             |                                                   |
+> > | ------------------------ | ------------------------------------------------- |
+> > | WAVEFORMPRESS            | To be used to simulate button press. In device-   |
+> > |                          | controlled mode, it will also be used to simulate |
+> > |                          | button release.                                   |
+> > | ------------------------ | ------------------------------------------------- |
+> > | WAVEFORMRELEASE          | To be used to simulate button release.            |
+> >
+> > All waveforms will have an associated duration; continuous waveforms will be
+> > ignored by the kernel.
+> >
+> > Triggers & Mode switching
+> > .........................
+> >
+> > The “auto trigger waveform” should be set to WAVEFORM_PRESS by default, and the
+> > button from the touchpad collection should be set as the “auto trigger
+> > associated control”.
+> >
+> > The kernel can trigger the different modes in the following ways:
+> > * Device-controlled mode can be enabled by setting the “auto trigger waveform” to
+> >   WAVEFORM_PRESS.
+> > * Host-controlled mode can be enabled by setting the "auto trigger waveform" to
+> >   WAVEFORM_STOP.
+> >
+> > The device must also support manual triggering. If intensity modification for
+> > waveforms is supported by the device, the intensity control should be included
+> > in the manual trigger output report. This allows modification of the intensity
+> > on a per-waveform basis. Retriggering does not need to be supported by the
+> > device.
+> >
+> > Userspace API
+> > -------------
+> >
+> > Multitouch protocol
+> > ...................
+> >
+> > ABS_MT_PRESSURE will be used to report force. The resolution of ABS_MT_PRESSURE
+> > should also be defined and reported in force units of grams or Newtons.
+> > ABS_PRESSURE should be reported as the total force applied to the touchpad.
+> > When the kernel is in host-controlled mode, it should always forward the button
+> > press and release events to userspace.
+> >
+> > Use Force Feedback protocol to request pre-defined effects
+> > ..........................................................
+> >
+> > The force feedback protocol [4] should be used to control predefined effects.
+> >
+> > Typical use of the force feedback protocol requires loading effects to the
+> > driver by describing the output waveform, and then requesting those effects
+> > using an ID provided by the driver. However, for haptic touchpads we do not want
+> > to describe the output waveform explicitly, but use a set of predefined effects,
+> > which are identified by HID usage.
+> >
+> > The force feedback protocol will need to be extended to allow requests for HID
+> > haptic effects. This requires a new feedback effect type:
+> >
+> > /**
+> >  * struct ff_haptic_effect
+> >  * @hid_usage: hid_usage according to Haptics page (WAVEFORM_CLICK, etc.)
+> >  * @vendor_id: the waveform vendor ID if hid_usage is in the vendor-defined
+> >  * range
+> >  * @vendor_id: the vendor waveform page if hid_usage is in the vendor-defined
+> >  * range
+> >  * @intensity: strength of the effect
+> >  * @repeat_count: number of times to retrigger effect
+> >  * @retrigger_period: time before effect is retriggered (in ms)
+> >  */
+> > struct ff_haptic_effect {
+> >         __u16 hid_usage;
+> >         __u16 vendor_id;
+> >         __u8  vendor_waveform_page;
+> >         __s16 intensity;
+> >         __u16 repeat_count;
+> >         __u16 retrigger_period;
+> > }
+> >
+> > Since the standard waveform id namespace does not overlap with the vendor
+> > waveform id namespace, the vendor id and page can be ignored for standard
+> > waveforms.
+> >
+> > Click and release control
+> > .........................
+> >
+> > Haptic functionality shall be gated behind the HID_MULTITOUCH_HAPTIC kernel
+> > configuration option, and this kernel configuration option should only be
+> > enabled if userspace will support haptic capabilities. Haptic functionality will
+> > only be initialized and used if HID_MULTITOUCH_HAPTIC is enabled, and if the
+> > following conditions have been met:
+> > * ABS_MT_PRESSURE is defined and reporting force units of Newtons or grams.
+> > * The device supports haptic effects according to the hid protocol defined in
+> >   HUTRR63 [3].
+> > These checks will happen when the driver probes and initializes the multitouch
+> > device.
+> >
+> > In the case when the kernel configuration option has been set and the device
+> > reports pressure and haptic effects as defined above, the kernel will initialize
+> > the haptic device and configure the haptic driver to signal that the touchpad is
+> > haptic-compatible. To signal to userspace that the touchpad is haptic-compatible
+> > the kernel will mark INPUT_PROP_HAPTIC_TOUCHPAD.
+> >
+> > With userspace willing and able to take control, the kernel will signal to the
+> > device to exit device-controlled mode once a WAVEFORMPRESS or WAVEFORMRELEASE
+> > event is uploaded. From here, userspace will take control over press/release
+> > haptic feedback, relying on the effects sent by the kernel.
+> >
+> > In all other cases, the driver will take no action to enable haptic
+> > functionality.
+> >
+> > Summary of normal use-case
+> > 1. The kernel waits for userspace to upload WAVEFORMPRESS or
+> >    WAVEFORMRELEASE.
+> > 2. Userspace determines when a click has been performed based on its own
+> >    criteria and tells the touchpad to perform a haptic effect.
+> > 3. When userspace erases the WAVEFORMPRESS or WAVEFORMRELEASE effect, signal the
+> >    device to return to device-controlled mode.
+> >
+> > [0]: https://www.spinics.net/lists/linux-input/msg60938.html
+> > [1]: https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-devices
+> > [2]: Usage ID 0x30 of HID usage table 0x0D. See chapter 16:
+> >      https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
+> > [3]: https://www.usb.org/sites/default/files/hutrr63b_-_haptics_page_redline_0.pdf
+> > [4]: https://www.kernel.org/doc/html/v4.20/input/ff.html
+> >
+> > Signed-off-by: Jonathan Denose <jdenose@google.com>
+> > ---
+> > Changes in v3:
+> > - Change CONFIG_HID_HAPTIC from bool to tristate
+> > - Fix devm_kzalloc calls in hid-multitouch.c to use correct device
+> > - Minor comment cleanup + grammar fix
+> > - Link to v2: https://lore.kernel.org/r/20250818-support-forcepads-v2-0-ca2546e319d5@google.com
+> >
+> > Changes in v2:
+> > - Rename FF_HID and ff_hid_effect to FF_HAPTIC and ff_haptic_effect
+> > - Add more detail to CONFIG_HID_HAPTIC config option description
+> > - Remove CONFIG_MULTITOUCH_HAPTIC config option
+> > - Utilize devm api in hid-multitouch haptic functions
+> > - Link to v1: https://lore.kernel.org/all/20250714-support-forcepads-v1-0-71c7c05748c9@google.com
+> >
+> > ---
+> > Angela Czubak (11):
+> >       HID: add haptics page defines
+> >       Input: add FF_HAPTIC effect type
+> >       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
+> >       HID: haptic: introduce hid_haptic_device
+> >       HID: input: allow mapping of haptic output
+> >       HID: haptic: initialize haptic device
+> >       HID: input: calculate resolution for pressure
+> >       HID: haptic: add functions handling events
+> >       Input: MT - add INPUT_MT_TOTAL_FORCE flags
+> >       HID: haptic: add hid_haptic_switch_mode
+> >       HID: multitouch: add haptic multitouch support
+> >
+> >  Documentation/input/event-codes.rst    |  14 +
+> >  drivers/hid/Kconfig                    |  11 +
+> >  drivers/hid/Makefile                   |   1 +
+> >  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++++++++
+> >  drivers/hid/hid-haptic.h               | 127 ++++++++
+> >  drivers/hid/hid-input.c                |  18 +-
+> >  drivers/hid/hid-multitouch.c           |  47 +++
+> >  drivers/input/input-mt.c               |  14 +-
+> >  include/linux/hid.h                    |  29 ++
+> >  include/linux/input/mt.h               |   1 +
+> >  include/uapi/linux/input-event-codes.h |   1 +
+> >  include/uapi/linux/input.h             |  22 +-
+> >  12 files changed, 858 insertions(+), 7 deletions(-)
+> > ---
+> > base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+> > change-id: 20250625-support-forcepads-0b4f74fd3d0a
+> >
+> > Best regards,
+> > --
+> > Jonathan Denose <jdenose@google.com>
+> >
+> Hi all,
+> 
+> Please let me know if there is anything else needed from me.
+> 
 
-Supported a complete jump_label implementation based on the ARM64 and
-RV64 version and add the CONFIG_JUMP_LABEL=y to the defconfig.
+Dmitry, I've just re-reviewed and tested this series. I'm fine with it.
+Can you give us your ack on the input bits?
 
-Testing was conducted using a dedicated test module (jump-label-test,
-provided in the link below) with the following environment: Below is
-a brief usage and test report of this module. For detailed steps,
-please refer to the README in the provided link.
-
-Link: https://github.com/ChenMiaoi/GSoC-2025-Final-Report/tree/main/tests/jump-label-test
-
-Test Environment:
-  - Hardware: QEMU emulated OR1K
-  - Kernel Version: 6.17.0-rc3-dirty
-  - Configs: CONFIG_MODULES=y,CONFIG_MODULE_UNLOAD=y
-  - Toolchain: or1k-none-linux-musl-gcc 15.1.0
-
-Test Procedure:
-  1. Build and install modules (make modules_install)
-  2. Build the jump-label-test module
-  3. Boot kernel in QEMU
-  4. Transfer jump_label_test.ko via NFS
-  5. Load module and observe results
-
-Test Results:
-$ insmod jump_label_test.ko
-[   32.590000] Jump label performance test module loaded
-[   35.250000] Normal branch time: 1241327150 ns (124 ns per iteration)
-[   35.250000] Jump label (false) time: 706422700 ns (70 ns per iteration)
-[   35.250000] Jump label (true) time: 708913450 ns (70 ns per iteration)
-$ rmmod jump_label_test.ko
-[   72.210000] Jump label test module unloaded
-
-The results show approximately 43% improvement in branch performance
-when using jump labels compared to traditional branches.
-
-Link: https://lore.kernel.org/openrisc/aK3O6kOMqgDb6zZj@antec/T/#u
-Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-
----
-Changes in V4:
-  - Add appropriate comments.
-  - Added testing for jump_label
-
-Changes in V3:
-  - Ensure the two defconfig using the make savedefconfig.
-  - modify the __ASSEMBLY__ to __ASSEMBLER__, modify the
-    __ASM_JUMP_LABEL_H to __ASM_OPENRISC_JUMP_LABEL_H and remove
-    invalid comment.
-
-Changes in V2:
-  - using the patch_insn_write(void *addr, u32 insn) not the
-    const void *insn.
-  - add new macro OPENRISC_INSN_NOP in insn-def.h to use.
-
-Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
----
- .../core/jump-labels/arch-support.txt         |  2 +-
- arch/openrisc/Kconfig                         |  2 +
- arch/openrisc/configs/or1ksim_defconfig       |  1 +
- arch/openrisc/configs/virt_defconfig          |  1 +
- arch/openrisc/include/asm/insn-def.h          |  3 +
- arch/openrisc/include/asm/jump_label.h        | 72 +++++++++++++++++++
- arch/openrisc/kernel/Makefile                 |  1 +
- arch/openrisc/kernel/jump_label.c             | 52 ++++++++++++++
- arch/openrisc/kernel/setup.c                  |  2 +
- 9 files changed, 135 insertions(+), 1 deletion(-)
- create mode 100644 arch/openrisc/include/asm/jump_label.h
- create mode 100644 arch/openrisc/kernel/jump_label.c
-
-diff --git a/Documentation/features/core/jump-labels/arch-support.txt b/Documentation/features/core/jump-labels/arch-support.txt
-index ccada815569f..683de7c15058 100644
---- a/Documentation/features/core/jump-labels/arch-support.txt
-+++ b/Documentation/features/core/jump-labels/arch-support.txt
-@@ -17,7 +17,7 @@
-     |  microblaze: | TODO |
-     |        mips: |  ok  |
-     |       nios2: | TODO |
--    |    openrisc: | TODO |
-+    |    openrisc: |  ok  |
-     |      parisc: |  ok  |
-     |     powerpc: |  ok  |
-     |       riscv: |  ok  |
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index b38fee299bc4..9156635dd264 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -24,6 +24,8 @@ config OPENRISC
- 	select GENERIC_PCI_IOMAP
- 	select GENERIC_IOREMAP
- 	select GENERIC_CPU_DEVICES
-+	select HAVE_ARCH_JUMP_LABEL
-+	select HAVE_ARCH_JUMP_LABEL_RELATIVE
- 	select HAVE_PCI
- 	select HAVE_UID16
- 	select HAVE_PAGE_SIZE_8KB
-diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
-index 58e27d8fdb4e..769705ac24d5 100644
---- a/arch/openrisc/configs/or1ksim_defconfig
-+++ b/arch/openrisc/configs/or1ksim_defconfig
-@@ -10,6 +10,7 @@ CONFIG_EXPERT=y
- # CONFIG_KALLSYMS is not set
- CONFIG_BUILTIN_DTB_NAME="or1ksim"
- CONFIG_HZ_100=y
-+CONFIG_JUMP_LABEL=y
- CONFIG_MODULES=y
- # CONFIG_BLOCK is not set
- CONFIG_SLUB_TINY=y
-diff --git a/arch/openrisc/configs/virt_defconfig b/arch/openrisc/configs/virt_defconfig
-index 8a581e932766..a93a3e1e4f87 100644
---- a/arch/openrisc/configs/virt_defconfig
-+++ b/arch/openrisc/configs/virt_defconfig
-@@ -12,6 +12,7 @@ CONFIG_NR_CPUS=8
- CONFIG_SMP=y
- CONFIG_HZ_100=y
- # CONFIG_OPENRISC_NO_SPR_SR_DSX is not set
-+CONFIG_JUMP_LABEL=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
-diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
-index e28a9a9604fc..1e0c028a5b95 100644
---- a/arch/openrisc/include/asm/insn-def.h
-+++ b/arch/openrisc/include/asm/insn-def.h
-@@ -9,4 +9,7 @@
- /* or1k instructions are always 32 bits. */
- #define	OPENRISC_INSN_SIZE		4
- 
-+/* or1k nop instruction code */
-+#define OPENRISC_INSN_NOP     0x15000000U
-+
- #endif /* __ASM_OPENRISC_INSN_DEF_H */
-diff --git a/arch/openrisc/include/asm/jump_label.h b/arch/openrisc/include/asm/jump_label.h
-new file mode 100644
-index 000000000000..3ec0f4e19f9c
---- /dev/null
-+++ b/arch/openrisc/include/asm/jump_label.h
-@@ -0,0 +1,72 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2025 Chen Miao
-+ *
-+ * Based on arch/arm/include/asm/jump_label.h
-+ */
-+#ifndef __ASM_OPENRISC_JUMP_LABEL_H
-+#define __ASM_OPENRISC_JUMP_LABEL_H
-+
-+#ifndef __ASSEMBLER__
-+
-+#include <linux/types.h>
-+#include <asm/insn-def.h>
-+
-+#define HAVE_JUMP_LABEL_BATCH
-+
-+#define JUMP_LABEL_NOP_SIZE OPENRISC_INSN_SIZE
-+
-+/**
-+ * JUMP_TABLE_ENTRY - Create a jump table entry
-+ * @key: Jump key identifier (typically a symbol address)
-+ * @label: Target label address
-+ *
-+ * This macro creates a jump table entry in the dedicated kernel section (__jump_table).
-+ * Each entry contains the following information:
-+ * 		Offset from current instruction to jump instruction (1b - .)
-+ * 		Offset from current instruction to target label (label - .)
-+ * 		Offset from current instruction to key identifier (key - .)
-+ */
-+#define JUMP_TABLE_ENTRY(key, label)			\
-+	".pushsection	__jump_table, \"aw\"	\n\t"	\
-+	".align 	4 			\n\t"	\
-+	".long 		1b - ., " label " - .	\n\t"	\
-+	".long 		" key " - . 		\n\t"	\
-+	".popsection				\n\t"
-+
-+#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-+	".align		4			\n\t"	\
-+	"1: l.nop				\n\t"	\
-+	"    l.nop				\n\t"	\
-+	JUMP_TABLE_ENTRY(key, label)
-+
-+static __always_inline bool arch_static_branch(struct static_key *const key,
-+					       const bool branch)
-+{
-+	asm goto (ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
-+		  ::"i"(&((char *)key)[branch])::l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
-+	".align		4			\n\t"	\
-+	"1: l.j	" label "			\n\t"	\
-+	"    l.nop				\n\t"	\
-+	JUMP_TABLE_ENTRY(key, label)
-+
-+static __always_inline bool
-+arch_static_branch_jump(struct static_key *const key, const bool branch)
-+{
-+	asm goto (ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[l_yes]")
-+		  ::"i"(&((char *)key)[branch])::l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+#endif /* __ASSEMBLER__ */
-+#endif /* __ASM_OPENRISC_JUMP_LABEL_H */
-diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
-index f0957ce16d6b..19e0eb94f2eb 100644
---- a/arch/openrisc/kernel/Makefile
-+++ b/arch/openrisc/kernel/Makefile
-@@ -9,6 +9,7 @@ obj-y	:= head.o setup.o or32_ksyms.o process.o dma.o \
- 	   traps.o time.o irq.o entry.o ptrace.o signal.o \
- 	   sys_call_table.o unwinder.o cacheinfo.o
- 
-+obj-$(CONFIG_JUMP_LABEL)	+= jump_label.o
- obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
- obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
- obj-$(CONFIG_MODULES)		+= module.o
-diff --git a/arch/openrisc/kernel/jump_label.c b/arch/openrisc/kernel/jump_label.c
-new file mode 100644
-index 000000000000..071dacad885c
---- /dev/null
-+++ b/arch/openrisc/kernel/jump_label.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Chen Miao
-+ *
-+ * Based on arch/arm/kernel/jump_label.c
-+ */
-+#include <linux/jump_label.h>
-+#include <linux/kernel.h>
-+#include <linux/memory.h>
-+#include <asm/bug.h>
-+#include <asm/cacheflush.h>
-+#include <asm/text-patching.h>
-+
-+bool arch_jump_label_transform_queue(struct jump_entry *entry,
-+				     enum jump_label_type type)
-+{
-+	void *addr = (void *)jump_entry_code(entry);
-+	u32 insn;
-+
-+	if (type == JUMP_LABEL_JMP) {
-+		long offset;
-+
-+		offset = jump_entry_target(entry) - jump_entry_code(entry);
-+		/*
-+		 * The actual maximum range of the l.j instruction's offset is -134,217,728
-+		 * ~ 134,217,724 (sign 26-bit imm).
-+		 * For the original jump range, we need to right-shift N by 2 to obtain the
-+		 * instruction's offset.
-+		 */
-+		if (unlikely(offset < -134217728 || offset > 134217724)) {
-+			WARN_ON_ONCE(true);
-+		}
-+		/* 26bit imm mask */
-+		offset = (offset >> 2) & 0x03ffffff;
-+
-+		insn = offset;
-+	} else {
-+		insn = OPENRISC_INSN_NOP;
-+	}
-+
-+	if (early_boot_irqs_disabled) {
-+		copy_to_kernel_nofault(addr, &insn, sizeof(insn));
-+	} else {
-+		patch_insn_write(addr, insn);
-+	}
-+	return true;
-+}
-+
-+void arch_jump_label_transform_apply(void)
-+{
-+	kick_all_cpus_sync();
-+}
-diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
-index a9fb9cc6779e..000a9cc10e6f 100644
---- a/arch/openrisc/kernel/setup.c
-+++ b/arch/openrisc/kernel/setup.c
-@@ -249,6 +249,8 @@ void __init setup_arch(char **cmdline_p)
- 		initrd_below_start_ok = 1;
- 	}
- #endif
-+	/* perform jump_table sorting before paging_init locks down read only memory */
-+	jump_label_init();
- 
- 	/* paging_init() sets up the MMU and marks all pages as reserved */
- 	paging_init();
--- 
-2.45.2
-
+Cheers,
+Benjamin
 
