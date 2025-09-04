@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-800953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C707B43E2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:09:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A814B43E2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D67BA31F
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BAB5A2BF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0210130BF77;
-	Thu,  4 Sep 2025 14:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE2307AE0;
+	Thu,  4 Sep 2025 14:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmx8C5ID"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNZna4yI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9C22D3A86
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 14:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C892222AC;
+	Thu,  4 Sep 2025 14:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756994853; cv=none; b=iVLIa9HV677WmWaFDWcHjw/AN9VEMcVXuVKN3dxiDuavxQ6aJne2F8kA/tXmBUoRonHSJcJY5BOwbEHK8syqpz+IzUQkk1yYcyrvi88XmX2B8A27RO5OEBVEf7q0odF2GCztMgkpzIz0vWsbvH17t7F7CeoNr6j2ZrgDi6DIF5U=
+	t=1756994878; cv=none; b=euLkRh0GSLSm0lCcqFAXp/GvdOsuNAw1L15U2moHwsfMBpPYg7U83sDUBcO4neo+/TLQMpl/yH4UQRwfWLp/1B7RDpcjZe2GAtRrUCMpW6bvLzR93RtRbsA0ujLofhSJmgV7dK7a4+2zDYNkHC/p+oid1MzCT8mZ3EAnco642P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756994853; c=relaxed/simple;
-	bh=GpLrwpBjFgVZ/+5BOLTD+3omYqDGzzxW7dP1pUXDtbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ipF2MYTLI9sW+1GaXHFiGaZCTCeVwmjpwwODdYiMx+9Nk2DY8/+IwB/wDV+Y1bVA+5dIDG+XyI7LYgjN+9spgRF56QZuniPoNf6vORLyqCNoFtROLCvbpD4FAgDWCKoGBK04oBoA4lRzSGmR+beklicQPazrm9mCHz5d/StPdrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmx8C5ID; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24cb267c50eso1571725ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 07:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756994851; x=1757599651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JXF7lUGlzoUNaaSeGTJ59Qfx95myet4lfZdU71qhW/c=;
-        b=lmx8C5IDnGP5p1QmsfSjSuMMpyFked29UfBj0ZNYjTwwHq1LFiL+i5H+ac8W8++oKt
-         1v06+mgGEpZ+V1D1+hMNWaMg3O22c+TPOGE26iTH59vrYs3bTndxIObZKEhVUdfhh4P6
-         /mefpVZzYTUxUPi6eoTfy3f5XMTwqXbMxVBhnj5dCjyeqrehccwpgdJwe5Dvh7OPlWU6
-         yRX13SNY8KS7R43vLcxlLCDs/bq8jCxyX9uawpoB7l7QLKbYy3RDjMp6IPKA0m8N0z0P
-         xL4akY10Q+kFIFqlL/6oKXzPuNDyz6CZtNLyHxk9mUnhuz1fPj3IhezcpBtVyPv9EJQB
-         BFjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756994851; x=1757599651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JXF7lUGlzoUNaaSeGTJ59Qfx95myet4lfZdU71qhW/c=;
-        b=wVbrGXIZ7WkLgWEw/326CPJsx0RN7qkxXrZH12jswlXoqTWqD50mTQP25UFARS9fLF
-         J9m9SjlA4UeIowNjfqSfo9NJ57fHq6E9U2Df0dbYkVASqg7rtiyrLAEsk//xZwRiubO8
-         Tyl9mb29ujSsgu+eAkF08Nilo/OcZODPDYaaYla1Pb8oGSC9G/oNwGZrW0MqDRLL07hV
-         h2ed58uWQDr2ThecAn5kLQdaYeePSMbiRjtiRg73ZAL3BJJXaTO3jjhFTXmnAgMahCdU
-         g7YWJ/07zpqPUWW9xLuQwO7W25aI0w7GGNuO0UfgfUdUa+Akepa1f94IlHSqS7rrXvrZ
-         3QKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOzDQ7Ob6tzcmUXZEnAKDYzLcKTwBEhIGqSUNC+q5poSRnw0nMRJKEikyTq27ZkdEHdA0L3sG3g/iJ5FM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi4P5c//8N15nExvzC727x3ljKoA+jb2kdsxM4ApZcoJVSSlqF
-	Fz+kFjhTfMezDxJpFXC7jcx+EEd8PfRp/ZI+24c2iAsA/UuyXtDitsKipOAn7eqFI435NvjW4FT
-	wrBx942EjHHbsyPAqKazWau2LEwE3FNM=
-X-Gm-Gg: ASbGncsoXZHT6qF+jCNXWGXiioD77l1DGbQ+TbM96W7zqzaty1HMZnx/hHCYnTAZvMn
-	dpqUr/5rWD0df3gGKu7rF6S12PTWT+dSeXZr1NIP2bYnI9Rg7fvm/OZJ6unVJJZUO2OdT0VK5Yu
-	77y2wj5/jRZxpyvR6vrOXmLS4DuWquddwdmd6hLbRT0ugk4ehgcrTQJ6ljn6s+wu73uIpRwwAst
-	JIGrMcuIwFmcxsvyA==
-X-Google-Smtp-Source: AGHT+IH3MY/OTockoauDSyOp/l19fy2ykBd3RlTZfyNT0ABfjsmLAysxtPRcG50Q0m4OIHq4m+LRitinGGXWpfoiUgE=
-X-Received: by 2002:a17:903:22d1:b0:248:8a31:bf6f with SMTP id
- d9443c01a7336-2491eadb922mr166015585ad.4.1756994851019; Thu, 04 Sep 2025
- 07:07:31 -0700 (PDT)
+	s=arc-20240116; t=1756994878; c=relaxed/simple;
+	bh=83qKXqxzTjXqiIxqE1Oi+C0b2TBjxEpEofB6xNXsUDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B95+3x02Ik1R4OoTkHz7TD7Qonu9kCWKBgEGh1SZoP8rb/xxpqNozvKCHC2fwuHQda+YXcV1dZEs8Cgmyy/Fks5SqQYVv3LJXZMFQxeBDUXUVNowe2TZDs6BqhUCpCKdIALWOYdpAbe6J9sJduJdmCsGub5F1bXVfOjDgk3CNX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNZna4yI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 097D2C4CEF0;
+	Thu,  4 Sep 2025 14:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756994878;
+	bh=83qKXqxzTjXqiIxqE1Oi+C0b2TBjxEpEofB6xNXsUDs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jNZna4yIHMTBnVj/o1c8Jq0lsBBZw/LZqCHXrOOG8zhpv8/gL2MizSbv97ZIS9Emr
+	 lde6W3/40C9CXT5ij1kf9+NpV4xcUSX/4DpsUeH4wKnfwMRrzLjaw139t1XOCIiD17
+	 Urzr4BaxKnkO1lolQBUgi+FaqS6/KWcfcD5LX3uujKhCvmWPNSv2stViWjj6K33S9b
+	 bV8bQSrzBe2Z6BSBT1wdJkDDFDVVviANWO3M7cdhJ3BTQkzSmMAZbVWu2ICk493SP3
+	 S5KK9w0kGxwyIhDXI7eZL10yShdVSEse2KbOxSU5U61RHw1R9z0U8NvrzZFARo3089
+	 UKULz+2YPt48w==
+Message-ID: <9050a07a-e94e-4d34-b4aa-bd2e6f91f792@kernel.org>
+Date: Thu, 4 Sep 2025 16:07:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904123646.464028-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250904123646.464028-1-rongqianfeng@vivo.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 4 Sep 2025 10:07:19 -0400
-X-Gm-Features: Ac12FXykgD4aIBzDItZHcqzk1vdrpEvCwQuABoCP0-tmsZGt2PPBgJYPMj3ZoqA
-Message-ID: <CADnq5_N=hQH9OGp2GfdPeOq7V2B_UX0VCDQ-XcTDroy-WHRmyQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdkfd: Fix error code sign for EINVAL in svm_ioctl()
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philip Yang <Philip.Yang@amd.com>, 
-	Alex Sierra <alex.sierra@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] regulator: pf530x: NXP PF530x regulator driver
+To: Woody Douglass <wdouglass@carnegierobotics.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20250902-pf530x-v5-0-658c403e6a52@carnegierobotics.com>
+ <3c45fe88-c9f4-4606-87bc-726f262998cc@carnegierobotics.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3c45fe88-c9f4-4606-87bc-726f262998cc@carnegierobotics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Applied.  Thanks!
+On 04/09/2025 15:57, Woody Douglass wrote:
+> All,
+> 
+> When i submitted this patch, I got a bunch of "unsolicited mail" bounces from gmail. My 
+> @carnegierobotics.com address is an exchange server with no exposed smtp, so i have to
+> send patches with `git send-email` via an envelope sender (git@douglass.dev). I suspect 
+> this is what caused this. I'm sorry for the inconvenience; patch v5 still seems to be 
+> on the lkml archive.
 
-Alex
+Maybe b4 relay will be helpful:
+https://b4.docs.kernel.org/en/latest/contributor/send.html
 
-On Thu, Sep 4, 2025 at 8:54=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.com=
-> wrote:
->
-> Use negative error code -EINVAL instead of positive EINVAL in the default
-> case of svm_ioctl() to conform to Linux kernel error code conventions.
->
-> Fixes: 42de677f7999 ("drm/amdkfd: register svm range")
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_svm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c b/drivers/gpu/drm/amd/a=
-mdkfd/kfd_svm.c
-> index 521c14c7a789..68ba239b2e5d 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_svm.c
-> @@ -4261,7 +4261,7 @@ svm_ioctl(struct kfd_process *p, enum kfd_ioctl_svm=
-_op op, uint64_t start,
->                 r =3D svm_range_get_attr(p, mm, start, size, nattrs, attr=
-s);
->                 break;
->         default:
-> -               r =3D EINVAL;
-> +               r =3D -EINVAL;
->                 break;
->         }
->
-> --
-> 2.34.1
->
+but if you have own SMTP, then could work as well.
+
+Best regards,
+Krzysztof
 
