@@ -1,104 +1,152 @@
-Return-Path: <linux-kernel+bounces-801461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10687B4453E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22F7B44541
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C9EA43DD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1C4A44CE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B10342C99;
-	Thu,  4 Sep 2025 18:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F3342C9C;
+	Thu,  4 Sep 2025 18:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzIx75iW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ot5JOORl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C767A31A54C;
-	Thu,  4 Sep 2025 18:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C132531A54C;
+	Thu,  4 Sep 2025 18:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757010067; cv=none; b=sUTUk8mYwVst4GxBRqHI9SFqYGcn6MRDh2iQTFJgQIM0SS4rI6p3vB5t5rzJR7ZUKnqJdAUYYM/iyxdfmlCEylbXuCxSTz3dsEDBivSW219eI61G8TYQSrNGhZKSOi7dsijuyysNIA8c++30r84wQvTfshAuP7YQGYFAWPj2n/E=
+	t=1757010076; cv=none; b=JJuG8FJLGxpz3CiT6MtNzVQ0BdtfZaWM+gkHjJ4bfGGb2fmTU7wrkX7z+Har+ukGq1WEZDfDEuiC8oNogFtW+Hf+nJ6juACGmO7i72qVyDeHOGk96ES+OEjI/mC7Hs5tzwDhJjX32T0OfqCSfSjN9v+sZJyOuFNto/nQPt5DPKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757010067; c=relaxed/simple;
-	bh=vuKt74MtYD7IscAzLV1lxdYYoSz+D2LfckiU/M4c3h4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nL1d1TQV+J9HpxDR/yHilksxbq4omktyLKngxZ0ET3BHTa/AYpAAixYSb3K5Y6BStbX2FzWzVoul0Xeo/ylsIym2vds2fWp3hStj5vu7mMp/LQ2hVp8bPsSsRoiih6/yblmwaooUr6JUeRUgxZ4VS1yeauJt6oTfvVJMPsHY1qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzIx75iW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A6AC4CEF6;
-	Thu,  4 Sep 2025 18:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757010067;
-	bh=vuKt74MtYD7IscAzLV1lxdYYoSz+D2LfckiU/M4c3h4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rzIx75iWhfcpelJB3nPUaPnZfKRE/WKQeNufx43TMfGPmPXjcorGtDzXkzvLeBBnY
-	 PYPT0mLtjk10HsK2tcXlOq2wtiw4CcTpB4bcKr7w131R8PDPdQFQlb9LSHAoaUGpKV
-	 kdpMgLDofk8U1Ix7SVBzKkeuFPT1NlRmJjjv0r0MBOvqEFnaYA4uPywfO1/jzKRrZz
-	 IDSLFa63JCTIpQD0zzE/FxQW/x5CIltv17wQblUtLR8i27TOQA05yHDnHlo7e9Mee8
-	 bte8fO8Z2gx0xEQEunaBhJRd5uqtFEeXJc7Rmke+YwrA2M1zyV/XnDbMV5qBsZGuv2
-	 Pzj6D9OxNqEhQ==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61ff9c5a0c6so55168eaf.0;
-        Thu, 04 Sep 2025 11:21:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX41WqMlWKEvzf8+Jd3L5FwKmPXIiDtpf0md+Q67JvuIY6qDg66eNL7CUpuwdruwF1AwHeOwmSkK823ckg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHePTbBoWcs+NM1PkhVrB07xeeP3BuDWwkKr6KWU5gc4iQG9tR
-	fUJqRlKWS4RbqH6Y5jqFE1XyQElCM4kOTZJciflMjNAmUDJ7b3N/X3xCZJyuqBzCe26sWWNI2e5
-	9YbWIpW+zfHqxOwNEzQo71PfEuPpzH5g=
-X-Google-Smtp-Source: AGHT+IFz7a9PeXhJsPGKqzOGIE/V1p52FgT+so0RDMEhaRB435kRDktRlrI2k+6cUH7u5NIssdFxPM/H6sN+00yoO3U=
-X-Received: by 2002:a05:6820:1503:b0:61f:f9e2:b183 with SMTP id
- 006d021491bc7-61ff9e2b66amr137008eaf.4.1757010066630; Thu, 04 Sep 2025
- 11:21:06 -0700 (PDT)
+	s=arc-20240116; t=1757010076; c=relaxed/simple;
+	bh=oWzvywWktWhzJsp0F5tCpXdiwFL7jrcYj/ogPZsDT04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRuiCUevVMAvxTvXcUVIZl8aMp1M07k/qbemOjI5szzj77L0jOnZsBRoprJhTSbLZDhBMz7r4PZHNge8rp0wOGlwNZVWUTw9yxPPlo8yKv29M5YM4jTQauRxsGgtgVJM+bAqLUWyntR29UbHAn9SOy76SiqHg1LwEmOtuyQMhOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ot5JOORl; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757010074; x=1788546074;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oWzvywWktWhzJsp0F5tCpXdiwFL7jrcYj/ogPZsDT04=;
+  b=Ot5JOORlAOBSRIB9X1PI1qPTf6RwrqaynRCxaJN6wNBJqMZxR7gfObmp
+   JbYpwQiZQ+MMFcBnAAAqBU1klNoNfgi/qHCDXGlYyNijEpXkpV35dL9VP
+   j881KjNREfY/Khzha8Lp4dw45OVIXHj2zapYaP/lUoZ666ral4Ff8y1zU
+   CiDxrg2ByQB6KykQqIKtv0F8z2LvYLa9riUi3Vppt3mWQOa0x9h8wO4wk
+   TjntrbPFmEY0AbGe7ZUTvuplDwLdGLHUbHvd57rwNwwRceJEGFxLiJN8t
+   fRx3N01YuDgsR4mSA8kZPv2TZeRDwUNvhGIwAAz+69RNsawVZ6KiaVbC/
+   w==;
+X-CSE-ConnectionGUID: XN3GCBSCTMaKGCO9gshnRw==
+X-CSE-MsgGUID: u0a3H/PLRA+9vVi9WaBHUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59429296"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="59429296"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:21:13 -0700
+X-CSE-ConnectionGUID: RR7jI4NwTQqgA2P7PdZBBQ==
+X-CSE-MsgGUID: nQaesdJVQkuyyxPl7EfGpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="171250240"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 11:21:11 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uuEa4-0000000BMzq-0YmQ;
+	Thu, 04 Sep 2025 21:21:08 +0300
+Date: Thu, 4 Sep 2025 21:21:07 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: ad7124: fix sample rate for multi-channel
+ use
+Message-ID: <aLnYk6RPePeACmex@smile.fi.intel.com>
+References: <20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7674021.TlGXAFRqVo@daniel-desktop3> <20250828051203.GU476609@black.igk.intel.com>
- <2881298.hMirdbgypa@daniel-desktop3> <20250828081345.GV476609@black.igk.intel.com>
-In-Reply-To: <20250828081345.GV476609@black.igk.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 20:20:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jTPFnb_W4eWN=o5UnAjSOGn5cLiQgmZ81YE9moy39_TQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxHmPSf2-Tn9DMGtlM6uqyzIRGJV-9cAzTk_uTPSZTql2tGmqWzBhr4oR4
-Message-ID: <CAJZ5v0jTPFnb_W4eWN=o5UnAjSOGn5cLiQgmZ81YE9moy39_TQ@mail.gmail.com>
-Subject: Re: [PATCH v2] acpi: TAD: Add missing sysfs_remove_group for ACPI_TAD_RT
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Daniel Tang <danielzgtg.opensource@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v2-1-bbf2f0d997ea@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Aug 28, 2025 at 10:13=E2=80=AFAM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> On Thu, Aug 28, 2025 at 01:38:14AM -0400, Daniel Tang wrote:
-> > Previously, after `rmmod acpi_tad`, `modprobe acpi_tad` would fail
-> > with this dmesg:
-> >
-> > sysfs: cannot create duplicate filename '/devices/platform/ACPI000E:00/=
-time'
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x6c/0x90
-> >  dump_stack+0x10/0x20
-> >  sysfs_warn_dup+0x8b/0xa0
-> >  sysfs_add_file_mode_ns+0x122/0x130
-> >  internal_create_group+0x1dd/0x4c0
-> >  sysfs_create_group+0x13/0x20
-> >  acpi_tad_probe+0x147/0x1f0 [acpi_tad]
-> >  platform_probe+0x42/0xb0
-> >  </TASK>
-> > acpi-tad ACPI000E:00: probe with driver acpi-tad failed with error -17
-> >
-> > Fixes: 3230b2b3c1ab ("ACPI: TAD: Add low-level support for real time ca=
-pability")
-> > Signed-off-by: Daniel Tang <danielzgtg.opensource@gmail.com>
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Thu, Sep 04, 2025 at 11:19:56AM -0500, David Lechner wrote:
+> Change how the FS[10:0] field of the FILTER register is calculated to
+> get consistent sample rates when only one channel is enabled vs when
+> multiple channels are enabled in a buffered read.
+> 
+> By default, the AD7124 allows larger sampling frequencies when only one
+> channel is enabled. It assumes that you will discard the first sample or
+> so to allow for settling time and then no additional settling time is
+> needed between samples because there is no multiplexing due to only one
+> channel being enabled. The conversion formula to convert between the
+> sampling frequency and the FS[10:0] field is:
+> 
+>     fADC = fCLK / (FS[10:0] x 32)
+> 
+> which is what the driver has been using.
+> 
+> On the other hand, when multiple channels are enabled, there is
+> additional settling time needed when switching between channels so the
+> calculation to convert between becomes:
+> 
+>     fADC = fCLK / (FS[10:0] x 32 x (4 + AVG - 1))
+> 
+> where AVG depends on the filter type selected and the power mode.
+> 
+> The FILTER register has a SINGLE_CYCLE bit that can be set to force the
+> single channel case to use the same timing as the multi-channel case.
+> 
+> Before this change, the first formula was always used, so if all of the
+> in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
+> a buffered read with 1 channel enabled would result in the requested
+> sampling frequency of 10 Hz. But when more than one channel was
+> enabled, the actual sampling frequency would be 2.5 Hz per channel,
+> which is 1/4 of the requested frequency.
+> 
+> After this change, the SINGLE_CYCLE flag is now always enabled and the
+> multi-channel formula is now always used. This causes the sampling
+> frequency to be consistent regardless of the number of channels enabled.
+> 
+> Technically, the sincx+sinc1 filter modes can't currently be selected
+> so there is some temporarily dead code in ad7124_get_avg() until filter
+> support is added.
+> 
+> The AD7124_FILTER_FS define is moved while we are touching this to
+> keep the bit fields in descending order to be consistent with the rest
+> of the file.
 
-Applied as 6.18 material, thanks!
+...
+
+>  	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
+> +		AD7124_FILTER_SINGLE_CYCLE |
+>  		FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits);
+
+Seems to me that this is not indented correctly, with that in mind I would
+
+	tmp = FIELD_PREP(AD7124_FILTER_FILTER, cfg->filter_type) |
+	      FIELD_PREP(AD7124_FILTER_FS, cfg->odr_sel_bits) |
+	      AD7124_FILTER_SINGLE_CYCLE;
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
