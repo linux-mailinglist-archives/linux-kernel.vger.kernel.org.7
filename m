@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-800021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBAAB4328C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8E5B4328F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EA5172661
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E38A561491
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 06:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941C2275B1F;
-	Thu,  4 Sep 2025 06:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E96275B0D;
+	Thu,  4 Sep 2025 06:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="lr2KS+kO";
-	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="kHdwSRig"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fv1TVnEl"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5CB27586E;
-	Thu,  4 Sep 2025 06:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756967780; cv=pass; b=cnIN00tCcUcPkFNiZ9bLkgYNXUwqrL+8EVbTOSNICOp+XZ0tIDUYbff28UkY4nnHuZbSoB5cyYOCcnfwtL9/ys/SYE+YESd4TMkdStqRfPPKrQodMb93fztsVuWdtt1eXNQBF3Qry4LyJmVILPDSMkHh9oi02wvr3QlrgVqFL4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756967780; c=relaxed/simple;
-	bh=KWfuWOndEi6XDR/nOG2EFgdxEYeuXl+rJvfeJ5e2TEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNod7oXX36zPXVlGiIGOI9p3MnwLnJAgdQ0v7O0aYfg3U/CyEVdT1wHK7XhEyfcQCLHtUXZVxh+YS+DOq+OZ54hXyk2yYeY3RG5jwn5GZuw3zLBZRx3dilhchEAjHIPpJ1qBCRLQ2ZTlw0GSNh/e0Rp141QQ1v5gnzD2LVTAOS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=lr2KS+kO; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=kHdwSRig; arc=pass smtp.client-ip=85.215.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1756967774; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=C8QI5EsKrAzo5XU+uSLOXRlfbljCWUBlI0LDmUuFYJUUvU2ZydXY/mV0OaEQLuRZwL
-    bJZjfuxcsDc7e3QXn8miwdMOYyGfTsFwbpikd5I3oj+aUffU/s/Ve7abYtAa6hiW0n/o
-    1Bn5yX0YGbKtgUHQ9rM02YuQz4qiVVVa3NDuo69RV0qWxsuqr3/KMAZYyTs19U4HluUn
-    FS2whBq/dxo5ElyCnLwgMPR/Oleg6zbX7Gzr+9tE9mBky/4mKqFuxjp5SQIy0ISbdAjr
-    iMjFQhlOd7v9JnKuquP/5oZ+BCsAwv8GYx6fGyLCY79NTNYRgXtSQWY8EiAzX8AL62Lx
-    Rr7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967774;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=WNLLBL8ARyJnydp9YLJ9ekRET3L+HhY4TBjwGIKOOSE=;
-    b=H95n7BoltTJqbIeY77zMIWi8aKooU3YNLE9cn6Oo30aTf0ftKVGVONFiaW7ofVaB36
-    bSKnak2RqgYJ3VUskg2x1EtpyxwhDje52lnJRKzi+2Hty8TDG0iMoy0vTWyrcRYUouB1
-    ginv/wZpjeIIdOgp+ZfpKIX2IDoxyVq0vAKWFIfZWPeAIlUBcrNvNTv5Lb3oVTOoDLg7
-    /PXe16gzk/7SFG8xqTyW5T+1gQ70E6CgCYmZgImwO82N+PqY4KUcqLy1YSSklC1md/yh
-    XuU+aTP1jq+KeckBPY9sOoRoKeS2d8VmXZ8aHO2NY0RJ2NUiLoEqPJP37xUG8LgCeqpF
-    le3w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756967774;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=WNLLBL8ARyJnydp9YLJ9ekRET3L+HhY4TBjwGIKOOSE=;
-    b=lr2KS+kOd5oazMYJLd4G24yqyrebWCkOMqH9Kyd8AURrALRIQvMSkyMOPFlssMuOXz
-    +BpUd1DsFxQLkLQy1/IKhrGCUV4ZFXtgDOQdchcXa0GDHJdxz0/6hqGvZG7hcUjrjQWX
-    glrOtT5FI/U0+nmi6uhbsORSzMzd3XQma/edj41nqGtpToi2kAl7/4GJQnMaMkz8BSnK
-    jIGSQ5CWDqO/JdlLPKOYU5WuekEF7V/tFdC2k0p6wkYB54qWsnATOPinJiIpayn3MM2t
-    2K7hzO3BKuim1l2RLOaMCKGWNa7gUlLYh9zG0kUD4/XOAmKXPZSb0SiuWKfoiBiQHUke
-    A2Fg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756967774;
-    s=strato-dkim-0003; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=WNLLBL8ARyJnydp9YLJ9ekRET3L+HhY4TBjwGIKOOSE=;
-    b=kHdwSRigsZPrZxHsLnHpP0cxSTqa7xTYf0e+W7Wz2AHr3C9XCycMhofkELsgdB8QuE
-    nD3K/9+HsX37fAluNcCw==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
-Received: from [IPV6:2a00:6020:4a38:6810::9f3]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K5d3611846aELiJ
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 4 Sep 2025 08:36:14 +0200 (CEST)
-Message-ID: <e37c9890-823f-4a38-bdcc-c170dbe67e13@hartkopp.net>
-Date: Thu, 4 Sep 2025 08:36:13 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE6A2750E1;
+	Thu,  4 Sep 2025 06:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756967797; cv=none; b=TtMiHxkf6AMrAE8bDdV4B21axTWqfZZtplv7674fMnMg0RJtro8hrCB8uk7Ba7L9tR0A8uSOyCSxi2mN2oNch7EBIgxX3mGBXOZRInVXlRmmrmtRBUwhwrc4TXD9L7hVYfiFYV9yRbSeckb6bwh8WaL/kcd9TCpW9H6mcxNXbMU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756967797; c=relaxed/simple;
+	bh=DpE82IJAwixADlnMuviaS0MAb4mJckPRZS0EepdPCVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLzbmMqUyI4+7u37WxC6pIFBFpVBF6SmMm0Vxvt+9GKregLg09Hyhv6bfRs2PHgX3gpcf84u4H82UC0OnawhBpnviVqln7QqxbRHU7LB5gZyDD86s9unvDAXsepx+VqpHiJk2x96En1D30MZd0sjJbquvzpzEshluElUFQgRGew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fv1TVnEl; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=KxCfRS8/dIzqWWtc3wSYSDwPd9eAd3omN4Lj9Pa5Xi0=; b=fv1TVnEl4thmm1prMBC18GOGOt
+	//dRAfezKTviuTLVDljsrJaNhm5m95oYJWrjAq59bj7C+SOpIg7AGQ8LOEcoy+EJ29rQQaOnElXNI
+	sCw5UeRV3x107+1UOO0ca0zaCT6qJ6OpvBdyvQ6r8Pt8vlZuo2jmJ+1OvhMhq16CW1tbUI21IWT5Y
+	rIPdYnF3qUBmDHjRuJDbAcJs1kfWEbxRBT8Chgcfjha2FkQ76rFZTRQGXZMvX2dj0wqIcqqZbMvgS
+	hr/1DwJz+rys8ZqveEeYED/qv/BL0CDESRGO4DX4cTYNcGuu521CoP9UpecqwNAOZ0beea/ytW9LN
+	FAkWJopg==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uu3aC-00000009ZVY-3nK0;
+	Thu, 04 Sep 2025 06:36:32 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	linux-pm@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v4] kernel.h: add comments for system_states
+Date: Wed,  3 Sep 2025 23:36:31 -0700
+Message-ID: <20250904063631.2364995-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/21] can: netlink: preparation before introduction of
- CAN XL step 2/2
-To: Vincent Mailhol <mailhol@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
- <6e4dcab9-d3d7-4c8b-99c1-f472bb7caa07@kernel.org>
-Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <6e4dcab9-d3d7-4c8b-99c1-f472bb7caa07@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Provide some basic comments about the system_states and what they imply.
+Also convert the comments to kernel-doc format.
 
+However, kernel-doc does not support kernel-doc notation on extern
+struct/union/typedef/enum/etc. So I made this a DOC: block so that
+I can use (insert) it into a Documentation (.rst) file and have it
+look decent.
 
-On 03.09.25 11:26, Vincent Mailhol wrote:
-> On 03/09/2025 à 17:49, Vincent Mailhol wrote:
-> 
-> (...)
-> 
->> The follow up series which introduces CAN XL is nearly completed but
->> will be sent only once this one is approved: one thing at a time, I do
->> not want to overwhelm people (including myself).
-> 
-> If you want a preview of the full CAN XL, you can have a look at my work in
-> progress here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/linux.git/
-> log/?h=b4/canxl-netlink
-> https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/iproute2-next.git/log/?h=canxl-netlink
-> 
-> The kernel part is nearly completed, but I am still playing some whack-a-mole to
-> find potential gaps in the configuration validation. I also need to rewrite or
-> fine tune the commit description.
-> 
-> The iproute2 part is still under development. It has the PWM interface but I
-> have not added all the control modes yet.
-> 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+---
+v2: add Rafael's Ack.
+v3: add Andrew
+v4: add DOC: so that this DOC: block can be used in Documentation/
+    add Greg K-H
+    add Jon Corbet, Mauro Chehab, & linux-doc
 
-Thanks Vincent!
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Len Brown <len.brown@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+---
+ Documentation/driver-api/pm/devices.rst |    8 ++++++++
+ include/linux/kernel.h                  |   18 ++++++++++++++++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
 
-The repos are very helpful.
-
-With "missing" control modes you refer to CAN_CTRLMODE_XL_ERR_SIGNAL, 
-CAN_CTRLMODE_XL_RRS and CAN_CTRLMODE_RESTRICTED, right?
-
-Best regards,
-Oliver
-
-> Regardless, the two links above are just an FYI. Beware that there will be some
-> random force pushes without any notice. You can play with it but it is
-> *not* opened for comments until the preparation series is approved.
-> 
-> Looking forward for your comments on this CAN XL preparation series, it took me
-> a fair amount of effort :)
-> 
-> 
-> Yours sincerely,
-> Vincent Mailhol
-
+--- linux-next-20250819.orig/include/linux/kernel.h
++++ linux-next-20250819/include/linux/kernel.h
+@@ -164,8 +164,22 @@ extern int root_mountflags;
+ 
+ extern bool early_boot_irqs_disabled;
+ 
+-/*
+- * Values used for system_state. Ordering of the states must not be changed
++/**
++ * DOC: General system_states available for drivers
++ *
++ * enum system_states - Values used for system_state.
++ *
++ * * @SYSTEM_BOOTING:	%0, no init needed
++ * * @SYSTEM_SCHEDULING:	system is ready for scheduling; OK to use RCU
++ * * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
++ * * @SYSTEM_RUNNING:	system is up and running
++ * * @SYSTEM_HALT:	system entered clean system halt state
++ * * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
++ * * @SYSTEM_RESTART:	system entered emergency power off or normal restart
++ * * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
++ *
++ * Note:
++ * Ordering of the states must not be changed
+  * as code checks for <, <=, >, >= STATE.
+  */
+ extern enum system_states {
+--- linux-next-20250819.orig/Documentation/driver-api/pm/devices.rst
++++ linux-next-20250819/Documentation/driver-api/pm/devices.rst
+@@ -241,6 +241,14 @@ before reactivating its class I/O queues
+ More power-aware drivers might prepare the devices for triggering system wakeup
+ events.
+ 
++System states available for drivers
++-----------------------------------
++
++These system states are available for drivers to help them determine how to
++handle state transitions.
++
++.. kernel-doc:: include/linux/kernel.h
++   :doc: General system_states available for drivers
+ 
+ Call Sequence Guarantees
+ ------------------------
 
