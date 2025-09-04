@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-802183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3A4B44E98
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 188BDB43DFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7609A3B46F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FE23B5DC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386C62D7817;
-	Fri,  5 Sep 2025 07:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A59305E2F;
+	Thu,  4 Sep 2025 14:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Xw7j69eR"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KfJohFUH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266341F91C7
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3952D8771;
+	Thu,  4 Sep 2025 14:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055787; cv=none; b=jeeNkIxoCj4X+3seOWOgkRZsJPHBaIoDn4bZpW6OpY78qXBKnWrg0pf+qzJuIurj9Fmd0SyCKO/ZPGstdY35yL3r5Sbsxs37/6ThHgW60h8QqhwfET1IR2rybg5oZWSeo9wW1uNCYhHn612mCiCGq9iSvLUXcosWiniE0Kzu7no=
+	t=1756994679; cv=none; b=dEzAtVj0GQJ9AX9aQt+97z+jLJirH3ZnHunQZYL95n/gJCx6XqepipXK4rbIVMiTn9FWG2vhaTC2tXox0SC8j1W45GcDyq6tCgdHo2GrxGpBwmcqoy+gcFLJym4+9R4pb8C6hBfB7DD5ukoqMbyq99JZF63+VvdwuGX0MqzqPGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055787; c=relaxed/simple;
-	bh=GFB77Kia7nFWeUn6EKHzA83dbk9PLHtJAef6GyQAXJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=PloAO3/VBZ8ZTJvLVKp84aaOfbo8WUF1tzbT18qVw60IUBZQo0fmKoyRh34vk6C5+XI5tqsHj4iqt+bDIBf6saOil5MIeGe1rPswuQkKtOsOwbm/DMjxmnNQ//iP5hs1oubIdYIyFLA7Ikrmv8JVrv1Bbcpt8ceK0glodmSO5EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Xw7j69eR; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250905070303epoutp02907dc7bb30805bcda4f665467b4cc8f7~iUOz9JHTL0185001850epoutp02F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250905070303epoutp02907dc7bb30805bcda4f665467b4cc8f7~iUOz9JHTL0185001850epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757055783;
-	bh=GFB77Kia7nFWeUn6EKHzA83dbk9PLHtJAef6GyQAXJw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xw7j69eRswsCDUefMTsmiYSXV3SD3GkiDZYv8rDh+m7epK7xT0XSMsD/9xu/l1AUR
-	 7SWoRIP8Oeo+HJ9fba2wZ8342Hv9bC2PqlL5QbjxQ2wCMX+fR4q9iNP71VzvHmYNcO
-	 UWJrGyRP3HBk2KlkHBfbQoN3MyQEyajM8NYxLdlo=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250905070303epcas5p3ae383c5ed342aa2b5a50aaf9a95e88a4~iUOzpy3un1446414464epcas5p3p;
-	Fri,  5 Sep 2025 07:03:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cJ6kH0QkRz2SSKn; Fri,  5 Sep
-	2025 07:03:03 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904140222epcas5p2cf05c11cfab462d6b7ea44a696615674~iGTopfau41527115271epcas5p24;
-	Thu,  4 Sep 2025 14:02:22 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250904140220epsmtip2833e27c5fb9767d885da67727bf44810~iGTnUDHOk2403024030epsmtip2S;
-	Thu,  4 Sep 2025 14:02:20 +0000 (GMT)
-Date: Thu, 4 Sep 2025 19:32:15 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com,
-	a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com
-Subject: Re: [PATCH V2 04/20] nvdimm/label: CXL labels skip the need for
- 'interleave-set cookie'
-Message-ID: <1931444790.41757055783048.JavaMail.epsvc@epcpadp2new>
+	s=arc-20240116; t=1756994679; c=relaxed/simple;
+	bh=8D15COu2exGUd3E0Qy8knhTqB4T/stT3kGk+YvNt1Xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtGJNnHqiAsLiPU25ARVPZjYgLNvKVd4UdnlFgS/1OMVsiss/8/lLDdB+NOB7m6XCEe8jNou9HJbFshHdqRu1qa5nACBSipqdYFWmIJRtcDk1Z0KWCf18f2+ZRSss1X9koT7pZqQ8DCJwerWs+VOBuCUQ7mZi9YC+oRrhAZKg+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KfJohFUH; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756994678; x=1788530678;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8D15COu2exGUd3E0Qy8knhTqB4T/stT3kGk+YvNt1Xc=;
+  b=KfJohFUH7Hn1UeO43oPCiN3r+3F941+Cogr92jFKdEr40icswc/cO/Q1
+   P4ZXVOEFo4TOHlPuR/3xJYWVJqbuoj3LLbSOOUmWEF59xJhZaQ3xqLwIV
+   zZoIdG376fb/57Zl6nMqJdCHKUNd7dd0WnXBywvjPToeTaNJ72YD+D/tu
+   CJfOt1RX9do3P6jR3r2MnvnazJ302KTRUQ6dbBbpXXiZG7BmOdpt89X5Q
+   qjPZJ0WiQoBA4A6BVYaZ33ifaOVyiSKNgcjAHI3jgdLGIQKL/JIh53vMN
+   iqYLxc84JY6RmGVe1btPRJFy225gJwcXpk0s3EbEe1d4kWXe+lIfJPH+z
+   w==;
+X-CSE-ConnectionGUID: dur8aXbyR4icYs9PvtclUw==
+X-CSE-MsgGUID: 8XQCbnVKQZGLYFK/yZFDaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="70431585"
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="70431585"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 07:04:37 -0700
+X-CSE-ConnectionGUID: jk3xqa1ERUuvLneeMH0DuQ==
+X-CSE-MsgGUID: ZlXGG7xRRzuIrTFtgMNG7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; 
+   d="scan'208";a="202827580"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 04 Sep 2025 07:04:31 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuAYv-0005Mt-2U;
+	Thu, 04 Sep 2025 14:03:53 +0000
+Date: Thu, 4 Sep 2025 22:02:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <202509042119.GiwpuwCl-lkp@intel.com>
+References: <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <68a4a09b147ef_27db95294a8@iweiny-mobl.notmuch>
-X-CMS-MailID: 20250904140222epcas5p2cf05c11cfab462d6b7ea44a696615674
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----AO5Z5CA5q82FpJQJAbIGDvoW6m12ppu.cCYhbwpEEtg295OJ=_eac9d_"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121227epcas5p4675fdb3130de49cd99351c5efd09e29e@epcas5p4.samsung.com>
-	<20250730121209.303202-5-s.neeraj@samsung.com>
-	<68a4a09b147ef_27db95294a8@iweiny-mobl.notmuch>
-
-------AO5Z5CA5q82FpJQJAbIGDvoW6m12ppu.cCYhbwpEEtg295OJ=_eac9d_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
 
-On 19/08/25 11:04AM, Ira Weiny wrote:
->Neeraj Kumar wrote:
->> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
->> set configuration instead of interleave-set cookie used in previous LSA
->> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
->> so skip its usage for CXL LSA 2.1 format
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->
->Seems ok:
->
->Acked-by: Ira Weiny <ira.weiny@intel.com>
+Hi Matti,
 
-Thanks Ira for review and AB tag.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
 
-Regards,
-Neeraj
+url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO/20250902-203558
+base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+patch link:    https://lore.kernel.org/r/08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount%40gmail.com
+patch subject: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+config: sparc-randconfig-r071-20250904 (https://download.01.org/0day-ci/archive/20250904/202509042119.GiwpuwCl-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 14.3.0
 
-------AO5Z5CA5q82FpJQJAbIGDvoW6m12ppu.cCYhbwpEEtg295OJ=_eac9d_
-Content-Type: text/plain; charset="utf-8"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509042119.GiwpuwCl-lkp@intel.com/
 
+smatch warnings:
+drivers/iio/adc/rohm-bd79112.c:212 bd79112_read_raw() warn: inconsistent indenting
 
-------AO5Z5CA5q82FpJQJAbIGDvoW6m12ppu.cCYhbwpEEtg295OJ=_eac9d_--
+vim +212 drivers/iio/adc/rohm-bd79112.c
 
+   192	
+   193	static int bd79112_read_raw(struct iio_dev *indio_dev,
+   194				    struct iio_chan_spec const *chan, int *val,
+   195				    int *val2, long m)
+   196	{
+   197		struct bd79112_data *data = iio_priv(indio_dev);
+   198		int ret;
+   199	
+   200		switch (m) {
+   201		case IIO_CHAN_INFO_RAW:
+   202			ret = regmap_read(data->map, chan->channel, val);
+   203			if (ret < 0)
+   204				return ret;
+   205	
+   206			return IIO_VAL_INT;
+   207	
+   208		case IIO_CHAN_INFO_SCALE:
+   209			 *val = data->vref_mv;
+   210			 *val2 = 12;
+   211	
+ > 212			return IIO_VAL_FRACTIONAL_LOG2;
+   213		}
+   214	
+   215		return -EINVAL;
+   216	}
+   217	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
