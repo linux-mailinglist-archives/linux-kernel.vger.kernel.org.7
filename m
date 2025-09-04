@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-799945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF032B43181
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0542BB43188
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670A65479FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBB0580092
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 05:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A4523A995;
-	Thu,  4 Sep 2025 05:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7A522B8BD;
+	Thu,  4 Sep 2025 05:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v2nhIvAH"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEPY5UgD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C3D33E7;
-	Thu,  4 Sep 2025 05:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663ADC8CE;
+	Thu,  4 Sep 2025 05:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756962605; cv=none; b=OJ5Qa8V/unoXrPUo+SVez5NOdApZth5O0wlIkez+7J9Dias06IL4aGQhAYpJsdgaq4qCjEjaoad+Y4WAu3p1lY3apHYdLKYCvpHPt35sHZ6yBTGRWkEfbRm2sOPRkX2KvLpSfX0WqhJn1dT+O4ecpLrus1RkuVSUxozYIsiA+ko=
+	t=1756963087; cv=none; b=k6S1KcxdzIWPnG5NPB71tqKs9T3hZz5FCX3k+FNUYU5fOetkpFw+LC0YVzlWsBOrWAJ3ABNdM7Uoh9RTWExspDPigoSV26naJV4hkSGTBkl/EJ1Y9wDiqzAkeXHWHB0DKl6fk2BvbUfKLGTZKAovSy4Zj0RNtB0LusH8WmFVP/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756962605; c=relaxed/simple;
-	bh=ydFs6i7keCMfBbD9quYtCVIwH9y+8boTcTxEbezuoqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAxvlDnh0ixw/8kBK6MMSp5rPI1PP8hUx2ZiPoyZrgzGl17RV4jzWqpXPnqm+EjINQBcN+DiwxSx3XKHSUxrfYCkJ+eZFy5EiqXpq7iGU2vyr8Cb33O1jXkiK0XfXuXKVTsKk/hgpX3EQMEyWUZeM1jGWkeeQDo/pMMaqTSyc8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v2nhIvAH; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ydFs6i7keCMfBbD9quYtCVIwH9y+8boTcTxEbezuoqI=; b=v2nhIvAHa8n7akzk3SUERXmaHo
-	YvNeXa5K0jwkINpKuRz0S5VtIcpV710I+gAMavCPxiHGRUIRKK/UoZk7idl1zok3c0L86qWILmnyr
-	9eHA8+oT5R9Ho2y2JNUDI86b1HTqGj28rmQYVXMz6WcrzQeKG+ojLdutPKj85v62fh8oRYC/FfuGB
-	6iYOUIURK6e64WDJkkkSPooaRQfbglSijM/sO9oYgDiZQgl3zbfb6ioUXvfiifvrHipr/+QhcmuvU
-	xkDWaE//NvdBrotQ1jIeSGblxfklYqFb6Xh5x+W9vY1iod5cBOnxCIb1ckRapLbxFpwEmrM2YVeVM
-	JuTlcZ1w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uu2EH-00000009A1O-0i6e;
-	Thu, 04 Sep 2025 05:09:49 +0000
-Date: Wed, 3 Sep 2025 22:09:49 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Yu Kuai <hailan@yukuai.org.cn>, Christoph Hellwig <hch@infradead.org>,
-	colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
-	tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
-	josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
-	satyat@google.com, ebiggers@google.com, neil@brown.name,
-	akpm@linux-foundation.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH RFC v3 02/15] block: add QUEUE_FLAG_BIO_ISSUE
-Message-ID: <aLkfHW2KuNvrcYyN@infradead.org>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-3-yukuai1@huaweicloud.com>
- <aLhBqTrbUWVK4OKy@infradead.org>
- <5378349f-4d00-4d3e-9834-f3ddf2e514cc@yukuai.org.cn>
- <dbbfce94-22d8-5c34-ba70-c6de2b902659@huaweicloud.com>
+	s=arc-20240116; t=1756963087; c=relaxed/simple;
+	bh=0aKem663rtBhcwUfKFeosww3r9HSWIadq/brKJlHnmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o/Cd1ig22tf4i8v0DKnATIBsKCHM9/GycHD+oR/a+ipxx4H+HTeJebRU/i568IMdAe6moYURrQJg2cKLOt1HK8Lv68Jh//AczuYDYVrreE55y932HQFwWpptIC6UUXcD7JaASdiaaPeYdL7GNBDQagPgaNR9sJW9URejojNsEsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEPY5UgD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87235C4CEF0;
+	Thu,  4 Sep 2025 05:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756963086;
+	bh=0aKem663rtBhcwUfKFeosww3r9HSWIadq/brKJlHnmg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bEPY5UgDP3Gs0Ato7IWtAJ7/UYexLY6S3hxOcoCvmYOeUBjZ1Y5JT7HPqJ/yqyK1U
+	 lgSC26n6aWOkb0QFYmX4yglMpL3LJRilL81/ns/mAU3EYBUkh4FcBWpBKIvUN1+L20
+	 ntPDmMDafiopkCIdahu0qxUrFLOtgo23KpUz5TRQFq0UCVgR4tDwg4RE8fRG/q9WkA
+	 cJvQCn2hitl9b/QIQbQdDVuyq4KHfOeztm2V9hbJMPohldyp6uiv2wlgGlGuyTfX9c
+	 teqxsLyTiJBvh7rBKAbLfu8V+ATW3qWI8rVww1JQ6I0Pk7QT1BRRl8nhSLoxtaNEzK
+	 JQ9doD7MSuoYQ==
+Date: Thu, 4 Sep 2025 07:18:01 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl
+ <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] tools/docs: sphinx-* break documentation bulds
+ on openSUSE
+Message-ID: <20250904071700.2e680548@foz.lan>
+In-Reply-To: <aLh9HVd8_S9LvSgv@casper.infradead.org>
+References: <cover.1756916565.git.mchehab+huawei@kernel.org>
+	<29135db8c8094006f256e1fa0b64663c735737e7.1756916565.git.mchehab+huawei@kernel.org>
+	<aLh9HVd8_S9LvSgv@casper.infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbbfce94-22d8-5c34-ba70-c6de2b902659@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 10:44:32AM +0800, Yu Kuai wrote:
-> - it's only used by iolatency, which can only be enabled for rq-based
-> disks;
-> - For bio that is submitted the first time, blk_cgroup_bio_start() is
-> called from submit_bio_no_acct_nocheck(), where q_usage_counter is not
-> grabbed yet, hence it's not safe to enable that flag while enabling
-> iolatency.
+Em Wed, 3 Sep 2025 18:38:37 +0100
+Matthew Wilcox <willy@infradead.org> escreveu:
 
-Yes, keeping more things in blk-mq is always good.
+> On Wed, Sep 03, 2025 at 06:24:16PM +0200, Mauro Carvalho Chehab wrote:
+> > Before this patch, building htmldocs on opensuseLEAP works
+> > fine:
+> > 
+> >     # make htmldocs
+> >     Available Python versions:
+> >       /usr/bin/python3.11
+> > 
+> >     Python 3.6.15 not supported. Changing to /usr/bin/python3.11
+> >     Python 3.6.15 not supported. Changing to /usr/bin/python3.11  
+> 
+> [...]
+> 
+> > 1. after this change, sphinx-pre-install needs to be called
+> >    by hand:
+> > 
+> >     $ /usr/bin/python3.11 tools/docs/sphinx-pre-install
+> >     Detected OS: openSUSE Leap 15.6.
+> >     Sphinx version: 7.2.6  
+> 
+> I thought the preferred option was to be able to specify:
+> 
+> PYTHON=/usr/bin/python3.11 make htmldocs
+> 
+> or even make htmldocs PYTHON=/usr/bin/python3.11
+> 
+> like being able to specify CC, LD or AWK.
 
-> -void blk_mq_submit_bio(struct bio *bio)
-> +void b k_mq_submit_bio(struct bio *bio)
+This could be an option, but it is still half-broken - or at least
+implementing it is not trivial - as spinx-pre-install is the
+script which recommends what packages are needed on openSUSE Leap.
+and on RHEL8 (and based) distros.
 
-This got mangled somehow.
+Internally, it needs to run sphinx-build --version to check if
+Sphinx version is compatible with the build. So, adding support
+for a PYTHON env is still half-broken after this series.
+
+Thanks,
+Mauro
 
