@@ -1,150 +1,194 @@
-Return-Path: <linux-kernel+bounces-801275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FCBB442EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:37:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4814DB442F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 18:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A20C1890783
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05ED71C86700
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 16:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D6D1D554;
-	Thu,  4 Sep 2025 16:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E237A2D12EA;
+	Thu,  4 Sep 2025 16:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ye76iZPQ"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="AFvd+gkJ"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41826161302
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 16:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DD12C3768;
+	Thu,  4 Sep 2025 16:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757003815; cv=none; b=h60mi5Ye4ir7kGiDsSuPx8pn3m2NH8rgCdw3935/DnYeEuQAAdX6TCDFIfivUxBob6ZY6nIFjadoOrda27G6pV0H3ezkOW2GS6B7P1W4buJ+pkgJBpJC4cYHeUqYPj93LfNa/Rlm7sk48LhHUmKhEWhyJ9EQiAnQLcIk97y6aS0=
+	t=1757003826; cv=none; b=FUtmQ6/TyNMR+fcfijeOwPNMqfNyK4fXB6uGaY/kb5vtEL9gavqNjlIzyPl9XM7T44ytGX9DC9PEDYtVRYmOPEj7eNMZBKd0/mz9jfeZdhaa8Euef/9BWbnlnDKXXDB9ghZyCAGO2/FaQMTJeOqU/COioSB43fvMyzigaGG2Vyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757003815; c=relaxed/simple;
-	bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUoaTQuK2ywtjiBT1MiCMB2Gt7kJ0h5ZwEQJSYTMBklM2w71l0RvwGm3NlOdrz2GVanPdgSLmmuaMTsVacn5AYjUXPajm31qwLdU0ShYMy+eUNkrJcoltE3mnFt4zU6mGrz9mE0Et+2/8jZP2pWrJ65IxoCP4THRhBw5hDD9lVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ye76iZPQ; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cb9e039d9so2156464a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 09:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757003813; x=1757608613; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
-        b=Ye76iZPQmnif30gTNvizD8NlTxOA+LlejWyYP0lmtbeFcGrwfVFjorxPbpr2ny1QbF
-         Kl9MgoB2R7JExmPGDnSy4LRdOtlbM20yK+20Ub2Ovh00JnBwUI+AHguFJkaH14l8KnRz
-         mE4J38Kip1TKbgUQxjcTr+rWY8AC5jX1H+cqIO0oqrQhr48nauvYhaHSuS+4u+UMpYiU
-         mv8258nP7zfwlALlwvp7sKanMJ/peytQtYsQWZw0nse9fuGI+uP6E2huxWRjx781WjIa
-         lkt9eMTpjM0Is4QAUB52OYLRgY0tnCiO541qi/8P5oKYWuslhz8fhJiPzTTequHTeP9D
-         K8cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757003813; x=1757608613;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7904c62jqnr+Z9vpb9OeNuICRFS6lbka6nmTNqOdF0k=;
-        b=PR24RfmpEO62+eX/gbIZMYHtI4COdzLraSr3ZWiHv3iD4WKoF1RNC+2akN9LNGUMAv
-         kU9wzQ6v4vXwxQu+RzvUatXeOgYk/AWZfrFiDNJJgECBq0INwtzJgkR3UdnvWLd3GN/r
-         bVh5UKX7KEVPR1ORCDeB46Yzt4Ryv1JU+qJwSjsZ5DpnjbI62jZtbkxxsgLehw1SlaGY
-         bs/IIEFfnyOO+7luUqroISMQ788tnUbVedLH7tNeqnJRO4qkFeIyUF3EwbOQlfhhbWJ5
-         vmUGXdl9a1q6Gg32CR1xGcnWJTyjUFYknV5GAn+sVDxqh5F3ZRkkT/nUNB5dfzifDoXI
-         mS6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUWv/MCECYGSZFXFIbqbOsLspuCgglVbTmN5J88jBMl5VIzdRQ2Y92Pa4dSYU5ygJeuG1/gCgrRikNKrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmRmVKqctmLMsuTHsLFw+yBK5LQZ3ZTIjNqqzATGMnlDgyR2Hh
-	jy7IJsNULKb9ixykPsFUfSiEltnJNqtO3L3DgJGoL4SdHVeeKSC4R3oXdpRXetH1RhTVSEcZ1XB
-	ovDpAv/AM7jXYNo6P8Syd8jPCaZzX16E=
-X-Gm-Gg: ASbGnctYfLW4vL3IroaKQMndi8xN3EvSewWzbsSnH513p8ApbMvto4bE0GGkaKKYzA+
-	b1Cz/z14EA12WnSYqJ6D+nEkb2OPvF0NffxPsIH18hETXHqLpApep5KPMKTMvq7P0IhLxEnTOEu
-	l69PUCMBRJ6JczGdlWLwV27HaL0/mBU0lJVLw0NyTL9RCZhqjG71pWqY4oOOSahsryvBiTlJKpx
-	L0TAQCkxQ6WzHeojb146Q==
-X-Google-Smtp-Source: AGHT+IEA2UeIAkXr+e/tdWh3HGDsg++x/c5BndXwl04n0fDAlOHFSLcblpbp/pDol4/9hV6KP6nc7aCS9TcBGJams98=
-X-Received: by 2002:a05:6402:504b:b0:618:aed3:38a with SMTP id
- 4fb4d7f45d1cf-61d26ebbf9fmr16584771a12.31.1757003812505; Thu, 04 Sep 2025
- 09:36:52 -0700 (PDT)
+	s=arc-20240116; t=1757003826; c=relaxed/simple;
+	bh=aI33hpNZv7QPjfBmT68XRHirLg/skD+4qO8gAzqEKZ0=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=C/tR5v7cswLTZ/mlgQUbFx8Hi+bfjCIRIBa1l6hNSedpr4BppO2fZ0UN5wUGJJFE7ZL2ZWmaLjnL4BdQhVm8RKjpIPf+eumf08Z/ksWrn/kCScMX1fLDEO6u9gwZ9V7cIio3Hy252KURi8wD7pIradhcPn0dKvYzvspcIqkjzY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=AFvd+gkJ; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=aN8IZ0Npe/EHb0ZHn3hHSyVNoCWWTZZacN+GW1RF+5o=; b=AFvd+gkJajTuSscCJYkHR6IYsP
+	SSPOXHvzg2ox0IaxGnVFS1GvhsaGRvJkzOGo3oiUJgMgFmuMUQAaXQbAk7BWaqBm4tCZZ7EKOD/lD
+	TcyKWNmHTAcOprBrSKM7RzoHYVkmUdFv1hZBjTckfA/lFIWjt7MxVQbdtLPbwGtPGfVw=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:43692 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1uuCx1-0003c6-O7; Thu, 04 Sep 2025 12:36:45 -0400
+Date: Thu, 4 Sep 2025 12:36:42 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Tapio Reijonen <tapio.reijonen@vaisala.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Alexander Shiyan <shc_work@mail.ru>, Hugo
+ Villeneuve <hvilleneuve@dimonoff.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Message-Id: <20250904123642.c8dd7bd6bf693ccbb5f6989b@hugovil.com>
+In-Reply-To: <e88f3c74-2ea0-4266-b5f7-62b87a1987c5@vaisala.com>
+References: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
+	<214edb7a-2631-4f7f-9516-a38a3796cc0b@kernel.org>
+	<e88f3c74-2ea0-4266-b5f7-62b87a1987c5@vaisala.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
-In-Reply-To: <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 5 Sep 2025 00:36:15 +0800
-X-Gm-Features: Ac12FXxXIyA7Ak57QaP00eHzQFWcLDAWH7ZbkJmCacJCM3GF4SOIsmmFYuv5ftA
-Message-ID: <CAMgjq7Bv99OHvbEiDcEMVYS5bRdSgSu75a8YUEQ+3roLiOo=ug@mail.gmail.com>
-Subject: Re: [PATCH 0/9] mm, swap: introduce swap table as swap cache (phase I)
-To: Chris Li <chrisl@kernel.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -2.8 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH] serial: max310x: improve interrupt handling
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Sat, Aug 30, 2025 at 2:57=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
->
-> Hi Kairui,
->
-> I give one pass of review on your series already. I Ack a portion of
-> it. I expect some clarification or update on the rest.
->
-> I especially want to double check the swap cache atomic set a range of
-> swap entries to folio.
-> I want to make sure this bug does not happen to swap table:
-> https://lore.kernel.org/linux-mm/5bee194c-9cd3-47e7-919b-9f352441f855@ker=
-nel.dk/
->
-> I just double checked, the swap table should be fine in this regard.
-> The bug is triggered by memory allocation failure in the middle of
-> insert folio. Swap tables already populated the table when the swap
-> entry is allocated and handed out to the caller. We don't do memory
-> allocation when inserting folio into swap cache, which is a good
-> thing. We should not have that bug.
->
-> I also want some extra pair of eyes on those subtle behavior change
-> patches, I expect you to split them out in the next version.
-> I will need to go through the split out subtle patch one more time as
-> well. This pass I only catch the behavior change, haven't got a chance
-> to reason those behavior changes patches are indeed fine. If you can
-> defer those split out patches, that will save me some time to reason
-> them on the next round. Your call.
+Hi,
 
-Thanks a lot for the review and raising concern about robustness of phase 1=
-.
+On Thu, 4 Sep 2025 14:50:16 +0300
+Tapio Reijonen <tapio.reijonen@vaisala.com> wrote:
 
-I just added more atomic runtime checks and ran another few days of
-stress and performance tests. So far I don't think there is a race or
-bug in the code, as I have been testing the longer series for months.
-But with more checks, we are still a lot faster than before, and much
-less error prone. So it seems very reasonable and acceptable to have
-them as this is a quite important part, even for a long term.
+> Hi,
+>=20
+> On 9/4/25 10:53, Jiri Slaby wrote:
+> > On 03. 09. 25, 11:23, Tapio Reijonen wrote:
+> >> When there is a heavy load of receiving characters to all
+> >> four UART's, the warning 'Hardware RX FIFO overrun' is
+> >> sometimes detected.
+> >> The current implementation always service first UART3 until
+> >> no more interrupt and then service another UARTs.
+> >>
+> >> This commit improve interrupt service routine to handle all
+> >> interrupt sources, e.g. UARTs when a global IRQ is detected.
+> >>
+> >> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
+> >> ---
+> >> =A0 drivers/tty/serial/max310x.c | 21 ++++++++++++++++-----
+> >> =A0 1 file changed, 16 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x=
+.c
+> >> index=20
+> >> ce260e9949c3c268e706b2615d6fc01adc21e49b..3234ed7c688ff423d25a007ed8b9=
+38b249ae0b82 100644
+> >> --- a/drivers/tty/serial/max310x.c
+> >> +++ b/drivers/tty/serial/max310x.c
+> >> @@ -824,15 +824,26 @@ static irqreturn_t max310x_ist(int irq, void=20
+> >> *dev_id)
+> >> =A0=A0=A0=A0=A0 if (s->devtype->nr > 1) {
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 do {
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned int val =3D ~0;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned int val;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 unsigned int global_irq =3D ~0;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 int port;
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 WARN_ON_ONCE(regmap_read(s->re=
+gmap,
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 MAX310X_GLOBALIRQ_REG, &val));
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 val =3D ((1 << s->devtype->nr) - 1)=
+ & ~val;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 MAX310X_GLOBALIRQ_REG, =
+&global_irq));
+> >> +
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 val =3D ((1 << s->devtype->nr) - 1)=
+ & ~global_irq;
+> >=20
+> > This is horrid. Use GENMASK() (or BIT() below) instead. Likely, you wan=
+t=20
+> > a local var storing the mask (the first part before the &).
+> >=20
+> val =3D GENMASK(s->devtype->nr - 1, 0) & ~global_irq;>> =A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 if=20
+> (!val)
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 break;
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (max310x_port_irq(s, fls(val) - =
+1) =3D=3D IRQ_HANDLED)
+> >> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 handled =3D true;
+> >> +
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 do {
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 port =3D fls(val) - 1;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (max310x_port_irq(s,=
+ port) =3D=3D IRQ_HANDLED)
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 handled =3D=
+ true;
+> >> +
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 global_irq |=3D 1 << po=
+rt;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 val =3D ((1 << s->devty=
+pe->nr) - 1) & ~global_irq;
+> >> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 } while (val);
+> >=20
+> > Actually, does it have to be from the end? I am thinking of=20
+> > for_each_and_bit()...
+> >=20
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 } while (1);
+> >> =A0=A0=A0=A0=A0 } else {
+> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 if (max310x_port_irq(s, 0) =3D=3D IRQ_HAND=
+LED)
 
-That will surely help catch any potential new or historical issue.
+Combining what I suggested earlier, with Jiri's comments but using=20
+for_each_clear_bit() allow to get rid of the original horrid mask:
 
-V2 would have a few more patches splitted from old ones so it should
-be cleaner. The code should be basically still the same though. Some
-parts like the whole new infrastructure are really hard to split though
-as they are supposed to work as a whole.
+---
+        if (s->devtype->nr > 1) {
+                do {
+                        unsigned int val =3D ~0;
++                       unsigned long channel;
++                       unsigned long irq;
++                       bool read_reg_done =3D true;
+=20
+                        WARN_ON_ONCE(regmap_read(s->regmap,
+                                                 MAX310X_GLOBALIRQ_REG, &va=
+l));
+-                       val =3D ((1 << s->devtype->nr) - 1) & ~val;
+-                       if (!val)
++                       irq =3D val;
++
++                       for_each_clear_bit(channel, &irq, s->devtype->nr) {
++                               read_reg_done =3D false;
++
++                               if (max310x_port_irq(s, channel) =3D=3D IRQ=
+_HANDLED)
++                                       handled =3D true;
++                       }
++
++                       if (read_reg_done)
+                                break;
+-                       if (max310x_port_irq(s, fls(val) - 1) =3D=3D IRQ_HA=
+NDLED)
+-                               handled =3D true;
+                } while (1);
+---
 
->
-> Oh, I also want to write a design document for the swap table idea. I
-> will send it your way to incorporate into your next version of the
-> series.
->
-> Thanks for the great work! I am very excited about this.
 
-Later phases will also be exciting where we start to trim down the LOC
-and long existing issues, with net gains :)
+--=20
+Hugo Villeneuve
 
