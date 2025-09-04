@@ -1,453 +1,182 @@
-Return-Path: <linux-kernel+bounces-800729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ABBB43B3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC61FB43B44
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71705685F19
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30EAB177BC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA472DE701;
-	Thu,  4 Sep 2025 12:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764452D7DCD;
+	Thu,  4 Sep 2025 12:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jMMy9td9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XSBcXVvk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FAA2C21C0;
-	Thu,  4 Sep 2025 12:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756987974; cv=pass; b=Ox39zJhkP/DFGhlvnLqLR+A7M4r6L/mM9knlSs/EZevtH8nGz4mT/Y3m8XGO9ifD5Wny0Vy9xZd6lbCYPuiJmYjMxqf46osSkpGXotHUklDgf1BwjnhXWgigFBDa+fFbiYYaCigzR3J8lXf+Nz/aq09SNqVRhtsuTBWbj+lATt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756987974; c=relaxed/simple;
-	bh=L9UY9fY8S78Td4d+Nvcnh5r45q+r3aH+TFNj1euUELg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ps18spP5DNeTShDq26S0RUxGYs+VHSuUKUl2hXi3DU6b0o3TahmpQxvEgx5VenmrCpqo3OieFbCiUXVFz5X49UHe65IVTLSX3bm3RrMr5mrZSAeluMiYEAQiohUWCtUkxtMKjZzXt7TkYDtnwZrcRSmPqE5HVAIJiYNJZG+sL6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jMMy9td9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756987933; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TvKirX4c74x7jqN1tg6isOyPPEnZPs+fy4zd55xvA2Kog/pOh5jVY0IcNm9uvILjpgYC/MaPYRGnKJmj6emAOPNvfL6poMD5v2dfWX/9qzmd0ehQ9uSM3qC+f+60JaSmFHkv/tLJ/rpoTSizkvC4oMCVXcw1DHVZdmp2Qhcg0LA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756987933; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Kg+imjEAl3CXmIfEbHlp4v245YFguRUUK5TRAGFXJso=; 
-	b=dzP89dQ+z49VzlwEan2/Yl6RWm+w2nhq3AinO5RmzyLWd2Ev4fXVrVwJRSctuJrHnVmSYy1lXZWe3w051TJ2xg1lugn/OrukxfXwJmtVmnTPKZ3cCfv2q8k2DptnOCrkh984LLdEdTMfvZIv0Kysj3Nh0fo0U/BGqaJ+WrZCZLo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756987933;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Kg+imjEAl3CXmIfEbHlp4v245YFguRUUK5TRAGFXJso=;
-	b=jMMy9td9dP/h8xOOi6g/kSvcUIBDwA2A4iqcDR8bGLQRHpUv3G2kd2ywqfhKg/GL
-	UsoBC55q5otWRoNIjhW+guh3cuuc0GLY6Bwz4q4cQfdDWlKY9gRKt5L13DD6cyhmjuf
-	B/unwPc5DkYdxBlEBcWaQTAUDGhe2V4kPBdaidww=
-Received: by mx.zohomail.com with SMTPS id 1756987929589959.508568434057;
-	Thu, 4 Sep 2025 05:12:09 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674B2D0C9A
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756988015; cv=none; b=Hu+Rf3/NNfLQlNbHcjNtQAYq2j/CSm/Et6VXsAlrQgAHwLxHbYe7dqPwe+lilBMilM191lucDY6PyNHly2iqe+oLT4CXTxE+iKflk3DkRvlfv3AP0jtxlklG9gUtHliWJgBMBuedGpJ7eGZtRlc9wUPr9ekrEFjeLTnTxvAAwSE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756988015; c=relaxed/simple;
+	bh=dGaxnwDc1UTsfN5tgg40DErGoAILkqkBdGg9Q5eHUVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXpoX3ebUUilWTUc1NgLpTgY82b7TUjtccNczPtdgELi/eev+6SB4OjkJuhpzQ2pWOgr2mLDX2DoMi0WXL7an+fT6QL5mw6KX/F1OZ8nzQggaQn68/baP0QVpg0jtWyZQCXZ53tlnU3bhQ6SQNRg8Ta+k+b7tXOj9RTWeCiGBj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XSBcXVvk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A8D1840E01BB;
+	Thu,  4 Sep 2025 12:13:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id X5Lfc-Z7aB7y; Thu,  4 Sep 2025 12:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756988007; bh=HwImBea0Pxd9tUsfNJTSFd6GGaQnM6wbr1zT9zpJBSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XSBcXVvkFmoPCNF1FMBpZWuDS7uTBwpL3WlRpb3eOnjQ9P/8NOjJu6Ing6L5mI9+f
+	 6wXxzDBpbA5p/N4RymAtuzixzsEIOXgMCyUozYfojrdGttRJhgzhKCSCoVp2BZOiaE
+	 WgWQeL0Wyifpu1tKvgTTK/bO29ik7/OOTSdirAjDTjasIIm+zp/bS8dXPLDV7j9I2V
+	 VYs3qXcwx4St+lNKbn87L5BE/JtcmyuY84Pgcgd3gQpUJgcemsqRpx3MsbkRh3LpoU
+	 dH9/s3CxrCmZJjB260BN4TQjyrkKRM1pF+3O7Q1vPmKr76Azruh3OgQEi3pZU1qoa0
+	 WQX8+SPSePhBIOLmWciFoAh0vIr5HJbdsHiiIuI6jKHmnSxZy+yyt6WvlVCp2K1eBm
+	 djZT+0tppyeLEnJGiaKeucduavAvL4Ql4cCQGit2ThGZG3lYG2IaX7BMyqTJDQxnXI
+	 okKBzPOzLHk8oTDWse+Rx71rfkRK85A6mK1gvrG9IdJieOUyr4MelkK64pMBEqX+S8
+	 p7T8XFcQhx81xAUcG2tAyP32xIV3phSZd0tNJ2p4TYqStQBsOKQUlchRp0UW9QAA+1
+	 wtvoCCha/b159RjELTV2FXwbKIK/M0TqyypNdBSMO7c16FNJQzTnJmEghAGLIb6Sz6
+	 1GOUecnRmpN9EMzCBzfUPsxc=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 502B740E00DA;
+	Thu,  4 Sep 2025 12:13:19 +0000 (UTC)
+Date: Thu, 4 Sep 2025 14:13:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, chao.gao@intel.com,
+	abusse@amazon.de
+Subject: Re: [PATCH v5 3/7] x86/microcode/intel: Establish staging control
+ logic
+Message-ID: <20250904121318.GKaLmCXlU4kwhsxG9h@fat_crate.local>
+References: <20250813172649.15474-1-chang.seok.bae@intel.com>
+ <20250823155214.17465-1-chang.seok.bae@intel.com>
+ <20250823155214.17465-4-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 01/14] rust: drm: gem: Simplify use of generics
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-2-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 09:11:51 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Asahi Lina <lina+kernel@asahilina.net>,
- "open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <662189D6-44B2-4880-971D-A3D2D748542D@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-2-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250823155214.17465-4-chang.seok.bae@intel.com>
 
-Hi Lyude,
+On Sat, Aug 23, 2025 at 08:52:06AM -0700, Chang S. Bae wrote:
+> When microcode staging is initiated, operations are carried out through
+> an MMIO interface. Each package has a unique interface specified by the
+> IA32_MCU_STAGING_MBOX_ADDR MSR, which maps to a set of 32-bit registers.
+> 
+> Prepare staging with the following steps:
+> 
+>   1.  Ensure the microcode image is 32-bit aligned to match the MMIO
+>       register size.
+> 
+>   2.  Identify each MMIO interface based on its per-package scope.
+> 
+>   3.  Invoke the staging function for each identified interface, which
+>       will be implemented separately.
+> 
+> Also, define cpu_primary_thread_mask for the CONFIG_SMP=n case, allowing
+> consistent use when narrowing down primary threads to locate the
+> per-package interface.
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Now that my rust skills have been honed, I noticed that there's a lot =
-of
-> generics in our gem bindings that don't actually need to be here. =
-Currently
-> the hierarchy of traits in our gem bindings looks like this:
->=20
->  * Drivers implement:
->    * BaseDriverObject<T: DriverObject> (has the callbacks)
->    * DriverObject (has the drm::Driver type)
->  * Crate implements:
->    * IntoGEMObject for Object<T> where T: DriverObject
->      Handles conversion to/from raw object pointers
->    * BaseObject for T where T: IntoGEMObject
->      Provides methods common to all gem interfaces
->=20
->  Also of note, this leaves us with two different drm::Driver =
-associated
->  types:
->    * DriverObject::Driver
->    * IntoGEMObject::Driver
->=20
-> I'm not entirely sure of the original intent here unfortunately (if =
-anyone
-> is, please let me know!), but my guess is that the idea would be that =
-some
-> objects can implement IntoGEMObject using a different ::Driver than
-> DriverObject - presumably to enable the usage of gem objects from =
-different
-> drivers. A reasonable usecase of course.
->=20
-> However - if I'm not mistaken, I don't think that this is actually how
-> things would go in practice. Driver implementations are of course
-> implemented by their associated drivers, and generally drivers are not
-> linked to each-other when building the kernel. Which is to say that =
-even in
-> a situation where we would theoretically deal with gem objects from =
-another
-> driver, we still wouldn't have access to its drm::driver::Driver
-> implementation. It's more likely we would simply want a variant of gem
-> objects in such a situation that have no association with a
-> drm::driver::Driver type.
->=20
-> Taking that into consideration, we can assume the following:
-> * Anything that implements BaseDriverObject will implement =
-DriverObject
->  In other words, all BaseDriverObjects indirectly have an associated
->  ::Driver type - so the two traits can be combined into one with no
->  generics.
-> * Not everything that implements IntoGEMObject will have an associated
->  ::Driver, and that's OK.
->=20
-> And with this, we now can do quite a bit of cleanup with the use of
-> generics here. As such, this commit:
->=20
-> * Removes the generics on BaseDriverObject
-> * Moves DriverObject::Driver into BaseDriverObject
-> * Removes DriverObject
-> * Removes IntoGEMObject::Driver
-> * Add AllocImpl::Driver, which we can use as a binding to figure out =
-the
->  correct File type for BaseObject
->=20
-> Leaving us with a simpler trait hierarchy that now looks like this:
->=20
->  * Drivers implement: BaseDriverObject
->  * Crate implements:
->    * IntoGEMObject for Object<T> where T: DriverObject
->    * BaseObject for T where T: IntoGEMObject
->=20
-> Which makes the code a lot easier to understand and build on :).
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
-> V2:
-> * Don't refer to Object<T> in callbacks, as this would result in =
-drivers
->  getting the wrong gem object type for shmem gem objects once we add
->  support for those. Instead, we'll just add a type alias to clean this
->  part up.
-> V3:
-> * Fix nova compilation
-> * Also, add an associated driver type to AllocImpl - as we still need =
-the
->  current driver accessible from BaseObject so that we can use the =
-driver's
->  various associated types, like File
-> V4:
-> * Add missing Object =3D Self constraint to type bounds for =
-create_handle,
->  lookup_handle. I forgot that if drivers can have private gem objects =
-with
->  a different data layout, we can only guarantee gem objects with =
-handles
->  are of the same gem object type as the main one in use by the driver.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> drivers/gpu/drm/nova/gem.rs |  8 ++--
-> rust/kernel/drm/driver.rs   |  3 ++
-> rust/kernel/drm/gem/mod.rs  | 77 ++++++++++++++++---------------------
-> 3 files changed, 40 insertions(+), 48 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-> index cd82773dab92c..2760ba4f3450b 100644
-> --- a/drivers/gpu/drm/nova/gem.rs
-> +++ b/drivers/gpu/drm/nova/gem.rs
-> @@ -16,16 +16,14 @@
-> #[pin_data]
-> pub(crate) struct NovaObject {}
->=20
-> -impl gem::BaseDriverObject<gem::Object<NovaObject>> for NovaObject {
-> +impl gem::DriverObject for NovaObject {
-> +    type Driver =3D NovaDriver;
+This paragraph is stale now and can go.
+
+> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+> index b65c3ba5fa14..0356155f9264 100644
+> --- a/arch/x86/include/asm/msr-index.h
+> +++ b/arch/x86/include/asm/msr-index.h
+> @@ -913,6 +913,8 @@
+>  #define MSR_IA32_UCODE_WRITE		0x00000079
+>  #define MSR_IA32_UCODE_REV		0x0000008b
+>  
+> +#define MSR_IA32_MCU_STAGING_MBOX_ADDR	0x000007a5
+
+Doesn't look sorted to me.
+
 > +
->     fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, =
-Error> {
->         try_pin_init!(NovaObject {})
->     }
-> }
->=20
-> -impl gem::DriverObject for NovaObject {
-> -    type Driver =3D NovaDriver;
-> -}
-> -
-> impl NovaObject {
->     /// Create a new DRM GEM object.
->     pub(crate) fn new(dev: &NovaDevice, size: usize) -> =
-Result<ARef<gem::Object<Self>>> {
-> diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-> index fe7e8d06961aa..dae0f4d1bbe3c 100644
-> --- a/rust/kernel/drm/driver.rs
-> +++ b/rust/kernel/drm/driver.rs
-> @@ -86,6 +86,9 @@ pub struct AllocOps {
->=20
-> /// Trait for memory manager implementations. Implemented internally.
-> pub trait AllocImpl: super::private::Sealed + drm::gem::IntoGEMObject =
-{
-> +    /// The [`Driver`] implementation for this [`AllocImpl`].
-> +    type Driver: drm::Driver;
+>  /* Intel SGX Launch Enclave Public Key Hash MSRs */
+>  #define MSR_IA32_SGXLEPUBKEYHASH0	0x0000008C
+>  #define MSR_IA32_SGXLEPUBKEYHASH1	0x0000008D
+> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+> index 371ca6eac00e..d309fb1f058f 100644
+> --- a/arch/x86/kernel/cpu/microcode/intel.c
+> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+> @@ -299,6 +299,54 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
+>  	return size ? NULL : patch;
+>  }
+>  
+> +/*
+> + * Handle the staging process using the mailbox MMIO interface.
+> + * Return the result state.
+> + */
+> +static enum ucode_state do_stage(u64 mmio_pa)
+> +{
+> +	pr_debug_once("Staging implementation is pending.\n");
+> +	return UCODE_ERROR;
+> +}
 > +
->     /// The C callback operations for this memory manager.
->     const ALLOC_OPS: AllocOps;
-> }
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index b71821cfb5eaa..31c5799d995c5 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -15,31 +15,31 @@
-> use core::{mem, ops::Deref, ptr::NonNull};
->=20
-> /// GEM object functions, which must be implemented by drivers.
-> -pub trait BaseDriverObject<T: BaseObject>: Sync + Send + Sized {
-> +pub trait DriverObject: Sync + Send + Sized {
-> +    /// Parent `Driver` for this object.
-> +    type Driver: drm::Driver;
+> +static void stage_microcode(void)
+> +{
+> +	unsigned int pkg_id = UINT_MAX;
+> +	enum ucode_state ret;
+> +	int cpu, err;
+> +	u64 mmio_pa;
 > +
->     /// Create a new driver data object for a GEM object of a given =
-size.
-> -    fn new(dev: &drm::Device<T::Driver>, size: usize) -> impl =
-PinInit<Self, Error>;
-> +    fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl =
-PinInit<Self, Error>;
->=20
->     /// Open a new handle to an existing object, associated with a =
-File.
->     fn open(
-> -        _obj: &<<T as IntoGEMObject>::Driver as drm::Driver>::Object,
-> -        _file: &drm::File<<<T as IntoGEMObject>::Driver as =
-drm::Driver>::File>,
-> +        _obj: &<Self::Driver as drm::Driver>::Object,
-> +        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
->     ) -> Result {
->         Ok(())
->     }
->=20
->     /// Close a handle to an existing object, associated with a File.
->     fn close(
-> -        _obj: &<<T as IntoGEMObject>::Driver as drm::Driver>::Object,
-> -        _file: &drm::File<<<T as IntoGEMObject>::Driver as =
-drm::Driver>::File>,
-> +        _obj: &<Self::Driver as drm::Driver>::Object,
-> +        _file: &drm::File<<Self::Driver as drm::Driver>::File>,
->     ) {
->     }
-> }
->=20
-> /// Trait that represents a GEM object subtype
-> pub trait IntoGEMObject: Sized + super::private::Sealed + =
-AlwaysRefCounted {
-> -    /// Owning driver for this type
-> -    type Driver: drm::Driver;
-> -
->     /// Returns a reference to the raw `drm_gem_object` structure, =
-which must be valid as long as
->     /// this owning object is valid.
->     fn as_raw(&self) -> *mut bindings::drm_gem_object;
-> @@ -74,25 +74,15 @@ unsafe fn dec_ref(obj: NonNull<Self>) {
->     }
-> }
->=20
-> -/// Trait which must be implemented by drivers using base GEM =
-objects.
-> -pub trait DriverObject: BaseDriverObject<Object<Self>> {
-> -    /// Parent `Driver` for this object.
-> -    type Driver: drm::Driver;
-> -}
-> -
-> -extern "C" fn open_callback<T: BaseDriverObject<U>, U: BaseObject>(
-> +extern "C" fn open_callback<T: DriverObject>(
->     raw_obj: *mut bindings::drm_gem_object,
->     raw_file: *mut bindings::drm_file,
-> ) -> core::ffi::c_int {
->     // SAFETY: `open_callback` is only ever called with a valid =
-pointer to a `struct drm_file`.
-> -    let file =3D unsafe {
-> -        drm::File::<<<U as IntoGEMObject>::Driver as =
-drm::Driver>::File>::from_raw(raw_file)
-> -    };
-> -    // SAFETY: `open_callback` is specified in the AllocOps structure =
-for `Object<T>`, ensuring that
-> -    // `raw_obj` is indeed contained within a `Object<T>`.
-> -    let obj =3D unsafe {
-> -        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj)
-> -    };
-> +    let file =3D unsafe { drm::File::<<T::Driver as =
-drm::Driver>::File>::from_raw(raw_file) };
-> +    // SAFETY: `open_callback` is specified in the AllocOps structure =
-for `DriverObject<T>`,
-> +    // ensuring that `raw_obj` is contained within a =
-`DriverObject<T>`
-> +    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj) };
->=20
->     match T::open(obj, file) {
->         Err(e) =3D> e.to_errno(),
-> @@ -100,26 +90,21 @@ extern "C" fn open_callback<T: =
-BaseDriverObject<U>, U: BaseObject>(
->     }
-> }
->=20
-> -extern "C" fn close_callback<T: BaseDriverObject<U>, U: BaseObject>(
-> +extern "C" fn close_callback<T: DriverObject>(
->     raw_obj: *mut bindings::drm_gem_object,
->     raw_file: *mut bindings::drm_file,
-> ) {
->     // SAFETY: `open_callback` is only ever called with a valid =
-pointer to a `struct drm_file`.
-> -    let file =3D unsafe {
-> -        drm::File::<<<U as IntoGEMObject>::Driver as =
-drm::Driver>::File>::from_raw(raw_file)
-> -    };
-> +    let file =3D unsafe { drm::File::<<T::Driver as =
-drm::Driver>::File>::from_raw(raw_file) };
+> +	if (!IS_ALIGNED(get_totalsize(&ucode_patch_late->hdr), sizeof(u32)))
+> +		return;
 > +
->     // SAFETY: `close_callback` is specified in the AllocOps structure =
-for `Object<T>`, ensuring
->     // that `raw_obj` is indeed contained within a `Object<T>`.
-> -    let obj =3D unsafe {
-> -        <<<U as IntoGEMObject>::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj)
-> -    };
-> +    let obj =3D unsafe { <<T::Driver as drm::Driver>::Object as =
-IntoGEMObject>::from_raw(raw_obj) };
->=20
->     T::close(obj, file);
-> }
->=20
-> impl<T: DriverObject> IntoGEMObject for Object<T> {
-> -    type Driver =3D T::Driver;
-> -
->     fn as_raw(&self) -> *mut bindings::drm_gem_object {
->         self.obj.get()
->     }
-> @@ -141,10 +126,12 @@ fn size(&self) -> usize {
->=20
->     /// Creates a new handle for the object associated with a given =
-`File`
->     /// (or returns an existing one).
-> -    fn create_handle(
-> -        &self,
-> -        file: &drm::File<<<Self as IntoGEMObject>::Driver as =
-drm::Driver>::File>,
-> -    ) -> Result<u32> {
-> +    fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-> +    where
-> +        Self: AllocImpl<Driver =3D D>,
-> +        D: drm::Driver<Object =3D Self, File =3D F>,
-> +        F: drm::file::DriverFile,
-
-Shouldn=E2=80=99t this be F: drm::file::DriverFile<Driver =3DD>?
-
-As you said in the commit message, I don=E2=80=99t see where exactly we =
-would have
-two competing drm::Driver types when calling this function, but we =
-should
-perhaps enforce this bound anyways.
-
-> +    {
->         let mut handle: u32 =3D 0;
->         // SAFETY: The arguments are all valid per the type =
-invariants.
->         to_result(unsafe {
-> @@ -154,10 +141,12 @@ fn create_handle(
->     }
->=20
->     /// Looks up an object by its handle for a given `File`.
-> -    fn lookup_handle(
-> -        file: &drm::File<<<Self as IntoGEMObject>::Driver as =
-drm::Driver>::File>,
-> -        handle: u32,
-> -    ) -> Result<ARef<Self>> {
-> +    fn lookup_handle<D, F>(file: &drm::File<F>, handle: u32) -> =
-Result<ARef<Self>>
-> +    where
-> +        Self: AllocImpl<Driver =3D D>,
-> +        D: drm::Driver<Object =3D Self, File =3D F>,
-> +        F: drm::file::DriverFile,
-
-Same here?
-
-> +    {
->         // SAFETY: The arguments are all valid per the type =
-invariants.
->         let ptr =3D unsafe { =
-bindings::drm_gem_object_lookup(file.as_raw().cast(), handle) };
->         if ptr.is_null() {
-> @@ -212,8 +201,8 @@ impl<T: DriverObject> Object<T> {
->=20
->     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =3D =
-bindings::drm_gem_object_funcs {
->         free: Some(Self::free_callback),
-> -        open: Some(open_callback::<T, Object<T>>),
-> -        close: Some(close_callback::<T, Object<T>>),
-> +        open: Some(open_callback::<T>),
-> +        close: Some(close_callback::<T>),
->         print_info: None,
->         export: None,
->         pin: None,
-> @@ -296,6 +285,8 @@ fn deref(&self) -> &Self::Target {
-> }
->=20
-> impl<T: DriverObject> AllocImpl for Object<T> {
-> +    type Driver =3D T::Driver;
+> +	lockdep_assert_cpus_held();
 > +
->     const ALLOC_OPS: AllocOps =3D AllocOps {
->         gem_create_object: None,
->         prime_handle_to_fd: None,
-> --=20
-> 2.50.0
->=20
+> +	/*
+> +	 * The MMIO address is unique per package, and all the SMT
+> +	 * primary threads are online here. Find each MMIO space by
+> +	 * their package ids to avoid duplicate staging.
+> +	 */
+> +	for_each_cpu(cpu, cpu_primary_thread_mask) {
+> +		if (topology_logical_package_id(cpu) == pkg_id)
+> +			continue;
 
-With the DriverFile comment sorted out:
+<---- newline here.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+> +		pkg_id = topology_logical_package_id(cpu);
+> +
+> +		err = rdmsrq_on_cpu(cpu, MSR_IA32_MCU_STAGING_MBOX_ADDR, &mmio_pa);
+> +		if (WARN_ON_ONCE(err))
+> +			return;
+> +
+> +		ret = do_stage(mmio_pa);
+> +		if (ret != UCODE_OK) {
+> +			pr_err("Error: staging failed with %s for CPU%d at package %u.\n",
+> +			       ret == UCODE_TIMEOUT ? "timeout" : "error state",
+
+What does "error state" mean?
+
+Are we going to dump additional error state so that it is clear why it failed?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
