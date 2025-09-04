@@ -1,138 +1,104 @@
-Return-Path: <linux-kernel+bounces-800738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479D9B43B5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346BFB43B5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17ED5863F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5531C83530
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34F62D94B9;
-	Thu,  4 Sep 2025 12:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD262C235B;
+	Thu,  4 Sep 2025 12:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CcbWdzhk"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b="Wx+sKZAy"
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [178.154.239.214])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784CD27E7DA;
-	Thu,  4 Sep 2025 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756988327; cv=pass; b=AzKid7oqIPfjGkb1DXeV/0JG/ICm00LT77P4zVGjIRuQAgFppX7GOpDK5Wq8q5TzZ9lIbY7ElAaVGsYkivSkQRGmNkVRZHRtRxga34BbXgR1zwAqRxC/Jx5A8kT7zFApMVJtDKjxZzfXLXNwZl8zI7j3IYFKvukQU+ntqcgz8EQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756988327; c=relaxed/simple;
-	bh=dhFHlGyMZvzaUto2hCu/vOiTWfaGlSNWDhXXaQMo8Rg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=t8Iulvl18mk+wR952CvHqXwyLRz8XVNvaM785O4XhXNjsnrJ0CHzh36JRFDTOzB1nnAr1wCHoueF06h2ryWVzofMbnAueKrzWiqwBxu3ynWymeXMA9f3m+pXrkC+q39qYSD07wQZDoZ7H5QVwUVNKH3FjFf+w527uc6u6JxbT7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CcbWdzhk; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756988285; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dRrG0fSjtlDhA2wpZb/kkJ90v5z8fd633NamFcld3UZEVJk3xcXcPUXA+/6a9DtAfesRkrEVYlLUZwyt20G3s2E6AIewYLaub3GClVVw19mhTJN0PxsI64IQIiOHNHipbSG7zQioLiLcqr28520tkVuqj44sVhSR6s/gMDWQmTg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756988285; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PniDd8q7i51dKDLDoV+CziCPP+VbPskOVJVwBIuSbJs=; 
-	b=fv1h7ar0s65z2e667eev8zqRanYWlk2yBzeAH1+7M2ZLPPswtsS3ZPwdCN+QxQuBNyqVn8RlYXYWo92/5ffKrvpMOc2xSMareG8XoT/z4z/aqJNHrRne9mzTFRm2oQSTvEez767qYII02nBGZXl2woYze8Qq34gMYc5VuCTIDQs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756988285;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=PniDd8q7i51dKDLDoV+CziCPP+VbPskOVJVwBIuSbJs=;
-	b=CcbWdzhk0XFj3QidRCbUytsNfv3eoWGRHTFWMULxH21M2z3MQTWaRO317j2EpryK
-	vUnFL3h9Fc6/ZfEyVP54zVXorltzA7/HgwU827+BM8ObAwZs/N/S61Xd4UJVbomSMgd
-	yWqWdpWFV31nzfIWWjfeFpcWZ3r1wLpHyus3FuWA=
-Received: by mx.zohomail.com with SMTPS id 1756988284509936.693694341028;
-	Thu, 4 Sep 2025 05:18:04 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EBC27E7DA;
+	Thu,  4 Sep 2025 12:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.214
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756988308; cv=none; b=mwEeKu/yygdOqFJyDGuUd2cEeqw4beNxvzPYTgVrHH5g+Hfnc+kHqnczMZdegIUqExEchQe/VIPyYt6f+von2wp1debvEWEC7PAVDz+6H/EypDUHujPw6uWtj+RlSmyOloIPq/Z/uBI55dsw/Mw17HojinWp1n7JcaAkwstyx+4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756988308; c=relaxed/simple;
+	bh=nWLD3219mEX9eLoMharp+SAPmuPOFJVNtzN3FzCNCS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U3VD2DrOaPAXlLV2whemTRdPU0ATfxce0cpNccKO+jyqgPchJVXfUEMh4fU2va43yFT87Zzv8vmC8d53idYZLqpkfuq2zB3eZa2KIeKGaGkBqal1pFSCXWZ4LlrZFR3xciyAW1SzsWXandYJnFVcXGKYdBy5nupWlp1+isA8bWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru; spf=pass smtp.mailfrom=tssltd.ru; dkim=pass (1024-bit key) header.d=tssltd.ru header.i=@tssltd.ru header.b=Wx+sKZAy; arc=none smtp.client-ip=178.154.239.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tssltd.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tssltd.ru
+Received: from mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:37a7:0:640:7089:0])
+	by forward103d.mail.yandex.net (Yandex) with ESMTPS id D169BC00DD;
+	Thu, 04 Sep 2025 15:18:15 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0IgxvuwL08c0-U9d5OJpp;
+	Thu, 04 Sep 2025 15:18:15 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tssltd.ru; s=mail;
+	t=1756988295; bh=VXTyxlvyxZgPwuZeJnsHDe9e+6Oi1CMf/DpK5r1q3P0=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=Wx+sKZAylqd8SrjaIFODzGb1yOQhgYyveOgIQ2NemiehsVOjz35bQfq3GkqfRPbH9
+	 CX2RpVTChLdPifVssguWyrSQNt/C/P7GIcM41Z9e/aUSI2yLQC5KZ+zIIsN5D1Z76Q
+	 3v4innOwloM0NruZdELfVwnjOP0wJ6k6aQA0zR6o=
+Authentication-Results: mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net; dkim=pass header.i=@tssltd.ru
+From: Makar Semyonov <m.semenov@tssltd.ru>
+To: Steve French <sfrench@samba.org>
+Cc: Makar Semyonov <m.semenov@tssltd.ru>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org
+Subject: 
+Date: Thu,  4 Sep 2025 15:17:54 +0300
+Message-ID: <20250904121757.1679560-1-m.semenov@tssltd.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 03/14] rust: drm: gem: Drop Object::SIZE
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-4-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 09:17:49 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Asahi Lina <lina+kernel@asahilina.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DEAC44E1-9037-4609-A53F-0BBBDCC576A0@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-4-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Date: Thu, 4 Sep 2025 15:00:27 +0300
+Subject: [PATCH] cifs: prevent NULL pointer dereference in UTF16
+ conversion
 
+There can be a NULL pointer dereference bug here. NULL is passed to
+__cifs_sfu_make_node without checks, which passes it unchecked to
+cifs_strndup_to_utf16, which in turn passes it to
+cifs_local_to_utf16_bytes where '*from' is dereferenced, causing a crash.
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Drive-by fix, it doesn't seem like anything actually uses this =
-constant
-> anymore.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> ---
-> rust/kernel/drm/gem/mod.rs | 5 +----
-> 1 file changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index 80940ed11368d..b27b9fbf28bbb 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -12,7 +12,7 @@
->     prelude::*,
->     types::{ARef, AlwaysRefCounted, Opaque},
-> };
-> -use core::{mem, ops::Deref, ptr::NonNull};
-> +use core::{ops::Deref, ptr::NonNull};
->=20
-> /// A type alias for retrieving a [`Driver`]s [`DriverFile`] =
-implementation from its
-> /// [`DriverObject`] implementation.
-> @@ -197,9 +197,6 @@ pub struct Object<T: DriverObject + Send + Sync> {
-> }
->=20
-> impl<T: DriverObject> Object<T> {
-> -    /// The size of this object's structure.
-> -    pub const SIZE: usize =3D mem::size_of::<Self>();
-> -
->     const OBJECT_FUNCS: bindings::drm_gem_object_funcs =3D =
-bindings::drm_gem_object_funcs {
->         free: Some(Self::free_callback),
->         open: Some(open_callback::<T>),
-> --=20
-> 2.50.0
->=20
->=20
+This patch adds a check for NULL 'src' in cifs_strndup_to_utf16 and
+returns NULL early to prevent dereferencing NULL pointer.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE
+
+Signed-off-by: Makar Semyonov <m.semenov@tssltd.ru>
+---
+ fs/smb/client/cifs_unicode.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
+index 4cc6e0896fad..1a9324bec7d6 100644
+--- a/fs/smb/client/cifs_unicode.c
++++ b/fs/smb/client/cifs_unicode.c
+@@ -628,6 +628,9 @@ cifs_strndup_to_utf16(const char *src, const int maxlen, int *utf16_len,
+ {
+ 	int len;
+ 	__le16 *dst;
++
++	if (!src)
++		return NULL;
+
+ 	len = cifs_local_to_utf16_bytes(src, maxlen, cp);
+ 	len += 2; /* NULL */
+-- 
+2.43.0
 
 
