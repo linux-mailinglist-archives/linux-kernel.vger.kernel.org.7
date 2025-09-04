@@ -1,139 +1,215 @@
-Return-Path: <linux-kernel+bounces-800795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC2DB43C2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:56:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDF4B43C3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 14:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2C85E6E48
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CC21727D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 12:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4880E2FE053;
-	Thu,  4 Sep 2025 12:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BII/ePzk"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DC2277CA4;
-	Thu,  4 Sep 2025 12:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756990584; cv=pass; b=TFjJ/W0uExNt00SGpoUF5xv2bq0FUc/dAXmFnwGcu9rp1A+9ohYBKlX1vtM23sGJSVQi18EI9WW+FA6RMt20Y6BHRdvttJR7FBq0brHJnCugVqIv9BWlZhdwZEfaSONXBRQQhXDBp1Axg4WtNezWscYxwvLSFYwQbW9dtjVGTx8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756990584; c=relaxed/simple;
-	bh=wkdmqXKZo1tHNEjUJXXVj27FZ7Zjg6MMvyBcbROIYJY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YbfsO/VAm7IZxZlUYmTKKEDKJgm/QEyd2rVOX2OUbjJAr7fO83ZWHVJB5syPxyAX4l4EHuhE+fA2St1ZM1EtOJaBk2cSv2fm6eKVJchENom+zcF93RYRTcFSJ7d1la/PSKI+S6EsCKw1luJwdwt751hMQchZ3dZFGoBBBjwYdIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BII/ePzk; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756990551; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ol/OxM4mp3DvaV5G8Oz2RkBldtrtCDfPwxGRyWQvSW417obvnAHslBBLEenHdNqeKHRCaqmBHM4xitqVV+aN3+zwDsrhhd1YAcWM1MnnJ6FlIZqQ+/UbhHE7beDm5NWyyR5GyzB0vx9ox0awcgDjvYTi+dZXQRQJlJ5RAg0gMv8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756990551; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4yQXcYDvDkWrXuTPgSfbG55Fo5/awg+Dvlk2c39nTQc=; 
-	b=jE/9ASCAC5cm3vBRjWPE9ycgDNDjX6GGV+XfZ3OrfnQrnZnF2yJddB1Fc9MAc+P4lQZ5lvpmkFb9AK3hPKHNMuv+mja5OYsZAFM7959goLqkOtlCRxHzYNFF0VdtMnT0DEKVVjFxIfHvfrzfILf0Y6bJ/uHfJb+v9wtD+4l1LdA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756990551;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=4yQXcYDvDkWrXuTPgSfbG55Fo5/awg+Dvlk2c39nTQc=;
-	b=BII/ePzk4ZuTOuSqHJxN5z0IMwtmpB+vcfs1mIJIRiLyZVBmGwCvTxSporJ1bfnm
-	yMxiXPhW4aoAwy+RRgEcZZxnnA5kparef/DjjHMLEeuxC5kiId29Dq4/MYdae9Wj0om
-	IqaSM45h59bp+8drZhSIUilh+H44dFXi86skHNyM=
-Received: by mx.zohomail.com with SMTPS id 1756990548664140.47824642979833;
-	Thu, 4 Sep 2025 05:55:48 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8B52FE053;
+	Thu,  4 Sep 2025 12:58:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DB33009C3;
+	Thu,  4 Sep 2025 12:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756990705; cv=none; b=CxJJxkFRQ6CfiIEP5bDNltX4rpC3S9TLV+uQGTNVI/lGVRaGXZRb6NGaGf49NQr7CZ82b5b8Wq8YH0tqnESZo4vuXt60vi4vySCSZJn5MUyUqR1WXD5WauE/DKSIW2LJhGYvt7g89XS4lZAkPEmCSTYvKZ2yBHfBCfoLituA4f4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756990705; c=relaxed/simple;
+	bh=jB8A4olDfnmsrn7GuGHJyBSY1MAa++JEV5h6wbhXk5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PJF9R+AhIW+zeVRn7doheFxfc5kBaJpZbGZYP+9gbepfJNrnKWRdKHxdZ0BJzm51DqNxYUh/MAEwLZ17YtG3iXSser1u+Kj4AjKgUMIDKZHz05qXBIzwKimzxMQIg6pDsJTErTX9K/kJKU8mqGCyFP1lhI1GmyjPVJTE5bEKEYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F7181756;
+	Thu,  4 Sep 2025 05:58:12 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 684763F6A8;
+	Thu,  4 Sep 2025 05:58:16 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Juergen Gross <jgross@suse.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH 0/7] Nesting support for lazy MMU mode
+Date: Thu,  4 Sep 2025 13:57:29 +0100
+Message-ID: <20250904125736.3918646-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 06/14] rust: drm: gem: Add raw_dma_resv() function
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-7-lyude@redhat.com>
-Date: Thu, 4 Sep 2025 09:55:30 -0300
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	Asahi Lina <lina+kernel@asahilina.net>, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linux-media"@vger.kernel.org (ope>),
-	"moderated list:DMA BUFFER SHARING  FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linaro-mm-sig"@lists.linaro.org (mod>)
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4E13112B-6379-4466-8924-417AA6ACB228@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-7-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+When the lazy MMU mode was introduced eons ago, it wasn't made clear
+whether such a sequence was legal:
+
+	arch_enter_lazy_mmu_mode()
+	...
+		arch_enter_lazy_mmu_mode()
+		...
+		arch_leave_lazy_mmu_mode()
+	...
+	arch_leave_lazy_mmu_mode()
+
+It seems fair to say that nested calls to
+arch_{enter,leave}_lazy_mmu_mode() were not expected, and most
+architectures never explicitly supported it.
+
+Ryan Roberts' series from March [1] attempted to prevent nesting from
+ever occurring, and mostly succeeded. Unfortunately, a corner case
+(DEBUG_PAGEALLOC) may still cause nesting to occur on arm64. Ryan
+proposed [2] to address that corner case at the generic level but this
+approach received pushback; [3] then attempted to solve the issue on
+arm64 only, but it was deemed too fragile.
+
+It feels generally fragile to rely on lazy_mmu sections not to nest,
+because callers of various standard mm functions do not know if the
+function uses lazy_mmu itself. This series therefore performs a U-turn
+and adds support for nested lazy_mmu sections, on all architectures.
+
+The main change enabling nesting is patch 2, following the approach
+suggested by Catalin Marinas [4]: have enter() return some state and
+the matching leave() take that state. In this series, the state is only
+used to handle nesting, but it could be used for other purposes such as
+restoring context modified by enter(); the proposed kpkeys framework
+would be an immediate user [5].
+
+Patch overview:
+
+* Patch 1: general cleanup - not directly related, but avoids any doubt
+  regarding the expected behaviour of arch_flush_lazy_mmu_mode() outside
+  x86
+
+* Patch 2: main API change, no functional change
+
+* Patch 3-6: nesting support for all architectures that support lazy_mmu
+
+* Patch 7: clarification that nesting is supported in the documentation
+
+Patch 4-6 are technically not required at this stage since nesting is
+only observed on arm64, but they ensure future correctness in case
+nesting is (re)introduced in generic paths. For instance, it could be
+beneficial in some configurations to enter lazy_mmu set_ptes() once
+again.
+
+This series has been tested by running the mm kselfetsts on arm64 with
+DEBUG_PAGEALLOC and KFENCE. It was also build-tested on other
+architectures (with and without XEN_PV on x86).
+
+- Kevin
+
+[1] https://lore.kernel.org/all/20250303141542.3371656-1-ryan.roberts@arm.com/
+[2] https://lore.kernel.org/all/20250530140446.2387131-1-ryan.roberts@arm.com/
+[3] https://lore.kernel.org/all/20250606135654.178300-1-ryan.roberts@arm.com/
+[4] https://lore.kernel.org/all/aEhKSq0zVaUJkomX@arm.com/
+[5] https://lore.kernel.org/linux-hardening/20250815085512.2182322-19-kevin.brodsky@arm.com/
+---
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: sparclinux@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+---
+Kevin Brodsky (7):
+  mm: remove arch_flush_lazy_mmu_mode()
+  mm: introduce local state for lazy_mmu sections
+  arm64: mm: fully support nested lazy_mmu sections
+  x86/xen: support nested lazy_mmu sections (again)
+  powerpc/mm: support nested lazy_mmu sections
+  sparc/mm: support nested lazy_mmu sections
+  mm: update lazy_mmu documentation
+
+ arch/arm64/include/asm/pgtable.h              | 34 ++++++-------------
+ .../include/asm/book3s/64/tlbflush-hash.h     | 24 +++++++++----
+ arch/powerpc/mm/book3s64/hash_tlb.c           | 10 +++---
+ arch/powerpc/mm/book3s64/subpage_prot.c       |  5 +--
+ arch/sparc/include/asm/tlbflush_64.h          |  6 ++--
+ arch/sparc/mm/tlb.c                           | 19 ++++++++---
+ arch/x86/include/asm/paravirt.h               |  8 ++---
+ arch/x86/include/asm/paravirt_types.h         |  6 ++--
+ arch/x86/include/asm/pgtable.h                |  3 +-
+ arch/x86/xen/enlighten_pv.c                   |  2 +-
+ arch/x86/xen/mmu_pv.c                         | 13 ++++---
+ fs/proc/task_mmu.c                            |  5 +--
+ include/linux/mm_types.h                      |  3 ++
+ include/linux/pgtable.h                       | 21 +++++++++---
+ mm/madvise.c                                  | 20 ++++++-----
+ mm/memory.c                                   | 20 ++++++-----
+ mm/migrate_device.c                           |  5 +--
+ mm/mprotect.c                                 |  5 +--
+ mm/mremap.c                                   |  5 +--
+ mm/vmalloc.c                                  | 15 ++++----
+ mm/vmscan.c                                   | 15 ++++----
+ 21 files changed, 147 insertions(+), 97 deletions(-)
 
 
-
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> For retrieving a pointer to the struct dma_resv for a given GEM =
-object. We
-> also introduce it in a new trait, BaseObjectPrivate, which we =
-automatically
-> implement for all gem objects and don't expose to users outside of the
-> crate.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/gem/mod.rs | 12 ++++++++++++
-> 1 file changed, 12 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index ec36cd9ea69ed..f901d4263ee87 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -186,6 +186,18 @@ fn create_mmap_offset(&self) -> Result<u64> {
->=20
-> impl<T: IntoGEMObject> BaseObject for T {}
->=20
-> +/// Crate-private base operations shared by all GEM object classes.
-> +#[expect(unused)]
-> +pub(crate) trait BaseObjectPrivate: IntoGEMObject {
-> +    /// Return a pointer to this object's dma_resv.
-> +    fn raw_dma_resv(&self) -> *mut bindings::dma_resv {
-> +        // SAFETY: `as_gem_obj()` always returns a valid pointer to =
-the base DRM gem object
-
-This apparently does not match the actual function call below anymore.
-
-> +        unsafe { (*self.as_raw()).resv }
-> +    }
-> +}
-> +
-> +impl<T: IntoGEMObject> BaseObjectPrivate for T {}
-> +
-> /// A base GEM object.
-> ///
-> /// Invariants
-> --=20
-> 2.50.0
->=20
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+-- 
+2.47.0
 
 
