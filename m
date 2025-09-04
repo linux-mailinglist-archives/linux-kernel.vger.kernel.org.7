@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-800578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0161B43982
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C968AB43987
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7085A1309
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DC6356705C
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1921C2FC01B;
-	Thu,  4 Sep 2025 11:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2C02FC01F;
+	Thu,  4 Sep 2025 11:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKZZiKq3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNNxGCot"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5411B2FC001;
-	Thu,  4 Sep 2025 11:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84452FC02E
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 11:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756983947; cv=none; b=UC9ZnkvrGd8fc43OQ47oWbdBP+AMIjYmhQrO8xVOEBTHy78HXgSfsEuu/mVzDf+SunIealHXDzejJCgdhfKup/RcEp46CqHwGM9UwcF6rlLIXmATeirLBzCADflxgnaXHMtNGug+lXLjERlwez5ZhfYJwVQuvLOG9Par/YqH9+s=
+	t=1756983986; cv=none; b=R4t8sDtcCbNl/d3GUcO7p6ujdGHv/LAg2/kEJtimtGilaw1V/emN1U+76mNN6x/xcZED+GgrWeWyyDi+wy+LuyY1Mke7bvqNPOWai3mU756Popq7b5zOzYiB6doT0yhGrYMn1nZRwGpuaftnVXXxOnXk9smooe3e+0ombNxOtQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756983947; c=relaxed/simple;
-	bh=ERfmAvwGnsR9Noz+SlGnHy31HmeyJzY7rdvaAAcGjMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rGWGfgpakKa9QOZXtd6oeCWfRhCkwdHnIhXOzNPPpFR2kvdG9WhE2VQP4NgelWV4u8KxgJe3aRForpqRRMuD9gV3MXfq7922UqrqWKwGKtr9jKnMm3WY8A+cHMY/oFIqZPxGjC0J8pj/e6GiZE7+3hXwaIsIVLlbnSGwzI0ZavM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKZZiKq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CFCC4CEF0;
-	Thu,  4 Sep 2025 11:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756983946;
-	bh=ERfmAvwGnsR9Noz+SlGnHy31HmeyJzY7rdvaAAcGjMc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QKZZiKq3M1IpJbcnyjTf2PJJkFW/J68fAJ78LCRzFusWHpWiSenY0rfiD9xC2zEa1
-	 MbQ24RgKLqoZpOUp5ftSsDRCVAxzB2Iv9GQ+LLUhAX8ZMbrcCIuLrcTTGbvPwTxYU/
-	 gNsE+POWGhlOsEpgIFDUY4m7qTQFvjQtwKgnHCVX4KgxTH5oxsLSbDngSUMS0QiB85
-	 76uo3nQ1KKuGEeZtxFcIU+RM4pOvLYxHXqxvmCBb0o20EjlgVwi5hCeVWvU/DiGU5o
-	 LhWwYyvYWUR9GUs1Xy/7wc8oRU96cw1w6T7xGOLLVauoWL1+2jnJuj6bDV5rEQvY32
-	 EK5eZRluNhsjQ==
-Message-ID: <f7bb0739-3161-4d70-87e5-8c978a023361@kernel.org>
-Date: Thu, 4 Sep 2025 13:05:41 +0200
+	s=arc-20240116; t=1756983986; c=relaxed/simple;
+	bh=5ePcVdkCAP+ESkraZYbyKnHjr7ZHVyyj6qsuO2F5SsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qX0j9evz0kq7O8jtREIs/TQP1HZkNzBikAnwfS8ogfRCYI2Ig86oetH0q+KiLIX2uLqjWXm0B+vvUy4OJ9W78pwB6OmjkMhccN3f6+Z6bUUX8ozEed+xiWFc2MNmWLWvROShoenRFOCdMW+BRyTWu7giup2faXhM7w/iamCFK1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNNxGCot; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e96dc26dfa2so862745276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 04:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756983984; x=1757588784; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qqKmJAcNXHCDcjaAnbZVhbmbW/ApAzLJDIUDuK/HU4s=;
+        b=eNNxGCotUilXfuyt8TL1JfKDjSU+ol8BSFAjNeoUbWMGFmASGOuEbKKM5PPdJERShC
+         rMAmxCo5WcY1ceTbAxL6W+w/mDPVk71mIV7AUQ0Exv6OtU8uQ7kkllq+M2Bxvfb/ofvw
+         Gs/SoafXsTo8a3lQMWrVSlBy7OAZgNo5JZc1sAu80kWqFXOz31I/Vmc/Tt/UXeaqyp/M
+         0lb9SqV16OeIcCjxd5/9WOP81+n/9nnPUPBSpO3RV6uHXcBVZrx/i4e8zL2Dl6+x43W0
+         jNiOBvJcztbLs3u8tvqrh0BKWc0ywi+QwZUC5wxaaslZwajzhfeHb7N+KyfLeS9y1D0L
+         BXaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756983984; x=1757588784;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qqKmJAcNXHCDcjaAnbZVhbmbW/ApAzLJDIUDuK/HU4s=;
+        b=EusepfWmdzsV5HkgNJPeV1RuCw5KDLYO67mq4tfM8t4sQjNIqtCRLDJSyq271LHg4u
+         nQeFGvwx9zjN09v0l0S2G5MoEZXU4QRNCeQ3ZayyFjsRroUXiltrdyq1jvV1DGa3GMWf
+         L2z/e5ImYPESaFauDDYlNJTrDWOLnCCFg1B0eJisWmsL6+AGH1yyQxFq6RCI4pMwRXIk
+         a7nQrUWU9JsFfbr0S1gno5VEj1Q7KnxgB2G5NGK6h822PqKnnWS/KEfDc+rpuKF6adqi
+         Syg22VUR7R0FVD9g9S6WdNp47cBdwnMei02DkS1J22sWF2yym6ERsveBOFWRgLhhAlLY
+         dCKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvojfx1pFtFSNtJAIz27Qm56jcYzTt8fBgJnUDcm7BaCk6AdAkTSN2FP/ozs0Q7rlRISSFu7QVPA7S4iE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6mZFzzFWR0O2hiH+qYE8ZBr2GhTOadYUAWy0zlt5UXylKAVbV
+	G1BEaUvw3hOD5YvsP28lI1OPpaToTIytWI8Xjwnb465K7govVRBQRgEztxBr0aFyX9viyQ4FKfT
+	/92NZCDQuBPdM4JsUDhnnoBmA88UpbCaO/oonDm/kNw==
+X-Gm-Gg: ASbGncuYTxKvKjla8yOsxwyFZJXHcEjLgiw5Y5KQgb10+AIazy0B3MqU8QGkr0OI5BT
+	I08O55euBFoaewoDZWOa4RqeuNO1qlPO8M8Q1cBOUnns3RnRr4SW9vwYRHpVrOj+jBHDPIWcNWT
+	RpuVZhcteZRHSGu4q5nkgs5iSFRCyhGFNpGqNj4fqW/SjVTPc4qW/4nu+N7r8C78JrN9Qclto3V
+	ApQqLgB
+X-Google-Smtp-Source: AGHT+IGqecQe5yOp9cR8x9hlAxxhDZsB8TfIupcC0FJtDt5AMK3d6JhTkzzkgdPyrWC0L7dsYj69W3txBCo/Z85TaT0=
+X-Received: by 2002:a05:690c:9a8d:b0:71c:1754:2696 with SMTP id
+ 00721157ae682-72276542673mr206178927b3.36.1756983983654; Thu, 04 Sep 2025
+ 04:06:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: broadcom: rp1: Add USB nodes
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iivanov@suse.de, svarbanov@suse.de,
- mbrugger@suse.com, Jonathan Bell <jonathan@raspberrypi.com>,
- Phil Elwell <phil@raspberrypi.com>
-References: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250822-pm-s6-s7-s7d-v1-0-82e3f3aff327@amlogic.com>
+In-Reply-To: <20250822-pm-s6-s7-s7d-v1-0-82e3f3aff327@amlogic.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 4 Sep 2025 13:05:47 +0200
+X-Gm-Features: Ac12FXzzO6lh2XeuKq6zK_9jSCFOJd4db2W5dfvQA3Y4rmF6D3oa47ZB2y7XJS0
+Message-ID: <CAPDyKFo=pwb43vZFkKprbBthxAy_YtYD2mKitY6Oe-rMHYCkDQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Power: Add power domain driver for S6 S7 S7D
+To: xianwei.zhao@amlogic.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Jianxin Pan <jianxin.pan@amlogic.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, "hongyu.chen1" <hongyu.chen1@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/08/2025 15:50, Andrea della Porta wrote:
-> The RaspberryPi 5 has RP1 chipset containing two USB host controller,
-> while presenting two USB 2.0 and two USB 3.0 ports to the outside.
-> 
-> Add the relevant USB nodes to the devicetree.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+On Fri, 22 Aug 2025 at 07:41, Xianwei Zhao via B4 Relay
+<devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
+>
+> Add power controller driver support for Amlogic S6 S7 S7D SoC.
+>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+Patch 1 and 2 applied for next, thanks!
+
+Note, the DT patch (patch1) is available on my immutable dt branch too.
+
+Kind regards
+Uffe
+
+
 > ---
->  arch/arm64/boot/dts/broadcom/rp1-common.dtsi | 28 ++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> index 5002a375eb0b..116617fcb1eb 100644
-> --- a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> +++ b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> @@ -39,4 +39,32 @@ rp1_gpio: pinctrl@400d0000 {
->  			     <1 IRQ_TYPE_LEVEL_HIGH>,
->  			     <2 IRQ_TYPE_LEVEL_HIGH>;
->  	};
-> +
-> +	rp1_usb0: usb@40200000 {
-> +		reg = <0x00 0x40200000  0x0 0x100000>;
-> +		compatible = "snps,dwc3";
-Please order properties and nodes according to DTS coding style.
-
-Best regards,
-Krzysztof
+> hongyu.chen1 (5):
+>       dt-bindings: power: add Amlogic S6 S7 S7D power domains
+>       pmdomain: amlogic: Add support for S6 S7 S7D power domains controller
+>       arm64: dts: amlogic: s6: add power domain controller node
+>       arm64: dts: amlogic: s7: add power domain controller node
+>       arm64: dts: amlogic: s7d: add power domain controller node
+>
+>  .../bindings/power/amlogic,meson-sec-pwrc.yaml     |  3 +
+>  arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 10 +++
+>  arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 10 +++
+>  arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 10 +++
+>  drivers/pmdomain/amlogic/meson-secure-pwrc.c       | 95 ++++++++++++++++++++++
+>  include/dt-bindings/power/amlogic,s6-pwrc.h        | 29 +++++++
+>  include/dt-bindings/power/amlogic,s7-pwrc.h        | 20 +++++
+>  include/dt-bindings/power/amlogic,s7d-pwrc.h       | 27 ++++++
+>  8 files changed, 204 insertions(+)
+> ---
+> base-commit: ffeebf7587f518a3717fad308cf735adbbcaba97
+> change-id: 20250820-pm-s6-s7-s7d-950f720aac6d
+>
+> Best regards,
+> --
+> Xianwei Zhao <xianwei.zhao@amlogic.com>
+>
+>
 
