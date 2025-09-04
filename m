@@ -1,188 +1,196 @@
-Return-Path: <linux-kernel+bounces-800335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4950B43670
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD11CB4366A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 10:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2452B3B6504
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:00:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995127C1948
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 08:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDB12D3225;
-	Thu,  4 Sep 2025 08:59:58 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8164524167F;
-	Thu,  4 Sep 2025 08:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F3B2D1F7B;
+	Thu,  4 Sep 2025 08:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QxzxqLn3"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1018A2D061E;
+	Thu,  4 Sep 2025 08:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976398; cv=none; b=limp7ZhStU6ApNUYVu08hwLaiebGgJoVXlXoNeTBCUl80iLAh4WhXXD/1YOZ8DW0p4KWT04KuxzMaqGjY1LlsosMTa64KH1TL8NChm7xYkCSzwiTahMHLLFB9IGJwTcvPH6MkcMoJWPVfyi7z3ehE5Sv61ntm8a8SBDEjxt4mEk=
+	t=1756976387; cv=none; b=NRswE/uhk8lkGQsIbx//UPeY5FvDiDr9h/gMiCcidb/9xyodg3IzAfh8NQ6HR5C5GzRjeaXZJVJh7bVrpCTdzplzgGwDaKE7rPjPX7dxW8WlFFwL2sg1pu/uwGGGuABKXn5CeYTT4pWalqciIIHElkBmfzE0uimA4/QYOJmTav8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976398; c=relaxed/simple;
-	bh=TyJkCCbUPD4VJsWVif6zYXzeJFnFiI63DHb4IK+7uJg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Zxz2KbpUyy3ZWhH0aXmuZj6rts9OQe4H6Ls6Dy42p11A41xDpnormPIm4KpHt6IdjOzqZun+cFt/Jag+2rNS3k50spG/NtwNb7Fk5uoi6rfKvQYPefob/SyBOWJTd3Zp6bBAlmlXer2m15aIDNSXhHSXXz0ikIbAfaQ5Kan5hZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
-	by app1 (Coremail) with SMTP id TAJkCgDn_Q7kVLlosGTIAA--.33516S2;
-	Thu, 04 Sep 2025 16:59:19 +0800 (CST)
-From: weishangjuan@eswincomputing.com
-To: devicetree@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com,
-	rmk+kernel@armlinux.org.uk,
-	faizal.abdul.rahim@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	inochiama@gmail.com,
-	jan.petrous@oss.nxp.com,
-	jszhang@kernel.org,
-	p.zabel@pengutronix.de,
-	boon.khai.ng@altera.com,
-	0x1207@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	emil.renner.berthing@canonical.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Shangjuan Wei <weishangjuan@eswincomputing.com>
-Subject: [PATCH v5 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
-Date: Thu,  4 Sep 2025 16:59:13 +0800
-Message-Id: <20250904085913.2494-1-weishangjuan@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1756976387; c=relaxed/simple;
+	bh=ga7tmV4L0ISGRZ0jJ6UfxKx8Es4klai04+hvgsgpbIg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uPLbGZwHvRoXI0RUHMX4d7ILZt6VnCWLSYllLyUssrb18Hp9i+JmGS/gpiwgThDqgY9WJ0tqWzp1tFMvR/COqbrWZAWH+i0KyC931KrCmeZArrp/rIjbx2SN19fafJNH1KUjED0U2/YqEFwKIsJFSNCFEW4VVbz/TXou+MW26Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QxzxqLn3; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 322E01A0984;
+	Thu,  4 Sep 2025 08:59:42 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 026D8606BB;
+	Thu,  4 Sep 2025 08:59:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0200D1C22A241;
+	Thu,  4 Sep 2025 10:59:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756976381; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=5oXliwhksVRoXJFSBUuq81uC4pWKGDKz3WEBub+fLxc=;
+	b=QxzxqLn3jynq+8kdugI9MMK7psIjpv7iUv3DCmfxgo0jldRXoE6p5Hj3FFYwLs/bei5ijZ
+	f3ubzOTOtWHHH2qdxWZqyl1qbxWt95aqa7+a2eXtDjJWtk8Id9/mnQCl9bcMMuWK/anNJZ
+	4UBhN3EQkwVpMHfL3EsNl71W2rK3wQAqsasvg8C6PP4xNI6MaEkEFRMP57WWOin373VEQF
+	4eUP+N6UQZf91yELZEdMQzDJ/Vgt1K28yJYrFs3WUNkXZHalbL2unaN7BugXfUC0kzy08e
+	Vlz1PiiuNFQy/cx20hNTYiF1RCnEKr+kv+Maq50v3Q2QV2x2xDcMQzWbWHoWqg==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Date: Thu, 04 Sep 2025 10:59:24 +0200
+Subject: [PATCH] i2c: designware: use dev_err_probe when probing platform
+ device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgDn_Q7kVLlosGTIAA--.33516S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4ftw1UXFy5try3WrykZrb_yoWrAryrpF
-	W0kry5Wwn8AryxXw4Iyw10kFyfJan7JF1akr1Iqw1fXa1qya90qr4ak3WjgFy7Cr4DZ34Y
-	gay3ZFW7Ca4ay3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRAnYwUUUUU
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
+Message-Id: <20250904-i2c-dw-dev-err-probe-v1-1-acca6ffd122e@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAOtUuWgC/x3MwQpAQBCH8VfRnE0xKLyKHNj9L3NBs4WSd7c5/
+ g7f91CEKSL12UOGU6PuW0KZZ+TWaVvA6pNJCmmKVoRVHPuLPU6GGR+2z2BMoZsdKoTaUUoPQ9D
+ 73w7j+35s2pkSZgAAAA==
+X-Change-ID: 20250822-i2c-dw-dev-err-probe-eaf9bce3ef4c
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+Add calls to dev_err_probe on error paths that can return -EPROBE_DEFER
+when probing platform device. Namely when requesting the reset controller,
+when probing for lock support and when requesting the clocks.
 
-This series depends on the config option patch [1].
+In i2c_dw_probe_master and i2c_dw_probe_slave, called by the platform
+probe from i2c_dw_probe, replace the call to dev_err by dev_err_probe
+when failing to acquire the IRQ.
 
-[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
+PCI device probing already use dev_err_probe.
 
-Updates:
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+I recently spend some time debugging a case where the i2c controller
+never showed up. In the end it was caused by a missing reset controller
+due to a typo in the device tree.
 
-  Changes in v5：
-  - Updated eswin,eic7700-eth.yaml
-    - Use "items" instead "enum" for clock-names
-    - Arrange clocks description in correct order
-    - Delete redundant descriptions for eswin,hsp-sp-csr property
-  - Updated dwmac-eic7700.c  
-    - Optimize the implementation of eic7700_ appy_delay
-    - Update comments and remove reg checking
-    - Use FIELD_PREP in eic7700_apply_delay function
-    - Use clk_bulk related APIs to manage clks
-  - Link to v4: https://lore.kernel.org/all/20250827081135.2243-1-weishangjuan@eswincomputing.com/
+While this has nothing to do with the i2c designware driver, not having
+any hint about why the device stays in deferred probe state does not
+help.
 
-  Changes in v4:
-  - Updated eswin,eic7700-eth.yaml
-    - Modify reg:minItems:1 to reg:maxItems: 1
-    - Delete minItems and maxItems of clock and clock-names
-    - Delete phy-mode and phy-handle properties
-    - Add description for clock
-    - Add types of clock-names
-    - Delete descriptions for rx-internal-delay-ps and tx-internal-delay-ps
-    - Add enum value for rx-internal-delay-ps and tx-internal-delay-ps
-    - Modify description for eswin,hsp-sp-csr property
-    - Delete eswin,syscrg-csr and eswin,dly-hsp-reg properties
-    - Modify phy-mode="rgmii" to phy-mode="rgmii-id"
-  - Updated dwmac-eic7700.c
-    - Remove fix_mac_speed and configure different delays for different rates
-    - Merge the offset of the dly register into the eswin, hsp sp csr attributes
-      for unified management
-    - Add missing Author and optimize the number of characters per
-      line to within 80
-    - Support default delay configuration and add the handling of vendor delay 
-      configuration
-    - Add clks_config for pm_runtime
-    - Modify the attribute format, such as eswin,hsp_sp_csr to eswin,hsp-sp-csr
-  - Link to v3: https://lore.kernel.org/all/20250703091808.1092-1-weishangjuan@eswincomputing.com/
+The patch add dev_err_probe in the error paths that can return
+-EPROBE_DEFER to aid in debugging such case.
+---
+ drivers/i2c/busses/i2c-designware-master.c  |  9 ++++-----
+ drivers/i2c/busses/i2c-designware-platdrv.c | 11 ++++++-----
+ drivers/i2c/busses/i2c-designware-slave.c   |  9 ++++-----
+ 3 files changed, 14 insertions(+), 15 deletions(-)
 
-  Changes in v3:
-  - Updated eswin,eic7700-eth.yaml
-    - Modify snps,dwmac to snps,dwmac-5.20
-    - Remove the description of reg
-    - Modify the value of clock minItems and maxItems
-    - Modify the value of clock-names minItems and maxItems
-    - Add descriptions of snps,write-questions, snps,read-questions
-    - Add rx-internal-delay-ps and tx-internal-delay-ps properties
-    - Modify descriptions for custom properties, such as eswin,hsp-sp-csr
-    - Delete snps,axi-config property
-    - Add snps,fixed-burst snps,aal snps,tso properties
-    - Delete snps,lpi_en property
-    - Modify format of custom properties
-  - Updated dwmac-eic7700.c
-    - Simplify drivers and remove unnecessary API and DTS attribute configurations
-    - Increase the mapping from tx/rx_delay_ps to private dly
-  - Link to v2: https://lore.kernel.org/all/aDad+8YHEFdOIs38@mev-dev.igk.intel.com/
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index cbd88ffa561010ff2d29086836d9119da5b8885c..c7a72c28786c2b59a249a768d43a7954119bc018 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -1068,11 +1068,10 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
+ 	if (!(dev->flags & ACCESS_POLLING)) {
+ 		ret = devm_request_irq(dev->dev, dev->irq, i2c_dw_isr,
+ 				       irq_flags, dev_name(dev->dev), dev);
+-		if (ret) {
+-			dev_err(dev->dev, "failure requesting irq %i: %d\n",
+-				dev->irq, ret);
+-			return ret;
+-		}
++		if (ret)
++			return dev_err_probe(dev->dev, ret,
++					     "failure requesting irq %i: %d\n",
++					     dev->irq, ret);
+ 	}
+ 
+ 	ret = i2c_dw_init_recovery_info(dev);
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index a35e4c64a1d46f43aa2d37c0d20fbbd4bc1ff600..07efe4b529e29b52b9e4e439c4b154b467a24fda 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -238,7 +238,7 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 
+ 	dev->rst = devm_reset_control_get_optional_exclusive(device, NULL);
+ 	if (IS_ERR(dev->rst))
+-		return PTR_ERR(dev->rst);
++		return dev_err_probe(device, PTR_ERR(dev->rst), "failed to acquire reset\n");
+ 
+ 	reset_control_deassert(dev->rst);
+ 
+@@ -247,21 +247,22 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 		goto exit_reset;
+ 
+ 	ret = i2c_dw_probe_lock_support(dev);
+-	if (ret)
++	if (ret) {
++		ret = dev_err_probe(device, ret, "failed to probe lock support\n");
+ 		goto exit_reset;
+-
++	}
+ 	i2c_dw_configure(dev);
+ 
+ 	/* Optional interface clock */
+ 	dev->pclk = devm_clk_get_optional(device, "pclk");
+ 	if (IS_ERR(dev->pclk)) {
+-		ret = PTR_ERR(dev->pclk);
++		ret = dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
+ 		goto exit_reset;
+ 	}
+ 
+ 	dev->clk = devm_clk_get_optional(device, NULL);
+ 	if (IS_ERR(dev->clk)) {
+-		ret = PTR_ERR(dev->clk);
++		ret = dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
+ 		goto exit_reset;
+ 	}
+ 
+diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
+index b936a240db0a9308f005148cdf4c4f9fd512be05..6eb16b7d75a6d059c7abcead609258f9d514d012 100644
+--- a/drivers/i2c/busses/i2c-designware-slave.c
++++ b/drivers/i2c/busses/i2c-designware-slave.c
+@@ -266,11 +266,10 @@ int i2c_dw_probe_slave(struct dw_i2c_dev *dev)
+ 
+ 	ret = devm_request_irq(dev->dev, dev->irq, i2c_dw_isr_slave,
+ 			       IRQF_SHARED, dev_name(dev->dev), dev);
+-	if (ret) {
+-		dev_err(dev->dev, "failure requesting IRQ %i: %d\n",
+-			dev->irq, ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev->dev, ret,
++				     "failure requesting IRQ %i: %d\n",
++				     dev->irq, ret);
+ 
+ 	ret = i2c_add_numbered_adapter(adap);
+ 	if (ret)
 
-  Changes in v2:
-  - Updated eswin,eic7700-eth.yaml
-    - Add snps,dwmac in binding file
-    - Modify the description of reg
-    - Modify the number of clock-names
-    - Changed the names of reset-names and phy-mode
-    - Add description for custom properties, such as eswin,hsp_sp_csr
-    - Delete snps,blen snps,rd_osr_lmt snps,wr_osr_lmt properties
-  - Updated dwmac-eic7700.c
-    - Remove the code related to PHY LED configuration from the MAC driver
-    - Adjust the code format and driver interfaces, such as replacing kzalloc
-      with devm_kzalloc, etc.
-    - Use phylib instead of the GPIO API in the driver to implement the PHY
-      reset function
-  - Link to v1: https://lore.kernel.org/all/20250516010849.784-1-weishangjuan@eswincomputing.com/
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250822-i2c-dw-dev-err-probe-eaf9bce3ef4c
 
-Shangjuan Wei (2):
-  dt-bindings: ethernet: eswin: Document for EIC7700 SoC
-  ethernet: eswin: Add eic7700 ethernet driver
-
- .../bindings/net/eswin,eic7700-eth.yaml       | 128 +++++++++
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 250 ++++++++++++++++++
- 4 files changed, 390 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
-
+Best regards,
 -- 
-2.17.1
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
