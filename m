@@ -1,349 +1,326 @@
-Return-Path: <linux-kernel+bounces-799605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 606F6B42E1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:24:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0085B42E52
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D354543EDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A785E788A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AC221FF5C;
-	Thu,  4 Sep 2025 00:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7384E19309C;
+	Thu,  4 Sep 2025 00:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxzXpSFN"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN2QfXZJ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C420F20C029;
-	Thu,  4 Sep 2025 00:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55FB15D3;
+	Thu,  4 Sep 2025 00:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756945360; cv=none; b=s9nfv5IIHSvRjbMjIOlM/a0BXxnq/VG9/T9hkyvkt3QJTSC4QKs/lBVV9ovSyB564PTmFRMnYwqt9sgyZicc4qvyhtJodWN0yTk9b7aqnLZyLQMD1JNKVFecvUK64pSmCr1UI7JspfUfSL9C7KJEpPGbrLZ67zaAyUNQWbKWAbs=
+	t=1756946335; cv=none; b=ZZMm4i6xDWliIqJOhw4E8pL1WJvPCyged5hrLmsvhthak2OKNwHI/J9EMmNCPNNvdTf5G8rtzLsJRnrnBMwIvIWxDmZ7lRq1btiskyc8ZXOYf5SUAawewTbEDtFIk0quaP/0CI77Umf3MpHDRTQQN5hdOHFkZ5I9iqaM1kxK14k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756945360; c=relaxed/simple;
-	bh=j1iA+F8l6exS4tHUmf1t6OuoFhoXBGn5tYn3vihXrxI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KAHueE/SlnD89F/vNTEhQHCXKViuhjlSQBPkz31p3B6IYmaPwVuItV+NXPaPY/GU5Tt56AU3EzP0PRpWvnAWGRAUldHzoyBLn00hNZP1i4nLJBxogEXQ42guX/8WLwqvUvkyC4IPZsjcTGoqv7aR/eRcwlOplTGNiwa3AR88PmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxzXpSFN; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1756946335; c=relaxed/simple;
+	bh=0U0Dsem90VQQK0B/tIbI+8P9Ceh8zzg7qRZcpK9Fp/0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Us1vVqRG4eMaGjP2X8FUsEXskfQwnDHDQOb3D9jqJ12e2RU77D4Z5tPtBSL06glXXEo6HAOIu7I1dhWNCrrZw5IFLf98V4byGkWSOtxGVj+gszvOeGIcPrRMnAiGaabelN+AzAMzlf7PUYeukGagzuRoZse8N1WjqjjkONaNfnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN2QfXZJ; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7cd8ec2cso528646e87.2;
-        Wed, 03 Sep 2025 17:22:38 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4717543ed9so245867a12.3;
+        Wed, 03 Sep 2025 17:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756945357; x=1757550157; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hs54R+cY2eDa4UXL+XlzVwDcfi5itAVEtYS9rV/3eBg=;
-        b=cxzXpSFNcOx1i9J0afDZ6YYI7aOcGR0DiCinDzocvr0EuevY4CAslg3+z/GbvyFKF6
-         +dsVVLgTyXGsZM4RIn+uMWobcvBGM745SNAa8ZeMMb3sQ9pCi/2v3LDrkuYpAeynEP1/
-         HOed5PEFsS3Yr8PuUAatq55TDxcPJMJv2V+ZDPl2vzJ14a34TzGJhsfZ+rY/PQRjNeri
-         oHJJcXXZOuonpdX4oZlEWe3CXYhLfVgTAIOZ6RkDc7fBJmBiMEBc3FfkEhYGFubwXLZA
-         QpHryCLg8zEQGKD6Yy1EsrRICX4qZIbGmasvYZtohHvqEOaEDOviMZhPkMiMVNOaxq9V
-         RtyQ==
+        d=gmail.com; s=20230601; t=1756946333; x=1757551133; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M9wjahpjajRVdLTvLPg2jmwGdR+YAWepelf042yY0AY=;
+        b=eN2QfXZJfv9zJ7QipqbfOn1DWD2byrkUgXk+EfVv8bvK4cN2oVx6WXQdrVhjPQsRoT
+         kk0VU+eueSD5EASHjEB3Ry90GqyzWVq7FeI8qZubVHrWD+hv+eyuM4qLggImY8Hh1mgi
+         AzlofWySunR3RALVlGAf9HcYkBJU10JtXQE2trfLZkGVY4hERJKY7EhouNZa82qBwpOE
+         IsYWTGC9Yx1kDurMSR/eZodYeQonl6I7+FHiks6+Se3TZ1TU4hWyWSSPcz5XFpuElxVj
+         +6fIKw04b698ExrVCfBkzYH3/YG8Qd17qF8bWga5intDkidfonsb7wZa1ZRjRf86XHJD
+         T4JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756945357; x=1757550157;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hs54R+cY2eDa4UXL+XlzVwDcfi5itAVEtYS9rV/3eBg=;
-        b=tAahUu/EpQjcOScI4zQDBaB9x9u7yReL8O1A9JG6KzYIzrxyezM7srAVESDGC58yhX
-         DS+OV3CBSPdfLV8PqjamEgFmJRnBvCezU6cqo6+TLznJ6r2eoxNZ4KIb/nZfwnvjJvqR
-         4UloVo41Yzh4dF/4n32s70K4TKwlixZqF/DInfEnHOnIHQCwOsz8mKVbfKIapI+EcBaL
-         m27vfHyeOpcggTNvlDqZRWa41PkV+jjbqzC/ZNYaCKrx+GIx7MNWc8VHHXET2VnImvSD
-         3UjkjlOSBMr6hoNxq85eBvcohehy/BvZWz471oLgZG6hzSRQ0K19yLrmZ6RAem3AQ2o+
-         dCng==
-X-Forwarded-Encrypted: i=1; AJvYcCUt8rp5K2xEBNNi66l0iyDdAm/FmMQqAuUGx4br93z4FnI83idUJzhXXfNP6D4p09ZMg6WLZ3e/ojLk@vger.kernel.org, AJvYcCVFZh9LtARA+/1sZ96OJIad4G5/6BWgv/cwINugPVGe/TlIAZljPA6YbOfT1mvLygnkfMs+qWBqKcOoxjtG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqmuII6T2uUuLy2CSVXswU9/rLTbo7Vr4PIRKcL43EkY2B2PFq
-	cm3odLHdsvMa3BAfG7k9EKH2Ys4Pe7PGMQCccbn4gOeHCoEfhNGT8Gk5
-X-Gm-Gg: ASbGncuEHQK90QpTUzHdf+sHrIz0neGVXdifP9n3waolevFElFLjOsb3ZsTZQr7Z5xQ
-	WsjuhweS8UNjvzSr9lmxHUgFwjhhprxuVNfW7aPJF68dJhrwtaTsdQfgz7Xe8WqYeT2jYF+oePQ
-	mEMLmcUqMI30rVUp5iMMbbzGPRTSX10mKBIZ05Q8bYtEx1mOJWc/BpDjSCUn00yfcljCtBCjk30
-	gMBbZcOSBfrFACH0mXTm+2DYENoA53pAcD2MF1I+uOZRU5TbXkAmM2JBtNdxdeZLBwXQmSZSZHg
-	kFSfkDSPGga1rszocvIPVpLT7nT/rvN04AhRKjxGBSBVHxMSlIDcmGJteeLdJruu/BUM9l49uni
-	SQdodgkytcbiOyDhmUOiRqzbgk/e9MHNi2f6LmRF5PUtdNXOEHgkoxg==
-X-Google-Smtp-Source: AGHT+IFX7Odr7JCq2UutFIWxBTRcw3JXG/BZmk3QFMKKgrt7rx/RJnwIPcQeJKxi1AZEayCAXLZBKw==
-X-Received: by 2002:a05:6512:2513:b0:55f:6a72:5679 with SMTP id 2adb3069b0e04-55f70906104mr5009627e87.34.1756945356768;
-        Wed, 03 Sep 2025 17:22:36 -0700 (PDT)
-Received: from vovchkir.localdomain ([95.161.221.106])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-5608ab8e95bsm821613e87.34.2025.09.03.17.22.35
+        d=1e100.net; s=20230601; t=1756946333; x=1757551133;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9wjahpjajRVdLTvLPg2jmwGdR+YAWepelf042yY0AY=;
+        b=sk2331/w5Be6xJKndG+qEcynyDM8zK82iJ/lQzuNQtbgB6WVRVJ5lizo3YyQa2XguK
+         rQMM6rn+671jSV/xn6vnVT3Hh0hQmsGlfU4TeSj92GsTLJcNE6dWXoC1OJsf85jzvePV
+         8IGkbgH0BE215vhk34b2zVUhiN+5xPd1l00rfVLXNfQLMNU8RmxwXS5NQknUlDEME1ld
+         tM1iCWdcxtml0archo68WQXSKbrnokcOmMMYk3oSB4xdWZ0iM5TFScNlWjxqmBUYDZns
+         Xq04BeclQaR/nvVs0Y0Ba3uy+wzSJyyB19Hi428dF2apNBiwXnt01F0T6bHJuYv0Xwam
+         58LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAfbvcsUB3etZfa+3es25bSVaNurT3QBvfF5kQ9jyKjvHgsnFMZXrYmuGmcsnbUzSx4tLObQG5QBtmmw==@vger.kernel.org, AJvYcCXl6wUYvmXYIJqZrVwEDgrV1pk3vXg47g9l3NEEFtwtFY+xpO51F0Jj3Do2KPPvL9T/o/bwO7tOshdp8DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrjWR/tAqXSmX5u3HXdvj4EGlX+6DYouyz95TMFHpDRJm4LzEw
+	kaoetoiMqlrY1xlDmtfTs16SKs+RFAbH9qkmXz78qyddxdMbnzLLIihv
+X-Gm-Gg: ASbGncumNlb8V8SxpGfnELG+9kkkLNv06KoGqua3CT8Jtumx66TmCxaGslX1v/rQiwz
+	rN4EdiAw9QCSXnDIMu8rcOogOzMAoPg6AMLvHdaAZM70fs0f2Xc9qCc6ZC02cWfd6Z1uSMVeVrl
+	KHPLLJMyHwd68ycXoIvPX2HNOZBCL1B8Gs1Ojo1SKOwjFqMoEFnG41DZ27taF2BAsjL5dd8Anuh
+	eCZot2dsaX4AaHmpMSOTDcLagM2w3Cezar65a9wAMyeTwfmfIGFECctG1eLa5buCZjqRGg8rGKO
+	5bm4jedfxGvTLaU4ZQqB52kyMhwcNkNV8pRRUL5Ry1YLuV3kLv87ywtCE0a7SU3GFVnQfVE0Wt8
+	9AymsOqsJFsws+BrEq3tAl0w=
+X-Google-Smtp-Source: AGHT+IF8fWb/70JgPLh7N7Xn466vomeY7twFDDtFD6ID6JfG4YJmNgXkQZrYmfFbnlzFyM4OYAuWoQ==
+X-Received: by 2002:a17:90b:3811:b0:32b:6145:fa63 with SMTP id 98e67ed59e1d1-32b614601acmr4849866a91.4.1756946333006;
+        Wed, 03 Sep 2025 17:38:53 -0700 (PDT)
+Received: from dw-tp ([171.76.85.3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fb98f9f6asm1185841a12.8.2025.09.03.17.38.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 17:22:36 -0700 (PDT)
-From: Vladimir Yakovlev <vovchkir@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: vovchkir@gmail.com
-Subject: [PATCH 2/2] drm/panel: himax-hx83102: add panel starry xr109ia2t
-Date: Thu,  4 Sep 2025 03:22:32 +0300
-Message-Id: <20250904002232.322218-3-vovchkir@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904002232.322218-1-vovchkir@gmail.com>
-References: <20250904002232.322218-1-vovchkir@gmail.com>
+        Wed, 03 Sep 2025 17:38:52 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com, christophe.leroy@csgroup.eu, bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com, akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn, davidgow@google.com, glider@google.com, dvyukov@google.com, alexghiti@rivosinc.com
+Cc: alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com, elver@google.com, kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org, snovitoll@gmail.com
+Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static key across modes
+In-Reply-To: <20250810125746.1105476-2-snovitoll@gmail.com>
+Date: Thu, 04 Sep 2025 05:54:04 +0530
+Message-ID: <87ldmv6p5n.ritesh.list@gmail.com>
+References: <20250810125746.1105476-1-snovitoll@gmail.com> <20250810125746.1105476-2-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The STARRY XR109AI2T is a 10.95" 1200x2000 (WUXGA+) TFT LCD panel with
-himax-hx83102 controller. Hence, we add a new compatible with panel
-specific config.
+Sabyrzhan Tasbolatov <snovitoll@gmail.com> writes:
 
-Signed-off-by: Vladimir Yakovlev <vovchkir@gmail.com>
----
- drivers/gpu/drm/panel/panel-himax-hx83102.c | 193 ++++++++++++++++++++
- 1 file changed, 193 insertions(+)
+> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures [1] that need
+> to defer KASAN initialization until shadow memory is properly set up,
+> and unify the static key infrastructure across all KASAN modes.
+>
+> [1] PowerPC, UML, LoongArch selects ARCH_DEFER_KASAN.
+>
+> The core issue is that different architectures haveinconsistent approaches
+> to KASAN readiness tracking:
+> - PowerPC, LoongArch, and UML arch, each implement own
+>   kasan_arch_is_ready()
+> - Only HW_TAGS mode had a unified static key (kasan_flag_enabled)
+> - Generic and SW_TAGS modes relied on arch-specific solutions or always-on
+>     behavior
+>
+> This patch addresses the fragmentation in KASAN initialization
+> across architectures by introducing a unified approach that eliminates
+> duplicate static keys and arch-specific kasan_arch_is_ready()
+> implementations.
+>
+> Let's replace kasan_arch_is_ready() with existing kasan_enabled() check,
+> which examines the static key being enabled if arch selects
+> ARCH_DEFER_KASAN or has HW_TAGS mode support.
+> For other arch, kasan_enabled() checks the enablement during compile time.
+>
+> Now KASAN users can use a single kasan_enabled() check everywhere.
+>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+> Changes in v6:
+> - Added more details in git commit message
+> - Fixed commenting format per coding style in UML (Christophe Leroy)
+> - Changed exporting to GPL for kasan_flag_enabled (Christophe Leroy)
+> - Converted ARCH_DEFER_KASAN to def_bool depending on KASAN to avoid
+>         arch users to have `if KASAN` condition (Christophe Leroy)
+> - Forgot to add __init for kasan_init in UML
+>
+> Changes in v5:
+> - Unified patches where arch (powerpc, UML, loongarch) selects
+>     ARCH_DEFER_KASAN in the first patch not to break
+>     bisectability
+> - Removed kasan_arch_is_ready completely as there is no user
+> - Removed __wrappers in v4, left only those where it's necessary
+>     due to different implementations
+>
+> Changes in v4:
+> - Fixed HW_TAGS static key functionality (was broken in v3)
+> - Merged configuration and implementation for atomicity
+> ---
+>  arch/loongarch/Kconfig                 |  1 +
+>  arch/loongarch/include/asm/kasan.h     |  7 ------
+>  arch/loongarch/mm/kasan_init.c         |  8 +++----
+>  arch/powerpc/Kconfig                   |  1 +
+>  arch/powerpc/include/asm/kasan.h       | 12 ----------
+>  arch/powerpc/mm/kasan/init_32.c        |  2 +-
+>  arch/powerpc/mm/kasan/init_book3e_64.c |  2 +-
+>  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +----
+>  arch/um/Kconfig                        |  1 +
+>  arch/um/include/asm/kasan.h            |  5 ++--
+>  arch/um/kernel/mem.c                   | 13 ++++++++---
+>  include/linux/kasan-enabled.h          | 32 ++++++++++++++++++--------
+>  include/linux/kasan.h                  |  6 +++++
+>  lib/Kconfig.kasan                      | 12 ++++++++++
+>  mm/kasan/common.c                      | 17 ++++++++++----
+>  mm/kasan/generic.c                     | 19 +++++++++++----
+>  mm/kasan/hw_tags.c                     |  9 +-------
+>  mm/kasan/kasan.h                       |  8 ++++++-
+>  mm/kasan/shadow.c                      | 12 +++++-----
+>  mm/kasan/sw_tags.c                     |  1 +
+>  mm/kasan/tags.c                        |  2 +-
+>  21 files changed, 106 insertions(+), 70 deletions(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 93402a1d9c9f..4730c676b6bf 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -122,6 +122,7 @@ config PPC
+>  	# Please keep this list sorted alphabetically.
+>  	#
+>  	select ARCH_32BIT_OFF_T if PPC32
+> +	select ARCH_NEEDS_DEFER_KASAN		if PPC_RADIX_MMU
+>  	select ARCH_DISABLE_KASAN_INLINE	if PPC_RADIX_MMU
+>  	select ARCH_DMA_DEFAULT_COHERENT	if !NOT_COHERENT_CACHE
+>  	select ARCH_ENABLE_MEMORY_HOTPLUG
+> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
+> index b5bbb94c51f6..957a57c1db58 100644
+> --- a/arch/powerpc/include/asm/kasan.h
+> +++ b/arch/powerpc/include/asm/kasan.h
+> @@ -53,18 +53,6 @@
+>  #endif
+>  
+>  #ifdef CONFIG_KASAN
+> -#ifdef CONFIG_PPC_BOOK3S_64
+> -DECLARE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
+> -
+> -static __always_inline bool kasan_arch_is_ready(void)
+> -{
+> -	if (static_branch_likely(&powerpc_kasan_enabled_key))
+> -		return true;
+> -	return false;
+> -}
+> -
+> -#define kasan_arch_is_ready kasan_arch_is_ready
+> -#endif
+>  
+>  void kasan_early_init(void);
+>  void kasan_mmu_init(void);
+> diff --git a/arch/powerpc/mm/kasan/init_32.c b/arch/powerpc/mm/kasan/init_32.c
+> index 03666d790a53..1d083597464f 100644
+> --- a/arch/powerpc/mm/kasan/init_32.c
+> +++ b/arch/powerpc/mm/kasan/init_32.c
+> @@ -165,7 +165,7 @@ void __init kasan_init(void)
+>  
+>  	/* At this point kasan is fully initialized. Enable error messages */
+>  	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>  }
+>  
+>  void __init kasan_late_init(void)
+> diff --git a/arch/powerpc/mm/kasan/init_book3e_64.c b/arch/powerpc/mm/kasan/init_book3e_64.c
+> index 60c78aac0f63..0d3a73d6d4b0 100644
+> --- a/arch/powerpc/mm/kasan/init_book3e_64.c
+> +++ b/arch/powerpc/mm/kasan/init_book3e_64.c
+> @@ -127,7 +127,7 @@ void __init kasan_init(void)
+>  
+>  	/* Enable error messages */
+>  	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>  }
+>  
+>  void __init kasan_late_init(void) { }
+> diff --git a/arch/powerpc/mm/kasan/init_book3s_64.c b/arch/powerpc/mm/kasan/init_book3s_64.c
+> index 7d959544c077..dcafa641804c 100644
+> --- a/arch/powerpc/mm/kasan/init_book3s_64.c
+> +++ b/arch/powerpc/mm/kasan/init_book3s_64.c
+> @@ -19,8 +19,6 @@
+>  #include <linux/memblock.h>
+>  #include <asm/pgalloc.h>
+>  
+> -DEFINE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
+> -
+>  static void __init kasan_init_phys_region(void *start, void *end)
+>  {
+>  	unsigned long k_start, k_end, k_cur;
+> @@ -92,11 +90,9 @@ void __init kasan_init(void)
+>  	 */
+>  	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>  
+> -	static_branch_inc(&powerpc_kasan_enabled_key);
+> -
+>  	/* Enable error messages */
+>  	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>  }
+>  
 
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-index 2aad315aec5a..a10fb9973150 100644
---- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-+++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-@@ -23,6 +23,7 @@
- /* Manufacturer specific DSI commands */
- #define HX83102_SETPOWER	0xb1
- #define HX83102_SETDISP		0xb2
-+#define HX83102_SETRGBIF		0xb3
- #define HX83102_SETCYC		0xb4
- #define HX83102_UNKNOWN_B6	0xb6
- #define HX83102_UNKNOWN_B8	0xb8
-@@ -33,6 +34,7 @@
- #define HX83102_UNKNOWN_BE	0xbe
- #define HX83102_SETPTBA		0xbf
- #define HX83102_SETSTBA		0xc0
-+#define HX83102_SETDGCLUT	0xc1
- #define HX83102_SETTCON		0xc7
- #define HX83102_SETRAMDMY	0xc8
- #define HX83102_SETPWM		0xc9
-@@ -701,6 +703,172 @@ static int starry_2082109qfh040022_50e_init(struct hx83102 *ctx)
- 	return dsi_ctx.accum_err;
- }
- 
-+static int starry_himax83102_xr109_init(struct hx83102 *ctx)
-+{
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
-+
-+	msleep(60);
-+
-+	hx83102_enable_extended_cmds(&dsi_ctx, true);
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2C, 0xB1,
-+				     0xB1, 0x2D, 0xED, 0x32, 0xD7, 0x43, 0x36,
-+				     0x36, 0x36, 0x36);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xD9);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x78, 0x33);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDISP, 0x00, 0x47,
-+				     0xB0, 0xD0, 0x00, 0x12, 0x72, 0x3C, 0x9B,
-+				     0x22, 0x02, 0x02, 0x00, 0x88, 0xF0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRGBIF, 0x11);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x6A, 0x6A,
-+				     0x6A, 0x6A, 0x6A, 0x6A, 0x6A, 0x4D, 0x6A,
-+				     0x4D, 0x01, 0x95);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_B6, 0x40);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETVDC, 0x1B, 0x04);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xCD);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x84);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_BE, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xFC, 0xC4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSTBA, 0x32, 0x32,
-+				     0x22, 0x11, 0x33, 0xA0, 0x61, 0x08, 0xF5,
-+				     0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDGCLUT, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xCC);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x80);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC6);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRAMDMY, 0x97);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPWM, 0x00, 0x1E,
-+				     0x30, 0xD4, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x08, 0x13,
-+				     0x07, 0x00, 0x0E, 0xA1);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPANEL, 0x02, 0x03,
-+				     0x44);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCASCADE, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPCTRL, 0x37, 0x06,
-+				     0x00, 0x02, 0x04, 0x0C, 0xFF);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0x1F, 0x11,
-+				     0x1F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x06, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x6B, 0x03, 0xAA, 0xAB, 0x0E, 0x0E, 0x03,
-+				     0x03, 0x98, 0x10, 0x08, 0x00, 0x08, 0x32,
-+				     0x17, 0xDE, 0x07, 0xDE, 0x32, 0x17, 0xE2,
-+				     0x07, 0xE2, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP1, 0x18, 0x18,
-+				     0x18, 0x18, 0x18, 0x18, 0x48, 0x48, 0x18,
-+				     0x18, 0x18, 0x18, 0x22, 0x23, 0x1F, 0x1F,
-+				     0x1E, 0x1E, 0x24, 0x25, 0x26, 0x27, 0x28,
-+				     0x29, 0x2A, 0x2B, 0x00, 0x01, 0x02, 0x03,
-+				     0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A,
-+				     0x0B, 0x20, 0x21, 0x18, 0x18, 0x18, 0x18);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0x00, 0xAA,
-+				     0xAA, 0xAA, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
-+				     0xAA, 0xAA, 0x00, 0x00, 0xAA, 0xEA, 0xAA,
-+				     0xAA, 0x00, 0x00, 0xAA, 0xEA, 0xAA, 0xAA,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGMA, 0x00, 0x02,
-+				     0x08, 0x0D, 0x12, 0x18, 0x2C, 0x32, 0x38,
-+				     0x34, 0x4F, 0x56, 0x5E, 0x70, 0x72, 0x7E,
-+				     0x89, 0x9E, 0x9F, 0x50, 0x59, 0x62, 0x68,
-+				     0x00, 0x02, 0x08, 0x0D, 0x12, 0x18, 0x2C,
-+				     0x32, 0x38, 0x34, 0x4F, 0x56, 0x5E, 0x70,
-+				     0x72, 0x7E, 0x89, 0x9E, 0x9F, 0x50, 0x59,
-+				     0x65, 0x74);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x08, 0x10,
-+				     0x10, 0x1B, 0x22, 0x95, 0x01, 0x5C, 0x97,
-+				     0x14, 0x14, 0x00, 0x00, 0x00, 0x00, 0x12,
-+				     0x05, 0x02, 0x02, 0x10, 0x33, 0x02, 0x04,
-+				     0x18, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x01, 0xBF,
-+				     0x11);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDGCLUT, 0x00, 0x04,
-+				     0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20,
-+				     0x24, 0x28, 0x2D, 0x30, 0x35, 0x39, 0x3D,
-+				     0x41, 0x46, 0x4A, 0x4E, 0x56, 0x5D, 0x65,
-+				     0x6E, 0x76, 0x7E, 0x86, 0x8D, 0x96, 0x9E,
-+				     0xA5, 0xAD, 0xB6, 0xBE, 0xC6, 0xCF, 0xD6,
-+				     0xDE, 0xE6, 0xED, 0xF5, 0xF9, 0xFA, 0xFC,
-+				     0xFE, 0xFF, 0x19, 0xA6, 0xBC, 0xDF, 0xC0,
-+				     0x7D, 0x97, 0x2E, 0x24, 0xB6, 0x4D, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x86);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0x3C);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC5);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x00, 0x00,
-+				     0x00, 0x80, 0x80, 0x0C, 0xA1);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0x00, 0xFF,
-+				     0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
-+				     0xFF, 0xFF);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x02, 0x00,
-+				     0x3E, 0x01, 0x83, 0x0F, 0x7E, 0x10, 0xA0,
-+				     0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDGCLUT, 0x00, 0x04,
-+				     0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20,
-+				     0x24, 0x28, 0x2C, 0x30, 0x34, 0x39, 0x3D,
-+				     0x41, 0x45, 0x49, 0x4D, 0x55, 0x5C, 0x64,
-+				     0x6C, 0x75, 0x7C, 0x84, 0x8C, 0x94, 0x9C,
-+				     0xA4, 0xAB, 0xB4, 0xBC, 0xC4, 0xCD, 0xD4,
-+				     0xDD, 0xE5, 0xEC, 0xF4, 0xF8, 0xFA, 0xFC,
-+				     0xFE, 0xFF, 0x19, 0x95, 0x6B, 0x70, 0x15,
-+				     0x7B, 0x3D, 0xA6, 0x28, 0xC2, 0x94, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xCC);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x02, 0x1D,
-+				     0xE0, 0x11, 0x70);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xAB, 0xFF,
-+				     0xFF, 0xFF, 0xFF, 0xA0, 0xAB, 0xFF, 0xFF,
-+				     0xFF, 0xFF, 0xA0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0xFB, 0x01,
-+				     0xFB, 0x01, 0xFB, 0x01, 0x00, 0x00, 0x00,
-+				     0x26, 0x00, 0x26, 0x81, 0x02, 0x40, 0x00,
-+				     0x20, 0x94, 0x05, 0x04, 0x03, 0x02, 0x01,
-+				     0x00, 0x00, 0x00, 0x01, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC6);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x03, 0xFF,
-+				     0xF0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDGCLUT, 0x00, 0x04,
-+				     0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x1F,
-+				     0x24, 0x28, 0x2B, 0x2F, 0x33, 0x38, 0x3C,
-+				     0x3F, 0x43, 0x47, 0x4B, 0x53, 0x5B, 0x62,
-+				     0x6A, 0x73, 0x7B, 0x82, 0x8A, 0x92, 0x9A,
-+				     0xA2, 0xA9, 0xB2, 0xBA, 0xC3, 0xCB, 0xD3,
-+				     0xDB, 0xE4, 0xEB, 0xF3, 0xF8, 0xFA, 0xFC,
-+				     0xFE, 0xFF, 0x11, 0x90, 0xC3, 0xA0, 0xFF,
-+				     0xDB, 0x0D, 0x7B, 0x72, 0xA2, 0xC0, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xAA, 0xBB,
-+				     0xEA, 0xAA, 0xAA, 0xA0, 0xAA, 0xBB, 0xEA,
-+				     0xAA, 0xAA, 0xA0, 0xAB, 0xFF, 0xFF, 0xFF,
-+				     0xFF, 0xA0, 0xAB, 0xFF, 0xFF, 0xFF, 0xFF,
-+				     0xA0, 0xAA, 0xBA, 0xAA, 0xAA, 0xAA, 0xA0,
-+				     0xAA, 0xBA, 0xAA, 0xAA, 0xAA, 0xA0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x96);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xC5);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x4F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3F);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
-+
-+	hx83102_enable_extended_cmds(&dsi_ctx, false);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 60);
-+
-+	return dsi_ctx.accum_err;
-+}
-+
- static const struct drm_display_mode starry_mode = {
- 	.clock = 162680,
- 	.hdisplay = 1200,
-@@ -833,6 +1001,28 @@ static const struct hx83102_panel_desc starry_2082109qfh040022_50e_desc = {
- 	.init = starry_2082109qfh040022_50e_init,
- };
- 
-+static const struct drm_display_mode starry_himax83102_xr109_default_mode = {
-+	.clock = 168500,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 55,
-+	.hsync_end = 1200 + 55 + 20,
-+	.htotal = 1200 + 55 + 20 + 40,
-+	.vdisplay = 2000,
-+	.vsync_start = 2000 + 116,
-+	.vsync_end = 2000 + 116 + 8,
-+	.vtotal = 2000 + 116 + 8 + 12,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static const struct hx83102_panel_desc starry_himax83102_xr109_desc = {
-+	.modes = &starry_himax83102_xr109_default_mode,
-+	.size = {
-+		.width_mm = 143,
-+		.height_mm = 239,
-+	},
-+	.init = starry_himax83102_xr109_init,
-+};
-+
- static int hx83102_enable(struct drm_panel *panel)
- {
- 	msleep(130);
-@@ -1069,6 +1259,9 @@ static const struct of_device_id hx83102_of_match[] = {
- 	{ .compatible = "starry,himax83102-j02",
- 	  .data = &starry_desc
- 	},
-+	{ .compatible = "starry,himax83102-xr109",
-+	  .data = &starry_himax83102_xr109_desc
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, hx83102_of_match);
--- 
-2.34.1
+Only book3s64 needs static keys here because of radix v/s hash mode
+selection during runtime. The changes in above for powerpc looks good to
+me. It's a nice cleanup too.
 
+So feel free to take:
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com> #powerpc
+
+However I have few comments below...
+
+...
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 9142964ab9c9..e3765931a31f 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -32,6 +32,15 @@
+>  #include "kasan.h"
+>  #include "../slab.h"
+>  
+> +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
+> +/*
+> + * Definition of the unified static key declared in kasan-enabled.h.
+> + * This provides consistent runtime enable/disable across KASAN modes.
+> + */
+> +DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> +EXPORT_SYMBOL_GPL(kasan_flag_enabled);
+> +#endif
+> +
+>  struct slab *kasan_addr_to_slab(const void *addr)
+>  {
+>  	if (virt_addr_valid(addr))
+> @@ -246,7 +255,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+>  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>  				unsigned long ip)
+>  {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+
+For changes in mm/kasan/common.c.. you have removed !kasan_enabled()
+check at few places. This seems to be partial revert of commit [1]:
+  
+  b3c34245756ada "kasan: catch invalid free before SLUB reinitializes the object" 
+
+Can you please explain why this needs to be removed? 
+Also the explaination of the same should be added in the commit msg too.
+
+[1]: https://lore.kernel.org/all/20240809-kasan-tsbrcu-v8-1-aef4593f9532@google.com/
+
+>  		return false;
+>  	return check_slab_allocation(cache, object, ip);
+>  }
+> @@ -254,7 +263,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>  bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>  		       bool still_accessible)
+>  {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+>  		return false;
+>  
+>  	/*
+> @@ -293,7 +302,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>  
+>  static inline bool check_page_allocation(void *ptr, unsigned long ip)
+>  {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>  		return false;
+>  
+>  	if (ptr != page_address(virt_to_head_page(ptr))) {
+> @@ -522,7 +531,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+>  		return true;
+>  	}
+>  
+> -	if (is_kfence_address(ptr) || !kasan_arch_is_ready())
+> +	if (is_kfence_address(ptr))
+>  		return true;
+>  
+>  	slab = folio_slab(folio);
+
+-ritesh
 
