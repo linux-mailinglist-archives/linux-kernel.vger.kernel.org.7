@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-801101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF471B43FDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF96B43FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBFBF580819
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7151C84247
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C3D305076;
-	Thu,  4 Sep 2025 15:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5120308F1F;
+	Thu,  4 Sep 2025 15:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaLOxh72"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cl98NBHP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130012D3EC0;
-	Thu,  4 Sep 2025 15:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B29302CDA;
+	Thu,  4 Sep 2025 15:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756998131; cv=none; b=FsS1BOAfED/Lr21020RKJuJtJeyoPpJVnj1FaCOjTbOUr/UbZcflLtfcXINfw0zp0auDEjIoeJJ9HVNiiGwfIMdFWcf/XecOqUvpQDy7T5xzDdXZ+qu1ViR3u3V1HCH3n22jMnqQFXS6Q5PavrYfjvsW96yyuZyNX514eO3Zh3k=
+	t=1756998148; cv=none; b=NdjXzK7wV4bnxmCaO5oRTn3vZTiopj7HUlqp+k27BKJJ63v8HU98fpowq0SG4mtYcAK4bYKq+bzC7qQDiCtez1Q5wYzmJXUHxwhBFHu1+gnOekdPCe1WRPG41EnQF74WznnoIPBhmb5RsNB/AjkkX0RUQekQVOwUxDrk7TSPVU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756998131; c=relaxed/simple;
-	bh=WsAaT5z9DTXprMXgadEDAY3E4jgG3J07sJHYyh6BVw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=laPZir0K+xE9q+eWs/ADSKJyLfnFpv+aXYAVb8OY2D4V+UfkWjh2S82Khb4l9vy+ri6fSqaIZcq45kHgMsHMJIsb+lcYGc+h/aDv4t5pa3RSsGsG9rz7Lw0mbS4p4e6WW4gcSm0zI3pXTrMotWmE7xE4Kh+QV8+N5XsNvk/2Lg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaLOxh72; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e2055ce7b3so427521f8f.0;
-        Thu, 04 Sep 2025 08:02:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756998128; x=1757602928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2ajTeyG2BSzRFwWcOgVNlWU2GcEhvUma3dwfU9D+78=;
-        b=FaLOxh72/54hyhLZ4Vvp0g3qhrJyDNdwqjZZ9se3T136mee+OR0RbQfYpu78VjKb92
-         IPJ/9i/eHFsErpfss7d5Oj0cOdjb7fvjrqzTRtYkpQHXDbASNAPDmjbrPvxc00drHPE5
-         wVUyXTIa9SwOY+F6jgLsirAALhsbBQ6cWl0BeGXvt+PSOH+10jnLcVsQdgpAk92zG7jc
-         LzKLmZ0J9nXKZi0xuwfPdj/3V7ws4fZTndpgGZPZAhWpr09JnCtUB/V1tU+RVrbseMoV
-         H8oKLIW2RBLq/wjmXLfAe3D2oo5hcp+o1PdaE/qqWCEfmXAK1OXn16SRnbe64DkJvFEq
-         la5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756998128; x=1757602928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a2ajTeyG2BSzRFwWcOgVNlWU2GcEhvUma3dwfU9D+78=;
-        b=ZaXv+e5vJnPqzw7t7RbkmKJ+nXahsS+DZnKgah2MzfrU78RwTpi24j76E+1j8i+eKg
-         8Hqhb8/u+umJM0G7zvw/O3OSNJ3XBOQ/HQrBFym7NlPXLZ+DHuSmhKgfdI6AECJp+PdL
-         Npwrppp9NLa3ys4OYtSUbnyMa9HNStnu0WhV3gHhXMOYFeQWs7ivP53v60Ft8urL5q++
-         cKfyJuPizgf5N2gdYvoCjqmoS40aAZbgTrzPirinrU0mv/ssFDS9p+0w3nxZhqOpJCUX
-         wYYAnAagNKyg/8RpGHweo4H+TjuHenkBXp5T7hH88xPQLJdwOqpAmbwYfcbgvv3HgjdI
-         JLTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUifZrFyzcz/hndgnYfOEfFMgH/wLDs76hjd7gJu3HtFEMcK+rpGXJwqw1lRC6xvdLRrns=@vger.kernel.org, AJvYcCWbOh54Ij+EEZ4e3mxty4WDsV9WJHHyKi8VWJfQF5m2QmQryXooPr094EsB4hUkkquwr5pjOhjCw3Cxu39MzDwiInu5@vger.kernel.org, AJvYcCXN9Ha4JtcLAA87zdwnzmhBeg/8912qDSGj5KfQIb5hmRlyrnfNG3SG7dMcN2t9hrmy8cvq5tKrmHqfyNZQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWkL07hL83Y18u7dfhg2LW25J9Cu1F8uctUi4kDsEt0YCIwqGq
-	Xfo05hiQv1QOYgQZMfHyPR+ib6TBG4DsG5jFLIfan2jXfHuYxHOav9bTuqq1BgePQCfAX0GtoWv
-	qhPGnfgajqtRug6Pv5r2f9QT6gIGE+zo=
-X-Gm-Gg: ASbGncsoJGCBqNKycb25uZiHQIdb0vvTf5308SuwxA8RZdXIxmbH0yrl7pe9tgJiFy1
-	osxyYwYJLc43/vbsZ0l1bEfmRIKvpVbFtWq9bT4flER7IAim/ZiwP7G/ZZwX/3lfiNm8hHI2VVC
-	ZfsCaiPrkIhDwCmODbx0NqAvCZLcnRuVFOTFIFDyJtj5Kb9LMv8BbiBSf7fvvJ7qZ98YlJmF7Nn
-	hx87D005Ck8q0OG8rVGO+U=
-X-Google-Smtp-Source: AGHT+IFkJxBHJsi/qhXBTMrnuJxMrKa9yT7zV/ASPN4AZtBUYPr88vFciqMUlhOtEU6msJtj1095Jt5l4VsOVmKLPPo=
-X-Received: by 2002:a05:6000:4013:b0:3b7:94a2:87e8 with SMTP id
- ffacd0b85a97d-3d1dcb75006mr14310626f8f.18.1756998124908; Thu, 04 Sep 2025
- 08:02:04 -0700 (PDT)
+	s=arc-20240116; t=1756998148; c=relaxed/simple;
+	bh=mH9Qa53DW8rPCvOMKW7s4T0USBUdqkx8bGES1nfIJtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQsla3JgVFL/JItD4TbX11jTfxXdzyoBZpEwC56kvDkpm1BW4kEjjREYZQ5RyST2bIKN3tCMG7JQRWumUZ7wbbi/g0r0MA1moQJPEMCKItGdamLtPcau8E+1kZBxU81gLTXD/eUrtpYU2YgJ920ilLS40OoEAoh9fYiiajcQ/L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cl98NBHP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 77E6818B9;
+	Thu,  4 Sep 2025 17:01:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756998064;
+	bh=mH9Qa53DW8rPCvOMKW7s4T0USBUdqkx8bGES1nfIJtk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cl98NBHPhv8LuCGb6sR/py4+vw3iWwjNP/4f5ksPgnzKCh0fcSyh0rfe9BttjWpEg
+	 m0kGsY2utSojhny9N0pv2QghIQw7qIZp6mZIZsme5LJXSPkV/8ImfwDbUgIiR9LQGD
+	 IiKP+HjihV1AwWqsl2HinB2tMnMK9Xrt93pDqSdc=
+Date: Thu, 4 Sep 2025 17:01:53 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>, rmfrfs@gmail.com,
+	martink@posteo.de, kernel@puri.sm, mchehab@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-media@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hverkuil@kernel.org,
+	nicolas.dufresne@collabora.com, sakari.ailus@linux.intel.com,
+	tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se,
+	dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com,
+	mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
+Subject: Re: [PATCH v2 2/3] media: imx-mipi-csis: Store the number of
+ data_lanes configured in dt
+Message-ID: <20250904150153.GB6174@pendragon.ideasonboard.com>
+References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com>
+ <20250903102243.1563527-3-isaac.scott@ideasonboard.com>
+ <aLhfu0KK5NHIGH/W@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902143504.1224726-1-jolsa@kernel.org> <20250902143504.1224726-3-jolsa@kernel.org>
- <20250903112648.GC18799@redhat.com> <aLicCjuqchpm1h5I@krava>
- <20250904084949.GB27255@redhat.com> <aLluB1Qe6Y9B8G_e@krava> <20250904112317.GD27255@redhat.com>
-In-Reply-To: <20250904112317.GD27255@redhat.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 4 Sep 2025 08:01:53 -0700
-X-Gm-Features: Ac12FXzf4RJj6-nnXZ3VoZB1z-JhMD_QU665pLEmSa9O2cuDWoa1D1tma5CQqOQ
-Message-ID: <CAADnVQ+DHGc8R0Tdxf7eUj1R0TDGHXLwk5D4i_0==2_rfXGbfw@mail.gmail.com>
-Subject: Re: [PATCH perf/core 02/11] uprobes: Skip emulate/sstep on unique
- uprobe when ip is changed
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aLhfu0KK5NHIGH/W@lizhi-Precision-Tower-5810>
 
-On Thu, Sep 4, 2025 at 4:26=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> On 09/04, Jiri Olsa wrote:
+On Wed, Sep 03, 2025 at 11:33:15AM -0400, Frank Li wrote:
+> On Wed, Sep 03, 2025 at 11:22:41AM +0100, Isaac Scott wrote:
+> > The number of lanes actively used by a MIPI CSI transmitter may differ
+> > from that which is defined in device tree. To allow us to be able to set
+> > the number of configured lanes without changing the maximum lane count,
+> > store the number of lanes configured in device tree, and adjust the
+> > debug print to reflect the device tree value.
 > >
-> > On Thu, Sep 04, 2025 at 10:49:50AM +0200, Oleg Nesterov wrote:
-> > > On 09/03, Jiri Olsa wrote:
-> > > >
-> > > > On Wed, Sep 03, 2025 at 01:26:48PM +0200, Oleg Nesterov wrote:
-> > > > > On 09/02, Jiri Olsa wrote:
-> > > > > >
-> > > > > > If user decided to take execution elsewhere, it makes little se=
-nse
-> > > > > > to execute the original instruction, so let's skip it.
-> > > > >
-> > > > > Exactly.
-> > > > >
-> > > > > So why do we need all these "is_unique" complications? Only a sin=
-gle
-> > > > > is_unique/exclusive consumer can change regs->ip, so I guess hand=
-le_swbp()
-> > > > > can just do
-> > > > >
-> > > > >         handler_chain(uprobe, regs);
-> > > > >         if (instruction_pointer(regs) !=3D bp_vaddr)
-> > > > >                 goto out;
-> > > >
-> > > > hum, that's what I did in rfc [1] but I thought you did not like th=
-at [2]
-> > > >
-> > > > [1] https://lore.kernel.org/bpf/20250801210238.2207429-2-jolsa@kern=
-el.org/
-> > > > [2] https://lore.kernel.org/bpf/20250802103426.GC31711@redhat.com/
-> > > >
-> > > > I guess I misunderstood your reply [2], I'd be happy to drop the
-> > > > unique/exclusive flag
-> > >
-> > > Well, but that rfc didn't introduce the exclusive consumers, and I th=
-ink
-> > > we agree that even with these changes the non-exclusive consumers mus=
-t
-> > > never change regs->ip?
+> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/nxp/imx-mipi-csis.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
 > >
-> > ok, got excited too soon.. so you meant getting rid of is_unique
-> > check only for this patch and have just change below..  but keep
-> > the unique/exclusive flag from patch#1
->
-> Yes, this is what I meant,
->
-> > IIUC Andrii would remove the unique flag completely?
->
-> Lets wait for Andrii...
+> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > index 2beb5f43c2c0..fc89325f2f94 100644
+> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > @@ -313,6 +313,8 @@ struct mipi_csis_device {
+> >  	u32 hs_settle;
+> >  	u32 clk_settle;
+> >
+> > +	unsigned int max_data_lanes;
+> > +
+> 
+> is num_data_lanes better? you get from vep.bus.mipi_csi2.num_data_lanes
 
-Not Andrii, but I see only negatives in this extra flag.
-It doesn't add any safety or guardrails.
-No need to pollute uapi with pointless flags.
+That's a good point, but I think I prefer max_data_lanes here as it
+conveys better the fact that the field stores the maximum number of data
+lanes that can be used, not the number of data lanes being used at a
+given point of time.
+
+This being said, why do we need this ? The maximum number of data lanes
+can be accessed through csis->bus.num_data_lanes. I've looked at patch
+3/3 to answer this question, it there csis->bus.num_data_lanes is
+modified to store the number of data lanes used at runtime. I think it
+would be better to consider csis->bus as immutable after probe, and
+store the number of used data lanes in csis->num_data_lanes.
+
+Isaac, could you replace this patch by another one that adds
+csis->num_data_lanes, sets it to csis->bus.num_data_lanes in
+mipi_csis_async_register(), and replace usage of
+csis->bus.num_data_lanes with csis->num_data_lanes through the driver ?
+Patch 3/3 should then modify csis->num_data_lanes, not
+csis->bus.num_data_lanes.
+
+> >  	spinlock_t slock;	/* Protect events */
+> >  	struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
+> >  	struct dentry *debugfs_root;
+> > @@ -1299,8 +1301,9 @@ static int mipi_csis_async_register(struct mipi_csis_device *csis)
+> >  	}
+> >
+> >  	csis->bus = vep.bus.mipi_csi2;
+> > +	csis->max_data_lanes = vep.bus.mipi_csi2.num_data_lanes;
+> >
+> > -	dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
+> > +	dev_dbg(csis->dev, "data lanes: %d\n", csis->max_data_lanes);
+> >  	dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
+> >
+> >  	asd = v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
+
+-- 
+Regards,
+
+Laurent Pinchart
 
