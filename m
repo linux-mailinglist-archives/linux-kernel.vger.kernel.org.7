@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-800369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C235B436DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E92AB436E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118265A0D24
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBEE1C24D29
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D698F2EF677;
-	Thu,  4 Sep 2025 09:18:47 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1723506F;
+	Thu,  4 Sep 2025 09:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l/96Upit"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FEC2EE614;
-	Thu,  4 Sep 2025 09:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D42DFA26;
+	Thu,  4 Sep 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756977527; cv=none; b=nuWFIUL1tKH8fgSXDSNFld4UUYGFaz4U80jwqUGIn8KT5GcddvOHKBcdHsE82oPhEJr9suCw2yVuRnsg0QiUVbJBhtPqsJQAIpRRi511guhdi1rdBaXX8hlDxiRu01i6YduyHxGEYYWRzwarb4381txiO1SxyP0UWxVP8fWFvds=
+	t=1756977546; cv=none; b=Da/60sUpwTYp++I7AcQu8HC7l9LG9empx+8a68TX00oA+COIOsbgaJoePWAZMJHN9LGGRRlwNS6To39T3gxt1tLTFy4dZt7Naz1F6d3rXaJHnp8HVCAQqGooy4ryvYf02kHD3CprXy17kvoyQR4wHNMhMaEZHNqI5rjfbKS85g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756977527; c=relaxed/simple;
-	bh=61gNEaI3lEFoOXIORqIcW24LJz+TydmIDQrX1wRKd0c=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PWyw268V5vRT+CkwhULkLwfGmANQO/AzWg9Ei8JxTc3boArqu7DVve2eZadXFfhayJWVRsxqt21ALEdHkFsilfJE0irpIUxK4S2TPvhc4h+oIDWjjaud40ZFC88pZslH2HAtt9UmnhLk1Fj/iZDIznOjLppDzlyHAFEcYEQOGwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cHYnF4DP1zKHN1N;
-	Thu,  4 Sep 2025 17:18:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 818561A0AE4;
-	Thu,  4 Sep 2025 17:18:41 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCX4o5vWbloN7lnBQ--.14941S3;
-	Thu, 04 Sep 2025 17:18:41 +0800 (CST)
-Subject: Re: [PATCH v2] blk-throttle: fix access race during throttle policy
- activation
-To: Han Guangjiang <gj.han@foxmail.com>, yukuai1@huaweicloud.com,
- Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: hanguangjiang@lixiang.com, fanggeng@lixiang.com, yangchen11@lixiang.com,
- liangjie@lixiang.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
- <tencent_2B678DA920124B08854638A6BE68746CCC05@qq.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <1f9c674a-9f5b-6c89-0504-1f6985095fa0@huaweicloud.com>
-Date: Thu, 4 Sep 2025 17:18:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756977546; c=relaxed/simple;
+	bh=pOtCgn/R5R30ybiZxFxw8oEKZ031yya84xjSg0TOgrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Owa0vnDagDwBvJIdgHz7JzFEaU6bxpvbltZgw184LG6mG2+yMRQGphCqTDu+kv3Svv8khFTbejqRw06KiRurg1tSjthpp6JkVondqMmUthJVTlW3fwIJGrlS5qB4zjQIjLEAHZ6+Nrtk30WKz/n2bRrvMfuZZu4A6qeaVyyczf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l/96Upit; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5841mNP9004991;
+	Thu, 4 Sep 2025 09:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	baoKJWLvfk5vZCL5Lo+mCicXEHDPlRdfFPrnWUAdlV8=; b=l/96UpitUBFhZyhu
+	aw9nTg3a5tN8qH0YwcQHjKZu5AuvtFHioKyDDbBu6kHMWP18sLliM6/cajbslDOH
+	Ink3RWSKdSKo9vqF3QJiFWxrj29Xf54Iy/+UiUGIKa9WyVfHbcCQef0oYha2kMol
+	L9j1YStjZdTam9QURNCR80scnOaGabMkb3E2JK5LMG5q1Os1BB25/phFBn57mQh2
+	WolMINnCW7vP2jERgYWQZ/QDyexRgsYK+BmvKrvDXF4AjIB1MW6McV9VGQU5+yqT
+	54i3dL5GWPks4Fro2tjJmKQvZezB+pQvICG12XQZG4MwJ4mAdlrYa/YxlvqSqlZy
+	4LpohA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8s70h7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Sep 2025 09:18:51 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5849Ioqj027240
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Sep 2025 09:18:50 GMT
+Received: from [10.217.199.111] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 4 Sep
+ 2025 02:18:43 -0700
+Message-ID: <2735afb0-96ba-4efb-818d-0a7b342b7145@quicinc.com>
+Date: Thu, 4 Sep 2025 14:48:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <tencent_2B678DA920124B08854638A6BE68746CCC05@qq.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: lemans: Add GPU cooling
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Akhil P Oommen
+	<akhilpo@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Rob Clark
+	<robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250822-a663-gpu-support-v4-0-97d26bb2144e@oss.qualcomm.com>
+ <20250822-a663-gpu-support-v4-4-97d26bb2144e@oss.qualcomm.com>
+ <4ac0ff3d-38db-44cc-9e36-44f9e819e96d@oss.qualcomm.com>
+Content-Language: en-US
+From: Gaurav Kohli <quic_gkohli@quicinc.com>
+In-Reply-To: <4ac0ff3d-38db-44cc-9e36-44f9e819e96d@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCX4o5vWbloN7lnBQ--.14941S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw1DXryrCr1rXr1rXryUAwb_yoWrXr17pr
-	W3Wr45Kr4ktFsrGw45Jr13ZFWUta1kAFWUA393G343AF1j9w1UJw1UJFW8C34kAFs7WFy7
-	AF4DXw40kF1UJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX5EQpLzs7wFrs
+ cC5KQJ/Qgxtm76RRZlGCjb7joFFWqqziKCj97/71EtxV6YEvyO4/fflEM3ezJ6fuUoZdDn+scDV
+ dZ7EMTKicO27xWqtZ/4PSv297cVonRUL/gacBiT3JrCtn/8p7XlKkIlLOSZzvxwGz3h7mr7g3br
+ Ft+XyX7KcMtsYS+hf1JjfELonjGEVAEv/sqDCpnM6kBtIDijuMjQOtQKH2CgTrq6aS5he0D3jtx
+ MhGeU0uav+igxOMnY8CZKSBq0PrIWXooInxpBbVILGLUSgW/4+skPn2xSFoq1P0i4iQu0pSnqmu
+ L06t4ZiGIFVi7+5oVMUJT32X8oZ0rBxoTx75a4kDupgtBu44m4om8qSwaI6zZ3VC3F6RxKORmI5
+ kItkk8dC
+X-Proofpoint-GUID: r3AiJCyyTwPoA44C1DZF2D46RO5W0qtj
+X-Proofpoint-ORIG-GUID: r3AiJCyyTwPoA44C1DZF2D46RO5W0qtj
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b9597b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=Tnv4r2qD--CattBqy9UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-04_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1011
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-Hi,
 
-ÔÚ 2025/09/04 16:17, Han Guangjiang Ð´µÀ:
-> From: Han Guangjiang <hanguangjiang@lixiang.com>
-> 
-> On repeated cold boots we occasionally hit a NULL pointer crash in
-> blk_should_throtl() when throttling is consulted before the throttle
-> policy is fully enabled for the queue. Checking only q->td != NULL is
-> insufficient during early initialization, so blkg_to_pd() for the
-> throttle policy can still return NULL and blkg_to_tg() becomes NULL,
-> which later gets dereferenced.
-> 
->   Unable to handle kernel NULL pointer dereference
->   at virtual address 0000000000000156
->   ...
->   pc : submit_bio_noacct+0x14c/0x4c8
->   lr : submit_bio_noacct+0x48/0x4c8
->   sp : ffff800087f0b690
->   x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
->   x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
->   x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
->   x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
->   x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
->   x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
->   x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
->   x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
->   x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
->   x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
->   Call trace:
->    submit_bio_noacct+0x14c/0x4c8
->    verity_map+0x178/0x2c8
->    __map_bio+0x228/0x250
->    dm_submit_bio+0x1c4/0x678
->    __submit_bio+0x170/0x230
->    submit_bio_noacct_nocheck+0x16c/0x388
->    submit_bio_noacct+0x16c/0x4c8
->    submit_bio+0xb4/0x210
->    f2fs_submit_read_bio+0x4c/0xf0
->    f2fs_mpage_readpages+0x3b0/0x5f0
->    f2fs_readahead+0x90/0xe8
-> 
-> Tighten blk_throtl_activated() to also require that the throttle policy
-> bit is set on the queue:
-> 
->    return q->td != NULL &&
->           test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
-> 
-> This prevents blk_should_throtl() from accessing throttle group state
-> until policy data has been attached to blkgs.
-> 
-> Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
-> Co-developed-by: Liang Jie <liangjie@lixiang.com>
-> Signed-off-by: Liang Jie <liangjie@lixiang.com>
-> Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
-> ---
-> v2:
->   - remove the comment about freeze queue in blk_should_throtl()
->   - Retitle: "blk-throttle: fix access race during throttle policy activation"
-> ---
->   block/blk-throttle.h | 7 +------
->   1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/block/blk-throttle.h b/block/blk-throttle.h
-> index 3b27755bfbff..fbf97c531c48 100644
-> --- a/block/blk-throttle.h
-> +++ b/block/blk-throttle.h
-> @@ -156,7 +156,7 @@ void blk_throtl_cancel_bios(struct gendisk *disk);
->   
->   static inline bool blk_throtl_activated(struct request_queue *q)
->   {
-> -	return q->td != NULL;
-> +	return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
->   }
 
-You can just remove the fist checking, p->td must be set if policy is
-enabled. And please make blkcg_policy_enabled() inline function in
-blk-cgroup.h and use it here.
-
->   
->   static inline bool blk_should_throtl(struct bio *bio)
-> @@ -164,11 +164,6 @@ static inline bool blk_should_throtl(struct bio *bio)
->   	struct throtl_grp *tg;
->   	int rw = bio_data_dir(bio);
->   
-> -	/*
-> -	 * This is called under bio_queue_enter(), and it's synchronized with
-> -	 * the activation of blk-throtl, which is protected by
-> -	 * blk_mq_freeze_queue().
-> -	 */
->   	if (!blk_throtl_activated(bio->bi_bdev->bd_queue))
->   		return false;
->   
+On 9/3/2025 5:48 PM, Konrad Dybcio wrote:
+> On 8/21/25 8:55 PM, Akhil P Oommen wrote:
+>> From: Gaurav Kohli <quic_gkohli@quicinc.com>
+>>
+>> Unlike the CPU, the GPU does not throttle its speed automatically when it
+>> reaches high temperatures.
+>>
+>> Set up GPU cooling by throttling the GPU speed
+>> when reaching 105Â°C.
+>>
+>> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/lemans.dtsi | 67 +++++++++++++++++++++++++++++-------
+>>   1 file changed, 55 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> index 8eac8d4719db9230105ad93ac22287850b6b007c..b5d4d07b2fd9c14a6f1cc462c695e864394cade2 100644
+>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>> @@ -20,6 +20,7 @@
+>>   #include <dt-bindings/power/qcom,rpmhpd.h>
+>>   #include <dt-bindings/power/qcom-rpmpd.h>
+>>   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>> +#include <dt-bindings/thermal/thermal.h>
+>>   
+>>   / {
+>>   	interrupt-parent = <&intc>;
+>> @@ -6816,13 +6817,20 @@ trip-point1 {
+>>   			};
+>>   		};
+>>   
+>> -		gpuss-0-thermal {
+>> +		gpuss0_thermal: gpuss-0-thermal {
 > 
+> You don't need labels for the thermal zones, just the trip points below
 
-Please also remove the comment in blk_throtl_init() about freeze_queue,
-and add comments in both blk_throtl_init() and blk_throtl_bio() about
-synchronization.
+Sure, will update.
 
-Thanks,
-Kuai
+> 
+> Konrad
+> 
 
 
