@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-800671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71379B43A53
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:37:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E45B43A55
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE945482414
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:37:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BB5F7B9422
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66022D3A6A;
-	Thu,  4 Sep 2025 11:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314582ED170;
+	Thu,  4 Sep 2025 11:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/w81wI7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="RLhbYEg5"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF26199FAB;
-	Thu,  4 Sep 2025 11:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025942BE7B5;
+	Thu,  4 Sep 2025 11:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756985834; cv=none; b=YIwJwZjmV4CJF9B4i/gY+CfLu0D5VryGTFCHQ7UGUWHiVPL1g8XTWr99RKin6v1uD3E6Cnd6JXA9nUytY1YWFyf3BeNg+kvB2UPnni7OSNziEUoSybpwyyxSKYe5Kq64HCo9MxSki+yONqwdmTfitjwRv6tt6KPJGnvSfAWvtOU=
+	t=1756985845; cv=none; b=NG7gMYsMVGvohXppFtQwt5dkm1oseZ6rRZc9Ymj/Kmcz+BBK149lnZif0a8asXwiYnGq56vZzL+cmXTlOa1SfUUrMy3dXP0oqIHA6DrNGafaoPZjQ/ZG7Yeiupe0pdNeOqipHHGHabDcrdlnuGDuirWbh1KT7i1g6uckhLVuS3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756985834; c=relaxed/simple;
-	bh=cR0kkQiOhOO+mVhWrGef3b5Ko/oMPdeUXKcuvtI9dCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OC8jCaj5a+WuJrslqR/oKzl6s+TFHsmSsFz01JGjcq6hKoOKbqilQeneyaGfnEIxG1pj/uO1IGihP1NtwBmy7eTWk/fMHrtXMhh5ppM1v8OUZ151JPt6eKvRKOjcRJB8BmTgrVtmZknQak0jhf10w6W7IRR+UYZYvamW8vN9v/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/w81wI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8ED14C4CEF4;
-	Thu,  4 Sep 2025 11:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756985833;
-	bh=cR0kkQiOhOO+mVhWrGef3b5Ko/oMPdeUXKcuvtI9dCg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=B/w81wI7qXIsro9bibPxmg+ZtAiMrL6JcnGEZV8e0QPovfVifYbSiULHNf95UXjJc
-	 KI9kURiacpcn62USXSS+TVSvf1rBh1AmpQv+nr5GEdCBzLRkGZEIEkxOH/r7fNuMB8
-	 j+CBHqxVPwQKJ0ALAHopoqx7SuXM4CS7HM0AsOhbTBKEgr+MnU47w3aH72wIH0TrCO
-	 g47RrUgEjtn+1G7Mxa9KWPfdtkzIGJ8QkzF5BVBrLobiWxDuAibKHwQCsiU9YTyVRq
-	 te4vznFwU0gvOONAlunMPym9MGUsEult9OfAke32YJ5Qztj0qQJ9PvjC3lwFFz6WsQ
-	 B/7nNU1okCG7Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7670BCA1016;
-	Thu,  4 Sep 2025 11:37:13 +0000 (UTC)
-From: Simon Schuster via B4 Relay <devnull+schuster.simon.siemens-energy.com@kernel.org>
-Date: Thu, 04 Sep 2025 13:36:52 +0200
-Subject: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64
- clone_flags
+	s=arc-20240116; t=1756985845; c=relaxed/simple;
+	bh=Q4jfgD20x2B7lfwTG+nsjBkx74xKusKlr1NJe4tcKs4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A7V9tjqVKcIqDEE7dILTJMytSyPRUhdJMx30T9Xy2prh3jlCIYalDgCq+YWZkxCgCDR3Ssi3PrePUdOCGL/Yq33L3xoT4CDIy873b1c0vs9JtSELfJeICAPD2+1DgezAChUvJC7h3eyr5mSRTJQwm1DRdUsK6Py5CISfEUeXosQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=RLhbYEg5; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=brpPuPKsHj0xYX7qb+mIRu4ZZuWxnZaYaYuDlNzAyxY=;
+	t=1756985844; x=1758195444; b=RLhbYEg5FtzaoVXzHxZgL514N1ehKGwiNU94fISciey/kmG
+	jd0ZT3eMZQTIF8lBhHlhiWBMxX8yD7WyoGXkFyIWisve7B9L/MMlL15mlXRmhdRr0peQ7mdayoc17
+	JAZJ3nyrw7jfSysZbu8OvAeC19uti4nTUsQcIhHBfPdBo0jdLWxBHhLDfuRu5CW0NIEqxkpojOpmo
+	hpVshZw3z9dsS3nilOzM4td9C3BQlRwVhUqYFQB61PZkp7PvZeb+5/yrp+lB7FsH/7RZjiDBIaaN3
+	3ayHwI63pw/Esb4vVuPdW9ugdtLn9Co94BiJZI9LJGEc04W1cuLzGc+Z2INS/2KA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uu8HJ-0000000E710-1tvs;
+	Thu, 04 Sep 2025 13:37:21 +0200
+Message-ID: <6b8ff5139bb9c361468840046b757dfa5ebe1aba.camel@sipsolutions.net>
+Subject: Re: [PATCH v5 18/22] wifi: nxpwifi: add core files
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Jeff Chen <jeff.chen_1@nxp.com>, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, 
+	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de, 
+	brian.hsu@nxp.com
+Date: Thu, 04 Sep 2025 13:37:20 +0200
+In-Reply-To: <20250804154018.3563834-19-jeff.chen_1@nxp.com>
+References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
+	 <20250804154018.3563834-19-jeff.chen_1@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
-X-B4-Tracking: v=1; b=H4sIANN5uWgC/x2NQQqDQAxFryJZGxitU7RXERcxRhuUsUwGWxDv3
- sHV48Hj/xNMoorBqzghyqGme8hSlQXwm8IiqFN2qF3tXecaTJFYMJGtGOR7c9YfMm3bSLwajpV
- vn4+GfTcR5JlPlBzcF/1wXX/dCTs2cgAAAA==
-X-Change-ID: 20250904-trace-task-newtask-fix-callbacks-b158634c59da
-To: Steven Rostedt <rostedt@goodmis.org>, 
- Christian Brauner <brauner@kernel.org>, 
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Hildenbrand <david@redhat.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Arnd Bergmann <arnd@arndb.de>, 
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, 
- Simon Schuster <schuster.simon@siemens-energy.com>
-X-Mailer: b4 0.14.3-dev-2ce6c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756985832; l=2094;
- i=schuster.simon@siemens-energy.com; s=20250818;
- h=from:subject:message-id;
- bh=csJ5txv6tqXJkqrIKhkf4TfiADTvCuVUIksSMgyFOQc=;
- b=38kU7qTU3ePme9DQA8Us2hLlr+NTH5vWQV+CBallDDv1+gLQMyaXqtUPGu2nQ1fcpi28/61XV
- ZZRnu69MyC5CqWYDz/cxbvX75QNMrlichdqEVJIep+QIIh6PWPsSZvz
-X-Developer-Key: i=schuster.simon@siemens-energy.com; a=ed25519;
- pk=PUhOMiSp43aSeRE1H41KApxYOluamBFFiMfKlBjocvo=
-X-Endpoint-Received: by B4 Relay for
- schuster.simon@siemens-energy.com/20250818 with auth_id=495
-X-Original-From: Simon Schuster <schuster.simon@siemens-energy.com>
-Reply-To: schuster.simon@siemens-energy.com
+X-malware-bazaar: not-scanned
 
-From: Simon Schuster <schuster.simon@siemens-energy.com>
-
-Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
-calltree") the task_newtask trace event exposes clone_flags as u64 to
-its callbacks.
-
-However, ltl_monitor was not adapted, resulting in a faulty callback.
-This also resulted in an lkp build warning due to
--Wincompatible-pointer-types.
-
-Fixes: edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/lkml/20250904113334.18822d43@canb.auug.org.au/
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509040134.bQVbm7ja-lkp@intel.com/
-Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
----
-I did further search for other in-tree users of the task_newtask
-callback, but the trace macros make it a bit harder. Yet, as far as I
-could see, there are none, so this patch hopefully resolves the problem
-for good. The other matches all relate to "tp_btf/task_newtask", which
-seems to be unaffected.
-
-With this patch, ARCH=S390 allmodconfig -- that originally tripped the
-LKP builds -- now builds without further -Wincompatible-pointer-types
-warnings.
-
-Sorry for causing this trouble, and thanks to Stephen Rothwell for
-testing/reporting.
----
- include/rv/ltl_monitor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
-index 67031a774e3d..5368cf5fd623 100644
---- a/include/rv/ltl_monitor.h
-+++ b/include/rv/ltl_monitor.h
-@@ -56,7 +56,7 @@ static void ltl_task_init(struct task_struct *task, bool task_creation)
- 	ltl_atoms_fetch(task, mon);
- }
- 
--static void handle_task_newtask(void *data, struct task_struct *task, unsigned long flags)
-+static void handle_task_newtask(void *data, struct task_struct *task, u64 flags)
- {
- 	ltl_task_init(task, true);
- }
-
----
-base-commit: edd3cb05c00a040dc72bed20b14b5ba865188bce
-change-id: 20250904-trace-task-newtask-fix-callbacks-b158634c59da
-
-Best regards,
--- 
-Simon Schuster <schuster.simon@siemens-energy.com>
+On Mon, 2025-08-04 at 23:40 +0800, Jeff Chen wrote:
+>=20
+> +/* The main process.
+> + *
+> + * This function is the main procedure of the driver and handles various=
+ driver
+> + * operations. It runs in a loop and provides the core functionalities.
+> + *
+> + * The main responsibilities of this function are -
+> + *      - Ensure concurrency control
+> + *      - Handle pending interrupts and call interrupt handlers
+> + *      - Wake up the card if required
+> + *      - Handle command responses and call response handlers
+> + *      - Handle events and call event handlers
+> + *      - Execute pending commands
+> + *      - Transmit pending data packets
+> + */
+> +void nxpwifi_main_process(struct nxpwifi_adapter *adapter)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&adapter->main_proc_lock, flags);
+> +
+> +	/* Check if already processing */
+> +	if (adapter->nxpwifi_processing || adapter->main_locked) {
+> +		adapter->more_task_flag =3D true;
+> +		spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
+> +		return;
+> +	}
+> +
+> +	adapter->nxpwifi_processing =3D true;
+> +	spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
 
 
+This makes me very nervous, it at least means it's super hard to
+understand when this may or may not be running ... It's also the sort of
+custom locking that's kind of frowned upon.
+
+Could this not be with wiphy mutex and be very clear? Though maybe you
+wouldn't want TX to go through that ... and maybe it can't since sdio
+calls it? But that seems odd, why is it both a worker and called for
+every interrupt? Should it even be a single function for those two
+cases?
+
+Also it sets more_task_flag when it's entered while already running, but
+that's just weird? Should other work coming in really get processed by
+the SDIO interrupt processing?
+
+It seems to me this is one of those awful design things inherited by
+mwifiex that just happens to work? Can you document it well? If so maybe
+do that and that can say why it really needs to be this way. If not, you
+should probably change it completely and redesign it from first
+principles, i.e. figure out what it has to do and build it accordingly?
+
+The whole function is also everything and the kitchen sink, could use
+some serious refactoring?
+
+> +		if (adapter->delay_null_pkt && !adapter->cmd_sent &&
+> +		    !adapter->curr_cmd && !is_command_pending(adapter) &&
+> +		    (nxpwifi_wmm_lists_empty(adapter) &&
+> +		     nxpwifi_bypass_txlist_empty(adapter) &&
+> +		     skb_queue_empty(&adapter->tx_data_q))) {
+> +			if (!nxpwifi_send_null_packet
+> +			    (nxpwifi_get_priv(adapter, NXPWIFI_BSS_ROLE_STA),
+> +			     NXPWIFI_TxPD_POWER_MGMT_NULL_PACKET |
+> +			     NXPWIFI_TxPD_POWER_MGMT_LAST_PACKET)) {
+> +				adapter->delay_null_pkt =3D false;
+> +				adapter->ps_state =3D PS_STATE_SLEEP;
+> +			}
+> +			break;
+> +		}
+> +	} while (true);
+
+
+Sao that ... those conditions are awful? If this were a separate
+function at least you could write it in multiple lines with return
+true/false there.
+
+> +/* CFG802.11
+
+(side note: there's really no such thing as "CFG802.11" FWIW, it was
+always just called "cfg80211")
+
+johannes
 
