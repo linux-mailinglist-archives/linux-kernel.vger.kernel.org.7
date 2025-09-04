@@ -1,319 +1,137 @@
-Return-Path: <linux-kernel+bounces-800352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B98BB436AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:09:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659DCB436B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 11:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA373B8694
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:09:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C402E7B3533
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3B32DF145;
-	Thu,  4 Sep 2025 09:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535BC2E0B64;
+	Thu,  4 Sep 2025 09:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CH+DRb0D"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013022.outbound.protection.outlook.com [40.107.159.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GUkAcN3t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218DF2DD5F0
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756976946; cv=fail; b=klA9IHCYr7MjWQ8c1/mgGfXbgRHwJWVOhrIWNb4j4crjjUJ6V1WSofz6IGjNT2aEjXfR0dvc5X0XLfq1rwKeFYZrg2/4Py80ZhI6vXZqn7IiY/oslEjUk+RDZGTpD2rUspclDgG8cV0LhJi4WGdQntE5Zz89zxYLj8KAjVc4OzM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756976946; c=relaxed/simple;
-	bh=g89GlY5ACbIwNh+WzpnX6WC8hwWY+p4ddlg+KlYD3lQ=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=IORPGYgiT+qp31CqJKqeRi4ayXb+wKMDTiaOOBYuk53ZMrxQuBfqWgWbn8ixY1uDFXKsQ72Xnruk1pJOZ/tGP+ckwrncbTEfFVLI2l6iHJQe+NPVWUhwKMa0YGUc63SOOmMrApH+/IKYB5cr9pSWzhvSXyJFTyrkkzZHm+qvKFs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CH+DRb0D; arc=fail smtp.client-ip=40.107.159.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nQ21X4isaYwEHIc+L547YbeaNtgA88A3vGHHvkUDY152m0gHH8x6wsy90snHokwU/FBkhzdsnR6EsE0vlketux4XyL6O4KKJqXWuXziVeKGsaaNkPDcjL7BDVFFp5GrsT4mIHvgl9s85JlOMEJNI7TUml6QH1+vseMyzJmgPJSH/hXuDafMrWqFdjF8NqmQR6YANVwfNDEJXw/bZHl3Wpmcm1r9zBg+I1dL5CqnOB1BrUpN1HmDNYDPT2SHmM2qZjvirqK+duOSNJQfFgpPWaaySI8yl+jcjRBs2rxefMVrS9Q4agV6x+dotbWc/Ni0vxDotAzvU8/7CyXmS2zsV5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FkVxXGpneA0F6KITkRptj9Guss5XZosRe4l/x75JiaM=;
- b=EyRQF+0Z6rHCMKZ4vP9rgHkS75wcJGFyGK4cH3jtWMpT3bFfHRuZKrlnnConM7G49/61acRwJKFPwwErQ0vVxuBOzwmvM3NydUUKKTw61JHmnEwTEaewMFT9cXbdZnom84Ie1vVQIpfd52MH61tjfKOr1I9jr3rRVT7JFCvUn/pGzN0fv8VCc22fh8+kpFRmYdP/QeZcR9X2Ft+DCBx2fvIqXycAap9Hi4xAGmbPenCRx5c3LOH0dOwZP0CniAdgLzN+UhfZP9GeMnfvGP12VqnOD0biJ6eZ7G/jifCXiM+1hwWs8oN1pm2E4qIYAuC0b437TqcYjMg8psDML+oz9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FkVxXGpneA0F6KITkRptj9Guss5XZosRe4l/x75JiaM=;
- b=CH+DRb0D3k2+3RS1fFViakwZwUwmJaylkCSl3ESKNbnMo8Fv63oWm+gyVK4F+p3EpgNI9dDZVWNGhdZjinoC4hgWJqh6y8729k5nbtUO7AZHma0SICF1HMivO/9OXYi3JdBFIouYht2jZqjNVkzGQ9S9WuwCwrvEJjrtvppf5hktwc503zomxLHAaSeicC+2CCOmzNE2XJpA5vBJci27kUOL7xRINe/fyhP1NYF3WBsItnrOr8JCxLM/czMAnVb8ZrqHiw3xvl7lvcd+Ap6FZ/a9iqkIr0CCVkbOsQeP5bQE+ZyTmJ/APQfX8Vzw5hXCWwlG6uoSxSy+WOWQeE3ISA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VE1PR04MB7455.eurprd04.prod.outlook.com (2603:10a6:800:1a1::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Thu, 4 Sep
- 2025 09:08:59 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9094.017; Thu, 4 Sep 2025
- 09:08:59 +0000
-From: Liu Ying <victor.liu@nxp.com>
-Date: Thu, 04 Sep 2025 17:10:02 +0800
-Subject: [PATCH] drm/bridge: ite-it6263: Support HDMI vendor specific
- infoframe
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com>
-X-B4-Tracking: v=1; b=H4sIAGlXuWgC/x3NQQrCMBBG4auUWTuQxFjRq4iLkM7ovzApEymF0
- rs3dPlt3tuoiUEaPYeNTBY01NLhLwPlbyofYUzdFFy4uYeLjP8YxisvUqZq3GbJUGRG0aqWfsI
- pRRd81Oj1Tj0zmyjWc/F67/sBgZXYEHIAAAA=
-X-Change-ID: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Liu Ying <victor.liu@nxp.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SG2PR01CA0146.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::26) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE0626E70C
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 09:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756977115; cv=none; b=ihiFrTxK4IuucTggvwkcMff+tYQEIFWev8GK1HfAPOoWLN9j6RY2zv9WMKhZgpnTn6dmOYt4zeeM6A1farLs64ewIlZwUDBj42pdZASTgHd8lMV9SYS2xSVCgEVlMhnODdJNwnag2f+9053SMH5MQiJJGnEJIC3AGVF07X/Ka10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756977115; c=relaxed/simple;
+	bh=DmdoGdYnbYjhO6QpJrH+knWoIO4cuyRmzzzOdZTcPI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWGl/jRhLAMrMqEl0Ihtj+pjBwbmxj1IztOrM/OI8DGXkq1m1kz5MY3PoqxtuFoelUOsvMY5nB5AX7zTlEzGDi1fNmoJjSrxeNKO/Nf11ui8q0+TSry+tGzpNoYtGvqXHbsRx/KppqgJCEkr4tDijXX+7c81wNb84HvWUJdQWuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GUkAcN3t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756977113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ap8nEHbAjkSuUadouik2OGxJ+woZMqI3nNwdhC/IOJA=;
+	b=GUkAcN3tA4zCCAbW6RJ+R6lQ2oOBXl1mc3SBsbKryFqydWkOANdigb18CuvZaRxn45ieT+
+	lzd7WiGyfXxxUHb6rFarqRyVJQyGS8fmSASfYwfLak1xadDIE1IuBQjDDXt2pFaERNVgBu
+	zrnv69+pdsoX04qGx2bpU3WAhtO7uK8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-531-oSbfkzNcM2mo_hrHo7Fesw-1; Thu,
+ 04 Sep 2025 05:11:48 -0400
+X-MC-Unique: oSbfkzNcM2mo_hrHo7Fesw-1
+X-Mimecast-MFC-AGG-ID: oSbfkzNcM2mo_hrHo7Fesw_1756977106
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E00871956089;
+	Thu,  4 Sep 2025 09:11:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.52])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 59ED619560AB;
+	Thu,  4 Sep 2025 09:11:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  4 Sep 2025 11:10:22 +0200 (CEST)
+Date: Thu, 4 Sep 2025 11:10:16 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v3 1/1] x86/shstk: don't create the shadow stack for
+ PF_USER_WORKERs
+Message-ID: <20250904091015.GC27255@redhat.com>
+References: <20250903134126.GA27641@redhat.com>
+ <20250903134203.GA27651@redhat.com>
+ <b91c72b6-cbe0-4767-8d65-05f804733a55@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VE1PR04MB7455:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21659e8d-ebce-4c83-886e-08ddeb92aee1
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|19092799006|1800799024|366016|52116014|7416014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?WTROUGlzK2YzMzNzUHJxUlpsU0lIaGxncmxqZlg3enNaejFFRisyZHJoOHRK?=
- =?utf-8?B?ejV1YldSL3BvR1owcW1USDIvQ2F2cjNJWStTcnI4Qlp0REwyYUp1MTl1ay9H?=
- =?utf-8?B?QzJieW5zWUZTb29NOXJmamgxb2tkNnB4QjJsbVVDT1RxQmRiQnJXMGpyMzRq?=
- =?utf-8?B?TEhZWlkyaDhzY3VER2dTc2xGVEFybjdEWXNQQk9mekdROWthTmZWZStFVkZs?=
- =?utf-8?B?SEc2OG13YXBoZ3diWlFSTWttY056QU5kMGk2TmpDK2MzaEgycUlwbWsybklz?=
- =?utf-8?B?UVJVRURESjI0V1R1d20rUWhURm12bmlKMWF0VnRFQjVVWVdBQ2ZKRzR0eWNt?=
- =?utf-8?B?aVN2aEYya2JMNi85NW1NVmpJb3JYQ3cydk9ITjVDMGhTNTU3U0JaZjdWVi9O?=
- =?utf-8?B?NGVZN2pxcVVIOVJhUThxTEVhd1U2UnNKamJYWHFhL29lL05VelJmMnRxVVZ0?=
- =?utf-8?B?U3pENUhTVnpadWhRaXA2a3oyaFdFd0pnNWxZK215N25aMTB4ZWxGdUI5UWo0?=
- =?utf-8?B?WmxIOFNnMXFRZDE3bU5iOWh4WFNxcVlFcUt6b0pUMHV6Sm8ra01RUnJTc0RG?=
- =?utf-8?B?NHMvTktnQXFEaEFlWHFyekdBWGtSSUNlWmRKQ3hmS3lsMXNlRjlsdlVpUGFo?=
- =?utf-8?B?S01FWnU4NmE1TWpaQUpPbHJvZDZMM2JtUlU5Wk9jSng4c2Z2czQ1S2M5ckN0?=
- =?utf-8?B?L1RRQm4wSmdRdnBtWDhnekd1cTkyRU5rVGZNUHU3V0VPcmF3TGQrbVIyRDdz?=
- =?utf-8?B?aW5KeU9CUWQ3cTl4WHFCQWF2c3N3NEVia1RvMnMwWmg0MGpLMWZ5c1Yxd3JV?=
- =?utf-8?B?KzJ3RWtKaC9iemQ5NjJTTmgwTVNmTEJxZU10Q085K0JoYktEZjlrOUtKSSsz?=
- =?utf-8?B?aEt5YkNzdGRhcDdiOGZTdFlrRVVVNjNBN3RiSGdMOVJPSE95QkRmQnRXZ3J2?=
- =?utf-8?B?UXRiZVlSQU1XVjZ5NWJPaWdqa2t5NWVJajRVMDNiWW9qcEUvbSt5SzczdUVl?=
- =?utf-8?B?aTlkUExzcm1BLzNwUnlBSjhZK21tRVJxTG5UOHFEdDlXWjRNNXNHVUxTeDJk?=
- =?utf-8?B?VkIyTG5IR3J6ZzNwcklLVFVGYktZb1F2TDdKZUZnVHhwUktHVm1vVndPSVRw?=
- =?utf-8?B?YUVid0c3SG9WTURFUEJLYmtHbzBxcUQyY2Zxd0kwWVRuYndidFAwQlhqWDNJ?=
- =?utf-8?B?dWdOMWxvV0J3NkJRMGtHMXdaSVY2Ym5oT1NzWUkrdTNKMXBHb3U1eEZVdC9h?=
- =?utf-8?B?ZGdvVlhzYkljRzh5ME5nMmEybEhUc2FFcUM1OVBiKzQrTnB4WTUrWUJMZS9J?=
- =?utf-8?B?aytSWThhQ3RXMHRSSjNSQ0Q4RDFsY3Vha0ROWmtUVTh3TFBqLy9CMVZLTHgz?=
- =?utf-8?B?dXBWcW9kTHYvT1k4eVREMjRYSy9GVSszZm9BdUJFWTgvU3czMmZ5OEI4Wisr?=
- =?utf-8?B?ZDNvUFpTdzAyc2VWRkQwRUZZRmxtWnlJS05YRTBsOVJtcDZCMGRJZjVGeExI?=
- =?utf-8?B?eFJQQVdxUml2enE2QzFaVlFlNUFudVNObytwTitmMnhEQVZPVXdCVm9zblM1?=
- =?utf-8?B?MWpTVFM4N3FNVTArSkNCN1NTV2FLUEdjZEZ2QzFidDBmd2xXazUzSWxsM3BV?=
- =?utf-8?B?emY1TWV0b3o0MWJXbVRKQ1lRQ2E1cXlod084eFZOWDBFZm1zV0dySnRqdEpC?=
- =?utf-8?B?L2NaTTNDWERtRVVjN2xGcjh2ejlGSER3eCt5cWxIVmJLM3o4T3lkUThRVElr?=
- =?utf-8?B?SDJJY2hXTEhqRE5OZVRpd1p1bk9pcVMzYXdtWGRINHNLK21JU2tJcHoxNmtu?=
- =?utf-8?B?alJsdmFFZkVKMGQrL2UxdUNJWVdna1ovaVNZMEhwTFB3bDljUC80SkpseEdL?=
- =?utf-8?B?TUU2N2RKU2gwUkdFbm9ISEhLRlNqZUhBMzdZNGtkZHpqZlQvTXVFZXFqVkcz?=
- =?utf-8?B?N2tRQ3hPWCtyRjdtaG9mNnVnSzc1TitwUjY5WlVSOUhxbXRrMXZ0TWh4Tzd5?=
- =?utf-8?Q?Pra7bQNJx0Jw6nAoHiMuh1+Eig2M6g=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?NWxTNEgrSk81R1VLS25SVjAzRlZXK2w1NEI1WE9FMFViM0FUTGFhTzZnZ1pk?=
- =?utf-8?B?R0NQNkRWOGJCL0JxUEEvMFQvNDlLSERrN0sxNTl2T09sV2VoV3lsOXNmMUg4?=
- =?utf-8?B?WGQvL3AyWGlLS0xQSHBPckZTc0x2dXhielU2RTZTVWpWRjAzc2o2cUdPKzZv?=
- =?utf-8?B?eEFuV002L1NsSWZvaDA2eVRsd28wU3Y3Z3BmdjFJWnIyYmZRSWh0SzJMOFlM?=
- =?utf-8?B?eHkzTVVDUGxZQVpuQTF3SXJVbDlnS25MNU54amNpT29CajF0VHhNd1p0dXlI?=
- =?utf-8?B?anBLcTV1cVcyWlR2dzNtY2JvVnNSVGdVWWFhdkVSTUdZK3VUNEZNWGdiZFRL?=
- =?utf-8?B?SWlxTnZoQ3NjVTFLOVFpYzVGYlpIdnhoTHljTUdFMlFvd2lPa05paTUycUVB?=
- =?utf-8?B?NzA1b2tTSzVsS2NpSGpFT0VLV3VtbFBIQ0d5bG5GZnM4dTJ5Sm9jdnZTSm8x?=
- =?utf-8?B?Z3cvTndCRGJJSkdWVVorM2l4Wk96VnBDL3R4YmVCZGQvYVV6Yk9TckdiMHJH?=
- =?utf-8?B?NFJHSVhJekdidENPNkxIWTAxTUx6WCtwak5INlYxVm1qMk53UnFKeTBld0Nz?=
- =?utf-8?B?T3RFbnBGWDM2L0pUK1JQOWRsYXFpSmR2NTF1akNXWC9lOHlsalo4L1hhbWpK?=
- =?utf-8?B?cERDNDdqeU43d0xQSFJFQkVETmxxNlFsYjdqSU9Oc3UwOGVSNyt3d2VpMXFD?=
- =?utf-8?B?WHMzdFFvaE5ReDk0TmFpcGN4RjBtVDM0K0RrcWZZSldOYU5FZkRJalI0NGEv?=
- =?utf-8?B?ZlFOVE03OHpNekpFUFBCRFlLejVCK3BITytxM1Jka1V4VzVTckhBWnc5N3lv?=
- =?utf-8?B?eDdGNGxnTEFWQ3pLZEpUR1N6bVVOdEcwWm1ScXNET3Z4TUZoZHZYWi8vMlF3?=
- =?utf-8?B?blRXRkJSSW42c0NCRE9Mb2xUWHgyWHM4UjZtK0hZQklyL0wxb2R0VS9NQ1ZZ?=
- =?utf-8?B?SVJkZXZDZ0MyUHhtV2E0V284WXA0WVBBOWdPOU1BZys1cXNrNHVLRmNuMW9w?=
- =?utf-8?B?Q2prUTlEdG13N0tQL0ZNeFBkaklSYjBSeU1ObjBCbTczUzN4ZFBDajR5Z2lK?=
- =?utf-8?B?ZGVvWm9NWVlkWVBTTlBvYUtFend1N0ZXb1FSUEd6WUh3QlZqOTVLbDNiWWFM?=
- =?utf-8?B?UWhDcmpqc1RYbzA1N3hsbkU1SUpzeTE0SzZSbmdmaEErd2VVT05reWZuV3lI?=
- =?utf-8?B?QVYybnVYd2orWlRmRGx6RDdqTnBnVG80c1F6NW5jYmJ6dTRma3RQYWdsUXpr?=
- =?utf-8?B?dy9QcUtGK25ieXlvSFNtMVFXcFlvWDRFNWRDbER1OUNRS1ozNkJyMFBMbDVY?=
- =?utf-8?B?M2lwUjN2TDFuT1UyaWxhc0drUmZ0UStiMURtMnMzNTduSXFyVGJ5RGQxclN5?=
- =?utf-8?B?b2x2SkpRYlNXbzhiK3FyWFRIUGd2eGxNU1dGV3JMZy9nalRnL3NWSFZ6NHJQ?=
- =?utf-8?B?ZngyeW03cmU2RjdwbTZTSHBtY2hYL0hCbFNIM3FSa0FYQ3YrdEUxZ2RIUERF?=
- =?utf-8?B?WTdsVDMwMzh4dVJ0cVFLYitsVDhYUUhzQmdzdkZBRkFKN2t0NHdLYU11UlJZ?=
- =?utf-8?B?dVdybWNFbjZ6OXBYYTZZRlg4dmRiMHNMTHIyTXVXRlpscmRXaElDUHI5WU9n?=
- =?utf-8?B?R0RFd0EzSHJFU1lqQjIyNzUyYSs3bkxQY2hlMFd6bEFyTVhvWWNGdXgwSnVQ?=
- =?utf-8?B?Q290dHIwZnVXNDdJcGpmMEwva2hLNk5xWlZRWXlYMm9mRHlQTzg5Mlo0R3U5?=
- =?utf-8?B?ZnJVcndTdE94UWIvUVkvUWdqd2hJaHUwYVF6U2lYRnhUbUx1WTJmNm5OV3dS?=
- =?utf-8?B?ZlowL21aaTg3c2ZXRnN1VDBnUXhhUzQ3VFRGbVFNVkJzZGNac052cmN5cGJx?=
- =?utf-8?B?anhybmV5U2xVTXgvVjZtdHVVMXI5S1dKRmMvVC9BWFBVaHJ0WGRQNWgwcWtp?=
- =?utf-8?B?bFQzNTAxeXh1bzhNOUNhQzAyMzByVkl3QkhPQ2hWSzU4ZmtpVjV1Ulh2ZlJr?=
- =?utf-8?B?MkExMVY0amE0TWpVd1k1Nkg5T0psdXJ1YmFQQlEwMTBvYjZ5ZzZqT1pHd1Y2?=
- =?utf-8?B?bVUxYk9Yd1ArZDIrb204TnljcFFOMmpjSmZST1IzcXBPbDA4cHFEVW9PSFlq?=
- =?utf-8?Q?AIEfKeXkD7DZyePh6ZNc9f5iw?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21659e8d-ebce-4c83-886e-08ddeb92aee1
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2025 09:08:59.0385
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xXr9I936u0pYlPmDOjLOxUTFGpgmwj2kFdppvYIasn/8kNg0SplZ8/yeBcZ553l1n7ga1dV5TS6ERztVM46ILw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7455
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b91c72b6-cbe0-4767-8d65-05f804733a55@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-IT6263 supports HDMI vendor specific infoframe.  The infoframe header
-and payload are configurable via NULL packet registers.  The infoframe
-is enabled and disabled via PKT_NULL_CTRL register.  Add the HDMI vendor
-specific infoframe support.
+On 09/03, Dave Hansen wrote:
+>
+> On 9/3/25 06:42, Oleg Nesterov wrote:
+> >  arch/x86/include/asm/shstk.h | 4 ++--
+> >  arch/x86/kernel/process.c    | 2 +-
+> >  arch/x86/kernel/shstk.c      | 9 +++++++--
+> >  3 files changed, 10 insertions(+), 5 deletions(-)
+>
+> That's not a great diffstat for a "cleanup". It's also not fixing any
+> end-user-visible issues as far as I can tell.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/ite-it6263.c | 72 ++++++++++++++++++++++++++-----------
- 1 file changed, 52 insertions(+), 20 deletions(-)
+Well, from the changelog:
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-index cf813672b4ffb8ab5c524c6414ee7b414cebc018..0cc5e44b325afe177e0da41cdce753407cec51e7 100644
---- a/drivers/gpu/drm/bridge/ite-it6263.c
-+++ b/drivers/gpu/drm/bridge/ite-it6263.c
-@@ -146,6 +146,7 @@
- #define  HDMI_COLOR_DEPTH_24		FIELD_PREP(HDMI_COLOR_DEPTH, 4)
- 
- #define HDMI_REG_PKT_GENERAL_CTRL	0xc6
-+#define HDMI_REG_PKT_NULL_CTRL		0xc9
- #define HDMI_REG_AVI_INFOFRM_CTRL	0xcd
- #define  ENABLE_PKT			BIT(0)
- #define  REPEAT_PKT			BIT(1)
-@@ -154,6 +155,14 @@
-  * 3) HDMI register bank1: 0x130 ~ 0x1ff (HDMI packet registers)
-  */
- 
-+/* NULL packet registers */
-+/* Header Byte(HB): n = 0 ~ 2 */
-+#define HDMI_REG_PKT_HB(n)		(0x138 + (n))
-+/* Packet Byte(PB): n = 0 ~ 27(HDMI_MAX_INFOFRAME_SIZE), n = 0 for checksum */
-+#define HDMI_REG_PKT_PB(n)		(0x13b + (n))
-+#define HDMI_PKT_HB_PB_CHUNK_SIZE	\
-+	(HDMI_REG_PKT_PB(HDMI_MAX_INFOFRAME_SIZE) - HDMI_REG_PKT_HB(0) + 1)
-+
- /* AVI packet registers */
- #define HDMI_REG_AVI_DB1		0x158
- #define HDMI_REG_AVI_DB2		0x159
-@@ -224,7 +233,9 @@ static bool it6263_hdmi_writeable_reg(struct device *dev, unsigned int reg)
- 	case HDMI_REG_HDMI_MODE:
- 	case HDMI_REG_GCP:
- 	case HDMI_REG_PKT_GENERAL_CTRL:
-+	case HDMI_REG_PKT_NULL_CTRL:
- 	case HDMI_REG_AVI_INFOFRM_CTRL:
-+	case HDMI_REG_PKT_HB(0) ... HDMI_REG_PKT_PB(HDMI_MAX_INFOFRAME_SIZE):
- 	case HDMI_REG_AVI_DB1:
- 	case HDMI_REG_AVI_DB2:
- 	case HDMI_REG_AVI_DB3:
-@@ -755,10 +766,16 @@ static int it6263_hdmi_clear_infoframe(struct drm_bridge *bridge,
- {
- 	struct it6263 *it = bridge_to_it6263(bridge);
- 
--	if (type == HDMI_INFOFRAME_TYPE_AVI)
-+	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AVI:
- 		regmap_write(it->hdmi_regmap, HDMI_REG_AVI_INFOFRM_CTRL, 0);
--	else
-+		break;
-+	case HDMI_INFOFRAME_TYPE_VENDOR:
-+		regmap_write(it->hdmi_regmap, HDMI_REG_PKT_NULL_CTRL, 0);
-+		break;
-+	default:
- 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-+	}
- 
- 	return 0;
- }
-@@ -770,27 +787,42 @@ static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
- 	struct it6263 *it = bridge_to_it6263(bridge);
- 	struct regmap *regmap = it->hdmi_regmap;
- 
--	if (type != HDMI_INFOFRAME_TYPE_AVI) {
-+	switch (type) {
-+	case HDMI_INFOFRAME_TYPE_AVI:
-+		/* write the first AVI infoframe data byte chunk(DB1-DB5) */
-+		regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
-+				  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
-+				  HDMI_AVI_DB_CHUNK1_SIZE);
-+
-+		/* write the second AVI infoframe data byte chunk(DB6-DB13) */
-+		regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
-+				  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
-+					  HDMI_AVI_DB_CHUNK1_SIZE],
-+				  HDMI_AVI_DB_CHUNK2_SIZE);
-+
-+		/* write checksum */
-+		regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
-+
-+		regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL,
-+			     ENABLE_PKT | REPEAT_PKT);
-+		break;
-+	case HDMI_INFOFRAME_TYPE_VENDOR:
-+		const char zero_bulk[HDMI_PKT_HB_PB_CHUNK_SIZE] = { };
-+
-+		/* clear NULL packet registers due to undefined default value */
-+		regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0),
-+				  zero_bulk, sizeof(zero_bulk));
-+
-+		/* write header and payload */
-+		regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0), buffer, len);
-+
-+		regmap_write(regmap, HDMI_REG_PKT_NULL_CTRL,
-+			     ENABLE_PKT | REPEAT_PKT);
-+		break;
-+	default:
- 		dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
--		return 0;
- 	}
- 
--	/* write the first AVI infoframe data byte chunk(DB1-DB5) */
--	regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
--			  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
--			  HDMI_AVI_DB_CHUNK1_SIZE);
--
--	/* write the second AVI infoframe data byte chunk(DB6-DB13) */
--	regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
--			  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
--				  HDMI_AVI_DB_CHUNK1_SIZE],
--			  HDMI_AVI_DB_CHUNK2_SIZE);
--
--	/* write checksum */
--	regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
--
--	regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL, ENABLE_PKT | REPEAT_PKT);
--
- 	return 0;
- }
- 
+	Another problem is that the current logic looks simply wrong. In this case
+	fpu_clone() won't call update_fpu_shstk(), so xstate->user_ssp won't be
+	initialized.
 
----
-base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-change-id: 20250904-it6263-vendor-specific-infoframe-aa40214f41f7
+	But since the copy_thread() paths do not clear the ARCH_SHSTK_SHSTK flag
+	copied by arch_dup_task_struct(), ssp_active(PF_USER_WORKER) will return
+	true in ssp_get(), so ssp_get() will try to report cetregs->user_ssp which
+	can't be correct.
 
-Best regards,
--- 
-Liu Ying <victor.liu@nxp.com>
+this doesn't look right to me.
+
+> > -	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
+> > +	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->fn, args->stack_size);
+>
+> Passing 'args->fn' as a 'bool' argument is a bit cruel, don't you think?
+
+Yes, and
+
+> >  unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long clone_flags,
+> > -				       unsigned long stack_size)
+> > +				       bool minimal, unsigned long stack_size)
+> 'minimal' is an awfully meaningless name for this.
+
+yes.
+
+But please note that fpu_clone() has the same "bool minimal" argument passed
+as "args->fn". I even mentioned this in the changelog, this patch tries to
+mimic the existing code. But of course I can change it. Can you suggest a
+better name?
+
+Oleg.
 
 
