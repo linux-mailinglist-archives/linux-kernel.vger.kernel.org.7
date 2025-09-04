@@ -1,65 +1,67 @@
-Return-Path: <linux-kernel+bounces-799710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7805B42F74
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:12:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0CDB42F80
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 04:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1F41BC816C
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:12:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163B17A2C90
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 02:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56B1226CFE;
-	Thu,  4 Sep 2025 02:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2744E1EEA54;
+	Thu,  4 Sep 2025 02:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oAbIqkcw"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19641F869E;
-	Thu,  4 Sep 2025 02:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="jej/3PHh"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08841E3DF2;
+	Thu,  4 Sep 2025 02:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756951834; cv=none; b=tktK3rEi5XAWRUpdzV4iyzU420Mvi52mNd0Usk1xP8HmdNpDtrKwC5/a27rMnoqShytA7LTidrStGBKoxua9ja2ICN+gcaiCpyDJBp+n30OL6a+RA5NE3i0jvj5S6Q1OJO8hEDbonACyIp9B+OrXvljWo1YjoGGCIHCBwLEK5hI=
+	t=1756951929; cv=none; b=SR7ZT1kAftgjmrPqEKWvDWAi6RhTPmXTvCgahRWbishhQQYuFpGj50Fy7fS7XXRPpJo2LN1goWnmI8i4hd1KIH/RZWU1z4++Y4NwokvfzDQ3luKK4ESuohJV7uWjhPnMCL72AR7yLIIQBZJuw1IYw/qSAdeXLiF9DrvmiOF3/Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756951834; c=relaxed/simple;
-	bh=IjlZPYXTBtYlYrypJ72vUJfsaObcMKI3XybtAbZMtgc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HWNG6lplbtOCT89NpDWmYqo4mJAQIi/qJEM5CIRcGM/AyIoz5233dUmvHBZzOjBMVvnu0oZG++hqNSIYpH5brj6tQXc3NOMXPt8uE9cbxPvI9qov17JovXGKsYTb40JruaI9jRcIyENU6uvC7TtAGjWK3MKMWOycYHAM6jlVsys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oAbIqkcw; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B21F02119CBB;
-	Wed,  3 Sep 2025 19:10:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B21F02119CBB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756951832;
-	bh=No7MDoBUN5vu1bWJS9xH97RmItizDW8HhObvH3FVga0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oAbIqkcwLmjaSkRTT4H1arFfJHvEoavjSs4m8vAjn1tfJgMcp6Rr384IRtaucw13V
-	 jAUfhJC6/l3EE3S4BALUWd3H1kesaC5MAoTKUgWy5OSFRydN6Bq/I4eyXEL4M3pYMN
-	 74HPlzlrNLjZFkOvwck3koG+ZeqrlJG6+SxWhL1k=
-From: Mukesh Rathor <mrathor@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de
-Subject: [PATCH v0 6/6] Hyper-V: Enable build of hypervisor crash collection files
-Date: Wed,  3 Sep 2025 19:10:17 -0700
-Message-Id: <20250904021017.1628993-7-mrathor@linux.microsoft.com>
-X-Mailer: git-send-email 2.36.1.vfs.0.0
-In-Reply-To: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
-References: <20250904021017.1628993-1-mrathor@linux.microsoft.com>
+	s=arc-20240116; t=1756951929; c=relaxed/simple;
+	bh=elo34a7kXzxnuVCXuHUnNsz4xvsXFb4e0AwTQYIPjqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ukj39bTOE4oDQD0QU10tWr1rsqr2xrgPROUaQgtPzmxEJJKAjQ5rCGOYsKK2vPYX2X4XmTu2VDzURE9ps2tC/oVVKh+u1fewjiRVmPGQyf437Cyb0QywOX7IvfejMehH3/DBk1MHBUXQ5PGoIjrDGqsuv1tUdGR1ED8dViRShaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=jej/3PHh; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5842BSx043060713, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1756951889; bh=4NjR6lrJbCSVIfVV84b0NexDgbOS+5WtG1RVDA5wIj0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=jej/3PHhWcaY2tKDD5pMvjnIP7N0IH8yDuocuclZL9VxkO9tJeENHFx3OdnVRAY+Z
+	 eIg4i+HUVozvaKXbq7kO0rmtesTnyP7jmhjGBIF311N/VxPhrCj7/KJnPnZxueStsK
+	 VgIZQmbl4B24rz1P4yEJm/Xu9rf88Qpxk+XpjR95zK2KEbq2NxfCSsUgvilNgIDkk1
+	 x0Tm8blS2Kn0uVJumxkPC9pYGyEMe1tCQE5lJFHxMvEnPl9lBcFF5WDQ+nIrQ/kPP0
+	 /YDvnbl2QWsm0hFbFlOOqMI3AYipgV+REn2r4JbThzBQoIxoed0JiSPio01p4LOKcv
+	 /+fXoYsQOPFgw==
+Received: from RS-EX-MBS2.realsil.com.cn ([172.29.17.102])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5842BSx043060713
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 4 Sep 2025 10:11:29 +0800
+Received: from RS-EX-MBS1.realsil.com.cn (172.29.17.101) by
+ RS-EX-MBS2.realsil.com.cn (172.29.17.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.33; Thu, 4 Sep 2025 10:11:28 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS1.realsil.com.cn
+ (172.29.17.101) with Microsoft SMTP Server id 15.2.1544.33 via Frontend
+ Transport; Thu, 4 Sep 2025 10:11:28 +0800
+From: ChunHao Lin <hau@realtek.com>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        ChunHao Lin
+	<hau@realtek.com>
+Subject: [PATCH net-next] r8169: set EEE speed down ratio to 1
+Date: Thu, 4 Sep 2025 10:11:23 +0800
+Message-ID: <20250904021123.5734-1-hau@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,66 +69,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-This final commit enables build of the new files introduced in the
-earlier commits and adds call to do the setup during boot.
+EEE speed down ratio (mac ocp 0xe056[7:4]) is used to control EEE speed down
+rate. The larger this value is, the more power can save. But it actually save
+less power then expected, but will impact compatibility. So set it to 1 (mac
+ocp 0xe056[7:4] = 0) to improve compatibility.
 
-Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+Signed-off-by: ChunHao Lin <hau@realtek.com>
 ---
- arch/x86/hyperv/Makefile       | 6 ++++++
- arch/x86/hyperv/hv_init.c      | 2 ++
- include/asm-generic/mshyperv.h | 9 +++++++++
- 3 files changed, 17 insertions(+)
+ drivers/net/ethernet/realtek/r8169_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
-index d55f494f471d..6f5d97cddd80 100644
---- a/arch/x86/hyperv/Makefile
-+++ b/arch/x86/hyperv/Makefile
-@@ -5,4 +5,10 @@ obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 9c601f271c02..e5427dfce268 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -3409,7 +3409,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+ 		r8168_mac_ocp_modify(tp, 0xd412, 0x0fff, sw_cnt_1ms_ini);
+ 	}
  
- ifdef CONFIG_X86_64
- obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+= hv_spinlock.o
-+
-+ ifdef CONFIG_MSHV_ROOT
-+  CFLAGS_REMOVE_hv_trampoline.o += -pg
-+  CFLAGS_hv_trampoline.o        += -fno-stack-protector
-+  obj-$(CONFIG_CRASH_DUMP)      += hv_crash.o hv_trampoline.o
-+ endif
- endif
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 6919f1af2e51..e3a4650b9ec7 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -513,6 +513,8 @@ void __init hyperv_init(void)
+-	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0070);
++	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+ 	r8168_mac_ocp_modify(tp, 0xe052, 0x6000, 0x8008);
+ 	r8168_mac_ocp_modify(tp, 0xe0d6, 0x01ff, 0x017f);
+ 	r8168_mac_ocp_modify(tp, 0xd420, 0x0fff, 0x047f);
+@@ -3514,7 +3514,7 @@ static void rtl_hw_start_8117(struct rtl8169_private *tp)
+ 		r8168_mac_ocp_modify(tp, 0xd412, 0x0fff, sw_cnt_1ms_ini);
+ 	}
  
- 		/* mark ram reserved for hypervisor as owned by hypervisor */
- 		hv_mark_resources();
-+
-+		hv_root_crash_init();
- 	} else {
- 		hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
- 		wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index 1d2ad1304ad4..57cc3e0cac90 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -369,6 +369,15 @@ int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
- int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
- int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
- 
-+#if CONFIG_CRASH_DUMP
-+void hv_root_crash_init(void);
-+void hv_crash_asm32(void);
-+void hv_crash_asm64_lbl(void);
-+void hv_crash_asm32_end(void);
-+#else   /* CONFIG_CRASH_DUMP */
-+static inline void hv_root_crash_init(void) {}
-+#endif  /* CONFIG_CRASH_DUMP */
-+
- #else /* CONFIG_MSHV_ROOT */
- static inline bool hv_root_partition(void) { return false; }
- static inline bool hv_l1vh_partition(void) { return false; }
+-	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0070);
++	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+ 	r8168_mac_ocp_write(tp, 0xea80, 0x0003);
+ 	r8168_mac_ocp_modify(tp, 0xe052, 0x0000, 0x0009);
+ 	r8168_mac_ocp_modify(tp, 0xd420, 0x0fff, 0x047f);
+@@ -3715,7 +3715,7 @@ static void rtl_hw_start_8125_common(struct rtl8169_private *tp)
+ 	r8168_mac_ocp_modify(tp, 0xc0b4, 0x0000, 0x000c);
+ 	r8168_mac_ocp_modify(tp, 0xeb6a, 0x00ff, 0x0033);
+ 	r8168_mac_ocp_modify(tp, 0xeb50, 0x03e0, 0x0040);
+-	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0030);
++	r8168_mac_ocp_modify(tp, 0xe056, 0x00f0, 0x0000);
+ 	r8168_mac_ocp_modify(tp, 0xe040, 0x1000, 0x0000);
+ 	r8168_mac_ocp_modify(tp, 0xea1c, 0x0003, 0x0001);
+ 	if (tp->mac_version == RTL_GIGA_MAC_VER_70 ||
 -- 
-2.36.1.vfs.0.0
+2.43.0
 
 
