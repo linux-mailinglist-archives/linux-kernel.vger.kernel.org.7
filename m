@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-800836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7CBB43CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0766B43CCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D06464E2656
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB55585498
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 13:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF712301022;
-	Thu,  4 Sep 2025 13:14:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136622EA15D
-	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 13:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588F430149F;
+	Thu,  4 Sep 2025 13:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kc1cN+MP"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5828C3002D8;
+	Thu,  4 Sep 2025 13:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756991669; cv=none; b=g4l2tvbrkvGl7LMHxe0+mnoNqSh2pjn4TwxWIWZ45hh+QTUD5UhAhmJ6JuqLT9SUDt3G+NnUSaePInlJCa7ZWX/GWyvUXlfhYJfUvX6aoc1QUsE3vbtLY2LuGs8dEWZ9PdR3/CKdL/oOtv7bBjxtoIxtNrgFBH2lWkhZx+wYajg=
+	t=1756991677; cv=none; b=cxgJqdXlndqtUXNRQMajqcjDv3i3U0C1vB3tzy5icHkE6NT5wwkQoyAlCnNHVDzHGh6Dwtg0YQ1rHO2BMLnpeAzyjlfOuU5qN7ho3sw2dJvQ0QDTQ0+ZGAgWky/ZnA6XMSII+6fugdKnHwiOGs/wE49vfI26cl+MdaL9QXaqjM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756991669; c=relaxed/simple;
-	bh=jtwr23eYTqBK4QRMx4XXwEq5b02C4wefmqSPLrLOLAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X1anHWP15D41r+Cj5q/WALyi1tdSxaVDb4PfUQfexzOxguYZTbVkyWkdly7EN/ZEVvs161HSDxuhItddF4/PdnYKEqyFVsuQQGztvnlB6wFUKbRgELJwdV6+wP8NxCZwJpEDx2zNCoBUA6PjZc3A5I5XcE5m6A+qXKn8XjhWh8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CC1C1756;
-	Thu,  4 Sep 2025 06:14:19 -0700 (PDT)
-Received: from [10.1.37.179] (XHFQ2J9959.cambridge.arm.com [10.1.37.179])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E55D3F6A8;
-	Thu,  4 Sep 2025 06:14:25 -0700 (PDT)
-Message-ID: <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
-Date: Thu, 4 Sep 2025 14:14:24 +0100
+	s=arc-20240116; t=1756991677; c=relaxed/simple;
+	bh=dEe3oGeQMtPB8wuvNB8FBuJzRWiGuoUdh066kutEK9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktnGx/XCzJdpC84dj+k0FSjGUtV4mCniktwaZli2ge0e0+BKk8mAHdhItPW27ecdtkNcgBgadv6UCoinSmDoPKV5RMlZojuAMTpUKfbC7yJiM/9Bmt5mFibzXagll/6DDeleXfx6eqliJYkXIba6QARwwVNv9FRg37qKR8XV8H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kc1cN+MP; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d60528734so9010627b3.2;
+        Thu, 04 Sep 2025 06:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756991675; x=1757596475; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1hNBrk05MCGZgtGPl87X/mVFXWaCSlKuwxFY/ixXTs=;
+        b=Kc1cN+MPsECYuBqqiz+XkzHcsAfajjM0Gc5nD9ypN/IESj1J9GuLpROzl7izJdWkVx
+         4o2tRHEeGR6eEBYJKCHzFNatU0dWdfGwPr9xBuTOQFDLH2SXu9EXN0TWRwvb+2S1Oc+X
+         UFEJJQaoT7DWyAuFDFMq7+tcwfk5mzjJlNl0CvwPsUvxns21bhQSGzTOS6HealAylnsH
+         cJnU7syFgIQ4TyjfCg23bOGGmQby5UZSVk/n6PXu6foU2aw2l9VxOaNa4kaHTH+9nsuJ
+         lPEQdgBHmMnxxpsnhgPu04KXumfDQugLZjVXPz9PkcRneRhm4qhWbBURZxqp3SddI4am
+         6wGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756991675; x=1757596475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q1hNBrk05MCGZgtGPl87X/mVFXWaCSlKuwxFY/ixXTs=;
+        b=jfstJqUXMryJtxU0KPGWm80jXMxDD+5Bu+85fF7ADOkpO6dole0M+1qOkryGMUpU0W
+         KnMoe0ObuyJECz8k6zZX/Bhbkz4yqhVo/R/eDxmZoBAyNcEIFJWyJo2WDnzCeC7R/r2i
+         gBFbP7R+DSD4D0592/itmG+aNt6S6GU2byVlzoVu8y4tFtX6v67/mPoZ09xw05YKfuTY
+         vVumrC/TrB2Z66gjs5ehRhf8IeBel7YiLUJaC/HLbfjm0LLixycFLd8rsMfFkhD3Q8qm
+         FfsOnhYO4CaEsz+xvF6/XRB80huj8VfVZ4yyKlJhc5wcwR6nChWc+WUzesKzwn6ziKtJ
+         v4Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3SwIXV1/WWCRQORTcd3NCkjdqPzEArMRuRzYNSWpgDrkDBe/M+79CmC0TOA4s0QlwvlYAn6kP4SjfRnM=@vger.kernel.org, AJvYcCVLOl8CjGWV6DGnrW5aNTmDH4yI4XHDtpNTP6uqsWEfo87wKxGPJeuA8yIvOQ+Gqb182uQVtxFbGtdRwQ==@vger.kernel.org, AJvYcCVlxK038NgnVR/IONfTRO0gW/11gzJIcPEsf3SdpRpKOuliffGu66KgYDrpxKzxr3wdB5CY/snb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ+VsMFP5cIvR0X4HPPxXEMg1cuUSIVnExQedYepjvtZQmn9Y/
+	KjiqBGp7bFBszahRBGAP+xU+aQNRlHQuia61NqjSOdZpLB5Znugfv+pE6BLHYr3x
+X-Gm-Gg: ASbGncvUFUnlDN74QSfnb4f3DhVMOvUAkFVAPpeHVThBkLVqoCOTIWQ+caqLNY/3wK3
+	nc6bUAxMdGlPpLMChw46UbutO9rJSs24N5z8EFKC+BPNjaJCQrjeFas0f7QAovmkQJJNU5tUC/h
+	wnacQAtirNT6yXLMyxweKnC30NEwozkonXNh4krlrqdZcz0GljaTwREKKYsTAeTaavE1CaV8qdm
+	eMwUBsmHjtsR6xz/8HGWMsVwtaMQ1O1ph+Vjvxpz0dZHflk5xX+Lk8Jn9TyealnQBQCaAnY4Sig
+	yVh9uaRm8ULRMsPyMMg2/Pecf+qGDCwfCpKgJ0HQuKukW6NM+Cp+fRrjy1pG1u4jbU/Ob0eVOcw
+	ViAFW0rVIjh7dB+WEmBYoscnaq+PUvCmmi/9L+HcmjQ==
+X-Google-Smtp-Source: AGHT+IFNskK3EFi2xtyUCVxgOnvSd1XZWTDJnBX3UGI8lrc9DMhpnA8IpUMHa4JoiklpSdQDgNd34g==
+X-Received: by 2002:a05:690c:4513:b0:721:6a43:c960 with SMTP id 00721157ae682-722763cfc0amr199134677b3.21.1756991675072;
+        Thu, 04 Sep 2025 06:14:35 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a82d6ad1sm21418977b3.5.2025.09.04.06.14.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 06:14:34 -0700 (PDT)
+Date: Thu, 4 Sep 2025 06:14:31 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Mark Bloch <mbloch@nvidia.com>, Paolo Abeni <pabeni@redhat.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: Re: [PATCH net-next V2 1/3] ptp: Add ioctl commands to expose raw
+ cycle counter values
+Message-ID: <aLmQt838Yt-Vu_bL@hoboy.vegasvil.org>
+References: <1755008228-88881-1-git-send-email-tariqt@nvidia.com>
+ <1755008228-88881-2-git-send-email-tariqt@nvidia.com>
+ <ca8b550b-a284-4afc-9a50-09e42b86c774@redhat.com>
+ <1384ef6c-4c20-49fb-9a9f-1ee8b8ce012a@nvidia.com>
+ <aLAouocTPQJezuzq@hoboy.vegasvil.org>
+ <3f44187b-ce41-47e8-b8b1-1b0435beb779@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
- <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
- <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f44187b-ce41-47e8-b8b1-1b0435beb779@nvidia.com>
 
-On 03/09/2025 01:50, Yang Shi wrote:
->>>>
->>>>
->>>> I am wondering whether we can just have a warn_on_once or something for the
->>>> case
->>>> when we fail to allocate a pagetable page. Or, Ryan had
->>>> suggested in an off-the-list conversation that we can maintain a cache of PTE
->>>> tables for every PMD block mapping, which will give us
->>>> the same memory consumption as we do today, but not sure if this is worth it.
->>>> x86 can already handle splitting but due to the callchains
->>>> I have described above, it has the same problem, and the code has been working
->>>> for years :)
->>> I think it's preferable to avoid having to keep a cache of pgtable memory if we
->>> can...
->>
->> Yes, I agree. We simply don't know how many pages we need to cache, and it
->> still can't guarantee 100% allocation success.
+On Thu, Sep 04, 2025 at 03:09:23PM +0300, Carolina Jubran wrote:
 > 
-> This is wrong... We can know how many pages will be needed for splitting linear
-> mapping to PTEs for the worst case once linear mapping is finalized. But it may
-> require a few hundred megabytes memory to guarantee allocation success. I don't
-> think it is worth for such rare corner case.
+> On 28/08/2025 13:00, Richard Cochran wrote:
+> > On Mon, Aug 25, 2025 at 08:52:52PM +0300, Mark Bloch wrote:
+> > > 
+> > > On 19/08/2025 11:43, Paolo Abeni wrote:
+> > > > can we have a formal ack here?
 
-Indeed, we know exactly how much memory we need for pgtables to map the linear
-map by pte - that's exactly what we are doing today. So we _could_ keep a cache.
-We would still get the benefit of improved performance but we would lose the
-benefit of reduced memory.
-
-I think we need to solve the vm_reset_perms() problem somehow, before we can
-enable this.
+Looks good to me.
 
 Thanks,
-Ryan
-
-> 
-> Thanks,
-> Yang
-> 
->>
->> Thanks,
->> Yang
->>
->>>
->>> Thanks,
->>> Ryan
->>>
->>>
->>
-> 
-
+Richard
 
