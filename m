@@ -1,183 +1,200 @@
-Return-Path: <linux-kernel+bounces-800194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-800196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAFCB43471
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF87DB43474
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 09:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D893A61A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DBF9485ED0
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 07:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B292BD597;
-	Thu,  4 Sep 2025 07:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74C0289E17;
+	Thu,  4 Sep 2025 07:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=@siemens-energy.com header.b="XMlEx1oD"
-Received: from FR5P281CU006.outbound.protection.outlook.com (mail-germanywestcentralazon11012045.outbound.protection.outlook.com [40.107.149.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TsB5ZXm0"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708A82BD00C;
-	Thu,  4 Sep 2025 07:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.149.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756971865; cv=fail; b=VVq31TP5c/bWVvEL6CdKQxJmgltKosoIXpRJihNJAO6PPdEI+LMGeGquBrypp+qzTXmydHuHKYFwJ5X/KFqbSHv/4e95ZzC9minlAabZW4yAxiihZ1d+iJhWb+HiZ0+uraXouk9cOQyTEcAo7z2tqOZQ+UJPd06j5TOCHvSNsKo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756971865; c=relaxed/simple;
-	bh=HLERZlC7OlcysXJ4ySy2qnsPZ5Mxv+RS8309ML38PHU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sElx8dfzgC+JP7HxW0+Z24mKsTa2+eeTSoUuKbcZRPm8vTaWqW8hyWkrz0x47qBSkK2rwCvvY0pZZ7QtD96CHD2s7MsYVJM8eI1LfLJLyZrw3miI6DY3DnEvHwK1d3t8pqfH18SRz9KJVTS2rr7d7gdI/4vcNONCR9AFyp1RPxA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com; spf=pass smtp.mailfrom=siemens-energy.com; dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=@siemens-energy.com header.b=XMlEx1oD; arc=fail smtp.client-ip=40.107.149.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens-energy.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urNfKITAiYhBZ1QOnl4TVptl+HiGXysAvZTnDIWke6XPXm2Rs1cNr4yITHk/4BxnSZgCkWrvSJRTxHHMMeqIHp/x8rwWamGQIlTts3yZSBkEr4lMbAMHw4yU28cYyxCxIAwiQz83k0fKqlH3SBwxxN1VFFSBmC903LozDY54sfSiBoB9LEFkuDZ0UnhvRI1ahbacQPkcE0qYqktRMVSV9pyZUh2fW3Q4CMNccbB0M6RQITDGm7ERC43pTuaUNCLhvEiE89tRsZBMcmxihXcL9IKhfwch5Mq7Sb4rGAk1RValIegV9qHgrkn4OWMti90lQVoAP6mxfjSUyEYxMMtspg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yolseursy67wRvV4JvXBlDwuX693YUKZL2R+fJwhoio=;
- b=DGvHpmoc7zE6p9rGTUcnsCvxLA+VHTOGPaIRdiYyEYn+o3fPzen5xBkU8ia+u7YLND7k642hls3Hf/sf+2SBGQEgZdEm50C9g7tMrjSGqqz0TgfonCohEgOtioadF2A+OqCTxLEPIoUbiv41z5nfVHs6uTniuMLXzpXmjiGtYgxfiDNKmQF0ghOfNfQS8p+oEjZI0JFD6QgkUHAIRZrb3HN1TTzj/NxMBC9DpgR5CTSFPKfXz/Wv2NQMXYL54FnPYYpGF7En3fw/ujCDAXXdFvDT6mFP9QHs8lCndv1P3EDiy2iwBUGx4DDDqqk2tOy7QQ6CM2NctDuDXPUXkSfkbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens-energy.com; dmarc=pass action=none
- header.from=siemens-energy.com; dkim=pass header.d=siemens-energy.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens-energy.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yolseursy67wRvV4JvXBlDwuX693YUKZL2R+fJwhoio=;
- b=XMlEx1oDvBR1dwd4Tr4HsjDEPZ2WfN/edShNkOpJDGwwMFTIrHGFrb5NUJCji3eGbkh8o/e965JhjVScfD7rdXxC97QZt4cD8DjeLydrgaFHfUgrSHpqeDxMezx+YunWseQE4i6Ec54UJYw9ec4KKGdj1Jd9j0zcRl+o3ggL5TkXNpJKqsz/qr73x8yWyfCVYO3DMOtIce+fYE1+GIvnh51pIN0mPcHchDlSeTT31J6Hl370MPJvHcI5iSoEZt+iTpnl+M/bAWc1LCLDrDB/BED+QC9+0l/i7s3hsUC5GEp7yxCK37PE9VFH4SJjetVMA1hoPQtLefsxD0Z0wDK9rw==
-Received: from FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:91::10)
- by FR4P281MB3574.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:da::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Thu, 4 Sep
- 2025 07:44:19 +0000
-Received: from FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
- ([fe80::5233:e398:feb8:a20e]) by FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
- ([fe80::5233:e398:feb8:a20e%3]) with mapi id 15.20.9094.016; Thu, 4 Sep 2025
- 07:44:19 +0000
-From: "schuster.simon@siemens-energy.com" <schuster.simon@siemens-energy.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christian Brauner
-	<brauner@kernel.org>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Thread-Topic: linux-next: build failure after merge of the vfs-brauner tree
-Thread-Index: AQHcHTv7s3oAgC4CI0WMdfN5mjICbbSCpPYA
-Date: Thu, 4 Sep 2025 07:44:19 +0000
-Message-ID:
- <FR2P281MB154466417264801491E8001EB500A@FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM>
-References: <20250904113334.18822d43@canb.auug.org.au>
-In-Reply-To: <20250904113334.18822d43@canb.auug.org.au>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_ActionId=20477559-f3c2-4db6-b8b5-61c0b12da02b;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_ContentBits=0;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Enabled=true;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Method=Standard;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Name=restricted-default;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_SetDate=2025-09-04T07:18:37Z;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_SiteId=254ba93e-1f6f-48f3-90e6-e2766664b477;MSIP_Label_36791f77-3d39-4d72-9277-ac879ec799ed_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens-energy.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: FR2P281MB1544:EE_|FR4P281MB3574:EE_
-x-ms-office365-filtering-correlation-id: 4c6d2c0f-6288-4203-a6b2-08ddeb86db45
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?amROKX9SkIeGNivYCg5i3Tki+kpkq1v0k3saOsCTTsPF0rahSxELf23NAJTb?=
- =?us-ascii?Q?4GfQE6XpEvkML29W+g1WfpBfPXc55uvAf3/b0Ngo6HIrY/Zl2pOT8RYEm5aF?=
- =?us-ascii?Q?xeG8QW1P2Kbd1DM3BnpJKzs7KW78JRlGPBf3MnacAS0VCY7sRCV5KVsLxFYO?=
- =?us-ascii?Q?ICFTS8kiAx/3Y6wDsrhcxS6S1KmdI8o1bFIQZ8neu8CYuKG7k1hDKiOVrmCq?=
- =?us-ascii?Q?PktzAuC9NPYaoyJsFAzBCnlOJckUOV6mbI+Z6IsNSbqd1g1+uR2MjD2DQtSN?=
- =?us-ascii?Q?j8RThLuByuQelLZjj4ixn+0y4988+2+uSuOyC4mXmy1oiKpOMVgIZVNGmlwY?=
- =?us-ascii?Q?6TydmIs9ruh2ydxzjiOrKs1Brq66g0EE+Z2YWl+gALpI69pihl3kw9+AB7Cj?=
- =?us-ascii?Q?JJKrszxxAW+HsuyjKjyYO0ZimUpu+I2YXwKIrhkNOntUBj2leScxV6sZtaur?=
- =?us-ascii?Q?lSuoXfZxJmiOcXU9PY2pjQsGHakB/TouTxZrz5i5optNPJrjhhAx0gKjS/8r?=
- =?us-ascii?Q?CQPsToV80eRItNa4xSmJhhRoumonW0FBKbBz178YgHSc+j0rezx7TP5yQN2C?=
- =?us-ascii?Q?xloQ/63mKyJlB6Vr6MjigTGzgUavFiuRIAKgR0aECnm9sYqREAhVg4+r2toU?=
- =?us-ascii?Q?9vwX8B34UrZsXU1ayfxVHU950wQDZEkpu9l4YMgiMFhsTwh6QVnoRIhIe4S8?=
- =?us-ascii?Q?b6379C1jJeFHr/Ujv4CR54pOBCU/IhWKc4MPJKjW1hyw1PjlgjejWeTVZDiM?=
- =?us-ascii?Q?UYHRdkvxfKXkOIkBZ/Daa27Q6GtyfSrlqWJYI0Ho4VRShm731Iips1LBSfE8?=
- =?us-ascii?Q?8mlGitSWcONKvCCvaFC2vWVNnz9cd+83A6pSehbscbJm1ic0R7d7jACPA3aT?=
- =?us-ascii?Q?yJK/dGZc8CIALTs1mHlwkkRdRX1Ho9lNHfL4mfKYKAjhzWiD1y63sRK+Gyng?=
- =?us-ascii?Q?hnmYek1XiUluKYLI5bwwcJrKCo2gIpa+UuQkCXLRPH4qFsszWIGQmtiFqQ8m?=
- =?us-ascii?Q?Y+O+Uw1/bOcekuFaOQcUFQCZD7XSBdlz8Usk2O0be/HD8S1aZTmG5nZq51Lc?=
- =?us-ascii?Q?htqnp9g3JeMOIeITYylACFD9oNHvPBYckfyE9g+1HSRi55LmVkIn1fNKfimc?=
- =?us-ascii?Q?oxpW+GCf/QNdgTNZ1SCp45/Oqgyp+tAExQBN9iBPd8rBOP5hc9RzI4UNbMgT?=
- =?us-ascii?Q?eX8/xghPmM3rRoEKFZLm5IH0qSxDSGkUSTeRvT1TspLmjsHkBlSPh5+Hgh0u?=
- =?us-ascii?Q?xfYJzLNVhme5XI/diX1lfcb4L6UdyTLFuHiEl1hRU6sxgPpEI2VNA/XUkS4S?=
- =?us-ascii?Q?G2Ysea0xOm3/1y4VA4fkIJ1uUWGS2oRc4e0fiIkqjdFEemGhtyWh8h5q3IgA?=
- =?us-ascii?Q?D3XyFtyClQPWqh6bv2C+hXR29RWuBm+11CDWm2WbkWNzgwnW0LROWOUo3dxp?=
- =?us-ascii?Q?llTfIyOadvxu3WvkiqXCxAkGhBmwyOI+W61s9dRxZMMJZedXSd5VAw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?zPj3EZt19McI0dLUbLGfP0gBpsY1hhwwMP8tkSGOd5XjL6+iOMie1D4MjQTj?=
- =?us-ascii?Q?/BOCAm+Q4mgk0O6glYfhpEyulMzzaB3CJpPTnnbkCeLSxKZk0CbUdhV85/8V?=
- =?us-ascii?Q?bFwUn0RZ2/CfFEO+zvQmKKd87og3BDEeBKCJA8Os0VlOaaNbfAjzG+GE1CJa?=
- =?us-ascii?Q?N7wHYAZDw5GjNLgHmC/3Qg1Lv1G6i0uJuTR900xaZX6lef2Drv+LvW6ORANq?=
- =?us-ascii?Q?fTcIuAM9qkW+H7Ez53DaR+zb2ZXc6f+nWCauUQx3QSRmaF5OG9d4evXN17YQ?=
- =?us-ascii?Q?E+F7flFPaEBv0LW1Z9Qg5so5m4RQHqQ1MBhXkXrQ0eCEYYd9Olp9W3i3+YNp?=
- =?us-ascii?Q?HhiilLYodl6aiFUGkRP+3lWFFFylH9WIfwG63/c/chVZ0E2Ken/HEXvRkNQx?=
- =?us-ascii?Q?+j4y7Bw8sbiydppDJASaqzxcdbPOvziXVkr+nPMpTf0H82IRZaNewr65ZmeI?=
- =?us-ascii?Q?QkYN7z1IkPpaa3Em/pA5PAyh6sL5IBhn7gQbyDuOxsJYp6bZB+5lOVSHOVlN?=
- =?us-ascii?Q?om15v04z9xGV1SOjlGMb8658KMrZwykzjo//u8rd5TScm51vhaXhPCRByAip?=
- =?us-ascii?Q?Sa5cg+fyYURA3Jn96QMfJ3khCGusKcmtY+c3OGHz3sV7UBbWKCFpR5rx6MVF?=
- =?us-ascii?Q?IohRdr6OsRqHXed7lAJWW1s55OFTPI0GyDCLyJo4eVhSa0+bg+tELf5QyTzu?=
- =?us-ascii?Q?Pd0M1G73BTEpftRvydnpWYe1j0l/z71xfA72YaisatFW3wY0NX/wEKbiD0aP?=
- =?us-ascii?Q?I/F1LKMRUYqssTxkKZxMfjJEO+/WKHAviu6+ELBfX9EL6hl/5cyDJPOaY3ZM?=
- =?us-ascii?Q?WbK964LMEdZjxCcZATXsWpjtSv1FTCvYmNAolPZMfPwZNeqvkFabMAN423nL?=
- =?us-ascii?Q?Z/824xI0b2NTdLQDrf6D1eeAKRDu2MGdiBJ1mOhBaI961zaak1GxqCUaWS5n?=
- =?us-ascii?Q?5oZA2T/VN7oR+QPQhHkXqxuQ8/s3tdr4hkN4Rm7rZ+3HIfTQmu0spA7tTAjn?=
- =?us-ascii?Q?z6omfiPx+wAvc1ozdtXdpPpIxXOEzO6Fg1xFLdltlGM4mv3av5wLTMNdgtDl?=
- =?us-ascii?Q?G68ydg/nwRsHT3Bx4ECWiNyMnzexATI2+K23YLdwiJCcpZaNzfxD4jAwyNlf?=
- =?us-ascii?Q?HZ4UYGY1aCb/tPti7SNiMSojKSMYhgHmMZUWNdwQIR6+tUQBGBfG3jlX3gmS?=
- =?us-ascii?Q?7oC2RyzWfGD12zvu6iLqFmrGBTAa9A0qqBMJgsckqcNJ+o+jGR+fKYbzycJn?=
- =?us-ascii?Q?pjSgX4mMn2lguZbZuD4A+0LVC6v5MRw6nvvfosJHwAm5gWrARZhLTrke7X2h?=
- =?us-ascii?Q?QPo8X2fNTgUEoNHoxAAzDgQ9HlkQ3vhWZ7oLhAXe0QAq3Xdhudr+wgX03EQS?=
- =?us-ascii?Q?ZqcmihJ9zftKPOA55JTJ1nLi34NUeWWFdQvnqnTqY6wT+VO9Lw5Im9qxX4d7?=
- =?us-ascii?Q?+tumDHvMDxBnLY/YjMlfkuF/gl01yLMeJZOj0z/1mX80CcnNZZSQYwRioztG?=
- =?us-ascii?Q?pr3auNJ85UgnkaFy0d9mLgttG1YXJm3+65ME/GnjietgAyFPmbISsReC+YVH?=
- =?us-ascii?Q?FVu0iqHc5YomFhcFgv3iQf+3Psts00AwZKj/1ygxbP1GwAgRlOHjAQ85ViM7?=
- =?us-ascii?Q?9Q=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6513FF1
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 07:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756971938; cv=none; b=o6NeIrnDCKg4VRK0Q5nCAOiVMEQm5P6XbOwBjs7h6NhkDMrf6mZUgf/c4a56ZdWR/4WNr7wJedGcNB+Ws7VELMUCTT0L8+ONPL0xmCYOS1k7+OXAPYqj2woPM3s36Rii/f8JYPesMTpXDIRJBNJVd9opaNnRiIeOh5RAQQ6uY9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756971938; c=relaxed/simple;
+	bh=2JG3jWqYLlfQhZBSRnGeuB9ys4zyrKZK3ClYzoG5V4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rrUXCAKS4xVaf59iq0qRsgog4R6KUJJYuQGS6tgykmHO5jUDm1KIscNZVY7Gzm7sQQwotzMz9Q0iFAW+hRakutO/xJq2PDdhRizSZExvDtRTtY+GPLUdZw+nUlIyHlZZsLCglsnyfh7lehCYSt3nRtRWm1s6IIDqox/ptHjHghQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TsB5ZXm0; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24af8cd99ddso10306845ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 00:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756971936; x=1757576736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOk9aM7uMLk4oCwBs0MeiGtoy+qSX8dOfHwcPVA0QKw=;
+        b=TsB5ZXm0EEIuOPXETyaivVlPxeOeOJq5USM31wuXkIWQWJnlOgjuj1albaWxtKDLxE
+         uglSQjcf/SKnjotqCN97k2vBK+Xb9P4kOksVAtEO2Sx6kWYk2KU4ce53nyM18ylxZsyt
+         xv+uVxHVZG+APlY2MPsi7FvZSqrdNdThh7r6xmXRIHjPF8mMGLOCYaEpy8Wa7Uft8kcG
+         TOaaYK2XL0S9hAlfL+aGflkcRCc9TjF/96eV3oE8nsxGrwbr4nuUMNA2QtXKEj2iniWq
+         A3QSsqX2DvLnCpBCzdKryonOgxmdJPd1fHMZdxdYr1Egs6mwvceg9qyQSgW50YBw9P4e
+         SUdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756971936; x=1757576736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KOk9aM7uMLk4oCwBs0MeiGtoy+qSX8dOfHwcPVA0QKw=;
+        b=O4nb+RXSYVSQoYlpJwJMnwWDnoQ4he1qhZcFa9NFlVsr//yRxkz1A7e+TD8wFCB9Yi
+         SOYH7hb6tVd8py7FVIfVpLB0xc4P6PwCrQOu2kimRjRAwrlg3pT0zRazhE3lLC5w1Afb
+         kGwRQMt6D1TGHXXi10DPqrhtt/npe0oaOzMgzYXY4j/R275OXZAkUJA0711xqVq7bfom
+         pdzRy8PruGqTYXcJ0qdw5LqkxToNhwV0wfs9B9VbX0825tInnqMHsbpOVGRPgaSZyPtO
+         gQuNkwnfX6pPAwEr/5CeqcT3NNYYhq5B7EVrGX+c/3CSANSKySMQ/XV026xQKTTalSOQ
+         LITg==
+X-Gm-Message-State: AOJu0YwMO3yA6Rha0ljeIbuhKjZ4L0F7RteySoMl25a6gQTgBBYz6bOW
+	lg0sCCMVbb4/8oJnyWNNRpk3haNyGWYdvU5zhEaI6Z9juha+UNPEXnySaqGUe2wV61w=
+X-Gm-Gg: ASbGncvv1bKJY6sttXwfGl9Wgi3FrOuvRXeRIZiIgwbwlDcPh+RrtaN6euiZSyh4dcI
+	8+FVbn6AKOEQcwGCUNoMvMjojfovGm5tyvwQcKwqv+gKKOB1Vsy2Qh806qW6SlP+HBrZ2vZuicI
+	u5hgAMnke+FQFomM/Tc0cpt9PT2i2f0nCglZPjFZZknk7677UteVc3poK1qiQEmcJHTqcQu6mvz
+	u1Cm9uUOvMVE+7yABUj2165t9zMulax2U5dD19Sa2pSXTgIeSB64v+rMDCGrpEXC6Ld/u5As67X
+	Owqex7/t1LAIXJRR9E6Hdw2biG/qcTErmOvS9UyRXjb2YNRiZlV9Nx0tEYr70DqP/TPjnO36ISh
+	tw9AeiEdLevEfkYCL4/HcIhuajRWmX3GQ1xo/Ewax3c2+J7EEpw8Aj5RemPNBMWMIJQXG
+X-Google-Smtp-Source: AGHT+IHgvNjNK+2nyS/2aHJDejBh5MtqlXwNPkbvUWoov9UdDxExDfOszCfmkHzSTWhXjS0OJ2oLRA==
+X-Received: by 2002:a17:902:d544:b0:248:9669:a405 with SMTP id d9443c01a7336-24944a11968mr258033145ad.3.1756971935775;
+        Thu, 04 Sep 2025 00:45:35 -0700 (PDT)
+Received: from n37-019-243.byted.org ([115.190.40.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b1f7492d8sm63504395ad.129.2025.09.04.00.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 00:45:35 -0700 (PDT)
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+To: tj@kernel.org,
+	mkoutny@suse.com,
+	hannes@cmpxchg.org,
+	longman@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: [PATCH 0/3] Defer flushing of the cpuset_migrate_mm_wq to task_work
+Date: Thu,  4 Sep 2025 15:45:02 +0800
+Message-Id: <20250904074505.1722678-1-zhouchuyi@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens-energy.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: FR2P281MB1544.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c6d2c0f-6288-4203-a6b2-08ddeb86db45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2025 07:44:19.2708
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 254ba93e-1f6f-48f3-90e6-e2766664b477
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HFPAD02WFT45m+p6Zr0rcUQoeLcX43PJCDFOq9u07AcIr25AnaIWH58wxZGqKPN/g6tgsqNztTzKgDzAi0XqDdMSOil0daPQIgCMH2CfLiWuymwkLzL52U1Bi24+JbWF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR4P281MB3574
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sept 4, 2025 at 03:34:00AM +0200, Stephen Rothwell wrote:
-> After merging the vfs-brauner tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ...
->
-> Presumably caused by commit
->
->   edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
->
-> I have used the vfs-brauner tree from next-20250829 for today.
+Now in cpuset_attach(), we need to synchronously wait for
+flush_workqueue to complete. The execution time of flushing
+cpuset_migrate_mm_wq depends on the amount of mm migration initiated by
+cpusets at that time. When the cpuset.mems of a cgroup occupying a large
+amount of memory is modified, it may trigger extensive mm migration,
+causing cpuset_attach() to block on flush_workqueue for an extended period.
 
-Thanks for investigating and notifying me. Yes, bisect is almost
-certainly correct. It looks like I missed adapting the tracepoint
-consumers of the task_newtask tracepoint that I did adapt in that
-commit, sorry. I'll look into preparing a patch for it.
+            cgroup attach operation  | someone change cpuset.mems
+                                     |
+      -------------------------------+-------------------------------
+       __cgroup_procs_write()                 cpuset_write_resmask()
+	cgroup_kn_lock_live()
+	cpuset_attach()				cpuset_migrate_mm()
 
-Best regards
-Simon
+
+	cpuset_post_attach()
+	  flush_workqueue(cpuset_migrate_mm_wq);
+
+This could be dangerous because cpuset_attach() is within the critical
+section of cgroup_mutex, which may ultimately cause all cgroup-related
+operations in the system to be blocked. We encountered this issue in the
+production environment, and it can be easily reproduced locally using the
+script below.
+
+[Thu Sep  4 14:51:39 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Thu Sep  4 14:51:39 2025] task:tee             state:D stack:0     pid:13330 tgid:13330 ppid:13321  task_flags:0x400100 flags:0x00004000
+[Thu Sep  4 14:51:39 2025] Call Trace:
+[Thu Sep  4 14:51:39 2025]  <TASK>
+[Thu Sep  4 14:51:39 2025]  __schedule+0xcc1/0x1c60
+[Thu Sep  4 14:51:39 2025]  ? find_held_lock+0x2d/0xa0
+[Thu Sep  4 14:51:39 2025]  schedule+0x3e/0xe0
+[Thu Sep  4 14:51:39 2025]  schedule_preempt_disabled+0x15/0x30
+[Thu Sep  4 14:51:39 2025]  __mutex_lock+0x928/0x1230
+[Thu Sep  4 14:51:39 2025]  ? cgroup_kn_lock_live+0x4a/0x240
+[Thu Sep  4 14:51:39 2025]  ? cgroup_kn_lock_live+0x4a/0x240
+[Thu Sep  4 14:51:39 2025]  cgroup_kn_lock_live+0x4a/0x240
+[Thu Sep  4 14:51:39 2025]  __cgroup_procs_write+0x38/0x210
+[Thu Sep  4 14:51:39 2025]  cgroup_procs_write+0x17/0x30
+[Thu Sep  4 14:51:39 2025]  cgroup_file_write+0xa5/0x260
+[Thu Sep  4 14:51:39 2025]  kernfs_fop_write_iter+0x13d/0x1e0
+[Thu Sep  4 14:51:39 2025]  vfs_write+0x310/0x530
+[Thu Sep  4 14:51:39 2025]  ksys_write+0x6e/0xf0
+[Thu Sep  4 14:51:39 2025]  do_syscall_64+0x77/0x390
+[Thu Sep  4 14:51:39 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+This patchset attempts to defer the flush_workqueue() operation until
+returning to userspace using the task_work which is originally proposed by
+tejun[1], so that flush happens after cgroup_mutex is dropped. That way we
+maintain the operation synchronicity while avoiding bothering anyone else.
+
+[1]: https://lore.kernel.org/cgroups/ZgMFPMjZRZCsq9Q-@slm.duckdns.org/T/#m117f606fa24f66f0823a60f211b36f24bd9e1883
+
+#!/bin/bash
+
+sudo mkdir -p /sys/fs/cgroup/test
+
+sudo mkdir -p /sys/fs/cgroup/test1
+sudo mkdir -p /sys/fs/cgroup/test2
+
+echo 0 > /sys/fs/cgroup/test1/cpuset.mems
+
+echo 1 > /sys/fs/cgroup/test2/cpuset.mems
+
+for i in {1..10}; do
+    (
+        pid=$BASHPID
+
+        while true; do
+	    echo "Add $pid to test1"
+
+	    echo "$pid" | sudo tee /sys/fs/cgroup/test1/cgroup.procs >/dev/null
+
+            sleep 5
+
+	    echo "Add $pid to test2"
+
+            echo "$pid" | sudo tee /sys/fs/cgroup/test2/cgroup.procs >/dev/null
+
+        done
+    ) &
+done
+
+
+echo 0 > /sys/fs/cgroup/test/cpuset.mems
+
+echo $$ > /sys/fs/cgroup/test/cgroup.procs
+
+stress --vm 100 --vm-bytes 2048M --vm-keep &
+
+sleep 30
+
+echo "begin change cpuset.mems"
+
+echo 1 > /sys/fs/cgroup/test/cpuset.mems
+
+Chuyi Zhou (3):
+  cpuset: Don't always flush cpuset_migrate_mm_wq in
+    cpuset_write_resmask
+  cpuset: Defer flushing of the cpuset_migrate_mm_wq to task_work
+  cgroup: Remove unused cgroup_subsys::post_attach
+
+ include/linux/cgroup-defs.h |  1 -
+ kernel/cgroup/cgroup.c      |  4 ----
+ kernel/cgroup/cpuset.c      | 30 +++++++++++++++++++++++++-----
+ 3 files changed, 25 insertions(+), 10 deletions(-)
+
+-- 
+2.20.1
+
 
