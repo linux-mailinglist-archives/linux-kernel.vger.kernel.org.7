@@ -1,254 +1,131 @@
-Return-Path: <linux-kernel+bounces-801198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ABEB4413B
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D64B44170
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 17:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648263BFA7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375871CC251A
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 15:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7777E27E060;
-	Thu,  4 Sep 2025 15:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52FB29AB07;
+	Thu,  4 Sep 2025 15:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EtUj1aF3"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wlu9umTu"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BECD280335;
-	Thu,  4 Sep 2025 15:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE745281369
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 15:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757001338; cv=none; b=oTra1gq4c9dlTHOj7EIqnKwbpVPTCbnoPReEs3bxK7AtX1CF+xJfc1piHnjSdsejpRI89wNrel11eK3CbIhkyTidGJP9V2ILpuiIBTULHHsGjlulcZbSbae3Y9RZ10CJ2yVmtONUhkp4wMxAgu5tBfqgkgHTEy3LMAkW30OZUm0=
+	t=1757001437; cv=none; b=OUpBMjgWZnVmqBevvz+hOOL2E6/6kWMEay0BO3/TZ7elyP476cPx5uVtvTS+9r4PHDCADKFP1aUm5yI992xMyu4vByFSUA/R9Nx+I/c5R6znQIokycwfKkXtx57knMdb2p8pYDGS/Ny8BXDWx8XrP4471JJrRGnp0RFmcrAG5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757001338; c=relaxed/simple;
-	bh=H2o6l74Q+Wze9cr3QOcR1WhRgm/QpQGaTuJu+mYEEP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oLZV7iQLl0Y6FuEJlKXXfK9guCHd+eSQGR/vevRHjN2+Li79+2mlXjWeiL2GENQBIrYgWCDHYMCVx2qWOKp6NZFSwe91bZHRa+13DrT6JNR3LH+ULwehgNiKoUSuFZD4YWtjUkDgwLj01zOX1IkgGkyQp8FcnkdxVMb5Ov9ixIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EtUj1aF3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=JXBbmbucA/mSoOJjIBHCDzFXAIUYdW9KdILBDaPTQUA=; b=EtUj1aF3Y/qzGo0Tq72hQD09oH
-	DzVGDhUARUe+87Q9iNJaGY+WfyFW+wPP7Vw86mFsl46R7WtcpZfi+xfwsx/G5mFUy0Nj5snEaDbIf
-	VzHWxvqk2Znrt6Tvj8yu4mv/Hr4843JlrZVMneceSDCeCMEfLyDqYxbEYrKqnNwCJr9MPOEJWFV5r
-	MSCyCs4ePLZZ1+CKC5FLSEG+zxJwZlZN/S5RHe7CrniaR2Fd7nyrBSwy2Y5qBUKFQZsyu+o+CsWUj
-	FHjdn1QjzA7w+tSo40o+jnG9TdiKCCbpGxZnwIB3rEZlwrmSeNMJ8OWUajrtI3tXCy5W6bfzVgZ9Y
-	V976g8jQ==;
-Received: from i53875bb9.versanet.de ([83.135.91.185] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uuCJC-00021d-8E; Thu, 04 Sep 2025 17:55:34 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, linux-rockchip@lists.infradead.org,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
-Date: Thu, 04 Sep 2025 17:55:33 +0200
-Message-ID: <878503621.0ifERbkFSE@diego>
-In-Reply-To: <117136352.nniJfEyVGO@diego>
-References:
- <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
- <117136352.nniJfEyVGO@diego>
+	s=arc-20240116; t=1757001437; c=relaxed/simple;
+	bh=5bwgftlti0OnS19E8s5I3qUBUN5cb0H7I5hTJs1jaEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LlEx96AQHsJHvp5WBMcFs3Z96iLW9wqu1K0uUVd7Sm4wSmN1yKsW0QCLBT9KDfIFq6qwqv0ogAef0bvCHU7sfIDVu8Hww3rQ+8Z30uokFNN2ih5wRk5FQLEhRngAi74JK8s1vKkcHjPQFmpoC7/AdR9HqeSSduoyQgrPvHDPyZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wlu9umTu; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24ab15b6f09so202775ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 08:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757001435; x=1757606235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knBUAJ9UaN+FZLHj0gx+L4m7BuumlipWhHmFcevIGIQ=;
+        b=wlu9umTujnJHZeYWpfX93lNgSOkFLhU4c/fWbrf+hzKIES8J2DN9jQ5vAyAjUrqUtX
+         CjzT9pEIHd/3SPKzuH+gS9UYJxRBwzSoXWs9PuZbTniH/c08yk28M28OoXYx4FYzUbwN
+         o0uR7FYWRTo1hqQvAH2x58rYpuzADKA99YzlxvGy4j/c1kOb+uBTkU0/8LR+N50SWSsy
+         2KfsAqo6H93bFxFC9Ge1rYRMW4dbFv8hgmWuJXpnVMBmA2YgfaNYBYKmJbEJ1+QOJsdf
+         FxDAx5ywNmdXI4tLdcEgaXFSTFEWd92maIEoTY27CoIWgHV91oXvzuX+9ldOIuK/qaHp
+         L+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757001435; x=1757606235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knBUAJ9UaN+FZLHj0gx+L4m7BuumlipWhHmFcevIGIQ=;
+        b=DJ578oyKRddzRfFMAFiNYpwGMF7XBdoPd5O/2OKpRsN8tePFDqmB37HmuNb9cK/YBF
+         4d3prtkL9fH+WGe2/Kg2xWcKVi4s7T4DEsHyNSXRUoI6IOzt7O/b84SPxs5uHkmIGAX4
+         +01xx0JxulZ05nmMKGQ1vK87pGUclPo1vgACt+4qrNx0ffauOetK02QIdG4lg6oa4ABz
+         qCI01OgrHDF6Yyn4TChuVCOLPn+3zbSIYWXi/J5VkCKr9HRo4sTH0wSOR5W/1csG5uPU
+         wwvBOkvFo/OF+jauFzC2PttZ8OCGxUFXdUWQgmqmAUafCvslTMu9mHbVSF8xWBiqdd0o
+         VcoA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8y/KIY6Dq+aJXdBKcPkdPNmIavwdj/6wxxaXDthEA7H1UYO36Rt9Y9YGdxFadp2EXDwuEjtHN8vyPQkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCIfXzxaaLbDeWcsISLE18xC+0Q/0w1jOZzHcaYFXgRjKijoj9
+	vmAzQl4MaLJ8vTlpg1QrFqw6JX5xiU+wtH6OFG016+i2CYf+6TYY/31JPd8uF1eoJupJI5thk3G
+	XQUQhGCatMSWvi4jpqXxJs7PuIH0XRRGsv8kUrpCLEOKscauwgWr1AdIVYvs=
+X-Gm-Gg: ASbGnctWknsR2R8PKXYEZLaatElxtjq+nlC/NqZMtM1UZjzwMFP6QhpTEoKcuQe5C9E
+	RLY7G75/bu89F7hpfIwMCayAI4584+MfW0C1YkRmauyPYmjIBg6SpONt8+z9DcAiVf913AeHB0m
+	uPSz7mKpFE3vvPC5aAWDhBi+niYi655PjZtC/+Lm2lyUX+steWSd90QQMYEEabfMKhFZq7RhyB4
+	vRcqKp29v2n/nql2NvFPeKQhzr+gIvybiXsMSGbUnK0qPU5G37E8J8=
+X-Google-Smtp-Source: AGHT+IFruwuAGBkh7rKP7RWIUwTJnAWvhVe1xHsgspTlHo9U/RM8g1S8GgdHNUpcy8Rksev/Q7nZoVg7U084PMlX+h0=
+X-Received: by 2002:a17:902:e88c:b0:249:10e8:c866 with SMTP id
+ d9443c01a7336-24ccccc4984mr3559105ad.11.1757001434759; Thu, 04 Sep 2025
+ 08:57:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250904090904.2782814-1-colin.i.king@gmail.com>
+In-Reply-To: <20250904090904.2782814-1-colin.i.king@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 4 Sep 2025 08:57:03 -0700
+X-Gm-Features: Ac12FXwis0ieQjvaJDpAAZ-N5VUsQcVYBE46x0ADT7btZd7ypFajhQSQ5YJpnbk
+Message-ID: <CAP-5=fVZ-mQTRzA2qkW2NjB_W_AvNJJ7mNJj5cBh1jJX7X8Btw@mail.gmail.com>
+Subject: Re: [PATCH][next] perf python: Fix spelling mistake "metics" -> "metrics"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Am Donnerstag, 4. September 2025, 17:49:16 Mitteleurop=C3=A4ische Sommerzei=
-t schrieb Heiko St=C3=BCbner:
-> Hi,
->=20
-> Am Dienstag, 2. September 2025, 20:23:04 Mitteleurop=C3=A4ische Sommerzei=
-t schrieb Nicolas Frattaroli:
-> > This reverts commit de141a9aa52d6b2fbeb63f98975c2c72276f0878.
-> >=20
-> > On RK3576, the UFS controller's power domain has a quirk that requires
-> > it to stay enabled, infrastricture for which was added in Commit
-> > cd3fa304ba5c ("pmdomain: core: Introduce dev_pm_genpd_rpm_always_on()").
-> >=20
-> > Unfortunately, Commit de141a9aa52d ("pmdomain: core: Leave powered-on
-> > genpds on until sync_state") appears to break this quirk wholesale. The
-> > result is that RK3576 devices with the UFS controller enabled but unused
-> > will freeze once pmdomain shuts off unused domains.
-> >=20
-> > Revert it until a better fix can be found.
-> >=20
-> > Fixes: de141a9aa52d ("pmdomain: core: Leave powered-on genpds on until =
-sync_state")
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
->=20
-> just an observation independent of the conversation in the other thread.
-> This patch/revert whatever fixes an actual issue for me.
+On Thu, Sep 4, 2025 at 2:09=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> There is a spelling mistake in a Python doc string. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-ah and just saw Nicolas' mail from 6 minutes earlier.
+Thanks Colin you are a star!
 
-So I guess what saves me here is the rocket driver being built as a
-module, power-domain getting turned off early, rocket probes with
-pd off and then gets its supplies as expected.
+Reviewed-by: Ian Rogers <irogers@google.com>
+Fixes: d0550be70f7a ("perf python: Add parse_metrics function")
 
+Ian
 
-Heiko
-
-
->=20
-> On the rk3588 the NPU power-domains are a hirarchy of
->=20
-> PD_NPU
-> 	PD_NPUTOP (core0)
-> 		PD_NPU1 (core1)
-> 		PD_NPU2 (core2)
->=20
-> and the PD_NPU does need a supply regulator.
->=20
-> (1) With "just" v6.17-rc + the rocket driver probing and then idling, I g=
-et:
->=20
-> # cat /sys/kernel/debug/regulator/regulator_summary
->  regulator                      use open bypass  opmode voltage current  =
-   min     max
-> -------------------------------------------------------------------------=
-=2D-------------
->  dc_12v                           4    3      0 unknown 12000mV     0mA 1=
-2000mV 12000mV=20
-> [...]
->     vcc5v0_baseboard              2    1      0 unknown  5000mV     0mA  =
-5000mV  5000mV=20
->        vcc5v0_sys                18   18      0 unknown  5000mV     0mA  =
-5000mV  5000mV=20
-> [...]
->           vdd_npu_s0              0    0      0  normal   800mV     0mA  =
- 550mV   950mV=20
->           vcc_1v2_s3              2    1      0 unknown  1200mV     0mA  =
-1200mV  1200mV=20
->              fe1b0000.ethernet-phy   1                                 0m=
-A     0mV     0mV
->           vdd_gpu_s0              1    2      0  normal   675mV     0mA  =
- 550mV   950mV=20
->              fb000000.gpu-mali    1                                 0mA  =
- 675mV   850mV
->              fd8d8000.power-management:power-controller-domain   0       =
-                          0mA     0mV     0mV
-> [...]
->=20
-> #  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary=20
-> domain                          status          children        performan=
-ce
->     /device                         runtime status                  manag=
-ed by
-> -------------------------------------------------------------------------=
-=2D----
-> [...]
-> gpu                             off-0                           0
->     fb000000.gpu                    suspended                   0        =
-   SW
-> npu2                            off-0                           0
->     fdada000.iommu                  suspended                   0        =
-   SW
->     fdad0000.npu                    suspended                   0        =
-   SW
-> npu1                            off-0                           0
->     fdaca000.iommu                  suspended                   0        =
-   SW
->     fdac0000.npu                    suspended                   0        =
-   SW
-> nputop                          off-0                           0
->                                                 npu1, npu2
->     fdab9000.iommu                  suspended                   0        =
-   SW
->     fdab0000.npu                    suspended                   0        =
-   SW
-> npu                             on                              0
->                                                 nputop
->=20
-> Observe that the PD_NPU never got its regulator and the domain also
-> never actually gets turned off. While the domains directly attached to
-> the cores get turned off.
->=20
->=20
-> (2) with Nicolas's patch applied on top, I get the correct behaviour,
-> that was also happening with v6.16 before
->=20
-> # cat /sys/kernel/debug/regulator/regulator_summary
->  regulator                      use open bypass  opmode voltage current  =
-   min     max
-> -------------------------------------------------------------------------=
-=2D-------------
->  dc_12v                           4    3      0 unknown 12000mV     0mA 1=
-2000mV 12000mV=20
-> [...]
->     vcc5v0_baseboard              2    1      0 unknown  5000mV     0mA  =
-5000mV  5000mV=20
->        vcc5v0_sys                18   18      0 unknown  5000mV     0mA  =
-5000mV  5000mV=20
-> [...]
->           vdd_npu_s0              0    1      0  normal   800mV     0mA  =
- 550mV   950mV=20
->              fd8d8000.power-management:power-controller-domain   0       =
-                          0mA     0mV     0mV
->           vdd_cpu_big1_s0         2    1      0  normal  1000mV     0mA  =
- 550mV  1050mV=20
->              cpu6-cpu             1                                 0mA  =
-1000mV  1000mV
->           vdd_gpu_s0              1    2      0  normal   675mV     0mA  =
- 550mV   950mV=20
->              fb000000.gpu-mali    1                                 0mA  =
- 675mV   850mV
->              fd8d8000.power-management:power-controller-domain   0       =
-                          0mA     0mV     0mV
-> [...]
->=20
-> # cat /sys/kernel/debug/pm_genpd/pm_genpd_summary=20
-> domain                          status          children        performan=
-ce
->     /device                         runtime status                  manag=
-ed by
-> -------------------------------------------------------------------------=
-=2D----
-> [...]
-> gpu                             off-0                           0
->     fb000000.gpu                    suspended                   0        =
-   SW
-> npu2                            off-0                           0
->     fdada000.iommu                  suspended                   0        =
-   SW
->     fdad0000.npu                    suspended                   0        =
-   SW
-> npu1                            off-0                           0
->     fdaca000.iommu                  suspended                   0        =
-   SW
->     fdac0000.npu                    suspended                   0        =
-   SW
-> nputop                          off-0                           0
->                                                 npu1, npu2
->     fdab9000.iommu                  suspended                   0        =
-   SW
->     fdab0000.npu                    suspended                   0        =
-   SW
-> npu                             off-0                           0
->                                                 nputop
->=20
-> The regulator handling is working correctly and also the parent PD_NPU
-> domain gets turned off when its children are off.
->=20
->=20
-> Heiko
->=20
-
-
-
-
+> ---
+>  tools/perf/util/python.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 47178404802f..779fe1280a56 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -2187,7 +2187,7 @@ static PyMethodDef perf__methods[] =3D {
+>                 .ml_meth  =3D (PyCFunction) pyrf__parse_metrics,
+>                 .ml_flags =3D METH_VARARGS,
+>                 .ml_doc   =3D PyDoc_STR(
+> -                       "Parse a string of metics or metric groups and re=
+turn an evlist.")
+> +                       "Parse a string of metrics or metric groups and r=
+eturn an evlist.")
+>         },
+>         {
+>                 .ml_name  =3D "pmus",
+> --
+> 2.51.0
+>
 
