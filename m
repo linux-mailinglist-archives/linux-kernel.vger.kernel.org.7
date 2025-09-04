@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-801572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D06B446E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5CFB446EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 22:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C19AA40453
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DC1A40672
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 20:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3832F27A92A;
-	Thu,  4 Sep 2025 20:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB8827A92B;
+	Thu,  4 Sep 2025 20:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOaA7t6d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jPvWeScN"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A75279DDA;
-	Thu,  4 Sep 2025 20:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4994C2737E0
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 20:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757016188; cv=none; b=oxtoQxrdKTxLZuXj9NSO575sKCYXyQUiWKDKcU5JNZTiq9emin1GUhqGgZRYvY6JVvXGttV59LyWMu9k6bi8acPdKmJUJFmj0OSewBqBUgSWBaEEhjCy+kub6hBdeizcjgJrPV46Ef/GBPXpTlahMjLuO53d37TNMCjMrMn82aU=
+	t=1757016277; cv=none; b=ujknQLyxWx3WWmKZtSxsnFJ40u57hfIVFjYv2HQKkN3yjnHjv0DVQo/wtlpJ4Rsavv47LMoVeQZvYNiYhxqLvXvW6CZssUsMueNa6grNl7b/TTbigDTmwX1TCoOglfUs7fQZmNbENXfuTjrbZyWzSnVXnYsTKHNvSgNF+9W9vB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757016188; c=relaxed/simple;
-	bh=jiB0SmMjS4zaMyTVtUGdfi4c0oVbMnzk0ENcWBuYT6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vGTL/e3DretmXrbWv55I2bjv9sTF992dR0l5+eA6kRawV1g5XAPH3nwoS9ck787bMXrlSn58uzz1FGTPyKv7aMNKpypRnomG2D0YWSZ1fXm/wC0efExBvBBVC4Nt3S7lMuXtkTA1G+Be2Q0LHefki12jZqa7VVul8KHTRv7jPTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOaA7t6d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B755C4CEF0;
-	Thu,  4 Sep 2025 20:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757016188;
-	bh=jiB0SmMjS4zaMyTVtUGdfi4c0oVbMnzk0ENcWBuYT6U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JOaA7t6dly4gcV34fzYVYHG0ngsLNCvfjXBy5NU03O8jgEl+1BQObSoXXs/7l8rc/
-	 pAmEff+kl+8uNaMSkhakFCdO0s+5C7m9cFJIcyTauuBfwIpJzkzU2JaxfKswDrnt6j
-	 4I2t7qEiigpnVNfEEn4DnoN18hMaMnigRR3GOvmOfy2dxK61jyYikhG7mjNbDJQyUD
-	 ZS4dreJqKQAzAvf418X7I7XW0Z+bEA+tq1a5MKdCuv8+vKEQDV+z3nz13n81tu+WXG
-	 koBrAX9Dm/FJ1LczbIJ+6iXZkA9zWQ/DJDtyQspB8C1NdBOpcMw5AABilhWEfslSsC
-	 uDpX2gcgy5IyA==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-74526ca79c2so686001a34.3;
-        Thu, 04 Sep 2025 13:03:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJNn+jPWp+Ylr0JAvHG5ksSNBHn4Y05fhgjDn7ar9YJIRF1MVhWJ/oaikwB7Y7YigtQDNB0gCTmGwLtuU=@vger.kernel.org, AJvYcCVqjytkUvyO83R63SdlPhpVmoviKN6rMIMNcHbjlzk5PXeXsEKeUgFYxsqCzk+RIbi5vtgK72sNUww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVttRX7d6L2d+YKEOi8xMK7lzFALIEOuTOVBbHhiCVlDdo3d/w
-	puAIL8fMTaht6cJGRy+SiMquGWGURpSJSgdNzEPRAeTdGv+zEJgzy7b5Rjmnicdv82B7p24V4Ke
-	pRM8NI6gBV94mPH8OGD+Hyv0DTC7dEN0=
-X-Google-Smtp-Source: AGHT+IGDgabH07o0jXUsx8EUBmxVIeNIp9gbySMtFVD6zhi4DjUSLK9X5SYv0mndPHQ/smsOJXFgUANYD0cBtQuciOA=
-X-Received: by 2002:a05:6830:f82:b0:745:623b:fcea with SMTP id
- 46e09a7af769-74569c68d47mr11744107a34.0.1757016187344; Thu, 04 Sep 2025
- 13:03:07 -0700 (PDT)
+	s=arc-20240116; t=1757016277; c=relaxed/simple;
+	bh=9CtM8kOig8lhqQfkqBq4cGnzcIdZCxWezMouBG2wwGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hofmjVWRdqWAO3ln/2GsqkstkI79ZLN3GDowFPuWclhV8lDA4kgUZl07C8e4k4q6gdsbCckr1YjbrPnrldxzXvqmZpYp8Al3lWENbZPjYhs3fewZQ9/SqcVU0MsJn+InNn37/CZeHH5TZ4Nae/VqX/kmXog9WGH7KWZvjmV5+oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jPvWeScN; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=03uN
+	vgwUPEr5pFTjghRkW0v1kpVYYKwWd6HYjQaWs4w=; b=jPvWeScNBfdAuCiRqHB6
+	sxRkRcCUuHczF293rrs3sjddA/+gnkLukkz4I0jJMMxUDE1cP6vxkysGWImknBB1
+	TMpkn+UcHXPQV7DoToNgx0XqOgOYO6Zm0ahFzgfj+rfeSRTN1HMekeGp0xi5y1NG
+	Tk03wvaZQh/wzkNn0Wez6EPAuCkDTblPhnnkANfS19i6JEhBmeaWf/TWHdV9KcDQ
+	MXBuqI/2N0+Y6Beuz/RRqqqotswrxd8qyKfe7K/tUY2hqeIAfbgsZw4FNOV74/sK
+	Ae5l/CS7lpVAoWP9xBipfj7jPI3RUz98ZtNLsRBflD5VFEiHA197+nFQhfFh0pg4
+	gw==
+Received: (qmail 3780798 invoked from network); 4 Sep 2025 22:04:33 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Sep 2025 22:04:33 +0200
+X-UD-Smtp-Session: l3s3148p1@rs7NOv89wMsgAQnoAEbDAKz8Ugxpiihv
+Date: Thu, 4 Sep 2025 22:04:32 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Mohammad Gomaa <midomaxgomaa@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, kenalba@google.com,
+	hbarnor@chromium.org, rayxu@google.com
+Subject: Re: [PATCH WIP v2] i2c: add tracepoints to aid debugging in
+ i2c-core-base
+Message-ID: <aLnw0L3ncTsQm2eD@shikoro>
+References: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826183644.220093-1-sohil.mehta@intel.com>
-In-Reply-To: <20250826183644.220093-1-sohil.mehta@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 4 Sep 2025 22:02:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hw+797-mm3qA6PqQdA7hWyZKhkYobbvF+8MCvg1cHZvQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyvbt0m04pHIDjR3IZESiqkecbEoB7zGlMvdqST2dqGlpONMlCx5RdiJgM
-Message-ID: <CAJZ5v0hw+797-mm3qA6PqQdA7hWyZKhkYobbvF+8MCvg1cHZvQ@mail.gmail.com>
-Subject: Re: [PATCH v3] cpufreq: ondemand: Update the efficient idle check for
- Intel extended Families
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
-	x86@kernel.org, Tony Luck <tony.luck@intel.com>, Zhao Liu <zhao1.liu@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oLDJ+0ds4x0QP+bE"
+Content-Disposition: inline
+In-Reply-To: <20250817-refactor-add-i2c-tracepoints-v2-1-c0bad299e02e@gmail.com>
+
+
+--oLDJ+0ds4x0QP+bE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 8:38=E2=80=AFPM Sohil Mehta <sohil.mehta@intel.com>=
- wrote:
->
-> IO time is considered busy by default for modern Intel processors. The
-> current check covers recent Family 6 models but excludes the brand new
-> Families 18 and 19.
->
-> According to Arjan van de Ven, the model check was mainly due to a lack
-> of testing on systems before INTEL_CORE2_MEROM. He suggests considering
-> all Intel processors as having an efficient idle.
->
-> Extend the IO busy classification to all Intel processors starting with
-> Family 6, including Family 15 (Pentium 4s) and upcoming Families 18/19.
->
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Hi Mohammad,
+
+On Sun, Aug 17, 2025 at 10:55:14AM +0300, Mohammad Gomaa wrote:
+> Add tracepoints to i2c-core-base.c file to help trace
+> and debug I2C device probe failures.
+>=20
+> The new trace points are:
+> - i2c_device_probe_debug: records non-failure routines
+>   e.g. IRQ 0.
+> - i2c_device_probe_complete: records failed & successful
+>   probbes with appropriate trace message.
+>=20
+> To support operation of these tracepoints an enum
+> was added that stores log message for debug and failure.
+>=20
+> Signed-off-by: Mohammad Gomaa <midomaxgomaa@gmail.com>
 > ---
-> v3:
->  - Posting this patch separately since the core family cleanup series
->    was merged without it.
->  - Improve commit message and code comments.
->
-> v2: https://lore.kernel.org/lkml/20250211194407.2577252-7-sohil.mehta@int=
-el.com/
-> ---
->  drivers/cpufreq/cpufreq_ondemand.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq=
-_ondemand.c
-> index 0e65d37c9231..3decfc53fe68 100644
-> --- a/drivers/cpufreq/cpufreq_ondemand.c
-> +++ b/drivers/cpufreq/cpufreq_ondemand.c
-> @@ -15,6 +15,10 @@
->  #include <linux/tick.h>
->  #include <linux/sched/cpufreq.h>
+> Hello,
+>=20
+> This patch adds tracepoints to i2c-core-base to aid with debugging I2C pr=
+obing failrues.
+>=20
+> The motivation for this comes from my work in Google Summer of Code (GSoC=
+) 2025:
+> "ChromeOS Platform Input Device Quality Monitoring"
+> https://summerofcode.withgoogle.com/programs/2025/projects/uCdIgK7K
+>=20
+> This is my first submission to the Linux kernel, so any feedback is welco=
+me.
 
-Since you are adding this #ifdef below, why don't you go a bit farther and =
-do
+Welcome to Kernel hacking!
 
-> +#ifdef CONFIG_X86
-> +#include <asm/cpu_device_id.h>
+I understand from the link above that this patch is intended for quality
+assurance. With automatic testing, you can find regression of firmware
+updates much easier.
 
-static bool should_io_be_busy(void)
-{
-       /* All Intel Family 6 and later processors have efficient idle. */
-       return boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
-boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO;
-}
-#else
-static inline bool should_io_be_busy(void)
-{
-        return false;
-}
-> +#endif
-> +
->  #include "cpufreq_ondemand.h"
->
->  /* On-demand governor macros */
-> @@ -41,12 +45,9 @@ static unsigned int default_powersave_bias;
->  static int should_io_be_busy(void)
->  {
->  #if defined(CONFIG_X86)
-> -       /*
-> -        * For Intel, Core 2 (model 15) and later have an efficient idle.
-> -        */
-> +       /* For Intel, Family 6 and later have an efficient idle. */
->         if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL &&
-> -                       boot_cpu_data.x86 =3D=3D 6 &&
-> -                       boot_cpu_data.x86_model >=3D 15)
-> +           boot_cpu_data.x86_vfm >=3D INTEL_PENTIUM_PRO)
->                 return 1;
->  #endif
->         return 0;
-> --
+The drawback is that it is quite some code for such a niche use case.
+Also, I would think this code is very fragile because whenever the code
+path in probe changes, one must ensure that err_reason is still set
+accordingly. This adds maintenance burden.
+
+I wonder if you can't use the output in the kernel log to identify
+problems? We could add some if they are really missing. I know such
+strings are not static. Still, my gut feeling says some application
+should handle the complexity, not the kernel. Wouldn't we need a patch
+like this for each and every subsystem if we follow that route?
+
+Happy hacking,
+
+   Wolfram
+
+--oLDJ+0ds4x0QP+bE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmi58MwACgkQFA3kzBSg
+KbYRtw//f79DM39aMbcZLj/iJn0Rba+V2KLROUlT9cmx1NgvbVR2VSL1YqH/BRy/
+IbDnHHdEhVFFoS5gWGLT/szYUjoOdEKT/rwc5rEe7najMxAFQ//bp5td7T5UDH+m
+VRVzGENbhys7vPABI6KEQ5yrMLhvbTDpB/b2MDsVaNVUd4gfQQ2QwVNb+uUSKO7K
+Nio+MK/mf6+CXpRhStDr9edrx70lkFlmPj63APMka631k4CFwQPbAXismIs/kasn
+C77JWftI6jLSRJcZP2glQ0n5MfxFF87uzgl0ALiTDxSxXtlZksA3EpCIXuuAVxYO
+NZMrDAW5D40uHmRxRsXACptqSabh/yKUUg3AmHpl/SeRqeWThBjt/poXfTUFB9i9
+PH8Kr6PAn+DZEToMx2bsbXlkmxOn3NcexVfqhj5Zz8bBd7UJ/zauga9ACSaaVJAa
+haXoBnQd2Xanz1bzk/IxI3HPa7wYCE7oGfXK0ZptLt7YCNhn6uFc8hflCfPARLA9
+16Bhb5eksk7er5RgwaXrPGuZDImuctkNQP3UpkQsELYAFTTjy5+BqePgx06CoeIn
+YyXtdTBih25G04OxqhjRvY424wWCKb70SaaDHPjF2PLA/Mxn5nNHmgpuq1vTe3+j
+nC3QgT4l63VfMvTRAN3LO7w925hVrqHipmzyDHcEx6WBxjxyGhU=
+=hxUd
+-----END PGP SIGNATURE-----
+
+--oLDJ+0ds4x0QP+bE--
 
