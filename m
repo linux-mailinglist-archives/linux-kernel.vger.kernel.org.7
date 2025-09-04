@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-801842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9330BB44A98
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19927B44A90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D0F171DDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BF31C84EE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 23:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF532EDD6D;
-	Thu,  4 Sep 2025 23:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A61A2D7DCD;
+	Thu,  4 Sep 2025 23:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f3nh6/RQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s2q6tezP"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFA81A76BB;
-	Thu,  4 Sep 2025 23:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC66D1A76BB
+	for <linux-kernel@vger.kernel.org>; Thu,  4 Sep 2025 23:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757030183; cv=none; b=XAR3kM6j32ERFP5aiI7OUUgp7RprnDqnxp+K3MDPJIi2qwm5soYEWJdTA+WaudM9n+4/gybZBo+OODlLUWQY6wUqS2EGe2HPc8pmJuo+WdZRf1hJcp30ackYzH2TdWeV2N2FfuGyIrEsfLz/MrS9Gn6PINq417aEl0SAP4dDv+U=
+	t=1757029829; cv=none; b=Wdl63SBQx7Vt1Ja5jIrq+d+Fwx6A3/YA0y8O4hHgGWZ172mbFU9Y8byucda4lNZDednMiOubQ/JkKiKYypswDIoJWC7wCmo/fOFVYMnnZDM6G4s4BmyeUT3+G71n++jKdTmFssT4J4K3cmGxnWtnu1QQkEM8SOejubdl33Ki6To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757030183; c=relaxed/simple;
-	bh=otVE6t2/BThNskCmixx2DqkMpeXZzZ1KMufsKRkyUXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pLNjHH3BU640IUMlSh+W73YzJUNgY3H5Y1GU7QSjL4KoHhd+Z53071aVRl6Vuim7FvxHFOrBgNc41ELAytJ+WIjAQ96WMPDO4DYk1IwLDC/bysUsOMeQwsBcrAXo9wFy30ir7z6CeB0KDvMebPutwkYhjbgJifYalvUtLSl9wc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f3nh6/RQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757029716;
-	bh=zoNjw3x/D4DHxguoOOmyMlEq4DSUrjPzmLS2pjcWL1g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f3nh6/RQS3+LG3L0F5+HayojCq0AP5eWR4JZvXrkoV0KbakD/hIxCFPI5xalr5HpK
-	 a1r8AABe28lcw/amsOOU6Ks3r4Dw/roBL36JpcvG+Uhm1dFziGAPXiAQVc4v03pPHY
-	 t9iaNzVWu4UlTxudiDSv/VW9tdo2SbD2PIExxBZEENibvmZOXu7AW8opyo51YO8o2l
-	 jHaBxJOiSVY6R2xBcydOqYFUqVtbSofFgWQNQCi1UZNbi4tEadHK/INlKej8ega7QH
-	 OtDD/7R8uMve3Ho6vQYIDwGIi04UfJ8PEJ8+LLeg70GHojkRI1NUQSxUWw/MI/H634
-	 IF29SolKpiBYg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cHx4z5Knxz4wB1;
-	Fri,  5 Sep 2025 09:48:35 +1000 (AEST)
-Date: Fri, 5 Sep 2025 09:48:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Askar Safin <safinaskar@zohomail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with the vfs-brauner tree
-Message-ID: <20250905094834.46d58f55@canb.auug.org.au>
+	s=arc-20240116; t=1757029829; c=relaxed/simple;
+	bh=cJRcgXduiHSal19odhrqMAyc1h/5FcDcOd6A03wo4FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tE4lf5gj6enuoxizXur8Q09ebITWnTfpsPiLAPC82PWg0nKOdsXZNhw/dZPGUPIsqIaciQtOFMc4e1DkpmGv4m/tNXBYB4aS1keKDYLaDkPSTpsdrnBSPCr6H/WXfee7pNomfNaIw7GiycC2VSDPz4wWxgnkOqAUIE+ScsL5c/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s2q6tezP; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 4 Sep 2025 16:50:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757029825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EcoOi63+8ErVCjATfSW78fVTOIe8m0/lvvNKJAzSLt8=;
+	b=s2q6tezPZeSmesxSDgaE8+n9vbDTU0MO+2z+vXbPRt63svdVgoDc7UT3UpTt8DErPzsBX3
+	NNNgUFCG0/CBwrrH/pfNyidiqF5MIc5F/hYr8KQoD7Ar9MYzP4muLgM9puSLmNvYcgi+2g
+	ggq1GbrnOO9tWPypkcNpVLh64Ra0yes=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: mhocko@suse.com, rientjes@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, surenb@google.com, 
+	liulu.liu@honor.com, feng.han@honor.com
+Subject: Re: [PATCH v7 2/2] mm/oom_kill: The OOM reaper traverses the VMA
+ maple tree in reverse order
+Message-ID: <llxw4jc4okxjxjcco5vacqiushvr642u2lto5sml3vc6wlqboe@lyfqb5anihq6>
+References: <20250903092729.10611-1-zhongjinji@honor.com>
+ <20250903092729.10611-3-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5F.qNVNU0evQfspE.7JQrP.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903092729.10611-3-zhongjinji@honor.com>
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/5F.qNVNU0evQfspE.7JQrP.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 03, 2025 at 05:27:29PM +0800, zhongjinji wrote:
+> Although the oom_reaper is delayed and it gives the oom victim chance to
+> clean up its address space this might take a while especially for
+> processes with a large address space footprint. In those cases
+> oom_reaper might start racing with the dying task and compete for shared
+> resources - e.g. page table lock contention has been observed.
+> 
+> Reduce those races by reaping the oom victim from the other end of the
+> address space.
+> 
+> It is also a significant improvement for process_mrelease(). When a process
+> is killed, process_mrelease is used to reap the killed process and often
+> runs concurrently with the dying task. The test data shows that after
+> applying the patch, lock contention is greatly reduced during the procedure
+> of reaping the killed process.
+> 
+> Without the patch:
+> |--99.74%-- oom_reaper
+> |  |--76.67%-- unmap_page_range
+> |  |  |--33.70%-- __pte_offset_map_lock
+> |  |  |  |--98.46%-- _raw_spin_lock
+> |  |  |--27.61%-- free_swap_and_cache_nr
+> |  |  |--16.40%-- folio_remove_rmap_ptes
+> |  |  |--12.25%-- tlb_flush_mmu
+> |  |--12.61%-- tlb_finish_mmu
+> 
+> With the patch:
+> |--98.84%-- oom_reaper
+> |  |--53.45%-- unmap_page_range
+> |  |  |--24.29%-- [hit in function]
+> |  |  |--48.06%-- folio_remove_rmap_ptes
+> |  |  |--17.99%-- tlb_flush_mmu
+> |  |  |--1.72%-- __pte_offset_map_lock
+> |  |--30.43%-- tlb_finish_mmu
+> 
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
 
-Hi all,
-
-Today's linux-next merge of the vfs tree got a conflict in:
-
-  fs/namespace.c
-
-between commits:
-
-  807602d8cfc8 ("vfs: output mount_too_revealing() errors to fscontext")
-  1e5f0fb41fcc ("vfs: fs/namespace.c: remove ms_flags argument from do_remo=
-unt")
-
-from the vfs_brauner tree and commits:
-
-  5423426a79dd ("switch do_new_mount_fc() to fc_mount()")
-  308a022f41bd ("do_new_mount_fc(): use __free() to deal with dropping mnt =
-on failure")
-  ead5706f63cd ("do_{loopback,change_type,remount,reconfigure_mnt}(): const=
-ify struct path argument")
-
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/namespace.c
-index 92980f758fd4,aeeb33bf3e7b..000000000000
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@@ -3298,7 -3310,7 +3319,7 @@@ static int do_reconfigure_mnt(const str
-   * If you've mounted a non-root directory somewhere and want to do remount
-   * on it - tough luck.
-   */
-- static int do_remount(struct path *path, int sb_flags,
- -static int do_remount(const struct path *path, int ms_flags, int sb_flags,
-++static int do_remount(const struct path *path, int sb_flags,
-  		      int mnt_flags, void *data)
-  {
-  	int err;
-@@@ -3738,30 -3720,20 +3729,22 @@@ static int do_new_mount_fc(struct fs_co
-  	if (IS_ERR(mnt))
-  		return PTR_ERR(mnt);
- =20
-+ 	sb =3D fc->root->d_sb;
-+ 	error =3D security_sb_kern_mount(sb);
-+ 	if (unlikely(error))
-+ 		return error;
-+=20
- -	if (unlikely(mount_too_revealing(sb, &mnt_flags)))
-++	if (unlikely(mount_too_revealing(sb, &mnt_flags))) {
-++		errorfcp(fc, "VFS", "Mount too revealing");
-+ 		return -EPERM;
-++	}
-+=20
-  	mnt_warn_timestamp_expiry(mountpoint, mnt);
- =20
-- 	error =3D lock_mount(mountpoint, &mp);
-- 	if (!error) {
-- 		error =3D do_add_mount(real_mount(mnt), mp.mp,
-- 				     mountpoint, mnt_flags);
-- 		unlock_mount(&mp);
-- 	}
-- 	if (error < 0)
-- 		mntput(mnt);
-+ 	LOCK_MOUNT(mp, mountpoint);
-+ 	error =3D do_add_mount(real_mount(mnt), &mp, mnt_flags);
-+ 	if (!error)
-+ 		retain_and_null_ptr(mnt); // consumed on success
-  	return error;
-  }
- =20
-
---Sig_/5F.qNVNU0evQfspE.7JQrP.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi6JVIACgkQAVBC80lX
-0GwruQf/bwnaUu0QRZlyyfB1RzMfcUpPAoH1fazxGPiMpUj9Q3DRp4+TFdVErVuS
-9b405dKK/Z7anAuSViRAqzj10Lw7kLehbtma/Eq3ywI+fo6TQ5TXIYIMJ1ShhIIo
-Uk5+FNQazmMG+yyy6f3GT154RlPNGdqvUR0tUiStuQhSKhuo3kOieYn76CQw3FTS
-ogMzeiEiUNaz6R8ClBSXBd3YZdBl/z5gYAaJO8gm7dJuiuuGF4WbuyzdvQfCqoj4
-muWvnrVB57Flfz5WIxLdkuxjx5CwLNXNxLQ7WzKkiNrLA9whTCmvRAfLUe4Aqits
-uRvvqp98Orv3V12tbi/EKGZbnWPIlw==
-=yX/g
------END PGP SIGNATURE-----
-
---Sig_/5F.qNVNU0evQfspE.7JQrP.--
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
