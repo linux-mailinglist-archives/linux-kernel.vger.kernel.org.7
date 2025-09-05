@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-803688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B35B463C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:37:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A03B463C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A63B1772A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:37:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8888C7B628E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807A627BF80;
-	Fri,  5 Sep 2025 19:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DS4ps4kk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A8427EFFE;
+	Fri,  5 Sep 2025 19:38:53 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E142248176;
-	Fri,  5 Sep 2025 19:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0887221577;
+	Fri,  5 Sep 2025 19:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101040; cv=none; b=p7DDiEUa2yrH6Kd1PPXyRVwuya7jjro4CUOHKEKPqC/bnohlljesR9riZqWQYFJNmVYVCmmIBXWY3dlTQCFKBRBo/vW+wCt6c3G8pGV03j9uW5hYUOR58dmvah2EVMpbdqNKtBsXCyuYvRpv2yPvjm19w0UIY/phVOvt0F1ZAi4=
+	t=1757101133; cv=none; b=N4s7SOx7xUkeyUKYENNI8xIo4+TDbgqSgYRZohyxkrdAnrB4fok+bkcRvpKtdOMvdY0a41Dr4aaX1rlCfZt6dQwlpfAyeZZ3U2xiVYrLTJ2bW1SCHKlF17W5btsrYCUSUein9Dqd0lCbXQSmu/bc/v7G4ZtQyNKOWgIzqNn1XJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101040; c=relaxed/simple;
-	bh=Kw583N7TwFtfpw+SQdnogjAN8M5w0gWNctlDKFZphqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=joGA4BwqpPGJgQ8yYZnc+7K/hUDkA1O0X24/s9EEsbWS9Ol9+fWb0vzEq7dJ9G0KTKorIUI1sYxAQWaLKCE/EF+eADG/Oa9hCwTq0EEpz34la6iaDA+Z+hrD5XqpMAkEt/iPLodvSXbDlFJ/9awsTtaSvYX4twhBX7urOU+j4ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DS4ps4kk; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757101039; x=1788637039;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Kw583N7TwFtfpw+SQdnogjAN8M5w0gWNctlDKFZphqU=;
-  b=DS4ps4kkqIpwa2m7hTodw7K2zPKh12sP05v5vooJlcnC9Uj7Zc956qwW
-   dNq6ZH4Tb7gAhu71BlnCRUTjTXax7Bw3spvQbnsFxwpKmymmt+2XOAVzU
-   hYxk/r4EmFobHHg+Y0aqD0N8l1Jz0s/3mkCtO4uLFOKmN3N4k7ZV4IeB7
-   bLFPeeIkhqW5sRxjL8iV+BDfrR3Sc6D3NpodY59L3ufawOj2nPI+rCP3q
-   AY+AJ1tLqG2q4tIoXlR9MwGUqvrSxNijlsPQTDHQYuaxckpPJsAa3zXZm
-   vCmF8iHUazVUcf1r7nrKfDQa2DLWIgFNixupi6MsF8XVdizU9p3t/YPSN
-   w==;
-X-CSE-ConnectionGUID: 3YsQJY7iRXeiIwYGpc/Cxw==
-X-CSE-MsgGUID: ZqL5H93tTNGw/skan6kRWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="59603705"
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="59603705"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:37:19 -0700
-X-CSE-ConnectionGUID: 7PRtGndXTPGZueuV4VDJag==
-X-CSE-MsgGUID: pJij0l6UQdGEhPsJ1E53aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="171517027"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.42]) ([10.125.110.42])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:37:19 -0700
-Message-ID: <287a2652-bce6-4084-b9b5-c8feb24a2940@intel.com>
-Date: Fri, 5 Sep 2025 12:37:18 -0700
+	s=arc-20240116; t=1757101133; c=relaxed/simple;
+	bh=U9oSa2Dh8yshfVoh6TuWYERaJFbgi+QGHLnYK0vULIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FLDDdspxgTi6xi7BE80YHcK8tjf8PEKsKq5hLlX9OKu9E56c70LOCCUjGIYY6dLd73CkyCVbBJKbv0Ya9KAOCTzfh2OoEiTI+YRkeDZe/O2/ng502shwFduE6ErMhWLKsgaY5HmA9L/qPn+5KwGXh/+uiXfHAGEH528rWxjXfwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 7BD401A0178;
+	Fri,  5 Sep 2025 19:38:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 921B719;
+	Fri,  5 Sep 2025 19:38:47 +0000 (UTC)
+Date: Fri, 5 Sep 2025 15:39:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Pu Lehui <pulehui@huawei.com>
+Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>, Pu Lehui
+ <pulehui@huaweicloud.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tracing: Fix missing errno when zero parser->idx in
+ trace_pid_write
+Message-ID: <20250905153926.68b47107@gandalf.local.home>
+In-Reply-To: <e3c22d00-1a0c-45e0-bc76-955d367ab4d1@huawei.com>
+References: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+	<e3c22d00-1a0c-45e0-bc76-955d367ab4d1@huawei.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 0/5] Enable automatic SVN updates for SGX enclaves
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
- mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
- chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
- bondarn@google.com, scott.raynor@intel.com
-References: <20250818071304.1717183-1-elena.reshetova@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250818071304.1717183-1-elena.reshetova@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 7xfnaj9qsfuneec441b56cyuew6m7kdj
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 921B719
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19w8e+rcyq3MTvpt6bLlPxvAV8ZPrHZbL8=
+X-HE-Tag: 1757101127-572679
+X-HE-Meta: U2FsdGVkX1+f9wmQtYBN5OBcUTJ1cFpo3gWqS1jDTTfrvxPeJnjUsYOc1hsCVcqHEPPxZoMultw7druGuJuROpYyqO1jLpcodvnQ/W7dOdIN/DmG6zYb18RjvpXd9TwCYJexaHGq4sYlgtZikU+WwDReAfdPVlrK23vOpl6Hb0Z0CKjWNjJqz4gfO/X9Wj5shyBHPUbsUKs1Ynupukj0VaayDYsbv5HFqm9O2kF2vl1m+lC5iXqHXNC9mvwSImU0HUb+K+TC1ERpAyeme/NIhA/q+1Ams60XruQfkt5ZxTn/wNYPV4IlXURR4CHkr8OVFchdOhT9X6NASVQJLQ+NBz8BHmRt+mnc
 
-On 8/18/25 00:11, Elena Reshetova wrote:
-> Testing
-> -------
+On Wed, 3 Sep 2025 12:15:16 +0800
+Pu Lehui <pulehui@huawei.com> wrote:
+
+> As for this fault injection syzkaller issue, shall we need to silence 
+> it? How about the below fix?
+
+I usually don't care about fault injections because it causes "faults" that
+would only happen if the system was about to crash. But anyway..
+
 > 
-> Tested on EMR machine using kernel 6.17.0_rc1 & sgx selftests.
-> Also tested on a Kaby Lake machine without EUPDATESVN support.
-> If Google folks in CC can test on their side, it would be greatly
-> appreciated.
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index e6b50b416e63..c17c031e7917 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -834,7 +834,11 @@ int trace_pid_write(struct trace_pid_list 
+> *filtered_pids,
+>                  /* copy the current bits to the new max */
+>                  ret = trace_pid_list_first(filtered_pids, &pid);
+>                  while (!ret) {
+> -                       trace_pid_list_set(pid_list, pid);
+> +                       ret = trace_pid_list_set(pid_list, pid);
+> +                       if (ret) {
+> +                               trace_parser_put(&parser);
+> +                               return ret;
+> +                       }
 
-Yeah, lots of @google.com addresses on Cc, but there's a dearth of tags
-from those addresses.
+make it:
+
+			if (ret < 0)
+				goto out;
+
+>                          ret = trace_pid_list_next(filtered_pids, pid + 
+> 1, &pid);
+>                          nr_pids++;
+>                  }
+
+And put the out label just before the trace_parser_put().
+
+Oh, and add one space before the "out:" label. That makes diffs of patches
+show the function when changes are after the label and not the label itself.
+
+-- Steve
 
