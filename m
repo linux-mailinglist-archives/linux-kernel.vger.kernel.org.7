@@ -1,156 +1,110 @@
-Return-Path: <linux-kernel+bounces-802125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4FFB44DD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:15:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEC4B44DDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC071B27860
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3D4E1B2799A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7163D13AA2D;
-	Fri,  5 Sep 2025 06:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0682874EA;
+	Fri,  5 Sep 2025 06:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WCewLAdo"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zRJzdLtP"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933FF2874EA
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2742AD2F;
+	Fri,  5 Sep 2025 06:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757052915; cv=none; b=KkuLNC59108Y1qbq7DO1G2+oObLjjTrzhJLwCpUc3EZ+4XupfevjNfkzL5wpYMfa2bUCdhHyawG1W4M41Wq0LOXGyIz7hMOw82HB7xN6mqSYgGyHPCfz60t/znzdVEhC2Vwv+NoKFpb/OQCWFmIXO0a4tx9lX9p1DTSBJgu/JSk=
+	t=1757052984; cv=none; b=jkvpBXI64gFKi6iOqp8MpERkHl0vFkrFkZwaVbMhwZXwKK9Sm0QyznVyc6fL8RBiOtff7RRvTdl6oo2PISNrxJYWGptMo96aG+MEOmY+pznOsCCeh6BLYQPdaLS+BtPYFx1zfSvPKib4fcE3Ck9K20xWk1hN3q26zKvs88ZLIKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757052915; c=relaxed/simple;
-	bh=4QB78LNQwxKAsA68SulDE/sw/iH3uDbwsF2AQjDBOCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vBn+NvYiZrKKvTyGvLsFAQ0taqYArS2Y2MRzhijSawE8+NBXx0VQ/hRwYO+CimVV++tvj4C6ezUYlz25s1EQt7pGJa0K4FVkW6hUaK/fQkHsTQVnyrHAN1q728vFU/iCNkrC35gV1zuNPnzwnmk3uuOxrhT/CXo688SwxVyMLLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WCewLAdo; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6216e9bdda5so55298a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1757052912; x=1757657712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=67Fan9f0fhfdCk8yqG4XmOKNFNUAhVKb3cVNbIqGl/s=;
-        b=WCewLAdoKtdo8jkGFbffWFrZVuD9nvvpv6EPBWGIrbZwEUUWtItcvNcQoYoaszr4PW
-         y4Ajw2DZSXyGk9schrUGWnCguNtZQtN1dG7XbbcPJZ9bQ3O4VCeN9fjFcs3Z3zs/a828
-         OR7sHZAUQlRZ/CbaPvFsjDiKUBjIt+MHCW6nDu/ZRZrA5JDsIMQfqw89/bFpupSTMTDZ
-         QpO7dkLYfykfvD7j3J08M1LWT9FlZZ+/Zp0PNfCOYFSi576Z+970F4Thxi8F4fMMcpOk
-         4WVSkGmKZztk8QAvnBqQuNd/Wc0qXrZdxSRlKGXeYKHtsHDgxfqWkxj3lnNuo7vGUxiK
-         CS7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757052912; x=1757657712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=67Fan9f0fhfdCk8yqG4XmOKNFNUAhVKb3cVNbIqGl/s=;
-        b=bJYyfTlPxSBlHnenX8VsjBa2nlT25FqGGpbUHHwU0Nt3O5seUS3eK+tZyiN3yl3NYL
-         QO6t2TmCM7iKiGNU0ueJX+FAFJDcFxy8XXa2N6+f8Qnq8x9FczbWroB9Mm8b6x2XBr4p
-         uNnTc83sO82ZgUMotH8T+tIw53DyKawqjdB0FMImVGUFBRjsf+7d/FsqXIdl78xg1SqP
-         m3+kHciHFC9aY6529L/SpNYtSgqzUrVQcLomPCPsRFS6x/lPxxbdtG9Ihi/nnT6+kkkA
-         7QuZoFSL2dNfPi0QUp0wkaWQdizJX4ihb2xnIy9Tk8dWpcSTYpg5thgy9KEfOfyfmZkc
-         FWdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzhNg9N5QiUV9LkxL8I4gYI/iguuSKoWFoq7NMtyxyK8/spRPD/wRCiDbOXRCvtRs0FG+meR93j453sqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykANr47TUpdrXfHj0FsmDnhdrujZURZEmOhhsyVZDQpZb0MFWs
-	KTLxhO1MmEgudM2ozKhoLlGc0oWTCign/XbmcEuWNkiMWkcO3qmj5c8ob07l5tMp3vKBHN2OO4Y
-	0sTtlh0lxSIagSkYkAulVbojYnZPDxx5pZGswkada5A==
-X-Gm-Gg: ASbGncu7QiAhvbL2v7BcwpsiXkrpGkAobfQG+86qY3csByA15Pw/NqCKMrUyggrX1U8
-	YJ7NpIj37zCbQQ4Pr9CDDpMB98DaIYWpDSdqWDFgTylM8ZOGQ2euHrIIgU8/Wctrp9426CnFMMM
-	s4ZLXs+5cwtOzTvUPOS3NwxcdX1DYtgatbzbrzJ0HDVUxiHCOSNXG/r+Fmve4/JEVCBlE4ijmi+
-	jbz0xTD
-X-Google-Smtp-Source: AGHT+IGQxtNMXZdvajLZ7J8QVJRCMBGrRVcTSOlLx1yX827VXeUjk0Y0uoYjfJG3Qk/GwD1+mtNnIEotbRORPtK5gAk=
-X-Received: by 2002:a05:6402:430b:b0:620:bf3a:f6dc with SMTP id
- 4fb4d7f45d1cf-620bf3afabamr1472744a12.4.1757052911908; Thu, 04 Sep 2025
- 23:15:11 -0700 (PDT)
+	s=arc-20240116; t=1757052984; c=relaxed/simple;
+	bh=KpRBmRKvhDcjWYur42/C1E01RbQyObokHTjZKKxxxLk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gz0Korl3ZN82082cDS2yEgO+DBsBB65jDUdzgXzmjA6yiij/p5x0Lr/6hgGxCK8T0KOLHByOUt8MseK2upAXo9gysJUvxUb+e46FOCzHDlfYdSZmRa/ppIUMtcZuu9iRmQkKgIqRj8ZLbA5WH+31NkuLNR7XR0VpzrQwrIe6Ozs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zRJzdLtP; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5856GG323688819;
+	Fri, 5 Sep 2025 01:16:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757052976;
+	bh=6QhfPD6JIYlG46t1oLGKwVf4axoG3i/vXd29SY71uMA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=zRJzdLtPrgJ1V9493DF9TDLIcb+evX+BtefbXgcr0QKEkBL4kIDpHHS42WogoCKXp
+	 WSlfazTzCm7WiBUcn6LYr4h6HFUgaNmZlYHjE27lBt1bWMqFX9gNfdKzJB80+UBoiW
+	 DBvvthSsJG2KWNBCfurb6o2E7+ZgPcaADVO0kA4M=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5856GGLL165521
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 01:16:16 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 01:16:16 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 01:16:16 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5856GFuu004031;
+	Fri, 5 Sep 2025 01:16:15 -0500
+Date: Fri, 5 Sep 2025 11:46:14 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Akashdeep Kaur <a-kaur@ti.com>
+CC: <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>, <vigneshr@ti.com>,
+        <u-kumar1@ti.com>, <sebin.francis@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vishalm@ti.com>
+Subject: Re: [PATCH v5 3/4] arm64: dts: ti: k3-pinctrl: Add the remaining
+ macros
+Message-ID: <20250905061614.c4heyez77to4ovpz@lcpd911>
+References: <20250905051448.2836237-1-a-kaur@ti.com>
+ <20250905051448.2836237-4-a-kaur@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aLmoE8CznVPres5r@kspp>
-In-Reply-To: <aLmoE8CznVPres5r@kspp>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Fri, 5 Sep 2025 08:15:02 +0200
-X-Gm-Features: Ac12FXzLRYvr9qxSpOLdM_cu9n8ZpiBkps4v2s9lawoV77lRbVRWUjzUv-Bi5yo
-Message-ID: <CAMGffE=4KUt2y_-C32YaVtJVFiyU+1T=gnu1D0m+MxXs=X05kQ@mail.gmail.com>
-Subject: Re: [PATCH v2][next] scsi: pm80xx: Avoid -Wflex-array-member-not-at-end
- warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250905051448.2836237-4-a-kaur@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 4, 2025 at 4:54=E2=80=AFPM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
->
-> Remove unused field residual_count in a couple of structures,
-> and with this, fix the following -Wflex-array-member-not-at-end
-> warnings:
->
-> drivers/scsi/pm8001/pm8001_hwi.h:342:33: warning: structure containing a =
-flexible array member is not at the end of another structure [-Wflex-array-=
-member-not-at-end]
-> drivers/scsi/pm8001/pm80xx_hwi.h:561:32: warning: structure containing a =
-flexible array member is not at the end of another structure [-Wflex-array-=
-member-not-at-end]
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-oh, indeed, v1 is wrong, and v2 is right fix.
-Reviewed-by: Jack Wang <jinpu.wang@ionos.com>
+Hi Akash,
+
+On Sep 05, 2025 at 10:44:47 +0530, Akashdeep Kaur wrote:
+> Add the drive strength, schmitt trigger enable macros to pinctrl file.
+> Add the missing macros for DeepSleep configuration control referenced
+> from "Table 14-6172. Description Of The Pad Configuration Register Bits"
+> in AM625 TRM[0].
+
+Isn't what you're really referencing the AM62P TRM ?
+Small correction, perhaps it can be fixed up while applying?
+
+> Add some DeepSleep macros to provide combinations that can be used
+> directly in device tree files example PIN_DS_OUTPUT_LOW that
+> configures pin to be output and also sets its value to 0.
+> 
+> [0] https://www.ti.com/lit/pdf/SPRUJ83
+> 
+> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
 > ---
-> Changes in v2:
->  - Remove unused field residual_count. (James)
->
-> v1:
->  - Link: https://lore.kernel.org/linux-hardening/aLiMoNzLs1_bu4eJ@kspp/
->
->  drivers/scsi/pm8001/pm8001_hwi.h | 3 ++-
->  drivers/scsi/pm8001/pm80xx_hwi.h | 3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm800=
-1_hwi.h
-> index fc2127dcb58d..170853dbf952 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.h
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.h
-> @@ -339,8 +339,9 @@ struct ssp_completion_resp {
->         __le32  status;
->         __le32  param;
->         __le32  ssptag_rescv_rescpad;
-> +
-> +       /* Must be last --ends in a flexible-array member. */
->         struct ssp_response_iu  ssp_resp_iu;
-> -       __le32  residual_count;
->  } __attribute__((packed, aligned(4)));
->
->
-> diff --git a/drivers/scsi/pm8001/pm80xx_hwi.h b/drivers/scsi/pm8001/pm80x=
-x_hwi.h
-> index eb8fd37b2066..b13d42701b1b 100644
-> --- a/drivers/scsi/pm8001/pm80xx_hwi.h
-> +++ b/drivers/scsi/pm8001/pm80xx_hwi.h
-> @@ -558,8 +558,9 @@ struct ssp_completion_resp {
->         __le32  status;
->         __le32  param;
->         __le32  ssptag_rescv_rescpad;
-> +
-> +       /* Must be last --ends in a flexible-array member. */
->         struct ssp_response_iu ssp_resp_iu;
-> -       __le32  residual_count;
->  } __attribute__((packed, aligned(4)));
->
->  #define SSP_RESCV_BIT  0x00010000
-> --
-> 2.43.0
->
+
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+[...]
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
