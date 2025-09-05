@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-802819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CC3B45765
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E5CB4576A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC4C7C1701
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:12:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3B07C1956
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2D34F49A;
-	Fri,  5 Sep 2025 12:11:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB2334F498;
-	Fri,  5 Sep 2025 12:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CC834AAFA;
+	Fri,  5 Sep 2025 12:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nyhJmFF6";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XxedlOd2"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3192D595B;
+	Fri,  5 Sep 2025 12:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074315; cv=none; b=D0ToZP8AJFylC/NnEFh16VjdY88HG5DiuX0Mlzej+OC+n/4fUsEdeez1jZotNWbeWO32hVqDKDNacFDwcZjP1x4MUdZWd8LbJUuS1DWLuW+R6tyqCk/LggA9nrgV12LYSiXu4cO316kn7b3Kv4kT6rYLfh1wwwvGL3qeI6y2iQ4=
+	t=1757074404; cv=none; b=OlbwwGV4t8SFTXiX6Q21J4sdwnHWIB8/ESovW51wx2VW8SRMuDA56xMzN7ap/8282bceTaa7XNo4N1IQjsFMS6sknhXv39HPo3RsQ4tMvP0OHaqcnETy1+JtrTbP5qM90V2GEX5Hy8BnYC6DABVQ3HeEo9vl35DMnuRm5qqRfxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074315; c=relaxed/simple;
-	bh=VvyIHkUv5RRxBs59x2FA9ZxJ1T5Ll9H13cK44Xc+SPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHMcaetZma5D0touVYT+892F+gdCzpHgVnva8H8LCWYCbWkcgNHcakSvRgjmmoRSvk/IHvSpnZ/VLD+nnwKj0+EsSNPbQ+yu2YI7cnY9Z3IU1Jzv9jefv87qwk5SwYzEXqrv8BMRYl/QctbveKU1UHnnnriLatbnwUUrEAXbbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0A1B153B;
-	Fri,  5 Sep 2025 05:11:42 -0700 (PDT)
-Received: from [10.57.60.42] (unknown [10.57.60.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65F093F63F;
-	Fri,  5 Sep 2025 05:11:45 -0700 (PDT)
-Message-ID: <66335cf3-d49d-4b27-a37b-0a8a5e2c5d78@arm.com>
-Date: Fri, 5 Sep 2025 14:11:43 +0200
+	s=arc-20240116; t=1757074404; c=relaxed/simple;
+	bh=csjHK8PoOisMbnu7P8iLdFCxGu9TmO9YhQI56Bglkl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nv5D0xid8NYCDI7HAUKSxvikmyD+r0tZps1cMgXW78aIeaj6kyDEwkgXnwdTnE27ddFbzvt3cLZKiT1JHRvdzIqa81Isq6K5T9J7namtHE1Ut9KWY5/A5KwA4anclY2xz2Ss74CPh2HeySJ792vMigaWBX6RTAlgMUNDw+GygUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nyhJmFF6; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XxedlOd2; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cJFcH3CmPz9sbL;
+	Fri,  5 Sep 2025 14:13:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757074399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oEMdT5xWzO1hbI9Xaxw82eQEzXMf3KhV/c5Xfg9jCXc=;
+	b=nyhJmFF6Tv0nyJNL7QJJepUc+Z1xvIm8YpoG1PlQsSM/fhUtAh6fqBPv+F946IkLdNxVid
+	E1wZdUr7fuKcLYHYXfiY5Lkh+c8/s0+3O6bw04RunDP2YXCKW/bpp2dSm6Hkyul2FKbOnE
+	nCigxaM4CvhdokD9KPfAkwswRdnlCoYxkzMe4C5sZ3jmPV6Tl00WB4iCEHac2RwWhw6p+6
+	xMHYkxYd6t+bvMqo90YvymtdqBojwTkjtJpVgCcgXrUAE+FJDfim/CGhy5dVjXAXzNEHAx
+	ZjcxcKIBQNswch+0YJQ6+Ibg8In9VtP1Ru18Bv9HeHRLqUwOim3t3bvwfkwS/g==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757074397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oEMdT5xWzO1hbI9Xaxw82eQEzXMf3KhV/c5Xfg9jCXc=;
+	b=XxedlOd2EHqPvf5TagP2AgPnKHEyT9zuW3kVHkSuEuGAXnwZ50GnE3/sgFZ0pQBSR24uDC
+	YggclyS4dVkGoLW7FUdzrixyPPdBKASqMluVUg8ylV0ZDmvdBKDgzyGM6ko3ayWSiVM++y
+	/Z8x1IPua8PwYmPiAqbFgulv/AxANn3zJjeFy0TEpst9Uv5vJ6KXDVLqDAaWH0/QvJaIEk
+	h0UA+7tABZKRznL3OsD8N5inJFwI7wIfk4ihf8JDkJNe8vTTyOlQ9LllUKFBXvQ/0O7fDF
+	Lo/VKY9x8W0y2j5rggwT6rvGW5CflNss/qvmIDXW76J46sPFHLjSCMp+vSAlmw==
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Wang Jiang <jiangwang@kylinos.cn>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for fixed BARs
+Date: Fri,  5 Sep 2025 14:12:43 +0200
+Message-ID: <20250905121259.9378-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Nesting support for lazy MMU mode
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <9fd076c7-f163-4b92-8201-d8a259a338c1-agordeev@linux.ibm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <9fd076c7-f163-4b92-8201-d8a259a338c1-agordeev@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 4eis68otftdeswfckfrm4yza3shqrujy
+X-MBO-RS-ID: 3ee001c26907758ab67
 
-On 05/09/2025 11:46, Alexander Gordeev wrote:
-> On Thu, Sep 04, 2025 at 01:57:29PM +0100, Kevin Brodsky wrote:
->
-> Hi Kevin,
->
->> When the lazy MMU mode was introduced eons ago, it wasn't made clear
->> whether such a sequence was legal:
->>
->> 	arch_enter_lazy_mmu_mode()
->> 	...
->> 		arch_enter_lazy_mmu_mode()
->> 		...
->> 		arch_leave_lazy_mmu_mode()
->> 	...
->> 	arch_leave_lazy_mmu_mode()
-> I did not take too deep - sorry if you already answered this.
-> Quick question - whether a concern Ryan expressed is addressed
-> in general case?
+Currently, the test allocates BAR sizes according to fixed table
+bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 } . This
+does not work with controllers which have fixed size BARs, like
+Renesas R-Car V4H PCIe controller, which has BAR4 size limited
+to 256 Bytes, which is much less than 131072 currently requested
+by this test.
 
-The short answer is yes - it's good that you're asking because I failed
-to clarify this in the cover letter!
+Adjust the test such, that in case a fixed size BAR is detected
+on a controller, minimum of requested size and fixed size BAR
+size is used during the test instead.
 
-> https://lore.kernel.org/all/3cad01ea-b704-4156-807e-7a83643917a8@arm.com/
->
-> 	enter_lazy_mmu
-> 		for_each_pte {
-> 			read/modify-write pte
->
-> 			alloc_page
-> 				enter_lazy_mmu
-> 					make page valid
-> 				exit_lazy_mmu
->
-> 			write_to_page
-> 		}
-> 	exit_lazy_mmu
->
-> <quote>
-> This example only works because lazy_mmu doesn't support nesting. The "make page
-> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
-> page can be accessed in write_to_page. If nesting was supported, the inner
-> exit_lazy_mmu would become a nop and write_to_page would explode.
-> </quote>
+This helps with test failures reported as follows:
+"
+pci_epf_test pci_epf_test.0: requested BAR size is larger than fixed size
+pci_epf_test pci_epf_test.0: Failed to allocate space for BAR4
+"
 
-Further down in the cover letter I refer to the approach Catalin
-suggested [4]. This was in fact in response to this concern from Ryan.
-The key point is: leave() keeps the lazy MMU mode enabled if it is
-nested, but it flushes any batched state *unconditionally*, regardless
-of nesting level. See patch 3-6 on the practical implementation of this;
-patch 7 also spells it out in the documentation.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>
+Cc: Wang Jiang <jiangwang@kylinos.cn>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Simplify the conditional to always use fixed size BAR size for test
+---
+ drivers/pci/endpoint/functions/pci-epf-test.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Hope that clarifies the situation!
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index e091193bd8a8a..2418add64104a 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -1050,7 +1050,12 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+ 		if (bar == test_reg_bar)
+ 			continue;
+ 
+-		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
++		if (epc_features->bar[bar].type == BAR_FIXED)
++			test_reg_size = epc_features->bar[bar].fixed_size;
++		else
++			test_reg_size = bar_size[bar];
++
++		base = pci_epf_alloc_space(epf, test_reg_size, bar,
+ 					   epc_features, PRIMARY_INTERFACE);
+ 		if (!base)
+ 			dev_err(dev, "Failed to allocate space for BAR%d\n",
+-- 
+2.50.1
 
-- Kevin
-
-[4] https://lore.kernel.org/all/aEhKSq0zVaUJkomX@arm.com/
 
