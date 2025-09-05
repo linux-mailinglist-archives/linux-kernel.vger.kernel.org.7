@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-803741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4411CB46484
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DCFB46485
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A2BA02513
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F94EA0253F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1502989B0;
-	Fri,  5 Sep 2025 20:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E0E29B8F8;
+	Fri,  5 Sep 2025 20:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BC/EMx7F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttdoIzGD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354832701DA;
-	Fri,  5 Sep 2025 20:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A378E281351
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 20:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757103447; cv=none; b=aw99zfFx88xvpbi5/0D1lX3vVT8RKWHdSYalX/E3FSLWl4xbsiGLAOv+fIEMKOmKoobx5S5zNJiF2zDuCTrYxrIB5lGiBbHzqFGz6eaCQyDkmaT9o5YoPGNDFeTQ+bWsceCg6ZuYcnCdFRvYD7kTgamSYgX0Ei4CoNEazwEj8Rk=
+	t=1757103448; cv=none; b=KkuxSY/wF1JRKj78aJM2KJRXKqufrhno5SlXkusQSJZIt3cNVv2GuSUB75W38st47+tdMtmqB+Aop5D7QXuLIXDg0MH+oQvfY3+W8PHqPYpExYNN4bZLY0ZglN5/WlN3o125Fzw9IFD15svFaldbh6Im+zuIsy2JXqWXUBetFTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757103447; c=relaxed/simple;
-	bh=59xDGMOg1rEZ3zUCEsQ8Srjr10q1wTcWWHQskQz2VLw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=glfWf7Iq71Nb4WfrRJ8VPvqoj1IuWWbGqt//EhUafgVEdaRQAH4LTl1V2ow2cJwOq2d+5amzX33BB9SQpCvmPXZBjCZLfEByD4u6Xy4Ly5VL89gjh797vr5ZMFSwMHcRN0JXWf0Q44+L32AyplJoIJQr8Yr/V6DL3rS5k2wI2KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BC/EMx7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0DCDC4CEF7;
-	Fri,  5 Sep 2025 20:17:26 +0000 (UTC)
+	s=arc-20240116; t=1757103448; c=relaxed/simple;
+	bh=riI43D9lO1MLv2qm7PX19Iq7jYpv/aKJ8u0QsSqJpps=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=uwgbMO/kO1Q4GbtNXpMCrVnwDYqf/vfTE8tu4Dwn756XInNIQQsAve0RbOLKXf/sIKWfgkPV73m1f/DsJ7PMcgng+GcjIhUEnPgke7wlsXhDNBnXHpSQtsDDXPspC9CZunknX/JSBa9WhvuD8/5hCmUwNz0On2wVSnlNVCMIzQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttdoIzGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1A5C4CEF8;
+	Fri,  5 Sep 2025 20:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757103446;
-	bh=59xDGMOg1rEZ3zUCEsQ8Srjr10q1wTcWWHQskQz2VLw=;
+	s=k20201202; t=1757103448;
+	bh=riI43D9lO1MLv2qm7PX19Iq7jYpv/aKJ8u0QsSqJpps=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=BC/EMx7Fu1AGRz0ld6hfnaFAbFg7B+7i/ch+OVOHQ+wRkblXs9OxggmQSx4X3zRdd
-	 rQBph5buPQpcS+XjlAHlatxD6XctuYhbMjCNoe2jQ0SOinTngsZh9yAoAYE8p6ESuy
-	 11oxuDBsFEUk99TfrXrOlJ7QD/Y0HNCZgEJ97lU50xwqQeQlOJ1Ik5ZTpFA34VbWNK
-	 HmpICBehIgRKDIL3KOHLNsfn/CXAwKaXt2BoXrF7VPdmAelPnAC+TE8BS9zIsG7zDS
-	 SocfjYZDKkA4cnReunLzfJX9FU828ka9e81Bz6ldHvWD+8VMAQRj1PT19GmEd1RxKq
-	 NMOWWy/TWJS7Q==
+	b=ttdoIzGDNxvhxeoy+O6UA5XhzDH+8T1EcwQ2RW/qWySEGEkF3vDe3Kn5LBij2VUPO
+	 JpaZp1bgW/5bVdTrkhp787ZC0TAu3ewb2YHHhU0i33Exx/CmcoZYKzNBeqWDPJRONw
+	 AwVeOjAoRFF3l2HMtPeOxGb6pRCYThOjDptVyAWXrf9cf1c0Zt3yfY+PDwqo/AKLFa
+	 E2jSOROYQnmnNIb2A/XO/tF5FrcqQID6qNFhT808rXmVLBHAE+SA5yQ9Zc67PLYSie
+	 7eGMaJZe4q8wzSeUGotrHXLqjSmlsYzVoyBQQgiP3cF4OSiGwapMXXbvRhWaE+giI5
+	 Mciq83XBnql6Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DE6383BF69;
-	Fri,  5 Sep 2025 20:17:32 +0000 (UTC)
-Subject: Re: [GIT PULL] audit/audit-pr-20250905
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEE6383BF69;
+	Fri,  5 Sep 2025 20:17:33 +0000 (UTC)
+Subject: Re: [GIT PULL] arm64 fixes for 6.17-rc5
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <6af833b45f68db4612ca52dd839d5662@paul-moore.com>
-References: <6af833b45f68db4612ca52dd839d5662@paul-moore.com>
+In-Reply-To: <aLsffo3bIIH4hYSQ@arm.com>
+References: <aLsffo3bIIH4hYSQ@arm.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <6af833b45f68db4612ca52dd839d5662@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git tags/audit-pr-20250905
-X-PR-Tracked-Commit-Id: 4540f1d23e7f387880ce46d11b5cd3f27248bf8d
+X-PR-Tracked-Message-Id: <aLsffo3bIIH4hYSQ@arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+X-PR-Tracked-Commit-Id: a7ed7b9d0ebb038db9963d574da0311cab0b666a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 730c1451fbc3942d434a4203bd4616ad0b71b23d
-Message-Id: <175710345113.2676293.3387784958803581298.pr-tracker-bot@kernel.org>
-Date: Fri, 05 Sep 2025 20:17:31 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: e5d5d23319565a7e48232707c3fe30bd4eb638cd
+Message-Id: <175710345262.2676293.12334008211790244742.pr-tracker-bot@kernel.org>
+Date: Fri, 05 Sep 2025 20:17:32 +0000
+To: Catalin Marinas <cmarinas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 05 Sep 2025 11:37:03 -0400:
+The pull request you sent on Fri, 5 Sep 2025 18:35:58 +0100:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git tags/audit-pr-20250905
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/730c1451fbc3942d434a4203bd4616ad0b71b23d
+https://git.kernel.org/torvalds/c/e5d5d23319565a7e48232707c3fe30bd4eb638cd
 
 Thank you!
 
