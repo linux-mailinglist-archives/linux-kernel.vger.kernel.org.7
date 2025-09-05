@@ -1,122 +1,141 @@
-Return-Path: <linux-kernel+bounces-802241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6161FB44F58
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:26:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805EDB44F5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271D25805A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488EEA4611B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4712F39A7;
-	Fri,  5 Sep 2025 07:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DoloE0yz"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC622F5330;
+	Fri,  5 Sep 2025 07:20:09 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1D92F3635
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCFC2F4A19;
+	Fri,  5 Sep 2025 07:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757056779; cv=none; b=R9bGNibu3jdOyJQh48R3YVd1zk+iOQVW8iAO4CErN5fLLJa3PhBrTbwYnQutQLSE0AIVD3ZXmA7CLUacIeBl3bGOh6gxK1DWUWCyeZVGcLEfBsh4bYGiSXtOb6FlezWcBhKTDrJc8C37ptQwbHOne5vgECOUeE0g0/o1t4hPnXE=
+	t=1757056809; cv=none; b=XHxVt6KSG3WT+lLlabvcfhAXMvn6LMk3cgSJw4dyDey/G40f6N5oIshznbjEhO41OUcFy8tpaKBEn7kWGw5CLLxIxF6oD9nCD5kRyVGphbbsldWQnbqLEZHjM/1pzgGmvS0w81KfyqxXtS4aqc/Xk6b0Gomjp94amptzu1CWd44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757056779; c=relaxed/simple;
-	bh=onocq6twXaoXdwX5nQirMF9Kmg6OzlgFZ2RFJQEwhPg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D0/r+lP39ltr2PWCZskkzzaO5wflxVOVTgihgLsfO9XOAvkObU96Ycw2Oo8u0+C/hTEhUZBgrhudAYx3vKzxjZqIHWHOyRzx4c6G3MQv7+ELSIP0hSdko/AXcyCC3jgUsvcjKodjul3C/m/gIa0mXRIS3cUWXJcQQYqt7EFRD3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DoloE0yz; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso2069275e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:19:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757056775; x=1757661575; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nzDQDuZjxVC6oySC+SReVx9M1aCW1txUI5kRYOyeNM8=;
-        b=DoloE0yzO1xQj6c9HRZ82gXSVvTz4HrWm9yxFbSZF6YLj10vAkj1nVNZxM+KIFTyj+
-         HxOSLOuBMa6vUWW87Sg2VluwSNcWw2vvU+rsFIe5EsoPDJdyeDxHTYSFJaBgWzpPRf9v
-         /adRj85HqqPmdVyzGWXGklKrPe42+p41aVFYO9Mk2eLWIQ1VbbleRyaRK1Z3NKrwxTpW
-         cVtkdc9zdNKASpA3EjOa1bEBtM46No7ZlF9ovmsLR5SuLbaaAM2Ak0SCq94s/Fn/AZQH
-         3zLeid9uVsw2ol18BjFvFji/fLiQ91UdJVL+UTzxFHWYe+wdIwqXHMw4D/WqeFgOz+JV
-         U+Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757056775; x=1757661575;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nzDQDuZjxVC6oySC+SReVx9M1aCW1txUI5kRYOyeNM8=;
-        b=T0E3OutIWM3wwrtNw0a5V6PZcKqnphEWjPE2qMqd8HnvE3ch6NZKhDkBIKnX7mFlo0
-         MChyCxA3PxftOwQB7WJ8BQbIcpF5P8yTMCj0fspfM6TTaJmT0QbO5AcoLgEok3ONQT6T
-         wNc1hV2kPUC1W4KKTSXCNVD4dzQ2HUMkYNJxFJf9paTuT1QKrTUz0jTd4+Mw/up22WGq
-         QsTZzW+FwySk35nWTAGNXZ/FnVf8uW5gfreclgr1NrDbRWk/peuF9Mc2Igr698VgtIS9
-         sltOSmjJDngoY65SSJQpx9kyQTNWxxp08qfEVi1todmrAfQ18RHrhrh18EyQALvO3eWq
-         k4gA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEnITLawN0dGNnEXXjpnSqGFCQsNBDEaDSAnyyxT+Ab6p/B4jDUWTYeak41YWdMSwhRhtJniQkzaIT9zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjhdLlOUI+FQf641KCRq3uuPlk5Cq2slB+8jjrajA5xaWORPZz
-	5WeK09oPKh/DjCyCtMhC4eARKsSaeRmOfC8tQ+iDjzHjdobCn6YOQrCl1+n1AF6ImWltcuiC6zm
-	RwSA2OjMDs0p0PqNYvg==
-X-Google-Smtp-Source: AGHT+IHMbd1cgOBQqeIHZBAcbJF/pQ0YegzqkDP/pVp9v6OrwLpQzRk9eV1m5hUFWBGmD9QF/W3bgJQ5m0Nq3FM=
-X-Received: from wmqd22.prod.google.com ([2002:a05:600c:34d6:b0:45b:4777:8063])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:c4aa:b0:45b:47e1:ef69 with SMTP id 5b1f17b1804b1-45b855beda0mr160151915e9.36.1757056775334;
- Fri, 05 Sep 2025 00:19:35 -0700 (PDT)
-Date: Fri, 5 Sep 2025 07:19:34 +0000
-In-Reply-To: <20250901202850.208116-1-dakr@kernel.org>
+	s=arc-20240116; t=1757056809; c=relaxed/simple;
+	bh=d3MhxYFWdpuDbIbKX3VsMWBE+wEo3XzfqmNa/b9vZgE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=uO3eB6DP5PBFefmBf0E1qlyJsNSIlh9zgDLTCzrIMV3uh78U1jlEKFJy8iM/5cGGMLL24eo1udU/oel1IDi67Nn2n2vSP7Hvuop/jF15tKDnWHHNIEYckipEXj4z1UeWchKjsjpcOUklP1Rg7YaOoMK39P3XHlEbJFHFJ+9lEw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cJ75y6bLgzYQvYm;
+	Fri,  5 Sep 2025 15:20:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 68C0E1A08FC;
+	Fri,  5 Sep 2025 15:20:05 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY0kj7povtzQBQ--.42269S3;
+	Fri, 05 Sep 2025 15:20:05 +0800 (CST)
+Subject: Re: [PATCH v3 0/2] blk-mq: fix update nr_requests regressions
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+ ming.lei@redhat.com, nilay@linux.ibm.com, hare@suse.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
+ <95389918-b809-f81b-5fd0-2e350154ca01@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f4231a7f-cc73-c506-e30b-b2bfa9d98dba@huaweicloud.com>
+Date: Fri, 5 Sep 2025 15:20:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250901202850.208116-1-dakr@kernel.org>
-Message-ID: <aLqPBqXZX7lERvoU@google.com>
-Subject: Re: [PATCH] MAINTAINERS: Add drm-rust tree for Rust DRM drivers and infrastructure
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, acourbot@nvidia.com, 
-	daniel.almeida@collabora.com, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+In-Reply-To: <95389918-b809-f81b-5fd0-2e350154ca01@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY0kj7povtzQBQ--.42269S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFyUZF4UWw1UuFW5Aw1fZwb_yoW8Cryrpr
+	s3Xa13Cr18Wrsaqr4fAw17XryrAw4vqw15Crsxtw1fC34Y9F1xXF18WF10gFyqqrWfWr42
+	grn8tryDWr1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VU13ku3UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Sep 01, 2025 at 10:26:39PM +0200, Danilo Krummrich wrote:
-> Multiple DRM Rust drivers (e.g. nova-core, nova-drm, Tyr, rvkms) are in
-> development, with at least Nova and (soon) Tyr already upstream. Having a
-> shared tree will ease and accelerate development, since all drivers can
-> consume new infrastructure in the same release cycle.
-> 
-> This includes infrastructure shared with other subsystem trees (e.g. Rust
-> or driver-core). By consolidating in drm-rust, we avoid adding extra
-> burden to drm-misc maintainers, e.g. dealing with cross-tree topic
-> branches.
-> 
-> The drm-misc tree is not a good fit for this stage of development, since
-> its documented scope is small drivers with occasional large series.
-> 
-> Rust drivers in development upstream, however, regularly involve large
-> patch series, new infrastructure, and shared topic branches, which may
-> not align well with drm-misc at this stage.
-> 
-> The drm-rust tree may not be a permanent solution. Once the core Rust,
-> DRM, and KMS infrastructure have stabilized, drivers and infrastructure
-> changes are expected to transition into drm-misc or standalone driver
-> trees respectively. Until then, drm-rust provides a dedicated place to
-> coordinate development without disrupting existing workflows too much.
-> 
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Hi, Jens
 
-Applied to drm-rust-fixes. Thanks!
+在 2025/08/26 14:27, Yu Kuai 写道:
+> Hi, Jens
+> 
+> 在 2025/08/21 14:06, Yu Kuai 写道:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Changes in v3:
+>>   - call depth_updated() directly in init_sched() method in patch 1;
+>>   - fix typos in patch 2;
+>>   - add review for patch 2;
+>> Changes in v2:
+>>   - instead of refactor and cleanups and fix updating nr_requests
+>>   thoroughly, fix the regression in patch 2 the easy way, and dealy
+>>   refactor and cleanups to next merge window.
+>>
+>> patch 1 fix regression that elevator async_depth is not updated correctly
+>> if nr_requests changes, first from error path and then for mq-deadline,
+>> and recently for bfq and kyber.
+>>
+>> patch 2 fix regression that if nr_requests grow, kernel will panic due
+>> to tags double free.
+>>
+>> Yu Kuai (2):
+>>    blk-mq: fix elevator depth_updated method
+>>    blk-mq: fix blk_mq_tags double free while nr_requests grown
+>>
+>>   block/bfq-iosched.c   | 22 +++++-----------------
+>>   block/blk-mq-sched.h  | 11 +++++++++++
+>>   block/blk-mq-tag.c    |  1 +
+>>   block/blk-mq.c        | 23 ++++++++++++-----------
+>>   block/elevator.h      |  2 +-
+>>   block/kyber-iosched.c | 19 +++++++++----------
+>>   block/mq-deadline.c   | 16 +++-------------
+>>   7 files changed, 42 insertions(+), 52 deletions(-)
+>>
+> 
+> Friendly ping, please consider this set in this merge window.
+> 
+> BTW, I see that for-6.18/block branch was created, however, I have
+> a pending set[1] for the next merge window that will have conflicts with
+> this set, not sure if you want to rebase for-6.18/block with block-6.17
+> or handle conflicts later for 6.18-rc1.
+> 
+> [1] 
+> https://lore.kernel.org/all/20250815080216.410665-1-yukuai1@huaweicloud.com/ 
+> 
+Friendly ping ...
+
+Thanks,
+Kuai
+
+> 
+> Thanks,
+> Kuai
+> 
+> .
+> 
 
 
