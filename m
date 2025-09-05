@@ -1,139 +1,171 @@
-Return-Path: <linux-kernel+bounces-802761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E04B456A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D59B456A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EC0A41A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957B71C25CC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714734A307;
-	Fri,  5 Sep 2025 11:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3F34573D;
+	Fri,  5 Sep 2025 11:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SBnNCUSt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HrLdoUoz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dERcJ76N"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF2343218;
-	Fri,  5 Sep 2025 11:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E8B2F60C4;
+	Fri,  5 Sep 2025 11:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757072409; cv=none; b=TGQMi5UKmOjXWzkzK+C7wyGDtJeyfSyKn7g7dn2wI2CZpadxDzVy/W+OSibYlSDhxpO0dqm+2EqyoZDA1eqnZQ0Fm2OLavPkgkDG2lLjuVt1RfPk/uzefseLFZCo64wA860L2aZbwjNzc78uMCQxDG7eOHhZZQxjpss/rTZfcA4=
+	t=1757072450; cv=none; b=j9iHUwdO2eEW2TBx+EJhpyU5JTeOMby1/XjWFg72R16m/9OA9tzl4PUXrT3KoLTQiJcdwfExYiHAr1wl7QBxDg0OZq/oAVDmttG7DJAtjvTxdLbbgUrxqf6d8H3MlscaTfmbMmHQ9N+3lkq4aOEP3JXxBWSeTCJv0fJHeBz5YBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757072409; c=relaxed/simple;
-	bh=sx2wz53gv4OIUWMCEXeNS8i0YplTPAB4OZ9qODA9qog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yq1ExSVckm+9XO1wGnhh8YtSCU0RE6YXwxsLOmgEVJUTFRt9Wv6js9XKqbWlmIglWwIGZiFJFainXr5PHbCiXMoTgTARiBnIcwsyeur0tEZ1cQWUKibk2E1E4ToI6lmQOkFwq7beu2YW6vo+ds60Lrp1wCH+VR9iF/oMVAi7osA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SBnNCUSt; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757072408; x=1788608408;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sx2wz53gv4OIUWMCEXeNS8i0YplTPAB4OZ9qODA9qog=;
-  b=SBnNCUStDUL8/JU+555300KEYJqMKh87/udKHLgCPI8aYRdDCjWyf+HH
-   J/XeWcr05hfN7fZ99VbPcOW7GMdjSiv8urOg2/PuOWC7ls+yYT0rS1+Hp
-   8qMda3aFHc81hPO8FfSU2yG5bJ86J424+lzCFWpCixOJc+e8KwAkNTALv
-   cZ3T162/4IXaz39sq4e11W3VQgHh3h7zssBKWhItn/bPzx7JiWTzkBOQH
-   YPsIff6m5zRlHu+rdkAyY3HJDh1Oo6G1H6inNmssLXFF1LqzGIWe9C2U1
-   zlJ3qGyKfAy+tc1kWS/cf+5Yrn5wCmjSG4GStGxJiQeFGFuLWBicJWISE
-   Q==;
-X-CSE-ConnectionGUID: ctwFtdUfRUKCae+fE+b6gA==
-X-CSE-MsgGUID: ZlCcPbIKRliMa9oxkWWuFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63064752"
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="63064752"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:40:07 -0700
-X-CSE-ConnectionGUID: 7ivWf5SiTburyJTsZYw9/Q==
-X-CSE-MsgGUID: Mm1LtjFKRfexLBEV4Qw4+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="171710329"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa007.fm.intel.com with SMTP; 05 Sep 2025 04:40:01 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 14:40:00 +0300
-Date: Fri, 5 Sep 2025 14:40:00 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH RFC 15/22] usb: typec: tipd: Update partner identity when
- power status was updated
-Message-ID: <aLrMEL_St_0JlZYG@kuha.fi.intel.com>
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-15-172beda182b8@kernel.org>
+	s=arc-20240116; t=1757072450; c=relaxed/simple;
+	bh=9Dzt6Bz7PjriJuglPUkzheC4OM+ZaWN8rXYtKraQ37I=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=XdSGxQTPNGKd3+9bVw9hk6MpuqLDwRlSskMn1OwkV2MN0JFgypJIr3Xvoe65ubqlmfj+9uK+nb6OHJrjOlUkEhrKOyJIwco1eskTqOPpMNlxiLvoR8CF/AqiVf7e9RgppVVE+g0ZKRjwcSkrmQ1Iu1P3CUGPIdNO0TYr1yT0e9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HrLdoUoz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dERcJ76N; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 05 Sep 2025 11:40:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757072446;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a3gQip8tDvRK8+TRjh4puFHpI1VdaH0YtN+PZv9GhuE=;
+	b=HrLdoUoz+b384XXnWN5i+EQzLlFx8NOA+rl8I5zWbnveswUfUMu48qyKVo4Ytma/atSt1v
+	8THumAcX7nCeYXPU3/xr0GKFaGrmI9HucVAzp7W9f115AAxKo1bxliC/AL5CEF7MEj+Uro
+	T6GbweOYeNBjeuiZZdovt+/dKl33FZ07vsYgY/bB4dcTQPKRBTckz73sNHpqdfDDfeuLLJ
+	Kaw8irEnnrG6KS25L6W21sPNK9O3inrVLFUF44b+RSG8AfC5OZKvy8VVWnlv8r/qpkdNEX
+	tkq1sq3oZgTUzPMiiERi4X843pjmsOmL9PhLoNNQg7OqH4W7wXZha/WopE/9Gw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757072446;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a3gQip8tDvRK8+TRjh4puFHpI1VdaH0YtN+PZv9GhuE=;
+	b=dERcJ76NW6E/eDL0VHEIE2cpPnX1qEy2gCrbjxXkBXBrq+zngMqPgSpSrZKFpOjrMncJDT
+	po3cY4QdNc752RCw==
+From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] x86/mce: Remove __mcheck_cpu_init_early()
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ Tony Luck <tony.luck@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250825-wip-mca-updates-v5-6-865768a2eef8@amd.com>
+References: <20250825-wip-mca-updates-v5-6-865768a2eef8@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-atcphy-6-17-v1-15-172beda182b8@kernel.org>
+Message-ID: <175707244484.1920.7598135746151621462.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following commit has been merged into the ras/core branch of tip:
 
-On Thu, Aug 21, 2025 at 03:39:07PM +0000, Sven Peter wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> Whenever the power status is changed make sure to also update the
-> partner identity to be able to detect changes once de-bouncing and mode
-> changes arre added for CD321x.
+Commit-ID:     9f34032ec0deef58bd0eb7475f1981adfa998648
+Gitweb:        https://git.kernel.org/tip/9f34032ec0deef58bd0eb7475f1981adfa9=
+98648
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Mon, 25 Aug 2025 17:33:03=20
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 05 Sep 2025 12:43:44 +02:00
 
-s/arre/are/
+x86/mce: Remove __mcheck_cpu_init_early()
 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Sven Peter <sven@kernel.org>
-> ---
->  drivers/usb/typec/tipd/core.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index e369897bfa017ca96e559a8bd70da11207d4513a..b0fdd4dddd3a490dbc2a8ced21ea0803658f36a7 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -636,9 +636,16 @@ static irqreturn_t cd321x_interrupt(int irq, void *data)
->  	if (!tps6598x_read_status(tps, &status))
->  		goto err_unlock;
->  
-> -	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE)
-> +	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE) {
->  		if (!tps6598x_read_power_status(tps))
->  			goto err_unlock;
-> +		if (TPS_POWER_STATUS_PWROPMODE(tps->pwr_status) == TYPEC_PWR_MODE_PD) {
-> +			if (tps6598x_read_partner_identity(tps)) {
-> +				dev_err(tps->dev, "%s: failed to partner identity\n", __func__);
+The __mcheck_cpu_init_early() function was introduced so that some
+vendor-specific features are detected before the first MCA polling event done
+in __mcheck_cpu_init_generic().
 
-				dev_err(tps->dev, "failed to read partner identity\n");
+Currently, __mcheck_cpu_init_early() is only used on AMD-based systems and
+additional code will be needed to support various system configurations.
 
-> +				tps->partner_identity = (struct usb_pd_identity) {0};
-> +			}
-> +		}
-> +	}
->  
->  	if (event & APPLE_CD_REG_INT_DATA_STATUS_UPDATE)
->  		if (!tps->data->read_data_status(tps))
+However, the current and future vendor-specific code should be done during
+vendor init. This keeps all the vendor code in a common location and
+simplifies the generic init flow.
 
-thanks,
+Move all the __mcheck_cpu_init_early() code into mce_amd_feature_init().
 
--- 
-heikki
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Tested-by: Tony Luck <tony.luck@intel.com>
+Link: https://lore.kernel.org/20250825-wip-mca-updates-v5-6-865768a2eef8@amd.=
+com
+---
+ arch/x86/kernel/cpu/mce/amd.c  |  4 ++++
+ arch/x86/kernel/cpu/mce/core.c | 14 --------------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index e9b9be2..aa13c93 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -653,6 +653,10 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 	u32 low =3D 0, high =3D 0, address =3D 0;
+ 	int offset =3D -1;
+=20
++	mce_flags.overflow_recov =3D cpu_feature_enabled(X86_FEATURE_OVERFLOW_RECOV=
+);
++	mce_flags.succor	 =3D cpu_feature_enabled(X86_FEATURE_SUCCOR);
++	mce_flags.smca		 =3D cpu_feature_enabled(X86_FEATURE_SMCA);
++	mce_flags.amd_threshold	 =3D 1;
+=20
+ 	for (bank =3D 0; bank < this_cpu_read(mce_num_banks); ++bank) {
+ 		if (mce_flags.smca)
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 311876e..0326fbb 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -2034,19 +2034,6 @@ static bool __mcheck_cpu_ancient_init(struct cpuinfo_x=
+86 *c)
+ 	return false;
+ }
+=20
+-/*
+- * Init basic CPU features needed for early decoding of MCEs.
+- */
+-static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
+-{
+-	if (c->x86_vendor =3D=3D X86_VENDOR_AMD || c->x86_vendor =3D=3D X86_VENDOR_=
+HYGON) {
+-		mce_flags.overflow_recov =3D !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
+-		mce_flags.succor	 =3D !!cpu_has(c, X86_FEATURE_SUCCOR);
+-		mce_flags.smca		 =3D !!cpu_has(c, X86_FEATURE_SMCA);
+-		mce_flags.amd_threshold	 =3D 1;
+-	}
+-}
+-
+ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
+ {
+ 	struct mca_config *cfg =3D &mca_cfg;
+@@ -2285,7 +2272,6 @@ void mcheck_cpu_init(struct cpuinfo_x86 *c)
+=20
+ 	mca_cfg.initialized =3D 1;
+=20
+-	__mcheck_cpu_init_early(c);
+ 	__mcheck_cpu_init_generic();
+ 	__mcheck_cpu_init_vendor(c);
+ 	__mcheck_cpu_init_prepare_banks();
 
