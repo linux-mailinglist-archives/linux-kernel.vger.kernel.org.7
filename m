@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-802591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31737B4544C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:17:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB49B453CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE0A3A5012
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:16:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2F427B820D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D482D4813;
-	Fri,  5 Sep 2025 10:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="fdHhu5+t"
-Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF3B2D29D1;
-	Fri,  5 Sep 2025 10:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA0A296BB7;
+	Fri,  5 Sep 2025 09:53:27 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E7E28D8D0
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067406; cv=none; b=mtpLq2R9UWY6x9Xf6Ah69c4UGe62gBvJzzMayajgK2TaPRO7FOxf02QmscuSWPEIst6oID8yoUCMXkBDZ24DiTYyrG38dq3UCSjitfHjA1MggniwFBBS/npZe2CE8EyEQKB+vkLGYJY/810E54xPMaFe911BFCCaMEtw532FMrs=
+	t=1757066006; cv=none; b=OFt+WRazrvdKtn9jEJHTEJa3jVmtmpTwmYWCpvvEjLnKWcEJlR7chg8NjjRmG8xMG8VsIV+1lReo4afbG1Ob0PapmMHyH83AgNbUEjwtohDic1vC8AZVpO3eJ4pW3dwI33oaHd9pctVNIxlIH5BjwCVezusMxUxzOYvLKedbwvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067406; c=relaxed/simple;
-	bh=VzgY2tpimVlvgm1SgvE188WWGQb1N0ivYxEYsBpx7uQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=Q7iDnzcCYQDzT/7XGdDqlRlRhm/yl3KXXduPbZGW/AA/qQIEXJwbRfl2sNZr7pjd+AYOraselMmU/h2Hq4hKeHH3cr5tL0eRNKaA0O7vtsqymvorH4IaxJFNs8nCZs6mkTXo36WdxVtvIQ4Q5rWgODjAZy6xDjksUXTxVFcxpIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=fdHhu5+t; arc=none smtp.client-ip=195.201.215.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:To:From:Cc:
-	Subject:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=S4Z4pi2vstaCY5LFpKxEjHRuqlRGNHBr99kO/RP0amE=; b=fdHhu5+tculIUWKwtIyzxXqTKn
-	tr5L6aJmOMRaiUEnRzoIQn+5165zUajK6YOcUepLbPk1BscOZJTdye0+k8qlrCKTxiNRF3VrkwEHN
-	IbIAcPw2AcIEQ0I0tdFBtjU/nyE5fj2Y6VcUW6tthn/IGAWXsyUBaWxc5aaZkscyereORb8py+sfx
-	B5sJXT3IlsxWJEhOkOEnHEA2qTwA9ZLH3l1xl2rJPaFANi5hJ5p/KC48NxWEYaBFqZFL3xhtokOuJ
-	TN/RjVCMQhvlbvLWyq8Jb1Ii8QYOQk4ZQixj28m11Qeolgm7Xvu7OosAeNuA5bjeq/mbJ/P/Il7bf
-	CaExittA==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1uuT6X-000AAb-24;
-	Fri, 05 Sep 2025 11:51:37 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1uuT5s-0006sD-0e;
-	Fri, 05 Sep 2025 11:51:37 +0200
+	s=arc-20240116; t=1757066006; c=relaxed/simple;
+	bh=TA/IRpMoFzaGCaODu0EFqNFBZRbPPnCaAi9dH1MgABc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Wdyu9XeWu9G2OqYf35GWQnzsIfQCXM4H+wGmqzMw/ynCkvy4hchrpRpUvx0lq1BH4UgeDsy9XxPXRG3yg10JrEI25AD3GaTjv9ImLEW0NwVl0gmSfGUyrDHRZVMtWK4Cyxooxs7b6AdBuzUICyvWc3HfmNtedxcN6/eEfA4+/KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxHvALs7poYwgHAA--.14971S3;
+	Fri, 05 Sep 2025 17:53:15 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxzsEJs7poud1_AA--.49582S3;
+	Fri, 05 Sep 2025 17:53:14 +0800 (CST)
+Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about
+ efi_boot_kernel()
+To: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
+ <20250901072156.31361-2-yangtiezhu@loongson.cn>
+ <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
+ <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn>
+ <qvatvh7rixtdtaflqtgphlva7kkr47drijklkvmae3xh54vn6y@y5v75lwgjdyu>
+ <CAAhV-H5u4xHcuLhyPe+a_YqPoCX2uVoqcW94i=HvU1NooL_efg@mail.gmail.com>
+ <mqyjt5cabahlvezowt6plurkyrrbputvg776rhgaxhpwsqnuq3@onr5svx5heuf>
+ <CAAhV-H6Cntwxo2XcPtB+zH0VE5J3N=Wb2Ad8RZ6DjwopGsXALw@mail.gmail.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <75cae289-8717-85e7-1d86-a2736010d99c@loongson.cn>
+Date: Fri, 5 Sep 2025 17:53:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Sep 2025 09:51:36 +0000
-Message-Id: <DCKRVLG0RDPF.2HIFAQSB8UF3H@folker-schwesinger.de>
-Subject: Re: [PATCH] dmaengine: xilinx_dma: Fix uninitialized addr_width
- when "xlnx,addrwidth" property is missing
-Cc: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-From: "Folker Schwesinger" <dev@folker-schwesinger.de>
-To: "Suraj Gupta" <suraj.gupta2@amd.com>, <vkoul@kernel.org>,
- <michal.simek@amd.com>, <radhey.shyam.pandey@amd.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250905064811.1887086-1-suraj.gupta2@amd.com>
-In-Reply-To: <20250905064811.1887086-1-suraj.gupta2@amd.com>
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27753/Thu Sep  4 10:26:09 2025)
+MIME-Version: 1.0
+In-Reply-To: <CAAhV-H6Cntwxo2XcPtB+zH0VE5J3N=Wb2Ad8RZ6DjwopGsXALw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxzsEJs7poud1_AA--.49582S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uF15AF15ur4xZF1kuF13KFX_yoW8JFW7pF
+	W0qrWxKF4kJF4xArn7X3y09Fy3W3s7t3s0kwn8Wry5Aa4DJr1Svr12gr15uFZ8Xr4xta12
+	vr1Yq342kayDGrXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
+	U
 
-On Fri Sep 5, 2025 at 8:48 AM CEST, Suraj Gupta wrote:
-> When device tree lacks optional "xlnx,addrwidth" property, the addr_width
-> variable remained uninitialized with garbage values, causing incorrect
-> DMA mask configuration and subsequent probe failure. The fix ensures a
-> fallback to the default 32-bit address width when this property is missin=
-g.
->
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Fixes: b72db4005fe4 ("dmaengine: vdma: Add 64 bit addressing support to t=
-he driver")
+Hi Josh,
 
-Reviewed-by: Folker Schwesinger <dev@folker-schwesinger.de>
+On 2025/9/5 下午12:33, Huacai Chen wrote:
+> Hi, Josh,
+> 
+> On Fri, Sep 5, 2025 at 1:26 AM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>>
+>> On Thu, Sep 04, 2025 at 10:17:11AM +0800, Huacai Chen wrote:
 
-> ---
->  drivers/dma/xilinx/xilinx_dma.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c
-> index fabff602065f..89a8254d9cdc 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -131,6 +131,7 @@
->  #define XILINX_MCDMA_MAX_CHANS_PER_DEVICE	0x20
->  #define XILINX_DMA_MAX_CHANS_PER_DEVICE		0x2
->  #define XILINX_CDMA_MAX_CHANS_PER_DEVICE	0x1
-> +#define XILINX_DMA_DFAULT_ADDRWIDTH		0x20
-> =20
->  #define XILINX_DMA_DMAXR_ALL_IRQ_MASK	\
->  		(XILINX_DMA_DMASR_FRM_CNT_IRQ | \
-> @@ -3159,7 +3160,7 @@ static int xilinx_dma_probe(struct platform_device =
-*pdev)
->  	struct device_node *node =3D pdev->dev.of_node;
->  	struct xilinx_dma_device *xdev;
->  	struct device_node *child, *np =3D pdev->dev.of_node;
-> -	u32 num_frames, addr_width, len_width;
-> +	u32 num_frames, addr_width =3D XILINX_DMA_DFAULT_ADDRWIDTH, len_width;
->  	int i, err;
-> =20
->  	/* Allocate and initialize the DMA engine structure */
-> @@ -3235,7 +3236,9 @@ static int xilinx_dma_probe(struct platform_device =
-*pdev)
-> =20
->  	err =3D of_property_read_u32(node, "xlnx,addrwidth", &addr_width);
->  	if (err < 0)
-> -		dev_warn(xdev->dev, "missing xlnx,addrwidth property\n");
-> +		dev_warn(xdev->dev,
-> +			 "missing xlnx,addrwidth property, using default value %d\n",
-> +			 XILINX_DMA_DFAULT_ADDRWIDTH);
-> =20
->  	if (addr_width > 32)
->  		xdev->ext_addr =3D true;
+...
+
+>> Is there some technical reason why vmlinux.o needs efistub linked in?
+> I think so. For example, EFISTUB prefer to directly use screen_info
+> that defined in vmlinux, see the comments in
+> drivers/firmware/efi/libstub/screen_info.c:
+> 
+> /*
+>   * There are two ways of populating the core kernel's struct
+> screen_info via the stub:
+>   * - using a configuration table, like below, which relies on the EFI init code
+>   *   to locate the table and copy the contents;
+>   * - by linking directly to the core kernel's copy of the global symbol.
+>   *
+>   * The latter is preferred because it makes the EFIFB earlycon available very
+>   * early, but it only works if the EFI stub is part of the core kernel image
+>   * itself. The zboot decompressor can only use the configuration table
+>   * approach.
+>   */
+
+I wonder what is the final conclusion.
+
+(1) For patch #1 and #2, keep the code as is and just update
+the commit message.
+
+(2) For patch #3, replace UNWIND_HINT_UNDEFINED with
+UNWIND_HINT_END_OF_STACK and remove is_entry_func().
+
+If there are any more comments, please let me know.
+
+Thanks,
+Tiezhu
 
 
