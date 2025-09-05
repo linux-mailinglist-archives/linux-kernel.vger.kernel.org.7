@@ -1,173 +1,137 @@
-Return-Path: <linux-kernel+bounces-803441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E55DB45FD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:16:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A13CB45FD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7CD4853E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:16:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 580347BA979
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA34C25A2A5;
-	Fri,  5 Sep 2025 17:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05992F7AA4;
+	Fri,  5 Sep 2025 17:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6Cf2eWq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjGjOhIp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559ED17BA6;
-	Fri,  5 Sep 2025 17:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B9117BA6;
+	Fri,  5 Sep 2025 17:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092612; cv=none; b=sP6AwFQjMqbRwt0ayjbllGqXxufL1YIc9b2tLHhdm/lQ6DcaHtxC8LJIFwJyKrA/KRt75pTdyDjK36dWQj3NZSWPkVlEElMIFlqSL2hvCE6+TfI5N3tHv1LpnJ0T2vWVeOK5tJZVPBjddZwWfHtYXJdjTUy2+nQohojpARTnTMs=
+	t=1757092712; cv=none; b=NyPV8mHOulB6vPugHqlysoOGZCbd8R7ZeFq4LLZxK/DhyJcuoPX/IHv04uisV4jMn+p0dmTiV52lbyVO3uM3N6iKIZ4F/JhubbZGKdsExuLML1d2v2G+ZZ9YggBHKFKdab3CcpSkSosnwxjpWqIcSQmqeeFMaIvJj/3U5ew3lV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092612; c=relaxed/simple;
-	bh=ouLB2GyNpB1Uz5P4xEJfwiUxaPqbq43VCk1TEm0nhd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTKD8nVk6KHcmPdtp56buvjRi3a0iCdat+YP9yDodqVxF4XvJsc7nXC4bNYJUYBSl/dXoKRqjyRDUlo+9j2I/njhdPM7DJvBauIQNN1zt+F+RvcTRIo6zQ05JyWlVLfNVw6qW+DGm4VxOAsZu2aaRL8A6Q8ZjC8a7QyhndjI3sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6Cf2eWq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so8820995e9.0;
-        Fri, 05 Sep 2025 10:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757092609; x=1757697409; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4JZXGZQK4+aPXzsNsXAjn+r0rkwVSB6hlGGc2MQLvZ8=;
-        b=l6Cf2eWqT7lAc3JSluMAjIDxbklBGiaIEB89ODHKiG91AsgNLu7ruWuaM4hHk7ccTx
-         iXEm+uaFQrHPB5B6gsfYcTqnEt7yEf8TAWSqbttZz6dl/QlAwTXUMVKFPN/DFKrhs483
-         6IcsIyPhu24Grl/5qZOYRSE/TBRraR6Tzse3wyGD57HTxa2F1Ko1klfHgoQdmHsVvID9
-         hr1fDzlVaNiAb3nRBgNSWdbcOZ/C0DaR8M5MalkGl7mvsHv8DWvzgCRAQYZnEJJQtzYZ
-         xrEq5ZFkEyw4IIv/45y1TemrK6PG3BM84aEFXnYA5M8Is2YxPOXEjY9Vmuz43cxFm32g
-         XvRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757092609; x=1757697409;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4JZXGZQK4+aPXzsNsXAjn+r0rkwVSB6hlGGc2MQLvZ8=;
-        b=nzW4mITPkwEjbW0PJrMtMGZQYRDl390cNmPRQ4E2D668nvDTWEuFbqAOduOwIYea9F
-         VBgNwLishMpgMMbKcJGbO0Y0b+R/TFbMKQCM0pua5lT88M44BEqKTrvcYFFNlSEm2j/l
-         3ZqO6zn6K918cbutiXcZlTr6OrpZBkNeiGSOu+IuRl/kfKW5il1Y6Lofp+Y2HQJzc0u7
-         0K3vP1KoPPYRnuWRYRyhya3i+hz6sXBV6zFnv1Y9QzE8Jp37Hp20K004wGyuFwZDS6h2
-         cbAiN0kCYsuretkdhlixMSKlQ0u3zYF1eiLijsC8ghKpYHnaxwJK7pJTb3Ms12DTPA8Q
-         aUUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+AFYFYHYs3e0rgR/30bbyYvo7tudOVkmsaroFMFVpTKi5e18yVtIQZrJ2vFzXKVehRTo5yqRRqWLx7ehmgg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeY9UVHMHy1PIvke5ognjmnWEhZKMEeTGo/1qwQcBZXuzzG5tH
-	fJBAY72LLVYvi5maBtKwLkEMr3zjeDjs4zIqBbJcI+pQx5oDToB62bLTHEuJ6Q==
-X-Gm-Gg: ASbGnctDfG6spe4sLZP1FaA3Zo2fU0i2EhJPm8HeRTDNurv4NTv1BBgvi0wfBIJarp3
-	2zPGwr1kx6GMXjQ8YcSUr8AF4jNKYXUklQsVnH7Z1KOuvoiDABB2nkjYSh2d9YWdToy0XRve7To
-	/z9a4nZuTaUc4+7Uu+FfQ7UwzxhHtcr9EZpGHfVcuI/bCq8wWt0fugOD5ZdB1Y8xn8b+QnngnLw
-	z3lnvvBBswvM0lMVvAbxvEIqpoZG5u66VWqjzMs7w2QqAPThqrg/lHhQa5lE9bGECMYydOGyf+z
-	v7MS8X+jymk8UPhFZrP1ynV1aKYJ+NatNCiIgcPZML7UvwMU+S86ZPdAQgzeEA4VA7iw/JGnVoh
-	a8quDKlJzTXRQDvt+XEmKfsRDsw0gQeWs+zIfFG9eNZzP6XzNwVcH5ojZfo8LffOb6aE9M/BV
-X-Google-Smtp-Source: AGHT+IGEPhI6d/AQJxAER2t/VYs0nTP+0MPnvNgN5uJkvZaFMSVMqNVMdiLO3Y1PoL7u/hCV77WqRA==
-X-Received: by 2002:a05:600c:1daa:b0:45b:92a6:63e3 with SMTP id 5b1f17b1804b1-45dd5b68e02mr32053815e9.9.1757092608562;
-        Fri, 05 Sep 2025 10:16:48 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e12444de96sm7187305f8f.19.2025.09.05.10.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 10:16:47 -0700 (PDT)
-Date: Fri, 5 Sep 2025 18:16:46 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: ChenMiao <chenmiao.ku@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>
-Subject: Re: [PATCH v4 0/4] openrisc: Support basic trace mechanism
-Message-ID: <aLsa_h00k8nOoZB8@antec>
-References: <20250904100109.688033-1-chenmiao.ku@gmail.com>
+	s=arc-20240116; t=1757092712; c=relaxed/simple;
+	bh=AWSjBgq3zhHdP9BGjciHx5eMjuRmw2yC8sc9IocKhxs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=b6Svd09LIvOy/hH9pzgWJnwSOSGuq0SEXFOCZxnGP5zWubVdzL13wBU3uGezNKgqON3s+1qje0zRB88tExGpIXrhdrRvpe5pKwaO1lmhV5cDuH3oNSeaaz0Za3mFJiWlWN81CnTpwZ6n19TqrBPVEyLwJnyqZABpxIfnAhhVc/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjGjOhIp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238E8C4CEF1;
+	Fri,  5 Sep 2025 17:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757092711;
+	bh=AWSjBgq3zhHdP9BGjciHx5eMjuRmw2yC8sc9IocKhxs=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=JjGjOhIpa+Dq4GYo24uci2y36ObrtkBRW01e4SkHWqZBdSPvB4i1p2iKiZx3vOmZg
+	 H2e+GPe27P7++gklGKgvKerqhuEtc6mkgE7QQWF4zd51UgCovyuUNr3j9Gu0yO/wVe
+	 om4Cl/+W+Ennk5zXfyUmEmprEkwbSLOlzjpfZGLeYDZE0jnl5HTirBa5UZBM+LK1Fd
+	 UVYLHvo7FORuyKZtXRydnPsWdb7JOuQP5AUp4LxCrAwx3Z1GGSsclzHme8rU+LDi+c
+	 KL1sz+nKya/wJ7VIaGq2/uN+l3Mgq9xR/Xb4YV85uei8S8uTeSG42iTEZ8V2S/V7aF
+	 n8iizHXS66zUg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904100109.688033-1-chenmiao.ku@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Sep 2025 19:18:25 +0200
+Message-Id: <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Fiona Behrens" <me@kloenk.dev>,
+ "Alban Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250905140047.3325945-1-lossin@kernel.org>
+In-Reply-To: <20250905140047.3325945-1-lossin@kernel.org>
 
-On Thu, Sep 04, 2025 at 10:00:48AM +0000, ChenMiao wrote:
-> From: chenmiao <chenmiao.ku@gmail.com>
-> 
-> Hello everyone,
-> 
-> This implements a basic text patching mechanism and a complete jump_label
-> implementation for OpenRISC. It should be noted that the jump_label have
-> passed testing.
-> 
-> 1. Implement the patch_map interface and the patch_insn_write single insn
-> write API by providing FIX_TEXT_POKE0. And create a new insn-def.h to record
-> openrisc's instruction macro definition which only have OPENRISC_INSN_SIZE
-> now.
-> 
-> 2. Support for the R_OR1K_32_PCREL relocation type is added for module insertion,
-> enabling subsequent jump_label selftest module insertion.
-> 
-> 3. Regenerate defconfigs for or1ksim_defconfig and virt_defconfig.
-> 
-> 4. Based on the previously implemented patch_insn_write, achieve a complete
-> jump_label implementation, directly supporting arch_jump_label_transform_queue.
-> And add a new macro OPENRISC_INSN_NOP in insn-def.h.
+On Fri Sep 5, 2025 at 4:00 PM CEST, Benno Lossin wrote:
+> After initializing a field in an initializer macro, create a variable
+> holding a reference that points at that field. The type is either
+> `Pin<&mut T>` or `&mut T` depending on the field's structural pinning
+> kind.
+>
+> Link: https://github.com/Rust-for-Linux/pin-init/pull/83/commits/0f658594=
+c39398f58cd5cb99a8141e370e225e74
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-Thank, this is looking good.  I will queue this soon once the final items are
-cleaned up.
+I forgot to test with the right configuration and found some errors with
+existing code. Here are their fixes. If I don't need to re-send, I will
+add them on apply (if you want a v2, let me know).
 
-> Link: https://lore.kernel.org/openrisc/20250805084926.4125564-1-chenmiao.ku@gmail.com/T/#u
+---
+Cheers,
+Benno
 
-> Thanks,
-> 
-> Chen Miao
-> 
-> ---
-> Changes in V4:
->   - Added testing for jump_label
->   - Split part of the jump_label patch content to form the third patch
->   - Implemented R_OR1K_32_PCREL module support for jump_label testing
-> 
-> Changes in V3:
->   - Removed the is_exit_text used, added some necessary comments.
->   - Modify some macro like __ASSEMBLY__ to __ASSEMBLER__ and ensure the
->     defconfig by make savedefconfig.
-> 
-> Changes in V2:
->   - Add a new insn-def.h to record the insn macro.
->   - Modify the patch_insn_write API from const void* to u32 insn.
->   - Using the modified patch_insn_write API in 
->     arch_jump_label_transform_queue.
-> 
-> chenmiao (4):
->   openrisc: Add text patching API support
->   openrisc: Add R_OR1K_32_PCREL relocation type module support
->   openrisc: Regenerate defconfigs.
->   openrisc: Add jump label support
-> 
->  .../core/jump-labels/arch-support.txt         |  2 +-
->  arch/openrisc/Kconfig                         |  2 +
->  arch/openrisc/configs/or1ksim_defconfig       | 19 ++---
->  arch/openrisc/configs/virt_defconfig          |  2 +-
->  arch/openrisc/include/asm/Kbuild              |  1 -
->  arch/openrisc/include/asm/fixmap.h            |  1 +
->  arch/openrisc/include/asm/insn-def.h          | 15 ++++
->  arch/openrisc/include/asm/jump_label.h        | 72 +++++++++++++++++
->  arch/openrisc/include/asm/text-patching.h     | 13 +++
->  arch/openrisc/kernel/Makefile                 |  2 +
->  arch/openrisc/kernel/jump_label.c             | 52 ++++++++++++
->  arch/openrisc/kernel/module.c                 |  4 +
->  arch/openrisc/kernel/patching.c               | 79 +++++++++++++++++++
->  arch/openrisc/kernel/setup.c                  |  2 +
->  arch/openrisc/mm/init.c                       |  6 +-
->  15 files changed, 256 insertions(+), 16 deletions(-)
->  create mode 100644 arch/openrisc/include/asm/insn-def.h
->  create mode 100644 arch/openrisc/include/asm/jump_label.h
->  create mode 100644 arch/openrisc/include/asm/text-patching.h
->  create mode 100644 arch/openrisc/kernel/jump_label.c
->  create mode 100644 arch/openrisc/kernel/patching.c
-> 
-> -- 
-> 2.45.2
-> 
-> 
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index da18091143a6..91dbf3f4b166 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -134,11 +134,9 @@ pub fn new<'a, E>(
+         T: 'a,
+         Error: From<E>,
+     {
+-        let callback =3D Self::devres_callback;
+-
+         try_pin_init!(&this in Self {
+             dev: dev.into(),
+-            callback,
++            callback: Self::devres_callback,
+             // INVARIANT: `inner` is properly initialized.
+             inner <- {
+                 // SAFETY: `this` is a valid pointer to uninitialized memo=
+ry.
+@@ -151,7 +149,7 @@ pub fn new<'a, E>(
+                 //    properly initialized, because we require `dev` (i.e.=
+ the *bound* device) to
+                 //    live at least as long as the returned `impl PinInit<=
+Self, Error>`.
+                 to_result(unsafe {
+-                    bindings::devm_add_action(dev.as_raw(), Some(callback)=
+, inner.cast())
++                    bindings::devm_add_action(dev.as_raw(), Some(*callback=
+), inner.cast())
+                 })?;
+=20
+                 Opaque::pin_init(try_pin_init!(Inner {
+diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci=
+.rs
+index 606946ff4d7f..1ac0b06fa3b3 100644
+--- a/samples/rust/rust_driver_pci.rs
++++ b/samples/rust/rust_driver_pci.rs
+@@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -=
+> Result<Pin<KBox<Self>
+=20
+         let drvdata =3D KBox::pin_init(
+             try_pin_init!(Self {
+-                pdev: pdev.into(),
+                 bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c_str!(=
+"rust_driver_pci")),
++                pdev: pdev.into(),
+                 index: *info,
+             }),
+             GFP_KERNEL,
 
