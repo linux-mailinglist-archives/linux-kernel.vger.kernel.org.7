@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-803728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21913B46464
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B83B46469
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E32177516
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6021B1671FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50195287501;
-	Fri,  5 Sep 2025 20:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GShNvFcV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781BE299A8A;
+	Fri,  5 Sep 2025 20:11:21 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0A5280A5F;
-	Fri,  5 Sep 2025 20:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6131E2882CC;
+	Fri,  5 Sep 2025 20:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757102946; cv=none; b=JnGq5icDzcK743Q04f5/nRDzgR939oRbUoxdwHI5CXNiwn0wGK3xGSEV4P/4YoH0Gd7DU2AAQoxtSqfSIK4BKLrdzwoXObdb+0HUWVOzHl9Gx3HvwCWR/eHoScYn9KX5kU/aNTqeVuayQINZaKTUIAPlJCiw6r8WBXNUUL2n3gY=
+	t=1757103081; cv=none; b=V34ZujFz1WXwlcNxnbrcCrZ/SGL6zco0+N/IYX2gT6O43mKdopsqJgPkvvJ4EVl12l8GBizJXBLeqdIyGB5nJkND/1IUDVK2/WuGXoZw6K12vtMr19IB4jXvgcZ4EA3JvjiRgy394CkVm7jDZNAwHf6rR1DWwfGX2ZwwwEF0Vjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757102946; c=relaxed/simple;
-	bh=Li7bM5SQHqjbRpCJToYrtYTRr5PgxJgR1Ff2r6AoN9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPo0p7m6aa5tJtg+NkemqYtHdp26tcL+Xd+gp5C58w5cZOXGZq3cmRofnnfEPvIBxuHTJUb9vLs8Ag69T6Ow8aaTSA9zbBcnM50GuhuTi54rGvbvOKRqpXhyjd8XhaRuE4Yjd+5a4W4Y88KBB1hBieZUkVhOcmiQ2dk0MpDwS/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GShNvFcV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15B4C4CEF1;
-	Fri,  5 Sep 2025 20:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757102946;
-	bh=Li7bM5SQHqjbRpCJToYrtYTRr5PgxJgR1Ff2r6AoN9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GShNvFcVVEyuIUXPWLss5knF52KhZt+jKuUpQNJGBuFjQ6ywhxA8VgeJ2eJmnDAus
-	 89J7/QU5uehFZmxzeD9Nz3vUZ3xGE9C6z858aCAPrPEMRQ2prsQFvtYxFlvfI9JoBl
-	 rUQpo7l4pWuO3TZUemIlxjfkbAGhDIDU3iBRcz8GkjY82lCID+123RrWXLA7eLI3qZ
-	 ICaRHNHKUZRyGeA6RcKgxRo594g2xbNCiqCF+dfOPq+IzjELNmAsY298HLagg0xwOz
-	 cY7RIuhJI4v1FHEr1zqCoTR3i1Oppbh0k6hQQbNdQiAVYLhvuffu7hJUwDi/0DLW8H
-	 BUKl3uyuoZjBQ==
-Date: Fri, 5 Sep 2025 13:09:03 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zecheng Li <zecheng@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] perf dwarf-aux: Skip check_variable for
- die_find_variable_by_reg
-Message-ID: <aLtDX0W0DMMr6BE4@google.com>
-References: <20250825195806.226328-1-zecheng@google.com>
- <aLKot1esgc3HHubX@google.com>
- <CAJUgMy+jTTAQ+=F=ddryLrftyB0h==pezZdvnZAT-UHmSU994w@mail.gmail.com>
+	s=arc-20240116; t=1757103081; c=relaxed/simple;
+	bh=pt5FYmzAOX0vF1yNT2OYVBQB2qw2fcTAKGUx1LBYO5g=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=AaIWarL7ApmUiFkZbT/JpLDIfco7bHepsqXZVuiN5vGBurWUu0P/IVb68bxNyev3VyAzF4tFaBggCf65iWm0fHK3Mcew+prUKs5nT9Ms3seM+zMaLoSIN6HAwiEtqkVv3wAW+2MhI7KlmExAunMw2eWv3+zQrnKavI5XmHVg8Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b00a9989633so473335666b.0;
+        Fri, 05 Sep 2025 13:11:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757103075; x=1757707875;
+        h=content-transfer-encoding:subject:from:to:content-language:reply-to
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3CNeVBChpPSW3Zw9eLsrTWLPrHpK+4pxoexsckxOXIg=;
+        b=EgbEOvCM4uR8q0QGxRGq3oby4ZPKKsFnk1IoKMvnt+SHs+orwC/fZM2xeLY6s053iY
+         eOSy09b2JqIa1WEC1OohJeEQKx+fkrunckQLl8ilDYlGoVfgz6AzlodINb2QVCtqRUpX
+         cQSivcKkIa7AzJLlcCJ/xe9rYVO14J5/hAvr08BROUsmJpI4CAywE+qmXjIyduhMbW2l
+         Qbp8fScZYJf8kqK5beJP9gupGFfRpua5hMU8cL39QVzsqyiPNqsj6Yxd7HbhkaiDZbz4
+         QwEOh3NFTBSu9y32DIG7wrYW+8Oe29hUWShWbQYaCTUc3v1RsUwp3InI7KAFVGX49+ce
+         zHhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwxHKDU48phP4wH8RaW/Y58FNd4zJmXg2CvdiKVwdb3a16idGFrCXo6xfdU9MRU+CgZ+tIaogOOCCI771a@vger.kernel.org, AJvYcCWoO+GVJ+0yS6trb1s3sjQ8LrUEBKumpw7PIoKxNHYo4eZpmVK0b7YgapJxgSUPYNGQQ4aTEHA064gxdX/HmcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvDFeKApdukuqwPOy3ZKn6t1/GPkGZD8V1bDMuGzb8IRLF2X5V
+	FW+q1ZRAoa8O5EDhiV9EsZLoTQZtiwWtE8oDmMDagNEPvE9EIl5W/fHSp5d16Q==
+X-Gm-Gg: ASbGnctdKOx6tXuGroKbSo868yb6K+lMHgvKYp0eIKBYCbcR0MktjicOnciYQ0Dl0ej
+	wI+84Dxv3DM2NcOIwe/REi0EVLzoPDmKHZpuu9PtTUDTTb7XnwlyNA0mv2fjfAHT0tqBZ92KGZj
+	yY9tlPAqoYUPesqeOQifd+Ytf7qjasObtkkUXDDrKNOOAlRLaMzblJegRGUUqXtXgQ9yHSNGPJD
+	FkGBzafYOBFMbQPTsSs5Ijl+c+94+Ncs1+mPhKCxWtCVYcoJJ5W4JbO77zQwQTnzEib3PcBklpN
+	l5+zWfqYrbaoTLFjVgwNLjyii3r2DCt9F+8/IwOnk8z5HHUFoCL+pepOV2Jd7NJQ4DaXgD/lwid
+	rW44yze+LRvsbick8Oa0=
+X-Google-Smtp-Source: AGHT+IHr/h8LMAq4D6Xkb3rU4602VFMlDFz/n0CzfnHoJuGC8Nq2KZrbPHG1pdTWXy65B0JfSGCI+A==
+X-Received: by 2002:a17:906:dc93:b0:b02:d867:b837 with SMTP id a640c23a62f3a-b0493084d31mr511388866b.7.1757103074299;
+        Fri, 05 Sep 2025 13:11:14 -0700 (PDT)
+Received: from [0.0.0.0] ([89.207.129.98])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04190700a4sm1471790666b.63.2025.09.05.13.11.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 13:11:13 -0700 (PDT)
+Message-ID: <01d9ec74-27bb-4e41-9676-12ce028c503f@linux.com>
+Date: Fri, 5 Sep 2025 23:11:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJUgMy+jTTAQ+=F=ddryLrftyB0h==pezZdvnZAT-UHmSU994w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: alex.popov@linux.com
+Content-Language: en-US
+To: "kernel-hardening@lists.openwall.com"
+ <kernel-hardening@lists.openwall.com>, linux-hardening@vger.kernel.org,
+ kasan-dev <kasan-dev@googlegroups.com>, Kees Cook <keescook@chromium.org>,
+ Kees Cook <kees@kernel.org>, Jann Horn <jannh@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, Florent Revest <revest@google.com>,
+ GONG Ruiqi <gongruiqi1@huawei.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+From: Alexander Popov <alex.popov@linux.com>
+Subject: Slab allocator hardening and cross-cache attacks
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 05:23:01PM -0400, Zecheng Li wrote:
-> On Sat, Aug 30, 2025 at 3:31 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > > - In match_var_offset, use __die_get_real_type instead of
-> > >   die_get_real_type to preserve typedefs. Move the (offset == 0) branch
-> >
-> > Why do you want to preserve typedefs?  I think a variable type can be
-> > typedef to a pointer then now it won't resolve that target type anymore.
-> 
-> check_variable preserves the typedefs. It would sometimes resolve to
-> an unnamed struct if we remove the typedefs. 
+Hello!
 
-Ah, that's unfortunate.
+I published the article "Kernel-hack-drill and a new approach to exploiting 
+CVE-2024-50264 in the Linux kernel":
+https://a13xp0p0v.github.io/2025/09/02/kernel-hack-drill-and-CVE-2024-50264.html
 
-> Let me test if it will
-> affect the dwarf_tag(&data->type) == DW_TAG_pointer_type check. Also I
-> found calling dwarf_aggregate_size on typedef'd types gives the
-> correct result, so maybe we don't need the sized_type in
-> check_variable?
+It's about exploiting CVE-2024-50264, a race condition in AF_VSOCK sockets that 
+happens between the connect() system call and a POSIX signal, resulting in a 
+use-after-free (UAF).
 
-You're right.
+I chose Ubuntu Server 24.04 with OEM/HWE kernel as the target for my 
+experiments. This kernel ships with kconfig options that neutralize naive heap 
+spraying for UAF exploitation:
+  - CONFIG_SLAB_BUCKETS=y, which creates a set of separate slab caches for 
+allocations with user-controlled data;
+  - CONFIG_RANDOM_KMALLOC_CACHES=y, which creates multiple copies of slab caches 
+for normal kmalloc allocation and makes kmalloc randomly pick one based on code 
+address.
 
-> 
-> > > - When comparing types from different scopes, first compare their type
-> > >   offsets. A larger offset means the field belongs to an outer
-> > >   (enclosing) struct. This helps resolve cases where a pointer is found
-> > >   in an inner scope, but a struct containing that pointer exists in an
-> > >   outer scope. Previously, is_better_type would prefer the pointer type,
-> > >   but the struct type is actually more complete and should be chosen.
-> >
-> > Can we improve is_better_type() then?
-> 
-> Here we are comparing two types with the extra access offset
-> information. In other contexts, the calls to is_better_type compares
-> two types only, so I think we don't need to add two new parameters to
-> is_better_type?
+I used my pet project kernel-hack-drill to learn how cross-cache attacks behave 
+on the kernel with slab allocator hardening turned on. Kernel-hack-drill is an 
+open-source project (published under GPL-3.0) that provides a testing 
+environment for learning and experimenting with Linux kernel vulnerabilities, 
+exploit primitives, and kernel hardening features:
+https://github.com/a13xp0p0v/kernel-hack-drill
 
-Right, I meant just about pointer type and struct type.  It compares two
-types take the same location so I didn't expect they can be a pointer
-and a struct.  My intention was about a pointer and a base type.
+In kernel-hack-drill, I developed several prototypes that implement cross-cache 
+and cross-allocator attacks. The article thoroughly describes the procedure I 
+used to debug them.
 
-Also you may consider typedef and struct.  I think we prefer struct
-since it can access the member field.  But as you said we should use
-typedef if it's an unnamed struct.  It'd be great if we can get members
-even for typedefs (for structs).
+After experimenting with kernel-hack-drill on Ubuntu Server 24.04, I found that 
+CONFIG_RANDOM_KMALLOC_CACHES and CONFIG_SLAB_BUCKETS block naive UAF 
+exploitation, yet they also make my cross-cache attacks completely stable. It 
+looks like these allocator features give an attacker better control over the 
+slab with vulnerable objects and reduce the noise from other objects. Would you 
+agree?
 
-> 
-> > > -                     if (!found || is_better_type(type_die, &mem_die)) {
-> > > +                     if (!found || dloc->type_offset < type_offset ||
-> > > +                             (dloc->type_offset == type_offset &&
-> > > +                              is_better_type(type_die, &mem_die))) {
-> > >                               *type_die = mem_die;
-> > >                               dloc->type_offset = type_offset;
-> > >                               found = true;
-> 
-> I find changing the is_better_type call to !is_better_type(&mem_die,
-> type_die) would yield better results: prefer types from outer scope if
-> the current one is not "better" than the new one.
+It seems that, without a mitigation such as SLAB_VIRTUAL, the Linux kernel 
+remains wide-open to cross-cache attacks.
 
-Ok, sounds good.
-
-Thanks,
-Namhyung
-
+Best regards,
+Alexander
 
