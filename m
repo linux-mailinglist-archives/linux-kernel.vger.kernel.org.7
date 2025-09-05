@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-802798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF07B4571A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2548AB4571B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF131C869AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4374188D33C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D685350840;
-	Fri,  5 Sep 2025 11:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B53D34A32A;
+	Fri,  5 Sep 2025 11:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pq+VnWzC"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzPTYwir"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7232634AAFD;
-	Fri,  5 Sep 2025 11:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4034A32F;
+	Fri,  5 Sep 2025 11:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757073582; cv=none; b=btozj8IMl0g+Vw7K/Ukr3woc6swy+GFb1ASaUSGbCNBzBobA4M3HJEPCNfGMVn8zbjNxvIgtarRl0X1IVbwAKYKlbaYE8OyYamPw+qISrLsYd6g5kk6nfHDTok5Pyw8kMNX2BWTo+yZjVxnbrGOKJHpBkRrrXU7t6yqyIWitX/U=
+	t=1757073590; cv=none; b=Xe/A+LC6db3/zo9ol8Zx+eIiRjVh4RtSO8NsxPnd6aG8K0u1gvTb7R9vn2fk5ij+Agx2SXh4DzXkPezqKrv/HHqQe0gkBrkocYLQ6dz2nO3lExS6/QU70VOid24EWN9ro6YBqlMcNmFGUPbvVqEFXyxMOJ3vp3yREibiG275IaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757073582; c=relaxed/simple;
-	bh=DguBEiQsYWFDhrLnesFndx4m3uklMpioQ9wv5xHBPEs=;
+	s=arc-20240116; t=1757073590; c=relaxed/simple;
+	bh=2jcuAoog76kRgO31UwW6tnig0Q+AbLz8iT0OkxR1UIw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fYG94r0PeZahcGLMzFHjNUn0TqbXYEN8CjITyufaP2PGsSODGTn+oNzjEhJimq6fx+7RrAzUhtWuPnLAU4Zr/i2JlW6xaRZls80ox3FlHNQQ+Q2xvQ3hJBJIDjPu5QNK/tbIHHuLyo7Zj4FE5sQyA1e4s7cSpmOIXOzYaN2ypA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pq+VnWzC; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=XKug0umt/V42gPdd7pKA73hTLhgHbfA7E2o9o8nyHwcFrU2yJRqS9ocrvYF5K4ybBsnIR9JezPEtVTfvYgBEehUirA6ka63k/eg7j9r+qP55It/vTLmpzBGJu/Vaot4T95VbU2CbuUXsNajlBGNOz751srtubdGir3US4SxIuT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzPTYwir; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7723f0924a3so2809654b3a.2;
-        Fri, 05 Sep 2025 04:59:41 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32b590d819aso1675198a91.3;
+        Fri, 05 Sep 2025 04:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757073581; x=1757678381; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757073588; x=1757678388; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yfusC6FdHMxDdfI3s8bgNXW0JeeMt/mO+ot1XvJ8c04=;
-        b=Pq+VnWzCcPMsM5wA7RYSg4G4qJFeirXpQPw6KabNXKbTuG5SK5vzF8xvgJe5+4kOBB
-         aQdASghkmiiOkAnN2h618NQs3qlBu742ov2HFjMj3UoMmXqnDj7nMD1Uk5vOvNQIuGUf
-         5tD56ursHv3O+h2CoGjU2mJLkaY7MM7hlEfnZ27SpQJWseSR+in/TXcelGYlAPG53evO
-         lM81lC4asPxg7EYo3SflNQqDrcKjKHo7DjhC68Daehvc3B7hy0fHXDNGdF0JHp4Xs4P/
-         grvXXGBJ4EdHcPy7JAJV7c/6pavIG3YdKQVtDLmMrKQDitV3GHdyoJas8lM5Rlx/5PH/
-         uI/g==
+        bh=xOEcXeUcizfvnu5+T09Xo7eSsAfydjLjWPzQfaUOV+s=;
+        b=dzPTYwir0XRbbyHfgbe9nmYt2w7qTZOX8XYps8f87EBpPFi7HNY0eJcyYPu0KyETL/
+         8ENOAsMoyN97NNF6T2LehmyaNQKeuCMUYDLzMcmGRMPotCylM+SRdTT7TSPOMOVbDUlI
+         oL7io0vd509BDpy0qW6YVjnD5QKgrLKigNEtQPPC77eH0YYQhxgdDdzOXX4nTN1EnJlL
+         QPoHU53QtD5C/V4mnuqMtinohKqo9fSzRRA46RCr9EM6srzsGa5qJkk2hSI3DzV4JCFU
+         IB8NWqzfKZYEuij59EkDvluFzHwKhtO03U21eGljH7Vb/nQ6iCK+VVdjEbtAQCQzfoW6
+         fFrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757073581; x=1757678381;
+        d=1e100.net; s=20230601; t=1757073588; x=1757678388;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yfusC6FdHMxDdfI3s8bgNXW0JeeMt/mO+ot1XvJ8c04=;
-        b=vWETfUiNsllRjjWbdhUTUDRduEsYxT2uMjNMZWYfuNEqJWj5qXFmgjIZ6oXKO7iy4x
-         fPjLVPe9HcpdHEVWCGlq3cO9IE4UQ0sWUdrZF1RbpiLRIHhX9ZL4cDNzDYXGBJAWipGw
-         TDitStIH3WZU2C0dQoCbigSYNTTKdwfjfr60LTBVozpeyWANjrCdWvcGsBr3PFVTHhxf
-         4x9QWIb5JMpfHIFmpbS6sSxo5trMsLcu31irB5Q67k/QLkPjDmauV6yyWCSP4zsKA+Zj
-         ZwXczB5zvvNuD1G2jxhsJcgzQ/WzOHwNslImZnYIkyiQe/For8gTHd0USnfLfS7sJiXe
-         du8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX66Ne9mishvYwtf24nyUYCod79HPWKXNa7J2kFihb3OTRdR7BXffGqSiXa6uvvJ/dnDVnZXg/mWQhC@vger.kernel.org, AJvYcCX6FRucWCouxmnZSKwieYAHVCldrrrDz2eRc+I/yxRMHtnmMtnMQkQ1m0oXyqsCKuHExXIi8YaHt7ocLlGo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9hsOWP6XhmP1eBG3K/djjX0LzqaXikUt6BzaWr80IvvIgdgZw
-	cFiR+r5xdZFxrUIhBTSp02Fs+9vwjn8ssMyyDeGuQFps1Lcvl5OiMnAt
-X-Gm-Gg: ASbGnct2LABqeT+cUmv6TcFVIaKEptODgw2FBd+b0eONra/o1lPrr3Zw6MB9wXHnNhK
-	eZDtSHaGaBazlptxN9t1QupL4ooeAGCtKg144KE68J4lLODZ2bY8BOW8FhqTTUzkKbxJuvc1Y+l
-	D3Kdx/N9RHy3a9C+e72AkJn+vJeD7s1Eltdp9oC6YphdNKZ5e2cunswiSu3gsh+h4pUYttcdqBA
-	eA9E+NqXELOjMFr0x/ShXVdcdb9siIheX8uQEOMPx+XmSXgP39FAIlKNg9ng95fzV8hsvC4o+wA
-	FwKMt0mflkaUsiDg2CPK5CSYO/6Xib61/a/1VpnGHDUuGKRDsa/4QrNqiuIC/BktFdmCwmerYTZ
-	6zdEM03iE9kMIlku9mPWk
-X-Google-Smtp-Source: AGHT+IFoZYigQbwEW4Vr8mbtasCWDC6i9hDthzyIkXHkuRGQriltAlc6nbmtWMDmJtJfFGnb4kj3FQ==
-X-Received: by 2002:aa7:88cb:0:b0:772:638e:5f72 with SMTP id d2e1a72fcca58-772638e6165mr21255920b3a.25.1757073580767;
-        Fri, 05 Sep 2025 04:59:40 -0700 (PDT)
+        bh=xOEcXeUcizfvnu5+T09Xo7eSsAfydjLjWPzQfaUOV+s=;
+        b=iHbTG2EdY4BhJtvDiT67CgO4/WMBnroArYrAeeI1gyV0Q8rfpTDa2KAwj90sq/FKol
+         Bd3gMqwvPxHeE8nTh9zcUtLB5y3SU+UjCrdK35RkD+GZNOsIUm7FwLKcTtrGoM8epdVX
+         0HwJa+saIsgBkATNJIv7W4KL2ZRlTcs5Y/TPgrghM0ErjbzXUGBEkk0MKdhdaNKerydV
+         STddKV1msZ7unZ1Or1i4wobotyUwChaiAOI8zkHeLD/vMC6swj7PHHcpUpGjFqTP9xXi
+         4L3xs3X9jwMFDD0h8HPh/VlIehyoeSRgaEjHEkbj3pufVRySFQ33tLo9l/JL29/Pbj64
+         StWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWa/OeHRlKyl+fk/DxmOhVpYTve4J6tjRr2bIo0V3Sn/5QtjeFT1AJP+X+57Q59gMzWpcbkWZ1IcFxZxYK@vger.kernel.org, AJvYcCW1vZmXmKAGKilnMPZrh8O1pEq3SJkS+J2yoX7QSjth3scJPj6yOty4Pbb86TX1WVz/gRv39bSkHe32@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCHUlUH/udE4mHiFMzanTzC+O9VAvhvxdfIRSt1qLib+rslQWK
+	c+kptRgnUNX0U0r/ApqZ/z5YCB69vvCiNXvkPp+x7NBRtXrP7WfBjgmm
+X-Gm-Gg: ASbGncuRKHZQxTqCXzwzK7ZD9zajfloE/Cy/t/lmS1khJqL8w++J7xPbIUkakvW4lYz
+	uKZSGShgOvqAfxTCXMWhs1F98YvwWh1bI/COAzKXj81L9FuABc1OvGkLM0rTnICqgcnmyLZevoZ
+	diGsx0i47YuNwiYZgV+cVKKjBcNe0zDfNsdXvV4SyZz/zq8RMt0cQb6HMph7o5tuJwg6ttrJjhv
+	GXVD61bP+STYjIY0bu7GXugdj4do0WrjNeTcTzrYQWlhVPZjHGt5XYjKcrNt38d+c6ID+7f2Nl5
+	RTFbrpkbcqAdE7XEJYbpKmzdZIjfUUMoGUpgWQVQiYXi/0QlfxyBMomr8Fpd/D8fSB8ZdsEEtaM
+	NzHAdK2zAf7qInZn/1eijkdWk2GDjJy1zQCgZPQaRzw==
+X-Google-Smtp-Source: AGHT+IGSnGXMPfX2ToymDA+CKxfOFGpRs2YxaEW93/3sIQasItb8q0Va6j5MszBF7XBKNfyU+srCKg==
+X-Received: by 2002:a17:90b:3c12:b0:321:2b89:957c with SMTP id 98e67ed59e1d1-328156e29eamr29316101a91.27.1757073588211;
+        Fri, 05 Sep 2025 04:59:48 -0700 (PDT)
 Received: from rockpi-5b ([45.112.0.216])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772396d2b97sm19633049b3a.67.2025.09.05.04.59.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772396d2b97sm19633049b3a.67.2025.09.05.04.59.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 04:59:40 -0700 (PDT)
+        Fri, 05 Sep 2025 04:59:47 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Kevin Hilman <khilman@baylibre.com>,
@@ -85,9 +85,9 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	linux-kernel@vger.kernel.org (open list)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v3 07/11] arm64: dts: amlogic: Add cache information to the Amlogic A4 SoC
-Date: Fri,  5 Sep 2025 17:27:38 +0530
-Message-ID: <20250905115836.7549-8-linux.amoon@gmail.com>
+Subject: [PATCH v3 08/11] arm64: dts: amlogic: Add cache information to the Amlogic C3 SoC
+Date: Fri,  5 Sep 2025 17:27:39 +0530
+Message-ID: <20250905115836.7549-9-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250905115836.7549-1-linux.amoon@gmail.com>
 References: <20250905115836.7549-1-linux.amoon@gmail.com>
@@ -99,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As per A4 datasheet add missing cache information to the Amlogic A4 SoC.
+As per C3 datasheet add missing cache information to the Amlogic C3 SoC.
 
 - Each Cortex-A53 core has 32KB of L1 instruction cache available and
 	32KB of L1 data cache available.
@@ -107,15 +107,15 @@ As per A4 datasheet add missing cache information to the Amlogic A4 SoC.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 37 +++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 23 +++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-index 563bc2e662fac..fce45933fa28b 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-@@ -17,6 +17,13 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a53";
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+index cb9ea3ca6ee0f..ee0b1ffa947e3 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+@@ -23,6 +23,13 @@ cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a35";
  			reg = <0x0 0x0>;
  			enable-method = "psci";
 +			d-cache-line-size = <32>;
@@ -128,37 +128,9 @@ index 563bc2e662fac..fce45933fa28b 100644
  		};
  
  		cpu1: cpu@1 {
-@@ -24,6 +31,13 @@ cpu1: cpu@1 {
- 			compatible = "arm,cortex-a53";
+@@ -30,6 +37,22 @@ cpu1: cpu@1 {
+ 			compatible = "arm,cortex-a35";
  			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			d-cache-line-size = <32>;
-+			d-cache-size = <0x8000>;
-+			d-cache-sets = <32>;
-+			i-cache-line-size = <32>;
-+			i-cache-size = <0x8000>;
-+			i-cache-sets = <32>;
-+			next-level-cache = <&l2>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -31,6 +45,13 @@ cpu2: cpu@2 {
- 			compatible = "arm,cortex-a53";
- 			reg = <0x0 0x2>;
- 			enable-method = "psci";
-+			d-cache-line-size = <32>;
-+			d-cache-size = <0x8000>;
-+			d-cache-sets = <32>;
-+			i-cache-line-size = <32>;
-+			i-cache-size = <0x8000>;
-+			i-cache-sets = <32>;
-+			next-level-cache = <&l2>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -38,6 +59,22 @@ cpu3: cpu@3 {
- 			compatible = "arm,cortex-a53";
- 			reg = <0x0 0x3>;
  			enable-method = "psci";
 +			d-cache-line-size = <32>;
 +			d-cache-size = <0x8000>;
@@ -173,7 +145,7 @@ index 563bc2e662fac..fce45933fa28b 100644
 +			compatible = "cache";
 +			cache-level = <2>;
 +			cache-unified;
-+			cache-size = <0x80000>; /* L2. 512 KB */
++			cache-size = <0x7d000>; /* L2. 512 KB */
 +			cache-line-size = <64>;
 +			cache-sets = <512>;
  		};
