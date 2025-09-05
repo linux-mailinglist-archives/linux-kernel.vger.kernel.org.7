@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-802801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777EFB4571D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:01:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38364B45721
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A683A8856
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:01:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104674E551A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8104D2F83BA;
-	Fri,  5 Sep 2025 12:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFE534DCC8;
+	Fri,  5 Sep 2025 12:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZwix2JC"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak9de5Dx"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64014341AD4;
-	Fri,  5 Sep 2025 12:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9EC2343BE;
+	Fri,  5 Sep 2025 12:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757073605; cv=none; b=S3qDiwq0hXf/vT6lK9FbN8a2ARDH+9PvCT7r5vykievj3aaD8wq0l8pD+N3ZMP7nCdbCHZ9ZIpKimT6uB5r3HHeOVULdaPZ+zQEEBh9n76B2sLBcpqmQAuy7mSWQC+YAxvE2p640eZNhOXz8xYc11agBCd3ncEO/jNiu9jNY/SY=
+	t=1757073614; cv=none; b=Bcp+NbHV8BMohAhW5apJT9iwlWqRBb8FuyoeuUh8dOwYCg0SdZUQbdhsMf6Hw26kRTy02P5844TolgSGS6+TReM1LJko8rdJL8pIS3lKGFaRDZNHlKmCW3OYHT9WS447JoLoL/7P5jtLPMHlDyTBpGj9/API03AlHGND37l9Ti0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757073605; c=relaxed/simple;
-	bh=7ABTsmeScuin4GYhDUhvuRrG20wP60K0doEdcIzHAho=;
+	s=arc-20240116; t=1757073614; c=relaxed/simple;
+	bh=lXISe0xsz5jXAKAliGKbVi5V4LE36s1ZbY9PbPUaJH0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AZE8M0jn5dN/WUbDYfqJurA3p5nLF/7w2geSO/4txsYhvRBOQMQ92lcKSc+ajsr/EJLaMc8VXpHlmnl0jptTRhkIfdd/vgmhO+UIYn7yQiF06gHjZhBt9huMCqZYtIcbSKaLcmV6TTrx+W4SxEqNcwwa1JMDsf/07QHvhpXFNHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZwix2JC; arc=none smtp.client-ip=209.85.216.53
+	 MIME-Version; b=cQ5GqmKOt1tjLQ2CjqwXs8+wtrPg7O3082m379w8A3Equ8J/zoLkvY6c9jvacL8Bxc1jnpdSXERb4Lry8KKTOptUVgNyBRqlPqU0wiFvt5pPOmXY/k1rvvrFqde6OEy5jfv8ZiFQ84FhG1cTPDuJ4RI7gmzqLaSFNXeEuaEPJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak9de5Dx; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32b92d75eaeso1313680a91.0;
-        Fri, 05 Sep 2025 05:00:04 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7724df82cabso2440561b3a.2;
+        Fri, 05 Sep 2025 05:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757073604; x=1757678404; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757073611; x=1757678411; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RVxRCVFvOJzT3t1Nwg2lUVttPj3xxid9CGLZKoZfprg=;
-        b=PZwix2JCP5hfVPGqCab+KEKEayNGGAqCYY+0PFXld7fWtofDMhoB+cQdFOZ0JlNwwJ
-         xpD+72j6APBKL/ntm5/s+Upj6irLp/H7IWJTo0l0fpskU1r5p04VOuGreVhWPi4mI+qo
-         M7IsKFxJL1wM0DK5sJYPYvSQwKagY/8TlNgz7TkW2lGbPSSnZBT/4Uaie0nX2awtQJIx
-         svK3O2fbDAFV6EmeirsnmeZqEDdAEB7SQBAOuta3lkYhAd27MjdPKbQk9ocqToEoIATD
-         ScTg6goMZibFMDu0AKO974UVupD0QUpj+f8FrIbOFL4LZB0MQ6Xkt/B7ZtBLd6MIXdkn
-         Qvzw==
+        bh=jbHadlRPNZHf4QM7oZmMpzNXcctgtaP/Xq2UPJ6KP14=;
+        b=Ak9de5DxKf8CT0W+3wDkQxWCbSWzsz+85n8o2YnLwmPefI0qK28wPJyGvVV2e3SiMF
+         BhrK4Aok4WbfC08a2LwMvMLGLcueeo0rWIrGYG9ASnJVBWdi9XeWZMR02I9KENIVApGV
+         jqqEZwuB3txpLNSzCe2gFJbqzwKArJOJixQt2Oxik3ssgWIC0PxtJUMW45UN2bWoPEtX
+         OB2uuVbZwVtMO8cWHcK/f7VN1n/RGeIuNfkdFaMIrlTRa0ozPgnsiXwQztGkXm/u8YRw
+         bVWnxxgJP149KUe/sAU+/XIBRGThJZATWIjQ66+v9JDcDsfGNGOJDi4m/3zna6oVZFBb
+         HisQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757073604; x=1757678404;
+        d=1e100.net; s=20230601; t=1757073611; x=1757678411;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RVxRCVFvOJzT3t1Nwg2lUVttPj3xxid9CGLZKoZfprg=;
-        b=nWuOhkq+PDXlFdMjMgrv2F+UFPLDSkm6GJvQz+mRlHS2Hw3VgTjn4GclZ3hPKHVGRY
-         wREYn1l9l2LOC1y/vejqwc3t9go6qys32blCKUEPyX6WYRxHSVN264sMdx7rqWlZAW/e
-         zydeF2g5vVXpHvi40VyvU2MDXZ7X9u79UgE77ngdbyvJic3BPgN8DIP3a7a8LhQggMor
-         oArQmBAr/zJsT0EmXt/hLJcyEMCQKfQHoIkbKlIM5ULw78tou33+2fy0MoqwqqwSU6Mi
-         SdRBfE0yQN8bxFHESX3HSZbalnbKzySqSHPF2FgkvVEKqBAwS+9YmpXUmCVDYrtyBMKZ
-         EdQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa2UG8Izqh6iekWwnyL2qdALsVV3swcnDq/D8or6TvvECFcPjfPtZpS4yE8a9Cq+uqWb86mmauzwP1@vger.kernel.org, AJvYcCXqrqDaRRnRS4cRK4luRDhsjh7QjceMbggjJv/JTSdH2yv5jc1c3kOJ8VAcrXQz4rvkyJUH0Ov/HMRwN+DU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1UuAAu3fev3JXBsbEaxWlYKNBshuHfWPQ5R20t/GvbkBtzhUN
-	YVk6ILU7IXUuWaiuyIJhzC73IKWqxi4snwEu4J92pTPZeYCKNRwe6aE5
-X-Gm-Gg: ASbGncu4us9RPR5jeW6OyvfNRMvJfiSFXNdW2oskTMl8c4gYwY+k8VH8g2IxLZVJLUM
-	Jw/nkQRthDbzYmO8XAVE6bxdTzgSaemzKG/euAPuC6n60bqd0kTL7onUfkaJiK/+jYPMs8U2cSo
-	DLVztcnyRTtGzX9i3OWd3VhBm59QbORTItk77uHjX9Q8Z12Ze3nkwS2MI63jOsFHQ8EL/9GE+wF
-	6J4lSokl/mAtHEjNVfUd8SUKHpdz1ve3BTPPKsnWdDd/9vyzaf4TodS135uVn2aUb5U/4pSTs2L
-	8710sQE0lyS34YtFmwIEQ3UEWj4jbykEmb+avH209Rb7WW8O9W5K5f3Y65hHc4hB2VW7fIhOyak
-	VqBUhVz2SF9wyRuhYUVCSqXVorK+B1rA=
-X-Google-Smtp-Source: AGHT+IGY5TeOBBLsD3Cq48stKZ7qkYVc+vwv84x6vovwpGRju1eJ3HiOc73XVMc6AcKN9NGG9nv4lA==
-X-Received: by 2002:a17:90b:2d8d:b0:32b:baaa:2a93 with SMTP id 98e67ed59e1d1-32bbcb945e0mr3464777a91.2.1757073603453;
-        Fri, 05 Sep 2025 05:00:03 -0700 (PDT)
+        bh=jbHadlRPNZHf4QM7oZmMpzNXcctgtaP/Xq2UPJ6KP14=;
+        b=xPOOeAdLuDdGypmdxO+LnkGlWJw3rVgolua35pQQy77cWPVA+rgmlDjeWaohVZdjlL
+         WHLJLr+UnHL4HgkpyTjLWr0jnGXo6h0gAWATxPKXqTEmYKwioMYbK/rGU4aGb4nGOluc
+         mVQinyuhdLRPdYqST35EBNopLBWSvO8Vun9GS6cbVp0Ep8IcpRpANHcdEXW8g3CBF6tt
+         i7ec038eY8oeMDJBnUbhaPX1LLiZBmmhM9PPuylosxRQ0OHEU5Y9I+amaYMV8FcvtZTQ
+         NM30e267S78YXXM18DjQyZlsYpsIyr5grjv8NR0YCSUAOcb+xWqYEVNna1vh2ll1FXii
+         Jw5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkEEVSUGyG6QEGfXUU4IfU/b8VLFIZ4vw0xCY1i6gsdWy8eiuInDW6SLcXKCZsOW1nrmSP8fE+ULJL@vger.kernel.org, AJvYcCXU2BjalgOVLa9KsF1e3NeCdeKMANNzrIY9owwiXxoy/RJwfD3dzCXEAgMEXBXczx7yBvJPB5QpkKBtjhWT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6XEG5QzxroGuEh79cLt1vMOxTgiR2wW3wwEeoYFs9y5h1xOnV
+	fBcg7DKTzleKT2yJ5Bka1QxV3tLddWaI4JC3w9pgsH2DH+k9hiLJXKkc
+X-Gm-Gg: ASbGnctbGLaxef01bEmN2kBaqNx8th9tmBY8UV/bK+Srm033XCC3k059IFVuamfhcyE
+	SeWQ7qujGUMDZMvjjm6KBv0mrh/DTP/+YZWYCmmvNo7tnIYyVkHeG+g87fvWbXxBE0MdUtqqXA/
+	SYQyaQ+PA8bIi8VVkU9EV9d1kzEbIv1ruaifUeSqmjDELTYMCNPQQDL4uN4LXrHyxcYJm8jZoxW
+	AkaRt/db7jHciRLSYPqvE2DWAU7e/Yre+Hz7mmc1RFEBSvNiIMmUlNn2HfZpohT4RwEN2v13EBU
+	WDhl4DjzEhGNkf69p4/b/zA0rl850FWFJrtBBN8K5Wai2kYvEQQAuJAvZqqnlJyaQKGnkMioZ/E
+	TUZz28gFA36QjjD5QOJze8PtWhcZADZw=
+X-Google-Smtp-Source: AGHT+IEHzTd/Vu5HIqp5Obu47X3pNPJVxl9wP0t91OrOXzNkFGFINMn4lFyMzbYJuqchoSIRXpB1mA==
+X-Received: by 2002:a05:6a20:7f8d:b0:243:c081:b4a7 with SMTP id adf61e73a8af0-243d6f85b56mr31346449637.59.1757073611194;
+        Fri, 05 Sep 2025 05:00:11 -0700 (PDT)
 Received: from rockpi-5b ([45.112.0.216])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772396d2b97sm19633049b3a.67.2025.09.05.04.59.59
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772396d2b97sm19633049b3a.67.2025.09.05.05.00.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 05:00:02 -0700 (PDT)
+        Fri, 05 Sep 2025 05:00:10 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Kevin Hilman <khilman@baylibre.com>,
@@ -85,9 +85,9 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	linux-kernel@vger.kernel.org (open list)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v3 10/11] arm64: dts: amlogic: Add cache information to the Amlogic S922X SoC
-Date: Fri,  5 Sep 2025 17:27:41 +0530
-Message-ID: <20250905115836.7549-11-linux.amoon@gmail.com>
+Subject: [PATCH v3 11/11] arm64: dts: amlogic: Add cache information to the Amlogic T7 SoC
+Date: Fri,  5 Sep 2025 17:27:42 +0530
+Message-ID: <20250905115836.7549-12-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250905115836.7549-1-linux.amoon@gmail.com>
 References: <20250905115836.7549-1-linux.amoon@gmail.com>
@@ -99,8 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As per S922X datasheet add missing cache information to the Amlogic
-S922X SoC.
+As per T7 datasheet add missing cache information to the Amlogic T7 SoC.
 
 - Each Cortex-A53 core has 32 KB of instruction cache and
 	32 KB of L1 data cache available.
@@ -111,48 +110,17 @@ S922X SoC.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12b.dtsi | 62 ++++++++++++++++++---
- 1 file changed, 55 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 74 +++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
-index 86e6ceb31d5e2..f04efa8282561 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
-@@ -49,7 +49,13 @@ cpu0: cpu@0 {
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <592>;
--			next-level-cache = <&l2>;
-+			d-cache-line-size = <32>;
-+			d-cache-size = <0x8000>;
-+			d-cache-sets = <32>;
-+			i-cache-line-size = <32>;
-+			i-cache-size = <0x8000>;
-+			i-cache-sets = <32>;
-+			next-level-cache = <&l2_cache_l>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -59,7 +65,13 @@ cpu1: cpu@1 {
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <592>;
--			next-level-cache = <&l2>;
-+			d-cache-line-size = <32>;
-+			d-cache-size = <0x8000>;
-+			d-cache-sets = <32>;
-+			i-cache-line-size = <32>;
-+			i-cache-size = <0x8000>;
-+			i-cache-sets = <32>;
-+			next-level-cache = <&l2_cache_l>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -69,7 +81,13 @@ cpu100: cpu@100 {
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+index ec743cad57dbf..6510068bcff92 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+@@ -53,6 +53,13 @@ cpu100: cpu@100 {
+ 			compatible = "arm,cortex-a53";
  			reg = <0x0 0x100>;
  			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			next-level-cache = <&l2>;
 +			d-cache-line-size = <32>;
 +			d-cache-size = <0x8000>;
 +			d-cache-sets = <32>;
@@ -160,14 +128,13 @@ index 86e6ceb31d5e2..f04efa8282561 100644
 +			i-cache-size = <0x8000>;
 +			i-cache-sets = <32>;
 +			next-level-cache = <&l2_cache_l>;
- 			#cooling-cells = <2>;
  		};
  
-@@ -79,7 +97,13 @@ cpu101: cpu@101 {
+ 		cpu101: cpu@101 {
+@@ -60,6 +67,13 @@ cpu101: cpu@101 {
+ 			compatible = "arm,cortex-a53";
  			reg = <0x0 0x101>;
  			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			next-level-cache = <&l2>;
 +			d-cache-line-size = <32>;
 +			d-cache-size = <0x8000>;
 +			d-cache-sets = <32>;
@@ -175,29 +142,41 @@ index 86e6ceb31d5e2..f04efa8282561 100644
 +			i-cache-size = <0x8000>;
 +			i-cache-sets = <32>;
 +			next-level-cache = <&l2_cache_l>;
- 			#cooling-cells = <2>;
  		};
  
-@@ -89,7 +113,13 @@ cpu102: cpu@102 {
+ 		cpu102: cpu@102 {
+@@ -67,6 +81,13 @@ cpu102: cpu@102 {
+ 			compatible = "arm,cortex-a53";
  			reg = <0x0 0x102>;
  			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			next-level-cache = <&l2>;
-+			d-cache-line-size = <64>;
-+			d-cache-size = <0x10000>;
-+			d-cache-sets = <64>;
-+			i-cache-line-size = <64>;
-+			i-cache-size = <0x10000>;
-+			i-cache-sets = <64>;
-+			next-level-cache = <&l2_cache_b>;
- 			#cooling-cells = <2>;
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&l2_cache_l>;
  		};
  
-@@ -99,14 +129,32 @@ cpu103: cpu@103 {
+ 		cpu103: cpu@103 {
+@@ -74,6 +95,13 @@ cpu103: cpu@103 {
+ 			compatible = "arm,cortex-a53";
  			reg = <0x0 0x103>;
  			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			next-level-cache = <&l2>;
++			d-cache-line-size = <32>;
++			d-cache-size = <0x8000>;
++			d-cache-sets = <32>;
++			i-cache-line-size = <32>;
++			i-cache-size = <0x8000>;
++			i-cache-sets = <32>;
++			next-level-cache = <&l2_cache_l>;
+ 		};
+ 
+ 		cpu0: cpu@0 {
+@@ -81,6 +109,13 @@ cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
 +			d-cache-line-size = <64>;
 +			d-cache-size = <0x10000>;
 +			d-cache-sets = <64>;
@@ -205,14 +184,54 @@ index 86e6ceb31d5e2..f04efa8282561 100644
 +			i-cache-size = <0x10000>;
 +			i-cache-sets = <64>;
 +			next-level-cache = <&l2_cache_b>;
- 			#cooling-cells = <2>;
  		};
  
--		l2: l2-cache0 {
+ 		cpu1: cpu@1 {
+@@ -88,6 +123,13 @@ cpu1: cpu@1 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			d-cache-line-size = <64>;
++			d-cache-size = <0x10000>;
++			d-cache-sets = <64>;
++			i-cache-line-size = <64>;
++			i-cache-size = <0x10000>;
++			i-cache-sets = <64>;
++			next-level-cache = <&l2_cache_b>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -95,6 +137,13 @@ cpu2: cpu@2 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x2>;
+ 			enable-method = "psci";
++			d-cache-line-size = <64>;
++			d-cache-size = <0x10000>;
++			d-cache-sets = <64>;
++			i-cache-line-size = <64>;
++			i-cache-size = <0x10000>;
++			i-cache-sets = <64>;
++			next-level-cache = <&l2_cache_b>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -102,6 +151,31 @@ cpu3: cpu@3 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x3>;
+ 			enable-method = "psci";
++			d-cache-line-size = <64>;
++			d-cache-size = <0x10000>;
++			d-cache-sets = <64>;
++			i-cache-line-size = <64>;
++			i-cache-size = <0x10000>;
++			i-cache-sets = <64>;
++			next-level-cache = <&l2_cache_b>;
++		};
++
 +		l2_cache_l: l2-cache-cluster0 {
- 			compatible = "cache";
- 			cache-level = <2>;
- 			cache-unified;
++			compatible = "cache";
++			cache-level = <2>;
++			cache-unified;
 +			cache-size = <0x40000>;  /* L2. 256 KB */
 +			cache-line-size = <64>;
 +			cache-sets = <512>;
@@ -222,12 +241,12 @@ index 86e6ceb31d5e2..f04efa8282561 100644
 +			compatible = "cache";
 +			cache-level = <2>;
 +			cache-unified;
-+			cache-size = <0x100000>; /* L2. 1MB */
++			cache-size = <0x100000>; /* L2. 1 Mb */
 +			cache-line-size = <64>;
 +			cache-sets = <512>;
  		};
  	};
- };
+ 
 -- 
 2.50.1
 
