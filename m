@@ -1,181 +1,192 @@
-Return-Path: <linux-kernel+bounces-802603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FCAB45476
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:22:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B703B45484
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2E1A42811
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:21:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4D2A03B67
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF982D640A;
-	Fri,  5 Sep 2025 10:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E822D6604;
+	Fri,  5 Sep 2025 10:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hhf1vyfz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="BvgBdHW4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2429A26CE12
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067699; cv=none; b=flj5VKYXTMojeLwESGdl0ASo/olSSzoaD838mSIe0LPCPqhH5QunlC767pq8YeEsO1GhblNyj1a+wEXLKrQr3uXtnMNYMbSVEP6e1zYfKYSQXboJaSFahUAeVuheqJOeGhme0yIQkdG5yJZrtMydkwuMSNnxxb+VLjH5avm+tus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067699; c=relaxed/simple;
-	bh=qCppbG+eQP46tSiZEY0crGxJVA1nNjzZ4wk6qR9CveA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cx8EPKB0a8EaMpfdFZvnl38O8Zi97b90xBn8lSqXQKdWiXvgxIs4sxa3vvp0VMfjnI3BKW8zoeOfVLTH6EEsBZOsYtLgjDa92C6i0gTy5V5czUtfmpuWlkmxxoP0LQ2p6OkPPySoI+dM/ScCOcUbprMJwmtn5pCM1KTZEQraJaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hhf1vyfz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857XXbx008125
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 10:21:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YhX9I5xQxAo+v+fO6pOEhRjl3CA+K4fHzStrCxl2ggk=; b=hhf1vyfzR3s0A5fM
-	DAhvWijlnL9vn8hTAJrsAS/QJdRIOzhUHe4DNHvnBAM8c6AlYh6iIUH7pJtEFPQ8
-	0W8Qs4oByESPGxBuOwNPJhtOEGmpRK2+H5KNJf/n+NNGQBqGnz6ex49pvHYybjXH
-	kxSnv/O2nXS8q3iEocuDlNoyLETuVmh7SPehXjajgThSuYwgnk8O61mLDSz7CqQm
-	hkI71xkbjw9EObY1O7inRyc3U/U9yYF6yfqqFgu2yUATzP3N0/ZgjkdL8xOc8vOZ
-	c6D3WLQXrPYKgFRfHQ79XI5Pnt3JOGEOoFrLASo8OVKMl1/74j9dkudyDdA8hRzz
-	0pa5ew==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjtqf8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:21:36 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a9f5a43b6so4521666d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:21:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757067696; x=1757672496;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhX9I5xQxAo+v+fO6pOEhRjl3CA+K4fHzStrCxl2ggk=;
-        b=kvnuSzT1ld+Gr5Tz2C6chAeaxEBDBByMSI04qk5oB4Au2B/IGcaenYXZsfrPZXdZn2
-         FTQkjH23sz9Wzd0x0j9EAep5wIcpkrQ/OYMvWXYkc2o+h5e4P0toY5xlBAr88+xx3729
-         ZxgJojX0Kyd7D4zzETNwWj/D3v9sjLipm3/3z2+X09JOWsEqKUcKwyt2Wj8MPK4XHP4H
-         DycIjuKzzhdA04RTzcPOmG938KDEBKFhGtMy1W7ybij1+InTc3Pdm5LUJ4wtGrymrNjl
-         rA59ZhuWbtIMMyIe8DaiKzjEAZ5D3YOj3t5RvMUjaKo31j1m71TQz+X6lTgTppkZyE+3
-         lOGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVASQnYv7UGaHH3D3XzerVU2/+HnW5W4qzwpPJ2sTKKJXuOv8o0wFNSd8gpu3tdgG0cigyF+t8YelYqemE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSkMGGw4P9yTGRXBrh0L5jC2XxwmIPZuMDtAd+52TxMvVMXxbe
-	7OhUSzMCl6ohCjmejrXRSCQQJxwgShkUi83wtmUyZVbk7F9qKS6486IO0QcJhaApJNHmWoF+vkl
-	ey6LeI2gVLAY2x7aeWDVdpJvohbMXIfaCV1LQqg1Pj/6DRdIU5go6vMrsWncCrVgoCX4=
-X-Gm-Gg: ASbGnctNZ3AM5feeE9xs+PENpTO8fKphklxzNHWWZfcIBSmvC6Oflr98A8tUJzFWXeA
-	ghJAXUS9O9QynYQ84uGqBIML0Sc38iSXHSfMZWheL51j/FzjRMzvV4o5gpBhitqDUC4765RRcMe
-	HOd+/JdjkLwtTbBiZDY6WGGgox0CMtjFjwrRORsjmgg8BSjFpDjg6PzejGj7eqXlyho1vLT1xXc
-	W7JnDMU4AQjz52EWpNsWiE02PtalJeFOKlHZ9Iv+r0KUYcG+zJ2B7XlqFw1tmqTfVBPmuQvLyJJ
-	9VOcbYEEBZONkPzSnMAB9Imwk073GB70mIuQpp2tleJSDSXka3YG/zlffM9bIZvkWVvsxACpvU4
-	CKRBbASqzFGym4ogDSG376g==
-X-Received: by 2002:a05:622a:1a04:b0:4b4:95d0:ffd3 with SMTP id d75a77b69052e-4b495d11860mr62588791cf.1.1757067696156;
-        Fri, 05 Sep 2025 03:21:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsI15M5gOFq5piSlzss18AHTX4GYCxGcCIZkv13DSKshZ+1CACZN6exOPR+BcJ3u0qTjcFRQ==
-X-Received: by 2002:a05:622a:1a04:b0:4b4:95d0:ffd3 with SMTP id d75a77b69052e-4b495d11860mr62588541cf.1.1757067695509;
-        Fri, 05 Sep 2025 03:21:35 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0424cc1698sm1249620566b.21.2025.09.05.03.21.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 03:21:35 -0700 (PDT)
-Message-ID: <2408b467-f1b2-491f-a701-4e45e1a1e823@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 12:21:31 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923F285C99;
+	Fri,  5 Sep 2025 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757067845; cv=pass; b=eUmoJJF8FNL7h+sIVbwUz+bZw0yi9+ksHfWmZkoMgkCM9Pcb64EvxnErdZ1oFIzRmSqlKhFdpbwSgHa7rzH7R73ZtyWJSNSGCtzj+eY+5fZNznveyujGCU0FHVktbgOwpNz+du1Z5jCSKWrtNh85ksKBoNqx9ek+rDoZb0PxCd4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757067845; c=relaxed/simple;
+	bh=QZA4RR62Kctrtehb5IxqxnX/l9Q+N/8UFN8FaTCAu04=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QLUZwkWRbYAodTKT+m+ZUl6XPwVHeZ5GiCBkJv0RsjvUYbKwlNTtHFZcZNWPixm35cPqnZyfk1MAq+TRPTET+3xbCgwO7TYYFPuMSe1mklRkKcXiv9mh3/u7+WTlq3dw+cigLc6CPqqa9B+5O/ZhSnbb2Q+2kv95+huYhTUtA8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=BvgBdHW4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757067816; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GybpDjWYrcHzyhe7ld9X+plIzRLFThL2vVRB4HOE39LPhEWo7G76wejJkddedYND5EPpQ9rgJaOp7EXZOdAo/Gx7y6sP/7AwDkDaoIu8oF8/wJL1R3NIuDrBFXJOWn1TFpXNI5Yi2h+ARaHSMJPSUmiP4hecLToZf9uVK06a+sM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757067816; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Sa4pK2HiFVq0V3IW5nFLIvvG4Ckdsl8UUh8ALJALKdQ=; 
+	b=kKnaR4pJBgM3+SeWyb52P6PTtYt804ke+MagQ44d46HPexHfGUR1TIMbeW5zhYKRPMug4qUTlbF7OVFmGt3sJQskTC+6ywtLpGbnjer9NVl83NuXJXKTRhLPR3KEXbQXQ2nrSHjqD0xhdfqW3OWWuG4qeYEkOO1cAjIGboZcX7I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757067816;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=Sa4pK2HiFVq0V3IW5nFLIvvG4Ckdsl8UUh8ALJALKdQ=;
+	b=BvgBdHW4mre870EH86Py7ypKynt0qstx69dUFNQp7WUqIWhAOuSBhGluDwu2/8+D
+	oWRANoyyeXRnkSP+vEp0Mrig+Y3UUKyxJO/ChrCHo3JM1spMW0RnOxLDsh6wLJAQRoj
+	oT7zANmrPAe6hp2zMBRDn7sPcu6n8cGXUwp/n9HM=
+Received: by mx.zohomail.com with SMTPS id 1757067815022812.3069983849073;
+	Fri, 5 Sep 2025 03:23:35 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH RFC 00/10] MT8196 GPU Frequency/Power Control Support
+Date: Fri, 05 Sep 2025 12:22:56 +0200
+Message-Id: <20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
- privacy indicator
-To: Aleksandrs Vinarskis <alex@vinarskis.com>,
-        Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
-        Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Daniel Thompson <danielt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus
- <sakari.ailus@linux.intel.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
- <20250905-leds-v2-4-ed8f66f56da8@vinarskis.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250905-leds-v2-4-ed8f66f56da8@vinarskis.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68bab9b1 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=I76Qk8w-AAAA:8 a=QE2y9RwVZUYpaLmqgykA:9
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=vUPM0Wvl0xcrLs4nqPIT:22
-X-Proofpoint-GUID: imopev4AkGzjyjo-h2atcUXpY87fVVKR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX4f1DQ16Yjku/
- Ih4/6XC516zCFMzt6IGCCo+3oVMJWosDzod3VDJjMKQg28IeKBuj1GESU35Qr94C261bIs7gEDS
- FbyKZoAc+yBU79LCL6aKPfZJg8bOaReVnMkJxdLimQVjQQ+eXpaX36ctssLAbZMggN6yEjlJxfF
- Xb4JZ5sZwuw0Q7NINXaMLEXbGz+XYH6Fmf1IPbmgyDjYHHk66Gjv7fjR9CooQ4AJSqJ8ep0Iicd
- Zovrlhkw+vdz4wxCcak/L1/cQf5QJkT/mA8DmvjoUyxGBAC1Twa+Nmgp6+FECOzluSN3GPrCnxX
- yWb8l3U9VjAZL5NtSO2yWFACddcRTTaC4ctz5PQEesDwabPJ6nj6VDc277QjdZu1AhsZ/VUYxM6
- vav82hl1
-X-Proofpoint-ORIG-GUID: imopev4AkGzjyjo-h2atcUXpY87fVVKR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+X-B4-Tracking: v=1; b=H4sIAAG6umgC/zWN3QqCMBhAX0W+6ybbTN0kIgh6gG7Di6mfNVBn2
+ wxBfPeW1eX5fs5ZwKHV6KCIFrD40k6bIQDbRVA/1HBHopvAwClPqeCS9F4wmZH7OLUWn0Tl2T7
+ NctowwSE8jRZbPW/CG1wvZyi/w3A7Bbn/bSrlkNSm77UvogFnT7aApOlH0qNzaksX0eFfppJJl
+ sQsYSkXhJFOTVbFgzKn2nSdqkygYDxCua5vazWHD9cAAAA=
+X-Change-ID: 20250829-mt8196-gpufreq-a7645670d182
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+ kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 9/5/25 9:59 AM, Aleksandrs Vinarskis wrote:
-> Leverage newly introduced 'leds' and 'led-names' properties to pass
-> indicator's phandle and function to v4l2 subnode. The latter supports
-> privacy led since couple of years ago under 'privacy-led' designation.
-> Unlike initially proposed trigger-source based approach, this solution
-> cannot be easily bypassed from userspace, thus reducing privacy
-> concerns.
-> 
-> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..03801b174713cb9962c10072a73e9516abc45930 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> @@ -83,15 +83,11 @@ leds {
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&cam_indicator_en>;
->  
-> -		led-camera-indicator {
-> -			label = "white:camera-indicator";
-> +		privacy_led: privacy-led {
->  			function = LED_FUNCTION_INDICATOR;
->  			color = <LED_COLOR_ID_WHITE>;
->  			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
-> -			linux,default-trigger = "none";
->  			default-state = "off";
-> -			/* Reuse as a panic indicator until we get a "camera on" trigger */
-> -			panic-indicator;
+This series, currently an RFC, introduces two new drivers to accomplish
+controlling the frequency and power of the Mali GPU on MediaTek MT8196
+SoCs.
 
-I think panic-indicator may stay, as it's useful and mostly mutually
-exclusive (bar some multi-OS use cases) with the camera being on,
-with the comment above it obviously being removed as you did
+It's marked as an RFC as I want feedback on the general approach, and
+because there is a clock series I need to send out first but that's
+waiting for the other clock series to be accepted first in order to not
+create needless confusion and conflicts.
 
-Konrad
+The reason why it's not as straightforward as with other SoCs is that
+the MT8196 has quite complex glue logic. There's an additional MCU
+running a specialised firmware, which communicates with the application
+processor through a mailbox and some SRAM, and is in charge of
+controlling the regulators, the PLL clocks, and the power gating of the
+GPU, all while also being in charge of any DVFS control.
+
+This set of drivers is enough to communicate desired OPP index limits to
+the aforementioned MCU, referred to as "GPUEB" from here on out. The
+GPUEB is still free to lower the effective frequency if the GPU has no
+jobs going on at all, even when a higher OPP is set. There's also
+several more powerful OPPs it seemingly refuses to apply, possibly
+because those are boost levels.
+
+The frequency control driver lives in panthor's subdirectory, as it
+registers a devfreq device for the panthor GPU device, and needs to
+mingle with it somewhat closely. I've kept the tie-in parts generic
+enough however to not make this a complete hack; mediatek_mfg (the
+frequency control driver) registers itself as a "devfreq provider" with
+panthor, and panthor picks it up during its probe function (or defers if
+mediatek_mfg is not ready yet, after adding a device link first).
+
+The mailbox driver is a fairly bog-standard common mailbox framework
+driver, just specific to the firmware that runs on the GPUEB. Most of
+its channels are not known, as they're either not really used apart from
+debug references in downstream code, or have indecipherable downstream
+code, and I lacked the necessary documentation.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Nicolas Frattaroli (10):
+      dt-bindings: gpu: mali-valhall-csf: add mediatek,mt8196-mali variant
+      dt-bindings: devfreq: add mt8196-gpufreq binding
+      dt-bindings: sram: Add compatible for mediatek,mt8196-gpufreq-sram
+      dt-bindings: mailbox: Add MT8196 GPUEB Mailbox
+      mailbox: add MediaTek GPUEB IPI mailbox
+      drm/panthor: call into devfreq for current frequency
+      drm/panthor: move panthor_devfreq struct to header
+      drm/panthor: devfreq: expose get_dev_status and make it more generic
+      drm/panthor: devfreq: add pluggable devfreq providers
+      drm/panthor: add support for MediaTek MFlexGraphics
+
+ .../bindings/devfreq/mediatek,mt8196-gpufreq.yaml  |  116 +++
+ .../bindings/gpu/arm,mali-valhall-csf.yaml         |   36 +-
+ .../mailbox/mediatek,mt8196-gpueb-mbox.yaml        |   64 ++
+ Documentation/devicetree/bindings/sram/sram.yaml   |    1 +
+ drivers/gpu/drm/panthor/Kconfig                    |   13 +
+ drivers/gpu/drm/panthor/Makefile                   |    2 +
+ drivers/gpu/drm/panthor/mediatek_mfg.c             | 1053 ++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_devfreq.c          |  136 ++-
+ drivers/gpu/drm/panthor/panthor_devfreq.h          |   57 +-
+ drivers/gpu/drm/panthor/panthor_device.h           |    3 -
+ drivers/gpu/drm/panthor/panthor_drv.c              |    4 +-
+ drivers/mailbox/Kconfig                            |   10 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/mtk-gpueb-mailbox.c                |  330 ++++++
+ 14 files changed, 1788 insertions(+), 39 deletions(-)
+---
+base-commit: 87a9e300217e33b2388b9c1ffe99ec454eb6e983
+change-id: 20250829-mt8196-gpufreq-a7645670d182
+prerequisite-message-id: <20250829091913.131528-1-laura.nao@collabora.com>
+prerequisite-patch-id: 441c4c2e3d22f83a41241a1ab5c9be1a442f742e
+prerequisite-patch-id: 852bfc3d13e2bccc4d6f4813a71c42f329dadb0c
+prerequisite-patch-id: 0bc5b7bf268e88a6ef22e46c91db7645e2ce6189
+prerequisite-patch-id: 442533e316e46ecd47cd0b7fb410b58fad2b3bf9
+prerequisite-patch-id: 6d6d70ccb7d718b3bcca6662cdaf1e8b64b6ddc2
+prerequisite-patch-id: d61046e2cd2f33024092e96e8a987b9c34c24e73
+prerequisite-patch-id: c27ca28bb3df435c98fe02438264188d6fa52b7c
+prerequisite-patch-id: 27fadb12ce15099a684c08d4f8c785bedc87cef2
+prerequisite-patch-id: 7796ec9a0162ae96b708ea513742016657c69e14
+prerequisite-patch-id: f7549078f3702acdf1e6dcd36ddebab0e543b5db
+prerequisite-patch-id: b123fb15cb8c97cf0896b826820f4ce33085170c
+prerequisite-patch-id: fa96e18eae90efc14e4b9f13534c013b448a3f84
+prerequisite-patch-id: 1e53ad7341ddb67c9788252456068cc14ab2f610
+prerequisite-patch-id: ffff2977d8f2a3a44c3606f77d38f8745cb3c60a
+prerequisite-patch-id: 71d23f4f096e424ae3aa59a23695f5b1e488fab0
+prerequisite-patch-id: 3c12631f22a39d6def9340ed840e9e55e1a76304
+prerequisite-patch-id: caec6572d5d9a37183601b8e38f50af797df635e
+prerequisite-patch-id: d5b3d5719675a1e3be26e028b5596d39e839bc09
+prerequisite-patch-id: da7b826d56ac70b3b72be58d64e7c2107445478f
+prerequisite-patch-id: f3f789e0d919dd92b7d811a4e11c57bb05f71617
+prerequisite-patch-id: 79cca92633ca3d9cc2f1f38b6fc977a8d8543d60
+prerequisite-patch-id: f663f8f3bddf198d0cab083bac7ebb88689ffc82
+prerequisite-patch-id: a0ffc5b88c5eb88c491f6187672012c621bd520c
+prerequisite-patch-id: e6c6d67b034d06b6158a0e0f8299ad28f0e59134
+prerequisite-patch-id: 25f658fbd1238bd57e05ff299d0436f942bdcc4d
+prerequisite-patch-id: 7be8439e241a320b0eb0a264a8a59a9beef383d6
+prerequisite-patch-id: b903714dbe7d6a44fbe18faa02d59862ceadf217
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
