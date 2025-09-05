@@ -1,383 +1,191 @@
-Return-Path: <linux-kernel+bounces-802912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEC0B4584E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:56:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65560B45852
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702CF1884FC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091BF3AC753
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43B9350840;
-	Fri,  5 Sep 2025 12:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83DE1F61C;
+	Fri,  5 Sep 2025 12:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gscSEaMQ"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ws25oJ9S"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14A38DDB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5144034F486
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757076979; cv=none; b=RHTPA5TiA9AcSlccFP0rJRJ11DK1HhOI59qdpKch4e5tP4kih0iHfZ9LlqznaN439rSipPG6z2yLMIC5r01gVd/rUsw2zNlF2FdYvf25bHgID0B0x5HObWi52704kjcVY7ZwonyvpT3XVCVDlzm+hkkMWabCtN9sKKDRSKFJZNs=
+	t=1757077096; cv=none; b=D/vwUVuVQlwmNN/k2s2wca3czN3Gl5ElGAAND68TrKLqvP6aTNNF7x4/nhmKK1bLJpD6rYepmMbmW5fflzv3wL37Jd6ABzs6e+q9y7MAafMYBXFBEdoSSUFE59dxsn4WWLk4nt/aL0gL/jVB5CWFkJhejA/5b1XSvWvzyxdsihI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757076979; c=relaxed/simple;
-	bh=sTPyuw8FsH5sLgRm/oHrbzoi+/eqVPQWTKZgHixvD0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mDVCvwBPPom1abenZ3YMb1Q8RrqxTXfgWdXAWBNDfyhwGv8lHYRHdZHeMEFaDOFmlgaFiDf7IeWYBVYXkU41XIdBIlDsd2fMRgnqQw/SQskBXXcUUqR0UrMJPtn/9BMCOkhwqCRSlfNrQ8hJ/fklr2rXoNeDp2Ecya594aDhPE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gscSEaMQ; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-80a59f06a4fso287576185a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:56:17 -0700 (PDT)
+	s=arc-20240116; t=1757077096; c=relaxed/simple;
+	bh=B4t5lfIeAigVVk9t8Ob6HbXErWQiFE5Us9s4emvtCSk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AI7aoSKzIN7RCVpVb+e1CCrJpHkmu1Ie9auE3ehi0nljq18yByNdILab+p5Ojqxg8Hdfn/sXYGVtTiiLcmSoHQ2T6s9JSmXBfOkLqUXAsCgl2ITtgDoXCVxTywg0VbAwNgYIGjqb+7eKQ8aPeV5gzIX/3uYZ3CMdj/tGZI0RBRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ws25oJ9S; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-249406d5878so20627965ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757076976; x=1757681776; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CTxs5SwYrMyGeGwlj9iYpatMPDNtPdxi9WJsm7dZ9Aw=;
-        b=gscSEaMQDHr2Q2hJqDmJyX6uV1lwtvDFmhiIxBveA38I6KXrWSKtXPAnYZu8yp2qlQ
-         pXdox0dYbtwSdypWMST7xoL/x5UM5HGiJRcI714hRk12hUt/HUETafjZUuTMDNl//Dz9
-         haeR0ziEDbpsPtV81/Zsw1dLazt4EZ0n3oA5ZGzr+sJGfsLFcVwYS4KZwVV2ST0uHtft
-         a/VxhfWM/k+D/vWa4b0S0CPFosK5Qlc3Uvgy8MFLnU4xAhBzDToieFVLKepSiInny4r+
-         e6UIm33KLGK636QrBeZfG7WVTG6xCdpxWykDiqkUAQZDRE4pIGG00wOxVNj2jHkMW7PE
-         IvNg==
+        d=linaro.org; s=google; t=1757077093; x=1757681893; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JX+UloOjfH7D+sxycIEOtQIvDvV/64rp/Z1H0sQ8SEs=;
+        b=ws25oJ9SDRNIKIZ9CkwvB7buUc27BSPN2v4eDfZ/2puZc4b5hjjC5QL9Cpwx5yy/gd
+         6pAmiXT8kGQco123HEK1hPL2fWA9sZQc4hRuIFn+d6r/OHbKAySxTD3uUQc8Xto2y9qo
+         DH9NTwd+5LhVl7c7k7PDyTHzx1RZFlBpzslwJ+IwwT6XI7bldQ8H8VrosL81yJwHSa76
+         EZM3UkMQNWclaqi9tL/ezTt+ColV5BjmOwYFcuu+AP+hXVqKx5J0jRKdPJZcXim40oaS
+         pcNPvsbQrsCzzXI/GF3mMR5l2Hse5WKr6GeKDMaZuNnyPMwUQBi4uH+z+GsizShnQrQq
+         Igtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757076976; x=1757681776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CTxs5SwYrMyGeGwlj9iYpatMPDNtPdxi9WJsm7dZ9Aw=;
-        b=BwUbB44PvbvkOhuJysa5ZeCLwRLuDkS0AXHwCmtMIdzVU9scaGcr1D+Za8/azQ5Nca
-         3o9z8aSixBsFoDCOD2IQcfBYwS4mP6Ml+askMUG+z2om2j/adpG3yKiyEfAjfc/EurRG
-         ZHYno7PPd54HNsNwPr+PVPs7rGn+daTBHGFndqJNOnF0xwDi8txwjF1gcKs06mbxs7T/
-         iMAZ1wpYkhJIWRkPOTBNTQP2dy+7gUX1mCjG9neEM+c3qfwg+bSAHZNSqnQcp8u/HGpL
-         EH6syrpWrCawJYAVRdJKiQsUH1PGLXbyX0y9P9rbEZ9J49YW/jhWU6vzFCxpkQ/KTg4i
-         1U1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzKCApAzG84cvkYT0z4wcQrSMAwSVy7Symvt08Cr5EpfgL79cxvx+Dz3MOG/o+WwIDCmnLgLOYRYNK5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTZA5K+c1aiMyr80pGhxYD/K6vu2UxtBZx6XTL/V7xcAPUHnpT
-	wGcMAdgtRQUtSV95lS1TttbOPpXVZaVLd1s+y5VcU/BApX//qhmN/BoRIOiC6H8zWmm3Yf9fmgD
-	Tm5bX31f7aq6hsJEO+TI/gD7jKSHAhGX9ugw8NH2B
-X-Gm-Gg: ASbGncsDLNfp2OAJYvNOfYUbylyOPq+v3zSRbfW7vBZs+ARpE1UjgAlIAl3+NSWhwAu
-	yaaVpWgZDB5SbShrbHr4odfDygQ6uU1GxDv3Yf7vRNo5v6N2geOdQRZ1t+LUXuwNytU/cKfCKA5
-	S0WMJAi/Rt6YdetBu/DNy9Rc2j0x++ZNUtwL91dyxHjYPS4IcIfBHLztefpTniL63u/GHfM2UCW
-	ivlLioMX6Ar8w==
-X-Google-Smtp-Source: AGHT+IHiua4IGahBRvHFImBaLNbSxz1SxBuz5ZI2OyhC3CPbnkXs8wzRyqHtI5Kw21oKog/1E2vip/M2pW2kj/tV4Bw=
-X-Received: by 2002:a05:620a:601b:b0:808:95:2c86 with SMTP id
- af79cd13be357-80800952dffmr1353174785a.26.1757076969191; Fri, 05 Sep 2025
- 05:56:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757077093; x=1757681893;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JX+UloOjfH7D+sxycIEOtQIvDvV/64rp/Z1H0sQ8SEs=;
+        b=uo8AdAlG5pMXl2TjuMlqgiAzq8ytRt1r0lGNcr0xfB2ZuPxjupIf07a7zFcFv6CPtX
+         ngT/4OEIQl0+vLutQ1lsU3gt0zW+nLcbYauise4+T0En1KAXW/S78rkzA/4SxRav0bIJ
+         nZu8aSNpHqJoKTS9pEcaqCVAOVGQYudeSvsOdLdSIGyN5mRo9koPN5CqREKQEaabZH0u
+         YeHDlv/hUbxZ78jUt/RfFTTnFJY7CfZMUv0O1xRTLQkkUfJAuQTjZ9PHUNEdP/6S69ac
+         NG7Pfxv8DQoaENYf8dqdvdLGJCqKWkwwNJMvu3vROrePT1W12giKx5f5fHKsTIt+/6XX
+         LEmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrhPdNEMq4/xKs8A+iKUpwgMigmnVoEtei2jyeCRz5zYA2PB6MyNImKzpaShfBUzIUdcf34INxTZPERtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwegHB5GEgCV6qQTK21pNynUOB7+YQLLZEv9hhXqi/LnbK+y642
+	q9U6tvOuzf5aOKET4Y5lBTu/FKrfEidn65wEPP59+HYt+IxH6dbB9BFEBVBMbsICAkNLMXhtvuS
+	PA+gJC3yorqD55jeza1tRmGI6IVXAzukO+ssJwZhWQw==
+X-Gm-Gg: ASbGncvFTEXsDfW/9WIy+ukb2gDO27pnwdApLGM/t35kCY4jT0dJc4eCszIRR69S05R
+	6QfP+nFTiC6T09kbeFhWddLm4pcX+ILXf1NpxOYg+67YttWT3AsgQvqglif8EiFxPirYu22a/Cb
+	TUjjQXH5T2Cghi+viJ1lcwFLAsepuFONXyk749k7g76fDiorRkXpj4ijoGFdHf9cJs5eassyFNn
+	hHLhSnWdPMDJWptDjTI2eX+G8v41A/o+WUcSwIceu0/cGO2ggk=
+X-Google-Smtp-Source: AGHT+IHFc84uQD7HnKhbvnMlVkJWu/UesQwpj5m5QbYQvo39J9ytF/CDHAmibmoLeZCOjeCF7ZgfEj4bm8un2AUlLVk=
+X-Received: by 2002:a17:903:3ba4:b0:24a:ceea:b96f with SMTP id
+ d9443c01a7336-24aceeabf79mr205950155ad.24.1757077093464; Fri, 05 Sep 2025
+ 05:58:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsmo39mXw-U7VKJgHWTBB5bXNgwOqNfmDWRqvbqmxnD2g@mail.gmail.com>
-In-Reply-To: <CA+G9fYsmo39mXw-U7VKJgHWTBB5bXNgwOqNfmDWRqvbqmxnD2g@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 5 Sep 2025 05:55:57 -0700
-X-Gm-Features: Ac12FXyznZm1yGK9an1rQRLourKNoFIDUhCek4w9Q7Guuc6gfHnrKMXM8INFM18
-Message-ID: <CANn89iKciN019j88sGYpi_Boi7ggJoSnV4gOW=5grp+skkKnBA@mail.gmail.com>
-Subject: Re: next-20250905: x86_64: udpgso_bench.sh triggers NULL deref in zerocopy_fill_skb_from_iter
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, David Hildenbrand <david@redhat.com>
-Cc: Netdev <netdev@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Eric Biggers <ebiggers@google.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>, 
-	Willem de Bruijn <willemb@google.com>, Pengtao He <hept.hept.hept@gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 5 Sep 2025 18:28:01 +0530
+X-Gm-Features: Ac12FXw1zyoAY5th54tVc4lJ5HX0a8azkxHLTgbPsqhejM_y90ZgToo_FYVmtlE
+Message-ID: <CA+G9fYtsamwXQzuQm4dYNC8kbSJzGAQvZ5mr4BA8X9WE29+yyg@mail.gmail.com>
+Subject: qemu-arm64: xfstests crash in bio_iov_iter_get_pages on next-20250904
+To: Linux btrfs <linux-btrfs@vger.kernel.org>, linux-block <linux-block@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Christoph Hellwig <hch@lst.de>, David Sterba <dsterba@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 5, 2025 at 2:30=E2=80=AFAM Naresh Kamboju <naresh.kamboju@linar=
-o.org> wrote:
->
-> The following kernel crash was noticed on x86_64 running selftests net
-> udpgso_bench.sh
-> on Linux next-20250905 tag.
->
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? Re-validation is in progress
->
-> First seen on next-20250905
-> Bad: next-20250905
-> Good: next-20250904
->
-> Test regression: next-20250905 x86_64 selftests net BUG kernel NULL
-> pointer dereference zerocopy_fill_skb_from_iter
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> x86_64:
->  Test:
->     * selftests: net: udpgso_bench.sh
->
-> Test error:
-> selftests: net: udpgso_bench.sh
-> ipv4
-> tcp
->
-> <trim>
->
-> # tcp zerocopy
-> [  991.110488] SELinux: unrecognized netlink message: protocol=3D4
-> nlmsg_type=3D19 sclass=3Dnetlink_tcpdiag_socket pid=3D64835 comm=3Dss
-> # RTNETLINK answers: Invalid argument
-> [  991.129878] BUG: kernel NULL pointer dereference, address: 00000000000=
-00008
-> [  991.136850] #PF: supervisor read access in kernel mode
-> [  991.141986] #PF: error_code(0x0000) - not-present page
-> [  991.147118] PGD 0 P4D 0
-> [  991.149657] Oops: Oops: 0000 [#1] SMP PTI
-> [  991.153661] CPU: 0 UID: 0 PID: 64842 Comm: udpgso_bench_tx Tainted:
-> G S                  6.17.0-rc4-next-20250905 #1 PREEMPT(voluntary)
-> [  991.165907] Tainted: [S]=3DCPU_OUT_OF_SPEC
-> [  991.169825] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-> 2.7 12/07/2021
-> [  991.177209] RIP: 0010:zerocopy_fill_skb_from_iter
-> (include/linux/page-flags.h:284)
-> [ 991.182954] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
-> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
-> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
-> f7
-> All code
-> =3D=3D=3D=3D=3D=3D=3D=3D
->    0: 4d 85 c0              test   %r8,%r8
->    3: 0f 84 04 01 00 00    je     0x10d
->    9: 44 39 c7              cmp    %r8d,%edi
->    c: 41 0f 4d f8          cmovge %r8d,%edi
->   10: 4c 63 de              movslq %esi,%r11
->   13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
->   18: 49 89 d6              mov    %rdx,%r14
->   1b: 4d 29 ce              sub    %r9,%r14
->   1e: 49 c1 fe 06          sar    $0x6,%r14
->   22: 49 d3 ee              shr    %cl,%r14
->   25: 4d 85 f6              test   %r14,%r14
->   28: 74 24                je     0x4e
->   2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instructio=
-n
->   2e: f6 c1 01              test   $0x1,%cl
->   31: 0f 85 cb 00 00 00    jne    0x102
->   37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->   3c: 31 c9                xor    %ecx,%ecx
->   3e: 48                    rex.W
->   3f: f7                    .byte 0xf7
->
-> Code starting with the faulting instruction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
->    4: f6 c1 01              test   $0x1,%cl
->    7: 0f 85 cb 00 00 00    jne    0xd8
->    d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->   12: 31 c9                xor    %ecx,%ecx
->   14: 48                    rex.W
->   15: f7                    .byte 0xf7
-> [  991.201691] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
-> [  991.206910] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 000000000=
-0000009
-> [  991.214033] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 000000000=
-0001000
-> [  991.221156] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec=
-4208000
-> [  991.228280] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b48=
-25f4200
-> [  991.235406] R13: 0000000000000001 R14: 000000003d6277bf R15: 000000000=
-0000000
-> [  991.242529] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
-> knlGS:0000000000000000
-> [  991.250608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  991.256378] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 000000000=
-03706f0
-> [  991.263513] Call Trace:
-> [  991.265956]  <TASK>
-> [  991.268055] __zerocopy_sg_from_iter (net/core/datagram.c:?)
-> [  991.272674] ? kmalloc_reserve (net/core/skbuff.c:581)
-> [  991.276599] skb_zerocopy_iter_stream (net/core/skbuff.c:1867)
-> [  991.281219] tcp_sendmsg_locked (net/ipv4/tcp.c:1283)
-> [  991.285493] tcp_sendmsg (net/ipv4/tcp.c:1393)
-> [  991.288896] inet6_sendmsg (net/ipv6/af_inet6.c:661)
-> [  991.292466] __sock_sendmsg (net/socket.c:717)
-> [  991.296126] __sys_sendto (net/socket.c:?)
-> [  991.299785] __x64_sys_sendto (net/socket.c:2235 net/socket.c:2231
-> net/socket.c:2231)
-> [  991.303622] x64_sys_call (arch/x86/entry/syscall_64.c:41)
-> [  991.307462] do_syscall_64 (arch/x86/entry/syscall_64.c:?)
-> [  991.311128] ? irqentry_exit (kernel/entry/common.c:210)
-> [  991.314881] ? exc_page_fault (arch/x86/mm/fault.c:1536)
-> [  991.318720] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:=
-130)
-> [  991.323762] RIP: 0033:0x7f41e814b687
-> [ 991.327352] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00
-> 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10
-> 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff
-> ff
-> All code
-> =3D=3D=3D=3D=3D=3D=3D=3D
->    0: 48 89 fa              mov    %rdi,%rdx
->    3: 4c 89 df              mov    %r11,%rdi
->    6: e8 58 b3 00 00        call   0xb363
->    b: 8b 93 08 03 00 00    mov    0x308(%rbx),%edx
->   11: 59                    pop    %rcx
->   12: 5e                    pop    %rsi
->   13: 48 83 f8 fc          cmp    $0xfffffffffffffffc,%rax
->   17: 74 1a                je     0x33
->   19: 5b                    pop    %rbx
->   1a: c3                    ret
->   1b: 0f 1f 84 00 00 00 00 nopl   0x0(%rax,%rax,1)
->   22: 00
->   23: 48 8b 44 24 10        mov    0x10(%rsp),%rax
->   28: 0f 05                syscall
->   2a:* 5b                    pop    %rbx <-- trapping instruction
->   2b: c3                    ret
->   2c: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
->   33: 83 e2 39              and    $0x39,%edx
->   36: 83 fa 08              cmp    $0x8,%edx
->   39: 75 de                jne    0x19
->   3b: e8 23 ff ff ff        call   0xffffffffffffff63
->
-> Code starting with the faulting instruction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    0: 5b                    pop    %rbx
->    1: c3                    ret
->    2: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
->    9: 83 e2 39              and    $0x39,%edx
->    c: 83 fa 08              cmp    $0x8,%edx
->    f: 75 de                jne    0xffffffffffffffef
->   11: e8 23 ff ff ff        call   0xffffffffffffff39
-> [  991.346124] RSP: 002b:00007ffdd843ba50 EFLAGS: 00000202 ORIG_RAX:
-> 000000000000002c
-> [  991.353680] RAX: ffffffffffffffda RBX: 00007f41e80b9740 RCX: 00007f41e=
-814b687
-> [  991.360806] RDX: 000000000000f180 RSI: 000056251f1fd100 RDI: 000000000=
-0000005
-> [  991.367931] RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000=
-0000000
-> [  991.375063] R10: 0000000004000000 R11: 0000000000000202 R12: 000000000=
-0000000
-> [  991.382193] R13: 000056251f1fb080 R14: 000001a670e438d8 R15: 000000000=
-0000005
-> [  991.389357]  </TASK>
-> [  991.391571] Modules linked in: mptcp_diag tcp_diag inet_diag
-> xt_conntrack xfrm_user ipip bridge stp llc geneve vxlan act_csum
-> act_pedit openvswitch nsh nf_nat nf_conntrack nf_defrag_ipv6
-> nf_defrag_ipv4 psample cls_flower sch_prio xt_mark nft_compat
-> nf_tables sch_ingress act_mirred cls_basic sch_fq_codel vrf pktgen
-> macvtap macvlan tap x86_pkg_temp_thermal ip_tables x_tables [last
-> unloaded: test_bpf]
-> [  991.426812] CR2: 0000000000000008
-> [  991.430121] ---[ end trace 0000000000000000 ]---
-> [  991.434733] RIP: 0010:zerocopy_fill_skb_from_iter
-> (include/linux/page-flags.h:284)
-> [ 991.440477] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
-> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
-> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
-> f7
-> All code
-> =3D=3D=3D=3D=3D=3D=3D=3D
->    0: 4d 85 c0              test   %r8,%r8
->    3: 0f 84 04 01 00 00    je     0x10d
->    9: 44 39 c7              cmp    %r8d,%edi
->    c: 41 0f 4d f8          cmovge %r8d,%edi
->   10: 4c 63 de              movslq %esi,%r11
->   13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
->   18: 49 89 d6              mov    %rdx,%r14
->   1b: 4d 29 ce              sub    %r9,%r14
->   1e: 49 c1 fe 06          sar    $0x6,%r14
->   22: 49 d3 ee              shr    %cl,%r14
->   25: 4d 85 f6              test   %r14,%r14
->   28: 74 24                je     0x4e
->   2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instructio=
-n
->   2e: f6 c1 01              test   $0x1,%cl
->   31: 0f 85 cb 00 00 00    jne    0x102
->   37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->   3c: 31 c9                xor    %ecx,%ecx
->   3e: 48                    rex.W
->   3f: f7                    .byte 0xf7
->
-> Code starting with the faulting instruction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
->    4: f6 c1 01              test   $0x1,%cl
->    7: 0f 85 cb 00 00 00    jne    0xd8
->    d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->   12: 31 c9                xor    %ecx,%ecx
->   14: 48                    rex.W
->   15: f7                    .byte 0xf7
-> [  991.459215] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
-> [  991.464434] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 000000000=
-0000009
-> [  991.471557] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 000000000=
-0001000
-> [  991.478681] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec=
-4208000
-> [  991.485807] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b48=
-25f4200
-> [  991.492930] R13: 0000000000000001 R14: 000000003d6277bf R15: 000000000=
-0000000
-> [  991.500054] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
-> knlGS:0000000000000000
-> [  991.508132] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  991.513870] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 000000000=
-03706f0
-> [  991.520994] note: udpgso_bench_tx[64842] exited with irqs disabled
->
->
-> ## Source
-> * Kernel version: 6.17.0-rc4
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next=
-/linux-next.git
-> * Git describe: next-20250905
-> * Git commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
-> * Architectures: x86_64
-> * Toolchains: clang-nightly
-> * Kconfigs: defconfig+selftests/*/config
->
-> ## Build
-> * Test log: https://qa-reports.linaro.org/api/testruns/29777495/log_file/
-> * LAVA test log: https://lkft.validation.linaro.org/scheduler/job/8434053=
-#L16943
-> * Test details:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20250905/log-p=
-arser-test/oops-oops-oops-smp-pti/
-> * Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/t=
-ests/32GkXBGNRNDEj5d64zd73eXhXQC
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32Gk=
-U7mdlpISpPeeeEwIfAJuzqG/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeE=
-wIfAJuzqG/config
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+The following regressions were detected on qemu-arm64 while running
+xfstests with the Linux next-20250904 tag. The system crashed with an
+internal error in bio_iov_iter_get_pages(), resulting in an Oops during
+direct I/O write operations.
 
-I suspect a bug added in mm/gup.c recently
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-commit db076b5db550aa34169dceee81d0974c7b2a2482
-Author: David Hildenbrand <david@redhat.com>
-Date:   Mon Sep 1 17:03:40 2025 +0200
+First seen on next-20250904
+Bad: next-20250904 and next-20250905
+Good: next-20250822
 
-    mm/gup: remove record_subpages()
+Test regression: next-20250904 qemu-arm64 xfstests Internal error Oops
+bio_iov_iter_get_pages
 
-    We can just cleanup the code by calculating the #refs earlier, so we ca=
-n
-    just inline what remains of record_subpages().
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-    Calculate the number of references/pages ahead of times, and record the=
-m
-    only once all our tests passed.
+qemu-arm64:
+Test:
+* xfstests
 
-    Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.c=
-om
-    Signed-off-by: David Hildenbrand <david@redhat.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Test crash:
+
+[ 2074.633472] Internal error: Oops: 0000000096000004 [#1]  SMP
+[ 2074.639619] Modules linked in: sm3_ce sha3_ce fuse drm backlight dm_mod
+[ 2074.651698] CPU: 0 UID: 0 PID: 154238 Comm: xfs_io Not tainted
+6.17.0-rc4-next-20250904 #1 PREEMPT
+[ 2074.652132] Hardware name: linux,dummy-virt (DT)
+[ 2074.652429] pstate: 22402009 (nzCv daif +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+[ 2074.652716] pc : bio_iov_iter_get_pages (block/bio.c:1074
+block/bio.c:1272 block/bio.c:1336)
+[ 2074.701159] lr : bio_iov_iter_get_pages (block/bio.c:1072
+block/bio.c:1272 block/bio.c:1336)
+[ 2074.701366] sp : ffff800080f83950
+[ 2074.701506] x29: ffff800080f83980 x28: 000000000006f000 x27: fff00000c03b9408
+[ 2074.701853] x26: 0000000000001000 x25: 0000000000000091 x24: ffffc1ffc153b480
+[ 2074.702133] x23: 0000000000000002 x22: 00000000ffffffff x21: 0000000000000100
+[ 2074.702421] x20: 0000000000000001 x19: 0000000000001000 x18: 0000000000001000
+[ 2074.702710] x17: 0000000000000000 x16: 0000000000000000 x15: fff00000ff6e9a80
+[ 2074.702987] x14: fff0000007413500 x13: ffffa44770f6e000 x12: ffffc1ffc0000000
+[ 2074.703264] x11: 0000000000001000 x10: fff00000cf850800 x9 : fff00000cf850b78
+[ 2074.703510] x8 : ffffc1ffc153ac08 x7 : 0000ffff9626f000 x6 : 0000000000000fff
+[ 2074.703794] x5 : 0000000000021000 x4 : ffffc1ffbf000000 x3 : 7878782f78787878
+[ 2074.704079] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000001000
+[ 2074.704436] Call trace:
+[ 2074.704685] bio_iov_iter_get_pages (block/bio.c:1074
+block/bio.c:1272 block/bio.c:1336) (P)
+[ 2074.704971] iomap_dio_bio_iter (fs/iomap/direct-io.c:437)
+[ 2074.705167] __iomap_dio_rw (include/linux/uio.h:228
+fs/iomap/direct-io.c:530 fs/iomap/direct-io.c:559
+fs/iomap/direct-io.c:729)
+[ 2074.705331] btrfs_direct_write+0x1f4/0x3bc
+[ 2074.713828] btrfs_do_write_iter+0x18c/0x1ec
+[ 2074.725568] btrfs_file_write_iter+0x14/0x20
+[ 2074.725936] vfs_write (fs/read_write.c:593 fs/read_write.c:686)
+[ 2074.731508] __arm64_sys_pwrite64 (fs/read_write.c:793
+fs/read_write.c:801 fs/read_write.c:798 fs/read_write.c:798)
+[ 2074.731822] invoke_syscall (arch/arm64/kernel/syscall.c:35
+arch/arm64/kernel/syscall.c:49)
+[ 2074.737438] el0_svc_common.constprop.0 (arch/arm64/kernel/syscall.c:132)
+[ 2074.737885] do_el0_svc (arch/arm64/kernel/syscall.c:151)
+[ 2074.738235] el0_svc (arch/arm64/kernel/entry-common.c:879)
+[ 2074.785073] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:899)
+[ 2074.785245] el0t_64_sync (arch/arm64/kernel/entry.S:596)
+[ 2074.785643] Code: f9400fea d2820000 7940c377 f8795943 (f9400462)
+All code
+========
+   0: f9400fea ldr x10, [sp, #24]
+   4: d2820000 mov x0, #0x1000                // #4096
+   8: 7940c377 ldrh w23, [x27, #96]
+   c: f8795943 ldr x3, [x10, w25, uxtw #3]
+  10:* f9400462 ldr x2, [x3, #8] <-- trapping instruction
+
+Code starting with the faulting instruction
+===========================================
+   0: f9400462 ldr x2, [x3, #8]
+[ 2074.786668] ---[ end trace 0000000000000000 ]---
+
+
+## Source
+* Kernel version: 6.17.0-rc4-next-20250904
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250904
+* Git commit: 4ac65880ebca1b68495bd8704263b26c050ac010
+* Architectures / Devices: qemu-arm64
+* Toolchains: gcc-13
+* Kconfigs: defconfig+xfstests
+* xfstests: v2024.12.01
+
+## Build
+* Test log: https://qa-reports.linaro.org/api/testruns/29762004/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250904/log-parser-test/internal-error-oops-oops-smp/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32E6ypoTqaDjAEJISuUAAgkPUva
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32E6us2qcXmnop3jTYQMOB9eVPt/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32E6us2qcXmnop3jTYQMOB9eVPt/config
+* xfstests: https://storage.tuxboot.com/overlays/debian/trixie/arm64/xfstests/v2024.12.01/xfstests.tar.xz
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
