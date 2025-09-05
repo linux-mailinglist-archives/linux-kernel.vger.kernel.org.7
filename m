@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-803527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC3AB461F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCEFB461F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C9D17B425
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA45A41544
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6BA303A0C;
-	Fri,  5 Sep 2025 18:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40587303A22;
+	Fri,  5 Sep 2025 18:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zzxglfxW"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="J7NKgRQR"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FA31C56B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D56931C579
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757095970; cv=none; b=VDJyI1b5Ks1aHVm5bIWSkD76sn494yKjpIbwsZalJUXXqAD4tlwTdPD5gjVWd7csmlnivcuMpFlzgzxI2oL8HjPPvo1dW+Yb/hjPTEnQxrYRs6/l6oEBIxfbHAQhgQ/hZpSA2M68cSR8UzNENbdvku6s4shxyZBmpn/3Hkog47g=
+	t=1757095971; cv=none; b=Vs7/YUi5uZG+k1KHwJmkqHtwuRJED9c4KzfRFdaXTtet5nzxdGMjYROqOSBSUOZm9s9kiiQt7sWUhAQEMiGf/wlIDQMBYykClfQMJ3d4LrqWkJpFlujdqh0J/zL2aHy0lzfCjyf1gGdc3mFgEgsJTLYQVaIujM6coAxAMxtY6+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757095970; c=relaxed/simple;
-	bh=kx5uyvPHJnpni90op3iFGnjN7gyxEZMgcFaPdsde1b0=;
+	s=arc-20240116; t=1757095971; c=relaxed/simple;
+	bh=QEvSoG9oo+amGpQo5aYx923w5/Dr4Rh7PhvFmupuYfo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JAOXRjoIp6P6E9lcmg5yy4xoIIwr1F3uvnPq2nzkYRxjlOG8c55Fd0xu3tmqR5FFtF7Hoswv7IOxQ/9rC44ugx2v4VqUqs5yUEkll7/rj8jDrRahRU4GnOEJrv22aJR0m4zT+pwg+2RCKl6D8HWIkQapv98QfLZ3YXJgklUxZk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zzxglfxW; arc=none smtp.client-ip=209.85.160.53
+	 In-Reply-To:To:Cc; b=ekmYvx0L/4lqV61V0axKOFG/JFX7Fmot4H2aTUOA3fNUOGLSojMrHyBarIQqeKgBmOlU/uBanLBycXRLnrigoJB2sNmuFGnnL66MQZ6OAD6pv9Y4k328p3A5bHGjNW48MWa5O0U4Ivv6j7kV1PrQaOEBUqAwKe37vur8eutSsVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=J7NKgRQR; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30ccec928f6so1168473fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:12:48 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-31d6b8be249so1844688fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757095967; x=1757700767; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757095968; x=1757700768; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3g/UCnn4/ZEnTWGOYRS0g3qjMxVzhKkl5rubg7Uyi/4=;
-        b=zzxglfxWCBbWOdD0YDKm7EczVYFcziADPIsMt/qgIpitJ10tES/WphbUrF7G1NtahU
-         +iff3S8LXuXXQWDXsCRrHBjr0Ky4ocu8DB8AfLKNnM0dIf6yVRM39cPMPFg4nWIRYtxM
-         IK8wIVTydgzaaRYGelKiGk5DzHfnei019MqfJdw5+gX+L9gKDQtmFm1UyKoHCIo8sTVC
-         TasfLTaN6uk0yUgavdwWj2m5+aHJgc898R8k+3XX5UyVwwRpX+Yp3Vfxv/W45vgO4E8/
-         8CRS9Wf7x3Occ6n4Hf8JtJ2d+EhNOQkPC3hfvvkh6bsLW4GbLbZaGc9s7dXy2TLbCLkY
-         uCBw==
+        bh=pq/O4xCAgJP0KqFCiB1CekBvbauRk68b8NmuWzDdO7c=;
+        b=J7NKgRQR/fWBqeYZh/cU0xlxE0k+tWVClgqRKEli2b6TzxqEJcz4b6a8lThp6oBtce
+         V8Cz98m02c0RaS+FhCkdMf1shOKo0ni7HwxPw0YyhL4A5XuwWUOmE48XhzyAT4I6bm1r
+         qdLxRksI3IpBfzL4VtRqbC2XlzwLwUfORaxt/sqH0y6Im0iNElDHNBdTwc+ju6VpnD65
+         M37McxkFI0E9CuWb8OSABkUSuzNU/jhTEhChk2IVyxiepbs6RUuC+a4L/iHgL9L2hXVG
+         UaUkrDmIT1HY1My0WtZr2nTi7fdGbf4zKzRhOKnGsdO5WZtbJYJ35GIyW84WaykWmP4F
+         ucUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757095967; x=1757700767;
+        d=1e100.net; s=20230601; t=1757095968; x=1757700768;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3g/UCnn4/ZEnTWGOYRS0g3qjMxVzhKkl5rubg7Uyi/4=;
-        b=UI9SPf9H4DGNEbaWKEat447G7S/nn/LNXsxinihif1Y6LhRTWz+C8E2Gk2OjQQLKeB
-         X+CppmAwCkwZ6Wc3OSpnu0RiR1QqySqJyvsLw1NRpUzerPOMUmUX42jbNG0P+hVxCPxL
-         yYhs660kOISqUOVCvrFI1lLtVcQT1twUnHY/n258lQwcopaWTiGFFaymn/ne8AUTBhpF
-         1E3qWNrDpKm51Vq4JtXsJ3Y/4GHfgILRd0jZDYA9yIEF/9Rn8tZquDkCwubgYP+70PRi
-         M6Z+0meFPdt+oBDrkNwBdDXmVPp0WfDZ+jorB2jJoKODB8xBVYoBPJSEZmoUNwfe2ny2
-         wjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/0d6o1vf0bO3kP/6AjnoMYRVbMtfresXVh1M1JH9z/8zo7ZZTqeGwYvGeNyZzBuNR4XVdwk2rTIrFG7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9M0RwSCJntpwSycBhdPZdkDqsUpvyPSUxpdnMwP90eYrkCNMI
-	MP4ZjbK0uKSJbZZPiPFl7c1h9Fx7CJmNnRe97mcKpnFP3Y4R8yz993wtsnpIAdOtPY78JqtR6oo
-	sRyjz
-X-Gm-Gg: ASbGncuYXvdA24D0A3NnVd2Cghat4RhulcAzLsvqCrNupZ9QdtnLwLza4NscWLyYzdf
-	P4IgazW+sVjQSMn99+arNyU+hLT2LiaC+JtTE7J72k7/iOf9l+aFHhiXje3SH/p7iDuloOeeLzH
-	DSGZEQ4FFliQ4xlLVM8WOoBpELYuSabH12RWMYCj4HLIDT+8He8WirS6o6uHSvH0qS+IvkqcQNK
-	TGsFCIY18jke7/umni2I7NNHYcuqAsYw4q/ANCfiz5tapX8W6OBUStN41tSC0zfwQB6HsaKGDl1
-	i0+QgHd0BYZqlImYiY19E/abQ5cPPQmsb+QECeSwLWhNydbBG/6Fc5eN8BTVI17i6w3EX2bfpKG
-	ij9ScESRWjKq8aJGW6s0J1gIXac0=
-X-Google-Smtp-Source: AGHT+IF+rqHcZ5O3Yblxuqf4xfUFIK2sHxy0Ay3Nxeoe7ccO+CaEOtqHKkJIL3+4idGeldtQaxIXlQ==
-X-Received: by 2002:a05:6871:e78c:b0:321:2772:dd0 with SMTP id 586e51a60fabf-32127726a92mr2099568fac.10.1757095967642;
-        Fri, 05 Sep 2025 11:12:47 -0700 (PDT)
+        bh=pq/O4xCAgJP0KqFCiB1CekBvbauRk68b8NmuWzDdO7c=;
+        b=GjaSDqVjCBmOcgrR0dk8dhmDTE9w22kHwqc+BSYqN1KXYlpVKTMZDv77lHCuHKoo7I
+         UjqVMTx6aYqbNi5Ji/b77DGBfP26IJmr8TUh5fP5LPERfXI5REUPpJSUC7Qzrw2McGrK
+         NpN6B1EgiMDKlu7aNxscJ5i23ORFb5BfwZmWGYTMaNVk5PgcogEA0yIXz+BJDvKPAZcb
+         vdsOfPfAkH8j4sJUJK8w3enJXBDEOmeN3dB0dU/whd+rTv50rB8MuS4k2Hv5K7UdIi8y
+         Bg5EqBZ+ljEMAmj+XYKRAHf0zoSamdQ+AXc1I803MSo/eQwmomtYTJ9CX8b84Mq+NscA
+         gNSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXscNmZnfRy5dnVQXeqwag3ONBS2/oWWfzavBukOvC5WMj7GRZMUN3Cv17UxyAegk6Leo2kObgzOcKItZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi081d9Or+eGFBgJ/a3cqRl/KGgFekEkpIfUYq9xib7T7WOiFM
+	gSyzdo5RHx6DIW4blHgVZU2oyR7+nYxqWb/UUt84t3qzZH9Yjtj0Neh1wJMvS3Ze09w=
+X-Gm-Gg: ASbGncvYdeqE5nfujB8o9JtK3Ixvrw8htvclB0pLUIZLoqV/NiPs8NWqVRkoYvCNzW3
+	jI06VRsaD50eRM292kMScppaiqeQRUap2uBqsD0mENwC9VY6+wnaVnR2vh6PXP5BFiRRKrve/aU
+	iFdlM6nUyaMfX/f3cOI5sa2dW8IlwQvWYmBUG3yq9++y4KRVv69PQeTz1JgZJINcF+BT+IOhu9X
+	Ckk3JV3WMk2f4fM+oHGRvYbYqMJRUUwywmx7Qf60CatrAVD5SWnj2uLptST6ruzpE0/PNkjtmj9
+	wGBeEFkIoDMSAx6dfB4TS6WYUygvkn1PCvx1um1zU4NzwVcxxLYIM8CLCskg04UZPO+6TkgS7QQ
+	8APSZILqzoAzVBDaDidZ2Wic5JgshhjfMKDVY3Q1GLjuz8toy
+X-Google-Smtp-Source: AGHT+IHiFaLhmix02to3SMgZZqByu/YBe6CEM25m/eqHlooV5XhvbN53r09zYYi9FDkfdZyJBlqDqg==
+X-Received: by 2002:a05:6870:17a3:b0:315:a68c:d90b with SMTP id 586e51a60fabf-31963345786mr11690278fac.23.1757095968426;
+        Fri, 05 Sep 2025 11:12:48 -0700 (PDT)
 Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-31d686398e1sm3052292fac.13.2025.09.05.11.12.46
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-31d686398e1sm3052292fac.13.2025.09.05.11.12.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 11:12:47 -0700 (PDT)
+        Fri, 05 Sep 2025 11:12:48 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 05 Sep 2025 13:11:58 -0500
-Subject: [PATCH 3/6] iio: adc: ad7124: use guard(mutex) to simplify return
- paths
+Date: Fri, 05 Sep 2025 13:11:59 -0500
+Subject: [PATCH 4/6] iio: adc: ad7124: support fractional
+ sampling_frequency
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-iio-adc-ad7124-add-filter-support-v1-3-aee3834be6a9@baylibre.com>
+Message-Id: <20250905-iio-adc-ad7124-add-filter-support-v1-4-aee3834be6a9@baylibre.com>
 References: <20250905-iio-adc-ad7124-add-filter-support-v1-0-aee3834be6a9@baylibre.com>
 In-Reply-To: <20250905-iio-adc-ad7124-add-filter-support-v1-0-aee3834be6a9@baylibre.com>
 To: Michael Hennerich <Michael.Hennerich@analog.com>, 
@@ -95,105 +94,171 @@ To: Michael Hennerich <Michael.Hennerich@analog.com>,
 Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  David Lechner <dlechner@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2323; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=kx5uyvPHJnpni90op3iFGnjN7gyxEZMgcFaPdsde1b0=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBouygBZy5XyJMymkrm8NweZsbQhQ0Xndor7I7za
- Q8eX38z84aJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaLsoAQAKCRDCzCAB/wGP
- wBp/B/4gPu4pc+ZBtlILyEsP5zzyU4KMnhP0WwhaABU/YX4quSKwp9mZ0g5g9p99SFFBDMwgAR0
- yGx8nfwI8Ce40blr1ZaoF8tJQ58iKZeuPNKQ+vyHI7JldEAZ8eaDnqFy7qNI20H/U/PDROfpHV0
- neJ4LWiAdkMcJnTOyZMh9Q6kq8ftK6b+cElryBdX/xCmkFfQaQkOd9o7id5AdTTgR7xXGX/LaWQ
- ZMJnfBu8FYqZ2JyVSk/MR7vBL6Tpe65zQTYNG0DGdCiPDwQLumr6xJ+ds54bfcV0jWTdZSm+y81
- rrEja5NG69lyTfbUpz+NmU4865IyILZFFSn5xgdXhMS9Si2+
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5575; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=QEvSoG9oo+amGpQo5aYx923w5/Dr4Rh7PhvFmupuYfo=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBouygIcE4D5fTMX03D7KcVg5yFzpWnllIAr3oP2
+ 0dBRTLLqHmJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaLsoCAAKCRDCzCAB/wGP
+ wMH8B/4xu27Lk451bUl1W4lOAQNp20acyd2GPp93eNxqzmhsq5Iz5wzLiY1U4xzLiYa+GT7eTIt
+ WDjGWcDkSxUBTDQJJXEYNGqGxKM8ZsTUIlAaacj1eAhUEUXDjN2wdke7eusWNIbGOPkgjghym6q
+ 48VoxcEROCHtBauAhTJ9S6NFUJ3iHzxLhXVdHxl9ezgURZkGwvcP6uhoeQ2rNOkPcFcnOM+Ygj5
+ hlcsxY2oKJ2Zpl8zJHtOmcF2ntm9UAFGSY7cTwlKpCu4rAAKPtEIQevihCZfedGcgEw4uN5Kfz4
+ QdPpaUbJHWr0gG7GnGIQ5xKJ6/GATTkCc8ihSKxdBlSperRq
 X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
  fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Use guard(mutex) in a couple of functions to allow direct returns. This
-simplifies the code a bit and will make later changes easier.
+Modify the attribute read/write functions for sampling_frequency and
+filter_low_pass_3db_frequency to return fractional values.
+
+These ADCs support output data rates in the single digits, so being
+able to specify fractional values is necessary to use all possible
+sampling frequencies.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/adc/ad7124.c | 35 ++++++++++++-----------------------
- 1 file changed, 12 insertions(+), 23 deletions(-)
+ drivers/iio/adc/ad7124.c | 65 +++++++++++++++++++++++++++++-------------------
+ 1 file changed, 39 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 6c17cc59f33c6ddc241e94d1b0f43bceced1e719..d0c6462bcf410efcc664b602beb94a9ab6a869c0 100644
+index d0c6462bcf410efcc664b602beb94a9ab6a869c0..e2d92f2e3e2eb96d11dcaaf53de9124a6cc44ca4 100644
 --- a/drivers/iio/adc/ad7124.c
 +++ b/drivers/iio/adc/ad7124.c
-@@ -741,24 +741,20 @@ static int ad7124_write_raw(struct iio_dev *indio_dev,
- {
- 	struct ad7124_state *st = iio_priv(indio_dev);
- 	unsigned int res, gain, full_scale, vref;
--	int ret = 0;
+@@ -168,7 +168,6 @@ struct ad7124_channel_config {
+ 		bool buf_negative;
+ 		unsigned int vref_mv;
+ 		unsigned int pga_bits;
+-		unsigned int odr;
+ 		unsigned int odr_sel_bits;
+ 		unsigned int filter_type;
+ 		unsigned int calibration_offset;
+@@ -287,7 +286,17 @@ static u32 ad7124_get_fclk_hz(struct ad7124_state *st)
+ 	return fclk_hz;
+ }
  
--	mutex_lock(&st->cfgs_lock);
-+	guard(mutex)(&st->cfgs_lock);
+-static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
++static u32 ad7124_get_fadc_divisor(struct ad7124_state *st, unsigned int channel)
++{
++	/*
++	 * The output data rate (f_ADC) is f_CLK / divisor. We are returning
++	 * the divisor.
++	 */
++	return st->channels[channel].cfg.odr_sel_bits * 32 * 4;
++}
++
++static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel,
++				   unsigned int odr, unsigned int odr_micro)
+ {
+ 	unsigned int fclk, factor, odr_sel_bits;
+ 
+@@ -302,29 +311,28 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
+ 	 * FS[10:0] can have a value from 1 to 2047
+ 	 */
+ 	factor = 32 * 4; /* N = 4 for default sinc4 filter. */
+-	odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, odr * factor), 1, 2047);
++	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor +
++					       odr_micro * factor / MICRO);
++	odr_sel_bits = clamp(odr_sel_bits, 1, 2047);
+ 
+ 	if (odr_sel_bits != st->channels[channel].cfg.odr_sel_bits)
+ 		st->channels[channel].cfg.live = false;
+ 
+-	/* fADC = fCLK / (FS[10:0] x 32) */
+-	st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
+-								factor);
+ 	st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
+ }
+ 
+-static int ad7124_get_3db_filter_freq(struct ad7124_state *st,
+-				      unsigned int channel)
++static int ad7124_get_3db_filter_factor(struct ad7124_state *st,
++					unsigned int channel)
+ {
+-	unsigned int fadc;
+-
+-	fadc = st->channels[channel].cfg.odr;
+-
++	/*
++	 * 3dB point is the f_CLK rate times some factor. This functions returns
++	 * the factor times 1000.
++	 */
+ 	switch (st->channels[channel].cfg.filter_type) {
+ 	case AD7124_FILTER_FILTER_SINC3:
+-		return DIV_ROUND_CLOSEST(fadc * 272, 1000);
++		return 272;
+ 	case AD7124_FILTER_FILTER_SINC4:
+-		return DIV_ROUND_CLOSEST(fadc * 230, 1000);
++		return 230;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -348,7 +356,6 @@ static struct ad7124_channel_config *ad7124_find_similar_live_cfg(struct ad7124_
+ 				     bool buf_negative;
+ 				     unsigned int vref_mv;
+ 				     unsigned int pga_bits;
+-				     unsigned int odr;
+ 				     unsigned int odr_sel_bits;
+ 				     unsigned int filter_type;
+ 				     unsigned int calibration_offset;
+@@ -365,7 +372,6 @@ static struct ad7124_channel_config *ad7124_find_similar_live_cfg(struct ad7124_
+ 		    cfg->buf_negative == cfg_aux->buf_negative &&
+ 		    cfg->vref_mv == cfg_aux->vref_mv &&
+ 		    cfg->pga_bits == cfg_aux->pga_bits &&
+-		    cfg->odr == cfg_aux->odr &&
+ 		    cfg->odr_sel_bits == cfg_aux->odr_sel_bits &&
+ 		    cfg->filter_type == cfg_aux->filter_type &&
+ 		    cfg->calibration_offset == cfg_aux->calibration_offset &&
+@@ -720,16 +726,23 @@ static int ad7124_read_raw(struct iio_dev *indio_dev,
+ 
+ 	case IIO_CHAN_INFO_SAMP_FREQ:
+ 		mutex_lock(&st->cfgs_lock);
+-		*val = st->channels[chan->address].cfg.odr;
++		*val = ad7124_get_fclk_hz(st);
++		*val2 = ad7124_get_fadc_divisor(st, chan->address);
+ 		mutex_unlock(&st->cfgs_lock);
+ 
+-		return IIO_VAL_INT;
+-	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+-		mutex_lock(&st->cfgs_lock);
+-		*val = ad7124_get_3db_filter_freq(st, chan->scan_index);
+-		mutex_unlock(&st->cfgs_lock);
++		return IIO_VAL_FRACTIONAL;
++	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY: {
++		guard(mutex)(&st->cfgs_lock);
+ 
+-		return IIO_VAL_INT;
++		ret = ad7124_get_3db_filter_factor(st, chan->address);
++		if (ret < 0)
++			return ret;
++
++		/* 3dB point is the f_CLK rate times a fractional value */
++		*val = ret * ad7124_get_fclk_hz(st);
++		*val2 = MILLI * ad7124_get_fadc_divisor(st, chan->address);
++		return IIO_VAL_FRACTIONAL;
++	}
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -746,10 +759,10 @@ static int ad7124_write_raw(struct iio_dev *indio_dev,
  
  	switch (info) {
  	case IIO_CHAN_INFO_SAMP_FREQ:
--		if (val2 != 0 || val == 0) {
--			ret = -EINVAL;
--			break;
--		}
-+		if (val2 != 0 || val == 0)
-+			return -EINVAL;
+-		if (val2 != 0 || val == 0)
++		if (val2 < 0 || val < 0 || (val2 == 0 && val == 0))
+ 			return -EINVAL;
  
- 		ad7124_set_channel_odr(st, chan->address, val);
--		break;
-+
-+		return 0;
+-		ad7124_set_channel_odr(st, chan->address, val);
++		ad7124_set_channel_odr(st, chan->address, val, val2);
+ 
+ 		return 0;
  	case IIO_CHAN_INFO_SCALE:
--		if (val != 0) {
--			ret = -EINVAL;
--			break;
--		}
-+		if (val != 0)
-+			return -EINVAL;
- 
- 		if (st->channels[chan->address].cfg.bipolar)
- 			full_scale = 1 << (chan->scan_type.realbits - 1);
-@@ -774,13 +770,10 @@ static int ad7124_write_raw(struct iio_dev *indio_dev,
- 			st->channels[chan->address].cfg.live = false;
- 
- 		st->channels[chan->address].cfg.pga_bits = res;
--		break;
-+		return 0;
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
- 	}
--
--	mutex_unlock(&st->cfgs_lock);
--	return ret;
- }
- 
- static int ad7124_reg_access(struct iio_dev *indio_dev,
-@@ -812,7 +805,8 @@ static int ad7124_update_scan_mode(struct iio_dev *indio_dev,
- 	int ret;
- 	int i;
- 
--	mutex_lock(&st->cfgs_lock);
-+	guard(mutex)(&st->cfgs_lock);
-+
- 	for (i = 0; i < st->num_channels; i++) {
- 		bit_set = test_bit(i, scan_mask);
- 		if (bit_set)
-@@ -820,15 +814,10 @@ static int ad7124_update_scan_mode(struct iio_dev *indio_dev,
- 		else
- 			ret = ad7124_spi_write_mask(st, AD7124_CHANNEL(i), AD7124_CHANNEL_ENABLE,
- 						    0, 2);
--		if (ret < 0) {
--			mutex_unlock(&st->cfgs_lock);
--
-+		if (ret < 0)
- 			return ret;
--		}
+@@ -1298,7 +1311,7 @@ static int ad7124_setup(struct ad7124_state *st)
+ 		 * regardless of the selected power mode. Round it up to 10 and
+ 		 * set all channels to this default value.
+ 		 */
+-		ad7124_set_channel_odr(st, i, 10);
++		ad7124_set_channel_odr(st, i, 10, 0);
  	}
  
--	mutex_unlock(&st->cfgs_lock);
--
- 	return 0;
- }
- 
+ 	ad7124_disable_all(&st->sd);
 
 -- 
 2.43.0
