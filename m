@@ -1,217 +1,204 @@
-Return-Path: <linux-kernel+bounces-802202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC0FB44ED2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7CEB44EE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D3F583F17
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC87A0031F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44D02D47F6;
-	Fri,  5 Sep 2025 07:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCE3258CE9;
+	Fri,  5 Sep 2025 07:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrSD0tXw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C2mJYHgM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF862D3A8A;
-	Fri,  5 Sep 2025 07:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959F2DAFBA;
+	Fri,  5 Sep 2025 07:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757056464; cv=none; b=SAWbZI5FGae6lR1uKf+EBOPavdWq1sO1EeQ5poc8H9B/1BWyCRoW3xgBIgJNYqxCWEfzHAK/l/DjmNInqhcslysa/Cjp8SUPKNzREw+aqk9vG3aAtjQiKn5putlwm7rVbDw7qFHfhG2O3uvUTrKpXaGJcOuBrvYtwchM4RPMvkM=
+	t=1757056517; cv=none; b=vGbVmsQ95cte4OKSpCwUgA4+Go/RHGqjhSZ84X8Hs85BonOdOg11E6jo2vSCoR3ERFDx+o6hyX0gxPQ+oqwPi/SXeLV6F5UiSMobMrxnCMtqg7QqGuXALh4YQVgG8Vc0eDYmJyN04NO8lHDzv+Y/nZn3VsyTGWbXHi5J7VchNPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757056464; c=relaxed/simple;
-	bh=i36iL+KR7T7uZpLSbsJEopmHE0PSVOySVwlmjmxdzKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=C9tudciOaC8XAioZvPvQk2cDfvF+gdgimm2FRHbpMVhRyqxPHbxQrwux4lyBFRwZD3bdjwU7FSLBRm9asoFAHR0hJPcBBZBbgqNKJSXObOKTsZy3VbmDYg2FBae3sSnBPMM1dOUo6lOk3QuXRhRGXoYX5U+XRj33Pq5ItIC1cyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrSD0tXw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B3CC4CEF1;
-	Fri,  5 Sep 2025 07:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757056463;
-	bh=i36iL+KR7T7uZpLSbsJEopmHE0PSVOySVwlmjmxdzKo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nrSD0tXwtr2Yh1WmtvrkbYVD6OdnGHNJRibQrTfQxvkXrwV4OIkdLex+XPX02JlCY
-	 gP7eLtKIOzQKP+CN813MJczPTT/3jYXu29IuQR/3DtTcfJPSlj97VKxG+HsayT9q+3
-	 UZpgBRDuZ8bdk2qniqyF0vHOz5myfV+7xo2Uu1Nc5ngWsv/f/5pZ7l6n66JSAJwuRM
-	 02Fpwu5KAFVCsqz9Mt+d2595brCMvo0mqRST59KdV2qxBBZGzgQ38Ki3Ci7T69072E
-	 0adZr8zFdJtgZdLfLJudW/dRMDvfsgvOFhYeSh9YX+auBadcmWcdXTvTXBj++iH/UC
-	 nGVXlkAtg4PFg==
-Date: Fri, 5 Sep 2025 09:14:17 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: EDAC Mailing List <linux-edac@vger.kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] v4: Split sphinx call logic from docs Makefile
-Message-ID: <20250905091417.13181d6f@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757056517; c=relaxed/simple;
+	bh=l0LgmoVu57gmmqkxJRv6F9Ot+jdWHsty8iJFi6rkzxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OhpcfbgUpQ4j+BEP85Dvc8BK4s41HmISCJ5NKnWJI4VYl7BgobitUlaCi/TOa+sHdRJIQYgP87FsgvdaZdl5/GDQEguix1ISNRrK1k7ZZUYLWx9kxXXe7jlr2bpPuDrgm3p4pJDzlN0BQHxGcXp80XZSGPFyiMCWWyEmzzDP7oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C2mJYHgM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5854SeO2018638;
+	Fri, 5 Sep 2025 07:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=YJ6zDa0XJUo6OqEUZAiADROj3jEN4WSc4hw
+	qt8M0CD4=; b=C2mJYHgM6g3GqzfC/ZKiE5sPDipdh6ad9Cf6LJ1sr1uDrMPrQd6
+	0eOS1HCBJu0pcxuzpEMcg66c2sE9b51lcL+irxSDXtP0y6kaAw8FVnc2VO4drqQk
+	6CZ6HZK7dtkgjE9Xb2dS0WWorc34VaRYuJaZe5YEpvKALTbb++SxqHPf4Jk6egwZ
+	jWh+OZ35cBNSfnB+0VlMmmT+9U1MNt7zllAVntXlCsKKVcagVHd8fLn0GYz8I8V6
+	5RbjrRhJDHinEBxrMBM/yLt3aB/vVt8mbsqtyofc4dZfkJtkhDQ3cY+SI+V8vBZd
+	/JWTcUyuJfS0HHJXRMbMLoihBTfgYnQ/Y0w==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48yebut367-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 07:14:58 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5857EtRm016434;
+	Fri, 5 Sep 2025 07:14:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48utcmrhs3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 07:14:55 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5857EtGx016424;
+	Fri, 5 Sep 2025 07:14:55 GMT
+Received: from ziyuzhan-gv.ap.qualcomm.com (ziyuzhan-gv.qualcomm.com [10.64.66.102])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 5857EsKJ016420
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 07:14:55 +0000
+Received: by ziyuzhan-gv.ap.qualcomm.com (Postfix, from userid 4438065)
+	id A8D20522; Fri,  5 Sep 2025 15:14:53 +0800 (CST)
+From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v12 0/5] pci: qcom: Add QCS8300 PCIe support
+Date: Fri,  5 Sep 2025 15:14:43 +0800
+Message-ID: <20250905071448.2034594-1-ziyue.zhang@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: F8CcoH5iPPSokcYbbB7M9mXrL7Bz9ofZ
+X-Authority-Analysis: v=2.4 cv=X+ZSKHTe c=1 sm=1 tr=0 ts=68ba8df3 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=QyXUC8HyAAAA:8 a=MByrn4WnkjAl5ObW7ywA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2MyBTYWx0ZWRfX8WmAfvP8WHte
+ xLgGWm1v9paNtIv5oPmep6jNOQw5tOR00979rY2ybfZyO4Y54RVduI38H26Tz+Z9LlLnQQgDqwH
+ iFxGtdpTsPBR0whAfAIudENExEHJdXCTK+WDtE97d6Apo7dyFv8EFNSqsV+xtOeOOu4YgWzk+/V
+ gaeP8IRv5Kkilz7KS9PCF20RzYfG/c3sHjSx5OShOjxffBOoLxtAH7j6jSaEL9R42KXJvRWJ/cz
+ hoye7s9cGOi7NlLIKLt4qCrC8N69NQ+HOQuGD0W41/WkWk+aVIfSv7G/E5O1C7VtvVpJmV/sEBO
+ HArvqMJvVTsXH7Wx8Fi3hf4WR7zmdX+rvUQGkTn6wIwNhh+AfBtJUdeTflcvFctt/bgh0gb7vRo
+ /MS35nEL
+X-Proofpoint-ORIG-GUID: F8CcoH5iPPSokcYbbB7M9mXrL7Bz9ofZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509040163
 
-Hi Jon,
+This series depend on this patch
+https://lore.kernel.org/all/20250826-pakala-v2-3-74f1f60676c6@oss.qualcomm.com/
 
-As patch 04/19 do some changes on non-English documents, perhaps the best
-is for you to pick the series as a pull request. The content here
-is identical to:
+This series adds document, phy, configs support for PCIe in QCS8300.
+It also adds 'link_down' reset for sa8775p.
 
-	https://lore.kernel.org/linux-doc/cover.1756969623.git.mchehab+huawei@kernel.org/
+Have follwing changes:
+	- Add dedicated schema for the PCIe controllers found on QCS8300.
+	- Add compatible for qcs8300 platform.
+	- Add configurations in devicetree for PCIe0, including registers, clocks, interrupts and phy setting sequence.
+	- Add configurations in devicetree for PCIe1, including registers, clocks, interrupts and phy setting sequence.
 
-so, I'll just repeat the description below.
-
--
-
-This series does a major cleanup at docs Makefile by moving the
-actual doc build logic to a helper script (scripts/sphinx-build-wrapper).
-
-Such script was written in a way that it can be called either
-directly or via a makefile. When running via makefile, it will
-use GNU jobserver to ensure that, when sphinx-build is
-called, the number of jobs will match at most what it is
-specified by the "-j" parameter.
-
-The first 3 patches do a cleanup at scripts/jobserver-exec
-and moves the actual code to a library. Such library is used
-by both the jobserver-exec command line and by sphinx-build-wrappper.
-
-The change also gets rid of parallel-wrapper.sh, whose
-functions are now part of the wrapper code.
-
-I opted to pick patches from:
-   https://lore.kernel.org/linux-doc/cover.1756916565.git.mchehab+huawei@kernel.org/T/#t
-
-re-ordering them to make more sense.
-
-The last patch breaks doc build when Python3 < 3.7, as requested,
-or when sphinx-pre-install suggests to install an updated Sphinx
-version. Matteu suggested adding a PYTHON env to allow overriding it,
-but this won't would work with sphinx-pre-install, which is meant to
-be executed with older python versions, but still requires to run
-python from the suggested package to check if package install
-succeded. Currently, sphinx-pre-install recomments to install a newer
-Python on 3 distribution types:
-
-    - 3.11 on openSuse Leap;
-    - 3.9 on RHEL8 and RHEL8-based distros;
-    - 3.13 on openSUSE Thumbleweed.
-
-Patch 19 breaks sphinx-pre-install for those, and adding PYTHON
-env won't properly fix it. ATM, I can't think on a good non-hacky
-solution, as the only way I can think is to let sphinx-pre-install
-(and sphinx-build-wrapper) execute python3.x instead of python3.
-
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 ---
+Changes in v12:
+- rebased pcie phy bindings
+- Link to v11: https://lore.kernel.org/all/20250826091205.3625138-1-ziyue.zhang@oss.qualcomm.com/
 
-v4:
-- updated references for sphinx-pre-install after its rename;
-- added some extra patches to add more options to python_version,
-  allowing it to bail out and suggest alternatives;
-- added a patch at the end to explicitly break doc builds when
-  python3 points to python3.6 or older.
+Changes in v11:
+- move phy/perst/wake to pcie bridge node (Mani)
+- Link to v10: https://lore.kernel.org/all/20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com/
 
-v3:
-- rebased on the top of docs-next;
-- added two patches to build man files that were on a separate
-  patch series.
+Changes in v10:
+- Update PHY max_items (Johan)
+- Link to v9: https://lore.kernel.org/all/20250725104037.4054070-1-ziyue.zhang@oss.qualcomm.com/
 
-v2:
+Changes in v9:
+- Fix DTB error (Vinod)
+- Link to v8: https://lore.kernel.org/all/20250714081529.3847385-1-ziyue.zhang@oss.qualcomm.com/
 
-- there's no generic exception handler anymore;
-- it moves sphinx-pre-install to tools/docs;
-- the logic which ensures a minimal Python version got moved
-  to a library, which is now used by both pre-install and wrapper;
-- The first wrapper (05/13) doesn't contain comments (except for
-  shebang and SPDX). The goal is to help showing the size increase
-  when moving from Makefile to Python. Some file increase is
-  unavoidable, as Makefile is more compact: no includes, multple
-  statements per line, no argparse, etc;
-- The second patch adds docstrings and comments. It has almost
-  the same size of the code itself;
-- I moved the venv logic to a third wrapper patch;
-- I fixed an issue at the paraller build logic;
-- There are no generic except blocks anymore.
+Changes in v8:
+- rebase sc8280xp-qmp-pcie-phy change to solve conflicts.
+- Add Fixes tag to phy change (Johan)
+- Link to v7: https://lore.kernel.org/all/20250625092539.762075-1-quic_ziyuzhan@quicinc.com/
 
-Please pull from:
+Changes in v7:
+- rebase qcs8300-ride.dtsi change to solve conflicts.
+- Link to v6: https://lore.kernel.org/all/20250529035635.4162149-1-quic_ziyuzhan@quicinc.com/
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git docs/v6.17-2
+Changes in v6:
+- move the qcs8300 and sa8775p phy compatibility entry into the list of PHYs that require six clocks
+- Update QCS8300 and sa8775p phy dt, remove aux clock.
+- Fixed compile error found by kernel test robot
+- Link to v5: https://lore.kernel.org/all/20250507031019.4080541-1-quic_ziyuzhan@quicinc.com/
 
-For:
+Changes in v5:
+- Add QCOM PCIe controller version in commit msg (Mani)
+- Modify platform dts change subject (Dmitry)
+- Fixed compile error found by kernel test robot
+- Link to v4: https://lore.kernel.org/linux-phy/20241220055239.2744024-1-quic_ziyuzhan@quicinc.com/
 
-{ADD CONTENT HERE}
+Changes in v4:
+- Add received tag
+- Fixed compile error found by kernel test robot
+- Link to v3: https://lore.kernel.org/lkml/202412211301.bQO6vXpo-lkp@intel.com/T/#mdd63e5be39acbf879218aef91c87b12d4540e0f7
 
-Regards,
-Mauro
+Changes in v3:
+- Add received tag(Rob & Dmitry)
+- Update pcie_phy in gcc node to soc dtsi(Dmitry & Konrad)
+- remove pcieprot0 node(Konrad & Mani)
+- Fix format comments(Konrad)
+- Update base-commit to tag: next-20241213(Bjorn)
+- Corrected of_device_id.data from 1.9.0 to 1.34.0.
+- Link to v2: https://lore.kernel.org/all/20241128081056.1361739-1-quic_ziyuzhan@quicinc.com/
 
----
+Changes in v2:
+- Fix some format comments and match the style in x1e80100(Konrad)
+- Add global interrupt for PCIe0 and PCIe1(Konrad)
+- split the soc dtsi and the platform dts into two changes(Konrad)
+- Link to v1: https://lore.kernel.org/all/20241114095409.2682558-1-quic_ziyuzhan@quicinc.com/
 
-The following changes since commit 7e5a0fe4e8ae2eb341f8ebbee2b24231a58fc28b:
+Ziyue Zhang (5):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+    for qcs8300
+  arm64: dts: qcom: qcs8300: enable pcie0
+  arm64: dts: qcom: qcs8300-ride: enable pcie0 interface
+  arm64: dts: qcom: qcs8300: enable pcie1
+  arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
 
-  doc: filesystems: proc: remove stale information from intro (2025-09-03 16:04:43 -0600)
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   5 +-
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  84 +++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 310 +++++++++++++++++-
+ 3 files changed, 394 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git tags/docs/v6.17-2
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.43.0
 
-for you to fetch changes up to 04de72da80bbb19e38e2b416de56a9cb179f25e9:
-
-  tools/docs: sphinx-* break documentation bulds on openSUSE (2025-09-04 21:07:43 +0200)
-
-----------------------------------------------------------------
-[GIT PULL for v6.17-rc5] docs fixes
-
-----------------------------------------------------------------
-Mauro Carvalho Chehab (19):
-      scripts/jobserver-exec: move the code to a class
-      scripts/jobserver-exec: move its class to the lib directory
-      scripts/jobserver-exec: add a help message
-      scripts: sphinx-pre-install: move it to tools/docs
-      tools/docs: python_version: move version check from sphinx-pre-install
-      tools/docs: python_version: drop a debug print
-      tools/docs: python_version: allow check for alternatives and bail out
-      tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build
-      tools/docs: sphinx-build-wrapper: add comments and blank lines
-      tools/docs: sphinx-build-wrapper: add support to run inside venv
-      docs: parallel-wrapper.sh: remove script
-      docs: Makefile: document latex/PDF PAPER= parameter
-      tools/docs: sphinx-build-wrapper: add an argument for LaTeX interactive mode
-      tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
-      tools/docs: sphinx-build-wrapper: allow building PDF files in parallel
-      docs: add support to build manpages from kerneldoc output
-      tools: kernel-doc: add a see also section at man pages
-      scripts: kdoc_parser.py: warn about Python version only once
-      tools/docs: sphinx-* break documentation bulds on openSUSE
-
- Documentation/Makefile                             | 136 +---
- Documentation/doc-guide/kernel-doc.rst             |  29 +-
- Documentation/doc-guide/sphinx.rst                 |   4 +-
- Documentation/sphinx/kerneldoc-preamble.sty        |   2 +-
- Documentation/sphinx/parallel-wrapper.sh           |  33 -
- .../translations/it_IT/doc-guide/sphinx.rst        |   4 +-
- .../translations/zh_CN/doc-guide/sphinx.rst        |   4 +-
- Documentation/translations/zh_CN/how-to.rst        |   2 +-
- MAINTAINERS                                        |   3 +-
- Makefile                                           |   2 +-
- scripts/jobserver-exec                             |  88 +--
- scripts/lib/jobserver.py                           | 149 +++++
- scripts/lib/kdoc/kdoc_files.py                     |   5 +-
- scripts/lib/kdoc/kdoc_output.py                    |  84 ++-
- scripts/lib/kdoc/kdoc_parser.py                    |   7 +-
- scripts/split-man.pl                               |  28 -
- tools/docs/lib/python_version.py                   | 178 +++++
- tools/docs/sphinx-build-wrapper                    | 739 +++++++++++++++++++++
- {scripts => tools/docs}/sphinx-pre-install         | 135 +---
- 19 files changed, 1265 insertions(+), 367 deletions(-)
- delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
- create mode 100755 scripts/lib/jobserver.py
- delete mode 100755 scripts/split-man.pl
- create mode 100644 tools/docs/lib/python_version.py
- create mode 100755 tools/docs/sphinx-build-wrapper
- rename {scripts => tools/docs}/sphinx-pre-install (93%)
 
