@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-803498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E70B4609E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:47:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E7CB46100
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B17583606
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7C61C24727
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B792FB08E;
-	Fri,  5 Sep 2025 17:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647035CEB8;
+	Fri,  5 Sep 2025 17:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViVBARX0"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MeAap+sk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3333191DB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD4D23E342;
+	Fri,  5 Sep 2025 17:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094463; cv=none; b=Z1opTmr5Q8SWoTct5RF7fFjPmtnvkqjuANlMSO7j2vyVduPD8RzrAk7PkOM2fGHb5ejssjQwp46j0Sbecjy6CY9MXo63pwS3fVUzYvuFOWPpB5XuqHBYI+p/BdbS+OSbSKbQkdlzccQBYaDj5GwkcasMyBqX1defR2dcPPpxIHQ=
+	t=1757094634; cv=none; b=fDiDMerTFXUrZKqzCgOmyZuVGOnLy65PFOMhrZcNUrYvcBYgJYJi74h7voTMOGqRQERcMW5aEFglN2bUbzyxD+k72/wtvuLF4k6Vag3v+tTAdIYWfN4gppr/e7yLqe6zqVq13QiKygCATgXMGFGKaPqkCBEXEqjS5y9YABaQIn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094463; c=relaxed/simple;
-	bh=o34BmzkJCbWQe0X0lBP2XX3M2HpMngbM/yfmsu8decs=;
+	s=arc-20240116; t=1757094634; c=relaxed/simple;
+	bh=fEvOC+Hb5Uih6l7ipb42YGCKy5ESrhPsjYdJkhOP85s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isegzeueQzgHeF+lxk08tUt0QOgvqCcZVN/WT3yln9gBbTkVSerkbXtNDxukVn8zqgFG52UBZIm630Oc7XLk9Gq4zyzLy6ymPOcS3+uqBZ6d4809YPG/FvK6ZpgNEhOZ+cccUCkfPowYi/S1DscyadfDXhhbhjGUPCVN2annGDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViVBARX0; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7722f2f2aa4so3159573b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757094461; x=1757699261; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iGdmOjhJX6hBoAVuN78EeIW768m+7wCUaHh9ZJvY08E=;
-        b=ViVBARX0MYMdE5Zot3Zu6sAaLrHqUM1feMGkszDC3xUoHtlGPiKciiT2C/wi7XsZrs
-         IZ1DIFTpJlI/qfy6g3zvfmg9U3G3FkYCg2JN76LIVVhrmt3ee1lTwUlM7AHCBmoYoW0l
-         a3A19XC3fzEgeCYBaclxk77/kJUp16PatMlBvgYwuOBFkAFRjhhNOvQcafC1881nBq2G
-         /cbIutfhn+RZyQ6m0OL+8jGREI9v8Jpqm6EK46LU9RoltPckFoRtNEyzXA1en6SH2lYO
-         swRVOwnQmnflisEx+LZOphH7oojYQtghf94SwGcZQtJkv23iDWCdHTC7GnCYXKSnEiMU
-         Butg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757094461; x=1757699261;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGdmOjhJX6hBoAVuN78EeIW768m+7wCUaHh9ZJvY08E=;
-        b=f6RFc+PH0se+HTqrUqu81eY79sl7bAaiW7a72n7tP3rUK4UEOmGTuCn6mMet1J3g00
-         aH/VlOIxiwbiJwZRsi/InSyOwgbVviW9/G6YASKIx/1salge/S4uR9ptFY/n32mlspAK
-         tvO9MPT0ykKmRoDKNZmD92cwYuGfTvUnbzP/6SBrOyt5SrsDlWkoYKk+Xtwqb2iFt1EE
-         fum8lwN79enT4vlsEP0mQcAHPMK99D+urmN/huVuBrxe2dmGihghTkRWT4D39Jgf7nSN
-         qK2q37kwTNnFUqFnwug5CjMmV1Ws5hoHp+qKhuFQda/wPgvrMIArL3ugrekpj4Y5AhLh
-         /Biw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkvn7dJI3xIF0JG1xVrYE0Dyy3yK9Gt7roybdyUObEfDukRX/tfYMHpp9Ln37qd29AZWAku5UgzcVYWtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH6/VJTDYU7F35JhX8a5wfBAoCg/ceWoCHZsVA51GN/klEBk9J
-	IMkQ9P/o1+4HRmU/Rq2jblrVts60dKYx1EnJVfy6nOcqpuSOAzzDyL40Ec4QkQ==
-X-Gm-Gg: ASbGncsNKH6Zzmwfr3/VZAPMYoJ/u6HfIznYBOzZ70oQxfoD5vrwFWegqVkrrbKEEI8
-	CiAEbmLQTZKxBVvvr2l5h+JYG0uJ6ppOaFq8CXsR0HZyX9Tnaco6JDmQpZM75tS/sYAg6624xz2
-	W/asg3Agp4rPHUrjkb7EChydqagtil6QUUsZLNMU6xQNtkIOeYKHpp/jqCcXBp23vM6hv5y7IVx
-	quI0BnT7qnEFqITW1UvRNirZDxtj17sq1kMZhKz+aUGb69/m2sX1Jow+kl4BgJ2IEnFGP6jJtE1
-	QZHlSdWzv8mbkJ0XiulXsBKeAvZse5VcPCMF3znZddERQRFa9X9T89vVphi4mkeq/2TC8PWzO7v
-	zu+55KHR3G1Ero+18GOjmhi11Ynl35wS+GpyfgU71r0tIgs3UIEROXvSFuy2wR08H
-X-Google-Smtp-Source: AGHT+IHE2lRExnIyHB3Qcc28VDoQK8iZdwHIwmBowH0wlHh4c9ugPDIVctlxj9Nc+It2M+MIg5ro8g==
-X-Received: by 2002:a05:6a21:999f:b0:24c:48f3:3fd2 with SMTP id adf61e73a8af0-24c48f34120mr9732610637.24.1757094461464;
-        Fri, 05 Sep 2025 10:47:41 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f8a0a2851sm12010238a12.37.2025.09.05.10.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 10:47:40 -0700 (PDT)
-Date: Fri, 5 Sep 2025 10:47:38 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: tag kernel stack pages
-Message-ID: <aLsiOvvxhJnTzKO6@fedora>
-References: <20250820202029.1909925-1-vishal.moola@gmail.com>
- <ea48bc1f-7ee7-48b4-b389-c3622fc4d3d1@redhat.com>
- <aLiGnSHFJdaTpMc-@fedora>
- <84297d37-b766-4cfe-9c3f-bff1cb3cb4a4@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PqmmsWYgbF+n6GcRUOsOuOagNvKVmvXsKeE8RucJsQuC9YCFVYuVaKgaogy/DjsEmwgEiN0KE1k1xztgp/JjZJrPIcV5C3jbWAdP37fGX5Z/nhcwUA1xotVz1sKGYV1YzAtNCAw+D5mVwwrVZq0ejsHyFo3e3SKGGMiZNYGHTRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MeAap+sk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 34ABD40E016D;
+	Fri,  5 Sep 2025 17:50:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5uOUeExJDHzu; Fri,  5 Sep 2025 17:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757094622; bh=nvYUl9QmXcZhGV7LDMivTR1R7SodOASqEywSNEZXCFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MeAap+sk+VdwfyCrswiOc5REIH3s9U7SaP0ra9piDtNpViHKJrjiiXC+OYwbEnjcT
+	 vwbogjD2xQul6ZxKUnv7+8p/uvByda2LQ9ycJvqg+iaTvEDQdy9sJBj06686iAO05u
+	 LYk91Odqh2reQIDbVXE62GJ/SEHiShROwNqiWov8ZplEJ8dGU2H1o2LOqjuJUFPYnH
+	 Hl+/PMD8BvMWnnq9L74fYprFl1mAEdcKlMLwU1XuOaLLcme2lQlb8wB1EKeF1Wkr4w
+	 LPM1FpPt6mnOkHIE9/9ieU3LBDgDcugFeP301vE3tSOReDbOxcanvOnV9REpx/V79V
+	 kfDbtKEyGS+YKgf0/TkIDFi8HgFuTi+wPxplFJsKSbpkO+19/x25dNs7Yx2ChXhYA9
+	 nPABWcUYMaDxUwaTEk4fUX6JFbTPtsJX7TaU/qqXqIhLRLk9YuaagdbqQjdSVL1ZPz
+	 bVURNzkLucbI0Ny6oLRtekjNLnYlGwfAjPpE9J1xw8qkQ6Ea7DOkkTa1/3ISF7wWw4
+	 8G4tfgbnQEIkhkmQlAQseuKbvB3XWcCxvk0N/X8c1Ep28yuffQIMOl3KMycFMzcT1s
+	 76pK91UNExnVDSeaQTE2egOD0fCWDWZkFiJ4UCsr4k78nblHLZu4xXeaf2cCLYd3/h
+	 Ka+nU1Z9wTcsmovkAE+m7C4c=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EFA6B40E00DE;
+	Fri,  5 Sep 2025 17:49:34 +0000 (UTC)
+Date: Fri, 5 Sep 2025 19:49:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+	Ben Horgan <ben.horgan@arm.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>,
+	Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] cpufreq: use __free() for all cpufreq_cpu_get()
+ references
+Message-ID: <20250905174928.GFaLsiqKV36JDowX94@fat_crate.local>
+References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,63 +112,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84297d37-b766-4cfe-9c3f-bff1cb3cb4a4@redhat.com>
+In-Reply-To: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
 
-On Thu, Sep 04, 2025 at 12:23:31PM +0200, David Hildenbrand wrote:
-> On 03.09.25 20:19, Vishal Moola (Oracle) wrote:
-> > On Wed, Sep 03, 2025 at 09:49:06AM +0200, David Hildenbrand wrote:
-> > > [resending my original mail because it might have landed in the spam folder]
-> > 
-> > Ah, indeed the original mail was found in my spam folder. Thanks for
-> > resending.
-> > 
-> > > On 20.08.25 22:20, Vishal Moola (Oracle) wrote:
-> > > > Currently, we have no way to distinguish a kernel stack page from an
-> > > > unidentified page. Being able to track this information can be
-> > > > beneficial for optimizing kernel memory usage (i.e. analyzing
-> > > > fragmentation, location etc.). Knowing a page is being used for a kernel
-> > > > stack gives us more insight about pages that are certainly immovable and
-> > > > important to kernel functionality.
-> > > 
-> > > It's a very niche use case. Anything that's not clearly a folio or a
-> > > special movable_ops page is certainly immovable. So we can identify
-> > > pretty reliable what's movable and what's not.
-> > > 
-> > > Happy to learn how you would want to use that knowledge to reduce
-> > > fragmentation. 🙂
-> > > 
-> > > So this reads a bit hand-wavy.
-> > 
-> > My thoughts align with Matthew's response. If we decide "This doesn't add
-> > enough value to merge it upstream" thats fine by me.
-> > 
-> > Otherwise if we think this is useful, I can respin this with your
-> > suggestion below.
-> 
-> As raised in my other mail, I assume there is no way to just have any stack
-> pages in any kernel config marked appropriately (slab allocation
-> discussion)?
-> 
-> If so, I prefer to not add it.
+On Fri, Sep 05, 2025 at 09:24:07PM +0800, Zihuan Zhang wrote:
+> This patchset converts all remaining cpufreq users to rely on the
+> __free(put_cpufreq_policy) annotation for policy references, instead of
+> calling cpufreq_cpu_put() manually.
 
-I agree, this shouldn't be tied to specific kernel configs. We can leave this
-out of tree.
+Sep 01 Zihuan Zhang ( :8.6K|) [PATCH v3 00/12] cpufreq: use __free() for all cpufreq_cpu_get() references
+Sep 03 Zihuan Zhang ( :  65|) [PATCH v4 00/10] cpufreq: use __free() for all cpufreq_cpu_get() references
+Sep 05 Zihuan Zhang ( :8.3K|) [PATCH v5 0/6] cpufreq: use __free() for all cpufreq_cpu_get() references
 
-I didn't know a page could only have one type, and trying to handle that
-doesn't help explore what we're interested in right now anyway.
+Please stop the spamming. While waiting, go read how this kernel process thing
+works:
 
-> If there is a way to just make it consistent, then no strong opinion from my
-> side. Willy is the page-type guard :)
-> 
-> BTW, I was wondering if page-owner could be useful instead.
+From: Documentation/process/submitting-patches.rst
 
-Thanks for the suggestion, page-owner looks useful for playing around with
-different kernel stack allocation methods :)
+Don't get discouraged - or impatient
+------------------------------------
 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
+After you have submitted your change, be patient and wait.  Reviewers are
+busy people and may not get to your patch right away.
+
+Once upon a time, patches used to disappear into the void without comment,
+but the development process works more smoothly than that now.  You should
+receive comments within a week or so; if that does not happen, make sure
+that you have sent your patches to the right place.  Wait for a minimum of
+one week before resubmitting or pinging reviewers - possibly longer during
+busy times like merge windows.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
