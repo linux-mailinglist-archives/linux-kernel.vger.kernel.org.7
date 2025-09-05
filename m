@@ -1,101 +1,121 @@
-Return-Path: <linux-kernel+bounces-802474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE196B452AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F1AB452AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C463A8D73
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8431894718
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40973128AE;
-	Fri,  5 Sep 2025 09:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989E630CD81;
+	Fri,  5 Sep 2025 09:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M7CRSVSI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ScCTqce1"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCF8284B4E
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D669C24C077
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063314; cv=none; b=iONU+Y7yj0deQui6L/JQ6Kyt20QsNEer7MP22mazpe6KREJq5ifHavvgTl3S+5V+/g8RODYPaNe6Xq2e5Aqf0mW1GoSHzCd480For8HwzoHKPgAaDGktcP66b/NOS0gkUsd0xnO74CNmapkId7E8laJ5yoxC3Hemr26JNfa49NE=
+	t=1757063349; cv=none; b=aYS3LAUbCE2ArTJN7Bpbwnr6CPe0p25Fpz2h/YajWVcY1Jz4V7S44ygWwr7IAzT8LqUvkIEBhgztOucf0euQcjn74tb1u7TwKJZ7ahzQciMVnitU0+VPAEQkL92O0nLAvukM1gw8GN8s/JksHS8EPKVnGGV7ix/R75rTsWcC5Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063314; c=relaxed/simple;
-	bh=26Tb1NtsqwZ1rv+sVNZuBfdl1j0yHZvMb0KD02KS9aA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cu3I8zUkijxV3E4WSeZ53UgUg1/baNQHkYDKR7Jw29UG81sts413L574sxVmnnRxGlMfQkArxD4PXJiJYfjiZsKzsa1CnoF+ks9rwvQO2dcDVkMTSgbNIFCGFdZc55/G4erEKuKnT+7hUOvCZYs21DGbt52TH6Gmyyadytd18h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M7CRSVSI; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1757063349; c=relaxed/simple;
+	bh=7Lq3qMXShfmBDk3ScmH45ToYpqdeDRbNuuuQpDGUbUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mSCAP7aa0uIJ3ar2eN0TKJWQb3pOJvoQEQaD/3sOxyHDHV3cOkrhgvod/htMO90Siuv1Rsf/gseO3ykhy04A41QgIC2JjPrSwkJQcBBWE5qels6RBe354z4AZP5beJ/OOi0ffjJOekWgZJZZsiOB/kbYp4a9QFJomYselCpsZdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ScCTqce1; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b7c56a987so8047875e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:08:31 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b8b02dd14so13645855e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757063310; x=1757668110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vsx4ro+fg1Da+fZ6k37g0k5i+Ei4r7saLuhpbXY1yMw=;
-        b=M7CRSVSIPdrVjHEiX3ynHHUpvetOiCRTKsJgCPWe7bseB9Q98YLQLGSBwHbZeGkpQE
-         /aPocbNzlBPzXITNXx4BztXxA7ChXEiSD/SNq86d/6JBR/P3nzh1KWfjigJLMvgkg7m8
-         J6O1ZbgnxFcrdNLJXuVy7D0i/REVhCWNQ1kC1desbMJ89+sJe39gBXmtq3jiB1KbN+J8
-         y+VNjEF1H9xAuMwgxgu8MX0pob/s/HsQp7qsz+3zHu4zwuJogTmTtHkwqgfWLtzq9Bqi
-         w8dfZY2DWBe8+3w8vLnPEo3zUY2OxdwCktLcbWtz1mk/uZzlMipltfboP7sP1M+3UMea
-         nQug==
+        d=suse.com; s=google; t=1757063346; x=1757668146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7GrTx5OAH0jMmNOM8g0SLGoBJRngIK/hcbD1dJzJHo=;
+        b=ScCTqce14k01HmfYs3wHrMyvUIRgKddUp4NddEcMTycJ7ihrlrNSUlKV9pvRe7/3Ni
+         aJQnJzB0gOjABjKfHArDtBcyQUJbFhWgDXjCp1nPiQSNYfNsV2lA1f+wWVKVCrqTy/vj
+         wtHcAP4PFaUdl/sw5YVz2I3/o5/SoqbLYF4DRiF44+y4+LAQkVi90skb9nLh5jjCcK6j
+         Ma515EWoTO/L0COOAteblpJIssVWIIae9NXnCu2PgTqcnErDlCV/2A7BGXrcM47UVDMM
+         xu1bxbcBktKgNotn89dc122usb4VQ5fkQD+Jru4uniuWO6HDoJU0GyXYShuVfiuDsQZY
+         f9KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757063310; x=1757668110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vsx4ro+fg1Da+fZ6k37g0k5i+Ei4r7saLuhpbXY1yMw=;
-        b=khUKB4Dgm6Y9QJYmkAZrN8T2Ci4DWjm/iuDTR9VT0AxllIrvLv/XfwL8ndQw8X+LLE
-         9RfWk3SIrJ7RZZIKdl2kv0sSKxDDKe3pP8V/FhUALXs+79LGTn5nYV23BXOKN9v1M7Bx
-         80hl/+kfWWbz8pjc4e+9ekRupqR0jKmL7heJKqXgqqZv0GUmjO3BCTMO2xUvrGJNMwKx
-         CzGJWnaGWW4diiL1T+GfWu5ASUT2N2tYvNi2lDW9OLW0uBTayUQ7gZDapGW42WICj0u9
-         zQJd2CD++7JFHeYaTdlOREYp3W5tDeVQDgP6yOkLXvqZqUywahKP7e//kRkyv+FBmERY
-         ZGVw==
-X-Gm-Message-State: AOJu0YwcUDK9iLugdO4qWI1wS/vg2Wd5un2M3ouzwLvQZJuBJtrvVfDP
-	7PzIAqlIR8oSV3Ym2jUCOYp9iYn9LYANUu2lhxlnDh0rhwfBzLppXRCix28I956t5tO5MBps23O
-	AUCrN
-X-Gm-Gg: ASbGncuUudgKLwr+/NNV5a0o4h2xpB/3nS2DVz2uV0qgnpcYrafbw63sfIFDYq+DmLF
-	U5Vdsi9S7SLPOziteSPoyjIWZ/l6sDRJcA1DuO8Pj/VILYjQ0uTY8plIPCODvt01i12Gn/Oz3Gf
-	rgnf+mWlKBNqw6haRbSX5n8MiImGotxXR50mnltg62fX4tgm27E789vfl4sh+ruc07q191zwYvw
-	qZx402CdRGjjSNvtnMDKWTWVpb3JMaH0Ob8B6/7OP3cd3qQmLJuiv43jEWMQa75eEjhiR3VBP+k
-	zrl5am3UFJn7wPNh5FLqRj0WtgYgVU0CYIL081VEM5xy2bHMBXxAZ/ThGoym0QFitPdwm6danVR
-	qKR0XHTZoYxlKgVravabcEoEqwaZHY1sTEXtliaIuJWGjyJTHmgurprXatw==
-X-Google-Smtp-Source: AGHT+IHUYSE4/MqB/EOjKjkztpcu59mOOTXF5Ahf/lvz7h2oStW1eg9hrquGPbwauw4p3kcS8EXfwA==
-X-Received: by 2002:a05:600c:1c08:b0:45d:d353:a491 with SMTP id 5b1f17b1804b1-45dd54a5b31mr22217865e9.1.1757063310044;
-        Fri, 05 Sep 2025 02:08:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757063346; x=1757668146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J7GrTx5OAH0jMmNOM8g0SLGoBJRngIK/hcbD1dJzJHo=;
+        b=AW33cgRD86Gm9hGA8GI+FpE5NgVHY0cEU2ww5guCYmzzWPdv3A1LXwb3Xu3KczIWca
+         Fpm1SJQxPfwhNeY02W3OoNKiyOzLpsUY/u9xsaHjDONaa+NcUBBSIRg5p6FNJLvLam/C
+         5/5ohpMwyrJ4D8o/5G/4BX6pqCw7XuMnPytmrd2BdYzsNWCQDApBiER1iwqY0ZvSScM3
+         3mEz+OUPaNn1KI1IcPVkjlhHILCOvqtLS1i4sq9tchsmLFibJnH1WphYc14QsrgtpEKO
+         pKDoNKY1UYLw8rkrL3fgIpDp/egrN/aSelKWyUmGha4sV8CtzhqNU9n8dVOoFHS2Sdf6
+         EnrQ==
+X-Gm-Message-State: AOJu0YzYWrd53cvL2va/otE6qbsqxuALdYjjanuSoSMC8W2sIVjSJYPx
+	mRvYmnSh9DMVtU/0dJd3QaRTmh557i83QamLbiPJQoBMKRS4hjQy9LD/SVfKAUGgvNu+MQq5sUr
+	b3fjknqk=
+X-Gm-Gg: ASbGncsANCY/LWv2Chk8semVRScABFeTBAPaQ8dAORMurIaRRhJSSOBKpoNtWK9Mz2z
+	zM5388jZoopjnptv8k2XMqzl+k94AH3Ju6KW4qkaVc81mA7cfvu7YQ/88kPdPPmNg3EZ29AhsCq
+	Pd0c6dsLtzXLZRnXed8s+bvJ+fbCTTs0YdrUvpTVNQeEuA1ZTOTdeonCtopbiCMyhRCLXOEAchR
+	F3DhI/5Usc9caBmcQIKriqkmgj6ZIWQ294Kna7tc4pOwBI9iWVzId07y/iKcmuX2M0EgBmq4Akh
+	Nt/qg/2sZdoS/XXN7bIjxErnGMuQ/gKbLcOH3zgwUVQjv1uCGXKEN+OCKNAuolIastftSLd+2cf
+	eH/WHf6Hvf0FyctxiFeIkVrFEnZfBrupvo5CbgU8S/OaAWA9ShlM7V5gQxw==
+X-Google-Smtp-Source: AGHT+IGFAkAMNWLANszf5sfV5IIK/XFKx1LcXShCkOWPlYc7igvx9YUxhH0uGtBFRkNHjHYd+DFmuA==
+X-Received: by 2002:a05:600c:4fcc:b0:45d:d19c:32fc with SMTP id 5b1f17b1804b1-45dd59d2f76mr24210995e9.10.1757063345990;
+        Fri, 05 Sep 2025 02:09:05 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd0350e80sm68900805e9.22.2025.09.05.02.08.29
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda6da5casm12931995e9.7.2025.09.05.02.09.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:08:29 -0700 (PDT)
+        Fri, 05 Sep 2025 02:09:05 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
+	linux-s390@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Subject: [PATCH 2/2] rust: replace use of system_wq with system_percpu_wq
-Date: Fri,  5 Sep 2025 11:08:19 +0200
-Message-ID: <20250905090819.107694-3-marco.crivellari@suse.com>
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>
+Subject: [PATCH 0/2] s390: replace wq users and add WQ_PERCPU to alloc_workqueue() users
+Date: Fri,  5 Sep 2025 11:08:55 +0200
+Message-ID: <20250905090857.108240-1-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905090819.107694-1-marco.crivellari@suse.com>
-References: <20250905090819.107694-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
+
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+
+=== Current situation: problems ===
+
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
 
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
@@ -105,48 +125,76 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-CPU affinity constraint, which is very often not required by users. Make
-it clear by adding a system_percpu_wq.
+=== Plan and future plans ===
 
-queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-new per-cpu wq: whether the user still stick on the old name a warn will
-be printed along a wq redirect to the new one.
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
 
-This patch add the new system_percpu_wq except for mm, fs and net
-subsystem, whom are handled in separated patches.
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
 
-The old wq will be kept for a few release cylces.
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- rust/kernel/workqueue.rs | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+        WQ_UNBOUND will be removed in a future release cycle.
 
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index 8ca813d68a1a..6f508c3e37e4 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -633,15 +633,15 @@ unsafe fn __enqueue<F>(self, queue_work_on: F) -> Self::EnqueueOutput
-     }
- }
- 
--/// Returns the system work queue (`system_wq`).
-+/// Returns the system work queue (`system_percpu_wq`).
- ///
- /// It is the one used by `schedule[_delayed]_work[_on]()`. Multi-CPU multi-threaded. There are
- /// users which expect relatively short queue flush time.
- ///
- /// Callers shouldn't queue work items which can run for too long.
- pub fn system() -> &'static Queue {
--    // SAFETY: `system_wq` is a C global, always available.
--    unsafe { Queue::from_raw(bindings::system_wq) }
-+    // SAFETY: `system_percpu_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_percpu_wq) }
- }
- 
- /// Returns the system high-priority work queue (`system_highpri_wq`).
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] Replace use of system_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+
+        Because of that, system_wq has been renamed in system_percpu_wq.
+
+2) [P 2] add WQ_PERCPU to remaining alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND. This is actually enforced warning if both or none of them
+        are present at the same time.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+=== For Maintainers ===
+
+There are prerequisites for this series, already merged in the master branch.
+The commits are:
+
+128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
+system_dfl_wq")
+
+930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+
+
+Thanks!
+
+Marco Crivellari (2):
+  drivers/s390: WQ_PERCPU added to alloc_workqueue users
+  s390: replace use of system_wq with system_percpu_wq
+
+ arch/s390/kernel/diag/diag324.c  | 4 ++--
+ arch/s390/kernel/hiperdispatch.c | 2 +-
+ drivers/s390/char/tape_3590.c    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
 2.51.0
 
