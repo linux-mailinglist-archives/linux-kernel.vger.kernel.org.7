@@ -1,303 +1,183 @@
-Return-Path: <linux-kernel+bounces-803361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748ACB45E20
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B764B45E24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D632B3AB196
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18F45C8225
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7778C306B0F;
-	Fri,  5 Sep 2025 16:27:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BA631D750;
-	Fri,  5 Sep 2025 16:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12728302176;
+	Fri,  5 Sep 2025 16:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QgDe1SiW"
+Received: from mail-il1-f227.google.com (mail-il1-f227.google.com [209.85.166.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9820431D72D
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089640; cv=none; b=noVbiy8rAY2HRSyCUE7nkfkGLqKjhH1SmJhUjm/TvpbZ+xIUiwwNYbUcGv0FluTXXdEq737+1egRfHK7K/MmTeIVu2HRqept9IW8qgOTNIZ2QxVchmSlpuccRfjuJOmjS+JySSoCgkK56XbDoyz7HOwYkG2CdacKXADOzPGSGC8=
+	t=1757089764; cv=none; b=o5Ny3m3DBvY2nvfSiyYMjEsuamlwvlarrCnGCkN72oA4JNBIjyht6GZrxbYkL1w6vZgoHbmkTkOresiGzMLzklo8uOcN+VcEW7j82sWjKnUU5arI+LrU4vpJmTm0TBFBi13IaslFIVzmoBd+RjDlmd7g5X0KhPebKUqV1le8UFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089640; c=relaxed/simple;
-	bh=v/S/LJTOi6ZyryPMzGyn1/L7NYUSdlZ0YVbue83lmz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVyXX2C5DmldK7MhLKbL8qvVMrzzD0fFHHd9QZK1BM55EOAGH7oskGKHB2ajNC2IlhtugomeEcpBT87p2QSIsx+4fzTqV5YnjYKiYBN/7sAntRiVctV7Gur144P2CD0Yw6RcoB7FXRPer7aVSbevUn8xeLW/ZZ/9sTTb5fSDLis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6141152B;
-	Fri,  5 Sep 2025 09:27:08 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A4F83F63F;
-	Fri,  5 Sep 2025 09:27:11 -0700 (PDT)
-Date: Fri, 5 Sep 2025 17:27:08 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 05/33] ACPI / PPTT: Find cache level by cache-id
-Message-ID: <aLsPXFI4VuueQVXM@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-6-james.morse@arm.com>
- <aK7jEMqM/FoB4ABW@e133380.arm.com>
- <cc4881e8-5d90-4992-8cbf-650ea2efa5ca@arm.com>
+	s=arc-20240116; t=1757089764; c=relaxed/simple;
+	bh=VCRprQuG3eJRVmXySnm1RY2bxZG15OWhzU4Qo2J1MAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rOCSNZU3vUuY9jyX5fuburmqbO1oPpIGZJnQFcCgftypfUHNj6xW/+0slFK1YIwcP9MCh3bwIeY7M/u65QWFesOaCuD8EWNVHchJsLWg8KOqDLmDlLlDtoEgUJbNNbvCcvhHikaXJDISzGQ6p6Kwou8npm1CxZkJsvNDJxyDP4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QgDe1SiW; arc=none smtp.client-ip=209.85.166.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-il1-f227.google.com with SMTP id e9e14a558f8ab-3f663c571ffso24513345ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:29:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757089761; x=1757694561;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YDcBS9ZQf09+Sv5HM5XXuVUarA2h0FYbmVQTBGicKGE=;
+        b=YP+CpriQQ166wvwtO4fIy8y7mZHb2l9PadwkwMTG4y/a6iVJZI3ykA6VCyDNUOgLC7
+         OsPMmz+sPsfuYzYyU2ykBGevpoKTTNp9ZoYRXNiZ9JZnOIJe9xMfjHbwNQFxP4/3cZkh
+         9ExP05zkwEvKohArrKtKGlzUIrXnhebP0m1WaIukKQRcXKwC61s4PIjcWiPMDt2m7w/g
+         dDWJsjL79iiokthdjVqv+XuLFy+R6JOE/AhQKNxkBDg9dvRONk52qMmVnNEK38lhe+lO
+         AAN7BWwLJtXAGw4bqgmbGGDgAGPRdR4WdfM0ZFLxlZUZBAW1cSeeBN+1GeZMqUmTwga3
+         E/aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD28TgiCxPJ31pW+O5qvReHxk1mx6TJJ4Llmx0HwPudJuownhfjrSRbR6q/F46rF4Df4dTAhD5CjmQLYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypwgb88qcdbybo/R33Yby5dEn07pbs89hcRCG0Vw485ugMPJLJ
+	UBe1Gvx9QBFepyiWfhIULJLFmro6Jr1K0TGzRGCJkB0E21CzWv/7C1MwAxPvnqAVL5QE4mmDQ2T
+	6mWmun0pplV5bnDG14FDJ9Xh0SraEW9E51lYPSquKxHy0J2TLm3h9xt22b6gb09XF7C52xL2pAs
+	EdiULK5dENK3vFrJjSmbnmBYykYqQX3SxzAku+YBUgT9y/zvS45CllznS+SQ7ISbc4qx2IhjcQr
+	rQEjGUEiDRR8PXKG2WJeTg4
+X-Gm-Gg: ASbGnculcitiU90v1jWYN7/cg2YilCeNNSo4MgtHoJsuGJSIMBbmEIztKk0nn4q+77X
+	Z+5UlWQ+x85aFc/Kz7WhaNMqwGf8nFOtFGXU0SCx0yzC37+Gl5RighDS/ZWQweFBFg35Tb9p5fd
+	PrBPz+EjHWjVnCNDuGPRV1/qWE80GGQztn4V8xMwm4y6EgN2QMBPRSY6+CKg1kCxU+f+vFR2WFL
+	77if1D9wcBiE00LSgoeze9oYnEgoLCfWIMCNDo46SMB/L2JlCJElbsv6ceEwr88FO5SFUnswTEP
+	oUCgIoN21DE+u/fTWnPP0hBDBVEoL1VQ1gI6nWMOhaVWxlJ7S9mObiF8SeYmZXVvKDgohl5KYVo
+	LrYVKlau+0AUq4RJeMT/8T/vsJ82ffUcMnwIx1zv9syb5pYOGDY58dWYtD3d3JRMdfk014whxxy
+	hzacHXm54=
+X-Google-Smtp-Source: AGHT+IECu4EI9p6aUovsMZhh2O7Z3TYqOoUEDvkpKMoC1jpWXa2OlQnDjfyRlL1mgaaQglyYxUMMM4/Cd1Yv
+X-Received: by 2002:a05:6e02:17c9:b0:3ec:df8e:6ab5 with SMTP id e9e14a558f8ab-3f401aee327mr349922325ab.20.1757089761549;
+        Fri, 05 Sep 2025 09:29:21 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-122.dlp.protect.broadcom.com. [144.49.247.122])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3f65ef02a67sm6380955ab.27.2025.09.05.09.29.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Sep 2025 09:29:21 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b32fe42b83so39151611cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1757089761; x=1757694561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YDcBS9ZQf09+Sv5HM5XXuVUarA2h0FYbmVQTBGicKGE=;
+        b=QgDe1SiWPhWHACS5nyG2miIBgQ0gpfwVl9zJpxC2T4gs+puDvapUKXdx/pBHv32/wR
+         YQyAo1o4vMcK3B8L1Ia7gNZXssBNezhMc0nmNQVRzhrWjSxuVQM/bR4O9CSUzXNL6fts
+         X3A1ug+gu/CN3PYukv+cX6NFwIqoFo1IqU7H4=
+X-Forwarded-Encrypted: i=1; AJvYcCWltwCcTEfWLeQuZh+f7nvri27ALqxBqxkjKg4C3hCrvCMFIabwWriRl7zIwamSMB3sf3JSI+csoKjYZqQ=@vger.kernel.org
+X-Received: by 2002:ac8:584c:0:b0:4b5:edd3:ddde with SMTP id d75a77b69052e-4b5edd3ebd2mr29216581cf.81.1757089760506;
+        Fri, 05 Sep 2025 09:29:20 -0700 (PDT)
+X-Received: by 2002:ac8:584c:0:b0:4b5:edd3:ddde with SMTP id d75a77b69052e-4b5edd3ebd2mr29216131cf.81.1757089759779;
+        Fri, 05 Sep 2025 09:29:19 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aabb8288dsm497299885a.58.2025.09.05.09.29.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 09:29:18 -0700 (PDT)
+Message-ID: <5e97121a-01c2-4a5b-a7bb-0034dc344768@broadcom.com>
+Date: Fri, 5 Sep 2025 09:29:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc4881e8-5d90-4992-8cbf-650ea2efa5ca@arm.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net v2] net: dsa: b53: fix ageing time for BCM53101
+To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250905124507.59186-1-jonas.gorski@gmail.com>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250905124507.59186-1-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Hi James,
-
-On Thu, Aug 28, 2025 at 04:58:05PM +0100, James Morse wrote:
-> Hi Dave,
+On 9/5/25 05:45, Jonas Gorski wrote:
+> For some reason Broadcom decided that BCM53101 uses 0.5s increments for
+> the ageing time register, but kept the field width the same [1]. Due to
+> this, the actual ageing time was always half of what was configured.
 > 
-> On 27/08/2025 11:50, Dave Martin wrote:
-> > Hi,
-> > 
-> > On Fri, Aug 22, 2025 at 03:29:46PM +0000, James Morse wrote:
-> >> The MPAM table identifies caches by id. The MPAM driver also wants to know
-> >> the cache level to determine if the platform is of the shape that can be
-> >> managed via resctrl. Cacheinfo has this information, but only for CPUs that
-> >> are online.
-> >>
-> >> Waiting for all CPUs to come online is a problem for platforms where
-> >> CPUs are brought online late by user-space.
-> >>
-> >> Add a helper that walks every possible cache, until it finds the one
-> >> identified by cache-id, then return the level.
-> >> Add a cleanup based free-ing mechanism for acpi_get_table().
+> Fix this by adapting the limits and value calculation for BCM53101.
 > 
-> > Does this mean that the early secondaries must be spread out across the
-> > whole topology so that everything can be probed?
-> >
-> > (i.e., a random subset is no good?)
+> So far it looks like this is the only chip with the increased tick
+> speed:
 > 
-> For the mpam driver - it needs to see each cache with mpam hardware, which means a CPU
-> associated with each cache needs to be online. Random is fine - provided you get lucky.
-
-"Fine" = "not dependent on luck".  So, random is not fine.
-
-> > If so, is this documented somewhere, such as in booting.rst?
+> $ grep -l -r "Specifies the aging time in 0.5 seconds" cdk/PKG/chip | sort
+> cdk/PKG/chip/bcm53101/bcm53101_a0_defs.h
 > 
-> booting.rst is for the bootloader.
-> Late secondaries is a bit of a niche sport, I've only seen it commonly done in VMs.
-> Most platforms so far have their MPAM controls on a global L3, so this requirement doesn't
-> make much of a difference.
+> $ grep -l -r "Specifies the aging time in seconds" cdk/PKG/chip | sort
+> cdk/PKG/chip/bcm53010/bcm53010_a0_defs.h
+> cdk/PKG/chip/bcm53020/bcm53020_a0_defs.h
+> cdk/PKG/chip/bcm53084/bcm53084_a0_defs.h
+> cdk/PKG/chip/bcm53115/bcm53115_a0_defs.h
+> cdk/PKG/chip/bcm53118/bcm53118_a0_defs.h
+> cdk/PKG/chip/bcm53125/bcm53125_a0_defs.h
+> cdk/PKG/chip/bcm53128/bcm53128_a0_defs.h
+> cdk/PKG/chip/bcm53134/bcm53134_a0_defs.h
+> cdk/PKG/chip/bcm53242/bcm53242_a0_defs.h
+> cdk/PKG/chip/bcm53262/bcm53262_a0_defs.h
+> cdk/PKG/chip/bcm53280/bcm53280_a0_defs.h
+> cdk/PKG/chip/bcm53280/bcm53280_b0_defs.h
+> cdk/PKG/chip/bcm53600/bcm53600_a0_defs.h
+> cdk/PKG/chip/bcm89500/bcm89500_a0_defs.h
 > 
-> The concern is that if resctrl gets probed after user-space has started, whatever
-> user-space service is supposed to set it up will have concluded its not supported. Working
-> with cache-ids for offline CPUs means you don't have to bring all the CPUs online - only
-> enough so that every piece of hardware is reachable.
+> [1] https://github.com/Broadcom/OpenMDK/blob/a5d3fc9b12af3eeb68f2ca0ce7ec4056cd14d6c2/cdk/PKG/chip/bcm53101/bcm53101_a0_defs.h#L28966
 > 
-> 
-> > Maybe this is not a new requirement -- it's not an area that I'm very
-> > familiar with.
-> 
-> Hard to say - its a potentially surprising side effect of glomming OS accessible registers
-> onto the side of hardware that can be automatically powered off. (PSCI CPU_SUSPEND).
-> 
-> I did try getting cacheinfo to populate all the CPUs at boot, regardless of whether they
-> were online. Apparently that doesn't work for PowerPC where the properties of CPUs can
-> change while they are offline. (presumably due to RAS or a firmware update)
+> Fixes: e39d14a760c0 ("net: dsa: b53: implement setting ageing time")
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-So, it sounds like there is a requirement, but we don't document it,
-and if the requirement is not met then the user is presented with an
-obscure failure in the MPAM driver.  This seems a bit unhelpful?
-
-I'm not saying booting.rst is the right place for this -- maybe the
-appropriate document doesn't exist yet.
-
-I wonder whether the required property is reasonable and general enough
-that it should be treated as a kernel boot requirement.
-
-Or, we require caches to be symmetric for non-early CPUs and reject
-those that don't match when they try to come online (similarly to
-the way cpufeatures deals with mismatches).
-
-
-> >> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> >> index 8f9b9508acba..660457644a5b 100644
-> >> --- a/drivers/acpi/pptt.c
-> >> +++ b/drivers/acpi/pptt.c
-> >> @@ -907,3 +907,67 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
-> >>  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
-> >>  					  ACPI_PPTT_ACPI_IDENTICAL);
-> >>  }
-> >> +
-> >> +/**
-> >> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
-> >> + * @cache_id: The id field of the unified cache
-> >> + *
-> >> + * Determine the level relative to any CPU for the unified cache identified by
-> >> + * cache_id. This allows the property to be found even if the CPUs are offline.
-> >> + *
-> >> + * The returned level can be used to group unified caches that are peers.
-> >> + *
-> >> + * The PPTT table must be rev 3 or later,
-> >> + *
-> >> + * If one CPUs L2 is shared with another as L3, this function will return
-> >> + * an unpredictable value.
-> >> + *
-> >> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> > 
-> > Nit: doesn't exist or its revision is too old.
-> 
-> ... its not old, but there is no published spec for that revision... unsupported?
-
-That seems OK, say,
-
-	"... if the PPTT doesn't exist or has an unsupported format, or ..."
-
-
-> >> + * Otherwise returns a value which represents the level of the specified cache.
-> >> + */
-> >> +int find_acpi_cache_level_from_id(u32 cache_id)
-> >> +{
-> >> +	u32 acpi_cpu_id;
-> >> +	int level, cpu, num_levels;
-> >> +	struct acpi_pptt_cache *cache;
-> >> +	struct acpi_pptt_cache_v1 *cache_v1;
-> >> +	struct acpi_pptt_processor *cpu_node;
-> >> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_PPTT, 0);
-> 
-> > acpi_get_pptt() ? (See comment on patch 3.)
-> 
-> Yup,
-> 
-> > Comments there also suggest that the acpi_put_table() may be
-> > unnecessary, at least on some paths.
-> > 
-> > I haven't tried to understand the ins and outs of this.
-> 
-> It's grabbing one reference and using it for everything, because it needs to 'map' the
-> table in atomic context due to cpuhp, but can't.
-> Given how frequently its used, there is no problem just leaving it mapped.
-
-That's rather what I thought -- in which case we can use it (as you
-already concluded, by the looks of it).
-
-> >> +
-> >> +	if (IS_ERR(table))
-> >> +		return PTR_ERR(table);
-> >> +
-> >> +	if (table->revision < 3)
-> >> +		return -ENOENT;
-> >> +
-> >> +	/*
-> >> +	 * If we found the cache first, we'd still need to walk from each CPU
-> >> +	 * to find the level...
-> >> +	 */
-> 
-> > ^ Possibly confusing comment?  The cache id is the starting point for
-> > calling this function.  Is there a world in which we are at this point
-> > without first having found the cache node?
-> > 
-> > (If the comment is just a restatement of part of the kerneldoc
-> > description, maybe just drop it.)
-> 
-> It's describing the alternate world where the table is searched to find the cache first,
-> but then we'd still need to walk the table another NR_CPUs times, which can't be avoided.
-> I'll drop it - it was justifying why its done this way round...
-
-Oh, I see, this is "if the code had been written in such-and-such a way",
-not "if such-and-such a runtime precondition is met" ?
-
-The comment can be read both ways, as it stands.
-
-> 
-> >> +	for_each_possible_cpu(cpu) {
-> >> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-> >> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-> >> +		if (!cpu_node)
-> >> +			return -ENOENT;
-> >> +		num_levels = acpi_count_levels(table, cpu_node, NULL);
-> > 
-> > Is the initial call to acpi_count_levels() really needed here?
-> > 
-> > It feels a bit like we end up enumerating the whole topology two or
-> > three times here; once to count how many levels there are, and then
-> > again to examine the nodes, and once more inside acpi_find_cache_node().
-> > 
-> > Why can't we just walk until we run out of levels?
-> 
-> This is looking for a unified cache - and we don't know where those start.
-> We could walk the first 100 caches, and stop once we start getting unified caches, then
-> they stop again ... but this seemed simpler.
-
-I'm still a bit confused.
-
-We start at level one, and then trace parents until we hit a unified
-cache or run out of levels.
-
-Why do we need to know a priori how many levels there are, when the
-way to determine that is part of the same procedure we're already doing
-(i.e., start at level one and trace parents until we run out of levels)?
-
-> > I may be missing some details of how these functions interact -- if
-> > this is only run at probe time, compact, well-factored code is
-> > more important than making things as fast as possible.
-
-(This still stands.)
-
-
-> >> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-
-[...]
-
-> >> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
-> >>  void acpi_table_init_complete (void);
-> >>  int acpi_table_init (void);
-> >>  
-> >> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
-> >> +{
-> >> +	struct acpi_table_header *table;
-> >> +	int status = acpi_get_table(signature, instance, &table);
-> >> +
-> >> +	if (ACPI_FAILURE(status))
-> >> +		return ERR_PTR(-ENOENT);
-> >> +	return table;
-> >> +}
-> 
-> > This feels like something that ought to exist already.  If not, why
-> > not?  If so, are there open-coded versions of this spread around the
-> > ACPI tree that should be ported to use it?
-> 
-> 
-> It's a cleanup idiom helper that lets the compiler do this automagically - but its moot as
-> its not going to be needed in the pptt because of the acpi_get_pptt() thing.
-
-Ah, OK.
-
-Cheers
----Dave
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
