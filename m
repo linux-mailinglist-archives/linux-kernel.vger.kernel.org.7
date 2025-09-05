@@ -1,193 +1,201 @@
-Return-Path: <linux-kernel+bounces-802501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7A3B452E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A2CB452DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84EF3A3469
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:17:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B07317A70A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768373054D6;
-	Fri,  5 Sep 2025 09:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C1C30FF08;
+	Fri,  5 Sep 2025 09:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="kvMnUfE4"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012058.outbound.protection.outlook.com [40.107.75.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VVnLmL9X"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DE430F541;
-	Fri,  5 Sep 2025 09:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063617; cv=fail; b=WQ/8KjZSKzf+wLO/kJh7JDj81STRC9qc+VhKBTbGePWSCpwRJ6McTQUD6zeAT9C/iT5PgIMW/+Ds2yI/4QBwWvxZVeNF77+Sj/A93KUlBBVnItB4CXzN2nhGUAu53y3o7L+jq+jmmidbmOtlGCp7rYbDuvCszpPupGxqLhyn5Og=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063617; c=relaxed/simple;
-	bh=UO6oCV021M/ZESWd0HSAkwrp/iEj/3sET3HBFkHiqYg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=DzWLNOSo/FKAEaltYwKnK3p8PXp99ZeYlgg5xnza2wauB9ibp2e7DxvmmRIs0s5u3Bn/M8DrQo6VnEgzAdxsdT5Ypzp0vdY1DZ7pbtwF1uRcfVEWRoB6i9K28TcJ8MNC4Pkbpo2ktCqlZYvTVBcEL6EVVpxHxKrM5Ge3yyBG9NU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=kvMnUfE4; arc=fail smtp.client-ip=40.107.75.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q8bAks6mZMjsoCrUOR9I8i+kg91uw3Z9lfZGJj4UZsZSb8yPsSVQqiflQTPI4/fUVMrpUzmLROCc4FVZCHgObWGLLFiYn5dG8A+902J8+wt9/SZYTuYmX8RQRAPgjvI7EnuOsGTyAj2dLMD/xH6QX0Cbnbf1PkcCVe+LzOgYD2n/e0Zqe0ZzFQf38FXAguFLZWsMOliO/jv207YzgiVcEbVNksja70adQ2usiMvhsYJUN3ISX9whMasXqP6XdRbZGgPGlhP4TkogoTn/LuvROx5wpYj+/4fhGSPV23wF7+IV+jaLQ8bcaQVV4ZYHDdE8X+aMw08svtYqqE7jt1+Zfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WgjxX+RyvozPBzUvY2PA/ambW/o0dcYBhvDlRYhlBuI=;
- b=tPU9WmoTjmLIY/Pq2ihEnnqQCfOpv0bJGVghTi5EMXXoo4XD5KDcnuvnp/j6OBVqas7Gv8y1ZRIwfR9yVdiIlb6G2Xg5ngcNCXDkw0bs3KmDvgvg1ZRDEbBNS4QFXoXms51z7wHDKjq7ZW8JCW36EZcwGVzpnDlpNjNVde75LQ4ezaxnDq1VGTuH5AIiMXGefM/qs2uWehbIBesOKiMEdNrk1YkEGR7hqskjP54LFnn+fBs0SZ9XhzTbBK3NogVk7+Yqw7YCIWGSLMXCwqRhS49rN0s8TPgg06R0RJPPi8eIDjq9Rfe00xED9hBEx6LEhdCixlGAFL5ac8lt4lQQ5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WgjxX+RyvozPBzUvY2PA/ambW/o0dcYBhvDlRYhlBuI=;
- b=kvMnUfE4oLT8php1baZlwMmyecd3VZhW9dlYgirfGbGCzwxaYlsLT4i+UiREk8RNP8+BVZFmOBTXcPwOz5dmxTsYyZ6yglKH2PAYodh52wYZF3KI1lONwbMmggPPMD3WRV+rZ5+t1lzGhUf3m2mLHVGxGuguLL9Esz4KUZp3ZnqbzMKbM6dLBDsB2zSCw6J6Ndn4P8Lbdim4ql38/2DRI4FrumM8CNst9srQOHhtbgWmRHzBLd77ReAJpTRMegDprcuCayQn1MJslrW+ID5s706DyVEza+naXDM+5O0hUAYZ2+dlbBiprbbJMgfLMd0VACmktwtt3JPWQYRhZwPtzQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7330.apcprd06.prod.outlook.com (2603:1096:820:146::7)
- by PUZPR06MB5518.apcprd06.prod.outlook.com (2603:1096:301:fd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
- 2025 09:13:32 +0000
-Received: from KL1PR06MB7330.apcprd06.prod.outlook.com
- ([fe80::d1d3:916:af43:55f5]) by KL1PR06MB7330.apcprd06.prod.outlook.com
- ([fe80::d1d3:916:af43:55f5%4]) with mapi id 15.20.9094.018; Fri, 5 Sep 2025
- 09:13:31 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] tty: remove redundant condition checks
-Date: Fri,  5 Sep 2025 17:13:21 +0800
-Message-Id: <20250905091321.437476-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP301CA0032.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::15) To KL1PR06MB7330.apcprd06.prod.outlook.com
- (2603:1096:820:146::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96435308F3A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757063616; cv=none; b=q1kybaSXpG45pKNqerVqQHb99hbNrxE0WzLa//N4MYG1HHc0MUI199mw02+EA+AByjQ/ht1eLpqDLUOpJ4845P5u7ar3jT2/E70Z27uQywSNv+1Ri+c62nOaaRW7mom9lFUAanHItquSsUxMynZ+CgjWuleXPe0jRku5xs4hWGk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757063616; c=relaxed/simple;
+	bh=xjej/kYDNqQPebgXT6tHOxX3YBBaZvnjKKNmel41Ees=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nFSw27VCNcoeWsZUXQme7+CsF8W7YaJygRu+hO1mTs3hjbQFmcItCuT2NOuGB7+QH/uhxhh8B+hVUXT3SscyWEasTdXTrXNV3I80UuF9SPMB4Lnafdzw/x8HiCD+U6NDXj8vMDVyhDSGGBGudbHM2Z22l/yTQJXHN3mEXgoSIME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VVnLmL9X; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3dce6eed889so1545783f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:13:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757063612; x=1757668412; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQWYKdUrkbucux1r+P71RtTJM5A+HaI/LGMcYLDUFnM=;
+        b=VVnLmL9Xz6NMUYRe9085YuDDRcb5fymyEUvgkcg/gEg55hLXq18tD+2n49bKUGKtdc
+         oRHDCMBCoTK4ahRG6UkItPfAkle8Eg8LGX+I9BRBG4F1N2t56WlLXyaWwwbB2qB1Hgia
+         +1yKDPobTzelrDoQiVr4oc9Oxha0q+7l2FCOmrCLmSjQQkMhxsCnXIL4mXS8nEJ7ObP2
+         uibgtESpiLFGcPJ/n/bpY7eQA7euwR8QYP66a4Rp0qgLcyYM3SDXbDBopRAWZO34WQPu
+         rmo1pA7sc3T3Wo2to37lKcE2omcEqcPiiL/uFR0fmx38T6DiNXjcL69pvAPt3iZPivLu
+         bjTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757063612; x=1757668412;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NQWYKdUrkbucux1r+P71RtTJM5A+HaI/LGMcYLDUFnM=;
+        b=pK2lFhsc+xL9YB9ippRk5i1pPctRlj0a91whiahJMpHt8WXmWMfYhY4TlI/wfZ4yc3
+         Lq3aeZnaZm+UpzY5znLHjODtT0Kp3ccpVgD15Y2BAJadv6aGaNTY9p/3wxoX7TUEuocs
+         ZE6Y6d3wd6HtLoMgRHDWJPeWUUC/HcZ2904YwmkSimH8svzYuGyw13aRxG5nESaWT5md
+         7XHBTOKWEGpFR2H3TlbZIQCEyMoooxiwkRKCn6LAD2xGKTn6CYvGC5yQLT+6IG1r7CtN
+         4NjOq/jKol/1DW418b8YLdcA5JSOnq3PicEISaR8PFLHB5/6Svloa2pqxmfiXv/FlB7B
+         zrJg==
+X-Gm-Message-State: AOJu0YyuEnPSdRieYxcBBDmGlXrTMoyIrn6QU3ApZMfCD5Fl1pDoWgJY
+	7Rp1ceJcJP8zExEwXUs8/V8Ic31zUXsX6X1F7PieRv5DBaTAB2L+xQ2on3xIFKgAI/FrNhEGru0
+	Iga3Pn5M=
+X-Gm-Gg: ASbGnct30VMAdpMOJyS4MnPO28RrF6VHiTx72wMdslPMxg8g6He18nABi7D6g2h8gxM
+	Kxh7JTcu85+AxPPax/FKOx4dlWzj1p4UidwCCN79kkl1C9jrB2s/IpIT9dCkZyW02o0D/T4R0dN
+	cFAw8OnLnqUhyp2x3LwTws3++DW10bAL741PvgPaoIJWoPJXV4FcRAMATvxnPdVYGJt+1WJyiPg
+	qCwbVh8AsmIMHM5fS6dp9F6Y5F6Vlm0QZHCUSnquxpSS8vEwUJfghg6JIsjDCOGPX406HPyiAJY
+	2T5NflDrGMK1sHlPmmg0QgYiy2AQ5MryRa8Sj6l+23HDmEZ71ahWwTnyK4sP3rjud+4CUKbL5KC
+	phyVoSWyNEBUOoSLc2hr+040wHarSLkHWU5haFYQk/QQcGkQ=
+X-Google-Smtp-Source: AGHT+IGkyalW/7AUfWYEYQVGRI9yndjzBt4cGgpcgnjB3bjoX5oyDn+icTrep6Omgr9A6Ne9zQOSEQ==
+X-Received: by 2002:a05:6000:268a:b0:3da:bf6b:f2f1 with SMTP id ffacd0b85a97d-3dabf6bf39fmr10345579f8f.14.1757063612499;
+        Fri, 05 Sep 2025 02:13:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e4e2c3fe44sm167477f8f.0.2025.09.05.02.13.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 02:13:32 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 0/3] workqueue: replace wq users and add WQ_PERCPU to alloc_workqueue() users 
+Date: Fri,  5 Sep 2025 11:13:22 +0200
+Message-ID: <20250905091325.112168-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7330:EE_|PUZPR06MB5518:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51f887f6-47ff-46a7-6c21-08ddec5c7baf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kfP2usrRUGzQbQPQlFMpb9nRKZRFqA00SZguNreXVgmiavT1rM7wLlko8wvp?=
- =?us-ascii?Q?eAk0GfKempYmSeQgA3yR6PxkFrhLKAcwiBNlKaNYAyE2XDitGIdcQbw+l5U8?=
- =?us-ascii?Q?0Qp+g1iIGVQJc5sD4xtwBJfeWAWAAHhX5+hPT3tPhBj6QbBWCvkGZFZy6gTG?=
- =?us-ascii?Q?Ha63SKL8Kk+5ji98gVlAQyf1ttygeK9FJQL0uv35BXBit+pF0NhMPf3IXxtj?=
- =?us-ascii?Q?k7+CAS+fTmtbpWzRFeqTdgGca482E/usCPbr8ba39Bf7p+Umz/ZIm9AVMT6T?=
- =?us-ascii?Q?oAhsJ4T5GPBDRYkGVGucvGZKRbEdHpavSJ4LS9f1wNRVhknMSwvBV0oJhWti?=
- =?us-ascii?Q?ffUbCqy1qZoMdzvAESwpJ/oEHjbs7W6VR2nzGRMwR0fMD23hzdQrXoNeLFOS?=
- =?us-ascii?Q?Rf1FVMWu7B6HNRBiTfLr3KQyjWbDI0jQo3jdDexJoPiNRhT96FZ4zR0/ykXh?=
- =?us-ascii?Q?YwABXWxvDq5faSN771ciZIScmuhug+3gEN/S1I2HjQgxLBxecyy+5X56KXGb?=
- =?us-ascii?Q?t2043E1lUVt5fyF8mDrDY+xb/3x7/vzccA2E7UEZdT6pxgthixJrJA5gpe7h?=
- =?us-ascii?Q?ZyeWq7nAQQrtzW2M/J0jshdho9FGSCrjvjOPt/JCdz6WV47bcEJVi9KZnlwm?=
- =?us-ascii?Q?gWWKRDuxsUpP+MsYMzoVdhjzkU2Rpiapptz96FXIVTwbu2c8H7tV7sFeHCn0?=
- =?us-ascii?Q?nkgAfzoc1Iho6MzAyleJuLstBNx4jEoPYxMrbiwqSF1ftYrlrbZQ2HrMpDwU?=
- =?us-ascii?Q?U0agq8Kt//0/6cB/O9tQzjIBwQqsFf6cBP5JLBiBj9ZdYLc6N0S6eT2A0Y1N?=
- =?us-ascii?Q?yADP+N5NpkOy+a/xNPXZYCwzfzFgv7UvQH9nHK6iF/b/OZSxfSNcQ8p6cKkm?=
- =?us-ascii?Q?uEXDnLCOTRVpPufIseK7z251y/T/OW+SiR6AiAxaE4iVT3+IIJ/oP+EeIzhw?=
- =?us-ascii?Q?3rnpAzHZgIq8WVHkS6s2pKSmqIVnnIF1owm8MolxccG9RvshwmsVEH0jySfA?=
- =?us-ascii?Q?zl0iYQIuHVl+4LHpBIbQ8QpOAkBhIgCKw3V2aZ6f9Qepyltax1GkriSBF6L4?=
- =?us-ascii?Q?Hq8iGftExe6ShOAUqSBtg/zZ8tC43zj3FjYWQyLPEWkoilciTsadUR+SBixD?=
- =?us-ascii?Q?VeHZqDKNjGrcjYXMwaO4eaXwypBARElewbzgnpRdrw7LbH4DKf59R7DNnUtR?=
- =?us-ascii?Q?YpM2L0aYdF9Ota0u6yM0cNYjXAEdT+cZTosJoEbwgN0AyKAPMF/YXpuj6KGV?=
- =?us-ascii?Q?JdlAKMkJ4Gi2Ws43EEVji3TVhyTAaKzzr2UKZsTRwW2IexYg6Q1hv369phZk?=
- =?us-ascii?Q?n23yRBMLp2kXfa2cujFiXBDPKPUatFa3bQxd/IatnP86+hICqu931iiIDVk/?=
- =?us-ascii?Q?/Q2L6yaFU/uBwjOpVouVcq2H3d0BI4rK9p9ylx7qhWmW5AJ8yHW0XBnl1Sch?=
- =?us-ascii?Q?/0Z2Zb6n8D8HKQ6KDARuWXelBtiTIQVs6rAMuRM697g8aU1uVhsLag=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7330.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZV2dkX+dwm0Z8Sw18mGt/gieWdyAzoh+Q29l5pc3rogEtCLi5e/DjwOwyzKy?=
- =?us-ascii?Q?VGpvrhcSAucXj3IRS3/LVVwWOv+KLj6bmqLGywTderYixxv6pWIhfKMLYRrj?=
- =?us-ascii?Q?5hcoJzQLiiNAy46goKiiJCXhvLyxOiXxTJ9uOJODhhgXN4ATR7NiaLB+66RA?=
- =?us-ascii?Q?qkey1QTsdWUswsUQI7SZH07yN9JHqBwbeeGafroITnDxm4mlI/dMZysBI2fq?=
- =?us-ascii?Q?aDIJ7th96QQhNBiIJ0hiIeucCFcgwzqhjrWTOGO67RoPzgQJgn2iN91cTPVa?=
- =?us-ascii?Q?sStUKCWDBOgbXpTm1ObysPr0RrgnP4awSBwu+NkMU+WVF8XzzGJ4J+CD1hUS?=
- =?us-ascii?Q?gpu9umuR9GFBloeMPA22GQbJ2W918OkHitmnk/ilnBvspbqPzvZ3OHtkEtlC?=
- =?us-ascii?Q?ibJ9iXZKcpwqtOES1UnLLkAc72MUNrEYaDI2mHQYW41r7syQUeAxpH0qImcb?=
- =?us-ascii?Q?CpNFU0ZHdiouMmEC80XACo4ZL8/dJaFYkegU1L3+coqsA8yNsDFKDLVYWpuK?=
- =?us-ascii?Q?RhA0ovx24fpY3iQ75mDVlWH2MlXK3OFplgyVmrhhTn/+R+fekPWe/1OdozVo?=
- =?us-ascii?Q?2fR4yRn1W9mfclOZJrCq3qDm6GkjL5OOuVjfkC1lMWcbX+WSIcr6yZxZeG4Y?=
- =?us-ascii?Q?ts9P7VwwA9EerbAQyKdm26ExpLEwmxyl5RHz6eQ0u2jNByRRmwawXmeERb1r?=
- =?us-ascii?Q?OvG8PzYo/4A5IQE/5KLebKRFkM/chaXgfQbGf1oBwImsRF28l2O32Mx7LqgH?=
- =?us-ascii?Q?EPBous8OgvEe5c4u5mCUyPVVIiwaisvxeqz9RG7hzMR7HOmnsRpJYKhvsgIw?=
- =?us-ascii?Q?hcf75c1Iihi8cL2ul8W1uGjNReSdIqTuZsXFfm5wEA5EG8WhMvOJ+8OBMtfm?=
- =?us-ascii?Q?FOTrkmra9tm6Sf0quz49BTq0SWRJF/47bNYZsY1ZSgRR4+iOfNsW4yTqJOlQ?=
- =?us-ascii?Q?eoYolFd0R0KGTdcFLrQhMmfJSWfKO6Rdrehge3x9KcrfEFMostJucfu0KHsQ?=
- =?us-ascii?Q?9C15F6kAnUYWPZ4aubxCVDtNgtdQbwta4GpoBKBoR2FPlDfzUCHTfvjTxxsX?=
- =?us-ascii?Q?40gPw15f/+nyN4BT8Zox3noPetp3oMDm3q2wXl5L4XZjm3360aSu/LPPCY8S?=
- =?us-ascii?Q?uFoYe/CzyjS8EtpreDmIHFJgTWoST2BixHAlrPDCNxtdSGx2OjHmIbvCZeX0?=
- =?us-ascii?Q?0X0dY/GG7NakCETUGIMy8Fp8vvUZJechpTnFfJ/H6iqNvaFNQ3LgPWCXYT2L?=
- =?us-ascii?Q?IdfWJRgAnICvO0a1mNMEgOScLxgpl06Z1PPtmOXiblfOD6H8ulkX0NK82jID?=
- =?us-ascii?Q?dVXVSoF1w5cg8cqwGIh0iFrwg4dO+jTdmR9M2fdvJNAnuz4OyCvKhlWt2Nh0?=
- =?us-ascii?Q?Oav0t0JH2OP+fWY3ene2QQCtdW+4Niy8TRuojNDVJTTe8RfolLY9qyRYMSO/?=
- =?us-ascii?Q?nob8AS/Cu5K1xMkHHE/AcQZw/cpPJDYKrZTBLq9bhS/s8qSs1g2kNTh1OBeA?=
- =?us-ascii?Q?eYJONtWZPhAxUcnT9SnpzBbGVAbi3PKm9G7QkO/JiNfmNDh7bodAHI+171U9?=
- =?us-ascii?Q?aBz/slMFgQinnxkuT18iVPBg+iTcr3vricJjpibu?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51f887f6-47ff-46a7-6c21-08ddec5c7baf
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7330.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 09:13:31.5233
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d03RVGeyqR46pAVJAno3G/eW/NYjD6WlANvFRg5BnIhfnXlXKsbBn70UAsSkdMK7RHetr9RZwCnHvUUKNnmZfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5518
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Remove redundant condition checks and replace else if with else.
+Hi!
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/tty/hvc/hvc_console.c   | 2 +-
- drivers/tty/serial/msm_serial.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index cd1f657f782d..fffc30b9ea54 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -184,7 +184,7 @@ static void hvc_console_print(struct console *co, const char *b,
- 					hvc_console_flush(cons_ops[index],
- 						      vtermnos[index]);
- 				}
--			} else if (r > 0) {
-+			} else {
- 				i -= r;
- 				if (i > 0)
- 					memmove(c, c+r, i);
-diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-index 3449945493ce..2e999cb9c974 100644
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -1102,7 +1102,7 @@ msm_find_best_baud(struct uart_port *port, unsigned int baud,
- 
- 			if (result == baud)
- 				break;
--		} else if (entry->divisor > divisor) {
-+		} else {
- 			old = target;
- 			target = clk_round_rate(msm_port->clk, old + 1);
- 			/*
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+
+=== Current situation: problems ===
+
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Plan and future plans ===
+
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
+
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
+
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a future release cycle.
+
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2] Replace use of system_wq and system_unbound_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+        system_unbound_wq is to be used when locality is not required.
+
+        Because of that, system_wq has been renamed in system_percpu_wq, and
+        system_unbound_wq has been renamed in system_dfl_wq.
+
+2) [P 3] add WQ_PERCPU to remaining alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND. This is actually enforced warning if both or none of them
+        are present at the same time.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+=== For Maintainers ===
+
+There are prerequisites for this series, already merged in the master branch.
+The commits are:
+
+128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
+system_dfl_wq")
+
+930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+
+
+Thanks!
+
+Marco Crivellari (3):
+  workqueue: replace use of system_unbound_wq with system_dfl_wq
+  workqueue: replace use of system_wq with system_percpu_wq
+  workqueue: WQ_PERCPU added to alloc_workqueue users
+
+ include/linux/workqueue.h | 30 +++++++++++++++---------------
+ kernel/workqueue.c        | 23 ++++++++++++-----------
+ 2 files changed, 27 insertions(+), 26 deletions(-)
+
 -- 
-2.34.1
+2.51.0
 
 
