@@ -1,114 +1,95 @@
-Return-Path: <linux-kernel+bounces-803190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD8FB45BDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:11:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08256B45BB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97FDA1C2080C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:07:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010257BC66A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341D937428C;
-	Fri,  5 Sep 2025 15:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98B37C114;
+	Fri,  5 Sep 2025 15:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrXh5JC8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpscm9D3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8800437426D;
-	Fri,  5 Sep 2025 15:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F209715D3;
+	Fri,  5 Sep 2025 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084578; cv=none; b=unrn2s8vPecEH8TdzMOJA2F5sbm80kwCh/wetLJU2kWZ12MvZe8ULV/mvKPXOBH1NHeOMtZnJNWY6Lq7SPewUUEVy/Ev/bLnCweBp9tQZ/YCBcW2Ws1ME2ixtlfYjJQM6KHDT2Uq3IPiQSAB3ZYfGzSDfvRf9JLgvO7V5UCNN4U=
+	t=1757084590; cv=none; b=l0EsImoHsg9S+25fXFQFkyDzcVHIbV8eACMVaqH8RqgFk0UnzXOcbWsxY63CCqdn3IVmN8lhsMIsNSpT2NO0SsE2xcSIx9jtsxwWrWEyWtKCM9PVJ0oh1UiQnZhAfrQpQ4iajPN6q9uUCpB9Kn9ZtmIz0hGEW+cOegut6+bMWPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084578; c=relaxed/simple;
-	bh=fXAlkg6U4rjB2T88uzlB0xsdi6LWa2QU3tBer2f0tLE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=enzxGhEpONlHCfTsxkxr3LohLyM30xX60IEW9b78b0R+vyMw5mvkGX57VDAJxCWOn4N+AIh9a6B2O2oOKa2T0vD9CmqAmNwU028IzKRzfaf4ipom4jFY8b3u5r6n3mFwvE2UdiU3MVmHrWGw1Fq5k8t55tb+0L73WGNpj7tDcY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrXh5JC8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0750C4CEF1;
-	Fri,  5 Sep 2025 15:02:57 +0000 (UTC)
+	s=arc-20240116; t=1757084590; c=relaxed/simple;
+	bh=eWcAevp3S4UXAh8xJvmgJDZ8dIZTuYfxGRfOPAGHzjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=by1owLRKA8AWTsfwP4wiLlYEQhuuvoeZldJTy/yWw5C/GcqOVWi5UshlANhKEuG1UxMQWSrPjISlIjB3oWD+wivUbS3enFQu5svIoqR3NwfSrY9BryntMstoucdiNy931kpr0igtwYnlhsYzBY8+5/vsZ2Grt7MCyoeEnVMozco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpscm9D3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1ADC4CEF1;
+	Fri,  5 Sep 2025 15:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757084578;
-	bh=fXAlkg6U4rjB2T88uzlB0xsdi6LWa2QU3tBer2f0tLE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nrXh5JC8NNluI3p5jaLqySzGJpmeKgwV9Zu67Olq4VBiL2OHhcKZp17i1qxOAByjZ
-	 IZ4BCOyAB4ZZgxu5fMVQ+gBrLQb/M77HHt6Pfvdmmbrb0gC5kFv2DggICl9HnpqV02
-	 iVXgMMfQUTS64BpH9F8/DUQ0kpxwpbRoVVZsdjWg3YbcIJmoiqRkfxX56L+OSBGI8w
-	 MNd7Gk13vdIAKKNRRKjk8kHQ5BkwPmP6Fzka3zSdZjAnlil3fc0Y7eeGv9JKI3sGys
-	 Jx6VoHtvtf3rU5cudLlcScxlSJT+J4E1IOSyA/AjtvsJypal4QQDn9r61B6dFx9KXV
-	 8T6H4OovQB4+g==
-Date: Fri, 05 Sep 2025 10:02:57 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1757084589;
+	bh=eWcAevp3S4UXAh8xJvmgJDZ8dIZTuYfxGRfOPAGHzjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bpscm9D3qzPLLuVZ8PGfSsrsMMeke//1FuhPUCKteBX0Wm5hUiV5gAge8j/Ckra64
+	 aInTQerHYlfhk7oJm/9+Hm3pf/B8H+zHHSc9Zor5bB7VuljHPXzYEkDxGIoI6fCNAl
+	 ttCA+kSGwulJQTfjIFQf9SXeZKCwOg0L+D3aNx82O5AohDy4BBlFdgE03bMUiLvcOc
+	 mMgexzxxEp5P9XMKAcsOTwRYm89/mSESinr00JvsZAbYTLopcwN9Rnm5KuEF8cxVJw
+	 m0Oq0tG7jG53kU1Ao0+RXyHsjrQ5VpZnzM0QuMJ2KcBgequu0mHecqemSbtIT9NpNR
+	 BMKW8ijbNJGjw==
+Date: Fri, 5 Sep 2025 20:33:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v3 6/6] bus: mhi: host: pci_generic: Support independent
+ DMA mask for VFs
+Message-ID: <adba44ewxcgndetgggknfgqzr7ndagmj5fk72w3rgnfn4d7xe6@ulkzzei25qed>
+References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
+ <20250821-vdev_next-20250821_sriov-v3-6-e1b017c48d4a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Chris Lu <chris.lu@mediatek.com>, 
- linux-mediatek <linux-mediatek@lists.infradead.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Sean Wang <sean.wang@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>, 
- Jiande Lu <jiande.lu@mediatek.com>, 
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
- linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
- linux-kernel <linux-kernel@vger.kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hao Qin <Hao.qin@mediatek.com>, 
- Luiz Von Dentz <luiz.dentz@gmail.com>, 
- devicetree <devicetree@vger.kernel.org>, Deren Wu <deren.Wu@mediatek.com>
-To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-In-Reply-To: <20250905084433.26999-1-ot_zhangchao.zhang@mediatek.com>
-References: <20250905084433.26999-1-ot_zhangchao.zhang@mediatek.com>
-Message-Id: <175708448180.930634.147702031291534747.robh@kernel.org>
-Subject: Re: [PATCH v7] dt-bindings: net: mediatek,mt7925-bluetooth.yaml
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-6-e1b017c48d4a@quicinc.com>
 
-
-On Fri, 05 Sep 2025 16:44:33 +0800, Zhangchao Zhang wrote:
-> Reset BT via BT_KILL_1V2_L hardware pin.
+On Thu, Aug 21, 2025 at 06:25:38PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
 > 
-> On the M.2 standard hardware pin interface, the MTK chip
-> has a pin called BT_KILL_1V2_L or W_DISABLE#2, it uses
-> function-level device reset (FLDR) to reset Bluetooth.
-> When it is pulled low, it can external shut down the BT
-> function, it is defined as 5 on the MT7925 chip, and is
-> defined as 248 on the device tree pio controller.
+> Certain devices like QDU100 bootloader support only up to a 32-bit DMA
+> address range. However, Virtual Functions (VFs) are enabled only after
+> the device enters Mission Mode and can support higher DMA address ranges
+> (up to 40 bits).
 > 
-> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> ---
->  .../bluetooth/mediatek,mt7925-bluetooth.yaml  | 47 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.yaml
+> A 32-bit DMA mask limits addressable space to 4GiB, which is insufficient
+> for data transfer requirements over VFs on platforms like QDU100. These
+> devices require larger memory regions to be mapped for efficient VF
+> operation.
 > 
+> To address this, configure `dma_mask` independently for Physical Functions
+> (PFs) and Virtual Functions (VFs), allowing VFs to use higher DMA mask
+> values where supported.
+> 
+> As per PCIe SR-IOV specification (rev 0.9, Section 1), VFs are capable of
+> handling resources associated with the main data movement of the Function.
+> 
+> This change ensures compatibility with bootloaders that have limited DMA
+> capabilities while enabling full VF functionality once the device reaches
+> Mission Mode.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Compatibility is with the existing non-SR-IOV devices, isn't it? How does
+bootloader comes into picture for them?
 
-yamllint warnings/errors:
+- Mani
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.example.dtb: bluetooth (mediatek,mt7925-bluetooth): Unevaluated properties are not allowed ('#gpio-cells' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/mediatek,mt7925-bluetooth.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250905084433.26999-1-ot_zhangchao.zhang@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
