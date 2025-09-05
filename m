@@ -1,130 +1,121 @@
-Return-Path: <linux-kernel+bounces-802567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE8FB453E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:59:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA113B453DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFC51C279AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E81C7BA1EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA5729BDAC;
-	Fri,  5 Sep 2025 09:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF29299928;
+	Fri,  5 Sep 2025 09:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ju7VL2t+"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="db5PG2Gf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B096B29992B;
-	Fri,  5 Sep 2025 09:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252BE1D555;
+	Fri,  5 Sep 2025 09:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757066331; cv=none; b=gMEtvvgJ+uyMW95cahC345Eo+CtF7BM6/11e8TkddijNiAqPI8qG6cPJb+s4unvCcV8naMnnP8YnUV7oRXiELG15d7Hl9cd/0ZuKWqLyL/EpQhtuqt2iVh8jnRL+hqHaMCYJV690UtEqmpj2uMBlJfACfCOIHgMZE7GVIlq2QD8=
+	t=1757066303; cv=none; b=iSU6/oYPxGTUXgM7X7c0gIVC1kwXwdw9pbRX44AI6sALr405CrjzHFHVgVmsHjolp7YMzFTidt3o6TWt7qh9/lzeX/S7Rcc2chVbizy6nzPGtZCi/Y7dim+NMi3s5RtSSjd1GLGNjGFvI7NRZ2b0d2/KPVxDqXfnFAKoNPTL5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757066331; c=relaxed/simple;
-	bh=HwKAByuNhyttoGvFHgIccch/Uo155Ry0ykJWPvr1wMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1UbRWRqBy3e2gD8pe571xLzQfsCFLSHXz3sU8fhBvyXLDZEiIoHaW+OZuKFiEE/eiG5sF5PQeuZ21RvRjtZ56gcfQSv1mcYeWFXbOS/qX6+zjtkpBCwb66OOzgwVAguikuEVgEt6LAoyNXpfffb8QcQBYGuybFFxDbhEnBiVe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ju7VL2t+; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso3997247a12.0;
-        Fri, 05 Sep 2025 02:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757066328; x=1757671128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Fbkrslrl/U4EHGtpNkUJapA11UFx/rFpQL4PlMt2+o=;
-        b=Ju7VL2t+yE45YjZPcFLMqEBvgyXRKiYbvbgLNNZRphjEFwfpZcwS4fvmI0k6roSAKl
-         /V6XDy/i9hptqFECLx3d+++AbyPKYLcWg1C6KrMmWbe303e2V2TIeu6RC7cRSFDD5TqY
-         9/3efbb1buRTSFM2eBykAPR9NTexuFKI05DbcsG/jcwjvOk6BRfzphMT1JxTiHxpKom9
-         1NOCh0pJp3aIHYCYHWmiorUBrTPQWMV2gP4QjIMb/K8xdbYUeAXweBhRKlDe/PtskEuK
-         jUPckMfqTjt+0Xbwcda5QkOsmfADb3KbTOIb2zpD7k4/UflsmEKxQoFBuoESbYfbJkVB
-         6K9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757066328; x=1757671128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Fbkrslrl/U4EHGtpNkUJapA11UFx/rFpQL4PlMt2+o=;
-        b=XGUbKioqqbwv+k9M5etEzYqQKkhl7+1bA1N8c8Z3WWNA/y63VQ7g5aeIxIYuVV7Nxj
-         X0V/Uy6MYk/BqKg5vetCr9L31qY3W8RdRPYuIGYm2b/TY67tHlCeJ9aVpOC27aWxOPHt
-         qUwk64+QmF2gkMuvqPf+R4J0KK7hAnn0bgQB6Q08kwpGmgyKT+eFJ5XYhnIkC7/203oI
-         YrJjFkfnzEBloQw3kqtPUreW++GL06LIimguitGjHE92IZ83gW0PT4VLCZtty2d8BwBx
-         4xRUQANyKshe66+nBE97TdXaaQ6CVtojzadOs5depRc82105aPk8HrElwWufT+UVn/cw
-         m2lw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5TusZsWvANO5QZpBXjLiJwxhew1dnrOoc7dllKEzE7eckRu1bUWFnp/aUR+pw4qmN0zxzuFTNAHOg6zQxjw==@vger.kernel.org, AJvYcCUlOK3CKTpXbnnS0tyubxPjZO5EQlCze+ekMjTFAbNtyNdkOYZoJXlPooKsIt0JJCEf/3ICocNdH1WOY9sg@vger.kernel.org, AJvYcCVbNTTXsf2TIF5N1c6KeavA8WNATQ28zP0HpKx5VywvKCwzd154IyQWj5wLFBPCeo1RKIFOl6Fhkx/LMA==@vger.kernel.org, AJvYcCWW7HOUcEp+pHWlBK60JShV2u18zwJkXwokE99xuW/X7r6Z3v9iXV8eAKUvh21Z2OJvs38dyvxHFHH5L6A=@vger.kernel.org, AJvYcCXa/d6LaBGz9hn5qX4R5J5PSkuieBTP6JVfqLyYmVxyJhzbJjuoysiG+Ls8FFyzZziMFrYktiiXQgaq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH99YiwiSHCOuig6bKEw9pCBV3TAN2o8UKGuhXyjH3QTcfaRCo
-	PDOHpMj3Em+8iisF5D829NanknmSzjkLnzo//XrCqZkUsn7YDNoM6AzW+2bY+kiRMmZ+yN7RrIe
-	4lMMZd+QYh8yhp5N2DjzqXQPEJG+Cnl8=
-X-Gm-Gg: ASbGncsRIz13No41OSggY9WfDCX/gggjUAAWmT5V1hd1MeitwwrcnLA/LfE2xz9mJB+
-	FXvR37bk9B8WNk6r6t4jXHukU/JkEfN0eFdhmpGZURaiyGjUkQ3oz9q6Uw/QNv5cNkLDmezJnwC
-	ICY434PloAlLr5BheBEvuDE7dTEN5gHq7CbFcUJo+SrD3rbVSzFMNzVszMqTjmYAMJBdabmgsPQ
-	/pXAWoYYftoaKH2kP+r
-X-Google-Smtp-Source: AGHT+IG+T0I2sVJ76wcpIaEPBSRBiZu3omKGiXauTUn6MdjpxAu1nCa0lZ8hdCy65HkLKv48pMVIExJVfsOtu7NoIlE=
-X-Received: by 2002:a17:906:b24e:b0:afd:eb4f:d5d2 with SMTP id
- a640c23a62f3a-b04931b6715mr244720966b.31.1757066327695; Fri, 05 Sep 2025
- 02:58:47 -0700 (PDT)
+	s=arc-20240116; t=1757066303; c=relaxed/simple;
+	bh=fH/fH9IlI4y4iyWIl9EmyomPqVs0ZCb7wQlHJg8l0wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jo5d1GK00WnoTk8UsmTE/M5EGJb3YpRbHRC/T1Y9zjhmo3wUPQTfdXD9Ejn0Dj9NEDUAEPDcMKpksl/784YiRr9hq5pVJQhIT5HoLVDnqfDMLHGfAaAMJejp7yEXfiCIxdZLT9Fs8jxqf6FzZbig30xD7Yy+obDxqRps8X/QRKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=db5PG2Gf; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757066302; x=1788602302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fH/fH9IlI4y4iyWIl9EmyomPqVs0ZCb7wQlHJg8l0wE=;
+  b=db5PG2GfI28nnHosiqzbBN03rtLe6M42XT5kDhu3n/FKiZrA5ZaBgY/r
+   TtJMW4ERo5hCfwHMh29uArmivTgE/z5g5jdsOf5+pSVY7zeNFkQ0Oa0W/
+   3cQ7f+fyAdGTTeIUF7m/ayTAG7EgQEJ+7gZCFqiqJjolGlX0fQLVZlqS+
+   sNrYUSpxpEA54yWS/ytraoZyUIrQv8CeSxA78epdwrdkfo+WHcqVYWIlf
+   2wGhPeAape9f2FncujvMQxPXqFseVQ0/ihSIHS5FGCpt3tP+gf74nXdJt
+   SKH+k/pBOIuRYfC4k7v95p5aFePLzLtBUu3yaQuABrK3S1vx0EdJQMGtj
+   g==;
+X-CSE-ConnectionGUID: ewbEAwIOTEeQ6dFu4Nqwcw==
+X-CSE-MsgGUID: bAn+OmcySuuw4uZO+2R0Xw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="58450173"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="58450173"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:58:21 -0700
+X-CSE-ConnectionGUID: z3iBlKTRSkixb0iLo9lHyw==
+X-CSE-MsgGUID: cxdbLLL0T9quPQjZfy/Yfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="172012263"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa007.jf.intel.com with SMTP; 05 Sep 2025 02:58:17 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 12:58:16 +0300
+Date: Fri, 5 Sep 2025 12:58:16 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] platform/chrome: cros_ec_typec: Set
+ alt_mode_override flag
+Message-ID: <aLq0OD_7lIP6B-eJ@kuha.fi.intel.com>
+References: <20250825145750.58820-1-akuchynski@chromium.org>
+ <20250825145750.58820-3-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com> <20250905-leds-v2-3-ed8f66f56da8@vinarskis.com>
-In-Reply-To: <20250905-leds-v2-3-ed8f66f56da8@vinarskis.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 5 Sep 2025 12:58:11 +0300
-X-Gm-Features: Ac12FXxgVWw8at73QOgiZhDzD-M5RC_p2kCHNqId-Qnd1EcmDzHOPtVe7B7RZ5s
-Message-ID: <CAHp75VfSoDHX-zy3Kdk0=oBA64mKddXqHh7v6RwfzRJo8Az_1A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] leds: led-class: Add devicetree support to led_get()
-To: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Daniel Thompson <daniel.thompson@linaro.org>, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825145750.58820-3-akuchynski@chromium.org>
 
-On Fri, Sep 5, 2025 at 11:00=E2=80=AFAM Aleksandrs Vinarskis <alex@vinarski=
-s.com> wrote:
+On Mon, Aug 25, 2025 at 02:57:47PM +0000, Andrei Kuchynski wrote:
+> This flag specifies that the Embedded Controller (EC) must receive explicit
+> approval from the Application Processor (AP) before initiating Type-C
+> alternate modes or USB4 mode.
+> 
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
 
-> Add 'name' argument to of_led_get() such that it can lookup LEDs in
-> devicetree by either name or index.
->
-> And use this modified function to add devicetree support to the generic
-> (non devicetree specific) [devm_]led_get() function.
->
-> This uses the standard devicetree pattern of adding a -names string array
-> to map names to the indexes for an array of resources.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-...
+> ---
+>  drivers/platform/chrome/cros_ec_typec.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+> index b712bcff6fb2..c0806c562bb9 100644
+> --- a/drivers/platform/chrome/cros_ec_typec.c
+> +++ b/drivers/platform/chrome/cros_ec_typec.c
+> @@ -491,6 +491,7 @@ static int cros_typec_init_ports(struct cros_typec_data *typec)
+>  
+>  		cap->driver_data = cros_port;
+>  		cap->ops = &cros_typec_usb_mode_ops;
+> +		cap->no_mode_control = !typec->ap_driven_altmode;
+>  
+>  		cros_port->port = typec_register_port(dev, cap);
+>  		if (IS_ERR(cros_port->port)) {
+> -- 
+> 2.51.0.rc2.233.g662b1ed5c5-goog
+> 
 
-> +       if (dev->of_node) {
-
-This check is not needed.
-
-Currently of_led_get() returns -ENOENT if the np is NULL or index is
-invalid (negative value).
-Same will be with the added index search as in case of error it will
-hold a negative value.
-
-> +               led_cdev =3D of_led_get(dev->of_node, -1, con_id);
-> +               if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) !=3D -ENOENT)
-> +                       return led_cdev;
-> +       }
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+heikki
 
