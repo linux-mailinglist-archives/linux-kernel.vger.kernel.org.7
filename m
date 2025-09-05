@@ -1,371 +1,175 @@
-Return-Path: <linux-kernel+bounces-803290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F8CB45CFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36715B45D06
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3585E7ADD90
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:48:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88AC188F245
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2CC30214C;
-	Fri,  5 Sep 2025 15:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33D830214A;
+	Fri,  5 Sep 2025 15:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Plb916g7"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DRFTEJUz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2CC31D746;
-	Fri,  5 Sep 2025 15:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9262024EA9D;
+	Fri,  5 Sep 2025 15:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087209; cv=none; b=Nrm5QUZv8ava00OCZ/OfuSh8JknmiMeS/uq/hT3jYETvnRYs12Tu5JFmuypAyk+LRBYiudcbjKST4ClQ6xH/xZPS+/SSbUzqiW7xFASXRNqJSnnzkioYyLE+0DOd4YQWVEBT2NWzKy4+0VqQ3chUx6BxHzOLJ3wRX55LZOVloKc=
+	t=1757087365; cv=none; b=JtkcUCRL0WcjHn5gmsJFVld/u5MktpXRg8/gM6PyZo/mLB7valdBm5H2/Jvl0ymb7qbYphqEY1/pqe9SC/vvb17bdNWOy5dEwYRVD6bXyJ4agyhszfqkd5fTbZ/hij+e9XoTWwf/u9PYbMGRBAwkQsckr696s56Tlmp3MtFxxu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087209; c=relaxed/simple;
-	bh=WgrxH3lG2+fvh6S9Kworr7I4wyXCwAYVcDzvGNGNtZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nlAhQiERiM3vjC6e4FQf12sEJhdq6kxyOQpWvkd+ZwXrVUo6ER4C/gNANpB5BuNRErsaLIDbuLTRWGOl3n1xO2waEMtkeqlUB9fTcescz8TxY0xyv0IUK/+Hkw8yD33iVSSceSgssoXuR6AYbcHPhSGjjQ/NAcRdx6JHrg0y0uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Plb916g7; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso15637145e9.2;
-        Fri, 05 Sep 2025 08:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757087205; x=1757692005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yM/kpsrWuS7EbRNYLGZUP0tAA7bvvftiQ6cg5jjOdtc=;
-        b=Plb916g7CIXX2CCCE09x7vNm67VC5qT36xSoPJfDmvQbKzxH76uj5M4ILWSMwS8r+W
-         KDinP34O35hpZDC4kzLdBTKRprPefzsiByAka1OOrv9GmwIz7UBYQeEHOYkujVKDVYpi
-         N5cAYINWh4NidDI1dJ408PJvKhNIQQBRo0awVLyKaK6Isd060TrnzGyzyVgqtD2J9cKh
-         WYZplwyxjKoxje2uYgzgcs8EKbNdNsO/eT6JM7YRQPjhs6t3WSoLK8aoCHHQXtUrsbmS
-         ifjVZXfkMy7/NCfFQkDadkhjDIzfD4GogkJZ+bcnC1pAChN0tvan67CWGoSX97WrLyBU
-         1ONA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757087205; x=1757692005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yM/kpsrWuS7EbRNYLGZUP0tAA7bvvftiQ6cg5jjOdtc=;
-        b=mnHbZrO0gJniQo+lB+WNYiXo5kF7dvtbzIDZRrbo1OAnx5cZP3g4nXTi4ew5gDk3mq
-         vTMIH/8/H/AcLvssXtoUwkpdZxjNxpIkWIKfMBEJWRx58nJt1szjnJMliLNMxCASe7Ot
-         2vp1yleFkpXhtsNhRKnkDBTzoELcHZxZ+Fco0DpBRSd5EjiG0Z1g4g1HoNE5Ufwhu/IS
-         wb21eBnL0x4TBEjohdPkzchRebHbxToxKyvEsJAP0F3J/aarEE9eYAVDWSJOghTw2III
-         eaqXUfLGjkk+HNPI981YrcHnw7aB9NXaB+Gxgh2djozA8eZA+687Fat6wfXgqwWylGWR
-         3kcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk2MHRhBbvS48LG4aIgUFOP36LgPzXWsaNaeAfOvvGvdfxAYNMQOTmF4LZ0IFuWE834crlwwgpwjzwj9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwitQX4e+AFdvqls2idroHYEt2qAjxpSWT4V0hMxQmQrf7Am6Lj
-	l65ve7NwOjpx01Fnpphedrrhc98Y9OxflRKDnCPIPHHL3sgIVI1681F9RdmsjhPF5ktXLQ==
-X-Gm-Gg: ASbGnctTtZwRHpwk16qWOyoQijvb5EcUBzKIV3CsbvUVierrfAwxXHbvcpSEHcoYeKD
-	vUeujV31UD0Kg8rH9LxDClZwCCUXYUasrQC3EBpg+Giv8IsdGHx7iOMqjxtdNo2/hHhMnTOnGqf
-	e9T+cgXRy2NjwjOW7Oh+zetBLHMZyZK1EJfYGbKeJ0TgoGMYgQtWwmxCNIns6LzKbeQ/KXU7Xke
-	a4xr7mXoS9pVZqwf9GHFepIR2ytrOoKOU3vXXA5BiDXDJceyHsUaDfb66zqVmnqySLHQ6pJnddp
-	jUyyvUXpTy8Bk8miZj+QSKrtVqB8XGrMvawD8h1PAjrsHCKjEMwIdn9MQONMfSBGdtD1dPn3XhL
-	th3KvSUceyIrFbBKDnj9m7M9H03w=
-X-Google-Smtp-Source: AGHT+IF2rT1+TS5L9oKcWYnx9bd3WcpTH0tQRr6+IS6eToCzikMbl21hDow2X6nBhwzcyUfhn3BhiA==
-X-Received: by 2002:a05:600c:5492:b0:45b:9a7b:66ba with SMTP id 5b1f17b1804b1-45b9a7b67ffmr115538645e9.14.1757087204394;
-        Fri, 05 Sep 2025 08:46:44 -0700 (PDT)
-Received: from Al-Qamar ([2a00:f29:348:d0f:44dd:9238:4455:2174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc3fasm31472842f8f.5.2025.09.05.08.46.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 08:46:43 -0700 (PDT)
-From: Fidal Palamparambil <rootuserhere@gmail.com>
-To: linux-modules@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	petr.pavlu@suse.com,
-	da.gomez@kernel.org,
-	samitolvanen@google.com,
-	linux-kernel@vger.kernel.org,
-	Fidal palamparambil <rootuserhere@gmail.com>
-Subject: [PATCH] module : fix signature checker pointer arithmetic and bounds check
-Date: Fri,  5 Sep 2025 19:45:49 +0400
-Message-ID: <20250905154550.130-1-rootuserhere@gmail.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1757087365; c=relaxed/simple;
+	bh=4mIxP72eS0LmGYvRHu+tYBXtiieXUi8pm8fU9+ptrI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lSUDqXLnxbqF/GOBLUc5+myiFXCvK6cwp6V2fb4ETWK5ahqQN9wK6//kwpO+xjLlB1E7nHohrdMmLjchEBpWKmJopqMxnVAjkuq5oqdu+wKMfTTemD8gRJlJGnj7azz5vDhZI0qDshvG72uIqzfrSsZXROpz7sTKWFzH8shJvm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DRFTEJUz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585AgQoa017948;
+	Fri, 5 Sep 2025 15:48:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=mCfoUYLMC6HNsYLC2Cmci4imZfw/Ws
+	ROhnMAP3rAWN8=; b=DRFTEJUzUMLxbxYuAXuLuwNqrzv8c+DrkFqe89wjY27c9F
+	HPKmwnL0ffbZLOY3Rz5gz7HsHuFYQX6DqipN3T17S7pXXoPQ0OUX26rpw2bM2Ta4
+	HCoGI8+peE6wgvdwt4ZhOwwGmSI9acpU5CBc496pJ6Kl9gzxQDChu/+1O6PlEWaS
+	HHHSSQvfm9GSge31HtdVFwim+meO0SH5sOxV9j5RYTRpeOEqPos2duD1GYvhAUwk
+	Y1ASxol3ifR8yNeQRkjgWqPhocL/iRqrC9el8+zCXSORnp/lvdaNXU7o8ETDqd86
+	PWf/tQ2g4yPndZLt/k4Lq6iGIW8zebN60vYAGngw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurhfn9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 15:48:31 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 585FkhKr005421;
+	Fri, 5 Sep 2025 15:48:30 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurhfmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 15:48:30 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 585D0Hpj019442;
+	Fri, 5 Sep 2025 15:48:29 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4na0hb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 15:48:29 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 585FmRQ252298180
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Sep 2025 15:48:27 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB1582004E;
+	Fri,  5 Sep 2025 15:48:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EE2320043;
+	Fri,  5 Sep 2025 15:48:25 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.48.240])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  5 Sep 2025 15:48:25 +0000 (GMT)
+Date: Fri, 5 Sep 2025 17:48:23 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andreas Larsson <andreas@gaisler.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 4/7] x86/xen: support nested lazy_mmu sections (again)
+Message-ID: <d3adc2a0-5888-411e-ac7c-9df45e3389c9-agordeev@linux.ibm.com>
+References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
+ <20250904125736.3918646-5-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904125736.3918646-5-kevin.brodsky@arm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX5iXkXHtPokV2
+ s58RZ7e813edv+vWWoqJUrrtWQXbub6NiX58yP1v9mbmzE5GTo4wfrfFkR/YZ/MbCR+iaBSdaCX
+ adCNlkxNA/nEsZ3agSOH3KgEWq38b6wGZtWAzoLq+mKBzCvbn/uEMkBgl3O9f5obeDeeWy94B3P
+ LgKQGohc5o/PIli23EYmnTGZI+Oj8pYgiOworIhg3wrM4u606YHplewCbIn1zTW8AdxtJuUJDYA
+ iMBC7cL5Ca1p2IQg+1kqXYCy73F3DoQq/aCn8/pSszhndcjXi11V8uX0tGswVehF3dhVd7AerLt
+ JrqhsabJDFJw5fzoqnl1EhDRooO7y32BwqH5cYOjZy4q0rOcELXv53bz54YHJ9HbXtIGc4qdlip
+ ckpxcnXd
+X-Proofpoint-GUID: u6h_butZCR90wxuVu6ifBPi5r4KK37UM
+X-Proofpoint-ORIG-GUID: HU44fewV-eZEBpYhS3NFrN8FS6mJ4q6n
+X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68bb064f cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=36QzpkCBnVJsay_x71QA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300030
 
-From: Fidal palamparambil <rootuserhere@gmail.com>
+On Thu, Sep 04, 2025 at 01:57:33PM +0100, Kevin Brodsky wrote:
+...
+> -static void xen_enter_lazy_mmu(void)
+> +static lazy_mmu_state_t xen_enter_lazy_mmu(void)
+>  {
+> +	if (this_cpu_read(xen_lazy_mode) == XEN_LAZY_MMU)
+> +		return LAZY_MMU_NESTED;
+> +
+>  	enter_lazy(XEN_LAZY_MMU);
+> +	return LAZY_MMU_DEFAULT;
+>  }
+>  
+>  static void xen_flush_lazy_mmu(void)
+> @@ -2167,11 +2171,12 @@ static void __init xen_post_allocator_init(void)
+>  	pv_ops.mmu.write_cr3 = &xen_write_cr3;
+>  }
+>  
+> -static void xen_leave_lazy_mmu(void)
+> +static void xen_leave_lazy_mmu(lazy_mmu_state_t state)
+>  {
+>  	preempt_disable();
+>  	xen_mc_flush();
+> -	leave_lazy(XEN_LAZY_MMU);
+> +	if (state != LAZY_MMU_NESTED)
+> +		leave_lazy(XEN_LAZY_MMU);
 
-This patch fixes :
- - invalid module_param type (bool_enable_only → bool)
- - unsafe pointer arithmetic on void *
- - missing bounds check for sig_len, preventing underflow/OOB
- - export set_module_sig_enforced for consistency
+Based on xen_enter_lazy_mmu(), whether this condition needs to be
+executed with the preemption disabled?
 
-Signed-off-by : Fidal Palamparambil <rootuserhere@gmail.com>
-Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
----
- kernel/module/signing.c    |  48 ++++++++------
- kernel/module/signing.orig | 125 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+), 18 deletions(-)
- create mode 100644 kernel/module/signing.orig
+Or may be this_cpu_read(xen_lazy_mode) + enter_lazy(XEN_LAZY_MMU)
+should be executed with the preemption disabled?
 
-diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index a2ff4242e623..8dda6cd2fd73 100644
---- a/kernel/module/signing.c
-+++ b/kernel/module/signing.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/* Module signature checker
-+/*
-+ * Module signature checker
-  *
-  * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-  * Written by David Howells (dhowells@redhat.com)
-@@ -20,11 +21,11 @@
- #define MODULE_PARAM_PREFIX "module."
- 
- static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
--module_param(sig_enforce, bool_enable_only, 0644);
-+module_param(sig_enforce, bool, 0644);
- 
- /*
-- * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-- * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-+ * Export sig_enforce kernel cmdline parameter to allow other subsystems to
-+ * rely on that instead of directly on CONFIG_MODULE_SIG_FORCE config.
-  */
- bool is_module_sig_enforced(void)
- {
-@@ -36,6 +37,7 @@ void set_module_sig_enforced(void)
- {
- 	sig_enforce = true;
- }
-+EXPORT_SYMBOL(set_module_sig_enforced);
- 
- /*
-  * Verify the signature on a module.
-@@ -45,44 +47,55 @@ int mod_verify_sig(const void *mod, struct load_info *info)
- 	struct module_signature ms;
- 	size_t sig_len, modlen = info->len;
- 	int ret;
-+	const unsigned char *data = mod;
- 
- 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
- 
- 	if (modlen <= sizeof(ms))
- 		return -EBADMSG;
- 
--	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-+	memcpy(&ms, data + (modlen - sizeof(ms)), sizeof(ms));
- 
- 	ret = mod_check_sig(&ms, modlen, "module");
- 	if (ret)
- 		return ret;
- 
- 	sig_len = be32_to_cpu(ms.sig_len);
-+
-+	/* Ensure sig_len is valid to prevent underflow/oob */
-+	if (sig_len > modlen - sizeof(ms))
-+		return -EBADMSG;
-+
- 	modlen -= sig_len + sizeof(ms);
- 	info->len = modlen;
- 
--	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-+	return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
- 				      VERIFY_USE_SECONDARY_KEYRING,
- 				      VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
- }
- 
-+/*
-+ * Check signature validity of a module during load.
-+ */
- int module_sig_check(struct load_info *info, int flags)
- {
- 	int err = -ENODATA;
- 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
- 	const char *reason;
--	const void *mod = info->hdr;
-+	const unsigned char *mod = info->hdr;
- 	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
- 				       MODULE_INIT_IGNORE_VERMAGIC);
-+
- 	/*
--	 * Do not allow mangled modules as a module with version information
--	 * removed is no longer the module that was signed.
-+	 * Do not allow mangled modules: a module with version info removed
-+	 * is no longer the module that was signed.
- 	 */
- 	if (!mangled_module &&
- 	    info->len > markerlen &&
--	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
--		/* We truncate the module to discard the signature */
-+	    memcmp(mod + info->len - markerlen,
-+		   MODULE_SIG_STRING, markerlen) == 0) {
-+		/* Truncate the module to discard the signature marker */
- 		info->len -= markerlen;
- 		err = mod_verify_sig(mod, info);
- 		if (!err) {
-@@ -92,9 +105,8 @@ int module_sig_check(struct load_info *info, int flags)
- 	}
- 
- 	/*
--	 * We don't permit modules to be loaded into the trusted kernels
--	 * without a valid signature on them, but if we're not enforcing,
--	 * certain errors are non-fatal.
-+	 * Enforced mode: only allow modules with a valid signature.
-+	 * Non-enforced mode: certain errors are downgraded to warnings.
- 	 */
- 	switch (err) {
- 	case -ENODATA:
-@@ -106,12 +118,12 @@ int module_sig_check(struct load_info *info, int flags)
- 	case -ENOKEY:
- 		reason = "module with unavailable key";
- 		break;
--
- 	default:
- 		/*
--		 * All other errors are fatal, including lack of memory,
--		 * unparseable signatures, and signature check failures --
--		 * even if signatures aren't required.
-+		 * All other errors are fatal, including:
-+		 * - OOM
-+		 * - unparseable signatures
-+		 * - invalid signature failures
- 		 */
- 		return err;
- 	}
-diff --git a/kernel/module/signing.orig b/kernel/module/signing.orig
-new file mode 100644
-index 000000000000..a2ff4242e623
---- /dev/null
-+++ b/kernel/module/signing.orig
-@@ -0,0 +1,125 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* Module signature checker
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/module.h>
-+#include <linux/module_signature.h>
-+#include <linux/string.h>
-+#include <linux/verification.h>
-+#include <linux/security.h>
-+#include <crypto/public_key.h>
-+#include <uapi/linux/module.h>
-+#include "internal.h"
-+
-+#undef MODULE_PARAM_PREFIX
-+#define MODULE_PARAM_PREFIX "module."
-+
-+static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-+module_param(sig_enforce, bool_enable_only, 0644);
-+
-+/*
-+ * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-+ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-+ */
-+bool is_module_sig_enforced(void)
-+{
-+	return sig_enforce;
-+}
-+EXPORT_SYMBOL(is_module_sig_enforced);
-+
-+void set_module_sig_enforced(void)
-+{
-+	sig_enforce = true;
-+}
-+
-+/*
-+ * Verify the signature on a module.
-+ */
-+int mod_verify_sig(const void *mod, struct load_info *info)
-+{
-+	struct module_signature ms;
-+	size_t sig_len, modlen = info->len;
-+	int ret;
-+
-+	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-+
-+	if (modlen <= sizeof(ms))
-+		return -EBADMSG;
-+
-+	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-+
-+	ret = mod_check_sig(&ms, modlen, "module");
-+	if (ret)
-+		return ret;
-+
-+	sig_len = be32_to_cpu(ms.sig_len);
-+	modlen -= sig_len + sizeof(ms);
-+	info->len = modlen;
-+
-+	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-+				      VERIFY_USE_SECONDARY_KEYRING,
-+				      VERIFYING_MODULE_SIGNATURE,
-+				      NULL, NULL);
-+}
-+
-+int module_sig_check(struct load_info *info, int flags)
-+{
-+	int err = -ENODATA;
-+	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-+	const char *reason;
-+	const void *mod = info->hdr;
-+	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
-+				       MODULE_INIT_IGNORE_VERMAGIC);
-+	/*
-+	 * Do not allow mangled modules as a module with version information
-+	 * removed is no longer the module that was signed.
-+	 */
-+	if (!mangled_module &&
-+	    info->len > markerlen &&
-+	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
-+		/* We truncate the module to discard the signature */
-+		info->len -= markerlen;
-+		err = mod_verify_sig(mod, info);
-+		if (!err) {
-+			info->sig_ok = true;
-+			return 0;
-+		}
-+	}
-+
-+	/*
-+	 * We don't permit modules to be loaded into the trusted kernels
-+	 * without a valid signature on them, but if we're not enforcing,
-+	 * certain errors are non-fatal.
-+	 */
-+	switch (err) {
-+	case -ENODATA:
-+		reason = "unsigned module";
-+		break;
-+	case -ENOPKG:
-+		reason = "module with unsupported crypto";
-+		break;
-+	case -ENOKEY:
-+		reason = "module with unavailable key";
-+		break;
-+
-+	default:
-+		/*
-+		 * All other errors are fatal, including lack of memory,
-+		 * unparseable signatures, and signature check failures --
-+		 * even if signatures aren't required.
-+		 */
-+		return err;
-+	}
-+
-+	if (is_module_sig_enforced()) {
-+		pr_notice("Loading of %s is rejected\n", reason);
-+		return -EKEYREJECTED;
-+	}
-+
-+	return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
-+}
--- 
-2.50.1.windows.1
+>  	preempt_enable();
+>  }
 
+Thanks!
 
