@@ -1,97 +1,157 @@
-Return-Path: <linux-kernel+bounces-803148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8E5B45B4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34655B45B4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7AE25C703A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D0DA62EEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E3E2F7ACA;
-	Fri,  5 Sep 2025 14:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943E374284;
+	Fri,  5 Sep 2025 14:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PRl0gyvY"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+Ll0mWo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB9C2F7AC4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4EB2F7AB0;
+	Fri,  5 Sep 2025 14:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084182; cv=none; b=lUou4nub4uPQ2gmxDbntE1Gu6KcQ5zyB/PLWwYbZrV1oOIy64LzZ1nNrs0lx6vbg31igMF1Nl1TKg/QmY2dWOpgh3dF0TlY/QmdHevCVN3S49TOYh4BFtEoKOewtFfbUWaSiMOONmrXQYAxvIC1FjLDmBoIIIdVIeIf+SyEY5Xw=
+	t=1757084191; cv=none; b=N9gNFx0cOAbnlKp+2JJVtYSuGfPlBO6ngpcBW593BGTMesVpHnHzW8QGh9HvnQCovG6d8XXwobNIGr5PLmn0puJ48mMkpL3q+L/ouEJPYNhr9s3Q+EaMd3ZeZkfjBxc5NPCv0+0UNE264XFgkbYNK9weVDdxLFV/1VGz3VeckPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084182; c=relaxed/simple;
-	bh=dkBLRD4gj8ciWOVbZDkQbz6/yYdKcNPykgYzvKga97I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nK06RO4bp4IQBqC80yHBc86APBDgUr6AWnDbP8IN6w9XYIA30+BH40h4U2KDD4Lt2mnUqg0FKmZBnR/npWu6Ni1lpJ5w4nNSN72zI1LAVJjkJDJ98hi9xZ3/qGPe4TzQPuYCFrJ+Vm9C65XwIamlrNnzBfL3iZXwPTJgpv2dLps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PRl0gyvY; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6E58FC8F448;
-	Fri,  5 Sep 2025 14:55:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B6FBB6060B;
-	Fri,  5 Sep 2025 14:56:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 191B6102F28D6;
-	Fri,  5 Sep 2025 16:56:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757084170; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=1jcGlcOV37H7WUoFdZdwjtSdPqibMZqqIq92pDZU1HM=;
-	b=PRl0gyvYEeox1nfHU+C5KY3I3MLYo4v5cltyfjofp4ijrZJfuIFWSrbK4ikaKcfxPhst9K
-	HJzYMyg6pj1PDPrFgvHsm5NOwO3O5xm3hVaG1gmorCN73D9HQY9vdVB07LqgpoqqLY6XBg
-	Ioo9P9AMhWxkI6qKHRFp9n9XmtOX2mxH5CZHDHbeKQP/tbOuEtDuPZAyi4KsleG0gYJXzw
-	P+hcRPXaoWCEp0L76zIVqJoz8Me0P2o5XlEwkozqDOvitatv0RQx80P1ZSQqAPMSNzi2Wq
-	H3+zn/SQoFdK6jBDiAVQWAhwJ166/eEYho3/LwFB5mWu4Wak43zTVa781ZonBw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: richard@nod.at, vigneshr@ti.com, 
- Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-In-Reply-To: <20250902092732.2244544-1-wangzhaolong@huaweicloud.com>
-References: <20250902092732.2244544-1-wangzhaolong@huaweicloud.com>
-Subject: Re: [PATCH V2] mtd: core: skip badblocks increment for blocks
- already known bad
-Message-Id: <175708416143.334139.12983911214656984817.b4-ty@bootlin.com>
-Date: Fri, 05 Sep 2025 16:56:01 +0200
+	s=arc-20240116; t=1757084191; c=relaxed/simple;
+	bh=jmmqgMUirtfYeSXPXqYQ0yzKkKVEp3WxOphifTvxL60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOLdWi46GDrWNH3u07HpPlucj1ZY0IXfLzvuMKW/nfRnFZBihpe4J8onlsu6vYgEV1rWph63kMvPvr3Bgpvb42CKZCZ3njqOxDNgNdB/59whggy0+hPfWHb4eEtolDmm+CmxsZx9QCdY+EU47phc43US2SrNxdeDJvoSjb+mzmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+Ll0mWo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AC0C4CEF1;
+	Fri,  5 Sep 2025 14:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757084190;
+	bh=jmmqgMUirtfYeSXPXqYQ0yzKkKVEp3WxOphifTvxL60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q+Ll0mWoVCfGIsJnW26P6Xd9tnA5QcSS7qpAw2XV503fsq1NhlE6rYDgRSNlFE0XA
+	 y9Z+l6ZzX5QSbixMaGvsYkvLUL2zSoBA+0/RrY1O0j60pA/BLs8iOxI8WNuz5IHrEQ
+	 97MUu+CT0zt8QZcC+/bSOOkq0NKZKKIbFOFgYvPD2mLi/n7OQF8gwpaR8kc95LgHdR
+	 /phaM2LneM141rLNoBNFbCJPZAPh/pida569RKSDKppGVYsB6tyVVqILZrFNGl/uTv
+	 GyYtIA4dx/qcCwC9X81ggk+C9uVsVJTzU12Gb5cv9XX6qCTUwxYoYdWu/uTC8Onr/u
+	 VnR5toe309Jjw==
+Date: Fri, 5 Sep 2025 20:26:24 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v3 4/6] bus: mhi: host: pci_generic: Remove MHI driver
+ and ensure graceful device recovery
+Message-ID: <e5nhd5hgu7peewiaxn6wdjlopaixntgu7zc6d7twhjgglt46rh@hymyien7z5wy>
+References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
+ <20250821-vdev_next-20250821_sriov-v3-4-e1b017c48d4a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-4-e1b017c48d4a@quicinc.com>
 
-On Tue, 02 Sep 2025 17:27:32 +0800, Wang Zhaolong wrote:
-> Repeatedly marking the same eraseblock bad inflates
-> mtd->ecc_stats.badblocks because mtd_block_markbad() unconditionally
-> increments the counter on success, while some implementations (e.g.
-> NAND) return 0 both when the block was already bad and when it has just
-> been marked[1].
+On Thu, Aug 21, 2025 at 06:25:36PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
 > 
-> Fix by checking if the block is already bad before calling
-> ->_block_markbad() when _block_isbad is available. Only skip the counter
-> increment when we can confirm the block was already bad. In all other
-> cases continue incrementing the counter.
+> So, When the MHI driver is removed from the host side, it is essential to
+> ensure a clean and stable recovery of the device.
+
+You need to mention why it is essential. What will happen otherwise.
+
+> This commit introduces
+> the following steps to achieve that:
 > 
-> [...]
+> 1. Disable SR-IOV for any SR-IOV-enabled devices on the Physical Function.
+> 2. Perform a SOC_RESET on the PF to fully reset the device.
+> 
+> Disabling SR-IOV ensures all Virtual Functions (VFs) are properly shutdown,
+> preventing issues during the reset process. The SOC_RESET guarantees that
+> the PF is restored to a known good state.
+> 
 
-Applied to mtd/next, thanks!
+Again, no reasoning was provided why this is necessary.
 
-[1/1] mtd: core: skip badblocks increment for blocks already known bad
-      commit: 1b2dd17dd514b699818afeac1b513651b003ec10
+> Note:
+> - The QDU100 platform supports 1 PF and 16 VFs.
+> - QDU100 does not support Function Level Reset (FLR) due to a hardware
+>   limitation. As a result, SOC_RESET is used to reset the device.
+> - On QDU100, any VF failure can cause the entire endpoint (EP)
+>   to go down, making this recovery mechanism critical.
+> 
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
+This comment about QDU100 doesn't belong to this patch as this patch is not at
+all related to QDU100.
 
-Kind regards,
-Miquèl
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 351b177cdf84057fb5a4e2f5b52279d7f1da41c2..f922cca0ab633aeae942587f0c40038342ce9c33 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -45,6 +45,8 @@
+>   * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
+>   *		   of inband wake support (such as sdx24)
+>   * @no_m3: M3 not supported
+> + * @reset_on_remove: Set true for devices support SOC reset and perform it
+> + *		     while drivee remove
 
+driver
+
+Maybe reword it to:
+
+	'Set true for devices that require SoC during driver removal'
+
+>   */
+>  struct mhi_pci_dev_info {
+>  	const struct mhi_controller_config *config;
+> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
+>  	unsigned int mru_default;
+>  	bool sideband_wake;
+>  	bool no_m3;
+> +	bool reset_on_remove;
+>  };
+>  
+>  #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+>  	.dma_data_width = 32,
+>  	.sideband_wake = false,
+>  	.no_m3 = true,
+> +	.reset_on_remove = true,
+>  };
+>  
+>  static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
+> @@ -1039,6 +1043,7 @@ struct mhi_pci_device {
+>  	struct work_struct recovery_work;
+>  	struct timer_list health_check_timer;
+>  	unsigned long status;
+> +	bool reset_on_remove;
+>  };
+>  
+>  static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
+> @@ -1323,7 +1328,6 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	else
+>  		mhi_cntrl_config = info->config;
+>  
+> -	/* Initialize health check monitor only for Physical functions */
+
+Spurious change?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
