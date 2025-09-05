@@ -1,224 +1,206 @@
-Return-Path: <linux-kernel+bounces-802468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835A8B452A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2489B452A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45F95A71D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303DE169C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBF928A704;
-	Fri,  5 Sep 2025 09:07:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B614D283686;
-	Fri,  5 Sep 2025 09:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5693093C7;
+	Fri,  5 Sep 2025 09:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CsktbZDU"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5637A3090E6
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063273; cv=none; b=hi0A/HaewmVme6Yv6hWarZVpg0rdU2b6enqYQzj2YyKtB1kO3ynrLH0IYgzYtadC7/A0s983D9aXdwWoDy95TPELMbrKdjBjegP6qWFkzg+ld5t6oZM+VgrO4jKQthy/kdoDY152Xro486t3IasYZmpXsk+8m0LDevgLRdScWLo=
+	t=1757063284; cv=none; b=fa3mKhNy/DH3nUYUv7C1pyyn+cmOWi/haXgCAIMtLs8e3WK03XugdIM+PmszaaL5Ie7+RyyuRtJPxfxGrufLYFqhXKy7uX8WbjkFhr+ynznN8TpNzUn25ja9k4AyObJb90gdjWof2z5Y77q22cCf4AmsPHa25x1k6mvCPjgBE9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063273; c=relaxed/simple;
-	bh=BbqlXQX6NiftlnJjVrouj1jPgYZT7eGHUP9KaTmFWuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iU1AQL3kPXIUpKYPrhKNsYs+145bYbWjFkALK+MIFCmTCld8XRJ99FlUUqRhWKfsMKyCu+wk9GOZxTaW/lHfYJVw61Va6Hssq5Hsue3Om7GAgxuIWGoc3Yz4YcX7oozsbu1eoMb14GN9Nl6mRsDLPN/q7aoVPjdREaSUH6PHQug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F6B6152B;
-	Fri,  5 Sep 2025 02:07:41 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4798D3F694;
-	Fri,  5 Sep 2025 02:07:46 -0700 (PDT)
-Date: Fri, 5 Sep 2025 10:07:39 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: panfan <panfan@qti.qualcomm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, samitolvanen@google.com, song@kernel.org,
-	ardb@kernel.org, dylanbhatch@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kdong@qti.qualcomm.com,
-	haijianc@qti.qualcomm.com
-Subject: Re: [PATCH v2] arm64: ftrace: fix unreachable PLT for ftrace_caller
- in init_module with CONFIG_DYNAMIC_FTRACE
-Message-ID: <aLqoWwLvGIo_qz6h@J2N7QTR9R3>
-References: <20250905032236.3220885-1-panfan@qti.qualcomm.com>
+	s=arc-20240116; t=1757063284; c=relaxed/simple;
+	bh=iFOnnxJrC94LV2LEks6kE1pmEF2x261VyN5f5eLmpgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CJY7w+8vx2enVhoo8IzS4trrr8C+BbNvOSg9f7FA1valJSJyKLRdhs5imZ/Ld2VXNBkRct8Z0OQImNEROU2Ca/ieV6GFzORdvqynD8LXF/ZQb0mexhxIC8ezSCYtCK3IOVus1tIVQRLJ52/gxpWpp2yF964aPy/S9QarliJKwq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CsktbZDU; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e2055ce7b3so903301f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757063280; x=1757668080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RMG28cPmINkh9yGK/HjokSpuEVCf8KpRl5KQ/ClSDEs=;
+        b=CsktbZDUMLrmFf/KMdU6w0W6C5v7TPUsSEp5al2zyFDMWu9awaduoFqjRnx0N3lGI+
+         XRzS1Tj4JZcB4yiSV6ubZMOJUmXmFzEtyyN2sILapCM42dg4oPTlBSz2ru+1qaBmAW+W
+         wY6lCIyRa5PwvFv7q5n3nx39QwatebPcOjkwTaQ48+gxJKLRkw8mLnMTYQQopyF3/5n4
+         8q0J8EL0hfrHb5bARyigpyXe6ajCIf5uiz8tIdHgRaDfohrKEvbjBSiAGRzB9rvKZQvN
+         zHsjiVKx3tPCDBTQu4h2aDryvr/9vGHcJx0zYW+oiTddSB1y4V36wh68DqYYLB+zkL7N
+         rPJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757063280; x=1757668080;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RMG28cPmINkh9yGK/HjokSpuEVCf8KpRl5KQ/ClSDEs=;
+        b=OoyaNydAITGDTei/0YpEoBpiYov3CKgu8uMrWw3WyIwn8F0vkQxn8taYWnxsh+j0Yu
+         K4DHHzBAXxx85HdlYBEweCcnbINylZZhNau/EpaHJjR63a++ON6luW59dxQ2WKPk+Ram
+         PFC9GjrSAp6Z2sTSwn0j/Iu4JwgD2BB6CNNh3cGupuMk6wJPzQ3jAtg3h9Y7Jc1HgiwS
+         xgvNFDPbPiSxaR7/iEyLLQSOM6Mr43DHeJgZYwjyObltFbj2+3IetxPepFuVuZSbUi8x
+         3FyWK2giSVCluCV9GO3lQ3NIua09K3rXdvS7vk2/JKwGylMLSLYMgDZzkdDiIH1LFbsg
+         XUUA==
+X-Gm-Message-State: AOJu0YzZzQ6eyHFUOayLzbzNM8U0AxD4txD9RQGvuO3/0bEbmvSjFtT2
+	s+R34hAGM88joek0bnaXPWrgWAChGMTIGuHSL6wlAHN4QWJW4lyrDHEW6drQaUIyAl7779MgGzJ
+	GLNVEJC0=
+X-Gm-Gg: ASbGnctaNYuPTvcgjl1vVotm3V6uWN5C8CK8NMuXHbs+AHIs7youi6ucwfbLqeDJ/2u
+	v/tOQbPErSIupbLDPxSRw9GSLCstj8ovx0P27zLlLAPdeG9AsIMZrYTX+u+aSwm+7sGgK8WHqLc
+	ni6tCD7m7nBTIcLovtCNb3DxNgTw0HGFLeGBrVinIioRbWF903KT/1uLNZ6C95vb7wgk20tOa5f
+	czHLlwUzrRTCwSYS9/bc9OG10caWEAyGX6e9Z1XAvLGaTwPEtdi+I/hfcbw5dt/QjqoZ4YHT+Wa
+	1H0s2AQ8WZqx+lFVSDVo9YofEbBmbGdYfSXbirfmnCm8miE4sxtcI9MCanpaTa+X2jaOA612MQ+
+	+Mj1C1t+7bstaPiBtvx3nL7FYDCJmasD0c4bwElmuRqUP8+gyzjLaqAU2HA==
+X-Google-Smtp-Source: AGHT+IHXqencWzdhmJCLzSHG6b957AFApxs+PiiNiGv952XmmQ7dyv023BmoBwStfcQ3i9qpXNojQw==
+X-Received: by 2002:a05:6000:200f:b0:3d5:d5ea:38d5 with SMTP id ffacd0b85a97d-3d5d5ea4100mr18390890f8f.25.1757063280428;
+        Fri, 05 Sep 2025 02:08:00 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm311505335e9.10.2025.09.05.02.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 02:08:00 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: [PATCH 0/2] rcu: replace wq users and add WQ_PERCPU to alloc_workqueue() users
+Date: Fri,  5 Sep 2025 11:07:45 +0200
+Message-ID: <20250905090747.107232-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905032236.3220885-1-panfan@qti.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 08:22:36PM -0700, panfan wrote:
-> On arm64, it has been possible for a module's sections to be placed more
-> than 128M away from each other since commit:
-> 
->   commit 3e35d303ab7d ("arm64: module: rework module VA range selection")
-> 
-> Due to this, an ftrace callsite in a module's .init.text section can be
-> out of branch range for the module's ftrace PLT entry (in the module's
-> .text section). Any attempt to enable tracing of that callsite will
-> result in a BRK being patched into the callsite, resulting in a fatal
-> exception when the callsite is later executed.
-> 
-> Fix this by adding an additional trampoline for .init.text, which will
-> be within range.
-> 
-> No additional trampolines are necessary due to the way a given
-> module's executable sections are packed together. Any executable
-> section beginning with ".init" will be placed in MOD_INIT_TEXT,
-> and any other executable section, including those beginning with ".exit",
->  will be placed in MOD_TEXT.
-> 
-> Fixes: 3e35d303ab7d ("arm64: module: rework module VA range selection")
-> 
-> Signed-off-by: panfan <panfan@qti.qualcomm.com>
+Hi!
 
-Thanks for respinning this! This looks good to me, so:
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 
-Catalin, Will, I assume you'll add a CC stable when picking this up.
+=== Current situation: problems ===
 
-Mark.
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-> ---
-> v2:
->    - Add an explicit check to ensure the address is within MOD_INIT_TEXT
->      or MOD_TEXT.
->    - Simplify the commit message.
-> 
-> Link: https://lore.kernel.org/all/20250819063418.1263119-1-panfan@qti.qualcomm.com/   # v1
-> ---
->  arch/arm64/include/asm/module.h     |  1 +
->  arch/arm64/include/asm/module.lds.h |  1 +
->  arch/arm64/kernel/ftrace.c          | 13 ++++++++++---
->  arch/arm64/kernel/module-plts.c     | 12 +++++++++++-
->  arch/arm64/kernel/module.c          | 11 +++++++++++
->  5 files changed, 34 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/module.h b/arch/arm64/include/asm/module.h
-> index 79550b22ba19..fb9b88eebeb1 100644
-> --- a/arch/arm64/include/asm/module.h
-> +++ b/arch/arm64/include/asm/module.h
-> @@ -19,6 +19,7 @@ struct mod_arch_specific {
->  
->  	/* for CONFIG_DYNAMIC_FTRACE */
->  	struct plt_entry	*ftrace_trampolines;
-> +	struct plt_entry	*init_ftrace_trampolines;
->  };
->  
->  u64 module_emit_plt_entry(struct module *mod, Elf64_Shdr *sechdrs,
-> diff --git a/arch/arm64/include/asm/module.lds.h b/arch/arm64/include/asm/module.lds.h
-> index b9ae8349e35d..fb944b46846d 100644
-> --- a/arch/arm64/include/asm/module.lds.h
-> +++ b/arch/arm64/include/asm/module.lds.h
-> @@ -2,6 +2,7 @@ SECTIONS {
->  	.plt 0 : { BYTE(0) }
->  	.init.plt 0 : { BYTE(0) }
->  	.text.ftrace_trampoline 0 : { BYTE(0) }
-> +	.init.text.ftrace_trampoline 0 : { BYTE(0) }
->  
->  #ifdef CONFIG_KASAN_SW_TAGS
->  	/*
-> diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
-> index 5a890714ee2e..5adad37ab4fa 100644
-> --- a/arch/arm64/kernel/ftrace.c
-> +++ b/arch/arm64/kernel/ftrace.c
-> @@ -258,10 +258,17 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
->  	return ftrace_modify_code(pc, 0, new, false);
->  }
->  
-> -static struct plt_entry *get_ftrace_plt(struct module *mod)
-> +static struct plt_entry *get_ftrace_plt(struct module *mod, unsigned long addr)
->  {
->  #ifdef CONFIG_MODULES
-> -	struct plt_entry *plt = mod->arch.ftrace_trampolines;
-> +	struct plt_entry *plt = NULL;
-> +
-> +	if (within_module_mem_type(addr, mod, MOD_INIT_TEXT))
-> +		plt = mod->arch.init_ftrace_trampolines;
-> +	else if (within_module_mem_type(addr, mod, MOD_TEXT))
-> +		plt = mod->arch.ftrace_trampolines;
-> +	else
-> +		return NULL;
->  
->  	return &plt[FTRACE_PLT_IDX];
->  #else
-> @@ -332,7 +339,7 @@ static bool ftrace_find_callable_addr(struct dyn_ftrace *rec,
->  	if (WARN_ON(!mod))
->  		return false;
->  
-> -	plt = get_ftrace_plt(mod);
-> +	plt = get_ftrace_plt(mod, pc);
->  	if (!plt) {
->  		pr_err("ftrace: no module PLT for %ps\n", (void *)*addr);
->  		return false;
-> diff --git a/arch/arm64/kernel/module-plts.c b/arch/arm64/kernel/module-plts.c
-> index bde32979c06a..7afd370da9f4 100644
-> --- a/arch/arm64/kernel/module-plts.c
-> +++ b/arch/arm64/kernel/module-plts.c
-> @@ -283,7 +283,7 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
->  	unsigned long core_plts = 0;
->  	unsigned long init_plts = 0;
->  	Elf64_Sym *syms = NULL;
-> -	Elf_Shdr *pltsec, *tramp = NULL;
-> +	Elf_Shdr *pltsec, *tramp = NULL, *init_tramp = NULL;
->  	int i;
->  
->  	/*
-> @@ -298,6 +298,9 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
->  		else if (!strcmp(secstrings + sechdrs[i].sh_name,
->  				 ".text.ftrace_trampoline"))
->  			tramp = sechdrs + i;
-> +		else if (!strcmp(secstrings + sechdrs[i].sh_name,
-> +				 ".init.text.ftrace_trampoline"))
-> +			init_tramp = sechdrs + i;
->  		else if (sechdrs[i].sh_type == SHT_SYMTAB)
->  			syms = (Elf64_Sym *)sechdrs[i].sh_addr;
->  	}
-> @@ -363,5 +366,12 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
->  		tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
->  	}
->  
-> +	if (init_tramp) {
-> +		init_tramp->sh_type = SHT_NOBITS;
-> +		init_tramp->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
-> +		init_tramp->sh_addralign = __alignof__(struct plt_entry);
-> +		init_tramp->sh_size = NR_FTRACE_PLTS * sizeof(struct plt_entry);
-> +	}
-> +
->  	return 0;
->  }
-> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-> index 40148d2725ce..d6d443c4a01a 100644
-> --- a/arch/arm64/kernel/module.c
-> +++ b/arch/arm64/kernel/module.c
-> @@ -466,6 +466,17 @@ static int module_init_ftrace_plt(const Elf_Ehdr *hdr,
->  	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
->  
->  	mod->arch.ftrace_trampolines = plts;
-> +
-> +	s = find_section(hdr, sechdrs, ".init.text.ftrace_trampoline");
-> +	if (!s)
-> +		return -ENOEXEC;
-> +
-> +	plts = (void *)s->sh_addr;
-> +
-> +	__init_plt(&plts[FTRACE_PLT_IDX], FTRACE_ADDR);
-> +
-> +	mod->arch.init_ftrace_trampolines = plts;
-> +
->  #endif
->  	return 0;
->  }
-> -- 
-> 2.34.1
-> 
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Plan and future plans ===
+
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
+
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
+
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a future release cycle.
+
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] Replace use of system_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+
+        Because of that, system_wq has been renamed in system_percpu_wq..
+
+2) [P 2] add WQ_PERCPU to remaining alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND. This is actually enforced warning if both or none of them
+        are present at the same time.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+=== For Maintainers ===
+
+There are prerequisites for this series, already merged in the master branch.
+The commits are:
+
+128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
+system_dfl_wq")
+
+930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+
+
+Thanks!
+
+Marco Crivellari (2):
+  rcu: replace use of system_wq with system_percpu_wq
+  rcu: WQ_PERCPU added to alloc_workqueue users
+
+ kernel/rcu/tasks.h | 4 ++--
+ kernel/rcu/tree.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.51.0
+
 
