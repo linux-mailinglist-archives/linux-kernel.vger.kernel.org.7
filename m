@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-802682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE8EB45574
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:57:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981B4B455BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53BA04E0218
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758451886092
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8213330FC0C;
-	Fri,  5 Sep 2025 10:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8C5341AC2;
+	Fri,  5 Sep 2025 11:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zaby/7yi"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wazxqZos"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DB830FC3A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FE3179BD;
+	Fri,  5 Sep 2025 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069839; cv=none; b=q3dIM6DXLtyhK7zp+D4vFhFKknGCZ2Bt4GRFjn4W68NNpKzayWVsGhzRJKHBTvow8cqlFc0njL96+Iryt5YZf1v4CaLEJRhIY+H36CbUidOws9UI2My+o0eplDCbjVxND85AX+pmKsJxlhn6qtZBzel75G4SVUPcDa+UkQz6nOc=
+	t=1757070465; cv=none; b=ppo9rhI4TuotqM/QjLMycS4KY/EUV25uFaIb5yrARSFM2UBZkcJ2bBIzf/tfj5anEHjpikwZsYkIX5oFrEthhqzb0DvzFcYGGNwulXd6w57RGb7j7vswlwOUb3cd8mXEuQg2Kvruw/JjPg1T5R/tx7rG9YCeYirzUaY8EJmHIYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069839; c=relaxed/simple;
-	bh=5edbOCQMtLRQq2l4Rm2FRKkM3DjktkJh4nczA1zq4ok=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=A3/LLDhux+ZdYJbOUNerkG9f813zFNCRjqYFamo15nGrJ+UyyA5g0c5k+R4h9HkXKEag0+u/PnqPCpForI1P+9XVs8g1w7GheY80l6OTPBI1Z3qdUUG3S+yCnt30E7B/N039YQnUOpjYZOId2m1xqcFKeaOfpuolxPRuLR3Nq2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Zaby/7yi; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250905105715epoutp02d4b6f7e4e66b9978444804b1842cb87e~iXbTaF9r52619326193epoutp02H
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250905105715epoutp02d4b6f7e4e66b9978444804b1842cb87e~iXbTaF9r52619326193epoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757069836;
-	bh=lGnEjjbaS1OmPNQ8V5HQyZUVH5+J/3jA4HeWoaYuixw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zaby/7yiaFcQrKx54lHPtwy2b1avPMjshfxTOgPuSP3xI77v9frni0pNLIsSsZ/1Z
-	 RPKLKuFAb3jJ3WQ5GRFU2hlQmQ3rpFfxdNJ9fTrImlIR6g7fxDWF+qlddMua0iAFtw
-	 76zqHRQLTMRwKcuT4nugaJZKl2q4S5U4bccy5GCE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250905105715epcas5p3525197234eca0bff4fb9264d60431b2c~iXbTFLUet0553305533epcas5p33;
-	Fri,  5 Sep 2025 10:57:15 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cJCwV4gwGz6B9m9; Fri,  5 Sep
-	2025 10:57:14 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250905105714epcas5p4bb26e232702a9dff37e87dfd07da3946~iXbRtr0H72481624816epcas5p4E;
-	Fri,  5 Sep 2025 10:57:14 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250905105712epsmtip2945c1e7aa059913f7664206cbb887168~iXbQHHdeh0831308313epsmtip2U;
-	Fri,  5 Sep 2025 10:57:12 +0000 (GMT)
-From: Devang Tailor <dev.tailor@samsung.com>
-To: alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	henrik@grimler.se, faraz.ata@samsung.com
-Cc: Devang Tailor <dev.tailor@samsung.com>
-Subject: [PATCH v3 3/3] arm64: dts: exynosautov9: add RTC DT node
-Date: Fri,  5 Sep 2025 16:35:54 +0530
-Message-Id: <20250905110554.2212304-4-dev.tailor@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250905110554.2212304-1-dev.tailor@samsung.com>
+	s=arc-20240116; t=1757070465; c=relaxed/simple;
+	bh=PuxLCceEcWNaF0wlDR9k3nAjW6PvbIkpdu97KH9DeAw=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=fMm/CabmcNmXXLu4fpwjebFKbpNw96AV39W11VinJlOdX98tRJp4ub3YF86/u5Egj9kr0/9GZFN8kh6JiamSdsscA4+blvshfIJlT0uGqKQpXdZ8vynlt6UPr7ZNyACTBxF7vxjpsrbGa+zkYynlgk6getvvL7cOcUVx9/ugsSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wazxqZos; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c67:84a2:d86d:fcf7:24b4:e467])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3A6E47F0;
+	Fri,  5 Sep 2025 13:06:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757070390;
+	bh=PuxLCceEcWNaF0wlDR9k3nAjW6PvbIkpdu97KH9DeAw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=wazxqZosvmbXS0f2HZx9eriHBDT68T/ZV6Vogn+Ls8m0kB+01CMEmeJOOM2FwQmGX
+	 e2ZLPP+OS5+jsuY4LEOJN0EZmX/dwlObHYNglYO+alxSFtpBEDAqEDJocnFfOd5Fds
+	 XjGLwntzggrApIauDlAlwvpBSYzrBEBQZ2y4Sj14=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250905105714epcas5p4bb26e232702a9dff37e87dfd07da3946
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250905105714epcas5p4bb26e232702a9dff37e87dfd07da3946
-References: <20250905110554.2212304-1-dev.tailor@samsung.com>
-	<CGME20250905105714epcas5p4bb26e232702a9dff37e87dfd07da3946@epcas5p4.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250825142522.1826188-2-r-donadkar@ti.com>
+References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-2-r-donadkar@ti.com>
+Subject: Re: [PATCH v5 01/14] media: ti: j721e-csi2rx: Remove word size alignment on frame width
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Date: Fri, 05 Sep 2025 16:37:35 +0530
+Message-ID: <175707045529.8095.7424566069689990352@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-Add DT node for on-chip RTC for ExynosAutov9
+Hi Rishikesh,
 
-Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts |  4 ++++
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi     | 10 ++++++++++
- 2 files changed, 14 insertions(+)
+Quoting Rishikesh Donadkar (2025-08-25 19:55:09)
+> j721e-csi2rx driver has a limitation of frame width being a multiple
+> word size. However, there is no such limitation imposed by the
+> hardware [1].
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-index de2c1de51a76..5f5167571f7a 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-@@ -106,6 +106,10 @@ &pwm {
- 	status = "okay";
- };
- 
-+&rtc {
-+	status = "okay";
-+};
-+
- &serial_0 {
- 	pinctrl-0 = <&uart0_bus_dual>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index 66628cb32776..afa6b258153c 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -1633,6 +1633,16 @@ pwm: pwm@103f0000 {
- 			clock-names = "timers";
- 			status = "disabled";
- 		};
-+
-+		rtc: rtc@10540000 {
-+			compatible = "samsung,exynosautov9-rtc";
-+			reg = <0x10540000 0x100>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>;
-+			clock-names = "rtc";
-+			status = "disabled";
-+		};
- 	};
- };
- 
--- 
-2.34.1
+Is there no limitation for the step size, or also not limitation for the
+minimum size of transfer?
 
+>=20
+> Remove this limitation from the driver.
+>=20
+> Link: https://www.ti.com/lit/pdf/spruj16
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> ---
+>  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c     | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
+ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index 3992f8b754b7..b3a27f4c3210 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -260,9 +260,6 @@ static void ti_csi2rx_fill_fmt(const struct ti_csi2rx=
+_fmt *csi_fmt,
+>                              MAX_WIDTH_BYTES * 8 / csi_fmt->bpp);
+
+Here the pix->width is restricted to be at minimum pixels_in_word.
+So TRY_FMT/S_FMT with a width =3D 1 will be clamped by the driver.
+
+>         pix->height =3D clamp_t(unsigned int, pix->height, 1, MAX_HEIGHT_=
+LINES);
+> =20
+> -       /* Width should be a multiple of transfer word-size */
+> -       pix->width =3D rounddown(pix->width, pixels_in_word);
+> -
+>         v4l2_fmt->type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE;
+>         pix->pixelformat =3D csi_fmt->fourcc;
+>         pix->bytesperline =3D pix->width * (csi_fmt->bpp / 8);
+> @@ -360,23 +357,15 @@ static int ti_csi2rx_enum_framesizes(struct file *f=
+ile, void *fh,
+>                                      struct v4l2_frmsizeenum *fsize)
+>  {
+>         const struct ti_csi2rx_fmt *fmt;
+> -       unsigned int pixels_in_word;
+> =20
+>         fmt =3D find_format_by_fourcc(fsize->pixel_format);
+>         if (!fmt || fsize->index !=3D 0)
+>                 return -EINVAL;
+> =20
+> -       /*
+> -        * Number of pixels in one PSI-L word. The transfer happens in mu=
+ltiples
+> -        * of PSI-L word sizes.
+> -        */
+> -       pixels_in_word =3D PSIL_WORD_SIZE_BYTES * 8 / fmt->bpp;
+> -
+>         fsize->type =3D V4L2_FRMSIZE_TYPE_STEPWISE;
+> -       fsize->stepwise.min_width =3D pixels_in_word;
+> -       fsize->stepwise.max_width =3D rounddown(MAX_WIDTH_BYTES * 8 / fmt=
+->bpp,
+> -                                             pixels_in_word);
+> -       fsize->stepwise.step_width =3D pixels_in_word;
+> +       fsize->stepwise.min_width =3D 1;
+
+But here, in ENUM_FRAMESIZES we allow width to go as low as 1.
+
+Can you make sure both of them match whatever is correct (and possible by
+the hardware)?
+
+> +       fsize->stepwise.max_width =3D MAX_WIDTH_BYTES * 8 / fmt->bpp;
+> +       fsize->stepwise.step_width =3D 1;
+>         fsize->stepwise.min_height =3D 1;
+>         fsize->stepwise.max_height =3D MAX_HEIGHT_LINES;
+>         fsize->stepwise.step_height =3D 1;
+> --=20
+> 2.34.1
+>=20
+
+Thanks,
+    Jai
 
