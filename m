@@ -1,122 +1,202 @@
-Return-Path: <linux-kernel+bounces-803887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6B5B466CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B78B466C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EF5E4E1E1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4919188199F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F23E29D277;
-	Fri,  5 Sep 2025 22:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22A229E10C;
+	Fri,  5 Sep 2025 22:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D11SbykN"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j91+qH+F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678B929D270
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084C5225761;
+	Fri,  5 Sep 2025 22:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757112288; cv=none; b=lDLuMGCo9QX+0Uz5Wjev6e135n3iAgxBi5o8wXckkLZlUADoiFjaUO6jS0HbEkSH+CQR1xPNfBBPlJU5lWQcnJ+/SjWb7G0uborIEM5QrfmMRyD+psPO6HRRbVjfJaUdP3fiHq+SG2r3DQHyT3+CtjMwRC/NlP+iwmVnaQxiZJc=
+	t=1757112274; cv=none; b=ic/157qgV2IVJ72Ge5bv44WVTpAmtQgjvsdx4VfJ/Ca6uEhd6+I1OaN8yt3xsITb0/H2tRsBrGm8j3iVD8P6l2oCDt8EnnoGgVsP3lLakPOG0dxtXYTNPItpINm/9cbXxYHXqGmGEkr9yOnKMNa0eEvgc46rbTTJQJ4hN/hJJFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757112288; c=relaxed/simple;
-	bh=V23C9Ebj02wqWuD1jFpn8uhOfCPGnEw6lbKl9cWUTRQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LtdZ6WRKKf5V0kJhhacFsvnppD34tKZQlpKcCTW16GThKJb0fL//bUuVUhPtYgan+t7t9/uMuIJQrHxLcLLmPxyCQastbLuRjhxBXO3nrl7i2YFV3PJ83WvctjPt9QJ2UvexwCz7Vj5qZ0+qIxyw0nDPaD20eb2BNEo4m/N7yqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D11SbykN; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757112274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IEvTf0gu2uvX4iNptGPGuSQc3Jmjp1dV6o5P5PehWGU=;
-	b=D11SbykNSIElurYGwH8imcgAOpuoUqmYxP+VrnGYqNwwXfriFXq2dx3BkVqnX9Rvg0B+82
-	hnSm4wVK2Zit7mfTkJ54avRQbmsT6cHrZRK6Z8tn1mLUC+8OndYp4Q2VLeJ/IqgrZCj3ze
-	BjbZntUKHiduelcTWnahlGLb4HT2xAY=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
-  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,
-  Muchun Song <muchun.song@linux.dev>,  Alexei Starovoitov
- <ast@kernel.org>,  Peilin Ye <yepeilin@google.com>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>,  bpf@vger.kernel.org,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  linux-kernel@vger.kernel.org,  Meta kernel team
- <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-In-Reply-To: <6bcjnhdsbyfmlua2x7olz6w3gheejfatnrtn5qu7ls5svegrok@zeatti7whrnq>
-	(Shakeel Butt's message of "Fri, 5 Sep 2025 14:50:17 -0700")
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
-	<87y0qsa95d.fsf@linux.dev>
-	<mai3ndkvqrpkfpblkazbyejvpkizrp7dh22374tpkmepfji32o@3troawzsuvqe>
-	<87ecska85y.fsf@linux.dev>
-	<6bcjnhdsbyfmlua2x7olz6w3gheejfatnrtn5qu7ls5svegrok@zeatti7whrnq>
-Date: Fri, 05 Sep 2025 15:44:28 -0700
-Message-ID: <87cy848qpf.fsf@linux.dev>
+	s=arc-20240116; t=1757112274; c=relaxed/simple;
+	bh=ecdRr8yDz4LhdbWsw8D/b4SVpMQdJT71OK6gvoVHdrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JGzBmzYiw1z7U7Gvmc2vkXfPWYO3Nq6iL+e1g2GQBiSNPC5yB1eQZpAG28rKV4mctZ/wVhZupj4C04g5TfHT07gTybvEbJuEfo+7QSTO11iMFE+Hs6NTNhqwPZlwuACW78YJxEjl2OUoVmHe2q9Ba4WyMh0o1XkTruPLzTpjq/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j91+qH+F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479A1C4CEF1;
+	Fri,  5 Sep 2025 22:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757112272;
+	bh=ecdRr8yDz4LhdbWsw8D/b4SVpMQdJT71OK6gvoVHdrE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=j91+qH+F+7zrhgPA7QmOREMjCCY9jtWORQ1GQgSLE3gNhaZ3EpcULfXyQskbKzPq7
+	 Bc79AGYEReaJ5iPsPpaUTcUE6bkoJnidMz/2KoE1upgmW73yrZpisxEtFHnGd5Mtq+
+	 O5cVz/EZOipDCa0Bt+O1SdlU8+6aeMbTxyALo7LZDo5dperTV9qRvAqc5041zQXgxI
+	 X9+xyXQgUyyfWGPNocJQp/IxBpzyq+8d3H+zzmP6dyR4lDh+C8KlMxxaWHdDXhA+et
+	 KxhhVX5wGOk/qLJhXRNS4y3Y5RPF4tO67RFV/RuIh+V5M8lKmJPfsxHJ/KY8+8G8OT
+	 nCzrZrxp/DyhQ==
+Date: Fri, 5 Sep 2025 17:44:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH v2 1/5] PCI: qcom: Wait for PCIE_RESET_CONFIG_WAIT_MS
+ after PERST# deassert
+Message-ID: <20250905224430.GA1325412@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903-pci-pwrctrl-perst-v2-1-2d461ed0e061@oss.qualcomm.com>
 
-Shakeel Butt <shakeel.butt@linux.dev> writes:
+On Wed, Sep 03, 2025 at 12:43:23PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> PCIe spec r6.0, sec 6.6.1 mandates waiting for 100ms before deasserting
+> PERST# if the downstream port does not support Link speeds greater than
+> 5.0 GT/s.
 
-> On Fri, Sep 05, 2025 at 02:42:01PM -0700, Roman Gushchin wrote:
->> Shakeel Butt <shakeel.butt@linux.dev> writes:
->> 
->> > On Fri, Sep 05, 2025 at 02:20:46PM -0700, Roman Gushchin wrote:
->> >> Shakeel Butt <shakeel.butt@linux.dev> writes:
->> >> 
->> >> > Generally memcg charging is allowed from all the contexts including NMI
->> >> > where even spinning on spinlock can cause locking issues. However one
->> >> > call chain was missed during the addition of memcg charging from any
->> >> > context support. That is try_charge_memcg() -> memcg_memory_event() ->
->> >> > cgroup_file_notify().
->> >> >
->> >> > The possible function call tree under cgroup_file_notify() can acquire
->> >> > many different spin locks in spinning mode. Some of them are
->> >> > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
->> >> > just skip cgroup_file_notify() from memcg charging if the context does
->> >> > not allow spinning.
->> >> 
->> >> Hmm, what about OOM events? Losing something like MEMCG_LOW doesn't look
->> >> like a bit deal, but OOM events can be way more important.
->> >> 
->> >> Should we instead preserve the event (e.g. as a pending_event_mask) and
->> >> raise it on the next occasion / from a different context?
->> >>
->> >
->> > Thanks for the review. For now only MAX can happen in non-spinning
->> > context. All others only happen in process context. Maybe with BPF OOM,
->> > OOM might be possible in a different context (is that what you are
->> > thinking?). I think we can add the complexity of preserving the event
->> > when the actual need arise.
->> 
->> No, I haven't thought about any particular use case, just a bit
->> worried about silently dropping some events. It might be not an issue
->> now, but might be easy to miss a moment when it becomes a problem.
->> 
->
-> Only the notification can be dropped and not the event (i.e. we are
-> still incrementing the counters). Also for MAX only but I got your
-> point.
->
->> So in my opinion using some delayed delivery mechanism is better
->> than just dropping these events.
->
-> Let me see how doing this irq_work looks like and will update here.
+I guess you mean we need to wait 100ms *after* deasserting PERST#?
 
-Thanks!
+I.e., this wait before sending config requests to a downstream device:
 
-If it won't work out for some reason, maybe at least explicitly
-narrow it down to the MEMCG_MAX events.
+  ◦ With a Downstream Port that does not support Link speeds greater
+    than 5.0 GT/s, software must wait a minimum of 100 ms following
+    exit from a Conventional Reset before sending a Configuration
+    Request to the device immediately below that Port.
+
+> But in practice, this delay seem to be required irrespective of
+> the supported link speed as it gives the endpoints enough time to
+> initialize.
+
+Saying "but in practice ... seems to be required" suggests that the
+spec requirement isn't actually enough.  But the spec does say the
+100ms delay before config requests is required for all link speeds.
+The difference is when we start that timer: for 5 GT/s or slower it
+starts at exit from Conventional Reset; for faster than 5 GT/s it
+starts when link training completes.
+
+> Hence, add the delay by reusing the PCIE_RESET_CONFIG_WAIT_MS definition if
+> the linkup_irq is not supported. If the linkup_irq is supported, the driver
+> already waits for 100ms in the IRQ handler post link up.
+
+I didn't look into this, but I wondered whether it's possible to miss
+the interrupt, especially the first time during probe.
+
+> Also, remove the redundant comment for PCIE_T_PVPERL_MS. Finally, the
+> PERST_DELAY_US sleep can be moved to PERST# assert where it should be.
+
+Unless this PERST_DELAY_US move is logically part of the
+PCIE_RESET_CONFIG_WAIT_MS change, putting it in a separate patch would
+make *this* patch easier to read.
+
+> Cc: stable+noautosel@kernel.org # non-trivial dependency
+> Fixes: 82a823833f4e ("PCI: qcom: Add Qualcomm PCIe controller driver")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..bcd080315d70e64eafdefd852740fe07df3dbe75 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -302,20 +302,22 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+>  	else
+>  		list_for_each_entry(port, &pcie->ports, list)
+>  			gpiod_set_value_cansleep(port->reset, val);
+> -
+> -	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
+>  }
+>  
+>  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+>  {
+>  	qcom_perst_assert(pcie, true);
+> +	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
+>  }
+>  
+>  static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
+>  {
+> -	/* Ensure that PERST has been asserted for at least 100 ms */
+> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +
+>  	msleep(PCIE_T_PVPERL_MS);
+>  	qcom_perst_assert(pcie, false);
+> +	if (!pp->use_linkup_irq)
+> +		msleep(PCIE_RESET_CONFIG_WAIT_MS);
+
+I'm a little confused about why you test pp->use_linkup_irq here
+instead of testing the max supported link speed.  And I'm not positive
+that this is the right place, at least at this point in the series.
+
+At this point, qcom_ep_reset_deassert() is only used by
+qcom_pcie_host_init(), so the flow is like this:
+
+  qcom_pcie_probe
+    irq = platform_get_irq_byname_optional(pdev, "global")
+    if (irq > 0)
+      pp->use_linkup_irq = true
+    dw_pcie_host_init
+      pp->ops->init
+        qcom_pcie_host_init                         # .init
+          qcom_ep_reset_deassert                    # <--
+ +          if (!pp->use_linkup_irq)
+ +            msleep(PCIE_RESET_CONFIG_WAIT_MS)     # 100ms
+      if (!dw_pcie_link_up(pci))
+        dw_pcie_start_link
+      if (!pp->use_linkup_irq)
+        dw_pcie_wait_for_link
+          for (retries = 0; retries < PCIE_LINK_WAIT_MAX_RETRIES; retries++)
+            if (dw_pcie_link_up(pci))
+              break
+            msleep(PCIE_LINK_WAIT_SLEEP_MS)         # 90ms
+          if (pci->max_link_speed > 2)              # > 5.0 GT/s
+            msleep(PCIE_RESET_CONFIG_WAIT_MS)       # 100ms
+
+For slow links (<= 5 GT/s), it's possible that the link comes up
+before we even call dw_pcie_link_up() the first time, which would mean
+we really don't wait at all.
+
+My guess is that most links wouldn't come up that fast but *would*
+come up within 90ms.  Even in that case, we wouldn't quite meet the
+spec 100ms requirement.
+
+I wonder if dw_pcie_wait_for_link() should look more like this:
+
+  dw_pcie_wait_for_link
+    if (pci->max_link_speed <= 2)                   # <= 5.0 GT/s
+      msleep(PCIE_RESET_CONFIG_WAIT_MS)             # 100ms
+
+    for (retries = 0; retries < PCIE_LINK_WAIT_MAX_RETRIES; retries++)
+      if (dw_pcie_link_up(pci))
+        break;
+      msleep(...)
+
+    if (pci->max_link_speed > 2)                    # > 5.0 GT/s
+      msleep(PCIE_RESET_CONFIG_WAIT_MS)             # 100ms
+
+Then we'd definitely wait the required 100ms even for the slow links.
+The retry loop could start with a much shorter interval and back off.
+
+I wish the max_link_speed checks used some kind of #define to make
+them readable.
+
+Bjorn
 
