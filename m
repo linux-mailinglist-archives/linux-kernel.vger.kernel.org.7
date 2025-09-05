@@ -1,76 +1,70 @@
-Return-Path: <linux-kernel+bounces-802070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2936B44D55
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8B0B44D5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76E841C80C7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:24:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4C1B7A72F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450B22D238C;
-	Fri,  5 Sep 2025 05:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE632D3A71;
+	Fri,  5 Sep 2025 05:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rs5KrjfL"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HM1YnV8M"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A76278E7B;
-	Fri,  5 Sep 2025 05:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D952D2485;
+	Fri,  5 Sep 2025 05:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049631; cv=none; b=ERf34uaQnONTwHmSGAoV/k/woAI+kZ0wcKQVGrarh9S0Ykd3uzsJQp+LE4o3ZOTUfrxS4jUVxC9x+rvLX1lYc31Vpm8ngnW0QzvCUKTuhjmG7SldxLghyAJcanS2VRqhs8rtL3ZclK/r6bHH6Gjsxv8q5j7ukEuPf1/eVNX2amw=
+	t=1757049634; cv=none; b=lWMVcPUqAGXxqH5cHjPjE8IfLqdNeTiab6XLeBDcwKnjGWfP3pH7pMGd8ivlOnKVvKZd8BidK0w11GhDDnllzBJ6Gwxmu6ftPfsuM3BpFsV7fmFdTABoaM2MGg+IijrpYVvCHHtvPUz+gmUAMYDh0WWSiMm2oqbPUiE6d6SjLn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049631; c=relaxed/simple;
-	bh=8Qs36Abn2ggI8VJjUw9GvpP469qCfO3YLij1D5DMuD8=;
+	s=arc-20240116; t=1757049634; c=relaxed/simple;
+	bh=oTi55rFWyXbAI+wQH3Nr91ehgstXbf9J3IOjk1gWCbw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qh1cr1SJclEKtvD2wjtJM9HITK/cCmuvbrC7ceHmK7vHsaJ3iHpzh35vurXZjJasT+ObK6IgWmAVWEDZ3q5yInPfr7iyhtsUAc9mu1ybfTSCN6IkqWLuO3zMRZlFet1yzOf9zS3YNg8Xw1wIfK+BbyW2xMRJPZdhKGL80ULcDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Rs5KrjfL; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=qCstOUWBa4pZEcMST3CjR64ikVo7tuEnErzCFQPxJXcszg46su0Ow6ht2g1/jXrD1h91hGTI6wr/JVlP0MqKyMXCotln2pjleZYZxw8pcTLv2HniNI6gIkOZPHzEdIr+GtwuS7B3wng6zKUFHA8fDczyneNDhdZ70jetvWQpVvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HM1YnV8M; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855KKjb3246466;
-	Fri, 5 Sep 2025 00:20:20 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855KOgT3678981;
+	Fri, 5 Sep 2025 00:20:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757049620;
-	bh=S4vPSMY+WPy4tAS1pz3zNbAgISNuOjb0rEdgpdtUzpo=;
+	s=ti-com-17Q1; t=1757049624;
+	bh=imZiDbY5LxKH7PJYXsjgASKSSB36ZX0k6ncjRHtiLik=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Rs5KrjfLDtfIcDwiQtlHXRfGIhe3JiQUB7oK9L2XkMh2+nsOQNIOS1ds/+uyvneZZ
-	 UxDxzYrZqyBriEU/L3CnfhlKWoWFM/UujfoNrIGD1muDCPZ2Yk8Kazu4Gx4SzpzJbl
-	 HTE7Q9/TRRnlGBY4aqp0rfEc1bPsUiRED4tXbGzA=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855KKpS136669
+	b=HM1YnV8MKeXaFxtofZ/MyNVSn+m8LNraTmChiO714ofzxxnirkBKJaD62xQhpanop
+	 b1Uvj9GC587GUcZPX1oaDy439KC1nUqpEA5ErEw4LrNKHIGyz3kup9+f5Zc9u0s/D9
+	 8lkWG8Xa/oC5Qkkvgu5ZdndnfWTbhasHHd0TGvf0=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855KO1S689125
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 00:20:20 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 5 Sep 2025 00:20:24 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 00:20:20 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 00:20:24 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 00:20:20 -0500
+ Frontend Transport; Fri, 5 Sep 2025 00:20:24 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855Ioil220581;
-	Fri, 5 Sep 2025 00:20:14 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855Ioim220581;
+	Fri, 5 Sep 2025 00:20:20 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
         <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Wadim
- Egorov <w.egorov@phytec.de>, Matt McKee <mmckee@phytec.com>,
-        Garrett Giordano
-	<ggiordano@phytec.com>,
-        Nathan Morrisson <nmorrisson@phytec.com>, John Ma
-	<jma@phytec.com>,
-        Logan Bristol <logan.bristol@utexas.edu>
-Subject: [PATCH v3 18/33] arm64: dts: ti: k3-am64-phycore-som: Add missing cfg for TI IPC Firmware
-Date: Fri, 5 Sep 2025 10:48:31 +0530
-Message-ID: <20250905051846.1189612-19-b-padhi@ti.com>
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v3 19/33] arm64: dts: ti: k3-am642-tqma64xxl: Add missing cfg for TI IPC Firmware
+Date: Fri, 5 Sep 2025 10:48:32 +0530
+Message-ID: <20250905051846.1189612-20-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250905051846.1189612-1-b-padhi@ti.com>
 References: <20250905051846.1189612-1-b-padhi@ti.com>
@@ -84,42 +78,59 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The k3-am64-phycore SoM enables all R5F and M4F remote processors.
-Reserve the MAIN domain timers that are used by R5F remote
+Currently, only R5F remote processors are enabled for k3-am642-tqma64xxl
+whereas the M4F in MCU domain is disabled. Enable the M4F remote
+processor at board level by reserving memory carveouts and assigning
+mailboxes.
+
+While at it, reserve the MAIN domain timers that are used by R5F remote
 processors for ticks to avoid rproc crashes. This config aligns with
 other AM64 boards and can be refactored out later.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-Tested-by: Wadim Egorov <w.egorov@phytec.de>
 ---
-Cc: Wadim Egorov <w.egorov@phytec.de>
-Cc: Matt McKee <mmckee@phytec.com>
-Cc: Garrett Giordano <ggiordano@phytec.com>
-Cc: Nathan Morrisson <nmorrisson@phytec.com>
-Cc: John Ma <jma@phytec.com>
-Cc: Logan Bristol <logan.bristol@utexas.edu>
-Requesting for review/test of this patch.
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Request for review/test of this patch.
 
 v3: Changelog:
-1. Carried T/B tag.
+1. None
 
 Link to v2:
-https://lore.kernel.org/all/20250823160901.2177841-19-b-padhi@ti.com/
+https://lore.kernel.org/all/20250823160901.2177841-20-b-padhi@ti.com/
 
 v2: Changelog:
-1. Re-ordered patch from [PATCH 28/33] to [PATCH v2 18/33].
+1. Re-ordered patch from [PATCH 29/33] to [PATCH v2 19/33].
 
 Link to v1:
-https://lore.kernel.org/all/20250814223839.3256046-29-b-padhi@ti.com/
+https://lore.kernel.org/all/20250814223839.3256046-30-b-padhi@ti.com/
 
- .../boot/dts/ti/k3-am64-phycore-som.dtsi      | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ .../arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-index 03c46d74ebb5..1efd547b2ba6 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-@@ -275,6 +275,30 @@ mbox_m4_0: mbox-m4-0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
+index 40b619c9a6c9..860b79aa5ef5 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi
+@@ -79,6 +79,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
+ 			no-map;
+ 		};
+ 
++		mcu_m4fss_dma_memory_region: m4f-dma-memory@a4000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x00 0xa4000000 0x00 0x100000>;
++			no-map;
++		};
++
++		mcu_m4fss_memory_region: m4f-memory@a4100000 {
++			compatible = "shared-dma-pool";
++			reg = <0x00 0xa4100000 0x00 0xf00000>;
++			no-map;
++		};
++
+ 		rtos_ipc_memory_region: ipc-memories@a5000000 {
+ 			reg = <0x00 0xa5000000 0x00 0x00800000>;
+ 			alignment = <0x1000>;
+@@ -167,6 +179,26 @@ mbox_m4_0: mbox-m4-0 {
  	};
  };
  
@@ -143,13 +154,23 @@ index 03c46d74ebb5..1efd547b2ba6 100644
 +	status = "reserved";
 +};
 +
-+&main_r5fss0 {
+ &main_r5fss0 {
+ 	status = "okay";
+ };
+@@ -203,6 +235,13 @@ &main_r5fss1_core1 {
+ 	status = "okay";
+ };
+ 
++&mcu_m4fss {
++	mboxes = <&mailbox0_cluster6 &mbox_m4_0>;
++	memory-region = <&mcu_m4fss_dma_memory_region>,
++			<&mcu_m4fss_memory_region>;
 +	status = "okay";
 +};
 +
- &main_i2c0 {
+ &ospi0 {
+ 	status = "okay";
  	pinctrl-names = "default";
- 	pinctrl-0 = <&main_i2c0_pins_default>;
 -- 
 2.34.1
 
