@@ -1,188 +1,150 @@
-Return-Path: <linux-kernel+bounces-803016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893ECB45978
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:47:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44053B45976
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D8E3A43B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E88484D7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E106C3568F1;
-	Fri,  5 Sep 2025 13:46:47 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B47350D56;
+	Fri,  5 Sep 2025 13:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SXENI+dQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94BC3568F2;
-	Fri,  5 Sep 2025 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007BF145329
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080007; cv=none; b=UtRlshZMxjlmxKH9n05eXvQ/ccQlXsr6Mzqbx1O2n/WZy/Wj7z0FmAiA65uOpMLlaczywJBM2LwSHk/6Qtbe31pbf6TuYoJBxATnGRve8HWShbfMN7dncPhzrntXTbgbm/CYsBfI3sbjUOr3PTMy9kwtnIo3NqY7ShOVlji55pA=
+	t=1757080001; cv=none; b=EccfsBZ8k6k8H2pWco6w0p9d13Hx8u6LnXNrx+OCKgirptOc7O4IIGb2kTVZOqEF0iWDsMK6OkqxLKOG2qYP9voDcc4uAt2ILnUtd/KETHqBDOnEVVKniigORtnOJehtQw751yMC7YuPCN8V4iC46Zt/spIMBGur+W/Ow2Oq6RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080007; c=relaxed/simple;
-	bh=0Z+odll08XIx79p7xMrLB0QONIlzENyS3D9paA5KBFI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EaH8iySfw7qJV/OoVKKamG2Mpj6aBELNs5dXQF6oQE2dwYCaUKRL7uFRXk7YElP7o13pTvMRRnw2mlbY5AplruxWPigvBfQ7gItz4ot50WhvUHuealWFUIWKfVCDMFeJvRrxV5FZq8rTPyI2NIaN//UBU43SUJmBgZjfbXT1r8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:24ce:2523:e0d0:1c47])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id D1B61420C4;
-	Fri,  5 Sep 2025 13:46:41 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:24ce:2523:e0d0:1c47) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud lecomte <contact@arnaud-lcm.com>
-To: alexei.starovoitov@gmail.com,
-	yonghong.song@linux.dev,
-	song@kernel.org
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH bpf-next v8 1/3] bpf: refactor max_depth computation in
- bpf_get_stack()
-Date: Fri,  5 Sep 2025 15:46:25 +0200
-Message-Id: <20250905134625.26531-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1757080001; c=relaxed/simple;
+	bh=rDwUf94pWrtY4v9/Yowz7CgUxlVbI7YWAum7k9Hw0bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CunGz4g4IZJgd2WVafLuyCmvya0+/NE+U7/P4CkOHMQc8k6pUBmiV2RxKiSQbl0Oh50RmTW8m1gflfZP63bxlpUvxcB4gqTnKK2cJY5c8Gx3BOJSHPDdzTg2Mw1VWITSFQKpEMXjv55/gVjdoGLNrG8hYlKFQRY0MkbrVUxlyrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SXENI+dQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5858WYxl018519
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 13:46:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3wQB5Afi4Fdw9xsNR7jXT3pZ
+	/Wg7hEvuCNLqqtAm4js=; b=SXENI+dQMtOeTueVqf9WdnSGWzjCsGQStpytdnB0
+	o6mCnrhrDPwXbi9h6jPFz7jdYvOxVwWwqFSF3oG24Ib1mopaFzQh4YUa602ji4v6
+	/ooWz3aZKls8RQU4n0kdEBhe3P4b9esSoI922Aq0TWRNWtGO6TUfekljdNGjR3v2
+	4dpXsBG5c3Lnv70p/HJc0ckXedvoKbxV5oyI4KOhwjdHssqFOqrDE3I5BUvkaxDR
+	UniKF3u3/oMoJqUXz/MEsEytmtkxYdzwrFUmJ/2JQNsQ3qvtXOupnRND++iPrGR5
+	VffTqF8UYS7N8sx7ZaAreNaKMrrjWcwUXeklaeV4NMWniQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnpkekb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:46:38 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-71ff3e1256cso43851916d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:46:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757079998; x=1757684798;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wQB5Afi4Fdw9xsNR7jXT3pZ/Wg7hEvuCNLqqtAm4js=;
+        b=a6Spv41iB4invpAqN/P43uFlyzsg55Hqlxo3wjPajJPl2h8lktV5u5gQN6yDBXevD6
+         WVUz6YDNvco/8gq5cJZ0K5kUVjUZWgLWMQPWNogVQBd0c3ytWw8BS353v/F4lImunNBg
+         nIOCqGeeSVdzW8kMKx5YFQeuY0oycuT7px0RbWoLQK0VTIx4umfjqooG+BMkmeMKPc4I
+         vyIiBgN0imFPkcgbYnUn/bfkpcXOs9vwrAbjQhR7X9sV4KoJDG/BgmLNl53BUrGShsF9
+         pBXFMzXrbmKAXNmJIOvg3LvwlkhB64AvG6C5sNBmzZX3Ro3uUNL4fKW9kFRid0jcWXbN
+         Il4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxqmre7TFScW90WnWkTbNLZki598jrN+vknl1pidO4JHecplEjCZRauyZfYwIELwvMQBqGuMAWnS3g+bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3QTxW2LfodAzC7u2XHUx4gf27IcaaLcurgpmd/Reh2NQ1bNFv
+	c5Hi3HZT/vsrvJnX2pT8S34uREid9kaO3Wo4sDODsx8jWZfAO2P81VMaxjfx6XAK8a70yH7Vlgy
+	AF80dKkjFjKvHGn4rzREA7+tKWlxMRNOi9zwati0hzRycG8RaUdBlK8ssV6EOkIspvh3+XzDkhX
+	c=
+X-Gm-Gg: ASbGncsCoyxGx3itjxn4iVcjmmsmM81AElVEn5bFWTZwwzFLVP8Y40As9rglDZ4rpUj
+	RA/HafDv6DFDYDvBpv2B8yHbC8JafA1+RLusLxfq6xDtPqjtFLBsWDJdjioAyReDibxP5XqvgZP
+	D8/qJeqlYOEstX3cT64J22mco0pcxAGKT//a2zLdVL74LWrFo23y0Yx37vBGGnG8bpBU6Su80aY
+	neA+fs0Zv/DuT3ylXMepZAr523QWJq47TGpdfoIn7rmPhozgzbCMfg9OMG93XPHEx1DMHsfOy16
+	sSPjHHOHcyeFxHxxrTXi79nvROTIHiHsWjE9Hi9xbyRkrw+aKOrY9PIK5LBxFqgTiw+nQffsWvt
+	ptTOFLHKJavY0RmWDnXQz6Pv5SDwsDkWHIS+J4F50/QvARQgo6x6M
+X-Received: by 2002:a05:6214:3308:b0:726:32d9:db64 with SMTP id 6a1803df08f44-72632d9e19cmr98143316d6.59.1757079997462;
+        Fri, 05 Sep 2025 06:46:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyLPSqn/5cyLU/ufeZ0J1VNb94Xf/Kcme1ni+D63yeD+5Me3DlASVIJOBnDX/9AWOyyQgd0Q==
+X-Received: by 2002:a05:6214:3308:b0:726:32d9:db64 with SMTP id 6a1803df08f44-72632d9e19cmr98142896d6.59.1757079996852;
+        Fri, 05 Sep 2025 06:46:36 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad52b4dsm1763359e87.152.2025.09.05.06.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 06:46:36 -0700 (PDT)
+Date: Fri, 5 Sep 2025 16:46:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Faisal Hassan <faisal.hassan@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Chenyuan Yang <chenyuan0y@gmail.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom-qmp-usb: Set regulator load before enabling
+Message-ID: <vda7dcqqfudhoiwbe45irfab62vbn45crfsc7smenskebuteon@rcutjxrfbwrm>
+References: <20250905101243.14815-1-faisal.hassan@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175708000245.25943.12706762412363530719@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905101243.14815-1-faisal.hassan@oss.qualcomm.com>
+X-Proofpoint-GUID: 8rmu4JhSm14hNdF9Iss9erBB31-b1npn
+X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68bae9be cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=wC53ndoxZnronpF1UXEA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: 8rmu4JhSm14hNdF9Iss9erBB31-b1npn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX2Lt9Nf6ZSxzy
+ Dph5IUFe68ewKsfjF1Ror3+uBPWxebmDjPmeqt3IxUkPayfPW2gWAOIMJKhNjiMp6RVvNE5swW4
+ 5pFgjSU2BMXaN7GzeRwDZkjvHlCkh8AoRlHZn3qSUoPhN4uFogvZZCMK7GWtSxDYIWPaKUYg4Kh
+ fH4WvWO7W45dviYQN8CNB86fcBkGX1eS6kidgO4UJ3Q2dQWbw+JO/tJUuqqavHs7FZ3onvw1uFC
+ kzgsgsyKPngCZ2jjF5yFUOGolebguVb+iugIcAGV2OQdTbquSpWwbAGy0exhta0YbwL9THUfE6z
+ /6gbtF907fUO8uBrk1RKDkKbA9y8AsqtgoTGZ7kFirgp4s80TLZJd4U/eH1F1r7/XSGTugXWYXu
+ NnJENdPK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300001
 
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
+On Fri, Sep 05, 2025 at 03:42:43PM +0530, Faisal Hassan wrote:
+> Set the regulator load before enabling the regulators to ensure stable
+> operation and proper power management on platforms where regulators are
+> shared between the QMP USB PHY and other IP blocks.
+> 
+> Introduce a regulator data structure with explicit enable load values and
+> use the regulator framework's `init_load_uA` field along with
+> `devm_regulator_bulk_get_const()` to ensure that `regulator_set_load()` is
+> applied automatically before the first enable, providing consistent power
+> management behavior across platforms.
+> 
+> Signed-off-by: Faisal Hassan <faisal.hassan@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 27 ++++++-------------------
+>  1 file changed, 6 insertions(+), 21 deletions(-)
+> 
 
-A new helper function stack_map_calculate_max_depth() that
-computes the max depth for a stackmap.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-Acked-by: Song Liu <song@kernel.org>
----
-Changes in v2:
- - Removed the checking 'map_size % map_elem_size' from
-   stack_map_calculate_max_depth
- - Changed stack_map_calculate_max_depth params name to be more generic
 
-Changes in v3:
- - Changed map size param to size in max depth helper
-
-Changes in v4:
- - Fixed indentation in max depth helper for args
-
-Changes in v5:
- - Bound back trace_nr to num_elem in __bpf_get_stack
- - Make a copy of sysctl_perf_event_max_stack
-   in stack_map_calculate_max_depth
-
-Changes in v6:
- - Restrained max_depth computation only when required
- - Additional cleanup from Song in __bpf_get_stack
-
-Changes in v7:
- - Removed additional cleanup from v6
-
-Link to v7: https://lore.kernel.org/all/20250903233910.29431-1-contact@arnaud-lcm.com/
----
- kernel/bpf/stackmap.c | 38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 3615c06b7dfa..ed707bc07173 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
- 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
- }
- 
-+/**
-+ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
-+ * @size:  Size of the buffer/map value in bytes
-+ * @elem_size:  Size of each stack trace element
-+ * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
-+ *
-+ * Return: Maximum number of stack trace entries that can be safely stored
-+ */
-+static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
-+{
-+	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 max_depth;
-+	u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
-+
-+	max_depth = size / elem_size;
-+	max_depth += skip;
-+	if (max_depth > curr_sysctl_max_stack)
-+		return curr_sysctl_max_stack;
-+
-+	return max_depth;
-+}
-+
- static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
- {
- 	u64 elem_size = sizeof(struct stack_map_bucket) +
-@@ -300,20 +322,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
--	u32 max_depth = map->value_size / stack_map_data_size(map);
--	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 elem_size = stack_map_data_size(map);
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	u32 max_depth;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
--	max_depth += skip;
--	if (max_depth > sysctl_perf_event_max_stack)
--		max_depth = sysctl_perf_event_max_stack;
--
-+	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
- 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
- 				   false, false);
- 
-@@ -406,8 +425,8 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 			    struct perf_callchain_entry *trace_in,
- 			    void *buf, u32 size, u64 flags, bool may_fault)
- {
--	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
- 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
-+	u32 trace_nr, copy_len, elem_size, max_depth;
- 	bool crosstask = task && task != current;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 	bool user = flags & BPF_F_USER_STACK;
-@@ -438,10 +457,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 		goto clear;
- 	}
- 
--	num_elem = size / elem_size;
--	max_depth = num_elem + skip;
--	if (sysctl_perf_event_max_stack < max_depth)
--		max_depth = sysctl_perf_event_max_stack;
-+	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
- 
- 	if (may_fault)
- 		rcu_read_lock(); /* need RCU for perf's callchain below */
 -- 
-2.47.3
+With best wishes
+Dmitry
 
