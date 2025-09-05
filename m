@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-803030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504F8B459AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D045B459AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55257B1DEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23172A63D95
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0FD35CEDB;
-	Fri,  5 Sep 2025 13:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F835E4C3;
+	Fri,  5 Sep 2025 13:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arbQTUjM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTZZUtNK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DB127AC5A;
-	Fri,  5 Sep 2025 13:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D9E35CED1;
+	Fri,  5 Sep 2025 13:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080439; cv=none; b=XHujeg32TJtlxdSF2etjRISJrbiN4PdFz0ZjCbqujIIhXcn0v81Y5ANlL52SjYup6hCDRMHIbtUE5uOv/MUbeHPKgN68ia8hvIdBUCsc43KCgGcFnMcNk20IcNhb8C00UM+W77XhtboGqjjl15NqZADg859Ycgug0dv1TGQDj24=
+	t=1757080452; cv=none; b=golrRHmHGwgbcm1Ff9ZNIx1NEoo1SBkiAO9UO7C29GwxYq+kFt/2eZ/HBfQ47X9/kK3QwZHHotx0j8yAZcZA2Vggvc+txItKYNKnUsileMHgm5p9Q64PEhd/blusJ/CRMCh3kYY/3DkvPM1yMW3ozvyV4Tlj2/00K1oj8DNXCII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080439; c=relaxed/simple;
-	bh=ReDyM4MB7hT8mA6UGUgIoBFRBaUXNQ62LKi7265f88I=;
+	s=arc-20240116; t=1757080452; c=relaxed/simple;
+	bh=5hFR82aFngQcdQcvd1+b8b9T/pUP9YunoyF6+F+9N0o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eO2sJD+DeOG7Sglmbc0IZIOZ5ZgmCvI12CqnuS3hNLV9SfrhKPOYXekEAhPVlbhlg828vi4RhmZ2zy1GykdN2dKY0Ow0DHmGRn5ZxoZQdAHStFdt5NbKTrU2w4tHRBD9l95oCZfJUcqO6vSha3I3pUmhaiC3h4t3Uiu/Phdk6No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arbQTUjM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0274C4CEF1;
-	Fri,  5 Sep 2025 13:53:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=UbII7oV0soohniwJeOdwAL1LL6/Ktp2fkuZ5bneVFShHJ8tEpjDc9gEYC/gfibDU0bSjgCE/JvmPN/3XYaYGeGUoc91BPXX5ZHpNRTJAl4KbtYSrBGjar+m9SvcvP7/1Hk8ghGTF+CUyDDPcQF8DQaSMXImo9lB73R/1q4S+iZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTZZUtNK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F7DC4CEF1;
+	Fri,  5 Sep 2025 13:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757080439;
-	bh=ReDyM4MB7hT8mA6UGUgIoBFRBaUXNQ62LKi7265f88I=;
+	s=k20201202; t=1757080451;
+	bh=5hFR82aFngQcdQcvd1+b8b9T/pUP9YunoyF6+F+9N0o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=arbQTUjMzG8MoJMRvIVpfMnM6U5qZawu/1QFEIdjVbUQ1Nylbpc5go6mPHakdZeRl
-	 s5//E6iluNHeHmDws00QSBHu0Eh08kc/bOzRJc785v1WHkEt+fHZrHnoMLH/crDP/X
-	 BJVZKecmSHdRPB8/u5ksZROzROhbl7MZdvA6JOull7eHVDTJScY7NXKb3ahyz6PoSP
-	 UGd9CCQx3ioIJw2pNtUv3g6Y8chetjCrqNPs0zLhWZnHOrgM9foRe60ayjXrJZYCa2
-	 vdvMjc8i4dZpPfwKVdsv48+RN0vgXqVWwZW4DhxQ5p3fdt3uIELLYSHZcE8lmeCAo2
-	 HqQLMDKjR7B5Q==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	linux-afs@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE
-Date: Fri,  5 Sep 2025 15:53:53 +0200
-Message-ID: <20250905-hausordnung-unfassbar-14afe9d699b7@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <829770.1756898956@warthog.procyon.org.uk>
-References: <829770.1756898956@warthog.procyon.org.uk>
+	b=cTZZUtNKNQC7rw3WkFEpnVdGV/SRYwTP8AKiW5kLkdTEkU6s8VYttO+AeEG8C1l1f
+	 D/frXbjxo8ulFtCznMfz7YWcniGkM1nTxvsAZggcHZNSUQniQI8WvykF9rdZyo3IGx
+	 86U69iiqOh1BDePwcC0Lz08Or3uR0XugHDEfkZaI5gwFHpHcchCesvB+hYFAnPFMAw
+	 YhO6TLjPF9J422SfeXvDuQRIDXGUV5zsO5yja4MllDWzn8o1XaDinb8ZhlA0YtR6Lq
+	 YVpsmbqlFKBzBIXEb3l5uBKikfu3D2SkHudWWZ4hc0n2hfe/ZkUkJ/nwTY4cp4qTiu
+	 m3HdzWDUXIlJA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Zihuan Zhang <zhangzihuan@kylinos.cn>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject:
+ [PATCH v1 3/3] cpufreq: intel_pstate: Adjust frequency percentage
+ computations
+Date: Fri, 05 Sep 2025 15:53:54 +0200
+Message-ID: <3395556.44csPzL39Z@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1182; i=brauner@kernel.org; h=from:subject:message-id; bh=ReDyM4MB7hT8mA6UGUgIoBFRBaUXNQ62LKi7265f88I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTsel3ke5X7lciVsBaxN8esr714U2S/fT37CdsDbP+vv MpY9ry+taOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiPQsYGXZN+VEn+3incvaM rbN5C9MOFEj5n3Di39tce6XbPey1yAuG/ym16797uanJlwWGLO3eOoUz5FSby585aR3XO3i8itf xswIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 03 Sep 2025 12:29:16 +0100, David Howells wrote:
-> 
-> Add support for RENAME_NOREPLACE and RENAME_EXCHANGE, if the server
-> supports them.
-> 
-> The default is translated to YFS.Rename_Replace, falling back to
-> YFS.Rename; RENAME_NOREPLACE is translated to YFS.Rename_NoReplace and
-> RENAME_EXCHANGE to YFS.Rename_Exchange, both of which fall back to
-> reporting EINVAL.
-> 
-> [...]
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Applied to the vfs-6.18.afs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.afs branch should appear in linux-next soon.
+Adjust frequency percentage computations in update_cpu_qos_request() to
+avoid going above the exact numerical percentage in the FREQ_QOS_MAX
+case.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/intel_pstate.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -1696,8 +1696,8 @@ unlock_driver:
+ static void update_cpu_qos_request(int cpunum, enum freq_qos_req_type type)
+ {
+ 	struct cpudata *cpu = all_cpu_data[cpunum];
++	unsigned int freq = cpu->pstate.turbo_freq;
+ 	struct freq_qos_request *req;
+-	unsigned int freq, perf_pct;
+ 
+ 	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpunum);
+ 	if (!policy)
+@@ -1711,14 +1711,12 @@ static void update_cpu_qos_request(int c
+ 		intel_pstate_get_hwp_cap(cpu);
+ 
+ 	if (type == FREQ_QOS_MIN) {
+-		perf_pct = global.min_perf_pct;
++		freq = DIV_ROUND_UP(freq * global.min_perf_pct, 100);
+ 	} else {
+ 		req++;
+-		perf_pct = global.max_perf_pct;
++		freq = (freq * global.max_perf_pct) / 100;
+ 	}
+ 
+-	freq = DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, 100);
+-
+ 	if (freq_qos_update_request(req, freq) < 0)
+ 		pr_warn("Failed to update freq constraint: CPU%d\n", cpunum);
+ }
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.afs
 
-[1/1] afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE
-      https://git.kernel.org/vfs/vfs/c/09c69289a273
 
