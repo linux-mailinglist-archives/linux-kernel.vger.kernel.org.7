@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-803849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69584B46624
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:49:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACE2B46626
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD161885A85
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 531A016F45A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DAE286419;
-	Fri,  5 Sep 2025 21:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12783287241;
+	Fri,  5 Sep 2025 21:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A257DYfj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AsvpR/nI"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D022129B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D872765C3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108965; cv=none; b=u3jso1nJu8yPUGo2Nh8smsKTzUqUw2G2PbycLlVVRP2iMn9AQaIQo5pUPjD+4hR14HgVYxoqiZ3QxNpq1hX16QYw/n+QBoFiiyfNpKJKSVesCk7jNTt5BBvXEXKwe9RnGFbxoIrR5mMeehnvRJcRHdh9FBaDufMM24oRXTilB24=
+	t=1757109036; cv=none; b=nwDtmngQEUFeVy1zvKqYGZCHQIPo3k8UAfNSFOlcKQ/CleKclvOI2uqLmiYgm1jKgrD4qVQrYjQDpUXsmzKEsb0FdUxZenA3UW4pkoJmpiD1NYL6faWs87VvFzF1eqU9NWQWZw8ZsRoNKum4HagYYlF9XgKEC9Q1MbtUvCTLufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108965; c=relaxed/simple;
-	bh=8rqxU2P26RfovZdy3bMvysD1ArZ5IT9wXUXD021PhVM=;
+	s=arc-20240116; t=1757109036; c=relaxed/simple;
+	bh=S/UWDnpTMWsqhx4sgrCQxMtbVj0rwQvQhDuX/DmBFNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCe5q0FX1FIwVazocjPFIqxNTP+1UsgFIObpyLio/xWqyoS9rkoHHlCCgIeWHFdw5X+Drf3caHIk8IQUU91vAfhHplG7bCjH6dpZzm7A/EeqWidqr/uhoQAde2xhWXg/kQmSB790rL6yTD8YFfVwtc5/Wk/PPNRB2jkUITzxRvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A257DYfj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7EA6C4CEF1;
-	Fri,  5 Sep 2025 21:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757108965;
-	bh=8rqxU2P26RfovZdy3bMvysD1ArZ5IT9wXUXD021PhVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A257DYfjQbLn8wfTw8C2eXsFdJ6qMxlepGDijsenuTfCBmMh+6lBfrHvwZhFiKoet
-	 FqcwvCM7JXkR0HGZOM6Aao38PM6VlrBe4UN18BU4qRWseDYFZw0KxPNlIk3fuvqVPn
-	 GpttiZeEn7P7zGRh/o6rVYIARhBkyzecDY1NHCpFul4g4fFsbHrI4GQwTRjikAS/bl
-	 IfM7s4g+6WtpbKjLpKtp/ULW8dYbcU2w2jpy9Gunkb317iEvocwhp5MZ0hXk7duIHW
-	 DyvRSY2vNLBvu1hpd//2Xc/AfUimSUAm/z5Rz6wAVYT1T9ZfzjvvVYqRmYt6Ufj58z
-	 36mit388J8cIw==
-Date: Fri, 5 Sep 2025 15:49:23 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	cassel@kernel.org, dlemoal@kernel.org, kamaljit.singh1@wdc.com
-Subject: Re: [PATCH v1 1/1] nvme-core: exclude ioccsz/iorcsz checks for admin
- ctrlr
-Message-ID: <aLta40FO1Ud6TZ4T@kbusch-mbp>
-References: <20250905211002.1937414-1-kamaljit.singh@opensource.wdc.com>
- <20250905211002.1937414-2-kamaljit.singh@opensource.wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FW+N/3IodElr70lAL+29JRvCVtMcO/0jWJxMaJbQj/w/u/GhfQMWoWrujyRzeMeEFlxBogE+2HBj3LUmU3fCG8IG0guslW/e/9AOMGhW6BiTd+/3Hnw31FlO85PKSEjQpoMEk9Ybx05qm8WlF/fDAfTYneuP8gX8iOxmu/yrvM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AsvpR/nI; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 5 Sep 2025 14:50:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757109022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i+4lbkYAVJItZbl2lUeNDlNahLiQUZCJiaL54ViPkiY=;
+	b=AsvpR/nIzurNpoIFa6XwntMf4OD07BIqdrNjj5pHASfxQjM6hDQZxoKF+RNqMmjRn+bwxD
+	QavQmwYEnsXt2x7J0YcXG8R67lsjb9n5gKD4blTaP7+Qk9IW5ox/72XJLYPBLhcvy0J3Vq
+	6nEtKlfioHa8Yera73WK9RMGQRYsHEE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
+Message-ID: <6bcjnhdsbyfmlua2x7olz6w3gheejfatnrtn5qu7ls5svegrok@zeatti7whrnq>
+References: <20250905201606.66198-1-shakeel.butt@linux.dev>
+ <87y0qsa95d.fsf@linux.dev>
+ <mai3ndkvqrpkfpblkazbyejvpkizrp7dh22374tpkmepfji32o@3troawzsuvqe>
+ <87ecska85y.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,38 +63,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905211002.1937414-2-kamaljit.singh@opensource.wdc.com>
+In-Reply-To: <87ecska85y.fsf@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 05, 2025 at 02:10:01PM -0700, Kamaljit Singh wrote:
-> An administrative controller does not support I/O queues, hence it
-> should exclude existing checks for IOCCSZ/IORCSZ.
+On Fri, Sep 05, 2025 at 02:42:01PM -0700, Roman Gushchin wrote:
+> Shakeel Butt <shakeel.butt@linux.dev> writes:
 > 
-> Signed-off-by: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
-> ---
->  drivers/nvme/host/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> > On Fri, Sep 05, 2025 at 02:20:46PM -0700, Roman Gushchin wrote:
+> >> Shakeel Butt <shakeel.butt@linux.dev> writes:
+> >> 
+> >> > Generally memcg charging is allowed from all the contexts including NMI
+> >> > where even spinning on spinlock can cause locking issues. However one
+> >> > call chain was missed during the addition of memcg charging from any
+> >> > context support. That is try_charge_memcg() -> memcg_memory_event() ->
+> >> > cgroup_file_notify().
+> >> >
+> >> > The possible function call tree under cgroup_file_notify() can acquire
+> >> > many different spin locks in spinning mode. Some of them are
+> >> > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
+> >> > just skip cgroup_file_notify() from memcg charging if the context does
+> >> > not allow spinning.
+> >> 
+> >> Hmm, what about OOM events? Losing something like MEMCG_LOW doesn't look
+> >> like a bit deal, but OOM events can be way more important.
+> >> 
+> >> Should we instead preserve the event (e.g. as a pending_event_mask) and
+> >> raise it on the next occasion / from a different context?
+> >>
+> >
+> > Thanks for the review. For now only MAX can happen in non-spinning
+> > context. All others only happen in process context. Maybe with BPF OOM,
+> > OOM might be possible in a different context (is that what you are
+> > thinking?). I think we can add the complexity of preserving the event
+> > when the actual need arise.
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index d67545bd7abb..ac72bae800a9 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -3491,14 +3491,14 @@ static int nvme_check_ctrl_fabric_info(struct nvme_ctrl *ctrl, struct nvme_id_ct
->  		return -EINVAL;
->  	}
->  
-> -	if (!nvme_discovery_ctrl(ctrl) && ctrl->ioccsz < 4) {
-> +	if (!nvmf_discovery_ctrl(ctrl) && !nvme_admin_ctrl(ctrl) && ctrl->ioccsz < 4) {
->  		dev_err(ctrl->device,
->  			"I/O queue command capsule supported size %d < 4\n",
->  			ctrl->ioccsz);
->  		return -EINVAL;
->  	}
->  
-> -	if (!nvme_discovery_ctrl(ctrl) && ctrl->iorcsz < 1) {
-> +	if (!nvmf_discovery_ctrl(ctrl) && !nvme_admin_ctrl(ctrl) && ctrl->iorcsz < 1) {
+> No, I haven't thought about any particular use case, just a bit
+> worried about silently dropping some events. It might be not an issue
+> now, but might be easy to miss a moment when it becomes a problem.
+> 
 
-Excessive line length over 80 chars.
+Only the notification can be dropped and not the event (i.e. we are
+still incrementing the counters). Also for MAX only but I got your
+point.
 
-Perhaps, though, we should have a helper to indicate IO controllers
-rather than chaining conditions for everything that isn't one.
+> So in my opinion using some delayed delivery mechanism is better
+> than just dropping these events.
+
+Let me see how doing this irq_work looks like and will update here.
 
