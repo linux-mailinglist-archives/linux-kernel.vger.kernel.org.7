@@ -1,140 +1,114 @@
-Return-Path: <linux-kernel+bounces-802275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4041AB45032
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:47:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A8BB45036
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1FA1C239FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F10107A2E3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1188C26B951;
-	Fri,  5 Sep 2025 07:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4530E26CE36;
+	Fri,  5 Sep 2025 07:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gxj5SjIz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wbJMk1A9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NJs6nJbE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C77514E2F2;
-	Fri,  5 Sep 2025 07:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4456314E2F2;
+	Fri,  5 Sep 2025 07:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757058424; cv=none; b=kMXKbaMJ+2zu8gcZtreNBuDncemtTzY6VW2vmyykJk8gna3DHcUFMsRdehgjtx+ZFd57n0m4OEwGpeUEZovymIEYTAhIPa5d8XoU/cqlqb2c2ZqIGWZ0eBreJydsChi8x0hAGFDb0rA7o9iUAdjKpIrYoJtOOHiuB82prmewqzg=
+	t=1757058470; cv=none; b=B7Ubu/wPbl69xfKtBmXTjcVT0xloYhFeJMq9IX6U7zprFhnKR6TbAl1B46mGVH4ChQpzD38WZASIQkRQoxs0xWVeayoNi5Ip9NO+2Te1g/K8vCC1xK9sQGqJwvVdf4hYuG9/Akok4cvK1qNVcYJu4gztmIqpR1WZ5exoAo0wRA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757058424; c=relaxed/simple;
-	bh=X9O/FE8yapu+Tkiylk8h8PPSZSi+4NrKdxIeBU484kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTKhTeb+Tt9yzUnIjzboQDOGjzOQxvUptyu3Ra8B9AY4aIjUdcG9Z4visN592TCC6AuzZWbXmZFFkv7JSZHyxcAvQ2n5BkVQSjCzdP4wZp74RtkFRG7+sDtmNvdstw7YI3jB6VUKZDLk8R/p8h9XJ+2Prb6KY/NVb8JFPG6fXnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gxj5SjIz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EE9C4CEF1;
-	Fri,  5 Sep 2025 07:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757058424;
-	bh=X9O/FE8yapu+Tkiylk8h8PPSZSi+4NrKdxIeBU484kc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gxj5SjIz8HB3amYF0S1DCJ+jzsknGXqtqizW8Ic844n58B0W/1NwOufsacin/xUOX
-	 YzyBqXTRzstrJ8c8/a9xgCM+YVx8DnJGoMI3xY7HPoMD5oQBwUtdIxwAp7yLEEW8bV
-	 CjueosZpoZFkTc/lRe+X6okqFErtp9eXDUocp9OoRTGJKWYYf0VISpKusxM/X+mFw4
-	 Rt7lVsu3J8D++lKtMuLQaCsirDs1vJ6tjg0grnOIa63yBkRIv/NatX4Za1hvGMuBAq
-	 q3Q3oXEvtBoDraxVrjORcIwytJ2Z0dbEW53ZmeRs2x8SPfhnUlO+7wIgUYnt/hlqMA
-	 T0SdFDh79HDTg==
-Date: Fri, 5 Sep 2025 09:47:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Woodrow Douglass <wdouglass@carnegierobotics.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] regulator: pf530x: Add a driver for the NXP
- PF5300 Regulator
-Message-ID: <20250905-chirpy-utopian-platypus-bea05f@kuoka>
-References: <20250902-pf530x-v6-0-ae5efea2198d@carnegierobotics.com>
- <20250902-pf530x-v6-2-ae5efea2198d@carnegierobotics.com>
+	s=arc-20240116; t=1757058470; c=relaxed/simple;
+	bh=HLkYXnaKFnKg9RHeCPeZV5JwIDK/Kr/j0SnlsRF7EK8=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y4ZNwzwG8N35UNYTaSyUkpX17x5IRk76rH1ilwOKkOoRPE1tFfiIymMKi3hK9F+Eov7noTqbsU93ETuMzMv+QWZeb1DP8tDP03Ni3/stJHqCcfhiptR3PnrauiAamPa0bssrHcai1uOQu0VLZTr+h7XFMimadMU7/UXhnncC584=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wbJMk1A9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NJs6nJbE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757058467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rBtkAe6H+jyGj4tt5HXrxDOSNwUiyry3aDabLs2QBuI=;
+	b=wbJMk1A9M/sLp/JYaMOxP5tGNweS3NYiR5ynw15kjZMAZ5rUMMSzHOnG1xBv+8gq4Vxhj+
+	oI1zFvBrXNGizVzbHofs4WCKcyD7In5isJOgPj+8Vc8aIWO2wap9DplKViLeXEQvFB8dPm
+	7gY5pnY/L4llUs8PDxJdWy3PUK7IXezT+B8lUw59CJpDwBlURZ2PzaLH6DlsQOawbKMPvJ
+	guPWRrINA9tUjXJ9RppdoorgcwTpGQJ3k7WnJkAgcttp7blEXkozcrCNWGk+LIl2jBelZk
+	J66iUGfBnBHmZecbdPkARyTfSWWr6SglxrlRTY/2RM77NlSX7RQ+PPrxzTIH6Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757058467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rBtkAe6H+jyGj4tt5HXrxDOSNwUiyry3aDabLs2QBuI=;
+	b=NJs6nJbEfespe8MIIJCa7ECvbrIBkCIhMite81FenHjk7bkCHnKDVUp/y1C6hXCIANO45v
+	SdDXOIvxzzqVzYBg==
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Eddie James
+ <eajames@linux.ibm.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel
+ Stanley <joel@jms.id.au>, Andrew
+ Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU
+ interrupt controllers
+In-Reply-To: <OS8PR06MB7541CD16E659666868EAECB9F203A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
+ <20250831021438.976893-5-ryan_chen@aspeedtech.com> <87y0qx0zqu.ffs@tglx>
+ <OS8PR06MB7541CD16E659666868EAECB9F203A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Date: Fri, 05 Sep 2025 09:47:46 +0200
+Message-ID: <87tt1hwdb1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902-pf530x-v6-2-ae5efea2198d@carnegierobotics.com>
+Content-Type: text/plain
 
-On Thu, Sep 04, 2025 at 04:44:36PM -0400, Woodrow Douglass wrote:
-> +
-> +static const struct regulator_ops pf530x_regulator_ops = {
-> +	.enable = regulator_enable_regmap,
-> +	.disable = regulator_disable_regmap,
-> +	.is_enabled = regulator_is_enabled_regmap,
-> +	.map_voltage = regulator_map_voltage_linear_range,
-> +	.list_voltage = regulator_list_voltage_linear_range,
-> +	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-> +	.get_status = pf530x_get_status,
-> +	.get_error_flags = pf530x_get_error_flags,
-> +	.set_bypass = regulator_set_bypass_regmap,
-> +	.get_bypass = regulator_get_bypass_regmap,
-> +};
-> +
-> +static struct linear_range vrange = REGULATOR_LINEAR_RANGE(500000, 0, 140, 5000);
+On Fri, Sep 05 2025 at 05:55, Ryan Chen wrote:
+>> So you have two different handlers. Why can't you provide two different
+>> mask/unmask/ functions along with a seperate irq chip instead of cluttering
+>> the code with conditionals. Thes two variants share no code at all.
+>
+> I will add irq_chip in SCU_VARIANT, like following.
+>
+> struct aspeed_scu_ic_variant {
+> ..
+> +	struct irq_chip	*irq_chip;	
+> };
+>
+> #define SCU_VARIANT(_compat, _shift, _enable, _num,  +_irq_chip, _split, _ier, _isr) { \
+> +	.irq_chip		=	_irq_chip,	\
+> .....
+> }
+>
+> static const struct aspeed_scu_ic_variant scu_ic_variants[]	__initconst = {
+> 	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7, &aspeed_scu_ic_chip_combined,	false,	0,	0),
+> 	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7, &aspeed_scu_ic_chip_combined,	false,	0,	0),
+> 	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6, &aspeed_scu_ic_chip_combined,	false,	0,	0),
+> 	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2, &aspeed_scu_ic_chip_combined,	false,	0,	0),
+> 	SCU_VARIANT("aspeed,ast2700-scu-ic0",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_chip_split,	true,	0x00, 0x04),
+> 	SCU_VARIANT("aspeed,ast2700-scu-ic1",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_chip_split,	true,	0x00, 0x04),
+> 	SCU_VARIANT("aspeed,ast2700-scu-ic2",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_chip_split,	true,	0x04, 0x00),
+> 	SCU_VARIANT("aspeed,ast2700-scu-ic3",	0, GENMASK(1, 0),	2, &aspeed_scu_ic_chip_split,	true,	0x04, 0x00),
+> };
 
-This looks like could be const
+You have this split_ier_isr field already, which should be good enough
+to select the chip to assign, similar to what you do with the handler, no?
 
-> +
-> +static struct regulator_desc pf530x_reg_desc = {
+Thanks,
 
-This as well (unless I missed something)
-
-> +	.name = "SW1",
-> +	.ops = &pf530x_regulator_ops,
-> +	.linear_ranges = &vrange,
-> +	.n_linear_ranges = 1,
-> +	.type = REGULATOR_VOLTAGE,
-> +	.id = 0,
-> +	.owner = THIS_MODULE,
-> +	.vsel_reg = PF530X_SW1_VOLT,
-> +	.vsel_mask = 0xFF,
-> +	.bypass_reg = PF530X_SW1_CTRL2,
-> +	.bypass_mask = 0x07,
-> +	.bypass_val_on = 0x07,
-> +	.bypass_val_off = 0x00,
-> +	.enable_reg = PF530X_SW1_CTRL1,
-> +	.enable_mask = GENMASK(5, 2),
-> +	.enable_val = GENMASK(5, 2),
-> +	.disable_val = 0,
-> +};
-> +
-
-...
-
-> +	config.dev = chip->dev;
-> +	config.driver_data = &pf530x_reg_desc;
-> +	config.of_node = chip->dev->of_node;
-> +	config.regmap = chip->regmap;
-> +	config.init_data = init_data;
-> +
-> +	// the config parameter gets copied, it's ok to pass a pointer on the stack here
-> +	rdev = devm_regulator_register(&client->dev, &pf530x_reg_desc, &config);
-> +	if (IS_ERR(rdev)) {
-> +		dev_err(&client->dev, "failed to register %s regulator\n", pf530x_reg_desc.name);
-> +		return PTR_ERR(rdev);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id pf530x_dt_ids[] = {
-> +	{ .compatible = "nxp,pf5300",},
-> +	{ .compatible = "nxp,pf5301",},
-
-Drop
-
-> +	{ .compatible = "nxp,pf5302",},
-
-Drop, that's the point of compatibility - less clutter in the drivers.
-
-Best regards,
-Krzysztof
-
+        tglx
 
