@@ -1,297 +1,324 @@
-Return-Path: <linux-kernel+bounces-803406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06195B45F6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0314B45F72
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A627A41DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:54:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7563E17F49C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA05309EF1;
-	Fri,  5 Sep 2025 16:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69824309F1A;
+	Fri,  5 Sep 2025 16:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnlggmN6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="54U6DUFz"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2138.outbound.protection.outlook.com [40.107.223.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC54266EEA
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757091356; cv=none; b=RH0o0BfkUMegb2WgvaCPpma9yu8BEKwWS/JDOH5SBT2o96RT9PxM/1pjcZgu3M2yqOcG0CBwTSZsJePl0KA3JQZBZJmR4lj/fsrB1aktznoM4tYtocnybWQgh6+RsWP8Xkj2EWo1PBXAZx8MxFEmUBN36TyRP7R/QlzDkBHRPu4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757091356; c=relaxed/simple;
-	bh=I2AG6GtlZ4CAAuYuV0mH7xXm0qsJtPROg8Oq2jxugF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbFenUtyIjz+Z8LFShrTgaIvOZnsAI/Iy04kK9novHstOZBMkLq+wBAvjkObFqx61BqjtOxrxMh65XV1S4TA7F+B5FIs/WjLFh/C1AagDOUdyuasCKnHtr/Zu+1n1MVc6t10XF0kX8KykwSsms5vZjq+7TiPiYLcCBzm1yy+mcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnlggmN6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757091353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jkfo6WSn/B2ygQxk1iQ5Vj38hQeZps62XsZ/7+Z0BZc=;
-	b=VnlggmN6BnTxw+NdXpsrDbppqAsdgnOiJEJyp645JmU5pW7XEvIDF/+L9ryMx4Eliz6dhw
-	DCxMhtsvGtgKIVH2hNF9YlAA/PHVw2+E83yIzCqDvLSDarGujg5xRV5tLzwDiU7cF3LSy+
-	dKNrDJGi8yza/o0dqOF8mPsQ6lV6QNA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-367-fDUzLTmBPiKz_-ZVADBAwQ-1; Fri, 05 Sep 2025 12:55:51 -0400
-X-MC-Unique: fDUzLTmBPiKz_-ZVADBAwQ-1
-X-Mimecast-MFC-AGG-ID: fDUzLTmBPiKz_-ZVADBAwQ_1757091351
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e38ae5394aso722887f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:55:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757091350; x=1757696150;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jkfo6WSn/B2ygQxk1iQ5Vj38hQeZps62XsZ/7+Z0BZc=;
-        b=r1NqJ3JxqKB41yB4it8ruKDdYcCDWCybDIg2m8V7IFQkXSMU8h82jEIdWKTeU8zT+C
-         M+sR4x0mpd5X6V+XHV5FDfASstQaVgNe1oZb13LSrR0VeiJmhUcrx8I7l4LMlFODjHGz
-         mQY4mxsWUsr6ZK8666XoPu5GeHdhrh/qJgFYoTzpKghLbvg5bldEfQB+uaL4YEgYtrZG
-         wrgZ+5Fta1Q7VUbArP+xEWMSi8a/munHehk0coCawyd4HqXDKeG0oiCaaJLZeWbK2RLc
-         4id6Ap5cUpYdV7O9G4bginUSPA3zTXuD43lelcKcRAVsHX90U8uUnlC7h2LW8zytmElk
-         WNUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWj63IDUEz5jw4lc+Y6dsRRJMJJCrkC8moUG1NeyH1ITQ25nRYbh7Zf7WNo29G5E66giN2IxjltCGdF6j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8udqsv3zVm2298VF1Vh26YUBn9HZPpbiuaK3LZh/pWdhkcCW7
-	wn1q4+lLpKzxGe1em/VsVorMNJ2Bxt+YBr67MnPTAV4tnGmoDpJ7RS+6F9ms4dp/X/pucJ9Wj/D
-	NXHMHWjdRYVRAiKa1ZtjfoM7Ev8/pC0mQZvhX/gMEZ3D7xeAyt0ppqNhagi5Okxpj0Q==
-X-Gm-Gg: ASbGncutcFfKMXjWQI2bzhA3YMn25nl2vOg/q62XLACneLK1DmmjdW8xD8iAKvt3N6E
-	rcwryax3Jb25HCDVlBOkInwIfjlF2GoC66uSo2tuBQE01zAZKQDvNxit6ZbrYbMOvvil3c029ep
-	+BZo+lVb2RQEZHVLBuHaiNlb0IxXeQMeEzekPNvL31DDYgxsOmiwGEKO6mzLJUvVXKHNUEy1qEb
-	D4tO1MbyKewZxbP3UOZCJVjt9l7I178XsdecSmf7rDTtICSRWjkqvKBUsuVOyGFf/hbJFtqKTGe
-	c0XReLvucFYN1IJ0PijhsPPJ67zfDLUlZhRRLi7JNt4bRwoGq+NVa/XGVcSwxVYT0FXmCDd7wgs
-	sHB7YQ7Q5OivT3tCZkn/RyMGwaSFwwQWCBVyX2481z+UQGunts4llISRh
-X-Received: by 2002:a05:6000:402b:b0:3db:c7aa:2c19 with SMTP id ffacd0b85a97d-3dbc7aa2dfbmr10316500f8f.26.1757091350520;
-        Fri, 05 Sep 2025 09:55:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhtIqtnxjkCVAPnrfA7KjaXw4ejvKO/sGeogZLv7rY2OklsxFVc59NUh6r7U4dsI+ZPEONvQ==
-X-Received: by 2002:a05:6000:402b:b0:3db:c7aa:2c19 with SMTP id ffacd0b85a97d-3dbc7aa2dfbmr10316475f8f.26.1757091350045;
-        Fri, 05 Sep 2025 09:55:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45ddd47b6easm3134475e9.18.2025.09.05.09.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 09:55:49 -0700 (PDT)
-Message-ID: <e41c8d5d-5685-49f4-a5f5-87513674a03b@redhat.com>
-Date: Fri, 5 Sep 2025 18:55:48 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77007271476;
+	Fri,  5 Sep 2025 16:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757091484; cv=fail; b=ZVkuhnb0/64fJjwRcKX/dIXw4PHW7hiK568sJmqAwO5Cp7uzMVIcn1k3CKNrfUJmLc92zv0kuJx9JoD4t0LF+KEvyLKHUHzjNhaQ5KpEn8I1grCCnY6rWJXiqEVkl83jdTlyqJ1DarVvsonYlOpvmDi6kwKD+QPZquI+1roXr18=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757091484; c=relaxed/simple;
+	bh=IYjgt16nUuN7W3pu5qzsxKgjj0HjHQXI7T/UKEhgx4k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Emvg0C05eUVRU50hHACcEB1xqaIP39vyKmZHd/MiNhsDxPXLEuFHa78iZYQYsDlMzUnXnwqVxw66Vc2koMcVBWFvlYVm4g8YJyzZjVlFHwE/PfGRoFPFHYKvz3f7PslmgPCs3J7j1qDLGyuBfFf6Nk/IajcLOdhHIh83U2uGsLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=54U6DUFz reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.223.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H4sMBQHQc5i1XTJeSJRnR3ZQgVtSv6D1+WI1BCPbWLiQPLJwDqR+zjvgcZb6ZBCIKJzMnOtukg26chmYzwADlpo3xKmb4FvjI592YjvhU4CwgPA5z8NOgJsheIY/aim2q30FGDSYK6rXiVNV3RFOKY7AF0GCA+KG8aq/iQtgsvW6ptQeiRLI7bABDly2dHl+EEKzhMMZU2Hgu1387c1RkSRdlaHS+WHxHjHZ3EiXAIodB+W52ezgTgiILU0Rk5jqbpo1Kb1BLc55wCZSbyPZwEAU2gH+DTmmDhSb4Fwi1YPCOsqZmPUDJZKW/CpNIudeMwnwKn4Fe33Vjqv9xOAf2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QbgvToigl9Pjc5/N7WlPkF6bv23WrCK7ZZg6adoevcA=;
+ b=BzZ1WzEq2O0Jx/ocpcbClgrfXk4o5PYl8/Ch/IVzSELYQXc7fOK8SH33xX9/nBlOCm8m4+aYn1iBCg5O2hOmnLFYzAlvg/GH5qTFzyQIaYZguct8bcGt0nade/TrGBB7uHVclE11mChEyO0WqE9eKPBR1j10rsOAyNHpwhQ/NuQmDbLchu6+VULOye0yGGXsHDS8AxT0B3X1TvotegvNbtZGm9cxXfu0Ze4j5W0cOMw4H8uBzz1pP0zqVrusc50nGoAnMDqa2zhDyaKWmf1ujc4E0y8Mx1j41+rZ2T1+Pvje38P3eolvFAJkEFfFilxjsI4W931pZIvKjg17G5j9/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QbgvToigl9Pjc5/N7WlPkF6bv23WrCK7ZZg6adoevcA=;
+ b=54U6DUFzOP9ZiSDA51E+c1tt+zlWTRC/6fuKOmIlsDcZAft2/aMu8tOO9q1fN3lWvkqqYqVySS09ULm3M3lmY7n4UQkkFb6PzMLT0s8+N17nAm7OOa0SGojOtyEWL1ciy0A+rAUsKNENOyb1p4EaFV7vLq2oyIdB2NvMINiJZIo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
+ BL4PR01MB9367.prod.exchangelabs.com (2603:10b6:208:58f::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.14; Fri, 5 Sep 2025 16:57:59 +0000
+Received: from BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
+ 16:57:59 +0000
+Message-ID: <b7808a42-aa11-45d5-8c8b-b8ec4fd81b1f@amperemail.onmicrosoft.com>
+Date: Fri, 5 Sep 2025 12:57:56 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v23 1/2] mailbox/pcc: support mailbox management of the
+ shared buffer
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: admiyo@os.amperecomputing.com, Jassi Brar <jassisinghbrar@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Robert Moore <robert.moore@intel.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Huisong Li <lihuisong@huawei.com>
+References: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
+ <20250715001011.90534-2-admiyo@os.amperecomputing.com>
+ <20250904-expert-invaluable-moose-eb5b7b@sudeepholla>
+ <2456ece8-0490-4d57-b882-6d4646edc86d@amperemail.onmicrosoft.com>
+ <20250905-speedy-giga-puma-1fede6@sudeepholla>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <20250905-speedy-giga-puma-1fede6@sudeepholla>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BLAPR05CA0013.namprd05.prod.outlook.com
+ (2603:10b6:208:36e::28) To BN3PR01MB9212.prod.exchangelabs.com
+ (2603:10b6:408:2cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
- max_ptes_none default
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-References: <20250905141137.3529867-1-david@redhat.com>
- <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
- <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
- <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
- <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
- <8461f6df-a958-4c34-9429-d6696848a145@gmail.com>
- <3737e6e5-9569-464c-8cd0-1ec9888be04b@redhat.com>
- <3c857cdb-01d0-4884-85c1-dfae46d8e4a0@gmail.com>
- <aadf50b1-151b-41c6-b60c-5f1f2a4f2d8e@redhat.com>
- <d48af6f4-2ded-40f5-849d-7aa991727a59@gmail.com>
- <701d2994-5b9a-4657-a616-586652f42df5@redhat.com>
- <686943a6-7043-41b0-bd4c-2bfc4463d49b@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <686943a6-7043-41b0-bd4c-2bfc4463d49b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|BL4PR01MB9367:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3449989e-11b9-402f-2507-08ddec9d5e49
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NXA4c2t1WWtVTTVTU3U4dFJXTmN2NjMwaE43OUJQVnZGc0V1clo2aEdocDdZ?=
+ =?utf-8?B?WHY5T2R4aU1ObGxVV0R5NEpsZUVic3ZIV3haM2kxckRCSFl5cnVOK0JMTnlu?=
+ =?utf-8?B?eEYwZHZMUzdqZXppZk03NXpDVEl1bW5VQnp0TnBRdE81dC9VUUt5UE1zdDl0?=
+ =?utf-8?B?NmozY3RzRCtIcGN0UnNmZGFUeUp2c1MzRTBYRnM4NkpCcVZXOXYvZHNCdUwr?=
+ =?utf-8?B?SmJaODhYb0h3VGpRTDdWcHFqdjVCSHRCdllvR1BWejV1N0ZzbGlwVnJxL000?=
+ =?utf-8?B?RVEzYldidVRWc1pONGc2LzBlVnNzYi9rMjdNaHBLTkkzMFZSVzNtZ3I2OVlt?=
+ =?utf-8?B?RHNSN3ZBUXRid0tVcVZpS1MwY25JSDc0TVBZdVc3UUxldnV1MEdrNXFNMlBs?=
+ =?utf-8?B?UysxYnNSdER4SFl5Q2o2VlI2MmxsK25nZE4zUHBZQzhSOUtnSEF5bjdYS1RG?=
+ =?utf-8?B?MExsaWZINTFid00xT3FkdjgrK2cwSW5VVkdHZ3NWczh4LzllS1dHcytPUU50?=
+ =?utf-8?B?d1RORlRCZWEweFVHak0zNlN0QnMvRklOWkRtSi9SM2RJZUlQQ09PTmllQkJ2?=
+ =?utf-8?B?M2ZlVDlJNEcydU1DSUNVeENMM0xMVUpJalNOTExuVTEydTk4ZG8yc0wrWHJZ?=
+ =?utf-8?B?U2RXM1VOS3M1MSsrTE96TWYvSFVvNW10dDlidFJvZU1tYTZYNWRCak14RUZv?=
+ =?utf-8?B?SDE0T3ZvaC9GU1NDOURPWHBRVjlVdTBMWjMycXlTcVhSeVNXQjh2dld0cDdq?=
+ =?utf-8?B?Y1pZMFROTllIZzFGYzhnVzVpeU04TG1ydXBQRlhTemtWMEFORE9IZFY2VVEv?=
+ =?utf-8?B?SFdpMDNQYVFiTEhXV1plNVBOVkNhVmRyRWtyZjNHMExza3N3eWNiMHpEUWla?=
+ =?utf-8?B?TlUvM25QRkkwVDE4ajMrNHRZdmxYZDd3a2JiUm1tSDBTTitRcDRWK2l5Uk9W?=
+ =?utf-8?B?dXBnb3JOZGwveXFpM0txM2tLTk42M0hzL3Q5Nlk2czRsZjhKSXdWazZWZmFO?=
+ =?utf-8?B?L1l1L0JPSVh2RlljbUtoeXN3M1U3UUo4RVBhV3pnd2w3c3RBNWRkNGFoSGQw?=
+ =?utf-8?B?V2tGVytzMHhFdVdES0puQjlRL0JwUHMvVDBiMUNjcEVaRjlPMkpZc3BkRGhG?=
+ =?utf-8?B?d05KWXA5TGRpUE5rc2FkSVRRaHF1bFRvS2lYam1DZ09SNjBVYWE3aURyRkJo?=
+ =?utf-8?B?dllvYU52U2ExamY5TlV4RENnVjV0NmRwVm9VcXViVC82RDNxNmRCMWE5MWNs?=
+ =?utf-8?B?bjRuRGRhTldUK1hpYnRoSThUUTB1bHJNS09LTlhBSUNUb3JidlBSeEFUYVRD?=
+ =?utf-8?B?dUFFZ0ttRCtZRlMxTHN2RDhOa0VPVVowMXJkMVFjRWdDYTNCc1V0QWlnMGw3?=
+ =?utf-8?B?aElCUTBpSVc1dzNCZGtzUDJWRU1oREthRXJTVFA5S3h5UDJsdnJ4Tm0xYThG?=
+ =?utf-8?B?M0IxQkw5Umwxa3hWVGd0dGJqY0dmejV2ZTlwWnZlOEFlMk5GWE15Z2dTM25L?=
+ =?utf-8?B?YkYyMW1MNWF3WldHbkszQWtDQmszaDVKR1RaeHkvRHVCa25tdWY3L2tOM2xP?=
+ =?utf-8?B?SmcwcEFlUitNRlYrdjJRZFZjaHhwektHbXhpem5YRWRVWXEzOThHVGJ5dDc5?=
+ =?utf-8?B?eWtUQUdJVFNjV1I0OW94S2dkbGFtS0pGdG5JcGRKSFA2cC8wd0tnN1k3TURE?=
+ =?utf-8?B?Vksrc01Yc2pUay9NOUpkQ3oxUDAyc1NUWWlaeUN2NDZYcTBycjFxbWxVYWJL?=
+ =?utf-8?B?c2YzaEZOZWF5YlN5NG5uYXdZbXpIQkRlbm8zL09KMjB3ckV2ejJhdmpSUzZD?=
+ =?utf-8?B?bWNZZzEvS0EySGVnOE9IbEg4YnZXdkxlNjFudUNEZWFYYUlDR0tFRWhIU2hU?=
+ =?utf-8?B?V1ZsZ0NQOTVTMjJzeU9mOVpNMEM0UnBsWkdWdDY1QWYxdGRzVFlZanRTQXJG?=
+ =?utf-8?Q?ATR9HlA8pBk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d1VsdEJjcUlxS09JZDNQTEZCekpuNVM1ank3Y2hhMjJRaFU4d1NiVnMvcWdI?=
+ =?utf-8?B?eStYWHJFRUJJcGpJbUt0dVZEZGJMbUFFNHRKdzJYTFY1Sysrc2VKMXd5dlJS?=
+ =?utf-8?B?cVpjMkpnWXZUZVR1a1c2cmwyZTNWaFR2eVBUYndER01CSHpHNUpXWnJkMG9J?=
+ =?utf-8?B?dDJuTysyanZNQ00xUzlKVithcDdIc1A0TUZ3UWRYR3RXajIrNDhQejl4NDlQ?=
+ =?utf-8?B?MTZSUndmb2hueFRNcWs3eFFOSjhXWjhoelM0cFJwZTFNZEgzMTVHMkUveHNi?=
+ =?utf-8?B?eTh1VktWclJreW0xUU1lS0kwdmM2VG12NHdOYm9BT3p4eXlaS1NDQmxsSU0v?=
+ =?utf-8?B?ekxtVlVzS054SmV6eGhtOXp6bzNQUWd4bDhIWkxsb2NiNi9hdUJnNExsTXB6?=
+ =?utf-8?B?Q1R6N1U4M1ZQT3NSYzA4OFVRQ1dYNXBibnY4Uk5ld0pNL3RXeDVZYzFHSits?=
+ =?utf-8?B?MVhiZ1A1M0xnWDdMMXRUNzdISlVHdy8yQzVRTmVEbWpjblFuWi9BKzV4VkZi?=
+ =?utf-8?B?dkVabThCbkNvNHJOMGtzSXlPaXFjSUJkdXBvZXdTcUg3TXlBbEJLa3dTeUxF?=
+ =?utf-8?B?WHJxaS9yYldMa2hLU29xRkh1aE1VdFQraEN2YVkyc0Z4cDJQZ0l2aGgwMm1l?=
+ =?utf-8?B?Mm9WSm1sQWh0dmY1ZzdQQTFWV2NYSGNVWXpFRzAyZnh2amhqbzk2M29xSFdT?=
+ =?utf-8?B?M1FENDRlQWE2OUNmR29yaWo3YWtJcGRmZW00c2pXck4ybmRIbWpsK1FmRWVu?=
+ =?utf-8?B?M1FkUTR0ckczWFZjTmVUUnVBNkd1b3FabUNQTjFkMURtSXUxYUpaUDkvUzhH?=
+ =?utf-8?B?OVAzNDFwMk5lckxCNE9WMEt4TE52a1V4OGVkUlh3SDhvdVJMRUMxRHJmVXRK?=
+ =?utf-8?B?L25HSkY3Zld1UWJreTZGSU01YlA0UkJHK1RqQ0dzQVo4RC9YdjE2cG5vRUkv?=
+ =?utf-8?B?cW5LRVlmaDhNQWI2MWVJUThEK1N0d3pPam1IQWdFK1NPNlpMdVkxQXdtaWhh?=
+ =?utf-8?B?LzdoeWVtRjlHeVZ6aFQ4aU1XSDN5QWFpVHNtaTNOeTR4ekZOTTlOU0ozNzFj?=
+ =?utf-8?B?VUUwRXJlRC9QL0t4Z1ZmZldWNWlxK0Y5OG8zNGY2YUJOTjB0bjFOTVNGNXpy?=
+ =?utf-8?B?QkRzZ1pGYjlLN1hCSXd2dkdqaVdQclVza09lU09uSjdzeGxUSzhaM3BGTW8y?=
+ =?utf-8?B?SVdKTFNJWElBdUt5b293VG52MXBnaENObDYyMXg4ZHNxSzFSU2tVbHhMaldn?=
+ =?utf-8?B?UlBzMUJCWVlhQmRTUzAzMnVUZ3NEb2cydGRHc3dFNUlwK2xUZ0I2VGtMNjRr?=
+ =?utf-8?B?TG03QkNiRUc2M3JOWUFDY0RIMlFGcThXcHU5aGR5dFNDdHJuTU5uZmhZNkZ2?=
+ =?utf-8?B?eVZLdkpPdzFXQm1qaVhhaVF6YWRsSm8vdzRwQVlPTlkwUGhEZW9yaUNYQlhS?=
+ =?utf-8?B?a3kyaXhCL3U4bm9FeTNPZzNaN25MY2dFRkxQVFFQZFR5dGYzWkxWQ2ZJSDZZ?=
+ =?utf-8?B?eTlLY2lDWU5lb3FRdWtvWVgzYzZNbE9wVjVFWE04RW5HNlBrSXo1elZMcHI2?=
+ =?utf-8?B?aVByUEgwYjRkRllYdFpoT2plMWJEYnl2b2JvMkNBeGRRY2YwUlNhcDZITmFU?=
+ =?utf-8?B?ZXcrbE9iT2hMUUdKWmF0d25nZzd2Mnp4UXRhbTFFSkhzWm9wY2dOa00xa0R5?=
+ =?utf-8?B?QU5ROTVLRWUyS1hqSTNXZ0poS2szMFhkZFplN0pwbk5zRUVJSmJoZ3JGOGoz?=
+ =?utf-8?B?S0RTUW05YXVYRkwvcS9OQ2NuVmlSRUpjVUowQmFWY3RaWmQzWDgzd1UzYThi?=
+ =?utf-8?B?d3ExOUQvNTcyajVYMWM5THZ1ckxJdG0rYkw0Q283OFhtcjNIOUZaaDVUakdT?=
+ =?utf-8?B?SG5RRkJXZ0p0L0hHaDdKREJTZTJrSG1jQW94Zy9xWkxmbm5zTlpweXNmWm1S?=
+ =?utf-8?B?bGhTWTN1Tm9wc2QxU1dGdThWcndXT1Q2UGp6N0s4NXhRSk10MkNGZVJXblNs?=
+ =?utf-8?B?UERTK0U1RkMrK3pCcExDeWduaXdveURpNkVZK0F1VEFQQ0pJVVhFbXpBZXQv?=
+ =?utf-8?B?WWlONEFuSUVXNmRWQUQ1amM1cExpL1hyUXhSVWtsazJsY0lNMUcxeUdVWk5L?=
+ =?utf-8?B?UjE2NGk1NFBlbkp0Ty95d0hvQzUwYTU5VXdFaWtHSkFhR0dtVHpyQW5TVmR4?=
+ =?utf-8?B?QVhJSXJubFArOGg3bjZQV0F2S3RwUmUrSksvM0JBNFRYWWd1M3pPYTNuZ2JG?=
+ =?utf-8?Q?dGvAXCA22zvCWq+jlmHInwPAoYUjJcDk4fl8NhdkLk=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3449989e-11b9-402f-2507-08ddec9d5e49
+X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 16:57:59.3637
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /Tv4PZ9WI4g62P7aZSm7QaL0pfklxm9gWTKiaoRbL5ulCaEkoXRilEx6vAmEVGxwaj+9mRMQgP5XEwEIR9il4EJYy+ZSPMvITAEC+3VXgkjMJ13JN7HUmsQEYaH41dFg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR01MB9367
 
-On 05.09.25 18:47, Usama Arif wrote:
-> 
-> 
-> On 05/09/2025 16:58, David Hildenbrand wrote:
->> On 05.09.25 17:53, Usama Arif wrote:
->>>
->>>
->>> On 05/09/2025 16:28, David Hildenbrand wrote:
->>>> On 05.09.25 17:16, Usama Arif wrote:
->>>>>
->>>>>
->>>>> On 05/09/2025 16:04, David Hildenbrand wrote:
->>>>>> On 05.09.25 17:01, Usama Arif wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 05/09/2025 15:58, David Hildenbrand wrote:
->>>>>>>> On 05.09.25 16:53, Usama Arif wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> On 05/09/2025 15:46, David Hildenbrand wrote:
->>>>>>>>>> [...]
->>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> The reason I did this is for the case if you change max_ptes_none after the THP is added
->>>>>>>>>>> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
->>>>>>>>>>> so that its considered for splitting.
->>>>>>>>>>
->>>>>>>>>> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
->>>>>>>>>>
->>>>>>>>>> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
->>>>>>>>>
->>>>>>>>> Yes, I do this as well, i.e. have a low value from the start.
->>>>>>>>>
->>>>>>>>> Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
->>>>>>>>> the usecase you are describing below, but we wont encounter the increased CPU usage.>
->>>>>>>>
->>>>>>>> I don't really see why we should do that.
->>>>>>>>
->>>>>>>> If the shrinker is a problem than the shrinker should be disabled. But if it is enabled, we should be shrinking as documented.
->>>>>>>>
->>>>>>>> Without more magic around our THP toggles (we want less) :)
->>>>>>>>
->>>>>>>> Shrinking happens when we are under memory pressure, so I am not really sure how relevant the scanning bit is, and if it is relevant enought to change the shrinker default.
->>>>>>>>
->>>>>>>
->>>>>>> yes agreed, I also dont have numbers to back up my worry, its all theoretical :)
->>>>>>
->>>>>> BTW, I was also wondering if we should just always add all THP to the deferred split list, and make the split toggle just affect whether we process them or not (scan or not).
->>>>>>
->>>>>> I mean, as a default we add all of them to the list already right now, even though nothing would ever get reclaimed as default.
->>>>>>
->>>>>> What's your take?
->>>>>>
->>>>>
->>>>> hmm I probably didnt understand what you meant to say here:
->>>>> we already add all of them to the list in __do_huge_pmd_anonymous_page and collapse_huge_page and
->>>>> shrink_underused sets/clears split_underused_thp in deferred_split_folio decides whether we process or not.
->>>>
->>>> This is what I mean:
->>>>
->>>> commit 3952b6f6b671ca7d69fd1783b1abf4806f90d436 (HEAD -> max_ptes_none)
->>>> Author: David Hildenbrand <david@redhat.com>
->>>> Date:   Fri Sep 5 17:22:01 2025 +0200
->>>>
->>>>       mm/huge_memory: always add THPs to the deferred split list
->>>>           When disabling the shrinker and then re-enabling it, any anon THPs
->>>>       allocated in the meantime.
->>>>           That also means that we cannot disable the shrinker as default during
->>>>       boot, because we would miss some THPs later when enabling it.
->>>>           So always add them to the deferred split list, and only skip the
->>>>       scanning if the shrinker is disabled.
->>>>           This is effectively what we do on all systems out there already, unless
->>>>       they disable the shrinker.
->>>>           Signed-off-by: David Hildenbrand <david@redhat.com>
->>>>
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index aa3ed7a86435b..3ee857c1d3754 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -4052,9 +4052,6 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
->>>>           if (folio_order(folio) <= 1)
->>>>                   return;
->>>>    -       if (!partially_mapped && !split_underused_thp)
->>>> -               return;
->>>> -
->>>>           /*
->>>>            * Exclude swapcache: originally to avoid a corrupt deferred split
->>>>            * queue. Nowadays that is fully prevented by memcg1_swapout();
->>>> @@ -4175,6 +4172,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->>>>                   bool underused = false;
->>>>                     if (!folio_test_partially_mapped(folio)) {
->>>> +                       if (!split_underused_thp)
->>>> +                               goto next;
->>>>                           underused = thp_underused(folio);
->>>>                           if (!underused)
->>>>                                   goto next;
->>>>
->>>>
->>>
->>>
->>> Thanks for sending the diff! Now I know what you meant lol.
->>>
->>> In the case of when shrinker is disabled, this could make the deferred split scan for partially mapped folios
->>> very ineffective?
+
+
+On 9/5/25 10:37, Sudeep Holla wrote:
+> On Thu, Sep 04, 2025 at 01:06:09PM -0400, Adam Young wrote:
+>> Answers inline.
 >>
->> I hope you realize that that's the default on each and every system out there that ships this feature :)
+>> On 9/4/25 07:00, Sudeep Holla wrote:
+> [...]
+>
+>>> Who will change this value as it is fixed to false always.
+>>> That makes the whole pcc_write_to_buffer() reduntant. It must go away.
+>>> Also why can't you use tx_prepare callback here. I don't like these changes
+>>> at all as I find these redundant. Sorry for not reviewing it in time.
+>>> I was totally confused with your versioning and didn't spot the mailbox/pcc
+>>> changes in between and assumed it is just MCTP net driver changes. My mistake.
+>> This was a case of leaving the default as is to not-break the existing
+>> mailbox clients.
 >>
-> 
-> Yes, I made it default :)
-> 
-> I am assuming people either keep shrinker enabled (which is an extremely large majority as its default), or disable shrinker
-> and they dont flip flop between the 2 settings.
-> There are 2 scenarios for the above patch:
-> 
-> - shrinker is enabled (default): the above patch wont make a difference.
-> - shrinker is disabled: the above patch makes splitting partially mapped folios inefficient.
-> 
-> I didnt talk about the shrinker enabled case as it was a no-op and just talked about the shrinker disabled
-> case.
+>> The maibox client can over ride it in its driver setup.
+>>
+> What if driver changes in the middle of an ongoing transaction ? That
+> doesn't sound like a good idea to me.
+It would not be a good idea.  This should be setup only.  Is there a 
+cleaner way to pass an initialization value like this in the mailbox API?
+>
+> You didn't respond as why tx_prepare callback can be used to do exactly
+> same thing ?
+
+Note that write_to_buffer checks pcc_chan_reg_read(&pchan->cmd_complete, &val);  This flag comes from struct pcc_chan_info which is defined in the pcc.c, not in a header.  Thus it is not accessible outside of the mailbox driver.  This needs to be done before data is written into the buffer, or there is a chance the far side is still reading it.  Checking it before send_data leads to a race condition.
+
+>
+>>>> +	void *(*rx_alloc)(struct mbox_client *cl,  int size);
+>>> Why this can't be in rx_callback ?
+>> Because that is too late.
+>>
+>> The problem is that the client needs  to allocate the memory that the
+>> message comes in in order to hand it off.
+>>
+>> In the case of a network device, the rx_alloc code is going to return the
+>> memory are of a struct sk_buff. The Mailbox does not know how to allocate
+>> this. If the driver just kmallocs memory for the return message, we would
+>> have a re-copy of the message.
+>>
+> I still don't understand the requirement. The PCC users has access to shmem
+> and can do what they want in rx_callback, so I don't see any reason for
+> this API.
+
+I was not around for the discussion where it was decided to diverge from 
+the mailbox abstraction, and provide direct access to the buffer.  I 
+assume it was due to the desire not to copy into temporary-allocated 
+memory.  However, the pcc mailbox driver should be handling the access 
+into and out of the buffer, and not each individual driver.  Looking at 
+most of them, there is very little type 4 usage where you are getting 
+significant amounts of data back in the buffer, most of them are using 
+rx for notification only, not transfer of data into the buffer.  Every 
+single driver that will need to copy data from the shmem into a kernel 
+memory buffer will have to do the exact same logic, and you can see it 
+is non-trivial and worth getting right in the mailbox driver.
 
 
-Yeah, and I am saying that all you raised as a concern would be a 
-problem already today in all default setups (-> 99.999999%). :)
+>
+>> This is really a mailbox-api level issue, but I was trying to limit the
+>> scope of my changes as much as possible.
+>>
+> Please explain the issue. Sorry if I have missed, pointer are enough if
+> already present in some mail thread.
 
-Probably we should not just disable the shrinker during boot, and once 
-enabled, it would only split THPs created afterwards.
+I don't think it is in any mail-thread: I expected the conversation to 
+happen once I submitted this patch.  I did attempt to clarify my 
+reasoning as much as possible in the commit message.  But the patch got 
+merged with no discussion, and without a maintainer ACK.
 
-With this patch it would also split ones created previously.
+The issue is that the mailbox driver is generic, and the actual use of 
+it (MCTP-PCC in my case) is bound to other kernel subsystems, that need 
+to manage memory in various ways.  The mailbox driver should handle the 
+protocol (PCC) but not the memory management.
 
--- 
-Cheers
+Thus, the rights solution would be to provide this callback function at 
+the mailbox API level, much like the tx_prepare functions.  However, 
+doing that would only change where he pcc mailbox driver finds the 
+function, and not the logic.  Thus, I limited the change to only the PCC 
+subsystem:  I did not want to have to sell this to the entire mailbox 
+community without some prior art to point to.
 
-David / dhildenb
+
+>
+>> The PCC mailbox code really does not match the abstractions of the mailbox
+>> in general.  The idea that copying into and out of the buffer is done by
+>> each individual driver leads to a lot of duplicated code.  With this change,
+>> most of the other drivers could now be re-written to let the mailbox manage
+>> the copying, while letting the mailbox client specify only how to allocate
+>> the message buffers.
+>>
+> Yes that's because each user have their own requirement. You can do what
+> you want in rx_callback.
+
+Each driver needs to do the same thing: reading the header from 
+iomemory, checking the length, allocating a buffer, and then reading the 
+whole message from iomemory and setting the flag that says the buffer 
+read is complete.  This is a way to get that logic right once, and  
+reuse for any PCC driver that receives data in the buffer.
+
+
+>
+>> Much of this change  was driven by the fact that the PCC mailbox does not
+>> properly check the flags before allowing writes to the rx channel, and that
+>> code is not exposed to the driver.  Thus, it was impossible to write
+>> everything in the rx callback regardless. This work was based on Huisong's
+>> comments on version 21 of the patch series.
+>>
+> Pointers please, sorry again. But I really don't like the merged code and
+> looking for ways to clean it up as well as address the requirement if it
+> is not available esp. if we have to revert this change.
+
+In retrospect, this patch made two changes, one which was completely 
+required (access to the flag before writing to the buffer) and one which 
+is a don't-repeat-yourself implementation.
+
+If needs be, I can work around the changes to the RX  path. But I cannot 
+work around the changes  in the TX path: it will lead to a race condition.
+
+Making the RX change makes both paths equivalent, and will lead to 
+cleaner PCC clients in the future.
+
+And I can imagine your shock in seeing this patch post-merge.  I did 
+send email out to you directly, but I realize now it must have gotten 
+lost in the noise.  I really wish we had this discussion prior to 
+merge.  However, I hope you will consider not reverting it.  I wrote it 
+to be backwards compatible with existing mailbox clients, and to only 
+take the new path upon explicit enabling.  I am more than happy to 
+consider better ways to enable the features.
+
+
 
 
