@@ -1,208 +1,186 @@
-Return-Path: <linux-kernel+bounces-803125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE61B45AC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:43:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D06BB45AD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3988A607B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4946E1CC0D87
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13566371E9F;
-	Fri,  5 Sep 2025 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6650371EAB;
+	Fri,  5 Sep 2025 14:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfqoQX0C"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="r9T3Jddi"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010017.outbound.protection.outlook.com [52.101.229.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9490B36CE1D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757083430; cv=none; b=RJQ0gzbi5Ush5sapz3u7tUFoqGWpJpKJWERPeQ5xTBmjIRACc6H86mKQ6JddlC+5ORE/pvkmlTUXBOtJbaGOtHH9ZxKvQw3klzt/Gq+t15NNZG0ee+11kISH5DbQ7+cpIiu9SCMnAFFMtIou0I14wDrG4roXFemnTAb0GzpfgVk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757083430; c=relaxed/simple;
-	bh=SXAksEB+Zw4a3or8qPJNRrMo1yTLsj901ZKAySc0z8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qy7GWyxAKWHxXMvlElsKZai17KRnfG1b8t/mDnSXJrgQzrJY/wtEnci/RMIp1KlTkCl9Wsyg65OlETKSnArbp8DA5ozS3Y1ON8/OkOp/VZGX2pRmQGPVzarNiWEJLPb5J3fjCzb/WxjPBsHtP7fRQodzpXQYgPCzb7vq5sIFX8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfqoQX0C; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45ddcb1f495so1063255e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757083427; x=1757688227; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gwJaAVz81BObi+H/arsIEh5sBDwsjXLHGvxI5p+NvZc=;
-        b=SfqoQX0COVMs9m9QEoVQYWyXvuTCksnwrIYoKnhhHuC0o7aYLcDP7W8KwtaW/SN5Mw
-         8FVABnj1Ohhydw7D8pa2greH28EZ+83S29+Dlt4T5nlCM+VZ4lW050WcssEmIMnfrENi
-         JYb9AB9dpyeBwlejn+wBmHWX4SxhDSgx6CJdFIfka7D3IAMj7m7JyuL9kTibnEZ7H9v0
-         vPjI7+wYF5uQXRrS+UXmMW7vjrqbU2Yk3Fx5KZLwD6A0LZIsr8BvWTDltjVDehFQ30TW
-         AFVMlK+X9QwE5jwFbaatK/F347XVj3lmQWUXgAFS22bVjkdHJ19lx9z8DiiuxVZeuT7f
-         zPkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757083427; x=1757688227;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwJaAVz81BObi+H/arsIEh5sBDwsjXLHGvxI5p+NvZc=;
-        b=Bbh7xVnOhxy2BL42o3LWop8IOl1AJueg3UtrIiapZS6pWFiimzHwiCiaoVS7P5pH81
-         AV6RPuR0r5WEUejUHUUO3YgvE2n0e/P5sm9jJKvv9Pg+BBQ6thxF55YLRmdH+JjYeYB1
-         AcjrPOs2XeKztYyQjJ1IT43D0VIbNoHCXX//x1nUpV/xugtNeRILc/oFnh71eBvameGM
-         RTn09SdVSDH6njYaS94MmXEs2rw0iWrNnW2yg6NqvxaFSPIn1W9AJofDPv80lmSRHkXa
-         HiFeDYJ3gFObAc1YRp6oyTbwCjPkD6XDJpChULfu48E2MBbuPCKSSO22HktDzksXOH6t
-         YxSw==
-X-Gm-Message-State: AOJu0Yz0oHUKT4TTPYpgX2bJZ/yN9NcaYA9kNxO4SQsz74V7l64i56Im
-	j9RrtTgyctRsQtdC6xOLDlzmBNWL1/GbJGx+2N5XkqgBDq5sBV2JKbCy
-X-Gm-Gg: ASbGnctGIpSrZybglM22LTexJI4HG4F6EH1EDlamf9wEM7039Yj/9YJitHpa6Jh0W+S
-	HBNfiAZQ4xx9vOZ40hcCDve7y51bTzq66xPLf7JZh+Gauc3ApLOUe+PyqcrDmjboVz29R8OPgMo
-	O37v36ycIDTw4UEdAGNrM39e7Z8t6ND6+gTiKS1K6wmNywAKQPi5Kni7QPA6LYQ61sf1QB+QQIL
-	zw8ATg5CnqTUl8U0l0QW87QfW+rpf7888f2Frp1PhGTyyHjZ208tTKMnYogNyCSI0ErktXbTREG
-	ZrgdkB99Ok67v8aE81+BFjeAtDSV3oL1VU9wHJPx7uhD36wS11a9KVXeqeCkAJhQxja1qfMu44N
-	ecBrAmKeNUrQ0rQ8qBpE8yxUmnIOdR0GpJi0+H6ihCgsH/chtaV718Ezp4Cv1sLOYfxLxrwE=
-X-Google-Smtp-Source: AGHT+IGTEmyI3GJ5+Bu7s94GgTAOG29U9ayxB6BDUIhPl8/Z0BjlcNHrWbUoE21RMRPW1bmYwLPBlg==
-X-Received: by 2002:a05:600c:4715:b0:45b:43cc:e558 with SMTP id 5b1f17b1804b1-45b8558ad00mr208282635e9.35.1757083426547;
-        Fri, 05 Sep 2025 07:43:46 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::4:4f66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8f2d3c88sm200044495e9.19.2025.09.05.07.43.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:43:45 -0700 (PDT)
-Message-ID: <d5c34688-30b8-4360-bb71-8c85f01bc8f4@gmail.com>
-Date: Fri, 5 Sep 2025 15:43:43 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A11371EB2;
+	Fri,  5 Sep 2025 14:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757083505; cv=fail; b=nEzlAkbaIextIZ3Cs/1Jkw6WXGKGh8ZWQpIlBNjoenjqTrskhMlFvTme8gfbiZsmgqWbXVXoQyUMp7XHkeJ9fyG/F1MDH7w7IabSmx6RzeAuHfq98S/3TwYQsGwwrPBc780Zlc6ziNQfx0QJQOE82A/LjuVgMBRbRCErg816IIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757083505; c=relaxed/simple;
+	bh=s83hlkdGruIIIZoiMepUksl/2AHe6DlQTrzcjuLYbto=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GwrRMm0RWefS+/p1/145MbGwxhRr5z7NYPgYueqclmCdob5oi3qhL0zN5b7JqY2e/Xy6fcNF2qBkCJBaTChUMRSMZR/JDEsj9hxqZgUxaPj+RNz9ZWe5v9af195e0Us8ISUWdOdUEvWcC+PkHuDtMSgMZrCTG/IL9QOf1gMByx8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=r9T3Jddi; arc=fail smtp.client-ip=52.101.229.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KG8MlUrkdNBWmvWyXkn/uTpNthIvLrDjysaJxoGJYLu4LZYZJL4zksRFTDAlKZ+hVc++rb4+lxXq+eMqT1jG6/o/3u7Z9MIK5d64gxqqLbZvX7R48i8GTh+zW7ebjSJQK5QKZf69bjzZ3A/Z8B+3wM6Mbd5pSPXCvElTgrd8+wkDS4JMI8s9Pb5yx7a99E3/ByM6nhPqKXLhE4cfzqlsVcku1w1ig4xa5Gz0JLIkMe4XpaK3xRKQpLyZmadUNc1W7ZFU0sLEm2A3Bu9RwS0q9Xd0Ujj0ziy5LwstB0RBFlOdGuLKbWJCLqYmctvASZIfwqJNCb6FbKVt/+/PMg2Khw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MrPKFRMVxvxYMQE+KegB2gxLRRyD9H2Uxsh+5WgW4ps=;
+ b=ahqZMYQoOXvBKAvXbBmtJ5S0djjtwhwJWliZsm/Sz0kRKFjJs+wOOw2q/BMrK9pBe+ge/nZYZ/0DOenJGHcxpXlptr4JxIGzzbLiq7DrL3k6ch4W3vNbuomHt9+6vmaZ4hJ2mnEHCWwmylIciis2H0JwLUp9l0wqWkWqbTZpauWHOSxzJ/2j2cwZOZ2+HI+PxYGSnMKN63AuMtuGhbXsrEvByPcDQNt4TyXFHdtXfEu3UplREeD02cVX/q1VyHG3Qsras8YTUoC3K18Hn10Ike7sG7OMCXctLI+2DaWyp8WSbDs56MtN8zzUiE2Oj3kqmaWayab9CBtDrkisC+7Ecw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MrPKFRMVxvxYMQE+KegB2gxLRRyD9H2Uxsh+5WgW4ps=;
+ b=r9T3Jddilr1qTnKNeu7BGkpOqUXzsU97e+zAUnNl8mggiClkqwwa5ZWUrccOQti0j46RheCsVkQ11iLSDuV7/Pb9aUlOxNCYXkHVCSp6VFKWfdljiQJjVcd/if9GTijeZpjS4Ck7bWsV/cP8iv/GZhX4LIRVo3b4yF78g6fhbZs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by OS9PR01MB14067.jpnprd01.prod.outlook.com (2603:1096:604:364::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
+ 2025 14:45:00 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31%5]) with mapi id 15.20.9094.016; Fri, 5 Sep 2025
+ 14:44:55 +0000
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] dmaengine: sh: rz-dmac: Add system sleep PM support
+Date: Fri,  5 Sep 2025 16:44:16 +0200
+Message-ID: <20250905144427.1840684-1-tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR4P281CA0420.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d0::17) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
- max_ptes_none default
-Content-Language: en-GB
-To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-References: <20250905141137.3529867-1-david@redhat.com>
- <7B0B1E09-5083-449F-851D-FD63D32D2B3D@nvidia.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <7B0B1E09-5083-449F-851D-FD63D32D2B3D@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|OS9PR01MB14067:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f8b82c7-eb07-4a2d-4d73-08ddec8ac71e
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eul+8vQSmhoMVPyQX7lMieR8Hj1nZn+MGbA8onG6U/HoL5ngX3eovPCg3XI1?=
+ =?us-ascii?Q?d15kLrWI1pqhYFh1haUZJV97er4thOMdvRDHl+9G61jM1+1zAZgD5rOY7rr0?=
+ =?us-ascii?Q?PHmR/yqUJiAh+a4r8kNuqjzcd2RVPaMQNCrtQbroeosoNCN2RcHZITHFTaRZ?=
+ =?us-ascii?Q?tZRKjOkK+nNvXK6EPtDsloyYa8Jp1BmCfKav3ut9uwgzEtPqgFPYz24GfAmF?=
+ =?us-ascii?Q?NbG6VlIAjGIbiK9SRA9emD/zs8EOYmyPIeyKOTYG9Vr/BekINk8RpfvNU6f5?=
+ =?us-ascii?Q?q1TN6tiOvCwSjA6xHIL+DTbwuLvsg618DLtGgQLHFSKS5Nv2HBdnw5qhWWq+?=
+ =?us-ascii?Q?eNnOveK5VFZYeSUqcRaj/7XhQ7KHoEPskpdFgcFTaEWzam1OWHDje1CCH/J2?=
+ =?us-ascii?Q?vLH7/tk4DbpdiCmlewJ7WiHhyVxIfmax6CQ/xMJYHLXRhWy0ascpF16qXNbS?=
+ =?us-ascii?Q?PobiI6zFjcwlQjmIHxBW8Rf7FUrOYXy7QZbrxePCJgtkidrsdxTOFE5PSE6W?=
+ =?us-ascii?Q?6cn/7UwePge5xs8Sm/t0mjDOnr1m06/QYe6EHeuNWvAQrcsxOZ3ZePSEE1Mv?=
+ =?us-ascii?Q?YAh82Ru6BS/RtC+FodaB1D+9QUKUnoHZlxBu/XtxV5ObNSoe8S2nk59BeCTF?=
+ =?us-ascii?Q?NXvAVuHNXpE1xRHsOJ4H7CqulOTawY/x/tvI/xmBK1Mrr6PP96yzxrxqlNkT?=
+ =?us-ascii?Q?K7Yf4Yyw7mFk5lg0S4UXHYAFmWnfOS2+5x+MfyzI3VzAJrVWFeg/fNYOo9Yd?=
+ =?us-ascii?Q?EdZAi7QrZFIQQ3Wzs3cSlut4QOMmKr9t9230IPX3gD+fLkDqwk4pHw5J9KM5?=
+ =?us-ascii?Q?JoV29KhoEG++9uORXf1MwvP4YdkwOXuE46E8YayWzQI4XJbLWZ5oSk9rcdZH?=
+ =?us-ascii?Q?K3OicLxQpMMhWcdQUS4CgBQJBSHc6fhImx2juEZNMKKT8G6OsvdeEJfKlMrl?=
+ =?us-ascii?Q?W+GilgDLPDiRiYznSnkI6f2TfywSdcmNwuaNX+C57wRq27OO54i+kNDoJDx0?=
+ =?us-ascii?Q?4W0DLwK81Ek9zx0aLAU1aMY5SKQ0E3mYvVNrR8RMZGz++CKO8FLl01L6yoeM?=
+ =?us-ascii?Q?Mnwe1jKS0/GM+4fCU7C7PSAcJV37/ZfG2bLggp+fPReR2BldmkNdl4MnNHVa?=
+ =?us-ascii?Q?ENMRxP/a9l+dl/PTbOiFBMDOPBIEIINmO9umlmcwe03POMl42Pw3Bkxrvv90?=
+ =?us-ascii?Q?39804pKCmcsDCivDs+Q4xo2u9XEPdRzDCOhaHMmJlBClQLoAYEqtgmg0B5bn?=
+ =?us-ascii?Q?xKREKPS/1OSUlNiFr7cw70E3a15XI06YTsBOGZiGzP0lmzIvhZCI7U2cmuXk?=
+ =?us-ascii?Q?sT9bzeYa0tOkI9yId9lNSgUj/0yOTTYMiYXpAfECugY7MVOU0794hkpcy1C1?=
+ =?us-ascii?Q?G5cCF1YcgKPHP4/lMd9I4jfOJg2/pLX2ox8wcfF003weWlA3Nkv2/d9ldtxd?=
+ =?us-ascii?Q?6mxXpXpmwMHO3vuf5O48Zw544Ww4Ve/+wruRK/vnZFnduKJ8aMDOrg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RsbTlHdk4uvBqOutQjAnfEdzdq33FWNFi383schdzNiSiOkIMX90aZbiRsFv?=
+ =?us-ascii?Q?0UMEH7r7u4rn4PENWmHnNOUYnAf1QgSBbPFqU0JEIxmLr3QXx8IzGqbDpSkn?=
+ =?us-ascii?Q?kDBCx84dv1ClTiUc1pyhQtz+EKJWg9VgqqbzPnfFSjBQxWGfbHr4cxk+hsDu?=
+ =?us-ascii?Q?H1tdh9CeZIf3nEpapkTD7bJjeT9vv7nIzpOg5RBJ9yyn610dTzoFLDixrRLh?=
+ =?us-ascii?Q?8TugzNGqEr3n3JGjsjDxr3MCPih9VKeg2K6kxkmqYJslN6Qu0om3pQONEZrt?=
+ =?us-ascii?Q?cOtNxiVlq5yeSpNd39LkKgDqwJHpw2YmxX4WDUdqewi1Y2TW/LhbX63gxnKl?=
+ =?us-ascii?Q?mKzw/DGFDAuok4Sn0EtVTeKa4ByAYePlzbCYCrB1gCKRtapbF0nYM1SKIjLf?=
+ =?us-ascii?Q?ANTnvkd9buBd77QXdo8sPE0j3U4m+JFTkEXRgiz4qOzpDe03vVePeVEbXpoM?=
+ =?us-ascii?Q?+DpNHNdV4zpLvsIw4uAssmSA6xMuliiEEwz2vpuFPjHEWAx5OD/6jqtPOhy+?=
+ =?us-ascii?Q?kV4QHb4UeIbcak28ZzyQdqBNlTowK1ioVIC8Js/P53ZDndnuyhG/0IJ7wkog?=
+ =?us-ascii?Q?6SVEww6DtqZ0V1q+NNWX/WM0XOfViAjSg1ImZFTqzoc5Asmh2e/ggno1vLL/?=
+ =?us-ascii?Q?1A69O4jUOYzKbN5J2f0juPf4gBvI+xGf0GvfwaeXn4imwDf33o4N743Lp3B5?=
+ =?us-ascii?Q?z6+Pps9v9Zh7IGHfdZRn9AiHeX8E1mizJBfgjnl4tRXQIqm0nP3TjCu60j6a?=
+ =?us-ascii?Q?eQuHy/JY5+t1ICdTJqcF2PP34gSoTMxG0a/7f6t3WXvEpwPSqtmYOLOXRpZ4?=
+ =?us-ascii?Q?+ONwlPvhmOiDuTdWVu9HZbCLfc9KJSuwv4l2HcGPWbAJ94CxBjIwHXi8WR2b?=
+ =?us-ascii?Q?rJUedPfkI1GGdrCKmAjix0zRdGbzTy+yG0vhRFn6ihjEP8CLRj7Txu8A8gHf?=
+ =?us-ascii?Q?wC4InLS3ON9QcYIEAaHDB2qBWuBNfYzrL06Wjl0wv+eZRAHhQB99LIJY8lG3?=
+ =?us-ascii?Q?3ssQ8FTLPTX9pPLp4Bg3LysTfx1MhINPQoCXuOCYivgw2HYmTSX5xYwSUkkA?=
+ =?us-ascii?Q?akPivCN1LAuyjf+1nmRgDLAR3oLRFvm7xg74qb4QACvf5zfFKUJ+WKX9vQzK?=
+ =?us-ascii?Q?IoD3O9ksFnwUApbu1/rNqzf3ZmiixKLrmOMEiaeTHgKA09VI2/hyaxg3ASKh?=
+ =?us-ascii?Q?w3036mCR7PwR8xD4mqa3ebB1IKTlEveUUUhlUdvzuH5IlYOmsmTQjVVd+A1f?=
+ =?us-ascii?Q?eSu8yrL/OFsFEPOr9hYlqggLvJRYUxzld3rlgejajbZXl9xGQ8kQdWTDwOpT?=
+ =?us-ascii?Q?K1a4Dzi7IN3+8Rvj9UxoEG+3QY2y6mYt811WJuX/wi7dO2cLXP3GGYv556AX?=
+ =?us-ascii?Q?h6OypQVdvXsdKJxOyAvm9YvzRGYzK52DtIQgNtkD8Dp4f7x8tLRi3DJ9tPEg?=
+ =?us-ascii?Q?LbcDWBhNezBsbJGxHwU72giSx7TbDR4q9Y8LAVEtAJMLMQdhaEUhzENEfh0g?=
+ =?us-ascii?Q?eRI/nzhygZdMHxdsTOpCq3Gt1jkwzP+/ruokya1nSYx/mQZ/203rf8U75s4J?=
+ =?us-ascii?Q?3qm/byPHQ4T60b5bUbE/Mkvi8VJL16OTx7p7QAYXkdjzfAFnG8UUYtVyiQDH?=
+ =?us-ascii?Q?oXEyxJ2XR9GidWN3IMBYCeM=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f8b82c7-eb07-4a2d-4d73-08ddec8ac71e
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 14:44:55.0558
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nn+YcRBWqBnilYKVuh+7pL6kQ+yV9OeVq3cQ0MWUM0NIM5zdbLahohlWIAJ6Jz7ArL5zKIvwuExxlPfJrq+ipwzpoaplyfL3gn3lyx0AFcP4sLczinlCA3/t8IYUYLCu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14067
 
+Dear All,
 
+This patch series improves runtime PM support and adds system sleep PM ops for
+supporting deep sleep in the rz-dmac driver.
 
-On 05/09/2025 15:37, Zi Yan wrote:
-> On 5 Sep 2025, at 10:11, David Hildenbrand wrote:
-> 
->> We added an early exit in thp_underused(), probably to avoid scanning
->> pages when there is no chance for success.
->>
->> However, assume we have max_ptes_none = 511 (default).
->>
->> Nothing should stop us from freeing all pages part of a THP that
->> is completely zero (512) and khugepaged will for sure not try to
->> instantiate a THP in that case (512 shared zeropages).
->>
->> This can just trivially happen if someone writes a single 0 byte into a
->> PMD area, or of course, when data ends up being zero later.
->>
->> So let's remove that early exit.
->>
->> Do we want to CC stable? Hm, not sure. Probably not urgent.
->>
->> Note that, as default, the THP shrinker is active
->> (/sys/kernel/mm/transparent_hugepage/shrink_underused = 1), and all
->> THPs are added to the deferred split lists. However, with the
->> max_ptes_none default we would never scan them. We would not do that. If
->> that's not desirable, we should just disable the shrinker as default,
->> also not adding all THPs to the deferred split lists.
->>
->> Easy to reproduce:
->>
->> 1) Allocate some THPs filled with 0s
->>
->> <prog.c>
->>  #include <string.h>
->>  #include <stdio.h>
->>  #include <stdlib.h>
->>  #include <unistd.h>
->>  #include <sys/mman.h>
->>
->>  const size_t size = 1024*1024*1024;
->>
->>  int main(void)
->>  {
->>          size_t offs;
->>          char *area;
->>
->>          area = mmap(0, size, PROT_READ | PROT_WRITE,
->>                      MAP_ANON | MAP_PRIVATE, -1, 0);
->>          if (area == MAP_FAILED) {
->>                  printf("mmap failed\n");
->>                  exit(-1);
->>          }
->>          madvise(area, size, MADV_HUGEPAGE);
->>
->>          for (offs = 0; offs < size; offs += getpagesize())
->>                  area[offs] = 0;
->>          pause();
->>  }
->> <\prog.c>
->>
->> 2) Trigger the shrinker
->>
->> E.g., memory pressure through memhog
->>
->> 3) Observe that THPs are not getting reclaimed
->>
->> $ cat /proc/`pgrep prog`/smaps_rollup
->>
->> Would list ~1GiB of AnonHugePages. With this fix, they would get
->> reclaimed as expected.
->>
->> Fixes: dafff3f4c850 ("mm: split underused THPs")
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Usama Arif <usamaarif642@gmail.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  mm/huge_memory.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
-> LGTM. Acked-by: Zi Yan <ziy@nvidia.com>
-> 
-> I also notice that thp_underused() checks num_zero_pages directly
-> against khugepaged_max_ptes_none. This means mTHPs will never be regarded
-> as underused. A similar issue you are discussing in Nico’s khugepaged
-> mTHP support. Maybe checks against these khugepaged_max* variables
-> should be calculated based on nr_pages of a large folio, like
-> making these variables a ratio in other discussion.
+It also refactors the driver to use the newly added devm_pm_runtime_enable()
+and rz_dmac_reset_control_assert() functions for reset cleanup handling.
 
-I unfortunately didnt follow the series in the latest revisions.
+Thanks & Regards,
+Tommaso
 
-In the earlier revisions, I think it was decided to not add mTHPs to shrinker
-as a start, as there are diminshing returns for smaller THPs and having a lot
-of smaller mTHPs in the deferred list might mean that we get to PMD mapped THPs
-a lot slower?
+Tommaso Merciai (4):
+  dmaengine: sh: rz-dmac: Use devm_pm_runtime_enable()
+  dmaengine: sh: rz-dmac: Use devm_add_action_or_reset()
+  dmaengine: sh: rz-dmac: Refactor runtime PM handling
+  dmaengine: sh: rz-dmac: Add system sleep power management
 
-> 
-> Best Regards,
-> Yan, Zi
+ drivers/dma/sh/rz-dmac.c | 82 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 70 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
 
 
