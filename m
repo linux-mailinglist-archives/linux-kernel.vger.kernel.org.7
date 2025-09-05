@@ -1,270 +1,152 @@
-Return-Path: <linux-kernel+bounces-803690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077F5B463CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:40:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A57B463D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39267B72F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:38:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA567B7CD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDAC28137A;
-	Fri,  5 Sep 2025 19:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926B828137D;
+	Fri,  5 Sep 2025 19:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqXRFlbg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWeO66el"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B31F13D539;
-	Fri,  5 Sep 2025 19:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E10D13D539;
+	Fri,  5 Sep 2025 19:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101204; cv=none; b=HQLWaBz9odOIaBNwYCy9/M8SA7ArlmNDp3YrfXwG8t03XJp0IXukdgIz6vR5YNjjhxtJdtiHA5NhQoZ28Uz2bov/jo7S7KV2drpUSq8V1+sWP0b35Ynm29T1iUQYFW8ek4eUI+cpFSwgRq5FN+gRf1IfKjgaUdTaRZcymBmF+14=
+	t=1757101230; cv=none; b=GV181OynmGA2bL4EEgpkVmQivyOzHvcTtvD0mUYVIqetncFp2lyQitsSfvKcQ4GSMT2dy8/cyiPKZqnc3VaksB1aowv7GkYAYeWEyhPeUK1O5HEl1GZ5pRRUKb3/jwMK6Uu9i2hHF5LH4Du2vCzpInZm5olU4OLGkEi0CAhhvGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101204; c=relaxed/simple;
-	bh=EW5E1DsoS/eP0Xpaway7kFwsFpD+pL719m9UghXWG4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJ9MW9S1Bucs/Y8uU2NzLIo+eSBpnSOfPMFsL5BXAXI7TPNGTcSXpHZ0xdBihfFZgESeXZXT8k9rL8Z+82l7q7LRvuI5f1pJ1du45k1ZOnseJwKRkZK73chnjgfwv5lJIF7ep3ZBIu8KPNROuWwL43yCQN2H0s8S2tmUiPDj420=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqXRFlbg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E43FC113CF;
-	Fri,  5 Sep 2025 19:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757101204;
-	bh=EW5E1DsoS/eP0Xpaway7kFwsFpD+pL719m9UghXWG4E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZqXRFlbgP5QwPcBxU6eNLL/08iwuclbpMhHj5f112VJ0D0CRs+uAOZZt9/eSU+oYH
-	 FOKxLZNfYfeCUuY691CYi9oaDczKB9oJxUx3sRU+YTC0hMmU7aj7i6icx+GswFUP2R
-	 IFwTEwP7LFbGxUg/I7SAjo0DENXd43ZHbeobRhQywFakWAs9/enQGWBOfoAuIelFBb
-	 wogoGak56kUdv1oV5wP9PLMDQRhAVNRB8Qk4NYGffSXcIWD99Y+pR+l0VNOqodu/Yf
-	 429lN+Si30NngrGAeTbmA/uuc+3zujKhmh+809qGxXm2EsqsYlM68fd6X/hgvyGAM6
-	 l4P6r3BqgQXRw==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-746da717f35so679040a34.1;
-        Fri, 05 Sep 2025 12:40:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKz24fSshaE6gjI+SrChkXvqsPDHYXGm9btTUI6SFpyk1LPU/OkpetJmqj6wu164Ejr8NxDWRxfoZRKsPz@vger.kernel.org, AJvYcCVyEYvKlQhdFnPgUwDXJr13V68kDlM/vkMAiyzK5StcmXXR/uHHRkCvQvz+30lMvJaq6exXWOeCF4sB@vger.kernel.org, AJvYcCWvxis1k5vmf0pLQ4Kp2wdPIUNb9wFKT8FszOL7tARj6+iFMbOJmhAu0HdC9txleYJYOVEB7otFxhc=@vger.kernel.org, AJvYcCXmFTC+zDKmsHhH+n9ftfnp7SAeWTkjQ6c8NzRJ6Lb9jzmEmATWVBbPM3RBiYt03wVeakQQYJ50uFpOBQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi2b03tZ6prJESMGoacEpczhN1Q+homgw1oPMBLihhhxmqYttK
-	82TTBkrw/3BJuOh4c9wixaomQ+v8mqNoNkTbJdwFNZ+uWOReVUR5IUhUmsz/+xVfsy0Fq09BEGY
-	aXA81U/yT4eNuvQA8+XrWVt3So5bRGFI=
-X-Google-Smtp-Source: AGHT+IEWhcvcPUmMTXw08ZtZH4mqK1uKC0R7GjcFC8PVlsyyD61c2ek06n5Ch8ecLJvX8w2zR6AjPrAE5CMEF+OJ57Q=
-X-Received: by 2002:a05:6830:700a:b0:74b:f9de:34dd with SMTP id
- 46e09a7af769-74bf9de3edfmr235939a34.15.1757101203180; Fri, 05 Sep 2025
- 12:40:03 -0700 (PDT)
+	s=arc-20240116; t=1757101230; c=relaxed/simple;
+	bh=xhsqW2ycceW1sdKQYARagIhFItw+4GqIkCDwVnVlC2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwMHn3O3f/puiFutF4rt48Uuddt5dZoxIKnwD/JLQLeRh7qtfJqp9R4D9cUmr9lPY7kmpQ62o6Df2P8vHdaiTDRlxJUGqbzcA7z9Iy0elfrSrSYhxc5l631Vg4aeEhPb45uxRsYby+AaN8Wjw1DkAiZkX88ntlIVHlnh/IIYe7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWeO66el; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3cdc54cabb1so966281f8f.0;
+        Fri, 05 Sep 2025 12:40:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757101227; x=1757706027; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Leh3iWdpj35vfwfF+dKvMn8gUxkJHhmSd0V0QRap4=;
+        b=jWeO66eluDRNnu6Tusz3v6NCIxCyW7Cf9jk3C//ckCpHLnUeepaXJ48Yv62P37aD9j
+         ZFhRm53ikZjUgvPoSqJRf4DtMIvdlHXie6ZgSrhcBwKpuTurEnXF7OMZEZVlAGfPpqDW
+         L5fJTQf1RlDBtQ12s55nVn7VsFU4VIYbJXkOXIv81DpHIiieuSBuCshWpAKcb5gYHHtY
+         Wxenj+CRgCfjY+p7ABh5/O6dAXxv2xnDUU/DOtJ0vTHgAImlL1DcwAJW8hesuJ1iZWKI
+         mUAnjQSx3XDRmksajewZP2C5d8n/RSDKatZ6C/sSPz81VQPGclFztD2+0NpGPDijAFqP
+         GltQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757101227; x=1757706027;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Leh3iWdpj35vfwfF+dKvMn8gUxkJHhmSd0V0QRap4=;
+        b=c+7wlU7PYx3h0kSmZiBMVOYo8C/xnVxF1gbT4Qai95o6k9TWBMt3iEpyMWxeStyDm4
+         NL9Y34z/mhguV+bJRTsN/o1zZtLsBP2Stz5zUIl7/LI8D1cKxaslCIJGbv1zqy4xMrz0
+         39ZRKGWhhvDfWuvtoad23BIFMG1mU3KpknZE1NYWh5+oDGGl0lA91VoLTlkd0FNco0OV
+         TWNKyj9YH22wdZcQ5ZVa/5AIeOBj7FjvK6xbLR/1UJM0HBPrM+IHacv56+iR1vjr9zV+
+         Qt1zFRN1Nwjo53pYGaXJ5q/W8Jc+JEP+EgUamtEFyKTX5dBiaoN+oDNTvR8MBbxDWj20
+         ILuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFrmM6qfumVwoubFYZHhtuBuwfr5NUzc2Osw3ekRWxZETzgJpVAKhlXHISwuiKfZxqZgCTer1SX3U=@vger.kernel.org, AJvYcCXjA13G3RR1K1lScaAQfaLuIb/NF98z8dIoXujVYNt0mJTOGmagbcnrfyk9O/3cod3nVWTi+VvoZtB+RZzXaQ==@vger.kernel.org, AJvYcCXtYS9fOthzW3l2gn3rJZlQE2coYfbj/Uyx+DIvRYq+8BRfNfy8tboA0gt60+CCAp0aDiKn0Qmyaa19vKSX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiwTsxVjPmSb8nLk4gfzwaa0TCPs4xgCT6A32Av4oscxoVDJHV
+	5Vwb3wzp3l4vtBLrA2Bh/rGhgvYJEfCnqDHjBlJ++iGvHrDlBq1vYIgx
+X-Gm-Gg: ASbGncsaGFP8ZJBYt/tnid4dePi3pUMTSSS+4vsd1orJlvlQ5O0P+3CYVTarZTYMf9j
+	/JveJkcSDH0iydGEgMd6I1XFheM6QIQVO0nzMqXQEgTRnvfKd72A65SimXVsKjgZBqvE1aJzanA
+	KKHXl72zJtC3tBmGzyxP88rIvP5U2t8BxgEo+N5GagrteKLpFsuohteKWU7ft+OzaEV1rw4/GZJ
+	5PGIJFRIi9XJKKZ5cL1+Hkbo113ONnFNtnvQ2XKjxs04NyxbbVesoWgpPZ8fQbKEooTfdbeteiJ
+	+Im1qk8me19MbIj6zJK8avcy5V7R6VzjnJrvkDWNMlU5w8KjsFfv32Yxp6NfBi16fTxwn3kVms9
+	cyBv291VijkgOKibj0w66rmDWAj4H+rrR0lrjMnwL3EcYFWzbeR/Kxu/PSdiAmAp2b57N9aLMhq
+	aH+R08ROHeui56MxGWQO9jIR/xqnks
+X-Google-Smtp-Source: AGHT+IGkCUtoIJmK/cXGI+fG8KbeWQpaLfWU2RtQVWVmzNIv533orfL59bVmV7MDCa5V1l6DsQsCcQ==
+X-Received: by 2002:a05:6000:2012:b0:3d1:8d1e:8e9 with SMTP id ffacd0b85a97d-3d1dfcfb918mr17778240f8f.32.1757101227334;
+        Fri, 05 Sep 2025 12:40:27 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d1319sm378087845e9.5.2025.09.05.12.40.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 12:40:26 -0700 (PDT)
+Message-ID: <abe39fc3-37a3-416d-b868-345f4e577427@gmail.com>
+Date: Fri, 5 Sep 2025 20:40:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn> <20250905132413.1376220-5-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250905132413.1376220-5-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 21:39:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jvskvxgUhxKJLN89A+s7Mruz1_tewHZfKgC7sUGLi9cw@mail.gmail.com>
-X-Gm-Features: Ac12FXws29Av_URAHgjbe1keBVsNp0-87UjpP4EeoBVUVvSgtWfWbkUI32D7vRk
-Message-ID: <CAJZ5v0jvskvxgUhxKJLN89A+s7Mruz1_tewHZfKgC7sUGLi9cw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/6] PM / devfreq: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
+ THPs completely
+Content-Language: en-GB
+To: Mark Brown <broonie@kernel.org>, Zi Yan <ziy@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
+ baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+ Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com, Aishwarya.TCV@arm.com
+References: <20250815135549.130506-1-usamaarif642@gmail.com>
+ <20250815135549.130506-7-usamaarif642@gmail.com>
+ <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
+ <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
+ <620a27cc-7a5f-473f-8937-5221d257c066@sirena.org.uk>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <620a27cc-7a5f-473f-8937-5221d257c066@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/devfreq/governor_passive.c | 60 +++++++++++-------------------
->  1 file changed, 22 insertions(+), 38 deletions(-)
->
-> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governo=
-r_passive.c
-> index 953cf9a1e9f7..5afaea39377e 100644
-> --- a/drivers/devfreq/governor_passive.c
-> +++ b/drivers/devfreq/governor_passive.c
-> @@ -80,24 +80,23 @@ static int get_target_freq_with_cpufreq(struct devfre=
-q *devfreq,
->         struct devfreq_passive_data *p_data =3D
->                                 (struct devfreq_passive_data *)devfreq->d=
-ata;
->         struct devfreq_cpu_data *parent_cpu_data;
-> -       struct cpufreq_policy *policy;
->         unsigned long cpu, cpu_cur, cpu_min, cpu_max, cpu_percent;
->         unsigned long dev_min, dev_max;
->         unsigned long freq =3D 0;
->         int ret =3D 0;
->
->         for_each_online_cpu(cpu) {
 
-I'd rather move the code in this loop to a separate function in the
-first place and then do a __free()-based simplification of it.  I'd
-suggest doing each step in a separate patch to avoid mistakes.
 
-> -               policy =3D cpufreq_cpu_get(cpu);
-> +               struct cpufreq_policy *policy __free(put_cpufreq_policy) =
-=3D
-> +                       cpufreq_cpu_get(cpu);
-> +
->                 if (!policy) {
->                         ret =3D -EINVAL;
->                         continue;
->                 }
->
->                 parent_cpu_data =3D get_parent_cpu_data(p_data, policy);
-> -               if (!parent_cpu_data) {
-> -                       cpufreq_cpu_put(policy);
-> +               if (!parent_cpu_data)
->                         continue;
-> -               }
->
->                 /* Get target freq via required opps */
->                 cpu_cur =3D parent_cpu_data->cur_freq * HZ_PER_KHZ;
-> @@ -106,7 +105,6 @@ static int get_target_freq_with_cpufreq(struct devfre=
-q *devfreq,
->                                         devfreq->opp_table, &cpu_cur);
->                 if (freq) {
->                         *target_freq =3D max(freq, *target_freq);
-> -                       cpufreq_cpu_put(policy);
->                         continue;
->                 }
->
-> @@ -121,7 +119,6 @@ static int get_target_freq_with_cpufreq(struct devfre=
-q *devfreq,
->                 freq =3D dev_min + mult_frac(dev_max - dev_min, cpu_perce=
-nt, 100);
->
->                 *target_freq =3D max(freq, *target_freq);
-> -               cpufreq_cpu_put(policy);
->         }
->
->         return ret;
-> @@ -255,8 +252,6 @@ static int cpufreq_passive_register_notifier(struct d=
-evfreq *devfreq)
->                         =3D (struct devfreq_passive_data *)devfreq->data;
->         struct device *dev =3D devfreq->dev.parent;
->         struct opp_table *opp_table =3D NULL;
-> -       struct devfreq_cpu_data *parent_cpu_data;
-> -       struct cpufreq_policy *policy;
->         struct device *cpu_dev;
->         unsigned int cpu;
->         int ret;
-> @@ -273,37 +268,34 @@ static int cpufreq_passive_register_notifier(struct=
- devfreq *devfreq)
->         }
->
->         for_each_possible_cpu(cpu) {
+On 05/09/2025 19:02, Mark Brown wrote:
+> On Fri, Sep 05, 2025 at 01:55:53PM -0400, Zi Yan wrote:
+>> On 5 Sep 2025, at 13:43, Mark Brown wrote:
+> 
+>>> but the header there is getting ignored AFAICT.  Probably the problem is
+>>> fairly obvious and I'm just being slow - I'm not quite 100% at the
+>>> minute.
+> 
+>> prctl_thp_disable.c uses “#include <sys/mman.h>” but asm-generic/mman-common.h
+>> is included in asm/mman.h. And sys/mman.h gets MADV_COLLAPSE from
+>> bits/mman-linux.h. Maybe that is why?
+> 
+> Ah, of course - if glibc is reproducing the kernel definitions rather
+> than including the kernel headers to get them then that'd do it.
+> Probably the test needs to locally define the new MADV_COLLAPSE for
+> glibc compatibility, IME trying to directly include the kernel headers
+> when glibc doesn't normally use them tends to blow up on you sooner or
+> later.
+> 
+> I knew it'd be something simple, thanks.
 
-And analogously here.  I'd use separate two patches for updating this code.
+Hi Mark,
 
-> -               policy =3D cpufreq_cpu_get(cpu);
-> -               if (!policy) {
-> -                       ret =3D -EPROBE_DEFER;
-> -                       goto err;
-> -               }
-> +               struct cpufreq_policy *policy __free(put_cpufreq_policy) =
-=3D
-> +                       cpufreq_cpu_get(cpu);
->
-> -               parent_cpu_data =3D get_parent_cpu_data(p_data, policy);
-> -               if (parent_cpu_data) {
-> -                       cpufreq_cpu_put(policy);
-> +               if (!policy)
-> +                       return -EPROBE_DEFER;
-> +
-> +               struct devfreq_cpu_data *initial_parent_cpu_data =3D
-> +                       get_parent_cpu_data(p_data, policy);
-> +
-> +               if (initial_parent_cpu_data)
->                         continue;
-> -               }
->
-> -               parent_cpu_data =3D kzalloc(sizeof(*parent_cpu_data),
-> -                                               GFP_KERNEL);
-> -               if (!parent_cpu_data) {
-> -                       ret =3D -ENOMEM;
-> -                       goto err_put_policy;
-> -               }
-> +               struct devfreq_cpu_data *parent_cpu_data __free(kfree) =
-=3D
-> +                       kzalloc(sizeof(*parent_cpu_data), GFP_KERNEL);
-> +
-> +               if (!parent_cpu_data)
-> +                       return -ENOMEM;
->
->                 cpu_dev =3D get_cpu_device(cpu);
->                 if (!cpu_dev) {
->                         dev_err(dev, "failed to get cpu device\n");
-> -                       ret =3D -ENODEV;
-> -                       goto err_free_cpu_data;
-> +                       return -ENODEV;
->                 }
->
->                 opp_table =3D dev_pm_opp_get_opp_table(cpu_dev);
->                 if (IS_ERR(opp_table)) {
->                         dev_err(dev, "failed to get opp_table of cpu%d\n"=
-, cpu);
-> -                       ret =3D PTR_ERR(opp_table);
-> -                       goto err_free_cpu_data;
-> +                       return PTR_ERR(opp_table);
->                 }
->
->                 parent_cpu_data->dev =3D cpu_dev;
-> @@ -313,8 +305,8 @@ static int cpufreq_passive_register_notifier(struct d=
-evfreq *devfreq)
->                 parent_cpu_data->min_freq =3D policy->cpuinfo.min_freq;
->                 parent_cpu_data->max_freq =3D policy->cpuinfo.max_freq;
->
-> -               list_add_tail(&parent_cpu_data->node, &p_data->cpu_data_l=
-ist);
-> -               cpufreq_cpu_put(policy);
-> +               list_add_tail(&(no_free_ptr(parent_cpu_data)->node,
-> +                       &p_data->cpu_data_list);
->         }
->
->         mutex_lock(&devfreq->lock);
-> @@ -324,14 +316,6 @@ static int cpufreq_passive_register_notifier(struct =
-devfreq *devfreq)
->                 dev_err(dev, "failed to update the frequency\n");
->
->         return ret;
-> -
-> -err_free_cpu_data:
-> -       kfree(parent_cpu_data);
-> -err_put_policy:
-> -       cpufreq_cpu_put(policy);
-> -err:
-> -
-> -       return ret;
->  }
->
->  static int devfreq_passive_notifier_call(struct notifier_block *nb,
-> --
+Thanks for raising this. I think doing 
+
+diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
+index 89ed0d7db1c16..0afcdbad94f3d 100644
+--- a/tools/testing/selftests/mm/prctl_thp_disable.c
++++ b/tools/testing/selftests/mm/prctl_thp_disable.c
+@@ -9,6 +9,7 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <sys/mman.h>
++#include <linux/mman.h>
+ #include <sys/prctl.h>
+ #include <sys/wait.h>
+
+
+should fix this issue?
+
+Thanks
+Usama
 
