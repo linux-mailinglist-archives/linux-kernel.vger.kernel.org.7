@@ -1,252 +1,157 @@
-Return-Path: <linux-kernel+bounces-801924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2D8B44BB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A100BB44BB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524571B249AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B95CA41615
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90D0223301;
-	Fri,  5 Sep 2025 02:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2F1223DE5;
+	Fri,  5 Sep 2025 02:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qANFTdRG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nKG3bc5C"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73555CA5E;
-	Fri,  5 Sep 2025 02:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24621F4177
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 02:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757040130; cv=none; b=YgbR5aXAJTvFYqZHWzWYjBzk8b4fSIOVdair5aRPVB3NomH4lp8fshS5p8fff4AUQ6J3OnnNAy2HprKQz2BTU5ujG9G8EYwCOKzxtIotmWkGNXgM8pH8dTFalY3yMTk+QWyLA4YySXV2dA+Oj8MV7sUz032jctHYHGEpcPsOHgM=
+	t=1757040286; cv=none; b=gGeyb4YW6tbj09ORzVEW5g75stxYQwcbB0ojr0pHxn3dEM0+x7R7WhqQWF7yYIrhrNgkm5/9TyZn1WYpHSXo6Z7LrK6mpE7drZtxF61KVFxTHMogyGtFgB7m5Ce2HbnON9optQJGsOgt5rNbQNdSLVrpUc00mV1UrkSY/HYqq1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757040130; c=relaxed/simple;
-	bh=2AVLQ+dlpLT9oz+xqhHu3hF8wKHX+qMqz/UApyvNYl0=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=jQEVdFyqMest4YG20NGUKaKeU5gwAGM58aLKppQIplq6jTWmpfXziLhg0Lvtw9WzQl8dgeiumt5Il6FKtLqGl6ZXyUCEk0J8wK/38a87smJmxyDlXZRtRuxzP/UE1zXhvOa5wQBGTnXed3jHPTV2u8xM3T0LuVllbmV1gDTzoWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qANFTdRG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58522Iqp012837;
-	Fri, 5 Sep 2025 02:41:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2RCveh
-	g54PQFt5qK9XI3+cLpnUwfVm7HuHLknje3RyI=; b=qANFTdRGPs3rdt479PLYQ/
-	Zs8OLn1lvXNiIiDysQCBDfo97SSGP+rQxVNm/vlhSX1M3/4wOeL7udgcGSoBU3Ks
-	+weA+rURpIV70a6d4DpoklwNzK8UMEMatwhQH0jWdGi940Jhg+kclHjof/Q5z00+
-	PLbwo1VBnTmF5qFG9GD/8pUc6w+uh2dxiKt9jYT+3hg9wyttS6GWXGusAe14nJTb
-	bXYSS4Ad8YVASD0VHCmCfCivDGW4v2COEbpTWJjADklrOx4k+3Yi+3W+LxmzxOBB
-	zbuAcPpTwBhRIrGFBCEB8U86LLYHEbEnG0KCVDtiCQlZHyxnUZvJpOIM8UpKiRGQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswdnvpp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 02:41:47 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5852fkt6017392;
-	Fri, 5 Sep 2025 02:41:46 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswdnvph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 02:41:46 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 584NWheH019412;
-	Fri, 5 Sep 2025 02:41:45 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4n7cc9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 02:41:45 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5852fiph32965296
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Sep 2025 02:41:44 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 45B0A58050;
-	Fri,  5 Sep 2025 02:41:44 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 375C058052;
-	Fri,  5 Sep 2025 02:41:43 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.93.44])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Sep 2025 02:41:43 +0000 (GMT)
-Message-ID: <d252b04934908e7e65a3299bfeffc282c7b0b12f.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA
- xattr
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250902042515.759750-1-coxu@redhat.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 04 Sep 2025 22:41:42 -0400
+	s=arc-20240116; t=1757040286; c=relaxed/simple;
+	bh=S7np+C9VMJWn+bcoWCgkhTBHAoVmM12mkBfUGqXesNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L8R+pfSESzSgiA9cXHqanR9ImSrWDWOubrTRr3nbN1i2rvm/Qp/8j0rNMwg4gQHHsPCIlJRbB84iDaEEL3CXfPvNsoDby2f3QbjmKxxM/hFM40vwCua9IbntjqiiUSPaA3o0Kp22057OdtHdswGxhA9i6X5NLO8NlP5ZHPjP/TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nKG3bc5C; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757040285; x=1788576285;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=S7np+C9VMJWn+bcoWCgkhTBHAoVmM12mkBfUGqXesNo=;
+  b=nKG3bc5CawZhuepOVkGn1xtjxIaQsNpD1e9JRWXfmkf1ac0vpPbRSf5r
+   ZI4GG3Y4YKsL+cmoYnEectAsttFGaFuSiFfjSOE2xwDPvGHT+L44q6TIj
+   4/8R/B2yZimjgTOmqDJq5KlcDH2QMcx7wZzE9eBM/snsnSnzc+oYVOnze
+   fEbWeItyjhyn5Y6eFqka5T/Rk0UCJ/pQrSWabGk2+n3lArbGzBTrJDO+A
+   3atlSrIuLRzVru0bhwrHhFyQLpHqaKV4TlF9lWBiJEJ+8lpPAIIBBpjjH
+   s72qN/rSV0x/Iz7Fjwapvc0ka/39YJDsZGKEZZc2NSe3YSsl7kJsE/9PE
+   Q==;
+X-CSE-ConnectionGUID: KzltWk2GSzSo67x+pj8rNw==
+X-CSE-MsgGUID: mg1WBeMgTcekwqqP1ZyF8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="76999539"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="76999539"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 19:44:44 -0700
+X-CSE-ConnectionGUID: Ck01XruKRZmHwGjwLiz+Ng==
+X-CSE-MsgGUID: oUxE6mM2SPm11H74/yHcdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="171275574"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 04 Sep 2025 19:44:42 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuMRL-00068W-1L;
+	Fri, 05 Sep 2025 02:44:39 +0000
+Date: Fri, 5 Sep 2025 10:43:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ian Rogers <irogers@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [tip:timers/vdso 12/15] include/vdso/unaligned.h:23:9: warning:
+ '__builtin_memcpy' reading 4 bytes from a region of size 1
+Message-ID: <202509051042.7KOze0fZ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=PeP/hjhd c=1 sm=1 tr=0 ts=68ba4deb cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=hiVKoCch6JRLWrWsl2YA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX71SIbWj7OgA2
- pd2YFqZxTSsBbUb6Qde7jdMj3DElAuK0chF5aykOnkGVY1C//4Az+NAE6OplW5KhuadBALJVZZH
- IAnM4x4OPn1JgXRqTGDKmzPY2xIb3Bn7rqqk+xsbeSlilaQZFbZAmnQNaP2UAOGdj+Jm/UWGyJF
- V5POErVAy64I8gKnDzO/GsAsmaaKMaljOPk6Wha/A/Tm6BbqDa7gVEMDuMtT9Qe6V1UJvX1ZIZE
- /1TXSYNln3d1AUrJHfdBbsCd4U2ihAWpvGQgNI0TdrpXOP1TaQx+VUBSo9okZlqlu/kCFRO+BY+
- 4dSkarNkDtIBcWMAcDyIQN6HaEybpvmoKL+b7HGzBzPEro6kaWjkuYuGpmougA4pDZjj6N3nt8j
- L+izyEOn
-X-Proofpoint-GUID: ADG9MaJ5cc-KcmW_t7i7V4AF2u4bUkKz
-X-Proofpoint-ORIG-GUID: JKzzpldWwSKmBwtws2qrmRzTrDpb5l5m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0
- impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 2025-09-02 at 12:25 +0800, Coiby Xu wrote:
-> Currently when both IMA and EVM are in fix mode, the IMA signature will
-> be reset to IMA hash if a program first stores IMA signature in
-> security.ima and then sets security.selinux for a file. For example, on
-> Fedora, after booting the kernel with "ima_appraise=3Dfix evm=3Dfix
-> ima_policy=3Dappraise_tcb" and installing rpm-plugin-ima, reinstalling a
-> package will not make good reference IMA signature generated. Instead
-> IMA hash is generated,
->     # getfattr -m - -d -e hex /usr/bin/bash
->     # file: usr/bin/bash
->     security.ima=3D0x0404...
->=20
-> This happens because when setting selinux.selinux, the IMA_DIGSIG flag
-> that had been set early was cleared. As a result, IMA hash is generated
-> when the file is closed.
->=20
-> Here's a minimal C reproducer,
->=20
->     #include <stdio.h>
->     #include <sys/xattr.h>
->     #include <fcntl.h>
->     #include <unistd.h>
->     #include <string.h>
->     #include <stdlib.h>
->=20
->     int main() {
->         const char* file_path =3D "/usr/sbin/test_binary";
->         const char* hex_string =3D "030204d33204490066306402304";
->         int length =3D strlen(hex_string);
->         char* ima_attr_value;
->         int fd;
->=20
->         fd =3D open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
->         if (fd =3D=3D -1) {
->             perror("Error opening file");
->             return 1;
->         }
->=20
->         ima_attr_value =3D (char*)malloc(length / 2 );
->         for (int i =3D 0, j =3D 0; i < length; i +=3D 2, j++) {
->             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
->         }
->=20
->         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) =
-=3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         const char* selinux_value=3D "system_u:object_r:bin_t:s0";
->         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selin=
-ux_value), 0) =3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         close(fd);
->=20
->         return 0;
->     }
->=20
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
+head:   e994a4197086cd5df809277b3b96c88f75e1e860
+commit: 34a1cbf21227f1327ead30dcf2a52aac79bf4f15 [12/15] vdso: Switch get/put_unaligned() from packed struct to memcpy()
+config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20250905/202509051042.7KOze0fZ-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509051042.7KOze0fZ-lkp@intel.com/reproduce)
 
-Thanks, Coiby.  Agreed, the ability to clear the IMA_DIGSIG flag should be
-limited to security.ima xattr and probably security.evm xattr.  Writing oth=
-er
-security xattrs should not affect the IMA_DIGSIG flag.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509051042.7KOze0fZ-lkp@intel.com/
 
-Even without an IMA appraise policy, the security xattrs are written out to=
- the
-filesystem, but the IMA_DIGSIG flag is not cached.
+All warnings (new ones prefixed by >>):
 
-Please document the tristate values:
-0: clear IMA_DIGSIG
-1: set IMA_DIGSIG
--1: don't change IMA_DIGSIG
+   In file included from include/linux/swab.h:5,
+                    from include/uapi/linux/byteorder/big_endian.h:14,
+                    from include/linux/byteorder/big_endian.h:5,
+                    from arch/parisc/include/uapi/asm/byteorder.h:5,
+                    from arch/parisc/include/asm/bitops.h:11,
+                    from include/linux/bitops.h:67,
+                    from include/linux/kernel.h:23,
+                    from arch/parisc/include/asm/bug.h:5,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/linux/sched.h:14,
+                    from include/linux/uaccess.h:9,
+                    from arch/parisc/boot/compressed/misc.c:7:
+   In function 'get_unaligned_le32',
+       inlined from 'decompress_kernel' at arch/parisc/boot/compressed/misc.c:312:16:
+>> include/vdso/unaligned.h:23:9: warning: '__builtin_memcpy' reading 4 bytes from a region of size 1 [-Wstringop-overread]
+      23 |         __builtin_memcpy(&__get_unaligned_val, (void *)(ptr),           \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      24 |                          sizeof(__get_unaligned_val));                  \
+         |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/uapi/linux/swab.h:120:19: note: in definition of macro '__swab32'
+     120 |         __fswab32(x))
+         |                   ^
+   include/linux/byteorder/generic.h:89:21: note: in expansion of macro '__le32_to_cpu'
+      89 | #define le32_to_cpu __le32_to_cpu
+         |                     ^~~~~~~~~~~~~
+   include/linux/unaligned.h:23:28: note: in expansion of macro '__get_unaligned_t'
+      23 |         return le32_to_cpu(__get_unaligned_t(__le32, p));
+         |                            ^~~~~~~~~~~~~~~~~
+   arch/parisc/boot/compressed/misc.c: In function 'decompress_kernel':
+   arch/parisc/boot/compressed/misc.c:29:13: note: source object 'output_len' of size 1
+      29 | extern char output_len;
+         |             ^~~~~~~~~~
 
-> ---
->  security/integrity/ima/ima_appraise.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
-ma/ima_appraise.c
-> index f435eff4667f..fc82161f8b30 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -708,7 +708,7 @@ static void ima_reset_appraise_flags(struct inode *in=
-ode, int digsig)
->  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
->  	if (digsig)
->  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
 
-This matches both -1 and 1.  Test "digsig =3D=3D 1" here.
+vim +/__builtin_memcpy +23 include/vdso/unaligned.h
 
-> -	else
-> +	else if (digsig !=3D -1)
+     6	
+     7	/**
+     8	 * __get_unaligned_t - read an unaligned value from memory.
+     9	 * @type:	the type to load from the pointer.
+    10	 * @ptr:	the pointer to load from.
+    11	 *
+    12	 * Use memcpy to affect an unaligned type sized load avoiding undefined behavior
+    13	 * from approaches like type punning that require -fno-strict-aliasing in order
+    14	 * to be correct. As type may be const, use __unqual_scalar_typeof to map to a
+    15	 * non-const type - you can't memcpy into a const type. The
+    16	 * __get_unaligned_ctrl_type gives __unqual_scalar_typeof its required
+    17	 * expression rather than type, a pointer is used to avoid warnings about mixing
+    18	 * the use of 0 and NULL. The void* cast silences ubsan warnings.
+    19	 */
+    20	#define __get_unaligned_t(type, ptr) ({					\
+    21		type *__get_unaligned_ctrl_type __always_unused = NULL;		\
+    22		__unqual_scalar_typeof(*__get_unaligned_ctrl_type) __get_unaligned_val; \
+  > 23		__builtin_memcpy(&__get_unaligned_val, (void *)(ptr),		\
+    24				 sizeof(__get_unaligned_val));			\
+    25		__get_unaligned_val;						\
+    26	})
+    27	
 
-and test "digsig =3D=3D 0" here.
-
->  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->  }
-> =20
-> @@ -794,6 +794,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap=
-, struct dentry *dentry,
->  		digsig =3D (xvalue->type =3D=3D EVM_IMA_XATTR_DIGSIG);
->  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) =
-{
->  		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
-> +	} else if (result !=3D 1) {
-
-The "if (result !=3D 1)" test is redundant.
-
-thanks,
-
-Mimi
-
-> +		digsig =3D -1;
->  	}
->  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
->  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
