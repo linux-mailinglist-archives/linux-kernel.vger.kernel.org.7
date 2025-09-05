@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-802050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C841AB44D29
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D808DB44D45
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 136497AA040
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CBE87BB373
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A8926F2B3;
-	Fri,  5 Sep 2025 05:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9F8296BD5;
+	Fri,  5 Sep 2025 05:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="acMGw2xd"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRwfikYB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37832AD00;
-	Fri,  5 Sep 2025 05:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98D728D8E8;
+	Fri,  5 Sep 2025 05:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049543; cv=none; b=Lr9Qp6I59UVo6m/WNVrzcH8yUs9xKlbbEgpa5GQOxDZ2L5wsyyslJezcaNTcOEE1AUzZot7pvAyLCwi+TAkBOfzn2+G8/iB1ldoj0TdwvFMOJmFBDTMjmI3SZaFEuAuWkT5EONV+ERb0tLm+oYkIToQnc2LVj4rrcLga+Xu80bw=
+	t=1757049591; cv=none; b=ICHWPxI7gEBz4O9fd0p6jJ6LIuIzuoLaSyLV16tmI+5lSL91ihNAi4uTyDWNTf3BSRrGymGHBfsreIMATeH4TktZqE4sAkrvx/KlAtlxVRyav812hO/OwzGKr20ifOb1Qv1WE7iK/whtM/hsAcIKei62ibmQIlS+LZ99n+EPgnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049543; c=relaxed/simple;
-	bh=0YbkTawyBInt9pUJ4jTW71f6Pk62hnb+ysAfsC1fzN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u9UHli8bNJjb5ZJ3fp8zMpRv8ONf++C/sfJtHXoyM17LHxeaolYTFAcFbMfZQPziIaaLMPvW8Ew1BUveJwNpROGqJfZdJp9XdN9wGzr5G9akNt00Zuxgfy81SiukXAO0+ABE6A2ACJP0o01kzqmCaF9B6jL2vP5Qs7Q9w5v+hE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=acMGw2xd; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855IuWq3246080;
-	Fri, 5 Sep 2025 00:18:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757049536;
-	bh=g/CjdO2oLUs6Kl6KrkstjG0mM0TAx6J8bSMY2vPc0j8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=acMGw2xddVqQt7//RKIZrvQ6Lu9HqXwl3RonGQ1UWoivS39hj/O9pO6gKzXmLR4zE
-	 G6YWaKA72SxroV0q2K7SvM0cl9Q5WMaPFaE+q6uGgUrjMM1/44/qkrTSwUWeEfGuNE
-	 mumn1EULm8kavxfXEPK9ZYHCh9OHKdyUAdKLrRbc=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855IuvW688344
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 00:18:56 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 00:18:56 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 00:18:55 -0500
-Received: from [10.24.68.177] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855IpZV4124087;
-	Fri, 5 Sep 2025 00:18:52 -0500
-Message-ID: <9e0c355c-8b19-438e-98d9-d6290a562863@ti.com>
-Date: Fri, 5 Sep 2025 10:48:51 +0530
+	s=arc-20240116; t=1757049591; c=relaxed/simple;
+	bh=j5sOyuZKyh/HWp7+7rk5nhLwxGNTgWGNr08IHfPCTqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9M7G6kkWM4HcB+TVHpqMKpRUPE9d22DEKf1iVR5JY/KxVG2AwjMzgd+uOf0jPeHqflsF+o9uA+xbtZZF6wY0fgszhNCCNpDwBk6sUS+QStMAHWAjkZs573O8n+lXt6z7AitgOsbIn0TbJ/G/EoZbRMzjjkq4HySDrrsDq3EeLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NRwfikYB; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757049590; x=1788585590;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=j5sOyuZKyh/HWp7+7rk5nhLwxGNTgWGNr08IHfPCTqY=;
+  b=NRwfikYBMp7KXDLhTfbnH4EB9sywMV5gZzGuNKrYmoq19qGVZ8YbcoKv
+   5lnvY5UlSwbnv4qD+ztyloCwwOxrmIrWp+ZXqzoChW3z4hbFFSeB2NOqE
+   AEIVge6lV+5y8mQB0m+G94GNZ4wIOc7GDsXPzWaDuwT5ezg+M2nFwhgWK
+   f4ss2nj0oXiq5OFszEJzyLbf6Lz/j1p9zUqyydzXcL40bXacwbLuI0ReA
+   m46sUg66G+wIDPmd3onU3OJEOdeN14WNxYGO+Fjhqdh5qYqm9VzJxmDWe
+   He/pc2IvkcGN9bfTXUon60yKLEuDlp40VdQM3f0WtsM7MQPcVBCm1+B7t
+   w==;
+X-CSE-ConnectionGUID: NArD58CVTKuu7pHTYHOlYg==
+X-CSE-MsgGUID: IhrakSuARfaTu902Aw8WPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="84829394"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="84829394"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:19:49 -0700
+X-CSE-ConnectionGUID: Yk5GqpLHSuCJXDnOvzBvGA==
+X-CSE-MsgGUID: scbqSEOcT0KJbxSRSIhC3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="171296749"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:19:44 -0700
+Message-ID: <84bccc75-6e5e-4c08-aba6-1d9219eacfaa@linux.intel.com>
+Date: Fri, 5 Sep 2025 13:19:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,95 +66,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: ti: k3-pinctrl: Add the remaining
- macros
-To: "Kumar, Udit" <u-kumar1@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <afd@ti.com>, <vigneshr@ti.com>, <d-gole@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <vishalm@ti.com>, <sebin.francis@ti.com>
-References: <20250902071917.1616729-1-a-kaur@ti.com>
- <20250902071917.1616729-4-a-kaur@ti.com>
- <b946af38-abf9-4b34-bf44-3ba9bc64bff7@ti.com>
- <b0ccb51f-14f4-43c9-9646-296d6e9d559c@ti.com>
- <f2e60ec2-5a1f-4cff-a8ee-c2555d835946@ti.com>
- <1a20e784-d2d7-46d7-b705-67e460b6ae33@ti.com>
- <8f0dc883-7bab-4ad8-8db2-6c8f8377fdb3@ti.com>
+Subject: Re: [PATCH v10 04/21] KVM: selftests: Update
+ kvm_init_vm_address_properties() for TDX
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>
+References: <20250904065453.639610-1-sagis@google.com>
+ <20250904065453.639610-5-sagis@google.com>
 Content-Language: en-US
-From: Akashdeep Kaur <a-kaur@ti.com>
-In-Reply-To: <8f0dc883-7bab-4ad8-8db2-6c8f8377fdb3@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250904065453.639610-5-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 05/09/25 10:27, Kumar, Udit wrote:
-> 
-> On 9/4/2025 7:16 PM, Akashdeep Kaur wrote:
->> Hi Udit,
->>
->> On 04/09/25 18:06, Kumar, Udit wrote:
->>>
->>
->> ...
->>
->>>> ...
->>>>>>   #define PULLTYPESEL_SHIFT    (17)
->>>>>>   #define RXACTIVE_SHIFT        (18)
->>>>>> +#define DRV_STR_SHIFT           (19)
->>>>>
->>>>> referring to above TRM mentioned in commit message
->>>>>
->>>>> Bit 20-19 are for DRV_STR, and description says
->>>>>
->>>>> 0 - Default
->>>>> 1 - Reserved
->>>>> 2 - Reserved
->>>>> 3 - Reserved
->>>>>
->>>>> Not sure, is there some additional document to be referred for 
->>>>> PIN_DRIVE_STRENGTH
->>>>
->>>> This information will be updated in TRM in coming cycles.
->>>
->>>
->>> Sorry ,
->>>
->>> can not ack before TRM update
->>
->> The information can be found at https://www.ti.com/lit/ug/spruj83b/ 
->> spruj83b.pdf in Table 14-8769. Description Of The Pad Configuration 
->> Register Bit
-> 
-> 
-> Then please give correct reference in commit message
 
-Updated the commit message!
 
-> 
-> 
-> 
->>
->>>
->>>
->>>
->>>>>
->>>>>
->>>>>> +#define DS_ISO_OVERRIDE_SHIFT (22)
->>>>>> +#define DS_ISO_BYPASS_EN_SHIFT  (23)
->>>>>
->>
->> ...
->>
->>>>>
->>>>>>   /* Default mux configuration for gpio-ranges to use with pinctrl */
->>>>>>   #define PIN_GPIO_RANGE_IOPAD    (PIN_INPUT | 7)
->>>>
->>>> Regards,
->>>> Akashdeep Kaur
->>
->> Thanks,
->> Akashdeep Kaur
->>
+On 9/4/2025 2:54 PM, Sagi Shahar wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>
+> Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_mask}
+> similar to SEV.
+>
+> TDX sets the shared bit based on the guest physical address width and
+> currently supports 48 and 52 widths.
+>
+> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Co-developed-by: Sagi Shahar <sagis@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 ++++++++++++++
+>   tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
+>   2 files changed, 24 insertions(+), 2 deletions(-)
+>   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>
+> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> new file mode 100644
+> index 000000000000..286d5e3c24b1
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef SELFTESTS_TDX_TDX_UTIL_H
+> +#define SELFTESTS_TDX_TDX_UTIL_H
+> +
+> +#include <stdbool.h>
+> +
+> +#include "kvm_util.h"
+> +
+> +static inline bool is_tdx_vm(struct kvm_vm *vm)
+> +{
+> +	return vm->type == KVM_X86_TDX_VM;
+> +}
+> +
+> +#endif // SELFTESTS_TDX_TDX_UTIL_H
+> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
+> index 82369373e843..2a44831e0cc9 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> @@ -8,6 +8,7 @@
+>   #include "kvm_util.h"
+>   #include "processor.h"
+>   #include "sev.h"
+> +#include "tdx/tdx_util.h"
+>   
+>   #ifndef NUM_INTERRUPTS
+>   #define NUM_INTERRUPTS 256
+> @@ -1160,12 +1161,19 @@ void kvm_get_cpu_address_width(unsigned int *pa_bits, unsigned int *va_bits)
+>   
+>   void kvm_init_vm_address_properties(struct kvm_vm *vm)
+>   {
+> +	uint32_t gpa_bits = kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY_ADDR);
+> +
+> +	vm->arch.sev_fd = -1;
+> +
+>   	if (is_sev_vm(vm)) {
+>   		vm->arch.sev_fd = open_sev_dev_path_or_exit();
+>   		vm->arch.c_bit = BIT_ULL(this_cpu_property(X86_PROPERTY_SEV_C_BIT));
+>   		vm->gpa_tag_mask = vm->arch.c_bit;
+> -	} else {
+> -		vm->arch.sev_fd = -1;
+> +	} else if (is_tdx_vm(vm)) {
+> +		TEST_ASSERT(gpa_bits == 48 || gpa_bits == 52,
+> +			    "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR value: %u", gpa_bits);
+> +		vm->arch.s_bit = BIT_ULL(gpa_bits - 1);
+> +		vm->gpa_tag_mask = vm->arch.s_bit;
+>   	}
+>   }
+>   
 
 
