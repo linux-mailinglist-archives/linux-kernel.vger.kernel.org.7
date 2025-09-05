@@ -1,290 +1,179 @@
-Return-Path: <linux-kernel+bounces-803686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97910B463B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1618BB463B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDA4A6708A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB40D3A8367
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422A82BE05E;
-	Fri,  5 Sep 2025 19:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26C1278157;
+	Fri,  5 Sep 2025 19:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EuIayymu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v+tt4TzM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="HTYXz0D5"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAC728C5D5;
-	Fri,  5 Sep 2025 19:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC8D272E51
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100796; cv=none; b=n+suQrI/W3mpRujAbh8RgLYd5zGTlhEzhHwORij83CFkI9hiaLyiCfbLANbwWQET9Ky2cvE991/AjED92OgvHVhRpx4Zs6ee9OYJpPvefajiFJwDLZlBx5WQQPqsWWYPERoa4a8cE3FnJpNmvinzsEtBA2uRu450Y3EFjZX0Aqg=
+	t=1757100903; cv=none; b=PEovmA4jST6sV73+Ci9Tx1VtJ+DjVC0uoTWXb6Hmpot56lzwvaz8QrqczFYeDCKPzJvz1ojvfjU4MX/6SAK2zHYbrIdjATJWHKyQWGw3EGbd1lHw+a8hGn/fOdDa1hIQarSWRHfieATw3F8bPbEu0nko9l5jPFzY7SQGrD3wbVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100796; c=relaxed/simple;
-	bh=brdpYiLGVMpxuzBSD+l+Bp2xtUKIMQQIGs2w2ek+36A=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=bFnn7C2VvNIw2w77hHBrJAPvvoroPun/ZA60kWuAwNHAPVWGuRXmAE8kzn8fHxo3YYBeHIDKmKPiY4b1ARJl4aCpPvDK82ZK3GuKaRKE/jy5gJnDRNMACEFJtUWI1EHT8ule4zOjTIRyWgEAqIburCMPr5wMSkjlC+vfKXW5fmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EuIayymu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v+tt4TzM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 05 Sep 2025 19:33:11 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757100793;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=galVC63ByykX9Uk9H6B1mwU+SeQxpAFHAiRgsp1MqzY=;
-	b=EuIayymuH+yhgCpOIP3SZhzVrC76Tra3FNHb67yWv5fEuONqIyr2uzlFdsbfEYyk+Z1yxH
-	olll1TUJvpx4uPM6MqK958Y5qxlHQqSLPo8E3hN/bLvXOiA1BK2OtzJKfk9MjZkyBdF6UH
-	mpXDO9TCAliJjeePy1ESKC2dfhid0bCTDR/BnvgzXfJpyAxJS6X+G15FdkE2tYXOjGz9fn
-	cZMah3mW4nplt64JZNHlUAWj+qQ1qi9ZstX4cO8gw7WJgww/j4qqpGobaqPd4prjuxI8H7
-	sj1j244PqY71qqOPNhQlHmn+Q9QSNDb6Okv2oXsTFu0h02M0C2Pyj6QgyQ4uVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757100793;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=galVC63ByykX9Uk9H6B1mwU+SeQxpAFHAiRgsp1MqzY=;
-	b=v+tt4TzMLRQpjLut1Qbidf3sklevrdxbUb9TK8UlwJk0+XJAOiZGoUc6hly7ueIjYJmdEA
-	LHWUYp0eBD+dZ1BQ==
-From: "tip-bot2 for Kai Huang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/tdx] x86/kexec: Consolidate relocate_kernel() function parameters
-Cc: Kai Huang <kai.huang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, David Woodhouse <dwmw@amazon.co.uk>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1757100903; c=relaxed/simple;
+	bh=Rvh7ciEHXfbDCfD3pPj8ITD6aqCcBeE2e4ML36hIwPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7PLIsa9vYYkwHTkWgvhP769AU9BAPGhhCcVhTB4Sg9lW06hXvAL2TYZ2lnRB0n0SBbL0+f3CtzjvKRXLpdCGf2wuY80kM5OSWwyTzhqfh91v03MsN/MANkAn0Ew8C49c9jAHkD3j4aponxWL5dNYZgqFnFKOEdFO6yWBxcyibo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=HTYXz0D5; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47052620a6so2573251a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1757100901; x=1757705701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9FAMAwKb9GlFbqFePz07zPDAIQCDZGG7K5Xfr8FjoY=;
+        b=HTYXz0D5n3RJV9jFHxbbMOvZiXrwbZs7v24wt02xOQn+hyFZd1zYqFJ8g7O7J6ujBY
+         5SXH2UR/p78yQEjh8+G2EI5eF18jPn+OTZGhT8iFtD+VygbwWsgtdjIj70e7rRhg+QGB
+         Jf19VloVJPcf0NQKztSH46h+52AXJTkCrMKjcGL3iJkoMnukxlJ26jwLWjyNW0JUdkr4
+         EJrKZNP1Mwpf10qkCu2fzBV3KubJmzJk2ewum1ws/W6OXWBTh82wL78ulQC/tJHfQOnV
+         Pgo1CissXP64EC6/4YROCZtUWxKO+kK+NrgDf7Mm/XaeO+EL5OUMydl2FayamaeasTwZ
+         UYtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757100901; x=1757705701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f9FAMAwKb9GlFbqFePz07zPDAIQCDZGG7K5Xfr8FjoY=;
+        b=YLaurwXBADy5Nues63p+XAgJdbzqv0kwAFG3QeSRsaP9t9iVyuYLBVns4W257HfPux
+         pm9/C2bmAa4zVH+Z2JWcJ8P1zX25pzWRrqtTBBXDJ0E7b+TdFs+xTvu/ZZKIJzzuSwe+
+         mDjNL8lhTpgt+cHpqe+Tmlioet3Zyfvt7IAezSzovxlskdTEtnHtrGrz8J8v2RBDcPC5
+         RMUn0xlYztsw8SW3/U++7K+KhIXm1RnCdsZhftVmAFuomlhmv6TFGBqBJ2UWxuNH+whB
+         fly2wY51Y9Xinilyf7stx7YaiIqFkNGO8n54dKcGOeuqEQYsp0yM6B2NDbSy/MlSbXm8
+         eaGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmQoTHfY9ezZrMIWbIR2owAVVWygX4QpHrsP4cZV9Jvje25gvfJNXSRMjVlpERwmbzKp9tQd5kI7c+TNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwNjzsQHwZ+/oDockoq/jkoBP4LrRS8RCVxhKBXxc0Q3wOF2wN
+	3P1s+qIXsJn2v7kuctVduvRbK0RsR4DCCJD10gGyNs1uJnMSyOb+Xw8adTlSBjTeNKFqe5Y2OkY
+	y0MhoZ5I0gK3sNi5hSgrUrXQyy35Vij+SrBhrWg4iAQ==
+X-Gm-Gg: ASbGncv5N7ryii5Z2Kpq2Q0jW85Wu42DNVY8pu9FWkc3dKV5k82S276HkBu4nSvcF6e
+	LVMilEfswk5CUUzJl7a5M+RE9p/MWyJNsunuSRFN514870OF7jKdubsDJl5+Spq7ZVJfHZNFL+v
+	hS5ESqiEAA0gEIUhYWmBDtW7pEBbYHbAPRbFMArjZv86i6Xo49AmheI3jj6pEa2TzFDouEcSRwu
+	nkNF9mBCNOAu4H4EeJ18804u9Du2Q==
+X-Google-Smtp-Source: AGHT+IHqWqyZqFIuzyIZvE/SUKQfYYN6g516wmc4GuFbgQsfUPht0NsXKsfItF2EyucT/HQ/Jt/iNNsDf0c9xrLH2sg=
+X-Received: by 2002:a17:90b:3c44:b0:32b:6223:262 with SMTP id
+ 98e67ed59e1d1-32bbcb945aemr5935479a91.3.1757100901459; Fri, 05 Sep 2025
+ 12:35:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175710079171.1920.6665054689729071103.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20250829-pmu_event_info-v5-0-9dca26139a33@rivosinc.com>
+ <20250829-pmu_event_info-v5-6-9dca26139a33@rivosinc.com> <aLIR3deQPxVI2VrE@google.com>
+ <CAHBxVyHFkNtFdX-vciPvYnTOH=GXvHVW7hjFrLA4MFr9wqWVvQ@mail.gmail.com> <aLqd9bKB6ucarR3e@google.com>
+In-Reply-To: <aLqd9bKB6ucarR3e@google.com>
+From: Atish Kumar Patra <atishp@rivosinc.com>
+Date: Fri, 5 Sep 2025 12:34:48 -0700
+X-Gm-Features: Ac12FXzDuYbaevvtu1cjWIBdIgE-JZvhAwCG0_v0qb1Ic8gyKF3DjAY5IEIX5wM
+Message-ID: <CAHBxVyE7Tp97GfbH=deaA7gqWQXByno3O3OHbHDJCJ=J7FUQvw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/9] KVM: Add a helper function to check if a gpa is in
+ writable memselot
+To: Sean Christopherson <seanjc@google.com>
+Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/tdx branch of tip:
+On Fri, Sep 5, 2025 at 1:23=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Wed, Sep 03, 2025, Atish Kumar Patra wrote:
+> > On Fri, Aug 29, 2025 at 1:47=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > On Fri, Aug 29, 2025, Atish Patra wrote:
+> > > > +static inline bool kvm_is_gpa_in_writable_memslot(struct kvm *kvm,=
+ gpa_t gpa)
+> > > > +{
+> > > > +     bool writable;
+> > > > +     unsigned long hva =3D gfn_to_hva_prot(kvm, gpa_to_gfn(gpa), &=
+writable);
+> > > > +
+> > > > +     return !kvm_is_error_hva(hva) && writable;
+> > >
+> > > I don't hate this API, but I don't love it either.  Because knowing t=
+hat the
+> > > _memslot_ is writable doesn't mean all that much.  E.g. in this usage=
+:
+> > >
+> > >         hva =3D kvm_vcpu_gfn_to_hva_prot(vcpu, shmem >> PAGE_SHIFT, &=
+writable);
+> > >         if (kvm_is_error_hva(hva) || !writable)
+> > >                 return SBI_ERR_INVALID_ADDRESS;
+> > >
+> > >         ret =3D kvm_vcpu_write_guest(vcpu, shmem, &zero_sta, sizeof(z=
+ero_sta));
+> > >         if (ret)
+> > >                 return SBI_ERR_FAILURE;
+> > >
+> > > the error code returned to the guest will be different if the memslot=
+ is read-only
+> > > versus if the VMA is read-only (or not even mapped!).  Unless every r=
+ead-only
+> > > memslot is explicitly communicated as such to the guest, I don't see =
+how the guest
+> > > can *know* that a memslot is read-only, so returning INVALID_ADDRESS =
+in that case
+> > > but not when the underlying VMA isn't writable seems odd.
+> > >
+> > > It's also entirely possible the memslot could be replaced with a read=
+-only memslot
+> > > after the check, or vice versa, i.e. become writable after being reje=
+cted.  Is it
+> > > *really* a problem to return FAILURE if the guest attempts to setup s=
+teal-time in
+> > > a read-only memslot?  I.e. why not do this and call it good?
+> > >
+> >
+> > Reposting the response as gmail converted my previous response as
+> > html. Sorry for the spam.
+> >
+> > From a functionality pov, that should be fine. However, we have
+> > explicit error conditions for read only memory defined in the SBI STA
+> > specification[1].
+> > Technically, we will violate the spec if we return FAILURE instead of
+> > INVALID_ADDRESS for read only memslot.
+>
+> But KVM is already violating the spec, as kvm_vcpu_write_guest() redoes t=
+he
+> memslot lookup and so could encounter a read-only memslot (if it races wi=
+th
+> a memslot update), and because the underlying memory could be read-only e=
+ven if
+> the memslot is writable.
+>
 
-Commit-ID:     744b02f62634b64345d05a8a3f145d56469313b4
-Gitweb:        https://git.kernel.org/tip/744b02f62634b64345d05a8a3f145d56469=
-313b4
-Author:        Kai Huang <kai.huang@intel.com>
-AuthorDate:    Mon, 01 Sep 2025 18:09:24 +02:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Fri, 05 Sep 2025 10:40:40 -07:00
+Ahh. Thanks for clarifying that.
 
-x86/kexec: Consolidate relocate_kernel() function parameters
+> Why not simply return SBI_ERR_INVALID_ADDRESS on kvm_vcpu_write_guest() f=
+ailure?
+> The only downside of that is KVM will also return SBI_ERR_INVALID_ADDRESS=
+ if the
+> userspace mapping is completely missing, but AFAICT that doesn't seem to =
+be an
+> outright spec violation.
 
-During kexec, the kernel jumps to the new kernel in relocate_kernel(),
-which is implemented in assembly and both 32-bit and 64-bit have their
-own version.
-
-Currently, for both 32-bit and 64-bit, the last two parameters of the
-relocate_kernel() are both 'unsigned int' but actually they only convey
-a boolean, i.e., one bit information.  The 'unsigned int' has enough
-space to carry two bits information therefore there's no need to pass
-the two booleans in two separate 'unsigned int'.
-
-Consolidate the last two function parameters of relocate_kernel() into a
-single 'unsigned int' and pass flags instead.
-
-Only consolidate the 64-bit version albeit the similar optimization can
-be done for the 32-bit version too.  Don't bother changing the 32-bit
-version while it is working (since assembly code change is required).
-
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lore.kernel.org/all/20250901160930.1785244-2-pbonzini%40redhat.=
-com
----
- arch/x86/include/asm/kexec.h         | 12 ++++++++++--
- arch/x86/kernel/machine_kexec_64.c   | 22 +++++++++++++---------
- arch/x86/kernel/relocate_kernel_64.S | 25 +++++++++++++++----------
- 3 files changed, 38 insertions(+), 21 deletions(-)
-
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index f2ad779..12cebbc 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -13,6 +13,15 @@
- # define KEXEC_DEBUG_EXC_HANDLER_SIZE	6 /* PUSHI, PUSHI, 2-byte JMP */
- #endif
-=20
-+#ifdef CONFIG_X86_64
-+
-+#include <linux/bits.h>
-+
-+#define RELOC_KERNEL_PRESERVE_CONTEXT		BIT(0)
-+#define RELOC_KERNEL_HOST_MEM_ENC_ACTIVE	BIT(1)
-+
-+#endif
-+
- # define KEXEC_CONTROL_PAGE_SIZE	4096
- # define KEXEC_CONTROL_CODE_MAX_SIZE	2048
-=20
-@@ -121,8 +130,7 @@ typedef unsigned long
- relocate_kernel_fn(unsigned long indirection_page,
- 		   unsigned long pa_control_page,
- 		   unsigned long start_address,
--		   unsigned int preserve_context,
--		   unsigned int host_mem_enc_active);
-+		   unsigned int flags);
- #endif
- extern relocate_kernel_fn relocate_kernel;
- #define ARCH_HAS_KIMAGE_ARCH
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kex=
-ec_64.c
-index 697fb99..5cda8d8 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -384,16 +384,10 @@ void __nocfi machine_kexec(struct kimage *image)
- {
- 	unsigned long reloc_start =3D (unsigned long)__relocate_kernel_start;
- 	relocate_kernel_fn *relocate_kernel_ptr;
--	unsigned int host_mem_enc_active;
-+	unsigned int relocate_kernel_flags;
- 	int save_ftrace_enabled;
- 	void *control_page;
-=20
--	/*
--	 * This must be done before load_segments() since if call depth tracking
--	 * is used then GS must be valid to make any function calls.
--	 */
--	host_mem_enc_active =3D cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT);
--
- #ifdef CONFIG_KEXEC_JUMP
- 	if (image->preserve_context)
- 		save_processor_state();
-@@ -427,6 +421,17 @@ void __nocfi machine_kexec(struct kimage *image)
- 	 */
- 	relocate_kernel_ptr =3D control_page + (unsigned long)relocate_kernel - rel=
-oc_start;
-=20
-+	relocate_kernel_flags =3D 0;
-+	if (image->preserve_context)
-+		relocate_kernel_flags |=3D RELOC_KERNEL_PRESERVE_CONTEXT;
-+
-+	/*
-+	 * This must be done before load_segments() since if call depth tracking
-+	 * is used then GS must be valid to make any function calls.
-+	 */
-+	if (cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
-+		relocate_kernel_flags |=3D RELOC_KERNEL_HOST_MEM_ENC_ACTIVE;
-+
- 	/*
- 	 * The segment registers are funny things, they have both a
- 	 * visible and an invisible part.  Whenever the visible part is
-@@ -443,8 +448,7 @@ void __nocfi machine_kexec(struct kimage *image)
- 	image->start =3D relocate_kernel_ptr((unsigned long)image->head,
- 					   virt_to_phys(control_page),
- 					   image->start,
--					   image->preserve_context,
--					   host_mem_enc_active);
-+					   relocate_kernel_flags);
-=20
- #ifdef CONFIG_KEXEC_JUMP
- 	if (image->preserve_context)
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_=
-kernel_64.S
-index ea604f4..26e945f 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -66,8 +66,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- 	 * %rdi indirection_page
- 	 * %rsi pa_control_page
- 	 * %rdx start address
--	 * %rcx preserve_context
--	 * %r8  host_mem_enc_active
-+	 * %rcx flags: RELOC_KERNEL_*
- 	 */
-=20
- 	/* Save the CPU context, used for jumping back */
-@@ -111,7 +110,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- 	/* save indirection list for jumping back */
- 	movq	%rdi, pa_backup_pages_map(%rip)
-=20
--	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
-+	/* Save the flags to %r11 as swap_pages clobbers %rcx. */
- 	movq	%rcx, %r11
-=20
- 	/* setup a new stack at the end of the physical control page */
-@@ -129,9 +128,8 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	/*
- 	 * %rdi	indirection page
- 	 * %rdx start address
--	 * %r8 host_mem_enc_active
- 	 * %r9 page table page
--	 * %r11 preserve_context
-+	 * %r11 flags: RELOC_KERNEL_*
- 	 * %r13 original CR4 when relocate_kernel() was invoked
- 	 */
-=20
-@@ -204,7 +202,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	 * entries that will conflict with the now unencrypted memory
- 	 * used by kexec. Flush the caches before copying the kernel.
- 	 */
--	testq	%r8, %r8
-+	testb	$RELOC_KERNEL_HOST_MEM_ENC_ACTIVE, %r11b
- 	jz .Lsme_off
- 	wbinvd
- .Lsme_off:
-@@ -220,7 +218,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	movq	%cr3, %rax
- 	movq	%rax, %cr3
-=20
--	testq	%r11, %r11	/* preserve_context */
-+	testb	$RELOC_KERNEL_PRESERVE_CONTEXT, %r11b
- 	jnz .Lrelocate
-=20
- 	/*
-@@ -273,7 +271,13 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	ANNOTATE_NOENDBR
- 	andq	$PAGE_MASK, %r8
- 	lea	PAGE_SIZE(%r8), %rsp
--	movl	$1, %r11d	/* Ensure preserve_context flag is set */
-+	/*
-+	 * Ensure RELOC_KERNEL_PRESERVE_CONTEXT flag is set so that
-+	 * swap_pages() can swap pages correctly.  Note all other
-+	 * RELOC_KERNEL_* flags passed to relocate_kernel() are not
-+	 * restored.
-+	 */
-+	movl	$RELOC_KERNEL_PRESERVE_CONTEXT, %r11d
- 	call	swap_pages
- 	movq	kexec_va_control_page(%rip), %rax
- 0:	addq	$virtual_mapped - 0b, %rax
-@@ -321,7 +325,7 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
- 	UNWIND_HINT_END_OF_STACK
- 	/*
- 	 * %rdi indirection page
--	 * %r11 preserve_context
-+	 * %r11 flags: RELOC_KERNEL_*
- 	 */
- 	movq	%rdi, %rcx	/* Put the indirection_page in %rcx */
- 	xorl	%edi, %edi
-@@ -357,7 +361,8 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
- 	movq	%rdi, %rdx    /* Save destination page to %rdx */
- 	movq	%rsi, %rax    /* Save source page to %rax */
-=20
--	testq	%r11, %r11    /* Only actually swap for ::preserve_context */
-+	/* Only actually swap for ::preserve_context */
-+	testb	$RELOC_KERNEL_PRESERVE_CONTEXT, %r11b
- 	jz	.Lnoswap
-=20
- 	/* copy source page to swap page */
+Yes. That's correct. That can still be considered as invalid address.
+I will revise the patch according to this.
+Thanks for the suggestions.
 
