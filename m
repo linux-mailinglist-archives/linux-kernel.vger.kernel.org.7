@@ -1,179 +1,244 @@
-Return-Path: <linux-kernel+bounces-803468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C76B46019
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:27:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AD6B4601E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD085A242D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B55A3B3C0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D196430E85A;
-	Fri,  5 Sep 2025 17:26:34 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D33235334A;
+	Fri,  5 Sep 2025 17:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b="aqTr82rD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fh4Rxy15"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915903191A3
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F533191CB;
+	Fri,  5 Sep 2025 17:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757093194; cv=none; b=hKEIIuntOcFQBVcrmr80x+B3Z15KMOyEGir23F8gsKsbMkqlltainE4s+s7AUyvT0cd5uaPtR8DHhyXiJdew+o+ouoGA9LFMNewcLiwduuwBW8hY/X6J87Q8Jq4xiPbr6XT+gAgQ7fpEsICF467Rn5qRoXPopNIrZKPWw8P/rnk=
+	t=1757093201; cv=none; b=LJ1iDpJomyqzlAyYZOVRh43elpYIZITpSU3m21T0G0vL31Ix4c5XWFZS6k/ZOx+TZbAYwOJgxY4iLba6nn5IKyy3RjJYIsCQy2uQvmusUg3AM/xJ4UyHyncZu0A9ikIi30GDb90vFulvbnhY6ljC87e39iEAaW5aHhpabIpBZIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757093194; c=relaxed/simple;
-	bh=Lp5fgNEyzLV5sKb9jE04U7SlEyBQqlduXG9QuM1Ub0U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uHWiTOajAX4I+D4zXDgK9I5mt3a70G0iyzrzu8xXRjCtD7Ik0X/qJzCynnT5YV4cgioFXJpJImuqOJzpmiqb5M5vYqBzvPhzXJ+C+f4sdtFNPRTmlqH228/Q+hMMZYxJFSPLce5uUwcLqfHUZqL3tGaBxQzimRGriI+gfjb7w70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8872f96a0b9so496327339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:26:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757093192; x=1757697992;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jtu418UTsdlNJQI1Uvfc3XM5Ot3P2gXA/LjM0DbScZw=;
-        b=dPrxSO+cuY+g2tRkLsUqL6N9mCg4Hb1DEm58abfXOmSvkjcj8NxLjCpO8ONKpO1Obk
-         4JN0WJx/UQK4uMQ+oLbsMhkWMlDcB2evi0fDpaZxOzYmLmo04h1MHNXJQ3Kn4YwMC7io
-         BgZ75bmsiw0XVgyPE2LDGveqpZGkOmZhNuGw3jbJAdCtnUu2L0kJ7y1REZulZcimEyc7
-         x/+yictchfj9GdmXEA7zHzGRK3rSby7W6QOssgfHuJQqrGW5mhs2J1kf1EoAqz9cSXUQ
-         PIJTlwSqrGHkNMKQ/wg7W2mqAbmDXEJSf1m4YCp8S1ehd5xlLt8LDm6TXEkU+yh4mwR6
-         RbOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx/GUqa/4zEnzqzwyTC0TU6uiaJMN1SLSBjRtRhtRpbHIPs6A0htdnovaeI/BzYy1xmwKOsZRNbjuJOCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjuR85UZO6zN9dPUVVaYgbksad7Ext3L0qr7BNUeRcfgCQLIdQ
-	dve8pHH2AAQvr5G4b5gSDNFj/9KccckDTp5Znhr93fRSmC+dZwyX2SsfL0Pzhhvj8fewvBUpbts
-	YVewdx7umCAp8/hM0rWwxvIPbtuw7yHZPH6gesvjHi/9xIQ2p1lJNtL/29WU=
-X-Google-Smtp-Source: AGHT+IHH/yTpMyRsFZOmf7O714Z3F8oARKaPJTTuxbTwdET54JoqHSYYqxpZehhMDmXzVrKRTaEEYgnTLWiRVtkomyFQ6AFGs+rg
+	s=arc-20240116; t=1757093201; c=relaxed/simple;
+	bh=8Ozdwo8cNdLgIlNBEqmBlNbbardsLRA/mZAHMa/7lcQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mLlUakGRijD7MwUc0tBLbYM7laDmviqEA0dUOHyxTeQqXEyyPNhI9C+yyvURqgbmhBASxIAYr8uSbkg2AXiPyolZFQhKWbFfSXAA4mILAvmd+gZYO1wJSKj3Zx7EacGYwA6JhAzx+ncq6Agcf5EXUscz2fXl8mZYDDGC4LUrap8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=pass smtp.mailfrom=pbarker.dev; dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b=aqTr82rD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fh4Rxy15; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pbarker.dev
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id DCE081D002A9;
+	Fri,  5 Sep 2025 13:26:38 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Fri, 05 Sep 2025 13:26:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1757093198; x=1757179598; bh=OQ4+PUHv1I
+	J1jMavfrkvi3AliHyN67JBHr/CZd2HFfo=; b=aqTr82rDReKxdvabI38ED7to/j
+	1SoVfoUrn7V4LYkW8I4aK4NzXuz4X1rqTgU11rjdJocNrOMCVwLBhB4n83FU6lYJ
+	4aZwa5BiTZmjBrjKbDMUm4mTOHV1Nv26+9bmAbolqZeT0CK+z+J36mkrKNqPk3OS
+	RTmAPljmRFsxTi8Sxw7346LKHGkYz8clSaXdNTh+i7vv9Or4cPPbQr1vLRzdkbQ5
+	krnKdSVP4fyyGMKvPRjkKc7z8I6aQiodrk2D6YuLjZ203rUhCesq/3yp2bMAkfIU
+	FGpgMmKYu1D0r9w0dNDUylGiAUqEgouDQk5cQ82My2z5XN2L5tTtyZcltOvQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757093198; x=1757179598; bh=OQ4+PUHv1IJ1jMavfrkvi3AliHyN67JBHr/
+	CZd2HFfo=; b=fh4Rxy15FoVyjaxCFC2CKbhyAFUR5of5LO8h9r0HZhDi0K/UDb1
+	Yfa0HOkzU53ybuR5V6OMtVcjIYijB7Obcjg32qNuh1sgY0g5xSlnFYDAuqziOT5J
+	dvTveZ/kUbzq51x/2juwww+HFo4SxQZAePadL077rKaG257Zh+2YJFMOFsKoA0JV
+	MhNnINzM1aGLBlCwC3p1gMPlmWdRr2pG57FeOlhlJ4nwe1IYPIcJ6sV4nLwt0bK0
+	vbodElpPTehh0FgsJhuVOgctXc/693O9PdYrad91iK2ARhVigY0NZlFINrGkScfJ
+	sdoPFODEDGVdyV6ZZikrcBkLcYzcBR1yOlw==
+X-ME-Sender: <xms:Th27aP51Wxk8byY52Yz8KcsyRurHMtgiDeKdWFkbdCB3YMyjPxSwcA>
+    <xme:Th27aLrB3oQKaURk0TXlVQQlq2LQnm_mGku4cUEtc2U5SHHB954HirNlZwrQfrOan
+    k2EmCaz-4cO36Ky3qM>
+X-ME-Received: <xmr:Th27aIN4EcuGAX6Jo4_gRztEA59MQv8UVxbvCvotZuND8PvbuUMNelw_fHsCxXUuscR-rmJjQWwft6HlDGLffJwjeSAX_w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelgeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epkffuhffvveffjghftggfggesghdtreertderjeenucfhrhhomheprfgruhhluceurghr
+    khgvrhcuoehprghulhesphgsrghrkhgvrhdruggvvheqnecuggftrfgrthhtvghrnhepfe
+    ffvdefgeevkeduhfetueehhfeikedvieeufeevieffueektdeluddtgfegveehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepphgruhhlsehpsg
+    grrhhkvghrrdguvghvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdr
+    shgthhhivghrsehlihhnuhigrdguvghvpdhrtghpthhtohepnhhitghkrdguvghsrghulh
+    hnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehmohhrsghosehg
+    ohhoghhlvgdrtghomhdprhgtphhtthhopehllhhvmheslhhishhtshdrlhhinhhugidrug
+    gvvhdprhgtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:Th27aL3Wl2I_zZp7Rx91Do8IDS_RsjhONA-OzeF9MAd4uygcvHv60A>
+    <xmx:Th27aPDxXE_fANTT2lZK27IaiN7j_6x01h7NW_rpXy0XXIJbC07s-g>
+    <xmx:Th27aALTsPbj8DD3pdp9ipGI5hDuI7-Pwbo1IKip4UfKt0EbKHTxDw>
+    <xmx:Th27aAlaVzqoCyfVwLVzgKr3RYwI6-TqeMDIHuj42oWB_8TUj_vsiw>
+    <xmx:Th27aOr08IyS282yrzCMqEhQ_4mIbaGdIADrqI5cgItqWPhB2WegWG2G>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 Sep 2025 13:26:37 -0400 (EDT)
+Message-ID: <e09dce93d521a89e3820a91e7c319d680cae203f.camel@pbarker.dev>
+Subject: Re: [PATCH] gen_compile_commands: Look in KBUILD_OUTPUT if set
+From: Paul Barker <paul@pbarker.dev>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier	
+ <nicolas.schier@linux.dev>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>,  Bill Wendling <morbo@google.com>,
+ llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 05 Sep 2025 18:26:32 +0100
+In-Reply-To: <3fya5rij6amcwt36jthyezkzov44m6rdvlacymqfpbkcmzrnw4@fymsxhcqq6tj>
+References: <20250905-gen_compile_commands-v1-1-9f5194542d4d@pbarker.dev>
+	 <3fya5rij6amcwt36jthyezkzov44m6rdvlacymqfpbkcmzrnw4@fymsxhcqq6tj>
+Autocrypt: addr=paul@pbarker.dev; prefer-encrypt=mutual;
+ keydata=mQINBGC756sBEADXL6cawsZRrDvICz9Y1SG0/lW1me4xpq36obh7a0IGAzp3ywNRb/4MO
+ DTqP4+DD0cIFuDY41/N17g0sNlp8z+/k/IIDmNPtYQOTVmAkrkdDU4BP8dD3Cp1PUw6nrbInfujAJ
+ NrVM0IVDkwKTbL2Nu1P+xns4MIpF9Kj4XN5celYJ9vEJ2n0Bo0nO5T5vg46dihIaDl+24iNIHSsHq
+ YyEdMBfY8kY2RulpaAyFOuaaHdIeDkejVvO5xLSiYLjB5qrRhgH134lJXsuLOsFQ64ybGECuOasnb
+ auevsPBAaroQW0pqVb9FneGrWHxMCLlQHJRqQJRdVa6bsUdp6NWra8/0msPawSrFwGQdfJBTA3aXJ
+ C2CG1JxEgj6QQjEQA49DSjgzdhInbiIK8Vbp/zedM4aVue7qJnwPMTFQM9lYx63b7wLN4Tu8B9YZ0
+ UFdSwMCJuqmYGsYRUYdwM3ArjS0VO6WpU+HBKvzLK5GQfUTSM8KaZ5eA2Uo2ain8SSZb+WptUYKpx
+ F9jbtCPbjpZKzGuX4iHFl9eT75TM9iXJNGAjB5xigkADLwVfPoJ5E53S+KdNVuOWHugyLMPNAQHOw
+ pw5Rey+0zxyzPd4wphutc93UIU5g/029ngAc7DuKCq12jl7fhkjqFlFtYPIc1k7nd+RSezmH/qRes
+ bMErHSX1MBSZQARAQABtB5QYXVsIEJhcmtlciA8cGF1bEBwYmFya2VyLmRldj6JAlcEEwEIAEECGw
+ EFCwkIBwIGFQoJCAsCBBYCAwECHgECF4ACGQEWIQSYsqrBAKw/grtdVGd0l1yBt+ZrrAUCaAzHVAU
+ JCTdOhgAKCRB0l1yBt+ZrrA51EACS7IYZaliCgQEhq8nnsQotchJtIZbO6nr8tk+6gicX0loJYqsY
+ P2/XZ/MaF8kWYSGPIHjiCcB8tEISUFKPAvfCu0Q/X7n62AkSUZOhsQ6T/ajCaXStv/P28kQmGzoCp
+ 6ljK/zALMWKvWFEbLaZprIWV8AZJxzJWhfSdb+1XnLlmwhBCfjXJeR/TlGWhNTqTO6vyAtZ5OpGgq
+ 6N9EG60EQd4YWYwliDhCoUYRYR8qpp9JMrsDm/dzwd/A2/3rR0zzCtkha29kHqdVJtsd7bbiVLr8/
+ Zpa9Wcd7EG32CC25DUdkarU7f2P+goFVXfddGQRPy7l9uwF4kmtLGeuxWCCS8+4FPadifGvL8UoE9
+ 62fbxdHTzhjj0Yqs8zDgEwQUxFjpbmTseVx7QdoEe783jWqH4QhCeuo2kSjC4/VIRGDAS0/7Hq3rj
+ Iqqg6zGY8YQRvUyoOLn7Ip7WbHkZOUtWPjPbxe2tgeCttZkGrLQCosH0dlC0Hm7KWs+XHFp5d8OVd
+ WzIgWUvYkVaDeLHe3b6tM8AXoixS1rSQrnrAs/O/62Nx+k9+XVAy1clY2jdYOstuPvDhcqkT10RPs
+ o2qQnH7RGh2DCVu1D10XwDE1CWZ4Op70BO3g/I02ojT6kG4MHh6JX9+tjpjOINQQf+rGiHzj1YZYf
+ z0oc2b0NQI//cy/pDbQjUGF1bCBCYXJrZXIgPHBhdWxAcGF1bGJhcmtlci5tZS51az6JAlQEEwEIA
+ D4CGwEFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSYsqrBAKw/grtdVGd0l1yBt+ZrrAUCaAzHVg
+ UJCTdOhgAKCRB0l1yBt+ZrrBr7D/oCOAaVVHKCuFHHJjnCNuN06o7BRgBUR8IzQxDSc0WIhTSNaa7
+ OWPSDanFtDJwOVhe7Ongu8ZF8gsLXg8jb9iS8J2lsm9q4tID3NCQIL0PgjI2/hKKOt1dZs4RGcFXj
+ v1nVEwFcvaJE4996tr9UMeZeOtipdlnGoh4Sozs2UvWydnc8SZZ3hCqxbJiorxD7wdrR4As5rqesP
+ YwiNqE4KW3jUavf1Sr0U94Umv4l5UPGQQekBxjh1ujsCo05g4IByS3RlDBxCQDvXAMBVHW20PLofD
+ aFqNpynQwAdpBS/cvX7tDK2pq+Rd4YK8uuDoHxH18dfCZcGYzSEUJ6y+rbYiJGh01mJFOM0oJP4DO
+ 9L79mJpURUdZNhI5/GVkCCxwt6HcNt24ertMlHDQkhZ6igP7zBgzODZ1sizODISaBh4M7lyxsBl76
+ 0dwghNbczt5ytG37mPLWjYaiJMeU7xQtoQo3yZDQvUSMnfFMxWYJO9Hi4P6H2gnMsDrPRnfr68vfP
+ rbseTtQM8cpfGnV0FzdFfHSTMJfcFA4BdeCJsn73JHuNEBMjDvUfgjN1a661nEzA5Zd26HQZQ1mQM
+ zRkrHto4z7Y86q05esioZ8Vd2Dhm1SMCBY9PNd5QrGpS67uP0wGOK2o3q9eQmxjenFHGAaOuTEZWT
+ UpTTTw8SSeLBAHSSQ37QbUGF1bCBCYXJrZXIgPHBhdWxAcGJya3IudWs+iQJTBBMBCAA+AhsBBQsJ
+ CAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEmLKqwQCsP4K7XVRndJdcgbfma6wFAmgMx1cFCQk3ToYAC
+ gkQdJdcgbfma6xTZw/2PQ+vjkegBRAHxNIMcj0j9QfP45ZE4bmyGrCDb5i8BwoAJccilT8chvVFgB
+ AjG40Zx4oFcRKYYe6AkC6/B5U71307/nqPtt0gEy0VmTi0V+28eQPrNiTLa+OL9B5SGki/45N3g5V
+ hdqDNdvx/P2k1cg8YsndVE5ASmdPI2l96n7dqd0fW2C/rzrYNUQ+mPyvNgOGcD82YzahLRfb2u/GV
+ CWzEc2iplJeeWlUGoYHPCo4ztZDqJghCfgBab0RBJexdTyJl2QFs/osCM3yp02nTEUV/EiKbXcuWu
+ 4fvJ3xRtopQ49DMQtsTS3xB0vaPgPeBYb6DeJsLpR6be31mvEmhHGPEuVlxXNsXig1JNS0S+U0NhH
+ R1fKNc1uwHE2eTFhFKHK+BhyzJGBWU3reEGjm9BygE9G591bz3+UASdqeT7FY7MGq55NqUVHTlW9R
+ +L+IYXzlKvtcF8xDaZLo5MGD/2WTjdbMm25cMc+Nj4MpElAKdvjneViv8NIfyBnXcXi4zU89mh377
+ 2+rcJTO/Hy87NN1G2LEOKr9zFgvm+CLeoGi2Ay8NyrB3q5+ptE3ziYIPJmq84qFw1SUy4Nq+VF4yc
+ OqpPZn7Ij1ga5IAOHNRi5MbyRFROYOeaOj7sz7S7roHQwdP3Q1qTwTOv30hlOSe6uz4PTBiEIKBQH
+ ep0k17xg==
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-BzYIG7QNSw7BczKYMxa7"
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d17:b0:887:6854:b075 with SMTP id
- ca18e2360f4ac-8876863f515mr589990839f.2.1757093191676; Fri, 05 Sep 2025
- 10:26:31 -0700 (PDT)
-Date: Fri, 05 Sep 2025 10:26:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bb1d47.a70a0220.7a912.02be.GAE@google.com>
-Subject: [syzbot] [bcachefs?] possible deadlock in __bch2_trans_get
-From: syzbot <syzbot+b70ffe7893bd1110ddd0@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+
+
+--=-BzYIG7QNSw7BczKYMxa7
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 2025-09-05 at 09:34 -0700, Justin Stitt wrote:
+> Hi,
+>=20
+> On Fri, Sep 05, 2025 at 11:17:43AM +0100, Paul Barker wrote:
+> > If someone is already using the KBUILD_OUTPUT environment variable to
+> > specify the directory where object files are placed, they shouldn't nee=
+d
+> > to repeat the same information to gen_compile_commands.py.
+> >=20
+> > Signed-off-by: Paul Barker <paul@pbarker.dev>
+> > ---
+> >  scripts/clang-tools/gen_compile_commands.py | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/scripts/clang-tools/gen_compile_commands.py b/scripts/clan=
+g-tools/gen_compile_commands.py
+> > index 96e6e46ad1a702cb0fad5d524a9a02d222b236ec..7b94a2ffba0b4d5f1290b51=
+bd602fb3f33acce6a 100755
+> > --- a/scripts/clang-tools/gen_compile_commands.py
+> > +++ b/scripts/clang-tools/gen_compile_commands.py
+> > @@ -39,8 +39,9 @@ def parse_arguments():
+> >      parser =3D argparse.ArgumentParser(description=3Dusage)
+> > =20
+> >      directory_help =3D ('specify the output directory used for the ker=
+nel build '
+> > -                      '(defaults to the working directory)')
+> > -    parser.add_argument('-d', '--directory', type=3Dstr, default=3D'.'=
+,
+> > +                      '(defaults to $KBUILD_OUTPUT (if set) or the wor=
+king directory)')
+> > +    parser.add_argument('-d', '--directory', type=3Dstr,
+> > +                        default=3Dos.environ.get('KBUILD_OUTPUT', '.')=
+,
+> >                          help=3Ddirectory_help)
+> > =20
+> >      output_help =3D ('path to the output command database (defaults to=
+ ' +
+> >=20
+>=20
+> Thinking out loud: It might make sense to also change the default output
+> path in some cases but not in all cases. For my clangd setup in vim, it
+> does some discovery for a compile_commands.json and I have some
+> different ones in various build-* directories -- I guess it'd be cool if
+> they were automatically placed in their appropriate spot. With all that
+> being said probably YAGNI.
 
-syzbot found the following issue on:
+I think it makes sense to place the output file in the current directory by
+default if you run gen_compile_commands.py directly.
 
-HEAD commit:    08b06c30a445 Merge tag 'v6.17-rc4-ksmbd-fix' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13851312580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=385d836f07b5a70d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b70ffe7893bd1110ddd0
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+The `make compile_commands.json` target places it in the output directory, =
+and
+`make rust-analyzer` does the same for the rust-project.json file. I did th=
+ink
+about whether we should change these, since clangd and rust-analyzer look f=
+or
+the relevant files in the source tree or its parent directories. But people=
+ may
+be using multiple output directories for different configs or archs, so wri=
+ting
+the files to the source tree isn't a good default for everyone.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+For my case I'm just symlinking the relevant files back in to the source tr=
+ee
+after building so that clangd and rust-analyzer can find them.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-08b06c30.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/516e142f1f8b/vmlinux-08b06c30.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a968d13b9737/bzImage-08b06c30.xz
+Thanks for testing!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b70ffe7893bd1110ddd0@syzkaller.appspotmail.com
+--=20
+Paul Barker
 
-bcachefs (loop0): /file0/file0 offset 0: data_read_io_err
-  u64s 8 type extent 4099:8:U32_MAX len 8 ver 1: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum chacha20_poly1305_80 77fa:f532966a693125aa  compress incompressible ptr: 0:34:0 gen 0
-bcachefs (loop0): /file0/file0 offset 0: data read error: data_read_io_err
-bcachefs (loop0): /file0/file0 offset 0: data read error, data_read_io_err
-  u64s 8 type extent 4099:8:U32_MAX len 8 ver 1: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum chacha20_poly1305_80 77fa:f532966a693125aa  compress incompressible ptr: 0:34:0 gen 0
-  loop0 io error
-============================================
-WARNING: possible recursive locking detected
-syzkaller #0 Not tainted
---------------------------------------------
-kworker/u4:5/1037 is trying to acquire lock:
-ffff888055bec1b0 (bcachefs_btree){+.+.}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
-ffff888055bec1b0 (bcachefs_btree){+.+.}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
-ffff888055bec1b0 (bcachefs_btree){+.+.}-{0:0}, at: __bch2_trans_get+0x7f4/0xd80 fs/bcachefs/btree_iter.c:3505
+--=-BzYIG7QNSw7BczKYMxa7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-but task is already holding lock:
-ffff888051f701b0 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked fs/bcachefs/btree_locking.h:206 [inline]
-ffff888051f701b0 (bcachefs_btree){+.+.}-{0:0}, at: bch2_trans_begin+0xbe0/0x2310 fs/bcachefs/btree_iter.c:3403
+-----BEGIN PGP SIGNATURE-----
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+iIcEABYKAC8WIQSzjPXf5Y1BDWhU2iCrY1Tsnbr0bgUCaLsdSBEccGF1bEBwYmFy
+a2VyLmRldgAKCRCrY1Tsnbr0bp9OAQCou2ek/qai30pe7wVkfOLSJni3AlisDE2H
+VfbXKGAaFQD+KqXbYwkqICgPcG+c2dsI7kXENFhNiQPGieT5ypE5lg8=
+=Muqt
+-----END PGP SIGNATURE-----
 
-       CPU0
-       ----
-  lock(bcachefs_btree);
-  lock(bcachefs_btree);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-5 locks held by kworker/u4:5/1037:
- #0: ffff88801a479148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88801a479148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
- #1: ffffc900025ffbc0 ((work_completion)(&rbio->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc900025ffbc0 ((work_completion)(&rbio->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
- #2: ffff888051f701b0 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked fs/bcachefs/btree_locking.h:206 [inline]
- #2: ffff888051f701b0 (bcachefs_btree){+.+.}-{0:0}, at: bch2_trans_begin+0xbe0/0x2310 fs/bcachefs/btree_iter.c:3403
- #3: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
- #3: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
- #3: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
- #4: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
- #4: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
- #4: ffff888052f04398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7f4/0xd80 fs/bcachefs/btree_iter.c:3505
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 1037 Comm: kworker/u4:5 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound bch2_rbio_retry
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
- check_deadlock kernel/locking/lockdep.c:3093 [inline]
- validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- trans_set_locked fs/bcachefs/btree_locking.h:206 [inline]
- __bch2_trans_get+0x8fd/0xd80 fs/bcachefs/btree_iter.c:3508
- bch2_rbio_retry+0x1d1/0x19b0 fs/bcachefs/io_read.c:594
- bch2_rbio_done fs/bcachefs/io_read.c:464 [inline]
- bch2_rbio_retry+0xbf4/0x19b0 fs/bcachefs/io_read.c:667
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=-BzYIG7QNSw7BczKYMxa7--
 
