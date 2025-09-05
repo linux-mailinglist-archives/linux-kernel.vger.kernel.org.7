@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-803010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829AEB45973
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08FDB45966
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBE9D7B1C88
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72ECC16BC76
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3C1352FFC;
-	Fri,  5 Sep 2025 13:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15144352FDC;
+	Fri,  5 Sep 2025 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0wqGjCP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TLqoNqLR"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7075E2750F0;
-	Fri,  5 Sep 2025 13:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0BB25557;
+	Fri,  5 Sep 2025 13:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757079815; cv=none; b=F2FdWXnG3GW2KSTiA6DuZ/KRMomhPwzsTbU3I1JWyELVkO8HKhejkechQZZvzR0MX2DLeCT+vvR7k6ffO2ZCahcesX0qHwBfRpinZ/bWuoR0RcI1Ph+1t+o6lhNu+gXD1v3iKD02iKZl8USVmsINZotjG866pNjIV8/QETdewuc=
+	t=1757079859; cv=none; b=l/TQMLEtdP6qUUBa9Ss0Ku+mZSS10xcPQh5hg+0RT2q0THnUfjVJqfUDUxt6pg2jbiQyPTxg6d5VUMwooRHXfWJxuCbqAac26ik3lGk/M0kQ/gtNj/4Xgmu1mzpnP95UWlVM+0rqDvI4c2BSyt5U8K4OaJO7hKPVPL9HZzT9TuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757079815; c=relaxed/simple;
-	bh=tCUjMHHCl/gwyX6Je7S4esPQkPk1Jl5ydpTIk1TU3L0=;
+	s=arc-20240116; t=1757079859; c=relaxed/simple;
+	bh=7jO5M4dxRxab8w3goordHgPq1t2aDB/9tElwXjDmNRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6QQb/qVBChO6olOXwrYqZ9uj/5CM/EF0lLqzUqUPbmjUsMao7ym4lkm/oqeAGHk4nLykVS1zXxfrexsrH9dWtNYW7+7YeTL+DUfUdZ1NW5P0eeEEZ8y/pkF+ScAsvNds6KtAQmkSMRrVrNV1FIu1FywL2jqOMTqU2aunHTgTSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0wqGjCP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0508CC4CEF1;
-	Fri,  5 Sep 2025 13:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757079815;
-	bh=tCUjMHHCl/gwyX6Je7S4esPQkPk1Jl5ydpTIk1TU3L0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=A0wqGjCPeCJXRBA5Ba/Ux6U/SNko2XK4EI+DRA4rkXa0Z5O3CW5RD2RvMtNd5vjO7
-	 ZV23+IP4kSpkF6fIuCNskr41/+jQmMF+ygS2JW6EIX5sitqMMy58Eauda/y7aMfmIv
-	 mJ3rt5+JI/CrSPpuOYhu2BUKd+LChElafZ5uQH68vVq+kA8CRZrvo+r88cwkGlWq+0
-	 cZE0RgWzibGQopQDAEBVn5mr1Wc8V37eZbdVETQlquTJPCkfoXtim0YJU/dUqt7YBu
-	 HX/QhBt7e193/wdrPUs0sCIoNnJtjdyDOjYI8uKsj3CnTsAr7RTncGnND62jx7+CEr
-	 SuVnbuZrmZZ3A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A196FCE0E09; Fri,  5 Sep 2025 06:43:34 -0700 (PDT)
-Date: Fri, 5 Sep 2025 06:43:34 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [paulmck-rcu:dev.2025.08.13a] [tracing]  364ac25d46:
- WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault
-Message-ID: <ea678a68-6a32-42d7-a9c7-f80261d02093@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202508211038.c93e8603-lkp@intel.com>
- <68044ea3-32c1-4d72-9bd3-fe2031669d79@paulmck-laptop>
- <aLebLoM2OQD+KPxQ@xsang-OptiPlex-9020>
- <d1ee722b-eb90-4b7e-9c2f-2db7d3b33ce9@paulmck-laptop>
- <20250903113112.247eb552@batman.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6jXq1MpQqMEzEJprwBgfuPyifErPMelNA6IL0zZrD7dyRcjPhjuxKeRawyg3v15iw7Mc3ZgtHnkfM3b3pDcyUtxMxsIuFpeOqgtu52LZtVrPjCOhbj882PoyTXGsvIst5ewTb8yl2/XiN+LVz9kzX2ZXiZIFxv2joM4hi+I5Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TLqoNqLR; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1WKz+CUCVTpXCW4x1MmW4FRgp0BslUwCgj8AnFSebyM=; b=TLqoNqLRMQ/rFC1uxV/EPhacWn
+	ysO0xj0Sc/1iHqPKULu1SojBXgNBQNSCXdxLBXQEzsUKJlW/VeTCEzaHh2SIjp4oKWZDj7cwGFCR1
+	0VarXi5eP/sS7vaCJmEcTpkZJKiwSKNp3HTzmP+Rcgy7ZF7MCmEWt/XzfEWez3uy4dDOSTWrngBlS
+	IVuafdZGVOmK4D5V35MZR8k/WaHBbffMV30fFfSeTE1wFUDJY3T5/8EoZ4W8j00+IK1cgBULjBvyP
+	/Hqbz2gp8QeP9rbk5hT/KaKf9x9PjbupII1TpogirvXbWMLM9c7d9H8wv6Dg2jkRd7IQYuwh+Z3Pp
+	G47XZQTw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuWja-00000004b29-2bpx;
+	Fri, 05 Sep 2025 13:44:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1FCAD3001D4; Fri, 05 Sep 2025 15:44:09 +0200 (CEST)
+Date: Fri, 5 Sep 2025 15:44:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v2 5/7] arm64/efi: Use a semaphore to protect the EFI
+ stack and FP/SIMD state
+Message-ID: <20250905134409.GD4067720@noisy.programming.kicks-ass.net>
+References: <20250905133035.275517-9-ardb+git@google.com>
+ <20250905133035.275517-14-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,27 +67,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250903113112.247eb552@batman.local.home>
+In-Reply-To: <20250905133035.275517-14-ardb+git@google.com>
 
-On Wed, Sep 03, 2025 at 11:31:12AM -0400, Steven Rostedt wrote:
-> On Wed, 3 Sep 2025 03:31:31 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Fri, Sep 05, 2025 at 03:30:41PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> > > by applying the patch, the issue gone. but since you said this is a 'diagnostic
-> > > patch', not sure if it's a real fix. anyway:
-> > > 
-> > > Tested-by: kernel test robot <oliver.sang@intel.com>  
-> > 
-> > Thank you very much!  This tells me that something on the code path from
-> > the tracepoint to the BPF program needs to have preemption disabled.
-> > I will leave the diagnostic patch in my tree, and will be looking into
-> > what the real fix should be.
-> 
-> Was it a BPF program that triggered this? I couldn't get that from the
-> backtrace. Also, is this only a x86 32bit issue?
+> Replace the spinlock in the arm64 glue code with a semaphore, so that
+> the CPU can preempted while running the EFI runtime service.
 
-Excellent question, now that you mention it!  Your thought is that
-one of the other preemption-disablings might need to be moved?
-
-						Thanx, Paul
+Gotta ask, why a semaphore and not a mutex?
 
