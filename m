@@ -1,157 +1,195 @@
-Return-Path: <linux-kernel+bounces-802458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810E3B4528E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:09:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DB1B4528F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3FAC5625B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F01C856A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F8930F94F;
-	Fri,  5 Sep 2025 09:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158062BEC2B;
+	Fri,  5 Sep 2025 09:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FRL9zxM/"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JR3ahxD6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CED130CD9A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9992701CF;
+	Fri,  5 Sep 2025 09:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063148; cv=none; b=sJGv+0Jhyd1zBuYDIzbNUxQaoPRAW0Ao/d//xyIqR0cipx6SfbYnwY+ZRRTmkqaOpoTCS3s77sGhM+kUYfUxo7vcoBHiI2UJ+JHEmjvgEBIo7nSvBjlrFpGbv4MAs7SWk/ExzGPa9NOkWQrgz7xqF1cmPBC+8gqYsaPiE3XKBcQ=
+	t=1757063166; cv=none; b=G1HPQnOXfxp8Jt8YZVPnbtbDuPBxQQHUC9NhTH3SHd2Obxiw5McgyrCj32UGPL6yrMoVS6kYi84Q31NuXGivPRroRiJlqn/gDEL5fjg/ycoYLhykNtPmjI+5tqxnhFc406t0jN6Scw6VLvooQXtH0K4OC6FMwN54uir5y6HRBVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063148; c=relaxed/simple;
-	bh=D19ZMh3k4zThuhjljLy3Ws9w4Xh4cdeVcim8AnQYOTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NxSLq/2sPoMYbBw7wQt4zILbO64H4xvxU+IJkZ6UuQS77j5C7O1B9xjG3bhWziWn0u6pysP2/4pmRTNE4XYENkEORMPN+PgzkFWt0fOSBU45negP973MR+EB6yoaJ3FsMlSoCRuNu55W1USjp8Y6ECiBseoT+LPxUYbtvp2djJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FRL9zxM/; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dd16c484dso10185235e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757063144; x=1757667944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dbpbADN/lQjW6NzzP05gKXfeMJELXaHMuSRw+eYkohE=;
-        b=FRL9zxM/u9+LV74c9ppiuPmWm6lADdr3muxKDiPzABcd1CSV3ZBTqbf1WmRY+Qlt4S
-         HlQ9AMP2wnPJRQ8dq9VVWp8X/eFsh/ZVo2yb/20H6jRxjhQNylzB2vwFDReCDRwGXBFW
-         xXVpQb44luIhTIDSf2DvHPHoh0gh6mPjIEOjOcbBInRIKA8h/IpmFEE0f4wx+jCU00w0
-         g2vuH/O2/2cRLdQG1e26TGSutgIvDOLnP1f8X8XDApD+c4Hb2FNJibu4zQeUbhO93Bp5
-         nKc0mcLvn/sF69v1Zhtmbi0HQ2lcp3YgSCks6/YBffLVwzVQpVWYDmY2FDxQrAv0RUyb
-         A7JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757063144; x=1757667944;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dbpbADN/lQjW6NzzP05gKXfeMJELXaHMuSRw+eYkohE=;
-        b=JzOV7XBrlU8Ivv3ArOJfb0H4+Er4xwZrZnCpha3gHCXQ8DUT6OusMW2Yc9528aHOSc
-         inlFIAfCAkjgMKxT6wQc2RpOzT0NKrpNvoscmFIj0iwH6ok4hBwll2MX2dePW43n7co8
-         XsOaQcYYCYd8lVRDpTQYBVDXHeWBPMgwOYSpyH0hf+UPOJe0KUqqjAErNgiBCsgD0RwO
-         CYAu8haP8gaSB/+XyZ+54WLAc0VS5N96xYeYI2bixbpsGnAP0Ds7Xjhe/9UaQn7Ngr2t
-         54bq9MqFU1iE1s9N603r4NjzgTzcUXmj8EM6hGpz+K5xAedmsg9q//D6aKkmK3LUmCxi
-         Yl/Q==
-X-Gm-Message-State: AOJu0YzHeaRM3ZlSbfDQdGSu2JnJa7fybeuNRu5g9OLPPxvcL7ifVxeK
-	Q25Jd1Ps9s8izGuaZ7AEyhwqD7Yav0X5F5iM5mpL3KzM5xKdaQpcFsJ8VU/El+onsftgPNz8G4F
-	TbPgi
-X-Gm-Gg: ASbGncuJk4G3B8E3FXs4P676mR9Np7mYmOfjtca6DUVowq2vWRGakwFvHgfaVUpyR6K
-	Gfm32mn7+sKDbbz4TfbQKRoJrPvNrqPxUN4hqQcSZrZs2QVkCVIXNr+xsooNT6A4a/Q2FX2t40D
-	P+ct0MTRQDUpeaAWqBHusk3fomrJJGuZttAOkoAvz3Thd19oGE3oOzg81WTPYIME0pqtlslofDn
-	/GZEHWxu2hgvyyuPEBsO/CGZ7zNvRdXZc30sJ9AaSEdMO4fPdFi0HNiknsp1SdQ0A4nh8bdH38u
-	JJh6Oh0Vn56Q4jekRVLyLfQ1aXZUs5HDXu6nwSkIaSI14rIdg9WfUpjxhXWV7o0nSjCqifnlDBv
-	ttOanm6PqxFK+NNDZ/hVX5yE6ZTA5xnXQthPeWz3j4RJ845HsNDW5RVPTSQ==
-X-Google-Smtp-Source: AGHT+IG+GG+Qa6JTGoB2snUOkxAyjairFMb2vNLcDce0lP41wW3LRGVkmOC/LouqaKcL/4gKsHqEwg==
-X-Received: by 2002:a05:600c:138e:b0:45b:47e1:ef72 with SMTP id 5b1f17b1804b1-45b8559ccdcmr196954465e9.37.1757063144043;
-        Fri, 05 Sep 2025 02:05:44 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd0350e80sm68794625e9.22.2025.09.05.02.05.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:05:43 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH 2/2] padata: WQ_PERCPU added to alloc_workqueue users
-Date: Fri,  5 Sep 2025 11:05:33 +0200
-Message-ID: <20250905090533.105303-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905090533.105303-1-marco.crivellari@suse.com>
-References: <20250905090533.105303-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757063166; c=relaxed/simple;
+	bh=7YFrlKd+MAc6wbx42R8Oz9rMGWrVDoq7jvwizjelbP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSrnRNfoQO3RW2SOrG8TPD8UcCJEHmfQRxKQqlPdktEePdi3vNIBvbLZ9jNepDKkmOLZmxD73u/uLRaCXIOc0aMqTLmpqTthDorquk5/50BrHwpkYOW0OOxyR0K7dIQYX3oCY+GNtOZ8GJyeqPhMKSqZc7ueuXbcUWD7W0c6kxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JR3ahxD6; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757063165; x=1788599165;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7YFrlKd+MAc6wbx42R8Oz9rMGWrVDoq7jvwizjelbP0=;
+  b=JR3ahxD6/m+fPxQqr5rgLoIHKDMWHyKGE+U4netft3JjJgxMScFkP158
+   xZHbNXPJbUH1OgSULR/6q4N3o9lunsfi27m+Vcvgq25/lOF3K4twP/3Fl
+   o7ihf5nioAdVPuv7lU610kqSjSAdRFmJxkhNzik4u0KpY2TmnU0tCjnSN
+   bs7iOkHhv4cfY4zCY8bwjifBaVRxRJVtayZKzOK6VnX1cYIJuxHwXMfrM
+   U3MECTopHzEIsOxMYy0Jeo7JWRJtY3tnL2f3zkanUJ42r/JM47hs7k7tM
+   u5hcQmiugFA7gItRXXoeV5vMtbfcOyWJf3Xe1uF0MpDGsWGM7dpPw6MhA
+   Q==;
+X-CSE-ConnectionGUID: ZFV/aHwmT+67zCbq00G99A==
+X-CSE-MsgGUID: HbHJEsNgSZWeNYHRIexhTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59485427"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="59485427"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:06:04 -0700
+X-CSE-ConnectionGUID: R6mvviZ9SkqHzzQK606tWw==
+X-CSE-MsgGUID: 1FTd/cCAS6OMipqT3EkNQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="202941463"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:05:58 -0700
+Message-ID: <73c7eee9-e84d-454e-8cc8-173b42c1dba5@linux.intel.com>
+Date: Fri, 5 Sep 2025 17:05:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 18/23] x86/virt/tdx: Do not perform cache flushes
+ unless CLFLUSH_BEFORE_ALLOC is set
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com,
+ dave.hansen@intel.com, kas@kernel.org, tabba@google.com,
+ ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com,
+ david@redhat.com, vannapurve@google.com, vbabka@suse.cz,
+ thomas.lendacky@amd.com, pgonda@google.com, zhiquan1.li@intel.com,
+ fan.du@intel.com, jun.miao@intel.com, ira.weiny@intel.com,
+ isaku.yamahata@intel.com, xiaoyao.li@intel.com, chao.p.peng@intel.com
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094516.4705-1-yan.y.zhao@intel.com>
+ <0d3229ff-2359-4ade-a715-c8af56c2916c@linux.intel.com>
+ <aLlg+VavGQlnQqFY@yzhao56-desk.sh.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aLlg+VavGQlnQqFY@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+On 9/4/2025 5:50 PM, Yan Zhao wrote:
+> On Thu, Sep 04, 2025 at 04:16:27PM +0800, Binbin Wu wrote:
+>>
+>> On 8/7/2025 5:45 PM, Yan Zhao wrote:
+>>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>>>
+>>> The TDX module enumerates with a TDX_FEATURES0 bit if an explicit cache
+>>> flush is necessary when switching KeyID for a page, like before
+>>> handing the page over to a TD.
+>>>
+>>> Currently, none of the TDX-capable platforms have this bit enabled.
+>>>
+>>> Moreover, cache flushing with TDH.PHYMEM.PAGE.WBINVD fails if
+>>> Dynamic PAMT is active and the target page is not 4k. The SEAMCALL only
+>>> supports 4k pages and will fail if there is no PAMT_4K for the HPA.
+>>>
+>>> Avoid performing these cache flushes unless the CLFLUSH_BEFORE_ALLOC bit
+>>> of TDX_FEATURES0 is set.
+>>>
+>>> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>>> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+>>> ---
+>>> RFC v2:
+>>> - Pulled from
+>>>     git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git tdx/dpamt-huge.
+>>> - Rebased on top of TDX huge page RFC v2 (Yan)
+>>> ---
+>>>    arch/x86/include/asm/tdx.h  |  1 +
+>>>    arch/x86/virt/vmx/tdx/tdx.c | 19 +++++++++++++------
+>>>    2 files changed, 14 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+>>> index f1bd74348b34..c058a82d4a97 100644
+>>> --- a/arch/x86/include/asm/tdx.h
+>>> +++ b/arch/x86/include/asm/tdx.h
+>>> @@ -15,6 +15,7 @@
+>>>    /* Bit definitions of TDX_FEATURES0 metadata field */
+>>>    #define TDX_FEATURES0_NO_RBP_MOD		BIT_ULL(18)
+>>> +#define TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC	BIT_ULL(23)
+>>>    #define TDX_FEATURES0_DYNAMIC_PAMT		BIT_ULL(36)
+>>>    #ifndef __ASSEMBLER__
+>>> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+>>> index 9ed585bde062..b7a0ee0f4a50 100644
+>>> --- a/arch/x86/virt/vmx/tdx/tdx.c
+>>> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+>>> @@ -1648,14 +1648,13 @@ static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+>>>    	return page_to_phys(td->tdvpr_page);
+>>>    }
+>>> -/*
+>>> - * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
+>>> - * a CLFLUSH of pages is required before handing them to the TDX module.
+>>> - * Be conservative and make the code simpler by doing the CLFLUSH
+>>> - * unconditionally.
+>>> - */
+>>>    static void tdx_clflush_page(struct page *page)
+>>>    {
+>>> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+>>> +
+>>> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
+>> According to the cover letter, if TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC is enabled,
+>> an explicit cache flush is necessary.
+>> Shouldn't this and below be:
+>> if (!(tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC))
+> Right, Sagi also reported it.
+> https://lore.kernel.org/kvm/CAAhR5DEZZfX0=9QwBrXhC+1fp1Z0w4Xbb3mXcn0OuW+45tsLwA@mail.gmail.com/
+>
+>>> +		return;
+>>> +
+>>>    	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
+>>>    }
+>>> @@ -2030,8 +2029,12 @@ EXPORT_SYMBOL_GPL(tdh_phymem_cache_wb);
+>>>    u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td)
+>>>    {
+>>> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+>>>    	struct tdx_module_args args = {};
+>>> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
+>>> +		return 0;
+>>> +
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+According to the description of TDX module base spec (348549006),
+CLFLUSH_BEFORE_ALLOC is related to clfush requirement before adding a page to
+TDX module.
 
-This patch adds a new WQ_PERCPU flag to explicitly request the use of
-the per-CPU behavior. Both flags coexist for one release cycle to allow
-callers to transition their calls.
+If it also applies to the pages returned back from TDX module, I think it needs
+to be called out somewhere.
 
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
 
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-All existing users have been updated accordingly.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- kernel/padata.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 76b39fc8b326..26cc9b748b3d 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -1030,8 +1030,9 @@ struct padata_instance *padata_alloc(const char *name)
- 
- 	cpus_read_lock();
- 
--	pinst->serial_wq = alloc_workqueue("%s_serial", WQ_MEM_RECLAIM |
--					   WQ_CPU_INTENSIVE, 1, name);
-+	pinst->serial_wq = alloc_workqueue("%s_serial",
-+					   WQ_MEM_RECLAIM | WQ_CPU_INTENSIVE | WQ_PERCPU,
-+					   1, name);
- 	if (!pinst->serial_wq)
- 		goto err_put_cpus;
- 
--- 
-2.51.0
+>>>    	args.rcx = mk_keyed_paddr(tdx_global_keyid, td->tdr_page);
+>>>    	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
+>>> @@ -2041,10 +2044,14 @@ EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_tdr);
+>>>    u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct folio *folio,
+>>>    				unsigned long start_idx, unsigned long npages)
+>>>    {
+>>> +	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
+>>>    	struct page *start = folio_page(folio, start_idx);
+>>>    	struct tdx_module_args args = {};
+>>>    	u64 err;
+>>> +	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
+>>> +		return 0;
+>>> +
+>>>    	if (start_idx + npages > folio_nr_pages(folio))
+>>>    		return TDX_OPERAND_INVALID;
 
 
