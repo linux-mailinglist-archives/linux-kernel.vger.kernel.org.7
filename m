@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-802338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C579DB45139
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C387B4513C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23B648620F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2ABA583365
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E632749D9;
-	Fri,  5 Sep 2025 08:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE442FFDF7;
+	Fri,  5 Sep 2025 08:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI2gIws5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdc9x6qR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC09308F0E;
-	Fri,  5 Sep 2025 08:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDBB1E7C03;
+	Fri,  5 Sep 2025 08:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060440; cv=none; b=AB4k/VxXLZp0/6KZWpfqUXA+dqztwQUJJrEjQ2tqsV/k1GwNA0m1SQdZxFUG9lbMpIm2J+GqJXpUdO0iN0kbE13NZZbO+O0Wwc1bl6O2i9Xu6/fMNpdZiA3v2LAUNLzx/bmwDGelKKAa96t8IqkibHfX9Na6wKk7GRjUrmkttog=
+	t=1757060579; cv=none; b=YXpzwgvjeqcK7HK+rYKwuiidMBf5tEHgYt1Afa2BM7EdqvgxbYv5tajIXYce0OEJXwWSMQ2FjKI2ymj4EOxGq4DVpGBKnURC4jQxprt4ukNALdOwd1OXV+agtxT5IFPyl0w9viCJtVCs1xu6DB4EeIfpXZfPpTv2XYiEG4ovazI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060440; c=relaxed/simple;
-	bh=1NT/J9zy+wp2WIDDw1MZkz4+Ema5iHWmh+YcteWPW9E=;
+	s=arc-20240116; t=1757060579; c=relaxed/simple;
+	bh=ey/kShOzSS9LzBy1SpXYUKciwMlZQTcbrdVlmd2wvSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgRK/0uUCdDE80+Qn2TtVj+ThcOjvIGTmw2Xur4XYtFYf6xsozQfVMiYbXKMKSl55AyHPCb6llwi40wPUkUO7Gb4vypmyvUOyKR0kMu6yPdC+XOVQyG40NbwQxhLbpuESXNYqeC8R+TSjTWH4xl3PfaFt4e+mydSRe2WdYjnm5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI2gIws5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFE0C4CEF7;
-	Fri,  5 Sep 2025 08:20:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLRl1YJhTb0xGJoU9goGJ+ECkmWQ/gKMpr8jIixeFMj0fyO7wHCXbcdZZ47vNOnOiFnQFX5p0F7Vrcv2fhMO1MtIie8OOqBYlfmrt6GyiLuGfg9zGsoOuUFusMfjRHukBqV6PvI8T5ZXO43/vkuLV7wUN7ayl3BHN/ilGhzYLlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdc9x6qR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED6BC4CEF1;
+	Fri,  5 Sep 2025 08:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757060440;
-	bh=1NT/J9zy+wp2WIDDw1MZkz4+Ema5iHWmh+YcteWPW9E=;
+	s=k20201202; t=1757060578;
+	bh=ey/kShOzSS9LzBy1SpXYUKciwMlZQTcbrdVlmd2wvSA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bI2gIws5IK3KjZoCKjEfQSCveSDzyPef2WcTJ2SWU78Qo4+kuev4nc1ClkUZeHe1b
-	 0T2q8lFfzXl/9pygx1vXkJ/jrzh31H72fH/hybLYLHsJKa5hq3xd0WyV+YP6tiXNfx
-	 b/y5KYE6nae/LAzna+DXu8qgSirjGkxgo5dqLMe+VjClsXDcdAytJIJybGXPsVHaYw
-	 gTPYudJukJkiu1+ct8nlHssSsL593gb32imFWjpSQVw3bN1oyKY1BKoXtzrIW7fBwV
-	 B/aknTh/77HWQ0oztPegXY+qR/MmqYOX7Edw2ioZzLyyTzR72Pi1l3R2Pw73W8L1jd
-	 5NaKsmHgdVTkg==
-Date: Fri, 5 Sep 2025 10:20:37 +0200
+	b=cdc9x6qRbgLD9mazhdyUs0XSsipHnza/HDk+e4+gfJ8l9fuJ3IrqGn3G4Jknqxnjp
+	 3/9SF5mYZsqHWzI79YA+W73qmJoq3ARERv4W+dGDDpOKeru+IsgM85LCq3c3JiAd/k
+	 njZXAR8Z4oTBvHZRrPDhEv+pu1z8K5xRmGTu/UiAlmo63O49nO4B25meUnWobCmHoS
+	 a2zIVZWcNG9D7xCgE5JfFt0cIJbxlUzIWsk76lT1wRAY/C01hbxUDdqQUd/7wX4iUU
+	 g6eWobUD57QzAwK+809jNntxFvFQbn82CO5O7VWXCUf1r22O5vY6cF72Sn7ixEYrhF
+	 g129HfS+cZfPw==
+Date: Fri, 5 Sep 2025 10:22:55 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Peter Rosin <peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	upstream@lists.phytec.de
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: afe: current-sense-amplifier:
- Add io-channel-cells
-Message-ID: <20250905-dainty-liberal-monkey-ec28bb@kuoka>
-References: <20250905065503.3022107-1-primoz.fiser@norik.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: phy: Add DP PHY compatible for Glymur
+Message-ID: <20250905-clay-falcon-of-anger-de5b5a@kuoka>
+References: <20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org>
+ <20250904-phy-qcom-edp-add-glymur-support-v1-1-e83c6b9a145b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,21 +62,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250905065503.3022107-1-primoz.fiser@norik.com>
+In-Reply-To: <20250904-phy-qcom-edp-add-glymur-support-v1-1-e83c6b9a145b@linaro.org>
 
-On Fri, Sep 05, 2025 at 08:55:02AM +0200, Primoz Fiser wrote:
-> The current-sense-amplifier is an IIO provider thus can be referenced by
-> IIO consumers (via "io-channels" property in consumer device node). Such
-> provider is required to describe number of cells used in phandle lookup
-> with "io-channel-cells" property.
+On Thu, Sep 04, 2025 at 09:55:51AM +0300, Abel Vesa wrote:
+> Document the compatible for the Glymur platform.
 > 
-> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
-> Changes in v2:
-> - refactor commit msg drop warnings introduced by commit #2
-> - drop Fixes: tag
+>  Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> index a8ba0aa9ff9d83f317bd897a7d564f7e13f6a1e2..e572f6ea3523a483f701aedab383a63af7abe0e5 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> @@ -24,6 +24,7 @@ properties:
+>            - qcom,sc8280xp-dp-phy
+>            - qcom,sc8280xp-edp-phy
+>            - qcom,x1e80100-dp-phy
+> +          - qcom,glymur-dp-phy
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please keep alphabetical order. We never add things to the end of lists.
 
 Best regards,
 Krzysztof
