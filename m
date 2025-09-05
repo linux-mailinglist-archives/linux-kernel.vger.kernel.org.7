@@ -1,188 +1,184 @@
-Return-Path: <linux-kernel+bounces-801963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD7DB44C1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:08:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53DFB44C21
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222FA1C268B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:08:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1251685A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA65221F32;
-	Fri,  5 Sep 2025 03:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C913F23FC4C;
+	Fri,  5 Sep 2025 03:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C7ifgCd9"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="XkMwQoCM"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0E32628D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 03:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757041695; cv=none; b=X/OaaU4HhLO1k1mvvNXY178lEbH+UCZGmBgZf7cbjNlQpG/72jCKRuwhvHZOBVkAnRKVHlCkg0V0FpPhWykJn/FHGaBdP5yAcjDQvJsLxXGWb+1aKQH4+0b2EAEn0/P+KpCo7403PjyQ59f11KVhTzsto2tayDY4EizrIGq9vE8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757041695; c=relaxed/simple;
-	bh=aB5m+P2q4cXUyhOBmZqie7bs4YuHa0YZE8lVDXQtA2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=puhSsRn8teyapAF2HsOfxuUSJ27rNqJqMiaLHuvWmZfCtJEJBkeEX/p53HzX8sky0pIL2PyS06FD14mozom1HmSgrc8Kvf0AC30FsgBs+4uVGY2TwlzI1XVO9BmG1JdoNuyuWi5U5lU/yyfwxqO3uE86gLKEdyGkLjDnt3ZcIQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C7ifgCd9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336ce4a8bfcso14348951fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 20:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757041691; x=1757646491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7VEF8fsQ16/5eguTcUya9i8sN0CVWScInMAqvxe2C0=;
-        b=C7ifgCd91S8jemr9dByDKvjMyox4El+DXfciiU3ZpaqQ5r8bUnB14pDOUjBOuUq51v
-         zcsHxFtBG0IcdBHkHZuSAHZrLJ9iv34PzRdngoOLBnaXJKHN9blE4NFELAnstfcJ2KtB
-         UxW3+RjPj/cj//YR3ROtg1H3WBoZWiZCOf6Qw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757041691; x=1757646491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z7VEF8fsQ16/5eguTcUya9i8sN0CVWScInMAqvxe2C0=;
-        b=O+1bTDusmMRktFsXJVs5E2HvEupdb7/iH3GYW7j+yK4nqFHKfHk9bptT1Cix++XQWo
-         9F1ajT/nmWxhfZpvaK2q76OyAwNbfETWasf8PXLVdVIQwJVcMu4Ob4VGwMCK/1NLbSSj
-         OjQ7Epyn8IHYkU7BHsKzefaCEeppS56c1zf/Aj/gIlVX10bkGtbCtCeVILofRYvKD0y2
-         Ev6tnSGi5UzABR1pgyHOcBgMY0uy3kfgBzGoZGF2GI/Y/znfUTpC7ob97fZLgBhSdyek
-         WZKsxVTBpPFVqsC7rpuV0HLi5kyENf87yoZxlTLRDGdNmNOKmVGCG7bH9zr6l2gCKYt1
-         OyFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFUsR/1LNPiWTAMoMdDI1pP4aptpino2J14EU1NZxmHihd+A2vRP2ibbzzXXOuSGes0ZYY0vDEtqQ7jQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEmsVynmbFzKoR8h9MEw1RJG0ri96Be/oYJvBZIch7+3ymty8F
-	kGfrcAGQD+3SUEPcNDmZ5AZS/y2ADX3ngZ8ZUW7N3AC7Zsn1K2Zfv9pAIyq2enJ7//uKH5SzpLm
-	mL9XkXh53qx0xHGpO0fyQctWB5pR4f+vDSxlT05SG
-X-Gm-Gg: ASbGncvZLPn3wyAXT++yK4G5lqSYDb4MDCZDCW5Uo02qHUeZGAOPwMsLjZOdwljTOdZ
-	YJtsT4V5I6KBdU4/LncFHmrawfjAk9xUdOm5tLGy9vSayVSvFd58CNzsdnYwIxnKXvWuxCOgeyK
-	9dbfpyRiX092zp4TOKtM+Pp8QZY4WF50/Bx48Ik+9NQepx/oxmlregvGO0zNbQInoCVXK+jaQoF
-	w7cFy4hZf7ruXsLET9aHHJCCvZB+hqmJcPSkZ1mAuPQXmG7
-X-Google-Smtp-Source: AGHT+IGldyHuDYkPWivf90sba85mlu8jLhfEVWhM+CRAtZ5kcPdD6IcKM+CLluf3aDGmO4+qEneV9QzpuYa7Bir4LF8=
-X-Received: by 2002:a05:651c:1107:10b0:338:5ec:1dda with SMTP id
- 38308e7fff4ca-33805ec1e2cmr23475841fa.9.1757041691297; Thu, 04 Sep 2025
- 20:08:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA224D599;
+	Fri,  5 Sep 2025 03:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757041881; cv=pass; b=sPYdEfaeNLIrqhtykYKKZ5YEsdBBrhj2KMAhvSiaQ2AE5Lm4SMUY3KoaqtKTLWUg1Xu1v2AZon0DW+DUe45swnp1nW7JAquEEfBTmDW6mjRxLHX9yHrLI5uxE4wGCpuqk8NpeHLpd9anIyc8yTSKzXuGvggrudkIT1bq34qjXAA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757041881; c=relaxed/simple;
+	bh=ZnxsnPR2qGPRWubPuRjnTr7DJ+AEdQqDJypwh1CpZjs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dQa1S+jXpZ6k3aKS6DJQWTye+zTk7WDNFBBqP06QA+RmGk9wCmBCSFgwnqY4HPmlybvY37P07ukndIkhiuSrwJM3yB2DEGdOuycccOTOMtuRRwFeCkEhRXkgiMUDGH44c9hs0ki1Au+on2R6helA+arMw9WTC9wve0QG7VzgRHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=XkMwQoCM; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757041850; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=WFVmTex9qv0kj1rXyTVR/Bl0XZkb1nioWiK28RinGGyd26RIaW3CD8PwnNpa2iywrJIGwRrncp1ATfPBUiVRS4C+0Rxq7lDxwuhpruwqKdDlQ8D3vZ9+YGtJCNGwQPee07IbFwVuTSnvaPNLO2QEJPmA+93Kw1vIcnPkgn1CPWs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757041850; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6THPioZ3D7kvh3Uhi2X3oA729ty8bXY0f3Z3hyWzCrM=; 
+	b=ciLoD2JmFFwc/j1lJgInnqGUv9pJO0nceYQs4p9wkHyBOCFQFLRDAPwFEEyHaJY3UVkB2urILq3t1T2GjhhQoEGw7EBOsySz+06U5F408sHbsxPfP/CawdqmCiyedoJhcCjD53Nt+Vqt+Rwzu9s4Y5RMZ0M2S8h8RteTqxU6kX0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757041850;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=6THPioZ3D7kvh3Uhi2X3oA729ty8bXY0f3Z3hyWzCrM=;
+	b=XkMwQoCMyv8MvSZbxh3LAw8LvO/X1W7WgG3HsEvVA0b1duEbTwDXmqxXtilhV7uK
+	ZpEnFTStSXme5kvaFEtnu1oWjWAO0owknB59neg1vyy6A5E1iAk6iCcVLtT70DOUm2B
+	h6gE13x0JWJ+6WzmvDdTJRFvQ2dCWYOGksGVwccw=
+Received: by mx.zohomail.com with SMTPS id 1757041842818787.6325831712053;
+	Thu, 4 Sep 2025 20:10:42 -0700 (PDT)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH v8 0/3] riscv: canaan: Add support for K230 clock
+Date: Fri, 05 Sep 2025 11:10:21 +0800
+Message-Id: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903225504.542268-1-olvaffe@gmail.com> <5820885.GXAFRqVoOG@workhorse>
-In-Reply-To: <5820885.GXAFRqVoOG@workhorse>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 11:08:00 +0800
-X-Gm-Features: Ac12FXw182raft1JJYOZIoO33KVRrFPcguj33C1FCebFdDsYEFHlJ4j0UxQM7o4
-Message-ID: <CAGXv+5EbEDG3sZjo9BDv_8-HhLNNTH4DLZ3ibvdcsULXgkzjYg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] drm/panthor: initial mt8196 support
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Chia-I Wu <olvaffe@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ1UumgC/3XSwW7bMAwG4FcJfJ4LiZREKae9x9CDTFKL0abu7
+ CzYWuTdKycdUieeT5bhj/xJ6L2ZdOx1arab92bUYz/1w0s9xG+bhnf55ae2vdRzAwacBRPazrV
+ PgKbl56c2gS+IRSUwNFW8jlr6P+dqPx4v51F//a5FD5ePTZcnbXnY7/vDdmNUc4pkYswAQijRa
+ gpRlNARC5P65ApdSucD72qW7UZUMrIjKKY+pYgzLCLEJQh2XmslySTczAl2/XQYxr/n8Y54jvA
+ 5CS0mOWJbXzpLydsYlej727Ab9rl/fqhp5wCVeWMB7llXCnmfOXHhdQYG7xkGYEoWnCdYsjn40
+ X0Ja92Su8otm8Q5dOhi/k9XS/fM5+QzOh9Dsitd7ZeukJbcVg5gc7Kk0aiscPjH66pMXHKYOXV
+ oMnD2sMb9lePtynzl5KLUbUBExfWZEcw9M5rExMTexbjSNVy7OuuXPMxdi8RUHFD9YYXTlRPed
+ Kf5Vnmq97LzCeUm9OPpdPoAokxgQYEDAAA=
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Troy Mitchell <TroyMitchell988@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+Feedback-ID: rr08011227a46b04b3360ed4d7c06c3b2600001d6922f00b98d97d2c41562fc4ae8d6e8e52770fc5516bee96:zu08011227052fa289f5934febeb3679eb000047b5b9de0e89fced7f5f947c77c0c16b1344f52eb14cfcfd50:rf0801122dc40bacc37b2933ba4c65afab000005ce6d1b822013d01c4e9e880bf89bb885e1512cdc59b98bbbc7b213e19b6d:ZohoMail
+X-ZohoMailClient: External
 
-On Thu, Sep 4, 2025 at 7:20=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> Hi,
->
-> On Thursday, 4 September 2025 00:55:02 Central European Summer Time Chia-=
-I Wu wrote:
-> > MediaTek MT8196 has Mali-G925-Immortalis, for which panthor gained
-> > support recently. But the soc also requires custom ASN hash to be
-> > enabled. This series introduces panthor_soc_data for per-soc data and
-> > uses it to enable custom ASN hash on MT8196.
-> >
-> > The clk/regulator provider on MT8196 is GPUEB, whose driver[1] needs to
-> > be cleaned up and upstreamed separately.
->
-> I'm currently working on this, I'm at a functional 800 LoC driver vs the
-> more than 30k LoC of the downstream... thing. I intend to send it in as
-> an RFC once the clock stuff lands, and I get some responses wrt to
-> figuring out what's still missing from linux-next aside from the DT to
-> get basic boot working so that I don't send in something that I
-> accidentally shredded during a rebase without noticing.
->
-> Cleaning up the downstream driver is a fool's errand, it's like 6?
-> separate drivers, with lots of global state (and no locking), without
-> using the common clock framework, and relying on abusing -supply DT
-> properties to force a certain probe order to make all the race
-> conditions it would otherwise have turn out fine. A lot of it is
-> code that seems dead, or wrappers wrapping wrappers that have nothing
-> to do with how the hardware actually works.
->
-> My solution adds a small mailbox driver for the GPUEB, and also adds
-> a new module that lives in the panthor tree and registers itself with
-> panthor's devfreq stuff to be a "devfreq provider". The motivation
-> for making it devfreq instead of a clock+regulator provider is that
-> the GPUEB seems to have several quite devfreq-like parts to it that
-> I am not yet using, namely setting a job completion target time and
-> several methods of limiting performance.
->
-> As it stands it can set the OPP, but boosting above 1.43 GHz does
-> not seem to stick. The boosting stuff may be done by the four or
-> five other ways it has to set some frequency target.
->
-> I'm hoping I can send this in maybe next week or the week after. If
-> things remain blocked by then it'll be compile-tested in its current
-> form only and lack some clock stuff.
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+PLLs and an external pulse input, with the controller managing these
+sources and their derived clocks.
 
-I suggest posting them when you think they are ready, and not wait for
-the clk patches to land. The review is going a bit slower than I expected
-and Stephen usually just picks up the patches towards the end of the
-cycles anyway.
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
 
-ChenYu
+Link: https://github.com/ruyisdk/linux-xuantie-kernel/blob/linux-6.6.36/arch/riscv/boot/dts/canaan/k230_clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
 
-> Kind regards,
-> Nicolas Frattaroli
->
-> >
-> > This initial support also lacks support for some hw configs. On some
-> > configs, panthor is expected to query a mask from efuse to mask out
-> > unavailable shader cores from ptdev->gpu_info.shader_present. This
-> > requires extending panthor_soc_data with a callback to read the mask.
-> >
-> > This is an RFC because the dependent drivers are not ready yet. But I
-> > would like to gather opinions on having panthor_soc_data for
-> > soc-specific data and having CONFIG_DRM_PANTHOR_SOC_MT8196 for
-> > soc-specific code.
-> >
-> > [1] https://gitlab.freedesktop.org/olv/kernel/-/commit/170d5fc90f817dc9=
-0bde54b32872c59cf5c77779
-> >
-> > Chia-I Wu (2):
-> >   dt-bindings: gpu: mali-valhall-csf: add MediaTek MT8196 compatible
-> >   drm/panthor: add initial mt8196 support
-> >
-> >  .../bindings/gpu/arm,mali-valhall-csf.yaml    |  1 +
-> >  drivers/gpu/drm/panthor/Kconfig               |  6 +++++
-> >  drivers/gpu/drm/panthor/Makefile              |  2 ++
-> >  drivers/gpu/drm/panthor/panthor_device.c      |  2 ++
-> >  drivers/gpu/drm/panthor/panthor_device.h      |  4 +++
-> >  drivers/gpu/drm/panthor/panthor_drv.c         |  4 +++
-> >  drivers/gpu/drm/panthor/panthor_gpu.c         | 26 ++++++++++++++++++-
-> >  drivers/gpu/drm/panthor/panthor_regs.h        |  4 +++
-> >  drivers/gpu/drm/panthor/panthor_soc.h         | 26 +++++++++++++++++++
-> >  drivers/gpu/drm/panthor/panthor_soc_mt8196.c  |  9 +++++++
-> >  10 files changed, 83 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/gpu/drm/panthor/panthor_soc.h
-> >  create mode 100644 drivers/gpu/drm/panthor/panthor_soc_mt8196.c
-> >
-> >
->
->
->
->
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+
+---
+Changes in v8:
+- Rename dts node name "timer_pulse_in" to "clock-50m"
+- Drop redundant comment and 'minItems' of hardware in dt-binding.
+- Link to v7: https://lore.kernel.org/r/20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com
+
+Changes in v7:
+- Rename K230_PLL_STATUS_MASK to K230_PLL_LOCK_STATUS_MASK
+- Add clkdev for PLLs to register lookup
+- Add macros to generate repeat variables definition
+- Refine the definitions of k230 clocks
+- Split composite clks into rate, gate, mux, fixed_factor clk
+- Replace k230_clk_hw_onecell_get with of_clk_hw_onecell_get for
+  clock provider
+- Drop k230_sysclk and use clk_mux, clk_gate and clk_fixed_factor
+  as the data structures.
+- Replace one loop registration with individual registration for
+  each type.
+- Link to v6: https://lore.kernel.org/r/20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com
+
+Changes in v6:
+- Remove some redundant comments in struct declaration.
+- Replace the Vendor's code source link with a new one.
+- Link to v5: https://lore.kernel.org/r/20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com
+
+Changes in v5:
+- Fix incorrect base-commit and add prerequisite-patch-id.
+- Replace dummy apb_clk with real ones for UARTs.
+- Add IDs of UARTs clock and DMA clocks in the binding header.
+- Replace k230_clk_cfgs[] array with corresponding named variables.
+- Remove some redundant checks in clk_ops.
+- Drop the unnecessary parenthesis and type casts.
+- Modify return value handling in probe path to avoid redundant print.
+- Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
+
+Changes in v4:
+- Remove redundant onecell_get callback and add_provider function
+for pll_divs.
+- Modify the base-commit in cover letter.
+- Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
+
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
+
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
+
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add bindings for Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock definition for K230
+
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   59 +
+ arch/riscv/boot/dts/canaan/k230-canmv.dts          |   11 +
+ arch/riscv/boot/dts/canaan/k230-evb.dts            |   11 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   26 +-
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 2456 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |  223 ++
+ 8 files changed, 2785 insertions(+), 8 deletions(-)
+---
+base-commit: 0eea987088a22d73d81e968de7347cdc7e594f72
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
+
+Best regards,
+-- 
+Xukai Wang <kingxukai@zohomail.com>
+
 
