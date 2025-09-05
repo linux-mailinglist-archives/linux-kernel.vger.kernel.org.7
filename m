@@ -1,182 +1,316 @@
-Return-Path: <linux-kernel+bounces-801852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7754B44AB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:07:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CFCB44AB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B0B16860F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4513BE073
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EC82114;
-	Fri,  5 Sep 2025 00:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC24C7483;
+	Fri,  5 Sep 2025 00:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LAbwofok"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgz0TO5h"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD97483;
-	Fri,  5 Sep 2025 00:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637A610E3;
+	Fri,  5 Sep 2025 00:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757030861; cv=none; b=uBMYIMAoOPKRMcZZ/t24SXJG+ST5ANtkDpRjkdJsVMXRpTM1JetJvBT0UHLKAyZ+ulCrjUfuSkw4ATa05TZVNaiRCqe6IWUw7bAupPHAdJiwkgYOuwDdYakRx2yRR6j+mHIG8rEGS96kiIIinl65Utkc3RY37MD5yANhkvEnBjA=
+	t=1757031023; cv=none; b=JwAUFBzhR/qZrnbow7H4ltEekuel5MAiQJOYPPlpN0Bbv1ZDte3g55odk604SIohohIpZ/Q7VICcLkypXy6O9ZkaZfkm5/TXBjAz3uu8DQ+4ygRmm0I6K6Nxs5btgZhyjTFPmB9iAAQWpOL67cSdNpp3HjodOC47S53zEwkHHq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757030861; c=relaxed/simple;
-	bh=lHqY1wJPcSDmE3iUOhGZSBp2N+TGzbF6LV8oPS5ZZII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CxB5QtgTCacB/UdXvKGAPX7KgpVz4lsxdbfFlUGyh2HYfKvTX8UOwM8Hur/uORfcUbJu49b6dNel/OBeceJ0yqQNNYI0G8WboNXHU6DZ5U8XXTxSWvipKZAUxmx0YS8NkVg4Wr0xlMi/DksuEQiIgQbX0hlQT713R2rvoEk0v8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LAbwofok; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757030860; x=1788566860;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lHqY1wJPcSDmE3iUOhGZSBp2N+TGzbF6LV8oPS5ZZII=;
-  b=LAbwofok4rzlgMJdKJBlJctGfZdugRypwjfivcm1cF70ohXOVtvHqO6v
-   mAkf6k3Q3dt9hmhLutr4QfF5CD7KfQoSKNECuLSr5yDmvK5NDVLBulL1B
-   R558w6e2do9NwBACbafFBmiBBC4g/Vh4FgxbGL9BKhiV+eaOgbqDaW4bU
-   saKeYlZ7klXt6KNSmTHQ0QUSJwtlanIJd3GGa+/iZJcgdgkq8lf8McM2W
-   tYlM3glWisd2LYk8qCM//tq7ruoKQjMZky6vogM7FC8OWxWjBKOiT6j2n
-   IdwLjERBQXOxZMKTvY5mRx8lJVk5d3AkF+2xo4VhDwVaJ6288erobTiJq
-   Q==;
-X-CSE-ConnectionGUID: 6rrXIuaGTOyvKlBUr3Gygg==
-X-CSE-MsgGUID: AKR1lR8ySd+7DOATQkx+Yg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63024435"
-X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
-   d="scan'208";a="63024435"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 17:07:39 -0700
-X-CSE-ConnectionGUID: /gxvi3aKS4C/ERgaNyKIig==
-X-CSE-MsgGUID: mtSvOWMbToSsCr8vtc1sEQ==
-X-ExtLoop1: 1
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.24]) ([10.125.110.24])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 17:07:37 -0700
-Message-ID: <91f42134-851d-446b-8b60-f93c429cfc59@intel.com>
-Date: Thu, 4 Sep 2025 17:07:36 -0700
+	s=arc-20240116; t=1757031023; c=relaxed/simple;
+	bh=Wqt0zoEmu9173NVgTwhdZ2M7MsZCPaLd/KKYZq92uO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E7cGEgE7wxkpOJJpMmmrFdm5kxzyzlu8sIQE9b3BvQ3d025aG4+7akASywK0Ks9BoKvPGZEN6wRlza8gLnuVEjtf0RcpXnkTzOVz4uQ6TgG1qXQYVKW1KACLV6/uFjijKKLYNf4A1k4CaoqnH/GF4PmZ3gAH8GGoikCvELA8Y8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgz0TO5h; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3f0651cb971so10246435ab.3;
+        Thu, 04 Sep 2025 17:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757031020; x=1757635820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O/TjQo4jPuViIaMKeRLpkPebSAj9mMxtTxcu+Ya09Fs=;
+        b=bgz0TO5h/3g4emSFJ0d1zpvrxBx5Z3WVutvoR5eg01VpKolzUzg4D/TsA1lJXMYvWn
+         oJG755jbjXj4iH+uwTCUCdg9ZYku9wzTQu3nepca3afdMvkMnLxMP7Wxp+QznDM29Th/
+         J427gO2mjGiKmSNQNCBXBSR3s65cpcz/MV6RrtRHKDPFl5EviMTivLBiEaTwRZMHodVI
+         3npJcb1rVm/LJtqHx+yIqaoAYRKcTuJJd2ZpSmrlYJxf0fcxTgZaA6w3S0HGjY8MbxU2
+         NVV9MTE0/WhYAEBgBjpaa3Z6+E5xmusnAdc8lck75xKayRdYmt53/tDLH7FYJAh7Alg2
+         jzjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757031020; x=1757635820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O/TjQo4jPuViIaMKeRLpkPebSAj9mMxtTxcu+Ya09Fs=;
+        b=jHz1VmlLKLOjC6BmCYG0CfARTcJtu/By5p1C8jaCeO/FmaUIAbOWGlgjbzMpD5QSbW
+         /epSXKutI9mkwAuhIil7xJ+/Q2I+jDPzC0U5fJhdM1qOoOgNbcG+3MZ5ou8XxedBGQHi
+         56R7klGKniMoRnzrH7D4DeXTY2WenJGYh3ue58aLxil2ErfVj9pzRs+3XG33BvBQXZFU
+         3A0EfBrYFnsze2cCnkCYWHO2VjS8XGR5gvfTBGFhXWXGlIXcTzK0QWJSDnOP9zRo8pdI
+         5sCNlWc37GxzjlAav5aqIwqdTIt1dET5m6rAdUhrgl1vDkudD+8NvoTKi9VDieWP7CGi
+         vTZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU43Hu23FbJBKFIHkwl7cJk45zFDUQciY/WhOwa6QtElzMTn11BcTXbRFE8xmJOk/MbojF60NxuDX2amJQ=@vger.kernel.org, AJvYcCU7om92DXdu4tSsyrDBs4Nzb2C2E09oFHSiiTikOCihFeq2XkXwdWgs56bIcdMWQjfuy63JO02q@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlZqX/lZ37m4tY4XQVOnlxLMD0f7tHBnA96myjHHFCGaPQPm2j
+	wTlsyYbOwq2TCTgP1tZnIiLA0XYxzce2o/Fdok7WBSIwDRLFN12OJtgx4rjOF55jXy+vMHcVyOB
+	QlxzhIKuaaAC4qPpfGIYnC3tUhS48Yn0=
+X-Gm-Gg: ASbGncvBBCOiaBnPG7uVaVZdIYpks/rG5BFkSDxDbkIdhy1sR61HIaVeL/ngl/lTVxb
+	M/I/GnqU7DZrB4PCeM65TJq9Gz8Nz1o6xIYhEauijuM2cVMbltZuk/uoRsmXdWt1Ac87BP7PkP2
+	Bgr3MC+PLEHOP9szpEgBU52kOkLc+RKEw8t87K0mjlz8wW5ib5n2NhiEIkEDh5RsyT+4CvXN7xC
+	7y2O6ksTJapc5q42XIVHA==
+X-Google-Smtp-Source: AGHT+IGljxce7x4jBgkKnW0xO1cr+poR4gowOY+QS/LFAGZa+oChfry7jhVX4j4dfrilczpUv3hMuwTcUyeJJw3ZKn0=
+X-Received: by 2002:a05:6e02:3a06:b0:3f0:b1ba:f72e with SMTP id
+ e9e14a558f8ab-3f4021c42d0mr369846055ab.25.1757031020238; Thu, 04 Sep 2025
+ 17:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4 v4] cxl/core: Enable Region creation/attach on x86
- with LMH
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- linux-cxl@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
- ming.li@zohomail.com, linux-kernel@vger.kernel.org
-References: <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250904145920.1431219-1-jackzxcui1989@163.com>
+In-Reply-To: <20250904145920.1431219-1-jackzxcui1989@163.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Fri, 5 Sep 2025 08:09:43 +0800
+X-Gm-Features: Ac12FXx5HaEwRNNl1C4OlwRjbLRkrmMCplt0TWXlIzpz9u1BH4C52pIlpbXG6-g
+Message-ID: <CAL+tcoB8d3jvD50oa3p5eZT+qLAXFXtuEQ9TvRr3jHzkxeXtSg@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
+ retire operation
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 4, 2025 at 11:00=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> wr=
+ote:
+>
+> On Thu, Sep 4, 2025 at 10:50=E2=80=AF+0800 Jason Xing <kerneljasonxing@gm=
+ail.com> wrote:
+>
+> > > In the description of [PATCH net-next v10 0/2] net: af_packet: optimi=
+ze retire operation:
+> > >
+> > > Changes in v7:
+> > >   When the callback return, without sk_buff_head lock protection, __r=
+un_hrtimer will
+> > >   enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer ex=
+pires while
+> > >   enqueuing a timer may cause chaos in the hrtimer red-black tree.
+> > >
+> > > Neither hrtimer_set_expires nor hrtimer_forward_now is allowed when t=
+he hrtimer has
+> > > already been enqueued. Therefore, the only place where the hrtimer ti=
+meout can be set is
+> > > within the callback, at which point the hrtimer is in a non-enqueued =
+state and can have
+> > > its timeout set.
+> >
+> > Can we use hrtimer_is_queued() instead? Please see tcp_pacing_check()
+> > as an example. But considering your following explanation, I think
+> > it's okay now.
+>
+> Okay=EF=BC=8C let's keep the current logic as it is.
 
+In case I didn't clearly state it, you don't need to change the
+overall logic but only add back one missing point as I replied in the
+last email? That is lookup path needing to refresh/update the timer.
 
-On 7/24/25 7:20 AM, Fabio M. De Francesco wrote:
-> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
-> Physical Address (HPA) windows that are associated with each CXL Host
-> Bridge. Each window represents a contiguous HPA that may be interleaved
-> with one or more targets (CXL v3.1 - 9.18.1.3).
->  
-> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
-> memory to which systems cannot send transactions. On those systems, BIOS
-> publishes CFMWS which communicate the active System Physical Address (SPA)
-> ranges that map to a subset of the Host Physical Address (HPA) ranges. The
-> SPA range trims out the hole, and capacity in the endpoint is lost with no
-> SPA to map to CXL HPA in that hole.
->  
-> In the early stages of CXL Regions construction and attach on platforms
-> with Low Memory Holes, the driver fails and returns an error because it
-> expects that the CXL Endpoint Decoder range is a subset of the Root
-> Decoder's (SPA >= HPA). On x86 with LMH's, it happens that SPA < HPA.
-> 
-> Therefore, detect x86 Low Memory Holes, match CXL Root and Endpoint
-> Decoders or already made CXL Regions and Decoders to allow the
-> construction of new CXL Regions and the attachment of Endpoint Decoders,
-> even if SPA < HPA. If needed because of LMH's, adjust the Endpoint Decoder
-> range end to match Root Decoder's.
-> 
-> - Patch 1/4 changes the calling conventions of three match_*_by_range()
->   helpers in preparation of 3/4.
-> - Patch 2/4 Introduces helpers to detect LMH's and also one to adjust
->   the HPA range end for CXL Regions construction.
-> - Patch 3/4 enables CXL Regions construction and Endpoint Decoders
->   attachment by matching Root Decoders or Regions with Endpoint
->   Decoders, adjusting Endpoint Decoders HPA range end, and relaxing
->   constraints while Endpoints decoders' attachment.
-> - Patch 4/4 simulates a LMH for the CXL tests on patched CXL driver.
-> 
-> Many thanks to Alison, Dan, Dave and Ira for their help.
-> 
-> Commenting on v1, Alison wrote a couple of observations on what users
-> will see. I suggest anyone interested to see how this series affect
-> users to take a look at her observations.[0] Thank you!
-> 
-> Changes for v4:
-> 
->   Re-base on top of 
-> 	"cxl: Address translation support, part 1: Cleanups and refactoring";[1] 
->   Drop no more necessary 2/4;
->   Drop collected tags because of major changes throughout the series.
-> 
->   1/3 - Adjust Endpoint Decoders dpa_res->end (Alison) [2] 
->   3/3 - Use weak/strong mechanism (Dan) [3]
-> 
-> Changes for v3:
-> 
->   Re-base the series on cxl/next.
-> 
->   1/4 - 2/4:
->         Constify local variables.
->   3/4:
->         Call arch_match_region() from region_res_match_cxl_range().
->   4/4:
->         arch_match_region() - Check that region end is under start + 4G;
->         arch_match_spa() - Check that SPA range start is cfmws_range_start.
-> 
-> v3 - https://lore.kernel.org/linux-cxl/20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com/
-> v2 - https://lore.kernel.org/linux-cxl/20250114203432.31861-1-fabio.m.de.francesco@linux.intel.com/
-> v1 - https://lore.kernel.org/all/20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com/
-> 
-> [0] - https://lore.kernel.org/all/Z0Tzif55CcHuujJ-@aschofie-mobl2.lan/
-> [1] - https://lore.kernel.org/linux-cxl/20250509150700.2817697-1-rrichter@amd.com/
-> [2] - https://lore.kernel.org/linux-cxl/Z9tzZkn1rqd2Uk_6@aschofie-mobl2.lan/
-> [3] - https://lore.kernel.org/linux-cxl/67ee07cd4f8ec_1c2c6294d5@dwillia2-xfh.jf.intel.com.notmuch/
-> 
-> Fabio M. De Francesco (4):
->   cxl/core: Change match_*_by_range() signatures
->   cxl/core: Add helpers to detect Low Memory Holes on x86
->   cxl/core: Enable Region creation on x86 with LMH
->   cxl/test: Simulate an x86 Low Memory Hole for tests
-> 
->  drivers/cxl/Kconfig               |   5 ++
->  drivers/cxl/core/Makefile         |   1 +
->  drivers/cxl/core/platform.c       |  86 +++++++++++++++++++
->  drivers/cxl/core/platform.h       |  32 +++++++
->  drivers/cxl/core/region.c         | 113 ++++++++++++++++--------
->  tools/testing/cxl/Kbuild          |   2 +
->  tools/testing/cxl/mock_platform.c | 137 ++++++++++++++++++++++++++++++
->  tools/testing/cxl/test/cxl.c      |  10 +++
->  tools/testing/cxl/test/mock.h     |   1 +
->  9 files changed, 352 insertions(+), 35 deletions(-)
->  create mode 100644 drivers/cxl/core/platform.c
->  create mode 100644 drivers/cxl/core/platform.h
->  create mode 100644 tools/testing/cxl/mock_platform.c
-> 
-> base-commit: acc2913692413df9d1
+>
+>
+>
+> > > /* kbdq - kernel block descriptor queue */
+> > > struct tpacket_kbdq_core {
+> > >         struct pgv      *pkbdq;
+> > >         unsigned int    feature_req_word;
+> > >         unsigned int    hdrlen;
+> > >         unsigned short  kactive_blk_num;
+> > >         unsigned short  blk_sizeof_priv;
+> > >         unsigned char   reset_pending_on_curr_blk;
+> > >
+> > >         char            *pkblk_start;
+> > >         char            *pkblk_end;
+> > >         int             kblk_size;
+> > >         unsigned int    max_frame_len;
+> > >         unsigned int    knum_blocks;
+> > >         char            *prev;
+> > >         char            *nxt_offset;
+> > >
+> > >         unsigned short  version;
+> > >
+> > >         uint64_t        knxt_seq_num;
+> > >         struct sk_buff  *skb;
+> > >
+> > >         rwlock_t        blk_fill_in_prog_lock;
+> > >
+> > >         /* timer to retire an outstanding block */
+> > >         struct hrtimer  retire_blk_timer;
+> > >
+> > >         /* Default is set to 8ms */
+> > > #define DEFAULT_PRB_RETIRE_TOV  (8)
+> > >
+> > >         ktime_t         interval_ktime;
+> > > };
+> >
+> > Could you share the result after running 'pahole --hex -C
+> > tpacket_kbdq_core vmlinux'?
+>
+> I change the struct tpacket_kbdq_core as following:
+>
+> /* kbdq - kernel block descriptor queue */
+> struct tpacket_kbdq_core {
+>         struct pgv      *pkbdq;
+>         unsigned int    feature_req_word;
+>         unsigned int    hdrlen;
+>         unsigned char   reset_pending_on_curr_blk;
+>         unsigned short  kactive_blk_num;
+>         unsigned short  blk_sizeof_priv;
+>
+>         unsigned short  version;
+>
+>         char            *pkblk_start;
+>         char            *pkblk_end;
+>         int             kblk_size;
+>         unsigned int    max_frame_len;
+>         unsigned int    knum_blocks;
+>         char            *prev;
+>         char            *nxt_offset;
+>
+>         uint64_t        knxt_seq_num;
+>         struct sk_buff  *skb;
+>
+>         rwlock_t        blk_fill_in_prog_lock;
+>
+>         /* timer to retire an outstanding block */
+>         struct hrtimer  retire_blk_timer;
+>
+>         /* Default is set to 8ms */
+> #define DEFAULT_PRB_RETIRE_TOV  (8)
+>
+>         ktime_t         interval_ktime;
+> };
+>
+>
+> pahole --hex -C tpacket_kbdq_core vmlinux
+>
+> running results:
+>
+> struct tpacket_kbdq_core {
+>         struct pgv *               pkbdq;                /*     0   0x8 *=
+/
+>         unsigned int               feature_req_word;     /*   0x8   0x4 *=
+/
+>         unsigned int               hdrlen;               /*   0xc   0x4 *=
+/
+>         unsigned char              reset_pending_on_curr_blk; /*  0x10   =
+0x1 */
+>
+>         /* XXX 1 byte hole, try to pack */
+>
+>         short unsigned int         kactive_blk_num;      /*  0x12   0x2 *=
+/
+>         short unsigned int         blk_sizeof_priv;      /*  0x14   0x2 *=
+/
+>         short unsigned int         version;              /*  0x16   0x2 *=
+/
+>         char *                     pkblk_start;          /*  0x18   0x8 *=
+/
+>         char *                     pkblk_end;            /*  0x20   0x8 *=
+/
+>         int                        kblk_size;            /*  0x28   0x4 *=
+/
+>         unsigned int               max_frame_len;        /*  0x2c   0x4 *=
+/
+>         unsigned int               knum_blocks;          /*  0x30   0x4 *=
+/
+>
+>         /* XXX 4 bytes hole, try to pack */
+>
+>         char *                     prev;                 /*  0x38   0x8 *=
+/
+>         /* --- cacheline 1 boundary (64 bytes) --- */
+>         char *                     nxt_offset;           /*  0x40   0x8 *=
+/
+>         uint64_t                   knxt_seq_num;         /*  0x48   0x8 *=
+/
+>         struct sk_buff *           skb;                  /*  0x50   0x8 *=
+/
+>         rwlock_t                   blk_fill_in_prog_lock; /*  0x58  0x30 =
+*/
+>         /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
+>         struct hrtimer             retire_blk_timer __attribute__((__alig=
+ned__(8))); /*  0x88  0x40 */
+>
+>         /* XXX last struct has 4 bytes of padding */
+>
+>         /* --- cacheline 3 boundary (192 bytes) was 8 bytes ago --- */
+>         ktime_t                    interval_ktime;       /*  0xc8   0x8 *=
+/
+>
+>         /* size: 208, cachelines: 4, members: 19 */
+>         /* sum members: 203, holes: 2, sum holes: 5 */
+>         /* paddings: 1, sum paddings: 4 */
+>         /* forced alignments: 1 */
+>         /* last cacheline: 16 bytes */
+> } __attribute__((__aligned__(8)));
 
-The series doesn't seem to apply to this base commit. 
-> 
+How about this one? The 'size' would be shrinked to168 and the 'sum
+holes' remains 5.
+# pahole --hex -C tpacket_kbdq_core vmlinux
+struct tpacket_kbdq_core {
+        struct pgv *               pkbdq;                /*     0   0x8 */
+        unsigned int               feature_req_word;     /*   0x8   0x4 */
+        unsigned int               hdrlen;               /*   0xc   0x4 */
+        short unsigned int         kactive_blk_num;      /*  0x10   0x2 */
+        short unsigned int         blk_sizeof_priv;      /*  0x12   0x2 */
+        short unsigned int         version;              /*  0x14   0x2 */
+        unsigned char              reset_pending_on_curr_blk; /*  0x16   0x=
+1 */
 
+        /* XXX 1 byte hole, try to pack */
+
+        char *                     pkblk_start;          /*  0x18   0x8 */
+        char *                     pkblk_end;            /*  0x20   0x8 */
+        int                        kblk_size;            /*  0x28   0x4 */
+        unsigned int               max_frame_len;        /*  0x2c   0x4 */
+        unsigned int               knum_blocks;          /*  0x30   0x4 */
+
+        /* XXX 4 bytes hole, try to pack */
+
+        uint64_t                   knxt_seq_num;         /*  0x38   0x8 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        char *                     prev;                 /*  0x40   0x8 */
+        char *                     nxt_offset;           /*  0x48   0x8 */
+        struct sk_buff *           skb;                  /*  0x50   0x8 */
+        rwlock_t                   blk_fill_in_prog_lock; /*  0x58   0x8 */
+        ktime_t                    interval_ktime;       /*  0x60   0x8 */
+        struct hrtimer             retire_blk_timer
+__attribute__((__aligned__(8))); /*  0x68  0x40 */
+
+        /* XXX last struct has 4 bytes of padding */
+
+        /* size: 168, cachelines: 3, members: 19 */
+        /* sum members: 163, holes: 2, sum holes: 5 */
+        /* paddings: 1, sum paddings: 4 */
+        /* forced alignments: 1 */
+        /* last cacheline: 40 bytes */
+} __attribute__((__aligned__(8)));
+
+I didn't want a more aggressive adjustment around the remaining holes.
+At least, the current statistics show a better result than before :)
+
+Thanks,
+Jason
+
+>
+> Thanks
+> Xin Zhao
+>
 
