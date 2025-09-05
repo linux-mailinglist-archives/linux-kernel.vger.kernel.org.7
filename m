@@ -1,209 +1,402 @@
-Return-Path: <linux-kernel+bounces-803791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB83B46550
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3D2B46557
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176C07BB846
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA151CC64F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5242F1FE5;
-	Fri,  5 Sep 2025 21:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4C2E9ED4;
+	Fri,  5 Sep 2025 21:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QEqt2BR6"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QXK26/QP"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26722F0683
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E721767C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757106940; cv=none; b=oVtXeFt+yXPDvCkGpbclIQgqpkyvfA/aa/Wp482b1qSpXspbSxgA/u+OuSLB07sm0WKN14o+2hMI/YfVqxr+l5ahgMicX7DZOWXhA8f8jTDN5SlbdR8yWxKjhZSk05A1Aivskd5HRDu+Z+7nDvtMH8EnJy+tKIJmFHGnkXEXgSg=
+	t=1757106981; cv=none; b=M2PKtRmj1GwqX8J9//5ptIkKsk7rPLtiBqCBvsnPOR2+cDbx3sysMKzkkThsiAASIYh5YS1TJBNL0oZlicLZpV3alBhql+xG1U/XIgA+w3guk7Hgar4OJj6ofpybLxYAD59hDRLnLDukzzbONiZ9Oj1O9q0W8376+I8kIrRTK2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757106940; c=relaxed/simple;
-	bh=ZbpTJpgq5eLZVl33raMdiFnvHNLuPpzwtxq8hWiMSh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0UqIkSUKWa4PjkgjskaGOb4CmZimzoNgCOvvp15D6LTroojd2+EdikZV2SbOX/1O/iS4zsllrO7IlbErd1zC7/H4WU72RzMu8Kw1R5/v1lL3T0XvXzeO/ZcoGrw0InsWcrQ6D/c1V76SMtr2bgM//G72gXhSp8EmD2LPCzBhzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QEqt2BR6; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b042eb09948so477009866b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1757106936; x=1757711736; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
-        b=QEqt2BR6/Y+P4loZL4Fxi4YgPMVPzPDPExdrMSbcCzjV+Li2LxmIWA1JRN9IRDDJ3H
-         STy7JFQnEmUgSpb6aa2g/JsGfyA+Abu1gFOLAnb9qTqmC0wJi7zXrxCj4MEaEiuMyeTJ
-         +xNSOUFn0lS4VoaDn0mLoju+Vrd5z1M0ouuJBTk8l+Z/BsVL43/1SPld+0M+CsMky1jl
-         8G2efjJGK6WylmPdsVcWlk6Zk/GmB84lhOpKw4OBd1nxE6Wl+9d7JZ2tN+S0ma06Phei
-         M/LgcdA/srbQm4l+tgGs6F0CvoKSjsCGC0o5yDwLI30hCoBCJ33HrgoWFhuzFSAxjszd
-         ouEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757106936; x=1757711736;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
-        b=DIPML7fxLETK2EnvwewaB+Ah/dBDG/1LC2ushtObtyFjyku8klQqvgGrDuPesJqlBQ
-         p+QwL2HRzqa8CBjIsf71Ik68xCUNQoHn758ILbCFddGJa2Omuf9mE2u7Kx6VUAr9eO41
-         6Gb5Hwwbhgilk8unSObGJzbw6pnuRYAYHJVd/pp9vanbpNog8HSFeYklLyBwc34HOzrz
-         zULZf63znyS3khyzpG6TX8y+g1uBwhPkLbX4kr4VIMPejzGBPJhRh3NeTw1O/2drXvez
-         YYt4MqcTWORIkn+W77LAg/wHIVwh8l41Onk4sbr0pjeBgV2ioWFcpejdMlgQMLksOLP8
-         g7LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyalmr5OsBQekZtxNpjuotZhRYj8pKViyYSksGXXD/hoAhNfs217UJm4lcsIuqYsNPtjXn9PF6kowPSNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw47iVWMgSHeDdK90UntYP8OxztLfY2mXu9Nnh2mwF5Q+hb0VHQ
-	fSxukI3tPXxopSwX169ivsS0fIXZt+APzli9ULRQ4T6Eefq513Y/XMA8jIB7+NvdCGg=
-X-Gm-Gg: ASbGncvR+NhOyVqkFrTgsMHG7PO2MJOdjA2qeoaxDoNg3i0ST4tQRlt8spEjjNd513j
-	cHTkSqKtWFhU4EsITRA3HOTbKRaWVCu061U3Y1g59LieAwOu52KcpsLsM03b8NroBlmUTdaC6Ek
-	0SBwcjA+5hqsGhmBvzi4cgAjSWsR1R+QT1Rv3Qusa5suOwd/rInsnGWOmrOvsx56fiUL5D1aKNo
-	DQlAkNAqYaQAbXxFI4FnHrUjC5VC/nCgIAd3sTmtnJjI97h1eRvsFPgCFnSEdxm6sPZjc0RN+hJ
-	02pEJEef+bgumuQOcWbJoPiUwRRTGZ3/I2IsWb5s8oCO8+582aRf0+RGPJELLG6FUC/hcKaI/cw
-	b4zcieGq4YjSz0dRvCPSbrC/cFcEnq618ANvy5jDcmdUbd9lFX0MzO1nqzyGsMX0eZth7Q9I06o
-	bwlVUF3GMoCZT0ekgQgy10vm/mwBVKlVKJTcY6QQFMw1oS
-X-Google-Smtp-Source: AGHT+IEI0UMFbxLDbFHi93Xgr79JgLgv6e0CgFXtb2r6z2caSDYapP71MxTt7L0Jmccte/7ICI7YVw==
-X-Received: by 2002:a17:907:3c92:b0:b04:1249:2b24 with SMTP id a640c23a62f3a-b04b1696062mr15691166b.37.1757106936248;
-        Fri, 05 Sep 2025 14:15:36 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f356800023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f35:6800:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047373afcesm604498166b.57.2025.09.05.14.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 14:15:35 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: slava.dubeyko@ibm.com,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
-	amarkuze@redhat.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] fs/ceph/dir: fix `i_nlink` underrun during async unlink
-Date: Fri,  5 Sep 2025 23:15:30 +0200
-Message-ID: <20250905211530.43296-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1757106981; c=relaxed/simple;
+	bh=dIZMKFDdNvRW0s3RO9rsfJN/k3BRl4vLKhdhqj4c0tQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kFHx8fkn8u2GfhdDVWH4XV6zfwJ9/QBveCfQIDB8MNHrGEnJWC5YCLur4ocUh5FRxv3zj2nU0v4us27gd5+EV5rP6zOvM5F7ycUdp3AL4R3RI5d6cKCI79nCY3f+8jPFh/l7H2xieVXv8rHQ7NoyJRki0pxBz6qmi8ZRYmc2Rfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QXK26/QP; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 894D4C6B3A0;
+	Fri,  5 Sep 2025 21:16:02 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D6ED76060B;
+	Fri,  5 Sep 2025 21:16:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B4E33102F1C32;
+	Fri,  5 Sep 2025 23:16:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757106976; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=sjXsVs41POn3zl7mwth27KGLe7I+5IAV0bpWcFgzeL4=;
+	b=QXK26/QP3qKkfw4bP0mFfzVTFiOFmWATrTck6pTLkX4Wh7cihUVKpdpIANAOZ55uY04NA9
+	yuhyAzakVqT2Sf1XNc9FoTuSIMpmGd/R03MucpPf/bhYaUdWemy118zoDLFkxJO+eJMG7u
+	vQ+6MX4z7MDQiBHgPVslO7g1+3QMyoAYqHht03zZmB+LufOO5HYHOovkd873HEgcY2pYjs
+	B7EIA0m9ecu7EF4ZPH5neIqCrjW6rQn8+A+M/MD1R86UfU0MdtTubGhjomymjvQSDnTp1Y
+	5bcytPUG6Y+cAzMlMDUPlXlfDuxe5BxgusSI0YZ0wPiAt47MdR8Lm0eCMpckkA==
+Message-ID: <ae4641e1-c696-44ef-a127-4ff3f0951ce3@bootlin.com>
+Date: Fri, 5 Sep 2025 23:16:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 16/58] dyndbg-API: remove
+ DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+ jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org,
+ robdclark@gmail.com, groeck@google.com, yanivt@google.com,
+ bleung@google.com, quic_saipraka@quicinc.com, will@kernel.org,
+ catalin.marinas@arm.com, quic_psodagud@quicinc.com, maz@kernel.org,
+ arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, mingo@redhat.com
+References: <20250803035816.603405-1-jim.cromie@gmail.com>
+ <20250803035816.603405-17-jim.cromie@gmail.com>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250803035816.603405-17-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-During async unlink, we drop the `i_nlink` counter before we receive
-the completion (that will eventually update the `i_nlink`) because "we
-assume that the unlink will succeed".  That is not a bad idea, but it
-races against deletions by other clients (or against the completion of
-our own unlink) and can lead to an underrun which emits a WARNING like
-this one:
 
- WARNING: CPU: 85 PID: 25093 at fs/inode.c:407 drop_nlink+0x50/0x68
- Modules linked in:
- CPU: 85 UID: 3221252029 PID: 25093 Comm: php-cgi8.1 Not tainted 6.14.11-cm4all1-ampere #655
- Hardware name: Supermicro ARS-110M-NR/R12SPD-A, BIOS 1.1b 10/17/2023
- pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : drop_nlink+0x50/0x68
- lr : ceph_unlink+0x6c4/0x720
- sp : ffff80012173bc90
- x29: ffff80012173bc90 x28: ffff086d0a45aaf8 x27: ffff0871d0eb5680
- x26: ffff087f2a64a718 x25: 0000020000000180 x24: 0000000061c88647
- x23: 0000000000000002 x22: ffff07ff9236d800 x21: 0000000000001203
- x20: ffff07ff9237b000 x19: ffff088b8296afc0 x18: 00000000f3c93365
- x17: 0000000000070000 x16: ffff08faffcbdfe8 x15: ffff08faffcbdfec
- x14: 0000000000000000 x13: 45445f65645f3037 x12: 34385f6369706f74
- x11: 0000a2653104bb20 x10: ffffd85f26d73290 x9 : ffffd85f25664f94
- x8 : 00000000000000c0 x7 : 0000000000000000 x6 : 0000000000000002
- x5 : 0000000000000081 x4 : 0000000000000481 x3 : 0000000000000000
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff08727d3f91e8
- Call trace:
-  drop_nlink+0x50/0x68 (P)
-  vfs_unlink+0xb0/0x2e8
-  do_unlinkat+0x204/0x288
-  __arm64_sys_unlinkat+0x3c/0x80
-  invoke_syscall.constprop.0+0x54/0xe8
-  do_el0_svc+0xa4/0xc8
-  el0_svc+0x18/0x58
-  el0t_64_sync_handler+0x104/0x130
-  el0t_64_sync+0x154/0x158
 
-In ceph_unlink(), a call to ceph_mdsc_submit_request() submits the
-CEPH_MDS_OP_UNLINK to the MDS, but does not wait for completion.
+Le 03/08/2025 à 05:57, Jim Cromie a écrit :
+> Remove the DD_CLASS_TYPE_*_NAMES classmap types and code.
+> 
+> These 2 classmap types accept class names at the PARAM interface, for
+> example:
+> 
+>    echo +DRM_UT_CORE,-DRM_UT_KMS > /sys/module/drm/parameters/debug_names
+> 
+> The code works, but its only used by test-dynamic-debug, and wasn't
+> asked for by anyone else, so reduce LOC & test-surface; simplify things.
+> 
+> Also rename enum class_map_type to enum ddebug_class_map_type.
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-Meanwhile, between this call and the following drop_nlink() call, a
-worker thread may process a CEPH_CAP_OP_IMPORT, CEPH_CAP_OP_GRANT or
-just a CEPH_MSG_CLIENT_REPLY (the latter of which could be our own
-completion).  These will lead to a set_nlink() call, updating the
-`i_nlink` counter to the value received from the MDS.  If that new
-`i_nlink` value happens to be zero, it is illegal to decrement it
-further.  But that is exactly what ceph_unlink() will do then.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-The WARNING can be reproduced this way:
+> ---
+>   include/linux/dynamic_debug.h |  23 ++------
+>   lib/dynamic_debug.c           | 102 +++-------------------------------
+>   lib/test_dynamic_debug.c      |  26 ---------
+>   3 files changed, 14 insertions(+), 137 deletions(-)
+> 
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index f4d1d08cd5a7c..769f02456c8e0 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -58,27 +58,16 @@ struct _ddebug {
+>   #endif
+>   } __attribute__((aligned(8)));
+>   
+> -enum class_map_type {
+> +enum ddebug_class_map_type {
+>   	DD_CLASS_TYPE_DISJOINT_BITS,
+>   	/**
+> -	 * DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, one per bit.
+> -	 * expecting hex input. Built for drm.debug, basis for other types.
+> +	 * DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, mapped to bits[0..N].
+> +	 * Expects hex input. Built for drm.debug, basis for other types.
+>   	 */
+>   	DD_CLASS_TYPE_LEVEL_NUM,
+>   	/**
+> -	 * DD_CLASS_TYPE_LEVEL_NUM: input is numeric level, 0-N.
+> -	 * N turns on just bits N-1 .. 0, so N=0 turns all bits off.
+> -	 */
+> -	DD_CLASS_TYPE_DISJOINT_NAMES,
+> -	/**
+> -	 * DD_CLASS_TYPE_DISJOINT_NAMES: input is a CSV of [+-]CLASS_NAMES,
+> -	 * classes are independent, like _DISJOINT_BITS.
+> -	 */
+> -	DD_CLASS_TYPE_LEVEL_NAMES,
+> -	/**
+> -	 * DD_CLASS_TYPE_LEVEL_NAMES: input is a CSV of [+-]CLASS_NAMES,
+> -	 * intended for names like: INFO,DEBUG,TRACE, with a module prefix
+> -	 * avoid EMERG,ALERT,CRIT,ERR,WARNING: they're not debug
+> +	 * DD_CLASS_TYPE_LEVEL_NUM: input is numeric level, 0..N.
+> +	 * Input N turns on bits 0..N-1
+>   	 */
+>   };
+>   
+> @@ -88,7 +77,7 @@ struct _ddebug_class_map {
+>   	const char **class_names;
+>   	const int length;
+>   	const int base;		/* index of 1st .class_id, allows split/shared space */
+> -	enum class_map_type map_type;
+> +	enum ddebug_class_map_type map_type;
+>   };
+>   
+>   /**
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 09f19155d7f02..2cd28a64578dd 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -646,76 +646,6 @@ static int ddebug_apply_class_bitmap(const struct _ddebug_class_param *dcp,
+>   
+>   #define CLASSMAP_BITMASK(width) ((1UL << (width)) - 1)
+>   
+> -/* accept comma-separated-list of [+-] classnames */
+> -static int param_set_dyndbg_classnames(const char *instr, const struct kernel_param *kp)
+> -{
+> -	const struct _ddebug_class_param *dcp = kp->arg;
+> -	const struct _ddebug_class_map *map = dcp->map;
+> -	unsigned long curr_bits, old_bits;
+> -	char *cl_str, *p, *tmp;
+> -	int cls_id, totct = 0;
+> -	bool wanted;
+> -
+> -	cl_str = tmp = kstrdup_and_replace(instr, '\n', '\0', GFP_KERNEL);
+> -	if (!tmp)
+> -		return -ENOMEM;
+> -
+> -	/* start with previously set state-bits, then modify */
+> -	curr_bits = old_bits = *dcp->bits;
+> -	vpr_info("\"%s\" > %s:0x%lx\n", cl_str, KP_NAME(kp), curr_bits);
+> -
+> -	for (; cl_str; cl_str = p) {
+> -		p = strchr(cl_str, ',');
+> -		if (p)
+> -			*p++ = '\0';
+> -
+> -		if (*cl_str == '-') {
+> -			wanted = false;
+> -			cl_str++;
+> -		} else {
+> -			wanted = true;
+> -			if (*cl_str == '+')
+> -				cl_str++;
+> -		}
+> -		cls_id = match_string(map->class_names, map->length, cl_str);
+> -		if (cls_id < 0) {
+> -			pr_err("%s unknown to %s\n", cl_str, KP_NAME(kp));
+> -			continue;
+> -		}
+> -
+> -		/* have one or more valid class_ids of one *_NAMES type */
+> -		switch (map->map_type) {
+> -		case DD_CLASS_TYPE_DISJOINT_NAMES:
+> -			/* the +/- pertains to a single bit */
+> -			if (test_bit(cls_id, &curr_bits) == wanted) {
+> -				v3pr_info("no change on %s\n", cl_str);
+> -				continue;
+> -			}
+> -			curr_bits ^= BIT(cls_id);
+> -			totct += ddebug_apply_class_bitmap(dcp, &curr_bits, *dcp->bits, NULL);
+> -			*dcp->bits = curr_bits;
+> -			v2pr_info("%s: changed bit %d:%s\n", KP_NAME(kp), cls_id,
+> -				  map->class_names[cls_id]);
+> -			break;
+> -		case DD_CLASS_TYPE_LEVEL_NAMES:
+> -			/* cls_id = N in 0..max. wanted +/- determines N or N-1 */
+> -			old_bits = CLASSMAP_BITMASK(*dcp->lvl);
+> -			curr_bits = CLASSMAP_BITMASK(cls_id + (wanted ? 1 : 0 ));
+> -
+> -			totct += ddebug_apply_class_bitmap(dcp, &curr_bits, old_bits, NULL);
+> -			*dcp->lvl = (cls_id + (wanted ? 1 : 0));
+> -			v2pr_info("%s: changed bit-%d: \"%s\" %lx->%lx\n", KP_NAME(kp), cls_id,
+> -				  map->class_names[cls_id], old_bits, curr_bits);
+> -			break;
+> -		default:
+> -			pr_err("illegal map-type value %d\n", map->map_type);
+> -		}
+> -	}
+> -	kfree(tmp);
+> -	vpr_info("total matches: %d\n", totct);
+> -	return 0;
+> -}
+> -
+>   static int param_set_dyndbg_module_classes(const char *instr,
+>   					   const struct kernel_param *kp,
+>   					   const char *mod_name)
+> @@ -724,29 +654,17 @@ static int param_set_dyndbg_module_classes(const char *instr,
+>   	const struct _ddebug_class_map *map = dcp->map;
+>   	unsigned long inrep, new_bits, old_bits;
+>   	int rc, totct = 0;
+> -
+> -	switch (map->map_type) {
+> -
+> -	case DD_CLASS_TYPE_DISJOINT_NAMES:
+> -	case DD_CLASS_TYPE_LEVEL_NAMES:
+> -		/* handle [+-]classnames list separately, we are done here */
+> -		return param_set_dyndbg_classnames(instr, kp);
+> -
+> -	case DD_CLASS_TYPE_DISJOINT_BITS:
+> -	case DD_CLASS_TYPE_LEVEL_NUM:
+> -		/* numeric input, accept and fall-thru */
+> -		rc = kstrtoul(instr, 0, &inrep);
+> -		if (rc) {
+> -			pr_err("expecting numeric input: %s > %s\n", instr, KP_NAME(kp));
+> -			return -EINVAL;
+> -		}
+> -		break;
+> -	default:
+> -		pr_err("%s: bad map type: %d\n", KP_NAME(kp), map->map_type);
+> +	char *nl;
+> +
+> +	rc = kstrtoul(instr, 0, &inrep);
+> +	if (rc) {
+> +		nl = strchr(instr, '\n');
+> +		if (nl)
+> +			*nl = '\0';
+> +		pr_err("expecting numeric input, not: %s > %s\n", instr, KP_NAME(kp));
+>   		return -EINVAL;
+>   	}
+>   
+> -	/* only _BITS,_NUM (numeric) map-types get here */
+>   	switch (map->map_type) {
+>   	case DD_CLASS_TYPE_DISJOINT_BITS:
+>   		/* expect bits. mask and warn if too many */
+> @@ -812,12 +730,8 @@ int param_get_dyndbg_classes(char *buffer, const struct kernel_param *kp)
+>   	const struct _ddebug_class_map *map = dcp->map;
+>   
+>   	switch (map->map_type) {
+> -
+> -	case DD_CLASS_TYPE_DISJOINT_NAMES:
+>   	case DD_CLASS_TYPE_DISJOINT_BITS:
+>   		return scnprintf(buffer, PAGE_SIZE, "0x%lx\n", *dcp->bits);
+> -
+> -	case DD_CLASS_TYPE_LEVEL_NAMES:
+>   	case DD_CLASS_TYPE_LEVEL_NUM:
+>   		return scnprintf(buffer, PAGE_SIZE, "%ld\n", *dcp->lvl);
+>   	default:
+> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> index 8434f70b51bb3..9c3e53cd26bd8 100644
+> --- a/lib/test_dynamic_debug.c
+> +++ b/lib/test_dynamic_debug.c
+> @@ -74,13 +74,6 @@ DECLARE_DYNDBG_CLASSMAP(map_disjoint_bits, DD_CLASS_TYPE_DISJOINT_BITS, 0,
+>   DD_SYS_WRAP(disjoint_bits, p);
+>   DD_SYS_WRAP(disjoint_bits, T);
+>   
+> -/* symbolic input, independent bits */
+> -enum cat_disjoint_names { LOW = 10, MID, HI };
+> -DECLARE_DYNDBG_CLASSMAP(map_disjoint_names, DD_CLASS_TYPE_DISJOINT_NAMES, 10,
+> -			"LOW", "MID", "HI");
+> -DD_SYS_WRAP(disjoint_names, p);
+> -DD_SYS_WRAP(disjoint_names, T);
+> -
+>   /* numeric verbosity, V2 > V1 related */
+>   enum cat_level_num { V0 = 14, V1, V2, V3, V4, V5, V6, V7 };
+>   DECLARE_DYNDBG_CLASSMAP(map_level_num, DD_CLASS_TYPE_LEVEL_NUM, 14,
+> @@ -88,13 +81,6 @@ DECLARE_DYNDBG_CLASSMAP(map_level_num, DD_CLASS_TYPE_LEVEL_NUM, 14,
+>   DD_SYS_WRAP(level_num, p);
+>   DD_SYS_WRAP(level_num, T);
+>   
+> -/* symbolic verbosity */
+> -enum cat_level_names { L0 = 22, L1, L2, L3, L4, L5, L6, L7 };
+> -DECLARE_DYNDBG_CLASSMAP(map_level_names, DD_CLASS_TYPE_LEVEL_NAMES, 22,
+> -			"L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7");
+> -DD_SYS_WRAP(level_names, p);
+> -DD_SYS_WRAP(level_names, T);
+> -
+>   /* stand-in for all pr_debug etc */
+>   #define prdbg(SYM) __pr_debug_cls(SYM, #SYM " msg\n")
+>   
+> @@ -102,10 +88,6 @@ static void do_cats(void)
+>   {
+>   	pr_debug("doing categories\n");
+>   
+> -	prdbg(LOW);
+> -	prdbg(MID);
+> -	prdbg(HI);
+> -
+>   	prdbg(D2_CORE);
+>   	prdbg(D2_DRIVER);
+>   	prdbg(D2_KMS);
+> @@ -129,14 +111,6 @@ static void do_levels(void)
+>   	prdbg(V5);
+>   	prdbg(V6);
+>   	prdbg(V7);
+> -
+> -	prdbg(L1);
+> -	prdbg(L2);
+> -	prdbg(L3);
+> -	prdbg(L4);
+> -	prdbg(L5);
+> -	prdbg(L6);
+> -	prdbg(L7);
+>   }
+>   
+>   static void do_prints(void)
 
-1. Force async unlink; only the async code path is affected.  Having
-   no real clue about Ceph internals, I was unable to find out why the
-   MDS wouldn't give me the "Fxr" capabilities, so I patched
-   get_caps_for_async_unlink() to always succeed.
-
-   (Note that the WARNING dump above was found on an unpatched kernel,
-   without this kludge - this is not a theoretical bug.)
-
-2. Add a sleep call after ceph_mdsc_submit_request() so the unlink
-   completion gets handled by a worker thread before drop_nlink() is
-   called.  This guarantees that the `i_nlink` is already zero before
-   drop_nlink() runs.
-
-The solution is to skip the counter decrement when it is already zero,
-but doing so without a lock is still racy (TOCTOU).  Since
-ceph_fill_inode() and handle_cap_grant() both hold the
-`ceph_inode_info.i_ceph_lock` spinlock while set_nlink() runs, this
-seems like the proper lock to protect the `i_nlink` updates.
-
-I found prior art in NFS and SMB (using `inode.i_lock`) and AFS (using
-`afs_vnode.cb_lock`).  All three have the zero check as well.
-
-Fixes: 2ccb45462aea ("ceph: perform asynchronous unlink if we have sufficient caps")
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/dir.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 8478e7e75df6..67f04e23f78a 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1341,6 +1341,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 	struct ceph_client *cl = fsc->client;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	struct inode *inode = d_inode(dentry);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_request *req;
- 	bool try_async = ceph_test_mount_opt(fsc, ASYNC_DIROPS);
- 	struct dentry *dn;
-@@ -1427,7 +1428,19 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 			 * We have enough caps, so we assume that the unlink
- 			 * will succeed. Fix up the target inode and dcache.
- 			 */
--			drop_nlink(inode);
-+
-+			/*
-+			 * Protect the i_nlink update with i_ceph_lock
-+			 * to precent racing against ceph_fill_inode()
-+			 * handling our completion on a worker thread
-+			 * and don't decrement if i_nlink has already
-+			 * been updated to zero by this completion.
-+			 */
-+			spin_lock(&ci->i_ceph_lock);
-+			if (inode->i_nlink > 0)
-+				drop_nlink(inode);
-+			spin_unlock(&ci->i_ceph_lock);
-+
- 			d_delete(dentry);
- 		} else {
- 			spin_lock(&fsc->async_unlink_conflict_lock);
 -- 
-2.47.2
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
