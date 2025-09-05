@@ -1,76 +1,58 @@
-Return-Path: <linux-kernel+bounces-803036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B543B459B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91573B459B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587DB7BD82A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AE73B566A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8844F35E4EF;
-	Fri,  5 Sep 2025 13:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A97935E4D2;
+	Fri,  5 Sep 2025 13:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NWVuXeMQ"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="przlC0vI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BD635E4EB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0031035CED7;
+	Fri,  5 Sep 2025 13:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080504; cv=none; b=Bwq4xSlggyIeiwWaWH7e1sCU5I2WFHOU6TuFEbPFGGAv1RSIoBrw3AJ+gFAsFmf4iB+tXpiaebdv2MSb5EO8P3XzZs7Ejw5r0OXVgTvYzcGkH4NOE4fXKWtg8/eJWmIhQ7EEcj67A+3yClrtYuRVBrVZlVDs4JlRaT2IbUP3zhg=
+	t=1757080489; cv=none; b=fmLk1oancpWGHvtaEs/ImmNCgJoBmMBE5FvegwM6SnOzTLcEOzVh+3JlDOkg4H34pCarNW9G7Zgfr8ZJC4OVFs6ce37aQO18Pk2eGExbcUuA4WzFk4DRrWNEzCokncttOdRjk5L06hPYMAO8CamddxwldRzenEeq1AHhrD8lito=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080504; c=relaxed/simple;
-	bh=UCiGATb/qHq9xnqHinm4V+YkHiCr4MxapKsdsK8p3/M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nojwOXZmRvQ2SyGoJ34WJNChjWG5FoZfXf7zeKcnYI5BGeWAU6ql7b6r58+qWSXFbyPm0fbjcyjPvfsm6bp4Pv6XyMHu4OTJVUqBWmYDvIo2BKRxyCvLjo6LL1ikeDrmcYDWDjl9HyZjDA2DvvR5FbT7tT648pI12dE+adMeObM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NWVuXeMQ; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A97BD1A0DD7;
-	Fri,  5 Sep 2025 13:54:59 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F8E56060B;
-	Fri,  5 Sep 2025 13:54:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 603E7102F27F9;
-	Fri,  5 Sep 2025 15:54:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757080498; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wXuDvE2U7zArCNiE29U7rGYQ6gNdC7m1Plskv1PwsfQ=;
-	b=NWVuXeMQs40iG/K4xjae3frw9k+oo7GG4MkGDvrQaYSWA2HZsBGfgpCmlLE8+sJ76pBcb9
-	AfkX2KpluWe1Swv+rn3dFYmoRrK3MYGznIxlAVhUBSL9Xz5lH1qDMdT1ECWe8YS9dP22Dl
-	57ssoT1BiGT3s5A0gCd6hpm5HKUVK18DkNA/g3mJ+HOqilN7Vu2aN280IIMCNLuuOJ/jEj
-	iy3Z/d8fBf0tQhAqzpMjXuQIJxIADAJsQkvNm7gNVKlxuvk8aWQHX3ifL+SZal3Fkf8a0Z
-	v3ey4D0uKndOz5kgGQFMdK34MSjVuiX+BZChzKhinyLAwjQuVjRpyRFLJFPwsw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev
-In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-Subject: Re: (subset) [PATCH v2 0/9] drm/bridge: get/put the bridge when
- looping over the encoder chain
-Message-Id: <175708046120.649333.5235747071021830726.b4-ty@bootlin.com>
-Date: Fri, 05 Sep 2025 15:54:21 +0200
+	s=arc-20240116; t=1757080489; c=relaxed/simple;
+	bh=J+R0vAgYI1pVH3pG4Eny88JJuYWH64ZFWRsxIrhwP4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c1iPS4yxnAzORo8uO0jpQ3Wmk9V5j7+1+6dfjsVkexT95vj+l1/viA9VYdN/hkpiMQwrMk4n6gLiz7jTylykCaHspni6Tg0us5LrNao7DFnLM+yn49/zGny708Zrxr0LFOG2gxDAF4TBpLWMko8gIpak/PX6z17Ye2AXOFooaVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=przlC0vI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD04C4CEF1;
+	Fri,  5 Sep 2025 13:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757080488;
+	bh=J+R0vAgYI1pVH3pG4Eny88JJuYWH64ZFWRsxIrhwP4o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=przlC0vIer93IgncZtpS+r2yF9Kb1+MEL6SNzrxv/BYbtJDMtF2O7Qk/ULpHGwmDd
+	 uvNxnm0K7azcWFlN0DBIv8CpS7oCBBc0bVolASgUsfhyzA5UVmiH8RknDygSmcJRhE
+	 8Y+oCdVFzbhbdPiDtg6lmpAv6oqwShOX/ry4GKtIs8wsUQ45FL0Tha4hz1es/snm9j
+	 NFuwKpgMtdHdPBfSL8noNJIvl2gIc6Jka+RCdTkBQ++veL7dHO53cAczbubDYsIUh5
+	 AOKzOLz1PCJi9QsUrDzN2pIW66kHxr9v9TQl/CeRJB1j0ZIwIcSUpDtSxj2IvzNF+6
+	 oncIVv940NIJw==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH] filelock: add FL_RECLAIM to show_fl_flags() macro
+Date: Fri,  5 Sep 2025 15:54:37 +0200
+Message-ID: <20250905-zeitweilig-klebt-bba897e58a0a@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250903-filelock-v1-1-f2926902962d@kernel.org>
+References: <20250903-filelock-v1-1-f2926902962d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,28 +60,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=897; i=brauner@kernel.org; h=from:subject:message-id; bh=J+R0vAgYI1pVH3pG4Eny88JJuYWH64ZFWRsxIrhwP4o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTser1EpZzd9mhNzbmwFNUzgf5nQnbP/bREVkm9u7lm+ rNnrAX9HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOJes/wV6rPzS1UscWuduo6 xoMr7MXObGb5stHy8+fHZ4o4NmQKPWP4K32RccIb72nTJiTaLtet3zpVYWHTnTltYm8mTj6zTCJ Plg0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-
-On Fri, 08 Aug 2025 16:49:07 +0200, Luca Ceresoli wrote:
-> This series adds drm_bridge_get/put() calls for DRM bridges used when
-> looping over bridges in an encoder chain.
+On Wed, 03 Sep 2025 11:23:33 -0400, Jeff Layton wrote:
+> Show the FL_RECLAIM flag symbolically in tracepoints.
 > 
-> This is part of the work towards removal of bridges from a still existing
-> DRM pipeline without use-after-free. The grand plan was discussed in [1].
-> Here's the work breakdown (➜ marks the current series):
 > 
-> [...]
 
-Applied, thanks!
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-[2/9] drm/display: bridge-connector: remove unused variable assignment
-      commit: 9e05c8dc4e8bb14bdb86eccff1d07169cfd69df8
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] filelock: add FL_RECLAIM to show_fl_flags() macro
+      https://git.kernel.org/vfs/vfs/c/c593b9d6c446
 
