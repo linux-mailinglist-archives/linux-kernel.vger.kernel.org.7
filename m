@@ -1,39 +1,63 @@
-Return-Path: <linux-kernel+bounces-802153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E7FB44E3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:50:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A051B44E40
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93CB97BB45A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30C01C226AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDD92D0C94;
-	Fri,  5 Sep 2025 06:50:03 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962C023B605;
-	Fri,  5 Sep 2025 06:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FA52D2483;
+	Fri,  5 Sep 2025 06:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JnMqhJtQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08891D9663
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055003; cv=none; b=h4BJKXYY32DWGOSiNTYwzBgyejfnZle24//40ANNe85HYn7n0ysLxO69Uxy29eqK2PTOc5y2wCXNmiGU/2aeusxd/k8ry2LYlpW3Mf+QjT2+YrivQVk/dLIMuqt7xPRJXhh0IKx6LZnP332lyQm2XJ7rdSwrKvxlRCEImX2b5Yg=
+	t=1757055029; cv=none; b=tXHd6DwOpOseKlmTWfAK5pH6jH2i9Me2ENCj/uQOBITesizxrZT7rr1npJ4wJI/zbr+3LXok4+VhzEdyTerLkOWU5ElR/ZJUVyS9LQmrcNbiAhVi5b4JeJmPfyz/TbYVxnpbdOFB7rdiTjlJ+T5wfFFU7zRFgYr9Vz+L6lxAtR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055003; c=relaxed/simple;
-	bh=V1cbCu4EQV8urxLhTiYKFn+wwpdWhCVDC8bBsrk+pLc=;
+	s=arc-20240116; t=1757055029; c=relaxed/simple;
+	bh=Y3vaYaLxaSBtwlXphX5LeCK51R2e4El29Banad48jA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBeIDLNi6cz5haBd0Klu2kbqFfLdxs6b2KZaopfA4RG4xG/wmcKgglArGhtLLXPtGumujQHfG+jrO5xQ6o/vAb6fgOfMHL12pk0ug0n7bUvYDN+FycMZEp5YL2D97MKg1Jdz4fpYSxwzREsUN/pS5Pl7/YmDERos+ZLFXYj0sXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [124.127.223.97])
-	by gateway (Coremail) with SMTP id _____8Bxnr8UiLpoUfYGAA--.13742S3;
-	Fri, 05 Sep 2025 14:49:56 +0800 (CST)
-Received: from [127.0.0.1] (unknown [124.127.223.97])
-	by front1 (Coremail) with SMTP id qMiowJBxD8IIiLpouZ9_AA--.40671S2;
-	Fri, 05 Sep 2025 14:49:47 +0800 (CST)
-Message-ID: <17f2c722-a32b-482b-9363-6a415443fb40@loongson.cn>
-Date: Fri, 5 Sep 2025 14:49:44 +0800
+	 In-Reply-To:Content-Type; b=N8pqkGlu9wOBVExMzSEh+PASS0MiFAGhqYXA1KHubsSlAS2T4n1hQRD5MrfN+LWf64anlLiBPnlvc0cf7znyl83K7XvLqsWtAo85dTDTAYKLTcwFGqBelwjDVcI7oZud/xCZwpez2UlJ+aHnmD6r5wXHphBKzfPHRemKjYr0f8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JnMqhJtQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757055026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PzkSnPUjwi+M04mIJFUTah0Llj9pDwzPR0FvY23x6pY=;
+	b=JnMqhJtQwzxbbBIJyfCLL5sA2h4wPe2vyP3292fQqe1uiEU9TBy2/LvwTnrT8erhMDPZDA
+	1jeXvzO7j93nrViAsoni0COCdkJWNE26DdqJF63kRSDweAiZXGCc+VoVxtANN2RBUkeVRT
+	Kme3MDIcpnX8hVOfj9beFqmVX9ytWiw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-7-fN3M7AV3P9KsU3yFI72dPg-1; Fri,
+ 05 Sep 2025 02:50:14 -0400
+X-MC-Unique: fN3M7AV3P9KsU3yFI72dPg-1
+X-Mimecast-MFC-AGG-ID: fN3M7AV3P9KsU3yFI72dPg_1757055012
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 520EA19560AE;
+	Fri,  5 Sep 2025 06:50:12 +0000 (UTC)
+Received: from [10.45.224.74] (unknown [10.45.224.74])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E6A9180044F;
+	Fri,  5 Sep 2025 06:50:07 +0000 (UTC)
+Message-ID: <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
+Date: Fri, 5 Sep 2025 08:50:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,123 +65,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1&6.6 0/3] kbuild: Avoid weak external linkage where
- possible
-To: Greg KH <gregkh@linuxfoundation.org>, WangYuli <wangyuli@uniontech.com>
-Cc: ardb@kernel.org, chenhuacai@kernel.org, chenhuacai@loongson.cn,
- kernel@xen0n.name, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- masahiroy@kernel.org, nathan@kernel.org, ndesaulniers@google.com,
- nicolas@fjasle.eu, sashal@kernel.org, stable@vger.kernel.org
-References: <2024120635-wham-campsite-b62b@gregkh>
- <F6E14B0130692444+20250206083705.63378-1-wangyuli@uniontech.com>
- <2025020611-olive-gluten-fa45@gregkh>
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+To: Rob Herring <robh@kernel.org>
+Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com,
+ Andrew Lunn <andrew@lunn.ch>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250815144736.1438060-1-ivecera@redhat.com>
+ <20250820211350.GA1072343-robh@kernel.org>
+ <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+ <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
 Content-Language: en-US
-From: Ming Wang <wangming01@loongson.cn>
-In-Reply-To: <2025020611-olive-gluten-fa45@gregkh>
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowJBxD8IIiLpouZ9_AA--.40671S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAgEQEmi6e4sAywAAso
-X-Coremail-Antispam: 1Uk129KBj93XoWxAw4rtF47Xr18uryUAFW7ZFc_yoWrJw43pa
-	ySga4ktr4DJF1Ivwn2vws2va40v3yfJFy5Gr95K34DZrs8WF9FqrWSqa1Yqa4Duw4fWa1q
-	qr4aq34kCa4UZacCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20x
-	vEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I
-	3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJV
-	WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
-	I48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F
-	4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
-	6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2PEfUUUUU
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Greg, all,
 
-On 2/6/25 18:03, Greg KH wrote:
-> On Thu, Feb 06, 2025 at 04:37:02PM +0800, WangYuli wrote:
->> Hi, Greg,
+
+On 05. 09. 25 12:06 dop., Rob Herring wrote:
+> On Fri, Aug 29, 2025 at 8:29 AM Ivan Vecera <ivecera@redhat.com> wrote:
+>> ...
 >>
->> It's rather unfortunate that currently, almost all Linux distributions
->> supporting LoongArch are using LTS kernels version v6.6 or older, such as
->> openEuler and deepin. [1][2]
+>> Do you mean to add a property (e.g. dpll-channel or dpll-device) into
+>> net/network-class.yaml ? If so, yes, it would be possible, and the way
+>> I look at it now, it would probably be better. The DPLL driver can
+>> enumerate all devices across the system that has this specific property
+>> and check its value.
+> 
+> Yes. Or into ethernet-controller.yaml. Is a DPLL used with wifi,
+> bluetooth, etc.?
+
+AFAIK no... ethernet-controller makes sense.
+
 >>
->> If this bugfix isn't merged into linux-stable, then every single distro
->> kernel team will have to waste time fixing the same darn bug over and
->> over, even though it's already fixed in later kernels.
+>> See the proposal below...
 >>
->> This would really make LTS look like it's failing to serve its intended
->> purpose. And I'm sure all of us do not want to see something so terrible
->> happen.
+>> Thanks,
+>> Ivan
+>>
+>> ---
+>>    Documentation/devicetree/bindings/dpll/dpll-device.yaml  | 6 ++++++
+>>    Documentation/devicetree/bindings/net/network-class.yaml | 7 +++++++
+>>    2 files changed, 13 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+>> b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+>> index fb8d7a9a3693f..560351df1bec3 100644
+>> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+>> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+>> @@ -27,6 +27,12 @@ properties:
+>>      "#size-cells":
+>>        const: 0
+>>
+>> +  "#dpll-cells":
+>> +    description: |
+>> +      Number of cells in a dpll specifier. The cell specifies the index
+>> +      of the channel within the DPLL device.
+>> +    const: 1
 > 
-> LTS is here to ensure that the original release of these branches, keeps
-> working for that branch.  Adding support for newer toolchains sometimes
-> happens, but is not a requirement or a normal thing to do as that really
-> isn't a "regression", right?
-> 
-> Most of the time, fixing things up for newer compilers is simple.
-> Sometimes it is not simple.  The "not simple" ones we usually just do
-> not backport as that causes extra work for everyone over time.
-> 
-> As for the distros like openEuler, and deepin, they are free to add
-> these patches there, on top of their other non-LTS patches, right?
-> 
-> thanks,
-> 
-> greg k-h
+> If it is 1 for everyone, then you don't need a property for it. The
+> question is whether it would need to vary. Perhaps some configuration
+> flags/info might be needed? Connection type or frequency looking at
+> the existing configuration setting?
 
-I'm writing to follow up on this important discussion. I have carefully
-read the entire thread, including your explanation of the LTS philosophy
-regarding support for new toolchains. I understand and respect the
-principle that LTS aims to maintain stability for the environment in
-which it was released, and that adapting to future toolchains is
-primarily a distributor's responsibility.
+Connection type maybe... What I am trying to do is define a relationship
+between the network controller and the DPLL device, which together form
+a single entity from a use-case perspective (e.g., Ethernet uses an
+external DPLL device either to synchronize the recovered clock or to
+provide a SyncE signal synchronized with an external 1PPS source).
 
-However, I would like to respectfully ask for a reconsideration by
-framing this issue from a slightly different perspective, based on the
-excellent technical analysis provided by Xi Ruoyao and Ard Biesheuvel.
+Yesterday I was considering the implementation from the DPLL driver's
+perspective and encountered a problem when the relation is defined from
+the Ethernet controller's perspective. In that case, it would be
+necessary to enumerate all devices that contain a “dpll” property whose
+value references this DPLL device.
 
-This situation appears to be more than just an incompatibility with a
-"newer" toolchain. As Xi Ruoyao detailed, the older toolchains did not
-"work correctly" but instead had a silent bug that produced incorrect
-code for undefined weak symbols on LoongArch. The new binutils version
-did not introduce a regression, but rather, it correctly started
-erroring out on this problematic code pattern, thus exposing a
-pre-existing, latent issue.
+This approach seems quite complicated, as it would require searching
+through all buses, all connected devices, and checking each fwnode for a
+“dpll” property containing the given reference. I don’t think this would
+be the right solution.
 
- From this viewpoint, this patch series is less about "adding support for
-a new toolchain" and more about "fixing a latent bug that was previously
-hidden by silent toolchain defects."
+I then came across graph bindings and ACPI graph extensions, which are
+widely used in the media and DRM subsystems to define relations between
+devices. Would this be an appropriate way to define a binding between an
+Ethernet controller and a DPLL device?
 
-Furthermore, the patches themselves, originally authored by Ard, 
-represent a clean, correct, and low-risk improvement. They were accepted 
-into the mainline not just as a workaround, but as a superior way to 
-handle these symbols, improving codegen for all architectures. 
-Backporting this series would therefore be applying a high-quality, 
-vetted bug fix that also has the fortunate side effect of resolving this 
-build failure.
+If so, what would such a binding roughly look like? I’m not very
+experienced in this area, so I would appreciate any guidance.
 
-While the build failure currently only manifests on LoongArch, the
-underlying code improvement is generic. For a relatively new 
-architecture like LoongArch, ensuring that the primary LTS kernels are 
-usable with modern, widely-adopted toolchains is crucial for the health 
-and growth of its ecosystem within the broader Linux community. As 
-WangYuli pointed out, this would prevent fragmented efforts across 
-multiple distributions.
+If not, wouldn’t it be better to define the relation from the DPLL
+device to the network controller, as originally proposed?
 
-In summary, we believe this case is exceptional because the patch fixes
-a latent issue exposed by a toolchain correction and represents a clean,
-mainline-accepted improvement. We would be very grateful if you could
-take another look at this series from this perspective.
-
-Thank you for your time.
-
-Best Regards,
-Robin
+Thanks,
+Ivan
 
 
