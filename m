@@ -1,217 +1,125 @@
-Return-Path: <linux-kernel+bounces-803575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA9CB46291
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335C4B462CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3327B6D37
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:45:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71DD6BA0FB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C7B2701B8;
-	Fri,  5 Sep 2025 18:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9111B393DE2;
+	Fri,  5 Sep 2025 18:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="r4r605hG"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LiePq/bb"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBA1305967;
-	Fri,  5 Sep 2025 18:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1A43191D2;
+	Fri,  5 Sep 2025 18:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098014; cv=none; b=cbJFL9MPmU0Ap9i3CBqe6pAOXf80OWbDJFS2Gg0eoxuLTcJDofwAc4R1pTJwIrFKmvewdUlDQzRv5DZLf6vebyAw6uK6j23LQklrwiJJc3YkAqout55wupBcaTzWy460HRah8BlP5nQ3MFNJiFyT5kfuA4tmyamQ26iv/tVomwY=
+	t=1757098138; cv=none; b=tw4B7s1r/kFZPF9OEsb3gNgKBC1F+MGAChZ/bNdWKnWQHiqsHeq1Ku9YS1e3PMFFkKpKR26pzd0b3u+TGJUCAHK5hACYc0OjJFUbha0WdLPi8TMHlKv1QAItCmTzz6OIEVuvuUJfFHmJfhQ1xeH2OCKFTXcAgET79eZMlB1jGlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098014; c=relaxed/simple;
-	bh=Pwy9K0h2ysHV5fV4DTvRgrbG2hbWyebs8oIqQsB8iAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hO7FYq+1dHttqG3+YSCUcSElu1yIDbPkPBoHClmqDjq9WA14lKODMlnOWmr3orNlaOt5XYybBnTB2mncFDtwzMiYefHjK93vGIVC2hbooFNDZ3uYjlcWKf3iodO4hnx1dnCvC4YjiuB1Hyxv1SbJDJZRwoTcJ6o2GmW8aRYPDjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=r4r605hG; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1757098008; x=1757702808; i=w_armin@gmx.de;
-	bh=Pwy9K0h2ysHV5fV4DTvRgrbG2hbWyebs8oIqQsB8iAU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=r4r605hGcnAUizNRjVHah8SszSR9n/kAFgDg/vVRHCzfVCW9OJp7gKC5t4hE6gwo
-	 98ueS4dyzVedvO6o1hAmUwFx2dSi1uSvDTkycMceDBzZr4lMV/x8u0r2JFzwidZj3
-	 E0spA1qyE0RruJdOudkkXXa3xgzmjrACJgSGvldas2n5oXCRKa4ZYLOOKDX9vkCaQ
-	 +5EiSt6Yz7gmeHXqW9+Db1qBlDCdiVYyrgAu/9oa4F7tD6nOoKwqUDw4/+R3X6qGl
-	 O0vx05Tbiy0/mP9/I8htB9P3w9ESMtsWRgFBRKIPIHmlTYSQQLYhzj2afCmLqAiWt
-	 E39XCR9w1RYMx2mBxw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.84.88.1] ([176.1.12.67]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MkHQX-1uAFE10krR-00lwpy; Fri, 05
- Sep 2025 20:46:48 +0200
-Message-ID: <8d6f8cf4-3c60-4b5b-87d1-e4fe4bce06e7@gmx.de>
-Date: Fri, 5 Sep 2025 20:46:42 +0200
+	s=arc-20240116; t=1757098138; c=relaxed/simple;
+	bh=gT6iLDzXkn2vkQT7GPoK0T33+aXJivk9xetjRQ9j+q4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvimoZuHhnDdKYxLZd6VpjhDtdv5oSE8NDSPxkAirfahj/nX3tvVgl5VDem8kegZlUWW0p7NsThNvbImxWX4NpBE8pxU5yC97m7NB5+8DpBLkLJ78BbdHE3MhUyPuLGFQDxcIjWD98zSWFku/cpo8V31vENfua4IxEPnUwYfWx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LiePq/bb; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585ImLAa3314373;
+	Fri, 5 Sep 2025 13:48:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757098101;
+	bh=i+QqUgGTAvZfE8MLyrDMwvyRy7EWTHhQeRZzEGO5LEc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LiePq/bbxWeXOukzQDZq892+phfvJweZoPr8QlhPlAL4BttslQArumXvZmSqRt84k
+	 nYgTSMd3MgSlP3+uiGNMgc/gHmOdA53A3prPdYvBerdexJVvpacmIKpTLd5hvBuEvP
+	 pMTO6urG8neIMH9iG+dskSksKhy24zV1iNpmxYuU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585ImKu01090339
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 13:48:20 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 13:48:19 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 13:48:19 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585ImIE41165621;
+	Fri, 5 Sep 2025 13:48:19 -0500
+Date: Sat, 6 Sep 2025 00:18:17 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Kendall Willis <k-willis@ti.com>, <gregkh@linuxfoundation.org>,
+        <jirislaby@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vigneshr@ti.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <vishalm@ti.com>, <sebin.francis@ti.com>,
+        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>,
+        <john.ogness@linutronix.de>, <andriy.shevchenko@linux.intel.com>,
+        <yujiaoliang@vivo.com>, <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH 1/3] dt-bindings: serial: 8250_omap: Update wakeup-source
+ type property
+Message-ID: <20250905184817.7kdhroadthzesnaj@lcpd911>
+References: <20250904212455.3729029-1-k-willis@ti.com>
+ <20250904212455.3729029-2-k-willis@ti.com>
+ <20250905-saloon-siesta-77da98d7ae02@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] platform/x86: Add Uniwill laptop driver
-To: Werner Sembach <wse@tuxedocomputers.com>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
- ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
- alok.a.tiwari@oracle.com, linux-leds@vger.kernel.org, lee@kernel.org,
- pobrn@protonmail.com
-References: <20250831192708.9654-1-W_Armin@gmx.de>
- <20250831192708.9654-2-W_Armin@gmx.de>
- <003d760c-0314-4ea2-b2b5-860021e0daf8@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <003d760c-0314-4ea2-b2b5-860021e0daf8@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:/yNYLxRKXhg4rCLsKDl9MCZM89/28D/J60g191Lzqp4s+e0nhZg
- FLIoyjztel4FrspE93wvqZq5URrlOBx31AGBqPSkRI3rUKCz56Jy0IOfLT3Q7yAwvjijmtJ
- f8M5QCXRVyod9qMGe1s5L9ncEx1cFVDsN7a5AigaRpAmZkaxGtgsww+P1QtxCOK7hIWXU9/
- qeg09dES2yyFklrUuMicA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Jtl7/z7dpKU=;lHESn1/L25j46c9HNvGSGSd1bp1
- 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
- h+YFwmWPv6fFnhBhD9BgEtX7D4o59mSg==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250905-saloon-siesta-77da98d7ae02@spud>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-QW0gMDMuMDkuMjUgdW0gMTk6MDggc2NocmllYiBXZXJuZXIgU2VtYmFjaDoNCg0KPiBIaSwNCj4N
-Cj4gc3RhcnRlZCB0byBsb29rIGludG8gdGhlIGRyaXZlciByZWdhcmRpbmcgVFVYRURPIE5CMDIg
-ZGV2aWNlcyBzdXBwb3J0LCANCj4gc3RhcnRpbmcgd2l0aCB0aGUgRk4tS2V5czoNCj4NCj4gQW0g
-MzEuMDguMjUgdW0gMjE6Mjcgc2NocmllYiBBcm1pbiBXb2xmOg0KPj4gK3N0YXRpYyBjb25zdCBz
-dHJ1Y3Qga2V5X2VudHJ5IHVuaXdpbGxfa2V5bWFwW10gPSB7DQo+PiArwqDCoMKgIC8qIFJlcG9y
-dGVkIHZpYSBrZXlib2FyZCBjb250cm9sbGVyICovDQo+PiArwqDCoMKgIHsgS0VfSUdOT1JFLMKg
-wqDCoCBVTklXSUxMX09TRF9DQVBTTE9DSyzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgeyANCj4+IEtFWV9DQVBTTE9DSyB9fSwNCj4+ICvCoMKgwqAgeyBLRV9JR05PUkUswqDC
-oMKgIFVOSVdJTExfT1NEX05VTUxPQ0sswqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgeyANCj4+IEtFWV9OVU1MT0NLIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBSZXBvcnRl
-ZCB3aGVuIHRoZSB1c2VyIGxvY2tzL3VubG9ja3MgdGhlIHN1cGVyIGtleSAqLw0KPj4gK8KgwqDC
-oCB7IEtFX0lHTk9SRSzCoMKgwqAgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfRU5BQkxFLMKg
-wqDCoMKgwqAgeyANCj4+IEtFWV9VTktOT1dOIH19LA0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzC
-oMKgwqAgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfRElTQUJMRSzCoMKgwqDCoCB7IA0KPj4g
-S0VZX1VOS05PV04gfX0sDQo+DQo+IENhbiB5b3UgYWxzbyBhZGQNCj4NCj4geyBLRV9JR05PUkUs
-wqAgwqAgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfQ0hBTkdFRCzCoCDCoCDCoHsgS0VZX1VO
-S05PV04gfX0sDQo+DQo+ID8NCj4NCj4gVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfRU5BQkxF
-IGFuZCANCj4gVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfRElTQUJMRSBhcmUgYWx3YXlzIHNl
-bnQgaW4gcGFpciANCj4gd2l0aMKgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xPQ0tfQ0hBTkdFRCAo
-YXQgbGVhc3Qgb24gbXkgdGVzdCBkZXZpY2UpIA0KPiBhbmQgd2l0aG91dCB0aGlzIGxpbmUgYW4g
-dW5rbm93biBrZXkgZXZlbnQgaXMgZ2VuZXJhdGVkIChhcyB0aGF0IGlzIA0KPiBub3QgZXhwbGlj
-aXRseSBtYXJrZWQgYXMgS0VfSUdOT1JFIHdpdGhvdXQgdGhlIGxpbmUpLg0KDQpPSy4NCg0KPg0K
-Pj4gKw0KPj4gK8KgwqDCoCAvKiBSZXBvcnRlZCBpbiBtYW51YWwgbW9kZSB3aGVuIHRvZ2dsaW5n
-IHRoZSBhaXJwbGFuZSBtb2RlIA0KPj4gc3RhdHVzICovDQo+PiArwqDCoMKgIHsgS0VfS0VZLMKg
-wqDCoMKgwqDCoCBVTklXSUxMX09TRF9SRktJTEwswqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB7IA0KPj4gS0VZX1JGS0lMTCB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyog
-UmVwb3J0ZWQgd2hlbiB1c2VyIHdhbnRzIHRvIGN5Y2xlIHRoZSBwbGF0Zm9ybSBwcm9maWxlICov
-DQo+PiArwqDCoMKgIHsgS0VfSUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9QRVJGT1JNQU5DRV9N
-T0RFX1RPR0dMRSzCoMKgwqAgeyANCj4+IEtFWV9VTktOT1dOIH19LA0KPiBUaGlzIGlzIGEgcGh5
-c2ljYWwgYnV0dG9uIG9uIHRoZSBnYW1pbmcgZGV2aWNlcyBmcm9tIFVuaXdpbGwsIG15IA0KPiBz
-dWdnZXN0aW9uIHdvdWxkIGJlIHRvIGJpbmQgaXQgdG8gRjE0IChiZWNhdXNlIGFub3RoZXIgT0RN
-IGhhcyBhIHZlcnkgDQo+IHNpbWlsYXIga2V5IHRoYXQgYWxyZWFkeSBzZW5kcyBGMTQgYnkgZGVm
-YXVsdCkgYW5kIHRoZW4gbGV0IHVzZXJzcGFjZSANCj4gaGFuZGxlIGl0IChLREUgZm9yIGV4YW1w
-bGUgaGFzIGVuZXJneSBwcm9maWxlcyB0aGF0IGNvdWxkIGJlIGJvdW5kIHRvIA0KPiBpdCkuDQo+
-PiArDQo+PiArwqDCoMKgIC8qIFJlcG9ydGVkIHdoZW4gdGhlIHVzZXIgd2FudHMgdG8gYWRqdXN0
-IHRoZSBicmlnaHRuZXNzIG9mIHRoZSANCj4+IGtleWJvYXJkICovDQo+PiArwqDCoMKgIHsgS0Vf
-S0VZLMKgwqDCoMKgwqDCoCBVTklXSUxMX09TRF9LQkRJTExVTURPV04swqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB7IA0KPj4gS0VZX0tCRElMTFVNRE9XTiB9fSwNCj4+ICvCoMKgwqAgeyBL
-RV9LRVkswqDCoMKgwqDCoMKgIFVOSVdJTExfT1NEX0tCRElMTFVNVVAswqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgeyANCj4+IEtFWV9LQkRJTExVTVVQIH19LA0KPj4gKw0KPj4gK8Kg
-wqDCoCAvKiBSZXBvcnRlZCB3aGVuIHRoZSB1c2VyIHdhbnRzIHRvIHRvZ2dsZSB0aGUgbWljcm9w
-aG9uZSBtdXRlIA0KPj4gc3RhdHVzICovDQo+PiArwqDCoMKgIHsgS0VfS0VZLMKgwqDCoMKgwqDC
-oCBVTklXSUxMX09TRF9NSUNfTVVURSzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgeyANCj4+IEtFWV9NSUNNVVRFIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBSZXBvcnRlZCB3
-aGVuIHRoZSB1c2VyIGxvY2tzL3VubG9ja3MgdGhlIEZuIGtleSAqLw0KPj4gK8KgwqDCoCB7IEtF
-X0lHTk9SRSzCoMKgwqAgVU5JV0lMTF9PU0RfRk5fTE9DSyzCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCB7IA0KPj4gS0VZX0ZOX0VTQyB9fSwNCj4+ICsNCj4+ICvCoMKgwqAg
-LyogUmVwb3J0ZWQgd2hlbiB0aGUgdXNlciB3YW50cyB0byB0b2dnbGUgdGhlIGJyaWdodG5lc3Mg
-b2YgdGhlIA0KPj4ga2V5Ym9hcmQgKi8NCj4+ICvCoMKgwqAgeyBLRV9LRVkswqDCoMKgwqDCoMKg
-IFVOSVdJTExfT1NEX0tCRElMTFVNVE9HR0xFLMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB7IA0K
-Pj4gS0VZX0tCRElMTFVNVE9HR0xFIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBGSVhNRTogZmlu
-ZCBvdXQgdGhlIGV4YWN0IG1lYW5pbmcgb2YgdGhvc2UgZXZlbnRzICovDQo+PiArwqDCoMKgIHsg
-S0VfSUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9CQVRfQ0hBUkdFX0ZVTExfMjRfSCzCoMKgwqDC
-oMKgwqAgeyANCj4+IEtFWV9VTktOT1dOIH19LA0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzCoMKg
-wqAgVU5JV0lMTF9PU0RfQkFUX0VSTV9VUERBVEUswqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHsg
-DQo+PiBLRVlfVU5LTk9XTiB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0ZWQgd2hlbiB0
-aGUgdXNlciB3YW50cyB0byB0b2dnbGUgdGhlIGJlbmNobWFyayBtb2RlIA0KPj4gc3RhdHVzICov
-DQo+PiArwqDCoMKgIHsgS0VfSUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9CRU5DSE1BUktfTU9E
-RV9UT0dHTEUswqDCoMKgwqDCoCB7IA0KPj4gS0VZX1VOS05PV04gfX0sDQo+PiArDQo+PiArwqDC
-oMKgIHsgS0VfRU5EIH0NCj4+ICt9Ow0KPg0KPiBBbnkgcmVhc29uIGZvciBzdGlsbCBoYXZpbmcg
-S0VZXyogZGVmaW5lcyBldmVuIG9uIHRoZSBpZ25vcmVkIGV2ZW50cz8gDQo+IExvb2tpbmcgYXQg
-b3RoZXIgZHJpdmVycyBLRV9JR05PUkUgZXZlbnRzIHVzdWFsbHkgZG9uJ3QgaGF2ZSBpdC4NCj4N
-Cj4gQmVzdCByZWdhcmRzLA0KPg0KPiBXZXJuZXINCg0KSSBkZWNpZGVkIHRvIGlnbm9yZSBVTklX
-SUxMX09TRF9GTl9MT0NLIGJlY2F1c2UgaSBkbyBub3Qga25vdyBpZiB0aGUgRm4gKyBFc2Mga2V5
-IHByZXNzZXMgYXJlIGZpbHRlcmVkIGJ5IHRoZSBFQyBvciBhbHNvIHJlY2VpdmVkIGJ5IHRoZSBP
-Uy4NCg0KVGhhbmtzLA0KQXJtaW4gV29sZg0KDQo=
+On Sep 05, 2025 at 19:38:00 +0100, Conor Dooley wrote:
+> On Thu, Sep 04, 2025 at 04:24:53PM -0500, Kendall Willis wrote:
+> > Allow the wakeup-source property to be either of type boolean or of a
+> > phandle array. The phandle array points to the system idle states that the
+> > UART can wakeup the system from.
+> > 
+> > Signed-off-by: Kendall Willis <k-willis@ti.com>
+> > ---
+> >  Documentation/devicetree/bindings/serial/8250_omap.yaml | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Documentation/devicetree/bindings/serial/8250_omap.yaml
+> > index 1859f71297ff2..851a5291b4be4 100644
+> > --- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
+> > +++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
+> > @@ -69,7 +69,13 @@ properties:
+> >    clock-frequency: true
+> >    current-speed: true
+> >    overrun-throttle-ms: true
+> > -  wakeup-source: true
+> > +
+> > +  wakeup-source:
+> > +    oneOf:
+> > +      - type: boolean
+> > +      - $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +        description:
+> > +          List of phandles to system idle states in which UARTs can wakeup the system.
+> 
+> Is there a single other instance of the wakeup-source property being
+> used like this?
+
+I think there's an ongoing thread here [1],
+[1] https://lore.kernel.org/all/20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com/
+
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
