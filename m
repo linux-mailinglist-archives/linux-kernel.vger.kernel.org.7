@@ -1,107 +1,312 @@
-Return-Path: <linux-kernel+bounces-803707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A136B463F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD23B463F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9867BCA87
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85BF1C83BAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E95D281508;
-	Fri,  5 Sep 2025 19:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B53528689A;
+	Fri,  5 Sep 2025 19:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSJuEUj5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88194248176;
-	Fri,  5 Sep 2025 19:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EMfE/qTy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78F9287501;
+	Fri,  5 Sep 2025 19:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101832; cv=none; b=GYCDcpZGSnkVlVRdlHCBHgGnrPoGCsLJK4oqo46/lhdKUiJxVTjs+gHytkWaJPUCm0GB3wPes9WD4evYAKHwwioNdLyi1Stc6Z8CeXUgaO+/KEfQCYQdoTumalTTh16o8hEmbZCawqnQylwHwD7xrSyy7NuPbtSp/PnkwP9xly0=
+	t=1757101836; cv=none; b=gxpM+vbFt+tMBjvz8ZH6t6YEUFHIJS40gWGcoFmDeAzbFIRwyIWo9ZAFzPRAfezv0wf6XvR9rYh8EvOB7R2qbAyBaUEKhfo93/Pf8ikbE3SuVLROFG8aGiQP6ykTVnoYjW0RHi9tAzlnyTCDn0sTb52CiVUWYgxn7fP9urmAbwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101832; c=relaxed/simple;
-	bh=EY9a/qJowNnGiBZRmmgNcKTqSiUenKGV9TjPNYFySFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXGUWQV6h1yRG8Uam2emxobJtBOwc55F71vkAMySvYFiOPQk8QcWJZn96vsq1qT1jba3O6eT8zW/vOUvC8UBBpv16Pi4KWcpqRkzfQvIScxSmfGOe4GqWFnDTciLxd4hiW0ZI4fQOByc0XzZE/E72OduMKgrdgNufsL+rMDatpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSJuEUj5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924B2C4CEF1;
-	Fri,  5 Sep 2025 19:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757101832;
-	bh=EY9a/qJowNnGiBZRmmgNcKTqSiUenKGV9TjPNYFySFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MSJuEUj50C4lXsNFIagLrB9IqmozQ+JzO9v5HaAbxoFl55kh8DwztNseiEncuTYn2
-	 7VRmk7Eagnwb5KH2BpuYLsaamNPsIEEPQS1JiRu/GpCwFbGmGGKgKhwo/5miG3uCtV
-	 f9SbV0dbbRcyQq2VncWkzKGpAN1+O/l8cSOXo7J8wPFHaHqC4B2SfcXKMihYR2Pj6w
-	 uN0qXuj94YcuA0MWssNhiVJe1z2FRlPFxng0/axd1dbcU4AtU2g7jQiGTYUDNvGbtQ
-	 u4+Jvbzji9/ux2/rWuzwnpozxE5qHaa38nScP/6RJHJkIaWfqYsj+F+6ECjd4m//bs
-	 fLNX1guYV15bg==
-Date: Fri, 5 Sep 2025 12:50:30 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] perf dwarf-aux: Use signed variable types in
- match_var_offset
-Message-ID: <aLs_BuzNJZt6Wl2g@google.com>
-References: <20250825195412.223077-1-zecheng@google.com>
- <20250825195412.223077-2-zecheng@google.com>
- <aK_8kt5Yf9MDoPdu@google.com>
- <aLhjnex4_SXpV_8N@x1>
- <aLi7o0hB23v7wpJ9@x1>
+	s=arc-20240116; t=1757101836; c=relaxed/simple;
+	bh=voHEJ7PJUDXuXcBLg/dxKU8fgk7weU9CxANGBASCIEY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=slU0vhzQjW+F0Om3tBIeBVxP2DdFAVK0ypTYaA36XpfOv7gvVBQ7IlhFQY6Nr0Phn06THzN6TMw7H/SHeGtqC4HG+OhPC5A6RvPvgbIDPsiInNnJS5og2RXypkUlVrfuF6gToHUuYb+KIF4FLdn48X9KHVYT2r0lSOg/7YOW7Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=EMfE/qTy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.233.45] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 819ED20171D9;
+	Fri,  5 Sep 2025 12:50:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 819ED20171D9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757101833;
+	bh=fXcKZLaTspFeLZFSa9p0gq9o3lJEfjkhrJb+EIbVsK0=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=EMfE/qTyPNUMnteZ6o3H45r1oOp7ohXa73yRcdSQiPhpCWd7XdaSDBGQEdW7WxGU+
+	 /JD9k6yji+yTZ6TLhR1kGxv9bwrNWBF4fijdmBScAxK6xe/xCVqMj5Zt79ERoPbHHP
+	 n5W4QkwWkG5WeYoY41WcOenLQ48zAh7KIKyrh00Q=
+Message-ID: <ed4ebc67-dc98-4ce4-af5e-b2f371d27c5b@linux.microsoft.com>
+Date: Fri, 5 Sep 2025 12:50:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aLi7o0hB23v7wpJ9@x1>
+User-Agent: Mozilla Thunderbird
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ easwar.hariharan@linux.microsoft.com, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+ decui@microsoft.com, paekkaladevi@linux.microsoft.com,
+ Jinank Jain <jinankjain@linux.microsoft.com>
+Subject: Re: [PATCH 6/6] mshv: Introduce new hypercall to map stats page for
+ L1VH partitions
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-7-git-send-email-nunodasneves@linux.microsoft.com>
+From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <1756428230-3599-7-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 03, 2025 at 07:05:23PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Sep 03, 2025 at 12:49:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Aug 27, 2025 at 11:52:02PM -0700, Namhyung Kim wrote:
-> > > On Mon, Aug 25, 2025 at 07:54:03PM +0000, Zecheng Li wrote:
-> > > > match_var_offset compares address offsets to determine if an access
-> > > > falls within a variable's bounds. The offsets involved for those
-> > > > relative to base registers from DW_OP_breg can be negative.
->  
-> > > > The current implementation uses unsigned types (u64) for these offsets,
-> > > > which rejects almost all negative values.
->   
-> > > Right, I thought it cannot get negative offsets except for stack access
-> > > (e.g. fbreg).  But it turns out that container_of() trick can generate
-> > > them with optimizing compilers.
->   
-> > > > Change the signature of match_var_offset to use signed types (s64). This
-> > > > ensures correct behavior when addr_offset or addr_type are negative.
->  
-> > > > Signed-off-by: Zecheng Li <zecheng@google.com>
->   
-> > > I've confirmed it produced slightly better results on my test sets.
->   
-> > > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
->  
-> > Cherry picked this first patch to make a bit of progress in the
-> > perf-tools-next front.
+On 8/28/2025 5:43 PM, Nuno Das Neves wrote:
+> From: Jinank Jain <jinankjain@linux.microsoft.com>
 > 
-> It is in perf-tools-next/perf-tools-next now (this first reviewed one):
+> Introduce HVCALL_MAP_STATS_PAGE2 which provides a map location (GPFN)
+> to map the stats to. This hypercall is required for L1VH partitions,
+> depending on the hypervisor version. This uses the same check as the
+> state page map location; mshv_use_overlay_gpfn().
 > 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
+> Add mshv_map_vp_state_page() helpers to use this new hypercall or the
+> old one depending on availability.
+> 
+> For unmapping, the original HVCALL_UNMAP_STATS_PAGE works for both
+> cases.
+> 
+> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root.h         | 10 ++--
+>  drivers/hv/mshv_root_hv_call.c | 92 ++++++++++++++++++++++++++++++++--
+>  drivers/hv/mshv_root_main.c    | 25 +++++----
+>  include/hyperv/hvgdk_mini.h    |  1 +
+>  include/hyperv/hvhdk_mini.h    |  7 +++
+>  5 files changed, 115 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index d7c9520ef788..d16a020ae0ee 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -297,11 +297,11 @@ int hv_call_connect_port(u64 port_partition_id, union hv_port_id port_id,
+>  int hv_call_disconnect_port(u64 connection_partition_id,
+>  			    union hv_connection_id connection_id);
+>  int hv_call_notify_port_ring_empty(u32 sint_index);
+> -int hv_call_map_stat_page(enum hv_stats_object_type type,
+> -			  const union hv_stats_object_identity *identity,
+> -			  void **addr);
+> -int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+> -			    const union hv_stats_object_identity *identity);
+> +int hv_map_stats_page(enum hv_stats_object_type type,
+> +		      const union hv_stats_object_identity *identity,
+> +		      void **addr);
+> +int hv_unmap_stats_page(enum hv_stats_object_type type, void *page_addr,
+> +			const union hv_stats_object_identity *identity);
+>  int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
+>  				   u64 page_struct_count, u32 host_access,
+>  				   u32 flags, u8 acquire);
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> index 1882cc90f2f5..44013751cfc1 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -804,6 +804,45 @@ hv_call_notify_port_ring_empty(u32 sint_index)
+>  	return hv_result_to_errno(status);
+>  }
+>  
+> +static int
+> +hv_call_map_stats_page2(enum hv_stats_object_type type,
 
-Thanks for doing that.  Please pick up the patch 2 and 3 as well.
-Namhyung
+Again, one line please. Also below.
 
+> +			const union hv_stats_object_identity *identity,
+> +			u64 map_location)
+> +{
+> +	unsigned long flags;
+> +	struct hv_input_map_stats_page2 *input;
+> +	u64 status;
+> +	int ret;
+> +
+> +	if (!map_location || !mshv_use_overlay_gpfn())
+> +		return -EINVAL;
+> +
+> +	do {
+> +		local_irq_save(flags);
+> +		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +
+> +		memset(input, 0, sizeof(*input));
+> +		input->type = type;
+> +		input->identity = *identity;
+> +		input->map_location = map_location;
+> +
+> +		status = hv_do_hypercall(HVCALL_MAP_STATS_PAGE2, input, NULL);
+> +
+> +		local_irq_restore(flags);
+> +		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+> +			if (hv_result_success(status))
+> +				break;
+> +			hv_status_debug(status, "\n");
+> +			return hv_result_to_errno(status);
+> +		}
+> +
+> +		ret = hv_call_deposit_pages(NUMA_NO_NODE,
+> +					    hv_current_partition_id, 1);
+> +	} while (!ret);
+> +
+> +	return ret;
+> +}
+> +
+>  static int
+>  hv_stats_get_area_type(enum hv_stats_object_type type,
+>  		       const union hv_stats_object_identity *identity)
+> @@ -822,9 +861,10 @@ hv_stats_get_area_type(enum hv_stats_object_type type,
+>  	return -EINVAL;
+>  }
+>  
+> -int hv_call_map_stat_page(enum hv_stats_object_type type,
+> -			  const union hv_stats_object_identity *identity,
+> -			  void **addr)
+> +static int
+> +hv_call_map_stats_page(enum hv_stats_object_type type,
+> +		       const union hv_stats_object_identity *identity,
+> +		       void **addr)
+
+...
+
+>  {
+>  	unsigned long flags;
+>  	struct hv_input_map_stats_page *input;
+> @@ -880,8 +920,37 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
+>  	return ret;
+>  }
+>  
+> -int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+> -			    const union hv_stats_object_identity *identity)
+> +int hv_map_stats_page(enum hv_stats_object_type type,
+> +		      const union hv_stats_object_identity *identity,
+> +		      void **addr)
+> +{
+> +	int ret;
+> +	struct page *allocated_page = NULL;
+> +
+> +	if (!addr)
+> +		return -EINVAL;
+> +
+> +	if (mshv_use_overlay_gpfn()) {
+> +		allocated_page = alloc_page(GFP_KERNEL);
+> +		if (!allocated_page)
+> +			return -ENOMEM;
+> +
+> +		ret = hv_call_map_stats_page2(type, identity,
+> +					      page_to_pfn(allocated_page));
+> +		*addr = page_address(allocated_page);
+> +	} else {
+> +		ret = hv_call_map_stats_page(type, identity, addr);
+> +	}
+> +
+> +	if (ret && allocated_page)
+> +		__free_page(allocated_page);
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +hv_call_unmap_stats_page(enum hv_stats_object_type type,
+
+...
+
+> +			 const union hv_stats_object_identity *identity)
+>  {
+>  	unsigned long flags;
+>  	struct hv_input_unmap_stats_page *input;
+> @@ -900,6 +969,19 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+>  	return hv_result_to_errno(status);
+>  }
+>  
+> +int hv_unmap_stats_page(enum hv_stats_object_type type, void *page_addr,
+> +			const union hv_stats_object_identity *identity)
+> +{
+> +	int ret;
+> +
+> +	ret = hv_call_unmap_stats_page(type, identity);
+> +
+> +	if (mshv_use_overlay_gpfn() && page_addr)
+> +		__free_page(virt_to_page(page_addr));
+> +
+> +	return ret;
+> +}
+> +
+>  int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
+>  				   u64 page_struct_count, u32 host_access,
+>  				   u32 flags, u8 acquire)
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index f91880cc9e29..1699423cc524 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -894,7 +894,8 @@ mshv_vp_release(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> -static void mshv_vp_stats_unmap(u64 partition_id, u32 vp_index)
+> +static void mshv_vp_stats_unmap(u64 partition_id, u32 vp_index,
+> +				void *stats_pages[])
+>  {
+>  	union hv_stats_object_identity identity = {
+>  		.vp.partition_id = partition_id,
+> @@ -902,10 +903,13 @@ static void mshv_vp_stats_unmap(u64 partition_id, u32 vp_index)
+>  	};
+>  
+>  	identity.vp.stats_area_type = HV_STATS_AREA_SELF;
+> -	hv_call_unmap_stat_page(HV_STATS_OBJECT_VP, &identity);
+> +	hv_unmap_stats_page(HV_STATS_OBJECT_VP, NULL, &identity);
+> +
+> +	if (stats_pages[HV_STATS_AREA_PARENT] == stats_pages[HV_STATS_AREA_SELF])
+> +		return;
+>  
+>  	identity.vp.stats_area_type = HV_STATS_AREA_PARENT;
+> -	hv_call_unmap_stat_page(HV_STATS_OBJECT_VP, &identity);
+> +	hv_unmap_stats_page(HV_STATS_OBJECT_VP, NULL, &identity);
+>  }
+>  
+>  static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
+> @@ -918,14 +922,14 @@ static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
+>  	int err;
+>  
+>  	identity.vp.stats_area_type = HV_STATS_AREA_SELF;
+> -	err = hv_call_map_stat_page(HV_STATS_OBJECT_VP, &identity,
+> -				    &stats_pages[HV_STATS_AREA_SELF]);
+> +	err = hv_map_stats_page(HV_STATS_OBJECT_VP, &identity,
+> +				&stats_pages[HV_STATS_AREA_SELF]);
+
+Shouldn't this be in the previous patch where the other hv_call_map_stat_page() calls were
+converted, same below?
+
+>  	if (err)
+>  		return err;
+>  
+>  	identity.vp.stats_area_type = HV_STATS_AREA_PARENT;
+> -	err = hv_call_map_stat_page(HV_STATS_OBJECT_VP, &identity,
+> -				    &stats_pages[HV_STATS_AREA_PARENT]);
+> +	err = hv_map_stats_page(HV_STATS_OBJECT_VP, &identity,
+> +				&stats_pages[HV_STATS_AREA_PARENT]);
+
+...
+
+>  	if (err)
+>  		goto unmap_self;
+>  
+> @@ -936,7 +940,7 @@ static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
+>  
+>  unmap_self:
+>  	identity.vp.stats_area_type = HV_STATS_AREA_SELF;
+> -	hv_call_unmap_stat_page(HV_STATS_OBJECT_VP, &identity);
+> +	hv_unmap_stats_page(HV_STATS_OBJECT_VP, NULL, &identity);
+>  	return err;
+>  }
+>
+
+<snip>
 
