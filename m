@@ -1,96 +1,145 @@
-Return-Path: <linux-kernel+bounces-803459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220A3B45FFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C345FB46005
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA60188BF69
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9778C1894C56
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125FE3568E0;
-	Fri,  5 Sep 2025 17:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TB2V6XtT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC41831B819;
+	Fri,  5 Sep 2025 17:25:28 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E19530B507
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE43191C2;
+	Fri,  5 Sep 2025 17:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757093053; cv=none; b=BCITklEr+2s6RvZJm/GR/rYafiI67KOFV4pqOG1Y/2hGyoLtWEJ/hGEl0q3ZkT/Jhf6vOzrlyMLQoYerOP/qRRWFOJ3ioxfxcTYNc94RRR+G8WsynAY0hTmhMFcvvEM2I3Zk+wnDBkyjl0mEw8WzzQK8LmOQqh/XrSmytIuvaFU=
+	t=1757093128; cv=none; b=OQxRQYjHG37qZw8ELWhG3Mc2Yc9tCco5gdt500fyx9RD5IvZtw4OYHghCpuQVDObQFGlr/qB/Rru/backhFykYdDLccUHMxIxq05ryhp92BEXN5+cNkHCcoSOyUDAoAYf7Z1w99RxXlK223vifLj7kCphjH8YmI5LjbY2yNkRaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757093053; c=relaxed/simple;
-	bh=LFG9QiUgt+ymXhzv0BXKuROD54gJ69W+WTz6Ff6/l9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeKe00lSWd167XFnDc7/bQMV/84xOc8ogfzpL/bi9lIufGFz2jybaWAxN9BjggI6dL4Y8zL2UZXGYvDdvOQPTzqmSHGfXRn7W7WHemm/F0bZ+V+AncPSOnOTvN9NmlOUeBlZ6QPiUXn8nDoyA4w0m5hNVKwA7zBoB52gYbskwgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TB2V6XtT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E2FC4CEF1;
-	Fri,  5 Sep 2025 17:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757093053;
-	bh=LFG9QiUgt+ymXhzv0BXKuROD54gJ69W+WTz6Ff6/l9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TB2V6XtTFbXI258LPJiV/9grht+No8/4SHhq8vW9pC17kKUKooZOfRV2WlYR2fnDU
-	 W0wx15ljj9PY8Okh3wEk4+aZlcEFy+gCRczaNx6iZNSz9T7mxb+JMoAnFdyfughAaV
-	 1DYCljowQR0N4/YMcQIvPhJ2lndvGweXWWIqBao8yBdywL560sEPExg/pPbPIreC7w
-	 zmQ7StW63vOC8BQbdQi7ejrZMW0CJDQcz/8qNWbHjUx4DRGaypBXtQrMVdGaNPgpW/
-	 tVR+gU6PRL7BCVK+YXrEwkfPLRIejl4S70h2suwDAnAoTf1tdkRHen0CBeVmyqNW8J
-	 XOO+JzF5i6GqA==
-Date: Fri, 5 Sep 2025 07:24:11 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 2/3] workqueue: replace use of system_wq with
- system_percpu_wq
-Message-ID: <aLscu4p7hU8HJRkK@slm.duckdns.org>
-References: <20250905091325.112168-1-marco.crivellari@suse.com>
- <20250905091325.112168-3-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757093128; c=relaxed/simple;
+	bh=Qy6YvJoeTji61t1mZRxRlusN42LF2rqUAfct8w5o8JI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wyn+sbEf4iEArscAjlxLDCAtHabUADoRcScQevApcXIiuLy4Pt0qP6o+m1WeHBSdHK3kRziKL9mAXx68pME6hsZE009Bb1L3Jd+dTxAWAyNZNtb1CauSnJifVoOHMTKPivzBojwlmySQ99fc9+x+rLyojH8V2SV+aM2Yg0zIU9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b046fc9f359so445654066b.0;
+        Fri, 05 Sep 2025 10:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757093125; x=1757697925;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZHDYLsHpohNsUyyCoi3m6vc8R+M4yrYz3cLb+AlY1+g=;
+        b=WX8Yz6EY3UuXX0DfLTi1AQTcVLLR5aXHmPiM/oZ/AB2UOT7sVwpROEtA7vUJdo4XhI
+         Gy5eU1mevXkjNSSmqShpt5yWzrJo2qyAaCNoLhDQihmAhbE5QxS75eUcau/PZXOvQRO/
+         2lSe/nwFJGbxV6apmLy8SJqsc8tXJ+ojXLenAUmq11dwQ/7UDyqoAI6JbTosI/yXAu7w
+         olFghr6CI/ZVt2tkVZP1HaeKolNThDeT9KJ9NQJ4N2rZK+LARrgVHb/SmmeiX5+rjVFT
+         YZt1WwLun4EXCf7Pzh7dhhFrHQX6PziQpGFvbD86JOHU/7/3Vw5GF6ZpldPKwZ84vRkQ
+         TWKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+9IGjy2Ar65liBpyhQwsm4bGUz+jFo8vEb8B8Uwp0IHnXpPUbRkV8NJv2aaYo/YEo34tWTwTM@vger.kernel.org, AJvYcCVyG5Q4/3jdWaaDQh7tW9rtDEWPBHnnkoXUZ3juKedrFdzpOtPCS3QFyLGFoG375IDrZzwzk0z+EHnW9Q/uJYg=@vger.kernel.org, AJvYcCWTua/3HWaP4nrGMLgT9/9hYi2SrwAboljBl+sPiKJ8tQ7gy7hBsSh2h7qwp79tni8qWNzOm8as@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+cPhOpTEgCfu1Dra/YtQFfmVtbScKd2AAOPeF+WYELAh6kNx9
+	TmYQN7s/vbhZBq1t5wu9vjxQRkVy4RyLKzX7qdHvti6cDf3Z7/RanhDZ93VWyw==
+X-Gm-Gg: ASbGncthh4AhjRhKKgaMQ+PRhQ9H4KRNptn7MHYLcWSmoYibkBVFLWQc52+r0A+rKP8
+	Hh/K2Szvw6R9Sx3hiWz8naU0sWr9+6j3T3Q+aOQRRDh2b6tmKo56aI/HylBtWyb6X48OygYC7Ue
+	5doEB4Nkv4fO7xBWerH9edYNkgRrGSH4QpY06FlGf/ZQPwYzInw5o7MOkzkV3RMrQeYSegoZX8R
+	zZAh/HMSQzK1Lfc2tcu/tZdelWxO0p8nYOXOzP+E1Lngpek8jbVKAaR3e43njDpQL/5noBQHgUb
+	ipsYWt5C7bgzUJ00NHdjK8O8ds/yPE8WPc1eamr8Lq8cQiGEm/VsF6QZdfK85OsK1PH6DZuNrut
+	/wfKGTd3g5Lpx3m2KVTnosj4=
+X-Google-Smtp-Source: AGHT+IGEGyqyx4VJabm4Vhed5iJmFLI6l0ORIangqVpHuf1vsooKlo5pRRFXuT9M8Vc863VgXbCU/g==
+X-Received: by 2002:a17:907:9283:b0:afe:8761:e76a with SMTP id a640c23a62f3a-b01d971a17dmr2377128466b.39.1757093124506;
+        Fri, 05 Sep 2025 10:25:24 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:8::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04110b94cbsm1495583166b.93.2025.09.05.10.25.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:25:23 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net v3 0/3] net: netpoll: fix a memleak and create a
+ selftest
+Date: Fri, 05 Sep 2025 10:25:06 -0700
+Message-Id: <20250905-netconsole_torture-v3-0-875c7febd316@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905091325.112168-3-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPMcu2gC/33N0QrCIBSA4VeRcz3DabrcVe8REaZnmxAaalKMv
+ XvgVUF0/cP3r5AxecwwkhUSVp99DDAS0RGwiwkzUu9gJMAZl0wzTgMWG0OON7yUmMojIT1Mlou
+ JGWu0ho7APeHknw09QcAC547A4nOJ6dVGtW/pn1l72lMmrGJKSX1AfXR49SbsYpqbV/mnsf9pc
+ MqoHAaJTjorlPoytm17A/Tf6rz+AAAA
+X-Change-ID: 20250902-netconsole_torture-8fc23f0aca99
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+ david decotigny <decot@googlers.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, 
+ calvin@wbinvd.org, kernel-team@meta.com, Breno Leitao <leitao@debian.org>, 
+ stable@vger.kernel.org, jv@jvosburgh.net
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1543; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Qy6YvJoeTji61t1mZRxRlusN42LF2rqUAfct8w5o8JI=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoux0Bu+8t4g1U+nbsovlVTHHByY+Ut0opVFiP5
+ QsEmLp0D1CJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaLsdAQAKCRA1o5Of/Hh3
+ bZkrD/47iuzPAjxTw9rChVtNP5hRjUY14UjFbBYWXSLBBwZ7Yk07Jt9Tf43XUi4REVAtE2y667f
+ /MlfZWXuVNVt4FHOzEebxmyEmgHbENV0/zxKXnb1rE8nEwFAd+dHj2UelXsk/QcZGqjqUYv6DYF
+ TcdZWWJdtfbi60NVNn6WchLAqoCAIl8F3pHrnoMmKD8trzisEZAfXdNDTAYj5H+KLYkzE3NRIWv
+ 1xXTg4C/0mcpNXXnGi246xrQ6lCQ5ym5h9b4gddjzqa9SrgBntxWSCrJOvGKG3Jb473JQ+8FwuJ
+ qD3L7gKsuQpKgLVODi0NggwIHbFF6fm6snqucmJ5BX+kSuY0XucVzZbEkcgKiTC0TlomV2DSxWL
+ 5FR22ydDT3As9JLUiEnLfRFfvnzz1GGZSAzJr+iUfl8OoTvRGF4CTeSKfzo9RgdB5xpSSuPao2+
+ 7kEvCLSLREIKHbOxsZyMbrTxgr5godm4KQnbza68z0uG2NdclIHn4k2iAaiX+x26I4vxQzW8HBI
+ wMWy6GVdGFllJsaYj15RwlBMGH/4650NY0vt0TjipzTL7fRDonyoR4fLZvAX1Fph1xdfu3+A7dd
+ imRLI+tkjfoLFbdia0gvgmEIFqRNWSZUxaa4elULHewTzuwsXv+ONbz4xF6x0eIlj0uk7iC6WlQ
+ l/byiO0ix/yyWiA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Fri, Sep 05, 2025 at 11:13:24AM +0200, Marco Crivellari wrote:
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistentcy cannot be addressed without refactoring the API.
-> 
-> system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-> CPU affinity constraint, which is very often not required by users. Make
-> it clear by adding a system_percpu_wq.
-> 
-> queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-> new per-cpu wq: whether the user still stick on the old name a warn will
-> be printed along a wq redirect to the new one.
-> 
-> This patch add the new system_percpu_wq except for mm, fs and net
-> subsystem, whom are handled in separated patches.
-> 
-> The old wq will be kept for a few release cylces.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Fix a memory leak issue on netpoll and create a netconsole test that exposes
+the problem, when run with kmemleak enabled.
 
-Applied 1-2 to wq/for-6.18.
+This is a merge of two patches I've sent individually and are merged on
+the same patchset[1][2].
 
-Thanks.
+Link: https://lore.kernel.org/all/20250904-netconsole_torture-v2-0-5775ed5dc366@debian.org/ [1]
+Link: https://lore.kernel.org/all/20250902165426.6d6cd172@kernel.org/ [2]
 
--- 
-tejun
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v3:
+- this patchset is a merge of the fix and the selftest together as
+recommended by Jakub.
+
+Changes in v2:
+- Reuse the netconsole creation from lib_netcons.sh. Thus, refactoring
+  the create_dynamic_target() (Jakub)
+- Move the "wait" to after all the messages has been sent.
+- Link to v1: https://lore.kernel.org/r/20250902-netconsole_torture-v1-1-03c6066598e9@debian.org
+
+---
+Breno Leitao (3):
+      netpoll: fix incorrect refcount handling causing incorrect cleanup
+      selftest: netcons: refactor target creation
+      selftest: netcons: create a torture test
+
+ net/core/netpoll.c                                 |   7 +-
+ tools/testing/selftests/drivers/net/Makefile       |   1 +
+ .../selftests/drivers/net/lib/sh/lib_netcons.sh    |  30 +++--
+ .../selftests/drivers/net/netcons_torture.sh       | 127 +++++++++++++++++++++
+ 4 files changed, 152 insertions(+), 13 deletions(-)
+---
+base-commit: d69eb204c255c35abd9e8cb621484e8074c75eaa
+change-id: 20250902-netconsole_torture-8fc23f0aca99
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
