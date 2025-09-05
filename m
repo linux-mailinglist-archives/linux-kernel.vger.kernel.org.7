@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-802932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC4FB45888
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A75B4588A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA495A4501F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C0415C10A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098041C701F;
-	Fri,  5 Sep 2025 13:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B7F1D86FF;
+	Fri,  5 Sep 2025 13:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EfWaZPkp"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="usitMJHy"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0321C4609
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24D61C860A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078031; cv=none; b=KvHroedicB7mK5xBz/cpzaiGuwoz1CB1dIK18lmFt8QD9uqitQ+0CG23zhtNlOMJ9ThF79//ort0435xCulb8ZvKQForiM0luEnOb38FZhLXPqlsCeG4qxYgZ2qSUcukuCJZAXZOeUaGLWB+1FEFT7pn4szLc/Ea2HQ9cUSV4hY=
+	t=1757078046; cv=none; b=AYVmSemexaE/blK8D3xw8eXivxaNYaQAQjYKXWyS2rdg0GseiPkP322+jKS2Macf89eZkFxJrOIWsdkwrOKTIU4kBqfNoOIIG3KiEKELq1f8o4VZP/Q3ea6fCi7JCxpnBq2cic4oayagPTKLgVzLGiUXAH5HWp/bcbCY8b/FbaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078031; c=relaxed/simple;
-	bh=pc2WPgJcGLhrpFaKlsLQahXKA9chhCVy7k7/gF1Cbmk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4SLh8hxjZZeAZcEoUiBo0WZ+UF3px2QdkZZY0t0Bi94UhCfojQ6SVE2CkDf4r6Nr5Ah1MbCZko2OTINiAKTfQfGySDqZJJfrsE8RSZ6jzDPD+Px0xNXieHgKLQRHxf90TY3eA8jiugR6FukpkFbuv/PjqWyMiBhiYy2pEAnZJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EfWaZPkp; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e2fdddd01dso177209f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:13:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757078027; x=1757682827; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNWX8w7J5IcI97nXdwv0jKcOCYSaYB+ZFn87ka9R6Bg=;
-        b=EfWaZPkpSH4KTQKoh8fclPWGVfQ6EgSnmc9J+smP62pADd4qdYbLZOhZ4AyoeABjyY
-         U6stjICBkpDvN2XmrihPO5CSox9NALv/QhILpo7soII6xHQCMDXXjc0mfAsGVGCPQkpK
-         WmLN8r2fpkRtKdgmN8N8LQ31E78eB7MucVdnNQw5Cjdatz0TXz2yy69MWUPK4/XnW3Kc
-         h/aCxFEHlsznlrz2FfJ6iMj2bK4frl53jIHKoiJ0KvURpoTquiuvo5D3LXKAs1iJ0yFg
-         IMPjBiOVfyPyfMdcdr9FlBDu6Hfowqf5ADA9o3+tJx1p1SflB0aH6j1IaXz4xfqUb2Ov
-         8YkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078027; x=1757682827;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xNWX8w7J5IcI97nXdwv0jKcOCYSaYB+ZFn87ka9R6Bg=;
-        b=ufyvUqnL3z+FiBGY773mkmjllfOcaQXqjitrl3eXUeiTeUMY/dWhDeR6zOZ/TaHKnA
-         YRXmpaCakswxmlnK8heTIkV0ZV6WygyboikaStkj9z7COAaiyHbTYb0kaGUJLOX3E2I4
-         9JlmkZunJ65u+TfgO/xoUJP7zmIpZnlmjcqH9erNVuite+yX2NlifVLaZPP/Msy6Dd1x
-         k5O1//Ovkh5lCWlpQhBNBmlhfNUp7fwYPMjfPoOYUgRb+zwFvanw42OocmW5xNECG8kZ
-         XQUlUWFAfTA/0yxIZ3E+CRjKuiRGATxbD2UaMMxOXTT6zcUBt00ZpiWwqUDYyc+SyBt3
-         zLKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJzsOY3T3QxRNc/Ir+KXAKWMrup8lcAIUgz70oXTU+ohvl5EKnyd77fcT/84bv64QQjtO50mcoGQrOxqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvK7g70sPa2QUjF5qvMyPQq4Ou6Z/ARwLwpXbjmv76jPW06fzP
-	96uhXhs7Z3j1isV0J/Ztr3AL2RfQGygUvM7VsU2oACKr3b3ZmZDzSG9kr+sYnDgSZ/0=
-X-Gm-Gg: ASbGncsDNJxmIMJb+kgcMT+fpTRb9ZwJ5T+QMBEM67Qx8YtFeoZdt+V95VKBWZmgkSx
-	bF2LXyLBEiuB+ElWIGJ7aEtg8I/TkcpPtiUZIqQQlE45fQWxZhG/8bFyEfKZDjpbipAa/p6ilKM
-	RZOOwGHvDtzbJB+875je2AvtJvYlbx+RH+unN8KHLzUhkviHthwdnwbk908iomqnnUSoscihQA6
-	ijpoMtcpeEOl6dN2a2Z9a/iRRPzn3G/M7KEYPiw76cwrwe4jHp1+JgVnpfrYCPF6f8oWoK0TUjZ
-	DCxVJ6AmuMPRJTYEsBATZIbYkqhMa7DOz5WTQvWaUdMHNi0VXYo5fCraz5d8RcADkuipe8q8cyh
-	WpyfJ2TN7NL9d7KCUMAIpazE=
-X-Google-Smtp-Source: AGHT+IFFbThKQaUMn97luKJ5NYCELBoHvf5CkKM0PAFFCnugiFcAZ60cVT3FxKj4IggIaIVjsWVqcw==
-X-Received: by 2002:a05:6000:18a8:b0:3d9:7021:fff0 with SMTP id ffacd0b85a97d-3d970220156mr11098273f8f.37.1757078027295;
-        Fri, 05 Sep 2025 06:13:47 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:35ed:b892:eb7c:cc5f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98e77231sm155189905e9.12.2025.09.05.06.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 06:13:46 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.17-rc5
-Date: Fri,  5 Sep 2025 15:13:45 +0200
-Message-ID: <20250905131345.105630-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757078046; c=relaxed/simple;
+	bh=8KszkY7xwsp7EJdgJg+m7cTajzj7GjeDlrC4I4zSkfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbvBPyuksnHi9HUKIE/4OMpPiZ8W/AA3LyEuguW7fFJfp6yNZeinhBXSrw1R6Xc5pqnisRhxThMVPVXrStFsifuFafqDyG3WKtDn6xEYEnFUHiW+ugWhuWoAAUyTZ7U8D48ZlU9sSRYWtN+RIoyecqHPw0Az/BQnOiAsUhGy2nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=usitMJHy; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cJGyJ0HnJz9tlt;
+	Fri,  5 Sep 2025 15:14:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1757078040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vI0YATYp7h2PCES+jpwfqumtKhHQsNMcqq9Q5sVv1i8=;
+	b=usitMJHyN/fOige9DO7Nq3zdziseh+9Pv08/2JJP0L1e7y0s4fbFkJduVcfFHGzFe2+1sa
+	nSNVjJNACSlQ7uvpVnkHD1+8jFylp7gWd9ee9gLijsKORXMBrk53kmC71teDQxdSSPJ2A6
+	8D3077pM8ITeQOitBEmAPk8NAOmueP8OughNAf1SvI3KmUpKLs0Ehcs7MSVAs8wBwDqwzX
+	wcf5XCYeWEgL0eTpdZpwMUsLHPEB04HijdV3v1jHxxF0QF3cYHNzMB7ttg3C18Joe/X326
+	8D4mgF+cE1urIzgCW/aQLaK2h9q5W/VO+kzBAnT0Vg0LRwwpF2KgvoaTK7gMnQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nico Pache <npache@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	kernel@pankajraghav.com,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Kiryl Shutsemau <kas@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v3] huge_memory: return -EINVAL in folio split functions when THP is disabled
+Date: Fri,  5 Sep 2025 15:13:52 +0200
+Message-ID: <20250905131352.88069-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,42 +79,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cJGyJ0HnJz9tlt
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Linus,
+split_huge_page_to_list_[to_order](), split_huge_page() and
+try_folio_split() return 0 on success and error codes on failure.
 
-Please pull the following set of GPIO fixes for the next RC.
+When THP is disabled, these functions return 0 indicating success even
+though an error code should be returned as it is not possible to split a
+folio when THP is disabled.
 
-Thanks,
-Bartosz
+Make all these functions return -EINVAL to indicate failure instead of
+0. As large folios depend on CONFIG_THP, issue warning as this function
+should not be called without a large folio.
 
-The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Zi Yan <ziy@nvidia.com>
+Acked-by: Kiryl Shutsemau <kas@kernel.org>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509051753.riCeG7LC-lkp@intel.com/
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+Changes since v2:
+  - use page_folio(page) directly in VM_WARN_ON_ONCE_FOLIO
 
-  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
+ include/linux/huge_mm.h | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-are available in the Git repository at:
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 7748489fde1b..1aeec06a89f7 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -553,22 +553,26 @@ static inline int
+ split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 		unsigned int new_order)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, page_folio(page));
++	return -EINVAL;
+ }
+ static inline int split_huge_page(struct page *page)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, page_folio(page));
++	return -EINVAL;
+ }
+ 
+ static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, folio);
++	return -EINVAL;
+ }
+ 
+ static inline int try_folio_split(struct folio *folio, struct page *page,
+ 		struct list_head *list)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, folio);
++	return -EINVAL;
+ }
+ 
+ static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.17-rc5
+base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
+-- 
+2.50.1
 
-for you to fetch changes up to ed42d80f3bae89592fbb2ffaf8b6b2e720d53f6a:
-
-  tools: gpio: remove the include directory on make clean (2025-09-04 16:29:28 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v6.17-rc5
-
-- fix GPIO submenu regression in Kconfig
-- fix make clean under tools/gpio/
-
-----------------------------------------------------------------
-Bartosz Golaszewski (1):
-      gpio: fix GPIO submenu in Kconfig
-
-zhang jiao (1):
-      tools: gpio: remove the include directory on make clean
-
- drivers/gpio/Kconfig | 6 +++---
- tools/gpio/Makefile  | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
