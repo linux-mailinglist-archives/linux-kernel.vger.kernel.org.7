@@ -1,142 +1,191 @@
-Return-Path: <linux-kernel+bounces-802417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0E7B45234
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63693B45242
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E4F17BBEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36B31C250FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5603002B2;
-	Fri,  5 Sep 2025 08:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B02B307494;
+	Fri,  5 Sep 2025 08:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="drVz4iOY"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L65rLMzo"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D917727EFF1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A367C3043D1;
+	Fri,  5 Sep 2025 08:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062597; cv=none; b=ayAWOFTAMKAb9DHZMbFcHaZHSPxR8HWvyR3inaNt0ahg7yKLyDKfyEHHpvSqJZEdwUtGlU3sxsn7FiQCfMt9rg48nenIG8NeEFis/6QfJ7Vwn4R/c+boX+3gTQ4CO3AGCqUoi9cmDMM/RNcbzeXUrhm/RP97C6FOt4vVnHDS9HA=
+	t=1757062683; cv=none; b=jhHeXY6EESvxofwfni2qaz8cN/7Bj+BVmQbi85rb+Vd+I9m7KvEtHwgEPX1kAV8ydSGyNhlHeM+4eXvNxabzzZldato5YqPRgIms0PocJFRIO/Tqb7cDv+JwTqRYmP3IBrMQgvn3HIG310VCD5bmzR9xA/6F3bycg92g3q9IE2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062597; c=relaxed/simple;
-	bh=+T8NOI6Zv4wcxfohTwV1+3xnH7VfvfWZyIpyrCQB4GY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GxsUWOSp8K/UO6HOWCbIx4DIrtZm/WZ/6e/ALe3G141suwuyOu2xHA9Di6OjEFUw49NMRHenVVAoXfZmC1ZSC5tXmzfGOKDSOdhDSPgXWPAgt8CAucF51uBE3A70PgRdrChAamM0fj5ir6UzZrpw4zmtfXClDVu6InDqn3AAhl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=drVz4iOY; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so1390326f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757062594; x=1757667394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oGB+Qhk7R+OYFlkgwfQcrSKwGrnqjIMBZvbPxHWeZM0=;
-        b=drVz4iOYS8qtwlKY0YbRg4GRTeMWcZ+emVqA4oxl0mGZ5yNHnDnS6hENcsyMxFN8nJ
-         JZvUrSv3MttN3emTIOlLvdiGxxkQ9q71OTPN3bWbu7JhF+/+UeY/UBLRodJWb8eJpXhR
-         /0jXFcrnolvgKcVccxSi7aeexhhAWVAWE+O7gsPRg9HzJNKDS4Qt5CG9UJ8F6LkvGrZZ
-         3K/wJIYpJxysbMWvSjb7DJX9ChuSbs+RStITTCXPLFD0OvzPc6Prj2cwEv6g4KsBFfuO
-         TmzUP/jW/vYVfj4jV5oQ9MyLq0KhvzBHh4Jn/9zkks1OcTyT8FU17KNCrKnGujDnWW7X
-         ybGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757062594; x=1757667394;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oGB+Qhk7R+OYFlkgwfQcrSKwGrnqjIMBZvbPxHWeZM0=;
-        b=kQTE8B+vJJWoNZIpzT1fWWdgoC64t/F2O+VBEPAxOBAzI6TH/z9Vjh8VheB2t6L4Yk
-         0fvlvzVu49E64kOyxMve1vbKQNBFVAvYA011F66Zz3XVq/a7E2znE+6Ub3psli6CpRVI
-         oEL1EDZAUiHL63jv1gulMoIbRAsvUdJ2avKt2GurXQC9P0SvipkQ8vNWJ6RbgEwlmV7r
-         8x4V1YRZNJsWg0ANy24I9s909xiVD5w765Yet2rAHyE/+iBngLtjYgyvH+ohiVdiJX+O
-         D2SzRuJ0//WE/a8cTg2XqrVwMmRIVdsPh6TB8To5Fv44yeezucOc221TDsQp28gXfylj
-         f1Ew==
-X-Gm-Message-State: AOJu0YxEUmjN7V9sp1s/H3GIuOchyV4RMn2JodtgeTT/ZmkBIlJW1HLB
-	3iLygSh6S/n2Qt/BAhIamkVFc6EvsG2ddCcF5obWCrfLOCNe2H/w6EaXnAFrzkUAicitBpt/VVY
-	2mkSS
-X-Gm-Gg: ASbGncvPxGagNfOdJRoGmAenYTCtJfjPr/sZS/G8zApJxYcUTerr+TghdosMyIv+0sl
-	OV/Afag3T1mkbzcGwET0tcpC3FT5HcGgcvEVli/z7QhCUxV+HJ3uKwnwixYBvZ1kdABHWEZJPri
-	B4j1A5b9DRFjgq7KT/KIT+MHEFdpKYnC4xptc2rKciUSIhIxI/RNlmVdIJybqIXjRdp2saYKJtV
-	o3y7rPOhJ5SOgCkqZ6gt6iG4tZBPKIOVh7Oan+hqBcZ/KvuXVMl0jbaCQ4QF5g5SIDb+9arBdeW
-	JUECCR9mrslYDIwyecutOyhmJ4T16PA92lTJq/vo1fsvB1BsXxWEnDEy7v0xUbpRrDHAGKbC7Re
-	NsfkSTeZj3h2NMNXxTLX3kno9QBSFJie9HZozzWgaMaFwi9sbJI0pawLbDw==
-X-Google-Smtp-Source: AGHT+IGsa0rp5MHa6kNBT4cj8hGWuR9YR74ee3KpeGkEs3kQ8djeneHdrXuQs+57ETnPU8KAwAJ6hw==
-X-Received: by 2002:a05:6000:2305:b0:3e4:bd77:df12 with SMTP id ffacd0b85a97d-3e4bd77e146mr269918f8f.18.1757062594051;
-        Fri, 05 Sep 2025 01:56:34 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3da13041bcasm14617492f8f.35.2025.09.05.01.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 01:56:33 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 1/1] closure: replace use of system_wq with system_percpu_wq
-Date: Fri,  5 Sep 2025 10:56:25 +0200
-Message-ID: <20250905085625.97367-2-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905085625.97367-1-marco.crivellari@suse.com>
-References: <20250905085625.97367-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757062683; c=relaxed/simple;
+	bh=cMojpqJ27h2eTF7V8dVIvJWdJkl9UMHceULvamZ/QVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oO1N9Aka51+audDYtb8Xs3n4UbC6b5u3wBCaMCDAaJkB9veerqtv7YFSaQoJZ+lo/SmEdayl3F5AzjnInArQSSmwL0sFMBoD8CbEGAlDzBC+pGvpqC7LQsIR0c+xDiIKdWfA6CNShWcueyFHBpAuUqsnbjNzOygF74nOTCizNPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L65rLMzo; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5858v61n3285442;
+	Fri, 5 Sep 2025 03:57:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757062626;
+	bh=kSrPRCtXJQEhqr1BuGJ8W84oGetUB7hhLQoAxDn9OAw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=L65rLMzogaTqWulEtRUm5v8L8NOgoTpdl2VCs2AYrRKilQ72FPlbbS3GQIILuT79Y
+	 +HhowBCxGclATIIb9zEmJzwbs4cL2wRCCANm+r1OxHHSE0YlUSiFdVsxieBdIpN/ND
+	 O2BGuMl/W6VM0yVHTMS7DjnOidnPad+rtM6mWf88=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5858v6k2251546
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 03:57:06 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 03:57:06 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 03:57:06 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5858uuZp196351;
+	Fri, 5 Sep 2025 03:56:57 -0500
+Message-ID: <ebcf48cb-a988-423c-b6bb-9bdee75dcdae@ti.com>
+Date: Fri, 5 Sep 2025 14:26:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
+ rpmsg-eth subnode
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        "Anwar, Md Danish" <a0501179@ti.com>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>,
+        Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Xin
+ Guo <guoxin09@huawei.com>, Lei Wei <quic_leiwei@quicinc.com>,
+        Lee Trager
+	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>,
+        Fan Gong
+	<gongfan1@huawei.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Lukas Bulwahn
+	<lukas.bulwahn@redhat.com>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>,
+        Suman Anna <s-anna@ti.com>, Tero
+ Kristo <kristo@kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Roger Quadros
+	<rogerq@kernel.org>
+References: <20250902090746.3221225-1-danishanwar@ti.com>
+ <20250902090746.3221225-3-danishanwar@ti.com>
+ <20250903-peculiar-hot-monkey-4e7c36@kuoka>
+ <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+ <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
+ <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
+ <6e56f36f-70fd-4635-b83f-a221780237ba@lunn.ch>
+ <9c2a863c-0c8a-4563-a58d-d59112ac45a8@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <9c2a863c-0c8a-4563-a58d-d59112ac45a8@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
 
-This lack of consistentcy cannot be addressed without refactoring the API.
 
-system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-CPU affinity constraint, which is very often not required by users. Make
-it clear by adding a system_percpu_wq.
+On 03/09/25 7:53 pm, Krzysztof Kozlowski wrote:
+> On 03/09/2025 16:06, Andrew Lunn wrote:
+>>>>>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
+>>>>>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>>>>>  			<&main_r5fss0_core0_memory_region>;
+>>>>> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
+>>>>
+>>>> You already have here memory-region, so use that one.
+>>>>
+>>>
+>>> There is a problem with using memory-region. If I add
+>>> `main_r5fss0_core0_memory_region_shm` to memory region, to get this
+>>> phandle from driver I would have to use
+>>> 	
+>>> 	of_parse_phandle(np, "memory-region", 2)
+>>>
+>>> Where 2 is the index for this region. But the problem is how would the
+>>> driver know this index. This index can vary for different vendors and
+>>> their rproc device.
+>>>
+>>> If some other vendor tries to use this driver but their memory-region
+>>> has 3 existing entries. so this this entry will be the 4th one.
+>>
+>> Just adding to this, there is nothing really TI specific in this
+>> system. We want the design so that any vendor can use it, just by
+>> adding the needed nodes to their rpmsg node, indicating there is a
+>> compatible implementation on the other end, and an indication of where
+>> the shared memory is.
+> 
+> I don't know your drivers, but I still do not see here a problem with
+> 'memory-region'. You just need to tell this common code which
+> memory-region phandle by index or name is the one for rpmsg.
+> 
 
-queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-new per-cpu wq: whether the user still stick on the old name a warn will
-be printed along a wq redirect to the new one.
+I am able to pass this index as driver_data in the `rpmsg_device_id`.
 
-This patch add the new system_percpu_wq except for mm, fs and net
-subsystem, whom are handled in separated patches.
+I can work with just adding this reserved memory region to the
+'memory-region'. No need to create additional node in dt.
 
-The old wq will be kept for a few release cylces.
+This will be the code,
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- include/linux/closure.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+static const struct rpmsg_eth_data ti_rpmsg_eth_data = {
+	.shm_region_index = 2,
+};
 
-diff --git a/include/linux/closure.h b/include/linux/closure.h
-index 880fe85e35e9..959b3c584254 100644
---- a/include/linux/closure.h
-+++ b/include/linux/closure.h
-@@ -58,7 +58,7 @@
-  * bio2->bi_endio = foo_endio;
-  * bio_submit(bio2);
-  *
-- * continue_at(cl, complete_some_read, system_wq);
-+ * continue_at(cl, complete_some_read, system_percpu_wq);
-  *
-  * If closure's refcount started at 0, complete_some_read() could run before the
-  * second bio was submitted - which is almost always not what you want! More
+static struct rpmsg_device_id rpmsg_eth_rpmsg_id_table[] = {
+	{ .name = "ti.shm-eth", .driver_data =
+(kernel_ulong_t)&ti_rpmsg_eth_data },
+	{},
+};
+
+Other vendors can add separate entry to rpmsg_eth_rpmsg_id_table with
+their index based on their device tree.
+
+I am keeping the data name `ti_rpmsg_eth_data` vendor specific so that
+other vendors can create their data filed and add entry to
+`rpmsg_eth_rpmsg_id_table` with driver_data pointing to their data
+structure.
+
+Andrew, does this sound ok to you. I will send out a v3 once you confirm.
+
+Krzysztof, Andrew thanks for the feedback.
+
 -- 
-2.51.0
+Thanks and Regards,
+Danish
 
 
