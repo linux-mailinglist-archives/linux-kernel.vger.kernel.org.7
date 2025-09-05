@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-803416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C92B45F90
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA3DB45F94
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AD91CC60EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A841CC608A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A99E31328B;
-	Fri,  5 Sep 2025 17:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1975322C83;
+	Fri,  5 Sep 2025 17:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KVM/5kj5"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gi8Ie0zb"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B61028641E
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078B31B801
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092002; cv=none; b=u33ACD5V2hN/ljAKYiJbA8asotXSUbcjD8MTp7FlKx+vDiyAc9qxb6syVQCNEu+Wkj5bv2z1GEi/rAnmfdfoykTWHDaXvcoA0awdjCzoqqyGa+Os83lC4wK0AnY9FXjryt9dRyY5adEiT5d0nCbP5oB+bUh5HICxQmtvBb6KW0U=
+	t=1757092008; cv=none; b=BGEy3nTwBkXKVolbxJXWDr/Lh/A2/pEmJbfS95XfmdKY49uGV1S72P7zBXEZBt+S69ELl5cb/qE7+cfs5corFg80sRT53obDqzKpZEmQQiWbGiI9PJYzBPdARNKIG9iqL+aN7B8qRkKP9P0L/s+DX7XFDe59gMKH/CkKoUWdkXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092002; c=relaxed/simple;
-	bh=QkflFLOyAsxpNTIsEZguoI9ZFg/E7isbqn/iXildXS4=;
+	s=arc-20240116; t=1757092008; c=relaxed/simple;
+	bh=jN0s/h7c25JUNJUarwGqsw47/AYuJ42K931uUXRodvc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iRvKGg7R8xeaDx7wcO59ft5+AEsey6EbDxwW91mtF6IYlCL+bZVD876moNF9w1+OyPT2ZDPx6p9XA0YpAD1GKUlq+QqFEfxQHLFi+3Ev//bkE1dSrkWzgfIHPdDMxY23gwsXIW4n3WHeaez8SWL/L7l7cC7Ug672gw9T3Uosx3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KVM/5kj5; arc=none smtp.client-ip=209.85.161.53
+	 In-Reply-To:Content-Type; b=URkrkD8dTuIBhRHsfQjwc/R+tX0RmHK+XRdzI6tKHkp8Boo9FbSLnGAOllfRS7QMYiTRq6IsVrAxXsQPfUT05CamAAIElIHQRFbIBn6i/LKeg3zHqzqnd+yxeW+lnxQx+8N8lilP9FW1+WJalXOZuLMupRK+oMCQg9F4bD1mFW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gi8Ie0zb; arc=none smtp.client-ip=209.85.161.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61da7b78978so1506493eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:06:38 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61bd4ad64c7so727474eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757091998; x=1757696798; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757092005; x=1757696805; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=anFqxnxyI7swraoxgwxGeFgFBlwXlIQh106TWK0o5QM=;
-        b=KVM/5kj5+ItiYgoroUyJ+4HQYO/s4jPuEdhWYjiAUwJciP9vtsfgK1cpt6VoatWU4S
-         KKpV7icHjs2OVfnd6sSvleSMfbO7LRJjs//iGM+cg8389x+gHCFxnLbcUjKv9YqniaVA
-         Q2HpjmT38+qmJTU0g8lxtNzGCNxfQq5JPUTFzZMieeFdHV55dIfOV5bPwS2XRxp6tIwj
-         8uGgwYqR7JZEQpC5g+cW+tRzc5KxiMR7+hGy+czZYo3HUjzVy6VSJlPkjIAsXsWrm5OI
-         7yKWSUs8t9HGVsnT3okvBIISEhVNW9BTcE4eSQIU5bX309/19gcQ4Yoo3qXqGes3ZTZ6
-         eWxw==
+        bh=DVItyR2m2+5QjtGCrAbeXGO+ngiTgRfmo3zC9GGSyMY=;
+        b=Gi8Ie0zbP8BPPd/qSAEaaNTfW/Z7wVTa0NxQ6jGwSwNlcDR2xwxBpxb8Dp8I6r8luL
+         9kMG2jWsCriWDQAZp+OANr0MP5zNuGuwF/nljJSaOBhT29mko8B4owi/CLriWIJrmkIe
+         mAuTX3KXQFITPgsCV0/ImYEzhFmXePg7FOFbicZhKVloaJ7wzfnGF139dhDd/Xn0oNnn
+         nq7papv4pLpbpzBsaspoQUTubh6mA61w06fjoHDRBAWklprlXFkYo3cH313IQRNEoMGK
+         yftZAv6bv7RVmObWtK7EJ52/EgZg07/i15LQsWT6Sy24wSOWtlmSZooo4G2JDYvPCJPI
+         KxaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757091998; x=1757696798;
+        d=1e100.net; s=20230601; t=1757092005; x=1757696805;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=anFqxnxyI7swraoxgwxGeFgFBlwXlIQh106TWK0o5QM=;
-        b=elAYqXRNe38mSW+LQUuVF2ktYvKtA3zGvnQtgVJnrJUwEXWIY3HybhLPkaUHObt6DO
-         49/yQcPoAGh0mlmKX6nCgzbG6uQ1b/PmfjPDzwnIO5V4Hfg8gS6w/lmv9/aqrdyNfyG+
-         Cin+xHYuV/KP2Rs/AQ7DcZRpyLSsY40diSnad/DPa/1mB9XwvQwLuRihxIpNIYwWEujl
-         jkORRX4XbCsKJf4ocjlIc6IJKVMj6Okgwpo9i26PKWO7ZrQKt9XJ2sWaBUxYuMrNMuQ3
-         Gp672Kl0z6//J71uUn4SDlnEw5gylqCZkgnGvPNprF8yGAvRKs2eJ1rY/y/j3gxHyCF5
-         OgLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9nNs8JhXJ/aHrA+Q2C3rEY/2BdFKs4CgzxV0c258/UK5uXzy6Kw56gcZatDxEUtFQ1quI/kD3JoMxeeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybYkfx2xumqghWsft2ulOBZpAhxStpSl06uiOSIfFkLeeQyd3Z
-	k7PzREuNtaiQBWWTRHpQvL36sdZVT7wLn6RQX/nDciualO0VDLfMWUOYwJDi4xexQEkzZTXXA39
-	ogxmw
-X-Gm-Gg: ASbGncuH/O9onttjDqKYh5MIQ4Y1SgVVpQajDtky8RCXBMjmh/U0bKGXNImn1Mc0BaD
-	Ll5EdxidirNMYDoNpSviVGHsZTpsL0z6qpFdq+QOvp+GQUg7/AKfHRqth8kHoz85Yddl9XmKauM
-	ww8cnPJ26K0OyXR+svA4ioxkakelhZB3clpjQN4UG6DM7HYqIM9qvBZaLSUnpV74czs1ZUTrYQW
-	VfW99gFsku8+YByrtli+mdp4oIsFn+p0YcJ3T+XZgcmJ8FplvjA7amwlox+w+xmrZ+1Ue2w5Fx8
-	Rz/YwediC5YBrzbIUBqLDmVcbFaQUM2ijYeAObP4VLt8NvY5CZHRNed6PxXS6Nyfe6iBL4oawyk
-	GJTOrsmpSNecOo82nAflxBCmKOnvjGJrjV9wqPfjTu+OMjtsYOqFOnc+tYUVOJ/j1sGDAPIWjU7
-	WWIwjutdM=
-X-Google-Smtp-Source: AGHT+IG7ghMIe2cxnj+pk3rXW2GvzmcdmR1NSgHSvJ5AtFFp4f+XYMewwsOhZYccj4QGq4HyHz8QTg==
-X-Received: by 2002:a05:6808:152a:b0:438:3ae6:d5ab with SMTP id 5614622812f47-4383ae6d6f3mr3823162b6e.41.1757091998124;
-        Fri, 05 Sep 2025 10:06:38 -0700 (PDT)
+        bh=DVItyR2m2+5QjtGCrAbeXGO+ngiTgRfmo3zC9GGSyMY=;
+        b=R1W7wo9Q1o1dbOAtxjjEMDVgBp9qbEpjGbRfevwFNPMHEDowOvfqXkqR7RLu8+tagA
+         pDWJ9Am9N7gb1qMJQ06BW0SHD+w3RvHUc8wkxM+zZ19zXOq7FHGcXmNH9CVBjFoRCKXH
+         gTc8Ldmk3YqXs7+4FhbeSjAxk7VKeQyJyzjpY0z831exjpAwG/e/LY+DCqJV3MKI0ScJ
+         YSaa2OKoNbrGeB9gPkPSvPXAAtAxhAEGmCptcAGl8meqCq5q7Y5TxQUAPOQO3vPR2FMb
+         ST6cj4ZpKwe4GMibdwgDMDqXOAs4q4fAioviQEORs/7wAFA+3LN0N0Euo75zwvml0O9f
+         VJ8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWjZgNxCKpQi+GGEVP5vktE6cvdFtOG7n9YwpxwFYWQ4kuKbss8hD/so/7XE8i+hlXgO8quJbkJOVEPWjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhrNiEjEFMDg+8kAfxJ+X655/WMYeIXm4VvutcrAr7m9Ocd+Sy
+	rwInw09VNVAFvVGkgiEm/sJB/b0sjpQKOdjfFhc04BFdILfGjs5XPpNuNBANCkQ0Iy8=
+X-Gm-Gg: ASbGnctUqj6/YCnn82ciLttxoiGgGsiqoOlwBOX5u0AHc043H4fbfh8W95dOO/iNLdY
+	duU8bWN9+wAquGJ1EDZ5mYqF0jb4VezlNwwEX2Eoqlq50KQMAk1rX65sfKLAXneAEYkMEmN4vK/
+	6jP4HKVqYaZ4zUdXXAEWF1uBQKTgj6CwYje5W+CTxhYEJFkLlFMCLinKtl27H8pvTyhvnIcU+OR
+	ZtBnBpOBVx4SNgtqpY5rhesUh38v2FEfg9lbgFnajYphnSrDMu0Omp4+fQ16GDPY7HysLa1PS/O
+	wBkG9SN7X/+QV1GrmOmXTUVR26QglWSad7KzZOjnmyg3HRdOzIIaoh+WptvpH9ZSXopPwy8jNuK
+	tJTZM7aGHKtV7kEToaoKx2UYDhigFhpSXkTRqAWWxq+aA2DzIzAiyzOyn00Bjs0bIjS1WElkU
+X-Google-Smtp-Source: AGHT+IGCip+t0CW1JF3kCxDlGyKFDm8SFolIuf1wSJVnpOilreSjhclhFmaFcTthQJmi9hElEWUmJg==
+X-Received: by 2002:a05:6808:48d6:b0:437:d7b0:878d with SMTP id 5614622812f47-437f7ddeecbmr10847393b6e.50.1757092004820;
+        Fri, 05 Sep 2025 10:06:44 -0700 (PDT)
 Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437ffed9f15sm3544740b6e.10.2025.09.05.10.06.36
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-437ffed9f15sm3544740b6e.10.2025.09.05.10.06.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 10:06:37 -0700 (PDT)
-Message-ID: <5d387011-7560-48ac-8f92-bfe0fda7e71e@baylibre.com>
-Date: Fri, 5 Sep 2025 12:06:36 -0500
+        Fri, 05 Sep 2025 10:06:44 -0700 (PDT)
+Message-ID: <09cbea15-1b14-4a0e-b643-563253e2a918@baylibre.com>
+Date: Fri, 5 Sep 2025 12:06:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,103 +81,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
- parts
+Subject: Re: [PATCH v3 2/4] iio: adc: ad7768-1: introduce chip info for future
+ multidevice support
 To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: lars@metafoo.de, jic23@kernel.org, nuno.sa@analog.com, andy@kernel.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
 References: <cover.1757001160.git.Jonathan.Santos@analog.com>
- <46842d4cf2c1149bd64188f94c60ce5e4f3b2beb.1757001160.git.Jonathan.Santos@analog.com>
+ <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
 From: David Lechner <dlechner@baylibre.com>
 Content-Language: en-US
-In-Reply-To: <46842d4cf2c1149bd64188f94c60ce5e4f3b2beb.1757001160.git.Jonathan.Santos@analog.com>
+In-Reply-To: <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 On 9/5/25 4:49 AM, Jonathan Santos wrote:
-> Add compatibles for supported parts in the ad7768-1 family:
-> 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
+> Add Chip info struct in SPI device to store channel information for
+> each supported part.
 > 
-> Add property and checks for AFF gain, supported by ADAQ7767-1
-> and ADAQ7769-1 parts:
-> 	adi,aaf-gain-bp
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
-> v3 Changes:
-> * Renamed adi,gain-milli to adi,aaf-gain-bp. Now it represents basis points
->   (one hundredth of a percent) as suggested by Krzysztof. Description was
->   adjusted.
->   Note: permille (1/1000) was also suggested as unit for this property.
-> 
-> v2 Changes:
-> * adi,aaf-gain property renamed to adi,gain-milli. Description was 
->   simplified.
-> * default value add to adi,gain-milli.
-> ---
->  .../bindings/iio/adc/adi,ad7768-1.yaml        | 44 +++++++++++++++++--
->  1 file changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> index c06d0fc791d3..c2ad8e585586 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> @@ -4,18 +4,26 @@
->  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Analog Devices AD7768-1 ADC device driver
-> +title: Analog Devices AD7768-1 ADC family
->  
->  maintainers:
->    - Michael Hennerich <michael.hennerich@analog.com>
->  
->  description: |
-> -  Datasheet at:
-> -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
 
-Only adding one property seems a bit incomplete give that the ADAQs have
-significantly more pins that the regular ADC.
+...
 
-E.g different/more power supplies; gain-gpios, fda-gpios (or don't allow
-gpio-controller if we can assume GAINx and FAx are always wired to back to the
-ADC and not coming from somewhere else).
+> @@ -1371,9 +1387,14 @@ static int ad7768_probe(struct spi_device *spi)
+>  
+>  	st->mclk_freq = clk_get_rate(st->mclk);
+>  
+> -	indio_dev->channels = ad7768_channels;
+> -	indio_dev->num_channels = ARRAY_SIZE(ad7768_channels);
+> -	indio_dev->name = spi_get_device_id(spi)->name;
+> +	st->chip = spi_get_device_match_data(spi);
 
->  
->  properties:
->    compatible:
-> -    const: adi,ad7768-1
-> +    enum:
-> +      - adi,ad7768-1
-> +      - adi,adaq7767-1
-> +      - adi,adaq7768-1
-> +      - adi,adaq7769-1
->  
->    reg:
->      maxItems: 1
-> @@ -58,6 +66,19 @@ properties:
->      description:
->        ADC reference voltage supply
->  
-> +  adi,aaf-gain-bp:
-> +    description: |
-> +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF)
-> +       to the ADC input in basis points (one hundredth of a percent).
-> +       The hardware gain is determined by which input pin(s) the signal goes
-> +       through into the AAF. The possible connections are:
-> +       * For the ADAQ7767-1: Input connected to IN1±, IN2± or IN3±.
-> +       * For the ADAQ7769-1: OUT_PGA pin connected to IN1_AAF+, IN2_AAF+,
-> +         or IN3_AAF+.
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    enum: [1430, 3640, 10000]
-> +    default: 10000
+Generally, we want this early in probe so that chip info is available as early
+as possible. Might not need it now, but would save us from having to move this
+later if we ever do.
+
+> +	if (!st->chip)
+> +		return dev_err_probe(&spi->dev, -ENODEV,
+> +				     "Could not find chip info data\n");
 > +
 
