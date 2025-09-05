@@ -1,196 +1,159 @@
-Return-Path: <linux-kernel+bounces-801942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14363B44BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A89BB44BB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03865A2E64
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C9F1896A2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DC32264D3;
-	Fri,  5 Sep 2025 02:52:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A61F5842;
+	Fri,  5 Sep 2025 02:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WhRQa/oe"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C76D1FAC4B;
-	Fri,  5 Sep 2025 02:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F672EEB3;
+	Fri,  5 Sep 2025 02:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757040773; cv=none; b=KXgSUZkJTbhDi+vawiobOk8fOv08uR5Jab54N2yQX29r1mb9Mv48KqhAWMJKyUyoflHIkTX9V3jFxlctNIFA1g3ZWSzVFHe+g0cU9+I11rW3vAgGLR+vkXX67KgCXZ+fmtqjItfhaBpb9ZuODVOEYBwIMS95v1Tq6J+yl7yQZe0=
+	t=1757040327; cv=none; b=URr5p79MDvJvr2+7pi+eUbyu2szRbnONILHmtTuGCS508z3vkeqtYl1DbQFXGqikG8K7LQB3Hi9Gowpep+t5LGmxmFeCIpW7lMMiZwySuXtmxi3BZobw1BBSz58PM47hzK7liLPUPSuoq0I5F/vcGvT7UYO1+5k6i7ZwTk92X6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757040773; c=relaxed/simple;
-	bh=awyv4lGa39gJ6Bpo1BVOB/Uk18u0N6Fl8y0t2Nnar/E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZeeYhlAsvktEoNcMqdixFlX6fxJhZai5cV074MbpBmzlhVDITDYlk99NYrYoKg4U9dvBG/ftT0laH33yIPYyBBAJVZLMQJAExr6ANu0PhyZnkJUUwF8rzRPV4yIEr17WPV0He1Gs4Hyk//3mk/9yuBON1StxEasYPtgJy4ce73Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cJ19W1lM6zKHMvV;
-	Fri,  5 Sep 2025 10:52:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 31FDD1A0877;
-	Fri,  5 Sep 2025 10:52:47 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY18ULpou6m7BQ--.37022S4;
-	Fri, 05 Sep 2025 10:52:46 +0800 (CST)
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-To: deller@gmx.de,
-	tzimmermann@suse.de,
-	lee@kernel.org,
-	jani.nikula@intel.com,
-	oushixiong@kylinos.cn,
-	soci@c64.rulez.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	yangerkun@huawei.com,
-	wozizhi@huaweicloud.com
-Subject: [PATCH] fbdev: Delay the setting of fbcon_ops to fix KASAN issues
-Date: Fri,  5 Sep 2025 10:43:40 +0800
-Message-Id: <20250905024340.337521-1-wozizhi@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1757040327; c=relaxed/simple;
+	bh=1oZaaSwR1Sa1mnNKk7QdlrOmQz8giGpB2NXuMpSY0EU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jjmslD7GNo/l5T3mMBWXnrM4AjZeODEO1aZI9CrzyumApFkgGp+Lqeuhiq9OO8DPXujf/7HrVcW/N9tyFP5t5pCsz0KQElaVCQGx4gfB2Rl1q4a4A5VwMgf4nyHSJPkooyhuFfS5B1Qwwb/tw7mPcnWXZpF+wjJzJQ/4exzdjKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WhRQa/oe; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5852ivfj3654671;
+	Thu, 4 Sep 2025 21:44:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757040297;
+	bh=UNwxcaJFSrFO5q+R1t0J7M4sGh4VvR9Irx9KtutqIis=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=WhRQa/oe0vza4t+wPi400uTMIETdVCn92OmjEKIy823CyxlUz66awuXcroEYhY/yf
+	 rnW9WyC7n9bRZcsCSTEvn3UA5ygbShgjFtnHCCojIA3DWiQrDT10FWH0W9YlyC+wvV
+	 RyhM/mp2pi3PRwB61v1n/+J+p+ZgzUDdchkApTdA=
+Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5852ivsY1325372
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 4 Sep 2025 21:44:57 -0500
+Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE20.ent.ti.com
+ (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 4 Sep
+ 2025 21:44:57 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Thu, 4 Sep
+ 2025 21:44:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 4 Sep 2025 21:44:56 -0500
+Received: from [10.249.48.175] ([10.249.48.175])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5852is6x054550;
+	Thu, 4 Sep 2025 21:44:54 -0500
+Message-ID: <5dc272a9-6a14-47df-e7ce-006517e2cb43@ti.com>
+Date: Thu, 4 Sep 2025 21:44:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 00/33] Refactor TI IPC DT configs into dtsi
+To: Judith Mendez <jm@ti.com>, Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <afd@ti.com>, <u-kumar1@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jo_o Paulo Gon_alves
+	<joao.goncalves@toradex.com>,
+        Parth Pancholi <parth.pancholi@toradex.com>,
+        Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+        Francesco Dolcini
+	<francesco.dolcini@toradex.com>,
+        Matthias Schiffer
+	<matthias.schiffer@ew.tq-group.com>,
+        Logan Bristol
+	<logan.bristol@utexas.edu>,
+        Josua Mayer <josua@solid-run.com>, John Ma
+	<jma@phytec.com>,
+        Nathan Morrisson <nmorrisson@phytec.com>,
+        Garrett Giordano
+	<ggiordano@phytec.com>,
+        Matt McKee <mmckee@phytec.com>, Wadim Egorov
+	<w.egorov@phytec.de>,
+        Andrejs Cainikovs <andrejs.cainikovs@toradex.com>,
+        "Max
+ Krummenacher" <max.krummenacher@toradex.com>,
+        Stefan Eichenberger
+	<stefan.eichenberger@toradex.com>,
+        Hiago De Franco <hiago.franco@toradex.com>
+References: <20250823160901.2177841-1-b-padhi@ti.com>
+ <8fea9d7d-faa0-4e51-b7a5-e17a945bf1ed@ti.com>
+Content-Language: en-US
+From: Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <8fea9d7d-faa0-4e51-b7a5-e17a945bf1ed@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncY18ULpou6m7BQ--.37022S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxArWkurWUXr4rAryfGw47twb_yoWrArWDpF
-	yYkry2q3Z8tw45C3W3Xw45WF4rX3ZrJry7ua97ta4YgFy3uFW8W34kJFyUuFWrur97Jry8
-	Xw1DtrW8GFWDuw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-[BUG]
-Recently, we encountered a KASAN warning as follows:
+On 9/4/25 15:40, Judith Mendez wrote:
+> Hi Beleswar,
+> 
+> On 8/23/25 11:08 AM, Beleswar Padhi wrote:
+>> The TI K3 SoCs have multiple programmable remote processors like
+>> R5F, M4F, C6x/C7x etc. The TI SDKs for these SoCs offer sample firmware
+>> which could be run on these cores to demonstrate an "echo" IPC test.
+>> Those firmware require certain memory carveouts to be reserved from
+>> system memory, timers to be reserved, and certain mailbox
+>> configurations for interrupt based messaging. These configurations
+>> could be different for a different firmware.
+>>
+>> Refactor these firmware dependent configurations from board level DTS
+>> into a dtsi for now. This dtsi for TI IPC firmware is board-independent
+>> and can be applied to all boards from the same SoC Family. This gets
+>> rid of code duplication (>50%) and allows more freedom for users
+>> developing custom firmware (or no firmware) to utilize system resources
+>> better; easily by swapping out this dtsi. To maintain backward
+>> compatibility, the dtsi is included in all existing boards.
+>>
+>> DTSI vs Overlay:
+>> 1. I chose DTSI over overlay as both the ways required including the
+>> refactored file in existing board-level files to maintain backward
+>> compatibility, so didn't see the advantage of using overlays here.
+>> 2. If we do down the overlay path, existing board-level file names have
+>> to be changed to indicate they are without the IPC support; so that
+>> they can be combined with the overlay to generate the same-named DTBs.
+>> For example:
+>> k3-am69-sk.dtb := k3-am69-sk-sans-ipc.dtb k3-j784s4-ti-ipc-firmware.dtbo
+>>                  ~~~~~~~~
+>>
+>> I am not sure if this renaming of files is ideal?
+>>
+> 
+> Thanks for you patches, I was able to boot test on am62px SK and
+> am62ax SK boards. I was also able do a simple rpmsg echo test with some
+> additional patches on top of your changes:
+> https://gist.github.com/jmenti/4ae7a6a65c2cb95fd54f48d32430c1e9
+> 
+> so for am62ax and am62px SK boards:
+> 
+> Tested-by: Judith Mendez <jm@ti.com>
+>
+Tested the AM64 dts patches on AM64-SK board and it worked.
+Thanks
 
-kasan_report+0xaf/0xe0 mm/kasan/report.c:588
-fb_pad_aligned_buffer+0x12f/0x150 drivers/video/fbdev/core/fbmem.c:116
-ccw_putcs_aligned drivers/video/fbdev/core/fbcon_ccw.c:119 [inline]
-ccw_putcs+0x9ac/0xbb0 drivers/video/fbdev/core/fbcon_ccw.c:175
-fbcon_putcs+0x329/0x3f0 drivers/video/fbdev/core/fbcon.c:1297
-do_update_region+0x3de/0x670 drivers/tty/vt/vt.c:623
-invert_screen+0x1de/0x600 drivers/tty/vt/vt.c:748
-highlight drivers/tty/vt/selection.c:57 [inline]
-clear_selection+0x5e/0x70 drivers/tty/vt/selection.c:81
-vc_do_resize+0xc8e/0xf40 drivers/tty/vt/vt.c:1206
-fbcon_modechanged+0x489/0x7a0 drivers/video/fbdev/core/fbcon.c:2705
-fbcon_set_all_vcs+0x1e0/0x600 drivers/video/fbdev/core/fbcon.c:2752
-fbcon_rotate_all drivers/video/fbdev/core/fbcon.c:250 [inline]
-...
-
-reproduce[probabilistic, depending on the width and height of vc_font, as
-well as the value of "p" in do_update_region()]:
-1) echo 2 > /sys/devices/virtual/graphics/fbcon/rotate_all
-2) echo 3 > /sys/devices/virtual/graphics/fbcon/rotate_all
-
-[CAUSE]
-The root cause is that fbcon_modechanged() first sets the current rotate's
-corresponding ops. Subsequently, during vc_resize(), it may trigger
-clear_selection(), and in fbcon_putcs->ccw_putcs[rotate=3], this can result
-in an out-of-bounds access to "src". This happens because ops->fontbuffer
-is reallocated in fbcon_rotate_font():
-1) When rotate=2, its size is (width + 7) / 8 * height
-2) When rotate=3, its size is (height + 7) / 8 * width
-
-And the call to fbcon_rotate_font() occurs after clear_selection(). In
-other words, the fontbuffer is allocated using the size calculated from the
-previous rotation[2], but before reallocating it with the new size,
-con_putcs is already using the new rotation[3]:
-
-rotate_all_store
- fbcon_rotate_all
-  fbcon_set_all_vcs
-   fbcon_modechanged
-   ...
-    fbcon_set_rotate
-     fbcon_rotate_ccw
-      ops->putcs = ccw_putcs // set rotate 3 ops
-    vc_resize
-    ...
-     clear_selection
-      highlight
-      ...
-       do_update_region
-	fbcon_putcs
-	 ccw_putcs_aligned
-	  src = ops->fontbuffer + (scr_readw(s--) & charmask)*cellsize
-	  fb_pad_aligned_buffer----[src KASAN!!!]
-       update_screen
-        redraw_screen
-	 fbcon_switch
-	  fbcon_rotate_font
-	   dst = kmalloc_array(len, d_cellsize, GFP_KERNEL)
-	   ops->fontbuffer = dst
-
-[FIX]
-Considering that when the rotation changes, clear_selection() should clear
-the previously selected region and not consider the new rotation yet.
-Therefore, the assignment to fbcon_ops for the newly set rotate can be
-postponed to fbcon_rotate_font(), since the fontbuffer is regenerated
-there. To avoid affecting other code paths, fbcon_set_rotate() will
-temporarily continue assigning fbcon_ops based on cur_rotate not rotate.
-
-Signed-off-by: Zizhi Wo <wozizhi@huaweicloud.com>
----
- drivers/video/fbdev/core/fbcon_rotate.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/core/fbcon_rotate.c b/drivers/video/fbdev/core/fbcon_rotate.c
-index ec3c883400f7..d76446da24d4 100644
---- a/drivers/video/fbdev/core/fbcon_rotate.c
-+++ b/drivers/video/fbdev/core/fbcon_rotate.c
-@@ -70,6 +70,7 @@ static int fbcon_rotate_font(struct fb_info *info, struct vc_data *vc)
- 			src += s_cellsize;
- 			dst += d_cellsize;
- 		}
-+		fbcon_rotate_ud(ops);
- 		break;
- 	case FB_ROTATE_CW:
- 		for (i = len; i--; ) {
-@@ -78,6 +79,7 @@ static int fbcon_rotate_font(struct fb_info *info, struct vc_data *vc)
- 			src += s_cellsize;
- 			dst += d_cellsize;
- 		}
-+		fbcon_rotate_cw(ops);
- 		break;
- 	case FB_ROTATE_CCW:
- 		for (i = len; i--; ) {
-@@ -86,6 +88,7 @@ static int fbcon_rotate_font(struct fb_info *info, struct vc_data *vc)
- 			src += s_cellsize;
- 			dst += d_cellsize;
- 		}
-+		fbcon_rotate_ccw(ops);
- 		break;
- 	}
- 
-@@ -97,7 +100,7 @@ void fbcon_set_rotate(struct fbcon_ops *ops)
- {
- 	ops->rotate_font = fbcon_rotate_font;
- 
--	switch(ops->rotate) {
-+	switch (ops->cur_rotate) {
- 	case FB_ROTATE_CW:
- 		fbcon_rotate_cw(ops);
- 		break;
--- 
-2.39.2
+Tested-by: Hari Nagalla <hnagalla@ti.com>
 
 
