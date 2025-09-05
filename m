@@ -1,108 +1,151 @@
-Return-Path: <linux-kernel+bounces-803176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6363EB45BA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66504B45BB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901CA188FB6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C755E0BF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA2423E320;
-	Fri,  5 Sep 2025 15:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A718A319154;
+	Fri,  5 Sep 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8/gzUtv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="VfZ97xaJ"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A800B30217B;
-	Fri,  5 Sep 2025 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580ED319121
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084417; cv=none; b=jmPlWOsl7Rlfl6uJ/Bozf3jL9lzFY6JiouHwrUEMUYj4jx6Tt6fhl/gsGcRkWEjFDmy7NEdfQiHzVNx3996iXgh4LpUfl1ZWJz6laU8hmDVPIwrsXPdRwODiY89s310jzTy2E6355A6XZOP7oCYlf5gudyDb0jXXQrcViFlclDI=
+	t=1757084425; cv=none; b=rTcIgUOHTOVKERlaTF0oRrjvOJmdhmzsd+DbvNuQIqVCAKizNzpWI+elwxio7omgVjRHcgmoTPtGHdKJ9bDv0IdEylNzIE/cjtKOkPl8jX7AD2YP1pM4Y76ysps96CLDWcA3pKb9esT9CpE43RH2ek9OgxJ9P2hKF5+IyXOVrxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084417; c=relaxed/simple;
-	bh=ri4clsiuu0TGnICYGMR3lnjIIOKj/dmNCRfheklY2bE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KY8l37reJmP9lMbQaFG8FjQPFrQgoeyb1Y94UGfgfrpfoPH2xODY1mjowmtox/SyHeBW2Uw5Ccd825taxrkvgrIpKBfZLtJhtR9ErrSpr3HRZVbLZ7EJBnJ8imrqrljPMLwY/bFWv0F0JCNV+BnD3ZSxclzC9Gg+DWQbcQmVQdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8/gzUtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C32C4CEF4;
-	Fri,  5 Sep 2025 15:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757084417;
-	bh=ri4clsiuu0TGnICYGMR3lnjIIOKj/dmNCRfheklY2bE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8/gzUtvAl7Q91n2WthpKhZE6uvbUNVuXBExoMGA+QJ0JgPaN5VCtQuHi2UFHOl7D
-	 kaTGn9LJ9lzh8D2DI7Scl+/2BSUI+vLCiTiioSPgnzAetP/sp64v94bNaQL9sgSWKd
-	 1BGuRvxrMUwe9l8M4a2z2XuXzlyZuwqjOBA/PwH2Age2UFR36UWNZAGODHj2pZlyBo
-	 crPW9lUrHVUFFqWc88DPym5WR56aEmPXFQuEAYy+ebbqbMYJgUVpIxC6ucuoOmj1yP
-	 EpcW6pp8/S56sSS4FI69mIYU/DujB5JyOcZKQxtRpI68mpU+g+6cTGKgxNp90XJbq8
-	 xlG3woLsHo7rQ==
-Date: Fri, 5 Sep 2025 20:30:11 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vivek.Pernamitta@quicinc.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH v3 5/6] bus: mhi: core: Improve mhi_sync_power_up
- handling for SYS_ERR state
-Message-ID: <sh3doz6uhkvbp4iy76eyhnh7ycigka3gmrod423rmgarhkhlxj@oet5rikyjhee>
-References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
- <20250821-vdev_next-20250821_sriov-v3-5-e1b017c48d4a@quicinc.com>
+	s=arc-20240116; t=1757084425; c=relaxed/simple;
+	bh=oCnKoNhuAJHXOJEdO0zYcmyRxqFy8oYfIx3LgHgeiHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y4odUF7CFmVId6NYueanb1Sm/lK3I4/vlKLmkUzwEGAftpCkimKbsSPDkJv5C0+I6iPMB8LtVLiDGj4O7aS9QVF5KID8X/f5Y9+MZYIpAtK/CMnobi4SqMVOs5krRfEwurUEUwNyXcrrv5aKFWX3ly5o2efguWFayoFnXXM+q6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=VfZ97xaJ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cJKJy0WjWz9sy4;
+	Fri,  5 Sep 2025 17:00:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1757084418;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RXOi5sZru2cPyRuOM2KEV2Sn8wT+4JJymSVhdB9bP78=;
+	b=VfZ97xaJzxCKsbqucB6C77/OY9hJkk0owMCk8Ivf5x8cWaqMhcYmcQYZNGhdb2rwIMsd9X
+	Mm7+0HDe6Hm5t2FCRkmaxg6EoGWb1kCpbnpJw4vwmwVwSc5NoOvhqhXVKSdZja/WaxxkJi
+	kPkhlqVCa/W2ITuyOfxZo/gIAa00YrKQ0q2OfQ690pAnz1y0rRlG7h2bBGwuuojZLR9xCT
+	h1Blb4BMuR1J0fY5aHW1tBekIpzBBydn/XuSp2MmxXu/L112MHPpOVqmVLlUZju/9EJnpx
+	qu+Gfqjsxi+WrFoVPwibSYDEtBsepHt9Fgnh+ULvogAqYgbm5rm7TJzkD7iT2A==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Zi Yan <ziy@nvidia.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Barry Song <baohua@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nico Pache <npache@redhat.com>,
+	Dev Jain <dev.jain@arm.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel@pankajraghav.com,
+	willy@infradead.org,
+	linux-mm@kvack.org,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Kiryl Shutsemau <kas@kernel.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v4] huge_memory: return -EINVAL in folio split functions when THP is disabled
+Date: Fri,  5 Sep 2025 17:00:12 +0200
+Message-ID: <20250905150012.93714-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-5-e1b017c48d4a@quicinc.com>
 
-On Thu, Aug 21, 2025 at 06:25:37PM GMT, Vivek.Pernamitta@quicinc.com wrote:
-> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> 
-> In power-up, reboot, or recovery scenarios, mhi_sync_power_up() is invoked
-> by the controller driver to wait for the device to enter Mission Mode.
-> 
-> However, in some cases, the device may be in SYS_ERR state due to a
-> previous device reset. SYS_ERR is a valid state, but currently, the host
-> exits at wait_event_timeout() prematurely when MHI_PM_IN_ERROR_STATE is
-> detected, causing mhi_sync_power_up() to fail.
-> 
-> If MHI is torn down before SYS_ERR is serviced, recovery is not possible.
-> Instead of aborting, the SYS_ERR handler should process the error and queue
-> the next state transition to bring the device into Mission Mode.
-> 
-> This change ensures mhi_sync_power_up() waits for Mission Mode even
-> after SYS_ERR, enabling proper recovery and improving robustness.
-> 
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Reword the description in imperative mood. Also, if this is an independent fix,
-this patch should be moved to the start of the series.
+split_huge_page_to_list_[to_order](), split_huge_page() and
+try_folio_split() return 0 on success and error codes on failure.
 
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> ---
->  drivers/bus/mhi/host/internal.h | 2 ++
->  drivers/bus/mhi/host/pm.c       | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
-> index 034be33565b78eff9bdefd93faa4f3ce93825bad..9e37e5c9a6c7e07d54300adce51c9db9052e477a 100644
-> --- a/drivers/bus/mhi/host/internal.h
-> +++ b/drivers/bus/mhi/host/internal.h
-> @@ -170,6 +170,8 @@ enum mhi_pm_state {
->  							MHI_PM_IN_ERROR_STATE(pm_state))
->  #define MHI_PM_IN_SUSPEND_STATE(pm_state)		(pm_state & \
->  							(MHI_PM_M3_ENTER | MHI_PM_M3))
-> +#define MHI_PM_IN_UNRECOVERABLE_ERROR(pm_state)		((pm_state == MHI_PM_FW_DL_ERR) || \
+When THP is disabled, these functions return 0 indicating success even
+though an error code should be returned as it is not possible to split a
+folio when THP is disabled.
 
-MHI_PM_IN_UNRECOVERABLE_STATE?
+Make all these functions return -EINVAL to indicate failure instead of
+0. As large folios depend on CONFIG_THP, issue warning as this function
+should not be called without a large folio.
 
-- Mani
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Zi Yan <ziy@nvidia.com>
+Acked-by: Kiryl Shutsemau <kas@kernel.org>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509051753.riCeG7LC-lkp@intel.com/
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+Changes since v3:
+  - use VM_WARN_ON_ONCE_PAGE instead of the folio version in functions
+    that take a page.
 
+Changes since v2:
+  - use page_folio(page) directly in VM_WARN_ON_ONCE_FOLIO
+
+ include/linux/huge_mm.h | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 7748489fde1b..cd61d2b789ec 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -553,22 +553,26 @@ static inline int
+ split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 		unsigned int new_order)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_PAGE(1, page);
++	return -EINVAL;
+ }
+ static inline int split_huge_page(struct page *page)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_PAGE(1, page);
++	return -EINVAL;
+ }
+ 
+ static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, folio);
++	return -EINVAL;
+ }
+ 
+ static inline int try_folio_split(struct folio *folio, struct page *page,
+ 		struct list_head *list)
+ {
+-	return 0;
++	VM_WARN_ON_ONCE_FOLIO(1, folio);
++	return -EINVAL;
+ }
+ 
+ static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+
+base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
 -- 
-மணிவண்ணன் சதாசிவம்
+2.50.1
+
 
