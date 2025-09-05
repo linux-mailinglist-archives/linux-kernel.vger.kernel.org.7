@@ -1,132 +1,132 @@
-Return-Path: <linux-kernel+bounces-803917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC535B46744
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DD9B46747
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ADA1C87712
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735991C8798C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18229E0E5;
-	Fri,  5 Sep 2025 23:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931BE2BD001;
+	Fri,  5 Sep 2025 23:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzHfgPr8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPOS8IeI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395CD25A2A1;
-	Fri,  5 Sep 2025 23:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57A126B951;
+	Fri,  5 Sep 2025 23:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757115639; cv=none; b=naPd3b8srlnrtJIla3wwm+ZbfRrajGqh2wGY130+C//+o67qUCsZFo+0hmvUS6nmEUhbKLPKYEVWIHN9U6D6ohBqN5QpYfMbUnE11sFgAqI9xxdFU14YZ9KFhCQwdvS1DzQ1h9vfqCXhZvOlIpExw9+EBASC8Ww9rhnR0pJvd3s=
+	t=1757115775; cv=none; b=CzIaWsng+fG8Zs6BtzfNSBolx3hHOzjUmolfecVkc6mYD3h5w8Qzwe7jQwXD6IUmGlhu6KJ1ezyeLkNo9I8VVkYe6ymjb6s9UkOwUkW0F1dYQ3XMC/i8/seGdSS6+MQ3Kd787OD6YD6xJ3jBkSd7Rf1hEYWNOFmsk7A7vGNEH9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757115639; c=relaxed/simple;
-	bh=vxYzG+tFLchZIj9rrVbtGxvJOup9VkxSvC/g/VUhtwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCxf7BNsGNUU7AcZAX+6uQG62QYltKKlZBlvNzgBWsOdtKyleKtElYaXUJwcd32jInpS98tKmcwsIyQ35P1QFZlnIIrkZtxSboaXZpfO52QYpjJT2JVF/TSd76HYqQbkmuVJZOyw1aB3ZdRuCqzy2pCVTok28kgtaB/YKXuSy1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzHfgPr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2962C4CEF1;
-	Fri,  5 Sep 2025 23:40:37 +0000 (UTC)
+	s=arc-20240116; t=1757115775; c=relaxed/simple;
+	bh=Z4AafRmSqirL4OdrjEWSxwft6czYJP8hw7N/bR6khaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b5m5TOvOPuEXw9PEWyNAm3dFXz4it21vkkqLb7upfJ3Up7dDbvtjRVYqOC7y7rncPHI+gX1kZ4LwKsq+SREim+mcPCrFMnlsXmE4Wjj1saPsWy7SEX8JZCV4NNOTe9xq5bK9pbe1ArH3UUOYIok55uP7ZKFDBeiEZFHtsQY39Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPOS8IeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC753C4CEF1;
+	Fri,  5 Sep 2025 23:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757115638;
-	bh=vxYzG+tFLchZIj9rrVbtGxvJOup9VkxSvC/g/VUhtwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jzHfgPr8OJpeMDxSoZMMpg9Mc3C/PaBn+3rO4JAV0xviSHIoBnv97jHdnenX85p3x
-	 D3wdwaX1vEvoptJw2RYW6NObvWJBVxgcbA9DiJGZKUAVIPUZc4JaJjENtfLtp8lnAh
-	 UPOtGI2DnYD5oGE+MEB3afuk3wC+MEPiQ6TOnpo2ilFKUneWalFtDx+XLGYlDtCV0b
-	 WY3+/pIUO2UXzGIOh+QkWSOpt/FclzWtyvasmox5chvwJXHK7fCJDETQjBreMHLack
-	 c27Vb7kbA28oVJZevQGW/dRQ4KUZ589jo7aTMAlJsMqnCF9CKvQBaNoPFDffPLnZb3
-	 5b7zQUhNDpOOQ==
-Date: Fri, 5 Sep 2025 18:40:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Cc: git@amd.com, michal.simek@amd.com, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	kees@kernel.org, gustavoars@kernel.org,
-	jarkko.nikula@linux.intel.com, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, radhey.shyam.pandey@amd.com,
-	srinivas.goud@amd.com, shubhrajyoti.datta@amd.com,
-	manion05gk@gmail.com
-Subject: Re: [PATCH V4 1/2] dt-bindings: i3c: Add AMD I3C master controller
- support
-Message-ID: <20250905234037.GA1512025-robh@kernel.org>
-References: <20250905113740.3841181-1-manikanta.guntupalli@amd.com>
- <20250905113740.3841181-2-manikanta.guntupalli@amd.com>
+	s=k20201202; t=1757115774;
+	bh=Z4AafRmSqirL4OdrjEWSxwft6czYJP8hw7N/bR6khaU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SPOS8IeITLATnexg0CrOFsJngLGbZWPeLa81mWBhS2jVPMLSDYVXuHJvBImbGE6S4
+	 K9apfFx8yriqCpeCkNs97UpZpNTh51pe6lvMkqFg5YykMrm7dmsvPFIWxoYhxIf6kX
+	 EmhMe1fQ9wxyaAk6/yyxy6dNOS+4z0dze49CW3868a0ZWXaSqz0w2wlszbwNRiLQnI
+	 lqH1Mda1bnui12BOeiURCM0lGidj5bz+7KckguicOb+kJmk2dbzCK7nhRaGWwPSEYY
+	 fs0RqlGMuSzd6BiEcTjLCaeWCd81KEuMuBGG8TYfdzynUYT8N5iiQenI1XB8PJSOhd
+	 gtuN/SviVpeXw==
+Date: Fri, 5 Sep 2025 16:42:53 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason
+ Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ jdamato@fastly.com, kernel-team@meta.com
+Subject: Re: [PATCH RFC net-next 4/7] net: ethtool: add get_rxrings callback
+ to optimize RX ring queries
+Message-ID: <20250905164253.4e9902d2@kernel.org>
+In-Reply-To: <20250905-gxrings-v1-4-984fc471f28f@debian.org>
+References: <20250905-gxrings-v1-0-984fc471f28f@debian.org>
+	<20250905-gxrings-v1-4-984fc471f28f@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905113740.3841181-2-manikanta.guntupalli@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 05:07:39PM +0530, Manikanta Guntupalli wrote:
-> Add device tree binding documentation for the AMD I3C master controller.
-> 
-> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-> ---
-> Changes for V2:
-> Updated commit subject and description.
-> Moved allOf to after required.
-> Removed xlnx,num-targets property.
-> 
-> Changes for V3:
-> Updated commit description.
-> Corrected the order of properties and removed resets property.
-> Added compatible to required list.
-> Added interrupts to example.
-> 
-> Changes for V4:
-> Added h/w documentation details.
-> ---
->  .../devicetree/bindings/i3c/xlnx,axi-i3c.yaml | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml b/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
-> new file mode 100644
-> index 000000000000..1daeb20205ac
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i3c/xlnx,axi-i3c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD I3C master
-> +
-> +maintainers:
-> +  - Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-> +
-> +description:
-> +  The AXI-I3C IP is an I3C Controller with an AXI4-Lite interface, compatible
-> +  with the MIPI I3C Specification v1.1.1. The design includes bidirectional I/O
-> +  buffers that implement open collector drivers for the SDA and SCL signals.
-> +  External pull-up resistors are required to properly hold the bus at a Logic-1
-> +  level when the drivers are released.
-> +
-> +  For more details, please see https://docs.amd.com/r/en-US/pg439-axi-i3c
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,axi-i3c-1.0
+On Fri, 05 Sep 2025 10:07:23 -0700 Breno Leitao wrote:
+> +	int	(*get_rxrings)(struct net_device *dev);
 
-I'm still wondering where 1.0 comes from? From the link the only 
-versions I could see are Vivado tool versions which appear to be year 
-based. If the IP is bundled with the tool, then use the tool version 
-(oldest version you tested with) if there is no other versioning. A 1.0 
-version really just sounds like you made it up.
+I think this can return u32..
+The drivers can't possibly fail to know how many queues they have.
+We already do that for get_rxfh_*_size callbacks
 
-Something like bindings/sifive/sifive,blocks-ip-versioning.yaml is what 
-I'm looking for.
+>  	void	(*get_pause_stats)(struct net_device *dev,
+>  				   struct ethtool_pause_stats *pause_stats);
+>  	void	(*get_pauseparam)(struct net_device *,
+> diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+> index 1a9ad47f60313..2f3dbef9eb712 100644
+> --- a/net/ethtool/ioctl.c
+> +++ b/net/ethtool/ioctl.c
+> @@ -1208,6 +1208,22 @@ static noinline_for_stack int ethtool_set_rxnfc(struct net_device *dev,
+>  	return 0;
+>  }
+>  
+> +static int get_num_rxrings(struct net_device *dev)
 
-Rob
+This one has to indeed keep returning int, until we get rid of
+get_rxnfc fallback completely.
+
+> +{
+> +	const struct ethtool_ops *ops = dev->ethtool_ops;
+> +	struct ethtool_rxnfc rx_rings;
+> +	int ret;
+> +
+> +	if (ops->get_rxrings)
+> +		return ops->get_rxrings(dev);
+> +
+> +	ret = ops->get_rxnfc(dev, &rx_rings, NULL);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return rx_rings.data;
+> +}
+> +
+>  static noinline_for_stack int ethtool_get_rxrings(struct net_device *dev,
+>  						  u32 cmd,
+>  						  void __user *useraddr)
+> @@ -1217,16 +1233,17 @@ static noinline_for_stack int ethtool_get_rxrings(struct net_device *dev,
+>  	const struct ethtool_ops *ops = dev->ethtool_ops;
+>  	int ret;
+>  
+> -	if (!ops->get_rxnfc)
+> +	if (!ops->get_rxnfc && !ops->get_rxrings)
+>  		return -EOPNOTSUPP;
+>  
+>  	ret = ethtool_rxnfc_copy_struct(cmd, &info, &info_size, useraddr);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = ops->get_rxnfc(dev, &info, NULL);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (WARN_ON_ONCE(info.cmd != ETHTOOL_GRXRINGS))
+> +		return -EOPNOTSUPP;
+
+I think malicious user space can trigger this warning with a TOCTOU
+race. Let's skip the check, it's not really needed?
+
+> +	info.data = get_num_rxrings(dev);
 
