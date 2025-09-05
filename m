@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-802878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29178B457CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C45B457E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075DF1C26D8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139803B69A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9734F482;
-	Fri,  5 Sep 2025 12:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E7134F485;
+	Fri,  5 Sep 2025 12:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="EONzcNdO"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E94234DCFC
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757075279; cv=none; b=DD/eqKN7+yZUOn5qr/pTgtYK9jBRGiJ5/jjzv09a3f12lYfAy2Vu/sCgS7KWtEkAysNmypvsN7MMAghmW0qaMWEqJTmVhaerRYybVMytS4l35EloO446lFkJGD6sbOMLtcCiDwr0Qtv7iVt4Y4kQBoJVJtDg+G6p16Kq5YQldQg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757075279; c=relaxed/simple;
-	bh=8CjpBmvrUyioClQv+4t4qWqIJCFOr+widzD2jXtprWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUXZez1U+EgxdJI/xhsKDJJU8qbxZqW5RVLywEcZsT0Ezjh3v80JVIi/D137v5VeEBIdgHwR7W6f4vT3qxBaN8nH4qLWWNRfAAyCm1VqGrRg9kKcgha9t23G4ftHA1wQyuOLNi6gjocyX4UsGeaiZt9O1SRFJ5I+X9KuXaCWFhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=EONzcNdO; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dkhVojmV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 0745E52C54;
-	Fri,  5 Sep 2025 14:27:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1757075277;
-	bh=8CjpBmvrUyioClQv+4t4qWqIJCFOr+widzD2jXtprWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EONzcNdOrHAgSS/R7sA/baWHgglBoaJyxqbKCl822wd1J4gyDGD3l/KbFg2hELjEK
-	 vLeMx68mqhnKsTRVe9eBoqtwlB0+LWgE056t4AgZv0ORHNQLtDHHnc9ZGlAwnKB8yD
-	 ldX1vNQbZI3mH4SvUcLnuBS59Qa0BPCvCFfFyAcuueshf3YcVvozVNyNyggswjdp4o
-	 Lf9EUiW+syyScoa+KmA/VzpNHaK2WLBvy0FDdBKUUZz83WOmPmcceOdQP15y2La0tP
-	 c7qO4at7A4tF6CoGXTpycfyBZvVlz8HhdiJkEo1ZPjya2kD98eteQyZYjUWNqedGzV
-	 1In0f20sVWSKQ==
-Date: Fri, 5 Sep 2025 14:27:55 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH v2 0/3] iommu/apple-dart: Four level page table support
-Message-ID: <aLrXS9Z-F31SEd_G@8bytes.org>
-References: <20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA1734DCE1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757075295; cv=none; b=f8RcrBCpJ/tucWm6oQ6xWflf/t0d0S2aJUdb6vnHqg+5n63Icc/Xgyrhby5+/830iMXtcVq47MPNRaa4ILR4Xo+gmqQBJwGMC93jNcCxVCPnKAQpKNHf+OUi7ZenbZw0sPEQhqWJcvdD5KNNpO9OENnktN6e+xM9boBJaGKdGvo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757075295; c=relaxed/simple;
+	bh=uDpudofOkYBdbeH6V9Y+kTFhVPT5jO4rSOKc/EyVu/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NlkxapeBiVkjNMOPlMFzY4o+y2yw696eOeVBBgmDEFeceXloJEFH4ZHkkui5SB5IPlfLx7cSVsO78uLMtUcZX5AaADbBvOPWN9idVu9YNE3HYOPZBmqw/A+U27RO8GlXm3WWmorvabe7I2g6xI/f6giJvfhVoqvTAwxs1+ERBxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dkhVojmV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857ZPxa023892
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 12:28:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eajFPWn1xdqMoWwy/ddDT0Q7ux3XoVox+4G1phz/d6g=; b=dkhVojmVX4VHTs4G
+	OryMgMrveKpyHaaD1gHSf1OsDuVwfd5Q3FYNga+eRnhpR7iKI6FtQCT3gD3Lbavj
+	K6rDQbf+bk14Y1Bw+R/azPFYH/jNDMQFo8HGYMoyo0zS+/StU2qgGVhiJIDFvXTz
+	yW2SPXi3NQRn3J0+83tmP9Kug94w8vRMoz7Jt8jMiXoO0Iab48qGPIysJptyi1A9
+	JzUioUnBLQyboraA/sS+gr2ls6IkdWCVwnJ4bcptDQY1Hgr0R8radtWdmPJJc/lJ
+	kLWXGxp3lZ7cmTL2viOk0tIuWVHWr0vSiwCwpGSnVw73kEDQ8a7Ov+1sS+xhOc08
+	EELPYA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2fty5s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:28:13 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b307e1bef2so5859761cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:28:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757075292; x=1757680092;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eajFPWn1xdqMoWwy/ddDT0Q7ux3XoVox+4G1phz/d6g=;
+        b=Ogt3KfW7+ASoenFkmQs3LbT4H6QOL5/tzpFEoXOLK5HgolD/s2vv3MJFr0NM6KL7Nj
+         VGDWz/q+nZRP/FGF9gFfexnguEws+TM9xJdlrSIGe3BqlDNAiUwDqGQfiVfJrv20vL/Q
+         oS2vh8MofXynuCENAGXqB+/wVd/0NiZmWNvhXirwisPUpGl1RqOZAJCnh5mvCFlLnfAV
+         iawIVsnMpCT/o/r3/BABBANqWFpFkTWBNpz2oi5okr1zXONtIvfcY7ZmA95otl3kayxg
+         pwcuBCERxlQVU/7Snt8JpRopYW2gkDPY5hy/R9P+uSP9+NKep0iLvC/XtjXYJldAUeao
+         zhug==
+X-Forwarded-Encrypted: i=1; AJvYcCVVCxUwOXQkfoRTXZ908k2WumXWQNCnFTU0FL0SDsTP/flL4pGUNYckyo5aG8UwO5cwh9cbGZ8RyPES6Qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwwEIRetA0LeUDftQPIwCBfud+fRl98VofAC7PCnppVN8Kli7A
+	/RVL320IsZmlFBoDoKvx4liYSLUFXieawbXtY3vpHQh+Pn3IP0iSF+pLZF6BpZeWhd3ZZcC2oC3
+	poFOI14X9islLr6u17+TgQDd9lcpMDgdOwdyLUdI14FqgLRzeRFb3huGn56i5WinejeBieQxnaG
+	U=
+X-Gm-Gg: ASbGncuP0/q+L4pQnUVlnwlQZt1SLwufmngAo2I78o734jJee5EdJZOvLh7wA6csJNf
+	7zDC1jc/r13Qg4FgeOpL82WCX3rvd8JNWyGa2hfmi7pJqAI8W05SxPFacxqXMrmLpQOzoiIrZkX
+	TXQZiXjju4wvLyhB+yCN2EVCOhoplseh0FXtB5pJjY1o0/snAXFE3XvgNKhUoXR9m9wfxdov5+7
+	AwOSmWHM20aqzufFx4tqlVY22aas3S3AHSchIUFdJzwQLeanlV123kxzAzBCtxjiztDTCrPTEzO
+	4RJ0wx7WKO+b9Oh9CoTL5mbrGQnjQcekGoRk6yERUN9UGT48blqMQJuutD1NMBZiefOdzmqxXHN
+	MEwLsx/LUXbFWAiv/oHHxYA==
+X-Received: by 2002:a05:622a:295:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b5a0fb5d27mr60552251cf.2.1757075291645;
+        Fri, 05 Sep 2025 05:28:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWg77L4QqQOKdAgOxGg9M+otrPnQYWNj7jNcsX5+drgBYt19UXWJz+PIWIgaNs5LHPYJywFA==
+X-Received: by 2002:a05:622a:295:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b5a0fb5d27mr60551941cf.2.1757075290926;
+        Fri, 05 Sep 2025 05:28:10 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff0cb2cb07sm1724345966b.16.2025.09.05.05.28.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 05:28:10 -0700 (PDT)
+Message-ID: <a54442d0-a22e-42f9-889c-4bec128b3b58@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 14:28:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8750-mtp: Enable PMIC RTC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250905095353.150100-2-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250905095353.150100-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX44ZiZZLqwAlZ
+ YWJ0OfAUsmlsyfIABJpiPVeKoP1x/Lnu/J6JB3u+zH78eivp0/ObAZX9zVPz9ysCdHMAIYv8v7v
+ D0NSqVPMVeof14cmZ19LnQiPtNvCqQVnQkd1p2/cdxhMkN3TMmaQahz7/ens+7L5mDohPt/ldMu
+ ilJ1uJVKVr6ucAC15rXlIM4y0Ctyzqo036tQGQfkp196QTrw7qitMpeWvndu0ux3ZDnVXBqez60
+ RtNFid0P01Zw5of20fed5HN493lkATlZ/SoUG4PTgLz/H0g6UyJXheTahKNtS29QKgISxEg+AzP
+ dIoFrvmPoH1iEZTjYTBQv+h3mzaprrwIAiUybvo3fBLcvfqb/zi7WRbkHvWMZeJwN2unUC8kxzv
+ /fHAnRH6
+X-Proofpoint-ORIG-GUID: ueOL-t5x_LJAeoV1yFF-sizcHxLJRPGS
+X-Proofpoint-GUID: ueOL-t5x_LJAeoV1yFF-sizcHxLJRPGS
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68bad75d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=HTN6E6hfFVIKqq8n5ioA:9
+ a=QEXdDO2ut3YA:10 a=AdHoc0ENqhcA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-On Thu, Aug 21, 2025 at 12:15:57PM +0200, Janne Grunau wrote:
-> The DART instances found in T602x based SoCs (Apple's M2 Pro/Max/Ultra)
-> indicate an IAS of 42 bit. This results in alloc_io_pgtable_ops()
-> failing as io-pgtable-dart supports at most 36-bit IAS.
-> The t8110 DART design supports 4-level page tables. Implement support
-> for this in io-pgtable-dart and mark DART stream with more than 36-bit
-> IAS as 4-level page tables.
+On 9/5/25 11:53 AM, Krzysztof Kozlowski wrote:
+> Enable the Real Time Clock on PMK8550 RTC.
 > 
-> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> Changes in v2:
-> - simplified 4 page table level use in apple_dart_hw_enable_translation()
-> - use "iommu/{apple,io-pgtable}-dart:" as commit subject prefix
-> - added Sven's Rb:
-> - Link to v1: https://lore.kernel.org/r/20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net
-> 
-> ---
-> Hector Martin (3):
->       iommu/apple-dart: Make the hw register fields u32s
->       iommu/io-pgtable-dart: Add 4-level page table support
->       iommu/apple-dart: Add 4-level page table support
-> 
->  drivers/iommu/apple-dart.c      |  50 +++++++++-----
->  drivers/iommu/io-pgtable-dart.c | 143 ++++++++++++++++++++++++----------------
->  include/linux/io-pgtable.h      |   1 +
->  3 files changed, 121 insertions(+), 73 deletions(-)
 
-Applied, thanks.
+I think it makes more sense to enable it by default instead
+
+Konrad
 
