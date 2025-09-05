@@ -1,218 +1,149 @@
-Return-Path: <linux-kernel+bounces-801975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15698B44C42
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:27:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CEBB44C44
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE951C27A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041D35875DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF47246BA4;
-	Fri,  5 Sep 2025 03:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC7E24A06A;
+	Fri,  5 Sep 2025 03:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZIQpQyw4"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="X8ihi48I"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B87221265
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 03:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757042847; cv=none; b=djvyIbGCiXG93RORL/bFXMkUQ7zwNHIbRGC3mXgbmywTBC8vuuBJ0noqyxmfzEdD07dROMAHD0BxVRL/A0HJMJt2PO4HSVSVyY0BVMJuqk87zR2k9ytsHpt5MwrdzKyKgt+Ty0QbgxSR/Hhpyje7Qz9OPTJsbIvV750aBIL2hwQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757042847; c=relaxed/simple;
-	bh=+VXSgIhRAwZIGPzIQ9jTQLIynfEbotiIyagnLddr+s4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aph/Penh+MzQMzVnBBzIrhbYUyqO74ybD7cc4wHC+VUbB2itK9kDCkHuAWLRpGDB7N9kKrugnugGcspWNVdv10mDcj5hN30SQaJ/x89Dubh8qd4vrHNKx4Zye8nFigywmxvPOwiV2B/7tVgFjViqhz2Z9uP+9jwfKDpraCk1hMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ZIQpQyw4; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61cebce2f78so985505a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 20:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1757042843; x=1757647643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=os04syBpjRUYrOuY5Z5ul0OnAt1kwR5e6GPJHPTZohI=;
-        b=ZIQpQyw4hPJRxODehY8OAZalmCmNJUNngkzc5B6rwowFxv2xDjACJZuv8gqkC0SiZe
-         6aaWZrrr1tDtn8HBaa/TocFbseqFweI5V8LlQLF6b+o23zjVHneQa6Q1AY2OZNUQIYe3
-         2wnexWIxWHjcJNdnPERhFzhqP7WHfLOjkb3P3nTRjyPe7m19BvG8YSHRhbKb2rZ+Z4aY
-         CrLXR0NlV2oL0XujXiQlswvHg3a4qQEBkMvHs20WW4s8eyIZt2viqQSymzBMXFz5iED7
-         ARUbh4ecfCURV9TE2aOHt9Ea4N+VPqatXiHrexBRjRtD4dHhKuvOvq8W0wxleTxy4w+F
-         /kYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757042843; x=1757647643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=os04syBpjRUYrOuY5Z5ul0OnAt1kwR5e6GPJHPTZohI=;
-        b=dRaNzEPil3mwjO8pky/ALKfYX6/4fi3Koa2Tqjb+UUldZI5+UoIb24kfh+jj8xRn/C
-         UGW41WI/jjsG12DZL+JNNzHx+39w5PPzoGQ3WCojcecE2TWaWOTvgRtjA7AOy5WdG+gb
-         PYIlL7uVO9maiFir0sGGzBtMmMhBAoHOU1LU2PAblwKLKJPXY04+MSPp+d4BuaTWKVi1
-         Ipkbfz2G88Oh+9yQDWV9CUtyDJOBnELDkrFLcFKXp9V/6OPL3aPD8+aDn2+SkJ5Cuoq3
-         Or5DhgBscP176fnUjFzM8x9YI1zNK8P9aBJA6vbCo5eSzhE0m4bGWUqatn8DPbg8B0dg
-         DKdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd1zuS9cLCWqh8MFWzoOT012QRVqjV/6w07Ohnvjb40v3I+gHncc+RRYcUb7sIsGPR0oVivYN8+jz4t7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx066IBqvVUQu3FYHVp+YLkfaoikjS6FsIWPPxcKua6KhDzJ+nN
-	jHRl9DOz52codxPExA21xe8UP+EaERQVnFvkcFisRV+0lVgNmzdurXaDBwQGcZdkNo7maPmIG8l
-	q418i1r4CDsU5KB7pVt7JwxcQ4PkwGxobkgzVb7Slvw==
-X-Gm-Gg: ASbGncsER6bRzTji9d1E2LYVVmRYD8xJXAJqaWJfBur3nZwUZu+3sCfPqkoC5kcckGo
-	4pFZkT1TfB8BhFgo2lPtYDmuelDmwIIGaAAjKvnDlmvp9aM41hKcOptJmxEIV8y8vgriCApQu58
-	rDYsM5f5cL1tCvCz6+eMW8aEljoKV+lqsq8bPpaWa4rBfZ+PJqNEKLpe4MToe/HGYv1vtRdXuiR
-	e5jmiHSLlUGTDRM00VK
-X-Google-Smtp-Source: AGHT+IFTBZLssAj4YEI3yGO9zckI6NIStV+ozblxy5fjUOhfU+lQN15HDXjbRdJYZmz9vJUW1Pms6o2MHeVJKPYWHtY=
-X-Received: by 2002:a05:6402:5cd:b0:61d:1443:8599 with SMTP id
- 4fb4d7f45d1cf-61d26ec6264mr18308728a12.32.1757042843053; Thu, 04 Sep 2025
- 20:27:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF12EEBD;
+	Fri,  5 Sep 2025 03:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757042874; cv=pass; b=CuuMtugnQNtv1qqZw/UTU8rGkUnMtEXAdJIHAP/xzU2n0ylSIzOHlB8WXshpup75yjP23DgMccCuiBDHbswZs0LpVKb6oQmidAlP9ZnTI536fArZ5BWJr1ryiVRNRZUqZRpRPReT+Xe6yr7AmvPDXT59kG0nvf46DqxibhwrGcY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757042874; c=relaxed/simple;
+	bh=vfcYQ/FN9o6FE/ZXdUwR8GaKdJ3N3R19zv6RknNZVBA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ckeC8zUmrJ+XsnNFItrV5UnOj035Dnhx3ZqkbFwfIAhbrrAvfJXAAvbhwaBJqJsA4+6tUCvH2scpwKbYkMFa6FPqdBuEOTsKm+ggLp8oRyj7coz448rXO5RRJePXJaPXsfF0gRDnWkI0B4esHxtO2Cs8fhIhNKn4SkXUlSwJDnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=X8ihi48I; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 5853Rhhi097613
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 5 Sep 2025 12:27:43 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id CCB5E109D5675;
+	Fri,  5 Sep 2025 12:27:42 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id J8YCdhpB346I; Fri,  5 Sep 2025 12:27:38 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id D7892109EFCDE; Fri,  5 Sep 2025 12:27:37 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757042857;
+	cv=none; b=xhmau25KID8WkN1isQ6OAcje5eV+Nf3oK5pEOKpiHH6fKG/RM2RxtFiYyNQcjPueLRoZFdhqWkhxzfDbvVXKdonX5gkESVKo1QuOwhslmoyrqm+yRKQ3xKYLjNfsxkfAD4z8lGf33heyhMi2Y21x8IIm2pvUBIWAmiZ6STYchlk=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757042857; c=relaxed/relaxed;
+	bh=66+PbdQB6GijM0MPBjzUoqsDFZwav04yEvjAynzsHNM=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Type:Content-Transfer-Encoding; b=vjd+2ooFDZ5BmKWZT4cWgN4cmd57f9Xy06LoMpAMNi9IgI7K3VUUABmjVkEBZPiE372w5bLh8DcixSZraFUdjAjCO8r/ggC2RTZMynAkys9aAjer6sBPCAzkyel4zJbsrYizHTgjaKvgJ4Tdl8pPpH3FdKVIbFTTopUbtxKhgic=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org D7892109EFCDE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757042857;
+	bh=66+PbdQB6GijM0MPBjzUoqsDFZwav04yEvjAynzsHNM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X8ihi48IhdHypotbGm/cos/F004+HsdK6bszWjygNrVsFyTeWcNpOlusfXaBLpzAd
+	 4h/P6Gld/tE39HW9xEWuZ5Y1l5Pw7YM13Y0mt1H9mWYzopKX88x/k1B3zcfDos7m4J
+	 S9LC3pgasMwlFcJMq8VwXJqnFklVsHqDiJPZYzPg=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, corbet@lwn.net, akiyks@gmail.com,
+        Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] docs: ja_JP: add guidance for the Fixes: tag in SubmittingPatches
+Date: Fri,  5 Sep 2025 12:27:29 +0900
+Message-ID: <20250905032729.2284883-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614142156.29420-3-zong.li@sifive.com> <20250901133629.87310-1-ni_liqiang@126.com>
- <CANXhq0ra+yv-Wt_vKTN3+c4StsPQB1vR+=Kp3RVSh0g10Oogqw@mail.gmail.com>
-In-Reply-To: <CANXhq0ra+yv-Wt_vKTN3+c4StsPQB1vR+=Kp3RVSh0g10Oogqw@mail.gmail.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 5 Sep 2025 11:27:10 +0800
-X-Gm-Features: Ac12FXxCOomRzLnISI4mSuIvWFVx9HD9ac2cyQivUPSI8ky_l1yBqci4E2RqAio
-Message-ID: <CANXhq0oeUZb7161eJ2z-9aRXSDSmt8P9RpC7QSH4DZ0YvNp_7Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/10] RISC-V IOMMU HPM and nested IOMMU support
-To: niliqiang <ni_liqiang@126.com>
-Cc: aou@eecs.berkeley.edu, iommu@lists.linux.dev, jgg@ziepe.ca, 
-	joro@8bytes.org, kevin.tian@intel.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	robin.murphy@arm.com, tjeznach@rivosinc.com, will@kernel.org, 
-	chenruisust@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 12:01=E2=80=AFPM Zong Li <zong.li@sifive.com> wrote:
->
-> On Mon, Sep 1, 2025 at 9:37=E2=80=AFPM niliqiang <ni_liqiang@126.com> wro=
-te:
-> >
-> > Hi Zong
-> >
-> > Fri, 14 Jun 2024 22:21:48 +0800, Zong Li <zong.li@sifive.com> wrote:
-> >
-> > > This patch initialize the pmu stuff and uninitialize it when driver
-> > > removing. The interrupt handling is also provided, this handler need =
-to
-> > > be primary handler instead of thread function, because pt_regs is emp=
-ty
-> > > when threading the IRQ, but pt_regs is necessary by perf_event_overfl=
-ow.
-> > >
-> > > Signed-off-by: Zong Li <zong.li@sifive.com>
-> > > ---
-> > >  drivers/iommu/riscv/iommu.c | 65 +++++++++++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 65 insertions(+)
-> > >
-> > > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.=
-c
-> > > index 8b6a64c1ad8d..1716b2251f38 100644
-> > > --- a/drivers/iommu/riscv/iommu.c
-> > > +++ b/drivers/iommu/riscv/iommu.c
-> > > @@ -540,6 +540,62 @@ static irqreturn_t riscv_iommu_fltq_process(int =
-irq, void *data)
-> > >   return IRQ_HANDLED;
-> > >  }
-> > >
-> > > +/*
-> > > + * IOMMU Hardware performance monitor
-> > > + */
-> > > +
-> > > +/* HPM interrupt primary handler */
-> > > +static irqreturn_t riscv_iommu_hpm_irq_handler(int irq, void *dev_id=
-)
-> > > +{
-> > > + struct riscv_iommu_device *iommu =3D (struct riscv_iommu_device *)d=
-ev_id;
-> > > +
-> > > + /* Process pmu irq */
-> > > + riscv_iommu_pmu_handle_irq(&iommu->pmu);
-> > > +
-> > > + /* Clear performance monitoring interrupt pending */
-> > > + riscv_iommu_writel(iommu, RISCV_IOMMU_REG_IPSR, RISCV_IOMMU_IPSR_PM=
-IP);
-> > > +
-> > > + return IRQ_HANDLED;
-> > > +}
-> > > +
-> > > +/* HPM initialization */
-> > > +static int riscv_iommu_hpm_enable(struct riscv_iommu_device *iommu)
-> > > +{
-> > > + int rc;
-> > > +
-> > > + if (!(iommu->caps & RISCV_IOMMU_CAPABILITIES_HPM))
-> > > +     return 0;
-> > > +
-> > > + /*
-> > > +  * pt_regs is empty when threading the IRQ, but pt_regs is necessar=
-y
-> > > +  * by perf_event_overflow. Use primary handler instead of thread
-> > > +  * function for PM IRQ.
-> > > +  *
-> > > +  * Set the IRQF_ONESHOT flag because this IRQ might be shared with
-> > > +  * other threaded IRQs by other queues.
-> > > +  */
-> > > + rc =3D devm_request_irq(iommu->dev,
-> > > +               iommu->irqs[riscv_iommu_queue_vec(iommu, RISCV_IOMMU_=
-IPSR_PMIP)],
-> > > +               riscv_iommu_hpm_irq_handler, IRQF_ONESHOT | IRQF_SHAR=
-ED, NULL, iommu);
-> > > + if (rc)
-> > > +     return rc;
-> > > +
-> > > + return riscv_iommu_pmu_init(&iommu->pmu, iommu->reg, dev_name(iommu=
-->dev));
-> > > +}
-> > > +
-> >
-> > What are the benefits of initializing the iommu-pmu driver in the iommu=
- driver?
-> >
-> > It might be better for the RISC-V IOMMU PMU driver to be loaded as a se=
-parate module, as this would allow greater flexibility since different vend=
-ors may need to add custom events.
-> >
-> > Also, I'm not quite clear on how custom events should be added if the R=
-ISC-V iommu-pmu is placed within the iommu driver.
->
-> Hi Liqiang,
-> My original idea is that, since the IOMMU HPM is not always present,
-> it depends on the capability.HPM bit, if we separate HPM into an
-> individual module, I assume that the PMU driver may not have access to
-> the IOMMU's complete MMIO region. I=E2=80=99m not sure how we would check=
- the
-> capability register in the PMU driver and avoid the following
-> situation: capability.HPM is zero, but the IOMMU-PMU driver is still
-> loaded because the PMU node is present in the DTS. It will be helpful
-> if you have any suggestions on this.
->
-> Regarding custom events, since we don=E2=80=99t have the driver data, my
-> current rough idea is to add a vendor event map table to list the
-> vendor events and use Kconfig to define them respectively. This is
-> just an initial thought and may not be the good solution, so feel free
-> to share any recommendations. Of course, if we eventually decide to
-> move it to drivers/perf as an individual module, then we could use the
-> driver data for custom events, similar to what ARM does.
+The Japanese translation of SubmittingPatches was missing the section
+describing the use of the 'Fixes:' tag. This patch adds the missing
+description, aligning the translation with commit 8401aa1f5997
+("Documentation/SubmittingPatches: describe the Fixes: tag") in the
+English version.
 
-Maybe let's try auxiliary driver framework to resolve this topic in
-the next version.
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ .../translations/ja_JP/SubmittingPatches      | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
->
-> Thanks
->
-> >
-> >
-> > Best regards,
-> > Liqiang
-> >
+diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documenta=
+tion/translations/ja_JP/SubmittingPatches
+index 5334db471744..28ad83171252 100644
+--- a/Documentation/translations/ja_JP/SubmittingPatches
++++ b/Documentation/translations/ja_JP/SubmittingPatches
+@@ -132,6 +132,27 @@ http://savannah.nongnu.org/projects/quilt
+        platform_set_drvdata(), but left the variable "dev" unused,
+        delete it.
+=20
++=E7=89=B9=E5=AE=9A=E3=81=AE=E3=82=B3=E3=83=9F=E3=83=83=E3=83=88=E3=81=AE=
+=E3=83=90=E3=82=B0=E3=82=92=E4=BF=AE=E6=AD=A3=E3=81=99=E3=82=8B=E3=83=91=E3=
+=83=83=E3=83=81=E3=81=AE=E5=A0=B4=E5=90=88=EF=BC=88=E4=BE=8B=EF=BC=9A``git =
+bisect``=E3=81=A7=E5=95=8F=E9=A1=8C=E3=82=92=E7=99=BA=E8=A6=8B=E3=81=97=E3=
+=81=9F=E5=A0=B4=E5=90=88=EF=BC=89=E3=80=81
++=E5=B0=91=E3=81=AA=E3=81=8F=E3=81=A8=E3=82=82 SHA-1 ID =E3=81=AE=E6=9C=80=
+=E5=88=9D=E3=81=AE 12 =E6=96=87=E5=AD=97=E3=81=A8 1 =E8=A1=8C=E3=81=AE=E8=
+=A6=81=E7=B4=84=E3=82=92=E8=A8=98=E8=BC=89=E3=81=97=E3=81=9F=E3=80=8CFixes:=
+=E3=80=8D=E3=82=BF=E3=82=B0=E3=82=92=E4=BD=BF=E7=94=A8=E3=81=97=E3=81=A6=E3=
+=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=80=82
++=E3=82=BF=E3=82=B0=E3=82=92=E8=A4=87=E6=95=B0=E8=A1=8C=E3=81=AB=E5=88=86=
+=E5=89=B2=E3=81=97=E3=81=AA=E3=81=84=E3=81=A7=E3=81=8F=E3=81=A0=E3=81=95=E3=
+=81=84=E3=80=82=E8=A7=A3=E6=9E=90=E3=82=B9=E3=82=AF=E3=83=AA=E3=83=97=E3=83=
+=88=E3=82=92=E7=B0=A1=E7=B4=A0=E5=8C=96=E3=81=99=E3=82=8B=E3=81=9F=E3=82=81=
+=E3=80=81=E3=82=BF=E3=82=B0=E3=81=AF
++=E3=80=8C75 =E6=96=87=E5=AD=97=E3=81=A7=E6=8A=98=E3=82=8A=E8=BF=94=E3=81=
+=99=E3=80=8D=E3=83=AB=E3=83=BC=E3=83=AB=E3=81=8B=E3=82=89=E9=99=A4=E5=A4=96=
+=E3=81=95=E3=82=8C=E3=81=BE=E3=81=99=E3=80=82
++
++=E4=BE=8B:
++
++        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the=
+ number of pages it actually freed")
++
++=E4=BB=A5=E4=B8=8B=E3=81=AE ``git config`` =E8=A8=AD=E5=AE=9A=E3=82=92=E4=
+=BD=BF=E7=94=A8=E3=81=99=E3=82=8B=E3=81=A8=E3=80=81``git log`` =E3=82=84 ``=
+git show`` =E3=82=B3=E3=83=9E=E3=83=B3=E3=83=89=E3=81=A7
++=E4=B8=8A=E8=A8=98=E5=BD=A2=E5=BC=8F=E3=82=92=E5=87=BA=E5=8A=9B=E3=81=99=
+=E3=82=8B=E9=9A=9B=E3=81=AB=E3=83=97=E3=83=AA=E3=83=86=E3=82=A3=E3=83=95=E3=
+=82=A9=E3=83=BC=E3=83=9E=E3=83=83=E3=83=88=E3=82=92=E8=BF=BD=E5=8A=A0=E3=81=
+=A7=E3=81=8D=E3=81=BE=E3=81=99::
++
++        [core]
++                abbrev =3D 12
++        [pretty]
++                fixes =3D Fixes: %h (\"%s\")
++
++=E5=91=BC=E3=81=B3=E5=87=BA=E3=81=97=E4=BE=8B::
++
++        $ git log -1 --pretty=3Dfixes 54a4f0239f2e
++        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the=
+ number of pages it actually freed")
+=20
+ 3) =E3=83=91=E3=83=83=E3=83=81=E3=81=AE=E5=88=86=E5=89=B2
+=20
+--=20
+2.47.3
+
 
