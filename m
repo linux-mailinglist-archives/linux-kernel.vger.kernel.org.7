@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-803021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E8EB45988
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:48:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BD6B4598A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC3A5643D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CF17C48A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0533568F0;
-	Fri,  5 Sep 2025 13:48:43 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1358F35CEA0;
+	Fri,  5 Sep 2025 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IiKEwvhX"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC76352FFF;
-	Fri,  5 Sep 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2714235CEB2
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080122; cv=none; b=DOdGaiMhixhLr2Uw/QTKFxP2AUsIYgok0xOXCVYESxVmPMoiWyZBZPOzmJH8WIvJBkF+Bm9XRXsNM8w4rRDl07BuRnBgj+X725mV7rJqrPQyFvyxNqDhUYnQfF4ZfAOoNxmUCRqWpFffeyprsL8F2jruVTCDeAuBB2UHeKBj/Cs=
+	t=1757080142; cv=none; b=mlM6sgCXaSRNjUvspL7bBlW/eeaD+xDw2PLe1xNqM+1wfBPu+2R9rR6C/Z0lTXPd/MoefU4eF8hccZQvHBzRJSknk4+DuKCGiSaru/Z6CJSY54+eZ2N0vxiMs/hE+aYNpmWzLVVSIhv0ekO/WiW0yeT7iCrb6kTXhGX9CWbTARc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080122; c=relaxed/simple;
-	bh=znhd37DdN6KALLrsCH/O6IMvCVPXC7uRg/8pj3Fasqc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VtVRuYqE519gZFN70rUi9KxaO0XKxX+oMgZ+U+asQNTVxgQDC8Gd2sttEMQPBAP/i6+FmaPsHXIz48V9In5v5DGAusVDHT40p5A4SAVN3Lqfkm35knp3bELXOvj5vF7pUUlE+DIc79vhlCPMllNJwOTaSQCVzFCbIxsfEtOneS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from 7cf34ddaca59.ant.amazon.com (unknown [IPv6:2a01:e0a:3e8:c0d0:24ce:2523:e0d0:1c47])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id AFAC74207B;
-	Fri,  5 Sep 2025 13:48:37 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a01:e0a:3e8:c0d0:24ce:2523:e0d0:1c47) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=7cf34ddaca59.ant.amazon.com
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud lecomte <contact@arnaud-lcm.com>
-To: alexei.starovoitov@gmail.com,
-	yonghong.song@linux.dev,
-	song@kernel.org
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH bpf-next v8 3/3] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Fri,  5 Sep 2025 15:48:33 +0200
-Message-Id: <20250905134833.26791-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250905134625.26531-1-contact@arnaud-lcm.com>
-References: <20250905134625.26531-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1757080142; c=relaxed/simple;
+	bh=JgssgQ44iAWEZiQncHgrZHAyaiEfCUhGCy1oI3X6Rt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaWGKh9+PgQDFV/VdTpXr+fKsoppxKhof5gmn1OVuHn7b+cNGJbNdl0iV65kDYDUm6oeyplg4+db/aRELvHGgSlWuTYWsBfCCZz77hgPKICEVMROb+LmJsMBihgFdyuEf8Uo2Xisb9eE6tOri7dxCRs0ry00p1CY5wspaUV7ylQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IiKEwvhX; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b0418f6fc27so341655666b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:48:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757080138; x=1757684938; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ohGQSMKwVj1UObMGtjXFeVfLrCd5JxxmvFAFzhxErEY=;
+        b=IiKEwvhXvx2czSAzQlt5aJ3gC4oo2gRlu7JUGS6xvj3VuWDlOtDfXAKE4cGhrxHZyI
+         JP7WBJf6i8utZpmAtZYc9A2g18rD3wLIyw5k9FcHCvdLYbRzQsAbYwAXNdZ97Yx8EPVP
+         E9dfuIfN3cxxhjivfPCT2CH5rjGwEgIa4FZgm2rk0f4xvBzXuWOwfudRH3fPjxcUcyEO
+         XrVbU05cmlEt1bczBfBCvM4GMfmcFXNyYkv7KfdGHPBZhEBmyw0JlBSHc4BsiHxczNJr
+         GbvTtkqlmiMgydcO3ERNvq2mtMNkbDNmFL8HJdmfsl2ZtzysnZqegg28Ri5WC/8moFtV
+         8xmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757080138; x=1757684938;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ohGQSMKwVj1UObMGtjXFeVfLrCd5JxxmvFAFzhxErEY=;
+        b=DP0klYChERc3bcv8qvEWA8fcqcXsI+lWJJU73TwFj09uqeQ3qgW9WsBMWF1jPLEpuN
+         B9PnBnrr9G6Xh0EiKAu4Zq+NqqycTlxs4akyXq46E3SGWsgDrJgPgkkWb5ArCT7LQguU
+         eW0H/bvOT1m6fK8v8t/AOZvNEF6Vk99XYYjaSFpr2rrgSYUVq4YQY/Z1jS2gpmrG0dgE
+         Vq+wVyB/+tqo96drkXuoarLyYlGA6RUYRJTWyBfAuh3fVOdEG6l+8x9f4pqSVmgCZ4L6
+         rxJvp40qNJzuwa5lfAAestH7w9AKSxOdJC83PIeENqQ04k7n78P3LR8yJiPpJm2PYQCS
+         MlWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXljARzDO1ufew97Y3YMk3oz1reLu4yxYlVRzfz3DyeollN09Je/W0GXiRYqQ1kJulOlaBGx5c8cVa3OZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvn6bUhVT0z8q+01wb1wlT2FkvfQWrEnX3ATecx/o0pkL7uOTd
+	V7TxDbBw2dZpXVI9iL6wGqiu87zCAt0UfTdXf0NGv8duWTWQIw+0D6V7waMdPhDYmd0=
+X-Gm-Gg: ASbGncuP5PE0rh5LcChHJdrr3CK8qyoMGWH7qKdxlM2UUXb1qqat/u8+e9XBXFX78mM
+	Ep9wBrWbSnrdlfYKHD4u0LH0vZTNWy7JgoDYgFGer/BMD7kkX8qoYtuPXtFSH2LiWmcnbRjrtHt
+	s21SrbKL3VNQuQPwoWJCZaaRmJAyjrhdPovRog77dxVJfDyw3eViXKMtDu5icgXY1o/AzEwspsC
+	oZUTxwnEJLa+G2FwXDHVos/xMSbLsi/28ul2V48xVPYJP7GTAmwxgQeOBM0Bs8iauYP/pWPowkl
+	U6Q1q97L2eAkqIeOfLwFQimGlgiZkLxLIYAnmwHr+A9dsaYUpHVm7sft1XSHkNaCHRG/vEBhlH/
+	yPDw9ijzKh0fDov3kneFf0uLSe8RdG70uLaL4
+X-Google-Smtp-Source: AGHT+IG8kzDpVkryXwsWX0ypMJH1Q/GoqYF6znezUko5xKILYPDfjCeWqnLDJjEeRbeInNjICaV63A==
+X-Received: by 2002:a17:907:86a4:b0:b04:4d7a:84f6 with SMTP id a640c23a62f3a-b044d7a8b80mr1329355866b.2.1757080138297;
+        Fri, 05 Sep 2025 06:48:58 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0476e0d61esm496789166b.53.2025.09.05.06.48.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 06:48:57 -0700 (PDT)
+Date: Fri, 5 Sep 2025 15:48:55 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v3 1/4] printk: nbcon: Export console_is_usable
+Message-ID: <aLrqR2l1A11lH_kV@pathway.suse.cz>
+References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
+ <20250902-nbcon-kgdboc-v3-1-cd30a8106f1c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175708011830.28313.17001961462282681133@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-nbcon-kgdboc-v3-1-cd30a8106f1c@suse.com>
 
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
+On Tue 2025-09-02 15:33:52, Marcos Paulo de Souza wrote:
+> The helper will be used on KDB code in the next commits.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+Looks good:
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to accommodate skip > 0")
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
----
-Changes in v2:
- - Fixed max_depth names across get stack id
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Changes in v4:
- - Removed unnecessary empty line in __bpf_get_stackid
-
-Changes in v6:
- - Added back trace_len computation in __bpf_get_stackid
-
-Changes in v7:
- - Removed usefull trace->nr assignation in bpf_get_stackid_pe
- - Added restoration of trace->nr for both kernel and user traces
-   in bpf_get_stackid_pe
-
-Link to v7: https://lore.kernel.org/all/20250903234325.30212-1-contact@arnaud-lcm.com/
----
- kernel/bpf/stackmap.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 9f3ae426ddc3..9b57b8307565 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -369,6 +369,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- {
- 	struct perf_event *event = ctx->event;
- 	struct perf_callchain_entry *trace;
-+	u32 elem_size, max_depth;
- 	bool kernel, user;
- 	__u64 nr_kernel;
- 	int ret;
-@@ -390,15 +391,16 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		return -EFAULT;
- 
- 	nr_kernel = count_kernel_ip(trace);
-+	elem_size = stack_map_data_size(map);
-+	__u64 nr = trace->nr; /* save original */
- 
- 	if (kernel) {
--		__u64 nr = trace->nr;
--
- 		trace->nr = nr_kernel;
-+		max_depth =
-+			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		trace->nr = min_t(u32, nr_kernel, max_depth);
- 		ret = __bpf_get_stackid(map, trace, flags);
- 
--		/* restore nr */
--		trace->nr = nr;
- 	} else { /* user */
- 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 
-@@ -407,8 +409,15 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 			return -EFAULT;
- 
- 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
-+		max_depth =
-+			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		trace->nr = min_t(u32, trace->nr, max_depth);
- 		ret = __bpf_get_stackid(map, trace, flags);
- 	}
-+
-+	/* restore nr */
-+	trace->nr = nr;
-+
- 	return ret;
- }
- 
--- 
-2.47.3
-
+Best Regards,
+Petr
 
