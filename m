@@ -1,273 +1,221 @@
-Return-Path: <linux-kernel+bounces-801982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89728B44C5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3121B44C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296411C81141
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:37:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735631C810D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5152220F3F;
-	Fri,  5 Sep 2025 03:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5698F229B02;
+	Fri,  5 Sep 2025 03:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=numberzero-org.20230601.gappssmtp.com header.i=@numberzero-org.20230601.gappssmtp.com header.b="CrzCvdGC"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="K22zrDyu"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022109.outbound.protection.outlook.com [40.107.75.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCA71C27
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 03:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757043432; cv=none; b=T50A3o5UCqkllJf3VKpHiSLhZYH84mX9lSfkNctO7CxwjC3qMDe7O6p4d5AarkFQLwmRhwRHPIjyo6N00FreI1k7+XuJILPdkVC48cYcoEXWTJTF1lohHu1wbgdkh+kzO2xfY/2zkmDlNikQ2QhZb6lmQrrw+izTpeV3Za/1890=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0AD143C69;
+	Fri,  5 Sep 2025 03:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757043432; cv=fail; b=h4oXOIBrLzzaFCTREI1vprtiIoyQHqtZ2doDQdw3GBcr+AcLxL3PHfCs4CHMFtPQz6XsXA471WWZcu/aPDka6yQff55vaC/VhaN/lZKDvAFcmcMqBRuwM1Lac6pRn8ITRP+y0onbCQVTba7+ED7Z9TU19w6KsHqcfQEL2/7+B4I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757043432; c=relaxed/simple;
-	bh=UJp9ip8wauQcu1GpQXETqeTXkUsYi+rSsoZ/qkCWWWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bVUdt6f9UHW+WW/BiVaSbueIbue9zFoZ00UCjKHV9gb40/2lH4qYekZNGUtG1k2lRARE1sRuBTWQ0X+AQz0kjeWkS4ugNKjwJ2w11YGGSXgR3F6QBkBfxxCXhQaXZoS2LaMeBUqe+5gCrcV4/Bkc+2skInexy+X0mtCIzqZ/giw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=numberzero.org; spf=none smtp.mailfrom=numberzero.org; dkim=pass (2048-bit key) header.d=numberzero-org.20230601.gappssmtp.com header.i=@numberzero-org.20230601.gappssmtp.com header.b=CrzCvdGC; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=numberzero.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=numberzero.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e9baa0310cbso1707089276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 20:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=numberzero-org.20230601.gappssmtp.com; s=20230601; t=1757043429; x=1757648229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QdUNIXCv9XvocNp6sZjSj50dinQK1dKBVeQLLo7vHE8=;
-        b=CrzCvdGCfYbKbjFhlw3slEu4ald0USYHJ4YMKLLeNl4esluXd0l1XOfkfuEyt2fBg5
-         8hlXlFz6gE/vlaxqLc0Gx2SOu0F2wiH9hVHI/HEHepffeWqlD8UZFy9J7zYwQpOVfdDO
-         zOnCMTAFsxOEQKpkjEQiK9lIa5Sjgu7dwQp+6hQJTITizPNEVTqRSFAbumrk2n1es2Hm
-         CYyP9sgm/zdnjStAKEinSV6pjKBe+Fi5D5pDrvumB/oKgsUF/vUuoUkud+Kb2gSp+0J7
-         JnZj0wXM9mqhEhbTMCocc3gn54kGy7/Ks/mnRrQ4soI2xZWM7P+HWhrfCW12Ou/IbJJd
-         kFSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757043429; x=1757648229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QdUNIXCv9XvocNp6sZjSj50dinQK1dKBVeQLLo7vHE8=;
-        b=C3s43ChwlVJLoqKECb+yPLdwdRN+GvRcufY2lAGOeRh5REunbqFDuo6zs1mcNjYHKW
-         NMr2GBO9+Sj6VFvSKcAIzqNZRnnUtiKtUfTv0CG7892oT9jIVOBgLgH+40aslD89oafU
-         rlXceN/rjI+Ik65Z8OAagiMZQ9GRmRJjfzeZ3QhOJsrNfzMOu+8llizfQOF35sqJN1Qr
-         izS+4BlQm1Z1HowvbCmimixKdDgUcBH4zuveMA9X9T3gWJv1CaMc71yj/AyplwmGplnw
-         WhxDxGFZKDlsmxhHrwFkaZevnwfgUO+tF0l28GbfnyIXlio5mUHG8Jez6nPDtYUT+nVH
-         WTOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkQ0mtVS6i7LUZGpNXIdlcRyWf1rdNfSeuqB5ZxKp5zhLn/bAuv7y+zv7CpvT0dTaRK+6oQGQK00e8kGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3zLbXAltYLXhLt5HjbQ1ckiJF+b8QBeLMhbZgUmuLB49tCMD6
-	FoOiNBqqYSOPdJbXkv6y2lnNtU7/jJ4SLyzOH2ULRYYO1KbZYr1AhCWyuX+i7fF37R0zBqnhdli
-	/ge7lQ5sJic+N9HoT/1e5P1mggJMoT+iA3le3xEoE1g==
-X-Gm-Gg: ASbGncvD+8rzqdmFLF448UB72c32kt8oVuOBuU4BRvHXnG0YQsmla1BZKc5wXARiWkY
-	h47P90nty9Sb9k2Gs8Mkv4H1Bet/lzJi8oRkaEKZfOFUEdkqszUHZMcPsVj7JYkeqcx2ktN3C2g
-	Z+D5x9DKpYQRnFOEXNnCQCtwtuks8k1a5ieg9G0h4UNf8gI+wTQSEIBkD2BvgpYK+OHs1a9Pyru
-	WGcVrCiKTxU51JImvc=
-X-Google-Smtp-Source: AGHT+IEfQ6DFfq/h4QdvTcXpuLFzvzUFO/OjoGKLieH2aukMeCl4YwyCsxRlXQgtO74o/vpnDSGBcWI1cl11YxP5vJ0=
-X-Received: by 2002:a05:6902:2490:b0:e96:efc6:8392 with SMTP id
- 3f1490d57ef6-e98a5851c2amr22539626276.43.1757043429439; Thu, 04 Sep 2025
- 20:37:09 -0700 (PDT)
+	bh=ErrZQDzE/Qgk73bmx+RjTrZ3TwjCec2ETL29TLfD1P0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lea5VdW2j5rvH3VyX6XbH4UC3I3mgCTmagJsupNWN66rAL4GzpDANi/RfnzkL3qJemWLnw+ZB5pjfZNm1n2lUY+/9oFqFyifAge+9wRCBA4zITWTazyKsFU4urWzcLuYTpsLklMl/dXrl6okDfBqOcMMKEP3oDBtzZjjdoa+exo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=K22zrDyu; arc=fail smtp.client-ip=40.107.75.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GAjrqaeDkzsfym/YtMQIpfkejK3tWMi8waGAUFgfwEGg/30lW4PvABDyRfUVSjyqAdmaJ/nRXlKp2Cd1kdV6jyO2Xm9gnMewD/pJ0X0ksI0jm7sMM6Q+wvox54bIvg8SgSgN9y0bXjcqvpHb2fdsTnFb9/Bg6oahfIOdXg6q4vJSz6uemv1WVJRkyvwqYKdSGPx57HqvjXUhkOa/OnauRYHyhw2bms83teK7tQ0Pomu9N4OQBrYvLjIBU2U3UxWsLmVxei4709mIiqGAt10fweeZ2rm6mq6Wl4OojmpA1VxH6DQakGH5odBZddI1/chwVGUCCrVBMXdyNM/BwuVuhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uYUcoa1VEnZ7gMIVNMGoZt7x3VVCyCW9tPDvDdvnZ1E=;
+ b=sjsncR2uGqkPdZ7HBI/2db3kM6vBmcXniUkB3Y00QKhlvn/rByVY+/7q/Q4aAxrkcIvu5IUFA+/lyRTW7CZ8D7qifs4/LCoAMd4ZYv7MZYwqga/apn5XOZHrfXxu92sxswZ7M1CcreTJELIxc9m6PapS+qIiWpsuw7ON5PNqoTr7wpjlxTNhapUebf66UiIXOihXFeJ86awTavcE9XYlB+HFbIrPK9g8y/5lEWyhjX8r8Si4byt5lgckd1mgnr1e73V/aLHMQJ+e35aB0U5qgOuLQ3NUfzXDbvao2/TUIK6B2g4EHyg+a3ZL03uHOgBhzX2yEKCYr1PK5xkgqf0Dxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uYUcoa1VEnZ7gMIVNMGoZt7x3VVCyCW9tPDvDdvnZ1E=;
+ b=K22zrDyubEDmhb78ZTeZTI1RmPgnb8Zr3PYqU1WP7ain1VZBZsdrybwN4kybhdXT2i0NYcB8n73hh2yYj8QBrIrIkWffDtMfHO/Hs24zQMP/jyulO+pENmZ2tuen9LRV7uFp8LRVmR7AyUr6Vx6aDazmqFLG0TMIcVPsq2Kg8a3DqP/5gsSyXSD3r/x6FBIsFAetRSKxarZfgJL4gVTxVlesN430nJ9DnE+I1ykkhsRuJCOxRb0yOKEemQCT6EdMAB2IrLsfb77xTPu0V8IpqFlQr/dE0dN2GhTUy3KNGzHtNrAIyqGI6uIq2AAe/83GCHixv/UlzD4yH358SqVtQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by TYZPR03MB8036.apcprd03.prod.outlook.com (2603:1096:400:44c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
+ 2025 03:37:07 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
+ 03:37:07 +0000
+Message-ID: <474fb92a-660f-4edc-8a46-bff4a40b8821@amlogic.com>
+Date: Fri, 5 Sep 2025 11:37:02 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dts: arm: amlogic: fix pwm node for c3
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250717-fix-pwm-node-v2-1-7365ac7d5320@amlogic.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <20250717-fix-pwm-node-v2-1-7365ac7d5320@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:4:194::21) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
- <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de> <CA+=Fv5To0A3N0fajWVhP1SfjD4uv1oaPNOpi9dnFVt9yHfaPQw@mail.gmail.com>
-In-Reply-To: <CA+=Fv5To0A3N0fajWVhP1SfjD4uv1oaPNOpi9dnFVt9yHfaPQw@mail.gmail.com>
-From: Ken Link <iissmart@numberzero.org>
-Date: Thu, 4 Sep 2025 22:36:33 -0500
-X-Gm-Features: Ac12FXx3P-MtuWX8UMh3cwtZpj2JgMH-3Ra2IT9zPld8mLmWGLobRAKv4x0nHuI
-Message-ID: <CAPZdOsYr5HuLuvTBeY85h0vr=VWMXQhoNaq6jr5PVFt7LGx5ig@mail.gmail.com>
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-To: Magnus Lindholm <linmag7@gmail.com>
-Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Anthony Yznaga <anthony.yznaga@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|TYZPR03MB8036:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98423aa1-c3c0-44fa-2ca3-08ddec2d7ce4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGZwVk80U3VRZ0thZ0xUclBRekRxcjd5OGtjUDBiK2UrOWZuakRSdWxaR1VM?=
+ =?utf-8?B?a1N1cWFpbUhMc3NQWVJjSG0vQ3Q1Vkszb3drL2xieHZKQVZjSi96RWo5TGN1?=
+ =?utf-8?B?VXlhU0pYVjRkRUl3UllLL1YzZlFDSjJwaWF0eDB2WDcvTHhVZVRyakk0SExZ?=
+ =?utf-8?B?QWxsaXNrMFBtc3RhYmd5S09UVmVqM1F5RkZaNlU3QkZNQjRxQXhKd2pkS0Rh?=
+ =?utf-8?B?enZjd1FUb3JkcXNtR0pCK1ZrZkxubmFTdVBiMnAyN2ZPajZLQWpya0NPUTU4?=
+ =?utf-8?B?WGJkVWk1UG1kSGdRRUVLMk92d3FoTDd4azJQZ05TVW0wLzlCRmpUaUlnV2Vu?=
+ =?utf-8?B?QVZBUWd3Z1doYUhmSEFFRmdZNTVWOVZ5ais5THNBdVR0dnlqRmhBS3BDWFRH?=
+ =?utf-8?B?STFYL0diZWZvc0VQUjA5NE5NYnJPQnNSY2lWREM2N3VTUS9jMU10dzlDT2tX?=
+ =?utf-8?B?TElvcmY2VlppK2RMY1kvaGUvREw4SW1wbEF6dTZZeERzbzBXYVVxQklTRGRY?=
+ =?utf-8?B?N1ppWmI3L2YvckEvb0J1MW1qYVI1ZlIzYS9qZGlSdk5taXN2aWt0dlIwOGEr?=
+ =?utf-8?B?R1BYWHNOa0UrbEZERG1GWjBGOWhCYWpIK3pNdHFydlNwNVdBRHVXdno2RkYr?=
+ =?utf-8?B?R0pWNW1QTklGV29rSllQVGdsRG5aRVZLaytOeCtIN0ZUcXF5b01CWE5mYVlm?=
+ =?utf-8?B?YXdDa1NvWHlkV1hHd1ZIc2R3cXdjU2U1QTNReFZSMXo1dUl1OFEwUy9CNlVI?=
+ =?utf-8?B?MkFlSjlFMlYxd0ZYUUlTTi9oMDVIeTlIYXU5ZyttdDU1OFBWYkVRcnlFek9L?=
+ =?utf-8?B?U0N5OWxZdDZhOStPdW9ZdlpqTWpuc21aZGszU0JoMmRMdjZtZVlSZ05xblFZ?=
+ =?utf-8?B?WXhoeXJPaEdnVHc1VVNob1EyMmlrSjg4Ni9ja2JjYWZhU1VYOXAwNTFFQkhE?=
+ =?utf-8?B?RHBKQ05TY0JDc1ZacWJiWk5RN1VCbmRwM0ZuVWVVdkhUZkhMOW1aVENaZXlH?=
+ =?utf-8?B?ZFVyaUZMZkhjbkY4L3hMczJ5VnpmZVNCTEM4R2tQSUVFRWJJT1I0Y3pWd3dk?=
+ =?utf-8?B?akR0NWdHalBhbm1rR25LTVdtMUF6WEVDWDNtZkdJRE1sMEFrUGxjaUM2enhE?=
+ =?utf-8?B?Q1BUV3VBbXVxaTZRazZRMnJJTTgyUkhiNGRKYitPQXM4SzV3UzFPTDhnRDNu?=
+ =?utf-8?B?ZTUxWExHUTdxVEVYb0o2bHNDbE9jZW5DNjJwNGc1cERpQ3RGdm5JQStCMlVV?=
+ =?utf-8?B?YWdRQ2ZwVXRVM0lNdlZuZjQvZDFZamtEQXdPN2M4NXo2RkEvVTBmaVkrMGZ0?=
+ =?utf-8?B?eHFPWDQvZENDdjkwMWoycmtVckFLcStzSTY5cUZDK25FcnJmT3M2KzdGYjcy?=
+ =?utf-8?B?Q3IrenVTZGI5YnI4U09uM2FBZHNsS2FYMEowdkY5N1FsRExZSDkvZGhUT2c4?=
+ =?utf-8?B?R0xCR21WZlpHTjJJZ1IwQStxaGpuNWI5VkR3M1VOOStJb1V3NTZtUGViU1kv?=
+ =?utf-8?B?MTg1SUJuUFRlekdWNWdFVEJ5a3liSWQvRWpWMmFOYVc0SmZDN1k0MENVd2c4?=
+ =?utf-8?B?RVhLRTZXeW40YndFMVcwTXRwQkJ6YzdLaWliRkRsbVEvbWpWeVVDcHRMNkZO?=
+ =?utf-8?B?QlBPL2JOd21RM2F6cUU4UjNHa2lRM1hGNjRaQytKMWtZSWxuV1lNd25tcjls?=
+ =?utf-8?B?MVJ2akZtay94dW9iMmg0Q3hSSll6TktYV29oNzY3aWw4cUFjQnhhbGxvalAy?=
+ =?utf-8?B?dUtqcmVyb0ZzN2hUTi9VcEdTTTJRQ3k2R0tvdTk3Vnd4aUNncmd2MDBJNHJC?=
+ =?utf-8?Q?leWwYSCpMPh+YF/Y0n0QGoDgunbv70OPW2sG4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YW9FTTlBdnkvMTBmVDNSZCtLSE9CK3krcXJNTWVGc0pBNG9IRDNPVW1Jb2xq?=
+ =?utf-8?B?TVpJRG9Cd1RGRCtDSTVCTW5Rcnd5TkIzL0RjL3g1cHAwVUJSY0E0SGRwUG9D?=
+ =?utf-8?B?ZGc4WXhFSWdGSjJUdmlPVFFBdUI4VTIxNkI1RSt1eTdHM1dXZ29raituVThv?=
+ =?utf-8?B?YlRWRmxweWozbTFhR3Ztc2Z2a1dzMUtYMHJPOEZ3UHkwRDEwQS84RjhWUnRp?=
+ =?utf-8?B?ZnhoamZPWiszbyt0eDJBM2RCSFpYRUdYMG1KUWtra3pyRHFpdG04K1NEbDBm?=
+ =?utf-8?B?TytPNVRsU3I0V2ppaVVYM1IyWjVRM2ZJT2RPZTdhV1NnRGRmaDJEVzFnWENh?=
+ =?utf-8?B?V01UeVc5VFpBblBsRWRHVmxzcENxd0ZPdExCVlVnQ3JUVXVZemRWYXVCaWgv?=
+ =?utf-8?B?RGUrbTVXamFTQ0p1WlhtM01ybVplQUV5dEljYkJwRDhJUVAwK0xQM053YnZM?=
+ =?utf-8?B?Y0s0VjNiSWt5WW43WSt2bG4vZjFnTFhld3BYNmVwME1lU0l2YmRockw2ZjJy?=
+ =?utf-8?B?b3hHc3RhaWs2eUdnQVZKaHJ5bUFkNHpBbHNhdHpLWnNiaWpWZU04SWlCSjJ1?=
+ =?utf-8?B?VUpWUmVyTGlrdjNWRWV5WkJ5Y0d6SCsrNFJlakYwdmhVTHFWd3JnRWp2SkRw?=
+ =?utf-8?B?UXF0blVnQkg0WFpOL0hFYThlTkpybStQRjJxeW93eTBJTzdvZytYU0VCS0pH?=
+ =?utf-8?B?aG9Lc2Q3ZUJya3dyWkMvMDEveURJT2pxUnZlNW10enZmK2N4Y0YwaUlDaWZD?=
+ =?utf-8?B?L0w5QmFWcjRhUThxRGlRdVR6RDcrdUNQUTdkempYeHlOVkRlVXpVVHRTbmsr?=
+ =?utf-8?B?MzJwT3hWbmFKRnFJS21IUER6K2VwSUNJYTNvS0JJMTdSSVJ1WXhQRmZFMWF1?=
+ =?utf-8?B?TTJtdWFINFpHa1JqK2pOWWJqUjFXYVJzYmNjblU0T1JIbTJoVW9DeVNXR3E2?=
+ =?utf-8?B?Q3laL1IxSm5CT0ZRbndLZlVlTkZydjBuRVhZUkF0ZWlTZ3JvRENIMTVaN09l?=
+ =?utf-8?B?cUpBejVBaEtLM05BQWFIWVpnelJUT2M1VnlqN29KeUlBK1hqVzFOV2xTdk82?=
+ =?utf-8?B?dWV5cnRxZm1ZUUIvS2hUVy9BVGJqSDkzVXdUVEdGcXlseUpHRlZSWG95ejRH?=
+ =?utf-8?B?Zzc3T3BhNzZwYTJzSytpY05NZnl6cDVGRGdYbngvN1Bhc2o5RGtXay9IaEJX?=
+ =?utf-8?B?QTlhWmhXemNDNi9vTXg3SEttZTMwYjBvSE5uVEtRbUJFdmVHNmJwRDNQT1BR?=
+ =?utf-8?B?Z09OaUVEZENHU1ZobjZGRVFOUmVxc3hlUXdGVS9xbFp5UHBVWGIvTW1SZ3NP?=
+ =?utf-8?B?aGp4WGFqMFNhakU5eHlacXFiQWdhTnVBaGhzU1pvNUpSRDhoWUcvTzJVRFhJ?=
+ =?utf-8?B?VjFFbVg2aEFwdzRMUm1nNjY5eXI2bm8rZ0h0TGF2bVVIanp5eWNmMU9IRWNr?=
+ =?utf-8?B?OStUblB6MXpqeDBnR0V2SnhjYmZMSGZleE1naHplYXhETmVFOUVQWUF3MEFm?=
+ =?utf-8?B?TWNkd0t2eWEvRWhMU3RUL1VVMStQdmNzd1JhajZGT2Z6ZWtnSFMwdkJ4Z2J0?=
+ =?utf-8?B?V0NaM0FpOUNkWTJMRkx4MytmVVVxK0FrWG1XcEdqUFZUV3dTTHNHekg1UUJB?=
+ =?utf-8?B?RDJxblYvZTVhbXM1QTB0QTRtOFpuVDhQRmxHMWNhdEZYVkU3RUU0WUtXMkhX?=
+ =?utf-8?B?bks0Sk1iMGp4T1NHa0dmeDhRVHRwZ3dOVmh0b0psVnZhcjVoV0w5Y3UvWWhU?=
+ =?utf-8?B?d2lZaGlWSjZ0Rm9RQmhNTkR6Q25kRG1teFFiTm01cVlnOW9GYmVCMWhCek5W?=
+ =?utf-8?B?Rk5jQXhNV3d3MklqUWFSN2EydUkxV3o3Q2RPUTAyWmduelJieFhIczVvdXFk?=
+ =?utf-8?B?TTVxamIzTG9zUVRXUlUwUmhFdElLZHljWjNkbDV1dE9OUEV0WWlZWlZuSGV1?=
+ =?utf-8?B?ci9hckRaV1dBRjk0aDQrdTQ4WUttajdJeUhtcThNak9KQldoMVFuZ0x6NUFq?=
+ =?utf-8?B?QlYyS2E1R3hLNm1SNGhCMHZBVElvc3drbkovNXB4NkowSUlVN2JaUlF1dGtS?=
+ =?utf-8?B?dGJBbDhubEhyM1RQV2txRncvRzA4dGxPLzJubC92L0JxODlsRldRZzR3bFRJ?=
+ =?utf-8?B?c2VtTTBWanNQcVdoQUVQb3IycEQvbU9FdDZzUk5yL0U3eVZ4RnRWSFlEaXBZ?=
+ =?utf-8?B?ZWc9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98423aa1-c3c0-44fa-2ca3-08ddec2d7ce4
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 03:37:07.1975
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sXg2tiFDvv6Gv2NeNrrboOE6VgNZTCaXcbnHLMMH/gC6kA0PCd2/pwjAcqSACgwTtlxaNhJ17HG7AuQsVmDGfFX1sLLx0tjXp0UscHKG5OY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8036
 
-Hi,
+Hi Neil,
+    Could you please take some time to review this submission?
 
-I can provide additional test coverage on a T1000, using Adrian's
-patched kernel package from:
-https://people.debian.org/~glaubitz/sparc64/linux-image-6.12.3-sparc64-smp_=
-6.12.3-1+sparc64_sparc64.deb
-
-$ uname -a
-Linux t1000a 6.12.3-sparc64-smp #1 SMP Debian 6.12.3-1+sparc64
-(2025-08-28) sparc64 GNU/Linux
-$ lsb_release -a
-
-No LSB modules are available.
-Distributor ID: Debian
-Description:    Debian GNU/Linux bookworm/sid
-Release:        unstable
-Codename:       sid
-$ sudo dmesg | grep T1000
-[    0.979644] PLATFORM: banner-name [Sun Fire(TM) T1000]
-[    0.980069] PLATFORM: name [SUNW,Sun-Fire-T1000]
-$ lscpu
-Architecture:          sparc64
-  CPU op-mode(s):      32-bit, 64-bit
-  Byte Order:          Big Endian
-CPU(s):                24
-  On-line CPU(s) list: 0-23
-Model name:            UltraSparc T1 (Niagara)
-  Thread(s) per core:  4
-  Core(s) per socket:  6
-  Socket(s):           1
-  Flags:               sun4v
-Caches (sum of all):
-  L1d:                 192 KiB (24 instances)
-  L1i:                 384 KiB (24 instances)
-  L2:                  72 MiB (24 instances)
-
-Tested-by: Ken Link <iissmart@numberzero.org>
-
-On Thu, Sep 4, 2025 at 1:37=E2=80=AFPM Magnus Lindholm <linmag7@gmail.com> =
-wrote:
->
-> I've tested this patch from on my T2000, I've booted up the ISO
->
-> https://dl.t2sde.org/binary/2025/incoming/t2-25.9-sparc64-base-wayland-gl=
-ibc-gcc-ultrasparc3.iso
->
-> And have been running some "regular stuff" like unpacking files and
-> building some packages
-> with gcc. It seems to work fine. The system has been running stable
-> with load for some hours now
-> install:/etc# uname -a
-> Linux t2 6.16.4-t2 #1 SMP Tue Sep  2 23:17:46 CEST 2025 sparc64 GNU/Linux
-> install:/etc# cat /proc/cpuinfo
-> cpu : UltraSparc T1 (Niagara)
-> fpu : UltraSparc T1 integrated FPU
-> pmu : niagara
-> prom : OBP 4.30.4.d 2011/07/06 14:29
-> type : sun4v
-> ncpus probed : 8
-> ncpus active : 8
-> D$ parity tl1 : 0
-> I$ parity tl1 : 0
-> cpucaps : flush,stbar,swap,muldiv,v9,blkinit,mul32,div32,v8plus,ASIBlkIni=
-t
-> Cpu0ClkTck : 000000003b9aca00
-> Cpu1ClkTck : 000000003b9aca00
-> Cpu2ClkTck : 000000003b9aca00
-> Cpu3ClkTck : 000000003b9aca00
-> Cpu4ClkTck : 000000003b9aca00
-> Cpu5ClkTck : 000000003b9aca00
-> Cpu6ClkTck : 000000003b9aca00
-> Cpu7ClkTck : 000000003b9aca00
-> MMU Type : Hypervisor (sun4v)
-> MMU PGSZs : 8K,64K,4MB,256MB
-> State:
-> CPU0: online
-> CPU1: online
-> CPU2: online
-> CPU3: online
-> CPU4: online
-> CPU5: online
-> CPU6: online
-> CPU7: online
->
->
-> tested-by: Magnus Lindholm <linmag7@gmail.com>
->
->
-> On Tue, Aug 26, 2025 at 6:05=E2=80=AFPM Michael Karcher
-> <kernel@mkarcher.dialup.fu-berlin.de> wrote:
-> >
-> > Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accurat=
-e exception reporting.")
-> > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> > ---
-> >  arch/sparc/lib/NGmemcpy.S | 29 ++++++++++++++++++-----------
-> >  1 file changed, 18 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/arch/sparc/lib/NGmemcpy.S b/arch/sparc/lib/NGmemcpy.S
-> > index ee51c1230689..bbd3ea0a6482 100644
-> > --- a/arch/sparc/lib/NGmemcpy.S
-> > +++ b/arch/sparc/lib/NGmemcpy.S
-> > @@ -79,8 +79,8 @@
-> >  #ifndef EX_RETVAL
-> >  #define EX_RETVAL(x)   x
-> >  __restore_asi:
-> > -       ret
-> >         wr      %g0, ASI_AIUS, %asi
-> > +       ret
-> >          restore
-> >  ENTRY(NG_ret_i2_plus_i4_plus_1)
-> >         ba,pt   %xcc, __restore_asi
-> > @@ -125,15 +125,16 @@ ENTRY(NG_ret_i2_plus_g1_minus_56)
-> >         ba,pt   %xcc, __restore_asi
-> >          add    %i2, %g1, %i0
-> >  ENDPROC(NG_ret_i2_plus_g1_minus_56)
-> > -ENTRY(NG_ret_i2_plus_i4)
-> > +ENTRY(NG_ret_i2_plus_i4_plus_16)
-> > +        add     %i4, 16, %i4
-> >         ba,pt   %xcc, __restore_asi
-> >          add    %i2, %i4, %i0
-> > -ENDPROC(NG_ret_i2_plus_i4)
-> > -ENTRY(NG_ret_i2_plus_i4_minus_8)
-> > -       sub     %i4, 8, %i4
-> > +ENDPROC(NG_ret_i2_plus_i4_plus_16)
-> > +ENTRY(NG_ret_i2_plus_i4_plus_8)
-> > +       add     %i4, 8, %i4
-> >         ba,pt   %xcc, __restore_asi
-> >          add    %i2, %i4, %i0
-> > -ENDPROC(NG_ret_i2_plus_i4_minus_8)
-> > +ENDPROC(NG_ret_i2_plus_i4_plus_8)
-> >  ENTRY(NG_ret_i2_plus_8)
-> >         ba,pt   %xcc, __restore_asi
-> >          add    %i2, 8, %i0
-> > @@ -160,6 +161,12 @@ ENTRY(NG_ret_i2_and_7_plus_i4)
-> >         ba,pt   %xcc, __restore_asi
-> >          add    %i2, %i4, %i0
-> >  ENDPROC(NG_ret_i2_and_7_plus_i4)
-> > +ENTRY(NG_ret_i2_and_7_plus_i4_plus_8)
-> > +       and     %i2, 7, %i2
-> > +       add     %i4, 8, %i4
-> > +       ba,pt   %xcc, __restore_asi
-> > +        add    %i2, %i4, %i0
-> > +ENDPROC(NG_ret_i2_and_7_plus_i4)
-> >  #endif
-> >
-> >         .align          64
-> > @@ -405,13 +412,13 @@ FUNC_NAME:        /* %i0=3Ddst, %i1=3Dsrc, %i2=3D=
-len */
-> >         andn            %i2, 0xf, %i4
-> >         and             %i2, 0xf, %i2
-> >  1:     subcc           %i4, 0x10, %i4
-> > -       EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4)
-> > +       EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4_plus_16)
-> >         add             %i1, 0x08, %i1
-> > -       EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4)
-> > +       EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4_plus_16)
-> >         sub             %i1, 0x08, %i1
-> > -       EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4)
-> > +       EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4_plus_16)
-> >         add             %i1, 0x8, %i1
-> > -       EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_minus_8)
-> > +       EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_plus_8)
-> >         bgu,pt          %XCC, 1b
-> >          add            %i1, 0x8, %i1
-> >  73:    andcc           %i2, 0x8, %g0
-> > @@ -468,7 +475,7 @@ FUNC_NAME:  /* %i0=3Ddst, %i1=3Dsrc, %i2=3Dlen */
-> >         subcc           %i4, 0x8, %i4
-> >         srlx            %g3, %i3, %i5
-> >         or              %i5, %g2, %i5
-> > -       EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4)
-> > +       EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4_plus_8)
-> >         add             %o0, 0x8, %o0
-> >         bgu,pt          %icc, 1b
-> >          sllx           %g3, %g1, %g2
-> > --
-> > 2.50.1
-> >
-> >
->
+On 2025/7/17 17:29, Xianwei Zhao via B4 Relay wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> Fix reg address for c3 pwm node.
+> 
+> Fixes: be90cd4bd422 ("arm64: dts: amlogic: Add Amlogic C3 PWM")
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+> Fix c3 pwm node reg.
+> ---
+> Changes in v2:
+> - Fix commit change-id about Fixes.
+> - Link to v1: https://lore.kernel.org/r/20250717-fix-pwm-node-v1-1-45021777efa9@amlogic.com
+> ---
+>   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> index cb9ea3ca6ee0..71b2b3b547f7 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> @@ -792,7 +792,7 @@ spicc1: spi@52000 {
+>                          pwm_mn: pwm@54000 {
+>                                  compatible = "amlogic,c3-pwm",
+>                                               "amlogic,meson-s4-pwm";
+> -                               reg = <0x0 54000 0x0 0x24>;
+> +                               reg = <0x0 0x54000 0x0 0x24>;
+>                                  clocks = <&clkc_periphs CLKID_PWM_M>,
+>                                           <&clkc_periphs CLKID_PWM_N>;
+>                                  #pwm-cells = <3>;
+> 
+> ---
+> base-commit: 58abdca0eb653c1a2e755ba9ba406ee475d87636
+> change-id: 20250717-fix-pwm-node-61ef27ba9605
+> 
+> Best regards,
+> --
+> Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> 
 
