@@ -1,143 +1,377 @@
-Return-Path: <linux-kernel+bounces-802701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981B4B455BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:07:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF89FB455C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758451886092
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E57E5C33DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8C5341AC2;
-	Fri,  5 Sep 2025 11:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E4C342CB0;
+	Fri,  5 Sep 2025 11:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wazxqZos"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EY3P8DkF"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FE3179BD;
-	Fri,  5 Sep 2025 11:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D005341676
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070465; cv=none; b=ppo9rhI4TuotqM/QjLMycS4KY/EUV25uFaIb5yrARSFM2UBZkcJ2bBIzf/tfj5anEHjpikwZsYkIX5oFrEthhqzb0DvzFcYGGNwulXd6w57RGb7j7vswlwOUb3cd8mXEuQg2Kvruw/JjPg1T5R/tx7rG9YCeYirzUaY8EJmHIYE=
+	t=1757070599; cv=none; b=JmNEx6RxrES9xG09qEMVjdIPttOZzDiq3z5hOtQ9xcTrJ06BGxhe+CgGJxo1mw8VBzLD8knSzMvSWy6kQSsP5MDK6PDTKpwA7c0GO7UfqpHL96va1CMhT8PIOYz2pd1XllZLsxue39hNtbPBu0bi4xom9AyyCnf+Taspa2ZC3Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070465; c=relaxed/simple;
-	bh=PuxLCceEcWNaF0wlDR9k3nAjW6PvbIkpdu97KH9DeAw=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=fMm/CabmcNmXXLu4fpwjebFKbpNw96AV39W11VinJlOdX98tRJp4ub3YF86/u5Egj9kr0/9GZFN8kh6JiamSdsscA4+blvshfIJlT0uGqKQpXdZ8vynlt6UPr7ZNyACTBxF7vxjpsrbGa+zkYynlgk6getvvL7cOcUVx9/ugsSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wazxqZos; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c67:84a2:d86d:fcf7:24b4:e467])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3A6E47F0;
-	Fri,  5 Sep 2025 13:06:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757070390;
-	bh=PuxLCceEcWNaF0wlDR9k3nAjW6PvbIkpdu97KH9DeAw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=wazxqZosvmbXS0f2HZx9eriHBDT68T/ZV6Vogn+Ls8m0kB+01CMEmeJOOM2FwQmGX
-	 e2ZLPP+OS5+jsuY4LEOJN0EZmX/dwlObHYNglYO+alxSFtpBEDAqEDJocnFfOd5Fds
-	 XjGLwntzggrApIauDlAlwvpBSYzrBEBQZ2y4Sj14=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757070599; c=relaxed/simple;
+	bh=7ALH7IJrp4A6nmOz1p/n3wXjhY7VUyQresBwcjSPj14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvOTsP7/celcHT0RGCye4IvnRJqiuxnZsqHgiyj7NCjLpReurKQSBeoxfJ+b7EDDFLp7a9Mlyv7XbJk9pjmkYrch/ZdrdHiqVOxO1FHbM9v27HfQop485N+5tHNPXRaKUlZxndnQikd3zrnwB9W0jEW/3J6i4qKUYX3AXXcZ8yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EY3P8DkF; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e98b64d7000so1844006276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757070596; x=1757675396; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2JdXw4Qv1njBlO6xmYzVUcXa+L4DKBA78RJzciCH6Gs=;
+        b=EY3P8DkFtoh53lUFqYoX/8zs9jbHFtCA3qmiqlBBjda3XXRs5ND5afjFfKsKkNZAtX
+         vJ3dcIoyVeqC06YtOd3wKZlrlkcoZlZ89xcNX/h0hS+kK4z0OrVeJlSp6SH3RsMF4xkF
+         mUetwiWRGzIMhIT6AhD3Yb5FRnS1jzqoRFt7vy5EMCHiAfR0ydtPTTc9yv0fSHlfMDC+
+         A3yfDxSvv1FzkFxahy3XHWaO8HnUqWGqdLVgWvBwZyuar8FEcsXgeiChwYATj84W42tE
+         7o64XKJUkB/aoASrrKcHvWSFWNRHxzkY5866P9XZ8XICqzjkFhQG4rBgJgMax1usFPyG
+         IPhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757070596; x=1757675396;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2JdXw4Qv1njBlO6xmYzVUcXa+L4DKBA78RJzciCH6Gs=;
+        b=t9XT3JpzZv23l+3GB/BX7/EdqQ71mdKaCUAEMQ9ZTfRfxOyzipNhkKD0/w1DwJSCXd
+         t5yf6th7EThOOZsJPRswHhBnMg/FvRnuf1iy1goKhoXOGdaLb9NHBnIeGbmQoNZXPL1n
+         mVszhJ9pKfvP02Pq0/qXnqamIJknQ1pCnzZBtlPQ04tRMKxiNMvmhA5389sZiUjLv/nb
+         mhYPJ+6QEuNmZCVQt7/eJyZRx8OT91jhSjsV6hnZgaX3UuT8s2Zsr6LhLP3xZruanyII
+         dJEg8o0xv2E1QkxPuhuf98lz8AktKcpVfe9hTWmD/gkjlPTfCpI6bESFK2IdviDc+H95
+         qpjA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8XkWw03WYJgPdQgrQIoMLAH8nPJY5vj8oNyeLUgvViSt8PibjybqohB5yRN1ZcbwtruFLnJVHpv1x85E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Zrauknxd7KO8B3LUj4zqknVJEfBbi93rK7sdQ+RY5koSe7HR
+	ZE7z/RkfbLt7GR+0cq9t2CIcUZ7OXPNhwWdE0XZTlFrVLE/z3EPyMuyBNth3mR32Qrpf7CC8q6E
+	Ey9iA3tisL2qWNjxKY4wtMSDUOO8UdIoSN3Vm9We1kQ==
+X-Gm-Gg: ASbGncsOJocVbEzFAyFxs5LdBW5V6FrrFbKlhfIg0KHu7cKPtzLpFq71Ykl72va4P89
+	P2gpjZgCVZepg3K1qOas74kj2Ctwua/vsjha1jvWgrvWXOU+z9O85rR1jmD2YRJpV103beor0nH
+	B06keztLLSrFkaD+6oIN4QrTWVgL8oWaZgy36Xaf5FI11WNWn8uQe4n1tJm17zmkD1WnkxyCw+6
+	5rFsl6Q2vAPEGvevD8=
+X-Google-Smtp-Source: AGHT+IGJvbbIlAC6F/9Nh1B+6nqGQfT+amUgoRJzoU9Ah54iDfe6pod7IY2Mz9W1QhgN1npg8B3ZwJzDinFuk2aB9V8=
+X-Received: by 2002:a05:690e:15c7:b0:5f5:5d5:b1f5 with SMTP id
+ 956f58d0204a3-601774c10f2mr4510800d50.20.1757070596115; Fri, 05 Sep 2025
+ 04:09:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250825142522.1826188-2-r-donadkar@ti.com>
-References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-2-r-donadkar@ti.com>
-Subject: Re: [PATCH v5 01/14] media: ti: j721e-csi2rx: Remove word size alignment on frame width
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
-Date: Fri, 05 Sep 2025 16:37:35 +0530
-Message-ID: <175707045529.8095.7424566069689990352@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
+ <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
+ <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+ <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
+ <CAPDyKFq7z9e9hEC9QWiYcaU=t+Gs_GgRurmK-+cNYp4xkhr5Ow@mail.gmail.com>
+ <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
+ <CAPDyKFr-mVbGo62Wp+othcs+cWR6Wn9bz==ZB5hSpyKgkGtqHg@mail.gmail.com>
+ <CAMuHMdUAhsZMbkUzwb=XnCNyvA3aOvuhkKL4=1nOPQ0w0if-HA@mail.gmail.com>
+ <CAPDyKFrWv3ObciCtrb4YE_K6to5xxx79DGcPv0=nP9LR60=xYA@mail.gmail.com> <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 5 Sep 2025 13:09:20 +0200
+X-Gm-Features: Ac12FXxAyk0DgxeOLPurHUdA5X-JyzT3WI7knde2ma8Q4W4KgpMj8w1PmU3YQLs
+Message-ID: <CAPDyKFqvjeuXhk7H4nH80RY63QfKwGO_61UW=MJaU8Qiahbt3g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rishikesh,
+[...]
 
-Quoting Rishikesh Donadkar (2025-08-25 19:55:09)
-> j721e-csi2rx driver has a limitation of frame width being a multiple
-> word size. However, there is no such limitation imposed by the
-> hardware [1].
+> > > > > > > > > BTW, the "pending due to"-messages look weird to me.
+> > > > > > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
+> > > > > > > > >
+> > > > > > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
+> > > > > > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
+> > > > > > > > > due to e6020000.watchdog
+> > > > > > > > >
+> > > > > > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
+> > > > > > > > > the watchdog resides in the always-on Clock Domain, and uses the
+> > > > > > > > > clock-controller for PM_CLK handling.
+> > > > > > >
+> > > > > > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
+> > > > > > > these bogus pending states, and no PM Domain is powered off.
+> > > > > >
+> > > > > > I see, thanks for the details. I am looking closer at this.
+> > > > > >
+> > > > > > In any case, this is the main issue, as it prevents the ->sync_state()
+> > > > > > callback to be called. Hence the "genpd->stay_on" will also *not* be
+> > > > > > cleared for any of the genpd's for the genpd-provider.
+> > > > >
+> > > > > I was under the impression there is a time-out, after which the
+> > > > > .sync_state() callback would be called anyway, just like for probe
+> > > > > deferral due to missing optional providers like DMACs and IOMMUs.
+> > > > > Apparently that is not the case?
+> > > >
+> > > > The behaviour is configurable, so it depends. The current default
+> > > > behaviour does *not* enforce the ->sync_state() callbacks to be
+> > > > called, even after a time-out.
+> > > >
+> > > > You may set CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT to achieve the above
+> > > > behavior or use the fw_devlink command line parameters to change it.
+> > > > Like setting "fw_devlink.sync_state=timeout".
+> > > >
+> > > > I guess it can be debated what the default behaviour should be.
+> > > > Perhaps we should even allow the default behaviour to be dynamically
+> > > > tweaked on a per provider device/driver basis?
+> > >
+> > > The domains are indeed powered off like before when passing
+> > > "fw_devlink.sync_state=timeout", so that fixes the regression.
+> > > But it was not needed before...
+> >
+> > Right, the default behavior in genpd has changed. The approach was
+> > taken as we believed that original behavior was not correct.
+> >
+> > Although, the current situation isn't good as it causes lot of churns for us.
+>
+> I did some more testing, and there seems to be a similar issue with
+> DMA controllers, which I hadn't really noticed before, as I have
+> DMAC drivers built-in in all my kernel configs.  If the (optional)
+> DMAC driver is not available, you need "fw_devlink=permissive" to make
+> drivers probe devices that have (optional) DMA support.
 
-Is there no limitation for the step size, or also not limitation for the
-minimum size of transfer?
+Well, after the deferred probe timeout, the missing supplier depency
+should be ignored even if you don't have "permissive".
 
->=20
-> Remove this limitation from the driver.
->=20
-> Link: https://www.ti.com/lit/pdf/spruj16
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
-> ---
->  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c     | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
-ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 3992f8b754b7..b3a27f4c3210 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -260,9 +260,6 @@ static void ti_csi2rx_fill_fmt(const struct ti_csi2rx=
-_fmt *csi_fmt,
->                              MAX_WIDTH_BYTES * 8 / csi_fmt->bpp);
+Typically we get a print in the log that could say:
+"pm-test-drv pm_test24: deferred probe timeout, ignoring dependency"
 
-Here the pix->width is restricted to be at minimum pixels_in_word.
-So TRY_FMT/S_FMT with a width =3D 1 will be clamped by the driver.
+... and then the driver-core tries probing the device anyway. It's
+then up to the consumer driver to allow probing to succeed, even if
+the DMA setup procedure fails.
 
->         pix->height =3D clamp_t(unsigned int, pix->height, 1, MAX_HEIGHT_=
-LINES);
-> =20
-> -       /* Width should be a multiple of transfer word-size */
-> -       pix->width =3D rounddown(pix->width, pixels_in_word);
-> -
->         v4l2_fmt->type =3D V4L2_BUF_TYPE_VIDEO_CAPTURE;
->         pix->pixelformat =3D csi_fmt->fourcc;
->         pix->bytesperline =3D pix->width * (csi_fmt->bpp / 8);
-> @@ -360,23 +357,15 @@ static int ti_csi2rx_enum_framesizes(struct file *f=
-ile, void *fh,
->                                      struct v4l2_frmsizeenum *fsize)
->  {
->         const struct ti_csi2rx_fmt *fmt;
-> -       unsigned int pixels_in_word;
-> =20
->         fmt =3D find_format_by_fourcc(fsize->pixel_format);
->         if (!fmt || fsize->index !=3D 0)
->                 return -EINVAL;
-> =20
-> -       /*
-> -        * Number of pixels in one PSI-L word. The transfer happens in mu=
-ltiples
-> -        * of PSI-L word sizes.
-> -        */
-> -       pixels_in_word =3D PSIL_WORD_SIZE_BYTES * 8 / fmt->bpp;
-> -
->         fsize->type =3D V4L2_FRMSIZE_TYPE_STEPWISE;
-> -       fsize->stepwise.min_width =3D pixels_in_word;
-> -       fsize->stepwise.max_width =3D rounddown(MAX_WIDTH_BYTES * 8 / fmt=
-->bpp,
-> -                                             pixels_in_word);
-> -       fsize->stepwise.step_width =3D pixels_in_word;
-> +       fsize->stepwise.min_width =3D 1;
+> Interestingly, that is not the case with (optional) IOMMU support:
+> drivers do probe devices that have (optional) DMA support when the
+> latter is not available.
 
-But here, in ENUM_FRAMESIZES we allow width to go as low as 1.
+Okay, so some special treatments are already in place for IOMMUs, to
+allow them to probe sooner, I guess. I don't know in detail how this
+works, maybe Saravana can help to fill in?
 
-Can you make sure both of them match whatever is correct (and possible by
-the hardware)?
+Although my guess is that, by allowing IOMMUs to probe like this,
+means that these drivers need to manage the DMA setup quite
+differently.
 
-> +       fsize->stepwise.max_width =3D MAX_WIDTH_BYTES * 8 / fmt->bpp;
-> +       fsize->stepwise.step_width =3D 1;
->         fsize->stepwise.min_height =3D 1;
->         fsize->stepwise.max_height =3D MAX_HEIGHT_LINES;
->         fsize->stepwise.step_height =3D 1;
-> --=20
-> 2.34.1
->=20
+The DMA driver (supplier) may probe and become available *after* the
+IOMMU driver has probed. In other words, the IOMMU drivers then need
+to manage the DMA setup even beyond probing.
 
-Thanks,
-    Jai
+>
+> > > I could add "select FW_DEVLINK_SYNC_STATE_TIMEOUT" to the SYSC_RCAR
+> > > and SYSC_RCAR_GEN4 Kconfig options, but that would play badly with
+> > > multi-platform kernels.  As the fw_devlink_sync_state flag is static,
+> > > the R-Car SYSC drivers can't just auto-enable the flag at runtime.
+> > >
+> > > Any other options? Perhaps a device-specific flag to be set by the PM
+> > > Domain driver, and to be checked by fw_devlink_dev_sync_state()?
+> >
+> > Something along those lines seems reasonable to me too.
+> >
+> > However, the remaining question though, is what should be the default
+> > behavior in genpd for this. Due to all the churns, we may want
+> > something that is closer to what we had *before*, which means to
+> > always use the timeout option, unless the genpd provider driver
+> > explicitly requests to not to (an opt-out genpd config flag).
+> >
+> > Saravana, it would be nice to get some thoughts from you are around
+> > this? Does it make sense?
+> >
+> > >
+> > > > > > > If I remove the "sync_state = false" above, genpd_provider_sync_state()
+> > > > > > > considers all domains, and does power down all unused domains (even
+> > > > > > > multiple times, as expected).
+> > > > > >
+> > > > > > I think those are getting called because with the change above, there
+> > > > > > is no device_link being tracked. As stated above, fw_devlink is
+> > > > > > limited to use only one device - if multiple devices share the same
+> > > > > > fwnode.
+> > > > >
+> > > > > Indeed.
+> > > > >
+> > > > > > In other words, the ->sync_state() callbacks are called even if the
+> > > > > > corresponding consumer devices have not been probed yet.
+> > > > >
+> > > > > Hence shouldn't there be a timeout, as the kernel may not even have
+> > > > > a driver for one or more consumer devices?
+> > > >
+> > > > See above.
+> > > >
+> > > > > > > Upon closer look, all "pending due to" messages I see claim that the
+> > > > > > > first (index 0) PM Domain is pending on some devices, while all of
+> > > > > > > these devices are part of a different domain (usually the always-on
+> > > > > > > domain, which is always the last (32 or 64) on R-Car).
+> > > > > > >
+> > > > > > > So I think there are two issues:
+> > > > > > >   1. Devices are not attributed to the correct PM Domain using
+> > > > > > >      fw_devlink sync_state,
+> > > > > > >   2. One PM Domain of a multi-domain controller being blocked should
+> > > > > > >      not block all other domains handled by the same controller.
+> > > > > >
+> > > > > > Right, that's a current limitation with fw_devlink. To cope with this,
+> > > > > > it's possible to enforce the ->sync_state() callback to be invoked
+> > > > > > from user-space (timeout or explicitly) for a device.
+> > >
+> > > That needs explicit handling, which was not needed before.
+> > >
+> > > Perhaps the fw_devlink creation should be removed again from
+> > > of_genpd_add_provider_onecell(), as it is not correct, except for
+> > > the first domain?
+> >
+> > There is nothing wrong with it, the behavior is correct, unless I
+> > failed to understand your problem. To me the problem is that it is
+>
+> It does print wrong and confusing warnings indicating the problem:
+>
+>     genpd_provider ca57-cpu0: sync_state() pending due to fe000000.pcie
+>
+> (no, the PCIe controller is not part of the CPU PM Domain)
+
+That's a good point. We should fix this to avoid confusion.
+
+>
+> > just less fine grained, compared to using
+> > of_genpd_add_provider_simple(). All PM domains that is provided by a
+> > single power-domain controller that uses #power-domain-cells = <1>,
+> > requires all consumers of them to be probed, to allow the sync_state
+> > callback to be invoked.
+>
+> if it would be just coarse-grained, the link should be created to a
+> device representing the controller, not to the device representing
+> the first PM domain.
+>
+> > If we could teach fw_devlink to take into account the
+> > power-domain-*id* that is specified by the consumer node, when the
+> > provider is using #power-domain-cells = <1>, this could potentially
+> > become as fine-grained as of_genpd_add_provider_simple().
+> >
+> > Saravana, do think we can extend fw_devlink to take this into account somehow?
+>
+> Doesn't the pmdomain core create a device for each PM domain, so the
+> index could be used to link to the correct domain?
+
+Correct, we have a device associated for each PM domain - and when
+of_genpd_add_provider_onecell() is called, we get the index associated
+for each of them.
+
+If I understand your proposal, you are suggesting that genpd itself
+creates the device_link between its corresponding device (supplier)
+and the upcoming consumer device(s), at the point when
+of_genpd_add_provider_onecell() is called, right?
+
+It's an interesting idea, but I am not sure it will work. To create
+the device_link at this point, assumes that all the consumer OF-nodes
+have been populated (to have devices available for them). Maybe there
+is an intermediate step we can take to instruct fw_devlink to treat
+these "links" differently?
+
+Saravana, any thoughts around this?
+
+>
+> > > > > > Another option would be to allow an opt-out behavior for some genpd's
+> > > > > > that are powered-on at initialization. Something along the lines of
+> > > > > > the below.
+> > > > > >
+> > > > > > From: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > > > Date: Tue, 29 Jul 2025 14:27:22 +0200
+> > > > > > Subject: [PATCH] pmdomain: core: Allow powered-on PM domains to be powered-off
+> > > > > >  during boot
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > I gave this a try (i.e. "| GENPD_FLAG_NO_STAY_ON" in rcar-sysc.c), but
+> > > > > this doesn't make any difference.  I assume this would only work when
+> > > > > actively calling genpd_power_off() (i.e. not from of_genpd_sync_state()
+> > > > > or genpd_provider_sync_state())?
+> > > >
+> > > > Right. Thanks for testing!
+> > > >
+> > > > So, we may need to restore some part of the genpd_power_off_unused()
+> > > > when CONFIG_PM_GENERIC_DOMAINS_OF is set. Without clearing
+> > > > "genpd->stay_on".
+> > > >
+> > > > I can extend the patch, if you think it would make sense for you?
+> > >
+> > > I would applaud anything that would fix these regressions.
+> > > Thanks!
+> >
+> > While being mostly silent from my side for a while, I have been
+> > continuing to evolve my test suite for sync_state tests. Wanted to
+> > make sure I cover additional new corner cases that you have pointed
+> > out for Renesas platforms.
+> >
+> > That said, I have not observed any issues on my side, so it looks like
+> > we are simply facing new behaviors that you have pointed out to be a
+> > problem. In this regards, I think it's important to note that we are
+> > currently only seeing problems for those genpds that are powered-on
+> > when the provider driver calls pm_genpd_init(). Another simple option
+> > is to power-off those PM domains that we know is not really needed to
+> > be powered-on. Also not perfect, but an option.
+> >
+> > Another option is something along the lines of what I posted, but
+> > perhaps extending it to let the late_initcall_sync to try to power-off
+> > the unused PM domains.
+>
+> Yep, like before.
+
+Okay!
+
+>
+> > I will work on updating the patch so we can try it out - or perhaps
+> > what you suggested above with a device-specific flag taken into
+> > account by fw_devlink_dev_sync_state() would be better/sufficient you
+> > think?
+>
+> I also had a closer look at the few pending sync_state() pending
+> warnings I do see on SH/R-Mobile SoCs.  Their PM Domain driver uses
+> of_genpd_add_provider_simple() instead of of_genpd_add_provider_onecell().
+> E.g. on R-Mobile A1:
+>
+>     genpd_provider a3sm: sync_state() pending due to f0100000.cache-controller
+>     genpd_provider a4s: sync_state() pending due to fe400000.memory-controller
+>     genpd_provider d4: sync_state() pending due to ptm
+>
+> All three domains were already handled specially in the PM Domain
+> driver, as they must not be turned off, so these platforms didn't
+> regress due to this series.
+
+Okay!
+
+Again the prints are confusing and annoying, but in principle we are
+fine. Thanks for clarifying!
+
+This also makes me wonder if we should skip enabling the fw_devlink
+support for those genpds with "simple" providers that are special
+(GENPD_FLAG_ALWAYS_ON and GENPD_FLAG_RPM_ALWAYS_ON). It doesn't make
+sense to track consumers for them, I think.
+
+[...]
+
+Kind regards
+Uffe
 
