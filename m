@@ -1,257 +1,163 @@
-Return-Path: <linux-kernel+bounces-802196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3EAB44EB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1761B44EF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EFA75A47F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67955A45207
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB732D7380;
-	Fri,  5 Sep 2025 07:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MW9No31i"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F972DAFB9;
+	Fri,  5 Sep 2025 07:15:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B3032F76C;
-	Fri,  5 Sep 2025 07:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055945; cv=fail; b=SoNoVFZM2DqT/kPF0aOwum5nTPyrZYnekRxQpyo6G9XpEjsbJWna3DJrExgOzdvCxQXBAGYI7uhC3Vn4TZcfN060WzkfvvbNbUYNeYVAtRg6ZoxnuwN4ZFO/q0co3tLudMUeMTOeVa9xHZSTx6nEzmu0Nmyyptm+V0uZ/B6PT3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055945; c=relaxed/simple;
-	bh=rEcLZfKvg7llMiOwRmyMIJ3CQjkyo7ycDhlGunttWf8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iEYQvR09gY4rivoHxKsAaITf95dE4XvvWXAI80OAAMK7ZAfxJWqII87c+jzBN9CzdVz3qVEHp6S/myutj2z9MQPcZRCZIVqYA1h5xTyyDbItpvA3Qook/+FRGskxwV8rv7cc6AdXSjPVyg4kLYyLacfvoZD53gvy+uxXBXlrlrQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MW9No31i; arc=fail smtp.client-ip=40.107.236.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jm4J76qQjEIn9LZGN1KcsV6KmM+giCJ3dmvATnOsnJMq8AfMo1xDhUdwrp2wSwX2Jq23trfjbEWWr5aGN/5NraqPaYjM9rrvA7HYnv2C6LQVLiAB6Y+1GYhUtLcui8NRItZsVsZ+A4bkFLj+GIuzKuzM4ua2yoawUISpiCYWm1reMWaKl9+/vN9t8RQbclXD3LlaPNlCeOfbFasVcbwgTNZqJgDRq4eZrYD2dmPkcI4Y6r/LmbsMMiALtEY325pU2+eJ/GKCtr2eA6Ts5vq7a9NGMWpaMmKV4kB0X1CrHVQgeO5gxbl63l+4pwpPdW8QDOGbThQcd4ur3uuSdq69nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2FLfC2WrJVHxB6AjeEH+OmawVa4jIlEmo9NYC4qNbHY=;
- b=y13aO4dFNgNw8IY2yZQAbXCQfjtY3kERyAwdKoT11h+fJolPAvzDK/JgysLdQ/JT5TWI6aIUZIMJCfk2jwrCu2owUMtxjYp2vI1uRnyqLeHsKjfps83uMlUw2s0lfohZYzpDvR40IXUaUd/neW5Cf4ac53urmIR+n0ZtJzSDtMDfY0YrtegKkLwXDtVCuEWjJhxqqzI4eg8pufok5mUBq3WiN3j1t1gQHnjX1A9Zykp8WUt+D1qrLv+TDEkLLigbWRzkSkcYrkVggJ2sqBfb4980YMLrNo9nY7x9376HjQ3G6iUJ/EEgqo2TmJrLdsyBXD3/bbXs1B13VtyaCPl+aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2FLfC2WrJVHxB6AjeEH+OmawVa4jIlEmo9NYC4qNbHY=;
- b=MW9No31iBtu9Jlot98TqrakYVe9JL/vE20Fd4gekwus/+0hV8O/wSnB/rh6QpjmPuVnkDIJSH6twmTUk/C9Vo60tjIcuKJTesvcWFrBb5qPYAINLM84lJYEVlTwiyV54Ce7Oa4IXmbyASxWlwZvVLVY9uUa49jIYfRp+0uamnlo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by MW4PR12MB7168.namprd12.prod.outlook.com (2603:10b6:303:22d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Fri, 5 Sep
- 2025 07:05:39 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
- 07:05:38 +0000
-Message-ID: <da070ae7-6347-4ce5-a0c1-11d1b0e491bf@amd.com>
-Date: Fri, 5 Sep 2025 15:05:29 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] media: platform: amd: isp4 video node and buffers
- handling added
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com, pratap.nirujogi@amd.com, benjamin.chan@amd.com,
- king.li@amd.com, gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
- Dominic.Antony@amd.com, mario.limonciello@amd.com, richard.gong@amd.com,
- anson.tsao@amd.com
-References: <20250828100811.95722-1-Bin.Du@amd.com>
- <20250828100811.95722-5-Bin.Du@amd.com>
- <20250903100841.GC13448@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <20250903100841.GC13448@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0121.apcprd02.prod.outlook.com
- (2603:1096:4:188::21) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FE233E1;
+	Fri,  5 Sep 2025 07:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757056557; cv=none; b=XvqIx7pv3YaZIJqlC91EmzdqqVoPval7ZB2eEoYVubOcp54AlpiqYfpa48Y3T9qd5mLXa28FPlhISVjH0wCAbaGCHVcF+6XhBtLPqxdQuJGI7jrcKwJ40BNAd8WuJhHA4uG55Tz1/Qg9S+yVhNo2otQiJtTEdNcA5xV8NR8nWYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757056557; c=relaxed/simple;
+	bh=WUqZ/mUGOa9rCdNCzxpP38onIg1k5jMJhJu8ZhqIBZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=trVEn7NpNCqvceLY3sotDA84+fZbeZ6CyY3GNagwkMuSt8ZKSC5vjLJ786QeRSGIc8x7LEa5fugwbjWVJ8/snw4GSbNgXiY2+WdLcEpxcvzGPZzEuhUpBdOuVG39yVon3Y8FuQRHOikbDi+urud7PKnaXYvQV6nTkGpPn2h/WKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cJ7146K3gzYQvYT;
+	Fri,  5 Sep 2025 15:15:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5BE8F1A101F;
+	Fri,  5 Sep 2025 15:15:51 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIwkjrpowYbQBQ--.23573S4;
+	Fri, 05 Sep 2025 15:15:50 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@infradead.org,
+	colyli@kernel.org,
+	hare@suse.de,
+	dlemoal@kernel.org,
+	tieren@fnnas.com,
+	bvanassche@acm.org,
+	axboe@kernel.dk,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	satyat@google.com,
+	ebiggers@google.com,
+	kmo@daterainc.com,
+	akpm@linux-foundation.org,
+	neil@brown.name
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH for-6.18/block 00/16] block: fix reordered IO in the case recursive split
+Date: Fri,  5 Sep 2025 15:06:27 +0800
+Message-Id: <20250905070643.2533483-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|MW4PR12MB7168:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86908a6d-c1be-44ad-a02b-08ddec4a9dd9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d2pCNDBzc3RUMmNQOVNLZnl6OU5yOWpxeVJSWCttbU9NR1pkN0RXUGxzV0VI?=
- =?utf-8?B?Qk10STI0K3VFNkhGcHprS1NpTFBiZXRjbkdWS0g3Q1U3VXJBRi8wc3NsRDFV?=
- =?utf-8?B?VVpCTjVaTEtVbE8xdTA0c0tMMXhXU09KcnlCK2JMQXFNanRibFdvcjdkTVh0?=
- =?utf-8?B?dENPL3gvMmpXelNJVzE5bHd5V3p6dTVUR0ZlWjhqRlpROS90VE1qeEZsTXpK?=
- =?utf-8?B?TUxJVXpiaHZKTjJFMjZsQlQvMUtPbnNnV3lEaUFXdHM0U2JycVJxeDdDM1pP?=
- =?utf-8?B?YlVZNGpYV2dMUFYyQmo2ajMrOFFuWk9Gd083QTFhV2hiWjdWUmk3N3JqdXRp?=
- =?utf-8?B?d2Y0bDJUWXloZmFUazJWMHo4ZWZyNGFBdDhnU2xyTGFLb1NKdFpEVmk5UTg0?=
- =?utf-8?B?MG9lS2RWdGlvR2wxdVFDUXUyZjIwQ1ZleEJKU1RaN3Vod1pTUmcrWWZvT2Zh?=
- =?utf-8?B?SjZJZm90eHFkSE00MVl5akh3cDMwazA5QkMwWUUwZFdkUWVPZzBKUlY3Zlp5?=
- =?utf-8?B?R3JHMDZxQ0NvcDFXcGVhVnJYK2FTRFFaelc1eGdSdXFlcHlyTmVNbjNZWm1B?=
- =?utf-8?B?SVgwZWdpVEpFOWxjR1M2aXpHV2owME5XQkxZTkt2L3d5UkY5ZmRub0FTWEhR?=
- =?utf-8?B?WjF6VlJEN2R5SlpWNkpzL3RXdk11dUZFMHdubDUxUUV4N0ZkOFZ2RXAxVTRW?=
- =?utf-8?B?N25ienBpcUFpOVhXRHR2RnR4Q2ZtV0tMNkwrVjZOTXNJVFBwL2RjUitzcDRk?=
- =?utf-8?B?L09LOFh5RDQ0anJEQ3RIKzdsaWt5T1YyOEh6ZEU4WGcxSVZ6VjhGU0FxVEE4?=
- =?utf-8?B?aWZBemtXZjA1Y3o4OU5GT3BKWFAzRkVmK2w2bHpOZEJaZVNLVk14Y05LSlhs?=
- =?utf-8?B?S3Rlc0l3Z2ViMVJrTmRrRk9YdytKRGMyMGtHZmRxcEtSay90K3BEeDQ0T2dk?=
- =?utf-8?B?KzA2OU9qdE9mTWE1L096WVFjVzVvQllNdy9MeldWR1ZDbXc0Zi9MTGd0eXky?=
- =?utf-8?B?Q2ovVXZDM1dIL2paVUtxS0NzSzZXUWpic3dmOWduVHFjVVBXMC9yQzc3MUVL?=
- =?utf-8?B?aFRWeDJFN3dtdktKYlg2ZlIrb1FaMGgxRHdkYmQxMjBObE1RNnBkQVVxK0dL?=
- =?utf-8?B?ZGVCKzZNdUQ0NTBYRVVrN010THBKeUZEUWZuTndhODY2UWRZUEVmanVRYUdQ?=
- =?utf-8?B?ak9uT2ZKZTNadU10VDYvT1AzejBVR0tlS0ZhQ1RGeWMyQlJuU2xUMkRTY2FJ?=
- =?utf-8?B?NksxR0M3aE5oR1VvdlBTRElLbjdYbis2T1FpOWFYU2ZJWlpzS3BJQ1lITmFm?=
- =?utf-8?B?ODhzalVvcS9paDlrQkR1bkFDcDlIVEVKZ2t4QTZVeHZNUm1VMmJ1c1kxdWtV?=
- =?utf-8?B?YXFjTzl6SXl3YXo4SUl2c1kxK3g3aytDK3JNMjk0aVp4QTNia1BDaVlGR1Zz?=
- =?utf-8?B?REFUNFBENktVVS9EVUYydG5ybjl2QkNHZHMyRHVaOHQ2VXhwUmtQZkg0bGhO?=
- =?utf-8?B?U1RqQXNSZGlCUyt1dW43V2RMaDVaL1JGMGdrTlJFNFE0SXd6aUJ5MWxWVno4?=
- =?utf-8?B?Uy95cGEzdDFUc09sL2JQQTBaQ2VGeDJvcnBJMjk2VEVlSWk5cHJ0YVI1c0Yx?=
- =?utf-8?B?SmZ6S2NENUhIenp2akdKSlZiSVIvbUpJVkswRGZkQllKRFlFTXJ3QzJCZlFx?=
- =?utf-8?B?OG5DeUY4eitjRGFCZTBiVXJhL0tlU0VMYVJHSjBLK2NUY2hGZHFkVU5sd1cr?=
- =?utf-8?B?eXpXQWxWRFErYXdrbmIvY0RPTm56Ty92WUtQdDBESzFlVVRPbEVzNnYwdTVK?=
- =?utf-8?Q?jXdHcthvbh8k63C/z8i6YTEsBeEaBEgOqGaic=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y000QzFPelduRnVETXE1ODByYUJEZGVTZ09BdTBLZG0ya0w4MHpialBKaFdS?=
- =?utf-8?B?dENFNWtTSUJROVpPTEpXY0tFRHhEbzl2QVdLQTJVS1JXTDdCRVJ5ZXZESlMw?=
- =?utf-8?B?UkpIeTltbW5FTkJwdzBydHJkbUdsaUhiUlFqbjVzNTVIbnZIR0Q4NWlsajBT?=
- =?utf-8?B?NXluK2ZmbStTMFlzZzRZN08yR1JUKzc0R28xeExXWWg1RFhsd1VTSU9GSWVh?=
- =?utf-8?B?YjB4N2RrMHQ2TStlZHNmREhGWFpkQnFVV21kMGJiZkNudE5XbVY2M25RTjEr?=
- =?utf-8?B?Q2lUMUN5bEx4RkJzN2dpaGlpVjh1YXMraVg2RFgrVFBjWUR6SXVoL1FUdEtq?=
- =?utf-8?B?bEpKa3B1RVUyd0x2YW9xMHhLQkIwUG9mR2xyWjRveHRrWWs4TVVCdXdDUWND?=
- =?utf-8?B?R2lmb2NrUDNQZlJ5NGZFTzh2c3ZTTkNCTHZja3JCb0N2TkMyR2ZEL1pHWW5D?=
- =?utf-8?B?a1M2TFBzcXZNQjhlMXdoaDVsWlAyL1V5MEVFdHVzNzRvdE1tTFNzQS9qNDV6?=
- =?utf-8?B?TnJlWVJzdk5ta1JmSUoraXhvWUl5S2ZCbm45UEJpcGJiK2F5dzI4OTllM3I1?=
- =?utf-8?B?YXJ5OW05L01rQ2pXajVkVHNCVGJJRzlGOUU2YlRvbDBDRnBIQmRMdU9sMWtQ?=
- =?utf-8?B?NlJPQTJoczhNWEx5SEQxbU12S2phLzJJUG1IOU8xajNGRnd4cnRnb3Q5NGRv?=
- =?utf-8?B?djVZN0pmWEVtTXpmdWVaOHUrWjdLR1ZIVlFIQmxCc05KM0xwUWd6QkNDRnNI?=
- =?utf-8?B?VVBWZ24yT0IrRi9yZ0dRbjhrZVkvdExTYVJQODR1UHVVektQZWMreGFXZkZX?=
- =?utf-8?B?YmZaY3puSGVEbzFNeExIUSthcitwRHpMVXlPNW1JYW9QSHhwdWRVM3NndkNu?=
- =?utf-8?B?WmkrRmlpNEtvOEQyRTNVa0d0azlvbGtldThrc0tUN21FczNuamNrbzNSVEN1?=
- =?utf-8?B?WVpYS1dDTnMyd29pNlZIRVRJUjVobmE3amtJa2c2N0JGc0MzL1Eyd2ZPN29a?=
- =?utf-8?B?cTBpRlJWT2VPZjJSQ0prZ3pzWDdSakxVVE1VNjFWNUZTQlhZUjUvWnV4YVZ5?=
- =?utf-8?B?RC9MRG5UVmp2K3FueWh1Y0RueGJmQnAza2RKUXlDRHI0eFdydUVQNzRqN2Vx?=
- =?utf-8?B?ekd2NTlzcWIrdVhxcU0rSHFZZkNlaERvMEFxYm9PMTR6VUF5U1V2ZlZEQm9o?=
- =?utf-8?B?d3k0SVU3bG1VQ2d2TkgveTQxanpaZFRIRHU5K2U2ajhTOTkzenJvMHlDOHE0?=
- =?utf-8?B?aDF1ckdHU2FRMk5qVndaUFlxTEVXOXl4YkJBN1d4c2U4SFdXOXVSZmF2Yzd4?=
- =?utf-8?B?UFExRTJLdUNLVlBzbzJXMisvQ2Z6NDk5dUtOekpJK2ZWRXV6aEJIVzhPa2hR?=
- =?utf-8?B?T3JYMEZwZlJqRkdVU2x4Y0RrajJoOHkxbEJMWkVCM0dGWUx3UmM4aVFQeTdO?=
- =?utf-8?B?VktwZ3ZobUdrZTFXekhXalUvTDhJNWNxVW5lUHg3TnNNOWVuNk85Nzl4bFlr?=
- =?utf-8?B?em5ESG40QnpLdkZ6OHd0OFoweFYyeXJzdDg2em15MUJ2WU80VExLditoVmFj?=
- =?utf-8?B?VkVJdWtTWkU2VjlZVmIwT1FINHhVOWl5WEVLSXJnUzVFUXZvV3ExWUVTNFUy?=
- =?utf-8?B?R3hZVjN5cjZwaDArNWNJa2lDMG05NThFdjNkK2pRWFRpVDdRbE0ySlNOMW0z?=
- =?utf-8?B?T2R6c0p4ZjNzR1c4bm51L1pob0twR3p6QXpTOWJndnJWc2hjbUFXWDA5Qlov?=
- =?utf-8?B?T0xXU1NKNmhKWkxuN0tOUytIdHRiWGZsRjd4c3NMcFMrY1ZQcExRUlVUUThx?=
- =?utf-8?B?bE9MbktuRjVoUkJXY2RDM293aHBSaEJNM2ZvcUtCcjVXL2JFK0s3dks0bzky?=
- =?utf-8?B?M1hzcjVzV0cranpLRENyTG1taTE0NWVrYXlQemlLcEFCQjNVQTJoUlFIc2dP?=
- =?utf-8?B?MFpZZzJlYldjcHJLYVlDcjQwOGhNSWRweVBYd01YRmpPY1FTU0NCc3hKM21N?=
- =?utf-8?B?Sy8yZ0h4KzRoOGx3aGpvbkdLQ2d1UGwxb0JBb3BodVNXeVJBV2ZBSDF6b0tu?=
- =?utf-8?B?eTlST2pGMkpMZk5hSmhBQlhlWXY0aUZ1eUtXYnhsMnc4Q1BwdUVmV1N3VHM3?=
- =?utf-8?Q?tLQQ=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86908a6d-c1be-44ad-a02b-08ddec4a9dd9
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 07:05:38.4291
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CClCA3ihUwIqhAzjaN3VIXdmZInE0UkniLE4QK+JS8FYqwPDWqCatj9ReCc+1hQ5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7168
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIwkjrpowYbQBQ--.23573S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrW7KF48XryfWr15GF43trb_yoW5XF43pw
+	4agr4fZr4xGFsagFsIq3W7tFn5GanY9FW5Jr9xXws5ZFyqyry8tw48XrW8tryDGrWfC3yU
+	XF1UCryUGr15GFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU0s2-5UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Thanks Laurent Pinchart,
+From: Yu Kuai <yukuai3@huawei.com>
 
-On 9/3/2025 6:08 PM, Laurent Pinchart wrote:
-> Hi Bin,
-> 
-> Thank you for the patch.
-> 
-> On Thu, Aug 28, 2025 at 06:08:09PM +0800, Bin Du wrote:
->> Isp video implements v4l2 video interface and supports NV12 and YUYV. It
->> manages buffers, pipeline power and state. Cherry-picked Sultan's DMA
->> buffer realated fix from branch v6.16-drm-tip-isp4-for-amd on
->> https://github.com/kerneltoast/kernel_x86_laptop.git
->>
->> Co-developed-by: Sultan Alsawaf <sultan@kerneltoast.com>
->> Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
->> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Bin Du <Bin.Du@amd.com>
->> ---
->>   MAINTAINERS                                   |    2 +
->>   drivers/media/platform/amd/isp4/Makefile      |    1 +
->>   drivers/media/platform/amd/isp4/isp4.c        |   10 +
->>   drivers/media/platform/amd/isp4/isp4_subdev.c |   95 +-
->>   drivers/media/platform/amd/isp4/isp4_subdev.h |    2 +
->>   drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
->>   drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
->>   7 files changed, 1406 insertions(+), 4 deletions(-)
->>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
->>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
-> 
-> [snip]
-> 
->> diff --git a/drivers/media/platform/amd/isp4/isp4_video.c b/drivers/media/platform/amd/isp4/isp4_video.c
->> new file mode 100644
->> index 000000000000..642faff83287
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/isp4/isp4_video.c
-> 
-> [snip]
-> 
->> +static int isp4vid_ioctl_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
->> +{
->> +	struct isp4vid_dev *isp_vdev = video_drvdata(file);
->> +
->> +	strscpy(cap->driver, ISP4VID_ISP_DRV_NAME, sizeof(cap->driver));
->> +	snprintf(cap->card, sizeof(cap->card), "%s", ISP4VID_ISP_DRV_NAME);
->> +	snprintf(cap->bus_info, sizeof(cap->bus_info),
->> +		 "platform:%s", ISP4VID_ISP_DRV_NAME);
-> 
-> The bus_info is set by v4l_quercap, I think you can drop it here (please
-> double-check the result).
-> 
+Changes from RFC v3:
+ - initialize bio->issue_time_ns in blk_mq_submit_bio, patch 2;
+ - set/clear new queue_flag when iolatency is enabled/disabled, patch 3;
+ - fix compile problem for md-linear, patch 12;
+ - make should_fail_bio() non-static, and open code new helper, patch 14;
+ - remove the checking for zoned disk, patch 15;
+Changes from RFC v2:
+ - add patch 1,2 to cleanup bio_issue;
+ - add patch 3,4 to fix missing processing for split bio first;
+ - bypass zoned device in patch 14;
+Changes from RFC:
+ - export a new helper bio_submit_split_bioset() instead of
+export bio_submit_split() directly;
+ - don't set no merge flag in the new helper;
+ - add patch 7 and patch 10;
+ - add patch 8 to skip bio checks for resubmitting split bio;
 
-Yes, you are definitely correct. bus_info is set by media_set_bus_info 
-call in v4l_querycap. Will drop it in the next version.
+patch 1-5 cleanup bio_issue, and fix missing processing for split bio;
+patch 6 export a bio split helper;
+patch 7-13 unify bio split code;
+path 14,15 convert the helper to insert split bio to the head of current
+bio list;
+patch 16 is a follow cleanup for raid0;
 
->> +
->> +	cap->capabilities |= (V4L2_CAP_STREAMING |
->> +			      V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_IO_MC);
-> 
-> You can now drop V4L2_CAP_IO_MC (and there's no need for parentheses).
-> 
+Yu Kuai (16):
+  block: cleanup bio_issue
+  block: initialize bio issue time in blk_mq_submit_bio()
+  blk-mq: add QUEUE_FLAG_BIO_ISSUE_TIME
+  md: fix mssing blktrace bio split events
+  blk-crypto: fix missing blktrace bio split events
+  block: factor out a helper bio_submit_split_bioset()
+  md/raid0: convert raid0_handle_discard() to use
+    bio_submit_split_bioset()
+  md/raid1: convert to use bio_submit_split_bioset()
+  md/raid10: add a new r10bio flag R10BIO_Returned
+  md/raid10: convert read/write to use bio_submit_split_bioset()
+  md/raid5: convert to use bio_submit_split_bioset()
+  md/md-linear: convert to use bio_submit_split_bioset()
+  blk-crypto: convert to use bio_submit_split_bioset()
+  block: skip unnecessary checks for split bio
+  block: fix reordered IO in the case recursive split
+  md/raid0: convert raid0_make_request() to use
+    bio_submit_split_bioset()
 
-Sure, will update in the next version.
-
->> +
->> +	dev_dbg(isp_vdev->dev, "%s|capabilities=0x%X",
->> +		isp_vdev->vdev.name, cap->capabilities);
->> +
->> +	return 0;
->> +}
-> 
-> [snip]
-> 
+ block/bio.c                 |  2 +-
+ block/blk-cgroup.h          |  6 ----
+ block/blk-core.c            | 19 ++++++-----
+ block/blk-crypto-fallback.c | 16 ++++------
+ block/blk-iolatency.c       | 19 +++++------
+ block/blk-merge.c           | 64 +++++++++++++++++++++++++------------
+ block/blk-mq-debugfs.c      |  1 +
+ block/blk-mq.c              |  3 ++
+ block/blk-throttle.c        |  2 +-
+ block/blk.h                 | 45 ++------------------------
+ drivers/md/md-linear.c      | 14 ++------
+ drivers/md/raid0.c          | 30 ++++++-----------
+ drivers/md/raid1.c          | 38 ++++++++--------------
+ drivers/md/raid1.h          |  4 ++-
+ drivers/md/raid10.c         | 54 ++++++++++++++-----------------
+ drivers/md/raid10.h         |  2 ++
+ drivers/md/raid5.c          | 10 +++---
+ include/linux/blk_types.h   |  7 ++--
+ include/linux/blkdev.h      |  3 ++
+ 19 files changed, 141 insertions(+), 198 deletions(-)
 
 -- 
-Regards,
-Bin
+2.39.2
 
 
