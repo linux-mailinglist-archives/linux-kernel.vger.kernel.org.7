@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-803207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B15BB45C24
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A87DB45C22
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6118561A05
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED15CAA18B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3F31B81B;
-	Fri,  5 Sep 2025 15:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOKuUiKS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D431B81F;
-	Fri,  5 Sep 2025 15:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B58131B80D;
+	Fri,  5 Sep 2025 15:12:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3CC31B80E;
+	Fri,  5 Sep 2025 15:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085138; cv=none; b=fKaRFluSF2nmOVAGQe2jtdQ7m2eRRTw1hyrVU8VrtvRnW/2Jx/hKVON8EOqbDcHb9QwOn13QmSPpUlys812AiB1WDAS7bLNzAJJfbZ0QZ0OJfLMFxSKjpbs4SGqgp1BPm2GSwkbsVd2SZeWJ84g7gY+K7OL857hAipFz+dqtgiI=
+	t=1757085147; cv=none; b=SNEhiJsgO0/IrfRSzmL7W7Y/69PwMxSDmYQysdYxWGwV6E/Qa+gymKfNbBL4MccLCPgq80avGHVSQcjLDYFB2/bsRAGAsQ8KAd5UJJOizcn/YcTiIfFtBYcYLN4ej3b9JlKtCPNjyk6PwXZSJR166vDNtg6MwClefRtkbcF3/cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085138; c=relaxed/simple;
-	bh=GqWmfiP16k/SjEKn56UrkAlZm2tla0SwMryFGU5QCEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hP0V0f9rHgravAreGOoSkeDeOV5tAGsJm1Tw6BvOaO08nCefkPtAlVFPuBjPrLQaTCGuIiC8HU694ytlK+88GJYv1lHJ3LsEzCIGPHIm+InyHmf7H2FH1PrfWefmVMI9f+tp6/wUS2ks9rWmYrk4MQ2FOnL//ZgvKflWlLD+k+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOKuUiKS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4695FC4CEFA;
-	Fri,  5 Sep 2025 15:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085136;
-	bh=GqWmfiP16k/SjEKn56UrkAlZm2tla0SwMryFGU5QCEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rOKuUiKS4wEKL970qs6ZsqxCbHLXUePx88xJxvBNTYN383sl3tGk4xmXWpA2WveM2
-	 DA6+lgqzbwHDBBJqe6OW5X+ofknc29pDE+TLOQ2s7C63okiPEkrQql1SyYJ0PAZBVA
-	 U58Cq02kg/RNEASYqzaf71Z5mpuMzypgqhRfYsE6Z/6SlvFWKgmopipwx3uuh/6INn
-	 Lunacs6wcDzbW6sbbzL2O3GSqEzoVYTwfn+NQFrgxmYOYaMq9eZc2WuSGfa285ZGv+
-	 ZYvfe1JjwdSlN9vc62cim5QJLy88TsdDAlYt8vu4VuMearqzPoOQKTH7wlvaR4RVNW
-	 hQHfJ9x5QxhTg==
-Message-ID: <59bc3e3b-bc96-4125-8e4d-4dbe92f8b2fc@kernel.org>
-Date: Sat, 6 Sep 2025 00:12:14 +0900
+	s=arc-20240116; t=1757085147; c=relaxed/simple;
+	bh=ML78PEVwKum5qJ/ROMu6oQ0iTfTMgoFq07Lydch11QM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HxoAG9LMXwNWU8LpkUdouM2uZP/xUwfQhccQEMD3UAksy04VHNmdoJ+m+1ujh0rGY6rTTWiHufaf7sARC1QpxJbnORfV6lfB37k3h8BkhAWpP3Ng1UaR3XcX3qGOR12qgPoegS2alKpvAx+aijPnitCg+LTbPEKyT4pjACBidEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EC1C152B;
+	Fri,  5 Sep 2025 08:12:16 -0700 (PDT)
+Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D62273F6A8;
+	Fri,  5 Sep 2025 08:12:22 -0700 (PDT)
+Date: Fri, 5 Sep 2025 16:12:20 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel
+ Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] dt-bindings: clock: sun55i-a523-ccu: Add missing
+ NPU module clock
+Message-ID: <20250905161220.282ad23e@donnerap>
+In-Reply-To: <20250830170901.1996227-2-wens@kernel.org>
+References: <20250830170901.1996227-1-wens@kernel.org>
+	<20250830170901.1996227-2-wens@kernel.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/21] can: netlink: remove comment in can_validate()
-To: Oliver Hartkopp <socketcan@hartkopp.net>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
- <20250903-canxl-netlink-prep-v1-7-904bd6037cd9@kernel.org>
- <b1bf6cc5-f972-4163-8619-e04b887e2d32@hartkopp.net>
- <79452f68-c231-4bf2-a4ea-e3dce9b78e2e@kernel.org>
- <a4c0fade-52b6-4077-8a6a-fce6f2d62cd2@hartkopp.net>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <a4c0fade-52b6-4077-8a6a-fce6f2d62cd2@hartkopp.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 05/09/2025 at 19:55, Oliver Hartkopp wrote:
+On Sun, 31 Aug 2025 01:08:54 +0800
+Chen-Yu Tsai <wens@kernel.org> wrote:
 
-(..)
-
-> No need to defend yourself with specific references or even feel personally
-> attacked.
-
-Thanks. I was not sure how to read your previous message.
-
-> My overall feeling is that you spend an excellent effort in commit messages but
-> this information is then omitted in code comments.
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> As I've already written "I would like to motivate you to generally add more
-> comments.". And this can also happen when refactoring things where new functions
-> are created which reduces the context to the original code section.
+> The main clock controller on the A523/T527 has the NPU's module clock.
+> It was missing from the original submission, likely because that was
+> based on the A523 user manual; the A523 is marketed without the NPU.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-My current mind set is that I want to do more ironing on the upcoming XL
-patches. Because I do the documentation last once everything is working well,
-this is still on my TODO list.
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-And when this is done, there is also
+Thanks,
+Andre
 
-  Documentation/networking/can.rst
-
-which need an update. At the moment, I am rather happy by just keeping the
-existing documentation in this refactor series and want to put the extra effort
-on the new stuff. Thinking of the upcoming work and of my current bandwidth, I
-am really not in the mood into injecting more time in the refactor.
-
-That said, on a second thought, I finally decided to keep the comment which I
-previously wanted to remove. I will just move it from can_validate() to
-can_validate_databittiming() in patch 06/21 "can: netlink: add
-can_validate_databittiming()".
-
-
-Yours sincerely,
-Vincent Mailhol
+> ---
+>  include/dt-bindings/clock/sun55i-a523-ccu.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/dt-bindings/clock/sun55i-a523-ccu.h b/include/dt-bindings/clock/sun55i-a523-ccu.h
+> index c8259ac5ada7..54808fcfd556 100644
+> --- a/include/dt-bindings/clock/sun55i-a523-ccu.h
+> +++ b/include/dt-bindings/clock/sun55i-a523-ccu.h
+> @@ -185,5 +185,6 @@
+>  #define CLK_FANOUT0		176
+>  #define CLK_FANOUT1		177
+>  #define CLK_FANOUT2		178
+> +#define CLK_NPU			179
+>  
+>  #endif /* _DT_BINDINGS_CLK_SUN55I_A523_CCU_H_ */
 
 
