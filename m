@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-802557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CADBB453C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC51B4611B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276DE7B59A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760725C7AF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546F428B501;
-	Fri,  5 Sep 2025 09:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3B136CDE2;
+	Fri,  5 Sep 2025 17:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlrdmfIv"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="FEaPe/hZ"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357F1F95C;
-	Fri,  5 Sep 2025 09:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE484306B12;
+	Fri,  5 Sep 2025 17:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065726; cv=none; b=fmUU2T2eScclkM2JBWKUoTcO27isikehCv7mvpHq1XUAYDm81j1ytS5S5YqVgzHds6DdFAWFkDwZIUHcWSUwt4UeOmeYZHkbi7FKKzxqCHWDqe9v3iJ2ayB2rJLfDGftJOQSA0oMqLGTf02Z4L6jd5zkCj7s0ASHJzaJi7xhxdE=
+	t=1757094776; cv=none; b=Z1HlyJIE+Ptge3bA4HVzt6w6F+Cb/hWcnBARsKmuw2vX5ueehRp5OMBeVIX4ApXo59UV0m3HD9EuzQBwYq5y5t/45KVPZOcUrsjEO0Icd+HvtVhRDo9vGAgKl4klH5ZeXEYFSwIs+5ODFt9oH52/IzC6ZZNMhuF8YJ21FoHheds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065726; c=relaxed/simple;
-	bh=J6ciJK5OYseCx33oRWPiAdiT2KynTrlqrDJwgJ6C0Rc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JIe0gcMoGq/VUDm7064gSv1fslwyUmjh1oBxRk0WiH3FxCKx7G4RrtKQ0ro9mb2QNyK8w8ewa/S72GqomJMspWXzbqNH0EeSQxxaaz+FCCPzaRB6K6QCNPB3YD2YNxsl4YSURMkVyg7o4zpqSxNCKwwRTWwAD0OU5iStNgZ/gJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlrdmfIv; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso1808459b3a.2;
-        Fri, 05 Sep 2025 02:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757065724; x=1757670524; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5VJo/YxZFHdX+2Y/e8DgutYHf/cZ8cVwYUuMWvfuEzw=;
-        b=KlrdmfIvtRC0ayFmBgyOC3u7wpOHuRCRyyThpV4ntNM4enhcJvKZP/CIGcGSquDgO1
-         4sK2D+NzbFaLU5i73gXbFHLkL60gcfZXAYcwgV95bBoCZj9DQfd+wwlbZkeTCIKIf88x
-         7kCOKwlEU4fQlsZjwAk9UmQiPOUAGTNXfBcsTjHPAoWnggDNsBCNtuPkJBpZAkCXM8GO
-         8iHQzTPiSVUdDriuF9pXkyweOAmPlNAFB4m0Rzf8Kl34C0l/aLhosId0Ek44ZXV+LzCF
-         DbWZ6oG8+JchyjXtNWdYURJ6YSxJeEgOQmm7ASWEJkPZSTbFDASLP5iscfjh3Wm0Luut
-         x15w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757065724; x=1757670524;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5VJo/YxZFHdX+2Y/e8DgutYHf/cZ8cVwYUuMWvfuEzw=;
-        b=Xv2ZhTR46rPmtgeCjUihbiUwpnL1entzJaDmTxSOtjUC4RCkXEpRnmk1UWJ0H67Bez
-         IufIP4NAXRJACSchWYmCsX/vkHZQWuNB8QPj2BKKLBiej39HD3rv18UXjY29mhXsiNYk
-         A+GXMCTC+WLj+AjCypsJKtieTC6MohWL+O/yCG5fBIAZ/DF4Fro8a7cnHDNS7nMGOLv5
-         p3SUcaPxOEskcQNO8/JA9CbBIWJnMQQ4eH9nx/3yLmN53qzWOu2vNc1hkG2Qk1vOSPAD
-         2hsc+P3GxQ7aoGIFnfeHlop8XnJLYzVyoiD604c5O1BibEeWvaZUelLe0z0VC0PNhXLE
-         mcCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAXFIzr2Kz1h2JZSHEmPu1sDF41LBS0aBii9401SGNHJxD62DBZvStb4tdzRRxnZtaaonWUgqeCuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTxfks1Jp9PpF4zsgKOJapUXfd1UMWDBd/Ey/ILkIITrOva4wO
-	S+vciIc17KRx8iVW7r7uip9uPcld+Rts9M0qGWimcGoqU7s+HW3HtBJm
-X-Gm-Gg: ASbGncsjsiInZeOZhdXZ6ArWqFx2nIaftg9YfMxGKtZtl1wcSjosYamxZW5lT9JczOO
-	/Afji2qpbNNRj5ECSMIz92XNcYSgXcBQHo09SD/ZbllOtYaNfL/tr+qvujSEfyLY+O/21BTXpm9
-	vps5VJ3tukm1mheOf5LKKmVl4k9DXcxWLtuZyRnFk1EbH5f6eqCHjMrGKYbo/kZGjmKmeftCJgo
-	cp5ZriNNeoMUMZVvUMWV8FSoAwuxraEb3CN4e46DB85++dP4QyqVvBb0H3tXi2vQvo1t3axYRDn
-	bgreicf9WKBasv1DOAawq0a3IaBzMVljgpG3NwtP6mjmQwfq47bXcS8k35FTzZE2PlD9rrNNz0b
-	SlfmrNvhPH3Sd3ebQgB2mON1A1faEtYA+pVcy734qBn983gWUFy/HRy55kLDvtvSnmEXh
-X-Google-Smtp-Source: AGHT+IGCLSjxEXR/wi2vz5IPAOhDThSY2NgzoLNBrcBpcqFYnWzkme349pBGV3dg9DFXNIknHI6eng==
-X-Received: by 2002:a17:902:f549:b0:24b:e55:34b with SMTP id d9443c01a7336-24b0e550987mr206891555ad.31.1757065724142;
-        Fri, 05 Sep 2025 02:48:44 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccfc7f988sm34957405ad.144.2025.09.05.02.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 02:48:43 -0700 (PDT)
-Message-ID: <cbcc3317-958c-450d-afab-e9a29b1d5add@gmail.com>
-Date: Fri, 5 Sep 2025 18:48:41 +0900
+	s=arc-20240116; t=1757094776; c=relaxed/simple;
+	bh=IJtObEWpiLPMjQekK9obEf61YS9ij6JQAfy2pMSQMPE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a49wuvU1LZmhqhFtRgB+GGvlOUA0yRnzk6bGzdGTR1kyeINybfFFeGHHbrucgX39NzQuQXX3/wdMRWXna5oJkCU62hLPzYanyj+ojbSg1SLBPzxG6Xwg8x6eT/7hr5hoOO0MSaWaQf9XQszBoBq9lP/qIA3VcfB/GfkdUIHsj3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=FEaPe/hZ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585DrHAt031272;
+	Fri, 5 Sep 2025 11:53:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=LrmIc/v0AASjQQ/lqZEv4EstG2a
+	zFtLZr04gfZV6lQw=; b=FEaPe/hZBNb5xsuSHk3QwI9nHD3DCRT82s9naO2Fqik
+	9+AFggIIJa1Nu+bqJrAWgKJKhXWEoLFCi7UyT3u33HaSz0Yyr7cQ3NLcWCv10rC1
+	3MI6+rB9AF526nKsPJHHFSp1zrQnAOie85BOqh/shjEvOQGlBx+cTiCIg1r26Sij
+	aW2/Nk2gtSgKB4LAhJhwF1Hwa8n9OwMI06kYHUKQqv1Foh/op67FNDttUlwd9qsT
+	iCA9KQSaAhDQGfF8lsUgDRx/uA2jc/s8JySzK8ghLLCoQSJ5xB+UycslScCwK95H
+	LUdsL547j3GoOBqusJYjXWhMfQZvAxsUwnY11tTyBKw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48ypq4up8k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 11:53:06 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 585Fr5Mq053254
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 5 Sep 2025 11:53:05 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 5 Sep 2025 11:53:05 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 5 Sep 2025 11:53:05 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 5 Sep 2025 11:53:05 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 585Fqp1O020473;
+	Fri, 5 Sep 2025 11:52:53 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
+        <jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+        <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+        <jonath4nns@gmail.com>
+Subject: [PATCH v3 0/4] Add support for ADAQ776x-1 ADC Family
+Date: Fri, 5 Sep 2025 06:48:59 -0300
+Message-ID: <cover.1757001160.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: ja_JP: add guidance for the Fixes: tag in
- SubmittingPatches
-To: Akiyoshi Kurita <weibu@redadmin.org>
-Cc: linux-kernel@vger.kernel.org, corbet@lwn.net,
- Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org
-References: <20250905032729.2284883-1-weibu@redadmin.org>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250905032729.2284883-1-weibu@redadmin.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: TXGafzvLlGnU5NDzRU3_PJmR72-dPRlN
+X-Proofpoint-GUID: TXGafzvLlGnU5NDzRU3_PJmR72-dPRlN
+X-Authority-Analysis: v=2.4 cv=LrKSymdc c=1 sm=1 tr=0 ts=68bb0762 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=grXmcW2ECOK5zeps9zwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA1MDAxNiBTYWx0ZWRfX7XsKwpkYs7pA
+ IYVCu5RTzV6SjKlyYu2Jt+lof78lhdB0elz8HSZrzv4zkM3w7KZJF+vz1BzCMc4jQO3btf678Vg
+ n8keE5JXPhc8tkvzGy6/C1c7DJ/LgU5URADJWLPks0NN2hx9O3nIYQnyPRdACxCkXs4mRD0T3Ru
+ 7hGUd+RHjyeTn1svO/vpTpBFIWpd/4hvE7Xw2Gpc+IEK6lAdK171kWJBBOSBbVqEdE6NkHCR1L+
+ DyNxrImi67ONLD29wTpeLOh4814BrYHIaVHT3OKjt9Dnhejc5rEQibB5ZTn2te/3Al6xOZ+9IMi
+ BXMCC6Y891FAvz86i0u0BcH8G+NX+zYC/PU5SwpqVnt9NSIjbimfsPXhowVxMaAIiybLc0CGYR5
+ hUmA22OD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 clxscore=1015 phishscore=0 adultscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509050016
 
-Hi Akiyoshi,
+This adds support for the ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1 devices. 
 
-On Fri,  5 Sep 2025 12:27:29 +0900, Akiyoshi Kurita wrote:
-> The Japanese translation of SubmittingPatches was missing the section
-> describing the use of the 'Fixes:' tag. This patch adds the missing
-> description, aligning the translation with commit 8401aa1f5997
-> ("Documentation/SubmittingPatches: describe the Fixes: tag") in the
-> English version.
-> 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
+The ADAQ7768-1 and ADAQ7769-1 integrate a programmable gain amplifier (PGA)
+with 7 and 8 gain options, respectively. The ADAQ7767-1 and ADAQ7769-1 
+also feature a 3-pin selectable Anti-aliasing filter (AAF) gain.
 
-This one made my imbox. Nice!
+---
+Changes in v3:
+* Renamed adi,gain-milli to adi,aaf-gain-bp. Now it represents basis points
+  (one hundredth of a percent).
+* ad7768_channel_masks removed along with available_masks element in
+  ad7768_chip_info struct. It does not add anything for single channels,
+  so not needed, at least for now.
+* New patch adding 64-bit fractional number types to math.h.
+* Moved aaf gain parsing to its own function, and now returning after
+  warning to avoid setting a variable when it shouldn't (avoid confusion).
+* ad7768_set_pga_gain(): removed the pgia enable check, relying on the
+  regmap cache.
+* Addressed other review comments, see individual patches.
 
->  .../translations/ja_JP/SubmittingPatches      | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documentation/translations/ja_JP/SubmittingPatches
-> index 5334db471744..28ad83171252 100644
-> --- a/Documentation/translations/ja_JP/SubmittingPatches
-> +++ b/Documentation/translations/ja_JP/SubmittingPatches
-> @@ -132,6 +132,27 @@ http://savannah.nongnu.org/projects/quilt
->         platform_set_drvdata(), but left the variable "dev" unused,
->         delete it.
->  
-> +特定のコミットのバグを修正するパッチの場合（例：``git bisect``で問題を発見した場合）、
-> +少なくとも SHA-1 ID の最初の 12 文字と 1 行の要約を記載した「Fixes:」タグを使用してください。
-> +タグを複数行に分割しないでください。解析スクリプトを簡素化するため、タグは
-> +「75 文字で折り返す」ルールから除外されます。
-> +
-> +例:
-> +
-> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed")
-> +
-> +以下の ``git config`` 設定を使用すると、``git log`` や ``git show`` コマンドで
-> +上記形式を出力する際にプリティフォーマットを追加できます::
-> +
-> +        [core]
-> +                abbrev = 12
-> +        [pretty]
-> +                fixes = Fixes: %h (\"%s\")
-> +
-> +呼び出し例::
-> +
-> +        $ git log -1 --pretty=fixes 54a4f0239f2e
-> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed")
->  
->  3) パッチの分割
->  
+Changes in v2:
+* adi,aaf-gain property renamed to adi,gain-milli. Default value added.
+* fixed some commit messages. 
+* Added 'select RATIONAL' to Kconfig.
+* Added lock to protect PGA value access.
+* rewrote AAF gain check and replaced error returns with warnings.
+* Addressed other review comments, see individual patches.
+* Link to v1: https://lore.kernel.org/linux-iio/cover.1754617360.git.Jonathan.Santos@analog.com/T/#t
+---
+Jonathan Santos (4):
+  dt-bindings: iio: adc: ad7768-1: add new supported parts
+  iio: adc: ad7768-1: introduce chip info for future multidevice support
+  math.h: Add 64-bit fractional numbers types
+  iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family
 
-So, this doesn't cover the other hunks in commit 8401aa1f5997.
-Instead, it includes the change made later in commit 5b5bbb8cc51be
-("docs: process: Add an example for creating a fixes tag").
+ .../bindings/iio/adc/adi,ad7768-1.yaml        |  44 ++-
+ drivers/iio/adc/Kconfig                       |   1 +
+ drivers/iio/adc/ad7768-1.c                    | 359 ++++++++++++++++--
+ include/linux/math.h                          |   2 +
+ 4 files changed, 377 insertions(+), 29 deletions(-)
 
-Your interpretation of Jon's desire might be different from that of
-mine, but I think Jon suggested translating up-to-date
-submitting-patches.rst as a whole.
 
-Of course that would be great, but I'm not sure it is a reasonable ask
-here.
-
-I think covering both commits 8401aa1f5997 and 5b5bbb8cc51be might be
-a reasonable middle ground here.
-
-What do you think?
-
-It's 100% up to you how far you want to do.
-
-Thanks, Akira
+base-commit: 91812d3843409c235f336f32f1c37ddc790f1e03
+-- 
+2.34.1
 
 
