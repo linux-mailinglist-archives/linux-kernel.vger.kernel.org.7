@@ -1,137 +1,202 @@
-Return-Path: <linux-kernel+bounces-802823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A988FB45774
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:15:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78963B4577B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CECB2189CFD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 112E87A17CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A572C34DCCE;
-	Fri,  5 Sep 2025 12:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0560834DCD3;
+	Fri,  5 Sep 2025 12:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Iv9m+fzY";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RCgZtvh3"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o4WJh9Zz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pEJXjxL4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803CE34AB0F;
-	Fri,  5 Sep 2025 12:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF734F497
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074494; cv=none; b=DuPbC/QD9hKWAse8JxAf5DeAOLgews27awBKgeCvlHvcLymh1Gl9q2PCnil0WcEh07o/oGCNlOLL7UhCCNuRl9fJ1BXktPs9g2QIrRKcnGOdhkVEd05Mw9teJpa70TOxLmRc12gMsd53TrKS7+BSB0P6gmsK0GUe3EuLKoZmQkE=
+	t=1757074539; cv=none; b=dA4yWfZnpXWXdkgy+HL6mGkRgon2g7HJS7itJll1CbDDuWzZ1Hu0FrLh5ql+vJgQSIDtk16ijyo0CWqKvURTUjRZgVCmEDf+z2mGVYWn2vUFuEB413y20wjoPGHAEmGWbRn5HJk1AnCiMaDKgMJU3MtsDOQFMArXQMRBH+GxaF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074494; c=relaxed/simple;
-	bh=8ds04XjGb4G3SLQo3Edkhd7NAoBCJhwTSnyssLuQBwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uM0es1SMAuOtUPONmf6uMU3FlXZ3E57gQwiXatEcsERkLrqRK6ZKreKs0ZIx2tPah4yMCNuacxt6jMnUzpLBdnhR6nheobqxvqWet5LEBwDgdAdbgdDaIfBI5YqYYAzOi70UH32gnHHc2F65dd/bcFiFoOoTlyfVPYcPbOH8H54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Iv9m+fzY; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RCgZtvh3; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cJFf247hPz9t6b;
-	Fri,  5 Sep 2025 14:14:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757074490;
+	s=arc-20240116; t=1757074539; c=relaxed/simple;
+	bh=Ha8n4UGVQ8iAPIKbr1RkFgZ4t1VhsTiE1tiK68g30+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fU5zdfv+2XthOCRl+eSJ5Kkk/LgoSbuygf3ah1063qrHh/5knzGYJSY3go3ZfJ93GUWPxmJVWRY1CMk3x/tRIvaqQ0o6XSqh2+8hPA8RfOM6ZQhPfBTlphqvhv7p0bbfrhfcyVudnlvzmO6s+YIKIyp6TKUJ/DfL+7U2mD3I6Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o4WJh9Zz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pEJXjxL4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757074535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XN/fRqEiYtlayEBesAxR9TsT6/h5XgQP+y1PhI5KoO8=;
-	b=Iv9m+fzYsVs3Jow37HoPisbjGbHvtqHt8+qKjSrBLOvZtgudjH2x2gckGS1M/CrLowrP8E
-	DYsaMQpM5MNuQpkRaxv8RWHC3nWaTxo25O+fYmpFIIRSJrxFIIw/RCJLLciTAfcjJnvggN
-	878He3jZm6g/gWvJDZqr73bXoC3pRcYKojKwSvMeWGOeLF1q7SQyM5w0jaOOVOSy+O2ACH
-	Kdz/Yj/GIRznwSaksKyDA0jDaK8mXTQVdyicc0OZzBsi+O3jFpabORo/abiZm3MLD3k4xM
-	HehjTNu7jZGxUlQ6FLawgirOEoWuzh5QkujJ/sd0679wmbNqT3GJ7F1Y2iZBIg==
-Message-ID: <caa01cf5-1ae4-439a-ab70-18cfcfce7a92@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757074488;
+	bh=6fdxarbMldtZEadRNUal90N3QLS36tZpJv/UAmJIjwA=;
+	b=o4WJh9Zzwkdho0yCpxmI/HSGuqVH8JPfMaasA9OMhI0AjyY/sCfcw4WvT9a/FGbeKdbczk
+	I3f/j0cW8FqXJw+VO+KTlv2Al8KQlcBG+qLikNtEURsLsINN2J+XHnW03OFT0xaDVD5C1U
+	Tf5ivg19vhBDHU3dsAXKhU9JrKckJWi+J5AwVOs800CkAgNgKvxx/RiJhI8kuj036itmHb
+	DdvnU8mC063uAN6Gcc09Y+OaPt0HGmC8N3r4UrdYNdYs+occwDxqAmVKURsb3Ay1v42yR6
+	qsc879LtOcSxGzTScwQnY9A98Sh8PxTzpOdVmgj92mV7HMZSfwvB3G7xNORZ8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757074535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XN/fRqEiYtlayEBesAxR9TsT6/h5XgQP+y1PhI5KoO8=;
-	b=RCgZtvh33Bu5yG435GwPZN59nC+G9S4DTRYcSBztpDxT2Kr4N6Rhg/DbIKFHsFDWqgbndJ
-	ILbWX8M/L2Oi4mpfPiyvC7v9hHLNl46GBF0YBupULpVtXzNc14N9vnGXLZs5+MlEH0VIYX
-	ddpSZmDQ2zNriD3mDz7XQ68vILl53HVmnJAntaWkLVoy6dl0obb0eT6P20GaHHs9uVDO8d
-	tOZdlFzD890stUHV2+fl4Dsz9juowQZWOzJoEeE8BpOf/rnhwDpXrQmAfpuf4QocWzb0OF
-	ag6nfboTabV3s6z3j5jvOJny9VYZiO4xZwXvAHlXdNg/KbIwlvmk8qwPLbViaw==
-Date: Fri, 5 Sep 2025 14:14:44 +0200
+	bh=6fdxarbMldtZEadRNUal90N3QLS36tZpJv/UAmJIjwA=;
+	b=pEJXjxL4XU6/UYkR5NB1L/Q0ENOMrBRRl+6qlqtKA7Bm6mSZTEDJlKePAxkZa9vckd4W4T
+	9WUaowkSNBS7N9CQ==
+To: Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Sean Christopherson <seanjc@google.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v5 05/35] x86/cpu/cacheinfo: Simplify cacheinfo_amd_init_llc_id() using _cpuid4_info
+Date: Fri,  5 Sep 2025 14:14:45 +0200
+Message-ID: <20250905121515.192792-6-darwi@linutronix.de>
+In-Reply-To: <20250905121515.192792-1-darwi@linutronix.de>
+References: <20250905121515.192792-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for
- fixed BARs
-To: Niklas Cassel <cassel@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Wang Jiang <jiangwang@kylinos.cn>,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20250904023753.494147-1-marek.vasut+renesas@mailbox.org>
- <b3d5773d-c573-4491-b799-90405a8af6a9@kernel.org> <aLmGBYOVevP5hH0X@ryzen>
- <1jplc54aoc.fsf@starbuckisacylon.baylibre.com> <aLqg90KqEJ8wSEPi@ryzen>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aLqg90KqEJ8wSEPi@ryzen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: d4e7a0328dfa46c6505
-X-MBO-RS-META: o1unrme6t9rk56kzwrhfetokkhmoxp5m
+Content-Transfer-Encoding: 8bit
 
-On 9/5/25 10:36 AM, Niklas Cassel wrote:
-> On Fri, Sep 05, 2025 at 09:32:03AM +0200, Jerome Brunet wrote:
->> On Thu 04 Sep 2025 at 14:28, Niklas Cassel <cassel@kernel.org> wrote:
->>>>
->>>> I think this can be simplified to:
->>>>
->>>> 		if (epc_features->bar[bar].type == BAR_FIXED)
->>>> 			test_bar_size = epc_features->bar[bar].fixed_size;
->>>> 		else
->>>> 			test_bar_size = bar_size[bar];
->>>
->>> +1
->>
->> It's what pci_epf_alloc_space() does too. so it makes sense but it also
->> means the side must stay aligned.
-> 
-> Not really, pci_epf_alloc_space() will give you 'fixed_size'
-> if you request size < fixed_size.
-> 
-> If you request more, it will give you an error.
-> 
->>
->> If a rework is needed, maybe it would be better to get size from
->> pci_epf_alloc_space() instead of recomputing it ?
-> 
-> The pci-epf-test driver is just a test driver and we can use whatever
-> BAR size we want for each BAR.
-> 
-> However, I don't think that pci_epf_alloc_space() can always give us
-> a BAR size. Sure, for fixed_size BARs, there is only a single size
-> that is possible. But for Programmable and Resizable BARs, there are
-> many possible sizes, so which size should pci_epf_alloc_space() then
-> return?
-> 
-> And not all EPF drivers might be happy with an aribitrary BAR size
-> (which is the case for pci-epf-test), some EPF drivers might have
-> strict minimum sizes for a BAR.
-> 
-> So, I still think this proposal is the best thing we can do.
-> 
-> At least it appears that we only need to patch pci-epf-test.
-In the meantime, I sent a tested V2, so it is on the list.
+From: K Prateek Nayak <kprateek.nayak@amd.com>
 
-Thanks !
+struct _cpuid4_info has the same layout as the CPUID leaf 0x8000001d.
+Use the encoded definition and amd_fill_cpuid4_info(), get_cache_id()
+helpers instead of open coding masks and shifts to calculate the llc_id.
+
+cacheinfo_amd_init_llc_id() is only called on AMD systems that support
+X86_FEATURE_TOPOEXT and amd_fill_cpuid4_info() uses the information from
+CPUID leaf 0x8000001d on all these systems which is consistent with the
+current open coded implementation.
+
+While at it, avoid reading  cpu_data() every time get_cache_id() is
+called and instead pass the APIC ID necessary to return the
+_cpuid4_info.id from get_cache_id().
+
+No functional changes intended.
+
+  [ bp: do what Ahmed suggests: merge into one patch, make id4 ptr
+    const. ]
+
+Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Ahmed S. Darwish <darwi@linutronix.de>
+Link: https://lore.kernel.org/20250821051910.7351-2-kprateek.nayak@amd.com
+---
+ arch/x86/kernel/cpu/cacheinfo.c | 48 +++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index adfa7e8bb865..51a95b07831f 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -289,6 +289,22 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
+ 	return i;
+ }
+ 
++/*
++ * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
++ * ECX as cache index. Then right shift apicid by the number's order to get
++ * cache id for this cache node.
++ */
++static unsigned int get_cache_id(u32 apicid, const struct _cpuid4_info *id4)
++{
++	unsigned long num_threads_sharing;
++	int index_msb;
++
++	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
++	index_msb = get_count_order(num_threads_sharing);
++
++	return apicid >> index_msb;
++}
++
+ /*
+  * AMD/Hygon CPUs may have multiple LLCs if L3 caches exist.
+  */
+@@ -312,18 +328,11 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id)
+ 		 * Newer families: LLC ID is calculated from the number
+ 		 * of threads sharing the L3 cache.
+ 		 */
+-		u32 eax, ebx, ecx, edx, num_sharing_cache = 0;
+ 		u32 llc_index = find_num_cache_leaves(c) - 1;
++		struct _cpuid4_info id4 = {};
+ 
+-		cpuid_count(0x8000001d, llc_index, &eax, &ebx, &ecx, &edx);
+-		if (eax)
+-			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
+-
+-		if (num_sharing_cache) {
+-			int index_msb = get_count_order(num_sharing_cache);
+-
+-			c->topo.llc_id = c->topo.apicid >> index_msb;
+-		}
++		if (!amd_fill_cpuid4_info(llc_index, &id4))
++			c->topo.llc_id = get_cache_id(c->topo.apicid, &id4);
+ 	}
+ }
+ 
+@@ -598,27 +607,12 @@ int init_cache_level(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-/*
+- * The max shared threads number comes from CPUID(0x4) EAX[25-14] with input
+- * ECX as cache index. Then right shift apicid by the number's order to get
+- * cache id for this cache node.
+- */
+-static void get_cache_id(int cpu, struct _cpuid4_info *id4)
+-{
+-	struct cpuinfo_x86 *c = &cpu_data(cpu);
+-	unsigned long num_threads_sharing;
+-	int index_msb;
+-
+-	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
+-	index_msb = get_count_order(num_threads_sharing);
+-	id4->id = c->topo.apicid >> index_msb;
+-}
+-
+ int populate_cache_leaves(unsigned int cpu)
+ {
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	struct cacheinfo *ci = this_cpu_ci->info_list;
+ 	u8 cpu_vendor = boot_cpu_data.x86_vendor;
++	u32 apicid = cpu_data(cpu).topo.apicid;
+ 	struct amd_northbridge *nb = NULL;
+ 	struct _cpuid4_info id4 = {};
+ 	int idx, ret;
+@@ -628,7 +622,7 @@ int populate_cache_leaves(unsigned int cpu)
+ 		if (ret)
+ 			return ret;
+ 
+-		get_cache_id(cpu, &id4);
++		id4.id = get_cache_id(apicid, &id4);
+ 
+ 		if (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON)
+ 			nb = amd_init_l3_cache(idx);
+-- 
+2.50.1
+
 
