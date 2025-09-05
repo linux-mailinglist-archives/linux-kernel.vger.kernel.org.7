@@ -1,235 +1,152 @@
-Return-Path: <linux-kernel+bounces-802719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABE6B455FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B59B45617
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97F34843B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1D517C307
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0269534A334;
-	Fri,  5 Sep 2025 11:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA9C301484;
+	Fri,  5 Sep 2025 11:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="lQsned7G"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="gvELK4Ix";
+	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="jY5O2cnJ"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CD234A32D;
-	Fri,  5 Sep 2025 11:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070739; cv=none; b=GAMFHn78haTdVG+tUlxrJjxpr7FLdT32ZgxJgsB1uv88XsUUpFRsNgQyZZJTOD5rH5WumtAZ8uz5AfmTsA6wR57w7ZJ26UEXHJC2uj0y9boNZOW+NJQ+4zyoBPeeIN6hSICvgKMIAcgc18tc9PEiXqhf+dqjkPaNhABgV7UF4Vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070739; c=relaxed/simple;
-	bh=t6Rj18HPnifnNiTJet0Gv+ZbNp1682MFTdRToJhRwwg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gSMdFlTmJ/bXQ6FA6bQQncMcwu12/sDx0TR5HpJ21HJN3ZqcnDcMJfhPlimiFm87LQ13N6l86itBAhdE5RdwrDnrjUBpArDHBG1rZrDTPIaFQaYH09/E0tvVzPaEuQg2dSpXpWLjvfLeRVr1nKr0tvX+waFiFn23kIt3WAR5+c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=lQsned7G; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uuUMY-003TJp-LR; Fri, 05 Sep 2025 13:12:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=tPRtNOCc0T6RXMXNRg93pifV3fla/+JNX7dzc2AQnI4=; b=lQsned7G591sjWTg+WIeXFDsFP
-	G6lUF3KH/00ujbWTTLtvPtPt5OWvmY3LH7PRnAs14sD3bOg+fmbL4k+6Nwt6ytSIJ5nsJO9yabOMZ
-	2C5gesKoyFpKoxb53IYmluP27TPjoVV81qGGJqBAoOXXSPIZlwVSduAIy43Og9+1F9gIMFPIbKXVT
-	+7RsrbI34M/O5zXXsQbfq2maRdKZoBKzvO8zWl9PljcZAd1HTJ65lGWRxeyXTqbSLZb35zEeCwTEf
-	xMLSypz2IEcaPlOrbbQuKaQqrpwU3sjndNntADiv++8XO2gCUvgtApF1YQ8RjXtST8++eOSvGSbcu
-	JfWQzLWw==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uuUMY-0002K3-Ak; Fri, 05 Sep 2025 13:12:14 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uuUMD-002yZ1-UJ; Fri, 05 Sep 2025 13:11:54 +0200
-From: Michal Luczaj <mhal@rbox.co>
-Date: Fri, 05 Sep 2025 13:11:45 +0200
-Subject: [PATCH bpf-next 5/5] selftests/bpf: sockmap_redir: Support
- no-redirect SK_DROP/SK_PASS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7315834F482;
+	Fri,  5 Sep 2025 11:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757070907; cv=pass; b=AmKssqmGFyzpiQWVOSElUSpRmgBRgF5hWBQS07AfPe9GKeikTcXNF1cqchEBw0kdWfAuP28+cGu+7X6KFJR0CbuQlXcnQTNOdrnyY+WkU8bBN4gHogcwlyPRiRlQ+AkFMxGSytS7bmMja6karzv2d0a1kpP3Q56SxRSYwUJkvDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757070907; c=relaxed/simple;
+	bh=5UpspWgiS0HcpIJL/OKDIm2gqbeCHpwQcmh9qPygNks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQE263mtaYFnERT0Rc7B4lPSW6XwROtlrpBTGjvZLD3hfsqdtRmQkPja4/ST6sSnlKjkCqYn6V470KAOamE72FggjKUOTkocwg8YgvUDP7SoW0b2eSh3I8+0AQp1UBqEV+bwGyK2QdYN0kjiTZ9o95hV6VBtGj8a7p2FVkVaajA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=gvELK4Ix; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=jY5O2cnJ; arc=pass smtp.client-ip=85.215.255.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
+ARC-Seal: i=1; a=rsa-sha256; t=1757070716; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=cJ96kMXqw4cX19wJYwGuUL8+l79vn2zlcj24sEUsn50cjsuSB6U+GPro7S9+QCWhS3
+    zqPVn3MVKEKEUn+1RVXCg2wy76h2VOVLc8UYh/mtpm+yFwHSnNcnP3r8Pc+RyCMJ92em
+    24f9ZeS0EzT7SDlqJMQNvQYBj1u0krjAr7ilSHsESh3G3BZDOBd493dXLGK80IFjGngR
+    DSf8CAoJMk+1WfwX5J7LGpfpY0gGbKyQpbSm73a5BzHxiYLluhPqUzjz0zXS+ivelnxq
+    bwBPv/+LGOOP6wn1gvSS4Wzig31DkuZmeWrKDIW4D0XwuXzA1iDfs18FT5OT+c/5cmzJ
+    RaIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757070716;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=yNJzwxqPzVq3CcGkZg4xoFAXvW1IoZ5zrFxaYvAixpM=;
+    b=bFyiDfK5poT9ZhSBAUdzSIApUADCyLl33VsTQ5ZriyprZ6aJ6Vl/eLR/zE9ZabWYC7
+    GAHOZfZpbZEkg4H1iMRJTQ6DEVEEWFInqd7oNpXcua1KFjGnNjualZOfWlQakb+g2XTR
+    bAN3tcgEhY7X6R7fYzSCeIf2RKdvUfH2jtpoeEa7Jh8b43AOHSks6YdgIHmDN5x8xCqq
+    NklnVanqh1dz/3FZTfdGk+zleg7SesGl8E4ZztqhE8rTeA1AZBiH3sb0J6x3AmoUMtwS
+    sOTsIpReZuFl2pQMxfD0RMfLWf87RR4c5td1flbACIPxLJaHnD4sNUfxdXtG4WYcqwYC
+    aLAw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757070716;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=yNJzwxqPzVq3CcGkZg4xoFAXvW1IoZ5zrFxaYvAixpM=;
+    b=gvELK4IxLzls1RSPu1+3niqliSJ1nkVXOPu41xxv8Pv2dcK7BuQZDD/C3iOcrnrAKc
+    EYzNiM958xtmotwMsf8XeCqp1vGJEyGAbWMPh02ybAYcwSeAnQ/XNPD8sZk1wz+P1eFe
+    Z6wu2yuloJuk/BXSBJMekXlu9wmifmL4rHjgpl+Iw6khDYyYwH34pRU1tQYNvfyvYWtm
+    XY1BQHfEIYANH8psYFjYeNFH3v+bXAw21Fln2BYbBA2E7LjO3YrColbTXWTcl+qdcLg6
+    6+Ptcidqk8tFFv3B9kNz4yYs8E9jlXmDkYcBYb81KuZcf8bRuNrx8Y5CghRCr7G1yW0J
+    W79Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757070716;
+    s=strato-dkim-0003; d=hartkopp.net;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=yNJzwxqPzVq3CcGkZg4xoFAXvW1IoZ5zrFxaYvAixpM=;
+    b=jY5O2cnJZhcLN9ysq9rALY3SAsu1dnsW6OUD7zJsRJDUx3QTW+FtuRjG+CYZ56pGtl
+    eoE1CYiY34US3hPJXdAg==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
+Received: from [IPV6:2a00:6020:4a38:6810::9f3]
+    by smtp.strato.de (RZmta 52.1.2 AUTH)
+    with ESMTPSA id K5d361185BBtRGM
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 5 Sep 2025 13:11:55 +0200 (CEST)
+Message-ID: <32fc8ebf-1cf5-41b0-b843-1af4821a8ddb@hartkopp.net>
+Date: Fri, 5 Sep 2025 13:11:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-redir-test-pass-drop-v1-5-9d9e43ff40df@rbox.co>
-References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
-In-Reply-To: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>, 
- Jiayuan Chen <mrpre@163.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/21] can: netlink: preparation before introduction of
+ CAN XL step 2/2
+To: Vincent Mailhol <mailhol@kernel.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+ <6e4dcab9-d3d7-4c8b-99c1-f472bb7caa07@kernel.org>
+ <e37c9890-823f-4a38-bdcc-c170dbe67e13@hartkopp.net>
+ <88d2836b-2702-481f-b504-20c6efa5cb1a@kernel.org>
+Content-Language: en-US
+From: Oliver Hartkopp <socketcan@hartkopp.net>
+In-Reply-To: <88d2836b-2702-481f-b504-20c6efa5cb1a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add tests that make the BPF programs skip the actual redirect and
-immediately return SK_DROP/SK_PASS.
+On 04.09.25 11:18, Vincent Mailhol wrote:
 
-Suggested-by: Jiayuan Chen <mrpre@163.com>
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- .../selftests/bpf/prog_tests/sockmap_redir.c       | 74 +++++++++++++++++++---
- 1 file changed, 65 insertions(+), 9 deletions(-)
+> Concerning the CAN_CTRLMODE_XL_RRS, I am not sure if that one is needed. I still
+> have it in my WIP series but I am recently considering to remove it. The reason
+> is that when reading ISO 11898-1 having RRS configurable looks mandatory to me.
+> 
+> In the logical Link control (LLC) this RRS bit is named FTYP (for Frame Type).
+> For example, CiA only mentions FTYP in their CAN XL knowledge page:
+> 
+>    https://www.can-cia.org/can-knowledge/can-xl
+> 
+> Contrarily to CAN FD's RRS which is indeed specified as being dominant and which
+> is just ignored in the LLC, the CAN XL FTYP/RRS is part of the LLC interface and
+> is meant to be configurable.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-index f89df1ca1174800d801f221a819b099abf911450..4c752000bbd8c84684b2df81eb389be953d8ba02 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
-@@ -18,6 +18,10 @@
-  * AF_UNIX, SOCK_DGRAM
-  * AF_VSOCK, SOCK_STREAM
-  * AF_VSOCK, SOCK_SEQPACKET
-+ *	x
-+ * SK_REDIRECT
-+ * SK_DROP
-+ * SK_PASS
-  */
- 
- #include <errno.h>
-@@ -65,6 +69,10 @@
-  */
- #define UNSUPPORTED_RACY_VERD	_BITUL(1)
- 
-+/* Mark for an immediate SK_DROP/SK_PASS, i.e. BPF program will not redirect.
-+ */
-+#define NO_REDIRECT		_BITUL(2)
-+
- enum prog_type {
- 	SK_MSG_EGRESS,
- 	SK_MSG_INGRESS,
-@@ -154,8 +162,9 @@ static void fail_recv(const char *prefix, int fd, int more_flags)
- 		FAIL("%s: unexpected success: retval=%zd", prefix, n);
- }
- 
--static void handle_unsupported(int sd_send, int sd_peer, int sd_in, int sd_out,
--			       int sd_recv, int map_verd, int status)
-+static void handle_unsupported(int sd_send, int send_flags, int sd_peer,
-+			       int sd_in, int sd_out, int sd_recv,
-+			       int map_verd, int status)
- {
- 	unsigned int drop, pass;
- 	char recv_buf;
-@@ -171,7 +180,7 @@ static void handle_unsupported(int sd_send, int sd_peer, int sd_in, int sd_out,
- 		goto get_verdict;
- 	}
- 
--	if (pass != 0) {
-+	if (pass && !(status & NO_REDIRECT)) {
- 		FAIL("unsupported: wanted verdict pass 0, have %u", pass);
- 		return;
- 	}
-@@ -237,14 +246,14 @@ static void test_send_recv(int sd_send, int send_flags, int sd_peer, int sd_in,
- 		FAIL("incomplete send");
- 	if (n < 0) {
- 		/* sk_msg redirect combo not supported? */
--		if (status & SUPPORTED || errno != EACCES)
-+		if (errno != EACCES)
- 			FAIL_ERRNO("send");
- 		goto out;
- 	}
- 
--	if (!(status & SUPPORTED)) {
--		handle_unsupported(sd_send, sd_peer, sd_in, sd_out, sd_recv,
--				   maps->verd, status);
-+	if (!(status & SUPPORTED) || (status & NO_REDIRECT)) {
-+		handle_unsupported(sd_send, send_flags, sd_peer, sd_in, sd_out,
-+				   sd_recv, maps->verd, status);
- 		goto out;
- 	}
- 
-@@ -326,9 +335,10 @@ static int is_redir_supported(enum prog_type type, const char *in,
- static int get_support_status(enum prog_type type, const char *in,
- 			      const char *out)
- {
--	int status = is_redir_supported(type, in, out);
-+	int status = in ? is_redir_supported(type, in, out) : 0;
- 
--	if (type == SK_SKB_INGRESS && strstarts(out, "v_"))
-+	if ((type == SK_SKB_INGRESS || type == SK_SKB_EGRESS) &&
-+	    strstarts(out, "v_"))
- 		status |= UNSUPPORTED_RACY_VERD;
- 
- 	return status;
-@@ -370,6 +380,41 @@ static void test_redir(enum bpf_map_type type, struct redir_spec *redir,
- 		       status);
- }
- 
-+static void test_verdict(enum bpf_map_type type, struct redir_spec *redir,
-+			 struct maps *maps, struct socket_spec *s_in,
-+			 enum sk_action action)
-+{
-+	int fd_in, fd_out, fd_send, fd_peer, fd_recv, flags, status;
-+	char s[MAX_TEST_NAME];
-+	const char *s_str;
-+
-+	fd_in = s_in->in[0];
-+	fd_out = s_in->in[1];
-+	fd_send = s_in->in[redir->idx_send];
-+	fd_peer = s_in->in[redir->idx_send ^ 1];
-+	fd_recv = s_in->in[redir->idx_send ^ 1];
-+	flags = s_in->send_flags;
-+
-+	s_str = socket_kind_to_str(fd_in);
-+	status = get_support_status(redir->prog_type, NULL, s_str);
-+	status |= NO_REDIRECT;
-+
-+	snprintf(s, sizeof(s),
-+		 "%-4s %-17s %-7s %-5s%6s",
-+		 /* hash sk_skb-to-ingress u_str pass (OOB) */
-+		 type == BPF_MAP_TYPE_SOCKMAP ? "map" : "hash",
-+		 redir->name,
-+		 s_str,
-+		 action == SK_PASS ? "pass" : "drop",
-+		 flags & MSG_OOB ? "(OOB)" : "");
-+
-+	if (!test__start_subtest(s))
-+		return;
-+
-+	test_send_recv(fd_send, flags, fd_peer, fd_in, fd_out, fd_recv, maps,
-+		       status);
-+}
-+
- static void test_sockets(enum bpf_map_type type, struct redir_spec *redir,
- 			 struct maps *maps, int *skel_redir_type)
- {
-@@ -413,6 +458,17 @@ static void test_sockets(enum bpf_map_type type, struct redir_spec *redir,
- 			test_redir(type, redir, maps, in, out);
- 		}
- 	}
-+
-+	/* No redirect: SK_DROP */
-+	*skel_redir_type = __MAX_BPF_MAP_TYPE + SK_DROP;
-+	for (s = sockets; s < sockets + ARRAY_SIZE(sockets); s++)
-+		test_verdict(type, redir, maps, s, SK_DROP);
-+
-+	/* No redirect: SK_PASS */
-+	*skel_redir_type = __MAX_BPF_MAP_TYPE + SK_PASS;
-+	for (s = sockets; s < sockets + ARRAY_SIZE(sockets); s++)
-+		test_verdict(type, redir, maps, s, SK_PASS);
-+
- out:
- 	while (--s >= sockets)
- 		socket_spec_close(s);
+I double checked my XCANB CAN XL controller spec and indeed the RRS bit 
+is part of every RX/TX FIFO element and the figures see it as 
+configurable element too.
 
--- 
-2.50.1
+> Nothing in the standard tells us that this should be a dominant bit. I think
+> your intention was to add CAN_CTRLMODE_XL_RRS as a quirk for the devices which
+> expose this flag. But as far as I can see, it seems that a device which does not
+> expose it is just not compliant.
+
+Let's see if we will find CAN XL IP cores where the engineers have a 
+different view on this. I currently have a discussion on this RRS bit 
+with the Vector support because the RRS bit is not visible in the 
+CANalyser 19 GUI.
+
+> If some day a device which can not set the FTYP/RRS flag appears in the wild,
+> then maybe we can add a flag which would specify that RRS is not configurable
+> (opposite logic as what you suggested). But as long as such a device do not
+> exist, it is better to add nothing.
+
+ACK. After this discussion I would also vote to omit my glorious patch 
+which added the CAN_CTRLMODE_XL_RRS flag. Let's see if we find a CAN XL 
+controller that does not support the variable RRS bit in reading and 
+writing. And if it shows up we can add this flag to handle it (similar 
+to the fd-non-iso feature).
+
+Best regards,
+Oliver
 
 
