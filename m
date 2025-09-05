@@ -1,162 +1,158 @@
-Return-Path: <linux-kernel+bounces-803623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FE1B46317
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB51B46313
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0441795D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:04:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C078170F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A77169AE6;
-	Fri,  5 Sep 2025 19:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F14315D58;
+	Fri,  5 Sep 2025 19:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="SBn/twbl"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b="TairyvWA"
+Received: from sender3-of-o54.zoho.com (sender3-of-o54.zoho.com [136.143.184.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2752315D2E;
-	Fri,  5 Sep 2025 19:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD08315D22;
+	Fri,  5 Sep 2025 19:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757099043; cv=pass; b=Ya2pj7DHdE5LyhOP271HuK8Okrkoi9ujRFVoIU/++GtaduJeo+1d8mFtZFq4gu3L9TZYeMagznD65Ak/04UJzjS+IFk7SjHgrfP50pm2ZAM4xEL6lL9tKy4rv1/j0aZZdKAtOKYqixOZnGnYmmzjqAqX5+aDMfvwflCaKNCUmTg=
+	t=1757099015; cv=pass; b=nfLHR8/q8Dgv9a8MnWBAKM8rAn4TS340XCeVEQ+d3e1YlGoNT4eu7l0SZOmjD8d1DQlh0Is2adpENjUn91r+9KqnEUsg54Qy69bNN0tEuMHIbs3cvw8fbU5gYRe3gvWJjwYLjFQwQ3PqDryrEX8b41/HgS5xb9kchfUHPdLhDJA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757099043; c=relaxed/simple;
-	bh=UfMRvbCdz//QcrjCmuh19y/FVDAsWrc1l8Lsivmaeq4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HDeo4cSzXbEj+HB3dDiI9smxUD3iUr4xykwCwc/H8/iViDi/pwZN+ig9Lzu9Ul4biTLs9ItWzfoK/T7Z5ZvUkJ71icT2sPobY/gRvlL0ZHD5k7B/WmfRwGVyK8ZMT1jlvFVe16FcJa6FzNqnoG8dU9KTWEDR9EYTSbsO0KD9EL0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=SBn/twbl; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1757099015; c=relaxed/simple;
+	bh=bDppVikZqz1VDZwZU00PCgVbwhIeGhaop80vGUK9GzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hY7Nrs2ndorA0Fkix0Z1QtG5W1H+MAQ8U5tjsLoufMweCLm9pI6APbO3YMzgwJIAPd7pscOevfE0QtU5AJDvfN9kSU5Bp05fHiOhRC/gu8rmFrNwyhNf4xcYnNF6XoQcMzqGbzu7i25ILK71pr1jCJstglBzbwo5QLCj1VF+7a0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com; spf=pass smtp.mailfrom=anirudhrb.com; dkim=pass (1024-bit key) header.d=anirudhrb.com header.i=anirudh@anirudhrb.com header.b=TairyvWA; arc=pass smtp.client-ip=136.143.184.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=anirudhrb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anirudhrb.com
 ARC-Seal: i=1; a=rsa-sha256; t=1757099001; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=SWEf5Q/+/3tQS6q4IL9ngfhDcDP1qUO78lRIKwnzgqZZLQiUoCPoDx9NxFilZyG7g6xvf5TOHltDngenlCEbrUCzmloJCTUPb51bWw4ojnRPxzqSH+NaI/3iJhUDeGCR/QBhKwyt5RrgDiDLd9g1FEnb0QLdhF46Fd0EqNd1+d0=
+	b=PUxM6M9dytJ6SNCVS257ONnSvXpBQi66v1A3YYFGsP5lcz5S3brKvGgsMCpT4f+GtBeKdqR72XBQi5Ouj9dbFVUTqmjMV52y3wqLxpIa/jyvs0tijda54QXzUvjAJC4UO01+efHrDrX8V0GFE6p0ZQs/U4GQEo8nxprW/mUp4sU=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757099001; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7x9ncDrrrS5zRZo4deaFxhL1RLmq8zmIxWh53uHA2TM=; 
-	b=ic99RPrLQUPPazIc+KJ8yEfgtSD/CyPVVaX5A0Uk6vvJxD57f8kv6cOwJPsvoUd0WUpmZANLCMAF8CU/63jGaJxLoHkmAIlalhZm81BLQT1TDRkFE5he8F7gUGuxJ4nhJ3PcXeQWftNtDZmGuVbqDb67fPcLRY5dB3h+5QdB3yU=
+	t=1757099001; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BjWePr2hlI+rQ4+nuIiucc+BsZmLUX4MO6xnw2zoglM=; 
+	b=goxvPd6tXP1G3BO1M5yTtzI/U0vuai5EYclu4WUy4lI1CuxiuU9LJglfRMWX1N8MQIr+batPp8VUzCyx5jV9MV2plu5G+lHhqwrTnFS7DG7qwj7F3Syms2dt/Gc1rc8vQT0h3j7egyXXNpZR3ldlw1/3JhKLIv5NOfUApmFbEPo=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757099001;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=7x9ncDrrrS5zRZo4deaFxhL1RLmq8zmIxWh53uHA2TM=;
-	b=SBn/twblvcIKwSX3dDOMYodlyejcb+lONzT6Y8udwHzs2ore0foP8L/Ud31/WJ0X
-	cZu+GqZ9oRkM6xok4xhi4ee4dFe+XnikH23LwA9YW+V6dhzaEeyq//w2d7pxKCdppvF
-	giri92t4lcB8o8PKW694bWxqkIHeIM3TiuKFAMm0=
-Received: by mx.zohomail.com with SMTPS id 1757098999295176.35403178460876;
-	Fri, 5 Sep 2025 12:03:19 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass  header.i=anirudhrb.com;
+	spf=pass  smtp.mailfrom=anirudh@anirudhrb.com;
+	dmarc=pass header.from=<anirudh@anirudhrb.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757099000;
+	s=zoho; d=anirudhrb.com; i=anirudh@anirudhrb.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=BjWePr2hlI+rQ4+nuIiucc+BsZmLUX4MO6xnw2zoglM=;
+	b=TairyvWAXdH9X3gVoDACdja28SFOpGeNwP5wCoFSVSRDnH1kpxP/YsCmg51R9wnY
+	mfaEbwg4EOUODgGd+tUsRPswCkBz0p0anqWYcge1QHQZthUV4LCCFCLCe84g8av0Vmx
+	1JogsohC9pK80V6kWVwj3IfUNAgbAIPmf18e9eAI=
+Received: by mx.zohomail.com with SMTPS id 1757098997366957.6801432970645;
+	Fri, 5 Sep 2025 12:03:17 -0700 (PDT)
+Date: Fri, 5 Sep 2025 19:03:11 +0000
+From: Anirudh Rayabharam <anirudh@anirudhrb.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	mhklinux@outlook.com, decui@microsoft.com,
+	paekkaladevi@linux.microsoft.com
+Subject: Re: [PATCH 4/6] mshv: Get the vmm capabilities offered by the
+ hypervisor
+Message-ID: <aLsz78GrA_mqucOb@anirudh-surface.localdomain>
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 3/7] rust: implement `WwMutex`, `WwAcquireCtx` and
- `WwMutexGuard`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <886565B2-B5CD-49DA-9598-EBD60490C0DC@collabora.com>
-Date: Fri, 5 Sep 2025 16:03:02 -0300
-Cc: rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- lossin@kernel.org,
- lyude@redhat.com,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E98866AA-AE29-432E-B6D3-4625103B8D07@collabora.com>
-References: <20250903131313.4365-1-work@onurozkan.dev>
- <20250903131313.4365-4-work@onurozkan.dev>
- <886565B2-B5CD-49DA-9598-EBD60490C0DC@collabora.com>
-To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
 X-ZohoMailClient: External
 
-[=E2=80=A6]
+On Thu, Aug 28, 2025 at 05:43:48PM -0700, Nuno Das Neves wrote:
+> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> 
+> Some newer hypervisor APIs are gated by feature bits in the so-called
+> "vmm capabilities" partition property. Store the capabilities on
+> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
+> 
+> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root.h      |  1 +
+>  drivers/hv/mshv_root_main.c | 28 ++++++++++++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index 4aeb03bea6b6..0cb1e2589fe1 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -178,6 +178,7 @@ struct mshv_root {
+>  	struct hv_synic_pages __percpu *synic_pages;
+>  	spinlock_t pt_ht_lock;
+>  	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
+> +	struct hv_partition_property_vmm_capabilities vmm_caps;
+>  };
+>  
+>  /*
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index 56ababab57ce..29f61ecc9771 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -2327,6 +2327,28 @@ static int __init mshv_root_partition_init(struct device *dev)
+>  	return err;
+>  }
+>  
+> +static int mshv_init_vmm_caps(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
+> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
+> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
+> +						0, &mshv_root.vmm_caps,
+> +						sizeof(mshv_root.vmm_caps));
+> +
+> +	/*
+> +	 * HV_PARTITION_PROPERTY_VMM_CAPABILITIES is not supported in
+> +	 * older hyperv. Ignore the -EIO error code.
+> +	 */
+> +	if (ret && ret != -EIO)
+> +		return ret;
+> +
+> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
+> +
+> +	return 0;
+> +}
+> +
+>  static int __init mshv_parent_partition_init(void)
+>  {
+>  	int ret;
+> @@ -2377,6 +2399,12 @@ static int __init mshv_parent_partition_init(void)
+>  	if (ret)
+>  		goto remove_cpu_state;
+>  
+> +	ret = mshv_init_vmm_caps(dev);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to get VMM capabilities\n");
+> +		goto exit_partition;
 
->=20
->> +///
->> +/// # Examples
->> +///
->> +/// ## Basic Usage
->> +///
->> +/// ```
->> +/// use kernel::c_str;
->> +/// use kernel::sync::Arc;
->> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, =
-WwMutex };
->> +/// use pin_init::stack_pin_init;
->> +///
->> +/// stack_pin_init!(let class =3D =
-WwClass::new_wound_wait(c_str!("buffer_class")));
->> +/// let mutex =3D Arc::pin_init(WwMutex::new(42, &class), =
-GFP_KERNEL)?;
->> +///
->> +/// let ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), =
-GFP_KERNEL)?;
->> +///
->> +/// let guard =3D ctx.lock(&mutex)?;
->> +/// assert_eq!(*guard, 42);
->> +///
->> +/// # Ok::<(), Error>(())
->> +/// ```
->> +///
->> +/// ## Multiple Locks
->> +///
->> +/// ```
->> +/// use kernel::c_str;
->> +/// use kernel::prelude::*;
->> +/// use kernel::sync::Arc;
->> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, =
-WwMutex};
->> +/// use pin_init::stack_pin_init;
->> +///
->> +/// stack_pin_init!(let class =3D =
-WwClass::new_wait_die(c_str!("resource_class")));
->> +/// let mutex_a =3D Arc::pin_init(WwMutex::new("Resource A", =
-&class), GFP_KERNEL)?;
->> +/// let mutex_b =3D Arc::pin_init(WwMutex::new("Resource B", =
-&class), GFP_KERNEL)?;
->> +///
->> +/// let ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), =
-GFP_KERNEL)?;
->> +///
->> +/// // Try to acquire both locks.
->> +/// let guard_a =3D match ctx.lock(&mutex_a) {
->> +///     Ok(guard) =3D> guard,
->> +///     Err(e) if e =3D=3D EDEADLK =3D> {
->> +///         // Deadlock detected, use slow path.
->=20
-> You must release all other locks before calling this, except there =
-aren=E2=80=99t any taken in your example.
->=20
-> You should perhaps add a release_all() function to the context.
->=20
+Should this really be treated as a failure here? We could still offer
+/dev/mshv albeit with potentially limited capabilities.
 
-By the way, if we need a context in the first place to lock, it makes =
-sense to
-release_all() once this context is dropped.
+Thanks,
+Anirudh.
 
-=E2=80=94 Daniel
-
-
+> +	}
+> +
+>  	ret = mshv_irqfd_wq_init();
+>  	if (ret)
+>  		goto exit_partition;
+> -- 
+> 2.34.1
+> 
 
