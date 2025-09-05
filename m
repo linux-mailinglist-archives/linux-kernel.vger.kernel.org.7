@@ -1,54 +1,80 @@
-Return-Path: <linux-kernel+bounces-803775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F23B4650E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:58:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E793B46513
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34815A4901A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF50C1CC7C4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4013B2E612E;
-	Fri,  5 Sep 2025 20:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F70C2E8B86;
+	Fri,  5 Sep 2025 20:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J/6afEi2"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VO3ut7AQ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009D52E9755
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 20:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7162E36E1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 20:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757105898; cv=none; b=gHw4lBUJeLsjRlipBrS88Iqn4Mkh92FAsH7LuzPG74Igt2cmtAMvH1dVaCXULNpNP3hoVok2AytuYL3mZQ5edqy2p2DsEF4M0J+O50Pj6799n8oKMLoI10+nuzM3ihsdN+rLoKPhuoXA3re4RX95JKW9nYMfsb4+yNoKaRAIXAU=
+	t=1757105926; cv=none; b=d9ES416qFwanMNw2kynVysXzSaORcDv1XTIz+2UmaLMkxvL8C6KofZRvQQA12uALqHSSQ3R2TQjtqdH3GdIlUDVRRe1A9tIx+k/BKnjT7aMjw/gWGDF2E8/ux+iROGALrU2do847Ae9dy6YD76VP1U46rXBoVci6WTxcXIJIq04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757105898; c=relaxed/simple;
-	bh=eDVxUt+gPNYYTgjO9whiH30MM2CcFo3Y9sMKQYw+8a0=;
+	s=arc-20240116; t=1757105926; c=relaxed/simple;
+	bh=JE+vWgl+J/mXD3WaYWUbbwLtIN+kep2SQRmhl33Q8hA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIlJdRDcNm/aXyocRQ6cO2/tUuZFkEcakM9Pj2dx/IQ0aXzJM1+YM1qiisEvQeLIJa3TJA4B6RNQRIhicvl6AdpS+vARCD/YllrFxuHtSxO0hIqMzaX2JPaxTMU2r8ax6SXEzVJ4Ixpj8j+af6dUgiQwo3c6u3z2AFQ4Qf31/3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J/6afEi2; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 265641A0DCB;
-	Fri,  5 Sep 2025 20:58:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DDA0F6060B;
-	Fri,  5 Sep 2025 20:58:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2BB64102F1C84;
-	Fri,  5 Sep 2025 22:57:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757105891; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=CXOJmH8o5Y2K44CEV/UVJmY5m3bChX0jwiI1W9AUJAo=;
-	b=J/6afEi2bHNULLFhuT2tta9wf/V570JY4L81okAmR6RQnLZX13nJ00LwIfYjkeehcTRmq/
-	HY3c5Equ3ugMMc7N+tU3OgAjjfbFVMpekUISSmqon05BjG96mQxK2QZ0KsDh6iWuakpX/y
-	JkIK49N/+mBRM4GoECp8P/hD55C4419F4xBqkc4su9p5tI3yWqb5Nsxbrkf1wTVEXPDkkA
-	SvvQzMRj6qft4ip3sN+sdez4N3oBpgItwyYm0F7gTu038QqJixCWPefRf7xeiVFaatMBmc
-	QkdLkASIXe7ZPKHcR/f4ChjALZ0uiX5JGKr4Ai2xhKTPKX6V13yn8i24KmAhFA==
-Message-ID: <f3e1cb1f-4691-4c1b-9b67-feed0c687ff2@bootlin.com>
-Date: Fri, 5 Sep 2025 22:57:45 +0200
+	 In-Reply-To:Content-Type; b=NoYlruzaqirII56dkXKXYOnEYw2rqUPrCXHa1BSFo0+jpcp85s7VhYU2d0lxq+hv/8u98QA6sMKM/tUmOMTCE3y4HS8kkvpA12f2qWqbl6LcA496h/koohupPQaqEu9FTi2gwER602tt7jtnJccsz3CKHgUaucA0ejQz19WkjB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VO3ut7AQ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e2055ce7b3so1332461f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757105923; x=1757710723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SJ3qhvGkvWjmzTYnbRf6LUTpVwuX2R1TomdWWbhzJ/U=;
+        b=VO3ut7AQzqlyDgwT5nM6DYu+KEoO7CLp6zLxYXqpb3Ypg6BpnjAVWsnicIB+okfcns
+         Jia1ooUzBsLhOBqEL+xUelkaA37zpOqluWKj6Q4bWRjTlMBtK7iTuSpVuI5ghjKmGH7V
+         PMCAXTFEa2tjlqe6R3x1NRBmcsvIiM+xY7XW1TBd8uSbOvIz6zPBZA+89GyLgxF5rky+
+         +I7ganOLWUZbgrAIKOL5UWOfv49KX4pYbjt4UoROhcrQ89eQCoaxKvWx+AdW7ndwcr0Q
+         ryMSEgDIer0H1Trg7EEgZI7GjtvkDi4B2t+WMaDocBaXe7Fz/Na397kRmz7j5pVUyXI7
+         ZW8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757105923; x=1757710723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJ3qhvGkvWjmzTYnbRf6LUTpVwuX2R1TomdWWbhzJ/U=;
+        b=v2PMm02sPx2X4v4GfvlyvpAfgqfYczoggkL8RrjcIZ4ZQEhm++25+Suypx0HIFheDF
+         L7kcR1Fzf7QZ/QWdb4wJkT+7lraz0W9AwEXlRRKIzSXGWr0n5k5Kw3fyETU9xegEsLS3
+         wWe7yPrmFI/++IbXHtGCLryQhnMFYbrqt3IoO9cQ4KsTj4M3WDaJuQhfLwp16PTeTn9z
+         /ETm8kvJUp5bJCzQItktKgcP45pDSNlxUWil8xCyH9eyj2QCqWG4xIB3PBRnEikQIJUj
+         1T/yt4vRqxgLrcQVvFLbl0A9nki/tR4Cl4SAQaeMHdpT7TNBUBjUUNxJrROBouCxtETr
+         XZwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYO8v/e/HE6prfiJe+5l2N/KTneLF/fdPd0fKWIjjzZM8UoGOqjeC9kHfkWxH3nWh/rHeCtv0VQ2xPvPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyopMsR+7OQ7aH23Nr9/c2qg4Ao6ccXsksnxsj67Qe/m/UEWCtI
+	DACySPLzBr/mYQ6F5x8quzTYqszKjeckke8ay9JjUKQ2N2rfdDFZnu7dhOOYFXd+wEg=
+X-Gm-Gg: ASbGncsPyqkLXEhxodFaJDPrWTscWUHQhoEhfvAN6lS2JsfHees4Ma1Q5ysOo708u39
+	6ExXdqQf9tPKar2wIfuQGZe6fQGat7i5TroBfFJYV23vJL2m3jG+FDRS/CdLIcmpnWMjJpErhBe
+	qgegHRFB61OtmLlZI4GiPnT2OGCCKxM5hDkPsd7CpOtFslvwKOweqrZmBmg2Pfy7mCpbr23Lmiz
+	TCnGP8tQhJFCv9lD5+U9QbUACKkyBXsVhV9HqGC7RMFoNxTP86F2/iStVs2a29SsEJC1AWsFpGg
+	MDJl7AuaZIPaPzbZ14PwYVPHEfBBO1iLUQDWovq9gcHL/teCdcoRvIdtwTOTwpk0JlZa+nlxP5E
+	Q+tSp+w8/WmrObTg87fYWMr1FFVzyWxttbm2ME0+r3VdIfIcy+GqU/2P+970UlI4E7YJmMPpSbn
+	wY+0mSW0JtZAk4
+X-Google-Smtp-Source: AGHT+IELX1IohyCRbd4MOAxXRTUwh2SHXc2VAXJB7Lr05lK/1BKEmFD2R34ayIj0GxcCWJr9wAhxjw==
+X-Received: by 2002:a05:6000:268a:b0:3d4:2f8c:1d37 with SMTP id ffacd0b85a97d-3d42f8c2014mr20060507f8f.26.1757105923080;
+        Fri, 05 Sep 2025 13:58:43 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:43b0:7b3b:e0d9:6992? ([2a05:6e02:1041:c10:43b0:7b3b:e0d9:6992])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45dcfa3ec60sm95019335e9.15.2025.09.05.13.58.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 13:58:42 -0700 (PDT)
+Message-ID: <23b80d52-6149-483b-a159-276dd00d12cd@linaro.org>
+Date: Fri, 5 Sep 2025 22:58:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,115 +82,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/58] dyndbg: tweak pr_fmt to avoid expansion
- conflicts
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org,
- robdclark@gmail.com, groeck@google.com, yanivt@google.com,
- bleung@google.com, quic_saipraka@quicinc.com, will@kernel.org,
- catalin.marinas@arm.com, quic_psodagud@quicinc.com, maz@kernel.org,
- arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, mingo@redhat.com
-References: <20250803035816.603405-1-jim.cromie@gmail.com>
- <20250803035816.603405-8-jim.cromie@gmail.com>
+Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+To: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <noname.nuno@gmail.com>, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org
+Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+ <20250903102756.1748596-3-daniel.lezcano@linaro.org>
+ <eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
+ <0bfce1eb-69f1-4dae-b461-234eb98ffce1@linaro.org>
+ <a3373804-08a4-4526-a432-c21a74ea3d6b@baylibre.com>
+ <edc8e024-e425-49de-bfa2-44218fe72e26@linaro.org>
+ <6b8cd005-b04c-4dd7-abf7-5a51319a5f0a@baylibre.com>
 Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250803035816.603405-8-jim.cromie@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <6b8cd005-b04c-4dd7-abf7-5a51319a5f0a@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
+On 05/09/2025 17:25, David Lechner wrote:
+> On 9/5/25 4:44 AM, Daniel Lezcano wrote:
+>> On 04/09/2025 19:49, David Lechner wrote:
+>>> On 9/4/25 12:40 PM, Daniel Lezcano wrote:
 
+[ ... ]
 
-Le 03/08/2025 à 05:57, Jim Cromie a écrit :
-> Disambiguate pr_fmt(fmt) arg, by changing it to _FMT_, to avoid naming
-> confusion with many later macros also using that argname.
+> Taking a step back, what sort of real-world uses cases do you need to support?
+> Or are you just trying to implement everything that the ADC can do? The latter
+> can be a bit risky because you might end making something where you can't do
+> a buffered read and a single channel read at the same time, but later find out
+> you have a real-world application that needs to do this.
 > 
-> no functional change
+> It looks like it would be possible to implement buffered reads in lots of ways.
+> IIO devices can have more than one buffer per device so we can add more in the
+> future if we need to. So I would just drop the DMA part of the implementation
+> for now and implement the basic triggered buffer using MCR[NSTART] and ECH
+> (End of Chain) interrupt request and just reading data from the ICDR registers.
 > 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> I would wait to have a real-world application that requires DMA to decide the
+> best way to implement that. There are lots of possibilities, like does it need
+> an external trigger or is continuous mode good enough? Does it need to be cyclic
+> (something the IIO subsystem doesn't really support yet) or not. Is exact sample
+> timing important or do we just need a big buffer? These questions we can't
+> really answer without a specific application to use it.
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+In the case of this IP, the use cases are in the automotive context. The 
+system running on the APU is supposed to monitor at high rate (or not) 
+the different channels which can be connected to any device the 
+integrator choose to use.
 
-> ---
->   lib/dynamic_debug.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index 55df35df093b0..2751056a5240d 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -11,7 +11,7 @@
->    * Copyright (C) 2013 Du, Changbin <changbin.du@gmail.com>
->    */
->   
-> -#define pr_fmt(fmt) "dyndbg: " fmt
-> +#define pr_fmt(_FMT_) "dyndbg: " _FMT_
->   
->   #include <linux/kernel.h>
->   #include <linux/module.h>
+For this reason, the driver should be able to support the different 
+modes because the integrator of the car computer can decide to monitor 
+the devices connected to the different channels differently.
+
+Said differently, we need these modes because the capture depends on 
+what the integrator decide to connect to the different channels. That 
+could be a real high rate sampling, or triggered with a dedicated global 
+timer on the system or just read the value at a low rate. We just know 
+all these use cases exist.
+
 
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
