@@ -1,178 +1,127 @@
-Return-Path: <linux-kernel+bounces-803696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAFEB463D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:44:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A079B463DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10ED65C3FEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CFA45C40AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309C280A52;
-	Fri,  5 Sep 2025 19:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6003528725B;
+	Fri,  5 Sep 2025 19:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb25GASt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLirrO8k"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E1927FD49
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBE228689A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101443; cv=none; b=KFzRSqEYRD0V4BgWjKhDH+SsTGjiAlww2mQo4oZ3/960bplmh4XCkVIvZR/vf6qnR10+ReLY0xyPWDvieZl2HbFYpQHSmBJup9gspyeRbB6SAA7TOAMnBxZXF9b//XR2yxUoK+fReHz9I1w6cprEKRl/TiSy98hefxQyIEmqfM4=
+	t=1757101456; cv=none; b=j4LRLBMQgBkERFltGV/cJKHme3ui0ToJw2WVdj0MzvaH+0537RCHZgaHLWfTbhNaTLy3BlyrhXDVeiVfg/KnwFi8WcWgactLDzOwI5qN5HXz6nAQfKtV3vlfiioZ3+I+SSjk1oYZyO0hazAg4/wWYu+TenBcRUMBS2o9bm4CGgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101443; c=relaxed/simple;
-	bh=qj5NWqYmLfQgUNyQbHqhOAioJ4HtjEhlRLgfXr/ggm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sL9h5jCKvfW7U8sBTSZ3ocwljbDN+/BLk7FG08M2tyrDxRgSjV7XGbORkmR/wWpP0IgYgU2ua9bwlhFJKR60KIcZVNcLVMtkGpiSDlKpkA3CoTnXdx5Pw8pDBJJ2TqHXLkwwnofn9EAmbom6ElDyqFhYkaZnB9Ay3g1eCSoY3qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb25GASt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 895DBC4CEF1;
-	Fri,  5 Sep 2025 19:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757101442;
-	bh=qj5NWqYmLfQgUNyQbHqhOAioJ4HtjEhlRLgfXr/ggm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gb25GAStY7PK4KWfMQC7rtd4cff2Ft31RumZ/kNKywLAXwUdYfICHHIJhBPjrZ6j7
-	 o7iHpATbrIqVl1AYu1jaVpoUr8IlvHC34mB3TyehId4+9gUdLyyv/gHHn98jalOtC0
-	 MX2S360mJGGFkZmz2ogHqkD/MgCf/035PnB2I9Wq5ZfXBWK5fpwd1RbY1MXhtqJPld
-	 H5GqrWgLYTQargRJ06fYCqqcMjdxQlMgkFIz1Gqzc+2aRDBKLVXuNsb4wASbw6IEl6
-	 597PZCICEO+V0BK33bDDozHnZlGhmt7NvXrmXSlYdy89LJVzrbcrFORdWilzQ/GPWA
-	 8B6Fa0HYYbdnA==
-Date: Fri, 5 Sep 2025 12:43:59 -0700
-From: Minchan Kim <minchan@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
-	lorenzo.stoakes@oracle.com, kernel-team@android.com,
-	android-mm@google.com, David Hildenbrand <david@redhat.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: centralize and fix max map count limit checking
-Message-ID: <aLs9f9WjxIOrE3Sr@google.com>
-References: <20250903232437.1454293-1-kaleshsingh@google.com>
- <qa7b7pvrycejnn6pjytxysu57xckhexupjrzefmk4j5hlaxka3@ayeg2vzpfe3r>
+	s=arc-20240116; t=1757101456; c=relaxed/simple;
+	bh=5kSIyEkKJPNtcS4C9SW12B6CjFCMmyXxFbHsBSrhHlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MV+t+9PsD+b5jnFSHK1FpS6GmbpY2DFNkuwGgsrxUBpgM9J+VV5ZSKllmDs7Tx+Js3cQL2OJgZyRHRJkSiOXFx+3k0tkToobc0gS7cXWXnJ/Av9dGKVkPJAkvrSUat06F6Tq904PjTSC2ms+iwNP55A3mnB4Wp+MIEDC1hwp/5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLirrO8k; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45dd16c484dso14399525e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757101453; x=1757706253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kSIyEkKJPNtcS4C9SW12B6CjFCMmyXxFbHsBSrhHlc=;
+        b=RLirrO8kUXEHAMr6lLkv9LZQkPjYycgTfXVU34+M+YF290imjjVAfBkfhcwEGkjqd3
+         1oIFpXmjWBEu+OhJtAat5JuSPpfNn3APqNtorWRukQbW+9bSv2VGrN1X6QIvi1dklNdl
+         EdnBHIweAibSXn3ZrU/oQe+435JJ62xbFX8rf8pQAW1pww0h5i3BhBy30jfUztWubhr6
+         nyFoCvDL3Tvcc0je5Uh11XI9FCcYuuY6zzRBhiVioBnRPI/tOECyXW6qc2iCFK/TSIqh
+         uZGQIoUGBYVl3yQzCPRFh1dQrUT3i84ZbLpw8flcatrVm5E0gwnLnlVkBsIKc6aZDTGr
+         nozQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757101453; x=1757706253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5kSIyEkKJPNtcS4C9SW12B6CjFCMmyXxFbHsBSrhHlc=;
+        b=VJlxA9BUBNqYq8w3cr6BdeIbDPZtZZEEp7uXgLSrt7j+tcW6yRV6L7EMlQ0DbM0d2O
+         Hz4288a6tKleOD2a3kqXytjQXO4aeZnV43ho6emVU5sh41NBbtJGv8Lfj6M1btSS+0b+
+         wLjqFdb70oWZPkgtjHnOZsC3iO6m1495m9tjR93wcf+s85QlSYTe6HXPSaPlnycqYwBm
+         JQwbuVSRmRzDO/6SHNpngfFTad0UysRkmxKIIfliGMD3z/x8UTQI5VZAXTHBrW20zXA4
+         KUkgLdfIku4JK9Y+SuPpOR45PU/qOFN3Cyqb5sB62NEa5OMiKZ0Q0uOnZSC1yg819nTz
+         imEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTf+NUtlL9N2ubMeiFGt4WJMceAhnva5GvJKaoD9j4t1+QjQWi8v//rUhWZFgtyS6pQwF2XWt0Od17INU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/PorXqbi8k+2pzNunKgDQ/uVfKN0FeZqtQhOSyvzBYNx62vnW
+	Ojyd0KRDqcR6xskAZqMiLQkvMUz1XQNcUGokGn2E/UuxMIk3nUJ+jSECo8LPWezCowOQYt7HIRw
+	5rihBIL7lPUIwnc6503q8S1x07Y8o5u4=
+X-Gm-Gg: ASbGnctDhgocLp3mQOvD039/PjiyPdcFgaGGEuxJ6eJalx9d3vhY0q+KVBhULMBStY6
+	Pss8Of57UGWYVYouzEFEJy+8uP9soxLPAcB2cWdxW7A+cNad8HCvJxpwaQ/aoGo7xnJAyK5vwQf
+	QAM9oPYCRuxKhiHciFmSToNKeld1SIPsOCrphKEOGICrehgtwq5yHoCKjLNbYFkHDXeJPbyt7Vw
+	RpTpdSeSwWOvspS4A==
+X-Google-Smtp-Source: AGHT+IEIWTbj6iXai5EB56BajMtkwmQ0wX6zSMX9cOQAlzshrXJq4aBijoRGaRfyrquo9vOREnmChUojy9i9giTVk9g=
+X-Received: by 2002:adf:b188:0:b0:3cd:44a8:ffcf with SMTP id
+ ffacd0b85a97d-3d1dd81e4b7mr13383104f8f.12.1757101453197; Fri, 05 Sep 2025
+ 12:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <qa7b7pvrycejnn6pjytxysu57xckhexupjrzefmk4j5hlaxka3@ayeg2vzpfe3r>
+References: <20250820053459.164825-1-bhe@redhat.com> <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
+ <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv> <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
+ <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com> <CA+fCnZdWxWD99t9yhmB90VPefi3Gohn8Peo6=cxrvw8Zdz+3qQ@mail.gmail.com>
+ <c0bd173c-c84f-41d5-8532-2afb8eca9313@csgroup.eu>
+In-Reply-To: <c0bd173c-c84f-41d5-8532-2afb8eca9313@csgroup.eu>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 5 Sep 2025 21:44:00 +0200
+X-Gm-Features: Ac12FXw8jIlx5I_GnULq-nTw7_htdTiBmfe6-tGy9IZcoS0RzVO8mAQjd7gKDAU
+Message-ID: <CA+fCnZd9unSjY-UnEwc4rGkSRgZX3nrs=WgBb2eDQNEpZX10cA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three modes
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Baoquan He <bhe@redhat.com>, snovitoll@gmail.com, 
+	glider@google.com, dvyukov@google.com, elver@google.com, linux-mm@kvack.org, 
+	vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	kexec@lists.infradead.org, sj@kernel.org, lorenzo.stoakes@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 12:46:34AM +0100, Pedro Falcato wrote:
-> On Wed, Sep 03, 2025 at 04:24:35PM -0700, Kalesh Singh wrote:
-> > The check against the max map count (sysctl_max_map_count) was
-> > open-coded in several places. This led to inconsistent enforcement
-> > and subtle bugs where the limit could be exceeded.
-> > 
-> > For example, some paths would check map_count > sysctl_max_map_count
-> > before allocating a new VMA and incrementing the count, allowing the
-> > process to reach sysctl_max_map_count + 1:
-> > 
-> >     int do_brk_flags(...)
-> >     {
-> >         if (mm->map_count > sysctl_max_map_count)
-> >             return -ENOMEM;
-> > 
-> >         /* We can get here with mm->map_count == sysctl_max_map_count */
-> > 
-> >         vma = vm_area_alloc(mm);
-> >         ...
-> >         mm->map_count++   /* We've now exceeded the threshold. */
-> >     }
-> 
-> I think this should be fixed separately, and sent for stable.
-> 
-> > 
-> > To fix this and unify the logic, introduce a new function,
-> > exceeds_max_map_count(), to consolidate the check. All open-coded
-> > checks are replaced with calls to this new function, ensuring the
-> > limit is applied uniformly and correctly.
-> 
-> Thanks! In general I like the idea.
-> 
-> > 
-> > To improve encapsulation, sysctl_max_map_count is now static to
-> > mm/mmap.c. The new helper also adds a rate-limited warning to make
-> > debugging applications that exhaust their VMA limit easier.
-> > 
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Minchan Kim <minchan@kernel.org>
-> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > ---
-> >  include/linux/mm.h | 11 ++++++++++-
-> >  mm/mmap.c          | 15 ++++++++++++++-
-> >  mm/mremap.c        |  7 ++++---
-> >  mm/nommu.c         |  2 +-
-> >  mm/util.c          |  1 -
-> >  mm/vma.c           |  6 +++---
-> >  6 files changed, 32 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 1ae97a0b8ec7..d4e64e6a9814 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -192,7 +192,16 @@ static inline void __mm_zero_struct_page(struct page *page)
-> >  #define MAPCOUNT_ELF_CORE_MARGIN	(5)
-> >  #define DEFAULT_MAX_MAP_COUNT	(USHRT_MAX - MAPCOUNT_ELF_CORE_MARGIN)
-> >  
-> > -extern int sysctl_max_map_count;
-> > +/**
-> > + * exceeds_max_map_count - check if a VMA operation would exceed max_map_count
-> > + * @mm: The memory descriptor for the process.
-> > + * @new_vmas: The number of new VMAs the operation will create.
-> > + *
-> > + * Returns true if the operation would cause the number of VMAs to exceed
-> > + * the sysctl_max_map_count limit, false otherwise. A rate-limited warning
-> > + * is logged if the limit is exceeded.
-> > + */
-> > +extern bool exceeds_max_map_count(struct mm_struct *mm, unsigned int new_vmas);
-> 
-> No new "extern" in func declarations please.
-> 
-> >  
-> >  extern unsigned long sysctl_user_reserve_kbytes;
-> >  extern unsigned long sysctl_admin_reserve_kbytes;
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 7306253cc3b5..693a0105e6a5 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-> >  		return -EOVERFLOW;
-> >  
-> >  	/* Too many mappings? */
-> > -	if (mm->map_count > sysctl_max_map_count)
-> > +	if (exceeds_max_map_count(mm, 0))
-> >  		return -ENOMEM;
-> 
-> If the brk example is incorrect, isn't this also wrong? /me is confused
-> >  
-> >  	/*
-> > @@ -1504,6 +1504,19 @@ struct vm_area_struct *_install_special_mapping(
-> >  int sysctl_legacy_va_layout;
-> >  #endif
-> >  
-> > +static int sysctl_max_map_count __read_mostly = DEFAULT_MAX_MAP_COUNT;
-> > +
-> > +bool exceeds_max_map_count(struct mm_struct *mm, unsigned int new_vmas)
-> > +{
-> > +	if (unlikely(mm->map_count + new_vmas > sysctl_max_map_count)) {
-> > +		pr_warn_ratelimited("%s (%d): Map count limit %u exceeded\n",
-> > +				    current->comm, current->pid,
-> > +				    sysctl_max_map_count);
-> 
-> I'm not entirely sold on the map count warn, even if it's rate limited. It
-> sounds like something you can hit in nasty edge cases and nevertheless flood
-> your dmesg (more frustrating if you can't fix the damn program).
+On Fri, Sep 5, 2025 at 9:13=E2=80=AFPM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+> > Hm, I thought it worked like that, but then what threw me off just now
+> > was seeing that zero_pte_populate()->pte_wrprotect() (on arm64) resets
+> > the PTE_WRITE bit and sets the PTE_RDONLY bit. So I thought the
+> > kasan_early_shadow_page is marked as read-only and then the
+> > instrumentation is disabled for all early code that might write into
+> > the page before the proper shadow is set up. Or am I reading this
+> > bit-setting code wrong?
+>
+> But that zero_pte_populate() is called by kasan_init() when everything
+> is ready.
+>
+> kasan_init()->kasan_init_shadow()->kasan_populate_early_shadow()->zero_p4=
+d_populate()->zero_pud_populate()->zero_pmd_populate()->zero_pte_populate()
+>
+> Here we are talking about the shadow set at startup kasan_early_init(),
+> aren't we ?
 
-How about dynamic_debug?
+Ah, you're right, thanks!
 
-a1394bddf9b6, mm: page_alloc: dump migrate-failed pages
+I was confused by the name of kasan_populate_early_shadow(). I think
+we should rename it to kasan_populate_shadow_read_only() or something
+like that and also update the comment. As this function is not
+intended for populating early shadow (that is done via
+kasan_early_init() in the arch code instead), we're populating normal
+shadow for pages that can be accessed but whose shadow won't be
+written to. Perhaps it makes sense to come up with a better name for
+the kasan_early_shadow_page variable too to point out its dual
+purpose.
 
