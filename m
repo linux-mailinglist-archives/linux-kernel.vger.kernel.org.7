@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-802118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09558B44DC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:00:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976F8B44DC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C361B209DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB825423A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D741B2820BA;
-	Fri,  5 Sep 2025 06:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC8A2820C6;
+	Fri,  5 Sep 2025 06:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pd31JRqV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0D283121
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Jg92GSH6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5AF21D011;
+	Fri,  5 Sep 2025 06:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757052017; cv=none; b=UokSrK+AvHnrckv5iuio41cylcBTiDvLKQXSN4Paeh9XIOI7nJLp9MiUOvisqMmUxY9kyOvhOW7YaY68rzkBnPCyk/m+CaFyX/ggZzp1wizaWfVs2ECCjotuxspdtfqchnStxw88bXgO/GW86M9+E9ESAwkwlx3Z/Bbjp05Uxe0=
+	t=1757052110; cv=none; b=hRFT3esR9myWwp4TG7nj+hlE2bj+4QY24D+Hx25new72YpUGk6e+zBHkzQmEtv1C/fNUf1Dmc6ixDM5l9AqvzMJkZkYcp+cHy1uJsO9pVDQ9cLOUgtp2xI5WVnIgr7Qe21LlFAnqO4KPoIGVBaQd+tjzi2Xb4dk84KWpTGX8k3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757052017; c=relaxed/simple;
-	bh=AFb+9QCqjGbJ/1m/HKU4siOLrQoCZ646eOELHAiI0rI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0CfE/6w2joffqBXwwfqH/7LKKZktYoqCAuGgb1wGsRf0TWCo+zbZcsXs+6OsuMCNei78bUBjTWUYu8w93gEGxg/0de/638F3bKqLT4a1phH/VnlkL2crTYEELRbZIbxCyYnF0Rp3JyDdj6w9NGZysG0zmtjTYzUeDDvUhsOU/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pd31JRqV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IF2mI003172
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 06:00:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K3wvqQmO4VlXSkPHtA+kQ1G3ijV/kY/N6LPpzZ6ALdc=; b=Pd31JRqVJVL455fW
-	iIxfXyF8FHxyLPsYD50i5INO954E8+4E8CgDJvSkSUPXRi4n4BONKqIgl4QGd943
-	03MyVmB4xG87yWf20teujpwDINGn/TATUWK+azJkm33sQQGnre5qjBG3S78wEZPG
-	G0NwL7FqJPkAl9lLDLr95cvmAtu53e6W07/hFeXDwJM+LBwdxyEcT9HqH4FVxoxR
-	KOH4tiV0MYfrtHtnGk5viR/duYta8IJN04n9kHVoFt7AkHkhjaEIWbB2iuUnP6Aj
-	HJRIDVRVBMzGOFvX75adZRmrGIBiuKiHlzhWXypWO96+myK2HGUXBC3CeoKJdZPB
-	roipUw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush39vsq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:00:14 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b2336e513so29532715ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:00:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757052011; x=1757656811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K3wvqQmO4VlXSkPHtA+kQ1G3ijV/kY/N6LPpzZ6ALdc=;
-        b=tslRVLTxmFFdm4gKXOZlz/MBLSOK51R65z6ymo1rWNItpPJg88InMDZ3UlmzVsdVoz
-         jS/0FvJXny8PnTznO5ZZLdKKDnM8BmeaqosOVjQY99IRGxbqOAlJLaTPYGFonKJDX1tD
-         FcDiz2SWPUfvmUOEjLuVS2TTszeQ4TtJnlo3FsBlF7zvYCHYp1cCfZ+9JSLImE0e2dZn
-         2ZahnVwPjLuquFybG6ebxnpQekqJ2Jks4mx1GRfLU8ysPBTy1tdebCjCVqAbpW9kVN8L
-         vnEr7APwiL/PIGqnJpLFQmV7mG3i0ShfiBdj/Z43/VBN7sI8zUNI/MuPGEHw34u7kwZx
-         AYng==
-X-Forwarded-Encrypted: i=1; AJvYcCUvN6gXk2x7Y+cKCsvlwB2rZtWgBQNc1M92AANOYl7uIyRKQMNGDEr30b38McDpkDA8YqskzHJLGu4CvO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVqnzVrrideXx0rQjt6dU6ycH4PVtQSAc4e3LXt+GXhEuq2h+S
-	so2MNrYGNi7qQRosdcu/GlzN302uO5eG8UCF9qgxPv3G/p37rAB0DKGjgQLZmlnXmBDfhPNB4K4
-	z8ssBu/BtT+obLQbigB63kUVNUiHw9quL3TyQvY2iaHqjpcrhggsg4fT8vTT+96whizA=
-X-Gm-Gg: ASbGncs1MsJhJ0pG+3fY1L6+fu9GYK0vIQHd78bPPmymPFnWzcm0EqTajrjbNk7BZOh
-	9PXlZ8avZYe4Nh1hcwObo4EWajaJ1rgNhZ8YKT05+0EQ6YgBVxECcu7cflN2FqBo72HensI8FNH
-	7vzLclbWQID+LLyjAozhztDXDw1wcV2wOHP1lzjmIvGAQwgpt/03T1Sh64Ih67cf5Oo6WSXIItD
-	x30P5/10O3vBpp2fEPUv19X81wi1K4W+ckqDU+9zsyf8IvgEu881TjhTByb/JE+DNJKInbLBr1T
-	8bI35R4e6uVKWUSO6IYzwWoeZi+ZQt9VV4FtuMGMFpshuOywqgFsRu0laeQaiwBBCicQj362giI
-	Rm2Y7Nv5Jbke+Vb9qbluF9+gsoMW5EXJZ
-X-Received: by 2002:a17:902:ce8e:b0:24a:d582:fbaa with SMTP id d9443c01a7336-24ad582ff65mr218517375ad.12.1757052011483;
-        Thu, 04 Sep 2025 23:00:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/cHmFw51D0GHNL0K6FHmxYOYqdRzziDWguo5c6iA+8dTLIn0jYMYcaSVHHWMsKF7j5DIKqg==
-X-Received: by 2002:a17:902:ce8e:b0:24a:d582:fbaa with SMTP id d9443c01a7336-24ad582ff65mr218516805ad.12.1757052010969;
-        Thu, 04 Sep 2025 23:00:10 -0700 (PDT)
-Received: from [10.133.33.61] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cbe170977sm37426225ad.42.2025.09.04.23.00.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 23:00:10 -0700 (PDT)
-Message-ID: <d8a885b5-3054-4dff-aa64-5ba194be4cc2@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 14:00:03 +0800
+	s=arc-20240116; t=1757052110; c=relaxed/simple;
+	bh=3knstRovj93xkUytRtrTV4g+ye1JGAHeEex24QMnCko=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=h8CcI19c4cBlN2EU3luJwMgQFh+HjaT66j7W8+/qphZEntztaHNWs7OzsSETLdHw5TVlpN44umjAK/jJEagWIHvmJEbZYJTukxsd0IQhIqR0vsUKfbqJtDZg+7IxVZBJqjlIW9hB70kCiksH+uw7KrOSEhdH7aeCCWjogg0nOwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Jg92GSH6; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Od
+	8KnfSygcUPovid5hxz+wVBe3lxMm/XME01VPFpLt0=; b=Jg92GSH6RVWVFg6wot
+	74T4jMndPS0t3kUMA/e91Gfc+bTzmRNco9fP5qES/eQJ3suWB+LvaKEHom6y73W/
+	V/jJ+S74HkuxsWWuAxddboyIIt84XeTJa/spfyhnxLd7NbNjnm7MptPz7f6bkfvy
+	g0oogz6hwh/V16icIufEI9Cwo=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wC3eap7fLpok1QJGQ--.24371S2;
+	Fri, 05 Sep 2025 14:00:28 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: eddyz87@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	llvm@lists.linux.dev,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH v2 bpf-next] selftests/bpf: Fix the invalid operand for instruction issue
+Date: Fri,  5 Sep 2025 14:00:26 +0800
+Message-Id: <20250905060026.1285979-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <7a037c0579e1cbabb83935c05c24ddbc6bc43327.camel@gmail.com>
+References: <7a037c0579e1cbabb83935c05c24ddbc6bc43327.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/3] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
- <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
- <2o2ypmxo6wbohrb5edkj27ueqpgbqhsnqu4ofzfubtfwg7vyri@mdsu4ca63fr5>
- <wturd73lfutj4njzrmatzli356cfyehbtr45fjcttmbo2pieu5@he3fnsqzumfv>
-Content-Language: en-US
-From: Yijie Yang <yijie.yang@oss.qualcomm.com>
-In-Reply-To: <wturd73lfutj4njzrmatzli356cfyehbtr45fjcttmbo2pieu5@he3fnsqzumfv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX4lPdyc6Z+5uH
- cpIljmpFgPehljXK0y+XGMRI5SLCWS2PsJPRgqXg5l8rRsI0/fIUFkXhJ1w4jTBIIRaMV7ZiNIQ
- xrORobQQrXgC/e42hyykTBc3yzqkIxHcByDshi4YoUW2eMEtaRFB0E2eeMWVOy/ELqsqENlNVB1
- fzqGeJypawDr+iKEjOINxE3brq2ReTD2eUR6L7Zri/dBurqGk5JEvTfQGGkIapthathVU27qsTh
- WNugqpE3rb25V6+jnPbcC5QFczzl+CfrWQ2zIFcpbqNUuS0DtK/yCV0j+h7uJhf7L+lftuHvBI3
- LveoAwax8Lf0+uP9GsWkYXsYaly4TZMGBhmFWqoecEmjVTZOfQxC1uqL/rtERihhL2JXC0apEp5
- 6hYnVE3N
-X-Proofpoint-ORIG-GUID: 3edf-1-4RIkWgEWbsIEEsGowSe5IYGAI
-X-Proofpoint-GUID: 3edf-1-4RIkWgEWbsIEEsGowSe5IYGAI
-X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68ba7c6e cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=5pxm4SLHXydbrukv4qEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300032
+X-CM-TRANSID:_____wC3eap7fLpok1QJGQ--.24371S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CrWxWFW5CrykKF1UCF48Zwb_yoW8JFWrpF
+	yrWr1DKF4rJFyUJr13Jw4aqF1Yvw4SkrWrGrW8Ar9rGr90ywsIyFyxGryY9asIgw47u3yY
+	9rW8X3yfCw4qyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRcTmhUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRO-eGi6aW8nQAACsA
 
+On Thu, 04 Sep 2025 08:48:45 -0700 Eduard Zingerman wrote:
 
-
-On 2025-09-04 21:58, Dmitry Baryshkov wrote:
-> On Thu, Sep 04, 2025 at 04:52:26PM +0300, Dmitry Baryshkov wrote:
->> On Thu, Sep 04, 2025 at 03:48:33PM +0800, Yijie Yang wrote:
->>> The HAMOA-IOT-SOM is a compact computing module that integrates a System
->>> on Chip (SoC) — specifically the x1e80100 — along with essential
->>> components optimized for IoT applications. It is designed to be mounted on
->>> carrier boards, enabling the development of complete embedded systems.
->>>
->>> This change enables the following components:
->>
->> Documentation/process/submitting-patches.rst, "[This patch] makes xyzzy
->> do frot".
->>
->>> - Regulators on the SOM
->>> - Reserved memory regions
->>> - PCIe6a and its PHY
->>> - PCIe4 and its PHY
->>> - USB0 through USB6 and their PHYs
->>> - ADSP, CDSP
->>> - WLAN, Bluetooth (M.2 interface)
->>
->> No, you don't. WiFi and BT are not present on the SoM.
-
-Will update.
-
->>
->>>
->>> Written in collaboration with Yingying Tang (PCIe4 and WLAN)
->>> <quic_yintang@quicinc.com>.
->>
->> Co-developed-by, Signed-off-by.
+> On Thu, 2025-08-28 at 10:01 +0800, Feng Yang wrote:
+> > From: Feng Yang <yangfeng@kylinos.cn>
+> > 
+> > The following issue occurs when compiling with clang version 17.0.6:
+> > progs/compute_live_registers.c:251:3: error: invalid operand for instruction
+> >   251 |                 "r0 = 1;"
+> >       |                 ^
+> > <inline asm>:1:22: note: instantiated into assembly here
+> >     1 |         r0 = 1;r2 = 2;if r1 & 0x7 goto +1;exit;r0 = r2;exit;
+> >       |                             ^
+> > 1 error generated.
+> > 
+> > Use __imm_insn to fix this issue.
+> > 
+> > Fixes: 4a4b84ba9e453 ("selftests/bpf: verify jset handling in CFG computation")
+> > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> > ---
 > 
-> After checking old thread, you can ignore this comment.
+> Hi Feng,
 > 
+> This message felt through cracks a bit.  It's a minor thing, of
+> course, but there is a legit question of how much backward we'd like
+> to support clang versions for the test suite.
+> 
+> Could you please provide some detail on your build environment,
+> why do you want to run the tests with older clang?
 
--- 
-Best Regards,
-Yijie
+Hi Eduard,
+
+Actually, there is no specific reason to test with an older version of Clang.
+It's just that the Clang downloaded from the source is this version,
+and installing a newer version by myself would be rather troublesome.
+
+clang version 17.0.6
+GNU Make 4.4.1
+gcc (GCC) 12.3.1
+linux version: 6.6
+arch: x86-64
 
 
