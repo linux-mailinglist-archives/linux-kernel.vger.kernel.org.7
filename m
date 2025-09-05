@@ -1,224 +1,97 @@
-Return-Path: <linux-kernel+bounces-802984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3171AB45925
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC0BB45930
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A69D5C40A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D104DA64722
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8DF3570AE;
-	Fri,  5 Sep 2025 13:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33773570D4;
+	Fri,  5 Sep 2025 13:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDLPRfxE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/pY9Uon"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6962C17B3;
-	Fri,  5 Sep 2025 13:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F312D3568F6;
+	Fri,  5 Sep 2025 13:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757079131; cv=none; b=qjtkbVM4sCfe4LZ3yLpQcsR4op3Hwi6n+/FSOYyoL/XHO4RHJq4sqkTkyR5YnBVVA+un89VZ0niKBIgDUq92wv2GtGz0XMbaO5soZQLKBoEML52DLvEUTtsBEs6SUHJ1hJt2bc0f9J6Gnl3F1MIi7KAjNJea/ta1By/yoGKRfps=
+	t=1757079136; cv=none; b=KTgO8aJSpC4q6pp/Sk21IBvTDb7oB9PX0nqfJlwWRAyPT1jgbjUl3zQwpJbCMQ9TmgrzMfxTk/3WVaut1TKVccYRbTHec2EBqUh9PZ8fulj+Q9i7OCAU+150RQN4K52xdX+VAluv5U2sc/vwn6QcTTuya3t9f0mVGg61xO7qjZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757079131; c=relaxed/simple;
-	bh=8jAcdpkwkSpwOdJxvwA2Vj7xEHXguZJ+MKwk0qNCAa4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mAKpO5mBkMT8dz6BJOKtBxtpdNh+mAGJx1tI0yYQiuyH3sLYf9CW6e0yVdCqRXhBcXqUh+dcfdvrHjX94JKawHZtPdwwBz2Nz071xhdcpWaE5xp8u2VZpYRcNdSPcniL3YeLhvkwikagMZTRqsBJsiFd5TqmA5dsJ49oEjB2Yog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDLPRfxE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF52EC116B1;
-	Fri,  5 Sep 2025 13:32:10 +0000 (UTC)
+	s=arc-20240116; t=1757079136; c=relaxed/simple;
+	bh=KkrwZDu1pRu7pLhJXpgsAxDu3nkp0f+KHpeyCCJvgR8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SifQAoXGnWiRE8IUERGNic54O79LWjp6tjikeNGpC2TisiMbaGjB5YZBVuEHNU5K9CE+lrrWBNNeVqlpjPlgPWsxBF4IGeMtK4YIAhQdYm3E9MdKk6PFohP2H0zhALKO9dUNtGuGwx12LQZ9mPbvxm6rcQXj4CMnHqKGZ6gjMHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/pY9Uon; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9E8C4CEF1;
+	Fri,  5 Sep 2025 13:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757079131;
-	bh=8jAcdpkwkSpwOdJxvwA2Vj7xEHXguZJ+MKwk0qNCAa4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YDLPRfxE+TA2Q55nxy+S45umyans+pDRvwbObVt0bW3hJ3GKjbxPrVlX07NomP+MM
-	 gilJHDzfgmGFOcAFu0+loSilTzpkeDO9g9x8k2BAevsNOqWlkswrDpHfRJW58By2gZ
-	 h5T2iOat+XnnhSD9UwBeQ3xYHCYi7jaP+GtkcpXBdqab/ccFdCeVstKHtgcieR/3QH
-	 +KRTayLgDC1M/LhwjwPtXIccD6HoAsAvaea3u1dA7qTzCEzjxT3V+HO3EHQdCVNDFU
-	 /St9BM0FbaHx4JdEUTHAM1R9DDj8M5cKZD+5HIpQks7AUiitM6xvVlMUYXsHzcS8lI
-	 bWTNhY8srV4ig==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74526ca79beso1847717a34.0;
-        Fri, 05 Sep 2025 06:32:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3+NXTW3ZWLTIciU/ynYdAcepa5iFgqr735GLhaWGKax/AN48Eglt3LLVEwa7o4xwRbqVYI5ngHT/Mb4ho@vger.kernel.org, AJvYcCVetlqpV4XywqBkxaXooa1lRKwsALYk/cmO/Y5h35FtE1fwXZpjSsU4tr9KtcqykIKKOs6/pLnXB+nn@vger.kernel.org, AJvYcCWVKwfzqTXQyIKLuM6pWkL+pXYky10oxMSBObEQP8zKkE78Gxbnaqpdsq9/x77xHyw8QxKR9p3E77A=@vger.kernel.org, AJvYcCXvNjedoEvIla8PbMlSm8nkUPlvvrsp7BtdxhNrLsRGrOmxkwRRCTVuOe73jKwCT9rOPYLIv8APoU1o0g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzno1eoxmp07jd1M7X83eI5OgCimBs1YTDjBctGNPwNvoYmsE68
-	pgbI91nuEUkzOfqynABzYrPVF780EKkPpuED5M9NFQOtMvisSXgewk6iOfRRL8lzQM7eS+RMF+k
-	qPJMGnpP3uXQppdhY7dkMoPz2k0+X11c=
-X-Google-Smtp-Source: AGHT+IFnE56n2ZWY3m6GFquWJS3R+4zyRWG4mn/x7Tvk/fQPvR7/F7IjMN/5eFQpLDwVxaDdPh5JX7KANJsrFqH4mJc=
-X-Received: by 2002:a05:6830:378e:b0:741:a5f0:bc82 with SMTP id
- 46e09a7af769-74569e53d0dmr13231613a34.17.1757079130135; Fri, 05 Sep 2025
- 06:32:10 -0700 (PDT)
+	s=k20201202; t=1757079135;
+	bh=KkrwZDu1pRu7pLhJXpgsAxDu3nkp0f+KHpeyCCJvgR8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=X/pY9UonwZj0XCbLcnOfTUAMg1P0UP6XUO2DdnscFTi2KFLAeZxzGGrquXuV39YOO
+	 MTpn/CntE3rZ2so3PepY0r10UNFGhsqsR9IzTRSdFqZAQpGPN8+5Lsie4GnC7gJa/R
+	 UU1lkRWrUWZgDMIskmOgrAAObghvmNK5iXiEAYYi1w9q+jELu+OLNHHEgejrZ+5YYn
+	 B29BZpDFPiyjzazocMLVskpPY7wfUohDVmjwo3afW/K6HsC4SnNzzge2Ygcw0Tef1v
+	 GKzCUM5DFRqFGv+5SXWq6yNt4Vfaackc6z4WSlAG/0h/j5IPmmiZ6XoUsJcetm3rBU
+	 S6lfyf30fCGMg==
+From: Mark Brown <broonie@kernel.org>
+To: nick.li@foursemi.com, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, Charles Han <hanchunchao@inspur.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250905091845.1559-1-hanchunchao@inspur.com>
+References: <20250905091845.1559-1-hanchunchao@inspur.com>
+Subject: Re: [PATCH] ASoC: codecs: fs210x: Add NULL check in
+ fs210x_register_snd_component
+Message-Id: <175707913385.96517.7750852185553922910.b4-ty@kernel.org>
+Date: Fri, 05 Sep 2025 14:32:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn> <20250905132413.1376220-4-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250905132413.1376220-4-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 15:31:58 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jdJZ2upvE4KzDnc59KpMX+oqYbq=ZW=SXfwvjBctMj3Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwR6ToJkYo5xTTss3xr-Ox8ITso59X_uvklZva98cFgnVHnG6meS0I7mt8
-Message-ID: <CAJZ5v0jdJZ2upvE4KzDnc59KpMX+oqYbq=ZW=SXfwvjBctMj3Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] cpufreq: intel_pstate: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dfb17
 
-On Fri, Sep 5, 2025 at 3:24=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+On Fri, 05 Sep 2025 17:18:44 +0800, Charles Han wrote:
+> Add check for the return value of devm_kmemdup() to prevent
+> potential null pointer dereference.
+> 
+> 
 
-No, sorry.  I've already said that this isn't going to work:
+Applied to
 
-https://lore.kernel.org/linux-pm/CAJZ5v0gN1T5woSF0tO=3DTbAh+2-sWzxFjWyDbB7w=
-G2TFCOU01iQ@mail.gmail.com/
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-so why are you resending it?
+Thanks!
 
-And making changes to it in the process without saying what they are?
+[1/1] ASoC: codecs: fs210x: Add NULL check in fs210x_register_snd_component
+      commit: be585f7ebc99598edf97c3001d0f8d67954ab376
 
-Please stop adding confusion.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> ---
->  drivers/cpufreq/intel_pstate.c | 59 +++++++++++++++++++---------------
->  1 file changed, 33 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index f366d35c5840..0b54e08f9447 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(struct c=
-pufreq_policy *policy,
->
->  static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
->  {
-> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
-req_cpu_get(cpudata->cpu);
->
-> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
->         if (!policy)
->                 return false;
->
-> @@ -1695,41 +1694,49 @@ static ssize_t store_no_turbo(struct kobject *a, =
-struct kobj_attribute *b,
->         return count;
->  }
->
-> -static void update_qos_request(enum freq_qos_req_type type)
-> +static bool intel_pstate_cpufreq_update_limits(int cpu, enum freq_qos_re=
-q_type type)
->  {
->         struct freq_qos_request *req;
-> -       struct cpufreq_policy *policy;
-> -       int i;
-> +       unsigned int freq, perf_pct;
-> +       struct cpudata *data =3D all_cpu_data[cpu];
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
-req_cpu_get(cpu);
->
-> -       for_each_possible_cpu(i) {
-> -               struct cpudata *cpu =3D all_cpu_data[i];
-> -               unsigned int freq, perf_pct;
-> +       if (!policy)
-> +               return false;
->
-> -               policy =3D cpufreq_cpu_get(i);
-> -               if (!policy)
-> -                       continue;
-> +       req =3D policy->driver_data;
->
-> -               req =3D policy->driver_data;
-> -               cpufreq_cpu_put(policy);
-> +       if (!req)
-> +               return false;
->
-> -               if (!req)
-> -                       continue;
-> +       if (hwp_active)
-> +               intel_pstate_get_hwp_cap(data);
->
-> -               if (hwp_active)
-> -                       intel_pstate_get_hwp_cap(cpu);
-> +       if (type =3D=3D FREQ_QOS_MIN) {
-> +               perf_pct =3D global.min_perf_pct;
-> +       } else {
-> +               req++;
-> +               perf_pct =3D global.max_perf_pct;
-> +       }
->
-> -               if (type =3D=3D FREQ_QOS_MIN) {
-> -                       perf_pct =3D global.min_perf_pct;
-> -               } else {
-> -                       req++;
-> -                       perf_pct =3D global.max_perf_pct;
-> -               }
-> +       freq =3D DIV_ROUND_UP(data->pstate.turbo_freq * perf_pct, 100);
->
-> -               freq =3D DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, =
-100);
-> +       if (freq_qos_update_request(req, freq) < 0)
-> +               pr_warn("Failed to update freq constraint: CPU%d\n", cpu)=
-;
->
-> -               if (freq_qos_update_request(req, freq) < 0)
-> -                       pr_warn("Failed to update freq constraint: CPU%d\=
-n", i);
-> +       return true;
-> +}
-> +
-> +
-> +static void update_qos_request(enum freq_qos_req_type type)
-> +{
-> +       int i;
-> +
-> +       for_each_possible_cpu(i) {
-> +               if (!intel_pstate_cpufreq_update_limits(i, type))
-> +                       continue;
->         }
-> +
->  }
->
->  static ssize_t store_max_perf_pct(struct kobject *a, struct kobj_attribu=
-te *b,
-> --
-> 2.25.1
->
->
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
