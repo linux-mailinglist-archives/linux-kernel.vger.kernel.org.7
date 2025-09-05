@@ -1,257 +1,206 @@
-Return-Path: <linux-kernel+bounces-801962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049F5B44C1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:07:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506B0B44C4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19161C26612
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:07:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC765A036B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379E623507B;
-	Fri,  5 Sep 2025 03:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804782571C9;
+	Fri,  5 Sep 2025 03:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BwtbmYMN"
-Received: from mail-m3270.qiye.163.com (mail-m3270.qiye.163.com [220.197.32.70])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="P8zUMD8U"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011018.outbound.protection.outlook.com [52.101.70.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C151EF0B9;
-	Fri,  5 Sep 2025 03:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757041616; cv=none; b=odr5jpjuVAnWnomuai2gyFygUEu9uxVfq2+rF5Fh/WZzO4TStvaKO0q//jDkNBElhdynwC/ANQ9nk1PlHXuWqwe30grKAXSporFAEshJizBUy8kPunr4kRADs2ZvsxJthshl0Lk01zBU9+rnPUUVAIuPdTyms5h/dTYTjNI9S/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757041616; c=relaxed/simple;
-	bh=NQty9wCp6vRJtkHOlaJ/iEGX4DwlGUS9Q3AZEXK+72I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hsrwmUSiI3HKvKT7N8m0BD1hBO7QxuFhOzVxIu1sP02BqtKsulUTBMwudsC79/M0m1JHvqu2zt6yrcEU4IP+9yA6qm3gFV0NE9/EmbuDjFE5ZINycVhxfKwyU8vrqDa8RbBZ4oqV1OJE/+VIOGxDhabIc5blJZjiGeBByLUvqoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BwtbmYMN; arc=none smtp.client-ip=220.197.32.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 21c51f9ff;
-	Fri, 5 Sep 2025 11:06:41 +0800 (GMT+08:00)
-Message-ID: <22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com>
-Date: Fri, 5 Sep 2025 11:06:40 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4F9EEBD;
+	Fri,  5 Sep 2025 03:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757042914; cv=fail; b=tXa/28+zt+atwdjcv2g89To9sp5xiH3aAp8EtUdBPcZg8AHdtjJdkOV2ufoXNhwE4+4AefBQ4+fDcKLpTgSrXnVgrCDvY8cJC/j3xKGIyf/OtsAvEWImoubASqDKQZG3YDNVU8wOMxvGNmVvEkPEpaROzU8VG7m6mJpsxBlAGu8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757042914; c=relaxed/simple;
+	bh=DRXKwgYFfO7g9fllB29yqyI21WyazMHUvqn/yDUXlB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=V78thv/yumfD/Uyu41F7LDp68xRgR0SnSKy1P61dhYtcgSIqjPQwYMlmTtKSo3yEPdfGLiSFtz6ij+YMunrkYk0rMF/NQf7kW5jtiWwMCcWSyWKDwXSymiZH8tweLNtljb/khf7uJyiTqNPIAcPk1kNIt8q16uSMiN8jOnI75JI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=P8zUMD8U; arc=fail smtp.client-ip=52.101.70.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mzzyqLD75h7Iba6GbwX9M/5f0BBD+MmhtdRe1EMKiE8FGSYNIH0wWDGK4YkUywmfWV3eBxRECn211OCdbSApjjvE27aH4CC1TPFBn9us31CoBGt7JsHKUcFsLmLSI8nH4aZfsfRKacyeZV0shRc57H0QKiET2TGVAdPMzZsFkGUq3oK1JF+OJdh3ZeChj84rq2dvsSg15QBalDG25ZTY9hVJ7D+75PGk+9B8HbrpPFDAK+HxkRiyyeWxs1YM4viXJLqjvap+8qKGGQaXTIj1ThBw64CDDRFS7LR9toST/b5mMEjKez2cqFL5DWcRmRjoH5DKFSsQcsmTRolCJW/eEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T7u9aGrmrTwUlrvZDh+gHMyvUQGn1VMW1dsK2fndlcU=;
+ b=ly7mT0+eXAB5WF5M4K7Jte6+w8CAbUemjKM87vl5GcQvM8+cbFwo9BciX8OLG+4oubFj+/yXLfwsledgoOdsTP13glnjzUQNzE04d9N/gCaio0i1RrIfhgLVBeX/kf5j+qReVsvVWXUYuceeOGdZf4s2BIlg0BouVfR4QEGdsEt5H/y0ay0ViF7YG2uF53Di4pwVfP5cvTTxZI4qVYSuu4ltxxWrmquEPvPAoHI8HJWAeg48eaTD8X3oDj5jE8N8dA+Nr0LFi8WOuHp8G0NdxauALaoP6tbxZgPPDKYmNNjL8grVIu/3fU5uIi2KQErKieo6Sa9/TsbRV1+wFhzzyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T7u9aGrmrTwUlrvZDh+gHMyvUQGn1VMW1dsK2fndlcU=;
+ b=P8zUMD8Uab8QPIBvH+MRDJpmyw0640tUxmXL0hGh2JmWQqlso4J2Qungy1kQTioR4hkszEty2VEappiuXVVANE//O1jd/S8JAWZ8RgH3cusDCntPEbs+pSA4eZdukIo4PX/yKrTXQRp2+DUxzcjkssPEmvM6i0PNF5V8XIIu2rbd1oGJ9Oeb12rYCUUGjRh5JAK0qMGGb6u3zGMuvONzma07G+wEeAnrfN/rUYiIgSGyl1y11mdFdofmOE8UfNgkTFSVs7wyUBG1kxu9lVSSOBlGTCjkglmYyqE3lEDAS0zk9L/SkihR68o2yToYWRmK3JE0L8HDgN/E9i+WEB6Hww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DUZPR04MB10013.eurprd04.prod.outlook.com (2603:10a6:10:4d8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Fri, 5 Sep
+ 2025 03:28:29 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9094.018; Fri, 5 Sep 2025
+ 03:28:29 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	Frank.Li@nxp.com,
+	yangbo.lu@nxp.com,
+	christophe.leroy@csgroup.eu
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: [PATCH v2 net-next 0/3] ptp: add pulse signal loopback support for debugging
+Date: Fri,  5 Sep 2025 11:07:08 +0800
+Message-Id: <20250905030711.1509648-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0120.apcprd03.prod.outlook.com
+ (2603:1096:4:91::24) To AM9PR04MB8505.eurprd04.prod.outlook.com
+ (2603:10a6:20b:40a::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- dmitry.baryshkov@oss.qualcomm.com
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- l.stach@pengutronix.de, dianders@chromium.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
- <20250814104753.195255-1-damon.ding@rock-chips.com>
- <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
- <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
- <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
- <f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
- <a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
- <461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
- <46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
- <ea57ca6e-4000-49f7-8e0b-899f34b7693a@samsung.com>
- <825ff59f-0a97-49a1-a210-a7ee275364bc@rock-chips.com>
- <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9917d72c0e03a3kunmbaa24fa91f77c7
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5IGVYeGEJMTkJKTU8fTE5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=BwtbmYMNkLOfYppAy+wuG3dRf3rgy/c5fhy0xfkxwjm4IP/EavUY+x5tkpRceqRJiBu+2UIRw4usYHfbUd9Y/L0yFePemizYbPmz3Q8nZ8ysLJ0O3T7nBxiPvA/aIkc9b4hwf3HatRCTgkqwI47m9DmdxumhhRdXH5+51C+XPQc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=yYRsnu1zQIxv1Gvs6bfNQCy9syx23j16FxOMbpuMt9Y=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DUZPR04MB10013:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f5da766-b432-4c07-c6d4-08ddec2c461b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|19092799006|376014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7D+Tzj0f+9Rm1ZTHxcPAvyBKUjeQphxzEdJjzld76ncM161VEJ6xMmVVTnsF?=
+ =?us-ascii?Q?hgiGg6+dxn8IWxbov0IEny9hcThUc/ST5uBd12o8N8j+y1qwhoaPe975b0j1?=
+ =?us-ascii?Q?qHNtgK1FwL4REN1VTzdVeGQKckzyUnidI5zZfjqLQvFHPZXHPBTSQOsbABF+?=
+ =?us-ascii?Q?/gn57nBlBM5Y0ucmRFhis8i+lluWGWjLLmU+WZCCbCeJ3fUQ7MUtsaYCK8sH?=
+ =?us-ascii?Q?CS5ZUhTxzp3IbgUX5MzBviC5o4mCBQoZ/VGPaZmk34kKFNJjeVsv0bHtIYav?=
+ =?us-ascii?Q?03qTwuUDji4jh0+rgy0xvWT/snp58aR5Wh0J7Y40h4JmrH4dJxo4hUOSC3D2?=
+ =?us-ascii?Q?VaRE7tcp5nOVkH22nZLuDzsgoQOTCKq7Qi1Z7jZIeS5F076+VOqb1tnf8TCZ?=
+ =?us-ascii?Q?agpYTXzurEusjpbl7md34B9SfSva8uPy70PCMeh08At+MNzb9QfiOdDIzw4s?=
+ =?us-ascii?Q?y3+jABVi7JKz8elk7ykDXE6fR34NTSU9Xre1SYu1dpj64Kfho+1wON5JABLx?=
+ =?us-ascii?Q?Yc1uf9thjrnI7/jN5QQLLDlj2nP8WYt4HLGfuvVNJ8QLIjFjwNV7+lFG01yQ?=
+ =?us-ascii?Q?uLp6CIz2sx137jx86I70RRvZXRxP2wlQ72VuwH8M4m3AnVuqiEHEjuyxZ69G?=
+ =?us-ascii?Q?vCJtuH4OYA4FqgdWDf2ZmlE/ktBw+dRv24oIbJHaziQYHuNSYmuYcDhDL4wa?=
+ =?us-ascii?Q?beON+qMjITv6m+TTdkXZfWo+LzgdTbH1W7d4NcjC626ZwQHzScQmpTsuADCl?=
+ =?us-ascii?Q?3S+AlNBD/rmKjp5Iojyg/AmrcJIfSY3qZ4mLpKPhuXG6rQwBH7NsITHWo8tt?=
+ =?us-ascii?Q?YWxMYwPH1R8UBtaaRZtK+jwWkhF6u2hSl2tdZouLiKhZJp7C1/LYG0V0kzRH?=
+ =?us-ascii?Q?dZ/q07joOUlY01597Yskkef84PvCezuhyPlgGicHkVvHuSgVDacQsTPjWRS+?=
+ =?us-ascii?Q?DJUG+HItBjGYuJJlSAkSW9e0PIRgDZhnD1n0sBDNObWPnwRWAr2kXJl9opWf?=
+ =?us-ascii?Q?5VhDaYMr+RDBbz4LfUpEYWZcZOxksFCFeOs6b+wCQBlChCmABIb2qfUnwiFz?=
+ =?us-ascii?Q?9Lo8oGd77CD7REKhEkV27V7Jv95oNTB0PppCykaflWAT3cRu9C3e1XjNueNf?=
+ =?us-ascii?Q?2SpjsAz4o8PQmc6cgrV8gj/MKL1JF8xWHqBwU4DqWMFRIijTqbhrqA7GmAkA?=
+ =?us-ascii?Q?VR0C+KOUANNyyCKWhSWZJtm5SY6yS6iu6wWNzQGh++QUo9dYa41z/c569DFZ?=
+ =?us-ascii?Q?QlOwE7+EFMtrmCtUOh5aJuyGFdKMxuRv6B6cKmL9Tl7ohAA978a8g5auxwko?=
+ =?us-ascii?Q?1fWJJMPImSGJpjiXZ7/iEQsdirtieTVw85cUhNXJULh/pUIPBbjOeYDk5LNI?=
+ =?us-ascii?Q?Juyz1l/ei6XKsgnpapt1I35XlUzazHQbJgw6nR7YG+EDRKqZ2krCPKSNHvMm?=
+ =?us-ascii?Q?IgSBwdxHbFX71Cj6no4ZLGvXn/6mJNtPtY1Z6J3+Xi+brXdSUvkNmJiJ/3L4?=
+ =?us-ascii?Q?XLedfPFlLG56/IV0sXla/TwtPeBZWPYUxSO4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(19092799006)(376014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3xbEu6DgRlGYVB7UhI+IrZOxdNUbGK2Whz8LbpRvMHTOS/0M4XBlIUd9m5jO?=
+ =?us-ascii?Q?5G8kONGXr5sXuOdfcXYyasmmCkMv/l26Necs2EjRr41PbndFrcX6+Iv9jthm?=
+ =?us-ascii?Q?Xpy1wXG2vXCeaTdgP8G5Kvum11Pbxwfm8wB9csgxoWxG4g66KqM7c3J59prk?=
+ =?us-ascii?Q?L6vdL8D31OJVd1+k5kkPyHg/cV5C1+NXRwkesUDpf/a1OvJ4LGRNUN9zokgg?=
+ =?us-ascii?Q?KTpteFqZCGNI3yAT0dDq4Q7o9mRw3oQUbZn3x2m1ywpulQB7sOc1pgI0G8sd?=
+ =?us-ascii?Q?3xJfv4dhp/qDbes72b7gIJe+2M8OGyomvprC2elB9hJ2poSAhFZC5NP+WhBT?=
+ =?us-ascii?Q?aYC0OqtaAOBu16fMm72HExAKz4Vv//Q46nmTnjonpq4sEAyFcul0PyZtaFIv?=
+ =?us-ascii?Q?hQfJPXyx6SnV7DHqb2PJEaDeaxNn4VVl+evhSm1dPWSPy3HWCEz5290eHgde?=
+ =?us-ascii?Q?zDWXO9Splf+MQ7RYGepMuY1HN0d2FLZOahb6RV/UNlktPaZ6qR6zevzwaOOa?=
+ =?us-ascii?Q?SDB47HsE/s/ReMyNRfBtw7A20bEYmhHb2TupZiC/7Z23OI1zgDyXrW0OkhAN?=
+ =?us-ascii?Q?r8VH/reGdzO5/tBTxrPVALXHUuRRkikWfIHH5beSSMfNZqr3uqR3/ee3SxVi?=
+ =?us-ascii?Q?qYKz6ruAgmxczv1yao+7LmTLWT4o3AVrQuGdkR4zgjNAZz1s2lLWS4oKV9g3?=
+ =?us-ascii?Q?O//HfEefmz2HWUDAKJSKdEicBFh4992vyD1mgWHkTsWNMVn3DhtWx7F+o2tw?=
+ =?us-ascii?Q?rza1fbRQ3zf6/WutNHEw7EZB7schnZ+pA2R+cGwQdKHpIH4Hh2HaTrWORCg+?=
+ =?us-ascii?Q?LvX3hmQMCLbtFAQ+R2XQeUeHNR56D3VmDi1aUKFSjxAb5rhbkqzBwLF689lj?=
+ =?us-ascii?Q?H4TpWwnmsTMsGrD9Sc8aB7Eveu/aJ+fkl4eHuRX9UhzQ1SwBvIIo1s7egoH1?=
+ =?us-ascii?Q?XZcFBkQAzm/jLJYL6VjwqCReaHOT8YaOalWIqje+XCFO7SmaTiX2871YX6xh?=
+ =?us-ascii?Q?KbNK/unlhGor5wnP6aGZMAwLqp7CKTen3rT+23iKA2anp4cOgXz+p4ohnbnn?=
+ =?us-ascii?Q?P+Dc+hS1Lua22OUKYRkfUE5g6XVulExeXJoVHn1H6jaPH3ygZU3fZ+r6yDlE?=
+ =?us-ascii?Q?kNrLbMiXHvMuFPJUEtDpayW62BTUwm5eHHcwpAbFnJlFRnfW4JvKg4ghKE/c?=
+ =?us-ascii?Q?hdlzw2Fis258REiouSFErKFec+5yIsSm874GwZ7JO9jnnMdqUUUueaDEEUc2?=
+ =?us-ascii?Q?v2jbHmNyCMb7AtyHjmLOEsLx4Z9vvtW2gx5HLDnT4cAeHqVbbFwl27GviOzO?=
+ =?us-ascii?Q?e7z4du701q2ZNJnVnVU5k+LQ40s/sKQe1en9ZZ/FOwBjmJneJyNwwmMm7kUZ?=
+ =?us-ascii?Q?JYpfcNbuLNhZ3IDSqQOnN/ygM5s2VYbWkj9zG1lVg8ffNIm3DeaH017CcmkR?=
+ =?us-ascii?Q?eBwf7yoJYSpndkxgkyYsR6jsP/QK/fQ3Gee8aujuI5Te8dFLge8iKyfKPZk4?=
+ =?us-ascii?Q?OY2CN0OO8l+zSxpj/rLYulhA62yZe3mxEY5E2M3mj7q2UHv22Re5ggMML0rI?=
+ =?us-ascii?Q?jiqYDo3mx6J9ONLRSssOENouLsAOG1s0fXrY4e/K?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f5da766-b432-4c07-c6d4-08ddec2c461b
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8505.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 03:28:29.2704
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2tqBZZwZOjdeAzj7Udqiygbc8MSJpfGULHLnCtWrmtuUtKYP7M2aS4NRe/rZUqhOCpx0U0ppUGg6qzBWYILplA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB10013
 
-Hi Marek,
+Some PTP devices support looping back the periodic pulse signal for
+debugging. For example, the PTP device of QorIQ platform and the NETC v4
+Timer has the ability to loop back the pulse signal and record the extts
+events for the loopback signal. So we can make sure that the pulse
+intervals and their phase alignment are correct from the perspective of
+the emitting PHC's time base. In addition, we can use this loopback
+feature as a built-in extts event generator when we have no external
+equipment which does that. Therefore, add the generic debugfs interfaces
+to the ptp_clock driver. The first two patch are separated from the
+previous patch set [1]. The third patch is new added.
 
-On 9/4/2025 9:27 PM, Marek Szyprowski wrote:
-> On 04.09.2025 05:19, Damon Ding wrote:
->> On 9/1/2025 6:25 PM, Marek Szyprowski wrote:
->>> On 01.09.2025 05:41, Damon Ding wrote:
->>>> On 8/29/2025 4:23 PM, Marek Szyprowski wrote:
->>>>> On 29.08.2025 10:08, Damon Ding wrote:
->>>>>> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
->>>>>>> On 15.08.2025 04:59, Damon Ding wrote:
->>>>>>>> On 2025/8/15 5:16, Marek Szyprowski wrote:
->>>>>>>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
->>>>>>>>>> On 14.08.2025 12:47, Damon Ding wrote:
->>>>>>>>>>> PATCH 1 is a small format optimization for struct
->>>>>>>>>>> analogid_dp_device.
->>>>>>>>>>> PATCH 2 is to perform mode setting in
->>>>>>>>>>> &drm_bridge_funcs.atomic_enable.
->>>>>>>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector
->>>>>>>>>>> helper.
->>>>>>>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
->>>>>>>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix
->>>>>>>>>>> side.
->>>>>>>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
->>>>>>>>>>> PATCH 13 is to apply the panel_bridge helper.
->>>>>>>>>> ...
->>>>>>>
->>>>>>
->>>>>> Could you please provide the related DTS file for the test? I will
->>>>>> also try to find out the reason for this unexpected issue. ;-)
->>>>>
->>>>> Unfortunately I didn't find enough time to debug this further. The
->>>>> above
->>>>> log is from Samsung Snow Chromebook,
->>>>> arch/arm/boot/dts/samsung/exynos5250-snow.dts
->>>>>
->>>>>
->>>>
->>>> I compare the differences in the following display path before and
->>>> after this patch series:
->>>>
->>>> exynos_dp -> nxp-ptn3460 -> panel "auo,b116xw03"
->>>>
->>>> The issue is likely caused by the &drm_connector_funcs.detect()
->>>> related logic. Before this patch series, the nxp-ptn3460 connector is
->>>> always connector_status_connected because there is not available
->>>> &drm_connector_funcs.detect(). After it, the DRM_BRIDGE_OP_DETECT flag
->>>> make the connection status depend on analogix_dp_bridge_detect().
->>>>
->>>> Could you please add the following patches additionally and try again?
->>>> (Not the final solution, just validation)
->>>>
->>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>> index a93ff8f0a468..355911c47354 100644
->>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>>> @@ -1491,9 +1491,11 @@ int analogix_dp_bind(struct analogix_dp_device
->>>> *dp, struct drm_device *drm_dev)
->>>>                   }
->>>>           }
->>>>
->>>> -       bridge->ops = DRM_BRIDGE_OP_DETECT |
->>>> -                     DRM_BRIDGE_OP_EDID |
->>>> +       bridge->ops = DRM_BRIDGE_OP_EDID |
->>>>                         DRM_BRIDGE_OP_MODES;
->>>> +       if (drm_bridge_is_panel(dp->plat_data->next_bridge))
->>>> +               bridge->ops |= DRM_BRIDGE_OP_DETECT;
->>>> +
->>>>           bridge->of_node = dp->dev->of_node;
->>>>           bridge->type = DRM_MODE_CONNECTOR_eDP;
->>>>           ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
->>>
->>> It is better. Now the display panel is detected and reported to
->>> userspace, but it looks that something is not properly initialized,
->>> because there is garbage instead of the proper picture.
->>>
->>
->> I simulated the display path mentioned above on my RK3588S EVB1 Board.
->> To my slight surprise, it displayed normally with the reported
->> connector type DRM_MODE_CONNECTOR_LVDS. ;-)
->>
->> The modifications included:
->> 1.Synchronized the Analogix DP ralated DT configurations with Samsung
->> Snow Chromebook.
->> 2.Skipped the I2C transfers and GPIO operations in nxp-ptn3460 driver.
->> 3.Set the EDID to that of eDP Panel LP079QX1-SP0V forcibly.
->>
->> Additionally, I added debug logs to verify whether the functions in
->> ptn3460_bridge_funcs were actually called.
->>
->> Did you encounter any unexpected logs during your investigation? I'd
->> like to perform additional tests on this issue. :-)
-> 
-> 
-> Okay, I've finally went to the office and tested manually all 3
-> Chromebook boards witch use exynos-dp based display hardware. Previously
-> I only did the remote tests and observed result on a webcam, which was
-> not directed directly at the tested displays, so I only saw the glare
-> from the display panel.
-> 
-> The results are as follows:
-> 
-> 1. Snow (arch/arm/boot/dts/samsung/exynos5250-snow.dts) - exynos-dp ->
-> nxp-ptn3460 1366x768 lvds panel - works fine with the above mentioned
-> change.
-> 
-> 2. Peach-Pit (arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts) -
-> exynos-dp -> parade,ps8625 -> auo,b116xw03 1366x768 lvds panel -
-> displays garbage, this was the only board I previously was able to see
-> partially on the webcam.
-> 
-> 3. Peach-Pi (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts) -
-> exynos-dp -> auo,b133htn01 1920x1080 edp panel - also displays garbage.
-> 
-> Then I found why both Peach boards displays garbage on boot - the
-> framebuffer emulation is initialized for 1024x786 resolution, which is
-> not handled by those panels. This is a bit strange, because the
-> connector implemented by the panel reports proper native mode to drm and
-> userspace. 'modetest -c' shows the right resolution. Also when I run
-> 'modetest -s' with the panel's native resolution then the test pattern
-> is correctly displayed on all three boards.
-> 
-> 
-> Then I've played a bit with the analogix code and it looks that this
-> 1024x768 mode is some kind default mode which comes from
-> analogix_dp_bridge_edid_read() function, which has been introduced by
-> this patchset. When I removed DRM_BRIDGE_OP_EDID flag from bridge->ops,
-> then I got it finally working again properly on all three boards. I hope
-> this helps fixing this issue.
-> 
+[1]: https://lore.kernel.org/imx/20250827063332.1217664-1-wei.fang@nxp.com/ #patch 3 and 9
 
-Thank you for your help with the investigation. :-)
+---
+v2 changes:
+1. The value of "enable" is restricted to 0 or 1.
+2. Fix the typo: covert --> convert
+3. Improve the cover-letter
+---
 
-Based on your helpful findings and Dmitry's earlier suggestions[0], it 
-is better to distinguish the &drm_bridge->ops of Analogix bridge based 
-on whether the downstream device is a panel, a bridge or neither.
+Wei Fang (3):
+  ptp: add debugfs interfaces to loop back the periodic output signal
+  ptp: netc: add the periodic output signal loopback support
+  ptp: qoriq: convert to use generic interfaces to set loopback mode
 
-1. If there is a panel after, the &drm_bridge->ops should be set to 
-DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT.
+ MAINTAINERS                      |   1 -
+ drivers/ptp/Kconfig              |   2 +-
+ drivers/ptp/Makefile             |   4 +-
+ drivers/ptp/ptp_clock.c          |  69 +++++++++++++++++++++
+ drivers/ptp/ptp_netc.c           |  25 ++++++++
+ drivers/ptp/ptp_qoriq.c          |  24 +++++++-
+ drivers/ptp/ptp_qoriq_debugfs.c  | 101 -------------------------------
+ include/linux/fsl/ptp_qoriq.h    |  10 ---
+ include/linux/ptp_clock_kernel.h |  10 +++
+ 9 files changed, 128 insertions(+), 118 deletions(-)
+ delete mode 100644 drivers/ptp/ptp_qoriq_debugfs.c
 
-Since the &drm_bridge->ops of panel_bridge is DRM_BRIDGE_OP_MODES and 
-the panel-edp driver reads EDID in &drm_panel_funcs.get_modes(), the 
-DRM_BRIDGE_OP_EDID should be removed to ensure proper invocation for the 
-&drm_bridge_funcs.get_modes() of panel_bridge.
-
-2. If there is a bridge after, the &drm_bridge->ops should be set to NULL.
-
-The OP_EDID and OP_MODES supports depends on the next bridge rather than 
-the Analogix bridge. According to your investigation, nxp-ptn3460 
-supports &drm_bridge_funcs.edid_read() while parade-ps8625 do not.
-
-Additionally, since some bridges does not support 
-&drm_bridge_funcs.detect(), which regards as connector_status_connected 
-by default according to 
-drm_helper_probe_detect()(drivers/gpu/drm_probe_helper.c), the 
-connection status should also depends on the next bridge rather than the 
-Analogix bridge.
-
-3. If there is neither a panel nor a bridge, the &drm_bridge->ops should 
-be set to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
-
-In this case, the Analogix DP driver may work in the DP mode, so the 
-OP_EDID and OP_DETECT supports should be helpful.
-
-Best regards,
-Damon
-
-[0]https://lore.kernel.org/all/incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim/
+-- 
+2.34.1
 
 
