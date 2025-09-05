@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-803206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EA4B45C1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B15BB45C24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACE47C2498
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6118561A05
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E21831B80D;
-	Fri,  5 Sep 2025 15:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3F31B81B;
+	Fri,  5 Sep 2025 15:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="fXV2PKDT"
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOKuUiKS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAC331B81C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D431B81F;
+	Fri,  5 Sep 2025 15:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085130; cv=none; b=gkVtfz9Q8F768k0GGQNoTNfudlOAuxM2Fl34tC6jRWa1CJlAg51DmTcSDfVRnbG8ONCm0h5DMuMhj4DX69A9K+hypo0JlYQwPYaepWIVQIgIIOKGkVxBchKW1j6f2YT6/qg874lQgYX3j67BadccemZPOxy/lkZM3fALUaLXxgk=
+	t=1757085138; cv=none; b=fKaRFluSF2nmOVAGQe2jtdQ7m2eRRTw1hyrVU8VrtvRnW/2Jx/hKVON8EOqbDcHb9QwOn13QmSPpUlys812AiB1WDAS7bLNzAJJfbZ0QZ0OJfLMFxSKjpbs4SGqgp1BPm2GSwkbsVd2SZeWJ84g7gY+K7OL857hAipFz+dqtgiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085130; c=relaxed/simple;
-	bh=ttrRBcRJHUGJsmpiYHMPJaoIp0vAv8EnpbZbJ4yyr/I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kv8/J/7D5u/EjiqKFNUYgzrQD77JLoqAiCiF2L94qoFnLkabBsb2ggsv6HOsrMn7XlhcN4giRPXOhZ11/QgwQ+EtycwAwKL3Ti6kUgVk2X/32HAWKrG0rcpy9cnVvRHhwCQ3MrwFAOEI6QFc3xziv3IcyjXCOOBwNuK0xp4dUys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=fXV2PKDT; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [221.228.238.82])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 21d9533d1;
-	Fri, 5 Sep 2025 23:11:59 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: maarten.lankhorst@linux.intel.com
-Cc: mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] drm: Use kvmemdup/kvfree for EDID data
-Date: Fri,  5 Sep 2025 15:11:56 +0000
-Message-Id: <20250905151156.844758-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757085138; c=relaxed/simple;
+	bh=GqWmfiP16k/SjEKn56UrkAlZm2tla0SwMryFGU5QCEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hP0V0f9rHgravAreGOoSkeDeOV5tAGsJm1Tw6BvOaO08nCefkPtAlVFPuBjPrLQaTCGuIiC8HU694ytlK+88GJYv1lHJ3LsEzCIGPHIm+InyHmf7H2FH1PrfWefmVMI9f+tp6/wUS2ks9rWmYrk4MQ2FOnL//ZgvKflWlLD+k+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOKuUiKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4695FC4CEFA;
+	Fri,  5 Sep 2025 15:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757085136;
+	bh=GqWmfiP16k/SjEKn56UrkAlZm2tla0SwMryFGU5QCEg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rOKuUiKS4wEKL970qs6ZsqxCbHLXUePx88xJxvBNTYN383sl3tGk4xmXWpA2WveM2
+	 DA6+lgqzbwHDBBJqe6OW5X+ofknc29pDE+TLOQ2s7C63okiPEkrQql1SyYJ0PAZBVA
+	 U58Cq02kg/RNEASYqzaf71Z5mpuMzypgqhRfYsE6Z/6SlvFWKgmopipwx3uuh/6INn
+	 Lunacs6wcDzbW6sbbzL2O3GSqEzoVYTwfn+NQFrgxmYOYaMq9eZc2WuSGfa285ZGv+
+	 ZYvfe1JjwdSlN9vc62cim5QJLy88TsdDAlYt8vu4VuMearqzPoOQKTH7wlvaR4RVNW
+	 hQHfJ9x5QxhTg==
+Message-ID: <59bc3e3b-bc96-4125-8e4d-4dbe92f8b2fc@kernel.org>
+Date: Sat, 6 Sep 2025 00:12:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a991a6f34b303a1kunm694de830289b38
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQxlDVk0dTEhNSkJJGklOGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUpVSUlDVUlIQ1VDSVlXWRYaDxIVHRRZQVlLVUtVS1VLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=fXV2PKDTt7nk7QveGxHQ/I8dtVQPfO0B2eT4t57TeRbc/m0jZlYpkdxswpkD3dZgORr/WVNBJy/Pe7Abx/SrWi8LB4ZW63mQyT/UqiCav/jqk/UhjKhjIgQvvAlf6w+9pIotIvVgXS8adZDCTFJkNkUampzFE4NuSYfnJyGBnb8=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
-	bh=Rjrnbhz/j596PH/1yB3FKm4uksPxzdVSFHyF0AXryOg=;
-	h=date:mime-version:subject:message-id:from;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/21] can: netlink: remove comment in can_validate()
+To: Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+ <20250903-canxl-netlink-prep-v1-7-904bd6037cd9@kernel.org>
+ <b1bf6cc5-f972-4163-8619-e04b887e2d32@hartkopp.net>
+ <79452f68-c231-4bf2-a4ea-e3dce9b78e2e@kernel.org>
+ <a4c0fade-52b6-4077-8a6a-fce6f2d62cd2@hartkopp.net>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <a4c0fade-52b6-4077-8a6a-fce6f2d62cd2@hartkopp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The drm_edid_alloc() function uses kmemdup() to copy raw EDID data,
-which can be loaded from firmware. A problem exists because the firmware
-subsystem uses vfree() to release its data buffer. This implies the
-buffer may be allocated with vmalloc() and can thus be larger than
-kmalloc() typically supports. Since kmemdup() uses kmalloc() internally,
-attempting to duplicate a large, vmalloc'd EDID buffer can lead to an
-allocation failure.
+On 05/09/2025 at 19:55, Oliver Hartkopp wrote:
 
-To fix this mismatch and robustly handle EDID data of any size, this
-patch replaces kmemdup() with kvmemdup(). The kvmemdup() function is
-designed for this scenario, as it can safely handle a vmalloc'd source
-and choose an appropriate allocator for the destination. The corresponding
-free calls are therefore updated to kvfree().
+(..)
 
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/gpu/drm/drm_edid.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> No need to defend yourself with specific references or even feel personally
+> attacked.
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index e2e85345aa9a..97142bfc45ad 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -2530,13 +2530,13 @@ const struct drm_edid *drm_edid_alloc(const void *edid, size_t size)
- 	if (!edid || !size || size < EDID_LENGTH)
- 		return NULL;
- 
--	edid = kmemdup(edid, size, GFP_KERNEL);
-+	edid = kvmemdup(edid, size, GFP_KERNEL);
- 	if (!edid)
- 		return NULL;
- 
- 	drm_edid = _drm_edid_alloc(edid, size);
- 	if (!drm_edid)
--		kfree(edid);
-+		kvfree(edid);
- 
- 	return drm_edid;
- }
-@@ -2568,7 +2568,7 @@ void drm_edid_free(const struct drm_edid *drm_edid)
- 	if (!drm_edid)
- 		return;
- 
--	kfree(drm_edid->edid);
-+	kvfree(drm_edid->edid);
- 	kfree(drm_edid);
- }
- EXPORT_SYMBOL(drm_edid_free);
--- 
-2.34.1
+Thanks. I was not sure how to read your previous message.
+
+> My overall feeling is that you spend an excellent effort in commit messages but
+> this information is then omitted in code comments.
+> 
+> As I've already written "I would like to motivate you to generally add more
+> comments.". And this can also happen when refactoring things where new functions
+> are created which reduces the context to the original code section.
+
+My current mind set is that I want to do more ironing on the upcoming XL
+patches. Because I do the documentation last once everything is working well,
+this is still on my TODO list.
+
+And when this is done, there is also
+
+  Documentation/networking/can.rst
+
+which need an update. At the moment, I am rather happy by just keeping the
+existing documentation in this refactor series and want to put the extra effort
+on the new stuff. Thinking of the upcoming work and of my current bandwidth, I
+am really not in the mood into injecting more time in the refactor.
+
+That said, on a second thought, I finally decided to keep the comment which I
+previously wanted to remove. I will just move it from can_validate() to
+can_validate_databittiming() in patch 06/21 "can: netlink: add
+can_validate_databittiming()".
+
+
+Yours sincerely,
+Vincent Mailhol
 
 
