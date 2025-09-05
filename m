@@ -1,142 +1,203 @@
-Return-Path: <linux-kernel+bounces-802239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C79B44F56
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:26:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066A2B44FA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53763BC12A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:26:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094687BDAFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125272F0681;
-	Fri,  5 Sep 2025 07:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StwrOGC2"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E392F1FE6;
+	Fri,  5 Sep 2025 07:19:25 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44FD2EF65E;
-	Fri,  5 Sep 2025 07:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405BA2D7DE2;
+	Fri,  5 Sep 2025 07:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757056737; cv=none; b=SL6Vs1izZ8Qo6u/oO4RRjHFXRgo9/Wr4brKfq1Q4+ONDle8Jv+ZJq3ioJD/BW4H4txRKjDTNgS1esnZm8s+ij2x5YlfR4M1b0zrcZQKHpVUfoE3xT0FMP8EfK6Ds7xV41+nR6r8OSVXSUfexQCMnOTXif1+YbuKQhSnxVSNySRU=
+	t=1757056765; cv=none; b=JTU7KjfB4lqMlMqMmOFjFGLyOYOhhjqynT64/afECHEMBJqCIKhH789BR2ErMfykyRp11jGbYzLpu5QKvAqoPBnw0HtqokyQFx45DgNhUkYM6ELd/V7S7kZnxlm0WQUmLGTLihLXqoImf15QpD0+Rciu//tQ5uyR2ptQngch61c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757056737; c=relaxed/simple;
-	bh=H223aX43nK1pPdfcIo1BT3fCYy/tXf6As0jPOBfabl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zj1QyGT+aFBk9Pq24ppRXOfYrw79bkBBCX2WOsQA4O6ly5fEiiYhcj6iaZb/04RItgb6MapvQfCuJo4ASSsYTMoA9/AWIycnMwweLSUgLWrb4603fkbQtZeCryvTBn4GaNG0PrySP0YpiJ2b0hLQLSFYxFbAI/fA+PxVa8Wudt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StwrOGC2; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3381df3b950so6780071fa.0;
-        Fri, 05 Sep 2025 00:18:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757056734; x=1757661534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJz7bdBnKBg2ceOJglorHSW6LY+Qn3Rzkau42ItVYOM=;
-        b=StwrOGC2mqJaZCD13znqfA7bngAt8MvjhWrDO5fyKQS7egU18qhNNXOhyCMzh5p5IC
-         zXWXhAO566zsp9efhkd1xDdbEUhPqg9bhIybE0Qq1mcbGVw0Y+0adUtUsi/+x5xXBu8M
-         P0RWLMzsoisujMpaJCG4nZY9CJ2WFZ+czv+HkYK2iMMzzhimz4bdRGzg/GNki9dY+vSS
-         ESj2J1fwoaNeQoLLrHIt74kMWNBwV2HQfCxhb0fEji8vyMpZWu4PYkvm45jzuwhzgSTg
-         nXbKSNLyWfCBaekvOOlIvyKN84l3TtlDSSI3s+j4BWU5k7Q9oEXyM1cs2zSnJgPfYuot
-         dD0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757056734; x=1757661534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VJz7bdBnKBg2ceOJglorHSW6LY+Qn3Rzkau42ItVYOM=;
-        b=QEuzVqN4jJ4waFTlmOXVKNFuCDTt+t/5ASX9u6lwF8NKuZY1bCIZWs9UhssKcXaQey
-         KVdUPLfhJBhqB7cx8zLiPnbudnGVzVpRuR0ROGgIi7eY/eolUrWBhlyvpMGNRBS3zMab
-         2IQs5hM8q5NUHnbVKaOua6tSly+LTDO8dEjfT2P8HBAvcH17KWofzEDzzmin9rQJL2aP
-         lxxy73Mwi8tGddVH9QUHL1FWMLvoroqokkmFx3MRc0GFA7Bg0L6xh92mxeDppEdjTTnF
-         Wi+Hb+eVYYmFjW+q8MbgNauCejLNIDWSqYQ+x9NoFqAmDP+mX0t1xx1bVrHdbky1ZnuI
-         6PyA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Z88TwiM1dFROUOO4B++04SH/x1y1pD6G6PofBffFqTeYcOxIIlOAJsbbd6XpRu2VOzKCyUCtDpnsEGY=@vger.kernel.org, AJvYcCX1/6DguGsJZYXfvRvsTlE8OIVU7u8TXMHrakdAnQI5tAv7HyK+kxxiKU5EZDBmgC5EsOPgUhZbds/8@vger.kernel.org, AJvYcCXSL8oxGQyh2j01WGmpBMhpUHWTCtQ/Qz+09w56fWG8muOw/q9PtIRNZAjjmz91aRMvgZNcwsZByDw=@vger.kernel.org, AJvYcCXxVHN4sEBVjuxMfECsj1nIs5MCwD0ZPNRUtvtbbmDisWHimR2X7mcMLs8wAzbUa5OBPJ0i0KXsmY2m3giq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDnmY3d9vobz2z7/gwoNBVlYurjS4+ZofqQeHBkPXHfwLqLQpa
-	jURd8EdZwBk44MSU9X4Ml2kyU0JOqrmbobXlF8r++lqmUWcrshSKK/E8j/ET8mjeQbDkfAOw2hT
-	ofMgz31mVPVpi7jUgcrC1IADi4jVK8hY=
-X-Gm-Gg: ASbGnctUmfVc+lwWtStvhJgzoXmERf3dB+Iy0N8ovaujF0OdKv3IeTaXrgQuca2dXVw
-	pW8bb3hb0Om6hUvWJcFvHy+05IJL80nxWGXfkiUMifyU6xau/7SaVspAunn5iT38sbJCvSYNJc5
-	cvYa60q1hWCXNy6f6PSGVhZr4QLC2yIhmDFGmTzBsxNaZ0Fe7mFBLijj//z3UHUUq6Wqc4V3CVu
-	kEoelc=
-X-Google-Smtp-Source: AGHT+IG+iAZiL5a9vcVJGPUFdWSDn5K9xZdjUYWNJPmKZX7IPVD8EN9zuBxiYf7HfJEJRgarXPnKa9oD6EzDEGdw/jE=
-X-Received: by 2002:a05:651c:b06:b0:336:c310:6ff9 with SMTP id
- 38308e7fff4ca-336ca9cd8cemr56466581fa.19.1757056733511; Fri, 05 Sep 2025
- 00:18:53 -0700 (PDT)
+	s=arc-20240116; t=1757056765; c=relaxed/simple;
+	bh=HLoSeCRQYxL++oAQkD0DlxnGeb/r/Kj9JsB5JDVRpyc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qFkFJb6eaw28UAnHXJQ5e22iKo9UE2Wd/P2IUxcYkkhCvmWMs5XygdQeiLepnIYQx56GqV3IXwt0RCHS/z+hUYcrnrl3Yl8DCaMd8pAjztIoAp86EfJ3KFmJvjRzefAROhNA7Ft+mUmCtL3q7Lc+hWABSaxkYz3vy5WCpddRrbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cJ75313cMzKHN6S;
+	Fri,  5 Sep 2025 15:19:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1FCB51A1436;
+	Fri,  5 Sep 2025 15:19:19 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3QY71jrpowczQBQ--.43501S3;
+	Fri, 05 Sep 2025 15:19:18 +0800 (CST)
+Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
+To: Han Guangjiang <gj.han@foxmail.com>, yukuai1@huaweicloud.com
+Cc: axboe@kernel.dk, fanggeng@lixiang.com, hanguangjiang@lixiang.com,
+ liangjie@lixiang.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangchen11@lixiang.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <1f9c674a-9f5b-6c89-0504-1f6985095fa0@huaweicloud.com>
+ <tencent_F6A864CCCE079BE929924EE899C63BC6A705@qq.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <602194b5-e671-5a1e-65cb-0f770c5efb6a@huaweicloud.com>
+Date: Fri, 5 Sep 2025 15:19:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com> <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
- <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com> <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
-In-Reply-To: <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 5 Sep 2025 02:18:41 -0500
-X-Gm-Features: Ac12FXwJhmydf2_U-hTVI9iShWSyeWRBVWI7bOIm9DBcxoS9hWma7UNAMb0hcxA
-Message-ID: <CALHNRZ8apdrTK_77bS05=NA_F6_fjoyySNbgS6UDLBp2pLhJpg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client IDs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <tencent_F6A864CCCE079BE929924EE899C63BC6A705@qq.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3QY71jrpowczQBQ--.43501S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFWfJF1fZFy7Jw1fuF1kGrg_yoW7Xr1rpF
+	W3K3W5Cr4kXFnrZa17tr1YgryjyaykAa1UJrn3Jr1fuF1q9r1kK3W8tF42kryDAF4UtFyI
+	qF1qq3y8KF1DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Sep 5, 2025 at 1:56=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 04/09/2025 19:33, Aaron Kling wrote:
-> > On Thu, Sep 4, 2025 at 3:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >>
-> >> On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
-> >>> Each memory client has unique hardware ID, add these IDs.
-> >>>
-> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> >>> ---
-> >>>  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++=
-++++++++++
-> >>>  1 file changed, 58 insertions(+)
-> >>>
-> >>> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bi=
-ndings/memory/tegra210-mc.h
-> >>> index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e04914201=
-4e3bcc132b88bf1a92d 100644
-> >>> --- a/include/dt-bindings/memory/tegra210-mc.h
-> >>> +++ b/include/dt-bindings/memory/tegra210-mc.h
-> >>> @@ -75,4 +75,62 @@
-> >>>  #define TEGRA210_MC_RESET_ETR                28
-> >>>  #define TEGRA210_MC_RESET_TSECB              29
-> >>>
-> >>> +#define TEGRA210_MC_PTCR             0
-> >>
-> >> There is no driver user of this ABI, so does not look like a binding.
-> >>
-> >> You have entire commit msg to clarify such unusual things, like lack o=
-f
-> >> users. Please use it.
-> >
-> > The tegra210-mc driver has these hardcoded and should probably be
-> > updated to use the bindings instead, but I think that's outside of the
-> > scope of this series. I will clarify such in the updated message.
->
-> If you introduce the binding, change the drivers to use it. Otherwise
-> there is no point benefit in this binding, really.
+Hi,
 
-Ack. I was adding the bindings to avoid magic numbers in the dt
-commits at the end of this series. But I can update the mc driver as
-well.
+ÔÚ 2025/09/05 14:53, Han Guangjiang Ð´µÀ:
+> Hi,
+> 
+>>>>>     static inline bool blk_throtl_activated(struct request_queue *q)
+>>>>>     {
+>>>>> -        return q->td != NULL;
+>>>>> +        return q->td != NULL &&
+>>>>> +               test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
+>>>>>     }
+>>>> You can just remove the fist checking, p->td must be set if policy is
+>>>> enabled. And please make blkcg_policy_enabled() inline function in
+>>>> blk-cgroup.h and use it here.
+>>> We intentionally kept the q->td != NULL check because we cannot guarantee
+>>> that the policy module is fully loaded when this function is called.
+>>> If the policy module is not loaded yet, blkcg_policy_throtl.plid might not be
+>>> assigned, which could cause the test_bit() check to be incorrect.
+>>>
+>>> By keeping this check, we ensure that we have at least reached the cgroup
+>>> configuration flow, indicating that the policy loading is complete.
+>>>
+>>> I'm wondering if there are any risks here and whether we should remove
+>>> the q->td != NULL check?
+>>
+>> I think there is none. blk-throttle can't be build as module, if config is n,
+>> blk_throtl_bio() is a non-function, if config is y, policy is registered during
+>> init. And throtl_init() failure will panic, noted blkcg_policy_register() will
+>> never fail for blk-throttle. BTW, policy pid is not a dynamic value at runtime.
+> 
+> I understand your point, but I think there's still a potential race
+> condition during kernel initialization. While blk-throttle is built as a
+> built-in module, block devices can also be built as built-in modules, and
+> at the same initcall level, the loading order may be unpredictable.
+> Additionally, the policy plid is allocated during blk-throttle module
+> initialization, so we need to verify this timing issue.
+> 
+> I conducted an experiment on the qemu platform by adding a BUG() statement
+> in the blk_throtl_activated() function:
+> 
+> ------------[ cut here ]------------
+> kernel BUG at block/blk-throttle.h:157!
+> Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT_RT SMP
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.17-g69f6c99f1c48 #2
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : submit_bio_noacct+0xec/0x388
+> lr : submit_bio_noacct+0x40/0x388
+> sp : ffff80008135b530
+> x29: ffff80008135b530 x28: ffff00000180f000 x27: fffffdffc00876c0
+> x26: 0000000000000040 x25: ffff800080a405f0 x24: 0000000000000004
+> x23: ffff800080393128 x22: ffff000002720000 x21: ffff0000018c0700
+> x20: 0000000000000000 x19: ffff00000207b180 x18: 0000000000000020
+> x17: 0000000000000002 x16: 0000000000000002 x15: ffffffffffffffff
+> x14: 0000000000000000 x13: ffff800080dff350 x12: ffffffffffffffff
+> x11: 0000000000000000 x10: 0000000000000020 x9 : ffff8000804cd088
+> x8 : ffff00000180f088 x7 : 0000000000000000 x6 : ffff00000207b1f8
+> x5 : 0000000000000008 x4 : ffff0000018c0700 x3 : ffff7fffdee71000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> Call trace:
+>   submit_bio_noacct+0xec/0x388
+>   submit_bio+0xb4/0x150
+>   submit_bh_wbc+0x14c/0x1d0
+>   block_read_full_folio+0x25c/0x398
+>   blkdev_read_folio+0x24/0x38
+>   filemap_read_folio+0x34/0xf0
+>   do_read_cache_folio+0x150/0x290
+>   read_cache_folio+0x1c/0x30
+>   read_part_sector+0x48/0xd0
+>   read_lba+0x9c/0x180
+>   efi_partition+0xa0/0x780
+>   bdev_disk_changed+0x238/0x608
+>   blkdev_get_whole+0xac/0x150
+>   bdev_open+0x28c/0x418
+>   bdev_file_open_by_dev+0xe0/0x150
+>   disk_scan_partitions+0x74/0x160
+>   device_add_disk+0x3f4/0x448
+>   virtblk_probe+0x74c/0x920
+>   virtio_dev_probe+0x1a4/0x250
+>   really_probe+0xb4/0x2b0
+>   __driver_probe_device+0x80/0x140
+>   driver_probe_device+0xdc/0x178
+>   __driver_attach+0x9c/0x1b8
+>   bus_for_each_dev+0x7c/0xe8
+>   driver_attach+0x2c/0x40
+>   bus_add_driver+0xec/0x218
+>   driver_register+0x68/0x138
+>   __register_virtio_driver+0x2c/0x50
+>   virtio_blk_init+0x74/0xd0
+>   do_one_initcall+0x64/0x290
+>   kernel_init_freeable+0x214/0x408
+>   kernel_init+0x2c/0x1f0
+>   ret_from_fork+0x10/0x20
+> 
+>>From the experimental results, we can see that virtio block device is 
+> executing blk_throtl_activated() during initialization in do_one_initcall()
+> when loading virio-blk module_init().
+> 
+> Combined with the information that blk-throttle is also loaded as a
+> built-in module, there exists a scenario where the block device probes
+> first, at which point the plid has not been allocated yet, and
+> blk_throtl_activated() is executed, followed by the loading of the
+> blk-throttle built-in module.
+> 
+> Given this experimental evidence, I'm wondering if we should consider
+> keeping the q->td != NULL check as a safeguard against this initialization
+> race condition. I'd appreciate your thoughts on this matter.
+> 
 
-Aaron
+Yes, this make sense, thanks for the explanation. Please add comments
+about this as well.
+
+Thanks,
+Kuai
+
+> Thanks,
+> Han Guangjiang
+> 
+> .
+> 
+
 
