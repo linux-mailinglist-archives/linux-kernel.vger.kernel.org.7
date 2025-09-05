@@ -1,327 +1,625 @@
-Return-Path: <linux-kernel+bounces-803577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3CCB4629E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:49:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A73B462BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456EA7AFBDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF9D7BB200
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B24225A29;
-	Fri,  5 Sep 2025 18:48:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A484277017;
-	Fri,  5 Sep 2025 18:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE6C289376;
+	Fri,  5 Sep 2025 18:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuQkjbHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA18326C39E;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098122; cv=none; b=KXWGcs4MNJrLK0xRfzOnDND9/I+ocfQ88gUHeUII8Sx8YjDPYjKfRwd7lILcu8fbf1THNZ7GZFAfADGOHLKAF6GpwhOqls+R2EKwocMVAkSQYJa5M7DNdfDqT19yE1QmKGx8F4Gc7STU0aAh2MWfIn8UzHFUuyFHvvIlHkI1ils=
+	t=1757098130; cv=none; b=VHTmTJvj1yGQoXmyheEpzHnDmnJz5z66ri4mMazM7cOkeDoZKrDkjn5KWh6XS6y92CGKdOdCaxrDSNfYG+O2yyESB5JnLL/nLhQW53GK55gnmzRahWsl+0hBZ5OfBmaUvMHWV/Wn0wWW8K1wrPA8uvD4/TnslryIdUug+jv9v40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098122; c=relaxed/simple;
-	bh=7UqTyz8zP8i8yfRiTBv/BTxviF7lQMms4rKZ92n/Ydc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tvs1WT3iUbf8cItcHbFEMQ+KdbP9H0vTsNqgBxjvSmFCZ+6UckiBsdvEJmQM5xmgKdM/g7AwTdDznbaXV2+cSo515xyE+AQyGOgG1mNdui5jP+0wfMTYAhPx5FE9UldiYQ95NNYOsu4tcQ3oqcuHptHzowxhjNtG3lWRs3q4tmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17137152B;
-	Fri,  5 Sep 2025 11:48:31 -0700 (PDT)
-Received: from [10.1.197.69] (unknown [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C6113F63F;
-	Fri,  5 Sep 2025 11:48:33 -0700 (PDT)
-Message-ID: <c129a5ca-066b-4a78-a1fe-be474b592022@arm.com>
-Date: Fri, 5 Sep 2025 19:48:25 +0100
+	s=arc-20240116; t=1757098130; c=relaxed/simple;
+	bh=0RsfSk7Z7giYDTRx/TlwUf+aWs1ysuZSuIiQt3xAsKc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TBxdFd/Wn+vlu48RoBOggI3jSchQUF6b6IVABftU3QHPZEhRPsd8QUjij95Ud/KAO6cpWKNFDNWr9ugyeQ1aR/M/Ze0I4UkffprelSZhoBcB5ghRtT5K2+OQQyD/WPVTwowDAJXuIzLK9mWetWBeaH1S/zp9uWO5CUMgQu3q93s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuQkjbHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 876ABC4CEFB;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757098130;
+	bh=0RsfSk7Z7giYDTRx/TlwUf+aWs1ysuZSuIiQt3xAsKc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=cuQkjbHnGKhjJKAJMFhWZNE33XdOiRrWYzQvVujoMJ9S81Ppm71J0qrT/zBNu6FKE
+	 Q4/dVGwvzJtGHyGGWfuYWSKh0+fdDfHBIRlB32zxqTNANFxo3uxz4VnGQ7iG+An5E6
+	 I0hLh6YdG6e5V3Koa2/vccY4sj6QxPpS2nyuYBmfur3ikRjb5TodkUJuSeFG5vZR+B
+	 E0xUo04JJjoyO5UsI6ELmSIibZ3sNkPMT6SIwqyGRo7Wyeab/IEfxk4TaJDVSlgkPH
+	 wFQeUOk13LSIJub+3yXoFGLCK3HT8CVRnsf4MTR48E4Qk3xCWFNrNfrFn7ty/eEo2i
+	 qDtIF3yHVzzDw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A65CA101F;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+Date: Fri, 05 Sep 2025 13:48:26 -0500
+Subject: [PATCH RFC 03/13] dmaengine: sdxi: Add descriptor encoding and
+ unit tests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
- kbuild boiler plate
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-11-james.morse@arm.com>
- <120b4049-a28d-40ad-9def-c901e12c7a68@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <120b4049-a28d-40ad-9def-c901e12c7a68@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250905-sdxi-base-v1-3-d0341a1292ba@amd.com>
+References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+In-Reply-To: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Wei Huang <wei.huang2@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757098128; l=15232;
+ i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
+ bh=UezToU+VmZcS1jraaaN8wx3PC2DeVePS8pHMHmsC5dQ=;
+ b=VDFU1hO+cBEzdN0KG639/c4S4BO9U0MkDWKjhXjihFFSVQglPW0F3m7VV75nYmL1zErwvWonP
+ L+NkJLEUsZLDsMkM6HgMR6Ns5CP21Vz9Pg73HDL3cZlErBmWf5TOikq
+X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
+ pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
+X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
+ auth_id=241
+X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
+Reply-To: nathan.lynch@amd.com
 
-Hi Ben,
+From: Nathan Lynch <nathan.lynch@amd.com>
 
-On 27/08/2025 14:03, Ben Horgan wrote:
-> On 8/22/25 16:29, James Morse wrote:
->> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
->> only be accessible from those CPUs, and they may not be online.
->> Touching the hardware early is pointless as MPAM can't be used until
->> the system-wide common values for num_partid and num_pmg have been
->> discovered.
->>
->> Start with driver probe/remove and mapping the MSC.
+Add support for encoding several types of SDXI descriptors:
 
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> new file mode 100644
->> index 000000000000..a0d9a699a6e7
->> --- /dev/null
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -0,0 +1,336 @@
+* Copy
+* Interrupt
+* Context start
+* Context stop
 
->> +static int mpam_dt_parse_resource(struct mpam_msc *msc, struct device_node *np,
->> +				  u32 ris_idx)
->> +{
->> +	int err = 0;
->> +	u32 level = 0;
->> +	unsigned long cache_id;
->> +	struct device_node *cache;
->> +
->> +	do {
->> +		if (of_device_is_compatible(np, "arm,mpam-cache")) {
->> +			cache = of_parse_phandle(np, "arm,mpam-device", 0);
->> +			if (!cache) {
->> +				pr_err("Failed to read phandle\n");
->> +				break;
->> +			}
-> This looks like this allows "arm,mpam-cache" and "arm,mpam-device" to be
-> used on an msc node when there are no ris children. This usage could be
-> reasonable but doesn't match the schema in the previous patch. Should
-> this usage be rejected or the schema extended?
+Each type of descriptor has a corresponding parameter struct which is
+an input to its encoder function. E.g. to encode a copy descriptor,
+the client initializes a struct sdxi_copy object with the source,
+destination, size, etc and passes that to sdxi_encode_copy().
 
-The DT/ACPI stuff is only going to describe the things that make sense at a high level,
-e.g. the controls for the L3. There may be other controls for stuff that doesn't make
-sense in the hardware - these get discovered, grouped as 'unknown' and left alone.
+Include unit tests that verify that encoded descriptors have the
+expected values and that fallible encode functions fail on invalid
+inputs.
 
-Another angle on this is where there is an MSC that the OS will never make use of, but
-needs to know about to find the system wide minimum value. (there is a comment about
-this in the ACPI spec...)
+Co-developed-by: Wei Huang <wei.huang2@amd.com>
+Signed-off-by: Wei Huang <wei.huang2@amd.com>
+Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
+---
+ drivers/dma/sdxi/.kunitconfig       |   4 +
+ drivers/dma/sdxi/descriptor.c       | 197 ++++++++++++++++++++++++++++++++++++
+ drivers/dma/sdxi/descriptor.h       | 107 ++++++++++++++++++++
+ drivers/dma/sdxi/descriptor_kunit.c | 181 +++++++++++++++++++++++++++++++++
+ 4 files changed, 489 insertions(+)
 
-I don't think its a problem if the magic dt-binding machinery is overly restrictive, that
-is about validating DTB files...
+diff --git a/drivers/dma/sdxi/.kunitconfig b/drivers/dma/sdxi/.kunitconfig
+new file mode 100644
+index 0000000000000000000000000000000000000000..a98cf19770f03bce82ef86d378d2a2e34da5154a
+--- /dev/null
++++ b/drivers/dma/sdxi/.kunitconfig
+@@ -0,0 +1,4 @@
++CONFIG_KUNIT=y
++CONFIG_DMADEVICES=y
++CONFIG_SDXI=y
++CONFIG_SDXI_KUNIT_TEST=y
+diff --git a/drivers/dma/sdxi/descriptor.c b/drivers/dma/sdxi/descriptor.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ea5247bf8cdaac19131ca5326ba1640c0b557f8
+--- /dev/null
++++ b/drivers/dma/sdxi/descriptor.c
+@@ -0,0 +1,197 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * SDXI descriptor encoding.
++ *
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++
++#include <kunit/test.h>
++#include <kunit/test-bug.h>
++#include <kunit/visibility.h>
++#include <linux/align.h>
++#include <linux/bitfield.h>
++#include <linux/bitmap.h>
++#include <linux/dma-mapping.h>
++#include <linux/log2.h>
++#include <linux/packing.h>
++#include <linux/string.h>
++#include <linux/types.h>
++#include <asm/byteorder.h>
++
++#include "hw.h"
++#include "descriptor.h"
++
++enum {
++	SDXI_PACKING_QUIRKS = QUIRK_LITTLE_ENDIAN | QUIRK_LSW32_IS_FIRST,
++};
++
++#define sdxi_desc_field(_high, _low, _member) \
++	PACKED_FIELD(_high, _low, struct sdxi_desc_unpacked, _member)
++#define sdxi_desc_flag(_bit, _member) \
++	sdxi_desc_field(_bit, _bit, _member)
++
++static const struct packed_field_u16 common_descriptor_fields[] = {
++	sdxi_desc_flag(0, vl),
++	sdxi_desc_flag(1, se),
++	sdxi_desc_flag(2, fe),
++	sdxi_desc_flag(3, ch),
++	sdxi_desc_flag(4, csr),
++	sdxi_desc_flag(5, rb),
++	sdxi_desc_field(15, 8, subtype),
++	sdxi_desc_field(26, 16, type),
++	sdxi_desc_flag(448, np),
++	sdxi_desc_field(511, 453, csb_ptr),
++};
++
++void sdxi_desc_unpack(struct sdxi_desc_unpacked *to,
++		      const struct sdxi_desc *from)
++{
++	*to = (struct sdxi_desc_unpacked){};
++	unpack_fields(from, sizeof(*from), to, common_descriptor_fields,
++		      SDXI_PACKING_QUIRKS);
++}
++EXPORT_SYMBOL_IF_KUNIT(sdxi_desc_unpack);
++
++static void desc_clear(struct sdxi_desc *desc)
++{
++	memset(desc, 0, sizeof(*desc));
++}
++
++static __must_check int sdxi_encode_size32(u64 size, __le32 *dest)
++{
++	/*
++	 * sizes are encoded as value - 1:
++	 * value    encoding
++	 *     1           0
++	 *     2           1
++	 *   ...
++	 *    4G  0xffffffff
++	 */
++	if (WARN_ON_ONCE(size > SZ_4G) ||
++	    WARN_ON_ONCE(size == 0))
++		return -EINVAL;
++	size = clamp_val(size, 1, SZ_4G);
++	*dest = cpu_to_le32((u32)(size - 1));
++	return 0;
++}
++
++int sdxi_encode_copy(struct sdxi_desc *desc, const struct sdxi_copy *params)
++{
++	u64 csb_ptr;
++	u32 opcode;
++	__le32 size;
++	int err;
++
++	err = sdxi_encode_size32(params->len, &size);
++	if (err)
++		return err;
++	/*
++	 * TODO: reject overlapping src and dst. Quoting "Memory
++	 * Consistency Model": "Software shall not ... overlap the
++	 * source buffer, destination buffer, Atomic Return Data, or
++	 * completion status block."
++	 */
++
++	opcode = (FIELD_PREP(SDXI_DSC_VL, 1) |
++		  FIELD_PREP(SDXI_DSC_SUBTYPE, SDXI_DSC_OP_SUBTYPE_COPY) |
++		  FIELD_PREP(SDXI_DSC_TYPE, SDXI_DSC_OP_TYPE_DMAB));
++
++	csb_ptr = FIELD_PREP(SDXI_DSC_NP, 1);
++
++	desc_clear(desc);
++	desc->copy = (struct sdxi_dsc_dmab_copy) {
++		.opcode = cpu_to_le32(opcode),
++		.size = size,
++		.akey0 = cpu_to_le16(params->src_akey),
++		.akey1 = cpu_to_le16(params->dst_akey),
++		.addr0 = cpu_to_le64(params->src),
++		.addr1 = cpu_to_le64(params->dst),
++		.csb_ptr = cpu_to_le64(csb_ptr),
++	};
++
++	return 0;
++}
++EXPORT_SYMBOL_IF_KUNIT(sdxi_encode_copy);
++
++int sdxi_encode_intr(struct sdxi_desc *desc,
++		     const struct sdxi_intr *params)
++{
++	u64 csb_ptr;
++	u32 opcode;
++
++	opcode = (FIELD_PREP(SDXI_DSC_VL, 1) |
++		  FIELD_PREP(SDXI_DSC_SUBTYPE, SDXI_DSC_OP_SUBTYPE_INTR) |
++		  FIELD_PREP(SDXI_DSC_TYPE, SDXI_DSC_OP_TYPE_INTR));
++
++	csb_ptr = FIELD_PREP(SDXI_DSC_NP, 1);
++
++	desc_clear(desc);
++	desc->intr = (struct sdxi_dsc_intr) {
++		.opcode = cpu_to_le32(opcode),
++		.akey = cpu_to_le16(params->akey),
++		.csb_ptr = cpu_to_le64(csb_ptr),
++	};
++
++	return 0;
++}
++EXPORT_SYMBOL_IF_KUNIT(sdxi_encode_intr);
++
++int sdxi_encode_cxt_start(struct sdxi_desc *desc,
++			  const struct sdxi_cxt_start *params)
++{
++	u16 cxt_start;
++	u16 cxt_end;
++	u64 csb_ptr;
++	u32 opcode;
++
++	opcode = (FIELD_PREP(SDXI_DSC_VL, 1) |
++		  FIELD_PREP(SDXI_DSC_FE, 1) |
++		  FIELD_PREP(SDXI_DSC_SUBTYPE, SDXI_DSC_OP_SUBTYPE_CXT_START_NM) |
++		  FIELD_PREP(SDXI_DSC_TYPE, SDXI_DSC_OP_TYPE_ADMIN));
++
++	cxt_start = params->range.cxt_start;
++	cxt_end = params->range.cxt_end;
++
++	csb_ptr = FIELD_PREP(SDXI_DSC_NP, 1);
++
++	desc_clear(desc);
++	desc->cxt_start = (struct sdxi_dsc_cxt_start) {
++		.opcode = cpu_to_le32(opcode),
++		.cxt_start = cpu_to_le16(cxt_start),
++		.cxt_end = cpu_to_le16(cxt_end),
++		.csb_ptr = cpu_to_le64(csb_ptr),
++	};
++
++	return 0;
++}
++EXPORT_SYMBOL_IF_KUNIT(sdxi_encode_cxt_start);
++
++int sdxi_encode_cxt_stop(struct sdxi_desc *desc,
++			  const struct sdxi_cxt_stop *params)
++{
++	u16 cxt_start;
++	u16 cxt_end;
++	u64 csb_ptr;
++	u32 opcode;
++
++	opcode = (FIELD_PREP(SDXI_DSC_VL, 1) |
++		  FIELD_PREP(SDXI_DSC_FE, 1) |
++		  FIELD_PREP(SDXI_DSC_SUBTYPE, SDXI_DSC_OP_SUBTYPE_CXT_STOP) |
++		  FIELD_PREP(SDXI_DSC_TYPE, SDXI_DSC_OP_TYPE_ADMIN));
++
++	cxt_start = params->range.cxt_start;
++	cxt_end = params->range.cxt_end;
++
++	csb_ptr = FIELD_PREP(SDXI_DSC_NP, 1);
++
++	desc_clear(desc);
++	desc->cxt_stop = (struct sdxi_dsc_cxt_stop) {
++		.opcode = cpu_to_le32(opcode),
++		.cxt_start = cpu_to_le16(cxt_start),
++		.cxt_end = cpu_to_le16(cxt_end),
++		.csb_ptr = cpu_to_le64(csb_ptr),
++	};
++
++	return 0;
++}
++EXPORT_SYMBOL_IF_KUNIT(sdxi_encode_cxt_stop);
+diff --git a/drivers/dma/sdxi/descriptor.h b/drivers/dma/sdxi/descriptor.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..141463dfd56bd4a88b4b3c9d45b13cc8101e1961
+--- /dev/null
++++ b/drivers/dma/sdxi/descriptor.h
+@@ -0,0 +1,107 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef DMA_SDXI_DESCRIPTOR_H
++#define DMA_SDXI_DESCRIPTOR_H
++
++/*
++ * Facilities for encoding SDXI descriptors.
++ *
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++
++#include <asm/byteorder.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/errno.h>
++#include <linux/minmax.h>
++#include <linux/sizes.h>
++#include <linux/stddef.h>
++#include <linux/types.h>
++
++#include "hw.h"
++
++static inline void sdxi_desc_set_csb(struct sdxi_desc *desc,
++				     dma_addr_t addr)
++{
++	desc->csb_ptr = cpu_to_le64(FIELD_PREP(SDXI_DSC_CSB_PTR, addr >> 5));
++}
++
++struct sdxi_cxt_range {
++	u16 cxt_start;
++	u16 cxt_end;
++};
++
++static inline struct sdxi_cxt_range __sdxi_cxt_range(u16 a, u16 b)
++{
++	return (struct sdxi_cxt_range) {
++		.cxt_start = min(a, b),
++		.cxt_end   = max(a, b),
++	};
++}
++
++#define sdxi_cxt_range_1(_id)			\
++	({					\
++		u16 id = (_id);			\
++		__sdxi_cxt_range(id, id);	\
++	})
++
++#define sdxi_cxt_range_2(_id1, _id2) __sdxi_cxt_range(_id1, _id2)
++
++#define _sdxi_cxt_range(_1, _2, _fn, ...) _fn
++
++#define sdxi_cxt_range(...)						\
++	_sdxi_cxt_range(__VA_ARGS__,					\
++			sdxi_cxt_range_2, sdxi_cxt_range_1)(__VA_ARGS__)
++
++struct sdxi_copy {
++	dma_addr_t src;
++	dma_addr_t dst;
++	size_t len;
++	u16 src_akey;
++	u16 dst_akey;
++};
++
++int sdxi_encode_copy(struct sdxi_desc *desc,
++		     const struct sdxi_copy *params);
++
++struct sdxi_intr {
++	u16 akey;
++};
++
++int sdxi_encode_intr(struct sdxi_desc *desc,
++		     const struct sdxi_intr *params);
++
++struct sdxi_cxt_start {
++	struct sdxi_cxt_range range;
++};
++
++int sdxi_encode_cxt_start(struct sdxi_desc *desc,
++			  const struct sdxi_cxt_start *params);
++
++struct sdxi_cxt_stop {
++	struct sdxi_cxt_range range;
++};
++
++int sdxi_encode_cxt_stop(struct sdxi_desc *desc,
++			  const struct sdxi_cxt_stop *params);
++
++/*
++ * Fields common to all SDXI descriptors in "unpacked" form, for use
++ * with pack_fields() and unpack_fields().
++ */
++struct sdxi_desc_unpacked {
++	u64 csb_ptr;
++	u16 type;
++	u8 subtype;
++	bool vl;
++	bool se;
++	bool fe;
++	bool ch;
++	bool csr;
++	bool rb;
++	bool np;
++};
++
++void sdxi_desc_unpack(struct sdxi_desc_unpacked *to,
++		      const struct sdxi_desc *from);
++
++#endif /* DMA_SDXI_DESCRIPTOR_H */
+diff --git a/drivers/dma/sdxi/descriptor_kunit.c b/drivers/dma/sdxi/descriptor_kunit.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..eb89d5a152cd789fb8cfa66b78bf30e583a1680d
+--- /dev/null
++++ b/drivers/dma/sdxi/descriptor_kunit.c
+@@ -0,0 +1,181 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * SDXI descriptor encoding tests.
++ *
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++#include <kunit/device.h>
++#include <kunit/test-bug.h>
++#include <kunit/test.h>
++#include <linux/container_of.h>
++#include <linux/dma-mapping.h>
++#include <linux/module.h>
++#include <linux/string.h>
++
++#include "descriptor.h"
++
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
++
++static void desc_poison(struct sdxi_desc *d)
++{
++	memset(d, 0xff, sizeof(*d));
++}
++
++static void copy(struct kunit *t)
++{
++	struct sdxi_desc_unpacked unpacked;
++	struct sdxi_copy copy = {};
++	struct sdxi_desc desc = {};
++
++	desc_poison(&desc);
++	KUNIT_EXPECT_EQ(t, -EINVAL, sdxi_encode_copy(&desc, &copy));
++
++	desc_poison(&desc);
++	copy.len = SZ_4G + 1;
++	KUNIT_EXPECT_EQ(t, -EINVAL, sdxi_encode_copy(&desc, &copy));
++
++	desc_poison(&desc);
++	copy.len = 1;
++	KUNIT_EXPECT_EQ(t, 0, sdxi_encode_copy(&desc, &copy));
++
++	desc_poison(&desc);
++	copy.len = SZ_4G;
++	KUNIT_EXPECT_EQ(t, 0, sdxi_encode_copy(&desc, &copy));
++	KUNIT_EXPECT_EQ(t, SZ_4G - 1, le32_to_cpu(desc.copy.size));
++
++	desc_poison(&desc);
++	KUNIT_EXPECT_EQ(t, 0,
++			sdxi_encode_copy(&desc,
++					 &(struct sdxi_copy) {
++						 .src = 0x1000,
++						 .dst = 0x2000,
++						 .len = 0x100,
++						 .src_akey = 1,
++						 .dst_akey = 2,
++					 }));
++	KUNIT_EXPECT_EQ(t, 0x1000, le64_to_cpu(desc.copy.addr0));
++	KUNIT_EXPECT_EQ(t, 0x2000, le64_to_cpu(desc.copy.addr1));
++	KUNIT_EXPECT_EQ(t, 0x100, 1 + le32_to_cpu(desc.copy.size));
++	KUNIT_EXPECT_EQ(t, 1, le16_to_cpu(desc.copy.akey0));
++	KUNIT_EXPECT_EQ(t, 2, le16_to_cpu(desc.copy.akey1));
++
++	sdxi_desc_unpack(&unpacked, &desc);
++	KUNIT_EXPECT_EQ(t, unpacked.vl, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.ch, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.subtype, SDXI_DSC_OP_SUBTYPE_COPY);
++	KUNIT_EXPECT_EQ(t, unpacked.type, SDXI_DSC_OP_TYPE_DMAB);
++	KUNIT_EXPECT_EQ(t, unpacked.csb_ptr, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.np, 1);
++}
++
++static void intr(struct kunit *t)
++{
++	struct sdxi_desc_unpacked unpacked;
++	struct sdxi_intr intr = {
++		.akey = 1234,
++	};
++	struct sdxi_desc desc;
++
++	desc_poison(&desc);
++	KUNIT_EXPECT_EQ(t, 0, sdxi_encode_intr(&desc, &intr));
++	KUNIT_EXPECT_EQ(t, 1234, le16_to_cpu(desc.intr.akey));
++
++	sdxi_desc_unpack(&unpacked, &desc);
++	KUNIT_EXPECT_EQ(t, unpacked.vl, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.ch, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.subtype, SDXI_DSC_OP_SUBTYPE_INTR);
++	KUNIT_EXPECT_EQ(t, unpacked.type, SDXI_DSC_OP_TYPE_INTR);
++	KUNIT_EXPECT_EQ(t, unpacked.csb_ptr, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.np, 1);
++}
++
++static void cxt_start(struct kunit *t)
++{
++	struct sdxi_cxt_start start = {
++		.range = sdxi_cxt_range(1, U16_MAX)
++	};
++	struct sdxi_desc desc = {};
++	struct sdxi_desc_unpacked unpacked;
++
++	KUNIT_EXPECT_EQ(t, 0, sdxi_encode_cxt_start(&desc, &start));
++
++	/* Check op-specific fields. */
++	KUNIT_EXPECT_EQ(t, 0, desc.cxt_start.vflags);
++	KUNIT_EXPECT_EQ(t, 0, desc.cxt_start.vf_num);
++	KUNIT_EXPECT_EQ(t, 1, desc.cxt_start.cxt_start);
++	KUNIT_EXPECT_EQ(t, U16_MAX, desc.cxt_start.cxt_end);
++	KUNIT_EXPECT_EQ(t, 0, desc.cxt_start.db_value);
++
++	/*
++	 * Check generic fields. Some flags have mandatory values
++	 * according to the operation type.
++	 */
++	sdxi_desc_unpack(&unpacked, &desc);
++	KUNIT_EXPECT_EQ(t, unpacked.vl, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.se, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.fe, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.ch, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.subtype, SDXI_DSC_OP_SUBTYPE_CXT_START_NM);
++	KUNIT_EXPECT_EQ(t, unpacked.type, SDXI_DSC_OP_TYPE_ADMIN);
++	KUNIT_EXPECT_EQ(t, unpacked.csb_ptr, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.np, 1);
++}
++
++static void cxt_stop(struct kunit *t)
++{
++	struct sdxi_cxt_stop stop = {
++		.range = sdxi_cxt_range(1, U16_MAX)
++	};
++	struct sdxi_desc desc = {};
++	struct sdxi_desc_unpacked unpacked;
++
++	KUNIT_EXPECT_EQ(t, 0, sdxi_encode_cxt_stop(&desc, &stop));
++
++	/* Check op-specific fields */
++	KUNIT_EXPECT_EQ(t, 0, desc.cxt_stop.vflags);
++	KUNIT_EXPECT_EQ(t, 0, desc.cxt_stop.vf_num);
++	KUNIT_EXPECT_EQ(t, 1, desc.cxt_stop.cxt_start);
++	KUNIT_EXPECT_EQ(t, U16_MAX, desc.cxt_stop.cxt_end);
++
++	/*
++	 * Check generic fields. Some flags have mandatory values
++	 * according to the operation type.
++	 */
++	sdxi_desc_unpack(&unpacked, &desc);
++	KUNIT_EXPECT_EQ(t, unpacked.vl, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.se, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.fe, 1);
++	KUNIT_EXPECT_EQ(t, unpacked.ch, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.subtype, SDXI_DSC_OP_SUBTYPE_CXT_STOP);
++	KUNIT_EXPECT_EQ(t, unpacked.type, SDXI_DSC_OP_TYPE_ADMIN);
++	KUNIT_EXPECT_EQ(t, unpacked.csb_ptr, 0);
++	KUNIT_EXPECT_EQ(t, unpacked.np, 1);
++}
++
++static struct kunit_case generic_desc_tcs[] = {
++	KUNIT_CASE(copy),
++	KUNIT_CASE(intr),
++	KUNIT_CASE(cxt_start),
++	KUNIT_CASE(cxt_stop),
++	{},
++};
++
++static int generic_desc_setup_device(struct kunit *t)
++{
++	struct device *dev = kunit_device_register(t, "sdxi-mock-device");
++
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(t, dev);
++	t->priv = dev;
++	return 0;
++}
++
++static struct kunit_suite generic_desc_ts = {
++	.name = "Generic SDXI descriptor encoding",
++	.test_cases = generic_desc_tcs,
++	.init = generic_desc_setup_device,
++};
++kunit_test_suite(generic_desc_ts);
++
++MODULE_DESCRIPTION("SDXI descriptor encoding tests");
++MODULE_AUTHOR("Nathan Lynch");
++MODULE_LICENSE("GPL");
+
+-- 
+2.39.5
 
 
->> +		} else if (of_device_is_compatible(np->parent, "cache")) {
->> +			cache = of_node_get(np->parent);
->> +		} else {
->> +			/* For now, only caches are supported */
->> +			cache = NULL;
->> +			break;
->> +		}
->> +
->> +		err = of_property_read_u32(cache, "cache-level", &level);
->> +		if (err) {
->> +			pr_err("Failed to read cache-level\n");
->> +			break;
->> +		}
->> +
->> +		cache_id = cache_of_calculate_id(cache);
->> +		if (cache_id == ~0UL) {
->> +			err = -ENOENT;
->> +			break;
->> +		}
->> +
->> +		err = mpam_ris_create(msc, ris_idx, MPAM_CLASS_CACHE, level,
->> +				      cache_id);
->> +	} while (0);
->> +	of_node_put(cache);
->> +
->> +	return err;
->> +}
-
->> +static int mpam_msc_drv_probe(struct platform_device *pdev)
->> +{
->> +	int err;
->> +	struct mpam_msc *msc;
->> +	struct resource *msc_res;
->> +	void *plat_data = pdev->dev.platform_data;
->> +
->> +	mutex_lock(&mpam_list_lock);
->> +	do {
->> +		msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
->> +		if (!msc) {
->> +			err = -ENOMEM;
->> +			break;
->> +		}
->> +
->> +		mutex_init(&msc->probe_lock);
->> +		mutex_init(&msc->part_sel_lock);
->> +		mutex_init(&msc->outer_mon_sel_lock);
->> +		raw_spin_lock_init(&msc->inner_mon_sel_lock);
->> +		msc->id = mpam_num_msc++;
->> +		msc->pdev = pdev;
->> +		INIT_LIST_HEAD_RCU(&msc->glbl_list);
->> +		INIT_LIST_HEAD_RCU(&msc->ris);
->> +
->> +		err = update_msc_accessibility(msc);
->> +		if (err)
->> +			break;
->> +		if (cpumask_empty(&msc->accessibility)) {
->> +			pr_err_once("msc:%u is not accessible from any CPU!",
->> +				    msc->id);
->> +			err = -EINVAL;
->> +			break;
->> +		}
->> +
->> +		if (device_property_read_u32(&pdev->dev, "pcc-channel",
->> +					     &msc->pcc_subspace_id))
->> +			msc->iface = MPAM_IFACE_MMIO;
->> +		else
->> +			msc->iface = MPAM_IFACE_PCC;
->> +
->> +		if (msc->iface == MPAM_IFACE_MMIO) {
->> +			void __iomem *io;
->> +
->> +			io = devm_platform_get_and_ioremap_resource(pdev, 0,
->> +								    &msc_res);
->> +			if (IS_ERR(io)) {
->> +				pr_err("Failed to map MSC base address\n");
->> +				err = PTR_ERR(io);
->> +				break;
->> +			}
->> +			msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
->> +			msc->mapped_hwpage = io;
->> +		} else if (msc->iface == MPAM_IFACE_PCC) {
->> +			msc->pcc_cl.dev = &pdev->dev;
->> +			msc->pcc_cl.rx_callback = mpam_pcc_rx_callback;
->> +			msc->pcc_cl.tx_block = false;
->> +			msc->pcc_cl.tx_tout = 1000; /* 1s */
->> +			msc->pcc_cl.knows_txdone = false;
->> +
->> +			msc->pcc_chan = pcc_mbox_request_channel(&msc->pcc_cl,
->> +								 msc->pcc_subspace_id);
->> +			if (IS_ERR(msc->pcc_chan)) {
->> +				pr_err("Failed to request MSC PCC channel\n");
->> +				err = PTR_ERR(msc->pcc_chan);
->> +				break;
->> +			}
-> I don't see pcc support added in this series. Should we fail the probe
-> if this interface is specified?
-
-I've got patches from Andre P to support it on DT - but the platforms that need it keeping
-popping in and out of existence. I'll pull these bits out - they were intended to check
-the ACPI table wasn't totally rotten...
-
-
-> (If keeping, there is a missing pcc_mbox_free_channel() on the error path.)
-
-When pcc_mbox_request_channel() fails? It already called mbox_free_channel() itself.
-
-
->> +		}
->> +
->> +		list_add_rcu(&msc->glbl_list, &mpam_all_msc);
->> +		platform_set_drvdata(pdev, msc);
->> +	} while (0);
->> +	mutex_unlock(&mpam_list_lock);
->> +
->> +	if (!err) {
->> +		/* Create RIS entries described by firmware */
->> +		if (!acpi_disabled)
->> +			err = acpi_mpam_parse_resources(msc, plat_data);
->> +		else
->> +			err = mpam_dt_parse_resources(msc, plat_data);
->> +	}
->> +
->> +	if (!err && fw_num_msc == mpam_num_msc)
->> +		mpam_discovery_complete();
->> +
->> +	if (err && msc)
->> +		mpam_msc_drv_remove(pdev);
->> +
->> +	return err;
->> +}
-
->> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
->> new file mode 100644
->> index 000000000000..07e0f240eaca
->> --- /dev/null
->> +++ b/drivers/resctrl/mpam_internal.h
->> @@ -0,0 +1,62 @@
-
->> +struct mpam_msc {
->> +	/* member of mpam_all_msc */
->> +	struct list_head        glbl_list;
->> +
->> +	int			id;
->> +	struct platform_device *pdev;
->> +
->> +	/* Not modified after mpam_is_enabled() becomes true */
->> +	enum mpam_msc_iface	iface;
->> +	u32			pcc_subspace_id;
->> +	struct mbox_client	pcc_cl;
->> +	struct pcc_mbox_chan	*pcc_chan;
->> +	u32			nrdy_usec;
->> +	cpumask_t		accessibility;
->> +
->> +	/*
->> +	 * probe_lock is only take during discovery. After discovery these
-> nit: s/take/taken/
-
-Fixed,
-
->> +	 * properties become read-only and the lists are protected by SRCU.
->> +	 */
->> +	struct mutex		probe_lock;
->> +	unsigned long		ris_idxs[128 / BITS_PER_LONG];
->> +	u32			ris_max;
->> +
->> +	/* mpam_msc_ris of this component */
->> +	struct list_head	ris;
->> +
->> +	/*
->> +	 * part_sel_lock protects access to the MSC hardware registers that are
->> +	 * affected by MPAMCFG_PART_SEL. (including the ID registers that vary
->> +	 * by RIS).
->> +	 * If needed, take msc->lock first.
->> +	 */
->> +	struct mutex		part_sel_lock;
->> +
->> +	/*
->> +	 * mon_sel_lock protects access to the MSC hardware registers that are
->> +	 * affeted by MPAMCFG_MON_SEL.
-> nit: s/affeted/affected/
-Fixed,
-
-
->> +	 * If needed, take msc->lock first.
->> +	 */
->> +	struct mutex		outer_mon_sel_lock;
->> +	raw_spinlock_t		inner_mon_sel_lock;
->> +	unsigned long		inner_mon_sel_flags;
->> +
->> +	void __iomem		*mapped_hwpage;
->> +	size_t			mapped_hwpage_sz;
->> +};
->> +
->> +#endif /* MPAM_INTERNAL_H */
-
-Thanks,
-
-James
 
