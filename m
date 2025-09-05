@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-803159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5763DB45B6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:02:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D08B45B56
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C81166355
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:59:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014587AEBCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A59737289C;
-	Fri,  5 Sep 2025 14:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A245306B1B;
+	Fri,  5 Sep 2025 14:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELzK1Dto"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EX4o4y4x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C7306B04;
-	Fri,  5 Sep 2025 14:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C4A306B08;
+	Fri,  5 Sep 2025 14:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084333; cv=none; b=p39diY7R5b9fH0EbZ4lVqeL87AUgEt64TIuWuY3UGlCcMn/Kycgqev+MXzdUm/cz6R/WlBCVItqXXitUPnxPH8qpaFlFnwXITOVxOhF1uv6c67pOJcmMvG24/WPSBOaTgL1M4EAJCX11WFKeOzvqPy1ALeK5AQAR097OvalOYKQ=
+	t=1757084340; cv=none; b=CfdSJ32jauuo+Zue5KVae4nZD7zSWi7bT2unFC4P0gbO5NT0DN5wMFyZWDMR+XsR2VZd5Cw3x+RCNde5bv6ckmzuI9dBje2pBfJZzhRuOaEqZSCegKfeUdSOQWKLHL8TgXOqOO8/uYACbHr80ltpuc83/Kt9BpALrKCiiduwA/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084333; c=relaxed/simple;
-	bh=mg0k12zBWTMKVIHace3F600FbAS2V+x7Sd+WtaH65dA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqZQkDw/tOzGwZaiB/4TIueiU1uW+Hq3GVSvS5tVjWTboVFqo0fSHH6YFIidv9qlHDsIgFl53uTi4EG/FVOOa6guK6nG38I2AtmxWBrTqcbgSksEwGqXDpi4xLa0ogYmNu3fIRW6lsodO6i0Yg9PTGZw0JR3deNPi5n1oP1k8QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELzK1Dto; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D822AC4CEF1;
-	Fri,  5 Sep 2025 14:58:51 +0000 (UTC)
+	s=arc-20240116; t=1757084340; c=relaxed/simple;
+	bh=reVuS9zhTFmkX8jA2nOh2kSTCPa25rqxfdxv2B2YT/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DPAC48X+9EZI1pRqv0gyYJEdo7VwRRMCsmKZksU9mRwCNJ7x4duOrPVjjfHUgpjVkPZMzOurdeWIn563wVm34r1QkiKJy8rGDQo/qkQZWN9mREvnKUm2Ki/qJnJY7sIJoHVHKzLGNyVI8qMZv621rE2jDLWdkC9+fbHI/zZQM0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EX4o4y4x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A13C4CEF4;
+	Fri,  5 Sep 2025 14:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757084333;
-	bh=mg0k12zBWTMKVIHace3F600FbAS2V+x7Sd+WtaH65dA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ELzK1DtoX3Fnua56iq6tQ0clMGufaoqKH18IIDWNzaxdMAIVEdn4j72CfoaOv1TGX
-	 V3rw1jPpkLcKPquyEYgxOVOM+i7XccubaJOPeOVuoeTurf212w26c58XQPyr+xHuGQ
-	 mHsrPVZCbeAZ1I0PqErgNF8a6D37CbmngL+fXIKiUao0h4+sy/+DJgrHmmxylEYRz2
-	 4n7vPFKtxnR4Za7Xw41k4xh6xuo3dyCqwFIRM7MCJprc0pt51Z/MO7uXMZnSV4KNP9
-	 DjA2tYo2n9AvA1fHmZqeJ/evBoZE5I3Exr0NZ/yG8B+oGfSJn4XjVbwixR93psETkw
-	 nA9GaZ8UjAL/w==
-Message-ID: <6799c8a7-cc0e-4df0-aa08-10b948b58c4d@kernel.org>
-Date: Fri, 5 Sep 2025 23:58:50 +0900
+	s=k20201202; t=1757084339;
+	bh=reVuS9zhTFmkX8jA2nOh2kSTCPa25rqxfdxv2B2YT/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EX4o4y4xKAuUGKFAQd9CAubRxt4lm2wqWLNIGd0ZiNrK2hDPiXhm47QyUZ/Haq1XA
+	 0O8WFp2GrG2uq8afEjt/ImiIVkyOZpzF8NFYpy3BcXof4oH0PQfxCNubg8q/m+alAC
+	 gRlRbPZThhauOm0/DoRXMfLXynymbAqsJ9HAfaURJJr4aWi27buSxceA/saZaqeD5Z
+	 MZvBCnTNcHY/ohwSE/UxKrwclPt5XLM9k++NKhS3OY41qUkdbm6aeS2x5PeQt7C+a5
+	 iOr/fpEnOoTnw2ihfjS2Ti3cLS/Q1a41HsfyAkzoqQIo9o5aRw/rg8ZbtloJXOS00I
+	 M/eqqr9dLxijA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 5/6] selftests: tracing: Add a basic testcase for wprobe
+Date: Fri,  5 Sep 2025 23:58:54 +0900
+Message-ID: <175708433451.64001.6930500874071515570.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <175708427997.64001.11661389635019507808.stgit@devnote2>
+References: <175708427997.64001.11661389635019507808.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/21] can: netlink: preparation before introduction of
- CAN XL step 2/2
-To: Oliver Hartkopp <socketcan@hartkopp.net>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
- <6e4dcab9-d3d7-4c8b-99c1-f472bb7caa07@kernel.org>
- <e37c9890-823f-4a38-bdcc-c170dbe67e13@hartkopp.net>
- <88d2836b-2702-481f-b504-20c6efa5cb1a@kernel.org>
- <32fc8ebf-1cf5-41b0-b843-1af4821a8ddb@hartkopp.net>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <32fc8ebf-1cf5-41b0-b843-1af4821a8ddb@hartkopp.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 05/09/2025 at 20:11, Oliver Hartkopp wrote:
-> On 04.09.25 11:18, Vincent Mailhol wrote:
-> 
->> Concerning the CAN_CTRLMODE_XL_RRS, I am not sure if that one is needed. I still
->> have it in my WIP series but I am recently considering to remove it. The reason
->> is that when reading ISO 11898-1 having RRS configurable looks mandatory to me.
->>
->> In the logical Link control (LLC) this RRS bit is named FTYP (for Frame Type).
->> For example, CiA only mentions FTYP in their CAN XL knowledge page:
->>
->>    https://www.can-cia.org/can-knowledge/can-xl
->>
->> Contrarily to CAN FD's RRS which is indeed specified as being dominant and which
->> is just ignored in the LLC, the CAN XL FTYP/RRS is part of the LLC interface and
->> is meant to be configurable.
-> 
-> I double checked my XCANB CAN XL controller spec and indeed the RRS bit is part
-> of every RX/TX FIFO element and the figures see it as configurable element too.
-> 
->> Nothing in the standard tells us that this should be a dominant bit. I think
->> your intention was to add CAN_CTRLMODE_XL_RRS as a quirk for the devices which
->> expose this flag. But as far as I can see, it seems that a device which does not
->> expose it is just not compliant.
-> 
-> Let's see if we will find CAN XL IP cores where the engineers have a different
-> view on this. I currently have a discussion on this RRS bit with the Vector
-> support because the RRS bit is not visible in the CANalyser 19 GUI.
-> 
->> If some day a device which can not set the FTYP/RRS flag appears in the wild,
->> then maybe we can add a flag which would specify that RRS is not configurable
->> (opposite logic as what you suggested). But as long as such a device do not
->> exist, it is better to add nothing.
-> 
-> ACK. After this discussion I would also vote to omit my glorious patch which
-> added the CAN_CTRLMODE_XL_RRS flag. Let's see if we find a CAN XL controller
-> that does not support the variable RRS bit in reading and writing. And if it
-> shows up we can add this flag to handle it (similar to the fd-non-iso feature).
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-OK. Good that we reached out to the same conclusion :)
+Add 'add_remove_wprobe.tc' testcase for testing wprobe event that
+tests adding and removing operations of the wprobe event.
 
-Because I already implemented all the logic, I will save the current RRS patch
-somewhere in case we need to resurrect it some days.
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ .../ftrace/test.d/dynevent/add_remove_wprobe.tc    |   68 ++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
 
-
-Yours sincerely,
-Vincent Mailhol
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+new file mode 100644
+index 000000000000..20774c7f69f8
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+@@ -0,0 +1,68 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Generic dynamic event - add/remove wprobe events
++# requires: dynamic_events "w[:[<group>/][<event>]] [r|w|rw]@<addr>[:<len>]":README
++
++echo 0 > events/enable
++echo > dynamic_events
++
++# Use jiffies as a variable that is frequently written to.
++TARGET=jiffies
++
++echo "w:my_wprobe w@$TARGET" >> dynamic_events
++
++grep -q my_wprobe dynamic_events
++if [ $? -ne 0 ]; then
++    echo "Failed to create wprobe event"
++    exit_fail
++fi
++
++test -d events/wprobes/my_wprobe
++if [ $? -ne 0 ]; then
++    echo "Failed to create wprobe event directory"
++    exit_fail
++fi
++
++echo 1 > events/wprobes/my_wprobe/enable
++
++# Check if the event is enabled
++cat events/wprobes/my_wprobe/enable | grep -q 1
++if [ $? -ne 0 ]; then
++    echo "Failed to enable wprobe event"
++    exit_fail
++fi
++
++# Let some time pass to trigger the breakpoint
++sleep 1
++
++# Check if we got any trace output
++if !grep -q my_wprobe trace; then
++    echo "wprobe event was not triggered"
++fi
++
++echo 0 > events/wprobes/my_wprobe/enable
++
++# Check if the event is disabled
++cat events/wprobes/my_wprobe/enable | grep -q 0
++if [ $? -ne 0 ]; then
++    echo "Failed to disable wprobe event"
++    exit_fail
++fi
++
++echo "-:my_wprobe" >> dynamic_events
++
++! grep -q my_wprobe dynamic_events
++if [ $? -ne 0 ]; then
++    echo "Failed to remove wprobe event"
++    exit_fail
++fi
++
++! test -d events/wprobes/my_wprobe
++if [ $? -ne 0 ]; then
++    echo "Failed to remove wprobe event directory"
++    exit_fail
++fi
++
++clear_trace
++
++exit 0
 
 
