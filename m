@@ -1,168 +1,161 @@
-Return-Path: <linux-kernel+bounces-802931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE0CB45885
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E55AB4588B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C9C5C0D14
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2F0B6109F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF933342CB6;
-	Fri,  5 Sep 2025 13:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00FA1C84B8;
+	Fri,  5 Sep 2025 13:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbyVlZEC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3bSByT7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4635B1BCA07;
-	Fri,  5 Sep 2025 13:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A1F350848;
+	Fri,  5 Sep 2025 13:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078025; cv=none; b=Wm1OvyXL1rzQs8n0PpNKzyWgfwDue+Jx03OGcyloBcqnJ1Xj6SvgG4mGlS87wxPq/KhiH18d+BUMa8sKIaDf3B4dXCCZvalnWXc78gWnZoEP1jLXgFz08PElyud26PYKKBcFvJmIvlCZIKhhxPLUqsMm87nyaQC+EF9pSG8qXs0=
+	t=1757078034; cv=none; b=sVkI+qkd358fXpRtwDfgN2opRJLVQbs3+vj6UURibv1VXb+CEkBD5I73L/V3BpjJaNGJ6VOwOg2ZiU69EBvcye8yNuWiJtW3yEj4qnaT5t4L84mz+qQZh56c7EtxpUJda0CX4qEDGyM61JO5jtNJvvFXNacz2BOIm9nPCZTe4kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078025; c=relaxed/simple;
-	bh=psnf4hQKAp2Cx9mom1Q/QVqcoKJXFno8iWz7CTh6G1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVSQcHHvXfZ2D7JRFDESZ95X4BmPzovkO/Xb8JRTQqWgSTEAe7adfbmpac1QEw4z6Nba70qljcdHZe+TpWA3bhP7n1F3qLhqPYk6z3UKNpSm4nB+kndXxZZCv0mTGOFyhWKLhJIRWp1tDExicnmIhZK/WmPbLeSofudd5Gwey7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbyVlZEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DFBC4CEF1;
-	Fri,  5 Sep 2025 13:13:42 +0000 (UTC)
+	s=arc-20240116; t=1757078034; c=relaxed/simple;
+	bh=4fPiVUr8iqSHUA1048R7A5lGeRD0073y1e1CWCfad+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cR25W6bg+DtdK39Q4TsWkX2ro9Mie2s8/XZyGZK2kHbff5VRxkPo16syoT7mhAyoAx2JXlVeEfSrGL7Jm4lpSjC26XgKIRE5tmim1QPdofBuVPEK6Qru/CrQoTDVsFSBeSbPTmnAyXtSbURPyfF+C+VIpHLOqhHU6ToK4X/Bc5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3bSByT7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D40A3C4CEFB;
+	Fri,  5 Sep 2025 13:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757078024;
-	bh=psnf4hQKAp2Cx9mom1Q/QVqcoKJXFno8iWz7CTh6G1E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pbyVlZECJKfoODfPM/rXM+bFQ01/iGarOubsg1z/hjDn9oEGfCuewlUa3XZPmrhqh
-	 cqutQ7770wchsayQAWXiFP6lxnj5zNLr14klSO+mWbxgXwF4eQII4X9i+YAB88FEx3
-	 suQKqz2p7g0AgMozp2hsYbZFFQSC3C9ItcPZsRMLPrucqjkcvVPNQk5Ts+MQ4Ge5mR
-	 m4mxrwTVr2vr5TzIXWQN3gUBIM+Chb/UlzomWdrjwCjr+gaB5an2ScUg9+fPG77N+E
-	 8Jt+czJcDgwYLG5jAB4TlOrO/2lsq7bldRZ1pk0aHZ++3ROPF2NEy/0d1a4hrcqGe3
-	 pjFgXMqnPf1BA==
-Date: Fri, 5 Sep 2025 18:43:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Palash Kambar <quic_pkambar@quicinc.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_nitirawa@quicinc.com
-Subject: Re: [PATCH v5] ufs: ufs-qcom: Align programming sequence of Shared
- ICE for  UFS controller v5
-Message-ID: <a7vqktgfrfr2u53e7vnr5mqhty5l5entmtsoafnewk3ess4evx@442o73xkmdio>
-References: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
+	s=k20201202; t=1757078033;
+	bh=4fPiVUr8iqSHUA1048R7A5lGeRD0073y1e1CWCfad+4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r3bSByT7fJh4/eg4OUCA7r/B+lOhcIzVlTUYOH0PkK7wnmHVVqhsF3hB31k1ee16k
+	 IE7zVoR7w6ItgNUPNeknoirAkgujWF7B057JqvQkoZZ5sjbJcGfBSy0mDB4Ix3HoPk
+	 zCWBm1bw6z5GzuJ3L/vY4jy0llOv7BJjIlh4bP+UWH2Z7RyyjSGIoCnqzFQvn4No6X
+	 4yAtGYd6SXsCR9XRlAe8Pb6Mn0U0Oq0ZtYn6fGBfEPw7+lths1xeo6AfQHcvdqm8vB
+	 S2AGmabgQC9PNIbNHe+1soaGzmldetgDNeRVbyzJud1Y0sgXSSDdDMGHBFX9VCrvum
+	 sFIhFmTZWT/4g==
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7454cf6abf9so1023435a34.1;
+        Fri, 05 Sep 2025 06:13:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV4o4v+fgI68T/pMdqmBO5cpirGeq8vESJ1Dsf97LE8mdFmg3p+YP+oI6E/hBqjMe8Nvn4zQ/G6VMG8vlk=@vger.kernel.org, AJvYcCVXNIyY43VtIehvNawsaFQTgVLqhC278oQFMiHaXh4DZXkuxETlKDJPfG2KzQQ17XRo8OZOJ7HtyHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo9hwI3Z7E6fYI6saKuGvAh2Cubvpecje8+epnUHXTcU1LLQe6
+	oQUDQBpoAY7menyA/wchME/Lq+kofYss8N4mZkbYwwRAmLenRyN5QRcOOgxiSChU9nWONGx93oe
+	BaYrJ5ZiW7Y/H1fqAAHbyKKbTRktToFM=
+X-Google-Smtp-Source: AGHT+IFffuiP30MgrkTsgngQV11TsWgdOrnGzK7NoEJFqBdCBOCtrraIWbEOd+sb7Dy7S/K5rYsbEu53ji3Zgc0AX60=
+X-Received: by 2002:a05:6830:6a8b:b0:746:d832:eb4d with SMTP id
+ 46e09a7af769-746d832ee97mr3136923a34.6.1757078033181; Fri, 05 Sep 2025
+ 06:13:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
+References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
+In-Reply-To: <871polxs9c.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Sep 2025 15:13:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
+X-Gm-Features: Ac12FXytMQ0oah2eRFtPagBtfjslFVTgXfnj9GXfs5MDvT0D4yuymp6BzFyWryE
+Message-ID: <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
+Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 09:39:05AM GMT, Palash Kambar wrote:
-> Disabling the AES core in Shared ICE is not supported during power
-> collapse for UFS Host Controller v5.0, which may lead to data errors
-> after Hibern8 exit. To comply with hardware programming guidelines
-> and avoid this issue, issue a sync reset to ICE upon power collapse
-> exit.
-> 
-> Hence follow below steps to reset the ICE upon exiting power collapse
-> and align with Hw programming guide.
-> 
-> a. Assert the ICE sync reset by setting both SYNC_RST_SEL and
->    SYNC_RST_SW bits in UFS_MEM_ICE_CFG
-> b. Deassert the reset by clearing SYNC_RST_SW in  UFS_MEM_ICE_CFG
-> 
-> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+On Fri, Sep 5, 2025 at 9:39=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Fri, Aug 29 2025 at 22:01, Rafael J. Wysocki wrote:
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -2710,6 +2710,12 @@
+> >       cpu_maps_update_begin();
+> >       cpu_smt_control =3D CPU_SMT_ENABLED;
+> >       for_each_present_cpu(cpu) {
+> > +             /*
+> > +              * Avoid accidentally onlining primary thread CPUs that h=
+ave
+> > +              * been taken offline.
+> > +              */
+> > +             if (topology_is_primary_thread(cpu))
+> > +                     continue;
+>
+> Hmm. That's kinda solving the problem, but I think the proper solution
+> would be to implement topology_is_core_online() for x86.
+>
+> The above is preventing the primary thread to be onlined, but then
+> onlines the corresponding hyperthread, which does not really make sense.
 
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+Well, manual online can be used for onlining the secondary thread of a
+core where the primary thread is offline, so this is technically
+possible already.
 
-- Mani
+> Something like the completely untested below.
 
-> 
+So given the above, shouldn't topology_is_core_online() check if any
+thread in the given core is online?
+
 > ---
-> changes from V1:
-> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
->    between ICE reset assertion and deassertion.
-> 2) Removed magic numbers and replaced them with meaningful constants.
-> 
-> changes from V2:
-> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
-> 
-> changes from V3:
-> 1) Addressed Manivannan's comments and added bit field values and
->    updated patch description.
-> 
-> change from V4:
-> 1) Addressed Konrad's comment and fixed reset bit to zero.
-> ---
->  drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
->  drivers/ufs/host/ufs-qcom.h |  2 +-
->  2 files changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 444a09265ded..242f8d479d4a 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -38,6 +38,9 @@
->  #define DEEMPHASIS_3_5_dB	0x04
->  #define NO_DEEMPHASIS		0x0
->  
-> +#define UFS_ICE_SYNC_RST_SEL	BIT(3)
-> +#define UFS_ICE_SYNC_RST_SW	BIT(4)
-> +
->  enum {
->  	TSTBUS_UAWM,
->  	TSTBUS_UARM,
-> @@ -751,11 +754,29 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->  {
->  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
->  	int err;
-> +	u32 reg_val;
->  
->  	err = ufs_qcom_enable_lane_clks(host);
->  	if (err)
->  		return err;
->  
-> +	if ((!ufs_qcom_is_link_active(hba)) &&
-> +	    host->hw_ver.major == 5 &&
-> +	    host->hw_ver.minor == 0 &&
-> +	    host->hw_ver.step == 0) {
-> +		ufshcd_writel(hba, UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW, UFS_MEM_ICE_CFG);
-> +		reg_val = ufshcd_readl(hba, UFS_MEM_ICE_CFG);
-> +		reg_val &= ~(UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW);
-> +		/*
-> +		 * HW documentation doesn't recommend any delay between the
-> +		 * reset set and clear. But we are enforcing an arbitrary delay
-> +		 * to give flops enough time to settle in.
-> +		 */
-> +		usleep_range(50, 100);
-> +		ufshcd_writel(hba, reg_val, UFS_MEM_ICE_CFG);
-> +		ufshcd_readl(hba, UFS_MEM_ICE_CFG);
-> +	}
-> +
->  	return ufs_qcom_ice_resume(host);
+> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topol=
+ogy.h
+> index 6c79ee7c0957..21041898157a 100644
+> --- a/arch/x86/include/asm/topology.h
+> +++ b/arch/x86/include/asm/topology.h
+> @@ -231,6 +231,16 @@ static inline bool topology_is_primary_thread(unsign=
+ed int cpu)
 >  }
->  
-> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-> index 6840b7526cf5..81e2c2049849 100644
-> --- a/drivers/ufs/host/ufs-qcom.h
-> +++ b/drivers/ufs/host/ufs-qcom.h
-> @@ -60,7 +60,7 @@ enum {
->  	UFS_AH8_CFG				= 0xFC,
->  
->  	UFS_RD_REG_MCQ				= 0xD00,
-> -
-> +	UFS_MEM_ICE_CFG				= 0x2600,
->  	REG_UFS_MEM_ICE_CONFIG			= 0x260C,
->  	REG_UFS_MEM_ICE_NUM_CORE		= 0x2664,
->  
-> -- 
-> 2.34.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>  #define topology_is_primary_thread topology_is_primary_thread
+>
+> +int topology_get_primary_thread(unsigned int cpu);
+> +
+> +static inline bool topology_is_core_online(unsigned int cpu)
+> +{
+> +       int pcpu =3D topology_get_primary_thread(cpu);
+> +
+> +       return pcpu >=3D 0 ? cpu_online(pcpu) : false;
+> +}
+> +#define topology_is_core_online topology_is_core_online
+> +
+>  #else /* CONFIG_SMP */
+>  static inline int topology_phys_to_logical_pkg(unsigned int pkg) { retur=
+n 0; }
+>  static inline int topology_max_smt_threads(void) { return 1; }
+> diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topolog=
+y.c
+> index e35ccdc84910..6073a16628f9 100644
+> --- a/arch/x86/kernel/cpu/topology.c
+> +++ b/arch/x86/kernel/cpu/topology.c
+> @@ -372,6 +372,19 @@ unsigned int topology_unit_count(u32 apicid, enum x8=
+6_topology_domains which_uni
+>         return topo_unit_count(lvlid, at_level, apic_maps[which_units].ma=
+p);
+>  }
+>
+> +#ifdef CONFIG_SMP
+> +int topology_get_primary_thread(unsigned int cpu)
+> +{
+> +       u32 apic_id =3D cpuid_to_apicid[cpu];
+> +
+> +       /*
+> +        * Get the core domain level APIC id, which is the primary thread
+> +        * and return the CPU number assigned to it.
+> +        */
+> +       return topo_lookup_cpuid(topo_apicid(apic_id, TOPO_CORE_DOMAIN));
+> +}
+> +#endif
+> +
+>  #ifdef CONFIG_ACPI_HOTPLUG_CPU
+>  /**
+>   * topology_hotplug_apic - Handle a physical hotplugged APIC after boot
+>
+>
 
