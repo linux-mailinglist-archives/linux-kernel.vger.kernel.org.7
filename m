@@ -1,119 +1,278 @@
-Return-Path: <linux-kernel+bounces-803258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E25B45CB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:37:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092F3B45CBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A06B4E14EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3E917E78E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7D12F7ADC;
-	Fri,  5 Sep 2025 15:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA12FB0B3;
+	Fri,  5 Sep 2025 15:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Adxer/jb"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9K0Zady"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0180B2EE608
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA7F2F7ACE;
+	Fri,  5 Sep 2025 15:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086629; cv=none; b=egIzXwhsM/UQBSHur5NxYur0pb/8kBZsfJr7UEDuRq0PW56TFnLy3L81fxC+tUOcdGhdaO94oJNcR5joXyMEli7Ns3ULgkSznBbjK1NLQMQ12SjxF2OXV1Ay5gKY8VquLO8J6s30e8BV63j1/t6U6Ou+l7VIkTgRXPKfNhCMszU=
+	t=1757086808; cv=none; b=Wtkjska8U1MwCKrJa+47kVEN5qTYb6xKjQKr7RySPjajZvRpzYoFbZA/fLbHeiakjqw2ghFJEP9HOh8qRTCpkk6K+UxNimFLLD8R+Riwmxh4b4EHnEesxNxFtG5B9flhAzwF6V5fgOeG40YNqn6voXj+1wtDcaxaA4wwgUT9KpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086629; c=relaxed/simple;
-	bh=Kg1vnljwk728S3xcpj5uPtZq0cPx87y/XAxf6Mbkg0w=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=QbsfUplvvX9vBbdMSWBO1hT8VuB1v8j9Rdv87yJGxva4Gh0n57kJxIS6uwx+5IH50lvKGGAHYIehbIKZqIxNu7M42UPqDqJlFiEJ8i9DgS6QhztfWSv2z5s+kw5bjMJE4F7l5q7V3N47DVWGwiXTyoLk9jA6QSQUeBtKd7gvFBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Adxer/jb; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109c58e29so17598551cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:37:06 -0700 (PDT)
+	s=arc-20240116; t=1757086808; c=relaxed/simple;
+	bh=RKl0oH9K/77QrV6Iu9zpJegJ6Grz5vWUbGNUph4Wk+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IjDmZRX2Ftb1abdMvsNm2eysJv56JdqkB9WJTJQtSNR9tUFzaCn5UuggZMBh8g2V4c2eixZBTOQJUJYBkTFZpSmk9NG/O+VGgq4QuF4raC25rQCshnqM8bS+mH3ZIemdOFlHKF5oVeuIXz4HfuLbPTgi6QKY4Ri1NROTnpumPik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9K0Zady; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7459fa1ef2aso2353131a34.1;
+        Fri, 05 Sep 2025 08:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1757086626; x=1757691426; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H8H2BgOZaIRqj4/CcuEuveM9YTYIhVsemNvoFOFsf3o=;
-        b=Adxer/jbSeczynoeFKEXClu7cZMZCpAF3YLWX+s0HTBWs6TBpLyV2vLRrfiKsaIL+D
-         ZhqpWBTavn9Db2BIGlnBvqmcOzF+JUsAekaEgCeJUNaUOhJSFPDZvzVMOHvs1SgKpkc+
-         AqHd2pYm09ShlOUEubo9sDUSMc4cOwing3C7JUwsdbz9IWkiKFgSsczRcOMLXwytPuxi
-         KuenPdohzMQWfiTAL9YTg/4MvUnlnFc0fLVwKC4ejK9wCe8q+XtUUpJyJojGjuaO+QO/
-         807AVC+9b2a8UsjoH8Ki4j2CCxzj1IJMBp5zP1w9YFfVis/G07DkxoN6TNdR/fngx0cu
-         tqPg==
+        d=gmail.com; s=20230601; t=1757086806; x=1757691606; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bnLPWF2bAcQVbqrjz3TVGHgiOphWHv7Vq8hRwdfUIWg=;
+        b=a9K0ZadytNdN6CY+GN59bVtfqHRd2dC07i9yhrnMYGQwcTGlN6ybn5hxSSWJTRlS/m
+         BtfhlCRXnph7cGFUEfBpz2hjAvp2sI8Qnw6y22DwHaisyN5eVI52KumT6tKdM9R2h+77
+         bnjF0MgL0xeh6/NZu37p4P7e5EyK7tPk2RdqyTJbJizFz7LwHKsJiVHovnUh9Avxz5sq
+         p+OIyHCoQjGyTQqbTjQ3ehbB8U+7JEA302tUIo3htLYNUBjY3Feq5+R8gVT1bPbpuFHF
+         nQN+Od6tKoUhTt6m40n9KmmyMfpg3HU31Jmx7dsQFa/u2kWHXgqyMu/t598KK7O8Pze6
+         nasw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757086626; x=1757691426;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H8H2BgOZaIRqj4/CcuEuveM9YTYIhVsemNvoFOFsf3o=;
-        b=HlQt6zfZV5Msot3dfjABIDs/pAfq0TYJairEHp7Cumn5rgyIiXP6tbe4zEJZjCNgSc
-         tvaWTkgd7Ufrimpq4I++fAOMD6RKhy++LUdAYKlmws0jb/m+djFAtFJhLZmKZzoju13K
-         P91/gmCF+yjuONvIvM3baF9r1DBF+6ibbeci3LgENKtqGCFuO7th6bZrzOqZEiveKfXr
-         yykoxRA62eccf3bd0OeeXmdzuGzgGpR41jYwQanqR1Wy4BL7J2n5+7TELcKLET5jPdzj
-         8c3/Ro7xT1no5ARATuZ63oaBK5/TKgZ4EPWK9rkNBQn9oirpLCWlU3y1i51vAZ4AjBFI
-         A10A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzcIVjtmlbIN+UDD5dBFUHA1g+gPDad9UKgBJ2bEhozJPaxfmtnqItIdRsBAMAYjrwc1rCp6dhXiNLABk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0eYPVIDhNi++x5GmWuvUia8U8kTUaY6Rswrcge+aWpOWEMf8S
-	FePWsUkXKlyDkJph2v901x3MvMGigZUCOwuuGkGh0r8qfZV5SMt67Z6R93uIJUpqYw==
-X-Gm-Gg: ASbGncsTVWbo5C90ihSVLsx6veDBRxKIga/zsFr+OPZ5Ww/6kNs2s4Wit9AJiPbdXeC
-	7ElDzfjC7t9nu28sAlGuD2kTpVdMC680vFHHYGPO+4msgX/xvQmlHhEiQosark/p7/9OUMZF3wM
-	8TY9Ca3MDb6HgaIXM1k6ZwKPnFCypj+GY0oyll2uvsm9P4vpAVVo2XAeDG36PoZv6RtbAupk+eH
-	7n5w796y3I0hKMxV3FnjeP0VDLmzP6qVEgYJ2G3N0r6s3UJjhcjkd8e9HKmvFGKmtFrrJicP1p2
-	aM0FWb12nTs5RxEoUbY6500qhtlou0+dgCWlIPk8dMsQ2SrzP+Qeh7/xcLnYP1JNGWB+Y0IkNQS
-	6x4PJZnqBFg5c51+m1yYCOIakI7MrzYAwsHxNy9169CeF7eFBKEv2PiSv8SY848F+GGlFTTocEu
-	ip75U=
-X-Google-Smtp-Source: AGHT+IHso3j+0e//Z9vqXwH7srvuoY144d5Q5A5/ORbPudxl8GItsfJbG1VzD6dz0JwkeY/cN1Uv6A==
-X-Received: by 2002:a05:622a:5e1b:b0:4b4:56a6:42b1 with SMTP id d75a77b69052e-4b456a6498cmr110458451cf.47.1757086625566;
-        Fri, 05 Sep 2025 08:37:05 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b5d57c6e0asm33881781cf.51.2025.09.05.08.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 08:37:04 -0700 (PDT)
-Date: Fri, 05 Sep 2025 11:37:03 -0400
-Message-ID: <6af833b45f68db4612ca52dd839d5662@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] audit/audit-pr-20250905
+        d=1e100.net; s=20230601; t=1757086806; x=1757691606;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bnLPWF2bAcQVbqrjz3TVGHgiOphWHv7Vq8hRwdfUIWg=;
+        b=toRM0ENDfmN7z++P6EGJwjSMPmEEz2SnG7P9cleVFswtpSyuZYTACQoJlwA3GPgNlj
+         jFTODcQ1fS0O6sE1K+kuAwMmtFB8vyTR8j4WHkeQlEV1EodasQogeFLxFnkj40+Rd4+s
+         rGLmCWfkhSAwm4A4LPBtfuH/Mvns0gEKRyShm1uwTtxLvGexcsNfSRKB6N65v5SDB7n0
+         zCS710e2+dcCh2wD+1NwV/q2nE+nNGg+Vuim4s4WROzVrJ3lghVhsay0Q3vOajUSwM7r
+         bSk5qqXGlkxx806xkHMZa3usJyHswZlJeTOUTEpuVUq6Do81+FFa7hR4qwE0qlHxBoT9
+         2d2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWChhF2SuGcr7YbgpXBmlAhZUqBnIAqhlj3rXK07dqzOl26Yxyn/+hwl4KxsqspsuB6JcYUA+5pMUKsvx4=@vger.kernel.org, AJvYcCWNxbD3KeqalJhMqBtgvIUzKbC7qU4yqy4/bs1BG3nQeewO8vxMhonerTJmYEBMP87Pujk3Ak3yXev6qFhY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF/klMhI3BF3ScJhSAaY9MtrR2aQCO9eSdhaOVCh8ikGJj2uvK
+	RjaQPifwo0W7V2WEsGXVzCOgaejjFsK+BJ8xbT2lNU2qwxBn+Z86qQdV
+X-Gm-Gg: ASbGnct6xxuUSEsJ7iAPTgTdjOm1Ggo8ojFogX/BmtxEQsKfARfzMuxTRt/Z8t/Kedf
+	WHRpzNsbzDqcbHJ6wwjGMt1RASKHpas/vHr6Sa/g54lQ/JVqMXMItfTatxNNby+Qajrcxx94XXd
+	vaXpxcBWEs+n5t5QHk7kAJI9/aH28+BVns6DWmysAY/QL9mGGLf9m3kx2X/2+oE1t4b6XcuZ/yr
+	+J345jUbOsJ5jX8WXjGcVtA8fMtDFigdcmE6VyAINM0jtRE2VseQjRGvF4UsrtaBiZ51uP3oHHW
+	yZzUnzUO1f4EdtegcYKKB0VwsuhPokbNssJX5vgfIZhng0edos2jUEASu4zgu08MJ5r4yS40S5m
+	cMNfZS4xFbG4rAjXPJLfs9NN0GZvTHTpeorBO6fCFC5zWu+PgCKGt
+X-Google-Smtp-Source: AGHT+IEmIw3f0aZNCO/f+i6InRqnfbv5gdPlLDM3Iu80lfYM79vGYYbtkKzB7IZZC4l/jjBzrOFOtA==
+X-Received: by 2002:a05:6830:4d8e:20b0:745:902a:9c6b with SMTP id 46e09a7af769-745902aa25amr5826827a34.3.1757086805751;
+        Fri, 05 Sep 2025 08:40:05 -0700 (PDT)
+Received: from ?IPV6:2603:8081:c640:1::1007? ([2603:8081:c640:1::1007])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74647c1c2f9sm1800104a34.1.2025.09.05.08.40.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:40:05 -0700 (PDT)
+Message-ID: <1801fe7b-4fb7-4fd7-a620-7a2095a9284d@gmail.com>
+Date: Fri, 5 Sep 2025 10:40:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX
+ hypercall
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-4-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Language: en-US
+From: Praveen K Paladugu <praveenkpaladugu@gmail.com>
+In-Reply-To: <1756428230-3599-4-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Linus,
 
-A single small audit patch to fix a potential out-of-bounds read caused
-by a negative array index when comparing paths.  Please merge for v6.17.
 
-Paul
+On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
+> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> 
+> This hypercall can be used to fetch extended properties of a
+> partition. Extended properties are properties with values larger than
+> a u64. Some of these also need additional input arguments.
+> 
+> Add helper function for using the hypercall in the mshv_root driver.
+> 
+> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>   drivers/hv/mshv_root.h         |  2 ++
+>   drivers/hv/mshv_root_hv_call.c | 31 ++++++++++++++++++++++++++
+>   include/hyperv/hvgdk_mini.h    |  1 +
+>   include/hyperv/hvhdk.h         | 40 ++++++++++++++++++++++++++++++++++
+>   include/hyperv/hvhdk_mini.h    | 26 ++++++++++++++++++++++
+>   5 files changed, 100 insertions(+)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index e3931b0f1269..4aeb03bea6b6 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -303,6 +303,8 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+>   int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
+>   				   u64 page_struct_count, u32 host_access,
+>   				   u32 flags, u8 acquire);
+> +int hv_call_get_partition_property_ex(u64 partition_id, u64 property_code, u64 arg,
+> +				      void *property_value, size_t property_value_sz);
+>   
+>   extern struct mshv_root mshv_root;
+>   extern enum hv_scheduler_type hv_scheduler_type;
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> index 1c38576a673c..7589b1ff3515 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -590,6 +590,37 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+>   	return hv_result_to_errno(status);
+>   }
+>   
+> +int
+> +hv_call_get_partition_property_ex(u64 partition_id, u64 property_code, u64 arg,
+> +				  void *property_value, size_t property_value_sz)
+> +{
+> +	u64 status;
+> +	unsigned long flags;
+> +	struct hv_input_get_partition_property_ex *input;
+> +	struct hv_output_get_partition_property_ex *output;
+> +
+> +	local_irq_save(flags);
+> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +
+> +	memset(input, 0, sizeof(*input));
+> +	input->partition_id = partition_id;
+> +	input->property_code = property_code;
+> +	input->arg = arg;
+> +	status = hv_do_hypercall(HVCALL_GET_PARTITION_PROPERTY_EX, input, output);
+> +
+> +	if (!hv_result_success(status)) {
+> +		hv_status_debug(status, "\n");
+> +		local_irq_restore(flags);
+> +		return hv_result_to_errno(status);
+> +	}
+> +	memcpy(property_value, &output->property_value, property_value_sz);
+> +
+> +	local_irq_restore(flags);
+> +
+> +	return 0;
+> +}
+> +
+>   int
+>   hv_call_clear_virtual_interrupt(u64 partition_id)
+>   {
+> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+> index 79b7324e4ef5..1bde0aa102ec 100644
+> --- a/include/hyperv/hvgdk_mini.h
+> +++ b/include/hyperv/hvgdk_mini.h
+> @@ -490,6 +490,7 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
+>   #define HVCALL_GET_VP_STATE				0x00e3
+>   #define HVCALL_SET_VP_STATE				0x00e4
+>   #define HVCALL_GET_VP_CPUID_VALUES			0x00f4
+> +#define HVCALL_GET_PARTITION_PROPERTY_EX		0x0101
+>   #define HVCALL_MMIO_READ				0x0106
+>   #define HVCALL_MMIO_WRITE				0x0107
+>   
+> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
+> index 57f3f9c2a685..fd3555def008 100644
+> --- a/include/hyperv/hvhdk.h
+> +++ b/include/hyperv/hvhdk.h
+> @@ -411,6 +411,46 @@ struct hv_input_set_partition_property {
+>   	u64 property_value;
+>   } __packed;
+>   
+> +union hv_partition_property_arg {
+> +	u64 as_uint64;
+> +	struct {
+> +		union {
+> +			u32 arg;
+> +			u32 vp_index;
+> +		};
+> +		u16 reserved0;
+> +		u8 reserved1;
+> +		u8 object_type;
+> +	};
+> +} __packed;
+> +
+> +struct hv_input_get_partition_property_ex {
+> +	u64 partition_id;
+> +	u32 property_code; /* enum hv_partition_property_code */
+> +	u32 padding;
+> +	union {
+> +		union hv_partition_property_arg arg_data;
+> +		u64 arg;
+> +	};
+> +} __packed;
+> +
+> +/*
+> + * NOTE: Should use hv_input_set_partition_property_ex_header to compute this
+> + * size, but hv_input_get_partition_property_ex is identical so it suffices
+> + */
+> +#define HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE \
+> +	(HV_HYP_PAGE_SIZE - sizeof(struct hv_input_get_partition_property_ex))
+> +
+> +union hv_partition_property_ex {
+> +	u8 buffer[HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE];
+> +	struct hv_partition_property_vmm_capabilities vmm_capabilities;
+> +	/* More fields to be filled in when needed */
+> +} __packed;
+> +
+> +struct hv_output_get_partition_property_ex {
+> +	union hv_partition_property_ex property_value;
+> +} __packed;
+> +
+>   enum hv_vp_state_page_type {
+>   	HV_VP_STATE_PAGE_REGISTERS = 0,
+>   	HV_VP_STATE_PAGE_INTERCEPT_MESSAGE = 1,
+> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
+> index 858f6a3925b3..bf2ce27dfcc5 100644
+> --- a/include/hyperv/hvhdk_mini.h
+> +++ b/include/hyperv/hvhdk_mini.h
+> @@ -96,8 +96,34 @@ enum hv_partition_property_code {
+>   	HV_PARTITION_PROPERTY_XSAVE_STATES                      = 0x00060007,
+>   	HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE		= 0x00060008,
+>   	HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY		= 0x00060009,
+> +
+> +	/* Extended properties with larger property values */
+> +	HV_PARTITION_PROPERTY_VMM_CAPABILITIES			= 0x00090007,
+>   };
+>   
+> +#define HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT		1
+> +#define HV_PARTITION_VMM_CAPABILITIES_RESERVED_BITFIELD_COUNT	59
+> +
+> +struct hv_partition_property_vmm_capabilities {
+> +	u16 bank_count;
+> +	u16 reserved[3];
+> +	union {
+> +		u64 as_uint64[HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT];
+> +		struct {
+> +			u64 map_gpa_preserve_adjustable: 1;
+> +			u64 vmm_can_provide_overlay_gpfn: 1;
+> +			u64 vp_affinity_property: 1;
+> +#if IS_ENABLED(CONFIG_ARM64)
+> +			u64 vmm_can_provide_gic_overlay_locations: 1;
+> +#else
+> +			u64 reservedbit3: 1;
+> +#endif
+> +			u64 assignable_synthetic_proc_features: 1;
+> +			u64 reserved0: HV_PARTITION_VMM_CAPABILITIES_RESERVED_BITFIELD_COUNT;
+> +		} __packed;
+> +	};
+> +} __packed;
+> +
+>   enum hv_snp_status {
+>   	HV_SNP_STATUS_NONE = 0,
+>   	HV_SNP_STATUS_AVAILABLE = 1,
 
---
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
-    tags/audit-pr-20250905
-
-for you to fetch changes up to 4540f1d23e7f387880ce46d11b5cd3f27248bf8d:
-
-  audit: fix out-of-bounds read in audit_compare_dname_path()
-    (2025-09-03 16:46:23 -0400)
-
-----------------------------------------------------------------
-audit/stable-6.17 PR 20250905
-----------------------------------------------------------------
-
-Stanislav Fort (1):
-      audit: fix out-of-bounds read in audit_compare_dname_path()
-
- kernel/auditfilter.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---
-paul-moore.com
+Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
 
