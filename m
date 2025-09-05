@@ -1,137 +1,147 @@
-Return-Path: <linux-kernel+bounces-803223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD571B45C55
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:21:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73162B45C52
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A229B16E4F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D267E1888D31
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117FA31B803;
-	Fri,  5 Sep 2025 15:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F861FF1A1;
+	Fri,  5 Sep 2025 15:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogeoxe37"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TWeRVTxo"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567BE31B835;
-	Fri,  5 Sep 2025 15:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6C72633;
+	Fri,  5 Sep 2025 15:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085455; cv=none; b=pzPwatmIWNKNDlV+R05zRRKSefUV6Yj+a0r5U5UfdiH5bZkOB5EIJxQEEWQS4VCz7EVPWgHF+OuAJP0UQoj+yEEOsuX08Lby8JDzDiixugfuKyQfd3pEXXWj/GSa2o5ws/kre0KBGMk/PbD95N9lwOFdc1P70iDd9xGPpqyXa7E=
+	t=1757085527; cv=none; b=rT6JFjsIwAv9qUJpYV9oGqDkwGQYvkuFyNXgft+sfFlhDBb9whdBYqJkJsO2RSfFhJt5jtF/s688H4GvjjrT/5ZnpVn7iqToXQlRJ2bZCxeIBNyrgh2c7mO/xWDhierEMY6LLX9Qgh+SUJHTCLyVBCYi2prP/jKI0j+MBQpxcvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085455; c=relaxed/simple;
-	bh=dr+T2rwp5B5VrM1rUBLT6viu/Q1Jhzb6unLFntNx2/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ezGnHePKgqwFNRccoYFNoZcEs4oCj7hVf+csIorIVOvvP/tD+mIovKRXslbLaB98/mK86sgzjHN+moqDFbL9uBh0UE3Lo6S7s8X6YsCuzOYIiXjuEZjIdEAYRujDPqsMkl5hjTMcNJkY+lDhUJXXV7ICHdB2m+4H3xy1dWBq+6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogeoxe37; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84D8C4CEF4;
-	Fri,  5 Sep 2025 15:17:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085454;
-	bh=dr+T2rwp5B5VrM1rUBLT6viu/Q1Jhzb6unLFntNx2/o=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=ogeoxe37ksPcj8h2cL77V8KZpT6J9875/nOiZH8QepCfGPkYjNt4/oEh+JrcY9A7z
-	 N8GUmBWx/xFZ7LADTDAO5JNKmlzxSn+KnCpRDfdgT0T3OitF2zcX1sG3gl2zeo+6Ac
-	 UjySxmwlZ+kb8C4NrmUhr3oVsV/nngOC+NTZNgyGJs1Y9rW6b+whoMLEvD5y4DfnTB
-	 Zx3gi2SljRWd78NWlgL6BzJNH7EUwe3eaMG8HXLH/2zElwL0K0nfFojueWpIuh4u24
-	 714E5DefpgOSSuvuJpI+fsSLn6UDl4zcleFT2LH1YdVqjOhmNj7dafCIE/85utTudH
-	 z6t6IugrwJkfg==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-336dc57f3f2so22264221fa.3;
-        Fri, 05 Sep 2025 08:17:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUV+jKgaBUjJyD8pylkxggLh4gAz5LdM/ngjEc883bmDH1X3D4FZRscVtu4UojzW/yC9A2dSy4NUqHy@vger.kernel.org, AJvYcCUgrNY+jE344RS/2EALE1ofqtssmBWmd0QBP9YDxWoCP76P8Hk+G+ag0kKWVNu5D8RfA3wPJ8SbwrAKIpdG@vger.kernel.org, AJvYcCWlayOM5zFXEi2e+l3PnsqLQ+zoQzeDvLXt50AEukCD6Oy5oGEjkJ6G2Qj0a8eVrMRMIs9I9HiA7aNg@vger.kernel.org
-X-Gm-Message-State: AOJu0YztXxpuJk6upK7IEytpALJDr0odqkL5Rhkvb7p54Z3aqW0Jxzwe
-	fGK5cw/19b0QssSmQ7CiTrpSMcxt2X3gI8oy+w5j60IvzWUbF2FOe9KozLp/Sbr3Yfy5QWp+QqC
-	UBZ7CjLti/w2sTLCFqkmEbKlTLJoAqqM=
-X-Google-Smtp-Source: AGHT+IHuctgvaReJVM5L6lLElO1ujTh+IJ3xit6qqIlU8KTDuhaXRGGAdYM2dar503Kj7x8VhbLVORGMlP0Lcie3F3I=
-X-Received: by 2002:a05:651c:b23:b0:337:e410:cb1d with SMTP id
- 38308e7fff4ca-337e410ccf5mr52525011fa.43.1757085453105; Fri, 05 Sep 2025
- 08:17:33 -0700 (PDT)
+	s=arc-20240116; t=1757085527; c=relaxed/simple;
+	bh=PFtfISKCGLgCCpPFMJdUVWc7+BucDIQgwm+dDXgg3Zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ljzj4XQLejhaQU0s7Cm2IzGxVehhaDFdZAF72T1BFBwdJVEfIqQf75sOTo+3NBfpEVmuEIA0U1LT10uqLd3+wSJr3/si3gaq7TyP1mHu005KLo3Z94Nez+O8TYUB1294f4WZlAXhGsnOpBfWzT10HC977bPYlA1BLju2YFEUXf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TWeRVTxo; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e5190bca95so146711f8f.0;
+        Fri, 05 Sep 2025 08:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757085524; x=1757690324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqWX29cADd8oXR3a+jsb0bx8Bb4o78EwXOGQnNUO1IA=;
+        b=TWeRVTxoN9vNlzQdtZyhvUh7E2l0iS7kAe4uHGFMpsELzS/fQjCwpLlGCfZXEj7NB8
+         uuC02p8pe0mpy3QxFwqN75uQ1FjjyYEXhy4oUvaR3/iHAbghHlR28HdyZOQeU83s+z0I
+         KHb0WsimgJAzm3JmAL54nnPx+ZDxqkBnHoTDEXqkUXh4r1+Hz+tNu3GOxqZutKoc/3zR
+         RDpJnBRjVQ0rIoxPv9Ryt8ZDp/kGPYH7aCLShDMn1RW2up2HYy75nPtiwea9h2YUZM11
+         9zIPIStUaTMfmEjP4uUbkxlCFlWM0v7mklupWmBRGfUvFATotFLON/rE1ybebuQtQ6nr
+         6fFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757085524; x=1757690324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cqWX29cADd8oXR3a+jsb0bx8Bb4o78EwXOGQnNUO1IA=;
+        b=F/DwgSJEscBZaY+AuSTTChhY8lr1bnECkXdRxBBL1H224rKkD5+5+FLxj1KXtD60Vc
+         J8Gi5FruDD1x1ZA9N4VUS43nVjyE9A+HtDSCuzlvTDiYBpzRChuKpB1m1vxl5lRG/c7c
+         jKeq1nnTMp41oj1gAp5VbVbtaOtKx1fZGq0fRbV3974uicdoXnNEy/zFFIeGOmC5C1aJ
+         gWZnixTASIN30632AsdtnTDNd5mtB3I6Yhp6j+vXINZWw6i97VCOU1Ne3HQ1uzhL0578
+         ztu3sse+X/XSWLj5ujZomPjlIN8pffyjzMZCi5IA0/0zGsnZ11ypX1a0r5VtsRh0hQPY
+         V1XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWifOIpx7kBeckMF1imvK0zc4Y0yMyq1vWh/JxyuUiIv/At9Jtux83K/rB+ArktdirEwMgDCnkBTo11MujbZlKy@vger.kernel.org, AJvYcCXQo8ctDaU6l++RCGbpuUPwgsGD/25rv121FdbRUYOKhguELTzcVqmVsm22DnrHk/LMOSHI4E/PNswQILA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC579Ah3Y1r0Y8JWnRwSExGANVUBRQGsrS8YCxpuhdWHSNOHRq
+	pKLRCWt6OyqDrHI2t2QflUv90pGsxngVfm65W0fFoK4iYH9J+5gfQsw3
+X-Gm-Gg: ASbGncurXQkQ4GCdZ3GhSbjaJ1nlS0qMRjJOlNlB7g4s+8y00yMjp0HIEC9p5Od52y1
+	veSdfydhKH0C2kOdPP29JZ/RaQFR4TDctrzF5/FQvDGw2opwb09BAe/lkSYaE/d1ozE/UXscbnf
+	oCuZae5MuNpLNXwZdzbkyYt6m4+3y0DHV9yhD7KbjySrIuaKhcuhpoewpeBwH6k8shaCYVlehE1
+	tEskxAfGR/amZrv4JrctemQsDXw2huCm66qeWYQdtT9gDldPBJUf0UQ2+BBdebc3/jl3hO9vnrx
+	3jVvxTDn6GP7RFO3p9L8UuzWSJcfiN7iNFtLQiBs+W5u2jSooAMlmN2Moqwrp6wx6TIgFojIt3j
+	8FAYCdtOxVki4yNhb78GCwp9zlg==
+X-Google-Smtp-Source: AGHT+IFdOL1aDtvRrBK5e/DIroOdpfGm54NZLFIv+6Ap9Edo0Xnobb4lqpDJUHwLo1ezj3u2vY4yKA==
+X-Received: by 2002:a05:6000:26cb:b0:3ca:99ad:519e with SMTP id ffacd0b85a97d-3d1dca7bed7mr15075926f8f.4.1757085523698;
+        Fri, 05 Sep 2025 08:18:43 -0700 (PDT)
+Received: from hsukr3.. ([141.70.88.200])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab093sm356411555e9.22.2025.09.05.08.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 08:18:43 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Sukrut Heroorkar <hsukrut3@gmail.com>,
+	linux-kernel@vger.kernel.org (open list:FUTEX SUBSYSTEM),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] selftests/futex: Fix -Wformat-security warnings in futex_priv_hash
+Date: Fri,  5 Sep 2025 17:17:20 +0200
+Message-ID: <20250905151734.12729-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830170901.1996227-1-wens@kernel.org> <20250830170901.1996227-4-wens@kernel.org>
- <20250905161236.51b6ecee@donnerap>
-In-Reply-To: <20250905161236.51b6ecee@donnerap>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 5 Sep 2025 23:17:19 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65utA6PsoAS-wLPskYy9GGXfESvtiwOBC4qSdi1XvLeKQ@mail.gmail.com>
-X-Gm-Features: Ac12FXx524PiYu7fy0CjI9wjWYIIgWKZl0OQuhFEwY-L-xvtcN5IjLcA6m5m72w
-Message-ID: <CAGb2v65utA6PsoAS-wLPskYy9GGXfESvtiwOBC4qSdi1XvLeKQ@mail.gmail.com>
-Subject: Re: [PATCH 3/8] clk: sunxi-ng: mp: Fix dual-divider clock rate readback
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 5, 2025 at 11:12=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
->
-> On Sun, 31 Aug 2025 01:08:56 +0800
-> Chen-Yu Tsai <wens@kernel.org> wrote:
->
-> > From: Chen-Yu Tsai <wens@csie.org>
-> >
-> > When dual-divider clock support was introduced, the P divider offset wa=
-s
-> > left out of the .recalc_rate readback function. This causes the clock
-> > rate to become bogus or even zero (possibly due to the P divider being
-> > 1, leading to a divide-by-zero).
->
-> Ah, a nice catch, thanks for that! Just curious, how did you find this?
-> The MMC clocks use the dual divider type as well, but I didn't observe
-> them being wrong?
+Fix several -Wformat-security warnings in futex_priv_hash by passing
+the test message strings as arguments to %s format specifiers in
+ksft_*() logging functions.
 
-I was looking at clk_summary in debugfs and kept seeing some of the audio
-clocks returning 0 and dumped the register to get the actual value. I then
-did a printk trace of the .determine_rate callback and saw that one of the
-dividers was always 1. I guessed that the .recalc_rate callback was to blam=
-e.
+This silences the warnings without changing the functional behavior
+of the test.
 
-> Regardless:
->
-> > Fix this by incorporating the P divider offset into the calculation.
-> >
-> > Fixes: 45717804b75e ("clk: sunxi-ng: mp: introduce dual-divider clock")
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+---
+ .../selftests/futex/functional/futex_priv_hash.c       | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks!
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+index aea001ac4946..2627eeb1625f 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -193,10 +193,10 @@ int main(int argc, char *argv[])
+ 	futex_slots1 = futex_hash_slots_get();
+ 	if (futex_slots1 <= 0) {
+ 		ksft_print_msg("Current hash buckets: %d\n", futex_slots1);
+-		ksft_exit_fail_msg(test_msg_auto_create);
++		ksft_exit_fail_msg("%s", test_msg_auto_create);
+ 	}
+ 
+-	ksft_test_result_pass(test_msg_auto_create);
++	ksft_test_result_pass("%s", test_msg_auto_create);
+ 
+ 	online_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+ 	ret = pthread_barrier_init(&barrier_main, NULL, MAX_THREADS + 1);
+@@ -237,11 +237,11 @@ int main(int argc, char *argv[])
+ 			}
+ 			ksft_print_msg("Expected increase of hash buckets but got: %d -> %d\n",
+ 				       futex_slots1, futex_slotsn);
+-			ksft_exit_fail_msg(test_msg_auto_inc);
++			ksft_exit_fail_msg("%s", test_msg_auto_inc);
+ 		}
+-		ksft_test_result_pass(test_msg_auto_inc);
++		ksft_test_result_pass("%s", test_msg_auto_inc);
+ 	} else {
+-		ksft_test_result_skip(test_msg_auto_inc);
++		ksft_test_result_skip("%s", test_msg_auto_inc);
+ 	}
+ 	ret = pthread_mutex_unlock(&global_lock);
+ 
+-- 
+2.43.0
 
-
-> Thanks,
-> Andre
->
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_mp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_m=
-p.c
-> > index 354c981943b6..4221b1888b38 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> > @@ -185,7 +185,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_=
-hw *hw,
-> >       p &=3D (1 << cmp->p.width) - 1;
-> >
-> >       if (cmp->common.features & CCU_FEATURE_DUAL_DIV)
-> > -             rate =3D (parent_rate / p) / m;
-> > +             rate =3D (parent_rate / (p + cmp->p.offset)) / m;
-> >       else
-> >               rate =3D (parent_rate >> p) / m;
-> >
->
 
