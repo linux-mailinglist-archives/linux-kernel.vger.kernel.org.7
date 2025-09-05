@@ -1,180 +1,199 @@
-Return-Path: <linux-kernel+bounces-803264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78E5B45CC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97384B45CC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6385A2712
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED22D1881E44
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7E9302145;
-	Fri,  5 Sep 2025 15:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6333302149;
+	Fri,  5 Sep 2025 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP8CJ997"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UkIyLf2S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491031B833;
-	Fri,  5 Sep 2025 15:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345C6302142
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087045; cv=none; b=dpCkup0QjecTPGVEL8dx/KjOYEgaf8HPsI7rdreShMrIGHiOA2x52YTDiufJSF7EUYZtgil58chdh4CBeo3KweQQPPWTUezAiK2AhBZU3LSLaPRb+o7Mj/rnNOw7G551uCEKiaJfu/jo/9nj9PMiNa5mUa3K91rfNIZEmlqI80g=
+	t=1757087080; cv=none; b=RrkRzq944B0PQeIx02NenNlK5S/CCKcDNdhrS/sPtw/WTpRLYdroMmXr8T9QQqVfgZttITyu/SrDZHJkWnpGOxYYkE/a8KOFl7IW7izYGNZkgg8ALkhFQ4k/xMcqzrW2MzWu6Dv/JKPebZW0yLIoJ1CLTuR7sPa53DdNHjwk9XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087045; c=relaxed/simple;
-	bh=jQ6wRH+vPe3IDPH5gDvEWz6iLi0di+IZLYpz3tvhhKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s/Mqry5FAgKDiDqaKt7Erbw50sfsXwtHvE6Obzf8AVTFpLbrpt+MnKT0so6RmF8pQZuTB1GI4CZ8xHakQdktCLXnoj6yEeSJmQ0Es4D/Z9cPHKBqeXkT4YNIM544hrHeVbq+5cPUyinZtD4dOwRk4lrMyRMatN6KNOi+5qKbZCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP8CJ997; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7459fa1ef2aso2356405a34.1;
-        Fri, 05 Sep 2025 08:44:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757087042; x=1757691842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f2ag447guJJ+5SXVnrwNqP+lUfwxcxZXABgH6xXWAjI=;
-        b=kP8CJ997zPOG8NV//kxz7Pv34MblpbCVNFp/HuyBczTwLf+GVdTIIFBWjhkVQHPOSP
-         G/PlBIR2rD39BSq5Y/RGFLPJg3wZIAmSj8u2fDrVeUz7t8M0Pl3yVr5750jdsqCh3iuI
-         r2ZA8MmMlSDHGdGqXRBcgSywoHytMTNcCDPf14UFLT1mk2joBbYshrtneY1wgP1TtB4y
-         9n0yYTIcE8mLvUoLtMLifCjPpPXdG1c0jHekWuqgYJWyEFDSuKyx11yFQUn6XsfmeEYR
-         X5SyYuG3rttXJ1GVOqMQSd6C/6kRN7to7z72oGgpoEChG+Mc1EpWcmdSS+04kRQYVCaS
-         1qzw==
+	s=arc-20240116; t=1757087080; c=relaxed/simple;
+	bh=ROujn7dp7bppBLnxm3K3XpMOBDn2+OlyLJK69FjVksk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eyvVHKMF/osHnEtgkZbSsJCKczk/uHK8Vgr4HtZi9VbIuGYxBVhEYMC3A9YdD8kSpJpqJRDgW/PNTCHEi2z0pqufejInMJbLPPAxi8nEAvCuK6GxXc5kUWgQUFI9NiOUDJtLdfI4jSgDAeAkB+eb23auh2hDyMbwxnkYR4BYrsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UkIyLf2S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585DQsVh018471
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 15:44:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=6cVRx3cmyc19pzQ+jRbWLtqnyxCx5rv9VK6
+	F+T36Woo=; b=UkIyLf2SqWOVDk6RRYf48FjlRlPTyQYcuQRN+TO+HgA1XYCR2la
+	miKLWd+CPXkmJhoDgVrkT7niK0h+0dUlp4RwxXaL+FXpiRG5UhWxxdIwLsy9Vgab
+	CzNdtNWoqcoLPxxuRrQPwkY8B/JLBBkv1ibEEq7oa3r7+ZH0fhBJv6cdMmfTOkrS
+	cRGXG45Riom12aJn2hv7L6BEfbpNYw7XxS9r2mgjmUIcwVjqC37YNK1MPcA86V9N
+	VcDga3niudp0ULmRr5qlCCxVPhKHZvehREoUwvJ8ksurC9uhgcutlO8KaOO4lBu3
+	fiidoSForJqgGAWVr/ZC+aMBEDluyCisJww==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48yebuufmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:44:38 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5eb7b2c05so22241601cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:44:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757087042; x=1757691842;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2ag447guJJ+5SXVnrwNqP+lUfwxcxZXABgH6xXWAjI=;
-        b=s2dAyyGGjdtYjGXpEDFsWJpKR6df0VkEIUPJ2UXwZLfwwRlVGnYbp2l7YVEJXWtj45
-         mVkiVo1KdDkJ5PfHJK3xLSqPwniGHMExnKqdCxWxdKo+Qt47pCzk/EsijVxf0/pVSOWk
-         57YGR8jd9kHSQxMPkkR5iYgsIcizL7R3XbrnxJXaGQvd4ujlo+QabEUod0KSmO+mpdBZ
-         DpvrWd4kUqXga45Y76H9lNRpyXhCwgupuaRHcUPqCY5ec9f0gn13mukyu68HSujRwqOv
-         y4A9KdGk55jYQWEWKgVggN2rEzbHxCKksyJ2FwJFI+PDMzpT0AT6HMfihu8DD9TVUpR0
-         qncQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxEd5kvGOdbXn7ZBTHXe5pMjBgrxBu9IuyigkiKZXf3uDNP8v4gpXX25dNiXmR/dkB8eSd7ojGAcZuBBu5@vger.kernel.org, AJvYcCVzJu42U43OxbGOhUt9cJpuRyQOUf5Cd2TLeMqZc4tEhLHYj4mZKolwyrHjsdyiOcFVbCIpdCQ0VOiu1r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzF0a4TjRrmyBnqToR92w2Em4CLSAh7fiH5AFxIROmr+FNt/r8
-	tLY9/p1kJ6PY8LU+/t0r46wMiJBLg9JpRwbUcO8x9dOaeKYFZQ0Fa3Zi
-X-Gm-Gg: ASbGnct7Qzm+RMgTbSiz5iOt8WvToTjy7g4C89g//PdynxHx8/zvInsUYQLkt3JLQQA
-	uhoVIldAM3XezIMAgaRAy2ViBhEOTQWvDcq0q8Ie+YHXg2d1Y6h5yqkdHv3U0weE23oxGsiBk2K
-	SsJKHosY6BIoMLeKk207GdwktDCvCGA/f6St8yIClX/PFuDjWqT4m8cYFIzD5UgnZegsEJV8VuR
-	fBYjJoJ4/p4xioPgCRilI5JtZhJ/LW8t+FLm2S9fmvBwkNdIdlzlvgMeDPIFK2VZTk10H+6ZVK5
-	lqdKp6MufUD/di6PpxpIi9Sz6wn0m8E3QxjnQHDIvKZHiw23O5YOrDeo7Gjc0HQD4LoRLR3KZhI
-	Z9UOb13STil+TCpQN+5ogU7jywMo6M8R1MxnPVJCjsg==
-X-Google-Smtp-Source: AGHT+IESoaKFNwvJ2zmh3m5L9WabCBNHQw5n+iPtShwEM3j+ZEPGJykW8vK3WMjwFC0559P80frv3g==
-X-Received: by 2002:a05:6830:3898:b0:743:968b:3440 with SMTP id 46e09a7af769-74569e8b89emr10587473a34.20.1757087042507;
-        Fri, 05 Sep 2025 08:44:02 -0700 (PDT)
-Received: from ?IPV6:2603:8081:c640:1::1007? ([2603:8081:c640:1::1007])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61e6feb11a7sm1347327eaf.10.2025.09.05.08.44.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 08:44:01 -0700 (PDT)
-Message-ID: <64adc508-d18b-4075-835d-97ce5b68c4eb@gmail.com>
-Date: Fri, 5 Sep 2025 10:43:59 -0500
+        d=1e100.net; s=20230601; t=1757087077; x=1757691877;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6cVRx3cmyc19pzQ+jRbWLtqnyxCx5rv9VK6F+T36Woo=;
+        b=QxJvBXRhY7+Y7IsOMjiQVeQPKWK0USMeWOdqa/bQFpvbEKNsVTklUdGhSw1iXUt57C
+         d/8nx3na+k406M8KFiWz9ftq/RFTyPSuJDfKIVkL6r7elEQN99MQgeeJ5JjjB1VbTJj/
+         7z9hG36sbtalTyhZqAwhZSk8qvSZ5u0KI16i8clf7s3TeZ3fWOHzy3h5zjOG0+ITeAec
+         x9pIoYroimClr2iJ68smWZBiIlGYZ9bVnlTkXaQky5evwH1HmfIGUFcjchTyJ+HUCN37
+         hzncsPmQJ9JjhrovSSy4pXPJhjqY2YIOD040Hgls480tNjKOrzxjzG6mAqgZ9rpG+852
+         IUyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTEL9mUzsouRClkbfDstP2xSSbYK75G+2KKA4PJhY+hCSg9mT53CKbKBUc0LPYybplOFo96xQZAghBAVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgo3BPSQ33pHp7Nv/kn//EPmYuZrom+R52IeETkZq9q2/iCurP
+	2pXjPXViGKaa3N6Ix0QwWj+hbPH6gUL5GppYCaajU2OAgEHGT26a1A8eXQYo8syXTFg7ZmbZ7se
+	O0rqRuQ+Cxa3x/ikpZS6YmVG9g8I6brkSg4atsijmf0Vg0Z+B5ItIIg7CPPVIo9pLkp2CkaRmeI
+	M=
+X-Gm-Gg: ASbGncssjlE7tbfsifJvOwdxTJ6mDHUZOL68QyspHlsyxq3codBApjp2byVMIZeW4+z
+	pS+WRiKi4Tc0EijjZosp0vdgozWKDL9Cz7mitatnhpcnxsmvML844lhkLrH3QJAW8UW4gqmyDbE
+	RBjJRilI2jryBfYd5bQOXoTG/3SqKWkJUmj4o0mCPoXCSeklpfY/6dnFlPRdXerjtUE6kuAq5t5
+	V/flrcaqss/EN5ZIp4f7aZQgiRc7SlhLba1g1X0W+lNOMILJ8CnBnA+lIKROJgZFFBwIF2AOt4p
+	NrcrLyaP9uo4SKVdBFrZmjT9Ohvp1OOpEgm6+YbNU8lAyegJhEI9iA==
+X-Received: by 2002:a05:622a:1e90:b0:4b5:e925:fc6a with SMTP id d75a77b69052e-4b5e925fe0fmr37081071cf.29.1757087076897;
+        Fri, 05 Sep 2025 08:44:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhaW+hRQN4a/2r+1WyMzrpI5xdfa8nBO9Xth74jDeBbJjGeyj1Ucclcx/fmglFqSr7/onWHA==
+X-Received: by 2002:a05:622a:1e90:b0:4b5:e925:fc6a with SMTP id d75a77b69052e-4b5e925fe0fmr37080411cf.29.1757087075841;
+        Fri, 05 Sep 2025 08:44:35 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9bcda91dsm165716585e9.6.2025.09.05.08.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 08:44:35 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, tiwai@suse.com, vkoul@kernel.org, srini@kernel.org,
+        yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        neil.armstrong@linaro.org, krzysztof.kozlowski@linaro.org,
+        dmitry.baryshkov@oss.qualcomm.com, linux-sound@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH v3 00/12] ASoC: codecs: wcd93xxx: remove code duplication
+Date: Fri,  5 Sep 2025 16:44:18 +0100
+Message-ID: <20250905154430.12268-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] mshv: Get the vmm capabilities offered by the
- hypervisor
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Language: en-US
-From: Praveen K Paladugu <praveenkpaladugu@gmail.com>
-In-Reply-To: <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: zHNA-yzK9GM6_y58UtF-XFd18mCsff_B
+X-Authority-Analysis: v=2.4 cv=X+ZSKHTe c=1 sm=1 tr=0 ts=68bb0566 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=yJojWOMRYYMA:10 a=OLL_FvSJAAAA:8 a=NNk1almXngzNn2I0ufIA:9 a=sPFwb3Qtu_UA:10
+ a=kl_IBrakYWIA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=oIrB72frpwYPwTMnlWqB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2MyBTYWx0ZWRfX79rheLp0NkB5
+ NZdGhQ4OESH6dxT0OZlPkfrfT9zJ69OGPrwCbQi+2UKKrZ3Rc5fWlvt93ynlikBzi/espQJHz56
+ J/a6vw4HHaRUSVtEKfTrLaiCWlgi2grlMn8L7T9RmtIVRi5kDj0Kw6uY6clBuUHuxnGGVgqkxre
+ QYa7pJpbIsAL9CHYgJ/kJ1h3BfxS5SabJLwddLm+p7B689jjqznxgeMqTOWvipV5kmbyuqmYAkY
+ fp7pnuHTs8XNlMxbo4m/jFUmjoMg0OmDSV8q9EoAecvdC/0pzpRpSASxGzGD/9330HVyVvngrxZ
+ Gz/guvSZrfwQFowZFKwOivTrlbnnDYmm0gwxYfNWhTKFaVMsy4iT+HxvBao2TLTpnNQlKYmmDOX
+ Ti/597ll
+X-Proofpoint-ORIG-GUID: zHNA-yzK9GM6_y58UtF-XFd18mCsff_B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509040163
+
+All the Qualcomm WCD codecs and WCD based codecs have lots of code in
+common, resulting in lot of duplicate code.
+This series is an attempt to clean some of this by moving the common
+code to wcd-common library or to soundwire helper functions.
+
+Currently I have done cleanups for 4 codecs wcd934x, wcd937x, wcd938x
+and wcd939x, however any new Qualcomm codecs can avoid this duplication
+by using the wcd-common library.
+
+I have also added two helpers of_sdw_find_device_by_node() and
+sdw_slave_get_current_bank() in soundwire layer for the codecs to use them,
+this series was already acked by Soundwire maintainer Vinod.
+
+As original cleanup series was depending on the new soundwire interfaces
+I have combined both the series as they are cleaning up code
+duplications.
+
+As am touching the same codec drivers, a bug fix is also added at the
+start of the series.
+
+There is still lot of code that is duplicate, but this is just a
+starting point for such cleanups.
+
+I have tested this on T14s, any testing is appreciated.
+
+Changes since v2:
+	-combined other cleanup patch series 
+	("[PATCH v2 0/4] ASoC: codecs: wcd937x/8x/9x: cleanup")
+	https://www.spinics.net/linux/fedora/linux-sound/msg25202.html
+	into this series to make it easy to apply.
+	- fixed copyright text.
+	- fixed few empty spaces and re-arrage header inclusion into
+	  source file.
+
+Changes since v1:
+	- add new patches to remove usage of dev_get_regmap
+	- add fix to wcd937x for comp soundwire ports
 
 
+Srinivas Kandagatla (12):
+  ASoC: codecs: wcd937x: set the comp soundwire port correctly
+  soundwire: bus: add of_sdw_find_device_by_node helper
+  soundwire: bus: add sdw_slave_get_current_bank helper
+  ASoC: codecs: wcdxxxx: use of_sdw_find_device_by_node helper
+  ASoC: codecs: wcdxxxx: use sdw_slave_get_current_bank helper
+  ASoC: codecs: wcd: add common helper for wcd codecs
+  ASoC: codecs: wcd-common: move WCD_SDW_CH to common
+  ASoC: codecs: wcd-common: move component ops to common
+  ASoC: codecs: wcd939x: get regmap directly
+  ASoC: codecs: wcd-common: move status_update callback to common
+  ASoC: codecs: wcd938x: get regmap directly
+  ASoC: codecs: wcd937x: get regmap directly
 
-On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> 
-> Some newer hypervisor APIs are gated by feature bits in the so-called
-> "vmm capabilities" partition property. Store the capabilities on
-nit: s/xx/Some hypervisor APIs are gated by feature bits exposed in
-"vmm capabilities" partition property./g> mshv_root module init, using 
-HVCALL_GET_PARTITION_PROPERTY_EX.
-> 
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->   drivers/hv/mshv_root.h      |  1 +
->   drivers/hv/mshv_root_main.c | 28 ++++++++++++++++++++++++++++
->   2 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index 4aeb03bea6b6..0cb1e2589fe1 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -178,6 +178,7 @@ struct mshv_root {
->   	struct hv_synic_pages __percpu *synic_pages;
->   	spinlock_t pt_ht_lock;
->   	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
-> +	struct hv_partition_property_vmm_capabilities vmm_caps;
->   };
->   
->   /*
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index 56ababab57ce..29f61ecc9771 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -2327,6 +2327,28 @@ static int __init mshv_root_partition_init(struct device *dev)
->   	return err;
->   }
->   
-> +static int mshv_init_vmm_caps(struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
-> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
-> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
-> +						0, &mshv_root.vmm_caps,
-> +						sizeof(mshv_root.vmm_caps));
-> +
-> +	/*
-> +	 * HV_PARTITION_PROPERTY_VMM_CAPABILITIES is not supported in
-> +	 * older hyperv. Ignore the -EIO error code.
-> +	 */
-> +	if (ret && ret != -EIO)
-> +		return ret;
-> +
-> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
-> +
-> +	return 0;
-> +}
-> +
->   static int __init mshv_parent_partition_init(void)
->   {
->   	int ret;
-> @@ -2377,6 +2399,12 @@ static int __init mshv_parent_partition_init(void)
->   	if (ret)
->   		goto remove_cpu_state;
->   
-> +	ret = mshv_init_vmm_caps(dev);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to get VMM capabilities\n");
-> +		goto exit_partition;
-> +	}
-> +
->   	ret = mshv_irqfd_wq_init();
->   	if (ret)
->   		goto exit_partition;
+ drivers/soundwire/bus.c        |  12 +++
+ drivers/soundwire/slave.c      |   6 ++
+ include/linux/soundwire/sdw.h  |  17 ++++
+ sound/soc/codecs/Kconfig       |   8 ++
+ sound/soc/codecs/Makefile      |   2 +
+ sound/soc/codecs/wcd-common.c  | 143 +++++++++++++++++++++++++++++++++
+ sound/soc/codecs/wcd-common.h  |  44 ++++++++++
+ sound/soc/codecs/wcd934x.c     |  82 ++++++-------------
+ sound/soc/codecs/wcd937x-sdw.c |  67 ++-------------
+ sound/soc/codecs/wcd937x.c     |  85 +++++---------------
+ sound/soc/codecs/wcd937x.h     |  24 ++----
+ sound/soc/codecs/wcd938x-sdw.c |  83 +++----------------
+ sound/soc/codecs/wcd938x.c     |  99 +++++------------------
+ sound/soc/codecs/wcd938x.h     |  26 +-----
+ sound/soc/codecs/wcd939x-sdw.c |  98 +++-------------------
+ sound/soc/codecs/wcd939x.c     | 104 ++++++------------------
+ sound/soc/codecs/wcd939x.h     |  32 +-------
+ 17 files changed, 354 insertions(+), 578 deletions(-)
+ create mode 100644 sound/soc/codecs/wcd-common.c
+ create mode 100644 sound/soc/codecs/wcd-common.h
 
-Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
 -- 
-Regards,
-Praveen K Paladugu
+2.50.0
 
 
