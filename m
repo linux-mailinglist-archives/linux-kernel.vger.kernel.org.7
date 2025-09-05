@@ -1,115 +1,234 @@
-Return-Path: <linux-kernel+bounces-802272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B35BB45028
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:44:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B942B45030
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4DC1C833C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0703E3B9B00
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CA726E16A;
-	Fri,  5 Sep 2025 07:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZFpwu3D"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C73229CB2A;
+	Fri,  5 Sep 2025 07:45:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC24EDF71;
-	Fri,  5 Sep 2025 07:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A401D271447;
+	Fri,  5 Sep 2025 07:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757058245; cv=none; b=m2nXvpVOxyu0JGaN77K/1tSmJidqYLF+Ii6+vouOxMsJzSxCGKA/ZjStpY1G1cQov59vSHKvbQOKvGbAPRKJfqD2mbsxacorZnqqN6v70fNdCa+qZqgQH2xEyAvYouU1aUNCnsBUWMB1Y/bmFSgtpjSfWVNonAmGJqnsFo9r9sc=
+	t=1757058310; cv=none; b=Enjhs5Xa9nyEjzLcLbNwkhhJ8D1a3b6IP/zXzQAESVY+s5StrcbEzR5EvRnNBzFJ4nm8yPyFW1wy++Do5Pa8KM2w2YgPN9hUhsTcHNM1CnfZ+LoENZOepZ1iYwk3x+Ju3w2oxuMzOA81i9SEZ797aVx42GyXifyoNHixccQNTJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757058245; c=relaxed/simple;
-	bh=v0Goq8B6iu1BXms7r9OT3/94R7+63Lo0tNCLc694trQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JhsITBvqoika/L39ojynBEeONjcVS6GqOZ//3Agu079SOwTmzUfaH8gW4VdaiTCQmldAunIt1b2GOCSap+UHlylj28RXsDjOvEq+RoyiYli3+6wl3qQiQiExGq3eYDzUWlO7fgFGtM8w+IeabftDoQ62APDYGvalqCdugtWw+bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZFpwu3D; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b7c01a708so6815025e9.3;
-        Fri, 05 Sep 2025 00:44:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757058241; x=1757663041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v0Goq8B6iu1BXms7r9OT3/94R7+63Lo0tNCLc694trQ=;
-        b=jZFpwu3Dihdon8Uyrl0upyVSkn9AT1QMKYGeevXc/so/Jqp2kFeo9LN2ue9yIGlbry
-         9Kp00NIyj5x7+DSpSWZ3LM+fRzK10BxZ53AY99BnvnZCdqDQvSKv0Fe85wkv5EhEUxK7
-         fVeNG/IeBRIKFx+WPd4UURF2SRbwphAsGupB9S6NwP5ZC+p/FeKLaULOsEX7npDLwI9f
-         3pbJls3p+yN2oE2HioJlWfpQSlr/XqdgHBallc9HfqSVkm4y4CQigST4gHL0vCyRB7Zl
-         /jDRRltTCcIm9WSz8aBFRqZDUAKlN8Jxe5vRFjnm5DKqHsvu6X8yk+YuxPMsDbjfMRcw
-         Nxcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757058241; x=1757663041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v0Goq8B6iu1BXms7r9OT3/94R7+63Lo0tNCLc694trQ=;
-        b=Z3E3vnzSACv91RFe2qc9QmNwR1P9CaVlrZojE+2XyuFsDtrMv5Sc/7X8Ft2g0ZOzPE
-         ygW/axfXiKUz45Lacb8Qs1JEFygW5APANFbazGpzpFeVMy7sI0izcrdPVx+Z5n7oepp3
-         ZKHSYtQcavo0vAdkLtOrbhiJGA1pg7UX1AVz1udfaYSGMsN7ZqdQikdzlfSbQPOF/Npf
-         /7YLzBD0zrB9Fa1cJkY1+U1CjcVhcYhvFLAEwpsdybpkbrGUhE03+bb7JhSJgCCqoNH0
-         A1ilKMKjLvIc90/G6QMXrOfjTzzOGJpgeUssTf5KWCfAv9uw7korGK/bCSBWMvrNfZ9y
-         /jww==
-X-Forwarded-Encrypted: i=1; AJvYcCUE/CwgbWBXw3XpNLPRc/pYepJFtTPKqD9YQWW+7xgFQBHuShjIpZMj6uXHs6CE+SsCtyglr7/BYNLzLl11d6IjXCU=@vger.kernel.org, AJvYcCVvio+jqOoXbvj4xMXTUXvGVWKWxYeZeSxsiAF837uzW9JpocTNs6n9izuuBJC8eLyaLzC8T+SBAmVP@vger.kernel.org, AJvYcCXuMz6QC+fDyAX+0+Q35Ag5Df7qITzsM2d2uFwkIgm05htkPy8EwVuQdeGEH65lLB5E9t0OCba3S+5NeSOJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz79Rapr5SMRRh76a4xdPsjNWFMKlZxk4wcQabx2jCBFCVITofS
-	q2Pdx5CcOyAZb3gwh3THNDjXLLEWChKZDfiobZ2/IByICgrH+VFRXySHOAuFp0vWdYrhvb049DU
-	v422JvijaWdN4W0/4LrOG5D/OchgtSBM=
-X-Gm-Gg: ASbGncuvatnfJgDab+PU12mj/LyRBtEGxR+/QgoCSGa2X3Oh0RHJaIq71np7L5KPwwf
-	z+6RWFv1ZzXZbAAjA4DYKVm2EGnmqU9aQ8e4Rae2RUVLN+e8Y4XL9o1jPUXGrGBRnEXsC/70Kma
-	utEtWBkYWAyfkCXlWgDbHGRDvtNvGtqVLUMIheO1nr3g1gsDSs2pASiNP5Y/UMpRAvLeNPknJjy
-	PDlZr10KRCmMkZo2ZI=
-X-Google-Smtp-Source: AGHT+IEs0sDk7Yw5ukuGeAfjlznKmlUqSEdvVHfRpyhiJhHksA9VkslDAzk+mIR7EIQjI7ZlLC80dl0edVxeg6AjH30=
-X-Received: by 2002:a05:600c:3543:b0:45d:d9ca:9f8a with SMTP id
- 5b1f17b1804b1-45dd9caa239mr7197005e9.27.1757058240685; Fri, 05 Sep 2025
- 00:44:00 -0700 (PDT)
+	s=arc-20240116; t=1757058310; c=relaxed/simple;
+	bh=3XX5fgVfIt8H/eWkB6Y8cCGVwctszDhoX3FKONvJFag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ENe2t41mVhsggzYGDLPjJqQljKagpa0evt0+UzWW1vQxpcgdCb+71L1TMdNTihN2oMgq/n4ltsMd5a2/Xbpv9lOLWuEVi2QmOBo904Vquz+gmVSCGLmVasgUhss8nFJUjirUvamwRxAiIozwqNNPPxLPovztU/Do1dGQiI3nIPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 397b25d28a2c11f0b29709d653e92f7d-20250905
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:f87db68f-3c30-403e-8904-d7166b6f16d2,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:07aa7fe718078e46c5eacd4bb0c408a3,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 397b25d28a2c11f0b29709d653e92f7d-20250905
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 541260558; Fri, 05 Sep 2025 15:44:59 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 29A5AE008FA4;
+	Fri,  5 Sep 2025 15:44:59 +0800 (CST)
+X-ns-mid: postfix-68BA94FA-497226507
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 27E5DE008FA3;
+	Fri,  5 Sep 2025 15:44:40 +0800 (CST)
+Message-ID: <11bcb7cb-2169-479f-9247-a48e48e9c54e@kylinos.cn>
+Date: Fri, 5 Sep 2025 15:44:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904160305.247618-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aLm5kbgRIcomBo6a@ninjato> <CA+V-a8t9VU4+Q6ofTYru2=OsrsfiSM53=rtvEzxoYmu_A0wwBg@mail.gmail.com>
- <aLnrV0VBVvQ-XB83@ninjato>
-In-Reply-To: <aLnrV0VBVvQ-XB83@ninjato>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 5 Sep 2025 08:43:34 +0100
-X-Gm-Features: Ac12FXwduyQu1SOO_ZjtWEAWUhY7RX1CzOvh8slh0GNzlEn65FN3TY8ypxCN7v0
-Message-ID: <CA+V-a8tsoTt_543aUsABtrCWzvqxYUerRu-WzUuvZzvZ-cb0+Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/10] powercap: dtpm_cpu: Use scope-based cleanup
+ helper
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Thierry Reding <thierry.reding@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
+ <20250903131733.57637-8-zhangzihuan@kylinos.cn>
+ <CAJZ5v0hirWzWZiLbAXPWB58SQv3CAW95iHLnsqs=i2twVCcmwg@mail.gmail.com>
+ <52e322e5-2dd4-488c-a98e-3a4018f0c323@kylinos.cn>
+ <CAJZ5v0g__9g_dfA3=4GVi351f4CKBegKkW9nU81j+Qu=2Hfg1Q@mail.gmail.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <CAJZ5v0g__9g_dfA3=4GVi351f4CKBegKkW9nU81j+Qu=2Hfg1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
 
-On Thu, Sep 4, 2025 at 8:41=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+=E5=9C=A8 2025/9/4 21:17, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> On Thu, Sep 4, 2025 at 12:38=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylin=
+os.cn> wrote:
+>>
+>> =E5=9C=A8 2025/9/3 21:45, Rafael J. Wysocki =E5=86=99=E9=81=93:
+>>> On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kyli=
+nos.cn> wrote:
+>>>> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+>>>> annotation for policy references. This reduces the risk of reference
+>>>> counting mistakes and aligns the code with the latest kernel style.
+>>>>
+>>>> No functional change intended.
+>>>>
+>>>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>>>> ---
+>>>>    drivers/powercap/dtpm_cpu.c | 30 +++++++++++-------------------
+>>>>    1 file changed, 11 insertions(+), 19 deletions(-)
+>>>>
+>>>> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu=
+.c
+>>>> index 99390ec1481f..f76594185fa2 100644
+>>>> --- a/drivers/powercap/dtpm_cpu.c
+>>>> +++ b/drivers/powercap/dtpm_cpu.c
+>>>> @@ -144,19 +144,17 @@ static int update_pd_power_uw(struct dtpm *dtp=
+m)
+>>>>    static void pd_release(struct dtpm *dtpm)
+>>>>    {
+>>>>           struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
+>>>> -       struct cpufreq_policy *policy;
+>>>>
+>>>>           if (freq_qos_request_active(&dtpm_cpu->qos_req))
+>>>>                   freq_qos_remove_request(&dtpm_cpu->qos_req);
+>>>>
+>>>> -       policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
+>>>> -       if (policy) {
+>>>> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
+>>>> +               cpufreq_cpu_get(dtpm_cpu->cpu);
+>>>> +
+>>>> +       if (policy)
+>>>>                   for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
+>>>>                           per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D N=
+ULL;
+>>>>
+>>>> -               cpufreq_cpu_put(policy);
+>>>> -       }
+>>>> -
+>>>>           kfree(dtpm_cpu);
+>>>>    }
+>>>>
+>>>> @@ -192,7 +190,6 @@ static int cpuhp_dtpm_cpu_online(unsigned int cp=
+u)
+>>>>    static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
+>>>>    {
+>>>>           struct dtpm_cpu *dtpm_cpu;
+>>>> -       struct cpufreq_policy *policy;
+>>>>           struct em_perf_state *table;
+>>>>           struct em_perf_domain *pd;
+>>>>           char name[CPUFREQ_NAME_LEN];
+>>>> @@ -202,21 +199,19 @@ static int __dtpm_cpu_setup(int cpu, struct dt=
+pm *parent)
+>>>>           if (dtpm_cpu)
+>>>>                   return 0;
+>>>>
+>>>> -       policy =3D cpufreq_cpu_get(cpu);
+>>>> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
+>>>> +               cpufreq_cpu_get(cpu);
+>>>> +
+>>>>           if (!policy)
+>>>>                   return 0;
+>>>>
+>>>>           pd =3D em_cpu_get(cpu);
+>>>> -       if (!pd || em_is_artificial(pd)) {
+>>>> -               ret =3D -EINVAL;
+>>>> -               goto release_policy;
+>>>> -       }
+>>>> +       if (!pd || em_is_artificial(pd))
+>>>> +               return -EINVAL;
+>>>>
+>>>>           dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
+>>>> -       if (!dtpm_cpu) {
+>>>> -               ret =3D -ENOMEM;
+>>>> -               goto release_policy;
+>>>> -       }
+>>>> +       if (!dtpm_cpu)
+>>>> +               return -ENOMEM;
+>>>>
+>>>>           dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
+>>>>           dtpm_cpu->cpu =3D cpu;
+>>>> @@ -239,7 +234,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm=
+ *parent)
+>>>>           if (ret < 0)
+>>>>                   goto out_dtpm_unregister;
+>>> So this change kind of goes against another recommendation given in c=
+leanup.h:
+>>>
+>>>    * Lastly, given that the benefit of cleanup helpers is removal of
+>>>    * "goto", and that the "goto" statement can jump between scopes, t=
+he
+>>>    * expectation is that usage of "goto" and cleanup helpers is never
+>>>    * mixed in the same function. I.e. for a given routine, convert al=
+l
+>>>    * resources that need a "goto" cleanup to scope-based cleanup, or
+>>>    * convert none of them.
+>>
+>> Should I replace all the memory allocation cleanups here with `__free`=
+?
+>> That would allow us to drop all the `goto`s, but since this function h=
+as
+>> quite a few of them, I=E2=80=99m concerned it might introduce new issu=
+es. What=E2=80=99s
+>> your recommendation?
+> Frankly, don't use __free() in this code at all, at least for the time =
+being.
 >
+> There is a problem with dropping the reference to policy at the end of
+> __dtpm_cpu_setup() because that policy may be subsequently indirectly
+> used in set_pd_power_limit() which calls
+> freq_qos_update_request(&dtpm_cpu->qos_req, freq) and
+> dtpm_cpu->qos_req->qos is policy->constraints, so using it will cause
+> policy->constraints to be dereferenced in freq_qos_apply() which will
+> crash and burn if the policy goes away in the meantime.  So AFAICS
+> __dtpm_cpu_setup() shouldn't call cpufreq_cpu_put() at all and the
+> policy should be released in pd_release() without acquiring a new
+> reference to it.
 >
-> > Yes with the P3T1085UK Arduino Shield Evaluation kit (logs can be found=
- at [0]).
->
-> Cool. Since it reports two temperatures, it must be my modified version
-> of the shield :)
->
-Yes it is ;-)
 
-Cheers,
-Prabhakar
+Thanks a lot for the detailed explanation!
+
 
