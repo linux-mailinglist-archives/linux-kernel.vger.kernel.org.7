@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-802850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD0CB45794
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:21:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38186B45796
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A2EA60B19
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33814174A64
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38EE34F467;
-	Fri,  5 Sep 2025 12:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA53C35A28D;
+	Fri,  5 Sep 2025 12:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hhUYr5VZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nI5KapsW"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ujxhTLcm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IlBGgObC"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863413570BE
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA793570DF
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074610; cv=none; b=G24ZfyfqCdbB8R5oxOHIQ0545F0hGDjrn2cWGatGwpbTtr25A71Pbxco+d+NvWVPWbUu61+MObXmSf7jWRNAPvLpDNMupp/RpzzylkclLWF8kdf1Hjkh6EQzw8TrzrrX86XgktGRgk5FslZ9Egkqlc2JxjL6QAOb+V7HODMtxfE=
+	t=1757074613; cv=none; b=EULbyqibz6Ki+ZDhMbOc2LJBVldSkbaP8OKUEcty9Wad97Z6iLemHWazLr5DV6lTWBgVKz4rP/RqPt2wcgz1/eZlvZ/zCLYEOGkbo3HVT4B+1XbTtvuDMatbVvWjMeITJ4vb62O+ENHWlWxm7JnrMmdsFLbxbT7w9PayHgf5XeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074610; c=relaxed/simple;
-	bh=yNpYB8ZWbb+KQniL0ZjgQ/fa4iKBtyPmfBP0wwNfaj8=;
+	s=arc-20240116; t=1757074613; c=relaxed/simple;
+	bh=O5cAbpiI+Tjmr4wDFGGhia3hX/6l83QzjiYacPX5AVY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LTcUAS+Iz6ciNZmWNAfo66iUp9r2kzy42Zo3myrqP/8AIrClZ9vR/Jlbn2VdrldmLjeOPRCxQ+o2l61vP2OxBOdb/2+HcsvT0e4Sm1EKKmVRi7ZbN12lj3dyLe0NtBJyaN6emaUEhmxDmhF1VRW7uTELxpbDuWc68dw2SOGRCco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hhUYr5VZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nI5KapsW; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=fQ+BqDGOQJjrDlzZXhKKVKjbTezF08XVvXgXXIckvOiakVU0aS1ksnWEiIMKpU3a2wAJOxmb1JuFnZ2XoNtlJ6r8A9tBWu31U3sjhw2Z+eMzenfY2klQugRx0Cc6HpqcSfpddD/2TgQeqnrG6mea0dAuX8KF7bynoCQLtzwM2/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ujxhTLcm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IlBGgObC; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757074607;
+	s=2020; t=1757074610;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qs37mBil5a1SU5iV5EX5mmOXYYZ7JEI/2oUycDoeqOI=;
-	b=hhUYr5VZCTE+u1nYiJsIi1G1uw74k1+Iij6dvGUyJbd1HRye9llNzpgcDW3JfZB3IRh5wx
-	i3kvG4UeAO+SOfZi5ogAKy14hhvqxmy84xMSYZ8SuJxKsESihYSU9TCHCoy3uwixi8XqH6
-	ajEo4BGd5Y9BlkAl3bkp+G21RaIu6FYJg79e4fk4+2IJGI+n3e3vvkOqQh2X5iv6TlYwuq
-	FZszPmQ6j/kSVafwYGnSHSePbh/zxCs6jLxJN33wQ5p2IT9isPcHPlLBg13PY0RROIMCov
-	iyuIZQL7oOOT9631JFgNGVTOeCYX7/3UyqRdXSh7ShiIv3G3SI5eQ0Y82ix2YA==
+	bh=cQoSw1nvlRzPsTiSlFXd+9t8QVcHNs1P2S1dYlYV6PQ=;
+	b=ujxhTLcmZpFU3mTnbTnUoUZtVs02mmiudGxi9IVAMZoOK7EAmdbZ6/vOmWK+gws2nwBsdk
+	s5T8fFZ8Dsf1SXrnVbIT6co8S/EzSFhfkpd5W2zFunH3BkjkOsPqhuYuR95Jcw1Ml0RuCt
+	AHiN2hf/9FtsHQH/SjFv8ej0VPk78mKLjlJKpSnbf6K3C3cFtxvZPRBSVwl5xVK/WiaX9B
+	M088P4l96N1Zj18mkZVE67OlXbWhnCF1lfr0l55B50xlhMp2bY+KUjmT+gztO55Bp9fpHD
+	neNqyzJOCUYTXdoCTUbhjI3GZOltWS7MHmmcL9DCPxW71FKYA7Ahd7j1FfC1dw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757074607;
+	s=2020e; t=1757074610;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qs37mBil5a1SU5iV5EX5mmOXYYZ7JEI/2oUycDoeqOI=;
-	b=nI5KapsW9/tkpPt5pKRyxhoWA6LhI44HfJnbO83cJSekRDIzGUNjHfPV1BdkiF9pj30yWj
-	RmMBhJftuJ6AcFDg==
+	bh=cQoSw1nvlRzPsTiSlFXd+9t8QVcHNs1P2S1dYlYV6PQ=;
+	b=IlBGgObC4G10J1mwyAFMQkwZqfPLKf9tf4bC2w/mfbbt8rVzJ/YjTTqJexJT14xTzV5Gly
+	/NV3mh8NzxOyEFDQ==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v5 25/35] x86/cacheinfo: Pass a 'struct cpuinfo_x86' refrence to CPUID(0x4) code
-Date: Fri,  5 Sep 2025 14:15:05 +0200
-Message-ID: <20250905121515.192792-26-darwi@linutronix.de>
+Subject: [PATCH v5 26/35] x86/cacheinfo: Use parsed CPUID(0x4)
+Date: Fri,  5 Sep 2025 14:15:06 +0200
+Message-ID: <20250905121515.192792-27-darwi@linutronix.de>
 In-Reply-To: <20250905121515.192792-1-darwi@linutronix.de>
 References: <20250905121515.192792-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,81 +81,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Prepare the CPUID(0x4) cache topology code for using parsed CPUID APIs
-instead of invoking direct CPUID queries.
+For the Intel cacheinfo code, use parsed CPUID(0x4) access instead of a
+direct CPUID query.
 
-Since such an API requires a 'struct cpuinfo_x86' reference, trickle it
-from the <linux/cacheinfo.h>'s populate_cache_leaves() x86 implementation
-down to fill_cpuid4_info() and its Intel-specific CPUID(0x4) code.
+Use the parsed CPUID API:
 
-No functional change intended.
+    cpuid_subleaf_count(c, 0x4)
 
-Suggested-by: Ingo Molnar <mingo@kernel.org>
+to determine the number of CPUID(0x4) cache subleaves instead of calling
+find_num_cache_leaves(), which uses direct CPUID(0x4) queries.
+
+Since find_num_cache_leaves() is no longer needed for Intel code paths,
+make it AMD-specific:
+
+  - Rename it to amd_find_num_cache_leaves()
+  - Remove its Intel CPUID(0x4) logic
+
+Adjust the AMD code paths accordingly.
+
+At intel_cacheinfo_0x4(), remove the max CPUID level check since
+cpuid_subleaf_count(c, 0x4) will safely return zero if CPUID(0x4) is not
+supported by the CPU.
+
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Link: https://lore.kernel.org/lkml/aBnEBbDATdE2LTGU@gmail.com
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c | 40 ++++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 23 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index c09e7f96fa77..f6b093dd8416 100644
+index f6b093dd8416..76fa3a01a34b 100644
 --- a/arch/x86/kernel/cpu/cacheinfo.c
 +++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -252,7 +252,7 @@ static int amd_fill_cpuid4_info(int index, struct _cpuid4_info *id4)
+@@ -252,16 +252,17 @@ static int amd_fill_cpuid4_info(int index, struct _cpuid4_info *id4)
  	return cpuid4_info_fill_done(id4, eax, ebx, ecx);
  }
  
--static int intel_fill_cpuid4_info(int index, struct _cpuid4_info *id4)
-+static int intel_fill_cpuid4_info(struct cpuinfo_x86 *unused, int index, struct _cpuid4_info *id4)
+-static int intel_fill_cpuid4_info(struct cpuinfo_x86 *unused, int index, struct _cpuid4_info *id4)
++static int intel_fill_cpuid4_info(struct cpuinfo_x86 *c, int index, struct _cpuid4_info *id4)
  {
- 	union _cpuid4_leaf_eax eax;
- 	union _cpuid4_leaf_ebx ebx;
-@@ -264,13 +264,13 @@ static int intel_fill_cpuid4_info(int index, struct _cpuid4_info *id4)
- 	return cpuid4_info_fill_done(id4, eax, ebx, ecx);
+-	union _cpuid4_leaf_eax eax;
+-	union _cpuid4_leaf_ebx ebx;
+-	union _cpuid4_leaf_ecx ecx;
+-	u32 ignored;
++	const struct cpuid_regs *regs = cpuid_subleaf_n_raw(c, 0x4, index);
+ 
+-	cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &ignored);
++	if (!regs)
++		return -EIO;
+ 
+-	return cpuid4_info_fill_done(id4, eax, ebx, ecx);
++	return cpuid4_info_fill_done(id4,
++				     (union _cpuid4_leaf_eax)(regs->eax),
++				     (union _cpuid4_leaf_ebx)(regs->ebx),
++				     (union _cpuid4_leaf_ecx)(regs->ecx));
  }
  
--static int fill_cpuid4_info(int index, struct _cpuid4_info *id4)
-+static int fill_cpuid4_info(struct cpuinfo_x86 *c, int index, struct _cpuid4_info *id4)
- {
- 	u8 cpu_vendor = boot_cpu_data.x86_vendor;
- 
- 	return (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON) ?
- 		amd_fill_cpuid4_info(index, id4) :
--		intel_fill_cpuid4_info(index, id4);
-+		intel_fill_cpuid4_info(c, index, id4);
+ static int fill_cpuid4_info(struct cpuinfo_x86 *c, int index, struct _cpuid4_info *id4)
+@@ -273,17 +274,16 @@ static int fill_cpuid4_info(struct cpuinfo_x86 *c, int index, struct _cpuid4_inf
+ 		intel_fill_cpuid4_info(c, index, id4);
  }
  
- static int find_num_cache_leaves(struct cpuinfo_x86 *c)
-@@ -443,7 +443,7 @@ static bool intel_cacheinfo_0x4(struct cpuinfo_x86 *c)
+-static int find_num_cache_leaves(struct cpuinfo_x86 *c)
++static int amd_find_num_cache_leaves(struct cpuinfo_x86 *c)
+ {
+-	unsigned int eax, ebx, ecx, edx, op;
+ 	union _cpuid4_leaf_eax cache_eax;
++	unsigned int eax, ebx, ecx, edx;
+ 	int i = -1;
+ 
+-	/* Do a CPUID(op) loop to calculate num_cache_leaves */
+-	op = (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) ? 0x8000001d : 4;
++	/* Do a CPUID(0x8000001d) loop to calculate num_cache_leaves */
+ 	do {
+ 		++i;
+-		cpuid_count(op, i, &eax, &ebx, &ecx, &edx);
++		cpuid_count(0x8000001d, i, &eax, &ebx, &ecx, &edx);
+ 		cache_eax.full = eax;
+ 	} while (cache_eax.split.type != CTYPE_NULL);
+ 	return i;
+@@ -328,7 +328,7 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id)
+ 		 * Newer families: LLC ID is calculated from the number
+ 		 * of threads sharing the L3 cache.
+ 		 */
+-		u32 llc_index = find_num_cache_leaves(c) - 1;
++		u32 llc_index = amd_find_num_cache_leaves(c) - 1;
  		struct _cpuid4_info id4 = {};
- 		int ret;
  
--		ret = intel_fill_cpuid4_info(i, &id4);
-+		ret = intel_fill_cpuid4_info(c, i, &id4);
- 		if (ret < 0)
- 			continue;
+ 		if (!amd_fill_cpuid4_info(llc_index, &id4))
+@@ -353,7 +353,7 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
+ 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
  
-@@ -612,17 +612,17 @@ int populate_cache_leaves(unsigned int cpu)
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
- 	struct cacheinfo *ci = this_cpu_ci->info_list;
- 	u8 cpu_vendor = boot_cpu_data.x86_vendor;
--	u32 apicid = cpu_data(cpu).topo.apicid;
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct amd_northbridge *nb = NULL;
- 	struct _cpuid4_info id4 = {};
- 	int idx, ret;
+ 	if (boot_cpu_has(X86_FEATURE_TOPOEXT))
+-		ci->num_leaves = find_num_cache_leaves(c);
++		ci->num_leaves = amd_find_num_cache_leaves(c);
+ 	else if (c->extended_cpuid_level >= 0x80000006)
+ 		ci->num_leaves = (cpuid_edx(0x80000006) & 0xf000) ? 4 : 3;
+ }
+@@ -362,7 +362,7 @@ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
+ {
+ 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
  
- 	for (idx = 0; idx < this_cpu_ci->num_leaves; idx++) {
--		ret = fill_cpuid4_info(idx, &id4);
-+		ret = fill_cpuid4_info(c, idx, &id4);
- 		if (ret)
- 			return ret;
+-	ci->num_leaves = find_num_cache_leaves(c);
++	ci->num_leaves = amd_find_num_cache_leaves(c);
+ }
  
--		id4.id = get_cache_id(apicid, &id4);
-+		id4.id = get_cache_id(c->topo.apicid, &id4);
+ static void intel_cacheinfo_done(struct cpuinfo_x86 *c, unsigned int l3,
+@@ -426,15 +426,9 @@ static bool intel_cacheinfo_0x4(struct cpuinfo_x86 *c)
+ 	unsigned int l2_id = BAD_APICID, l3_id = BAD_APICID;
+ 	unsigned int l1d = 0, l1i = 0, l2 = 0, l3 = 0;
  
- 		if (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON)
- 			nb = amd_init_l3_cache(idx);
+-	if (c->cpuid_level < 4)
+-		return false;
+-
+-	/*
+-	 * There should be at least one leaf. A non-zero value means
+-	 * that the number of leaves has been previously initialized.
+-	 */
++	/* Non-zero means that it has been previously initialized */
+ 	if (!ci->num_leaves)
+-		ci->num_leaves = find_num_cache_leaves(c);
++		ci->num_leaves = cpuid_subleaf_count(c, 0x4);
+ 
+ 	if (!ci->num_leaves)
+ 		return false;
 -- 
 2.50.1
 
