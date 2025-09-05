@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-802600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47391B45468
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:20:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33382B45D22
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F182A42850
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 686B17B787A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DFE2D592B;
-	Fri,  5 Sep 2025 10:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AAF2D46D8;
-	Fri,  5 Sep 2025 10:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C28302166;
+	Fri,  5 Sep 2025 15:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="EeXTrWA7"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C4631D74D;
+	Fri,  5 Sep 2025 15:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067638; cv=none; b=jMK2c1EaUDrenhSveF24QOIR8rklW7e2vsQgtuxvwUjVdu8arWc6CrcNTZ8vK6cnPaG6SlmjHuPQnjKgCGbBzRn0ltTLbG6+op0yp2QdOUPIhbgLE+UtatjIP/VJQ7I+1uccizSInoWCiNNpIqfRliiFiNt63scEwN8EfyrFYhA=
+	t=1757087634; cv=none; b=fWjU8Ya/zbInpKNrRBXuWCw+WSn2XZStqo9ugjhCo+xlLCaestKF3lDzsOf2KRYtmPNepWUy6b59TuOjNjWRQ/46rGh+QhR6J0OiTk31ES5OMlRmOdOdzdHnoO9lZDsMkl6kCiYIYnI53fycnszqcPhOQWJzqYxGo/8C6nlcG+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067638; c=relaxed/simple;
-	bh=HnPEUWmGMhAPulchLlYkOSU9Nq+SlXkxxTHApPFtel4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVx+VcbBYc8DJqNqchd5G6aJ8r4UvHI/pTdWziHK6bldrsdgMVTDtsE0VXlO6ixbLYBRkU00mVQorL4H6UVIq6yNcO5pIH1Ii1UbQ7UL0+TN88cyt8p67K8pnFEE5YUpneeRRVbbEKnDLHY+3UXAqmdPjQiTJwmVGG+6uIThDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cJBQF6cZVz9sSh;
-	Fri,  5 Sep 2025 11:49:25 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RcDlpa8gf6Cl; Fri,  5 Sep 2025 11:49:25 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cJBQD56YSz9sSf;
-	Fri,  5 Sep 2025 11:49:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 97D228B774;
-	Fri,  5 Sep 2025 11:49:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id RTrywvFHm_LN; Fri,  5 Sep 2025 11:49:24 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D74578B773;
-	Fri,  5 Sep 2025 11:49:23 +0200 (CEST)
-Message-ID: <d5bfa13f-379f-493a-a410-400dd3782207@csgroup.eu>
-Date: Fri, 5 Sep 2025 11:49:23 +0200
+	s=arc-20240116; t=1757087634; c=relaxed/simple;
+	bh=bQJbBlDb2plSFmN3rMuQrvP2t8272xYYiasY74ESFkQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ffh2+mi/qbYvkOEA6lCdTuAkaQskW903W/dPXDHJuZs0C1nqED+ktsednnwBVITKUpjA53z1qcnHi0OI8mBMQB+5UAGNskoz7qOBfFMJtW9bYwhLToZ8YeMoTHkHsxiP15sVWND43/VcpL0FTYDFSJIgME5W4WZgN2zrx6RsZl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=EeXTrWA7; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585EDjNP002489;
+	Fri, 5 Sep 2025 11:53:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=VWyl2
+	GKKUtzXeEMO5licX2jrTgAUwAr9qFjnFnbI/NA=; b=EeXTrWA7oTZajJ8ZL9vmj
+	mLbt7+lJ0YPlA/hJRQg9LpNQnWh9uSLg3iI3LukJgu2/ZeEXaHLfOPh0TdBk6a0J
+	AeKpYheIgMLE1zQAnw53sg/8CKSoq2doZ2j1N/d+QccNZX0vW6o/B0TFJsZo7eF3
+	m3OG5LJyf0kGcshhZMzEOikIFe27Wgv+PI+prjlw3kV7adoZJf9v9EFqIyaUDN/s
+	oIa6wbVHyv3uArL3tC5NBvjJZ0MykfJ2JOYjSzRvFh8U3+7hNvLuM+dD5XsG9LoS
+	rXJSun6eE/Kqzfxn6baB6Yc6FDagGb1Z/HjP7YMcHDd5OmZv0XeH+RUOTSfw3dql
+	Q==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48uu54xcv4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 11:53:37 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 585FraOk063316
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 5 Sep 2025 11:53:36 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 5 Sep 2025 11:53:36 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 5 Sep 2025 11:53:36 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 5 Sep 2025 11:53:36 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 585FrKPl020487;
+	Fri, 5 Sep 2025 11:53:23 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
+        <jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+        <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+        <jonath4nns@gmail.com>
+Subject: [PATCH v3 3/4] math.h: Add 64-bit fractional numbers types
+Date: Fri, 5 Sep 2025 06:49:32 -0300
+Message-ID: <f9ebbb830fab46201dacbffa4cbe223782f0acf3.1757001160.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1757001160.git.Jonathan.Santos@analog.com>
+References: <cover.1757001160.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: remove redundant condition checks
-To: Xichao Zhao <zhao.xichao@vivo.com>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250905091321.437476-1-zhao.xichao@vivo.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250905091321.437476-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: c_p8oEdeRg8jk9CDobSP_QX96q5shPQH
+X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=68bb0781 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=yJojWOMRYYMA:10 a=gAnH3GRIAAAA:8 a=24LePxzCA9kSruUjZT8A:9
+X-Proofpoint-GUID: c_p8oEdeRg8jk9CDobSP_QX96q5shPQH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0NyBTYWx0ZWRfX4sTihd8AJk2U
+ /gPNwftnXm6bs3nWa5rBL0DFfr/YFDjMp1nrG1naMpJrcauTL4k/69cLhzaFyItpXSJvp9r2Tmw
+ otnrKbJKQMLmZsV98Ly7KJsc+XP6uHlwCR5pg/xSjj7ERSvLxgTBV5DWeuyrgkbVY5Clob9k9+v
+ FsjM/VU0KTWSxUcOBJAFYK5h/Yn90epvDqydY118fciEyMnTyIN6BICungRMMiM6tKK6M3XMo6S
+ a5Vz0GAL+QuFmxd60/Ti4h68wEAbmT+6ybRddLF1EbBZv0flGeKqhcU1g8COaLzPZ0iviWIASe9
+ D/xqwvHx6x8e0oDTxl4E0gYdOPMPB8qzoliImCznZujOI1v6EHOUa1BKJwYwU8cgeUUatA+l32W
+ 8HQQpEJZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300047
 
+Extend fractional numbers types to include __u64 and __s64 data types.
 
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v3 Changes:
+* New patch.
+* OBS: Andy suggested to support long types, but the macro was made for
+  data types like __TYPE. So i have added the __u64 and __s64 types.
+---
+ include/linux/math.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Le 05/09/2025 à 11:13, Xichao Zhao a écrit :
-> Remove redundant condition checks and replace else if with else.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   drivers/tty/hvc/hvc_console.c   | 2 +-
->   drivers/tty/serial/msm_serial.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-> index cd1f657f782d..fffc30b9ea54 100644
-> --- a/drivers/tty/hvc/hvc_console.c
-> +++ b/drivers/tty/hvc/hvc_console.c
-> @@ -184,7 +184,7 @@ static void hvc_console_print(struct console *co, const char *b,
->   					hvc_console_flush(cons_ops[index],
->   						      vtermnos[index]);
->   				}
-> -			} else if (r > 0) {
-> +			} else {
->   				i -= r;
->   				if (i > 0)
->   					memmove(c, c+r, i);
-> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-> index 3449945493ce..2e999cb9c974 100644
-> --- a/drivers/tty/serial/msm_serial.c
-> +++ b/drivers/tty/serial/msm_serial.c
-> @@ -1102,7 +1102,7 @@ msm_find_best_baud(struct uart_port *port, unsigned int baud,
->   
->   			if (result == baud)
->   				break;
-> -		} else if (entry->divisor > divisor) {
-> +		} else {
->   			old = target;
->   			target = clk_round_rate(msm_port->clk, old + 1);
->   			/*
+diff --git a/include/linux/math.h b/include/linux/math.h
+index 0198c92cbe3e..ff28a0dcfaa8 100644
+--- a/include/linux/math.h
++++ b/include/linux/math.h
+@@ -130,6 +130,8 @@ __STRUCT_FRACT(s16)
+ __STRUCT_FRACT(u16)
+ __STRUCT_FRACT(s32)
+ __STRUCT_FRACT(u32)
++__STRUCT_FRACT(s64)
++__STRUCT_FRACT(u64)
+ #undef __STRUCT_FRACT
+ 
+ /* Calculate "x * n / d" without unnecessary overflow or loss of precision. */
+-- 
+2.34.1
 
 
