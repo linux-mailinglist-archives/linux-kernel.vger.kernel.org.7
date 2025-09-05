@@ -1,530 +1,185 @@
-Return-Path: <linux-kernel+bounces-803599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D2EB462DD
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8079B462DE
 	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BB43BCC8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1038ABA188E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FC028312E;
-	Fri,  5 Sep 2025 18:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41328315D5F;
+	Fri,  5 Sep 2025 18:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZrjfXZXA"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="MsbNAmrs"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45DF27E07F;
-	Fri,  5 Sep 2025 18:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098248; cv=pass; b=rz/KM24TV5BRFX0fxeEjXS8eisLuQ5jBpHHjYCqlbr2pGcjcvgZw+OaKL8xLxXrdkksKxjjDxpRXcrAcrPOUlmYTdLOKV2lbvKObqzCGMt8LP65d0s9GEUgi/A4QGsBPTfdjztYk3h1wnVtt3xtGl7wzHpFDi2jb6aR3C67+67g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098248; c=relaxed/simple;
-	bh=psnnZEHO1jLg6QFHHneQeik3rC53a/rYz22ZqHoWlAc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=TAEHR7qFoH/A+wYMnr4Lj/ZdkVsFn6WI55XwuvZjmJwYE3ruTVVmmyNHN0H2nK74zUzxzqjqjbvI3UV3hGE9ABtLVQt5wmLDgOpkWPhRwRBe5cd4OfCZiF592MIzx1+8nzkJawqAmyVSfIn7f7yxS6NHDGFkFa6UphqUpekxSi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZrjfXZXA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757098216; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MGszn2MP1l39+Iqv8mWTs3TJdW8srp547RJ61/GwtVjJPYGiuG3NhhVmSXustrTduRk8BkLPAgdgOdW6attE/vJqrlYTneTVkkWKohFvcqK9lJ8c6QVgB3SJZ9Jyr088XiYIhU2RQa9SiVnGiEELmz+qMhoWMQVGrY84qJ3iFgE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757098216; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8RQIiHyNynBWq6LtRFAmJpE3Kl8lr5mXan0DTdyIJrM=; 
-	b=kVGm408EeF49iGab28OTDPun0UTb7ci+26wsAgYUbAClzN/5pWQUyCxQ0vb3cr96mi9z5ByYgZPBzedPZVRs5gU4YykIgr7TruzioShmFBO2c3J8NUbvfU7JatHZEWb0mCui1VbjbFPNgYcsLg6mJMsvEmLVyko8wS/M7d/0XYs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757098216;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=8RQIiHyNynBWq6LtRFAmJpE3Kl8lr5mXan0DTdyIJrM=;
-	b=ZrjfXZXA/qRCIOMKo5HNkBJ44NEJXSLVVgopwjDNo8fP9lBMQQc/44ul7VOvjycG
-	T+TO5uZxaaPW0rwztqecFrvSMl9GACbTiFDm6x9D/E17qliOw3rZwEGn/jYqH8CfuBo
-	EAqv4HSELpsr4nHc5KTlnpQTXpEt5WAnrppdceGU=
-Received: by mx.zohomail.com with SMTPS id 1757098215259640.9815782272678;
-	Fri, 5 Sep 2025 11:50:15 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D78315D5A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757098223; cv=none; b=X94z9H5uRReMu6zZyD3LtS0g/AFHoI0odyBciWDCATUbXACQE4YdZEhoJ8/C0j2gm1AVOQEcmO+z6LvC3d4u3k4vZgwq1VWcW+9dlxb94hejqZhFBhbxHoOCfw4bpNM14Z+sUDdELB+D3N4HDlmZvBIKZ5MmhnaBu7qJ9VCzDRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757098223; c=relaxed/simple;
+	bh=0hYvnTz+R7sjXCKT6oK+dyNsXz+XwJzcx6mP2KzeeiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OAqHzqlvC4eDNvrqUN6RViWARPtcjpsOM33V7McrLH7ZgCMdvFsuMTmxBSOwxk2FVJeqgI0m+HMnErrzJTR2jsOvUvhKWLfjWnATKSJURAWmn0GUvoQl86AyROdEnYPg3NIwIVQyqTQTejmVLrA8ezkbJD8fXLxDN36eidIVthM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=MsbNAmrs; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74be52f5447so45644a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1757098220; x=1757703020; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FEEk6xUwhvxiQOfwQMcWge63YTvzvqM+uAXEwNhtVtc=;
+        b=MsbNAmrsizfrJ9c/xKL4vtL/HemI+mu4h0B87BMe3blqlk9YqsXyHa5p4uxRsVSsAI
+         msiqFPDynZ8iBTXdwkmWpvhCwa9eC9cJU+fP7maLqfLxGgIXCIsVdVc3rSmsfMa4l5zg
+         k+msg9SSYbevw76Ab6YxisA5L2oA5UuKVnQEzIu8D5vozNLiUahPwNxciAqfazPv/eW4
+         LByLv0dvVQhbmMMrOHRU1R3qaTCqw4SGvBDa7Cb7bJuq7qHBz8B90EPpzhFXcqOrzAuk
+         H5VeK50WX4IeWloLoBa1YqQ+ZkUjezmARMnd7ww8NZe1gYHwdS3kuf+TPz88DeOYuCVE
+         UhvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757098220; x=1757703020;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FEEk6xUwhvxiQOfwQMcWge63YTvzvqM+uAXEwNhtVtc=;
+        b=sjebhtt8ipjXhAdzVX1XH0I2NgVgzY/SyfF2/XXB/GZPfhJpQmVf61HX1GD9BlKE/w
+         ziXrgvBTdsyI+/vn962b0sA8qOOo7o3cUhShERKWIgfvo10B4gOnSfATu07FVIgW7hbg
+         VQMu8BSbhtxWtAVXoNo+JureeCts1rsQFU61fGKbSEhFw3LZONzXqZofSgAXElIHuMex
+         QIpCvJ8cTmUfffrpymtLV/pN5F+PtmUINXHh87o3nVkb2d/xm0xtRp4bVXJilwNwhGgM
+         GLRRMHH+LpAVgPGrqfxN5dFGvz2iQNZtYFlKTw2YU9E0gCdq7I8UHbG3etNqk3gyIwzz
+         NPIA==
+X-Gm-Message-State: AOJu0Yzu873ptkRaLNCHYcMTe9FT57reRBm3//N/Lwftg0S/8j1ZQ5XF
+	cmUl9JMzpjCfQPStG/kxNUzcyvyaA3oHJCRQF2aFEm7sEYsttVEo0H+b8zuqdsVmKmU=
+X-Gm-Gg: ASbGncsHmUjne91GnNNY3IYFcoxl02Z19cc3l5d1x/l6cHaCTeNVCJdtzm/BXp/EUcT
+	n60q7rPZw90cSNiXkuSBXkrdeCz+KYiE7yLJI+qKUNFHcsjC0zNF5gcWypmUVUx9dF7SF0uvPDr
+	/uz8IjHYRIxgE9dza0gJdzBLCkX3b1tIB7nxi5Wk2s+PoruX7Z2YF9xi3j5gJWmX0Qyklq3O4Eh
+	VYDXoKIcDid3Svsn3gzsun5b5cf9uLVyqjGI5gXnRKybEfNM/J9pD98r6Tk2N1+CX92oKUf0mzw
+	aXuuphc8FE1aaEb9VAP0jID+RhmEbiFHvdVMhgUrZs5DYBcQhi0P27luijqgFnoBJkTSeiWeJrQ
+	E9MrBu9pKErDvpS3WqJy8JLzt
+X-Google-Smtp-Source: AGHT+IGhE9dThViFZe1QFt4sm/cQOA52RjTcfkrT7ftr8yl7gfauhn1PktZuJ2w0amu5yhU2y/mqIA==
+X-Received: by 2002:a05:6830:498f:b0:742:fefe:4311 with SMTP id 46e09a7af769-74569deee96mr13615645a34.16.1757098220481;
+        Fri, 05 Sep 2025 11:50:20 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:e171:344b:daa:1a1a])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-746db51a7ccsm1049989a34.30.2025.09.05.11.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 11:50:19 -0700 (PDT)
+Date: Fri, 5 Sep 2025 13:50:16 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Gilles BULOZ <gilles.buloz@kontron.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+	OpenIPMI Developers <openipmi-developer@lists.sourceforge.net>
+Subject: Re: user->nr_msgs going negative in ipmi_msghandler.c
+Message-ID: <aLsw6G0GyqfpKs2S@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <5cc48305-d88d-ac15-ce0d-55306a60a0dd@kontron.com>
+ <aLrPbzfho1d2kMsn@mail.minyard.net>
+ <aLrRlQZdeToIgPBG@mail.minyard.net>
+ <c3c0cba1-a45d-8619-06c0-64046d8ecd76@kontron.com>
+ <f14bd1ca-c47a-13b3-fd5f-5f5ad0c89fad@kontron.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 3/7] rust: implement `WwMutex`, `WwAcquireCtx` and
- `WwMutexGuard`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250903131313.4365-4-work@onurozkan.dev>
-Date: Fri, 5 Sep 2025 15:49:57 -0300
-Cc: rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- lossin@kernel.org,
- lyude@redhat.com,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <886565B2-B5CD-49DA-9598-EBD60490C0DC@collabora.com>
-References: <20250903131313.4365-1-work@onurozkan.dev>
- <20250903131313.4365-4-work@onurozkan.dev>
-To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f14bd1ca-c47a-13b3-fd5f-5f5ad0c89fad@kontron.com>
 
-Hi Onur,
+I'm adding the OpenIPMI mailing list and the LKML.
 
-I think this is starting to come together IMHO. Some comments inline.
+On Fri, Sep 05, 2025 at 05:04:28PM +0200, Gilles BULOZ wrote:
+> Le 05/09/2025 à 15:15, Gilles BULOZ a écrit :
+> > Le 05/09/2025 à 14:03, Corey Minyard a écrit :
+> >> On Fri, Sep 05, 2025 at 06:54:23AM -0500, Corey Minyard wrote:
+> >>> On Fri, Sep 05, 2025 at 10:16:19AM +0200, Gilles BULOZ wrote:
+> >>>> Hi Corey,
+> >>>>
+> >>>> I'm HW/SW developer at Kontron (computer manufacturer) and don't know what to
+> >>>> think about an issue with user->nr_msgs going negative in ipmi_msghandler.c.
+> >>>> Not sure if it's a weakness in ipmi_msghandler.c or a bug in the IPMC software
+> >>>> of our computer board (satellite) with event messages.
+> >>> I worked with people from Kontron a long time ago.  Those were good
+> >>> times :).
+> >>>
+> >>>> I see this when I run ipmitool on this board while some event messages already
+> >>>> available. In this case deliver_response() is processing the messages and is
+> >>>> decreasing user->nr_msgs below 0. Then when ipmitool calls
+> >>>> ioctl(IPMICTL_SEND_COMMAND) it gets an error with errno=EBUSY because in
+> >>>> i_ipmi_request() user->nr_msgs is incremented but still negative, casted to
+> >>>> unsigned int so becomes huge, and found greater than max_msgs_per_user (100).
+> >>> Thanks for the detailed description.  The fix for the bug is:
+> >>>
+> >>> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> >>> index e12b531f5c2f..ba33070622b1 100644
+> >>> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> >>> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> >>> @@ -1634,6 +1634,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
+> >>>
+> >>>                 list_for_each_entry_safe(msg, msg2, &msgs, link) {
+> >>>                         msg->user = user;
+> >>> +                       atomic_add(1, &usr->nr_msgs);
+> >> Sorry, that should obviously be user->nr_msgs
+> > Thanks very much !
+> > I've tried it with kernel 6.11.8 and it's better but still not enough.
+> > Running "ipmitool sensor" with some debug in ipmi_msghandler.c shows that I always have nr_msgs=1 right after the atomic_add (called
+> > 9 times), then when in i_ipmi_request() I reach line "rv = -EBUSY;" with nr_msgs=-2 (twice).
+> My understanding is that ipmitool calls ioctl(IPMICTL_SET_GETS_EVENTS_CMD) calling ipmi_set_gets_events() and thanks to your patch
+> for each event available the nr_msgs is incremented here and decremented in deliver_response(). So your patch is OK for that.
+> But after that if other events are coming, deliver_response() is called and nr_msgs gets decremented. So when ipmitool calls
+> ioctl(IPMICTL_SEND_COMMAND), this calls i_ipmi_request() with nr_msgs < 0 and that returns -EBUSY
 
-> On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
->=20
-> Includes full locking API (lock, try_lock, slow path, interruptible =
-variants)
-> and integration with kernel bindings.
->=20
-> Also adds the `EDEADLK` error code to support deadlock detection.
->=20
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> ---
-> rust/kernel/error.rs              |   1 +
-> rust/kernel/sync/lock/ww_mutex.rs | 289 +++++++++++++++++++++++++++++-
-> 2 files changed, 289 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index a41de293dcd1..560de6117094 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -64,6 +64,7 @@ macro_rules! declare_err {
->     declare_err!(EPIPE, "Broken pipe.");
->     declare_err!(EDOM, "Math argument out of domain of func.");
->     declare_err!(ERANGE, "Math result not representable.");
-> +    declare_err!(EDEADLK, "Resource deadlock avoided.");
->     declare_err!(EOVERFLOW, "Value too large for defined data type.");
->     declare_err!(ETIMEDOUT, "Connection timed out.");
->     declare_err!(ERESTARTSYS, "Restart the system call.");
-> diff --git a/rust/kernel/sync/lock/ww_mutex.rs =
-b/rust/kernel/sync/lock/ww_mutex.rs
-> index ca5b4525ace6..314360632953 100644
-> --- a/rust/kernel/sync/lock/ww_mutex.rs
-> +++ b/rust/kernel/sync/lock/ww_mutex.rs
-> @@ -10,8 +10,11 @@
-> //! For more information: =
-<https://docs.kernel.org/locking/ww-mutex-design.html>
->=20
-> use crate::bindings;
-> +use crate::error::to_result;
-> use crate::prelude::*;
-> -use crate::types::Opaque;
-> +use crate::types::{NotThreadSafe, Opaque};
-> +use core::cell::UnsafeCell;
-> +use core::marker::PhantomData;
->=20
-> /// Create static [`WwClass`] instances.
-> ///
-> @@ -134,3 +137,287 @@ pub fn new_wound_wait(name: &'static CStr) -> =
-impl PinInit<Self> {
->         Self::new(name, false)
->     }
-> }
-> +
-> +/// Groups multiple mutex acquisitions together for deadlock =
-avoidance.
-> +///
-> +/// Must be used when acquiring multiple mutexes of the same class.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, =
-WwMutex};
-> +/// use kernel::c_str;
-> +/// use kernel::sync::Arc;
-> +/// use pin_init::stack_pin_init;
-> +///
-> +/// stack_pin_init!(let class =3D =
-WwClass::new_wound_wait(c_str!("my_class")));
-> +///
-> +/// // Create mutexes.
-> +/// let mutex1 =3D Arc::pin_init(WwMutex::new(1, &class), =
-GFP_KERNEL)?;
-> +/// let mutex2 =3D Arc::pin_init(WwMutex::new(2, &class), =
-GFP_KERNEL)?;
-> +///
-> +/// // Create acquire context for deadlock avoidance.
-> +/// let ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), =
-GFP_KERNEL)?;
-> +///
-> +/// // Acquire multiple locks safely.
-> +/// let guard1 =3D ctx.lock(&mutex1)?;
-> +/// let guard2 =3D ctx.lock(&mutex2)?;
-> +///
-> +/// // Mark acquisition phase as complete.
-> +/// ctx.done();
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[pin_data(PinnedDrop)]
-> +pub struct WwAcquireCtx<'a> {
 
-Please drop the Ww prefix. This is ww_mutex.rs <http://ww_mutex.rs/> =
-after all.
+Yeah, after I sent my email I started looking through the driver for
+other issues around this, and there were several.  That change wasn't
+well thought through.
 
-> +    #[pin]
-> +    inner: Opaque<bindings::ww_acquire_ctx>,
-> +    _p: PhantomData<&'a WwClass>,
-> +}
-> +
-> +impl<'ww_class> WwAcquireCtx<'ww_class> {
-> +    /// Initializes `Self` with calling C side `ww_acquire_init` =
-inside.
-> +    pub fn new(ww_class: &'ww_class WwClass) -> impl PinInit<Self> {
-> +        let class =3D ww_class.inner.get();
-> +        pin_init!(WwAcquireCtx {
-> +            inner <- Opaque::ffi_init(|slot: *mut =
-bindings::ww_acquire_ctx| {
-> +                // SAFETY: `ww_class` is valid for the lifetime =
-`'ww_class` captured by `Self`.
-> +                unsafe { bindings::ww_acquire_init(slot, class) }
-> +            }),
-> +            _p: PhantomData
-> +        })
-> +    }
-> +
-> +    /// Marks the end of the acquire phase.
-> +    ///
-> +    /// After calling this function, no more mutexes can be acquired =
-with this context.
-> +    pub fn done(&self) {
-> +        // SAFETY: The context is pinned and valid.
-> +        unsafe { bindings::ww_acquire_done(self.inner.get()) };
-> +    }
+So, I've added some tests around this in my test suite, and I've
+reworked this to be a much better implementation that's harder to get
+wrong.
 
-This lets you call done() multiple times. We should probably use a =
-typestate here.
+I'm going to send the fix in a separate email.
 
-> +
-> +    /// Locks the given mutex.
-> +    pub fn lock<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) -> =
-Result<WwMutexGuard<'a, T>> {
+Thanks,
 
-> +        // SAFETY: The mutex is pinned and valid.
-> +        let ret =3D unsafe { =
-bindings::ww_mutex_lock(ww_mutex.mutex.get(), self.inner.get()) };
-> +
-> +        to_result(ret)?;
-> +
-> +        Ok(WwMutexGuard::new(ww_mutex))
-> +    }
-> +
-> +    /// Similar to `lock`, but can be interrupted by signals.
-> +    pub fn lock_interruptible<'a, T>(
-> +        &'a self,
-> +        ww_mutex: &'a WwMutex<'a, T>,
-> +    ) -> Result<WwMutexGuard<'a, T>> {
-> +        // SAFETY: The mutex is pinned and valid.
-> +        let ret =3D unsafe {
-> +            =
-bindings::ww_mutex_lock_interruptible(ww_mutex.mutex.get(), =
-self.inner.get())
-> +        };
-> +
-> +        to_result(ret)?;
-> +
-> +        Ok(WwMutexGuard::new(ww_mutex))
-> +    }
-> +
-> +    /// Locks the given mutex using the slow path.
-> +    ///
-> +    /// This function should be used when `lock` fails (typically due =
-to a potential deadlock).
-> +    pub fn lock_slow<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) =
--> Result<WwMutexGuard<'a, T>> {
-> +        // SAFETY: The mutex is pinned and valid, and we're in the =
-slow path.
-> +        unsafe { bindings::ww_mutex_lock_slow(ww_mutex.mutex.get(), =
-self.inner.get()) };
-> +
-> +        Ok(WwMutexGuard::new(ww_mutex))
-> +    }
-> +
-> +    /// Similar to `lock_slow`, but can be interrupted by signals.
-> +    pub fn lock_slow_interruptible<'a, T>(
-> +        &'a self,
-> +        ww_mutex: &'a WwMutex<'a, T>,
-> +    ) -> Result<WwMutexGuard<'a, T>> {
-> +        // SAFETY: The mutex is pinned and valid, and we are in the =
-slow path.
-> +        let ret =3D unsafe {
-> +            =
-bindings::ww_mutex_lock_slow_interruptible(ww_mutex.mutex.get(), =
-self.inner.get())
-> +        };
-> +
-> +        to_result(ret)?;
-> +
-> +        Ok(WwMutexGuard::new(ww_mutex))
-> +    }
-> +
-> +    /// Tries to lock the mutex without blocking.
-> +    ///
-> +    /// Unlike `lock`, no deadlock handling is performed.
-> +    pub fn try_lock<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) -> =
-Result<WwMutexGuard<'a, T>> {
-> +        // SAFETY: The mutex is pinned and valid.
-> +        let ret =3D unsafe { =
-bindings::ww_mutex_trylock(ww_mutex.mutex.get(), self.inner.get()) };
-> +
-> +        if ret =3D=3D 0 {
-> +            return Err(EBUSY);
-> +        } else {
-> +            to_result(ret)?;
-> +        }
-> +
-> +        Ok(WwMutexGuard::new(ww_mutex))
-> +    }
-> +}
-> +
-> +#[pinned_drop]
-> +impl PinnedDrop for WwAcquireCtx<'_> {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // SAFETY: The context is being dropped and is pinned.
-> +        unsafe { bindings::ww_acquire_fini(self.inner.get()) };
-> +    }
-> +}
-> +
-> +/// A wound/wait mutex backed with C side `ww_mutex`.
-> +///
-> +/// This is a mutual exclusion primitive that provides deadlock =
-avoidance when
-> +/// acquiring multiple locks of the same class.
+-corey
 
-A link would be cool for the docs.
-
-> +///
-> +/// # Examples
-> +///
-> +/// ## Basic Usage
-> +///
-> +/// ```
-> +/// use kernel::c_str;
-> +/// use kernel::sync::Arc;
-> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, WwMutex =
-};
-> +/// use pin_init::stack_pin_init;
-> +///
-> +/// stack_pin_init!(let class =3D =
-WwClass::new_wound_wait(c_str!("buffer_class")));
-> +/// let mutex =3D Arc::pin_init(WwMutex::new(42, &class), =
-GFP_KERNEL)?;
-> +///
-> +/// let ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), =
-GFP_KERNEL)?;
-> +///
-> +/// let guard =3D ctx.lock(&mutex)?;
-> +/// assert_eq!(*guard, 42);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +///
-> +/// ## Multiple Locks
-> +///
-> +/// ```
-> +/// use kernel::c_str;
-> +/// use kernel::prelude::*;
-> +/// use kernel::sync::Arc;
-> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, =
-WwMutex};
-> +/// use pin_init::stack_pin_init;
-> +///
-> +/// stack_pin_init!(let class =3D =
-WwClass::new_wait_die(c_str!("resource_class")));
-> +/// let mutex_a =3D Arc::pin_init(WwMutex::new("Resource A", &class), =
-GFP_KERNEL)?;
-> +/// let mutex_b =3D Arc::pin_init(WwMutex::new("Resource B", &class), =
-GFP_KERNEL)?;
-> +///
-> +/// let ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), =
-GFP_KERNEL)?;
-> +///
-> +/// // Try to acquire both locks.
-> +/// let guard_a =3D match ctx.lock(&mutex_a) {
-> +///     Ok(guard) =3D> guard,
-> +///     Err(e) if e =3D=3D EDEADLK =3D> {
-> +///         // Deadlock detected, use slow path.
-
-You must release all other locks before calling this, except there =
-aren=E2=80=99t any taken in your example.
-
-You should perhaps add a release_all() function to the context.
-
-> +///         ctx.lock_slow(&mutex_a)?
-> +///     }
-> +///     Err(e) =3D> return Err(e),
-> +/// };
-> +///
-> +/// let guard_b =3D ctx.lock(&mutex_b)?;
-> +/// ctx.done();
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[pin_data]
-> +pub struct WwMutex<'a, T: ?Sized> {
-> +    _p: PhantomData<&'a WwClass>,
-
-Make the PhantomData last, please.
-
-> +    #[pin]
-> +    mutex: Opaque<bindings::ww_mutex>,
-> +    data: UnsafeCell<T>,
-> +}
-> +
-> +// SAFETY: [`WwMutex`] can be shared between threads.
-> +unsafe impl<T: ?Sized + Send> Send for WwMutex<'_, T> {}
-
-=E2=80=9CSend=E2=80=9D does not share anything. When you send something, =
-some other
-thread has it, and you don=E2=80=99t have it anymore.
-
-Blank here.
-
-> +// SAFETY: [`WwMutex`] can be safely accessed from multiple threads =
-concurrently.
-> +unsafe impl<T: ?Sized + Send + Sync> Sync for WwMutex<'_, T> {}
-> +
-> +impl<'ww_class, T> WwMutex<'ww_class, T> {
-> +    /// Creates `Self` with calling `ww_mutex_init` inside.
-
-^ This does not parse very well.
-
-> +    pub fn new(t: T, ww_class: &'ww_class WwClass) -> impl =
-PinInit<Self> {
-
-Please rename =E2=80=9Ct=E2=80=9D to =E2=80=9Cdata=E2=80=9D.
-
-> +        let class =3D ww_class.inner.get();
-> +        pin_init!(WwMutex {
-> +            mutex <- Opaque::ffi_init(|slot: *mut bindings::ww_mutex| =
-{
-> +                // SAFETY: `ww_class` is valid for the lifetime =
-`'ww_class` captured by `Self`.
-> +                unsafe { bindings::ww_mutex_init(slot, class) }
-> +            }),
-> +            data: UnsafeCell::new(t),
-> +            _p: PhantomData,
-> +        })
-> +    }
-> +}
-> +
-> +impl<T: ?Sized> WwMutex<'_, T> {
-
-I wonder why we need this ?Sized here?
-
-> +    /// Returns a raw pointer to the inner mutex.
-> +    fn as_ptr(&self) -> *mut bindings::ww_mutex {
-> +        self.mutex.get()
-> +    }
-> +
-> +    /// Checks if the mutex is currently locked.
-> +    ///
-> +    /// Intended for internal tests only and should not be used
-> +    /// anywhere else.
-
-Why?
-
-> +    #[cfg(CONFIG_KUNIT)]
-> +    fn is_locked(&self) -> bool {
-
-I=E2=80=99d recommend removing this CONFIG_KUNIT and making this pub. =
-You can see
-that there are users for this function in the C code, like for example,
-dma_resv_is_locked().
-
-> +        // SAFETY: The mutex is pinned and valid.
-> +        unsafe { bindings::ww_mutex_is_locked(self.mutex.get()) }
-> +    }
-> +}
-> +
-> +/// A guard that provides exclusive access to the data protected
-> +/// by a [`WwMutex`].
-> +///
-> +/// # Invariants
-> +///
-> +/// The guard holds an exclusive lock on the associated [`WwMutex`]. =
-The lock is held
-> +/// for the entire lifetime of this guard and is automatically =
-released when the
-> +/// guard is dropped.
-> +#[must_use =3D "the lock unlocks immediately when the guard is =
-unused"]
-> +pub struct WwMutexGuard<'a, T: ?Sized> {
-> +    mutex: &'a WwMutex<'a, T>,
-> +    _not_send: NotThreadSafe,
-> +}
-> +
-> +// SAFETY: [`WwMutexGuard`] can be shared between threads if the data =
-can.
-> +unsafe impl<T: ?Sized + Sync> Sync for WwMutexGuard<'_, T> {}
-> +
-> +impl<'a, T: ?Sized> WwMutexGuard<'a, T> {
-> +    /// Creates a new guard for a locked mutex.
-> +    fn new(mutex: &'a WwMutex<'a, T>) -> Self {
-> +        Self {
-> +            mutex,
-> +            _not_send: NotThreadSafe,
-> +        }
-> +    }
-> +}
-> +
-> +impl<T: ?Sized> core::ops::Deref for WwMutexGuard<'_, T> {
-> +    type Target =3D T;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: We hold the lock, so we have exclusive access.
-> +        unsafe { &*self.mutex.data.get() }
-> +    }
-> +}
-> +
-> +impl<T: ?Sized> core::ops::DerefMut for WwMutexGuard<'_, T> {
-> +    fn deref_mut(&mut self) -> &mut Self::Target {
-> +        // SAFETY: We hold the lock, so we have exclusive access.
-> +        unsafe { &mut *self.mutex.data.get() }
-> +    }
-
-We need to add a bound on Unpin. See [0].
-
-> +}
-> +
-> +impl<T: ?Sized> Drop for WwMutexGuard<'_, T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: We hold the lock and are about to release it.
-> +        unsafe { bindings::ww_mutex_unlock(self.mutex.as_ptr()) };
-> +    }
-> +}
-> =E2=80=94
-> 2.50.0
->=20
->=20
-
-[0]: =
-https://lore.kernel.org/rust-for-linux/20250828-lock-t-when-t-is-pinned-v2=
--1-b067c4b93fd6@collabora.com/
-
+> >>>                         kref_get(&user->refcount);
+> >>>                         deliver_local_response(intf, msg);
+> >>>                 }
+> >>>
+> >>>
+> >>> Can you try that out?
+> >>>
+> >>> I'll forward port this to current kernel (if appropriate, this has all
+> >>> been rewritten) and required a backport.
+> >>>
+> >>> Thanks,
+> >>>
+> >>> -corey
+> >>>
+> >>>> As workaround I set module parameter max_msgs_per_user to 0xffffffff so that
+> >>>> user->nr_msgs is never greater than this value.
+> >>>> I was using kernel 6.11.8 but updated to 6.16.3 and get the same issue.
+> >>>> I'm also not sure if our board is supposed to receive such event messages as
+> >>>> it is not Shelf Manager, even if these events come from the local sensors of
+> >>>> the board.
+> >>>>
+> >>>> Best regards
+> >>>>
+> >>>> Gilles Buloz
+> >>>> Kontron Modular Computers France
+> >>>> R&D SW/HW senior developer
+> >>>>
+> >> .
+> 
 
