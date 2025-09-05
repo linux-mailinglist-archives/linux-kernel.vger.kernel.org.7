@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-803558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD881B4624D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA89B4624C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B31C11CC7FE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C37D1CC7F59
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FE1261B91;
-	Fri,  5 Sep 2025 18:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A0258CFF;
+	Fri,  5 Sep 2025 18:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="FDJHuT0W";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="JL71OQyO"
-Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUtojZFf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E94305971
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95091305947;
+	Fri,  5 Sep 2025 18:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097180; cv=none; b=BWplvenKSFRbIiMcEoilN1zSmgUMXWOu3UP/Y4qSWM6zD64bj9WG9plvStoAuCfeLYTIJgqBlvUj6NTLrnoMTjgk1WONqkgaVs3KpZaN0K4COQ1cwf3ggntqUzrlMBknbNXVlvJKEJP+vhDNSvx7GqT13VTOK6N/60aUsiBTemU=
+	t=1757097151; cv=none; b=R5OKbsq4LEN+uaoo/gvkoil+4++KK21DlX9UVXCLjPIrrubHKYjJ70Dp+SG6n6jOTDmj4igMKOYXNGKlctaX3/BAwMwBOaXFYWoPx+EWzYfJpOxE24Nb70JpsA2NUDy5LPAbrEVQi5iVX9fMPuoFulUDAk/PmQKNxmuJbD/tc8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097180; c=relaxed/simple;
-	bh=OxhKA3Gjzk/xIEHINEHN2GhZdADFRxSA6rz84t6CdvE=;
+	s=arc-20240116; t=1757097151; c=relaxed/simple;
+	bh=e4JMOWDCtaWn4IWv+Qg9bqYdXONUBAHh8WRaRowDs6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1kUHxRqpmghAuzs2G1hTNBWEkmfF9nRqQc33nk59KeHb+tLmmkXOJvW9m++sro95XIdg6gK/SpHcRq8r+IbIQD4luGo5b8NDjeTrXeXcA+QJgyNbKNVzNIchcxilX9mMzco5VZvtjb/ubh1IjwAMP8KC8y+5H789MU/XMHRCVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=FDJHuT0W; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=JL71OQyO; arc=none smtp.client-ip=46.30.211.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757097107; x=1757701907;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=XLrsQjlopOzuKX1/eHehC43L8GgHSisCzYiPyOWGnls=;
-	b=FDJHuT0WaJMRjBW8mdLPp3rn7DYJCnm6MmdcaAbqml4Rv+KIqnCfJ1LnGHdg9dHoQrNXkD722CKMa
-	 QVpTRQjdnY+4S/AQfwH0mXw3MviObRP2q9yf6li9MJKmtENFaqBLQjEEUjCNKNrOXHRTGlfxRb5LaK
-	 I8FlU2ZAENPgWhqjOJFxNzwWs6M2YxgdkcXHjBmSotJnFeDkvH/nVA7P5oPHwHOBmoquJudQN9ZTFE
-	 5yQOdfTrZxFBBS3w2hNteMeY9w7vlDQh6vpd3p1CZKE6pq6EUrTGkj59qqA1Rk/IFA4Gj67Bf3EHEO
-	 3yS8hrf2OmBR7uODszHLSlJ+QVSYv/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757097107; x=1757701907;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=XLrsQjlopOzuKX1/eHehC43L8GgHSisCzYiPyOWGnls=;
-	b=JL71OQyOVlwKXEPCWtIEffYZQ1lig2lzogR5w0MWucQlDvlyaaON6JNLm3HR06Yn9Iv3JwwAO1CeO
-	 cOugqiSCg==
-X-HalOne-ID: 92b917ff-8a86-11f0-874e-f7376af24660
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay6.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 92b917ff-8a86-11f0-874e-f7376af24660;
-	Fri, 05 Sep 2025 18:31:46 +0000 (UTC)
-Date: Fri, 5 Sep 2025 20:31:45 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] fbcon: Rename struct fbcon_ops to struct fbcon
-Message-ID: <20250905183145.GA360685@ravnborg.org>
-References: <20250818104655.235001-1-tzimmermann@suse.de>
- <20250818104655.235001-3-tzimmermann@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVrhkspzz9okWob7pvS8QcTc5pwEDLp5NjjDuzQn+qbAJz0T1i4bXvDE7ijuuPsnZP/dOlHsRGnwI2kq6vY8z9NtMw2MIc7iY2KXwcxQk30UM4nlrSug10fvnb08sQ9YHbwfkcg4kAxuEJvbn7ZtiKx2uIO3cyO3CJprHD9TJ2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUtojZFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE429C4CEF1;
+	Fri,  5 Sep 2025 18:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757097151;
+	bh=e4JMOWDCtaWn4IWv+Qg9bqYdXONUBAHh8WRaRowDs6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BUtojZFfxPu8z3gD7wiOB66CARaIwLsYkUy3gjCrgMpyZVgcxewDZMKVj8e5UAa2X
+	 +HhOGkTGVs+WUqWWIy5ULM0j6/BhVLUL3s5fW81Un9h8AtnqrEXIErhW22zGgyr38u
+	 hGh8n9vAx5trCCECvpeVi6q0fjY+5B2CgtMN4uqTRSyJQ6WKlF9pT9OzsYsEFOhaSl
+	 QK2wr33IGQdg6hL+6sHohs7jdiqCr+uC3SBEUzC2Imwyx8DCLDGSHfRReIw7CprZr1
+	 24bR6LWwOJySdfP8rEueEz+q9REj18vjNRqqkuexNB1CIgt3JwVZBUIpvdSzigOuYs
+	 m8E6l6C4TcyKQ==
+Date: Fri, 5 Sep 2025 19:32:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: xianwei.zhao@amlogic.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jianxin Pan <jianxin.pan@amlogic.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"hongyu.chen1" <hongyu.chen1@amlogic.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: power: keep alphabetical order
+Message-ID: <20250905-stew-removed-db191517cdf5@spud>
+References: <20250905-pm-fix-order-v1-1-3596e03d66e6@amlogic.com>
+ <20250905-vexingly-crudely-36f9e510e9c5@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ArYkgdtypeXZuzdN"
+Content-Disposition: inline
+In-Reply-To: <20250905-vexingly-crudely-36f9e510e9c5@spud>
+
+
+--ArYkgdtypeXZuzdN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818104655.235001-3-tzimmermann@suse.de>
 
-Hi Thomas.
+On Fri, Sep 05, 2025 at 07:31:33PM +0100, Conor Dooley wrote:
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-(I needed a distraction - this patchset was my excuse).
+Actually no. Ack is dependant on $subject being scoped to the individual
+amlogic binding. Perhaps the subsystem maintainer can do it on
+application
 
-On Mon, Aug 18, 2025 at 12:36:37PM +0200, Thomas Zimmermann wrote:
-> The type struct fbcon_ops contains fbcon state and callbacks. As the
-> callbacks will be removed from struct fbcon_ops, rename the data type
-> to struct fbcon. Also rename the variables from ops to confb.
-My personal preference would be to name the variable fbcon.
-This matches the name of the struct, and I did not see any conflicts
-while browsing the diff.
-But this is bikeshedding..
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 
-Assuming the bug reported by the kernel robot is fixed.
 
-	Sam
+--ArYkgdtypeXZuzdN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLssuQAKCRB4tDGHoIJi
+0pLHAPsGHxXqiKWNNentQqgjeU+9z7eQFW2LYOQzgEYNCmyDuQEA8yzY+9TrObfw
+cZ4RAaTfqlgFAYVSR2jknvD3eFTKJwY=
+=To+s
+-----END PGP SIGNATURE-----
+
+--ArYkgdtypeXZuzdN--
 
