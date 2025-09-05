@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-803873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF12B466A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD33B466B3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBE01CC1FA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD73E1CC2CBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE097288C16;
-	Fri,  5 Sep 2025 22:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448742D595B;
+	Fri,  5 Sep 2025 22:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="OoTQx7nv"
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="FKc0V9r8"
 Received: from mail-244107.protonmail.ch (mail-244107.protonmail.ch [109.224.244.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F791B78F3;
-	Fri,  5 Sep 2025 22:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0749529B78E;
+	Fri,  5 Sep 2025 22:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757110959; cv=none; b=lPPpu+ZjKrdF4M0FrX9GF8aoZqPlu8tSY6Q1/GPEN5kMkVvHJf91HUngNsfU7uIiweN1F3ikU6kpfINMtmD7jBJXiTzexl6PDbr5iMwgCAy8pCvuXmEBoJxA2WvMtwYVMhsxQIpCkXw0M14eqe57IY1GIbA3DFu0Cp4yrXNoBxk=
+	t=1757111019; cv=none; b=hHTTFzU2tAdPzJUpd6IbMGUjY/cxlha2faqjr+EVFnlLPE4MeGNUud1zqgyRoJ5xLn04uhDubt+G4X/0McUYdv+1axhLSH/8S1pjoAW2jew7Lq+7227YU6ePCgRvG4eZAub3iogXFz/EDJykdGQPlduxoYEOqD2CZEb36Q0ojQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757110959; c=relaxed/simple;
+	s=arc-20240116; t=1757111019; c=relaxed/simple;
 	bh=pJg0KHF5CycpRL2Ecfx78Mu7wH7vePriO8CTC9rJYhA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQG7ZB4VqLjw1sTX6smYX7VbnmZiqqO+2AWo6s4uFuxgPVhsups9IlK4HKfoHpVN2leBcxm95IjnI2CpkNk2Ges7XVYsqPTPWhupw+mpOc61590URYAKD67Qi8BekRKOLqtjmsGkFbbiFFuS/oLBRUp250CejzNw0wmMBQrkbtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=OoTQx7nv; arc=none smtp.client-ip=109.224.244.107
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtymQ3ohVTyEa5K+0cshJy/aSkkYg+dyPrP/z9GQrZb1PsNcHUMM62oVvBW4bfNSwBY+pOuZYp/PYXCVyPJ77Ho/fKW8NVsM6v9CPUEWRcKmrlxJGpXUrvDKw4PRx7O+U5OadLr+UTTOHLbnsjx4syxWi2nqpFdKX9CW2gUM54Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=FKc0V9r8; arc=none smtp.client-ip=109.224.244.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1757110953; x=1757370153;
+	s=protonmail3; t=1757111012; x=1757370212;
 	bh=0krcnuYf+HRb0KjbYvjUYhVudHL1dFh9Fxl804g3Gyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
 	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=OoTQx7nvROXMbGTTMKr2KrB9vMeZGUs8NF/QGckVlupEa8uHVv0sdpk7svn7KU+rw
-	 +X+q0csk8oM2g/AjCBXU9WziWapJV9LCHcDaj3qy1OOOswBQnPvDQxNQKDvEOrKbTN
-	 /FOmQPgYfqFZspIdGAmQz2iJCzkAreNOnsONqq6m8/C9SRT5pocHqRj6MhHo+Pp0+7
-	 N+XWT4DHMXYAEZ/N82k3y6phwxDo4NJPOBM0Uzx2/MQ8j0Js8ueemRWSjPwUWUVLtu
-	 CzB3Kdy+lLBX/daRDnYcM7axuQqN9Cb1tJLkKAnhtqzczN5dg4RzpdP1Kv4HbLjmWY
-	 Vef9J0lru9SLw==
-X-Pm-Submission-Id: 4cJW7B25rPz1DDYP
-Date: Fri, 5 Sep 2025 22:22:27 +0000
+	b=FKc0V9r8DkBZlfaeTdcnu+waSImO9OA4s/NxVmAAVzhGu/5HQMSHgxmrZ9qspsqAl
+	 1e4s8M5kv7vlwPutmWW5Ga4kT5zl2Cgen29IBsv0g4TXMUblb0k97rXsytHUQ+FPm4
+	 YKzFzmM2yYo/5375B8E/K0zKDNuxPT7Y93XDC8B/iOtSXK1cCiujNG5Kok9h2/kjhJ
+	 0zYZuDqopIDqjQoO4BcHXp+huS6avvrsjrnXsS0oPMknrqMVeBYXQHor0xX8rVQSkZ
+	 Mc86iYbGR3g3dhV6fR5DQ8Z3N9g3Hbm3UV4GDzAwJjA8uRrvWJhrnimXXbQzjzeKqZ
+	 e2fkd3bOSRq+A==
+X-Pm-Submission-Id: 4cJW8L3s0Gz1DDLf
+Date: Fri, 5 Sep 2025 22:23:27 +0000
 From: Elle Rhumsaa <elle@weathered-steel.dev>
 To: Joel Fernandes <joelagnelf@nvidia.com>
 Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -64,7 +64,7 @@ Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
 Subject: Re: [PATCH v2 3/4] nova-core: bitstruct: Add support for custom
  visiblity
-Message-ID: <aLtio1FbGy9Qx9rL@archiso>
+Message-ID: <aLti3zYjOD-OGFQQ@archiso>
 References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
  <20250903215428.1296517-4-joelagnelf@nvidia.com>
 Precedence: bulk
