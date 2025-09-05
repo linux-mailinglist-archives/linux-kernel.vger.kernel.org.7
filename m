@@ -1,108 +1,87 @@
-Return-Path: <linux-kernel+bounces-803876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DF2B466B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:27:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6765B466B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB58856563D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1A01CC5A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D839288C16;
-	Fri,  5 Sep 2025 22:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090C828C871;
+	Fri,  5 Sep 2025 22:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eYP0RDnn"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri0gJETl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE34286428
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9B3524F;
+	Fri,  5 Sep 2025 22:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757111238; cv=none; b=PaIr2C2gZ6kX2kAeZGm0D33r9qIitxKPG7yWXjD2QCaladIhWPAqpb0VFmbEHWIURkIKIQe4+/mSsnqHdjJVnQO6dVB3Ss8Co3YpavFpY3j2tzq3AL9/iK+IRyKqkBEZF8II3/ZK+ClCJjpeolkHHpMx6+M5be5svZ7kcS608bw=
+	t=1757111565; cv=none; b=AeMKVOlWbbHFlHUXvURHsi3aJhrpSFeCjHGyM3HQL1iyfnyP+Uj+aYtww8PKjOZm2JJJc9+I/Eks62QaHun4W0V5TEP1em5KiMHZV19uI3fEsLoNT9e/p3lu+Ba21N/ukBNGB6oEQFwJaGffvwd6rVwPxQ6MNfVtJ4cRp6sY2pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757111238; c=relaxed/simple;
-	bh=AZppQpwuWqYUy9syMAiud+b8ut6j2XrYuweM1e9f9cs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mD6X+kXR5Bq7gZoyW8Poh+0SSxoqCZxtGZEepaF5plbzyaMCPCvhl2E8jGdzHCMVqZoj5gvqHpWMbXAS1PUTgF4ydAHKtP802ppKq706ymEfvocvUMSNJU88mNBjFoO/b9GenicnD3/Ap8B667nj/SfGFkaEuFjFl5L2kiySVMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eYP0RDnn; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-8875a8663d0so276287439f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757111236; x=1757716036; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WBrKuX2LN/XLXYsBo8MKK/22tPKbOLoG+RYV/aRIhhY=;
-        b=eYP0RDnnSPUVrTmn4eouwLg8yo47tOJwsYKJSsjDVSCqOExJIOJZswtjNH57pjkrpU
-         5YIVlj7XRzJB6K3FlfuaOWpMtFyrT2+5ng0J+K1nkCYUdOrJB/3oPRL7N25k/NTwaBn0
-         nfs55z7tNc2tLD3NYJO4pecqvsYJaxsI377FizDGsaAnlImbuRqLfVsUcLssfwv01w62
-         83Ile7Ih6rd1zNppavwGx/7qlHgJomun9AgWvZyDzBtu4qXlacRhcQezB5fG/MOWI/mC
-         +C/M+XfwFn5IYTsGBNc7/au2AY3yus+FLHgCbExWj/X3zFFtHhFeBMiDQVd3pLUDD4a6
-         iokg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757111236; x=1757716036;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WBrKuX2LN/XLXYsBo8MKK/22tPKbOLoG+RYV/aRIhhY=;
-        b=PNmUN3fJpyQEpWrXmpGPFRwqeOpLe3fxjQl8JeeREmfCnTqDYsZh83w5SfyLUpY5Jm
-         dVQqEp9vsbVcy74wWwvXFoVPtU8Y8DU9jXUw+kkimX5taFIX77pCDy0jUqWHP+Cabz3h
-         2EUl389nRGO/+CsxDCUOIiXlMs4ffV8n0k7HhCcPLFfzWTvplM1akO3bJQBGAM8m+1JX
-         vdUWwAAmkI5tueS0J9HcFocds1pc/ddI22Fylq9+qXaCQeBww9vNIZKgmwjq7uB9lTlz
-         a6/ly944Wu8Q0gMTupx0vTJGfbOg0ZES8p/LzJTPACyrmUl33h/tH8/YtQayezc2ghwK
-         u8aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTr2WbFa7T9/SIy4B9u5K99Bed46eyIh4I94MSYbcM73msjxVEP0DeqBWAM+cVlykF7UVP4g6Uj+FQM6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPH3qdsPtSwKl92+i0VM0b1ICKDTGCREFJUKUCOBvlK7SY2Cf+
-	nMVGC6VKfmtBIZhwc75g3mZ/zSIwN8ggNUzBybmA8ruWJW2+HsqysbuA350wSpIqslYtgLyuxTv
-	g0Aa08JKSiQ==
-X-Google-Smtp-Source: AGHT+IGXSFXfkWoQEoRGV7ycAUlfjOG//VdVmLeu9tSMlVvNgEhGD2juMvgtuMG1rJACmxFDuGO2oVJYmjNI
-X-Received: from iouw30.prod.google.com ([2002:a05:6602:35e:b0:887:7b4:58ea])
- (user=nkapron job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:1492:b0:881:87f1:7258
- with SMTP id ca18e2360f4ac-887774d8692mr70242739f.3.1757111235762; Fri, 05
- Sep 2025 15:27:15 -0700 (PDT)
-Date: Fri,  5 Sep 2025 22:26:55 +0000
+	s=arc-20240116; t=1757111565; c=relaxed/simple;
+	bh=15bRWi7su5MvAmKGNxXt2owYHWtH082o7pkz6sGkzDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=av3OUL5VJ3VxV6Lr4AENCMiCeRvwXyRzgflkGLKIqjGlXaEmOcx9reny/WZDe5C9+gmDhf+BvPiKViwVZMiB6UMP5rTIKY6AnZLPXmUif3w/ifh6LxMFFq1HjmrBWGjYoREpo3yiNgx67r4vuQjY0sQOGGaf0hBdCmVDtCjxdgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri0gJETl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB12C4CEF1;
+	Fri,  5 Sep 2025 22:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757111565;
+	bh=15bRWi7su5MvAmKGNxXt2owYHWtH082o7pkz6sGkzDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ri0gJETlbk+vs52iaTgfVqWmVYfGrw9ZmcjZYr6BcHJ2L4YIbnB6ipwlKoEx8WZ6c
+	 VXseXr3SExClQXaiCHF1k0ZYuZDVUMrOE6/84ol2v9Mka+I2O46DjRMNAa6Ibb90cV
+	 ifT0f7wAYzxBKKUIzDKh+MNbG9zZlLIBdGJQZglYkl98Z3ERHjAdmyKZ1hepecVJm+
+	 XKh+oTFKV4lnzPtCBLN2EzJf1GFVRcN7VT44EkjMDgYa7zjH+fJmD60LTqlNlPtOQw
+	 ogd15rRJatEtBsOozt7b/PgXzVMQJbLSseVG2maK3Cg6TkWP14+e1JyGgCMifVKSdE
+	 RJ+DfgcrenbhA==
+Date: Fri, 5 Sep 2025 15:32:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Gal Pressman
+ <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, "Cosmin Ratiu"
+ <cratiu@nvidia.com>, Nimrod Oren <noren@nvidia.com>, Mark Bloch
+ <mbloch@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: Re: [PATCH 3/3] selftests: drv-net: Relax total BW check in
+ devlink_rate_tc_bw.py
+Message-ID: <20250905153243.6c03e257@kernel.org>
+In-Reply-To: <20250902162101.5c78cc88@kernel.org>
+References: <20250831080641.1828455-1-cjubran@nvidia.com>
+	<20250831080641.1828455-4-cjubran@nvidia.com>
+	<20250902162101.5c78cc88@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250905222656.3692837-1-nkapron@google.com>
-Subject: [PATCH] selinux: fix logic issue with per-file labeling for functionfs
-From: Neill Kapron <nkapron@google.com>
-To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Neill Kapron <nkapron@google.com>
-Cc: kernel-team@android.com, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This patch resolves a logic issue with selinux_set_mnt_opts when
-selinux_policycap_functionfs_seclabel is enabled. The issue was
-introduced between v1 and v2 of the original patchset.
+On Tue, 2 Sep 2025 16:21:01 -0700 Jakub Kicinski wrote:
+> On Sun, 31 Aug 2025 11:06:41 +0300 Carolina Jubran wrote:
+> > Because the measured total is the sum of two iperf3 streams that do not
+> > always start or stop at the same time  
+> 
+> That's solvable, tho? iperf3 has --json support, it will give you 
+> the b/w readings in the configured intervals (1sec by default).
+> With the interval based samples at hand you should be able to select
+> only the period in which b/w is stable ("middle" of the test).
+> 
+> While at it it may make sense to switch to lib/py/load.py wrappers
+> rather than threading the python locally in the test.
 
-Fixes: 1b22454bb5e6 ("selinux: enable per-file labeling for functionfs")
-Signed-off-by: Neill Kapron <nkapron@google.com>
----
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 333bb6cba25e..0e47b4bb8d40 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -745,7 +745,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
- 	    !strcmp(sb->s_type->name, "pstore") ||
- 	    !strcmp(sb->s_type->name, "securityfs") ||
- 	    (selinux_policycap_functionfs_seclabel() &&
--	     strcmp(sb->s_type->name, "functionfs")))
-+	     !strcmp(sb->s_type->name, "functionfs")))
- 		sbsec->flags |= SE_SBGENFS;
- 
- 	if (!strcmp(sb->s_type->name, "sysfs") ||
--- 
-2.51.0.355.g5224444f11-goog
-
+Hi Carolina! I think you replied to me but the reply never reached 
+the list, I purged it from my inbox before realizing. 
+I think you said that the direction of the flows is wrong for load.py.
+Perhaps adding a reverse= attr which will translate the --reverse in
+the client process would do?
 
