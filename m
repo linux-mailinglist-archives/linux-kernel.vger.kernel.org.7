@@ -1,237 +1,123 @@
-Return-Path: <linux-kernel+bounces-802648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F47FB45529
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:45:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDFEB45557
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC355C0F3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33657B9A58
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13444304BDA;
-	Fri,  5 Sep 2025 10:44:11 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC82830FF1D;
+	Fri,  5 Sep 2025 10:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vy9w1FB/"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507E32D7398;
-	Fri,  5 Sep 2025 10:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746582C028F;
+	Fri,  5 Sep 2025 10:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069050; cv=none; b=qXEKdaeGNXtkQt5+0YfNLWdJTTwL8Hane8gVrPk105zBhSOdPr82JRvkNhHbk0tItzTyQjhJ/iaaBAFD9/ik7JBXUSGXhqRik0g0dkfeOOjxXQM0ZNfkSHQVw1SMjSJaBSf0XeckgmxBFMDC9TjQ90rtkWdpV86qLlwNBWDCDAQ=
+	t=1757069641; cv=none; b=Arof3vjL6XSqKhDTolr2ZLw85MyOOp4n1hq+tcg0FBVQqiRv8j0VH/mpusTJgxpkL2JsrH+8vbd60IVORrD29+CR5eS9tEfZsA6WTck1zyyqbKmMZANtE1y5sP7D3gbi7R7axgsEgD2/6Z+YB6TNOfsnwhdH3chBsEbmi/k2f2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069050; c=relaxed/simple;
-	bh=MUrIlrkXaaX59LL3U0l5CXZqWGM6vaIICc4runzDo5A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h8r9WBO31x00LUVu0tfr21Uy0h95b/FHKHB4DOYwbS6lpkgvkuB2IiMicIUUS8ebod+JwuUs0QlpcBeZlJPOKLspnRGjiA808DGNa8QiQzUSs9DSWfYktA1erTHAx04LyPpU27kmaLQyOyL4S50AJeJFoaIneisOgIaQHxxRKjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-01 (Coremail) with SMTP id qwCowABnwaNMvbpoocLNAA--.50311S7;
-	Fri, 05 Sep 2025 18:37:02 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jan Kara <jack@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Wei Xu <weixugc@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH v9 5/5] riscv: mm: Add uffd write-protect support
-Date: Fri,  5 Sep 2025 18:36:51 +0800
-Message-Id: <20250905103651.489197-6-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250905103651.489197-1-zhangchunyan@iscas.ac.cn>
-References: <20250905103651.489197-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1757069641; c=relaxed/simple;
+	bh=uxny7a4Kpc0PxVoOzZ5v1bP9RgRIFQsVUH2eLUOmcFM=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=czGiGjdl4uWIGHdRu8FJdevhS8msl1cyWG9FtmL2ZuB4lEcY504v+c4g+hDRZfdoFwdhbqxSLHAFqgYT/BhYH0J80sgEhdLIRwRlAmTlH3h12PwDm/m/rK3+BnSG6Z1irlCax/qojAQIhRZGWVlbhG9WHJx0MFYzoyS0YX1WrPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vy9w1FB/; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so7654165e9.3;
+        Fri, 05 Sep 2025 03:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757069637; x=1757674437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z41bjByaFM60LnQEd6Oew9k8K6jjJWYfgMsisJ7Td+Y=;
+        b=Vy9w1FB/EmAzkhyRp86HljOUPx/1OHt/6aFsvg3IdmGOAmh2cNJBIzWXHw6czhylF+
+         jiCqD88IExsg7tkoVE1DFibD8Tz1g0VHWwX2TIDIA2pYbq/RWQH9RY4XDQgnDJDUnPvN
+         hFDz00HL/R2enk7ObEwjnxxPQ/itNudcqrrOXzhLFJEU/oIZ4Pf9ALEUrPxJuw2OSN/f
+         ZQCckL3oKwgXjjlE3UNKS6jWmWZcGk5hyMoSBpm3gMTu8PK1I7xvHmQ6KzqrA65Kk7BM
+         5ry8b3TCZvaRBzXrRiJH8UDqLU76RHNstG1l+fgLRl/LVDvwHiXHjsE5mq0ihtE/ZaDC
+         y4zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757069637; x=1757674437;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z41bjByaFM60LnQEd6Oew9k8K6jjJWYfgMsisJ7Td+Y=;
+        b=S6EBYcrmDuJXmz9LfTW1EpHViYZHvqeCqbmT4PbfDakGlZLPsPXSgAzKJu8LJ55vQG
+         nRhyZMLAB9Hb4a/5rD9bGm2eWNQtPhiY49IkbHkUSqQJWB2sPdtMPrLGdnjIJ3c9wYKn
+         Txajino3AK7CFfGoChFaffLM2ZpmBxpPzuRjSg2vBBcBFNo9MEK7aYpvsJEJ1Mtyu/Yj
+         6AcC2p89u16xVvr4J2NJnWKGwBkZmrrZHVmI4rBMR8lIICtrzC4Lyk4OhOw+luPko0nw
+         aL4ap5U+IPJkTCzCWUBA5VypoMSoy8WjIUpTMz0jwSC8xi6kO5Q2uNAMcknYrmzOOIIf
+         LIZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMfcjbuSwl6VS9grjzIHo/iC4LUqbcyBH0bAV4GqjXgAyshdWucBDkmd3QDfaeWpzFlfsOEwdIe3LJKOI=@vger.kernel.org, AJvYcCWkcBKC6Iv10E8HBl2CpCfVaI4S/gOI9tutGgSqrnv1SrAho0VGfPFrDYu+6EwUBM2EGKUVWjc/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya+rm5k7oZB1vDQfVM43vh/6CY75NyU5aUr7EI47s6wFWLWvwV
+	6KqW1AYhbPaAd2NAdad4dYuiwbyBuvw/uMuQjVP//vU8/m0wBbCbMemQPV93qj31
+X-Gm-Gg: ASbGncuxS0XPV/FQ5q3G0J0sZsXAJXOiUfio2ODB44EbgEzQrq32QddpqnJs/gEHLW1
+	c7rIjuN2/Z1rTX/0L5jAwV12yyNJvcyu+ZPInVGR7vea6KCgGHlEGCyycjwv8JoEdQfcGeI0DJf
+	04E7/hPyoGysN2Q/Ip/YheIi0AkMHQU9AW/HNyYVv7ly2ukyr2IZwkADXOxsOC59xIzjVGt2sur
+	li7zFCNTGtDB48YbtKL8BsztiX0vLH9xzZpTx4iMs7yTL5bsid4KJu5YV3fvYgU6IRJYKt8p2O6
+	VpLmOWV7QlGbopCbcIaCo28oDzBR/BiUMVMpIgYkjZSOFgdkFYeRn4Fz/nTsYE+oBmX4HV22RiM
+	Z2Y8XJ03727ZhOSF1C7vtIQS18rfeKKG3CBkbuvANOuyGCg==
+X-Google-Smtp-Source: AGHT+IGOY4bwB+izuGnbd5LE84YducDA7sGQmtMlij3Az404K/MZ+AIoA8ONqCveaO1sAzbVbdxh4Q==
+X-Received: by 2002:a05:600c:35ca:b0:45c:b5eb:b0bd with SMTP id 5b1f17b1804b1-45cb5ebb156mr92165805e9.8.1757069637272;
+        Fri, 05 Sep 2025 03:53:57 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:8157:959d:adbf:6d52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd3aadbcesm51030585e9.17.2025.09.05.03.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 03:53:56 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
+ <ast@fiberby.net>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
+ Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  wireguard@lists.zx2c4.com,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 02/11] tools: ynl-gen: generate nested array
+ policies
+In-Reply-To: <20250904220156.1006541-2-ast@fiberby.net>
+Date: Fri, 05 Sep 2025 11:37:24 +0100
+Message-ID: <m2bjnpyyl7.fsf@gmail.com>
+References: <20250904-wg-ynl-prep@fiberby.net>
+	<20250904220156.1006541-2-ast@fiberby.net>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnwaNMvbpoocLNAA--.50311S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4UZw1rtw17Kr1DuF4kJFb_yoWruFWfpr
-	s5GayrurWDJFn2yayftr4FgrWrZw4fWa4DWr93Ca1kJFy7K3yDXr95Kry3try8XFWvv347
-	WFWrKr1rCw47JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxU-0PfDUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBwkQB2i6oq1plwABs7
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
+> This patch adds support for NLA_POLICY_NESTED_ARRAY() policies.
+>
+> Example spec (from future wireguard.yaml):
+> -
+>   name: wgpeer
+>   attributes:
+>     -
+>       name: allowedips
+>       type: indexed-array
+>       sub-type: nest
+>       nested-attributes: wgallowedip
+>
+> yields NLA_POLICY_NESTED_ARRAY(wireguard_wgallowedip_nl_policy).
+>
+> This doesn't change any currently generated code, as it isn't
+> used in any specs currently used for generating code.
+>
+> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 18 +++++++
- arch/riscv/include/asm/pgtable.h      | 67 +++++++++++++++++++++++++++
- 3 files changed, 86 insertions(+)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 53b73e4bdf3f..f928768bb14a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -147,6 +147,7 @@ config RISCV
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD && RISCV_ISA_SVRSW60T59B
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index 8ffe81bf66d2..894b2a24fc49 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,24 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP							\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 (1UL << 60) : 0)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP						\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 _PAGE_USER : 0)
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index b2d00d129d81..94cc97d3dbff 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -416,6 +416,40 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+#define pte_uffd_wp_available()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)
-+
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -836,6 +870,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -1053,6 +1119,7 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
--- 
-2.34.1
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
