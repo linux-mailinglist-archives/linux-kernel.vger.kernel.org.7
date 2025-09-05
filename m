@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-802379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA5B451C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:40:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CBEB451BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88D087BFF02
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B832C587980
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09E1281356;
-	Fri,  5 Sep 2025 08:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E961727EFFF;
+	Fri,  5 Sep 2025 08:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oaT3H2ES"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iYjYyqiB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D566E27F756
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B92A277C8D;
+	Fri,  5 Sep 2025 08:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061598; cv=none; b=DEQPwdMUs27BNtUjy675MMumpFuPvRQUB99PXNU/jAAyOtEMhz/6Cp3TETj+bE0O0uGGEzUW0g3SUD3p2LY3OBhYpHk5UISiyuISXC67gQpbFOUjyLy+rBCzUT4q4692tthq9vDaWzfushw7FRyghSRFNmhJhuPHPr6XmQg5Kgw=
+	t=1757061624; cv=none; b=iDD46/WQhAlLGF9GVHXn3JVocLjZgzJpDEG1gxgk53mQSRjb7JACwNAAJtJXC4YUC6eAVJ5ZGlYTrkimHT7Yfr60EdIgEPQBb7TKiJgf5oUTqkKnKge/jwOih7hnlOkwO3yHvWIaLB59nsaJOXccsFMGNboveefWJE0T8km6Lx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061598; c=relaxed/simple;
-	bh=2uw7HuzgrJw6Tl3/iFOPwWaXxB3idEJMwXtoGqGnLec=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=a6FoSXdRUH+JMfagxx8ePyXMWDq+1NXZG5GBPaDOaGCXckMjQaDxvb/O2RCo24PebBecGLZyk70Dg+BBeFYA019zuIyKvem+4+B+0kEwfBeDsKcoJXg7rcK/SslGTaZ9nGiFdHBD8mjXkS4axNK0Tb3Obyn6HjfH0QcHVQxlMNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oaT3H2ES; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24b2336e513so31631655ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757061596; x=1757666396; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGaAkM61h3VIdibL8CNrJAlZjHRjWbnHUBI3WLmTg+w=;
-        b=oaT3H2ESt6P96BRnWGaynTcLVctNl1avg4xfFHk8s0LONtl3QPZ/1+dNBgJSVaKbb8
-         UmJhkZFe7EQTepcVu7vbVlG/YKxfD+f1KcQcso3UqnD2vAf1YmqWoEIvWd41bPIL7Gup
-         P1BJqA2YhJqVbzKze2NKgKIwJSYDz2nIddh+jZYarV3zgmPYFVEOd07Z1tkknUqmAL61
-         uH69+3gHiMMrPGZyWG5AEvb7fvwO/1LNf8+w2IRD7u2UWkW/dZDZRslJ9YKA+fFHqTlt
-         aq3YTNTqjBy0UrQHc3Y/yU3Ii0AfsG18k4ESHHiApMhArdCTeGgi3CkruXokMkFiNCgD
-         aTxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757061596; x=1757666396;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGaAkM61h3VIdibL8CNrJAlZjHRjWbnHUBI3WLmTg+w=;
-        b=Oq+x9srSqBOSjqz3Y8KS2j/SkkJofBeWGxhieMlsgMMQr+I5xfXh+SxshNHAkn4xz5
-         BXZTiJw/iJ/btKOGDrZSE+JSOMJCjax0c+0e84SHyxUIjihblV0a6RbXAD2EWyq8c0Cz
-         cT7u/gT8jX7BB90qW8S+3KiPBcH9dNyrvfT5P7QUyxIKchHqfLw2kvDZUWaovOHpsGE1
-         YiSUXj0/lhN1afWVgMIy/J3QEBhuntsrSb/J1LXUw5I7D63cOMXdBQ7M4fwApHziFe5F
-         CnN/AGLKAeR0lkV/ytbN2ayyv16aWtXn1k8P9YRUwtZ/qZbCkPtehK3MkzZW8iwg6kv3
-         uscw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbxxkT5n5XBEHFcJc+BRRIa0YIQJ5kZWg4C7cwP82utU61+y+oaeSWCQlpZyyl+O/pePmMD2FmtKpszXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDdCJyhnIsboXHFV/S6qaLi04VxqU/72+2uxRdJlGmCVtwdX2n
-	m5r9it4RdKVTyKXed/tYw7TG9uh8x7m4hHK1lG4MbUgb9dCcX+KRx2EZKR/nLAetaRWQLom+A//
-	OwfIr+A==
-X-Google-Smtp-Source: AGHT+IF9Ey0l0Twra047lmw7Mv180RmWg4iz+sNKmRb5BvkP839d48enj0OX/10NKGQmanskpRfLbSpQ8dw=
-X-Received: from pjbtd4.prod.google.com ([2002:a17:90b:5444:b0:32b:6e12:e965])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f790:b0:24c:ba67:95
- with SMTP id d9443c01a7336-24cba67045fmr65288585ad.9.1757061596257; Fri, 05
- Sep 2025 01:39:56 -0700 (PDT)
-Date: Fri, 5 Sep 2025 08:39:54 +0000
-In-Reply-To: <33701547-13AA-467D-AC41-A1A05963B1DD@amazon.com>
+	s=arc-20240116; t=1757061624; c=relaxed/simple;
+	bh=3m+oHss1dKrtRtNm486Neak4ylKeTSNpjIilPQVti1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyA+q+7hD8fpE7Wt55wdp8tycyFtGeMstb1afz6fl6wuqtX1qmdzF2p5dHI/laMf9RzB+0K4pcPyhGFPeSsa5bN8/Cu9hnXuFeWbXhAJXnLwEXWejOdt0gwh273TJ/Jyd20H6MvJ+gUe6ZYJ+lDWaKXQv8lSNzlj7Mu3k8yzG4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iYjYyqiB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757061620;
+	bh=3m+oHss1dKrtRtNm486Neak4ylKeTSNpjIilPQVti1U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iYjYyqiBw3VN83ZDXH0u7pPq2RjuqgaHuV2aLml3n+Abym3tZvm34XbcHvIrjFC7n
+	 bz1P6HCVIHHnZb5zGSQM7vw9I0hidUrgJ7ZLTY2nfKpRArfUzDkPA96/IbYNP3AOhS
+	 1iz1ciE0htqvuhGs1QsnQPSKDmMsFOEGdLwXbcWgaYFw1Zfiqu70STZ2YizK2OmHPV
+	 WuS5mKUbs526qegmqr8uco9wm/95zmypPFblo9YMZYryuA8KfNwx1JxIs7eDsDjXDY
+	 1Cd4p5CMrQXteBA88tFstDk8bDQHXYa2qiss3CaOnr+HvLCfxLkjFYPTGpQsrhRWwI
+	 WRcZkAxG3KGow==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3615217E0E20;
+	Fri,  5 Sep 2025 10:40:20 +0200 (CEST)
+Message-ID: <c044f5af-5087-41fc-b459-08f0a954678f@collabora.com>
+Date: Fri, 5 Sep 2025 10:40:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829142556.72577-1-aqibaf@amazon.com> <20250829142556.72577-6-aqibaf@amazon.com>
- <aLIPs7eqA_i75Bgy@google.com> <33701547-13AA-467D-AC41-A1A05963B1DD@amazon.com>
-Message-ID: <aLqh2ojEpZZhjheT@google.com>
-Subject: Re: [PATCH 5/9] KVM: selftests: Prevent PAGE_SIZE redefinition on x86
-From: Sean Christopherson <seanjc@google.com>
-To: "Faruqui, Aqib" <aqibaf@amazon.co.uk>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 22/27] clk: mediatek: Add MT8196 disp1 clock support
+To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com, wenst@chromium.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ kernel@collabora.com
+References: <20250829091913.131528-1-laura.nao@collabora.com>
+ <20250829091913.131528-23-laura.nao@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250829091913.131528-23-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-+lists
-
-Please keep discussions on-list unless there's something that can't/shouldn't be
-posted publicly, e.g. for confidentiality or security reasons.
-
-On Tue, Sep 02, 2025, Faruqui, Aqib wrote:
-> I suppose a fix for blindly using PAGE_SIZE in subsequent macros:
+Il 29/08/25 11:19, Laura Nao ha scritto:
+> Add support for the MT8196 disp1 clock controller, which provides clock
+> gate control for the display system. It is integrated with the mtk-mmsys
+> driver, which registers the disp1 clock driver via
+> platform_device_register_data().
 > 
-> #ifdef PAGE_SIZE
-> #undef PAGE_SIZE
-> #endif
-> #define PAGE_SIZE		(1ULL << PAGE_SHIFT)
-> 
-> Is no better and is instead blindly suppressing the compiler's redefinition warning. 
-> 
-> I'm having trouble finding what causes the conflict, any advice here?
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 
-Maybe try a newer compiler?  E.g. gcc-14.2 will spit out the exact location of the
-previous definition.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-In file included from include/x86/svm_util.h:13,
-                 from include/x86/sev.h:15,
-                 from lib/x86/sev.c:5:
-include/x86/processor.h:373:9: error: "PAGE_SIZE" redefined [-Werror]
-  373 | #define PAGE_SIZE               (1ULL << PAGE_SHIFT)
-      |         ^~~~~~~~~
-include/x86/processor.h:370:9: note: this is the location of the previous definition
-  370 | #define PAGE_SIZE               BIT(12)
-      |         ^~~~~~~~~
+
 
