@@ -1,245 +1,113 @@
-Return-Path: <linux-kernel+bounces-802378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BF9B451C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:42:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA5B451C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806DE7AD92E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:38:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88D087BFF02
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5808027A129;
-	Fri,  5 Sep 2025 08:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09E1281356;
+	Fri,  5 Sep 2025 08:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cU8OmHth"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oaT3H2ES"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FF71A9FB3;
-	Fri,  5 Sep 2025 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D566E27F756
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061594; cv=none; b=GNEBpA5nYqkY01luei5brHZhqamXpC1a9P0+cSpqnaxikniTgFvAi2OrH0bOO+XI6hFkB6TTMi2AD7DabpiAouIzw7b6GSaBfYax4p2z25QBBJq/QqRfqJfDaupw+D0yqmCkinAb2elYAZA62AONMQ5ASF/uZVjrVKOjEh5i1bo=
+	t=1757061598; cv=none; b=DEQPwdMUs27BNtUjy675MMumpFuPvRQUB99PXNU/jAAyOtEMhz/6Cp3TETj+bE0O0uGGEzUW0g3SUD3p2LY3OBhYpHk5UISiyuISXC67gQpbFOUjyLy+rBCzUT4q4692tthq9vDaWzfushw7FRyghSRFNmhJhuPHPr6XmQg5Kgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061594; c=relaxed/simple;
-	bh=i8Fqq1+YDvq6ltSnkYjxfh2RSJGrjvrk0LThUF973iI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LblqDx6n0z+dY+gM2xFdwNNthNxhOrY2Br/TfMCYw0vp705ZDykHo/G/IB2iKjFUpMqelWfhhwBPlC8CuLFwix19fFtZFanJe7fUcxwfU1UYvvwBOvUY5bVqFpzmphqGO1xGCv/72ogcoYHwmJENbJtLrH0AztBBMkEN0sEgt+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cU8OmHth; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757061590;
-	bh=i8Fqq1+YDvq6ltSnkYjxfh2RSJGrjvrk0LThUF973iI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cU8OmHth28mrcjuLguyHAJPef4lQL1E9y4lP0VHmKNYGAq0w9CT/57UWJI/m9RmKs
-	 Cus4X1hEg5M6VhZzPj8NeWVjCh/yPE1FZqFUOEIWk90K03czt29TVUdzFTfW4vX6DE
-	 i1qY8F5nfaebJsVDW7qALDJNLE6YtmBvQP0geECUy5VhEjzy0Xx6BVwaklHqFE8OYl
-	 6MGrn3j6f4G7pmrff+4zjHJw6HZqQya4ZuI4EwRL1R9udri661xZ7ERdn4tO55+izB
-	 25TDJzEh0fNJiDfXnqNXtu0oxziN7fqOeFlAUWw4iZ7SUls/l79PkJ3HQXNESayhCJ
-	 OyVA+SLnQlwrA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BF09517E0E20;
-	Fri,  5 Sep 2025 10:39:49 +0200 (CEST)
-Message-ID: <0e6592b7-6f6d-4291-992c-ff321c920381@collabora.com>
-Date: Fri, 5 Sep 2025 10:39:49 +0200
+	s=arc-20240116; t=1757061598; c=relaxed/simple;
+	bh=2uw7HuzgrJw6Tl3/iFOPwWaXxB3idEJMwXtoGqGnLec=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=a6FoSXdRUH+JMfagxx8ePyXMWDq+1NXZG5GBPaDOaGCXckMjQaDxvb/O2RCo24PebBecGLZyk70Dg+BBeFYA019zuIyKvem+4+B+0kEwfBeDsKcoJXg7rcK/SslGTaZ9nGiFdHBD8mjXkS4axNK0Tb3Obyn6HjfH0QcHVQxlMNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oaT3H2ES; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24b2336e513so31631655ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757061596; x=1757666396; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGaAkM61h3VIdibL8CNrJAlZjHRjWbnHUBI3WLmTg+w=;
+        b=oaT3H2ESt6P96BRnWGaynTcLVctNl1avg4xfFHk8s0LONtl3QPZ/1+dNBgJSVaKbb8
+         UmJhkZFe7EQTepcVu7vbVlG/YKxfD+f1KcQcso3UqnD2vAf1YmqWoEIvWd41bPIL7Gup
+         P1BJqA2YhJqVbzKze2NKgKIwJSYDz2nIddh+jZYarV3zgmPYFVEOd07Z1tkknUqmAL61
+         uH69+3gHiMMrPGZyWG5AEvb7fvwO/1LNf8+w2IRD7u2UWkW/dZDZRslJ9YKA+fFHqTlt
+         aq3YTNTqjBy0UrQHc3Y/yU3Ii0AfsG18k4ESHHiApMhArdCTeGgi3CkruXokMkFiNCgD
+         aTxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757061596; x=1757666396;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGaAkM61h3VIdibL8CNrJAlZjHRjWbnHUBI3WLmTg+w=;
+        b=Oq+x9srSqBOSjqz3Y8KS2j/SkkJofBeWGxhieMlsgMMQr+I5xfXh+SxshNHAkn4xz5
+         BXZTiJw/iJ/btKOGDrZSE+JSOMJCjax0c+0e84SHyxUIjihblV0a6RbXAD2EWyq8c0Cz
+         cT7u/gT8jX7BB90qW8S+3KiPBcH9dNyrvfT5P7QUyxIKchHqfLw2kvDZUWaovOHpsGE1
+         YiSUXj0/lhN1afWVgMIy/J3QEBhuntsrSb/J1LXUw5I7D63cOMXdBQ7M4fwApHziFe5F
+         CnN/AGLKAeR0lkV/ytbN2ayyv16aWtXn1k8P9YRUwtZ/qZbCkPtehK3MkzZW8iwg6kv3
+         uscw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbxxkT5n5XBEHFcJc+BRRIa0YIQJ5kZWg4C7cwP82utU61+y+oaeSWCQlpZyyl+O/pePmMD2FmtKpszXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDdCJyhnIsboXHFV/S6qaLi04VxqU/72+2uxRdJlGmCVtwdX2n
+	m5r9it4RdKVTyKXed/tYw7TG9uh8x7m4hHK1lG4MbUgb9dCcX+KRx2EZKR/nLAetaRWQLom+A//
+	OwfIr+A==
+X-Google-Smtp-Source: AGHT+IF9Ey0l0Twra047lmw7Mv180RmWg4iz+sNKmRb5BvkP839d48enj0OX/10NKGQmanskpRfLbSpQ8dw=
+X-Received: from pjbtd4.prod.google.com ([2002:a17:90b:5444:b0:32b:6e12:e965])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f790:b0:24c:ba67:95
+ with SMTP id d9443c01a7336-24cba67045fmr65288585ad.9.1757061596257; Fri, 05
+ Sep 2025 01:39:56 -0700 (PDT)
+Date: Fri, 5 Sep 2025 08:39:54 +0000
+In-Reply-To: <33701547-13AA-467D-AC41-A1A05963B1DD@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com, wenst@chromium.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- kernel@collabora.com
-References: <20250829091913.131528-1-laura.nao@collabora.com>
- <20250829091913.131528-20-laura.nao@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250829091913.131528-20-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250829142556.72577-1-aqibaf@amazon.com> <20250829142556.72577-6-aqibaf@amazon.com>
+ <aLIPs7eqA_i75Bgy@google.com> <33701547-13AA-467D-AC41-A1A05963B1DD@amazon.com>
+Message-ID: <aLqh2ojEpZZhjheT@google.com>
+Subject: Re: [PATCH 5/9] KVM: selftests: Prevent PAGE_SIZE redefinition on x86
+From: Sean Christopherson <seanjc@google.com>
+To: "Faruqui, Aqib" <aqibaf@amazon.co.uk>
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Il 29/08/25 11:19, Laura Nao ha scritto:
-> Add support for the MT8196 mdpsys clock controller, which provides clock
-> gate control for MDP.
++lists
+
+Please keep discussions on-list unless there's something that can't/shouldn't be
+posted publicly, e.g. for confidentiality or security reasons.
+
+On Tue, Sep 02, 2025, Faruqui, Aqib wrote:
+> I suppose a fix for blindly using PAGE_SIZE in subsequent macros:
 > 
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->   drivers/clk/mediatek/Kconfig             |   7 +
->   drivers/clk/mediatek/Makefile            |   1 +
->   drivers/clk/mediatek/clk-mt8196-mdpsys.c | 186 +++++++++++++++++++++++
->   3 files changed, 194 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
+> #ifdef PAGE_SIZE
+> #undef PAGE_SIZE
+> #endif
+> #define PAGE_SIZE		(1ULL << PAGE_SHIFT)
 > 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 8e5cdae80748..68ac08cf8e82 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -1024,6 +1024,13 @@ config COMMON_CLK_MT8196_MCUSYS
->   	help
->   	  This driver supports MediaTek MT8196 mcusys clocks.
->   
-> +config COMMON_CLK_MT8196_MDPSYS
-> +	tristate "Clock driver for MediaTek MT8196 mdpsys"
-> +	depends on COMMON_CLK_MT8196
-> +	default COMMON_CLK_MT8196
-> +	help
-> +	  This driver supports MediaTek MT8196 mdpsys clocks.
-> +
->   config COMMON_CLK_MT8196_PEXTPSYS
->   	tristate "Clock driver for MediaTek MT8196 pextpsys"
->   	depends on COMMON_CLK_MT8196
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 46358623c3e5..d2d8bc43e45b 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -155,6 +155,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o
->   				   clk-mt8196-peri_ao.o
->   obj-$(CONFIG_COMMON_CLK_MT8196_IMP_IIC_WRAP) += clk-mt8196-imp_iic_wrap.o
->   obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) += clk-mt8196-mcu.o
-> +obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) += clk-mt8196-mdpsys.o
->   obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
->   obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
->   obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
-> diff --git a/drivers/clk/mediatek/clk-mt8196-mdpsys.c b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
-> new file mode 100644
-> index 000000000000..a46b1627f1f3
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
-> @@ -0,0 +1,186 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2025 MediaTek Inc.
-> + *                    Guangjie Song <guangjie.song@mediatek.com>
-> + * Copyright (c) 2025 Collabora Ltd.
-> + *                    Laura Nao <laura.nao@collabora.com>
-> + */
-> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +static const struct mtk_gate_regs mdp0_cg_regs = {
-> +	.set_ofs = 0x104,
-> +	.clr_ofs = 0x108,
-> +	.sta_ofs = 0x100,
-> +};
-> +
-> +static const struct mtk_gate_regs mdp1_cg_regs = {
-> +	.set_ofs = 0x114,
-> +	.clr_ofs = 0x118,
-> +	.sta_ofs = 0x110,
-> +};
-> +
-> +static const struct mtk_gate_regs mdp2_cg_regs = {
-> +	.set_ofs = 0x124,
-> +	.clr_ofs = 0x128,
-> +	.sta_ofs = 0x120,
-> +};
-> +
-> +#define GATE_MDP0(_id, _name, _parent, _shift) {	\
-> +		.id = _id,				\
-> +		.name = _name,				\
-> +		.parent_name = _parent,			\
-> +		.regs = &mdp0_cg_regs,			\
-> +		.shift = _shift,			\
-> +		.flags = CLK_OPS_PARENT_ENABLE,		\
+> Is no better and is instead blindly suppressing the compiler's redefinition warning. 
+> 
+> I'm having trouble finding what causes the conflict, any advice here?
 
-Why would MDP0 and MDP2 be different, as in why would MDP1 be so special to not
-need CLK_OPS_PARENT_ENABLE while the others do?
+Maybe try a newer compiler?  E.g. gcc-14.2 will spit out the exact location of the
+previous definition.
 
-Either they all do, or they all don't.
-
-I guess they all don't, but I'm not sure how you tested that at all, since the
-only way to test this is downstream (and upstream will very likely be different
-from that).
-
-Even though I think they don't need that - please add back CLK_OPS_PARENT_ENABLE
-to GATE_MDP1 to be safe, as in (all) MediaTek SoCs the multimedia subsystem is
-kinda separate from the rest.
-
-Once MT8196 MDP support is upstreamed, we will be able to run a number of tests
-to evaluate whether this flag is really needed or not.
-
-After all, if it turns out we can remove it, it's going to be a 3 lines patch,
-not a big deal.
-
-> +		.ops = &mtk_clk_gate_ops_setclr,	\
-> +	}
-> +
-> +#define GATE_MDP1(_id, _name, _parent, _shift) {	\
-> +		.id = _id,				\
-> +		.name = _name,				\
-> +		.parent_name = _parent,			\
-> +		.regs = &mdp1_cg_regs,			\
-> +		.shift = _shift,			\
-> +		.ops = &mtk_clk_gate_ops_setclr,	\
-> +	}
-> +
-> +#define GATE_MDP2(_id, _name, _parent, _shift) {	\
-> +		.id = _id,				\
-> +		.name = _name,				\
-> +		.parent_name = _parent,			\
-> +		.regs = &mdp2_cg_regs,			\
-> +		.shift = _shift,			\
-> +		.flags = CLK_OPS_PARENT_ENABLE,		\
-> +		.ops = &mtk_clk_gate_ops_setclr,	\
-> +	}
-> +
-
-..snip..
-
-> +
-> +static const struct mtk_clk_desc mdp_mcd = {
-> +	.clks = mdp_clks,
-> +	.num_clks = ARRAY_SIZE(mdp_clks),
-> +	.need_runtime_pm = true,
-> +};
-> +
-> +static const struct of_device_id of_match_clk_mt8196_mdpsys[] = {
-> +	{ .compatible = "mediatek,mt8196-mdpsys1", .data = &mdp1_mcd },
-> +	{ .compatible = "mediatek,mt8196-mdpsys0", .data = &mdp_mcd },
-
-0 comes before 1, swap those entries please.
-
-After applying the proposed fixes
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mdpsys);
-> +
-> +static struct platform_driver clk_mt8196_mdpsys_drv = {
-> +	.probe = mtk_clk_simple_probe,
-> +	.remove = mtk_clk_simple_remove,
-> +	.driver = {
-> +		.name = "clk-mt8196-mdpsys",
-> +		.of_match_table = of_match_clk_mt8196_mdpsys,
-> +	},
-> +};
-> +module_platform_driver(clk_mt8196_mdpsys_drv);
-> +
-> +MODULE_DESCRIPTION("MediaTek MT8196 Multimedia Data Path clocks driver");
-> +MODULE_LICENSE("GPL");
-
+In file included from include/x86/svm_util.h:13,
+                 from include/x86/sev.h:15,
+                 from lib/x86/sev.c:5:
+include/x86/processor.h:373:9: error: "PAGE_SIZE" redefined [-Werror]
+  373 | #define PAGE_SIZE               (1ULL << PAGE_SHIFT)
+      |         ^~~~~~~~~
+include/x86/processor.h:370:9: note: this is the location of the previous definition
+  370 | #define PAGE_SIZE               BIT(12)
+      |         ^~~~~~~~~
 
