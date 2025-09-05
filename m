@@ -1,191 +1,82 @@
-Return-Path: <linux-kernel+bounces-802913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65560B45852
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C29DB45856
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091BF3AC753
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:58:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FC53AECA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83DE1F61C;
-	Fri,  5 Sep 2025 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB78350840;
+	Fri,  5 Sep 2025 12:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ws25oJ9S"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5144034F486
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="vV5P3vG4"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9732A350835
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757077096; cv=none; b=D/vwUVuVQlwmNN/k2s2wca3czN3Gl5ElGAAND68TrKLqvP6aTNNF7x4/nhmKK1bLJpD6rYepmMbmW5fflzv3wL37Jd6ABzs6e+q9y7MAafMYBXFBEdoSSUFE59dxsn4WWLk4nt/aL0gL/jVB5CWFkJhejA/5b1XSvWvzyxdsihI=
+	t=1757077129; cv=none; b=VfYdOHc90cyAnaiONKrlxBE1gZq6Baxyl6nT/3g2ywuNulxSqjtUwT5Yv1LQaCYFrJDfzORyf8lfijmqj2CUnhZKsdeulBTga/m7fiSYvA+OZZWkLwm/z1Mrf+AjxEPQvW+m8/HsUitriLumEROw3T72HElrdfC8rbvcY/sNEYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757077096; c=relaxed/simple;
-	bh=B4t5lfIeAigVVk9t8Ob6HbXErWQiFE5Us9s4emvtCSk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AI7aoSKzIN7RCVpVb+e1CCrJpHkmu1Ie9auE3ehi0nljq18yByNdILab+p5Ojqxg8Hdfn/sXYGVtTiiLcmSoHQ2T6s9JSmXBfOkLqUXAsCgl2ITtgDoXCVxTywg0VbAwNgYIGjqb+7eKQ8aPeV5gzIX/3uYZ3CMdj/tGZI0RBRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ws25oJ9S; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-249406d5878so20627965ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757077093; x=1757681893; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JX+UloOjfH7D+sxycIEOtQIvDvV/64rp/Z1H0sQ8SEs=;
-        b=ws25oJ9SDRNIKIZ9CkwvB7buUc27BSPN2v4eDfZ/2puZc4b5hjjC5QL9Cpwx5yy/gd
-         6pAmiXT8kGQco123HEK1hPL2fWA9sZQc4hRuIFn+d6r/OHbKAySxTD3uUQc8Xto2y9qo
-         DH9NTwd+5LhVl7c7k7PDyTHzx1RZFlBpzslwJ+IwwT6XI7bldQ8H8VrosL81yJwHSa76
-         EZM3UkMQNWclaqi9tL/ezTt+ColV5BjmOwYFcuu+AP+hXVqKx5J0jRKdPJZcXim40oaS
-         pcNPvsbQrsCzzXI/GF3mMR5l2Hse5WKr6GeKDMaZuNnyPMwUQBi4uH+z+GsizShnQrQq
-         Igtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757077093; x=1757681893;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JX+UloOjfH7D+sxycIEOtQIvDvV/64rp/Z1H0sQ8SEs=;
-        b=uo8AdAlG5pMXl2TjuMlqgiAzq8ytRt1r0lGNcr0xfB2ZuPxjupIf07a7zFcFv6CPtX
-         ngT/4OEIQl0+vLutQ1lsU3gt0zW+nLcbYauise4+T0En1KAXW/S78rkzA/4SxRav0bIJ
-         nZu8aSNpHqJoKTS9pEcaqCVAOVGQYudeSvsOdLdSIGyN5mRo9koPN5CqREKQEaabZH0u
-         YeHDlv/hUbxZ78jUt/RfFTTnFJY7CfZMUv0O1xRTLQkkUfJAuQTjZ9PHUNEdP/6S69ac
-         NG7Pfxv8DQoaENYf8dqdvdLGJCqKWkwwNJMvu3vROrePT1W12giKx5f5fHKsTIt+/6XX
-         LEmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrhPdNEMq4/xKs8A+iKUpwgMigmnVoEtei2jyeCRz5zYA2PB6MyNImKzpaShfBUzIUdcf34INxTZPERtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwegHB5GEgCV6qQTK21pNynUOB7+YQLLZEv9hhXqi/LnbK+y642
-	q9U6tvOuzf5aOKET4Y5lBTu/FKrfEidn65wEPP59+HYt+IxH6dbB9BFEBVBMbsICAkNLMXhtvuS
-	PA+gJC3yorqD55jeza1tRmGI6IVXAzukO+ssJwZhWQw==
-X-Gm-Gg: ASbGncvFTEXsDfW/9WIy+ukb2gDO27pnwdApLGM/t35kCY4jT0dJc4eCszIRR69S05R
-	6QfP+nFTiC6T09kbeFhWddLm4pcX+ILXf1NpxOYg+67YttWT3AsgQvqglif8EiFxPirYu22a/Cb
-	TUjjQXH5T2Cghi+viJ1lcwFLAsepuFONXyk749k7g76fDiorRkXpj4ijoGFdHf9cJs5eassyFNn
-	hHLhSnWdPMDJWptDjTI2eX+G8v41A/o+WUcSwIceu0/cGO2ggk=
-X-Google-Smtp-Source: AGHT+IHFc84uQD7HnKhbvnMlVkJWu/UesQwpj5m5QbYQvo39J9ytF/CDHAmibmoLeZCOjeCF7ZgfEj4bm8un2AUlLVk=
-X-Received: by 2002:a17:903:3ba4:b0:24a:ceea:b96f with SMTP id
- d9443c01a7336-24aceeabf79mr205950155ad.24.1757077093464; Fri, 05 Sep 2025
- 05:58:13 -0700 (PDT)
+	s=arc-20240116; t=1757077129; c=relaxed/simple;
+	bh=RcmxVQgj4OeABmLrsIQO0VZ8BVIj60bpYWvgPtZ0tiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ORDPVv1QBOQB0BdxCfSJRkKjVdSZCOxsOCpys5oAg9aIWY3dpYbVVr4crVR92WSaC07PhSm8jj/Zj55uL4sw3Q1+6PzQMiEj24O8AC8QDd0izM/IcPfOVFX1LFL+AFqBJraQBp0hIiPPSn8FSqB9XvmbgP9bgCOJVA5yolcZl9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=vV5P3vG4; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 5A0FC548D8;
+	Fri,  5 Sep 2025 14:58:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1757077126;
+	bh=RcmxVQgj4OeABmLrsIQO0VZ8BVIj60bpYWvgPtZ0tiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vV5P3vG4CShLJrt4R2J2VYP/o+TfVjftSb8Q5b0ntfouY/yjcc3OIqaxAtyqgm3km
+	 K/GiO32Jz4aTedEaIB9HeuM+4WNygK0iTnJqecTY0VYMV45yz8CdZIFSmqkdpMiWJB
+	 8gFWSNouWiLVNuQdYDSqHkWQ2pwwXgbgyv4KkM63VNYUBGJt5/O2jfa9OFxLMQevRm
+	 DFpOvJe9ky++mlEvU56hUAf/052xCiQSfTV7ltJNTrIgulbGMqjbR5827r43a9MkV9
+	 Z3akb8Gvy67w5Algo3/sAx5TfhuWVtdkwK0hWs+XXY/y8Zamtq2zu5SyDs4ukb0CCD
+	 G/R0f4ojojmew==
+Date: Fri, 5 Sep 2025 14:58:45 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/omap: Use int type to store negative error codes
+Message-ID: <aLrehYcpQcmmuKPR@8bytes.org>
+References: <20250829140219.121783-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 5 Sep 2025 18:28:01 +0530
-X-Gm-Features: Ac12FXw1zyoAY5th54tVc4lJ5HX0a8azkxHLTgbPsqhejM_y90ZgToo_FYVmtlE
-Message-ID: <CA+G9fYtsamwXQzuQm4dYNC8kbSJzGAQvZ5mr4BA8X9WE29+yyg@mail.gmail.com>
-Subject: qemu-arm64: xfstests crash in bio_iov_iter_get_pages on next-20250904
-To: Linux btrfs <linux-btrfs@vger.kernel.org>, linux-block <linux-block@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Christoph Hellwig <hch@lst.de>, David Sterba <dsterba@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Anders Roxell <anders.roxell@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829140219.121783-1-rongqianfeng@vivo.com>
 
-The following regressions were detected on qemu-arm64 while running
-xfstests with the Linux next-20250904 tag. The system crashed with an
-internal error in bio_iov_iter_get_pages(), resulting in an Oops during
-direct I/O write operations.
+On Fri, Aug 29, 2025 at 10:02:19PM +0800, Qianfeng Rong wrote:
+> Change the 'ret' variable from u32 to int to store negative error codes
+> or zero;
+> 
+> Storing the negative error codes in unsigned type, doesn't cause an issue
+> at runtime but it's ugly. Additionally, assigning negative error codes to
+> unsigned type may trigger a GCC warning when the -Wsign-conversion flag
+> is enabled.
+> 
+> No effect on runtime.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/iommu/omap-iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
-
-First seen on next-20250904
-Bad: next-20250904 and next-20250905
-Good: next-20250822
-
-Test regression: next-20250904 qemu-arm64 xfstests Internal error Oops
-bio_iov_iter_get_pages
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-qemu-arm64:
-Test:
-* xfstests
-
-Test crash:
-
-[ 2074.633472] Internal error: Oops: 0000000096000004 [#1]  SMP
-[ 2074.639619] Modules linked in: sm3_ce sha3_ce fuse drm backlight dm_mod
-[ 2074.651698] CPU: 0 UID: 0 PID: 154238 Comm: xfs_io Not tainted
-6.17.0-rc4-next-20250904 #1 PREEMPT
-[ 2074.652132] Hardware name: linux,dummy-virt (DT)
-[ 2074.652429] pstate: 22402009 (nzCv daif +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
-[ 2074.652716] pc : bio_iov_iter_get_pages (block/bio.c:1074
-block/bio.c:1272 block/bio.c:1336)
-[ 2074.701159] lr : bio_iov_iter_get_pages (block/bio.c:1072
-block/bio.c:1272 block/bio.c:1336)
-[ 2074.701366] sp : ffff800080f83950
-[ 2074.701506] x29: ffff800080f83980 x28: 000000000006f000 x27: fff00000c03b9408
-[ 2074.701853] x26: 0000000000001000 x25: 0000000000000091 x24: ffffc1ffc153b480
-[ 2074.702133] x23: 0000000000000002 x22: 00000000ffffffff x21: 0000000000000100
-[ 2074.702421] x20: 0000000000000001 x19: 0000000000001000 x18: 0000000000001000
-[ 2074.702710] x17: 0000000000000000 x16: 0000000000000000 x15: fff00000ff6e9a80
-[ 2074.702987] x14: fff0000007413500 x13: ffffa44770f6e000 x12: ffffc1ffc0000000
-[ 2074.703264] x11: 0000000000001000 x10: fff00000cf850800 x9 : fff00000cf850b78
-[ 2074.703510] x8 : ffffc1ffc153ac08 x7 : 0000ffff9626f000 x6 : 0000000000000fff
-[ 2074.703794] x5 : 0000000000021000 x4 : ffffc1ffbf000000 x3 : 7878782f78787878
-[ 2074.704079] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000001000
-[ 2074.704436] Call trace:
-[ 2074.704685] bio_iov_iter_get_pages (block/bio.c:1074
-block/bio.c:1272 block/bio.c:1336) (P)
-[ 2074.704971] iomap_dio_bio_iter (fs/iomap/direct-io.c:437)
-[ 2074.705167] __iomap_dio_rw (include/linux/uio.h:228
-fs/iomap/direct-io.c:530 fs/iomap/direct-io.c:559
-fs/iomap/direct-io.c:729)
-[ 2074.705331] btrfs_direct_write+0x1f4/0x3bc
-[ 2074.713828] btrfs_do_write_iter+0x18c/0x1ec
-[ 2074.725568] btrfs_file_write_iter+0x14/0x20
-[ 2074.725936] vfs_write (fs/read_write.c:593 fs/read_write.c:686)
-[ 2074.731508] __arm64_sys_pwrite64 (fs/read_write.c:793
-fs/read_write.c:801 fs/read_write.c:798 fs/read_write.c:798)
-[ 2074.731822] invoke_syscall (arch/arm64/kernel/syscall.c:35
-arch/arm64/kernel/syscall.c:49)
-[ 2074.737438] el0_svc_common.constprop.0 (arch/arm64/kernel/syscall.c:132)
-[ 2074.737885] do_el0_svc (arch/arm64/kernel/syscall.c:151)
-[ 2074.738235] el0_svc (arch/arm64/kernel/entry-common.c:879)
-[ 2074.785073] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:899)
-[ 2074.785245] el0t_64_sync (arch/arm64/kernel/entry.S:596)
-[ 2074.785643] Code: f9400fea d2820000 7940c377 f8795943 (f9400462)
-All code
-========
-   0: f9400fea ldr x10, [sp, #24]
-   4: d2820000 mov x0, #0x1000                // #4096
-   8: 7940c377 ldrh w23, [x27, #96]
-   c: f8795943 ldr x3, [x10, w25, uxtw #3]
-  10:* f9400462 ldr x2, [x3, #8] <-- trapping instruction
-
-Code starting with the faulting instruction
-===========================================
-   0: f9400462 ldr x2, [x3, #8]
-[ 2074.786668] ---[ end trace 0000000000000000 ]---
-
-
-## Source
-* Kernel version: 6.17.0-rc4-next-20250904
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20250904
-* Git commit: 4ac65880ebca1b68495bd8704263b26c050ac010
-* Architectures / Devices: qemu-arm64
-* Toolchains: gcc-13
-* Kconfigs: defconfig+xfstests
-* xfstests: v2024.12.01
-
-## Build
-* Test log: https://qa-reports.linaro.org/api/testruns/29762004/log_file/
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250904/log-parser-test/internal-error-oops-oops-smp/
-* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32E6ypoTqaDjAEJISuUAAgkPUva
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32E6us2qcXmnop3jTYQMOB9eVPt/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/32E6us2qcXmnop3jTYQMOB9eVPt/config
-* xfstests: https://storage.tuxboot.com/overlays/debian/trixie/arm64/xfstests/v2024.12.01/xfstests.tar.xz
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Applied, thanks.
 
