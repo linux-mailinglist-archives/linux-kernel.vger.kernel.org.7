@@ -1,198 +1,216 @@
-Return-Path: <linux-kernel+bounces-802329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC29B4511C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:17:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64E1B45118
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1913348116C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865941C260A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A762FF168;
-	Fri,  5 Sep 2025 08:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862A1285C91;
+	Fri,  5 Sep 2025 08:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqH1H+KC"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8bJ3+yk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706425C81B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FAF1C84B9;
+	Fri,  5 Sep 2025 08:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060209; cv=none; b=PR+P0pZR3lcjgTe0QaSfuY80CYXkBmH3KgBiXicwh/Ib58FHnE5J3zfrKtX39uxmt7potbxt5OnE18VVAWbHUyRjvv6WC0hvteoabsO1N9Z/5LJGFLRbFtzMpm56z9J3kaTUedwq4C1m5UI9LEcQx5SNUfvOLZATSfdo0y08ISw=
+	t=1757060198; cv=none; b=uvcpJFwNm1E1mBnrIRsbSWJBnSwTv1CCjN+eyWzevnGb5P5/RKLixbpKLQl1Ou795tJjVE9VVFj1fQOaFKdinWkm4XYauEcN6N37PBmMS99azG1qIfRuDC+CAOPffIoI+a8gjNZ7dmHUcVQcDG+SDs8Re5PkEkT13ZA9mTUKcXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060209; c=relaxed/simple;
-	bh=r34BaPjjnAxEk0pYZF1gJK7z2l/adNB3vzB+6aApLLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3eii5ftlMZMI+O1uDgq/IHn/qEmlEpOh+Q2BrK5k5+d97qqmkHfeSCsR6oE5RJo0AUK0V6VneAXUkWERFFm/FdfkLBTSRrC+FAktaJmOZjHJujDT1YF9Cxl9DjOcguld5Ppy3nAL72her/rB46w35Hv7ulF7ZSXd1ZvA4cEThw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VqH1H+KC; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70dc6d81b87so485466d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757060205; x=1757665005; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmRMEuNmJqUQDrfbifQMhcZYMdkhFlWyXwwtuzWLPlM=;
-        b=VqH1H+KCUWU4657PsFvLhiEzB1qE8Kz5Dc0tHJuwxVRlG3AKc1tco7REkHb2AllmsU
-         GDaOX8YedV7ETQmapML4qR5fmjrv5FkeodrmTA5FLt7PGQArdFI+howebmZIuatxcZQt
-         4IoRmgG0D8pubpRF69bml6Rs6kyk8KDREK9GerWjncrSWLJwfm6RHvXpdNLeFQoMJWUL
-         nKqOwQoaBII1A0r2HBlr6MwrIfZnxs+jtTXz+x/HLdnTA2GvAo25Ucao+iDqA0XDTYtH
-         FHU/8A9qbWGX2nWFUNeBeeYYk3FAMaaRQbmfF+D5pQbsYq5BkN7bAQV66orOPlVadfSF
-         RFMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757060205; x=1757665005;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pmRMEuNmJqUQDrfbifQMhcZYMdkhFlWyXwwtuzWLPlM=;
-        b=i04XMuWH9RDx1Tl5BSYMNq3EuAfNgTkBt74C8DIsoefOsenJFOM6GBOdvNR84Nzick
-         WnkD3uYgPzFCTXFMmB+gKF759VLByJYzVJBwGn5n96m0BjjpKFXH2Aky6N40106d4kNn
-         xrSUNKIDBWu+QZJOk4hn+VVI3MBV4zQR0pbsvYfcO/Cojb4AmIojSJEZQ4ZonYECMgdO
-         IXoDRe6ihH8hTa8Yq1ksxN871kN6Ildh5AGxavcddVvOqiALrlWdZyUZMQ35z+4g4Cuv
-         +x3UE41ohfIPjvFdIOBEMaz0QOiKWIy9F5T1MWMTLl8D6eRDP+ZinSeUf3wUC2N69VX0
-         2mog==
-X-Forwarded-Encrypted: i=1; AJvYcCVKN+n0/sqpxlcVLp5plv8l4f10oNJx6VADeDN4+Xe0TTZgkjQjgSD5qXH86xRgcKZeh3pFPtEXuxHdQvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxFR8STE2WZmbgbS7NfGilnb6MwJWf420LhickHbkB93WKI6fe
-	yXUuCPaRHgWMNsOD8ddex64KmsX1hl6GXDts9p05DyoytuGvp1mrYUpknAbIB6qtMXoo3aCYMiH
-	bKdYGwZHmYL8/4+pmKkOwjyKwLVvvRiTZ4kPtNx6DAA==
-X-Gm-Gg: ASbGncsugBmkL+oAvLlPvykE9SqF9q06KeZg8X6lsWuQnZlfwy3ZNDtZGx1FWRRzbfC
-	1WmgGAjxkujW4ZIrESDer/2QtUWaYsyMH0cqu4aNwyMxiCNb77xfCO9H3zhMnO8MZqSFvKO68Ki
-	ykpQVjg+VUsKYm/naMoaTHjiDeCl9/06kwun5Jy03clH+Tl1/Ex9wKuXiTQZiN72Tgoj/o3tyR4
-	rRfqxlNocPteH5aHAypFNtetbYSFxpdjx8IcQ==
-X-Google-Smtp-Source: AGHT+IG1/H0XgF1Z0mVwgA+Hm/3Z8WnWU7aR5gwqaxhSAw9EmueUjpEcG/rJ6rBmj73ByYwqulnJNifibNyClBj0MK0=
-X-Received: by 2002:a05:6214:4405:b0:72f:27de:9443 with SMTP id
- 6a1803df08f44-72f27deb20bmr6495506d6.0.1757060205056; Fri, 05 Sep 2025
- 01:16:45 -0700 (PDT)
+	s=arc-20240116; t=1757060198; c=relaxed/simple;
+	bh=0+i54Si2cMI9nBtLp8I1HNyZ8djprDv/KS3WoyWPmOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWAIyyKbKdOfIGa2yUrhsU2BUVarObYMnJ1xY9dIlMk6vlq2Xx1lcUgaJevLoqS1KpHLI7TIX85SsNzqxn/HT6RG9qzVE8f0GLgfrTNKCEAQLwzoS5akWtn/Dpd+UGq88+rJ2Xsijd8jhtitX+66/tNlHk+X47Qqfih7Nt6Pruc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8bJ3+yk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA29C4CEF1;
+	Fri,  5 Sep 2025 08:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757060197;
+	bh=0+i54Si2cMI9nBtLp8I1HNyZ8djprDv/KS3WoyWPmOE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D8bJ3+ykwQH5VksbMEcM5VcdAdKja9Ie/6gP3kW3ShfMCYvV54eoW/lUuryOeqoZ5
+	 WzObbEp5u6lQOLzmhqRwMlvOQcINIQdnrJDQmcSFacwlirQv6BzJuq2Mms9r1iR20L
+	 qaOpx7kRJksiamSajB5X73CLtcajkWyOC/Fnd7U2Yb1bFWMiDFLX+lWZcNThiWpck3
+	 dncnKrdemaBMYWDMdcotIGiqEnIBapC/m/MC+4BYHe+OPvKn34IlVTXj5aPuWDXz4u
+	 1P1TlUMQidi+x2eKCTNhqgGY5w9BLDKRBjEsE3kq6yQz1FaoHlQ0pxIIkUjdV438xB
+	 Dzsg9mNvLZfQQ==
+Date: Fri, 5 Sep 2025 10:16:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2 2/4] dt-bindings: pinctrl: aspeed: Add support for
+ AST27xx
+Message-ID: <20250905-monumental-camouflaged-butterfly-01faed@kuoka>
+References: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
+ <20250904103401.88287-3-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905052836.work.425-kees@kernel.org>
-In-Reply-To: <20250905052836.work.425-kees@kernel.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 5 Sep 2025 10:16:33 +0200
-X-Gm-Features: Ac12FXxXBCiJZ6j6Q-_OR5jc0zqm4NYxAPnOlmCg3M0Qu-SVhJpAaiy5I8LGFng
-Message-ID: <CADYN=9Kd9w0pAMJJD1jq4RSum5+Xzk04yPZiQxi9tmEBtHPEMA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
-To: Kees Cook <kees@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux Kernel Functional Testing <lkft@linaro.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250904103401.88287-3-billy_tsai@aspeedtech.com>
 
-On Fri, 5 Sept 2025 at 07:28, Kees Cook <kees@kernel.org> wrote:
->
-> After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
-> ffs()-family implementations"), which allows GCC's value range tracker
-> to see past ffs(), GCC 8 on ARM thinks that it might be possible that
-> "ffs(rq) - 8" used here:
->
->         v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
->
-> could wrap below 0, leading to a very large value, which would be out of
-> range for the FIELD_PREP() usage:
->
-> drivers/pci/pci.c: In function 'pcie_set_readrq':
-> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
-> ...
-> drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
->   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
->       ^~~~~~~~~~
->
-> If the result of the ffs() is bounds checked before being used in
-> FIELD_PREP(), the value tracker seems happy again. :)
->
-> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On Thu, Sep 04, 2025 at 06:33:59PM +0800, Billy Tsai wrote:
+> Add bindings for the pin controller found in the ASPEED AST27xx SoC.
+> The ASPEED AST2700 SoC contains two separate pin controllers, each
+> managed by a distinct System Control Unit (SCU).
+> Because these two controllers have different register maps, control
+> different sets of pins, support different pin configuration options, and
+> implement different multi-function switch logic, they are not compatible.
+> Therefore, two separate device tree bindings,'aspeed,ast2700-soc0-pinctrl'
+> and 'aspeed,ast2700-soc1-pinctrl', are introduced.
+> 
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 > ---
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: lkft-triage@lists.linaro.org
-> Cc: Linux Regressions <regressions@lists.linux.dev>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dan Carpenter <dan.carpenter@linaro.org>
-> Cc: Ben Copeland <benjamin.copeland@linaro.org>
-> Cc: <lkft-triage@lists.linaro.org>
-> Cc: <linux-pci@vger.kernel.org>
-> Cc: <linux-kernel@vger.kernel.org>
-> ---
->  drivers/pci/pci.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b0f4d98036cd..005b92e6585e 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  {
->         u16 v;
->         int ret;
-> +       unsigned int firstbit;
->         struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
->
->         if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
-> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->                         rq = mps;
->         }
->
-> -       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
-> +       firstbit = ffs(rq);
-> +       if (firstbit < 8)
-> +               return -EINVAL;
-> +       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
+>  .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml  | 115 +++++
+>  .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml  | 435 ++++++++++++++++++
+>  2 files changed, 550 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..0fee62259250
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ASPEED AST2700 SoC0 Pin Controller
+> +
+> +maintainers:
+> +  - Billy Tsai <billy_tsai@aspeedtech.com>
+> +
+> +description: |
 
-Hi Kees,
+Drop |
 
-Thank you for looking into this.
+> +  Bindings for the ASPEED AST2700 SoC0 Pin Controller.
 
-These warnings are not a one time thing.  the later versions of gcc
-can figure it
-out that firstbit is at least 8 based on the "rq < 128" (i guess), so
-we're adding
-bogus code.  maybe we should just disable the check for gcc-8.
+You should explain here hardware, not say what bindings are (we know
+what bindings are) or copy title, either.
 
-Maybe something like this:
+> +
+> +properties:
+> +  compatible:
+> +    const: aspeed,ast2700-soc0-pinctrl
+> +
+> +additionalProperties:
 
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index 5355f8f806a9..4716025c98c7 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -65,9 +65,20 @@
-                BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
-                                 _pfx "mask is not constant");          \
-                BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
--               BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
--                                ~((_mask) >> __bf_shf(_mask)) &        \
--                                       (0 + (_val)) : 0,               \
-+               /* Value validation disabled for gcc < 9 due to
-__attribute_const__ issues.
-+                */ \
-+               BUILD_BUG_ON_MSG(__GNUC__ >= 9 &&
-__builtin_constant_p(_val) ?  \
-+                                ~((_mask) >> __bf_shf(_mask)) &
-         \
-+                                       (0 + (_val)) : 0,
-         \
-                                 _pfx "value too large for the field"); \
-                BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                                 __bf_cast_unsigned(_reg, ~0ull),       \
+You should restrict nodes with pattern to common suffix or prefix, e.g.
+group, state, pins. See other pinctrl bindings for examples.
 
-I found similar patterns with ffs and FIELD_PREP here
-drivers/dma/uniphier-xdmac.c row 156 and 165
-drivers/gpu/drm/i915/display/intel_cursor_regs.h row 17
 
-Cheers,
-Anders
+> +  $ref: pinmux-node.yaml#
+> +  additionalProperties: false
+> +
+> +  properties:
+> +    function:
+> +      enum:
+> +        - EMMC
+> +        - VGADDC
+> +        - USB3A
+> +        - USB2A
+> +        - USB3B
+> +        - USB2B
+> +        - JTAG0
+> +        - PCIERC
+> +
+> +    groups:
+> +      enum:
+> +        - EMMCG1
+> +        - EMMCG4
+> +        - EMMCG8
+> +        - EMMCWPN
+> +        - EMMCCDN
+> +        - VGADDC
+> +        - USB3AXHD
+> +        - USB3AXHPD
+> +        - USB3AXH
+> +        - USB3AXHP
+> +        - USB3AXH2B
+> +        - USB3AXHP2B
+> +        - USB2AXHD1
+> +        - USB2AXHPD1
+> +        - USB2AD1
+> +        - USB2AXH
+> +        - USB2AXHP
+> +        - USB2AXH2B
+> +        - USB2AXHP2B
+> +        - USB2AHPD0
+> +        - USB2AD0
+> +        - USB2AH
+> +        - USB2AHP
+> +        - USB3BXHD
+> +        - USB3BXHPD
+> +        - USB3BXH
+> +        - USB3BXHP
+> +        - USB3BXH2A
+> +        - USB3BXHP2A
+> +        - USB2BXHD1
+> +        - USB2BXHPD1
+> +        - USB2BD1
+> +        - USB2BXH
+> +        - USB2BXHP
+> +        - USB2BXH2A
+> +        - USB2BXHP2A
+> +        - USB2BHPD0
+> +        - USB2BD0
+> +        - USB2BH
+> +        - USB2BHP
+> +        - JTAGM0
+> +        - PSP
+> +        - SSP
+> +        - TSP
+> +        - DDR
+> +        - USB3A
+> +        - USB3B
+> +        - PCIEA
+> +        - PCIEB
+> +        - PCIERC0PERST
+> +        - PCIERC1PERST
+> +
+> +    pins:
+> +      $ref: /schemas/types.yaml#/definitions/string-array
+> +    drive-strength:
+> +      minimum: 0
+> +      maximum: 15
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  - |
+> +    pinctrl0: pinctrl{
+
+DTS coding style - missing space.
+
+Unused label.
+
+And you did not implement Rob's comment.
+
+
+Best regards,
+Krzysztof
+
 
