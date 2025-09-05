@@ -1,86 +1,94 @@
-Return-Path: <linux-kernel+bounces-801899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D69B44B58
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:49:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ECCB44B60
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593B4188CE34
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:50:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D1BA400BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2521EFF9B;
-	Fri,  5 Sep 2025 01:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82098207A3A;
+	Fri,  5 Sep 2025 01:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arHvTfHr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXfTEnvb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D543320EB;
-	Fri,  5 Sep 2025 01:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D631D1E8342;
+	Fri,  5 Sep 2025 01:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757036984; cv=none; b=aMiuyQ+OFRh/r8yyopouJG2Sf6hwftIu6lBkBMUu2TEgkj8eLuT/Vk6geyTlLS5uIyQk7RLHYeuRsCRbYU/s77RjeIN1kFUWTSRvLv6xkbmOP5mVrbNIxJM9uboSuzyUiD9wHJUwqZPbPkndh539Ty7IOZSsfyuMrQbUA35JfYA=
+	t=1757037391; cv=none; b=oQDnVvMO4Gd7jsz0CEdTll40SbXY2kxpDo4IjifF7gN3IKkV5yXpdH+wJ14sGSNwoGxlb3ZCDW5XyHkwuw2uKMsVPd2TwFRYdYcAqnLImHqHRdr01jg6UZvhx8eEqz49NtiHiKx+4+nsRfeu7uzH4oAXZUo4GKj1pIdASkv/lbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757036984; c=relaxed/simple;
-	bh=Tu8dRLxfbouCfnvyFL1u/voFfdEj304GNbmJcjKPnMo=;
+	s=arc-20240116; t=1757037391; c=relaxed/simple;
+	bh=Xcn+I+kMYJB+u+tv1XD+EFcjTYldh08BKwhM60y/8E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XA5FJCdYvPkxq2/HEOB2xWIrayWuz9uYIj5/zB3C98jJwxwib/BWlRnVC2UalKCbTR9AMoD8o4Q3sYEIQHeVFsRwIYR6JFiI3hgDFCozrM4L82YK0JgtNDucg4mRf5PY+4keAZiyvudGpbBfnOQjuSjC/X1czGcoq5t6kg1wAvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arHvTfHr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41525C4CEF0;
-	Fri,  5 Sep 2025 01:49:42 +0000 (UTC)
+	 MIME-Version:Content-Type; b=S1P5OFgpnenFhos5bEyZJ7c9RaXiEhdvjsUo/VQLPkGc59YEmeLWWvowzupoST1WxpZh75WYWrHttMiYvA/sRByWpabTeOwmHbHORpIKAl4K+ECHf5AD3dlIeTlgv/9etVaMjjd/jqKMcupnqfnAKAvUM6n+7IvpHHRwLyVj8Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXfTEnvb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D057AC4CEF0;
+	Fri,  5 Sep 2025 01:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757036983;
-	bh=Tu8dRLxfbouCfnvyFL1u/voFfdEj304GNbmJcjKPnMo=;
+	s=k20201202; t=1757037390;
+	bh=Xcn+I+kMYJB+u+tv1XD+EFcjTYldh08BKwhM60y/8E0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=arHvTfHr/x83tMaViDMhKMfNh5iHY6zBLv7spcIACyMHnOMYBO1aY1QaWGpRwfSCD
-	 R40gX0f7KdksFVTam2Hvz4prnjP85wymEqPryhHgLM61yBNfezir9fdfqFL5a6kR7E
-	 9XnG0cP+YN/xe09/qPyTKtFb2+fkvHpancnN7Pswh4nmR8KqfM3mLhvWYxKP/EEC7w
-	 ocADly8+wcqAFffq+RHCroudIfMa7Md2iEXMGAL7u8Y2JP9DWVXHfun4TbfcARzozy
-	 DRRBC14cxIg8PsjwK4oX7iuDP7JcTjO41WrAwTbI5zi9opR0+2u9PP66rkHpD9tdkj
-	 JGCjdifIG8/fA==
-Date: Thu, 4 Sep 2025 18:49:41 -0700
+	b=ZXfTEnvbwXuSMFbjorLIGqEyLXaaUZmSiUjjAV7YcCN0klbARxYqI5ez4nWya6UgS
+	 WFqadB42tQlbl/Jex5QJqNkVBfpnbkmrriSTx1YaA6fNerL2HuC3bTAtcaW+Ozmwbd
+	 5QfHpCUhrrmMWqSrCc6xVIRwJK8IuR9TQOkmMboXH1u7wbCwsP1GxXwO0jFjh75KHK
+	 fRob6P3T6OK4OPUg2iW2fbRY2l1JqfaJvfcTJZsFb6x00s0h2uAuTUqEcMQb7ypxwF
+	 2a7Ed53ton6FayNdd4vSg+WxpWz+rdirz9hm7NxfvE0nQmrvAGX3tdENBAkdoYtdEE
+	 nsiFdX+FR15ew==
+Date: Thu, 4 Sep 2025 18:56:28 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stanimir Varbanov <svarbanov@suse.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, Nicolas
- Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Phil Elwell <phil@raspberrypi.com>, Jonathan
- Bell <jonathan@raspberrypi.com>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
-Message-ID: <20250904184941.207518c8@kernel.org>
-In-Reply-To: <20250904184757.1f7fb839@kernel.org>
-References: <20250822093440.53941-1-svarbanov@suse.de>
-	<06017779-f03b-4006-8902-f0eb66a1b1a1@broadcom.com>
-	<20250904184757.1f7fb839@kernel.org>
+To: Sebastian Basierski <sebastian.basierski@intel.com>
+Cc: Konrad Leszczynski <konrad.leszczynski@intel.com>,
+ <davem@davemloft.net>, <andrew+netdev@lunn.ch>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <cezary.rojewski@intel.com>, Karol
+ Jurczenia <karol.jurczenia@intel.com>
+Subject: Re: [PATCH net 3/3] net: stmmac: check if interface is running
+ before TC block setup
+Message-ID: <20250904185628.0de3c483@kernel.org>
+In-Reply-To: <e1e9c67e-04c7-4db4-9719-25e5d0609490@intel.com>
+References: <20250828100237.4076570-1-konrad.leszczynski@intel.com>
+	<20250828100237.4076570-4-konrad.leszczynski@intel.com>
+	<20250901130311.4b764fea@kernel.org>
+	<e1e9c67e-04c7-4db4-9719-25e5d0609490@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Sep 2025 18:47:57 -0700 Jakub Kicinski wrote:
-> > netdev maintainers, I took patches 4 and 5 through the Broadcom ARM SoC 
-> > tree, please take patches 1 through 3 inclusive, or let me know if I 
-> > should take patch 2 as well.  
-> 
-> Thanks for the heads up! Let me take patch 3 right now.
+On Thu, 4 Sep 2025 21:01:49 +0200 Sebastian Basierski wrote:
+> On 9/1/2025 10:03 PM, Jakub Kicinski wrote:
+> > More context would be useful. What's the user-visible behavior before
+> > and after? Can the device handle installing the filters while down?
+> > Is it just an issue of us restarting the queues when we shouldn't? =20
+>=20
+> Before this patch driver couldn't be unloaded with tc filter applied.
+>=20
+> Running those commands is enough to reproduce the issue:
+>  =C2=A0 tc qdisc add dev enp0s29f2 ingress
+>  =C2=A0 tc filter add dev enp0s29f2 ingress protocol all prio 1 u32
+>  =C2=A0 rmmod dwmac_intel
+>=20
+> in effect module would not unload.
 
-s/patch 3/patch 2/
+Makes sense. Could you also confirm that the offload doesn't in fact
+work if set up when device is down? I think block setup is when qdisc
+is installed?
 
-> I'm a bit unclear on where we landed with the parallel efforts to add
-> the >32b address support :(
+ip link set dev $x down
+tc qdisc add dev enp0s29f2 ingress
+ip link set dev $x up
+tc filter add dev enp0s29f2 ingress protocol all prio 1 u32 ...
 
+If it doesn't work we can feel safe we're not breaking anyone's
+scripts, however questionable.
 
