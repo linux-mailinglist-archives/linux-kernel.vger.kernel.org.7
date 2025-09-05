@@ -1,213 +1,165 @@
-Return-Path: <linux-kernel+bounces-801878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D9B44B10
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD98AB44B24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014A11C81C97
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3441C82AD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264391DE4FB;
-	Fri,  5 Sep 2025 01:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AE81F4C84;
+	Fri,  5 Sep 2025 01:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lxnPFCXF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCU3QQCe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07E71AAE28
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2751DF755;
+	Fri,  5 Sep 2025 01:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757034243; cv=none; b=UwUKTmEvxCQzp1makd4Wf5lZUNpJf1KcD3/q9l1b2+cqLot7E0De5bSl/lzqxt8x244WXKroga/w39BQj9mgKAzwKRICZ8Q3S1MOTyzPH04J4EquK8gn7uwtNbRDLsvHamwNwtnBEQNxJ+cVzkuWZfYUUk+lhzlFycDzbRCFOXU=
+	t=1757034579; cv=none; b=V6qI//+sI5M/EehYqcFtwphChDhe7a5Kl6XVsX5VkAgsY/8LYyPLcMf0RBNyLQw546OqNva3y3cNPJJu9uHIVnCNunx3yzrMYVvaN8dzXuQWMdnBUSXxugnhxIB1UrLLtRC486SCGqJij//Syriqxje7OPz082YHoLtxcOUZUys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757034243; c=relaxed/simple;
-	bh=E60oZCvVY2XQC5MKAz3hSZqG5cJY22Czhkp4QdVVK0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6jWedjtYnaISh2w1eZN4kwX+DeD/Y2CK3jm4Khap+sAF0dJebLGGuxyM2Qsa4opL3KSO11NKJJx0fYu3qNzM65OkI2bUwloj9Kzzc+Qw8YN8u+pZ6pbabKczLJnWSMWWlcLtxbaVC1afJmdfdFQu7hRuDPmIgZer/4SokvT0UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lxnPFCXF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IYFqe002728
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 01:04:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9x/ZnBgm4svQLivjO5lFYu5fqyWw8hoi1jnTAaS2pOs=; b=lxnPFCXFMyLZb9AV
-	X7ffLjgtvcqL2/6lLBrlZcUNg+kauiZcZo42GKmwsofn19Ry5flHl2HMRIR6P11H
-	5r2PYbyEFe+WoS3bL5DpivX/ej1D/yLd4jWblkAuKqHQRxVBU+PN0ZerITKwbPq3
-	Jzwg5izzv+6/NUywDnTNx3UI3iEr6VY18T/yFEqTYhRD9e0hu2GCbZ+v/rJDJ9ri
-	mXyamNeHb+IPEuC7DKyobtiPNptI/RN2jS1CmPcVr6xPs7Uhn0xuQSwlt3ETZ1OG
-	8DcXjD+TW9607Z75ANPR4g6GNs8Whx58d12fG4nnI1eRYXZu0gwSc1V8CUAeLXJ6
-	B0yxvw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush396xh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:04:01 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24c99bd543aso25508025ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:04:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757034240; x=1757639040;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9x/ZnBgm4svQLivjO5lFYu5fqyWw8hoi1jnTAaS2pOs=;
-        b=s/XqKzCe4BJ/qI5ks09oLtvPQoc+fr0ZwA530iIl9yZ4E7VAg4zQOLsO1aykKR3BKs
-         l/PWS1qEh93UNNYbHtBJO/mAZaAaX1ky8ZXZP7MOiS3mSJcfm1TcKpMoBxrwu+M+tDju
-         pRUiCd5rr56ohKOiu6Xdbxgr3E7GX0uEAQptPq2K45ggT8LOPVX3l6heQKq2DNTbssf7
-         Jj0cWDw2l9J2F4cDszGHY3CvlSbzSMa9nR0+MyOQhUwV6+JOEXbhkrhYP/ob/ImnNb9i
-         EoAXLXoPugOXrsbMqgwWQO9rtnMxEEUO88TOkjkEB83vKTCA+RUm1is1O6FVouTela1Q
-         1LWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKU2CtEO57T6jxVKL+PwJoM3FBDWnPLvagkLzvcPGZGOO7q3KpK3EmgSekreL47LNfxv+utZ/gpGUfoZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLHD3UzE2lnN+GeChVjrnUVajef/5qZXJDQ30++pl9IYgisiqE
-	cjUxPaGPlD/Ya/0RrO02WJeOR4iCgUTHuwTZb52Rf7N6gEb0EuSxGQVTRJEwuo8ospcJfBzmW9d
-	NUIEwwpkbhcjRlT7vyXIa4TjZP7Lom1dVQ71x6hYeI+i0MkFEo9mVdu+ai39a7YN3HSs=
-X-Gm-Gg: ASbGnctOlWtPw/dZ699Ui/D9z3JGC7GBd6bCQCudtuxJn8qjDwY35WBFbp9TZQBJMpL
-	EC0SKcZ9pZGL//KEKPSQX8nl8Bz6VIqeRAdyngOWU+n8LcWyICbbllDdfjQcoJMrcjJ6pJpJh2m
-	1xJpeyYOFratRmiI30SQXsRBfpA6Jf03K5YAawu4717FiuBwYQytSXsJd4JsPMHDp433Sdq8ra0
-	O+ojU5JhQezWG5yREwbisR3ZNbO8b3b1lg50FWWNjRby9SsqlLrvkxMOfT31HRN97ouDE3PRgph
-	ZBNzOItgeobiXGPhIbiNBMplQnvsQYESYxdy6uBgTuv6Er5A+eZQ5YxlGCLjGYeXcREoW21aBi8
-	VUzJWXwOUtusBOuQ5Jo79/u9mbH3GPasC
-X-Received: by 2002:a17:903:1a0e:b0:248:c96e:f46 with SMTP id d9443c01a7336-24944b81c37mr262422515ad.60.1757034239987;
-        Thu, 04 Sep 2025 18:03:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7PL5Q1tEpk5K+qxnrlMkRx3Zfh4Hi5/r47t4WUi+YB3Zb3IhsOhnnrsNU7IDSjiEHTamUJQ==
-X-Received: by 2002:a17:903:1a0e:b0:248:c96e:f46 with SMTP id d9443c01a7336-24944b81c37mr262422075ad.60.1757034239485;
-        Thu, 04 Sep 2025 18:03:59 -0700 (PDT)
-Received: from [10.133.33.84] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c8945d925sm58656885ad.36.2025.09.04.18.03.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 18:03:58 -0700 (PDT)
-Message-ID: <af7cf6cc-d558-435e-b406-374ef92914a2@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 09:03:50 +0800
+	s=arc-20240116; t=1757034579; c=relaxed/simple;
+	bh=zlThuuzkt1QkJxp3SzFyL9usQnMhVeyLmEtHSFL+eoI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P+3mGQMTrgTM6jLsEyQZkgxJ8Brmmmx9PFy8VcL1/wgGJH6IKcUnLrZt0fJ0rMYClc0zDMH4sfbh5+4oY2me41AjcKGlAo6+DLuGD/liN7eRrXrqOxFvA0EsxlGar2DoofytMeXsoqCkZJWGNXuOFQJr1PPapUIqKamPdVXr88A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCU3QQCe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40281C116C6;
+	Fri,  5 Sep 2025 01:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757034579;
+	bh=zlThuuzkt1QkJxp3SzFyL9usQnMhVeyLmEtHSFL+eoI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=YCU3QQCefhSJs2BvTMKR8N0lkgVYD1xPSo3XsRlSeJMfOiKTGKN39PSF6zbD9vI6Z
+	 s1eOPMdIbJvq9U6uY+gnpr+HqQ7laQ1NqEH616zi21gANJ4cu3/qbnKIeVIx1T91s3
+	 G+tZCHBYC9ksmubKBlD08+poVhIxtYUxDBWre+60OEm+sDvdWHyF/YzeWR2NzBQglp
+	 6wGam1VsgJm6JZ2CQOUUQHtpxjXZzfBW4KqpQoz8PVjYj8OtHjzigglu+HtGn2fwRh
+	 ureQ5C3IEXJtBjKzGkhvaXrx29wlGEYYsRxDBMUuffGNSGyq/QUj+3N7NglTlv2duQ
+	 +w8fUgW3rlrcA==
+Received: by venus (Postfix, from userid 1000)
+	id 0DB9D180B05; Fri, 05 Sep 2025 03:09:36 +0200 (CEST)
+From: Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH v2 0/3] platform: arm64: thinkpad-t14s-ec: new driver
+Date: Fri, 05 Sep 2025 03:09:30 +0200
+Message-Id: <20250905-thinkpad-t14s-ec-v2-0-7da5d70aa423@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: x1e80100-crd: Add charge limit
- nvmem
-To: Maud Spierings <maud_spierings@hotmail.com>,
-        devnull+fenglin.wu.oss.qualcomm.com@kernel.org
-Cc: andersson@kernel.org, bryan.odonoghue@linaro.org, conor+dt@kernel.org,
-        david.collins@oss.qualcomm.com, devicetree@vger.kernel.org,
-        dmitry.baryshkov@oss.qualcomm.com, gregkh@linuxfoundation.org,
-        heikki.krogerus@linux.intel.com, kernel@oss.qualcomm.com,
-        konrad.dybcio@oss.qualcomm.com, konradybcio@kernel.org,
-        krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, me@kuruczgy.com, robh@kernel.org,
-        sre@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com
-References: <20250826-qcom_battmgr_update-v3-8-74ea410ef146@oss.qualcomm.com>
- <AM7P189MB100958EDD985483DB1F32EC5E301A@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <AM7P189MB100958EDD985483DB1F32EC5E301A@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX89r2QKaOwjNB
- 5kaTcKLEZ8KBFMCAXh/xcVdDiE0cDda4R57Ym3bK03vUr7XzJI8t4fs83J3SBC+U+5RyeAue/j0
- zByrv7DthbRSFgenwjjY+GYnedym6WDrre5lEHLJ6bCFW4qJhuWS2eOGD/B/v36TMqdx9EhpYVa
- tvAJU186AIBKL1h4gE8NgpEdGOIHcRV2j0eIJAkp1kTrmqoTZuo6YTwEnQPzVJOCu7iczLDtkUP
- H5NFk4Eckm2fw2u2lY3fzsuXNu8nPa8BQDvjxSCmyWyCzjZIPyyW5jvPQhdzmUL3b13unJKi0aM
- ZHa3tzetw4ZH62o/w+n1ZbLaAfOT+cDtmHYUgDaajpETB0psOMEZ8wmoidwC6Qb8WKwjcCKqyIB
- RNslIWP3
-X-Proofpoint-ORIG-GUID: fuE4Od8cRij11mUShroPRhh9ANGFyety
-X-Proofpoint-GUID: fuE4Od8cRij11mUShroPRhh9ANGFyety
-X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68ba3701 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=065pQyBIx5i4jwDuaBsA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_08,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300032
+X-B4-Tracking: v=1; b=H4sIAEo4umgC/32NQQ6CMBBFr0Jm7Zi2KBpX3MOwmLZTmYiUtIRoC
+ He3cgCX7yX//RUyJ+EMt2qFxItkiWMBc6jA9TQ+GMUXBqPMWV1rjXMv43Mij7M+ZWSH3rM1tbe
+ egoUymxIHee/Je1e4lzzH9NkfFv2zf2KLRoUNq4bUhQKr0Lo4DGRjoqOLL+i2bfsC6MLCBrQAA
+ AA=
+X-Change-ID: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3681;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=zlThuuzkt1QkJxp3SzFyL9usQnMhVeyLmEtHSFL+eoI=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBoujhO2kpGKRTK+MHUHbmu+kG3VkOiIiJswsqrd
+ zKjR05CI3iJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaLo4TgAKCRDY7tfzyDv6
+ mn8fD/9R86xT85YjvMkSbbB2j0G+gyXjPGYnqnA8ogeXZAVOyoyoZhgUU5hlX82mVazTSotNSbO
+ rQpAqPni/EAsMlFcbPt8p0SfRyBinCInvvvVTqlYpn6b+1aeyif/tKDJQ/YRv2Nro6uwmfBzALh
+ VVjwmULNdGvFAZnDz9BQEVMvjTzjlTkmagdnsrBP/VLNqlzzoip1hpld1TGrCYNb2N10HNhC9MT
+ 5gzEG6ibbdcOExLhctTqsb/PBXKGgU5f0b41QvtC2V4QCChbC76o1p+9aeSW0PL1m0OW6xKiBFZ
+ fSFpcCPcqkQ7aBRW9pjJAqcbp5sveHVOLmzruQQOQ9G6BzTlDXPFgviVUpsNwYDY3Rj5ZYgRlFt
+ K9Ef9xmHQoCIf6Cdpw/uF2gNW9lt8DJCkHUrX0+2ePF8gmLB6/UctFNa9/nmFQAVoc11hhsXOE5
+ rNyCtOgw8dg9UKKoSAPSxyQXPnbG2e8feCNUe+0RlPz70sEUKZcrANQ1/cTFqlgowS3bBriWGpF
+ fcEcI8NxGAoqMLG7wkpdhe7jAt835Vl5sE0/8+W9iWWqS/BtDUJ/2HJ4DG2MiomMiqoIBHeltUt
+ B5MR9fC3NuRrwiurXK9nTopDFK+HYI3SCB2URz8CZk1i8JbTW4iyZ83+Qteuk2swHKsd4OZwHbr
+ UYxAts/rJzczTHQ==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
+Introduce driver for the ThinkPad T14s Gen6 Snapdragon EC. In theory
+it seems to be compatible with the ThinkPad ACPI driver, but these
+devices are booted with device tree. As the name implies, the existing
+ThinkPad ACPI driver only supports the ACPI interface. Looking at
+the implementation, the ACPI DSDT contains many mapping functions
+to translate the low level I2C messages into the interface used by
+the ThinkPad ACPI driver. Adding DT support to the ThinkPad ACPI driver
+would require adding all those translation functions, which would add
+more or less the same amount of code as writing a separate driver using
+the low level interface directly. I don't think it's sensible to make
+the existing ACPI driver even more complicated, so I went for a separate
+driver.
 
-On 9/3/2025 4:41 PM, Maud Spierings wrote:
-> Hi Fenglin,
->
->> Add nvmem cells for getting charge control thresholds if they have
->> been set previously.
->>
->> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/x1-crd.dtsi         |  2 ++
->>  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 20 ++++++++++++++++++++
->>  2 files changed, 22 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi 
->> b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
->> index 
->> c9f0d505267081af66b0973fe6c1e33832a2c86b..8c3d30dd936ef9b12867971f5f237dd12484072d 
->> 100644
->> --- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
->> @@ -82,6 +82,8 @@ pmic-glink {
->>                      <&tlmm 123 GPIO_ACTIVE_HIGH>,
->>                      <&tlmm 125 GPIO_ACTIVE_HIGH>;
->>
->> +        nvmem-cells = <&charge_limit_en>, <&charge_limit_end>, 
->> <&charge_limit_delta>;
->> +        nvmem-cell-names = "charge_limit_en", "charge_limit_end", 
->> "charge_limit_delta";
->>          /* Left-side rear port */
->>          connector@0 {
->>              compatible = "usb-c-connector";
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi 
->> b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
->> index 
->> c02fd4d15c9649c222caaafa5ed2c777a10fb4f5..abf7afe5127d7b8b572513234e00009ce837837d 
->> 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
->> @@ -239,6 +239,26 @@ reboot_reason: reboot-reason@48 {
->>              };
->>          };
->>
->> +        pmk8550_sdam_15: nvram@7e00 {
->> +            compatible = "qcom,spmi-sdam";
->> +            reg = <0x7e00>;
->> +            #address-cells = <1>;
->> +            #size-cells = <1>;
->> +            ranges = <0 0x7e00 0x100>;
->> +
->> +            charge_limit_en: charge-limit-en@73 {
->> +                reg = <0x73 0x1>;
->> +            };
->> +
->> +            charge_limit_end: charge-limit-end@75 {
->> +                reg = <0x75 0x1>;
->> +            };
->> +
->> +            charge_limit_delta: charge-limit-delta@75 {
->
-> I think this is supposed to be @76 given the reg property below and 
-> the other ones above.
+I managed to get system LEDs, audio LEDs, extra keys and the keyboard
+backlight control working. The EC also seems to be used for some thermal
+bits, which I haven't looked into deeply. As far as I understand most
+thermal and fan control is handled by a different controller
+(0x36@i2c5) anyways.
 
-Thanks for catching it. I will address it in next patch.
+Apart from that the EC is involved in proper system suspend, which
+is something I do not yet understand (I don't have any documentation
+apart from the dis-assembled DSDT and existing ACPI driver). Right
+now I disabled wake capabilities for the IRQ, since it would wake
+up the system when closing the LID. Hopefully a way to mask specific
+events will be found in the future.
 
+Changes in v2:
+- Link to v1: https://lore.kernel.org/r/20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com
+- Apply Reviewed-by tags from Bryan O'Donoghue
+- Apply Tested-by tags from Neil Armstrong
+- Update DT binding description, location and examples (Krzysztof Kozlowski)
+- Add missing wakeup-source to DT binding (Rob Herring Bot)
+- Update DTS newlines, pinctrl order, nodename (Konrad Dybcio)
+- Updates to EC driver
+  - Add bits.h and bitfield.h include (Ilpo Järvinen)
+  - Drop mutex.h (myself, leftover from development)
+  - Drop DEBUG define (Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_BLINK_RATE_ON_OFF_MS (Bryan O'Donoghue, Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_KEY_EVT_OFFSET (Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_KEY_ENTRY (myself, to keep line length sane
+    after THINKPAD_T14S_EC_KEY_EVT_OFFSET)
+  - Align values of thinkpad_t14s_ec_led_status_t (Ilpo Järvinen)
+  - Use u8 instead of char for I2C command buffers (Ilpo Järvinen)
+  - Add some more newlines after goto/return (Bryan O'Donoghue)
+  - Use FIELD_PREP/FIELD_GET instead of _SHIFT (Ilpo Järvinen)
+  - Explicitly map to LED_ON/LED_OFF in audio_led_get (Ilpo Järvinen)
+  - Add missing , after .driver.of_match_table (Ilpo Järvinen)
+  - Change from KEY_MODE to KEY_PERFORMANCE (myself after seeing a patch
+    for HID lenovo being sent to the list)
 
->
->> +                reg = <0x76 0x1>;
->> +            };
->> +        };
->> +
->>          pmk8550_gpios: gpio@8800 {
->>              compatible = "qcom,pmk8550-gpio", "qcom,spmi-gpio";
->>              reg = <0xb800>;
->>
->> -- 
->> 2.34.1
->
-> Kind regards,
-> Maud
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
+---
+Sebastian Reichel (3):
+      dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+      platform: arm64: thinkpad-t14s-ec: new driver
+      arm64: dts: qcom: x1e80100-t14s: add EC
+
+ .../lenovo,thinkpad-t14s-ec.yaml                   |  50 ++
+ MAINTAINERS                                        |   6 +
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  24 +
+ drivers/platform/arm64/Kconfig                     |  20 +
+ drivers/platform/arm64/Makefile                    |   1 +
+ drivers/platform/arm64/lenovo-thinkpad-t14s.c      | 610 +++++++++++++++++++++
+ 6 files changed, 711 insertions(+)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
