@@ -1,100 +1,78 @@
-Return-Path: <linux-kernel+bounces-802941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E89B4589E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D91B458A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D0D7C4DA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDFD58470C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4F34F470;
-	Fri,  5 Sep 2025 13:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D703B1D7995;
+	Fri,  5 Sep 2025 13:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhD+kFkn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="McPcmgFW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3B734AB1D;
-	Fri,  5 Sep 2025 13:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7811713
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078334; cv=none; b=MTDHO0fBbKQI3kXP1RCba+xBrVsRlUYqepiJA9JoVRXRExiyLuYPSeutyI/fcxYdRC7b4dl2LrXyZ0xVcwnd+av43r2SpRzK4iQwhLK503ogJUW4sQ6GbBEftTALn3msfsxW0LCgOC2iFVssGwIAwt6DC6Lqf/5TwOxCS7bcJrs=
+	t=1757078373; cv=none; b=E8U8g16FD0+O1sn5lSNCBvSQYuAax3UAUSmvaZWb4LgUxF2aDSJTGNHp3u0Bmid9PPE+2yLjEAattXbkCrsO8hiJvUM2euHuMDeCBj0WPZUE5ZqWQsnwPxMkTR30gYokqwORPqVBshjA5EiCT9G6xNRW9i3Ji/wLuP6oW4B3y+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078334; c=relaxed/simple;
-	bh=ny/A2p5gbcBaQSpVgqnsxmBtWkpq6taqfrkGe29oX78=;
+	s=arc-20240116; t=1757078373; c=relaxed/simple;
+	bh=4+aBu1QYPkiVf6s77hX2MEWDjitw9I++XXnLuguNv6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pff4o2MXgtRYQTHQ5Y7Amm+Xk6aLiino43GXjRVJubRqw2q5uklJwp7E1qwE2IkjzouLTn5Hglx9VeP4ajOk3RTrtj5bqbsO1WeQLPLvj6hhCaIrOlLkPXj53wvN+rxc+Lssw4BUAPAMGytZM7yvJIacQlRr9042u0JNG5apmwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhD+kFkn; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-248d5074ff7so21325465ad.0;
-        Fri, 05 Sep 2025 06:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757078331; x=1757683131; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vE5oCxOckOECN6gRYk3jORDGGbCehZ7GCnaiRL+725k=;
-        b=EhD+kFknK8EujeV1/sZuz6tLfHcRkn5pna39vbJpquj3Bf4YGkIFrw/y3qdSmIIVpk
-         /6F0yuESgEDrXu5KfDzgau7lMsdjzMY+6CGGP079DqhYfIXOyilEjXABNgfihaf+dw1J
-         WdpEV85JuIp207tGSO5Bq1Ona0F79hXKiXsdeG2QD0C/KwKmC44BJaTC2NEEkExlOrVo
-         2syEeykx1t9HZ35MgSDUgPWGUIUB8gBGRRzMK5o/WfHueE01A8sJ7Adfk4jnNyqHJ3oM
-         yHPM5/HddLHCVaUaghiNJCeKqyKuVJoNjCkNh6p8TpUxHJKN4Iv5o02rM2AXzhCD8DE2
-         2Qlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078331; x=1757683131;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vE5oCxOckOECN6gRYk3jORDGGbCehZ7GCnaiRL+725k=;
-        b=tSBO3lFyYoyvFNBymyYJQZ6CYWuBALY4mbR0b8smEvPoOcyPNMxhjaaBRFRK+BR+3+
-         eDcR8LuZZODXA/b5uTJW1y5RsiSwrIchA6L/uJ8WQrsh4w4bNgAZVyqR7koskYbfZx3n
-         si3a4GseS2K6FBRzUW9i5giW3k1o7QqyManTEd1NhnB5a6902tv9s687bGzJhOMBmlbh
-         hkor0SIX/yaKQw1tepKd4Nl71pSlzwYAsFsppDfLXAKb6UkyqDG8pZIIhLc55CESNAc/
-         OuDHAyKbudhUcg1cl5FqudRuuEHAjQF1BfPNug8iovzYtLbGnuBC1qaiyfxFxBektBM2
-         q/WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1lmwtb+9xxS1gV0xoR3drKHd7PGc7BDl/RdOHIYzMtd062AWjSB9z0ToxcWGps+peQO9eUWO9IlA0Ar5A@vger.kernel.org, AJvYcCVIRvdZwhWjdAA/au5xLuJ3dWb7wYqxIfp/4r4D7SPbzaQIvcAIa/zpmY5mowhsGOpJ6oQjjnf7Jnw8JytwMzs=@vger.kernel.org, AJvYcCVxMNXN93axTEWUhK1efml9FghZOrCvNTXylj77eEJP0hupvKK1riBuIm3sfjn1i6+nYWSZYNsT8N9okwhUivo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTGRvkqWqIaWnn40iVMoICtzS9AR/qwEI/FZS3sY+O90Knpqib
-	hJ8lKpSZo7bEhoZYp3jqSv+J1UKkr5M5ovgo3asHOU8G9qBwWmHOXbIH
-X-Gm-Gg: ASbGncsfoKNXSldjJPLTNoOxBwHsE9J3wrPvdaw0aQXkdBo5qZrVZMt+Wceuj2lqAM5
-	RDeig7dNjc9x1AL+D96RJnR66epY14izf3Z6HoYZL8X4Gz+VqqcnRud15VyKNxyvQm9jQX2PV72
-	h0+SNKb2YhXVxIYEQYYN9ALt0fdvSPC0pvSH3HG3r0Oyn9mbneqeVK4aHgo54G49DY0QbuQeoLC
-	mGucT8Fg148jHPqdWT1Sia7M+7pLGjxcOvZ7hrhRb2WWgsVDe5hwU9AaVcRnu2/idpRatepyNVm
-	Gky/B5S9cah//rBkLk0geLHtPd3/AUO6/HT6sUUANFl5ox5BYhNsLIyNPJPERibLZYB4sRI3tBM
-	6IQnEMkTvToCEX2mle0FjejESaMP8sEa9
-X-Google-Smtp-Source: AGHT+IHAcL4T8yV1PZcm0QU3EQH6ydo5GkeGOb56QbE/EyrOvFaRkT+PiEsexQHyRuXKDzNt/g/n0Q==
-X-Received: by 2002:a17:903:b88:b0:246:571:4b51 with SMTP id d9443c01a7336-24cefe277c2mr49034265ad.29.1757078330578;
-        Fri, 05 Sep 2025 06:18:50 -0700 (PDT)
-Received: from localhost ([216.228.125.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9c2b12f9sm68886835ad.101.2025.09.05.06.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 06:18:49 -0700 (PDT)
-Date: Fri, 5 Sep 2025 09:18:47 -0400
-From: Yury ooNorov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Burak Emir <bqe@google.com>, Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Carlos LLama <cmllamas@google.com>,
-	Pekka Ristola <pekkarr@protonmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v15 0/5] rust: adds Bitmap API, ID pool and bindings
-Message-ID: <aLrjNze2_L_vAnWX@yury>
-References: <20250904165015.3791895-1-bqe@google.com>
- <aLnURXW_ZiX2iJd_@yury>
- <CANiq72==48=69hYiDo1321pCzgn_n1_jg=ez5UYXX91c+g5JVQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3BPVI+Yk7noveQ1PPhsVSywZ15MQFWocW1Vo57xs64o1NRCSdyGpePnor/M7qnyJbS4SXwy/FzV4MFvn3Z2Kr+gKRL+ptlpyKgTdi+kDFDGZjlUzeX47uRVQjvenE3MMCiG69R4/0xR/hf7A1a5pL2ItCFnhf1D2FmBpJuZhfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=McPcmgFW reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E95E140E01A5;
+	Fri,  5 Sep 2025 13:19:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8G6JW74q3WKi; Fri,  5 Sep 2025 13:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757078362; bh=+75vthP3JRfPmr4G0ovrKndN5n6E7CyQChLfsO/D918=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=McPcmgFWWndOeR1OONO4boLM2w7NrPV2ABZuYAwmrobY4JXQwB2ff0/PfZZl5LAqh
+	 dhpiyXXZ8t3IcRXr+y3n/Hi1DsM1baU9tIJ9zKMjBoAsC7Dc0JxHUm6oE/AH2gbeM6
+	 JBiRcvICSd1xriF97NKxM4QSGm+vKl/MtoNm8GUB7Yoe92G5QZwrhdZNdxkKJbGA/S
+	 +RC0ZoGf+X9nHTfzIbUv0Btxbl17GUn7JBpPz+mSqNOuA9nmKDwhhdpDmOLcAmX2ST
+	 1q0hdcYZMj1Bn1ZWjys/+E7AEU47iruAl3a9mUwSklNz62XGAQISn5ByuPbqnYViLI
+	 s2VljS32Y0u99SnYm4HKIoBxGqnLscpF39FvZikpOG0j+/xW17zw9Q7rye0D7xB3+s
+	 ZBUXfQZ142QDhkUnQ6/nM8SuD3UWb88tIjTP3T8Tf/ckpdRvNs45ueeqlMQsnTsf/Q
+	 R6JVJy0Vr2/fM5JSimvJvLZBr4MA0LqT3HivJYxhfXdtOKtvabZFpzMMB9pGjt64wB
+	 6rL8OUgTCd0TNxNEaClRhL9wGZTptXvyUHg8YF+NGLOhUiiC6RAJ8w1G7StaEmWTgm
+	 HiSu2v2QdOrowVUh4Rin+UNLaCumA6J6Dn7v8RAu7p81ET1KcLWQG820OASzx1czLJ
+	 aC8jRWGgoD4m6mWHatUT4Cms=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 27C3B40E016D;
+	Fri,  5 Sep 2025 13:19:15 +0000 (UTC)
+Date: Fri, 5 Sep 2025 15:19:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -tip] x86: Remove code depending on
+ __GCC_ASM_FLAG_OUTPUTS__
+Message-ID: <20250905131909.GDaLrjTTw0PyFHeCHp@fat_crate.local>
+References: <20250828072958.3922703-1-ubizjak@gmail.com>
+ <20250905121723.GCaLrU04lP2A50PT-B@fat_crate.local>
+ <CAFULd4auQGQ3Ro_3GHJAoGDTnHW1hNzrK+9W_0mVwTEQeWTDUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,77 +81,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72==48=69hYiDo1321pCzgn_n1_jg=ez5UYXX91c+g5JVQ@mail.gmail.com>
+In-Reply-To: <CAFULd4auQGQ3Ro_3GHJAoGDTnHW1hNzrK+9W_0mVwTEQeWTDUg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-+ Philip Li <philip.li@intel.com>
+On Fri, Sep 05, 2025 at 02:36:24PM +0200, Uros Bizjak wrote:
+> There we are testing the value of a single flag bit, set by the CMPXCHG=
+=C2=A0
+> instruction. =3D@ccz is used here to distinguish the CC user from compa=
+rison
+> instructions, where ZERO flag indeed means that values are equal.
 
-On Fri, Sep 05, 2025 at 11:29:22AM +0200, Miguel Ojeda wrote:
-> On Thu, Sep 4, 2025 at 8:02 PM Yury Norov <yury.norov@gmail.com> wrote:
-> >
-> > Added in bitmap-for-next for testing. Thanks!
-> 
-> linux-next breaks with CONFIG_RUST_BITMAP_HARDENED=y:
-> 
->      error[E0425]: cannot find function `owned_bitmap_out_of_bounds`
-> in this scope
->        --> rust/kernel/bitmap.rs:484:1
->         |
->     484 | #[kunit_tests(rust_kernel_bitmap)]
->         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
-> 
-> because the proc macro doesn't support `cfg`s (moving it below
-> `#[test]` wouldn't work either). I have filled:
-> 
->     https://github.com/Rust-for-Linux/linux/issues/1185
-> 
-> so that we don't forget about it.
-> 
-> Meanwhile, I would recommend e.g. moving the `cfg` inside the
-> function, something like:
-> 
->     diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
->     index 6e0824579781..2f00e91e9c35 100644
->     --- a/rust/kernel/bitmap.rs
->     +++ b/rust/kernel/bitmap.rs
->     @@ -551,18 +551,21 @@ fn bitmap_set_clear_find() -> Result<(), AllocError> {
->              Ok(())
->          }
-> 
->     -    #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
->          #[test]
->          fn owned_bitmap_out_of_bounds() -> Result<(), AllocError> {
->     -        let mut b = BitmapVec::new(128, GFP_KERNEL)?;
->     +        #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
->     +        {
->     +            let mut b = BitmapVec::new(128, GFP_KERNEL)?;
->     +
->     +            b.set_bit(2048);
->     +            b.set_bit_atomic(2048);
->     +            b.clear_bit(2048);
->     +            b.clear_bit_atomic(2048);
->     +            assert_eq!(None, b.next_bit(2048));
->     +            assert_eq!(None, b.next_zero_bit(2048));
->     +            assert_eq!(None, b.last_bit());
->     +        }
-> 
->     -        b.set_bit(2048);
->     -        b.set_bit_atomic(2048);
->     -        b.clear_bit(2048);
->     -        b.clear_bit_atomic(2048);
->     -        assert_eq!(None, b.next_bit(2048));
->     -        assert_eq!(None, b.next_zero_bit(2048));
->     -        assert_eq!(None, b.last_bit());
->              Ok(())
->          }
+No, this is not what I mean. I mean SETE and SETZ are the same insn: 0F 9=
+4 /0
 
-Thanks for the testing, Miguel! I've folded-in your fix and added
-your co-developed-by tag. Please let me know if it doesn't work for
-you.
+What you mean is that CMPXCHG8B modifies the zero flag, thus you want to =
+use
+ccz which denotes the flag while "set equal" doesn't correspond to a flag=
+ in
+rFLAGS.
 
-Philip, is it possible to add CONFIG_RUST_BITMAP_HARDENED=y/n in your
-testing too?
+But then you need to say that in the commit message instead of me asking =
+about
+it.
 
-Thanks,
-Yury
+> The same situation is with carry bit setting BT instructions, where we =
+use
+> =3D@ccc instead of =3D@ccb.
+
+Ditto.
+
+Thx.
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
