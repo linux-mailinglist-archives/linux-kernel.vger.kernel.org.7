@@ -1,358 +1,103 @@
-Return-Path: <linux-kernel+bounces-803470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E12AB4601D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D9AB46020
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808E11C81C90
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB191C80AE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E1630217E;
-	Fri,  5 Sep 2025 17:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZvuxzun"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9C33191DE;
+	Fri,  5 Sep 2025 17:28:30 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649EF3191D9;
-	Fri,  5 Sep 2025 17:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90EA3191B1;
+	Fri,  5 Sep 2025 17:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757093265; cv=none; b=M4PNYddDA6EuwDHqeG6nVwwXjOQRaM/BuAAZt+ZgF5eLi4T1KA1UfXx9/oZSlIFGewIiK085YDHiNsZU6aXrzS2za25cY/Oobc0PyQ/q3MkAdIXHNdzYDELrgY+KvXo/toa1GZ/P1WopMveWCs/mi4OzVPuM3jZWF+Jis3IGEBM=
+	t=1757093310; cv=none; b=L1yTi3oZVf1bDd9oYG4kM/as5a74iJysm8EKBsg+KiBwoLzfTgo5c84/FPqUJyXaGAYHWNBvZiVpCY973yzYRuhS3ORvwcFyK1bXlq+PQ343WgJuSeQdKxd6foBd7YDSqmXclFEPSg3yAN65LPOEq1lrBscjzyuVg2EC2PeUyic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757093265; c=relaxed/simple;
-	bh=/fjx5BWzjOdmNQHQSQLpxQ22WXogYjaHAXKWiill7h0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g4z3wMB8YZPbtaRgKi9O9QZdwMNLUI18z4vnu3BjwJZuqoUfMQ8gQqPgVVwCuyc6bZni0LO5P5ncDvenvCafB/xKMyNlX2X86UKgE9BVP1j951CNh2rZ+YnmL5GmuVc947QtR9J9wvAUSTxgy6dkd7KPYJlt/MDapePZblpa4Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZvuxzun; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1757093310; c=relaxed/simple;
+	bh=n8LTlK/QUILOghMRnynkpFTd9U6GJoTityV7CtqlzF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGgQpKT6Kr8DmBGvj+yA5iV5XxoZONJu3kJRSMqPG/kaES+fuSW9hc2u7+HAMU0He8EenyFYCQOa89NxyMv0fOxsIobeHNCUmngDN6MQN5M+siMicyNmSKK/2Lit9bTaFIANfkyom3g4nnlSCt5OuNOyxUn+hfl08TKAYY+NUDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b00a9989633so444268766b.0;
-        Fri, 05 Sep 2025 10:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757093262; x=1757698062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s4ruzCFcUV7SEcdpypiT1vJGfSBx8CrilcyOYgtpgss=;
-        b=HZvuxzuniM/iahWVAq45RyP/mJEguqgYtPVmkFcFTjIOAvH//UX5pgQ/6ZEAkNDbkZ
-         zgsurJw0whfJdP4Rm2luJ1GiH/tHmPkcVBF7KJk4kaqyaRTQunGKtivIXocc+Mr2PwOb
-         qWjIuYYKxqszAxfG3v9gwbnYdiglmGTkSpv3pxbvAMeFeEG8CWRhqW1rRdRtd2j3JppS
-         1VJq5pMu0x+zi20FJOymRzY2da66pZz68nLNUd0SpMHfYSBQP+Omq9uJRQ5JnJMbNV+j
-         0xYSGZYb/P77tp5jI+mS/1rji9pZp9DJi2B/uND1NUboIn9V6tQndEDbTFPAf/OWwf8D
-         D+sA==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b042eb09948so440924666b.3;
+        Fri, 05 Sep 2025 10:28:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757093262; x=1757698062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s4ruzCFcUV7SEcdpypiT1vJGfSBx8CrilcyOYgtpgss=;
-        b=sfkXvQHuUDoiZPscr+VGC7GIHfBo+7QQjfzSR0VHIRXaS6aTqNsBHygXWIVqTTDAA3
-         4caGnCHZ4R1qLWsD4jD7u+tG1BLyqRoReRnRDhdaA1aBFKuAMYP5oMfd8fLKDKmL94aq
-         l3juetB6cve7D9Ez+URwIEkeVWwzycuyw3SlLSrP9tAWp+rNZklAWsul3MDk+FJKgsrU
-         dZJiiBpQ+JqIoriPF3gudkMdiRWRR8UIOjsyRiYxcVFuIYkbaLIDPFYRYt2HdDa6dYQ+
-         pj1IN2xmj8hjlK7UqYIU2tXr7cEN+tR4wDrGJSPcfi053rJwSAMSpzclW5SMRqbmyJPX
-         PFmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYcZN5yF6lGVTdgCJlC0czGji2gIoCSu/PYdq1VNsWH/eTsm2im7vsSLHDq8S19010HTnTTt0fuf6nkAA=@vger.kernel.org, AJvYcCUZYjTgZfeEv+bSOTh/X/c4s8TLrwM4LdgfBuLcpFFxhRhJNBsbJ4tdezgI4LCsBqdbzhZ9Dn8NtQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyC5zR/6x2V/Cw9SNliADbPWF598MPdOWl0Vs5t+QO/JrXmVb8
-	Hh6PyHocJ/xbCewdjPsgsJki9eTCrCwAetJF6UBmwMOZ1hwv0Pe1w/lZuPaeebv4a1siM07PpM8
-	k3J/HlIjey0SdiPzyQ3/PqByCDNmlxqY=
-X-Gm-Gg: ASbGnctJ5ml0NaDsVnPXutF664rZCF9+eAE0bpPGAKh31l0RYsA/QWraVyop6h4ALNz
-	cFPB+qBgXFeOxKmceMk+svGrHwMQ1Qpy5aECPzzftTox+uOhMcCMTsosv4xUTNTO0G+FhNih7o/
-	PS1pQtTECejNrtXf39CnABCPhQaq1vlvL8G5S7IwJAyemzCIdTD/2UZqmRBORvadzG8HwyNa//0
-	3kaHmaVg3jE0dRFamivKKOFCDifw6mNk1rRHYrc2dB0eIO39pg=
-X-Google-Smtp-Source: AGHT+IEAaLgKrXjgXt+6D5U8EOgOZ5wN2cKnK9fGfiKEt3Dg9kLwtbpEhTpRCbsqjyVkOY/k1ccq1hFsTplbWYYKB8k=
-X-Received: by 2002:a17:907:7e8b:b0:afe:ef8a:a48b with SMTP id
- a640c23a62f3a-b04932a3098mr478941066b.30.1757093261353; Fri, 05 Sep 2025
- 10:27:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757093307; x=1757698107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIS0xj7/1wkbG7klBxWxd/p3ZEfpHI3pNd+rkKtoedg=;
+        b=wNVbGCyBMR/53piC6nT8YdYre8nOeVc56nmbcwWmEg4fzzE3F5vYP3ZyAwn3W8VOPQ
+         m/aOLorzst8cOCZHncefC+l/qNzEiC8etX2eaqidimU7hDfgLEMsjytp8bIHeHBDQuec
+         i71fQ6EKpdqcN8HIXR+zxnKS9PKmr1mYQ6bfiPNFljhaPuHrp56H1mXgu6Z4uemhnCwW
+         WZhXGCgeB6vmcmTDqP9YI+VdXOlmXpcoHbGPgO6LguDxKhz72RRwqbB4Ms/2t/AgWsdZ
+         WC6626h2QJyOzmdDhPJ0yuibKOUANZq4q/2ti+ETtjWHF7IfVKhDVopjTejAgJdNf55j
+         +JAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUb6yP5wOQAtMtOZRM5t03lsod7Tm4AOKPcnjdup2sTV9W+nPacEAygkevICCYszOwFEIfc1Lnw7UQWXirXcLDf@vger.kernel.org, AJvYcCUe/uWPQLepA8B4WITd2hPTNhp5CkGH4kNPP9NSvF9hWokv/+c1DKmzLsIv9knmtpyqBx/5ldkClSOM7aY=@vger.kernel.org, AJvYcCWHMVjaQNaNPEAmcTLqrvHl07o2pYLLwah+XWPcLimAIbbu5V02P3kqEYdDiksiE6Ozu8B3Rj8v@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEXSlFom2fcWWPjQ/rwS+5uVJLJddwROEPPNNTKeYBi/W3h7z5
+	qFfbtxMQSkASD5pGrsULZZ04W9GyzfS9KNiSNv3bI4Us3ZVBhSbcVLi3
+X-Gm-Gg: ASbGncu5lUh2BC8pngy/tyO0lxFuPNbkAX08BO3IH74KuPzSt5DoGyE+0/NFxXdMat/
+	SwbSLQ7U4JHGX36aigaCR3to6GIzAq2nQ25bY2HG2GoYhxjwIB1xiGF1TpTM8/DkzkDhZdCKH7w
+	jZmB/+fEDAwun2bcNf2sBLlsbD/CgJt2TsqFIgpZI0qp9X1FBoGpkHodSQ1IBWzDrUGctKMDct9
+	6JLBLcSCCJeG65yiVHj36PX0hCrJcv61WMGy281S8jckh49c9F7PINt56PVe+5woLYf5qU9xPg1
+	3f8UGoIBr8gluRSCGSxUgDmAw6725AXj1j8q7RzXYD6FZDdfvtOV11c/8hBtz/dM/C5+l/tJ4f0
+	K77QPZ5mot5qOTl9qolt3Uf/J
+X-Google-Smtp-Source: AGHT+IGQu9KRWT87zu3zQXDe6q9Hj3PmpKvyr8QxNEXEY9pWpDlHawoSPeUoVh9C/rQHm+WkCDo2tg==
+X-Received: by 2002:a17:907:c14:b0:afe:fbee:88a with SMTP id a640c23a62f3a-b01f20bc537mr2478492466b.59.1757093306932;
+        Fri, 05 Sep 2025 10:28:26 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff0a591819sm1790884266b.41.2025.09.05.10.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:28:26 -0700 (PDT)
+Date: Fri, 5 Sep 2025 10:27:51 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, asantostc@gmail.com, 
+	efault@gmx.de, calvin@wbinvd.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 0/2] net: selftest: Introduce netconsole
+ torture test
+Message-ID: <4suklxl4t6ulo5ndlvw23rk6cgpza2b5qfrudszn4oothihyuv@zgelxgrgfe4k>
+References: <20250904-netconsole_torture-v2-0-5775ed5dc366@debian.org>
+ <20250904145925.101e2091@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825185807.57668-1-vivekyadav1207731111@gmail.com> <CAJZ5v0gfrTvLgs=PdmRbRRN05GE4Bk8Q7hJdtQfyk3VqaOz7FQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gfrTvLgs=PdmRbRRN05GE4Bk8Q7hJdtQfyk3VqaOz7FQ@mail.gmail.com>
-From: vivek yadav <vivekyadav1207731111@gmail.com>
-Date: Fri, 5 Sep 2025 22:57:31 +0530
-X-Gm-Features: Ac12FXws6O7TgkFBepo_DQXCMVKTsEEWm_xmr6hzfYb_tRSbRc9iwL6b4hQiAus
-Message-ID: <CABPSWR5cG=xTA72BHayYQTb=24VS3N+=dbsiMcU+gyqTKvNXAQ@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: sysfs: Use sysfs_emit/sysfs_emit_at instead of sprintf/scnprintf
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904145925.101e2091@kernel.org>
 
-On Mon, Aug 25, 2025 at 8:58=E2=80=AFPM <vivekyadav1207731111@gmail.com> wr=
-ote:
->>
->> From: Vivek Yadav <vivekyadav1207731111@gmail.com>
->>
->> The ->show() callbacks in sysfs should use sysfs_emit() or
->> sysfs_emit_at() when formatting values for user space. These helpers
->> are the recommended way to ensure correct buffer handling and
->> consistency across the kernel.
->>
->> See Documentation/filesystems/sysfs.rst for details.
->>
->> No functional change intended.
->>
->> Suggested-by: Joe Perches <joe@perches.com>
->> Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail.com>
->> ---
->>  drivers/cpuidle/sysfs.c | 38 +++++++++++++++++++-------------------
->>  1 file changed, 19 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
->> index d6f5da61cb7d..c7af09460b74 100644
->> --- a/drivers/cpuidle/sysfs.c
->> +++ b/drivers/cpuidle/sysfs.c
->> @@ -22,21 +22,21 @@ static ssize_t show_available_governors(struct devic=
-e *dev,
->>                                         struct device_attribute *attr,
->>                                         char *buf)
->>  {
->> -       ssize_t i =3D 0;
->> +       ssize_t len =3D 0;
->
->The variable rename is not necessary or even useful AFAICS ->
+On Thu, Sep 04, 2025 at 02:59:25PM -0700, Jakub Kicinski wrote:
+> On Thu, 04 Sep 2025 11:00:39 -0700 Breno Leitao wrote:
+> > Create a netconsole test that puts a lot of pressure on the netconsole
+> > list manipulation. Do it by creating dynamic targets and deleting
+> > targets while messages are being sent. Also put interface down while the
+> > 
+> > In order to do it, refactor create_dynamic_target(), so it can be used to
+> > create random targets in the torture test.
+> 
+> You either have to post it in the same series as the fix, or wait for
+> the fix to be present in net-next. Without your pending fix this will
+> obviously not pass thru the CI :/
 
-There is no harm if we leave the variable name as 'i' but it would be bette=
-r
-if we give it a suitable name like 'offset'. It will definitely improve
-readability.
+Ack! I've sent the netpoll fix and the selftest in the same patchset, as
+you suggested.
 
->
->>         struct cpuidle_governor *tmp;
->>
->>         mutex_lock(&cpuidle_lock);
->>         list_for_each_entry(tmp, &cpuidle_governors, governor_list) {
->> -               if (i >=3D (ssize_t) (PAGE_SIZE - (CPUIDLE_NAME_LEN + 2)=
-))
->> +               if (len >=3D (ssize_t)(PAGE_SIZE - (CPUIDLE_NAME_LEN + 2=
-)))
->>                         goto out;
->>
->> -               i +=3D scnprintf(&buf[i], CPUIDLE_NAME_LEN + 1, "%s ", t=
-mp->name);
->> +               len +=3D sysfs_emit_at(buf, len, "%.*s ", CPUIDLE_NAME_L=
-EN, tmp->name);
->
->-> because the second argument here is still an offset relative to
->buf, isn't it?
+https://lore.kernel.org/all/20250905-netconsole_torture-v3-0-875c7febd316@debian.org/
 
-I think 'len' is also not a good name. Now I have two options.
-Either I can remove this part from the patch or I can make new patch
-where I can change the variable name 'i' into a more meaningful name
-like 'offset'.
-
-Let me know in which direction I should move.
-
-~Vivek
-
-
-On Fri, Sep 5, 2025 at 1:05=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Mon, Aug 25, 2025 at 8:58=E2=80=AFPM <vivekyadav1207731111@gmail.com> =
-wrote:
-> >
-> > From: Vivek Yadav <vivekyadav1207731111@gmail.com>
-> >
-> > The ->show() callbacks in sysfs should use sysfs_emit() or
-> > sysfs_emit_at() when formatting values for user space. These helpers
-> > are the recommended way to ensure correct buffer handling and
-> > consistency across the kernel.
-> >
-> > See Documentation/filesystems/sysfs.rst for details.
-> >
-> > No functional change intended.
-> >
-> > Suggested-by: Joe Perches <joe@perches.com>
-> > Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail.com>
-> > ---
-> >  drivers/cpuidle/sysfs.c | 38 +++++++++++++++++++-------------------
-> >  1 file changed, 19 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
-> > index d6f5da61cb7d..c7af09460b74 100644
-> > --- a/drivers/cpuidle/sysfs.c
-> > +++ b/drivers/cpuidle/sysfs.c
-> > @@ -22,21 +22,21 @@ static ssize_t show_available_governors(struct devi=
-ce *dev,
-> >                                         struct device_attribute *attr,
-> >                                         char *buf)
-> >  {
-> > -       ssize_t i =3D 0;
-> > +       ssize_t len =3D 0;
->
-> The variable rename is not necessary or even useful AFAICS ->
->
-> >         struct cpuidle_governor *tmp;
-> >
-> >         mutex_lock(&cpuidle_lock);
-> >         list_for_each_entry(tmp, &cpuidle_governors, governor_list) {
-> > -               if (i >=3D (ssize_t) (PAGE_SIZE - (CPUIDLE_NAME_LEN + 2=
-)))
-> > +               if (len >=3D (ssize_t)(PAGE_SIZE - (CPUIDLE_NAME_LEN + =
-2)))
-> >                         goto out;
-> >
-> > -               i +=3D scnprintf(&buf[i], CPUIDLE_NAME_LEN + 1, "%s ", =
-tmp->name);
-> > +               len +=3D sysfs_emit_at(buf, len, "%.*s ", CPUIDLE_NAME_=
-LEN, tmp->name);
->
-> -> because the second argument here is still an offset relative to
-> buf, isn't it?
->
-> >         }
-> >
-> >  out:
-> > -       i+=3D sprintf(&buf[i], "\n");
-> > +       len +=3D sysfs_emit_at(buf, len, "\n");
-> >         mutex_unlock(&cpuidle_lock);
-> > -       return i;
-> > +       return len;
-> >  }
-> >
-> >  static ssize_t show_current_driver(struct device *dev,
-> > @@ -49,9 +49,9 @@ static ssize_t show_current_driver(struct device *dev=
-,
-> >         spin_lock(&cpuidle_driver_lock);
-> >         drv =3D cpuidle_get_driver();
-> >         if (drv)
-> > -               ret =3D sprintf(buf, "%s\n", drv->name);
-> > +               ret =3D sysfs_emit(buf, "%s\n", drv->name);
-> >         else
-> > -               ret =3D sprintf(buf, "none\n");
-> > +               ret =3D sysfs_emit(buf, "none\n");
-> >         spin_unlock(&cpuidle_driver_lock);
-> >
-> >         return ret;
-> > @@ -65,9 +65,9 @@ static ssize_t show_current_governor(struct device *d=
-ev,
-> >
-> >         mutex_lock(&cpuidle_lock);
-> >         if (cpuidle_curr_governor)
-> > -               ret =3D sprintf(buf, "%s\n", cpuidle_curr_governor->nam=
-e);
-> > +               ret =3D sysfs_emit(buf, "%s\n", cpuidle_curr_governor->=
-name);
-> >         else
-> > -               ret =3D sprintf(buf, "none\n");
-> > +               ret =3D sysfs_emit(buf, "none\n");
-> >         mutex_unlock(&cpuidle_lock);
-> >
-> >         return ret;
-> > @@ -230,7 +230,7 @@ static struct cpuidle_state_attr attr_##_name =3D _=
-_ATTR(_name, 0644, show, store)
-> >  static ssize_t show_state_##_name(struct cpuidle_state *state, \
-> >                          struct cpuidle_state_usage *state_usage, char =
-*buf) \
-> >  { \
-> > -       return sprintf(buf, "%u\n", state->_name);\
-> > +       return sysfs_emit(buf, "%u\n", state->_name);\
-> >  }
-> >
-> >  #define define_show_state_ull_function(_name) \
-> > @@ -238,7 +238,7 @@ static ssize_t show_state_##_name(struct cpuidle_st=
-ate *state, \
-> >                                   struct cpuidle_state_usage *state_usa=
-ge, \
-> >                                   char *buf)                           =
- \
-> >  { \
-> > -       return sprintf(buf, "%llu\n", state_usage->_name);\
-> > +       return sysfs_emit(buf, "%llu\n", state_usage->_name);\
-> >  }
-> >
-> >  #define define_show_state_str_function(_name) \
-> > @@ -247,8 +247,8 @@ static ssize_t show_state_##_name(struct cpuidle_st=
-ate *state, \
-> >                                   char *buf)                           =
- \
-> >  { \
-> >         if (state->_name[0] =3D=3D '\0')\
-> > -               return sprintf(buf, "<null>\n");\
-> > -       return sprintf(buf, "%s\n", state->_name);\
-> > +               return sysfs_emit(buf, "<null>\n");\
-> > +       return sysfs_emit(buf, "%s\n", state->_name);\
-> >  }
-> >
-> >  #define define_show_state_time_function(_name) \
-> > @@ -256,7 +256,7 @@ static ssize_t show_state_##_name(struct cpuidle_st=
-ate *state, \
-> >                                   struct cpuidle_state_usage *state_usa=
-ge, \
-> >                                   char *buf) \
-> >  { \
-> > -       return sprintf(buf, "%llu\n", ktime_to_us(state->_name##_ns)); =
-\
-> > +       return sysfs_emit(buf, "%llu\n", ktime_to_us(state->_name##_ns)=
-); \
-> >  }
-> >
-> >  define_show_state_time_function(exit_latency)
-> > @@ -273,14 +273,14 @@ static ssize_t show_state_time(struct cpuidle_sta=
-te *state,
-> >                                struct cpuidle_state_usage *state_usage,
-> >                                char *buf)
-> >  {
-> > -       return sprintf(buf, "%llu\n", ktime_to_us(state_usage->time_ns)=
-);
-> > +       return sysfs_emit(buf, "%llu\n", ktime_to_us(state_usage->time_=
-ns));
-> >  }
-> >
-> >  static ssize_t show_state_disable(struct cpuidle_state *state,
-> >                                   struct cpuidle_state_usage *state_usa=
-ge,
-> >                                   char *buf)
-> >  {
-> > -       return sprintf(buf, "%llu\n",
-> > +       return sysfs_emit(buf, "%llu\n",
-> >                        state_usage->disable & CPUIDLE_STATE_DISABLED_BY=
-_USER);
-> >  }
-> >
-> > @@ -310,7 +310,7 @@ static ssize_t show_state_default_status(struct cpu=
-idle_state *state,
-> >                                           struct cpuidle_state_usage *s=
-tate_usage,
-> >                                           char *buf)
-> >  {
-> > -       return sprintf(buf, "%s\n",
-> > +       return sysfs_emit(buf, "%s\n",
-> >                        state->flags & CPUIDLE_FLAG_OFF ? "disabled" : "=
-enabled");
-> >  }
-> >
-> > @@ -358,7 +358,7 @@ static ssize_t show_state_s2idle_##_name(struct cpu=
-idle_state *state, \
-> >                                          struct cpuidle_state_usage *st=
-ate_usage, \
-> >                                          char *buf)                    =
-         \
-> >  { \
-> > -       return sprintf(buf, "%llu\n", state_usage->s2idle_##_name);\
-> > +       return sysfs_emit(buf, "%llu\n", state_usage->s2idle_##_name);\
-> >  }
-> >
-> >  define_show_state_s2idle_ull_function(usage);
-> > @@ -550,7 +550,7 @@ static ssize_t show_driver_name(struct cpuidle_driv=
-er *drv, char *buf)
-> >         ssize_t ret;
-> >
-> >         spin_lock(&cpuidle_driver_lock);
-> > -       ret =3D sprintf(buf, "%s\n", drv ? drv->name : "none");
-> > +       ret =3D sysfs_emit(buf, "%s\n", drv ? drv->name : "none");
-> >         spin_unlock(&cpuidle_driver_lock);
-> >
-> >         return ret;
-> > --
+--breno
 
