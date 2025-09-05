@@ -1,178 +1,98 @@
-Return-Path: <linux-kernel+bounces-802261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40415B44FEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFBFB45044
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0567D17A690
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03ED61C8330F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1D0258CE9;
-	Fri,  5 Sep 2025 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlYeVcXd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46752E612E;
+	Fri,  5 Sep 2025 07:51:46 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FF3AD2C;
-	Fri,  5 Sep 2025 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854642DD60E
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757057707; cv=none; b=m7uHg4H5+70fNZ1mPddBU6MKjcL/ALbBGUST5jW7MWuH1Ihe5uxJ4eLn+m15QE44rCgbNKQPrdvQnLYXhK5Siq6S/ZO6y6mWMw9/6912DXKexi8Zln6+di9QALmapGeXrFPuH4gHpWCcTxZ4Tkrn2Vv+ahXY3xhZx/gD8FNZE6w=
+	t=1757058706; cv=none; b=PQeLVhPQLCCelW+7/Bv72DNKmJ70+07xdXGDudlGUdyURwnMTb7GdR0o6l3vo3J2hsRHFlRtqzZfzsEfgtXjTWYWlC7oTsuIp4qJACb9PcGgJzZKs+uKFEFr+rp1xerhxJ0ObWQ5MjMEM9aKfJV362DXLEbpFZ1r9Umz81jpiCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757057707; c=relaxed/simple;
-	bh=EOPqr6ZVLOPhzztgKUphvR1K2RBLa6FRjsBJ+lJ5MQI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eN/ONpiWfcOUwAgftIZxTdSL39eCwBfekn1EnjJicHbfiV57YqJwj2vtsOqbOA/eMuJgXEgANT1jVE8RXQTcIehWHNHsgooR9ze2EYWSADfptbL4qR0N16itjgcf70DDhZtdtxqCPjusNZhfY3p6kKanqdWzcPqtRNuHMEnzSnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlYeVcXd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04DA7C4CEF1;
-	Fri,  5 Sep 2025 07:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757057707;
-	bh=EOPqr6ZVLOPhzztgKUphvR1K2RBLa6FRjsBJ+lJ5MQI=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=nlYeVcXd3krgFEfHZm3GGyE2JgRucewc+onGD2kWqj2Hqv+J6/jxC8HXl9GHcXdtu
-	 iroWoe+WxSyvetrRNvDxBeoX96pCfIoIHPXVSeqcd9asp5f5CKhdVjdsQuSv57hOQH
-	 6669rXyQ7mHdqHvn+3WoTK2ei1uoT3ImBb7hd72kf+zonFpTPjNy8lao/Ba9kr0ODI
-	 8kQpqpe4SEUx38cqcD9tBwgjjNn+U23Vben/8GWWQ8jx6qPd1qvrVz2ohErAnf8PFO
-	 N38mq+DIxXhm5+4UzZEDcTtaGsn5pN7XqBsYpvSuZ4Cnue4vVkQis4fuPTWniD/F0s
-	 i8PB2XSkLbx+A==
-Message-ID: <02fa4a52-1daa-4d1a-9d38-e092b6c9ae13@kernel.org>
-Date: Fri, 5 Sep 2025 09:35:04 +0200
+	s=arc-20240116; t=1757058706; c=relaxed/simple;
+	bh=eWH/PQZFaUv0eXFseZtn24o2Te+XDor+V5TD5Ihs66g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ci0tld7kYN5MiQOmFGIfqzIFaVlpXR0di9loH1iLOeJQubmkb5L2j/bGEx4KpNfruShJP1HFYFUKVXUhrnjXCqNcW+WaHqTFSsMl8c82tsycKSQxYqEG6eUTDkFE7PYqPRsWicDllGcn/XaERiR8SNfCwHbHPPS22+GgrV/YcN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABX+hOAlrpolMXCAA--.35359S2;
+	Fri, 05 Sep 2025 15:51:28 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: airlied@redhat.com,
+	tzimmermann@suse.de,
+	jfalempe@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/ast: ast_2100: Remove unneeded semicolon
+Date: Fri,  5 Sep 2025 15:37:12 +0800
+Message-Id: <20250905073712.3791260-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] media: az6007: fix out-of-bounds in az6007_i2c_xfer()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, zhang_shurong@foxmail.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250421105555.34984-1-aha310510@gmail.com>
- <c4cf17bb-73cb-4e3b-9e61-8fd682b5e9ee@kernel.org>
- <CAO9qdTHJ9GrbqjtMKzgDhy+bvEmDc+Sn3VosYxuq5hJ9Z20-bA@mail.gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <CAO9qdTHJ9GrbqjtMKzgDhy+bvEmDc+Sn3VosYxuq5hJ9Z20-bA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABX+hOAlrpolMXCAA--.35359S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DXFWDCF1Utrb_yoWxurg_C3
+	W8Ww4fXr98AFyqgr1ayw45ur1qyrs0vws3uayjgFZ3K3sFvr4UX34xur4UXw13uF1xXF9x
+	J3W8WF15A3Z3KjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbS_M3UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 04/09/2025 13:07, Jeongjun Park wrote:
-> Hi Hans,
-> 
-> Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
->>
->> Hi Jeongjun,
->>
->> On 21/04/2025 12:55, Jeongjun Park wrote:
->>> According to the previous commit 1047f9343011 ("media: az6007:
->>> Fix null-ptr-deref in az6007_i2c_xfer()"), msgs[i].len is user-controlled.
->>
->> Does this relate to syzbot reports? If so, please add a reference to that.
->>
->> As far as I can tell, you can get here only through /dev/i2c-X devices.
->>
-> 
-> Sorry, I seem to have forgotten to include the reported-by tag when
-> sending the email. I'll add it in the next patch.
-> 
-> 
->>>
->>> In the previous commit, bounds checking was added because a null-ptr-deref
->>> bug occurs when msgs[i].buf and msgs[i].len are set to null. However, this
->>> leads to an out-of-bounds vuln for st->data when msgs[i].len is set to a
->>> large value.
->>>
->>> Therefore, code to check the maximum value of msgs[i].len needs to be added.
->>>
->>> Fixes: 1047f9343011 ("media: az6007: Fix null-ptr-deref in az6007_i2c_xfer()")
->>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>> ---
->>>  drivers/media/usb/dvb-usb-v2/az6007.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
->>> index 65ef045b74ca..fba1b6c08dc7 100644
->>> --- a/drivers/media/usb/dvb-usb-v2/az6007.c
->>> +++ b/drivers/media/usb/dvb-usb-v2/az6007.c
->>> @@ -788,7 +788,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->>>                       if (az6007_xfer_debug)
->>>                               printk(KERN_DEBUG "az6007: I2C W addr=0x%x len=%d\n",
->>>                                      addr, msgs[i].len);
->>> -                     if (msgs[i].len < 1) {
->>> +                     if (msgs[i].len < 1 || msgs[i].len + 1 > sizeof(st->data)) {
->>>                               ret = -EIO;
->>>                               goto err;
->>>                       }
->>> @@ -806,7 +806,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->>>                       if (az6007_xfer_debug)
->>>                               printk(KERN_DEBUG "az6007: I2C R addr=0x%x len=%d\n",
->>>                                      addr, msgs[i].len);
->>> -                     if (msgs[i].len < 1) {
->>> +                     if (msgs[i].len < 1 || msgs[i].len + 5 > sizeof(st->data)) {
->>>                               ret = -EIO;
->>>                               goto err;
->>>                       }
->>
->> I feel uncomfortable about this patch and similar patches that attempt to address this
->> in various other drivers as well.
->>
->> It's all rather ad-hoc. E.g. you fix the two places here, but not the case at line 778.
->>
->> I think the proper fix would be to modify __az6007_read/write and add an argument with the
->> size of the buffer, then let that function do the check. Rather than manually doing this
->> check at every call of those functions. Same for similar drivers.
->>
->> The approach taken in this patch is too fragile.
->>
-> 
-> You're right. Looking at it again, it seems more appropriate to fix
-> __az6007_read/write.
-> 
-> https://lore.kernel.org/all/20250421125244.85640-1-aha310510@gmail.com/
-> 
-> I remember patching vulnerabilities I found in other drivers using the
-> method Hans suggested. Is this the correct way to patch them?
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-Yes, that's probably the correct way.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/gpu/drm/ast/ast_2100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Your patch for drivers/media/usb/dvb-usb/az6027.c has the same problem as this patch
-for the az6007, so if you can provide an updated version of that patch as well, then
-that will be great.
-
-It's actually more complicated: az6007_i2c_xfer also has code that writes to st->data
-before calling __az6007_write:
-
-	for (j = 0; j < len; j++)
-		st->data[j] = msgs[i].buf[j + 1];
-
-So there we do need a check, we can't rely on __az6007_write to do that.
-
-It's really messy code, perhaps __az6007_write/read should just receive the st pointer,
-and the msgs[i].buf+offset pointer, and have it do the copying and checking against
-sizeof(st->data). I think that's what dtv5100_i2c_msg does, so perhaps this is a good
-template to use.
-
-Regards,
-
-	Hans
-
-> 
->> Regards,
->>
->>         Hans
->>
->>
->>> --
->>>
->>
-> 
-> Regards,
-> Jeongjun Park
+diff --git a/drivers/gpu/drm/ast/ast_2100.c b/drivers/gpu/drm/ast/ast_2100.c
+index 91541c8eaff7..829e3b8b0d19 100644
+--- a/drivers/gpu/drm/ast/ast_2100.c
++++ b/drivers/gpu/drm/ast/ast_2100.c
+@@ -336,7 +336,7 @@ static void ast_post_chip_2100(struct ast_device *ast)
+ 				default:
+ 					data = dram_reg_info->data;
+ 					break;
+-				};
++				}
+ 
+ 				temp = ast_read32(ast, 0x12070);
+ 				temp &= 0xc;
+-- 
+2.25.1
 
 
