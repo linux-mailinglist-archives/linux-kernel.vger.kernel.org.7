@@ -1,146 +1,136 @@
-Return-Path: <linux-kernel+bounces-801880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBCAB44B23
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47262B44B27
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9E718955D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9DB1C834A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F081F0E50;
-	Fri,  5 Sep 2025 01:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70B71DDC35;
+	Fri,  5 Sep 2025 01:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNrn1mKh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlY/DkIf"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892481D90DD;
-	Fri,  5 Sep 2025 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE7A2746A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757034579; cv=none; b=QjrXpVHecS6ksFdxBW//HRFXq3548AmqukNCrkT+3uiUFpI/dUzvAMeNsNZj+YFTnZ++Rtumg7ZACS0SEq1w5Z3XXQhuXwXmNRpFowtFYzGMzPQvwLFkxoSHro6SkirvIAC59bUs31xpk2rT847I/hGQVMbKerfDg2CnTPvjX6A=
+	t=1757034764; cv=none; b=a+9Y5LjtELWQtFSr4k0YtncgzxT7snTA9wd7E1mEoFWL8zV+dQ29CcwmrGUmPF/JsUhWyIAZzWpIcpgXXtrpau1TDISzJXFmzAavZWCp31dIfFsrYd0jaNlXJcK4UctupGAS0JTATqPStLxuhNsMZDNou/M3vKzndaoGDdnOMmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757034579; c=relaxed/simple;
-	bh=8KymmQbiX0xMeNo9k7iaOAyWLVkxoe2n8Vei2/uCabE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gbjQnGZhhorAfKS5PRuSpTIyeuS6fypxNfNZ8ZYWGKea7moeqRIt8BZ1Q5Ehn7CkAAGgwg0y8Arp8AlcMazemyjTBCplFjE6M6c2MWRXod6Xxz4faLed42hRJhSXQDWNZLCGhrG91bgNbL9hyn4foQwl3M79s3kTxYNOi3kP4Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNrn1mKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C929BC4CEF6;
-	Fri,  5 Sep 2025 01:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757034579;
-	bh=8KymmQbiX0xMeNo9k7iaOAyWLVkxoe2n8Vei2/uCabE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SNrn1mKhIPievf8XKAES92Rp1xn4On/b27/H0IeKLQxTkPc+XfHH5O1Bbw3L+dA9n
-	 9mhz6wPfSAPX4Bjc7VcIV/HwqPL/rb7QsfE/qQVDbMxvJ//naso21Dv2c/8LlMDlCF
-	 swlqqskyIm/JATjks62fgFrFdqqLeF+kZxXTuO+DXfawR8XJdgwAI1Unk2lmn4pcIN
-	 V3AkoZ69j16zQdxVLvhQcKDSlhxjQ/a22PNasoQEfNN3nIMexuGUegfrQz/XpjD486
-	 vxacBSMEybUMeIs3gePJsh9QD+R499AQBG/asdKgnUH/fMLmAuyn4SBeOJBl+zCdKN
-	 T43aO2eiy5S3g==
-Received: by venus (Postfix, from userid 1000)
-	id 1205A180B21; Fri, 05 Sep 2025 03:09:36 +0200 (CEST)
-From: Sebastian Reichel <sre@kernel.org>
-Date: Fri, 05 Sep 2025 03:09:33 +0200
-Subject: [PATCH v2 3/3] arm64: dts: qcom: x1e80100-t14s: add EC
+	s=arc-20240116; t=1757034764; c=relaxed/simple;
+	bh=Bbruro+lBjMgA7mDH1pp/r8lpqXNWdfm79qWVynzU8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nf70DZco1lqiofYqDQ2oEBwiswjizrsX2mIUdzGdyCatV+NUwypsFrDv/6ZBPGyHRq3ZKL0C818tkl2RQeb2pDS7PbnyZfIUnizOwnlQDOs5DXXY3BH30BnDtheFIitYfNeoSKFhv8iW3zcx4RJofsKLWnkEd7zyCfi1hqeSVaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlY/DkIf; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso14796185e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757034761; x=1757639561; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1I2+OXiSohga9/Gw4Byp3e+y1P+U3kLBsy650if5j28=;
+        b=FlY/DkIfQ9TtCSSK04UXvd6ix4RU8j3doQexAiic48eGtbQGK1Wu9r76/03hncT+YX
+         Ptcd5ZMAOCE4KOf/rRyQj9pRv0pf/S+Sqcq9/zz20b/Ev/SY13WqVGDVNcJFld4EqZRp
+         0Oyq+jsa8T9uAIHKRYWSfj6lRI5f8xYFZSmNW8OssLlQjNWxz29yo2nbQHbL46+L+svc
+         PMbCDaJJrgdiYrss0QO8IgpuFw1GIy2Q+yGkCmXmrC0BVYeNpT6S30bNCoxUVQ7OjHI5
+         2s4l/xVUqJM9W7dMFUAaBMZgrLZf5gbvsY1gb0423Hgf3MaapFOD4BXMFQ8vgWkkQHl8
+         9qJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757034761; x=1757639561;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1I2+OXiSohga9/Gw4Byp3e+y1P+U3kLBsy650if5j28=;
+        b=NqpOqicfPOxnqloC60wCxenMLu9A7AxxGroI7GE84I341Wh2VoYuIFpSytw2p8/Ax6
+         /ikB+1Tg024gUZoKTU1ZtzUleL73/2pHgRAfbxtGKLZdCcN4JtkNWhmD6lApLfSWUe62
+         VGF6NKK5an/yuKJcpACdxqHpX7D2Up6GKUnikByWCFWDbSh6ngN138unoMw/YRYPp8ky
+         srtpXKZLUhyPmpuh06t4f67wx/Qhy3Ci8Ian/7dlKrx4WVNMq/g5eDz0rTZ6A617tNX+
+         EopKRdVWi3Gk1EpyZpC0Z3R5NrKDbfpDx9gEXGZx53OXI31Rn4peKK9J6CCc8eT19foW
+         bZRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSqj3SjO65pikmZmLCj38z+E040DZeu628ScBN64wzY33twwQvDmZaqqA7eCCbgEfzpKrbIXdCIn6Qv4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwi0dNd5RZ1yhA4mrydFS1GVsv4/eR1y0PzjSP6nBwPd0Njz09
+	Xh0YZy6L6IDTtYB5758X59XquktOX47ydJsMWIXep65MHJmKL6pKuTC16G9Et9bH
+X-Gm-Gg: ASbGncsEBOsqdqphVTZ4qXgfBTtG5Qw2KSXN6EE90CkxjEEX+HxMI4az85DBLdprYK+
+	1scaTMd7ocEOdw4zfrTJV/B9mSpo7BslDiMYrV/CPZImRSrHeSTm6wgng8LMb2Pw8W8c3V1XQKY
+	e0pYvBE7NzTqslKSVTK99rJUausfH9bHNib1YrtclvyFeVR/GBKPoY0if48FvQjhXFd1a1TzQNo
+	2ZBe3q0O6xCDUcUjPZqFJy21htCkb2i/vtSnl4HKpCMWc52wqAUJsW73WoE1GRmaOcf9WhqqKeI
+	6WEcR9W5gVMiv9VRF3TFrb5ZUH7acr47Y499FnCTL8/ev8WbU1E73EY3m2nEWZ0iEC47TyDwJM2
+	iV9odNSXBUGTl/95kOao7xNpXlImEtUZ9EFyEpAcG5VmYltwiTtkTup+xozWG4LZRI34L2fO0sh
+	Pr+Pq9fLTutiHDkRSeHUI7X2zsKkg=
+X-Google-Smtp-Source: AGHT+IHEIC6vSNOwwGEEe4szY+c5GG/HwlLiZbSIpgmQ55Qnsrq5gk6z9VLuTQAFFNbDZOzOjPQ8Ww==
+X-Received: by 2002:a05:600c:3b98:b0:45d:d9d1:80a3 with SMTP id 5b1f17b1804b1-45dd9d183dbmr776225e9.37.1757034760495;
+        Thu, 04 Sep 2025 18:12:40 -0700 (PDT)
+Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9c234b24sm119315935e9.16.2025.09.04.18.12.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 18:12:39 -0700 (PDT)
+Message-ID: <72d087b8-1af1-44a6-88c4-04a9ff98f660@gmail.com>
+Date: Fri, 5 Sep 2025 09:12:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: fix task_numa_migrate to consider both task
+ and group benefits
+To: Jianyong Wu <wujianyong@hygon.cn>
+Cc: jianyong.wu@outlook.com, linux-kernel@vger.kernel.org
+References: <20250829085529.15686-1-wujianyong@hygon.cn>
+Content-Language: en-US
+From: Ethan Zhao <etzhao1900@gmail.com>
+In-Reply-To: <20250829085529.15686-1-wujianyong@hygon.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-thinkpad-t14s-ec-v2-3-7da5d70aa423@collabora.com>
-References: <20250905-thinkpad-t14s-ec-v2-0-7da5d70aa423@collabora.com>
-In-Reply-To: <20250905-thinkpad-t14s-ec-v2-0-7da5d70aa423@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
- Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1495;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=8KymmQbiX0xMeNo9k7iaOAyWLVkxoe2n8Vei2/uCabE=;
- b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBoujhPvE9AY5hTWjabvJxj7CzoIutmwtI5VhXP8
- Idz38UxTxiJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaLo4TwAKCRDY7tfzyDv6
- muUDD/0betVnb3gFiWMeGJzcMFu4nzBItk37KoMJBMjfK+xh2r52dxf4hrjTiKKUT4Q3f9AlpX8
- 8Ij13BezBd3tVjs0ptBRBhLCj6GHHaKrS9M2CQgSqIggbt36csn8XL9dUFmuqoiJ1JFZfQNJ02L
- ndU/vNk86nq8SLyU7A5wOu88jO0T7Qp7xRquS7FGyh5LowDhq1w9CF731SK+i0q+9R7NqkNqdf0
- xkGGmy4m7jIvi24AH+8qmb8cWYmoISVsvkKPLEOowk0Q8SMO4ZRpQstS+pytUWlVW8th+jEsO1N
- OFUEQ9jGjVvVoKjx3pVfFXCAIE/YL4pdhNIXNB+6tr6wAz6SntuRyuEYiRK6/Gvcn/TZ616v4VV
- 9ixsYscpvaOFCZUOyvUqr8akICgZncSBJingXjQyXgU4iQs5MObxH1NGipfSMv5f6N0Ed5ElA29
- RZjXgy66vcsx1jY1VHfPVVNWEk4Brbzk84f/giNHEbXGNQ8UWjtmwCNaDMX3S1N5a4NjR0z2cie
- 8T9z5xeyvSMvdqJTds0/1zKJX51XTqwdsG4WOXAtWurqIhzzk4iKtlrU7y7hOC2ksY8GhQ0ZiVC
- ZWnVJvyX4LxmmMs5H7iZjRNFJV89MZGf6SEgPdBYwNOxNmc8cCcTiaMNx4q0EwhvNdEEprrFDo4
- xZqTzyrKLSr+66g==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Describe ThinkPad Embedded Controller in the T14s device tree,
-which adds LED and special key support.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-Signed-off-by: Sebastian Reichel <sre@kernel.org>
----
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index ac1dddf27da30e6a9f7e1d1ecbd5192bf2d0671e..f70489aba870289edbcf84ec22fdb004e010868b 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -887,6 +887,24 @@ eusb6_repeater: redriver@4f {
- 	};
- };
- 
-+&i2c6 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	embedded-controller@28 {
-+		compatible = "lenovo,thinkpad-t14s-ec";
-+		reg = <0x28>;
-+
-+		interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ec_int_n_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
- &i2c7 {
- 	clock-frequency = <400000>;
- 
-@@ -1267,6 +1285,12 @@ &tlmm {
- 			       <72 2>, /* Secure EC I2C connection (?) */
- 			       <238 1>; /* UFS Reset */
- 
-+	ec_int_n_default: ec-int-n-state {
-+		pins = "gpio66";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
- 	eusb3_reset_n: eusb3-reset-n-state {
- 		pins = "gpio6";
- 		function = "gpio";
+On 8/29/2025 4:55 PM, Jianyong Wu wrote:
+> The comment indicates that when searching for a suitable NUMA node, we
+> should ensure that the selected node benefits both the task and its NUMA
+> group. However, the current implementation can only guarantee that either
+> the task or the group benefits, but not necessarily both.
+> 
+> Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
+> ---
+>   kernel/sched/fair.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..58c899738399 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -2568,7 +2568,7 @@ static int task_numa_migrate(struct task_struct *p)
+>   			/* Only consider nodes where both task and groups benefit */
+>   			taskimp = task_weight(p, nid, dist) - taskweight;
+>   			groupimp = group_weight(p, nid, dist) - groupweight;
+> -			if (taskimp < 0 && groupimp < 0)
+> +			if (taskimp < 0 || groupimp < 0) 
+Perhaps you misunderstand the comment, && means either the task or the
+group has NO benefit from this migration, it wouldn't be done.
+But if you replace it with ||, you will ignore the target node that
+could benefit either the task or the group.
 
--- 
-2.50.1
+There is more logic to consider the benefit for both task & group
+in the later function part.
+
+One question, why not
+if (taskimp <= 0 && groupimp <= 0) ?
+
+Thanks,
+Ethan
+>   				continue;
+>   
+>   			env.dist = dist;
 
 
