@@ -1,119 +1,105 @@
-Return-Path: <linux-kernel+bounces-802677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193BFB4556F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF0AB45566
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FC27C1DFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:56:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187171BC24A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56425322743;
-	Fri,  5 Sep 2025 10:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3EB30FF28;
+	Fri,  5 Sep 2025 10:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ie3zTAk7"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdOwWr10"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB1732144D;
-	Fri,  5 Sep 2025 10:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE3E30F925;
+	Fri,  5 Sep 2025 10:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069652; cv=none; b=XWjOWskampGoEqp74i73b88fdgd7DFu+4wJVkxYWxpdJskwPoi4AUmyaeQFJkMjUwu1IMDRSSccuiZn6+OwimgMVMdkQl85Kg2esETaMluh7o/ZlXOjQOqo3mdUYdqsCM+gm8pKxjLHil+qDj6HijER32fk6bEf/6MLuQq2n8c8=
+	t=1757069692; cv=none; b=YdJ38+TTntsEJvIKZpPvchSiJZOIE8B7rOVMLtKZgolWvQwVuTNqB/4diPw6G5R9BFiYPfKR7DPPlnhZH2aAKJWw6BWH/NvwE2fXBtLP9M6EkQI94v8SyPmCddVCWLvXX2JjO4am4YBS68I6O4uYnKDYOkFA0dYXPwmtlo8MeAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069652; c=relaxed/simple;
-	bh=HfX44cCVxvlSHiCbNobCW//1cotLxhGdfKz5wHzdISw=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=swZk01yILvdcamDD/AmINIEpUdLzCzKDD6xTas3M9rGM9hU8RPPnlL7sazOPZ8ycxHRAuNYQ71kG3SCBkmM2X19aN1VfsKu8l4RA5t9v80RRlgJeoAFZci/lSJjDZdAi5y6yz46AqQEDXERzf4b7ePujC0r6bJCOjO97KvTlHMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ie3zTAk7; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3df35a67434so1133163f8f.3;
-        Fri, 05 Sep 2025 03:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757069649; x=1757674449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HfX44cCVxvlSHiCbNobCW//1cotLxhGdfKz5wHzdISw=;
-        b=Ie3zTAk7NP+5BxQY0ci73Ho9pbdvQnLi7L3YvcaTVkWLyZi8Pc76NwLTkZSLgSzbOn
-         CtquNQvax+YWQNiGty4iGhgZMbyS60u7DHAzfKbjgHwQ1cCbrYK2L7P81lrhmiMsXLbk
-         sTJ+Cw/i3uL6Vi7QU+RcUZhmfhGZsvLPOLS8fB6+it8eHon2MCIIN3slWsytg9xA0Mbz
-         l+h2IBcJU00/rL6GiNG3FjomsPS0BHy7W5CRVm05H4mSYOHUevveBPCghS7Hjk2oT5M6
-         PXoUWBAA0M9gIx0CM9R2CyA/g3UOpVuNK6r/j2qaigx/mGDDB/b0saSD8IbuPpu73ETh
-         t0Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757069649; x=1757674449;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HfX44cCVxvlSHiCbNobCW//1cotLxhGdfKz5wHzdISw=;
-        b=faSV2JyFUaO4UJD7vGZn3Ce2x96JtE/eXotYedcEB8LMccs3BDJRfQ31qTjgHlGpPK
-         a5ogHlO7ecqkX00wO4D9XpcEPvDOx9moHARRgYnAqpZTLF5usVlR6bnjeRnGuyxEv0Ss
-         hHppeWnPRBC8Vdnesz5/fdzS2WB+EEcengxCYNDquABv3L6hWboZntj0FLc5YiFeR3C7
-         3pBD9HaiOf844s3QiyhWzLAaHY7ueHrE0+lB+ESrVC1O6cAF5I0m8k6AhgJPjssWeHX2
-         h8Ketm7N2a8RdzHVc83KZNBrDaWFUQqj4vq0S2TB8SKUMiRJwRiC2CZ8TNjzJZLllEU3
-         kb8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzPcqXnk4yUD2k4FNKg5+E7TAN7TSjoGVLSmchJRMD6i6mQyKR/U/6ILQaJ91YvWcmYiGCO4ei@vger.kernel.org, AJvYcCVLStOhLNH+AEll6aJq1uQ5T+IPtG/8LJpWH1ZuyvDsJ90bW5YZktWKrIUp9XnQ1T96MkYTlKP0Tab/62U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwdk+HvSb6mA7q4zXG9vxuWEwY6evGq4YH1/1QzJVci/UEN/6+
-	YMmdzASYy3DzqAvLT6PKvmCGqeG2OulQChs8A2dTJ1XxaEFCoT7A3Q5FgLYVBiFm
-X-Gm-Gg: ASbGncuCtNkpcOAkutMZx6w7nv8IkPTvaijr7JsuBj++TrNdzXn/b2JqWlnC2nc0aNz
-	g37C+PLNoWln1K/pxeIl2HXAnwCzBNqcsguJNz+BAuFENbOaXNjhohU6qwPdw14AKPdY1xEovIn
-	oQMt+/mORQAsNU/98DBgb0NT/mC1NaLjlYZOpqA8fsJeNr0Pq1ISNNumlvzvqbE9UtESjKEjpvw
-	QgEn9YRmHJ3of42I1S0vFKz/urf/mwDukEdqRGM2+8ZbfMIBd5t4lXenCwqYhvOVJBLqFlQ+hyo
-	dsUILEpSYY3ExxsfSshvnb1dPVWzZ50XlfsPDl3PsPTpZoA8vK2cuxJJViL8DT7rHFcS2B8F7Hp
-	XCtnuW9lz9erUSzsBEihbveEPoeCcC3XllDfwfYNSyNgYEA==
-X-Google-Smtp-Source: AGHT+IFr36RJW7E2yGF/wK6VOECemQL0w3KvaSXVwzVEKkJL8YL3TLKGhXqDsUzljxD7JqPtJ74H6A==
-X-Received: by 2002:a05:6000:250e:b0:3c8:c89d:6b5b with SMTP id ffacd0b85a97d-3d1e01d2f18mr17441129f8f.48.1757069649105;
-        Fri, 05 Sep 2025 03:54:09 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:8157:959d:adbf:6d52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d9f3c36a78sm15388611f8f.48.2025.09.05.03.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 03:54:08 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Andrew Lunn <andrew+netdev@lunn.ch>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 11/11] tools: ynl: add ipv4-or-v6 display hint
-In-Reply-To: <20250904220156.1006541-11-ast@fiberby.net>
-Date: Fri, 05 Sep 2025 11:53:46 +0100
-Message-ID: <m2cy85xj9h.fsf@gmail.com>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-11-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757069692; c=relaxed/simple;
+	bh=vzB1ifxUaWoDO39iCrU3dnvqig2LeV4lwCS84Edjywk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsPkKqhHLeK214RxNitsDS1vmC/6Ed+iWJaatNuoCHi+quYnlPKhHfj/O/UhFVI1oc3PLSBsbY2fX9OjQfAgiMMvQmjEln8kbHBWP7ZieKOZ2g41FOqd9eTHWOUsDGB+t44fLXkuauZ8FahAG9uJlnR/Q24VWP3j2y9Kbmxbju8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdOwWr10; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6486C4CEF1;
+	Fri,  5 Sep 2025 10:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757069692;
+	bh=vzB1ifxUaWoDO39iCrU3dnvqig2LeV4lwCS84Edjywk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VdOwWr108XQBjlgzHfKa4MrLZvVjmLA0NXBBV3MsceYZUAPEC7PxjtPE1oDjrG1dx
+	 W1Bs5n45j/T/vEKlU5NVRJlw/1Q1cjnk9jqZ5UD1oaWcwJlu8V/GT/jl2Xc3+3UhFc
+	 cGRoHZMSvb+JzTLP/WReLSnSA0Q0DOfZqNI6KrTRL5J7W8x7bo6Gc+TC2bd47jPPXz
+	 vOseblBmV4AhCkiSZ7SRrGqEqvTjB3lCHyHzWOpyHh1owyA95nwY/tv9LBJErhIf/g
+	 UaangJe3nG9hdwIGErRVzQllaIerc4fMw6Tu7byGThZfKFcCRbl0nN1G6tZkUSo076
+	 TWtJYWYZQiIcA==
+Date: Fri, 5 Sep 2025 11:54:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH 2/2] ASoC: replace use of system_wq with system_percpu_wq
+Message-ID: <54446af3-9ca5-4932-a3fd-e44185751dda@sirena.org.uk>
+References: <20250905091016.109428-1-marco.crivellari@suse.com>
+ <20250905091016.109428-3-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UXwcJmoyPHTNgDRr"
+Content-Disposition: inline
+In-Reply-To: <20250905091016.109428-3-marco.crivellari@suse.com>
+X-Cookie: He who laughs, lasts.
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
 
-> The attribute WGALLOWEDIP_A_IPADDR can contain either an IPv4
-> or an IPv6 address depending on WGALLOWEDIP_A_FAMILY, however
-> in practice it is enough to look at the attribute length.
->
-> This patch implements an ipv4-or-v6 display hint, that can
-> deal with this kind of attribute.
->
-> It only implements this display hint for genetlink-legacy, it
-> can be added to other protocol variants if needed, but we don't
-> want to encourage it's use.
->
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+--UXwcJmoyPHTNgDRr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+On Fri, Sep 05, 2025 at 11:10:16AM +0200, Marco Crivellari wrote:
 
-I suspect there are occurrences of ipv4 or ipv6 in the existing specs
-that really should be ipv4-or-ipv6 but the python code doesn't care.
+> +++ b/sound/soc/codecs/aw88081.c
+> @@ -779,7 +779,7 @@ static void aw88081_start(struct aw88081 *aw88081, bool sync_start)
+>  	if (sync_start == AW88081_SYNC_START)
+>  		aw88081_start_pa(aw88081);
+>  	else
+> -		queue_delayed_work(system_wq,
+> +		queue_delayed_work(system_percpu_wq,
+>  			&aw88081->start_work,
+>  			AW88081_START_WORK_DELAY_MS);
+>  }
+
+I can't tell why you're putting all these onto the percpu workqeue, I
+would be astonished if any of the users cared.
+
+--UXwcJmoyPHTNgDRr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi6wXYACgkQJNaLcl1U
+h9BRPAf9EvLzOB1dlvmwngk6RBkO8A8q2dXdqH3EeoPJ69yhW0ohvsrG7bgI/U9t
+hGE2azQ2gn0Y+t99tOOA2CXGgymTWE47InNnY/6ZRMrYsMOHl3wyuJ4Tj2a4Xy1Z
+jOPhe2/Ym24YBmvcrhf6vX3spn/mhnFVYip3lsE6iHtnLFBt3wpTzwrpZ+vAi/+/
+//xbm0rkWHzIpbgtRsVk7FL18ePWkduXLqKEUr2b32VkWeeH4iLOWWWfziGkh3yt
+nU+DkTgqm5TOScbWZCfqRjhSUp7LQBJx8qbUSXKW+ShAbQcI9pGwu+D3mxAz2f/M
+VPwGNXR8eJrO8+dd6wmGIqqe9q9wcw==
+=Eq0T
+-----END PGP SIGNATURE-----
+
+--UXwcJmoyPHTNgDRr--
 
