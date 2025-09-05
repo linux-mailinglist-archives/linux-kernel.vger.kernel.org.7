@@ -1,177 +1,98 @@
-Return-Path: <linux-kernel+bounces-803856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CEFB4666B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:07:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D99B46671
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 939AE5C589C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 635767AB563
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A893F2F3C32;
-	Fri,  5 Sep 2025 22:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9712F60AD;
+	Fri,  5 Sep 2025 22:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SyTHqxeO"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZXyDRSfH"
+Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F125DB0D;
-	Fri,  5 Sep 2025 22:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BE22F28E3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757110054; cv=none; b=TEXLVWrcPCbC1LcXNhoj2hQw9qewJIRJSwsIHnaiYcNuVbA2xnN70V6Vti3zI9n+HJSY4Ma099Kgnr40mHau7qY1gBwU/WtizXPD94999qHf/RpHX6gy2In4xp6/LE36h6mVkKsEljNWQGnLbxtJkzOnDa0wS2l0egLhsgMQRKM=
+	t=1757110337; cv=none; b=r5nSYUJZqptXpAET1XjU2kcvksEQXN3nGKdpH8RVqXk8OYJTH/hmTh0/Iiaew1zJ8AzU0Z6OQMnTqJ7FDTdVqGowTlNpUx5ENkJpb48dgM3qJVU3AHmjo2ZQCgM6vNVNYWksKKOoKC0LQ/0kJ7adbW/zMWAzpZKdctU66Ml9Na4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757110054; c=relaxed/simple;
-	bh=qabVDCAerk3jm2UbasgcN/y7pUQHMuhEfsL/6QAlt7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BHn9RcohFKukQpzsNQljMczWCYqlmcfcxX10T44g+3Y374z2vIN70UCfwVqIGZTTsNCgNWol2wYvpwmBaeGrERhxvWXiD+qzA3tcgnle7wr6LTx2CtQJm067GnGE+J+uZWo4BkyJnEttU+vgNbyafffe638uEMJHSaQ9FnEna2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SyTHqxeO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=fQd68/uOkmvzwh4WQpDH5bQFAN9vRGtlSDE2//znmz0=; b=SyTHqxeOyTERtbb8NPhFJFLxhA
-	GQdA9w6SFdU/pTuMAbUjAQQ64g0zaXpCEUYlA2z5xHcxdcdpPg35MtJxt6XEFpF8SSfnbXXKj8YSm
-	0bX+pI/+EYDHHLWzUOeb2LjxiLDhUoIrGZbNRsGGTDeBUfhIMOTw16b962cVGTLYtQQBTV12qKrpJ
-	Z4JTKmKo3jOgyIo31HnOw9scls6pOD9dceYs15z8o0vief4Yz4351uh1wZtBxxyW9t1y5Vz+EpJdt
-	RiRNFt2ZEcAPc3WMofsVOl7qRCq4R/LAMnqnGm3uvdG4oV8AdqqYz99+xRFb7t6ZmNvuosDbYVnwt
-	EhOnS4/A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uueai-00000004vCq-0Gah;
-	Fri, 05 Sep 2025 22:07:32 +0000
-Message-ID: <2aad4540-ccdd-4519-9bed-7d8c7ccd009d@infradead.org>
-Date: Fri, 5 Sep 2025 15:07:31 -0700
+	s=arc-20240116; t=1757110337; c=relaxed/simple;
+	bh=BS2eV+MmamMy0xsm9+vg8yFdZbJEXJn1T+NTTl6/7oY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ICFViYE+stntmFZ0jw4YX5jBesW9masKODxwl+9ELWO959kKbEzF4eOmIbZbxs6TyxrJ2umZ9kVOSI8ZjJI7vDpMwxfPZB2sp3G42yoxN6knSfVcZJryXKdCYQ/rPZYyxmZ0cwzDEUTVBS2nxlmC5aADuQHNrnSPhRy/BDA6omw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZXyDRSfH; arc=none smtp.client-ip=109.224.244.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1757110327; x=1757369527;
+	bh=BHaBMEFVDewwSKp7thargfT1P3IxRVYDym7J1XLx8cw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ZXyDRSfH04X3Kd8NpuKWqSv6SLyErmbJUnFOAcGhMcATkIasuOkCRdZ6hwNiPZ5+Q
+	 BH6LeBvfPwVRjNc2F+EpWab83/C/kncZa2F7DmNjRSbVyBQUIt73luNdFGGGPkhE+N
+	 Jqgv0vyL7Paz9dvu6U520+XlUlPHx4NmNzgVHKwJFeRebdqKsjO7T5RQ+TJi9SEqj0
+	 xhk62cUOrDCxMp/a7mirm9JXWEWW9jm4yuNdEB5kJEVvKHdajw7cjgjIdglmzpRIhg
+	 zEKIn61k1YdQB0EbiRYcB3RO/KdIo0zP4a/xuhueDqamWVYskiEoKnaey58E6rWrdy
+	 1y/I9JEBao16g==
+Date: Fri, 05 Sep 2025 22:12:04 +0000
+To: "kuba@kernel.org" <kuba@kernel.org>
+From: =?utf-8?Q?Maksimilijan_Maro=C5=A1evi=C4=87?= <maksimilijan.marosevic@proton.me>
+Cc: "davem@davemloft.net" <davem@davemloft.net>, "dsahern@kernel.org" <dsahern@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "syzbot+a259a17220263c2d73fc@syzkaller.appspotmail.com" <syzbot+a259a17220263c2d73fc@syzkaller.appspotmail.com>
+Subject: Re: [PATCH 1/1] ipv6: Check AF_UNSPEC in ip6_route_multipath_add()
+Message-ID: <u3HUdiCPiMCv5kkEVMXU9bKhZLDParnZCqUybez-bALHM78ymOclmc2pzUXgAGu-Bdwi30aV_LJkhicY2rwhZdjBzvYWyErXQpDQN3w4Ihs=@proton.me>
+In-Reply-To: <20250904090301.552ef178@kernel.org>
+References: <20250804204233.1332529-1-maksimilijan.marosevic@proton.me> <20250904090301.552ef178@kernel.org>
+Feedback-ID: 97766065:user:proton
+X-Pm-Message-ID: a0a4e673389a6769a8cd4218687215afaa60f323
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] kernel.h: add comments for system_states
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pavel Machek
- <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>
-References: <20250904063631.2364995-1-rdunlap@infradead.org>
- <6089e22ddfdc135040cdeb69329d817846026728@intel.com>
- <20250905140104.42418fba@foz.lan>
- <34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
- <atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Jakub,
 
-On 9/5/25 6:38 AM, Mauro Carvalho Chehab wrote:
-> On Fri, Sep 05, 2025 at 04:06:31PM +0300, Jani Nikula wrote:
->> On Fri, 05 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
->>> Em Fri, 05 Sep 2025 12:02:37 +0300
->>> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
->>>
->>>> On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:
->>>>> Provide some basic comments about the system_states and what they imply.
->>>>> Also convert the comments to kernel-doc format.
->>>>>
->>>>> However, kernel-doc does not support kernel-doc notation on extern
->>>>> struct/union/typedef/enum/etc. So I made this a DOC: block so that
->>>>> I can use (insert) it into a Documentation (.rst) file and have it
->>>>> look decent.  
->>>>
->>>> The simple workaround is to separate the enum type and the variable:
->>>>
->>>> /**
->>>>  * kernel-doc for the enum
->>>>  */
->>>> enum system_states {
->>>> 	...
->>>> };
->>>>
->>>> /**
->>>>  * kernel-doc for the variable
->>>>  */
->>>> extern enum system_states system_state;
->>>>
->>>> BR,
->>>> Jani.
->>>>
->>>>>
->>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>>>> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
->>>>> ---
+Sorry for the delay.=20
+I've managed to devise a test-case that reliably reproduces the error, but =
+I now believe the fix can be implemented better. Unfortunately, I haven't h=
+ad the chance to work on the new fix these past couple of weeks.
 
-[snip]
->>> If the problem is with "extern" before enum, fixing kdoc be
->>> fairly trivial.
->>
->> The non-trivial part is deciding whether you're documenting the enum
->> type or the variable. Both are equally valid options.
-> 
-> True.
-> 
-> I'd say that, if the variable is under EXPORT_SYMBOL macros, it
-> should be documented.
+I'll try to finish it this weekend and then run it through syzbot once more=
+.
 
-Do you mean documented with kernel-doc? How do we do that?
-I was under the impression that we don't currently have a way to
-use kernel-doc for variables (definitions, only for declarations).
+Maksimilijan
 
+-------- Original Message --------
+On 04/09/2025 18:03, Jakub Kicinski <kuba@kernel.org> wrote:
 
-> The same applies to the enum: if it is used by kAPI, it should
-> also be documented.
-> 
-> So, yeah, I suspect that on most kAPI cases, the best is to split,
-> having documentation for both.
-> 
->>
->> BR,
->> Jani.
->>
->>>
->>> If you see:
->>>
->>> 	def dump_function(self, ln, prototype):
->>> 	
->>>      	# Prefixes that would be removed
->>>         sub_prefixes = [
->>> 	    ...
->>> 	    (r"^extern +", "", 0),	
->>> 	    ...
->>> 	}
->>>
->>>         for search, sub, flags in sub_prefixes:
->>>             prototype = KernRe(search, flags).sub(sub, prototype)
->>>
->>>
->>> we need something similar to that at:
->>> 	def dump_enum(self, ln, proto):
->>>
->>> alternatively, we could use a simpler approach modifying adding a
->>> non-group optional match for "extern". E.g:
->>>
->>> -	r = KernRe(r'enum\s+(\w*)\s*\{(.*)\}')
->>> +       r = KernRe(r'(?:extern\s+)?enum\s+(\w*)\s*\{(.*)\}')
->>>
->>> (untested)
-
-Yes, this might work. It might also lead to documenting more than
-was intended. It seems safer just to do the enum declaration and
-variable definition split light Jani suggested.
-
-
-Thanks.
--- 
-~Randy
-
+>  On Mon, 04 Aug 2025 20:42:53 +0000 Maksimilijan Marosevic wrote:
+>  > This check was removed in commit e6f497955fb6 ("ipv6: Check GATEWAY
+>  > in rtm_to_fib6_multipath_config().") as part of rt6_qualify_for ecmp()=
+.
+>  > The author correctly recognises that rt6_qualify_for_ecmp() returns
+>  > false if fb_nh_gw_family is set to AF_UNSPEC, but then mistakes
+>  > AF_UNSPEC for AF_INET6 when reasoning that the check is unnecessary.
+>  > This means certain malformed entries don't get caught in
+>  > ip6_route_multipath_add().
+>  >
+>  > This patch reintroduces the AF_UNSPEC check while respecting changes
+>  > of the initial patch.
+> =20
+>  Hi Maksimilijan!
+> =20
+>  Are you planning to repost this with a test?
+>  If not I suppose we can enlist the author of the commit to help with
+>  the selftest..
+>  
 
