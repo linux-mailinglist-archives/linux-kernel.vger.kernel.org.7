@@ -1,156 +1,297 @@
-Return-Path: <linux-kernel+bounces-803426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE30B45FAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BDAB45FB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9571CC6634
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:10:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9768A087BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A300313277;
-	Fri,  5 Sep 2025 17:07:48 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D8F309EED;
+	Fri,  5 Sep 2025 17:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="u02FQyfX"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40C374292;
-	Fri,  5 Sep 2025 17:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933CD31D736
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092067; cv=none; b=bzpL/7KmKDawLIUl7NSI+LYgo7sVNmQa4v5vMy0Pp1wmWR+WTDmZpPr1i9FXJtSc94MIw/A66xqlaKxOa2qoi+sPiQXz1uBKJvOc9sx9RtQAYskWghjdnzphHKxhgcZu4GDN4miB9MtdTMxB4wLbueyTK563MltucSuvnzYchzo=
+	t=1757092138; cv=none; b=GHzUZH5uZ0VuTWID/RBgqHjsVIE8vKUuoMCDSpepTXtHcVYbpOgy0F0iwt699i9FPbs9osMtCK8Y69pdIw3d7KLKG99OjtlFbO20rwZK2dESNL5E9ZDHHA1jydhKWTwMgs07F3uFiVkvHGibYREW1ekh5EEtBI3Pt9KTGrWe5Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092067; c=relaxed/simple;
-	bh=3aXidoCnjwjLlFAFt83SYhSNY9u5/DbQjFuEPX/ClMk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qUhQziS7Hx7EI7TwfbOcaOlmM3bbNnppdLYZq4Xb5mU6YsgqHiIqa0y8I5U+Z62zZ0Z5/hdNKPpP68b5WVnIx1pmYC5D+nLrhath+/xO+m6LFuv1iXFG2BUN4mVCcUp+y7u4UAgYZtXuWor8A6HSZZk2P2qwdxPfA8tgUPs2mRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so4447944a12.3;
-        Fri, 05 Sep 2025 10:07:45 -0700 (PDT)
+	s=arc-20240116; t=1757092138; c=relaxed/simple;
+	bh=Tkbn50qn/hhS/M6+NYFtTjOUIs5BN8FyqJf3T2PkPA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXvnMtY849MpTfMKaa2125AUKrLYQccUHsFOrQXgZg9DUYKKFxYshOga9iOvdwV44ix4hYX8kUU3nSXHc383vQVJMuPTqdhnmMP+ItLwbArXh+U9C+DRpstNcr89rC9k8OARqlO77g5FIusWvOwMMYKGt/nXY5m21yO/bjTMhM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=u02FQyfX; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e27fee909so890561eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757092135; x=1757696935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=es5BenmFY8/wYi/7jlHuxSPUlpqWojpQjFWnnzqMqrI=;
+        b=u02FQyfXpWypqPuYJQBppcCdtuq3aPY65QiOQFZXC9R/y6cOJ3WmJXx+V+g1XehFzr
+         tgBjhrLYefqNKmf0TVX7HDPBoowFpc23OpMsITsKmNsyQwZGBhLBIygZf3BQUhwRte91
+         yJbuAP3l3Nw3lFZUJi8B85AiHh9gkvkvKAbce+sebR7afeNLLC2k+Y6X9L130m4sW+pp
+         cB1C+w4mU5I8E170AkZ5B4kkJpKsCv+4Uf9bxG4MQj7+ybsPee6QYSvHsiRlJeU8fh7s
+         kkJ0ZE+uzeul/PBR413KlIu2EQDkgdhFrgM3ssIuqevxhgIVaRR6i7z6bCGge4680Ax/
+         0k3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757092064; x=1757696864;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hPOh83BwsxUoqeI+xJ5O/OzWhrMRpIrMTjO1JPoh9E0=;
-        b=WChw8X0QAyFyJXC/Vt1tlQe7ixA5IAS+HQbV7dyezOCmXN1nj6bJczjrN2QWXQWhy3
-         Tsqqra4jHcyCFAjxu+qZLdRPlX+rBLnXoMzewWB/aZIUdVA9VXcSjlnDZqinGT17GP2t
-         XXsplGFYlXhDEKPadEgXLpThwQrc3Iw+zgettKiyIzvJUqVcCX91pNVi2/zVjQfRm8dW
-         x7zUwiQdv6CEavLGKs3P27ZXxpTAXu1ttJrvCEdy5UGwzNLwmiXa1iXk1mhDuRR7A4+F
-         zX8w9671RCwyYxS32io6TAcQXTvzzWTFuLGd+tgEOmbWtYPYvOlDJCzO2KvPmWdvKRwt
-         kEvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVr36u2Z4bxGDYxkVp28crRoDfns6Mu2ozV08qGs9FuWWtNBV03bcx8K9XozNIBvBdJ0hq5V9ayInbd/KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfD7IDG+5kWclfOZ0VibJXo85MHuy3V7YR4huh0cxawmdiDRAM
-	l/NhtJR+fwa+w/uTsTBmFwpWRfq+z9q5r/Xp9r/qttx2GVYuEy2Ni7df
-X-Gm-Gg: ASbGnctATNBFzM9yGdu6ChxVJ48lOyVtIiLg4lh//wixrenyGGm313CHu0Zw1b/8nNm
-	7WU8nODX5qXNugKsSgkq/W43Tq2WkvUcPNphE6QBWQ1cuTFWBrnRYp30TY8d8Yx+H0AGhqqJH3a
-	gLipml80ERbIh5P8x6LU+CIUS+fiXIDWwT4yr6PZQ/8ZuQyH07XlmjmdKFZbKzvqA+miiI7N+wJ
-	7svu7sh/OXJIKB/RIMmbswoUT/FX9z5v0PKF9p7Tmygk2MlwpkuKBnvapMgYV4zP2lJPpmjOmuy
-	1O/R5zI4BB0uylTASzupJA8foUjq5YnQHtJx8wFne1u5mvUnK3RA/G12ChDrinVpLCZnlobr9Nk
-	q3WR0mHnyIOJNmLquCJgu2972
-X-Google-Smtp-Source: AGHT+IFHB/021clnQGQ9l2V/ebhPpnhyDNv4aANIU9IER24mAVYd7lakHWEK5C+0sF2ladD2UZSv7Q==
-X-Received: by 2002:a05:6402:210c:b0:61e:a5c8:e830 with SMTP id 4fb4d7f45d1cf-61ea5c8e868mr16151197a12.1.1757092063706;
-        Fri, 05 Sep 2025 10:07:43 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:71::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c77d0sm17028678a12.11.2025.09.05.10.07.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 10:07:43 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 05 Sep 2025 10:07:26 -0700
-Subject: [PATCH RFC net-next 7/7] net: virtio_net: add get_rxrings ethtool
- callback for RX ring queries
+        d=1e100.net; s=20230601; t=1757092135; x=1757696935;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=es5BenmFY8/wYi/7jlHuxSPUlpqWojpQjFWnnzqMqrI=;
+        b=JqZ1vzUb/8HZBNcvQGKXWDF+i6mKr2t5hSU/RQlHhMixmYHiEWI++PMJIBC/GrNa+e
+         bvcDWUCotnQsYzSvVShelgs+Lrla0zAy/C2Ps/LBft25FHVa4ROY/qc2f+3Rl4Rp38JE
+         AuL36nxrianaYWkaNbVj9ViDEArEaqhkWzCk1wLfBysCUCH2QhMT7OUsAd7MpdECnhKd
+         Iu6AQ8P8eSGoVMoqnVk7y6pIUUa5FwOzhPl5lupveTAhGM8fouI063vuqRbNOxZ6hwrk
+         GJqhiYSjd5F+yQ1S4E8J+6vSJSjXoZv/QkRG5XZi52drpDeJlKZbtfwOnK1WOP8FiBPH
+         TRYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxCXgZb/wuASs0ardtKB06G2GOcKbMaEVHYoUIMpFkgdbxXjp43PnDR64BClqg2bGaoaDSmyw7a63mZ/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaZ2ygg6DMLgCPOZY/BRe/Yz5yRhgBaRNCUS/IISOwXZ8asFSe
+	PZa//BDqlpDxps5Impf1k3r84LbFMaRV8eTZB2y+2L9gNGONIm3H7ZaZVvYAEWWflSA=
+X-Gm-Gg: ASbGncvHDlT6G99p5IQs/f0ON/hjtTWorB6bhfpD0hgpZtUDf8HDfoT8NAeMAE9Fgor
+	cslseMI8PneagHlyXktb+jM8vzOgIAkMe+fmPymKqKQSmQHEZPB1MgfTWlA68QhtZy/wbd8sG+g
+	j9zERf2vmAmOHfetf9WRdPe5aaW86kcHRYuB3SFmUCqMqkVsQmD5jGFK//47pfRPFLauQeZqPFs
+	N+Tqt6sjHQRPfXoN8LfB1+9ZJsiBm0AEel3lTSDHMgyfiGJzUn7WGiJfzOPjKYfxy1IN9MEJaAK
+	x8Uhd3gZaVRA0lG3v33il6yaDJHzAjkyOiHLJDDTID2iJmYJBnyGBajgPLkdEInl+bV+PfwlK87
+	CJ9BSpceHh9fFgJuI7rr6nKB+mK7tEKgZH5WMLNS6EVys4mDtUnHtofKBJ2fcUcNhqskXY+dD
+X-Google-Smtp-Source: AGHT+IH9e9QHKGKP9WAtZWwX8qx9tCZXNF7ybfkvHwaIe8Iwg6dM/XI66Ifyq30xrOvrMd8TWLRguA==
+X-Received: by 2002:a05:6870:d915:b0:2bc:7811:5bb8 with SMTP id 586e51a60fabf-319630cb2d2mr10627124fac.18.1757092135573;
+        Fri, 05 Sep 2025 10:08:55 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-319b5886e78sm3801891fac.4.2025.09.05.10.08.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 10:08:55 -0700 (PDT)
+Message-ID: <598ec4ca-5b36-4ddf-877c-3617711c3aed@baylibre.com>
+Date: Fri, 5 Sep 2025 12:08:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1 ADC
+ Family
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: lars@metafoo.de, jic23@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
+References: <cover.1757001160.git.Jonathan.Santos@analog.com>
+ <6228c10d731b6946a68e1c3c95643065cc81329a.1757001160.git.Jonathan.Santos@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <6228c10d731b6946a68e1c3c95643065cc81329a.1757001160.git.Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-gxrings-v1-7-984fc471f28f@debian.org>
-References: <20250905-gxrings-v1-0-984fc471f28f@debian.org>
-In-Reply-To: <20250905-gxrings-v1-0-984fc471f28f@debian.org>
-To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
- kuba@kernel.org, Simon Horman <horms@kernel.org>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
- jdamato@fastly.com, kernel-team@meta.com
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1593; i=leitao@debian.org;
- h=from:subject:message-id; bh=3aXidoCnjwjLlFAFt83SYhSNY9u5/DbQjFuEPX/ClMk=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBouxjSrAs1Sm+xxMdVGyejtHHGgv9lU+1AEZcr8
- HRgIm5+yvKJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaLsY0gAKCRA1o5Of/Hh3
- bSzdD/9VZrqjup5ByMvV1ARdrXaNOQAT0EzCwe6eGJSqbeLxU6C5ECSqaD2RYn6tKOwqGGwr0aK
- KNWlZc7acHG7tdwqHvzcctsE6HsC5bFDsVO7N4AdhNiZtz0b/U0FLDYas4mtVQyw68PRhffmMBX
- boWG8bfFtjAj4MvMwVbFlWNYsIbL/FNHgMx/7zj5pLzAWB4HFASzWEkpq2dgQdittZ05EpETn1u
- UMRVxB5cG7Gebm0jD0L86pan6rSQlaLr6VZDUN+zQkUsP9aO9YY99Zux7c+u16ZWaVS9AskwOze
- ce80xTgM9pgAz9S1WQyDCC0w1xLbw/zfZI2Y3xTUpD3oRC+QmRBzezdCnD3+6inNbf/QyNGqwpL
- 30d8WBTuEcCMXqKPYwmWgaEL30ljXdjT89l4Q4xyzMgGLc3WMBxLXUlFVq4AfW8JeSeIpITb/lj
- 9RX94ORn0vcc4wgenLBxht/1Y0JIRyWYr7JIz/CIfhlnbEl0VSaCNK0gFCMKf6u7DYpd29s5tZV
- l1WXHx3tdLMBIFtlbM2dAzS9eBBb8fbeh4QOju85Y4GOs5qozuuFsLZETAq1ZkJF1PdzeTWg+sP
- /1ig8EsSB8pIvbnuafh054c5DHfMc2I1IFr1eeVvrnu2Z3LzDJroipiBciPKHFPubblQW/PfxGa
- UOYSQ23i/cdj7GQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Replace the existing virtnet_get_rxnfc callback with a dedicated
-virtnet_get_rxrings implementation to provide the number of RX rings
-directly via the new ethtool_ops get_rxrings pointer.
+On 9/5/25 4:49 AM, Jonathan Santos wrote:
+> Add support for ADAQ7767/68/69-1 series, which includes PGIA and
+> Anti-aliasing filter (AAF) gains. Unlike the AD7768-1, they do not
+> provide a VCM regulator interface.
+> 
 
-This simplifies the RX ring count retrieval and aligns virtio_net with
-the new ethtool API for querying RX ring parameters.
+...
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/virtio_net.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+> +static void ad7768_fill_scale_tbl(struct iio_dev *dev)
+> +{
+> +	struct ad7768_state *st = iio_priv(dev);
+> +	const struct iio_scan_type *scan_type;
+> +	int val, val2, tmp0, tmp1, i;
+> +	struct u64_fract fract;
+> +	unsigned long n, d;
+> +	u64 tmp2;
+> +
+> +	scan_type = iio_get_current_scan_type(dev, &dev->channels[0]);
+> +	if (scan_type->sign == 's')
+> +		val2 = scan_type->realbits - 1;
+> +	else
+> +		val2 = scan_type->realbits;
+> +
+> +	for (i = 0; i < st->chip->num_pga_modes; i++) {
+> +		/* Convert gain to a fraction format */
+> +		fract.numerator = st->chip->pga_gains[i];
+> +		fract.denominator = MILLI;
+> +		if (st->chip->has_variable_aaf) {
+> +			fract.numerator *= ad7768_aaf_gains_bp[st->aaf_gain];
+> +			fract.denominator *= 10000;
+> +		}
+> +
+> +		rational_best_approximation(fract.numerator, fract.denominator,
+> +					    INT_MAX, INT_MAX, &n, &d);
+> +
+> +		val = mult_frac(st->vref_uv, d, n);
+> +		/* Would multiply by NANO here, but value is already in milli */
+> +		tmp2 = shift_right((u64)val * MICRO, val2);
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 975bdc5dab84b..942ae55e8897d 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -5610,20 +5610,11 @@ static int virtnet_set_rxfh(struct net_device *dev,
- 	return 0;
- }
- 
--static int virtnet_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *info, u32 *rule_locs)
-+static int virtnet_get_rxrings(struct net_device *dev)
- {
- 	struct virtnet_info *vi = netdev_priv(dev);
--	int rc = 0;
- 
--	switch (info->cmd) {
--	case ETHTOOL_GRXRINGS:
--		info->data = vi->curr_queue_pairs;
--		break;
--	default:
--		rc = -EOPNOTSUPP;
--	}
--
--	return rc;
-+	return vi->curr_queue_pairs;
- }
- 
- static const struct ethtool_ops virtnet_ethtool_ops = {
-@@ -5651,7 +5642,7 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
- 	.set_rxfh = virtnet_set_rxfh,
- 	.get_rxfh_fields = virtnet_get_hashflow,
- 	.set_rxfh_fields = virtnet_set_hashflow,
--	.get_rxnfc = virtnet_get_rxnfc,
-+	.get_rxrings = virtnet_get_rxrings,
- };
- 
- static void virtnet_get_queue_stats_rx(struct net_device *dev, int i,
+shift_right() is only needed for signed values. Can just use >> since this is
+dealing with unsigned.
 
--- 
-2.47.3
+> +		tmp0 = div_u64_rem(tmp2, NANO, &tmp1);
+> +		st->scale_tbl[i][0] = tmp0; /* Integer part */
+> +		st->scale_tbl[i][1] = abs(tmp1); /* Fractional part */
+> +	}
+> +}
+> +
 
+...
+
+> +static int ad7768_set_pga_gain(struct ad7768_state *st,
+> +			       int gain_mode)
+> +{
+> +	int pgia_pins_value = abs(gain_mode - st->chip->pgia_mode2pin_offset);
+> +	int ret;
+> +
+> +	guard(mutex)(&st->pga_lock);
+> +
+> +	ret = regmap_write(st->regmap, AD7768_REG_GPIO_CONTROL, AD7768_GPIO_PGIA_EN);
+
+Hiding multiple fields in a macro makes it harder to see what this is doing.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Write the respective gain values to GPIOs 0, 1, 2 */
+> +	ret = regmap_write(st->regmap, AD7768_REG_GPIO_WRITE,
+> +			   AD7768_GPIO_WRITE(pgia_pins_value));
+
+Hiding the FIELD_PREP() in a macro makes this a bit harder to understand.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->pga_gain_mode = gain_mode;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ad7768_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct iio_dev *indio_dev = gpiochip_get_data(chip);
+> @@ -778,6 +925,10 @@ static const struct iio_chan_spec ad7768_channels[] = {
+>  	AD7768_CHAN(0, 0),
+>  };
+>  
+> +static const struct iio_chan_spec adaq776x_channels[] = {
+> +	AD7768_CHAN(0, BIT(IIO_CHAN_INFO_SCALE)),
+> +};
+> +
+>  static int ad7768_read_raw(struct iio_dev *indio_dev,
+>  			   struct iio_chan_spec const *chan,
+>  			   int *val, int *val2, long info)
+> @@ -805,7 +956,19 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
+>  		return IIO_VAL_INT;
+>  
+>  	case IIO_CHAN_INFO_SCALE:
+> -		*val = (st->vref_uv * 2) / 1000;
+> +		if (st->chip->has_pga) {
+> +			guard(mutex)(&st->pga_lock);
+> +
+> +			*val = st->scale_tbl[st->pga_gain_mode][0];
+> +			*val2 = st->scale_tbl[st->pga_gain_mode][1];
+> +			return IIO_VAL_INT_PLUS_NANO;
+> +		}
+> +
+> +		temp = (st->vref_uv * 2) / 1000;
+> +		if (st->chip->has_variable_aaf)
+> +			temp = (temp * 10000) / ad7768_aaf_gains_bp[st->aaf_gain];
+
+Should we add a BASIS_POINTS macro to units.h since we are calling this a
+standard unit?
+
+> +
+> +		*val = temp;
+>  		*val2 = scan_type->realbits;
+>  
+>  		return IIO_VAL_FRACTIONAL_LOG2;
+
+...
+
+> +static int ad7768_parse_aaf_gain(struct device *dev, struct ad7768_state *st)
+> +{
+> +	bool aaf_gain_provided;
+> +	u32 val;
+> +	int ret;
+> +
+> +	st->aaf_gain = AD7768_AAF_IN1;
+
+No sense in setting this if we return early on -EINVAL.
+
+> +	ret = device_property_read_u32(dev, "adi,aaf-gain-bp", &val);
+> +	aaf_gain_provided = (ret == 0);
+
+Only -EINVAL means the property is not present. Other errors can be returned.
+Or add a comment explaining why we don't care about other errors.
+
+> +	if (!aaf_gain_provided && st->chip->has_variable_aaf) {
+> +		dev_warn(dev, "AAF gain not specified, using default\n");
+
+Using the default seems like a normal thing to do, so should not be a warning.
+
+> +		return 0;
+> +	}
+> +
+> +	if (aaf_gain_provided && !st->chip->has_variable_aaf) {
+> +		dev_warn(dev, "AAF gain not supported for %s\n", st->chip->name);
+
+Returning error here would be senseible. Clearly there is something wrong with
+the devicetree. But it could be something else, like the wrong compaible string.
+
+> +		return 0;
+> +	}
+> +
+> +	if (aaf_gain_provided) {
+> +		switch (val) {
+> +		case 10000:
+> +			st->aaf_gain = AD7768_AAF_IN1;
+> +			break;
+> +		case 3640:
+> +			st->aaf_gain = AD7768_AAF_IN2;
+> +			break;
+> +		case 1430:
+> +			st->aaf_gain = AD7768_AAF_IN3;
+> +			break;
+> +		default:
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "Invalid firmware provided AAF gain\n");
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+>  static int ad7768_probe(struct spi_device *spi)
+> @@ -1399,7 +1669,13 @@ static int ad7768_probe(struct spi_device *spi)
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+>  	/* Register VCM output regulator */
+> -	ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+> +	if (st->chip->has_vcm_regulator) {
+> +		ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+
+ad7768_register_regulators() now seems mis-named since it only handles VMC
+supply.
+
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = ad7768_parse_aaf_gain(&spi->dev, st);
+>  	if (ret)
+>  		return ret;
+>  
 
