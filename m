@@ -1,179 +1,185 @@
-Return-Path: <linux-kernel+bounces-801915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CE5B44B8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:16:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1ECBB44B8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A82582D56
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A073AB165
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0FB20E6E1;
-	Fri,  5 Sep 2025 02:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA61217722;
+	Fri,  5 Sep 2025 02:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bbRAOku6"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IB3EwNaX"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013039.outbound.protection.outlook.com [40.107.159.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819D31F4CA9;
-	Fri,  5 Sep 2025 02:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757038603; cv=none; b=CZQS6lF5iGzKc3JDdFDcnsV0rNXLx+sI0xQ1XVjXM0c2aS7bJi9xUJjveA1uRTOezGw+aOAlIqBTLaUbRthYycBkl9pgu5l/tZ4QDq7xBSHwY54UfGqzx5nkYcwI5PV3caG7K8L/bzCGtMzgr2vdsrgufbr/9ne8ALnzSnM2ZuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757038603; c=relaxed/simple;
-	bh=YPjJE0hUW8Ymcc2ZzFk+iwe9acZ4n3zf65pmGhxg5wc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oB1E9UXgw6cqZAPq1nQUGxT4fjz5C3tvCmLqgCoafoO9KnOzjxtpDjkgUq5zoaJmjCQMi252+5DnuERJFYtzF/a707WwxX7jIAJKQNjHD+rYYvrgJOAXVOBYUHXZ8aJLxUgLiI2dqpw9bjT6zLgv7Q337+/6ZqZA81IdwtDtkl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bbRAOku6; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757038592; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=1xlUx97XLvAy2xa8m7uFNrIw4cF2sdfqp6b1RBGJRVk=;
-	b=bbRAOku68a7q5VqhP581qaUIECxFYKeCFHKwfPzSmVH5xZ3VO6wBOcSkOVjJdRoa6rJKzJsI8EL8objtRracOkSc1DKbLlt+o7NcbanVD9+x7doD6jX7DJ0ZVbf8kG16HLsUqvVeFIyPFYD4+alAf5DHscp+ZMrSveZLjuK5fU4=
-Received: from 30.221.148.72(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0WnIliIf_1757038591 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Sep 2025 10:16:31 +0800
-Message-ID: <11edd1da-7162-4f5a-b909-72c2f65e9db7@linux.alibaba.com>
-Date: Fri, 5 Sep 2025 10:16:30 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED22B1A23A6;
+	Fri,  5 Sep 2025 02:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757038729; cv=fail; b=JcajWkNPJegCnmBbtAfeibCYyM7Br1VavjlMu2WnLlKaHZxnSbjfSl4+q2N1X4ZXc+l18AJPSX4TAKf4Ofr8E5HCPQCJwQQe+VwJL4yMbNiIbYR0uYUFi/1TN2E+BGa/BrfhvfAu1mZOyfjuI4klSzi3jVNP2gYcOxRgK6WTru0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757038729; c=relaxed/simple;
+	bh=pm0pNEUZyr36HRXD0PNKWw8pXcMaeKElyPb0/kWbLv0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kcuFd82SNNtS5mDI77UacAzi631WfCXn7E2H2q8YnvLKMkIN/oU0+7waNkzYYQcS6enBSAZXC8hH7L/Z/ZA2cj5I8G+2Ps+JYbHwwMQuiET0ms1YBjQKzNGsS35U4APxpPj5HkjCqxvnIjDMb6UZ7qnRfSqDzXFnD5wHDjzklfc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IB3EwNaX; arc=fail smtp.client-ip=40.107.159.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LLzD8fvrr7ncdx3mtl+hrDKhIJYlu8kruC1yvqmPWT8OqU0eEGlvwhIL/qde7VOltK2eWkBTTusk6A9xChBtahaDrWhyQCENMxTuTN5glcjzvtLzH1hkdJYfgVT95uJ/TkT0dWGBRFfUWl+SupcuINh8MFl518scjlTCHNYkRWqWAffZeNRamZmKc01dwlQcrd1KWG0TCjuiXEDS/QeZPGRgxxUlxcixlBme+MfPPmxDrmAp8C9uUjOzalhvAoyh+XLTm/fG7+mLPtcRddCtal4i2aUYABI2mutv1SZIVvcd9Zvr8MQpyZypvyQOyl/Mlq9lt9LdsIbz6qN5WA0fcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jQm/mBCJ6lVeaoWzEDZQulJUpbOSNMV9lspJAheOEZU=;
+ b=jSJEwdwUyLtOSAXzOo/vyWWYh+QrapxURdrqYGtMYf6+phfDkWeGhqcSAncoz8vQgMoJHZgtGs9I98IlYVFD34eHNV5kyB4lAIqNk+rcvfLpHOovSwhhVknszK54jk2sg+VH8FeRI5PWgDsBSjzOOh/C7rNwaDo2Atmqc4+MhKLTipU5ixonMuRkrGr6yw2ta2d9Pnob6QywGvuXe2SJeasTzve4C653p2ULqCKMQVMoG/C6rRpA+eRhCSFYAksCc194uQAqrJqtbKxVzKqDf/sYzMd+ogjfFQxczsmxQvA3mVSQy1UKp7Gk1jnBg7PMfSD935rjtpKYfOli+3XHug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jQm/mBCJ6lVeaoWzEDZQulJUpbOSNMV9lspJAheOEZU=;
+ b=IB3EwNaXXTdZUbcxY95GA+fTi94Dt3NS5XlIHJgEO+GA4D64tPckkIrV35Z32LElAIKxygBBGy24ilDdM2PMsNjwMpnYeo3Znl+ZCE1+4lZPkTZl5iku7Q652+/qf1SUvCj4iBNVX4qpbj4mTX0pEHaqN0B0fgFCD4PBppVvXsEogDKj6p8rVNl6uw+qEuwuDl2zuzLZ4JJhPCYl+aHaVmLDTJy3/168t053ismZzCRznSYNjZS82kBJpljGlniymSOleG7Gbtoenh5vf0L7gVdGRNUGVU3SDLb/9zcamLl/W64KKq+6HyNBuXVfsjNyHl2K9cIhdjg4fLxArPCQRw==
+Received: from AM9PR04MB8505.eurprd04.prod.outlook.com (2603:10a6:20b:40a::14)
+ by AS8PR04MB7670.eurprd04.prod.outlook.com (2603:10a6:20b:297::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
+ 2025 02:18:45 +0000
+Received: from AM9PR04MB8505.eurprd04.prod.outlook.com
+ ([fe80::bb21:d7c8:f7f7:7868]) by AM9PR04MB8505.eurprd04.prod.outlook.com
+ ([fe80::bb21:d7c8:f7f7:7868%7]) with mapi id 15.20.9094.015; Fri, 5 Sep 2025
+ 02:18:45 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Richard Cochran <richardcochran@gmail.com>
+CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Frank Li <frank.li@nxp.com>, "Y.B. Lu"
+	<yangbo.lu@nxp.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>
+Subject: RE: [PATCH net-next 0/3] ptp: add pulse signal loopback support for
+ debugging
+Thread-Topic: [PATCH net-next 0/3] ptp: add pulse signal loopback support for
+ debugging
+Thread-Index: AQHcHLD5iK57qqmEXUuEFtuGvb40JbSBd4YAgADLQNCAALzkAIAA3Yxw
+Date: Fri, 5 Sep 2025 02:18:45 +0000
+Message-ID:
+ <AM9PR04MB8505775FBCCD61B1F3E4582E8803A@AM9PR04MB8505.eurprd04.prod.outlook.com>
+References: <20250903083749.1388583-1-wei.fang@nxp.com>
+ <aLhFiqHoUnsBAVR7@hoboy.vegasvil.org>
+ <PAXPR04MB8510785442793740E5237AFA8800A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <aLmOfsgjumBX3ftE@hoboy.vegasvil.org>
+In-Reply-To: <aLmOfsgjumBX3ftE@hoboy.vegasvil.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB8505:EE_|AS8PR04MB7670:EE_
+x-ms-office365-filtering-correlation-id: 3ea3718c-0bea-4956-7ba2-08ddec228a6b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|19092799006|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?tGr6XySyJwRS/k5CIhjN35ErRfDZ284RKQgXzcAk975mU4j1OvDWLMuKNknB?=
+ =?us-ascii?Q?gZUylj8bygfq3gunbb221Gq7+p51Yu3/oh1Og++0Jbjt1ZdahsGXJifCAbeT?=
+ =?us-ascii?Q?XpSf2LqABcykBv1nnyPr3cLXGnKyZVTjBIgICkLW3l2ZXvTUYnalAXZ5mNHK?=
+ =?us-ascii?Q?bc/+KQUB637K4x+TWwWbuqhLKBS6pFeHtnzdW+SNulzaNdepbVOFWdxXU9EY?=
+ =?us-ascii?Q?RwY3h9+d1SHow78l10lrObeoN6RKkw2vjQDDgw8YGAKuebwopNVje2tHf3DB?=
+ =?us-ascii?Q?r3Rnhg+9f7loS1HMDXap+FjQCUhKN4D7QXQJTD7P4F7llsPtYPVNNpKcmURb?=
+ =?us-ascii?Q?RuVJwtMtfrmpLdKBHxuFvHc/013CK44DJBsjdtWjkmZrA8tI0BN2bsALxeHB?=
+ =?us-ascii?Q?IvB1xoJ/ZCgiJ4xVEwFm+/IhraLyq2zTjeMyzkM3AdG/r5uQ+2hwq20/EIPs?=
+ =?us-ascii?Q?nZ2IiAmud4KNyCpRZKCFjW6MJ8Ktbhxhql2YSxLyA3zS9D/MccKb9Xg/I0s9?=
+ =?us-ascii?Q?elZuALUWrz7WypnBO89qbVnq2MvmJqJgV+qgiXGqjaxxeHPYO+lnPyV+GQmb?=
+ =?us-ascii?Q?tr+VMMUs2MQKFro4PTcnVuopvdMR9zhxoStRxXzk1WmzG7K6lPf9Txr/AEgF?=
+ =?us-ascii?Q?XThrOd54hWAg1R9P/I/KN3wlPJqfUXwwaqGmnY4DGuRgsdBO5NA4UYqTXL+F?=
+ =?us-ascii?Q?dt0WXCYZFTqM0OpnKvrqGL8wJV4qCdQnTUIcOloLDPHgpicf/78jIRmX+72V?=
+ =?us-ascii?Q?httXWsa5+MILkQ+/9kU7vPlzP7kx2CbprlXH8MXSKstyqpeprEcZ6fUD158Q?=
+ =?us-ascii?Q?KIoVS5WiR+PWZ0jDFkg6V9HbevWU4CUZstDCG2HzNJq5j3VKuf2bysOEMZJT?=
+ =?us-ascii?Q?stmw5zR5OUiHKv4wX4BBlLPb7iSYo4m1Qfk6d22csjWFV8TlwPzk/j/djwNg?=
+ =?us-ascii?Q?u3zrBotXT0v5MoLZJk3LIEXBNqjPicIyRLGT1gMF4MIU898M2dRtMpVfQ7tr?=
+ =?us-ascii?Q?QmI7LaMe2e5A5FayczSq+lU69exGaGPqdSRBfnvfEVzM5T0X1nW8u3ziqxGC?=
+ =?us-ascii?Q?vqSAhHpJOxI5wbSm5Na0Rcew6PxXFjgKCe5UO6F3kdvj3kYC+Di3oRRtOouJ?=
+ =?us-ascii?Q?SAGWh126csTCs32S6nvfvTi0AwG004QrZTTWFWG3m8gGE1piTi7FIyDUY6Z0?=
+ =?us-ascii?Q?xbJGwiDk3ztRPxugKVPEO/chKa309fw4Im8n8svcytoI99Zy9v+OWlaAqIfH?=
+ =?us-ascii?Q?GZiBDe6A54+GXgBPM5gl3JEj5XrLV0VcUhQx/LPAZuqvXLUfki4lUPCB3ywS?=
+ =?us-ascii?Q?dQQ7CjtxXfsJpP7pZhMf6NqXuulTbbhjlCJ2ri/oy/J4rYHR/Y0bojg+xu1n?=
+ =?us-ascii?Q?OtY0KxUyv36dERs22f8Vhhjo/GwokPoQjjX72IQGrDGtSLxzH/AU6JVVo74m?=
+ =?us-ascii?Q?Sk0Sns6gtOs0UzxBZGcDrUF0Qwrqnod9n2pWLc4t+FMxvJ2euYkaGQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8505.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(19092799006)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3o2ChNpkLVJYjdwTBLZDAXcoZOPvaOpqI7Vjuk5KEKdRkj4exuuXS3R3iHMC?=
+ =?us-ascii?Q?aKEp1hRUnD+4mGOsOUqJBwaRO0ctYY1fay6KYiWobGtPgDgCCpRAjFi0KIyY?=
+ =?us-ascii?Q?xQaeRGJrEjTsQIoJucifRxE1NN3R/EtUJCLNU3gwTO7A/Vkr7OxOa02f4PvM?=
+ =?us-ascii?Q?ZFRCtWSIj1X2PWpmB/CzkwshulKD9UGj4+IVUSfUwMHynviv96fymAQ5saoo?=
+ =?us-ascii?Q?LllSO6gEvUHlHXDLZ8QiMjbrICRdilt1gTtpBIfyZfAjzzyJ+x8XBeccvT1z?=
+ =?us-ascii?Q?z6b9LltDrdu9Kr4mNgRQ0/3XHJU2EanF/e9P1SE7WR7tw3AfUY5Yh6wZ/ll6?=
+ =?us-ascii?Q?TlaIghuILlsMCGRO4ZeijP8otLmJ8e6yvt/3cHctXjYfE1gl9IMVIuU7QeXX?=
+ =?us-ascii?Q?0Th7ntlgGVtbMdDIjqkWR1w81OGs9fX8TbvUyvJDHKBXQlVGf190awKs+US/?=
+ =?us-ascii?Q?UmxYdugdUXpLfBWAc0n04fxsjKhPvacIEbQfX+pzZzobaM4hJBES725sP1c6?=
+ =?us-ascii?Q?SyCl3f5XiJG7ZxIXlfXKF32YtJ2Ok6J/pGDJNx8rROpchBOhnO6PTrs2meJp?=
+ =?us-ascii?Q?3mLiCOSG/MEvvBCE15M6/iZMQtEH5Gn0XT2gHHppTWQsZSQIkp4gI48nwbkF?=
+ =?us-ascii?Q?gbTF5CJSyIdmfmtKm8E9LqgHqbGrV9e+0Hg+hTiNBiru6Nu8Ed4KBoLDhuZ9?=
+ =?us-ascii?Q?DAsz/4HwG6YsSoYPaGMJtqi3Co2fPDuHoLcWoqmxUsXhpOBuNhiTdSYd/Fxf?=
+ =?us-ascii?Q?Z0po2DfYLx/D0aUjCOVMtT0BABssxuHpIXV7mQo9w9Xf5RpBtKpPThk3uLGO?=
+ =?us-ascii?Q?iI3q1TjBmo1bonZi+HMmzvHp6Gokj7IGWj1H2u3JroL90Pwqr0ywQgTpejFV?=
+ =?us-ascii?Q?uH0QUxm0RA5oSQf8ZeDSosJw4bFrGBJLZzWNU2hU/3F6a9xWCFyBm1u60m3P?=
+ =?us-ascii?Q?fSViFrx4h95sW4WrZbawyX/VY9nRWIqNQvrm8s3HClhY0V//CmEE2FugV6Pd?=
+ =?us-ascii?Q?3KR8AbxgwmivxDY1MYsSLTOy6paXvgJCGSkXaeDKDmGKFDENonVjt9/ngSdQ?=
+ =?us-ascii?Q?CjTRxq9d2pwmhVTOhhyjaFRqIqaAbvdhaasuCRKa7/T2VwNQimkUYWpUsqP0?=
+ =?us-ascii?Q?Ds5TiJ2C1R8+3TjP+E+d/I+61lOlyuRHHky7SoqX1lcOBcSsIVpgn64JlGLy?=
+ =?us-ascii?Q?PsZY6HUyl+7ygU+iplso5lqMW5jcE7oFc3oQrxg35/I1kMJnCA9GhWdZ93Wb?=
+ =?us-ascii?Q?TUwK0tjLG/+4FQ87VAaRX65BKEr4fXX3A9b4x0JeFvqJ2ew2hWUNrdu3XcGZ?=
+ =?us-ascii?Q?U3xNprd9BEsoW/fdOFecqflTEoq35JBkPby7rmy0KpL5aydNbOZLeXjZR6PK?=
+ =?us-ascii?Q?EfC5sb3H+41BL+AMM0ToeqwO15s/iZYkDmFA6yQKi5KRsG8UtsZG8p0EUv2f?=
+ =?us-ascii?Q?tplCiwKONPXtnsvURVIGS38iLy2wmaoet/CZtFjBlBHqquUuLTPscAP9e6YN?=
+ =?us-ascii?Q?zsBrLLG6Xcq4vmQ3+ZdVhWfYciaz97op10d+Z88iadriG0mWf0KaMOYW5Sxx?=
+ =?us-ascii?Q?2r5U7UUa2IAE4ZW/vhg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-To: Tejun Heo <tj@kernel.org>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <cover.1756985260.git.escape@linux.alibaba.com>
- <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
- <aLm-2Lcnu602AB85@slm.duckdns.org>
-From: escape <escape@linux.alibaba.com>
-In-Reply-To: <aLm-2Lcnu602AB85@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8505.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ea3718c-0bea-4956-7ba2-08ddec228a6b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2025 02:18:45.1376
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1lS72TySdIkjAQziPlVcTsr0AycrF0HxXm4+KfKnlDz9qtDyybGKWFGyhe8Fz1AOvdPR5lTqhdkviyFfYXoV7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7670
 
-Thanks for your review.
+> On Thu, Sep 04, 2025 at 01:55:43AM +0000, Wei Fang wrote:
+> > Vladimir helped explain its purpose in the thread, do you still think
+> > it is pointless?
+>=20
+> Vladimir gave practical examples for the use case, so no objection
+> from my side.  I just wanted to understand how this is useful.
+>=20
+> Next time, it would be helpful to have that info in the cover letter.
+>=20
 
-在 2025/9/5 00:31, Tejun Heo 写道:
-> Hello,
->
-> On Thu, Sep 04, 2025 at 07:39:32PM +0800, Yi Tao wrote:
-> ...
->> To avoid affecting other users, the per-thread-group rwsem is only used
->> when the `favordynmods` flag is enabled.
-> Can you please:
->
-> - Note that this isn't necessary for cgroup2's recommended workflow and is
->    thus gated behind favordynmods.
->
-> - Include performance numbers briefly.
->
->> +extern bool have_favordynmods;
->> +
->>   /**
->>    * cgroup_threadgroup_change_begin - threadgroup exclusion for cgroups
->>    * @tsk: target task
->> @@ -838,6 +840,8 @@ struct cgroup_of_peak {
->>   static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
->>   {
->>   	percpu_down_read(&cgroup_threadgroup_rwsem);
->> +	if (have_favordynmods)
->> +		down_read(&tsk->signal->group_rwsem);
->>   }
->>   
->>   /**
->> @@ -848,6 +852,8 @@ static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
->>    */
->>   static inline void cgroup_threadgroup_change_end(struct task_struct *tsk)
->>   {
->> +	if (have_favordynmods)
->> +		up_read(&tsk->signal->group_rwsem);
->>   	percpu_up_read(&cgroup_threadgroup_rwsem);
-> Hmm... I wonder whether turning on/off the flag is racy. ie. what prevents
-> have_favordynmods flipping while a task is between change_begin and end?
-have_favordynmods is read-only after initialization and will not change 
-during runtime.
->> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
->> index 1ef1edbaaf79..86fbc99a9174 100644
->> --- a/include/linux/sched/signal.h
->> +++ b/include/linux/sched/signal.h
->> @@ -226,6 +226,10 @@ struct signal_struct {
->>   	struct tty_audit_buf *tty_audit_buf;
->>   #endif
->>   
->> +#ifdef CONFIG_CGROUPS
->> +	struct rw_semaphore group_rwsem;
->> +#endif
-> Maybe name it more specific - e.g. cgroup_threadgroup_rwsem?
->
->>   /**
->>    * cgroup_attach_lock - Lock for ->attach()
->> - * @lock_threadgroup: whether to down_write cgroup_threadgroup_rwsem
->> + * @tsk: thread group to lock
->> + * @lock_threadgroup: whether to down_write rwsem
->>    *
->>    * cgroup migration sometimes needs to stabilize threadgroups against forks and
->>    * exits by write-locking cgroup_threadgroup_rwsem. However, some ->attach()
->> @@ -2480,21 +2481,30 @@ EXPORT_SYMBOL_GPL(cgroup_path_ns);
->>    * write-locking cgroup_threadgroup_rwsem. This allows ->attach() to assume that
->>    * CPU hotplug is disabled on entry.
->>    */
-> Please expand the function comment to explain what's going on and why and
-> maybe point to it from a comment on top of favor_dynmods.
->
->> -void cgroup_attach_lock(bool lock_threadgroup)
->> +void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup)
-> As @tsk is an optional argument, it'd probably make more sense to put it at
-> the end.
->
->> @@ -3010,15 +3008,27 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
->>   	 */
->>   	if (tsk->no_cgroup_migration || (tsk->flags & PF_NO_SETAFFINITY)) {
->>   		tsk = ERR_PTR(-EINVAL);
->> -		goto out_unlock_threadgroup;
->> +		goto out_unlock_rcu;
->>   	}
->> -
->>   	get_task_struct(tsk);
->> -	goto out_unlock_rcu;
->>   
->> -out_unlock_threadgroup:
->> -	cgroup_attach_unlock(*threadgroup_locked);
->> -	*threadgroup_locked = false;
->> +	rcu_read_unlock();
->> +
->> +	/*
->> +	 * If we migrate a single thread, we don't care about threadgroup
->> +	 * stability. If the thread is `current`, it won't exit(2) under our
->> +	 * hands or change PID through exec(2). We exclude
->> +	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
->> +	 * callers by cgroup_mutex.
->> +	 * Therefore, we can skip the global lock.
->> +	 */
->> +	lockdep_assert_held(&cgroup_mutex);
->> +	*threadgroup_locked = pid || threadgroup;
->> +
->> +	cgroup_attach_lock(tsk, *threadgroup_locked);
-> I'm not sure this relocation is safe. What prevents e.g. @tsk changing its
-> group leader or signal struct before lock is grabbed?
-When a non-leader thread in a thread group executes the exec system call,
-the thread group leader is updated, but the signal_struct remains unchanged,
-so this part is safe.
->
-> Thanks.
-
-I will accept the remaining comments and apply them in the next version of
-the patch.
-
-Thanks.
+Okay, I will. Thanks.
 
 
