@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-803787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9BCB4653A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC78B4653D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C5A27B4802
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0741F1CC207D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F6D2ED168;
-	Fri,  5 Sep 2025 21:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FA92EDD65;
+	Fri,  5 Sep 2025 21:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TfK+8KM6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/a/RIz27"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnYF8D7C"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026212EA493;
-	Fri,  5 Sep 2025 21:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7843E2EA493;
+	Fri,  5 Sep 2025 21:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757106668; cv=none; b=uoYMdaqPxy5HEt1yaRR5lt9IArJJdN79QcOiuL029w8mpCd3H0Ff7BxFaUWCZaBDHtJgD16N0sn4vh6vwv2/zxljSWoulAm8TjKzedhEZOe1RV/kcPfPT9DZBQl/Vn6C7KwryZPyedGeuzNk6zb+cRUFbEndBjeoyzlPWqNJSDI=
+	t=1757106695; cv=none; b=c9xU7tDb4WMjS+cf8Vbv3RgOrsB/lsjq3mGSq2wftyzclsHfD5SoSz1izScLUAwTL47k9xlP+MqZwoiHBqggDV0Bdx6DlBvCKQuMYnhNhvBVDsO7bpWSdL2Qd6XQTPl6HNUuNuQBIp8KGORF2umWkTrILgCC5pK4PzZ7jqNW5n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757106668; c=relaxed/simple;
-	bh=znCNu58A9bbkI+V+cQofTFIn4B73K6qagheSr2yA+VQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=E6XeDtrOxuYeGldwZ/uPC+f+elVXq4npWRAvshq64FhyjGe47l5cGtqqfOYimtcWg65t2DbMLC0ifJrDesdixSvXK4N/EB72+Z5r8MhNdIXuLbDNqnUAmZaeFDU5AbCR1eBGBCylITrMqoY570U2RgwOPCnDDP9o+zN/mCe3VjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TfK+8KM6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/a/RIz27; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 05 Sep 2025 21:11:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757106662;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DkiEYWYz/NyqpBfKmEaqPDHv4PxuOCGA7nc85qYysAM=;
-	b=TfK+8KM65QEEdMUS7nbmB1xvcsRUygKEYU7f+EWQcsLM0CSVwt23Cu4OZGQkF4BP/QZs7p
-	uVD1X2IxTSunvswdV3K5p4O28lm4KaQSS2krk2wsSDSHtHDNw9oydWB2WFwptUm9esmF5d
-	R5114FDiHt7zsYNAbjBYDNqnl4xMBy5ov+fN3EpJLzNvyWSbrGzmLAfgRPD0xypqimSTLk
-	KGaBHaBcCp7r2ItjcgOLfssJ+VU6kreuHRKhaLxnFsa2mjeeGv/bfqxrYJic9cnrUr7rzs
-	xUjgBdcdAHEywfX9EQBa6+++qa77/8uvWitInmslmBetydM7ilQaW0NIAr9d3w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757106662;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DkiEYWYz/NyqpBfKmEaqPDHv4PxuOCGA7nc85qYysAM=;
-	b=/a/RIz27oECKKGvI1hfjBceiM1dPj50wnENes8rmre6GZhf/r3yIcP5H+xBf9GEyWyr2eR
-	Nm6WnoTCmavpDhAQ==
-From: tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] vdso: Add struct __kernel_old_timeval forward
- declaration to gettime.h
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250815-vdso-sparc64-generic-2-v2-1-b5ff80672347@linutronix.de>
-References: <20250815-vdso-sparc64-generic-2-v2-1-b5ff80672347@linutronix.de>
+	s=arc-20240116; t=1757106695; c=relaxed/simple;
+	bh=8PkpIInGM85gtbwzO1eVSfzewzaGUuJb7RwTaXh6y2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWdbeVhCt1tukTpYDccybr/y8De1X7YcJjayTGfeSkHKnW3Iu01kbXP4uTEpSNOBXqDKbrRNn2+lRyzahHTrK6YAuI09M6SYKNkW+xc3sAt2Llx1YubqwYMEch2F6PJoe8CAfvuSbLbnHYmKHM0VAy9rYAxdaX/mwQIicnpVg88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnYF8D7C; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7723bf02181so2107916b3a.1;
+        Fri, 05 Sep 2025 14:11:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757106694; x=1757711494; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G+1Jgx4TsbUDwWMkNtvRRVRf7sFRhVCLbOW+P/LGwSQ=;
+        b=SnYF8D7CXO7Qw9BR5YkTAgbrLC+aJuTMYT6zDt5xolCAj8leA8pQtOVBgSYYaut1jv
+         tqhzNRFFTcJxvXwKTRmVw1zyi2/gI7PDaqSMeNQmfGWWHRE+ipwNNlS4gxHZyP8G1kAd
+         T869CpkX5fO/jCnLnYB/Xn8xIzAeJq14tADkgtUJi6oEA4ueuXDiaHNu1cw+x8CrwSLZ
+         MCBArtrYZnPYzZ6OUXleTwb9o10CUFoR34F1HOqkPzCo2RonF9au5WRhILG7MU2yrIHs
+         zFZ6Z0op62p1ZOIoJrBXKE7qB8BUxfIMAMgPQy9HUYesbGHuwN+1UcGnlSuGCGQcypGD
+         1faA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757106694; x=1757711494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G+1Jgx4TsbUDwWMkNtvRRVRf7sFRhVCLbOW+P/LGwSQ=;
+        b=c3/3nwPbqKxMhpxxMHDXTVQk8zltZyMx5xUSIEMJPdSNj4pvifQurC9c6BFzUBZL3E
+         3VEI6ae5HSTR9EoZ7iXsVPwRXB2QBIk7LXNX9AB7o6/Z3kuhbxqWFUypFQlNfpYAGyLp
+         v9DnpS0+JiHLHeIDTRSopVQjxSOtmzuiJMTKX0FtPvvocZiRJj4F0/7HcMcCtprq7BGx
+         sjFxjeF4tRH9/Ll0UBJagPda7Wjncepn3ctczP66tOHEajyufdZFFKinkw/HdEQf0SIz
+         2nRk+ZfjsQ5yYThU8yCEY7cM7LNR7WywaWRO9OE1b/VXVM4nU2cjTcAuj3GoRbrf23pf
+         L/uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUx6xhLKN2AhOrL4O+1GsizxLkhz2/r9/WZOyx8OkYyRSQtlwjNr5HFHwGDPwyMAgkcp04IVJXSB+nl913/3jX0CItfQ==@vger.kernel.org, AJvYcCUhLnp2Zvc53CJUcnbp4kw1WfW1o6AOwgzv0yydoebXxdmnHDIo0MHuwmqYjM0F0rtooHUVA9BQD6T4Qg==@vger.kernel.org, AJvYcCXbtM3pod07R9l4jHkGtwWci+9FhfBs9Ndl+oKtjmkM6zdjoegUe9ojRKRxgwyY0e0BegDEEx6g4QRZc256@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD/9UWbnE4g7/TAxeM3HsgQ12DFCBwVtNcpGl8g0aKa16q1tKm
+	d945X5BFrIuKJllt/3qJji1zi03OEgzBfw0MBL169pqv3tTxULPwPBYyxEMhJ6VL
+X-Gm-Gg: ASbGncvd8siWPDPCtwc8HSegnbv9/Flc2FVt8W1FHOvphgB2SOZxVJf8z7X529XS83k
+	hQNRXNZwxe9TyHYKWmywnRq1/2BW8UUqlG+ig88c27k6YZq4nsC/m0PctNKaaDa/etVNR5Kui2Y
+	wosGE5SwjT0M0sOdnxpMrS17VXnoxhCIJasTdaVx/n7P3RVtEhhXV1LfdJjXrsD3IT/qw8ThAYj
+	5OmlnetPHaxEPWZ88eiWS6eVi88+JCxhM/4wt69izlwXGuml7UXR7OvXILCqsIq60z75SM0evzU
+	hg1twMsjWmSSN7oR4ZCz9OChXvrdhWzPA81kFjYSJOhCSHkr7IbOWPiw0Ma8aReqoFNJySeK9LN
+	y9eXIA9BLNx67eM7F6ugKd+9NIyzvqfPvKs019UYGtsIoGw==
+X-Google-Smtp-Source: AGHT+IFbE1wcQAMT5FctyjRxUPKR3qfGzsN3l79PQislJ6TbLtV8sOiukUHddnAe3/z2lDB8ayZFaA==
+X-Received: by 2002:a05:6a00:3d52:b0:772:295b:e6a with SMTP id d2e1a72fcca58-7742ded3993mr144977b3a.31.1757106693547;
+        Fri, 05 Sep 2025 14:11:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772396d2dbcsm20670884b3a.50.2025.09.05.14.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 14:11:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 5 Sep 2025 14:11:32 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com, jdelvare@suse.com,
+	platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jay.chen@canonical.com
+Subject: Re: [PATCH v4] platform/x86: portwell-ec: Add hwmon support for
+ voltage and temperature
+Message-ID: <a763c871-55c7-4d7d-a38b-e7b1b325b9a7@roeck-us.net>
+References: <a5edf505-9b77-461e-ae8d-510e6ed3f950@portwell.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175710666021.1920.18083277458644179546.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5edf505-9b77-461e-ae8d-510e6ed3f950@portwell.com.tw>
 
-The following commit has been merged into the timers/vdso branch of tip:
+On Thu, Sep 04, 2025 at 05:29:23PM +0800, Yen-Chi Huang wrote:
+> Integrates voltage and temperature monitoring into the driver via the hwmon
+> subsystem, enabling standardized reporting via tools like lm-sensors.
+> 
+> Signed-off-by: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+> ---
+> 
+> This version removes board-specific details such as labels and voltage
+> scaling factors. The driver now follows a generic approach, delegating
+> customization to userspace (e.g. via sensors.conf in lm-sensors), which
+> is the standard and more flexible practice.
 
-Commit-ID:     437054b1bbe11be87ab0a522b8ccbae3f785c642
-Gitweb:        https://git.kernel.org/tip/437054b1bbe11be87ab0a522b8ccbae3f78=
-5c642
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Fri, 15 Aug 2025 12:41:10 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 05 Sep 2025 23:04:35 +02:00
+FWIW, this reasoning is wrong. sensors.conf is intended to be used for
+situations where board specific scaling factors are _not_ known.
 
-vdso: Add struct __kernel_old_timeval forward declaration to gettime.h
-
-The prototype of __vdso_gettimeofday() uses this struct.  However
-gettime.h's own includes do not provide a definition for it.
-
-Add a forward declaration, similar to other used structs.
-
-Fixes: 42874e4eb35b ("arch: vdso: consolidate gettime prototypes")
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250815-vdso-sparc64-generic-2-v2-1-b5ff80=
-672347@linutronix.de
-
----
- include/vdso/gettime.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/vdso/gettime.h b/include/vdso/gettime.h
-index c50d152..9ac1618 100644
---- a/include/vdso/gettime.h
-+++ b/include/vdso/gettime.h
-@@ -5,6 +5,7 @@
- #include <linux/types.h>
-=20
- struct __kernel_timespec;
-+struct __kernel_old_timeval;
- struct timezone;
-=20
- #if !defined(CONFIG_64BIT) || defined(BUILD_VDSO32_64)
+Guenter
 
