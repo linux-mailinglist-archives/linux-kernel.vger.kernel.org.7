@@ -1,143 +1,210 @@
-Return-Path: <linux-kernel+bounces-803253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4EAB45CAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:35:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAFBB45CA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C800C1BC29BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221EC16BDA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA0302141;
-	Fri,  5 Sep 2025 15:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624762F7ADA;
+	Fri,  5 Sep 2025 15:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="CempboGf"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZf5dAID"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBA72FB0A8;
-	Fri,  5 Sep 2025 15:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A262F15D3;
+	Fri,  5 Sep 2025 15:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086484; cv=none; b=QdGZQ6WuKmITfewsb8DRndajY30erZK4w2PsMCP0LkBygDN4tSBHT9z61m8lB6M03vW7n5+xVB+f1Gn4oLEf+TmFXC+g/Z9+bTzw1iGjyKQQUZcGhtFzycBe8Cd2S70z+w18Q6R8rPUl7cRXXsKFabNPQSxBIxZ6qdjWUwXBsBk=
+	t=1757086478; cv=none; b=JXCX5S3BtaAEOPO/AZKC5Aw2jPCs63DT3r9XM05RvM7Hols52ArOs4PlREXioC/iu1++Fvh2Di6SUiac9dUdTQJ5uYlNoFiTRiTLGbm4VrhA5PTg2/q42QSNVMc+JCjJYz5OBQc9p9xC3KP4e0l/gagNBFFqCYOtoRqVTIjK5eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086484; c=relaxed/simple;
-	bh=wtTFmaz+N02R+TrK0pbOOzB15g2M3Ec/dVGk2zh3GXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UE/1o9q6maIG4fDkGLoO7nCRntQECbqWeJdhEfmxOKJykn8GOUK9gBCxU0cTYou5Ntkr0jmT6+hdpg5fk9V5E96kAkfugVruxXW7rTbIrqEnN+d1TfSQIGKfspik5Vxl/qLBwP/EX1pfIterpiXdKW+LAJhucIHt2fiAutSyfaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=CempboGf; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1757086477;
-	bh=wtTFmaz+N02R+TrK0pbOOzB15g2M3Ec/dVGk2zh3GXY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CempboGfU5BbL6MvuQKGRxTq8ENz2ywbtLsQw+a5bYzwe9C35xnI3k5YCaHBxwGjn
-	 Sl6s3hIRoVSzYWnBsWgXc9ZJVTVFnG0jhqmZpgfHqGkXzh6D6usbMe/GWYh4wO9hv5
-	 CTG81e9yn3QpQ5HZDhmA2D1WxxdYguvLXgUJRNtLxLtMBvzy2Z6arqa1rgdAfdGm5l
-	 qSFYqUl6IqMCiF+6t4r61zioeI1EjaCvWGP37SCPLK7I3q7nMOJCa2RK3WfoSqCns5
-	 9fhR/ceX5G3OnsdGCZGWXAsI2UrsZa05wFw0gQf4F6oEOrVBMkWptZFw8+Rn9DdcbL
-	 2qEyYp8mCXUow==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 2E4A960078;
-	Fri,  5 Sep 2025 15:34:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id 1923B200402;
-	Fri, 05 Sep 2025 15:34:33 +0000 (UTC)
-Message-ID: <ab1ee9d4-8cf6-46ae-8c97-56d9a27fbb32@fiberby.net>
-Date: Fri, 5 Sep 2025 15:34:32 +0000
+	s=arc-20240116; t=1757086478; c=relaxed/simple;
+	bh=S2f4zsIVkSVZX6263AtP4FMC2mXV744EV7vcHdcxvFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DM1vQw7ljbuDMbE/CPrM5a9NeEzisdIWVvL5di+76pRbNPnes5kxpIz+rj0lesbUDYIVBnE9olO9fNCCPcs9dpM5x2+IEbkGUlZstSzU+gccxDoSro+t13CcS/pO396VCoVJEXTLn0Tgq3wVwUP4QWuN7ZAnVMvLJS7D20/7ylc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZf5dAID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1FB7C4CEF1;
+	Fri,  5 Sep 2025 15:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757086478;
+	bh=S2f4zsIVkSVZX6263AtP4FMC2mXV744EV7vcHdcxvFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LZf5dAIDALZlpnlmorOcqX3O1MGgtWtRZyVieJ+6MsMxP5YD1Q4QFHkgp1Vmntr6C
+	 wvPgaa1NLQiDAngT9jt9lKUU1wIiwiuNyxnEOarNr5lRwAMQJ4aXAuUBXL3YNsLKhi
+	 dRxiXVQL7Bd7lIv8/Y8Vd/zbd6htZe8bktPgBmflpgd73LEOdGzpHUxeungKUbVvGU
+	 O3I7FiHp/ADxKKQHPvIXMKVZ3J/a97+jB5Pz92nJvsb7kuKequ1onDHT8CLiL4YHS/
+	 8r76zT7Emhrny/U3xZPoE9R228e0LdSFRJQpnIqCd1gx+HF2WjfhzOTYwLihlA1KK6
+	 bakXfsYfKkkKA==
+Date: Fri, 5 Sep 2025 10:34:37 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: leds: add generic LED consumer
+ documentation
+Message-ID: <20250905153437.GA970284-robh@kernel.org>
+References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
+ <20250905-leds-v2-1-ed8f66f56da8@vinarskis.com>
+ <20250905151739.GA953718-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 09/11] tools: ynl: encode indexed-array
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250904-wg-ynl-prep@fiberby.net>
- <20250904220156.1006541-9-ast@fiberby.net> <m2ldmtxjh6.fsf@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <m2ldmtxjh6.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905151739.GA953718-robh@kernel.org>
 
-Hi Donald,
-
-Thanks for the reviews.
-
-On 9/5/25 10:49 AM, Donald Hunter wrote:
-> Asbjørn Sloth Tønnesen <ast@fiberby.net> writes:
+On Fri, Sep 05, 2025 at 10:17:39AM -0500, Rob Herring wrote:
+> On Fri, Sep 05, 2025 at 09:59:29AM +0200, Aleksandrs Vinarskis wrote:
+> > Introduce common generic led consumer binding, where consumer defines
+> > led(s) by phandle, as opposed to trigger-source binding where the
+> > trigger source is defined in led itself.
+> > 
+> > Add already used in some schemas 'leds' parameter which expects
+> > phandle-array. Additionally, introduce 'led-names' which could be used
+> > by consumers to map LED devices to their respective functions.
 > 
->> This patch adds support for encoding indexed-array
->> attributes with sub-type nest in pyynl.
->>
->> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
->> ---
->>   tools/net/ynl/pyynl/lib/ynl.py | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>
->> diff --git a/tools/net/ynl/pyynl/lib/ynl.py b/tools/net/ynl/pyynl/lib/ynl.py
->> index 4928b41c636a..a37294a751da 100644
->> --- a/tools/net/ynl/pyynl/lib/ynl.py
->> +++ b/tools/net/ynl/pyynl/lib/ynl.py
->> @@ -564,6 +564,11 @@ class YnlFamily(SpecFamily):
->>               nl_type |= Netlink.NLA_F_NESTED
->>               sub_space = attr['nested-attributes']
->>               attr_payload = self._add_nest_attrs(value, sub_space, search_attrs)
->> +        elif attr['type'] == 'indexed-array' and attr['sub-type'] == 'nest':
->> +            nl_type |= Netlink.NLA_F_NESTED
->> +            sub_space = attr['nested-attributes']
->> +            attr_payload = self._encode_indexed_array(value, sub_space,
->> +                                                      search_attrs)
->>           elif attr["type"] == 'flag':
->>               if not value:
->>                   # If value is absent or false then skip attribute creation.
->> @@ -617,6 +622,9 @@ class YnlFamily(SpecFamily):
->>           else:
->>               raise Exception(f'Unknown type at {space} {name} {value} {attr["type"]}')
->>   
->> +        return self._add_attr_raw(nl_type, attr_payload)
->> +
->> +    def _add_attr_raw(self, nl_type, attr_payload):
->>           pad = b'\x00' * ((4 - len(attr_payload) % 4) % 4)
->>           return struct.pack('HH', len(attr_payload) + 4, nl_type) + attr_payload + pad
->>   
->> @@ -628,6 +636,15 @@ class YnlFamily(SpecFamily):
->>                                              sub_attrs)
->>           return attr_payload
->>   
->> +    def _encode_indexed_array(self, vals, sub_space, search_attrs):
->> +        attr_payload = b''
->> +        nested_flag = Netlink.NLA_F_NESTED
+> Please update the existing user dropping the type $ref and indicate how 
+> many entries (i.e. "maxItems: 1").
+
+Nevermind, I see you did...
+
 > 
-> This line is not doing anything, right?
+> > 
+> > Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> > ---
+> >  .../devicetree/bindings/leds/leds-consumer.yaml    | 85 ++++++++++++++++++++++
+> >  1 file changed, 85 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..077dbe3ad9ff3fa15236b8dd1f448c00271e4810
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > @@ -0,0 +1,85 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common leds consumer
+> > +
+> > +maintainers:
+> > +  - Aleksandrs Vinarskis <alex@vinarskis.com>
+> > +
+> > +description:
+> > +  Some LED defined in DT are required by other DT consumers, for example
+> > +  v4l2 subnode may require privacy or flash LED. Unlike trigger-source
+> > +  approach which is typically used as 'soft' binding, referencing LED
+> > +  devices by phandle makes things simpler when 'hard' binding is desired.
+> > +
+> > +  Document LED properties that its consumers may define.
+> > +
+> 
+> select: true
+> 
+> 
+> > +properties:
+> > +  leds:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    description:
+> > +      A list of LED device(s) required by a particular consumer.
+> > +    items:
+> > +      maxItems: 1
 
-Right, that line shouldn't be there, it is a remain of an early version, where
-I didn't add the indexes, as NLA_NESTED_ARRAY is actually an unindexed-array.
+Also, the select is going to cause a problem with nodes named 'leds', so 
+it will need to be:
 
-The wireguard kernel code only sends zero types, and it doesn't care that user-
-space sends an indexed array back, eg. when setting multiple allowed ips.
+leds:
+  oneOf:
+    - type: object
+    - $ref: /schemas/types.yaml#/definitions/phandle-array
+      ...
 
->> +        for i, val in enumerate(vals):
->> +            idx = i | Netlink.NLA_F_NESTED
->> +            val_payload = self._add_nest_attrs(val, sub_space, search_attrs)
->> +            attr_payload += self._add_attr_raw(idx, val_payload)
->> +        return attr_payload
->> +
->>       def _get_enum_or_unknown(self, enum, raw):
->>           try:
->>               name = enum.entries_by_val[raw].name
-
--- 
-pw-bot: cr
+> > +
+> > +  led-names:
+> > +    description:
+> > +      A list of device name(s). Used to map LED devices to their respective
+> > +      functions, when consumer requires more than one LED.
+> > +
+> > +additionalProperties: true
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/leds/common.h>
+> > +
+> > +    leds {
+> > +        compatible = "gpio-leds";
+> > +
+> > +        privacy_led: privacy-led {
+> > +            color = <LED_COLOR_ID_RED>;
+> > +            default-state = "off";
+> > +            function = LED_FUNCTION_INDICATOR;
+> > +            gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
+> > +        };
+> > +    };
+> > +
+> > +    i2c {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      camera@36 {
+> > +        compatible = "ovti,ov02c10";
+> > +        reg = <0x36>;
+> > +
+> > +        reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
+> > +        pinctrl-names = "default";
+> > +        pinctrl-0 = <&cam_rgb_default>;
+> > +
+> > +        led-names = "privacy-led";
+> > +        leds = <&privacy_led>;
+> > +
+> > +        clocks = <&ov02e10_clk>;
+> > +
+> > +        assigned-clocks = <&ov02e10_clk>;
+> > +        assigned-clock-rates = <19200000>;
+> > +
+> > +        avdd-supply = <&vreg_l7b_2p8>;
+> > +        dvdd-supply = <&vreg_l7b_2p8>;
+> > +        dovdd-supply = <&vreg_cam_1p8>;
+> > +
+> > +        port {
+> > +          ov02e10_ep: endpoint {
+> > +            data-lanes = <1 2>;
+> > +            link-frequencies = /bits/ 64 <400000000>;
+> > +            remote-endpoint = <&csiphy4_ep>;
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +...
+> > 
+> > -- 
+> > 2.48.1
+> > 
 
