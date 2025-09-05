@@ -1,152 +1,138 @@
-Return-Path: <linux-kernel+bounces-802089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDA7B44D7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:28:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04950B44D86
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABB3AA163E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9BD77BD98C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FB426FA5E;
-	Fri,  5 Sep 2025 05:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ADA23D7CE;
+	Fri,  5 Sep 2025 05:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mY36iWyT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKdG7fhG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BD10942;
-	Fri,  5 Sep 2025 05:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8D76FBF;
+	Fri,  5 Sep 2025 05:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049859; cv=none; b=iAFDDJsVHEekLNUsIJDO3EOoEhHlrUIYz73dk4uPwiqI92V5I97h3YcJv7AoUHFTqdDnZX1WkwYk/xfdWjGSNiMzxhSy9gvETJAGvvhlNandonG7vugmSNqSBlC//DlNvSqaVH5gvWZ7hLX4DN8smWqxc7262vgYqQXlSq/ztOo=
+	t=1757050125; cv=none; b=KjUmCHE8OZ9v6zp5W/DrQta8YdOZ3T0Mx2q27pgT6bwXslL6jPNOtSzOOQw+/p9hGjf6DFNRfGredWONLLggiAUlSl5R8DRgtlWKNEP7RkP7VL5JODYxWmfPpTmL+evVtcnj2ew7uyoNQgT8Zxyoi5H+5OYxS0glJLIycJlyBiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049859; c=relaxed/simple;
-	bh=H55g4kcERvNIDx1O7G1HQJWI8S4+ev9RwwNDcVQDI4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEutBBh1NS1mebmc4TdT/LLHz3TF0Jphe+sd1ei0YPhGowpx5WwNZiF14b5M+n4qRov4yQD5VyMERUsk5z//HazSHe1X8n/BHnyVPLj1TWzhSvIbP9gb/pNdgnp/LZ3C/JYWr26u6ROA633cm/0iV8Kl/3E5eCXXZR/tiletZGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mY36iWyT; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757049858; x=1788585858;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H55g4kcERvNIDx1O7G1HQJWI8S4+ev9RwwNDcVQDI4Q=;
-  b=mY36iWyTIzQICcPWcEbh+ny2tFRVUc8gFv2K5tTaba+FzADZNFgm/RJb
-   L0W0k3kUhbRzeskE2mdhWxqaMQ0JbND6UdaPkFcvZuP3sNdeBwHrfjcN7
-   O6MbMZUxqYLPLRZuE8EMu7NMJ6Um8iTwaX2/WawivIYRdCPpwpAotwGPq
-   pgmp43KSjhHYIh6UASGy/SQ6ndTRrspBjZaiMh5hmLNLu9Cze61+qdgL5
-   rCUFHLkUEvHUQygT0DwHYzzoOq0uwr7+y1b60ftzv0pbyS8LRW98p/e5x
-   9dqdci2Ivz88NSvDoZ09/UjRh9vaQ/sXwlVo4bwnHWf7c283sIYMgRwce
-   Q==;
-X-CSE-ConnectionGUID: kSks9azKSVCUYGTCrEqhIw==
-X-CSE-MsgGUID: Bgak3UBlSPuP3CH0D2shBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59508681"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="59508681"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:24:15 -0700
-X-CSE-ConnectionGUID: QX3PLvbxTu2Cn0Ln9lemHA==
-X-CSE-MsgGUID: C99e9a0PQ3OIYIwd+ObXjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="176411892"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:24:11 -0700
-Message-ID: <c8f85609-aae2-4d5e-b983-e2703bb874c0@linux.intel.com>
-Date: Fri, 5 Sep 2025 13:24:08 +0800
+	s=arc-20240116; t=1757050125; c=relaxed/simple;
+	bh=rH5A0s5ImlEW8CCamjv0C9bsrZqiEVscDZ+4NlPYlew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PfcIh29JujrI9MRCvQevvhdcuEYYSx/2lfm2PkWu7scbzZPiemJgUXCERZY8B+o0nqcfHWE1CZ2YHsbQyToCEVbPKjQWW0oh3uMDpe8SJ6nRcP4uUK/RbMqUvGqDuyYpFZIneKUrfveaosJqILGxM+qOr16EsUGjDkbnF6GwAXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKdG7fhG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBB8C4CEF1;
+	Fri,  5 Sep 2025 05:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757050124;
+	bh=rH5A0s5ImlEW8CCamjv0C9bsrZqiEVscDZ+4NlPYlew=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CKdG7fhG7H4kHHOx5HS4QTp1JSpgRQbIHQdtVLNAr3UIOVj50x7MXYwsq+k+KehSd
+	 mu2aZnNzQys/eMtfhcbMsVH3K4ZY6D0KLCVQqgApn5U55nmqlzq9XUCoqqW/Z3xgde
+	 dupJ/1WThnfz6MqlzUDKM2yfm3nuYtI9Qc2M3DKO52jgnSqQlgmCdO/SscLxI2Zd8V
+	 ywmo5F5xkVxqhMtocGQey4+vvIqxvoRtm5qhXZtCfBFMNBqU4g72eyFE2R397uS0EZ
+	 XUhoZtKy/1fGd/BajUuWrqsvL3eb1lnXeceknDJ8l5pBqtBYumXF8VLo9UHrNkuKWR
+	 pugNCSE20bM+A==
+From: Kees Cook <kees@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
+Date: Thu,  4 Sep 2025 22:28:41 -0700
+Message-Id: <20250905052836.work.425-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 05/21] KVM: selftests: Expose segment definitons to
- assembly files
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250904065453.639610-1-sagis@google.com>
- <20250904065453.639610-6-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250904065453.639610-6-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2501; i=kees@kernel.org; h=from:subject:message-id; bh=rH5A0s5ImlEW8CCamjv0C9bsrZqiEVscDZ+4NlPYlew=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm7SjnXPZ7u2LPu+PQqrtY5ci8udk8qXaXSu0lkq7XcR 5/tdmEOHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABMRymb472oaGKv+P06m8My6 MM8HUS9OHLkfPEfs0LQCrwXScYFf3jP8z1vKl/I/a5/jzaQGjyN2vzj/XS6UW1V78IGUe69akKk IMwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
+ffs()-family implementations"), which allows GCC's value range tracker
+to see past ffs(), GCC 8 on ARM thinks that it might be possible that
+"ffs(rq) - 8" used here:
 
+	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
 
-On 9/4/2025 2:54 PM, Sagi Shahar wrote:
-> Move kernel segment definitions to a separate file which can be included
-> from assembly files.
->
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+could wrap below 0, leading to a very large value, which would be out of
+range for the FIELD_PREP() usage:
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+drivers/pci/pci.c: In function 'pcie_set_readrq':
+include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
+...
+drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
+  v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+      ^~~~~~~~~~
 
-> ---
->   .../selftests/kvm/include/x86/processor_asm.h        | 12 ++++++++++++
->   tools/testing/selftests/kvm/lib/x86/processor.c      |  5 +----
->   2 files changed, 13 insertions(+), 4 deletions(-)
->   create mode 100644 tools/testing/selftests/kvm/include/x86/processor_asm.h
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/processor_asm.h b/tools/testing/selftests/kvm/include/x86/processor_asm.h
-> new file mode 100644
-> index 000000000000..7e5386a85ca8
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/include/x86/processor_asm.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Used for storing defines used by both processor.c and assembly code.
-> + */
-> +#ifndef SELFTEST_KVM_PROCESSOR_ASM_H
-> +#define SELFTEST_KVM_PROCESSOR_ASM_H
-> +
-> +#define KERNEL_CS	0x8
-> +#define KERNEL_DS	0x10
-> +#define KERNEL_TSS	0x18
-> +
-> +#endif  // SELFTEST_KVM_PROCESSOR_ASM_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index 2a44831e0cc9..623168ea9a44 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -7,6 +7,7 @@
->   #include "test_util.h"
->   #include "kvm_util.h"
->   #include "processor.h"
-> +#include "processor_asm.h"
->   #include "sev.h"
->   #include "tdx/tdx_util.h"
->   
-> @@ -14,10 +15,6 @@
->   #define NUM_INTERRUPTS 256
->   #endif
->   
-> -#define KERNEL_CS	0x8
-> -#define KERNEL_DS	0x10
-> -#define KERNEL_TSS	0x18
-> -
->   vm_vaddr_t exception_handlers;
->   bool host_cpu_is_amd;
->   bool host_cpu_is_intel;
+If the result of the ffs() is bounds checked before being used in
+FIELD_PREP(), the value tracker seems happy again. :)
+
+Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Anders Roxell <anders.roxell@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: lkft-triage@lists.linaro.org
+Cc: Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ben Copeland <benjamin.copeland@linaro.org>
+Cc: <lkft-triage@lists.linaro.org>
+Cc: <linux-pci@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+---
+ drivers/pci/pci.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index b0f4d98036cd..005b92e6585e 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+ {
+ 	u16 v;
+ 	int ret;
++	unsigned int firstbit;
+ 	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+ 
+ 	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
+@@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+ 			rq = mps;
+ 	}
+ 
+-	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
++	firstbit = ffs(rq);
++	if (firstbit < 8)
++		return -EINVAL;
++	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
+ 
+ 	if (bridge->no_inc_mrrs) {
+ 		int max_mrrs = pcie_get_readrq(dev);
+-- 
+2.34.1
 
 
