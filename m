@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-803350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF5AB45DFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BF9B45DFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805C8A61F58
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8872F5C6E39
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA68330B500;
-	Fri,  5 Sep 2025 16:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024A8309EFE;
+	Fri,  5 Sep 2025 16:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vb7FbUY5"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GAZxz1Aw"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B9E309EFD
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B51130B509
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089285; cv=none; b=rofEJwvii+RwHAKjzsPUwMNG7RkwIGDI6j8e4vBBnbzXWOJ6ZlrwLgwHK0yJoyhwQE20h70lw8k+vDOv8czOAYLjZt9RrWQWSrWJKq06xWdOhC/j6gSsv0DDd3KT5gswV/zriM5GuyfiKripiPHMy6jfkrrrFumYSUeTFK7SYQY=
+	t=1757089293; cv=none; b=MRT9ArXmleWozjTBjl2NZph2+gvA/VAb895lKdeVRDQqY8Dmh1Zxuezt5woOnmUTTdn3qkiDdF0K2nQjqCHlQnhMABF0XuL+ul7mVzx6++MSNV+6MRdW20wmM2W/0HwyTYCifD26ZxWYQjnBLW7PletHRjEpAPsfHc7Ghi7eqA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089285; c=relaxed/simple;
-	bh=FhLxsW7N1SQCjS7MmdLttNnXs5yQWDLWyMtOjt5ZKog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pCqWjndY/p14RfNEmgBstFSB8SAFp+W1aHwChrcQ6gpxEJRfSd5SAGtye2yUdzKfd1MgrPAutkE3fmxRXgcs/enJUbGeytazxWUHR1lkmTiRkiyuXukvzj5Wmoca5jNG/KTKArOdwIhBwBJtuX9sPjFeG0WT+aJYLMKVhYyb1w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vb7FbUY5; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1757089293; c=relaxed/simple;
+	bh=trrGEMYRQyhMQdhMLHq+V1vq3d+BnWlEQPuDROhG9RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjUp0MjII+Cw9FxlAXc5lkr75Xl/9RPNNTnImaZWM4CpCxn0EpMcfK/ahapQik634jmc4xTrbg4b379bvKoztgh518gQtGlOjvsMTgnjNkMfNn5Du+ZT5f7QMMn5oge3EFn4IxjLVWPwPXqQjiVmf8rsjYAMp+LLHNGVcjKFhLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GAZxz1Aw; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f646b1db8so2604334e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:21:22 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b04163fe08dso400585966b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757089281; x=1757694081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l5WFFAiISakOGL7/w6h2pyckQlucNaVtb99jNidQbKk=;
-        b=Vb7FbUY5umiTxiUnt6o+ORWaaY75uUhkoqj0iljQgEhswOwedpUxlicFQshEDWdy9d
-         Ysu6acntohhP9+9J4KEl6ILFeX4iwsqWEnn0TczgllCngxiLzhaCX7BLFBLaIo9u5I/t
-         mvApvvSMTotZHRcQ4RNiZa5cMTHJgMMSX61dsCzaRl47SFbwv5tLdEYvTaBOEZ70U1uv
-         eweGmTA3JUWTEsdd3EgcG386WLkbiA/bs6TBOSVcV0N2hRGUOjePeE9GWBTXlFSG87kY
-         fZqCpW1cWn4ZYekn/+3msQ3fENu4ca7hqnLGjwKGoRplHY203CNTsgUIUvxvwqcTdGE0
-         LKDA==
+        d=suse.com; s=google; t=1757089290; x=1757694090; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=38RoV3MRt21m9VCpn2yaWDX6X26/U5hWGaVRdsOFlqo=;
+        b=GAZxz1AwIOXUq7sda6HEi876MyYTcqiQLwsR6sDvkVBR1Dl5LX1ZITG4fHvl/3ccnD
+         xibcUOiveCLhEaLfXiBmsbOjNI0mZ0zIOmyWmg7o50acK2yxbJWIEazuSZPeOLwnde5m
+         oXbAU5zMKzEvdsm/KrXOxhIHnixaYfAyx/frcAjDeW4QQ1KpiMqk+fhsfRHUZnQlTGot
+         FQzStmsb5GmpJTMPS+SxRqPd2QSNaezReUvXgu7Bzwc/Th6Dqc1KP7PATZI3usEkWkAF
+         V2LkbuoK0RizSgEyqRFH0zJIFJ/0jt7nnP5myqOIdqAuoXqx2nUujvnn0qgWtVizAA1e
+         NljA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757089281; x=1757694081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l5WFFAiISakOGL7/w6h2pyckQlucNaVtb99jNidQbKk=;
-        b=HtR5AH2saYzbNVgqznptbgzcQ3aGHYBWEYiEaC4CoDw3yh4M19VQHW8G3a4fhKrcM3
-         CNoVxp1rV6gZwHFeHtsycY8PLriYbo750cKOkpVKJxAKzfhgYTanva1MZdlJJhm7cm92
-         0V77oOj0E+Oe9iZ32iwb9poEqqotWjgcB7A3eViTOEU2j+PmzpYWkpLv5OB8aiXKsyMx
-         37oEgO1X9wJTYvmM1vsnuMtmvLoh6yk39ln76OHMmcRF+JFwj4C1BB2nK6VQ5fn1pIPa
-         LOwmy4Y6s9Z0zZWJ/BUEX2GxWofM91eWuOcQsKoCRShYFVIlT58K5rjADWWIAbNGkf4N
-         dJcQ==
-X-Gm-Message-State: AOJu0YyLfai5N1Ql3HyAMDpbIIZImYGT/QYNiRUzVLEv7T9dx/DEvBEw
-	w7V8Plmi5nOneEobCQ6L4eay9CQUVrvASXgIKLAvJxSubW4Gw7YKcpfW6qN8MQi2p9QmBS92rBl
-	3Ep2B42A7GivPN06CCzxXi55zXaqaKVZcyp/rIGOAOw==
-X-Gm-Gg: ASbGncureXwf00WOXI8F0hAa3qhn4DghkKOIly7WP3TlkxRBJqT1uGjGpp4ndVDUdAJ
-	ljOwSF1Wsjm+VnDJ6a5TwFp99TUQSJ6uBNKZOtTqfW/XTce5qx3IMtPksYsqOjZBMzsumMwDt+G
-	6JLXAiboSvIXD/VmvBfNvtn+Pc+DHyf1OViKdiUWOJGNpwwpg/Wp/QQdlK4vx4Wk0HJbcOQSi37
-	dJGA9Q2Haqws0Y7c5JjtlNkTja8Ra/piDNuiWz8ZcBOy8+jtEA=
-X-Google-Smtp-Source: AGHT+IECqCoJEQFJEoXiFIgxbW0WXoCjBAMPomhwUyHK1hQjSLnX3Y/Z3kwYoh71qzWompk3QBquPOz4QaH7kdtc4Qk=
-X-Received: by 2002:a05:6512:4608:b0:55f:61de:5359 with SMTP id
- 2adb3069b0e04-55f708bcd00mr6079153e87.24.1757089281135; Fri, 05 Sep 2025
- 09:21:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757089290; x=1757694090;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=38RoV3MRt21m9VCpn2yaWDX6X26/U5hWGaVRdsOFlqo=;
+        b=CW9kDpL8rDffVk5FVvHNRSs+PRDSwwC2ziE37q1rOq9vXyvoAvDKjRnqoSJKhdLkPE
+         t5bX9UuWPKYTUfyf/DdzhWlbpOXAI3hy1ZwEWrTaJ3h6KP9XK2yszJAjdPul8xu9DkXv
+         Ur3+YAjPBUnUMBnIuO7yKOwz6348kzVeLw+lVqWOD2frnU6T3isfDnfnQ4MTpdkEWwNV
+         UgnVbB36V7vGPWDXl4lIARQf0ap0hiiHjX9aArWPHiGppuhB4bHIcnBzpPKqQwVWZQPG
+         b4vzWuU/aC/g1OeCCs/BfifgjY62ZBeR2M4pn1UB0kwWLdnTnkxYYOmecq91LvqmXUah
+         ZGgA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0E+x9g8fYsmy3AIajBiwhx5tfzVJnwt30lgqhNOT57U3lfyjZIXNKJx5qutSX4Q4oZVdRltYDF6J7rUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Wvu7A/aMRicFW6NL5XD8bjfxR4cRx9JcDpO+pf2hO3Vbqe75
+	yE2tBJhKK6OmPbLYgIQvpzl2f8MHU9F9To+HaeAvFgp8+ekDCsqg+OBw3dASnCMPP/g=
+X-Gm-Gg: ASbGncsjbgvZ36QKS5frl4PpX0Mqkjeh+LO9AdGmBbHKISFkyAuuGBCF12yrMxj4rki
+	0nSlem7rJGNDrn4iSiHWAQYxWH5+T1iJIwcr64vrZW63tmWG+ZXlSzJ+ukajM9acP/9wU8JCM+R
+	k6j79bg2ptigi0EDb/5SMtO5u+lJD2LtOz+3RoAxooavQVwJOXo5Y0kU5ZdC942wfmGA6eyzKyW
+	03gpScSqz6KG9CN8GakArpHYTdMotzqE39S+Q4bQ60tIdoqyUlSfKTnqLKhY7bdrVal56vIj+8D
+	yVqMCOgpgopwcLe0DOPUyKqeKLvkCnisYN0RDxGX5yEM3rsQwpqNqklNFa24St0M/zaduXFV+Ye
+	5LClOg4hbeS9Zm5xgQFbG2GEevA==
+X-Google-Smtp-Source: AGHT+IEbX7TLmTaMwpShKtCjVerZWqrr/UBxB0YUnBbh+NMFi75E+MxyttToNGmKdJlXe36bbMityw==
+X-Received: by 2002:a17:907:97d6:b0:b04:6858:13ce with SMTP id a640c23a62f3a-b0468583507mr1159761666b.38.1757089289588;
+        Fri, 05 Sep 2025 09:21:29 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0410a65a68sm1475036366b.110.2025.09.05.09.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 09:21:29 -0700 (PDT)
+Date: Fri, 5 Sep 2025 18:21:27 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v3 2/4] printk: nbcon: Introduce KDB helpers
+Message-ID: <aLsOBwV6CVBwG9JV@pathway.suse.cz>
+References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
+ <20250902-nbcon-kgdboc-v3-2-cd30a8106f1c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090602.105725-1-marco.crivellari@suse.com>
- <20250905090602.105725-2-marco.crivellari@suse.com> <CAJZ5v0jr1-dD9_cWrgunkXEsqE25CsHwpB5U0Zn_z7ztXRbSeg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jr1-dD9_cWrgunkXEsqE25CsHwpB5U0Zn_z7ztXRbSeg@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Fri, 5 Sep 2025 18:21:09 +0200
-X-Gm-Features: Ac12FXxjxVOTarCKOZNujM62DbxcO3umsAjV-eUPbQCaZ37gBHhXya5kewHvPMo
-Message-ID: <CAAofZF6uid+TAcz6P9WDXHWXrJMjNHdqgFuN8kf4w=ZSf7t5AQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] PM: WQ_PERCPU added to alloc_workqueue users
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-nbcon-kgdboc-v3-2-cd30a8106f1c@suse.com>
 
-On Fri, Sep 5, 2025 at 4:04=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
-> Duplicate paragraph.
->
-> > This patch adds a new WQ_PERCPU flag to explicitly request the use of
->
-> Using phrases like "this patch" in kernel patch changelogs is
-> discouraged because the patches become commits when they go into git
-> and then the language becomes slightly odd.  You can say "this change"
-> instead.
+On Tue 2025-09-02 15:33:53, Marcos Paulo de Souza wrote:
+> These helpers will be used when calling console->write_atomic on
+> KDB code in the next patch. It's basically the same implementaion
+> as nbcon_device_try_acquire, but using NBCON_PORIO_EMERGENCY when
+> acquiring the context.
+> 
+> For release we need to flush the console, since some messages could be
+> added before the context was acquired, as KDB emits the messages using
+> con->{write,write_atomic} instead of storing them on the ring buffer.
 
-Hello,
+I am a bit confused by the last paragraph. It is a very long sentence.
 
-Thank you for the advice!
+Sigh, I wanted to propose a simple and clear alternative. But I ended
+in a rabbit hole and with a rather complex text:
 
-> > @@ -1012,7 +1012,7 @@ EXPORT_SYMBOL_GPL(pm_wq);
-> >
-> >  static int __init pm_start_workqueue(void)
-> >  {
-> > -       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE, 0);
-> > +       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE | WQ_PERCPU, 0);
->
-> I have no strong opinion on the change itself.
->
-> While preserving the current behavior is prudent, this particular
-> workqueue may as well be better off as WQ_UNBOUND.
+<proposal>
+The atomic flush in the release function is questionable. vkdb_printf()
+is primary called only when other CPUs are quiescent in kdb_main_loop()
+and do not call the classic printk(). But, for example, the
+write_atomic() callback might print debug messages. Or there is
+one kdb_printf() called in kgdb_panic() before other CPUs are
+quiescent. So the flush might be useful. Especially, when
+the kdb code fails to quiescent the CPUs and returns early.
 
-Thanks for the info, about this specific wq.
+Let's keep it simple and just call __nbcon_atomic_flush_pending_con().
+It uses write_atomic() callback which is used by the locked kdb code
+anyway.
 
-All the users have been massively converted in this step.
-So we added WQ_PERCPU if WQ_UNBOUND wasn't present, to make explicit
-it is per-cpu - as you said, keeping the current behavior.
+The legacy loop (console_trylock()/console_unlock()) is not
+usable in kdb context.
 
-A next step will involve exactly what you said: remove the WQ_PERCPU flag
-where not necessary.
+It might make sense to trigger the flush via the printk kthread.
+But it would not work in panic() where is the only known kdb_printf()
+called when other CPUs are not quiescent. So, it does not look
+worth it.
+</proposal>
 
-Thanks!
+What do you think?
 
---=20
+My opinion:
 
-Marco Crivellari
+Honestly, I think that the flush is not much important because
+it will most offten have nothing to do.
 
-L3 Support Engineer, Technology & Product
+I am just not sure whether it is better to have it there
+or avoid it. It might be better to remove it after all.
+And just document the decision.
 
-
-
-
-marco.crivellari@suse.com
+Best Regards,
+Petr
 
