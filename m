@@ -1,181 +1,115 @@
-Return-Path: <linux-kernel+bounces-802570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52560B453EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:00:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE2CB453E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372583B2EA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192201C27DE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA89D29C344;
-	Fri,  5 Sep 2025 10:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EE5299A87;
+	Fri,  5 Sep 2025 09:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="bZ1rKPju"
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QTKzlnep"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97DB299959;
-	Fri,  5 Sep 2025 10:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757066409; cv=pass; b=PKxAA3qaQ2UwKZqc2fH+kL6vTBqUn1GE2bDVRzuQU2TaqdEWE9trzRdgJ6SId60pfqwx2vwxUlKjEIj50OeDSw9ka8wQHxxCUPVVEeAgz3oykL6YfeU/ZDC1fqb+9blyKJrKiFxEa0/XqsifdRls17V5o9DFGpdxkVYvwh/kSlU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757066409; c=relaxed/simple;
-	bh=//E6VuckYvFeQEKYG5UGFWm9/s4L4UbMW/5I7jgdka8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=hsu/FLvyWQj/GX3vdLrFdDsxTFVZ+xi20KYFM3LdoumO0QgZA0u7mPFkaQsL4LFqUUTegVZtu2/0JzzpjY6HawmZ6f4Meu5+Id8PZK8jgwIVwQwEftoQdmhco/b1TaB+rFYuwK8Xtpf8/+HbQdDNJHHU+lC342NN2yRUrHev2NM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=bZ1rKPju; arc=pass smtp.client-ip=157.107.129.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id EF0A1109D5675;
-	Fri,  5 Sep 2025 18:59:06 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id NYVS74ahHZTi; Fri,  5 Sep 2025 18:59:02 +0900 (JST)
-Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: weibu@redadmin.org)
-	by www.redadmin.org (Postfix) with ESMTPSA id DF6AD109EFCDE;
-	Fri,  5 Sep 2025 18:59:01 +0900 (JST)
-DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org DF6AD109EFCDE
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757066342;
-	cv=none; b=YL6tgkaBt1LxeWphQps8FdRJQtEIbwOC5nl2H12TpywBHPelr0ymJvgLtLmZgyWmoIpjDydSVH4c5pZINjhTN87obDN49KRCFVJPlTpuYYkVKdU6NEtSKc85sEL25GsmOD1jYgU/aA25GFdhHNFspsggHiPTRdpPxlmg7N+vfPU=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1757066342; c=relaxed/relaxed;
-	bh=rS61IeZT5rzeSXHAT1NTR7y9kJ8XX2rCqt+4Om7z2AI=;
-	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
-	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
-	 Content-Transfer-Encoding; b=zUOaAlKJJgVrOXzVwyGZ5iqS0sw9jFo90irHDaprz3lWXITBMm5gbbrmW58nNmYrmMo8VeQj4mQaWa5sOqRLmRRxbaPAOy1MtChv4MEF//XpABGSt1OsOQOvZA1uWLywS/zxUFWPlzMS4N288BpT2U5VgGt9vzHrbFsFEpfg/mY=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org DF6AD109EFCDE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1757066341;
-	bh=rS61IeZT5rzeSXHAT1NTR7y9kJ8XX2rCqt+4Om7z2AI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bZ1rKPjua+ZPNAKTDRDJ172Q766XqoExWN+U/EWQLNygr3OX96knPCORlvJK1wwOu
-	 x5R+KwP+zFOZPokYGuCVNZ7Ag8Ox7GyBeXv0QyU/PFCDdY/QOXGPjB9gObRYdrXBez
-	 WznHYpOzfYOmDAIYpTd68RmZ+1fMH6VjqooClC9Y=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5650D29992B;
+	Fri,  5 Sep 2025 09:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757066355; cv=none; b=ACyixzgR/I/RWhZLIQy8T/PruhQbMoMnR7TNw2Swx7cHtzNFa3vzJKKdszpqvdsxHONjlM4A/s2HwN8hC4Eoy9bsxdCAigmwYycZiiwwtJzbtnI8SChXxY7NTxI74qa+ATtubokFLM40KSnKKZx/WriJWOiQy2NU2pqwprG/vFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757066355; c=relaxed/simple;
+	bh=Oc5oxzPko0VSO8pZR2WCr8boFGP/lzIgTp951BTp44A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSkVM0ckp+qqELDw2D+cyfa3N8Ay7tBt2babIzSTw+Xdzv/M4ywpwpem2iys7WnnRDwt0eTLziARHN5zm04oeAmJ7FBDzNPhGaFLSdag1GekVOCH/lJs6UP6GenUF6S4XpIwe5Dc84ZjwALR3WakW25TTTtVmSFRMfWx9gVK3+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QTKzlnep; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757066353; x=1788602353;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Oc5oxzPko0VSO8pZR2WCr8boFGP/lzIgTp951BTp44A=;
+  b=QTKzlnepQ2ohWBFQIhnSkDkZ02qVJ/a5+zEVCKLfQJQmFLIkMcAvLmHg
+   rTq3beDwZfHGX7p7yFoxi4c1wnXpGS00UqsjBqET07GnRpbC5KBZM5eNI
+   JY62HwW8AAqg6pIodoYv/0tXcmGl2pAunl9QnKKDmxDxBy8lGAh4Jxori
+   t6ciZBMb+G5vb1iArCJmoZQb7wscLUVKEkKM+HGc0izKYgAPdjmvD3jQK
+   Ez3U+gShsz7Ca1CUyaXaF6d0Zi2WC1SRIhP4sym+DfKkCAf3nVl6mYwFA
+   jjRkcAzgP2hPgDe+Nx+8sE0bO1836d3fgSBeFoXrAaxF/MPN07nIyNnsa
+   Q==;
+X-CSE-ConnectionGUID: LeKcOVZyTjCMxVyZj7kGpg==
+X-CSE-MsgGUID: hJq3fttFR5CB/Sml/aK2GQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59368734"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59368734"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:59:13 -0700
+X-CSE-ConnectionGUID: tob/WFwEQ562+GvuXs11xg==
+X-CSE-MsgGUID: Q0cV4h2pQJKjymxh1k3+jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="177344958"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa004.fm.intel.com with SMTP; 05 Sep 2025 02:59:09 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 12:59:07 +0300
+Date: Fri, 5 Sep 2025 12:59:07 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] usb: typec: ucsi: Set alt_mode_override flag
+Message-ID: <aLq0a4fPzeWKzaxk@kuha.fi.intel.com>
+References: <20250825145750.58820-1-akuchynski@chromium.org>
+ <20250825145750.58820-4-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 05 Sep 2025 18:59:01 +0900
-From: weibu@redadmin.org
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: linux-kernel@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: ja_JP: add guidance for the Fixes: tag in
- SubmittingPatches
-In-Reply-To: <cbcc3317-958c-450d-afab-e9a29b1d5add@gmail.com>
-References: <20250905032729.2284883-1-weibu@redadmin.org>
- <cbcc3317-958c-450d-afab-e9a29b1d5add@gmail.com>
-Message-ID: <8cb26ed070501f86a555cd5c525e113d@redadmin.org>
-X-Sender: weibu@redadmin.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825145750.58820-4-akuchynski@chromium.org>
 
-
-
-Hi Akira-san
-
-Thanks—got it. I’ll take the middle ground you suggested.
-
-For v2, I’ll cover both commits:
-
-sync the “Fixes:” section and related wording from 8401aa1f5997, and
-
-keep the example/pretty-format from 5b5bbb8cc51be.
-
-I’ll keep v2 scoped to those hunks for an easier review. After that, I 
-can follow up with a separate series to gradually sync the ja_JP file 
-with the current English submitting-patches.rst.
-
-Thanks,
-Akiyoshi
-
-
-2025-09-05 18:48 に Akira Yokosawa さんは書きました:
-> Hi Akiyoshi,
+On Mon, Aug 25, 2025 at 02:57:48PM +0000, Andrei Kuchynski wrote:
+> This flag indicates that the PPM allows the OPM to change the currently
+> negotiated alternate mode using the SET_NEW_CAM command.
 > 
-> On Fri,  5 Sep 2025 12:27:29 +0900, Akiyoshi Kurita wrote:
->> The Japanese translation of SubmittingPatches was missing the section
->> describing the use of the 'Fixes:' tag. This patch adds the missing
->> description, aligning the translation with commit 8401aa1f5997
->> ("Documentation/SubmittingPatches: describe the Fixes: tag") in the
->> English version.
->> 
->> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->> ---
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> ---
+>  drivers/usb/typec/ucsi/ucsi.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> This one made my imbox. Nice!
-> 
->>  .../translations/ja_JP/SubmittingPatches      | 21 
->> +++++++++++++++++++
->>  1 file changed, 21 insertions(+)
->> 
->> diff --git a/Documentation/translations/ja_JP/SubmittingPatches 
->> b/Documentation/translations/ja_JP/SubmittingPatches
->> index 5334db471744..28ad83171252 100644
->> --- a/Documentation/translations/ja_JP/SubmittingPatches
->> +++ b/Documentation/translations/ja_JP/SubmittingPatches
->> @@ -132,6 +132,27 @@ http://savannah.nongnu.org/projects/quilt
->>         platform_set_drvdata(), but left the variable "dev" unused,
->>         delete it.
->> 
->> +特定のコミットのバグを修正するパッチの場合（例：``git bisect``で問題を発見した場合）、
->> +少なくとも SHA-1 ID の最初の 12 文字と 1 行の要約を記載した「Fixes:」タグを使用してください。
->> +タグを複数行に分割しないでください。解析スクリプトを簡素化するため、タグは
->> +「75 文字で折り返す」ルールから除外されます。
->> +
->> +例:
->> +
->> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() 
->> return the number of pages it actually freed")
->> +
->> +以下の ``git config`` 設定を使用すると、``git log`` や ``git show`` コマンドで
->> +上記形式を出力する際にプリティフォーマットを追加できます::
->> +
->> +        [core]
->> +                abbrev = 12
->> +        [pretty]
->> +                fixes = Fixes: %h (\"%s\")
->> +
->> +呼び出し例::
->> +
->> +        $ git log -1 --pretty=fixes 54a4f0239f2e
->> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() 
->> return the number of pages it actually freed")
->> 
->>  3) パッチの分割
->> 
-> 
-> So, this doesn't cover the other hunks in commit 8401aa1f5997.
-> Instead, it includes the change made later in commit 5b5bbb8cc51be
-> ("docs: process: Add an example for creating a fixes tag").
-> 
-> Your interpretation of Jon's desire might be different from that of
-> mine, but I think Jon suggested translating up-to-date
-> submitting-patches.rst as a whole.
-> 
-> Of course that would be great, but I'm not sure it is a reasonable ask
-> here.
-> 
-> I think covering both commits 8401aa1f5997 and 5b5bbb8cc51be might be
-> a reasonable middle ground here.
-> 
-> What do you think?
-> 
-> It's 100% up to you how far you want to do.
-> 
-> Thanks, Akira
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index 0d6b0cf5a7cd..85a6b7fc6d93 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -1632,6 +1632,8 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
+>  
+>  	cap->driver_data = con;
+>  	cap->ops = &ucsi_ops;
+> +	cap->no_mode_control =
+> +		!(con->ucsi->cap.features & UCSI_CAP_ALT_MODE_OVERRIDE);
+
+Fits to one.
+
+thanks,
+
+-- 
+heikki
 
