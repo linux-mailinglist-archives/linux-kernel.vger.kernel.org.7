@@ -1,212 +1,137 @@
-Return-Path: <linux-kernel+bounces-803079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECAAB45A47
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:23:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27451B45A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54672A485A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FB897B6C5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D7A372886;
-	Fri,  5 Sep 2025 14:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037D337058B;
+	Fri,  5 Sep 2025 14:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JR8KLbOt"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="erpJX7YK"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A2D371EAC
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66D917F4F6;
+	Fri,  5 Sep 2025 14:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082147; cv=none; b=Z5MadIGOP/SsXO6ct1BeXFnvb4MKs+S8fZhBcGb70E8pLkZAHc0nT2l2/DGslYIj2yTgDihYWRgSFMF4pEMgwRrz9RE14N42vwUs86BtzM303J11q1bfGYWn113aKpRAqwdhY1fLEu/YrdJCFDvLadFUuHiKR3N4Iyv0HVKPXXo=
+	t=1757082175; cv=none; b=rpbjJFtIb7cdUhO3Z3Ub6IBbIanAtQi9F1/z5dmC+Zmh44ZfzB62Otb9H7a5esxi1fXO1ES6p5cD6eI+0gJ9LwJ9pIpfwRSRgm873tkhlxCckznYHnH9EM2QBR6x+ujjjeGkn7cwNgn3634kfrEilF+i4Q3jFfwWfOJLhSG0uXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082147; c=relaxed/simple;
-	bh=N70arxT/iGReacj90zjbg0gjuZvRPUxNf9AQDKl2eMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QNFMbDdAnQBx0f/KkuCxv+ykIRWtbzlg0lY2S9d+BY3BOURGplQn6rBrfsxM9TZm6p29sMHfLus7JbDybdEGX4gR64yOiu9crWjk3MATYlO3tpFSl9PTyGzQ4CZROfM6j0SzL6kQCBBbsh+n2pcQNRld6UyCcgl4n2z/aGuQTHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JR8KLbOt; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b0454d63802so369604566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757082143; x=1757686943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aM2EplsdBpHriECPVCPtShoqnRN3L2lkTWP4nBkA3tY=;
-        b=JR8KLbOtEVWf0UDPiXSO50Hn2M+APsmFamSG276Yx/XvhKV4cqwDY6UbJFPJ9ejvcj
-         yB157NpUOkmLargTviCX/y9jVjmUA2GBc7kqfI5Et9kzTrMWFg/bfmvUJOrwFtQ8P1li
-         XrTc7CYyztG8gTnhxFf47Gq16XfVreDcJpqI4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082143; x=1757686943;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aM2EplsdBpHriECPVCPtShoqnRN3L2lkTWP4nBkA3tY=;
-        b=cyt0sM6BkndQ+06m5q/+Z/2ZT8/IwG7NoDS1Mg3wPtFr6Q1VNkVSWOucJ/Xe5jj35Y
-         WpBfHIP2Xao7vaRKKuM8cjriwZ5y+pkeP6uyYjVCU2F66s98L8e2P3EjcI2kK6KJ/jEz
-         SdHxTPRQTtSR8VQJVnkQlG3bBVHE+j1LW9ZAQLqB4JNAwW9m8mA9MnnFub2RRXlkIpi5
-         qw0Ra1fAr6YuPh6jYdEXwXDlQx0AB8HPOVZD3E56wfpAplnQbY8ilHB8KwWVJ17tQJqQ
-         QEdsESgLiDkh76uGov7lOg4CvedvDfWtxlEO1t44ug8+ntakYSFxENZb+u5OSPaY+HRz
-         ggOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAfApJID4+Spj2oUjBKE76KrdCErkIbprOpKkaRH2x9Gk89Hg5mKZSy/XnB/7IbX5qBEGxfRYX9Fz3osg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBCfMg1RJ5Vzv7LXVNEHFhW5DjFVG+QbSdiWdYFnv5HX1hTXeT
-	3raEeZgdrqvh6MEdOKUnhnQvdmYMQQCxTZMfLXLmU/xFBQ+kkwbXsruYLkcvOO8KQg==
-X-Gm-Gg: ASbGncuOgFA1MZl/9vlAZVNOK8LRzGcXDEa9cKL1+LdOH/E6tiOGRM2hDEo+rHtzb1i
-	avkMiNiyVRFG5SFDJMojXtPQSInHSdlFRswJYqw4QfFhDs2O2K43ku+XYkXigy3rs32yiG0VblV
-	W6S+9L5x8nHgmkluDp3jOF1ZbsiSMA5ukNW25s6zMSV+Ajw3dsD3m5V7lSH70bm2ExAS7fdCBSG
-	sPKQTBKLPm1B2CkYQMueZ5rR3yWgr8Ag5oSfqUucrqZqNjC8OTpoDvyf0jRG/wcWQMjRZ/fY33e
-	8m3NOnQsdGuGyqHi7Qe8lvRUC6kkU8KTXmytfmLy20jVXu/GR4C+dgtp7CgHUunThTmrwEoGNZR
-	FFuiemNQVlSPefrnrOsGtgr78foFYLdw/r/2zyHNcgUlZ1CWl1b/YcBpJDNUmCD4DW/afxPtgGo
-	LGiosqzNUKIU9zACM=
-X-Google-Smtp-Source: AGHT+IEUW8qkOHgjidxoy4ZII7ZAuk//jICzXdqIhvcSNPCu7yDo3dIGYIsHRdwcsjy825w3RSPySA==
-X-Received: by 2002:a17:907:94d2:b0:af9:5ca0:e4fe with SMTP id a640c23a62f3a-b01d97bd1b7mr2225391066b.56.1757082143434;
-        Fri, 05 Sep 2025 07:22:23 -0700 (PDT)
-Received: from akuchynski.c.googlers.com.com (240.225.32.34.bc.googleusercontent.com. [34.32.225.240])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0476e0d61esm502141066b.53.2025.09.05.07.22.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 07:22:22 -0700 (PDT)
-From: Andrei Kuchynski <akuchynski@chromium.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev
-Cc: Guenter Roeck <groeck@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Venkat Jayaraman <venkat.jayaraman@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Andrei Kuchynski <akuchynski@chromium.org>
-Subject: [PATCH v3 5/5] usb: typec: Expose alternate mode priority via sysfs
-Date: Fri,  5 Sep 2025 14:22:06 +0000
-Message-ID: <20250905142206.4105351-6-akuchynski@chromium.org>
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-In-Reply-To: <20250905142206.4105351-1-akuchynski@chromium.org>
-References: <20250905142206.4105351-1-akuchynski@chromium.org>
+	s=arc-20240116; t=1757082175; c=relaxed/simple;
+	bh=iXh+Bl38X2EaiStHRHcv6FcU/gmGdvpDqsCf2aQDgPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vnh5RsnOx9vyQ8zWy5+vloxSySnSPfboCBWaEFvBRQVec/coS08Kz9hi561BOhxZzr+RO4t9B/GPoqb/2Ip4h+9E/Xa9Fjvo62H6B/a/+nWcWnzYKcdlg4187GUIO0MfL/u60j967AqfKC/b2QAXYnJtxLF4+3IfSQ/rU0Hh0h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=erpJX7YK; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757082169; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=i7lSBQn9bunxBXeDCEhWwLI2E33KOvXQC3PG7TrCbjM=;
+	b=erpJX7YKlVMM64riye+FXAp9AmhNiyX03RveTN0mK2VNHkmrxQwtkALkZHt8hQxcSXjy5GnvCusr83srNkcYYH89FgCBWl2iGvMcXaoHbVs7InGRMGUGHaLv0+cojKRliDhQf/cLe2cQa0QfjqRKEQ8++PhZgWcsHn6XVPiwlY4=
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WnKtX9o_1757082168 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 05 Sep 2025 22:22:48 +0800
+Date: Fri, 5 Sep 2025 22:22:48 +0800
+From: Dust Li <dust.li@linux.alibaba.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Sidraya Jayagond <sidraya@linux.ibm.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Mahanta Jambigi <mjambigi@linux.ibm.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net/smc: make wr buffer count configurable
+Message-ID: <aLryOL-fahUINVg0@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <20250904211254.1057445-1-pasic@linux.ibm.com>
+ <20250904211254.1057445-2-pasic@linux.ibm.com>
+ <aLpc4H_rHkHRu0nQ@linux.alibaba.com>
+ <20250905110059.450da664.pasic@linux.ibm.com>
+ <20250905140135.2487a99f.pasic@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250905140135.2487a99f.pasic@linux.ibm.com>
 
-This patch introduces a priority sysfs attribute to the USB Type-C
-alternate mode port interface. This new attribute allows user-space to
-configure the numeric priority of alternate modes managing their preferred
-order of operation.
+On 2025-09-05 14:01:35, Halil Pasic wrote:
+>On Fri, 5 Sep 2025 11:00:59 +0200
+>Halil Pasic <pasic@linux.ibm.com> wrote:
+>
+>> > 1. What if the two sides have different max_send_wr/max_recv_wr configurations?
+>> > IIUC, For example, if the client sets max_send_wr to 64, but the server sets
+>> > max_recv_wr to 16, the client might overflow the server's QP receive
+>> > queue, potentially causing an RNR (Receiver Not Ready) error.  
+>>
+>> I don't think the 16 is spec-ed anywhere and if the client and the server
+>> need to agree on the same value it should either be speced, or a
+>> protocol mechanism for negotiating it needs to exist. So what is your
+>> take on this as an SMC maintainer?
 
-Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- Documentation/ABI/testing/sysfs-class-typec | 11 +++++++
- drivers/usb/typec/class.c                   | 32 ++++++++++++++++++++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
+Right — I didn't realize that either until I saw this patch today :)
+But since the implementation's been set to 16 since day one, bumping it
+up might break things.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-index 38e101c17a00..dab3e4e727b6 100644
---- a/Documentation/ABI/testing/sysfs-class-typec
-+++ b/Documentation/ABI/testing/sysfs-class-typec
-@@ -162,6 +162,17 @@ Description:	Lists the supported USB Modes. The default USB mode that is used
- 		- usb3 (USB 3.2)
- 		- usb4 (USB4)
- 
-+		What:		/sys/class/typec/<port>/<alt-mode>/priority
-+Date:		July 2025
-+Contact:	Andrei Kuchynski <akuchynski@chromium.org>
-+Description:
-+		Displays and allows setting the priority for a specific alt-mode.
-+		When read, it shows the current integer priority value. Lower numerical
-+		values indicate higher priority (0 is the highest priority).
-+		If the new value is already in use by another mode, the priority of the
-+		conflicting mode and any subsequent modes will be incremented until they
-+		are all unique.
-+
- USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
- 
- What:		/sys/class/typec/<port>-partner/accessory_mode
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 9f86605ce125..aaab2e1e98b4 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -19,6 +19,7 @@
- #include "bus.h"
- #include "class.h"
- #include "pd.h"
-+#include "mode_selection.h"
- 
- static DEFINE_IDA(typec_index_ida);
- 
-@@ -445,11 +446,34 @@ svid_show(struct device *dev, struct device_attribute *attr, char *buf)
- }
- static DEVICE_ATTR_RO(svid);
- 
-+static ssize_t priority_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t size)
-+{
-+	unsigned int val;
-+	int err = kstrtouint(buf, 10, &val);
-+
-+	if (!err) {
-+		typec_mode_set_priority(to_typec_altmode(dev), val);
-+		return size;
-+	}
-+
-+	return err;
-+}
-+
-+static ssize_t priority_show(struct device *dev,
-+			      struct device_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%u\n", to_typec_altmode(dev)->priority);
-+}
-+static DEVICE_ATTR_RW(priority);
-+
- static struct attribute *typec_altmode_attrs[] = {
- 	&dev_attr_active.attr,
- 	&dev_attr_mode.attr,
- 	&dev_attr_svid.attr,
- 	&dev_attr_vdo.attr,
-+	&dev_attr_priority.attr,
- 	NULL
- };
- 
-@@ -459,11 +483,15 @@ static umode_t typec_altmode_attr_is_visible(struct kobject *kobj,
- 	struct typec_altmode *adev = to_typec_altmode(kobj_to_dev(kobj));
- 	struct typec_port *port = typec_altmode2port(adev);
- 
--	if (attr == &dev_attr_active.attr)
-+	if (attr == &dev_attr_active.attr) {
- 		if (!is_typec_port(adev->dev.parent)) {
- 			if (!port->mode_control || !adev->ops || !adev->ops->activate)
- 				return 0444;
- 		}
-+	} else if (attr == &dev_attr_priority.attr) {
-+		if (!is_typec_port(adev->dev.parent) || !port->mode_control)
-+			return 0;
-+	}
- 
- 	return attr->mode;
- }
-@@ -2491,6 +2519,8 @@ typec_port_register_altmode(struct typec_port *port,
- 		to_altmode(adev)->retimer = retimer;
- 	}
- 
-+	typec_mode_set_priority(adev, 0);
-+
- 	return adev;
- }
- EXPORT_SYMBOL_GPL(typec_port_register_altmode);
--- 
-2.51.0.355.g5224444f11-goog
+>>
+>> I think, we have tested heterogeneous setups and didn't see any grave
+>> issues. But let me please do a follow up on this. Maybe the other
+>> maintainers can chime in as well.
+
+I'm glad to hear from others.
+
+>
+>Did some research and some thinking. Are you concerned about a
+>performance regression for e.g. 64 -> 16 compared to 16 -> 16? According
+>to my current understanding the RNR must not lead to a catastrophic
+>failure, but the RDMA/IB stack is supposed to handle that.
+
+No, it's not just a performance regression.
+If we get an RNR when going from 64 -> 16, the whole link group gets
+torn down — and all SMC connections inside it break.
+So from the user’s point of view, connections will just randomly drop
+out of nowhere.
+
+>
+>I would like to also point out that bumping SMC_WR_BUF_CNT basically has
+>the same problem, although admittedly to a smaller extent because it is
+>only between "old" and "new".
+
+Right.
+
+>
+>Assuming that my understanding is correct, I believe that the problem of
+>the potential RNR is inherent to the objective of the series, and
+>probably one that can be lived with. Given this entire EID business, I
+>think the SMC-R setup is likely to happen in a coordinated fashion for
+>all potential peers, and I hope whoever tweaks those values has a
+>sufficent understanding or empiric evidence to justify the tweaks.
+>
+>Assuming my understanding is not utterly wrong, I would very much like
+>to know what would you want me to do with this?
+
+In my opinion, the best way to support different SMC_WR_BUF_CNT values
+is: First, define it in the spec - then do a handshake to agree on the
+value.
+If the peer doesn’t support this feature, just fall back to 16.
+If both sides support it, use the smaller (MIN) of the two values.
+
+Best regards,
+Dust
 
 
