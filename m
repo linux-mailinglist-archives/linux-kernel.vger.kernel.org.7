@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-803593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335C4B462CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:53:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0EFB462AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71DD6BA0FB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50719A61B48
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9111B393DE2;
-	Fri,  5 Sep 2025 18:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948F92750F4;
+	Fri,  5 Sep 2025 18:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LiePq/bb"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXwKfgA/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1A43191D2;
-	Fri,  5 Sep 2025 18:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BA266591;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098138; cv=none; b=tw4B7s1r/kFZPF9OEsb3gNgKBC1F+MGAChZ/bNdWKnWQHiqsHeq1Ku9YS1e3PMFFkKpKR26pzd0b3u+TGJUCAHK5hACYc0OjJFUbha0WdLPi8TMHlKv1QAItCmTzz6OIEVuvuUJfFHmJfhQ1xeH2OCKFTXcAgET79eZMlB1jGlc=
+	t=1757098130; cv=none; b=CpPYenHHGddDbv2MhPzkz4Gqqw1Gu6pEqFc4u5UrA/v6BLuGyLWSdN46fFVqIqMaSjyE9qGeB4Vah2DW7pyqfJhUgs9tWOQtx7MOwwe4TzULCySKH5Wex4cb8sDPGAPqsgEEQl4+u8RaOBoYvvRtkTdNWA9wEj2AFY7c+qXnObY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098138; c=relaxed/simple;
-	bh=gT6iLDzXkn2vkQT7GPoK0T33+aXJivk9xetjRQ9j+q4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvimoZuHhnDdKYxLZd6VpjhDtdv5oSE8NDSPxkAirfahj/nX3tvVgl5VDem8kegZlUWW0p7NsThNvbImxWX4NpBE8pxU5yC97m7NB5+8DpBLkLJ78BbdHE3MhUyPuLGFQDxcIjWD98zSWFku/cpo8V31vENfua4IxEPnUwYfWx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LiePq/bb; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585ImLAa3314373;
-	Fri, 5 Sep 2025 13:48:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757098101;
-	bh=i+QqUgGTAvZfE8MLyrDMwvyRy7EWTHhQeRZzEGO5LEc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=LiePq/bbxWeXOukzQDZq892+phfvJweZoPr8QlhPlAL4BttslQArumXvZmSqRt84k
-	 nYgTSMd3MgSlP3+uiGNMgc/gHmOdA53A3prPdYvBerdexJVvpacmIKpTLd5hvBuEvP
-	 pMTO6urG8neIMH9iG+dskSksKhy24zV1iNpmxYuU=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585ImKu01090339
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 13:48:20 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 13:48:19 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 13:48:19 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585ImIE41165621;
-	Fri, 5 Sep 2025 13:48:19 -0500
-Date: Sat, 6 Sep 2025 00:18:17 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Kendall Willis <k-willis@ti.com>, <gregkh@linuxfoundation.org>,
-        <jirislaby@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vigneshr@ti.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <vishalm@ti.com>, <sebin.francis@ti.com>,
-        <msp@baylibre.com>, <khilman@baylibre.com>, <a-kaur@ti.com>,
-        <john.ogness@linutronix.de>, <andriy.shevchenko@linux.intel.com>,
-        <yujiaoliang@vivo.com>, <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH 1/3] dt-bindings: serial: 8250_omap: Update wakeup-source
- type property
-Message-ID: <20250905184817.7kdhroadthzesnaj@lcpd911>
-References: <20250904212455.3729029-1-k-willis@ti.com>
- <20250904212455.3729029-2-k-willis@ti.com>
- <20250905-saloon-siesta-77da98d7ae02@spud>
+	s=arc-20240116; t=1757098130; c=relaxed/simple;
+	bh=EtS18cPQp642F259+o2Fz/jfh1Vgpj1ASix6SL/Hf28=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CqdOQTnUN2zdSwDW3g4nxwSviKRJTAWixDGBcJ9af04BUuZmX1pBbLaaHez9H6OnvydrmCMxpPv2Zl1atL9UxZ+YER8fX9JffgrA4MQy2n4NV+09+fkSdpQ5H4e7u67qhVh+AMjvCwzE2n6f35kUjRRLFSOAApHrhFx+CJhXgi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXwKfgA/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 605D9C4CEF1;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757098130;
+	bh=EtS18cPQp642F259+o2Fz/jfh1Vgpj1ASix6SL/Hf28=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aXwKfgA/p0TtSF4n77I4NILylEp16UkFqn2dcqy/20A8CQP5FEzVhxFQd1XdOHHUG
+	 rTK9IggWfLA8sW44H8gVZk9HWPSp/o5F0g6ueNvI+adG9filDYXH8e0W3ZstYWN8mo
+	 r9yktzpviMRU5XbqGhX1fRbYhL33zmCWRfr1dQSG3f3wPCiL9ygCCjbUOjMthMU51J
+	 ql/HagW33oO+pBvge1ir1FI8ROi+NOd2uBr2Txtd8HgkGCOw2SrJEnP+53twaweQEU
+	 OxXyz7QCf9wyusVS1et0YJwxltyeehSII5PA5CGMQvk6Fe9ek2MsFAiG0oSLB8REEJ
+	 gOwjT7FQkr6cg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6A5CA1010;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+Subject: [PATCH RFC 00/13] dmaengine: Smart Data Accelerator Interface
+ (SDXI) basic support
+Date: Fri, 05 Sep 2025 13:48:23 -0500
+Message-Id: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250905-saloon-siesta-77da98d7ae02@spud>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHcwu2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Nj3eKUikzdpMTiVF1z4xTzZMu0lORUU3MloPqCotS0zAqwWdFKQW7
+ OSrG1tQB2/4WQYAAAAA==
+X-Change-ID: 20250813-sdxi-base-73d7c9fdce57
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Wei Huang <wei.huang2@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757098128; l=3884;
+ i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
+ bh=EtS18cPQp642F259+o2Fz/jfh1Vgpj1ASix6SL/Hf28=;
+ b=iVkDOOyZdiEyU2gtuQtkxNnaJPuHOvBGX1zqikp6ZyoWp8HWIlxFBzj0d+MNk9wJO0e8rHN7r
+ b80J+I2ExHOC0FbEjtzsezbZLs2MRqVZlpdAAD24jqUeCYTnvNHjvGE
+X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
+ pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
+X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
+ auth_id=241
+X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
+Reply-To: nathan.lynch@amd.com
 
-On Sep 05, 2025 at 19:38:00 +0100, Conor Dooley wrote:
-> On Thu, Sep 04, 2025 at 04:24:53PM -0500, Kendall Willis wrote:
-> > Allow the wakeup-source property to be either of type boolean or of a
-> > phandle array. The phandle array points to the system idle states that the
-> > UART can wakeup the system from.
-> > 
-> > Signed-off-by: Kendall Willis <k-willis@ti.com>
-> > ---
-> >  Documentation/devicetree/bindings/serial/8250_omap.yaml | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> > index 1859f71297ff2..851a5291b4be4 100644
-> > --- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> > +++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> > @@ -69,7 +69,13 @@ properties:
-> >    clock-frequency: true
-> >    current-speed: true
-> >    overrun-throttle-ms: true
-> > -  wakeup-source: true
-> > +
-> > +  wakeup-source:
-> > +    oneOf:
-> > +      - type: boolean
-> > +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +        description:
-> > +          List of phandles to system idle states in which UARTs can wakeup the system.
-> 
-> Is there a single other instance of the wakeup-source property being
-> used like this?
+The Smart Data Accelerator Interface (SDXI) is a vendor-neutral
+architecture for memory-to-memory data movement offload designed for
+kernel bypass and virtualization.
 
-I think there's an ongoing thread here [1],
-[1] https://lore.kernel.org/all/20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com/
+General information on SDXI may be found at:
+https://www.snia.org/sdxi
 
+This submission adds a driver with basic support for PCIe-hosted SDXI 1.0
+implementations and includes a DMA engine provider.
 
--- 
+It is very much a work in progress. Among other issues, the DMA
+provider code only supports single-threaded polled mode, and context
+management should use better data structures.
+
+While we're addressing those shortcomings, we'd appreciate any
+feedback on:
+
+* Where the code should live. SDXI entails a fair amount of code for
+  context and descriptor management, and we expect to eventually add a
+  character device ABI for user space access. Should all of this go in
+  drivers/dma/sdxi?
+
+* Whether the DMA engine provider should use virt-dma/vchan. SDXI
+  submission queues can be almost arbitrarily large, and I'm not sure
+  putting a software queue in front of that makes sense.
+
+Planned future SDXI work (out of scope for this series):
+
+* Character device for user space access. We are evaluating the uacce
+  framework for this.
+
+* Support for operation types to be added in future SDXI revisions.
+
+* Greater configurability for control structures, e.g. descriptor ring
+  size.
+
+The latest released version of the SDXI specification is 1.0:
+https://www.snia.org/sites/default/files/technical-work/sdxi/release/SNIA-SDXI-Specification-v1.0a.pdf
+
+Draft versions of future SDXI specifications in development may be found at:
+https://www.snia.org/tech_activities/publicreview#sdxi
+
+---
+Nathan Lynch (13):
+      PCI: Add SNIA SDXI accelerator sub-class
+      dmaengine: sdxi: Add control structure definitions
+      dmaengine: sdxi: Add descriptor encoding and unit tests
+      dmaengine: sdxi: Add MMIO register definitions
+      dmaengine: sdxi: Add software data structures
+      dmaengine: sdxi: Add error reporting support
+      dmaengine: sdxi: Import descriptor enqueue code from spec
+      dmaengine: sdxi: Context creation/removal, descriptor submission
+      dmaengine: sdxi: Add core device management code
+      dmaengine: sdxi: Add PCI driver support
+      dmaengine: sdxi: Add DMA engine provider
+      dmaengine: sdxi: Add Kconfig and Makefile
+      MAINTAINERS: Add entry for SDXI driver
+
+ MAINTAINERS                         |   7 +
+ drivers/dma/Kconfig                 |   2 +
+ drivers/dma/Makefile                |   1 +
+ drivers/dma/sdxi/.kunitconfig       |   4 +
+ drivers/dma/sdxi/Kconfig            |  23 ++
+ drivers/dma/sdxi/Makefile           |  17 ++
+ drivers/dma/sdxi/context.c          | 547 ++++++++++++++++++++++++++++++++++++
+ drivers/dma/sdxi/context.h          |  28 ++
+ drivers/dma/sdxi/descriptor.c       | 197 +++++++++++++
+ drivers/dma/sdxi/descriptor.h       | 107 +++++++
+ drivers/dma/sdxi/descriptor_kunit.c | 181 ++++++++++++
+ drivers/dma/sdxi/device.c           | 401 ++++++++++++++++++++++++++
+ drivers/dma/sdxi/dma.c              | 409 +++++++++++++++++++++++++++
+ drivers/dma/sdxi/dma.h              |  12 +
+ drivers/dma/sdxi/enqueue.c          | 136 +++++++++
+ drivers/dma/sdxi/enqueue.h          |  16 ++
+ drivers/dma/sdxi/error.c            | 340 ++++++++++++++++++++++
+ drivers/dma/sdxi/error.h            |  16 ++
+ drivers/dma/sdxi/hw.h               | 249 ++++++++++++++++
+ drivers/dma/sdxi/mmio.h             |  92 ++++++
+ drivers/dma/sdxi/pci.c              | 216 ++++++++++++++
+ drivers/dma/sdxi/sdxi.h             | 206 ++++++++++++++
+ include/linux/pci_ids.h             |   1 +
+ 23 files changed, 3208 insertions(+)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250813-sdxi-base-73d7c9fdce57
+
 Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+-- 
+Nathan Lynch <nathan.lynch@amd.com>
+
+
 
