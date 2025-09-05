@@ -1,159 +1,91 @@
-Return-Path: <linux-kernel+bounces-803374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0FBB45E59
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87330B45E57
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC88587DBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D967587DA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F16309EE0;
-	Fri,  5 Sep 2025 16:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NfEn+tYW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4BB309F02;
+	Fri,  5 Sep 2025 16:39:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE93306B2A;
-	Fri,  5 Sep 2025 16:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2AC306B12
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757090368; cv=none; b=c4DHxbFAzidfcSAu6gt57I47YUzFh77kYwwZfNReiFPZStxx6cz7X/gdt2Cqnt41pdbhRqOUJhnqtLT3+rCaLNpUVxnHCiv+xGmBLL7GerXi/3zqjUXgxUrsy3cB0D1E92y+gcQZVj8nq8ljwM5tVlsV/GOUwzHv5KpwS1uQrUI=
+	t=1757090347; cv=none; b=oB4ewd8gT4tlvGyvxq1JhbWJDog/8RViITcuot3k9OeKrjfSZYdTxLIzejRqsaGK3ln2G/mlchrYmNX6Z9W08xiBqUQe9DgLA8byBILbrRmHS3KyaosN0n2j35+P0NKt5wS59ghek/67EgI2/RA5uYT/aghKeuQqOn7PcQWC9IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757090368; c=relaxed/simple;
-	bh=zmsBzE6b5qj1Y6/n+7xcJ/aC30MluLPi1gxV/P3HC1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ge1JL15eZ7B17DLvWdJRmbLc73TcYwPf33AYGXdbnD/3KuI7dqRzwiX9LuUtqTyvhSbtrHBgqCuHNhwgwAUwOEJi1JgFUhh0o+JCLDKvhEuCa29p4T2MLEoYV0HdxaT6GzBgAcoClTOawoYL+Jnl7XZtxgeGjsBqppzk62dw3Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NfEn+tYW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 29FB7F09;
-	Fri,  5 Sep 2025 18:38:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757090294;
-	bh=zmsBzE6b5qj1Y6/n+7xcJ/aC30MluLPi1gxV/P3HC1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NfEn+tYWvOlpeB53yvR0bEXeIkn8r7IHA0NOilB1smB6p3/1sk4+gQO1WN3YQbtPU
-	 3fGaOZp0KexFAlZxayt2h8aWmFBJfePJpgzUJgV+AkBjtWugzf2pq/93wpmPW44CE4
-	 G/0lTkeLsPAxS99bX5gN/YxDfyuatajmuGH+zUIY=
-Date: Fri, 5 Sep 2025 18:39:03 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: slongerbeam@gmail.com, p.zabel@pengutronix.de, rmfrfs@gmail.com,
-	martin.kepplinger@puri.sm, kernel@puri.sm,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, mchehab@kernel.org,
-	Hans Verkuil <hans@jjverkuil.nl>
-Subject: Re: [PATCH 1/1] MAINTAINERS: media: nxp: Add Frank Li as reviewer
- for nxp SoC
-Message-ID: <20250905163903.GB21773@pendragon.ideasonboard.com>
-References: <20250904161720.514889-1-Frank.Li@nxp.com>
- <20250905160453.GA21773@pendragon.ideasonboard.com>
- <aLsRVWhK2mT32Kzf@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1757090347; c=relaxed/simple;
+	bh=/FFeZI7QdUkhcuzbEYE5FKUgrVEK1ZE2ssX+lyyiL2Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NKBhb+sdp7vYMXxKadICPgyzed1AFXfofL6uzLyy9Gb2FMEGeZ9MrtYBi+s8uKKhpMDHKbUh8F5J6hvEAMp2X33rGnkzNtxvmSQhOp84pie6iRc3el4FtpzbkmJ7JlwIq/D08eoKbCDqsCBv0vDzhyG28h6FWzZTSgYGrJdyCmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8870345ac41so482867439f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:39:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757090345; x=1757695145;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3xjY4OL/WtLFThU2GJmksldyVS+4jgC0MSLxl8k1vWc=;
+        b=iXmDhmWUEY2b0rfKh0yx6T9B/fA+b5uUr+jOgZnm0WqbXhrPLnAyIFQ1V6bUdMS/RG
+         yzWsM8x6+zNpDD0uJkQaqAAAlOcmHvbcwSA6JtWAyTnu9vD8RruizYTdBr/iSzS1cRBw
+         3ulpRRASivzsUM2ZoQTJ2hNBrxrbIPgbciUWNSxHwoObulhbI/XsMxwMsSLEnob747bs
+         lC0hh690cj2aM+hEPrjvlP2A+vAPpbdSRjuYvVumi2xoNv5tQAgirj4oqKS2dOb0Utap
+         sLZ8L7mFLsphFGT/aF2YMOR8o/uqarTtlvKyrPoWGRRNDXOxVxKlHYoWf3GZ5U9JTk+T
+         0dXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDtnNHx9cO4clM/5VyPh+strYzcQMJvZtlIxtU/upQMU2emKEa/Erdyzg7TUNp3ZYt0JvQp2vS86UvXx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvI9gYFcWE6l59jk6FbgTTPLpv3770rrqp3DQuIE+Cl0p9BP6i
+	KymQwNyBJ19Uq9pImakKeo1xkgT3aGdj4jy0lBg6sEFJItLjsCfjqX2O/0ue8XF4M9+VmaXLfMG
+	FIITJQ90pGo3QNYFNbZ5DT9DkHdDaI1G6yoJyE1LnLzd1x2nV4zt3C5WJyPE=
+X-Google-Smtp-Source: AGHT+IGNstnM/s2sSf9/8RpanNHE1iJ0lbodvD0nHxbzVnhf3Kkd8ZCCBfzyCTWdxuDM9LneEO8NOl5MaeCmbg9emOy++9kyK7t7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aLsRVWhK2mT32Kzf@lizhi-Precision-Tower-5810>
+X-Received: by 2002:a92:ca4f:0:b0:3f9:8e24:4ca2 with SMTP id
+ e9e14a558f8ab-3f98e246731mr26316375ab.22.1757090344926; Fri, 05 Sep 2025
+ 09:39:04 -0700 (PDT)
+Date: Fri, 05 Sep 2025 09:39:04 -0700
+In-Reply-To: <68bad556.a00a0220.eb3d.0013.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bb1228.050a0220.192772.0194.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_level_init (4)
+From: syzbot <syzbot+55c84106264e92ea9ada@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 12:35:33PM -0400, Frank Li wrote:
-> On Fri, Sep 05, 2025 at 06:04:53PM +0200, Laurent Pinchart wrote:
-> > On Thu, Sep 04, 2025 at 12:17:20PM -0400, Frank Li wrote:
-> > > Add Frank Li as reviewer for nxp SoC.
-> >
-> > Great idea, and thank you for volunteering ! I really appreciate your
-> > help with reviews so far, and I have already mentioned it in a
-> > conversation with another SoC vendor as a model they should follow.
-> >
-> > I'd mention media drivers here though, unless you want to volunteer to
-> > review patches for the whole SoC :-) Maybe something along the lines of
-> >
-> > ----
-> > MAINTAINERS: Add Frank Li as reviewer for NXP media drivers
-> >
-> > Frank has been reviewing NXP media drivers for a while, and is
-> > volunteering to continue. Add him as a reviewer for the IMX media
-> > drivers.
-> >
-> > Also add the NXP i.MX platform mailing list (imx@lists.linux.dev).
-> > ----
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Do I need repost it with updated commit message? Or you can handle it when
-> pick patche?
+syzbot has bisected this issue to:
 
-No need to repost if you're fine with the proposal. I've applied the
-patch to my tree already to avoid forgetting about it. It would be
-easier if Hans or Mauro (on CC) could pick it though, to avoid sending a
-pull request with a single patch. Otherwise I'll send a pull request.
+commit f11ca2ab18e369a662c2f60d53b8bea46c54e312
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Thu Nov 28 03:29:54 2024 +0000
 
-> > > Add nxp open source mail list imx@lists.linux.dev.
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > I am work on kernel community for the while. And upstreamed/reviewed:
-> > > cee06ca7a6748 media: imx8mq-mipi-csi2: Fix error code in imx8mq_mipi_csi_parse_dt()
-> > > 51ad3b570ea7b media: imx-jpeg: Account for data_offset when getting image address
-> > > 642b70d526ab8 media: imx8mq-mipi-csi2: Add support for i.MX8QXP
-> > > 382d53e9cefb3 media: imx8mq-mipi-csi2: Add imx8mq_plat_data for different compatible strings
-> > > 859278460faa4 media: imx8-isi: Add support for i.MX8QM and i.MX8QXP
-> > > dee8521f69874 media: nxp: imx8-isi: Use dev_err_probe() to simplify code
-> > > 73a40554f979e media: nxp: imx8-isi: Remove redundant check for dma_set_mask_and_coherent()
-> > > 60b8de2b9b4be media: nxp: imx8-isi: Use devm_clk_bulk_get_all() to fetch clocks
-> > > 66ede6d71d4e8 media: nxp: imx8-isi: Remove unused offset in mxc_isi_reg and use BIT() macro for mask
-> > > 2021b8d51cdb5 media: nxp: imx8-isi: Allow num_sources to be greater than num_sink
-> > > 038d27acf987c media: imx-mipi-csis: Use CSI-2 data type macros from mipi-csi2.h
-> > > fd5b6cd730676 media: imx-jpeg: Check decoding is ongoing for motion-jpeg
-> > > f65fbf8c3d671 media: imx-jpeg: Change the pattern size to 128x64
-> > > 7500bb9cf164e media: imx-jpeg: Cleanup after an allocation error
-> > > faa8051b128f4 media: imx-jpeg: Reset slot data pointers when freed
-> > > 46e9c092f850b media: imx-jpeg: Move mxc_jpeg_free_slot_data() ahea
-> > >
-> > > On going thread:
-> > > 5 patches, https://lore.kernel.org/imx/20250729-imx8qxp_pcam-v4-1-4dfca4ed2f87@nxp.com/
-> > > 32 patches, https://lore.kernel.org/imx/20250808-95_cam-v2-0-4b29fa6919a7@nxp.com/
-> > > 2 patches, https://lore.kernel.org/imx/aLbdRdS3TmLHjW+Q@lizhi-Precision-Tower-5810/
-> > >
-> > > I am volunteer to review media related patches so add myself to MAINTIANER
-> > > so I can get notified when related patches post.
-> > > ---
-> > >  MAINTAINERS | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index b3ca0ba848879..2884a5216b427 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -15327,6 +15327,8 @@ F:	drivers/media/pci/ddbridge/*
-> > >  MEDIA DRIVERS FOR FREESCALE IMX
-> > >  M:	Steve Longerbeam <slongerbeam@gmail.com>
-> > >  M:	Philipp Zabel <p.zabel@pengutronix.de>
-> > > +R:	Frank Li <Frank.Li@nxp.com>
-> > > +L:	imx@lists.linux.dev
-> > >  L:	linux-media@vger.kernel.org
-> > >  S:	Maintained
-> > >  T:	git git://linuxtv.org/media.git
-> > > @@ -15341,6 +15343,8 @@ M:	Rui Miguel Silva <rmfrfs@gmail.com>
-> > >  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > >  M:	Martin Kepplinger <martin.kepplinger@puri.sm>
-> > >  R:	Purism Kernel Team <kernel@puri.sm>
-> > > +R:	Frank Li <Frank.Li@nxp.com>
-> > > +L:	imx@lists.linux.dev
-> > >  L:	linux-media@vger.kernel.org
-> > >  S:	Maintained
-> > >  T:	git git://linuxtv.org/media.git
+    bcachefs: Guard against backpointers to unknown btrees
 
--- 
-Regards,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1663c962580000
+start commit:   d69eb204c255 Merge tag 'net-6.17-rc5' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1563c962580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1163c962580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=55c84106264e92ea9ada
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1788c962580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b0887c580000
 
-Laurent Pinchart
+Reported-by: syzbot+55c84106264e92ea9ada@syzkaller.appspotmail.com
+Fixes: f11ca2ab18e3 ("bcachefs: Guard against backpointers to unknown btrees")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
