@@ -1,206 +1,235 @@
-Return-Path: <linux-kernel+bounces-803726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C7FB46462
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:08:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F9AB46455
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0CA3AC337
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:08:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FACA4E4342
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0C4298CDC;
-	Fri,  5 Sep 2025 20:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C7B27990C;
+	Fri,  5 Sep 2025 20:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bsZ+Tv9v"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34184280A5F;
-	Fri,  5 Sep 2025 20:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757102884; cv=none; b=esA16IQtJunG5a/yJlCxqpuHOTonFUMzxg8Cho092RblnRaQJs+A/xWdfhapuaemdUf6VJB3grEGd5/QmCZ8LHFMR+hYxF7ckA4XSXnQA7t2cyqTiAZgZLvfvxBeYby7n9ctEb1AGOi3Vio3OYLNdllXTe4KK0IixudKBpblwWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757102884; c=relaxed/simple;
-	bh=2m6fPzkCRC92qTFZavMPj/0W9huhFTFWzZEWQiM0e+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHkWP3iDOcjvFbJHx4muxFHr7g4fXfk81u3/MHI+YSg72AqwIglilC0FypKhl+1OanhWhH+U1qG/f8bzr7/WRGgS4cfuZKeNrjkQvqDgsSsE8bZqa08UVVeWVgeK443OLjG8LY89tUgG3QaCLNZlLMJsPE6TqsvI9oI9XolngIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bsZ+Tv9v; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 98B5220171C4;
-	Fri,  5 Sep 2025 13:08:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 98B5220171C4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757102882;
-	bh=uotTTD65zan8TmCm5oKAbPiE7QB78kRP80SKbUy3768=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bsZ+Tv9vlFvx3FSsyyJQ00ypVCg071rBzhVBQzQ/LnPzkj/syqiM8BQWw8v4Czew8
-	 +mS7K/hwRDMDO3GD3r5fPtl8h2fOvZArSQGq0dxtTszR8YTrcw26eytE3rGQ7MMIqk
-	 vnwEKn2ou0NMnA2ymmTpNmSgop+6sZ4I9ED+9giU=
-Message-ID: <231f05cb-4f33-48ac-bb2e-1359ed52e606@linux.microsoft.com>
-Date: Fri, 5 Sep 2025 13:08:00 -0700
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4aZKRGZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26B8BA42;
+	Fri,  5 Sep 2025 20:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757102796; cv=fail; b=j7kxf02aV+Hnqgm3xBnX6/7pnOY5b3cpiW11wkkrV8FIhBtFHX6C9O2S5y+L/uwVnqrnM12PvIuZ3WsZjYngQVMeBqTteWK7Wz/5E+6BysK3jCGs+ythFVNUWFQKCqHr6cElQUJ83XIg5ZIMV11Ks1paNysvT3mxIgxZaOa5UaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757102796; c=relaxed/simple;
+	bh=S/6+sD0Gdt3zSAk/fG9nXJF4mn6Xkwt9EGDU39oGA8E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XRAFYHCaUjdU+6NCSjywa4uQ9HkQ4Gyn/+V0I2WOQVR8gqx/w12Gzcc3Ef9YPiRaDKW9KYR0Ano7UScLWfeWZASPF8K3uzHbMUYyEO6M5l6NqzGYUsEYle7b18DzMhcLE1bgFsqLCXFIOHmRFP9JEdCDpgug3Zg5l6VhMkrwlro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4aZKRGZ; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757102795; x=1788638795;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=S/6+sD0Gdt3zSAk/fG9nXJF4mn6Xkwt9EGDU39oGA8E=;
+  b=n4aZKRGZfS4UPvTXUBMvFmrhpaGx/s2NP3GP18TFnoZK4d1NK8ue1DxZ
+   pDgMQXX3n/3Ht3LFUCEUcmO1eJe0U5OAwIBdBY/zRb/tPL575TzMA1Oxd
+   yUji2TxPMlW/oMoaLJ76OTtpH6OV9VissUfhmBgiwHRmG/lhY0TseVJI5
+   aB1ge4xTUnQ3XfFHouBk2JTOy5qiEQbu3WTimUOOIeBJXtcSKPA1ss383
+   0lG+iw8VI3aBdmAbjdMAqymX8tAL2F7foo0Dd4sfnBNLCsowUraHDbVao
+   2w0oru4qf7LiCqUcqKiDFzkbrRrab3OajfOZ68PqYKOXKIkB69CLOhztk
+   A==;
+X-CSE-ConnectionGUID: z0NiH0fnSMWKxtvdnHuV6g==
+X-CSE-MsgGUID: ex4Z+f/uSWinHVo2ZzLJ5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="58670435"
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="58670435"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 13:06:34 -0700
+X-CSE-ConnectionGUID: wKFjrqU3S7iJPyPOYWwLmg==
+X-CSE-MsgGUID: u8UhtalzQaC5cj/4/tw+lA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="171521461"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 13:06:33 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 5 Sep 2025 13:06:33 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 5 Sep 2025 13:06:33 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.43)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 5 Sep 2025 13:06:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fJaurg6h1ShlHK+6DgDwiFVVAuf50q91bvBD4gfCD+YR593YHHUfj19RZnpDhN+8QbWiVRHDFbc44skk+Hyp4Lv+Xxi56/IPUpD/QiXcM/flXKRLLbV4egKI2GqhxafeoAbqg+sl7YHCsI8czGWoHU8aWgnslFLb2ee1wfYru+wWFNCSau4N/Gr+2f3VOVIcrVwqZX9WGSmmOK7ocAD1sC8XyZGaSjmXlAvo8ljRQzHjibh9VSu2Y0l27TXmY1HJr8U3xGOQa005a/PEL9BSGvHbUxvH2fT/r4NKtDG0SdUu1PYiLIlPkYMAgsJ88VHHI7sbjucJiA6x5RBJ3FzmKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q3SrlE7XBKkICNA8CuVMz/KnGZapiD703AkGVJobD4k=;
+ b=h2Ea45TL7nUgFjY4uCf+YWzYYH9c0OVNBaInenRzS/S43ye8DwkJDFGMzQqA4gj+A3/xotlqKTXw99W9bB/X4oTG/Qe7u9GImKPYzWIT4FdLwoRE+Te4RjCPLglyfj0xdMMRGVmuVrXbLNUIBQ1HVKuMwPhWYQZKD0jXJk2ffUWnHMTshQXpgbjlzTnIv5ePmyXi6hvNQwv9f/GrbPQZxt0Wna7R2B/rE78YxBFty3Swy8KUezq6HgTV2oI/2P40RpPd23NlqOzsUtx77ILCBJL0AWT/3FD9KUZ0joXiYW4vmQjOuuhRa/LC8QCF5kQyG+2H/i1WdAEEEWJkge5Jxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by PH7PR11MB8549.namprd11.prod.outlook.com
+ (2603:10b6:510:308::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Fri, 5 Sep
+ 2025 20:06:29 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
+ 20:06:29 +0000
+Date: Fri, 5 Sep 2025 15:08:21 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>, Ira Weiny <ira.weiny@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>,
+	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
+Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
+ init_labels and its region_uuid
+Message-ID: <68bb43351ea_9916329427@iweiny-mobl.notmuch>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+ <CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
+ <20250730121209.303202-8-s.neeraj@samsung.com>
+ <68a4c8d971529_27db9529479@iweiny-mobl.notmuch>
+ <1690859824.141757055784098.JavaMail.epsvc@epcpadp2new>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1690859824.141757055784098.JavaMail.epsvc@epcpadp2new>
+X-ClientProxiedBy: MW4PR03CA0039.namprd03.prod.outlook.com
+ (2603:10b6:303:8e::14) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V0 0/2] Fix CONFIG_HYPERV and vmbus related anamoly
-To: Mukesh R <mrathor@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "jikos@kernel.org" <jikos@kernel.org>,
- "bentiss@kernel.org" <bentiss@kernel.org>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "deller@gmx.de" <deller@gmx.de>, "arnd@arndb.de" <arnd@arndb.de>,
- "sgarzare@redhat.com" <sgarzare@redhat.com>,
- "horms@kernel.org" <horms@kernel.org>
-References: <20250828005952.884343-1-mrathor@linux.microsoft.com>
- <SN6PR02MB4157917D84D00DBDAF54BD69D406A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ff4c58f1-564d-ddfa-bdff-48ffee6e0d72@linux.microsoft.com>
- <SN6PR02MB41573C5451F21286667C5441D400A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <4f38c613-255c-eaf6-0d50-28f8ffc02fff@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <4f38c613-255c-eaf6-0d50-28f8ffc02fff@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|PH7PR11MB8549:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7908c04b-3a29-48f5-4b14-08ddecb7b39d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?z/qL26jYoQiwhy2PBVXY2j/YZ4s8yeXrlupjmtOLOENTUj176cDNgO6ufH5X?=
+ =?us-ascii?Q?VpkCSBP6SG8j6rUFeZS70q7jhwxnbHIhbHDJTqhuc9/UB6JfaBQ8AGbKXxBm?=
+ =?us-ascii?Q?s70rw/TdtRmRYCq5bIB3+e5TT28Nmki1IV43zfeyXF7HcgyuuLZucynpqLp7?=
+ =?us-ascii?Q?yf5pt48wr6hl6Jh30EMEzegphFILGYJd58hb82hfMLtlpFC4KlZcNhzQS2AE?=
+ =?us-ascii?Q?8vrzGkJZxBVc29GeglSXQ5fCd7yaH9bPLHAzB9qD2a8hu/sEjahKzWoNWjnR?=
+ =?us-ascii?Q?Q6zlM3pGtPoKfFRb5jbABjGXIwfI0txjP6VRSsHBjrUrM7QF/TDpOYhGe6lc?=
+ =?us-ascii?Q?ErtcyZOzg772HQd/TZaiXtJsC6+HrrQGe2Sa4r+dFqGytt1WVdRBaZTJEM7c?=
+ =?us-ascii?Q?YMvy5oWpsHTnnnRhUsif+IBeo1IsWnqVdufImt/MeUdSeOmQrXiwxOT7W0M9?=
+ =?us-ascii?Q?fz9GylMopMcAYhD3K2YT2yxsmBL9TiowiPLkQ1sss1qIwBfM7UjqoS/rGmu1?=
+ =?us-ascii?Q?fQZ+V/+7gi/0eqn9awmErw+HWTB3E2Rch8rAMkjwKd+oGNz4/vkOLQmyQDHa?=
+ =?us-ascii?Q?gHkpRZ3YIGYg0JVTOxzWceWCtjEfjNMaFntbvDF4Crgu32UJ17/GuDcSM2KG?=
+ =?us-ascii?Q?sbAj9JOU+3TxbDuo+eJn1k8hN+OxLXdrTG3fylghUN079LsNj2Ae+cTgbJ47?=
+ =?us-ascii?Q?dGyYQERzhvMdW13GziVBoLm8cGgKQN9RcT87H919QcW1ijyWySPw8i7TABcF?=
+ =?us-ascii?Q?t5TVWvL6RRbrzwK5sL0y5IIa6IdVT0GoOpSRYboiDlIt/x75tDxTKrYEgwvE?=
+ =?us-ascii?Q?QecSGyfqGXgxMY6JZH5akFNGCGXMoi0te6R4qFbNmd+KJyoBcCQGa8zalRjg?=
+ =?us-ascii?Q?rZskGAtKMVa8+AOsCPEh+1Pz4JBdiekObi4VpcyAbkO3rVdd2nrBlFB1Qzm6?=
+ =?us-ascii?Q?FHFoDWgS8HK8fm7FZy8w02KQW0nmY3ilI8zaHSg1bbniUp7ZDuT9HNlY4QZD?=
+ =?us-ascii?Q?EPH/7OouDMivdgknhWZJRmoedySVtWl1QlNfkTIZGntTwH5YhpDg/8HHjUsj?=
+ =?us-ascii?Q?MbARsC9/+cWItiLra1C4f7SrgOaU7EBhhB8Ya6D03KFhN/A5ckVDfnmSBFQD?=
+ =?us-ascii?Q?WJ2fsKg15GwmdjDFChPE2pGfypswziooHmrZ61pgDm762R207AVZszqO0i9n?=
+ =?us-ascii?Q?x3JCPVwD+/4qD+44E+tt6dqnO2Yq/QozCpjNqTAi/CizNnM2ulh5OHYffMRB?=
+ =?us-ascii?Q?vsbNyR4/CdwEF3P7gHUFCgNc+pp1bJegKuzyiBQe3F4/ECnAXGTIui3ZJ+pA?=
+ =?us-ascii?Q?+j6ATRyDoBI2G1l/bqkowBsH5dMl3C0iuDX5TI7CJS/zNm6S8V7OZTiF+nGu?=
+ =?us-ascii?Q?/5eVtiexLjGGL1Do8C5ko4msCw87o5QYk4zgBbOZIZ9DjHKgJVs+Oynek4IT?=
+ =?us-ascii?Q?ILoq09BjsoM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?UXXX/Me/KQvJKGQGsrFgHgWel3n/gctmyGb5/d6cIyAs18SHnbai3Lt2yTWt?=
+ =?us-ascii?Q?8ExNvqnWDuAVhvZEIci1LjdsSf2IhacIS4b19DZI95ZUFL5rBwgbplHyPB87?=
+ =?us-ascii?Q?/4e0+3F12fOZEi9Fll4ayNc0ROLzYGOKZXyqk0EzgEbK2+gA70jN/srU4Go7?=
+ =?us-ascii?Q?qjOvx0WX8Sd8teOeMoXvXL4QVvRcw0yDUXdDQPk0m49Rr+3NCFAjCCc9ZBTn?=
+ =?us-ascii?Q?8Nrhny0Q8wmbaLKzwrBTgSzUid5s6tOnFF1lyP+n590AhY6mNgHnCyzgxw7p?=
+ =?us-ascii?Q?lp6lbpE9xxvUmb719p+djj+2d7wBSp/3KnuPbw75qYZouIc5bo03HiY9dWZr?=
+ =?us-ascii?Q?M58KVU8seiw77egLRT8V/BHyjYcy9VYuQXiSD3EyF1afcAVCo7MhP0LGRv/6?=
+ =?us-ascii?Q?kX8EYml6V6gz7QHonZv8aSUYaVny8zsczhLI70gEb9AkxN/AJcctY39bBrka?=
+ =?us-ascii?Q?gJFjfKF5UPoWmKdDsJkTFh//GvbbjA+QM69QVrFKtXpVKVgIseazbICdy2CM?=
+ =?us-ascii?Q?5k1h/kU7VKnFlBE6YJaeFwpIHYlbDaKRBYCL1uVhNon9JX9oaMIkOTXLyR3b?=
+ =?us-ascii?Q?zq2344+l+uQ3utGlOKO/QuGvghqkrn5xkUE0zTMB9jJHsCaGvbbG6yMYAuyP?=
+ =?us-ascii?Q?qA9oHHzTcR6mJBqJvxf98hpIPu9jmZuLODhqL3lrDpArR7NbKIUudIXHUphv?=
+ =?us-ascii?Q?sT4DbDBHGyk3/tWwNTSW1RYOduJEf+yp29qTfhZXoEo31eFZEn+Lgj2eW8Nm?=
+ =?us-ascii?Q?3kI85FCTB1kBU+qKGcFUDj/IbhHs4MzoxZTgZaVrfdl277Q6LFL3HXgdYR33?=
+ =?us-ascii?Q?HJcMwf/ah7bY7W9op4yeKDsjzcQipNY8s6kT5Oe9mynOeCSh/G8l3nMQuSFC?=
+ =?us-ascii?Q?dtQgXM9USRCLGNDYyX/a1jByK9ea37UKN+EbzwTD9kEIbEOenkAI13CTpALF?=
+ =?us-ascii?Q?Lh8CtDxAW5Xz7YbC/FYGIpvoahv+zc3paiPmAAsJyhT1INUh+L9EUF+I0/CI?=
+ =?us-ascii?Q?kespH0JUasIwulHuiNJGRKauYbLa0XF6hs7ZISw0+elqYPFhYnf4HfoKJEiQ?=
+ =?us-ascii?Q?afO9/gqYSEP6kkH6xwdSYYYVfAFd9RvKO5o0c0nJDQnvLw+qxg+cR3cKo8w6?=
+ =?us-ascii?Q?WdvLYEHLgCork/bXwJIv8iPsVBs5Zh2AEzge3Pn2DL8nhnKWkVA170rJyZqq?=
+ =?us-ascii?Q?2G/7zgpzY/aPv6LJz+ZQNz9Boi2AZlTbbG/YfFe4NyO8y1lFqZJ3cMVyFT3e?=
+ =?us-ascii?Q?dUDtsQUF0rciXlMcWgTTvcymivLQ2R0zHG+zbVZz+GGTRuFa6z1Vflc861iA?=
+ =?us-ascii?Q?4k1JkVHE/ifbC8mpuVrQvH/2mprZV2kTMb9VSMekBCVoFZugfMSqbLLx4pn6?=
+ =?us-ascii?Q?xmI5XEjVj9aIsDmk4IS4H+WUDFnLlNI6PVmyQV7ZvNiVvNJ9Ilvpn2nxRCpn?=
+ =?us-ascii?Q?z0bvA0BJ8sTxx8jz5yls4qk3RLu8MktwlYHZuMZGHEP1VmLedKlTM0FXc93X?=
+ =?us-ascii?Q?jvnXyjitx8GK4qHMbICpnfzpTSaJUbgNb5Yvud6f1yPaqyl31wrxC7SCJsw2?=
+ =?us-ascii?Q?PZ7chjacyFcHBC5eys/OPsBfZ7buPjXzbeSOQaMP?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7908c04b-3a29-48f5-4b14-08ddecb7b39d
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 20:06:29.6029
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mhq5TgSgyckopHdn+zpi+amZmWv/fzoz3edT/UA0BCPUQoCs5XGLaFBGHyTusAIztCds55odw3uf9MbIh+fNNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8549
+X-OriginatorOrg: intel.com
 
-On 9/4/2025 11:18 AM, Mukesh R wrote:
-> On 9/4/25 09:26, Michael Kelley wrote:
->> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, September 3, 2025 7:17 PM
->>>
->>> On 9/2/25 07:42, Michael Kelley wrote:
->>>> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Wednesday, August 27, 2025 6:00 PM
->>>>>
->>>>> At present, drivers/Makefile will subst =m to =y for CONFIG_HYPERV for hv
->>>>> subdir. Also, drivers/hv/Makefile replaces =m to =y to build in
->>>>> hv_common.c that is needed for the drivers. Moreover, vmbus driver is
->>>>> built if CONFIG_HYPER is set, either loadable or builtin.
->>>>>
->>>>> This is not a good approach. CONFIG_HYPERV is really an umbrella config that
->>>>> encompasses builtin code and various other things and not a dedicated config
->>>>> option for VMBUS. Vmbus should really have a config option just like
->>>>> CONFIG_HYPERV_BALLOON etc. This small series introduces CONFIG_HYPERV_VMBUS
->>>>> to build VMBUS driver and make that distinction explicit. With that
->>>>> CONFIG_HYPERV could be changed to bool.
->>>>
->>>> Separating the core hypervisor support (CONFIG_HYPERV) from the VMBus
->>>> support (CONFIG_HYPERV_VMBUS) makes sense to me. Overall the code
->>>> is already mostly in separate source files code, though there's some
->>>> entanglement in the handling of VMBus interrupts, which could be
->>>> improved later.
->>>>
->>>> However, I have a compatibility concern. Consider this scenario:
->>>>
->>>> 1) Assume running in a Hyper-V VM with a current Linux kernel version
->>>>     built with CONFIG_HYPERV=m.
->>>> 2) Grab a new version of kernel source code that contains this patch set.
->>>> 3) Run 'make olddefconfig' to create the .config file for the new kernel.
->>>> 4) Build the new kernel. This succeeds.
->>>> 5) Install and run the new kernel in the Hyper-V VM. This fails.
->>>>
->>>> The failure occurs because CONFIG_HYPERV=m is no longer legal,
->>>> so the .config file created in Step 3 has CONFIG_HYPERV=n. The
->>>> newly built kernel has no Hyper-V support and won't run in a
->>>> Hyper-V VM.
-
-It surprises me a little that =m doesn't get 'fixed up' to =y in this case.
-I guess any invalid value turns to =n, which makes sense most of the time.
-
->>>>
->>>> As a second issue, if in Step 1 the current kernel was built with
->>>> CONFIG_HYPERV=y, then the .config file for the new kernel will have
->>>> CONFIG_HYPERV=y, which is better. But CONFIG_HYPERV_VMBUS
->>>> defaults to 'n', so the new kernel doesn't have any VMBus drivers
->>>> and won't run in a typical Hyper-V VM.
->>>>
->>>> The second issue could be fixed by assigning CONFIG_HYPERV_VMBUS
->>>> a default value, such as whatever CONFIG_HYPERV is set to. But
->>>> I'm not sure how to fix the first issue, except by continuing to
->>>> allow CONFIG_HYPERV=m.
-
-I'm wondering, is there a path for this change, then? Are there some
-intermediate step/s we could take to minimize the problem?
-
->>>
->>> To certain extent, imo, users are expected to check config files
->>> for changes when moving to new versions/releases, so it would be a
->>> one time burden. 
->>
->> I'm not so sanguine about the impact. For those of us who work with
->> Hyper-V frequently, yes, it's probably not that big of an issue -- we can
->> figure it out. But a lot of Azure/Hyper-V users aren't that familiar with
->> the details of how the Kconfig files are put together. And the issue occurs
->> with no error messages that something has gone wrong in building
->> the kernel, except that it won't boot. Just running "make olddefconfig"
->> has worked in the past, so some users will be befuddled and end up
->> generating Azure support incidents. I also wonder about breaking
->> automated test suites for new kernels, as they are likely to be running
->> "make olddefconfig" or something similar as part of the automation.
->>
->>> CONFIG_HYPERV=m is just broken imo as one sees that
->>> in .config but magically symbols in drivers/hv are in kerenel.
->>>
->>
->> I agree that's not ideal. But note that some Hyper-V code and symbols
->> like ms_hyperv_init_platform() and related functions show up when
->> CONFIG_HYPERVISOR_GUEST=y, even if CONFIG_HYPERV=n. That's
->> the code in arch/x86/kernel/cpu/mshyperv.c and it's because Hyper-V
->> is one of the recognized and somewhat hardwired hypervisors (like
->> VMware, for example).
->>
->> Finally, there are about a dozen other places in the kernel that use
->> the same Makefile construct to make some code built-in even though
->> the CONFIG option is set to "m". That may not be enough occurrences
->> to make it standard practice, but Hyper-V guests are certainly not the
->> only case.
->>
->> In my mind, this is judgment call with no absolute right answer. What
->> do others think about the tradeoffs?
+Neeraj Kumar wrote:
+> On 19/08/25 01:56PM, Ira Weiny wrote:
+> >Neeraj Kumar wrote:
+> >> nd_mapping->labels maintains the list of labels present into LSA.
+> >> init_labels() prepares this list while adding new label into LSA
+> >> and updates nd_mapping->labels accordingly. During cxl region
+> >> creation nd_mapping->labels list and LSA was updated with one
+> >> region label. Therefore during new namespace label creation
+> >> pre-include the previously created region label, so increase
+> >> num_labels count by 1.
+> >
+> >Why does the count of the labels in the list not work?
+> >
+> >static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+> >{
+> >        int i, old_num_labels = 0;
+> >...
+> >        mutex_lock(&nd_mapping->lock);
+> >        list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> >                old_num_labels++;
+> >        mutex_unlock(&nd_mapping->lock);
+> >...
+> >
 > 
-> Wei had said in private message that he agrees this is a good idea. Nuno
-> said earlier above: 
+> Hi Ira,
 > 
-> "FWIW I think it's a good idea, interested to hear what others think."
-> 
-That was before Michael pointed out the potential issues which I was
-unaware of. Let's see if there's a path that is smoother for all the
-downstream users who may be compiling with CONFIG_HYPERV=m.
+> init_labels() allocates new label based on comparison with existing
+> count of the labels in the list and passed num_labels. If num_labels
+> is greater than count of the labels in the list then new label is
+> allocated and stored in list for later usage
 
-Nuno
+I think I'm following better but shouldn't this hunk be included in the
+code which creates the region label in the list?
 
-> Thanks,> -Mukesh
-> 
-> 
+I'm concerned that this '+ 1' out of the blue and will be confusing in the
+future.  Why can't count be kept up to date when the region label was
+created and added?
 
+What code (patch) added this region label?
+
+Ira
+
+[snip]
 
