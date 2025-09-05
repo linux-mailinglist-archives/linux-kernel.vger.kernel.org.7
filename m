@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-803314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D070B45D66
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765B5B45D68
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D0E73A06E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E970E17FD23
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616B2FB082;
-	Fri,  5 Sep 2025 16:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0658F2FB08F;
+	Fri,  5 Sep 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkCTmRFP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t5znLdDO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C50131D749;
-	Fri,  5 Sep 2025 16:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EE031D749;
+	Fri,  5 Sep 2025 16:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757088294; cv=none; b=nsWx6Sfji7JbEUGQthoJ78Lf3iSsLAE5ljOJgiFqIMwmi7DG12fMAd2BlTIeKYeGkt1fZx8T1VDSpfpELN4E9fE8hO1wdd+qYR1Ae4sQIPeEqAUB6MzmRNaChyl2yqEyl/i/C+azlWaoCcNcl0U9YsbHI02CrFBzsf3xmNW5gzo=
+	t=1757088324; cv=none; b=r8F8teeFmZYS3MxemRxWHuDQOBGPa0hdTBGngCzXN9oXb+RqgfupOyCukADh8Kn3eeuKFFIkTeiAZ/nFpm79989pHyaYXr1EtUK2U4rpEcfCuXqAWgsDPE4f8AN6JBApU/IIZL0A4RxR2aWNhtvjmfQo2zdsPub/YaXhsf6AsIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757088294; c=relaxed/simple;
-	bh=MFaxVUP2WR8mgDvfrBhcM+Tfjo4mL8eAwZ6FVGDLWjc=;
+	s=arc-20240116; t=1757088324; c=relaxed/simple;
+	bh=Q3cOUcU+++24jA63p/u073+a/HiaPqsJU8CA5zLc19I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bI6IVtvTlJ8yZXRocvU9BUHXiPbM8pw2xNoog2M1H90ghJ9oJ7axHPvLdLsanY5xxrTl5wrEtgEAXIVtYGN/pnJ3+xfulU9vY/FVJ7JVSAmaoo+tGlY4u4a4PuJS5A0lhOuLAOGj6FUCUpHRDwJc3W2vAJtEWSfrAwNIT4PZ8Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkCTmRFP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8320C4CEF1;
-	Fri,  5 Sep 2025 16:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757088293;
-	bh=MFaxVUP2WR8mgDvfrBhcM+Tfjo4mL8eAwZ6FVGDLWjc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=V3b6lUZHRfoqdGZPWtkrTrekCrL4HLq7Cw0VBhjXesu8CoegLOWGkiC3T52+57HhSHH2nscjCDR1aYUHlrZjYOPtQHY0j8XUovW+uDxm2OanMt3EfuXMjZOdR/g2h8CsEPJCPN5hQ3IWh1hoEBZ+pkbDzgnY4iAyZqZKzhlhEu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t5znLdDO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 25D5FF09;
+	Fri,  5 Sep 2025 18:04:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757088244;
+	bh=Q3cOUcU+++24jA63p/u073+a/HiaPqsJU8CA5zLc19I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VkCTmRFPvNIoW2SRR9UQ+m3Bgmsw3U8XoktISJCNWRsHPG+sm07bN4kNxkCfT10si
-	 A/igHYxPZ82zdvfzQrO6RLksqI8tJ4jDxNCz45/+U8Fmud8MkDFbOngF6ttRlS11lo
-	 EOW8GSe9xnEOyQ3GtDQmNezgCiKxx3sTnjQpe3G5ro6I9OQjCILR5kmyP62kxy0QpI
-	 7MG3Q1Z2YYKQrPIqnbDNdf9nAuN/hcOcfZcam9/POvGyDYO8WWZzRbAJ3n4tbivQV/
-	 kYGKv1VbF2B/3LqOpv03Mtpf8392yqlxj/Cpm+cB7fxJ2gH/zGRfI+uxlMi51BZOA1
-	 cS6d7lz0gUGuw==
-Date: Fri, 5 Sep 2025 09:04:50 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
- warnings about EFISTUB
-Message-ID: <itoqfhz4pxaf7aclzajkxcdsxe5akxhgahzj4dp24leh7w334k@epnvcxdga75p>
-References: <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
- <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn>
- <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
- <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn>
- <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
- <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn>
- <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
- <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55>
- <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
- <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
+	b=t5znLdDOCBJ8UUSR2W8IzUrPaj+ebAQEhnZW7pJe4F7WnPuKYQ8QLBx5PxvVu1GrY
+	 IJAk3fi8RlnJos9o1hI7u3WG1PZB8rOc4WQkWE3y++RuOQoL4bkDz+8FexzOeu/MkM
+	 4PR6XMBTMeJ18TtkowpJC/NEry+nO5BADDiCae8s=
+Date: Fri, 5 Sep 2025 18:04:53 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: slongerbeam@gmail.com, p.zabel@pengutronix.de, rmfrfs@gmail.com,
+	martin.kepplinger@puri.sm, kernel@puri.sm,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, mchehab@kernel.org
+Subject: Re: [PATCH 1/1] MAINTAINERS: media: nxp: Add Frank Li as reviewer
+ for nxp SoC
+Message-ID: <20250905160453.GA21773@pendragon.ideasonboard.com>
+References: <20250904161720.514889-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,57 +59,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
+In-Reply-To: <20250904161720.514889-1-Frank.Li@nxp.com>
 
-On Fri, Sep 05, 2025 at 12:36:16PM +0800, Huacai Chen wrote:
-> Hi, Josh,
+Hi Frank,
+
+On Thu, Sep 04, 2025 at 12:17:20PM -0400, Frank Li wrote:
+> Add Frank Li as reviewer for nxp SoC.
+
+Great idea, and thank you for volunteering ! I really appreciate your
+help with reviews so far, and I have already mentioned it in a
+conversation with another SoC vendor as a model they should follow.
+
+I'd mention media drivers here though, unless you want to volunteer to
+review patches for the whole SoC :-) Maybe something along the lines of
+
+----
+MAINTAINERS: Add Frank Li as reviewer for NXP media drivers
+
+Frank has been reviewing NXP media drivers for a while, and is
+volunteering to continue. Add him as a reviewer for the IMX media
+drivers.
+
+Also add the NXP i.MX platform mailing list (imx@lists.linux.dev).
+----
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> Add nxp open source mail list imx@lists.linux.dev.
 > 
-> On Fri, Sep 5, 2025 at 5:46 AM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > On Thu, Sep 04, 2025 at 10:39:30AM -0700, Josh Poimboeuf wrote:
-> > > On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
-> > > > This is from RISC-V code.
-> > > >
-> > > > __HEAD
-> > > > SYM_CODE_START(_start)
-> > > >         /*
-> > > >          * Image header expected by Linux boot-loaders. The image header data
-> > > >          * structure is described in asm/image.h.
-> > > >          * Do not modify it without modifying the structure and all bootloaders
-> > > >          * that expects this header format!!
-> > > >          */
-> > > > #ifdef CONFIG_EFI
-> > > >         /*
-> > > >          * This instruction decodes to "MZ" ASCII required by UEFI.
-> > > >          */
-> > > >         c.li s4,-13
-> > > >         j _start_kernel
-> > > > #else
-> > > >         /* jump to start kernel */
-> > > >         j _start_kernel
-> > > >         /* reserved */
-> > > >         .word 0
-> > > > #endif
-> > > >
-> > > > The HEAD section has instructions, if you change it into a data
-> > > > section then it loses the "x" attribute.
-> >
-> > Actually, the "x" attribute isn't needed for vmlinux.  The vmlinux
-> > linker script places it in the text region regardless.
-> >
-> > Moving the data to a data section should be really simple, something
-> > like the below.
-> >
-> > And yes, even the above RISC-V code can be in a data section.  Those
-> > instructions are part of the 'struct riscv_image_header' data structure.
-> This may work but also look strange (code in data section), it is more
-> like a "workaround". :)
-
-The "strange" part of the code is the intermixing of code and data.  If
-they can't be separated, then they are part of a data structure and
-belong in a data section.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> I am work on kernel community for the while. And upstreamed/reviewed:
+> cee06ca7a6748 media: imx8mq-mipi-csi2: Fix error code in imx8mq_mipi_csi_parse_dt()
+> 51ad3b570ea7b media: imx-jpeg: Account for data_offset when getting image address
+> 642b70d526ab8 media: imx8mq-mipi-csi2: Add support for i.MX8QXP
+> 382d53e9cefb3 media: imx8mq-mipi-csi2: Add imx8mq_plat_data for different compatible strings
+> 859278460faa4 media: imx8-isi: Add support for i.MX8QM and i.MX8QXP
+> dee8521f69874 media: nxp: imx8-isi: Use dev_err_probe() to simplify code
+> 73a40554f979e media: nxp: imx8-isi: Remove redundant check for dma_set_mask_and_coherent()
+> 60b8de2b9b4be media: nxp: imx8-isi: Use devm_clk_bulk_get_all() to fetch clocks
+> 66ede6d71d4e8 media: nxp: imx8-isi: Remove unused offset in mxc_isi_reg and use BIT() macro for mask
+> 2021b8d51cdb5 media: nxp: imx8-isi: Allow num_sources to be greater than num_sink
+> 038d27acf987c media: imx-mipi-csis: Use CSI-2 data type macros from mipi-csi2.h
+> fd5b6cd730676 media: imx-jpeg: Check decoding is ongoing for motion-jpeg
+> f65fbf8c3d671 media: imx-jpeg: Change the pattern size to 128x64
+> 7500bb9cf164e media: imx-jpeg: Cleanup after an allocation error
+> faa8051b128f4 media: imx-jpeg: Reset slot data pointers when freed
+> 46e9c092f850b media: imx-jpeg: Move mxc_jpeg_free_slot_data() ahea
+> 
+> On going thread:
+> 5 patches, https://lore.kernel.org/imx/20250729-imx8qxp_pcam-v4-1-4dfca4ed2f87@nxp.com/
+> 32 patches, https://lore.kernel.org/imx/20250808-95_cam-v2-0-4b29fa6919a7@nxp.com/
+> 2 patches, https://lore.kernel.org/imx/aLbdRdS3TmLHjW+Q@lizhi-Precision-Tower-5810/
+> 
+> I am volunteer to review media related patches so add myself to MAINTIANER
+> so I can get notified when related patches post.
+> ---
+>  MAINTAINERS | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b3ca0ba848879..2884a5216b427 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15327,6 +15327,8 @@ F:	drivers/media/pci/ddbridge/*
+>  MEDIA DRIVERS FOR FREESCALE IMX
+>  M:	Steve Longerbeam <slongerbeam@gmail.com>
+>  M:	Philipp Zabel <p.zabel@pengutronix.de>
+> +R:	Frank Li <Frank.Li@nxp.com>
+> +L:	imx@lists.linux.dev
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://linuxtv.org/media.git
+> @@ -15341,6 +15343,8 @@ M:	Rui Miguel Silva <rmfrfs@gmail.com>
+>  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>  M:	Martin Kepplinger <martin.kepplinger@puri.sm>
+>  R:	Purism Kernel Team <kernel@puri.sm>
+> +R:	Frank Li <Frank.Li@nxp.com>
+> +L:	imx@lists.linux.dev
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://linuxtv.org/media.git
 
 -- 
-Josh
+Regards,
+
+Laurent Pinchart
 
