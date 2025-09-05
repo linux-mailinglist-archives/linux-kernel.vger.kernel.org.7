@@ -1,153 +1,157 @@
-Return-Path: <linux-kernel+bounces-803456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF617B45FF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:24:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92D9B46002
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B57EA45185
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41BCB614A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D536435A2A1;
-	Fri,  5 Sep 2025 17:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9357B37289F;
+	Fri,  5 Sep 2025 17:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zb3G1xOz"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZceW/fl"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECF5313270;
-	Fri,  5 Sep 2025 17:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3789F306B00;
+	Fri,  5 Sep 2025 17:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092916; cv=none; b=e+pZoMjfNVRNM5WU4ihiyrcSOZ8tl3O65eiwCy7H7dMfFJAUSu8mTAQfRCqvEdjRYoEFCTW0jSAj1gc/s0JA8qCQMOaxBMEWVqNqqkUvlTAmZ1gipBF0rN55wsODBNWQrgCWeSvvTU5mM+SEo5V8FJbF/YC5aG75mcliJl6aVmk=
+	t=1757092986; cv=none; b=k8iIfk17vGe+I7a7L/dIH1dRlw7Om5R2doXeeHkJrWqDIhQonq421NZekP9avywFdOYD8coBHwSkOTcliI+kWHI+2M98/cgJEkFwr6Wsmn2S4SDI6qtqYg0By+ZRw/RiXwZ8MC+HkwKqjM6txr21boxsGH0lPIXkbSxV8tx3u1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092916; c=relaxed/simple;
-	bh=UGJZrTlyxlhtg40AgmN8LaTmzVKr4Sl2AOH8Cpc9Org=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feoa52+TRraVjyvt6u450yIoCG5t3S59qrJ6eKfrL1VjW9whWziy8BUwZF71eXXS5Y34Q6XOUhGkUkJ/2k8VPr7Lz/tecPaoZAtfKd9bB8NaDvPN+AOz/le73e7OyZVvHUkOCZafk8RWk8FsED9vfIwCyWbPWtvu5NML6UNM+u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zb3G1xOz; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1757092986; c=relaxed/simple;
+	bh=mGWiWaE6I6hKE2f/4EzWDzmc6s/u3BxagDNUzVCSctk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FHE1KPZl0ISIxnaWsL9bWzn5HOd/N5p2uXAKVRHAhTNcTHAAbzifcTA5hjpEgGQU1KMNxFdk8muhSUO69GYE/EHNCjNAwQSXJEgYmkIJKnCJ2ciSp4hLZOGja++adtuRrT4ApTCWfXNRWwOigemMDXXLtzaKfPAyOHDM4sk38Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZceW/fl; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7291d89185fso11427686d6.0;
-        Fri, 05 Sep 2025 10:21:54 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so3564661a12.0;
+        Fri, 05 Sep 2025 10:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757092913; x=1757697713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757092983; x=1757697783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ojkruaY3kRdJj/HExv5LGFVsZ/Ot5/KNUgISWC2ZkwY=;
-        b=Zb3G1xOz15x2HJJb7XSfb2duM0PuHd9Gau9404/dWDC0XPkPelSp1C17IpWc0C8MFz
-         awlzZGGUx8PXXKLxGKUJZuziZepMa6F5Fe45BULqT8AK7D7vwirD5YnAg9N7eFL014qR
-         EoXUGa0eSc3rM78WZFk6ThZ6KVv1TcRRVamXsqWDe7/ac3fFSrWCxUQNzcN3jCYnSIW5
-         DqMeKNVxxKny1pSuvP6GMV0iFO15TFTlb/lOirpgZpeQsxgyFDlS5HUCrUxbMERxRjRE
-         81zRqeVVunos37FJnSDe6i3Pe0pwEJPRCZzN1oSkgcKG9Cy5Dx8gdQ5g0b7OB5zcCg0F
-         kLDQ==
+        bh=mGWiWaE6I6hKE2f/4EzWDzmc6s/u3BxagDNUzVCSctk=;
+        b=RZceW/flPWaq9/xpqIXDHMHhXheo5Ta/QW10ch8R7f0ovfRyXCGfOQIZgIyzbRjXwj
+         s7VLnmL9IT4/Uet+9kndWzmJpcIly5tJ39WyeKBYCLM1ceoGDSw1HcSN1DxGyQpb1RmY
+         hVC4xyAJlv0+W+skW6L3/NLl+vYi2/9lsWo2OZLPwPiovGiH5BA8HXcd14Xtf6NHoTT5
+         nV5boyye/zgsFHQau0YJML0LJzMY+ODb2zwrKbW4EvY2+l4pKQ7yMjAdaXPrB6wNsQE6
+         a0Uh5lHvE7o8T9j3FDAQKEWm+Mjg0uzoJIR671SFVX6pWzXze//4xVPrPfBlX3oKh3TQ
+         oCFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757092913; x=1757697713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757092983; x=1757697783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ojkruaY3kRdJj/HExv5LGFVsZ/Ot5/KNUgISWC2ZkwY=;
-        b=rJVVMIpDdgSL+bdjeL705+D/saEjK5H6qunEzoDqQbGiLx/+0dlS5E9tPVkRvSMFai
-         RnyIb/SuHfH7MaunkSMbeaan0choXxsU7ACCEYu+Q5UekAvE6xtw7xAB7CGUjgjFRUxE
-         czM+RiKGIohvvaTuzJDXJWVeW7rcUnOik5bWh2gfo9bQmLH2bAZAYbYGKC0iWGRfU+dg
-         tglK/T8lmOhqHAxn+zxLS5JsjYtP0ON45bTEmu+EvMPcVKe5XvnKxoeNXyck3VGs+162
-         nrwIigeMID554wdpPH4lgIKDoUY+3scHcrWTsDIbks28qrCXv7kvUFWugPU0SzkdloJ4
-         jvTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOwdL7HozudGTnqs/vCzvLBTy9SyR/k+VqF22So76MQ6Uu+fC5lC42MsYoj8Z7wjJ0x17P3le0G8fTH60=@vger.kernel.org, AJvYcCX2yfJeHFNqAT22fHD4azrV2fzOCsMesa4l/9uotXULrcGYgsyF644kqqrXUoC/jFesQ2feffhIUFsfxpKK6j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymFchfrDvbxkx4blRvq6tnHfDDeA3TvCaoorD6VTKuJA8rwFkK
-	sYj8aVQx3E3dJxqizLEDm6b2KvUWT7ydJaTDaPX5T24kT5X/TsRB/g+t
-X-Gm-Gg: ASbGncurI/0gkjxC+tnUF3i/lQMfw5iADDvlAOaAwghWk5sRNy/ZQR00mmxp98DOiHy
-	rBB6cMxOsbvRyDwEWLyi105XkKUSIIh2KXWvyJf8fs4eUkwp8IKsVW4oTumpcfONx0xUUvkYWb7
-	A/+xCH9Xlwi8d5W8VDk2zj+ZcahEQoS4mzyR5MynMg/7ZyFsVjeCIwf+unj00/g8fRkcr01MfbR
-	9kWvjGFPYsHDkA0mQEpM+Br/WM67y+Eda8vqQfuAio6vDuzhT5BxvaIMYB6sLrqZ6q7tAfDiVEV
-	fr2O+vRnas1A7Q2UPbppUimRUEpuPjOZdqgmxj/u2FnZ0grncptr+xUQaliXvZ6a4lKZbHaWZYZ
-	nSuZhMI5wCEBBP9FTXWhblQi8ge206L9Ts+pcqmAbcj19gr5ei8a2DJIT5eG/ovqKjDT5pEuWlu
-	QligWk2nTl2LDlbaSP7DbKvPKWvEKwN6PWZtelOr10fzph
-X-Google-Smtp-Source: AGHT+IHvYp931SXAxT1u59cLKnwlPbnLOsc4TRjevIGttrrwPHVRH8WvMI0LrkxHpd2Yn2NzTDShiQ==
-X-Received: by 2002:a05:6214:410a:b0:70d:f758:597b with SMTP id 6a1803df08f44-70fac6f8128mr257309206d6.5.1757092912874;
-        Fri, 05 Sep 2025 10:21:52 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b683283csm69994416d6.68.2025.09.05.10.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 10:21:52 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id ED72CF40066;
-	Fri,  5 Sep 2025 13:21:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 05 Sep 2025 13:21:51 -0400
-X-ME-Sender: <xms:Lxy7aDBsJ0Z0KryaHpKn4ltDLTN_66ChTkvw2iMGoNoYavdw5cFpdw>
-    <xme:Lxy7aIC4psUkUhoS2LEgJr_2Dhr2BMqs6bUymT9VYm73aKUzr2LsoIklkfp8yfhg3
-    pk8W4j26rB8V7jdNA>
-X-ME-Received: <xmr:Lxy7aKHN3aUuZXPdDeWjl2wkj_JgNGJeea1BxmS47T9I70PCyuE3-MbZe6hgsj3FjuAgbn1YUMlvj2ageVjZEOOXaR40PkAW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelgeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgv
-    nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
-    hnpefftdeihfeigedtvdeuueffieetvedtgeejuefhhffgudfgfeeggfeftdeigeehvden
-    ucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhs
-    ohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnh
-    hgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedu
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihse
-    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
-    mhgrihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphht
-    thhopehtmhhgrhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepuggrkhhrsehkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Lxy7aP7GFvd5i-ussE66htRj9wgyQTrIMxZCUBJT7VY7d6s1fFDRSw>
-    <xmx:Lxy7aBRug6LIiZOF2QENhQlxZFgKsbpf4DRrWiM3mTtd8Cya5tUeSw>
-    <xmx:Lxy7aK5nB1wGt2xLs4F4VXWcq-LliBoqm7jqwYxHDyOuHK4wSuAS8A>
-    <xmx:Lxy7aOSN6tVyuvIlA1uvvh2diDHhwff7T2X2CXGSQ256n2M1HUGVXw>
-    <xmx:Lxy7aPnhTwPfoAcNU5U5CPXfSSuLc5Dkjd4n5jc8XCqOivL3Bd3OhXXp>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 Sep 2025 13:21:51 -0400 (EDT)
-Date: Fri, 5 Sep 2025 10:21:50 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>,
-	Alban Kurti <kurti@invicto.ai>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
- fields
-Message-ID: <aLscLsY0Sv1Qwgni@tardis-2.local>
-References: <20250905140047.3325945-1-lossin@kernel.org>
+        bh=mGWiWaE6I6hKE2f/4EzWDzmc6s/u3BxagDNUzVCSctk=;
+        b=nuUIsUKFr+jhLlZolSWUJoA4iSNsVb9W+yiVUZBLNO3d3vD0Am/7Nxa10kgdy88qUS
+         kPMeOyHWzuh13vbbGToAPRnFggVt5f6dds+wCttZr0LpPMro4qQBdxlvnzAqZde1IFTb
+         BE+Ueye4L0DNM45Fyoq0wDM8F8yQSxCxhOpFiopVd0jtpn+3Dpzx/wTlXLpvHFJr+5Y5
+         mDpA4PIj4CFrafy6mpQ5r3cBAwweJF689U2JxD+md656cTg+y7/+JV+gnYIQ6NHmridS
+         C9RUUMAGhpCXMrukFF/9Id1egy3etLpw2bbFgjuLkj/VSokhXC5gXf7eK6HeLhpQ8cfu
+         mQcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPOm/LZAdw9R3YggUTAGHZqR9PK3Yrt9r7VpLwc4WZ+twnYu6ZjrhXHfqNYgmlijMY5rF65WBTiAK2r1DQ@vger.kernel.org, AJvYcCWMUb/XEW+lp7W+CKMGCe3lrMhEbrU85ERM81bHSBsFiwO7iJ7Ubtqun0vFjVcoa/0CDu50mhc5SuHWvko=@vger.kernel.org, AJvYcCXDyJKze4MHrnFIERwqjNeyi3Vfh+3VDja402QhVIkN5say2U3+jnKBUUcZU8Am78xhhNHEIxQtcME7@vger.kernel.org, AJvYcCXic3r5JqxZUl5GM7riA+v3Xl+MGeA5d6ktCwC6rZxZNG6xkcMduH/plQdtBH+byMafoCNCeFseSLu1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6oAjkrRCwx3+V4iTf8xRYpZ6CgXc1+DNvZPSpZ0F7hExu/m3W
+	oJ7cbCX3ffmtge+iIqWwhMoPYrsSOFIfGyJS9se3hqHaPTtsOGp8CYFWMbiy/vgbNqPQYqaDC7l
+	dIGnticvFlNEdXB5F+exr3uUv1+ZUatIKm09FPT6U
+X-Gm-Gg: ASbGncsbMHT0BJMg7V6d7T0sscrnJlyYvhff8iRCawR/sMkkjIDSSUydH9+kB7GU3CV
+	h4hoYuToz35OJubG0N6spDlf1Z1MzP250sNXQOdYL3I4czdPID/CySGiWo5rAybpgQ4GNp/dQAO
+	6qsbpXSxaaE//GjpA2OQGBUd6l6w/0Nv59zGxHvWgLO3sx7Y3cirh3iBZ23yhDq2G1EvMuCZg6M
+	9oTWWBLCp7LCqobyzM=
+X-Google-Smtp-Source: AGHT+IG1EevZl5gNe7tD3U6dF+X3O4BzPpBn2tmPP3k+dNUVDqX/Q568jdKn1EyPG+pq749qDdlVfF5qm6ykFFbEqB8=
+X-Received: by 2002:a05:6402:3881:b0:61c:5b3f:4d69 with SMTP id
+ 4fb4d7f45d1cf-61d2688c061mr19821874a12.11.1757092983140; Fri, 05 Sep 2025
+ 10:23:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905140047.3325945-1-lossin@kernel.org>
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+ <20250904-hwmon-tps23861-add-class-restrictions-v3-1-b4e33e6d066c@gmail.com> <20250905-deft-porcelain-teal-a3bdbf@kuoka>
+In-Reply-To: <20250905-deft-porcelain-teal-a3bdbf@kuoka>
+From: Gregory Fuchedgi <gfuchedgi@gmail.com>
+Date: Fri, 5 Sep 2025 10:22:26 -0700
+X-Gm-Features: Ac12FXyU_zPmF4j8ZQQX0_c8Sixq8TzhVGirncT8O8xrCsAjMiL2w60zjFD_UMk
+Message-ID: <CAAcybutsMdXmqrA6kG9L5OTP9ZPyLzYrXTGUGLAkWs5+MH9ifA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: update TI TPS23861 with
+ per-port schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Robert Marko <robert.marko@sartura.hr>, Luka Perkov <luka.perkov@sartura.hr>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 05, 2025 at 04:00:46PM +0200, Benno Lossin wrote:
-> After initializing a field in an initializer macro, create a variable
-> holding a reference that points at that field. The type is either
-> `Pin<&mut T>` or `&mut T` depending on the field's structural pinning
-> kind.
-> 
+On Fri, Sep 5, 2025 at 1:10=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+> On Thu, Sep 04, 2025 at 10:33:44AM -0700, Gregory Fuchedgi wrote:
+> What's the meaning of values? There are no other generic properties like
+> that? Last time it was a generic property, but maybe the answer to my
+> question should be that there is or should be such generic one?
+>
+> Also, why exactly wouldn't you want to accept here always the highest
+> power class? What makes it a board-level property?
+poe class (values from 0 to 8, this chip only supports 0 to 4) defines maxi=
+mum
+power of a poe session. The higher the class the higher the power (with an
+exception of 0 for historical reasons).
 
-It's hard to review because of lack of examples. Could you or Danilo
-share some sample usages? Thanks!
+A board may have a power budget of let's say 7W allocated for a poe device.=
+ In
+that case the board should only provide power to devices which ask/negotiat=
+e poe
+class 1 (up to 4W) or class 2 (up to 7W). Devices that ask for more should =
+be
+rejected to prevent brown out issues.
 
-Regards,
-Boqun
+I think some of my questions last time got lost in the noise. Given the inf=
+o
+above, should this be a generic property? And if yes where do I put it?
+I haven't found an existing one.
 
-> Link: https://github.com/Rust-for-Linux/pin-init/pull/83/commits/0f658594c39398f58cd5cb99a8141e370e225e74
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
-> ---
-[...]
+> I fail to see how this is property of a board... unless you wanted to
+> figure out which ports are not connected, but status=3Ddisabled could be
+> used for that.
+yes, status=3Ddisabled is used for ports that are not connected at all.
+off-by-default property is different.
+
+Most boards want simple automatic operation, no userspace involved. E.g. en=
+able
+power as soon as acceptable class was negotiated.
+
+For some boards, however, it is critical to have control of poe from the
+userspace. Without this property the driver may enable power before userspa=
+ce is
+ready.
+
+> Sorry, but device has FIXED reset values for registers, so whether
+> something is off or on by default is defined by compatible.
+yes, but it is also defined by ports-shutdown pin state.
+
+Here's our board startup sequence (see 2/2 patch):
+reset pin has pull resistor keeping reset active until driver takes over th=
+e
+pin. The driver activates ports-shutdown pin first and only then deactivate=
+s
+reset. Then configuration over i2c happens, while ports are shut down. Then=
+ the
+driver either enables a port based on off-by-default property or
+doesn't, leaving
+this up to the userspace.
+
+This setup guarantees that from soc reset until userspace is ready there's =
+no
+poe activity on the ports. This implementation is also flexible and backwar=
+ds
+compatible.
 
