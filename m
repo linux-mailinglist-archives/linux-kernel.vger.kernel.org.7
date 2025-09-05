@@ -1,327 +1,136 @@
-Return-Path: <linux-kernel+bounces-802326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6B9B4510D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF86B45113
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7CCF1C25E70
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51F2A07FD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31239304964;
-	Fri,  5 Sep 2025 08:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8650285C91;
+	Fri,  5 Sep 2025 08:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T8Q+Kfqy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dW9ueFKZ"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC593043D1;
-	Fri,  5 Sep 2025 08:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C313E898
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060119; cv=none; b=D4WQwnCp1UXDQ17yktkYjgbgbr24Oyl9VF2wBOb2xH64kZSgiEpdqiqLW4RPhW6Vi9jDmhR8iGYXe1O6WWjT7f5PGmcmCM4TKn+oLobpfReAqf8yH1gGTHXjtxMdDXljIaMKFth0nXwsYo5n81X+ZH7iRQ2RnHsHlcfksC8BQy4=
+	t=1757060152; cv=none; b=O68dMO6I55HQDH+l3WOD8461QKtG7hE6Nic+guT/iktsb3KslFPIbtzT8xzqKoc+HukuPCeI02a7tXFgK9SdA1tiguR5EP15lW+2WORpfSOUHY3kVfp0BScm6ezBs+rn8Ill13SCiG89GE7yDjRFEwD/5iQsWPpnAOxrhfx8ye8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060119; c=relaxed/simple;
-	bh=dGl3HPk4ea6xcz1AY9xoYbL2hRSpczO81jV7mfFdqyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SChvX6nlD2J/A5Omt8Lgvg8dTChdOOnKe2VDGAZQOSAcqklGVI1i+j4cCfdZQVK1zs62mAAxOuOyOmL1aCeBLKZY8xFO0jIQ/8cfcakYhk65IuU6JhKTZDGlbJ84K6321jEzKAwZztYiZGvBS54H0CXkfTrLJZKmU+TVvlpzFRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T8Q+Kfqy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857q0fN000693;
-	Fri, 5 Sep 2025 08:14:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=tXHNtHbn1eNK0FlZE
-	95i5qXhKjyxOQpxjAPzGwb8hhE=; b=T8Q+KfqyRgTbSXDzG5hx7oeHciyJ8ct/l
-	tzN5SEp+WvaZWS9ynuURmbQKv+uEdB8fBrONKDLiSaDO9Y16ufFSWlpCMMAEJgBL
-	pFncCOPE3eda7qhsyqYjboOPxNjV6kCldIFQd0yEDKZkFUsgNWSxAi1P0rE22KVH
-	fq2AdXh1kOeHJlkLr4Ac2mc20YL8i8YQo8rR/sLoZUgTdSMXr/TrmXCSuMYd8WMA
-	+qrMLPto955Tzr6MavbC7dkGFhv/fqRc08/IpSfYPq4iOSm9+Hgpw7yD8bMgy/VI
-	CFQTroIkxlqBp7nZ8kDUe45bJfEWWZr86VrvVb/GvFZYMQQoGfFxw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48wshfajh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 08:14:58 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58587gUe000714;
-	Fri, 5 Sep 2025 08:14:58 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48wshfajgx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 08:14:58 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5855YZQW019331;
-	Fri, 5 Sep 2025 08:14:57 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4n8edw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 08:14:57 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5858EteO18743792
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Sep 2025 08:14:55 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B8B02004E;
-	Fri,  5 Sep 2025 08:14:55 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C315C2004B;
-	Fri,  5 Sep 2025 08:14:53 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.27.144])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Sep 2025 08:14:53 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
-        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
-Subject: [PATCH 2/2] fsmap: use blocksize units instead of cluster units
-Date: Fri,  5 Sep 2025 13:44:47 +0530
-Message-ID: <d332ed2f90a0c8533139741d25e7fc1935773e14.1757058211.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1757058211.git.ojaswin@linux.ibm.com>
-References: <cover.1757058211.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1757060152; c=relaxed/simple;
+	bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=euj8p42iydKRxyhe4YeE22PU9IEfkM8igW/3xzXQ4ad4ckyKa4PSRJe8DLZE+eF23LdcrglD8YUQJ0yjzCLauefH6vfPHpxFfrg74KM3IYisOW871ckPtY/NWqrqz8WmHbukmcG+GMQnjia3t6GpjegmWOREOz+DeEVwMwltBd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dW9ueFKZ; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e266ab733so1857931eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:15:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757060149; x=1757664949; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
+        b=dW9ueFKZs4M7zxcPMiQ3QlFCW+75uhcRIkSOiuKiNh+ng0O3pmPG0tZsQoSrckigtA
+         195AZo6mxsI/d186cDNBwW8ZfnNGrzdJuvsuY5+MFSMLqLPIqi1yLGRacqS+ZEQiQ3Sn
+         SUW15j0XADsBxDueQm06pyf6M47NUaSzDFayW55eec4MkzhM/wJ9GcdjkF2zZ7mfDoF2
+         181mXP10Y1Pa9yZPjCogHmgAH8fc5IrdvS2RNoAvr+4rc8aCIjt9v07KngM6bwXGJzg1
+         aIlBi+hv9/xgZsjnqbDadi73eA6m7aoHdUEnmcLmh4zJZqsFcyK3m2EtehbtoGzGDwWt
+         EqTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757060149; x=1757664949;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
+        b=mzd9tH+FpQV+Zo7ZpN7lN0rjiE0UYQtqA8KtluG54viJEgwkAciQnAPIQ9lEWyT0VR
+         V1KbbucnRaB2YcKsGwTIoVM7OvreEVefjv7wnFVhdWESMB8WNlgTDXDal3IodkwChYDK
+         8LzK8vkzDGyIQXe1fIsrAwd4wo/Xt5q/yYRyRHrRt8hm2oYur2cVEO8rAGJfYpJH6/jg
+         XnWI24hAb+hAXz29Ga79C7//CKuq441+dgeizs+0UAPGdLkDUmiv6loh78MYhItEMx/p
+         tqrvFUhTmZsFL+hTqj95NfcQF6i+P1v4fCsZTblmOH/snzK6VSKEXCkmulRr03NM0eBV
+         damg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxiLUZExNZ5jQhNh7x+7r3KwthweQPi8ISZRm/tdhQLo4ROWyNPIrNZSnPcdX2AdTw8rtvQbs4hfhFVaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylcmA7Nm1G8uK1Efq9fvjyEulR0wsz5muLkbU3ubP2QTSgdYzy
+	gbphOKwXVCctKyGGtY4hRR+kVSc+jsPlrzCfrgAEpK0zsBbP4ga7k0Hb0fknopmHbrvIKb7mTmK
+	m9qPUFsxUUTwBzW+g0lzI5KGFZXBlDf7BBP5VmKN34A==
+X-Gm-Gg: ASbGncugSxlqaC8I5cI+1MzpPFv8IfJFEB75+KdLLFWKEFAClGF1EzLqM7kB1bNvt0q
+	au2t5DjDoWtm/R/DLe/en/0bEHOPnkH0Mzod3Skebdrfnw7a5K6geUwHLyLHcMrpc/szsu+rrIO
+	1OLNUHM6yowiA7UbKbX7X1HuUEBBQjv/V/hY+Nju7DJR0eygT4gTlCQ7C8iHX274BWXJSyFG3ez
+	a7YdDy8
+X-Google-Smtp-Source: AGHT+IHQj7XWIg+aHFhxE5wA0mBU6jl6RILB2uf8bPMyU1ck849cJn5VIU0gR4I4BwUtKnrjZoeB3FBwyczpBjhB1PU=
+X-Received: by 2002:a05:6808:6d8d:b0:438:384b:be51 with SMTP id
+ 5614622812f47-439ae5b57d0mr1719731b6e.14.1757060149490; Fri, 05 Sep 2025
+ 01:15:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QuBKTN1BuvLfJlVwgvUEdxckXIIn9pVo
-X-Authority-Analysis: v=2.4 cv=do3bC0g4 c=1 sm=1 tr=0 ts=68ba9c02 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=dPYBfUDpcxx5Ehpc6mMA:9
-X-Proofpoint-ORIG-GUID: RNbF0Ua0YLOdPSlSzHWyyMkt1q7j7HoA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDA0MCBTYWx0ZWRfX49T+ikf78h6B
- eiRaF+GWoxrOYjnpwrtbCpNqc2CBv5dStP5lUfO1V6R7mOPVQ2GpEywknulH1FVIW9TDxpnlhR8
- VAoqxg3E4uZ66Y2M2tDtWecLvRPer4wuI8heRhcGw09PdflG9RXKvRtYjiGyetVxD5aZ+fIaZB6
- VgXhGaAZ0x2tcSMd7deHn9WUm1lGT2etsQghh3QGvlaBS0Dx5WwznukGultsxO5GRG099YZBNLY
- GOL2vmz/Jc0f48ITFqMxJbBXirQX4+uBWdAF7wuSBUizWQBlmEPkf4htcROpiwIS/TQXJN8wuVx
- Nih4YbE8mL698+lWGJ5gxt6Kk4nnkkQajtq5Kqzelg6lK1IiaIkMxs6Wc23A2fQUhj2vrLdt0Au
- ofzWMyjx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020040
+References: <CGME20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f@eucas1p1.samsung.com>
+ <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org> <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
+In-Reply-To: <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 5 Sep 2025 09:15:37 +0100
+X-Gm-Features: Ac12FXzCRgR8yHlathKqigOEKqZV5Lvkwxo4wgJo10cx69pMLAPLfx34mAd5JLQ
+Message-ID: <CADrjBPqjw82MuxctT5oxHWX7J4D0yghtO6Md8WkJHz5-6LkP3g@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU flag
+ on ARM64 SoCs
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	John Stultz <jstultz@google.com>, kernel-team@android.com, youngmin.nam@samsung.com, 
+	hoony.yu@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-Currently, ext4's implementation of fsmap converts the ranges to cluster
-units if bigalloc is enabled and then converts to block units whenever
-needed. However, this back and forth conversion has known to cause
-several edge case issues since even with bigalloc the metadata is still
-in block size unit.
+Hi Marek,
 
-Hence, convert the code to use block size instead of cluster size.
-Cluster size is only used when dealing with mballoc bitmap. This takes
-care of the existing issues with the code, example, for a mapping as
-follows:
+On Thu, 4 Sept 2025 at 18:49, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> On 04.09.2025 17:32, Peter Griffin wrote:
+> > This patch addresses a regression reported in [1] whereby CPU hotplug now
+> > fails on little CPUs (for reasons that aren't fully understood) for Arm
+> > 32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
+> >
+> > Note: This patch makes an assumption that the exynos_mct driver is only
+> > used on Arm 32/64 bit SoCs.
+> >
+> > Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
+> > Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> > Hi Marek & Krzysztof,
+> >
+> > Can you test this patch on your Exynos5422 based boards and see if it
+> > resolves the issue Marek reported of CPU hot plug failing on the little
+> > cores of Exynos 5422 based boards?
+> >
+> > Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
+> > SoC) to test on. I can confirm CPU hotplug is functional on the little
+> > cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
+>
+> This is a duplicate of
+> https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
+>
+> and yes, it fixes the reported issue.
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-xfs_io -c fsmap -d (bs=4096, clustersize=65536)
+Sorry I hadn't noticed your patch for this. Let's go with your fix
+then as it seems more succinct.
 
-   0: 254:16 [0..7]: static fs metadata 8
-   1: 254:16 [8..15]: special 102:1 8
-   2: 254:16 [16..327]: special 102:2 312
-   3: 254:16 [328..351]: special 102:3 24
-   4: 254:16 [352..375]: special 102:4 24
-   ...
+Thanks,
 
-xfs_io -c fsmap -d 6 16 (before this patch):
-
-   0: 254:16 [0..7]: static fs metadata 8
-   1: 254:16 [8..23]: unknown 16       <--- incorrect/ambiguous entry
-
-xfs_io -c fsmap -d 6 16 (after this patch):
-
-   0: 254:16 [0..7]: static fs metadata 8
-   1: 254:16 [8..15]: special 102:1 8
-   2: 254:16 [16..327]: special 102:2 312
-
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/fsmap.c   | 42 +++++++++++++++++++++++-------------------
- fs/ext4/mballoc.c | 25 +++++++++++++++++--------
- 2 files changed, 40 insertions(+), 27 deletions(-)
-
-diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
-index 22fc333244ef..02e5d501dda8 100644
---- a/fs/ext4/fsmap.c
-+++ b/fs/ext4/fsmap.c
-@@ -193,13 +193,11 @@ static int ext4_getfsmap_meta_helper(struct super_block *sb,
- 	struct ext4_getfsmap_info *info = priv;
- 	struct ext4_fsmap *p;
- 	struct ext4_fsmap *tmp;
--	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t fsb, fs_start, fs_end;
- 	int error;
- 
--	fs_start = fsb = (EXT4_C2B(sbi, start) +
--			  ext4_group_first_block_no(sb, agno));
--	fs_end = fs_start + EXT4_C2B(sbi, len);
-+	fs_start = fsb =  start + ext4_group_first_block_no(sb, agno);
-+	fs_end = fs_start + len;
- 
- 	/*
- 	 * Return relevant extents from the meta_list. We emit all extents that
-@@ -248,13 +246,12 @@ static int ext4_getfsmap_datadev_helper(struct super_block *sb,
- 	struct ext4_getfsmap_info *info = priv;
- 	struct ext4_fsmap *p;
- 	struct ext4_fsmap *tmp;
--	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t fsb;
- 	ext4_fsblk_t fslen;
- 	int error;
- 
--	fsb = (EXT4_C2B(sbi, start) + ext4_group_first_block_no(sb, agno));
--	fslen = EXT4_C2B(sbi, len);
-+	fsb = start + ext4_group_first_block_no(sb, agno);
-+	fslen = len;
- 
- 	/* If the retained free extent record is set... */
- 	if (info->gfi_lastfree.fmr_owner) {
-@@ -531,13 +528,13 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t start_fsb;
--	ext4_fsblk_t end_fsb;
-+	ext4_fsblk_t end_fsb, orig_end_fsb;
- 	ext4_fsblk_t bofs;
- 	ext4_fsblk_t eofs;
- 	ext4_group_t start_ag;
- 	ext4_group_t end_ag;
--	ext4_grpblk_t first_cluster;
--	ext4_grpblk_t last_cluster;
-+	ext4_grpblk_t first_grpblk;
-+	ext4_grpblk_t last_grpblk;
- 	struct ext4_fsmap irec;
- 	int error = 0;
- 
-@@ -553,10 +550,18 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- 		return 0;
- 	start_fsb = keys[0].fmr_physical;
- 	end_fsb = keys[1].fmr_physical;
-+	orig_end_fsb = end_fsb;
- 
--	/* Determine first and last group to examine based on start and end */
--	ext4_get_group_no_and_offset(sb, start_fsb, &start_ag, &first_cluster);
--	ext4_get_group_no_and_offset(sb, end_fsb, &end_ag, &last_cluster);
-+	/*
-+	 * Determine first and last group to examine based on start and end.
-+	 * NOTE: do_div() should take ext4_fsblk_t instead of ext4_group_t as
-+	 * first argument else it will fail on 32bit archs.
-+	 */
-+	first_grpblk = do_div(start_fsb, EXT4_BLOCKS_PER_GROUP(sb));
-+	last_grpblk = do_div(end_fsb, EXT4_BLOCKS_PER_GROUP(sb));
-+
-+	start_ag = start_fsb;
-+	end_ag = end_fsb;
- 
- 	/*
- 	 * Convert the fsmap low/high keys to bg based keys.  Initialize
-@@ -564,7 +569,7 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- 	 * of the bg.
- 	 */
- 	info->gfi_low = keys[0];
--	info->gfi_low.fmr_physical = EXT4_C2B(sbi, first_cluster);
-+	info->gfi_low.fmr_physical = first_grpblk;
- 	info->gfi_low.fmr_length = 0;
- 
- 	memset(&info->gfi_high, 0xFF, sizeof(info->gfi_high));
-@@ -584,8 +589,7 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- 		 */
- 		if (info->gfi_agno == end_ag) {
- 			info->gfi_high = keys[1];
--			info->gfi_high.fmr_physical = EXT4_C2B(sbi,
--					last_cluster);
-+			info->gfi_high.fmr_physical = last_grpblk;
- 			info->gfi_high.fmr_length = 0;
- 		}
- 
-@@ -600,8 +604,8 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- 				info->gfi_high.fmr_owner);
- 
- 		error = ext4_mballoc_query_range(sb, info->gfi_agno,
--				EXT4_B2C(sbi, info->gfi_low.fmr_physical),
--				EXT4_B2C(sbi, info->gfi_high.fmr_physical),
-+				info->gfi_low.fmr_physical,
-+				info->gfi_high.fmr_physical,
- 				ext4_getfsmap_meta_helper,
- 				ext4_getfsmap_datadev_helper, info);
- 		if (error)
-@@ -627,7 +631,7 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
- 	 * any allocated blocks at the end of the range.
- 	 */
- 	irec.fmr_device = 0;
--	irec.fmr_physical = end_fsb + 1;
-+	irec.fmr_physical = orig_end_fsb + 1;
- 	irec.fmr_length = 0;
- 	irec.fmr_owner = EXT4_FMR_OWN_FREE;
- 	irec.fmr_flags = 0;
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 5898d92ba19f..cf78776940dd 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -7117,6 +7117,8 @@ ext4_mballoc_query_range(
- 	ext4_grpblk_t			start, next;
- 	struct ext4_buddy		e4b;
- 	int				error;
-+	struct ext4_sb_info 		*sbi = EXT4_SB(sb);
-+	ext4_grpblk_t 			start_c, end_c, next_c;
- 
- 	error = ext4_mb_load_buddy(sb, group, &e4b);
- 	if (error)
-@@ -7125,9 +7127,9 @@ ext4_mballoc_query_range(
- 
- 	ext4_lock_group(sb, group);
- 
--	start = max(e4b.bd_info->bb_first_free, first);
--	if (end >= EXT4_CLUSTERS_PER_GROUP(sb))
--		end = EXT4_CLUSTERS_PER_GROUP(sb) - 1;
-+	start = max(EXT4_C2B(sbi, e4b.bd_info->bb_first_free), first);
-+	if (end >= EXT4_BLOCKS_PER_GROUP(sb))
-+		end = EXT4_BLOCKS_PER_GROUP(sb) - 1;
- 	if (meta_formatter && start != first) {
- 		if (start > end)
- 			start = end;
-@@ -7138,19 +7140,26 @@ ext4_mballoc_query_range(
- 			goto out_unload;
- 		ext4_lock_group(sb, group);
- 	}
--	while (start <= end) {
--		start = mb_find_next_zero_bit(bitmap, end + 1, start);
--		if (start > end)
-+
-+	start_c = EXT4_B2C(sbi, start);
-+	end_c = EXT4_B2C(sbi, end);
-+
-+	while (start_c <= end_c) {
-+		start_c = mb_find_next_zero_bit(bitmap, end_c + 1, start_c);
-+		if (start_c > end_c)
- 			break;
--		next = mb_find_next_bit(bitmap, end + 1, start);
-+		next_c = mb_find_next_bit(bitmap, end_c + 1, start_c);
- 
- 		ext4_unlock_group(sb, group);
-+
-+		start = EXT4_C2B(sbi, start_c);
-+		next = EXT4_C2B(sbi, next_c);
- 		error = formatter(sb, group, start, next - start, priv);
- 		if (error)
- 			goto out_unload;
- 		ext4_lock_group(sb, group);
- 
--		start = next + 1;
-+		start_c = next_c + 1;
- 	}
- 
- 	ext4_unlock_group(sb, group);
--- 
-2.49.0
-
+Peter
 
