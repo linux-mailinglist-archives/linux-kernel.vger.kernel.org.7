@@ -1,165 +1,166 @@
-Return-Path: <linux-kernel+bounces-802556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0495B453BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:48:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CADBB453C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7AD1C83F1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:49:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276DE7B59A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7A28C854;
-	Fri,  5 Sep 2025 09:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546F428B501;
+	Fri,  5 Sep 2025 09:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maFSgfUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlrdmfIv"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1476E288C0E;
-	Fri,  5 Sep 2025 09:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357F1F95C;
+	Fri,  5 Sep 2025 09:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065717; cv=none; b=feiHNTUt5JOohbCpRTWLcpgrpFeJHPBQKssECUzDNSNmgc5NhtEgiXLRh8qZ8D0YFhZkxHtGd14TaFk9KCdFTDLf7Q1yqXzzAzm1REe87Snt5rA/X9F3hLWI8W6me0DbpuXSmdJiHgqbVmqxREJ3pJdBsf//0CzQF9x/pf+0tmg=
+	t=1757065726; cv=none; b=fmUU2T2eScclkM2JBWKUoTcO27isikehCv7mvpHq1XUAYDm81j1ytS5S5YqVgzHds6DdFAWFkDwZIUHcWSUwt4UeOmeYZHkbi7FKKzxqCHWDqe9v3iJ2ayB2rJLfDGftJOQSA0oMqLGTf02Z4L6jd5zkCj7s0ASHJzaJi7xhxdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065717; c=relaxed/simple;
-	bh=60j1mYXfx8imU4XQiFjnOOvCwt0U79tykqDPzODIpZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rN/sTuoFcTpd5mKPGT5WVqs0rkvsBQ2wdoNcW+Rnf+vdF5Eg2rHSoFrxUVzEH6HAI58GYQBXbUm0OP88+JzeQcBPWX6Y7VFZfNPPmtoFJ5taIle5Uq4LoEk9c7ccTq7pva86FrLdrJZd4SPps6tEZFnm/+PVHD6H8to6doJ8pFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maFSgfUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819D2C4CEFB;
-	Fri,  5 Sep 2025 09:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757065716;
-	bh=60j1mYXfx8imU4XQiFjnOOvCwt0U79tykqDPzODIpZo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=maFSgfUyMQwnqV1XKC3DkrSxo3c4Gr1bocEJUa0cLC/fCnWL7VKM4c2Bo9v1SmE4u
-	 yVQjdnUaUzl/q7oOdXDTBWOziVgkW3OUauQ8yDbUzkhD+Ea/pnt8pUGe+qn8Hxy6DP
-	 errowBQd2WgD8DTePq4VnEhBOJnbeJmsXbrCagkdiWyhFzq39BzhmUenO0511YEV7n
-	 jg+iBtIvamrBFBb9f8DY9bEXpN3pl+sA7SKU5wB9iLK+S2xWlmrKw+vsNDCdZOVn3Y
-	 RFDI8L2baCVkbbjmpaN5vYKIn9ynTjCxTDJPLLx6OTo4NvTKH9jSoNhMTydU60UEnS
-	 1fR3EU3FDmD7Q==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-61ff35a56d3so739188eaf.3;
-        Fri, 05 Sep 2025 02:48:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCbxE2fvT+TovKEO7pdC3sMxZjVZeo/a/IU2YjLr/Qe1+ucrHlfB2oQWMm6c10FZ51EjxxDfbzXMlu@vger.kernel.org, AJvYcCUx4Y3u9kyK2UqvOUch+SvAxUKUtMJu/T4TlrBEe54Scs+yB8iCV8RF21kKJkMWKpumV2wSLAqDdNYK4oIt@vger.kernel.org, AJvYcCVRRgbaf4DBeVi2C4/zKpkfGLU7KME4kfte266DVdMZZMUPqt2IOpgqoHgOdWIXiYHh8pUwpET2Rpk=@vger.kernel.org, AJvYcCXjGAmW51ISqiM6foDQczg4xndqMtx3AoFksvxPqSIhxJXBDdBz4WpZHy/RPH2nVGpmsGOE0AOQrzJtdg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmKndNBpdvakcN+UX5gzXnyWG4dtLG7HHs7U0RqHvGc5y/gVg/
-	Ro+BJTuejKpI62oOCmtinsFRD/b89Z0/auvi6gC3vrWct0PeuiKe14SWv2BgLz1y+kGFs7GSBah
-	ZkCArt2r56Q9gUp88x/K/Dcrc/HHIiPo=
-X-Google-Smtp-Source: AGHT+IHkVwjUQLo7sTj2SxSH10cahTF1EYNw9jM6xcyVmF8yMApnd+1WPw0MFaTQWrdPzjCgm5hFMvaNgP7dcxRbczQ=
-X-Received: by 2002:a05:6820:1b96:b0:61e:154c:5b01 with SMTP id
- 006d021491bc7-61e3374776emr14360839eaf.6.1757065715741; Fri, 05 Sep 2025
- 02:48:35 -0700 (PDT)
+	s=arc-20240116; t=1757065726; c=relaxed/simple;
+	bh=J6ciJK5OYseCx33oRWPiAdiT2KynTrlqrDJwgJ6C0Rc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JIe0gcMoGq/VUDm7064gSv1fslwyUmjh1oBxRk0WiH3FxCKx7G4RrtKQ0ro9mb2QNyK8w8ewa/S72GqomJMspWXzbqNH0EeSQxxaaz+FCCPzaRB6K6QCNPB3YD2YNxsl4YSURMkVyg7o4zpqSxNCKwwRTWwAD0OU5iStNgZ/gJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlrdmfIv; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso1808459b3a.2;
+        Fri, 05 Sep 2025 02:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757065724; x=1757670524; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5VJo/YxZFHdX+2Y/e8DgutYHf/cZ8cVwYUuMWvfuEzw=;
+        b=KlrdmfIvtRC0ayFmBgyOC3u7wpOHuRCRyyThpV4ntNM4enhcJvKZP/CIGcGSquDgO1
+         4sK2D+NzbFaLU5i73gXbFHLkL60gcfZXAYcwgV95bBoCZj9DQfd+wwlbZkeTCIKIf88x
+         7kCOKwlEU4fQlsZjwAk9UmQiPOUAGTNXfBcsTjHPAoWnggDNsBCNtuPkJBpZAkCXM8GO
+         8iHQzTPiSVUdDriuF9pXkyweOAmPlNAFB4m0Rzf8Kl34C0l/aLhosId0Ek44ZXV+LzCF
+         DbWZ6oG8+JchyjXtNWdYURJ6YSxJeEgOQmm7ASWEJkPZSTbFDASLP5iscfjh3Wm0Luut
+         x15w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757065724; x=1757670524;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5VJo/YxZFHdX+2Y/e8DgutYHf/cZ8cVwYUuMWvfuEzw=;
+        b=Xv2ZhTR46rPmtgeCjUihbiUwpnL1entzJaDmTxSOtjUC4RCkXEpRnmk1UWJ0H67Bez
+         IufIP4NAXRJACSchWYmCsX/vkHZQWuNB8QPj2BKKLBiej39HD3rv18UXjY29mhXsiNYk
+         A+GXMCTC+WLj+AjCypsJKtieTC6MohWL+O/yCG5fBIAZ/DF4Fro8a7cnHDNS7nMGOLv5
+         p3SUcaPxOEskcQNO8/JA9CbBIWJnMQQ4eH9nx/3yLmN53qzWOu2vNc1hkG2Qk1vOSPAD
+         2hsc+P3GxQ7aoGIFnfeHlop8XnJLYzVyoiD604c5O1BibEeWvaZUelLe0z0VC0PNhXLE
+         mcCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAXFIzr2Kz1h2JZSHEmPu1sDF41LBS0aBii9401SGNHJxD62DBZvStb4tdzRRxnZtaaonWUgqeCuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTxfks1Jp9PpF4zsgKOJapUXfd1UMWDBd/Ey/ILkIITrOva4wO
+	S+vciIc17KRx8iVW7r7uip9uPcld+Rts9M0qGWimcGoqU7s+HW3HtBJm
+X-Gm-Gg: ASbGncsjsiInZeOZhdXZ6ArWqFx2nIaftg9YfMxGKtZtl1wcSjosYamxZW5lT9JczOO
+	/Afji2qpbNNRj5ECSMIz92XNcYSgXcBQHo09SD/ZbllOtYaNfL/tr+qvujSEfyLY+O/21BTXpm9
+	vps5VJ3tukm1mheOf5LKKmVl4k9DXcxWLtuZyRnFk1EbH5f6eqCHjMrGKYbo/kZGjmKmeftCJgo
+	cp5ZriNNeoMUMZVvUMWV8FSoAwuxraEb3CN4e46DB85++dP4QyqVvBb0H3tXi2vQvo1t3axYRDn
+	bgreicf9WKBasv1DOAawq0a3IaBzMVljgpG3NwtP6mjmQwfq47bXcS8k35FTzZE2PlD9rrNNz0b
+	SlfmrNvhPH3Sd3ebQgB2mON1A1faEtYA+pVcy734qBn983gWUFy/HRy55kLDvtvSnmEXh
+X-Google-Smtp-Source: AGHT+IGCLSjxEXR/wi2vz5IPAOhDThSY2NgzoLNBrcBpcqFYnWzkme349pBGV3dg9DFXNIknHI6eng==
+X-Received: by 2002:a17:902:f549:b0:24b:e55:34b with SMTP id d9443c01a7336-24b0e550987mr206891555ad.31.1757065724142;
+        Fri, 05 Sep 2025 02:48:44 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccfc7f988sm34957405ad.144.2025.09.05.02.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 02:48:43 -0700 (PDT)
+Message-ID: <cbcc3317-958c-450d-afab-e9a29b1d5add@gmail.com>
+Date: Fri, 5 Sep 2025 18:48:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn> <20250903131733.57637-4-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250903131733.57637-4-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 11:48:22 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gN1T5woSF0tO=TbAh+2-sWzxFjWyDbB7wG2TFCOU01iQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwjp9ef-jXM-6Nr2o91cs1h2j3e0FpihiJghXWzXAbogv1aACVXGXzJKyM
-Message-ID: <CAJZ5v0gN1T5woSF0tO=TbAh+2-sWzxFjWyDbB7wG2TFCOU01iQ@mail.gmail.com>
-Subject: Re: [PATCH v4 03/10] cpufreq: intel_pstate: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: ja_JP: add guidance for the Fixes: tag in
+ SubmittingPatches
+To: Akiyoshi Kurita <weibu@redadmin.org>
+Cc: linux-kernel@vger.kernel.org, corbet@lwn.net,
+ Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org
+References: <20250905032729.2284883-1-weibu@redadmin.org>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250905032729.2284883-1-weibu@redadmin.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025 at 3:18=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Hi Akiyoshi,
+
+On Fri,  5 Sep 2025 12:27:29 +0900, Akiyoshi Kurita wrote:
+> The Japanese translation of SubmittingPatches was missing the section
+> describing the use of the 'Fixes:' tag. This patch adds the missing
+> description, aligning the translation with commit 8401aa1f5997
+> ("Documentation/SubmittingPatches: describe the Fixes: tag") in the
+> English version.
+> 
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
 > ---
->  drivers/cpufreq/intel_pstate.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index f366d35c5840..925efb1e65be 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1209,6 +1209,17 @@ static bool hybrid_clear_max_perf_cpu(void)
->         return ret;
->  }
->
-> +static struct freq_qos_request *intel_pstate_cpufreq_get_req(int cpu)
-> +{
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
-> +               cpufreq_cpu_get(cpu);
-> +
-> +       if (!policy)
-> +               return NULL;
-> +
-> +       return policy->driver_data;
-> +}
-> +
->  static void __intel_pstate_get_hwp_cap(struct cpudata *cpu)
->  {
->         u64 cap;
-> @@ -1698,19 +1709,13 @@ static ssize_t store_no_turbo(struct kobject *a, =
-struct kobj_attribute *b,
->  static void update_qos_request(enum freq_qos_req_type type)
->  {
->         struct freq_qos_request *req;
-> -       struct cpufreq_policy *policy;
->         int i;
->
->         for_each_possible_cpu(i) {
->                 struct cpudata *cpu =3D all_cpu_data[i];
->                 unsigned int freq, perf_pct;
->
-> -               policy =3D cpufreq_cpu_get(i);
-> -               if (!policy)
-> -                       continue;
-> -
-> -               req =3D policy->driver_data;
-> -               cpufreq_cpu_put(policy);
-> +               req =3D intel_pstate_cpufreq_get_req(i);
->
->                 if (!req)
->                         continue;
-> --
 
-This change would have been fine if the modified code had been
-correct.  Unfortunately, this is not the case because below req is
-passed to freq_qos_update_request() which accesses the policy object
-indirectly through it, so the policy object should be
-reference-counted until freq_qos_update_request() completes.
+This one made my imbox. Nice!
 
-I will send a fix for this shortly (it is better to fix it before
-rearranging the code to allow the fix to be backported more easily)
-along with my version of the change in question.
+>  .../translations/ja_JP/SubmittingPatches      | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documentation/translations/ja_JP/SubmittingPatches
+> index 5334db471744..28ad83171252 100644
+> --- a/Documentation/translations/ja_JP/SubmittingPatches
+> +++ b/Documentation/translations/ja_JP/SubmittingPatches
+> @@ -132,6 +132,27 @@ http://savannah.nongnu.org/projects/quilt
+>         platform_set_drvdata(), but left the variable "dev" unused,
+>         delete it.
+>  
+> +特定のコミットのバグを修正するパッチの場合（例：``git bisect``で問題を発見した場合）、
+> +少なくとも SHA-1 ID の最初の 12 文字と 1 行の要約を記載した「Fixes:」タグを使用してください。
+> +タグを複数行に分割しないでください。解析スクリプトを簡素化するため、タグは
+> +「75 文字で折り返す」ルールから除外されます。
+> +
+> +例:
+> +
+> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed")
+> +
+> +以下の ``git config`` 設定を使用すると、``git log`` や ``git show`` コマンドで
+> +上記形式を出力する際にプリティフォーマットを追加できます::
+> +
+> +        [core]
+> +                abbrev = 12
+> +        [pretty]
+> +                fixes = Fixes: %h (\"%s\")
+> +
+> +呼び出し例::
+> +
+> +        $ git log -1 --pretty=fixes 54a4f0239f2e
+> +        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed")
+>  
+>  3) パッチの分割
+>  
 
-Thanks!
+So, this doesn't cover the other hunks in commit 8401aa1f5997.
+Instead, it includes the change made later in commit 5b5bbb8cc51be
+("docs: process: Add an example for creating a fixes tag").
+
+Your interpretation of Jon's desire might be different from that of
+mine, but I think Jon suggested translating up-to-date
+submitting-patches.rst as a whole.
+
+Of course that would be great, but I'm not sure it is a reasonable ask
+here.
+
+I think covering both commits 8401aa1f5997 and 5b5bbb8cc51be might be
+a reasonable middle ground here.
+
+What do you think?
+
+It's 100% up to you how far you want to do.
+
+Thanks, Akira
+
 
