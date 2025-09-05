@@ -1,117 +1,199 @@
-Return-Path: <linux-kernel+bounces-802519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C85B4530E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:23:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4B4B45317
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15F61885C7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6452BA04254
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81802701CF;
-	Fri,  5 Sep 2025 09:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372D28469C;
+	Fri,  5 Sep 2025 09:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Wbyq1OIR"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lCFxCcPX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+Elsm7G2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LdVt/R+0";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xib63Lfw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919782459E7
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E262459E7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757064083; cv=none; b=HcKGbfB+YqlGZNKAgN8ZOvsVLEGxb5hYERZziLGkcDUrWd7GlP6vutzy/PNNY0mk9nvy7MTEaomt9SI4VkFnjP1ThqNWH7WKHs91IPCIDrEuXuW5adK1+jbs3EW3+2frdb98qskedWqTr4hMLYiuQOvIhmfyHzvVdnZc51+zykk=
+	t=1757064088; cv=none; b=eoOcEJCjc5vYJbh8Ji7Sv+DMikB0b0V4Ww9apRuFZ/qaSPJjNuE8J2nUySewm2qMYNgwkOTOdAMNFBzOfn7r6hexx0hB/UdslVM1Aif+lHt0t9zEVH7tLNHLFYKSFADN5Dvnd8xlLETy6BvMaTC1ARKUxmpJL8OsAd+UGBEYU+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757064083; c=relaxed/simple;
-	bh=3wlQplHKoQ+m8+l8Ds1tA3KMLL8GWFA9HaRZhemqOdU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fk19Mp6ykNcOOtiO/x9vKOXlzy9bigetuyMMBxuNwngl4BXMMeTKYYdtjQEtUiEIKnG0Mpc8UeyxM/YufLnwi+j5v92hR0PrftJrreEezCriUUmbjHvFv5mWHSc7OOeJq7+CeKPK02o7HkFSb6thFEDJHWozBSJk+jvHE5ue95Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Wbyq1OIR; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757064081; x=1788600081;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3wlQplHKoQ+m8+l8Ds1tA3KMLL8GWFA9HaRZhemqOdU=;
-  b=Wbyq1OIRYF8JQqedxe6ZzSKi9+dSI09j4AaQD3i/J8yjnTVokcAJyYky
-   SIcrL014ak8R5LPxtlph9gQQQ2HIiyubQuOnKKal+fyAPHDkhqzh7/xkz
-   HKcgqTSVPOsjMeq/KwZUZMgjlr+LtMJV5GcN4eBOwcgvhzAnJBljEUBIu
-   9DvgZJIJ6OmAKozeheDj2pp7uPC2JFPlLzWDJm0QNpncCCDJ5wI5yN6lZ
-   ZGDZWcN4H8EqkqK1+3EPO7yNdjkV3uuoYZofd1qbIOAvE727A5afJfNt5
-   4rnWZ4Lp0Mk6bWsy8l31ru/FiQTPe5lzXfJFE10iivDeiS14uCuBkM4HZ
-   A==;
-X-CSE-ConnectionGUID: TCGxiWdGRGmXVlKQMbRlFg==
-X-CSE-MsgGUID: E7XpECVTReeMFy9O5WQIBw==
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="277490372"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Sep 2025 02:21:14 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 5 Sep 2025 02:21:00 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Fri, 5 Sep 2025 02:20:58 -0700
-From: <nicolas.ferre@microchip.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: Ryan Wanner <ryan.wanner@microchip.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>
-Subject: [PATCH] ARM: dts: microchip: sama7d65: add uart3 definition for flexcom3 peripheral
-Date: Fri, 5 Sep 2025 11:20:44 +0200
-Message-ID: <20250905092044.25429-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757064088; c=relaxed/simple;
+	bh=YbQoDZsA7LqTWbhYeqwEESggXepydwpbYeBBDb9QyTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=swFp/o9yOsNrlSY8dvP6QFK2HxxPDMnZHnQvXgic097l0/fL5jgYvdt8Io1MzYgSA13tLRMwm+Y7qH2cPcm3FcgStO5fKLtqLHXgISFxDVypwtc4YhzcMCkRXCH9amQDPaIb3ka/hl3cu5jDkxB13J8S6mNHe9TgpceKVRT6/Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lCFxCcPX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+Elsm7G2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LdVt/R+0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xib63Lfw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6DD934DDE3;
+	Fri,  5 Sep 2025 09:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757064078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Rg3QKWs9uU1kouyVm2UkSG/lcnvMWp/nur8uOfA5dks=;
+	b=lCFxCcPXzckNK0oMR9ftp0nJM8WnQKAg1Mdh/YftdrxP5DkEdohTCnOUgeNiP0vBTFcK+t
+	CHbEjBgQuf2vNoaAhZQXjGMvWNiAC5dzS+LO7/KciwBT3GMVFATCg9bMH7dv5E2RBGx5m+
+	gitBC1kSB/8fOv2BPWaIqIuHhx8WO7g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757064078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Rg3QKWs9uU1kouyVm2UkSG/lcnvMWp/nur8uOfA5dks=;
+	b=+Elsm7G2wGU4B5UOQlMR/l7dHnW8ud577ayqhJ9Q/hyH9zRJe8xWZNIPXdcWKxPagebYJS
+	Xp6eEdlKMG+lLPAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757064077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Rg3QKWs9uU1kouyVm2UkSG/lcnvMWp/nur8uOfA5dks=;
+	b=LdVt/R+0dYTTDAo8q7+KfPjf1cYAiWqzOd4txT0eDCGViKehrjT+AzAQ5fKe/v9Ilxlqa8
+	2LikQU+XkeUUWtgW7mrM1JZoBSk2G8ePZ3thD7kDDkIesUO8CQCbXX/8nQYx/oqeVtuV2E
+	JIq0Bn7jLG0B+MkT7i3tRLyKH1C6CvU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757064077;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Rg3QKWs9uU1kouyVm2UkSG/lcnvMWp/nur8uOfA5dks=;
+	b=Xib63LfwF7CRtzoz7AXoF4l1eOf+5zo87oHZsaG+ROQG8vWUt3P+kx4ZY7qwDvDCtI7WQz
+	Jyay+k1iJw2hgEAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5676E139B9;
+	Fri,  5 Sep 2025 09:21:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Dj5eE42rumgOKgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 05 Sep 2025 09:21:17 +0000
+Message-ID: <3d9a2e2c-8081-4298-87d4-a4c023b3687e@suse.cz>
+Date: Fri, 5 Sep 2025 11:21:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: add tree entry to numa memblocks and
+ emulation block
+Content-Language: en-US
+To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250905091557.3529937-1-rppt@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250905091557.3529937-1-rppt@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On 9/5/25 11:15, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Add the definition of uart3 at the side of i2c3 for flexcom3.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Reviewed-by: Ryan Wanner <ryan.wanner@microchip.com>
----
- arch/arm/boot/dts/microchip/sama7d65.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-index 84bac1d29421..9f3340c4ccf4 100644
---- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
-+++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-@@ -506,6 +506,21 @@ flx3: flexcom@e182c000 {
- 			#size-cells = <1>;
- 			status = "disabled";
- 
-+			uart3: serial@200 {
-+				compatible = "microchip,sama7d65-usart", "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 37>;
-+				clock-names = "usart";
-+				dmas = <&dma0 AT91_XDMAC_DT_PERID(12)>,
-+				       <&dma0 AT91_XDMAC_DT_PERID(11)>;
-+				dma-names = "tx", "rx";
-+				atmel,use-dma-rx;
-+				atmel,use-dma-tx;
-+				status = "disabled";
-+			};
-+
- 			i2c3: i2c@600 {
- 				compatible = "microchip,sama7d65-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
--- 
-2.43.0
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6dcfbd11efef..fbdbf7c012a0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16127,6 +16127,7 @@ M:	Andrew Morton <akpm@linux-foundation.org>
+>  M:	Mike Rapoport <rppt@kernel.org>
+>  L:	linux-mm@kvack.org
+>  S:	Maintained
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock.git
+>  F:	include/linux/numa_memblks.h
+>  F:	mm/numa.c
+>  F:	mm/numa_emulation.c
 
 
