@@ -1,444 +1,323 @@
-Return-Path: <linux-kernel+bounces-802527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFA6B45328
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C72C2B4532B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD8E3BB070
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E3148747B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996F022129B;
-	Fri,  5 Sep 2025 09:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D7124167F;
+	Fri,  5 Sep 2025 09:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="KXfH9xw8"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022101.outbound.protection.outlook.com [52.101.126.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xIcNh29G"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDFF1F4613;
-	Fri,  5 Sep 2025 09:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757064635; cv=fail; b=KBFn7LrhLhYSZF8o24r4WXvqRMk0MFRkZWkIsLxPsXvdD35WauGXHg6yXNpdpsE3yaIYu7JJQ+a7tnkzmCDG6+9fA9cuUGSP3aTplbXr4oD4X/GR/HdElahP6PZ3nHUS+7wVubB1KQOIlcvEuIqKo2UKZS97n3qSRsVGMeLrFBg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757064635; c=relaxed/simple;
-	bh=hoQNkvJnWmLK0JmamlkRfaF7IWjBxT9hpoUNqhdQ4Q8=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YZ+t2PJasxVU3vbr1C2c+28FIGvQUu8VAoj6rA7y52Xs3/hwuPFsk8gFynI2Y1Lij2xcl3nPn0DslgOZuV8W2JKzIYS6d8nA4emFyBGAuGtPTXra3f21Tt/Dq2NdNg5pHhr73UqaexCc30yucKUgw8Y/ej/GkrLUfDd0yH06kEg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=KXfH9xw8; arc=fail smtp.client-ip=52.101.126.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VA9Q0GfwYWliweZLrKWDgnlFlir2pqFaXmlrtC94ppM+LQm308XtzPd5eWF8NOrS8TRwyVjT1FccS91XEEXaLL+qnsh8ZjHnEY8Fw0pjYMo1H7ZtsdgevlqxAsAwLRjYvkcNywVrNKt6x6hDRFW07iT4c3g2QuiHlrIkcs8q4q5g7UOMdPzV/DG0LkQxOfoGCZJsO4Xc3DjuNvs/X0c48iWziGIb+XbNplvHHEV2WBCYw3AgyhX9ihUZHiT+odU3XO6ZfogOdUmQdrCMLeL5lWJyB94krmxxlyS8IH0fFPg38cSEjlArHgOXf3AqSgmue99+lSlmbH1n94CgAksumA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w8FKnULOHC7+7BvNxcPIDyUndKIrDbyGo5yPkbk0f28=;
- b=peb24V08ppghUaxgawubHiDWHjJ5wdJV7lGatRafvjlEM8QQfor+URPBFU1nKPDI3ID9Hat8Qiu/MX6telMtURCQ25tP9wCmdPMVBmmW0QbMS3d1Y4O4SUjo/5FPuDh9ZpBTK9Son0hm+Yi2PdujbBeGA0yfvZT8HOLdQZAA2ApqrUGTNk8/RRyqzoeplyWqkMROSLre4vIy8skcb6a2neEH6XwlYV6GQmO5uL+lH/NXTPaiw79obqlAefJn6vFXAuhUQbsFLPdvPN+Ym3zOlB03Z61hqQmATgyxuPjHClIEJ6Y1oOioT+DxXWN7BjbSj4QXcnEz+N7VROThPBMWwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w8FKnULOHC7+7BvNxcPIDyUndKIrDbyGo5yPkbk0f28=;
- b=KXfH9xw8n79aekupH60HkR19hZFUCVjWaTbNPbgE2JdqsKjLaKZ/xyqmEGwXwyrvnH4Xm01StW7OAYgEBn7TrQyffeT4nbpWV1eOMEpq5i6VAg6iKVtzD4JesDeMonZc8lwy7OBBoR0CZSHk9bpo9jC7v+T4sg1wp66rVjUQvBGKwxRQQoyEZ//DMcMTPF8nWa8wo8tWVrm3xzjdbeW5wWNWs5SrvWVsnztTIminTncQU82hN2fBqzKmAA5jP0hTSNvKXDUV/+BELD5rv8d3f496+d6fq4xShUdM71q9oVIsxsZE3ckHs55jFDBrhzEev3BwSVWjFDoaPcxgj3JUGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from SI2PR03MB5786.apcprd03.prod.outlook.com (2603:1096:4:150::10)
- by TYZPR03MB6895.apcprd03.prod.outlook.com (2603:1096:400:288::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
- 2025 09:30:29 +0000
-Received: from SI2PR03MB5786.apcprd03.prod.outlook.com
- ([fe80::3f37:cacc:420b:9b86]) by SI2PR03MB5786.apcprd03.prod.outlook.com
- ([fe80::3f37:cacc:420b:9b86%5]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
- 09:30:29 +0000
-Message-ID: <5993b59e-af9f-4738-a5ef-dc5c324b4f08@amlogic.com>
-Date: Fri, 5 Sep 2025 17:29:56 +0800
-User-Agent: Mozilla Thunderbird
-From: Chuan Liu <chuan.liu@amlogic.com>
-Subject: Re: [PATCH v3 2/2] clk: amlogic: add video-related clocks for S4 SoC
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
- <20250905-add_video_clk-v3-2-8304c91b8b94@amlogic.com>
-In-Reply-To: <20250905-add_video_clk-v3-2-8304c91b8b94@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0364.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::8) To SI2PR03MB5786.apcprd03.prod.outlook.com
- (2603:1096:4:150::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0501E2834
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757064661; cv=none; b=a/NG8ShZApyMECFJyp1SU+oM3pjkTaI2GiAwsxJWdktlIz3cDqxQlaJgW223BNbbuGe1cwn68fnRZMbLEJLRD9DwhTeYWSRQ5gpDHUsHFKZqM7tSybDsWVom2LpiImVf2cPnOhzHO2e2tTXjiD1wkTTsjadPfZ5TtprU4xIE5Bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757064661; c=relaxed/simple;
+	bh=cComBjj/vDPU72+FvDU/MvSfl4KJJjzD7B7BldnVSPI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mSfcShD/B3kVpXfZlmbxOnmMhhKXc8kfJ384EfR75ADZzL7X8H0Ti2mJ7+UA2IB8MF3KyeTUxj+sSE2320hNULE1FKItUZVFt0N1pukblYt5xC88rLZyqSDvpxn8XWk7MK/AjI4L48anOM/227WRIf0pdLpz/jcXJGITYPms788=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xIcNh29G; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b4cf40cd0d1so1594642a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757064659; x=1757669459; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+LobxBsVhrOLP6eF1oCgb7vPNLRbOh2IXRKPy/RCs6I=;
+        b=xIcNh29GzwH9dnw2XaBpohJleGt/Ng66Iwem73Bf2P+50OVY3657NmKft3NkveS4Gk
+         a4a1S8y/+Vk2YBljNaiym9NoiuH8HhRki5df4HT33ZMBbYQbb/DzpbRi8aulMhXNryAZ
+         dlGRoZ8Q3u7YzjxenEIFLL+30VO4nDH4VbPXrxQYrKN1IykmDnRK3VQMYuWboWG5ZcHR
+         4jryTYWhN/pwM7DOc4bPlC8Fr1n24wXcJtUixPm0E5ZVrQstc5U0tHp7sjjnvGKfSIPb
+         XoJWmJ0vJ0Ui0IaMXq5S3m9nW3Q9EXx00PlrhgXTt3Ool/lpAM7Fx0+RoJrTanJhrxrJ
+         i5og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757064659; x=1757669459;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+LobxBsVhrOLP6eF1oCgb7vPNLRbOh2IXRKPy/RCs6I=;
+        b=U1+UHZzU6cuJEBcvn8WPtYXCrwPglP7y3fUkymL5W1s1l7BPw8ZYfLiH5nfmCVSIwF
+         v2p78R7HHYWFH8fdfuGbOAxfjCbEosHIpTGUfFjOZW7w5aaAorBXkL/xaT2Yq5h68hZn
+         B2QwtGPgUC80HIUsFoL5bLGR7gZo/hD5jhXmoAUXYeGEmUdeh+3Ub9Ihq+qzeZQod1uG
+         uXc8yuvM2ereYXOvjN3Pci6RMe/e/LEppHPbbLYprqmGONoWNUsryks0ZV2bD1st7soC
+         irNTxHE20b87famqhPQ/I4E2oX5agWxr7tzMDWncbfDRWYFhG0tAHjxN8WzsUg+F5FGi
+         71Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWxnom9eR2vsVVAlfTqnXRJJ0E4/B3e4oCp1yhd6S1170rmNjZ3LmxtHwfiiGF3mUaDxAVSbb3rQz6eMv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzda/tAgn8Hk0DUbkzy4d1pWVX3VF8BbDqLnDyzQhsFxLY0SY1h
+	RYXB0qBihUYlvhG3GyOhqTvpObrVS+mRK4YPrpxLZWIR4c/oPhQBe4JUfBKzPePnTr+wDEOqNtx
+	pj475hbREgC9eMXdYYGbtx1Xn8Qi9oG5q5mJsaeTKrQ==
+X-Gm-Gg: ASbGnct6c4m9Dkz4FOKADkT1lO1tQtr/2W/Ec63Dk2ifPzbUnsTfEEBjYF1yssLEQpz
+	3H8JRUi9djKP0re30GaTBMXBaWEzqYPreTmIunSoLPg6S9ZDlFPOHoMKv2VKZ4rCT34QKPjbz5+
+	eFIHvGmOYqFuCpQK3/7d/60dDK6JNZWRugEiBWB3uFkMkzUHycyrtFnJZeOGkycpn3SigtjhSP+
+	yFLhq84veBW5Dq8pIj5O/muVvqantRL8PlipHlM
+X-Google-Smtp-Source: AGHT+IHXA2PhuxH15MNyIwAlo4Zsa1wegxGTRmX/0N7BbPmF1yBcGj4uXgca0x/iboAEfGk+fwKK4A1E3Kyu6BjOlso=
+X-Received: by 2002:a17:90b:4d92:b0:327:e018:204a with SMTP id
+ 98e67ed59e1d1-3281531d3e3mr29191395a91.0.1757064658607; Fri, 05 Sep 2025
+ 02:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR03MB5786:EE_|TYZPR03MB6895:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83661e6f-0341-4f10-f336-08ddec5eda51
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b25PUDhaeWNxeWNlVTZSay9uQ3ptZ3JHaVZIRFAzNjh3OG9GZXo4aDFYV0Uv?=
- =?utf-8?B?a05iWExTemJIQTdLVUpwNTlkM0lwRVVNZFZFdDBjK29meldmNHVFRGYzM0lV?=
- =?utf-8?B?TGJjWk43QkNPekI5cm5vM0lHN29TMUxNbDk0cjc4eTU4OXh4aVh1SW1FNC85?=
- =?utf-8?B?aUl3Z2lmRUdhK3grb2hCN2tRNkk5UkxsUGZVSXRCY2RnaG1CVFVtTndNNHlK?=
- =?utf-8?B?RGpvT1ZvdG4xNHU3UEJhTGFZN25vT0o0V0pFd00zTU1YVjJ5cXgyM25BYWl6?=
- =?utf-8?B?Ymoxd3dkMTYvRTRpaVdzNEpIelVBVE1nb3ZNVFV3L1dDYVVHNW1xYlhJZkRu?=
- =?utf-8?B?aTY1L1dXRCttUTloMlFsakhwWGM5NmNQUTNzTWFkZW15Q29LSHVlZDcxZUkr?=
- =?utf-8?B?OGZVcWZYeFhEN2RneVJOYi9ZaHRqVy96clo1Y0xRdFFXa1I3OTNOR0FHY2g4?=
- =?utf-8?B?V0FNQjcwN1pyR1hSZ2FFTVhWcmZPMERXcTdwSE9XMituR2dCTStLaklMbGhv?=
- =?utf-8?B?bGVjYnFUQVVRbFdtU0wwcUhZSjNaMXBneDBrdzlUcjdJMmNMeWxWSVU1cldQ?=
- =?utf-8?B?MUdESU1rQzdHWDRLSUtBZmhMVDR3R2JHMG4wdlZZd0p2Mk5MeENjc3hRa1Fo?=
- =?utf-8?B?RnlaSXlzYy93MXhIRThmWnAyNHg4dTJlSk9CdUF2eVZVckgrTHlsVjNsOEUr?=
- =?utf-8?B?U255bUxwZ013Q2srcnpZdW1WZUEvQnNRZ1NoaU9iOC9GcUNKeXptSG5sN1Vo?=
- =?utf-8?B?NERMd0ROY24xYlNPMDZrQTd0SE91eEpSZHR1b1FRSDhDVmNmU1padkR2NUZT?=
- =?utf-8?B?dDBDRU93cjFtKzMxT2swTVVSZXRSckNsdVFmNnZNUTIvNVo4ZzhyUGR4Ynlx?=
- =?utf-8?B?WHF4NEM4dGRoWUlLYkFDYmtqbmtrZE5ZSkxwWWhMbUFEOWZla0Q4RmZUOENJ?=
- =?utf-8?B?dFlnazlrbXJnZU15dG9KUFhHWkZzNE1nbmZnSkw3S1AyQU04QW55alF1NlNR?=
- =?utf-8?B?eUFKZmEyK0lKQnlaN0FtQlZsZWloZGRscFhSUUVPY21BVndxMGRuL3gxK3hE?=
- =?utf-8?B?ZndUajlQdjJIZWhGMXROV0ZKTWlDR3U0N25WcGlNeVJYKzRoMHk2Mk1RM3pt?=
- =?utf-8?B?K1dITlA2VDg2cjVtRjFXK3phWjM5Uk1NNmVKRW5LRmpteU1YZXltZmZaZHZz?=
- =?utf-8?B?a1YxTE94TUJWM25MV2NKdHJqR3N5TmNXekRxb25rYUNxZUhoTldtcytSbTdG?=
- =?utf-8?B?eDhXNDNMWnV0YkozVnQvQ2RZSnA5N2hzbElobEVHLzB0OWpUWGZGRW1XZ2RG?=
- =?utf-8?B?cDBGcTg4S2hCQVNrN29QcjVwOWlTcmtZclhPNllaTnRZdG1jZ3ZzZ0x0c293?=
- =?utf-8?B?RURwd2o0b2Q0OEc0UE9MQ3RoTmZ6Y1gvUXFjUWduRVNITU1aYzBIRFE1SURz?=
- =?utf-8?B?c2hyZGV2S0ZQOGZKWE44QmZzenNlY0hFVGFIS3FTbkJodnlvWU5jQW9HMGxG?=
- =?utf-8?B?cWh2VUVWcHR6R1llZ1Z5L0J2bTRabVF0Rm1OOEFPcDdFdjQ2MS9JZFBRL1RJ?=
- =?utf-8?B?c3pZSDQ3NDFEcmJHTkJRRkJkK1VOenErSnlqYXhtUG04OFdpL0h0SEc1Qy9l?=
- =?utf-8?B?WEwveUZGMFM3NUJaZjVnb1JPam1VZnloVERBaUxEVDk2c3h2czNvV01QenpN?=
- =?utf-8?B?ZTlZNFRYUHVtL1V1SEoraWJFRlVIWG1lVGlDRThHSEZUWE9CNUlJaUwxeXBu?=
- =?utf-8?B?Y1B4V0s0VW41dTA0VkJZMmIvSEZ4TXB0Y3hzeGFGS1dIVG5VOUgzdDNDcjZh?=
- =?utf-8?B?R2p4T01tZGhqN0Z1czR2YWlOYkpwRmlGT1FJTDViZHVNSHBaSTdvbXBuVVdX?=
- =?utf-8?B?MkRTR3hNdVZtS0Y1VnJHTGQrVnFkZFZabzVST1RTcHZCQmc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR03MB5786.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UW5xNkF4ZnkxbFVzVFkwbkVNNG5CV2c1NFh1cTRzZUlvblIvcVQrWGE3REVi?=
- =?utf-8?B?THgrMEFET21QUk5BQjV1bW1lMUVUL0JvWUhVRTU3bzFJMVdqRFFHTzJzZzRv?=
- =?utf-8?B?V3FuK3NTZ1phWjQxNi9SNkl6TXkyREh0NmlKN0pwNFB6bHFzcjNYWHpmSTgr?=
- =?utf-8?B?c2hiUXBwemFUM0lMOFpIb21hVm02bzAvcmc1V2RNTW9nalJraEQvbm5NVHBN?=
- =?utf-8?B?M3ZXOVlqSlNTOTEyMlpOc1Z0K1Zrd0JXQmVkU2hIU1hIRHI0U2lSSkwzYmRz?=
- =?utf-8?B?Vmpvd3BTN3R2dDAxMjBDaWZjUE9HcU9Td202cktMckIzcGcvcXVFZ3BmaG9k?=
- =?utf-8?B?QXlZUVd0QzZJWXEvK29CZ1c1UGltRkxvNlYrcllFUU51bVhhb0o5MlR2ckRE?=
- =?utf-8?B?U3NvMkJ0WmlpWmZmWFhXaVlDWmRRVEtaNWVubjdaRENtT0hNMGV3U0o3Qm1I?=
- =?utf-8?B?cUtpaE9CcUs3VWt3eUlJU1ZlcXlJdU5lUHlCUFVVenIvR1ZJdmZUaVlSTFVj?=
- =?utf-8?B?L05URGl6Sm0yTGFWN2RWMTZXZG4zbE5RSDZONW5NQ0lyMy80Rm1YWnM3ZnNu?=
- =?utf-8?B?bDNlTGZoYkQwd2ZhVzRmdG55dk9GenI1WEJ1cHdMSE5uUXR6NWF0T3JxNG8y?=
- =?utf-8?B?aVFvcDZEUCtVM3p2cWxUQm9IazhNU25qdnAzSjI3T1B6blVBcUhtWEk0cy9v?=
- =?utf-8?B?SlIrZHBRbXVxb2V0S2FESWNiemtNOTdKN0tGRzA5ajVlRjdYOER1YUxkcitl?=
- =?utf-8?B?Z0xoemhOL0c0SkZrZytSOWEwdjlPa1c2TERFRmNjR2hFRE9kQ1g5SlNlbHVp?=
- =?utf-8?B?UHpCM1NtaUNEQUV1dGljT0pWUXplZ0NiL1g2R3dPNDA4UHRiT3dxUm5tSXh2?=
- =?utf-8?B?OEpvOWNrWEh3dzBVYndwZ0hyOXYvSXAvTFF4cGlsbXR5T0Q2QWtBQTRzaG5v?=
- =?utf-8?B?b2dCay9XaTcvNHhsMWMyVWZna2V1Q0gwRDVDSTB3cTB4M3NIM3Y3MG9ITVAw?=
- =?utf-8?B?SnViVTkyOHpjWmNFcVMxRzM2YjRnbG5WVjl0cG45d2RxanRYZkZ5d0kxYUdh?=
- =?utf-8?B?Z1pCbXpCK1FiTmdhYjlqWHdwMkN1ZDJXR3lDOEhiZUZzMTY5aW4yWkF6MGlI?=
- =?utf-8?B?d3FYdjEzenhBb0hyREhCUy8ySis4T0hxTENZNGg3MHRzSzQyemI3emF2clNj?=
- =?utf-8?B?L0ZZMkdNdFdtSkh0bFVWZEtHeVhEaDhmVGJwSitOMFpSNWU0SSt3YUR0SlFr?=
- =?utf-8?B?amJVc3YzZk5PSjVqVnNiZkJzMGJCbE1SZFhkSnV4eFdNSWFKU1huVDhnTXlW?=
- =?utf-8?B?NnIwUVdtdWVHZ3llUkJJOEFtTzkwQmwvOEc4cEpaZnRjVVJYUStYVTNDcWVk?=
- =?utf-8?B?S25rVVJiYW1IbkZxd3N4NjdoTTJqY2cxZHFsaVhwODhBS2JkSE93YWIzT2lN?=
- =?utf-8?B?bFY3ekQ3WkFiMWVxNzZIMkZaSEI5V2FaMmMvTGNLUHliN29udVhQMWpncEh6?=
- =?utf-8?B?U204czNDT3NibWJrWHhMeWFEOFZwNEduelljUEdaMENHVGdsbW1pN2gyVkJh?=
- =?utf-8?B?QS8xaENRZCt6RVF6YzZHYmYxbDFzTlRrTjV4dVNhNEpJRlIxN3ZFREd1SmJX?=
- =?utf-8?B?ajNkS2JHbmFFYUpjemJMdlN5SUFjaTg3ZjFoSmtBc2h2Vzk3eGJwL2NUblF2?=
- =?utf-8?B?M0NVanRQbVNYTWp0a1V3SFVWbGpMc0E2cW1rT1lFRGhtOEZlSDBLY3Q0NXhw?=
- =?utf-8?B?REFmRUFrdEdZbFBYR2xDTXNQWS9xakNENmN0WjhLeEtKNlM4V2Z2c0Q2MFNp?=
- =?utf-8?B?REQ5TDN5OWg5NzRORXlNck1yMkhtSnJBYUNCMGtpMGIxaFZEQTVxWXRkUU5O?=
- =?utf-8?B?cTAyVHduUGVhL2VoL01oY2pQR0tvajIzZUczNVFDbHdqS0FqVjdMSWdYb25P?=
- =?utf-8?B?NmwwSTBtYUhaWUlxbWRNT0Yva3Q0YUhzUFlnZytuYzJYS2srSXdwNDFydWR0?=
- =?utf-8?B?WVBGbFBGSi9FSU1uM0lZN2J4NmZKZEJmYThZN3ZkUE9NZ2xydGZVZmZERDZB?=
- =?utf-8?B?ajAyTFBZMU9WNTZYQ2VBRzAvNFd5VGVQZEtrWE5TLytuVUlvSEZtYkVDbjRI?=
- =?utf-8?Q?FPS6I5dGfuQKZs5HznwQ1nHR2?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83661e6f-0341-4f10-f336-08ddec5eda51
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR03MB5786.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 09:30:29.2504
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mkkcsI5Xa336KJ+TQmAmLHGrEgOZKmeFu0pqg1yMfTRvbu6ijGm+D+4Diskxq/Zsw3hZU8nSu7H9F9HxKLbxRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB6895
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 5 Sep 2025 15:00:47 +0530
+X-Gm-Features: Ac12FXzSXlXs-UMpYMYTMehHV94NkxIEElsCgVxRk1HWKsb_351cP0b29GGHSf8
+Message-ID: <CA+G9fYsmo39mXw-U7VKJgHWTBB5bXNgwOqNfmDWRqvbqmxnD2g@mail.gmail.com>
+Subject: next-20250905: x86_64: udpgso_bench.sh triggers NULL deref in zerocopy_fill_skb_from_iter
+To: Netdev <netdev@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Eric Biggers <ebiggers@google.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, 
+	Pengtao He <hept.hept.hept@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof:
+The following kernel crash was noticed on x86_64 running selftests net
+udpgso_bench.sh
+on Linux next-20250905 tag.
 
-         Sorry, I forgot to add your 'Acked-by' tag in this version.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? Re-validation is in progress
 
-Please ignore this patch for now. I will re-add it in the next revision.
+First seen on next-20250905
+Bad: next-20250905
+Good: next-20250904
+
+Test regression: next-20250905 x86_64 selftests net BUG kernel NULL
+pointer dereference zerocopy_fill_skb_from_iter
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+x86_64:
+ Test:
+    * selftests: net: udpgso_bench.sh
+
+Test error:
+selftests: net: udpgso_bench.sh
+ipv4
+tcp
+
+<trim>
+
+# tcp zerocopy
+[  991.110488] SELinux: unrecognized netlink message: protocol=4
+nlmsg_type=19 sclass=netlink_tcpdiag_socket pid=64835 comm=ss
+# RTNETLINK answers: Invalid argument
+[  991.129878] BUG: kernel NULL pointer dereference, address: 0000000000000008
+[  991.136850] #PF: supervisor read access in kernel mode
+[  991.141986] #PF: error_code(0x0000) - not-present page
+[  991.147118] PGD 0 P4D 0
+[  991.149657] Oops: Oops: 0000 [#1] SMP PTI
+[  991.153661] CPU: 0 UID: 0 PID: 64842 Comm: udpgso_bench_tx Tainted:
+G S                  6.17.0-rc4-next-20250905 #1 PREEMPT(voluntary)
+[  991.165907] Tainted: [S]=CPU_OUT_OF_SPEC
+[  991.169825] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.7 12/07/2021
+[  991.177209] RIP: 0010:zerocopy_fill_skb_from_iter
+(include/linux/page-flags.h:284)
+[ 991.182954] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
+63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
+74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
+f7
+All code
+========
+   0: 4d 85 c0              test   %r8,%r8
+   3: 0f 84 04 01 00 00    je     0x10d
+   9: 44 39 c7              cmp    %r8d,%edi
+   c: 41 0f 4d f8          cmovge %r8d,%edi
+  10: 4c 63 de              movslq %esi,%r11
+  13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
+  18: 49 89 d6              mov    %rdx,%r14
+  1b: 4d 29 ce              sub    %r9,%r14
+  1e: 49 c1 fe 06          sar    $0x6,%r14
+  22: 49 d3 ee              shr    %cl,%r14
+  25: 4d 85 f6              test   %r14,%r14
+  28: 74 24                je     0x4e
+  2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
+  2e: f6 c1 01              test   $0x1,%cl
+  31: 0f 85 cb 00 00 00    jne    0x102
+  37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+  3c: 31 c9                xor    %ecx,%ecx
+  3e: 48                    rex.W
+  3f: f7                    .byte 0xf7
+
+Code starting with the faulting instruction
+===========================================
+   0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
+   4: f6 c1 01              test   $0x1,%cl
+   7: 0f 85 cb 00 00 00    jne    0xd8
+   d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+  12: 31 c9                xor    %ecx,%ecx
+  14: 48                    rex.W
+  15: f7                    .byte 0xf7
+[  991.201691] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
+[  991.206910] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
+[  991.214033] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
+[  991.221156] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
+[  991.228280] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
+[  991.235406] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
+[  991.242529] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
+knlGS:0000000000000000
+[  991.250608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  991.256378] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
+[  991.263513] Call Trace:
+[  991.265956]  <TASK>
+[  991.268055] __zerocopy_sg_from_iter (net/core/datagram.c:?)
+[  991.272674] ? kmalloc_reserve (net/core/skbuff.c:581)
+[  991.276599] skb_zerocopy_iter_stream (net/core/skbuff.c:1867)
+[  991.281219] tcp_sendmsg_locked (net/ipv4/tcp.c:1283)
+[  991.285493] tcp_sendmsg (net/ipv4/tcp.c:1393)
+[  991.288896] inet6_sendmsg (net/ipv6/af_inet6.c:661)
+[  991.292466] __sock_sendmsg (net/socket.c:717)
+[  991.296126] __sys_sendto (net/socket.c:?)
+[  991.299785] __x64_sys_sendto (net/socket.c:2235 net/socket.c:2231
+net/socket.c:2231)
+[  991.303622] x64_sys_call (arch/x86/entry/syscall_64.c:41)
+[  991.307462] do_syscall_64 (arch/x86/entry/syscall_64.c:?)
+[  991.311128] ? irqentry_exit (kernel/entry/common.c:210)
+[  991.314881] ? exc_page_fault (arch/x86/mm/fault.c:1536)
+[  991.318720] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[  991.323762] RIP: 0033:0x7f41e814b687
+[ 991.327352] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00
+59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10
+0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff
+ff
+All code
+========
+   0: 48 89 fa              mov    %rdi,%rdx
+   3: 4c 89 df              mov    %r11,%rdi
+   6: e8 58 b3 00 00        call   0xb363
+   b: 8b 93 08 03 00 00    mov    0x308(%rbx),%edx
+  11: 59                    pop    %rcx
+  12: 5e                    pop    %rsi
+  13: 48 83 f8 fc          cmp    $0xfffffffffffffffc,%rax
+  17: 74 1a                je     0x33
+  19: 5b                    pop    %rbx
+  1a: c3                    ret
+  1b: 0f 1f 84 00 00 00 00 nopl   0x0(%rax,%rax,1)
+  22: 00
+  23: 48 8b 44 24 10        mov    0x10(%rsp),%rax
+  28: 0f 05                syscall
+  2a:* 5b                    pop    %rbx <-- trapping instruction
+  2b: c3                    ret
+  2c: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
+  33: 83 e2 39              and    $0x39,%edx
+  36: 83 fa 08              cmp    $0x8,%edx
+  39: 75 de                jne    0x19
+  3b: e8 23 ff ff ff        call   0xffffffffffffff63
+
+Code starting with the faulting instruction
+===========================================
+   0: 5b                    pop    %rbx
+   1: c3                    ret
+   2: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
+   9: 83 e2 39              and    $0x39,%edx
+   c: 83 fa 08              cmp    $0x8,%edx
+   f: 75 de                jne    0xffffffffffffffef
+  11: e8 23 ff ff ff        call   0xffffffffffffff39
+[  991.346124] RSP: 002b:00007ffdd843ba50 EFLAGS: 00000202 ORIG_RAX:
+000000000000002c
+[  991.353680] RAX: ffffffffffffffda RBX: 00007f41e80b9740 RCX: 00007f41e814b687
+[  991.360806] RDX: 000000000000f180 RSI: 000056251f1fd100 RDI: 0000000000000005
+[  991.367931] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[  991.375063] R10: 0000000004000000 R11: 0000000000000202 R12: 0000000000000000
+[  991.382193] R13: 000056251f1fb080 R14: 000001a670e438d8 R15: 0000000000000005
+[  991.389357]  </TASK>
+[  991.391571] Modules linked in: mptcp_diag tcp_diag inet_diag
+xt_conntrack xfrm_user ipip bridge stp llc geneve vxlan act_csum
+act_pedit openvswitch nsh nf_nat nf_conntrack nf_defrag_ipv6
+nf_defrag_ipv4 psample cls_flower sch_prio xt_mark nft_compat
+nf_tables sch_ingress act_mirred cls_basic sch_fq_codel vrf pktgen
+macvtap macvlan tap x86_pkg_temp_thermal ip_tables x_tables [last
+unloaded: test_bpf]
+[  991.426812] CR2: 0000000000000008
+[  991.430121] ---[ end trace 0000000000000000 ]---
+[  991.434733] RIP: 0010:zerocopy_fill_skb_from_iter
+(include/linux/page-flags.h:284)
+[ 991.440477] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
+63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
+74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
+f7
+All code
+========
+   0: 4d 85 c0              test   %r8,%r8
+   3: 0f 84 04 01 00 00    je     0x10d
+   9: 44 39 c7              cmp    %r8d,%edi
+   c: 41 0f 4d f8          cmovge %r8d,%edi
+  10: 4c 63 de              movslq %esi,%r11
+  13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
+  18: 49 89 d6              mov    %rdx,%r14
+  1b: 4d 29 ce              sub    %r9,%r14
+  1e: 49 c1 fe 06          sar    $0x6,%r14
+  22: 49 d3 ee              shr    %cl,%r14
+  25: 4d 85 f6              test   %r14,%r14
+  28: 74 24                je     0x4e
+  2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
+  2e: f6 c1 01              test   $0x1,%cl
+  31: 0f 85 cb 00 00 00    jne    0x102
+  37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+  3c: 31 c9                xor    %ecx,%ecx
+  3e: 48                    rex.W
+  3f: f7                    .byte 0xf7
+
+Code starting with the faulting instruction
+===========================================
+   0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
+   4: f6 c1 01              test   $0x1,%cl
+   7: 0f 85 cb 00 00 00    jne    0xd8
+   d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+  12: 31 c9                xor    %ecx,%ecx
+  14: 48                    rex.W
+  15: f7                    .byte 0xf7
+[  991.459215] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
+[  991.464434] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
+[  991.471557] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
+[  991.478681] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
+[  991.485807] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
+[  991.492930] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
+[  991.500054] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
+knlGS:0000000000000000
+[  991.508132] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  991.513870] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
+[  991.520994] note: udpgso_bench_tx[64842] exited with irqs disabled
 
 
-On 9/5/2025 5:06 PM, Chuan Liu via B4 Relay wrote:
-> [ EXTERNAL EMAIL ]
->
-> From: Chuan Liu<chuan.liu@amlogic.com>
->
-> Add video encoder, demodulator and CVBS clocks.
->
-> Signed-off-by: Chuan Liu<chuan.liu@amlogic.com>
-> ---
->   drivers/clk/meson/s4-peripherals.c | 203 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 203 insertions(+)
->
-> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-> index 6d69b132d1e1..c0f877ce0993 100644
-> --- a/drivers/clk/meson/s4-peripherals.c
-> +++ b/drivers/clk/meson/s4-peripherals.c
-> @@ -44,6 +44,7 @@
->   #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
->   #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
->   #define CLKCTRL_HDCP22_CTRL                        0x100
-> +#define CLKCTRL_CDAC_CLK_CTRL                      0x108
->   #define CLKCTRL_VDEC_CLK_CTRL                      0x140
->   #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
->   #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
-> @@ -1126,6 +1127,22 @@ static struct clk_regmap s4_cts_encp_sel = {
->          },
->   };
->
-> +static struct clk_regmap s4_cts_encl_sel = {
-> +       .data = &(struct clk_regmap_mux_data){
-> +               .offset = CLKCTRL_VIID_CLK_DIV,
-> +               .mask = 0xf,
-> +               .shift = 12,
-> +               .table = mux_table_cts_sel,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "cts_encl_sel",
-> +               .ops = &clk_regmap_mux_ops,
-> +               .parent_hws = s4_cts_parent_hws,
-> +               .num_parents = ARRAY_SIZE(s4_cts_parent_hws),
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
->   static struct clk_regmap s4_cts_vdac_sel = {
->          .data = &(struct clk_regmap_mux_data){
->                  .offset = CLKCTRL_VIID_CLK_DIV,
-> @@ -1205,6 +1222,22 @@ static struct clk_regmap s4_cts_encp = {
->          },
->   };
->
-> +static struct clk_regmap s4_cts_encl = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = CLKCTRL_VID_CLK_CTRL2,
-> +               .bit_idx = 3,
-> +       },
-> +       .hw.init = &(struct clk_init_data) {
-> +               .name = "cts_encl",
-> +               .ops = &clk_regmap_gate_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_cts_encl_sel.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
->   static struct clk_regmap s4_cts_vdac = {
->          .data = &(struct clk_regmap_gate_data){
->                  .offset = CLKCTRL_VID_CLK_CTRL2,
-> @@ -2735,6 +2768,165 @@ static struct clk_regmap s4_gen_clk = {
->          },
->   };
->
-> +/* CVBS DAC */
-> +static struct clk_regmap s4_cdac_sel = {
-> +       .data = &(struct clk_regmap_mux_data) {
-> +               .offset = CLKCTRL_CDAC_CLK_CTRL,
-> +               .mask = 0x3,
-> +               .shift = 16,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "cdac_sel",
-> +               .ops = &clk_regmap_mux_ops,
-> +               .parent_data = (const struct clk_parent_data []) {
-> +                       { .fw_name = "xtal", },
-> +                       { .fw_name = "fclk_div5" },
-> +               },
-> +               .num_parents = 2,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_cdac_div = {
-> +       .data = &(struct clk_regmap_div_data) {
-> +               .offset = CLKCTRL_CDAC_CLK_CTRL,
-> +               .shift = 0,
-> +               .width = 16,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "cdac_div",
-> +               .ops = &clk_regmap_divider_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_cdac_sel.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_cdac = {
-> +       .data = &(struct clk_regmap_gate_data) {
-> +               .offset = CLKCTRL_CDAC_CLK_CTRL,
-> +               .bit_idx = 20,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "cdac",
-> +               .ops = &clk_regmap_gate_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_cdac_div.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_demod_core_sel = {
-> +       .data = &(struct clk_regmap_mux_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .mask = 0x3,
-> +               .shift = 9,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "demod_core_sel",
-> +               .ops = &clk_regmap_mux_ops,
-> +               .parent_data = (const struct clk_parent_data []) {
-> +                       { .fw_name = "xtal" },
-> +                       { .fw_name = "fclk_div7" },
-> +                       { .fw_name = "fclk_div4" }
-> +               },
-> +               .num_parents = 3,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_demod_core_div = {
-> +       .data = &(struct clk_regmap_div_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .shift = 0,
-> +               .width = 7,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "demod_core_div",
-> +               .ops = &clk_regmap_divider_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_demod_core_sel.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_demod_core = {
-> +       .data = &(struct clk_regmap_gate_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .bit_idx = 8
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "demod_core",
-> +               .ops = &clk_regmap_gate_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_demod_core_div.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +/* CVBS ADC */
-> +static struct clk_regmap s4_adc_extclk_in_sel = {
-> +       .data = &(struct clk_regmap_mux_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .mask = 0x7,
-> +               .shift = 25,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "adc_extclk_in_sel",
-> +               .ops = &clk_regmap_mux_ops,
-> +               .parent_data = (const struct clk_parent_data []) {
-> +                       { .fw_name = "xtal" },
-> +                       { .fw_name = "fclk_div4" },
-> +                       { .fw_name = "fclk_div3" },
-> +                       { .fw_name = "fclk_div5" },
-> +                       { .fw_name = "fclk_div7" },
-> +                       { .fw_name = "mpll2" },
-> +                       { .fw_name = "gp0_pll" },
-> +                       { .fw_name = "hifi_pll" }
-> +               },
-> +               .num_parents = 8,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_adc_extclk_in_div = {
-> +       .data = &(struct clk_regmap_div_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .shift = 16,
-> +               .width = 7,
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "adc_extclk_in_div",
-> +               .ops = &clk_regmap_divider_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_adc_extclk_in_sel.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +static struct clk_regmap s4_adc_extclk_in = {
-> +       .data = &(struct clk_regmap_gate_data) {
-> +               .offset = CLKCTRL_DEMOD_CLK_CTRL,
-> +               .bit_idx = 24
-> +       },
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "adc_extclk_in",
-> +               .ops = &clk_regmap_gate_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &s4_adc_extclk_in_div.hw
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
->   static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
->
->   #define S4_PCLK(_name, _reg, _bit, _flags) \
-> @@ -3028,6 +3220,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
->          [CLKID_HDCP22_SKPCLK_SEL]       = &s4_hdcp22_skpclk_sel.hw,
->          [CLKID_HDCP22_SKPCLK_DIV]       = &s4_hdcp22_skpclk_div.hw,
->          [CLKID_HDCP22_SKPCLK]           = &s4_hdcp22_skpclk.hw,
-> +       [CLKID_CTS_ENCL_SEL]            = &s4_cts_encl_sel.hw,
-> +       [CLKID_CTS_ENCL]                = &s4_cts_encl.hw,
-> +       [CLKID_CDAC_SEL]                = &s4_cdac_sel.hw,
-> +       [CLKID_CDAC_DIV]                = &s4_cdac_div.hw,
-> +       [CLKID_CDAC]                    = &s4_cdac.hw,
-> +       [CLKID_DEMOD_CORE_SEL]          = &s4_demod_core_sel.hw,
-> +       [CLKID_DEMOD_CORE_DIV]          = &s4_demod_core_div.hw,
-> +       [CLKID_DEMOD_CORE]              = &s4_demod_core.hw,
-> +       [CLKID_ADC_EXTCLK_IN_SEL]       = &s4_adc_extclk_in_sel.hw,
-> +       [CLKID_ADC_EXTCLK_IN_DIV]       = &s4_adc_extclk_in_div.hw,
-> +       [CLKID_ADC_EXTCLK_IN]           = &s4_adc_extclk_in.hw,
->   };
->
->   static const struct meson_clkc_data s4_peripherals_clkc_data = {
->
-> --
-> 2.42.0
->
->
+## Source
+* Kernel version: 6.17.0-rc4
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250905
+* Git commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+* Architectures: x86_64
+* Toolchains: clang-nightly
+* Kconfigs: defconfig+selftests/*/config
+
+## Build
+* Test log: https://qa-reports.linaro.org/api/testruns/29777495/log_file/
+* LAVA test log: https://lkft.validation.linaro.org/scheduler/job/8434053#L16943
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250905/log-parser-test/oops-oops-oops-smp-pti/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32GkXBGNRNDEj5d64zd73eXhXQC
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
