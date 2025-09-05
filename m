@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-801920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C569B44BA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 267F4B44BA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D359E486C88
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8513486C4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8579521D3D9;
-	Fri,  5 Sep 2025 02:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C099225761;
+	Fri,  5 Sep 2025 02:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvI3YWzj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3PJ6H8y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D93BB44;
-	Fri,  5 Sep 2025 02:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDF221D3D2;
+	Fri,  5 Sep 2025 02:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757039566; cv=none; b=Yh1WeDdmQT4ck17u34g4gFPPS7QoZxadPUFLb5QJAdtFvKhyODucISRFQY9DAxwTRaILxcj+3KbfJbwMOcXVnffMJahrCywpRg54a7eJ6JxZLnVCyXNfrivKc7GW7ISDNHd1u8gv85q+1bsmov1EwLp8p3nEmObtxUAh0chA7KA=
+	t=1757039567; cv=none; b=ajzf3GnUfWtQuS5c8rSuTM6Y50s10lzFcEQ2ZJhX/+3p+tzT2BdNacJvkArlrQ/VAtFYYSgkkYIO3FMlGCXAZGRPIQxXb4PVhHQRCDndiMM5y/v8kI3dkwFOJx7/NKdzqh3NCLfj+8XkEWDhaR4A/fXej0mt15XzSIjVTu/KaCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757039566; c=relaxed/simple;
-	bh=r/GiDLoxoEPeOsRFkLNJjLpOh6aEb7+BENWEot8E3Ts=;
+	s=arc-20240116; t=1757039567; c=relaxed/simple;
+	bh=GPaD+K1HwBec1AzBnycvX5KKxlacm+uHk4fgWkMm9ak=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=FLhMVSFdijoGIMLAMEmbQXqZKXLjJHULmXtsYMFJHs+4Wp1tCK2qQ1wNsehIo5dY7q3CfMX94BOopEQJ4VnIFxYVyIbC6DPOgtpDUWLk/6ldphxyOcoo8bxYletgVoZKXMC7py1m1R4qlZm9lPEqvSJDofAheJBB/XbH7qZUWtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvI3YWzj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C95FC4CEF0;
-	Fri,  5 Sep 2025 02:32:46 +0000 (UTC)
+	 Message-Id:Subject; b=jl0yJH+n/mlJznGZJyNKICQrzPrn++zPBByABoBB/LkR6q2rQZ8838qndxu+3xuJU/mUCiQ4obMIAZw6PS+rAV4+Hd2fYAdHQTP3lD8Os4Z9NgyTv09ucjrL3jyZQD0o4v8VAhAhco5dHhGhPUKYdoBeJihKtg5Esk7mZ8PIdWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3PJ6H8y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A026C4CEF5;
+	Fri,  5 Sep 2025 02:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757039566;
-	bh=r/GiDLoxoEPeOsRFkLNJjLpOh6aEb7+BENWEot8E3Ts=;
+	s=k20201202; t=1757039567;
+	bh=GPaD+K1HwBec1AzBnycvX5KKxlacm+uHk4fgWkMm9ak=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=YvI3YWzjMc1vSmCBlfUEyGlY85yBExmoWt6rIAad4CNUd3eb+fNLgc326Yy4W9zMX
-	 26VOw4bwOCwyOus+l5MWvp1VoZMiaSTEfw2A/dPEPksAqBFJIdejeLWFRRNl8iaYtg
-	 4VxmFDGbTplwGSBtwB2gR9wQt1IWGXPWdm+Xt1Z/+RoUHJ2LNVqWgMgKVG6w23JntX
-	 T0+ZZlg/skxehcBbrLvUa1QDGrljffZjIGrWFvmu3hf0s8dsDDR34UsMdw8PDRLR2/
-	 PsdNoPnyIfYrlnGxvcy6vAsbd2KPk7ma6eJyrJepKWI15ylrqpNqAkf9GVJK6LOyTu
-	 qIbS4QuUMKGkA==
-Date: Thu, 04 Sep 2025 21:32:45 -0500
+	b=V3PJ6H8yna7ghufxtWVbzbsZYOFev3/I9T48P6ykKzw9xhLIdq9ThxyOJ1Ud+Z4Zk
+	 tDwixER9hZNANWU4G8F12wY7aFU60ZZH0kNxmiGp+KqmnKd8syD8lShiV1LIhdZHwW
+	 pVXrEAqM15OYPrqffl8MaDA2fIsGhgsp1ijRR4ry6cwop7AgcxCkqhZj4jVb/jdYBO
+	 5qqpZkUsi5zBemLcl8dTqJmY4uJjwScp/Kyd8iMOw1ttmzH/NzrkNhQzsWfJCf7LtE
+	 dkto+S4r4q+Ul/p5YFhMsbFIayNHIs3oPFnwWSvQQWBB9XOayRJ9wfuAqWqSbAwq6s
+	 pFGVYpre8tj5Q==
+Date: Thu, 04 Sep 2025 21:32:46 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,120 +50,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org
-To: Prabhakar <prabhakar.csengg@gmail.com>
-In-Reply-To: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-Id: <175703941904.745223.12563008293745270864.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Add I3C support to RZ/V2N and RZ/V2H(P) SoCs
+Cc: vishalm@ti.com, kristo@kernel.org, conor+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, khilman@baylibre.com, d-gole@ti.com, 
+ vigneshr@ti.com, a-kaur@ti.com, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, msp@baylibre.com, sebin.francis@ti.com, 
+ krzk+dt@kernel.org, nm@ti.com
+To: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250904212827.3730314-1-k-willis@ti.com>
+References: <20250904212827.3730314-1-k-willis@ti.com>
+Message-Id: <175703941947.745257.14151418968229633072.robh@kernel.org>
+Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62: Support Main UART wakeup
 
 
-On Thu, 04 Sep 2025 17:59:07 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 04 Sep 2025 16:28:24 -0500, Kendall Willis wrote:
+> This series adds wakeup support for the Main UART in the device tree of
+> the TI AM62 family of devices. It defines the specific pins and pinctrl
+> states needed to wakeup the system from the Main UART via I/O
+> daisy-chaining. The wakeup-source property is configured to describe the
+> low power modes the system can wakeup from using the Main UART.
 > 
-> Hi All,
+> Dependencies
+> ------------
+> This series is dependent on the following series [1] to be merged into
+> the kernel. The series adds the system idle states that are available on
+> the SoCs. The system idle states are used when configuring the
+> wakeup-source property.
 > 
-> This series adds I3C node to RZ/V2N and RZ/V2H(P) SoC DTSI files.
+> This series is also dependent on the following patch [2] to be merged
+> into the kernel. The patch integrates the PIN_WKUP_EN macro which
+> enables the WKUP_EN bit.
 > 
-> I3C was tested on RZ/V2H(P) and RZ/V2N EVKs using P3T1085UK Arduino
-> Shield Evaluation Board [0].
+> Implementation
+> --------------
+> This series is intended to be implemented along with the following
+> series:
 > 
-> Disable I2C2 on PMOD connector CN6 and enable I3C.
+> 1. "pmdomain: ti_sci: Handle wakeup constraint if device has pinctrl
+>    wakeup state": Patch which skips setting constraints for wakeup sources
+>    that use pinctrl state 'wakeup'.
 > 
-> Connect EVK TO P3T1085UK Arduino Shield Evaluation Board
-> P3T1085UK <-> EVK PMOD CN6
-> - J13[1] to CN6[3] (I3C_SCL)
-> - J13[2] to CN6[4] (I3C_SDA)
-> - J13[4] to CN6[5] (GND)
-> - J9[7]  to CN6[11] (GND)
-> - J9[9]  to CN6[6] (3.3V)
+> 2. "serial: 8250: omap: Add wakeup support": Implements
+>    wakeup from the UARTs for TI K3 SoCs
 > 
-> On P3T1085UK,
-> - JP2 pin1 to pin2 (I3C_SDA)
-> - JP3 pin1 to pin2 (I3C_SCL)
-> - JP1 pin2 to pin3 (VDD 3V3)
+> 3. "arm64: dts: ti: k3-am62: Support Main UART wakeup": (this series)
+>    implements the functionality to wakeup the system from the Main UART
+> 
+> Testing
+> -------
+> Tested on a SK-AM62B-P1 board with all series and dependencies
+> implemented. Suspend/resume verified with the Main UART wakeup source
+> by entering a keypress on the console.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20250812-topic-am62-dt-partialio-v6-15-v2-2-25352364a0ac@baylibre.com/
+> [2] https://lore.kernel.org/all/20250904112538.529857-4-a-kaur@ti.com/
+> 
+> Kendall Willis (3):
+>   arm64: dts: ti: k3-am62x-sk-common: Enable Main UART wakeup
+>   arm64: dts: ti: k3-am62a7-sk: Enable Main UART wakeup
+>   arm64: dts: ti: k3-am62p5-sk: Enable Main UART wakeup
+> 
+>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts       | 24 +++++++++++++++----
+>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       | 24 +++++++++++++++----
+>  .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 +++++++++++++++----
+>  3 files changed, 60 insertions(+), 12 deletions(-)
 > 
 > 
-> [0] https://www.nxp.com/design/design-center/development-boards-and-designs/analog-toolbox/arduino-shields-solutions/p3t1085uk-arduino-shield-evaluation-board:P3T1085UK-ARD
-> 
-> Test Logs:
-> --- RZ/V2H(P) ---
-> root@rzv2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep i3c
->           i3c_0_pclk     1       2        0   100000000   0   0     50000      Y    12400000.i3c     pclk
->           i3c_0_pclkrw   1       2        0   100000000   0   0     50000      Y    12400000.i3c     pclkrw
->           i3c_0_tclk     1       2        0   200000000   0   0     50000      Y    12400000.i3c     tclk
-> root@rzv2h-evk:~#
-> root@rzv2h-evk:~# cat /sys/class/hwmon/*/temp1_input
-> 26687
-> 26812
-> root@rzv2h-evk:~# cat /proc/interrupts | grep i3c
-> 150:         38          0          0          0    GICv3 709 Edge      i3c-resp
-> 151:          2          0          0          0    GICv3 712 Edge      i3c-rx
-> 152:          0          0          0          0    GICv3 713 Edge      i3c-tx
-> 153:          0          0          0          0    GICv3 721 Level     i3c-start
-> 154:          0          0          0          0    GICv3 722 Level     i3c-stop
-> 155:          0          0          0          0    GICv3 724 Level     i3c-tend
-> 156:          0          0          0          0    GICv3 725 Level     i3c-nack
-> root@rzv2h-evk:~# cat /sys/class/hwmon/*/temp1_input
-> 26687
-> 26812
-> root@rzv2h-evk:~# cat /proc/interrupts | grep i3c
-> 150:         42          0          0          0    GICv3 709 Edge      i3c-resp
-> 151:          2          0          0          0    GICv3 712 Edge      i3c-rx
-> 152:          0          0          0          0    GICv3 713 Edge      i3c-tx
-> 153:          0          0          0          0    GICv3 721 Level     i3c-start
-> 154:          0          0          0          0    GICv3 722 Level     i3c-stop
-> 155:          0          0          0          0    GICv3 724 Level     i3c-tend
-> 156:          0          0          0          0    GICv3 725 Level     i3c-nack
-> root@rzv2h-evk:~#
-> 
-> --- RZ/V2N ---
-> root@rzv2n-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep i3c
->           i3c_0_pclk     1       2        0   100000000   0    0     50000      Y   12400000.i3c     pclk
->           i3c_0_pclkrw   1       2        0   100000000   0    0     50000      Y   12400000.i3c     pclkrw
->           i3c_0_tclk     1       2        0   200000000   0    0     50000      Y   12400000.i3c     tclk
-> root@rzv2n-evk:~# cat /proc/interrupts | grep i3c
->  65:         22          0          0          0    GICv3 709 Edge      i3c-resp
->  66:          2          0          0          0    GICv3 712 Edge      i3c-rx
->  67:          0          0          0          0    GICv3 713 Edge      i3c-tx
->  68:          0          0          0          0    GICv3 721 Level     i3c-start
->  69:          0          0          0          0    GICv3 722 Level     i3c-stop
->  70:          0          0          0          0    GICv3 724 Level     i3c-tend
->  71:          0          0          0          0    GICv3 725 Level     i3c-nack
-> root@rzv2n-evk:~# cat /sys/class/hwmon/*/temp1_input
-> 27000
-> 27125
-> root@rzv2n-evk:~# cat /proc/interrupts | grep i3c
->  65:         26          0          0          0    GICv3 709 Edge      i3c-resp
->  66:          2          0          0          0    GICv3 712 Edge      i3c-rx
->  67:          0          0          0          0    GICv3 713 Edge      i3c-tx
->  68:          0          0          0          0    GICv3 721 Level     i3c-start
->  69:          0          0          0          0    GICv3 722 Level     i3c-stop
->  70:          0          0          0          0    GICv3 724 Level     i3c-tend
->  71:          0          0          0          0    GICv3 725 Level     i3c-nack
-> root@rzv2n-evk:~#
-> 
-> Cheers,
-> Prabhakar
-> 
-> Lad Prabhakar (2):
->   arm64: dts: renesas: r9a09g057: Add I3C node
->   arm64: dts: renesas: r9a09g056: Add I3C node
-> 
->  arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 33 ++++++++++++++++++++++
->  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 33 ++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
-> 
+> base-commit: 4ac65880ebca1b68495bd8704263b26c050ac010
 > --
-> 2.51.0
+> 2.34.1
 > 
 > 
 > 
@@ -184,26 +138,93 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: failed to guess base
+ Base: using specified base-commit 4ac65880ebca1b68495bd8704263b26c050ac010
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250904212827.3730314-1-k-willis@ti.com:
 
-arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: i3c@12400000 (renesas,r9a09g056-i3c): compatible:0: 'renesas,r9a09g056-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
-arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: i3c@12400000 (renesas,r9a09g056-i3c): compatible: ['renesas,r9a09g056-i3c', 'renesas,r9a09g047-i3c'] is too long
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
-arch/arm64/boot/dts/renesas/r9a09g057h48-kakip.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible:0: 'renesas,r9a09g057-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
-arch/arm64/boot/dts/renesas/r9a09g057h48-kakip.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible: ['renesas,r9a09g057-i3c', 'renesas,r9a09g047-i3c'] is too long
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
-arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible:0: 'renesas,r9a09g057-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
-arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible: ['renesas,r9a09g057-i3c', 'renesas,r9a09g047-i3c'] is too long
-	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+Lexical error: arch/arm64/boot/dts/ti/k3-am62a7-sk.dts:313.71-82 Unexpected 'PIN_WKUP_EN'
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/ti] Error 2
+make[2]: Target 'arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb' not remade because of errors.
+Lexical error: arch/arm64/boot/dts/ti/k3-am62p5-sk.dts:359.71-82 Unexpected 'PIN_WKUP_EN'
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/ti] Error 2
+make[2]: Target 'arch/arm64/boot/dts/ti/k3-am62p5-sk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: ti/k3-am62p5-sk.dtb] Error 2
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: ti/k3-am62a7-sk.dtb] Error 2
+Lexical error: arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi:182.71-82 Unexpected 'PIN_WKUP_EN'
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/ti] Error 2
+make[2]: Target 'arch/arm64/boot/dts/ti/k3-am62-lp-sk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: ti/k3-am62-lp-sk.dtb] Error 2
+Lexical error: arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi:182.71-82 Unexpected 'PIN_WKUP_EN'
+FATAL ERROR: Syntax error parsing input tree
+make[3]: *** [scripts/Makefile.dtbs:132: arch/arm64/boot/dts/ti/k3-am625-sk.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/ti] Error 2
+make[2]: Target 'arch/arm64/boot/dts/ti/k3-am625-sk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: ti/k3-am625-sk.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'ti/k3-am625-verdin-wifi-ivy.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-wifi-ivy.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-wifi-dahlia.dtb' not remade because of errors.
+make: Target 'ti/k3-j721e-common-proc-board.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-wifi-dev.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-evm.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-wifi-mallow.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-nonwifi-dahlia.dtb' not remade because of errors.
+make: Target 'ti/k3-am62d2-evm.dtb' not remade because of errors.
+make: Target 'ti/k3-j742s2-evm.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-hummingboard-t.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-beagleplay.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-nonwifi-yavia.dtb' not remade because of errors.
+make: Target 'ti/k3-am6528-iot2050-basic-pg2.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-wifi-mallow.dtb' not remade because of errors.
+make: Target 'ti/k3-am68-sk-base-board.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am6528-iot2050-basic.dtb' not remade because of errors.
+make: Target 'ti/k3-am62-pocketbeagle2.dtb' not remade because of errors.
+make: Target 'ti/k3-am6548-iot2050-advanced-m2.dtb' not remade because of errors.
+make: Target 'ti/k3-am654-base-board.dtb' not remade because of errors.
+make: Target 'ti/k3-am6548-iot2050-advanced.dtb' not remade because of errors.
+make: Target 'ti/k3-am62a7-phyboard-lyra-rdk.dtb' not remade because of errors.
+make: Target 'ti/k3-am62a7-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-nonwifi-dev.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-nonwifi-mallow.dtb' not remade because of errors.
+make: Target 'ti/k3-j722s-evm.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-nonwifi-dahlia.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-nonwifi-ivy.dtb' not remade because of errors.
+make: Target 'ti/k3-j721e-beagleboneai64.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-nonwifi-dev.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-phyboard-electra-rdk.dtb' not remade because of errors.
+make: Target 'ti/k3-am69-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-wifi-dahlia.dtb' not remade because of errors.
+make: Target 'ti/k3-am6548-iot2050-advanced-pg2.dtb' not remade because of errors.
+make: Target 'ti/k3-am68-phyboard-izar.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-hummingboard-t-pcie.dtb' not remade because of errors.
+make: Target 'ti/k3-j7200-common-proc-board.dtb' not remade because of errors.
+make: Target 'ti/k3-am62-lp-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-wifi-yavia.dtb' not remade because of errors.
+make: Target 'ti/k3-j721s2-common-proc-board.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-tqma64xxl-mbax4xxl.dtb' not remade because of errors.
+make: Target 'ti/k3-am67a-beagley-ai.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-nonwifi-yavia.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-hummingboard-t-usb3.dtb' not remade because of errors.
+make: Target 'ti/k3-am642-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am6548-iot2050-advanced-sm.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-nonwifi-mallow.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-phyboard-lyra-rdk.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-wifi-yavia.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-verdin-nonwifi-ivy.dtb' not remade because of errors.
+make: Target 'ti/k3-j784s4-evm.dtb' not remade because of errors.
+make: Target 'ti/k3-am625-sk.dtb' not remade because of errors.
+make: Target 'ti/k3-am62p5-verdin-wifi-dev.dtb' not remade because of errors.
+make: Target 'ti/k3-j721e-sk.dtb' not remade because of errors.
 
 
 
