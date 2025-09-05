@@ -1,180 +1,166 @@
-Return-Path: <linux-kernel+bounces-803091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701D8B45A6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41116B45A7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5831CC5216
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B40A1C83834
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2E136CE16;
-	Fri,  5 Sep 2025 14:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AC136CDED;
+	Fri,  5 Sep 2025 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F5vPBUQT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I34lo9IB"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593F236CDF6
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F6536808F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082429; cv=none; b=SRrGhcrtZZ9EJOFV22EXgvs6HSQv7LoS2DTzSQNd1UIyOz++Pj60gCf1rgT3384YVlQK7EphAemN1YMs9Ywynpcs0Uaupq7Ykm2cBoYP25DYhBc3VJNs1dgiadQnGBHsZTHs18dz6QCembD3ttv86KnzoYoXsJNEmQs+LwUWa2c=
+	t=1757082487; cv=none; b=H0YpJ5Zzg1lTXTxK70i8JxoAhqdH6kzKW+9H2+jaJ3kFAMPHVrqz79OuclRL0vkULzE1UEIzs2ShvGH3Jy3nwMMidY8H10CAVSncZW6Ix77/QQoMUB/TvCNr0S9pA4IzGTQ2gmM3+gcAOqrXXUf6U9+GodPEthqCHux1pxzq5Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082429; c=relaxed/simple;
-	bh=Sbl6HkXn9HbFaiqu2h3yBfINxyPTTdsLyK/JjQYYPDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRC6heyUoaPno1JhTiiNIvO7XSBWGR/SvTVfS89icPBQlvVAYSLAOyc7acZwx8UEmXDJjidyslIvM+WtIUaMpp58iN3zv+3BoI183pvVrQmFiWt8lWdySqWgp3aDlxJfoITPffEFolDngUAsEgFsgX93hCk59BRYMubqWKB6AG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F5vPBUQT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585D18R4018575
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 14:27:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=eF61zkZp9mMYxVggMMzwArKN
-	A1z21l0hZQVBszHsT2g=; b=F5vPBUQTBlKC7wn+jmgeXSyLos6dsnyMQncm+JVu
-	4r31K2SfNeSKL8AE4GDWK6KuuJQ3CohKTgWA08ieqRKK/KfeX6oXYPsz6GKr1PS8
-	xsylaqqlAAJ4PSyCGaPiJfVTAuz8DbfHuarGUxwMB67AfFDLKB7JUyQy9ZrG8CvO
-	h2DoL4KmgSPDdrW2XnGUv1iDhE/wpi9B5aW8UdSEs2tvgr8wW6FjZI8C4Ak0SlYz
-	H/iPBgeUqLrZJSUgvEimmNiN5sRt3FnCO0/40J6GlibJLiVRSt+uycsoGKwE1Ggc
-	Xgvb8mLoVntLOI1qGVkZ/rg7Gxr29RFk/WPNQlITj9eq8Q==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48yebuu97x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:27:07 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5ecf597acso17124891cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:27:07 -0700 (PDT)
+	s=arc-20240116; t=1757082487; c=relaxed/simple;
+	bh=iMW3bYd4LW3JWRnFP3mkUjQVIbwOYp4N45RelcvLep0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ax5dVc/0enTIGoZ2RZ57bgaoOTQ0ZuPNQ85hM7BwzkZyjXAXSt/lHbLOI6NyM0el8hJZu6m/mB3IaR3dRcYFs7C8jyOONGkYyOZo8dT2Bnwa6JlZXWhEI+51QlFrgIRiBZg3rrLSvSAl3NUxaP1dhb3ZmEPmiLg2c1UiXR2NPUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I34lo9IB; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-724b9ba6e65so20347717b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757082484; x=1757687284; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMW3bYd4LW3JWRnFP3mkUjQVIbwOYp4N45RelcvLep0=;
+        b=I34lo9IBKAhIThYSuhxJwU40XSCILPTSkDYYFnmLQZImtfJmQBm9JZbonP2Xs6Q0py
+         KwWclXdxeXyDleI0ixx44bPKZNK7VK5RnyxU0wXIeZSRYdeClXx9xm/DGXe2QJAaXFPy
+         2nRqdM/NFCEd2w9ZLurc8uCYFaty3fXZaiIMrespHz2+DubYYxYzsuFJTUWyog6tTTsT
+         KTyztXsBEl6jlSIhCwaWRwYpkvjPrl4s1PBaHWqkGQHEMRtMS3fI+E1mo9ISuBWXIxkM
+         2Byks87Lm/2Xec+einG4F2e+ILzoRRm0s/P/BBE9sowwHCuJTJyXfwV4tnZeYZnYWBLa
+         0YvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082426; x=1757687226;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eF61zkZp9mMYxVggMMzwArKNA1z21l0hZQVBszHsT2g=;
-        b=oRVjVD5uIYeq/X3mSkgsdtedtRJk6eqpbcsqqzjKvcl/EkSf6yfuEByBcV3DrcQ4ZV
-         qfFYTd19JBgbEYPNwjzEFMrkw/gVS4rzgQo3QIsKB2QElFQoysu2E3QqwdhZFNecuopS
-         ylaAKu+soolzO6FqCUxR1OAhmRMyrDCFf4tpoTP4RR/MM2CYuxQLxvvQuOq2u6kePnc4
-         JTueGdr6EyHVczkPokd47xyyS03R7+3jgZ0jpnUgc6TrL0effc/XXTJ01EItOyYOz6V2
-         w7G8M6Zd9J4X2FacMi6f94mHSve0BPRggjS7bqcW6GeCNxJxaECvvLi2HEDmh4dKx3/C
-         CvYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIo676Xn4BveJQE4AerSf6ws6V8I0Sx14sr+hbfmtmJFmpnEokXO/WZ1g/y5cXYWHtEYYTGYuXyTDNFVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIL13etyuEZluEW72+0UDcXpO4//erymTbUnwbBtWysY6NDOss
-	FVG75eVfdjExTiUuRjr+VWUQFl1QUopt5jWnMNKOzR7dkLwLCPAOEZy3shH6Pb5dw8XfYCbZtTy
-	xREE9O8I8E3f2QiRK3bn7Q0VPlPxnIHYH9IcXVsy8VXg0+St562O7IqLUNIqBmu7qklQ=
-X-Gm-Gg: ASbGncu5XNTga/XJZoKfZEUNpgoQ9q7dTKdKGGA9vlcvTO9of3FADphfkzxtKLjSjvw
-	QW9wNOHSdibyu0fNSvG4iKDmw7bbdaRXBOuVHtWY6vJIPwdaGPAlGrDnF320eliqPjwaFNpiZKi
-	+mdXZCiZYRSkMF5GB11Vk3I6t+ZS5tWrc2GnTmjFS4jAbgLA1Quh+3dbhtTYSBYUE0wiQtMMQPs
-	vtW7AhH9jfD0SrRugaXZEtxuucq7NLyyCC8WFJOjSe/ndrFjAR08ykIVSCE8Jt3NMdjC5EXkdAB
-	zyEoLG9K78Fh3WKYxgrw3CUdfSD8kYlQo1beWlEFgCV4mEPXLkQVg5i+3goKozh/TqB8Sp1HX+2
-	9P1lEkCH5mPn50Rx+4UN6opg7LUBwmjGQpFmknu9wjD3c5vNQyfe6
-X-Received: by 2002:a05:622a:1a89:b0:4b5:d739:627b with SMTP id d75a77b69052e-4b5d7396898mr89983041cf.76.1757082425979;
-        Fri, 05 Sep 2025 07:27:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECmkBwlmY6UiEs6hcJX3488laXoD4oV0+tFPvFeEwoB/BLO8UPs9WqixuE8OIxKWAk1kYaYA==
-X-Received: by 2002:a05:622a:1a89:b0:4b5:d739:627b with SMTP id d75a77b69052e-4b5d7396898mr89982311cf.76.1757082425175;
-        Fri, 05 Sep 2025 07:27:05 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfc24fsm1802596e87.104.2025.09.05.07.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 07:27:04 -0700 (PDT)
-Date: Fri, 5 Sep 2025 17:27:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, kernel@collabora.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Algea Cao <algea.cao@rock-chips.com>,
-        Derek Foreman <derek.foreman@collabora.com>,
-        Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-Message-ID: <zni6d5udvawma6kcjp54d24kihlue543dfqc2ti3k43jntaphj@xtuusmebp6qj>
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
- <ncmsmxdcvhj4jec6wmqf5abrb7nijx7ac2i33tvvcc2prljez3@uks2cb6aunnx>
- <b8d068ef-d083-4bb1-b34e-b8ddaa62b436@collabora.com>
+        d=1e100.net; s=20230601; t=1757082484; x=1757687284;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iMW3bYd4LW3JWRnFP3mkUjQVIbwOYp4N45RelcvLep0=;
+        b=W/+TVZZMJxOKCr3P2JhMoLUBIpeBkQSkovhT66oENVLJtufW8oUMbg724PGN1nBvlu
+         v3XGQVIYg7e25CuDHgJQqV/qFGGD/zQL8yu8pMmCdztuI8c+LVa7KFFYtUHpc32TnxR/
+         IpQOyL/ENHnleWcL+00ShHF0lkie8Q7W1dg0QKhrduZrzMBEIIr3+9Y7l3VXpFFHyDF+
+         QcJAXyKSA9WxQ53imPUivgWtYyWPyUYHrXmHN3PMFmPF/C90Nv8iNq5OKqND/oWLkRXl
+         5lEAnjNrvBKZ3mvB2YZa87SCmt+915LcuNzczFJEtscSy1dhoQeIZc4UAWZM8ABiTF1w
+         jKJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWE5HNQynI9prdidfoNyBoGAdIvHALXn3E0Nl0ncNcNyXGCqVd6+sNOTtTwEEhNvegDFuBlDk4BSE7LUN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6pP+kzewRvimhkyqBdI8vo72LF3ehoY14oi+iHayFTedf63CX
+	dxbOvDxUdNqFp3bun91A1SfOYlWz8oB17nUTvIlsBTkil/zY69CtZX8BK8Is/CRqheBbt88DLL2
+	+CUJHYA0pComI1FH5dCHr5NlbIB2rb4eGi3gHlRSGjQ==
+X-Gm-Gg: ASbGncvDidORL35I8dmuxF6adu4jXcV9HMD9656pOUS4zmpgI0HT9ifpXOmTrmvteiR
+	9AvDggLtkEGK7iDR86rpFW1dNlEhOYekiTY6eYgwAN3/3BqKoO+FK9RSwOpgVM6oPltv/ETilRF
+	NFGFN1njGUfYeUwxJGfhSOrbBNL6FU6Yx3yEFGPyvKFbcKsjLK6bcj5f/RpaxrAJIJtqM/aHi61
+	iZlhLiLyculbNWYzNw=
+X-Google-Smtp-Source: AGHT+IHckmRAJE89FXWWeCt002oCNhs7ilFvKi54aN2hkL9SOdLB58eIP1SZS8Ne2VJD5q2m/6tTefKqLCBLkhBMdCQ=
+X-Received: by 2002:a05:690c:f86:b0:71f:b944:103e with SMTP id
+ 00721157ae682-72276543df1mr262928937b3.47.1757082484124; Fri, 05 Sep 2025
+ 07:28:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8d068ef-d083-4bb1-b34e-b8ddaa62b436@collabora.com>
-X-Proofpoint-GUID: vUsd_TAVCGNljNcVcYiCnNw_gk4oEyGf
-X-Authority-Analysis: v=2.4 cv=X+ZSKHTe c=1 sm=1 tr=0 ts=68baf33b cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=QX4gbG5DAAAA:8 a=gdAa2DyRb25O423_gIoA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2MyBTYWx0ZWRfX7bwfN8iLVOy5
- ySuATPvqUyGdLnvFmnAIccTUm6jhBKk8G++i6VRk6UKKQ2rIlCoZ1t0R2ISJUFuTp+atvCMpa1C
- fy2k0jrHpc/In/XcU3MEgYiy6R6KInS5Y10gx7TqfxHT/3ZH7Ig2bDYixnHs9ixE2PNyXDmK1CZ
- P37JaDQnlpT20IN+QDRwcRGfEe0IRmCTdNHU7Rl+0OJjkDTAMFad0BVQNIfd+oPb6mHEc6JeApG
- Z+w0iESIg92dGgQyqn658hLCEc9tGHGBuMV1/Xu/ZHq+XSgRc/E1PcqbV9QGtfPWcjfjQvV101T
- 70vUdWMeZ+fZNWutJB65ziTJg+Z7e7mg7RAmM3zyB5vdEtL+RCbbuBMRa4FxHMdOJjQfRlLQtDm
- aBY2ReGt
-X-Proofpoint-ORIG-GUID: vUsd_TAVCGNljNcVcYiCnNw_gk4oEyGf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509040163
+References: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+ <CAPDyKFpAOLiBOoAhv+GQcobU_g_AWrB9iyOGmodROLtRmR30JA@mail.gmail.com>
+ <3332408.jE0xQCEvom@workhorse> <3556261.BddDVKsqQX@workhorse>
+In-Reply-To: <3556261.BddDVKsqQX@workhorse>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 5 Sep 2025 16:27:27 +0200
+X-Gm-Features: Ac12FXzti6CwQKzMNnrf9BUUJQxR_BOv1AT1PonXIWLFU5Biyc2yW9uocDffvw8
+Message-ID: <CAPDyKFpSY+FeKh7ocjQ_nGNZA5+3tWAL8e7ZNKXKNFP-yoiu_g@mail.gmail.com>
+Subject: Re: [PATCH] pmdomian: core: don't unset stay_on during sync_state
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com, linux-rockchip@lists.infradead.org, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 09:32:36AM +0300, Cristian Ciocaltea wrote:
-> Hi Dmitry,
-> 
-> On 9/5/25 2:48 AM, Dmitry Baryshkov wrote:
-> > On Wed, Sep 03, 2025 at 09:50:58PM +0300, Cristian Ciocaltea wrote:
-> >> The first patch in the series implements the CEC capability of the
-> >> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
-> >> This is based on the downstream code, but rewritten on top of the CEC
-> >> helpers added recently to the DRM HDMI connector framework.
-> >>
-> >> The second patch is needed for RK3576 in order to fixup the timer base
-> >> setup according to the actual reference clock rate, which differs
-> >> slightly from RK3588.
-> >>
-> >> The following three patches setup platform data with the new information
-> >> expected by the HDMI QP transmitter library, while improving the error
-> >> handling in the probe path.
-> >>
-> >> Please note the CEC helpers were affected by a resource deallocation
-> >> issue which could crash the kernel and freeze the system under certain
-> >> test conditions.  This has been already fixed in v6.17-rc1 via commit
-> >> 19920ab98e17 ("drm/display: hdmi-cec-helper: Fix adapter
-> >> unregistration").
-> >>
-> >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> > 
-> > Cristian, I'm sorry for almost off-topic, but as you are working on this
-> > driver: would it be possible to support HDMI (vendor-specific) and SPD
-> > InfoFrames in the dw-hdmi-qp driver?
-> 
-> Sure, no worries.  I'll be on leave for the next two weeks, but I can handle
-> it on my return.
+[...]
 
-Nice, thanks!
+>
+> Okay so I believe I have found the root cause of the regression. UFS is
+> innocent, disabling UFS just happens to avoid it due to how the timing of
+> things works out.
+>
+> The real issue is that the NPU power domains on the RK3576, which are
+> currently unused, have an undeclared dependency on vdd_npu_s0.
+>
+> Declaring this dependency with a `domain-supply` and adding the
+> necessary flag in the rockchip PD controller to use it does not solve
+> he problem. This is because the rockchip PD controller cannot acquire
+> those supplies during probe, as they're not available yet and their
+> availability depends on the PD controller finishing probe.
+>
+> That's why it acquires them in the PD enable callback, but the NPU
+> PDs are never enabled because they're unused.
+>
+> This worked fine when unused PDs were still turned off quite early, as
+> this meant they were turned off before regulators. Now the unused
+> regulators are turned off before turning off the unused PDs happens.
 
--- 
-With best wishes
-Dmitry
+I see, thanks for sharing these details. What a mess.
+
+>
+> I don't really see an easy way to fix this with a patch that's fit for
+> an rc cycle. We can't request the regulator early or even just add a
+> device link, as the regulator is not around yet.
+
+Right, I will work on a patch or two that allows rockchip
+power-domains to opt-out from genpds new behavior and to keep using
+the old one.
+
+I think we prefer to do it like this (should be quite a limited amount
+of code and okay for an rc), rather than reverting for everyone.
+
+>
+> Marking vdd_npu_s0 as always-on would be abusing DT to work around a
+> Linux kernel shortcoming, which is a no-no.
+>
+> What we need is either a way to register with pmdomain core that
+> certain PDs need a late init for additional supplies, which is then
+> called before any of the unused regulator power off functionality is
+> invoked by the regulator core.
+>
+> Any ideas?
+
+Yes :-)
+
+I would suggest implementing an auxiliary driver, along with the
+rockchip_pm_domain_driver. The main job for the auxiliary driver would
+be to get the regulator in its ->probe() - and if it fails because the
+regulator isn't available yet, it should keep trying by returning
+-EPROBE_DEFER. See more about the auxiliary bus/device/driver in
+include/linux/auxiliary_bus.h and module_auxiliary_driver().
+
+Moreover, when the rockchip_pm_domain_driver probes, it becomes
+responsible for pre-parsing the OF nodes for the domain-supply DT
+property, for each of the specified power-domains. If it finds a
+domain-supply, it should register an auxiliary device that corresponds
+to that particular power-domain. This can be done by using
+platform-data that is shared with the auxiliary device/driver. See
+devm_auxiliary_device_create().
+
+Furthermore we would need some kind of synchronization mechanism
+between the rockchip_pm_domain_driver and the auxiliary driver, to
+manage the regulator get/enable/disable. I think that should be rather
+easy to work out.
+
+Do you think this can work?
+
+Kind regards
+Uffe
 
