@@ -1,234 +1,303 @@
-Return-Path: <linux-kernel+bounces-802771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F35B456C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A377B456C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7941C28483
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3041EA020EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A2634A301;
-	Fri,  5 Sep 2025 11:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AF343D76;
+	Fri,  5 Sep 2025 11:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Wz5hYcs9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cktCuTWc"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B925934A317
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C976F2DC334;
+	Fri,  5 Sep 2025 11:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757072721; cv=none; b=LSi4VVMKiUC7/caJLAknsXshqV+gF0QoReNz/ZXG6VjPgSkWrQN01c6JN34ap6bS+ZZrOqalXeWFbYw4UmCH+tTgLBLXfEaTNVXZlfb82k2DqvPrkRRUczCB7nuwQM31chsu2FCF/4GxfKNkZqfmry6xEbqbWEFT51mwWlsAhxs=
+	t=1757072774; cv=none; b=MjIkkeAnkyUoiT866k/BX9sZk8H+uIFs/vP7VL2YcyYEmFUKs+CCntJMAkgtyHcb9KwbR1YE6cRWXC6Hr5my8lJlBck5VL2U1U7Xy53uC3+uUpOwPN4YMPq8ormrpmKgaf7M4DAkeW0lJZWFYptonDZsKJLYN/rA2IKsz0EVK+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757072721; c=relaxed/simple;
-	bh=BGGZ/ELDswRXBatmlsy/yvTpLKnGxcJMcui0IavQz28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNJdi+P7/H3goSvIQAJHpHbBjzua1AqAMYJwPTmLTs+Ug7SoMG7VFAwPAF2rs/MCHdt7TVYyxItz3ie5kErmqdDqkIvMoibRA+qJjRbhwqyZz/58wZ+GZrV9hhtv4oTTklrDI4RCiYpHXuhVdBjnq8x10CLRVdJpJmzPVaDgWw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Wz5hYcs9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856dI66023895
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 11:45:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JrwiK3+YBBKfTwjeyYweO2evQz8q+FFooJOWqyd2ccc=; b=Wz5hYcs9FTztI+IU
-	CgkG401Y2rP/T87qgJJKLpMkXoqvnnWZ/MJGE0blxXjtnmeLp/jmueLL+UvM3yb0
-	53L74HNwwUvgITVz3wEW3b/A65X6E6NJG9NxPJHXeySO5MA38uk/ALMNoG7S4p6Q
-	F7E4MdiI6I7BOBDammHxZ8JEko2icpj6TQEd7e3NtlEr/pFakxcTuYWJKJCkZo9p
-	rC0ZP79vLWy+doLCJ42luGh6gFNA9G6nYKcLGZosOVzm6UphYl0uwLAbzlFqlPN+
-	8ChrLFMvh1M5RrEjnECuL0jCGX9ZT8uSG/Uun6Cm5hMqAWJZ1hZ9SoV/4/s2808E
-	aNCyXA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2ftuna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:45:17 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7fc5584a2e5so642784485a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:45:17 -0700 (PDT)
+	s=arc-20240116; t=1757072774; c=relaxed/simple;
+	bh=6558W0gdFw2CcLK6XJJlcxR27J4Mz3Bc+q6QfMIH+OU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rFtw4D2v7fMSCF1SWBTNC+AAt5qMOi/YdaaP7II+ZjCXWA40EVVshwXXwLEtnXN4ra/B4pYwFEFsxg4DTMiixZKiipd/IvFJ5xCH08FyQYPZBFhWO9AnclZywVJSnOV6H5i++am8d6DvcOpOFybW0JdpiMoqahZRXklNeZeF+JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cktCuTWc; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b7d497ab9so19105775e9.0;
+        Fri, 05 Sep 2025 04:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757072771; x=1757677571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOWmyjzKCjcAwZA77QdwaQSqbMtQlFHl1MYZckajIMM=;
+        b=cktCuTWcZI4hiUBbmCiye3ioKfU9EfnQq22hkqC6ZMdg9QptIksS5DOlUUvWexWRSn
+         2aq/ZOo+Wug89SN3cPD57i3mmJmSMxT1jkZjNFWPeWYh6FJcT+HzclwH3v+yzeO091kM
+         /KoUUcaCcTPDoyvxIPB9siEMDadxz21HtB9dHGvSVnHloc2GawYWeX71qUYaOlvtrS1f
+         czh+C0KBpqQauPn2wJ/0S5OL6BUkhvYLTCIpsavRUzXo7+BJhH1tZnDCUOzaeay5d9Em
+         n/LmDIjqae4YAjUduP6EJtXaJnDQUZR1Z3fob86upqW3rASVLNoijTiaLrxCnzqkC8qK
+         dwhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757072709; x=1757677509;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JrwiK3+YBBKfTwjeyYweO2evQz8q+FFooJOWqyd2ccc=;
-        b=QqCn4opJQ3cGdFxXcy73xyfsKNpmHc1Wj5MxbE6bTA17NLi6lTvLjInDMcbKJX19Td
-         ilaHrVleuHgOJMBxcN8xPYzyVzft3EsQE5EXQMozmbDc/+YqsEW0lfSBKmPawLUS5J7d
-         Vz1gxGyu84UrlCnzG4urf2dtQx9HZR3P1RgUvNt6azygYs6ulFiMqGWeOvMrM/Qk2i7J
-         8s0YlkSqkBx18nmsp3eiSK+kqyqhhaNqHA2eRBU9Xzm3xjzv3VnJEvHQ440sLTVMMpn1
-         8DxCliXozDxNkHVz4nzvat5f7i9xf9NAIg+/mdJk8EPY/JOaedE3WlblCWx39AbO3emK
-         9luA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjVBpIVhZbwLG4jwcUTZR0AIqhpJ5GDePNBW+YItWaxqWkqvMpfVhUyWdnhs4jQYkY7JcprBkFdBkkDvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPK6INV9pvGwHzssQPqRWpxhpFnWwkvByWuebPwfJ3ts00B+pZ
-	SOdPGoTC6UNqAMs6UCWQ6bRFoPcQOWO4Wlt18lW4sC1RDYxIouYVgAfNUfxk/yKVOQt8narBpOD
-	vvJ+IOEH1dfwiy7cHhp9J3Of/dUF8rceHSheS04KEyrpUq1BphDv5GD9S8n+JjtQtXC4=
-X-Gm-Gg: ASbGncsshpQLBM2Yi1gzRKtzrXN9PYQ0/dPjeXqfKJdnagxUcwCP3w5iDS2+XhkCq6G
-	fA5NX5NpWbSd6WnvETU++H1SIs8waqIZzLpwIJswBJvumzB666WWzJInMfLnFBddAwcb4gpMnHl
-	stHxVzxJAXJTtHH99JlcqlKUEFYIx0VuJF/rxYgdQhs+MY1gLr4T/JhMMjz8yOAqdO6z+4oONap
-	Mj95xaMY4H+woCbXZ9ZQBIjar+VCfOmB0unb5e0AvR4RW+lBvu6QJFOT0GkQ5OQoBM5aFK3yz1v
-	KED1QMKkCHOg8ZBG7qlUM3ceOPguhJl1kFeYiNic7+EuHNICY7IM+3Q0eBB/3pbtpiJ0N+6PuFD
-	s1GPphSyaFbE0WgI658PzkuKXBxG2WUVvSh6tzZ8fI8fv1bTqDuln
-X-Received: by 2002:a05:620a:179e:b0:7f3:62f3:32c7 with SMTP id af79cd13be357-7ff2b1d1980mr2415308785a.49.1757072708796;
-        Fri, 05 Sep 2025 04:45:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcuxKXmP9sMAXZXFv5luGupilJaBfmlbkboCf2+phHC9krfABEbIlHwDZFOn6G2BDDWqoqSw==
-X-Received: by 2002:a05:620a:179e:b0:7f3:62f3:32c7 with SMTP id af79cd13be357-7ff2b1d1980mr2415304485a.49.1757072708088;
-        Fri, 05 Sep 2025 04:45:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3380f68331asm9641041fa.12.2025.09.05.04.45.06
+        d=1e100.net; s=20230601; t=1757072771; x=1757677571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gOWmyjzKCjcAwZA77QdwaQSqbMtQlFHl1MYZckajIMM=;
+        b=NyTgKxyUt49xCi9Jn8/g5HjQSQVSNKDTeIG+4luvmgGSnbLcb0yJKXd1xMlTlsnJDu
+         rHBKvq9SFp8oacPD52gMZlUQqyG/ldOoY0s/o+TNZAyB5LxbuwSmtR2a93mEG/KHEu6w
+         QJiNqDAWs4q8frLNrj4opQulHczN6ZQ8o8T9loUN9qhUivJ+LnxZIOyF0HOS2/gJunbl
+         03yJStPEBiqfhQJl5y3DtldKFDkI915aGNhwOtMFSdupYBEAMq1nnWlVvT5k4wpsTU3v
+         T69YJVLCsPltEfDmKB0er1rY7QR3IyFKkbBp4nlRDlulpF7+14PlD3FoXG15RGsZJyHJ
+         lCqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxmoSkcu2FzMOQVIfSlINIonbyEQ6v2lcttX8sKevS8HDX7rFmCGyEyl/qAdI9bPWjfHH0CFX7sBAH31qr@vger.kernel.org, AJvYcCVzHz5FVgtN8kMneGyzzxCBsmWJj7yHZu8QFQFzK7WahCNtHPAn4PLAH19dLQrxpa+FljIphANNc/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZC3biO9sNHMttIValTEfnDGhh/tb/FdeFA2sG6BGW4mrIUbKk
+	mFtMdsy0UHzWynVuZzsQJdnUt1YcbXVhiTXh06YQkfYCeTLuSDDYel8k
+X-Gm-Gg: ASbGncurPO+zJAJel1uXxwE0izwdt1Bg6yFk67lduQrXMx6ogA2EDd5VgJMRByPUUux
+	FyDdoOh0FQSW2DW715+6PnC5UI38Mr550WUebPU8f4TSUtPHPbwBFsyNQieS7SN33jKac30OqS4
+	o13O9vZwcasrnOAHM4w3XrjZmvbYOuQohY1Oevz8owzzvGmHiRYwBmeNXi3M9GvMrhODMfsyLXj
+	Vc9yG4+B8Atp3qNaBIJYkKaJxML7lvEBGAt0ldiSp8ynU5xbLhx7e4kFcNifQcWHjZkItyAY3dP
+	NSksJOfITpAriSRfWN6PGEOt+NTQmn2K4kEUfQueEVrLw+Ti/GWNYqd6AqMB48SuSLFzKR28uqM
+	Qw45E6FSPwbRRgWwSyFVAryVKruRXxHgsm7CNLlchLR1QI9UoBXEFiMUqiduA13kxj80=
+X-Google-Smtp-Source: AGHT+IG+ExTLkkqiZj4F94wbaeOa6oj93rYEJrBGbOViMoIXe+T3d8eIMlAgjaQNJ3TJ6mk/hCvbmg==
+X-Received: by 2002:a05:600c:c04b:10b0:45b:98d4:5eb7 with SMTP id 5b1f17b1804b1-45b98d4615amr87376015e9.18.1757072770698;
+        Fri, 05 Sep 2025 04:46:10 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:6760:b4ec:282a:825a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfd000dasm37784155e9.5.2025.09.05.04.46.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 04:45:07 -0700 (PDT)
-Date: Fri, 5 Sep 2025 14:45:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
-Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and
- SDC pin configuration
-Message-ID: <xausmwmh6ze5374eukv6pcmwe3lv4qun73pcszd3aqgjwm75u6@h3exsqf4dsfv>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
- <rxd4js6hb5ccejge2i2fp2syqlzdghqs75hb5ufqrhvpwubjyz@zwumzc7wphjx>
- <c82d44af-d107-4e84-b5ae-eeb624bc03af@oss.qualcomm.com>
- <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
- <tqm4sxoya3hue7mof3uqo4nu2b77ionmxi65ewfxtjouvn5xlt@d6ala2j2msbn>
- <3b691f3a-633c-4a7f-bc38-a9c464d83fe1@oss.qualcomm.com>
- <zofmya5h3yrz7wfcl4gozsmfjdeaixoir3zrk5kqpymbz5mkha@qxhj26jow5eh>
- <57ae28ea-85fd-4f8b-8e74-1efba33f0cd2@oss.qualcomm.com>
+        Fri, 05 Sep 2025 04:46:10 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+Date: Fri,  5 Sep 2025 12:45:58 +0100
+Message-ID: <20250905114558.1602756-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <57ae28ea-85fd-4f8b-8e74-1efba33f0cd2@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfXyENwyYWyFet8
- pYCeeHaPSJr9Y7lyD5zJ1P2Af9voDLQ4i8iL32DVwWitkqWgGgbWMlt3KbO7HI7iKSTuz28N0kd
- rHKwepxPtIcebsHHY5bgnvNM86gd8RM2UHYl0KCRMsMUmyeIczx1/439IFKVHyaZqsj2VqMoHKZ
- hNchsjOR7z7lLhun4NNDe+6WW2VKa6SFIQ33v/QEnTq5BbXVwxREoGoF+gLAiiFq4olAmMi3eFw
- ECFfZAx9n1q5jHdjdx1XHX4wiDZC6gWQEMcZm4gx9ZEjDVXJy916jq65EAoZ7Dz4TfqCuPNKY45
- GNdUJvnu/7+t4bDJTINhbnV5n89Wb2Rt26mi38N+G0AkdiBmgM7FcOSrlhmmREnS7uM76ORV/mO
- nEe2m7lr
-X-Proofpoint-ORIG-GUID: 0F2yjZOb8OR2jCuNSUL99oH8Mz2M3y5P
-X-Proofpoint-GUID: 0F2yjZOb8OR2jCuNSUL99oH8Mz2M3y5P
-X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68bacd4d cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=Hq1aP8QxBszXHj81Fu8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-On Fri, Sep 05, 2025 at 01:14:29PM +0200, Konrad Dybcio wrote:
-> On 9/4/25 7:32 PM, Dmitry Baryshkov wrote:
-> > On Thu, Sep 04, 2025 at 04:34:05PM +0200, Konrad Dybcio wrote:
-> >> On 9/4/25 3:35 PM, Dmitry Baryshkov wrote:
-> >>> On Wed, Sep 03, 2025 at 09:58:33PM +0530, Wasim Nazir wrote:
-> >>>> On Wed, Sep 03, 2025 at 06:12:59PM +0200, Konrad Dybcio wrote:
-> >>>>> On 8/27/25 3:20 AM, Dmitry Baryshkov wrote:
-> >>>>>> On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
-> >>>>>>> From: Monish Chunara <quic_mchunara@quicinc.com>
-> >>>>>>>
-> >>>>>>> Introduce the SDHC v5 controller node for the Lemans platform.
-> >>>>>>> This controller supports either eMMC or SD-card, but only one
-> >>>>>>> can be active at a time. SD-card is the preferred configuration
-> >>>>>>> on Lemans targets, so describe this controller.
-> >>>>>>>
-> >>>>>>> Define the SDC interface pins including clk, cmd, and data lines
-> >>>>>>> to enable proper communication with the SDHC controller.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> >>>>>>> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> >>>>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> >>>>>>> ---
-> >>>>>>>  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
-> >>>>>>>  1 file changed, 70 insertions(+)
-> >>>>>>>
-> >>>>>>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> >>>>>>> index 99a566b42ef2..a5a3cdba47f3 100644
-> >>>>>>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> >>>>>>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> >>>>>>> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
-> >>>>>>>  			};
-> >>>>>>>  		};
-> >>>>>>>  
-> >>>>>>> +		sdhc: mmc@87c4000 {
-> >>>>>>> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
-> >>>>>>> +			reg = <0x0 0x087c4000 0x0 0x1000>;
-> >>>>>>> +
-> >>>>>>> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-> >>>>>>> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
-> >>>>>>> +			interrupt-names = "hc_irq", "pwr_irq";
-> >>>>>>> +
-> >>>>>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> >>>>>>> +				 <&gcc GCC_SDCC1_APPS_CLK>;
-> >>>>>>> +			clock-names = "iface", "core";
-> >>>>>>> +
-> >>>>>>> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
-> >>>>>>> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
-> >>>>>>> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
-> >>>>>>> +
-> >>>>>>> +			iommus = <&apps_smmu 0x0 0x0>;
-> >>>>>>> +			dma-coherent;
-> >>>>>>> +
-> >>>>>>> +			resets = <&gcc GCC_SDCC1_BCR>;
-> >>>>>>> +
-> >>>>>>> +			no-sdio;
-> >>>>>>> +			no-mmc;
-> >>>>>>> +			bus-width = <4>;
-> >>>>>>
-> >>>>>> This is the board configuration, it should be defined in the EVK DTS.
-> >>>>>
-> >>>>> Unless the controller is actually incapable of doing non-SDCards
-> >>>>>
-> >>>>> But from the limited information I can find, this one should be able
-> >>>>> to do both
-> >>>>>
-> >>>>
-> >>>> It’s doable, but the bus width differs when this controller is used for
-> >>>> eMMC, which is supported on the Mezz board. So, it’s cleaner to define
-> >>>> only what’s needed for each specific usecase on the board.
-> >>>
-> >>> `git grep no-sdio arch/arm64/boot/dts/qcom/` shows that we have those
-> >>> properties inside the board DT. I don't see a reason to deviate.
-> >>
-> >> Just to make sure we're clear
-> >>
-> >> I want the author to keep bus-width in SoC dt and move the other
-> >> properties to the board dt
-> > 
-> > I think bus-width is also a property of the board. In the end, it's a
-> > question of schematics whether we route 1 wire or all 4 wires. git-log
-> > shows that bus-width is being sent in both files (and probalby we should
-> > sort that out).
-> 
-> Actually this is the controller capability, so if it can do 8, it should
-> be 8 and the MMC core will do whatever it pleases (the not-super-sure
-> docs that I have say 8 for this platform)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Isn't it a physical width of the bus between the controller and the slot
-or eMMC chip?
+Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+Registers (MRCR) where both reset and deassert actions are done via
+read-modify-write (RMW) to the same register.
 
+Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
+it to reset_regs. For this SoC, the number of resets is based on the
+number of MRCR registers rather than the number of module clocks. Also
+add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
+while holding the spinlock. This follows the RZ/T2H requirements, where
+processing after releasing a module reset must be secured by performing
+seven dummy reads of the same register, and where a module that is reset
+and released again must ensure the target bit in the Module Reset Control
+Register is set to 1.
+
+Update the reset controller registration to select cpg_mrcr_reset_ops for
+RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v2->v3:
+- Simplifed the code by adding a common function cpg_mrcr_set_bit() to handle
+  set/clear of bits with options for verify and dummy reads.
+- Added a macro for the number of dummy reads required.
+  
+v1->v2:
+- Added cpg_mrcr_reset_ops for RZ/T2H specific handling
+- Updated commit message
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 112 ++++++++++++++++++++++++-
+ 1 file changed, 108 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 5ff6ee1f7d4b..81206db2b873 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -40,6 +40,8 @@
+ #define WARN_DEBUG(x)	do { } while (0)
+ #endif
+ 
++#define RZT2H_RESET_REG_READ_COUNT	7
++
+ /*
+  * Module Standby and Software Reset register offets.
+  *
+@@ -137,6 +139,22 @@ static const u16 srcr_for_gen4[] = {
+ 	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
+ };
+ 
++static const u16 mrcr_for_rzt2h[] = {
++	0x240,	/* MRCTLA */
++	0x244,	/* Reserved */
++	0x248,	/* Reserved */
++	0x24C,	/* Reserved */
++	0x250,	/* MRCTLE */
++	0x254,	/* Reserved */
++	0x258,	/* Reserved */
++	0x25C,	/* Reserved */
++	0x260,	/* MRCTLI */
++	0x264,	/* Reserved */
++	0x268,	/* Reserved */
++	0x26C,	/* Reserved */
++	0x270,	/* MRCTLM */
++};
++
+ /*
+  * Software Reset Clearing Register offsets
+  */
+@@ -736,6 +754,73 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+ 	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
+ }
+ 
++static int cpg_mrcr_set_bit(struct reset_controller_dev *rcdev, unsigned long id,
++			    bool set, bool verify, bool dummy_reads, const char *op_name)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++	void __iomem *reg_addr;
++	unsigned long flags;
++	unsigned int i;
++	u32 val;
++
++	dev_dbg(priv->dev, "%s %u%02u\n", op_name, reg, bit);
++
++	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
++
++	reg_addr = priv->pub.base0 + priv->reset_regs[reg];
++	/* Read current value and modify */
++	val = readl(reg_addr);
++	if (set)
++		val |= bitmask;
++	else
++		val &= ~bitmask;
++	writel(val, reg_addr);
++
++	/* Verify the operation if requested */
++	if (verify) {
++		val = readl(reg_addr);
++		if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
++			dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
++			spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++			return -EIO;
++		}
++	}
++
++	/* Perform dummy reads if required */
++	for (i = 0; dummy_reads && i < RZT2H_RESET_REG_READ_COUNT; i++)
++		readl(reg_addr);
++
++	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++
++	return 0;
++}
++
++static int cpg_mrcr_reset(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	int ret;
++
++	/* Assert reset */
++	ret = cpg_mrcr_set_bit(rcdev, id, true, true, false, "reset");
++	if (ret)
++		return ret;
++
++	/* Deassert reset with dummy reads */
++	return cpg_mrcr_set_bit(rcdev, id, false, false, true, "reset");
++}
++
++static int cpg_mrcr_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_bit(rcdev, id, true, true, false, "assert");
++}
++
++static int cpg_mrcr_deassert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_bit(rcdev, id, false, false, true, "deassert");
++}
++
+ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.reset = cpg_mssr_reset,
+ 	.assert = cpg_mssr_assert,
+@@ -743,6 +828,13 @@ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.status = cpg_mssr_status,
+ };
+ 
++static const struct reset_control_ops cpg_mrcr_reset_ops = {
++	.reset = cpg_mrcr_reset,
++	.assert = cpg_mrcr_assert,
++	.deassert = cpg_mrcr_deassert,
++	.status = cpg_mssr_status,
++};
++
+ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 				const struct of_phandle_args *reset_spec)
+ {
+@@ -760,11 +852,23 @@ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 
+ static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ {
+-	priv->rcdev.ops = &cpg_mssr_reset_ops;
++	/*
++	 * RZ/T2H (and family) has the Module Reset Control Registers
++	 * which allows control resets of certain modules.
++	 * The number of resets is not equal to the number of module clocks.
++	 */
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		priv->rcdev.ops = &cpg_mrcr_reset_ops;
++		priv->rcdev.nr_resets = ARRAY_SIZE(mrcr_for_rzt2h) * 32;
++	} else {
++		priv->rcdev.ops = &cpg_mssr_reset_ops;
++		priv->rcdev.nr_resets = priv->num_mod_clks;
++	}
++
+ 	priv->rcdev.of_node = priv->dev->of_node;
+ 	priv->rcdev.of_reset_n_cells = 1;
+ 	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
+-	priv->rcdev.nr_resets = priv->num_mod_clks;
++
+ 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
+ }
+ 
+@@ -1166,6 +1270,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		priv->control_regs = stbcr;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
+ 		priv->control_regs = mstpcr_for_rzt2h;
++		priv->reset_regs = mrcr_for_rzt2h;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
+ 		priv->status_regs = mstpsr_for_gen4;
+ 		priv->control_regs = mstpcr_for_gen4;
+@@ -1262,8 +1367,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		goto reserve_exit;
+ 
+ 	/* Reset Controller not supported for Standby Control SoCs */
+-	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+-	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		goto reserve_exit;
+ 
+ 	error = cpg_mssr_reset_controller_register(priv);
 -- 
-With best wishes
-Dmitry
+2.51.0
+
 
