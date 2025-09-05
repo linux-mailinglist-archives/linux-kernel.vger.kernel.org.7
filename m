@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-802315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D938B450E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:07:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D489B450E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91511BC20FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F288176C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C34730146F;
-	Fri,  5 Sep 2025 08:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD912FD7B8;
+	Fri,  5 Sep 2025 08:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T/RQbQLv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8wu+DKsG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bn5TQY4F"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84C32FE06F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3003F2FB60D
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059488; cv=none; b=H9y27z6xtOsluFimtJb5rmrp4qaFpBqfBaU/xtovzjG4G5S5a6LArXuc2XZsMPuWZ+xdR/XhLWGpzWdmSIdrrynw70Cu4HgNBz6/but3maYtuCB/Vb51gAi8m3CEvKASgvDgSGc+8P2bpvBxwGILdviiQgzQAs69T9354rqAGIM=
+	t=1757059832; cv=none; b=rVnoqWkzxAEx4Gh4ptbi7l4PV/8EmloK0IvpYVm2MDBGvzlwOHsM1IvkEUZv95ngLZtnfEgtVEML/n2dhfmoyNneMN1qEW8Jg7kYT2GxT83KyP38halU5sa82Cb2tjYRyd48U1z2SFS0BmA2nbh4f6GvDdggQsbQx0x5lp67DKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059488; c=relaxed/simple;
-	bh=QGKVrHrnICzFMyVbArbD3ExeehPmsCNYREmmPa7haEk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rmjaW4wv3nDWMF+ihgtNf5vYJOJT5WUivfxiA7DfVZa1yxLvBKngWkNaSpQpVknnkabgT1nMh5ErluKw/vmlVpSmq6OkAYxGwSzqAJsSekmVphUeLg3WiXwlUe3ApTV1Ne3x2VZ3JHIW+94zCk2GMHOPyYGFSdp/YrulGCgaVKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T/RQbQLv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8wu+DKsG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757059484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qptmhWEow2XN769eIxUwWzfBidCXD8AJeNJEY12zhuQ=;
-	b=T/RQbQLvnHHzaa3kcgAR+LLn5ai0Ux033UjJXzWe3BHLGjUJPqE0zIGOS3UULgAsiVYO9j
-	9leLirtrAXGc4SG8sOMyOUHFH1YJkZPefOOvbLMSdBkphuwAx4r4MIyypm9DAjyBXb1ESZ
-	vQCfP5CmcPZAeFsAocnxOUsuczDYK4TQKn5JUddsnAkoFTwNLZ8F6nwPvf9oEOmwxkVtwY
-	NO/mdeBq2qaLHMsz66TmiIty4B9JnzfGdi24JVGEjxF4eGk8P5NA410zSDBto9s5hfPrn3
-	sshPFMS5tSeDOAZNt07YHUekjlRQ+c5qq1e6F4DoJgZsPD/KJJNtlvJQXlsiZQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757059484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qptmhWEow2XN769eIxUwWzfBidCXD8AJeNJEY12zhuQ=;
-	b=8wu+DKsG3vM3/aRuVuIpOUINZJ1YBmZRRaiPqIlTPXUcQoy5TYiboN5Rk+ECsEOUJCP7HC
-	AfEh8nI6ryrtk+CQ==
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-coco@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
- maz@kernel.org, robin.murphy@arm.com, suzuki.poulose@arm.com,
- akpm@linux-foundation.org, jgg@ziepe.ca, steven.price@arm.com, "Aneesh
- Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-In-Reply-To: <20250905055441.950943-1-aneesh.kumar@kernel.org>
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
-Date: Fri, 05 Sep 2025 10:04:40 +0200
-Message-ID: <87qzwlwciv.ffs@tglx>
+	s=arc-20240116; t=1757059832; c=relaxed/simple;
+	bh=BtGTpK92RV2Z6TkeFuzCre6Mq/G4NqRshn0AGkTNf4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pm/XU+iYVkyiw1MGBfozfhz8BJuXtBvr3sa1AoRgTLyI/NSiiLHwxGb2IjfPzO2OYWQL131sWNmiuufFkYZBYTBq0DNRYvtZ6LFsrerE7lNQBB07qqbz9/kA8Mj+ttlckIgkgusVd17FI74Gw4Z9I+I5DMv6iOyU8K37jOR5z38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bn5TQY4F; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-33808d9e10bso16841121fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757059828; x=1757664628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BtGTpK92RV2Z6TkeFuzCre6Mq/G4NqRshn0AGkTNf4M=;
+        b=Bn5TQY4FBlGSlUcjEP+x3Di67lMAFi5yaMEi5qM+uA2mKdG79IcWxmnuhjx6zlGJws
+         87CUAK4UH4zuWowgtNdTjNQfE6BX/p8oT93qCOZhSx2ygm2iRd+xnNRiqfHIY3edK4wp
+         hrytwv8oKbIwmIYNPJmOhNraz05bJUQgJPdVu5AakjpJnhyv/PeXjVgQl/iCzRRf8nAZ
+         Vc4To6kk/LcIngsy/Ryr9EMmlvw52hHfFHMNd7tXueiX3Jb8rTXTZyfPD/jFm05PpaxP
+         x/MCZcK3qYafQ2wr1/qimNT8iv1hsopNK7dmAq5MuUJ3AD15BbYDtCX06sGg3M0quAjC
+         ogeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757059828; x=1757664628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BtGTpK92RV2Z6TkeFuzCre6Mq/G4NqRshn0AGkTNf4M=;
+        b=lLuMV0AXHg53gsHnJK69sjVRICuqSYVXJmqlNLJxKxGNlGM8NPqKI7S9lopogQVie7
+         hQ+w1SmjyUQTe63f/4kv8PQC5gGT691PfGraXxOn2U+vMUTC8bpOGJPgm3QnsOEpMxbJ
+         MS3ncBkpyTgQm5V/VKViv/QZG2IaZiW/SH/jabQ3Hi4kKOodZR7XHnBUJpwZs8/n7UEm
+         RqKPdT2QZ8Firr3VEkSjHhAdDL0pDmBYm5bqDkTyd7cLOo2mYC0wn5JjwTyF6c589Iw9
+         eY9b2sM8iWWXklcGKucZdRKa3T5svMBHrh7TKXKDmZeaOM2N98IiDX6HvLPdTvoOysXK
+         f5rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwW+shvhLgL3vdSEFcQyQyR2pYEvr11q4BNVF6EqMgvdXmQWN+E1fIct+Vq0VzpByByZJQCtTYcZYtypY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwffdphkubNE2ELOqms29yufDR61v753FDuAcBsW6RAmNZVy4tb
+	fGWH27tRjpaXYn2nPz3mbxzVqakOOyE1pqcYJTJg9dd8wCVf9RRgMzA35LE2HBSBMRHAY321bI6
+	EKtmF3B/qqttwv5CC9iPIb1UA3HdCupxTGQxObzERyg==
+X-Gm-Gg: ASbGncvcjEAbNFv4uQYnxAXFzCfD/1/6UqjNyxFc2yUZhN8yss2vVF3FrQvcQxUCbkF
+	GfFsIZporuKRJ2Y7p7GWA35hHDOEjI4kl0wolTbDSzjsE6+Of3Oh+6tjkAYb0cXRvaM4JwwuLI6
+	nWRgagHYE6D238h2FPj63yKzDeesAsX4C0OabIAOiNUxBlDdWxVwyRJVm7XhCXwjQFV5oSPdcM+
+	PuJih4=
+X-Google-Smtp-Source: AGHT+IHGuueojXvcDw+IxXf2H0yV1IZv2l/On0WYvOmWs3UEZEA+8rzZONaAnBMOjzPj+g4/KV47tq/0JIxyMnlIPRA=
+X-Received: by 2002:a05:651c:989:b0:337:f40b:ceff with SMTP id
+ 38308e7fff4ca-3381e2bd8bfmr6337601fa.0.1757059828213; Fri, 05 Sep 2025
+ 01:10:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1757053456.git.mazziesaccount@gmail.com> <fc3cffa3b75d1fcd19df0ff794e6ad75c8c87373.1757053456.git.mazziesaccount@gmail.com>
+In-Reply-To: <fc3cffa3b75d1fcd19df0ff794e6ad75c8c87373.1757053456.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 5 Sep 2025 10:10:16 +0200
+X-Gm-Features: Ac12FXwzrJgD4cqNVEMDwjcqLjGCJuYfaMNmrTkon9AkUOYZTyb9cMdwIMQNW6c
+Message-ID: <CACRpkdaY3P7uj8dQfDbauvyJ_sSYPeUC7kK+DTMrkfT+BcLjCw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 05 2025 at 11:24, Aneesh Kumar K. V. wrote:
-> When running with private memory guests, the guest kernel must allocate
-> memory with specific constraints when sharing it with the hypervisor.
+On Fri, Sep 5, 2025 at 8:42=E2=80=AFAM Matti Vaittinen <mazziesaccount@gmai=
+l.com> wrote:
+
+> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
+> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
 >
-> These shared memory buffers are also accessed by the host kernel, which
-> means they must be aligned to the host kernel's page size.
+> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
+> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+> daisy-chain configuration) and maximum sampling rate is 1MSPS.
 >
-> This patch introduces a new helper, arch_shared_mem_alignment(), which
-
-# git grep "This patch" Documentation/process/
-
-> can be used to enforce proper alignment of shared buffers.
+> Add a device tree binding document for the ROHM BD79112.
 >
-> The actual implementation of arch_shared_mem_alignment() is deferred
-> to a follow-up patch.
->
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  arch/arm64/include/asm/mem_encrypt.h |  6 ++++++
->  arch/arm64/mm/init.c                 |  4 +++-
->  arch/arm64/mm/mem_encrypt.c          |  6 ++++++
->  drivers/irqchip/irq-gic-v3-its.c     |  8 ++++++--
->  include/linux/mem_encrypt.h          |  7 +++++++
->  include/linux/swiotlb.h              |  7 ++++---
->  kernel/dma/direct.c                  |  7 +++++++
->  kernel/dma/pool.c                    |  1 +
->  kernel/dma/swiotlb.c                 | 28 +++++++++++++++++-----------
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-This does too many things at once and breaks all swiotlb users except
-arm64. Seriously?
+Looking good!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> -void swiotlb_init(bool addressing_limited, unsigned int flags);
-> +void swiotlb_init(bool addressing_limited, unsigned int alignment, unsigned int flags);
-
-Why do you need this alignment argument in the first place?
-
-In quite some other places you use arch_shared_mem_alignment(), which
-defaults to PAGE_SIZE if the architecture does not implement it's own
-variant. What's preventing you from using that in the init functions as
-well?
-
-Thanks,
-
-        tglx
+Yours,
+Linus Walleij
 
