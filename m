@@ -1,278 +1,189 @@
-Return-Path: <linux-kernel+bounces-802150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90C8B44E34
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:45:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B91B44E36
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C3E17C1FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D49E07BAAC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4F52D0C94;
-	Fri,  5 Sep 2025 06:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5E92BF3CF;
+	Fri,  5 Sep 2025 06:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAIdJVmx"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OmQBOCr7"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2061.outbound.protection.outlook.com [40.107.223.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831A1A55;
-	Fri,  5 Sep 2025 06:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757054749; cv=none; b=opXOXjKqaHgajXRTZw8npcRdBVRsNL9uZ25C4ia0Zn9F/XcdZIuJXK/4D0lKbvzB6dRgNVihumkaaHXbvbeUrJOaI+aDWkfCz6Sz0wY1tHGoCN45NKBrpq8QidPlj+vMJrMiOWdfgkNVSlIaJzLwI46SX+vM8Djx4omgkGvfBs4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757054749; c=relaxed/simple;
-	bh=D8qjd6uOB+cLD7mni+zG6iqBAqIrkrGPtosL5HqdQpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNheosZihjVqOAyrZhf0OeZ0wmASXUHsdXf54N1SciNgXay7UCs33Lh4ixpMVTOMEzo2h47sF9oMEZ6dHWkZK4dZ9icir+Fmids4bEMmge/E9c5sFpguq0wiyDk3wSfIu1Og9URfPdgHEwqhEyDfF5GOO6gkjP2SRHJVT7Mjs1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAIdJVmx; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3f4d7feef27so12851475ab.3;
-        Thu, 04 Sep 2025 23:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757054746; x=1757659546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ObiAp89bZ6nnnxD4zTTgY8mWdO0E5S1BFTQ6XkTPWU=;
-        b=XAIdJVmxM1or8c7JKVWe6GMn1emyx0njtQ8I/RmzNxVbf9g+zLb4TZfBuTECYEPhHm
-         /FN5rKJDMrU/b+ioCRqMuCuPIHXApKSquAC2jD+fisMNS9Bs/u1IcrCbznaVa60aOvMK
-         cvo6mOcsL5jz2Nl+ft9OUu/qgJnN2hVRBkN0r14hHo2ixky8U/ZnLGvSUgWggnZEQEOG
-         Qz090XvNQsD5vh5Ad6YHbRu4I7HSJI8u4F+eIDtyyd54QB+fjWbJSt+x2qHT/qYQzXvj
-         fi7dl5O11eDNc0UU5wDigp47xaBG7NrRpwUbZjKrGYJ9jrMITpf2Ry8AghhJ6BB0DG3P
-         Zm8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757054746; x=1757659546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ObiAp89bZ6nnnxD4zTTgY8mWdO0E5S1BFTQ6XkTPWU=;
-        b=vCwirgLCfsts7HGLJgeu8lTdlUIQNLNh0Se86mr/rl345UIaRmnLPH0U2DQNp2u1Lb
-         J1yr9Zv9ym0+6YVXyVPMVTFWe6bEF+qYlwvGmU1ozy98y1tMn1UV0B6CtuQNU9JygicY
-         /kOypZ5FUMoPXJpiOBOU8sHG/N0KX+ywIFX+qwgrS/E/HLj7RdeFCa8vGsuWrRy4J8Hy
-         bS08viu+IJ8Ia3Wdjr9T9bUhiH3hdze9NnwqashZmor9OVxdFxeKSwg0hL1jkZjEgeTM
-         0yF80TswnOjqprCaPmKBJzCF6Q/fpnLQ2wmMqMjfmzZQo9+A8el0ut9JUF89RsYPA2+C
-         aCBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYPAiHkSVyuZ9tkwZI6AUVDspU/dR5KYJRmX34yd8EKxdEDrR1nVtkrNLT/p8+D2vcABc7AChx4IDjLZs=@vger.kernel.org, AJvYcCXjmoNHq3Ib7fAHD1JMi9B4FRQBkJHqo9t9ub0nhhp4WLszhnzmEZGMpM/Ul4S2jqVKDLLL9+zA@vger.kernel.org
-X-Gm-Message-State: AOJu0YygU/ifzOY4ADAZ4UluypTsG3k1R5x9mFA8GAVg367G/LUaW4Ej
-	18M8kkpPJc8d5KvDFYFUq2Pg35Nl0HqU5xyzBxOpFcfBVsKEPmiulyyKqyYmMjuFuOaesiFBIE3
-	vrvfaFi4Sw2VYYGN8uZPwSLkyY4/lWBk=
-X-Gm-Gg: ASbGncsCXC51tmL5urFpucQ7lzGj2CVFPXHr7VmGRLLBP42txxxScgfr49HDF0OLKeh
-	XTQWZ+4TKxwWQExK3WqnZVo8r0/6l3+woeghR2+56m//EE4c/VXM1D0Z1HTV8XEeCitrwULi/xS
-	MCcsXUCPcP9QSdcqLc3p70qBbcHt4bYssvD3UMKhpfvQgW5Xjv8YUAWofOMy1yoz1tkZt/I1WHg
-	1KZSybrAb76FJjhNcQtkRxY9IVqyOZ3
-X-Google-Smtp-Source: AGHT+IGr4rlyUYeotvjLMlveZYQJ03/SyqoIlIDi+NlWOdBD4pVXZEfnRy8PUghK31+dx0Q/rybz59J8gHh8C9nx/DU=
-X-Received: by 2002:a05:6e02:2706:b0:3eb:5862:7cef with SMTP id
- e9e14a558f8ab-3f4024c779cmr296689965ab.22.1757054746457; Thu, 04 Sep 2025
- 23:45:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564D01D9663;
+	Fri,  5 Sep 2025 06:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757054905; cv=fail; b=Qc+vWtVBAsZ4vhmrvCRdxnDxE40wSbbgUZqM/V22+KcDDYZI6huLeCIG45TnTIyDsRN6fs50NZTPPlWWFRt/XeslCPpl9qXHKdNw8Cl5+9i0+iP52MW+L0i2HsX/tobAZ0Fs8cwEkgnUs0hy6eZiujL503WV8yTq+Gsq+K6CN0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757054905; c=relaxed/simple;
+	bh=EO8vrS7OgSHFYg70AT3w4ai5/ROu2lVfw0Jpnz9TFSU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hW4DK3L43Bjf1BK4OI4kDshX+XN9MQ2I/pbPvnKeBB0pFhw3Fqz/bjQO9WYDwmstsJIKz/l5Je0yBtr77r8k6CscfICWK46ewxF6z3ROd1cXkkakTytUxWJGcVhfFrGvcd/RLC88tQkF64zerOjrqGURqy6q/5ciWh6T0msbZx0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OmQBOCr7; arc=fail smtp.client-ip=40.107.223.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JocoO0sXJYutPF5A4jVF4U3jmG/03bBvkBSKs0ZrsaC17L6XwybQdXL1+iHrmcsbWqRxpvW2HXGOpTbob9Al+fZPsuHNH9wKPhyRjqpHiyKeDU7DfxpvC2JThumiI7vpwAI5pEY51iB8k4LIJc4Q7RbcPLkBpQ9J1VB0aehkZmfXBKWWEj2u6Lta4rkpc4N6GFSKDDKClJELbvyD1NHqjRktuCzdg1MpjdzUa4t5cwfbHyXYI3B0mZkHp/KlTJa19nTt3Pvce0Sj+gDlzCokH1dLtb5Lyv9kVeQtkSCgTrGG/TQ6x0CHVRxLIwzDCJruwTqvWEeoq6AHomHqZgdw9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cu8LEDd4282aI9U+xlecBFS+qHm5DmTS98OsmeKTmDk=;
+ b=Q2rODrgFeXS0R7Z34N1GrxYs4ZniTy4bptWLoR47oaFNodZ4VzfC2cQfMkzAS1J72HSZo/lOz/2d7dytVfe8gQMC9IEpVJIUsE8dJxbk/Oj9RTHKvg0oZugm/1ONjt/w9lWAtdcl5wBIFsk1aLBJ6rEMwzyUBkdZqyypb2wdG9u80YtcdnQjlSB5RMQl2WXqhT4EM5yOjql226pwSETVTmrFwsEIFMrYcf8330MkdKygPo8C48FKYEhFSiCNK8tRyr/ZTM1FAQtaffWrrqLCV/OyZoYZqYgMbBXwa3SO6jELVm98gGqjxnPIy6669N2MQGhjxdjh6lJK9xgCUD8nrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cu8LEDd4282aI9U+xlecBFS+qHm5DmTS98OsmeKTmDk=;
+ b=OmQBOCr7TyAwmyPpySR9H3gsIypzqGqywPBVXVGKL3dHmQOuTmJ1Ix2yWfUeh+ILETA1hbGdedJ/e+YSiZxWqSYVdElTtdSi/OOxiYb8NVMF9cA1wUARi6bPGVy0JWzZIaL0gUlYKfx1h/1RB9AnNYZEef0RlvN80bu9ndWSIUs=
+Received: from BN9PR03CA0757.namprd03.prod.outlook.com (2603:10b6:408:13a::12)
+ by PH0PR12MB7011.namprd12.prod.outlook.com (2603:10b6:510:21c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Fri, 5 Sep
+ 2025 06:48:19 +0000
+Received: from BN2PEPF000044A7.namprd04.prod.outlook.com
+ (2603:10b6:408:13a:cafe::b) by BN9PR03CA0757.outlook.office365.com
+ (2603:10b6:408:13a::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.17 via Frontend Transport; Fri,
+ 5 Sep 2025 06:48:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN2PEPF000044A7.mail.protection.outlook.com (10.167.243.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Fri, 5 Sep 2025 06:48:19 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 5 Sep
+ 2025 01:48:19 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 4 Sep
+ 2025 23:48:18 -0700
+Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 5 Sep 2025 01:48:16 -0500
+From: Suraj Gupta <suraj.gupta2@amd.com>
+To: <vkoul@kernel.org>, <michal.simek@amd.com>, <radhey.shyam.pandey@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] dmaengine: xilinx_dma: Fix uninitialized addr_width when "xlnx,addrwidth" property is missing
+Date: Fri, 5 Sep 2025 12:18:11 +0530
+Message-ID: <20250905064811.1887086-1-suraj.gupta2@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905040021.1893488-1-jackzxcui1989@163.com> <CAL+tcoDxyfAWOWT9gWC7wvcEy8tNYM7pF8suJhwUpdz+MWdxhw@mail.gmail.com>
-In-Reply-To: <CAL+tcoDxyfAWOWT9gWC7wvcEy8tNYM7pF8suJhwUpdz+MWdxhw@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 5 Sep 2025 14:45:08 +0800
-X-Gm-Features: Ac12FXz6J7-kbTv_qE7tOJM-feIbCUDYWLyM7LfI-L3SstbDoio-f2Vac5CK5XA
-Message-ID: <CAL+tcoDYfbu7oCWgnWdb2rLee0AtdC9xS9ix9yJ4RQ3TVa6u4g@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A7:EE_|PH0PR12MB7011:EE_
+X-MS-Office365-Filtering-Correlation-Id: b799faf8-de3e-48bd-d1b8-08ddec4832f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r3GzTEzWYbjjjKt50WsopcSVonytYtOdPlg/LGy3ev7BU/w5UUejWuWnD87I?=
+ =?us-ascii?Q?nRBQ8s77T7nTiisnqB4IvOTfsWxZn/4eLXGXa9LybhDUUCjQ0ABqMM/+WvcB?=
+ =?us-ascii?Q?IeZmHP+6YKlmZvIwauhxOl74Zgz9n1bNPF2nvW9E6uLvPP7eoLku6ly+ZutY?=
+ =?us-ascii?Q?IEluvV/jGS52utNJ6aljtGb2eVcfXxXT4KoBetgiosgfPEPzghw6U0NzaKPq?=
+ =?us-ascii?Q?GWllyv2RLvMgQO8nBLLjtDQBQFIpOn0veg9DQTpw6PlPIhj2ypNDDfVYJFWk?=
+ =?us-ascii?Q?vaZEbnWc9005EXzTmoBh/xXYY6avia2VmcCIqiNk9wsoDFeeTJC4wzDpgWo9?=
+ =?us-ascii?Q?+danpLldjaoCvAYxxptubiYbwFANLXxm+n+p0Yr8Gd/L4FAmWsi8wGDTQ//r?=
+ =?us-ascii?Q?elOnsECUP5pFfj4MJHe1dAPNJ8Q7gIcFPJ5/ti1imce2LFJ/9hYZYBdePn3/?=
+ =?us-ascii?Q?aJON8jrH0CAK5KGEpjDRzwD+dYBmfRoHq5HOzYTQE7inE+feEop1wSBQQFo0?=
+ =?us-ascii?Q?OTZO3gcZ6/fq90pFGRCVh7OTM2INCsdO4ag2Bt6w6/TFki46VgLTlUfy6Gpb?=
+ =?us-ascii?Q?XZsAL6kDhV/QED8f7lxVruspYq42Rvps5ZqbSLYN5lBRWGk11ZZ74ia91Gnf?=
+ =?us-ascii?Q?Qp5qzuKzZGZdWokNFza8nYZRLALIHfQw0yRMIbYd7Gg+2UZrkKIOgTaSA5Wl?=
+ =?us-ascii?Q?J9c92ntL6N2yXoY4z4+e/rUZrvx4sTNiSFztp/YtMIpnWJJY1DHP8cfCAw7N?=
+ =?us-ascii?Q?6UhWFQF0tTDU9/XzBr3FvPBQZYFk4WoVMb0UxIWwvyoYgKG1Dv/GQ48vlQOz?=
+ =?us-ascii?Q?yjsePjEVUpAUSTweIS+cAlSGSTqEGCdXW/XLR6QGjxGZV7p1Uln7h2/TFK57?=
+ =?us-ascii?Q?nIc4YE2U73435DzGu2sGNJHfbd1QZFnzzF1/WSiNmvxJbamHSVyYTJ2Js/Gq?=
+ =?us-ascii?Q?crcGoeCEYUN0qOF5gxgXoOJgsHyh5zqMzU38yf67ljwgMA77Hsy3RvhIMYAZ?=
+ =?us-ascii?Q?QpO72DazXDcPwyGc/H/9tPCVU2pjfeRu44bHq3ZexPvJvEdfUC34FGFT+4qu?=
+ =?us-ascii?Q?yLwAm6xlcGp6ui96ea7YKzWf/qU5rKyaolAl8IzAweS+cpufF+REMNURL+U1?=
+ =?us-ascii?Q?UdZ02QlUFZlVuuNEwdQlQTnC88jv2/OZHQWLw3wa1fkL4o6zvrY0j8weC+fO?=
+ =?us-ascii?Q?kscEHJUOId8W/Hy33jtA1YeQVtiHZUtm5Is2LewQfdaRPbJWrRaOjlkf8RoP?=
+ =?us-ascii?Q?BylWWKN+C1FUvyWPAxQjFQe1R3xwxJSTPOXwmlrcFmwmgUCP9B202+/GhDJb?=
+ =?us-ascii?Q?hbIJvgNyc3gNm1G6h9dYnylBkvACTkYL4rqUhIf5UTcu7ViF7h8wo+SUEkdV?=
+ =?us-ascii?Q?HDf7yba7rsHq8xfKnyXG5RchAHvabXr2cNfeeTBR4euH0ePfgclzYQXy7C8s?=
+ =?us-ascii?Q?uPpsceE9YFiXCvdKQLD2+RxBpR7YBNBjtnUbu0Av3nwz2u1uCCltJcXSRkoT?=
+ =?us-ascii?Q?9mK+0zoL4ZGrkVvJiaAPVMcnWATkpBTn8oDP?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 06:48:19.2763
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b799faf8-de3e-48bd-d1b8-08ddec4832f4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7011
 
-On Fri, Sep 5, 2025 at 2:03=E2=80=AFPM Jason Xing <kerneljasonxing@gmail.co=
-m> wrote:
->
-> On Fri, Sep 5, 2025 at 12:01=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> =
-wrote:
-> >
-> > On Thu, Sep 4, 2025 at 11:26=E2=80=AF+0800 Jason Xing <kerneljasonxing@=
-gmail.com> wrote:
-> >
-> > > > In the description of [PATCH net-next v10 0/2] net: af_packet: opti=
-mize retire operation:
-> > > >
-> > > > Changes in v8:
-> > > > - Delete delete_blk_timer field, as suggested by Willem de Bruijn,
-> > > >   hrtimer_cancel will check and wait until the timer callback retur=
-n and ensure
-> > > >   enter enter callback again;
-> > >
-> > > I see the reason now :)
-> > >
-> > > Please know that the history changes through versions will finally be
-> > > removed, only the official message that will be kept in the git. So
-> > > this kind of change, I think, should be clarified officially since
-> > > you're removing a structure member. Adding more descriptions will be
-> > > helpful to readers in the future. Thank you.
-> >
-> > I will add some more information to the commit message of this 2/2 PATC=
-H.
-> >
-> >
-> >
-> > > > Consider the following timing sequence:
-> > > > timer   cpu0 (softirq context, hrtimer timeout)                cpu1=
- (process context)
-> > > > 0       hrtimer_run_softirq
-> > > > 1         __hrtimer_run_queues
-> > > > 2           __run_hrtimer
-> > > > 3             prb_retire_rx_blk_timer_expired
-> > > > 4               spin_lock(&po->sk.sk_receive_queue.lock);
-> > > > 5               _prb_refresh_rx_retire_blk_timer
-> > > > 6                 hrtimer_forward_now
-> > > > 7               spin_unlock(&po->sk.sk_receive_queue.lock)
-> > > > 8             raw_spin_lock_irq(&cpu_base->lock);              tpac=
-ket_rcv
-> > > > 9             enqueue_hrtimer                                    sp=
-in_lock(&sk->sk_receive_queue.lock);
-> > > > 10                                                               pa=
-cket_current_rx_frame
-> > > > 11                                                                 =
-__packet_lookup_frame_in_block
-> > > > 12            finish enqueue_hrtimer                               =
-  prb_open_block
-> > > > 13                                                                 =
-    _prb_refresh_rx_retire_blk_timer
-> > > > 14                                                                 =
-      hrtimer_is_queued(&pkc->retire_blk_timer) =3D=3D true
-> > > > 15                                                                 =
-      hrtimer_forward_now
-> > > > 16                                                                 =
-        WARN_ON
-> > > > On cpu0 in the timing sequence above, enqueue_hrtimer is not protec=
-ted by sk_receive_queue.lock,
-> > > > while the hrtimer_forward_now is not protected by raw_spin_lock_irq=
-(&cpu_base->lock).
-> > > >
-> > > > In my previous email, I provided an explanation. As a supplement, I=
- would
-> > > > like to reiterate a paragraph from my earlier response to Willem.
-> > > > The point is that when the hrtimer is in the enqueued state, you ca=
-nnot
-> > >
-> > > How about tring hrtimer_is_queued() beforehand?
-> > >
-> > > IIUC, with this patch applied, we will lose the opportunity to refres=
-h
-> > > the timer when the lookup function (in the above path I mentioned)
-> > > gets called compared to before. If the packet socket tries to look up
-> > > a new block and it doesn't update its expiry time, the timer will soo=
-n
-> > > wake up. Does it sound unreasonable?
-> >
-> >
-> > I actually pointed out the issue with the timeout setting in a previous=
- email:
-> > https://lore.kernel.org/netdev/20250826030328.878001-1-jackzxcui1989@16=
-3.com/.
-> >
-> > Regarding the method you mentioned, using hrtimer_is_queued to assist i=
-n judgment, I had
-> > discussed this extensively with Willem in previous emails, and the conc=
-lusion was that
-> > it is not feasible. The reason is that in our scenario, the hrtimer alw=
-ays returns
-> > HRTIMER_RESTART, unlike the places you pointed out, such as tcp_pacing_=
-check, where the
-> > corresponding hrtimer callbacks all return HRTIMER_NORESTART. Since our=
- scenario returns
-> > HRTIMER_RESTART, this can lead to many troublesome issues. The fundamen=
-tal reason is that
-> > if HRTIMER_RESTART is returned, the hrtimer module will enqueue the hrt=
-imer after the
-> > callback returns, which leads to exiting the protection of our sk_recei=
-ve_queue lock.
-> >
-> > Returning to the functionality here, if we really want to update the hr=
-timer's timeout
-> > outside of the timer callback, there are two key points to note:
-> >
-> > 1. Accurately knowing whether the current context is a timer callback o=
-r tpacket_rcv.
-> > 2. How to update the hrtimer's timeout in a non-timer callback scenario=
-.
-> >
-> > To start with the first point, it has already been explained in previou=
-s emails that
-> > executing hrtimer_forward outside of a timer callback is not allowed. T=
-herefore, we
-> > must accurately determine whether we are in a timer callback; only in t=
-hat context can
-> > we use the hrtimer_forward function to update.
-> > In the original code, since the same _prb_refresh_rx_retire_blk_timer f=
-unction was called,
-> > distinguishing between contexts required code restructuring. Now that t=
-his patch removes
-> > the _prb_refresh_rx_retire_blk_timer function, achieving this accurate =
-distinction is not
-> > too difficult.
-> > The key issue is the second point. If we are not inside the hrtimer's c=
-allback, we cannot
-> > use hrtimer_forward to update the timeout.
-> > So what other interface can we use? You might
-> > suggest using hrtimer_start, but fundamentally, hrtimer_start cannot be=
- called if it has
-> > already been started previously. Therefore, wouldn=E2=80=99t you need t=
-o add hrtimer_cancel to
-> > confirm that the hrtimer has been canceled? Once hrtimer_cancel is adde=
-d, there will also
-> > be scenarios where it is restarted, which means we need to consider the=
- concurrent
-> > scenario when the socket exits and also calls hrtimer_cancel. This migh=
-t require adding
-> > logic for that concurrency scenario, and you might even need to reintro=
-duce the
-> > delete_blk_timer variable to indicate whether the packet_release operat=
-ion has been
-> > triggered so that the hrtimer does not restart in the tpacket_rcv scena=
-rio.
-> >
-> > In fact, in a previous v7 version, I proposed a change that I personall=
-y thought was
-> > quite good, which can be seen here:
-> > https://lore.kernel.org/netdev/20250822132051.266787-1-jackzxcui1989@16=
-3.com/. However,
-> > this change introduced an additional variable and more logic. Willem al=
-so pointed out
-> > that the added complexity to avoid a non-problematic issue was unnecess=
-ary.
->
-> Admittedly it's a bit complex.
->
-> >
-> > As mentioned in Changes in v8:
-> >   The only special case is when prb_open_block is called from tpacket_r=
-cv.
-> >   That would set the timeout further into the future than the already q=
-ueued
-> >   timer. An earlier timeout is not problematic. No need to add complexi=
-ty to
-> >   avoid that.
->
-> It'd be better to highlight this in the commit message as well to
-> avoid further repeat questions from others. It's an obvious change in
-> this patch :)
+When device tree lacks optional "xlnx,addrwidth" property, the addr_width
+variable remained uninitialized with garbage values, causing incorrect
+DMA mask configuration and subsequent probe failure. The fix ensures a
+fallback to the default 32-bit address width when this property is missing.
 
-BTW, I have to emphasize that after this patch, the hrtimer will run
-periodically and unconditionally. As far as I know, it's not possible
-to run hundreds and thousands packet sockets in production, so it
-might not be a huge problem. Or else, numerous timers are likely to
-cause spikes/jitters, especially when timeout is very small (which can
-be 1ms timeout for HZ=3D1000 system). It would be great if you state the
-possible side effects in the next version.
+Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+Fixes: b72db4005fe4 ("dmaengine: vdma: Add 64 bit addressing support to the driver")
+---
+ drivers/dma/xilinx/xilinx_dma.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Willem, any thoughts on this?
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index fabff602065f..89a8254d9cdc 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -131,6 +131,7 @@
+ #define XILINX_MCDMA_MAX_CHANS_PER_DEVICE	0x20
+ #define XILINX_DMA_MAX_CHANS_PER_DEVICE		0x2
+ #define XILINX_CDMA_MAX_CHANS_PER_DEVICE	0x1
++#define XILINX_DMA_DFAULT_ADDRWIDTH		0x20
+ 
+ #define XILINX_DMA_DMAXR_ALL_IRQ_MASK	\
+ 		(XILINX_DMA_DMASR_FRM_CNT_IRQ | \
+@@ -3159,7 +3160,7 @@ static int xilinx_dma_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct xilinx_dma_device *xdev;
+ 	struct device_node *child, *np = pdev->dev.of_node;
+-	u32 num_frames, addr_width, len_width;
++	u32 num_frames, addr_width = XILINX_DMA_DFAULT_ADDRWIDTH, len_width;
+ 	int i, err;
+ 
+ 	/* Allocate and initialize the DMA engine structure */
+@@ -3235,7 +3236,9 @@ static int xilinx_dma_probe(struct platform_device *pdev)
+ 
+ 	err = of_property_read_u32(node, "xlnx,addrwidth", &addr_width);
+ 	if (err < 0)
+-		dev_warn(xdev->dev, "missing xlnx,addrwidth property\n");
++		dev_warn(xdev->dev,
++			 "missing xlnx,addrwidth property, using default value %d\n",
++			 XILINX_DMA_DFAULT_ADDRWIDTH);
+ 
+ 	if (addr_width > 32)
+ 		xdev->ext_addr = true;
+-- 
+2.25.1
 
-Thanks,
-Jason
 
