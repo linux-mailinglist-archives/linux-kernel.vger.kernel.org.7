@@ -1,61 +1,90 @@
-Return-Path: <linux-kernel+bounces-803908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB3EB46712
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:18:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BD6B46713
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A7D5E1438
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F17A45819
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5905028504C;
-	Fri,  5 Sep 2025 23:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E650233136;
+	Fri,  5 Sep 2025 23:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sly972OZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwhbVKKW"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8711F4622;
-	Fri,  5 Sep 2025 23:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27891D416E;
+	Fri,  5 Sep 2025 23:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757114300; cv=none; b=cndM3bATkV5kMpgUg1v76BSuowKrJxTq4Tq3SmhST17/g9r9tOdQy7oQ+yIPXGwen3I86dZrodMmIF30d4Si2Ngf+8GlyI9QY5dIVi24bpbXyKVxzUdGwhxOgQfDkrgKgoX4u4X+QYZu5AQXLQc3b8xEYNEbqTP16g/yLV0BOPA=
+	t=1757114346; cv=none; b=pNJ3zLuo17FTsvHsiHRYq44c2JxAkUaLkvgu0XlyhjeJZQz2Bdqp2Pn43c911kbDwPd2Joalz9vwkBM9aOsuoQW/OnqbTWM8AwwTqRNCims6EuCQnfVpsnzFVJa68Sgp1WV3mK+M43v4ORSPBcrgU10pgL/NrLUx5PhDsOJDnBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757114300; c=relaxed/simple;
-	bh=J9WEIa+VV0+QVsnt8Ym5PX6MCPZuNTIbHrVfBa7z+wY=;
+	s=arc-20240116; t=1757114346; c=relaxed/simple;
+	bh=X4LWfw7XzGycXhNmKo5/oVoaXxnUZl7fO9KijW5BlEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6k4eNtEGyuj5DXdj3QH1iEbTe3i4w4Zy3nrcjrHvOGiQ96F/t3pf0WRj4KzYtRbBn3acsAm9nAh+G7R/5khUvVJw80zX2q8yrhDoj4u/6WpK2/BmvI+XPPgMzqwLwjjDRKBT5fXK5PLantAEpVNCVoXLmGmltcjI4Dgt+DGCZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sly972OZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38E6C4CEF1;
-	Fri,  5 Sep 2025 23:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757114300;
-	bh=J9WEIa+VV0+QVsnt8Ym5PX6MCPZuNTIbHrVfBa7z+wY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sly972OZKjGVPtM0/0oy4e80y36ZqOj9wlbDQWxdlzl6I0e/OsuQd5q/ULITS8SLv
-	 +6CzeXIOFhWm5Jc4NrGuwofQx2+fVFlVKUZ0UB/lcR3VjxLWRhPT+IoeQ5hvV2k2om
-	 Wi2GQqnLE9OnMo2o0vnU/c0YTZOln7K1IC2sHqTR9LecmffgcUeu1LXaNySGkuIs1q
-	 dPLQ78Mp0VrIpk7inTNgfWvRWyqYzX0EMqJq9ikhftdDFa7Dwscl3ZKZwQc3jQ5Miv
-	 McNRvtIUQaWxYr4Hsee6wIPEOR3atfQ5+FSDTOmSV8YDtcvHhMz5gvnRW0j2V13Kxk
-	 hUTS4wWQSdttQ==
-Date: Fri, 5 Sep 2025 18:18:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: remoteproc: qcom,milos-pas: Document
- remoteprocs
-Message-ID: <20250905231819.GA1484997-robh@kernel.org>
-References: <20250905-sm7635-remoteprocs-v4-0-9e24febcb246@fairphone.com>
- <20250905-sm7635-remoteprocs-v4-1-9e24febcb246@fairphone.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6MlLAoo9qajd35sRvPBRgu6BWvIy5be492yA6IVSqym5VMx1n0ffRWqaG1+LLvRlPTcxPY36A+qM3eAU5AloMEVzL0+4KlqfIzRY45iFd5Li5MuJRIrEIHzJIfwG1fddpJ+Va7vo5235xYg8BG+4rcZSCW/gU0JFipQTKJMBvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwhbVKKW; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b475dfb4f42so1559655a12.0;
+        Fri, 05 Sep 2025 16:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757114344; x=1757719144; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eEMr+Cyrtz+r7sJA3C93LzdGGUEefqmRC6fYCHMz4Kw=;
+        b=iwhbVKKWXp+q6zP9EswIzaGc/DJuHiZ3HBSOFEFzwz39v6d8rI/TzxTzYzcGG21ftA
+         mLaCu2HvvbDU2D3Tqp4uanfAtZr+2wWt1OZGgf9SdSSSUCAEhcXI1m58EBRl8fyzQ/SA
+         Iuyj8lO0Yi6MUcmvgLL+Ry3iTLu6GG2wADYpETtWpkJxhOD6oEoI00/O+USCANxxkbfx
+         rJC8ua/OBc66xOQMVsckBRffoP9CnbHZJ9wgXU0u/XVz6is0byzVXmcehvMdDgC/VQKq
+         XlUrP+Nyvt9lAcsLANtOiKNxpowt8ufDlqT7KedBNBB7NwsmN1v4vIzFTw90pGjPFbFB
+         Wn6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757114344; x=1757719144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eEMr+Cyrtz+r7sJA3C93LzdGGUEefqmRC6fYCHMz4Kw=;
+        b=lbN3mv0MAleYZjp79ICx8RiWTuzH/MecnkzS2HuTOTVJ/qQ6/7W12bzl5cF3wukmTT
+         GTf+8Sr2GHP2Vm56gMfRaBjO1e+yzNlFrR6ErvEfXZn6eZY0AgWe9T6KXahnJonzfQS9
+         h7oBV2eUHo7EzU8oZqfTF5VwjcyRhFS4gk/we8rjQFqfTBsP0lBqqZOk5bLt44nZ3Hud
+         4jOJ8fvcCww5Hl7QlmeJCEtAoLhMnFscQUh/wfykR8jeF3QGupPLqQDXRnzrfR6eGfUD
+         cLLy8pdFrmjp8F/ajMeDWJFXdu7FCmCtpd6/1067sNm2wET47Rs/KQzeptebDWeQakVK
+         xy1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPsU0jeRpM4vWoZZLca1r1GcoN68TGy7v5F2x6mgcYy4Y8pEM3UVZ0CUpBOKLDFNoIm/7xrbgLhLfyWRA=@vger.kernel.org, AJvYcCXdkvTHZaEQFYAVDRYIW/pjnfM5n7lvlityRa+bgfr9cdbYPcdO2QzmVVM1Zqdy2siWACl149+5j4qpRrVKVZEwbO8z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtauppzu2GT9tyzTZ5lcm1vt8DH7H0kVjGN7d0ZQvqF1M/1nFV
+	7wD2M5984gTrxT7r88BhDNr9evdFb18pCCHryxw1tf+dWj8Y1yKWPs1I/k4+xYT0
+X-Gm-Gg: ASbGncv1DwcukXrie2PAWuv8eVHbUybHZVN6kPKeY09gQwkRYpjCZexNccag6OO7p7F
+	toUEmNSszKq97paayFaNwsFFUvT+3hlbWTM2p83fqC7+Eb/t68UNI2nksc7w705PzFadoBy/qDb
+	vKaMScpjYQ6tFil5295r18SQkQCQjBCsNQAr9/f8riGdTcHHOiw5/0++DvX6B3+TwbbMX9GGN0S
+	cLusQfl0J1Tvi5KS18cpdhRy3/sU9U/MkrOdgMBq0zYZ9Ivi1o915O6n4NaTp5vnzXbpNlwvBsK
+	tnFHCwKG2ZXCvsoWd7yThRFerrA4lbcxTjG3zxkeTpdXvV8wmfCIGWysWhflgrJuTXKympwdf88
+	rxsbOsrpJZ1AViHc0YXhQlmtveH9ijz7Fyd+aVkEiBtzvZA==
+X-Google-Smtp-Source: AGHT+IEZunIdMChKjW5FSHSQZiCMwnCx8dI9dYrX6AmOs+tl+Q4iKJiQQ5ngXBecvWeccL+lEm2Ciw==
+X-Received: by 2002:a17:903:288:b0:246:cb10:6e2f with SMTP id d9443c01a7336-2516ec6f1c3mr5870655ad.26.1757114343999;
+        Fri, 05 Sep 2025 16:19:03 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4b99fasm23306657b3a.57.2025.09.05.16.19.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 16:19:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 5 Sep 2025 16:19:02 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ye Weihua <yeweihua4@huawei.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] trace/fgraph: Fix the warning caused by missing
+ unregister notifier
+Message-ID: <9d6ee97b-5b0a-48a7-850d-de18d3107bce@roeck-us.net>
+References: <20250818073332.3890629-1-yeweihua4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,235 +93,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905-sm7635-remoteprocs-v4-1-9e24febcb246@fairphone.com>
+In-Reply-To: <20250818073332.3890629-1-yeweihua4@huawei.com>
 
-On Fri, Sep 05, 2025 at 11:37:04AM +0200, Luca Weiss wrote:
-> Document the bindings for the ADSP, CDSP, MPSS and WPSS PAS on the Milos
-> (e.g. SM7635) SoC.
+Hi,
+
+On Mon, Aug 18, 2025 at 07:33:32AM +0000, Ye Weihua wrote:
+> This warning was triggered during testing on v6.16:
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> notifier callback ftrace_suspend_notifier_call already registered
+> WARNING: CPU: 2 PID: 86 at kernel/notifier.c:23 notifier_chain_register+0x44/0xb0
+> ...
+> Call Trace:
+>  <TASK>
+>  blocking_notifier_chain_register+0x34/0x60
+>  register_ftrace_graph+0x330/0x410
+>  ftrace_profile_write+0x1e9/0x340
+>  vfs_write+0xf8/0x420
+>  ? filp_flush+0x8a/0xa0
+>  ? filp_close+0x1f/0x30
+>  ? do_dup2+0xaf/0x160
+>  ksys_write+0x65/0xe0
+>  do_syscall_64+0xa4/0x260
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> When writing to the function_profile_enabled interface, the notifier was
+> not unregistered after start_graph_tracing failed, causing a warning the
+> next time function_profile_enabled was written.
+> 
+> Fixed by adding unregister_pm_notifier in the exception path.
+> 
+> Fixes: 4a2b8dda3f870 ("tracing/function-graph-tracer: fix a regression while suspend to disk")
+> Signed-off-by: Ye Weihua <yeweihua4@huawei.com>
 > ---
->  .../bindings/remoteproc/qcom,milos-pas.yaml        | 201 +++++++++++++++++++++
->  1 file changed, 201 insertions(+)
+>  kernel/trace/fgraph.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..790ad38a0330bf81f6333e887522ddb97690edbc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
-> @@ -0,0 +1,201 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,milos-pas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Milos SoC Peripheral Authentication Service
-> +
-> +maintainers:
-> +  - Luca Weiss <luca.weiss@fairphone.com>
-> +
-> +description:
-> +  Qualcomm Milos SoC Peripheral Authentication Service loads and boots firmware
-> +  on the Qualcomm DSP Hexagon cores.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,milos-adsp-pas
-> +      - qcom,milos-cdsp-pas
-> +      - qcom,milos-mpss-pas
-> +      - qcom,milos-wpss-pas
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: XO clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +
-> +  interrupts:
-> +    minItems: 6
-> +    maxItems: 6
-> +
-> +  interrupt-names:
-> +    minItems: 6
-> +    maxItems: 6
-> +
-> +  qcom,qmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the AOSS side-channel message RAM.
-> +
-> +  smd-edge: false
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index c5b207992fb4..dac2d58f3949 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1391,10 +1391,11 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  error:
+>  	if (ret) {
+>  		ftrace_graph_active--;
+>  		gops->saved_func = NULL;
+>  		fgraph_lru_release_index(i);
+> +		unregister_pm_notifier(&ftrace_suspend_notifier);
 
-Drop. Already has a type.
+Is this really correct ? The pm notifier is only registered if
+ftrace_graph_active==1, but not if it is larger than that.
+The above code unregisters it unconditionally, even if
+ftrace_graph_active > 1. I can see that the resulting double
+unregistration in unregister_ftrace_graph() doesn't really
+matter since the error return will be ignored, but is it really
+irrelevant for the successful registered graphs no longer get the
+benefit of the pm notifier callback ?
 
-> +    minItems: 1
-> +    items:
-> +      - description: Firmware name of the Hexagon core
-> +      - description: Firmware name of the Hexagon Devicetree
-> +
-> +  memory-region:
-> +    minItems: 1
-> +    items:
-> +      - description: Memory region for core Firmware authentication
-> +      - description: Memory region for Devicetree Firmware authentication
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - memory-region
-> +
-> +allOf:
-> +  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,milos-adsp-pas
-> +            - qcom,milos-cdsp-pas
-> +    then:
-> +      properties:
-> +        memory-region:
-> +          minItems: 2
-> +          maxItems: 2
-
-Max is already 2. Drop.
-
-> +        firmware-name:
-> +          minItems: 2
-> +          maxItems: 2
-
-Max is already 2. Drop.
-
-> +    else:
-> +      properties:
-> +        memory-region:
-> +          maxItems: 1
-> +        firmware-name:
-> +          maxItems: 1
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,milos-adsp-pas
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: LCX power domain
-> +            - description: LMX power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: lcx
-> +            - const: lmx
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,milos-cdsp-pas
-> +            - qcom,milos-wpss-pas
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: CX power domain
-> +            - description: MX power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: cx
-> +            - const: mx
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,milos-mpss-pas
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: CX power domain
-> +            - description: MSS power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: cx
-> +            - const: mss
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interconnect/qcom,milos-rpmh.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/mailbox/qcom-ipcc.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    remoteproc@3000000 {
-> +        compatible = "qcom,milos-adsp-pas";
-> +        reg = <0x03000000 0x10000>;
-> +
-> +        interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-> +                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-> +                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-> +                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-> +                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
-> +                              <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
-> +        interrupt-names = "wdog",
-> +                          "fatal",
-> +                          "ready",
-> +                          "handover",
-> +                          "stop-ack",
-> +                          "shutdown-ack";
-> +
-> +        clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +        clock-names = "xo";
-> +
-> +        power-domains = <&rpmhpd RPMHPD_LCX>,
-> +                        <&rpmhpd RPMHPD_LMX>;
-> +        power-domain-names = "lcx",
-> +                             "lmx";
-> +
-> +        interconnects = <&lpass_ag_noc MASTER_LPASS_PROC QCOM_ICC_TAG_ALWAYS
-> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +
-> +        memory-region = <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
-> +
-> +        firmware-name = "qcom/milos/vendor/device/adsp.mbn",
-> +                        "qcom/milos/vendor/device/adsp_dtb.mbn";
-> +
-> +        qcom,qmp = <&aoss_qmp>;
-> +
-> +        qcom,smem-states = <&smp2p_adsp_out 0>;
-> +        qcom,smem-state-names = "stop";
-> +
-> +        glink-edge {
-> +            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
-> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-> +                                         IRQ_TYPE_EDGE_RISING>;
-> +            mboxes = <&ipcc IPCC_CLIENT_LPASS
-> +                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +            label = "lpass";
-> +            qcom,remote-pid = <2>;
-> +
-> +            /* ... */
-> +        };
-> +    };
-> 
-> -- 
-> 2.51.0
-> 
+Guenter
 
