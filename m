@@ -1,115 +1,147 @@
-Return-Path: <linux-kernel+bounces-803604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14DAB462E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:56:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E741EB462E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6B1189E671
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4941B16F657
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8379D303A22;
-	Fri,  5 Sep 2025 18:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B44279780;
+	Fri,  5 Sep 2025 18:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JW94pD62"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="AeEd6qCU";
+	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="FY2u5rVd"
+Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD41303A10;
-	Fri,  5 Sep 2025 18:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BD12773DB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098409; cv=none; b=LM5jbiICsIy9YkyEY+MW1qbBOyUvI49nm9TbAO9xlC4yAFoZz9sxW4OdyQ4IUr1lS6eVIpYtSVB6zC1JY8MAR2dSEZZAkX9OpveOcoNvTuMtn8m0Prefxx7trR3Dqcj9ig9N6f4eO9q1kZkFJAFVgQwh2XlcEVAGDVZjeqQlQpM=
+	t=1757098444; cv=none; b=TdVLsFSLcJIJTzLGfvKgRwfeQAOeWLFZc/LabctsKI6EqE2sGfQeurpc9DRmfiSIHU7W6nZok7JJ+THI7/9VlA7x+vCbKIeRluA1RIMLAjjAbsZ/jlv7mPEFZqkX8ALegZIdfpSyePZgQicVZmMwuKMCv9wGzbcugyNhirBKWTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098409; c=relaxed/simple;
-	bh=Uk+8a2MRxRxE9hEls54PJ4aU7Ef63Kv5ju07iXhVOvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBRFYAQdUGlQlAAQdt5cZPImYaA/m6K1JEKzOVdF5oOdu5uXuMMLM45QaE/Z+9XZStW9vA5M+q6Wi1o6wOWTKc1bwSwOd0nd0tLk4ve4YbmGWe+KaKDUyiO44Hs37UDLpMMot08442b6s/HolcL+PTbSMayvF81C6riQCnwNZlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JW94pD62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AC2C4CEFB;
-	Fri,  5 Sep 2025 18:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757098408;
-	bh=Uk+8a2MRxRxE9hEls54PJ4aU7Ef63Kv5ju07iXhVOvA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JW94pD62hORvWJXJ71j4O3PApCk+RnMMyJ7uV/iZgGwFl7KXpPOXrw9upqoiIA3gc
-	 PrNjVjym3eladd8ZU3/Op4Tx20hTzvqyGYSWfVVDfD0904KFOfoNQoxqAO74DkDczm
-	 f+Qq7sRnHw0VRnxEr5CnX1WOyDhrG60KOFC3WaqQqi+61KMfZTCb6KeHb60r064icD
-	 j2uFyxj2FjjnW1aXpKvO4svLbltCeI4v4mzlhi6lZDrq7uzZBzhNEwFmTJ7rtSV0dC
-	 Yhf65muCHhUmczl1f+UcpplPiB7WMc3C/jyNW6ckox19arLCmQulwGRJjX/OgPHGnm
-	 pTMcPvaV8A4dw==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e74d053cfso568117eaf.1;
-        Fri, 05 Sep 2025 11:53:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAtXDb+b9oeMFVR8qOzdkDk1efXCZpH3n276bsXWSkdvPAPodexygMmsiNKDbcYxpJ908Hp45/XQM2hQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUVrOP8Nb+LUjbkzN/787sXjK/f+5Tpb6Rm61V2FnPCkXDTUlS
-	ZCgLYnuIKhKWfKGZogZ8bBQZYxiPLGx7ia1H7KTfvpYdc763n6lbYh5gklfmFEILYzrAH+TbwA+
-	4kS5669SqhTPHR2nXcs9et0+CQNGUvjY=
-X-Google-Smtp-Source: AGHT+IF5l8iyIDclG52ch+WMIMtjzYgWGF4FfZqnmg7QL3Kq7H+uEJ6+K5dpA0GurwaVCSFzWURyRNnRS4NFFp54PkQ=
-X-Received: by 2002:a05:6820:1623:b0:61e:77ca:2a57 with SMTP id
- 006d021491bc7-61e77ca2b48mr4470188eaf.0.1757098407965; Fri, 05 Sep 2025
- 11:53:27 -0700 (PDT)
+	s=arc-20240116; t=1757098444; c=relaxed/simple;
+	bh=ZvuXIb5M91fgkkHiJ7YVxRV9Ppa07NebU+vIPN6dQ0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQ4v9ZaP3kYw+ly+MGjjNh83LcrTG1kmt8jnNzrYS1k5MsdNtmOl8CBnoYq6J3/vdPJEPfi7yiaPVkpkbwoMF09e8idy5O43HWtIWVapKfXxyqNyj4m7C8wc+nAZ9y9hpNAQPjIOK1ANnSMt1IXH43ce25U62d2qBWO5RmNAqNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=AeEd6qCU; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=FY2u5rVd; arc=none smtp.client-ip=46.30.211.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757098439; x=1757703239;
+	d=ravnborg.org; s=rsa1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=Rp8QvMDkqRWorfuh6XNKbpaQu3Sv/rPZIcu6CVHbFO4=;
+	b=AeEd6qCUcN2/whahq4sGxJKJv7S1+QvKhPYb6F5TniwiLP6GLOPiy9xIJk+KZyArO3utSXXJrCrCn
+	 xnli0OmIygOeSLYYAIKCH3tfy48n5FdiP5BG6UOT+yVsHZI0BPpv4JBWJWiS9zMMoMTzlZYXl09kE+
+	 r4++Wj1mkr+rW8bXSIxUhAZVtGIhwBTajPTVWrQwY56P3bYxlnH9LpwNEanb3GoNkx7l9MjzMUW9FB
+	 dG5ZJAe+mBMSMBhyorNh9pYNUhVYoF9hRWX57Qi32BJHgA92UjKvL/OWN1vU/7qzVns20gXx+m2wz1
+	 Uy8JAtnm/OyiAGjoH5QDUJoRCpr2I1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757098439; x=1757703239;
+	d=ravnborg.org; s=ed1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=Rp8QvMDkqRWorfuh6XNKbpaQu3Sv/rPZIcu6CVHbFO4=;
+	b=FY2u5rVdT37ucKn4KYuYewbTUpwcg3M/MiBZr2aeIWoFIE2k7w6NRDUwSMpWSe0xksW6UNgo2yjFg
+	 7cqrqHkCQ==
+X-HalOne-ID: addad8e8-8a89-11f0-87ea-632fe8569f3f
+Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
+	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id addad8e8-8a89-11f0-87ea-632fe8569f3f;
+	Fri, 05 Sep 2025 18:53:59 +0000 (UTC)
+Date: Fri, 5 Sep 2025 20:53:58 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] fbcon: Move fbcon callbacks into struct fbcon_bitops
+Message-ID: <20250905185358.GA361827@ravnborg.org>
+References: <20250818104655.235001-1-tzimmermann@suse.de>
+ <20250818104655.235001-5-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903192059.11353-1-osama.abdelkader@gmail.com> <a7dfd3da-fb55-411a-8410-062931c97e3d@arm.com>
-In-Reply-To: <a7dfd3da-fb55-411a-8410-062931c97e3d@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 20:53:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iL=zDAzu7xUCYmr7OgSD_-ynqA03sOTJ3SWUT72RfngA@mail.gmail.com>
-X-Gm-Features: Ac12FXyX9Qd5cSy3tUC2TSqjrjQgpGL4ULEvzf46gt1LfADg85lvs1LryFRuOhY
-Message-ID: <CAJZ5v0iL=zDAzu7xUCYmr7OgSD_-ynqA03sOTJ3SWUT72RfngA@mail.gmail.com>
-Subject: Re: [PATCH v2] thermal: hwmon: replace deprecated strcpy() with strscpy()
-To: Lukasz Luba <lukasz.luba@arm.com>, Osama Abdelkader <osama.abdelkader@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818104655.235001-5-tzimmermann@suse.de>
 
-On Thu, Sep 4, 2025 at 9:45=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> wr=
-ote:
->
->
->
-> On 9/3/25 20:20, Osama Abdelkader wrote:
-> > strcpy() is deprecated, use strscpy() instead for consistency with ther=
-mal
-> > subsystem since this is the only strcpy there.
-> >
-> > Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
-> > ---
-> > v2:
-> > Improve the commit msg: add that this is the only strcpy left in therma=
-l subsystem
-> > ---
-> >   drivers/thermal/thermal_hwmon.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_=
-hwmon.c
-> > index 0ecccd4d8556..64cc3ab949fe 100644
-> > --- a/drivers/thermal/thermal_hwmon.c
-> > +++ b/drivers/thermal/thermal_hwmon.c
-> > @@ -96,7 +96,7 @@ thermal_hwmon_lookup_by_type(const struct thermal_zon=
-e_device *tz)
-> >
-> >       mutex_lock(&thermal_hwmon_list_lock);
-> >       list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
-> > -             strcpy(type, tz->type);
-> > +             strscpy(type, tz->type);
-> >               strreplace(type, '-', '_');
-> >               if (!strcmp(hwmon->type, type)) {
-> >                       mutex_unlock(&thermal_hwmon_list_lock);
->
->
-> LGTM, that was indeed the single occurrence in thermal sub-system.
-> Thanks!
->
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Hi Thomas.
 
-Applied as 6.18 material, thanks!
+On Mon, Aug 18, 2025 at 12:36:39PM +0200, Thomas Zimmermann wrote:
+> Depending on rotation settings, fbcon sets different callback
+> functions in struct fbcon from within fbcon_set_bitops(). Declare
+> the callback functions in the new type struct fbcon_bitops. Then
+> only replace the single bitops pointer in struct fbcon.
+> 
+> Keeping callbacks in constant instances of struct fbcon_bitops
+> makes it harder to exploit the callbacks. Also makes the code slightly
+> easier to maintain.
+> 
+> For tile-based consoles, there's a separate instance of the bitops
+> structure.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/video/fbdev/core/bitblit.c   | 17 ++++---
+>  drivers/video/fbdev/core/fbcon.c     | 67 +++++++++++++++-------------
+>  drivers/video/fbdev/core/fbcon.h     |  7 ++-
+>  drivers/video/fbdev/core/fbcon_ccw.c | 18 +++++---
+>  drivers/video/fbdev/core/fbcon_cw.c  | 18 +++++---
+>  drivers/video/fbdev/core/fbcon_ud.c  | 18 +++++---
+>  drivers/video/fbdev/core/tileblit.c  | 16 ++++---
+>  7 files changed, 94 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/core/bitblit.c b/drivers/video/fbdev/core/bitblit.c
+> index a2202cae0691..267bd1635a41 100644
+> --- a/drivers/video/fbdev/core/bitblit.c
+> +++ b/drivers/video/fbdev/core/bitblit.c
+> @@ -384,15 +384,18 @@ static int bit_update_start(struct fb_info *info)
+>  	return err;
+>  }
+>  
+> +static const struct fbcon_bitops bit_fbcon_bitops = {
+> +	.bmove = bit_bmove,
+> +	.clear = bit_clear,
+> +	.putcs = bit_putcs,
+> +	.clear_margins = bit_clear_margins,
+> +	.cursor = bit_cursor,
+> +	.update_start = bit_update_start,
+> +};
+> +
+>  void fbcon_set_bitops(struct fbcon *confb)
+>  {
+> -	confb->bmove = bit_bmove;
+> -	confb->clear = bit_clear;
+> -	confb->putcs = bit_putcs;
+> -	confb->clear_margins = bit_clear_margins;
+> -	confb->cursor = bit_cursor;
+> -	confb->update_start = bit_update_start;
+> -	confb->rotate_font = NULL;
+> +	confb->bitops = &bit_fbcon_bitops;
+>  
+>  	if (confb->rotate)
+>  		fbcon_set_rotate(confb);
+
+fbcon_set_rotate() is only used to set the correct bitops.
+
+It would be simpler to just do
+
+	if (confb->rotate)
+		confb->bitops = fbcon_rotate_get_ops();
+
+And rename fbcon_set_rotate() to fbcon_rotate_get_ops() and return the
+pointer to the struct.
+
+The no need to pass the struct, and it is obvious that the bitops are
+overwritten.
+
+	Sam
+
 
