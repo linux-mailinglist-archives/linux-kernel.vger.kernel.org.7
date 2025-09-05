@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-803562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5705EB4625F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:38:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E956B46264
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2720A47F50
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:38:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A249CB652ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA092749ED;
-	Fri,  5 Sep 2025 18:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88D8274B50;
+	Fri,  5 Sep 2025 18:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKX9Ju1m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDgCRkEJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBAF17F4F6;
-	Fri,  5 Sep 2025 18:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0743017F4F6;
+	Fri,  5 Sep 2025 18:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097487; cv=none; b=KahHWuyCwVwp4VgFaPcMR2mlIoqxXeHSAAGP7E3DKDtCMBJ10bBDUE7R7oBbtjFRoXBd8AnxolFEWqAL4Cc1GMUm56CcfMlQV2CMXX9+kBaT8uosngYyvBndVED8hh0fUiHBYr7O2g4hUqFco+7kQmyYdLgg9vTNUtPypEhOwfI=
+	t=1757097496; cv=none; b=MyTtLGwvsOfzCnCrHj3V/6OPPah47SkXjhWeRqKWQNjwEP5FwGep9rU21BH2bjx4nWMY4QExjIhihyY4nrzXQEwgi6SzmciSY4gwU21ls3EKEs/lmHiEXZQjRhDaiNAX4pfYQA9WtoNOB/eslOPDvfuBS/7up4Tq9idN3bdTunI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097487; c=relaxed/simple;
-	bh=zBznowgcA9KRpPYdFjqyySbRdKkl9xdj5USfqCcnRzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbtbhkImDdIC2Yfe9YR5IfDm6G8M+19cdzYKRoD3vO7AGbdKEVWeCR3hsCxP0ESXH1quat/z9ynE75Eg0yTv5HpY593dza+PKSupJLJBeRcBZx2Zn3W8iu2HdBfm7QQ+ld0r/jX/C6JKH4BrkeaTnOEivN1aAsDeMALzQlZpbfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKX9Ju1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18486C4CEF1;
-	Fri,  5 Sep 2025 18:38:02 +0000 (UTC)
+	s=arc-20240116; t=1757097496; c=relaxed/simple;
+	bh=yRMl6rKGMmDa8v1ekwAN3qQizqieb3T/4q2oJ3kuFM8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=dFgFbNa2PxicTaS9bi30fk2mg4ypgqRNe9RDPH7zTciREz5y00ff3dJKZhy65VBL1NNpTr6NGei8b8HyAomazqkxEF2/DZgRzm1W+NbbogdCLVhgFltuGesrus5F3NGofISiev5hzg7spW4YzUr2hqsoWpcry2OAvlrzYua8SAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDgCRkEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D040BC4CEF1;
+	Fri,  5 Sep 2025 18:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757097487;
-	bh=zBznowgcA9KRpPYdFjqyySbRdKkl9xdj5USfqCcnRzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LKX9Ju1mWOXI6N75KfrsrKrwLfvt94Xo7Jbvycrs9IXgcAFnJc1MoWmjzHNi1e8bV
-	 b7oIiDbtVqIwoFAbp7CuQUaSqsm05FRccpW8RQGc7uBYl1iQ6/ORuE37l+zFqol7tv
-	 N3109/8CwbsVFqDjUOjdmOL+7kqMTH4eLzEgZDLlnaEosbQSwQ3zj4grFA1h9/Egd+
-	 vwKy64+AOVyk8yoWTurZAmQ8WJMj1wHeoRhO1r4v+0x4TxtPsgXpTCf2CA3cGcc9MV
-	 D/TSUGfak+q+Gn1FXUVoAlQ+Mw5uT2M4bk8z2YLK7HCfSQSvZbJA/TR8VyqSbxXxSo
-	 JU8ShV4YUxkMw==
-Date: Fri, 5 Sep 2025 19:38:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kendall Willis <k-willis@ti.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vigneshr@ti.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, d-gole@ti.com, vishalm@ti.com,
-	sebin.francis@ti.com, msp@baylibre.com, khilman@baylibre.com,
-	a-kaur@ti.com, john.ogness@linutronix.de,
-	andriy.shevchenko@linux.intel.com, yujiaoliang@vivo.com,
-	b-liu@ti.com, u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH 1/3] dt-bindings: serial: 8250_omap: Update wakeup-source
- type property
-Message-ID: <20250905-saloon-siesta-77da98d7ae02@spud>
-References: <20250904212455.3729029-1-k-willis@ti.com>
- <20250904212455.3729029-2-k-willis@ti.com>
+	s=k20201202; t=1757097495;
+	bh=yRMl6rKGMmDa8v1ekwAN3qQizqieb3T/4q2oJ3kuFM8=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=SDgCRkEJJiDM2hdbgIYxVJ6R2+7agEaMNR8FlKgT6J6FbpOF7kuHAhLYa2hVjiRyo
+	 gIxiTd7FjEBI1hGyCzYwqNcZC58PPWPugAVrhbAFqeva0+NQZu8lreKISrUHRgd+l8
+	 U+RDPHF3oVlyIdohb4Jf339+uf6WH95/VIe55RIYrvG1NMam1WD6JF+5k4Woo+BTcK
+	 n17KIHzh+qehZaLGlA8ccY1nmRJFIpbzNynPXZzzsgsMTq+cWSg9lYw2t1fESwqu6H
+	 eeLqH//dCPO1LOlM2FhNLaVUt4ea/26HJjbbK40wWBO/Sy1K+5DKTed6pozLQHQz6J
+	 AzU6+M1/ZvTqQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YBHU1HQe3eAUtz/k"
-Content-Disposition: inline
-In-Reply-To: <20250904212455.3729029-2-k-willis@ti.com>
-
-
---YBHU1HQe3eAUtz/k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Sep 2025 20:38:11 +0200
+Message-Id: <DCL32RUQ6Z56.1ERY7JBK6O1J6@kernel.org>
+Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
+ Kurti" <kurti@invicto.ai>, "Alexandre Courbot" <acourbot@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+References: <20250905140047.3325945-1-lossin@kernel.org>
+ <aLscLsY0Sv1Qwgni@tardis-2.local>
+In-Reply-To: <aLscLsY0Sv1Qwgni@tardis-2.local>
 
-On Thu, Sep 04, 2025 at 04:24:53PM -0500, Kendall Willis wrote:
-> Allow the wakeup-source property to be either of type boolean or of a
-> phandle array. The phandle array points to the system idle states that the
-> UART can wakeup the system from.
->=20
-> Signed-off-by: Kendall Willis <k-willis@ti.com>
-> ---
->  Documentation/devicetree/bindings/serial/8250_omap.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Do=
-cumentation/devicetree/bindings/serial/8250_omap.yaml
-> index 1859f71297ff2..851a5291b4be4 100644
-> --- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> +++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> @@ -69,7 +69,13 @@ properties:
->    clock-frequency: true
->    current-speed: true
->    overrun-throttle-ms: true
-> -  wakeup-source: true
-> +
-> +  wakeup-source:
-> +    oneOf:
-> +      - type: boolean
-> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        description:
-> +          List of phandles to system idle states in which UARTs can wake=
-up the system.
+(Cc: Alex)
 
-Is there a single other instance of the wakeup-source property being
-used like this?
+On Fri Sep 5, 2025 at 7:21 PM CEST, Boqun Feng wrote:
+> On Fri, Sep 05, 2025 at 04:00:46PM +0200, Benno Lossin wrote:
+>> After initializing a field in an initializer macro, create a variable
+>> holding a reference that points at that field. The type is either
+>> `Pin<&mut T>` or `&mut T` depending on the field's structural pinning
+>> kind.
+>>=20
+>
+> It's hard to review because of lack of examples. Could you or Danilo
+> share some sample usages? Thanks!
 
-> =20
->  required:
->    - compatible
-> --=20
-> 2.34.1
->=20
+Sure, here's an example. Eventually, it's going to be a bit more complicate=
+d,
+but basically that's it.
 
---YBHU1HQe3eAUtz/k
-Content-Type: application/pgp-signature; name="signature.asc"
+	#[pin_data(PinnedDrop)]
+	pub(crate) struct Gpu {
+	    spec: Spec,
+	    bar: Arc<Devres<Bar0>>,
+	    sysmem_flush: SysmemFlush,
+	    gsp_falcon: Falcon<Gsp>,
+	    sec2_falcon: Falcon<Sec2>,
+	    #[pin]
+	    gsp: Gsp,
+	}
 
------BEGIN PGP SIGNATURE-----
+	impl Gpu {
+	    pub(crate) fn new(
+	        dev: &Device<Bound>,
+	        bar: Arc<Devres<Bar0>>,
+	    ) -> impl PinInit<Self, Error> + '_ {
+	        try_pin_init(Self {
+	            bar,
+	            spec: Spec::new(bar.access(dev)?)?,
+	            gsp_falcon: Falcon::<Gsp>::new(dev, spec.chipset)?,
+	            sec2_falcon: Falcon::<Sec2>::new(dev, spec.chipset)?,
+	            sysmem_flush: SysmemFlush::register(dev, bar.access(dev)?, spe=
+c.chipset)?
+	            gsp <- Gsp::new(gsp_falcon, sec2_falcon, sysmem_flush)?,
+	        })
+	    }
+	}
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsuCAAKCRB4tDGHoIJi
-0sCOAP0YKRfgNPuWmw0VBD7mFYv3TWGmnWOS9WQUj1ptbhD6ygEA2tj71JTgNmGh
-//hKbMoedfGWmP9EJpLiTCdPihC7agU=
-=B5j5
------END PGP SIGNATURE-----
-
---YBHU1HQe3eAUtz/k--
+Imagine how much unsafe pointer mess this needs without this patch. :)
 
