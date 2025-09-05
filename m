@@ -1,213 +1,217 @@
-Return-Path: <linux-kernel+bounces-802201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648A3B44EC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC0FB44ED2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4EE56867F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:11:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D3F583F17
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137C52D5A16;
-	Fri,  5 Sep 2025 07:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44D02D47F6;
+	Fri,  5 Sep 2025 07:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcBbmDl9"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrSD0tXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FF332F76C;
-	Fri,  5 Sep 2025 07:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF862D3A8A;
+	Fri,  5 Sep 2025 07:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757056261; cv=none; b=J5WTCL7j2NqRDvOVV9HOiH7GiC3W1DkoYTx7dz6F5XWBdmyQIfaI7uzr2mtWbF7o0sc7FQDIDaIE9KnrsNNixVIjUf84KgQUsN/GJTD+9tIY6mPwSBw4Ux/aGlmnel/YRzXPMb6VsxvUgacMhulLXKU+xJiLB2LS3ewWfn3G6kQ=
+	t=1757056464; cv=none; b=SAWbZI5FGae6lR1uKf+EBOPavdWq1sO1EeQ5poc8H9B/1BWyCRoW3xgBIgJNYqxCWEfzHAK/l/DjmNInqhcslysa/Cjp8SUPKNzREw+aqk9vG3aAtjQiKn5putlwm7rVbDw7qFHfhG2O3uvUTrKpXaGJcOuBrvYtwchM4RPMvkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757056261; c=relaxed/simple;
-	bh=GGfi3htzKuTZlupJ8A/9R0OP1UVodldjUfF8TFxYa4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGdMukF/YXn4Sgd9pgBx8ywwSx+zxqxdMjvr1mwGSOmo19c+4gUSgCz40+6QO3RfLnJJdpyiti4+CAGi1IInck6kU1Mvmcq7OG7Yxefg+xCKIUZUMtwYWMWUF420DBU/IBCDKzO5fcA2gBcNqUKt7lz2ZC6yMVI8KfHM+3LFlKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcBbmDl9; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f7ad815ceso2056909e87.3;
-        Fri, 05 Sep 2025 00:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757056258; x=1757661058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O15oaFlbSecL0xPawdsbWSzPwlKRkU4sBoLNzXpmMYI=;
-        b=DcBbmDl93PNvhwaHmW/RAcMJ8T0rUOtVKq6SY00hvCWTXbyppqAqr4UrNfEGOB/2El
-         ZwtGCHF5zLUcx/5Kzsxz+Xdy0MGV2r+H7vU7DIJ3SLRAgUjfGXh/YO3c3uY0tfRzSsiZ
-         iwenXsPJ7pzusvGbvk/yh5lkvVJ8xfcdIACHS7xbNPo0uI6a4Ei0xWkypax6vqXcUQ2C
-         Usl1H6Uj6lC+B8RoudiSlkrdNOFt5cequ7+7duaqB50dvrUEc5CqvAnio2UaHuanlsJB
-         C8dDKgtzkDZiEmS2BceIU0Ke7C7aC8FR1+lBJWvrRz+CCftsNQ+t1fKOTcXBCbmRIiK0
-         ze/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757056258; x=1757661058;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O15oaFlbSecL0xPawdsbWSzPwlKRkU4sBoLNzXpmMYI=;
-        b=RKjQPlwCyL9PirGtAXZFNYhZKpLADSSqu+yh1RuSinA3ffQM8K19unJBrBafLL/ym8
-         bmurnjLeJr3zJDjeHwvyJ5av7FvGRbar1HnLToY9YcNi3NPkHUydZTy/qOOG5SpzGTRz
-         KxKTXHNaKnkdLxeqA3F1Wp6sAfT/tJD3qhM+3nXtrygwWAWlIyVkC+cRRSH5rHgQYOsO
-         juwMeGbnROwRy7HnkUSgQk/04x7g/NdJAkcPnYM0tUhKV4MR1IyKFQKjehhBX8jV5tYZ
-         c+QsQ5MxHcW5uDmvUAgwjGG/7sDPPOglcqJde8pzRHCQNV8oNmP2wO6zM6QRRDGTmiEr
-         x2Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVy8k4pY6/aBwM2cVwlbFVNQ7BIumFPkps6bUfj2f1jXQIMfdHeNd59SBZTs+FDeBl61mqG/oSeWsHaw==@vger.kernel.org, AJvYcCXj6gdFNcTiALD+zcZDAxNf3OlBUPjeKSD3+F7yFilr+H3ZxtuGYeR/m2JvQs6S0SnpmZ7zKCDpyeZp@vger.kernel.org, AJvYcCXmO1dD5lNZvsLtoQ72tnV7VQ9H4LXwVUrzEHRixZbUI982I3EkA+Td6uCOyidmEawCppvKosPd/8tm@vger.kernel.org, AJvYcCXuusYHzPGY+DPM0MWatXNh5f0S8yFhJzW5snZ0vgN9so77d41PCtSJw/1Hweig5chWpJFlzm73SdIDXOuM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdXCvlFy4ZqjTWgGTiLuuU1sO2lWbhBQJhOmIQxozcPdDhErBe
-	ZGPtMGLUjfWSe07h9MipDL555DWO0sJWYU6djBTo3ChgxzgAWPCsUmwxkhra6But
-X-Gm-Gg: ASbGnctAY6jmVOcoLZ2OGXdoGzs2vi36033PWnySDPdT5y+QnxTVTJEO3qKGNCABlwm
-	tDM6Pnbnq55rGaMOOaIWgAXJvozyrQzMwNAsjKEeYKMl89Lic7QPdnZfvdz1eAfKNjL/9QClcN8
-	79R6UrSFsPJLHflP5o2Ojd7BwojjIJ/0HXtTwieyH/T+a86Y0pWT1MKmW440VTh7RJnfYGh60ki
-	YtqYo20PBj/8kuleOr0iBufDw63EwAbNGkuX9CiwnapEVrxiwjQ8PSI6/KLJ4Zo0EwS9u6O3Xwu
-	LA+l9t1sdT+VSAtPek0S9v3gTU4M9g4TmXtlD+4RM35+DSaDsClm9fvTC/X66TgHM4fUWXyEp21
-	c2I/uGoAooZsnv/qIXiVLvwjhvU/CX2gq3SUDVjPDU7SdthlO8LliwkPfgnJuWHmCihE/iZEgQO
-	0pt9B7KrArsr3QZ7U=
-X-Google-Smtp-Source: AGHT+IHhKnvRXd70Bi88Un4YmSlqHa0PlAAVn+v9tZUCAv87NgGNYHCHUoVeLs1lU1dQzasnAc9nJA==
-X-Received: by 2002:a05:651c:2344:20b0:336:c873:1b10 with SMTP id 38308e7fff4ca-336ca94901dmr41988781fa.15.1757056257406;
-        Fri, 05 Sep 2025 00:10:57 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4cb9b5esm18215451fa.28.2025.09.05.00.10.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 00:10:56 -0700 (PDT)
-Message-ID: <2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
-Date: Fri, 5 Sep 2025 10:10:55 +0300
+	s=arc-20240116; t=1757056464; c=relaxed/simple;
+	bh=i36iL+KR7T7uZpLSbsJEopmHE0PSVOySVwlmjmxdzKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=C9tudciOaC8XAioZvPvQk2cDfvF+gdgimm2FRHbpMVhRyqxPHbxQrwux4lyBFRwZD3bdjwU7FSLBRm9asoFAHR0hJPcBBZBbgqNKJSXObOKTsZy3VbmDYg2FBae3sSnBPMM1dOUo6lOk3QuXRhRGXoYX5U+XRj33Pq5ItIC1cyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrSD0tXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B3CC4CEF1;
+	Fri,  5 Sep 2025 07:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757056463;
+	bh=i36iL+KR7T7uZpLSbsJEopmHE0PSVOySVwlmjmxdzKo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nrSD0tXwtr2Yh1WmtvrkbYVD6OdnGHNJRibQrTfQxvkXrwV4OIkdLex+XPX02JlCY
+	 gP7eLtKIOzQKP+CN813MJczPTT/3jYXu29IuQR/3DtTcfJPSlj97VKxG+HsayT9q+3
+	 UZpgBRDuZ8bdk2qniqyF0vHOz5myfV+7xo2Uu1Nc5ngWsv/f/5pZ7l6n66JSAJwuRM
+	 02Fpwu5KAFVCsqz9Mt+d2595brCMvo0mqRST59KdV2qxBBZGzgQ38Ki3Ci7T69072E
+	 0adZr8zFdJtgZdLfLJudW/dRMDvfsgvOFhYeSh9YX+auBadcmWcdXTvTXBj++iH/UC
+	 nGVXlkAtg4PFg==
+Date: Fri, 5 Sep 2025 09:14:17 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: EDAC Mailing List <linux-edac@vger.kernel.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] v4: Split sphinx call logic from docs Makefile
+Message-ID: <20250905091417.13181d6f@foz.lan>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Tobias Sperling <tobias.sperling@softing.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- Hans de Goede <hansg@kernel.org>, Herve Codina <herve.codina@bootlin.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1757053456.git.mazziesaccount@gmail.com>
- <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
- <CAHp75VdaAH+1mh16KWoYtYFMV+_ec8x9YipeD3K8g6yQr-2VjA@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAHp75VdaAH+1mh16KWoYtYFMV+_ec8x9YipeD3K8g6yQr-2VjA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 05/09/2025 09:54, Andy Shevchenko wrote:
-> On Fri, Sep 5, 2025 at 9:42 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>
->> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
->> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
->>
->> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
->> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
->> daisy-chain configuration) and maximum sampling rate is 1MSPS.
->>
->> The IC does also support CRC but it is not implemented in the driver.
-> 
-> ...
-> 
->> +config ROHM_BD79112
->> +       tristate "Rohm BD79112 ADC driver"
->> +       depends on I2C && GPIOLIB
-> 
-> Still I2C?
+Hi Jon,
 
-Thanks :) I didn't spot this @_@. I just switched the REGMAP_I2C to 
-REGMAP_SPI. Will fix.
+As patch 04/19 do some changes on non-English documents, perhaps the best
+is for you to pick the series as a pull request. The content here
+is identical to:
 
-> 
->> +       select REGMAP_SPI
->> +       select IIO_ADC_HELPER
->> +       help
->> +         Say yes here to build support for the ROHM BD79112 ADC. The
->> +         ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog
-> 
-> which --> where
+	https://lore.kernel.org/linux-doc/cover.1756969623.git.mchehab+huawei@kernel.org/
 
-I thought which (as a genetive case) would work here just fine?
+so, I'll just repeat the description below.
 
-> 
->> +         inputs can also be used for GPIO.
-> 
-> ...
-> 
->> +/*
->> + * The data-sheet explains register I/O communication as follows:
->> + *
->> + * Read, two 16-bit sequences separated by CSB:
->> + * MOSI:
->> + * SCK:        | 1 | 2 | 3   | 4      | 5 .. 8 | 9 .. 16 |
->> + * data:| 0 | 0 |IOSET| RW (1) | ADDR   | 8'b0    |
->> + *
->> + * MISO:
->> + * SCK:        | 1 .. 8 | 9 .. 16 |
->> + * data:| 8'b0   | data    |
->> + *
->> + * Note, CSB is shown to be released between writing the address (MOSI) and
->> + * reading the register data (MISO).
->> + *
->> + * Write, single 16-bit sequence:
->> + * MOSI:
->> + * SCK:        | 1 | 2 | 3   | 4     | 5 .. 8 |
->> + * data:| 0 | 0 |IOSET| RW(0) | ADDR   |
->> + *
->> + * MISO:
->> + * SCK:        | 1 .. 8 |
->> + * data:| data   |
->> + */
-> 
-> What I meant in previous reviews is that the | are not aligned (in the
-> same columns). Is it on purpose? If so, I can't read that as I don't
-> understand the meaning of | in each case. For example, the data starts
-> with 0, followed by 0, and the latter one is when SCL is #1? Okay, but
-> how to read IOSET that overlaps 2 SCK cycles and is unaligned with
-> times... I'm really quite confused by these charts.
+-
 
-Ah. I think I now know what you mean. Whitespaces are hard :)
-I see I have '\t' between the SCK: and first |.
- >> + * SCK: /* '\t' here */       | 1 | 2 | 3   | 4     | 5 .. 8 |
+This series does a major cleanup at docs Makefile by moving the
+actual doc build logic to a helper script (scripts/sphinx-build-wrapper).
 
-It works perfectly on my editor, which has tab width 8. Thus, all the 
-'|' on SCK and data rows are perfectly aligned for me. My original 
-thought has been to align the first '|' on all rows by tab, but since 
-the " * data:" is already 8 chars I didn't add a tab for this row...
+Such script was written in a way that it can be called either
+directly or via a makefile. When running via makefile, it will
+use GNU jobserver to ensure that, when sphinx-build is
+called, the number of jobs will match at most what it is
+specified by the "-j" parameter.
 
-I now realize this will not work if tabs behave different from my setup. 
-I will do replacing the '\t' with ' '. Does this make it better for your 
-editor or do you see some other problem besides that?
+The first 3 patches do a cleanup at scripts/jobserver-exec
+and moves the actual code to a library. Such library is used
+by both the jobserver-exec command line and by sphinx-build-wrappper.
 
-Thanks for the patience explaining it.
+The change also gets rid of parallel-wrapper.sh, whose
+functions are now part of the wrapper code.
 
-> ...
-> 
->> +        * Ouch. Seems the pin is ADC input - shouldn't happen as changing mux
->> +        * at runtime is not supported and non GPIO pins should be invalidated
->> +        * by the valid_mask at probe. Maybe someone wrote register bypassing
-> 
-> wrote a
-> 
->> +        * the driver?
-> 
+I opted to pick patches from:
+   https://lore.kernel.org/linux-doc/cover.1756916565.git.mchehab+huawei@kernel.org/T/#t
 
-Yours,
-	-- Matti
+re-ordering them to make more sense.
 
+The last patch breaks doc build when Python3 < 3.7, as requested,
+or when sphinx-pre-install suggests to install an updated Sphinx
+version. Matteu suggested adding a PYTHON env to allow overriding it,
+but this won't would work with sphinx-pre-install, which is meant to
+be executed with older python versions, but still requires to run
+python from the suggested package to check if package install
+succeded. Currently, sphinx-pre-install recomments to install a newer
+Python on 3 distribution types:
+
+    - 3.11 on openSuse Leap;
+    - 3.9 on RHEL8 and RHEL8-based distros;
+    - 3.13 on openSUSE Thumbleweed.
+
+Patch 19 breaks sphinx-pre-install for those, and adding PYTHON
+env won't properly fix it. ATM, I can't think on a good non-hacky
+solution, as the only way I can think is to let sphinx-pre-install
+(and sphinx-build-wrapper) execute python3.x instead of python3.
+
+---
+
+v4:
+- updated references for sphinx-pre-install after its rename;
+- added some extra patches to add more options to python_version,
+  allowing it to bail out and suggest alternatives;
+- added a patch at the end to explicitly break doc builds when
+  python3 points to python3.6 or older.
+
+v3:
+- rebased on the top of docs-next;
+- added two patches to build man files that were on a separate
+  patch series.
+
+v2:
+
+- there's no generic exception handler anymore;
+- it moves sphinx-pre-install to tools/docs;
+- the logic which ensures a minimal Python version got moved
+  to a library, which is now used by both pre-install and wrapper;
+- The first wrapper (05/13) doesn't contain comments (except for
+  shebang and SPDX). The goal is to help showing the size increase
+  when moving from Makefile to Python. Some file increase is
+  unavoidable, as Makefile is more compact: no includes, multple
+  statements per line, no argparse, etc;
+- The second patch adds docstrings and comments. It has almost
+  the same size of the code itself;
+- I moved the venv logic to a third wrapper patch;
+- I fixed an issue at the paraller build logic;
+- There are no generic except blocks anymore.
+
+Please pull from:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git docs/v6.17-2
+
+For:
+
+{ADD CONTENT HERE}
+
+Regards,
+Mauro
+
+---
+
+The following changes since commit 7e5a0fe4e8ae2eb341f8ebbee2b24231a58fc28b:
+
+  doc: filesystems: proc: remove stale information from intro (2025-09-03 16:04:43 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-docs.git tags/docs/v6.17-2
+
+for you to fetch changes up to 04de72da80bbb19e38e2b416de56a9cb179f25e9:
+
+  tools/docs: sphinx-* break documentation bulds on openSUSE (2025-09-04 21:07:43 +0200)
+
+----------------------------------------------------------------
+[GIT PULL for v6.17-rc5] docs fixes
+
+----------------------------------------------------------------
+Mauro Carvalho Chehab (19):
+      scripts/jobserver-exec: move the code to a class
+      scripts/jobserver-exec: move its class to the lib directory
+      scripts/jobserver-exec: add a help message
+      scripts: sphinx-pre-install: move it to tools/docs
+      tools/docs: python_version: move version check from sphinx-pre-install
+      tools/docs: python_version: drop a debug print
+      tools/docs: python_version: allow check for alternatives and bail out
+      tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build
+      tools/docs: sphinx-build-wrapper: add comments and blank lines
+      tools/docs: sphinx-build-wrapper: add support to run inside venv
+      docs: parallel-wrapper.sh: remove script
+      docs: Makefile: document latex/PDF PAPER= parameter
+      tools/docs: sphinx-build-wrapper: add an argument for LaTeX interactive mode
+      tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
+      tools/docs: sphinx-build-wrapper: allow building PDF files in parallel
+      docs: add support to build manpages from kerneldoc output
+      tools: kernel-doc: add a see also section at man pages
+      scripts: kdoc_parser.py: warn about Python version only once
+      tools/docs: sphinx-* break documentation bulds on openSUSE
+
+ Documentation/Makefile                             | 136 +---
+ Documentation/doc-guide/kernel-doc.rst             |  29 +-
+ Documentation/doc-guide/sphinx.rst                 |   4 +-
+ Documentation/sphinx/kerneldoc-preamble.sty        |   2 +-
+ Documentation/sphinx/parallel-wrapper.sh           |  33 -
+ .../translations/it_IT/doc-guide/sphinx.rst        |   4 +-
+ .../translations/zh_CN/doc-guide/sphinx.rst        |   4 +-
+ Documentation/translations/zh_CN/how-to.rst        |   2 +-
+ MAINTAINERS                                        |   3 +-
+ Makefile                                           |   2 +-
+ scripts/jobserver-exec                             |  88 +--
+ scripts/lib/jobserver.py                           | 149 +++++
+ scripts/lib/kdoc/kdoc_files.py                     |   5 +-
+ scripts/lib/kdoc/kdoc_output.py                    |  84 ++-
+ scripts/lib/kdoc/kdoc_parser.py                    |   7 +-
+ scripts/split-man.pl                               |  28 -
+ tools/docs/lib/python_version.py                   | 178 +++++
+ tools/docs/sphinx-build-wrapper                    | 739 +++++++++++++++++++++
+ {scripts => tools/docs}/sphinx-pre-install         | 135 +---
+ 19 files changed, 1265 insertions(+), 367 deletions(-)
+ delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
+ create mode 100755 scripts/lib/jobserver.py
+ delete mode 100755 scripts/split-man.pl
+ create mode 100644 tools/docs/lib/python_version.py
+ create mode 100755 tools/docs/sphinx-build-wrapper
+ rename {scripts => tools/docs}/sphinx-pre-install (93%)
 
