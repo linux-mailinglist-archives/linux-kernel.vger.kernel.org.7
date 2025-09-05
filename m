@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-801972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BFAB44C3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:25:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67CDB44C3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5905C7B846B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11216A0159D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2DC242910;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80228255E40;
 	Fri,  5 Sep 2025 03:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="q8K8tsqE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D8520C463;
-	Fri,  5 Sep 2025 03:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF4BEEBD;
+	Fri,  5 Sep 2025 03:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757042736; cv=none; b=c0CwBwRifVyUYMFmYaJgCwlOEzY7zAzBAdOIHNB7xZhcD8Enhzn9CdADA0Fbzi3w7GMrIe6m32QT9UaF5xlD2GDR0nvigDUytZBM9iqya1EMv8E3J+wuXVeGauUnZzDyPLqx+S6qvJD2y3vsHOcOCcgsL7hsA6E+pE82uHQUZ8c=
+	t=1757042737; cv=none; b=V0e3IQHKcsFaj+1HmCZCkU0H9cddPNEBUfQUW//tQxj5pZwBOSZRqbmrluplHDekJsgYgxgWGOV5f0AJTfG2DmaCl9QlntUc06oDhF+faWELxP5uOxrLgCLpk39ROQVB6MVJVMB94UrBJm9RZ1ZV5T8eUJKzgnbLkXS83P5u6sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757042736; c=relaxed/simple;
-	bh=YtZuuCz3KVJBwFv6l9cX99QAi+jK7Txov/fJu31Gjgo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=QHPtfyrbGOCLBZszSbB4akmrLS74WSIuHoo1yIfdAKJDzMuRDL7se4fYPLVoLvbsuKs58WXHlVwNUamV4N72Lu5sWrOI1FBAUdd+DwhDsobWvCzPUQ0BUz8pM1X1sBm17RxIpG+YIpAgf/WHYi4m8W++dzYAE1VQvQehZLp96A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=q8K8tsqE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBCDCC4CEF1;
-	Fri,  5 Sep 2025 03:25:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757042736;
-	bh=YtZuuCz3KVJBwFv6l9cX99QAi+jK7Txov/fJu31Gjgo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q8K8tsqEZ9AFKuWCPYq/WXdRmiRWPaHOrzWJjVZ5DOe+YnwmjvZQKv6uQScJ5lsNI
-	 x0bcgdKAD5GZ9N64NJAF+gNsfbDRDE9EHoxHEC+Uv3uLgiGsfxK1HPH5/iDo0/nIY4
-	 ga8QNpEPEkYIH9O72D6X046mUk+sEOwNme2yJ1dc=
-Date: Thu, 4 Sep 2025 20:25:35 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, David Hildenbrand <david@redhat.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in
- io_sqe_buffer_register
-Message-Id: <20250904202535.fff5bea806408171d349a7f1@linux-foundation.org>
-In-Reply-To: <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
-References: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
-	<54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757042737; c=relaxed/simple;
+	bh=y+c+psw4AkFMd2zCG9/KDIdtVs0a3W/Q+/DG9IdoKCs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qJSsj9l/1ujm+gdA3ZXTyl2YMWe+UEacD2Z1kX443rhI8GXobRfS0rleTaqjz/12qdmocy6vLOJ5GjT6g2ZNTqQgo47mekL6/k1kZg13oBSWkfpFRSBQe1P60mn1vMUPw3t8KUfW9bZ2fjHOtBiKUEn4cGZjOUoNckyRblI3oyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cJ1p505Gfz2CgSb;
+	Fri,  5 Sep 2025 11:21:01 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC5651401F4;
+	Fri,  5 Sep 2025 11:25:30 +0800 (CST)
+Received: from huawei.com (10.175.104.170) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 5 Sep
+ 2025 11:25:29 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <tglozar@redhat.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] tracing/osnoise: fix null-ptr-deref in bitmap_parselist
+Date: Fri, 5 Sep 2025 11:25:44 +0800
+Message-ID: <20250905032544.231962-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Thu, 4 Sep 2025 17:20:41 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+A crash was observed with the following output:
 
-> > ==================================================================
-> 
-> This is from the mm-unstable changes in linux-next, adding David as I
-> ran a quick bisect and it said:
-> 
-> da6b34293ff8dbb78f8b9278c9a492925bbf1f87 is the first bad commit
-> commit da6b34293ff8dbb78f8b9278c9a492925bbf1f87
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Mon Sep 1 17:03:40 2025 +0200
-> 
->     mm/gup: remove record_subpages()
->     
->     We can just cleanup the code by calculating the #refs earlier, so we can
->     just inline what remains of record_subpages().
->     
->     Calculate the number of references/pages ahead of times, and record them
->     only once all our tests passed.
->     
->     Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.com
->     Signed-off-by: David Hildenbrand <david@redhat.com>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> 
-> I won't personally have time to look into this until after the weekend,
-> but as it's linux-next specific, not a huge deal right now.
-> 
-> Note that there's also a similar report, which is the same thing:
-> 
-> https://lore.kernel.org/all/68b9d130.a00a0220.eb3d.0008.GAE@google.com/
-> 
-> which I marked as dupe of this one.
+BUG: kernel NULL pointer dereference, address: 0000000000000010
+Oops: Oops: 0000 [#1] SMP NOPTI
+CPU: 2 UID: 0 PID: 92 Comm: osnoise_cpus Not tainted 6.17.0-rc4-00201-gd69eb204c255 #138 PREEMPT(voluntary)
+RIP: 0010:bitmap_parselist+0x53/0x3e0
+Call Trace:
+ <TASK>
+ osnoise_cpus_write+0x7a/0x190
+ vfs_write+0xf8/0x410
+ ? do_sys_openat2+0x88/0xd0
+ ksys_write+0x60/0xd0
+ do_syscall_64+0xa4/0x260
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ </TASK>
 
-Thanks.  Seems i can remove that patch without causing merge or build
-damage, so I'll do that.
+This issue can be reproduced by below code:
+
+fd=open("/sys/kernel/debug/tracing/osnoise/cpus", O_WRONLY);
+write(fd, "0-2", 0);
+
+When user pass 'count=0' to osnoise_cpus_write(), kmalloc() will return
+ZERO_SIZE_PTR (16) and cpulist_parse() treat it as a normal value, which
+trigger the null pointer dereference. Add check for the parameter 'count'.
+
+Fixes: 17f89102fe23 ("tracing/osnoise: Allow arbitrarily long CPU string")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ kernel/trace/trace_osnoise.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index fd259da0aa64..edf5178d0317 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
+ 	int running, err;
+ 	char *buf __free(kfree) = NULL;
+ 
++	if (count < 1)
++		return -EINVAL;
++
+ 	buf = kmalloc(count, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+-- 
+2.33.0
 
 
