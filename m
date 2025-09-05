@@ -1,92 +1,85 @@
-Return-Path: <linux-kernel+bounces-802337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE9AB45135
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C579DB45139
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CD956654D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23B648620F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C82E30507F;
-	Fri,  5 Sep 2025 08:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E632749D9;
+	Fri,  5 Sep 2025 08:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aolFvpWn"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI2gIws5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20832FE579;
-	Fri,  5 Sep 2025 08:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC09308F0E;
+	Fri,  5 Sep 2025 08:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060438; cv=none; b=ns2T7fk7nE/ZvkjBS/XxKB6+DK6LRsmawOS1wp9dg4x0wIOlZWvP+L3qWjed2ReI+yJd0Bq8f/UOJvM7M7RolIwc1LlLsUgnWr3XzXyOsipZPpINQw9NLFZk8qNhROrI2MsA83eW0IKvAyfkrEr5YI1P+ITu7co9NGs45iQY0gA=
+	t=1757060440; cv=none; b=AB4k/VxXLZp0/6KZWpfqUXA+dqztwQUJJrEjQ2tqsV/k1GwNA0m1SQdZxFUG9lbMpIm2J+GqJXpUdO0iN0kbE13NZZbO+O0Wwc1bl6O2i9Xu6/fMNpdZiA3v2LAUNLzx/bmwDGelKKAa96t8IqkibHfX9Na6wKk7GRjUrmkttog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060438; c=relaxed/simple;
-	bh=OAnRq+EFKKwYtkRHr0XwJ5eAzkcTuotAqvUJYtyAA7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDNBvnBC05j5m6KYmVqfSCFC/mwq+Dfw82bodBJKyiQjKiIbJhCxk1WnbGkdT7X4p5cC9O+fhQhvlXS5bogO681S4KyallP//PwfAOlTTxQEHfcHaijrYQtMx9+DoDLPc2zPDQHgyxFQIZNXSTPPJABncXwYg83tqNn+66TAFxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aolFvpWn; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757060435;
-	bh=OAnRq+EFKKwYtkRHr0XwJ5eAzkcTuotAqvUJYtyAA7w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aolFvpWn/tCj2yIGSvsHAhJDidaC+yNPqGzu1ARtT+PyBYBTtd+fcOWCWjFkbTlv5
-	 uFoQNUncMb9hUb0NDMi8pur6WyqqDA5e4reB8ZVZuxc0rZ0Vaat3d9bLvb59nsKtT+
-	 isbHtl4x2zbtuoZeqxvrKXW+VperMTogzjNhSEhblCaJO7jVrIuFuVAp94HThD4V+a
-	 6aC82FaNcKQYbGnbHCXfvkIvV9+S5W4b5AQCtRKGpcwSzh8NSOBSK7GPHB3mkn4pNp
-	 58HdvIOIyLzkxrV+JQHJ9ZQwpRUFk7RrxazV1WhYJ4eHS4rcMjt8cRn6Erl8yrkrVv
-	 EqP28fESmLtPg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6957517E0AC3;
-	Fri,  5 Sep 2025 10:20:34 +0200 (CEST)
-Message-ID: <000a0636-2a78-433b-8bfe-2534ae0a9bee@collabora.com>
-Date: Fri, 5 Sep 2025 10:20:34 +0200
+	s=arc-20240116; t=1757060440; c=relaxed/simple;
+	bh=1NT/J9zy+wp2WIDDw1MZkz4+Ema5iHWmh+YcteWPW9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgRK/0uUCdDE80+Qn2TtVj+ThcOjvIGTmw2Xur4XYtFYf6xsozQfVMiYbXKMKSl55AyHPCb6llwi40wPUkUO7Gb4vypmyvUOyKR0kMu6yPdC+XOVQyG40NbwQxhLbpuESXNYqeC8R+TSjTWH4xl3PfaFt4e+mydSRe2WdYjnm5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI2gIws5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFE0C4CEF7;
+	Fri,  5 Sep 2025 08:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757060440;
+	bh=1NT/J9zy+wp2WIDDw1MZkz4+Ema5iHWmh+YcteWPW9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bI2gIws5IK3KjZoCKjEfQSCveSDzyPef2WcTJ2SWU78Qo4+kuev4nc1ClkUZeHe1b
+	 0T2q8lFfzXl/9pygx1vXkJ/jrzh31H72fH/hybLYLHsJKa5hq3xd0WyV+YP6tiXNfx
+	 b/y5KYE6nae/LAzna+DXu8qgSirjGkxgo5dqLMe+VjClsXDcdAytJIJybGXPsVHaYw
+	 gTPYudJukJkiu1+ct8nlHssSsL593gb32imFWjpSQVw3bN1oyKY1BKoXtzrIW7fBwV
+	 B/aknTh/77HWQ0oztPegXY+qR/MmqYOX7Edw2ioZzLyyTzR72Pi1l3R2Pw73W8L1jd
+	 5NaKsmHgdVTkg==
+Date: Fri, 5 Sep 2025 10:20:37 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Peter Rosin <peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	upstream@lists.phytec.de
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: afe: current-sense-amplifier:
+ Add io-channel-cells
+Message-ID: <20250905-dainty-liberal-monkey-ec28bb@kuoka>
+References: <20250905065503.3022107-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/27] clk: mediatek: clk-gate: Refactor
- mtk_clk_register_gate to use mtk_gate struct
-To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com, wenst@chromium.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- kernel@collabora.com
-References: <20250829091913.131528-1-laura.nao@collabora.com>
- <20250829091913.131528-7-laura.nao@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250829091913.131528-7-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250905065503.3022107-1-primoz.fiser@norik.com>
 
-Il 29/08/25 11:18, Laura Nao ha scritto:
-> MT8196 uses a HW voter for gate enable/disable control, with
-> set/clr/sta registers located in a separate regmap. Refactor
-> mtk_clk_register_gate() to take a struct mtk_gate, and add a pointer to
-> it in struct mtk_clk_gate. This allows reuse of the static gate data
-> (including HW voter register offsets) without adding extra function
-> arguments, and removes redundant duplication in the runtime data struct.
+On Fri, Sep 05, 2025 at 08:55:02AM +0200, Primoz Fiser wrote:
+> The current-sense-amplifier is an IIO provider thus can be referenced by
+> IIO consumers (via "io-channels" property in consumer device node). Such
+> provider is required to describe number of cells used in phandle lookup
+> with "io-channel-cells" property.
 > 
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> ---
+> Changes in v2:
+> - refactor commit msg drop warnings introduced by commit #2
+> - drop Fixes: tag
 
-Nice cleanup.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+Best regards,
+Krzysztof
 
 
