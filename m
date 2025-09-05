@@ -1,377 +1,209 @@
-Return-Path: <linux-kernel+bounces-802703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF89FB455C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B82DB455D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E57E5C33DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21D817EB24
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E4C342CB0;
-	Fri,  5 Sep 2025 11:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EY3P8DkF"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF8F3469F2;
+	Fri,  5 Sep 2025 11:10:51 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D005341676
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D4345745;
+	Fri,  5 Sep 2025 11:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070599; cv=none; b=JmNEx6RxrES9xG09qEMVjdIPttOZzDiq3z5hOtQ9xcTrJ06BGxhe+CgGJxo1mw8VBzLD8knSzMvSWy6kQSsP5MDK6PDTKpwA7c0GO7UfqpHL96va1CMhT8PIOYz2pd1XllZLsxue39hNtbPBu0bi4xom9AyyCnf+Taspa2ZC3Mo=
+	t=1757070650; cv=none; b=d/UTlFPce180IS3PwUvTFQVVd4hRMygCY3Gk1bByaMxOfqt5ef5THcDOUMFhSjvTVTRCXvwARkZKnAM9KlnS7mj6X07RskfzeK82ibKLruFlKHCpU+ol+4FPxTBJixQp0+UvhDXp2dQXUgdoX47pAKZAvvX9rp/VtMDAAWsnlNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070599; c=relaxed/simple;
-	bh=7ALH7IJrp4A6nmOz1p/n3wXjhY7VUyQresBwcjSPj14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvOTsP7/celcHT0RGCye4IvnRJqiuxnZsqHgiyj7NCjLpReurKQSBeoxfJ+b7EDDFLp7a9Mlyv7XbJk9pjmkYrch/ZdrdHiqVOxO1FHbM9v27HfQop485N+5tHNPXRaKUlZxndnQikd3zrnwB9W0jEW/3J6i4qKUYX3AXXcZ8yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EY3P8DkF; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e98b64d7000so1844006276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757070596; x=1757675396; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2JdXw4Qv1njBlO6xmYzVUcXa+L4DKBA78RJzciCH6Gs=;
-        b=EY3P8DkFtoh53lUFqYoX/8zs9jbHFtCA3qmiqlBBjda3XXRs5ND5afjFfKsKkNZAtX
-         vJ3dcIoyVeqC06YtOd3wKZlrlkcoZlZ89xcNX/h0hS+kK4z0OrVeJlSp6SH3RsMF4xkF
-         mUetwiWRGzIMhIT6AhD3Yb5FRnS1jzqoRFt7vy5EMCHiAfR0ydtPTTc9yv0fSHlfMDC+
-         A3yfDxSvv1FzkFxahy3XHWaO8HnUqWGqdLVgWvBwZyuar8FEcsXgeiChwYATj84W42tE
-         7o64XKJUkB/aoASrrKcHvWSFWNRHxzkY5866P9XZ8XICqzjkFhQG4rBgJgMax1usFPyG
-         IPhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757070596; x=1757675396;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2JdXw4Qv1njBlO6xmYzVUcXa+L4DKBA78RJzciCH6Gs=;
-        b=t9XT3JpzZv23l+3GB/BX7/EdqQ71mdKaCUAEMQ9ZTfRfxOyzipNhkKD0/w1DwJSCXd
-         t5yf6th7EThOOZsJPRswHhBnMg/FvRnuf1iy1goKhoXOGdaLb9NHBnIeGbmQoNZXPL1n
-         mVszhJ9pKfvP02Pq0/qXnqamIJknQ1pCnzZBtlPQ04tRMKxiNMvmhA5389sZiUjLv/nb
-         mhYPJ+6QEuNmZCVQt7/eJyZRx8OT91jhSjsV6hnZgaX3UuT8s2Zsr6LhLP3xZruanyII
-         dJEg8o0xv2E1QkxPuhuf98lz8AktKcpVfe9hTWmD/gkjlPTfCpI6bESFK2IdviDc+H95
-         qpjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8XkWw03WYJgPdQgrQIoMLAH8nPJY5vj8oNyeLUgvViSt8PibjybqohB5yRN1ZcbwtruFLnJVHpv1x85E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1Zrauknxd7KO8B3LUj4zqknVJEfBbi93rK7sdQ+RY5koSe7HR
-	ZE7z/RkfbLt7GR+0cq9t2CIcUZ7OXPNhwWdE0XZTlFrVLE/z3EPyMuyBNth3mR32Qrpf7CC8q6E
-	Ey9iA3tisL2qWNjxKY4wtMSDUOO8UdIoSN3Vm9We1kQ==
-X-Gm-Gg: ASbGncsOJocVbEzFAyFxs5LdBW5V6FrrFbKlhfIg0KHu7cKPtzLpFq71Ykl72va4P89
-	P2gpjZgCVZepg3K1qOas74kj2Ctwua/vsjha1jvWgrvWXOU+z9O85rR1jmD2YRJpV103beor0nH
-	B06keztLLSrFkaD+6oIN4QrTWVgL8oWaZgy36Xaf5FI11WNWn8uQe4n1tJm17zmkD1WnkxyCw+6
-	5rFsl6Q2vAPEGvevD8=
-X-Google-Smtp-Source: AGHT+IGJvbbIlAC6F/9Nh1B+6nqGQfT+amUgoRJzoU9Ah54iDfe6pod7IY2Mz9W1QhgN1npg8B3ZwJzDinFuk2aB9V8=
-X-Received: by 2002:a05:690e:15c7:b0:5f5:5d5:b1f5 with SMTP id
- 956f58d0204a3-601774c10f2mr4510800d50.20.1757070596115; Fri, 05 Sep 2025
- 04:09:56 -0700 (PDT)
+	s=arc-20240116; t=1757070650; c=relaxed/simple;
+	bh=zD720it9Cl0qjj3VgVvm72Iet63yku/R94TspnSwR/o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NV8cz3AE/y+oK+W122XNSTyO9VcQIpZh1s1/vDA3DQAXvxpn1ZTLewII/d0msYJZzINgsX3Wsyndaxz+CrBLRmdb1CJRAGYEq9Aq2nPLvSDRbN71pPt9mddmEEdeWmfezLqy164jZaSC6iEGFrlf67DIilJoRiymVzVo9zNFW3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowACnu4X1xLpoFdfLAA--.1807S2;
+	Fri, 05 Sep 2025 19:09:43 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH net-next v9 0/5] Add Ethernet MAC support for SpacemiT K1
+Date: Fri, 05 Sep 2025 19:09:29 +0800
+Message-Id: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
- <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
- <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
- <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
- <CAPDyKFq7z9e9hEC9QWiYcaU=t+Gs_GgRurmK-+cNYp4xkhr5Ow@mail.gmail.com>
- <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
- <CAPDyKFr-mVbGo62Wp+othcs+cWR6Wn9bz==ZB5hSpyKgkGtqHg@mail.gmail.com>
- <CAMuHMdUAhsZMbkUzwb=XnCNyvA3aOvuhkKL4=1nOPQ0w0if-HA@mail.gmail.com>
- <CAPDyKFrWv3ObciCtrb4YE_K6to5xxx79DGcPv0=nP9LR60=xYA@mail.gmail.com> <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 5 Sep 2025 13:09:20 +0200
-X-Gm-Features: Ac12FXxAyk0DgxeOLPurHUdA5X-JyzT3WI7knde2ma8Q4W4KgpMj8w1PmU3YQLs
-Message-ID: <CAPDyKFqvjeuXhk7H4nH80RY63QfKwGO_61UW=MJaU8Qiahbt3g@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOnEumgC/23RzW7CMAwH8FdBOS/ISfPJae8x7ZA6zogmCmu6i
+ gnx7gtlEi3d0bJ//kfOhRXqMxW221xYT2Mu+djVwr9sGO5D90E8x1ozCVKDAcM7Gvin4HQIyBs
+ STmhwFIxiVZx6Svk8bXtjt8GOzgN7v3d6+vqu64e/dhsKcTweDnnYbUazFZb3KKbhfS7Dsf+Z3
+ jSKafoeL5pF/Cg4cESTPGkBxtjXXDCUbcAtdtOmUc61W2pZtVdJJ7BS2uDWunloC3Kpm6qdkxG
+ 1VqBSs9Zqrp9erqo2zkTwqDD9l60f2omnbF11jMKi8qCT8mttZlrCUpvb1QRJl2TrWtJrbed6+
+ eWjrVq3KLSL4EygtXZz/XRzVzV5sDpGicHDUl+v118AYzWZkQIAAA==
+X-Change-ID: 20250606-net-k1-emac-3e181508ea64
+To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:rQCowACnu4X1xLpoFdfLAA--.1807S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4fCFykKF13Cw1xWFW7urg_yoW7JFWfpF
+	W8CrZI9wsrJrWIgFs7Cw47uF1fXan5J343WF17t3yrXa1DAFyUA39akw43Cr1UZrZ5J34j
+	ya1UuF1kuFyDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7sRiuWl3UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-[...]
+SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+Add devicetree bindings, driver, and DTS for it.
 
-> > > > > > > > > BTW, the "pending due to"-messages look weird to me.
-> > > > > > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
-> > > > > > > > >
-> > > > > > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
-> > > > > > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
-> > > > > > > > > due to e6020000.watchdog
-> > > > > > > > >
-> > > > > > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
-> > > > > > > > > the watchdog resides in the always-on Clock Domain, and uses the
-> > > > > > > > > clock-controller for PM_CLK handling.
-> > > > > > >
-> > > > > > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
-> > > > > > > these bogus pending states, and no PM Domain is powered off.
-> > > > > >
-> > > > > > I see, thanks for the details. I am looking closer at this.
-> > > > > >
-> > > > > > In any case, this is the main issue, as it prevents the ->sync_state()
-> > > > > > callback to be called. Hence the "genpd->stay_on" will also *not* be
-> > > > > > cleared for any of the genpd's for the genpd-provider.
-> > > > >
-> > > > > I was under the impression there is a time-out, after which the
-> > > > > .sync_state() callback would be called anyway, just like for probe
-> > > > > deferral due to missing optional providers like DMACs and IOMMUs.
-> > > > > Apparently that is not the case?
-> > > >
-> > > > The behaviour is configurable, so it depends. The current default
-> > > > behaviour does *not* enforce the ->sync_state() callbacks to be
-> > > > called, even after a time-out.
-> > > >
-> > > > You may set CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT to achieve the above
-> > > > behavior or use the fw_devlink command line parameters to change it.
-> > > > Like setting "fw_devlink.sync_state=timeout".
-> > > >
-> > > > I guess it can be debated what the default behaviour should be.
-> > > > Perhaps we should even allow the default behaviour to be dynamically
-> > > > tweaked on a per provider device/driver basis?
-> > >
-> > > The domains are indeed powered off like before when passing
-> > > "fw_devlink.sync_state=timeout", so that fixes the regression.
-> > > But it was not needed before...
-> >
-> > Right, the default behavior in genpd has changed. The approach was
-> > taken as we believed that original behavior was not correct.
-> >
-> > Although, the current situation isn't good as it causes lot of churns for us.
->
-> I did some more testing, and there seems to be a similar issue with
-> DMA controllers, which I hadn't really noticed before, as I have
-> DMAC drivers built-in in all my kernel configs.  If the (optional)
-> DMAC driver is not available, you need "fw_devlink=permissive" to make
-> drivers probe devices that have (optional) DMA support.
+Tested primarily on BananaPi BPI-F3. Basic TX/RX functionality also
+tested on Milk-V Jupiter.
 
-Well, after the deferred probe timeout, the missing supplier depency
-should be ignored even if you don't have "permissive".
+I would like to note that even though some bit field names superficially
+resemble that of DesignWare MAC, all other differences point to it in
+fact being a custom design.
 
-Typically we get a print in the log that could say:
-"pm-test-drv pm_test24: deferred probe timeout, ignoring dependency"
+Based on SpacemiT drivers [1]. These patches are also available at:
 
-... and then the driver-core tries probing the device anyway. It's
-then up to the consumer driver to allow probing to succeed, even if
-the DMA setup procedure fails.
+https://github.com/dramforever/linux/tree/k1/ethernet/v9
 
-> Interestingly, that is not the case with (optional) IOMMU support:
-> drivers do probe devices that have (optional) DMA support when the
-> latter is not available.
+[1]: https://github.com/spacemit-com/linux-k1x
 
-Okay, so some special treatments are already in place for IOMMUs, to
-allow them to probe sooner, I guess. I don't know in detail how this
-works, maybe Saravana can help to fill in?
+---
+Changes in v9:
+- Refactor to use phy_interface_mode_is_rgmii
+- Minor changes
+  - Use netdev_err in more places
+  - Print phy-mode by name on unsupported phy-mode
+- Link to v8: https://lore.kernel.org/r/20250828-net-k1-emac-v8-0-e9075dd2ca90@iscas.ac.cn
 
-Although my guess is that, by allowing IOMMUs to probe like this,
-means that these drivers need to manage the DMA setup quite
-differently.
+Changes in v8:
+- Use devres to do of_phy_deregister_fixed_link on probe failure or
+  remove
+- Simplified control flow in a few places with early return or continue
+- Minor changes
+  - Removed some unneeded parens in emac_configure_{tx,rx}
+- Link to v7: https://lore.kernel.org/r/20250826-net-k1-emac-v7-0-5bc158d086ae@iscas.ac.cn
 
-The DMA driver (supplier) may probe and become available *after* the
-IOMMU driver has probed. In other words, the IOMMU drivers then need
-to manage the DMA setup even beyond probing.
+Changes in v7:
+- Removed scoped_guard usage
+- Renamed error handling path labels after destinations
+- Fix skb free error handling path in emac_start_xmit and emac_tx_mem_map
+- Cancel tx_timeout_task to prevent schedule_work lifetime problems
+- Minor changes:
+  - Remove unnecessary timer_delete_sync in emac_down
+  - Use dev_err_ratelimited in a few more places
+  - Cosmetic fixes in error messages
+- Link to v6: https://lore.kernel.org/r/20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn
 
->
-> > > I could add "select FW_DEVLINK_SYNC_STATE_TIMEOUT" to the SYSC_RCAR
-> > > and SYSC_RCAR_GEN4 Kconfig options, but that would play badly with
-> > > multi-platform kernels.  As the fw_devlink_sync_state flag is static,
-> > > the R-Car SYSC drivers can't just auto-enable the flag at runtime.
-> > >
-> > > Any other options? Perhaps a device-specific flag to be set by the PM
-> > > Domain driver, and to be checked by fw_devlink_dev_sync_state()?
-> >
-> > Something along those lines seems reasonable to me too.
-> >
-> > However, the remaining question though, is what should be the default
-> > behavior in genpd for this. Due to all the churns, we may want
-> > something that is closer to what we had *before*, which means to
-> > always use the timeout option, unless the genpd provider driver
-> > explicitly requests to not to (an opt-out genpd config flag).
-> >
-> > Saravana, it would be nice to get some thoughts from you are around
-> > this? Does it make sense?
-> >
-> > >
-> > > > > > > If I remove the "sync_state = false" above, genpd_provider_sync_state()
-> > > > > > > considers all domains, and does power down all unused domains (even
-> > > > > > > multiple times, as expected).
-> > > > > >
-> > > > > > I think those are getting called because with the change above, there
-> > > > > > is no device_link being tracked. As stated above, fw_devlink is
-> > > > > > limited to use only one device - if multiple devices share the same
-> > > > > > fwnode.
-> > > > >
-> > > > > Indeed.
-> > > > >
-> > > > > > In other words, the ->sync_state() callbacks are called even if the
-> > > > > > corresponding consumer devices have not been probed yet.
-> > > > >
-> > > > > Hence shouldn't there be a timeout, as the kernel may not even have
-> > > > > a driver for one or more consumer devices?
-> > > >
-> > > > See above.
-> > > >
-> > > > > > > Upon closer look, all "pending due to" messages I see claim that the
-> > > > > > > first (index 0) PM Domain is pending on some devices, while all of
-> > > > > > > these devices are part of a different domain (usually the always-on
-> > > > > > > domain, which is always the last (32 or 64) on R-Car).
-> > > > > > >
-> > > > > > > So I think there are two issues:
-> > > > > > >   1. Devices are not attributed to the correct PM Domain using
-> > > > > > >      fw_devlink sync_state,
-> > > > > > >   2. One PM Domain of a multi-domain controller being blocked should
-> > > > > > >      not block all other domains handled by the same controller.
-> > > > > >
-> > > > > > Right, that's a current limitation with fw_devlink. To cope with this,
-> > > > > > it's possible to enforce the ->sync_state() callback to be invoked
-> > > > > > from user-space (timeout or explicitly) for a device.
-> > >
-> > > That needs explicit handling, which was not needed before.
-> > >
-> > > Perhaps the fw_devlink creation should be removed again from
-> > > of_genpd_add_provider_onecell(), as it is not correct, except for
-> > > the first domain?
-> >
-> > There is nothing wrong with it, the behavior is correct, unless I
-> > failed to understand your problem. To me the problem is that it is
->
-> It does print wrong and confusing warnings indicating the problem:
->
->     genpd_provider ca57-cpu0: sync_state() pending due to fe000000.pcie
->
-> (no, the PCIe controller is not part of the CPU PM Domain)
+Changes in v6:
+- Implement pause frame support
+- Minor changes:
+  - Convert comment for emac_stats_update() into assert_spin_locked()
+  - Cosmetic fixes for some comments and whitespace
+  - emac_set_mac_addr() is now refactored
+- Link to v5: https://lore.kernel.org/r/20250812-net-k1-emac-v5-0-dd17c4905f49@iscas.ac.cn
 
-That's a good point. We should fix this to avoid confusion.
+Changes in v5:
+- Rebased on v6.17-rc1, add back DTS now that they apply cleanly
+- Use standard statistics interface, handle 32-bit statistics overflow
+- Minor changes:
+  - Fix clock resource handling in emac_resume
+  - Ratelimit the message in emac_rx_frame_status
+  - Add ndo_validate_addr = eth_validate_addr
+  - Remove unnecessary parens in emac_set_mac_addr
+  - Change some functions that never fail to return void instead of int
+  - Minor rewording
+- Link to v4: https://lore.kernel.org/r/20250703-net-k1-emac-v4-0-686d09c4cfa8@iscas.ac.cn
 
->
-> > just less fine grained, compared to using
-> > of_genpd_add_provider_simple(). All PM domains that is provided by a
-> > single power-domain controller that uses #power-domain-cells = <1>,
-> > requires all consumers of them to be probed, to allow the sync_state
-> > callback to be invoked.
->
-> if it would be just coarse-grained, the link should be created to a
-> device representing the controller, not to the device representing
-> the first PM domain.
->
-> > If we could teach fw_devlink to take into account the
-> > power-domain-*id* that is specified by the consumer node, when the
-> > provider is using #power-domain-cells = <1>, this could potentially
-> > become as fine-grained as of_genpd_add_provider_simple().
-> >
-> > Saravana, do think we can extend fw_devlink to take this into account somehow?
->
-> Doesn't the pmdomain core create a device for each PM domain, so the
-> index could be used to link to the correct domain?
+Changes in v4:
+- Resource handling on probe and remove: timer_delete_sync and
+  of_phy_deregister_fixed_link
+- Drop DTS changes and dependencies (will send through SpacemiT tree)
+- Minor changes:
+  - Remove redundant phy_stop() and setting of ndev->phydev
+  - Fix error checking for emac_open in emac_resume
+  - Fix one missed dev_err -> dev_err_probe
+  - Fix type of emac_start_xmit
+  - Fix one missed reverse xmas tree formatting
+  - Rename some functions for consistency between emac_* and ndo_*
+- Link to v3: https://lore.kernel.org/r/20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn
 
-Correct, we have a device associated for each PM domain - and when
-of_genpd_add_provider_onecell() is called, we get the index associated
-for each of them.
+Changes in v3:
+- Refactored and simplified emac_tx_mem_map
+- Addressed other minor v2 review comments
+- Removed what was patch 3 in v2, depend on DMA buses instead
+- DT nodes in alphabetical order where appropriate
+- Link to v2: https://lore.kernel.org/r/20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn
 
-If I understand your proposal, you are suggesting that genpd itself
-creates the device_link between its corresponding device (supplier)
-and the upcoming consumer device(s), at the point when
-of_genpd_add_provider_onecell() is called, right?
+Changes in v2:
+- dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+- dts: Added Milk-V Jupiter
+- Fix typo in emac_init_hw() that broke the driver (Oops!)
+- Reformatted line lengths to under 80
+- Addressed other v1 review comments
+- Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
 
-It's an interesting idea, but I am not sure it will work. To create
-the device_link at this point, assumes that all the consumer OF-nodes
-have been populated (to have devices available for them). Maybe there
-is an intermediate step we can take to instruct fw_devlink to treat
-these "links" differently?
+---
+Vivian Wang (5):
+      dt-bindings: net: Add support for SpacemiT K1
+      net: spacemit: Add K1 Ethernet MAC
+      riscv: dts: spacemit: Add Ethernet support for K1
+      riscv: dts: spacemit: Add Ethernet support for BPI-F3
+      riscv: dts: spacemit: Add Ethernet support for Jupiter
 
-Saravana, any thoughts around this?
+ .../devicetree/bindings/net/spacemit,k1-emac.yaml  |   81 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |   46 +
+ arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts  |   46 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   48 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |   22 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/spacemit/Kconfig              |   29 +
+ drivers/net/ethernet/spacemit/Makefile             |    6 +
+ drivers/net/ethernet/spacemit/k1_emac.c            | 2183 ++++++++++++++++++++
+ drivers/net/ethernet/spacemit/k1_emac.h            |  426 ++++
+ 11 files changed, 2889 insertions(+)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250606-net-k1-emac-3e181508ea64
 
->
-> > > > > > Another option would be to allow an opt-out behavior for some genpd's
-> > > > > > that are powered-on at initialization. Something along the lines of
-> > > > > > the below.
-> > > > > >
-> > > > > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > > Date: Tue, 29 Jul 2025 14:27:22 +0200
-> > > > > > Subject: [PATCH] pmdomain: core: Allow powered-on PM domains to be powered-off
-> > > > > >  during boot
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > I gave this a try (i.e. "| GENPD_FLAG_NO_STAY_ON" in rcar-sysc.c), but
-> > > > > this doesn't make any difference.  I assume this would only work when
-> > > > > actively calling genpd_power_off() (i.e. not from of_genpd_sync_state()
-> > > > > or genpd_provider_sync_state())?
-> > > >
-> > > > Right. Thanks for testing!
-> > > >
-> > > > So, we may need to restore some part of the genpd_power_off_unused()
-> > > > when CONFIG_PM_GENERIC_DOMAINS_OF is set. Without clearing
-> > > > "genpd->stay_on".
-> > > >
-> > > > I can extend the patch, if you think it would make sense for you?
-> > >
-> > > I would applaud anything that would fix these regressions.
-> > > Thanks!
-> >
-> > While being mostly silent from my side for a while, I have been
-> > continuing to evolve my test suite for sync_state tests. Wanted to
-> > make sure I cover additional new corner cases that you have pointed
-> > out for Renesas platforms.
-> >
-> > That said, I have not observed any issues on my side, so it looks like
-> > we are simply facing new behaviors that you have pointed out to be a
-> > problem. In this regards, I think it's important to note that we are
-> > currently only seeing problems for those genpds that are powered-on
-> > when the provider driver calls pm_genpd_init(). Another simple option
-> > is to power-off those PM domains that we know is not really needed to
-> > be powered-on. Also not perfect, but an option.
-> >
-> > Another option is something along the lines of what I posted, but
-> > perhaps extending it to let the late_initcall_sync to try to power-off
-> > the unused PM domains.
->
-> Yep, like before.
+Best regards,
+-- 
+Vivian "dramforever" Wang
 
-Okay!
-
->
-> > I will work on updating the patch so we can try it out - or perhaps
-> > what you suggested above with a device-specific flag taken into
-> > account by fw_devlink_dev_sync_state() would be better/sufficient you
-> > think?
->
-> I also had a closer look at the few pending sync_state() pending
-> warnings I do see on SH/R-Mobile SoCs.  Their PM Domain driver uses
-> of_genpd_add_provider_simple() instead of of_genpd_add_provider_onecell().
-> E.g. on R-Mobile A1:
->
->     genpd_provider a3sm: sync_state() pending due to f0100000.cache-controller
->     genpd_provider a4s: sync_state() pending due to fe400000.memory-controller
->     genpd_provider d4: sync_state() pending due to ptm
->
-> All three domains were already handled specially in the PM Domain
-> driver, as they must not be turned off, so these platforms didn't
-> regress due to this series.
-
-Okay!
-
-Again the prints are confusing and annoying, but in principle we are
-fine. Thanks for clarifying!
-
-This also makes me wonder if we should skip enabling the fw_devlink
-support for those genpds with "simple" providers that are special
-(GENPD_FLAG_ALWAYS_ON and GENPD_FLAG_RPM_ALWAYS_ON). It doesn't make
-sense to track consumers for them, I think.
-
-[...]
-
-Kind regards
-Uffe
 
