@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-803164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A12B45B7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:03:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF41DB45B5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B0B5E0BBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:00:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3B8B7A123C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1653275106;
-	Fri,  5 Sep 2025 14:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8FC2F7ABA;
+	Fri,  5 Sep 2025 14:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUhPqtfC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CyJrJgKg"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375AE306B1A;
-	Fri,  5 Sep 2025 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA342F7AB6
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084374; cv=none; b=JLXHJBz3eSLzFad06Q05sMKJ1GG1UTcpZE8PDf2svDiPDndbxLxumxWyECau2dRA0ebpfGuKRcJuarEUZ1snU21V9WUnq6d+/W9nBLw9WqGs/723PVGfWcYDCg7reLVuA++w+cHt1ZXJRS2VlSweoUFLzrFOcPDvrJm79Fzc/JI=
+	t=1757084378; cv=none; b=q+2thvD9yvfQBACTLpGTRW56Pprgdcn493gG0Hpk0Lw4qotc5Pdb13fcXEl0e5+eTeMjD9ly8URGqo5VBQUiOhnUxaSGjQk+OMc8Lj6ZkLxbhC4gGpR52qKRQw/q1C94d7OX8RDo55hhDbKTMW2HGgv89W6wmWIm1APj83eoP1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084374; c=relaxed/simple;
-	bh=cUGN/wzrVSoqYTMOmdRBda+jkl3PmKsA50plWDMUcuo=;
+	s=arc-20240116; t=1757084378; c=relaxed/simple;
+	bh=XcqHYkHT4m5vC0R1cBvzFMNka7TCqqEBUzUASjSkIKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wqwy4Qf83nGf/uCvOHUAt/pi1364jsKpuxxDSyKYbd+12D+Obj13dTXHcMWWdWgzw65sIK99WSOpgOjpf02IT8b5960ZGVZf2gyNUqAEGfbPs3Feh0iay7VRQOP6chAG3n6fsWZ8PKDjI9KjP+OwzDnj9tsTAueBbvlo5xl4wHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUhPqtfC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24456ce0b96so24229515ad.0;
-        Fri, 05 Sep 2025 07:59:31 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=XE/mRsgjv0Z5EcDOJnlDUZzbIRGI8RjRSfgBFDBTeB6xmcFVeFn67dyy8qBtcKHdqtA3shJ/46Mvi1hQbnTiXxb/cCx+fCoVopk10MO2gZTfoiK3r68YmAovZPgMXmVZQYUY63uJElq7UOPxgKZwOBIeGnpxQT3bKw0VFXYiP0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CyJrJgKg; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2445806df50so19996355ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757084371; x=1757689171; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=xW+aJGzb7wHmrVXSSznp5Yz17F8YF7pk4UxzRQqTk1g=;
-        b=jUhPqtfCmvuvF1Qi63a9n5uuRAt06G4YSKSCHIjTsIW5wPTT8l0bh0szONaNYM5+Kt
-         FI0JSdWgnV4zRk5Kusx4RF8W3RNr9yGuW0TyeyywtJnK8PI+avvgnmxVIQu99hjcURWR
-         wnzYnd+VgT3sdOwmfaJ2uEqNrvV9M6g80WJ2Lr3gW2osuwUgw/nxSmX5BECp/hKBa+bF
-         Ile+3icApByYJ8FLcRyC0Nx6hdDkto0RPHnKTJEVdzLQI25ETwSzLpLclAoxtYTKeby3
-         2PLPl9bX5P7tZJymxZRpVPCEhDrfMA8FMDUnPTk6ReVYyAqgIQX/Rfw//rMupyHdSW0P
-         Jp/w==
+        d=bytedance.com; s=google; t=1757084376; x=1757689176; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yxJY233Uqqg21CAqUEiMyudhk5JYPYhTbvvi/CIfNGk=;
+        b=CyJrJgKgITVtKBLkB+Pug6B9MgDCjE+0o4IZJ1igdNAF4bxNOxzF4mOGGWM+/n/e38
+         5812v/pRD7aO72ZwTFkL00p/8mXQi1stkLo/7Um+W7/Xl/aE3fx8KG5Il53M6mlaHZEd
+         ZIaoZDo5XAWgO9wL7ITV4QFoxcZ3b2GScRNqn48bh6EuBFt2ZwE+iZOdNTqPcq0GP+Q0
+         vcTWhkKzl+7CEUe/+0+rzU8f1la+a2yqdT4Tl6BVkIKYzDZeLZ7THOBv8SAdtUQokpMo
+         /H4me9pG78jQ+e8rwp6KshX8Lgdr8o1Q0wOS45ZH3l9zgpFNRaLXWlw5MY6SVjhMyVTN
+         Q5Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084371; x=1757689171;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xW+aJGzb7wHmrVXSSznp5Yz17F8YF7pk4UxzRQqTk1g=;
-        b=H8wbwGL9oAbXWM0r9YkClHercSd83XhZbfXQ6wCYGU0a1FcKLb4dTjigYWW1T0T8Y3
-         CkhWyg/N9kAd6PaJ/2yZstV6DUq3qMr0d0QsLCPeG/kVkRHV56Gv5Eqltb+K+nw/bfyd
-         pnb5WoDIYgwuRxCQgSWJkbaap5lr8CFVhGYtyOxWeHvC8FDO+Di7jBrgJN/3w8pt5OwE
-         BIlsv5xzwqvYZGc5BctH+V3N+Twz19+NkIL5M1QZh07qExzzmUKxmEvudR0fyuIJrx2H
-         zwgmtrYIPFu+V15YYN5NBv1SoB8Rqq1Qo0ZKJ9aS6fB8oglKl4Umc2pfD/Ckxl7wHTKQ
-         h2Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUr665p+CHPfKUThRcNat81nDb/rJL/zPn12bJraq7cdUWkT9ESgKfPtnOhjxHy+3LQCGdiBodiN97I@vger.kernel.org, AJvYcCWRsIEtFlilcTJLTfIbH+Ef+C88CVpXa2lCJFKLpYSjGH1AFoATJBq3/U9u4TRveB3fJ32pAIm953vZ+eOm@vger.kernel.org, AJvYcCX88Hb41+hycUg8Io+iy7DLXBC5N+iNqgTVG+75sAEJwcqKS1a5jtMjbU9bGYLO7RL+gz3Zj1JP59EEWrE+hitgfxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHvmwXiADFt8cTYgZaNV568VAAa3swJWZ/AEYUQ3geBB4Fkbj8
-	UitHuzV/+q0hjvkOUC8rOHZzoBQXu2MEdBD1Cd5B2Cd0zcVKXLGYeHNY
-X-Gm-Gg: ASbGnctFfERYjX6387xiJk9QfQ9JIX2XyYX050bzlrEio2BO6K/qNbvcxy/X7zkxh53
-	0YL9COWSZKzL2h9ZtPrDnZ2gregEITfrP7AmuDuTvkS781cZtZkfHKPFWVyFpKDNo27qMNvaT76
-	39DoBDSgIk+u6rTHR6oUrZT8clzMz8qzmOZo8Rmeh0knERrq/GToljl8G4uetv44noWH62p2x/R
-	EAxNDMQstIUVBT0i3GEhYC4uJ9UHHBbnAKkBHuxdVL9gc5YX70TQ2f04rRdCCJnpRW43ctkjrSJ
-	n7KlpI+pGubg5O1QpYs8J//GWr+sa11dit+2lLDzWp3iuFxuuy837jLY+pLGemJI34GoNY383pN
-	zmKLjjB+X+GalDPb7pkzpaMc4pnLhoW8WpU7Yti3Ft4tm08kJO+5Cpvk+2wcptCzJw/AYLHA=
-X-Google-Smtp-Source: AGHT+IGxH1/yuoG0bV0EUZYJipuYzhOx3fFGWwyOnbI5ixhz4XJQ34sajUfOhGBgfB+rRZx92P8WAA==
-X-Received: by 2002:a17:903:4b07:b0:235:f091:11e5 with SMTP id d9443c01a7336-24cedcb72c0mr48145235ad.10.1757084371208;
-        Fri, 05 Sep 2025 07:59:31 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cc919880dsm46483655ad.51.2025.09.05.07.59.29
+        d=1e100.net; s=20230601; t=1757084376; x=1757689176;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxJY233Uqqg21CAqUEiMyudhk5JYPYhTbvvi/CIfNGk=;
+        b=MxBu0tDhy80N1E2VUJSCcm7Xi63D5EU6H2EY3vqgkaJOWIohEn4hPJ3WazQvwBXvd1
+         647KsSpjX/5bAAUerdVZKJGdYhQqyPzJsMglSc78jYTsaLwbTMHcbgeXw4Ewqcx0d1ZM
+         0+8rvvyALwjy+QsHyRUFjcjO1LyaQV4VFM36/0qyfhCGm9azuYAPMArJbqE+EJtpCY9D
+         9T5uewOT2oCUT/C6i9Ml1P6cKjf61+unU69eSTDRozkLY7P9R5l7GSHXUV/bJJmmzbSN
+         0iUrS9w9HBf8DMJ1dq+/xT35hnedJUYw2s5YEmK3oRxU2I5ZvT890P6cScW0H3uAo8Ra
+         kPMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUor/WM9Q6/QfAdz0KVgDmhyizWse1F3RJaNldyZ5A0VaZJND5YEpO4HBIyorCCRsoo3GrO1xqSwgADMyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT6YGQ2zWHhzKs152f6Nl+N6DS+b7MPLnFE67yLERWQejYMPi+
+	/a1KXSMztGm2R9unJr6/wl1ysI60lU3wbQvtxhmRMSEXP4EFTgnfBHrkCA9x6Soho3I=
+X-Gm-Gg: ASbGnct0ITzHm63bJuhlUUBTPb0LUfElEnnT7heYY4fnAx3yjnbK7hA/8CAa8H+qRrD
+	QmvUvFuXMjer9anei0Bo2fq/cFuFCfVulvpdAHGBQsT0zs1kI3Xp+rwg4URaHUy6Ydof+MUkRsz
+	Y7EEttvDDg79UJ+aXi8CMydSouIBU4p7NuA5yo8UE8+A0l1LFu4GG0YTIlu3fvuY7J63GNSwZA2
+	zqAiYcOdErZ2EXZOYre+Z3o59GsU0HwzDTYNjnioWD4MtSq2Rd6Sxgf1p9DQuKtxyOctPL0awvn
+	fn7L+QoUv6xlmCbt7B9JlSIKPvXxFL56U2HDdYcHYmeSxunMx1xEhdL4gz85Ei9R94IJzFStWXT
+	jSIokkt1bLSimlPhu+Q7cZxdY2mdZDjQDMUT/OeZSrf/hrzf4DI8c1GGl5910vEE=
+X-Google-Smtp-Source: AGHT+IF0oshhaCSxRIfpasEwtpeGFZadc99IPAvw/eelHrSh1OB4Ilh5zEeIUkPqAnpO5BxcnXM/Lg==
+X-Received: by 2002:a17:903:2309:b0:248:96f3:408c with SMTP id d9443c01a7336-24944b1cb74mr370934945ad.31.1757084376131;
+        Fri, 05 Sep 2025 07:59:36 -0700 (PDT)
+Received: from [10.4.109.2] ([139.177.225.231])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd0736ba7sm19340638a12.12.2025.09.05.07.59.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:59:30 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f44a1b1f-26cb-47df-a7c6-bf115a695611@roeck-us.net>
-Date: Fri, 5 Sep 2025 07:59:29 -0700
+        Fri, 05 Sep 2025 07:59:35 -0700 (PDT)
+Message-ID: <d686f056-180c-4a22-a359-81eadb062629@bytedance.com>
+Date: Fri, 5 Sep 2025 22:59:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,89 +81,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] watchdog: rzv2h: Obtain clock-divider and timeout
- values from OF match data
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250804195723.3963524-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [External] Re: [PATCH] KVM: x86: Latch INITs only in specific CPU
+ states in KVM_SET_VCPU_EVENTS
+To: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, liran.alon@oracle.com, hpa@zytor.com,
+ wanpeng.li@hotmail.com, kvm@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250827152754.12481-1-lifei.shirley@bytedance.com>
+ <aK8r11trXDjBnRON@google.com>
+ <CABgObfYqVTK3uB00pAyZAdX=Vx1Xx_M0MOwUzm+D1C04mrVfig@mail.gmail.com>
+ <f904b674-98ba-4e13-a64c-fd30b6ac4a2e@bytedance.com>
+ <CABgObfb4ocYcaZixoPD_VZL5Z_SieTGJW3GBCFB-_LuOH5Ut2g@mail.gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250804195723.3963524-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Fei Li <lifei.shirley@bytedance.com>
+In-Reply-To: <CABgObfb4ocYcaZixoPD_VZL5Z_SieTGJW3GBCFB-_LuOH5Ut2g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/4/25 12:57, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Update the rzv2h_wdt driver to fetch clock configuration and timeout
-> parameters from device tree match data rather than relying on hardcoded
-> constants. Introduce a new structure rzv2h_of_data that encapsulates
-> minimum and maximum clock select values (cks_min and cks_max), clock
-> divider (cks_div), timeout cycle count (timeout_cycles), and the
-> timeout period select bits (tops). These values are provided through
-> the OF match table and retrieved via of_device_get_match_data() during
-> probe.
-> 
-> This change allows dynamic configuration of the watchdog timer for
-> different SoCs, such as the RZ/T2H, which require different settings.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 8/29/25 12:44 AM, Paolo Bonzini wrote:
+> On Thu, Aug 28, 2025 at 5:13 PM Fei Li <lifei.shirley@bytedance.com> wrote:
+>> Actually this is a bug triggered by one monitor tool in our production
+>> environment. This monitor executes 'info registers -a' hmp at a fixed
+>> frequency, even during VM startup process, which makes some AP stay in
+>> KVM_MP_STATE_UNINITIALIZED forever. But this race only occurs with
+>> extremely low probability, about 1~2 VM hangs per week.
+>>
+>> Considering other emulators, like cloud-hypervisor and firecracker maybe
+>> also have similar potential race issues, I think KVM had better do some
+>> handling. But anyway, I will check Qemu code to avoid such race. Thanks
+>> for both of your comments. 🙂
+> If you can check whether other emulators invoke KVM_SET_VCPU_EVENTS in
+> similar cases, that of course would help understanding the situation
+> better.
+>
+> In QEMU, it is possible to delay KVM_GET_VCPU_EVENTS until after all
+> vCPUs have halted.
+>
+> Paolo
+>
+Hi Paolo and Sean,
+
+
+Sorry for the late response, I have been a little busy with other things 
+recently. The complete calling processes for the bad case are as follows:
+
+`info registers -a` hmp per 2ms[1]      AP(vcpu1) thread[2]              
+     BSP(vcpu0) send INIT/SIPI[3]
+
+                                  [2]
+                                  KVM: KVM_RUN and then
+                           schedule() in kvm_vcpu_block() loop
+
+[1]
+for each cpu: cpu_synchronize_state
+if !qemu_thread_is_self()
+1. insert to cpu->work_list, and handle asynchronously
+2. then kick the AP(vcpu1) by sending SIG_IPI/SIGUSR1 signal
+
+                       [2]
+                       KVM: checks signal_pending, breaks loop and 
+returns -EINTR
+Qemu: break kvm_cpu_exec loop, run
+   1. qemu_wait_io_event()
+   => process_queued_cpu_work => cpu->work_list.func()
+        e.i. do_kvm_cpu_synchronize_state() callback
+        => kvm_arch_get_registers
+             => kvm_get_mp_state /* KVM: get_mpstate also calls
+            kvm_apic_accept_events() to handle INIT and SIPI */
+        => cpu->vcpu_dirty = true;
+   // end of qemu_wait_io_event
+
+                                   [3]
+                                   SeaBIOS: BSP enters non-root mode and 
+runs reset_vector() in SeaBIOS.
+                                            send INIT and then SIPI by 
+writing APIC_ICR during smp_scan
+                                   KVM: BSP(vcpu0) exits, then => 
+handle_apic_write
+                                        => kvm_lapic_reg_write => 
+kvm_apic_send_ipi to all APs
+                                        => for each AP: 
+__apic_accept_irq, e.g. for AP(vcpu1)
+                                             => case APIC_DM_INIT: 
+apic->pending_events = (1UL << KVM_APIC_INIT)
+                                                  (not kick the AP yet)
+                                             => case APIC_DM_STARTUP: 
+set_bit(KVM_APIC_SIPI, &apic->pending_events)
+                                                  (not kick the AP yet)
+
+   [2]
+   2. kvm_cpu_exec()
+   => if (cpu->vcpu_dirty):
+      => kvm_arch_put_registers
+         => kvm_put_vcpu_events
+                       KVM: kvm_vcpu_ioctl_x86_set_vcpu_events
+  => clear_bit(KVM_APIC_INIT, &vcpu->arch.apic->pending_events);
+       e.i. pending_events changes from 11b to 10b
+  // end of kvm_vcpu_ioctl_x86_set_vcpu_events
+Qemu: => after put_registers, cpu->vcpu_dirty = false;
+         => kvm_vcpu_ioctl(cpu, KVM_RUN, 0)
+                       KVM: KVM_RUN
+  => schedule() in kvm_vcpu_block() until Qemu's next SIG_IPI/SIGUSR1 signal
+  /* But AP(vcpu1)'s mp_state will never change from 
+KVM_MP_STATE_UNINITIALIZED
+    to KVM_MP_STATE_INIT_RECEIVED, even then to KVM_MP_STATE_RUNNABLE
+without handling INIT inside kvm_apic_accept_events(), considering BSP 
+will never
+    send INIT/SIPI again during smp_scan. Then AP(vcpu1) will never enter
+    non-root mode */
+
+                                   [3]
+                                   SeaBIOS: waits CountCPUs == 
+expected_cpus_count and loops forever
+                                   e.i. the AP(vcpu1) stays: 
+EIP=0000fff0 && CS =f000 ffff0000
+                                         and BSP(vcpu0) appears 100% 
+utilized as it is in a while loop.
+
+As for other emulators (like cloud-hypervisor and firecracker), there is 
+no interactive command like 'info registers -a'.
+But sorry again that I haven't had time to check code to confirm whether 
+they invoke KVM_SET_VCPU_EVENTS in similar cases, maybe later. :)
+
+
+Have a nice day, thanks
+Fei
 
 
