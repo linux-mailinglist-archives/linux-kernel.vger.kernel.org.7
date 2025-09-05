@@ -1,94 +1,58 @@
-Return-Path: <linux-kernel+bounces-803515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E96B461A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:02:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A4AB461A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F1D1C826EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:03:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7084C4E24A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D8137C0EC;
-	Fri,  5 Sep 2025 18:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D93374287;
+	Fri,  5 Sep 2025 18:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="loP7ejro"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Imvi4AOT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FAA37C0F7;
-	Fri,  5 Sep 2025 18:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708072AD25;
+	Fri,  5 Sep 2025 18:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757095361; cv=none; b=Js070gH2gvh7Lk8kWvkW1LqBAbgoTcP/wRltEFzgm6QNZFKS2lL/Y4WYHjzcM9uuwz6a/RQr3l9aoPaHgw4zCpUGq5HaSP0ME5kbkDhoyQmIkzUYIVvlxCsWnL3rb6HWbo6dbUNszuoYMpCeyggyRqKsgJUyd1x405caoNO7U98=
+	t=1757095382; cv=none; b=sTDEPdPgSgZg+NQn3p3KAGHfZ7SnESbsX/Xyc5niEoGVY41dXDfGn0UjW70jf2/vmAYos29xS2qzopvs3ENucSRyJXsZhuw7d2whmVnwa0gbWde+4HAKQSTjrUeJlQdhlyruTpy2E5gxe4u2fSDVI1wkyOHLFpJmMW5OjBFhGPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757095361; c=relaxed/simple;
-	bh=Qb+QuJSkObqX+fj1w4dRqT/e/kifWjnwMbO8oipHUNQ=;
+	s=arc-20240116; t=1757095382; c=relaxed/simple;
+	bh=hAJ4x2W+ROFMjcNY1H+cl3OVZvsIOc93Nsd1wiY/2aE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3LOt5YXVnXqxA4lDMt1BPReH5E+uNSHnojnfc3gPPF2Xbv2wy+O9FHuKqEk7DFH0woBA+kFzYc5eK0/c9C8+xSYZeHzPAhNAAv2NsBEsNXS1Naw6kS40U0ya8z9TXr/6PihyuiD57IBWuuxsj3Kix4uh2Z8i9XrDhrEMPDClZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=loP7ejro; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4c72885c8bso1945058a12.0;
-        Fri, 05 Sep 2025 11:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757095360; x=1757700160; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vyvqbUDXebspKl35FIPJk0lFngkuMldmVpFc1O8R/zI=;
-        b=loP7ejro2ueaShJvpKXm7Kqz428oRmCHruexot5tWdCmqCjAXd/J3eC2oa/j31g7oe
-         Y2dDia/VdYEQI5d/rD5pPCB6jOAmErY/Fs0MILF0u5lQkShCgf+xD0p+dhWhPBff6p+c
-         nXWRDWJknQRO7JgOhMfrLYCu1gS1WoOs3aZXrEdeyrHbGzntuXQlPoIVIlGxVnEIZQU3
-         vlW62c/B76rG4YbbmvbO6LV8nPbz/mi5nJppHFMA8euOEWiylcq/FJua4nACqg7yahGc
-         duKn/GdBB22467PJfx++oFM/l97UdjBwc/vF7ZE9i5OHgjX7ru0R57cv5bavjENEdyTt
-         6KkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757095360; x=1757700160;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vyvqbUDXebspKl35FIPJk0lFngkuMldmVpFc1O8R/zI=;
-        b=XjGKs7a4G/DNpuVyXgCu4lmgkhoqmAkKrwOV2PO5pF8XbMfowvRsMqJ7qa4SEp/lTG
-         E7y/kL73DSvnF1/NGDu4YWfyXqZBibNgmF85F9sQantUe+SJ4k2p/bk6RHq2a5YdrVpN
-         LJpEo09Ad4XrcP1/bBjAcvmO90SLsFE9S2d0J1auaRoljxGud2W/F74UhZvIFPt0RtDM
-         HY8C9Blztj32aw2M+9jyQhQRKkD9oF8aYb6A/1j1lQvGszilxJdWxbtrJ986HEKcqahI
-         AeSPGjO/zARr5UeY0o+d8AHOWcXD8gc2EZjlv0WF4JYPf1A7NVOVUkqL3k/ncaUORk5W
-         2MkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrxiS4HuDVuZt4MTrXbts4rm87GsFtA4Hha1PLSsqrMd74B1FZ0YTfRDWXMVvYQwCnCeYF0uiudGAFQ==@vger.kernel.org, AJvYcCVOYzEjPgNV1Cvug8bYOsY8i4iIihAJ6gylqPPzpi1ly2yt0PE5eo5xSXq0uxYT6LpTnYLu3kqhz3aQ@vger.kernel.org, AJvYcCX6PA8eETTxMvE3039wxezpdLjxzIX9aeJQDpa5TQo7VIeKs96sgPhWXP4dJvsezQsiaH21E5aE7W6XNWcj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwClwg22I8uhweB89VTr6SqvD1W4BNye42MZ/FDa+OGfw7tJDbG
-	PylLh/4aofCGyFvz1IbKhqXkbXFr+OcKZb7yn9U1RMvCHaiDbWdCpWSJ
-X-Gm-Gg: ASbGncsu9wUIKF416vopkyguoQZDI5D2JAJGWFnyE2yAl7IgUoUTjrlhUDOl6rhKTr6
-	yqxTFwvUruKFm/feJBiJm03TLq9qVzLCH5AeIGS+qDvnry1e5RnNxZnDW1NsHvViEwkYWkXcpMS
-	PHEhZe2Xhvpl6NW7OKUlXiN+FoidDX5P87wKTKH6KuM08RNAunRA3OA+E4M8q9jlBH8Gx2ovPZd
-	NV2PPvOXrCMcI0hZhoBdIdhs2UVtFjH8A0L9I6B/OLA9etHBiG8qeoeosXROKyfCuVHHiOEIP9W
-	aCty6LxVW7n+qTK+ehGQ5RnrxiCKE6abowJJpYqWiNvc92wApIfbycwv6DdCVkHKQWbOElhbyjQ
-	scdLfmqvrDQ/uF9MDOM3WQ9d1uQlyNhKAUyZMuPvxExeE2YMiSmR+kwIb+T3RuMXUsf4/PqLVQR
-	A=
-X-Google-Smtp-Source: AGHT+IH4BIuCOkufR5zpdXWK9alIlYMnPti5eXH+01WmcFERf5EmF47R3LvTkLS7gssMCY0/Uh9xug==
-X-Received: by 2002:a17:90a:d64e:b0:32b:5c13:868d with SMTP id 98e67ed59e1d1-32b5c138af9mr13139268a91.1.1757095358574;
-        Fri, 05 Sep 2025 11:02:38 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b95d31976sm5409595a91.22.2025.09.05.11.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 11:02:37 -0700 (PDT)
-Date: Fri, 5 Sep 2025 11:02:35 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-efi@vger.kernel.org, virtualization@lists.linux.dev,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 3/7] x86: Stop calling page_address() in free_pages()
-Message-ID: <aLslu1yKPNgoz1OU@fedora>
-References: <20250903185921.1785167-1-vishal.moola@gmail.com>
- <20250903185921.1785167-4-vishal.moola@gmail.com>
- <aLl9KneqOYTujcCh@kernel.org>
- <aLl98MQs-FlHo6bW@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjDEG4D9o1UwsSDr/KCAwXeae/WjrlKFOHtl2JPLqrr+383f/SOwMghub9FIklmG1nYD9Y3M5gVOA2yZWVKOrThJNOltcnWztT+nsukdcL43H4q52eFgRZKTECqH2NFYQIc8lCcBY4/EYEQhHNJckW7XE/3KsM/z6WJElXmMyrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Imvi4AOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34696C4CEF1;
+	Fri,  5 Sep 2025 18:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757095381;
+	bh=hAJ4x2W+ROFMjcNY1H+cl3OVZvsIOc93Nsd1wiY/2aE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Imvi4AOTOGUvNfESIb6chOwQnvzxZAyS9BmPWSaKINeEifc3n6FVzsp88c+h+/wdR
+	 4EgFVZpGUrx+acUYbYFiAXRgESG8xI1eAzxPmiNV2nwgYFQ3oPO+9zxvZ7SkYbaonI
+	 leLkOR57WCVdib7UAKKu+cZXPghGh4cuS/uIkzGMu0AUsyDVrRRIT1dd1l5mwFH6mX
+	 sZ5dZQxg++4ZEd261+NHxNlael/23r0U6nbK1BBgwO8iRWomA84+TiFFNyGcN5ycF0
+	 L3up9g5rZcqE4fxG6sm9KdtLb3JPN8NsWvR2orjIB/oqyWROS9ANnb/ZmRKUs0R91m
+	 EPB8nd9Rajaxw==
+Date: Fri, 5 Sep 2025 11:02:56 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Paul Barker <paul@pbarker.dev>
+Cc: Justin Stitt <justinstitt@google.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gen_compile_commands: Look in KBUILD_OUTPUT if set
+Message-ID: <20250905180256.GA319413@ax162>
+References: <20250905-gen_compile_commands-v1-1-9f5194542d4d@pbarker.dev>
+ <3fya5rij6amcwt36jthyezkzov44m6rdvlacymqfpbkcmzrnw4@fymsxhcqq6tj>
+ <e09dce93d521a89e3820a91e7c319d680cae203f.camel@pbarker.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,53 +61,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLl98MQs-FlHo6bW@kernel.org>
+In-Reply-To: <e09dce93d521a89e3820a91e7c319d680cae203f.camel@pbarker.dev>
 
-On Thu, Sep 04, 2025 at 02:54:24PM +0300, Mike Rapoport wrote:
-> On Thu, Sep 04, 2025 at 02:51:14PM +0300, Mike Rapoport wrote:
-> > On Wed, Sep 03, 2025 at 11:59:17AM -0700, Vishal Moola (Oracle) wrote:
-> > > free_pages() should be used when we only have a virtual address. We
-> > > should call __free_pages() directly on our page instead.
+Hi Paul
+
+On Fri, Sep 05, 2025 at 06:26:32PM +0100, Paul Barker wrote:
+> On Fri, 2025-09-05 at 09:34 -0700, Justin Stitt wrote:
+> > On Fri, Sep 05, 2025 at 11:17:43AM +0100, Paul Barker wrote:
+> > > If someone is already using the KBUILD_OUTPUT environment variable to
+> > > specify the directory where object files are placed, they shouldn't need
+> > > to repeat the same information to gen_compile_commands.py.
 > > > 
-> > > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > > Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > > Signed-off-by: Paul Barker <paul@pbarker.dev>
 > > > ---
-> > >  arch/x86/mm/init_64.c          | 2 +-
-> > >  arch/x86/platform/efi/memmap.c | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >  scripts/clang-tools/gen_compile_commands.py | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
 > > > 
-> > > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > > index b9426fce5f3e..0e4270e20fad 100644
-> > > --- a/arch/x86/mm/init_64.c
-> > > +++ b/arch/x86/mm/init_64.c
-> > > @@ -1031,7 +1031,7 @@ static void __meminit free_pagetable(struct page *page, int order)
-> > >  		free_reserved_pages(page, nr_pages);
-> > >  #endif
-> > >  	} else {
-> > > -		free_pages((unsigned long)page_address(page), order);
-> > > +		__free_pages(page, order);
-> > >  	}
-> > >  }
+> > > diff --git a/scripts/clang-tools/gen_compile_commands.py b/scripts/clang-tools/gen_compile_commands.py
+> > > index 96e6e46ad1a702cb0fad5d524a9a02d222b236ec..7b94a2ffba0b4d5f1290b51bd602fb3f33acce6a 100755
+> > > --- a/scripts/clang-tools/gen_compile_commands.py
+> > > +++ b/scripts/clang-tools/gen_compile_commands.py
+> > > @@ -39,8 +39,9 @@ def parse_arguments():
+> > >      parser = argparse.ArgumentParser(description=usage)
 > > >  
-> > > diff --git a/arch/x86/platform/efi/memmap.c b/arch/x86/platform/efi/memmap.c
-> > > index 061b8ecc71a1..023697c88910 100644
-> > > --- a/arch/x86/platform/efi/memmap.c
-> > > +++ b/arch/x86/platform/efi/memmap.c
-> > > @@ -42,7 +42,7 @@ void __init __efi_memmap_free(u64 phys, unsigned long size, unsigned long flags)
-> > >  		struct page *p = pfn_to_page(PHYS_PFN(phys));
-> > >  		unsigned int order = get_order(size);
+> > >      directory_help = ('specify the output directory used for the kernel build '
+> > > -                      '(defaults to the working directory)')
+> > > -    parser.add_argument('-d', '--directory', type=str, default='.',
+> > > +                      '(defaults to $KBUILD_OUTPUT (if set) or the working directory)')
+> > > +    parser.add_argument('-d', '--directory', type=str,
+> > > +                        default=os.environ.get('KBUILD_OUTPUT', '.'),
+> > >                          help=directory_help)
 > > >  
-> > > -		free_pages((unsigned long) page_address(p), order);
+> > >      output_help = ('path to the output command database (defaults to ' +
+> > > 
 > > 
-> > Could be just free_pages((unsigned long)phys_to_virt(phys), order), then
-> > the page is not needed at all.
+> > Thinking out loud: It might make sense to also change the default output
+> > path in some cases but not in all cases. For my clangd setup in vim, it
+> > does some discovery for a compile_commands.json and I have some
+> > different ones in various build-* directories -- I guess it'd be cool if
+> > they were automatically placed in their appropriate spot. With all that
+> > being said probably YAGNI.
 > 
-> Or even __free_pages(phys_to_page(phys), order);
+> I think it makes sense to place the output file in the current directory by
+> default if you run gen_compile_commands.py directly.
+> 
+> The `make compile_commands.json` target places it in the output directory, and
 
-Right. It actually looks like we could inline this whole block if we
-really wanted to...
+Yeah, I think it should be made clearer in the commit message that this
+change should only impact people who run the script manually. When it is
+generated through the compile_commands.json make target (which is the
+preferred way IMO), KBUILD_OUTPUT should already be respected because
+gen_compile_commands.py is run with $(objtree) as the current working
+directory.
 
-__free_pages(phys_to_page(phys), get_order(size));
+I am fine with the actual contents of the change though, it does not
+feel like much of a burden to support this scenario.
 
-Should I send a fixup (or v4) with this change?
+> `make rust-analyzer` does the same for the rust-project.json file. I did think
+> about whether we should change these, since clangd and rust-analyzer look for
+> the relevant files in the source tree or its parent directories. But people may
+> be using multiple output directories for different configs or archs, so writing
+> the files to the source tree isn't a good default for everyone.
+
+Yeah, I do not think this should be generated in the source tree
+unconditionally since those commands are tied to that build directory
+due to CONFIG_ options and such.
+
+Cheers,
+Nathan
 
