@@ -1,210 +1,126 @@
-Return-Path: <linux-kernel+bounces-802441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5AEB4526D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:04:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8727B45262
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DD23B5CF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B6A7BA665
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAA230AD06;
-	Fri,  5 Sep 2025 09:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A324D599;
+	Fri,  5 Sep 2025 09:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="u3Hpc2fg"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="pi8XHduV"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D028468C;
-	Fri,  5 Sep 2025 09:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46792459E7;
+	Fri,  5 Sep 2025 09:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062964; cv=none; b=ce9jOvdQ8N4uPXPx2Q3VGsimzU23BcYumJEjcY07YGXFERNAnoIk630317Zi7QtcEirZ5rtETpFPhiey3HJI4b1CfF3YG++Wv4/0azkFziJ0wD3G6c/lC4pcPP4SV/bc5HtzbWvFNyFWItL6rK++8AM8pl91uU6SHJDx2xl+OS0=
+	t=1757062940; cv=none; b=tkg9JogRtU5z4GRka7hS179MbcwAgnFnfxVOCSf7KJsfuPBuYQq4pMzSEOiJW5/z4hMwqC1GHHQs0vRQYLgFHP+S17UF2dJuNv5J3ZND8VRJrj0FEdmY+lb1A+0wg3Nb8lyKXWQVFH3xBlOsTMC3C4xNHvROn1D7tfmD59LlM4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062964; c=relaxed/simple;
-	bh=Y0krQ/dhwVEvyq75DSLzb/wzwZ/mZamFxcekM86ZgJw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=U1g9hT0d4xdbmgoFlvJl556QbCVj2RLoGnoNAZFJwKKR3tYbP0FOPukrnMhteeJb40NZK0H5iuNIRB9UYP6T36iTChbBQ/IiMrFrnfmxj2VwQwpVx+c95IboSsePLKDru5wbfGmzup0GwqdwjcnGsvP9wpYLVAX9qcKmEoVpnSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=u3Hpc2fg; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 17EA74E40C32;
-	Fri,  5 Sep 2025 09:02:40 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D54AA606C5;
-	Fri,  5 Sep 2025 09:02:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A86AB102F1D40;
-	Fri,  5 Sep 2025 11:02:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757062958; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=EDM06GeR+DIfdwsC7qFlc6kZpFptQC37v7RnCGNQQKY=;
-	b=u3Hpc2fgxgudUL1L7iVhLC/HJ6hJFJp3owJHuqHzqSR/F+RFOeZQXHU++sPksWik/VpHZ7
-	n4ThcCSUb9T/cnX4HUV7sXfu9taxSru6Qi4dGl3U5LrvPS/mrK+BFq9dOdx/SLi9Wlmlst
-	DP2Ph0MTF1kSUQINhx0HqbWLYHyv5bqvcN8PN3eTiiNkYmoOghzrZ6Xk8yCrWLIA6IphKw
-	LMuaVu869ncqTjA0Y6nbscZRKOszn1TfngNf6yubsHw4DbRUyz2UtEzbdqA5OSXj3hEr3k
-	iBzF0T123MCy8QP1KH0dHfa1rP0UmnmFVuYRNZ0ywQMhuINwRD1M2ebq3jpnUQ==
+	s=arc-20240116; t=1757062940; c=relaxed/simple;
+	bh=b6pNNu1kZuCqmC2pn3qZj6MsJda0RifZCd6eEAHIVpQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K9rnMOAh6yV8i3ghetljiHUJSPaTFOK+iWMSor915Ob4C3jsA2shWajjFv8K47ibpNOcWcQ4GKUmy7yGlWenOxJcTjl0RbjkUK/RSPQ5RyvI3ImIMDAdfdW6OiGlenJAVuZup2ze++Bfb9p1BUD5SosbIlbpap4zmMmGY/syHOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=pi8XHduV; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=9NszR2Bf8DLTmFmz7B9WrX9IE8Qe4vm+3b/4QW49/qg=; t=1757062936;
+	x=1757667736; b=pi8XHduV73FzMVzGUiqCOG0vzqtjK1D6dr/s8lcyJy2M/ISkDIHIQX+HewC0R
+	JBgfqR4zZYlx4eyG4XlbjQ6VpseWBnYyzJGeoKi/m3nBFKGegvsCGJ8owIlKa8GzrVHg7AKdQo2DP
+	tUanyRuDU4nQuWlA83HNoyYNomAIRo9Y6tlfy0XBQBTaIYY+L8DHTO3AzURXRJuCjPOckRc5PsT0Q
+	SKPzKs5TDKUNk0Au94z+I74B+RsFaynOQxcQJyQ6Ta1d96WEyYb8R5VPuzLZr18tsTMeApvC19QQV
+	D8D7X5anrSS6hpv7NWI4Mbk7NpHOnzn36ZKXGFA9RX1pqU7EGA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uuSKd-00000003JN3-3UMl; Fri, 05 Sep 2025 11:02:07 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uuSKd-00000000BTu-2b4S; Fri, 05 Sep 2025 11:02:07 +0200
+Message-ID: <129fc4699cb74035813b199651282e741c8838cc.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for Niagara
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Andreas Larsson <andreas@gaisler.com>, Rene Rebe <rene@exactcode.com>, 
+	kernel@mkarcher.dialup.fu-berlin.de
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+	anthony.yznaga@oracle.com
+Date: Fri, 05 Sep 2025 11:02:07 +0200
+In-Reply-To: <8deb9ed8-6c12-4fef-a78c-028de7928803@gaisler.com>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+	 <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
+	 <20250902.184011.440504961051160142.rene@exactcode.com>
+	 <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
+	 <8deb9ed8-6c12-4fef-a78c-028de7928803@gaisler.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Sep 2025 11:02:03 +0200
-Message-Id: <DCKQTNSCJD5Q.BKVVU59U0MU@bootlin.com>
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, "Harini Katakam"
- <harini.katakam@xilinx.com>, "Richard Cochran" <richardcochran@gmail.com>,
- <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Sean Anderson" <sean.anderson@linux.dev>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net v4 5/5] net: macb: avoid double endianness swap in
- macb_set_hwaddr()
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250820-macb-fixes-v4-0-23c399429164@bootlin.com>
- <20250820-macb-fixes-v4-5-23c399429164@bootlin.com>
- <aKXo_jihNKyJmxVQ@shell.armlinux.org.uk>
-In-Reply-To: <aKXo_jihNKyJmxVQ@shell.armlinux.org.uk>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hello Russell,
+Hi,
 
-On Wed Aug 20, 2025 at 5:25 PM CEST, Russell King (Oracle) wrote:
-> On Wed, Aug 20, 2025 at 04:55:09PM +0200, Th=C3=A9o Lebrun wrote:
->> writel() does a CPU->LE conversion. Drop manual cpu_to_le*() calls.
->>=20
->> On little-endian system:
->>  - cpu_to_le32() is a no-op (LE->LE),
->>  - writel() is a no-op (LE->LE),
->>  - dev_addr will therefore not be swapped and written as-is.
->>=20
->> On big-endian system:
->>  - cpu_to_le32() is a swap (BE->LE),
->>  - writel() is a swap (BE->LE),
->>  - dev_addr will therefore be swapped twice and written as a BE value.
+On Fri, 2025-09-05 at 10:04 +0200, Andreas Larsson wrote:
+> On 2025-09-02 18:47, John Paul Adrian Glaubitz wrote:
+> > On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
+> > > From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> > >=20
+> > > > Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to acc=
+urate exception reporting.")
+> > > > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de=
 >
-> I'm not convinced by this, I think you're missing something.
->
-> writel() on a BE or LE system will give you bits 7:0 of the CPU value
-> written to LE bit 7:0 of the register. It has to be this way, otherwise
-> we would need to do endian conversions everwhere where we write simple
-> numbers to device registers.
->
-> Why?
->
-> Remember that on a LE system with a 32-bit bus, a hex value of
-> 0x76543210 at the CPU when written without conversion will appear
-> as:
-> 	0 on bus bits 0:3
-> 	1 on bus bits 4:7
-> 	...
-> 	6 on bus bits 24:27
-> 	7 on bus bits 28:31
->
-> whereas on a BE system, this is reversed:
-> 	6 on bus bits 0:3
-> 	7 on bus bits 4:7
-> 	...
-> 	0 on bus bits 24:27
-> 	1 on bus bits 28:31
->
-> The specification is that writel() will write in LE format even on
-> BE systems, so there is a need to do an endian conversion for BE
-> systems.
->
-> So, if a device expects bits 0:7 on the bus to be the first byte of
-> the MAC address (high byte of the OUI) then this must be in CPU
-> bits 0:7 as well.
->
->
-> Now, assuming that a MAC address of AA:BB:CC:DD:EE:FF gets read as
-> 0xDDCCBBAA by the first read on a LE machine, it will get read as
-> 0xAABBCCDD on a BE machine.
->
-> We can now see that combining these two, getting rid of the
-> cpu_to_le32() is likely wrong.
->
-> Therefore, I am not convinced this patch is actually correct.
+> > >=20
+> > > Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # UltraSparc T4 SPARC =
+T4-1 Server
+> >=20
+> > Thanks for the testing! However, this actually needs to be tested on a =
+SPARC T1
+> > as both T2 and T4 have their own implementation that is being used. Tes=
+ting on a
+> > T4 will therefore not invoke this particular code unless you modify the=
+ kernel in
+> > head_64.S to employ the Niagara 1 code on Niagara 4.
+>=20
+> Did you have the fourth patch, that is for Niagara 4, applied as well
+> when you did this testing? If so, we could add your Tested-by to that
+> patch instead.
 
-Thanks for the above, in-detail, explanation. I agree with it all.
-I've always have had a hard time wrapping my head around endianness
-conversion.
+I just talked to Rene in person and he confirmed that he applied all patche=
+s and
+tested on SPARC T4. Thus, please add his Tested-by to the Niagara 4 patch a=
+s:
 
-Indeed the patch is wrong: the swap is required on BE platforms.
-My gripe is more with the semantic of the current code:
+Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # on Oracle SPARC T4-1
 
-   bottom =3D cpu_to_le32(*((u32 *)bp->dev->dev_addr));
-   macb_or_gem_writel(bp, SA1B, bottom);
-   top =3D cpu_to_le16(*((u16 *)(bp->dev->dev_addr + 4)));
-   macb_or_gem_writel(bp, SA1T, top);
+(also, to be consistent with my tag, we tested on the same model).
 
-Notice how:
- - The type of the argument to cpu_to_le32(); pointer is to a CPU-endian
-   value (u32) but in reality is to a BE32.
- - We apply cpu_to_le32() to get a swap but the semantic is wrong; input
-   value is BE32 that we want to turn into CPU-endian.
- - Above two points apply to `u16 top` as well.
- - writel() are unrelated to the issue; they do the right thing by
-   writing a CPU value into a LE device register.
+Adrian
 
-Sparse is complaining about the second bulletpoint; it won't complain
-about the first one because it trusts that you know what you are doing
-with explicit casts.
-
-   warning: incorrect type in assignment (different base types)
-      expected unsigned int [usertype] bottom
-      got restricted __le32 [usertype]
-
-If we want to keep to the same structure, this does the exact same but
-its semantic is more aligned to reality (to my eyes):
-
-   bottom =3D le32_to_cpu(*((__le32 *)bp->dev->dev_addr));
-   macb_or_gem_writel(bp, SA1B, bottom);
-   top =3D le16_to_cpu(*((__le16 *)(bp->dev->dev_addr + 4)));
-   macb_or_gem_writel(bp, SA1T, top);
-
-Notice how:
- - Casts are fixed to signal proper types.
- - Use le32_to_cpu().
-
-Sparse is happy and code has been tested on a BE platform.
-Assembly generated is strictly identical.
-
-However, I think we can do better. Second option:
-
-   const unsigned char *addr =3D bp->dev->dev_addr;
-
-   bottom =3D addr[0] << 0 | addr[1] << 8 | addr[2] << 16 | addr[3] << 24;
-   top =3D addr[4] << 0 | addr[5] << 8;
-
-This is a bit of a mouthful, what about this one?
-
-   bottom =3D get_unaligned_le32(addr);
-   top =3D get_unaligned_le16(addr + 4);
-
-It is my preferred. I found those helpers reading more code that reads
-the `unsigned char *dev_addr` field. Explicit and straight forward.
-
-Can you confirm that last option fits well?
-
-Thanks Russell,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
