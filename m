@@ -1,183 +1,96 @@
-Return-Path: <linux-kernel+bounces-803848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4FAB46623
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:48:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69584B46624
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495801694CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD161885A85
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95C928689B;
-	Fri,  5 Sep 2025 21:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DAE286419;
+	Fri,  5 Sep 2025 21:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqJNDZ5X"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A257DYfj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAD26B951;
-	Fri,  5 Sep 2025 21:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D022129B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108927; cv=none; b=gMZxGUekY1emVK+6coBReja4V0kEbypO2uVAaz0j4KwSmbk0MWVEbsPcsxrvDPDbNY65ib05Lua0Cqapji+JTKIidrEarwpUF/sIzLTywny1AWewzaHimP9Zr6gwoXynKoeTSPj90iY4hUZfug4tjkYvzvkG82bI+1YAN2ekqhI=
+	t=1757108965; cv=none; b=u3jso1nJu8yPUGo2Nh8smsKTzUqUw2G2PbycLlVVRP2iMn9AQaIQo5pUPjD+4hR14HgVYxoqiZ3QxNpq1hX16QYw/n+QBoFiiyfNpKJKSVesCk7jNTt5BBvXEXKwe9RnGFbxoIrR5mMeehnvRJcRHdh9FBaDufMM24oRXTilB24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108927; c=relaxed/simple;
-	bh=xUNNlqwOESV0eE+tUpWmOnuKApsTiklZcSE/4hYwGlw=;
+	s=arc-20240116; t=1757108965; c=relaxed/simple;
+	bh=8rqxU2P26RfovZdy3bMvysD1ArZ5IT9wXUXD021PhVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJohnxtGkS09Y/Ti5bhPTh4KjCEvc61AMC9xgsGw5IG2pbd+uzdvCz6I/bYL06auTJ6ukIjxKRmoz9GwLlash94eZioJcjpF6NZEJAEwr7M/GsFiXBesPqomok6SZ7FAuSn7RoCIWLMvxs5KbG/256DcYz0/YSXNwkooN67Pk8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqJNDZ5X; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d60501806so25246097b3.2;
-        Fri, 05 Sep 2025 14:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757108924; x=1757713724; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TlvGjgOOrYou8qPPCBam0uB1ddfexbPjHc8LzQs0nbU=;
-        b=CqJNDZ5XCZ9uxdV5wjjq+ECZKi8jl9dkNUa2+1e9pojOqTeJKWyG2ML1vNUjRCew9E
-         sfaWxTbhwfKkp44FS9hl7zsMjkx+V6O8DDw97pc9Whuklsjg6OHaqR1PCw31gV8lxNbZ
-         rB+Nt2qq8V07x6GPZM8lZaHRryxDppVaJYWR/yXyqxFuQ3I6sEyITjaJ/hDIk3GNeDEf
-         OowWFd9gxky5OQAFXloreVEZiRhGAhkOB689CT9FGecHUZkuRyBDHwz9uTaYAfwmVio8
-         ArZvH+mW5srbZJqJeoXRNn4pq5M4JLIAS9SlARQ5vxQ9TGJG41UfCMpnAPNPE4d3J3MH
-         MAaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757108924; x=1757713724;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TlvGjgOOrYou8qPPCBam0uB1ddfexbPjHc8LzQs0nbU=;
-        b=tB1HJHaG1bbGsnV01Tcfm5iW/O08rtEpwLEwm6kYHYnl4eWLxwEd0zH/ASAoDNGUGp
-         g0C63hqEQXsqRjHsBmFEDK2Lld/nqU1Hzi4Qq2qN1PX55mLeCa1Tw7JgBHFEp1uT38nZ
-         X7EpcZ0k3NoAhoPt5bTn2u/wB3HFsbj/64RlDmxZIjEM/ob2M0C5ZTer1pufQ+2PQha6
-         gyt92cMLj6qyZM5ZSygkgLUh4vzoH2WcAUuHR1G8VGM9PP3xjFGTgoNRSOvKWFJ+fTmk
-         g6JABh2DzsUcKWEbBP2qizXO5SXacQUjUMhF3VBU/UKjnY3E2x0wKYKUanrUUrRyPXwy
-         BkfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVF9yi23PWzMT10Gw/Z7Ro84bi3S7xvBuGMyyzaTx7hTd8hWPzrUPejJyLDIz8r92BZmKNErQff69WkpzW14+A=@vger.kernel.org, AJvYcCWU1tTcr3N/BUymG4Mto4ThlWpVM6MBpvbg/G/aaVg3egGX34RRTo6Ozd63M+XnjsGpPhTt+B5dahj3pbT/@vger.kernel.org, AJvYcCXidz08b4DWXQ2PAIQnzSlNri2sTMA1JoRKf3LMBSrXH8bY4ojvcm40yssKwFLMJB1NDWuv5NePspaSHVndIbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpcfjkq73SimQjpmkAzcuchw9LMKE7NNjGOVjzORIruEMQF5tG
-	8WxB+8dJaRRO0Vpr1yDUeu7YF683fvFh6yezeDhqPe02nxsCklu8hmZM
-X-Gm-Gg: ASbGncvx6MOArl8/2ckZCkpehtWaij4yJoHvpQfdkjNeMnI+0Xoc5C0jvS5vxXghsmB
-	5amshdL6ledBGacSI0mikhbsXu69+CAChiIcH6r/hrT4GSiGOZ7wPjhZmEJV/G7z70gnvXeoHTI
-	ohbaGcMYyjsT8yKyky/KzVgxfpvMO6WmFZzxKsA68kmXeB5uAMrxvdIhQ+rRCWZPaM7oTBXVBwm
-	qW7sEDu4uOlCNXOGnkFeD84+xQIOsfgXV+IwJaGlZOwDeTooXn1+LSJ09NITzoADRHWIlWVqR0U
-	UfHi/FZ0adhhYuIWspIJ3gsWqHC0HyIEjUqwmbliermRqTQxOFHzagfMxDqsW2FEnyCGwx5EA0v
-	dYCeeHNseLvulRJ8HSns=
-X-Google-Smtp-Source: AGHT+IGaw+gqiKbD8tSP3wYYMKk+NhXYGOt0QQgdzAKGLPBQortYFRwLmY/VZvXpIwDyWbzuX71RBQ==
-X-Received: by 2002:a05:690c:6e93:b0:723:88f6:c332 with SMTP id 00721157ae682-727f31a8b33mr4017117b3.18.1757108924205;
-        Fri, 05 Sep 2025 14:48:44 -0700 (PDT)
-Received: from localhost ([2601:347:100:5ea0:a745:ec:6416:ba44])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a8329a4dsm32770907b3.22.2025.09.05.14.48.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 14:48:43 -0700 (PDT)
-Date: Fri, 5 Sep 2025 17:48:42 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Burak Emir <bqe@google.com>, Kees Cook <kees@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Carlos LLama <cmllamas@google.com>,
-	Pekka Ristola <pekkarr@protonmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Philip Li <philip.li@intel.com>
-Subject: Re: [PATCH v15 0/5] rust: adds Bitmap API, ID pool and bindings
-Message-ID: <aLtautgAVKdqNv2R@yury>
-References: <20250904165015.3791895-1-bqe@google.com>
- <aLnURXW_ZiX2iJd_@yury>
- <CANiq72==48=69hYiDo1321pCzgn_n1_jg=ez5UYXX91c+g5JVQ@mail.gmail.com>
- <aLrjNze2_L_vAnWX@yury>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DCe5q0FX1FIwVazocjPFIqxNTP+1UsgFIObpyLio/xWqyoS9rkoHHlCCgIeWHFdw5X+Drf3caHIk8IQUU91vAfhHplG7bCjH6dpZzm7A/EeqWidqr/uhoQAde2xhWXg/kQmSB790rL6yTD8YFfVwtc5/Wk/PPNRB2jkUITzxRvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A257DYfj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7EA6C4CEF1;
+	Fri,  5 Sep 2025 21:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757108965;
+	bh=8rqxU2P26RfovZdy3bMvysD1ArZ5IT9wXUXD021PhVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A257DYfjQbLn8wfTw8C2eXsFdJ6qMxlepGDijsenuTfCBmMh+6lBfrHvwZhFiKoet
+	 FqcwvCM7JXkR0HGZOM6Aao38PM6VlrBe4UN18BU4qRWseDYFZw0KxPNlIk3fuvqVPn
+	 GpttiZeEn7P7zGRh/o6rVYIARhBkyzecDY1NHCpFul4g4fFsbHrI4GQwTRjikAS/bl
+	 IfM7s4g+6WtpbKjLpKtp/ULW8dYbcU2w2jpy9Gunkb317iEvocwhp5MZ0hXk7duIHW
+	 DyvRSY2vNLBvu1hpd//2Xc/AfUimSUAm/z5Rz6wAVYT1T9ZfzjvvVYqRmYt6Ufj58z
+	 36mit388J8cIw==
+Date: Fri, 5 Sep 2025 15:49:23 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
+Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	cassel@kernel.org, dlemoal@kernel.org, kamaljit.singh1@wdc.com
+Subject: Re: [PATCH v1 1/1] nvme-core: exclude ioccsz/iorcsz checks for admin
+ ctrlr
+Message-ID: <aLta40FO1Ud6TZ4T@kbusch-mbp>
+References: <20250905211002.1937414-1-kamaljit.singh@opensource.wdc.com>
+ <20250905211002.1937414-2-kamaljit.singh@opensource.wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLrjNze2_L_vAnWX@yury>
+In-Reply-To: <20250905211002.1937414-2-kamaljit.singh@opensource.wdc.com>
 
-(Actually adding Philip in the list.)
+On Fri, Sep 05, 2025 at 02:10:01PM -0700, Kamaljit Singh wrote:
+> An administrative controller does not support I/O queues, hence it
+> should exclude existing checks for IOCCSZ/IORCSZ.
+> 
+> Signed-off-by: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
+> ---
+>  drivers/nvme/host/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index d67545bd7abb..ac72bae800a9 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3491,14 +3491,14 @@ static int nvme_check_ctrl_fabric_info(struct nvme_ctrl *ctrl, struct nvme_id_ct
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (!nvme_discovery_ctrl(ctrl) && ctrl->ioccsz < 4) {
+> +	if (!nvmf_discovery_ctrl(ctrl) && !nvme_admin_ctrl(ctrl) && ctrl->ioccsz < 4) {
+>  		dev_err(ctrl->device,
+>  			"I/O queue command capsule supported size %d < 4\n",
+>  			ctrl->ioccsz);
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (!nvme_discovery_ctrl(ctrl) && ctrl->iorcsz < 1) {
+> +	if (!nvmf_discovery_ctrl(ctrl) && !nvme_admin_ctrl(ctrl) && ctrl->iorcsz < 1) {
 
-On Fri, Sep 05, 2025 at 09:18:50AM -0400, Yury ooNorov wrote:
-> + Philip Li <philip.li@intel.com>
-> 
-> On Fri, Sep 05, 2025 at 11:29:22AM +0200, Miguel Ojeda wrote:
-> > On Thu, Sep 4, 2025 at 8:02 PM Yury Norov <yury.norov@gmail.com> wrote:
-> > >
-> > > Added in bitmap-for-next for testing. Thanks!
-> > 
-> > linux-next breaks with CONFIG_RUST_BITMAP_HARDENED=y:
-> > 
-> >      error[E0425]: cannot find function `owned_bitmap_out_of_bounds`
-> > in this scope
-> >        --> rust/kernel/bitmap.rs:484:1
-> >         |
-> >     484 | #[kunit_tests(rust_kernel_bitmap)]
-> >         | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ not found in this scope
-> > 
-> > because the proc macro doesn't support `cfg`s (moving it below
-> > `#[test]` wouldn't work either). I have filled:
-> > 
-> >     https://github.com/Rust-for-Linux/linux/issues/1185
-> > 
-> > so that we don't forget about it.
-> > 
-> > Meanwhile, I would recommend e.g. moving the `cfg` inside the
-> > function, something like:
-> > 
-> >     diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-> >     index 6e0824579781..2f00e91e9c35 100644
-> >     --- a/rust/kernel/bitmap.rs
-> >     +++ b/rust/kernel/bitmap.rs
-> >     @@ -551,18 +551,21 @@ fn bitmap_set_clear_find() -> Result<(), AllocError> {
-> >              Ok(())
-> >          }
-> > 
-> >     -    #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
-> >          #[test]
-> >          fn owned_bitmap_out_of_bounds() -> Result<(), AllocError> {
-> >     -        let mut b = BitmapVec::new(128, GFP_KERNEL)?;
-> >     +        #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
-> >     +        {
-> >     +            let mut b = BitmapVec::new(128, GFP_KERNEL)?;
-> >     +
-> >     +            b.set_bit(2048);
-> >     +            b.set_bit_atomic(2048);
-> >     +            b.clear_bit(2048);
-> >     +            b.clear_bit_atomic(2048);
-> >     +            assert_eq!(None, b.next_bit(2048));
-> >     +            assert_eq!(None, b.next_zero_bit(2048));
-> >     +            assert_eq!(None, b.last_bit());
-> >     +        }
-> > 
-> >     -        b.set_bit(2048);
-> >     -        b.set_bit_atomic(2048);
-> >     -        b.clear_bit(2048);
-> >     -        b.clear_bit_atomic(2048);
-> >     -        assert_eq!(None, b.next_bit(2048));
-> >     -        assert_eq!(None, b.next_zero_bit(2048));
-> >     -        assert_eq!(None, b.last_bit());
-> >              Ok(())
-> >          }
-> 
-> Thanks for the testing, Miguel! I've folded-in your fix and added
-> your co-developed-by tag. Please let me know if it doesn't work for
-> you.
-> 
-> Philip, is it possible to add CONFIG_RUST_BITMAP_HARDENED=y/n in your
-> testing too?
-> 
-> Thanks,
-> Yury
+Excessive line length over 80 chars.
+
+Perhaps, though, we should have a helper to indicate IO controllers
+rather than chaining conditions for everything that isn't one.
 
