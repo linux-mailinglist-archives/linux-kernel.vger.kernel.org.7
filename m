@@ -1,152 +1,93 @@
-Return-Path: <linux-kernel+bounces-801900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C15B44B5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0A8B44B55
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0C5BA064B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6A3A052E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BA41F4C84;
-	Fri,  5 Sep 2025 01:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399361E22E9;
+	Fri,  5 Sep 2025 01:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RD+pAQH1"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfe/GuOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D3EB661;
-	Fri,  5 Sep 2025 01:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DEC20EB;
+	Fri,  5 Sep 2025 01:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757037061; cv=none; b=nO1tddJzN5RzEd6j56bnkEG/iA8pPcL6fsYOXhRGja/uTeEjeHaV8M64W9Ux7ueSttwHKcqg1/JTEP49vb5Xqt0P7NoPtuyyr9At/mzvTujWQ8BIJ2vu97lTO2B0DP5cSDmjR8//ed8LhthveyCPmW2fLSj//1EIK8qLv/lpX78=
+	t=1757036880; cv=none; b=RAdDcq1d4izBWM+b6OKndrTIle9wFlzFEb/CIMMHahtub7uHcUpcrPpbhBlEwwvtoydImxfEhYDFrfL50whZku3J2kX1QDmiRAYc3Y+m4Su85N93UaKi8p8xLnigkFUZpkt3ve28iM+O+/VDahVbWcilEjpH3Vin/v21iAG2ml0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757037061; c=relaxed/simple;
-	bh=mtUCiZFkROrmNmZueNDQiWOeAr2ehmsSpZK0qNYFgkI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qiol/+mYpgQBqfOtrMXbT2GnLWlhDS16z5Ax/oDSTgoVTH/+foDfw+dkPKwdek8wQUsqBzGtfrTiBN7XnCv/EtwHyZ2v4A0MHNhk4aQ3lsxkjNaOsYojoUEllpPfLbF8hGJ/PztBboX918JsGAyADdjBZIvpxwqp0Tr8DKYt5Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RD+pAQH1; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-30ccea8a199so1681024fac.2;
-        Thu, 04 Sep 2025 18:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757037059; x=1757641859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8JY0OivZfKZISUUtnUE77EU75I1wp67Mbf/W+WdkKKE=;
-        b=RD+pAQH1aqQEM5sazVYmKev95fa3DNuPejOposje2zr4HsLas+dsAmyL/GC+GG+JPa
-         yM+W0vNMabqbRHmZaqqzWmJGIPK1Rl/xZ4O0QKmWjyO7KvcbsodZslU6jdpg9TaQl+NW
-         tBiSFccHuo4tOfUEvOGc/5MadlFufuJAdFy7AhDdpehD5s/6TFZZSFTyPMgHJ/yjFuGT
-         04YVruPFwS7Qeo6f49fXvAipUWCjJJVIyYJlR32Chcf4QZRx4KM+6AIi7hZ4wRcGdKd5
-         HMh/Nes7Wo7k7fcmTT45Xs2ptp86cuZUhwru7JrwGHA5WxCCTgsTOrOEJcRrYyOvRGuT
-         iusA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757037059; x=1757641859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8JY0OivZfKZISUUtnUE77EU75I1wp67Mbf/W+WdkKKE=;
-        b=a4eM/g5MesZbCxQr3uXDqil3SecaJINFRDIbdyk3eWHmyIr5td8vIE1Z/x/Cp0MfsN
-         AOrvTriv8SHC20s3eFTBwLU1F2C+9cbX88NCPASuc5ffCAQXWcJpWYQqVHoirGvV74hQ
-         cqSofNd0TVJaXSijIjelyES2Zeu2FJhjwhC6R5CkEIN9bLsM3bOJYu7AGTixsiM/NCn1
-         1JLdJIIEX9jkARaO5SkOGAVPCMTb6xlj5zS/okxPTXfQ9JbPTxnjG5GyUXGI3sUNVUiX
-         Ixb+XhZqYIBY9z+8b4cezIRPulrRR2oSavTcIob0n23vJxIHOthajJilhz2ORem05BMS
-         ma0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUtwBEA0YJl83aNSFbnGzR/jxKNF0+XMt6MGSF4pnkZEZHOOwOukWjd3smgAU2MAFXR7+BR90PfzKT4sKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgIoqCXcUlNQKpfPBYxwvDdD2luoYTwEd9P4zT2TMQpDBG4JNy
-	PQoA3FZoG5+N5r3Hi9uALBywbFnSAyKAxvmlXRC3O+zNhgBqBWcpSPwyg4St4CcH
-X-Gm-Gg: ASbGncvO3OP9lzYlQRbbEVHLoYI1AoxELhQiYPrstrNZsiJ5vC8L9iIT5CEeAiN14Wo
-	MY+cPwPTl/YtCj6010RIboAaeoqWJKape0VcXJr5T8+AD0QhvEigr21RM+PyXXSpdLSaymAI8D1
-	tDbbH2i64FLjupOT+sfgmo4/lFln84qTKxBgnvhTE9WBCttwu3rGMRWbIsr2wfZASKdo4rVGQyD
-	Dq5FbWxXZB9Pqb+6xjpahx+yfEdtSDb6eV2x8fNsMUWvefqW8zktcbAkjZIq/YMzl+NEbc82X8v
-	kGXAYncQ6bmDO3Jqaqxr/vc9wsQg0ZiMRr4K5lT92HzkWhT+400nCf2xYOV7Vxiqiw/iGYCUTGC
-	PuUz1NGri9+FaePPREHHq0NiDRwRQuaiv4KOaug==
-X-Google-Smtp-Source: AGHT+IEUOSHI82q+qUqzWnyKrSzQRvdztHSGTkGFLJQrV/Qab/Uy462NQfF+hyPQzgE+WUmNpDc60w==
-X-Received: by 2002:a05:6871:230c:b0:30c:9385:bf11 with SMTP id 586e51a60fabf-3196309acf7mr10018044fac.3.1757037058680;
-        Thu, 04 Sep 2025 18:50:58 -0700 (PDT)
-Received: from ryzoh.. ([2804:14c:5fc8:8033:c6df:ff74:ed73:ebff])
-        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-32128eaef7bsm229154fac.26.2025.09.04.18.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 18:50:58 -0700 (PDT)
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Subject: [PATCH] scsi: mpi3mr: Replace one-element arrays with flexible-array members 
-Date: Thu,  4 Sep 2025 22:43:45 -0300
-Message-Id: <20250905014345.7054-1-pedrodemargomes@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1757036880; c=relaxed/simple;
+	bh=nKN62gC4jkdDbMIOofqf7YTZbhCZ14cobe9mIKWrKv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FFaA7/7FR7zmxUmPhnfPedEPy6ASru0wT8M/Xmdc7toBeFjf/CZFJq7twn1v7NQMDSakqhaswhvDTEXvHut2fVoevBed+1sky4DuT1vvs/uT5/o8c3ut2rbqzGZFJX26d3Nbj+K7orqIAxa4oLU73lRXGURtzh2zeGZsAMdRzwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfe/GuOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9B47C4CEF0;
+	Fri,  5 Sep 2025 01:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757036879;
+	bh=nKN62gC4jkdDbMIOofqf7YTZbhCZ14cobe9mIKWrKv8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rfe/GuOpH8cuEJ12EXJjZnxs8Ao00R7lbvEgT0XnlAnjTPGcgGRTfCzYXpMwmE4re
+	 JB1amUpWAPGJivhw+cKL6KuPsBTsuQbOX6PahAv8pplZuRsz/Ni6QerYmSW2QqVxTX
+	 axOLcpsJsjs67pNZM8kmc7tn53I4bzAhMfSw04Pdx7w5YvtcAK33nmRv7ZvCPZBJ5m
+	 LP9b0MfjoYzQwVKLI9hO+oSZ/zcJQTflFQ3sQaLFUh+0e/9roVzeGIx5lWoMueii7p
+	 Hlr39DthJTA1kcp1gG4iaESqFyHc+AlGSQP880GSonx5SeeN2cvGKj08nQzQ3xrESI
+	 Mcgm106muHXOA==
+Date: Thu, 4 Sep 2025 18:47:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, Nicolas
+ Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Phil Elwell <phil@raspberrypi.com>, Jonathan
+ Bell <jonathan@raspberrypi.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
+Message-ID: <20250904184757.1f7fb839@kernel.org>
+In-Reply-To: <06017779-f03b-4006-8902-f0eb66a1b1a1@broadcom.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+	<06017779-f03b-4006-8902-f0eb66a1b1a1@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-One-element arrays are deprecated, and we are replacing them with flexible
-array members instead. So, replace one-element arrays with flexible-array
-members in multiple structures.
+On Thu, 4 Sep 2025 14:07:36 -0700 Florian Fainelli wrote:
+> On 8/22/25 02:34, Stanimir Varbanov wrote:
+> > Hello,
+> > 
+> > Changes in v2:
+> >   - In 1/5 updates according to review comments (Nicolas)
+> >   - In 1/5 added Fixes tag (Nicolas)
+> >   - Added Reviewed-by and Acked-by tags.
+> > 
+> > v1 can found at [1].
+> > 
+> > Comments are welcome!  
+> 
+> netdev maintainers, I took patches 4 and 5 through the Broadcom ARM SoC 
+> tree, please take patches 1 through 3 inclusive, or let me know if I 
+> should take patch 2 as well.
 
-Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
----
- include/uapi/scsi/scsi_bsg_mpi3mr.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/uapi/scsi/scsi_bsg_mpi3mr.h b/include/uapi/scsi/scsi_bsg_mpi3mr.h
-index f5ea1db92339..9e5b6ced53ab 100644
---- a/include/uapi/scsi/scsi_bsg_mpi3mr.h
-+++ b/include/uapi/scsi/scsi_bsg_mpi3mr.h
-@@ -205,7 +205,7 @@ struct mpi3mr_all_tgt_info {
- 	__u16	num_devices;
- 	__u16	rsvd1;
- 	__u32	rsvd2;
--	struct mpi3mr_device_map_info dmi[1];
-+	struct mpi3mr_device_map_info dmi[];
- };
- 
- /**
-@@ -248,7 +248,7 @@ struct mpi3mr_logdata_entry {
- 	__u8	valid_entry;
- 	__u8	rsvd1;
- 	__u16	rsvd2;
--	__u8	data[1]; /* Variable length Array */
-+	__u8	data[]; /* Variable length Array */
- };
- 
- /**
-@@ -259,7 +259,7 @@ struct mpi3mr_logdata_entry {
-  * @entry: Variable length Log data entry array
-  */
- struct mpi3mr_bsg_in_log_data {
--	struct mpi3mr_logdata_entry entry[1];
-+	__DECLARE_FLEX_ARRAY(struct mpi3mr_logdata_entry, entry);
- };
- 
- /**
-@@ -307,7 +307,7 @@ struct mpi3mr_bsg_in_hdb_status {
- 	__u8    element_trigger_format;
- 	__u16	rsvd2;
- 	__u32	rsvd3;
--	struct mpi3mr_hdb_entry entry[1];
-+	struct mpi3mr_hdb_entry entry[];
- };
- 
- /**
-@@ -416,7 +416,7 @@ struct mpi3mr_buf_entry_list {
- 	__u8	rsvd1;
- 	__u16	rsvd2;
- 	__u32	rsvd3;
--	struct mpi3mr_buf_entry buf_entry[1];
-+	struct mpi3mr_buf_entry buf_entry[];
- };
- /**
-  * struct mpi3mr_bsg_mptcmd -  Generic bsg data
--- 
-2.39.5
-
+Thanks for the heads up! Let me take patch 3 right now.
+I'm a bit unclear on where we landed with the parallel efforts to add
+the >32b address support :(
 
