@@ -1,206 +1,224 @@
-Return-Path: <linux-kernel+bounces-802983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1268B4591F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3171AB45925
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AF7F162982
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A69D5C40A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFB235336F;
-	Fri,  5 Sep 2025 13:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8DF3570AE;
+	Fri,  5 Sep 2025 13:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uUMTLApe"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2072.outbound.protection.outlook.com [40.107.212.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDLPRfxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E9F18C332;
-	Fri,  5 Sep 2025 13:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757079103; cv=fail; b=GwWwDHKsrtefkj7OjY8AuCKVvAxMUkUfAihnTQhD5BpSz7iTVycl1VwjSSwBCy2gxQmUh5lvOpKm2P6Puw1sXp9vG4ePtqgG+kuDzt74LACRWJNPMfbqvkGOxS6f1IQZ2OvR05kg/OHttRlr5UpJOl/GYX7jEyO6IOFVNllYnN0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757079103; c=relaxed/simple;
-	bh=s58iD2qrZKUIKuAiufO77kCJaQbi53NibRmlHcMUOIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Om8xzJjzmFz/5QYfiMHisGpl4vqaSXCrhLff3GB6DK3kBy9UsQE2KAJVCP/zXwFngger2j1X66qjnZMPyS7hjYE6TQsoyiOzip0S322Sd4Bf7dWDr8B28wWyP+9ZRCvFFTqw0Opyn86PprVhhgClYfpCRNSpYQHor2Tt5UFEJ3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uUMTLApe; arc=fail smtp.client-ip=40.107.212.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tnBCg3uz5jQuTEFp03Z5p95P2iMfU3690iK9q3bwDaMyzRtUZJKL4cxnkkKqw9oHt3KxAQ7c3oi9Tzn6BF3Ti6DjpVsS5CgLGOXuUvICg3X8BBmB7B5+ucZhHy8gbROKQjcoDxSaoATKPA5l15fsOS2EGvzQtXfTpkfY3A3ftGfU8grS49a21eFby704xC4GhFGuKpRNXlsoqvfowapOSRrnQJCxWmi626bGSnnaBD/FqpA920VXoxeb600a3rVWSNDwKUBNK5ctthUmu9Nvc6ScymExCMlOqCyaYjlCZhiUChVRXLUkoRdFyAQSzwOeDal3HorEPh4bIo2gn+XDnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OLgEmlj998TCq92QaqvKqY+pzWpEkBvyzfgCkvPx8XM=;
- b=k5abl16W4ofjp26iojb/Tu0uT7i94hgnmtHADL4u8Q30kcmfiQG4WWAVn8vcXrU+mugNFfziDBYOUYPaqHEZ/yDcobFjYY26PEj6R2vT6a4F5AR59N4zQj9hIBANBit6eQrCCbmLk+Nj8JLkGzXEnu4FTcMLBPyJZ/GP0YG5gv17zqM2QxD6dQzGFucUNYc18VPkOkvJiv0hD/mvmwKzdffkkH1+SisuqCdaUQi6qDPHER8gGe8RkF96Kju5ocmDlb1Rw5jjVjyw90S41LJHpoXNheeCU6/SRh9yImWa3H0n8BRnWaIk/ZfBGfGLHVC22fSm2Vr8U6iKst3mx9EaaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OLgEmlj998TCq92QaqvKqY+pzWpEkBvyzfgCkvPx8XM=;
- b=uUMTLApe6kESszjq0/5NMZ0fluS8mmdsAlBwJcI4sjUW6di5x3+7ZDh7ovDBag/mZUGtI2J1VPF94IIO42Nx6DI0sM6SgSAHS1Ib5yYfaGFDA/6cbzFcTNsS6UK+OlciXwKSRPZDTaizErm/OMn9/S63ln41eL9mEGcd/Kzl79sUq68CvVByOG0Bnx52ezir6IKbFR06M6vWT2sj9ns3ltMNIh/6t9ryb6zt4/FTAqJZ+yYfmIvQs2NnPi5KecEP6X4yORId6MXlkQrJnqxk17oGdGoQfWyZKRSPNPR4/vrLZLW0sIGREtKdzEtUFgGh3pDLqpMMhXvkglIPR7wgdQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by CYYPR12MB8871.namprd12.prod.outlook.com (2603:10b6:930:c2::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Fri, 5 Sep
- 2025 13:31:38 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
- 13:31:38 +0000
-Date: Fri, 5 Sep 2025 10:31:36 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: ankita@nvidia.com
-Cc: alex.williamson@redhat.com, yishaih@nvidia.com, skolothumtho@nvidia.com,
-	kevin.tian@intel.com, yi.l.liu@intel.com, zhiw@nvidia.com,
-	aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com,
-	targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com,
-	apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com,
-	anuaggarwal@nvidia.com, mochs@nvidia.com, kjaju@nvidia.com,
-	dnigam@nvidia.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 07/14] vfio/nvgrace-egm: Register auxiliary driver ops
-Message-ID: <20250905133136.GD616306@nvidia.com>
-References: <20250904040828.319452-1-ankita@nvidia.com>
- <20250904040828.319452-8-ankita@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904040828.319452-8-ankita@nvidia.com>
-X-ClientProxiedBy: YT4PR01CA0419.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10b::6) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6962C17B3;
+	Fri,  5 Sep 2025 13:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757079131; cv=none; b=qjtkbVM4sCfe4LZ3yLpQcsR4op3Hwi6n+/FSOYyoL/XHO4RHJq4sqkTkyR5YnBVVA+un89VZ0niKBIgDUq92wv2GtGz0XMbaO5soZQLKBoEML52DLvEUTtsBEs6SUHJ1hJt2bc0f9J6Gnl3F1MIi7KAjNJea/ta1By/yoGKRfps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757079131; c=relaxed/simple;
+	bh=8jAcdpkwkSpwOdJxvwA2Vj7xEHXguZJ+MKwk0qNCAa4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mAKpO5mBkMT8dz6BJOKtBxtpdNh+mAGJx1tI0yYQiuyH3sLYf9CW6e0yVdCqRXhBcXqUh+dcfdvrHjX94JKawHZtPdwwBz2Nz071xhdcpWaE5xp8u2VZpYRcNdSPcniL3YeLhvkwikagMZTRqsBJsiFd5TqmA5dsJ49oEjB2Yog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDLPRfxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF52EC116B1;
+	Fri,  5 Sep 2025 13:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757079131;
+	bh=8jAcdpkwkSpwOdJxvwA2Vj7xEHXguZJ+MKwk0qNCAa4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YDLPRfxE+TA2Q55nxy+S45umyans+pDRvwbObVt0bW3hJ3GKjbxPrVlX07NomP+MM
+	 gilJHDzfgmGFOcAFu0+loSilTzpkeDO9g9x8k2BAevsNOqWlkswrDpHfRJW58By2gZ
+	 h5T2iOat+XnnhSD9UwBeQ3xYHCYi7jaP+GtkcpXBdqab/ccFdCeVstKHtgcieR/3QH
+	 +KRTayLgDC1M/LhwjwPtXIccD6HoAsAvaea3u1dA7qTzCEzjxT3V+HO3EHQdCVNDFU
+	 /St9BM0FbaHx4JdEUTHAM1R9DDj8M5cKZD+5HIpQks7AUiitM6xvVlMUYXsHzcS8lI
+	 bWTNhY8srV4ig==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74526ca79beso1847717a34.0;
+        Fri, 05 Sep 2025 06:32:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3+NXTW3ZWLTIciU/ynYdAcepa5iFgqr735GLhaWGKax/AN48Eglt3LLVEwa7o4xwRbqVYI5ngHT/Mb4ho@vger.kernel.org, AJvYcCVetlqpV4XywqBkxaXooa1lRKwsALYk/cmO/Y5h35FtE1fwXZpjSsU4tr9KtcqykIKKOs6/pLnXB+nn@vger.kernel.org, AJvYcCWVKwfzqTXQyIKLuM6pWkL+pXYky10oxMSBObEQP8zKkE78Gxbnaqpdsq9/x77xHyw8QxKR9p3E77A=@vger.kernel.org, AJvYcCXvNjedoEvIla8PbMlSm8nkUPlvvrsp7BtdxhNrLsRGrOmxkwRRCTVuOe73jKwCT9rOPYLIv8APoU1o0g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzno1eoxmp07jd1M7X83eI5OgCimBs1YTDjBctGNPwNvoYmsE68
+	pgbI91nuEUkzOfqynABzYrPVF780EKkPpuED5M9NFQOtMvisSXgewk6iOfRRL8lzQM7eS+RMF+k
+	qPJMGnpP3uXQppdhY7dkMoPz2k0+X11c=
+X-Google-Smtp-Source: AGHT+IFnE56n2ZWY3m6GFquWJS3R+4zyRWG4mn/x7Tvk/fQPvR7/F7IjMN/5eFQpLDwVxaDdPh5JX7KANJsrFqH4mJc=
+X-Received: by 2002:a05:6830:378e:b0:741:a5f0:bc82 with SMTP id
+ 46e09a7af769-74569e53d0dmr13231613a34.17.1757079130135; Fri, 05 Sep 2025
+ 06:32:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CYYPR12MB8871:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08d4ec1f-4e3d-48e1-b620-08ddec808a92
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?k9nmF1a6hYTAcWZeQ46nT/SIKigjqHX5tk34DaEr29qqwKGO4Wt/e8Z2jBIQ?=
- =?us-ascii?Q?yCjyXODpXyAlYEDf7d0yXo8nSEh5/XJmr+Gg5zbqGNpwmmm0OPUcfhoU2KP9?=
- =?us-ascii?Q?xUqLjdz88BRXEkF3VZENlkTuxpLf61Gdng41zCIVqNR8ZZHXgn6nJS27+J9Y?=
- =?us-ascii?Q?2jvTx2MeUGdnhxLsAJTeuIk+LpIAL1axECFkziVp4szAcMsb/w56FaLFJYRW?=
- =?us-ascii?Q?6FMlNNsgqk99dW0gUf38tlbeZiPk4dos7CmrXw5jOfZ8qJNGfBpY0CGnBMJS?=
- =?us-ascii?Q?pnrDWdxENMOjPuVOpxgmY5vw/pDprc0Nzhl0dUla0QT8d/hngE5okvCKM7V9?=
- =?us-ascii?Q?ouUqLfA9JxBOVu1Dyx30kBthlMa6gmLh2sGffartHkF16SBYBOMHUElEBxBb?=
- =?us-ascii?Q?noGuag72l5cwIr7oPKL3NbX3zChvbj3ql6yRvUhh8dYbntiswopqo3wlw05m?=
- =?us-ascii?Q?JxJHCckWFPqHyEsqmkv2xenmvF5QWsT35kl7orMzPWrJWvZS2wQF0iLa1QcE?=
- =?us-ascii?Q?AJYJ/P+NwZUuWm7C0T69RhRIa/HNbvSV9Rk1na2rfOjU+DPB68AiiFnMz12h?=
- =?us-ascii?Q?hBD5JeUxwudC8ITu4nR/ktXKcPjUM/n/QT2fcMUyvXNUaMwZ/W7oD409yopm?=
- =?us-ascii?Q?C/NigHUhkSGo7YLjGnN50cQw9yzZcCVtqtigZmxCWAC8LFEOuZd4puvk7hhZ?=
- =?us-ascii?Q?IC9ROBYbKZS3AY8QWngkvtZEfiSVfOpbpN9vJ+EYLISM3p13Lpa1RXb1yDgv?=
- =?us-ascii?Q?s+8ihBa98nqd8A1tQ/ohp2PZZS2EZkVzB9ZeKoPgrlJURrwosh2IOoxpO8J1?=
- =?us-ascii?Q?E/NeRHYlz33cy4aXDauR2eIWeL2IrXSPoC09Km2Tt3ZQB1ZOiqxigqktmVrE?=
- =?us-ascii?Q?H0ieP1TBKq9o9o5OqsUV8UQt1Ai3glvRBz14T8lJbsDpGUxyL8fdkzML25n6?=
- =?us-ascii?Q?KpgArj90Ag3tFoK6dm3GLAU4AdcXqtRKb2cA1W9C5I0XF3AJeIRSj+aEd5RQ?=
- =?us-ascii?Q?JO457cgEsPJYxPeSnbeCfy42DkttoHje4Dyi7cSDZPRgYNUCIxEALlcktCUw?=
- =?us-ascii?Q?kKFjrjzqwxkJc+4/X0G3lyWBRcWApT94rUyNPERDBrN7O09YgfcT+q0DsDmk?=
- =?us-ascii?Q?ZjzshFc2MfRMHueSKhrEvRO6+HoxbOWUwk6jF13h7HTEz33piySIdAUYuI5p?=
- =?us-ascii?Q?dcOlTVHW2BoFcmIjQ+CPFaxIfzCqxenokTyaWbIsJGnbJHeJx3vBs/Ogeypi?=
- =?us-ascii?Q?7MEtBrUrRDBL6k/oVvyYsbdnWsuRless68xgOanpk0tCtwBvF25t6+6Qf64y?=
- =?us-ascii?Q?nJvU2ZVijlsQxMPqzPUqLkFJhrXC3UK2t+iw/Zg5ZRtYI2WEMA3Qyp5eIS2l?=
- =?us-ascii?Q?iHVFlJ9sU3y5lvaxDUI5/i6oijiriQCKzJzeTnZSfzbqCWz9NS5ombM1EQWW?=
- =?us-ascii?Q?wsW9Geon+mQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cPm1FM1DrLdmtuH7d3jx32jOmfsE50XnJvjGvje0pXvspRnASCIQbKeERP4U?=
- =?us-ascii?Q?9T5CMdd+JsnzZVkk0zqefm2v7wUzx3fwiMD1cMZY3QPG6pBMMOMkmJPOV5dT?=
- =?us-ascii?Q?8m4tmff+GBRa8awQyuZJDX8x4AupiGXo/IzLr19QaaV0E/hY8CCXecuM2EUS?=
- =?us-ascii?Q?kNqVol9xezYlndnS58weFGsaKDg8HB+dP7QSUqj69kmmroy9KOiVIstfVbYC?=
- =?us-ascii?Q?Es7sYujYy7Qau+nt+lmlMcz/0kWGwU0m7WGgbVmmslcv7RPwDs25Zbatlo3y?=
- =?us-ascii?Q?6ar7/85Dgb0Uh9DOJkYIMdb/glAokiBpxqnzedqkVR+Y4+B+6teMen5KeOQr?=
- =?us-ascii?Q?eRNmtzQ5sRo+0LIIvSn94+e1tSbyo0WCFQveWNkqq/B2HmbFZjx9T1FcKhKK?=
- =?us-ascii?Q?+PJmmgUbTMZ4vvYwXnDhVMKV0+FKIyDqIamvfFmvesD6P36WTRryWogcFk+E?=
- =?us-ascii?Q?34h+lYri254BIVyQei+xnNaEOs15afnQQD6oTKoYw8GX3JLLe5yIwjEutAYq?=
- =?us-ascii?Q?LvOaoZQn7eLrdwSQCOVSuuqbwfcXaLTqhJo5d5dd2Y0eq4/OQDxc0j6AhR2W?=
- =?us-ascii?Q?T1IfVW+I+M2szFxzzOQj0wb3K1WTgrKiXxtnL2xnNQvCFhYAYI1/99GSH1VE?=
- =?us-ascii?Q?EvZ3EQqBNelUVEJorzuYs+hB+AoQNJHSO9NUQLr8SKQuOc/Bk9HB5KPe4mc9?=
- =?us-ascii?Q?Rqrh0Rai0If1S9Nn1u106tofKZHoUhTySKRt5Gpv7oqCXTRIRnIWQ+/TwF22?=
- =?us-ascii?Q?wsFaYAaKhdhMnlr5a6CJatfb0oAAPvVevoOXpUJ7a789MMLft8jKsV4bBcES?=
- =?us-ascii?Q?PAZl0voOaTWQwYABU/xwkkGQN+gSGNeJPmZ8+TcZs8/TZR83LmBSAUdclD6X?=
- =?us-ascii?Q?kS15VenCy+RuXr0UABhrmLlG0yXQFBHJZiKr6Ir4FiVBaTkGzQWunadUP0Cz?=
- =?us-ascii?Q?vWUtPXky234DOXL8WTInz7Xs34+m92rQ4GNgWHKiNwJrauRgCNKH9XC9eWNs?=
- =?us-ascii?Q?1jK066HJIvCXAJKsOYaXWRlgbBUZS3KY0U6lnluyvr4AmYvwm76Xj/kVklbv?=
- =?us-ascii?Q?8Yb/XAPy/+j0M/OvWer41Ug4l9XFUgNAJVzqdKNQz6qbSgI+pBshrOVW0ba6?=
- =?us-ascii?Q?lpdFDI9xqO2cj19HpYguvEdRRvEaoApubFtDtetrFq57T6isYKv5vFzJBFQi?=
- =?us-ascii?Q?sAjGpXlwh9Oq9tmlslpkq1eiCnYvUBazz2DySZ+mVUpdOm6nAtt1KIzTR/cE?=
- =?us-ascii?Q?USsXEN58agaOklEV1lNe4JXW2hmROmSfKm7u6KcO9uOYD1ZOnwLRO/wJey2M?=
- =?us-ascii?Q?MEyb1K15NlXa8WagrRD5lwmOyQm/tzwRY7jLZqRyccu/o08QnZkjNljVQeHf?=
- =?us-ascii?Q?1huCLeTOENzbK+8M1i2syyBBRQqqCZC8WpCd4FLtXlLZzP/ltMeKJtcTOSqc?=
- =?us-ascii?Q?LkhZzZ1BY1nkja4u3rbtVXNAxgGzRSjH7YQrhngvaskxvsS4gbOgu/joRrmm?=
- =?us-ascii?Q?4zw7nTxxOAekeLmEQxEqj/5EEmtrEGYlYL6Mw3oE/I750n36eCDTMlZ+yaxf?=
- =?us-ascii?Q?VlVtTPsDwrFvW3EdZgA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08d4ec1f-4e3d-48e1-b620-08ddec808a92
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 13:31:38.3286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zqffDYJtSY9U1qi6XquLhg5r1v0Kk6TYRwDDuFxdXeGHzj7RGkVwxsjjlhlCUuXq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8871
+References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn> <20250905132413.1376220-4-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250905132413.1376220-4-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Sep 2025 15:31:58 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jdJZ2upvE4KzDnc59KpMX+oqYbq=ZW=SXfwvjBctMj3Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwR6ToJkYo5xTTss3xr-Ox8ITso59X_uvklZva98cFgnVHnG6meS0I7mt8
+Message-ID: <CAJZ5v0jdJZ2upvE4KzDnc59KpMX+oqYbq=ZW=SXfwvjBctMj3Q@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] cpufreq: intel_pstate: Use scope-based cleanup helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 04, 2025 at 04:08:21AM +0000, ankita@nvidia.com wrote:
-> +static const struct auxiliary_device_id egm_id_table[] = {
-> +	{ .name = "nvgrace_gpu_vfio_pci.egm" },
-> +	{ .name = "nvidia_vgpu_vfio.egm" },
+On Fri, Sep 5, 2025 at 3:24=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
+> wrote:
+>
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+>
+> No functional change intended.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Not in tree
+No, sorry.  I've already said that this isn't going to work:
 
->  static char *egm_devnode(const struct device *device, umode_t *mode)
+https://lore.kernel.org/linux-pm/CAJZ5v0gN1T5woSF0tO=3DTbAh+2-sWzxFjWyDbB7w=
+G2TFCOU01iQ@mail.gmail.com/
+
+so why are you resending it?
+
+And making changes to it in the process without saying what they are?
+
+Please stop adding confusion.
+
+> ---
+>  drivers/cpufreq/intel_pstate.c | 59 +++++++++++++++++++---------------
+>  1 file changed, 33 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index f366d35c5840..0b54e08f9447 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(struct c=
+pufreq_policy *policy,
+>
+>  static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
 >  {
->  	if (mode)
-> @@ -35,19 +59,28 @@ static int __init nvgrace_egm_init(void)
->  
->  	class = class_create(NVGRACE_EGM_DEV_NAME);
->  	if (IS_ERR(class)) {
-> -		unregister_chrdev_region(dev, MAX_EGM_NODES);
-> -		return PTR_ERR(class);
-> +		ret = PTR_ERR(class);
-> +		goto unregister_chrdev;
->  	}
->  
->  	class->devnode = egm_devnode;
->  
-> -	return 0;
-> +	ret = auxiliary_driver_register(&egm_driver);
-> +	if (!ret)
-> +		goto fn_exit;
+> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
+req_cpu_get(cpudata->cpu);
+>
+> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
+>         if (!policy)
+>                 return false;
+>
+> @@ -1695,41 +1694,49 @@ static ssize_t store_no_turbo(struct kobject *a, =
+struct kobj_attribute *b,
+>         return count;
+>  }
+>
+> -static void update_qos_request(enum freq_qos_req_type type)
+> +static bool intel_pstate_cpufreq_update_limits(int cpu, enum freq_qos_re=
+q_type type)
+>  {
+>         struct freq_qos_request *req;
+> -       struct cpufreq_policy *policy;
+> -       int i;
+> +       unsigned int freq, perf_pct;
+> +       struct cpudata *data =3D all_cpu_data[cpu];
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
+req_cpu_get(cpu);
+>
+> -       for_each_possible_cpu(i) {
+> -               struct cpudata *cpu =3D all_cpu_data[i];
+> -               unsigned int freq, perf_pct;
+> +       if (!policy)
+> +               return false;
+>
+> -               policy =3D cpufreq_cpu_get(i);
+> -               if (!policy)
+> -                       continue;
+> +       req =3D policy->driver_data;
+>
+> -               req =3D policy->driver_data;
+> -               cpufreq_cpu_put(policy);
+> +       if (!req)
+> +               return false;
+>
+> -               if (!req)
+> -                       continue;
+> +       if (hwp_active)
+> +               intel_pstate_get_hwp_cap(data);
+>
+> -               if (hwp_active)
+> -                       intel_pstate_get_hwp_cap(cpu);
+> +       if (type =3D=3D FREQ_QOS_MIN) {
+> +               perf_pct =3D global.min_perf_pct;
+> +       } else {
+> +               req++;
+> +               perf_pct =3D global.max_perf_pct;
+> +       }
+>
+> -               if (type =3D=3D FREQ_QOS_MIN) {
+> -                       perf_pct =3D global.min_perf_pct;
+> -               } else {
+> -                       req++;
+> -                       perf_pct =3D global.max_perf_pct;
+> -               }
+> +       freq =3D DIV_ROUND_UP(data->pstate.turbo_freq * perf_pct, 100);
+>
+> -               freq =3D DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, =
+100);
+> +       if (freq_qos_update_request(req, freq) < 0)
+> +               pr_warn("Failed to update freq constraint: CPU%d\n", cpu)=
+;
+>
+> -               if (freq_qos_update_request(req, freq) < 0)
+> -                       pr_warn("Failed to update freq constraint: CPU%d\=
+n", i);
+> +       return true;
+> +}
 > +
-> +	class_destroy(class);
-> +unregister_chrdev:
-> +	unregister_chrdev_region(dev, MAX_EGM_NODES);
-> +fn_exit:
-> +	return ret;
+> +
+> +static void update_qos_request(enum freq_qos_req_type type)
+> +{
+> +       int i;
+> +
+> +       for_each_possible_cpu(i) {
+> +               if (!intel_pstate_cpufreq_update_limits(i, type))
+> +                       continue;
+>         }
+> +
 >  }
->  
->  static void __exit nvgrace_egm_cleanup(void)
->  {
->  	class_destroy(class);
->  	unregister_chrdev_region(dev, MAX_EGM_NODES);
-> +	auxiliary_driver_unregister(&egm_driver);
->  }
-
-Out of order, the order should be the reverse of init. This will UAF
-the class as-is.
-
-Jason
+>
+>  static ssize_t store_max_perf_pct(struct kobject *a, struct kobj_attribu=
+te *b,
+> --
+> 2.25.1
+>
+>
 
