@@ -1,99 +1,79 @@
-Return-Path: <linux-kernel+bounces-803402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2DBB45F5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D350B45F5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EB217518B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B813AAA70
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968B309EE3;
-	Fri,  5 Sep 2025 16:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E523309F08;
+	Fri,  5 Sep 2025 16:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mb7+sxRH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+wf9Fc2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DFC218ACA
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C29331D736;
+	Fri,  5 Sep 2025 16:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757091087; cv=none; b=a+WYV9ZViE5rYXAKgeC4cYGS40PqgiOYX5U7phIb6SxLeyiSoz5LGFDFyjOjDaN01oZxCHVZIsfH10RTiyEo614qiv3nWzecPVaTVSBOacp5ZDnT72UqGixJH5fzvT5HqB27/yHDa5Hs+Zi+DH8mYTdxqtALAzhhrZzJgQHHoA4=
+	t=1757091118; cv=none; b=IfHwOnO6k/B3LCgsSEo2lt6kvONLuB7eVCBWCS2TuZZ/kC6CxDfrFT44bBWpUu0uuJ0wfoiocAnsT2+U8rgY4qYmx+Q2mOOBB7SRDZYE+hT83ZusVUej9+gZT54qWY3AJl3CD9SM89unM80dky3OpyuSf5qfuGTLuPXyEYyWirg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757091087; c=relaxed/simple;
-	bh=IZ3lb4U/LoqXWSGcvX+7jXfGU/h7GlhNS7B0l768+Sc=;
+	s=arc-20240116; t=1757091118; c=relaxed/simple;
+	bh=Q2NvVrGEL+0/GeOayDpQMKWrprzquXJGtl3FdPmWfso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHOOoTUicGy/4wzQ3YtNY+TU8FjxB7eO/rMQ1hPi24LkLQ7yK4KGqrLRsuy1DfW5SN4dAZTJ6ugOU7BjCd/6VK/JQQgB+mbT2Uq0/ucldsH04SlgchUTuYubrTJvSkrZ6b0kJVg/EANOja+0+JgpNvXMsjocN6KvhTk2sFZuwxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mb7+sxRH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585G9aXx031836
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 16:51:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=4xa3n6NDrhRLnjmOPl5k/ZnS
-	t/9I4YsaolOfWnhteaA=; b=mb7+sxRHRVew2env8Xw4AqGvdnL5/GQLdGPSqiyW
-	MBaqxEzr8eNxsKOmePzhiRkj3R/RwFAy4a4xJ5yjsrfwhR/cbZrRKbOIZ+JgczRW
-	QLc61xaTN8I7Tiu4MtH8n/tS4mzMUWeT3dhyeQp9MDCoSfnrHzSpfCN6Rdg2NYz9
-	io7YIYfJ+EfNsnArKMcehxFC5UH9u3mhryI6Q+A71f+6wFSKswxUorwE37MixNp7
-	1MPpkAdR0YgJ15Todig6xXjGdTp0GBUxeFMhkJ0+9vfnhhfzpnrxBVfWS9umeHLL
-	UmHY8AiVMS2/T5Ie76Hn6lDfmmqbdVMXX4t4pKwqZd5wHQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw0bxkb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 16:51:24 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b339e7d107so60840821cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:51:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757091084; x=1757695884;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4xa3n6NDrhRLnjmOPl5k/ZnSt/9I4YsaolOfWnhteaA=;
-        b=LIxl9D3qGBB9J5Np4FWvGt/LnMEJcFTOwfAfC8eM5mG/SkTjGCBeyfTdENtIcB5Wtq
-         ii5HDEtNQqPADwkMJtW1O1wCJ/9kkWTUwRSJ1C1itKwk8K5PpwWid9drao1d694XMzOV
-         xjBL2HFjk8+ttxlMGDfCx+w/iUyA4pztBNnj1rM2f0ljcMdgOJCvJ6938ttnmcxSeEU4
-         BdmApPwxFH4gRLCcL5kQSaCZTIlO+h9nyMxWb2pqsqGkvkFg0EiMD4CHoDy+tjmLA1+k
-         w7idub2B99NYNCg44XoV39RHTOPrZ9Ca6coWpmVp9hD91MC2EbBDvf6heLLiAMfdZYfm
-         nt3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5geqOj6Y/qpnh11hO2hAQUqtF4tzpRanzYyJh8RdEM6/Z/z2ogDcqFCOmpzoiKtgXSmiC2xQWACUN9Xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqoZHOxbhngieZgTvLh+FBLbMytIOhkeGeYyO2CNa206LG4Hai
-	YXXjkcGk7nOIvdABAdCaimpUWfXvEhgCVL8gx7bfOB6F/O0dF+ln4DEfJCL5D3KSvE4bPwab0ev
-	cPTUCsIsdZ/0SXOdxkIUKrbRUPADIvFuD9Hl1+IUq/ynEjzmY2QFKRsgFLAxh8JbzJzk=
-X-Gm-Gg: ASbGnctw82RFwTYlLPLPLt+HcwCpN41rHXB5blic2qyPGC2vOzg4Wj41phJsWhDxYTz
-	PhfELIMeyaz7npj7TjIDwgJGAFhS9eW3lhrxdQDVoZMrty9kOT9XZqBGnhYFIGJpCMlSH4gllkh
-	nlXef6sVT7f3PAaCoaEB4r3g40vqSc7u+Qr+8KEQz7NI8lk+Zc8knzkqu36xrr9CUgniOJE6IUj
-	raYdfAOgbb2Yb8mVDKarsYuaxDSimN2duQKGfKv+Nlzb1SJCVrTlzw7QT1YS8jGGBSuQ5AYyNM0
-	KIQbro20I3PzXG+7SHuNuIH1SFPyvpzuzCgVJShUC+BrIF4CEe9wkAdbrfbmJDZ8pMTB7GgJcPe
-	mX8gySoDrwqifdTV+9OQPqQDwSFZpURk1IY2xX0U7BzuRpuG8hUu/
-X-Received: by 2002:a05:622a:11c3:b0:4b5:e647:fa06 with SMTP id d75a77b69052e-4b5e6480197mr64077461cf.31.1757091083919;
-        Fri, 05 Sep 2025 09:51:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGe9NXJNecwnP4ZBhUrbIp/AeRbWzoPY4rSQxPE1jmL8jey4gjRk14sba2Sc9yFWCYAmMMTGg==
-X-Received: by 2002:a05:622a:11c3:b0:4b5:e647:fa06 with SMTP id d75a77b69052e-4b5e6480197mr64077041cf.31.1757091083297;
-        Fri, 05 Sep 2025 09:51:23 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c4ed3csm19832831fa.4.2025.09.05.09.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 09:51:22 -0700 (PDT)
-Date: Fri, 5 Sep 2025 19:51:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH RESEND v7] drm/vc4: hdmi: switch to generic CEC helpers
-Message-ID: <bmbu6dfhr4i37fxlqo7ltalkzz6bocb5whuv34x437k3crie5j@ndtqjrv64n5j>
-References: <20250705-drm-hdmi-connector-cec-v7-1-d14fa0c31b74@oss.qualcomm.com>
- <pz5luqbagulactqp7h237apoostl64rcrnvmu53eauvtb6cqly@nsmzsvbfixrr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANN5E8V40d4ckXAoI9PPRqAr+Dw6LIZrftTZKdb9AI+Rnn/t5CUekFmFFWFqDyr+9jaFTxq5stEJCGv1eW4Zjj6HW7y7Gzhd4FcDyX7o01TkXycjj5IigzqhVGpY2whI3sLeGPZLbmjSlSftgd7+hyyYRxXJ8stZUqcAq7CkHgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+wf9Fc2; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757091117; x=1788627117;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q2NvVrGEL+0/GeOayDpQMKWrprzquXJGtl3FdPmWfso=;
+  b=j+wf9Fc2F/N9nBNlQdcqVmrgqCbMpDpKt1E17ZLzNDlKxbLlMo62Evb9
+   3NTqe7g3LL1UDsVsHqgsWrBJR2ya9TPv8Kflqi7aMxQjDtU+0qVixjgpN
+   Fri/fdzGoZ3D06vIGYqodKZI4HK4PfWfvLXTIdYgrFBJ3LL2U2aGo9Pbx
+   /m7DEQQNmGON0UwQUwCEoXWiTjc5oMP1L3QbbTsWXo+kJhTBG4iPxrOtL
+   Z0X28Ggt8nG23UrmJfaeD3AOHjfKeDZjcqZKIIGy1ZY8V19TIA8j4QLQR
+   J2X65iWvsJogxQVP4ELovNyMgFmfK0agKuNKR0cXs44rnGRUcXKA0A74E
+   g==;
+X-CSE-ConnectionGUID: vgRfJicaTmeAKNUoh9Pvtw==
+X-CSE-MsgGUID: 6mLxlJ9KTYWevXJ7+2qlAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="70873803"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="70873803"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 09:51:57 -0700
+X-CSE-ConnectionGUID: dE/Fp5RbQ8uehYSfrW9X0A==
+X-CSE-MsgGUID: RulAsFpER2Wi6WqCD7ni9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="177422147"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 09:51:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uuZfC-0000000BffY-2oy8;
+	Fri, 05 Sep 2025 19:51:50 +0300
+Date: Fri, 5 Sep 2025 19:51:50 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lars@metafoo.de, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
+Subject: Re: [PATCH v3 2/4] iio: adc: ad7768-1: introduce chip info for
+ future multidevice support
+Message-ID: <aLsVJraM57okkP1o@smile.fi.intel.com>
+References: <cover.1757001160.git.Jonathan.Santos@analog.com>
+ <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,55 +82,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <pz5luqbagulactqp7h237apoostl64rcrnvmu53eauvtb6cqly@nsmzsvbfixrr>
-X-Proofpoint-GUID: o0ljQnp7WOQF0RWMehJFCeXdFvz4q48G
-X-Proofpoint-ORIG-GUID: o0ljQnp7WOQF0RWMehJFCeXdFvz4q48G
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX3hLfFf/uINOU
- a9FcLlg1PV8FVgEP2pY7a3t6r1nFd2c+eC2jYQ869/cAvoie/cG+ocrhykCfoHvD0tFg3FWkfwy
- ufKWAGFh5M82mRYERRtvWism+20fuTfx8M6gHQJYexx+oapMdqIjL97XXqhssvpk/KN2T5VYUvC
- XSkCXy+PwqHuLXAM0pnNIclUBj3mrjTGN2RkAeFqHkn305hUoWw7b2+TPcO/6Wh1tC5UZE9XhKs
- oX0jd3mTRjW8ZD8mTGNGx5sQD1OdGBmjUPx8NfS7KgZp+pR19ApKHCAQE3XoKKV6BSaIdHoCg/4
- +lLeZikRYaPstTwNTjPts9Alibq82E2K7RNrYK6rrS7Nb5ZSrSqI+WqJ0cKdUFLgEc2X9S5IH85
- znjslq+g
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68bb150d cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=j_c-LHFTLc-8uPKrwYUA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+In-Reply-To: <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Aug 15, 2025 at 06:11:57PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Jul 05, 2025 at 01:05:13PM +0300, Dmitry Baryshkov wrote:
-> > Switch VC4 driver to using CEC helpers code, simplifying hotplug and
-> > registration / cleanup. The existing vc4_hdmi_cec_release() is kept for
-> > now.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > ---
-> > This is a part of the HDMI CEC rework, posting separately to let it be
-> > tested by the maintainers.
-> > ---
-> > Changes in v7:
-> > - Dropped all applied patches, keeping just VC4
-> > - Link to v6: https://lore.kernel.org/r/20250517-drm-hdmi-connector-cec-v6-0-35651db6f19b@oss.qualcomm.com
-> > 
-> 
-> Can I please get Tested-by for this patch? It has been R-B'ed, but I
-> totally don't think it should be applied without testing on the actual
-> hardware...
+On Fri, Sep 05, 2025 at 06:49:21AM -0300, Jonathan Santos wrote:
+> Add Chip info struct in SPI device to store channel information for
+> each supported part.
 
-And another ping to get it tested by...
+...
+
+> +#define AD7768_CHAN(_idx, _msk_avail) { \
+
+I consider slightly better to read
+
+#define AD7768_CHAN(_idx, _msk_avail) \
+{ \
+
+
+> +	.type = IIO_VOLTAGE, \
+> +	.info_mask_separate_available = _msk_avail, \
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) | \
+
+> +			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
+> +			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), \
+
+In the original code below indentation was not broken.
+
+
+> +	.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), \
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	.ext_info = ad7768_ext_info, \
+> +	.indexed = 1, \
+> +	.channel = _idx, \
+> +	.scan_index = _idx, \
+> +	.has_ext_scan_type = 1, \
+> +	.ext_scan_type = ad7768_scan_type, \
+> +	.num_ext_scan_type = ARRAY_SIZE(ad7768_scan_type), \
+> +}
+
+...
+
+> +	st->chip = spi_get_device_match_data(spi);
+
+> +	if (!st->chip)
+> +		return dev_err_probe(&spi->dev, -ENODEV,
+> +				     "Could not find chip info data\n");
+
+Might be useful in some cases, but I don't see its value. Just always provide
+a chip_info and no need to care about this. Esp. this just shows that it's
+mandatory, but if absent, it will crash on the following line. Since it's about
+probe, one will notice it immediately, otherwise it will mean a submission of
+the code that has never been tested.
+
+TL;DR: just drop this check.
+
+> +	indio_dev->channels = st->chip->channel_spec;
+
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
