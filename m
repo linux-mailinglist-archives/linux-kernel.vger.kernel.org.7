@@ -1,190 +1,258 @@
-Return-Path: <linux-kernel+bounces-802269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EC4B4501C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80859B4501F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB8F3BD396
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EA73A6BB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A372E270EBB;
-	Fri,  5 Sep 2025 07:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A348C265637;
+	Fri,  5 Sep 2025 07:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MFDWFDQT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d6wvA4x6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MFDWFDQT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d6wvA4x6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K/+fA0PK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EBF26463A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0E7DF71
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757058107; cv=none; b=Bi8y8map0CiLoU2J/2B+gW1iUxlIO6wdVDxIGtklhdXGxMs5jboNKBJRt+Jjq9PTyxD729ZmiUfx8IT7GUtSHWtGDKdsrMYluRfb67N6wV8EFhnlkjT81KxOs4/7LH+P995xKm5fp1SsQ5n+DOzHdvvRNpbc66xXWcP9jdseBTw=
+	t=1757058183; cv=none; b=RLJoINn1t9Fi62Nxe/p6BwVOaa7fdEeNSsA2H4OPqqQh6meRJdoKBgMOK1jyCNBdsMlGDL9iPxGDwapfMIOH8iMpVnH8f9+GJpSnk8rxU5bBUezgzdtetYJ4SAZCRMGyoeU95hUGhlNr2uqweKqEHewm7iFJ0ZMaorNb7KH1Gdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757058107; c=relaxed/simple;
-	bh=5EnOooRLaWG+1zujjxFTjqAcUilh1DuvKP0af/61SK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DoKYgqKA3HQECNjRdsQh2quj+u6WPQ957v6KkKotlYlYanUK2Fr21Wk9cO1JpV+NoQvVcHvQkENCv3ApyffiLLJWAsbub3rLf52oGFtGHivkI8IuIJw7SZPZFKV8rEJOTMBjeCkYCT+wOo9Lq18fRWwJCSPZ8jGzNgd3/nhquiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MFDWFDQT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d6wvA4x6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MFDWFDQT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d6wvA4x6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A39294D92A;
-	Fri,  5 Sep 2025 07:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757058102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m+BAVyD25FezVwTZNryOXCPxljZr03tkbPhnVekdh0Q=;
-	b=MFDWFDQTxyFbha5g/xmtOkY9FdHT1TPudDjvqYwHsDk5SImSbZxn/UexebPgLDQHU8YU8d
-	Ec/gXDhN2/z3m4tj5II4pl3G+w4J0GRW34tpKZA95RKBLjeOyGVXzGP9VQBMKmiOocDEtZ
-	xeAKH9om4Tp7ACLeDNE8xAxEZUJQ8Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757058102;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m+BAVyD25FezVwTZNryOXCPxljZr03tkbPhnVekdh0Q=;
-	b=d6wvA4x60pwWJ3Inxph2sEG+i20Ywu9+zBr/tJXUPI175gQzsXaSR0gHnEvoxXuMpERJG9
-	XFSiqAUMRxQCGBAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MFDWFDQT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=d6wvA4x6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757058102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m+BAVyD25FezVwTZNryOXCPxljZr03tkbPhnVekdh0Q=;
-	b=MFDWFDQTxyFbha5g/xmtOkY9FdHT1TPudDjvqYwHsDk5SImSbZxn/UexebPgLDQHU8YU8d
-	Ec/gXDhN2/z3m4tj5II4pl3G+w4J0GRW34tpKZA95RKBLjeOyGVXzGP9VQBMKmiOocDEtZ
-	xeAKH9om4Tp7ACLeDNE8xAxEZUJQ8Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757058102;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m+BAVyD25FezVwTZNryOXCPxljZr03tkbPhnVekdh0Q=;
-	b=d6wvA4x60pwWJ3Inxph2sEG+i20Ywu9+zBr/tJXUPI175gQzsXaSR0gHnEvoxXuMpERJG9
-	XFSiqAUMRxQCGBAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C07E13306;
-	Fri,  5 Sep 2025 07:41:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4CXcITaUumiHCwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Fri, 05 Sep 2025 07:41:42 +0000
-Date: Fri, 5 Sep 2025 09:41:42 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v7 05/10] scsi: Use block layer helpers to constrain
- queue affinity
-Message-ID: <71598d89-b29c-4b21-83ee-49fe9b890043@flourine.local>
-References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
- <20250702-isolcpus-io-queues-v7-5-557aa7eacce4@kernel.org>
- <d95de280-8cd7-4697-933a-37dc53f4c552@suse.de>
+	s=arc-20240116; t=1757058183; c=relaxed/simple;
+	bh=pVM5vIb/BptuM168eR1sfolL9rBvq9Vpfg6rZzCtIK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VuyA3yTgBLG2p4dQTE8/dMKLSc8MLLJZtWeLZyt844MW+83qGXSid6xU4UMccalHf6gjVTbHjKIqFB+4DrrhGEaBkzwao4g2mkppim/K2ioC3pNTH3oPFe3qXXklZglN9dFJ6KlawmBD7YE5cJT8NQURhzfd1uxhSIgIyPvNRFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K/+fA0PK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757058180;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z6Cco/gArEI1B3IDLJ4230/RV/hI9+YhFOcMJyqZnI8=;
+	b=K/+fA0PKiFYZYYfPJBqf03z1R1tB55jxNTcFWDW/sDSo39HQuNBs1M+5paUZMW8A4NlEZX
+	btBNqQzji/QeWgJksi6OFC2Uyb6nEAoD1Yag3pWIgctjDOtlgK9I4AVnXXQZXlyUuc1Zhn
+	sz0DRQePH6uLfLFjfDhxmcRWdswlAuY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-376-UttQy9gPNU6Qrs18hl2b6Q-1; Fri, 05 Sep 2025 03:42:58 -0400
+X-MC-Unique: UttQy9gPNU6Qrs18hl2b6Q-1
+X-Mimecast-MFC-AGG-ID: UttQy9gPNU6Qrs18hl2b6Q_1757058177
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3dc0f2fd4acso1080935f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:42:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757058177; x=1757662977;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z6Cco/gArEI1B3IDLJ4230/RV/hI9+YhFOcMJyqZnI8=;
+        b=DAMdZnVupr+6ErOA4Ug2gB+3QHlxVhaPFufvQBEBKpqFSO+jKrC69u+OMaFKC8V61S
+         XlIRov5awUom9M/SeeeX6WgVZaiW7NT7iGNm6UxKIkCXaek/LiN08rMM8vcre720jjOF
+         8ZOPSeWujxyPNuUSt3gaK8szQ/WpCD/0rB/qih4/VqeXCFSN2YOB25QVoM8EFASe5ae+
+         nPmiwqggkR57hiWkXb3IwgwO39tFNnbkDqVb8iIO1qOebGxklqOmM6Op8GoBeTgqO+Vk
+         ByzwZIxGzBhIL+cTAsrnzFCiBhuwYw//2eHBvHfyUC7BZmqkqdvZerEO2nAl7/VE1eH/
+         hvXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUla/M53xQPUfjOmOxgkswu8VxzQX6io3slnLj/OBQCg+DjGnamnHLyn7iNdoS0RbpFxW7QqPrugLk9d6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXfK78e0id5Aj7+HTbp7wnwUGc9oSP59zimNS2Kf4mrFYH3q5W
+	WD1vgS8LZNVXP2QGIRfUWrPhELQKJki65gth6/1Y/NlYrX5BPFhXwMJAwnFuHMkletYxqDvpJwp
+	jLNVhlFEyrN8EpyoaCE+OetAT3SFZrAXoRigtimla83AFWoY43OscGsIyoqxzfDup5Q==
+X-Gm-Gg: ASbGnctn5w3zy4n+rBMczwkb6rGEZd9mFd0EbVD04Ahyrm8Z/gAqQF4iwAXqRgKqQL3
+	8ydg6/zMys0+cQL3caLteA+X2wL1fmjTVAgNXkj1LDZ31uUru8Ctt8RAUrzyGs45plpdokqVTyt
+	IgNF+rdP9XblZF+gljlCjvzj1Req6a8nns16hNDR37ArE08FB0Dz1wDE1v+V9hTJBBI7cu6AKQx
+	T3mgX+dD4p4OAVTG1zqk5Ip37w9j6jorxajrxayZlmP0DMMcKBhOOghsjEQvFHieo15xdSSFEA8
+	y8de4vGOusF/1yAtmZPdurFJjZuGbHD+zT/9QrVmgrr74VMWImLYLr5/S+t0MCBBZx1p6TEOwOX
+	hN5I2MvURsLhtAxjyA/4Mp6Pmpj4tLxOonJyv5KEHOkYBtTkUutF6wnqJ
+X-Received: by 2002:a05:6000:2c09:b0:3d4:6abb:7e01 with SMTP id ffacd0b85a97d-3d46abb82d7mr14730336f8f.41.1757058177446;
+        Fri, 05 Sep 2025 00:42:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdkmonAdN8kZC7Auh4/5UvF8c34qVbrqn3f2dXFG6i4O0vhisGnRXPONU3jqW9KXcFWL0j8w==
+X-Received: by 2002:a05:6000:2c09:b0:3d4:6abb:7e01 with SMTP id ffacd0b85a97d-3d46abb82d7mr14730319f8f.41.1757058177001;
+        Fri, 05 Sep 2025 00:42:57 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm30535206f8f.43.2025.09.05.00.42.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 00:42:56 -0700 (PDT)
+Message-ID: <cc7f03f8-da8b-407e-a03a-e8e5a9ec5462@redhat.com>
+Date: Fri, 5 Sep 2025 09:42:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d95de280-8cd7-4697-933a-37dc53f4c552@suse.de>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: A39294D92A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL71uuc3g3e76oxfn4mu5aogan)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in
+ io_sqe_buffer_register
+To: Jens Axboe <axboe@kernel.dk>,
+ syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>
+References: <68b9b200.a00a0220.eb3d.0006.GAE@google.com>
+ <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <54a9fea7-053f-48c9-b14f-b5b80baa767c@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 03, 2025 at 08:43:01AM +0200, Hannes Reinecke wrote:
-> >   drivers/scsi/fnic/fnic_isr.c              | 7 +++++--
-> >   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 1 +
-> >   drivers/scsi/megaraid/megaraid_sas_base.c | 5 ++++-
-> >   drivers/scsi/mpi3mr/mpi3mr_fw.c           | 6 +++++-
-> >   drivers/scsi/mpt3sas/mpt3sas_base.c       | 5 ++++-
-> >   drivers/scsi/pm8001/pm8001_init.c         | 1 +
-> >   drivers/scsi/qla2xxx/qla_isr.c            | 1 +
-> >   drivers/scsi/smartpqi/smartpqi_init.c     | 7 +++++--
-> >   8 files changed, 26 insertions(+), 7 deletions(-)
-> >
-> 
-> All of these drivers are not aware of CPU hotplug, and as such
-> will not be notified when the number of CPUs changes.
-> But you use 'blk_mq_online_queue_affinity()' for all of these
-> drivers.
-> Wouldn't 'blk_mq_possible_queue_affinit()' a better choice here
-> to insulate against CPU hotplug effects?
-> 
-> Also some drivers which are using irq affinity (eg aacraid, lpfc) are
-> missing from these conversions. Why?
+On 05.09.25 01:20, Jens Axboe wrote:
+> On 9/4/25 9:36 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1785fe62580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f23e62580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb6312580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
+>>
+>> ==================================================================
+>> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>> BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+>> BUG: KASAN: null-ptr-deref in PageCompound include/linux/page-flags.h:331 [inline]
+>> BUG: KASAN: null-ptr-deref in io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+>> BUG: KASAN: null-ptr-deref in io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+>> Read of size 8 at addr 0000000000000000 by task syz.0.17/6020
+>>
+>> CPU: 0 UID: 0 PID: 6020 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>>   kasan_report+0x118/0x150 mm/kasan/report.c:595
+>>   check_region_inline mm/kasan/generic.c:-1 [inline]
+>>   kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:200
+>>   instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>>   _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+>>   PageCompound include/linux/page-flags.h:331 [inline]
+>>   io_buffer_account_pin io_uring/rsrc.c:668 [inline]
+>>   io_sqe_buffer_register+0x369/0x20a0 io_uring/rsrc.c:817
+>>   __io_sqe_buffers_update io_uring/rsrc.c:322 [inline]
+>>   __io_register_rsrc_update+0x55e/0x11b0 io_uring/rsrc.c:360
+>>   io_register_rsrc_update+0x196/0x1a0 io_uring/rsrc.c:391
+>>   __io_uring_register io_uring/register.c:736 [inline]
+>>   __do_sys_io_uring_register io_uring/register.c:926 [inline]
+>>   __se_sys_io_uring_register+0x795/0x11b0 io_uring/register.c:903
+>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>   do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f99b1f8ebe9
+>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007f99b2d88038 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+>> RAX: ffffffffffffffda RBX: 00007f99b21c5fa0 RCX: 00007f99b1f8ebe9
+>> RDX: 00002000000003c0 RSI: 0000000000000010 RDI: 0000000000000003
+>> RBP: 00007f99b2011e19 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 00007f99b21c6038 R14: 00007f99b21c5fa0 R15: 00007ffeadfa5958
+>>   </TASK>
+>> ==================================================================
 
-I've updated both drivers to use pci_alloc_irq_vectors_affinity with the
-PCI_IRQ_AFFINITY flag. But then I saw this:
+#syz test
 
-  dafeaf2c03e7 ("scsi: aacraid: Stop using PCI_IRQ_AFFINITY")
+ From bfd07c995814354f6b66c5b6a72e96a7aa9fb73b Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Fri, 5 Sep 2025 08:38:43 +0200
+Subject: [PATCH] fixup: mm/gup: remove record_subpages()
 
-So we need be careful here.
+pages is not adjusted by the caller, but idnexed by existing *nr.
 
-In the case of lpfc (and qla2xxx), the nvme-fabrics core needs to be
-updated too (gets out ouf sync with the number of queues allocated). I
-already have patches for this. But I'd say we first continue with this
-series before the next set of patches.
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  mm/gup.c | 2 ++
+  1 file changed, 2 insertions(+)
 
-Thus I decided to drop all the driver updates which are currently not
-using pci_alloc_irq_vectors_affinity and PCI_IRQ_AFFINITY. These are
-supporting managed irqs thus these should be all ready for this feature.
+diff --git a/mm/gup.c b/mm/gup.c
+index 010fe56f6e132..22420f2069ee1 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t 
+*pmdp, unsigned long addr,
+  		return 0;
+  	}
 
-For the rest of the drivers, I'd rather update one by one so we don't
-introduce regressions (e.g. aacraid)
++	pages += *nr;
+  	*nr += refs;
+  	for (; refs; refs--)
+  		*(pages++) = page++;
+@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t 
+*pudp, unsigned long addr,
+  		return 0;
+  	}
+
++	pages += *nr;
+  	*nr += refs;
+  	for (; refs; refs--)
+  		*(pages++) = page++;
+-- 
+2.50.1
+
+
+-- 
+Cheers
+
+David / dhildenb
+
 
