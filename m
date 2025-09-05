@@ -1,105 +1,84 @@
-Return-Path: <linux-kernel+bounces-802334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398C6B45129
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E92CB4512E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D4967A5114
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0F2188D390
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01424304BDA;
-	Fri,  5 Sep 2025 08:19:14 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1B25C81B;
+	Fri,  5 Sep 2025 08:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcwW800q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3482301488;
-	Fri,  5 Sep 2025 08:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD5D2FF178;
+	Fri,  5 Sep 2025 08:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060353; cv=none; b=cEDvmZJ0JlTaocJL40pPBri44YSF+TSmlF4SGBTXZRuHdtU9maSP1CYM2Ej7S5hXpG3DEnvYXSvpQ+QR4egrZmhMx6552t85cubC9MCBOjzDaopl82qc8CLD3574W0ZbHs75NgRjZVqcYvF0wJWQumuasRAcojqLP+bozrDvTGw=
+	t=1757060369; cv=none; b=gMHhPCvD4nbgaatqhlzThiNSTsCKA8c/21e89Hu19LBmh4INJoFKhy5A0Jg+2yWuQrrhIQaZ2F91SbuuhQEC01I6AQMGLnLusyU3PBEBfnojIAmEUsHewbbJaXnnl9lexvfufBjIPPdBnGKQpMsFPtQjvLw2gub+aVvAKHwrU0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060353; c=relaxed/simple;
-	bh=7miSWgnG8UrDriLWjuLtnCeX0nVUoyuHZuBm3OomKmc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jQvOqNVYN6ldEoSFmURif2XpnmLdS9kBjbrDGKwjX/kithW4jh8mND++0hz3g+5USkHSEmpu6U5oN+Ecj3vmz1da7h4Lih5/4y60GUYM5u8tu1VhkQ79tS6muNwEvDvMKudMUzA8+LKCcZBFM5Ezr3NqSN1BjKub+FEm6avsxgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cJ8KT1RLQz13NPd;
-	Fri,  5 Sep 2025 16:15:09 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 167A8140147;
-	Fri,  5 Sep 2025 16:19:03 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 5 Sep 2025 16:19:02 +0800
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 5 Sep 2025 16:19:02 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
-	<lihuisong@huawei.com>
-Subject: [PATCH v2 3/3] ACPI: processor: Fix acpi_processor_ffh_lpi_xxx() declaration
-Date: Fri, 5 Sep 2025 16:19:00 +0800
-Message-ID: <20250905081900.663869-4-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250905081900.663869-1-lihuisong@huawei.com>
-References: <20250905081900.663869-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1757060369; c=relaxed/simple;
+	bh=8hyk9W0dk6PBtSnPsb1Yu/jNChS6pHTMZ/Hv7oN0kgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8HOn0VsItkczWkKv/NqSbM4fDhEkPU/P8t6xQuZldddGZH7LU47Ff2f+gLedtN2QCmGRjy+e8BioFN1ky9eYFDTgrUxne62Tj1w4eWhNlGN4EyyVO2dEHGWgvPrYJc9CtkesLo1i+pMde9K/blgPQVTlYkrRu+JsX3aqkz9WBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcwW800q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AAD0C4CEF1;
+	Fri,  5 Sep 2025 08:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757060368;
+	bh=8hyk9W0dk6PBtSnPsb1Yu/jNChS6pHTMZ/Hv7oN0kgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JcwW800qzULc0Fc5qsNO+72UyRQEDRHrRdKIo/Dq+KeLtxdHFNoJRbBIhsqNXJJSi
+	 S0+xldXonTWvJcXrMb/ZgugRS9oSWAQw6TaJTbpelK/sZu8pmWSPh8tn5rhzku51aP
+	 5IBBkMLyQb/Tt30G+m8VFuUn8GvUCqznddVoJOWRogBTWd5aqNdFlw6/n9pm1h2vEr
+	 yE/WgCzNGYKQOTEwSTvxY9Plan3mvPjv9bgGA7Oi+6KiH1PNIXKMguXDGrselocPyo
+	 HmeoPMrH8WQFsM62c/PHj93wO76Q74CCL6olr139AQb3ljjl8Zn+ATvVCBx1MucEDE
+	 XDOi/XUlM/+2Q==
+Date: Fri, 5 Sep 2025 10:19:26 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	"Derek J. Clark" <derekjohn.clark@gmail.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+Message-ID: <20250905-melodic-outgoing-crow-0ddfa8@kuoka>
+References: <20250905-thinkpad-t14s-ec-v2-0-7da5d70aa423@collabora.com>
+ <20250905-thinkpad-t14s-ec-v2-1-7da5d70aa423@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250905-thinkpad-t14s-ec-v2-1-7da5d70aa423@collabora.com>
 
-To unify the place of function declaration of processor_idle.c, move
-acpi_processor_ffh_lpi_probe and acpi_processor_ffh_lpi_enter to one
-place. And remove 'extern' key word in declaration by the way.
+On Fri, Sep 05, 2025 at 03:09:31AM +0200, Sebastian Reichel wrote:
+> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
+> which is based on the Qualcomm X1 Elite. Some of the system LEDs
+> and extra keys are only accessible via the EC.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>  .../lenovo,thinkpad-t14s-ec.yaml                   | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- include/acpi/processor.h | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index d6a87dc42a9a..34d6ecfece39 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -425,6 +425,8 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
- int acpi_processor_hotplug(struct acpi_processor *pr);
- void acpi_processor_register_idle_driver(void);
- void acpi_processor_unregister_idle_driver(void);
-+int acpi_processor_ffh_lpi_probe(unsigned int cpu);
-+int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
- #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
- 
- /* in processor_thermal.c */
-@@ -447,11 +449,6 @@ static inline void acpi_thermal_cpufreq_exit(struct cpufreq_policy *policy)
- }
- #endif	/* CONFIG_CPU_FREQ */
- 
--#ifdef CONFIG_ACPI_PROCESSOR_IDLE
--extern int acpi_processor_ffh_lpi_probe(unsigned int cpu);
--extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
--#endif
--
- void acpi_processor_init_invariance_cppc(void);
- 
- #endif
--- 
-2.33.0
+Best regards,
+Krzysztof
 
 
