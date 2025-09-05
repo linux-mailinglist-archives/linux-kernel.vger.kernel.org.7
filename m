@@ -1,179 +1,174 @@
-Return-Path: <linux-kernel+bounces-802929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62E6B45882
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:13:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C618B45883
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC0F1C26816
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14AE51C268C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26C02EC543;
-	Fri,  5 Sep 2025 13:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGNTu275"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9C01C75E2;
+	Fri,  5 Sep 2025 13:13:40 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFB02343BE
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB18819CCEC;
+	Fri,  5 Sep 2025 13:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757077997; cv=none; b=Z4KXJxl8rYQJSha+voxktWvg4C83qw5RlO2FSeOhAD6Z8qklKAaD8iegHSlbyeB4bAzDxSor38r4l7SxKEuIryR+Rqos+zTCgAiI8DLcJoMlBASMhNHePxzBBhG9JSsx0qi/n7/hIHrwDaYelTzHy7O620IG2mhG68rTT2WXN68=
+	t=1757078020; cv=none; b=jHhdAjfQoPo1vW7/LllcJXWns5irsV0z8fVySWsM9HOAt20dCYkXx4sTow9ErytFBhf8Dq+uJbQzXUsvEL2wkpJnZCFZgwGaHeS0NGnbV6bau1hRLSGp7ik9LEjO6jFUYsBCSO8GFFVbi6yZkdUnrejB3mdG9l/uiWEbkZrjkOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757077997; c=relaxed/simple;
-	bh=C3NlxNYz6bfCABhEIee3Vq9GbnEKAONZKNFONpPiN3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ip7KXUByEjZjV7OlE6koHG4uX79Ye6tj0fEbDxQneXjMRwrY49g6XlwuQFWbnJ/7u6wBXir26sB5NjbipkpywcnbqPSfNZg7hTWNPC0vNe+InpRHJcL/410JyA0E+5oaDW4mBlUPgknwTYOhAanDIHjJiPAyp4rTNJHq4FHPMDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGNTu275; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9438FC4CEF5;
-	Fri,  5 Sep 2025 13:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757077996;
-	bh=C3NlxNYz6bfCABhEIee3Vq9GbnEKAONZKNFONpPiN3c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FGNTu275tZdPUVoHbM/gsRDrY9R4cZS7yNP3f5xFXFJckXDeUDoGcHBVQPqzUEybo
-	 p01bpMPmeOFwRV3EFf/vTUyWrR5NT+FphaDifK39Z+ICtA8qx9tjBE7C+8B2gSNAa6
-	 /jK445o7hQMS3xvSr+1Kb7Kq+ic17FFSXiHpOcFILLy29BXGrV0VT+UneZgLb+VcaX
-	 SmggdGs5SQqC9fO/duwxz6wP9726EJzbjmG4KYyIf+8ew9eKQGYn48RN0M4vjudfxa
-	 JTt3Xo97JetPuAa9Ztc+z8clkMInxubohu0XAU4VbSXZ53NrepwMbHL5EuhUD0Xn8y
-	 b5bj4d7GC/5qw==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Graf <graf@amazon.com>,
-	Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
-Date: Fri,  5 Sep 2025 16:13:02 +0300
-Message-ID: <20250905131302.3595582-3-rppt@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250905131302.3595582-1-rppt@kernel.org>
-References: <20250905131302.3595582-1-rppt@kernel.org>
+	s=arc-20240116; t=1757078020; c=relaxed/simple;
+	bh=GKuxMe2A+mKDUW7bUgrTL/4xbuivAI7n6nsCHRDlrS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuZqD2YYjb2CWD3VxGkgi9mRyNOgPGiNQr80MSh5PcpXElgsUTITvysfHKwZMc9iP+CXn/BSv2/62/fn5lGrAJE8qqtibjNUulbA1DI5bsv15+mIGotN7pkqkgtX5dizDYqyK5tlh51qvRnTmo9fPlUBoKefR6LUWZJB++WarP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7C5C4CEF1;
+	Fri,  5 Sep 2025 13:13:37 +0000 (UTC)
+Date: Fri, 5 Sep 2025 14:13:34 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, robin.murphy@arm.com, suzuki.poulose@arm.com,
+	akpm@linux-foundation.org, jgg@ziepe.ca, steven.price@arm.com
+Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
+ properly aligned
+Message-ID: <aLrh_rbzWLPw9LnH@arm.com>
+References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905055441.950943-1-aneesh.kumar@kernel.org>
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Hi Aneesh,
 
-KHO test stores physical addresses of the preserved folios directly in
-fdt.
-Use kho_preserve_vmalloc() instead of it and kho_restore_vmalloc() to
-retrieve the addresses after kexec.
+On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
+> When running with private memory guests, the guest kernel must allocate
+> memory with specific constraints when sharing it with the hypervisor.
+> 
+> These shared memory buffers are also accessed by the host kernel, which
+> means they must be aligned to the host kernel's page size.
 
-This makes the test more scalable from one side and adds tests coverage
-for kho_preserve_vmalloc() from the other.
+So this is the case where the guest page size is smaller than the host
+one. Just trying to understand what would go wrong if we don't do
+anything here. Let's say the guest uses 4K pages and the host a 64K
+pages. Within a 64K range, only a 4K is shared/decrypted. If the host
+does not explicitly access the other 60K around the shared 4K, can
+anything still go wrong? Is the hardware ok with speculative loads from
+non-shared ranges?
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- lib/test_kho.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index ea84a61ed508..389070e9ee65 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -337,12 +337,14 @@ void __init bootmem_init(void)
+>  
+>  void __init arch_mm_preinit(void)
+>  {
+> +	unsigned int swiotlb_align = PAGE_SIZE;
+>  	unsigned int flags = SWIOTLB_VERBOSE;
+>  	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
+>  
+>  	if (is_realm_world()) {
+>  		swiotlb = true;
+>  		flags |= SWIOTLB_FORCE;
+> +		swiotlb_align = arch_shared_mem_alignment();
+>  	}
+>  
+>  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
+> @@ -356,7 +358,7 @@ void __init arch_mm_preinit(void)
+>  		swiotlb = true;
+>  	}
+>  
+> -	swiotlb_init(swiotlb, flags);
+> +	swiotlb_init(swiotlb, swiotlb_align, flags);
+>  	swiotlb_update_mem_attributes();
 
-diff --git a/lib/test_kho.c b/lib/test_kho.c
-index c2eb899c3b45..10045f5979a0 100644
---- a/lib/test_kho.c
-+++ b/lib/test_kho.c
-@@ -32,6 +32,7 @@ module_param(max_mem, long, 0644);
- struct kho_test_state {
- 	unsigned int nr_folios;
- 	struct folio **folios;
-+	phys_addr_t *folios_info;
- 	struct folio *fdt;
- 	__wsum csum;
- };
-@@ -68,13 +69,17 @@ static struct notifier_block kho_test_nb = {
- static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- {
- 	phys_addr_t *folios_info __free(kvfree) = NULL;
-+	phys_addr_t folios_info_phys;
- 	int err = 0;
- 
--	folios_info = kvmalloc_array(state->nr_folios, sizeof(*folios_info),
--				     GFP_KERNEL);
-+	folios_info = vmalloc_array(state->nr_folios, sizeof(*folios_info));
- 	if (!folios_info)
- 		return -ENOMEM;
- 
-+	err = kho_preserve_vmalloc(folios_info, &folios_info_phys);
-+	if (err)
-+		return err;
-+
- 	for (int i = 0; i < state->nr_folios; i++) {
- 		struct folio *folio = state->folios[i];
- 		unsigned int order = folio_order(folio);
-@@ -89,11 +94,14 @@ static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- 	err |= fdt_begin_node(fdt, "data");
- 	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
- 			    sizeof(state->nr_folios));
--	err |= fdt_property(fdt, "folios_info", folios_info,
--			    state->nr_folios * sizeof(*folios_info));
-+	err |= fdt_property(fdt, "folios_info", &folios_info_phys,
-+			    sizeof(folios_info_phys));
- 	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
- 	err |= fdt_end_node(fdt);
- 
-+	if (!err)
-+		state->folios_info = no_free_ptr(folios_info);
-+
- 	return err;
- }
- 
-@@ -197,7 +205,8 @@ static int kho_test_save(void)
- static int kho_test_restore_data(const void *fdt, int node)
- {
- 	const unsigned int *nr_folios;
--	const phys_addr_t *folios_info;
-+	const phys_addr_t *folios_info_phys;
-+	phys_addr_t *folios_info;
- 	const __wsum *old_csum;
- 	__wsum csum = 0;
- 	int len;
-@@ -212,8 +221,12 @@ static int kho_test_restore_data(const void *fdt, int node)
- 	if (!old_csum || len != sizeof(*old_csum))
- 		return -EINVAL;
- 
--	folios_info = fdt_getprop(fdt, node, "folios_info", &len);
--	if (!folios_info || len != sizeof(*folios_info) * *nr_folios)
-+	folios_info_phys = fdt_getprop(fdt, node, "folios_info", &len);
-+	if (!folios_info_phys || len != sizeof(*folios_info_phys))
-+		return -EINVAL;
-+
-+	folios_info = kho_restore_vmalloc(*folios_info_phys);
-+	if (!folios_info)
- 		return -EINVAL;
- 
- 	for (int i = 0; i < *nr_folios; i++) {
-@@ -233,6 +246,8 @@ static int kho_test_restore_data(const void *fdt, int node)
- 		folio_put(folio);
- 	}
- 
-+	vfree(folios_info);
-+
- 	if (csum != *old_csum)
- 		return -EINVAL;
- 
-@@ -291,6 +306,7 @@ static void kho_test_cleanup(void)
- 		folio_put(kho_test_state.folios[i]);
- 
- 	kvfree(kho_test_state.folios);
-+	vfree(kho_test_state.folios_info);
- }
- 
- static void __exit kho_test_exit(void)
+I think there's too much change just to pass down an alignment. We have
+IO_TLB_MIN_SLABS, we could add an IO_TLB_MIN_ALIGN that's PAGE_SIZE by
+default but can be overridden to something dynamic for arm64.
+
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 467cb78435a9..e2142bbca13b 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -213,16 +213,20 @@ static gfp_t gfp_flags_quirk;
+>  static struct page *its_alloc_pages_node(int node, gfp_t gfp,
+>  					 unsigned int order)
+>  {
+> +	long new_order;
+>  	struct page *page;
+>  	int ret = 0;
+>  
+> -	page = alloc_pages_node(node, gfp | gfp_flags_quirk, order);
+> +	/* align things to hypervisor page size */
+> +	new_order = get_order(ALIGN((PAGE_SIZE << order), arch_shared_mem_alignment()));
+> +
+> +	page = alloc_pages_node(node, gfp | gfp_flags_quirk, new_order);
+>  
+>  	if (!page)
+>  		return NULL;
+>  
+>  	ret = set_memory_decrypted((unsigned long)page_address(page),
+> -				   1 << order);
+> +				   1 << new_order);
+
+At some point this could move to the DMA API.
+
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 24c359d9c879..5db5baad5efa 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -255,6 +255,9 @@ void *dma_direct_alloc(struct device *dev, size_t size,
+>  	    dma_direct_use_pool(dev, gfp))
+>  		return dma_direct_alloc_from_pool(dev, size, dma_handle, gfp);
+>  
+> +	if (force_dma_unencrypted(dev))
+> +		/*  align to hypervisor size */
+> +		size = ALIGN(size, arch_shared_mem_alignment());
+>  	/* we always manually zero the memory once we are done */
+>  	page = __dma_direct_alloc_pages(dev, size, gfp & ~__GFP_ZERO, true);
+
+You align the size but does __dma_direct_alloc_pages() guarantee a
+natural alignment? Digging through cma_alloc_aligned(), it guarantees
+the minimum of size and CONFIG_CMA_ALIGNMENT. The latter can be
+configured to a page order of 2.
+
+> @@ -382,7 +384,7 @@ void __init swiotlb_init_remap(bool addressing_limit, unsigned int flags,
+>  
+>  	nslabs = default_nslabs;
+>  	nareas = limit_nareas(default_nareas, nslabs);
+> -	while ((tlb = swiotlb_memblock_alloc(nslabs, flags, remap)) == NULL) {
+> +	while ((tlb = swiotlb_memblock_alloc(nslabs, alignment, flags, remap)) == NULL) {
+>  		if (nslabs <= IO_TLB_MIN_SLABS)
+>  			return;
+>  		nslabs = ALIGN(nslabs >> 1, IO_TLB_SEGSIZE);
+> @@ -417,9 +419,9 @@ void __init swiotlb_init_remap(bool addressing_limit, unsigned int flags,
+>  		swiotlb_print_info();
+>  }
+
+We also have the dynamic swiotlb allocations via swiotlb_dyn_alloc() ->
+swiotlb_alloc_pool() -> swiotlb_alloc_tlb(). I don't see any alignment
+guarantees.
+
+TBH, I'm not too keen on this patch. It feels like a problem to be
+solved by the host - don't advertise smaller page sizes to guest or cope
+with sub-page memory sharing. Currently the streaming DMA is handled via
+bouncing but we may, at some point, just allow set_memory_decrypted() on
+the DMA-mapped page. The above requirements will not allow this.
+
+I cannot come up with a better solution though. I hope the hardware can
+cope with sub-page shared/non-shared ranges.
+
 -- 
-2.50.1
-
+Catalin
 
