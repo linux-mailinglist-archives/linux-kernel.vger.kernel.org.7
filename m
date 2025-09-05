@@ -1,180 +1,180 @@
-Return-Path: <linux-kernel+bounces-803576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB56B46297
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:48:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D44B462C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D291CC1A11
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 454F57BCA23
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71A9266EF1;
-	Fri,  5 Sep 2025 18:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715A031C56D;
+	Fri,  5 Sep 2025 18:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HqBTFhzW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964FF305967;
-	Fri,  5 Sep 2025 18:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uns1K3EQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53582280017;
+	Fri,  5 Sep 2025 18:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098118; cv=none; b=O2pYmSghvuGABT5Npt1m9gXYXbA6115LW7XeeTaqzUIYXDgIJF6oIOIsBi+yWE9hjRLDHwFHY/TU2I2e41CSd9kGOPdLC8fZEXucWJatn3myT86jdPEwMRL/ZgEkZ0pH7SlNe6MJCtzH0/MCtyUOxvcoggYU8FZ41iP/Peq7qgg=
+	t=1757098131; cv=none; b=f4k/Mb32+r+vqcMOE+ZA6AEw/UEH2HL5LujXkruaty9R//erFd7ADLKtXqTHQKzsj6AGWK7jJi4Fe2cHP5RTzNX50/lIVINqmcvoOgu7TQTT5mORM2sgRfZha+ZTUtOhrpLqHnlpx2r1jpNav2FK8Qi2blQl3uiTY/h8XN4qyJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098118; c=relaxed/simple;
-	bh=ZYN7kjgpp1SBstT/IbRXfImDXToxoMIu7t63iDp4TqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kBafr9HRTduLEsb1CDtUbMIycA601YbTAywJW5kaTSjJXxRcXeBvn8HQchwErd6Nl2jtZ4osBcZ44fFNBPsLbr8zp1iSof8TALKvFDFztLKHSpEFlnco/zoWGbPiCmrNNiqPQcfrnQyE8D9rLJ707xad6LLoDJXjVKikk5jpyUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HqBTFhzW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.33.189] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9ED3520171D4;
-	Fri,  5 Sep 2025 11:48:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9ED3520171D4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757098115;
-	bh=UEf1JD/aGiC3VLU1cDq4oELHOZ+jOkavOtqU41LSL24=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HqBTFhzWNpOzIk6YsS4ZMbeBlQyeO7WAx+3otw9Y/JlPGOwY/+ACb7aL0pwjLk3pl
-	 yRsFfAhUaEFF+jparHEF77hOr3ERORImJUKeAIlJt83EfGWRJgVddq4aqAGftsd8SP
-	 17cYi4N/uH2gTc2/tRIItR3tDyixz0Mkpe8IeFbI=
-Message-ID: <75bb740c-a539-4e95-b0b0-52cb3f5060d5@linux.microsoft.com>
-Date: Fri, 5 Sep 2025 11:48:35 -0700
+	s=arc-20240116; t=1757098131; c=relaxed/simple;
+	bh=q/cnJYwiQrYCXLKiAQYrAuGmRzLn79YGRxuj3an5Vmw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WDZmSFw7zqZTvIbPP75X38znvDQbtGQO0b0/dn++AAojzqqx0uad6ZsR7XStS5N/qxaNkGKBXmZ7ya3T8ZVtZZqraQhEXv+iI42XPq//HBz2PYQSjerqLEknY/AvTFjEK4J2G3wRVahSMWte7kSAN0a7LG9lvEeMnBTNHrS6dw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uns1K3EQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 06067C4CEFB;
+	Fri,  5 Sep 2025 18:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757098131;
+	bh=q/cnJYwiQrYCXLKiAQYrAuGmRzLn79YGRxuj3an5Vmw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=uns1K3EQQuQU1283oQwUuOGEFpHFwTkZFZ5mLzp2+VjFCNEATIeenO8yLWbXi5DH/
+	 0CdDQaxHILYc9D+J/cIAzjflTnkSI8z0aMhVar4o1Qr+hLC4OqnbWHqufXn4rOe8+a
+	 XSeOFk6E+9pL0CsZr4BQruljJ2UomxoV7yh8xutR8nNZKJ440Bqw3h+M9Vf4D6vi2u
+	 IbGm1HeHh33Tak8oOoRU+oxAWwZSDJWp5sm7Rm+UaF2L52pkkEbQL0eO9pZQn6Pxti
+	 kohaeYpJCy4dqW9P3J7VngFoM9+4RpkgXddqY/9EQvibEkzSF97zv1NANLnswAoy8c
+	 FC0kxNdr5BgoA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33BCCA1017;
+	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
+From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+Date: Fri, 05 Sep 2025 13:48:35 -0500
+Subject: [PATCH RFC 12/13] dmaengine: sdxi: Add Kconfig and Makefile
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
-To: Praveen K Paladugu <praveenkpaladugu@gmail.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
- <644647df-64d5-44eb-b7ac-13bd4b81d422@gmail.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <644647df-64d5-44eb-b7ac-13bd4b81d422@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250905-sdxi-base-v1-12-d0341a1292ba@amd.com>
+References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+In-Reply-To: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Wei Huang <wei.huang2@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757098129; l=3113;
+ i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
+ bh=ouNlAF3ey9kkPHIHkTAL8nkSqeI8aY290db9HnPAHSw=;
+ b=9QEgbeZtoY02av3vXIAReneK8LIym6iDIavrtDdkJoaGAe+hK8loAznGg4DdNdfkul4tka+N0
+ gEXJrStJhE2APqhhM6Crk3tgkYiLF4lmaIzYy1L6gpxa4Mx6/56hMGo
+X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
+ pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
+X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
+ auth_id=241
+X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
+Reply-To: nathan.lynch@amd.com
 
-On 9/5/2025 8:31 AM, Praveen K Paladugu wrote:
-> 
-> 
-> On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
->> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->>
->> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
->> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
->> request.
->>
-> Is this behavior limited to VP stats? Or does it extend to other
-> stats (hypervisor, partition, etc) as well?
-> 
-In practice we will only need to worry about partition and VP.
+From: Nathan Lynch <nathan.lynch@amd.com>
 
-In the current code in hyperv-next, it's only VP stats. Upcoming patches
-to add debugfs code will also need it for partition stats.
+Add SDXI Kconfig that includes debug and unit test options in addition
+to the usual tristate. SDXI_DEBUG seems necessary because
+DMADEVICES_DEBUG makes dmatest too verbose.
 
->> This results a failure in module init. Instead of failing, gracefully
-> nit: s/This results in a failure during module init/
+One goal is to keep the bus-agnostic portions of the driver buildable
+without PCI(_MSI), in case non-PCI SDXI implementations come along
+later.
 
-Thanks, I'll change it for v2
+Co-developed-by: Wei Huang <wei.huang2@amd.com>
+Signed-off-by: Wei Huang <wei.huang2@amd.com>
+Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
+---
+ drivers/dma/Kconfig       |  2 ++
+ drivers/dma/Makefile      |  1 +
+ drivers/dma/sdxi/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/dma/sdxi/Makefile | 17 +++++++++++++++++
+ 4 files changed, 43 insertions(+)
 
-Nuno
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index 05c7c7d9e5a4e52a8ad7ada8c8b9b1a6f9d875f6..cccf00b73e025944681b03cffe441c372526d3f3 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -774,6 +774,8 @@ source "drivers/dma/fsl-dpaa2-qdma/Kconfig"
+ 
+ source "drivers/dma/lgm/Kconfig"
+ 
++source "drivers/dma/sdxi/Kconfig"
++
+ source "drivers/dma/stm32/Kconfig"
+ 
+ # clients
+diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
+index a54d7688392b1a0e956fa5d23633507f52f017d9..ae4154595e1a6250b441a90078e9df3607d3d1dd 100644
+--- a/drivers/dma/Makefile
++++ b/drivers/dma/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_XGENE_DMA) += xgene-dma.o
+ obj-$(CONFIG_ST_FDMA) += st_fdma.o
+ obj-$(CONFIG_FSL_DPAA2_QDMA) += fsl-dpaa2-qdma/
+ obj-$(CONFIG_INTEL_LDMA) += lgm/
++obj-$(CONFIG_SDXI) += sdxi/
+ 
+ obj-y += amd/
+ obj-y += mediatek/
+diff --git a/drivers/dma/sdxi/Kconfig b/drivers/dma/sdxi/Kconfig
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9757cffb5f64fbc175ded8d0c9d751f0a22b6df
+--- /dev/null
++++ b/drivers/dma/sdxi/Kconfig
+@@ -0,0 +1,23 @@
++config SDXI
++	tristate "SDXI support"
++	select DMA_ENGINE
++	select DMA_VIRTUAL_CHANNELS
++	select PACKING
++	help
++	  Enable support for Smart Data Accelerator Interface (SDXI)
++	  Platform Data Mover devices. SDXI is a vendor-neutral
++	  standard for a memory-to-memory data mover and acceleration
++	  interface.
++
++config SDXI_DEBUG
++	bool "SDXI driver debug"
++	default DMADEVICES_DEBUG
++	depends on SDXI != n
++	help
++	  Enable debug output from the SDXI driver. This is an option
++	  for use by developers and most users should say N here.
++
++config SDXI_KUNIT_TEST
++       tristate "SDXI unit tests" if !KUNIT_ALL_TESTS
++       depends on SDXI && KUNIT
++       default KUNIT_ALL_TESTS
+diff --git a/drivers/dma/sdxi/Makefile b/drivers/dma/sdxi/Makefile
+new file mode 100644
+index 0000000000000000000000000000000000000000..c67e475689b45d6260fe970fb4afcc25f8f9ebc1
+--- /dev/null
++++ b/drivers/dma/sdxi/Makefile
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0
++
++ccflags-$(CONFIG_SDXI_DEBUG) += -DDEBUG
++
++obj-$(CONFIG_SDXI) += sdxi.o
++
++sdxi-objs += \
++	context.o     \
++	descriptor.o  \
++	device.o      \
++	dma.o         \
++	enqueue.o     \
++	error.o
++
++sdxi-$(CONFIG_PCI_MSI) += pci.o
++
++obj-$(CONFIG_SDXI_KUNIT_TEST) += descriptor_kunit.o
 
->> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
->> already-mapped stats_pages[HV_STATS_AREA_SELF].
->>
->> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> ---
->>   drivers/hv/mshv_root_hv_call.c | 43 ++++++++++++++++++++++++++++++----
->>   drivers/hv/mshv_root_main.c    |  3 +++
->>   2 files changed, 42 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
->> index c9c274f29c3c..1c38576a673c 100644
->> --- a/drivers/hv/mshv_root_hv_call.c
->> +++ b/drivers/hv/mshv_root_hv_call.c
->> @@ -724,6 +724,24 @@ hv_call_notify_port_ring_empty(u32 sint_index)
->>       return hv_result_to_errno(status);
->>   }
->>   +static int
->> +hv_stats_get_area_type(enum hv_stats_object_type type,
->> +               const union hv_stats_object_identity *identity)
->> +{
->> +    switch (type) {
->> +    case HV_STATS_OBJECT_HYPERVISOR:
->> +        return identity->hv.stats_area_type;
->> +    case HV_STATS_OBJECT_LOGICAL_PROCESSOR:
->> +        return identity->lp.stats_area_type;
->> +    case HV_STATS_OBJECT_PARTITION:
->> +        return identity->partition.stats_area_type;
->> +    case HV_STATS_OBJECT_VP:
->> +        return identity->vp.stats_area_type;
->> +    }
->> +
->> +    return -EINVAL;
->> +}
->> +
->>   int hv_call_map_stat_page(enum hv_stats_object_type type,
->>                 const union hv_stats_object_identity *identity,
->>                 void **addr)
->> @@ -732,7 +750,7 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
->>       struct hv_input_map_stats_page *input;
->>       struct hv_output_map_stats_page *output;
->>       u64 status, pfn;
->> -    int ret = 0;
->> +    int hv_status, ret = 0;
->>         do {
->>           local_irq_save(flags);
->> @@ -747,11 +765,28 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
->>           pfn = output->map_location;
->>             local_irq_restore(flags);
->> -        if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
->> -            ret = hv_result_to_errno(status);
->> +
->> +        hv_status = hv_result(status);
->> +        if (hv_status != HV_STATUS_INSUFFICIENT_MEMORY) {
->>               if (hv_result_success(status))
->>                   break;
->> -            return ret;
->> +
->> +            /*
->> +             * Some versions of the hypervisor do not support the
->> +             * PARENT stats area. In this case return "success" but
->> +             * set the page to NULL. The caller checks for this
->> +             * case instead just uses the SELF area.
->> +             */
->> +            if (hv_stats_get_area_type(type, identity) == HV_STATS_AREA_PARENT &&
->> +                hv_status == HV_STATUS_INVALID_PARAMETER) {
->> +                pr_debug_once("%s: PARENT area type is unsupported\n",
->> +                          __func__);
->> +                *addr = NULL;
->> +                return 0;
->> +            }
->> +
->> +            hv_status_debug(status, "\n");
->> +            return hv_result_to_errno(status);
->>           }
->>             ret = hv_call_deposit_pages(NUMA_NO_NODE,
->> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
->> index bbdefe8a2e9c..56ababab57ce 100644
->> --- a/drivers/hv/mshv_root_main.c
->> +++ b/drivers/hv/mshv_root_main.c
->> @@ -929,6 +929,9 @@ static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
->>       if (err)
->>           goto unmap_self;
->>   +    if (!stats_pages[HV_STATS_AREA_PARENT])
->> +        stats_pages[HV_STATS_AREA_PARENT] = stats_pages[HV_STATS_AREA_SELF];
->> +
->>       return 0;
->>     unmap_self:
-> 
+-- 
+2.39.5
+
 
 
