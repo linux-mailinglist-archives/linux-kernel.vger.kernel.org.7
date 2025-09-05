@@ -1,128 +1,200 @@
-Return-Path: <linux-kernel+bounces-803397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62489B45E99
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:48:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB379B45EAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752FB172318
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:48:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BA777B77DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D22306B3A;
-	Fri,  5 Sep 2025 16:48:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FED3309F05;
+	Fri,  5 Sep 2025 16:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="ZDtmlhPR"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B35259CB3
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E6821FF46;
+	Fri,  5 Sep 2025 16:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757090885; cv=none; b=TYQ8ytlgYoJ0CUm1Ti3iS0IfEXENrw6PgVy+F2trC6SIlYs7wvhelc8DQpLHksvY4QZEXwfAW6LWVVt4TFFCfE8KEBjBskP0QSrqu/J1qBXMarUZFzkQyRw4ZxMpKkeA3N00AJkCBGuBS1Ca6laoJAvx0XwAfAfKYPPLtU0GSOY=
+	t=1757090943; cv=none; b=RXCydGCc6qCuNSkn484NsxSoZRdD/PzUmaXp1+PsqWgXpc7EFQ2RFssXgsq/ofLq0KAT+63YEjRfcMEfebyXhoj0yzI+dKSKHTHPsE/H5UZHyAaCcnmAM5i05JDItQDdCsKmz8H2v9sbX4zz37gfnXfa+VBOCDvo+fuXNOeG4kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757090885; c=relaxed/simple;
-	bh=vpFAyupKqUIPxdB7EanQJ7sA9RfZSCYLMiZsN1o0ESg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j8XMthYDrG89/s5sTg8EPMaIfIL9bYJR2t5+xqGg1gRhnM1nExhLWTh2BlrQnZ7hLP/wKu4bV8S3nAXB9wRYx1XX09+//QOdGvj+EGK3x94FyKOW2UfzBUhGiMkzCz9/SiuaUdum0KshFDgFCS4FmnblqSCnyiUDmD2oIGcntP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3f0c32654afso21838825ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757090882; x=1757695682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wu/5ukm0ZlTlcgF4Blqa4i3v1Jijb97FpXJs2n2sI7w=;
-        b=o76GxUYoLKQt31yAn5SdWtm3jf9pGTbRdyTi1avxRL1l26uTfzVnSvrNsM7+bPYaav
-         K76MPUGvbwAOs2rBAblX1mmhvvSV83RuN2ySLdCYkzR/CkGAJSprfb0pqwTdgeOkhjyx
-         lhSCTaNdIariDO7EireM7TaE/Ocey50iIbNHKzq+NdOwVrNjSfYcTCXLJfFx+u9BgQkJ
-         iVJ0wPlh+RcxMLAm8R9M78jId/PmnYMgl9KFpeYyCwjB0uySY2SfL93QsBAyBCxpFdex
-         FZolXClB1jBUnw6rZGyWDh2efM2e8g/VRpBLjyXPtC+TDnkYTsJNqMOhPPJkHeLnTpND
-         2OFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTOeQzPjLl48hD7aLLb4psK3lFaSav5liK62xNuj61Sr58CeAekkgvIc4DDfCziWdg3POIT926EQ0XB9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEtQjGXkF+7Iz/KqwP2YX5/dzJ97+Syk3XUUGsoQXDk8QFxb2H
-	NpJDbxb8cUV3rq5yilmv+7RxEbiXC7FusVXiGE7la9QwOg289cRp656ta4DFeP6PStqyvMXkZK8
-	7BcYr7Uz1y/9O2PvRHiLIE+SymSwqwBtwwENaOnhDLl9+qBqlzzhhRpensVM=
-X-Google-Smtp-Source: AGHT+IGIDS7a4z+EuDQHwpKYUNd2f0KIepTXhtKNl9epzuiHt3xEpg4nv/Gl7P2dl+jDGxn9tFdn5byIlGJL7wX1q5XmbYhCLOXg
+	s=arc-20240116; t=1757090943; c=relaxed/simple;
+	bh=diSf69d2oQ1dS0WKoCbUPJHHMv6KOh1u+FVVXuJwOm4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ShN71A+ChJ4BIYVa+Q8gl0DJF9XpSzuO/ZkJlHk6fLDx+TAScs3jm0gdM8De+JuPuH2MvqLu/IKTm7LIk6OqWEEU1//BNtQyGr0tcE80sLIX7U+PILVFi6HBahbNngCURswEXjCsJBwVBdRcTzwDDAmReWoAtoQddd02hXzrFKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=ZDtmlhPR; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1757090938; x=1757350138;
+	bh=diSf69d2oQ1dS0WKoCbUPJHHMv6KOh1u+FVVXuJwOm4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ZDtmlhPROSqmOV/mM031irz4iMovwT/6c7BOlqR8Ko2upeeW6TEn7SntMw6fDzaw8
+	 qufJU7PvggauiQcOyjOrAzI3yS0QA+BYNuhcttRDGzTEZYXgriOgCZFO9/CrS7NmZ+
+	 vXeKW9lqxZ+c3FpKAnk5Rma4s0PIGZiCMtfP6yX3xK1uF2N500A8YyW6RI/xmeQJdf
+	 qzNR9dUL01iA1IZweZBwvtK64Ut0sdcFweynzR2gYabOjj/aXkPKVwdTEnqmnE/PVX
+	 Ztjcj1wPNky8uIsZSli6Y15XQYQXj9yTb8wy3xxlafgksyozXDcE7IVGZPqEJ4Z7PX
+	 I+EfDtxPPFVJQ==
+Date: Fri, 05 Sep 2025 16:48:52 +0000
+To: Rob Herring <robh@kernel.org>
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: leds: commonize leds property
+Message-ID: <Lm6PLaup84KHzhxYTbsrQIbEeQpc6dj65aLkLFvOx7QwvuXS9ON53Csa2v6LBp4hd9iIQilvGhXqx4kXv4cfqgYUeA49vrVdWJw-fNMLu2Y=@vinarskis.com>
+In-Reply-To: <20250905152404.GB953718-robh@kernel.org>
+References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com> <20250905-leds-v2-2-ed8f66f56da8@vinarskis.com> <20250905152404.GB953718-robh@kernel.org>
+Feedback-ID: 158356072:user:proton
+X-Pm-Message-ID: 8506bc237e49fba276022028e967299c197ecd38
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2703:b0:3f3:dd9a:63e4 with SMTP id
- e9e14a558f8ab-3f7b6fb55e4mr57890345ab.0.1757090882595; Fri, 05 Sep 2025
- 09:48:02 -0700 (PDT)
-Date: Fri, 05 Sep 2025 09:48:02 -0700
-In-Reply-To: <20250905160645.4152096-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bb1442.050a0220.192772.0195.GAE@google.com>
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in az6007_i2c_xfer
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
-WARNING: CPU: 1 PID: 6699 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Modules linked in:
-CPU: 1 UID: 0 PID: 6699 Comm: syz.3.19 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 d0 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 59 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 40 e3 9a 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc9000381f938 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a2388
-RDX: ffff888030cbc880 RSI: ffffffff817a2395 RDI: 0000000000000001
-RBP: 1ffff92000703f2c R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
-R13: fffffbfff35c6810 R14: ffffc9000381f9c0 R15: ffff888022ff8000
-FS:  00007fd9a0eac6c0(0000) GS:ffff8881247e3000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000557fb7ffc108 CR3: 0000000022b5f000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- az6007_i2c_xfer+0x8a3/0xa90 drivers/media/usb/dvb-usb-v2/az6007.c:832
- __i2c_transfer+0x6b3/0x2190 drivers/i2c/i2c-core-base.c:2264
- i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
- i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
- i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
- i2c_master_recv include/linux/i2c.h:79 [inline]
- i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
- do_loop_readv_writev fs/read_write.c:847 [inline]
- do_loop_readv_writev fs/read_write.c:835 [inline]
- vfs_readv+0x5be/0x8b0 fs/read_write.c:1020
- do_preadv+0x1a6/0x270 fs/read_write.c:1132
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd99ff8e169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd9a0eac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007fd9a01b5fa0 RCX: 00007fd99ff8e169
-RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
-RBP: 00007fd9a0010a68 R08: 000000000000007e R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fd9a01b5fa0 R15: 00007fffaa2a4bc8
- </TASK>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-Tested on:
 
-commit:         d69eb204 Merge tag 'net-6.17-rc5' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10a31962580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2b271b97d244fd0a
-dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13626134580000
 
+
+
+On Friday, September 5th, 2025 at 17:24, Rob Herring <robh@kernel.org> wrot=
+e:
+
+>=20
+>=20
+> On Fri, Sep 05, 2025 at 09:59:30AM +0200, Aleksandrs Vinarskis wrote:
+>=20
+> > A number of existing schemas use 'leds' property to provide
+> > phandle-array of LED(s) to the consumer. Additionally, with the
+> > upcoming privacy-led support in device-tree, v4l2 subnode could be a
+> > LED consumer, meaning that all camera sensors should support 'leds'
+> > and 'led-names' property via common 'video-interface-devices.yaml'.
+> >=20
+> > To avoid dublication, commonize 'leds' property from existing schemas
+> > to newly introduced 'led-consumer.yaml'.
+> >=20
+> > Signed-off-by: Aleksandrs Vinarskis alex@vinarskis.com
+> > ---
+> > .../devicetree/bindings/leds/backlight/led-backlight.yaml | 7 +------
+> > Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml | 6 +=
+-----
+> > .../devicetree/bindings/media/video-interface-devices.yaml | 3 +++
+> > 3 files changed, 5 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/leds/backlight/led-backl=
+ight.yaml b/Documentation/devicetree/bindings/leds/backlight/led-backlight.=
+yaml
+> > index f5554da6bc6c73e94c4a2c32b150b28351b25f16..5e19b4376715eeb05cb7892=
+55db209ed27f8822f 100644
+> > --- a/Documentation/devicetree/bindings/leds/backlight/led-backlight.ya=
+ml
+> > +++ b/Documentation/devicetree/bindings/leds/backlight/led-backlight.ya=
+ml
+> > @@ -18,17 +18,12 @@ description:
+> >=20
+> > allOf:
+> > - $ref: common.yaml#
+> > + - $ref: /schemas/leds/leds-consumer.yaml#
+>=20
+>=20
+> Drop.
+>=20
+> > properties:
+> > compatible:
+> > const: led-backlight
+> >=20
+> > - leds:
+> > - description: A list of LED nodes
+> > - $ref: /schemas/types.yaml#/definitions/phandle-array
+> > - items:
+> > - maxItems: 1
+>=20
+>=20
+> You need to keep the property here:
+>=20
+> leds: true
+>=20
+> > -
+> > required:
+> > - compatible
+> > - leds
+> > diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicol=
+or.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+> > index 8ed059a5a724f68389a1d0c4396c85b9ccb2d9af..b4f326e8822a3bf452b22f5=
+b9fa7189696f760a4 100644
+> > --- a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+> > +++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+> > @@ -17,16 +17,12 @@ properties:
+> > compatible:
+> > const: leds-group-multicolor
+> >=20
+> > - leds:
+> > - description:
+> > - An aray of monochromatic leds
+> > - $ref: /schemas/types.yaml#/definitions/phandle-array
+> > -
+> > required:
+> > - leds
+> >=20
+> > allOf:
+> > - $ref: leds-class-multicolor.yaml#
+> > + - $ref: /schemas/leds/leds-consumer.yaml#
+>=20
+>=20
+>=20
+> Same comments in this one.
+>=20
+> > unevaluatedProperties: false
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/media/video-interface-de=
+vices.yaml b/Documentation/devicetree/bindings/media/video-interface-device=
+s.yaml
+> > index cf7712ad297c01c946fa4dfdaf9a21646e125099..1e25cea0ff71da2cfd1c7c4=
+642713199f3542c0a 100644
+> > --- a/Documentation/devicetree/bindings/media/video-interface-devices.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/media/video-interface-devices.y=
+aml
+> > @@ -10,6 +10,9 @@ maintainers:
+> > - Jacopo Mondi jacopo@jmondi.org
+> > - Sakari Ailus sakari.ailus@linux.intel.com
+> >=20
+> > +allOf:
+> > + - $ref: /schemas/leds/leds-consumer.yaml#
+>=20
+>=20
+> This can be dropped. The user still has to define how many entries and
+> what the values of led-names are.
+
+Hmm, but where should it be added then? If I just drop it, MIPI camera sche=
+mas which are based on 'video-interface-devices.yaml' and have 'unevaluated=
+Properties: false' throw warnings because 'leds' was not expected. Includin=
+g the example in 'led-consumer.yaml' as found by your bot (because of patch=
+ order your bot only run on 1/4, adding this very change fixes it).
+In this case, v4l2 subnode is the LED user, which is some camera. It seems =
+most/all of these cameras are based on this binding, so instead of adding n=
+ew led related properties to all of them, I thought this is a good common p=
+lace for it... Shall I add #entries and available options for 'led-names' h=
+ere to make it complete?
+
+Thanks,
+Alex
+
+>=20
+> > +
+> > properties:
+> > flash-leds:
+> > $ref: /schemas/types.yaml#/definitions/phandle-array
+> >=20
+> > --
+> > 2.48.1
 
