@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-802127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB97B44DE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:19:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81CEB44DB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF711C280F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07381C26995
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA3B289376;
-	Fri,  5 Sep 2025 06:19:33 +0000 (UTC)
-Received: from bsdbackstore.eu (128-116-240-228.dyn.eolo.it [128.116.240.228])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE24726C39E;
+	Fri,  5 Sep 2025 05:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rco3EMV4"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4052AD2F;
-	Fri,  5 Sep 2025 06:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.116.240.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CADAEEAB;
+	Fri,  5 Sep 2025 05:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757053173; cv=none; b=FHRJiEng2ZI4ncvHsZwYz2Wo/iHDxWAXRTt7kBTkTehlr1YXphG+TFo1QILGV85vWpDl0gXmjSu7kgKbKxISUef8mq4/jIfTKPEoy7kJlTP9AyZYashgl3/q6yepTho/5YTy+GOlJp6EVcVc0v44XXsE8TV9rub68tEIxCx2Whk=
+	t=1757051586; cv=none; b=MWbGTCtkl4tx4VNxx0cYhNnDqtAUZI3AwCfzlJ86anEA55MjsTZAIx4KBFLBW+YXTYoxo0XL+yqTDRz6im99gy187zxEnMvFRu5NXIRBEOVA9jnE3/1hK8xQbmX3OcQvTNj5LVYRHpFw6b+BVkqy3064Lcvqk9MkWiZZhMAqoa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757053173; c=relaxed/simple;
-	bh=NhlN6InMMn588qcAitktClqWH4WsbE2cjvjyyXVGWpU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Lq/TVbymN3ZSHQXPvt/+v1kjREH8VTdFIlZDqs+ufiTPrKgOsesti15Atj8XGdHDJ+g3WPBT/nWmc0RFIjT7/0UTEN0NBhjyatyS8o2XBiBnHddQvkWi6qSl2z9h6CkAEP1Z680VXXjvi3GWgQ2GW5D8inO+lsqpr8XHnAbKREk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu; spf=pass smtp.mailfrom=bsdbackstore.eu; arc=none smtp.client-ip=128.116.240.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsdbackstore.eu
-Received: from localhost (128-116-240-228.dyn.eolo.it [128.116.240.228])
-	by bsdbackstore.eu (OpenSMTPD) with ESMTPSA id cf8a8994 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 5 Sep 2025 07:52:41 +0200 (CEST)
+	s=arc-20240116; t=1757051586; c=relaxed/simple;
+	bh=tbNmxBvkmPLl/ntwp9nwG2AhqvpKbPi6ppZ4Gc0j83o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V9f+Y0X0gDuAxcrphWCFAssFzAAg9Tdw7oODa1Q48Wuxag8hfz76fmZ0uXeX3ZmNRLL40GWNANIB30+EjOP8MEXGXNIjwFDiJRn8JSoWdKmG5hohi7RRTt5Fm7+0is2ZBaTJ3WDEd5PSGthUWNQ7j3YFIFwcb1gyqUbp3SxU5c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rco3EMV4; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=deXU0gcF7yBIf+TpC1TbTUZssVkV6sZTs9sHoaAOhKo=; b=rco3EMV4Wt2VyqeetV9N8LyVPC
+	dX6SlBGQuX3s5tjDwMdjzgjNcf9snf4erTwYbUd2Syp8dj8NpyLauI+F9q8WONGecmcxY24Ag/rAq
+	dWx4ooli/OUns9yfIIvvWxkzlo8eRXKDOgHG/1AhSxp3mJdqdqhO2NawV/2tFjEq3oNrT7eyq1TlH
+	nf7dB+c2oNYsAOn/bvpTql/QESyUQGHOpb1j+m3dy4mz6236lgeWhWEex+MTo8zs7TwPI9CBWFa7N
+	ofNL0oRo7ifk5ab2jUNGaXdFji9RPT3BqJd+gw9VNOF7HOBxthcmUrqSrWJg47CJcvRcuc7CdM033
+	dv8lWy/Q==;
+Received: from i53875bb6.versanet.de ([83.135.91.182] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uuPNQ-0004GZ-TW; Fri, 05 Sep 2025 07:52:48 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: robh@kernel.org, WeiHao Li <cn.liweihao@gmail.com>
+Cc: hjc@rock-chips.com, andy.yan@rock-chips.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ WeiHao Li <cn.liweihao@gmail.com>
+Subject: Re: [PATCH v2 3/8] dt-bindings: clock: rk3368: Add SCLK_MIPIDSI_24M
+Date: Fri, 05 Sep 2025 07:52:47 +0200
+Message-ID: <2267196.NgBsaNRSFp@diego>
+In-Reply-To: <20250905025632.222422-4-cn.liweihao@gmail.com>
+References:
+ <20250905025632.222422-1-cn.liweihao@gmail.com>
+ <20250905025632.222422-4-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Sep 2025 07:52:41 +0200
-Message-Id: <DCKMSNY3N59V.3KQCDWA1VJQNQ@bsdbackstore.eu>
-Cc: <kbusch@kernel.org>, <axboe@kernel.dk>, <hch@lst.de>,
- <sagi@grimberg.me>, <kch@nvidia.com>, "Alistair Francis"
- <alistair.francis@wdc.com>
-Subject: Re: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
-From: "Maurizio Lombardi" <mlombard@bsdbackstore.eu>
-To: <alistair23@gmail.com>, <chuck.lever@oracle.com>, <hare@kernel.org>,
- <kernel-tls-handshake@lists.linux.dev>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-nvme@lists.infradead.org>, <linux-nfs@vger.kernel.org>
-X-Mailer: aerc
-References: <20250905024659.811386-1-alistair.francis@wdc.com>
- <20250905024659.811386-8-alistair.francis@wdc.com>
-In-Reply-To: <20250905024659.811386-8-alistair.francis@wdc.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri Sep 5, 2025 at 4:46 AM CEST, alistair23 wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
->
-> If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
-> a KeyUpdate handshake type then the underlying TLS keys need to be
-> updated.
->
-> If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
-> allow the NVMe layer to process the KeyUpdate request and forward the
-> request to userspace. Userspace must then update the key to keep the
-> connection alive.
->
-> This patch allows us to handle the NVMe host sending a KeyUpdate
-> request without aborting the connection. At this time we don't support
-> initiating a KeyUpdate.
->
-> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Hi,
+
+Am Freitag, 5. September 2025, 04:56:27 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb WeiHao Li:
+> Add a clock id for mipi dsi reference clock, mipi dsi node used it.
+>=20
+> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+
+another process-related comment :-) .
+
+(1) You already got in v1 the
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
+So when sending a v2, please include such received tags
+(if there are no major changes to the relevant code)
+
+This prevents people from reviewing things needlessly multiple times.
+So patch 3 would look something like:
+
+=2D-----------
+Add a clock id for mipi dsi reference clock, mipi dsi node used it.
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+=2D-----------
+
+(2) As can be seen in
+https://lore.kernel.org/linux-rockchip/175690195013.3771488.435870786224873=
+257.b4-ty@sntech.de/
+
+I already applied the two clock patches, so in newer versions don't
+send them anymore.
+
+
+Just to keep in mind for next time.
+
+
+Heiko
+
 > ---
-> v2:
->  - Use a helper function for KeyUpdates
->  - Ensure keep alive timer is stopped
->  - Wait for TLS KeyUpdate to complete
->
->  drivers/nvme/target/tcp.c | 90 ++++++++++++++++++++++++++++++++++++---
->  1 file changed, 84 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> index bee0355195f5..dd09940e9635 100644
-> --- a/drivers/nvme/target/tcp.c
-> +++ b/drivers/nvme/target/tcp.c
-> @@ -175,6 +175,7 @@ struct nvmet_tcp_queue {
-> =20
->  	/* TLS state */
->  	key_serial_t		tls_pskid;
-> +	key_serial_t		user_session_id;
->  	struct delayed_work	tls_handshake_tmo_work;
-> =20
->  	unsigned long           poll_end;
-> @@ -186,6 +187,8 @@ struct nvmet_tcp_queue {
->  	struct sockaddr_storage	sockaddr_peer;
->  	struct work_struct	release_work;
-> =20
-> +	struct completion       tls_complete;
-> +
->  	int			idx;
->  	struct list_head	queue_list;
-> =20
-> @@ -836,6 +839,11 @@ static int nvmet_tcp_try_send_one(struct nvmet_tcp_q=
-ueue *queue,
->  	return 1;
->  }
-> =20
-> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
-> +static int nvmet_tcp_try_peek_pdu(struct nvmet_tcp_queue *queue);
-> +static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w);
-> +#endif
-> +
->  static int nvmet_tcp_try_send(struct nvmet_tcp_queue *queue,
->  		int budget, int *sends)
->  {
-> @@ -844,6 +852,13 @@ static int nvmet_tcp_try_send(struct nvmet_tcp_queue=
- *queue,
->  	for (i =3D 0; i < budget; i++) {
->  		ret =3D nvmet_tcp_try_send_one(queue, i =3D=3D budget - 1);
->  		if (unlikely(ret < 0)) {
-> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
-> +			if (ret =3D=3D -EKEYEXPIRED &&
-> +				queue->state !=3D NVMET_TCP_Q_DISCONNECTING &&
-> +				queue->state !=3D NVMET_TCP_Q_TLS_HANDSHAKE) {
-> +					goto done;
-> +			}
-> +#endif
->  			nvmet_tcp_socket_error(queue, ret);
->  			goto done;
->  		} else if (ret =3D=3D 0) {
-> @@ -1110,11 +1125,52 @@ static inline bool nvmet_tcp_pdu_valid(u8 type)
->  	return false;
->  }
-> =20
-> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
-> +static int update_tls_keys(struct nvmet_tcp_queue *queue)
-> +{
-> +	int ret;
-> +
-> +	cancel_work(&queue->io_work);
-> +	handshake_req_cancel(queue->sock->sk);
-> +	handshake_sk_destruct_req(queue->sock->sk);
-> +	queue->state =3D NVMET_TCP_Q_TLS_HANDSHAKE;
-> +
-> +	/* Restore the default callbacks before starting upcall */
-> +	read_lock_bh(&queue->sock->sk->sk_callback_lock);
-> +	queue->sock->sk->sk_data_ready =3D  queue->data_ready;
-> +	queue->sock->sk->sk_state_change =3D queue->state_change;
-> +	queue->sock->sk->sk_write_space =3D queue->write_space;
-> +	queue->sock->sk->sk_user_data =3D NULL;
+>  include/dt-bindings/clock/rk3368-cru.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings=
+/clock/rk3368-cru.h
+> index ebae3cbf8..b951e2906 100644
+> --- a/include/dt-bindings/clock/rk3368-cru.h
+> +++ b/include/dt-bindings/clock/rk3368-cru.h
+> @@ -72,6 +72,7 @@
+>  #define SCLK_SFC		126
+>  #define SCLK_MAC		127
+>  #define SCLK_MACREF_OUT		128
+> +#define SCLK_MIPIDSI_24M	129
+>  #define SCLK_TIMER10		133
+>  #define SCLK_TIMER11		134
+>  #define SCLK_TIMER12		135
+>=20
 
-Shouldn't "sk_user_data =3D NULL" be protected by a write lock?
 
-Maurizio
+
+
 
