@@ -1,190 +1,219 @@
-Return-Path: <linux-kernel+bounces-802958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0010B458E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:27:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACD1B458C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50861CC133A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8385C1937
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E60350D5E;
-	Fri,  5 Sep 2025 13:25:09 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB7A350841;
+	Fri,  5 Sep 2025 13:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MHTn0O4S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2D35337A;
-	Fri,  5 Sep 2025 13:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE61342CB6
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078709; cv=none; b=EhWpgQXD4V1z+dtypBpchHSRWb3RM0xQzKQDnO6mtb/YYy2JE8wa9v/JzwbUiex1l2O0ixEAg3jq8dQ3wW0bnimCTYdG1MmB+aiQgOAGwTMkgy1PjUq8p5xbcrn+/Ah7ldEzG3+BZiNsgE/ZbqsPQ0+MXcbnfpNo8XOx77TI83o=
+	t=1757078681; cv=none; b=juWz0WYoFc618fN/75FbGmqH+iZP8P6/hvf8X4IAhFIlMGFD61y1NwGvN1GghWPuX6Q7yMaKqGcjoOdKDlujnfaC7YHuTHI3sAyoz6mogiYrnIGTYYBnzV64uafX9euK8S0GHYffMbPD092iNuYB14MOTUqY+G5rRNW8F7Fq2tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078709; c=relaxed/simple;
-	bh=vpnK+wgxPDyyGBiNRyOVaIAlcPF3ONZ70dk/Vdt+kro=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rody1JRDeRk/msd/i2NYZIr/PMFj21jCY4VB4ZexsxDKt4SvtViJqNi5xDmflG6Qd5ZE1lnfIioA/XN1AWUXYQJwUBwO+rh79HB+yn4EwfF/o+b2Z4LceMVTaIcERqN7stvOw1SkWlAf6Ltbsi3ZW1nRDakq61IFL6Ve2iZkYQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b8db92f68a5b11f0b29709d653e92f7d-20250905
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:646670e5-e5c7-40b1-b28a-3ee5e8c5af3a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f6a8c23197cabdb3bff5558c69d77a16,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b8db92f68a5b11f0b29709d653e92f7d-20250905
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 530252194; Fri, 05 Sep 2025 21:24:59 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 4D67FE008FA3;
-	Fri,  5 Sep 2025 21:24:59 +0800 (CST)
-X-ns-mid: postfix-68BAE4AB-1181537
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 70239E008FA7;
-	Fri,  5 Sep 2025 21:24:55 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>
-Cc: Ben Horgan <ben.horgan@arm.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v5 6/6] PM: EM: Use scope-based cleanup helper
-Date: Fri,  5 Sep 2025 21:24:13 +0800
-Message-Id: <20250905132413.1376220-7-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
-References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1757078681; c=relaxed/simple;
+	bh=47V1pWT30/JAy9Msd5PdOFGYfzNex1CvOxWZoRPIq0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eZQOKNr31vHv0AkoME4Un7gw6vBI1YZxjCxa8CvoGwJwnDuOsTLI7qnu79fr3D+yxIb+DuZ+Y+JqGfG472bwUJu9ePZwQBA0FA7lNx1CGPqLHhb78tYVAwgWVNAafyjpNhLlo3M8T5d+ghs8jR5DX9uSgE6LQ29BIBuUWGluQuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MHTn0O4S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856ukaQ024727
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 13:24:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RttbkaeRD6xilyn46DClTRGu1NipwCW1nrCCMWrHQIM=; b=MHTn0O4S7Gy3dMp2
+	koQg+xshH1SQPVBHB5e2F1UaGDM3B0BNHStVPQfc40YfWwU08RMD4J4yWOS19BYO
+	0aGdrsVnKgH5CPHdZOgrHv2zt4OwZc/IfMxcbaYs9+tgWMpV9L2LctpevJV8/tiB
+	SIWH8509GHw04YDwiIBeVpMoNpePUBiOWZa4MqgjXDzYgvhqFJsD9tLWRcWgGD3E
+	DXL092Uy7nipZTbgfuu6UL9D0AtFZceB68ghGj4Oi1/eZqe8LcgJmZkyceBwlrSX
+	YoiCJgi+f3bADusrMvz+W5C31B1E7wSIYZhVjvcw1R5eTZAoZxK/SOV9KmM7jbw8
+	P2VWYw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2fu3dd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:24:39 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-811917bdcfeso174500785a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:24:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757078678; x=1757683478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RttbkaeRD6xilyn46DClTRGu1NipwCW1nrCCMWrHQIM=;
+        b=fextXBb07cIqJmF7p6DeBnFaxIEnOIJSpTK8t5a0UlTnOTyd3VfPEfeNO/6TgYnBJb
+         8jDYr/hwAaaNp9ax8e25MbvlTL9t74160nnf0pSFrO8ogt2UsNX2/qgj/mj8aQtcoYq6
+         LOgtcDAkKGae/k9vjDOcTrJNKYTGypuFRLQaDr38DZMiWdixdOtz46lTkRwVYNxdmTAd
+         KcZ0X1r6MKTLVzdkPhLc9rqgITg4t8xeJkRW1jBpBoAI3vRBE9u04IqTiKTDRZP9iNFN
+         T5Rd5dcmcfpROjcDhjTJ+kkYn5IBB5eGWSJMHow7A1ALMRGwliyzlVXL5XXg74JZ4BtV
+         GYNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcX7kWs+8326K9lggkx1UvFRiGoDliIXOR90Fe4KR82HX7fvSDYG8WfPxOUL7o9qboR2irh51Xj5rtpEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX5qQsjA946HLVwKLha5VLZr0PV5VQxZlDnmoSg4wCywOJxptG
+	ZBONziTTNzjjAmwPTo2Ic0vG5+ZuL4O1gLX0hUUODEd29GDuN+WlEnoUmOPeymjk6SL+Yl/NG8V
+	+mDJilCTHkXCYHAZDukBppmVDzDzOBsbPaLmWKT7XRZtpOs0FAN6Sqr6ta0J8wgpYQ7z4+NBflJ
+	3z/LGONQt4EXzJrEiqlfU4FFYv83LftJW6Xmk6Q+rtZg==
+X-Gm-Gg: ASbGncv0ZNEQ8S0Gtm1HeHS5yP9OYu2MejBf3OGnpLYRgCUW+io4fIfzQK9cwa2Y4mG
+	Qvv7yJQPUYdwe9PGhO/c3APKkwcz3JH2QoTELvGwq7T47ROcI0Wo+94MQ86ngaNSiF4GdjZIhbj
+	SEnWvz9ee19k0nA1lmedKzyg==
+X-Received: by 2002:a05:620a:4044:b0:807:87a9:89a8 with SMTP id af79cd13be357-80787a98b83mr1630326885a.28.1757078677412;
+        Fri, 05 Sep 2025 06:24:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwKlqHy3ni2v6MLagolHNSXn+wi+jzOJYgpcpKQrunqd0lwMvR3Jz4UeTH+V50XEmq/HR3JKYmu8PmY4cD2hQ=
+X-Received: by 2002:a05:620a:4044:b0:807:87a9:89a8 with SMTP id
+ af79cd13be357-80787a98b83mr1630321185a.28.1757078676776; Fri, 05 Sep 2025
+ 06:24:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
+ <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com> <ao3nb3xkeutqetqx7amlfbqtvhuyojfvzm4prsze2mhgb2rpnc@s2bsigcrlxzo>
+In-Reply-To: <ao3nb3xkeutqetqx7amlfbqtvhuyojfvzm4prsze2mhgb2rpnc@s2bsigcrlxzo>
+From: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 18:54:25 +0530
+X-Gm-Features: Ac12FXwf69CKgwq0J5qfcDqJVVXGxU5AIZsk8pJGBMQ2vq1_qm6B_7wK263cVew
+Message-ID: <CAHz4bYs7Jy_NXcn6bOCHfxG=YoO+5vcAMUYEcptkJK+Cx+pA9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add Monaco EVK initial board support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Umang Chheda <umang.chheda@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+        Arun Khannna <quic_arkhanna@quicinc.com>,
+        Monish Chunara <quic_mchunara@quicinc.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX+SeJ5g1JqKD1
+ ghRnnjpiGHjdgpRF/LetAV92LOqigp0lJhEbAG+BjnQOTL3I5RNSPK58uvJ3QE7X2gSkKOPMYk/
+ PBM0eHyNRzvVqHF5JXi4TMAmkvarxY4dheFgY0C4TcsCU9t+3NTG2NM1K2+bc8TfqmGIsfVZgEr
+ IO/qu5A8NtgbX1J6/+HZ/7lcYu4ysgDPHWnAIAdXaqSPS693KplkKbNAJOwxJi43GoHZV7j15PC
+ 52272gVxtbpqhwTNMu3zUtj3Q5Cgwc0z+X5FZIcQa8mVJKaEIOTlgJzwImmadClU0Iv4aBoNLQ9
+ m4SWK1sDDjWgCSSBpnu2w9s9g+rLDjWdIzknCpW+m8t+biIfH+TwYfMjWbAC1GvxeJHC+jjuc5I
+ 9cUbQDSF
+X-Proofpoint-ORIG-GUID: lM8Lom9gRLs5wKQvwCI_k8CvkyQh1UE2
+X-Proofpoint-GUID: lM8Lom9gRLs5wKQvwCI_k8CvkyQh1UE2
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68bae497 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=uv0PlPAYtInrpSTTwawA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1011 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-annotation for policy references. This reduces the risk of reference
-counting mistakes and aligns the code with the latest kernel style.
+On Wed, Aug 27, 2025 at 7:13=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> On Tue, Aug 26, 2025 at 11:45:06PM +0530, Umang Chheda wrote:
+> > Add initial device tree support for Monaco EVK board, based on
+> > Qualcomm's QCS8300 SoC.
+> >
+> > Monaco EVK is single board supporting these peripherals:
+> >   - Storage: 1 =D0=B2 128 GB UFS, micro-SD card, EEPROMs for MACs,
+> >     and eMMC.
+> >   - Audio/Video, Camera & Display ports.
+> >   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD.
+> >   - PCIe ports.
+> >   - USB & UART ports.
+> >
+> > On top of Monaco EVK board additional mezzanine boards can be
+> > stacked in future.
+> >
+> > Add support for the following components :
+> >   - GPI (Generic Peripheral Interface) and QUPv3-0/1
+> >     controllers to facilitate DMA and peripheral communication.
+> >   - TCA9534 I/O expander via I2C to provide 8 additional GPIO
+> >     lines for extended I/O functionality.
+> >   - USB1 controller in device mode to support USB peripheral
+> >     operations.
+>
+> Is it actually peripheral-only?
+Hi Dmitry,
 
-No functional change intended.
+HW supports OTG mode as well on the USB0 port but for enabling OTG
+mode , it requires two things, one is role switch support and another
+is VBUS supply on/off support. Both will be taken care of by Type-C
+manager HD3SS3220. Currently, VBUS enablement support is not present
+in the driver. Once that support is added, I will add OTG support for
+the USB0 port, until then we would like to keep it in peripheral mode
+for ADB support.
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- kernel/power/energy_model.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+This is the same change which was discussed for lemans-evk [1] applies
+for monaco-evk as well.
 
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index ea7995a25780..5ec63b3e7d85 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -451,7 +451,6 @@ static void
- em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state =
-*table)
- {
- 	struct em_perf_domain *pd =3D dev->em_pd;
--	struct cpufreq_policy *policy;
- 	int found =3D 0;
- 	int i, cpu;
-=20
-@@ -465,7 +464,7 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
- 		return;
- 	}
-=20
--	policy =3D cpufreq_cpu_get(cpu);
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_cp=
-u_get(cpu);
- 	if (!policy) {
- 		dev_warn(dev, "EM: Access to CPUFreq policy failed\n");
- 		return;
-@@ -479,8 +478,6 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
- 			found++;
- 	}
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (!found)
- 		return;
-=20
-@@ -787,21 +784,19 @@ static void em_check_capacity_update(void)
-=20
- 	/* Check if CPUs capacity has changed than update EM */
- 	for_each_possible_cpu(cpu) {
--		struct cpufreq_policy *policy;
- 		struct em_perf_domain *pd;
- 		struct device *dev;
-=20
- 		if (cpumask_test_cpu(cpu, cpu_done_mask))
- 			continue;
-=20
--		policy =3D cpufreq_cpu_get(cpu);
-+		struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_c=
-pu_get(cpu);
- 		if (!policy) {
- 			pr_debug("Accessing cpu%d policy failed\n", cpu);
- 			schedule_delayed_work(&em_update_work,
- 					      msecs_to_jiffies(1000));
- 			break;
- 		}
--		cpufreq_cpu_put(policy);
-=20
- 		dev =3D get_cpu_device(cpu);
- 		pd =3D em_pd_get(dev);
---=20
-2.25.1
+[1] https://lore.kernel.org/linux-arm-msm/d6816cc6-c69e-4746-932e-8b030ca17=
+245@oss.qualcomm.com/
 
+Regards,
+Swati
+>
+> >   - Remoteproc subsystems for supported DSPs such as Audio DSP,
+> >     Compute DSP and Generic DSP, along with their corresponding
+> >     firmware.
+> >   - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+> >     and other consumers.
+> >   - QCA8081 2.5G Ethernet PHY on port-0 and expose the
+> >     Ethernet MAC address via nvmem for network configuration.
+> >     It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+> >   - Support for the Iris video decoder, including the required
+> >     firmware, to enable video decoding capabilities.
+>
+> I don't see firmware being declared here.
+>
+> >
+> > Co-developed-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+> > Signed-off-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+> > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > Co-developed-by: Arun Khannna <quic_arkhanna@quicinc.com>
+> > Signed-off-by: Arun Khannna <quic_arkhanna@quicinc.com>
+> > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > Co-developed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> > Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> > Co-developed-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
+> > Signed-off-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
+> > Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/Makefile       |   1 +
+> >  arch/arm64/boot/dts/qcom/monaco-evk.dts | 463 ++++++++++++++++++++++++
+> >  2 files changed, 464 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk.dts
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
