@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-802888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E70B45801
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D094B45802
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769C9A03CAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F6F16CF50
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA0A34F482;
-	Fri,  5 Sep 2025 12:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2BB34AAFF;
+	Fri,  5 Sep 2025 12:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RsdeZiHP"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ie2JrDBs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517B1F1513
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947D82747B;
+	Fri,  5 Sep 2025 12:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757076076; cv=none; b=lzvaFPhJlZmnlwxB8rZWJgIr0u+leI3ArdqJfe+VRf7eQ9PstQfKgsaoWysSmXwiNXJ+a487cdCtoJZKJZOvl6Y1PY3IY7ahZ2chDRV5ccECJSrtkYeoFYvAPnKL1ATqfM6NZPNxIaJZoUVmYOKuy2QaMhO+hOmiyDT8NjU0GLo=
+	t=1757076131; cv=none; b=TWuea5HR1R071BZU8otLojgIMzxjEr7F2ugDfxo+RASc9+17uT/b0Uxn8wwRbIkKFU4vDen7yE/S6+5yFLmNxFdlCb57kZhGTdnf8AH2BEFGh2TSNHqhy07lbTTvdvFTzIMKnYRusJgYOna2349kj7Q/o3NCCQXNbJOVhm8TD+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757076076; c=relaxed/simple;
-	bh=oBXHKrWN/b8xEphfOBxvMXuoVFvsOyyVX+52kY7ZBjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MrJEUjHqFgaw+aUns8VyCtsoLpaM2aQS5yCtKro2fR4BgffKPvu4WM1EyZ99arMKgy2sSNfnemi/sj0vPz26T2epoZzOrvBmE1UzZvdbAdJkP2zjrnuv4cQjnET0cwdXj6+p4zNxdMZ/EauBh3J614r5Tt7tE/s8i2ywbMpWUNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RsdeZiHP; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4c53892a56so1829913a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757076073; x=1757680873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDIiR34iXezMR7BHEFFCv6iSUlhvz1mav6TCgrGlsTQ=;
-        b=RsdeZiHPpHq0LgG1fPIuYRZOQ1TgGLw+legfSIYFUisEzOVuZOyPPmpViTDn16AGqj
-         aOfr57mpsU6y5hKF2L0XSqFBPVU0+LtzeL5MUaYeLDiQUCVIqpm1fgTRZtactURtMHVx
-         0HqxcUqhCl7w0PUv687i96Abswp1MapFMgGAQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757076073; x=1757680873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CDIiR34iXezMR7BHEFFCv6iSUlhvz1mav6TCgrGlsTQ=;
-        b=kWc7ugfIZ1u2jOMl2/sX7am4c883KrQau3RRQssKtjXWss2bpKIRze3xx08M3E3/nU
-         qjPYSOCU4831WF+bfUgqgZG7eOTCMqzUNEHh4c4+hmvCbihrrxqT1PipDUgrUq2EePTp
-         90AVSEBfb2HQp6XOUltTue5NJfyKgFpASsD65RyIiJTXXTwwud8mD18EpNviTkNQMKsr
-         CjUoGX/CLVE6ltdWYQWjj5Q4XKmzaY9YdqYqEdBeP8KTy3WvMaojDnShfxMmW2F3F35Y
-         7c0gDJ5Ves4Zc5wE9Y4nvDarLPfQIDReXOBUjkuTySK17N1tc+t+C+yfCME/pAofnQsb
-         08hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk91hTXxjkP8eWxStdNO6HtdyhbDCCiJ1yk4/Gvk2d/1vzvNHviw9JMOwee3seCARQsiyX+Fb6pHEawbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxkWqlWfLjbW7XzYS569tJNnkJzVVxbrPd0xacSppe+38OiqWC
-	UVTVijuXHwKO9bCBFY8a3tOOKCrdfAnAgrhM64+NCETjEI+RL2dfAdEFfnHJDUF7bV19BbFl5Jl
-	XR6h9JULntiyBx49JRnUAc5iRWdd64G+D+ds/7Aek
-X-Gm-Gg: ASbGncteNCdT95NBbVlSn/dHexPW6OeMjMRFl5K8hsmS8eCGbA5t3PKMapPj075u7D5
-	yx8oDEaQJ2WY20IKMpBUolfyz5PXAGxTSQwhBdlH6iuttI1Tyv0eIHzKc1fD6pC6yMKM7mWjgR7
-	Hed5PR1vBslmFsOKbkgpfewpc6iniZCFNDuc0LjbyEXZGXQdvwlLbcAk6ini8q/nmZMhfXRyFIV
-	j0mwimENcDTHxUXPxAoVpvg+nskM40DMQ==
-X-Google-Smtp-Source: AGHT+IE1e9GdET1HkJdnTcqNZ6pmew3/GoNUVVNslDsopYdaiOZRiWcX4ix6U/VN/o6VHJOiC5A+QLarYg2TUdmWIjE=
-X-Received: by 2002:a17:90b:3d48:b0:32b:70a7:16da with SMTP id
- 98e67ed59e1d1-32b70a71b2fmr11961610a91.20.1757076073274; Fri, 05 Sep 2025
- 05:41:13 -0700 (PDT)
+	s=arc-20240116; t=1757076131; c=relaxed/simple;
+	bh=/3OeXZlr4xjhyb0qagsOeB6JIKiHR9LeiB/2F0p8kqw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aMK5EcPtW02mIvVc/M7gxyJxmAz7JUXV8O/RHroShGutVtWEQTgGzKi7KAEgtn0J8dHOU/iv0i0LQ9tCrVJ9Y0C0qw9j4N7cNN2PoJLIb4Mv4doZE5xywKQl7w+wT3YMCtqiXaRUEg4r5TlLsiqeTm9pzqhV00rIvuj99VCJxjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ie2JrDBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9E5C4CEF1;
+	Fri,  5 Sep 2025 12:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757076131;
+	bh=/3OeXZlr4xjhyb0qagsOeB6JIKiHR9LeiB/2F0p8kqw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ie2JrDBsJNYABvpbzAUardYKHdtGGtGTygDlq+6KVM2Y7jajaL16rL4hWCWy+gTmi
+	 KS5OOOjFwdK430dpbxDS91B+7Q/k6qH1S9rHeL49wxT7svyjlNvXfi/+vlA9FkFmR2
+	 A8uUSS+aiWkIJVPEIXsm6i7SHnDO+Sh3I9D86/NO8lG2QHhr5PdgfvP/jSIZvjE3LR
+	 3SyME7NMXoKVn2iz3/Vu/L40GGIuPgIc3H6Nl25pHqidcDg5t+K9ximl51E+pvep48
+	 pY/IHZ9QXYoquBYXd2Hjr+hS4PhD7fJnatrt2+I3lFY9GMJA9AqGtc2WEit/Aa262X
+	 RYp0UkKzbk21g==
+Received: from [131.175.126.3] (helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uuVlY-00000003dl7-3MD5;
+	Fri, 05 Sep 2025 12:42:08 +0000
+Date: Fri, 05 Sep 2025 13:42:07 +0100
+Message-ID: <87ms79ystc.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: kvmarm@lists.linux.dev,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Fuad Tabba <tabba@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: kvm-unit-tests hang on Arm FVP with protected mode
+In-Reply-To: <CA+G9fYsT3b3Qd-m6tSDOgAXpgLPWz0QD_Z6a+_ff4oTecA85PQ@mail.gmail.com>
+References: <CA+G9fYsT3b3Qd-m6tSDOgAXpgLPWz0QD_Z6a+_ff4oTecA85PQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250825145750.58820-1-akuchynski@chromium.org> <aLrQKurGZkbCkjlw@kuha.fi.intel.com>
-In-Reply-To: <aLrQKurGZkbCkjlw@kuha.fi.intel.com>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Fri, 5 Sep 2025 14:41:01 +0200
-X-Gm-Features: Ac12FXyxvfhy8ARaoEcCu19f2V-MoHQ9ApY5WO6r6Z4u1iuoDkWCmEuJxuSbxjQ
-Message-ID: <CAMMMRMcYiB8Sb5sjjdH_TcX8b2kGZFcM=r8L_txpZtyBGZt4Gg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] USB Type-C alternate mode priorities
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
-	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 131.175.126.3
+X-SA-Exim-Rcpt-To: naresh.kamboju@linaro.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, regressions@lists.linux.dev, tabba@google.com, pbonzini@redhat.com, oliver.upton@linux.dev, james.morse@arm.com, catalin.marinas@arm.com, will@kernel.org, suzuki.poulose@arm.com, anders.roxell@linaro.org, arnd@arndb.de, dan.carpenter@linaro.org, benjamin.copeland@linaro.org, broonie@kernel.org, Aishwarya.TCV@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Sep 5, 2025 at 1:57=E2=80=AFPM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> Hi Andrei,
->
-> On Mon, Aug 25, 2025 at 02:57:45PM +0000, Andrei Kuchynski wrote:
-> > This patch series introduces a mechanism for setting USB Type-C alterna=
-te
-> > mode priorities. It allows the user to specify their preferred order fo=
-r
-> > mode selection, such as USB4, Thunderbolt, or DisplayPort.
-> >
-> > A new sysfs attribute named 'priority' is exposed to provide user-space
-> > control over the mode selection process.
-> >
-> > This series was tested on a Android OS device running kernel 6.16.
-> >
-> > Changes in v2:
-> > - The priority variable is now a member of the typec_altmode struct
-> > - typec_altmode2port is used to obtain the typec_port struct pointer
-> > - Default priorities are now set based on the order of registration
-> > - The mode_control capability is enabled by default
-> > - The mode_selection_state struct will be introduced in a separate seri=
-es
-> > - svid will be used instead of the typec_mode_type enum
-> >
-> > Andrei Kuchynski (5):
-> >   usb: typec: Add alt_mode_override field to port property
-> >   platform/chrome: cros_ec_typec: Set alt_mode_override flag
-> >   usb: typec: ucsi: Set alt_mode_override flag
-> >   usb: typec: Implement alternate mode priority handling
-> >   usb: typec: Expose alternate mode priority via sysfs
->
-> I'm sorry for keeping you waiting. I think these are okay - although,
-> I had to put a few nitpicks :) but they are minor - but can you
-> include a patch where you use the priority member in a driver (maybe
-> cros_ec_typec.c)?
->
-> thanks,
->
-> --
-> heikki
+On Fri, 05 Sep 2025 13:28:45 +0100,
+Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> 
+> kvm-unit-tests consistently hang on Arm FVP when booted with
+> kvm-arm.mode=protected across both 4K and 64K page-size kernel builds.
+> 
+> Running the same tests with kvm-arm.mode=vhe completes successfully.
 
-Thank you for your review and feedback! I appreciate you taking the time to
-provide these notes.
+Do you realise that "kvm-arm.mode=vhe" is not a valid option?
 
-The patch using the priority member is part of a subsequent series that I
-have ready. I will send it shortly. This functionality is implemented in
-mode_selection.c to determine the mode order, and we plan to use it for
-both the cros_ec_typec and UCSI implementations.
+> 
+> Anders, bisected and identified the first bad commit as:
+> 
+>   066daa8d3bc2694c392e14091978043aed7b1f23
+>   KVM: arm64: Initialize HCRX_EL2 traps in pKVM
+> 
+> Regression Analysis:
+> - Reproducibility? yes
+> 
+> Test regression: kvm-unit-tests hang on Arm FVP with kvm-arm.mode=protected
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Environment:
+> Platform: Arm FVP base-revc
+> Kernel: arm64 (tested with 4K and 64K page sizes)
+> Mode: kvm-arm.mode=protected (hangs) vs kvm-arm.mode=vhe (passes)
+> Test suite: kvm-unit-tests (./run_tests.sh -a -t -v)
+> Cmdline args : kvm-arm.mode=protected
+> Kernel: Mainline master and Linux next master
+> 
+> Test run log:
+> INFO: running kvm unit tests ...
+> + [ True = false ]
+> + ./run_tests.sh -a -t -v
+> + tee -a /lava-1/0/tests/0_kvm-unit-tests/automated/linux/kvm-unit-tests/output/result_log.txt
+> TAP version 13
 
-I will send a new v3 patch set shortly with the minor changes you suggested=
-.
+What do you expect us to do with such a non-report? Can you please, at
+the very least, identify which test in that test suite triggers the
+failure?
 
-Thanks!
-Andrei
+> Links:
+> https://regressions.linaro.org/lkft/linux-mainline-master/v6.17-rc4/lava/kvm-unit-tests/history/?page=1
+
+What is there? This link requires a login, and goes to 11 on the
+scale of being useless.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
