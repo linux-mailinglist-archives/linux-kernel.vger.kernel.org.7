@@ -1,54 +1,76 @@
-Return-Path: <linux-kernel+bounces-801902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2853B44B64
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E75B44B66
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3330B7B7E17
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29577B80CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AAA20B7EE;
-	Fri,  5 Sep 2025 01:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E644218821;
+	Fri,  5 Sep 2025 01:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mhyC1qL+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9931AA7A6;
-	Fri,  5 Sep 2025 01:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ce1lqXvI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E4C20A5DD;
+	Fri,  5 Sep 2025 01:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757037486; cv=none; b=dsgy339W18oC4MZ9Tbl6nUpeyxnxw+7wEnE484xEFHEOB+zW2NQAZs9C8ljSpp+ZrZDbUzFjrzW0EqzoHPdvhmNt5NSZzuzBRl0ogKE/Mv8q1zEFSzTw4ALjSY/qslL8V6mHWvaOmtKqWHYi5M8v6AntNTHPvELNd1kTSZTXlxo=
+	t=1757037488; cv=none; b=HJN/pfU9a15w5c34yBPE+TS9cKd4f+kXiI5g4yjxuXBDqjCDalu2WVjGVAvlvTs1oyy6FiNcR45LyI0IVuwglGTvnXnqOq6Xk305xdiIPiyDLAHcT7JNqi7olGJ98CAdHsp/nqXpGLGeSEUIWe8cYA4bt1JSxo/w3SqWXmbgi9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757037486; c=relaxed/simple;
-	bh=ejwGYqInl4YF0y1GjFOwNRf1/xCmmV+ARbgYrXW0njM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rCWtOmKRzl9+l0z01cnu0s9Ws/jYzDsNBCMBx5imJM8asptQh46ciXnthkGX5kEHO6xzDNHgUg2zr1a0z+6P8R8zFBaTavHv4INlbcB9b8ayAO5JsO4SG0OwA0ncpDDUamKut6k0b1Sst/eF6jZdZDQRJmcdHwOrRkkJC8Z8S1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mhyC1qL+; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/P
-	5SilX0dEje4PYdQtLtT+L26nPZeuPJzid50auEwKo=; b=mhyC1qL+cDvACwq5Tb
-	UugJy9Ev6HkAKr5S3nm1zBb08C3mf7wt5rvYJQyr+hw0A/taZeTvb6nGCMim3GNX
-	Bdp34p2GelWcok91HfHKIUe/0A9o+gqo/wSc0a90haMt3BUjrj5mzSlebLXU/vBi
-	taSaK9+l/5I/MLIZpLF/bRD/k=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnsWCSQ7poon9KGg--.51314S2;
-	Fri, 05 Sep 2025 09:57:40 +0800 (CST)
-From: chenyuan_fl@163.com
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	kuninori.morimoto.gx@renesas.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1757037488; c=relaxed/simple;
+	bh=/zvtIlpgQtPkqQmnC6uj3t/Jy0kNxEIug9z/OBpIhxM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j9A25bvR9qwNmFK7gzNCdWJeV/gwKPvM51PDbKHWDdTYWWsGpB2hWLW46e9PwAjhvn+ovBhG1axH27CtLxGdWO2KmZ9MQN1wnPrIH8dyzN+hPRZoCuQJTTdCXZHQn4tdaLHwhfY1i8UJxnknqlevNizhDbCHXTcwkhzNhHMehi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ce1lqXvI; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757037487; x=1788573487;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=/zvtIlpgQtPkqQmnC6uj3t/Jy0kNxEIug9z/OBpIhxM=;
+  b=Ce1lqXvIV3jn7bCgD1zMcQWuNmP5P5B/frMLGmLVlbRo0icjQRPqltCa
+   ggNUheNPZyQldUfMh7f3RRhnlbZ+6MweBFL/7/+mC+sTObxrwWFWgDu7A
+   phMqzWsPtBhwBFoqcqxmwkhTzCqw5L3G5cYQst6YoeT9rCh56J7K7o5Vn
+   7Gvdqgl7/bB7h1+NB5FKkCg3fz9Cb1FnueghKfi7HIa1KvVIw7BqW2G8r
+   GAyinrieGJBVMQm3CgUbUvcyJ+IL3wMtfpDvQa2x4PSu7+3tknjDJvN52
+   7Uyt8/alwxyFozhagL9bi70RpJmaEmiKJ4tjYCLWemlmhLsFY0UDBp5Pn
+   w==;
+X-CSE-ConnectionGUID: QOGpRvL1RVO1e/FEId2rnA==
+X-CSE-MsgGUID: tfWT417qRdOSiQaNWAH8kg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70487598"
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="70487598"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 18:58:06 -0700
+X-CSE-ConnectionGUID: BdjBt+biSDqJn/xmQ6qGcQ==
+X-CSE-MsgGUID: sG4NBOQXTxCoj8cENS/dCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,239,1751266800"; 
+   d="scan'208";a="171935728"
+Received: from shsensorbuild.sh.intel.com ([10.239.132.250])
+  by orviesa007.jf.intel.com with ESMTP; 04 Sep 2025 18:58:04 -0700
+From: Even Xu <even.xu@intel.com>
+To: xinpeng.sun@intel.com
+Cc: bentiss@kernel.org,
+	jikos@kernel.org,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yuan CHen <chenyuan@kylinos.cn>
-Subject: [PATCH] clk: renesas: fix memory leak in cpg_mssr_reserved_init()
-Date: Fri,  5 Sep 2025 02:57:35 +0100
-Message-Id: <20250905015735.10347-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.39.5
+	srinivas.pandruvada@linux.intel.com,
+	Even Xu <even.xu@intel.com>
+Subject: Re: [PATCH v2 1/2] hid: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
+Date: Fri,  5 Sep 2025 09:58:06 +0800
+Message-Id: <20250905015806.1372972-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250828021000.3299377-1-xinpeng.sun@intel.com>
+References: <20250828021000.3299377-1-xinpeng.sun@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,54 +78,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnsWCSQ7poon9KGg--.51314S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ur4UKF1xtF1fGrWUur48JFb_yoW8XrW7pr
-	W8GryIyF1Yyw1qgFZ7CayfZr1rZas7Ga47W342k3W8Zw1kAFya9r10qayqyFykJFZ5ZFya
-	gas0k3W8ur4UCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFYLkUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiJxi-vWi6OVrhlgAAs7
 
-From: Yuan CHen <chenyuan@kylinos.cn>
+Thanks for the patch!
 
-In the current implementation, when krealloc_array() fails, the original memory
-pointer is incorrectly set to NULL after kfree(), resulting in a memory leak
-during reallocation failure.
-
-Fixes: 6aa17547649 ("clk: renesas: cpg-mssr: Ignore all clocks assigned to non-Linux system")
-Signed-off-by: Yuan CHen <chenyuan@kylinos.cn>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5ff6ee1f7d4b..de1cf7ba45b7 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -1082,6 +1082,7 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 
- 		of_for_each_phandle(&it, rc, node, "clocks", "#clock-cells", -1) {
- 			int idx;
-+			unsigned int *new_ids;
- 
- 			if (it.node != priv->np)
- 				continue;
-@@ -1092,11 +1093,13 @@ static int __init cpg_mssr_reserved_init(struct cpg_mssr_priv *priv,
- 			if (args[0] != CPG_MOD)
- 				continue;
- 
--			ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
--			if (!ids) {
-+			new_ids = krealloc_array(ids, (num + 1), sizeof(*ids), GFP_KERNEL);
-+			if (!new_ids) {
- 				of_node_put(it.node);
-+				kfree(ids);
- 				return -ENOMEM;
- 			}
-+			ids = new_ids;
- 
- 			if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 				idx = MOD_CLK_PACK_10(args[1]);	/* for DEF_MOD_STB() */
--- 
-2.39.5
-
+Reviewed-by: Even Xu <even.xu@intel.com>
 
