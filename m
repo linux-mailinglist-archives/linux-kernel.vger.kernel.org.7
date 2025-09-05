@@ -1,149 +1,133 @@
-Return-Path: <linux-kernel+bounces-802696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2188B455A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:04:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333D7B455B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589B41C884FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C9D5A850D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1847341677;
-	Fri,  5 Sep 2025 11:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3C4342CB5;
+	Fri,  5 Sep 2025 11:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e/lMXPe1"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hayVNcaJ"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FED33EB1F;
-	Fri,  5 Sep 2025 11:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D1034166C;
+	Fri,  5 Sep 2025 11:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070269; cv=none; b=VkWbNgPnHef72BkMpwPam17DxHm5QblWdsLLqSsIBdauOhBdQdCWZBEHnr5b2snFbX3ztcDUZBylqH50Dd1yUmjL+pzt73DuHv08JibRHtA9uN6UAuUmxXHKTQllWVSamD5fywxfI0tb4ml5ntI20SbvIXQPuHnNK7t32Ve3TPo=
+	t=1757070303; cv=none; b=XG5xZoRwmaQLhMwmOukSs5EfSQnrzSbP1xs/chIHqXARmTVjaK8dd4N+0MA7KO7zFRA1KqcbsvlB3QPAvdzJvvk+xskMoDo6NIvhwVOn0vDnPyoCgPc9PKb1ghs1MM1lDl8YhQLGM90IBnKlooPsi9xS2wZTeooIE9LxqqbRmmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070269; c=relaxed/simple;
-	bh=AmC3UF7X56t8MbOkEzA0Ks3gwsgyTIf+BxiYirzqRUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hHCkLMn69Z307Wu03gLNujElx2PjcmJELOadKPKp7YXeohUfgjysEaI9rFsa6C9agDvn08We9wS7BDPLx6i7eG8Hk6tNnj1wIik6NHnvq4WEAF9Ii+ZexPryOYpcRjZHIdRuCISt1YCIIqlG8pxyed3Uu4+CKnOyEJLwYrCxFw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e/lMXPe1; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585B4FDP3307951;
-	Fri, 5 Sep 2025 06:04:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757070255;
-	bh=aC2fQQ/I4VHyv1syREOYU51RuC6I93oHXZndjA+RvG0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=e/lMXPe1jXJEcUT03XGzt5aiKoeLfGvhbQPtCYWhaBlp1ShPOUua92cPg4D0IUgop
-	 Z79WxfnIpKzCOyYlJa0gBBv43xQHmsxMKUlz1/8faSCrmlLUpU+2oyYx1nHEqVYtUv
-	 kewTVDPLh3hbwF8cSG6UC6PU+jqVQESmhChQCCUw=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585B4FhF874667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 06:04:15 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 06:04:15 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 06:04:15 -0500
-Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585B4ARf345139;
-	Fri, 5 Sep 2025 06:04:11 -0500
-Message-ID: <ea97b0b4-3467-4e18-9e8c-80b75e067f3d@ti.com>
-Date: Fri, 5 Sep 2025 16:34:10 +0530
+	s=arc-20240116; t=1757070303; c=relaxed/simple;
+	bh=z94UH18wEDTWuKbXydUnW9LoB+6yMEbgmCQLR68OqnY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5WSfxIH3MgSLXkDP5RvnCCmHFeWQoPZTMaQsl+jP3Pbl7ovnVTNvkrwAsgcATYG9wvjPAU4+lzb+VYeqwirIZK/okLvapdA0bp6/bx5hh7YSGBawEZvmXLp448ov64MGDBI1gPd5iChnULirWT8ZoYIUOP/B+L4m2r+pwnDG+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hayVNcaJ; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584Gvudu029451;
+	Fri, 5 Sep 2025 04:04:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
+	2iOvuXzHrhkIoaofGS46Rn+lBRShu3PnRtqUUYUkhI=; b=hayVNcaJVPB1FPRxn
+	s0AjQBkT9fQPwJSyLj6kM2eT/fPTWma57co+IYqddMgYJ5d3YI6BnGc7obhHAsuJ
+	88Iho1Y+p7edTyxXylzJJ/LmTo4DMX7pbu3DdKH7nmlWsjrrVlyi0+w9K5eK71uX
+	WHKbTWZ+jyReTL0fO2YiVGeSm1/uL7MM5UHzR5aRZdmtFxF5vMLlLNcwGyvnPu+o
+	Anwac3RYH5xfgMWd+NupO5fvwDbQPqs5H0RGquJgKLc9yppqOwpOKnIaHdk+55mE
+	9Vfa26pLW4iimSps6bNf0ph3w0IVevcFgdyrJj33m+S7MwppitQTzWzemG1d0h9M
+	I6RbQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48yerk9wh3-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 04:04:36 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 5 Sep 2025 04:04:41 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 5 Sep 2025 04:04:41 -0700
+Received: from naveenm-PowerEdge-T630 (unknown [10.29.37.44])
+	by maili.marvell.com (Postfix) with ESMTP id 2F6EE3F7104;
+	Fri,  5 Sep 2025 04:04:30 -0700 (PDT)
+Date: Fri, 5 Sep 2025 16:34:30 +0530
+From: Naveen Mamindlapalli <naveenm@marvell.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <horms@kernel.org>, <corbet@lwn.net>, <andrew@lunn.ch>,
+        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] docs: networking: clarify expectation of
+ persistent stats
+Message-ID: <aLrDvpAsVq4vTytH@naveenm-PowerEdge-T630>
+References: <20250825134755.3468861-1-naveenm@marvell.com>
+ <20250826174457.56705b46@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] spi: cadence-quadspi: Fix cqspi_setup_flash()
-To: Pratyush Yadav <pratyush@kernel.org>
-CC: <miquel.raynal@bootlin.com>, <broonie@kernel.org>, <vigneshr@ti.com>,
-        <marex@denx.de>, <computersforpeace@gmail.com>,
-        <grmoore@opensource.altera.com>, <theo.lebrun@bootlin.com>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
-        <u-kumar1@ti.com>, <s-k6@ti.com>
-References: <20250904133130.3105736-1-s-k6@ti.com>
- <20250904133130.3105736-4-s-k6@ti.com> <mafs0ms7ath3l.fsf@kernel.org>
-Content-Language: en-US
-From: Santhosh Kumar K <s-k6@ti.com>
-In-Reply-To: <mafs0ms7ath3l.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826174457.56705b46@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2NyBTYWx0ZWRfX8owaW6XsXbmz iCxUxMWzFq/FsC4cBuTKze3Sl/MUBbI8ATPpa4JKvtsSoc4oMAkxQ3dT2VuJg9JV33ZyV0VOssj rk4H3BQVHi3HUQPDCrAx2ICCH0QQCnadT7QeJEU0Wwee12nPVHiTgIVUr23pj7NKfvs2a5YGEVf
+ EWkXawH2I6vQrETOu8mNFpIDXioPQyywuDFPe1fNFTkkdxKGggwoLNoQBirjEN42nDK+RR5JRJj BpRluJf7Qkr2qYh/pEw6MxVn4VNSnoUwNYoveCh9dPDNXFmvm/VysjsPPo0OeiyOkne0+JyoEAV fSkO1lnFSyDovEsrbpSu/ktAB0EADLANK4YZ0kqmRilwNMjL52BjBAfBUV/9hU0/lhoSkhaEuqR hAObYZvC
+X-Authority-Analysis: v=2.4 cv=JL47s9Kb c=1 sm=1 tr=0 ts=68bac3c4 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=SfNP0LW7rUpxNmXbRPgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=lhd_8Stf4_Oa5sg58ivl:22
+X-Proofpoint-GUID: 0WeGHb-qpZOFV9vkSHIGbsjOjNyHYN_e
+X-Proofpoint-ORIG-GUID: 0WeGHb-qpZOFV9vkSHIGbsjOjNyHYN_e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
 
-Hello,
-
-On 04/09/25 20:11, Pratyush Yadav wrote:
-> On Thu, Sep 04 2025, Santhosh Kumar K wrote:
+On 2025-08-27 at 06:14:57, Jakub Kicinski (kuba@kernel.org) wrote:
+> On Mon, 25 Aug 2025 19:17:55 +0530 Naveen Mamindlapalli wrote:
+> > -Statistics must persist across routine operations like bringing the interface
+> > -down and up.
+> > +Statistics are expected to persist across routine operations like bringing the
 > 
->> The 'max_cs' stores the largest chip select number. It should only
->> be updated when the current 'cs' is greater than existing 'max_cs'. So,
->> fix the condition accordingly.
->>
->> Fixes: 0f3841a5e115 ("spi: cadence-qspi: report correct number of chip-select")
->> Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
->> ---
->>   drivers/spi/spi-cadence-quadspi.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
->> index 447a32a08a93..da3ec15abb3e 100644
->> --- a/drivers/spi/spi-cadence-quadspi.c
->> +++ b/drivers/spi/spi-cadence-quadspi.c
->> @@ -1722,7 +1722,7 @@ static const struct spi_controller_mem_caps cqspi_mem_caps = {
->>   
->>   static int cqspi_setup_flash(struct cqspi_st *cqspi)
->>   {
->> -	unsigned int max_cs = cqspi->num_chipselect - 1;
->> +	unsigned int max_cs = 0;
->>   	struct platform_device *pdev = cqspi->pdev;
->>   	struct device *dev = &pdev->dev;
->>   	struct cqspi_flash_pdata *f_pdata;
->> @@ -1740,7 +1740,7 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi)
->>   		if (cs >= cqspi->num_chipselect) {
->>   			dev_err(dev, "Chip select %d out of range.\n", cs);
->>   			return -EINVAL;
->> -		} else if (cs < max_cs) {
->> +		} else if (cs > max_cs) {
+> Please don't weaken the requirement. The requirements is what it is.
+Ack on not weakening the requirement.
 > 
-> Makes sense. Out of curiosity, are you using multiple CS in a real use
-> case or is this only theoretical?
-
-Real use case,  Pratyush - we have both OSPI NOR and QSPI NAND in our 
-new AM62Lx EVM - CS0 and CS3 respectively.
-
+> > +interface down and up. This includes both standard interface statistics and
+> > +driver-defined statistics reported via `ethtool -S`.
 > 
-> Also nit: this could be simplified to:
+> Rest of the paragraph looks good, but I think the preferred form of
+> quotations is double back ticks? Most of this doc doesn't comply but
+> let's stick to double when adding new stuff.
+Ack.
 > 
-> 		if (cs >= cqspi->num_chipselect) {
-> 			dev_err(dev, "Chip select %d out of range.\n", cs);
-> 			return -EINVAL;
-> 		}
+> > +However, this behavior is not always strictly followed, and some drivers do
+> > +reset these counters to zero when the device is closed and reopened. This can
+> > +lead to misinterpretation of network behavior by monitoring tools, such as
+> > +SNMP, that expect monotonically increasing counters.
+> > +
+> > +Driver authors are expected to preserve statistics across interface down/up
+> > +cycles to ensure consistent reporting and better integration with monitoring
+> > +tools that consume these statistics.
 > 
-> 		max_cs = max_t(unsigned int, cs, max_cs);
+> This feels like too many words. How about:
 > 
-> but I think it is fine either way.
-
-Yeah, this one's simpler, I'll go with this. Thanks!
+> Note that the following legacy drivers do not comply with this requirement
+> and cannot be fixed without breaking existing users:
+>  - driver1
+>  - driver2
+>  ...
+I don’t have a definitive list of non-compliant drivers. Would you prefer to add
+a brief note stating that some drivers may not comply, without naming them explicitly?
 
 Regards,
-Santhosh.
-
+Naveen
+> -- 
+> pw-bot: cr
 > 
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-> 
->>   			max_cs = cs;
->>   		}
-> 
-
 
