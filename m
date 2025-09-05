@@ -1,236 +1,199 @@
-Return-Path: <linux-kernel+bounces-803506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10327B46142
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413DBB46155
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41415C7C2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:56:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9EBF5C7D09
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C44236CE1A;
-	Fri,  5 Sep 2025 17:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2D23728B5;
+	Fri,  5 Sep 2025 17:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XMZVH6gN"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OrMwXlxC"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD5A3191D6;
-	Fri,  5 Sep 2025 17:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094962; cv=fail; b=dXejcHECZpExHJ2/JNkb1NCTmn332/x6X6WCvRFC7MzKuy+QsZXcucG3khBIaZIiQeP/5CWcso+2eXVzfer0cWuDZvCIUaFpV/XSMFV73mGQkzQylWYYv2V5AdoPpfRF4YrPZX3zbzXI2gNGixhcAYgDVuexvdZgVu4s4GLW5F0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094962; c=relaxed/simple;
-	bh=7IjSQ9byWclcH5bIlEjwBI7g+YjiKJug0t+rY1UrYE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M8Q4HpuYZYw9aSnmIXTqMnQBZaUcrBJ90TzipT3FI6WhnvBAEg+J2LYpyY/udUGAqmnYgpizo68xsgFZkjw5zN4qhYO8Tqa85j4uXyT5W8MIsbdk+mRzmbIEY+jnRPhoKkCWfaPBRuhvLKGwWxC9eG3NucK5Orzt1kywc7MS8Sg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XMZVH6gN; arc=fail smtp.client-ip=40.107.93.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vg+GTX3dgqSIB/8JieDxvlbeQCgL8b3sJFKlCSQ79sMEwu7ixidku6nc/MhFT/byYQyYT612dX+kWrg8qpKd3s6mq/vjrDuNAICkwBLSivT4YucfiVUGTzBF47TUnQ8KYxgLwui9pHBXbyISI69b47/EAiyK6Sc0MlcwNfn1ek3o5mJc0CaYCDkr67Z9VBvUZYKkL0Vi8Crrcxu/Jpb7vDBrqz14GLDZc/R2qkWh7czhNF6YEFq4PQCok0y2kGSe2TfmtvhlItaP+0BLZm54Z1O5dSftR9LLlqmVmSSvlOmYG5neuDSnTWZl+OvG3MNIgev5+Kdg5EkbbN29lrYy9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0sAT1MkQhxmaWoh5XM3aNqdHqkTWbLM+p3hq6AJi0Tc=;
- b=gdekvFS10RxH3QTxT59c/JWQC25VLtw1NoYEHDT8TDeeGWuf74D7eNRIH+RPOIu9x0LF2/2BeJc3uVQnyzDuwei5NUZ8EX5VHMg4uuwdD8QxdxQ/a2MCblSfajriTiIqDr1NUBNcFJgxpBZdK87co6mkTI7zjFwWnyiTDEp6CUIEKUuGIkDSzv4tqAkBlkXZZ+4eNNVnIoo1ln+wXxDKZPjWKFKebAb76D7cy78hrLk6jTjVaGGBjoNZA2rNfbFwwgsqASLvJOwi5yepE6noVVI2J7n2xn46wJ8/gvztiRcKmd2uVbn6F0b5ayXSMM/VJ812jRE8yfe7iL4xqclZXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0sAT1MkQhxmaWoh5XM3aNqdHqkTWbLM+p3hq6AJi0Tc=;
- b=XMZVH6gNQdBsJgD6KlnrOdP7KgyNH75pj8wF6pJIGOOEfpdOTkPT7w8N4GCXGrCGYDosHh91zS59WIWckQCdhrdJxBfCMNAyqB2WPtHNXWmMbnPhMtk/SDTU1FpzusveJGFgClcMMjUbrsj3X2DMwo2y8oVJ+uu95Vpnif6oFG/N9Xom++pJ6skGdZ+gACDnTHUjoi8eawHi5qsbBraKd1GS6B+l9FtQAv7vFEbQ/v0L15bTk4OtWL47KCS+J3tKanqDowoBPxshQQ2p6GCnabsoU9yGTOcrxOk/bE8u57i+2FIdklpsW9LV1MfDS1QeX9P3JLopvGHhR8E8z5QRDA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB9067.namprd12.prod.outlook.com (2603:10b6:510:1f5::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8989.18; Fri, 5 Sep 2025 17:55:56 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9094.016; Fri, 5 Sep 2025
- 17:55:56 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
- THPs completely
-Date: Fri, 05 Sep 2025 13:55:53 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
-In-Reply-To: <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-7-usamaarif642@gmail.com>
- <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN9PR03CA0568.namprd03.prod.outlook.com
- (2603:10b6:408:138::33) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446A037426F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757095012; cv=none; b=YINi8YP1rbaPbmkb9pi0Iehdd/q8Gm8L8t3MKVZWGabEmIffAkgv8yic7FVe4U1WPK85utv9WMXMzQv843yqoBpDzF2XqJS4AIudIh9eUn0udnW6ghr/W5y+EG6i+Iv8vUAqugtt0Q+o68l0fVrCJNq0+P4E+LMd3u/LMOcGLYI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757095012; c=relaxed/simple;
+	bh=pskcITP1iuk7aOBJ2XuZ0bg17/Tda0KCfOvDLHOSR98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XS/jxvmxK9RUHcq1DD+kDy7Gddqjf/gP9p5+4KQIyFoS6C3UtH67IwWRXIW9sCsUMVbvmUHpzDhE88e5P9vnLwbr5gVy7cCvp7mQKMOeNulNn94CpfFFMQ6QyX7CzwZOKrGbnNSSNckBv7zNlLtvua46WwB9fA89v96PXN+YDio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OrMwXlxC; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 2FF2AC6B3A0;
+	Fri,  5 Sep 2025 17:56:33 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 776806060B;
+	Fri,  5 Sep 2025 17:56:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 17C19102F2472;
+	Fri,  5 Sep 2025 19:56:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757095006; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=GwCvKM40n9oTGHOz5iUrMCSaEVOMJfFyEYGNBW2TTI4=;
+	b=OrMwXlxCAta5AQOvZjAau6fO06HSwK7h2FG6mKulp5tqBYzcd7We4rHX+7KCqVgwliOHWQ
+	Zpd+u6XQa1hN5DS5n2MlScEDU6DUzgZy/2yqRv+l9D6tMaAl2lEuwzkK8fV3CF9O4hkwDe
+	CGHXPrBIX2NHcyUmQ76gH0sTi73eBId9ykBLg6DVB2ODfKQiVdMSAP1oRxBpjHHp09YmdS
+	ef8+OvqX0WK83g6PTnYTa2wrWRYRSwPzDOrLdo6yMP5X94TGxP+kRj8gNvDtRYiGpPVK5a
+	jIT6RXXvOevuo+vu1+/tVpp9pMGo8Lfxmaw3NZ7xQObxAnhYbcDm0YT//phwGA==
+Message-ID: <710dc2f1-0e8e-4ad4-a816-63f64a278400@bootlin.com>
+Date: Fri, 5 Sep 2025 19:55:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB9067:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2d9efb9-96ec-450b-9914-08ddeca576e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bWV1V1Z3VVlGVW9yOVdOVEdPd2NSaWFyMCtIODI0WFlwcm5Lc3BaUmVNdGM2?=
- =?utf-8?B?RTA5VjN0cTdTK1p3TlVKVmVXaWRld1A5cnE0aDV2N011ZW1wMStWdDhCeW5M?=
- =?utf-8?B?MlhnZEtnWk1VRlpXdzcyeitvQkRFQlNUcGlxOHRJb1VFbU1hdVdWUTAwRTBn?=
- =?utf-8?B?ckpYWjN4cDU2b2VocGJhZ1BFcVhTWFBWZWY3VDNCdWlGaTRvSERlZ0dreGZy?=
- =?utf-8?B?OHBqQVl5dUhNTWcrK2h1M3VyMGJTeno1RFdvVVNjVTljQzRaeFJ6OU1RaDdt?=
- =?utf-8?B?SitSdWkzVDJYWHJVaWJmTGhQSHM3MURzNU45dEdJZFlkUXg5UzcvK0JUZXNB?=
- =?utf-8?B?L0x6NlU3dGFPSHpHQWxrcjBxbFQrT2pNa0JTMy9yTk1UdWljT1NMOTJMdmt5?=
- =?utf-8?B?b2xubk9veE93SmF6Zmc2YXVMWUNTQXpQTGN5Vm5paXl2RjJVaGJxUWVvQWt6?=
- =?utf-8?B?N2lSaG9wOXk0cWVVWTNkVkNsVkFLNXJ1VHM4dGlQaHkvOGU2TkhFYTdZWnI5?=
- =?utf-8?B?a3BWcng1VDdCS1JQaXV3NHZ4OXJDM3hGMlpQT1dyTDVQZGRaeUZmVVkzNXFn?=
- =?utf-8?B?ZzdxOXNXYSsxaXM2YUtsRitZYlpMMTliMEszWFF6TDlMcUtqc1RMQ3dxd0VH?=
- =?utf-8?B?WjVlWUZzOHdkQTA0eFRPNmhIS2dkd2VDM29oSnpBMkcxblNkaHFIM3dKaXcr?=
- =?utf-8?B?S00xT0FKMytmK0dkeWVKcXJ1N3VLZjE2Z3hFYnVJYXBnWWh5Y0FPeFpINXB0?=
- =?utf-8?B?NE1PMkx3cktqdnZJdE1jV0thdFlSbW9rMnNuTnBYN0ZqRVRCSm1lS0ZxcitC?=
- =?utf-8?B?blBjeHgwR3FRYXhPZXFZRXlyZi9FN2VvdDYxYUUwZWRKMzRVeE1pVVVtMUds?=
- =?utf-8?B?OVc5T2hTQUtSa2kzRno5VmdGTXlybk1KNjBoeWUrOUY3YWprQ0NnMkZqRUNp?=
- =?utf-8?B?MWE4RTVURkluU3gxVzk0UW83U0ZCeTZJY2lkUUVjNXpSaFVnNmpiNmUxOE9t?=
- =?utf-8?B?ZUdJN1Y1d3JaK1N0TlAvbFlkYTVFVGlrYWhYaXFhTmFBQjVtaEkwSHhEWFJz?=
- =?utf-8?B?OFpOdGp1ajNYaGk2QXFTcU8yTnBrQXZBUWxTQzZYcWVQV2NTcWNlQ3NnSW1r?=
- =?utf-8?B?Z2VuSDFhSlVvSktCbE9zZkJYbFJ2dmdZRktBd0drdW01MWtWbmVyU2VzVVFB?=
- =?utf-8?B?c1ZGbHRBWWpOUUVEdUFLQnhES0ZUOGVxL0JZeHlvbWJwNE81aEFJZFZGU2hQ?=
- =?utf-8?B?eVhwdkFVdG5vUDdEZkJhZmdqbVlSU3craTkrMjIrZ1J0VDE0MzNPK2xwbHdj?=
- =?utf-8?B?U1BaNTErbkpXSGRuMmVtSFpPeU1NT0E4L0ZSbE1NSHR4ZmhFRGFGdCtvMldS?=
- =?utf-8?B?NnlveTlZelVuQ3UrTUFtWm5OZWcrTnAyRURVcTVPZnI5WUxsRktGb3F6WHF5?=
- =?utf-8?B?N2NRS2RFb2poV1pZUUFBSENBZGxNNXkxa0pzY05xNnFsdFJiTUc2VnloamZ4?=
- =?utf-8?B?MUdoMTRpZUxORzBtYXczL3ZubFRvQXBBSkduTGRPVzMvU3ZPT0NrNC9iQWph?=
- =?utf-8?B?QkpSRVVySEV6Tm90bkhPNnhFVXdGaXhVYUgxeWdKWmNReWZGNHc4ZmpFbTJo?=
- =?utf-8?B?S1A4bzE1SUl6SGMzbGRWcDc5Zit2VWdVYnV5K2JpeEpRMnZaa0lCTmRzNVlm?=
- =?utf-8?B?SndjOEZnc2N4MmJ2VUFyTVZYZVVjSVRkOHdyYy96b3hSTkR5bmNCYktXdnMz?=
- =?utf-8?B?eFdmY2VxZ0JNUEFqQTd5YUs5TVJwUWJmd1A2VlFkai9KTXVkVVR2U21IU1RF?=
- =?utf-8?B?YzlyT1d4cnJFb1B3bHRzUnEzS1hFVFA1M2NnT0dXT1ZZR0NaOEJMZ2I0SE9Y?=
- =?utf-8?B?cHFscnplaFV1cGpsOEdjYzBZQXc0azZIUmtnOTlaNXI1cVhPS1h3b0R2bjVz?=
- =?utf-8?Q?j7Wz5p+bgzw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnRsd0dYeFdDd3Q5eXFzQS81WU1XMmZBc3huK01ZSVVvTGNSMzk4eG9DaFky?=
- =?utf-8?B?Q3ZHeFh4SXJ1UG1CZEUxakJjYUQ0RmRCUXd0UzFOSG9KQUxIQ3ZwL2FvWmR2?=
- =?utf-8?B?UlptK3NKYTdvV1Y4REpCRXdMY1NFQ0lobFRBVEovRWxBWWFmVEJXOXN0emZL?=
- =?utf-8?B?U3RrZ3BMaEY1eGNLOVpobkQwaTV4dE9BL2E0YmJsMHZaYjFtcmk3M1RrMTZz?=
- =?utf-8?B?Yi9sT0JIVi90cE1mWW14WVpUSnZ5NWFZbm5zZGt2S08yd1RPVWlJWXpTM0Mr?=
- =?utf-8?B?eXBGSEptL2phOGI2NGwwb3N1WVdPZVJDdVZmRVZ0bmZ4QUNmK1JDZ3U2N2t6?=
- =?utf-8?B?TCtkREpWdDBOY0k3T0o5WXR1c0djdEpEMHNhZUpMRW0vd2hWNHN1RGVzbmIy?=
- =?utf-8?B?bSt6L0tCVWNLbFFsWTdNbndWVitlemMzdVJSdWhES1Z5N3hHZWxySVBENHBW?=
- =?utf-8?B?YloxZyt5Tmd5ZEJkVTFaY2JVUG9ZeWdRc0hHTjhYVlpRaGhOdW0vK0Z4NSt5?=
- =?utf-8?B?dDhaZ2hYakNPeklzdU5aZ0JSVzVUb3BZN2JaL2VxMTB6RXo5UjNyVGNaZHFk?=
- =?utf-8?B?MzBQZU9oQVRsc29DbGNaQ0h4czJDQXV2M3RnL3ZxdDA1Q1gvNlAySEhXMHVv?=
- =?utf-8?B?d2VITmtuY2Y5Mk03RjNGK3VYS25LY29OT1MxN2RVUk9YNnVJdDN0bWFrZm90?=
- =?utf-8?B?cE9XQzcreVFBeGZUcWx6RmVXQ0VLbzkrQjV2RXp6ditqN2dvdi9BQWVXVVdX?=
- =?utf-8?B?QjB0RHJRNUFhWlhIMzM5cmlSNHR3dzVsczZlbDIwUWtrOTd3eDl3dDdMS2NP?=
- =?utf-8?B?SmZjN2RnM0plUi9tc1I1cjk1Z2I2d1dPaUl4QjFGL1Q5SnJQWXUwanlEZXpi?=
- =?utf-8?B?MGprTjN5SXd6bjdXWnptM1FQM2xWMnFsbW1BZElUQzMxMHBzVTByNlA0alNy?=
- =?utf-8?B?Q04yUklnd2RzNWZLMm0wVEh0cTZNeERFaXZMVWVVWklRK3B2dlI4RStRdHor?=
- =?utf-8?B?aHBlNEVhc1pNU0NvbE5iSGR4NXFZVm9iUnRvRTEwaHU3SklaSEJGT1lzUXNP?=
- =?utf-8?B?aW1udDl0Yk9rNXlQM0dEQXBRRjBlVVlUOTBCN0hNd3FFN2E1RUZ3VkwxcnYv?=
- =?utf-8?B?V3Juekw4WTJIRkxsdE9sOElEMXZGNXJpRWRSUEdKZ2ZhYWp1TEFRb1I4U2k1?=
- =?utf-8?B?T3lsKzhPcExqU0ZzTmxDNlRPenlxN0JSck16VjFnZUtZdXJNeEZBUjBuQWNs?=
- =?utf-8?B?QmFVb2xNaUtFMllxcXAzUFdUdnJnVGhoUlpsRE9nSWg5dHhTc3hzOGZWcmRV?=
- =?utf-8?B?cXZmRGNpeUEyK3ZaQmMwYlhWTWNQV09zTUJOaDlWaW84U2w3azJBQTVhZXNr?=
- =?utf-8?B?K2Uvd2dOaVhmb29UL3dOUEtvZHBrVXFWZktvVXNWUUU1R1FDRk4rSEZQR1Nn?=
- =?utf-8?B?b2REa2RXMWlnWjJPNWVjQnpRMDBkbG85TGxBb1JUWDZJendWL3pmaVdtMEtK?=
- =?utf-8?B?Q1JGd3JLRG5EV3R0RFRJdnE0Z25hMCtIWFdOYmtaWDdlUEFNa3J0SGlKa2FI?=
- =?utf-8?B?UVZPb0dhOGpmbUVtN3V3di90RW40eEI2QlViQWpkVEh1dit5ejRHR2hZa2tx?=
- =?utf-8?B?cjlQYWZqZXZiWGIyTno5OUJtYnZvN2pzYzJUQ2ZUdzRuSGh5bmpsS21PVDZI?=
- =?utf-8?B?Zk9wY2ZMcFhzaElvMzNhY2ZqdHhBNWhCUm8rNTUzYXM2TlIzbWxWWXlsbFpT?=
- =?utf-8?B?NVN0ZnQzVjJnN25xZjFVN2piVXJZT3RYS3dNQnJyaUorT01rMmVlMTE5cVho?=
- =?utf-8?B?RWw1TWUwYmpnNGlySEc4TlFYaFBtNWtCZDc1d0cxUFA2WC81dEk2SENCcHZh?=
- =?utf-8?B?VTB1cld2N1J4aWlDVWNVbEtGNTUrd3dJRVRlZ1AyQVJFbnpJWlJkU1VZZi9J?=
- =?utf-8?B?TU5OV2E1OHd3T29JS3ZyazhmR0Z3TlZtbjFPeDdZazNKOWxVelBIa0dZRWxC?=
- =?utf-8?B?U0I1N0g0R1V3cTcwTlp4cEJxZW5TZ2ZuNEFVUnNHcTdVdUNTc01NUVdjc2dN?=
- =?utf-8?B?Q3p0OCtzZzA0L0oybDZtM09TbkhXYnI5ODlTYlQxLzJLbm5XZlZEbDRSTXZt?=
- =?utf-8?Q?jduq45Retm2M8SZsGoSh9ZrCQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2d9efb9-96ec-450b-9914-08ddeca576e9
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 17:55:56.6667
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /5ruhRABC+nd6KzphcVO7/Gp3Uik9MsaBdLvxitfzcKb/9KkT481PyuV2W55KO8a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9067
-
-On 5 Sep 2025, at 13:43, Mark Brown wrote:
-
-> On Fri, Aug 15, 2025 at 02:54:58PM +0100, Usama Arif wrote:
->> The test will set the global system THP setting to never, madvise
->> or always depending on the fixture variant and the 2M setting to
->> inherit before it starts (and reset to original at teardown).
->> The fixture setup will also test if PR_SET_THP_DISABLE prctl call can
->> be made to disable all THPs and skip if it fails.
->
-> I don't think this is an issue in this patch but with it we're seeing
-> build failures in -next on arm64 with:
->
->   make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgc=
-c CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnuea=
-bihf- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/k=
-ci/linux -j98 kselftest-gen_tar
->
->   ...
->
->     CC       prctl_thp_disable
->   prctl_thp_disable.c: In function =E2=80=98test_mmap_thp=E2=80=99:
->   prctl_thp_disable.c:64:39: error: =E2=80=98MADV_COLLAPSE=E2=80=99 undec=
-lared (first use in this function); did you mean =E2=80=98MADV_COLD=E2=80=
-=99?
->      64 |                 madvise(mem, pmdsize, MADV_COLLAPSE);
->         |                                       ^~~~~~~~~~~~~
->         |                                       MADV_COLD
->
-> since the headers_install copy of asm-generic/mman-common.h doesn't
-> appear to being picked up with the above build invocation (most others
-> are fine).  I'm not clear why, it looks like an appropriate -isystem
-> ends up getting passed to the compiler:
->
->   aarch64-linux-gnu-gcc -Wall -O2 -I /linux/tools/testing/selftests/../..=
-/..  -isystem /tmp/kci/linux/build/usr/include -isystem /linux/tools/testin=
-g/selftests/../../../tools/include/uapi -U_FORTIFY_SOURCE -D_GNU_SOURCE=3D =
-    prctl_thp_disable.c vm_util.c thp_settings.c -lrt -lpthread -lm -o /tmp=
-/kci/linux/build/kselftest/mm/prctl_thp_disable
->
-> but the header there is getting ignored AFAICT.  Probably the problem is
-> fairly obvious and I'm just being slow - I'm not quite 100% at the
-> minute.
-
-prctl_thp_disable.c uses =E2=80=9C#include <sys/mman.h>=E2=80=9D but asm-ge=
-neric/mman-common.h
-is included in asm/mman.h. And sys/mman.h gets MADV_COLLAPSE from
-bits/mman-linux.h. Maybe that is why?
-
->
-> Thanks to Aishwarya for confirming which patch triggered the issue.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/5] drm/colorop: Export drm_colorop_cleanup() so
+ drivers can extend it
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
+ harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com,
+ pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com,
+ jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com,
+ agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
+ xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com,
+ quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com,
+ marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com,
+ chaitanya.kumar.borah@intel.com, mcanal@igalia.com, kernel@collabora.com,
+ daniels@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-2-a9446d4aca82@collabora.com>
+Content-Language: en-US
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
+ 5K81kIWbtQX91pD/wH5UapRF4kwMXTAqof8+m3XfYcEDVG31Kf8QkJTG/gLBi1UfJgGBahbY
+ hjP40kuUR/mr7M7bKoBP9Uh0uaEM+DuKl6bSXMSrJ6fOtEPOtnfBY0xVPmqIKfLFEkjh800v
+ jD1fdwWKtAIXf+cQtC9QWvcdzAmQIwmyFBmbg+ccqao1OIXTgu+qMAHfgKDjYctESvo+Szmb
+ DFBZudPbyTAlf2mVKpoHKMGy3ndPZ19RboKUP0wjrF+Snif6zRFisHK7D/mqpgUftoV4HjEH
+ bQO9bTJZXIoPJMSb+Lyds0m83/LYfjcWP8w889bNyD4Lzzzu+hWIu/OObJeGEQqY01etOLMh
+ deuSuCG9tFr0DY6l37d4VK4dqq4Snmm87IRCb3AHAEMJ5SsO8WmRYF8ReLIk0tJJPrALv8DD
+ lnLnwadBJ9H8djZMj24+GC6MJjN8dDNWctpBXgGZKuCM7Ggaex+RLHP/+14Vl+lSLdFiUb3U
+ ljBXuc9v5/9+D8fWlH03q+NCa1dVgUtsP2lpolOV3EE85q1HdMyt5K91oB0hLNFdTFYwn1bW
+ WJ2FaRhiC1yV4kn/z8g7fAp57VyIb6lQfS1Wwuj5/53XYjdipQARAQABzSlMb3VpcyBDaGF1
+ dmV0IDxsb3Vpcy5jaGF1dmV0QGJvb3RsaW4uY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
+ CwIEFgIDAQIeAQIXgBYhBItxBK6aJy1mk/Un8uwYg/VeC0ClBQJod7hIBQkJ0gcjAAoJEOwY
+ g/VeC0ClghwP/RQeixyghRVZEQtZO5/UsHkNkRRUWeVF9EoFXqFFnWqh4XXKos242btk5+Ew
+ +OThuqDx9iLhLJLUc8XXuVw6rbJEP5j5+z0jI40e7Y+kVWCli/O2H/CrK98mGWwicBPEzrDD
+ 4EfRgD0MeQ9fo2XJ3Iv+XiiZaBFQIKMAEynYdbqECIXxuzAnofhq2PcCrjZmqThwu8jHSc55
+ KwdknZU3aEKSrTYiCIRrsHHi1N6vwiTZ098zL1efw7u0Q8rcqxHu3OWNIAeKHkozsMy9yo1h
+ h3Yc7CA1PrKDGcywuY4MrV726/0VlrWcypYOCM1XG+/4ezIChYizpAiBNlAmd7witTK0d2HT
+ UNSZF8KAOQRlHsIPrkA5qLr94OrFHYx6Ek07zS8LmVTtHricbYxFAXnQ5WbugNSE0uwRyrL/
+ Kies5F0Sst2PcVYguoWcHfoNxes6OeU3xDmzclnpYQTanIU7SBzWXB1fr5WgHF7SAcAVxPY8
+ wAlJBe+zMeA6oWidrd1u37eaEhHfpKX38J1VaSDTNRE+4SPQ+hKGDuMrDn0mXfcqR5wO7n1Z
+ Q6uhKj3k6SJNksAWh1u13NP0DRS6rpRllvGWIyp+653R03NN8TE9JNRWAtSqoGvsiryhQyCE
+ FlPOsv6+Ed/5a4dfLcO1qScJwiuP/XjFHAaWFK9RoOX52lR4zsFNBGCG6KUBEADZhvm9TZ25
+ JZa7wbKMOpvSH36K8wl74FhuVuv7ykeFPKH2oC7zmP1oqs1IF1UXQQzNkCHsBpIZq+TSE74a
+ mG4sEhZP0irrG/w3JQ9Vbxds7PzlQzDarJ1WJvS2KZ4AVnwc/ucirNuxinAuAmmNBUNF8w6o
+ Y97sdgFuIZUP6h972Tby5bu7wmy1hWL3+2QV+LEKmRpr0D9jDtJrKfm25sLwoHIojdQtGv2g
+ JbQ9Oh9+k3QG9Kh6tiQoOrzgJ9pNjamYsnti9M2XHhlX489eXq/E6bWOBRa0UmD0tuQKNgK1
+ n8EDmFPW3L0vEnytAl4QyZEzPhO30GEcgtNkaJVQwiXtn4FMw4R5ncqXVvzR7rnEuXwyO9RF
+ tjqhwxsfRlORo6vMKqvDxFfgIkVnlc2KBa563qDNARB6caG6kRaLVcy0pGVlCiHLjl6ygP+G
+ GCNfoh/PADQz7gaobN2WZzXbsVS5LDb9w/TqskSRhkgXpxt6k2rqNgdfeyomlkQnruvkIIjs
+ Sk2X68nwHJlCjze3IgSngS2Gc0NC/DDoUBMblP6a2LJwuF/nvaW+QzPquy5KjKUO2UqIO9y+
+ movZqE777uayqmMeIy4cd/gg/yTBBcGvWVm0Dh7dE6G6WXJUhWIUtXCzxKMmkvSmZy+gt1rN
+ OyCd65HgUXPBf+hioCzGVFSoqQARAQABwsOyBBgBCAAmAhsuFiEEi3EErponLWaT9Sfy7BiD
+ 9V4LQKUFAmh3uH8FCQnSA1kCQMF0IAQZAQgAHRYhBE+PuD++eDwxDFBZBCCtLsZbECziBQJg
+ huilAAoJECCtLsZbECziB8YQAJwDRdU16xtUjK+zlImknL7pyysfjLLbfegZyVfY/ulwKWzn
+ nCJXrLAK1FpdYWPO1iaSVCJ5pn/Or6lS5QO0Fmj3mtQ/bQTnqBhXZcUHXxZh56RPAfl3Z3+P
+ 77rSIcTFZMH6yAwS/cIQaKRQGPuJoxfYq1oHWT0r7crp3H+zUpbE4KUWRskRX+2Z6rtNrwuL
+ K1Az1vjJjnnS3MLSkQR4VwsVejWbkpwlq5icCquU5Vjjw0WkVR32gBl/8/OnegSz7Of/zMrY
+ 8GtlkIPoCGtui1HLuKsTl6KaHFywWbX4wbm5+dpBRYetFhdW4WG+RKipnyMY+A8SkWivg2NH
+ Jf88wuCVDtLmyeS8pyvcu6fjhrJtcQer/UVPNbaQ6HqQUcUU49sy/W+gkowjOuYOgNL7EA23
+ 8trs7CkLKUKAXq32gcdNMZ8B/C19hluJ6kLroUN78m39AvCQhd4ih5JLU7jqsl0ZYbaQe2FQ
+ z64htRtpElbwCQmnM/UzPtOJ5H/2M7hg95Sb20YvmQ/bLI23MWKVyg56jHU1IU0A/P7M9yi9
+ WbEBpIMZxLOFBUlWWTzE+JvyDh+cjyoncaPvHLDwP13PGEJHYMgWZkvzgSc3tGP6ThUgZjsz
+ 9xW/EvzWOVswYwREyZv3oK5r3PVE6+IYDUd7aBsc5ynqqYs27eemuV4bw8tlCRDsGIP1XgtA
+ pT1zD/0dT+clFbGoCMaIQ5qXypYoO0DYLmBD1aFjJy1YLsS1SCzuwROy4qWWaFMNBoDMF2cY
+ D+XbM+C/4XBS8/wruAUrr+8RSbABBI/rfiVmqv0gPQWDm676V8iMDgyyvMG2DotMjnG/Dfxj
+ w9WVnQUs/kQSPD8GZCZZ3AcycFmxN24ibGHo4zC947VKR5ZYdFHknX+Dt92TdNDkmoBg2CEm
+ 9S2Skki9Pwyvb/21zCYq/o4pRMfKmQgpF2LT2m51rdtmNg9oj9F4+BJUmkgyNxMyGEA1V1jM
+ xQaVX4mRY61O4CimPByUDp2EH2VaEr2rEwvHszaWqFJdSQE8hdSDc4cqhik7rznNBjwgZAzq
+ cefLctAVnKjasfKEWp0VhgkIVB8/Sos4S8YaG4qbeGviSfIQJ2GO1Vd9WQ2n1XGth3cY2Qwk
+ dIo13GCFJF7b6y0J13bm+siRpPZQ3aOda7pn07GXqREjFsfq5gF04/9am5x/haehPse2yzcP
+ wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
+ gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
+ kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
+In-Reply-To: <20250822-mtk-post-blend-color-pipeline-v1-2-a9446d4aca82@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
 
-Best Regards,
-Yan, Zi
+
+Le 22/08/2025 à 20:36, Nícolas F. R. A. Prado a écrit :
+> Export drm_colorop_cleanup() so drivers subclassing drm_colorop can
+> reuse this function in subclass cleanup routines.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+> ---
+>   drivers/gpu/drm/drm_colorop.c | 3 ++-
+>   include/drm/drm_colorop.h     | 1 +
+>   2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_colorop.c b/drivers/gpu/drm/drm_colorop.c
+> index d53de1438d23def74a77730cacd3651131e82cbe..8a27861a367ab321d45835099f438ee5e2abd709 100644
+> --- a/drivers/gpu/drm/drm_colorop.c
+> +++ b/drivers/gpu/drm/drm_colorop.c
+> @@ -186,7 +186,7 @@ static int drm_plane_colorop_init(struct drm_device *dev,
+>    *
+>    * @colorop: The drm_colorop object to be cleaned
+>    */
+> -static void drm_colorop_cleanup(struct drm_colorop *colorop)
+> +void drm_colorop_cleanup(struct drm_colorop *colorop)
+>   {
+>   	struct drm_device *dev = colorop->dev;
+>   	struct drm_mode_config *config = &dev->mode_config;
+> @@ -201,6 +201,7 @@ static void drm_colorop_cleanup(struct drm_colorop *colorop)
+>   
+>   	kfree(colorop->state);
+>   }
+> +EXPORT_SYMBOL(drm_colorop_cleanup);
+>   
+>   /**
+>    * drm_colorop_pipeline_destroy - Helper for color pipeline destruction
+> diff --git a/include/drm/drm_colorop.h b/include/drm/drm_colorop.h
+> index 710a6199ebc5498a3f664de39ea07dbc95944eb7..158c2b8f775b99fd0a0efa03f2c019f14a9bc8b3 100644
+> --- a/include/drm/drm_colorop.h
+> +++ b/include/drm/drm_colorop.h
+> @@ -374,6 +374,7 @@ static inline struct drm_colorop *drm_colorop_find(struct drm_device *dev,
+>   	return mo ? obj_to_colorop(mo) : NULL;
+>   }
+>   
+> +void drm_colorop_cleanup(struct drm_colorop *colorop);
+>   void drm_colorop_pipeline_destroy(struct drm_device *dev);
+>   
+>   int drm_crtc_colorop_curve_1d_lut_init(struct drm_device *dev, struct drm_colorop *colorop,
+> 
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
