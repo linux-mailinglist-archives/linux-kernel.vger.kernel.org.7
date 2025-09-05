@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-803100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFA9B45A88
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617DBB45A8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331D77C3EB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F1C7C7215
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D5E36CE14;
-	Fri,  5 Sep 2025 14:30:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C54B661
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9552370584;
+	Fri,  5 Sep 2025 14:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9ObyQS9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBBD350D53;
+	Fri,  5 Sep 2025 14:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082645; cv=none; b=WqEBIucVrJeL4T9sY7fX3UTV4pz41xxObnLuhPKRwkNhPgsg4jmvfB691kEKcxzVIsz4psF8Npk8z2AKNzyK1n/36dWCl/W3TZqyCZjcXFxh8femMoAqZlgnrCjSeeiBjr3t11UZVq+ZYtREC2LrtzI6xCzqGbBektX6/GsVpPo=
+	t=1757082671; cv=none; b=Yw2jqW8XzCkQptp8ibTyRWLRve+aTcuUce91aatOuX4RbUsiEc/qs6DH0rLS3J/z0HBptGvNdL0NWJjHCLrp0Zch08MaqGLpONT7VKhPUdo6UkN0PkZGVjk221HAwawEPLWVBuMey/J5pBJG4xsIZk0kYM+4A42p9atc2IX516k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082645; c=relaxed/simple;
-	bh=bp7jfPlhfqWV5KygpcPcj7AHilzNFkOJ0PC1mt21yBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gvDB9z4X5LNF3xsDVLHgHIAnezn+Zc8x9Kjj/FcUmm7aaTkfhzeomgOyS00B8AbvLdi0/B4dBkEQsrp5rdUkRVCo/FsLPd7SZv7q38hWz+wsKBgFpY7T9owRMiW+FmiKvAgql1LZPuZoQiD7gJEVqyKMucxfDwNZAaoxYvLP4cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80D56152B;
-	Fri,  5 Sep 2025 07:30:33 -0700 (PDT)
-Received: from [10.57.57.155] (unknown [10.57.57.155])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A3823F63F;
-	Fri,  5 Sep 2025 07:30:39 -0700 (PDT)
-Message-ID: <cc9b8e02-e287-40c8-ad9c-34efd5e5e3f6@arm.com>
-Date: Fri, 5 Sep 2025 15:30:22 +0100
+	s=arc-20240116; t=1757082671; c=relaxed/simple;
+	bh=KEXtSGwfsIC7zCVkzHW+kQIA/8TfnPK+OMpue3a6JPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TPfW3kDKAfk4z20NE3V8N03QYdQqwUVZFUY5E1EENQDVdiaAw/Cb0F1R0Mjqoo8S9slGcOSCyeI8FtC+SQl2uO9Fbyor4KDw7oB2WS1f7EcGcvWJ0PtKEtAtxYawYcJZflavjHX5+xFsl/F89SMSkOllm1wIugFe+wVbdaqjhnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9ObyQS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742FAC4CEF7;
+	Fri,  5 Sep 2025 14:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757082670;
+	bh=KEXtSGwfsIC7zCVkzHW+kQIA/8TfnPK+OMpue3a6JPw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a9ObyQS9oWK8NAvCBt7tZ7rv1IYerllFhwk3B10rYxR1HkvuQF9uJJHG/J/5v0/lm
+	 xiDKRVqS+kdMi35Pae2g8iZkVDH/96ZY86uTuyI/gg5uloziMztZAMrJ2nmgrKcL5l
+	 PIWkRLys2izx/c1lmZEXt4bYTAvEFDx2PgG17Pezg4jcVJdDqrNkY5hPd4yiX6hxZI
+	 OtdMjRwIa/DRpiREJeAD2Sjqii15EEeyaVDMGIxjdJ8jixN2MZ8xFaXZ4dehs6sNZ/
+	 sEJZtCQiNpMjq/7Ckt8KEf50fQ/bGK63A/kYmN6WAozGThAaYRsYY9+nXW1UGOMooi
+	 5VGkzcmh9sm0g==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61e74e59d8fso982133eaf.0;
+        Fri, 05 Sep 2025 07:31:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWXoIEsF8WQzrihQ9oXPiUCRVvKhJHzVb1X62dmmgynMnFq80X2kYBO6XeTAnxsfPZsv0hcsWBq1u2z@vger.kernel.org, AJvYcCXaHE+tYUXim7TFnncVE9CY3rCkgciaxfsr9Nad8VJVvLOGoZ0fcI42M0i5JZh2wnm56crNK/0N8Eun@vger.kernel.org, AJvYcCXgDRdDyYTHjYtcunZ5OguSuMM0nk4QpE2lDIfuPAP4F8lz/WW6+MzJI1N9DClZzlL1z/YFODg2GlObXyfT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBY/Jtr3E/IyYZDmyCBOX78Odu2RKmi9Ie+ieacvGIeZ7gV+ig
+	DOE8Wg+BV8+kEfxJeLBVWtkg1lhB8r7F2PZgnPrOOfIDYqMmMjXANB12P3j0YIUWH8CrNLnNGqO
+	uX1+/2WZh7+0tATymI8QXx5p1ZgS492A=
+X-Google-Smtp-Source: AGHT+IFzBHpToPbaYhsxUcuEzlY8uNwMrnGiJlCP/fOq+ZAdCYknjgDExF05rFOJh/oF194cwfAHDMurW0hJsjhLImo=
+X-Received: by 2002:a05:6820:82c:b0:61f:f87a:7c7b with SMTP id
+ 006d021491bc7-61ff95734c9mr1990938eaf.0.1757082669722; Fri, 05 Sep 2025
+ 07:31:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] arm64: KASAN + KASLR may cause reserved page to be released
- during module loading
-To: =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- =?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>,
- =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?=
- <chinwen.chang@mediatek.com>, =?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?=
- <casper.li@mediatek.com>, "andreyknvl@google.com" <andreyknvl@google.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dvyukov@google.com" <dvyukov@google.com>,
- "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
- Ada Couprie Diaz <ada.coupriediaz@arm.com>
-References: <6065525d47bf338646d53182b9bbc4a25ccfda82.camel@mediatek.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Content-Language: en-US
-Organization: Arm Ltd.
-In-Reply-To: <6065525d47bf338646d53182b9bbc4a25ccfda82.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250904184801.47498-1-dave@stgolabs.net> <CAJZ5v0j9r6bKOXuo+o0gdhryR1ne3WY3B0o0DufEHB9y3j0Leg@mail.gmail.com>
+ <20250904191540.rb2dn4frng2ruq76@offworld>
+In-Reply-To: <20250904191540.rb2dn4frng2ruq76@offworld>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Sep 2025 16:30:57 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jPDYnibLWqaEKuQD4jda7kTc1YyM2MNOoNm5Xn4_0S9A@mail.gmail.com>
+X-Gm-Features: Ac12FXzoduTZjkQYGHDQ7BpxzQcF3KgJaG-8n_dpWorq4EpDxtTJFWo6wUX2__g
+Message-ID: <CAJZ5v0jPDYnibLWqaEKuQD4jda7kTc1YyM2MNOoNm5Xn4_0S9A@mail.gmail.com>
+Subject: Re: [PATCH] acpi, tables: Rename coherency CFMW restrictions
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, rafael.j.wysocki@intel.com, dave.jiang@intel.com, 
+	dan.j.williams@intel.com, jonathan.cameron@huawei.com, 
+	alejandro.lucero-palau@amd.com, ira.weiny@intel.com, 
+	alison.schofield@intel.com, a.manzanares@samsung.com, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 04/08/2025 15:03, Qun-wei Lin (林群崴) wrote:
-> Hi,
->   
-> We have encountered a kernel panic on arm64 when loading modules with
-> both KASAN and KASLR enabled.
->   
-> Kernel version:
-> 6.12
-> (also reproducible on 6.6-based Android common kernel)
->   
-> Config:
-> CONFIG_KASAN=y
-> CONFIG_KASAN_GENERIC=y
-> CONFIG_KASAN_VMALLOC=y
-> CONFIG_RANDOMIZE_BASE=y
-> # CONFIG_RANDOMIZE_MODULE_REGION_FULL is not set
->   
-> Reproducible:
-> ~50% of the time, when loading any module with Generic KASAN + KASLR
-> enabled.
->   
-> The kernel panic log is as follows:
-> [...]
-> Comm:kworker/4:1 Tainted: G          OE      6.12.23-android16-5-
-> g1e57f0e5996f-4k #1 eee834a579887c0f97d696d30c786233f4fbfcdf
-> [...]
+On Thu, Sep 4, 2025 at 9:15=E2=80=AFPM Davidlohr Bueso <dave@stgolabs.net> =
+wrote:
 >
-> If I disable KASLR, the issue does not occur.
-With the context provided I was not able to reproduce the issue
-when testing defconfig + generic KASAN on the following kernels :
-- v6.17-rc4
-- v6.12.23 Upstream
-- v6.12.23 Android[0]
-- v6.12.23 Upstream, compiled with LLVM
-- v6.12.23 Android[0], compiled with LLVM
+> On Thu, 04 Sep 2025, Rafael J. Wysocki wrote:
+>
+> >On Thu, Sep 4, 2025 at 8:48???PM Davidlohr Bueso <dave@stgolabs.net> wro=
+te:
+> >>
+> >> ACPICA commit 710745713ad3a2543dbfb70e84764f31f0e46bdc
+> >>
+> >> This has been renamed in more recent CXL specs, as
+> >> type3 (memory expanders) can also use HDM-DB for
+> >> device coherent memory.
+> >>
+> >> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+> >
+> >A link to the corresponding upstream commit, please?
+>
+> https://github.com/acpica/acpica/commit/710745713ad3a2543dbfb70e84764f31f=
+0e46bdc
 
-(I tried to match the version that appears in your trace)
+The only ACPICA change in this patch is the new symbol definitions in
+include/acpi/actbl1.h, so this can go in via CXL as far as I'm
+concerned.
 
-I tested on both QEMU/KVM and hardware (AMD Seattle), by loading
-and unloading an out-of-tree kernel module repeatedly (an APFS driver[1]),
-with no issues on either for all tested kernels.
->   
-> We are not certain which specific patch introduced this issue, but we
-> have confirmed that it does not occur on the Android common kernel 6.1
-> The problem was first observed after upgrading to 6.6-based kernels.
->   
-> Any suggestions or guidance would be appreciated.
-> Thank you.
-There's not much information to go off of here, my questions would be :
-- Are you able to reproduce on an upstream kernel ?
-   (Be it from kernel.org or a "base" Android kernel, like [0])
-- Are you able to reproduce under publicly available emulators ?
-- Are you able to reproduce with specific, public modules ?
-   (Something available in Debian[2] for example)
-- Which compiler and version are you using ?
+Please add a Link: tag with the link above to the patch, change the
+patch prefix to "cxl/acpi:" to follow the existing pattern, and you
+can add
 
-It is a bit of work, I'm aware, but given I didn't manage to reproduce
-the issue, it would be useful to have as much info on the context
-so either we might be able to reproduce, or you might be able to
-pinpoint the source on your side a bit better !
+Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
 
-I have not seen any other reports since yours, nor did I see any patch/fix
-that seemed relevant, so I don't have much more to suggest sadly ;
-others might.
-> Best Regards,
->   
->   
-> 林群崴 (Qun-wei Lin)
-> Qun-wei.Lin@mediatek.com
-Thanks in advance,
-Best regards
-Ada
+to it.
 
-
-[0]: 
-https://android.googlesource.com/kernel/common/+/refs/tags/android16-6.12-2025-06_r5
-[1]: https://github.com/linux-apfs/linux-apfs-rw/
-[2]: 
-https://packages.debian.org/search?keywords=-dkms&searchon=names&suite=trixie&section=all
-
+Thanks!
 
