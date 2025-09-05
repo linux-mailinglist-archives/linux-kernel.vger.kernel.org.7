@@ -1,126 +1,212 @@
-Return-Path: <linux-kernel+bounces-801919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63441B44B9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C569B44BA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23AB654310A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D359E486C88
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0430C21FF55;
-	Fri,  5 Sep 2025 02:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8579521D3D9;
+	Fri,  5 Sep 2025 02:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcPPYkbK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvI3YWzj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5311A200113;
-	Fri,  5 Sep 2025 02:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D93BB44;
+	Fri,  5 Sep 2025 02:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757039281; cv=none; b=JVJ84ljQH1Wnihij/d8uG497UBafNH1YgMgZfpxfPl7COsaVRlw7BNDmphSVGZ6OFPVR3SvbpbKOO7k4SWlVlreb1m/dr65JgEsOweoYHMK9eCWXY4rPNX3txuZnto9PDejFKjqKUpFVWaGgb0j4j5dnAooKVcjUqRMMD0zCxNk=
+	t=1757039566; cv=none; b=Yh1WeDdmQT4ck17u34g4gFPPS7QoZxadPUFLb5QJAdtFvKhyODucISRFQY9DAxwTRaILxcj+3KbfJbwMOcXVnffMJahrCywpRg54a7eJ6JxZLnVCyXNfrivKc7GW7ISDNHd1u8gv85q+1bsmov1EwLp8p3nEmObtxUAh0chA7KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757039281; c=relaxed/simple;
-	bh=oPqzWmjLUpku7Mb+6rePpAmC62We+Om8XH7mSYeF7cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DAG0qDzvvl+WAIySnTbqojGOC1DuAZfo1on7gJWmlPCc/fiZtD3YCqMxAdrKUqLeS+7m9J3sAKtAis9u9DToujKBju/5lAyL4stCp1MqyDxbFT0zizgOhShl6/vDNQdTofH88FhEnFopm/C3DW1EI8+vMlG5tyITX1CzRDEl8iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcPPYkbK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2904C4CEF0;
-	Fri,  5 Sep 2025 02:28:00 +0000 (UTC)
+	s=arc-20240116; t=1757039566; c=relaxed/simple;
+	bh=r/GiDLoxoEPeOsRFkLNJjLpOh6aEb7+BENWEot8E3Ts=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=FLhMVSFdijoGIMLAMEmbQXqZKXLjJHULmXtsYMFJHs+4Wp1tCK2qQ1wNsehIo5dY7q3CfMX94BOopEQJ4VnIFxYVyIbC6DPOgtpDUWLk/6ldphxyOcoo8bxYletgVoZKXMC7py1m1R4qlZm9lPEqvSJDofAheJBB/XbH7qZUWtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvI3YWzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C95FC4CEF0;
+	Fri,  5 Sep 2025 02:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757039280;
-	bh=oPqzWmjLUpku7Mb+6rePpAmC62We+Om8XH7mSYeF7cg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GcPPYkbKExL4lsM/ibJaUrthCs9RTQ630El2qX/qRfwfwhLyPlrGCTnpm7TN9bJZv
-	 nY/uCWTK1R98aiOKKEcUKHosz2ADfehkzVXBJeeqvmExsY016fgEwB6G30V4NOo2Vy
-	 AjB7YKCVVaKss+lYGw2bp2l94wrLKE88f3eC58o0wph8rb16qNjUc3z0Bl2pSmphLr
-	 N6RGe6SsuOkm7GtvhTUEQnolfxQu2wdrl9QMKNbqTrAzahJhOBtCoN8Dzqgp5qMTt3
-	 BIGTQOZiDQcHOU+YnBvxbTnpvn1bm4COW0ABU4+OK8CWwu2D1fCRo9bdvTGmImr0WC
-	 PpisJmAzSmCsA==
-Date: Thu, 4 Sep 2025 16:27:59 -1000
-From: Tejun Heo <tj@kernel.org>
-To: escape <escape@linux.alibaba.com>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-Message-ID: <aLpKr6_r5exdc3EQ@slm.duckdns.org>
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <cover.1756985260.git.escape@linux.alibaba.com>
- <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
- <aLm-2Lcnu602AB85@slm.duckdns.org>
- <11edd1da-7162-4f5a-b909-72c2f65e9db7@linux.alibaba.com>
+	s=k20201202; t=1757039566;
+	bh=r/GiDLoxoEPeOsRFkLNJjLpOh6aEb7+BENWEot8E3Ts=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=YvI3YWzjMc1vSmCBlfUEyGlY85yBExmoWt6rIAad4CNUd3eb+fNLgc326Yy4W9zMX
+	 26VOw4bwOCwyOus+l5MWvp1VoZMiaSTEfw2A/dPEPksAqBFJIdejeLWFRRNl8iaYtg
+	 4VxmFDGbTplwGSBtwB2gR9wQt1IWGXPWdm+Xt1Z/+RoUHJ2LNVqWgMgKVG6w23JntX
+	 T0+ZZlg/skxehcBbrLvUa1QDGrljffZjIGrWFvmu3hf0s8dsDDR34UsMdw8PDRLR2/
+	 PsdNoPnyIfYrlnGxvcy6vAsbd2KPk7ma6eJyrJepKWI15ylrqpNqAkf9GVJK6LOyTu
+	 qIbS4QuUMKGkA==
+Date: Thu, 04 Sep 2025 21:32:45 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11edd1da-7162-4f5a-b909-72c2f65e9db7@linux.alibaba.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org
+To: Prabhakar <prabhakar.csengg@gmail.com>
+In-Reply-To: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-Id: <175703941904.745223.12563008293745270864.robh@kernel.org>
+Subject: Re: [PATCH 0/2] Add I3C support to RZ/V2N and RZ/V2H(P) SoCs
 
-Hello,
 
-On Fri, Sep 05, 2025 at 10:16:30AM +0800, escape wrote:
-> > > +	if (have_favordynmods)
-> > > +		up_read(&tsk->signal->group_rwsem);
-> > >   	percpu_up_read(&cgroup_threadgroup_rwsem);
-> > Hmm... I wonder whether turning on/off the flag is racy. ie. what prevents
-> > have_favordynmods flipping while a task is between change_begin and end?
->
-> have_favordynmods is read-only after initialization and will not change
-> during runtime.
+On Thu, 04 Sep 2025 17:59:07 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Hi All,
+> 
+> This series adds I3C node to RZ/V2N and RZ/V2H(P) SoC DTSI files.
+> 
+> I3C was tested on RZ/V2H(P) and RZ/V2N EVKs using P3T1085UK Arduino
+> Shield Evaluation Board [0].
+> 
+> Disable I2C2 on PMOD connector CN6 and enable I3C.
+> 
+> Connect EVK TO P3T1085UK Arduino Shield Evaluation Board
+> P3T1085UK <-> EVK PMOD CN6
+> - J13[1] to CN6[3] (I3C_SCL)
+> - J13[2] to CN6[4] (I3C_SDA)
+> - J13[4] to CN6[5] (GND)
+> - J9[7]  to CN6[11] (GND)
+> - J9[9]  to CN6[6] (3.3V)
+> 
+> On P3T1085UK,
+> - JP2 pin1 to pin2 (I3C_SDA)
+> - JP3 pin1 to pin2 (I3C_SCL)
+> - JP1 pin2 to pin3 (VDD 3V3)
+> 
+> 
+> [0] https://www.nxp.com/design/design-center/development-boards-and-designs/analog-toolbox/arduino-shields-solutions/p3t1085uk-arduino-shield-evaluation-board:P3T1085UK-ARD
+> 
+> Test Logs:
+> --- RZ/V2H(P) ---
+> root@rzv2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep i3c
+>           i3c_0_pclk     1       2        0   100000000   0   0     50000      Y    12400000.i3c     pclk
+>           i3c_0_pclkrw   1       2        0   100000000   0   0     50000      Y    12400000.i3c     pclkrw
+>           i3c_0_tclk     1       2        0   200000000   0   0     50000      Y    12400000.i3c     tclk
+> root@rzv2h-evk:~#
+> root@rzv2h-evk:~# cat /sys/class/hwmon/*/temp1_input
+> 26687
+> 26812
+> root@rzv2h-evk:~# cat /proc/interrupts | grep i3c
+> 150:         38          0          0          0    GICv3 709 Edge      i3c-resp
+> 151:          2          0          0          0    GICv3 712 Edge      i3c-rx
+> 152:          0          0          0          0    GICv3 713 Edge      i3c-tx
+> 153:          0          0          0          0    GICv3 721 Level     i3c-start
+> 154:          0          0          0          0    GICv3 722 Level     i3c-stop
+> 155:          0          0          0          0    GICv3 724 Level     i3c-tend
+> 156:          0          0          0          0    GICv3 725 Level     i3c-nack
+> root@rzv2h-evk:~# cat /sys/class/hwmon/*/temp1_input
+> 26687
+> 26812
+> root@rzv2h-evk:~# cat /proc/interrupts | grep i3c
+> 150:         42          0          0          0    GICv3 709 Edge      i3c-resp
+> 151:          2          0          0          0    GICv3 712 Edge      i3c-rx
+> 152:          0          0          0          0    GICv3 713 Edge      i3c-tx
+> 153:          0          0          0          0    GICv3 721 Level     i3c-start
+> 154:          0          0          0          0    GICv3 722 Level     i3c-stop
+> 155:          0          0          0          0    GICv3 724 Level     i3c-tend
+> 156:          0          0          0          0    GICv3 725 Level     i3c-nack
+> root@rzv2h-evk:~#
+> 
+> --- RZ/V2N ---
+> root@rzv2n-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep i3c
+>           i3c_0_pclk     1       2        0   100000000   0    0     50000      Y   12400000.i3c     pclk
+>           i3c_0_pclkrw   1       2        0   100000000   0    0     50000      Y   12400000.i3c     pclkrw
+>           i3c_0_tclk     1       2        0   200000000   0    0     50000      Y   12400000.i3c     tclk
+> root@rzv2n-evk:~# cat /proc/interrupts | grep i3c
+>  65:         22          0          0          0    GICv3 709 Edge      i3c-resp
+>  66:          2          0          0          0    GICv3 712 Edge      i3c-rx
+>  67:          0          0          0          0    GICv3 713 Edge      i3c-tx
+>  68:          0          0          0          0    GICv3 721 Level     i3c-start
+>  69:          0          0          0          0    GICv3 722 Level     i3c-stop
+>  70:          0          0          0          0    GICv3 724 Level     i3c-tend
+>  71:          0          0          0          0    GICv3 725 Level     i3c-nack
+> root@rzv2n-evk:~# cat /sys/class/hwmon/*/temp1_input
+> 27000
+> 27125
+> root@rzv2n-evk:~# cat /proc/interrupts | grep i3c
+>  65:         26          0          0          0    GICv3 709 Edge      i3c-resp
+>  66:          2          0          0          0    GICv3 712 Edge      i3c-rx
+>  67:          0          0          0          0    GICv3 713 Edge      i3c-tx
+>  68:          0          0          0          0    GICv3 721 Level     i3c-start
+>  69:          0          0          0          0    GICv3 722 Level     i3c-stop
+>  70:          0          0          0          0    GICv3 724 Level     i3c-tend
+>  71:          0          0          0          0    GICv3 725 Level     i3c-nack
+> root@rzv2n-evk:~#
+> 
+> Cheers,
+> Prabhakar
+> 
+> Lad Prabhakar (2):
+>   arm64: dts: renesas: r9a09g057: Add I3C node
+>   arm64: dts: renesas: r9a09g056: Add I3C node
+> 
+>  arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 33 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 33 ++++++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+> 
+> --
+> 2.51.0
+> 
+> 
+> 
 
-I don't think that's necessarily true. favordynmods can also be specified as
-a mount option and mount can race against forks, execs and exits. Also,
-IIRC, cgroup2 doesn't allow remounts but there's nothing preventing someone
-from unmounting and mounting it again with different options.
 
-> > > @@ -3010,15 +3008,27 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
-> > >   	 */
-> > >   	if (tsk->no_cgroup_migration || (tsk->flags & PF_NO_SETAFFINITY)) {
-> > >   		tsk = ERR_PTR(-EINVAL);
-> > > -		goto out_unlock_threadgroup;
-> > > +		goto out_unlock_rcu;
-> > >   	}
-> > > -
-> > >   	get_task_struct(tsk);
-> > > -	goto out_unlock_rcu;
-> > > -out_unlock_threadgroup:
-> > > -	cgroup_attach_unlock(*threadgroup_locked);
-> > > -	*threadgroup_locked = false;
-> > > +	rcu_read_unlock();
-> > > +
-> > > +	/*
-> > > +	 * If we migrate a single thread, we don't care about threadgroup
-> > > +	 * stability. If the thread is `current`, it won't exit(2) under our
-> > > +	 * hands or change PID through exec(2). We exclude
-> > > +	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
-> > > +	 * callers by cgroup_mutex.
-> > > +	 * Therefore, we can skip the global lock.
-> > > +	 */
-> > > +	lockdep_assert_held(&cgroup_mutex);
-> > > +	*threadgroup_locked = pid || threadgroup;
-> > > +
-> > > +	cgroup_attach_lock(tsk, *threadgroup_locked);
-> > I'm not sure this relocation is safe. What prevents e.g. @tsk changing its
-> > group leader or signal struct before lock is grabbed?
->
-> When a non-leader thread in a thread group executes the exec system call,
-> the thread group leader is updated, but the signal_struct remains unchanged,
-> so this part is safe.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-But the leader can change, right? So, we can end up in a situation where
-threadgroup is set but the task is not the leader which I think can lead to
-really subtle incorrect behaviors like write succeeding but nothing
-happening when racing against exec.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Thanks.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
--- 
-tejun
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: failed to guess base
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250904165909.281131-1-prabhakar.mahadev-lad.rj@bp.renesas.com:
+
+arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: i3c@12400000 (renesas,r9a09g056-i3c): compatible:0: 'renesas,r9a09g056-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: i3c@12400000 (renesas,r9a09g056-i3c): compatible: ['renesas,r9a09g056-i3c', 'renesas,r9a09g047-i3c'] is too long
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+arch/arm64/boot/dts/renesas/r9a09g057h48-kakip.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible:0: 'renesas,r9a09g057-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+arch/arm64/boot/dts/renesas/r9a09g057h48-kakip.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible: ['renesas,r9a09g057-i3c', 'renesas,r9a09g047-i3c'] is too long
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible:0: 'renesas,r9a09g057-i3c' is not one of ['renesas,r9a08g045-i3c', 'renesas,r9a09g047-i3c']
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dtb: i3c@12400000 (renesas,r9a09g057-i3c): compatible: ['renesas,r9a09g057-i3c', 'renesas,r9a09g047-i3c'] is too long
+	from schema $id: http://devicetree.org/schemas/i3c/renesas,i3c.yaml#
+
+
+
+
+
 
