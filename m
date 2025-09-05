@@ -1,157 +1,334 @@
-Return-Path: <linux-kernel+bounces-803149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34655B45B4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:59:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBAAB45B54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D0DA62EEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6AA166EF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943E374284;
-	Fri,  5 Sep 2025 14:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F17B306B23;
+	Fri,  5 Sep 2025 14:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+Ll0mWo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IcfG6hme";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ama3xeGf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IcfG6hme";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ama3xeGf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4EB2F7AB0;
-	Fri,  5 Sep 2025 14:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5E6306B13
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084191; cv=none; b=N9gNFx0cOAbnlKp+2JJVtYSuGfPlBO6ngpcBW593BGTMesVpHnHzW8QGh9HvnQCovG6d8XXwobNIGr5PLmn0puJ48mMkpL3q+L/ouEJPYNhr9s3Q+EaMd3ZeZkfjBxc5NPCv0+0UNE264XFgkbYNK9weVDdxLFV/1VGz3VeckPA=
+	t=1757084263; cv=none; b=Zm0psPQ9SI6m4YFObYsrizcNMTEB13T3SfMkLXjq1MaBlZRRl5aqTilmjDvkLxLJhHjB5A+QZcT2HiBHtG2IWNLMDN9f63NAKTzlnraFytSgClyYG56hVjiFxwx9r1H32iC+8bri6qx6+tpJ4yZxKxuc3M+suGeSX7Nd+Wua0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084191; c=relaxed/simple;
-	bh=jmmqgMUirtfYeSXPXqYQ0yzKkKVEp3WxOphifTvxL60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOLdWi46GDrWNH3u07HpPlucj1ZY0IXfLzvuMKW/nfRnFZBihpe4J8onlsu6vYgEV1rWph63kMvPvr3Bgpvb42CKZCZ3njqOxDNgNdB/59whggy0+hPfWHb4eEtolDmm+CmxsZx9QCdY+EU47phc43US2SrNxdeDJvoSjb+mzmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+Ll0mWo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AC0C4CEF1;
-	Fri,  5 Sep 2025 14:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757084190;
-	bh=jmmqgMUirtfYeSXPXqYQ0yzKkKVEp3WxOphifTvxL60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q+Ll0mWoVCfGIsJnW26P6Xd9tnA5QcSS7qpAw2XV503fsq1NhlE6rYDgRSNlFE0XA
-	 y9Z+l6ZzX5QSbixMaGvsYkvLUL2zSoBA+0/RrY1O0j60pA/BLs8iOxI8WNuz5IHrEQ
-	 97MUu+CT0zt8QZcC+/bSOOkq0NKZKKIbFOFgYvPD2mLi/n7OQF8gwpaR8kc95LgHdR
-	 /phaM2LneM141rLNoBNFbCJPZAPh/pida569RKSDKppGVYsB6tyVVqILZrFNGl/uTv
-	 GyYtIA4dx/qcCwC9X81ggk+C9uVsVJTzU12Gb5cv9XX6qCTUwxYoYdWu/uTC8Onr/u
-	 VnR5toe309Jjw==
-Date: Fri, 5 Sep 2025 20:26:24 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vivek.Pernamitta@quicinc.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH v3 4/6] bus: mhi: host: pci_generic: Remove MHI driver
- and ensure graceful device recovery
-Message-ID: <e5nhd5hgu7peewiaxn6wdjlopaixntgu7zc6d7twhjgglt46rh@hymyien7z5wy>
-References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
- <20250821-vdev_next-20250821_sriov-v3-4-e1b017c48d4a@quicinc.com>
+	s=arc-20240116; t=1757084263; c=relaxed/simple;
+	bh=04ggDYcEbhyFiBY5BKc7xzCUBA1KauukdI70XpQbqu4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jlyx93p524fRQVdD/kBNkmPF6og8i23vQHwTKvcQt0/9+4isHl8q6m9kCIObIbC6cRNJfYf2a3iw4PFffd7nL1SCMFTeBvQb57XJnVH/q/tyk3AG3hniHBpmwts7vLYuPPKNBAbvnmjb0r/aMy2gpsxscW5uGNUYEbuPyxlGkdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IcfG6hme; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ama3xeGf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IcfG6hme; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ama3xeGf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CD20E5CBFF;
+	Fri,  5 Sep 2025 14:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757084258; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Z/2USD8t8idqwTAHcChcnnRg1V31t1mysQlx8pTrZI=;
+	b=IcfG6hmeKlcxuhBeKGCZ4IODY5glubTOUzvAhoC5cBeOCKVrhkyQWG2Jmg2HT0XjQoH4vV
+	/1Wq3HhihzfvVUaIjVkU02eKZGN0JoW8GG1414bQL/jXutAZBAhWsSG+Yji37APO4iX78V
+	gAwlmd6ZjN/QIYyyC4QNy6aLbZ6utFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757084258;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Z/2USD8t8idqwTAHcChcnnRg1V31t1mysQlx8pTrZI=;
+	b=ama3xeGf74uPNVbMSebXb1q5TNmy90WHjtVLb3C79o8s+UmQdewXtKn+CDyCheHZTx5jfZ
+	QpGWgr5Zl8V5TsBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=IcfG6hme;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ama3xeGf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757084258; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Z/2USD8t8idqwTAHcChcnnRg1V31t1mysQlx8pTrZI=;
+	b=IcfG6hmeKlcxuhBeKGCZ4IODY5glubTOUzvAhoC5cBeOCKVrhkyQWG2Jmg2HT0XjQoH4vV
+	/1Wq3HhihzfvVUaIjVkU02eKZGN0JoW8GG1414bQL/jXutAZBAhWsSG+Yji37APO4iX78V
+	gAwlmd6ZjN/QIYyyC4QNy6aLbZ6utFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757084258;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Z/2USD8t8idqwTAHcChcnnRg1V31t1mysQlx8pTrZI=;
+	b=ama3xeGf74uPNVbMSebXb1q5TNmy90WHjtVLb3C79o8s+UmQdewXtKn+CDyCheHZTx5jfZ
+	QpGWgr5Zl8V5TsBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 812A313306;
+	Fri,  5 Sep 2025 14:57:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LYFAHmL6umjmEAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 05 Sep 2025 14:57:38 +0000
+Date: Fri, 05 Sep 2025 16:57:38 +0200
+Message-ID: <87wm6doskd.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Takashi Iwai" <tiwai@suse.de>,
+	"Luca Weiss" <luca.weiss@fairphone.com>,
+	"Arnd Bergmann" <arnd@kernel.org>,
+	"Mark Brown" <broonie@kernel.org>,
+	"Wesley Cheng" <quic_wcheng@quicinc.com>,
+	"Jaroslav Kysela" <perex@perex.cz>,
+	"Takashi Iwai" <tiwai@suse.com>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Dan Carpenter" <dan.carpenter@linaro.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+In-Reply-To: <a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+References: <20250513123442.159936-1-arnd@kernel.org>
+	<20250513123442.159936-4-arnd@kernel.org>
+	<DBR2363A95M1.L9XBNC003490@fairphone.com>
+	<87v7n72pg0.wl-tiwai@suse.de>
+	<DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com>
+	<87ms8j2on6.wl-tiwai@suse.de>
+	<DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com>
+	<87bjnpqe45.wl-tiwai@suse.de>
+	<a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-4-e1b017c48d4a@quicinc.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: CD20E5CBFF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Thu, Aug 21, 2025 at 06:25:36PM GMT, Vivek.Pernamitta@quicinc.com wrote:
-> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+On Fri, 05 Sep 2025 16:54:06 +0200,
+Arnd Bergmann wrote:
 > 
-> So, When the MHI driver is removed from the host side, it is essential to
-> ensure a clean and stable recovery of the device.
-
-You need to mention why it is essential. What will happen otherwise.
-
-> This commit introduces
-> the following steps to achieve that:
+> On Fri, Sep 5, 2025, at 14:26, Takashi Iwai wrote:
+> > On Fri, 05 Sep 2025 13:47:28 +0200,
 > 
-> 1. Disable SR-IOV for any SR-IOV-enabled devices on the Physical Function.
-> 2. Perform a SOC_RESET on the PF to fully reset the device.
+> > @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct 
+> > snd_usb_substream *subs,
+> >  	if (!xfer_buf)
+> >  		return -ENOMEM;
+> > 
+> > -	/* Remapping is not possible if xfer_buf is outside of linear map */
+> > -	xfer_buf_pa = virt_to_phys(xfer_buf);
+> > -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+> > -		ret = -ENXIO;
+> > -		goto unmap_sync;
+> > -	}
+> >  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+> >  			xfer_buf_dma, len);
+> > 
+> >  	/* map the physical buffer into sysdev as well */
+> > +	/* note: 0 is passed to pa argument as we use sgt */
+> >  	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> > -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> > +					       0, len, &xfer_buf_sgt);
+> >  	if (!xfer_buf_dma_sysdev) {
+> >  		ret = -ENOMEM;
+> >  		goto unmap_sync;
 > 
-> Disabling SR-IOV ensures all Virtual Functions (VFs) are properly shutdown,
-> preventing issues during the reset process. The SOC_RESET guarantees that
-> the PF is restored to a known good state.
 > 
+> Makes sense. I had to rework the code a little more to actually
+> understand how it fits together, for reference the below version
+> (I don't expect it to build cleanly) would split up
+> uaudio_iommu_map() into one function that takes a physical
+> address and another function that takes an sg table.
 
-Again, no reasoning was provided why this is necessary.
+Yes, that's much clearer.
 
-> Note:
-> - The QDU100 platform supports 1 PF and 16 VFs.
-> - QDU100 does not support Function Level Reset (FLR) due to a hardware
->   limitation. As a result, SOC_RESET is used to reset the device.
-> - On QDU100, any VF failure can cause the entire endpoint (EP)
->   to go down, making this recovery mechanism critical.
+
+thanks,
+
+Takashi
+
 > 
-
-This comment about QDU100 doesn't belong to this patch as this patch is not at
-all related to QDU100.
-
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+>        Arnd
 > 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 351b177cdf84057fb5a4e2f5b52279d7f1da41c2..f922cca0ab633aeae942587f0c40038342ce9c33 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -45,6 +45,8 @@
->   * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
->   *		   of inband wake support (such as sdx24)
->   * @no_m3: M3 not supported
-> + * @reset_on_remove: Set true for devices support SOC reset and perform it
-> + *		     while drivee remove
-
-driver
-
-Maybe reword it to:
-
-	'Set true for devices that require SoC during driver removal'
-
+> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+> index a25c5a531690..f843c2181da5 100644
+> --- a/sound/usb/qcom/qc_audio_offload.c
+> +++ b/sound/usb/qcom/qc_audio_offload.c
+> @@ -539,32 +539,24 @@ static void uaudio_iommu_unmap(enum mem_type mtype, unsigned long iova,
+>  }
+>  
+>  /**
+> - * uaudio_iommu_map() - maps iommu memory for adsp
+> + * uaudio_iommu_map_pa() - maps iommu memory for adsp
+>   * @mtype: ring type
+>   * @dma_coherent: dma coherent
+>   * @pa: physical address for ring/buffer
+>   * @size: size of memory region
+> - * @sgt: sg table for memory region
+>   *
+>   * Maps the XHCI related resources to a memory region that is assigned to be
+>   * used by the adsp.  This will be mapped to the domain, which is created by
+>   * the ASoC USB backend driver.
+>   *
 >   */
->  struct mhi_pci_dev_info {
->  	const struct mhi_controller_config *config;
-> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
->  	unsigned int mru_default;
->  	bool sideband_wake;
->  	bool no_m3;
-> +	bool reset_on_remove;
->  };
+> -static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+> -				      phys_addr_t pa, size_t size,
+> -				      struct sg_table *sgt)
+> +static unsigned long uaudio_iommu_map_pa(enum mem_type mtype, bool dma_coherent,
+> +				      phys_addr_t pa, size_t size)
+>  {
+>  	struct scatterlist *sg;
+>  	unsigned long iova = 0;
+> -	size_t total_len = 0;
+> -	unsigned long iova_sg;
+> -	phys_addr_t pa_sg;
+>  	bool map = true;
+> -	size_t sg_len;
+>  	int prot;
+> -	int ret;
+> -	int i;
 >  
->  #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
-> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
->  	.dma_data_width = 32,
->  	.sideband_wake = false,
->  	.no_m3 = true,
-> +	.reset_on_remove = true,
->  };
+>  	prot = IOMMU_READ | IOMMU_WRITE;
 >  
->  static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
-> @@ -1039,6 +1043,7 @@ struct mhi_pci_device {
->  	struct work_struct recovery_work;
->  	struct timer_list health_check_timer;
->  	unsigned long status;
-> +	bool reset_on_remove;
->  };
+> @@ -583,20 +575,42 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+>  				     &uaudio_qdev->xfer_ring_iova_size,
+>  				     &uaudio_qdev->xfer_ring_list, size);
+>  		break;
+> -	case MEM_XFER_BUF:
+> -		iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+> -				     &uaudio_qdev->xfer_buf_iova_size,
+> -				     &uaudio_qdev->xfer_buf_list, size);
+> -		break;
+>  	default:
+>  		dev_err(uaudio_qdev->data->dev, "unknown mem type %d\n", mtype);
+>  	}
 >  
->  static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
-> @@ -1323,7 +1328,6 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	else
->  		mhi_cntrl_config = info->config;
+>  	if (!iova || !map)
+> -		goto done;
+> +		return 0;
 >  
-> -	/* Initialize health check monitor only for Physical functions */
-
-Spurious change?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> -	if (!sgt)
+> -		goto skip_sgt_map;
+> +	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+> +
+> +done:
+> +	return iova;
+> +}
+> +
+> +static unsigned long uaudio_iommu_map_xfer_buf(bool dma_coherent,
+> +				      size_t size, struct sg_table *sgt)
+> +{
+> +	struct scatterlist *sg;
+> +	unsigned long iova = 0;
+> +	size_t total_len = 0;
+> +	unsigned long iova_sg;
+> +	phys_addr_t pa_sg;
+> +	size_t sg_len;
+> +	int prot;
+> +	int ret;
+> +	int i;
+> +
+> +	prot = IOMMU_READ | IOMMU_WRITE;
+> +
+> +	if (dma_coherent)
+> +		prot |= IOMMU_CACHE;
+> +
+> +	iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+> +			     &uaudio_qdev->xfer_buf_iova_size,
+> +			     &uaudio_qdev->xfer_buf_list, size);
+> +	if (!iova)
+> +		goto done;
+>  
+>  	iova_sg = iova;
+>  	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
+> @@ -618,11 +632,6 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+>  		uaudio_iommu_unmap(MEM_XFER_BUF, iova, size, total_len);
+>  		iova = 0;
+>  	}
+> -	return iova;
+> -
+> -skip_sgt_map:
+> -	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+> -
+>  done:
+>  	return iova;
+>  }
+> @@ -1061,8 +1070,8 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+>  			xfer_buf_dma, len);
+>  
+>  	/* map the physical buffer into sysdev as well */
+> -	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> +	xfer_buf_dma_sysdev = uaudio_iommu_map_xfer_buf(dma_coherent, xfer_buf_pa,
+> +							len, &xfer_buf_sgt);
+>  	if (!xfer_buf_dma_sysdev) {
+>  		ret = -ENOMEM;
+>  		goto unmap_sync;
+> @@ -1143,8 +1152,8 @@ uaudio_endpoint_setup(struct snd_usb_substream *subs,
+>  	sg_free_table(sgt);
+>  
+>  	/* data transfer ring */
+> -	iova = uaudio_iommu_map(MEM_XFER_RING, dma_coherent, tr_pa,
+> -			      PAGE_SIZE, NULL);
+> +	iova = uaudio_iommu_map_pa(MEM_XFER_RING, dma_coherent, tr_pa,
+> +				   PAGE_SIZE);
+>  	if (!iova) {
+>  		ret = -ENOMEM;
+>  		goto clear_pa;
+> @@ -1207,8 +1216,8 @@ static int uaudio_event_ring_setup(struct snd_usb_substream *subs,
+>  	mem_info->dma = sg_dma_address(sgt->sgl);
+>  	sg_free_table(sgt);
+>  
+> -	iova = uaudio_iommu_map(MEM_EVENT_RING, dma_coherent, er_pa,
+> -			      PAGE_SIZE, NULL);
+> +	iova = uaudio_iommu_map_pa(MEM_EVENT_RING, dma_coherent, er_pa,
+> +				   PAGE_SIZE);
+>  	if (!iova) {
+>  		ret = -ENOMEM;
+>  		goto clear_pa;
 
