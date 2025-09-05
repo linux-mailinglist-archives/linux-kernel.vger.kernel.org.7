@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-803430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D254B45FB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:10:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F09B45FB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34FEB7A4736
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAF61885EA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67C4313264;
-	Fri,  5 Sep 2025 17:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F39F313266;
+	Fri,  5 Sep 2025 17:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pEVfPemG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Baift23J"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7A2F7AA4;
-	Fri,  5 Sep 2025 17:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79831D73D;
+	Fri,  5 Sep 2025 17:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092247; cv=none; b=qV0GWzp+wTxgTntxyBTljxq9rPsSmZqjZYmYg9n1Ht8bYg84majMV/hTQie7YgcHu9fdyCSN0wiRnTH6WxvLXqDV7fLhsZnKn5aKBYlgtpOZuR9iKa9aNQhe6qESFYyyaqIcZPP1OZ/ibiCpUJYzGIJz1cMbP4uNCwh8f4o9V4Y=
+	t=1757092316; cv=none; b=XTabSubPqmgH74Ku3umq2xYlB9izBWMVU9GGMnOYFcPX5EcArw9Eshuonf2sNDXjk+fGh3ZdLXOnroGFztdSQUu9KRyJ0YfQBMyiZQhUyIuHiC46eHU6OCRGx8/p8UXYNQVG1YX5ztR7mpMpfMrsaBGti710fOg24sFoNMEEpHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092247; c=relaxed/simple;
-	bh=Vv8ki8sI8KtDdrSfEGAJEtcXf6zHXkwXdhPayYAPtXA=;
+	s=arc-20240116; t=1757092316; c=relaxed/simple;
+	bh=g99F8/S09ryVFGiemjkXxFrv/elNT0gGl8vU/s9Oy90=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sz3/IXt9lWFoXut2PSXKjjRqso4v8tMDO30mXMmnNtTKhdKvPrXyp6uLKagVt+49tkmucbg/mD8Ti/aPaY5mXnsEwno2rh9/4YsX6qqKXkl4VvSTWRYc2lgWaGTUuHt84K14IXvwKGXRLnPsVP7gYjFzaXatFNYznMpzwNZSgOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pEVfPemG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585Dpniq005146;
-	Fri, 5 Sep 2025 17:10:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=R7h1xqlKGn5HU9xCSIKYQei+O9wytS
-	gN3k1XoIrayhE=; b=pEVfPemGHw2zjwVmi377N+v0sw4twUMdqd3yVpgsNXsv6P
-	zt1Tu3V5dmlG4Ig+GNaOzXLJc75iCwZkRIZAbU56xW9gSqBOJ6Av8XneRhmf2He+
-	lWaYaf62jciwG14kwmWIaSBpV4FZuDouGFNXcT7C0s5Z+uDgNjB7a7ftojMdqRPr
-	Kzodyizkyh+xCFdEZJ64dsHRfmZ8yK4Z9nKRvplQxBaL2bWbNmzRdQjWxXsv6FSx
-	eDAMjWUNqJHbqltvTzDlGdNrFi/XZ9ASeaXaFj9Y5EBTJRz0j2vtg89VE1j7Tdi6
-	yOnhk/xuBmtuVpv49FU/NJVOBauold2SSp9HMGYw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usv3j161-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 17:10:27 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 585HARPl001218;
-	Fri, 5 Sep 2025 17:10:27 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usv3j15u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 17:10:27 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 585DvDvG014145;
-	Fri, 5 Sep 2025 17:10:26 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3t723-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 17:10:26 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 585HAO4Q51052878
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Sep 2025 17:10:24 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9F94620040;
-	Fri,  5 Sep 2025 17:10:24 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7096220043;
-	Fri,  5 Sep 2025 17:10:22 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.220.13])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  5 Sep 2025 17:10:22 +0000 (GMT)
-Date: Fri, 5 Sep 2025 22:40:19 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v5 11/12] ext4: Test atomic writes allocation and write
- codepaths with bigalloc
-Message-ID: <aLsZe0czym9X9Lo4@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1755849134.git.ojaswin@linux.ibm.com>
- <a223c31b43ce3a2c7a3534efbc0477651f1fc2bb.1755849134.git.ojaswin@linux.ibm.com>
- <001c5111-84c8-4bb0-951a-cc51587479be@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+LQeJ5ZKLhGH1YzHYk1yKMxWYdssNk9xYtjktIvHNw/EfQX/I5QUfrYGnMzdnyzmIGEag/Copj50YhxCddmsIJIsiuAB6N1nPfYvxUdEG1e6eG+4s3hYng0TIa/Ld813Aya1WBHIqmldBULUuTxW6rmX6Q+vtZw8DnE1UAhfZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Baift23J; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b5f6ae99c3so164491cf.1;
+        Fri, 05 Sep 2025 10:11:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757092314; x=1757697114; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J5ekuWU5RbwtQiw31LCbZWWmruopatpE+jVwBSdU8tw=;
+        b=Baift23JeC96MpxmhnG4XcjAuQeAKenLjgX4g418wDznv6kSwfZ++8zKogtj/xkTKD
+         orwbtBJg6HRo2PAxqEhVi+RGgA2nQHdbOcqLJS1R+Z79Q0PQMn3HZ7lOM8ctopMuc87c
+         sic9Gh50Nodn1SdyDZe8alk5CjQ8hvdVYwo2UxttpPTEwAhVJKjSErrMmbUvknTzTf7O
+         qBH/HLclZpt4oSdXVu4Ohd34bBYmVIEAsPHye75jHZnKfamEYb+X6ecJAJm/exbfx6iE
+         Pv08PtfSXL6WcTdEjIayBiBHjqPkJSw0Q4ArSop8jBsKDosHTtjuQP4wbJIi5iY79okL
+         nVLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757092314; x=1757697114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J5ekuWU5RbwtQiw31LCbZWWmruopatpE+jVwBSdU8tw=;
+        b=PlRbAB/FTT0+XiRm87vGYVJqJCx5eCOjrq3WLbEMiKz3BoxblN0rwGx/q0uFoE3Sd8
+         PJc20vD+hVGqPzwk4TlXJBQm5pYxE6Njf4ovIugAPwKE4nGdm5l6EcB+1P/GYTMsGOA1
+         LY0uKGcxliBkHb9JIEal+4rlZ2DWPBhMJuRHLaq1XcFAHJjQd0nr+CRtfyzCzBsNt9l0
+         Ly0xZ/qminPedOgiF4MF1qlg9/dF+QPfLWrpEKdyRbcFn6qCtgttV8sCZmKxtnfi3Ch1
+         syukbosD9cRqeUOqMcp/bPJemPGANLqHfW+NnzbtZBqSETz1QPT0htYLQBxLEkeeDdcF
+         OoYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxuWJB0FYmVSLbHUTyLWxa/BDkqM6/t6d2F8S02zenKxbmYinwQGVYox+1E/oCGHFBZ7bowy49G1OSS3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8oQqwHg67rixBbTxk9ZcEI/uzPezgS1k8Dwa/ICb9+IQ9J1nk
+	5/QsbYwLQj5XqRLi6QII9YbskVv1keCG/C0F43dH5HnzZAJ99e1ILOyv
+X-Gm-Gg: ASbGnct9jhnGO0c2x35v8tGW78nDcXvfw++vbYu0Kdlu1ZlVZFec6WL95hk+L7nihLY
+	D0pfdZAv8a0hBo87Cpe/qDrDL/REPB6ZEGBh6Y8kgQAUJWJPObU0AMY6VAh5BWW9zSQ2/rRy4ZB
+	j7yKbZK8wpZhZwGS1vUMI26OsCbfkb+HqGupbd2SR1uAGwCTyq/xx3yVc66IlwU7LOEpcYD78jz
+	oyClLFqEmAiEI3nBHHsgcVkLbBbJPHQRxtk3GvcxZzXPpUn573Yjnqrg4hRAvtbh+RnwJ2Hyvgy
+	xTZNTAQ+pQv5FkfpkdtEYhx9M/vfm+CYJSK9CX+/SqT/w2fjyqhEKuVAFTjzUkZMt169SYyawKw
+	6hgWKW846Jj4OtOXwJqpsPliFup51EFk+/Il58ddfnkkgjce4/Uua8uzACDOhqwBZ2RePqXCl5K
+	70TvOz8GIGP/iiC1OtMd8tJ1lnG2C7GZ6qyw==
+X-Google-Smtp-Source: AGHT+IELnH/qBYxpQFwcEvQaoHlixPN9il9DoABwK4opJVKV9lTR4BrdWk00FQljbcVHQAJhcwqsKQ==
+X-Received: by 2002:ad4:5fca:0:b0:70d:eaf5:baf5 with SMTP id 6a1803df08f44-70fac90abaemr337980426d6.54.1757092313757;
+        Fri, 05 Sep 2025 10:11:53 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-73524aa8465sm4729826d6.65.2025.09.05.10.11.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:11:53 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id EA551F40066;
+	Fri,  5 Sep 2025 13:11:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 05 Sep 2025 13:11:52 -0400
+X-ME-Sender: <xms:2Bm7aBc9oR0OYeYGUVCIU86GwG7feYaOCOdA3co1GpLLFNzigHoIgA>
+    <xme:2Bm7aJS3p1YgcWNHrnH5J0MmSUDu6a2kYnR5I5K1Tnd4PBGmEVSMPmgTAMPIKyT0F
+    vIqxGBdDZljZ8jDlA>
+X-ME-Received: <xmr:2Bm7aPdtcjb9GyD8o2B1-yrW8IWRsy3ZhGVJaa5pTjvnT1hBxRlN7eKhctMPwDrhWh8QXyfiUlwslXwMlNKO8jhHt2si74_o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelgeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgv
+    nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
+    hnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffeivden
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquh
+    hnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudej
+    jeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrd
+    hnrghmvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehvihhtrghlhidrfihoohhlsehkohhnshhulhhkohdrshgvpdhrtghpthhtoheprh
+    hushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhl
+    sehgohhoghhlvgdrtghomhdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrih
+    hlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthht
+    ohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoheplh
+    hoshhsihhnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:2Bm7aCufJgmTiewwmU5Tg--b9ClI86Z3fZ2qdfnghhGFKH6WaOH4Cw>
+    <xmx:2Bm7aLJa3DvwSJ5j-Ztpj7wVy-7BsnU2Ntig_b2Zh7KGXoYKcLgsJw>
+    <xmx:2Bm7aGbX3TX4v6mHVVV_q-CrQTl6pRL8LlwozTPFfD2QoJQ9CtX1Ag>
+    <xmx:2Bm7aOmhgnX-AyT85SxZJSoDmTkhbEPN7XNA1jJu-smyW1LftNhctg>
+    <xmx:2Bm7aEXOTNYfLlANcBNeNolWBISngu-6-RP9Z6q0lyiqYFuuqRbpa0gw>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 Sep 2025 13:11:52 -0400 (EDT)
+Date: Fri, 5 Sep 2025 10:11:51 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH] rust: rbtree: add immutable cursor
+Message-ID: <aLsZ1wk8RADj7P7_@tardis-2.local>
+References: <20250904142552.2790602-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,163 +131,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001c5111-84c8-4bb0-951a-cc51587479be@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6g0HyMVHZ7sS99tObwvvkxUL7ZknZlfS
-X-Authority-Analysis: v=2.4 cv=FPMbx/os c=1 sm=1 tr=0 ts=68bb1984 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=Bvp6HHX3gaFx4hf-IG0A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: ycTFs8xoXygiXj1gbPKt8XsWaW07WkXc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX0/7w4wP4U984
- jU9CbEMEypj9fzxVaiZI0OR7AxoD6o8sjHwqx1h20WgbR8lbpo+RhHWjZaZxAf5ohRY78NDchbG
- SBTESH8BNEAMwvnvbX4YvK3ey8nXWSPRB110JCOC5j5aAdmHKJS0+/6NzI+PdfZhLrxsh2j2l/m
- 27Gyn1WZ3df2hHCuPcyJCzPF7ccl1N3GruQryT/XSMcOZZ+JB06ZAEhV8zXkQtiQJkeV1lxANMY
- 4xC5fe9yEnRvaWJr5CT8jxe4WAXwKF33Ums/a5jDzrAQEyo7j1s6iST1GWwxLK90p55mC6FBjjl
- 7jN5qSdrsKBogVmOgJQjaINHNbYK8s/UhZeb6tYiPO1BLenKpeEPfYigxT7QxajHYuUUFnjc5Wf
- kqAyBKFE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
- spamscore=0 adultscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300034
+In-Reply-To: <20250904142552.2790602-1-vitaly.wool@konsulko.se>
 
-On Tue, Sep 02, 2025 at 04:54:48PM +0100, John Garry wrote:
-> On 22/08/2025 09:02, Ojaswin Mujoo wrote:
-> > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-> > 
-> > This test does a parallel RWF_ATOMIC IO on a multiple truncated files in
-> > a small FS. The idea is to stress ext4 allocator to ensure we are able
-> > to handle low space scenarios correctly with atomic writes. We brute
-> > force this for different blocksize and clustersizes and after each
-> > iteration we ensure the data was not torn or corrupted using fio crc
-> > verification.
-> > 
-> > Note that in this test we use overlapping atomic writes of same io size.
-> > Although serializing racing writes is not guaranteed for RWF_ATOMIC,
-> > NVMe and SCSI provide this guarantee as an inseparable feature to
-> > power-fail atomicity. Keeping the iosize as same also ensures that ext4
-> > doesn't tear the write due to racing ioend unwritten conversion.
-> > 
-> > The value of this test is that we make sure the RWF_ATOMIC is handled
-> > correctly by ext4 as well as test that the block layer doesn't split or
-> > only generate multiple bios for an atomic write.
-> > 
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >   tests/ext4/062     | 203 +++++++++++++++++++++++++++++++++++++++++++++
-> >   tests/ext4/062.out |   2 +
-> >   2 files changed, 205 insertions(+)
-> >   create mode 100755 tests/ext4/062
-> >   create mode 100644 tests/ext4/062.out
-> > 
-> > diff --git a/tests/ext4/062 b/tests/ext4/062
-> > new file mode 100755
-> > index 00000000..d48f69d3
-> > --- /dev/null
-> > +++ b/tests/ext4/062
-> > @@ -0,0 +1,203 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> > +#
-> > +# FS QA Test 062
-> > +#
-> > +# This test does a parallel RWF_ATOMIC IO on a multiple truncated files in a
-> > +# small FS. The idea is to stress ext4 allocator to ensure we are able to
-> > +# handle low space scenarios correctly with atomic writes.. We brute force this
-> > +# for all possible blocksize and clustersizes and after each iteration we
-> > +# ensure the data was not torn or corrupted using fio crc verification.
-> > +#
-> > +# Note that in this test we use overlapping atomic writes of same io size.
-> > +# Although serializing racing writes is not guaranteed for RWF_ATOMIC, NVMe and
-> > +# SCSI provide this guarantee as an inseparable feature to power-fail
-> > +# atomicity. Keeping the iosize as same also ensures that ext4 doesn't tear the
-> > +# write due to racing ioend unwritten conversion.
-> > +#
-> > +# The value of this test is that we make sure the RWF_ATOMIC is handled
-> > +# correctly by ext4 as well as test that the block layer doesn't split or only
-> > +# generate multiple bios for an atomic write.
-> > +#
-> > +
-> > +. ./common/preamble
-> > +. ./common/atomicwrites
-> > +
-> > +_begin_fstest auto rw stress atomicwrites
-> > +
-> > +_require_scratch_write_atomic
-> > +_require_aiodio
-> > +_require_fio_version "3.38+"
-> > +
-> > +FSSIZE=$((360*1024*1024))
-> > +FIO_LOAD=$(($(nproc) * LOAD_FACTOR))
-> > +
-> > +# Calculate bs as per bdev atomic write units.
-> > +bdev_awu_min=$(_get_atomic_write_unit_min $SCRATCH_DEV)
-> > +bdev_awu_max=$(_get_atomic_write_unit_max $SCRATCH_DEV)
-> > +bs=$(_max 4096 "$bdev_awu_min")
-> > +
-> > +function create_fio_configs()
-> > +{
-> > +	local bsize=$1
-> > +	create_fio_aw_config $bsize
-> > +	create_fio_verify_config $bsize
-> > +}
-> > +
-> > +function create_fio_verify_config()
-> > +{
-> > +	local bsize=$1
-> > +cat >$fio_verify_config <<EOF
-> > +	[global]
-> > +	direct=1
-> > +	ioengine=libaio
-> > +	rw=read
-> > +	bs=$bsize
-> > +	fallocate=truncate
-> > +	size=$((FSSIZE / 12))
-> > +	iodepth=$FIO_LOAD
-> > +	numjobs=$FIO_LOAD
-> > +	group_reporting=1
-> > +	atomic=1
-> > +
-> > +	verify_only=1
-> > +	verify_state_save=0
-> > +	verify=crc32c
-> > +	verify_fatal=1
-> > +	verify_write_sequence=0
-> > +
-> > +	[verify-job1]
-> > +	filename=$SCRATCH_MNT/testfile-job1
-> > +
-> > +	[verify-job2]
-> > +	filename=$SCRATCH_MNT/testfile-job2
-> > +
-> > +	[verify-job3]
-> > +	filename=$SCRATCH_MNT/testfile-job3
-> > +
-> > +	[verify-job4]
-> > +	filename=$SCRATCH_MNT/testfile-job4
-> > +
-> > +	[verify-job5]
-> > +	filename=$SCRATCH_MNT/testfile-job5
-> > +
-> > +	[verify-job6]
-> > +	filename=$SCRATCH_MNT/testfile-job6
-> > +
-> > +	[verify-job7]
-> > +	filename=$SCRATCH_MNT/testfile-job7
-> > +
-> > +	[verify-job8]
-> > +	filename=$SCRATCH_MNT/testfile-job8
-> 
-> do you really need multiple jobs for verify?
+On Thu, Sep 04, 2025 at 04:25:52PM +0200, Vitaly Wool wrote:
+[...]
+> +
+> +    /// Returns a cursor over the tree nodes based on the given key.
+> +    ///
+> +    /// If the given key exists, the cursor starts there.
+> +    /// Otherwise it starts with the first larger key in sort order.
+> +    /// If there is no larger key, it returns [`None`].
+> +    pub fn cursor_lower_bound(&self, key: &K) -> Option<Cursor<'_, K, V>>
 
-Yes since we want each job to verify it's own file.
-> 
-> 
+I think you can make a helper function that returns a
+`Option<NonNull<..>>` and `cursor_lower_bound()` and
+`cursor_lower_bound_mut()` could share the searching logic in the helper
+function.
+
+> +    where
+> +        K: Ord,
+> +    {
+> +        let mut node = self.root.rb_node;
+> +        let mut best_match: Option<NonNull<Node<K, V>>> = None;
+> +        while !node.is_null() {
+> +            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in
+> +            // `self` point to the links field of `Node<K, V>` objects.
+> +            let this = unsafe { container_of!(node, Node<K, V>, links) };
+> +            // SAFETY: `this` is a non-null node so it is valid by the type invariants.
+> +            let this_key = unsafe { &(*this).key };
+> +            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
+> +            let left_child = unsafe { (*node).rb_left };
+> +            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
+> +            let right_child = unsafe { (*node).rb_right };
+> +            match key.cmp(this_key) {
+> +                Ordering::Equal => {
+> +                    best_match = NonNull::new(this);
+> +                    break;
+> +                }
+> +                Ordering::Greater => {
+> +                    node = right_child;
+> +                }
+> +                Ordering::Less => {
+> +                    let is_better_match = match best_match {
+> +                        None => true,
+> +                        Some(best) => {
+> +                            // SAFETY: `best` is a non-null node so it is valid by the type
+> +                            // invariants.
+> +                            let best_key = unsafe { &(*best.as_ptr()).key };
+> +                            best_key > this_key
+> +                        }
+> +                    };
+> +                    if is_better_match {
+> +                        best_match = NonNull::new(this);
+> +                    }
+> +                    node = left_child;
+> +                }
+> +            };
+> +        }
+> +
+> +        let best = best_match?;
+> +
+> +        // SAFETY: `best` is a non-null node so it is valid by the type invariants.
+> +        let links = unsafe { addr_of_mut!((*best.as_ptr()).links) };
+> +
+> +        NonNull::new(links).map(|current| {
+> +            // INVARIANT:
+> +            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
+> +            Cursor {
+> +                current,
+> +                _tree: PhantomData,
+> +            }
+> +        })
+> +    }
+>  }
+>  
+[...]
 
