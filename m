@@ -1,158 +1,166 @@
-Return-Path: <linux-kernel+bounces-802392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACC4B451DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C213FB451E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555CD5A04B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576275A0C87
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375DB301492;
-	Fri,  5 Sep 2025 08:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FC27CCE2;
+	Fri,  5 Sep 2025 08:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bnumHXjM"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm5LhzqF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E44927CCE2
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7A127F756;
+	Fri,  5 Sep 2025 08:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061778; cv=none; b=kR5hlexYwbhU4D5rR/z/+ntQH9lkDcVmHqmAYo0qNVPyayg582UnBt1OunJbEwt9xK2FIFIVjb7+vP4nSRkcnjzZC7CWYSSUoS40wl2b69fptaDhtY5S7Rv93dPSFfa+pHsaQ23zCPK+Ac4fjyjoKNuFD1EeuoOujJeJ26lor9U=
+	t=1757061827; cv=none; b=PtE/8dd8xQZJojIxCpC1fPxyZYFIPYtBWA23COqy7vIX/FaH/x3Uev7mDOS6DY019GUymmb+iOUQFl6eEbo3H09TefqH0apEze/i34FeHftiDFaxmTLum5aiiEzPYbWKxinLIuuoTQestJUEPhQGnNSW7UALvSf3SabOGS1yFRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061778; c=relaxed/simple;
-	bh=EoMaYTYHFXEwCGBlN/IEjhrPWRNTs6kRsDou2dH4cSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dc35QLhcUG796Rqtlvmb8jYxnCkjw+8ju4qG8RbrFCEjaJ7JPXwnOyW6xjH74uDgSXJzwHgZGcelO5ABKCJhCCUuwi+cLM5YwG7TIZVVwrov8vkJ6CBevkZt3UuK0gxSpzyEIUpg5GZGXZU8aGuPLANJx6R+KXqrlLaPkfFcYSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bnumHXjM; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e3aafe06a7so349271f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757061775; x=1757666575; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Upm3gtoelWKi/OiIlfN8TaykvgP8Dbo7GPj1kZ9zlhE=;
-        b=bnumHXjMsPsAYEmJ6Jb9jkgCVgqnF0tMridMkmKh93akDhM38MH2S/Ia3UAZeP/biP
-         GoWOY0x/2+dVTmZXWlK4WDUJ5EKxFmHj5SCF2q7aI1juiq6iREVHszZ0orMZ9PFhoMOM
-         dpDeC5Iv/ClHsF4slfWhwbEI4NCtnhDNNkRmra4HIIoLyF7mdJFCu4veqIfUWdU41dSp
-         q8l5JQ+iG7KYzbzSaI1JAZsC0hiB1de244r6Oi9K6fLoINi6UT007Xa0Zy9rzvXoT9bs
-         l5D8SBBZ/rPqvGrDUg3mo368I27ob4sc0CCJN4aif1xmbDtnKnrCUAFGdgbd1fYcQMGC
-         aPgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757061775; x=1757666575;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Upm3gtoelWKi/OiIlfN8TaykvgP8Dbo7GPj1kZ9zlhE=;
-        b=iY+3FIgJeJyRfXkLKgh156TNyTjSf8NWi7VE6/1IFCLMImKoLaMseTsDs1vbgTzeFU
-         ItzW/fNH7vMsl8JE65V43OD57uu8XNd/zMwZY+0XHf7IZkGrVRHsLS3XDzl7c9h1T9VJ
-         sbLLGWbGXzV+FmxGCjSruFTF1dDCvgDxFYCgIrxzyzSel5n9FhTGp+LKook6s5qBU5mc
-         +e+GaPLkVPsYTe89cbKXgh26DPz4dkU97ia1xBHu0+cfpmFMyOBx/9XmvDLjZwk75q3C
-         SaN1LJH30NaM+d2pqOdy/FBu2snLwu1qR+gFQxBay/O/XsdkWU/SAq6+5URMlYi1Yq0J
-         +JLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZBbd/dNWJyObiE/OBSxbFhukMMhZK5fxmL24NgP88qGH08fFi6jdTlzwrCUzNJFXHeQHJvrBIUa8Gl9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlU9gnMUmwb1kmBswQnuOw+EFhXo5jJNuhpHuO/UVYANfigcQY
-	HAYYNqbOT0mFRGg9xVVEOG5d6KAmzmjPKCykimgmIeFMg1HweDFKVo9hdDgdmT6etC0=
-X-Gm-Gg: ASbGncvP4SjZpzsBnLWJdL+oC9F0LAMPOOVkHeYtS9/kIBk6FuiVC5sr3/FbJfMmOG2
-	jtZjbk7/2FenmwteanatkCDsDVUzqyCMRUGg0S4wzjCwZvw+az2tK3rrNZUqhhu+Gob3iGuaOJ+
-	cuagOLMrtLkJMsNuDpW2QUs0yZaSrhs4fNPeGARzhL4bmIDDN3aiLXxKndTSOqlvDK4F24+cgSp
-	2rQNmdmy6Ww+aDFSmlMvbuxjVmQlAAJHEP74+NZrFbGEYvbnUURLxB9prwsGEMa/wQSx5ZV1eaq
-	yhwChyy2LVbQofQV15GPfglaHCU3B1VV+FIqpyw8FEvLQWj2MlsIQBdb0bt3UtqXwfF8lj7KDnd
-	6Z75bRCrP1wkBcr9keny7XScUiEVb
-X-Google-Smtp-Source: AGHT+IEQbkpijCuIHkSH8MhrhTJtQwPADWOBz/A63pVWyItEyOmzIbf0dkH52+ncdnxv4u3S/9wKgA==
-X-Received: by 2002:a5d:584a:0:b0:3e3:24c3:6d71 with SMTP id ffacd0b85a97d-3e324c36f9amr1793548f8f.1.1757061774650;
-        Fri, 05 Sep 2025 01:42:54 -0700 (PDT)
-Received: from u94a ([2401:e180:8d68:75a0:8d2:dc87:a659:a9df])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7723534c0a8sm19618409b3a.79.2025.09.05.01.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 01:42:54 -0700 (PDT)
-Date: Fri, 5 Sep 2025 16:42:43 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: bpf@vger.kernel.org
-Cc: Hoyeon Lee <hoyeon.lee@suse.com>, netdev@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Subject: Re: [RFC bpf-next v2 0/1] libbpf: add compile-time OOB warning to
- bpf_tail_call_static
-Message-ID: <3pevfugpcd2j44b2wkrjhspn2a2ta627nhnqxc6ty7dxy3nt3v@qhytbn7lmqum>
-References: <20250905051814.291254-1-hoyeon.lee@suse.com>
+	s=arc-20240116; t=1757061827; c=relaxed/simple;
+	bh=oEwTWadZNkJA3jji4rn9QqpCSfJM+iGAZQK5tLETGYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ON8VR7vgwbbIBSXCz0gmNleAWPMGwOCx6GiO5w6mfDKs9ERmpEaxJqoT3L7OTO4uWZu5tcgWYVI++3COjeyi1ZDEjBZx38aSO+LKSjdZigQ7ACG35+vi2jamgsIWFMRXoGRXmMPAeQ4vfFAyh2fI+31M5z+1NI+N4TX5JOO6uZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm5LhzqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F77C4CEF1;
+	Fri,  5 Sep 2025 08:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757061826;
+	bh=oEwTWadZNkJA3jji4rn9QqpCSfJM+iGAZQK5tLETGYY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wm5LhzqFKLlDiWm86N6Qv5ZBplEUa/ExXAJaHqbEeIkcSWBVQVg2Mjr9u6XkejaLH
+	 /zwCqptHSQAYqM3d00UGf7jRLB8a9PZJReoLI62nu5W3wSnWFfB53QRe2YbtnMbkvQ
+	 3viNVr4hZJA2t5ePmZm7vN6Kapy3fkEaBwOkEMCyCYayPys/mINcom2rXYj/pzTnja
+	 LtYB1PCgMKAeY7sKXSYxtGbHmPtLmZg4pjbiyqeBnF4LlNaHE3JOgOWF0wkmxdE37X
+	 GxAuyW2pxftWtd69lNlUrfACsvo0qr0yEoArdQcKLft/SYOlCVt3YPbUCh5TMWz3bp
+	 /Bnqes8RUqiUQ==
+Message-ID: <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
+Date: Fri, 5 Sep 2025 10:43:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905051814.291254-1-hoyeon.lee@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/1] Bluetooth: mediatek: add gpio pin to reset bt
+To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
+ Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
+ Hao Qin <Hao.qin@mediatek.com>,
+ linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-mediatek <linux-mediatek@lists.infradead.org>
+References: <20250905084059.26959-1-ot_zhangchao.zhang@mediatek.com>
+ <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Adding some context that I think was miss per off-list discussion with
-Hoyeon.
+On 05/09/2025 10:40, Zhangchao Zhang wrote:
+> Makes the platform Bluetooth to be reset by hardware pin,
+> it provides two methods to do it for mediatek controller,
+> and it has been tested locally many times and can reset normally.
+> 
+> When an exception occurs, resetting Bluetooth by hardware pin
+> is more stable than resetting Bluetooth by software.
+> If the corresponding pin is not found in dts,
+> bluetooth can also be reset successfully.
+> 
+> Co-developed: Hao Qin <hao.qin@mediatek.com>
+> Co-developed: Chris Lu <chris.lu@mediatek.com>
+> Co-developed: Jiande Lu <jiande.lu@mediatek.com>
+> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+> ---
+>  drivers/bluetooth/btmtk.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+> index 4390fd571dbd..29d6a93f255d 100644
+> --- a/drivers/bluetooth/btmtk.c
+> +++ b/drivers/bluetooth/btmtk.c
+> @@ -6,6 +6,8 @@
+>  #include <linux/firmware.h>
+>  #include <linux/usb.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/of.h>
+>  #include <linux/unaligned.h>
+>  
+>  #include <net/bluetooth/bluetooth.h>
+> @@ -359,11 +361,41 @@ int btmtk_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+>  }
+>  EXPORT_SYMBOL_GPL(btmtk_set_bdaddr);
+>  
+> +static int btmtk_hw_gpio_reset(struct hci_dev *hdev, struct btmtk_data *reset_work)
+> +{
+> +	struct gpio_desc *reset_gpio;
+> +
+> +	/* Find device node*/
+> +	hdev->dev.of_node = of_find_compatible_node(NULL, NULL, "mediatek,mt7925-bluetooth");
 
-On Fri, Sep 05, 2025 at 02:18:11PM +0900, Hoyeon Lee wrote:
-> This RFC adds a compile-time check to bpf_tail_call_static() to warn
-> when a constant slot(index) is >= map->max_entries. This uses a small
-> BPF_MAP_ENTRIES() macro together with Clang's diagnose_if attribute.
+Nothing improved.
 
-This is an attempt to see if it is possible to warn user of out-of-bound
-tail calls, with the assumption being that with bpf_tail_call_static()
-users would not be intentionally calling with an index that is superior
-to the number of entries.
+You just keep ignoring comments.
 
-However, there concerns with the current implementation, so this is
-being sent as RFC to gather feedback, and to see if it can be better
-done. Currently the concerns are:
-- use macro to override bpf_tail_call_static()
-- only works for Clang and not GCC
-- uncertain whether this fit into libbpf conventions
+NAK
 
-> Clang front-end keeps the map type with a '(*max_entries)[N]' field,
-> so the expression
-> 
->     sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)
-> 
-> is resolved to N entirely at compile time. This allows diagnose_if()
-> to emit a warning when a constant slot index is out of range.
-> 
-> Example:
-> 
->     struct { /* BPF_MAP_TYPE_PROG_ARRAY = 3 */
->         __uint(type, 3);             // int (*type)[3];
->         __uint(max_entries, 100);    // int (*max_entries)[100];
->         __type(key, __u32);          // typeof(__u32) *key;
->         __type(value, __u32);        // typeof(__u32) *value;
->     } progs SEC(".maps");
-> 
->     bpf_tail_call_static(ctx, &progs, 111);
-> 
-> produces:
-> 
->     bound.bpf.c:26:9: warning: bpf_tail_call: slot >= max_entries [-Wuser-defined-warnings]
->        26 |         bpf_tail_call_static(ctx, &progs, 111);
->           |         ^
->     /usr/local/include/bpf/bpf_helpers.h:190:54: note: expanded from macro 'bpf_tail_call_static'
->       190 |          __bpf_tail_call_warn(__slot >= BPF_MAP_ENTRIES(map));                  \
->           |                                                             ^
->     /usr/local/include/bpf/bpf_helpers.h:183:20: note: from 'diagnose_if' attribute on '__bpf_tail_call_warn':
->       183 |     __attribute__((diagnose_if(oob, "bpf_tail_call: slot >= max_entries", "warning")));
->           |                    ^           ~~~
-> 
-> Out-of-bounds tail call checkup is no-ops at runtime. Emitting a
-> compile-time warning can help developers detect mistakes earlier. The
-> check is currently limited to Clang (due to diagnose_if) and constant
-> indices, but should catch common errors.
-...
+Best regards,
+Krzysztof
 
