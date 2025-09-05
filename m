@@ -1,101 +1,62 @@
-Return-Path: <linux-kernel+bounces-801936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54899B44BDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8CBB44BD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA5B3A703E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1EF64883E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC77327B351;
-	Fri,  5 Sep 2025 02:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CC3275AE6;
+	Fri,  5 Sep 2025 02:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Onht9wzt"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="OCt3hXJv"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D68127A452;
-	Fri,  5 Sep 2025 02:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93665271468;
+	Fri,  5 Sep 2025 02:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757040484; cv=none; b=OlhMzZWhEUU/i8lOm21ASO02tk2d24UrUc1CjDTj9Fh+Wd8WXOyGpm05qbh/6lnvT86FGZ2uN8aNOp0v3CHm9WkN7qK9QGzpZ6Q7QsNKZLOyqed8fTyORzNT0V7cULxR5tnnsGOXAoetC4qPXbVD5E7GTif/HgTtDmc28xnZOVE=
+	t=1757040472; cv=none; b=UyjvCucnpxMZwK/8+Ub17A833rmPKNNoEZB82S0ZsFrnYpdNqirkpx76+rTZ15AmhkCv1cvRMbDEJCwLt8ReI+IMwMP5J0WJnfcrFyz5OL9z7io1bv0rMVA3qkCs0ttzFQNN8cdzXYAr/411ujTesVsLv9a3MpzxnFavszUIx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757040484; c=relaxed/simple;
-	bh=4UK7rmAawgGhsA0773xymZJziO6ODcvic3H/BSJy6es=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QG01pxF/wS0sYqASlH+8kwx7l7ETcE7Nlx7HyNTh/r5SS6oGabORQxFp+apkpQVCRSReR5Oqm+IlxgBodPiKStoLbwNTlZkELjzCxwDc7MU7p+SFEj0otwuZTCClJk8edKB5LrPx3S5DqJzzJY/iw7pBVtUV9tsekdrn8LeDVsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Onht9wzt; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7723bf02181so1335629b3a.1;
-        Thu, 04 Sep 2025 19:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757040481; x=1757645281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S5nwaGiejZsttf0FEnMcnunXH9MjlWaby5e6Q0AV81Y=;
-        b=Onht9wztxgsmN1hmdmx7c6PzyspzNzy+hj+PYDcE7Z1iDp+U2Wp5x+AQ2IyQUzVxyV
-         1nNTCWmj+GDxFzyq1P+nO9TSgsSm23nkelWkZftHJwudJlNqIhp3gIz+uM5eHtmmPONw
-         hTAcJXiDRGQOuvdGsotDLpD+HsrmrNZ1QV/oPSQN3cGLvO4Rs1G4WWhLkz82HVcCwqMR
-         w2HNtd9cemjZtgn2pMxe7mmo7ejX3A5a1npnGIYcUcsJOZ2BFxf2pgE7VTa6t3LHmNii
-         d8GVHBhJzEd2bLKcfXekvAdI5B7RhtcV5Sto6xUFmLhiSZBqALhzjJBZVZvMJ6t206uT
-         MSBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757040481; x=1757645281;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S5nwaGiejZsttf0FEnMcnunXH9MjlWaby5e6Q0AV81Y=;
-        b=G5iO5YAVAflj/6fne1FV2cjhSQbWAYrXwl7ROL9rKtuQ7OU6M9lpIiLNyorfhqf1BR
-         QiAkCTS23J+E3bH3AYtJ4uxyMzISQLz8xgXYy48N0upzUSkl5JtlkHcgHKEpfrRSbYZY
-         IM8nit6izSDLJYV7H7IvEZgbxv+w1C+YBw/TgTIyBSAMcaYVk6odBmbYAqz9c1nTaoUU
-         8YvK8mQx7gUnyujnzBCOhdcmfxNW/Jivkf/UjgzjBjB9pGQczEh95viHICAeanAOHuwd
-         iCniPsQlEY/arAxNXoCRqdto7IXw32Di7xjNpAht6ItxI0S5Fu4jL1D4NJ55guHhO+Rg
-         izZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Dp0aMKGD2aqrZxpMgTOPSU2b1EXeAwvRiC86l5OceBjknXdpUTmKOcy5TyCfn0Jp9MfXkehd@vger.kernel.org, AJvYcCVA0CF8dYJGn4n2jjghZn43pbxsVvNs2h/oi0qfo2tjNqdfo5vL2woUEN23z265lZxoH/gAP/AgxS3hVdTW@vger.kernel.org, AJvYcCWAI7WCh3dnr2RZnz9BYoVc8k6Ga5RQ2ilZhprwA7bDlfGRTyQ2TUxulvggVK+1HQdDVF1QTxvguuI=@vger.kernel.org, AJvYcCXiqHGfU3HwuGVANijNio417k9u2XZL6HkXQQAvGc/7In96TJQXfVP+xeTEAGJuYsX5SN336QS7Qs6S@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGJfsym8ZEzzIgJ3AcBdNdoQ/yAVRy7bgEe2hqj5BlZanp3Dbn
-	tirj59NeIGcWI457t19nVKR4ylDEU8XCqPjzo8XOXxnXSHxtH415llOV
-X-Gm-Gg: ASbGncugZ/4C7hw45Msre4uLEqjZmsvBsubhXHy0hlIchfTd9d43Rg4HkmCQfA2I/Xk
-	kWzfBpxlIhgx/jBhYU1YrvOgNFDN2szOSSnBnacOYSFo6k5kIrRX+jfMRGeTFjS3VsDe2pMERpr
-	+1sWb3P9+hRRdwJQpPTdi3ns49q7D+XdP159R9FfPN+tjgraS0WfGz/q8cddUFrFHZu0qfDVUHF
-	+bgD15up5/JCrQOHy6Kf5/SAIkm+XVfkd1yLFXOdoUdwIzNo7iMOUMdjOe8vmJy/29CzVOfkO9o
-	iNuTGdGjNYT+zX+huHgMheV9r8inTZVqHDxvZ5/Hc/8wtKfWMPC8E/3oxWbCXeSoeHEOLX2I7uU
-	Lt1BRHr5bi5ZwGwQ3XyBDW6Bg16eXXi4ekcmBnFnvu2H7UVy6/1vtdud54BaIk0CIuBgv/wrfcO
-	mxl5A9UOdRM8+J+czIXqq75ppQ5i0=
-X-Google-Smtp-Source: AGHT+IFw5bdrv/yE14vwPnoYgwhMXZlYXMIsK0giGOwHSUwOupBk+Zwq5d32aYQQabxamDe4WIODOA==
-X-Received: by 2002:a05:6a00:1956:b0:736:3ea8:4805 with SMTP id d2e1a72fcca58-7723e1f4f4cmr23642414b3a.7.1757040481393;
-        Thu, 04 Sep 2025 19:48:01 -0700 (PDT)
-Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772590e0519sm12991858b3a.84.2025.09.04.19.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 19:48:00 -0700 (PDT)
-From: alistair23@gmail.com
-X-Google-Original-From: alistair.francis@wdc.com
-To: chuck.lever@oracle.com,
-	hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1757040472; c=relaxed/simple;
+	bh=N60s4+7FghpNzyq7v5VvavLnPHbvQfoeNWF8zIPvD3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cfj2wpNZAWHUJLIwr5rFLcyPTSrzYFRZuK1Rgy4y+X7HVq4s99vSvGNso6ZC/4fI6SpY4lX74wJjZNRXIYCqc/CccqxfBqXCTwp1/ZwXFc1Hs+EZDgw5EJhp6AVstlC/EdksYPDrLkFEU3RsJkyTgcMJ1OJTr1wKj9/pnATpKAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=OCt3hXJv; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1757040432;
+	bh=dHbqnUGqjaTP70or5D9/fVYz69QM9vmlVjjHYRsgMpU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=OCt3hXJvy+my/6nWeo23I3XGXXiDOuCn0b1DRHr2jZP1UE/4B9l21mkrpffeB+Les
+	 gvOIb3RIidMBB51U2fcWxFA0U0hKvBpr8dyKgdqCPsGkZPyKvxVct+xfRY+TqAhCD9
+	 MkcNde9SEUOqgrPgkB6VoF5qYbhNi/v3wHsMNdiU=
+X-QQ-mid: zesmtpip2t1757040426t4dbc63c1
+X-QQ-Originating-IP: TcsgnCJLV3TMgXLgi4Dhlt9ZLLboDPsTjLcfca1rHYI=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 05 Sep 2025 10:47:04 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7429805484528472027
+EX-QQ-RecipientCnt: 7
+From: tuhaowen <tuhaowen@uniontech.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@kernel.org>
+Cc: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	linux-nfs@vger.kernel.org
-Cc: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	kch@nvidia.com,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
-Date: Fri,  5 Sep 2025 12:46:59 +1000
-Message-ID: <20250905024659.811386-8-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250905024659.811386-1-alistair.francis@wdc.com>
-References: <20250905024659.811386-1-alistair.francis@wdc.com>
+	tuhaowen@uniontech.com,
+	huangbibo@uniontech.com
+Subject: [PATCH] PM: Add configurable sync timeout during suspend and hibernate to prevent hang
+Date: Fri,  5 Sep 2025 10:47:02 +0800
+Message-Id: <20250905024702.1214-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,221 +64,236 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NlWvLSkfVnGc3NCZzfwkfv/2iy1I2bGTOYiovfP7uRCPYTZP5L7BKRLb
+	IPwPhGyqUyIFPlhEYThK6Z28A8SAzRJjm2sU3UGcT2p9309oMtpIyUMTE/Mbt9ycmRxwc3Y
+	jlarwZlgDWWHjDwPmsjNZT9yYCC/NvMRMSZpLjM4G92lSb5jxUx/+2ArBPg6/nM+ZfB8f35
+	SAGucIRTjMobm5+AMt8t88jUwVypg/16wUG+vwLxC+p/+q1oY+03G+XXSfpOCthGtvVkWj3
+	5n0ScmS3pFmdPUuvV9Tn6SZU5TvkimHwoaKUdOzSQIUT9SVhg/EXtfzbmdxUhLcsuqaWH/9
+	peruGxqXvPSP2oShI5/7QyQI4iPXHsn1Wk7xIX4GvYT+xBMS/fMuYItGeDSFr9NBj7ULWx7
+	Mz6WNMt7ae5bo9xzGZyoIS+lWhPKYzgbcLxZrsqEwSPev74LW6qRo6iaBSvOxqzQW6VO/pD
+	5QdTc01JHVZoKMQk9SzP/8OyUl43QOHeui20NzBY3uGB6r/FVVKVYOAkLVGq7tOmHSIRFgR
+	UphYzn04XStkpq7+gD2k+sGVIMQVlvrTX6FlFIWFKgHjmRWh/FTC247/r9GWWvsCf3ndI+R
+	vwx+CEdq9TTQcgEPMXteLP4jd7No9ufYLHlI36ZlE6i8UKKBMP/My2WavrB6e29PGL2Q9yn
+	ZCo5GF0L30Ihjl0DHRQy24+oLqCTvci9lCNqdjAwy9KYk8NaWgB37sE/WpjxB3WQTxcQTup
+	CIhSNSNq04atxjuz1cWoH4/LIBEkVxzZLYi+CeMTT3ob5BSNRe8duTCPuQZ84FENXBJzO1u
+	N9diVGXDX6AR1xlxRxfXoavH5lOOscKXtQZhIYbjq1aLlRmTeDBd4IAk0ThVb82uDQcs/AX
+	z1Xru/tPixJRorkVYYvW3klk6pcv7Bwa6O5JfYJ2jh+ATI8fqXmzIFlW4KY5ZOYto/ZL5Oh
+	I91fDNLY8sV8ZEvtcqIZXEBIycpj23hbfMPPxmpj3qHpRkgiVUsHd7NyFEaXmqEG5+YEls2
+	dpm1HKp36dz7X/Rk6X
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-From: Alistair Francis <alistair.francis@wdc.com>
+When users initiate suspend (S3) or hibernate (S4) while large file
+copy operations are in progress (especially to USB storage devices),
+the system can appear to hang with a black screen for an extended period.
+This occurs because the filesystem sync in the suspend/hibernate path
+blocks until all pending I/O operations complete,
+which can take several minutes for large file transfers or slow devices.
 
-If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
-a KeyUpdate handshake type then the underlying TLS keys need to be
-updated.
+This patch introduces an optional, configurable timeout mechanism for
+the sync operation during both suspend and hibernate.
+If the timeout is reached, the operation is aborted,
+and a clear error message is provided to the user, improving user
+experience by preventing indefinite system hangs.
 
-If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
-allow the NVMe layer to process the KeyUpdate request and forward the
-request to userspace. Userspace must then update the key to keep the
-connection alive.
+The timeout is disabled by default for both suspend and hibernate
+to maintain backward compatibility. If enabled, the default
+timeout value is 10000 ms (10 seconds), which can be changed
+at runtime via module parameters:
 
-This patch allows us to handle the NVMe host sending a KeyUpdate
-request without aborting the connection. At this time we don't support
-initiating a KeyUpdate.
+- sync_on_suspend_timeout_enable (bool, default: false)
+- sync_on_suspend_timeout_ms (uint, default: 10000)
+- sync_on_hibernation_timeout_enable (bool, default: false)
+- sync_on_hibernation_timeout_ms (uint, default: 10000)
 
-Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Compared to [PATCH v3 0/3] PM: Support aborting suspend during
+filesystem sync (see: https://lore.kernel.org/linux-pm/20250821004237.
+2712312-1-wusamuel@google.com/), this patch addresses scenarios where
+there may be no wakeup event, but the sync operation is excessively
+slow (e.g., due to slow or faulty storage). By introducing a configurable
+timeout, it proactively prevents indefinite hangs and improves user
+experience in a wider range of real-world cases. The implementation
+is also simpler and gives users or system integrators more flexibility
+to tune behavior for different devices and requirements.
+
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
 ---
-v2:
- - Use a helper function for KeyUpdates
- - Ensure keep alive timer is stopped
- - Wait for TLS KeyUpdate to complete
+ kernel/power/hibernate.c | 55 ++++++++++++++++++++++++++++++++++++++-
+ kernel/power/suspend.c   | 56 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 109 insertions(+), 2 deletions(-)
 
- drivers/nvme/target/tcp.c | 90 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 84 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-index bee0355195f5..dd09940e9635 100644
---- a/drivers/nvme/target/tcp.c
-+++ b/drivers/nvme/target/tcp.c
-@@ -175,6 +175,7 @@ struct nvmet_tcp_queue {
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 23c0f4e6c..2c173a0e5 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -33,10 +33,27 @@
+ #include <linux/ktime.h>
+ #include <linux/security.h>
+ #include <linux/secretmem.h>
++#include <linux/moduleparam.h>
++#include <linux/completion.h>
++#include <linux/kthread.h>
++#include <linux/jiffies.h>
+ #include <trace/events/power.h>
  
- 	/* TLS state */
- 	key_serial_t		tls_pskid;
-+	key_serial_t		user_session_id;
- 	struct delayed_work	tls_handshake_tmo_work;
+ #include "power.h"
  
- 	unsigned long           poll_end;
-@@ -186,6 +187,8 @@ struct nvmet_tcp_queue {
- 	struct sockaddr_storage	sockaddr_peer;
- 	struct work_struct	release_work;
- 
-+	struct completion       tls_complete;
++/* Sync timeout parameters for hibernation */
++static bool sync_on_hibernation_timeout_enable;
++module_param(sync_on_hibernation_timeout_enable, bool, 0644);
++MODULE_PARM_DESC(sync_on_hibernation_timeout_enable, "Enable sync timeout during hibernation (default: false)");
 +
- 	int			idx;
- 	struct list_head	queue_list;
++static unsigned int sync_on_hibernation_timeout_ms = 10000;
++module_param(sync_on_hibernation_timeout_ms, uint, 0644);
++MODULE_PARM_DESC(sync_on_hibernation_timeout_ms, "Sync timeout in milliseconds during hibernation (default: 10000)");
++
++/* Sync timeout implementation for hibernation */
++static struct completion hibernation_sync_completion;
++static struct task_struct *hibernation_sync_task;
++
  
-@@ -836,6 +839,11 @@ static int nvmet_tcp_try_send_one(struct nvmet_tcp_queue *queue,
- 	return 1;
+ static int nocompress;
+ static int noresume;
+@@ -97,6 +114,40 @@ bool hibernation_available(void)
+ 		!secretmem_active() && !cxl_mem_active();
  }
  
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+static int nvmet_tcp_try_peek_pdu(struct nvmet_tcp_queue *queue);
-+static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w);
-+#endif
-+
- static int nvmet_tcp_try_send(struct nvmet_tcp_queue *queue,
- 		int budget, int *sends)
- {
-@@ -844,6 +852,13 @@ static int nvmet_tcp_try_send(struct nvmet_tcp_queue *queue,
- 	for (i = 0; i < budget; i++) {
- 		ret = nvmet_tcp_try_send_one(queue, i == budget - 1);
- 		if (unlikely(ret < 0)) {
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+			if (ret == -EKEYEXPIRED &&
-+				queue->state != NVMET_TCP_Q_DISCONNECTING &&
-+				queue->state != NVMET_TCP_Q_TLS_HANDSHAKE) {
-+					goto done;
-+			}
-+#endif
- 			nvmet_tcp_socket_error(queue, ret);
- 			goto done;
- 		} else if (ret == 0) {
-@@ -1110,11 +1125,52 @@ static inline bool nvmet_tcp_pdu_valid(u8 type)
- 	return false;
- }
- 
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+static int update_tls_keys(struct nvmet_tcp_queue *queue)
++static int hibernation_sync_thread_func(void *data)
 +{
-+	int ret;
++	ksys_sync_helper();
++	complete(&hibernation_sync_completion);
++	return 0;
++}
 +
-+	cancel_work(&queue->io_work);
-+	handshake_req_cancel(queue->sock->sk);
-+	handshake_sk_destruct_req(queue->sock->sk);
-+	queue->state = NVMET_TCP_Q_TLS_HANDSHAKE;
++static int hibernation_sync_with_timeout(void)
++{
++	unsigned long timeout_jiffies;
 +
-+	/* Restore the default callbacks before starting upcall */
-+	read_lock_bh(&queue->sock->sk->sk_callback_lock);
-+	queue->sock->sk->sk_data_ready =  queue->data_ready;
-+	queue->sock->sk->sk_state_change = queue->state_change;
-+	queue->sock->sk->sk_write_space = queue->write_space;
-+	queue->sock->sk->sk_user_data = NULL;
-+	read_unlock_bh(&queue->sock->sk->sk_callback_lock);
-+
-+	nvmet_stop_keep_alive_timer(queue->nvme_sq.ctrl);
-+
-+	INIT_DELAYED_WORK(&queue->tls_handshake_tmo_work,
-+			  nvmet_tcp_tls_handshake_timeout);
-+
-+	ret = nvmet_tcp_tls_handshake(queue, HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_interruptible_timeout(&queue->tls_complete, 10 * HZ);
-+
-+	if (ret <= 0) {
-+		tls_handshake_cancel(queue->sock->sk);
-+		return ret;
++	if (!sync_on_hibernation_timeout_enable) {
++		ksys_sync_helper();
++		return 0;
 +	}
 +
-+	queue->state = NVMET_TCP_Q_LIVE;
++	init_completion(&hibernation_sync_completion);
++	hibernation_sync_task = kthread_run(hibernation_sync_thread_func, NULL, "hibernation_sync");
++	if (IS_ERR(hibernation_sync_task)) {
++		pr_warn("PM: hibernation: Failed to create sync thread, performing sync directly\n");
++		ksys_sync_helper();
++		return 0;
++	}
 +
-+	return ret;
++	timeout_jiffies = msecs_to_jiffies(sync_on_hibernation_timeout_ms);
++	if (!wait_for_completion_timeout(&hibernation_sync_completion, timeout_jiffies)) {
++		pr_warn("PM: hibernation: Sync operation timed out after %u ms, aborting hibernation\n",
++				sync_on_hibernation_timeout_ms);
++		kthread_stop(hibernation_sync_task);
++		return -ETIMEDOUT;
++	}
++	return 0;
 +}
-+#endif
 +
- static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
- 		struct msghdr *msg, char *cbuf)
- {
- 	struct cmsghdr *cmsg = (struct cmsghdr *)cbuf;
--	u8 ctype, level, description;
-+	u8 ctype, htype, level, description;
- 	int ret = 0;
+ /**
+  * hibernation_set_ops - Set the global hibernate operations.
+  * @ops: Hibernation operations to use in subsequent hibernation transitions.
+@@ -777,7 +828,9 @@ int hibernate(void)
+ 	if (error)
+ 		goto Restore;
  
- 	ctype = tls_get_record_type(queue->sock->sk, cmsg);
-@@ -1135,6 +1191,9 @@ static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
- 			ret = -EAGAIN;
- 		}
- 		break;
-+	case TLS_RECORD_TYPE_HANDSHAKE:
-+		ret = -EAGAIN;
-+		break;
- 	default:
- 		/* discard this record type */
- 		pr_err("queue %d: TLS record %d unhandled\n",
-@@ -1344,6 +1403,13 @@ static int nvmet_tcp_try_recv(struct nvmet_tcp_queue *queue,
- 	for (i = 0; i < budget; i++) {
- 		ret = nvmet_tcp_try_recv_one(queue);
- 		if (unlikely(ret < 0)) {
-+#ifdef CONFIG_NVME_TARGET_TCP_TLS
-+			if (ret == -EKEYEXPIRED &&
-+				queue->state != NVMET_TCP_Q_DISCONNECTING &&
-+				queue->state != NVMET_TCP_Q_TLS_HANDSHAKE) {
-+					goto done;
-+			}
-+#endif
- 			nvmet_tcp_socket_error(queue, ret);
- 			goto done;
- 		} else if (ret == 0) {
-@@ -1408,14 +1474,22 @@ static void nvmet_tcp_io_work(struct work_struct *w)
- 		ret = nvmet_tcp_try_recv(queue, NVMET_TCP_RECV_BUDGET, &ops);
- 		if (ret > 0)
- 			pending = true;
--		else if (ret < 0)
--			return;
-+		else if (ret < 0) {
-+			if (ret == -EKEYEXPIRED)
-+				update_tls_keys(queue);
-+			else
-+				return;
+-	ksys_sync_helper();
++	error = hibernation_sync_with_timeout();
++	if (error)
++		goto Exit;
+ 
+ 	error = freeze_processes();
+ 	if (error)
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 8eaec4ab1..144caf525 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -30,9 +30,25 @@
+ #include <trace/events/power.h>
+ #include <linux/compiler.h>
+ #include <linux/moduleparam.h>
++#include <linux/completion.h>
++#include <linux/kthread.h>
++#include <linux/jiffies.h>
+ 
+ #include "power.h"
+ 
++/* Sync timeout parameters for suspend */
++static bool sync_on_suspend_timeout_enable;
++module_param(sync_on_suspend_timeout_enable, bool, 0644);
++MODULE_PARM_DESC(sync_on_suspend_timeout_enable, "Enable sync timeout during suspend (default: false)");
++
++static unsigned int sync_on_suspend_timeout_ms = 10000;
++module_param(sync_on_suspend_timeout_ms, uint, 0644);
++MODULE_PARM_DESC(sync_on_suspend_timeout_ms, "Sync timeout in milliseconds during suspend (default: 10000)");
++
++/* Sync timeout implementation for suspend */
++static struct completion suspend_sync_completion;
++static struct task_struct *suspend_sync_task;
++
+ const char * const pm_labels[] = {
+ 	[PM_SUSPEND_TO_IDLE] = "freeze",
+ 	[PM_SUSPEND_STANDBY] = "standby",
+@@ -61,6 +77,40 @@ static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
+ enum s2idle_states __read_mostly s2idle_state;
+ static DEFINE_RAW_SPINLOCK(s2idle_lock);
+ 
++static int suspend_sync_thread_func(void *data)
++{
++	ksys_sync_helper();
++	complete(&suspend_sync_completion);
++	return 0;
++}
++
++static int suspend_sync_with_timeout(void)
++{
++	unsigned long timeout_jiffies;
++
++	if (!sync_on_suspend_timeout_enable) {
++		ksys_sync_helper();
++		return 0;
++	}
++
++	init_completion(&suspend_sync_completion);
++	suspend_sync_task = kthread_run(suspend_sync_thread_func, NULL, "suspend_sync");
++	if (IS_ERR(suspend_sync_task)) {
++		pr_warn("PM: suspend: Failed to create sync thread, performing sync directly\n");
++		ksys_sync_helper();
++		return 0;
++	}
++
++	timeout_jiffies = msecs_to_jiffies(sync_on_suspend_timeout_ms);
++	if (!wait_for_completion_timeout(&suspend_sync_completion, timeout_jiffies)) {
++		pr_warn("PM: suspend: Sync operation timed out after %u ms, aborting suspend\n",
++				sync_on_suspend_timeout_ms);
++		kthread_stop(suspend_sync_task);
++		return -ETIMEDOUT;
++	}
++	return 0;
++}
++
+ /**
+  * pm_suspend_default_s2idle - Check if suspend-to-idle is the default suspend.
+  *
+@@ -585,8 +635,12 @@ static int enter_state(suspend_state_t state)
+ 
+ 	if (sync_on_suspend_enabled) {
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-		ksys_sync_helper();
++		error = suspend_sync_with_timeout();
+ 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++		if (error) {
++			pr_err("PM: Sync timeout, aborting suspend\n");
++			goto Unlock;
 +		}
- 
- 		ret = nvmet_tcp_try_send(queue, NVMET_TCP_SEND_BUDGET, &ops);
- 		if (ret > 0)
- 			pending = true;
--		else if (ret < 0)
--			return;
-+		else if (ret < 0) {
-+			if (ret == -EKEYEXPIRED)
-+				update_tls_keys(queue);
-+			else
-+				return;
-+		}
- 
- 	} while (pending && ops < NVMET_TCP_IO_WORK_BUDGET);
- 
-@@ -1798,6 +1872,7 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
  	}
- 	if (!status) {
- 		queue->tls_pskid = peerid;
-+		queue->user_session_id = user_session_id;
- 		queue->state = NVMET_TCP_Q_CONNECTING;
- 	} else
- 		queue->state = NVMET_TCP_Q_FAILED;
-@@ -1813,6 +1888,7 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
- 	else
- 		nvmet_tcp_set_queue_sock(queue);
- 	kref_put(&queue->kref, nvmet_tcp_release_queue);
-+	complete(&queue->tls_complete);
- }
  
- static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w)
-@@ -1843,7 +1919,7 @@ static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
- 	int ret = -EOPNOTSUPP;
- 	struct tls_handshake_args args;
- 
--	if (queue->state != NVMET_TCP_Q_TLS_HANDSHAKE) {
-+	if (queue->state != NVMET_TCP_Q_TLS_HANDSHAKE && !keyupdate) {
- 		pr_warn("cannot start TLS in state %d\n", queue->state);
- 		return -EINVAL;
- 	}
-@@ -1856,7 +1932,9 @@ static int nvmet_tcp_tls_handshake(struct nvmet_tcp_queue *queue,
- 	args.ta_data = queue;
- 	args.ta_keyring = key_serial(queue->port->nport->keyring);
- 	args.ta_timeout_ms = tls_handshake_timeout * 1000;
-+	args.user_session_id = queue->user_session_id;
- 
-+	init_completion(&queue->tls_complete);
- 	ret = tls_server_hello_psk(&args, GFP_KERNEL, keyupdate);
- 	if (ret) {
- 		kref_put(&queue->kref, nvmet_tcp_release_queue);
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
 -- 
-2.50.1
+2.20.1
 
 
