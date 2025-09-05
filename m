@@ -1,81 +1,134 @@
-Return-Path: <linux-kernel+bounces-802322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3ECB45104
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4277CB4510B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDE57AC606
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8763B67DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B94B2FDC2F;
-	Fri,  5 Sep 2025 08:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872522FFDC4;
+	Fri,  5 Sep 2025 08:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqfTjSQi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c30yvJaK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8E5270557;
-	Fri,  5 Sep 2025 08:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649E92FF155;
+	Fri,  5 Sep 2025 08:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059991; cv=none; b=VCMqMsFVxG/63o3KqiePn5UW4n7GDHB2WUKb49ethZ8EJIeH9+dWEk3dHCqg3w2RRKXjuIh+hPMZ20fmSbHpn8cjTxgLh0rCl4g4s80EOUe9Jr/kqbKjjqOl2xLAKkJQVpxcyFwREk7Y2C4qH22WVtf0lhfNyLCEgWLVZR7Dvls=
+	t=1757060106; cv=none; b=BDLuaV+aE+FeHtzS2P49Et1F/85ylPk69C9RXvEPBobxsfaF9M2Y1XmUxvZij8pRzv7o/eqP0ocXzImlWu14+KobU98jBOaV+WuTEBdXmiTiVnkLji7avGeztfN2X1eP1EyWdW8ZHj51VRyC2SoQ4bHQEB2h95xkB8BgSryMuDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059991; c=relaxed/simple;
-	bh=S6kWmIW0hVTEZZAoAewWz0JxbYGS//J7DbVnzoq7lWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwXYVECe9JQmRUN7s+E6rPpVbVQJLxcP19y4XE41JJxikeZw/zkbgONd126X4zO0d1uAnCNeaOkE8CLFOhXikg2NVGZ8VUaINUAxexNwyrIBYbSy3RNrB0ON4HVJB0oCBL4BiWSFMikQh/erOd/68P82TKBXOFcn6OBHqvkbIEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqfTjSQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF30C4CEF1;
-	Fri,  5 Sep 2025 08:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757059991;
-	bh=S6kWmIW0hVTEZZAoAewWz0JxbYGS//J7DbVnzoq7lWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uqfTjSQidjTXugpGnslEzU82f/RadZElrGPTahUGa2Vj5cKM5BL5TuFZJyfNoVThP
-	 cXJqvvemUKZHUrcqJZj7S+nU2Mt/FOKD+ANHVUJDojYsr5/k6McPz32+9bHLye4urn
-	 1YvTNlTZ7ERiS/E3Q9h0TGVAo5cOi9RH9MY+eUMzyfVSeziJqjw93A3IIQ/qdHRK9U
-	 gm6OUCPSqji0ceFUTD5F2sflO21MDu6wIywexM4+gWmryX0aOhjgvVx2k+jpjZ2CGB
-	 dGnkwzASq7uyDcyrPakuM3WTWOS4lD5GVXOsqnJA5sbDKTJKhFkuNxRCnkvQ3cfDX8
-	 QhlCb/hGrMHrQ==
-Date: Fri, 5 Sep 2025 10:13:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: aspeed,ast2x00-scu: Support
- ast2700 pinctrl
-Message-ID: <20250905-oxpecker-of-impossible-prosperity-63ee96@kuoka>
-References: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
- <20250904103401.88287-2-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1757060106; c=relaxed/simple;
+	bh=sgr8KwWBNyGWO9cWj+BKDb2VmeI4D9Wu6/GLBDGJATg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzu49HKZsOxrzyO8WblnX3wIyO4HSCmQRIUb/juiNGwQRGh+CTBZJYTuMVhW1fm2HKFQ3EeoICbc/xurs7zntIMc4kHIf2BdNUU0uNJDrJOLPkd8y2si57AS1havewnMkmCGjMjLPZQQKz1Famht8ChSAvId3CbxN9MtPLfGNAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c30yvJaK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5855VN6C027521;
+	Fri, 5 Sep 2025 08:14:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=oM48yX/YR59XzOhYZ5orrKwOGTuY8MVIGM9iU6dRC
+	Jo=; b=c30yvJaK5+xFWe9CA1PaSJKiuui2Wzh0VFKFfAqseEWE4mnivAOHPD8kH
+	+dQa6ltsUCnJY3sgidOA1TyoiTQ4JFNEYSL0AkC9B2FkCEfiV9NeMfHrkuCmgAZc
+	XLvjh35/g7lU0p69BGlb0LvCOu9+PnlvWZmgn4sPcIUoJjrCzfOyJnHa/Z93UjO6
+	bgUvKa3KeEPaeKX9YTHnskn7jenSgs1WbndwxiDWPdOp5lbMXa96xW5Y2YNEUkXi
+	5l5ARALGJ63SNebwcY6iSmo8EsGcbxBhKtXOqHMo/DwSwJbqDdvMTlCsTcMdduWI
+	/BheHAPZFbppNdOOV6QrlRJPgqZxg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswdq5rj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 08:14:54 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5858EsZj027670;
+	Fri, 5 Sep 2025 08:14:54 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswdq5re-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 08:14:54 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5856Ggfg013959;
+	Fri, 5 Sep 2025 08:14:53 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3r8td-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 08:14:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5858EpCe51642784
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Sep 2025 08:14:51 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FFC82004B;
+	Fri,  5 Sep 2025 08:14:51 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D81B520043;
+	Fri,  5 Sep 2025 08:14:48 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.27.144])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  5 Sep 2025 08:14:48 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
+        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>
+Subject: [PATCH 0/2] Some more misc fsmap fixes
+Date: Fri,  5 Sep 2025 13:44:45 +0530
+Message-ID: <cover.1757058211.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250904103401.88287-2-billy_tsai@aspeedtech.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=PeP/hjhd c=1 sm=1 tr=0 ts=68ba9bfe cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=C1f-N4PK-TteUKfjugwA:9
+ a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX9jimB3+fWg4k
+ mTuf4GVJUecZyqEFhhwnEY62ftjKw2OckQbfhWI4Ka7W0ZNUCee9OXlz3y3Z7bXpV7PrgC3KaoC
+ YaNeZPWBnvuUzSzBUHfcU8Ty0jg4G/C7xlGffmaNi2tO+CPt/2rBNU51ptTZ8kADIRtCa7n8+i0
+ 8R++MainXLi5gMDO+eMRzK1NjmaX7DuEHli139Reo3nyroFlbrNT5jZ1y+vXQuPFxN/DgPxikja
+ mHy7wzmbiGCvr7qqr9qGHSs8marqVSdedZXKdxrZvIM0lbj6T5/9e7YIDYQdnGOx5dA8WkdP0cd
+ kzkAyAI5PT8rSdk/HLDdu6ETFZaDAsGLGbWuv81MOqTDFV8rCAxGPNkZcaY24T1F6M4gbNrKmEA
+ bR8A86IB
+X-Proofpoint-GUID: lnED6WZeQ1Fne_uX0dG0LB6ginQHIHXD
+X-Proofpoint-ORIG-GUID: dU16aDdiD6otrt6D7y89vbQIdlbBqNO2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
-On Thu, Sep 04, 2025 at 06:33:58PM +0800, Billy Tsai wrote:
-> Add the ast2700 pinctrl compatible string.
-> "aspeed,ast2700-soc0-pinctrl" and "aspeed,ast2700-soc1-pinctrl"
+These 2 patches mostly fixup a couple edge case inconsistent behavior
+we were seeing in fsmap. Further, convert fsmap path to use block size
+units wherever possible to avoid issues due to block to cluster to block
+conversions like [1].
 
-Nothing improved, completely redundant commit msg. We see this from the
-diff.
+[1] https://lore.kernel.org/linux-ext4/e7472c8535c9c5ec10f425f495366864ea12c9da.1754377641.git.ojaswin@linux.ibm.com/
 
-You got comment last time and it applies everywhere.
+Tested with some custom edge cases (which I'll see how to consistently
+convert to xfstests) as well as generic/365 on 4k, 64k and bigalloc
 
-> 
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Ojaswin Mujoo (2):
+  ext4: Correctly handle queries for metadata mappings
+  fsmap: use blocksize units instead of cluster units
 
-Best regards,
-Krzysztof
+ fs/ext4/fsmap.c   | 56 +++++++++++++++++++++++++++--------------------
+ fs/ext4/mballoc.c | 25 ++++++++++++++-------
+ 2 files changed, 49 insertions(+), 32 deletions(-)
+
+-- 
+2.49.0
 
 
