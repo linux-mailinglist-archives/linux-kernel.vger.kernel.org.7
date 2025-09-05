@@ -1,76 +1,59 @@
-Return-Path: <linux-kernel+bounces-802938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CBAB45894
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9037B45898
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0053BB61C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0EB7C4BAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A395B2D6E62;
-	Fri,  5 Sep 2025 13:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D02634AB15;
+	Fri,  5 Sep 2025 13:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n95GwHw7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfalbbc0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8461C5D4B;
-	Fri,  5 Sep 2025 13:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E501D5CC9;
+	Fri,  5 Sep 2025 13:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078301; cv=none; b=k8NLQd5qTlPj4B/i2GwQ36UGq8XBgN/8B88ByyD/g8Y91pmoJ2tcLjlkMNtWUfogQMjy6bovVXwUnjufO2wWuM17vCMroI307O3ioMGfIXsueYArYWW6GBe6XXyJWmmyLPQYXFIaGC2JAsGs736bXq17NYpkQ0aowK0U25cr83E=
+	t=1757078309; cv=none; b=Rdi0ie+AO9nB+XQiiy+Wu80dLMuf4mrZkR9ZYU0bnr7rvEcnOG3wdz4iSSLVgmfcfTAzjClH57Dv4T0S+3Jo/8M57rmn3gpKr3T0lDRauyO+sWwzfsUN3I4+Ua9KbzNc6KJuUvLGSGGE6RLeGV4uYBCvcyqMq6gcf9enhREmMDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078301; c=relaxed/simple;
-	bh=HHJV0tl8h7ZJtN1tdfZD7llAJ5LamlTFFDGb/7EvYOQ=;
+	s=arc-20240116; t=1757078309; c=relaxed/simple;
+	bh=RAA4rrJfeN8TQeFhBzYY5lBVITfb6FXS1EgUHDAhgbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFbVjPzouDKOD3A3TIFI7op9b0vDmsSLlc2Pvtmmmjcls8BHQLCxj8AIX5DnBXzVpm8et0cCwWs9YeIRtqCZGEedfS0XB+mHgddS6Uni6lzF2Zp3mbY+8V6oGJvwkwNik6Fg2NMwPAak/0yvUWdGfcadoJhhPS8/+cRRaoPa9oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n95GwHw7; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757078300; x=1788614300;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HHJV0tl8h7ZJtN1tdfZD7llAJ5LamlTFFDGb/7EvYOQ=;
-  b=n95GwHw7dhHsnCnLeLNJ8et0N8awdOu+HG/0NAsIVCRxnlD0tCNGkfJw
-   wY2/RqdMOfqc4iYu+ZJrMhMZFJfj+tXzmU4Wg3oM3JgX4qWivOrJiizGg
-   9fVS5nA6ub5tPWIAFKQuGQvws4XnO2AUzgIBYbJStF8l9BPx+9kAIJNJl
-   X4ROIp+tX4KQGdMcceJKm/CVC9NOHqylMAwfYwWcuw3J0beNB7XB36XLX
-   mvsyUmK6AGjtUCXlsm0RjHTJfHE979ifmsOBV/MF8F60YIo/DwCRz1+SB
-   yKxdTaSRKqyo2yabwkObDDxJA+ByyGYy9S2Kv72M1pim7kVKty/2Ud7Cg
-   g==;
-X-CSE-ConnectionGUID: ya0ZOYB2QhqTJhfkghJhyg==
-X-CSE-MsgGUID: yeA+VDk4T+iYvQ1J1bt+2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="82021616"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="82021616"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 06:18:19 -0700
-X-CSE-ConnectionGUID: kYszwXuYS2yQlrsxhQccpw==
-X-CSE-MsgGUID: 8dZHDGHwRMCY2zPALp+dTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="176499606"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Sep 2025 06:18:17 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuWKV-0000RX-1l;
-	Fri, 05 Sep 2025 13:18:15 +0000
-Date: Fri, 5 Sep 2025 21:17:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yi Tao <escape@linux.alibaba.com>, tj@kernel.org, hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-Message-ID: <202509052150.4GQ04PJn-lkp@intel.com>
-References: <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEdf3NXVlK4c2k+dSnG32oVIeJ4EGmbvR0p2ocHjU9UEoCbeoHGtqHnbWyVo14yFRwMAhf86E7HyGMojFpTQh3dJDgdqMRTY3euG3HLmen1QRdiq2BsJuzRFYituiKKkrUQSugIRUvQwNWj8GxGN2sCJ6BevJIXo+jajA72fWP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfalbbc0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A15DC4CEF1;
+	Fri,  5 Sep 2025 13:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757078309;
+	bh=RAA4rrJfeN8TQeFhBzYY5lBVITfb6FXS1EgUHDAhgbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sfalbbc0wK3mEOrEVsTZbNdHh1qtaNoFYkoXswu86BJXqgZtkB2p7ll0PmNFm+UF+
+	 gROQHu45kiB2fB6zc9OocpeaCAl/VSUHMQTcK5dzzrBgfqKjEqoouiaYe0mVXn3hhP
+	 2kpcsQKNAXGCMaKeCuDHKvZBNbFWuLrnetV5rnBM+Lul+hxu1a3YiWmsb1sWrI+HmF
+	 8pxiMX2HVdqmxtozF5RFbwrNM7Av4MtV5kA9VGPoVeyr66E1EOBfErHIwl+nZDi9gV
+	 BRPm5dt9TEUB/FB/dwkJLJ+Ks+3zD13gCA3XbAUMRYXVgNRQ6rjKqP7qlrGvZJFGPw
+	 1nGF+gV/jf+bw==
+Date: Fri, 5 Sep 2025 14:18:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: alistair23@gmail.com
+Cc: chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+	kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	kch@nvidia.com, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v2 1/7] net/handshake: Store the key serial number on
+ completion
+Message-ID: <20250905131823.GE553991@horms.kernel.org>
+References: <20250905024659.811386-1-alistair.francis@wdc.com>
+ <20250905024659.811386-2-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,87 +62,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
+In-Reply-To: <20250905024659.811386-2-alistair.francis@wdc.com>
 
-Hi Yi,
+On Fri, Sep 05, 2025 at 12:46:53PM +1000, alistair23@gmail.com wrote:
 
-kernel test robot noticed the following build errors:
+...
 
-[auto build test ERROR on tj-cgroup/for-next]
-[also build test ERROR on kees/for-next/execve akpm-mm/mm-everything tip/sched/core linus/master v6.17-rc4]
-[cannot apply to next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yi-Tao/cgroup-replace-global-percpu_rwsem-with-signal_struct-group_rwsem-when-writing-cgroup-procs-threads/20250904-194505
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape%40linux.alibaba.com
-patch subject: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with signal_struct->group_rwsem when writing cgroup.procs/threads
-config: i386-buildonly-randconfig-004-20250905 (https://download.01.org/0day-ci/archive/20250905/202509052150.4GQ04PJn-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509052150.4GQ04PJn-lkp@intel.com/reproduce)
+...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509052150.4GQ04PJn-lkp@intel.com/
+> @@ -83,6 +87,13 @@ static void tls_handshake_remote_peerids(struct tls_handshake_req *treq,
+>  		if (i >= treq->th_num_peerids)
+>  			break;
+>  	}
+> +
+> +	nla_for_each_attr(nla, head, len, rem) {
+> +		if (nla_type(nla) == HANDSHAKE_A_DONE_SESSION_ID) {
+> +			treq->user_session_id = nla_get_u32(nla);
 
-All errors (new ones prefixed by >>):
+Hi Alistair,
 
-   kernel/cgroup/cgroup.c: In function 'cgroup_attach_lock':
->> kernel/cgroup/cgroup.c:2511:28: error: 'favor_dynmods' undeclared (first use in this function); did you mean 'Opt_favordynmods'?
-    2511 |                 if (tsk && favor_dynmods)
-         |                            ^~~~~~~~~~~~~
-         |                            Opt_favordynmods
-   kernel/cgroup/cgroup.c:2511:28: note: each undeclared identifier is reported only once for each function it appears in
-   kernel/cgroup/cgroup.c: In function 'cgroup_attach_unlock':
-   kernel/cgroup/cgroup.c:2526:28: error: 'favor_dynmods' undeclared (first use in this function); did you mean 'Opt_favordynmods'?
-    2526 |                 if (tsk && favor_dynmods)
-         |                            ^~~~~~~~~~~~~
-         |                            Opt_favordynmods
+This appears to be addressed by patch 5/7 of this series.
+But struct tls_handshake_req does not have a user_session_id member
+with (only) this patch applied on top of net-next.
 
+This breaks bisection and should be addressed: when each patch is applied
+in turn the resulting source tree should compile.
 
-vim +2511 kernel/cgroup/cgroup.c
+...
 
-  2482	
-  2483	/**
-  2484	 * cgroup_attach_lock - Lock for ->attach()
-  2485	 * @tsk: thread group to lock
-  2486	 * @lock_threadgroup: whether to down_write rwsem
-  2487	 *
-  2488	 * cgroup migration sometimes needs to stabilize threadgroups against forks and
-  2489	 * exits by write-locking cgroup_threadgroup_rwsem. However, some ->attach()
-  2490	 * implementations (e.g. cpuset), also need to disable CPU hotplug.
-  2491	 * Unfortunately, letting ->attach() operations acquire cpus_read_lock() can
-  2492	 * lead to deadlocks.
-  2493	 *
-  2494	 * Bringing up a CPU may involve creating and destroying tasks which requires
-  2495	 * read-locking threadgroup_rwsem, so threadgroup_rwsem nests inside
-  2496	 * cpus_read_lock(). If we call an ->attach() which acquires the cpus lock while
-  2497	 * write-locking threadgroup_rwsem, the locking order is reversed and we end up
-  2498	 * waiting for an on-going CPU hotplug operation which in turn is waiting for
-  2499	 * the threadgroup_rwsem to be released to create new tasks. For more details:
-  2500	 *
-  2501	 *   http://lkml.kernel.org/r/20220711174629.uehfmqegcwn2lqzu@wubuntu
-  2502	 *
-  2503	 * Resolve the situation by always acquiring cpus_read_lock() before optionally
-  2504	 * write-locking cgroup_threadgroup_rwsem. This allows ->attach() to assume that
-  2505	 * CPU hotplug is disabled on entry.
-  2506	 */
-  2507	void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup)
-  2508	{
-  2509		cpus_read_lock();
-  2510		if (lock_threadgroup) {
-> 2511			if (tsk && favor_dynmods)
-  2512				down_write(&tsk->signal->group_rwsem);
-  2513			else
-  2514				percpu_down_write(&cgroup_threadgroup_rwsem);
-  2515		}
-  2516	}
-  2517	
+> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+> index e2c5e0e626f9..1d5829aecf45 100644
+> --- a/net/sunrpc/svcsock.c
+> +++ b/net/sunrpc/svcsock.c
+> @@ -450,7 +450,8 @@ static void svc_tcp_kill_temp_xprt(struct svc_xprt *xprt)
+>   * is present" flag on the xprt and let an upper layer enforce local
+>   * security policy.
+>   */
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please also add user_session_id to the kernel doc for this function (above).
+
+Flagged by W=1 builds and ./scripts/kernel-doc -none 
+
+> -static void svc_tcp_handshake_done(void *data, int status, key_serial_t peerid)
+> +static void svc_tcp_handshake_done(void *data, int status, key_serial_t peerid,
+> +				   key_serial_t user_session_id)
+>  {
+>  	struct svc_xprt *xprt = data;
+>  	struct svc_sock *svsk = container_of(xprt, struct svc_sock, sk_xprt);
+> diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+> index c5f7bbf5775f..3489c4693ff4 100644
+> --- a/net/sunrpc/xprtsock.c
+> +++ b/net/sunrpc/xprtsock.c
+> @@ -2591,7 +2591,8 @@ static int xs_tcp_tls_finish_connecting(struct rpc_xprt *lower_xprt,
+>   * @peerid: serial number of key containing the remote's identity
+>   *
+>   */
+> -static void xs_tls_handshake_done(void *data, int status, key_serial_t peerid)
+> +static void xs_tls_handshake_done(void *data, int status, key_serial_t peerid,
+> +				  key_serial_t user_session_id)
+
+Ditto.
+
+>  {
+>  	struct rpc_xprt *lower_xprt = data;
+>  	struct sock_xprt *lower_transport =
+> -- 
+> 2.50.1
+> 
+> 
 
