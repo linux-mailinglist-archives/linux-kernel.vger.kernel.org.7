@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-803518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221B7B461AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:03:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBE2B461AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC78A5C4BC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5321C84B2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D35374290;
-	Fri,  5 Sep 2025 18:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB9F36CE1A;
+	Fri,  5 Sep 2025 18:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFgDxtxL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dfTqhICY"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E47F2F7AC1;
-	Fri,  5 Sep 2025 18:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F7A2F7AC1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757095428; cv=none; b=Oh6+PTGfPHrsaq/91tmMAt6fgapYon502ho/1/bW5sh/02bAzu8KDaLEAJQ1EcUsBiTPGhpGOJipvvxAxH6qspT74NqfJKY6jc/hhjq+XrZ+PDeg/WMyqdUto1r09so+4fdbcrhreUSLScYAIfcTi17STUU8WMtuzbxsZgZ6tmM=
+	t=1757095514; cv=none; b=kbMKxfjm7aaycMp5KQA9wmQxx2VueYMGpge5/7HX3tr5cnColDfPSR6NKxXvyOZiMrOQCOK6qWYnm81GRjHR2s1rAydbM+l6S9jKbG+tHF80DiY2kcdtcnd6KrRnohFLHKhnTOCWIyta0QWzBaQ5vtPU8v4rkiFIABlYG7H0eFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757095428; c=relaxed/simple;
-	bh=aHNLolNwFIWfnR3I99LK8r6Twqb2kIqTa0Yq84hjZco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8k2E25GzWwQveiGGh8Lxm2JekDrpQ226WKh72dKpYXgXGzgSKIMjgSXHHgZFf1J3rSBc+SShCBspPKdPM6AQrdXGfC4SIUSvHHOPUphpsUZFWTSjLLWdcgc346I4c3qb/02JXG2Im3AL84s2Fwpflpj4EGU3HlBbqOY9NhKbPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFgDxtxL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C73C4CEF1;
-	Fri,  5 Sep 2025 18:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757095427;
-	bh=aHNLolNwFIWfnR3I99LK8r6Twqb2kIqTa0Yq84hjZco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFgDxtxLkDnaNWGC7yASrUFDQHbVOe35eVK5S9QFKMoH26XAbGr5w+5CMxqPB9/uX
-	 fcNCURIvQnpp4YnFM6L1fdEWOwDhW0tVwUj4TS+ZpOCZBGY4fTyIopm1ne6rtz/lr8
-	 Rutp6XzISO0+OFL8jyJCqhjE+QpyldalEf+4D/xidtnarTS/emidVENUwUAcvB1ahx
-	 UebB2P+p8n1UZeUDT0oMEnGSmzfyZzfhy5HihZFd88Q3jGQiw9lOeOPakSigW4NXc5
-	 346I+FpMDt8vQ0io4uhMajc1zZLSM7S7AHx1rnzTHeFWBLT/O6rjs5gxVMCUyRBr7n
-	 8sR7XShDXrITg==
-Date: Fri, 5 Sep 2025 13:03:46 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: i2c: qcom-cci: Allow operating-points-v2
-Message-ID: <175709542621.1016405.11547576176371094011.robh@kernel.org>
-References: <20250904-topic-cci_updates-v1-0-d38559692703@oss.qualcomm.com>
- <20250904-topic-cci_updates-v1-2-d38559692703@oss.qualcomm.com>
+	s=arc-20240116; t=1757095514; c=relaxed/simple;
+	bh=iLt4euP0A/8A3AKBgvWn92zIhvpTNMJ1mgotIHM6Bf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uhAHLKlheZlOz6zxBw9i/635Br6FACbQOYeEGnoTiRryM5z8EZIYgCROcWx3ugz4nA93V+dndRbXVkI8Ov267T/MNEPNQwaPUUzu2Oa3ORqrEl0kdvqZCfmb6GdpnJHP00/UxIbzM3VpzcVvIoON1y2kTId7wWHN2BFh/opGl20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dfTqhICY; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3e113599-2d99-4585-af14-a93cafe11d33@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757095500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LSXdQvhjLqn/cnLmBxmZ8XUh4olkXbYzp0sAqc3/Ow4=;
+	b=dfTqhICYs5bofpSfYNxjoM/fGywq3OzgNiQFG5yvYF11d9CeT3Vr10t4WSBJ0QFkHWxCX+
+	xtx8N7PkiYSt1x6cDmZo5fRgu9Ab7wTZ0C/m1nJZEJ/OleEqCkOlIQC2A2mqiX0dbDBwqy
+	HNi1WtovwHMzIWb4Vjc8YqoPllsRUcc=
+Date: Fri, 5 Sep 2025 11:04:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-topic-cci_updates-v1-2-d38559692703@oss.qualcomm.com>
+Subject: Re: [PATCH] drivers/perf: riscv: Remove redundant ternary operators
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Anup Patel <anup@brainfault.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>,
+ "open list:RISC-V PMU DRIVERS" <linux-riscv@lists.infradead.org>,
+ "moderated list:ARM PMU PROFILING AND DEBUGGING"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM PMU PROFILING AND DEBUGGING"
+ <linux-perf-users@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250828122510.30843-1-liaoyuanhong@vivo.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20250828122510.30843-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-On Thu, 04 Sep 2025 16:31:21 +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> An OPP table is necessary to express combined voltage and frequency
-> requirements for the CCI hw block.
-> 
-> Allow passing one, without requiring its presence.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On 8/28/25 5:25 AM, Liao Yuanhong wrote:
+> For ternary operators in the form of "a ? true : false", if 'a' itself
+> returns a boolean result, the ternary operator can be omitted. Remove
+> redundant ternary operators to clean up the code.
+>
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 > ---
->  Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+>   drivers/perf/riscv_pmu_sbi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index 698de8ddf895..c18dbffa9834 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -339,7 +339,7 @@ static bool pmu_sbi_ctr_is_fw(int cidx)
+>   	if (!info)
+>   		return false;
+>   
+> -	return (info->type == SBI_PMU_CTR_TYPE_FW) ? true : false;
+> +	return info->type == SBI_PMU_CTR_TYPE_FW;
+>   }
+>   
+>   /*
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
 
