@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-803257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D4DB45CB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:36:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E25B45CB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290F31BC274B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:37:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A06B4E14EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991E72FB0A6;
-	Fri,  5 Sep 2025 15:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7D12F7ADC;
+	Fri,  5 Sep 2025 15:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="SFbAhKrJ"
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Adxer/jb"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABF72F7AB5;
-	Fri,  5 Sep 2025 15:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086607; cv=pass; b=Q2q27a1ouil+BjEQOigDJFkX/4oMFt8xbLB1Li+HVvFkiGDbD2FtxTidu2qln3S41ol/51i/Rt+xwQ3G8iMYuZokLLGSDYyp1KStf3TgM3HB7fFlMU2PShqXEfsEArmdLwGsURwKy0UJfBBYcsc5MB2Cc5WgTHXjai6Jocm7uHc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086607; c=relaxed/simple;
-	bh=Odry3R6bS1eAPQGsgTzOfdP6nZUl5g4nQsM0O34G8I4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=M5Y4L79FDtgSagFgBNUxn8dUtIP5jf9AHE26LufMO7rWuuiHX3vUIAMLlAlEuCXU2sTEtODR71WgurKAzdErwlWyn4Ky8byuTm9NUxAmJyABYV8hxXJxQvHWQwkvGrARIUqiuTMiasXseGvQuVfIOq8+7uEXLrZ75+lN/ye3znM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=SFbAhKrJ; arc=pass smtp.client-ip=157.107.129.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 1B7F0109D5675;
-	Sat,  6 Sep 2025 00:36:42 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id vqmMf98r-Zyc; Sat,  6 Sep 2025 00:36:38 +0900 (JST)
-Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: weibu@redadmin.org)
-	by www.redadmin.org (Postfix) with ESMTPSA id 1F7E9109EFCDE;
-	Sat,  6 Sep 2025 00:36:38 +0900 (JST)
-DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org 1F7E9109EFCDE
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757086598;
-	cv=none; b=UQe7sIMnmpygKUu6f0Z4NOIE3rbil4S/pD9sDY9CBUyeM+c16qC4Y0m2WhFiT/SJXWtvz2yXprvfYrwCxF5nY/XhTPyxr/okAhm6VYjfDPyIYXK5bHcNFRyg3BDJ90joxg3uKqq+QjVEYSTFB94fm19+4cNBdDkSe3v+MVq1xsU=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1757086598; c=relaxed/relaxed;
-	bh=3D+SPF+6ZhBelny5po/Ar3EvbsOnw9N45aR/eUFC7ww=;
-	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
-	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
-	 Content-Transfer-Encoding; b=eD2bJltBytMrM3cHidoRkmMFuScyZvp5voi3TpWaCAdCd1pYut+RYjFk3af6HW/cN/4wYCNp10ga7xj2Eyi08GDtcDvCYDMF0quz137XRp7YGmNbZQ5TofsALmr2LI6fUH3ark4GMQGDcY/QbWEM+jkHRo8avR9MFeM+ck8wOEI=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 1F7E9109EFCDE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1757086598;
-	bh=3D+SPF+6ZhBelny5po/Ar3EvbsOnw9N45aR/eUFC7ww=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SFbAhKrJATOaqlmDsCkoueGvbkyKr3pnLGK4567JzpNnUynfHHC7vBmi9HD13ITks
-	 wPqZ55ovfDYXbWw+zOl2pbHmwf3vuNEK2EXyTPqTSHk/989Gn8drE1WoEUksXouoAg
-	 J/8IE7TO828Vgjvgdy3fU5IsELkJ7AXVZaKRzA/U=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0180B2EE608
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757086629; cv=none; b=egIzXwhsM/UQBSHur5NxYur0pb/8kBZsfJr7UEDuRq0PW56TFnLy3L81fxC+tUOcdGhdaO94oJNcR5joXyMEli7Ns3ULgkSznBbjK1NLQMQ12SjxF2OXV1Ay5gKY8VquLO8J6s30e8BV63j1/t6U6Ou+l7VIkTgRXPKfNhCMszU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757086629; c=relaxed/simple;
+	bh=Kg1vnljwk728S3xcpj5uPtZq0cPx87y/XAxf6Mbkg0w=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=QbsfUplvvX9vBbdMSWBO1hT8VuB1v8j9Rdv87yJGxva4Gh0n57kJxIS6uwx+5IH50lvKGGAHYIehbIKZqIxNu7M42UPqDqJlFiEJ8i9DgS6QhztfWSv2z5s+kw5bjMJE4F7l5q7V3N47DVWGwiXTyoLk9jA6QSQUeBtKd7gvFBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Adxer/jb; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109c58e29so17598551cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1757086626; x=1757691426; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H8H2BgOZaIRqj4/CcuEuveM9YTYIhVsemNvoFOFsf3o=;
+        b=Adxer/jbSeczynoeFKEXClu7cZMZCpAF3YLWX+s0HTBWs6TBpLyV2vLRrfiKsaIL+D
+         ZhqpWBTavn9Db2BIGlnBvqmcOzF+JUsAekaEgCeJUNaUOhJSFPDZvzVMOHvs1SgKpkc+
+         AqHd2pYm09ShlOUEubo9sDUSMc4cOwing3C7JUwsdbz9IWkiKFgSsczRcOMLXwytPuxi
+         KuenPdohzMQWfiTAL9YTg/4MvUnlnFc0fLVwKC4ejK9wCe8q+XtUUpJyJojGjuaO+QO/
+         807AVC+9b2a8UsjoH8Ki4j2CCxzj1IJMBp5zP1w9YFfVis/G07DkxoN6TNdR/fngx0cu
+         tqPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757086626; x=1757691426;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H8H2BgOZaIRqj4/CcuEuveM9YTYIhVsemNvoFOFsf3o=;
+        b=HlQt6zfZV5Msot3dfjABIDs/pAfq0TYJairEHp7Cumn5rgyIiXP6tbe4zEJZjCNgSc
+         tvaWTkgd7Ufrimpq4I++fAOMD6RKhy++LUdAYKlmws0jb/m+djFAtFJhLZmKZzoju13K
+         P91/gmCF+yjuONvIvM3baF9r1DBF+6ibbeci3LgENKtqGCFuO7th6bZrzOqZEiveKfXr
+         yykoxRA62eccf3bd0OeeXmdzuGzgGpR41jYwQanqR1Wy4BL7J2n5+7TELcKLET5jPdzj
+         8c3/Ro7xT1no5ARATuZ63oaBK5/TKgZ4EPWK9rkNBQn9oirpLCWlU3y1i51vAZ4AjBFI
+         A10A==
+X-Forwarded-Encrypted: i=1; AJvYcCUzcIVjtmlbIN+UDD5dBFUHA1g+gPDad9UKgBJ2bEhozJPaxfmtnqItIdRsBAMAYjrwc1rCp6dhXiNLABk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0eYPVIDhNi++x5GmWuvUia8U8kTUaY6Rswrcge+aWpOWEMf8S
+	FePWsUkXKlyDkJph2v901x3MvMGigZUCOwuuGkGh0r8qfZV5SMt67Z6R93uIJUpqYw==
+X-Gm-Gg: ASbGncsTVWbo5C90ihSVLsx6veDBRxKIga/zsFr+OPZ5Ww/6kNs2s4Wit9AJiPbdXeC
+	7ElDzfjC7t9nu28sAlGuD2kTpVdMC680vFHHYGPO+4msgX/xvQmlHhEiQosark/p7/9OUMZF3wM
+	8TY9Ca3MDb6HgaIXM1k6ZwKPnFCypj+GY0oyll2uvsm9P4vpAVVo2XAeDG36PoZv6RtbAupk+eH
+	7n5w796y3I0hKMxV3FnjeP0VDLmzP6qVEgYJ2G3N0r6s3UJjhcjkd8e9HKmvFGKmtFrrJicP1p2
+	aM0FWb12nTs5RxEoUbY6500qhtlou0+dgCWlIPk8dMsQ2SrzP+Qeh7/xcLnYP1JNGWB+Y0IkNQS
+	6x4PJZnqBFg5c51+m1yYCOIakI7MrzYAwsHxNy9169CeF7eFBKEv2PiSv8SY848F+GGlFTTocEu
+	ip75U=
+X-Google-Smtp-Source: AGHT+IHso3j+0e//Z9vqXwH7srvuoY144d5Q5A5/ORbPudxl8GItsfJbG1VzD6dz0JwkeY/cN1Uv6A==
+X-Received: by 2002:a05:622a:5e1b:b0:4b4:56a6:42b1 with SMTP id d75a77b69052e-4b456a6498cmr110458451cf.47.1757086625566;
+        Fri, 05 Sep 2025 08:37:05 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4b5d57c6e0asm33881781cf.51.2025.09.05.08.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 08:37:04 -0700 (PDT)
+Date: Fri, 05 Sep 2025 11:37:03 -0400
+Message-ID: <6af833b45f68db4612ca52dd839d5662@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] audit/audit-pr-20250905
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Sat, 06 Sep 2025 00:36:38 +0900
-From: weibu@redadmin.org
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net
-Subject: Re: [PATCH v2] docs: ja_JP: SubmittingPatches: document the 'Fixes:'
- tag (+example)
-In-Reply-To: <cd17b8f5-b5f2-4d9a-87af-04ecb2a235ba@gmail.com>
-References: <20250905032729.2284883-1-weibu@redadmin.org>
- <20250905111403.2338934-1-weibu@redadmin.org>
- <cd17b8f5-b5f2-4d9a-87af-04ecb2a235ba@gmail.com>
-Message-ID: <c5a767e4d064cee8092b79ebc30e9cb0@redadmin.org>
-X-Sender: weibu@redadmin.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi Akira-san,
+Linus,
 
-Thank you very much for your review and detailed feedback.
+A single small audit patch to fix a potential out-of-bounds read caused
+by a negative array index when comparing paths.  Please merge for v6.17.
 
-I will update the Fixes: example to use a consistent 12-character SHA-1 
-hash.
+Paul
 
-I will also move the Link: line under the --- separator, as per 
-convention.
+--
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-To clarify: v2 was intended as a full replacement of v1, not something 
-to be applied on top of it. I’ll make that explicit in the changelog 
-section for v3.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-I’ll prepare and send a v3 patch early next week with these corrections.
+are available in the Git repository at:
 
-Thanks again for your guidance, and have a good weekend.
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+    tags/audit-pr-20250905
 
-Best regards,
-Akiyoshi Kurita
+for you to fetch changes up to 4540f1d23e7f387880ce46d11b5cd3f27248bf8d:
 
-2025-09-06 00:14 に Akira Yokosawa さんは書きました:
-> Hi,
-> 
-> On Fri,  5 Sep 2025 20:14:03 +0900, Akiyoshi Kurita wrote:
->> Sync the ja_JP translation with parts of:
->>   - 8401aa1f5997 ("Documentation/SubmittingPatches: describe the 
->> Fixes: tag")
->>   - 5b5bbb8cc51be ("docs: process: Add an example for creating a fixes 
->> tag")
-> 
-> Consistent SHA-1 hash length would look nicer.
-> 
->> 
->> Link: 
->> https://lore.kernel.org/all/20250905032729.2284883-1-weibu@redadmin.org/
-> 
-> This link to v1 needs to be under the "---" below.
-> 
-> Wait, do you mean this patch is supposed to be applied on top of v1?
-> 
->> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->> 
->> ---
->> v2:
->>   - Add explanatory paragraphs from 8401aa1f5997 (purpose + stable 
->> note)
->>   - Keep example and pretty-format from 5b5bbb8cc51be
->>  Documentation/translations/ja_JP/SubmittingPatches | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->> 
-> 
-> I think I need to be more clear on what I am expecting.
-> I'll send a follow-up comment early next week.
-> 
-> Have a nice weekend!
-> 
-> Thanks,
-> Akira
+  audit: fix out-of-bounds read in audit_compare_dname_path()
+    (2025-09-03 16:46:23 -0400)
+
+----------------------------------------------------------------
+audit/stable-6.17 PR 20250905
+----------------------------------------------------------------
+
+Stanislav Fort (1):
+      audit: fix out-of-bounds read in audit_compare_dname_path()
+
+ kernel/auditfilter.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--
+paul-moore.com
 
