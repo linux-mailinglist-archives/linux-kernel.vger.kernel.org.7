@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-803611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153ABB462F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:59:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2477DB462FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B667B188107A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84F85C7768
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BDA315D39;
-	Fri,  5 Sep 2025 18:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C676257830;
+	Fri,  5 Sep 2025 19:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdKJkRnk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Xuep0fgk"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28F4315D22;
-	Fri,  5 Sep 2025 18:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B7026F2B4;
+	Fri,  5 Sep 2025 19:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098780; cv=none; b=USyXOK3K6H2K1JHc8eHxYPe5npBjIiHBbb+XXbkacn0IEQVMeQHgYfY+ecLQHptHPxnajc4QxdtDstdt9pLiBAAVsuNvj/SgHCMSHma0o+XcOfnf1hxNb5DkM3ugmw4cRd7Dzve+t9GjVTspFUodOa6E1O0Y5s+C4g18n57QA9I=
+	t=1757098846; cv=none; b=u8ev/6kdCldai9uXWh20og6tBz962ZBPtbrukPqQUaSNLE9/4rWUXdQEB6aLl24ZO/8hFO1+p5Rg7jScI1zYCVsQc9dCTnx3cM9bIHUAPPLW0cVwtmGNMJU/K/6a+svt4edxLisT9cuC2gH3mp95wqojNyAnImSGQ7YeZ8RUV/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098780; c=relaxed/simple;
-	bh=lFK6x9Jn+RDIo8hk6YvE4XAAa/pvvhUQnFYDz1Cs4OU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sbt2ogh75aJqZJ8JQkJecT0yVLAYAGwu3g+m9EF9ZEAcbr7XudVACJaAE1+7xa6xRkd5PgefuKWOE2lJQlHQ22KBLV66emYrRs6DTM7V9JhoA7zw1MIhdGZNqw+OlbFl9c01FTDYGU50+IP3RY4wbuoeohWfJY8pT+6G3CpuPZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdKJkRnk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA77C4CEF9;
-	Fri,  5 Sep 2025 18:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757098779;
-	bh=lFK6x9Jn+RDIo8hk6YvE4XAAa/pvvhUQnFYDz1Cs4OU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jdKJkRnkbnHJMRkli9lQG33dV3/fQZAgS7QO930nFXG9dfIEJl+9LcMyEeaGLUjfC
-	 5DlEDt2L/BkjL01kTRckA43nFg6Ozo0Ba1Jq5z0xTNFS2tFNJL520VaOUJfVYIURTr
-	 A1hWIHpw8jvsithOHfIUXZ89u71XleSvDorTXwbRd7jdewESlLbICbOifqQgxUf2Or
-	 xeUv3UCj4ji3aeTitKVVdMCf+tegG/754T45cYjbbOEkgXYi4PCDS+tsqzEZCu7kN5
-	 LaNFboJehUpGW4mBEGNzrjvea79VDEIrSMrsSDnwshdf8TI+Z1tRhDEl3IUI81uqTL
-	 AOY5WVf+cLujg==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-61e45cdfafeso539800eaf.1;
-        Fri, 05 Sep 2025 11:59:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIkXYOlElniRfa5hQxr7w3cjN5yBpce1+6O/hy9zL/2cK3WPwWV+YK6XETyDtanNH/opei+WarTCcchi0=@vger.kernel.org, AJvYcCVP1HF8lga5EfF2i2ngk+eeY4cZcm/eousZ/KPL6/BspH+LOlD18x5b9Yq2vjDy1Yg4F4LIe5NTi4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ2Udw739IHoi36L3mZics7MjHpQFIP9C+Vy27Ui/BoOJxfJ5m
-	yk/V1JWK4ZfNkkvA/mIm2kGTzAFEGc29wMCizBBQmyYjAJfPWlBOqM6VpszOt5Txh4GLVi1vZpj
-	d1Wfz3fGsb8X7E0RWwd4TQZJrpFzx/TM=
-X-Google-Smtp-Source: AGHT+IGBZn5bdUbUxZQ9R/VAE48egjxy7wtN2aJCa+dJNcBVRD8YKhEC7iDOHIvCcjhDlPCkYpcfxNDZIk8H+vZ1QR4=
-X-Received: by 2002:a05:6808:2f18:b0:438:2629:2fca with SMTP id
- 5614622812f47-4382629499fmr6067333b6e.10.1757098778854; Fri, 05 Sep 2025
- 11:59:38 -0700 (PDT)
+	s=arc-20240116; t=1757098846; c=relaxed/simple;
+	bh=jbDPoQPVj5LefJL1Lsz3kSRZPC4a/jkVm3mJ4yFeteE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NPxB4no8ZAA04pNB+88+cudSqLKS2aHTPfJztzLA8hbndFL294eBQevEKWqoMzMCTJIVQflOWbLWbsy3RuTxYLy4iYQ6MmBrIDunM95En/M1IKuNZwFWI+WNvjxLo0H8iMfv11oTcxNfoNvqVjCvXJ2IUxDB2kb+TWaHS896bBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Xuep0fgk; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585J0FmF3384990;
+	Fri, 5 Sep 2025 14:00:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757098815;
+	bh=Sz++EvfKy+SO0R/e8eeoLx/0K6KwEUb7JRKGZipN1m4=;
+	h=From:To:CC:Subject:Date;
+	b=Xuep0fgkLP4jZyDepsStGuXenEdMDDzyCyovUBZlectNJkE5ZathsJVNSOPiEM03Q
+	 0TQ8zNx1s9rK6mZC9O2p7Z4uYwLzre0OaL+2R1y+zxuNQA5qQsZO2NkKzFb39PmuRB
+	 SXeGSsCCX0tMeM3jYz9nAbv6d2hsBqu9qjxVfzlg=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585J0E0d561817
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 14:00:15 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 14:00:14 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 14:00:13 -0500
+Received: from santhoshkumark.dhcp.ti.com (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585J09kO887531;
+	Fri, 5 Sep 2025 14:00:10 -0500
+From: Santhosh Kumar K <s-k6@ti.com>
+To: <miquel.raynal@bootlin.com>, <broonie@kernel.org>, <vigneshr@ti.com>,
+        <marex@denx.de>, <computersforpeace@gmail.com>,
+        <theo.lebrun@bootlin.com>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <s-k6@ti.com>,
+        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
+        <u-kumar1@ti.com>
+Subject: [PATCH v2 0/4] Miscellaneous fixes and clean-ups
+Date: Sat, 6 Sep 2025 00:29:54 +0530
+Message-ID: <20250905185958.3575037-1-s-k6@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902114545.651661-1-rongqianfeng@vivo.com>
- <20250902114545.651661-4-rongqianfeng@vivo.com> <20250903041328.qgxv5eoajd6yg6jv@vireshk-i7>
-In-Reply-To: <20250903041328.qgxv5eoajd6yg6jv@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 20:59:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jsV1ZOdLa1=PTvrjzoJ9iVUE9fF6oWZbNcGwB+djNvQg@mail.gmail.com>
-X-Gm-Features: Ac12FXxs1ss8vivAI2PLfbdSuyFs5Lh1DN8xxMUIsH-ok7cqJQI8Q188vzJPvQ8
-Message-ID: <CAJZ5v0jsV1ZOdLa1=PTvrjzoJ9iVUE9fF6oWZbNcGwB+djNvQg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] cpufreq: speedstep-lib: Use int type to store
- negative error codes
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Sep 3, 2025 at 6:13=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
->
-> On 02-09-25, 19:45, Qianfeng Rong wrote:
-> > Change the return type of the speedstep_get_freqs() function from unsig=
-ned
-> > int to int because it may return negative error codes.  For the same
-> > reason, change the 'ret' variables to int type as well.
-> >
-> > No effect on runtime.
-> >
-> > Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> > ---
-> >  drivers/cpufreq/speedstep-lib.c | 12 ++++++------
-> >  drivers/cpufreq/speedstep-lib.h | 10 +++++-----
-> >  2 files changed, 11 insertions(+), 11 deletions(-)
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+This series introduces some small but important fixes and cleanups in
+the Cadence QSPI Controller.
 
-Applied as 6.18 material, thanks!
+Changes in v2:
+ - Use max_t() instead of if case
+ - Add a logic to return failure if there are no flash device declared.
+ - Convert all the open coded bit shifts to BIT() macro
+ - Link to v1: https://lore.kernel.org/linux-spi/20250904133130.3105736-1-s-k6@ti.com/T/#m2a5b6024ae6f147615e54e12688d8ceb5acc6228
+
+Tested on TI's AM62A SK and AM62P SK:
+Logs: https://gist.github.com/santhosh21/0d25767b58d9a1d9624f2c502dd8f36b
+
+Signed-off-by: Santhosh Kumar K s-k6@ti.com
+
+Pratyush Yadav (2):
+  spi: cadence-quadspi: Flush posted register writes before INDAC access
+  spi: cadence-quadspi: Flush posted register writes before DAC access
+
+Santhosh Kumar K (1):
+  spi: cadence-quadspi: Fix cqspi_setup_flash()
+
+Vignesh Raghavendra (1):
+  spi: cadence-quadspi: Use BIT() macros where possible
+
+ drivers/spi/spi-cadence-quadspi.c | 34 +++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
+
+-- 
+2.34.1
+
 
