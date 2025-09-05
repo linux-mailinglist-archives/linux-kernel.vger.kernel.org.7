@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-801890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558EBB44B3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36557B44B3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B164587FD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2C1488242
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153651EF0B9;
-	Fri,  5 Sep 2025 01:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D01EB5F8;
+	Fri,  5 Sep 2025 01:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="KX0G1Bds"
-Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHJR+MO7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099272625
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8AC72625
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757035543; cv=none; b=qIAwwmqt2MKeSmjFnRBF+bku08totAbCcb4k4Kes8sAhnfqs6w7JRMgEk4/fPiNH4pWGVuIzH095GRpxh6jJS68KHzSbIqV621qTiMqxX3InHSYSFRN1Urb2x3cGxEJE2Vf34ZDhY+Vh/Lewr12EKibnk92S/X5G/jYarCh++50=
+	t=1757035596; cv=none; b=QoSLbUK3XgRrCvO9avBJWTc4Dxl+uGnDqhQ2LUSZ9xd92QWGWu3LKdMb3S2cwqhxGO2aCvXD6BV9rlDrJ1as2ea72Fz3XWB9NUJCmylu4YsX6MT6zzmhPZEF/BxRA2aYrHqRYtWwSG5ZZhG3Fd803hKGpG6xBwg+BcoEZGtv1uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757035543; c=relaxed/simple;
-	bh=x4M8vzAa9G8ugV41duNrOqQggOoYYSbHqlw8bIGHuNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dltRczZc8diipQF3L1Mx+VXreYyHYe8mDG6i7dUYNkTHzpJ44sGP5DylMs24sYAgvBSTg+KUdDo49tgiT5pBTjDXz6am/eJQMvXKhYtKSy/JqB8B/Pi2z+MmnrHucuM2Q5hhe/vIqArvCmU+fab5nthievOGn0F2sNYjBY4ay40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=KX0G1Bds; arc=none smtp.client-ip=209.85.166.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3f45b5bca61so1030015ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:25:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757035540; x=1757640340; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnWnwy0cMPqtw5BEHHtxoCEyhV636CoDiZ02zMa7Bpc=;
-        b=KX0G1BdsNc6ziyIIZCKL5mOk9yAZHbiRFAM3rUbmRlAHkBo2ykmGSakl+JBpOeTSAO
-         KHWNkTK+WJD7uDu7jfITrHQGaxfDqobMv+TBVdNwXyHTNzx3MZsgcb1P8F0iZ5KGLU/i
-         tpCIBT7ALN/V+IeQ6DO3UE/4AkLiXK+AmD+Bpkh1fEf5IOA9E0HvSRRpuWe5T4fItbDF
-         sbCBMNDnsrru/RFbJoUznzDhPupbKityO2PR+YqSfWINqC2+BGArFnKyJoCi1Ye3odx9
-         kMZ/SEur9VABAm5QGehwvcmpGgEeBh9jPCjJXHhvJK7DYg6YDEb+9aTKRmqzSIoWAZx+
-         jmAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757035540; x=1757640340;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gnWnwy0cMPqtw5BEHHtxoCEyhV636CoDiZ02zMa7Bpc=;
-        b=gugn/G1iNgD1UgWUZhFzSmKPSVCR0lINk3vCf8QsIhPrVfDx/x8AO0PelS0hkezodH
-         3GVuQYT8pQomlyIOX1+Fw/Q2OLbxUc7uott9jOSOeyLnQpv/nIOIxY4SyopKcE3WHn+M
-         3OD1az1RGCVW667QICt3Um7r5S3Z4D61I/JZfMdFmJH1NUr5UFH6hteXHp9sjGs6bYSP
-         RL30Zs11XMgEn+9zEItUT7RhqJFZ+s4esZYmQ7+fuKTlkbOPze2rzVWMImKpwYkHEljl
-         R1uCov85jBN3r6kMUtYM0nsu2pgVVHEqBzYpjkTFBrk0pL1YrwY5KAdecFX/ospbg/xa
-         azng==
-X-Forwarded-Encrypted: i=1; AJvYcCUTvGAoT9L/VadCNpinyYnoySt9cM8g7GA8u2n3eQsm6acdPEBENDn+140UCBGcSfx+WgOyDzl6+5SuVGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHrvGNnPD1pyHFUXgabiAo/FBLzhJouwAFrGAUxHlb0omCsFOm
-	/P3azFBhNYCyKuHQJ6ilbz2A5Yzk4eq0Q2IWV4K4XAUmuprSizdor5ZCEFryUx5fH1pbGCOKWSe
-	9eJRHW8lTZrXaH1hg8I8PRfga/GxAbPuheg8M
-X-Gm-Gg: ASbGncu4VwATrg+BluF9JuILDAvovELUBWWnyWEjBZX2z8/ezGkkPBvNvbrTzIia3OR
-	3ytskiAaqdkhjcnAN2GJIYfoIxkkgorJ9S44Bve43gdLlvDHZDF/sQP/GYKAUdIsIcXedsJ8qkQ
-	VIAkDoCeRQyglCa7cEpcqUeVPmZSkh1DzMsTh/jDGVZ5ZGtVbrd7OiLCwot6rIgbTB4EIW2Akh+
-	o5/IclkJrtf0IlrFB9+gO+XHdy0tN6cZIdYR4KVINn6uY2TfFaDObYso2dxvMnqF1uxL+ZP0Jp9
-	vlzvW/ksNdRxS8fbPKxSp1NtTFsyn68Efl1kickj1SU53A/W8sziyryG8MJBmQXDv0Nu5CsX
-X-Google-Smtp-Source: AGHT+IE1TscQtnz7ja8VNIEOcYQE2LBDQ1YalQFkXxSCa5lmyVLkiFojFsDoRfuToE7u7AukvENY4JbX6eqT
-X-Received: by 2002:a05:6e02:1fc5:b0:3ef:beb7:dba4 with SMTP id e9e14a558f8ab-3f321afda65mr148455715ab.2.1757035539735;
-        Thu, 04 Sep 2025 18:25:39 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-50d8f2deb9dsm902184173.41.2025.09.04.18.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 18:25:39 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 186B2340237;
-	Thu,  4 Sep 2025 19:25:39 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 13106E41A5E; Thu,  4 Sep 2025 19:25:39 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/rsrc: initialize io_rsrc_data nodes array
-Date: Thu,  4 Sep 2025 19:25:34 -0600
-Message-ID: <20250905012535.2806919-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1757035596; c=relaxed/simple;
+	bh=Q7tJcuXKBC904lYzUKjtoyrfpAV6c97cosqGwoHHcXI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=szKsbOXy3ZdxvtVe66nO3lBUKR2rIhnBiNO7/2sF/yFiuv9AEn9E9PVqnzjtQUeraXRKd2K52/MKgGto2IkNTPaoXND4JcNEUz2YTzWPc5YO7KnJljQnhfDmQUjCjW9daPaOK8u4AMXWseQIUXfHcQP7DMVlbP/p4z9wV8g3cKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHJR+MO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B26C4CEF0;
+	Fri,  5 Sep 2025 01:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757035596;
+	bh=Q7tJcuXKBC904lYzUKjtoyrfpAV6c97cosqGwoHHcXI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=eHJR+MO7N1xSxuUWExeM1hWMtxBSFKJXPQrZhp9qYE9pJ2Fqe6DwNA5P78zsExH36
+	 IzMNwU0QGgWGUsDglK7rXZhBAw7yzHdbHxIY1bqPhFwuAfLBzOi8IgoS35zx+pZBKG
+	 1jnQ1BOnPhyWHfTdVdCCM7T2Km3ubdOmHkxEHw7NkWTkCjXo0yrg/cKahDU+Xf18m1
+	 lfL0k6vkBjHp5/2jrwHXLGLrWQ0Nn1Lq0zR3TUATbgFxF+i7Ncs5/CDuPAbynL5mSJ
+	 C/7Wgk2ge+8FJ06rAqwpCaWWcpCKMlLTVuJAXqW+sJrJoJc6FtUxfprSlljxhiqKRb
+	 b28uj3lRFoKOQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 04 Sep 2025 18:26:12 -0700
+Subject: [PATCH] mfd: tps6594: Explicitly include bitfield.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250904-mfd-tps6594-core-fix-bitfield-h-v1-1-5d0f00cfe58f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADM8umgC/x2NWwqAIBAAryL73YKZFXWV6KN0rYUeohJBdPekz
+ 4Fh5oFIgSlCLx4IdHHk88hQFgLMOh0LIdvMoKSqZSc17s5i8rGpO43mDISOb5w5OabN4oqtnhR
+ VtqmUM5ArPlA2/sMwvu8HS/rFDHEAAAA=
+X-Change-ID: 20250904-mfd-tps6594-core-fix-bitfield-h-74a2e3d632fc
+To: Lee Jones <lee@kernel.org>, Job Sava <jsava@criticallink.com>, 
+ Michael Walle <mwalle@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1424; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=Q7tJcuXKBC904lYzUKjtoyrfpAV6c97cosqGwoHHcXI=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBm7bLxsJhsVcl+0E/6Ze03+tVLUkWYv7htKwtyXOIsff
+ gszkH3cUcrCIMbFICumyFL9WPW4oeGcs4w3Tk2CmcPKBDKEgYtTACbCM5vhrzAHj86uOaqFM92e
+ ahvdF9fTeiYtf2yuqtOdWxliIi+K3zEynPXX9ZtlFFsvfmXLj+qp2qx3XkbdSbz1/3CG0I+fW87
+ wMAAA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-io_rsrc_data_alloc() allocates an array of io_rsrc_node pointers and
-assigns it to io_rsrc_data's nodes field along with the size in the nr
-field. However, it doesn't initialize the io_rsrc_node pointers in the
-array. If an error in io_sqe_buffers_register(), io_alloc_file_tables(),
-io_sqe_files_register(), or io_clone_buffers() causes them to exit
-before all the io_rsrc_node pointers in the array have been assigned,
-io_rsrc_data_free() will read the uninitialized elements, triggering
-undefined behavior.
-Additionally, if dst_off exceeds the current size of the destination
-buffer table in io_clone_buffers(), the io_rsrc_node pointers in between
-won't be initialized. Any access to those registered buffer indices will
-result in undefined behavior.
-Allocate the array with kvcalloc() instead of kvmalloc_array() to ensure
-the io_rsrc_node pointers are initialized to NULL (indicating no
-registered buffer/file node).
+After a recent change that started using FIELD_GET() in tps6594-core.c,
+there is an error when bitfield.h is not implicitly included, such as
+when building allmodconfig for ARCH=hexagon:
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-Fixes: 7029acd8a950 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
+  drivers/mfd/tps6594-core.c:767:7: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    767 |                 if (FIELD_GET(TPS65224_MASK_EN_PB_VSENSE_CONFIG, pwr_on) == TPS65224_EN_SEL_PB ||
+        |                     ^
+
+Explicitly include bitfield.h to resolve the errors.
+
+Fixes: d766ca01c208 ("mfd: tps6594: Add power button functionality")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- io_uring/rsrc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It looks like this should go into ib-mfd-input-6.18.
+---
+ drivers/mfd/tps6594-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index f75f5e43fa4a..3f3f355f6613 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -209,12 +209,12 @@ __cold void io_rsrc_data_free(struct io_ring_ctx *ctx,
- 	data->nr = 0;
- }
+diff --git a/drivers/mfd/tps6594-core.c b/drivers/mfd/tps6594-core.c
+index 7127af7142f5..8b26c4127472 100644
+--- a/drivers/mfd/tps6594-core.c
++++ b/drivers/mfd/tps6594-core.c
+@@ -10,6 +10,7 @@
+  * Copyright (C) 2023 BayLibre Incorporated - https://www.baylibre.com/
+  */
  
- __cold int io_rsrc_data_alloc(struct io_rsrc_data *data, unsigned nr)
- {
--	data->nodes = kvmalloc_array(nr, sizeof(struct io_rsrc_node *),
--					GFP_KERNEL_ACCOUNT | __GFP_ZERO);
-+	data->nodes = kvcalloc(nr, sizeof(struct io_rsrc_node *),
-+			       GFP_KERNEL_ACCOUNT | __GFP_ZERO);
- 	if (data->nodes) {
- 		data->nr = nr;
- 		return 0;
- 	}
- 	return -ENOMEM;
--- 
-2.45.2
++#include <linux/bitfield.h>
+ #include <linux/completion.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+
+---
+base-commit: a4eb677652a5da4d8e7271c0c0c8719c39f10e36
+change-id: 20250904-mfd-tps6594-core-fix-bitfield-h-74a2e3d632fc
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
