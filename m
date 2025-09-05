@@ -1,150 +1,304 @@
-Return-Path: <linux-kernel+bounces-802037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B12B44CFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9A1B44D03
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0451BC1296
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:08:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9278417512E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEAD26C3B3;
-	Fri,  5 Sep 2025 05:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CA826F28F;
+	Fri,  5 Sep 2025 05:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="i4+5qk2O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eE+AAGia"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097EC255E40;
-	Fri,  5 Sep 2025 05:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DABD221287
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 05:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757048888; cv=none; b=YZPmKkip1KY7uyUln+HjAaOc7hsQSIqlNAik/wnkziaybYM5f2zrZaP+LzmGzGiJCj84gkeq3Z3dHNcRAhLLjwl1+yrwOyCWv0UGS7fd1g5zN1x9Cr6ww2IVHza1W44axT21AeJ0VIZ4twoOk0T+mnLcxiiVFILgpAQBsTq9g7c=
+	t=1757048919; cv=none; b=mgRV/UGF/iEBxANw10fJlefz30PABa1ROh78AB4XKFONGhCpTShH8aSUAa/+/AWKEIGsvi4LtVKjHLqApFGOdoNZaVnOtBqJ7fktPK+9ePbAmZdNA0LYwAAz75cwPvTOCA8UKkjeSXNDo1zKZseX3JoHx5vD/YqKaFBxE/Jsc0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757048888; c=relaxed/simple;
-	bh=Nvsjo+hoxG0Y68uVTp1BOMx7yxFokSxTDBoAg4jYy0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qAopPSz03eAfswDhZmTRV31UaH89BiqIuEixZiCmhUFVLwvA2nBzjiE9bmRKptbQO/q6W7eOZKtWIvS8Ziu4jP48KJl6Dgy5vMN5NnXX7d/luiPTPIRiE2t+1p4xLbm/ahg3ZYLcw1sXdt5pfDzOG1CkSK2EhzrQQ6qoQal5niI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=i4+5qk2O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757048883;
-	bh=7Uobh0MtBkkqb4QSJlV6WibYFSiDhIJead2SUVGBM7c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i4+5qk2O2xIY+5VtWaB5ayCdgjmbeI299KiCIMZQp1V//C3KRxcIlRWEzUDHYT/tI
-	 meWfLcQqJDOfQxPtx+nolVmhc80piVgPJ0u7QcexlFvrD4K2WH+wKzJshgntphXgeM
-	 9S/fxzFs9X9z4VIZ9Ge5Ws6JW6iY81C4LbKBRcGi/4DuapVmx7TfvWq9FkuneOvDpx
-	 nR6dT96ugsdF4/cFgn9TIAQvAk523MAMtlyarpkDAmfKdXlZjOn3Q0Dtqp1iHPglXq
-	 EIOQ1SGkTjTi8/otzr264YvBKfLdnbSL+RTgNSIraVuSixA9uOqXZaBSgYOn66wuHu
-	 7wgGSpJyMO/bQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cJ49Y4Z2Tz4w9h;
-	Fri,  5 Sep 2025 15:08:01 +1000 (AEST)
-Date: Fri, 5 Sep 2025 15:08:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>, David
- Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Johannes Berg <johannes.berg@intel.com>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Wireless <linux-wireless@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the iwlwifi-next tree with the net
- tree
-Message-ID: <20250905150800.08c5402f@canb.auug.org.au>
-In-Reply-To: <20250903121032.744f5a30@canb.auug.org.au>
-References: <20250903121032.744f5a30@canb.auug.org.au>
+	s=arc-20240116; t=1757048919; c=relaxed/simple;
+	bh=GrlHgzC2CZ+jmdFYYWA4oPGmFL26PhRfAOttrHjSV9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SiNSXzaAI0izdlAaL2qjdNsWVRohxiUpLdssauOR2Bn5FL90JijfBEfzSviLOXGh+EVqgVGgKu3F1OSmHlZe3ia3hu2WA8uwKfv4BzjKSa5mF6DK1pcIH87v4jOgeZy9HBOj0zjec3zDL6mfbMFsC4yiUKLDIKSwSuDs3bOdeH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eE+AAGia; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IaMuM007991
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 05:08:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XSV9LgvcNte42quuPILmy53FTfP05rNvZ3H6trDOXVA=; b=eE+AAGiaO+bRxnq7
+	6QCLrNnCi4HVlWcL52am0ymom5JkC2A6sPXa/0TPeb9gEb0+LxgQRM8OLhLs8oL/
+	xdLXnry0dsr2g6ntdkJOTv59oVV3hQ4uGAwQUUB92V3ChvFHbI90kyaSf7PUdS5R
+	W/exYD/mq82BKtyFWi7SoMutwU4Dg4DNLg5VOayLHHcJXd4iKOGrl87qeg1VX2qh
+	ME+kZT6nEmYrleMV8dgRr2u8sxEL3sATP5CpESf4irxv8iyLuTGcLXnq5n9nhc2l
+	8BYkMlPiQye5Lw0p28LqcacTTh8FidpILrFQoDuS3hEXJ0Rx7IX7K58EBrDABO5A
+	Bl7S6w==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura91sfp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:08:36 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b4c949fc524so1359970a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 22:08:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757048915; x=1757653715;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSV9LgvcNte42quuPILmy53FTfP05rNvZ3H6trDOXVA=;
+        b=VFEz79A/KtmQHuMaZN4gYWx6wAtfqTsV5wTYfCSOjw2MjoYzQXc4ZOrwH1j9eTywQA
+         ScyhTP5I9fcUXBbovhw7pZN930SX7nPB1lFvFjWr+pWs+70rP4x8qZ2i/cVMNzEOKiTL
+         s008LoSOve/RvTCJjFuG1w39ibPZrZ+oqhDuY8svR9XwfoFFQ4kZNCS8S7aGzOwq7h0X
+         NyS/+HcWFovhGHhUb8rYJ8xZzfiMKCUWpQdbqvzVZ0fxKiDij3DF75MARd0ytL6YYbAk
+         0t1AJK6yb8ld3no7ENlib9l25CBbn0rGuL5XmnibxThTgGEwPS+NcS4xzuxR0V4teYMF
+         OOSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4EV2sLSGI6ox3ZlCCcZUvTIUNzB4HyCKR46xp+m1/3ZsqCZYGhu/y/unaJSpetmWDXix9X2uRG3lAHCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaDIWmFks1NWppVljATjLMsECK1cNIC7ss2BCXgaN82hXpkhdh
+	8V382FXt8lEfyoHSsMFnQeF+xCtVp09qikvZNCloOmMfaDhO2dJbCTQKrOIkxtOp9Aj/WO2PJ0X
+	EP454nhpPKzq/l/JOKzqveAdMWQNcc0pteGE4HT9I+qvWmc0uK+8Jvqrnes1kxDwvg0I=
+X-Gm-Gg: ASbGncunyMWUgUzoL/oQnR7N5/WxaVMPCmVr1HPEdT+Rd5sQ5vbx3YCA6jrt6pVVk+3
+	/KcGmdXcGnGrFB0mFv+6fk5FIhh6SBsSAgxXkJbvN7m/HVBmpbl5xNrO1r/uhkxWiWdiC8YKdRy
+	vV5DR9XUXUq7iReO+jgNi3WslGyECx8YnpKOLF5If7uaq01DtCtlEBL4bo7Sqqi3v/soMmB6CWH
+	zHPVZilYIMsGAKtp4XUHqkGDNFfJ/sb2YctJhJMMFyCHGeTNL5RDqkpkDwh3rFZd33kJ05cp9Gu
+	UzsBTJBP/qLr/C1gbbN3JADrZnSV3JWyFsNiFW+82itBK5VmE+G2JPntxeXgWl9VBugBVV+t8Q=
+	=
+X-Received: by 2002:a17:903:37c5:b0:24a:a2c5:a0a1 with SMTP id d9443c01a7336-24aa2c5a420mr239775485ad.21.1757048914838;
+        Thu, 04 Sep 2025 22:08:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHY/HqqWmtHl5e1NSr2FpgkUWCKmbzdwLY6Mz0jjApAO3v/DyNq9FxUsI0fmcFaLxI90E2kLw==
+X-Received: by 2002:a17:903:37c5:b0:24a:a2c5:a0a1 with SMTP id d9443c01a7336-24aa2c5a420mr239775175ad.21.1757048914300;
+        Thu, 04 Sep 2025 22:08:34 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24905da183asm198371925ad.74.2025.09.04.22.08.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 22:08:33 -0700 (PDT)
+Message-ID: <6502ef34-34c8-4aa5-a0f4-6860ac5a2802@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 10:38:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/AnN7A/or9kwBB3eNn0ui1UW";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] PCI: qcom: Add support for ECAM feature
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+        quic_vpernami@quicinc.com, mmareddy@quicinc.com
+References: <20250903195721.GA1216663@bhelgaas>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250903195721.GA1216663@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: OHTXoYs6l3S6OT0NQ42hCZIe2uuhyuo6
+X-Proofpoint-GUID: OHTXoYs6l3S6OT0NQ42hCZIe2uuhyuo6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX03I51abvxfHp
+ SDMmRTEMXmHJ4X10EjOmuuCs9G/e/9elS4MgGjQfq+4LXXoTk1MyeW8ilTktfLqjK9xN+/g05Tw
+ Y5rpWWuOcVM/CirUfggZ3bVbziENh73N3JFxuEh+pnXmC6MuVhq3zRBsr606CjQ4f2jg7+kOpn+
+ DKZYpzgCZndUfFv1S5APu20l2R7nRHRekjxQxpGZ6LfnQmLubEakllaHH+vB5E9gLDAeYlzZXGt
+ 8YRJ+x0n0M3bCxMdfVEouqyWZrWOVib6MpYJiO4DNVaD7cilttjDjDNulp4j+bIrZVvQYMKym1d
+ G0N+1n/8xmmJT0qYiU05ne96VjSR6zo7pFC8ku79MU5ls41uoy4YNZQOc7p9lEiKbHt/ATY1HGQ
+ MLeGOhWG
+X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68ba7054 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=9HwtANXkhL7ZsJXsY_EA:9
+ a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
 
---Sig_/AnN7A/or9kwBB3eNn0ui1UW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Wed, 3 Sep 2025 12:10:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the iwlwifi-next tree got a conflict in:
->=20
->   drivers/net/wireless/intel/iwlwifi/fw/uefi.c
->=20
-> between commit:
->=20
->   1d33694462fa ("wifi: iwlwifi: uefi: check DSM item validity")
->=20
-> from the net tree and commit:
->=20
->   f53f2bd8fc5f ("wifi: iwlwifi: uefi: remove runtime check of constant va=
-lues")
->=20
-> from the iwlwifi-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-> index 99a17b9323e9,44c7c565d1c6..000000000000
-> --- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-> @@@ -742,17 -744,6 +744,12 @@@ int iwl_uefi_get_dsm(struct iwl_fw_runt
->   		goto out;
->   	}
->  =20
-> - 	if (ARRAY_SIZE(data->functions) !=3D UEFI_MAX_DSM_FUNCS) {
-> - 		IWL_DEBUG_RADIO(fwrt, "Invalid size of DSM functions array\n");
-> - 		goto out;
-> - 	}
-> -=20
->  +	if (!(data->functions[DSM_FUNC_QUERY] & BIT(func))) {
->  +		IWL_DEBUG_RADIO(fwrt, "DSM func %d not in 0x%x\n",
->  +				func, data->functions[DSM_FUNC_QUERY]);
->  +		goto out;
->  +	}
->  +
->   	*value =3D data->functions[func];
->  =20
->   	IWL_DEBUG_RADIO(fwrt,
+On 9/4/2025 1:27 AM, Bjorn Helgaas wrote:
+> On Thu, Aug 28, 2025 at 01:04:26PM +0530, Krishna Chaitanya Chundru wrote:
+>> The ELBI registers falls after the DBI space, PARF_SLV_DBI_ELBI register
+>> gives us the offset from which ELBI starts. So override ELBI with the
+>> offset from PARF_SLV_DBI_ELBI and cfg win to map these regions.
+>>
+>> On root bus, we have only the root port. Any access other than that
+>> should not go out of the link and should return all F's. Since the iATU
+>> is configured for the buses which starts after root bus, block the
+>> transactions starting from function 1 of the root bus to the end of
+>> the root bus (i.e from dbi_base + 4kb to dbi_base + 1MB) from going
+>> outside the link through ECAM blocker through PARF registers.
+>>
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 70 ++++++++++++++++++++++++++++++++++
+>>   1 file changed, 70 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 5092752de23866ef95036bb3f8fae9bb06e8ea1e..8f3c86c77e2604fd7826083f63b66b4cb62a341d 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -55,6 +55,7 @@
+>>   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+>>   #define PARF_Q2A_FLUSH				0x1ac
+>>   #define PARF_LTSSM				0x1b0
+>> +#define PARF_SLV_DBI_ELBI			0x1b4
+>>   #define PARF_INT_ALL_STATUS			0x224
+>>   #define PARF_INT_ALL_CLEAR			0x228
+>>   #define PARF_INT_ALL_MASK			0x22c
+>> @@ -64,6 +65,16 @@
+>>   #define PARF_DBI_BASE_ADDR_V2_HI		0x354
+>>   #define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
+>>   #define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35c
+>> +#define PARF_BLOCK_SLV_AXI_WR_BASE		0x360
+>> +#define PARF_BLOCK_SLV_AXI_WR_BASE_HI		0x364
+>> +#define PARF_BLOCK_SLV_AXI_WR_LIMIT		0x368
+>> +#define PARF_BLOCK_SLV_AXI_WR_LIMIT_HI		0x36c
+>> +#define PARF_BLOCK_SLV_AXI_RD_BASE		0x370
+>> +#define PARF_BLOCK_SLV_AXI_RD_BASE_HI		0x374
+>> +#define PARF_BLOCK_SLV_AXI_RD_LIMIT		0x378
+>> +#define PARF_BLOCK_SLV_AXI_RD_LIMIT_HI		0x37c
+>> +#define PARF_ECAM_BASE				0x380
+>> +#define PARF_ECAM_BASE_HI			0x384
+>>   #define PARF_NO_SNOOP_OVERRIDE			0x3d4
+>>   #define PARF_ATU_BASE_ADDR			0x634
+>>   #define PARF_ATU_BASE_ADDR_HI			0x638
+>> @@ -87,6 +98,7 @@
+>>   
+>>   /* PARF_SYS_CTRL register fields */
+>>   #define MAC_PHY_POWERDOWN_IN_P2_D_MUX_EN	BIT(29)
+>> +#define PCIE_ECAM_BLOCKER_EN			BIT(26)
+>>   #define MST_WAKEUP_EN				BIT(13)
+>>   #define SLV_WAKEUP_EN				BIT(12)
+>>   #define MSTR_ACLK_CGC_DIS			BIT(10)
+>> @@ -134,6 +146,9 @@
+>>   /* PARF_LTSSM register fields */
+>>   #define LTSSM_EN				BIT(8)
+>>   
+>> +/* PARF_SLV_DBI_ELBI */
+>> +#define SLV_DBI_ELBI_ADDR_BASE			GENMASK(11, 0)
+>> +
+>>   /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+>>   #define PARF_INT_ALL_LINK_UP			BIT(13)
+>>   #define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
+>> @@ -317,6 +332,48 @@ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
+>>   	qcom_perst_assert(pcie, false);
+>>   }
+>>   
+>> +static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>> +	u64 addr, addr_end;
+>> +	u32 val;
+>> +
+>> +	/* Set the ECAM base */
+>> +	writel_relaxed(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
+>> +	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
+>> +
+>> +	/*
+>> +	 * The only device on root bus is the Root Port. Any access to the PCIe
+>> +	 * region will go outside the PCIe link. As part of enumeration the PCI
+>> +	 * sw can try to read to vendor ID & device ID with different device
+>> +	 * number and function number under root bus. As any access other than
+>> +	 * root bus, device 0, function 0, should not go out of the link and
+>> +	 * should return all F's. Since the iATU is configured for the buses
+>> +	 * which starts after root bus, block the transactions starting from
+>> +	 * function 1 of the root bus to the end of the root bus (i.e from
+>> +	 * dbi_base + 4kb to dbi_base + 1MB) from going outside the link.
+>> +	 */
+>> +	addr = pci->dbi_phys_addr + SZ_4K;
+>> +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
+>> +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE_HI);
+>> +
+>> +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE);
+>> +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE_HI);
+>> +
+>> +	addr_end = pci->dbi_phys_addr + SZ_1M - 1;
+> 
+> I guess this is an implicit restriction to a single Root Port on the
+> root bus at bb:00.0, right?  So when the qcom IP eventually supports
+> multiple Root Ports or even a single Root Port at a different
+> device/function number, this would have to be updated somehow?
+> 
+> No need to change anything here; just making sure I understand what's
+> going on.
+> 
+You are correct Bjorn, this is for single root port on the root bus.
+when there is multi root port we need to change this logic in future if
+QCOM decides to have multi root port devices.
 
-This is now a conflict between the wireless-next tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/AnN7A/or9kwBB3eNn0ui1UW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi6cDAACgkQAVBC80lX
-0Gyf5AgAh2FpHJpuXGtuzODAfaRcvBiF9tlg5Af2EsEgQj7VaWX7Qgzs802BFcCO
-WiU4DH39SLHTfX178+v+HZIIs0ysb6ImuqdiGkkoEyxAl40/7lX89hw3Qo1HYDWo
-hEyCQ8m6SAbrWp+csh8quYRx4NOWyFAVrjzUharEfeU25+SdPT11dIPlcDx0Ucae
-t1dUZvp3PXgJqSCugar48atsu8mdxVgltiEvJhzqr/fq8J/Da4FaDtyVEQgU3JjJ
-Fy6oCpEqHSen6hIAUD554WrlkkOMyAd5/pdVp7jtrpxCC6YgDsMgFcE3Z2Rb0wiK
-7c+xziCiF1+wGvy3hS7j964CwCgj3w==
-=f5nQ
------END PGP SIGNATURE-----
-
---Sig_/AnN7A/or9kwBB3eNn0ui1UW--
+- Krishna Chaitanya.
+>> +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT);
+>> +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT_HI);
+>> +
+>> +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT);
+>> +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT_HI);
+>> +
+>> +	val = readl_relaxed(pcie->parf + PARF_SYS_CTRL);
+>> +	val |= PCIE_ECAM_BLOCKER_EN;
+>> +	writel_relaxed(val, pcie->parf + PARF_SYS_CTRL);
+>> +}
+>> +
+>>   static int qcom_pcie_start_link(struct dw_pcie *pci)
+>>   {
+>>   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>> @@ -326,6 +383,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
+>>   		qcom_pcie_common_set_16gt_lane_margining(pci);
+>>   	}
+>>   
+>> +	if (pci->pp.ecam_enabled)
+>> +		qcom_pci_config_ecam(&pci->pp);
+>> +
+>>   	/* Enable Link Training state machine */
+>>   	if (pcie->cfg->ops->ltssm_enable)
+>>   		pcie->cfg->ops->ltssm_enable(pcie);
+>> @@ -1314,6 +1374,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>>   {
+>>   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+>> +	u16 offset;
+>>   	int ret;
+>>   
+>>   	qcom_ep_reset_assert(pcie);
+>> @@ -1322,6 +1383,15 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> +	if (pp->ecam_enabled) {
+>> +		/*
+>> +		 * Override ELBI when ECAM is enabled, as when ECAM
+>> +		 * is enabled ELBI moves along with the dbi config space.
+>> +		 */
+>> +		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
+>> +		pci->elbi_base = pci->dbi_base + offset;
+>> +	}
+>> +
+>>   	ret = qcom_pcie_phy_power_on(pcie);
+>>   	if (ret)
+>>   		goto err_deinit;
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
