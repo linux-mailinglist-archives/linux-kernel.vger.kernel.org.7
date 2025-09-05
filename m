@@ -1,183 +1,245 @@
-Return-Path: <linux-kernel+bounces-802376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4839FB451B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:39:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BF9B451C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 890FA7BE4F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806DE7AD92E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368ED27AC4C;
-	Fri,  5 Sep 2025 08:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5808027A129;
+	Fri,  5 Sep 2025 08:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R4b+CBZZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cU8OmHth"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80F1222594;
-	Fri,  5 Sep 2025 08:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FF71A9FB3;
+	Fri,  5 Sep 2025 08:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061530; cv=none; b=D2ks8FjOYMp1zzo2MrggSsAJQk3fj/IJoNxOGhyo2N/v2J0wF2QFB8wSYRCfqshm6G0HduqnhE1O7xXkEYZ/NtfOYFqOjigCiS+kmb4dlO0qh6bjaI/kz/NAc4nDV5E4YVhkm/CyFl45/8FtRdPDzmyow7yVdvFgRLuwxoywIyM=
+	t=1757061594; cv=none; b=GNEBpA5nYqkY01luei5brHZhqamXpC1a9P0+cSpqnaxikniTgFvAi2OrH0bOO+XI6hFkB6TTMi2AD7DabpiAouIzw7b6GSaBfYax4p2z25QBBJq/QqRfqJfDaupw+D0yqmCkinAb2elYAZA62AONMQ5ASF/uZVjrVKOjEh5i1bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061530; c=relaxed/simple;
-	bh=jkLTVGDQyGvp2VGSJ84Q/tzQ9JUtr5HITxCZfTbHdoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APYDPjEUYaTnbU8RCKGXZ71gRzL3pb2dcVcsNRUxmCEyeX0pyuZndg11alMDAG1dBSLlCX4KKDUyfR8hqKEm9yabakOdTtemImzxlGtRZ1N70xDMsGZCm20mMCZ8/pH4MT3w75gTTbNLkxJba6OiCyizOjfAv8S7zIytqOrTLJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R4b+CBZZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Om9p5nchqSzMFiVI8uUuwUfI4UaRwvpBhNH4IXNq5Hg=; b=R4b+CBZZ5G4FtZxCDVm1UoPQUo
-	v8kkly1N6o0/AOPJPJi0TJ5nUWajzLZOyYrf78kCoF+932Cpdv+JJ4VQxrLdu4TNxPt9IaR0w296U
-	nXMQGyQ5T2RtynQVzL2lME7/S8r1r/9ZxHG7APSRZRPYtoZWXyz/da/yg0idzNOzK5enKZkGJsAFh
-	TcdGonZKELB7XMFN94kFo6HeXtJ6qwbQG1/J/fSLpHLmOeCpAYMG8MvTfXqDWKksKjIl5e7RDrI9Y
-	NQ/a4ybnXuCNqzl+ylEf/k5CX2XyL5RnOwNFfXvKQZKBkw0kF4gfEyOCE7803jHKZEzVcWHY3Rrep
-	yYbpn5vQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuRxp-0000000EmVO-3F3o;
-	Fri, 05 Sep 2025 08:38:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 552C530034B; Fri, 05 Sep 2025 10:38:33 +0200 (CEST)
-Date: Fri, 5 Sep 2025 10:38:33 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
- uprobes/x86: Add uprobe syscall to speed up uprobe
-Message-ID: <20250905083833.GR4068168@noisy.programming.kicks-ass.net>
-References: <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLlKJWRs5etuvFuK@krava>
- <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
- <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
- <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
- <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
- <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
- <20250904215617.GR3245006@noisy.programming.kicks-ass.net>
- <20250904215826.GP4068168@noisy.programming.kicks-ass.net>
- <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1757061594; c=relaxed/simple;
+	bh=i8Fqq1+YDvq6ltSnkYjxfh2RSJGrjvrk0LThUF973iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LblqDx6n0z+dY+gM2xFdwNNthNxhOrY2Br/TfMCYw0vp705ZDykHo/G/IB2iKjFUpMqelWfhhwBPlC8CuLFwix19fFtZFanJe7fUcxwfU1UYvvwBOvUY5bVqFpzmphqGO1xGCv/72ogcoYHwmJENbJtLrH0AztBBMkEN0sEgt+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cU8OmHth; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757061590;
+	bh=i8Fqq1+YDvq6ltSnkYjxfh2RSJGrjvrk0LThUF973iI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cU8OmHth28mrcjuLguyHAJPef4lQL1E9y4lP0VHmKNYGAq0w9CT/57UWJI/m9RmKs
+	 Cus4X1hEg5M6VhZzPj8NeWVjCh/yPE1FZqFUOEIWk90K03czt29TVUdzFTfW4vX6DE
+	 i1qY8F5nfaebJsVDW7qALDJNLE6YtmBvQP0geECUy5VhEjzy0Xx6BVwaklHqFE8OYl
+	 6MGrn3j6f4G7pmrff+4zjHJw6HZqQya4ZuI4EwRL1R9udri661xZ7ERdn4tO55+izB
+	 25TDJzEh0fNJiDfXnqNXtu0oxziN7fqOeFlAUWw4iZ7SUls/l79PkJ3HQXNESayhCJ
+	 OyVA+SLnQlwrA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BF09517E0E20;
+	Fri,  5 Sep 2025 10:39:49 +0200 (CEST)
+Message-ID: <0e6592b7-6f6d-4291-992c-ff321c920381@collabora.com>
+Date: Fri, 5 Sep 2025 10:39:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
+To: Laura Nao <laura.nao@collabora.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com, wenst@chromium.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ kernel@collabora.com
+References: <20250829091913.131528-1-laura.nao@collabora.com>
+ <20250829091913.131528-20-laura.nao@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250829091913.131528-20-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 10:24:47AM +0200, Peter Zijlstra wrote:
-> +bool insn_is_nop(struct insn *insn)
-> +{
-> +	u8 rex, rex_b = 0, rex_x = 0, rex_r = 0, rex_w = 0;
-> +	u8 modrm, modrm_mod, modrm_reg, modrm_rm;
-> +	u8 sib = 0, sib_scale, sib_index, sib_base;
+Il 29/08/25 11:19, Laura Nao ha scritto:
+> Add support for the MT8196 mdpsys clock controller, which provides clock
+> gate control for MDP.
+> 
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>   drivers/clk/mediatek/Kconfig             |   7 +
+>   drivers/clk/mediatek/Makefile            |   1 +
+>   drivers/clk/mediatek/clk-mt8196-mdpsys.c | 186 +++++++++++++++++++++++
+>   3 files changed, 194 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
+> 
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 8e5cdae80748..68ac08cf8e82 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -1024,6 +1024,13 @@ config COMMON_CLK_MT8196_MCUSYS
+>   	help
+>   	  This driver supports MediaTek MT8196 mcusys clocks.
+>   
+> +config COMMON_CLK_MT8196_MDPSYS
+> +	tristate "Clock driver for MediaTek MT8196 mdpsys"
+> +	depends on COMMON_CLK_MT8196
+> +	default COMMON_CLK_MT8196
+> +	help
+> +	  This driver supports MediaTek MT8196 mdpsys clocks.
 > +
-> +	if (insn->rex_prefix.nbytes) {
-> +		rex = insn->rex_prefix.bytes[0];
-> +		rex_w = !!X86_REX_W(rex);
-> +		rex_r = !!X86_REX_R(rex);
-> +		rex_x = !!X86_REX_X(rex);
-> +		rex_b = !!X86_REX_B(rex);
-> +	}
+>   config COMMON_CLK_MT8196_PEXTPSYS
+>   	tristate "Clock driver for MediaTek MT8196 pextpsys"
+>   	depends on COMMON_CLK_MT8196
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 46358623c3e5..d2d8bc43e45b 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -155,6 +155,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o
+>   				   clk-mt8196-peri_ao.o
+>   obj-$(CONFIG_COMMON_CLK_MT8196_IMP_IIC_WRAP) += clk-mt8196-imp_iic_wrap.o
+>   obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) += clk-mt8196-mcu.o
+> +obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) += clk-mt8196-mdpsys.o
+>   obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
+>   obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
+>   obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
+> diff --git a/drivers/clk/mediatek/clk-mt8196-mdpsys.c b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
+> new file mode 100644
+> index 000000000000..a46b1627f1f3
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8196-mdpsys.c
+> @@ -0,0 +1,186 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025 MediaTek Inc.
+> + *                    Guangjie Song <guangjie.song@mediatek.com>
+> + * Copyright (c) 2025 Collabora Ltd.
+> + *                    Laura Nao <laura.nao@collabora.com>
+> + */
+> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
 > +
-> +	if (insn->modrm.nbytes) {
-> +		modrm = insn->modrm.bytes[0];
-> +		modrm_mod = X86_MODRM_MOD(modrm);
-> +		modrm_reg = X86_MODRM_REG(modrm) + 8*rex_r;
-> +		modrm_rm  = X86_MODRM_RM(modrm)  + 8*rex_b;
-> +	}
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
 > +
-> +	if (insn->sib.nbytes) {
-> +		sib = insn->sib.bytes[0];
-> +		sib_scale = X86_SIB_SCALE(sib);
-> +		sib_index = X86_SIB_INDEX(sib) + 8*rex_x;
-> +		sib_base  = X86_SIB_BASE(sib)  + 8*rex_b;
+> +#include "clk-gate.h"
+> +#include "clk-mtk.h"
 > +
-> +		modrm_rm = sib_base;
-> +	}
+> +static const struct mtk_gate_regs mdp0_cg_regs = {
+> +	.set_ofs = 0x104,
+> +	.clr_ofs = 0x108,
+> +	.sta_ofs = 0x100,
+> +};
 > +
-> +	switch (insn->opcode.bytes[0]) {
-> +	case 0x0f: /* 2nd byte */
-> +		break;
+> +static const struct mtk_gate_regs mdp1_cg_regs = {
+> +	.set_ofs = 0x114,
+> +	.clr_ofs = 0x118,
+> +	.sta_ofs = 0x110,
+> +};
 > +
-> +	case 0x89: /* MOV */
-> +		if (modrm_mod != 3) /* register-direct */
-> +			return false;
+> +static const struct mtk_gate_regs mdp2_cg_regs = {
+> +	.set_ofs = 0x124,
+> +	.clr_ofs = 0x128,
+> +	.sta_ofs = 0x120,
+> +};
 > +
-> +		if (insn->x86_64 && !rex_w) /* native size */
-> +			return false;
-> +
-> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
-> +			if (insn->prefixes.bytes[i] == 0x66) /* OSP */
-> +				return false;
-> +		}
-> +
-> +		return modrm_reg == modrm_rm; /* MOV %reg, %reg */
-> +
-> +	case 0x8d: /* LEA */
-> +		if (modrm_mod == 0 || modrm_mod == 3) /* register-indirect with disp */
-> +			return false;
-> +
-> +		if (insn->x86_64 && !rex_w) /* native size */
-> +			return false;
-> +
-> +		if (insn->displacement.value != 0)
-> +			return false;
-> +
-> +		if (sib & (sib_scale != 0 || sib_index != 4)) /* (%reg, %eiz, 1) */
+> +#define GATE_MDP0(_id, _name, _parent, _shift) {	\
+> +		.id = _id,				\
+> +		.name = _name,				\
+> +		.parent_name = _parent,			\
+> +		.regs = &mdp0_cg_regs,			\
+> +		.shift = _shift,			\
+> +		.flags = CLK_OPS_PARENT_ENABLE,		\
 
-Argh, that should obviously be: &&
+Why would MDP0 and MDP2 be different, as in why would MDP1 be so special to not
+need CLK_OPS_PARENT_ENABLE while the others do?
 
-> +			return false;
-> +
-> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
-> +			if (insn->prefixes.bytes[i] != 0x3e) /* DS */
-> +				return false;
-> +		}
-> +
-> +		return modrm_reg == modrm_rm; /* LEA 0(%reg), %reg */
-> +
-> +	case 0x90: /* NOP */
-> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
-> +			if (insn->prefixes.bytes[i] == 0xf3) /* REP */
-> +				return false; /* REP NOP -- PAUSE */
-> +		}
-> +		return true;
-> +
-> +	case 0xe9: /* JMP.d32 */
-> +	case 0xeb: /* JMP.d8 */
-> +		return insn->immediate.value == 0; /* JMP +0 */
-> +
-> +	default:
-> +		return false;
+Either they all do, or they all don't.
+
+I guess they all don't, but I'm not sure how you tested that at all, since the
+only way to test this is downstream (and upstream will very likely be different
+from that).
+
+Even though I think they don't need that - please add back CLK_OPS_PARENT_ENABLE
+to GATE_MDP1 to be safe, as in (all) MediaTek SoCs the multimedia subsystem is
+kinda separate from the rest.
+
+Once MT8196 MDP support is upstreamed, we will be able to run a number of tests
+to evaluate whether this flag is really needed or not.
+
+After all, if it turns out we can remove it, it's going to be a 3 lines patch,
+not a big deal.
+
+> +		.ops = &mtk_clk_gate_ops_setclr,	\
 > +	}
 > +
-> +	switch (insn->opcode.bytes[1]) {
-> +	case 0x1f:
-> +		return modrm_reg == 0; /* 0f 1f /0 -- NOPL */
-> +
-> +	default:
-> +		return false;
+> +#define GATE_MDP1(_id, _name, _parent, _shift) {	\
+> +		.id = _id,				\
+> +		.name = _name,				\
+> +		.parent_name = _parent,			\
+> +		.regs = &mdp1_cg_regs,			\
+> +		.shift = _shift,			\
+> +		.ops = &mtk_clk_gate_ops_setclr,	\
 > +	}
-> +}
+> +
+> +#define GATE_MDP2(_id, _name, _parent, _shift) {	\
+> +		.id = _id,				\
+> +		.name = _name,				\
+> +		.parent_name = _parent,			\
+> +		.regs = &mdp2_cg_regs,			\
+> +		.shift = _shift,			\
+> +		.flags = CLK_OPS_PARENT_ENABLE,		\
+> +		.ops = &mtk_clk_gate_ops_setclr,	\
+> +	}
+> +
+
+..snip..
+
+> +
+> +static const struct mtk_clk_desc mdp_mcd = {
+> +	.clks = mdp_clks,
+> +	.num_clks = ARRAY_SIZE(mdp_clks),
+> +	.need_runtime_pm = true,
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8196_mdpsys[] = {
+> +	{ .compatible = "mediatek,mt8196-mdpsys1", .data = &mdp1_mcd },
+> +	{ .compatible = "mediatek,mt8196-mdpsys0", .data = &mdp_mcd },
+
+0 comes before 1, swap those entries please.
+
+After applying the proposed fixes
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mdpsys);
+> +
+> +static struct platform_driver clk_mt8196_mdpsys_drv = {
+> +	.probe = mtk_clk_simple_probe,
+> +	.remove = mtk_clk_simple_remove,
+> +	.driver = {
+> +		.name = "clk-mt8196-mdpsys",
+> +		.of_match_table = of_match_clk_mt8196_mdpsys,
+> +	},
+> +};
+> +module_platform_driver(clk_mt8196_mdpsys_drv);
+> +
+> +MODULE_DESCRIPTION("MediaTek MT8196 Multimedia Data Path clocks driver");
+> +MODULE_LICENSE("GPL");
+
 
