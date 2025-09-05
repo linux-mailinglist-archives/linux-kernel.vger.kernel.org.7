@@ -1,78 +1,72 @@
-Return-Path: <linux-kernel+bounces-803311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6845B45D59
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3786CB45D5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C43607BD800
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADE317BE717
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C697B2FB085;
-	Fri,  5 Sep 2025 16:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9702FB0A9;
+	Fri,  5 Sep 2025 16:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8rE4WEp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf19mXo8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C6820330;
-	Fri,  5 Sep 2025 16:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCC631D74A;
+	Fri,  5 Sep 2025 16:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757088052; cv=none; b=l9pH22paZSCy81bNBq9GWX56FVBUZylB81Uy60qup0XqUSWh6HPSfIt2OuDuCWXq3XAHNhk1EDu+OLewhWJESIJHasAHwQIN20M1e7WDpx7JbqjbBMHJX1i2NaSoVrsWGCFufy88EB+4YtAkKcwsne/YWmeuL8lcwI1VnU8iL3k=
+	t=1757088126; cv=none; b=MYE3DViQhik0yK9EegvPFJfAMSVE1vBEYNgd2QhbbvLgo1S08AcL16fab7i/NZYNNaEq/7o9dgWdRSK/SI6WeEDAriCIvXUBFf0VArFa6tFjw75bXayjVulECq7PuE+qU1xYeaBvAPKFUMldDo6i5oMtM+kWO4tu5m58hpvSfk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757088052; c=relaxed/simple;
-	bh=R8F48XixHdf1G/WcAbluDKUvvQuIyQErT8a8h/wryh4=;
+	s=arc-20240116; t=1757088126; c=relaxed/simple;
+	bh=XtZf11jbbBoilXsBT63MRb4g16CbjYXTUzh33VUyndQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FDgUwQUH+bldacWYh+XVmCfGi/ehQfp3Dzm8UI/pKPvQZXXQ0oEdD2ZVBSjv7GOvVp9K98rvukp9r6IAZcLzibrct6/t9rD1McqGVMx2EknFpfn4P6eCmIYVCWtR1/TMrQ/FwMp/nwEJ/vjeLVH380DhN1P0Qep1z4Lsz2ehx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8rE4WEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D610C4CEF1;
-	Fri,  5 Sep 2025 16:00:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=edUTDMyFRyaN1DsTkFkeEBpfxD4L41xgRF9xhwNNya9sG0eHqt7PZVT6jKAVrf+raN64Kb814Ziz36in91JnyblJM26kEE4bYEQ9hQf2qswSLHcrJaOhedt0s/zN0d4K9fgIrd7Prp+HJmiMD/c4shqW5QePjZxo0Si2RM1pciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf19mXo8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13389C4CEF1;
+	Fri,  5 Sep 2025 16:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757088051;
-	bh=R8F48XixHdf1G/WcAbluDKUvvQuIyQErT8a8h/wryh4=;
+	s=k20201202; t=1757088126;
+	bh=XtZf11jbbBoilXsBT63MRb4g16CbjYXTUzh33VUyndQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O8rE4WEpacVIEiGmJc1tdHqvQeePbOwG5flmUg3IaXwVQhSJukB8A5YbM4jLvJBS8
-	 HJ7Dsz0nlpNTQcMtBFOVkE+doOrLP6Xg6uymd32GtbBg39/EaFKa4MIbBPB2mLz3IZ
-	 UIMB847WVU4nX9wiVyFNxokSTrWMlrLrLtziIbOsUJ/zNgz7qFDfxhZow/XRN5YtNU
-	 W0uWQ6ZH+x3WmZcmLoFwJzy2RfUnUS0JDEWFPrUIeO4vGJ+5cxvslWInSIfJRr7OLL
-	 hiGBakGPvDiJLXdChL+7ZOsynymbnBl3bc1G3MVmk8kTOWoo03+mR5spW3KxQ3TZom
-	 s2Io8nMXc8UPg==
-Date: Fri, 5 Sep 2025 09:00:51 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v20 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <202509050900.8A01B1E6@keescook>
-References: <20250902-clone3-shadow-stack-v20-0-4d9fff1c53e7@kernel.org>
- <20250902-clone3-shadow-stack-v20-4-4d9fff1c53e7@kernel.org>
- <20250905-nutria-befund-2f3e92003734@brauner>
- <0ff8b70e-283f-4d56-8bab-bcae11cd5bdb@sirena.org.uk>
+	b=Qf19mXo8p1IPKQFY0/UahTIRblVXtBICsSc3ebDDzITfYScFms3XLSzR4XT/AfBD1
+	 OySqhbWgBYAoQIPBm7WPAl1n8ItJ4IVZ7w32lKiBEOSAKlYAoJci+pSJYpRmfsSi+S
+	 2A3XDv2mWJhfeWexq7r+XRNFXiseFSMS/0Xjn9E1F1GwunHAuVWuE1YEbPUGOaSOgV
+	 BS4HYB46R7qujD8hm3bOvz3ki4e8bD4ZNWtYmnU6ro2b4OO6OBOCHVLvphT4el6TtF
+	 MnX+9ukJdOrtuZtElMAFMhCDHRVV/2HCvjYFYPuDpwfXB7OBg+cvAziKtB1RO6aPZc
+	 wMTMMngXUOpIw==
+Date: Fri, 5 Sep 2025 17:01:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Vivian Wang <uwu@dram.page>
+Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <20250905160158.GI553991@horms.kernel.org>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+ <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+ <20250905153500.GH553991@horms.kernel.org>
+ <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,30 +75,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ff8b70e-283f-4d56-8bab-bcae11cd5bdb@sirena.org.uk>
+In-Reply-To: <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
 
-On Fri, Sep 05, 2025 at 04:43:22PM +0100, Mark Brown wrote:
-> On Fri, Sep 05, 2025 at 05:21:59PM +0200, Christian Brauner wrote:
-> > On Tue, Sep 02, 2025 at 11:21:48AM +0100, Mark Brown wrote:
-> 
-> > > +		.shadow_stack_token	= args.shadow_stack_token,
-> 
-> > I'm not sure why this has to be named "shadow_stack_token" I think
-> > that's just confusing and we should just call it "shadow_stack" and be
-> > done with it. It's also a bit long of a field name imho.
-> 
-> I'm not hugely attached to the name, if you want to rename that's
-> perfectly fine by me.  My thinking was that there's a potential
-> confusion with it being a pointer to the base of the shadow stack by
-> comparison with the existing "stack" but I do agree that the resulting
-> name is quite long and if someone does actually get confused they should
-> discover the problem fairly rapidly in testing.  ss_token would shorter
-> but the abbreviation is less clear, whatever name you prefer is fine by
-> me.
+On Fri, Sep 05, 2025 at 11:45:29PM +0800, Vivian Wang wrote:
 
-Bike shed: shstk_token?
+...
 
+Hi Vivian,
 
--- 
-Kees Cook
+> >> +		status = emac_rx_frame_status(priv, rx_desc);
+> >> +		if (unlikely(status == RX_FRAME_DISCARD)) {
+> >> +			ndev->stats.rx_dropped++;
+> > As per the comment in struct net-device,
+> > ndev->stats should not be used in modern drivers.
+> >
+> > Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
+> >
+> > Sorry for not mentioning this in an earlier review of
+> > stats in this driver.
+> >
+> On a closer look, these counters in ndev->stats seems to be redundant
+> with the hardware-tracked statistics, so maybe I should just not bother
+> with updating ndev->stats. Does that make sense?
+
+For rx/tx packets/bytes I think that makes sense.
+But what about rx/tx drops?
+
+...
 
