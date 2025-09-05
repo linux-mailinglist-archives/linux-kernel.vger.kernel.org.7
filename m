@@ -1,59 +1,87 @@
-Return-Path: <linux-kernel+bounces-802602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8EEB45472
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:21:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FCAB45476
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786C7480B96
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2E1A42811
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B482D5C9E;
-	Fri,  5 Sep 2025 10:21:26 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF982D640A;
+	Fri,  5 Sep 2025 10:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hhf1vyfz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1667D2D4813;
-	Fri,  5 Sep 2025 10:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2429A26CE12
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067686; cv=none; b=lbW7tEUS5/D3x90FWf06EXNdqZx7LwAoVJSTJmE5sVTqSqTZZdo07nCx0RvEqJcK+lv/lWj7Hw/nAgnr6Q/XmV/yQKcQSvCWIqBiHicDtdDNF88gvltTL93YShoTRkUZrBAfNmEb7bbWidoBfGUx62B2l9dfP7ZI1Z0TRQQOwh8=
+	t=1757067699; cv=none; b=flj5VKYXTMojeLwESGdl0ASo/olSSzoaD838mSIe0LPCPqhH5QunlC767pq8YeEsO1GhblNyj1a+wEXLKrQr3uXtnMNYMbSVEP6e1zYfKYSQXboJaSFahUAeVuheqJOeGhme0yIQkdG5yJZrtMydkwuMSNnxxb+VLjH5avm+tus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067686; c=relaxed/simple;
-	bh=OfTOMWX66TbAfkqnKGzCFdhIOFRb5l9VXCVY15B8Ww4=;
+	s=arc-20240116; t=1757067699; c=relaxed/simple;
+	bh=qCppbG+eQP46tSiZEY0crGxJVA1nNjzZ4wk6qR9CveA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJjsovBX2u6NXwmH3Xd8kizvWTQ6QzRiO8n7G06pUNe/LfxeJkjU06CxVj0Xr5Ov0NCQ9rglEeStn/lTo8qeSnB5ribsWKJpWkwLFxYxKLDg0njWQkj7lh36o4GQUMM5WmDhknD3lwJ0EBkqNvNSvfVGIxm4rR3n1HJnXz9lfAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0e7797928a4211f0b29709d653e92f7d-20250905
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:14f482f1-1678-4861-8721-a3d21e06eb8e,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:91ab872eaa9ae72f0b505e024ab096ae,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|52,EDM:-3,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0e7797928a4211f0b29709d653e92f7d-20250905
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 829448159; Fri, 05 Sep 2025 18:21:16 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id E4DD9E008FA4;
-	Fri,  5 Sep 2025 18:21:15 +0800 (CST)
-X-ns-mid: postfix-68BAB99B-76698910
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 96DA5E008FA3;
-	Fri,  5 Sep 2025 18:21:07 +0800 (CST)
-Message-ID: <59305500-9ecf-4eeb-b4dc-9c9eed02454f@kylinos.cn>
-Date: Fri, 5 Sep 2025 18:21:06 +0800
+	 In-Reply-To:Content-Type; b=cx8EPKB0a8EaMpfdFZvnl38O8Zi97b90xBn8lSqXQKdWiXvgxIs4sxa3vvp0VMfjnI3BKW8zoeOfVLTH6EEsBZOsYtLgjDa92C6i0gTy5V5czUtfmpuWlkmxxoP0LQ2p6OkPPySoI+dM/ScCOcUbprMJwmtn5pCM1KTZEQraJaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hhf1vyfz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857XXbx008125
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 10:21:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YhX9I5xQxAo+v+fO6pOEhRjl3CA+K4fHzStrCxl2ggk=; b=hhf1vyfzR3s0A5fM
+	DAhvWijlnL9vn8hTAJrsAS/QJdRIOzhUHe4DNHvnBAM8c6AlYh6iIUH7pJtEFPQ8
+	0W8Qs4oByESPGxBuOwNPJhtOEGmpRK2+H5KNJf/n+NNGQBqGnz6ex49pvHYybjXH
+	kxSnv/O2nXS8q3iEocuDlNoyLETuVmh7SPehXjajgThSuYwgnk8O61mLDSz7CqQm
+	hkI71xkbjw9EObY1O7inRyc3U/U9yYF6yfqqFgu2yUATzP3N0/ZgjkdL8xOc8vOZ
+	c6D3WLQXrPYKgFRfHQ79XI5Pnt3JOGEOoFrLASo8OVKMl1/74j9dkudyDdA8hRzz
+	0pa5ew==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjtqf8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:21:36 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a9f5a43b6so4521666d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:21:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757067696; x=1757672496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YhX9I5xQxAo+v+fO6pOEhRjl3CA+K4fHzStrCxl2ggk=;
+        b=kvnuSzT1ld+Gr5Tz2C6chAeaxEBDBByMSI04qk5oB4Au2B/IGcaenYXZsfrPZXdZn2
+         FTQkjH23sz9Wzd0x0j9EAep5wIcpkrQ/OYMvWXYkc2o+h5e4P0toY5xlBAr88+xx3729
+         ZxgJojX0Kyd7D4zzETNwWj/D3v9sjLipm3/3z2+X09JOWsEqKUcKwyt2Wj8MPK4XHP4H
+         DycIjuKzzhdA04RTzcPOmG938KDEBKFhGtMy1W7ybij1+InTc3Pdm5LUJ4wtGrymrNjl
+         rA59ZhuWbtIMMyIe8DaiKzjEAZ5D3YOj3t5RvMUjaKo31j1m71TQz+X6lTgTppkZyE+3
+         lOGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVASQnYv7UGaHH3D3XzerVU2/+HnW5W4qzwpPJ2sTKKJXuOv8o0wFNSd8gpu3tdgG0cigyF+t8YelYqemE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSkMGGw4P9yTGRXBrh0L5jC2XxwmIPZuMDtAd+52TxMvVMXxbe
+	7OhUSzMCl6ohCjmejrXRSCQQJxwgShkUi83wtmUyZVbk7F9qKS6486IO0QcJhaApJNHmWoF+vkl
+	ey6LeI2gVLAY2x7aeWDVdpJvohbMXIfaCV1LQqg1Pj/6DRdIU5go6vMrsWncCrVgoCX4=
+X-Gm-Gg: ASbGnctNZ3AM5feeE9xs+PENpTO8fKphklxzNHWWZfcIBSmvC6Oflr98A8tUJzFWXeA
+	ghJAXUS9O9QynYQ84uGqBIML0Sc38iSXHSfMZWheL51j/FzjRMzvV4o5gpBhitqDUC4765RRcMe
+	HOd+/JdjkLwtTbBiZDY6WGGgox0CMtjFjwrRORsjmgg8BSjFpDjg6PzejGj7eqXlyho1vLT1xXc
+	W7JnDMU4AQjz52EWpNsWiE02PtalJeFOKlHZ9Iv+r0KUYcG+zJ2B7XlqFw1tmqTfVBPmuQvLyJJ
+	9VOcbYEEBZONkPzSnMAB9Imwk073GB70mIuQpp2tleJSDSXka3YG/zlffM9bIZvkWVvsxACpvU4
+	CKRBbASqzFGym4ogDSG376g==
+X-Received: by 2002:a05:622a:1a04:b0:4b4:95d0:ffd3 with SMTP id d75a77b69052e-4b495d11860mr62588791cf.1.1757067696156;
+        Fri, 05 Sep 2025 03:21:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsI15M5gOFq5piSlzss18AHTX4GYCxGcCIZkv13DSKshZ+1CACZN6exOPR+BcJ3u0qTjcFRQ==
+X-Received: by 2002:a05:622a:1a04:b0:4b4:95d0:ffd3 with SMTP id d75a77b69052e-4b495d11860mr62588541cf.1.1757067695509;
+        Fri, 05 Sep 2025 03:21:35 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0424cc1698sm1249620566b.21.2025.09.05.03.21.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 03:21:35 -0700 (PDT)
+Message-ID: <2408b467-f1b2-491f-a701-4e45e1a1e823@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 12:21:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,59 +89,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/10] thermal: imx: Use scope-based cleanup helper
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
- <20250903131733.57637-9-zhangzihuan@kylinos.cn>
- <20250905110551.00006588@huawei.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250905110551.00006588@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
+ privacy indicator
+To: Aleksandrs Vinarskis <alex@vinarskis.com>,
+        Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Daniel Thompson <danielt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Sakari Ailus
+ <sakari.ailus@linux.intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
+ <20250905-leds-v2-4-ed8f66f56da8@vinarskis.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250905-leds-v2-4-ed8f66f56da8@vinarskis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68bab9b1 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=I76Qk8w-AAAA:8 a=QE2y9RwVZUYpaLmqgykA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=vUPM0Wvl0xcrLs4nqPIT:22
+X-Proofpoint-GUID: imopev4AkGzjyjo-h2atcUXpY87fVVKR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX4f1DQ16Yjku/
+ Ih4/6XC516zCFMzt6IGCCo+3oVMJWosDzod3VDJjMKQg28IeKBuj1GESU35Qr94C261bIs7gEDS
+ FbyKZoAc+yBU79LCL6aKPfZJg8bOaReVnMkJxdLimQVjQQ+eXpaX36ctssLAbZMggN6yEjlJxfF
+ Xb4JZ5sZwuw0Q7NINXaMLEXbGz+XYH6Fmf1IPbmgyDjYHHk66Gjv7fjR9CooQ4AJSqJ8ep0Iicd
+ Zovrlhkw+vdz4wxCcak/L1/cQf5QJkT/mA8DmvjoUyxGBAC1Twa+Nmgp6+FECOzluSN3GPrCnxX
+ yWb8l3U9VjAZL5NtSO2yWFACddcRTTaC4ctz5PQEesDwabPJ6nj6VDc277QjdZu1AhsZ/VUYxM6
+ vav82hl1
+X-Proofpoint-ORIG-GUID: imopev4AkGzjyjo-h2atcUXpY87fVVKR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
+On 9/5/25 9:59 AM, Aleksandrs Vinarskis wrote:
+> Leverage newly introduced 'leds' and 'led-names' properties to pass
+> indicator's phandle and function to v4l2 subnode. The latter supports
+> privacy led since couple of years ago under 'privacy-led' designation.
+> Unlike initially proposed trigger-source based approach, this solution
+> cannot be easily bypassed from userspace, thus reducing privacy
+> concerns.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..03801b174713cb9962c10072a73e9516abc45930 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> @@ -83,15 +83,11 @@ leds {
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&cam_indicator_en>;
+>  
+> -		led-camera-indicator {
+> -			label = "white:camera-indicator";
+> +		privacy_led: privacy-led {
+>  			function = LED_FUNCTION_INDICATOR;
+>  			color = <LED_COLOR_ID_WHITE>;
+>  			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
+> -			linux,default-trigger = "none";
+>  			default-state = "off";
+> -			/* Reuse as a panic indicator until we get a "camera on" trigger */
+> -			panic-indicator;
 
-=E5=9C=A8 2025/9/5 18:05, Jonathan Cameron =E5=86=99=E9=81=93:
-> This radically changes the lifetime of the reference to policy.
-> If that is valid, then I'd expect a lot more description of why!
+I think panic-indicator may stay, as it's useful and mostly mutually
+exclusive (bar some multi-OS use cases) with the camera being on,
+with the comment above it obviously being removed as you did
 
-
-Thanks for your comment.
-
-Initially I thought policy was only used within this function, so I=20
-moved it here.
-After your feedback, I realize that this change might affect the=20
-reference lifetime in ways I didn=E2=80=99t fully consider. I need to rev=
-iew it=20
-further to ensure it=E2=80=99s safe.
-
+Konrad
 
