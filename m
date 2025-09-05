@@ -1,116 +1,399 @@
-Return-Path: <linux-kernel+bounces-803864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58721B4668B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:21:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F8BB4668C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2728B17F2D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1FCA44BC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2539227E1C5;
-	Fri,  5 Sep 2025 22:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FFE27E1C5;
+	Fri,  5 Sep 2025 22:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="TCqeOMh+";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="dPtpTyrI"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="B7Gsa8XV"
+Received: from mail-43170.protonmail.ch (mail-43170.protonmail.ch [185.70.43.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3147D191F98
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A0B191F98
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757110857; cv=none; b=e67QxHJT8m17yOhsxSVu5vEXkaGif4j+2XqBntBHSnLXBSYj1q3DxIH/2M6Vxf0sqglkD6EpkwiMo0wadJFfnxO0UncCaVXDgEb/rafT3Sg6oSHusaeR08UQvLn953L0LVW/KgBPoWs7E3ZyzvPBHx90xYAZ69EG1ZQtuqdLHlM=
+	t=1757110908; cv=none; b=eLfz/3Lq1ZRBX2NZ3nUGHOU467TtZhWUek/31VK5pxMI6xDdsp6oOCzgp0w7392CgaK2Z9B8+Uw6CDroP9tLtNjmDnqkRlAzaI2awt48catDLiyeKn1LenxbwNyLtXmVywBFZKRw3P5RpQncAgXN6NTEPJJwvApuWL0Pg07Xpvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757110857; c=relaxed/simple;
-	bh=IxLtAHdzEmLBZE2LYCCsTXG+Y30JEeRn1R1/WuErlk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5xpcQqGcrdZFVs+NIYOj6vwX6GdpKrxEPqDptU3vNePraOvCr16syKGh0QHwvCEwI3GkSFgNQl6TnuvkP1kossDxbLT0jAdDDRlDrmQtpg5qV4EUUBY/GJnSPsoxUusdEF5MuaZlCkO6MXD+RKwjYXyTZiHY7b2mxJQj+4lczc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=TCqeOMh+; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=dPtpTyrI; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757110848; x=1757715648;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=odc26EmzyJ8HGpXoYPMXxK2vau/006W/+LwKY/jri00=;
-	b=TCqeOMh+LiJj3QUTqFaSc9rzXgwRa+HQTJ25aT2mgd20EMKIVRaXBH0FMSMI669cEEap4CsRjCbMy
-	 eWYwom2px4Ts9s+/xn/aLTmU6Idnb67yIfMwjgVsloQpv20pNINeboBaDFrMJOzYqcHwRL6SCDCILm
-	 2gk86JTdrXLYQl+i4fZyfj5d6/ziZsOFPriAwZejwWjW98MS6rMT2J6IjcGdq4WqzsNPurpcr1j1BF
-	 hmWWW0S1fA/4n7x3/UpslHS7konv+VM43ZeEF8ZM4o9uejj7Xkr6LhoQBApGeeR9xB2u6VHg9esu5N
-	 7yMahW/zvA5UdWu4r66iSuMYXHJShuA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757110848; x=1757715648;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=odc26EmzyJ8HGpXoYPMXxK2vau/006W/+LwKY/jri00=;
-	b=dPtpTyrITZpEsdUxVo9uhiVbg8GNRG6UIPYCNNOMgE/ZpxiviHFRR7Yu2R67F5QhZbOAMEZkA/kOq
-	 nNyT+vtCA==
-X-HalOne-ID: 92c59c38-8aa6-11f0-9393-632fe8569f3f
-Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 92c59c38-8aa6-11f0-9393-632fe8569f3f;
-	Fri, 05 Sep 2025 22:20:48 +0000 (UTC)
-Message-ID: <16998440-84fb-45a4-9134-5dcff71ee68d@konsulko.se>
-Date: Sat, 6 Sep 2025 00:20:47 +0200
+	s=arc-20240116; t=1757110908; c=relaxed/simple;
+	bh=PzMU+GKqYsj4rcypaiju2z/OZynVhBL0hS1lVrxqg6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfOEb8zKP5ZuJck4MPTcMnWOw2S0d7/z6grd8ZDqPkmetLMz6xadCGjgX93g+b4rl/l7qYQNa2wFKnHVY6KuzCfDHO/C7q6UN5YvXGSzqaCLWlUO4KIS38XoGAvsKkUOkUSlHapd9elZISzLbiQTOL7XijsB8myv2d4JTWqeQZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=B7Gsa8XV; arc=none smtp.client-ip=185.70.43.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=protonmail3; t=1757110901; x=1757370101;
+	bh=FxWk3Q5v/enJfxs9GXwFtW0/oFYzvPIA0skhSYzwXbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=B7Gsa8XVYseX6grgfKcs+LdINZU+8d6PWMf3ecYhgRno/uPhG+Vw9vH0ZkhDMDtE8
+	 baYrITuMPk9WR7piE9YVKanRuK4A0bLLT+61WaU9E1xb/Q+7B13DyeN/dxMO9/5CY/
+	 LNXkFeiMnzC9rG45HXeCZXm5OqVIYtPEc3y+xAKaLSkmFFwecnpHMk8JolXFBPz2EY
+	 OCnx+DFb0JHl2udF08Ijfe3u25udKKvRK6kmMX/+aBHd/DeJlY/SsYLKNlCEX5iA+9
+	 s3DzSHeHPekIOrFu4RaZTyBbtY7vX9rBwb8xQ4msGisZeY+7Gr3K+SKL8KT/x0ptfr
+	 sR/ZAj7PQ2PRA==
+X-Pm-Submission-Id: 4cJW6941gnz1DDLC
+Date: Fri, 5 Sep 2025 22:21:34 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	dakr@kernel.org, acourbot@nvidia.com,
+	Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] nova-core: bitstruct: Add support for different
+ storage widths
+Message-ID: <aLtiN9B8ckCF4hSa@archiso>
+References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
+ <20250903215428.1296517-3-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: remove zpool
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <20250904164710.210731847fe25d9419203886@linux-foundation.org>
- <f0869789-ee30-4eb9-840a-502d031df1f5@konsulko.se>
- <20250905113043.3fb70f94c86445617266c958@linux-foundation.org>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <20250905113043.3fb70f94c86445617266c958@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903215428.1296517-3-joelagnelf@nvidia.com>
 
-
-
-On 9/5/25 20:30, Andrew Morton wrote:
-> On Fri, 5 Sep 2025 07:42:34 +0200 Vitaly Wool <vitaly.wool@konsulko.se> wrote:
+On Wed, Sep 03, 2025 at 05:54:26PM -0400, Joel Fernandes wrote:
+> Previously, bitstructs were hardcoded to use u32 as the underlying
+> storage type.  Add support for different storage types (u8, u16, u32,
+> u64) to the bitstruct macro.
 > 
->>
->>
->> On 9/5/25 01:47, Andrew Morton wrote:
->>> On Thu,  4 Sep 2025 11:33:24 +0200 Vitaly Wool <vitaly.wool@konsulko.se> wrote:
->>>
->>>>> With zswap using zsmalloc directly, there are no more in-tree users of
->>>>> this code. Remove it.
->>>>>
->>>>> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
->>>>
->>>> Per the previous discussions, this gets a *NACK* from my side. There is
->>>> hardly anything _technical_ preventing new in-tree users of zpool API.
->>>> zpool API is neutral and well-defined, I don’t see *any* good reason for
->>>> it to be phased out.
->>>
->>> Well, we have the zpool code and we know it works.  If a later need for
->>> the zpool layer is demonstrated then we can unremove the code at that
->>> time.
->>
->> The whole patchset [1] depends on zpool, with the whole intention to use
->> it on the Rust side.
->>
->> [1] https://lkml.org/lkml/2025/8/23/232
+> New syntax is: struct Name: <type ex., u32> { ... }
 > 
-> Well, that puts a Rust wrapper around zpool.  But what user-visible
-> benefit does it (or shall it) enable?
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/bitstruct.rs   | 71 ++++++++++++++++------------
+>  drivers/gpu/nova-core/regs/macros.rs | 16 +++----
+>  2 files changed, 48 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
+> index 1dd9edab7d07..068334c86981 100644
+> --- a/drivers/gpu/nova-core/bitstruct.rs
+> +++ b/drivers/gpu/nova-core/bitstruct.rs
+> @@ -9,7 +9,7 @@
+>  ///
+>  /// ```rust
+>  /// bitstruct! {
+> -///     struct ControlReg {
+> +///     struct ControlReg: u32 {
+>  ///         3:0       mode        as u8 ?=> Mode;
+>  ///         7:4       state       as u8 => State;
+>  ///     }
+> @@ -34,21 +34,21 @@
+>  ///   and returns the result. This is useful with fields for which not all values are valid.
+>  macro_rules! bitstruct {
+>      // Main entry point - defines the bitfield struct with fields
+> -    (struct $name:ident $(, $comment:literal)? { $($fields:tt)* }) => {
+> -        bitstruct!(@core $name $(, $comment)? { $($fields)* });
+> +    (struct $name:ident : $storage:ty $(, $comment:literal)? { $($fields:tt)* }) => {
+> +        bitstruct!(@core $name $storage $(, $comment)? { $($fields)* });
+>      };
+>  
+>      // All rules below are helpers.
+>  
+>      // Defines the wrapper `$name` type, as well as its relevant implementations (`Debug`,
+>      // `Default`, `BitOr`, and conversion to the value type) and field accessor methods.
+> -    (@core $name:ident $(, $comment:literal)? { $($fields:tt)* }) => {
+> +    (@core $name:ident $storage:ty $(, $comment:literal)? { $($fields:tt)* }) => {
+>          $(
+>          #[doc=$comment]
+>          )?
+>          #[repr(transparent)]
+>          #[derive(Clone, Copy)]
+> -        pub(crate) struct $name(u32);
+> +        pub(crate) struct $name($storage);
+>  
+>          impl ::core::ops::BitOr for $name {
+>              type Output = Self;
+> @@ -58,20 +58,20 @@ fn bitor(self, rhs: Self) -> Self::Output {
+>              }
+>          }
+>  
+> -        impl ::core::convert::From<$name> for u32 {
+> -            fn from(val: $name) -> u32 {
+> +        impl ::core::convert::From<$name> for $storage {
+> +            fn from(val: $name) -> $storage {
+>                  val.0
+>              }
+>          }
+>  
+> -        bitstruct!(@fields_dispatcher $name { $($fields)* });
+> +        bitstruct!(@fields_dispatcher $name $storage { $($fields)* });
+>      };
+>  
+>      // Captures the fields and passes them to all the implementers that require field information.
+>      //
+>      // Used to simplify the matching rules for implementers, so they don't need to match the entire
+>      // complex fields rule even though they only make use of part of it.
+> -    (@fields_dispatcher $name:ident {
+> +    (@fields_dispatcher $name:ident $storage:ty {
+>          $($hi:tt:$lo:tt $field:ident as $type:tt
+>              $(?=> $try_into_type:ty)?
+>              $(=> $into_type:ty)?
+> @@ -80,7 +80,7 @@ fn from(val: $name) -> u32 {
+>          )*
+>      }
+>      ) => {
+> -        bitstruct!(@field_accessors $name {
+> +        bitstruct!(@field_accessors $name $storage {
+>              $(
+>                  $hi:$lo $field as $type
+>                  $(?=> $try_into_type)?
+> @@ -89,13 +89,13 @@ fn from(val: $name) -> u32 {
+>              ;
+>              )*
+>          });
+> -        bitstruct!(@debug $name { $($field;)* });
+> -        bitstruct!(@default $name { $($field;)* });
+> +        bitstruct!(@debug $name $storage { $($field;)* });
+> +        bitstruct!(@default $name $storage { $($field;)* });
+>      };
+>  
+>      // Defines all the field getter/setter methods for `$name`.
+>      (
+> -        @field_accessors $name:ident {
+> +        @field_accessors $name:ident $storage:ty {
+>          $($hi:tt:$lo:tt $field:ident as $type:tt
+>              $(?=> $try_into_type:ty)?
+>              $(=> $into_type:ty)?
+> @@ -111,7 +111,7 @@ fn from(val: $name) -> u32 {
+>          #[allow(dead_code)]
+>          impl $name {
+>              $(
+> -            bitstruct!(@field_accessor $name $hi:$lo $field as $type
+> +            bitstruct!(@field_accessor $name $storage, $hi:$lo $field as $type
+>                  $(?=> $try_into_type)?
+>                  $(=> $into_type)?
+>                  $(, $comment)?
+> @@ -145,11 +145,11 @@ impl $name {
+>  
+>      // Catches fields defined as `bool` and convert them into a boolean value.
+>      (
+> -        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
+> +        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
+>              $(, $comment:literal)?;
+>      ) => {
+>          bitstruct!(
+> -            @leaf_accessor $name $hi:$lo $field
+> +            @leaf_accessor $name $storage, $hi:$lo $field
+>              { |f| <$into_type>::from(if f != 0 { true } else { false }) }
+>              $into_type => $into_type $(, $comment)?;
+>          );
+> @@ -157,17 +157,17 @@ impl $name {
+>  
+>      // Shortcut for fields defined as `bool` without the `=>` syntax.
+>      (
+> -        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
+> +        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
+>      ) => {
+> -        bitstruct!(@field_accessor $name $hi:$lo $field as bool => bool $(, $comment)?;);
+> +        bitstruct!(@field_accessor $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
+>      };
+>  
+>      // Catches the `?=>` syntax for non-boolean fields.
+>      (
+> -        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
+> +        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
+>              $(, $comment:literal)?;
+>      ) => {
+> -        bitstruct!(@leaf_accessor $name $hi:$lo $field
+> +        bitstruct!(@leaf_accessor $name $storage, $hi:$lo $field
+>              { |f| <$try_into_type>::try_from(f as $type) } $try_into_type =>
+>              ::core::result::Result<
+>                  $try_into_type,
+> @@ -178,29 +178,38 @@ impl $name {
+>  
+>      // Catches the `=>` syntax for non-boolean fields.
+>      (
+> -        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
+> +        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
+>              $(, $comment:literal)?;
+>      ) => {
+> -        bitstruct!(@leaf_accessor $name $hi:$lo $field
+> +        bitstruct!(@leaf_accessor $name $storage, $hi:$lo $field
+>              { |f| <$into_type>::from(f as $type) } $into_type => $into_type $(, $comment)?;);
+>      };
+>  
+>      // Shortcut for non-boolean fields defined without the `=>` or `?=>` syntax.
+>      (
+> -        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type:tt
+> +        @field_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
+>              $(, $comment:literal)?;
+>      ) => {
+> -        bitstruct!(@field_accessor $name $hi:$lo $field as $type => $type $(, $comment)?;);
+> +        bitstruct!(@field_accessor $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
+>      };
+>  
+>      // Generates the accessor methods for a single field.
+>      (
+> -        @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
+> +        @leaf_accessor $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident
+>              { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
+>      ) => {
+>          ::kernel::macros::paste!(
+>          const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
+> -        const [<$field:upper _MASK>]: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+> +        const [<$field:upper _MASK>]: $storage = {
+> +            // Generate mask for shifting
+> +            match ::core::mem::size_of::<$storage>() {
+> +                1 => ::kernel::bits::genmask_u8($lo..=$hi) as $storage,
+> +                2 => ::kernel::bits::genmask_u16($lo..=$hi) as $storage,
+> +                4 => ::kernel::bits::genmask_u32($lo..=$hi) as $storage,
+> +                8 => ::kernel::bits::genmask_u64($lo..=$hi) as $storage,
 
-There's at least one user ([2]) of that interface in the pipeline.
+Not really important for current users, but something to think about for
+the future is fields that are represented using byte arrays (e.g. a
+`u24` represented as `[u8; 3]`).
 
-[2] https://github.com/vwool/linux-mm/blob/rbtree_experiment/mm/zblock.rs
+I think your approach here could be fairly easily modified to handle
+those use-cases, just something to think about.
 
+For the byte array storage types, you would also need to think about
+endianness (MSB v. LSB).
+
+> +                _ => <$storage>::MAX
+> +            }
+> +        };
+>          const [<$field:upper _SHIFT>]: u32 = Self::[<$field:upper _MASK>].trailing_zeros();
+>          );
+>  
+> @@ -211,7 +220,7 @@ impl $name {
+>          #[inline(always)]
+>          pub(crate) fn $field(self) -> $res_type {
+>              ::kernel::macros::paste!(
+> -            const MASK: u32 = $name::[<$field:upper _MASK>];
+> +            const MASK: $storage = $name::[<$field:upper _MASK>];
+>              const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+>              );
+>              let field = ((self.0 & MASK) >> SHIFT);
+> @@ -226,9 +235,9 @@ pub(crate) fn $field(self) -> $res_type {
+>          )?
+>          #[inline(always)]
+>          pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
+> -            const MASK: u32 = $name::[<$field:upper _MASK>];
+> +            const MASK: $storage = $name::[<$field:upper _MASK>];
+>              const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+> -            let value = (u32::from(value) << SHIFT) & MASK;
+> +            let value = (<$storage>::from(value) << SHIFT) & MASK;
+>              self.0 = (self.0 & !MASK) | value;
+>  
+>              self
+> @@ -237,7 +246,7 @@ pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
+>      };
+>  
+>      // Generates the `Debug` implementation for `$name`.
+> -    (@debug $name:ident { $($field:ident;)* }) => {
+> +    (@debug $name:ident $storage:ty { $($field:ident;)* }) => {
+>          impl ::core::fmt::Debug for $name {
+>              fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+>                  f.debug_struct(stringify!($name))
+> @@ -251,7 +260,7 @@ fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+>      };
+>  
+>      // Generates the `Default` implementation for `$name`.
+> -    (@default $name:ident { $($field:ident;)* }) => {
+> +    (@default $name:ident $storage:ty { $($field:ident;)* }) => {
+>          /// Returns a value for the bitstruct where all fields are set to their default value.
+>          impl ::core::default::Default for $name {
+>              fn default() -> Self {
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
+> index 3fb6852dff04..bbfeab147c9f 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -284,25 +284,25 @@ pub(crate) trait RegisterBase<T> {
+>  macro_rules! register {
+>      // Creates a register at a fixed offset of the MMIO space.
+>      ($name:ident @ $offset:literal $(, $comment:literal)? { $($fields:tt)* } ) => {
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_fixed $name @ $offset);
+>      };
+>  
+>      // Creates an alias register of fixed offset register `alias` with its own fields.
+>      ($name:ident => $alias:ident $(, $comment:literal)? { $($fields:tt)* } ) => {
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_fixed $name @ $alias::OFFSET);
+>      };
+>  
+>      // Creates a register at a relative offset from a base address provider.
+>      ($name:ident @ $base:ty [ $offset:literal ] $(, $comment:literal)? { $($fields:tt)* } ) => {
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_relative $name @ $base [ $offset ]);
+>      };
+>  
+>      // Creates an alias register of relative offset register `alias` with its own fields.
+>      ($name:ident => $base:ty [ $alias:ident ] $(, $comment:literal)? { $($fields:tt)* }) => {
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_relative $name @ $base [ $alias::OFFSET ]);
+>      };
+>  
+> @@ -313,7 +313,7 @@ macro_rules! register {
+>          }
+>      ) => {
+>          static_assert!(::core::mem::size_of::<u32>() <= $stride);
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_array $name @ $offset [ $size ; $stride ]);
+>      };
+>  
+> @@ -334,7 +334,7 @@ macro_rules! register {
+>              $(, $comment:literal)? { $($fields:tt)* }
+>      ) => {
+>          static_assert!(::core::mem::size_of::<u32>() <= $stride);
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_relative_array $name @ $base [ $offset [ $size ; $stride ] ]);
+>      };
+>  
+> @@ -356,7 +356,7 @@ macro_rules! register {
+>          }
+>      ) => {
+>          static_assert!($idx < $alias::SIZE);
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_relative $name @ $base [ $alias::OFFSET + $idx * $alias::STRIDE ] );
+>      };
+>  
+> @@ -365,7 +365,7 @@ macro_rules! register {
+>      // to avoid it being interpreted in place of the relative register array alias rule.
+>      ($name:ident => $alias:ident [ $idx:expr ] $(, $comment:literal)? { $($fields:tt)* }) => {
+>          static_assert!($idx < $alias::SIZE);
+> -        bitstruct!(struct $name $(, $comment)? { $($fields)* } );
+> +        bitstruct!(struct $name: u32 $(, $comment)? { $($fields)* } );
+>          register!(@io_fixed $name @ $alias::OFFSET + $idx * $alias::STRIDE );
+>      };
+>  
+> -- 
+> 2.34.1
+> 
+> 
+
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
