@@ -1,217 +1,371 @@
-Return-Path: <linux-kernel+bounces-803289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99561B45D04
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:51:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F8CB45CFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86927C7953
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3585E7ADD90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC6931D74F;
-	Fri,  5 Sep 2025 15:46:09 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2CC30214C;
+	Fri,  5 Sep 2025 15:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Plb916g7"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821ED31D746;
-	Fri,  5 Sep 2025 15:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2CC31D746;
+	Fri,  5 Sep 2025 15:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087168; cv=none; b=l5IhRk+MPpUkUWf+CgkEutaAw9LHYJnr+SXgAjzY6BAAF+qHNXJSkiyQLzCEa3e9Vc9/SA+GOIgCve57zcHHbjTyk5L56YW6cGuT5ks8tcOEDRI+fUSSlAwcpdK8VdoCBni+THJQmoTVQ0qmnnrSZpHskuICR9T/f792cGlukL4=
+	t=1757087209; cv=none; b=Nrm5QUZv8ava00OCZ/OfuSh8JknmiMeS/uq/hT3jYETvnRYs12Tu5JFmuypAyk+LRBYiudcbjKST4ClQ6xH/xZPS+/SSbUzqiW7xFASXRNqJSnnzkioYyLE+0DOd4YQWVEBT2NWzKy4+0VqQ3chUx6BxHzOLJ3wRX55LZOVloKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087168; c=relaxed/simple;
-	bh=OKhzNW9ZD2RgTy4457MbKDaoTUd9Wh+DG8e3zQRGXwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s7LPeZV/tvrPO7YnVmvbHY19Ti86okmIdLbHKka6Ftpb0kl/+2qvNYSZMQmTec3tfVkeiwRHwZSzGoZ5OxBouxkCxd8oh/t4aooy4gOFL3QrdD8PfMveWvFCZkUNsWWS2TG/g6lHtEMfzn0RdyKam8ygE0cMA8FicmHGFWVxkn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.106] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowAAnd4GZBbtosNvWAA--.30834S2;
-	Fri, 05 Sep 2025 23:45:29 +0800 (CST)
-Message-ID: <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
-Date: Fri, 5 Sep 2025 23:45:29 +0800
+	s=arc-20240116; t=1757087209; c=relaxed/simple;
+	bh=WgrxH3lG2+fvh6S9Kworr7I4wyXCwAYVcDzvGNGNtZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nlAhQiERiM3vjC6e4FQf12sEJhdq6kxyOQpWvkd+ZwXrVUo6ER4C/gNANpB5BuNRErsaLIDbuLTRWGOl3n1xO2waEMtkeqlUB9fTcescz8TxY0xyv0IUK/+Hkw8yD33iVSSceSgssoXuR6AYbcHPhSGjjQ/NAcRdx6JHrg0y0uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Plb916g7; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso15637145e9.2;
+        Fri, 05 Sep 2025 08:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757087205; x=1757692005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yM/kpsrWuS7EbRNYLGZUP0tAA7bvvftiQ6cg5jjOdtc=;
+        b=Plb916g7CIXX2CCCE09x7vNm67VC5qT36xSoPJfDmvQbKzxH76uj5M4ILWSMwS8r+W
+         KDinP34O35hpZDC4kzLdBTKRprPefzsiByAka1OOrv9GmwIz7UBYQeEHOYkujVKDVYpi
+         N5cAYINWh4NidDI1dJ408PJvKhNIQQBRo0awVLyKaK6Isd060TrnzGyzyVgqtD2J9cKh
+         WYZplwyxjKoxje2uYgzgcs8EKbNdNsO/eT6JM7YRQPjhs6t3WSoLK8aoCHHQXtUrsbmS
+         ifjVZXfkMy7/NCfFQkDadkhjDIzfD4GogkJZ+bcnC1pAChN0tvan67CWGoSX97WrLyBU
+         1ONA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757087205; x=1757692005;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yM/kpsrWuS7EbRNYLGZUP0tAA7bvvftiQ6cg5jjOdtc=;
+        b=mnHbZrO0gJniQo+lB+WNYiXo5kF7dvtbzIDZRrbo1OAnx5cZP3g4nXTi4ew5gDk3mq
+         vTMIH/8/H/AcLvssXtoUwkpdZxjNxpIkWIKfMBEJWRx58nJt1szjnJMliLNMxCASe7Ot
+         2vp1yleFkpXhtsNhRKnkDBTzoELcHZxZ+Fco0DpBRSd5EjiG0Z1g4g1HoNE5Ufwhu/IS
+         wb21eBnL0x4TBEjohdPkzchRebHbxToxKyvEsJAP0F3J/aarEE9eYAVDWSJOghTw2III
+         eaqXUfLGjkk+HNPI981YrcHnw7aB9NXaB+Gxgh2djozA8eZA+687Fat6wfXgqwWylGWR
+         3kcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk2MHRhBbvS48LG4aIgUFOP36LgPzXWsaNaeAfOvvGvdfxAYNMQOTmF4LZ0IFuWE834crlwwgpwjzwj9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwitQX4e+AFdvqls2idroHYEt2qAjxpSWT4V0hMxQmQrf7Am6Lj
+	l65ve7NwOjpx01Fnpphedrrhc98Y9OxflRKDnCPIPHHL3sgIVI1681F9RdmsjhPF5ktXLQ==
+X-Gm-Gg: ASbGnctTtZwRHpwk16qWOyoQijvb5EcUBzKIV3CsbvUVierrfAwxXHbvcpSEHcoYeKD
+	vUeujV31UD0Kg8rH9LxDClZwCCUXYUasrQC3EBpg+Giv8IsdGHx7iOMqjxtdNo2/hHhMnTOnGqf
+	e9T+cgXRy2NjwjOW7Oh+zetBLHMZyZK1EJfYGbKeJ0TgoGMYgQtWwmxCNIns6LzKbeQ/KXU7Xke
+	a4xr7mXoS9pVZqwf9GHFepIR2ytrOoKOU3vXXA5BiDXDJceyHsUaDfb66zqVmnqySLHQ6pJnddp
+	jUyyvUXpTy8Bk8miZj+QSKrtVqB8XGrMvawD8h1PAjrsHCKjEMwIdn9MQONMfSBGdtD1dPn3XhL
+	th3KvSUceyIrFbBKDnj9m7M9H03w=
+X-Google-Smtp-Source: AGHT+IF2rT1+TS5L9oKcWYnx9bd3WcpTH0tQRr6+IS6eToCzikMbl21hDow2X6nBhwzcyUfhn3BhiA==
+X-Received: by 2002:a05:600c:5492:b0:45b:9a7b:66ba with SMTP id 5b1f17b1804b1-45b9a7b67ffmr115538645e9.14.1757087204394;
+        Fri, 05 Sep 2025 08:46:44 -0700 (PDT)
+Received: from Al-Qamar ([2a00:f29:348:d0f:44dd:9238:4455:2174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc3fasm31472842f8f.5.2025.09.05.08.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 08:46:43 -0700 (PDT)
+From: Fidal Palamparambil <rootuserhere@gmail.com>
+To: linux-modules@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	petr.pavlu@suse.com,
+	da.gomez@kernel.org,
+	samitolvanen@google.com,
+	linux-kernel@vger.kernel.org,
+	Fidal palamparambil <rootuserhere@gmail.com>
+Subject: [PATCH] module : fix signature checker pointer arithmetic and bounds check
+Date: Fri,  5 Sep 2025 19:45:49 +0400
+Message-ID: <20250905154550.130-1-rootuserhere@gmail.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
-References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
- <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
- <20250905153500.GH553991@horms.kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250905153500.GH553991@horms.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:rQCowAAnd4GZBbtosNvWAA--.30834S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFy8tw4rWFykAF18GFy7trb_yoW7JrWrpa
-	y5ta1DCF1UXF4jgrnaqF4UZFn3t3WfJr1UuFyYyrWF9FnFyrs7KFy8Kr17K34xCFW8uF4Y
-	9w1j9347GFZ8ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
-	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUvaZXDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-Hi Simon,
+From: Fidal palamparambil <rootuserhere@gmail.com>
 
-Thanks for the review.
+This patch fixes :
+ - invalid module_param type (bool_enable_only → bool)
+ - unsafe pointer arithmetic on void *
+ - missing bounds check for sig_len, preventing underflow/OOB
+ - export set_module_sig_enforced for consistency
 
-(I have a question about the use of ndev->stats - see below.)
+Signed-off-by : Fidal Palamparambil <rootuserhere@gmail.com>
+Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
+---
+ kernel/module/signing.c    |  48 ++++++++------
+ kernel/module/signing.orig | 125 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 155 insertions(+), 18 deletions(-)
+ create mode 100644 kernel/module/signing.orig
 
-On 9/5/25 23:35, Simon Horman wrote:
-> On Fri, Sep 05, 2025 at 07:09:31PM +0800, Vivian Wang wrote:
->> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
->> that only superficially resembles some other embedded MACs. SpacemiT
->> refers to them as "EMAC", so let's just call the driver "k1_emac".
->>
->> Supports RGMII and RMII interfaces. Includes support for MAC hardware
->> statistics counters. PTP support is not implemented.
->>
->> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
->> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
->> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ...
->
->> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
-> ...
->
->> +static void emac_init_hw(struct emac_priv *priv)
->> +{
->> +	/* Destination address for 802.3x Ethernet flow control */
->> +	u8 fc_dest_addr[ETH_ALEN] = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
->> +
->> +	u32 rxirq = 0, dma = 0;
->> +
->> +	regmap_set_bits(priv->regmap_apmu,
->> +			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
->> +			AXI_SINGLE_ID);
->> +
->> +	/* Disable transmit and receive units */
->> +	emac_wr(priv, MAC_RECEIVE_CONTROL, 0x0);
->> +	emac_wr(priv, MAC_TRANSMIT_CONTROL, 0x0);
->> +
->> +	/* Enable MAC address 1 filtering */
->> +	emac_wr(priv, MAC_ADDRESS_CONTROL, MREGBIT_MAC_ADDRESS1_ENABLE);
->> +
->> +	/* Zero initialize the multicast hash table */
->> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE1, 0x0);
->> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE2, 0x0);
->> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE3, 0x0);
->> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE4, 0x0);
->> +
->> +	/* Configure thresholds */
->> +	emac_wr(priv, MAC_TRANSMIT_FIFO_ALMOST_FULL, DEFAULT_TX_ALMOST_FULL);
->> +	emac_wr(priv, MAC_TRANSMIT_PACKET_START_THRESHOLD,
->> +		DEFAULT_TX_THRESHOLD);
->> +	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
->> +
->> +	/* Configure flow control (enabled in emac_adjust_link() later) */
->> +	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
->> +	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
->> +	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
->> +	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
->> +
->> +	/* RX IRQ mitigation */
->> +	rxirq = EMAC_RX_FRAMES & MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK;
->> +	rxirq |= (EMAC_RX_COAL_TIMEOUT
->> +		  << MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT) &
->> +		 MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_MASK;
-> Probably this driver can benefit from using FIELD_PREP and FIELD_GET
-> in a number of places. In this case I think it would mean that
-> MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT can be removed entirely.
-
-That looks useful. There's a few more uses of *_SHIFT in this driver,
-and I think I can get them all to use FIELD_PREP. I'll change those in
-the next version.
-
->> +
->> +	rxirq |= MREGBIT_RECEIVE_IRQ_MITIGATION_ENABLE;
->> +	emac_wr(priv, DMA_RECEIVE_IRQ_MITIGATION_CTRL, rxirq);
-> ...
->
->> +/* Returns number of packets received */
->> +static int emac_rx_clean_desc(struct emac_priv *priv, int budget)
->> +{
->> +	struct net_device *ndev = priv->ndev;
->> +	struct emac_rx_desc_buffer *rx_buf;
->> +	struct emac_desc_ring *rx_ring;
->> +	struct sk_buff *skb = NULL;
->> +	struct emac_desc *rx_desc;
->> +	u32 got = 0, skb_len, i;
->> +	int status;
->> +
->> +	rx_ring = &priv->rx_ring;
->> +
->> +	i = rx_ring->tail;
->> +
->> +	while (budget--) {
->> +		rx_desc = &((struct emac_desc *)rx_ring->desc_addr)[i];
->> +
->> +		/* Stop checking if rx_desc still owned by DMA */
->> +		if (READ_ONCE(rx_desc->desc0) & RX_DESC_0_OWN)
->> +			break;
->> +
->> +		dma_rmb();
->> +
->> +		rx_buf = &rx_ring->rx_desc_buf[i];
->> +
->> +		if (!rx_buf->skb)
->> +			break;
->> +
->> +		got++;
->> +
->> +		dma_unmap_single(&priv->pdev->dev, rx_buf->dma_addr,
->> +				 rx_buf->dma_len, DMA_FROM_DEVICE);
->> +
->> +		status = emac_rx_frame_status(priv, rx_desc);
->> +		if (unlikely(status == RX_FRAME_DISCARD)) {
->> +			ndev->stats.rx_dropped++;
-> As per the comment in struct net-device,
-> ndev->stats should not be used in modern drivers.
->
-> Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
->
-> Sorry for not mentioning this in an earlier review of
-> stats in this driver.
->
-On a closer look, these counters in ndev->stats seems to be redundant
-with the hardware-tracked statistics, so maybe I should just not bother
-with updating ndev->stats. Does that make sense?
-
-Thanks,
-Vivian "dramforever" Wang
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index a2ff4242e623..8dda6cd2fd73 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+-/* Module signature checker
++/*
++ * Module signature checker
+  *
+  * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+  * Written by David Howells (dhowells@redhat.com)
+@@ -20,11 +21,11 @@
+ #define MODULE_PARAM_PREFIX "module."
+ 
+ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+-module_param(sig_enforce, bool_enable_only, 0644);
++module_param(sig_enforce, bool, 0644);
+ 
+ /*
+- * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+- * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
++ * Export sig_enforce kernel cmdline parameter to allow other subsystems to
++ * rely on that instead of directly on CONFIG_MODULE_SIG_FORCE config.
+  */
+ bool is_module_sig_enforced(void)
+ {
+@@ -36,6 +37,7 @@ void set_module_sig_enforced(void)
+ {
+ 	sig_enforce = true;
+ }
++EXPORT_SYMBOL(set_module_sig_enforced);
+ 
+ /*
+  * Verify the signature on a module.
+@@ -45,44 +47,55 @@ int mod_verify_sig(const void *mod, struct load_info *info)
+ 	struct module_signature ms;
+ 	size_t sig_len, modlen = info->len;
+ 	int ret;
++	const unsigned char *data = mod;
+ 
+ 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
+ 
+ 	if (modlen <= sizeof(ms))
+ 		return -EBADMSG;
+ 
+-	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
++	memcpy(&ms, data + (modlen - sizeof(ms)), sizeof(ms));
+ 
+ 	ret = mod_check_sig(&ms, modlen, "module");
+ 	if (ret)
+ 		return ret;
+ 
+ 	sig_len = be32_to_cpu(ms.sig_len);
++
++	/* Ensure sig_len is valid to prevent underflow/oob */
++	if (sig_len > modlen - sizeof(ms))
++		return -EBADMSG;
++
+ 	modlen -= sig_len + sizeof(ms);
+ 	info->len = modlen;
+ 
+-	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
++	return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
+ 				      VERIFY_USE_SECONDARY_KEYRING,
+ 				      VERIFYING_MODULE_SIGNATURE,
+ 				      NULL, NULL);
+ }
+ 
++/*
++ * Check signature validity of a module during load.
++ */
+ int module_sig_check(struct load_info *info, int flags)
+ {
+ 	int err = -ENODATA;
+ 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
+ 	const char *reason;
+-	const void *mod = info->hdr;
++	const unsigned char *mod = info->hdr;
+ 	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
+ 				       MODULE_INIT_IGNORE_VERMAGIC);
++
+ 	/*
+-	 * Do not allow mangled modules as a module with version information
+-	 * removed is no longer the module that was signed.
++	 * Do not allow mangled modules: a module with version info removed
++	 * is no longer the module that was signed.
+ 	 */
+ 	if (!mangled_module &&
+ 	    info->len > markerlen &&
+-	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
+-		/* We truncate the module to discard the signature */
++	    memcmp(mod + info->len - markerlen,
++		   MODULE_SIG_STRING, markerlen) == 0) {
++		/* Truncate the module to discard the signature marker */
+ 		info->len -= markerlen;
+ 		err = mod_verify_sig(mod, info);
+ 		if (!err) {
+@@ -92,9 +105,8 @@ int module_sig_check(struct load_info *info, int flags)
+ 	}
+ 
+ 	/*
+-	 * We don't permit modules to be loaded into the trusted kernels
+-	 * without a valid signature on them, but if we're not enforcing,
+-	 * certain errors are non-fatal.
++	 * Enforced mode: only allow modules with a valid signature.
++	 * Non-enforced mode: certain errors are downgraded to warnings.
+ 	 */
+ 	switch (err) {
+ 	case -ENODATA:
+@@ -106,12 +118,12 @@ int module_sig_check(struct load_info *info, int flags)
+ 	case -ENOKEY:
+ 		reason = "module with unavailable key";
+ 		break;
+-
+ 	default:
+ 		/*
+-		 * All other errors are fatal, including lack of memory,
+-		 * unparseable signatures, and signature check failures --
+-		 * even if signatures aren't required.
++		 * All other errors are fatal, including:
++		 * - OOM
++		 * - unparseable signatures
++		 * - invalid signature failures
+ 		 */
+ 		return err;
+ 	}
+diff --git a/kernel/module/signing.orig b/kernel/module/signing.orig
+new file mode 100644
+index 000000000000..a2ff4242e623
+--- /dev/null
++++ b/kernel/module/signing.orig
+@@ -0,0 +1,125 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Module signature checker
++ *
++ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/module_signature.h>
++#include <linux/string.h>
++#include <linux/verification.h>
++#include <linux/security.h>
++#include <crypto/public_key.h>
++#include <uapi/linux/module.h>
++#include "internal.h"
++
++#undef MODULE_PARAM_PREFIX
++#define MODULE_PARAM_PREFIX "module."
++
++static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
++module_param(sig_enforce, bool_enable_only, 0644);
++
++/*
++ * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
++ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
++ */
++bool is_module_sig_enforced(void)
++{
++	return sig_enforce;
++}
++EXPORT_SYMBOL(is_module_sig_enforced);
++
++void set_module_sig_enforced(void)
++{
++	sig_enforce = true;
++}
++
++/*
++ * Verify the signature on a module.
++ */
++int mod_verify_sig(const void *mod, struct load_info *info)
++{
++	struct module_signature ms;
++	size_t sig_len, modlen = info->len;
++	int ret;
++
++	pr_devel("==>%s(,%zu)\n", __func__, modlen);
++
++	if (modlen <= sizeof(ms))
++		return -EBADMSG;
++
++	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
++
++	ret = mod_check_sig(&ms, modlen, "module");
++	if (ret)
++		return ret;
++
++	sig_len = be32_to_cpu(ms.sig_len);
++	modlen -= sig_len + sizeof(ms);
++	info->len = modlen;
++
++	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
++				      VERIFY_USE_SECONDARY_KEYRING,
++				      VERIFYING_MODULE_SIGNATURE,
++				      NULL, NULL);
++}
++
++int module_sig_check(struct load_info *info, int flags)
++{
++	int err = -ENODATA;
++	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
++	const char *reason;
++	const void *mod = info->hdr;
++	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
++				       MODULE_INIT_IGNORE_VERMAGIC);
++	/*
++	 * Do not allow mangled modules as a module with version information
++	 * removed is no longer the module that was signed.
++	 */
++	if (!mangled_module &&
++	    info->len > markerlen &&
++	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
++		/* We truncate the module to discard the signature */
++		info->len -= markerlen;
++		err = mod_verify_sig(mod, info);
++		if (!err) {
++			info->sig_ok = true;
++			return 0;
++		}
++	}
++
++	/*
++	 * We don't permit modules to be loaded into the trusted kernels
++	 * without a valid signature on them, but if we're not enforcing,
++	 * certain errors are non-fatal.
++	 */
++	switch (err) {
++	case -ENODATA:
++		reason = "unsigned module";
++		break;
++	case -ENOPKG:
++		reason = "module with unsupported crypto";
++		break;
++	case -ENOKEY:
++		reason = "module with unavailable key";
++		break;
++
++	default:
++		/*
++		 * All other errors are fatal, including lack of memory,
++		 * unparseable signatures, and signature check failures --
++		 * even if signatures aren't required.
++		 */
++		return err;
++	}
++
++	if (is_module_sig_enforced()) {
++		pr_notice("Loading of %s is rejected\n", reason);
++		return -EKEYREJECTED;
++	}
++
++	return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
++}
+-- 
+2.50.1.windows.1
 
 
