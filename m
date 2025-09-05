@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-803252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAFBB45CA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45125B45CAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221EC16BDA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C761F17289A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624762F7ADA;
-	Fri,  5 Sep 2025 15:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB3E2FB0AD;
+	Fri,  5 Sep 2025 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZf5dAID"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIOs0MwU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A262F15D3;
-	Fri,  5 Sep 2025 15:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6E288C0E;
+	Fri,  5 Sep 2025 15:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086478; cv=none; b=JXCX5S3BtaAEOPO/AZKC5Aw2jPCs63DT3r9XM05RvM7Hols52ArOs4PlREXioC/iu1++Fvh2Di6SUiac9dUdTQJ5uYlNoFiTRiTLGbm4VrhA5PTg2/q42QSNVMc+JCjJYz5OBQc9p9xC3KP4e0l/gagNBFFqCYOtoRqVTIjK5eE=
+	t=1757086508; cv=none; b=IO8s2wrfhJ4FUroP9q9wi0mmavS78sb7giqMVeoA3YmjdhBvH8ZIvHM0B2pzIgAzapiYaGwIox8rpKYELG48acz8/0equ2bDjt5m54WmTXNpUqhb/aPxpJ2BZ7/y5PYdQDFZfT6NOi32VMJKA1/3PLD+kpNduAZKkOtwHmRTURg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086478; c=relaxed/simple;
-	bh=S2f4zsIVkSVZX6263AtP4FMC2mXV744EV7vcHdcxvFs=;
+	s=arc-20240116; t=1757086508; c=relaxed/simple;
+	bh=Dd9GrN9GAAxETey0gekWGcwpoSTvYJkigJI730T+I/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DM1vQw7ljbuDMbE/CPrM5a9NeEzisdIWVvL5di+76pRbNPnes5kxpIz+rj0lesbUDYIVBnE9olO9fNCCPcs9dpM5x2+IEbkGUlZstSzU+gccxDoSro+t13CcS/pO396VCoVJEXTLn0Tgq3wVwUP4QWuN7ZAnVMvLJS7D20/7ylc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZf5dAID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1FB7C4CEF1;
-	Fri,  5 Sep 2025 15:34:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPV0jWWAYr9jpmhgnB9aszkqsEnngwGaZ7f2t4d33UOgfhFDWlUSiv358ESGqHNesCp28HsMGhSBNTx4GT3NMbwcPbvjTnzlKPCtBJY5bnJb7ytfXyDMBi5AlxWn66zMVAX5DGVIVLCeeDg0qVt5XsNvJwyk8RIIlD8+ebOI1Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIOs0MwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC64C4CEF1;
+	Fri,  5 Sep 2025 15:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757086478;
-	bh=S2f4zsIVkSVZX6263AtP4FMC2mXV744EV7vcHdcxvFs=;
+	s=k20201202; t=1757086507;
+	bh=Dd9GrN9GAAxETey0gekWGcwpoSTvYJkigJI730T+I/A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZf5dAIDALZlpnlmorOcqX3O1MGgtWtRZyVieJ+6MsMxP5YD1Q4QFHkgp1Vmntr6C
-	 wvPgaa1NLQiDAngT9jt9lKUU1wIiwiuNyxnEOarNr5lRwAMQJ4aXAuUBXL3YNsLKhi
-	 dRxiXVQL7Bd7lIv8/Y8Vd/zbd6htZe8bktPgBmflpgd73LEOdGzpHUxeungKUbVvGU
-	 O3I7FiHp/ADxKKQHPvIXMKVZ3J/a97+jB5Pz92nJvsb7kuKequ1onDHT8CLiL4YHS/
-	 8r76zT7Emhrny/U3xZPoE9R228e0LdSFRJQpnIqCd1gx+HF2WjfhzOTYwLihlA1KK6
-	 bakXfsYfKkkKA==
-Date: Fri, 5 Sep 2025 10:34:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
+	b=CIOs0MwUE2I3vXSEEPPTN+UByCEoKcgiRiHDw6TewSKVGn4/U8x5RRsuDen7Pv75K
+	 K9i75Y8ZRfml3R3Q1JnpNWMYn34xSqNuDVLpxxgG5HxeJe23vnQtFVTNanWHk41xRo
+	 dn94M2R3O7wAFnCVyCqxqFnWmwNKCJzlhT7uNvn71z5+bXgFxeBmpxwsnmVCJVGXJ0
+	 M3vbD4qErghqHC6JQSa3SvMb/rVimU6/KS1ERkLxBMxnQBnuBxxCH6h500PlXA4ZX3
+	 MIRmtSIRaFJ8WT6T5z5f1J/+8E/HTp/rn9O2xpmyUfu+VnWWNZE96DieKtFu5xkgXi
+	 SRz6ymsmWx+Sw==
+Date: Fri, 5 Sep 2025 16:35:00 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: leds: add generic LED consumer
- documentation
-Message-ID: <20250905153437.GA970284-robh@kernel.org>
-References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
- <20250905-leds-v2-1-ed8f66f56da8@vinarskis.com>
- <20250905151739.GA953718-robh@kernel.org>
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <uwu@dram.page>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <20250905153500.GH553991@horms.kernel.org>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+ <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,137 +73,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905151739.GA953718-robh@kernel.org>
+In-Reply-To: <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
 
-On Fri, Sep 05, 2025 at 10:17:39AM -0500, Rob Herring wrote:
-> On Fri, Sep 05, 2025 at 09:59:29AM +0200, Aleksandrs Vinarskis wrote:
-> > Introduce common generic led consumer binding, where consumer defines
-> > led(s) by phandle, as opposed to trigger-source binding where the
-> > trigger source is defined in led itself.
-> > 
-> > Add already used in some schemas 'leds' parameter which expects
-> > phandle-array. Additionally, introduce 'led-names' which could be used
-> > by consumers to map LED devices to their respective functions.
+On Fri, Sep 05, 2025 at 07:09:31PM +0800, Vivian Wang wrote:
+> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+> that only superficially resembles some other embedded MACs. SpacemiT
+> refers to them as "EMAC", so let's just call the driver "k1_emac".
 > 
-> Please update the existing user dropping the type $ref and indicate how 
-> many entries (i.e. "maxItems: 1").
-
-Nevermind, I see you did...
-
+> Supports RGMII and RMII interfaces. Includes support for MAC hardware
+> statistics counters. PTP support is not implemented.
 > 
-> > 
-> > Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
-> > ---
-> >  .../devicetree/bindings/leds/leds-consumer.yaml    | 85 ++++++++++++++++++++++
-> >  1 file changed, 85 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..077dbe3ad9ff3fa15236b8dd1f448c00271e4810
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-> > @@ -0,0 +1,85 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Common leds consumer
-> > +
-> > +maintainers:
-> > +  - Aleksandrs Vinarskis <alex@vinarskis.com>
-> > +
-> > +description:
-> > +  Some LED defined in DT are required by other DT consumers, for example
-> > +  v4l2 subnode may require privacy or flash LED. Unlike trigger-source
-> > +  approach which is typically used as 'soft' binding, referencing LED
-> > +  devices by phandle makes things simpler when 'hard' binding is desired.
-> > +
-> > +  Document LED properties that its consumers may define.
-> > +
-> 
-> select: true
-> 
-> 
-> > +properties:
-> > +  leds:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    description:
-> > +      A list of LED device(s) required by a particular consumer.
-> > +    items:
-> > +      maxItems: 1
+> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
-Also, the select is going to cause a problem with nodes named 'leds', so 
-it will need to be:
+...
 
-leds:
-  oneOf:
-    - type: object
-    - $ref: /schemas/types.yaml#/definitions/phandle-array
-      ...
+> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
 
-> > +
-> > +  led-names:
-> > +    description:
-> > +      A list of device name(s). Used to map LED devices to their respective
-> > +      functions, when consumer requires more than one LED.
-> > +
-> > +additionalProperties: true
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +    #include <dt-bindings/leds/common.h>
-> > +
-> > +    leds {
-> > +        compatible = "gpio-leds";
-> > +
-> > +        privacy_led: privacy-led {
-> > +            color = <LED_COLOR_ID_RED>;
-> > +            default-state = "off";
-> > +            function = LED_FUNCTION_INDICATOR;
-> > +            gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
-> > +        };
-> > +    };
-> > +
-> > +    i2c {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <0>;
-> > +
-> > +      camera@36 {
-> > +        compatible = "ovti,ov02c10";
-> > +        reg = <0x36>;
-> > +
-> > +        reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
-> > +        pinctrl-names = "default";
-> > +        pinctrl-0 = <&cam_rgb_default>;
-> > +
-> > +        led-names = "privacy-led";
-> > +        leds = <&privacy_led>;
-> > +
-> > +        clocks = <&ov02e10_clk>;
-> > +
-> > +        assigned-clocks = <&ov02e10_clk>;
-> > +        assigned-clock-rates = <19200000>;
-> > +
-> > +        avdd-supply = <&vreg_l7b_2p8>;
-> > +        dvdd-supply = <&vreg_l7b_2p8>;
-> > +        dovdd-supply = <&vreg_cam_1p8>;
-> > +
-> > +        port {
-> > +          ov02e10_ep: endpoint {
-> > +            data-lanes = <1 2>;
-> > +            link-frequencies = /bits/ 64 <400000000>;
-> > +            remote-endpoint = <&csiphy4_ep>;
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +...
-> > 
-> > -- 
-> > 2.48.1
-> > 
+...
+
+> +static void emac_init_hw(struct emac_priv *priv)
+> +{
+> +	/* Destination address for 802.3x Ethernet flow control */
+> +	u8 fc_dest_addr[ETH_ALEN] = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
+> +
+> +	u32 rxirq = 0, dma = 0;
+> +
+> +	regmap_set_bits(priv->regmap_apmu,
+> +			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
+> +			AXI_SINGLE_ID);
+> +
+> +	/* Disable transmit and receive units */
+> +	emac_wr(priv, MAC_RECEIVE_CONTROL, 0x0);
+> +	emac_wr(priv, MAC_TRANSMIT_CONTROL, 0x0);
+> +
+> +	/* Enable MAC address 1 filtering */
+> +	emac_wr(priv, MAC_ADDRESS_CONTROL, MREGBIT_MAC_ADDRESS1_ENABLE);
+> +
+> +	/* Zero initialize the multicast hash table */
+> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE1, 0x0);
+> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE2, 0x0);
+> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE3, 0x0);
+> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE4, 0x0);
+> +
+> +	/* Configure thresholds */
+> +	emac_wr(priv, MAC_TRANSMIT_FIFO_ALMOST_FULL, DEFAULT_TX_ALMOST_FULL);
+> +	emac_wr(priv, MAC_TRANSMIT_PACKET_START_THRESHOLD,
+> +		DEFAULT_TX_THRESHOLD);
+> +	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
+> +
+> +	/* Configure flow control (enabled in emac_adjust_link() later) */
+> +	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
+> +	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
+> +	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
+> +	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
+> +
+> +	/* RX IRQ mitigation */
+> +	rxirq = EMAC_RX_FRAMES & MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK;
+> +	rxirq |= (EMAC_RX_COAL_TIMEOUT
+> +		  << MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT) &
+> +		 MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_MASK;
+
+Probably this driver can benefit from using FIELD_PREP and FIELD_GET
+in a number of places. In this case I think it would mean that
+MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT can be removed entirely.
+
+> +
+> +	rxirq |= MREGBIT_RECEIVE_IRQ_MITIGATION_ENABLE;
+> +	emac_wr(priv, DMA_RECEIVE_IRQ_MITIGATION_CTRL, rxirq);
+
+...
+
+> +/* Returns number of packets received */
+> +static int emac_rx_clean_desc(struct emac_priv *priv, int budget)
+> +{
+> +	struct net_device *ndev = priv->ndev;
+> +	struct emac_rx_desc_buffer *rx_buf;
+> +	struct emac_desc_ring *rx_ring;
+> +	struct sk_buff *skb = NULL;
+> +	struct emac_desc *rx_desc;
+> +	u32 got = 0, skb_len, i;
+> +	int status;
+> +
+> +	rx_ring = &priv->rx_ring;
+> +
+> +	i = rx_ring->tail;
+> +
+> +	while (budget--) {
+> +		rx_desc = &((struct emac_desc *)rx_ring->desc_addr)[i];
+> +
+> +		/* Stop checking if rx_desc still owned by DMA */
+> +		if (READ_ONCE(rx_desc->desc0) & RX_DESC_0_OWN)
+> +			break;
+> +
+> +		dma_rmb();
+> +
+> +		rx_buf = &rx_ring->rx_desc_buf[i];
+> +
+> +		if (!rx_buf->skb)
+> +			break;
+> +
+> +		got++;
+> +
+> +		dma_unmap_single(&priv->pdev->dev, rx_buf->dma_addr,
+> +				 rx_buf->dma_len, DMA_FROM_DEVICE);
+> +
+> +		status = emac_rx_frame_status(priv, rx_desc);
+> +		if (unlikely(status == RX_FRAME_DISCARD)) {
+> +			ndev->stats.rx_dropped++;
+
+As per the comment in struct net-device,
+ndev->stats should not be used in modern drivers.
+
+Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
+
+Sorry for not mentioning this in an earlier review of
+stats in this driver.
+
+> +			dev_kfree_skb_irq(rx_buf->skb);
+> +			rx_buf->skb = NULL;
+> +		} else {
+> +			skb = rx_buf->skb;
+> +			skb_len = rx_frame_len(rx_desc) - ETH_FCS_LEN;
+> +			skb_put(skb, skb_len);
+> +			skb->dev = ndev;
+> +			ndev->hard_header_len = ETH_HLEN;
+> +
+> +			skb->protocol = eth_type_trans(skb, ndev);
+> +
+> +			skb->ip_summed = CHECKSUM_NONE;
+> +
+> +			napi_gro_receive(&priv->napi, skb);
+> +
+> +			ndev->stats.rx_packets++;
+> +			ndev->stats.rx_bytes += skb_len;
+> +
+> +			memset(rx_desc, 0, sizeof(struct emac_desc));
+> +			rx_buf->skb = NULL;
+> +		}
+> +
+> +		if (++i == rx_ring->total_cnt)
+> +			i = 0;
+> +	}
+> +
+> +	rx_ring->tail = i;
+> +
+> +	emac_alloc_rx_desc_buffers(priv);
+> +
+> +	return got;
+> +}
+
+...
 
