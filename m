@@ -1,276 +1,150 @@
-Return-Path: <linux-kernel+bounces-803541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5AFB46226
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A204EB4622A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D8717FBD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76BB41CC566F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7994426B764;
-	Fri,  5 Sep 2025 18:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D5E30597C;
+	Fri,  5 Sep 2025 18:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W8PTKlzC"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="LfG1o50Y"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E1526F2B4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757096297; cv=none; b=VdjrHo4NwMAIrXOPh55d2sIBxEGBm5CAu88TKNkS6HZ8mjTVGHXCuiVjjSoJ6BZ0NX+uH7cYN8FvxRCZpm9nu1w+WmTPiBbanSIH/Uu8coBsg8yHDROuTXTrtv2JT+74KQKN/W9rkOKKkA40cPqlg2EKlmu8U+95lv1BGm1i3/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757096297; c=relaxed/simple;
-	bh=kfh9Tls71Sbv6ikFPTwH56l633KM95jBXY4vKsbQjnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/Uh1Nh2wIIC3wPrjTy/wULXoDGX3rDwBF32dYsVqIKAUuPY2yjFbyk/i1gwqLg2pQkJLv9LCHk09LtIX1Xp9lBXeyWfTZYaZ6jel8hiv0XITmoiznGYtA3rYzOLkhLDFnf31+Eku9Nd1ZxGIs21GW5hjEUaa/WIJwCxP5B1uRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W8PTKlzC; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so442365f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757096294; x=1757701094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GKjPZ6JkdfP71MZhHGFNz5JoCmbYAum19kr8H2dtmZc=;
-        b=W8PTKlzChHgOivPJmKRIiQPJC560Aa16ygx1EcYxD31cDVGCRcaRtBNrMENHi4q4pC
-         nM9+o0iIFNaRcsw8Yu0sXnzhBktPBL0neU/ynJXsE0apjc0jDjanzKB0lpMkGs91Ru/c
-         El3NW/pfk3Xp4cMrtZSKWWBlTrVLUSrvROoAw9eJBWs5trEt/LZQqQxO+3UsmbrfYLsp
-         L+gTXslrGmkDwaFTzvSt7gNpKopf04d1ViHmbCUhmiqm4IgU+Us8eD7KL/A+YE70jrJ2
-         9TUC+Hd5BiR1FBsGhF4rc2Qs3okIisRPZQxruAcCj2oxUFJ+ldJ0fLtVxh8jJTxPnFmA
-         G/bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757096294; x=1757701094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GKjPZ6JkdfP71MZhHGFNz5JoCmbYAum19kr8H2dtmZc=;
-        b=LfpLcyt+A1Y7DfeRFsQuXDBQCK9wPMVxFx4HbG/YdVJfm0IugYuZeMo5qjY+Wxc1+5
-         0m6c3lQhFfV1uJ7JQFcSlkjfcRVqGsMHQ25/qNjHTbv2syVfiJgrZjUtJ3PKgNDkGjKj
-         wSqPOAIR4pHnptYIzFRVqMYBTTEzQFA5KxXX2yZt4XmeEJ6+3ZS3Odf3bwp69De/Yght
-         HUmCULl7KcqMBLDqQVrbWr8kCv2E2DbdesIWIzffOMoJiSuu5N5EHoaOVN3nk6RIrJxP
-         bfjEFUIdjOQWH5f4xwD7+Rwc/+Pw2LnhvLZhOeZa6m5hrJbydEurL2P3Sa3M35/FK7ln
-         SOWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOOq69FZPidHWjRgL8Nha7q08TyU/DXiz2nL/ybPy5wEJZrGasBn9xS5XJEMWfyrdLLCvknfZlNj3zcYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyotGe9eX33DROrZDuAgPdmG8/DVcbcOXMLxBMwUJM9TTIbrAsE
-	wdGDWPAbdM5KAJXvtTufkX91P5T4XC3UXsKwm779w1J47M6o2pAxkQi3Bf6Cd84V5Udi5DqRtGp
-	xTIvg8Il9H3PQlUdkrWYwFSqzyVbOOFEl+qmD8ZOj
-X-Gm-Gg: ASbGnctY7fNKHmIaileDuXFfzYx2So0ztxoNpde0ghx7pSFjd5tjV6QR1JnWvS0G3J8
-	fJIAx9ql0NPC5R1vOOrHgOo35AzfgMTUPm7okWzjEIg6pTREtNML65IJq9jxqdfxRkIpwY0HSZO
-	oMDxabEeHbmDfyt9Wkifh4u2Y4Th3cc53wNsxIb6kzGolOXuKYYksuzm9K6dqh2tNAb/MHyyG30
-	pvw/n8EQUG41hnCE2HbnyPHlqenOKkBHrr3YjuGOLpBDVo=
-X-Google-Smtp-Source: AGHT+IGlP6GVE/F3IvfvuFg3uqTuhZ7o1EtABAfnyD/mfTCM2CfW3Q+roVGtifPt0cXvnI1cRztA8nHmMv3mEeiacoo=
-X-Received: by 2002:a5d:64e3:0:b0:3e0:c28a:abbb with SMTP id
- ffacd0b85a97d-3e0c28aaf62mr6872387f8f.13.1757096293550; Fri, 05 Sep 2025
- 11:18:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0AB33987;
+	Fri,  5 Sep 2025 18:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757096336; cv=pass; b=aaq7ai+ZR1vnesHup2yvlkh/kngDqhVx9xKC3F5pAUZPMRw/Y8GmHWED/yaRNusJE6dmoAbbG1mA2xBsroBACu2FK66+SwHdf80FyjlUWHy7KW3WDkye3yYKM2GZ6Avi5vnQxDP+JHvZCUX1XmfYJL9PC8W+2r3JPLdQJ2XywMA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757096336; c=relaxed/simple;
+	bh=s8kMAXHqKircdVDaLnBBCpEe4BCEp5Cm1ra60ZMvMpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BcrwPwfYnWpDyv8KVrX/wS6OUxrdujwE9+g+7gnyG6RDNPatOywshA3+dCvaYa6JLz2R+o3dM11U7K8BAyPWyjDl836vOldcXL/RJ6qPzgclc4zcekOyqchMbsoMsy5PXEzJT7vIKvCx8n3lw1aAJISfWeGmtrfmf1q+DD8j8eo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=LfG1o50Y; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1757096313; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KVRu0YOLCajL4JtVTdijGfXPfuo7RsfWaGVQoGh52MTBGZ+1/M2EBeFnRb92jTg6Df0UdEUtBmM4ucITN0IAH2ZOkYFDZWAJc3Eu1BI/dXhqVP6CoQlBV+cNoeCbSuOtuZ5p5SgwVaaQ3Oyoj/l36CkXeROFAwJG9BvHp2kiuq8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757096313; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bFID9GaXPzXFmeOV0W1JROYq36B1IZQI0GNGvxsJiEY=; 
+	b=ATveCUn0U/ra2/BMSfyfQSWpXtos0CqlqVMn3yr8PLpOtLtaL4p7bXMN+Yr76Jz208xNduZMGtuFHD0UClNTFMMHr/26YnoGWK0VwXiFGTqb+3z5kurbz9uEfo/ZzWf/972roirXkrOojqgMfnSwl+bHwt7kmFRqDROKzQ2PTb4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757096313;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=bFID9GaXPzXFmeOV0W1JROYq36B1IZQI0GNGvxsJiEY=;
+	b=LfG1o50Y8opQPpM3GFy8l7h24FdebaU6tOt8qp+oxCMSz/xoVbkRRVIenWCvbqJy
+	e19HUuZxc/Wdknh9CjjcRCh++s4NanNhClEuEALmo2HFdEVKvkBk6F8h/bEOieZNJUz
+	tOYNmFCpmYbbKphBDacMuMsWECI8NWwJNhjl/5t8=
+Received: by mx.zohomail.com with SMTPS id 1757096311428106.37132658296662;
+	Fri, 5 Sep 2025 11:18:31 -0700 (PDT)
+Message-ID: <d918a88b-5dff-43e4-8cf6-77d1b716124f@yukuai.org.cn>
+Date: Sat, 6 Sep 2025 02:18:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
- <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com> <20250905152505.005a610d@fedora>
-In-Reply-To: <20250905152505.005a610d@fedora>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 5 Sep 2025 20:18:01 +0200
-X-Gm-Features: Ac12FXzdSoY4H14Jq3bYOy1msq82Tum3a_ciUTVq2KqVGeVzVChh5DdTZhsb_aI
-Message-ID: <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Price <steven.price@arm.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] blk-throttle: fix access race during throttle policy
+ activation
+To: Han Guangjiang <gj.han@foxmail.com>, yukuai1@huaweicloud.com,
+ Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: hanguangjiang@lixiang.com, fanggeng@lixiang.com, yangchen11@lixiang.com,
+ liangjie@lixiang.com
+References: <tencent_E009F9D3A4C7F814018C1DFA80304944BA0A@qq.com>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <tencent_E009F9D3A4C7F814018C1DFA80304944BA0A@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
+在 2025/9/5 18:24, Han Guangjiang 写道:
+
+> From: Han Guangjiang<hanguangjiang@lixiang.com>
 >
-> On Fri, 05 Sep 2025 12:11:28 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
+> On repeated cold boots we occasionally hit a NULL pointer crash in
+> blk_should_throtl() when throttling is consulted before the throttle
+> policy is fully enabled for the queue. Checking only q->td != NULL is
+> insufficient during early initialization, so blkg_to_pd() for the
+> throttle policy can still return NULL and blkg_to_tg() becomes NULL,
+> which later gets dereferenced.
 >
-> > When using GPUVM in immediate mode, it is necessary to call
-> > drm_gpuvm_unlink() from the fence signalling critical path. However,
-> > unlink may call drm_gpuvm_bo_put(), which causes some challenges:
-> >
-> > 1. drm_gpuvm_bo_put() often requires you to take resv locks, which you
-> >    can't do from the fence signalling critical path.
-> > 2. drm_gpuvm_bo_put() calls drm_gem_object_put(), which is often going
-> >    to be unsafe to call from the fence signalling critical path.
-> >
-> > To solve these issues, add a deferred version of drm_gpuvm_unlink() tha=
-t
-> > adds the vm_bo to a deferred cleanup list, and then clean it up later.
-> >
-> > The new methods take the GEMs GPUVA lock internally rather than letting
-> > the caller do it because it also needs to perform an operation after
-> > releasing the mutex again. This is to prevent freeing the GEM while
-> > holding the mutex (more info as comments in the patch). This means that
-> > the new methods can only be used with DRM_GPUVM_IMMEDIATE_MODE.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  drivers/gpu/drm/drm_gpuvm.c | 167 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  include/drm/drm_gpuvm.h     |  26 +++++++
-> >  2 files changed, 193 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> > index 78a1a4f095095e9379bdf604d583f6c8b9863ccb..849b6c08f83dcba832eda37=
-2bd3ce62b540e144b 100644
-> > --- a/drivers/gpu/drm/drm_gpuvm.c
-> > +++ b/drivers/gpu/drm/drm_gpuvm.c
-> > @@ -876,6 +876,25 @@ __drm_gpuvm_bo_list_add(struct drm_gpuvm *gpuvm, s=
-pinlock_t *lock,
-> >       cond_spin_unlock(lock, !!lock);
-> >  }
-> >
-> > +/**
-> > + * drm_gpuvm_bo_is_dead() - check whether this vm_bo is scheduled for =
-cleanup
-> > + * @vm_bo: the &drm_gpuvm_bo
-> > + *
-> > + * When a vm_bo is scheduled for cleanup using the bo_defer list, it i=
-s not
-> > + * immediately removed from the evict and extobj lists.
+>   Unable to handle kernel NULL pointer dereference
+>   at virtual address 0000000000000156
+>   ...
+>   pc : submit_bio_noacct+0x14c/0x4c8
+>   lr : submit_bio_noacct+0x48/0x4c8
+>   sp : ffff800087f0b690
+>   x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
+>   x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
+>   x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
+>   x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
+>   x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
+>   x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
+>   x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
+>   x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
+>   x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
+>   x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
+>   Call trace:
+>    submit_bio_noacct+0x14c/0x4c8
+>    verity_map+0x178/0x2c8
+>    __map_bio+0x228/0x250
+>    dm_submit_bio+0x1c4/0x678
+>    __submit_bio+0x170/0x230
+>    submit_bio_noacct_nocheck+0x16c/0x388
+>    submit_bio_noacct+0x16c/0x4c8
+>    submit_bio+0xb4/0x210
+>    f2fs_submit_read_bio+0x4c/0xf0
+>    f2fs_mpage_readpages+0x3b0/0x5f0
+>    f2fs_readahead+0x90/0xe8
 >
-> Maybe mention that it can't be, because those lists are protected with
-> the resv lock and we can't take this lock when we're in immediate mode?
-
-Ok.
-
-> > Therefore, anyone
-> > + * iterating these lists should skip entries that are being destroyed.
-> > + *
-> > + * Checking the refcount without incrementing it is okay as long as th=
-e lock
-> > + * protecting the evict/extobj list is held for as long as you are usi=
-ng the
-> > + * vm_bo, because even if the refcount hits zero while you are using i=
-t, freeing
-> > + * the vm_bo requires taking the list's lock.
-> > + */
-> > +static bool
-> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
-> > +{
-> > +     return !kref_read(&vm_bo->kref);
+> Tighten blk_throtl_activated() to also require that the throttle policy
+> bit is set on the queue:
 >
-> I'm not too sure I like the idea of [ab]using vm_bo::kref to defer the
-> vm_bo release. I get why it's done like that, but I'm wondering why we
-> don't defer the release of drm_gpuva objects instead (which is really
-> what's being released in va_unlink()). I can imagine drivers wanting to
-> attach resources to the gpuva that can't be released in the
-> dma-signalling path in the future, and if we're doing that at the gpuva
-> level, we also get rid of this kref dance, since the va will hold a
-> vm_bo ref until it's destroyed.
+>    return q->td != NULL &&
+>           test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
 >
-> Any particular reason you went for vm_bo destruction deferral instead
-> of gpuva?
-
-All of the things that were unsafe to release in the signalling path
-were tied to the vm_bo, so that is why I went for vm_bo cleanup.
-Another advantage is that it lets us use the same deferred logic for
-the vm_bo_put() call that drops the refcount from vm_bo_obtain().
-
-Of course if gpuvas might have resources that need deferred cleanup,
-that might change the situation somewhat.
-
-
-> > +}
-> > +
-> >  /**
-> >   * drm_gpuvm_bo_list_add() - insert a vm_bo into the given list
-> >   * @__vm_bo: the &drm_gpuvm_bo
-> > @@ -1081,6 +1100,9 @@ drm_gpuvm_init(struct drm_gpuvm *gpuvm, const cha=
-r *name,
-> >       INIT_LIST_HEAD(&gpuvm->evict.list);
-> >       spin_lock_init(&gpuvm->evict.lock);
-> >
-> > +     INIT_LIST_HEAD(&gpuvm->bo_defer.list);
-> > +     spin_lock_init(&gpuvm->bo_defer.lock);
-> > +
-> >       kref_init(&gpuvm->kref);
-> >
-> >       gpuvm->name =3D name ? name : "unknown";
-> > @@ -1122,6 +1144,8 @@ drm_gpuvm_fini(struct drm_gpuvm *gpuvm)
-> >                "Extobj list should be empty.\n");
-> >       drm_WARN(gpuvm->drm, !list_empty(&gpuvm->evict.list),
-> >                "Evict list should be empty.\n");
-> > +     drm_WARN(gpuvm->drm, !list_empty(&gpuvm->bo_defer.list),
-> > +              "VM BO cleanup list should be empty.\n");
-> >
-> >       drm_gem_object_put(gpuvm->r_obj);
-> >  }
-> > @@ -1217,6 +1241,9 @@ drm_gpuvm_prepare_objects_locked(struct drm_gpuvm=
- *gpuvm,
-> >
-> >       drm_gpuvm_resv_assert_held(gpuvm);
-> >       list_for_each_entry(vm_bo, &gpuvm->extobj.list, list.entry.extobj=
-) {
-> > +             if (drm_gpuvm_bo_is_dead(vm_bo))
-> > +                     continue;
-> > +
-> >               ret =3D exec_prepare_obj(exec, vm_bo->obj, num_fences);
-> >               if (ret)
-> >                       break;
-> > @@ -1460,6 +1487,9 @@ drm_gpuvm_validate_locked(struct drm_gpuvm *gpuvm=
-, struct drm_exec *exec)
-> >
-> >       list_for_each_entry_safe(vm_bo, next, &gpuvm->evict.list,
-> >                                list.entry.evict) {
-> > +             if (drm_gpuvm_bo_is_dead(vm_bo))
-> > +                     continue;
-> > +
-> >               ret =3D ops->vm_bo_validate(vm_bo, exec);
-> >               if (ret)
-> >                       break;
-> > @@ -1560,6 +1590,7 @@ drm_gpuvm_bo_create(struct drm_gpuvm *gpuvm,
-> >
-> >       INIT_LIST_HEAD(&vm_bo->list.entry.extobj);
-> >       INIT_LIST_HEAD(&vm_bo->list.entry.evict);
-> > +     INIT_LIST_HEAD(&vm_bo->list.entry.bo_defer);
-> >
-> >       return vm_bo;
-> >  }
-> > @@ -1621,6 +1652,106 @@ drm_gpuvm_bo_put(struct drm_gpuvm_bo *vm_bo)
-> >  }
-> >  EXPORT_SYMBOL_GPL(drm_gpuvm_bo_put);
-> >
-> > +static void
-> > +drm_gpuvm_bo_defer_locked(struct kref *kref)
-> > +{
-> > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm_gpuv=
-m_bo,
-> > +                                               kref);
-> > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
-> > +
-> > +     if (!drm_gpuvm_resv_protected(gpuvm)) {
-> > +             drm_gpuvm_bo_list_del(vm_bo, extobj, true);
-> > +             drm_gpuvm_bo_list_del(vm_bo, evict, true);
-> > +     }
-> > +
-> > +     list_del(&vm_bo->list.entry.gem);
-> > +     mutex_unlock(&vm_bo->obj->gpuva.lock);
+> This prevents blk_should_throtl() from accessing throttle group state
+> until policy data has been attached to blkgs.
 >
-> I got tricked by this implicit unlock, and the conditional unlocks it
-> creates in drm_gpuva_unlink_defer(). Honestly, I'd rather see this
-> unlocked moved to drm_gpuva_unlink_defer() and a conditional unlock
-> added to drm_gpuvm_bo_put_deferred(), because it's easier to reason
-> about when the lock/unlock calls are in the same function
-> (kref_put_mutex() being the equivalent of a conditional lock).
+> Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
+> Co-developed-by: Liang Jie<liangjie@lixiang.com>
+> Signed-off-by: Liang Jie<liangjie@lixiang.com>
+> Signed-off-by: Han Guangjiang<hanguangjiang@lixiang.com>
+> ---
+> v2:
+>   - remove the comment about freeze queue in blk_should_throtl()
+>   - Retitle: "blk-throttle: fix access race during throttle policy activation"
+> v3:
+>   - move blkcg_policy_enabled() to blk-cgroup.h
+>   - use blkcg_policy_enabled() instead in blk_throtl_activated()
+>   - remove the comment about freeze queue in blk_throtl_init()
+>   - add some comments to decribe the throttle init synchronization
+>   - Link to v2:https://lore.kernel.org/lkml/tencent_2B678DA920124B08854638A6BE68746CCC05@qq.com/
+> ---
+>   block/blk-cgroup.c   |  6 ------
+>   block/blk-cgroup.h   |  6 ++++++
+>   block/blk-throttle.c |  6 +-----
+>   block/blk-throttle.h | 18 +++++++++++-------
+>   4 files changed, 18 insertions(+), 18 deletions(-)
 
-Ok. I followed the docs of kref_put_mutex() that say to unlock it from
-the function.
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-Alice
 
