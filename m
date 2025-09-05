@@ -1,192 +1,128 @@
-Return-Path: <linux-kernel+bounces-802679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C30EB45569
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:56:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83164B4557C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40062188CC55
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:57:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 363934E0253
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9336630BBB9;
-	Fri,  5 Sep 2025 10:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FE430F541;
+	Fri,  5 Sep 2025 11:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="Sd89AzIX";
-	dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="Cvfbcpxu"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUI5oZU+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92D230BB8B;
-	Fri,  5 Sep 2025 10:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069718; cv=pass; b=CqFLTYP+foBtXQtTYCohDwbP0z4lvtKNDixnfykxGQuyKHchpdgxWI/tKPOwtAOkqLlRshTAnMHUW53SmdW8lC4Hq0QE3FyuwnegskP0Wk2hjnM8Ev7B7MMiKYGD960pdIIMPOAd7VbXyyYqpTW5dtfioqJIAWg0zZKQF19Z5jQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069718; c=relaxed/simple;
-	bh=LgekcvozZzBvKt3Qog2Rn/fs2BDInxuw373hvfXAK8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwwodiX71fWEe+xvDuGtuShGgEblmXEOnc9H4cLUATuUxuIJ8wRFgE41QUyHXiIS77h8A1j/SC9vj1WZFr0OpBq3ft3eW5TuXhx8KwTvJpXl27oIXuckvQTLnVPZRV5oIY86z0E3Ff8f4dckvh7dJ4WQWoXjVC2OEQ5VNztFtAU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=Sd89AzIX; dkim=permerror (0-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=Cvfbcpxu; arc=pass smtp.client-ip=81.169.146.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1757069708; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=cSM1SxpF00pOL8IPPgmZmfIbgA3Aqo1cUxyXMeROlvY/k6jdMzVsU4Hy3+/2mSjmqi
-    htKtDqyOQQDG03jb/8VbFSc4xnBlK67B0eC5Hc1w5x9bSuqLg25vpHkacNe56X8T7+6l
-    Pn0g1thS6lzXMreodjr+frDMqD1XY/tkDn3pYP2+B16Mj2kbHh2EIO+5psAhgD7Tjt0T
-    iEABAkFEPY3kkt0mpVW6c4rnL0N+xVGL8hk6mFRBq4JDeGmmJELj/9ha5ApOroHBGuLg
-    H4irS+ZaZQ/clyV5z8gBRZkXySdvpElqP715DPKfxigoWPWgbnH4phAAq/S/qivRuhaI
-    fVDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757069708;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=6NhZqsL4uJ9fGjeySJ5iCG+3q0rm80H4l54hcVLKDzE=;
-    b=kZrlA3HJb8nVV/BoOEgSxcR59T5L4Z1x5D9wnv/5wiHoehMayHE3NcxotD8xEliHLm
-    S9MNxWILSC1UN0gBLH0sBZ7THUHW4YWSNbTrULku9Hy3+c0FyqthRcvx44Yu4tSajLNp
-    NRZqVlcSoKf6yayi/JbIyjtGJt4sdimvQm20SRG24swZjZesKfXOJED5HYfJtHbG+EWM
-    YMeKFEtKE08dV6IFhLAl+pFY5cf0pfBt+d8XYBs5eUNIxTyXDafJR3cyTxlwVlPsAEAV
-    falm2IvOqntD+d7zx0CQN/BAknJthbYN0b14qgX8VJfOhokHt0JtL0cjbleo+m+7qbju
-    +5Jw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757069708;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=6NhZqsL4uJ9fGjeySJ5iCG+3q0rm80H4l54hcVLKDzE=;
-    b=Sd89AzIXMqyCn6F03gYhLvXa4AY+igJa6UxgHHD2MR3AMjsKj10Hc6b93Lk2OaXI50
-    qAzH0H7rNatulQISI1+0KcEjvDiDg2Rcs5oSkNckytDLw6hJKmtiZ29tYCAMXRlW6Q4w
-    4S/ir2Nxw6xtzxKEp3/byRrTFTO7RRFJWrHJ8ozJaN2X8Cylwb6Qm/OJm6u93RaBDy80
-    TJ+nJ1nl13y+cfGWUMd0XHrVdbxIOAgy0iAaYT6HjOkbpnZyICw/JVMF38+SU4/rgGZF
-    UPXj1ikGdKLGUJCFuZNkEuDIENDQSppztzl4/hxGM8sIF1kW7WIBGRHkyFZ51Vu/zoFX
-    2T+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757069708;
-    s=strato-dkim-0003; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=6NhZqsL4uJ9fGjeySJ5iCG+3q0rm80H4l54hcVLKDzE=;
-    b=CvfbcpxuwEjD8zUubmNlXzrX/U30rWs4gvLzFL7/3R3cbG+4HDsHKEn3uH7QtQCQnQ
-    6SYGqBgM26Psa/yBraCA==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMrZpkO3Mw3lZ/t54cFxeEQ7s8bGWj0Q=="
-Received: from [IPV6:2a00:6020:4a38:6810::9f3]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K5d361185At7RB9
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 5 Sep 2025 12:55:07 +0200 (CEST)
-Message-ID: <a4c0fade-52b6-4077-8a6a-fce6f2d62cd2@hartkopp.net>
-Date: Fri, 5 Sep 2025 12:55:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F09E30BB9C;
+	Fri,  5 Sep 2025 11:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757070004; cv=none; b=rT5GH+aj0rt14+rAt49roymol76q4JlDA3A0a8jXEW7VsSOaI6YS/u+wGG2SOI8lFBfvBfm5b+Wzb2pZGp+5lVPOxj8K70UzCn23kBSLVeJ2XGe2wdJj80xSUsJ+qnksRBU093lV/umurSkVErd4/VewLp2v2YS2H8hUGcIihQQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757070004; c=relaxed/simple;
+	bh=xWFG9IcSFRaAzKyA5Lio/LJJoAzp+33hlHZFKOaExJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4k5wIUoWOSTh0ctg4N5JfRxMN1t9Skf9k7n0UTmkSkr3bbUbEKAgFOEeyNQzxIvNGCGQ7QO97ell8J8lncYTmxCywioKv+gCryk6pwonlLyaWNck9b7oY6v8WuflLdj7lns4Nu5YgzEfF+29NLqMhjQdegUeDyp/hI7LRIbYh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUI5oZU+; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757070002; x=1788606002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xWFG9IcSFRaAzKyA5Lio/LJJoAzp+33hlHZFKOaExJw=;
+  b=PUI5oZU+WbcD5TRE5B1gzpA3ji46yxWYYV84kOnwJvwNgxtAxrR4p28b
+   q50qbhe6Zl9eC69UepGrKFCU556x/KiKT8R84Z8AbBr8wpxZ0xC98pnSC
+   yFhyTm7+BZpv3pcxjrfGGEVvLRfyVPg51Oege4jd+2he6TJpfVta9SQja
+   JiQz7/XfVDM7AmNPBYprAMlFj1/V+swY2mQHX+xgxsCqvbOiKEZ3fsuMW
+   8AXK9eNwyjzyxeXfEcRNDovFIdIh9auNKJVvINAYufKcJq5KHAjyh8wqH
+   UK5bC/dj9w/7topFCYZK2SrRMpwGnWwXgt5Bk//TvLTIUK35+lfaYpmWc
+   w==;
+X-CSE-ConnectionGUID: p9S9SDCySq2s9KefkPIA7Q==
+X-CSE-MsgGUID: Azqi8x4kS5CuwXXMYLbkFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59118962"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="59118962"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:00:01 -0700
+X-CSE-ConnectionGUID: zgDOmaF0S/+OTUlsH0/d9g==
+X-CSE-MsgGUID: 7w6td42BQWaRq1lJzsfd3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="172579445"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa009.fm.intel.com with SMTP; 05 Sep 2025 03:59:58 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 13:59:57 +0300
+Date: Fri, 5 Sep 2025 13:59:57 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Fedor Pchelkin <boddah8794@gmail.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-usb@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: ucsi: stm32: Use min() to improve
+ ucsi_stm32g0_fw_cb()
+Message-ID: <aLrCrQOdLsqq0U37@kuha.fi.intel.com>
+References: <20250830110426.10007-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/21] can: netlink: remove comment in can_validate()
-To: Vincent Mailhol <mailhol@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
- <20250903-canxl-netlink-prep-v1-7-904bd6037cd9@kernel.org>
- <b1bf6cc5-f972-4163-8619-e04b887e2d32@hartkopp.net>
- <79452f68-c231-4bf2-a4ea-e3dce9b78e2e@kernel.org>
-Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <79452f68-c231-4bf2-a4ea-e3dce9b78e2e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830110426.10007-2-thorsten.blum@linux.dev>
 
+On Sat, Aug 30, 2025 at 01:04:20PM +0200, Thorsten Blum wrote:
+> Use min() to improve ucsi_stm32g0_fw_cb() and avoid calculating
+> 'end - data' twice.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On 04.09.25 11:48, Vincent Mailhol wrote:
-> On 04/09/2025 at 15:51, Oliver Hartkopp wrote:
->> Hi Vincent,
->>
->> On 03.09.25 10:50, Vincent Mailhol wrote:
->>> The comment in can_validate() is just paraphrasing the code. When
->>> adding CAN XL, updating this comment would add some overhead work for
->>> no clear benefit.
->>
->> I generally see that the code introduced by yourself has nearly no comments.
+> ---
+>  drivers/usb/typec/ucsi/ucsi_stm32g0.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> I tend to disagree. While it is true that I added no C-style comment blocks, I
-> added a ton of error messages which I would argue are documentation.
-> 
-> For example, this code:
-> 
-> 	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
-> 	 * must be set and vice-versa
-> 	 */
-> 	if ((tdc_auto || tdc_manual) != !!data_tdc)
-> 		return -EOPNOTSUPP;
-> 
-> was transformed into:
-> 
-> 	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
-> 	 * must be set and vice-versa
-> 	 */
-> 	if ((tdc_auto || tdc_manual) && !data_tdc) {
-> 		NL_SET_ERR_MSG(extack, "TDC parameters are missing");
-> 		return -EOPNOTSUPP;
-> 	}
-> 	if (!(tdc_auto || tdc_manual) && data_tdc) {
-> 		NL_SET_ERR_MSG(extack, "TDC mode (auto or manual) is missing");
-> 		return -EOPNOTSUPP;
-> 	}
-> 
-> Which I think is a huge improvement on the documentation. And this has real
-> value because the user do not have to look at the source code anymore to
-> understand why an
-> 
->    ip link set can ...
-> 
-> returned an error.
-> 
->> E.g. if you look at the [PATCH 12/21] can: netlink: add
->> can_ctrlmode_changelink() the comments introduced by myself document the
->> different steps as we had problems with the complexity there and it was hard to
->> review either.
-> 
-> Those comments are still here.
-> 
->> I would like to motivate you to generally add more comments.
-> This is a refactoring series. I kept all existing comments except of one and
-> then added a more comments in the form of error message. I am not adding code,
-> just moving it around, so I do not really get why I should be adding even more
-> comments to the existing code.
-> 
->> When people (like me) look into that code that they haven't written themselves
->> and there is not even a hint of "what's the idea of what we are doing here" then
->> the code is hard to follow and to review.
-> 
-> Is this an issue in my code refactoring or an issue with the existing code?
-> 
->> We definitely don't need a full blown documentation on top of each function. But
->> I like this comment you want to remove here and I would like to have more of it,
->> so that people get an impression what they will see in the following code.
-> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> index 57ef7d83a412..838ac0185082 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/firmware.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/minmax.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/unaligned.h>
+> @@ -523,11 +524,7 @@ static void ucsi_stm32g0_fw_cb(const struct firmware *fw, void *context)
+>  	data = fw->data;
+>  	end = fw->data + fw->size;
+>  	while (data < end) {
+> -		if ((end - data) < STM32G0_I2C_BL_SZ)
+> -			size = end - data;
+> -		else
+> -			size = STM32G0_I2C_BL_SZ;
+> -
+> +		size = min(end - data, STM32G0_I2C_BL_SZ);
+>  		ret = ucsi_stm32g0_bl_write(g0->ucsi, addr, data, size);
+>  		if (ret) {
+>  			dev_err(g0->dev, "Write failed %d\n", ret);
+> -- 
+> 2.50.1
 
-No need to defend yourself with specific references or even feel 
-personally attacked.
-
-My overall feeling is that you spend an excellent effort in commit 
-messages but this information is then omitted in code comments.
-
-As I've already written "I would like to motivate you to generally add 
-more comments.". And this can also happen when refactoring things where 
-new functions are created which reduces the context to the original code 
-section.
-
-Best regards,
-Oliver
-
+-- 
+heikki
 
