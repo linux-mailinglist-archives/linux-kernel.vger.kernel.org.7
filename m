@@ -1,126 +1,107 @@
-Return-Path: <linux-kernel+bounces-803245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9ED1B45C95
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F26DAB45C96
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AD7656674E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6375167318
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDDB2F7ABA;
-	Fri,  5 Sep 2025 15:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F2D2F1FD1;
+	Fri,  5 Sep 2025 15:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfuKzJoB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="U5iLyCyt"
+Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BAA225408;
-	Fri,  5 Sep 2025 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3612B219EB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086133; cv=none; b=ErJwssJvDkeffWpK5bcFVku9DXAwxZITJOe0BPN4hLXJ3gASTf6Y6+2pU8jlRMxDsOQPaBRisJQul1WcKfqBGyjJSjxdDS8l46scz7fuwb3gaTZIEuJlaGuiaXT8HsFCriVaC78gsYrOAeedIJyNZY+KUNA2mzutdoOJMM5r4Y4=
+	t=1757086192; cv=none; b=DSoc97uqff28/5TPRktG3iVTrgcrgqzLziVHIZsrNYEkSZoz3mGWpCwa2NoGktuEGs4zIyuIz48zrtqXfgAY0rr0VNXIK86F1mwYNymSUw0L1obUsGYbgpiJPhCk2re/sSf/WtBdmYVWN9lBj/nGRQjGqa9Dj3N/ozJTWpRgPjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086133; c=relaxed/simple;
-	bh=sPEEy5vULDAfl0FqPxMJIccT/9QzwSSYVorKW+7DqOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lD3DCjnqSllmu9NpufXuE13MoWK8C7xxTIhYdUfK7SjjOMYVeCbiwlU20Gzj05YNhNVsfiA49setVke1eytRi1eiSz648HYLkNA6aTC9zBM8Zt5l6h2OB3XO7415v2MDMM/4/SHP9kEiLSQDm/37RntBosiQVotqwyEi9nsc59g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfuKzJoB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F727C4CEF1;
-	Fri,  5 Sep 2025 15:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757086133;
-	bh=sPEEy5vULDAfl0FqPxMJIccT/9QzwSSYVorKW+7DqOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfuKzJoB7YDS6ZdqbW1seO4OuIsImFFTGR/bXgnGmFJpT8WbxoE0kxe+/AkT2++HE
-	 aM2+HP3yidLqlM3C+RLjI7Z5r8mzwoxE4wfa2ikahg+1BswcHiQsmrt5orqitio4Ea
-	 Qas/HwsGqrfN7eF5HmmhXZFQfIN7s0XA/8Rk4kwnC3vgtWWQo+sOJlC6GgRHRTukOh
-	 GciBrU64ZYTKgOP2Bqx1S4J+G3efY9zyq4RFVewODDTRq5TghYcbO/XOMJiJ6Z/wWt
-	 eB9VWDk6YF1Dork/u60T77O+xEjdWSGPRaBYnwNzwHVccac84mr6BwXDrUCjTAHOkF
-	 LPXsaZS7k04ow==
-Date: Fri, 5 Sep 2025 16:28:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Asuna <spriteovo@gmail.com>
-Cc: Jason Montleon <jmontleo@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Tejun Heo <tj@kernel.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Matthew Maurer <mmaurer@google.com>, Jeff Xu <jeffxu@chromium.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
-Message-ID: <20250905-swipe-unstuck-dd7ad6e5466a@spud>
-References: <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250903190806.2604757-1-SpriteOvO@gmail.com>
- <20250903190806.2604757-2-SpriteOvO@gmail.com>
- <20250904-sterilize-swagger-c7999b124e83@spud>
- <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
+	s=arc-20240116; t=1757086192; c=relaxed/simple;
+	bh=BxUXzbp6tW9HkuDY9YdiJ/tKeL7BUBWB6wgeuNUUUPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DpsLH9ESiKiuiTL5LS3SbMaQyzftDyHYDK9BLxYyhipL3R+ZbIYttD0NB1PBjNMa4xSUcVHdEOopHYPXNnrfaaGo3fB3kTPs9MjENnkf6bCeDAltMFxDMUzUy+sHhbyfYm4g9Cb2NYhFrs7lhEAS+ZtGZpmz3T7DALJHWzQJrKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=U5iLyCyt; arc=none smtp.client-ip=178.154.239.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:3a87:0:640:845c:0])
+	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id B703FC1091;
+	Fri, 05 Sep 2025 18:29:38 +0300 (MSK)
+Received: from [IPV6:2a02:6bf:8080:d49::1:8] (unknown [2a02:6bf:8080:d49::1:8])
+	by mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id aTkr5n3GqOs0-EHHFA89N;
+	Fri, 05 Sep 2025 18:29:38 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1757086178;
+	bh=yCEN9kUnrmHejvnk5reuG8g0xKCGYUfPqxhPWFszXpY=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=U5iLyCytt2QkzEUEvNui/S5cuOkdiYx5W5++yPBfpdyU+be7mVpsgqsPK11WSbe+0
+	 9AyoLSHB6ZgHcv7dY3b5U/gN8q6RrKgqOcx5LeBTf23/T3fN2D4vjQ44m0wvz5igzp
+	 JbwW9ODXSwBrMFHXEQ5rza76UFkxoT+oqOjcpi90=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <ea3b4933-49d0-4940-9f05-d8e2189606c8@yandex-team.ru>
+Date: Fri, 5 Sep 2025 18:29:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cr2zhJdWyNpNS/E7"
-Content-Disposition: inline
-In-Reply-To: <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] printk_ringbuffer: don't needlessly wrap data
+ blocks around
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
+ <20250905144152.9137-2-d-tatianin@yandex-team.ru>
+ <84tt1gex89.fsf@jogness.linutronix.de>
+Content-Language: en-US
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+In-Reply-To: <84tt1gex89.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---cr2zhJdWyNpNS/E7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/5/25 6:27 PM, John Ogness wrote:
+> On 2025-09-05, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
+>> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+>> index d9fb053cff67..99989a9ce4b4 100644
+>> --- a/kernel/printk/printk_ringbuffer.c
+>> +++ b/kernel/printk/printk_ringbuffer.c
+>> @@ -1234,14 +1245,14 @@ static const char *get_data(struct prb_data_ring *data_ring,
+>>   	}
+>>   
+>>   	/* Regular data block: @begin less than @next and in same wrap. */
+>> -	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next) &&
+>> +	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
+>>   	    blk_lpos->begin < blk_lpos->next) {
+>>   		db = to_block(data_ring, blk_lpos->begin);
+>>   		*data_size = blk_lpos->next - blk_lpos->begin;
+>>   
+>>   	/* Wrapping data block: @begin is one wrap behind @next. */
+>> -	} else if (DATA_WRAPS(data_ring, blk_lpos->begin + DATA_SIZE(data_ring)) ==
+>> -		   DATA_WRAPS(data_ring, blk_lpos->next)) {
+>> +	} else if (!is_blk_wrapped(data_ring,
+>> +		   blk_lpos->begin + DATA_SIZE(data_ring), blk_lpos->next)) {
+> It would look nicer if the arguments of the function were indented to
+> the function parenthesis:
+>
+> 	} else if (!is_blk_wrapped(data_ring, blk_lpos->begin +
+> 				   DATA_SIZE(data_ring), blk_lpos->next)) {
 
-On Fri, Sep 05, 2025 at 06:56:35AM +0800, Asuna wrote:
-> > One thing - please don't send new versions
-> > of patchsets in response to earlier versions or other threads. It
-> > doesn't do you any favours with mailbox visibility.
->=20
-> I apologize for this, I'm pretty much new to mailing lists, so I had
-> followed the step "Explicit In-Reply-To headers" [1] in doc. For future
-> patches I'll send them alone instead of replying to existing threads.
->=20
-> [1]: https://www.kernel.org/doc/html/v6.9/process/submitting-patches.html=
-#explicit-in-reply-to-headers
+Would you like me to resend with this addressed?
 
-Ye I think this is mostly just misleading. You're better off providing a
-lore link in the body of the mail than replying to some old thread. I
-find that explicit in-reply-to stuff only really helpful to send a
-single patch as part of a conversation where it's effectively an RFC.
+Thanks!
 
---cr2zhJdWyNpNS/E7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsBqwAKCRB4tDGHoIJi
-0o8oAQDiIK6HL6oaYXWxQpproLYlTxZVq7be/QUm0+0M9Fhj4gEAyoX5K7PDnHGS
-NVoLGxCGdehDtQmXjvmrQUSeQfwA8Ao=
-=fC2y
------END PGP SIGNATURE-----
-
---cr2zhJdWyNpNS/E7--
+> Otherwise, everything is OK for me.
+>
+> Reviewed-by: John Ogness <john.ogness@linutronix.de>
+> Tested-by: John Ogness <john.ogness@linutronix.de>
 
