@@ -1,290 +1,169 @@
-Return-Path: <linux-kernel+bounces-802123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F70B44DD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EEDB44DD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C37D23AC361
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9373A07850
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D728506B;
-	Fri,  5 Sep 2025 06:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EFE286415;
+	Fri,  5 Sep 2025 06:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2ifH0C5"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YL2gDXuZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F4D2701B8;
-	Fri,  5 Sep 2025 06:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9277128488F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757052261; cv=none; b=SaWHJR5TgUNcy46dEBQvGJZJB8C2nXOtJ7+E2q/iXA4/kxZMLunnZMOswkuT3DtaUtG2e30Qv4Flo887it0Y3eXIqGyJvEeMv3DSSDao4eNyarOIbGIEJ5L6ty1uDCPV0Zq9eXUThYuFEHHLqveY1BDNi7ocpAaxGcfBbtsvXJ8=
+	t=1757052763; cv=none; b=SuBnQKCY6tJtDmD/KgxSs77mgeiyYpjxtQoWQm4otQiAZdAPzI2uMamdNJJyNnU4V2+7lpLqK2mVtAOOAKpIorhm6eduOYBBZWEsyatQ1xspTkVG+EUglbliXHZsQNHnAchxMgqGvmNXpLFxvPtPrck/NuaIWTgSKa8f2RKFT/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757052261; c=relaxed/simple;
-	bh=HmjbunLEzRsRk/ZTamrUb88Ve5f4cz84c8bpjMnqi3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BNoo7mXX7aTXc8oVMrIs8gtZB374btWx40/iTu9UANHBs5dnFLtfFadnZ4p7zpYgROtjP8YrPvO2H3+LnabZhyhahIcRFKPjNhzUgH9Du6AQe2GYnOsCH8MkghZb0YbbGTJGhwk0Q9bySu3nS9ZJHrjVXfut1k1maiB4EF+1ddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2ifH0C5; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3f663c571ffso19027175ab.1;
-        Thu, 04 Sep 2025 23:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757052259; x=1757657059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HqqG99XdMrAd2jqq6H0JJFOaA0Ryarr1Yvyzp3zS8B4=;
-        b=O2ifH0C5hnndC9FV6g+EbY8jFxt6iQQMnIhvCRgsecTgGGspShl1UevhN18jK24joj
-         YeTLKKOsQSG/kVTXu6o7W0bqbRQMgj9n6BOYuEDmZkLMHdnsODyjeNetJY0MGZj7KQZj
-         9APGkmCdkHDa4e7/Me24+p83Sw0s8iP+zZ4ziwTIHihj9Sd6pN/tkvzXsJMgjkqOa/VC
-         pnxva/OR8XigzINuQuoCq33s5OQidhBy61Q9/8rN2FnmjgRDgiELsln95056t9Y+e8qj
-         6SuGa4p6agsDie+4M7vwBKaJZ1Yod+KCQOnnf91VM+NxYBdDm8NCWGGWDwYR71OUhT9l
-         EvvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757052259; x=1757657059;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HqqG99XdMrAd2jqq6H0JJFOaA0Ryarr1Yvyzp3zS8B4=;
-        b=Ap8i1s3S1Wkff6v3H4RgYCdr1x74myrD0/kdiU1gdNBBue6u3YKh18DR5ayfibIt//
-         mcmEoYAp442PHwos6esa7LFTrjRI/Jl3q+qbu5DWGwU6uyBfaDxd5LjjCLcJ2P1mxYz2
-         nke7GmwT0KKNNbEL4XBTiKg4YcxnKFvnV060MfvworkbUIau26jNme0oKZXR+dD5bzvd
-         rOc1Y6+e8lZ0ODaO9iahDKJjZkfAAGvhH2ssPP1Olk6mGR6Ssz4xoTUtwtC3pzoF+cYd
-         EfgCQpsuYn2UajJOs3XtR6U5mY5QHM0q26D7xGrqmYKv832b0A+RxKCfyDugp6Actkrx
-         693g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwsJEyeQprw+TVwaEU4Bu5+N12sNW4Y+9OBUsTp7kkR7/UtkY+rNfSq+ReSCuB3No/A4159J9X@vger.kernel.org, AJvYcCXWeQHva9um7iJmsMClPe/imi1gby25dBezof0+3FNG/sbxQuGkFCsu+aqrnbt3+rKIF9M+0d+dI3N8vG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLlfoVoshL6vomMXrlduSw+FJRo72gffWeTUIaVv3FJDRqxCm/
-	F3HQssVG+eeEE2CPAlGIM8v9MEqrmXouwRdxqqVNH8q1l6oWERCBo44IF/NkoyJLAUETtH+lcmK
-	+KV77ECPowdQUTo7M/Bj2PgDS6SCDASk=
-X-Gm-Gg: ASbGncskm/MR66wT2CmXg3izF2lWOAAnYLFmS8mOmymHrvs5/OGJS1ARqHYu0SrlJwq
-	hddj1VQWdAo3Sn1AsylgNEuMrJiWiG6nkspJwvnK29x34C4mkjNkyut0tHBp8V/eIJokTdgKnkN
-	fHfVgcaN1oIbAJPVNiAI4FdpFfVoI+Q3QxQpQr6+2yNoHfRLh1lypV6JBZdxoQArk0ewvaNMkdV
-	j9/IYOtwFHbI9KHfJyX4A==
-X-Google-Smtp-Source: AGHT+IHY7W6fRw0PtIeKmDTwqYrzr7HzSY0z2rXbI1Ev3Ki7jWlTXaQ8YZBUQZSAAb2llhE6a7ykJxlcqn48s1+6Fes=
-X-Received: by 2002:a05:6e02:b2a:b0:3f8:e97d:1bd1 with SMTP id
- e9e14a558f8ab-3f8e97d2040mr11921285ab.0.1757052258871; Thu, 04 Sep 2025
- 23:04:18 -0700 (PDT)
+	s=arc-20240116; t=1757052763; c=relaxed/simple;
+	bh=BWbJljR/mtL6PMqRXPis87NQ9xRN7C6KE01z/L1AYP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qAKhsGe5tq09BgBgvAfGPFCWH11o/chKfV+Xhdkca8mTlADSyQBM7dLjXJp5/o/4bx7GKN33ZkUUnEnLpAIkaX4k/gSHbhCp4N/hRfyUE0KQsExsuhcWMb07JXgcRiePAhzZd+WWL8enKmMBdKakrQsDhs0aJCAH6rQS4UG3JU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YL2gDXuZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585205vJ011765;
+	Fri, 5 Sep 2025 06:12:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=EOiwDLypudExa6X+mQqAgTZSMoOzpDTpaATdLNnit
+	Wc=; b=YL2gDXuZ62mTlRHdvxP1cFJuZ236PJd++xCALhzhjqZRZPsglDjx9aCCL
+	frtdvRWRXOPXEtquLugPpaajBU+jVqJ4nQ7FtgE+XtMGC/CpnRObiTOdPu/XfmxS
+	k21Fe1oFuaAcv/nLV0kQEopGPlwipHZpj36mGuzO+QERZFSXwRf6FEsE93QM2Ira
+	Vt6E4u4UdbuHgqNRAH9uAbwuZwhwom9naNRrfTuYw1GaHXPL861Rx5SsgIdbB3iT
+	oFnMvP/NSJ7/cFa66Edn1wngMNfaTTJ29O/QEjP6RqMC9hlWhPUJrsTaC/L0vg5r
+	26adjH3V2M+vi1bhD50gMPcswaX+g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurej28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:12:06 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5856C6W0004690;
+	Fri, 5 Sep 2025 06:12:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurej25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:12:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5855GHA4009000;
+	Fri, 5 Sep 2025 06:12:05 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48vdumqx1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:12:05 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5856C4aZ48955772
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Sep 2025 06:12:04 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A5CA65805F;
+	Fri,  5 Sep 2025 06:12:04 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7C6D55805C;
+	Fri,  5 Sep 2025 06:12:00 +0000 (GMT)
+Received: from jarvis.j0t-au.ibm.com (unknown [9.90.171.232])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  5 Sep 2025 06:12:00 +0000 (GMT)
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        maddy@linux.ibm.com, mpe@ellerman.id.au, christophe.leroy@csgroup.eu,
+        peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com
+Cc: npiggin@gmail.com, rostedt@goodmis.org, ardb@kernel.org,
+        Erhard Furtner <erhard_f@mailbox.org>
+Subject: [PATCH RFC] powerpc: Panic on jump label code patching failure
+Date: Fri,  5 Sep 2025 16:11:35 +1000
+Message-ID: <20250905061135.1451362-1-ajd@linux.ibm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905040021.1893488-1-jackzxcui1989@163.com>
-In-Reply-To: <20250905040021.1893488-1-jackzxcui1989@163.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 5 Sep 2025 14:03:41 +0800
-X-Gm-Features: Ac12FXyTd5Kt1wcd7IjIAKD7eYm2C4nZSFJfhukXRhAVbb6w3h2BBeFgksmfdx8
-Message-ID: <CAL+tcoDxyfAWOWT9gWC7wvcEy8tNYM7pF8suJhwUpdz+MWdxhw@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX96Lf5pinkkAe
+ SWHwo837foscTeRwpLEUJWJrZ1Y5CaiQ/IQBsSentBEfagYO1u1JfkNmKqhkPBNPDqNul4RAsRZ
+ YYa9JQKoS3L+jSJaJpejdnTnMKJrr2wHU5HtfUIMr8V+783ubsoiiSdmVo+mjadj8mujxAKA+wD
+ wok/czKCjg4m2IvXMfIl+smeC8bnVp2UusT9pTrqvCTb8Z2Mq7sMejRewdrvoIdO7E0pxnz8NUs
+ FCyfWBisZl46yM0m3OEax5erumCwdQiOLJN+k+Zyw8XGjnLf6UA+dnWd5McCeEgoNhxA1kdYZ7e
+ 6lU3X6ACbffK77H0kI5em53z0R2LvBfH8zJQDxBbzEUPpaC1Tiql6iqj0qthuymYTYAvf+DSf32
+ 8A3kGA85
+X-Proofpoint-GUID: -XeHBqheUgEkTi5oLlF3x3FKZ_pPzdpT
+X-Proofpoint-ORIG-GUID: H3f_zlIX5ElpJY2djrWAYIy97iLbrzaf
+X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68ba7f36 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=voM4FWlXAAAA:8 a=1UX6Do5GAAAA:8 a=b3CbU_ItAAAA:8
+ a=VnNF1IyMAAAA:8 a=OjDvQk8CL8vKLhAk-QAA:9 a=IC2XNlieTeVoXbcui8wp:22
+ a=Et2XPkok5AAZYJIKzHr1:22 a=Rv2g8BkzVjQTVhhssdqe:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300030
 
-On Fri, Sep 5, 2025 at 12:01=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> wr=
-ote:
->
-> On Thu, Sep 4, 2025 at 11:26=E2=80=AF+0800 Jason Xing <kerneljasonxing@gm=
-ail.com> wrote:
->
-> > > In the description of [PATCH net-next v10 0/2] net: af_packet: optimi=
-ze retire operation:
-> > >
-> > > Changes in v8:
-> > > - Delete delete_blk_timer field, as suggested by Willem de Bruijn,
-> > >   hrtimer_cancel will check and wait until the timer callback return =
-and ensure
-> > >   enter enter callback again;
-> >
-> > I see the reason now :)
-> >
-> > Please know that the history changes through versions will finally be
-> > removed, only the official message that will be kept in the git. So
-> > this kind of change, I think, should be clarified officially since
-> > you're removing a structure member. Adding more descriptions will be
-> > helpful to readers in the future. Thank you.
->
-> I will add some more information to the commit message of this 2/2 PATCH.
->
->
->
-> > > Consider the following timing sequence:
-> > > timer   cpu0 (softirq context, hrtimer timeout)                cpu1 (=
-process context)
-> > > 0       hrtimer_run_softirq
-> > > 1         __hrtimer_run_queues
-> > > 2           __run_hrtimer
-> > > 3             prb_retire_rx_blk_timer_expired
-> > > 4               spin_lock(&po->sk.sk_receive_queue.lock);
-> > > 5               _prb_refresh_rx_retire_blk_timer
-> > > 6                 hrtimer_forward_now
-> > > 7               spin_unlock(&po->sk.sk_receive_queue.lock)
-> > > 8             raw_spin_lock_irq(&cpu_base->lock);              tpacke=
-t_rcv
-> > > 9             enqueue_hrtimer                                    spin=
-_lock(&sk->sk_receive_queue.lock);
-> > > 10                                                               pack=
-et_current_rx_frame
-> > > 11                                                                 __=
-packet_lookup_frame_in_block
-> > > 12            finish enqueue_hrtimer                                 =
-prb_open_block
-> > > 13                                                                   =
-  _prb_refresh_rx_retire_blk_timer
-> > > 14                                                                   =
-    hrtimer_is_queued(&pkc->retire_blk_timer) =3D=3D true
-> > > 15                                                                   =
-    hrtimer_forward_now
-> > > 16                                                                   =
-      WARN_ON
-> > > On cpu0 in the timing sequence above, enqueue_hrtimer is not protecte=
-d by sk_receive_queue.lock,
-> > > while the hrtimer_forward_now is not protected by raw_spin_lock_irq(&=
-cpu_base->lock).
-> > >
-> > > In my previous email, I provided an explanation. As a supplement, I w=
-ould
-> > > like to reiterate a paragraph from my earlier response to Willem.
-> > > The point is that when the hrtimer is in the enqueued state, you cann=
-ot
-> >
-> > How about tring hrtimer_is_queued() beforehand?
-> >
-> > IIUC, with this patch applied, we will lose the opportunity to refresh
-> > the timer when the lookup function (in the above path I mentioned)
-> > gets called compared to before. If the packet socket tries to look up
-> > a new block and it doesn't update its expiry time, the timer will soon
-> > wake up. Does it sound unreasonable?
->
->
-> I actually pointed out the issue with the timeout setting in a previous e=
-mail:
-> https://lore.kernel.org/netdev/20250826030328.878001-1-jackzxcui1989@163.=
-com/.
->
-> Regarding the method you mentioned, using hrtimer_is_queued to assist in =
-judgment, I had
-> discussed this extensively with Willem in previous emails, and the conclu=
-sion was that
-> it is not feasible. The reason is that in our scenario, the hrtimer alway=
-s returns
-> HRTIMER_RESTART, unlike the places you pointed out, such as tcp_pacing_ch=
-eck, where the
-> corresponding hrtimer callbacks all return HRTIMER_NORESTART. Since our s=
-cenario returns
-> HRTIMER_RESTART, this can lead to many troublesome issues. The fundamenta=
-l reason is that
-> if HRTIMER_RESTART is returned, the hrtimer module will enqueue the hrtim=
-er after the
-> callback returns, which leads to exiting the protection of our sk_receive=
-_queue lock.
->
-> Returning to the functionality here, if we really want to update the hrti=
-mer's timeout
-> outside of the timer callback, there are two key points to note:
->
-> 1. Accurately knowing whether the current context is a timer callback or =
-tpacket_rcv.
-> 2. How to update the hrtimer's timeout in a non-timer callback scenario.
->
-> To start with the first point, it has already been explained in previous =
-emails that
-> executing hrtimer_forward outside of a timer callback is not allowed. The=
-refore, we
-> must accurately determine whether we are in a timer callback; only in tha=
-t context can
-> we use the hrtimer_forward function to update.
-> In the original code, since the same _prb_refresh_rx_retire_blk_timer fun=
-ction was called,
-> distinguishing between contexts required code restructuring. Now that thi=
-s patch removes
-> the _prb_refresh_rx_retire_blk_timer function, achieving this accurate di=
-stinction is not
-> too difficult.
-> The key issue is the second point. If we are not inside the hrtimer's cal=
-lback, we cannot
-> use hrtimer_forward to update the timeout.
-> So what other interface can we use? You might
-> suggest using hrtimer_start, but fundamentally, hrtimer_start cannot be c=
-alled if it has
-> already been started previously. Therefore, wouldn=E2=80=99t you need to =
-add hrtimer_cancel to
-> confirm that the hrtimer has been canceled? Once hrtimer_cancel is added,=
- there will also
-> be scenarios where it is restarted, which means we need to consider the c=
-oncurrent
-> scenario when the socket exits and also calls hrtimer_cancel. This might =
-require adding
-> logic for that concurrency scenario, and you might even need to reintrodu=
-ce the
-> delete_blk_timer variable to indicate whether the packet_release operatio=
-n has been
-> triggered so that the hrtimer does not restart in the tpacket_rcv scenari=
-o.
->
-> In fact, in a previous v7 version, I proposed a change that I personally =
-thought was
-> quite good, which can be seen here:
-> https://lore.kernel.org/netdev/20250822132051.266787-1-jackzxcui1989@163.=
-com/. However,
-> this change introduced an additional variable and more logic. Willem also=
- pointed out
-> that the added complexity to avoid a non-problematic issue was unnecessar=
-y.
+If patch_branch() or patch_instruction() fails while updating a jump
+label, we presently fail silently, leading to unpredictable behaviour
+later on.
 
-Admittedly it's a bit complex.
+Change arch_jump_label_transform() to panic on a code patching failure,
+matching the existing behaviour of arch_static_call_transform().
 
->
-> As mentioned in Changes in v8:
->   The only special case is when prb_open_block is called from tpacket_rcv=
-.
->   That would set the timeout further into the future than the already que=
-ued
->   timer. An earlier timeout is not problematic. No need to add complexity=
- to
->   avoid that.
+Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-It'd be better to highlight this in the commit message as well to
-avoid further repeat questions from others. It's an obvious change in
-this patch :)
+---
 
-In the meanwhile, you should adjust the comments above
-prb_retire_rx_blk_timer_expired() and prb_open_block() because you
-removed the refresh logic there.
+Ran into this while debugging an issue that Erhard reported to me about my
+PAGE_TABLE_CHECK series on a G4, where updating a static key failed
+silently, but only for one call site, leading to an incorrect reference
+count later on. This looks to be due to the issue fixed in [0]. A loud
+failure would have saved us all considerable debugging time.
 
->
-> It is not problematic, as Willem point it out in
-> https://lore.kernel.org/netdev/willemdebruijn.kernel.2d7599ee951fd@gmail.=
-com/
->
->
-> In the end:
->
-> So, if you agree with the current changes in v10 and do not wish to add t=
-he timeout
-> setting under tpacket_rcv, that=E2=80=99s fine.
-> If you do not agree, then the only alternative I can think of is to use a=
- combination
-> of hrtimer_cancel and hrtimer_start under prb_open_block, and we would al=
-so need to
-> reintroduce the delete_blk_timer variable to help determine whether the h=
-rtimer was
-> canceled due to the packet_release behavior. If we really want to make th=
-is change,
-> it does add quite a bit of logic, and we would also need Willem's agreeme=
-nt.
+Should I change the return type of arch_jump_label_transform() and handle
+this in an arch-independent way? Are there other users of code patching
+in powerpc that ought to be hardened?
 
-Thanks, I think I know enough about this long background. Let's stick
-with the approach you provided in the next respin :)
+Or is this excessive?
 
-Thanks,
-Jason
+[0] https://patchwork.ozlabs.org/project/linuxppc-dev/patch/4b5e6eb281d7b1ea77619bee17095f905a125168.1757003584.git.christophe.leroy@csgroup.eu/
+---
+ arch/powerpc/kernel/jump_label.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/jump_label.c b/arch/powerpc/kernel/jump_label.c
+index 2659e1ac8604..80d41ed7ac50 100644
+--- a/arch/powerpc/kernel/jump_label.c
++++ b/arch/powerpc/kernel/jump_label.c
+@@ -12,9 +12,14 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+ 	u32 *addr = (u32 *)jump_entry_code(entry);
++	int err;
+ 
+ 	if (type == JUMP_LABEL_JMP)
+-		patch_branch(addr, jump_entry_target(entry), 0);
++		err = patch_branch(addr, jump_entry_target(entry), 0);
+ 	else
+-		patch_instruction(addr, ppc_inst(PPC_RAW_NOP()));
++		err = patch_instruction(addr, ppc_inst(PPC_RAW_NOP()));
++
++	if (err)
++		panic("%s: patching failed, err %d, type %d, addr %pS, target %pS\n",
++		      __func__, err, type, addr, (void *)jump_entry_target(entry));
+ }
+-- 
+2.51.0
+
 
