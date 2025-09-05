@@ -1,125 +1,239 @@
-Return-Path: <linux-kernel+bounces-803715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A11EB46406
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34919B4640C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504861C86325
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E344F1C8658C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96349283FD8;
-	Fri,  5 Sep 2025 19:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E672868A9;
+	Fri,  5 Sep 2025 19:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k5QdP2dm"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uzU2HdaD"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91C9248176
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C3283121
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757102269; cv=none; b=Tj9L84ChRlSQvSZVbrKac+a0e6Fp+NccUBE9BHYti1xhjJeLJ6rwduPNnzXRtssDZ5TiQMyFyrl/QvxFunyNKc1Npl13WH4V4IZpOXNO6t5+6GVVo95qiwPb2hPu+BSyGOzmnbSFPKbRQDZyg9+m4YI6lZbLzcQZ8M5JgmF/254=
+	t=1757102371; cv=none; b=a91N97DxERkVxY0KnBtDviDkt4CjBN6VrsCcVF5YxzTp9dpa63qLu68PTLD1okeeIWtW/dRF7bwhQQk1kjnWVsidhBV+kyRIFM1+3wikhqh1Pc3yYtnQHfAdEc+wrNCe0tgbL6vFVR6ItXMlL6tzb4NSp5inJ2CmWbegmtE5Z90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757102269; c=relaxed/simple;
-	bh=UA13ufErpkBti0CSt0Y6CXeFDCG8q66BPU3KRp+4QLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VF2a3gqsOnTSUKgGMZDH2LgC4uDNwDKC+gOWdldhimE4gOTct7OaM8+Ochq196M5zf4zIxwhlWfaJ9le+u/0MNXPD+smlw+hJC5zfv1eSudNJhp/1xILtE+fdVCR7LSQqR9dZsTEWqAs5w1ToTWzbIKZR+SMOMFf5Wvm0jb8MlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k5QdP2dm; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 5 Sep 2025 19:57:36 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757102261;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C88HDehPWivD9EUSvKkxXMxjXSeia8HK43L6jBuUCCM=;
-	b=k5QdP2dmq/1Ek9qMCh+byWehTbaBVFeSYl4SdH/jqY9gj46HWhi3IIEOEhOJyeA+k70JII
-	1ExSzHoZnEmaDRNMgT0mcb1eD0KlvPvVIMKN8hYqiRT8ciWSv5fjiyMpzlWV5GKdrldXKV
-	EIZ5cJon/uPV4AqhDtLsZr4PD+NgryQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: Vlastimil Babka <vbabka@suse.cz>, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH 0/3] mm: remove zpool
-Message-ID: <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
- <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
+	s=arc-20240116; t=1757102371; c=relaxed/simple;
+	bh=a/JV8A5G5nUlEZdYoKuMxsVvh45VgOaostPKBr7+uLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ApI6JtlzwBjPpOPWSwwAjRN3ljkL9VfRWMr5rBo7sbvjPmsQ96mKfVnjOayAtQrx8uSUJHMCQoma08w4/SbWiAyjM1QzZvKvWVel5zIXWsZFQA2pc8uMJrfyoQdrfuJc4l0u2VmlGr3v7D4DdZKKrotBLUuSict4iaObUpWTieA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uzU2HdaD; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61e73b1544fso910113eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757102368; x=1757707168; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HFR/qTe+EjunSfm8G+3G1jdMJoO0CoueuRNYqBhRg2g=;
+        b=uzU2HdaD4ZbysLu+TPYfrLl4L0Ovmi4mOoyWrLcU/6/6EsvR12mRGV4XTFyJrC6FkN
+         bIL5aMjbvWkC+FFAESkHI76rHvAAmGKcgfllYPpprWy0YprBrAGK3rn8Ny/Qkt/Iu+Do
+         gAZ5nzPQ0+x1kT97yM15tAoUT/Aq1LZEzbk88/GNMlsSNXqW9+KAoj3guyQz8fPtqGEm
+         nObR45dbd79YzESzywlo1mvkz9n1ByabcgPbW3G/ODIsmJEYSbZ/zRETsA3wGQY8jepQ
+         nRkAt0K0p2yCmEHSf1vecQUS3jAGNK/Zu1+fM0Q3vgaJltkaP+e5ZSWw0HOnn2/jTdJc
+         37iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757102368; x=1757707168;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HFR/qTe+EjunSfm8G+3G1jdMJoO0CoueuRNYqBhRg2g=;
+        b=o0UBL5UzutIV5Nq5ozGR8IX5CPix/9bRalOsh4zPqoIt2a2AG81EdBCrSrp+9r8hoE
+         I3IA2YCwtllPvUFIECvSPXnSXA+VFMNVwIuM/qCe4MrYFSVHdLQbqaeA9vm410VYta32
+         CrLXkjtF/K/3fMCD527npgsE1LUSUR8ri9+JTZfMtbUSrxsp0rzEOAvQMGB1hKjd0T8j
+         x48dY8uZs1W6jQcMlytQ0N1/MaqFMDKLyaqj8gB0P4agcN4ako5FNihsueiHpyLmzHF5
+         BRJif0C/tqqdEAKRvcjcosdaZcJK3bzipJL7MO6EwZfTOrcfX6+Dpk/D/ypk6Eb+OYer
+         yoSg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2zchkC/e2V+cv+nQQqPb2YPCYxPsNsvVZHFqxS/AfbFPNBFnQoEs3Q0pci0+iTFlToq9ohTHbbYue4M0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0LHWavN7HwPEv8ZWzx64oRC6GSoWzrPdlEro++joGpE6QQxkM
+	PZe64CP0s8tl6G5h1DmC2wJxvlxbGRAG95UPOHnRbAn+tQYBklUvqeBQlFSOdhn6D9Q=
+X-Gm-Gg: ASbGncsQIvJsCuS+HwaerlDbTb7wqcFnGOz/HXkjhnSzPqKqp5ul2nxgMLpUYyVHrQi
+	YF/gsLiRLvnpAfbqz/YwJMaNR166YnGxrMP7gMdQdmqTKL7XBWdSira3GAoVpJm/cOBBp3GKcJL
+	UN0lAH/LStnOPkxgUDEQQrDiP+etzgTrP+LU4JZcJmSygId6DTP8lgwHF59/xmokZbOzPuunNjl
+	z2J/OoNjBYzn6O6EUe65v3foiabvu0rjCpPWx51tk5W+nAsAC0RvTiIy5nCr0JiiiTJ9Ssca8Ba
+	fSjvQEn4giyIKYoLcUG38unrvaY9OgL1UGbO3jPknsXJx6TkFd4p82F9SySdrftTpgSxzMyFD+4
+	O9JX+h6LecQBHKnJgSol0XxGdGVVynbTb7fKl8b+RNdQ6649OQXvbnWjrurKniz2f/e7KMhwg
+X-Google-Smtp-Source: AGHT+IEHh2lFTOh4uKfrurbVep0wcCUizsaolUYPgwaH94RRZXYqurYKFtUABG/PLJ82S8PBBjhL+A==
+X-Received: by 2002:a05:6808:1244:b0:439:8e9:637c with SMTP id 5614622812f47-43b29b4c490mr6359b6e.25.1757102368483;
+        Fri, 05 Sep 2025 12:59:28 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-438237053d2sm2290875b6e.30.2025.09.05.12.59.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 12:59:28 -0700 (PDT)
+Message-ID: <cf18ede2-2077-41f4-a49c-adb3c13c4c44@baylibre.com>
+Date: Fri, 5 Sep 2025 14:59:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] iio: accel: BMA220 add LPF cut-off frequency
+ mapping
+To: Petre Rodan <petre.rodan@subdimension.ro>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+ <20250901194742.11599-7-petre.rodan@subdimension.ro>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250901194742.11599-7-petre.rodan@subdimension.ro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 04:11:04PM +0200, Vitaly Wool wrote:
+On 9/1/25 2:47 PM, Petre Rodan wrote:
+>  - add mapping for the low pass filter cut-off frequency.
+>  - make valid values visible for both the cut-off frequency and the scale.
 > 
+> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
+> ---
+>  drivers/iio/accel/bma220_core.c | 60 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 59 insertions(+), 1 deletion(-)
 > 
-> On 9/4/25 12:13, Vlastimil Babka wrote:
-> > On 9/4/25 11:33, Vitaly Wool wrote:
-> > > > With zswap using zsmalloc directly, there are no more in-tree users of
-> > > > this code. Remove it.
-> > > > 
-> > > > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> > > 
-> > > Per the previous discussions, this gets a *NACK* from my side. There is
-> > > hardly anything _technical_ preventing new in-tree users of zpool API.
-> > > zpool API is neutral and well-defined, I don’t see *any* good reason for
-> > > it to be phased out.
-> > 
-> > AFAIK it's a policy that unused code should be removed ASAP. And that's the
-> > case for zpool after Patch 1, no? It could be different if another user was
-> > about to be merged (to avoid unnecessary churn), but that doesn't seem the
-> > case for zblock?
+> diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma220_core.c
+> index 86347cf8ab1e..e60acd62cf96 100644
+> --- a/drivers/iio/accel/bma220_core.c
+> +++ b/drivers/iio/accel/bma220_core.c
+> @@ -4,6 +4,15 @@
+>   *
+>   * Copyright (c) 2016,2020 Intel Corporation.
+>   * Copyright (c) 2025 Petre Rodan  <petre.rodan@subdimension.ro>
+> + *
+> + *
+> + * Device register to IIO ABI mapping:
+> + *
+> + * Register                  | IIO ABI (sysfs)                | valid values
+> + * --------------------------+--------------------------------+---------------
+> + * scale (range)             | in_accel_scale                 | see _available
+> + * cut-off freq (filt_config)| in_accel_filter_low_pass_...   | see _available
+> + * ---------------------------------------------------------------------------
+>   */
 > 
-> For the C implementation of zblock, no. But there's another implementation
-> which is in Rust and it's nearing the submission.
+>  #include <linux/bits.h>
+> @@ -135,13 +144,23 @@
 > 
-> > My concern would be if the removal breaks any existing installations relying
-> > on zswap. Presumably not as a make oldconfig will produce a config where
-> > nothing important is missing, and existing boot options such as
-> > "zswap.zpool=" or attempts to write to in the init scripts to
-> > "/sys/module/zswap/parameters/zpool" will cause some errors/noise but not
-> > prevent booting correctly?
+>  #define BMA220_DEVICE_NAME			"bma220"
 > 
-> I don't expect heavy breakage but misconfigurations will definitely occur.
-> > I mean if we were paranoid and anticipated somebody would break their
-> > booting if writing to /sys/module/zswap/parameters/zpool failed, we could
-> > keep the file (for a while) and just produce a warning in dmesg that it's
-> > deprecated and does nothing?
-> > 
-> >  From Patch 1:
-> > 
-> > > Note that this does not preclude future improvements and experiments
-> > > with different allocation strategies. Should it become necessary, it's
-> > > possible to provide an alternate implementation for the zsmalloc API,
-> > > selectable at compile time. However, zsmalloc is also rather mature
-> > > and feature rich, with years of widespread production exposure; it's
-> > > encouraged to make incremental improvements rather than fork it.
-> > 
-> > With my history of maintaining the slab allocators I can only support this
-> > approach.
+> +#define BMA220_COF_1000HZ			0x0
+> +#define BMA220_COF_500HZ			0x1
+> +#define BMA220_COF_250HZ			0x2
+> +#define BMA220_COF_125HZ			0x3
+> +#define BMA220_COF_64HZ				0x4
+> +#define BMA220_COF_32HZ				0x5
+> +
+>  #define BMA220_ACCEL_CHANNEL(index, reg, axis) {			\
+>  	.type = IIO_ACCEL,						\
+>  	.address = reg,							\
+>  	.modified = 1,							\
+>  	.channel2 = IIO_MOD_##axis,					\
+>  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
+> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |		\
+> +	    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),		\
+> +	.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_SCALE) |\
+> +	    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),		\
+>  	.scan_index = index,						\
+>  	.scan_type = {							\
+>  		.sign = 's',						\
+> @@ -172,6 +191,7 @@ struct bma220_data {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+>  	struct mutex lock;
+> +	u8 lpf_3db_freq_idx;
+>  	u8 range_idx;
+>  	struct iio_trigger *trig;
+>  	struct {
+> @@ -188,6 +208,18 @@ static const struct iio_chan_spec bma220_channels[] = {
+>  	IIO_CHAN_SOFT_TIMESTAMP(3),
+>  };
 > 
-> There was the time when slab was the best option and it was more mature than
-> slub, which is now the best and only option. Thus, the "maturity" point is
-> indeed valid but not being backed by anything else it doesn't weigh too
-> much. Besides, zsmalloc's production exposure from all I know is limited to
-> the 4K page case, and zsmalloc is truly struggling when the system is
-> configured for 16K pages.
+> +/*
+> + * Available cut-off frequencies of the low pass filter in Hz.
+> + */
+> +static const int bma220_lpf_3db_freq_hz_table[][2] = {
+> +	[BMA220_COF_1000HZ] = {1000, 0},
+> +	[BMA220_COF_500HZ] = {500, 0},
+> +	[BMA220_COF_250HZ] = {250, 0},
+> +	[BMA220_COF_125HZ] = {125, 0},
+> +	[BMA220_COF_64HZ] = {64, 0},
+> +	[BMA220_COF_32HZ] = {32, 0},
 
-I think Android uses zram+zsmalloc with 16K pages. Perhaps Sergey could
-confirm.
+If all of these are integer values, why do we need 2-D table?
+
+> +};
+> +
+>  static const unsigned long bma220_accel_scan_masks[] = {
+>  	BIT(AXIS_X) | BIT(AXIS_Y) | BIT(AXIS_Z),
+>  	0
+> @@ -309,6 +341,11 @@ static int bma220_read_raw(struct iio_dev *indio_dev,
+>  		*val = bma220_scale_table[index][0];
+>  		*val2 = bma220_scale_table[index][1];
+>  		return IIO_VAL_INT_PLUS_MICRO;
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		index = data->lpf_3db_freq_idx;
+> +		*val = bma220_lpf_3db_freq_hz_table[index][0];
+> +		*val2 = bma220_lpf_3db_freq_hz_table[index][1];
+> +		return IIO_VAL_INT_PLUS_MICRO;
+
+Why not IIO_VAL_INT?
+
+>  	}
+> 
+>  	return -EINVAL;
+> @@ -353,6 +390,22 @@ static int bma220_write_raw(struct iio_dev *indio_dev,
+>  				"failed to set measurement range\n");
+>  		data->range_idx = index;
+> 
+> +		return 0;
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		index = bma220_find_match(bma220_lpf_3db_freq_hz_table,
+> +					  ARRAY_SIZE(bma220_lpf_3db_freq_hz_table),
+> +					  val, val2);
+> +		if (index < 0)
+> +			return -EINVAL;
+> +
+> +		ret = regmap_update_bits(data->regmap, BMA220_REG_FILTER,
+> +					 BMA220_FILTER_MASK,
+> +					 FIELD_PREP(BMA220_FILTER_MASK, index));
+> +		if (ret < 0)
+> +			dev_err(data->dev,
+> +				"failed to set low pass filter\n");
+
+Should `return ret;` here rather than logging error.
+
+> +		data->lpf_3db_freq_idx = index;
+> +
+>  		return 0;
+>  	}
+> 
+> @@ -370,6 +423,11 @@ static int bma220_read_avail(struct iio_dev *indio_dev,
+>  		*type = IIO_VAL_INT_PLUS_MICRO;
+>  		*length = ARRAY_SIZE(bma220_scale_table) * 2;
+>  		return IIO_AVAIL_LIST;
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		*vals = (const int *)bma220_lpf_3db_freq_hz_table;
+> +		*type = IIO_VAL_INT_PLUS_MICRO;
+> +		*length = ARRAY_SIZE(bma220_lpf_3db_freq_hz_table) * 2;
+> +		return IIO_AVAIL_LIST;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> --
+> 2.49.1
+> 
+
 
