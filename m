@@ -1,229 +1,197 @@
-Return-Path: <linux-kernel+bounces-802728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97C7B45618
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95347B45621
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452483B0FF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE2F7C7E46
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9742434F460;
-	Fri,  5 Sep 2025 11:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6D1343D9D;
+	Fri,  5 Sep 2025 11:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QEja0c3G"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FBP9IBtF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365E134A321
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969D286898;
+	Fri,  5 Sep 2025 11:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070877; cv=none; b=lPC7WEC5PRfBJVLCWqZ5HO3DP7egEs2hG1wd4mCOnfx4ieuAMEyRVqLNfC50DM82faKWzBsA6S+h8Nswe8sAF76ixf08LPR5droH/YHKLuOFFfyhc8ldYI503MVEHobwfT2y8NgJzEVXoUxPP85oz9aTEWtdB9zWL1oXIfC16oA=
+	t=1757070926; cv=none; b=KNoNRrZ1bu71Lkgge1OPcQcehBnGb1g4m2x2CxsSFfDI5Z/nTEczkQFn1uzI47FfChtMk8d2rzInDUV+nFZpORoaVUBMXmuYqZTKNCPh28A6F4e34twMXePc8oV4qxhn2SrxX1V4BaACvg/sSrXzam3e2xdciZ7Ft9K/i7or3/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070877; c=relaxed/simple;
-	bh=eMmQ9OoGm+P5E4eaGh3F1MRJISstesFzwHdqyCpi4pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FAAPVI9NdLjXVJZcZi+upSM+1WeRdcqpinVy/zIm2iazLMiwiKY+yxlj1WzW7DZ1jrinTa7iB1NQC7s7xwpki6bi7C5FlBsp64RJhkb/CwkNQpgm+0Kb67GWdaax+h1Z3CipJv0t+IsfxOJg8F88Halct2mICV9JhEdYE7ZLMa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QEja0c3G; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58572OcZ003799
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 11:14:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/FpbTHZW4xFomqVXWX7ayTQvBYf6qoBXa0d+diUXkvY=; b=QEja0c3GC5hhIQb2
-	fD9baFhbJ7Ms/iRoXZlJedqpURgY3oSaACrPnfba2EdQFzNkeTWIVxerLFDbesup
-	WBz8YRPJ8ZC/4Kkx1DhO8p2gh+gjH3O9hD/EwkO+Sgt+0YCjrrkcqbaUXP+WMkoJ
-	R3ApghoHAd/mSNCKhRSu2mV8b6Xj3sFh1e8K8ReVMswfAhNaYV2zOcdIKdpR+737
-	9/DVisxAymcd6g3NsiHZ3eNFeqpdX8ig8AnXQNN/qA3P2nd3uiGuNOZzY3t9lIU7
-	Xtu+KypdF7mkzV6hITjeNtfSe+zNmCaiv0YMNjPQO61bA3N1CprYrJSaFdeq8r7w
-	imAKAA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8sb1b8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:14:35 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8047fa66c98so68287185a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:14:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757070874; x=1757675674;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FpbTHZW4xFomqVXWX7ayTQvBYf6qoBXa0d+diUXkvY=;
-        b=HNkZKndil44VkXzsa7gtbD3VgusUpEMksEgF2EXK5zBq+yNzNn0q9yIzCZtBHMmsww
-         yTOckhEUAYPqpRw2FmHKHp6eB5AZYN6qqYuOE1KqtEyYmGh01km3VizZxQsYsIvnBG9D
-         Fi2R87Ne6pPxJN7uTmKakxwbfhLKO0Ng/HTmb8ijjqOUnaW5PQC5yTdU6qyv4G1t14sE
-         Pt0OxEyJ3faXb8tiMjGio1AXgGnos2DYdRbT/E5XmGHYd1U4ylRu4ZnWCsNC50IrHXhS
-         sxd9RQayxx1pHK4MR6q5w+Tq+uif6t1PxmEzFyae0+6I5Cq3qGnZzMWd8nRoW1Gq98tQ
-         UniQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVy7ZsurHrIRkFSox3jhSBsxZFB4r2swhRSK4DoPto4iPlWJT1FnLuH3JN6Ud0e1Dl6qpaRkeWhyhWJ73c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz11UmrL61COpPulXJghuq/OvMq7vu0UCOh+73ff5EQBVUbbipD
-	JmhdGpguT3aLYoqOpiB6iUAYt8bH7KLolehbUZmE/JcbNfTRfTbU+7oe418KJiI1pU1wp5kZWcb
-	HPosqjchzpZKUUGAg4tMUoyKGq2GP96JGekpDnQnMm6oSz5F9DAxWyenNVlNjNIh8rYs=
-X-Gm-Gg: ASbGnct9LRrTSUBUhnPfKVthWaeHPD3jLNrEggu3IooxArtdlmkWvyKumoYO6vI+mt9
-	FJjZQFZMCSl5LDC+JNETBpWMKAMkMsv40wuMNr6fu5PLvA2kxa1/uykeIJwhGUZN9d2DHdZMg8I
-	ZDhs85wgqc5e4pCga+G9v15aW7x94xIrlYdZlDtkaf7xRtLMgzNKREo419v8X4MEQPB3lBOKigv
-	WvLFx5EnQBs4NHRMLQSTcFjtSv/6DoPnT597t4qlp63SIkc0/eHxM4iCXtgegtsPAaPW4tlelFm
-	KmQGDEYTeuNRY4Rkq0qsBDZ8qMUbU8Zo8PwUxYTRSKyr8e5LV1Kj1FWxGfhnmPME/2T9MmugaZZ
-	tVMzc2f1k499J/J4FADBjrA==
-X-Received: by 2002:a05:6214:2a88:b0:72b:880d:3bfc with SMTP id 6a1803df08f44-72b880d3c5amr24659116d6.2.1757070873585;
-        Fri, 05 Sep 2025 04:14:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhxBIevK2sCdJCUPTxNgK1ElXc44o+jt15YDs8l2kK2RYkNbTjat2e9c4WHF0UaaGbTJuaiQ==
-X-Received: by 2002:a05:6214:2a88:b0:72b:880d:3bfc with SMTP id 6a1803df08f44-72b880d3c5amr24658896d6.2.1757070872870;
-        Fri, 05 Sep 2025 04:14:32 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b03ab857474sm1508366066b.89.2025.09.05.04.14.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 04:14:32 -0700 (PDT)
-Message-ID: <57ae28ea-85fd-4f8b-8e74-1efba33f0cd2@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 13:14:29 +0200
+	s=arc-20240116; t=1757070926; c=relaxed/simple;
+	bh=3akFC5IMed+fG2KKB0KQf9NBmC17zIW/9AU0DfJiD7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BYyVzVy+5oFOUM7cLWX7nYS8EFOBwrU+D4hAdAKrMY3cOQEdmX91vPdNi8hTfZKHEc8WkZ9Aau0Z5weErt8/dILvfkF5kqhxKhOmS2QFJTXoOd4Qi6MSRw9yDrDEhpwkgTgjbTteozq3oUngGGp2UOxZgR3ZXiP3+O53Fmqwfq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FBP9IBtF; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757070925; x=1788606925;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3akFC5IMed+fG2KKB0KQf9NBmC17zIW/9AU0DfJiD7Q=;
+  b=FBP9IBtFLrJmKvKW2nwyp+b8zJDMIDKk47xPY70ne5GHq08PlbI9bLRy
+   3upsVr55R2WBIt6BO6/RAEVZ/5bU6Ok2eJvqxJ77009ip220jeg4ssQAg
+   KjvJ5h/MpxZc30cu34R+q0c3jtlWtHTr98sPd7uge5RHvXt+r27qN/kZn
+   3GUaDNXsAH2f6/PfRAUrHgoqP32vYggxg+NAuyCMWNeT9PlFK0osDd+J6
+   GTh6lXh5JQfJAes+Wwt6iqMpP5HO6vf4j35em5+yEsxdW4dkoufMChz0d
+   /z4zUMNR/kr2r1zHJKRHmtRK4uJB0SJ7l2NOwwU+GnUFSW0U75mMBQKUh
+   Q==;
+X-CSE-ConnectionGUID: DP3B6aelR1qUsAhLm+TGRg==
+X-CSE-MsgGUID: QsgF+v8KTRCry6uu+e8p/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63251832"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63251832"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:15:24 -0700
+X-CSE-ConnectionGUID: +3HgtWUMTAaK3lJguvuAiQ==
+X-CSE-MsgGUID: 0bI3GIRWSgi/mUctC2BkUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="172069602"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa006.fm.intel.com with SMTP; 05 Sep 2025 04:15:17 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 14:15:16 +0300
+Date: Fri, 5 Sep 2025 14:15:16 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH RFC 12/22] usb: typec: tipd: Add cd321x struct with
+ separate size
+Message-ID: <aLrGRGTjyMhKV9hd@kuha.fi.intel.com>
+References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
+ <20250821-atcphy-6-17-v1-12-172beda182b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and SDC
- pin configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
- <rxd4js6hb5ccejge2i2fp2syqlzdghqs75hb5ufqrhvpwubjyz@zwumzc7wphjx>
- <c82d44af-d107-4e84-b5ae-eeb624bc03af@oss.qualcomm.com>
- <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
- <tqm4sxoya3hue7mof3uqo4nu2b77ionmxi65ewfxtjouvn5xlt@d6ala2j2msbn>
- <3b691f3a-633c-4a7f-bc38-a9c464d83fe1@oss.qualcomm.com>
- <zofmya5h3yrz7wfcl4gozsmfjdeaixoir3zrk5kqpymbz5mkha@qxhj26jow5eh>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <zofmya5h3yrz7wfcl4gozsmfjdeaixoir3zrk5kqpymbz5mkha@qxhj26jow5eh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX9fHBczaG1yN/
- J0bTL+U+76dqnv5ia8epI0CsWvFyH+Tta17hsIl3mu3vMdu5qVuKcy2aAF2rUOQUXuNIE4MB4rg
- UrD+BsbiLyq+tzj741q9Qj/v8k5pBjnPQPVdmTfJ54xK+T0y//Xd+lj3B1WrxzMfDaCmXqoqdsJ
- oAeglOIv11t4te79sE0OVyChAOCNuvs/li9V9qs40DR7kc/ppmYHdgyeOyQiKvZXP2dvSigdaGW
- j0xSWUpDhSQjvFex218qaepw2T6KT1fC8xchD3hm4T0B33xjd5RuY7fVDAVr3KMAWyhLfUbz7Vz
- gfa5EuTM22D4NStJDdC8pc0m/ufe9qQztLXvu4FxAZp88nKteh9BmCozPHpYMAGw+YenVrmnRy6
- VTRlNHBc
-X-Proofpoint-GUID: RRekAMBTfe6od-rES2-XKkUsIgxLDFsW
-X-Proofpoint-ORIG-GUID: RRekAMBTfe6od-rES2-XKkUsIgxLDFsW
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68bac61b cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=HgT1ff4I_b0h3GnEaV4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-atcphy-6-17-v1-12-172beda182b8@kernel.org>
 
-On 9/4/25 7:32 PM, Dmitry Baryshkov wrote:
-> On Thu, Sep 04, 2025 at 04:34:05PM +0200, Konrad Dybcio wrote:
->> On 9/4/25 3:35 PM, Dmitry Baryshkov wrote:
->>> On Wed, Sep 03, 2025 at 09:58:33PM +0530, Wasim Nazir wrote:
->>>> On Wed, Sep 03, 2025 at 06:12:59PM +0200, Konrad Dybcio wrote:
->>>>> On 8/27/25 3:20 AM, Dmitry Baryshkov wrote:
->>>>>> On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
->>>>>>> From: Monish Chunara <quic_mchunara@quicinc.com>
->>>>>>>
->>>>>>> Introduce the SDHC v5 controller node for the Lemans platform.
->>>>>>> This controller supports either eMMC or SD-card, but only one
->>>>>>> can be active at a time. SD-card is the preferred configuration
->>>>>>> on Lemans targets, so describe this controller.
->>>>>>>
->>>>>>> Define the SDC interface pins including clk, cmd, and data lines
->>>>>>> to enable proper communication with the SDHC controller.
->>>>>>>
->>>>>>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
->>>>>>> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
->>>>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
->>>>>>>  1 file changed, 70 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
->>>>>>> index 99a566b42ef2..a5a3cdba47f3 100644
->>>>>>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
->>>>>>> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
->>>>>>>  			};
->>>>>>>  		};
->>>>>>>  
->>>>>>> +		sdhc: mmc@87c4000 {
->>>>>>> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
->>>>>>> +			reg = <0x0 0x087c4000 0x0 0x1000>;
->>>>>>> +
->>>>>>> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
->>>>>>> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
->>>>>>> +			interrupt-names = "hc_irq", "pwr_irq";
->>>>>>> +
->>>>>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
->>>>>>> +				 <&gcc GCC_SDCC1_APPS_CLK>;
->>>>>>> +			clock-names = "iface", "core";
->>>>>>> +
->>>>>>> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
->>>>>>> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
->>>>>>> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
->>>>>>> +
->>>>>>> +			iommus = <&apps_smmu 0x0 0x0>;
->>>>>>> +			dma-coherent;
->>>>>>> +
->>>>>>> +			resets = <&gcc GCC_SDCC1_BCR>;
->>>>>>> +
->>>>>>> +			no-sdio;
->>>>>>> +			no-mmc;
->>>>>>> +			bus-width = <4>;
->>>>>>
->>>>>> This is the board configuration, it should be defined in the EVK DTS.
->>>>>
->>>>> Unless the controller is actually incapable of doing non-SDCards
->>>>>
->>>>> But from the limited information I can find, this one should be able
->>>>> to do both
->>>>>
->>>>
->>>> It’s doable, but the bus width differs when this controller is used for
->>>> eMMC, which is supported on the Mezz board. So, it’s cleaner to define
->>>> only what’s needed for each specific usecase on the board.
->>>
->>> `git grep no-sdio arch/arm64/boot/dts/qcom/` shows that we have those
->>> properties inside the board DT. I don't see a reason to deviate.
->>
->> Just to make sure we're clear
->>
->> I want the author to keep bus-width in SoC dt and move the other
->> properties to the board dt
+On Thu, Aug 21, 2025 at 03:39:04PM +0000, Sven Peter wrote:
+> We're about to add more fields to struct tps6598x which are only relevant
+> for Apple's CD321x and to ensure that we don't waste memory everywhere for
+> those add a separate struct for cd321x and prepare to allocate more space
+> inside probe.
 > 
-> I think bus-width is also a property of the board. In the end, it's a
-> question of schematics whether we route 1 wire or all 4 wires. git-log
-> shows that bus-width is being sent in both files (and probalby we should
-> sort that out).
+> Signed-off-by: Sven Peter <sven@kernel.org>
 
-Actually this is the controller capability, so if it can do 8, it should
-be 8 and the MMC core will do whatever it pleases (the not-super-sure
-docs that I have say 8 for this platform)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Konrad
+> ---
+>  drivers/usb/typec/tipd/core.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index 19d713937870304e68325a441b0de63eb5db3b80..51b0f3be8b66a743ddc3ea96c1b25f597a1e8f6c 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -113,6 +113,7 @@ struct tps6598x;
+>  struct tipd_data {
+>  	irq_handler_t irq_handler;
+>  	u64 irq_mask1;
+> +	size_t tps_struct_size;
+>  	int (*register_port)(struct tps6598x *tps, struct fwnode_handle *node);
+>  	void (*trace_data_status)(u32 status);
+>  	void (*trace_power_status)(u16 status);
+> @@ -148,6 +149,10 @@ struct tps6598x {
+>  	const struct tipd_data *data;
+>  };
+>  
+> +struct cd321x {
+> +	struct tps6598x tps;
+> +};
+> +
+>  static enum power_supply_property tps6598x_psy_props[] = {
+>  	POWER_SUPPLY_PROP_USB_TYPE,
+>  	POWER_SUPPLY_PROP_ONLINE,
+> @@ -1297,18 +1302,24 @@ tps25750_register_port(struct tps6598x *tps, struct fwnode_handle *fwnode)
+>  
+>  static int tps6598x_probe(struct i2c_client *client)
+>  {
+> +	const struct tipd_data *data;
+>  	struct tps6598x *tps;
+>  	struct fwnode_handle *fwnode;
+>  	u32 status;
+>  	u32 vid;
+>  	int ret;
+>  
+> -	tps = devm_kzalloc(&client->dev, sizeof(*tps), GFP_KERNEL);
+> +	data = i2c_get_match_data(client);
+> +	if (!data)
+> +		return -EINVAL;
+> +
+> +	tps = devm_kzalloc(&client->dev, data->tps_struct_size, GFP_KERNEL);
+>  	if (!tps)
+>  		return -ENOMEM;
+>  
+>  	mutex_init(&tps->lock);
+>  	tps->dev = &client->dev;
+> +	tps->data = data;
+>  
+>  	tps->reset = devm_gpiod_get_optional(tps->dev, "reset", GPIOD_OUT_LOW);
+>  	if (IS_ERR(tps->reset))
+> @@ -1334,10 +1345,6 @@ static int tps6598x_probe(struct i2c_client *client)
+>  	if (i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+>  		tps->i2c_protocol = true;
+>  
+> -	tps->data = i2c_get_match_data(client);
+> -	if (!tps->data)
+> -		return -EINVAL;
+> -
+>  	if (tps->data->switch_power_state) {
+>  		ret = tps->data->switch_power_state(tps, TPS_SYSTEM_POWER_STATE_S0);
+>  		if (ret)
+> @@ -1521,6 +1528,7 @@ static const struct tipd_data cd321x_data = {
+>  	.irq_mask1 = APPLE_CD_REG_INT_POWER_STATUS_UPDATE |
+>  		     APPLE_CD_REG_INT_DATA_STATUS_UPDATE |
+>  		     APPLE_CD_REG_INT_PLUG_EVENT,
+> +	.tps_struct_size = sizeof(struct cd321x),
+>  	.register_port = tps6598x_register_port,
+>  	.trace_data_status = trace_cd321x_data_status,
+>  	.trace_power_status = trace_tps6598x_power_status,
+> @@ -1535,6 +1543,7 @@ static const struct tipd_data tps6598x_data = {
+>  	.irq_mask1 = TPS_REG_INT_POWER_STATUS_UPDATE |
+>  		     TPS_REG_INT_DATA_STATUS_UPDATE |
+>  		     TPS_REG_INT_PLUG_EVENT,
+> +	.tps_struct_size = sizeof(struct tps6598x),
+>  	.register_port = tps6598x_register_port,
+>  	.trace_data_status = trace_tps6598x_data_status,
+>  	.trace_power_status = trace_tps6598x_power_status,
+> @@ -1549,6 +1558,7 @@ static const struct tipd_data tps25750_data = {
+>  	.irq_mask1 = TPS_REG_INT_POWER_STATUS_UPDATE |
+>  		     TPS_REG_INT_DATA_STATUS_UPDATE |
+>  		     TPS_REG_INT_PLUG_EVENT,
+> +	.tps_struct_size = sizeof(struct tps6598x),
+>  	.register_port = tps25750_register_port,
+>  	.trace_data_status = trace_tps6598x_data_status,
+>  	.trace_power_status = trace_tps25750_power_status,
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+heikki
 
