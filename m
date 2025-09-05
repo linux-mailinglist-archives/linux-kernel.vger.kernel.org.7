@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-802604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBB7B4547B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:22:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825C8B45465
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9C0A08507
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:22:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469095A44A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252372D5C9E;
-	Fri,  5 Sep 2025 10:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F432D59F7;
+	Fri,  5 Sep 2025 10:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fhcTe84v"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iDWdCbR5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A482BE02D;
-	Fri,  5 Sep 2025 10:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39B2D46AB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067731; cv=none; b=SCGa1JjT+Y4uAuVZK3dsAcm1IUMyLiuUtpWmdkODp58ZCBvL48AaloKIEjDZ903sf1Kn2wvC/lyu4BX0wRvvpIZ6cOqeDu+XVx5C09p2SUMaBaMSJ5OX1z9aiuMSX1y+B9xX5arhq6CMYpJ1EHTcyk+1dUNKFyFncYDoTte2a74=
+	t=1757067624; cv=none; b=K+v4hseklyWh0mJjlujeEfPMZV+oufVk2OW5ivK/S/0GPgUcGuh5iw++2Dh4dwPT2jNjHSJswaKlY41db2sKnFxV11Blv9NcGLvyl19Dh8e0Ob5YJU8ZbCLJZ6ck2ZszhlXjzUic7jEzoywqUF10POLtOEMSvMlCWJaMUiz1N4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067731; c=relaxed/simple;
-	bh=9Qap+eGs7ZQYwgm1QJ8AAh/l4wMnkb7/hdNbQnyD2LA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a8sW5dJSXMncEwkp5NfOUFjcZNjP9PwUuwOcODQQdiQqRXgauiNXQsc8KZb0lDEDlUF6NuuImLL48kLpjC8T4UV3GdG0NIG4BCYiJEPPsjoRH3MJKyy6snP/59YdVD8ZiOa4mtWSjgz1MmPa+MNBgINsdQXgbfWnhVshl8DthBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fhcTe84v; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585AFhjU001934;
-	Fri, 5 Sep 2025 10:22:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=UthwyRnhGLwJ6SHA
-	FNKvY9tkC4zGqchzQLCene09JYE=; b=fhcTe84vcdCtp7IbDAj5J6umuB8zBzaG
-	P8EN5wecsdGzKsoWumk+nIrjTTd1dkwIsRsEnSkzf6a6EZjB8bQJPrB0rsqHD6Nr
-	jRfvBfnx7WcEORJ2KERt7JLmO8k/cbRxOxiai+gdFkxBHJOt4lC3I/t+N28GsOcp
-	gY8H2XeZD4Pm3gLLLgUfbYMYHqEHbos0LBYZbhSET7uCQkNEmOTOtboRIgtNlI/z
-	NG+tdxPucMHL5QVh29/mB9380Yl/i/Ol2oagrL1NVj2PLTf9K1Ldh8BnfT24cFIq
-	pANsFrBFF60Ds/YDFoGesAx7IBKVrB1hz5n+6oglBG9UhMBKNBu/lw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48ywxdr077-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Sep 2025 10:22:03 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5859Jbf6034471;
-	Fri, 5 Sep 2025 10:22:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01s038v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Sep 2025 10:22:03 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 585AM2VU011858;
-	Fri, 5 Sep 2025 10:22:02 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48v01s036y-1;
-	Fri, 05 Sep 2025 10:22:02 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: Allison Henderson <allison.henderson@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: stable@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4] rds: ib: Remove unused extern definition
-Date: Fri,  5 Sep 2025 12:19:57 +0200
-Message-ID: <20250905101958.4028647-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1757067624; c=relaxed/simple;
+	bh=NhL39okvE1UQ0JDbrGcrVCu7unTeSnVwrFd1RwYqZM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibQjMrLE00Sz921HjfrRLxZWlI53S4Tj+7NxiX+6sjgm2hkTRn9Ot8NXrTYVp2YUd8TSPcy3mxG0+XiF+bmKAknidFul4LUbRVIkbgaGzQd4d7K8AM7+Zdbv1ZDmZ93BGgk7PXItIA0FqAKl+xpiP63dDG4d4B+lpw+/vKc63vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iDWdCbR5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857KOS3012118
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 10:20:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kTOVAGfJmHAMbslcDUKw3QbQxdL6mIKaKsV42CZz9as=; b=iDWdCbR5bU2UWlLU
+	y4vO0uzK/G082CYybYH9KBDzkgIiLLuDfn9q4i8gWqER57Y7OtZW00rEBUuV6zl6
+	Om4lUxRVewiEAxwZcqBC/hI6b6LtQgKMb416nUV1GcdIVpDXhAYBjI92I0IsjrEH
+	ZBqtY176u1be2bt5W7cnnS40jG5Fh4SAJgBtc7bu/7TtEwiOVF6JHtASmiEXYg/j
+	3ECvhkR55a5XHDPKKs7zB2jpTRjsUpNn5sl1hKCctVkD5/KuWPT9bIcKyZGj/zXG
+	R9N/qQJ5yquVKJBOwkqppq+Cpdw1sCokN8AaSlwshVaOJa+bZaseMXoRtfbgV9g+
+	FWlV6g==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48xmxj74bx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:20:22 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b33e296278so4285921cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:20:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757067621; x=1757672421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTOVAGfJmHAMbslcDUKw3QbQxdL6mIKaKsV42CZz9as=;
+        b=U2DmzGu06o8FsMBGu5alO272OJtcdam1fs0t3FlS/K8s6Z3EHgHIzXnHny8acok4QY
+         jOEdWxyXmFpxUvIFXs9tqfPwRNmk8tnCzYkADdy8x6JGtp/CORLmJ3a92zoZLwVQbsFN
+         +OlGDvaFAHK0+edsFZ/aL/BZwUQHChEh8+novCnwQG1WOP20nuO1c13U58UmlG0Mchiw
+         geUSc8xoLnuNP7mcoPdkl4IZPWosvl/pR9VLsiu80M15725PVzH3nrRtGlDbNO/kmCuV
+         czb/N93YIQJ0SDxoasZ8+HzlfYamf6jfygPzpNl+fZtBTAwMEtfX5qtNuVlfgXj6X7Y9
+         +3DA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbxAMEmSP3X0j4mZ52BNWJxL1SIaZo5Vu+Lk56fDTuknkd2NWBQ2060l/pRJYnRNpOO9C+fTb1aci+de8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBzx7il8IgN6ITAdlTb/qmi0Ur5ZPz8XLGY6EuQUZvOE4cc+lp
+	ByPpMKdcjn+2XE+IHrT3ztNamiy6cb55YvxtUrTMk3By3581YovprDcqzqp1Fvx/DSY1Y1dhgl2
+	ALpWXLVh0s26JaIH7cjPgyJt75leI49F/M/1YjO4RF0fYmK6Y9cOcFB321UxS5EYp+es=
+X-Gm-Gg: ASbGncvJvu0SNnCTwl2d5kW7ncdLxvrMg0m1m2ZPTmddK0pA9dAg4vxgfh71NGBTh01
+	kn7WzJyNlI/3tEofLGIh6O4QQpPeGReGhn1f7AKEd45I8VSwraBjOQLsagaLOWaYinwRTUVlt8b
+	64vVkIhTPkQSRfYkCSJG/NSV7OvBM3LgdUmhQPg1Oz+xJUg085cDpTlWkVoheuJsQAayc4hEE14
+	AbtTBbwOyih1XnpPM3pluI5YHUcNPSBhmXHxd77GR35QfZSESm59dvWxUrMD2rCxww2kSuVE2Y5
+	Zp3+76UGdIAasF5ZdoWhqAqdaBN4tyd2ynHk41LyH2Y4DY4vYdDfhpQISnErN1Zh3Pt578NpX3B
+	RgXFaegFLT2gPluvqWU2eWw==
+X-Received: by 2002:a05:622a:1483:b0:4b4:8e4d:6671 with SMTP id d75a77b69052e-4b48e4d6f04mr83378771cf.13.1757067620974;
+        Fri, 05 Sep 2025 03:20:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGO6Dw5E5OGVqQHPhLnTT6piTScFBZOcK2M8RO2gr8kQRnOFlQeerKrV8G2BH+P30VO7Bu8Lg==
+X-Received: by 2002:a05:622a:1483:b0:4b4:8e4d:6671 with SMTP id d75a77b69052e-4b48e4d6f04mr83378341cf.13.1757067620108;
+        Fri, 05 Sep 2025 03:20:20 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047373b000sm497098966b.68.2025.09.05.03.20.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 03:20:19 -0700 (PDT)
+Message-ID: <e480ab16-bf98-4a3e-a7e1-67776a598201@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 12:20:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: leds: add generic LED consumer
+ documentation
+To: Aleksandrs Vinarskis <alex@vinarskis.com>,
+        Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Daniel Thompson <danielt@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Sakari Ailus
+ <sakari.ailus@linux.intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
+ <20250905-leds-v2-1-ed8f66f56da8@vinarskis.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250905-leds-v2-1-ed8f66f56da8@vinarskis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDExNyBTYWx0ZWRfX897pFQGb+i4Y
+ 7XqFH6oiMDC1Cn1vEBDyisXsdm/4Nq5dPxgphkBbbCgqVyPAY76JNsKb/YDrW9QD9sZLlu2TALE
+ xGfgHAon6G5FtxGPRGSUEGqxR+I0+30P6Kj/Qe5n7CZNOIUn+UK9Z8h4goJ3tt//yoNchCK9PZ5
+ IgZSlLIjIEthh644KRALzSI8Mh0nWP5yb6zojbpEXNjt6yZi8Jlr5Ql7n7YRUX+FmMG5u0rc/zr
+ GfDlLhpBqeLJn3/ThlsUQuYc5hXqB2gBuTJ4eWxpX84ZtAz77tCH1uIEm7zEgGDlG5EkJlHFV3S
+ fkRJdcJzvKFqIMmoAkmECx/y/zIhdffaStUf1aWSNQRslF1ijBoqixMylAQNUxUOPcxD7KOhBEn
+ iA1p3Rde
+X-Authority-Analysis: v=2.4 cv=a5cw9VSF c=1 sm=1 tr=0 ts=68bab966 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=I76Qk8w-AAAA:8 a=2ng2SV8iM2HKWhXzYmMA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=vUPM0Wvl0xcrLs4nqPIT:22
+X-Proofpoint-GUID: a7PkrMXN6L-O0--v3RMzIDTIlH1j8VNh
+X-Proofpoint-ORIG-GUID: a7PkrMXN6L-O0--v3RMzIDTIlH1j8VNh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509050100
-X-Proofpoint-GUID: BMqJQNtE3aoNiSX-BXnqEAEX98lKcFiY
-X-Proofpoint-ORIG-GUID: BMqJQNtE3aoNiSX-BXnqEAEX98lKcFiY
-X-Authority-Analysis: v=2.4 cv=S7nZwJsP c=1 sm=1 tr=0 ts=68bab9cc cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=M51BFTxLslgA:10 a=yPCof4ZbAAAA:8
- a=VwQbUJbxAAAA:8 a=vqxsdnOqdfS0dGDShygA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA1MDEwMCBTYWx0ZWRfX//8KCIUpvCEi
- QFYiuDDSoUJsOEnA8UsILsvv/6ur2lffIkRy5qYNPNJkyBwYSazRRo8H7a7OKa7NyfL4gJ0VFni
- uM8BgUIA6IReItNjGof1siIt5161vvomV1VwbsKZfIVKqa6LSxmZP8CJBSRac0ieV+HRqdgRGN7
- XjbdwXqJ33BB0Z0yYt/EocER9Ks3HfRBxqiVnQPeDJac+zo6ePpYTIHXZAp4lrkbB/Pv1QeUrLw
- BssTK7kSivEahtlWRs+yS0sgYBC3ndJ96CHFWsHzhPFRThKMlXwC510zX1GeqJA5F+9vuaRHYm3
- ZuJ/rWj71OgbrIlqaGkmVh7y9LAz8+lpDl/Gas/GvrZQr7mWotUPbcqY0XKIcg7CVNL3Itc01QX
- vCa68r28
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509030117
 
-In the old days, RDS used FMR (Fast Memory Registration) to register
-IB MRs to be used by RDMA. A newer and better verbs based
-registration/de-registration method called FRWR (Fast Registration
-Work Request) was added to RDS by commit 1659185fb4d0 ("RDS: IB:
-Support Fastreg MR (FRMR) memory registration mode") in 2016.
+On 9/5/25 9:59 AM, Aleksandrs Vinarskis wrote:
+> Introduce common generic led consumer binding, where consumer defines
+> led(s) by phandle, as opposed to trigger-source binding where the
+> trigger source is defined in led itself.
+> 
+> Add already used in some schemas 'leds' parameter which expects
+> phandle-array. Additionally, introduce 'led-names' which could be used
+> by consumers to map LED devices to their respective functions.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> ---
 
-Detection and enablement of FRWR was done in commit 2cb2912d6563
-("RDS: IB: add Fastreg MR (FRMR) detection support"). But said commit
-added an extern bool prefer_frmr, which was not used by said commit -
-nor used by later commits. Hence, remove it.
+[...]
 
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      camera@36 {
+> +        compatible = "ovti,ov02c10";
+> +        reg = <0x36>;
+> +
+> +        reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&cam_rgb_default>;
+> +
+> +        led-names = "privacy-led";
+> +        leds = <&privacy_led>;
 
----
+property
+property-names
 
-v3 -> v4:
-      * Added Allison's r-b
-      * Removed indentation for this section
+is a common pattern
 
-v2 -> v3:
-      * As per Jakub's request, removed Cc: and Fixes: tags
-      * Subject to net-next (instead of net)
+I know this is just an example, but people will copypaste it
 
-v1 -> v2:
-      * Added commit message
-      * Added Cc: stable@vger.kernel.org
----
- net/rds/ib_mr.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/net/rds/ib_mr.h b/net/rds/ib_mr.h
-index ea5e9aee4959e..5884de8c6f45b 100644
---- a/net/rds/ib_mr.h
-+++ b/net/rds/ib_mr.h
-@@ -108,7 +108,6 @@ struct rds_ib_mr_pool {
- };
- 
- extern struct workqueue_struct *rds_ib_mr_wq;
--extern bool prefer_frmr;
- 
- struct rds_ib_mr_pool *rds_ib_create_mr_pool(struct rds_ib_device *rds_dev,
- 					     int npages);
--- 
-2.43.5
-
+Konrad
 
