@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-802314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134F7B450E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:06:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D938B450E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D2A189A8AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91511BC20FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7AC2FDC4F;
-	Fri,  5 Sep 2025 08:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C34730146F;
+	Fri,  5 Sep 2025 08:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Btp6hzfz"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T/RQbQLv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8wu+DKsG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8F2FDC3F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84C32FE06F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059486; cv=none; b=kzpJF1AglFo2JR43LX/KOXPYGQN9B0pvu4TvXZ8xbibLfvQC0nmteRehcuw+LOQ4mcH3BU0GwcrdHz2t3PHOBkBShxM+kAKEn+VMia6pxqc6cd/lZVh+DpowMg2E3WvqCseDctqRZSz3CK2t8+ZcZNyUgsUAeoAx4FfW5y1/Vjw=
+	t=1757059488; cv=none; b=H9y27z6xtOsluFimtJb5rmrp4qaFpBqfBaU/xtovzjG4G5S5a6LArXuc2XZsMPuWZ+xdR/XhLWGpzWdmSIdrrynw70Cu4HgNBz6/but3maYtuCB/Vb51gAi8m3CEvKASgvDgSGc+8P2bpvBxwGILdviiQgzQAs69T9354rqAGIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059486; c=relaxed/simple;
-	bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0uuVpJX/QhPrzcUTpE+Drp1yK58LQjV5rHERap6A1RhkptjjUacEjsM3KBsDp68qdf3mbQNJafZeUbUipXreanKh6lHHHjuLePKhT+6ftjV/owoKqAYfX9ktnzNU371oCg8LnspbPawndFD0AknDEbOeYAUhg2hFI/086uBwIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Btp6hzfz; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336b071e806so16880541fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757059483; x=1757664283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
-        b=Btp6hzfz4fIMQsarTFsMnLAfWVos9BkEPbBYhpuEYLDx26tordIN89lnk28EowcLDu
-         Q0jXZGTXpVQtlsKCOFau9WlFu41K8TSr21Z6X2DbsH/kUm65eyg4FxoMMUt5ZSwZDWfn
-         wns9vAoveW4954lfmyROdyO4NHh+xajzi7N+o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757059483; x=1757664283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
-        b=PFM8uoB0+aVaQT5jNRS1d5BrGd1CIqNmTsED+Fu/MrDo9npUZaYPWr+rIQbTAHNb5h
-         FTn8P9Jtuy3iOC6cryltVdVwZvDKnUtn+AnQBmFIRgA6bEhniyesHGlckEZoaAdXopZK
-         nf9eqOvYauqOlSzaZsGkhgTLmcBKex8Tfj+C5bzSEOhZ3lI7bTBkb65mIiNAOJkuV8f/
-         672Aq057WMyVsMIRUa38voLUnbWEpVUfApqUvbJ59y2crW4AjGSBakkPNW9edpkKm/bN
-         iGXZx5zhINtnMrbYlB/yWo7X5NuL8Wm8BO/yDI7uNsPaqUxTdG4Jo2VrpEAga2eQJeIq
-         kB/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWrouRWrPvoPLS4aK7oOVLYLL7G6VFpYW7VOAqBkeNfkNovgFU+QuiuJByQCwjd4a/znVdu3IVt+xwYpKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx28ZAwvqi7DXX3t4jUIuSW6FsDW9ABUtcG/oL2XkSuox9pKrjx
-	6DIwHoC3UdH4YWBQQSr1FFblegUpBMP8o6vi7a40OUWh+FEn6gB0eQuEER+58JnbzEkLmNhpBaw
-	Kd04s7kUNiHdeAUFOc7ZOqVzQt3Z/uZQ9vLDikF58
-X-Gm-Gg: ASbGnctXOCN89sA1cZo+64Gb2ogfOUAp+2XHLA2hy5tXPR+KN0Z3mi8oyDAYy2RFm6w
-	nGwSWwwCk7JIy1FTK1YjucbvXOZhZ7VzWNPSjTzjDdQ1gSZhgoM0UXpS/JuCp1iIicS0bYwI9bZ
-	OqmpZX2WcSZyjo4urX/Mpyf2TM6U4S2QYiUKCEQiHot+AgEl1JiX9HPrIm5CiBJF7Np1NXhoZmN
-	6GTLISgWzJEK2tRI0O2p5Q2qVul/gnk1RuhbwDtMLWe2L5o
-X-Google-Smtp-Source: AGHT+IFYc+QgjrNQcnNX0OlLPGUtYQKqYiLrIJbM/loEuXaaE2NFn67DssV7d5/BEdo89ntnizvXLq3xRVbqrk9nj5U=
-X-Received: by 2002:a05:651c:2106:b0:336:e176:cd3c with SMTP id
- 38308e7fff4ca-336e176d479mr52475301fa.38.1757059483084; Fri, 05 Sep 2025
- 01:04:43 -0700 (PDT)
+	s=arc-20240116; t=1757059488; c=relaxed/simple;
+	bh=QGKVrHrnICzFMyVbArbD3ExeehPmsCNYREmmPa7haEk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rmjaW4wv3nDWMF+ihgtNf5vYJOJT5WUivfxiA7DfVZa1yxLvBKngWkNaSpQpVknnkabgT1nMh5ErluKw/vmlVpSmq6OkAYxGwSzqAJsSekmVphUeLg3WiXwlUe3ApTV1Ne3x2VZ3JHIW+94zCk2GMHOPyYGFSdp/YrulGCgaVKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T/RQbQLv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8wu+DKsG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757059484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qptmhWEow2XN769eIxUwWzfBidCXD8AJeNJEY12zhuQ=;
+	b=T/RQbQLvnHHzaa3kcgAR+LLn5ai0Ux033UjJXzWe3BHLGjUJPqE0zIGOS3UULgAsiVYO9j
+	9leLirtrAXGc4SG8sOMyOUHFH1YJkZPefOOvbLMSdBkphuwAx4r4MIyypm9DAjyBXb1ESZ
+	vQCfP5CmcPZAeFsAocnxOUsuczDYK4TQKn5JUddsnAkoFTwNLZ8F6nwPvf9oEOmwxkVtwY
+	NO/mdeBq2qaLHMsz66TmiIty4B9JnzfGdi24JVGEjxF4eGk8P5NA410zSDBto9s5hfPrn3
+	sshPFMS5tSeDOAZNt07YHUekjlRQ+c5qq1e6F4DoJgZsPD/KJJNtlvJQXlsiZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757059484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qptmhWEow2XN769eIxUwWzfBidCXD8AJeNJEY12zhuQ=;
+	b=8wu+DKsG3vM3/aRuVuIpOUINZJ1YBmZRRaiPqIlTPXUcQoy5TYiboN5Rk+ECsEOUJCP7HC
+	AfEh8nI6ryrtk+CQ==
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-coco@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+ maz@kernel.org, robin.murphy@arm.com, suzuki.poulose@arm.com,
+ akpm@linux-foundation.org, jgg@ziepe.ca, steven.price@arm.com, "Aneesh
+ Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
+ properly aligned
+In-Reply-To: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+Date: Fri, 05 Sep 2025 10:04:40 +0200
+Message-ID: <87qzwlwciv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-20-laura.nao@collabora.com>
-In-Reply-To: <20250829091913.131528-20-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 16:04:32 +0800
-X-Gm-Features: Ac12FXyKW6bhjZsI-yGgtsh7BXxxyLqh5BQG4iFyVSU7pOJ_sKap2vxzQ5qbqlw
-Message-ID: <CAGXv+5F0pWn5+iE+3pgpZ+GMoXDV-eoEx4zKTfsmV5cpa-WC5Q@mail.gmail.com>
-Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
+On Fri, Sep 05 2025 at 11:24, Aneesh Kumar K. V. wrote:
+> When running with private memory guests, the guest kernel must allocate
+> memory with specific constraints when sharing it with the hypervisor.
 >
-> Add support for the MT8196 mdpsys clock controller, which provides clock
-> gate control for MDP.
+> These shared memory buffers are also accessed by the host kernel, which
+> means they must be aligned to the host kernel's page size.
 >
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> This patch introduces a new helper, arch_shared_mem_alignment(), which
 
-IMO removing CLK_OPS_PARENT_ENABLE is the right thing to do.
+# git grep "This patch" Documentation/process/
 
-However if the hardware ends up does having a requirement that _some_
-clock be enabled before touching the registers, then I think the
-MTK clock library needs to be refactored, so that a register access
-clock can be tied to the regmap. That might also require some work
-on the syscon API.
+> can be used to enforce proper alignment of shared buffers.
+>
+> The actual implementation of arch_shared_mem_alignment() is deferred
+> to a follow-up patch.
+>
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  arch/arm64/include/asm/mem_encrypt.h |  6 ++++++
+>  arch/arm64/mm/init.c                 |  4 +++-
+>  arch/arm64/mm/mem_encrypt.c          |  6 ++++++
+>  drivers/irqchip/irq-gic-v3-its.c     |  8 ++++++--
+>  include/linux/mem_encrypt.h          |  7 +++++++
+>  include/linux/swiotlb.h              |  7 ++++---
+>  kernel/dma/direct.c                  |  7 +++++++
+>  kernel/dma/pool.c                    |  1 +
+>  kernel/dma/swiotlb.c                 | 28 +++++++++++++++++-----------
 
-Whether the hardware needs such a clock or not, we would need some input
-from MediaTek. There's nothing in the datasheet on this.
+This does too many things at once and breaks all swiotlb users except
+arm64. Seriously?
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org> # CLK_OPS_PARENT_ENABLE remo=
-val
+> -void swiotlb_init(bool addressing_limited, unsigned int flags);
+> +void swiotlb_init(bool addressing_limited, unsigned int alignment, unsigned int flags);
+
+Why do you need this alignment argument in the first place?
+
+In quite some other places you use arch_shared_mem_alignment(), which
+defaults to PAGE_SIZE if the architecture does not implement it's own
+variant. What's preventing you from using that in the init functions as
+well?
+
+Thanks,
+
+        tglx
 
