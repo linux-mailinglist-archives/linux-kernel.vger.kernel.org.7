@@ -1,278 +1,358 @@
-Return-Path: <linux-kernel+bounces-803259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092F3B45CBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89838B45CBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3E917E78E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D50617C1F10
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBA12FB0B3;
-	Fri,  5 Sep 2025 15:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDE02FB0B5;
+	Fri,  5 Sep 2025 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9K0Zady"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHgtg1wl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA7F2F7ACE;
-	Fri,  5 Sep 2025 15:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086808; cv=none; b=Wtkjska8U1MwCKrJa+47kVEN5qTYb6xKjQKr7RySPjajZvRpzYoFbZA/fLbHeiakjqw2ghFJEP9HOh8qRTCpkk6K+UxNimFLLD8R+Riwmxh4b4EHnEesxNxFtG5B9flhAzwF6V5fgOeG40YNqn6voXj+1wtDcaxaA4wwgUT9KpQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086808; c=relaxed/simple;
-	bh=RKl0oH9K/77QrV6Iu9zpJegJ6Grz5vWUbGNUph4Wk+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IjDmZRX2Ftb1abdMvsNm2eysJv56JdqkB9WJTJQtSNR9tUFzaCn5UuggZMBh8g2V4c2eixZBTOQJUJYBkTFZpSmk9NG/O+VGgq4QuF4raC25rQCshnqM8bS+mH3ZIemdOFlHKF5oVeuIXz4HfuLbPTgi6QKY4Ri1NROTnpumPik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9K0Zady; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7459fa1ef2aso2353131a34.1;
-        Fri, 05 Sep 2025 08:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757086806; x=1757691606; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bnLPWF2bAcQVbqrjz3TVGHgiOphWHv7Vq8hRwdfUIWg=;
-        b=a9K0ZadytNdN6CY+GN59bVtfqHRd2dC07i9yhrnMYGQwcTGlN6ybn5hxSSWJTRlS/m
-         BtfhlCRXnph7cGFUEfBpz2hjAvp2sI8Qnw6y22DwHaisyN5eVI52KumT6tKdM9R2h+77
-         bnjF0MgL0xeh6/NZu37p4P7e5EyK7tPk2RdqyTJbJizFz7LwHKsJiVHovnUh9Avxz5sq
-         p+OIyHCoQjGyTQqbTjQ3ehbB8U+7JEA302tUIo3htLYNUBjY3Feq5+R8gVT1bPbpuFHF
-         nQN+Od6tKoUhTt6m40n9KmmyMfpg3HU31Jmx7dsQFa/u2kWHXgqyMu/t598KK7O8Pze6
-         nasw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757086806; x=1757691606;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnLPWF2bAcQVbqrjz3TVGHgiOphWHv7Vq8hRwdfUIWg=;
-        b=toRM0ENDfmN7z++P6EGJwjSMPmEEz2SnG7P9cleVFswtpSyuZYTACQoJlwA3GPgNlj
-         jFTODcQ1fS0O6sE1K+kuAwMmtFB8vyTR8j4WHkeQlEV1EodasQogeFLxFnkj40+Rd4+s
-         rGLmCWfkhSAwm4A4LPBtfuH/Mvns0gEKRyShm1uwTtxLvGexcsNfSRKB6N65v5SDB7n0
-         zCS710e2+dcCh2wD+1NwV/q2nE+nNGg+Vuim4s4WROzVrJ3lghVhsay0Q3vOajUSwM7r
-         bSk5qqXGlkxx806xkHMZa3usJyHswZlJeTOUTEpuVUq6Do81+FFa7hR4qwE0qlHxBoT9
-         2d2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWChhF2SuGcr7YbgpXBmlAhZUqBnIAqhlj3rXK07dqzOl26Yxyn/+hwl4KxsqspsuB6JcYUA+5pMUKsvx4=@vger.kernel.org, AJvYcCWNxbD3KeqalJhMqBtgvIUzKbC7qU4yqy4/bs1BG3nQeewO8vxMhonerTJmYEBMP87Pujk3Ak3yXev6qFhY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF/klMhI3BF3ScJhSAaY9MtrR2aQCO9eSdhaOVCh8ikGJj2uvK
-	RjaQPifwo0W7V2WEsGXVzCOgaejjFsK+BJ8xbT2lNU2qwxBn+Z86qQdV
-X-Gm-Gg: ASbGnct6xxuUSEsJ7iAPTgTdjOm1Ggo8ojFogX/BmtxEQsKfARfzMuxTRt/Z8t/Kedf
-	WHRpzNsbzDqcbHJ6wwjGMt1RASKHpas/vHr6Sa/g54lQ/JVqMXMItfTatxNNby+Qajrcxx94XXd
-	vaXpxcBWEs+n5t5QHk7kAJI9/aH28+BVns6DWmysAY/QL9mGGLf9m3kx2X/2+oE1t4b6XcuZ/yr
-	+J345jUbOsJ5jX8WXjGcVtA8fMtDFigdcmE6VyAINM0jtRE2VseQjRGvF4UsrtaBiZ51uP3oHHW
-	yZzUnzUO1f4EdtegcYKKB0VwsuhPokbNssJX5vgfIZhng0edos2jUEASu4zgu08MJ5r4yS40S5m
-	cMNfZS4xFbG4rAjXPJLfs9NN0GZvTHTpeorBO6fCFC5zWu+PgCKGt
-X-Google-Smtp-Source: AGHT+IEmIw3f0aZNCO/f+i6InRqnfbv5gdPlLDM3Iu80lfYM79vGYYbtkKzB7IZZC4l/jjBzrOFOtA==
-X-Received: by 2002:a05:6830:4d8e:20b0:745:902a:9c6b with SMTP id 46e09a7af769-745902aa25amr5826827a34.3.1757086805751;
-        Fri, 05 Sep 2025 08:40:05 -0700 (PDT)
-Received: from ?IPV6:2603:8081:c640:1::1007? ([2603:8081:c640:1::1007])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74647c1c2f9sm1800104a34.1.2025.09.05.08.40.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 08:40:05 -0700 (PDT)
-Message-ID: <1801fe7b-4fb7-4fd7-a620-7a2095a9284d@gmail.com>
-Date: Fri, 5 Sep 2025 10:40:03 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61F61991C9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757086836; cv=fail; b=nr9P1QcpgIobUj9qO8449HZkunWvFIlduLMJ9Wnepr0cTG2YOHwT5XuSK9l8xI1mTddj+dHnFMP0My/ouiezbKbZAHxjOFtXyvyvJqe/CLNjbpNuPTBJxi1qnni8KFwll7Nrz9fSRpoLXe2b/NwshHbP6XEzEB30/vy2cfKu4dw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757086836; c=relaxed/simple;
+	bh=blhpXiNbb4hbhMdRTHVZAEnvMeHIb5vXCrXl9+69sLk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GSG9JqilpBwgkCq2Q7zkybfB/vENQZwHU8jhAml5+vs8AgiMplwYqXYyLmZuVX5w5pNB/rVxzqQKLnK10rgo/bdDUV7B1dAjtcNycM0bf4vKN/FGrkI6qqpwVUkNEQ1C7OoDQHdLcavU8P30wTbh38LDdl5ERm7UHEYZSV0uPC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHgtg1wl; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757086835; x=1788622835;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=blhpXiNbb4hbhMdRTHVZAEnvMeHIb5vXCrXl9+69sLk=;
+  b=OHgtg1wlkaBSUGVG7slyG0AElvvCBASxgEXC1DwvHOGdg47gM8+5CCY7
+   0NLEBF+BwDdKDCta7FTYpnyaY26EhrQ+sIvXva6DEJDfCvCWrfl60gKzm
+   uFiqST2emnY8YvmTEgvGQo/zcN5UriUZ2Dp+Di/buvP1m8kLXagEZjiOx
+   NqFl8jp/xU9Fo87P/2DeKZm93xh75wMJ5LYbnjuW22tgpi/xzmuw/FUAO
+   53aZS3/OOQUlz/WPZr5sbH3hwiBczekwLfTWIIc8KlumJ3D59aUsuddtT
+   T1IM2H9/yS1YPzR49gDD/LZkOyuCvicFOWcuYD6eCgBEpSOUa+06nK0jR
+   Q==;
+X-CSE-ConnectionGUID: JaylfWHjQK254594Pm4NCA==
+X-CSE-MsgGUID: e7CDFbmHRHe3xFU7U2zynQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="70058422"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="70058422"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 08:40:34 -0700
+X-CSE-ConnectionGUID: ko8PlQuBRyCheJLnaTCvew==
+X-CSE-MsgGUID: 4K0KuYMmS4GxIFE1SK80eA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="203004366"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 08:40:33 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 5 Sep 2025 08:40:33 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 5 Sep 2025 08:40:33 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.50)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 5 Sep 2025 08:40:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gm0fflZ7G7ZjkrItKZq/7Jsn4/HUkfUx3giIrddTXxAs5uukEIy7nJ+odbfZq6nDgsoLEhzaQqXXKFhDaz08N2xAVAplHFGLJ+DUe2zB+RCMs70hVxarlaTRheZY68ZszZfaf/TxMFpds3G7ffg/uY4X3ToJgW9UZ2QGLQPN/CZWYVLE/G7wXUD6c7VDA6lFr5TB6zIIdmDCgJ8vKUUdyrRdzE5tfCNW4zRCnctyiEpCYy422Ni90wdTCkYYEL0H8X+8SceGZoyNOhbxLbSS192unywnkT1wPepVTvVeqSkoqmy0imzHFY0E4SA5LUbrAcPlhzW125WTAr+wkFqN7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mXhlrgDaTCDzWxCEsKf3MGJjs64Y2it/D+6sL20W+4Y=;
+ b=FHFk8/LUYVlcmNF9MzYuiyXan2tY6xSMPm0LENxxw9luqptNgd+NVyLfdJ11qn+K1pwvPPE3B95ooZalLLbftLZxSD6asti7hBj8+e7MguPhBXthd3gz6gPz7gYc19V7VAEL8sZ7kBHfNh1scknprPCDA5Snixa42c1T74UyMXi/MyhLFYywfx1fTS+df8eP7XjHaDyuZ11Iy8j16QrMg+M/ROFknUsMPGZJNofjfOHODzKLAJ6lCxOYgyVJnrwcCrBZ8djluVn96Zq8kSCLYWCF6DdbYFWr7a7rGkIbX6hfVYU1SEl7rmye8zSl/dBeNunomvoLhDqRi0rwuidEgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
+ by LV3PR11MB8458.namprd11.prod.outlook.com (2603:10b6:408:1bb::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Fri, 5 Sep
+ 2025 15:40:27 +0000
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9%7]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
+ 15:40:27 +0000
+Message-ID: <cac484c8-485a-415e-b97f-302e2578e5b7@intel.com>
+Date: Fri, 5 Sep 2025 21:10:19 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] drm/xe/xe_late_bind_fw: Introduce debug fs node to
+ disable late binding
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>, "Summers, Stuart"
+	<stuart.summers@intel.com>
+CC: "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "Usyskin,
+ Alexander" <alexander.usyskin@intel.com>, "Ceraolo Spurio, Daniele"
+	<daniele.ceraolospurio@intel.com>, "Gupta, Anshuman"
+	<anshuman.gupta@intel.com>
+References: <20250710150831.3018674-11-rodrigo.vivi@intel.com>
+ <20250710150831.3018674-19-rodrigo.vivi@intel.com>
+ <1f323cf45af3ba781d46d2e889f89bc26aa9b85a.camel@intel.com>
+ <aIzafHWskNOEcXuC@intel.com>
+Content-Language: en-US
+From: "Nilawar, Badal" <badal.nilawar@intel.com>
+In-Reply-To: <aIzafHWskNOEcXuC@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::19) To BN9PR11MB5530.namprd11.prod.outlook.com
+ (2603:10b6:408:103::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX
- hypercall
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-4-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Language: en-US
-From: Praveen K Paladugu <praveenkpaladugu@gmail.com>
-In-Reply-To: <1756428230-3599-4-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|LV3PR11MB8458:EE_
+X-MS-Office365-Filtering-Correlation-Id: a429e6d4-7e28-4e13-d98a-08ddec92898a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q3V1VXBSL05zNXhmdHZHYkZIZWY5a3ZFUG9INWZZWmN5UkFXZ0R6VzBuZ1JI?=
+ =?utf-8?B?ZUt2bXR2RDh4N3ZCbW5zWGZtZTZHbDZDNUlWYm1WeWcyS1VMRC8wcmZrZTRK?=
+ =?utf-8?B?YmhaejlWeDc2UTZqTjc4WXZtdHcySytadWFUdEpHYUZERGdVTklndC9GRmhv?=
+ =?utf-8?B?dVhiWHZKdzhFckFoeldlQTF2UEFuWTBCVGtqUjUwNHd2Sys0UzV4YVhpckwx?=
+ =?utf-8?B?WHFydHQwWXBkRWo0N3B3TjNzMGFNTm1RYVd2Y2daSXZnMDE1bHcrdDlpSE9L?=
+ =?utf-8?B?UUZmMFk5Ky9Rbm5uVUFNcUZockcxQWZNczZGcllxMlZyNXF6L3hham1QMGlj?=
+ =?utf-8?B?Z1VUUnlXRVNPYURqVGFBa1VKWFp3bDZ0SVEvZW1uWEdNZnQvSnN5MHNJZUVD?=
+ =?utf-8?B?ZEpYcmk3aisvWDhRODZYZHBPMmtWUmNxUW10bTEzUTd6SVdmZDVSb252b0JJ?=
+ =?utf-8?B?L25jejhYNXJYL2pxUElmZHp4M1lSMy9ldW5XMWcxSXZZVHhEUWp3TWNGMi9Z?=
+ =?utf-8?B?RmFDWEYzc3FyMjBKb1ZkSDdFazVKd1VZQTdreEhrbldJcnFJVVdzOGJheGVQ?=
+ =?utf-8?B?a2tMSmgvZHNuZlc1SDl6SmpmYjNLL2FEUHlVeUplQzBkTlVQTWU5ZmZxYnpi?=
+ =?utf-8?B?UmRXOWR4VDcwKzhlci9oS3JXMDhwSzdDSVZkNWt3Q2cxY0M3WDcvY3hkS2xG?=
+ =?utf-8?B?OVZQYVgxdEd1UyttS1o1QzZOcklBeXVrNmlCK3ZSVzljdVZuZkpKM2VPc3Z6?=
+ =?utf-8?B?ZnRIajhhL0FuTlo0bkRFR1dEckJRQ2ZjNEVSM0lobnRuMXcyRHcybmtRQnlw?=
+ =?utf-8?B?NVRaT0lWWWNrV0ZYNWlIM2lpQm9tWDNNa3owblY3RlYxVnpiR2pkWXpvOXFO?=
+ =?utf-8?B?dDlpVFMyem1Xb1k4YkpQRy9IeUp5UnZjWHlreVhnQWhGenV6RThmYXRjTzlH?=
+ =?utf-8?B?VHBaTmp6MGhyWWRvOTUzeHY3cVpLU0tTeW1UYXRPMWhGRDBkSzh2Y3I3TkVD?=
+ =?utf-8?B?ekNZczErUk4wQTE2NmFxMnR4QXEreUozbnhhZURTbWZRN1lGTSt6MmlZcHJL?=
+ =?utf-8?B?OXllQ0pmUDBNOVI1QVlVTTMrWTF6Y0RxSlRQWnVyZmhOWUYxQmhZMGwrL0xS?=
+ =?utf-8?B?YWRMdWh5eDhuMnFRVE1mQkhieFUxZm1IZ2RGbDEvVkYwbFhvTnhyVzdkTWRQ?=
+ =?utf-8?B?bjlmdWFTOFBjMnlLY09WTFZqMjNzeWFrZ0ZaMmVFV0w1R1pYWEdPU2lJMnhs?=
+ =?utf-8?B?c0JjWHZoUGt0V0xXSVNTZ0FvT1ZPc0Vna2hLdk81R2Y0bTh0bUFIM0Vkc1I3?=
+ =?utf-8?B?cmpiUmZkZjRZVy9uWVI2L3M4dm9GR3JqTTN0VlZYbVFWTXc5MUNVUUhuOTlX?=
+ =?utf-8?B?dG5vaUwzVWExUlpFWHJET2hMNE14ck9tMHArV2xzcGp1Z1lDb2kxaFhTcnRk?=
+ =?utf-8?B?YzJIcnErWE4vTlFBZ3dHY3VmSHFoWTNHMUVUM1JwT3NUTUZuUUZUSTZYdmRW?=
+ =?utf-8?B?RVJka3FaVnRtUzRrVDJzVGlHSTNEN0VrQS83RDZhQTExQkprNGZDQkM5Y253?=
+ =?utf-8?B?RW5zSzZmWElmSnVGelZiVFRYL1JGZWV1TGRCWElRSW1SejRMU2tGYVBhR2do?=
+ =?utf-8?B?OENoSVlJQkc1Ky9NZldPL1F5LzZzWEZGeEJSQUpUTnBldisxWWNTUmhNNi9J?=
+ =?utf-8?B?REIzZU9RS1lRTkIvVnZhRXdvY1pvN2tHVElwSGM3eTVnSllhSVlzR3JZR25q?=
+ =?utf-8?B?VGFPYWVFd0lPa2Z1V0lseFZacy9lalIySG5TR1IwK1FZUVNNMnlBc0R0YW0w?=
+ =?utf-8?B?Z09mZjRXSk5oazlOYk1EcWMxeXp3QWNnM28zTjNHZC9mYzNROW0rNVBFaSs5?=
+ =?utf-8?B?MDlNNHJORDN5Mm9HNlJ6YWJjRFVHNmlOSXphYkZOTm5RRE1KejJMTGF5eVA2?=
+ =?utf-8?Q?TTVOfs0XkuU=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VFp0U0h3WW55TVR4cGVlNW0yT2IyWkZNbHFmODBuaEd0S3kyVzhKTzNJd0pD?=
+ =?utf-8?B?Z21VRmU2OEZvRHlPODRXTzNCRFdacHVXOHFNbDZuOEdaNCtrdnJtL1d2eFAr?=
+ =?utf-8?B?M3d6M1dvdTVxYmtIRHJrd1dBSjUzSm13OE1xSHhVYW52ell3SnkyRCtVdkxY?=
+ =?utf-8?B?SUp2NGJCMTIyOUZjUHNiV0JiQS9leHpRVDVLOWFzMHAydC9HcVZwbjVCQ3RU?=
+ =?utf-8?B?T0FzR2RlQ3RCbTAvODU2RVY5cWc0amZ1MmNrbnRVQWlUNlpnZ0hOQ2VNUlQw?=
+ =?utf-8?B?M1VEbDhaTVR5NG9saTFYd3djemhwMjdpKzB4OTNqSXJJQ1ZOSTBmdWp6UW1N?=
+ =?utf-8?B?Q2lYRUJMNTJQRUtia2xiVU9OMFBpd0xFcmVKT3B6U0RqRnJDTHdSTkVNUGpF?=
+ =?utf-8?B?RXVBYjQ1UWxyYXhuS2R5UUQ1bFdpSUZTY3ZmbHVSWmx4VllxRXhFbEpFK1J1?=
+ =?utf-8?B?QndidEhZTTJ6dTZPeG9td2dEazJoYXEvWlhnRGtFcmtvcjJDRUh0NkZFemt2?=
+ =?utf-8?B?WFJ5NEdSN0JMQkxyZ2tHZkRZVE10OUd0ZkVQRWF4emNxYUlFaEFGNXFWSG9U?=
+ =?utf-8?B?UnJyc3hRbk83MjNxYTl4RXVJZmJPTEdLR3FFOGZvWEtIMG9HaWNDMUJJZjRH?=
+ =?utf-8?B?MUpaM3Rwdm9FbmtaLzNFVHVIMUNrQkdnRHRGL3JjUkpkd1MyZDZXanRyZGhy?=
+ =?utf-8?B?aDlsNkVqNzJSR3o4Q0x6dW81Y1NWS1Qva0cwalJpclpSc1dxdGI5ckw1bjZL?=
+ =?utf-8?B?Q3Z0ZUREbWpaWSs5Ynh3YnNqWjFKdk9HMFRPTWptR0tMbGRQN0J4UGV2V3A2?=
+ =?utf-8?B?OTBDbGdjWlYxcHdVakhXUnBqcnAxT1RKR0x3TThZMC9WWFVXTFJTdDlxOHdt?=
+ =?utf-8?B?Tjlndlp2bGRPbXZKWEF3VVQwU3dFK09YKzFxcC9rTUlPSmZEK3k4VlJuOUNI?=
+ =?utf-8?B?N1VOWnRaRys2NWF1cnV0SWt2Z0RmRUY0WUFZdmZHbjdiM0gxWm9MTldtK1ly?=
+ =?utf-8?B?UG5ZOGl4MG1sdW9yR0wra2NOWGVReTZ3THNFTVloaXozRFU3dk9PdVJneHls?=
+ =?utf-8?B?cVJvRDJWNEtxWUpPYnpuSkRZT1Iwby9YY3B0d0NEeTFyYWd0NURSZXhUdHgy?=
+ =?utf-8?B?NU9kb0draVc5dEdFaTdUVFZrdUJlVlpEVlN2dWZBZGhoQUlkY1FPMks2L09Y?=
+ =?utf-8?B?VjlGUG0ydHhYOWdESlZmdnc5SWg1UkhlYVl6dHpTU0JFZkp5RkFabVVYejQv?=
+ =?utf-8?B?U0VWaGxmRFBpYjk0cEhXaHZQWm5XTjMzSWxvS0JhYWUrODZtenl3eUtVeldp?=
+ =?utf-8?B?dGNkSFdxS3NYN3pkcVprWjVQYWNvNjQ2cWlUL29ZSHFnS1JOalN1S254UlpY?=
+ =?utf-8?B?ZVJhUmhxVHZKd3p6S1htWW9MNTV4dW1rOU0vb2I2dXBmTDM0WTcwOW10Z2pB?=
+ =?utf-8?B?b3ZLMFpLbHVxYzBvbVkwZTZlYnhnYlBQTkozdW8zMlRWZm01eHdZMGdjZ2VO?=
+ =?utf-8?B?SERrSWNwT0JZZmNTbHZJTXZVOUt3MUNHazVnNEtPTE9PMkRDR2x2WTZFcE5R?=
+ =?utf-8?B?NVp1NDA2dzdnRUIxdEllc3RpZnlXbkFGTGhZRmpTMXpRSjQwNEgxVGcrcVVE?=
+ =?utf-8?B?dk9sTFl6Unp4b2lSSHhKRnhIUmNFUkVWRmpFN29KNlVOd1VwUDJUVGFrOWR2?=
+ =?utf-8?B?djJYbVExMStpZmJhM05tb29qWGVhVmdoWDNVSXduU2VsaWlwWjAxN3J2b1BV?=
+ =?utf-8?B?YmVTRmZ3dmJEM01lc0FJUUxPbm5yclhzQ1d6OHVUK1dBeExXRlRJbkdOSDZL?=
+ =?utf-8?B?TFlBNkRXR2VKcEhVNFh3NkxvMU93bzBpSkFraGxlWUN3dHFWK1VCSXV1K1J6?=
+ =?utf-8?B?K0kwVkdZSStibncxNWJTaC9VMmZ6WWt4RUQwTW9XMGcvODJoNlVkQk5EU1BW?=
+ =?utf-8?B?YnROQ1d6bW5wNWJIVEJzczdEenRmSXFnMThXUzFDV0lWYkxpQ0gzcUxYakFT?=
+ =?utf-8?B?UlZyTTlnUVI2bXIyRjRicTl0YmFyMVQ1Z1A5YVZhTHcyb1VMZHRnUklxc2dz?=
+ =?utf-8?B?UHd4eHZ1SUpESGpHSU9WeXVjVUpIQ25rZzFBNHVpRDRwRGI0a0ZIUHNQbGRk?=
+ =?utf-8?B?cGR3aUJ1R3lrc0RuU2o2bkJBOUFzaGNlS1pwUGNGNURJR2huaUgyTFBvRlV1?=
+ =?utf-8?B?OVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a429e6d4-7e28-4e13-d98a-08ddec92898a
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 15:40:27.5341
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5egdn/WsxefUFzzydVPpXByj/SAhJoQQpQAyZyR2S7fH4HGl7sz8TtAFDEMZGOXxKgrl/Suv7GAgaCqqIanfdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8458
+X-OriginatorOrg: intel.com
 
 
+On 01-08-2025 20:47, Rodrigo Vivi wrote:
+> On Thu, Jul 31, 2025 at 08:03:36PM +0000, Summers, Stuart wrote:
+>> On Thu, 2025-07-10 at 11:08 -0400, Rodrigo Vivi wrote:
+>>> From: Badal Nilawar <badal.nilawar@intel.com>
+>>>
+>>> Introduce a debug filesystem node to disable late binding fw reload
+>>> during the system or runtime resume. This is intended for situations
+>>> where the late binding fw needs to be loaded from user mode,
+>>> perticularly for validation purpose.
+>>> Note that xe kmd doesn't participate in late binding flow from user
+>>> space. Binary loaded from the userspace will be lost upon entering to
+>>> D3 cold hence user space app need to handle this situation.
+>>>
+>>> v2:
+>>>    - s/(uval == 1) ? true : false/!!uval/ (Daniele)
+>>> v3:
+>>>    - Refine the commit message (Daniele)
+>>>
+>>> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>>> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+>>> Reviewed-by: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+>>> Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>> Bit of a flyby comment here, but would it be better if this was
+>> configfs rather than debugfs in case we wanted to skip this on the
+>> first probe?
+> Indeed. Configfs seems the best alternative for this. Otherwise
+> by the time we get to have the debugfs, the fw was already
+> attempted to get loaded at least once.
 
-On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> 
-> This hypercall can be used to fetch extended properties of a
-> partition. Extended properties are properties with values larger than
-> a u64. Some of these also need additional input arguments.
-> 
-> Add helper function for using the hypercall in the mshv_root driver.
-> 
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->   drivers/hv/mshv_root.h         |  2 ++
->   drivers/hv/mshv_root_hv_call.c | 31 ++++++++++++++++++++++++++
->   include/hyperv/hvgdk_mini.h    |  1 +
->   include/hyperv/hvhdk.h         | 40 ++++++++++++++++++++++++++++++++++
->   include/hyperv/hvhdk_mini.h    | 26 ++++++++++++++++++++++
->   5 files changed, 100 insertions(+)
-> 
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index e3931b0f1269..4aeb03bea6b6 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -303,6 +303,8 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
->   int hv_call_modify_spa_host_access(u64 partition_id, struct page **pages,
->   				   u64 page_struct_count, u32 host_access,
->   				   u32 flags, u8 acquire);
-> +int hv_call_get_partition_property_ex(u64 partition_id, u64 property_code, u64 arg,
-> +				      void *property_value, size_t property_value_sz);
->   
->   extern struct mshv_root mshv_root;
->   extern enum hv_scheduler_type hv_scheduler_type;
-> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
-> index 1c38576a673c..7589b1ff3515 100644
-> --- a/drivers/hv/mshv_root_hv_call.c
-> +++ b/drivers/hv/mshv_root_hv_call.c
-> @@ -590,6 +590,37 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
->   	return hv_result_to_errno(status);
->   }
->   
-> +int
-> +hv_call_get_partition_property_ex(u64 partition_id, u64 property_code, u64 arg,
-> +				  void *property_value, size_t property_value_sz)
-> +{
-> +	u64 status;
-> +	unsigned long flags;
-> +	struct hv_input_get_partition_property_ex *input;
-> +	struct hv_output_get_partition_property_ex *output;
-> +
-> +	local_irq_save(flags);
-> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> +	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-> +
-> +	memset(input, 0, sizeof(*input));
-> +	input->partition_id = partition_id;
-> +	input->property_code = property_code;
-> +	input->arg = arg;
-> +	status = hv_do_hypercall(HVCALL_GET_PARTITION_PROPERTY_EX, input, output);
-> +
-> +	if (!hv_result_success(status)) {
-> +		hv_status_debug(status, "\n");
-> +		local_irq_restore(flags);
-> +		return hv_result_to_errno(status);
-> +	}
-> +	memcpy(property_value, &output->property_value, property_value_sz);
-> +
-> +	local_irq_restore(flags);
-> +
-> +	return 0;
-> +}
-> +
->   int
->   hv_call_clear_virtual_interrupt(u64 partition_id)
->   {
-> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-> index 79b7324e4ef5..1bde0aa102ec 100644
-> --- a/include/hyperv/hvgdk_mini.h
-> +++ b/include/hyperv/hvgdk_mini.h
-> @@ -490,6 +490,7 @@ union hv_vp_assist_msr_contents {	 /* HV_REGISTER_VP_ASSIST_PAGE */
->   #define HVCALL_GET_VP_STATE				0x00e3
->   #define HVCALL_SET_VP_STATE				0x00e4
->   #define HVCALL_GET_VP_CPUID_VALUES			0x00f4
-> +#define HVCALL_GET_PARTITION_PROPERTY_EX		0x0101
->   #define HVCALL_MMIO_READ				0x0106
->   #define HVCALL_MMIO_WRITE				0x0107
->   
-> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
-> index 57f3f9c2a685..fd3555def008 100644
-> --- a/include/hyperv/hvhdk.h
-> +++ b/include/hyperv/hvhdk.h
-> @@ -411,6 +411,46 @@ struct hv_input_set_partition_property {
->   	u64 property_value;
->   } __packed;
->   
-> +union hv_partition_property_arg {
-> +	u64 as_uint64;
-> +	struct {
-> +		union {
-> +			u32 arg;
-> +			u32 vp_index;
-> +		};
-> +		u16 reserved0;
-> +		u8 reserved1;
-> +		u8 object_type;
-> +	};
-> +} __packed;
-> +
-> +struct hv_input_get_partition_property_ex {
-> +	u64 partition_id;
-> +	u32 property_code; /* enum hv_partition_property_code */
-> +	u32 padding;
-> +	union {
-> +		union hv_partition_property_arg arg_data;
-> +		u64 arg;
-> +	};
-> +} __packed;
-> +
-> +/*
-> + * NOTE: Should use hv_input_set_partition_property_ex_header to compute this
-> + * size, but hv_input_get_partition_property_ex is identical so it suffices
-> + */
-> +#define HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE \
-> +	(HV_HYP_PAGE_SIZE - sizeof(struct hv_input_get_partition_property_ex))
-> +
-> +union hv_partition_property_ex {
-> +	u8 buffer[HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE];
-> +	struct hv_partition_property_vmm_capabilities vmm_capabilities;
-> +	/* More fields to be filled in when needed */
-> +} __packed;
-> +
-> +struct hv_output_get_partition_property_ex {
-> +	union hv_partition_property_ex property_value;
-> +} __packed;
-> +
->   enum hv_vp_state_page_type {
->   	HV_VP_STATE_PAGE_REGISTERS = 0,
->   	HV_VP_STATE_PAGE_INTERCEPT_MESSAGE = 1,
-> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
-> index 858f6a3925b3..bf2ce27dfcc5 100644
-> --- a/include/hyperv/hvhdk_mini.h
-> +++ b/include/hyperv/hvhdk_mini.h
-> @@ -96,8 +96,34 @@ enum hv_partition_property_code {
->   	HV_PARTITION_PROPERTY_XSAVE_STATES                      = 0x00060007,
->   	HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE		= 0x00060008,
->   	HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY		= 0x00060009,
-> +
-> +	/* Extended properties with larger property values */
-> +	HV_PARTITION_PROPERTY_VMM_CAPABILITIES			= 0x00090007,
->   };
->   
-> +#define HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT		1
-> +#define HV_PARTITION_VMM_CAPABILITIES_RESERVED_BITFIELD_COUNT	59
-> +
-> +struct hv_partition_property_vmm_capabilities {
-> +	u16 bank_count;
-> +	u16 reserved[3];
-> +	union {
-> +		u64 as_uint64[HV_PARTITION_VMM_CAPABILITIES_BANK_COUNT];
-> +		struct {
-> +			u64 map_gpa_preserve_adjustable: 1;
-> +			u64 vmm_can_provide_overlay_gpfn: 1;
-> +			u64 vp_affinity_property: 1;
-> +#if IS_ENABLED(CONFIG_ARM64)
-> +			u64 vmm_can_provide_gic_overlay_locations: 1;
-> +#else
-> +			u64 reservedbit3: 1;
-> +#endif
-> +			u64 assignable_synthetic_proc_features: 1;
-> +			u64 reserved0: HV_PARTITION_VMM_CAPABILITIES_RESERVED_BITFIELD_COUNT;
-> +		} __packed;
-> +	};
-> +} __packed;
-> +
->   enum hv_snp_status {
->   	HV_SNP_STATUS_NONE = 0,
->   	HV_SNP_STATUS_AVAILABLE = 1,
+Don't want to skip fw load during probe, that's why used debugfs.
 
-Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+Regards,
+Badal
+
+>
+>> Thanks,
+>> Stuart
+>>
+>>> ---
+>>>   drivers/gpu/drm/xe/xe_debugfs.c            | 41
+>>> ++++++++++++++++++++++
+>>>   drivers/gpu/drm/xe/xe_late_bind_fw.c       |  3 ++
+>>>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |  2 ++
+>>>   3 files changed, 46 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/xe/xe_debugfs.c
+>>> b/drivers/gpu/drm/xe/xe_debugfs.c
+>>> index d83cd6ed3fa8..d1f6f556efa2 100644
+>>> --- a/drivers/gpu/drm/xe/xe_debugfs.c
+>>> +++ b/drivers/gpu/drm/xe/xe_debugfs.c
+>>> @@ -226,6 +226,44 @@ static const struct file_operations
+>>> atomic_svm_timeslice_ms_fops = {
+>>>          .write = atomic_svm_timeslice_ms_set,
+>>>   };
+>>>   
+>>> +static ssize_t disable_late_binding_show(struct file *f, char __user
+>>> *ubuf,
+>>> +                                        size_t size, loff_t *pos)
+>>> +{
+>>> +       struct xe_device *xe = file_inode(f)->i_private;
+>>> +       struct xe_late_bind *late_bind = &xe->late_bind;
+>>> +       char buf[32];
+>>> +       int len;
+>>> +
+>>> +       len = scnprintf(buf, sizeof(buf), "%d\n", late_bind-
+>>>> disable);
+>>> +
+>>> +       return simple_read_from_buffer(ubuf, size, pos, buf, len);
+>>> +}
+>>> +
+>>> +static ssize_t disable_late_binding_set(struct file *f, const char
+>>> __user *ubuf,
+>>> +                                       size_t size, loff_t *pos)
+>>> +{
+>>> +       struct xe_device *xe = file_inode(f)->i_private;
+>>> +       struct xe_late_bind *late_bind = &xe->late_bind;
+>>> +       u32 uval;
+>>> +       ssize_t ret;
+>>> +
+>>> +       ret = kstrtouint_from_user(ubuf, size, sizeof(uval), &uval);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>> +       if (uval > 1)
+>>> +               return -EINVAL;
+>>> +
+>>> +       late_bind->disable = !!uval;
+>>> +       return size;
+>>> +}
+>>> +
+>>> +static const struct file_operations disable_late_binding_fops = {
+>>> +       .owner = THIS_MODULE,
+>>> +       .read = disable_late_binding_show,
+>>> +       .write = disable_late_binding_set,
+>>> +};
+>>> +
+>>>   void xe_debugfs_register(struct xe_device *xe)
+>>>   {
+>>>          struct ttm_device *bdev = &xe->ttm;
+>>> @@ -249,6 +287,9 @@ void xe_debugfs_register(struct xe_device *xe)
+>>>          debugfs_create_file("atomic_svm_timeslice_ms", 0600, root,
+>>> xe,
+>>>                              &atomic_svm_timeslice_ms_fops);
+>>>   
+>>> +       debugfs_create_file("disable_late_binding", 0600, root, xe,
+>>> +                           &disable_late_binding_fops);
+>>> +
+>>>          for (mem_type = XE_PL_VRAM0; mem_type <= XE_PL_VRAM1;
+>>> ++mem_type) {
+>>>                  man = ttm_manager_type(bdev, mem_type);
+>>>   
+>>> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>>> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>>> index df43523e9043..88355adce1d0 100644
+>>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+>>> @@ -167,6 +167,9 @@ int xe_late_bind_fw_load(struct xe_late_bind
+>>> *late_bind)
+>>>          if (!late_bind->component_added)
+>>>                  return -ENODEV;
+>>>   
+>>> +       if (late_bind->disable)
+>>> +               return 0;
+>>> +
+>>>          for (fw_id = 0; fw_id < XE_LB_FW_MAX_ID; fw_id++) {
+>>>                  lbfw = &late_bind->late_bind_fw[fw_id];
+>>>                  if (lbfw->payload) {
+>>> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>>> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>>> index 5c0574aff7b9..158dc1abe072 100644
+>>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+>>> @@ -65,6 +65,8 @@ struct xe_late_bind {
+>>>          struct workqueue_struct *wq;
+>>>          /** @component_added: whether the component has been added */
+>>>          bool component_added;
+>>> +       /** @disable: to block late binding reload during pm resume
+>>> flow*/
+>>> +       bool disable;
+>>>   };
+>>>   
+>>>   #endif
 
