@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-803181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853E3B45BBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39064B45B94
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF3D5E1524
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A15560583
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8CA37C0FC;
-	Fri,  5 Sep 2025 15:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22842F7AD6;
+	Fri,  5 Sep 2025 15:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdOJ0F9e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ofn9I9iQ"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05B2319155;
-	Fri,  5 Sep 2025 15:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D42FB09F;
+	Fri,  5 Sep 2025 15:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084425; cv=none; b=KpJA0uMeEYWz9be47KkLgb5AEHmMeefNbJL2xtD3zt02WqzfjLQaxP6mKBH7dTvGPLXfVBFl6MO7ScLH/rwU0UgLgyrTQkUV9yy4mmVi4hTmi42UG4zifLkHTIIGJiAmNHsxqSP7DXhuo1kux+v5bGsAYQYRaH90fGuwx5FQgTA=
+	t=1757084403; cv=none; b=NuUNxbfMU6LJk/GnjKvW3f+MQK6aIJdWRIcZTOJ7bS4gkbMBAJXQxdo0jLvFSsmZ+1dG77PpqP/lYLaIbcYe1rOw1TmuEAfrGl94cxqhJwtOFU4SezkoHKIfkRPEDeS9LLiJgVrPx5BVsW9vLwBhE9MQiXPsGrQXo1Oi+/Dkvrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084425; c=relaxed/simple;
-	bh=RKC5z2WEU+s9nBjTQYx3DaugYt9DytA+/DWNBaUypdE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=syGgdnUuO8pwpSOG5rY9Ob8Zsav4ujUFINW+0A7ZfVpDkZ+BUqAO/ILoo/voGwFmRI2duNYG9n3J0gZfk5X7iPkxYvXQ2BZMnwKTaNSLXrIE0FtK+CAtX/AtcUjRars47/BoW8M6Vjv21m6VweLeQyIcjpm+i9wSX9ehhFAdx6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdOJ0F9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE966C4CEF1;
-	Fri,  5 Sep 2025 15:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757084425;
-	bh=RKC5z2WEU+s9nBjTQYx3DaugYt9DytA+/DWNBaUypdE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=sdOJ0F9ep89rr4t3o8/YdBRPJXANT7KvK1l6wVoWK5hT+7RrAFPu7P7yvCtLjUNin
-	 UWU0IvjEbPVaIumQNVPqpiDWuo0KBRoY3YYnnRwVG9N8Y06YbZa3BGM0CP0De/3BUC
-	 zeOPR9WTjFPrPSbX6Agci88zzzpLwsYF46vjbws4T/MRpFe5Tmyo2tIqzn5B+zNASZ
-	 fFWG+qUuyG2llvuPe8xW5H1Xd4yi96YOQWCFcQzYs68Pj74mTXs3je77nc1Biqn2eP
-	 AoOxHFbFfKvsUi3YYjC0ajgB6+6yh/9fDqIGJFNMvxS/7NQXCUgp5kDECQr18le+kQ
-	 LNiKjOHLdfbeg==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Fri, 05 Sep 2025 16:59:58 +0200
-Subject: [PATCH v8 12/12] docs: add io_queue flag to isolcpus
+	s=arc-20240116; t=1757084403; c=relaxed/simple;
+	bh=ALhbWpBuIHESZ3w6gZ/J34pjJGe0uGkxAAoVB4VKwp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uYpdIAG1oIZefZKNIHS3tu/wIK1bUGbhxa6rcXhpNR2bIT/G+gdxk+SIt+to0+9mYKLiXRZbO9J74EqKka6e9EdrzzdjQDUXoN08zY5j48cYq99+C8AX7V6+aIaaD+eZqfO+wHuduC14v6qyBQ2ko8Akumzdpq+gqsNtGFwp7/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ofn9I9iQ; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24c863e852aso20343835ad.1;
+        Fri, 05 Sep 2025 08:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757084402; x=1757689202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=BM3As/mXgJWAMTQFyUrVqvwBh5qWHLokM1O/8LYhcBk=;
+        b=Ofn9I9iQzk5qPViU8AkPjJLb7B7cyBIOn6o1JKzU7efAFi2ZDxEekFNeroA8fqROUB
+         g8eKBXoXzReEvPZp2e0CU8xnqvfTDfJQ8E0FN7dyNgzzi3hrQuJfjyhPTkx36rIscOhf
+         f6JDm2tf1KuuUDClPkDm6hekNfwbST38gCEboD2s1QR9Zo1AZ5FstmWCuyzXYyVBUNle
+         8Cy3596PmEGQ5bLmprowsScxuYAFR8008SJkSBLWdJiX48Kwj9GEXkm2YEUpk4VpXghV
+         30FzyJFi89KyW8JxzMjL+RBWui+mCpT/1Fa9UlCF959wY41H7JK5VrBEfHHJ0kgAHM3y
+         C9lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757084402; x=1757689202;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BM3As/mXgJWAMTQFyUrVqvwBh5qWHLokM1O/8LYhcBk=;
+        b=rQrzen107ng6pEJgwwl44WCzJpLjIRCiBCG471VTVEcS39bt9swOzFEsYzjmw0p/0F
+         nULEpJ7tnI9pBNcfHv7IRm5ssAbn3w5/N3NdvoKvM+LYuygDnqdt+G8bX23NmM/oy7vE
+         +Q1hR+1VbvXcTj0D553SJaG4WXRZ10PfmPUFIsmZJW7xf4qt/pAWQ3DpK7Fag140NCX2
+         R58+T1pip/I/fUnpGL50c24E6imp5F15h3gzkrNSNXhNiScChrstlUNXMe5HgMwyJIie
+         Bj+tC44CKWCFw2gPFi/e8Bg1B6R7JDFkLBbPN9qYFW9UkjG2nOgGwbwb7/y9DHeyLC0l
+         BQyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAcWnYZIaNT3qF11jRoYRBCRtd+IeBGinKzB/SRjAtDkD35VXXE82bRnbqFpFkftDFg+hzuuoHs7Sf@vger.kernel.org, AJvYcCUywUkvEVjdrQAfwdFlJoiwLsLwDdft0njyLwI/IXb9txzFQ3NEhWHqMeWkc7OzctqrAui5NwQ5e4TBGT1Bbh8TBbo=@vger.kernel.org, AJvYcCW4Zcob0xfVPWGLruCvdapdq2MCGlqswWSADluowAlvUtgWRKJ3VYQpj2TvLVZfRzynigSXW+Dhz0BwvLgU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCpmJuDPRrYJP135xLoHZxfBMOmSPRZvFFOIf2ni3dbAYRql8E
+	9RYjQx04kfwy8AD+NaI/dLszzakUL/3QE2yZ27Y3CB+i8zdT0yjif6cS
+X-Gm-Gg: ASbGncvj6sivGB2xsWevJi/zbHJKgmg8OC6RdpKTyq9IFmjHK1SIjkWdkGuju2DoM5D
+	ykBJUVcHJDPaBy/px+mBxVq7vfuMeoaUMz96wBcGuoXCygN5MGCGxpdDA+IcSWbDehG5UxaMqXK
+	CkWLgHTAyx33Vrcl64JSv+PcrDwGBfIniU243YEkkdjeaepDhyvZ5IWT6/j4Rk153v3qAGOaUx/
+	CDzuJYjDUBMBkSVR3UNAoMoUnBYbvH+xQrvGdnCKYbj3SJUKAqkdWWT6Z0Ka0O94HZ7LOaYEzwq
+	BJfgfyhpZZi/KyVlPKg0qbhw9WZoH9a717jQVlwBQ67WeMxxtENQhwYeqM2txbNpjfyKQHPhMJv
+	HyONil80ZCB7M+vKfVjW1nYlOfFJNvH6fhSIR1mMhpjs2/2HbO7XXlrtTPOf2ZB8zd/uyUkgVmR
+	M7ccUpDg==
+X-Google-Smtp-Source: AGHT+IHuVBtMRqO9E/uDVUcKzPUIj51uxl5WcTxllKIkah/7JqHcVhk+jjGOeTjkxr4voewoXYTYjA==
+X-Received: by 2002:a17:903:2b05:b0:24b:e55:334 with SMTP id d9443c01a7336-24b0e550925mr175545175ad.8.1757084401493;
+        Fri, 05 Sep 2025 08:00:01 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9c2b12f9sm70866975ad.101.2025.09.05.08.00.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:00:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <bf67130a-6a33-4725-bd60-c8599ff92d23@roeck-us.net>
+Date: Fri, 5 Sep 2025 07:59:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] watchdog: rzv2h: Make "oscclk" and reset
+ controller optional
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250804195723.3963524-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250804195723.3963524-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-isolcpus-io-queues-v8-12-885984c5daca@kernel.org>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
-In-Reply-To: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
- "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Aaron Tomlin <atomlin@atomlin.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, 
- Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, 
- Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Aaron Tomlin <atomlin@atomlin.com>, linux-kernel@vger.kernel.org, 
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
- storagedev@microchip.com, virtualization@lists.linux.dev, 
- GR-QLogic-Storage-Upstream@marvell.com, Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
 
-The io_queue flag informs multiqueue device drivers where to place
-hardware queues. Document this new flag in the isolcpus
-command-line argument description.
+On 8/4/25 12:57, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Update the rzv2h_wdt driver to make the "oscclk" clock and reset
+> controller optional.
+> 
+> Use devm_clk_get_optional_prepared() to obtain the "oscclk" clock,
+> allowing the driver to work on platforms that do not provide this clock,
+> such as the RZ/T2H SoC.
+> 
+> Similarly, use devm_reset_control_get_optional_exclusive() to allow the
+> driver to function on platforms that lack a reset controller.
+> 
+> These changes are preparatory steps for supporting the RZ/T2H SoC, which
+> does not provide an "oscclk" clock or a reset controller.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- Documentation/admin-guide/kernel-parameters.txt | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 747a55abf4946bb9efe320f0f62fdcd1560b0a71..4161d4277a7086f2a3726617826c50888eefb260 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2653,7 +2653,6 @@
- 			  "number of CPUs in system - 1".
- 
- 			managed_irq
--
- 			  Isolate from being targeted by managed interrupts
- 			  which have an interrupt mask containing isolated
- 			  CPUs. The affinity of managed interrupts is
-@@ -2676,6 +2675,27 @@
- 			  housekeeping CPUs has no influence on those
- 			  queues.
- 
-+			io_queue
-+			  Isolate from I/O queue work caused by multiqueue
-+			  device drivers. Restrict the placement of
-+			  queues to housekeeping CPUs only, ensuring that
-+			  all I/O work is processed by a housekeeping CPU.
-+
-+			  The io_queue configuration takes precedence
-+			  over managed_irq. When io_queue is used,
-+			  managed_irq placement constrains have no
-+			  effect.
-+
-+			  Note: Offlining housekeeping CPUS which serve
-+			  isolated CPUs will be rejected. Isolated CPUs
-+			  need to be offlined before offlining the
-+			  housekeeping CPUs.
-+
-+			  Note: When an isolated CPU issues an I/O request,
-+			  it is forwarded to a housekeeping CPU. This will
-+			  trigger a software interrupt on the completion
-+			  path.
-+
- 			The format of <cpu-list> is described above.
- 
- 	iucv=		[HW,NET]
-
--- 
-2.51.0
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 
