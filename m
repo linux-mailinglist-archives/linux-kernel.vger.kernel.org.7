@@ -1,70 +1,49 @@
-Return-Path: <linux-kernel+bounces-801904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6836EB44B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:00:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5E8B44B6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C771892FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:00:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC3B57ACF90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45C020CCCA;
-	Fri,  5 Sep 2025 01:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690EB220F37;
+	Fri,  5 Sep 2025 02:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="hIfrmYVU"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keIR4Mol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577D51AA7A6;
-	Fri,  5 Sep 2025 01:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7431218EA8;
+	Fri,  5 Sep 2025 02:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757037591; cv=none; b=UEkUi49o6VrwlbbwGxZ52HJnc84OjO+uxfsMFFE+G6Py2bNQbIqT2B3EuLhBxR/dBOdJ2xg6+oVLCwMT7beOA9ukpwwrAYxd6sFRkiUFRDpMYtrMfl1vSIq8E0maOFdjlLVQ+dUEJ08MnIrihf21A/rjtlJaD4YDWDnxv/y+7Hc=
+	t=1757037602; cv=none; b=lanKkou5H8UvmdVO3r/DaTKt/feh/0iEWVz83Hrp5QfJYqMDIeou6j/QDD9M7P5on1SuLyGL6/uMPYXZnWU6Vtkchrb3d1pFeZ0elfUF7QY1usRCeBWK26VW0FHXO4XRgMoyrDaymLjC0/jketykiQRvjPWJ0gZOYyifgND0u08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757037591; c=relaxed/simple;
-	bh=gA4Mh35DL16tO9ykLk/jxV4bapjsLQBQgQUcaxFhOSg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BNaP89cMVeEYm/o0nTJtY+4JAUGQGjcFzPPSv42Q2ZdVYCS5Pqa3afUdYXgSEnQ/A+3x90Yac0PZISWlYh70IMEsJxiNd7BRjLFUqgAAM7bTlhgEQqDoZQVxB6FXbgkmSxt76rq1crV86AbPClIlRqcP/enrUEdAg7vDTjKeIXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=hIfrmYVU; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5851e2AR4127040;
-	Thu, 4 Sep 2025 18:59:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=dev7IaIeKSTxt4NEKjiqP0mEW51ewSs8JZD7A60ZlJo=; b=
-	hIfrmYVUBNVckIK1GqPkUyX8eEwftqq8R1q1clFIXQKshcyFvbY74EJCNOzqWaRU
-	NJjMBZDZEpPvxZtRcg2ptK9Uy5u/7ufo9XkRyZBv4f2UnOVnSS8tiEXvTnxgDMpb
-	JJe0c6IOA6ueaZshVVTZFU+sq9eioGLfHkGAJPQy1ISFr54sDFKox0m6NIVm/GBK
-	ZrwEA4nodUUqwD5BLoq3boB4YJBp0NoXz3qWdlWJYPDMcWSD6Lytjo0Ub1609zNz
-	CmMGjhj4NulffuzT8GN4idDFTbgQQxFLjLlJjcIr3lPL2AIf0dwHknNESbDwx544
-	bX+ig0WpGATvONhUBWDLcg==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 48y7sb161s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 04 Sep 2025 18:59:28 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 4 Sep 2025 18:57:47 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 4 Sep 2025 18:57:45 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com>
-CC: <dhowells@redhat.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netfs@lists.linux.dev>,
-        <pc@manguebit.org>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] netfs: Prevent duplicate unlocking
-Date: Fri, 5 Sep 2025 09:59:25 +0800
-Message-ID: <20250905015925.2269482-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <68b9d0eb.050a0220.192772.000c.GAE@google.com>
-References: <68b9d0eb.050a0220.192772.000c.GAE@google.com>
+	s=arc-20240116; t=1757037602; c=relaxed/simple;
+	bh=6WrSKGMcklSN3roHjGk3yFcw/fLf1SGPFW5yr0SuEYA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Rj0lnkkIWRUOTqaDoI7vG180I2cV0lsQPIr53cMH80NZmILaeFmUFEhArL978ahEKTLFg1zyiChZVo6LqKZmYcrcLfmfV+Fpp9y5nYyAC2k88+gL6O56IkzCEfcqw0Z9PHE91BJziiJwFiKDlmpaIfSw0WZ6aHeyWWNouMFYzTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keIR4Mol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297EBC4AF0B;
+	Fri,  5 Sep 2025 02:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757037602;
+	bh=6WrSKGMcklSN3roHjGk3yFcw/fLf1SGPFW5yr0SuEYA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=keIR4MolXDCuDAQ4tpQuRfXkj9XNWYKqGDp4fRkc61kQInngXYCgqRhI6cwQ+G2KI
+	 WHaiElr2nXUMWbBrIWQAHLGc6y/JM7K0tIvmNAehAsJwMt2fKui0y4RljvXxBefdxF
+	 +1j5Xj/d1fJIHjCaUpOcQVGyh/JS5B5bHVYBfK+jxbrEdZhgkQnyfBxD4S/UUSPdYI
+	 ton3QP+6YF/XdXMfaYrOHwC++lCqsVGyIZqMdmr7vu6sSrOunyn3/K51gk6W8UGK1w
+	 VhdIkXlGWz+Sz1peFjS0rQXq1PYYNKHIMY2h4OqY3hDZP2WopJmHUKRIl0SSge6WCV
+	 RONgPnl0iGlRg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEEB383BF6C;
+	Fri,  5 Sep 2025 02:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,53 +51,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA1MDAxNiBTYWx0ZWRfX/Mag4kq53t23
- 6gOOtN8W0yahmgAai8TcXCIpi2/RxOhOLtKzbdqzxPVr6A9CKnjedf3N3uI26pWpQYf35pmA1MF
- /SpDGwkDVy7Ns9qEEJleMyuMuBWqBA6FMwTn0P3jZZrVOeleP/kd7ISoeNdB6BgZ3K/A+C2HDfM
- PwvCgU5TybPBk60Kgyndn1Q59bECGdP8ZbJvTspVzlBObGzkzB5H1fshSZK8Bj3efE9F7epJdz4
- c8hxEG63+Z6QyFKimTxeVfxU0X49xYiUSs3w4neQuZlId7gE5Eyu5lbCgwFZ5pugqFpZ8UsaeZS
- UpumyaC+W0bJe3WyofA7dsAoGg3FUmvZlVbPN5ay/DKqXKLRm4cBqXFUm36pwE=
-X-Proofpoint-GUID: 1WKAbH2NX1y1ujUTQaNOyUdaVB08zYtZ
-X-Authority-Analysis: v=2.4 cv=M5BNKzws c=1 sm=1 tr=0 ts=68ba4400 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=yJojWOMRYYMA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
- a=3yRTcMStzHrrPhRN-PwA:9 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: 1WKAbH2NX1y1ujUTQaNOyUdaVB08zYtZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011 adultscore=0
- spamscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
+Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175703760650.2006573.13109159782302004132.git-patchwork-notify@kernel.org>
+Date: Fri, 05 Sep 2025 02:00:06 +0000
+References: <20250822093440.53941-1-svarbanov@suse.de>
+In-Reply-To: <20250822093440.53941-1-svarbanov@suse.de>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, florian.fainelli@broadcom.com, andrea.porta@suse.com,
+ nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, phil@raspberrypi.com,
+ jonathan@raspberrypi.com, dave.stevenson@raspberrypi.com
 
-The filio lock has been released here, so there is no need to jump to
-error_folio_unlock to release it again.
+Hello:
 
-Reported-by: syzbot+b73c7d94a151e2ee1e9b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b73c7d94a151e2ee1e9b
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/netfs/buffered_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index f27ea5099a68..09394ac2c180 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -347,7 +347,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 		folio_put(folio);
- 		ret = filemap_write_and_wait_range(mapping, fpos, fpos + flen - 1);
- 		if (ret < 0)
--			goto error_folio_unlock;
-+			goto out;
- 		continue;
- 
- 	copied:
+On Fri, 22 Aug 2025 12:34:35 +0300 you wrote:
+> Hello,
+> 
+> Changes in v2:
+>  - In 1/5 updates according to review comments (Nicolas)
+>  - In 1/5 added Fixes tag (Nicolas)
+>  - Added Reviewed-by and Acked-by tags.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,1/5] net: cadence: macb: Set upper 32bits of DMA ring buffer
+    (no matching commit)
+  - [v2,2/5] dt-bindings: net: cdns,macb: Add compatible for Raspberry Pi RP1
+    https://git.kernel.org/netdev/net-next/c/d9c74e6f8125
+  - [v2,3/5] net: cadence: macb: Add support for Raspberry Pi RP1 ethernet controller
+    (no matching commit)
+  - [v2,4/5] arm64: dts: rp1: Add ethernet DT node
+    (no matching commit)
+  - [v2,5/5] arm64: dts: broadcom: Enable RP1 ethernet for Raspberry Pi 5
+    (no matching commit)
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
