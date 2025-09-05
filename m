@@ -1,173 +1,136 @@
-Return-Path: <linux-kernel+bounces-802062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D808DB44D45
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:22:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BD3B44D76
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CBE87BB373
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2141C81018
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9F8296BD5;
-	Fri,  5 Sep 2025 05:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115272F069A;
+	Fri,  5 Sep 2025 05:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NRwfikYB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="WaFnr3jY"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98D728D8E8;
-	Fri,  5 Sep 2025 05:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51792EFDAB;
+	Fri,  5 Sep 2025 05:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049591; cv=none; b=ICHWPxI7gEBz4O9fd0p6jJ6LIuIzuoLaSyLV16tmI+5lSL91ihNAi4uTyDWNTf3BSRrGymGHBfsreIMATeH4TktZqE4sAkrvx/KlAtlxVRyav812hO/OwzGKr20ifOb1Qv1WE7iK/whtM/hsAcIKei62ibmQIlS+LZ99n+EPgnM=
+	t=1757049697; cv=none; b=uSlwZBHqmZp41kAITPRmQNz+sqha5uqthCsrmUckU5Vv6lVxbD3MGwaSx9Flv2zYnCfG+IZC5UWRShMXt6IqqfRJ47eGKdRTIrE8D5bnADF5laPEv4nElIjUdR2/t4Fx/NbpAMPPDcPw5bY1qFF9ypEGhNuSS3uuHORZL5uRmOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049591; c=relaxed/simple;
-	bh=j5sOyuZKyh/HWp7+7rk5nhLwxGNTgWGNr08IHfPCTqY=;
+	s=arc-20240116; t=1757049697; c=relaxed/simple;
+	bh=IvqLa41Rgi5MStRNwS+3vZ63wEGrIeqTNh3mmJUDLuc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I9M7G6kkWM4HcB+TVHpqMKpRUPE9d22DEKf1iVR5JY/KxVG2AwjMzgd+uOf0jPeHqflsF+o9uA+xbtZZF6wY0fgszhNCCNpDwBk6sUS+QStMAHWAjkZs573O8n+lXt6z7AitgOsbIn0TbJ/G/EoZbRMzjjkq4HySDrrsDq3EeLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NRwfikYB; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757049590; x=1788585590;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j5sOyuZKyh/HWp7+7rk5nhLwxGNTgWGNr08IHfPCTqY=;
-  b=NRwfikYBMp7KXDLhTfbnH4EB9sywMV5gZzGuNKrYmoq19qGVZ8YbcoKv
-   5lnvY5UlSwbnv4qD+ztyloCwwOxrmIrWp+ZXqzoChW3z4hbFFSeB2NOqE
-   AEIVge6lV+5y8mQB0m+G94GNZ4wIOc7GDsXPzWaDuwT5ezg+M2nFwhgWK
-   f4ss2nj0oXiq5OFszEJzyLbf6Lz/j1p9zUqyydzXcL40bXacwbLuI0ReA
-   m46sUg66G+wIDPmd3onU3OJEOdeN14WNxYGO+Fjhqdh5qYqm9VzJxmDWe
-   He/pc2IvkcGN9bfTXUon60yKLEuDlp40VdQM3f0WtsM7MQPcVBCm1+B7t
-   w==;
-X-CSE-ConnectionGUID: NArD58CVTKuu7pHTYHOlYg==
-X-CSE-MsgGUID: IhrakSuARfaTu902Aw8WPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="84829394"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="84829394"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:19:49 -0700
-X-CSE-ConnectionGUID: Yk5GqpLHSuCJXDnOvzBvGA==
-X-CSE-MsgGUID: scbqSEOcT0KJbxSRSIhC3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="171296749"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:19:44 -0700
-Message-ID: <84bccc75-6e5e-4c08-aba6-1d9219eacfaa@linux.intel.com>
-Date: Fri, 5 Sep 2025 13:19:41 +0800
+	 In-Reply-To:Content-Type; b=ClnGUAJ07VoNSyyTEm25RHCr0kE3Am00fFmGJRaqkaDBtNxFECL60U38ethJhJtZkt70rrKwEHKcdEX5HnuhpDuWFoDN0zTPLGINwHJeEWw22Q2lKlHvCpNq5rw5KwbM0BBGfrP/gDHYPxkEkLuOqJbhMd9hWzZc9ujXQdFuRsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=WaFnr3jY; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1757049666; x=1757654466;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=IvqLa41Rgi5MStRNwS+3vZ63wEGrIeqTNh3mmJUDLuc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WaFnr3jYim3zobWPzFyjE7uIAigGtvl8F40hi4JltJgyoKa0kl+ns5gF3aCU7h92
+	 MRe9tSIyP1VmkzjseAiHhtKH9Bm7ZDAl2pYkCJdTAjXyYNXltbhVa4SCn0lGNhtZs
+	 6Ymzo2BJWyf6JQNqBYNyMKbDZrt6ZtU1HopPsgI3poA0ATPli/A7FYhq0lhY5MATn
+	 lh6HLauJmdrUuiTM25UnyZGZ83Mnz/sVn9M7rkmkjdaH8tHLXogCKxfJBH7nepG2m
+	 LLM3ibOQ5wuTAicE/drVPuXqXHImu7gOQykAJ3VEnhgef5TVAF0EBJr81Ju2YaKw6
+	 FzfJSVnDjuvVIJgP6g==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.145] ([91.64.235.193]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Myb8P-1uXdm83dgj-012Zfc; Fri, 05 Sep 2025 07:21:06 +0200
+Message-ID: <2fca6922-c312-4ac6-9b1e-f2aa492e1c6d@oldschoolsolutions.biz>
+Date: Fri, 5 Sep 2025 07:19:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 04/21] KVM: selftests: Update
- kvm_init_vm_address_properties() for TDX
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>
-References: <20250904065453.639610-1-sagis@google.com>
- <20250904065453.639610-5-sagis@google.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v7] arm64: dts: qcom: x1e78100-t14s-oled: Add eDP panel
+To: Christopher Obbard <christopher.obbard@linaro.org>,
+ Douglas Anderson <dianders@chromium.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+ Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>,
+ devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250904065453.639610-5-sagis@google.com>
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LCJFX39gSHvMklOr93P1mOJM7P4b9qcXgpSoFcZkrYwLAOCad08
+ qy2mWKK7IydJ9UKDeNFYsbw939l+e/isCLilco/K2AkEUUMciYONWHqGaHB8ny1WqLKOUHj
+ 8DVHhXGVMilw3wz0nHAWtLBDMqCu6Zw8sao1HXnNdHJRupM1bzpAYbr9yU8sWwLuvG8dwGd
+ BpqEhaFW9uzlWa0Jlx5CQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+QBQyDHBlms=;2IonQUqzHq2LnYp6i3VkQ2d0i3r
+ TXVqC9rlkdIeaxw6rzfFBP1Y+pXcH7XgkG8KcPZ96bJflB2I1c0PONBhGJvzuq/sH0pAzwyjv
+ 9oZcjtt3JxoWxyj49aB3yplXGJUK1CGcsvf+o8qqCvCcTNOy+KaA2RBfbaISvwa9nbLfmQJQE
+ 7V2Un6KSQpjH+KTul8O37K0QX2xYx7jby2iJgSLkJQjPO8UVkjAL1HnTo6BtZWHkLoRMxdPwv
+ 9EJC+z0OI97h+Gd/mZSOY8TXAvLacC5/RlKZL+nFP4kTNh6+9Wbf4xDyOJAI/ZcRvrHFRUosF
+ nsVXP2sJsNKhg+9SSib96Db4fQ4n7EDM6DLZpNhhoHrzV4fDkJkm07Cd/dn30HgNn23dgRkJr
+ KflSykmlwj4Zzw5O8qCeNmzMMNk7ln5b6YjYsfc3GJgyVUbM0WAxsKHzQUK/uiN5iAJbCuqNl
+ /s5vzi2Q3qCmehVeLlZAaSzjWQWUgjIxIg2qrvrqLqUdKfjMLzF/zQT4BrWTSPrwNe2C4QPCS
+ eORhTrrf45/I+v04uyfV2CEuyxnn3B3si9eMgR7x1+agl8ANXWeaNbqYEmebYkGpAh9aC3RV1
+ AH+xZslX8wr4G/Efw6+o4Y2CUS9/YiBlPILB/zSScw7vT+RCMVnzLf+XsdIjXmzuTk7wIX2pr
+ fV0kEBvfusuVLA88sVAZK2fVyTfvK4yV+1rtZ6b9IkDENXfIuQsm1oQGfg6RiTzWhYJ8GX0GQ
+ Iw+LUwHOMALaP5tmc8lJ7KXpPclA8fxE68zRd+613ohW050ZkXEhsqLwP47VDhgLthYUgpvGZ
+ y3kk7tlh+e4aWQuyKnr1w0Pdtl7+gnFadRh3rWbx/NmgqJAvxYcuQ5h+3AMY2V93+1C8Qa8Zx
+ 1e9OoznArU++TTdmdPB2GslcUbzrfuVEcqj5cPVoY2YEANYPFMewQghG/OM+Tc/dvWojDrRu7
+ IcR/GHkx7Og3279gU0hVXzP39Kewe4htMcEKAXVNCBezVPW8M+iicJF66NOd/RULRWXs1kPAP
+ BJaRYh4ib6oxvxUUJ2ruTkkq8z/t0YPDr6ANzsvW05Y6WjSy07tFu3XjUHb7MAQlCJ4Ijfw0O
+ gBTBvI1AOLB/kh3GsEhCPL6BLYvlgKR8UkmPWP/I89lWjKZ+kV/Uyc8BP6/e4mekkyh0Oem3L
+ ubdW6WdzarOWdpyRWOOQRxWNrNhYFXFd/7ZsbHJlpkZACexNuusiU/Yo540MX+pDgKoHvnuIV
+ i07xtgKG+V2idzCK6BaMHpZKgaw1aTjIfwlozzz30fgZP+QMKr2yNlhF1e93+1YzPS6wK/+P0
+ 3u+aBaky/wG+EFiavKEkOhtJPB4U3/x5w0EutZDGssddSbJOiDoIXHM2VdrdjiLbKBHrSz1Iw
+ kmEU7V2U4etJZTJ9QF+znAtzsK4DLuZiVtclIfLqzQknav8x4rGfOBFGDDDV8ywMvFhhqGbjW
+ V3HTASx8dOGeIiJZ4UfL0/wMLWWrxpAikRReE/qws6z9dQ4m6FmZrnNkypB+be3v7Iemqwk7n
+ +/6k/icRYwV2KniJZF+Z2A0P4xNQB517eX10R5LwFg+WtR6568s/vXd6BNLHhvdQdZfgk9RDL
+ hjA3+5y1BxtKpSTPx7zuQM/WHR7YbbhTreyixdtNSuqGiFV3EBvakZOsRSR2gQdAWqrah9YSB
+ LepRHzoQzKPUtzQShD5ZIGsyEdZ7kO74ujxCc6IGRDHuZ0MbW5T4yCzkyaOQ9ox3aUL4VJ9+h
+ VRB1tjcN6jDhVPevtscNppc3g5SlVEAfhWmza11Hb/zxz/mTDQEo4nPo=
 
+On 8/14/25 22:16, Christopher Obbard wrote:
 
-
-On 9/4/2025 2:54 PM, Sagi Shahar wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> Add the Samsung ATNA40YK20 eDP panel to the device tree for the
+> Snapdragon T14s OLED model.
 >
-> Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_mask}
-> similar to SEV.
->
-> TDX sets the shared bit based on the guest physical address width and
-> currently supports 48 and 52 widths.
->
-> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Co-developed-by: Sagi Shahar <sagis@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+Hi Christopher,
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+I have this model and the prerequisite patches in my tree and using it=20
+daily. Working very well.
 
-> ---
->   .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 ++++++++++++++
->   tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
->   2 files changed, 24 insertions(+), 2 deletions(-)
->   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> new file mode 100644
-> index 000000000000..286d5e3c24b1
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef SELFTESTS_TDX_TDX_UTIL_H
-> +#define SELFTESTS_TDX_TDX_UTIL_H
-> +
-> +#include <stdbool.h>
-> +
-> +#include "kvm_util.h"
-> +
-> +static inline bool is_tdx_vm(struct kvm_vm *vm)
-> +{
-> +	return vm->type == KVM_X86_TDX_VM;
-> +}
-> +
-> +#endif // SELFTESTS_TDX_TDX_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index 82369373e843..2a44831e0cc9 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -8,6 +8,7 @@
->   #include "kvm_util.h"
->   #include "processor.h"
->   #include "sev.h"
-> +#include "tdx/tdx_util.h"
->   
->   #ifndef NUM_INTERRUPTS
->   #define NUM_INTERRUPTS 256
-> @@ -1160,12 +1161,19 @@ void kvm_get_cpu_address_width(unsigned int *pa_bits, unsigned int *va_bits)
->   
->   void kvm_init_vm_address_properties(struct kvm_vm *vm)
->   {
-> +	uint32_t gpa_bits = kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY_ADDR);
-> +
-> +	vm->arch.sev_fd = -1;
-> +
->   	if (is_sev_vm(vm)) {
->   		vm->arch.sev_fd = open_sev_dev_path_or_exit();
->   		vm->arch.c_bit = BIT_ULL(this_cpu_property(X86_PROPERTY_SEV_C_BIT));
->   		vm->gpa_tag_mask = vm->arch.c_bit;
-> -	} else {
-> -		vm->arch.sev_fd = -1;
-> +	} else if (is_tdx_vm(vm)) {
-> +		TEST_ASSERT(gpa_bits == 48 || gpa_bits == 52,
-> +			    "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR value: %u", gpa_bits);
-> +		vm->arch.s_bit = BIT_ULL(gpa_bits - 1);
-> +		vm->gpa_tag_mask = vm->arch.s_bit;
->   	}
->   }
->   
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+with best regards
+
+Jens
 
 
