@@ -1,303 +1,297 @@
-Return-Path: <linux-kernel+bounces-803592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0321B462CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:52:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06195B45F6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B218D188EC6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:53:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A627A41DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41213393DCE;
-	Fri,  5 Sep 2025 18:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA05309EF1;
+	Fri,  5 Sep 2025 16:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ByRW68pz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnlggmN6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D77309F13;
-	Fri,  5 Sep 2025 18:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC54266EEA
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098138; cv=none; b=SaeqX9obd9XbaynES1VdT9lrHoJxy8PfD1cpQy89Fe3KKbyhy9xrj8FTp8jrZ8+LjIfB7IQfnw12Pmfvh9RRhfBMfBUWno3QBf6DR3Pv2khsaJXZ8dZ0QHj6aIgeDE1cLqd0bghRh9oZyG+f9jAhrRnfnRHFDx/9zqzt1/R93l8=
+	t=1757091356; cv=none; b=RH0o0BfkUMegb2WgvaCPpma9yu8BEKwWS/JDOH5SBT2o96RT9PxM/1pjcZgu3M2yqOcG0CBwTSZsJePl0KA3JQZBZJmR4lj/fsrB1aktznoM4tYtocnybWQgh6+RsWP8Xkj2EWo1PBXAZx8MxFEmUBN36TyRP7R/QlzDkBHRPu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098138; c=relaxed/simple;
-	bh=Dp5RmIYk2nbwxrj985ZZ3tn3G9Tpdw2szPFrfRBiizM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bZBGgn/uqN0vL6sj25zS0vT8chcacqsXJO6rAb+yGhfmp7jFqu3jVF0SDtAD3T10fItwz1dtCUUyPQG1tKZuCs6dniuCAPmY9knDcLmTLNdby3CVATvB83gfWAjZQf78/tKuN5KyaqHkyQ5X7shSjjcsrYymSNEQwqic+cM7IsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ByRW68pz; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757098136; x=1788634136;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=Dp5RmIYk2nbwxrj985ZZ3tn3G9Tpdw2szPFrfRBiizM=;
-  b=ByRW68pzynt8P6JuKF7RQKKyrsar46kNbAn19cF1fde75lPp0iEm68tp
-   WGf4dXkmNpin+oNAtntXecjl7Glbdc3Td8l/xATBvWVslz1eEKMMiHAOj
-   SUlMym20496BbLSVFPeYURFcQGV98iW7zHkfs5zNwsdIGbNgWTMizhsL7
-   QQVZGLg7mG96mrIPvWjx7tJjyO4kXKO2d6Auo54zEF3oqGrzhw1tiNDmZ
-   TNMNV5zLZoWifBMOE3qOSGR1Y1u2g7r62SzIuh2XBKNYxNnUamcPO5UHP
-   CShNlFccf5EZ5gCBFbu6x/WsaAUpRn3LZcEITPP65Hp+NiSzizs8LwEjk
-   w==;
-X-CSE-ConnectionGUID: 7QcyZHXdTv2sLrp/141qlg==
-X-CSE-MsgGUID: n+nz4hupRN+d8Ta1mD6qYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="82045546"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="82045546"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 11:48:55 -0700
-X-CSE-ConnectionGUID: rVFh1n2zQTGYFHzw4m+qyw==
-X-CSE-MsgGUID: 3foXpiZmQRCGBOvJLfl+Mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="203158361"
-Received: from spandruv-desk2.jf.intel.com (HELO [10.98.25.49]) ([10.98.25.49])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 11:48:55 -0700
-Message-ID: <5c83a18128bbc0b8cfd6900439e7349250732659.camel@linux.intel.com>
-Subject: Re: [PATCH RESEND v2] hid: intel-thc-hid: intel-quicki2c: support
- ACPI config for advanced features
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Xinpeng Sun <xinpeng.sun@intel.com>, jikos@kernel.org, bentiss@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, Rui Zhang
-	 <rui1.zhang@intel.com>
-Date: Fri, 05 Sep 2025 09:54:36 -0700
-In-Reply-To: <20250905013935.1356008-1-xinpeng.sun@intel.com>
-References: <20250905013935.1356008-1-xinpeng.sun@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1757091356; c=relaxed/simple;
+	bh=I2AG6GtlZ4CAAuYuV0mH7xXm0qsJtPROg8Oq2jxugF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbFenUtyIjz+Z8LFShrTgaIvOZnsAI/Iy04kK9novHstOZBMkLq+wBAvjkObFqx61BqjtOxrxMh65XV1S4TA7F+B5FIs/WjLFh/C1AagDOUdyuasCKnHtr/Zu+1n1MVc6t10XF0kX8KykwSsms5vZjq+7TiPiYLcCBzm1yy+mcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnlggmN6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757091353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jkfo6WSn/B2ygQxk1iQ5Vj38hQeZps62XsZ/7+Z0BZc=;
+	b=VnlggmN6BnTxw+NdXpsrDbppqAsdgnOiJEJyp645JmU5pW7XEvIDF/+L9ryMx4Eliz6dhw
+	DCxMhtsvGtgKIVH2hNF9YlAA/PHVw2+E83yIzCqDvLSDarGujg5xRV5tLzwDiU7cF3LSy+
+	dKNrDJGi8yza/o0dqOF8mPsQ6lV6QNA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-fDUzLTmBPiKz_-ZVADBAwQ-1; Fri, 05 Sep 2025 12:55:51 -0400
+X-MC-Unique: fDUzLTmBPiKz_-ZVADBAwQ-1
+X-Mimecast-MFC-AGG-ID: fDUzLTmBPiKz_-ZVADBAwQ_1757091351
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e38ae5394aso722887f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:55:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757091350; x=1757696150;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jkfo6WSn/B2ygQxk1iQ5Vj38hQeZps62XsZ/7+Z0BZc=;
+        b=r1NqJ3JxqKB41yB4it8ruKDdYcCDWCybDIg2m8V7IFQkXSMU8h82jEIdWKTeU8zT+C
+         M+sR4x0mpd5X6V+XHV5FDfASstQaVgNe1oZb13LSrR0VeiJmhUcrx8I7l4LMlFODjHGz
+         mQY4mxsWUsr6ZK8666XoPu5GeHdhrh/qJgFYoTzpKghLbvg5bldEfQB+uaL4YEgYtrZG
+         wrgZ+5Fta1Q7VUbArP+xEWMSi8a/munHehk0coCawyd4HqXDKeG0oiCaaJLZeWbK2RLc
+         4id6Ap5cUpYdV7O9G4bginUSPA3zTXuD43lelcKcRAVsHX90U8uUnlC7h2LW8zytmElk
+         WNUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWj63IDUEz5jw4lc+Y6dsRRJMJJCrkC8moUG1NeyH1ITQ25nRYbh7Zf7WNo29G5E66giN2IxjltCGdF6j4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8udqsv3zVm2298VF1Vh26YUBn9HZPpbiuaK3LZh/pWdhkcCW7
+	wn1q4+lLpKzxGe1em/VsVorMNJ2Bxt+YBr67MnPTAV4tnGmoDpJ7RS+6F9ms4dp/X/pucJ9Wj/D
+	NXHMHWjdRYVRAiKa1ZtjfoM7Ev8/pC0mQZvhX/gMEZ3D7xeAyt0ppqNhagi5Okxpj0Q==
+X-Gm-Gg: ASbGncutcFfKMXjWQI2bzhA3YMn25nl2vOg/q62XLACneLK1DmmjdW8xD8iAKvt3N6E
+	rcwryax3Jb25HCDVlBOkInwIfjlF2GoC66uSo2tuBQE01zAZKQDvNxit6ZbrYbMOvvil3c029ep
+	+BZo+lVb2RQEZHVLBuHaiNlb0IxXeQMeEzekPNvL31DDYgxsOmiwGEKO6mzLJUvVXKHNUEy1qEb
+	D4tO1MbyKewZxbP3UOZCJVjt9l7I178XsdecSmf7rDTtICSRWjkqvKBUsuVOyGFf/hbJFtqKTGe
+	c0XReLvucFYN1IJ0PijhsPPJ67zfDLUlZhRRLi7JNt4bRwoGq+NVa/XGVcSwxVYT0FXmCDd7wgs
+	sHB7YQ7Q5OivT3tCZkn/RyMGwaSFwwQWCBVyX2481z+UQGunts4llISRh
+X-Received: by 2002:a05:6000:402b:b0:3db:c7aa:2c19 with SMTP id ffacd0b85a97d-3dbc7aa2dfbmr10316500f8f.26.1757091350520;
+        Fri, 05 Sep 2025 09:55:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhtIqtnxjkCVAPnrfA7KjaXw4ejvKO/sGeogZLv7rY2OklsxFVc59NUh6r7U4dsI+ZPEONvQ==
+X-Received: by 2002:a05:6000:402b:b0:3db:c7aa:2c19 with SMTP id ffacd0b85a97d-3dbc7aa2dfbmr10316475f8f.26.1757091350045;
+        Fri, 05 Sep 2025 09:55:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45ddd47b6easm3134475e9.18.2025.09.05.09.55.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 09:55:49 -0700 (PDT)
+Message-ID: <e41c8d5d-5685-49f4-a5f5-87513674a03b@redhat.com>
+Date: Fri, 5 Sep 2025 18:55:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
+ max_ptes_none default
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>
+References: <20250905141137.3529867-1-david@redhat.com>
+ <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
+ <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
+ <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
+ <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
+ <8461f6df-a958-4c34-9429-d6696848a145@gmail.com>
+ <3737e6e5-9569-464c-8cd0-1ec9888be04b@redhat.com>
+ <3c857cdb-01d0-4884-85c1-dfae46d8e4a0@gmail.com>
+ <aadf50b1-151b-41c6-b60c-5f1f2a4f2d8e@redhat.com>
+ <d48af6f4-2ded-40f5-849d-7aa991727a59@gmail.com>
+ <701d2994-5b9a-4657-a616-586652f42df5@redhat.com>
+ <686943a6-7043-41b0-bd4c-2bfc4463d49b@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <686943a6-7043-41b0-bd4c-2bfc4463d49b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-09-05 at 09:39 +0800, Xinpeng Sun wrote:
-> There is a new BIOS enhancement that adds the capability to configure
-> the
-> following two features of I2C subsystem introduced in commit 1ed0b48
-> ("Intel-thc: Introduce max input size control") and commit 3f2a921
-> ("Intel-thc: Introduce interrupt delay control"):
-> - Max input size control
-> - Interrupt delay control
->=20
-> As BIOS is used for the configuration of these two features, change
-> driver
-> data usage to indicate hardware capability, and add corresponding
-> ACPI
-> configuration support in QuickI2C driver.
->=20
-> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-> Tested-by: Rui Zhang <rui1.zhang@intel.com>
-> ---
->=20
-Why the patch was resent?
+On 05.09.25 18:47, Usama Arif wrote:
+> 
+> 
+> On 05/09/2025 16:58, David Hildenbrand wrote:
+>> On 05.09.25 17:53, Usama Arif wrote:
+>>>
+>>>
+>>> On 05/09/2025 16:28, David Hildenbrand wrote:
+>>>> On 05.09.25 17:16, Usama Arif wrote:
+>>>>>
+>>>>>
+>>>>> On 05/09/2025 16:04, David Hildenbrand wrote:
+>>>>>> On 05.09.25 17:01, Usama Arif wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 05/09/2025 15:58, David Hildenbrand wrote:
+>>>>>>>> On 05.09.25 16:53, Usama Arif wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 05/09/2025 15:46, David Hildenbrand wrote:
+>>>>>>>>>> [...]
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> The reason I did this is for the case if you change max_ptes_none after the THP is added
+>>>>>>>>>>> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
+>>>>>>>>>>> so that its considered for splitting.
+>>>>>>>>>>
+>>>>>>>>>> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
+>>>>>>>>>>
+>>>>>>>>>> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
+>>>>>>>>>
+>>>>>>>>> Yes, I do this as well, i.e. have a low value from the start.
+>>>>>>>>>
+>>>>>>>>> Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
+>>>>>>>>> the usecase you are describing below, but we wont encounter the increased CPU usage.>
+>>>>>>>>
+>>>>>>>> I don't really see why we should do that.
+>>>>>>>>
+>>>>>>>> If the shrinker is a problem than the shrinker should be disabled. But if it is enabled, we should be shrinking as documented.
+>>>>>>>>
+>>>>>>>> Without more magic around our THP toggles (we want less) :)
+>>>>>>>>
+>>>>>>>> Shrinking happens when we are under memory pressure, so I am not really sure how relevant the scanning bit is, and if it is relevant enought to change the shrinker default.
+>>>>>>>>
+>>>>>>>
+>>>>>>> yes agreed, I also dont have numbers to back up my worry, its all theoretical :)
+>>>>>>
+>>>>>> BTW, I was also wondering if we should just always add all THP to the deferred split list, and make the split toggle just affect whether we process them or not (scan or not).
+>>>>>>
+>>>>>> I mean, as a default we add all of them to the list already right now, even though nothing would ever get reclaimed as default.
+>>>>>>
+>>>>>> What's your take?
+>>>>>>
+>>>>>
+>>>>> hmm I probably didnt understand what you meant to say here:
+>>>>> we already add all of them to the list in __do_huge_pmd_anonymous_page and collapse_huge_page and
+>>>>> shrink_underused sets/clears split_underused_thp in deferred_split_folio decides whether we process or not.
+>>>>
+>>>> This is what I mean:
+>>>>
+>>>> commit 3952b6f6b671ca7d69fd1783b1abf4806f90d436 (HEAD -> max_ptes_none)
+>>>> Author: David Hildenbrand <david@redhat.com>
+>>>> Date:   Fri Sep 5 17:22:01 2025 +0200
+>>>>
+>>>>       mm/huge_memory: always add THPs to the deferred split list
+>>>>           When disabling the shrinker and then re-enabling it, any anon THPs
+>>>>       allocated in the meantime.
+>>>>           That also means that we cannot disable the shrinker as default during
+>>>>       boot, because we would miss some THPs later when enabling it.
+>>>>           So always add them to the deferred split list, and only skip the
+>>>>       scanning if the shrinker is disabled.
+>>>>           This is effectively what we do on all systems out there already, unless
+>>>>       they disable the shrinker.
+>>>>           Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index aa3ed7a86435b..3ee857c1d3754 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -4052,9 +4052,6 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
+>>>>           if (folio_order(folio) <= 1)
+>>>>                   return;
+>>>>    -       if (!partially_mapped && !split_underused_thp)
+>>>> -               return;
+>>>> -
+>>>>           /*
+>>>>            * Exclude swapcache: originally to avoid a corrupt deferred split
+>>>>            * queue. Nowadays that is fully prevented by memcg1_swapout();
+>>>> @@ -4175,6 +4172,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>>>                   bool underused = false;
+>>>>                     if (!folio_test_partially_mapped(folio)) {
+>>>> +                       if (!split_underused_thp)
+>>>> +                               goto next;
+>>>>                           underused = thp_underused(folio);
+>>>>                           if (!underused)
+>>>>                                   goto next;
+>>>>
+>>>>
+>>>
+>>>
+>>> Thanks for sending the diff! Now I know what you meant lol.
+>>>
+>>> In the case of when shrinker is disabled, this could make the deferred split scan for partially mapped folios
+>>> very ineffective?
+>>
+>> I hope you realize that that's the default on each and every system out there that ships this feature :)
+>>
+> 
+> Yes, I made it default :)
+> 
+> I am assuming people either keep shrinker enabled (which is an extremely large majority as its default), or disable shrinker
+> and they dont flip flop between the 2 settings.
+> There are 2 scenarios for the above patch:
+> 
+> - shrinker is enabled (default): the above patch wont make a difference.
+> - shrinker is disabled: the above patch makes splitting partially mapped folios inefficient.
+> 
+> I didnt talk about the shrinker enabled case as it was a no-op and just talked about the shrinker disabled
+> case.
 
-If maintainer didn't review, just remind them after atleast 2 weeks
-instead of sending again.
 
-For any other reason add some change log here.
+Yeah, and I am saying that all you raised as a concern would be a 
+problem already today in all default setups (-> 99.999999%). :)
 
-Thanks,
-Srinivas
+Probably we should not just disable the shrinker during boot, and once 
+enabled, it would only split THPs created afterwards.
 
+With this patch it would also split ones created previously.
 
+-- 
+Cheers
 
-> =C2=A0.../intel-quicki2c/pci-quicki2c.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 43 ++++++++++++++---
-> --
-> =C2=A0.../intel-quicki2c/quicki2c-dev.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 ++++++++++-
-> =C2=A02 files changed, 55 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> index 854926b3cfd4..787c32557d24 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> @@ -23,6 +23,7 @@
-> =C2=A0
-> =C2=A0static struct quicki2c_ddata ptl_ddata =3D {
-> =C2=A0	.max_detect_size =3D MAX_RX_DETECT_SIZE_PTL,
-> +	.max_interrupt_delay =3D MAX_RX_INTERRUPT_DELAY,
-> =C2=A0};
-> =C2=A0
-> =C2=A0/* THC QuickI2C ACPI method to get device properties */
-> @@ -123,8 +124,8 @@ static int quicki2c_acpi_get_dsd_property(struct
-> acpi_device *adev, acpi_string
-> =C2=A0static int quicki2c_get_acpi_resources(struct quicki2c_device
-> *qcdev)
-> =C2=A0{
-> =C2=A0	struct acpi_device *adev =3D ACPI_COMPANION(qcdev->dev);
-> -	struct quicki2c_subip_acpi_parameter i2c_param;
-> -	struct quicki2c_subip_acpi_config i2c_config;
-> +	struct quicki2c_subip_acpi_parameter i2c_param =3D {0};
-> +	struct quicki2c_subip_acpi_config i2c_config =3D {0};
-> =C2=A0	u32 hid_desc_addr;
-> =C2=A0	int ret =3D -EINVAL;
-> =C2=A0
-> @@ -200,6 +201,21 @@ static int quicki2c_get_acpi_resources(struct
-> quicki2c_device *qcdev)
-> =C2=A0		return -EOPNOTSUPP;
-> =C2=A0	}
-> =C2=A0
-> +	if (qcdev->ddata) {
-> +		qcdev->i2c_max_frame_size_enable =3D i2c_config.FSEN;
-> +		qcdev->i2c_int_delay_enable =3D i2c_config.INDE;
-> +
-> +		if (i2c_config.FSVL <=3D qcdev->ddata-
-> >max_detect_size)
-> +			qcdev->i2c_max_frame_size =3D i2c_config.FSVL;
-> +		else
-> +			qcdev->i2c_max_frame_size =3D qcdev->ddata-
-> >max_detect_size;
-> +
-> +		if (i2c_config.INDV <=3D qcdev->ddata-
-> >max_interrupt_delay)
-> +			qcdev->i2c_int_delay =3D i2c_config.INDV;
-> +		else
-> +			qcdev->i2c_int_delay =3D qcdev->ddata-
-> >max_interrupt_delay;
-> +	}
-> +
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> @@ -441,17 +457,24 @@ static void quicki2c_dma_adv_enable(struct
-> quicki2c_device *qcdev)
-> =C2=A0	 * max input length <=3D THC detect capability, enable the
-> feature with device
-> =C2=A0	 * max input length.
-> =C2=A0	 */
-> -	if (qcdev->ddata->max_detect_size >=3D
-> -	=C2=A0=C2=A0=C2=A0 le16_to_cpu(qcdev->dev_desc.max_input_len)) {
-> -		thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> -					le16_to_cpu(qcdev-
-> >dev_desc.max_input_len));
-> +	if (qcdev->i2c_max_frame_size_enable) {
-> +		if (qcdev->i2c_max_frame_size >=3D
-> +		=C2=A0=C2=A0=C2=A0 le16_to_cpu(qcdev->dev_desc.max_input_len)) {
-> +			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> +						le16_to_cpu(qcdev-
-> >dev_desc.max_input_len));
-> +		} else {
-> +			dev_warn(qcdev->dev,
-> +				 "Max frame size is smaller than hid
-> max input length!");
-> +			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> +						le16_to_cpu(qcdev-
-> >i2c_max_frame_size));
-> +		}
-> =C2=A0		thc_i2c_rx_max_size_enable(qcdev->thc_hw, true);
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	/* If platform supports interrupt delay feature, enable it
-> with given delay */
-> -	if (qcdev->ddata->interrupt_delay) {
-> +	if (qcdev->i2c_int_delay_enable) {
-> =C2=A0		thc_i2c_set_rx_int_delay(qcdev->thc_hw,
-> -					 qcdev->ddata-
-> >interrupt_delay);
-> +					 qcdev->i2c_int_delay * 10);
-> =C2=A0		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, true);
-> =C2=A0	}
-> =C2=A0}
-> @@ -464,10 +487,10 @@ static void quicki2c_dma_adv_enable(struct
-> quicki2c_device *qcdev)
-> =C2=A0 */
-> =C2=A0static void quicki2c_dma_adv_disable(struct quicki2c_device *qcdev)
-> =C2=A0{
-> -	if (qcdev->ddata->max_detect_size)
-> +	if (qcdev->i2c_max_frame_size_enable)
-> =C2=A0		thc_i2c_rx_max_size_enable(qcdev->thc_hw, false);
-> =C2=A0
-> -	if (qcdev->ddata->interrupt_delay)
-> +	if (qcdev->i2c_int_delay_enable)
-> =C2=A0		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, false);
-> =C2=A0}
-> =C2=A0
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> index d412eafcf9ea..0d423d5dd7a7 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> @@ -38,6 +38,8 @@
-> =C2=A0
-> =C2=A0/* PTL Max packet size detection capability is 255 Bytes */
-> =C2=A0#define MAX_RX_DETECT_SIZE_PTL			255
-> +/* Max interrupt delay capability is 2.56ms */
-> +#define MAX_RX_INTERRUPT_DELAY			256
-> =C2=A0
-> =C2=A0/* Default interrupt delay is 1ms, suitable for most devices */
-> =C2=A0#define DEFAULT_INTERRUPT_DELAY_US		(1 * USEC_PER_MSEC)
-> @@ -101,6 +103,10 @@ struct quicki2c_subip_acpi_parameter {
-> =C2=A0 * @HMTD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line
-> Transmit HOLD Period
-> =C2=A0 * @HMRD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line
-> Receive HOLD Period
-> =C2=A0 * @HMSL: Maximum length (in ic_clk_cycles) of suppressed spikes in
-> High Speed Mode
-> + * @FSEN: Maximum Frame Size Feature Enable Control
-> + * @FSVL: Maximum Frame Size Value (unit in Bytes)
-> + * @INDE: Interrupt Delay Feature Enable Control
-> + * @INDV: Interrupt Delay Value (unit in 10 us)
-> =C2=A0 *
-> =C2=A0 * Those properties get from QUICKI2C_ACPI_METHOD_NAME_ISUB method,
-> used for
-> =C2=A0 * I2C timing configure.
-> @@ -127,17 +133,22 @@ struct quicki2c_subip_acpi_config {
-> =C2=A0	u64 HMTD;
-> =C2=A0	u64 HMRD;
-> =C2=A0	u64 HMSL;
-> +
-> +	u64 FSEN;
-> +	u64 FSVL;
-> +	u64 INDE;
-> +	u64 INDV;
-> =C2=A0	u8 reserved;
-> =C2=A0};
-> =C2=A0
-> =C2=A0/**
-> =C2=A0 * struct quicki2c_ddata - Driver specific data for quicki2c device
-> =C2=A0 * @max_detect_size: Identify max packet size detect for rx
-> - * @interrupt_delay: Identify interrupt detect delay for rx
-> + * @interrupt_delay: Identify max interrupt detect delay for rx
-> =C2=A0 */
-> =C2=A0struct quicki2c_ddata {
-> =C2=A0	u32 max_detect_size;
-> -	u32 interrupt_delay;
-> +	u32 max_interrupt_delay;
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct device;
-> @@ -170,6 +181,10 @@ struct acpi_device;
-> =C2=A0 * @report_len: The length of input/output report packet
-> =C2=A0 * @reset_ack_wq: Workqueue for waiting reset response from device
-> =C2=A0 * @reset_ack: Indicate reset response received or not
-> + * @i2c_max_frame_size_enable: Indicate max frame size feature
-> enabled or not
-> + * @i2c_max_frame_size: Max RX frame size (unit in Bytes)
-> + * @i2c_int_delay_enable: Indicate interrupt delay feature enabled
-> or not
-> + * @i2c_int_delay: Interrupt detection delay value (unit in 10 us)
-> =C2=A0 */
-> =C2=A0struct quicki2c_device {
-> =C2=A0	struct device *dev;
-> @@ -200,6 +215,11 @@ struct quicki2c_device {
-> =C2=A0
-> =C2=A0	wait_queue_head_t reset_ack_wq;
-> =C2=A0	bool reset_ack;
-> +
-> +	u32 i2c_max_frame_size_enable;
-> +	u32 i2c_max_frame_size;
-> +	u32 i2c_int_delay_enable;
-> +	u32 i2c_int_delay;
-> =C2=A0};
-> =C2=A0
-> =C2=A0#endif /* _QUICKI2C_DEV_H_ */
+David / dhildenb
+
 
