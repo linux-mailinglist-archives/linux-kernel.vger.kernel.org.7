@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-802783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA72B456F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8AAB456E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF91F189CEB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:53:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175801890857
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7978A34A31C;
-	Fri,  5 Sep 2025 11:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FB134A32D;
+	Fri,  5 Sep 2025 11:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwH6WZ2S"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KoNu/PZB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914F1D6DA9;
-	Fri,  5 Sep 2025 11:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D90343D76;
+	Fri,  5 Sep 2025 11:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757073204; cv=none; b=JLp1P8fthOTKqIasJs0C8xfYA+dNGKpuPTDMCXRRFyUFEP9ww2VRhnF2XtlrnMwrvqWIGlEvak62qPBEkK+k6VA36qyYa1kmRnGG88TxgjocgrCT6UAyFDSLh0hUCaoZKW+vIo4HU41k+3wMmwgbF5cgcDtEl0cBMdSjPIcBiPY=
+	t=1757073128; cv=none; b=bgB/c5jUvXBrPH2BibwrdjmXz/LKas875JTG10l6hFTYKDaIqR9p9Wp/BlZao5b2j4YZbpk8bPcUZMTMrPnVtQbog/ttu64MXrFo+2aA5tA0aTjnwVVlLz1S3aV8c0plY/jYZayh9iFbtWH+JMR6QyjlMzoUfccdQamfGXBpnxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757073204; c=relaxed/simple;
-	bh=GZfXG8CWYAUuUjKr7KhOpe/JWJt9mfIwt/Gv0dRMHKs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OGH3Xm/76gUigey8Hw3DSAuF4oq4gFlMavotaD7x16nnHDu8gVqmx3IVEFmUni2JG3pemMU59EL4HDejQiN8SiW2mJw+craFf5j60ZnttwUE1EeF62d5y+HyZqXIXaWt6DGwRvwGrVzGBqVtzNBzKaVtocx2SOYiIx8E+G51e/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwH6WZ2S; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3cd151c38ceso199814f8f.3;
-        Fri, 05 Sep 2025 04:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757073201; x=1757678001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibSd1EIrnlf1T65R99x8NmkSqz8ymnGekDTIZaoFiU0=;
-        b=TwH6WZ2SY2sO99mfp4mATjAAzKjO4KgexhUMXnvKaLYTOoZUEVkc0d570BaKYAB1ec
-         kxc8k1YJbNtzt6MUVKasbWssN9ZGO/kfpE0wUhNjuqSIRahLKOkfX4MJRR2g3VlqrNqq
-         gR/SgP0aWF/E2FGIVfAnlvgx9nxS7JSmPOxfDFaOnAxPRdO7ssQ+xBvqpD0ram1rT0zQ
-         59bPEJwI3Kw7chCv3Rgod7NnGx53nle8uN0CAk14YRpgTF89+7HljvLiswnU5PdKiQ0r
-         zT+KdYI++xGdeNYw4Fz4hrSQOOUPCLl8gtPSLVrHhw7KSPZWqLB2xm+nOEYVftgxWDQs
-         4QoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757073201; x=1757678001;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ibSd1EIrnlf1T65R99x8NmkSqz8ymnGekDTIZaoFiU0=;
-        b=W5j4knI6guDWMDQNE9WVmSkPcjikowilibpS8giCQmDSahdXDwVBSq9APP3HTcM4qr
-         QXM0l1LhyPv4/1E/gO3v4Ax1GzqUy33U6JlRUTz7CTPecWgMC9t5DWdCe7ZTIe+cgFT9
-         OkwD4hYsMqm+XM62+kQDUw7zNCHmFht00pZ5vgfqGsVCe2XxMMF4Lwn0gE2iFC4wCpFN
-         zNmWNAJagxqkviZOfZXP1z3V+xKJVGVwKKwIxLPjSa7mQGKTAB6jw2dyiVS+Qjyszg5H
-         sg/JqYlJjRY6jdsehI4a5kJTM8capKip/fUFm5uK1rLI8OHNxYMJflA9F1/+faXViokv
-         n0CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUletoVxSR3nCsO4CKPDcfFzbW+Wp+ff/BkEAwIttuXwfSKRmp6F21a5KQKF8tWoCwtRa0Nd6AE@vger.kernel.org, AJvYcCUm58FWmiys5g+I0FbGd+SO38hJsVGyob84HV7g0/xsF3ZiQTEqoICGGkJFfR4U9Dg32C7DJN9uFSb4eFU=@vger.kernel.org, AJvYcCVwuO8xmw6ymGpuVhi6zr4hlvXwHKJuXQzVGTNMCYTq6VXXI4hWbdqGaZWpJ6hxMwx+zOGskMw/UJ1xmodj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlsIHLtXKw/C7nhINgzdyWGhr2nfNbz0ZejZGKAU/mGeCE6hTv
-	b1j6eDgWPCoWXrMTyi7QN2uvLdiLMasv6G5rJBoY+w15dEf6bJ7/ZA+2
-X-Gm-Gg: ASbGncvA0E9OOkdccJ1iC3LZclShGSVL1/btoVhWr1fcN4FiEPfC3B6Z1rag3dl6ZGI
-	RjMZsCQ2RJRacvOao9PSBlZeDxfc85uAVT+YFUylLZ96FblpTuC/yd75QOA01rfixQ2g1BBRRfZ
-	8+diXVh9rfEIJDbUX6Fpzgeu2S65AvWp2ckBTKfwCK3tXt7Z8BPiCF4K3t2vFS2pyV2nrRRH5yu
-	NAJXuSqP8AoCT3cNDChGNvZyhTlxBlc7uevEkHLqqq7q3sn27wO+kkqhztAHRHAOYEZcSNfLNd6
-	wxJZs9u8evSQYEljpPb4uORLb5HhU8RJoAm6sYV66sbBLzQMiq05pzNFAUz4WebQ+uij2ZSHJJd
-	LkIghOXTYLx3i6okCMHb51+y7YNfm+mgVmSX/mxjFqNCdpvS3rmMqsxPAEcKsZUc8Wb2/MVND
-X-Google-Smtp-Source: AGHT+IFgyUVRsNnagZ84Pf1RIyYo5EbfYhRyDK79C1hAlhHc/Tz4Dui23mAaHaZv4EihvJszPYZfqQ==
-X-Received: by 2002:a05:600c:3110:b0:45c:b659:6fd8 with SMTP id 5b1f17b1804b1-45cb6597198mr40677645e9.3.1757073200933;
-        Fri, 05 Sep 2025 04:53:20 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:999e:a0c8:e30c:983a])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3e411219ddfsm1903897f8f.57.2025.09.05.04.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 04:53:20 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	stable@vger.kernel.org,
-	Neal Liu <neal_liu@aspeedtech.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Dhananjay Phadke <dphadke@linux.microsoft.com>,
-	Johnny Huang <johnny_huang@aspeedtech.com>,
-	linux-aspeed@lists.ozlabs.org,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: aspeed - Fix dma_unmap_sg() direction
-Date: Fri,  5 Sep 2025 13:51:11 +0200
-Message-ID: <20250905115112.26309-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757073128; c=relaxed/simple;
+	bh=dST/8xVStC32ekP6gB7vITv41T5xV6Hei4eA5fX+3yk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NFxRhVeXzMcAt5JRO/ghD7U085jR0+iWz/HS+rOuck9oAC2AV8PIpzeqZshrm0uVki7FnC8xmVtd66P3SoXYpcfiW/3NQUYuzDYqgTJf+aWG9mRLkUwqZXX0bXXw9hgqAh/kTY1bR5lm3PZFb9NVoCZeL9HPUBMhmNrnlqsMGIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KoNu/PZB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757073124;
+	bh=dST/8xVStC32ekP6gB7vITv41T5xV6Hei4eA5fX+3yk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KoNu/PZBVwQxyJw4U588Dtr1MZVIUtmtJ0zC3OZg2rcIFGvpNpdECWp7wcJgYpP9k
+	 e2Pd8w1XmR//tjpTp+D8wHXDsB/ox+1DfSB1VJm01fgXWxdS30Cfaz7SXIZcjoU8/a
+	 dlD3vb/uPlMB+pL0/eFx5ocaDodu0Z0VzRR4jOC8a7J76x62xAC220tmVssnkqC4NE
+	 UwAgInY549BINS5QjwXywrc7GdGqkCXrHBSNhCXR64TofvGvpwqHA2loICcu1K2RDQ
+	 YMYb2rOxGmHqECW3b7bKlno5gKINxEBOp0o/6rRaFBa8BM434PCAQTeY6lpSse2Osl
+	 9Egf+jiNiGQaA==
+Received: from localhost-live.home (2a01cb0892F2D600c8F85cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 25A8417E0100;
+	Fri,  5 Sep 2025 13:52:04 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH v3 0/3] Radxa NIO 12L: Add GPIO keys and LED support
+Date: Fri, 05 Sep 2025 13:51:57 +0200
+Message-Id: <20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN3OumgC/33NSwrCMBCA4auUrB1JJo0GV95DXKR5tIHalERCp
+ eTupl0Jirv5B+ablSQbvU3k0qwk2uyTD1MNfmiIHtTUW/CmNkGKgkrKICqzKJh8AIYwQj/XSbQ
+ OqdQoOOekXs7ROr/s6u1ee/DpGeJrf5LZtv3vZQYUDJUtdVIY1PKqwziqLkR11OFBNjPjh4On3
+ w5W5+yYdIq7zn07pZQ3mAz0zwIBAAA=
+X-Change-ID: 20250801-radxa-nio-12-l-gpio-54f208c25333
+To: kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ devicetree@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-It seems like everywhere in this file, when the request is not
-bidirectional, req->src is mapped with DMA_TO_DEVICE and req->src is
-mapped with DMA_FROM_DEVICE.
+This patchset adds support for the GPIO-connected red and blue LEDs,
+as well as the various hardware buttons present on the Radxa NIO 12L
+board.
 
-Fixes: 62f58b1637b7 ("crypto: aspeed - add HACE crypto driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+It also includes a fix for the missing release (key-up) interrupt
+handling for PMIC-managed GPIO keys.
+
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
- drivers/crypto/aspeed/aspeed-hace-crypto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+Patch 3/3: drop the deprecated LEDs label property
+- Link to v2: https://lore.kernel.org/r/20250826-radxa-nio-12-l-gpio-v2-0-7f18fa3fbfc8@collabora.com
 
-diff --git a/drivers/crypto/aspeed/aspeed-hace-crypto.c b/drivers/crypto/aspeed/aspeed-hace-crypto.c
-index a72dfebc53ff..fa201dae1f81 100644
---- a/drivers/crypto/aspeed/aspeed-hace-crypto.c
-+++ b/drivers/crypto/aspeed/aspeed-hace-crypto.c
-@@ -346,7 +346,7 @@ static int aspeed_sk_start_sg(struct aspeed_hace_dev *hace_dev)
- 
- 	} else {
- 		dma_unmap_sg(hace_dev->dev, req->dst, rctx->dst_nents,
--			     DMA_TO_DEVICE);
-+			     DMA_FROM_DEVICE);
- 		dma_unmap_sg(hace_dev->dev, req->src, rctx->src_nents,
- 			     DMA_TO_DEVICE);
- 	}
+Changes in v2:
+PATCH 1/3
+- Add Fixes tag
+- Drop Angelo's Reviewed-By since I'm now introducing the
+'key_release_irq' member that was missing in v1.
+- Link to v1: https://lore.kernel.org/r/20250801-radxa-nio-12-l-gpio-v1-0-d0840f85d2c8@collabora.com
+
+---
+Julien Massot (3):
+      Input: mtk-pmic-keys - MT6359 has a specific release irq
+      arm64: dts: mediatek: mt8395-nio-12l: add PMIC and GPIO keys support
+      arm64: dts: mediatek: mt8395-nio-12l: add support for blue and red LEDs
+
+ .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 65 ++++++++++++++++++++++
+ drivers/input/keyboard/mtk-pmic-keys.c             |  5 +-
+ 2 files changed, 69 insertions(+), 1 deletion(-)
+---
+base-commit: 6c68f4c0a147c025ae0b25fab688c7c47964a02f
+change-id: 20250801-radxa-nio-12-l-gpio-54f208c25333
+
+Best regards,
 -- 
-2.43.0
+Julien Massot <julien.massot@collabora.com>
 
 
