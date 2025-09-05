@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-803024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2FEB45991
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D13B45995
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5859F7C4C15
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB4C581F4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D5235E4C7;
-	Fri,  5 Sep 2025 13:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779ED35CECF;
+	Fri,  5 Sep 2025 13:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QXrSOSNc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tUh6xKhO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgNTZZ0f"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7285935CED4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456D33451BE;
+	Fri,  5 Sep 2025 13:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080156; cv=none; b=lIPzNUsLbOYVCrxV485LgHXhvJyCTdIpouBbxMJUyD7yyBFPCZZvWfrfTkZe9f7tj0vlHFdLxriAhXLygKxjh2VQOwdgZsN562+cptR1DwLYXQLVDFqz/dgxBIFc0rXqdvh1U2PQNG0LsX9B8I/c84qCTbvc0kMSiomAjrw9GGw=
+	t=1757080232; cv=none; b=cAhPQUKfR42NmRVt9qpmzVIgs6MXBVZhAeMEC5BzifYLHMTVaG8zYYWQILlbOQRQHWwrU2Z2T0cC3pA2/AOj7u7UMaNFBkhNXOtA6edRHbjeXZbFVFPZ1cEkl5jSZmGw+A+PWYv9+N0uUEua/B+RA8StoUH5hgKs0Da7WBUG5qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080156; c=relaxed/simple;
-	bh=Hyij9GvnO9P7fewDJxzbJ5TTnNsqvSnXtJRP7mrBQQw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gXy/PX7Nwk93nXZ8Ih9SlHbNfQTuRLH8MKCkUW6sFkrrsQLbcA1Om9JZMIM5R0xBdyuk/RMVKqtPp9s3kqTgxuOmb9Q6cq0ncUd+FztW0LcZI/zfRC8VZrDA4E2sj/V4luy7DbjRlJMjQu9TaDYO7NZJlo2EcYPwaG5cuaanOfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QXrSOSNc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tUh6xKhO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757080152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YCOhnbTUm+NTl9QRitDqMw0nh1plhowmudd5M+EQ1I=;
-	b=QXrSOSNccIFlTMqWW1ERDYMTnWbq8ZNNx9oqnpZwVzm/gCYwRY9pZmcZ9Do4KDE9X3CzQJ
-	G8isaTVc6tzOVAgd6h0Vz9jUItttnROkdwbOi7WiTj6qgf+7xL72gFMH26HA4cWDKBLIgA
-	7Qxw56JIzGN/u5kQw68mApfKn11AqWooVGrYAwMiKmovfxFMhydaGscseckbWPluGJrHlw
-	3kjFCKZZt7Oln7yNYhzPNvpnfYhN5A22KoKI5Hjmr3R0wg6su/lkCYu64Pm20Ecrf4XMTs
-	PqOAKRwpYdPsWYO2g+U+xCMnCQ2gSyYZG0uaTJ0en7kWI/q4f/WwLfoKEdPK0Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757080152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+YCOhnbTUm+NTl9QRitDqMw0nh1plhowmudd5M+EQ1I=;
-	b=tUh6xKhOhRBa/pDd+9fCPnosUnBQUM0ZJPwjPT+gJ7tymJoh/gowRl553li8BCsisywYWH
-	pNf5kN8KN/idUGBA==
-To: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Petr Mladek <pmladek@suse.com>, Feng Tang <feng.tang@linux.alibaba.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] panic: Remove redundant panic-cpu backtrace
-In-Reply-To: <20250903100418.410026-1-pmladek@suse.com>
-References: <20250903100418.410026-1-pmladek@suse.com>
-Date: Fri, 05 Sep 2025 15:55:11 +0206
-Message-ID: <844ithf1rc.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757080232; c=relaxed/simple;
+	bh=P3Q4uhxPRcsG6nzEVg3XOmj0dNzFAkDhoZFytzRFyL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cL9diCae7YQyy7MIw8CuxFMPmD+rud5dqg4vwvb5PTXBcJuxArU9/CufM2as/Z37fXyNT/lYEGGqmPv/Cj4gUJoJAwGTWNIOXm9gL91CAvEEbeJO+i2jMgVb+KIDldpWnwuHQft7H+FuoVPhn0yX7CAdB6I1P0Xsefn0MA8qn10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgNTZZ0f; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso4276483a12.0;
+        Fri, 05 Sep 2025 06:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757080229; x=1757685029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsDRGR++bormrxuQpTob+gGR1rNtwUxynLJUN3PiAt4=;
+        b=jgNTZZ0fV1eGLD60bf0ZbogA1PWZb/mkrXhl/PNvjw9HOEhwvVnNt6PTJgkCsvvmop
+         kMkR/1M+zTT1S9vZMnIlVWmhozT1ia52OHfqa0wM9w/DB8PIy2HWKcMj0Tm6FYK4DtF/
+         tF576tdISNGSHGQyXmKmYKaOy2LqMLB12mfYOpLfGA3xaiiD3opT7OOlnNweNAj1FwWW
+         BWsIqPAx0VGjCo5L52dX8fTdIG2jo6YbtYX6/WrPzaWX1o9jsaaXiZiEf2BoIIyOY5oq
+         EpGPe+M5XLk7HlNIhhyjAwW79BsaHQhXjxKcx8FG1/jhJZKJeKwHuhUdifzBFF3JAfZ6
+         ZyZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757080229; x=1757685029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GsDRGR++bormrxuQpTob+gGR1rNtwUxynLJUN3PiAt4=;
+        b=pIUPz1lZXGmPOV67VZMnnL4saTYT0POUa1AoPpYDU55ju1TID5gcc86AjoSviR1qQv
+         MGA/rNXQBw41cDIaFi7ghsGLs6Xf8zaPok7HT8/j0W9/qhJeeFSBkyNWXJJ/BNQohHvL
+         /vPEOizBWaXAI4TPRnsTWa6O5jYZGrDZ+g9TKlA8/zbzXWpFZkJPh4lKsxbRP/r4ns++
+         RlfH5HuDIu5zTpHkk3W1KtL7iX5D2mSJjtNNvn2iBbaFJUI1A5P/TT6b8mOqc6+jaPIt
+         drpTa6GX15jRp3PwNW8as6lLbV3T2RC5GEgiZFEAO/xAA0S8r2y5L1jSuVI6H7KfT1SI
+         auBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs7YLobpxsFhw2SZSh45T7D3FpDVD+lWInWUIgIcfoYJuSf7ji/O2QUs38SI2aTB/ezKoyUvAAK9G4HxoT@vger.kernel.org, AJvYcCV3gHaswnjkYUYEiqkxQL70P8fKjVa3v+i2bLSTasQJLIfuCcAJ7Kd4UiR4yFnMYH1rO1IeN5OtZaej@vger.kernel.org, AJvYcCXKc6TIbhimAxVzBeRqPi9m/a8NpqhE+wBv6hhpaEwwvAcmLWjMz0gE8CtouM8NAQc4Vj4EtcQLZlYT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyF3U8FMFw5tQOh2ZoATCweSjQGCiFNwev3M8dGdNuu5lwX56p
+	1Oi0vr4BsXcKki9e4BH30tjHHI5gTom5hqpMwW99kR1r3zpCDaDml1leysApi+PT8RyqRThgyYy
+	SEc45WkKcsrP9fCGEErfJuAMNK4MhCSs=
+X-Gm-Gg: ASbGncsnU0qQXOounx4g55lR2PQ5Y84BCWDP1KyuVawngLBYufg6DAwlZhmHt4csniN
+	uV2PCnS95l4SUtGUpUpU7IbsKAcvuasEkpM3h9E4e6Sq6BxmeD8lzijf07JtO3ugyRko95RpZC1
+	upJ2rtTfXb+rmmlX06umjgEk/pAa22ErAIlap2kqnn13RI9UqWX0w55/lqN8nmpVu5LXMnR9bS0
+	Z/rUp4Rt2542lkP5e3E
+X-Google-Smtp-Source: AGHT+IHjWWI9HbRGOxg6LjImm1wlKdJKXEOOX3NTMgz3aDtQ5bkt1lgUY0YKC8oZiVEVz59Ge+csrDJT51esVT2Tq4A=
+X-Received: by 2002:a17:906:37da:b0:b04:7eba:1b55 with SMTP id
+ a640c23a62f3a-b04931013c1mr293547266b.19.1757080229304; Fri, 05 Sep 2025
+ 06:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
+ <20250820-add_newport_driver-v5-3-2fc9f13dddee@tdk.com> <aKbk9WYtfb5L5la4@smile.fi.intel.com>
+ <FR2PPF4571F02BCCFD984FDD99C69CAE7298C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+ <aLmY2mKg_FsPOpsq@smile.fi.intel.com> <FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+In-Reply-To: <FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 5 Sep 2025 16:49:52 +0300
+X-Gm-Features: Ac12FXzLd2wqWO1IzNY4C04FzCYHy2I8A2mtoLZ2cJjriRJysLqX_toKQl18uwM
+Message-ID: <CAHp75VcLo__aS1GJCN_zgd5PgNKgtSGbCWbY07qngEFVXBtQVA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/9] iio: imu: inv_icm45600: add buffer support in iio devices
+To: Remi Buisson <Remi.Buisson@tdk.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-03, Petr Mladek <pmladek@suse.com> wrote:
+On Fri, Sep 5, 2025 at 3:44=E2=80=AFPM Remi Buisson <Remi.Buisson@tdk.com> =
+wrote:
+> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> >Sent: Thursday, September 4, 2025 3:49 PM
+> >On Thu, Sep 04, 2025 at 01:01:32PM +0000, Remi Buisson wrote:
+> >> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> >> >Sent: Thursday, August 21, 2025 11:21 AM
+> >> >On Wed, Aug 20, 2025 at 02:24:21PM +0000, Remi Buisson via B4 Relay w=
+rote:
 
-> From: Sergey Senozhatsky <senozhatsky@chromium.org>
->
-> Backtraces from all CPUs are printed during panic() when
-> SYS_INFO_ALL_CPU_BT is set. It shows the backtrace for
-> the panic-CPU even when it has already been explicitly
-> printed before.
->
-> Do not change the legacy code which prints the backtrace
-> in various context, for example, as part of Oops report,
-> right after panic message. It will always be visible in
-> the crash dump.
->
-> Instead, remember when the backtrace was printed, and skip
-> it when dumping the optional backtraces on all CPUs.
->
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Link: https://lore.kernel.org/r/20250731030314.3818040-1-senozhatsky@chromium.org
-> [pmladek@suse.com: Handle situations when the backtrace was not printed for the panic CPU.]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 72fcbb5a071b..e3cec9bc05ef 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -422,13 +432,15 @@ void vpanic(const char *fmt, va_list args)
->  		buf[len - 1] = '\0';
->  
->  	pr_emerg("Kernel panic - not syncing: %s\n", buf);
-> -#ifdef CONFIG_DEBUG_BUGVERBOSE
->  	/*
->  	 * Avoid nested stack-dumping if a panic occurs during oops processing
->  	 */
-> -	if (!test_taint(TAINT_DIE) && oops_in_progress <= 1)
-> +	if (test_taint(TAINT_DIE) || oops_in_progress > 1) {
-> +		panic_this_cpu_backtrace_printed = true;
-> +	} else if (IS_ENABLED(CONFIG_DEBUG_BUGVERBOSE)) {
->  		dump_stack();
-> -#endif
-> +		panic_this_cpu_backtrace_printed = true;
-> +	}
+...
 
-It took me a while to wrap my brain around this new logic. I guess in
-part because the comment above only tells a part of the story. I tried
-to write a suggestion for the comment, but it ended up being just as
-confusing as the code. So, I guess we just leave it...
+> >> >> + /* Disable FIFO and set depth. */
+> >> >> + val =3D FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
+> >> >> +                  INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS);
+> >> >> + val |=3D INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX;
+> >> >
+> >> >FIELD_MODIFY()
+> >> Ok, great.
+> >
+> >Actually this is not a modification per se, it's just an assignment (PRE=
+P)
+> >split to two lines, can you just make it a single expression (wrapped on=
+ a few
+> >lines, though)?
+> >
+> You mean droping the FIELD_MODIFY suggestion and doing something like:
+> val =3D FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
+>                  INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS) |
+>          FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MASK,
+>                  INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX);
 
-It seems this patch has already been picked up in the mm-tree (with a
-patch on top), but if not:
+Yes.
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+--=20
+With Best Regards,
+Andy Shevchenko
 
