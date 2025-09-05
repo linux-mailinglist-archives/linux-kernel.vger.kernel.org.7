@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-802105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605CFB44DAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93780B44DB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3A73B995C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C70B1C26989
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DAE24728B;
-	Fri,  5 Sep 2025 05:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F326C39E;
+	Fri,  5 Sep 2025 05:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZ9DBeyA"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CR14ebOC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0C0EEAB;
-	Fri,  5 Sep 2025 05:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5BEEAB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 05:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757051270; cv=none; b=r/IllSSXs+AOdF8hRJ0LJzE3izaKbWGmxOH1sdcvKlMooVudIUEzjXdav5wtfaMvs7cA4vzRydMXz6RnhBDBcwBsRHuy3LYnayuPAJt4BOXMRDMQvCYzLrmHzSJ7N0ncyZXxROfM4C8wmnscuO17cQsdcw5NNeARYEu7onGZwa4=
+	t=1757051596; cv=none; b=lIWJCkxcypI6b9Igg1Ix57CHz7jhN5jPb/ZJ82J/4YIevDVQtzmlIw9MgWkeRL3N59wcwW3H7tS0GStBeq/5XwvoupTsgOvK2NBNOXCLNd2QUykGaDCSRS6NhRWjnvSIlH36Oz7N9dnIOOFBDnzOzDHbG0dRZAlBV+7Z8dYzDuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757051270; c=relaxed/simple;
-	bh=Wz7naupFrJpTuHMt1wVGz7sZ5XBLZtPb9kQJkmHnnNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3CjNW2FcI+C0Hkp5VSNR+0hCw1tUVgrMT2+ao329EXg9noMswKBBArW2pO1YK0QsMo/CjezthsCZ2sZXwdkAEbdXf664SiFQF1JOnnxnlMjPpdfDY9g6fZXSEjwl2Q3abA5Qg7TMEXFC3Dma2o0XEJAZwtGBMQ5WZ6jDe+Hysg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZ9DBeyA; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f6507bd53so1899991e87.3;
-        Thu, 04 Sep 2025 22:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757051267; x=1757656067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EY1wx/hTaPVWB7ToJ66uksdPwS0xHGCPH10mQTR6JuI=;
-        b=JZ9DBeyAdrNof5Vv7oLnRekarL2qg3bs01QMt7SLpbJ2swwEOkl6j3fdCtqFJo6zA0
-         CV0XYHIyRJQqs4tc3lOSOQ8LAiY1gcLcvjLfUT9hFvkrXtomkpa3nU/xDIIUvlamv3It
-         nrJc/sPuPsmLnZAoDS5WrHN9E+3kWIHQ8nJPm4FlBM+wJqp98AcjGI+IoAotpPrkjGaO
-         sO9eSSpbYPX5Fs6a+Mb9IKzVAhjL7rFfXVBRGr8dt7PdujxKI1M5Wabn5BUilA9LPyVx
-         wZZ2AQ6vtu4E5sEqe6ZLLoTrozXvyBumnaQdRz64JaAGaeEK0sr4lDjnbHuEGH2vv7/N
-         4JGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757051267; x=1757656067;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EY1wx/hTaPVWB7ToJ66uksdPwS0xHGCPH10mQTR6JuI=;
-        b=M79joxlZwyQBTAPi2DggYsK8e7VNlLYMdVKk6wkKZ7v08Lezv6Spl0HyDDeBucPD24
-         m0vObVQ/lpywGgn3JrE/z6VYylwGXnbok3KDqk8hWnXCk68ivzY+gfWx3vQOKPW0qPdV
-         7+4Bd6OnJ/OLIgKS1hKoLrXLwgExZK8FPVqsjyD4U/h02RTi5Xzy4MxwcAt3rhKaegh+
-         q4FOSaqTF/eFYem6BoaEtdEr6eL4EJDZvbu1m3mP0e5kiRiByPHMqd636Y/hHRwn+yQp
-         4hGBVTpZhiX3u6s12C/asG09c0vWVOoxDi/CC3A89IlHmLW2tFfV74A0JRWeN81Gshv2
-         LUmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwXJ0GqR5L1AQUBC8SDEAg8LzRZPyCFI0HKq6/98xYhwKMwlYCQObVRh6/ySJLNrVdC3oP8TDozSC38g==@vger.kernel.org, AJvYcCVOBNdTd2ku+oAMQkJn3YiV0uuToBPoYAGnmhWMrIftNvunASHCnANLCJa+dq6k1ibV9KeUjmNhNauxvWfV@vger.kernel.org, AJvYcCWoMy6QQAmgMLLXnp8Wa2yE/dN1Getv9KfoPbEsG0pvrhTuEPS2Gxm+uv3PmiChSpVOqY51a9mI9OVb@vger.kernel.org, AJvYcCXk+72NoxukOVZCXqG43/jjRKBSkiHmjKBMuFq/SMGkSd3ZNOn2C3wSbJwYlNr7HwIG36kkDfmuWSWH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzzRXtLl3ycu1KQXVi4C9Fjkt6OkB16/hjkXrH6kduCNSxvZat
-	lJqxv5ZWiqHg19FFCnVXx2ipGqhN02RmG1qkDDGFeR2WNTwvbOI2ljJ/
-X-Gm-Gg: ASbGnctuGpdFQhKpTd1r6EKovAxwnV+HvLQfSdkBHRch5sErXGP5c7J4U9zB2Sr3qN2
-	PAG5JXBCIKruviWAzP8ry1/+csNV1DQN24plIZZbpBERJZarU40NZn2jc5zEn2i3UGkBlniNUPU
-	n5Low0reeoS841EvgaIh8L2KfUpPawu/fiIlPHFevuf2G7RQmRLWF9QzLX7++/2SiohGP0pK9Oo
-	1wYLGnL/+kkgzUDTM7GZ+g3hDEd2CgKvk3rzLAnDnPYFTk3T95T3irOTTgzXAnyVjezoUoaqK2q
-	XC1PkLe9/e+NSQyOsD0/r873Si9WCfJDBAOhkjHsK56ACbsgOUYqwvFkzJi19OVuz8NijKT1H+v
-	DDBDwG3bUtN546hu0UIiDvlN+U3nIa7qAHicx7AEnY/TiwwsVGXC3XHUxaTSZtfsvjkXFDRu+ly
-	vrttoU7aYbDPM0ZD4=
-X-Google-Smtp-Source: AGHT+IFpsuu1jzyehan4myYlV1Vbx2XvBMEJjqMLs1GIZrGmV7bs6BYZtSXMmSbFs0GHSOdFHOXlCA==
-X-Received: by 2002:a05:6512:2347:b0:55f:6ddb:25 with SMTP id 2adb3069b0e04-55f708a2b1amr7576130e87.3.1757051266342;
-        Thu, 04 Sep 2025 22:47:46 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ab5c226sm1645179e87.22.2025.09.04.22.47.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 22:47:45 -0700 (PDT)
-Message-ID: <37f9c6bd-f3b2-4258-a455-c4b08023d8a9@gmail.com>
-Date: Fri, 5 Sep 2025 08:47:44 +0300
+	s=arc-20240116; t=1757051596; c=relaxed/simple;
+	bh=9X/VX16NUlQeewe3ualj/gGyuhaQHxuHokasCga+Tys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BvU0pwWAJv38OxxwKgCmKQaI26lnoCVSDHuEcuYMxjkO0xIqnwndPryd8E0Zm4hX+lCA6aG1ok3fOyKMC7nmBlyNVpvIcF5gcnR/ph8UFpg/E1stJZ4VBAWBvRGP5FGc3IoDV8SYsgm7dA6LfukavzPBm5N2I7Pr9UFWSld0QAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CR14ebOC; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757051595; x=1788587595;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9X/VX16NUlQeewe3ualj/gGyuhaQHxuHokasCga+Tys=;
+  b=CR14ebOCPj+BG0aXyTVlN6xRSCgczNYhFlz+62G5zcvBdlqdQJaj5dEF
+   ywSYyNoP43UbE4OEjdO/AhPlj9uIybjK/mt/S+WsaHSsdYtnxvbdjJSz6
+   bU3KVE4ulAfdFZlaFB6IIJhb0rne1alcG6Kar0aZunbY+qk3cRkS4QSse
+   lXwD7zC5zFwjYcxrQOd+QCzbWv6E1p+jvSH+U4XrfoLo4FXcaEd44ZS/9
+   MKd9XPSceh1uasfrem3uHGtwIXu1+sfYYsqubWq0DSqaZtNNza6R5lXPj
+   uR5TK8kJUFMmumlHyyJFpS6DN8miIpDq8ybSI7uE7GK/R3M0lU8lh4+35
+   A==;
+X-CSE-ConnectionGUID: Mu/yNItQSySsNZV2GZWAag==
+X-CSE-MsgGUID: 0wYb2jQtSnaqOmJ0vKmUTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70015069"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="70015069"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:53:14 -0700
+X-CSE-ConnectionGUID: dIZP8Y3qSj20voM5FXjE9g==
+X-CSE-MsgGUID: DeqDxicIQ7mXrTqE9YIMuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="209257663"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by orviesa001.jf.intel.com with ESMTP; 04 Sep 2025 22:53:09 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Yi Lai <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev,
+	security@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v4 0/8] Fix stale IOTLB entries for kernel address space
+Date: Fri,  5 Sep 2025 13:50:55 +0800
+Message-ID: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Tobias Sperling <tobias.sperling@softing.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1756813980.git.mazziesaccount@gmail.com>
- <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
- <aLb8HuIG0XXLu653@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <aLb8HuIG0XXLu653@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 02/09/2025 17:15, Andy Shevchenko wrote:
+This proposes a fix for a security vulnerability related to IOMMU Shared
+Virtual Addressing (SVA). In an SVA context, an IOMMU can cache kernel
+page table entries. When a kernel page table page is freed and
+reallocated for another purpose, the IOMMU might still hold stale,
+incorrect entries. This can be exploited to cause a use-after-free or
+write-after-free condition, potentially leading to privilege escalation
+or data corruption.
 
->> +	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
->> +		BD79112_MAX_NUM_CHANNELS - 1, &cs);
-> 
-> Hmm... Indentation can be amended.
-> 
->> +	if (ret < 0) {
-> 
-> Why ' < 0' ?
-> 
->> +		/* Register all pins as GPIOs if there are no ADC channels */
->> +		if (ret == -ENOENT)
->> +			goto register_gpios;
->> +
->> +		return ret;
->> +	}
-> 
-> Assuming ret can't be positive this can be refactored as:
+This solution introduces a deferred freeing mechanism for kernel page
+table pages, which provides a safe window to notify the IOMMU to
+invalidate its caches before the page is reused.
 
-I returned back to this after reading your comment to v2.
+Change log:
+v4:
+ - Introduce a mechanism to defer the freeing of page-table pages for
+   KVA mappings. Call iommu_sva_invalidate_kva_range() in the deferred
+   work thread before freeing the pages.
 
-ret can be positive.
+v3:
+ - https://lore.kernel.org/linux-iommu/20250806052505.3113108-1-baolu.lu@linux.intel.com/
+ - iommu_sva_mms is an unbound list; iterating it in an atomic context
+   could introduce significant latency issues. Schedule it in a kernel
+   thread and replace the spinlock with a mutex.
+ - Replace the static key with a normal bool; it can be brought back if
+   data shows the benefit.
+ - Invalidate KVA range in the flush_tlb_all() paths.
+ - All previous reviewed-bys are preserved. Please let me know if there
+   are any objections.
 
-> 
-> 	/* Register all pins as GPIOs if there are no ADC channels */
-> 	if (ret == -ENOENT)
-> 		goto register_gpios;
-> 	else if (ret)
-> 		return ret;
-> 
-> I find it easier to follow.
+v2:
+ - https://lore.kernel.org/linux-iommu/20250709062800.651521-1-baolu.lu@linux.intel.com/
+ - Remove EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
+ - Replace the mutex with a spinlock to make the interface usable in the
+   critical regions.
 
-I still kinda like your suggestion. I'll change this to something like 
-below for v3:
+v1: https://lore.kernel.org/linux-iommu/20250704133056.4023816-1-baolu.lu@linux.intel.com/
 
-         /* Register all pins as GPIOs if there are no ADC channels */
-         if (ret == -ENOENT)
-                 goto register_gpios;
+Dave Hansen (6):
+  mm: Add a ptdesc flag to mark kernel page tables
+  mm: Actually mark kernel page table pages
+  x86/mm: Use 'ptdesc' when freeing PMD pages
+  mm: Introduce pure page table freeing function
+  mm: Introduce deferred freeing for kernel page tables
+  mm: Hook up Kconfig options for async page table freeing
 
-         if (ret < 0)
-                 return ret;
+Lu Baolu (2):
+  x86/mm: Use pagetable_free()
+  iommu/sva: Invalidate stale IOTLB entries for kernel address space
 
-Thanks again!
+ arch/x86/Kconfig              |  1 +
+ arch/x86/mm/init_64.c         |  2 +-
+ arch/x86/mm/pat/set_memory.c  |  2 +-
+ arch/x86/mm/pgtable.c         | 12 ++++-----
+ drivers/iommu/iommu-sva.c     | 29 +++++++++++++++++++-
+ include/asm-generic/pgalloc.h | 18 +++++++++++++
+ include/linux/iommu.h         |  4 +++
+ include/linux/mm.h            | 24 ++++++++++++++---
+ include/linux/page-flags.h    | 51 +++++++++++++++++++++++++++++++++++
+ mm/Kconfig                    |  3 +++
+ mm/pgtable-generic.c          | 41 ++++++++++++++++++++++++++++
+ 11 files changed, 175 insertions(+), 12 deletions(-)
 
-Yours,
-	-- Matti
+-- 
+2.43.0
+
 
