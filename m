@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-801883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47262B44B27
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01856B44B2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9DB1C834A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3FD05858AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70B71DDC35;
-	Fri,  5 Sep 2025 01:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800C11B5EC8;
+	Fri,  5 Sep 2025 01:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlY/DkIf"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZWznRLG"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE7A2746A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CA1175BF
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757034764; cv=none; b=a+9Y5LjtELWQtFSr4k0YtncgzxT7snTA9wd7E1mEoFWL8zV+dQ29CcwmrGUmPF/JsUhWyIAZzWpIcpgXXtrpau1TDISzJXFmzAavZWCp31dIfFsrYd0jaNlXJcK4UctupGAS0JTATqPStLxuhNsMZDNou/M3vKzndaoGDdnOMmY=
+	t=1757035055; cv=none; b=l0PVeolDnORqXY8YSqitNa7RMYK7PWNor8+petpont3m6Uu/m/jFfUaHzn9wpYSHExVyZQ7OMeGKTi1h1ymtIFf0gKRG0rAcCl5nYvyyXIpTOjtpogLjbijrZG5nLT01w8FMCd2gLj1UNPzymMzlpb0aYX/+s/q7BDgZ+94zsSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757034764; c=relaxed/simple;
-	bh=Bbruro+lBjMgA7mDH1pp/r8lpqXNWdfm79qWVynzU8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nf70DZco1lqiofYqDQ2oEBwiswjizrsX2mIUdzGdyCatV+NUwypsFrDv/6ZBPGyHRq3ZKL0C818tkl2RQeb2pDS7PbnyZfIUnizOwnlQDOs5DXXY3BH30BnDtheFIitYfNeoSKFhv8iW3zcx4RJofsKLWnkEd7zyCfi1hqeSVaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlY/DkIf; arc=none smtp.client-ip=209.85.128.65
+	s=arc-20240116; t=1757035055; c=relaxed/simple;
+	bh=2LiDsVuR+C2Za9gXSgwj/IVmzfiMxWkRqAi4hjBzaZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jyWKfKO38/bXyhXuUWqClSTejnq6GsJyGSZaz4n1Wa4HR1yalOBjN+kRaqHGY/y9qR5XYJhVUE+JtvpBoFZT7MuiXnYTXfnCpW+cr5gBrUE96hd5wEc7GVi8hSqmLqzeEcauSf2xolSj9mfDO2rnNkZldMqGHpBi/yUawE0cjmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZWznRLG; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso14796185e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:12:42 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32b863ed6b6so1374558a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757034761; x=1757639561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1I2+OXiSohga9/Gw4Byp3e+y1P+U3kLBsy650if5j28=;
-        b=FlY/DkIfQ9TtCSSK04UXvd6ix4RU8j3doQexAiic48eGtbQGK1Wu9r76/03hncT+YX
-         Ptcd5ZMAOCE4KOf/rRyQj9pRv0pf/S+Sqcq9/zz20b/Ev/SY13WqVGDVNcJFld4EqZRp
-         0Oyq+jsa8T9uAIHKRYWSfj6lRI5f8xYFZSmNW8OssLlQjNWxz29yo2nbQHbL46+L+svc
-         PMbCDaJJrgdiYrss0QO8IgpuFw1GIy2Q+yGkCmXmrC0BVYeNpT6S30bNCoxUVQ7OjHI5
-         2s4l/xVUqJM9W7dMFUAaBMZgrLZf5gbvsY1gb0423Hgf3MaapFOD4BXMFQ8vgWkkQHl8
-         9qJw==
+        d=gmail.com; s=20230601; t=1757035053; x=1757639853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r7Pf4+kubMT40gLaV6AmzrZ3LLU0nezZUg5BZHTuQLI=;
+        b=EZWznRLGpqsRMcy59dMh+ylVWr1MyM7C99AUlULYICxaECAyYkynVlJiXOVeFuf9TW
+         P7Wwbe4pEbX0BPP90GYBbi93hUDjw3t+QEYxlilQP25jbwAZekwYSUrgbZ7vUfQ8ZYAI
+         imxS7jDN6cvaVQMHTkr7RqB5F1rr2CVTyQU41tvvvmyTdAn7Ebf5M0PpwrVrNFxHfk1Y
+         KycDcKbN7XlNj2RzaM8W7VKrRro3giDTMURSSjr0xRNlBsRe8O5ccxMsuZwW9QLUDkqa
+         HSZLJZzBF3dErMk+9/B08gDYzrNq2zr620z9CxC16nTR2c4xWiEH3goMfy6rGtoFxEk3
+         36NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757034761; x=1757639561;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1I2+OXiSohga9/Gw4Byp3e+y1P+U3kLBsy650if5j28=;
-        b=NqpOqicfPOxnqloC60wCxenMLu9A7AxxGroI7GE84I341Wh2VoYuIFpSytw2p8/Ax6
-         /ikB+1Tg024gUZoKTU1ZtzUleL73/2pHgRAfbxtGKLZdCcN4JtkNWhmD6lApLfSWUe62
-         VGF6NKK5an/yuKJcpACdxqHpX7D2Up6GKUnikByWCFWDbSh6ngN138unoMw/YRYPp8ky
-         srtpXKZLUhyPmpuh06t4f67wx/Qhy3Ci8Ian/7dlKrx4WVNMq/g5eDz0rTZ6A617tNX+
-         EopKRdVWi3Gk1EpyZpC0Z3R5NrKDbfpDx9gEXGZx53OXI31Rn4peKK9J6CCc8eT19foW
-         bZRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSqj3SjO65pikmZmLCj38z+E040DZeu628ScBN64wzY33twwQvDmZaqqA7eCCbgEfzpKrbIXdCIn6Qv4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwi0dNd5RZ1yhA4mrydFS1GVsv4/eR1y0PzjSP6nBwPd0Njz09
-	Xh0YZy6L6IDTtYB5758X59XquktOX47ydJsMWIXep65MHJmKL6pKuTC16G9Et9bH
-X-Gm-Gg: ASbGncsEBOsqdqphVTZ4qXgfBTtG5Qw2KSXN6EE90CkxjEEX+HxMI4az85DBLdprYK+
-	1scaTMd7ocEOdw4zfrTJV/B9mSpo7BslDiMYrV/CPZImRSrHeSTm6wgng8LMb2Pw8W8c3V1XQKY
-	e0pYvBE7NzTqslKSVTK99rJUausfH9bHNib1YrtclvyFeVR/GBKPoY0if48FvQjhXFd1a1TzQNo
-	2ZBe3q0O6xCDUcUjPZqFJy21htCkb2i/vtSnl4HKpCMWc52wqAUJsW73WoE1GRmaOcf9WhqqKeI
-	6WEcR9W5gVMiv9VRF3TFrb5ZUH7acr47Y499FnCTL8/ev8WbU1E73EY3m2nEWZ0iEC47TyDwJM2
-	iV9odNSXBUGTl/95kOao7xNpXlImEtUZ9EFyEpAcG5VmYltwiTtkTup+xozWG4LZRI34L2fO0sh
-	Pr+Pq9fLTutiHDkRSeHUI7X2zsKkg=
-X-Google-Smtp-Source: AGHT+IHEIC6vSNOwwGEEe4szY+c5GG/HwlLiZbSIpgmQ55Qnsrq5gk6z9VLuTQAFFNbDZOzOjPQ8Ww==
-X-Received: by 2002:a05:600c:3b98:b0:45d:d9d1:80a3 with SMTP id 5b1f17b1804b1-45dd9d183dbmr776225e9.37.1757034760495;
-        Thu, 04 Sep 2025 18:12:40 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9c234b24sm119315935e9.16.2025.09.04.18.12.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 18:12:39 -0700 (PDT)
-Message-ID: <72d087b8-1af1-44a6-88c4-04a9ff98f660@gmail.com>
-Date: Fri, 5 Sep 2025 09:12:46 +0800
+        d=1e100.net; s=20230601; t=1757035053; x=1757639853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r7Pf4+kubMT40gLaV6AmzrZ3LLU0nezZUg5BZHTuQLI=;
+        b=Ja8wBy+SYruyXKSIteCzgiQyHd/QdhWzGNnsc0FKDd9X6Ch0wq54llMwRnnVQGDhlj
+         e7AqahS6i/I1K6+98XGYzuijQ+X3fxZSOOgKbwV78QWrEnhm+eEBu7nEnrbEZKUnqSvf
+         YELiOwyDVBv7c6qfnYsfiOoUH1JOm0JJ8YMFI0ecqL+nI6QM/5L+F/GFBNNizF3ZhagJ
+         jdyyVxjd6SYuQO7v6JnfhLYckSwT4UHoQdrBraQ0OENsVDEshOrXKLnOfJb3R8lzXR6D
+         XBZyRFvw4UcjCxBTS7Cknia+uv0pLfJueYSMS+XFR1FCHgqhGekDzPR00PfiO9uLvvbj
+         c32Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXy40egKIwKFRUJ6tlUlEKjUHR2SnwBvfyaeGVL4y3TJooSzFdVeSGwFQb7+DOfaCfB8fa29Qmjfo+gg9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfMF6+//rRkXI6sQLomB9fIq8cHwzXo1Lj4r2r2Y6plHlX9DgW
+	GjTaioAcGA7f+vKG4geQBdQlxAYpt8leV/T3PkN64JWoLHcziNi/ST4DM4QvYed4BtfnqPfhkYw
+	78LlKbhDdMZAnzIlOe7Xl93H5dZb4v8E=
+X-Gm-Gg: ASbGnctTOR5cx6qPx5eDUrRMM3Oer+6jHWqwtROPcjAFSGO2dUAizbRlNXTWn4xhOSb
+	DHN8PO011fJgRa/k8ZVdSVm/3H0XzgwytfZ/LiszRf6yPvjGjKjGcOI/SjxhQwIMAtECXf5/bGG
+	ytCy4L20RP0+yM/kPOyaakEF5RIpINcS4fuaWDpI4rrXbCq6rGhciz74OFOEbP/Kz0/zub16I6l
+	MlIO6FOrbWS+XcmyygpovTVSQaRS15Ao1ebrbO1cXgCUpXfccPHjBgKrq/xx5rvt2C/wvecQQZX
+	vRQx6A==
+X-Google-Smtp-Source: AGHT+IF2qns+wQRFsCXVs6volfobRwQAPreJKcfau6BotrpqzEVF+JmtSuYlKk4wlAMa21p+q4/IITX6/mm6oZrsBdc=
+X-Received: by 2002:a17:90b:53cc:b0:327:9e88:7714 with SMTP id
+ 98e67ed59e1d1-328156f991bmr27587872a91.37.1757035053238; Thu, 04 Sep 2025
+ 18:17:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: fix task_numa_migrate to consider both task
- and group benefits
-To: Jianyong Wu <wujianyong@hygon.cn>
-Cc: jianyong.wu@outlook.com, linux-kernel@vger.kernel.org
-References: <20250829085529.15686-1-wujianyong@hygon.cn>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <20250829085529.15686-1-wujianyong@hygon.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250808095503.906244-1-linchengming884@gmail.com>
+ <20250808095503.906244-3-linchengming884@gmail.com> <87zfca9kur.fsf@bootlin.com>
+ <CAAyq3SZbPpVX_LyoYaHYhA3ZNeb0NYWQ4KC6-+uubB1GGCqZag@mail.gmail.com> <87y0rhyq12.fsf@bootlin.com>
+In-Reply-To: <87y0rhyq12.fsf@bootlin.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Fri, 5 Sep 2025 09:14:40 +0800
+X-Gm-Features: Ac12FXx4byBzWH6j48oQZOe7xQFIRkBRcfZZ7-RMjyA1Z6cccgN6oI9mOsKBS90
+Message-ID: <CAAyq3Saj5cmHAb3NPd=ZzJEvYD873s2CFKOyoxMrKk6Tj6yakg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: spi-nand: macronix: Add randomizer support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
+	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Miquel,
 
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B48=E6=9C=88=
+18=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:47=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi Chang Ming,
+>
+> On 11/08/2025 at 11:01:25 +08, Cheng Ming Lin <linchengming884@gmail.com>=
+ wrote:
+>
+> > Hi Miquel,
+> >
+> > Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B48=E6=
+=9C=888=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=886:19=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> >>
+> >> On 08/08/2025 at 17:55:03 +08, Cheng Ming Lin <linchengming884@gmail.c=
+om> wrote:
+> >>
+> >> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> >> >
+> >> > Enable randomizer function by specific flowchart to set the default =
+value
+> >> > of RANDEN to 1.
+> >> >
+> >> > Randomizer introduces two new DT properties for child nodes to confi=
+gure
+> >> > the randomizer functionality and coverage options.
+> >> >  - mxic,enable-randomizer-otp: Specify whether to activate the rando=
+mizer
+> >> >                                feature.
+> >> >  - mxic,randopt: Define the randomizer area per page.
+> >>
+> >> Can we create a global NAND DT property for that? Enabling a randomize=
+r
+> >> is quite a generic step.
+> >>
+> >> > The penalty of randomizer are subpage accesses prohibited and more t=
+ime
+> >> > period is needed in program operation and entering deep power-down m=
+ode.
+> >> > i.e., tPROG 320us to 360us (randomizer enabled).
+> >>
+> >> Do you want to share what is the added value in terms of lifetime to
+> >> enable the randomizer, given the drawbacks which are significant?
+> >
+> > The randomizer mainly targets extremely unbalanced data patterns,
+> > which might potentially lead to data errors.
+> >
+> > Please refer to the attached document:
+> > https://www.mxic.com.tw/Lists/ApplicationNote/Attachments/2151/AN1051V1=
+-The%20Introduction%20of%20Randomizer%20Feature%20on%20MX30xFxG28AD_MX35xFx=
+G24AD.pdf
+>
+> Thanks for the link, it may be pointed with a "Link:" tag in your commit
+> to further justify this addition. However it is sparse on details. I
+> would be interested by more details, such as "how many 0s? how many
+> bitflips? how often/likely?"
 
-On 8/29/2025 4:55 PM, Jianyong Wu wrote:
-> The comment indicates that when searching for a suitable NUMA node, we
-> should ensure that the selected node benefits both the task and its NUMA
-> group. However, the current implementation can only guarantee that either
-> the task or the group benefits, but not necessarily both.
-> 
-> Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
-> ---
->   kernel/sched/fair.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c..58c899738399 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -2568,7 +2568,7 @@ static int task_numa_migrate(struct task_struct *p)
->   			/* Only consider nodes where both task and groups benefit */
->   			taskimp = task_weight(p, nid, dist) - taskweight;
->   			groupimp = group_weight(p, nid, dist) - groupweight;
-> -			if (taskimp < 0 && groupimp < 0)
-> +			if (taskimp < 0 || groupimp < 0) 
-Perhaps you misunderstand the comment, && means either the task or the
-group has NO benefit from this migration, it wouldn't be done.
-But if you replace it with ||, you will ignore the target node that
-could benefit either the task or the group.
+Thank you for your feedback. Unfortunately we do not have numerical
+data such as exact numbers of '0's, bitflip rates, or occurrence
+probabilities to share. Instead, I would like to refer to the JEDEC
+JESD22-A117E qualification standard, which provides guidance on
+retention and endurance testing.
 
-There is more logic to consider the benefit for both task & group
-in the later function part.
+According to this document, there is no single data pattern that
+represents a universal worst-case across all failure mechanisms.
+Different mechanisms may stress programmed cells, erased cells, or
+cells influenced by adjacent states, and thus specific patterns such
+as fully programmed, checkerboard, or mostly erased are each only
+worst-case for certain designs or processes.
 
-One question, why not
-if (taskimp <= 0 && groupimp <= 0) ?
+Given that no fixed pattern can cover all cases, the use of a
+randomized data pattern is considered a practical mitigation
+strategy. A randomizer distributes stress more evenly across the
+device by scrambling incoming data before storage and restoring it
+on read. This helps reduce pattern-dependent degradation and can
+therefore improve long-term flash reliability.
+
+>
+> > Figure 1 shows that continuously programming too
+> > many 0s can result in data errors.
+>
+> Thanks,
+> Miqu=C3=A8l
 
 Thanks,
-Ethan
->   				continue;
->   
->   			env.dist = dist;
-
+Cheng-Ming Lin
 
