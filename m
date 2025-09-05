@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-802917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C54B4585C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:01:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C334BB45863
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287BA1C84244
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8D35A4278
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498271B6D08;
-	Fri,  5 Sep 2025 13:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C132C18DB01;
+	Fri,  5 Sep 2025 13:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z0HT8zij"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0198535958
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="6Q4e3nps"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73E935966;
+	Fri,  5 Sep 2025 13:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757077293; cv=none; b=n/UxZU013tvz4EMW7XTp7lAxBp6u12JpBpuPGp+9gtR4T65ShqIsyckMTeLNiM/Bx32KzaiTDBmol+/4d7ORoHE6pVzFuwSbsqAYdCp66TdevnT+RDWwEcHDXvenJ4P8Qrmipd3UTH+PR7CuV3zJZofYvygQXlhT587c3vi0AXo=
+	t=1757077475; cv=none; b=Xa/8c5ODKq9j5GxXD9/tcK6Gs3ozd8kKANaC3M05mFHP9J9zlD6HUK9P4Km2ubH6sjD2hnsgbaL3S92h/st9zh315JfIH6W45586i+Va28cXaHUsKuAJW3gvbM/FGIwkZUv6wZGGQmuP5I+54KQMnCZa/nipmdeb6Xuz3z3dYUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757077293; c=relaxed/simple;
-	bh=5D/T4N9RADgC08mugIKCg2dy1gfMQNxZXjp5H1EyDXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gvxlxUXoGDzmpr5YCM6eBZ6egsobv3vPQbEtLCFPeoX4DiX4G5rkLfSEAYso53Rb4eSoPcsPovaeYS0zzvQTXKZk3SRsksDSRHawZ4vqSrmTLkxuGpwJtQ1K9iKW0qQBAs5zZFa3KmINJfNO5jXzaMQLEaR4/T/aiAvBdTLWW3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z0HT8zij; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so954205e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:01:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757077290; x=1757682090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pEb1MIacLJ9K4bgFxk/ct1GGbag7F0/HxbtYf4Ql4s=;
-        b=Z0HT8zijIY7qfDlsAa20UCjY4yUxOf8hV1n5vT+F3A9F7eXtlNYrRUjYAF2TOWwyPZ
-         2lOPeTkAY+zwJCVKDj56cCSP7Mag8r11parlum2vsUQP2UFBXCaV6uHo44jaots3KiA+
-         AU6FZwu/ZdfX0yrSXQkoVvhTG8/6AR7C55ahTnZ5SP2lg1I9IEn8ze5yBI3tNMwQs9hv
-         E5ZtACGGoBf+S7SAXor6XdNLWlmu1ySQvzGRn8NdbxI5CMXeuwZHyr2aT8cDFdVabqPX
-         xknVzpyZhmJTRr4UsjSpwR303USNNrqRIu6+i5JzTmKOl0Ohh2esUZKFNjBFTkDiCYXO
-         wjxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757077290; x=1757682090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/pEb1MIacLJ9K4bgFxk/ct1GGbag7F0/HxbtYf4Ql4s=;
-        b=rgpT1MbpVOkWHsoT6AdLNGNXMyOr6/SdjR7FiNpdiVDhGrLVAOr1NvudJ0L4pc1ZOX
-         6yfnxQ2V22TpY5iVg2r7Ozv5YwoFiY2VSeCW7oNl2k1kzzfrqSgkCsz/bN9W/GYeOo6B
-         U8YbwAf80vwl0E3YtJNJJEyb5tLyPU8KM+7rNMWgHx4fSnOV/5Gg7DpT8gslrK1lVHxr
-         mVPeGiXCyTEOkBiGOnQaE4ZV9R/RcI2BVMsNWooFEO19z/a2TZ2rYyiwKPuhKHSUm3rZ
-         1XluNue3BqByN0mTaujZyDJAj8uhj1TWjmQ1qeC+IP7had/nv/G8/uXZd1aFOgDf7OTB
-         03ng==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZTt8L0auGAevY3nssF33ol3AHDaOzq8v6kahUsL6HrxgFc0gxKESxVLzgz2piFxD9VNKmRQZ0NzCy0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhFmGeqWJM4al1bMpDJ79Ijw7pBrFa+qufMWMt1OMqjuETpu9S
-	a3joXqPP2L3v5pzpVDForw1PKGZGGluwqZpeK8FlfxlbDS3e+VhVjKKvjQcRQ5Na6ctG/XmrAfA
-	fYEJFL+XToV/uycaJ08lLoUhOB+6XfC0F2kQaxk28
-X-Gm-Gg: ASbGncvfK6nlbUKIOVRNpg35QRX8dt3hHSm7TQRXLs9SIU6ZNAOCHgJ+dcqXjiEXbQL
-	7bOSqOFDGSLGdVvOWF7KtuDETYK/ZNJYvplZNLJPfgw8/XQ4RcDaIvL09yFRhQK81F5Qy5b3dX4
-	PqLWnsT5GCaJNVDaXz196qkO/V4ta0yMccxvA+VlA5xEQY5WaJY4vMZx28KWBAr+mb8atS88mCm
-	5jM0QGP02eayuaZ3dNGj6OuyY8ft2m0OEms2Qt7Jj+vp68ZVwclnJpUH4XNkIAQjdHY6mRQRAgc
-	ZsclInlce64=
-X-Google-Smtp-Source: AGHT+IGuBKOVmlGWYI52O3gyTlIpz+6ngmiBUxM8WdXYtlt1/HZAj7YF8yKbPp1zHFZTrYVi/0srsYJtSZRAIHRbw4E=
-X-Received: by 2002:a05:6000:230d:b0:3d7:b12b:1312 with SMTP id
- ffacd0b85a97d-3d7b12b1a47mr10133768f8f.9.1757077288505; Fri, 05 Sep 2025
- 06:01:28 -0700 (PDT)
+	s=arc-20240116; t=1757077475; c=relaxed/simple;
+	bh=gf8Wv3CwSREEIQF0pzbMHFP1Ns2rSOX6mMMsVmZtdoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gqa0PUwN6cQSNmsfqp1zoo/Xg8upW8HkyDqh3CmQZuriI6tWZelT+Y2pCbHb7m5lAFQVl+7+D8etEjeOdHRUmx8rb7APM5UmYpSuzTPsuTUOtHVlbT/ZU5FmAf6UuprAhk5iPExU238xdNBSt+r62Bp4GIKyICaE1GaEOLLgOhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=6Q4e3nps; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 806CA54B04;
+	Fri,  5 Sep 2025 15:04:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1757077470;
+	bh=gf8Wv3CwSREEIQF0pzbMHFP1Ns2rSOX6mMMsVmZtdoc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=6Q4e3npsbUWJsGhy5Eagz8qfy9EPNOm2qK6uYFFlv2EmgCkeAFTGwiK+tOIwfKtJQ
+	 Hvs4uSy7dpTDftCRHTJLbMYx5qOVQu/GUf0xOf3SWKWpXOh7n4DGFH8vK5ugJ8FJ6Z
+	 AN4GLI73puW9nN+53lbgztv60jIWBvLwNU0b2PVPSihK/saRmlMUdtnH7syjm1BmXz
+	 BcSFNviYBaZ7vQC+iRaFUXqQ1Rp0hwnAACzA+wxDP1XNstQ5PibGKRZ+TiFtqj39Mf
+	 jIYVyx23ddSZzu8RwzSms5PTLetCZXCONKjaKBCEFk2VkSxQ6i/7BdPPGmYnBndq3W
+	 41Me7NSvvNxqg==
+Date: Fri, 5 Sep 2025 15:04:29 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>, Farhan Ali <alifm@linux.ibm.com>,
+	Benjamin Block <bblock@linux.ibm.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH] iommu/s390: Make attach succeed when the device was
+ surprise removed
+Message-ID: <aLrf3QshijTRYYzk@8bytes.org>
+References: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
- <20250905-vmbo-defer-v1-2-7ae1a382b674@google.com> <20250905145257.33339817@fedora>
-In-Reply-To: <20250905145257.33339817@fedora>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 5 Sep 2025 15:01:16 +0200
-X-Gm-Features: Ac12FXwpaHEBjBqXVyvbrj3-VvsDe5Yyi-iQSA8ardGSchek0DbSaptDO3tJbhY
-Message-ID: <CAH5fLgg3zKBG5FzLnVmQ1P-fZ=GDH2RN_jwFLEJ86tqwEXTvAA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] panthor: use drm_gpuva_unlink_defer()
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Price <steven.price@arm.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904-iommu_succeed_attach_removed-v1-1-e7f333d2f80f@linux.ibm.com>
 
-On Fri, Sep 5, 2025 at 2:53=E2=80=AFPM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
->
-> On Fri, 05 Sep 2025 12:11:29 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
-> >  static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx=
-,
-> >                                     struct panthor_vm *vm)
-> >  {
-> > -     struct panthor_vma *vma, *tmp_vma;
-> > -
-> >       u32 remaining_pt_count =3D op_ctx->rsvd_page_tables.count -
-> >                                op_ctx->rsvd_page_tables.ptr;
-> >
-> > @@ -1134,16 +1091,12 @@ static void panthor_vm_cleanup_op_ctx(struct pa=
-nthor_vm_op_ctx *op_ctx,
-> >       kfree(op_ctx->rsvd_page_tables.pages);
-> >
-> >       if (op_ctx->map.vm_bo)
-> > -             panthor_vm_bo_put(op_ctx->map.vm_bo);
-> > +             drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
-> >
-> >       for (u32 i =3D 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++)
-> >               kfree(op_ctx->preallocated_vmas[i]);
-> >
-> > -     list_for_each_entry_safe(vma, tmp_vma, &op_ctx->returned_vmas, no=
-de) {
-> > -             list_del(&vma->node);
-> > -             panthor_vm_bo_put(vma->base.vm_bo);
-> > -             kfree(vma);
->
-> Maybe I'm missing something, but I don't see the VMAs being freed in
-> this new version.
+On Thu, Sep 04, 2025 at 10:59:49AM +0200, Niklas Schnelle wrote:
+> When a PCI device is removed with surprise hotplug, there may still be
+> attempts to attach the device to the default domain as part of tear down
+> via (__iommu_release_dma_ownership()), or because the removal happens
+> during probe (__iommu_probe_device()). In both cases zpci_register_ioat()
+> fails with a cc value indicating that the device handle is invalid. This
+> is because the device is no longer part of the instance as far as the
+> hypervisor is concerned.
+> 
+> Currently this leads to an error return and s390_iommu_attach_device()
+> fails. This triggers the WARN_ON() in __iommu_group_set_domain_nofail()
+> because attaching to the default domain must never fail.
+> 
+> With the device fenced by the hypervisor no DMAs to or from memory are
+> possible and the IOMMU translations have no effect. Proceed as if the
+> registration was successful and let the hotplug event handling clean up
+> the device.
+> 
+> This is similar to how devices in the error state are handled since
+> commit 59bbf596791b ("iommu/s390: Make attach succeed even if the device
+> is in error state") except that for removal the domain will not be
+> registered later. This approach was also previously discussed at the
+> link.
+> 
+> Handle both cases, error state and removal, in a helper which checks if
+> the error needs to be propagated or ignored. Avoid magic number
+> condition codes by using the pre-existing, but never used, defines for
+> PCI load/store condition codes and rename them to reflect that they
+> apply to all PCI instructions.
+> 
+> Cc: stable@vger.kernel.org # v6.2
+> Link: https://lore.kernel.org/linux-iommu/20240808194155.GD1985367@ziepe.ca/
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/pci_insn.h | 10 +++++-----
+>  drivers/iommu/s390-iommu.c       | 26 +++++++++++++++++++-------
+>  2 files changed, 24 insertions(+), 12 deletions(-)
 
-Sorry you are right. We can kfree the vma right away after unlink(),
-but I forgot to add that.
-
-Alice
+Applied for -rc, thanks.
 
