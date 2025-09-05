@@ -1,96 +1,90 @@
-Return-Path: <linux-kernel+bounces-802485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6E1B452BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6506B452C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40242A63C66
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316EAA63910
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89F1313E29;
-	Fri,  5 Sep 2025 09:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A876281525;
+	Fri,  5 Sep 2025 09:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DtaahZ3Q"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ETQ7Rxod"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9ED306484
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF94B28137C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063433; cv=none; b=SeaVI5RBkciPY7vuzkzwASyIe6JKZX5pW+AUb611V5zNPG9ovkmeNLDc/6tFXX9IfeV5gz5LrDR9ICvsqazlOC+qZygZ6GnMjt1Sk0fPlTtNu+imiyd/cfQMOyEVqOdJMmjUw4sb8koi+4kgnxMWiIoaEZW7qLgfcY5Key6c1fs=
+	t=1757063452; cv=none; b=kOJi2irsA4G/zrZWudKMyN1RGAHR9PWTwtDblSmoxVhWtAEhGfI/ALPan0B0p+96xLthHtvArGTD64f2E2qYIRc5gy/Zv+iV2bY+a7XntaG5ARceVIOKQ9o66J7hLXETeRZIIL7ipPmeTXF20dFQQtyO/Jo3r4twghlSFh2DXtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063433; c=relaxed/simple;
-	bh=5RkNtJkVoCkHKfEYrA6MXCl2MVFvhfJGr8dOveoTRGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YdkJiTSG8KAKTNEr5b32Y3I/oUG55VnhUkJaFOSb3S9SCmMJ9OZe5jIxq0tS6LnmCkLmpOLQzg37BtZwlpeTsFSy4x8oIwhHl+tLPRaE7U5Wo/Bl+XpGmNlfPrFDK3YFpLjvvNnkYa3FfFmKDo03Zg4Uw8STUhsGEDzSbVCOW74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DtaahZ3Q; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1757063452; c=relaxed/simple;
+	bh=uzWqXcgkxCqg4JQl3dIDdqMd1cqCpcOGnZKSOa6Tl4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uCe5GyJwKVxdkG0cg4UqxXD1eVGNMa56EID7nWkelzCNtgcEFpuB9Wxo+l6VZdRHizknSYpNnHZcqI+3Y3APVdQYt1+TU+bHMwVsoGh7KXaG2J4Ppeb81uy7BW3466vArIgxYuOpV+0MO/DoSn99JN5guJbkayI3rHDU8spm5EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ETQ7Rxod; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e014bf8ec1so1387317f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:10:30 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d1bf79d75aso1052598f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757063429; x=1757668229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sm4pe/hBRwVMLzZHjbo9408+9mRS/P1/CN95bOU2KWk=;
-        b=DtaahZ3Q9CWdiIIAALeIi49ETn0CGswcYVGWMYsJqTygRWR044AnL4EJtjnU+htbDQ
-         y7rHUFqsKN29PZORDgtRwopGq+0JnCSgdRPF26Tix6B1z4i9yL+NkGDeCEfehq1xyQ6z
-         fvWbx5KqCJABVQLuBl3zcovsGCYQ8mjd5eYc5mQHcRRuLOgOIdF6L/gQaqxau12mDtQV
-         Nnc17MBRsEzt/8R9F0Lh1KeYzY9BE+vd0BDJ/2ktWJoQQfNtp1xzXFtQjQkoaE3L3YT/
-         NrIvxbhV5ndG4Mw8RiJWyLplnlnteIHmT6tou2jkEUFXmzOkvwdzapld4GRm3TGftRPQ
-         mA6Q==
+        d=suse.com; s=google; t=1757063449; x=1757668249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zJgu83tGnDIyptwHs0M5qK30DmBJzP4OSe+GrCUmwM=;
+        b=ETQ7Rxod5XiMR3LGD4ph01C8ZOUd/DdcKTnevXvAg4Wxyg1Yu5IPD2VCe4+MKOAVxV
+         AlFyPaN3oUVIK0wpnZPn3uXazO26Qa1ll/ceVSN2EXG9Mu77u30ZcDmqdxun7Asuvx9D
+         zqXMOG4PXcqQEx4Fer7absmN0qxuUAbQ2KsMUepQu7IZPelnEt7q6MQb4msArp4SWiHr
+         2QDYuQxu9g7FwYmzysokozcy0KmtarZNX9KB6H9nqRhQ/a0La8VtGeTZqC01NB5IHsjF
+         td71ntABuLduiMLYX2eswFUpSX9VesIYw0shG3OG32UOZ3YbQFbgu+CqDxovi7ZmqBuJ
+         awUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757063429; x=1757668229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sm4pe/hBRwVMLzZHjbo9408+9mRS/P1/CN95bOU2KWk=;
-        b=ePOJNwKtfOdr0oU5h0Zt2mHI/5gCwoZCqwBUGGER/hBCaeVI1fP31gQzfp1cZTBaS4
-         etvFB37aRwPCJXEE1HD88ZS5CkH2Nj47T/T1JDrSciqRJM1xzb5dA11iZEkjq9hRpA/p
-         aKNMqHkOuw/Z60KoMIpzrAlUPa0ndteVL0hr67jshNXxFL+Gy4jCyMAOBaQrhHSGjYSW
-         +Fil11I5lsAW36FHl00F7gr4jfgmH7ajJJZA1qG2xjqz2UEksh9rE/K42BNOwss4Iu7B
-         LVAaYklaGZPtvaAlruHSyrLD4vrQBfYeAyAm3AfH07Plstzt4gcHXGb09zj07huirTaQ
-         o1Wg==
-X-Gm-Message-State: AOJu0YxlffTzJ9t4SIq/8zGCLtCPJd9ZxpTg/xKfDTEM1TqnevbwM6ZH
-	dYAwt1Y4ohis2TUSjCkuIvEopT+AYSRwxD7DnFmqICSuFGyDzI8ywwnVOfJ/ZTNFP33AV7CJHT4
-	jjmyDoNU=
-X-Gm-Gg: ASbGnctHhGp09qBBm0tpHfpXR9D/0SaKYxy/VyuQBcfSszBaHj3FryOS9riT/lMHJHc
-	bhxf53VNuGvLVXFWB/U3qZUY9owfI25f68+TYiBlN7K4hF/ebAJwgZpLEaWi7MKEkz1GKg/sFdB
-	HdRIn6TwD57GLYQzU4hiQ6AEucyZ8thLN+m1xjRAOcEe/PHztWOuatzlYE4F+LNOQFzdi4n8+Do
-	t7bToXtvYcLNC+dbgVpFttxGLarnIQ90nx1mg06DS37OlCus0n8JTnessfkiUY2l0unQumXhU2U
-	O/y8p3z0nRJtpWQtk5ca1GVe1UtQCc8cZU8EpIoM471ewsYQ0g5GaxMj/NSp7mldMrXVENgdpkf
-	v2nI0Yd/87Kp++ZqEw7CIsEa4DAgD9eXRVvNyS+YSlbEOV+j7ZL7pRdDwbg==
-X-Google-Smtp-Source: AGHT+IHXZjRfNNN1VASUYYcP6J0MVd6RmogJZXjUNszPLnsyh/h8mAG1e0M5wD4yMRAWOYI+bFu/Yw==
-X-Received: by 2002:a05:6000:40ce:b0:3e4:bb5f:ee95 with SMTP id ffacd0b85a97d-3e4bb5ff303mr417291f8f.38.1757063429026;
-        Fri, 05 Sep 2025 02:10:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757063449; x=1757668249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7zJgu83tGnDIyptwHs0M5qK30DmBJzP4OSe+GrCUmwM=;
+        b=It92XuJXgIW2C5aD4d5kiE2dXQ2FDhXRZsdO2sNxTTE1sfGT0Sx2wd+nUobO/bB7FC
+         kjFrhX8vH5oHw4ShhzQ87y2ngPsUTqexWikvIydo4AFlF2sIMWo2Lqu/6OM2XahsAxMJ
+         7cp5NoZKuYJKnygBz5hLYwb26f4bkvA/94bXI6dAJJzUk8Dwlv1aqKcOjazrCxXSNqM8
+         e4U1nZuKRSL9HStPfYakaLsKp6S0ns3EFkQIXoQGgrm2IzjbXdqL8MsE82BM4FdB3J9s
+         uyNUbEy5r+e5R+eLMpTe9kjnG2WpTESm4WgbA6KoxFUWr6fyMu+It9UyrXQ34mYzZEYh
+         Z5bQ==
+X-Gm-Message-State: AOJu0YylDLkoVxGjCI99p1PNeNkwq+YSA5XP8rvxzi6n9KLQ6Dd8Wjcy
+	/z9/ihP2iGebg6KW+xQXhNi9ZD35udTtLYo5CU7PybJCqx4gSHUv58Xs/mAxbVIHMRbi250AKIy
+	2qGOSkxk=
+X-Gm-Gg: ASbGncuIGqHDrd7qbqLT5B7pIvvbDSm7oOvphxVKs1e6NVhvpLavhRaXstwUYTn56Qs
+	KTyKkSQcIaE1OppFUMUjfMyopwQWgPnBfl0t8vu+MBJlkI4WCTUk95H9fZGDEDIn+xRllTyQeKr
+	EoO6TLWkdSJeOvPhjJuo0tAMhCeRUCODrr9e7dO0NOC311eWpULJS5LFxEtWXS13sZfmw9UOQev
+	sczaf8AlWySTwnA+EH/H94mTfwEsNqE2/C0OfmFlMRkPX4YRe8HuKYWKu6fU0OohXgkN7eBEo9s
+	FjHVnFw5uelEji8hwHpTsk8yf91c86+JNFD6ORzBDcrdFak7D/Ktf6M7ZO4YmUwMS0pdkoe3c5C
+	eHCl+PWmWWl4zi5UayOe9UpQ/KOMRDOgqn5AV98CJxfaduX1ObDFr/6JHfw==
+X-Google-Smtp-Source: AGHT+IGhXiWhBqn2jHzfmfm7BjzbLOSlu+pFGtb5WVSNU0SG0ViScbi/+1/rI2XAuiW/Ky3Svs9JsA==
+X-Received: by 2002:a5d:584d:0:b0:3d2:633f:d02e with SMTP id ffacd0b85a97d-3e2ffd7fc1fmr1979807f8f.2.1757063448823;
+        Fri, 05 Sep 2025 02:10:48 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd4affb6bsm39726915e9.1.2025.09.05.02.10.28
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc3fasm30302590f8f.5.2025.09.05.02.10.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:10:28 -0700 (PDT)
+        Fri, 05 Sep 2025 02:10:48 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
+	linux-trace-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Subject: [PATCH 2/2] ASoC: replace use of system_wq with system_percpu_wq
-Date: Fri,  5 Sep 2025 11:10:16 +0200
-Message-ID: <20250905091016.109428-3-marco.crivellari@suse.com>
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH 0/1] trace: replace wq users and add WQ_PERCPU to alloc_workqueue() users
+Date: Fri,  5 Sep 2025 11:10:39 +0200
+Message-ID: <20250905091040.109772-1-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905091016.109428-1-marco.crivellari@suse.com>
-References: <20250905091016.109428-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,6 +92,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+
+Hi!
+
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
+
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+
+=== Current situation: problems ===
+
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
 
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
@@ -107,274 +125,66 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-CPU affinity constraint, which is very often not required by users. Make
-it clear by adding a system_percpu_wq.
+=== Plan and future plans ===
 
-queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-new per-cpu wq: whether the user still stick on the old name a warn will
-be printed along a wq redirect to the new one.
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
 
-This patch add the new system_percpu_wq except for mm, fs and net
-subsystem, whom are handled in separated patches.
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
 
-The old wq will be kept for a few release cylces.
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- sound/soc/codecs/aw88081.c          |  2 +-
- sound/soc/codecs/aw88166.c          |  2 +-
- sound/soc/codecs/aw88261.c          |  2 +-
- sound/soc/codecs/aw88395/aw88395.c  |  2 +-
- sound/soc/codecs/aw88399.c          |  2 +-
- sound/soc/codecs/cs42l43-jack.c     |  6 +++---
- sound/soc/codecs/cs42l43.c          |  4 ++--
- sound/soc/codecs/es8326.c           | 12 ++++++------
- sound/soc/codecs/rt5663.c           |  6 +++---
- sound/soc/intel/boards/sof_es8336.c |  2 +-
- sound/soc/sof/intel/cnl.c           |  2 +-
- sound/soc/sof/intel/hda-ipc.c       |  2 +-
- 12 files changed, 22 insertions(+), 22 deletions(-)
+        WQ_UNBOUND will be removed in a future release cycle.
 
-diff --git a/sound/soc/codecs/aw88081.c b/sound/soc/codecs/aw88081.c
-index ad16ab6812cd..e61c58dcd606 100644
---- a/sound/soc/codecs/aw88081.c
-+++ b/sound/soc/codecs/aw88081.c
-@@ -779,7 +779,7 @@ static void aw88081_start(struct aw88081 *aw88081, bool sync_start)
- 	if (sync_start == AW88081_SYNC_START)
- 		aw88081_start_pa(aw88081);
- 	else
--		queue_delayed_work(system_wq,
-+		queue_delayed_work(system_percpu_wq,
- 			&aw88081->start_work,
- 			AW88081_START_WORK_DELAY_MS);
- }
-diff --git a/sound/soc/codecs/aw88166.c b/sound/soc/codecs/aw88166.c
-index 6c50c4a18b6a..c9c3ebb9a739 100644
---- a/sound/soc/codecs/aw88166.c
-+++ b/sound/soc/codecs/aw88166.c
-@@ -1313,7 +1313,7 @@ static void aw88166_start(struct aw88166 *aw88166, bool sync_start)
- 	if (sync_start == AW88166_SYNC_START)
- 		aw88166_start_pa(aw88166);
- 	else
--		queue_delayed_work(system_wq,
-+		queue_delayed_work(system_percpu_wq,
- 			&aw88166->start_work,
- 			AW88166_START_WORK_DELAY_MS);
- }
-diff --git a/sound/soc/codecs/aw88261.c b/sound/soc/codecs/aw88261.c
-index fb99871578c5..c8e62af8949e 100644
---- a/sound/soc/codecs/aw88261.c
-+++ b/sound/soc/codecs/aw88261.c
-@@ -705,7 +705,7 @@ static void aw88261_start(struct aw88261 *aw88261, bool sync_start)
- 	if (sync_start == AW88261_SYNC_START)
- 		aw88261_start_pa(aw88261);
- 	else
--		queue_delayed_work(system_wq,
-+		queue_delayed_work(system_percpu_wq,
- 			&aw88261->start_work,
- 			AW88261_START_WORK_DELAY_MS);
- }
-diff --git a/sound/soc/codecs/aw88395/aw88395.c b/sound/soc/codecs/aw88395/aw88395.c
-index aea44a199b98..c6fe69cc5e73 100644
---- a/sound/soc/codecs/aw88395/aw88395.c
-+++ b/sound/soc/codecs/aw88395/aw88395.c
-@@ -75,7 +75,7 @@ static void aw88395_start(struct aw88395 *aw88395, bool sync_start)
- 	if (sync_start == AW88395_SYNC_START)
- 		aw88395_start_pa(aw88395);
- 	else
--		queue_delayed_work(system_wq,
-+		queue_delayed_work(system_percpu_wq,
- 			&aw88395->start_work,
- 			AW88395_START_WORK_DELAY_MS);
- }
-diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
-index ee3cc2a95f85..dfa8ce355e3c 100644
---- a/sound/soc/codecs/aw88399.c
-+++ b/sound/soc/codecs/aw88399.c
-@@ -1281,7 +1281,7 @@ static void aw88399_start(struct aw88399 *aw88399, bool sync_start)
- 	if (sync_start == AW88399_SYNC_START)
- 		aw88399_start_pa(aw88399);
- 	else
--		queue_delayed_work(system_wq,
-+		queue_delayed_work(system_percpu_wq,
- 			&aw88399->start_work,
- 			AW88399_START_WORK_DELAY_MS);
- }
-diff --git a/sound/soc/codecs/cs42l43-jack.c b/sound/soc/codecs/cs42l43-jack.c
-index ac19a572fe70..38c73c8dcc45 100644
---- a/sound/soc/codecs/cs42l43-jack.c
-+++ b/sound/soc/codecs/cs42l43-jack.c
-@@ -301,7 +301,7 @@ irqreturn_t cs42l43_bias_detect_clamp(int irq, void *data)
- {
- 	struct cs42l43_codec *priv = data;
- 
--	queue_delayed_work(system_wq, &priv->bias_sense_timeout,
-+	queue_delayed_work(system_percpu_wq, &priv->bias_sense_timeout,
- 			   msecs_to_jiffies(1000));
- 
- 	return IRQ_HANDLED;
-@@ -432,7 +432,7 @@ irqreturn_t cs42l43_button_press(int irq, void *data)
- 	struct cs42l43_codec *priv = data;
- 
- 	// Wait for 2 full cycles of comb filter to ensure good reading
--	queue_delayed_work(system_wq, &priv->button_press_work,
-+	queue_delayed_work(system_percpu_wq, &priv->button_press_work,
- 			   msecs_to_jiffies(20));
- 
- 	return IRQ_HANDLED;
-@@ -470,7 +470,7 @@ irqreturn_t cs42l43_button_release(int irq, void *data)
- {
- 	struct cs42l43_codec *priv = data;
- 
--	queue_work(system_wq, &priv->button_release_work);
-+	queue_work(system_percpu_wq, &priv->button_release_work);
- 
- 	return IRQ_HANDLED;
- }
-diff --git a/sound/soc/codecs/cs42l43.c b/sound/soc/codecs/cs42l43.c
-index ea84ac64c775..105ad53bae0c 100644
---- a/sound/soc/codecs/cs42l43.c
-+++ b/sound/soc/codecs/cs42l43.c
-@@ -161,7 +161,7 @@ static void cs42l43_hp_ilimit_clear_work(struct work_struct *work)
- 	priv->hp_ilimit_count--;
- 
- 	if (priv->hp_ilimit_count)
--		queue_delayed_work(system_wq, &priv->hp_ilimit_clear_work,
-+		queue_delayed_work(system_percpu_wq, &priv->hp_ilimit_clear_work,
- 				   msecs_to_jiffies(CS42L43_HP_ILIMIT_DECAY_MS));
- 
- 	snd_soc_dapm_mutex_unlock(dapm);
-@@ -178,7 +178,7 @@ static void cs42l43_hp_ilimit_work(struct work_struct *work)
- 
- 	if (priv->hp_ilimit_count < CS42L43_HP_ILIMIT_MAX_COUNT) {
- 		if (!priv->hp_ilimit_count)
--			queue_delayed_work(system_wq, &priv->hp_ilimit_clear_work,
-+			queue_delayed_work(system_percpu_wq, &priv->hp_ilimit_clear_work,
- 					   msecs_to_jiffies(CS42L43_HP_ILIMIT_DECAY_MS));
- 
- 		priv->hp_ilimit_count++;
-diff --git a/sound/soc/codecs/es8326.c b/sound/soc/codecs/es8326.c
-index 066d92b54312..4ba4de184d2c 100644
---- a/sound/soc/codecs/es8326.c
-+++ b/sound/soc/codecs/es8326.c
-@@ -812,12 +812,12 @@ static void es8326_jack_button_handler(struct work_struct *work)
- 			press_count = 0;
- 		}
- 		button_to_report = cur_button;
--		queue_delayed_work(system_wq, &es8326->button_press_work,
-+		queue_delayed_work(system_percpu_wq, &es8326->button_press_work,
- 				   msecs_to_jiffies(35));
- 	} else if (prev_button != cur_button) {
- 		/* mismatch, detect again */
- 		prev_button = cur_button;
--		queue_delayed_work(system_wq, &es8326->button_press_work,
-+		queue_delayed_work(system_percpu_wq, &es8326->button_press_work,
- 				   msecs_to_jiffies(35));
- 	} else {
- 		/* released or no pressed */
-@@ -912,7 +912,7 @@ static void es8326_jack_detect_handler(struct work_struct *work)
- 					(ES8326_INT_SRC_PIN9 | ES8326_INT_SRC_BUTTON));
- 			regmap_write(es8326->regmap, ES8326_SYS_BIAS, 0x1f);
- 			regmap_update_bits(es8326->regmap, ES8326_HP_DRIVER_REF, 0x0f, 0x0d);
--			queue_delayed_work(system_wq, &es8326->jack_detect_work,
-+			queue_delayed_work(system_percpu_wq, &es8326->jack_detect_work,
- 					msecs_to_jiffies(400));
- 			es8326->hp = 1;
- 			goto exit;
-@@ -923,7 +923,7 @@ static void es8326_jack_detect_handler(struct work_struct *work)
- 			regmap_write(es8326->regmap, ES8326_INT_SOURCE,
- 					(ES8326_INT_SRC_PIN9 | ES8326_INT_SRC_BUTTON));
- 			es8326_enable_micbias(es8326->component);
--			queue_delayed_work(system_wq, &es8326->button_press_work, 10);
-+			queue_delayed_work(system_percpu_wq, &es8326->button_press_work, 10);
- 			goto exit;
- 		}
- 		if ((iface & ES8326_HPBUTTON_FLAG) == 0x01) {
-@@ -958,10 +958,10 @@ static irqreturn_t es8326_irq(int irq, void *dev_id)
- 		goto out;
- 
- 	if (es8326->jack->status & SND_JACK_HEADSET)
--		queue_delayed_work(system_wq, &es8326->jack_detect_work,
-+		queue_delayed_work(system_percpu_wq, &es8326->jack_detect_work,
- 				   msecs_to_jiffies(10));
- 	else
--		queue_delayed_work(system_wq, &es8326->jack_detect_work,
-+		queue_delayed_work(system_percpu_wq, &es8326->jack_detect_work,
- 				   msecs_to_jiffies(300));
- 
- out:
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 45057562c0c8..44cfec76ad96 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -1859,7 +1859,7 @@ static irqreturn_t rt5663_irq(int irq, void *data)
- 	dev_dbg(regmap_get_device(rt5663->regmap), "%s IRQ queue work\n",
- 		__func__);
- 
--	queue_delayed_work(system_wq, &rt5663->jack_detect_work,
-+	queue_delayed_work(system_percpu_wq, &rt5663->jack_detect_work,
- 		msecs_to_jiffies(250));
- 
- 	return IRQ_HANDLED;
-@@ -1974,7 +1974,7 @@ static void rt5663_jack_detect_work(struct work_struct *work)
- 				cancel_delayed_work_sync(
- 					&rt5663->jd_unplug_work);
- 			} else {
--				queue_delayed_work(system_wq,
-+				queue_delayed_work(system_percpu_wq,
- 					&rt5663->jd_unplug_work,
- 					msecs_to_jiffies(500));
- 			}
-@@ -2024,7 +2024,7 @@ static void rt5663_jd_unplug_work(struct work_struct *work)
- 				    SND_JACK_BTN_0 | SND_JACK_BTN_1 |
- 				    SND_JACK_BTN_2 | SND_JACK_BTN_3);
- 	} else {
--		queue_delayed_work(system_wq, &rt5663->jd_unplug_work,
-+		queue_delayed_work(system_percpu_wq, &rt5663->jd_unplug_work,
- 			msecs_to_jiffies(500));
- 	}
- }
-diff --git a/sound/soc/intel/boards/sof_es8336.c b/sound/soc/intel/boards/sof_es8336.c
-index a0b3679b17b4..e60dd85f5552 100644
---- a/sound/soc/intel/boards/sof_es8336.c
-+++ b/sound/soc/intel/boards/sof_es8336.c
-@@ -163,7 +163,7 @@ static int sof_es8316_speaker_power_event(struct snd_soc_dapm_widget *w,
- 
- 	priv->speaker_en = !SND_SOC_DAPM_EVENT_ON(event);
- 
--	queue_delayed_work(system_wq, &priv->pcm_pop_work, msecs_to_jiffies(70));
-+	queue_delayed_work(system_percpu_wq, &priv->pcm_pop_work, msecs_to_jiffies(70));
- 	return 0;
- }
- 
-diff --git a/sound/soc/sof/intel/cnl.c b/sound/soc/sof/intel/cnl.c
-index 385e5339f0a4..207eb18560dd 100644
---- a/sound/soc/sof/intel/cnl.c
-+++ b/sound/soc/sof/intel/cnl.c
-@@ -329,7 +329,7 @@ int cnl_ipc_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg)
- 	 * CTX_SAVE IPC, which is sent before the DSP enters D3.
- 	 */
- 	if (hdr->cmd != (SOF_IPC_GLB_PM_MSG | SOF_IPC_PM_CTX_SAVE))
--		mod_delayed_work(system_wq, &hdev->d0i3_work,
-+		mod_delayed_work(system_percpu_wq, &hdev->d0i3_work,
- 				 msecs_to_jiffies(SOF_HDA_D0I3_WORK_DELAY_MS));
- 
- 	return 0;
-diff --git a/sound/soc/sof/intel/hda-ipc.c b/sound/soc/sof/intel/hda-ipc.c
-index f3fbf43a70c2..d8fde18145b4 100644
---- a/sound/soc/sof/intel/hda-ipc.c
-+++ b/sound/soc/sof/intel/hda-ipc.c
-@@ -96,7 +96,7 @@ void hda_dsp_ipc4_schedule_d0i3_work(struct sof_intel_hda_dev *hdev,
- 	if (hda_dsp_ipc4_pm_msg(msg_data->primary))
- 		return;
- 
--	mod_delayed_work(system_wq, &hdev->d0i3_work,
-+	mod_delayed_work(system_percpu_wq, &hdev->d0i3_work,
- 			 msecs_to_jiffies(SOF_HDA_D0I3_WORK_DELAY_MS));
- }
- EXPORT_SYMBOL_NS(hda_dsp_ipc4_schedule_d0i3_work, "SND_SOC_SOF_INTEL_HDA_COMMON");
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] Replace use of system_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+
+        Because of that, system_wq has been renamed in system_percpu_wq.
+
+
+=== For Maintainers ===
+
+There are prerequisites for this series, already merged in the master branch.
+The commits are:
+
+128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
+system_dfl_wq")
+
+930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+
+
+Thanks!
+
+Marco Crivellari (1):
+  tracing: replace use of system_wq with system_percpu_wq
+
+ kernel/trace/trace_events_user.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 -- 
 2.51.0
 
