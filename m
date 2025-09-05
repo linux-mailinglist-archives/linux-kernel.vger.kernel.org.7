@@ -1,181 +1,79 @@
-Return-Path: <linux-kernel+bounces-803032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39745B459AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91E4B459A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7731C26FC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:54:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 244427A63D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84C35E4E9;
-	Fri,  5 Sep 2025 13:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C2635CED4;
+	Fri,  5 Sep 2025 13:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orSAr+VF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NV8s46If"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4100235E4D3;
-	Fri,  5 Sep 2025 13:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFBE35CECC
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080457; cv=none; b=DxCUOffGCzkWdFwtQMunBYqWZx2PTHB7DE8wYN81PQPGhZP1yesZIOE5j4xCwQi9ZeRVoy/eWPoI5KtqvpE8iVUTGuYae/UcGUN0/KlUGdfXWhVSeC9qt2iX2Dzf6cnkGIRTXIAQAbKNXSDNV2IcI7+W0WLuaZDVZn7intEAqAE=
+	t=1757080403; cv=none; b=ZzbWzTOTiRjBlnqD2N6IdGp/Ye8ymgGWKKsLPxgX3Qg/O+BpqAbTN4nLVT1iLOL32EoXVh3SsScUqZtgSr+Y3JNbafH7OVwRvPq/7N3VrkcGQzCQDGYC455h5d/HPmCNXIdHfKNFIPUBx49IiR1dzeMcWJ5HN7Ir+FxxpaoO4uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080457; c=relaxed/simple;
-	bh=RJ+j94DaXb8OxhldXX6ve0r5pnX/7/TjVN81rxWNQgw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d/cK1JPsTqPpegZp4Y9z2YlyGlt9YSXSPO+Fb6s8b/ZVLGVkHHHy2EInkDzpFiAg8BqXS04b5B/tUxa6OBlRmoYdgrcbdlmdWOuvpL/ITHDZCV9frwjpJplfeVg7rqkztIUkMA7D5gBTPwKtCTgEsRUulu4ksyTgcO+i2rEReSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orSAr+VF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B66C4CEF5;
-	Fri,  5 Sep 2025 13:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757080455;
-	bh=RJ+j94DaXb8OxhldXX6ve0r5pnX/7/TjVN81rxWNQgw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=orSAr+VFnHMv6CEPlVHki4kzzlI32VkC1PWu+WEHV5NlynT9S/GeF0qYHHNhNm5fZ
-	 I5zNSNCk5EIiVfUvoGsBvIWcTb9E2dr931cSCNn9xdJ8Rcd6i+YHvhNahYhUkYGf+z
-	 wMd9RPkSp2BUpncEVYCDtICQnB2pkcbzRK83IGLvKvmnq82gvoiZVglWiijgyZLmAv
-	 jyW84r3gd1W12x8LLQt84ahXpwBl4vwPlNRnh1b8x8++BJ2VIYer0h6VQF33lVA0L5
-	 pzIqLp3VbVZkJ4fjtCIQKaVL2tl91LUsh+7phC/euJG4uFojrWRodDtVLkO6Khqa5K
-	 MMGT6Nka9gkfg==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Zihuan Zhang <zhangzihuan@kylinos.cn>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject:
- [PATCH v1 2/3] cpufreq: intel_pstate: Rearrange freq QoS updates using
- __free()
-Date: Fri, 05 Sep 2025 15:52:54 +0200
-Message-ID: <3026597.e9J7NaK4W3@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5028967.GXAFRqVoOG@rafael.j.wysocki>
-References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+	s=arc-20240116; t=1757080403; c=relaxed/simple;
+	bh=dS0ijienYB+5i4QOSlW83sgW3RHUmENhVtIbkeS4VSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+/K2ELTM9jjmm/pgbvbPU9OZ3rpjFRPdGq79QV4lRuoZ+IvqmwIzE3eD+twzzOn1crWgsHRVz33Kgd/I+R0pJyDYnPLpSPIyjCw/lDP/8Oj4KecknGzr4Jsl5hex7bI6VrVoy3mPgmajA/CMRFoaQUgE/kzA3j0KEsfKU9N68s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NV8s46If; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1pCvM6whJF4g8toP+FeR/YSNKgWlTWUXFE1HrnRQrF4=; b=NV8s46IfJJW0zYiKPHL+fAQCow
+	yvwfySzz1yr9xPH/iL4sMdoovrll+IXi/iVJYi3M4SinOH3f2iGszvZwGpMfmTjTSyRvp7IEMfygz
+	qgZ/a/ouxqyPxPjtSX7OkjRcqO0UGR4AmWB1NptVEe/fJWzoPsHiVYdtteaODdBYKqv0CwNVtIjLU
+	DNfR7vYiv7nox2mhCG0nUhI1CZEBm5VcVS1vVf2fCmVeEZGqlmRKuyIC5cPA/X85rjBchI0neM00I
+	yfi30TgDGHcC0c82zLkCWY/mtZ8OuabXail6KDS6v1JOiumUl0atYm51Yv7QdAQZf1BSdyJlD2kvk
+	+W4SVECw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuWsC-0000000HD8k-2G9m;
+	Fri, 05 Sep 2025 13:53:04 +0000
+Date: Fri, 5 Sep 2025 14:53:04 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
+	gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>,
+	Kiryl Shutsemau <kas@kernel.org>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3] huge_memory: return -EINVAL in folio split functions
+ when THP is disabled
+Message-ID: <aLrrQDCBzaMwwmA-@casper.infradead.org>
+References: <20250905131352.88069-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905131352.88069-1-kernel@pankajraghav.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Sep 05, 2025 at 03:13:52PM +0200, Pankaj Raghav (Samsung) wrote:
+> Changes since v2:
+>   - use page_folio(page) directly in VM_WARN_ON_ONCE_FOLIO
 
-Move the code from the for_each_possible_cpu() loop in update_qos_request()
-to a separate function and use __free() for cpufreq policy reference
-counting in it to avoid having to call cpufreq_cpu_put() repeatedly (or
-using goto).
-
-While at it, rename update_qos_request() to update_qos_requests()
-because it updates multiple requests in one go.
-
-No intentional functional impact.
-
-Link: https://lore.kernel.org/linux-pm/CAJZ5v0gN1T5woSF0tO=TbAh+2-sWzxFjWyDbB7wG2TFCOU01iQ@mail.gmail.com/
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |   65 ++++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 33 deletions(-)
-
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1693,43 +1693,42 @@ unlock_driver:
- 	return count;
- }
- 
--static void update_qos_request(enum freq_qos_req_type type)
-+static void update_cpu_qos_request(int cpunum, enum freq_qos_req_type type)
- {
-+	struct cpudata *cpu = all_cpu_data[cpunum];
- 	struct freq_qos_request *req;
--	struct cpufreq_policy *policy;
--	int i;
-+	unsigned int freq, perf_pct;
- 
--	for_each_possible_cpu(i) {
--		struct cpudata *cpu = all_cpu_data[i];
--		unsigned int freq, perf_pct;
--
--		policy = cpufreq_cpu_get(i);
--		if (!policy)
--			continue;
--
--		req = policy->driver_data;
--		if (!req) {
--			cpufreq_cpu_put(policy);
--			continue;
--		}
--
--		if (hwp_active)
--			intel_pstate_get_hwp_cap(cpu);
--
--		if (type == FREQ_QOS_MIN) {
--			perf_pct = global.min_perf_pct;
--		} else {
--			req++;
--			perf_pct = global.max_perf_pct;
--		}
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpunum);
-+	if (!policy)
-+		return;
-+
-+	req = policy->driver_data;
-+	if (!req)
-+		return;
-+
-+	if (hwp_active)
-+		intel_pstate_get_hwp_cap(cpu);
-+
-+	if (type == FREQ_QOS_MIN) {
-+		perf_pct = global.min_perf_pct;
-+	} else {
-+		req++;
-+		perf_pct = global.max_perf_pct;
-+	}
- 
--		freq = DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, 100);
-+	freq = DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, 100);
- 
--		if (freq_qos_update_request(req, freq) < 0)
--			pr_warn("Failed to update freq constraint: CPU%d\n", i);
-+	if (freq_qos_update_request(req, freq) < 0)
-+		pr_warn("Failed to update freq constraint: CPU%d\n", cpunum);
-+}
- 
--		cpufreq_cpu_put(policy);
--	}
-+static void update_qos_requests(enum freq_qos_req_type type)
-+{
-+	int i;
-+
-+	for_each_possible_cpu(i)
-+		update_cpu_qos_request(i, type);
- }
- 
- static ssize_t store_max_perf_pct(struct kobject *a, struct kobj_attribute *b,
-@@ -1758,7 +1757,7 @@ static ssize_t store_max_perf_pct(struct
- 	if (intel_pstate_driver == &intel_pstate)
- 		intel_pstate_update_policies();
- 	else
--		update_qos_request(FREQ_QOS_MAX);
-+		update_qos_requests(FREQ_QOS_MAX);
- 
- 	mutex_unlock(&intel_pstate_driver_lock);
- 
-@@ -1792,7 +1791,7 @@ static ssize_t store_min_perf_pct(struct
- 	if (intel_pstate_driver == &intel_pstate)
- 		intel_pstate_update_policies();
- 	else
--		update_qos_request(FREQ_QOS_MIN);
-+		update_qos_requests(FREQ_QOS_MIN);
- 
- 	mutex_unlock(&intel_pstate_driver_lock);
- 
-
-
-
+... why not use VM_WARN_ON_ONCE_PAGE?
 
