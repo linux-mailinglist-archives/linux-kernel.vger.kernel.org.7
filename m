@@ -1,95 +1,47 @@
-Return-Path: <linux-kernel+bounces-802164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E4DB44E5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:56:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E46B44E73
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290491C26179
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D6A06536
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F73F2D47F3;
-	Fri,  5 Sep 2025 06:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE652E1755;
+	Fri,  5 Sep 2025 06:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EbfyS7fx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MmkLfQ93";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EbfyS7fx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MmkLfQ93"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms4kB5hR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817612D3230
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F602D320E;
+	Fri,  5 Sep 2025 06:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055387; cv=none; b=cfO3mfV3AkkHObJaQ6K6C5IyC11Enao7vqdBi9vZZpNZTmjl6tb0yeCVlSmjidPIDIVsNC9u0TbvtlSKstK4UyjXlhoESryyjrwbvD33lOIXAG6PCtrqzkBmJYwJs+R3sx3hnRGFwn6RNR7O1UV87a3tQPCEJJLQcPfpI51FWcY=
+	t=1757055419; cv=none; b=EjRv+4DrDR9qgh9YFj5fIqWLRjSXWSy56TfIIxa1rLGsItNLI6C6lUgMqzeBJ9EujPT65f3kNu83TVrpyV6UmlNuGwVDNV7bmsWNGJzxoQpTuEYii9oaiM946qRmuBsbwLEJgyHu1nDFxNWZOmrQLA4DwUNQMPoBx7QBPc5ZrYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055387; c=relaxed/simple;
-	bh=7Ov6pqFOcCQOGobPb4PJRr5tp8z7JpxmPqF4ANnSEbI=;
+	s=arc-20240116; t=1757055419; c=relaxed/simple;
+	bh=uyFr8wxxfdR7aQYmyIRkP6+JdlV8SLol7rwk9pzJiHU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q0K25XZzQ1MrURUT4+IARVbDvnCve9XKVj2nuZ5nrwx4RW7wluO7rrVhfVStmTmlZHhw7Y1KN4m63JYiUCHsfXonPh6wzFMLEnScuhagPJRmzuLmxTtGRkzc5rXw09lVNvPVQZyzmqjy/BVM8ZAqMyTzXEeqakEwRuIWQ6bIo2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EbfyS7fx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MmkLfQ93; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EbfyS7fx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MmkLfQ93; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7880A20599;
-	Fri,  5 Sep 2025 06:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757055382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egy9Zu3bRx8BJ79Jn5qClQjMQorMYZAG+hUc9JPg81Y=;
-	b=EbfyS7fxEI7KPPsn0tSrs1zCWMY0Nczx0L/5eVocn5q092opzWtLiFiKw1zP2JDTSMblU9
-	S9ARISTityDxe7Rd6Pl8i0j0wq/lrY8Uh+CnvzKpJmwFF3xp+a5ONAg+/+rwHnxpuWzIds
-	N4sqhFpgGtTU4CWGElJ6tphVPZ+cf4U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757055382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egy9Zu3bRx8BJ79Jn5qClQjMQorMYZAG+hUc9JPg81Y=;
-	b=MmkLfQ93Ma788dVf2SyUvDD3ZbcEz43fgxx4a3qmSaqMJJnC6upHMGDCr+aumG7QNlOG0h
-	LP2NAiPVEPNjT8Aw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=EbfyS7fx;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MmkLfQ93
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757055382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egy9Zu3bRx8BJ79Jn5qClQjMQorMYZAG+hUc9JPg81Y=;
-	b=EbfyS7fxEI7KPPsn0tSrs1zCWMY0Nczx0L/5eVocn5q092opzWtLiFiKw1zP2JDTSMblU9
-	S9ARISTityDxe7Rd6Pl8i0j0wq/lrY8Uh+CnvzKpJmwFF3xp+a5ONAg+/+rwHnxpuWzIds
-	N4sqhFpgGtTU4CWGElJ6tphVPZ+cf4U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757055382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egy9Zu3bRx8BJ79Jn5qClQjMQorMYZAG+hUc9JPg81Y=;
-	b=MmkLfQ93Ma788dVf2SyUvDD3ZbcEz43fgxx4a3qmSaqMJJnC6upHMGDCr+aumG7QNlOG0h
-	LP2NAiPVEPNjT8Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C857139B9;
-	Fri,  5 Sep 2025 06:56:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +PUIEZaJumisfQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 05 Sep 2025 06:56:22 +0000
-Message-ID: <5a79e01c-c1be-4386-a3b5-ef9580ae7195@suse.de>
-Date: Fri, 5 Sep 2025 08:56:21 +0200
+	 In-Reply-To:Content-Type; b=u9usu1k7g7TeV3irZyFFFY2TzNIp0K9WFawjBQJldaebQMf2oyAzebEGXnjEGJTncGIWkG6GQBPPfVKG7PhsSX1oOdh1K4SspjHYOLNGYCGzcQgMISi67xW1637SJceRxL1vaX0/NCSuzqQQX294hPREQAHAObkSMHa+EOjkhHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms4kB5hR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B87C4CEF1;
+	Fri,  5 Sep 2025 06:56:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757055419;
+	bh=uyFr8wxxfdR7aQYmyIRkP6+JdlV8SLol7rwk9pzJiHU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ms4kB5hRXdSwJtIEDgY176SzYJ9i7DwB6lYiJLEo7v2gsHfkawDrVvJxqcy5OkaZP
+	 eK/D6IvM6esNyKcKvI3475cQVfDQ675K1YAVUpfgDS8etfrbPYX7NeBYS2GAhFfYhN
+	 NddOOi3O9Ui9M4yFx4U5d6QacamueHaUSi6AeJg+Rtg8Kvh00dRLtQoPJQ7vDQ0xgn
+	 uTz/VyJeBAAVE/WViT94o+vXysBHUdKlcyRn6C/QxHFmG8v9WAQ3zwhWLmQYfF2OwP
+	 /lzkdwtBh9FnTwt0mAw6hiRlWgwghjM1GkVVG+w6GN6iNY+KYzmeObBrfcXsGUq90G
+	 Hc7YpocH8z04w==
+Message-ID: <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
+Date: Fri, 5 Sep 2025 08:56:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,118 +49,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] fbcon: Move bitops callbacks into separate struct
-To: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250818104655.235001-1-tzimmermann@suse.de>
+Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client
+ IDs
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
+ <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com>
+ <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
+ <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250818104655.235001-1-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[ffwll.ch,gmx.de,vger.kernel.org,lists.freedesktop.org];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7880A20599
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-ping for a review
+On 04/09/2025 19:33, Aaron Kling wrote:
+> On Thu, Sep 4, 2025 at 3:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
+>>> Each memory client has unique hardware ID, add these IDs.
+>>>
+>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+>>> ---
+>>>  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++++++++++++
+>>>  1 file changed, 58 insertions(+)
+>>>
+>>> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindings/memory/tegra210-mc.h
+>>> index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e049142014e3bcc132b88bf1a92d 100644
+>>> --- a/include/dt-bindings/memory/tegra210-mc.h
+>>> +++ b/include/dt-bindings/memory/tegra210-mc.h
+>>> @@ -75,4 +75,62 @@
+>>>  #define TEGRA210_MC_RESET_ETR                28
+>>>  #define TEGRA210_MC_RESET_TSECB              29
+>>>
+>>> +#define TEGRA210_MC_PTCR             0
+>>
+>> There is no driver user of this ABI, so does not look like a binding.
+>>
+>> You have entire commit msg to clarify such unusual things, like lack of
+>> users. Please use it.
+> 
+> The tegra210-mc driver has these hardcoded and should probably be
+> updated to use the bindings instead, but I think that's outside of the
+> scope of this series. I will clarify such in the updated message.
 
-Am 18.08.25 um 12:36 schrieb Thomas Zimmermann:
-> Instances of fbcon use a number callbacks to support tile-based
-> drawing or console rotation. The fields are writeable in struct
-> fbcon_ops. Each case; unrotated, various rotated and tile-based
-> drawing; uses a set of related calbacks. Updating these 'bitops'
-> at runtime is spread throughout various helper functions.
->
-> This series puts related callbacks into dedicated instances of the
-> new type struct fbcon_bitops. Changing the callbacks at runtime
-> then only requires to pick the correct instance. It further allows
-> the various struct fbcon_bitops' to be declared 'static const', which
-> makes them write-protected at runtime.
->
-> Makes the fbcon bitops easier and safer to use and modify.
->
-> Thomas Zimmermann (6):
->    fbcon: Fix empty lines in fbcon.h
->    fbcon: Rename struct fbcon_ops to struct fbcon
->    fbcon: Set rotate_font callback with related callbacks
->    fbcon: Move fbcon callbacks into struct fbcon_bitops
->    fbcon: Streamline setting rotated/unrotated bitops
->    fbcon: Pass struct fbcon to callbacks in struct fbcon_bitops
->
->   drivers/video/fbdev/core/bitblit.c      | 148 ++++----
->   drivers/video/fbdev/core/fb_internal.h  |   2 +
->   drivers/video/fbdev/core/fbcon.c        | 459 ++++++++++++------------
->   drivers/video/fbdev/core/fbcon.h        |  33 +-
->   drivers/video/fbdev/core/fbcon_ccw.c    | 180 +++++-----
->   drivers/video/fbdev/core/fbcon_cw.c     | 172 ++++-----
->   drivers/video/fbdev/core/fbcon_rotate.c |  47 +--
->   drivers/video/fbdev/core/fbcon_rotate.h |  18 +-
->   drivers/video/fbdev/core/fbcon_ud.c     | 192 +++++-----
->   drivers/video/fbdev/core/softcursor.c   |  18 +-
->   drivers/video/fbdev/core/tileblit.c     |  49 +--
->   11 files changed, 681 insertions(+), 637 deletions(-)
->
+If you introduce the binding, change the drivers to use it. Otherwise
+there is no point benefit in this binding, really.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+> 
+> Aaron
 
 
+Best regards,
+Krzysztof
 
