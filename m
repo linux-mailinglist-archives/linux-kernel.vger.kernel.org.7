@@ -1,451 +1,197 @@
-Return-Path: <linux-kernel+bounces-802881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B2EB457E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:30:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF42B457EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD4B4B629F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543223A44DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2BD34F486;
-	Fri,  5 Sep 2025 12:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7062DCBEB;
+	Fri,  5 Sep 2025 12:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dSQkG08t"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2063.outbound.protection.outlook.com [40.107.220.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hz3VODHY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6768634DCD2;
-	Fri,  5 Sep 2025 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757075400; cv=fail; b=h6Tgv8AL3olLw4N9sTjW7oSRspr8KTf8TmNiQVVAqjOJ2Hno7WQNv6JMV/GzHQddLq2S42oXj1oVnIJCdKm5YipsUpXlU5uOn12cUNBI5E4vvcUM7zPJwKnExdDqEU2+3YT0aCOKIgrMDzgwjoruKmaHZv9z9WPwSbuSGqlK998=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757075400; c=relaxed/simple;
-	bh=l4IxSk1EHKV9qRGHYGdd4UX4QYLQFKuLVqxtpLQTZ7A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XblSFEnsp2Vwcpuc3L0S7mEA5Y1IF6U4r9d3s94mWeV9XWjBJBtb32ewtBWGhNzWl60mHU0/a0zkIGYOo4lOFLunhb7XWL2+Q+Wiwg1mgGiIfNAPZsBfhuAOqjaaOh8IvMB2OQHyi2jwFhcFG+Yj7aikphie6HO023YIfir89xg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dSQkG08t; arc=fail smtp.client-ip=40.107.220.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DYBdk0mMmrdEm0uPOkray2tCTY+0VrxWhJxOShXh/3xwl/kmbXsizsN6qDzKjIzIpA4YQ7Bk5tnRJbHEY0ot6s0TzrR0uTVN9W1d5T3AbRkVkj/rSKtJjpph2IrWfOWp40oOHuZujpzlxktI30OxJ76bm8AsSuqK0AoxpuKyNs5TVHhEOpalJ1kzB1oM/X/iDYPvyI1GTuHRVSlTH9xXX6C7AUJaax69SQPgL5GEHu7DtKDRKXPj2W0U01KLD7ogEoV1g6y+BdvdOZQii5eAqe6N0SfIE4W6On49e92Rn9pSw12xplyDvYRykw13RW4iTu+w4pcappHE+3/TogeNvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7cwXjDj4UmK0g+Vl4dOlFdBm5py6I1IsztMTKEVXbCg=;
- b=LZy4YQe6vwmkCVX8FQqG0h2fvVaiQN0jR0fKqWeD3Ki4kE2NWO/seyB6ubcI+zNSIypZxcysA+Swf5O1DZOfWsFLxfx/sLSiJKTirmW4eLlRf8d7lyfsGMcVsj+eEG/Swikb2oxTVJiHhYXXaoJIIxPmMglRn+laba4g8FqrLyITsRxEFy9+eXoEyClAj9/KOTE/faVBcVkGQnK7XSyJStck1ujlmXcbfcn83h1KW7ZesMQd+Ct7nQfnoPdvF7gp/nMgHOg/Do653e8zl8w/mGOSvTbCYv22ZKJKSfx3UZ9ZQzKUGj9dJ0MONQX+e7DgW19mEc6MDgzb5I0HxCBLvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7cwXjDj4UmK0g+Vl4dOlFdBm5py6I1IsztMTKEVXbCg=;
- b=dSQkG08tgaC9Wy2PIqcupjOtpB8NqZPmZ8Npm6QVQUbB3cZiVQHyq9sW39wioZ4gx1+xSMHR6kd3gNbDk1rE6Wad2HFRoMK2UDKmAmHr9eC5UzgIQJ/V+eM2cAv18Zqs+6T3/pjbMAT+iLmGMCiBs7KeMVekRowqx7DJks/OLtU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by PH8PR12MB7254.namprd12.prod.outlook.com (2603:10b6:510:225::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
- 2025 12:29:55 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30%4]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
- 12:29:55 +0000
-Message-ID: <5f21169b-39b8-4fcd-b7d7-e5bcb1885549@amd.com>
-Date: Fri, 5 Sep 2025 14:29:48 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: iio: xilinx: Add Documentation for
- Sysmon
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
- git@xilinx.com, Salih Erim <salih.erim@amd.com>,
- Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
- Anish Kadamathikuttiyil Karthikeyan Pillai
- <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>,
- Andy Shevchenko <andy@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-References: <cover.1757061697.git.michal.simek@amd.com>
- <610690b9cc4ab3854b56df550b688b4cc72a5653.1757061697.git.michal.simek@amd.com>
- <20250905123006.000031a9@huawei.com>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- mpwx1d8=
-In-Reply-To: <20250905123006.000031a9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH7PR17CA0050.namprd17.prod.outlook.com
- (2603:10b6:510:325::22) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A971CD2C;
+	Fri,  5 Sep 2025 12:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757075489; cv=none; b=W3QhLbpKEI6EX3YV8p/hlT3aijdplWAIitKTUoUup51gCxnWj8lG+hivi+FEZhEd+p/RyVu0LigZL3M6jhIFeCUIoAO0Fg9BHVTaHKWaG5YIScZzOiX0xfTxKRDPKbWulv2M/kF3FAhDmN7tK7dv5/OCe33dxWnKDJDylNJdbQY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757075489; c=relaxed/simple;
+	bh=ruCCB+HXYNDqzl61jtH2VjoKINqluUJciforkruMtVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUPGKToSbyQ+aNotZZS1oCuPGrgfakmIAOUYPVNKuPvZGGY7IQ4Gy8q2SkFJIFhPJK1ng3hyWp1MBRhC3r0OKxXkx9GGg6SbxuFE5Cwnl0kU+CGX/8YSdj/UN3e0aXQlE9q99rFfBO3j7qg/GrP+kxoSUAApZ73j4pobyKTj/aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hz3VODHY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso14732715e9.3;
+        Fri, 05 Sep 2025 05:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757075486; x=1757680286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kHonkD4Us1QO9Yt7U0Xd3LOspvgSrKo2EvCfpECpyzg=;
+        b=Hz3VODHYHuT2W66f1WvAAhsHgUQlQPjKvEahFjU4spGHFR+jtrPw7631YIjhK/0yVP
+         FLc+pxhTXydAqhQbUw8aw7N54WBeurYdr0g82ST7YMQJUv9m/2brNm1VGMQxHPB+L1dC
+         DWYF3tJrK/+mSvfTfH69JPG4thv4SvXV/cOQdzk761EEwKHKGy898VrAmFUQPtHOrSKp
+         TOj/QXiTZ58Ad6p65wLWZyDZ4XOKC/azPbk/miLPdhlWofuzweDbaPzAC2sfuXH6vP/I
+         6XpH0N/8M5V6abhSO6AIAhkWpeRSeazfy7uVqkudaXkMr9Y4C0HqhxYTGAflclR5YVon
+         H1Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757075486; x=1757680286;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kHonkD4Us1QO9Yt7U0Xd3LOspvgSrKo2EvCfpECpyzg=;
+        b=FL78jKEg/B3cRwuB49cp6SMp9bz7oWsED7PmOJWnoQAEujgDZiQcFBn5GNd2/a7jZL
+         lQHNk/Z6/vEfGIyJ9qqyAEEcKvOob5W5CYrSy5S4Y0Zd9R3HE905RJ6jXQLqDygQb2jW
+         IhbsbuE9VErYE1zvxTzNo3yKlTfQaKCOo6QDy9q0j5LPMco0b0GnlTjnpyRf1wDzc55b
+         YA6KcZNbikWICkWWXuIegzePI4FhWcfmRAWjnoQavZGX7Sc23sX2TMdWOROUVHtIEq42
+         jpAtUQZLmNP7HQHUzOuSe64wX3FtMU7wUgZaXDUSKHuRbDLzMHZ9KPCASdUWHTqWGXLW
+         uYuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDH34mG2H2aYLw6ebA5zcFnJItJKqxqvfXV5zadZgj2xmtR4y4aahT3QP6PYkDApx+D1GzizTDwvc=@vger.kernel.org, AJvYcCXV+jDQyL37r6Hj6LLCe4znZXG1Jphf/zYsvWbJW7qfToqKTc5oQyMcar6DqgVfsOH4GGi2fWzz9kMipOVvkUr9bvbF@vger.kernel.org, AJvYcCXz2pdne196lLpFFo4jukEqJBXSJNilIIhXtULCv6VJcAaqmX663i36cXZ68gfeipWH2G1aJ7TbQUTox0BV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV4FxU+wW+6rNaM8VbI+w3nR0g2x+Vy+CPtA9KfCytIqPLDgeh
+	fR59/mif8tlcJ6P19v21OxrrgJD89Wtq8KkHBBLrFdJqLLEnhuKsTMrp
+X-Gm-Gg: ASbGncvcHlly0x47ymhZxrWyr/MX+Wp2nyix3H8VKui9Uzx+LAZbCKuJt8hziUYkr2V
+	gfF2U56++DusMcM2uYGMdFnv8w0f5gPxzKpMnztsVAehR4eGQxN/+yD72bHEuoOaXZ5XlggjoTx
+	brl8sbEk5bi4ugVg+v7QK6kfF6+ivviwkIx8MdCj3uLbWKdVy0ic6jKlK50reztSMx9VVxHQgRO
+	ix5HJnYPZYu9C7DedNU6Nxlpmwp8+Z6SfRd8v07YckBss0PR+KT8jdWSBKlNTTN3banmSQndIQ3
+	11pBFZNVkZaQnqwzoJdfwFHqiiOq94M9AJ9phja3XIZ0uDgdmxhJI3s4J502D7p5OpakA0X2rmU
+	KIumetQFV9yuUaMJ5phCQAzlK+C8wHmpYrAN2Zp/ekH+rDlqFTkyLHHDEOcB1mVbyMKq47/Y=
+X-Google-Smtp-Source: AGHT+IHnlMwLin4RCPEC9ey4bGMrukJ3tHOz0H3ZwM/jse7eJzjGnYjTKutrVbK8gWD+JLEh2OHSYA==
+X-Received: by 2002:a05:600c:4f0c:b0:45c:b6d3:a106 with SMTP id 5b1f17b1804b1-45cb6d3a2afmr84182015e9.11.1757075485900;
+        Fri, 05 Sep 2025 05:31:25 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::4:4f66])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9bcda91dsm158752795e9.6.2025.09.05.05.31.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 05:31:25 -0700 (PDT)
+Message-ID: <71d11a43-e9ff-46e5-988d-b39905e10f61@gmail.com>
+Date: Fri, 5 Sep 2025 13:31:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|PH8PR12MB7254:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2635a7a-9bcd-4514-464b-08ddec77eb41
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGlRM1Z2d1JQUTVsS1daOExoSmVGQ2R2dHlVckJheWJObzdEdEJ1T29HMG0r?=
- =?utf-8?B?L1lrY2VpMk9ka0gyM3dlSVQ4WW9Oc2F5b2tsbnJyRHFRSm14MU5FREhGb2xq?=
- =?utf-8?B?OGhrdW5vM2xndWNKOExhWmNtbWZXeW5LR3ZVTDZ6OVN2eHRNWkF6cmZzL3hz?=
- =?utf-8?B?REVvZ3UxWGsrZEtCdzByc3RMdFVFRUN4V3N3V2o1NUxBUXYwVHZVZm1lWmZW?=
- =?utf-8?B?WVFyb0liNU11NU1NQWxiNURtMTNTK0s4elJZQkRTOWsrWGdWakVVZzlBVTYx?=
- =?utf-8?B?OXhoOHlkc0RyWUdTWTNIMW5uY1Nld3M3QmdqUDE0SGREWHdJOVBLUlJPMXlT?=
- =?utf-8?B?eTN0Ti85b2RZSFRFUTlqU2ZsWkZsMmNYY1BkYzVEaURNK2s0a09pcTZiNjNL?=
- =?utf-8?B?bUFOQWV4bkNQRDB0TGJiZmp1QTZTWGFzQVlKQkl1Yk80K3YzcGpvR2VMTzBL?=
- =?utf-8?B?VUVyd1EzYUNWU1lXbkxoVDdES1N1SDlhWnFqV002ZlRqT3VJcU5zeE5ESTNv?=
- =?utf-8?B?Z2RqU0ozR1hUdEZ0bjBBUVZlbmxtWmVHNXNxVmJ5akVJZ05ETTI4d1hXcGlx?=
- =?utf-8?B?dVhNUGlSVEN6WVErMkN6SEF1WVpibE9vWFV5L25Fb1ZMYmxZSmRFS0pWZms1?=
- =?utf-8?B?Ujg1cGUxZy90ODZKaXNKWHJGMzFKZjBoa1BndjVmYmxVbUFmZk5qUHdCWWFn?=
- =?utf-8?B?dlVDRXBxZ0NOd3d5RXQwbUNzQzVFNzk0Y2VNaHhBN01mUkd4bWtjTzBCRjlk?=
- =?utf-8?B?WnN3VWZVSjhDUTM3bW54cGQ0c3dOY1NkNVdwTHh2R2hlTDV6N2lmbjEyaWY3?=
- =?utf-8?B?YWpJa2JWWis2RXd6YkROcTlvSXgySjd3VzN1c1FwWldXeG5KNW1zQWZUV2tl?=
- =?utf-8?B?WnRIcDlCbU9OaXY5dk10akZZZm80bmZQdXByVzhKaENWZUsxZ3BuY0ZDVEo1?=
- =?utf-8?B?NEJWMDRINkY2Z0x1N1EwZGN4ODcvRnBGK1MrTU8vY1Z0Z3kzTUIrbHd6a2hR?=
- =?utf-8?B?R21EczFMTkhqOE5jS0RSRVdLZCtUYW1hcTlHYktGa2lEL2VTdUZWVEZwSTVM?=
- =?utf-8?B?ZjBuNkNubUJRS3Btc0ZMVTVnN2UyemROODdtZGVIR2IvOHJEMmlhbzFPZGJh?=
- =?utf-8?B?a1hwd1NadTh3OFdEZm9Rck42dUtBN2h0c2ZNdkpSYnd3R2NDWlc5UzJCQ0Na?=
- =?utf-8?B?ZzRmaHNmWTZFQzk2aS9pYTlsZGhaOVpZaHc2djlPL1lHdDdNYW5YSDBxZC8v?=
- =?utf-8?B?RTRTckJhQnJCMnlMOElDRFVOY2ZsNFdZUUh2d0dRT2Q4MEJRVUVaMnc2ZTcz?=
- =?utf-8?B?VkNWTmgzV2ZXSTcycVMxY1daazVka1BzK25Jb1RNUXFkREY5ZTBManBmZ054?=
- =?utf-8?B?b0kybjlsWUtUTCtTYUtmS0kvcGNWR0JBY0VTYXgxVkJRMXFEQkxvWGViZ0g2?=
- =?utf-8?B?NVVWT3MvenV5d3MraWNBb2VXMmpTUFpLbzBZdVNVYmJoaTZnd21JZ045SU44?=
- =?utf-8?B?ODNPVG43aU84K2FhUXBVVEMvYkdoRFZmUmJUNU0zc25OeE9LL09WSFZwb1pt?=
- =?utf-8?B?ZjlkaTZpYkpwZkFsS1hyZk1lQUcydUVJTTN2MVBUbUVpQ054dS9RZ0lTY1pk?=
- =?utf-8?B?SlRsQjVDWFN1NXIwT1l4emU3UzFWMjFjV05FYWY2U01LOUQ4MS9RWkFRc2hO?=
- =?utf-8?B?bmwrbzRVZDF1aEpuVFNVa2k4RkNDOGJxQTlnL2k1T3pMb3BNWi9XOGFTMmlw?=
- =?utf-8?B?aFFxWWQ4RkhpUDNRRHpaOXRLZyt5UU4rSnc5TXUrYVhLZ0kxclF5WjlibkZk?=
- =?utf-8?B?QzFKZitaN3ZrNUMwNlRvNlJOaGNTZTE3Q242Qm0rWll3V0J0K0VwdGs2LzVM?=
- =?utf-8?Q?U2C/a8lbmJh23?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UmQ5eFA5WVVOMTR5MDFTVWJRV0RuaDNoV21ST1hGbDBEQVpDaENaemFTd2pH?=
- =?utf-8?B?WWVGRG1NcXJwMVpCRVZQS3pBZHRIT0RIV1JJQVErcTB6VkNhTElFN1RONUdH?=
- =?utf-8?B?MUl6VjYra3FGNWUzcDYzSisyd2puaGJrcWFlT1hkbFpLL3dCNFJlZS9zcDBy?=
- =?utf-8?B?dXU5RDM3SEZ3TW5GRitrOEQwaDgyVzRiZmIzSHFHMUpLNnVkRVB1Nlp6TGJs?=
- =?utf-8?B?UGs1aUF2SlA1U3BWU3ExdTNPcTc3L0xGeXBjcGtGN2hQZ3VQS2diaVA1WTVT?=
- =?utf-8?B?VmFQeUR5NXNYTmJzMHFJajJqZ2YvL1V4dWEyZEZoMEQ3TmFzR2gvQjMvZkxU?=
- =?utf-8?B?aTg5bzVLcTdSNm5OdGJiQm8wVWUvVGo4K2xuT3lvVFhKaTArYzlNSDJRRisy?=
- =?utf-8?B?Z2dDNVNmTE9YQ3NaTnJHYUxYajUvQmVtL0NxOU5SNktsbzBJVnk5dmo2RFpw?=
- =?utf-8?B?NlFVY3ppVWtQVUNJVmtDVXJIdkRYY3Y5bUV5UEg2L1NHMSs3RkkweVJzbU1Z?=
- =?utf-8?B?MW1RV25vT2lWalpUT0h4Tm9LcWNTM1V1NnVTdzJUK3paaStqb0daazl4OUpk?=
- =?utf-8?B?NnF3SHF6ZWZwQVNMUlhmd0RrQkxFckdnYVNvdDc1cUluTjUzSkVRK3BmaFVL?=
- =?utf-8?B?MVVoOHFsQ2ZsQzFFZGdlOWlkWTFmNEVNd1JlN1I5T1JFMmRuVWZsUFJ5aUE0?=
- =?utf-8?B?dWNtVDRBWHVrVHFVNnlqd2lOcW45aTZCcExYSzhSbDZXc3ZxWWJ0L0t1TGFv?=
- =?utf-8?B?VmsyL0pQQVRhNDAwUGNGbzk1QjdOT25mWkpLc1RxbTJLMGpZNGNEeDZLSUNJ?=
- =?utf-8?B?cDI1OVpET2tETS9GTDV0eWNPM1Z4dG9namFmYVRrcm5sK096am9XOEM3L1lm?=
- =?utf-8?B?czlpazdGdG5rN1JwQTNDUlRrSlpvQ09QaVpldmNSZVVTUWF4c0czcm5MLzR1?=
- =?utf-8?B?a0NIdUZ6SmJCdnJWQmtsUlJsNDh0SHFIWHdqSnVIUGNOR3E0ekh5Mll0OFJk?=
- =?utf-8?B?QTVrOWJDK2djSW9BL3hIejNZTDg3aHl3U3pLRXlIZEh1TldYOU40eXN2d3Nm?=
- =?utf-8?B?Y3crSDlubFlrTzJWQTgya1A5cEpoQ3VTdks3WUlTQk4xc05BREpiV1Blb2Ey?=
- =?utf-8?B?cE5lUHNWZVNGdG9QUVlnc09KNTU2bVRnL2IzeVloYWlrL2R3dC9jYldCL0M0?=
- =?utf-8?B?NlpiY2Y5M1NUUnhHcm9sQ2dQaHprUXcwR3djTEI2MDdCdEpLMSsxWDZnTytF?=
- =?utf-8?B?dmFiRFcvV3ZrdHRROFB0YTRMNjVjekxpRjh2dDNtZ2wxNi84aUQ3OHBocXZK?=
- =?utf-8?B?amtWanczdUVZc1ZMcWxtSDZVekhQYXk2Y3BBUkVmem9VMGZJYmdvU09FVHRW?=
- =?utf-8?B?Lzl0dW8wZmVVNGpVS0Zpc0xEbnl1WVhQR1g3cFR5NGpmREZLNUpvOERiVzY1?=
- =?utf-8?B?UHpmbVZvR0VJV3RVaExBT0owQWsxSDhmbWpZVjlYbHRMeXc2WnBKOCtzM0Q5?=
- =?utf-8?B?MEhnYTlKb2hVS0p2T1lpK1ExTXhRMCswVzY1Ny81bXlTSW54YSttd2JjTEsz?=
- =?utf-8?B?bmZQWEUwTkVBL1UzT0EzTkJGYzVCd3BFYld5cUlrOXNyMTJJVjluVDRmQ2Y5?=
- =?utf-8?B?ZUZKZk9aWHE3b1RoMncvbVgwY1BZNFYzYUZTYkNNNGgyRUQrRVZkeVR2QkxX?=
- =?utf-8?B?bXlxSTVlU0dJWEV4ZGxQTmVNeEVyMnlyOUd5WC8xUVpQMm1CNm1hOHFMQ2dm?=
- =?utf-8?B?Vm5Vdm1idmxNQ0JCK0NQTXc5ZE1WeDlINTZPRVpaZkwwM1BDSVByV2hON0tu?=
- =?utf-8?B?L2VmbjQ1OVhTT2lTSkxOMGFzWUhyc2o0enlpMjZXOXZYOW1rcHl6UjlHRnFZ?=
- =?utf-8?B?Vm5UREVySHV1ZXB6VmY5RHVuZmhrd1lrbmhZMjIrV3R4bk5Ia2RLZEFIdGQx?=
- =?utf-8?B?Mk94YzFadVNtNWhRNzhXZGNNMXMyY3d3djhGQzcyeFFHWXpCMW8zVXpMWmt4?=
- =?utf-8?B?QUMvVE1WQ3ZRNGZjMGhKNFF5YUpDb1haSERMa1lYY3grZHpTMmRsZm93MXlz?=
- =?utf-8?B?dWZaak1ieUl0MlBsWGJVWUd4MzVRdW9uYmQ1c2lmTTdTSmVxM29weHM5cG9F?=
- =?utf-8?Q?DXhbCLt0KW7YGol/yPEEx+0U1?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2635a7a-9bcd-4514-464b-08ddec77eb41
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 12:29:55.1769
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NrGFPUJFM/8g13J80+OhBtMepnr29cr6buekESOBWMSFT0zBiS08RceSmxQhL/gH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7254
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Nico Pache <npache@redhat.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
+ <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
+ <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
+ <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
+ <eb02c281-6d41-44af-8eaf-8ffc29153a3a@linux.alibaba.com>
+ <286e2cb3-6beb-4d21-b28a-2f99bb2f759b@redhat.com>
+ <17075d6a-a209-4636-ae42-2f8944aea745@gmail.com>
+ <287f3b64-bc34-48d9-9778-c519260c3dba@redhat.com>
+ <ad6ed55e-2471-46be-b123-5272f3052e01@gmail.com>
+ <CAA1CXcCMPFqiiTi7hfVhhEvHs4Mddiktvpmb7dMe4coLDF0bgg@mail.gmail.com>
+ <61afc355-1877-4530-86b7-e0aa2b6fb827@lucifer.local>
+ <65ce71c1-72a5-415e-9059-027167abf129@redhat.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <65ce71c1-72a5-415e-9059-027167abf129@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-On 9/5/25 13:30, Jonathan Cameron wrote:
-> On Fri, 5 Sep 2025 10:41:44 +0200
-> Michal Simek <michal.simek@amd.com> wrote:
-> 
->> From: Salih Erim <salih.erim@amd.com>
+On 05/09/2025 12:55, David Hildenbrand wrote:
+> On 05.09.25 13:48, Lorenzo Stoakes wrote:
+>> On Wed, Sep 03, 2025 at 08:54:39PM -0600, Nico Pache wrote:
+>>> On Tue, Sep 2, 2025 at 2:23 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>> So I question the utility of max_ptes_none. If you can't tame page faults, then there is only
+>>>>>>> limited sense in taming khugepaged. I think there is vale in setting max_ptes_none=0 for some
+>>>>>>> corner cases, but I am yet to learn why max_ptes_none=123 would make any sense.
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>> For PMD mapped THPs with THP shrinker, this has changed. You can basically tame pagefaults, as when you encounter
+>>>>>> memory pressure, the shrinker kicks in if the value is less than HPAGE_PMD_NR -1 (i.e. 511 for x86), and
+>>>>>> will break down those hugepages and free up zero-filled memory.
+>>>>>
+>>>>> You are not really taming page faults, though, you are undoing what page faults might have messed up :)
+>>>>>
+>>>>> I have seen in our prod workloads where
+>>>>>> the memory usage and THP usage can spike (usually when the workload starts), but with memory pressure,
+>>>>>> the memory usage is lower compared to with max_ptes_none = 511, while still still keeping the benefits
+>>>>>> of THPs like lower TLB misses.
+>>>>>
+>>>>> Thanks for raising that: I think the current behavior is in place such that you don't bounce back-and-forth between khugepaged collapse and shrinker-split.
+>>>>>
+>>>>
+>>>> Yes, both collapse and shrinker split hinge on max_ptes_none to prevent one of these things thrashing the effect of the other.
+>>> I believe with mTHP support in khugepaged, the max_ptes_none value in
+>>> the shrinker must also leverage the 'order' scaling to properly
+>>> prevent thrashing.
 >>
->> Add devicetree documentation for Xilinx Sysmon IP which is used for
->> internal chip monitoring on Xilinx Versal SOCs.
+>> No please do not extend this 'scalling' stuff somewhere else, it's really horrid.
 >>
->> Co-developed-by: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>
->> Signed-off-by: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>
->> Co-developed-by: Anish Kadamathikuttiyil Karthikeyan Pillai <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>
->> Signed-off-by: Anish Kadamathikuttiyil Karthikeyan Pillai <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>
->> Signed-off-by: Salih Erim <salih.erim@amd.com>
->> Signed-off-by: Michal Simek <michal.simek@amd.com>
->> ---
+>> We have to find an alternative to that, it's extremely confusing in what is
+>> already extremely confusing THP code.
 >>
->>   .../bindings/iio/adc/xlnx,versal-sysmon.yaml  | 235 ++++++++++++++++++
->>   1 file changed, 235 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
+>> As I said before, if we can't have a boolean we need another interface, which
+>> makes most sense to be a ratio or in practice, a percentage sysctl.
 >>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml b/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
->> new file mode 100644
->> index 000000000000..a768395cade7
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
->> @@ -0,0 +1,235 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/xlnx,versal-sysmon.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Xilinx Versal Sysmon
->> +
->> +maintainers:
->> +  - Salih Erim <salih.erim@amd.com>
->> +
->> +description:
->> +  The Xilinx Sysmon provides on-chip monitoring and control for the supply
->> +  voltages and temperatures across the chip. Since there are only 160 supply
->> +  voltage registers and 184 measurement points, there is no constant mapping
->> +  of supply voltage registers and the measurement points. User has to select
->> +  the voltages to monitor in design tool. Depending on the selection, a voltage
->> +  supply gets mapped to one of the supply registers. So, this mapping information
->> +  is provided via description which contain the information of name of
->> +   the supply enabled and the supply register it maps to.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: xlnx,versal-sysmon
->> +
->> +  reg:
->> +    maxItems: 1
->> +    description: Sysmon Registers.
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +    description: Interrupt line for Sysmon.
->> +
->> +  '#address-cells':
->> +    const: 1
->> +
->> +  '#size-cells':
->> +    const: 0
->> +
->> +  '#io-channel-cells':
->> +    const: 0
->> +
->> +  xlnx,hbm:
->> +    type: boolean
->> +    description:
->> +      Exists if node refers to a HBM (High Bandwidth Memory) SLR (Super Logic Region).
->> +
->> +  xlnx,nodeid:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      PLM specified sysmon node id.
->> +
->> +  xlnx,numaiechannels:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 1
->> +    maximum: 64
->> +    description:
->> +      Total number of sysmon satellites close to AI Engine exposed as channels.
+>> Speaking with David off-list, maybe the answer - if we must have this - is to
+>> add a new percentage interface and have this in lock-step with the existing
+>> max_ptes_none interface. One updates the other, but internally we're just using
+>> the percentage value.
 > 
-> Feels like some use - would make this easier to parse.  xlnx,num-aie-channels.
-> Similar to the next one. How is this related to the number of child nodes?
-
-it is number of childs below. They can be calculated to get this number.
-
+> Yes, I'll try hacking something up and sending it as an RFC.
 > 
+>>
+>>> I've been testing a patch for this that I might include in the V11.
+>>>>
+>>>>> There are likely other ways to achieve that, when we have in mind that the thp shrinker will install zero pages and max_ptes_none includes
+>>>>> zero pages.
+>>>>>
+>>>>>>
+>>>>>> I do agree that the value of max_ptes_none is magical and different workloads can react very differently
+>>>>>> to it. The relationship is definitely not linear. i.e. if I use max_ptes_none = 256, it does not mean
+>>>>>> that the memory regression of using THP=always vs THP=madvise is halved.
+>>>>>
+>>>>> To which value would you set it? Just 510? 0?
 > 
->> +
->> +  xlnx,numchannels:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 1
->> +    maximum: 160
->> +    description:
->> +      Number of supply channels enabled in the design.
+> Sorry, I missed Usama's reply. Thanks Usama!
 > 
-> Given you have subnodes called supplyxxx why is a count
-> of those needed or is this not counting those?
-
-possible.
-
-
+>>>>>
+>>>>
+>>>> There are some very large workloads in the meta fleet that I experimented with and found that having
+>>>> a small value works out. I experimented with 0, 51 (10%) and 256 (50%). 51 was found to be an optimal
+>>>> comprimise in terms of application metrics improving, having an acceptable amount of memory regression and
+>>>> improved system level metrics (lower TLB misses, lower page faults). I am sure there was a better value out
+>>>> there for these workloads, but not possible to experiment with every value.
+>>
+>> (->Usama) It's a pity that such workloads exist. But then the percentage solution should work.
 > 
->> +
->> +patternProperties:
->> +  "^supply@([0-9]{1,2}|1[0-5][0-9])$":
->> +    type: object
->> +    description:
->> +      Represents the supplies configured in the design.
->> +
->> +    properties:
->> +      reg:
->> +        $ref: /schemas/types.yaml#/definitions/uint32
->> +        minimum: 0
->> +        maximum: 159
->> +        description:
->> +          The supply number associated with the voltage.
->> +
->> +      xlnx,name:
->> +        $ref: /schemas/types.yaml#/definitions/string
->> +        description:
->> +          Name of the supply enabled
+> Good. So if there is no strong case for > 255, that's already valuable for mTHP.
 > 
-> Would the generic property "label" be useable here?
 
-label should be fine.
-
-
-> 
->> +
->> +      xlnx,bipolar:
->> +        $ref: /schemas/types.yaml#/definitions/flag
->> +        description:
->> +          If the supply has a bipolar type and the output will be signed.
-> 
-> This is very generic.  We have it described for ADC channels already in
-> bindings/iio/adc/adc.yaml.  Why can't we use that here?
-
-no issue with it.
-And likely
-Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml
-should deprecated it and start to use new one.
-
-
-
-> That binding does rely on matching against 'channel' for node names though.
-> Where a 'type of channel' has been relevant IIRC we've always added
-> a separate property rather than using the child node name.
-
-Is this related to supply/temp channel name?
-
-I think one issue with the binding is that current schema allows to define
-supply@1  and also temp@1
-but both of them have reg = <1> which is not allowed (duplicate unit-address).
-
-Salih: What does this reg value means? Is it physical address where that sensor 
-is placed?
-
-> 
->> +
->> +    required:
->> +      - reg
->> +      - xlnx,name
->> +
->> +    additionalProperties: false
->> +
->> +  "^temp@([1-9]|[1-5][0-9]|6[0-4])$":
->> +    type: object
->> +    description:
->> +      Represents the sysmon temperature satellites.
->> +
->> +    properties:
->> +      reg:
->> +        minimum: 1
->> +        maximum: 64
->> +        description:
->> +          The sysmon temperature satellite number.
->> +
->> +      xlnx,aie-temp:
->> +        $ref: /schemas/types.yaml#/definitions/flag
->> +        description:
->> +          If present it indicates the temperature satellite is in
->> +          close proximity with AI Engine
-> 
-> This one seems unusual.  I guess it makes a configuration difference
-> of some type.  I'll look at the code to see if that answers the question.
-
-it is supposed to be identify location of this sensor.
-
-> 
->> +
->> +      xlnx,name:
->> +        $ref: /schemas/types.yaml#/definitions/string
->> +        description:
->> +          Name of temperature satellite exposed
-> 
-> As above. label tends to get used for things like this.
-
-no issue with this.
->> +
->> +    required:
->> +      - reg
->> +      - xlnx,name
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - xlnx,numchannels
->> +
->> +additionalProperties: false
-> 
-Thanks,
-Michal
+tbh the default value of 511 is horrible. I have thought about sending a patch to change it to 0 as default
+in upstream for sometime, but it might mean that people who upgrade their kernel might suddenly see
+their memory not getting hugified and it could be confusing for them?
 
