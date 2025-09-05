@@ -1,646 +1,281 @@
-Return-Path: <linux-kernel+bounces-801888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34E9B44B35
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:20:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F2CB44B38
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266C2189A134
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19033A7275
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 01:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804791EFF9B;
-	Fri,  5 Sep 2025 01:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2331F0E50;
+	Fri,  5 Sep 2025 01:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aI1gbfVm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SbBkJePj"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011070.outbound.protection.outlook.com [40.107.130.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D863E1D6187
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 01:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757035196; cv=none; b=CusKCqYyQF4LFJJZ8ndu0/iuWI860jQrqithVu/fbz6jGBeXHwqL9ORZ5JOQpSz96B99VaYKf8CAaD8jQGUnrpTpKgfjO7MUynzwF+hW3RA2Rq6kUAvweAG2zOdYAB8qOjo9rRHJdyN3dfkiVUHkgX5GBf7QwqK5AZz9Y/mCKlU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757035196; c=relaxed/simple;
-	bh=SPMEcY2kDMDcOkU3YM32ifT6JYq/BizXHmHM52QkltI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sGDRSYKLRfcoJmTz69ygpSwhf6b1xnGkgWdMCLUwD1FtcGMaYeVfC38CMa7WdkXJSaUa2QqZ+CgTFIn40l3TGDdVp7QJgiDIphG8hwFQSijmm4xOuWm+rYo+spXqDWzWsF+CQ2zCRNO8qQ5JbUolNByIykLWOTtXH2lznXNY9Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aI1gbfVm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IDOa3002543
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 01:19:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VNEYBWEWlXLwjtgy49W5gP23TQRvq9e3lj0aC3IZqHQ=; b=aI1gbfVmoKc/Gylu
-	RIrUED54WIOkqqsp3wRXgPTSh5bS00HFjd5gr6qDogrJIUb8pI28vJYcnDdFgPEY
-	NbJP3pGgtIQmzTS9NsvvWr3kMrEH3Zk4peFufXv26/hFULXBSUUqYZBBQUm0obP3
-	WvLGyQ5d1O5SIKnOOVbc8sj+eDxyXY4UhzPIbtS3mHwqARKyZvZVB7SxJXbyUajP
-	h/D9WLzVlIDRHe61Ac6eFCjRLbDpHntPv6qlYWRrdyedvmcWvu3IZip048bNO0rG
-	ABH42ZYaPkGtF2EMhEgvZZqAmmPiKl3FyhcyhSo1qexS4kuZO9F+R4a5zQdyCVWv
-	M7Jqfg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush397wc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:19:52 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32b58dd475eso1734912a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 18:19:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757035191; x=1757639991;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VNEYBWEWlXLwjtgy49W5gP23TQRvq9e3lj0aC3IZqHQ=;
-        b=Ig53fi4NE+ihKxW80P8pG4bvR5VHqdUCpWuVoViqXKfdMrCe3KYON0Gz9x/d1l8YI+
-         kkrRag1/4fMrmx8wCiNIIbGgTTGkNHCnsD01yymAt/DTX4D3B0fhiGh/U510Ep8UT+n7
-         r6OVnVvu7a58U6k0vj3JndOj3hzk+TtVA7AAysXHR6jmy1mbg9xifYNMkXUTYloMZfaB
-         qq5tqHNHBdVFPl9Ht37pL4c0ziUYCZ5thKry0GHvjQDO5BzXno7dPi2JNYZEVr6sKsrz
-         NiS8y8HAVleF3bBeEqvIByK5OsfTMpfV+r79dqoKEH1vKTjwdHGqmd3geZNCvFXrV+ux
-         kgPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRBaYrKJiCmx5GbqZrSgfzJ3q0Hf4CEjdKkDSyBpuNrC6QOU34jvI03uX9RZVQQCab/Z0Q5eH1ap8KeB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCLC5H0NS/r8pncLDtAe7/Q/bLXjstOb8QGgFFtg6YGWOlFdvL
-	O0FuQn6fppgOUaz2DYGk3P1C8nL4zX/0jj68PPY/SNjPkm0i7+vnWK3DKJUW9qSNda8+/Tg+4Ay
-	INdO4OMTK5elKqOCNpCt+V8BlpppXlmtvscXIW1br3399h4CUvrGtjRyiF1oszf/Ww78=
-X-Gm-Gg: ASbGncs67GvJ34jh1yrteAv76iLpCQ8CfEldFXDeAZDJW9K8lf/BC5grnUbqUBA/Dju
-	6xv9vD8xt90+mCg7znU/gNiQK+IMyT5znYo+zqMMJa6MrblrjJ6jfGEDESQBN8Mkapl44v7dCWl
-	9afJlxieWMzYKNj0A2O9tuYqJn0itt+8nWFCAqZWZQn+awZG7CcfB+WvdNWX2CS3TCfCKdxEJeU
-	nr/Es/mf6cSuWDxCdHzv3kxm6n+VKEKid8tyxPZVGYgzE7B0JugKmWwIF2AGnaTahUfyj8y00e8
-	FRMC8MsjntBzaqXJ+3ZyrFANw9fZTw/24NQO9rQk0cnNtYesq5tmj+prkmPDh2VfTmuYG9pS/Ox
-	D0/JMUddDpy9HDO5gzlDDgOtSK01aVypD
-X-Received: by 2002:a17:90b:2782:b0:32b:bac7:5a41 with SMTP id 98e67ed59e1d1-32bbac75a84mr2838356a91.37.1757035191077;
-        Thu, 04 Sep 2025 18:19:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHXd5Cjdl3Ro9wdntvWhxID9yfxphXvSndLq4UDHA71bD9sJubBRxncTTikTpAe34VSTnPMUQ==
-X-Received: by 2002:a17:90b:2782:b0:32b:bac7:5a41 with SMTP id 98e67ed59e1d1-32bbac75a84mr2838297a91.37.1757035190465;
-        Thu, 04 Sep 2025 18:19:50 -0700 (PDT)
-Received: from [10.133.33.84] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd6232sm26971003a91.16.2025.09.04.18.19.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Sep 2025 18:19:49 -0700 (PDT)
-Message-ID: <76d12f47-bdb0-404a-9371-788e116c3474@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 09:19:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A101E51E1;
+	Fri,  5 Sep 2025 01:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757035373; cv=fail; b=gGE4KyDcuXmhVV47ooV9ILAhZ4kxeIT8ml5ukvFjLY28hi6gSIDjF7bAohNXeyNcqKiki/XD+6/l106gOUyhxarvoKVf0PM8aTWB+U3m2T2iW75lOOOfJq+jeUnDxedqA8vdgTA/ujeiAhzuN9io08qAyJdBPyZiyBhwoPzGTfg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757035373; c=relaxed/simple;
+	bh=xNEWTTMnyT98hpnD+/dYAVcActZ9wbs0AH2+foOX8EQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qSacCg6iLfPPwsPE4dZODUxrMZXpEwftin9G6RFK/Sygw9briDFC16F5Iqyhyvt7MYaxeIrMvYJKRm5urVGiLnnPmaNgC9W/ecKJAa68dEBoooXQ36+awfdWRiBHZrpQudkFJLVd/StHTY9AYnbetdkQUHuwHtfXwKHk7KBFq+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SbBkJePj; arc=fail smtp.client-ip=40.107.130.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zyr9JPmNMm9T4j6RqDdNoA9uq8iLKGC5v7cuPWEgxvMAJkVZ8z9SbGGpyhE11izpKIQEQBY3kQe/GQoAIZIR08xxAXYHC4fcEmZ1/8osxTLQ1MX0z791/bT+RFnfNq8IfZQiBZXygdBP/lZVd0Owst6oWVmi+lDvJj73Y11TV62p9sOessKbiKDPzojcCWC8IzsVKGBW3MzQQQjOQYtINf6L0JqIt1QcOfbFo/je8E2c3rTmCar0XbLIa07ieI10Hlxa0NiHSjCF7yo2Vj4JjkR8z+CK76RC9fLfiVJSAutKtgUFq5LFc/qItVJbUVH9h0u1yKRQ6zcLgKq1hfb9Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xNEWTTMnyT98hpnD+/dYAVcActZ9wbs0AH2+foOX8EQ=;
+ b=ON7eHH/K8R7egaDh30cPvFQalDpcV0na7B3Z1uK+pMZmAb/AffOX/r79Pb/fy/kXn3dEqkKuO/Dwogu12aFIrUNgEh3kWBuxuMa/3GVd3sOWS0u6QMcA5SHacusc/CYf7keTI3bQGJuiSMj15kBR/C1cWf111/LmZIYmC6ZQwWY3g23YcvFSka4P7GykADuawNQwhzOrx0Fv2UJIzAsuXMRfevYRE5PReXgrtKj3+LTel+Cz+gXB192lmiMxjY0eOAv/897L1peg6pdW1QtabLkejSfeuLMrfnUe1XOfd3b6QesoCQRexMdZjLVZvRmvdReMruYug36uW2T/9ZMLBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xNEWTTMnyT98hpnD+/dYAVcActZ9wbs0AH2+foOX8EQ=;
+ b=SbBkJePjQXxG5saIGtoBL6Bgf+wWu+vCT5bCgY8JQoX075lxOwEsX96aBTKRfm+tQg2KUu3s9+FMrzc8fG3P7R0qpI5sJ/k/Z+6XrMGoO8zn56W3kUFcx70xbJCxibe1IOQy+FTn1rda0w8HPBsCjTXAITfvJQTHkx4cYzQ5RlLhMi43Hnnxyzc8wN1V4lwgrUQ5VTpiWTYclbCSc6IoDkSgZLUGqmSDEz5Kvxn2qVbyksQkrbtniDncSoX0mzAVPK2b082Vs557pwiG9VHf/RX3/wdUPTwlyypDfKkDCAFOssr1Zus8IUQGU/w2XrYOsW8x4c2l9NRn3+QVShQaqA==
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
+ by DB8PR04MB7161.eurprd04.prod.outlook.com (2603:10a6:10:124::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
+ 2025 01:22:47 +0000
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87%4]) with mapi id 15.20.9094.018; Fri, 5 Sep 2025
+ 01:22:47 +0000
+From: Ming Qian <ming.qian@nxp.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>, Marek Vasut
+	<marek.vasut@mailbox.org>, Nas Chung <nas.chung@chipsnmedia.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "hverkuil@xs4all.nl"
+	<hverkuil@xs4all.nl>, "sebastian.fricke@collabora.com"
+	<sebastian.fricke@collabora.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "jackson.lee@chipsnmedia.com"
+	<jackson.lee@chipsnmedia.com>, "lafley.kim@chipsnmedia.com"
+	<lafley.kim@chipsnmedia.com>
+Subject: RE: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
+Thread-Topic: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec
+ driver
+Thread-Index: AQHcHRxcxZ7rHCUBjkWTGgLDQqLCmLSDBGuAgAAjrICAAAYKAIAAnjlg
+Date: Fri, 5 Sep 2025 01:22:47 +0000
+Message-ID:
+ <PAXPR04MB825499BA447B4000AB8329A6E703A@PAXPR04MB8254.eurprd04.prod.outlook.com>
+References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
+	 <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
+	 <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
+	 <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
+ <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
+In-Reply-To: <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8254:EE_|DB8PR04MB7161:EE_
+x-ms-office365-filtering-correlation-id: d19b94e5-ea29-43ce-8657-08ddec1ab935
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|19092799006|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?a1BOMHgyL0lhWFN6ZVhVYnU5by9TMEkrVVJRb1grLzk5WWEwNVdRVEl4VEVL?=
+ =?utf-8?B?b0YxTVBlZndZck84U2FkNU94UVRpVVFuUW8rRzVuKzZRa2M1b29VUldyLzF2?=
+ =?utf-8?B?Ym9GUjhtRHgybitFUXJkUzlOSmVKeVpBWGVIREtTR29NU3J3WG5HVE4rNVZs?=
+ =?utf-8?B?MVFvU1pxSEZyS0VjdjMxdXgwSCtST1pmeG5yZ2hvdkxjb1ZzemtoL0VueXVz?=
+ =?utf-8?B?QjgxVlRHSEdiVEo4SUljK3ZWRFpDNjdpWGtONkV4L2Jod0F6QytkRDdpeEtt?=
+ =?utf-8?B?aDFkUWlxTERwZFBTTXUvdVFnZlU0TnMwWWNHQ2NYLzFSWWxXODhtdWlIL2pK?=
+ =?utf-8?B?OVN2akdPUktNVlN2MzZXb3h2Y3ZjMkFUcnV4UnVwVTlOYjVEMjdiR0liTFlD?=
+ =?utf-8?B?N3kxN2VvVldXTU10R2N5QXk4RG4wbHN5YktMWjhNNGhtSlRjcnQ5cE1UTlYw?=
+ =?utf-8?B?NDdzUUh6SFRnajg2UjhIN2N6bkpMcG9QS0tKVUdCT21jSnVrQ2xuWGh6L2xo?=
+ =?utf-8?B?czFHMC91RjQ0S3ZEUmVRbEVjL0d4cmNQRXQrVHcxTFNZN281YmFxeTFHK1Bt?=
+ =?utf-8?B?Wm5HeXVEV2RlbHI1SXJRRm94M3d6QnVVV3V6S2ZDa201WjIxRnVFcUxySDFO?=
+ =?utf-8?B?YTNqZ1pLSVc5RVNaem1jZlVFZW1NUGU4VWVhbkQranFJUHFUeUltZEw2b1JO?=
+ =?utf-8?B?bUptc2NtMGt1U2FaT20rTUgwK2FVM0txcDZnU01zNWg2Mm8wTVJBQmVXUHM4?=
+ =?utf-8?B?NUZKbTNmd2FETnA1WVJRTmlTUTVoeEJuKzdVSFFVVlNRbHdPdldTU3liaEo2?=
+ =?utf-8?B?Vk9CZEt2TnpOMTFMV2Njb1FXUHovSVZkR2hUNDhCbjg0OHFRR0gvQWJab1E3?=
+ =?utf-8?B?b0VqaWNFSVhaL1k1bXBqMnkwWjRaQy9mOU9xbHJNYVVQNk01ZVJMclVaMndS?=
+ =?utf-8?B?NzFVcFIrU043VXk3aDVBU205VUJja1FtZU9ISnZ0Qm9XUnNGck9weDlId1k5?=
+ =?utf-8?B?K2U4eTl5bkpaVzhmSTBuVXQ0bU1kcFJzbEdwcDZjUTNrS0tmeXpDcWpuTHVr?=
+ =?utf-8?B?SkJLaTFwd3N6NDdzWTBOSzBOc09pa2VabTB4OVpMV041UXR6bTRHZGZDT3hJ?=
+ =?utf-8?B?bEFBTFc1cjFIcW8yenJiRTdIRXFXTWZDMHdML2NNT09zTWJLbmttM24zOWpL?=
+ =?utf-8?B?cElRZjJQL09OcG8xZUJHcHp4bjVOWjhSOU1RQUR2M3diWjFYcEFNNHFZRU10?=
+ =?utf-8?B?UVhXb3dweG1rMUtscE50QWN5MmRZcm1iUmFhSGVkMklTVEtVeVh2VnpSVTRN?=
+ =?utf-8?B?ZG1Ia0dBejZhdlVuZC9YeTFPaVUxeFYrb2ZmQ29LUXZmL0RpRUlNb1hBNTBE?=
+ =?utf-8?B?OFZML1FsNDdpeXpSbHF0WWJOcFFOUmFyY2NzYTRKcVV0a3d6QlBEMHhxdjdD?=
+ =?utf-8?B?enVzZzFrcXdvUnE3cmFkRVpjR0p6c1RhUWcvdnJLRWVJM05lT2pZY3pSNVpi?=
+ =?utf-8?B?Zzdkb1hQOGxvdG51RDQ0WlBYZ3ovbEFESzIzaXNSb2d2TDBYb0did1h5azJw?=
+ =?utf-8?B?dCs4TXFySXl4TzJlZ3g2UnUwMy80VGMxbkxYUUxwb3hoU0Q2MXBxK08vMTdE?=
+ =?utf-8?B?UlIyaTRERVJvK2M3WGxDZDJKODR3K1cwTW9qaSt1SDgvQlNJZzVML1U0dlBz?=
+ =?utf-8?B?SnNvTnZ5ZzRLeW9RcVd1QlZnbnduejJiVytBNzREVXhoL3FaUUJMeG1YOFRN?=
+ =?utf-8?B?VDRwbVFOUHl4SGt5OFRZZHN2RDRsOXBzL0tpektaVWVqZWkzVkZlTkZwYzdN?=
+ =?utf-8?B?QkRZUW44U1lYK3lISFM5bTZTb291Q2hXbm8walVBcmJ5aHZDd0lkbFRkeWo5?=
+ =?utf-8?B?U2lHTVJZdHRtd21OQjhRYmVTTHQyZVFKSHBrQnQ4VkdyR2F4WDQzYTIzNFB1?=
+ =?utf-8?B?TzlvaldNME5mZkFVRkpKbVo5Z0ZFUFdDdXNwNUViNmpnbnh5V0FDT1NpbDVj?=
+ =?utf-8?B?TnFybzU3MjlBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(19092799006)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dEVFQ2w0cTUwT1pzSVBIMFdndTVZK3NldDl1NWtKaHM0RW9GendMSkk4V2Jq?=
+ =?utf-8?B?Z3ZmT0ZING1kK2pmaWlmOXQzYlZ6QUpacTIzdXFpckZlRWU2aDlxYWdjSEw3?=
+ =?utf-8?B?b0hkZ1V0Zkg1UXdaYzExUkZGanNzMUN4ZDZYOTREbWhqTnkvZ0ROZXVCdkdC?=
+ =?utf-8?B?ZDQ4dnp4NXpBaE56TXU2Mk9vdWdJbEd0UjEzSlVESlFuMVRIaExRby9nVzEw?=
+ =?utf-8?B?QnhjM2s4OHJURUZyS2R2SldOSmpTWDlaTW5DNHVpM1Vsd0d5NDkxVVNsWGFE?=
+ =?utf-8?B?elRXbWVUUVptQmtnUGNoajVPaTBTdWNucmlsTzN4ZEtLZm00QmdXTXpIVkR4?=
+ =?utf-8?B?NWo1RGZ1eis2c2FDc0k0cENhaW9RL1JFWlcxOUdsTVpDejhUTE96NStZRy9i?=
+ =?utf-8?B?c2t6L1pkUklGZFJqRGlBcWh1cTBKdTROQktVZUcyZ2RLK1lEREVURHJaVUI3?=
+ =?utf-8?B?Q3hZTTVZQVhIN3lzaW1jd2NLNVJ4eHdYRXd6V0dGN2JJaUxkZ0NSTWtLQVBa?=
+ =?utf-8?B?cmJndTk5bkxORkVzQWcra1ZyL1lYd29Nckwrd3NTV3h6V1NhLzhzWUNsOXZS?=
+ =?utf-8?B?N1NaQ2NTT0lBbmNlOGZ1a0tvWHozM0hFdXpqRWFMaS9zaUJwRlB4WU1DOVRC?=
+ =?utf-8?B?QjRUUitTWlF2NGtBSzhIeHRJcHZKcFRvRzVIWFV5dEd5V0UycGY1bjJCcXQv?=
+ =?utf-8?B?THVYLzh6N3kyTVVzamEyMjhDNHNZM3M0aHlTdy9SclovUzZhYVNsQ0FvSFpW?=
+ =?utf-8?B?UlBRdGM2NmdFWXN6QnVDd0ZhZmxmalA4M24rVnc0QUVUTXQrN2JnRnZQaFdR?=
+ =?utf-8?B?Ym1HUlVCRmxYY1cvYUZRQXFtVU5MemlWVm5KZTRRSUh6R2FmMi9lNUIzdTVQ?=
+ =?utf-8?B?SjRwdWFkVXV1cHdpZHVnTkNQRklDdEx4azJxQlI1U3NHdU5jejFLYTI3cnRD?=
+ =?utf-8?B?S3ZGaUhmUlF0Sk1IOEorcldFOVpiWXJXemcxVTBPdUt3UjdlU2ZTcjFpMWdR?=
+ =?utf-8?B?OTB1VGRkZloyZWk3WVQ0RVN6T3FTdTJpTU5FVVhmVFp2L1J3YmJEaDNTVkN1?=
+ =?utf-8?B?Q0lNSlE3cExVUFk1Q0VkdDZmeEpNWHR5Mk9BZzZjaklPRml6akxCWEhwOE1O?=
+ =?utf-8?B?Tk85Ky9jOXpBSno1bXZFTUxCUW5yZFkzbitIUFJkNmRtRzhTSFFDRjFmMnFH?=
+ =?utf-8?B?djBwcTdsQ09RT2lIM0VsQmNWdkJWL0dyRE53YU5aVVhXS3dTZVNWSnlnQ28w?=
+ =?utf-8?B?M0VsK3diWFJKSzliQnZOcEdEVUdFb1VTY3hoYi81aG5jZlQ0U3BYb25TTWww?=
+ =?utf-8?B?RURYcnBpTGkvcCtKd3lwanZGTTJRcU4ydXRHc3JYSTZPZnhERGJIekJqRmRW?=
+ =?utf-8?B?MmF6bjBjbEp5ZEU0V3NuL0RZZ29Jd0hjNFNmQ0pjR1lNWnVpZ0VPdkdDaEUz?=
+ =?utf-8?B?Mm4wS0dLUnNzNFR2ZkExUk41ajFYbEdqTS9uNGpSU0JCczd2SktoUkVFcko3?=
+ =?utf-8?B?QjJRcXBEU1Q5ZmJRNXlMZ0xhdXRTZEpjYzFsemVteVpKYXkzdmhhRUxXQk91?=
+ =?utf-8?B?TEpPUUxWTnJRSG9rUVRzTTFkeFZ4d3BwRnl1N0ZoR3luMHBVcklUNjJ0WE9O?=
+ =?utf-8?B?TytYRk14QXE2TU9Tc2NvV2F1Q1JMR2lvd3lqWmFDRjV5YkRjTE9oQjBiTDZN?=
+ =?utf-8?B?cG9nRlVZU294WU85cVEwS2MxUDJYSm0rTTEwdXB5WkJBZDdjVWhSZ1U1MDV0?=
+ =?utf-8?B?TC95amh6YVJBN1lPMWd5NHU4dkU3VGprb2xWMi9yT0VRdkVYK2QvUk1ELzF5?=
+ =?utf-8?B?TGJ5c0pRVlkzM054WUhwNTE3NXlYbmdZYmdNenFlT1VJblNCZmhYOGMvTVI4?=
+ =?utf-8?B?Ymx4ODNhRlpFUURZSjJWa2hySGhmYS83THM2MHYzZzdsUHgyUThaeG90YlVo?=
+ =?utf-8?B?S0NtSkRicHZYTk5hMWtWbkRCMkpqZDQ1QTl6ZHJPMWJFQUhRc245RFpaOHU2?=
+ =?utf-8?B?ajB3c0FVcUJ1dVpVZjVnNVNVKzFnckVvUVNpb2doamxQc293UVIxeWoxNzVx?=
+ =?utf-8?B?VlV2bGZEbWtnYm4wUFMvV0RFRkR4OTlQR3ozeDVaMUN0OSt4eTVrbXRQNmhL?=
+ =?utf-8?Q?lHtM=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] power: supply: qcom_battmgr: Add charge control
- support
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250826-qcom_battmgr_update-v3-0-74ea410ef146@oss.qualcomm.com>
- <20250826-qcom_battmgr_update-v3-7-74ea410ef146@oss.qualcomm.com>
- <f6372ebb-c237-4409-b3a9-8f458be85034@linaro.org>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <f6372ebb-c237-4409-b3a9-8f458be85034@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX9DnHND7HO1Vk
- ii6+DVKoktcUmhvRmBK1H1C0HXefKo/VCCw3Mx/x6g1XqPbGS6QK9BXyNOMCbdQ7fDV5B0gJmxz
- 5KtQS0rm6Igj+laJanQYbUzEvPo4kQU14v94iClFTqeLKKrrS+bPtGoVh/uez/S6NlPFgDOAHmU
- sKb+jMNfx5V2RqyP7pZxQrWjGzdRvhgJ1eHTO9fQHHi9yrLJOSHidlJ6PgCBy2ONBU84J4GO2ea
- UMa75Xk8m2ZGbBY+rFlE63VCReur54PpTXxQZ8ImGDvQhOoeVdndZd1gIQRRTRF6nTT05Xof/8w
- o7pBLQi0wo5cT/ai6miMYIjLUrLQwhkiHWSOsH+vcwSYHCGhIej05ZaoXp9Ur1S5nKT2FAttlla
- isbKNdrs
-X-Proofpoint-ORIG-GUID: mxIFzwdyy_AtnzCjA_HmG5OYe2ItewBa
-X-Proofpoint-GUID: mxIFzwdyy_AtnzCjA_HmG5OYe2ItewBa
-X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68ba3ab8 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=enrrldOF_p-Js0IFzaQA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-04_08,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300032
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d19b94e5-ea29-43ce-8657-08ddec1ab935
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2025 01:22:47.7041
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ITu0aqyRFeDvtyAQUp3NioX8fSwZHSoeiCSFC2puV7HnINCYdT0/dASodgilBDneTyTASDq5Y6U/WxzLy3keog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7161
 
-
-On 9/3/2025 4:29 PM, Neil Armstrong wrote:
-> On 26/08/2025 09:18, Fenglin Wu via B4 Relay wrote:
->> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>
->> Add charge control support for SM8550 and X1E80100. It's supported
->> with below two power supply properties:
->>
->> charge_control_end_threshold: The battery SoC (State of Charge)
->> threshold at which the charging should be terminated.
->>
->> charge_control_start_threshold: The battery SoC threshold at
->> which the charging should be resumed.
->>
->> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->> ---
->>   drivers/power/supply/qcom_battmgr.c | 290 
->> +++++++++++++++++++++++++++++++++++-
->>   1 file changed, 283 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/power/supply/qcom_battmgr.c 
->> b/drivers/power/supply/qcom_battmgr.c
->> index 
->> 174d3f83ac2b070bb90c21a498686e91cc629ebe..23c68eb942f1b213f634e31a45420b3e113e2764 
->> 100644
->> --- a/drivers/power/supply/qcom_battmgr.c
->> +++ b/drivers/power/supply/qcom_battmgr.c
->> @@ -7,6 +7,7 @@
->>   #include <linux/auxiliary_bus.h>
->>   #include <linux/module.h>
->>   #include <linux/mutex.h>
->> +#include <linux/nvmem-consumer.h>
->>   #include <linux/of_device.h>
->>   #include <linux/power_supply.h>
->>   #include <linux/property.h>
->> @@ -68,6 +69,9 @@ enum qcom_battmgr_variant {
->>   #define BATT_RESISTANCE            21
->>   #define BATT_POWER_NOW            22
->>   #define BATT_POWER_AVG            23
->> +#define BATT_CHG_CTRL_EN        24
->> +#define BATT_CHG_CTRL_START_THR        25
->> +#define BATT_CHG_CTRL_END_THR        26
->>     #define BATTMGR_USB_PROPERTY_GET    0x32
->>   #define BATTMGR_USB_PROPERTY_SET    0x33
->> @@ -92,6 +96,13 @@ enum qcom_battmgr_variant {
->>   #define WLS_TYPE            5
->>   #define WLS_BOOST_EN            6
->>   +#define BATTMGR_CHG_CTRL_LIMIT_EN    0x48
->> +#define CHARGE_CTRL_START_THR_MIN    50
->> +#define CHARGE_CTRL_START_THR_MAX    95
->> +#define CHARGE_CTRL_END_THR_MIN        55
->> +#define CHARGE_CTRL_END_THR_MAX        100
->> +#define CHARGE_CTRL_DELTA_SOC        5
->> +
->>   struct qcom_battmgr_enable_request {
->>       struct pmic_glink_hdr hdr;
->>       __le32 battery_id;
->> @@ -126,6 +137,13 @@ struct qcom_battmgr_discharge_time_request {
->>       __le32 reserved;
->>   };
->>   +struct qcom_battmgr_charge_ctrl_request {
->> +    struct pmic_glink_hdr hdr;
->> +    __le32 enable;
->> +    __le32 target_soc;
->> +    __le32 delta_soc;
->> +};
->> +
->>   struct qcom_battmgr_message {
->>       struct pmic_glink_hdr hdr;
->>       union {
->> @@ -238,6 +256,8 @@ struct qcom_battmgr_info {
->>       unsigned int capacity_warning;
->>       unsigned int cycle_count;
->>       unsigned int charge_count;
->> +    unsigned int charge_ctrl_start;
->> +    unsigned int charge_ctrl_end;
->>       char model_number[BATTMGR_STRING_LEN];
->>       char serial_number[BATTMGR_STRING_LEN];
->>       char oem_info[BATTMGR_STRING_LEN];
->> @@ -426,6 +446,8 @@ static const u8 sm8350_bat_prop_map[] = {
->>       [POWER_SUPPLY_PROP_INTERNAL_RESISTANCE] = BATT_RESISTANCE,
->>       [POWER_SUPPLY_PROP_STATE_OF_HEALTH] = BATT_SOH,
->>       [POWER_SUPPLY_PROP_POWER_NOW] = BATT_POWER_NOW,
->> +    [POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD] = 
->> BATT_CHG_CTRL_START_THR,
->> +    [POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD] = 
->> BATT_CHG_CTRL_END_THR,
->>   };
->>     static int qcom_battmgr_bat_sm8350_update(struct qcom_battmgr 
->> *battmgr,
->> @@ -496,7 +518,8 @@ static int qcom_battmgr_bat_get_property(struct 
->> power_supply *psy,
->>       if (!battmgr->service_up)
->>           return -EAGAIN;
->>   -    if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
->> +    if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->> +        battmgr->variant == QCOM_BATTMGR_X1E80100)
->>           ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->>       else
->>           ret = qcom_battmgr_bat_sm8350_update(battmgr, psp);
->> @@ -601,6 +624,12 @@ static int qcom_battmgr_bat_get_property(struct 
->> power_supply *psy,
->>       case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
->>           val->intval = battmgr->status.charge_time;
->>           break;
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
->> +        val->intval = battmgr->info.charge_ctrl_start;
->> +        break;
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
->> +        val->intval = battmgr->info.charge_ctrl_end;
->> +        break;
->>       case POWER_SUPPLY_PROP_MANUFACTURE_YEAR:
->>           val->intval = battmgr->info.year;
->>           break;
->> @@ -626,6 +655,149 @@ static int qcom_battmgr_bat_get_property(struct 
->> power_supply *psy,
->>       return 0;
->>   }
->>   +static int qcom_battmgr_set_charge_control(struct qcom_battmgr 
->> *battmgr,
->> +                       u32 target_soc, u32 delta_soc)
->> +{
->> +    struct qcom_battmgr_charge_ctrl_request request = {
->> +        .hdr.owner = cpu_to_le32(PMIC_GLINK_OWNER_BATTMGR),
->> +        .hdr.type = cpu_to_le32(PMIC_GLINK_REQ_RESP),
->> +        .hdr.opcode = cpu_to_le32(BATTMGR_CHG_CTRL_LIMIT_EN),
->> +        .enable = cpu_to_le32(1),
->> +        .target_soc = cpu_to_le32(target_soc),
->> +        .delta_soc = cpu_to_le32(delta_soc),
->> +    };
->> +
->> +    return qcom_battmgr_request(battmgr, &request, sizeof(request));
->> +}
->> +
->> +static int qcom_battmgr_set_charge_start_threshold(struct 
->> qcom_battmgr *battmgr, int start_soc)
->> +{
->> +    u32 target_soc, delta_soc;
->> +    int ret;
->> +
->> +    if (start_soc < CHARGE_CTRL_START_THR_MIN ||
->> +        start_soc > CHARGE_CTRL_START_THR_MAX) {
->> +        dev_err(battmgr->dev, "charge control start threshold exceed 
->> range: [%u - %u]\n",
->> +            CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
->> +        return -EINVAL;
->> +    }
->> +
->> +    /*
->> +     * If the new start threshold is larger than the old end threshold,
->> +     * move the end threshold one step (DELTA_SOC) after the new start
->> +     * threshold.
->> +     */
->> +    if (start_soc > battmgr->info.charge_ctrl_end) {
->> +        target_soc = start_soc + CHARGE_CTRL_DELTA_SOC;
->> +        target_soc = min_t(u32, target_soc, CHARGE_CTRL_END_THR_MAX);
->> +        delta_soc = target_soc - start_soc;
->> +        delta_soc = min_t(u32, delta_soc, CHARGE_CTRL_DELTA_SOC);
->> +    } else {
->> +        target_soc =  battmgr->info.charge_ctrl_end;
->> +        delta_soc = battmgr->info.charge_ctrl_end - start_soc;
->> +    }
->> +
->> +    mutex_lock(&battmgr->lock);
->> +    ret = qcom_battmgr_set_charge_control(battmgr, target_soc, 
->> delta_soc);
->> +    mutex_unlock(&battmgr->lock);
->> +    if (!ret) {
->> +        battmgr->info.charge_ctrl_start = start_soc;
->> +        battmgr->info.charge_ctrl_end = target_soc;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int qcom_battmgr_set_charge_end_threshold(struct qcom_battmgr 
->> *battmgr, int end_soc)
->> +{
->> +    u32 delta_soc = CHARGE_CTRL_DELTA_SOC;
->> +    int ret;
->> +
->> +    if (end_soc < CHARGE_CTRL_END_THR_MIN ||
->> +        end_soc > CHARGE_CTRL_END_THR_MAX) {
->> +        dev_err(battmgr->dev, "charge control end threshold exceed 
->> range: [%u - %u]\n",
->> +            CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
->> +        return -EINVAL;
->> +    }
->> +
->> +    if (battmgr->info.charge_ctrl_start && end_soc > 
->> battmgr->info.charge_ctrl_start)
->> +        delta_soc = end_soc - battmgr->info.charge_ctrl_start;
->> +
->> +    mutex_lock(&battmgr->lock);
->> +    ret = qcom_battmgr_set_charge_control(battmgr, end_soc, delta_soc);
->> +    mutex_unlock(&battmgr->lock);
->> +    if (!ret) {
->> +        battmgr->info.charge_ctrl_start = end_soc - delta_soc;
->> +        battmgr->info.charge_ctrl_end = end_soc;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int qcom_battmgr_charge_control_thresholds_init(struct 
->> qcom_battmgr *battmgr)
->> +{
->> +    int ret;
->> +    u8 en, end_soc, start_soc, delta_soc;
->> +
->> +    ret = nvmem_cell_read_u8(battmgr->dev->parent, 
->> "charge_limit_en", &en);
->> +    if (!ret && en != 0) {
->> +        ret = nvmem_cell_read_u8(battmgr->dev->parent, 
->> "charge_limit_end", &end_soc);
->> +        if (ret < 0)
->> +            return ret;
->> +
->> +        ret = nvmem_cell_read_u8(battmgr->dev->parent, 
->> "charge_limit_delta", &delta_soc);
->> +        if (ret < 0)
->> +            return ret;
->> +
->> +        if (delta_soc >= end_soc)
->> +            return -EINVAL;
->> +
->> +        start_soc = end_soc - delta_soc;
->> +        end_soc = clamp(end_soc, CHARGE_CTRL_END_THR_MIN, 
->> CHARGE_CTRL_END_THR_MAX);
->> +        start_soc = clamp(start_soc, CHARGE_CTRL_START_THR_MIN, 
->> CHARGE_CTRL_START_THR_MAX);
->> +
->> +        battmgr->info.charge_ctrl_start = start_soc;
->> +        battmgr->info.charge_ctrl_end = end_soc;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
->> +                     enum power_supply_property psp)
->> +{
->> +    switch (psp) {
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
->> +        return 1;
->> +    default:
->> +        return 0;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int qcom_battmgr_bat_set_property(struct power_supply *psy,
->> +                     enum power_supply_property psp,
->> +                     const union power_supply_propval *pval)
->> +{
->> +    struct qcom_battmgr *battmgr = power_supply_get_drvdata(psy);
->> +
->> +    if (!battmgr->service_up)
->> +        return -EAGAIN;
->> +
->> +    switch (psp) {
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
->> +        return qcom_battmgr_set_charge_start_threshold(battmgr, 
->> pval->intval);
->> +    case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
->> +        return qcom_battmgr_set_charge_end_threshold(battmgr, 
->> pval->intval);
->> +    default:
->> +        return -EINVAL;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->>   static const enum power_supply_property sc8280xp_bat_props[] = {
->>       POWER_SUPPLY_PROP_STATUS,
->>       POWER_SUPPLY_PROP_PRESENT,
->> @@ -659,6 +831,43 @@ static const struct power_supply_desc 
->> sc8280xp_bat_psy_desc = {
->>       .get_property = qcom_battmgr_bat_get_property,
->>   };
->>   +static const enum power_supply_property x1e80100_bat_props[] = {
->> +    POWER_SUPPLY_PROP_STATUS,
->> +    POWER_SUPPLY_PROP_PRESENT,
->> +    POWER_SUPPLY_PROP_TECHNOLOGY,
->> +    POWER_SUPPLY_PROP_CYCLE_COUNT,
->> +    POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
->> +    POWER_SUPPLY_PROP_VOLTAGE_NOW,
->> +    POWER_SUPPLY_PROP_POWER_NOW,
->> +    POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
->> +    POWER_SUPPLY_PROP_CHARGE_FULL,
->> +    POWER_SUPPLY_PROP_CHARGE_EMPTY,
->> +    POWER_SUPPLY_PROP_CHARGE_NOW,
->> +    POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
->> +    POWER_SUPPLY_PROP_ENERGY_FULL,
->> +    POWER_SUPPLY_PROP_ENERGY_EMPTY,
->> +    POWER_SUPPLY_PROP_ENERGY_NOW,
->> +    POWER_SUPPLY_PROP_TEMP,
->> +    POWER_SUPPLY_PROP_MANUFACTURE_YEAR,
->> +    POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
->> +    POWER_SUPPLY_PROP_MANUFACTURE_DAY,
->> +    POWER_SUPPLY_PROP_MODEL_NAME,
->> +    POWER_SUPPLY_PROP_MANUFACTURER,
->> +    POWER_SUPPLY_PROP_SERIAL_NUMBER,
->> +    POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
->> +    POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
->
-> Is it expected to _not_ have POWER_SUPPLY_PROP_STATE_OF_HEALTH & 
-> POWER_SUPPLY_PROP_INTERNAL_RESISTANCE here ?
->
-> Neil
-
-No, X1E80100 platform doesn't have battery resistance/SOH information 
-exported in battery management firmware
-
-
->
->> +};
->> +
->> +static const struct power_supply_desc x1e80100_bat_psy_desc = {
->> +    .name = "qcom-battmgr-bat",
->> +    .type = POWER_SUPPLY_TYPE_BATTERY,
->> +    .properties = x1e80100_bat_props,
->> +    .num_properties = ARRAY_SIZE(x1e80100_bat_props),
->> +    .get_property = qcom_battmgr_bat_get_property,
->> +    .set_property = qcom_battmgr_bat_set_property,
->> +    .property_is_writeable = qcom_battmgr_bat_is_writeable,
->> +};
->> +
->>   static const enum power_supply_property sm8350_bat_props[] = {
->>       POWER_SUPPLY_PROP_STATUS,
->>       POWER_SUPPLY_PROP_HEALTH,
->> @@ -691,6 +900,42 @@ static const struct power_supply_desc 
->> sm8350_bat_psy_desc = {
->>       .get_property = qcom_battmgr_bat_get_property,
->>   };
->>   +static const enum power_supply_property sm8550_bat_props[] = {
->> +    POWER_SUPPLY_PROP_STATUS,
->> +    POWER_SUPPLY_PROP_HEALTH,
->> +    POWER_SUPPLY_PROP_PRESENT,
->> +    POWER_SUPPLY_PROP_CHARGE_TYPE,
->> +    POWER_SUPPLY_PROP_CAPACITY,
->> +    POWER_SUPPLY_PROP_VOLTAGE_OCV,
->> +    POWER_SUPPLY_PROP_VOLTAGE_NOW,
->> +    POWER_SUPPLY_PROP_VOLTAGE_MAX,
->> +    POWER_SUPPLY_PROP_CURRENT_NOW,
->> +    POWER_SUPPLY_PROP_TEMP,
->> +    POWER_SUPPLY_PROP_TECHNOLOGY,
->> +    POWER_SUPPLY_PROP_CHARGE_COUNTER,
->> +    POWER_SUPPLY_PROP_CYCLE_COUNT,
->> +    POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
->> +    POWER_SUPPLY_PROP_CHARGE_FULL,
->> +    POWER_SUPPLY_PROP_MODEL_NAME,
->> +    POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
->> +    POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
->> +    POWER_SUPPLY_PROP_INTERNAL_RESISTANCE,
->> +    POWER_SUPPLY_PROP_STATE_OF_HEALTH,
->> +    POWER_SUPPLY_PROP_POWER_NOW,
->> +    POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
->> +    POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
->> +};
->> +
->> +static const struct power_supply_desc sm8550_bat_psy_desc = {
->> +    .name = "qcom-battmgr-bat",
->> +    .type = POWER_SUPPLY_TYPE_BATTERY,
->> +    .properties = sm8550_bat_props,
->> +    .num_properties = ARRAY_SIZE(sm8550_bat_props),
->> +    .get_property = qcom_battmgr_bat_get_property,
->> +    .set_property = qcom_battmgr_bat_set_property,
->> +    .property_is_writeable = qcom_battmgr_bat_is_writeable,
->> +};
->> +
->>   static int qcom_battmgr_ac_get_property(struct power_supply *psy,
->>                       enum power_supply_property psp,
->>                       union power_supply_propval *val)
->> @@ -766,7 +1011,8 @@ static int qcom_battmgr_usb_get_property(struct 
->> power_supply *psy,
->>       if (!battmgr->service_up)
->>           return -EAGAIN;
->>   -    if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
->> +    if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->> +        battmgr->variant == QCOM_BATTMGR_X1E80100)
->>           ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->>       else
->>           ret = qcom_battmgr_usb_sm8350_update(battmgr, psp);
->> @@ -888,7 +1134,8 @@ static int qcom_battmgr_wls_get_property(struct 
->> power_supply *psy,
->>       if (!battmgr->service_up)
->>           return -EAGAIN;
->>   -    if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
->> +    if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->> +        battmgr->variant == QCOM_BATTMGR_X1E80100)
->>           ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->>       else
->>           ret = qcom_battmgr_wls_sm8350_update(battmgr, psp);
->> @@ -1085,6 +1332,9 @@ static void 
->> qcom_battmgr_sc8280xp_callback(struct qcom_battmgr *battmgr,
->>       case BATTMGR_BAT_CHARGE_TIME:
->>           battmgr->status.charge_time = le32_to_cpu(resp->time);
->>           break;
->> +    case BATTMGR_CHG_CTRL_LIMIT_EN:
->> +        battmgr->error = 0;
->> +        break;
->>       default:
->>           dev_warn(battmgr->dev, "unknown message %#x\n", opcode);
->>           break;
->> @@ -1198,6 +1448,12 @@ static void 
->> qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
->>           case BATT_POWER_NOW:
->>               battmgr->status.power_now = 
->> le32_to_cpu(resp->intval.value);
->>               break;
->> +        case BATT_CHG_CTRL_START_THR:
->> +            battmgr->info.charge_ctrl_start = 
->> le32_to_cpu(resp->intval.value);
->> +            break;
->> +        case BATT_CHG_CTRL_END_THR:
->> +            battmgr->info.charge_ctrl_end = 
->> le32_to_cpu(resp->intval.value);
->> +            break;
->>           default:
->>               dev_warn(battmgr->dev, "unknown property %#x\n", 
->> property);
->>               break;
->> @@ -1280,6 +1536,7 @@ static void qcom_battmgr_sm8350_callback(struct 
->> qcom_battmgr *battmgr,
->>           }
->>           break;
->>       case BATTMGR_REQUEST_NOTIFICATION:
->> +    case BATTMGR_CHG_CTRL_LIMIT_EN:
->>           battmgr->error = 0;
->>           break;
->>       default:
->> @@ -1299,7 +1556,8 @@ static void qcom_battmgr_callback(const void 
->> *data, size_t len, void *priv)
->>         if (opcode == BATTMGR_NOTIFICATION)
->>           qcom_battmgr_notification(battmgr, data, len);
->> -    else if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
->> +    else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->> +         battmgr->variant == QCOM_BATTMGR_X1E80100)
->>           qcom_battmgr_sc8280xp_callback(battmgr, data, len);
->>       else
->>           qcom_battmgr_sm8350_callback(battmgr, data, len);
->> @@ -1346,11 +1604,13 @@ static char *qcom_battmgr_battery[] = { 
->> "battery" };
->>   static int qcom_battmgr_probe(struct auxiliary_device *adev,
->>                     const struct auxiliary_device_id *id)
->>   {
->> +    const struct power_supply_desc *psy_desc;
->>       struct power_supply_config psy_cfg_supply = {};
->>       struct power_supply_config psy_cfg = {};
->>       const struct of_device_id *match;
->>       struct qcom_battmgr *battmgr;
->>       struct device *dev = &adev->dev;
->> +    int ret;
->>         battmgr = devm_kzalloc(dev, sizeof(*battmgr), GFP_KERNEL);
->>       if (!battmgr)
->> @@ -1376,8 +1636,19 @@ static int qcom_battmgr_probe(struct 
->> auxiliary_device *adev,
->>       else
->>           battmgr->variant = QCOM_BATTMGR_SM8350;
->>   -    if (battmgr->variant == QCOM_BATTMGR_SC8280XP) {
->> -        battmgr->bat_psy = devm_power_supply_register(dev, 
->> &sc8280xp_bat_psy_desc, &psy_cfg);
->> +    ret = qcom_battmgr_charge_control_thresholds_init(battmgr);
->> +    if (ret < 0)
->> +        return dev_err_probe(dev, ret,
->> +                     "failed to init battery charge control 
->> thresholds\n");
->> +
->> +    if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->> +        battmgr->variant == QCOM_BATTMGR_X1E80100) {
->> +        if (battmgr->variant == QCOM_BATTMGR_X1E80100)
->> +            psy_desc = &x1e80100_bat_psy_desc;
->> +        else
->> +            psy_desc = &sc8280xp_bat_psy_desc;
->> +
->> +        battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, 
->> &psy_cfg);
->>           if (IS_ERR(battmgr->bat_psy))
->>               return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
->>                            "failed to register battery power supply\n");
->> @@ -1397,7 +1668,12 @@ static int qcom_battmgr_probe(struct 
->> auxiliary_device *adev,
->>               return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
->>                            "failed to register wireless charing power 
->> supply\n");
->>       } else {
->> -        battmgr->bat_psy = devm_power_supply_register(dev, 
->> &sm8350_bat_psy_desc, &psy_cfg);
->> +        if (battmgr->variant == QCOM_BATTMGR_SM8550)
->> +            psy_desc = &sm8550_bat_psy_desc;
->> +        else
->> +            psy_desc = &sm8350_bat_psy_desc;
->> +
->> +        battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, 
->> &psy_cfg);
->>           if (IS_ERR(battmgr->bat_psy))
->>               return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
->>                            "failed to register battery power supply\n");
->>
->
+SGkgTmljb2xhcywNCg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogTmljb2xh
+cyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVzbmUuY2E+DQo+U2VudDogVGh1cnNkYXksIFNlcHRl
+bWJlciA0LCAyMDI1IDExOjU0IFBNDQo+VG86IE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dEBtYWls
+Ym94Lm9yZz47IE5hcyBDaHVuZw0KPjxuYXMuY2h1bmdAY2hpcHNubWVkaWEuY29tPjsgbWNoZWhh
+YkBrZXJuZWwub3JnOyBodmVya3VpbEB4czRhbGwubmw7DQo+c2ViYXN0aWFuLmZyaWNrZUBjb2xs
+YWJvcmEuY29tOyByb2JoQGtlcm5lbC5vcmc7IGtyemsrZHRAa2VybmVsLm9yZzsNCj5jb25vcitk
+dEBrZXJuZWwub3JnDQo+Q2M6IGxpbnV4LW1lZGlhQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJl
+ZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPmtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGRsLWxp
+bnV4LWlteCA8bGludXgtaW14QG54cC5jb20+Ow0KPmphY2tzb24ubGVlQGNoaXBzbm1lZGlhLmNv
+bTsgbGFmbGV5LmtpbUBjaGlwc25tZWRpYS5jb20NCj5TdWJqZWN0OiBbRVhUXSBSZTogW1BBVENI
+IHYyIDAvOF0gQWRkIHN1cHBvcnQgZm9yIFdhdmU2IHZpZGVvIGNvZGVjIGRyaXZlcg0KPg0KPkhp
+LA0KPg0KPkxlIGpldWRpIDA0IHNlcHRlbWJyZSAyMDI1IMOgIDE3OjMyICswMjAwLCBNYXJlayBW
+YXN1dCBhIMOpY3JpdMKgOg0KPj4gT24gOS80LzI1IDM6MjUgUE0sIE5pY29sYXMgRHVmcmVzbmUg
+d3JvdGU6DQo+PiA+IEhpLA0KPj4gPg0KPj4gPiBMZSBtZXJjcmVkaSAwMyBzZXB0ZW1icmUgMjAy
+NSDDoCAyMzo0NyArMDIwMCwgTWFyZWsgVmFzdXQgYSDDqWNyaXTCoDoNCj4+ID4gPiBPbiA0LzIy
+LzI1IDExOjMxIEFNLCBOYXMgQ2h1bmcgd3JvdGU6DQo+PiA+ID4gPiBUaGlzIHBhdGNoIHNlcmll
+cyBpbnRyb2R1Y2VzIHN1cHBvcnQgZm9yIHRoZSBDaGlwcyZNZWRpYSBXYXZlNg0KPj4gPiA+ID4g
+dmlkZW8gY29kZWMgSVAsIGEgY29tcGxldGVseSBkaWZmZXJlbnQgaGFyZHdhcmUgYXJjaGl0ZWN0
+dXJlIGNvbXBhcmVkDQo+dG8gV2F2ZTUuDQo+PiA+ID4gPg0KPj4gPiA+ID4gVGhlIHdhdmU2IGRy
+aXZlciBpcyBhIE0yTSBzdGF0ZWZ1bCBlbmNvZGVyL2RlY29kZXIgZHJpdmVyLg0KPj4gPiA+ID4g
+SXQgc3VwcG9ydHMgdmFyaW91cyB2aWRlbyBmb3JtYXRzLCBpbmNsdWRpbmcgSC4yNjQgYW5kIEgu
+MjY1LA0KPj4gPiA+ID4gZm9yIGJvdGggZW5jb2RpbmcgYW5kIGRlY29kaW5nLg0KPj4gPiA+ID4g
+V2hpbGUgb3RoZXIgdmVyc2lvbnMgb2YgdGhlIFdhdmU2IElQIG1heSBzdXBwb3J0IFZQOSBkZWNv
+ZGluZw0KPj4gPiA+ID4gYW5kDQo+PiA+ID4gPiBBVjEgZGVjb2RpbmcgYW5kIGVuY29kaW5nIHRo
+b3NlIGZvcm1hdHMgYXJlIG5vdCBpbXBsZW1lbnRlZCBvcg0KPj4gPiA+ID4gdmFsaWRhdGVkIGlu
+IHRoaXMgZHJpdmVyIGF0IHRoaXMgdGltZS4NCj4+ID4gPiA+DQo+PiA+ID4gPiBPbiBOWFAgaS5N
+WCBTb0NzLCB0aGUgV2F2ZTYgSVAgZnVuY3Rpb25hbGl0eSBpcyBzcGxpdCBiZXR3ZWVuIHR3bw0K
+PnJlZ2lvbnM6DQo+PiA+ID4gPiBWUFUgQ29udHJvbCByZWdpb24sIE1hbmFnZXMgc2hhcmVkIHJl
+c291cmNlcyBzdWNoIGFzIGZpcm13YXJlDQo+bWVtb3J5Lg0KPj4gPiA+ID4gVlBVIENvcmUgcmVn
+aW9uLCBQcm92aWRlcyBlbmNvZGluZyBhbmQgZGVjb2RpbmcgY2FwYWJpbGl0aWVzLg0KPj4gPiA+
+ID4gVGhlIFZQVSBjb3JlIGNhbm5vdCBvcGVyYXRlIGluZGVwZW5kZW50bHkgd2l0aG91dCB0aGUg
+VlBVIGNvbnRyb2wNCj5yZWdpb24uDQo+PiA+ID4gPg0KPj4gPiA+ID4gVGhpcyBkcml2ZXIgaGFz
+IGJlZW4gdGVzdGVkIHdpdGggR1N0cmVhbWVyIG9uOg0KPj4gPiA+ID4gLSBOWFAgaS5NWDk1IGJv
+YXJkDQo+PiA+ID4gPiAtIHByZS1zaWxpY29uIEZQR0EgZW52aXJvbm1lbnQNCj4+ID4gPiA+DQo+
+PiA+ID4gPiBUZXN0IHJlc3VsdHMgZm9yIGRlY29kZXIgZmx1c3RlcjoNCj4+ID4gPiA+IC0gSlZU
+LUFWQ19WMSwgUmFuIDc3LzEzNSB0ZXN0cyBzdWNjZXNzZnVsbHnCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBpbg0KPj4gPiA+ID4gMzUuNTE5IHNlY3MNCj4+ID4gPiA+IC0gSlZULUZSLUVYVCwg
+UmFuIDI1LzY5IHRlc3RzIHN1Y2Nlc3NmdWxsecKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+aW4NCj4+ID4gPiA+IDE3LjcyNSBzZWNzDQo+PiA+ID4gPiAtIEpDVC1WQy1IRVZDX1YxLCBSYW4g
+MTMyLzE0NyB0ZXN0cyBzdWNjZXNzZnVsbHnCoMKgwqDCoMKgwqDCoMKgIGluDQo+PiA+ID4gPiA4
+MS41NDkgc2Vjcw0KPj4gPiA+ID4gLSBBbGwgZmFpbHVyZXMgYXJlIGR1ZSB0byB1bnN1cHBvcnRl
+ZCBoYXJkd2FyZSBmZWF0dXJlczoNCj4+ID4gPiA+IC0tIDEwYml0LCBSZXNvbHV0aW9ucyBoaWdo
+ZXIgdGhhbiA0SywgRk1PLCBNQkFGRg0KPj4gPiA+ID4gLS0gRXh0ZW5kZWQgcHJvZmlsZSwgRmll
+bGQgZW5jb2RpbmcgYW5kIEhpZ2g0MjIgc3JlYW1zLg0KPj4gPiA+ID4NCj4+ID4gPiA+IFRlc3Qg
+cmVzdWx0cyBmb3IgdjRsMi1jb21wbGlhbmNlOg0KPj4gPiA+ID4gdjRsMi1jb21wbGlhbmNlIDEu
+MjkuMC01MzU5LCA2NCBiaXRzLCA2NC1iaXQgdGltZV90DQo+PiA+ID4gPiB2NGwyLWNvbXBsaWFu
+Y2UgU0hBOiAyYTkxYTg2OWViOGEgMjAyNS0wNC0xMiAxMTozNTo1Mw0KPj4gPiA+ID4NCj4+ID4g
+PiA+IENvbXBsaWFuY2UgdGVzdCBmb3Igd2F2ZTYtZGVjIGRldmljZSAvZGV2L3ZpZGVvMDoNCj4+
+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZmFpbDoNCj4+ID4gPiA+
+IC4uL3V0aWxzL3Y0bDItY29tcGxpYW5jZS92NGwyLXRlc3QtY29udHJvbHMuY3BwKDExODApOg0K
+Pj4gPiA+ID4gIWhhdmVfc291cmNlX2NoYW5nZSB8fCAhaGF2ZV9lb3MNCj4+ID4gPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoCB0ZXN0IFZJRElPQ18oVU4pU1VCU0NSSUJFX0VWRU5UL0RRRVZFTlQ6IEZB
+SUwgVG90YWwNCj4+ID4gPiA+IGZvciB3YXZlNi1kZWMgZGV2aWNlIC9kZXYvdmlkZW8wOiA0OCwg
+U3VjY2VlZGVkOiA0NywgRmFpbGVkOiAxLA0KPj4gPiA+ID4gV2FybmluZ3M6IDANCj4+ID4gPiA+
+DQo+PiA+ID4gPiBDb21wbGlhbmNlIHRlc3QgZm9yIHdhdmU2LWVuYyBkZXZpY2UgL2Rldi92aWRl
+bzE6DQo+PiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZhaWw6DQo+
+PiA+ID4gPiAuLi91dGlscy92NGwyLWNvbXBsaWFuY2UvdjRsMi10ZXN0LWNvbnRyb2xzLmNwcCgx
+MTY5KToNCj4+ID4gPiA+IG5vZGUtPmNvZGVjX21hc2sgJiBTVEFURUZVTF9FTkNPREVSDQo+PiA+
+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqAgdGVzdCBWSURJT0NfKFVOKVNVQlNDUklCRV9FVkVOVC9E
+UUVWRU5UOiBGQUlMIFRvdGFsDQo+PiA+ID4gPiBmb3Igd2F2ZTYtZW5jIGRldmljZSAvZGV2L3Zp
+ZGVvMTogNDgsIFN1Y2NlZWRlZDogNDcsIEZhaWxlZDogMSwNCj4+ID4gPiA+IFdhcm5pbmdzOiAw
+DQo+PiA+ID4gPg0KPj4gPiA+ID4gTm90ZTogdGhlIGZhaWx1cmVzIGFyZSBhbGwgcmVsYXRlZCB3
+aXRoIHRoZSBlb3MgZXZlbnQuDQo+PiA+ID4NCj4+ID4gPiBGb3Igd2hhdCBpdHMgd29ydGgsIHRo
+ZSB3aG9sZSBzZXJpZXM6DQo+PiA+ID4NCj4+ID4gPiBUZXN0ZWQtYnk6IE1hcmVrIFZhc3V0IDxt
+YXJlay52YXN1dEBtYWlsYm94Lm9yZz4gIyBOWFAgaS5NWDk1IHJldi4NCj4+ID4gPiBBMA0KPj4g
+Pg0KPj4gPiBEbyB5b3UgbWluZCBzaGFyaW5nIHdoYXQgdGVzdHMgeW91IGhhdmUgZG9uZSA/IEFy
+ZSB5b3UgY29uZmlybWluZw0KPj4gPiB0aGUgc2FtZSBmbHVzdGVyIGFuZCBjb21wbGlhbmNlIHJl
+c3VsdHMsIGhhdmUgeW91IGRvbmUgbW9yZSA/IFNpbmNlDQo+PiA+IHRoaXMgaXMgbGFyZ2VseSBp
+bnNwaXJlZCBvbiBXYXZlNSwgSSdkIGxpa2UgdG8gc2VlIHBlb3BsZSB0ZXN0aW5nDQo+PiA+IHJl
+YWwtd29ybGQgcGxheWJhY2ssIHdpdGggc2Vla3MsIGR5bmFtaWMgcmVzb2x1dGlvbiBjaGFuZ2Vz
+LCBkYXRhDQo+PiA+IGxvc3QuIE9uIFdhdmU1LCBsYXRlc3QgcGVyZm9ybWFuY2UgcGF0Y2hlcyBs
+ZWFkcyB0byBjcmFzaCBvciBoYW5ncy4NCj4+IEkgZGlkIG5vdCB1c2UgZmx1c3RlciB0aGlzIHRp
+bWUsIEkgdXNlZCBoMjY0IGRlY29kZSBvZiAxOTIweDEwODAgNjANCj4+IEZQUyBzdHJlYW0uIFRo
+ZSBwaXBlbGluZSB3YXMgdmVyeSBiYXNpYywgc29tZXRoaW5nIGFsb25nIHRoZSBsaW5lcyBvZjoN
+Cj4+DQo+PiBnc3QtbGF1bmNoLTEuMCAtdiBmaWxlc3JjIGxvY2F0aW9uPS90ZXN0Lm1wNCAhIHF0
+ZGVtdXggISBoMjY0cGFyc2UgIQ0KPj4gdjRsMmgyNjRkZWMgISBmcHNkaXNwbGF5c2luayB0ZXh0
+LW92ZXJsYXk9ZmFsc2UgdmlkZW8tc2luaz13YXlsYW5kc2luaw0KPg0KPlRoYW5rcyBmb3IgdGhl
+IGRldGFpbC4gU2luY2UgeW91IGhhdmUgYSBydW5uaW5nIHNldHVwLCBwZXJoYXBzIGNvbnNpZGVy
+IHRlc3RpbmcNCj53aXRoIHRoZSBmb2xsb3dpbmcsIGxlZnQvcmlnaHQga2V5Ym9hcmQgYXJyb3cg
+d2lsbCBsZXQgeW91IGp1bXAgYXJvdW5kIGluIHRoZQ0KPm1lZGlhLg0KPg0KPiAgZ3N0LXBsYXkt
+MS4wIC0tYXVkaW9zaW5rPWZha2VhdWRpb3NpbmsgLS12aWRlb3Npbms9d2F5bGFuZHNpbmsgL3Rl
+c3QubXA0DQo+DQo+VGhhdCB3b3VsZCBhdCBsZWFzdCBjb3ZlciBzZWVraW5nIHVzZSBjYXNlcy4g
+SSBwcm92aWRlZCBOYXMgYSBzdHJlYW0gdGhhdA0KPmFnZ3Jlc3NpdmVseSBkbyByZXNvbHV0aW9u
+IGNoYW5nZXMgdG8gcmVwcm9kdWNlIGEgV2F2ZTUgY3Jhc2gsIEkgd291bGQgZXhwZWN0DQo+aGlt
+IHRvIHRlc3QgYW5kIHJlcG9ydCBhZ2FpbnN0IFdhdmU2IHRvby4gSWYgeW91J2QgbGlrZSB0byBo
+YXZlIHRoYXQgc2FtcGxlLCBsZXQNCj5tZSBrbm93LCBpdHMgbm90IHZlcnkgYmlnLCBhbmQgZnJl
+ZSwgYnV0IEknZCByYXRoZXIgbm90IGRvIGF0dGFjaGVtZW50cyBvdmVyIHRoZQ0KPm1haWxpbmcg
+bGlzdC4NCg0KV291bGQgeW91IHBsZWFzZSBzaGFyZSB0aGUgc3RyZWFtIHRvIG1lPyBJIHdhbnQg
+dG8gdGVzdCB0aGlzIHJlc29sdXRpb24tY2hhbmdlIGNhc2UgdG9vLg0KDQpSZWdhcmRzLA0KTWlu
+Zw0KDQo+DQo+cmVnYXJkcywNCj5OaWNvbGFzDQo=
 
