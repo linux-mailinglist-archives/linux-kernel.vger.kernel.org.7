@@ -1,401 +1,240 @@
-Return-Path: <linux-kernel+bounces-802279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56A9B4503D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6284B45041
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692D7582D7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465ADA0662B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B3B296BAA;
-	Fri,  5 Sep 2025 07:50:05 +0000 (UTC)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C96270ED9;
+	Fri,  5 Sep 2025 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="nIrVOALu"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41601261B64;
-	Fri,  5 Sep 2025 07:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C2F244668
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757058604; cv=none; b=JJ3yEWhU8v42dP2sP0rtG2AcFs8ZVrprrYKKTy2a9Gi385bRCoFHbeSp/yBLAHdBN/NzO+0VpB6PDb7qqlXut05cA7grwlYkzMNmy5hAe2PQPu1j2MPx8DQ2ff8ODxC2xrgfXTLDuVlF3SRsD7riE0robt0huK8QcpMw0gsO2sY=
+	t=1757058686; cv=none; b=U1KgouGUVnppu6s2T3lduqVzd+/JofMaPu1T3Jb1MMuJLozaqNY7F1Zixe2sYP9j93Yhb0Ljm23892my0WncGMYk4NE4jBCX5+hvJfLSCuVDT5zB6iLpLDDXg0CTEZ/HH67xLB0xjYdapcBpJ42AxOixZockvL0boBCQpkICFTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757058604; c=relaxed/simple;
-	bh=+ptU5iuSMXJ8zcKk5D4/Y8OBmsov13j0Igo2eyHbUK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ImHh4uLjblrVq1TRQwWklldwXTbYXb8fDvTVHdtg3zHuKukVo1jPm3N6KxUN3X4pFFV0PCjYtWkgtYkXR1Hk3TKTcmDhaoi79Umf5C9/xUX7ap0kDJoeB0Pom1yD/wjYVI+dVk8iyUgDlyM5wOL8QARVTVZIvHazvTrqqDpXErg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-52a80b778e7so681360137.1;
-        Fri, 05 Sep 2025 00:50:02 -0700 (PDT)
+	s=arc-20240116; t=1757058686; c=relaxed/simple;
+	bh=tbNW+ZcFHXZIgM6RdhMY3OAr4Jg5GjYz4rgfMkHPDkQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q0Odh43sKyvuWhbO77Iiw5KS7sq4c8n35V/CAMSgdm/cPQd5CUjHI6B6fv6nADlf0SbQ7Ly22gVVTJyb9QsPh72fOUgo6qQh4nd3l3BadR9TeaOW1XLVNuGoGIyprZpNin7pp/UkGKWeb7KAHqrHJjgrzQKM7spEvkuB3GKVPkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=nIrVOALu; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24b21006804so18968565ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:51:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1757058684; x=1757663484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EmbtEG9uQFz4Rx7fC2dkFqmrRnvHSDqPi/yrxENahzQ=;
+        b=nIrVOALut3cl56a0sOs8t7NMdV0H3enEqcbsPW3VKj89J7/vcNJDVVwD31rUo0oDhs
+         kRfeS50joYwsAA8VPatZNZ2G4mDo+b1L9PwFrg7ISFhSdMi2chx8ZHFJq4iW8TDet5Cb
+         /g+8WycQDsW8CsbjT/t9s2XaqswwN3hRYAhZVJ0qwFsOwaIm7sYe7X6MTV0vC1FjGAOZ
+         fhm6itk3rympMJkuIgcaN3FUY+OfJC3U/v00AkX+xGc4O0kGS5NHXK7qb/5iWtP0rp1F
+         drNXjrWvJrIDNb2LeNS5QznBoK2Vs7NRBJ/YFTgnSZExYgXqGbshfmFOR4yI8Oy0+NJU
+         nlZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757058601; x=1757663401;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757058684; x=1757663484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g41c13NWV9jwHMWvIm9LbxXNid7LZCSCocg1Kjw6o8M=;
-        b=v/aLDQpDnYLNwXrO0d6q7sckZ6SVkzPv0mVIBLCC4n6L9ctVI3JqxVcS8qUnS9exc/
-         CgVQ3H4HdJj9d+AFZPjCQ4lJW8TeTgcCq8/nkvmx/g9Xa8N7Umx7sSqiXMnFvLOeVn9k
-         5/nea4TVLUmtesz8OHDhhNMg/UYZ4uM06u4m6eBwlE5tm9qfH3J68s2+0aLotoALwE8X
-         t9lDJ5aLKhoQAqaEGOCdhILfJEhUOlUGPveUs4LaiIITktLjELPvMYw1KLcU/MBENUYb
-         7tcn90ruGhaF6GG4Fm3BXIQaY7rqYzLAMrZGAkoSxnSkpKf80MbhMLx7rIUyegFoNGzT
-         Yq6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVyQiwLY92bUxkoKAp6FW1cFCPZUe7C9EUVcJKu3px7YTB/+WoZwBmlJdIKihmevuOTyktipPHX2i4=@vger.kernel.org, AJvYcCWZ0qeGRXGuaXar+lG75BJuNRaLirsrf3gCZInNWAoR3h0OgNR3zHUKAZPPDYhy0yEXKDzPI95eBtlfrb0=@vger.kernel.org, AJvYcCXKEDQV1Bnhvnn5/tpa4rp0n8Gj8Y7WNOznxw2L3uByj5fDP3JQmKQshp/3hZ/RePpaG64P0uBT/Ud3lrJnG2I/mEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFtBqgOUz6ZeN/MJcmwCs2jT7hhOIQv2dXjNufs/tIi+nEvgJb
-	L8+TvisZ/nvsEmd2Kk7mGsQIYA4+HbdNaP02fZnifCXyUMo6Bdd/A5ZrcKSOMbMJ
-X-Gm-Gg: ASbGncvKDzjDaUsJi/RsnlVZOIF8WEohFc3UaOV1zscNksocTDH0gOoYiqgvbZpn7o2
-	++G0wc9pY9b84cRuYsjT1Qt+pvvR0aZMt4CJaaaTJNqzd86qZIi1TE9cBBnCbujjB8S3UV4BARl
-	ty8Pw2g/UB7GcH2F5YLN7Mt4ECy7agTt/dLrmAkoyWZ9YzeV1xkfuYMPX7SQdqRiuNpcRu+3dkJ
-	PsDBl3BpYLBb7slll+yd9GOLEe4fPqJlX47N51kk3D5+wYt1tlnC70YWveUUc91q5ifZjzwygqx
-	4QCxP3PXOjSbOFUUOAdyQ2OdT/8XLd8v6nKtMnQ8QK2Q2vaZu3FlP9BFJMB7aLSSSblIgv6RxOH
-	uLJ5PF0/1vV98GSqnQIolnIZ/W/Y/Fku/a8265SkE3Q7HqKMPsBbONoGSXVH5
-X-Google-Smtp-Source: AGHT+IEZS6VH5wYzVwZRl6uowgP5aLIofQNGRdBcqnSqB05trWeQBOyc8xDPLOvT+kHNNW/L4gAUGg==
-X-Received: by 2002:a05:6102:dcb:b0:523:fa25:9dcb with SMTP id ada2fe7eead31-52b19a52539mr7618483137.8.1757058600955;
-        Fri, 05 Sep 2025 00:50:00 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8982751bf54sm4708269241.21.2025.09.05.00.50.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 00:50:00 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89e5b87f406so479396241.0;
-        Fri, 05 Sep 2025 00:50:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4CBHzt8IffizkDKu4zTIQ+LDXO+apoXKjrprJEcSAp3C3duc9CViyBgEVgIjM1uLu5jC4m73yHUMdRDU=@vger.kernel.org, AJvYcCV957MiJiOaNgtDHaEag8gbV9q5+Fan+cUCpJlfsWM1XUeobfPHMv+TbxHqhtcDgUECqqIukGK3gAM=@vger.kernel.org, AJvYcCWrFhPEEZdg9CvWqPokrczehjutWsSjA5JrWZZ8z9tEUvr1iqqJIrlsdMxH/NRAN6Vv4xHoxBXYtAm54qsnnUk7P0E=@vger.kernel.org
-X-Received: by 2002:a05:6102:4b84:b0:527:84e4:265 with SMTP id
- ada2fe7eead31-52b19534045mr8151301137.5.1757058600400; Fri, 05 Sep 2025
- 00:50:00 -0700 (PDT)
+        bh=EmbtEG9uQFz4Rx7fC2dkFqmrRnvHSDqPi/yrxENahzQ=;
+        b=gJprW7wRDtx+jyZcomCab9JvQaqosZXqRt9ZBkA0WQS4BMgFuopG12SUzZRbOBr12Q
+         KH+FKCI0cMWltY8G7wYoc2HmDfzDbXfxi5/M7/s5MqxYcPsHfoDbUccaMlA25CQx2Qpx
+         B1mh43R32nDCgivcBupF1xlXrmia/9shSR5x1Mmus/ibDluTPHUGy6M1EoKLGGa5++Xd
+         heWRGUUaV/KGfNrrxvoNAuT9J5LFrUy32FTb8hmzQfIsxeAgeLm+E8KezXySSuuCKer8
+         kwJdQVS1bqAwHzFewcDWRZ1UVID7kJEmQzTx/xXb/IqvsjT6FXsbhQTHW5lMIQNqylfE
+         r/Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2dYeytGuJo7IjlGODIYJGr3SBPiaNAapvtEKTT8cSSTgqZdibZbQ+ZG6AZrFEhxvuYxpL+hpMJits7pU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbBhAI1VUpd7mklC8Bz5WqZ9G6NyKQA3GcndkjayPyXphTCsmR
+	kCMZpaM2ot/JWmdjlGPhL5By/JLK4zeyd0s/0Bp++vbMSW13BU2spp8BKKcfcP0zwRY=
+X-Gm-Gg: ASbGnct2R3esOFTCFaibtgq+HkMvWic6PKBLVVDxjGJyY3JlYCiuUFfbnEkFJS0TMmU
+	EtbnJY4wbTltWeXXznK1YNxSTmykgRYFcd2PPzofdcPjntkXQPBfpH7MJjNbBJhstQ2x4SI13Sk
+	LzkoTE1UZFQq4NrrJEDpMCMJ6EaK/bTETgi7dEwPXoNcXZ1CjSALbR+p3PA1meNFBGyLnbADJ61
+	GD4Kv3AjIMBu8evSGqLcVCw9hljCAe+gGW5tvay90sv+3Nbfg//BH9MBtGaDYMdijBT0eTXSPhM
+	oLw3E0O3AirctRB9hSeKd4sDHB5jfk3zgFpEA2uRdcgpB2IvZ37xgZCZ26eHr8XhvmU/Gqm+yQI
+	8y7Nhm4qmZyUJ5MNfbAiOQIOW6yJ05DwODUBcCJ5ltlj/Ohud0ENqY5Z4yj96dHxg5XpKwThzuo
+	D8ZojFe+MG8zU9YGVZU1qXitrPzuRYJ5F+vNpGUM/L0YEheY10XyPf
+X-Google-Smtp-Source: AGHT+IF0p4cn6WRBxaoe5Z8jzNmgbLxmxgFiMAZ4T0EJmL3ifwXRqn7/4bFP3GWMvTGOqD2sRt28zQ==
+X-Received: by 2002:a17:902:f790:b0:24c:ba67:95 with SMTP id d9443c01a7336-24cba67045fmr63934665ad.9.1757058684132;
+        Fri, 05 Sep 2025 00:51:24 -0700 (PDT)
+Received: from ubuntu.huaqin.com (202.60.225.076.static.cyberec.com. [202.60.225.76])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24df9e881casm6943695ad.62.2025.09.05.00.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 00:51:23 -0700 (PDT)
+From: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+To: dianders@chromium.org,
+	neil.armstrong@linaro.org,
+	jessica.zhang@oss.qualcomm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+Subject: [PATCH v2] drm/panel-edp: Add edp panels used by mt8189 chromebooks
+Date: Fri,  5 Sep 2025 15:51:14 +0800
+Message-Id: <20250905075114.1351267-1-wuzhongtian@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
- <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
- <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
- <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
- <CAPDyKFq7z9e9hEC9QWiYcaU=t+Gs_GgRurmK-+cNYp4xkhr5Ow@mail.gmail.com>
- <CAMuHMdU7W+f3nZ_ckHOFsmmK6V9HzK0-fNtcu8kgjTSeU89AqQ@mail.gmail.com>
- <CAPDyKFr-mVbGo62Wp+othcs+cWR6Wn9bz==ZB5hSpyKgkGtqHg@mail.gmail.com>
- <CAMuHMdUAhsZMbkUzwb=XnCNyvA3aOvuhkKL4=1nOPQ0w0if-HA@mail.gmail.com> <CAPDyKFrWv3ObciCtrb4YE_K6to5xxx79DGcPv0=nP9LR60=xYA@mail.gmail.com>
-In-Reply-To: <CAPDyKFrWv3ObciCtrb4YE_K6to5xxx79DGcPv0=nP9LR60=xYA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Sep 2025 09:49:48 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
-X-Gm-Features: Ac12FXxsmJginKpxd1Bb3DOpcRL3N2fGsIcySobleVuR7bO4K7fM-l9wOi9dDY0
-Message-ID: <CAMuHMdXoLnQR_hB-jXeGxAudwwpFRcQjrQcCb8iYCOz32yHinw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Ulf,
+Add a few generic edp panels used by mt8189 chromebooks. For
+BOE-NV140WUM-N44 V8.2 , the enable timing required 80ms. For
+CSW-MNE007QB3-1, the hpd_absent timing rquired 80ms, the enable timing
+required 50ms, the disable timing required 50ms. For CSW-MNE007QS3-6,
+the enable timing required 50ms. For CMN-N140JCA-ELK, the enable timing
+required 80ms and disable timing required 50ms.
 
-On Thu, 4 Sept 2025 at 17:44, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Thu, 4 Sept 2025 at 14:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Thu, 14 Aug 2025 at 17:50, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > On Wed, 13 Aug 2025 at 13:58, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Tue, 12 Aug 2025 at 12:01, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > On Thu, 7 Aug 2025 at 11:38, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > > > On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > > > On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > > > > > On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > > > > > > > Changes in v3:
-> > > > > > > > > >         - Added a couple of patches to adress problems on some Renesas
-> > > > > > > > > >         platforms. Thanks Geert and Tomi for helping out!
-> > > > > > > > > >         - Adressed a few comments from Saravanna and Konrad.
-> > > > > > > > > >         - Added some tested-by tags.
-> > > > > > > > >
-> > > > > > > > > I decided it was time to give this a try, so I have queued this up for
-> > > > > > > > > v6.17 via the next branch at my pmdomain tree.
-> > > > > > > > >
-> > > > > > > > > If you encounter any issues, please let me know so I can help to fix them.
-> > > > > > > >
-> > > > > > > > Thanks for your series!  Due to holidays, I only managed to test
-> > > > > > > > this very recently.
-> > > > > > > >
-> > > > > > > > Unfortunately I have an issue with unused PM Domains no longer being
-> > > > > > > > disabled on R-Car:
-> > > > > > > >   - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
-> > > > > > > >     disabled.
-> > > > > > > >   - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
-> > > > > > > >     sometimes not disabled.
-> > > > > > > >     At first, I noticed the IOMMU driver was not enabled in my config,
-> > > > > > > >     and enabling it did fix the issue.  However, after that I still
-> > > > > > > >     encountered the issue in a different config that does have the
-> > > > > > > >     IOMMU driver enabled...
-> > > > > > > >
-> > > > > > > > FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
-> > > > > > > > (using rmobile-sysc.c) and on BeagleBone Black. Note that these use
-> > > > > > > > of_genpd_add_provider_simple(), while all R-Car drivers use
-> > > > > > > > of_genpd_add_provider_onecell().  Perhaps there is an issue with
-> > > > > > > > the latter?  If you don't have a clue, I plan to do some more
-> > > > > > > > investigation later...
-> > > > > >
-> > > > > > of_genpd_add_provider_onecell() has:
-> > > > > >
-> > > > > >     if (!dev)
-> > > > > >             sync_state = true;
-> > > > > >     else
-> > > > > >             dev_set_drv_sync_state(dev, genpd_sync_state);
-> > > > > >
-> > > > > >     for (i = 0; i < data->num_domains; i++) {
-> > > > > >             ...
-> > > > > >             if (sync_state && !genpd_is_no_sync_state(genpd)) {
-> > > > > >                     genpd->sync_state = GENPD_SYNC_STATE_ONECELL;
-> > > > > >                     device_set_node(&genpd->dev, fwnode);
-> > > > > >                     sync_state = false;
-> > > > > >                     ^^^^^^^^^^^^^^^^^^^
-> > > > > >             }
-> > > > > >             ...
-> > > > > >     }
-> > > > > >
-> > > > > > As the R-Car SYSC drivers are not platform drivers, dev is NULL, and
-> > > > > > genpd->sync_state is set to GENPD_SYNC_STATE_ONECELL for the first PM
-> > > > > > Domain only.  All other domains have the default value of sync_state
-> > > > > > (0 = GENPD_SYNC_STATE_OFF).  Hence when genpd_provider_sync_state()
-> > > > > > is called later, it ignores all but the first domain.
-> > > > > > Apparently this is intentional, as of_genpd_sync_state() tries to
-> > > > > > power off all domains handled by the same controller anyway (see below)?
-> > > > >
-> > > > > Right, this is intentional and mainly because of how fw_devlink works.
-> > > > >
-> > > > > fw_devlink is limited to use only the first device - if multiple
-> > > > > devices share the same fwnode. In principle, we could have picked any
-> > > > > of the devices in the array of genpds here - and reached the same
-> > > > > result.
-> > > >
-> > > > OK, just like I already assumed...
-> > > >
-> > > > > > > > BTW, the "pending due to"-messages look weird to me.
-> > > > > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
-> > > > > > > >
-> > > > > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
-> > > > > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
-> > > > > > > > due to e6020000.watchdog
-> > > > > > > >
-> > > > > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
-> > > > > > > > the watchdog resides in the always-on Clock Domain, and uses the
-> > > > > > > > clock-controller for PM_CLK handling.
-> > > > > >
-> > > > > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
-> > > > > > these bogus pending states, and no PM Domain is powered off.
-> > > > >
-> > > > > I see, thanks for the details. I am looking closer at this.
-> > > > >
-> > > > > In any case, this is the main issue, as it prevents the ->sync_state()
-> > > > > callback to be called. Hence the "genpd->stay_on" will also *not* be
-> > > > > cleared for any of the genpd's for the genpd-provider.
-> > > >
-> > > > I was under the impression there is a time-out, after which the
-> > > > .sync_state() callback would be called anyway, just like for probe
-> > > > deferral due to missing optional providers like DMACs and IOMMUs.
-> > > > Apparently that is not the case?
-> > >
-> > > The behaviour is configurable, so it depends. The current default
-> > > behaviour does *not* enforce the ->sync_state() callbacks to be
-> > > called, even after a time-out.
-> > >
-> > > You may set CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT to achieve the above
-> > > behavior or use the fw_devlink command line parameters to change it.
-> > > Like setting "fw_devlink.sync_state=timeout".
-> > >
-> > > I guess it can be debated what the default behaviour should be.
-> > > Perhaps we should even allow the default behaviour to be dynamically
-> > > tweaked on a per provider device/driver basis?
-> >
-> > The domains are indeed powered off like before when passing
-> > "fw_devlink.sync_state=timeout", so that fixes the regression.
-> > But it was not needed before...
->
-> Right, the default behavior in genpd has changed. The approach was
-> taken as we believed that original behavior was not correct.
->
-> Although, the current situation isn't good as it causes lot of churns for us.
+BOE NV140WUM-N44 V8.2
+edid-decode (hex):
 
-I did some more testing, and there seems to be a similar issue with
-DMA controllers, which I hadn't really noticed before, as I have
-DMAC drivers built-in in all my kernel configs.  If the (optional)
-DMAC driver is not available, you need "fw_devlink=permissive" to make
-drivers probe devices that have (optional) DMA support.
-Interestingly, that is not the case with (optional) IOMMU support:
-drivers do probe devices that have (optional) DMA support when the
-latter is not available.
+00 ff ff ff ff ff ff 00 09 e5 6a 0a 00 00 00 00
+2e 20 01 04 a5 1e 13 78 03 fb f5 96 5d 5a 91 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 61 40 80 04 71 b0 3c 40 30 20
+36 00 2d bc 10 00 00 1a 81 33 80 04 71 b0 3c 40
+30 20 36 00 2d bc 10 00 00 1a 00 00 00 fd 00 28
+3c 4c 4c 10 01 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 56 31 34 30 57 55 4d 2d 4e 34 34 0a 01 7c
 
-> > I could add "select FW_DEVLINK_SYNC_STATE_TIMEOUT" to the SYSC_RCAR
-> > and SYSC_RCAR_GEN4 Kconfig options, but that would play badly with
-> > multi-platform kernels.  As the fw_devlink_sync_state flag is static,
-> > the R-Car SYSC drivers can't just auto-enable the flag at runtime.
-> >
-> > Any other options? Perhaps a device-specific flag to be set by the PM
-> > Domain driver, and to be checked by fw_devlink_dev_sync_state()?
->
-> Something along those lines seems reasonable to me too.
->
-> However, the remaining question though, is what should be the default
-> behavior in genpd for this. Due to all the churns, we may want
-> something that is closer to what we had *before*, which means to
-> always use the timeout option, unless the genpd provider driver
-> explicitly requests to not to (an opt-out genpd config flag).
->
-> Saravana, it would be nice to get some thoughts from you are around
-> this? Does it make sense?
->
-> >
-> > > > > > If I remove the "sync_state = false" above, genpd_provider_sync_state()
-> > > > > > considers all domains, and does power down all unused domains (even
-> > > > > > multiple times, as expected).
-> > > > >
-> > > > > I think those are getting called because with the change above, there
-> > > > > is no device_link being tracked. As stated above, fw_devlink is
-> > > > > limited to use only one device - if multiple devices share the same
-> > > > > fwnode.
-> > > >
-> > > > Indeed.
-> > > >
-> > > > > In other words, the ->sync_state() callbacks are called even if the
-> > > > > corresponding consumer devices have not been probed yet.
-> > > >
-> > > > Hence shouldn't there be a timeout, as the kernel may not even have
-> > > > a driver for one or more consumer devices?
-> > >
-> > > See above.
-> > >
-> > > > > > Upon closer look, all "pending due to" messages I see claim that the
-> > > > > > first (index 0) PM Domain is pending on some devices, while all of
-> > > > > > these devices are part of a different domain (usually the always-on
-> > > > > > domain, which is always the last (32 or 64) on R-Car).
-> > > > > >
-> > > > > > So I think there are two issues:
-> > > > > >   1. Devices are not attributed to the correct PM Domain using
-> > > > > >      fw_devlink sync_state,
-> > > > > >   2. One PM Domain of a multi-domain controller being blocked should
-> > > > > >      not block all other domains handled by the same controller.
-> > > > >
-> > > > > Right, that's a current limitation with fw_devlink. To cope with this,
-> > > > > it's possible to enforce the ->sync_state() callback to be invoked
-> > > > > from user-space (timeout or explicitly) for a device.
-> >
-> > That needs explicit handling, which was not needed before.
-> >
-> > Perhaps the fw_devlink creation should be removed again from
-> > of_genpd_add_provider_onecell(), as it is not correct, except for
-> > the first domain?
->
-> There is nothing wrong with it, the behavior is correct, unless I
-> failed to understand your problem. To me the problem is that it is
+02 03 0d 00 68 1a 00 00 01 01 28 3c 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06
 
-It does print wrong and confusing warnings indicating the problem:
+CSW MNE007QB3-1:
+edid-decode (hex):
 
-    genpd_provider ca57-cpu0: sync_state() pending due to fe000000.pcie
+00 ff ff ff ff ff ff 00 0e 77 6e 14 00 00 00 00
+00 23 01 04 a5 1e 13 78 07 ee 95 a3 54 4c 99 26
+0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 35 3c 80 a0 70 b0 23 40 30 20
+36 00 2d bc 10 00 00 18 2b 30 80 a0 70 b0 23 40
+30 20 36 00 2d bc 10 00 00 18 00 00 00 fd 00 28
+3c 4a 4a 0f 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4d 4e 45 30 30 37 51 42 33 2d 31 0a 20 01 69
 
-(no, the PCIe controller is not part of the CPU PM Domain)
+70 20 79 02 00 21 00 1d c8 0b 5d 07 80 07 b0 04
+00 3d 8a 54 cd a4 99 66 62 0f 02 45 54 40 5e 40
+5e 00 44 12 78 2e 00 06 00 44 40 5e 40 5e 81 00
+20 74 1a 00 00 03 01 28 3c 00 00 00 00 00 00 3c
+00 00 00 00 8d 00 e3 05 04 00 e6 06 01 00 60 60
+ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 68 90
 
-> just less fine grained, compared to using
-> of_genpd_add_provider_simple(). All PM domains that is provided by a
-> single power-domain controller that uses #power-domain-cells = <1>,
-> requires all consumers of them to be probed, to allow the sync_state
-> callback to be invoked.
+CSW MNE007QS3-6:
+edid-decode (hex):
 
-if it would be just coarse-grained, the link should be created to a
-device representing the controller, not to the device representing
-the first PM domain.
+00 ff ff ff ff ff ff 00 0e 77 3f 14 00 00 00 00
+00 22 01 04 a5 1e 13 78 03 2c c5 94 5c 59 95 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 ea 3d 80 c8 70 b0 2e 40 30 20
+36 00 2e bd 10 00 00 1a 88 31 80 c8 70 b0 2e 40
+30 20 36 00 2e bd 10 00 00 1a 00 00 00 fd 00 28
+3c 4b 4b 10 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4d 4e 45 30 30 37 51 53 33 2d 36 0a 20 01 80
 
-> If we could teach fw_devlink to take into account the
-> power-domain-*id* that is specified by the consumer node, when the
-> provider is using #power-domain-cells = <1>, this could potentially
-> become as fine-grained as of_genpd_add_provider_simple().
->
-> Saravana, do think we can extend fw_devlink to take this into account somehow?
+70 20 79 02 00 81 00 14 74 1a 00 00 03 01 28 3c
+00 00 00 00 00 00 3c 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 9e 90
 
-Doesn't the pmdomain core create a device for each PM domain, so the
-index could be used to link to the correct domain?
+CMN N140JCA-ELK:
+edid-decode (hex):
 
-> > > > > Another option would be to allow an opt-out behavior for some genpd's
-> > > > > that are powered-on at initialization. Something along the lines of
-> > > > > the below.
-> > > > >
-> > > > > From: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > > Date: Tue, 29 Jul 2025 14:27:22 +0200
-> > > > > Subject: [PATCH] pmdomain: core: Allow powered-on PM domains to be powered-off
-> > > > >  during boot
-> > > >
-> > > > [...]
-> > > >
-> > > > I gave this a try (i.e. "| GENPD_FLAG_NO_STAY_ON" in rcar-sysc.c), but
-> > > > this doesn't make any difference.  I assume this would only work when
-> > > > actively calling genpd_power_off() (i.e. not from of_genpd_sync_state()
-> > > > or genpd_provider_sync_state())?
-> > >
-> > > Right. Thanks for testing!
-> > >
-> > > So, we may need to restore some part of the genpd_power_off_unused()
-> > > when CONFIG_PM_GENERIC_DOMAINS_OF is set. Without clearing
-> > > "genpd->stay_on".
-> > >
-> > > I can extend the patch, if you think it would make sense for you?
-> >
-> > I would applaud anything that would fix these regressions.
-> > Thanks!
->
-> While being mostly silent from my side for a while, I have been
-> continuing to evolve my test suite for sync_state tests. Wanted to
-> make sure I cover additional new corner cases that you have pointed
-> out for Renesas platforms.
->
-> That said, I have not observed any issues on my side, so it looks like
-> we are simply facing new behaviors that you have pointed out to be a
-> problem. In this regards, I think it's important to note that we are
-> currently only seeing problems for those genpds that are powered-on
-> when the provider driver calls pm_genpd_init(). Another simple option
-> is to power-off those PM domains that we know is not really needed to
-> be powered-on. Also not perfect, but an option.
->
-> Another option is something along the lines of what I posted, but
-> perhaps extending it to let the late_initcall_sync to try to power-off
-> the unused PM domains.
+00 ff ff ff ff ff ff 00 0d ae 41 14 00 00 00 00
+25 21 01 04 a5 1e 13 78 03 28 65 97 59 54 8e 27
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 42 3c 80 a0 70 b0 24 40 30 20
+a6 00 2d bc 10 00 00 18 35 30 80 a0 70 b0 24 40
+30 20 a6 00 2d bc 10 00 00 18 00 00 00 fd 00 28
+3c 4b 4b 10 01 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 31 34 30 4a 43 41 2d 45 4c 4b 0a 20 01 14
 
-Yep, like before.
+02 03 0d 00 68 1a 00 00 01 01 28 3c 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06
 
-> I will work on updating the patch so we can try it out - or perhaps
-> what you suggested above with a device-specific flag taken into
-> account by fw_devlink_dev_sync_state() would be better/sufficient you
-> think?
+Signed-off-by: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+---
+ drivers/gpu/drm/panel/panel-edp.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-I also had a closer look at the few pending sync_state() pending
-warnings I do see on SH/R-Mobile SoCs.  Their PM Domain driver uses
-of_genpd_add_provider_simple() instead of of_genpd_add_provider_onecell().
-E.g. on R-Mobile A1:
-
-    genpd_provider a3sm: sync_state() pending due to f0100000.cache-controller
-    genpd_provider a4s: sync_state() pending due to fe400000.memory-controller
-    genpd_provider d4: sync_state() pending due to ptm
-
-All three domains were already handled specially in the PM Domain
-driver, as they must not be turned off, so these platforms didn't
-regress due to this series.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 9a56e208cbdd..6a27c0214dbe 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1828,6 +1828,13 @@ static const struct panel_delay delay_50_500_e200_d200_po2e335 = {
+ 	.powered_on_to_enable = 335,
+ };
+ 
++static const struct panel_delay delay_80_500_e50_d50 = {
++	.hpd_absent = 80,
++	.unprepare = 500,
++	.enable = 50,
++	.disable = 50,
++};
++
+ #define EDP_PANEL_ENTRY(vend_chr_0, vend_chr_1, vend_chr_2, product_id, _delay, _name) \
+ { \
+ 	.ident = { \
+@@ -1949,6 +1956,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d73, &delay_200_500_e80, "NE140WUM-N6S"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a6a, &delay_200_500_e80, "NV140WUM-N44 V8.2"),
+ 
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1130, &delay_200_500_e50, "N116BGE-EB2"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1132, &delay_200_500_e80_d50, "N116BGE-EA2"),
+@@ -1978,6 +1986,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14d6, &delay_200_500_e80_d50, "N140BGA-EA4"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14e5, &delay_200_500_e80_d50, "N140HGA-EA1"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x162b, &delay_200_500_e80_d50, "N160JCE-ELL"),
++	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1441, &delay_200_500_e80_d50, "N140JCA-ELK"),
+ 
+ 	EDP_PANEL_ENTRY('C', 'S', 'O', 0x1200, &delay_200_500_e50_p2e200, "MNC207QS1-1"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'O', 0x1413, &delay_200_500_e50_p2e200, "MNE007JA1-2"),
+@@ -1987,6 +1996,8 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1104, &delay_200_500_e50, "MNB601LS1-4"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1448, &delay_200_500_e50, "MNE007QS3-7"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1457, &delay_80_500_e80_p2e200, "MNE007QS3-8"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x146e, &delay_80_500_e50_d50, "MNE007QB3-1"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x143f, &delay_200_500_e50, "MNE007QS3-6"),
+ 
+ 	EDP_PANEL_ENTRY('E', 'T', 'C', 0x0000, &delay_50_500_e200_d200_po2e335, "LP079QX1-SP0V"),
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
