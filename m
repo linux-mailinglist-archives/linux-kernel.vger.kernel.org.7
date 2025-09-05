@@ -1,428 +1,250 @@
-Return-Path: <linux-kernel+bounces-802970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37867B458FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EB7B45904
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF1187BC736
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C715C21D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9672027E7DD;
-	Fri,  5 Sep 2025 13:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4B535206F;
+	Fri,  5 Sep 2025 13:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OvzIcV8o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DwF1H9CE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9No8GHHd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DwF1H9CE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9No8GHHd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0AD352074
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC023148DF
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078889; cv=none; b=dB6YirwnQN7+VfCjGuKTeSZb5lZgqg2BwYB+CIip3kTlVFOS2oACayl5GO3oH9AA5WcG8EYxK2yENtfGQ70LLZtLmyj1jExmjPwy45ecAE0dTi6cf4XyVw/TYqHbfIO3wFldO4OGGsoOZ5VmSkNDMGLB+pD1ij6Qz1RS7XFvpJc=
+	t=1757079003; cv=none; b=toYtnYS0Gy2uMz5Up58U1zbF1u4RJeqJmvVWvX/oFqYe4S+gx/p63Dw1UiLB9FRzu1vZsxg7pPhRlOSFBxQ2jNcIB1HZT31Hh70rLzux3rQphxKTPnL64puJ2Yg1p7p7S+SbhBeZ2CG78PivRDC9A3RAW/OZmNlg984Xx3lWEPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078889; c=relaxed/simple;
-	bh=00lP1MO7V96rpDy5Iqjhv/dbeh8Q0ASIz04S3hGBHjA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BEfdC1eE6MSGRssBBGQ9b4uwhWLDzA+0iBCCl0Q7Ug1pg8J/4mxPTiSddXelfx+IyMWyM7FzHwaimDS0blMWdDm9xq/LwPWsZSQ+5mYUHIwn77GefZ9Y91mEITMqh31ml//orLHCovuLd0WHPkqHtubxjByYdKua5PfXgriE8kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OvzIcV8o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757078885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3WiqqmvmkyU9dyNVWkSqj8OsGhyXBJbKIwB2/k8dKmc=;
-	b=OvzIcV8oKiGX/LOJsTCvfrx/sTgGcBXSghXuz6gkMZVeWEXjFzniNuLz06e4ZGuyv74bG0
-	rkMPRmY/Q7REZhpFpvDszKoNrmkHqvgHRZyrwlXBIYzQ/CEjuRTVjn/cEXzngi07CMoaE0
-	PKz7VYEEQw244w0BdfG/eR1iRYlK+iw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-rbr-IEEXMU6wG0NJPQj2dQ-1; Fri, 05 Sep 2025 09:28:04 -0400
-X-MC-Unique: rbr-IEEXMU6wG0NJPQj2dQ-1
-X-Mimecast-MFC-AGG-ID: rbr-IEEXMU6wG0NJPQj2dQ_1757078883
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b467f5173so15670825e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:28:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078883; x=1757683683;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3WiqqmvmkyU9dyNVWkSqj8OsGhyXBJbKIwB2/k8dKmc=;
-        b=uwopSCfFgdUhZvNFmHfkgUkEMXOKXFEFDYNcGDycq3RpqcauaIhozwx4lw22KOk8gm
-         rb2f/jF1wB+ScdyXnOgbkVV3c59hIxElrq3fhOrwZbbxJ+vy+Gdj4SqR8LPqfwE9Qsbq
-         vRwLA++cxKNmtnM5sjaC0gKbnyu1aIOe9AQVHq+Oet5p1ankag5KL33UZdhXB8HZCTEz
-         BTEQ2Vsn5HkzLqPBZCB5lo4jRrcJz5xSgsLq++5FWOkoxKE2MoN6u2kxwMMO9UZM5nC5
-         ygQWN95JYCiPHe38bidksPmYznE0zIyc6A76fKZsH2P4GbiPzC7nEnfrCNe+x5YQ89/m
-         1cbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXV1kyblvzrr6yCV568x2xMtrW1uXM9/0C1wp0c+Y9mPxXl9O8q3zb9AdGSlq/YST7UrP9Rxv9tmjPObtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/uMZETvktPqyItUu1anmZkOAkUAAtWo1/wMLPmPxjhsiE3tW
-	3leNMd6mGOzPWcLoCRD7R2LT94o2S9ipPhINDRlmWcFi9ISzglJ+RVFOd6ISGIM/4n+iXFuWKUK
-	XF5N2ruZnJ5WhFYZeefYtqGly3oZwKyow158OCNBnfilc1VxPr5d2CH8R5yg36so2sw==
-X-Gm-Gg: ASbGncvyZWo1grzieH2yYa/S58ysWYIVdKWCzxZ4yp1xJx3gOg4Qe2a0bzB9iTmY2N8
-	V6sXXjgBqWV7Amuo018fTx4K2XseXurwf9cI6i44GRpheVruPLDCYtX8N0OCvQpkMQ5oaGDmu8d
-	zfD8KPsl8kXT2EbpYv0pmfb9p5ZRIUn1FQhnPe97AdjZHWeUieAKH2O4ikmURQXPU5iwaLW8M5X
-	tt08/b5MY6NFmxM4Wry5orhkpw0U7/JX0CgiuSnPqXNQu++CwiX6igLOyORwyum6CZ+5EC6jSnW
-	3EbiBv0QdpNmn+FHCOc27CdCy9k+yLb933RdXwNAuuZc7RFBlqA9MBOLirn+AYYY9vzWPMyf8K3
-	0l28yuEx+l8Kd01D1KaefdvSwkGwXBm9Dgz5QzMnOySWZkbDjax/Zvfe8
-X-Received: by 2002:a5d:64c3:0:b0:3e4:d981:e31f with SMTP id ffacd0b85a97d-3e4d981e979mr899298f8f.60.1757078882915;
-        Fri, 05 Sep 2025 06:28:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmzbvGKGMXC1b4s32EUu5W51ZgOauNi8Zf/J3DfcPBT1LhN4y6O0qNuzW+PSJeZxpA24bWOw==
-X-Received: by 2002:a5d:64c3:0:b0:3e4:d981:e31f with SMTP id ffacd0b85a97d-3e4d981e979mr899266f8f.60.1757078882342;
-        Fri, 05 Sep 2025 06:28:02 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9db4sm31599368f8f.47.2025.09.05.06.28.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 06:28:01 -0700 (PDT)
-Message-ID: <0118a233-90fc-484b-b539-d8df641a25ad@redhat.com>
-Date: Fri, 5 Sep 2025 15:28:00 +0200
+	s=arc-20240116; t=1757079003; c=relaxed/simple;
+	bh=nbx9yeMXqVbxjaZrn9k4qgf1Ge15vs6guc1928gX5Yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5pw4u30zRBl9lNQZBoXHqDkOJey6ct4AxPeRgLyTX+6VIbAWZs0qEmtAtfDw612AhNVYF3gJDH8hpGQSwd61L3gzJO3KplCd+ZhVX6JYMXmZ3yAvDLTzmkxAfdV8CiAWCa9lCcYvdMvT9w+/Du5tr54YjR07ptn1kzt6PZV6MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DwF1H9CE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9No8GHHd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DwF1H9CE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9No8GHHd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0A2AE4E7D2;
+	Fri,  5 Sep 2025 13:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757078999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E9/tsIa4V6eWlJ4d89CEM4IMZi++FhWTrKiHIIwUSqs=;
+	b=DwF1H9CEUxRxaeppSbB7XuTDaCE2VosktZuJGvNzuMjTVoUqTQGF6T5cwVAVyRi/4Aww/a
+	L0nqfiS9EzJon9CxhAMBuGmlGXr3sFL9FNR9F6+cGk6ij3vEbwroead6lPRHgEOKuXzEwz
+	t0+6yPWYl2RVVtuur6/hevEO/1Xj6jY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757078999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E9/tsIa4V6eWlJ4d89CEM4IMZi++FhWTrKiHIIwUSqs=;
+	b=9No8GHHdw/OECAGVVGzG2sZKb+sv7GVF+K+dWNptckjRX6D0BAzs1I00Au1CwyVzTHzjI+
+	JoPje6cZVjQdqhAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757078999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E9/tsIa4V6eWlJ4d89CEM4IMZi++FhWTrKiHIIwUSqs=;
+	b=DwF1H9CEUxRxaeppSbB7XuTDaCE2VosktZuJGvNzuMjTVoUqTQGF6T5cwVAVyRi/4Aww/a
+	L0nqfiS9EzJon9CxhAMBuGmlGXr3sFL9FNR9F6+cGk6ij3vEbwroead6lPRHgEOKuXzEwz
+	t0+6yPWYl2RVVtuur6/hevEO/1Xj6jY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757078999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E9/tsIa4V6eWlJ4d89CEM4IMZi++FhWTrKiHIIwUSqs=;
+	b=9No8GHHdw/OECAGVVGzG2sZKb+sv7GVF+K+dWNptckjRX6D0BAzs1I00Au1CwyVzTHzjI+
+	JoPje6cZVjQdqhAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3B7E13306;
+	Fri,  5 Sep 2025 13:29:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fDKPN9blumhRdQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 05 Sep 2025 13:29:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D21B0A0A48; Fri,  5 Sep 2025 15:29:57 +0200 (CEST)
+Date: Fri, 5 Sep 2025 15:29:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	joseph.qi@linux.alibaba.com, jlbec@evilplan.org, mark@fasheh.com, brauner@kernel.org, 
+	willy@infradead.org, david@fromorbit.com
+Subject: Re: [PATCH] ocfs2: retire ocfs2_drop_inode() and I_WILL_FREE usage
+Message-ID: <3rqcl7pgqmel4l54fwbbyslexehzrqbugj7zfmq77iykmg74ih@js6ki7oacu67>
+References: <766vdz3ecpm7hv4sp5r3uu4ezggm532ng7fdklb2nrupz6minz@qcws3ufabnjp>
+ <20250904154245.644875-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next-20250905: x86_64: udpgso_bench.sh triggers NULL deref in
- zerocopy_fill_skb_from_iter
-From: David Hildenbrand <david@redhat.com>
-To: Eric Dumazet <edumazet@google.com>,
- Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Netdev <netdev@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Eric Biggers <ebiggers@google.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Ben Copeland <benjamin.copeland@linaro.org>,
- Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>,
- Willem de Bruijn <willemb@google.com>, Pengtao He <hept.hept.hept@gmail.com>
-References: <CA+G9fYsmo39mXw-U7VKJgHWTBB5bXNgwOqNfmDWRqvbqmxnD2g@mail.gmail.com>
- <CANn89iKciN019j88sGYpi_Boi7ggJoSnV4gOW=5grp+skkKnBA@mail.gmail.com>
- <a4e4be39-b0e6-4632-878d-0765c9475984@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <a4e4be39-b0e6-4632-878d-0765c9475984@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904154245.644875-1-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On 05.09.25 15:07, David Hildenbrand wrote:
-> On 05.09.25 14:55, Eric Dumazet wrote:
->> On Fri, Sep 5, 2025 at 2:30 AM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->>>
->>> The following kernel crash was noticed on x86_64 running selftests net
->>> udpgso_bench.sh
->>> on Linux next-20250905 tag.
->>>
->>> Regression Analysis:
->>> - New regression? yes
->>> - Reproducibility? Re-validation is in progress
->>>
->>> First seen on next-20250905
->>> Bad: next-20250905
->>> Good: next-20250904
->>>
->>> Test regression: next-20250905 x86_64 selftests net BUG kernel NULL
->>> pointer dereference zerocopy_fill_skb_from_iter
->>>
->>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>>
->>> x86_64:
->>>    Test:
->>>       * selftests: net: udpgso_bench.sh
->>>
->>> Test error:
->>> selftests: net: udpgso_bench.sh
->>> ipv4
->>> tcp
->>>
->>> <trim>
->>>
->>> # tcp zerocopy
->>> [  991.110488] SELinux: unrecognized netlink message: protocol=4
->>> nlmsg_type=19 sclass=netlink_tcpdiag_socket pid=64835 comm=ss
->>> # RTNETLINK answers: Invalid argument
->>> [  991.129878] BUG: kernel NULL pointer dereference, address: 0000000000000008
->>> [  991.136850] #PF: supervisor read access in kernel mode
->>> [  991.141986] #PF: error_code(0x0000) - not-present page
->>> [  991.147118] PGD 0 P4D 0
->>> [  991.149657] Oops: Oops: 0000 [#1] SMP PTI
->>> [  991.153661] CPU: 0 UID: 0 PID: 64842 Comm: udpgso_bench_tx Tainted:
->>> G S                  6.17.0-rc4-next-20250905 #1 PREEMPT(voluntary)
->>> [  991.165907] Tainted: [S]=CPU_OUT_OF_SPEC
->>> [  991.169825] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
->>> 2.7 12/07/2021
->>> [  991.177209] RIP: 0010:zerocopy_fill_skb_from_iter
->>> (include/linux/page-flags.h:284)
->>> [ 991.182954] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
->>> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
->>> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
->>> f7
->>> All code
->>> ========
->>>      0: 4d 85 c0              test   %r8,%r8
->>>      3: 0f 84 04 01 00 00    je     0x10d
->>>      9: 44 39 c7              cmp    %r8d,%edi
->>>      c: 41 0f 4d f8          cmovge %r8d,%edi
->>>     10: 4c 63 de              movslq %esi,%r11
->>>     13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
->>>     18: 49 89 d6              mov    %rdx,%r14
->>>     1b: 4d 29 ce              sub    %r9,%r14
->>>     1e: 49 c1 fe 06          sar    $0x6,%r14
->>>     22: 49 d3 ee              shr    %cl,%r14
->>>     25: 4d 85 f6              test   %r14,%r14
->>>     28: 74 24                je     0x4e
->>>     2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
->>>     2e: f6 c1 01              test   $0x1,%cl
->>>     31: 0f 85 cb 00 00 00    jne    0x102
->>>     37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->>>     3c: 31 c9                xor    %ecx,%ecx
->>>     3e: 48                    rex.W
->>>     3f: f7                    .byte 0xf7
->>>
->>> Code starting with the faulting instruction
->>> ===========================================
->>>      0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
->>>      4: f6 c1 01              test   $0x1,%cl
->>>      7: 0f 85 cb 00 00 00    jne    0xd8
->>>      d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->>>     12: 31 c9                xor    %ecx,%ecx
->>>     14: 48                    rex.W
->>>     15: f7                    .byte 0xf7
->>> [  991.201691] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
->>> [  991.206910] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
->>> [  991.214033] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
->>> [  991.221156] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
->>> [  991.228280] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
->>> [  991.235406] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
->>> [  991.242529] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
->>> knlGS:0000000000000000
->>> [  991.250608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [  991.256378] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
->>> [  991.263513] Call Trace:
->>> [  991.265956]  <TASK>
->>> [  991.268055] __zerocopy_sg_from_iter (net/core/datagram.c:?)
->>> [  991.272674] ? kmalloc_reserve (net/core/skbuff.c:581)
->>> [  991.276599] skb_zerocopy_iter_stream (net/core/skbuff.c:1867)
->>> [  991.281219] tcp_sendmsg_locked (net/ipv4/tcp.c:1283)
->>> [  991.285493] tcp_sendmsg (net/ipv4/tcp.c:1393)
->>> [  991.288896] inet6_sendmsg (net/ipv6/af_inet6.c:661)
->>> [  991.292466] __sock_sendmsg (net/socket.c:717)
->>> [  991.296126] __sys_sendto (net/socket.c:?)
->>> [  991.299785] __x64_sys_sendto (net/socket.c:2235 net/socket.c:2231
->>> net/socket.c:2231)
->>> [  991.303622] x64_sys_call (arch/x86/entry/syscall_64.c:41)
->>> [  991.307462] do_syscall_64 (arch/x86/entry/syscall_64.c:?)
->>> [  991.311128] ? irqentry_exit (kernel/entry/common.c:210)
->>> [  991.314881] ? exc_page_fault (arch/x86/mm/fault.c:1536)
->>> [  991.318720] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
->>> [  991.323762] RIP: 0033:0x7f41e814b687
->>> [ 991.327352] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00
->>> 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10
->>> 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff
->>> ff
->>> All code
->>> ========
->>>      0: 48 89 fa              mov    %rdi,%rdx
->>>      3: 4c 89 df              mov    %r11,%rdi
->>>      6: e8 58 b3 00 00        call   0xb363
->>>      b: 8b 93 08 03 00 00    mov    0x308(%rbx),%edx
->>>     11: 59                    pop    %rcx
->>>     12: 5e                    pop    %rsi
->>>     13: 48 83 f8 fc          cmp    $0xfffffffffffffffc,%rax
->>>     17: 74 1a                je     0x33
->>>     19: 5b                    pop    %rbx
->>>     1a: c3                    ret
->>>     1b: 0f 1f 84 00 00 00 00 nopl   0x0(%rax,%rax,1)
->>>     22: 00
->>>     23: 48 8b 44 24 10        mov    0x10(%rsp),%rax
->>>     28: 0f 05                syscall
->>>     2a:* 5b                    pop    %rbx <-- trapping instruction
->>>     2b: c3                    ret
->>>     2c: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
->>>     33: 83 e2 39              and    $0x39,%edx
->>>     36: 83 fa 08              cmp    $0x8,%edx
->>>     39: 75 de                jne    0x19
->>>     3b: e8 23 ff ff ff        call   0xffffffffffffff63
->>>
->>> Code starting with the faulting instruction
->>> ===========================================
->>>      0: 5b                    pop    %rbx
->>>      1: c3                    ret
->>>      2: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
->>>      9: 83 e2 39              and    $0x39,%edx
->>>      c: 83 fa 08              cmp    $0x8,%edx
->>>      f: 75 de                jne    0xffffffffffffffef
->>>     11: e8 23 ff ff ff        call   0xffffffffffffff39
->>> [  991.346124] RSP: 002b:00007ffdd843ba50 EFLAGS: 00000202 ORIG_RAX:
->>> 000000000000002c
->>> [  991.353680] RAX: ffffffffffffffda RBX: 00007f41e80b9740 RCX: 00007f41e814b687
->>> [  991.360806] RDX: 000000000000f180 RSI: 000056251f1fd100 RDI: 0000000000000005
->>> [  991.367931] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->>> [  991.375063] R10: 0000000004000000 R11: 0000000000000202 R12: 0000000000000000
->>> [  991.382193] R13: 000056251f1fb080 R14: 000001a670e438d8 R15: 0000000000000005
->>> [  991.389357]  </TASK>
->>> [  991.391571] Modules linked in: mptcp_diag tcp_diag inet_diag
->>> xt_conntrack xfrm_user ipip bridge stp llc geneve vxlan act_csum
->>> act_pedit openvswitch nsh nf_nat nf_conntrack nf_defrag_ipv6
->>> nf_defrag_ipv4 psample cls_flower sch_prio xt_mark nft_compat
->>> nf_tables sch_ingress act_mirred cls_basic sch_fq_codel vrf pktgen
->>> macvtap macvlan tap x86_pkg_temp_thermal ip_tables x_tables [last
->>> unloaded: test_bpf]
->>> [  991.426812] CR2: 0000000000000008
->>> [  991.430121] ---[ end trace 0000000000000000 ]---
->>> [  991.434733] RIP: 0010:zerocopy_fill_skb_from_iter
->>> (include/linux/page-flags.h:284)
->>> [ 991.440477] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
->>> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
->>> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
->>> f7
->>> All code
->>> ========
->>>      0: 4d 85 c0              test   %r8,%r8
->>>      3: 0f 84 04 01 00 00    je     0x10d
->>>      9: 44 39 c7              cmp    %r8d,%edi
->>>      c: 41 0f 4d f8          cmovge %r8d,%edi
->>>     10: 4c 63 de              movslq %esi,%r11
->>>     13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
->>>     18: 49 89 d6              mov    %rdx,%r14
->>>     1b: 4d 29 ce              sub    %r9,%r14
->>>     1e: 49 c1 fe 06          sar    $0x6,%r14
->>>     22: 49 d3 ee              shr    %cl,%r14
->>>     25: 4d 85 f6              test   %r14,%r14
->>>     28: 74 24                je     0x4e
->>>     2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
->>>     2e: f6 c1 01              test   $0x1,%cl
->>>     31: 0f 85 cb 00 00 00    jne    0x102
->>>     37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->>>     3c: 31 c9                xor    %ecx,%ecx
->>>     3e: 48                    rex.W
->>>     3f: f7                    .byte 0xf7
->>>
->>> Code starting with the faulting instruction
->>> ===========================================
->>>      0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
->>>      4: f6 c1 01              test   $0x1,%cl
->>>      7: 0f 85 cb 00 00 00    jne    0xd8
->>>      d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
->>>     12: 31 c9                xor    %ecx,%ecx
->>>     14: 48                    rex.W
->>>     15: f7                    .byte 0xf7
->>> [  991.459215] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
->>> [  991.464434] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
->>> [  991.471557] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
->>> [  991.478681] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
->>> [  991.485807] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
->>> [  991.492930] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
->>> [  991.500054] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
->>> knlGS:0000000000000000
->>> [  991.508132] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [  991.513870] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
->>> [  991.520994] note: udpgso_bench_tx[64842] exited with irqs disabled
->>>
->>>
->>> ## Source
->>> * Kernel version: 6.17.0-rc4
->>> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
->>> * Git describe: next-20250905
->>> * Git commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
->>> * Architectures: x86_64
->>> * Toolchains: clang-nightly
->>> * Kconfigs: defconfig+selftests/*/config
->>>
->>> ## Build
->>> * Test log: https://qa-reports.linaro.org/api/testruns/29777495/log_file/
->>> * LAVA test log: https://lkft.validation.linaro.org/scheduler/job/8434053#L16943
->>> * Test details:
->>> https://regressions.linaro.org/lkft/linux-next-master/next-20250905/log-parser-test/oops-oops-oops-smp-pti/
->>> * Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32GkXBGNRNDEj5d64zd73eXhXQC
->>> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/
->>> * Kernel config:
->>> https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/config
->>>
->>> --
->>> Linaro LKFT
->>> https://lkft.linaro.org
->>
->> I suspect a bug added in mm/gup.c recently
->>
->> commit db076b5db550aa34169dceee81d0974c7b2a2482
->> Author: David Hildenbrand <david@redhat.com>
->> Date:   Mon Sep 1 17:03:40 2025 +0200
->>
->>       mm/gup: remove record_subpages()
->>
->>       We can just cleanup the code by calculating the #refs earlier, so we can
->>       just inline what remains of record_subpages().
->>
->>       Calculate the number of references/pages ahead of times, and record them
->>       only once all our tests passed.
->>
->>       Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.com
->>       Signed-off-by: David Hildenbrand <david@redhat.com>
->>       Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->>
+On Thu 04-09-25 17:42:45, Mateusz Guzik wrote:
+> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
+> fine (tm).
 > 
-> Yes, fix already on its way:
+> The intent is to retire the I_WILL_FREE flag.
 > 
-> https://lkml.kernel.org/r/5090355d-546a-4d06-99e1-064354d156b5@redhat.com
-> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-#syz dup: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in io_sqe_buffer_register
+Looks good to me! Feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> 
+> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
+> 
+> btw grep shows comments referencing ocfs2_drop_inode() which are already
+> stale on the stock kernel, I opted to not touch them.
+> 
+> This ties into an effort to remove the I_WILL_FREE flag, unblocking
+> other work. If accepted would be probably best taken through vfs
+> branches with said work, see https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.18.inode.refcount.preliminaries
+> 
+>  fs/ocfs2/inode.c       | 23 ++---------------------
+>  fs/ocfs2/inode.h       |  1 -
+>  fs/ocfs2/ocfs2_trace.h |  2 --
+>  fs/ocfs2/super.c       |  2 +-
+>  4 files changed, 3 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index 6c4f78f473fb..5f4a2cbc505d 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
+>  
+>  void ocfs2_evict_inode(struct inode *inode)
+>  {
+> +	write_inode_now(inode, 1);
+> +
+>  	if (!inode->i_nlink ||
+>  	    (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
+>  		ocfs2_delete_inode(inode);
+> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
+>  	ocfs2_clear_inode(inode);
+>  }
+>  
+> -/* Called under inode_lock, with no more references on the
+> - * struct inode, so it's safe here to check the flags field
+> - * and to manipulate i_nlink without any other locks. */
+> -int ocfs2_drop_inode(struct inode *inode)
+> -{
+> -	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+> -
+> -	trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
+> -				inode->i_nlink, oi->ip_flags);
+> -
+> -	assert_spin_locked(&inode->i_lock);
+> -	inode->i_state |= I_WILL_FREE;
+> -	spin_unlock(&inode->i_lock);
+> -	write_inode_now(inode, 1);
+> -	spin_lock(&inode->i_lock);
+> -	WARN_ON(inode->i_state & I_NEW);
+> -	inode->i_state &= ~I_WILL_FREE;
+> -
+> -	return 1;
+> -}
+> -
+>  /*
+>   * This is called from our getattr.
+>   */
+> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
+> index accf03d4765e..07bd838e7843 100644
+> --- a/fs/ocfs2/inode.h
+> +++ b/fs/ocfs2/inode.h
+> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
+>  }
+>  
+>  void ocfs2_evict_inode(struct inode *inode);
+> -int ocfs2_drop_inode(struct inode *inode);
+>  
+>  /* Flags for ocfs2_iget() */
+>  #define OCFS2_FI_FLAG_SYSFILE		0x1
+> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+> index 54ed1495de9a..4b32fb5658ad 100644
+> --- a/fs/ocfs2/ocfs2_trace.h
+> +++ b/fs/ocfs2/ocfs2_trace.h
+> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
+>  
+>  DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
+>  
+> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
+> -
+>  TRACE_EVENT(ocfs2_inode_revalidate,
+>  	TP_PROTO(void *inode, unsigned long long ino,
+>  		 unsigned int flags),
+> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> index 53daa4482406..e4b0d25f4869 100644
+> --- a/fs/ocfs2/super.c
+> +++ b/fs/ocfs2/super.c
+> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
+>  	.statfs		= ocfs2_statfs,
+>  	.alloc_inode	= ocfs2_alloc_inode,
+>  	.free_inode	= ocfs2_free_inode,
+> -	.drop_inode	= ocfs2_drop_inode,
+> +	.drop_inode	= generic_delete_inode,
+>  	.evict_inode	= ocfs2_evict_inode,
+>  	.sync_fs	= ocfs2_sync_fs,
+>  	.put_super	= ocfs2_put_super,
+> -- 
+> 2.43.0
+> 
 -- 
-Cheers
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
