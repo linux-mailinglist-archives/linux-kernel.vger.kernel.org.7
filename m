@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-803497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AC8B46095
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:46:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827E1B460B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A0F176520
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A5B7B1DBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768922FB08E;
-	Fri,  5 Sep 2025 17:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3024D371EBC;
+	Fri,  5 Sep 2025 17:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGJe7bqG"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbwekWp+"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F3C3191DB
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CEC3191DB;
+	Fri,  5 Sep 2025 17:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094403; cv=none; b=irz/QpFsyrpviWR+nuqLQ9Kr+YILX4E/cZVEp6W10bIbsCdPx2jiNGZ40UndcOJWrDv+TWnXIVuw11KQPz35DIk9L0y1wpmUtJ5MLMT0sViYOq1zZ15CJ3t89PYm/D3JrmcaI4mixK+p0IbUaBrMx8C2PtNnxKSE9L+m9XLzLlM=
+	t=1757094468; cv=none; b=OeKDufHxyjZvun0v/wgjyyaFzLzKDSrAMcTAmRtezw7CMEzMiRTvSbH958a+P+owxStqisjf/uxOPNYeSqQwp9T+sJyFbcAac4Plz0KF3u4VPuiIjVXiLV8K8VCyALO0zFVWW6CmL67W+b9eWUT92f8YWxYa5hCSvf/RMG9n6Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094403; c=relaxed/simple;
-	bh=ImBcWa5EQacMGTiHmRHcGOuj7vGlSUaHQ6EbozwBxh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QI+VZuSkIAgACEvDRc4WJmS/QOts0Xn4cOql6XfjrK5fJRDWyNMDVjH0rPWj3AeUtaLbeVqlt3HGwdqH3wOcCjXJfYIWWrrn43hGEG51LBCZdSTB0Fsx9mzSEt5t8jRZLQVOa3hJlzvImQ8pwxdQHw89BQy4teSj13iVZI9c+wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGJe7bqG; arc=none smtp.client-ip=209.85.166.182
+	s=arc-20240116; t=1757094468; c=relaxed/simple;
+	bh=8+IcFoGRnR++LETo8qNriEg45mSVU48yABzZX0ErpGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JC/D/SRtM5rA8VHk/nGVmBhf47+xiKBcuRtKyceDBMjznCkmt3aXbEWrLqpfugJOdoDXM6+BIVB6vpAk4Z3Vd8UXGjdWvosK6iTnwfvh3p7k6/X1k1DOyEkHAyB/Oph6xiG7z4+VMTuuSXA+kthLBM6ij7SkY0dchXwefXSWYws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbwekWp+; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3ecbe06f849so16137085ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:46:42 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24af8cd99ddso31044135ad.0;
+        Fri, 05 Sep 2025 10:47:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757094401; x=1757699201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757094466; x=1757699266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bpSR1HTJo6nPim1htqd1MlTdSRYvLLWGux9NsjKArVA=;
-        b=hGJe7bqGU3o/0yzAr7aV61u8I+cgyzdCmVY6XUB+bxhVT3mhSBVRaEosRVFUf+SWy3
-         K0E+F4e6z02seb0yvgvg/Sv2McgFCkaOXICldEDxw5jNwICtMduRnxGgxGSiXqCgyzIl
-         S4tXy8PA6LfufZeq9LGCH+vLEGUy5Whes6WK2/RyBD66VMbhDZryWOigzJQlUVuUnndt
-         QF1ACofL+/M2bb9ZW8KZmL9ED1c6z0l35rwDzq2jHNk34JfXoEFl0yMaw0pE1JkUxgVf
-         01N0eUORFT0pA6KEUOZ51ToYtf7cjulJL6PtafnmV3O+cJ5uaJa31efaECt8CekLe/Kk
-         pnGg==
+        bh=pzeYsrA3usK5M9dOJfOGC+Kh4M1puYf0AR/8PeWCkKU=;
+        b=GbwekWp+FOHxATZKBnS1gWCG3s6Dm/sNcRvvPfur2XwU8AeiL1Y3e3z3dplVFMNg8Z
+         AQtqnX0umrskqUCgdTRtrekf9Zx55dgyIE2P2Ce9X6pixZuwtLUXs43zepWsQtXa9jr0
+         YFe4ylZ1yZmSA0v2BtkYJzp9OBGH10OYTWG8T27KEwc+xg86Wwtn6Q8/w8VUk4yLeQEE
+         2M3JAfQalrCyfRN7/vdD6chQ+hdq8Ev7zxOuI2t8PkIGxGXNATd5ZTTtKySMzYU/PXOm
+         7Gm5QihzpjAAGM8uq0d8Ax2+GyI6ChKsVZwfQZtGK1RI3cWdkgNZXOb7PMuitsFZ+LjR
+         CsFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757094401; x=1757699201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757094466; x=1757699266;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bpSR1HTJo6nPim1htqd1MlTdSRYvLLWGux9NsjKArVA=;
-        b=eh4UnpxV84VJGfP7jAumSUHAGIzHDoC/9a5g5HvcHI0i8WisM9xa9RNIZYinZk/GQF
-         zZMs2xt7mGmvvmBnp4s7+LhDaOyEn8hEeFH69gir8qMr8Xk6Fk3VIFuzrqQlRKEdsIul
-         4HNCYCQL45akBUQNj//gXYOjXaB/FdRI222fZzaE2X9Dn1r4fThqr4OgSXZfvVxe5TjH
-         03KcNvHfLhnfGZZ/ao4nkqiV62/dBLRebYO45Z7Eas7yvLUnQDqiMruPtrfkZQohc890
-         r4gE1wXVE9yfnX5QELbeiZwj5mkPIDOeFssGrLN09uJOQPORQRDynpcl8Cm+sO/RrCnK
-         8l+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVviQTidPgeGsnH7dg1jurZ+9cOwnIDuLs6JtHopOv2oJkIGAlFR42jFmQLbyPYC2bHeULxdlEkzOilIpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Rpg0a2gbajFJafr18BBk8eRo0ZG03fm4x5VX92dxUdFK7Kbm
-	6Lr9HdVipOEUy6Uh7peLauwuWfyr2oJB5WeXkWNmVWZrB8ISFPe6uk6G3gtIRCUXPg2RNzVrkQU
-	3NUjS9qCXxvJwBGusH12EEXEGgo+Hgx8=
-X-Gm-Gg: ASbGncsJkh+rXv6HQSDYOPu2KAdVmrr2HLnJ26+hFqhQf/YrG/tzDgqMK4sf3RpnRkL
-	0T8IBbdiod2qj9hrCcoSXsw4cyNb2m8Nx9shYHIj3033IvQHNxhmRBrcSIEhj58ZxhTC7nfLFAG
-	gJSpo455+l5kd/F1l7WQjcVn7lAhQ0SPN/MW3ctHKADPENn4ASozSrpPV0BaB/o+8JN4i1+vg5t
-	n8/
-X-Google-Smtp-Source: AGHT+IFk5Xz55Lrwaeg30ggic9C4Fnk5btiTmEEBZkVEbj3Gn6+4gdw2Oshvs2RpuY9fAkh+7wPvJ0+It5jjM+pHCSo=
-X-Received: by 2002:a05:6e02:1d98:b0:3f6:6ad8:6fbe with SMTP id
- e9e14a558f8ab-3f66ad871c0mr88436955ab.27.1757094401258; Fri, 05 Sep 2025
- 10:46:41 -0700 (PDT)
+        bh=pzeYsrA3usK5M9dOJfOGC+Kh4M1puYf0AR/8PeWCkKU=;
+        b=FHq83/9dk21MjTTpDE/t8qeSCBiRMXncaqqmYl3LSg+MSqdyDBSmSGW0lam1hfIQiN
+         R1a1cN3mR77jLVfELhhL2ks/uKsPmK1WV607rNUalHRYBxJdpOACpsre38uHa7YGrYtx
+         YpzBaDO1+2MulquJZcCognkwVfs0XH880jQCz44yb9IGTbKUlCzuorH4fpzdqoy4axsv
+         C1hPnUBL6TMl9geMTYg9mDP8gtCNe3V6zFPXCU6QVL6s4q3n3DoTaPGCGD/xvGol8xbK
+         GxknGYXO94uGgjh7grt2xoc/ZEeQiCYprEuhyJ9BSmoMyuDyssNlp/E6YCBp45nR/Cuk
+         OZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeuDnL7wWdAkoIB4SThQBxkKIMsOhbGBKc2WvSAqE9HziKcEMp2dBiYcZc6hcDgFWOwYg=@vger.kernel.org, AJvYcCVuNLJwyTwVOcSK7VxwsD8mhAZcIBTuIW8+InXEM6rldcxl9jpGc3fBDpIhJ1Jyp42+ft/zNiLy5eZt@vger.kernel.org, AJvYcCWYemTym9zzO3DdQt15oKDTHZga0ndzqB8MyrcqPHRQt9ZmyP8AVZPlOnbJcC12Q8Gjc3zCumzbY1EdwJGs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxJUXOpmvSAXgU03LMXqoVmvJ+zpeGBprZoRm+t8SQGoOwuCKa
+	1PCupDZxMBpSOAweKJmSjIrOKQnaMTHb8+Kcwy9fw7ZU/xtTkhXQbih/
+X-Gm-Gg: ASbGncvWin1Mezn1toTtxEH8DEq+/CqWu80hf9Upu/cBkRek617j1fX0Dqj/oE9DbeR
+	pmReKnv2vvU74+sX9iw51Vu5w3OvtpFFg7A5IfJSeukugKql52VcNfVkoGhWQhbj1JOVsKM5qIH
+	DU0TcE/+74akezZ4nZaMnN5gOo9DSLq1u7Phs4gOGMH8Rw3cQKE8UJGl0JGS8KNWDwLj2TbuY5E
+	4PiZRbbYkKMSw8SjuIAgaSQm7esArv/ceyM7DKAGYqA7sYZTOXeeuMlMNXygD2mqmOLr+guMEdy
+	eeOShgMUvoZ22vRXK2FS6dDZZ9P2GEr7ACiCBK/r+fX4/WrtOBGbDyTbxUp/EbuFP4j4Jz+UeAd
+	2mX8pLCKwxWClMlC/WuD5GwZFO9bq41xfBA==
+X-Google-Smtp-Source: AGHT+IGvzM6hfShqmrzfM+7I1bIAwS4FApulB2L51518SOYGWv8KHuncicMHqc/B9Wrx9jt7ejZ6Wg==
+X-Received: by 2002:a17:902:f707:b0:24b:1d30:5b09 with SMTP id d9443c01a7336-24b1d3076f8mr154186075ad.13.1757094465610;
+        Fri, 05 Sep 2025 10:47:45 -0700 (PDT)
+Received: from ustb520lab-MS-7E07.. ([115.25.44.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24ccfc56f60sm44482715ad.60.2025.09.05.10.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:47:45 -0700 (PDT)
+From: Jiaming Zhang <r772577952@gmail.com>
+To: rdunlap@infradead.org
+Cc: corbet@lwn.net,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	r772577952@gmail.com,
+	seanjc@google.com
+Subject: [PATCH v2] Documentation: KVM: Add reference specs for PIT and LAPIC ioctls
+Date: Sat,  6 Sep 2025 01:47:36 +0800
+Message-Id: <20250905174736.260694-1-r772577952@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <00378f4c-ac64-459d-a990-6246a29c0ced@infradead.org>
+References: <00378f4c-ac64-459d-a990-6246a29c0ced@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902-show_mem_zspages-v2-1-545daaa8b410@igalia.com> <paef7bzotb4runl4sjlcfesano36cc2bflb7uqe5mil3chnpgn@axng3yfe33w6>
-In-Reply-To: <paef7bzotb4runl4sjlcfesano36cc2bflb7uqe5mil3chnpgn@axng3yfe33w6>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 5 Sep 2025 10:46:29 -0700
-X-Gm-Features: Ac12FXzSy6TF-VgA3w4rWead4D6W38SYTeqqM6XV4n8p8HfQa0Ka1hCs1_kico8
-Message-ID: <CAKEwX=NE3ngvFnyHQTAofX3M08JkeZZcfaKi_mkOUuiB4zh6Dg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: show_mem: show number of zspages in show_free_areas
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, SeongJae Park <sj@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025 at 11:44=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (25/09/02 09:49), Thadeu Lima de Souza Cascardo wrote:
-> > When OOM is triggered, it will show where the pages might be for each z=
-one.
-> > When using zram or zswap, it might look like lots of pages are missing.
-> > After this patch, zspages are shown as below.
-> >
-> > [   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:=
-84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_a=
-non:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB =
-zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free=
-_pcp:0kB local_pcp:0kB free_cma:0kB
-> > [   48.792962] lowmem_reserve[]: 0 956 956 956 956
-> > [   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB=
- high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB in=
-active_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepe=
-nding:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB b=
-ounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
-> > [   48.793118] lowmem_reserve[]: 0 0 0 0 0
-> >
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > ---
-> > v2:
-> > - fix build when CONFIG_ZSMALLOC is not enabled
-> > ---
-> >  mm/show_mem.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/mm/show_mem.c b/mm/show_mem.c
-> > index 41999e94a56d623726ea92f3f38785e8b218afe5..c563d9adfa87765a8736e91=
-c1f68d824b03eaea8 100644
-> > --- a/mm/show_mem.c
-> > +++ b/mm/show_mem.c
-> > @@ -310,6 +310,7 @@ static void show_free_areas(unsigned int filter, no=
-demask_t *nodemask, int max_z
-> >                       " inactive_file:%lukB"
-> >                       " unevictable:%lukB"
-> >                       " writepending:%lukB"
-> > +                     " zspages:%lukB"
-> >                       " present:%lukB"
-> >                       " managed:%lukB"
-> >                       " mlocked:%lukB"
->
-> A little "preliminary optimization" idea: do we want to specifically
-> refer to it as "zspages" or do we want a more generic term, just in
-> case if zsmalloc goes away, or if there is (are) another allocator(s)
-> for compressed swaps?
+Hi Randy,
 
-Hmmm, zpage? z is a common prefix for "compressed".
+Thanks for your feedback! I have fixed the grammar and put the full URL on a single line.
 
-I'm honestly fine with zspage though. We can just have any new
-allocator call it zspage too ;)
+Please let me know if any other changes are needed.
+
+Thanks,
+Jiaming Zhang
+
+---
+
+The behavior of KVM_SET_PIT2 and KVM_SET_LAPIC conforms to their
+respective hardware specifications. Add references to the Intel 8254
+PIT datasheet and the Software Developer's Manual (SDM)  to ensure
+users can rely on the official datasheets for behavioral details.
+
+Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+---
+ Documentation/virt/kvm/api.rst | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 6aa40ee05a4a..f55e1b7562db 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -2083,6 +2083,11 @@ The format of the APIC ID register (bytes 32-35 of struct kvm_lapic_state's
+ regs field) depends on the state of the KVM_CAP_X2APIC_API capability.
+ See the note in KVM_GET_LAPIC.
+ 
++.. Tip::
++  ``KVM_SET_LAPIC`` ioctl strictly adheres to Intel® 64 and IA-32 Architectures
++  Software Developer's Manual (SDM). Refer to volume 3A of the `Intel SDM
++  <https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html>`_.
++
+ 
+ 4.59 KVM_IOEVENTFD
+ ------------------
+@@ -3075,6 +3080,13 @@ This IOCTL replaces the obsolete KVM_GET_PIT.
+ Sets the state of the in-kernel PIT model. Only valid after KVM_CREATE_PIT2.
+ See KVM_GET_PIT2 for details on struct kvm_pit_state2.
+ 
++.. Tip::
++
++  ``KVM_SET_PIT2`` ioctl strictly adheres to the spec of Intel 8254 PIT.
++  For example, a ``count`` value of 0 in ``struct kvm_pit_channel_state`` is
++  interpreted as 65536, which is the maximum count value. Refer to `Intel 8254
++  programmable interval timer <https://www.scs.stanford.edu/10wi-cs140/pintos/specs/8254.pdf>`_.
++
+ This IOCTL replaces the obsolete KVM_SET_PIT.
+ 
+ 
+-- 
+2.34.1
+
 
