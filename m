@@ -1,280 +1,159 @@
-Return-Path: <linux-kernel+bounces-802656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD512B4553D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E751B4553E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225275823EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BA915C118D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD1D30EF75;
-	Fri,  5 Sep 2025 10:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C31D2E2F08;
+	Fri,  5 Sep 2025 10:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6uFc0oU"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b/GXWPnn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BD430BF75;
-	Fri,  5 Sep 2025 10:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149F130F946
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069192; cv=none; b=AxvS76ilbU4ub3e3S/MVz/LxuPe7WSKn/JhTsueaoskmhIhSarjA+6PR/lWeo2gGsBDRW3VV+HEr2yN86rD28obwKFr/NSLtTneyl/BEgG/lXsJ/l4fd2I0F/EDjnOBTp7KbQbjaPTmyRx1kepFT9P2NgNT4aWXD/fMa5N6syZs=
+	t=1757069199; cv=none; b=HeYCUg/N4bwpCHHKRAi4g4QfNKL57imODj5T4ISY9VLZQESJTHSPw28RVO+Va/7MdACTUTdGN+7pxmuDeKb+oNhLTh23LbeLzkiKIKLLumDa0/xa98xbc7zBwUDZ9WlbDvBvKoK1Z6rgEOkKIhDiwAHCs4lsJvrCCC1HM1b5TrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069192; c=relaxed/simple;
-	bh=2jDfkRqUXqIeW8rjmLccCKlkfZ4pgZLPN7avonJFtBw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avdZNGSULaBshZWc9ptll65/kv8wRbwlyx2dZiBf6I9gieV22gd7WWsA2KcFaXLL1Us3fIXSOUv9P7jmMzlxPAKsB0Fro8BlO7ACbTAdIaMBcehdQEnCveu/WOmHCvHXkq7paq1JrV4FUoqI2MXG4bu5m/1UCW20+I47//di3JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6uFc0oU; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so2678262a12.0;
-        Fri, 05 Sep 2025 03:46:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757069188; x=1757673988; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Wi0gCQUeW9y8aeoflBmbq5YYWWP1GgOP5LlJZk0s3WM=;
-        b=E6uFc0oUFBgmyK+cdiI2cndltCtNl5+ISk2DtroqjxcJDUeV0vh6nN7K1q3mO0x2i7
-         B6L9pVSFQbOv5CqNWF1fOrfkilZz8UwhLCM1UtglHz1C3hRXE516dGOq41A4NUVt+CoS
-         9aghnoPEpDcUSXIayY8p7k1RuN5Nlixd90y2r4YGB92hDiI9eQEJneF/wmBuLWfFX9db
-         Me7lRdt2ovRKZrDoHoU0tXuwRCSWKwt2xoOjWZ5brvEf4L27lrARXQzR1+aShehoIp4U
-         er0lZuCX1RY+CfAYTcz6aEGwhnE6nPGPPgJlkI8AKsi3N7+zB1MEY1VOsIHyYIuowoJF
-         V3sA==
+	s=arc-20240116; t=1757069199; c=relaxed/simple;
+	bh=I6p/yTUh+A8pt4l7LAMv/W4PT4a6ow9nByy4vuG00yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O8Rgv64QpBs8y/fjcipzTVJU8ooefjpSxUT7NFkhIjWPeh6u8od51RKmcaQVnUfkML8NtFDnY7UAYXkgKqTI4FMab8xMSdDWwsUUvgl7crLon8UTqlVl2yDIBdvRP7/94nLF3dQU7VvIMYt5Lr/GvA6bX1IK4tE/KZ+ovWpeEKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b/GXWPnn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856pBa5013645
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 10:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eNfKE5usjc1AEQtJ4ORFpDrJWu8KVDm4Y0laoBTlgb4=; b=b/GXWPnn6rdIS+ff
+	4RS0hdb3r6CKWOuE2ASRJYXEXjln9K4Y9ukHuSsDJt4Op46o63pQbuPwaaittgl8
+	eIMr1Ng2lKPpVQ9WR1FRlUDTy9UFh5KNazS6mDBwizQEi7mSQT6jRVCLGYzWk1RK
+	chbAZzREu3Lfd1MOe/4CQ5UCVeFsFbSotRuDN6BECbPTlNVStY6bImaVZ7rgQn0a
+	onvbD7DbLe10Mla8/Dwf/vXsTFovF3wsWVYsQS91oG6NSXp/sWL2AcRB2fb/8B63
+	hWQ8xKXDe0eEFbl6SF8pjmh0t5N3Kuwy2YNzFdtNoPnkRGyY3zM9fJvxHS/FD2w9
+	moaWeQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48w8wyesdf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:46:35 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b10991e9c3so3485091cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:46:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757069188; x=1757673988;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1757069195; x=1757673995;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wi0gCQUeW9y8aeoflBmbq5YYWWP1GgOP5LlJZk0s3WM=;
-        b=u8CrV6GYv96e65eL/7hHeyR6ALoVPsyURA2/Dk/YFa8X4Faqkmuu/C1UiRCV1dKkuF
-         XesPAwwsvDdePAq3QaI8QWg23CyvUQbSWKWmVGok1KE9uwDi7TPdK27lqiEdu4yz4eM/
-         tajZfYUP9/630hsAywXU/XzQ6Ji59YEItFzmuRs8MVLo+BAM0r0FMnSLx9ma8PuDVcmS
-         2k5eI6SB7gIH+Qbah92fh/efFEjL0/Vp3QqGjeu/Cn99pZbRSRP95xMP/6F4mbjISrbw
-         LPCwmInBo3RsDfOuYJeUdT7qHTe32DLcSzbum/+4Q82drnA00ZL5cTN1FDOs2aOkkoEk
-         vr2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsmIyLeWqUGO45zSErMPYFZoaeb8Eb1SwmQKGkDKwhB5n3tBEziFOULu3lpWbOGepzftX0cv159mEB2cka@vger.kernel.org, AJvYcCWDYhn3YF/U9NYTZ/UaQgb8KrbQLqB0z+sbuL5TbKdWn435VhbLsGYrON2iaBnj/j9MHfQ=@vger.kernel.org, AJvYcCXk+gDIDhmVNmR3gybfVt/LeH+U6xp09c+oedrWIg81x8UwXY2/zZi/Ydqx19dmftNsIE0+kg1plPID3cEXi+glXJLi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHrWnDgG1lru3ejrpSA1SZtyJgHWJXHXyXHASg27Z+EK5P6hf5
-	4uu4QjCmeXO1gXP8/QpDYFiknMj/hOU7RGhFP4EYcl1M7OSQQfc44DI/
-X-Gm-Gg: ASbGncsOYPoac5anIz063Ej2F8mjauMVbigWzWPBjxXA4cHN4Z9FLt8R9wNc5YM9P02
-	kGhgkerkocT2dt48RePySnzOwiFFWHqqNWD65B8MIkrh0K9k0XGrFh0S8KE4i/DwrEYkozM12dg
-	PdRT8eGhgFe4Nww0aKskt5oYSRYFqnNVQkpsYlODr0PRD8JAoAPucA+RxezHlXO9gGA+EwZL522
-	ZkE4PDLCXPqaHvq+oGYzrsUtpgmkGDbQiUDeEJCwWdhojHLiV9M552vkSwqj5Rc4MxZpMsSvFrC
-	lYmRnSRTvxDBnq3BBJR/tzdyL0TPFxIllK30eWjkcJrYohq2NXscHPFwmBTGatERHReO1AsG
-X-Google-Smtp-Source: AGHT+IF96or+JtjZxMIo+jN0zmKDj2Mk8YR867t+x8zz2+qlVl0kzvhAnG5KnysjAKV1MNgQPkV7Og==
-X-Received: by 2002:a17:907:3e8c:b0:b04:5385:e26 with SMTP id a640c23a62f3a-b0453851563mr1417168366b.58.1757069188014;
-        Fri, 05 Sep 2025 03:46:28 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0409bf055esm1517769966b.85.2025.09.05.03.46.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 03:46:27 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 5 Sep 2025 12:46:25 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Jann Horn <jannh@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
- speed up uprobe
-Message-ID: <aLq_geGpgBKKfI7e@krava>
-References: <20250720112133.244369-1-jolsa@kernel.org>
- <20250720112133.244369-10-jolsa@kernel.org>
- <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
- <aLirakTXlr4p2Z7K@krava>
- <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
- <CAEf4Bza-5u1j75YjvMdfgsEexv2W8nwikMaOUYpScie6ZWDOsg@mail.gmail.com>
- <aLlGHSgTR5T17dma@krava>
- <CAG48ez2BBTiDGT1NNK2dfZLiYMF-C75EAcufcVKWtP+Y4v-Utw@mail.gmail.com>
- <aLmcFp4Ya7SL6FxU@krava>
- <CAEf4BzbPSTEKs2ya6-d5ecR=wdsRtxRwLJO0r+oEm-_R-B2_yQ@mail.gmail.com>
+        bh=eNfKE5usjc1AEQtJ4ORFpDrJWu8KVDm4Y0laoBTlgb4=;
+        b=i9mus+Biy4hZLp/su/tXF50E3INl3kl4/GyFIdJC7Sp5omfYl8Kzp8+tTATaN2sjSQ
+         DFpX4uj12Sc/JLO7dm9WndWiL8NIG6N7vEF+3c28R8cigI74+PBBGnUxg4khmL2wVqh9
+         ZAeNPNVRnG4Ekl9A+Dw8ZSWeTfiUFt9HnfWEfZoDKcFXHEtpQuzJblXKbJ/fGvvcZU0k
+         vb4jND5Pz97jDoAF2uCu+pHkBmLraKuC/cJzt0ZF4Ma+goZQoG35aPR6GaAQkvIqRpKU
+         +pYdcm44n8EKHwnj+Ljd/I97XADS4NxIafoWaS9ce/mz0bhakbg8gZybkTeHtyJ+TRxf
+         HyDw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2h8EIfea8FUYYfnf0hMP1VUNqJuwSTXS1GM84P7UMlDDIHXvP62HatFxbijf04sOwGsT5q92ti04WVW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNAAA8UeOTGkqonx5HWOOZvKMb4J0TVuGuIOiIFN9eDrKSLXQz
+	TDovsYDjNcHlRBRTpezSXyoIFtKsNl8t0xIXW0ZGKz3xqLbUFEODFhcELugWOExB8NY5ChTV+qg
+	2pPS8miKoldKlXhOTLljjyrfKOG/YmExtJJzRO62PSKdd00uYKr6HA/VkKe6nNhz4Tls=
+X-Gm-Gg: ASbGncsHHTUknybEQPzzYcCv5wVZo8JrBJ9OG628VaTThgdK7iRFMHzM5tBw1UOsnZz
+	+GnoTOM2oMFa/flmmhrzFS4AtgXKHkvWzlQlRkOp69d8k4RlFOpBHvCdbaq40Z0wQ45r11m6LCh
+	aCyoZG5jqGmakJxjy9nVsSxQZzmtvqIXYYQ9+dKX78j34poeTGhJoA3No3iL7EWdXYemoNyVFW5
+	vqX+lx1SuUvtG4XNactgjE14V0SmfNHMSWmRTpIaRnsxDBI4eXwaWbWOGiWmmxsJgn/yf/rBdJp
+	ElD0VlCvTxareJr/lr/9zAKS5OAVrkyBi9dOiOAQcVvH1K2HjVVcGNDIHmO491tZxYHnSeMnyGi
+	BgUBorJ74CU4Z1SEq+8CPcg==
+X-Received: by 2002:ac8:5ac3:0:b0:4b5:e391:e3e0 with SMTP id d75a77b69052e-4b5e391eb76mr31070131cf.0.1757069194939;
+        Fri, 05 Sep 2025 03:46:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHw8Dn21yvKCjUW8kKlGcrNzT5lmLe1h8eGatVckUE6o1c8jbDA7+nCFwuH00rX+I8cOcqToA==
+X-Received: by 2002:ac8:5ac3:0:b0:4b5:e391:e3e0 with SMTP id d75a77b69052e-4b5e391eb76mr31069951cf.0.1757069194370;
+        Fri, 05 Sep 2025 03:46:34 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0484e8a4a1sm340288266b.83.2025.09.05.03.46.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 03:46:33 -0700 (PDT)
+Message-ID: <b321019f-3ff6-4c6b-8285-77ca291492a2@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 12:46:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbPSTEKs2ya6-d5ecR=wdsRtxRwLJO0r+oEm-_R-B2_yQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] ASoC: qcom: sc8280xp: Fix DAI format setting for
+ MI2S interfaces
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
+        prasad.kumpatla@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com
+References: <20250905104020.2463473-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250905104020.2463473-4-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250905104020.2463473-4-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Ycq95xRf c=1 sm=1 tr=0 ts=68babf8b cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=4EjxHe3qrgCn2qlGiy0A:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: e116AbH34qMBU1kWSEy3OrKeZ1q1ywMe
+X-Proofpoint-ORIG-GUID: e116AbH34qMBU1kWSEy3OrKeZ1q1ywMe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDEwMSBTYWx0ZWRfXzZtv1j/EUjhV
+ mVDAndTy3iAbXRzWC1ba857/Wp8hUv66k5VmAgBNNwoY1UJBVHjviWjZUBdkUc/93qlL2I15OXg
+ EfiYOPghotHWkauSgNpvXuVIQ87N0zl/RTbAEUpGadDBwMlzO2Lt8czJIRR0t0qq30Iu12mmOxy
+ mFn7DnSmukMsl2XnJA7mMXBiWAxyROmzfOaKuwQ1BuDtJsk4EqMCiJdw1KBY74sPRdMZYAEJRsz
+ kbzTwAYCYqhfwnUgqYKoqAIZt6zhNbf3yyybcmRK/i65GwhDe6HBkPdxkBxdzIBBee9QOk1Xa7O
+ 809C+FE64RXYhM1uiQXTpdasbM2gHwX3c8zsc1MRKCPwxNYAiiI0dSYdq6Dhe5jIGCueMlHG6Nb
+ Oxvh73Q6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509010101
 
-On Thu, Sep 04, 2025 at 11:32:06AM -0700, Andrii Nakryiko wrote:
-> On Thu, Sep 4, 2025 at 7:03 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Thu, Sep 04, 2025 at 11:39:33AM +0200, Jann Horn wrote:
-> > > On Thu, Sep 4, 2025 at 9:56 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > > > On Wed, Sep 03, 2025 at 04:12:37PM -0700, Andrii Nakryiko wrote:
-> > > > > On Wed, Sep 3, 2025 at 2:01 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > > >
-> > > > > > On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
-> > > > > >
-> > > > > > > > > +SYSCALL_DEFINE0(uprobe)
-> > > > > > > > > +{
-> > > > > > > > > +       struct pt_regs *regs = task_pt_regs(current);
-> > > > > > > > > +       struct uprobe_syscall_args args;
-> > > > > > > > > +       unsigned long ip, sp;
-> > > > > > > > > +       int err;
-> > > > > > > > > +
-> > > > > > > > > +       /* Allow execution only from uprobe trampolines. */
-> > > > > > > > > +       if (!in_uprobe_trampoline(regs->ip))
-> > > > > > > > > +               goto sigill;
-> > > > > > > >
-> > > > > > > > Hey Jiri,
-> > > > > > > >
-> > > > > > > > So I've been thinking what's the simplest and most reliable way to
-> > > > > > > > feature-detect support for this sys_uprobe (e.g., for libbpf to know
-> > > > > > > > whether we should attach at nop5 vs nop1), and clearly that would be
-> > > > > > > > to try to call uprobe() syscall not from trampoline, and expect some
-> > > > > > > > error code.
-> > > > > > > >
-> > > > > > > > How bad would it be to change this part to return some unique-enough
-> > > > > > > > error code (-ENXIO, -EDOM, whatever).
-> > > > > > > >
-> > > > > > > > Is there any reason not to do this? Security-wise it will be just fine, right?
-> > > > > > >
-> > > > > > > good question.. maybe :) the sys_uprobe sigill error path followed the
-> > > > > > > uprobe logic when things go bad, seem like good idea to be strict
-> > > > > > >
-> > > > > > > I understand it'd make the detection code simpler, but it could just
-> > > > > > > just fork and check for sigill, right?
-> > > > > >
-> > > > > > Can't you simply uprobe your own nop5 and read back the text to see what
-> > > > > > it turns into?
-> > > > >
-> > > > > Sure, but none of that is neither fast, nor cheap, nor that simple...
-> > > > > (and requires elevated permissions just to detect)
-> > > > >
-> > > > > Forking is also resource-intensive. (think from libbpf's perspective,
-> > > > > it's not cool for library to fork some application just to check such
-> > > > > a seemingly simple thing as whether to
-> > > > >
-> > > > > The question is why all that? That SIGILL when !in_uprobe_trampoline()
-> > > > > is just paranoid. I understand killing an application if it tries to
-> > > > > screw up "protocol" in all the subsequent checks. But here it's
-> > > > > equally secure to just fail that syscall with normal error, instead of
-> > > > > punishing by death.
-> > > >
-> > > > adding Jann to the loop, any thoughts on this ^^^ ?
-> > >
-> > > If I understand correctly, the main reason for the SIGILL is that if
-> > > you hit an error in here when coming from an actual uprobe, and if the
-> > > syscall were to just return an error, then you'd end up not restoring
-> > > registers as expected which would probably end up crashing the process
-> > > in a pretty ugly way?
-> >
-> > for some cases yes, for the initial checks I think we could just skip
-> > the uprobe and process would continue just fine
-> >
+On 9/5/25 12:40 PM, Mohammad Rafi Shaik wrote:
+> The current implementation does not configure the CPU DAI format for
+> MI2S interfaces, resulting in -EIO errors during audio playback and
+> capture. This prevents the correct clock from being enabled for the
+> MI2S interface. Configure the required DAI format to enable proper
+> clock settings. Tested on Lemans evk platform.
 > 
-> For non-buggy kernel implementation in_uprobe_trampoline(regs->ip)
-> will (should) always be true when triggered for kernel-installed
-> uprobe. So this check can fail only for cases when someone
-> intentionally called sys_uprobe not from kernel-generated and
-> kernel-controlled trampoline.
+> Fixes: 295aeea6646ad ("ASoC: qcom: add machine driver for sc8280xp")
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> ---
+>  sound/soc/qcom/sc8280xp.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> At which point it's totally fine to just return an error and do nothing.
-> 
-> > we use sigill because the trap code paths use it for errors and to be
-> > paranoid about the !in_uprobe_trampoline check
-> 
-> Yeah, and it should be totally fine to keep doing that.
-> 
-> It's just about that entry in_uprobe_trampoline() check. And that's
-> sufficient to make all this nicely integrated with USDT use cases.
-> 
-> (I'd say it would be nice to also amend this into original patch to
-> avoid someone cherry picking original commit and forgetting/missing
-> the follow up change. But that's up to Peter.)
-> 
-> Jiri, can you please send a quick patch and see how that goes? Thanks!
+> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
+> index 73f9f82c4e25..2fd06354923a 100644
+> --- a/sound/soc/qcom/sc8280xp.c
+> +++ b/sound/soc/qcom/sc8280xp.c
+> @@ -32,6 +32,9 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
+>  	int dp_pcm_id = 0;
+>  
+>  	switch (cpu_dai->id) {
+> +	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
 
-seems like it's as easy as the change below, I'll send formal patches
-later if I don't hear otherwise.. we will also need man page change
+there's a discontiguous (i.e. asking for another 'case') QUINARY MI2S
 
-jirka
+there's also a SENARY MI2S, but that we don't define upstream today
 
-
----
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 0a8c0a4a5423..845aeaf36b8d 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -810,7 +810,7 @@ SYSCALL_DEFINE0(uprobe)
- 
- 	/* Allow execution only from uprobe trampolines. */
- 	if (!in_uprobe_trampoline(regs->ip))
--		goto sigill;
-+		return -ENXIO;
- 
- 	err = copy_from_user(&args, (void __user *)regs->sp, sizeof(args));
- 	if (err)
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-index 5da0b49eeaca..6d75ede16e7c 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-@@ -757,34 +757,12 @@ static void test_uprobe_race(void)
- #define __NR_uprobe 336
- #endif
- 
--static void test_uprobe_sigill(void)
-+static void test_uprobe_error(void)
- {
--	int status, err, pid;
-+	long err = syscall(__NR_uprobe);
- 
--	pid = fork();
--	if (!ASSERT_GE(pid, 0, "fork"))
--		return;
--	/* child */
--	if (pid == 0) {
--		asm volatile (
--			"pushq %rax\n"
--			"pushq %rcx\n"
--			"pushq %r11\n"
--			"movq $" __stringify(__NR_uprobe) ", %rax\n"
--			"syscall\n"
--			"popq %r11\n"
--			"popq %rcx\n"
--			"retq\n"
--		);
--		exit(0);
--	}
--
--	err = waitpid(pid, &status, 0);
--	ASSERT_EQ(err, pid, "waitpid");
--
--	/* verify the child got killed with SIGILL */
--	ASSERT_EQ(WIFSIGNALED(status), 1, "WIFSIGNALED");
--	ASSERT_EQ(WTERMSIG(status), SIGILL, "WTERMSIG");
-+	ASSERT_EQ(err, -1, "error");
-+	ASSERT_EQ(errno, ENXIO, "errno");
- }
- 
- static void __test_uprobe_syscall(void)
-@@ -805,8 +783,8 @@ static void __test_uprobe_syscall(void)
- 		test_uprobe_usdt();
- 	if (test__start_subtest("uprobe_race"))
- 		test_uprobe_race();
--	if (test__start_subtest("uprobe_sigill"))
--		test_uprobe_sigill();
-+	if (test__start_subtest("uprobe_error"))
-+		test_uprobe_error();
- 	if (test__start_subtest("uprobe_regs_equal"))
- 		test_uprobe_regs_equal(false);
- 	if (test__start_subtest("regs_change"))
+Konrad
 
