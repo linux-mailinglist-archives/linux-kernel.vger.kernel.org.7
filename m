@@ -1,197 +1,146 @@
-Return-Path: <linux-kernel+bounces-803796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D33B46565
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 694C0B4656C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC4C1CC65E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB4D1CC52AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70AB28688D;
-	Fri,  5 Sep 2025 21:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948BF2E8B86;
+	Fri,  5 Sep 2025 21:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MMxqQw39"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E2VFb4R4"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6752DAFB1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB761F30AD
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757107151; cv=none; b=AtBl9KczpI+D7o+6+4unSDV44J4ZBkphMZ3qfCl/TsMYdGZbvV0VCUF2w0T4GShwvo/s5dKncMWmXmLg44grkBCnAwLHlkgNXUtSswurU5oiVp74Ii8wZNayDrbMaL/LuzNYqwihC/93wfH23yx90h9QT0YIQZKe7J3Iptb2zI4=
+	t=1757107225; cv=none; b=Kz+YMpGKdaNqtGuI63Uj7NfAImqBrhc36ISvy8sIZa20Lc7fAEsE56G+kLiQEjTt7LECt+uiMwiyeAB/FPqW09tFUGZTY7ZZtT3A6yairccbpN9ysvKMG9Q6t2a8Igp4/yb7MjshN6UUM6cdfGUXzR0lSBf95E7NxFVQF9CFAqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757107151; c=relaxed/simple;
-	bh=Jf1qAeCeJDS1uwgV+LCCBB0fAFLh3+53vCVBEAyFjpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5pT9XGGlqNY6bogEktrD7yf/IcinBvDznoyPeg4PGaThvoKTo55QsTi/tpl9lDkmauk0Z/Sh09N9+VLycPikAaGiWqzN+fwaHkpOgykjepCu7P4kLPp/Se3c/Jz9Ci+qKLeLq1FsL3fTXhw6iXPBU0jOB9J2okfyYhr3QawhWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MMxqQw39; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A854A4E40C28;
-	Fri,  5 Sep 2025 21:19:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F3416060B;
-	Fri,  5 Sep 2025 21:19:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 60B80102F28A6;
-	Fri,  5 Sep 2025 23:18:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757107147; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=qA1p1HiFom/b+0AkpRGF5adHJ6OWSNZnIjm3LD9NiNI=;
-	b=MMxqQw39zzNxMUiU+Ngye0iqho7zJY6XaGDgaaXAX/KvI0gAw4nLq30LnlHOIknyRTSWkm
-	YKggeAdaWJLgsFluZQKzLLpU+iRe+J09IuPyvT/J263NM9ZuDQM+4VR2Z5hlxWigItBrPa
-	jiR7aoiKj3eQCY6hQVJJYp9Ckl9S6q16agMF/m6nX7GirM8rKL1UssAe2HSMHgf6uV3otW
-	v5u5d74f0QnJsA7uyKIC0c8RoXVh/j1JF1bZFWtjg83VVsTvktq1WpSzZrIxrUm0pI0fgB
-	LksPb9YSRv91Sckvye8rlgWeIVjUWUCbVkYf94DHzK/vU2SKpUm+QPc8SEU+Jw==
-Message-ID: <e0d8c575-0cbe-430d-9f02-1b9ff040e217@bootlin.com>
-Date: Fri, 5 Sep 2025 23:18:55 +0200
+	s=arc-20240116; t=1757107225; c=relaxed/simple;
+	bh=1CyIY4Gge20GP7y0cDU45m2jcj75ZJgT0UYbOpjMvYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X2x+M23dtV5fKBZMZo65SfI/s8bw5775TpdSJX/kzcLhL+u6oABiqIICmZFxIytVd41gFlpGtPZjy65OPpCJgrUgUG35ekTemwqm3kK3agEItlAbf9VNpuplR8+/Bc9SRjrTI1uEYV85KzeljWACMgCVXw0F8t+q0DPJ+BDl+1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E2VFb4R4; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so2752870e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757107221; x=1757712021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihoNevlLzJDBSuy8DxcqIRmMmQ3q65NAy+tYYX30mhs=;
+        b=E2VFb4R4IMPFSM3pee/VTvL2rGIgdQdJNG1SQftlQz3H53jnlmc1+1xJjk/6xW8ay3
+         RX9B/bKQJHv4cj2gyUD8L1uKB3q9m3YJzEOa8P11QZ+l3A/V79Z1FIAQSDrfKmgwjcE/
+         +1uMfi8Zfb5osQH0ksJkntQjGFCRaCBdSlcFXAJIO2/Fl9f5Sm0tVFv+HVIYpVC95JtY
+         ZKR53moxlo1nR9VO3m7qQCfvqmtwV0cur2Co9wtnEXlRDzJVIJUr64L17FlboemEJwJW
+         wlrStdt8SrH46G1l03RipN3qebLJt+rax24hd1LLYY7zvGviGMY6WxCRhAG6DMjK0Wot
+         wirQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757107221; x=1757712021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ihoNevlLzJDBSuy8DxcqIRmMmQ3q65NAy+tYYX30mhs=;
+        b=DQxQQLisEDZ5x4aW00GXUcVULAGU0FYQRKb9e4ksZ9mmwR2Y9TEe1v5rCe4e4K626C
+         F3NZVKKfGLYuvl5m+DLS32B6CfwbylOInVaVxKTMhJhr+2Icx6Y3DysPd/4Nz3JCl/1+
+         Cdtk8R8dE3C2H+m2pMhzl1f2qrZ5uskt+v/E7AS8iumZEXXw/UyBvqhgwpWUOzdXZJC7
+         0ljDmzODPmrL1CaxxfD/hpMcelSKAWM29ta3kCcBeh8fUWe7ls7Vy+11/B+z86IvKh5O
+         WQKGwj7xHokQhTJLVTG5JpI/58FyTthDJMVRh4gO7q3gMiJPjMBZzTGynmLB/0a7Er4e
+         Q6iA==
+X-Gm-Message-State: AOJu0YxqMv0NJcL0XhviPOgqvlasDE8mh08i5IMbhvJWSWvJzGYkizXc
+	4qHKdNQJpu1Vjm9Ryl+tHm/GdLjoqTwt7DOjCm+FQMviGpe+QhlrCCK4MuXYoar9UIRIHTnx+cL
+	GgQCs7XcVYzfLubt6JsycaEfBVDaYawB04cmQwwM=
+X-Gm-Gg: ASbGnctL7R8qgOVrQfrkFELVotMsdkVz2rqA7tR+jVQh6ZOM2U88i/QBj+ZTb6WboeY
+	hrdwEAXKJk2mfBfJBwaIAjbYDiWGUjZLbYeafM0FO2VVvISREi1wimT6SibYWe+sCMssUskhwCL
+	3aYDAhmwA6L1WDGQ/wMs8FWOPCK3rdnhdPR0E4FVjjjv6vUcHW8aTIxxFkyKIFSYJz3j42v4Sgs
+	sSEX/NIDw6mZjD7D3SzhDeuVep8s3OGYbwFhI/CYGEpTKCy68HtSw==
+X-Google-Smtp-Source: AGHT+IGklKSxmgtyLJoi1vvHN7sLHpD+0Iy8PrXyLbJxGTq/1I6kUc4ziYI23n3kTAxDik0wCpIxXBb5i2BdIOMmD6k=
+X-Received: by 2002:a05:6512:3b12:b0:55f:6831:6ee7 with SMTP id
+ 2adb3069b0e04-562601b5384mr78383e87.21.1757107221283; Fri, 05 Sep 2025
+ 14:20:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/58] dyndbg: change __dynamic_func_call_cls* macros
- into expressions
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org,
- robdclark@gmail.com, groeck@google.com, yanivt@google.com,
- bleung@google.com, quic_saipraka@quicinc.com, will@kernel.org,
- catalin.marinas@arm.com, quic_psodagud@quicinc.com, maz@kernel.org,
- arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, mingo@redhat.com
-References: <20250803035816.603405-1-jim.cromie@gmail.com>
- <20250803035816.603405-19-jim.cromie@gmail.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250803035816.603405-19-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <CA+G9fYv0mbEBVs0oTiM+H4X-y7ZCwYpfa0hGCQCeVkW2ufGD_w@mail.gmail.com>
+ <CANDhNCpWWNpBQfeGq_Bj1pEWTYULJGaubTuPJ2Yxjg4_ESzgBw@mail.gmail.com>
+In-Reply-To: <CANDhNCpWWNpBQfeGq_Bj1pEWTYULJGaubTuPJ2Yxjg4_ESzgBw@mail.gmail.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 5 Sep 2025 14:20:09 -0700
+X-Gm-Features: Ac12FXyJR8KmvN8T2fwKhwhjrwRXLtrixZllcL7-1u48pK2bWIjS9VPSJc01V20
+Message-ID: <CANDhNCrJYMcK+dak8ASX6uoVFkNSHMf3Bn1kOXDtqNqFb7LkJQ@mail.gmail.com>
+Subject: Re: arm64/juno-r2: Kernel panic in cgroup_fj_stress.sh on next-20250904
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Cgroups <cgroups@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 5, 2025 at 10:50=E2=80=AFAM John Stultz <jstultz@google.com> wr=
+ote:
+>
+> On Fri, Sep 5, 2025 at 6:21=E2=80=AFAM Naresh Kamboju <naresh.kamboju@lin=
+aro.org> wrote:
+> >
+> > Kernel warnings and a panic were observed on Juno-r2 while running
+> > LTP controllers (cgroup_fj_stress.sh) on the Linux next-20250904 with
+> > SCHED_PROXY_EXEC=3Dy enabled build.
+> >
+> > Regression Analysis:
+> > - New regression? yes
+> > - Reproducibility? yes
+> >
+> > First seen on next-20250904
+> > Bad: next-20250904
+> > Good: next-20250822
+> >
+> > Test regression: next-20250904 juno-r2 cgroup_fj_stress.sh kernel panic
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Thank you for the testing and the report here!
+>
+> > Juno-r2:
+> >  * LTP controllers
+> >    * cgroup_fj_stress.sh
+> >
+> > Test crash:
+> > cgroup_fj_stress_net_cls_1_200_one:
+> > [  365.917504] /usr/local/bin/kirk[402]: cgroup_fj_stress_net_cls_1_200=
+_one:
+> > start (command: cgroup_fj_stress.sh net_cls 1 200 one)
+> > [  374.230110] ------------[ cut here ]------------
+> > [  374.230132] WARNING: lib/timerqueue.c:55 at
+> > timerqueue_del+0x68/0x70, CPU#5: swapper/5/0
+>
+> This looks like we are removing a timer that was already removed from the=
+ queue.
+>
+> I don't see anything obvious right away in the delta that would clue
+> me into what's going on, but I'll try to reproduce this.
 
+So far I've not been able to reproduce this in my environment.  If you
+are able to reproduce this easily, could you try enabling
+CONFIG_DEBUG_OBJECTS_TIMERS to see if it shows anything?
 
-Le 03/08/2025 à 05:57, Jim Cromie a écrit :
-> The Xe driver's XE_IOCTL_DBG macro calls drm_dbg() from inside an if
-> (expression).  This breaks when CONFIG_DRM_USE_DYNAMIC_DEBUG=y because
-> the invoked macro has a do-while-0 wrapper, and is not an expression.
-> 
->     if (cond && (drm_dbg("expr-form"),1)) {
->        ... do some more stuff
->     }
-> 
-> Fix for this usage by changing __dynamic_func_call_cls{,_no_desc}
-> macros into expressions, by replacing the do-while-0s with a ({ })
-> wrapper.  In the common usage, the trailing ';' converts the
-> expression into a statement.
-> 
->     drm_dbg("statement form");
-> 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-> ---
-> ---
->   include/linux/dynamic_debug.h | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-> index 769f02456c8e0..1785ef5b93b15 100644
-> --- a/include/linux/dynamic_debug.h
-> +++ b/include/linux/dynamic_debug.h
-> @@ -217,20 +217,20 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
->    * (|_cls):	adds in _DPRINT_CLASS_DFLT as needed
->    * (|_no_desc):	former gets callsite descriptor as 1st arg (for prdbgs)
->    */
-> -#define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {	\
-> +#define __dynamic_func_call_cls(id, cls, fmt, func, ...) ({	\
->   	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);	\
->   	if (DYNAMIC_DEBUG_BRANCH(id))				\
->   		func(&id, ##__VA_ARGS__);			\
-> -} while (0)
-> +})
->   #define __dynamic_func_call(id, fmt, func, ...)				\
->   	__dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,		\
->   				func, ##__VA_ARGS__)
->   
-> -#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do {	\
-> +#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) ({	\
->   	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);		\
->   	if (DYNAMIC_DEBUG_BRANCH(id))					\
->   		func(__VA_ARGS__);					\
-> -} while (0)
-> +})
->   #define __dynamic_func_call_no_desc(id, fmt, func, ...)			\
->   	__dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,	\
->   					fmt, func, ##__VA_ARGS__)
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+thanks
+-john
 
