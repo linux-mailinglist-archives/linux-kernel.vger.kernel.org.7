@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-803602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DC3B462E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0F5B462E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0D017A78F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49427189C4F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE9C2FB094;
-	Fri,  5 Sep 2025 18:52:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C2629B20A;
-	Fri,  5 Sep 2025 18:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD9029D297;
+	Fri,  5 Sep 2025 18:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rWJfsIBe"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8282798E3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098366; cv=none; b=DbCZrU5QjzZ9B4UogkxIqcO+mk+vgOMVt0amqwJLUWD9DRIHn3waeSpRQ2qIFRlWG7PzyexnzegPbHC+G1XxDYCHTX0tZaTuOn7aR6j0CYFKOYHDBo0wzyfX1jqqgxKZPdlklcZ4w8c0Kvqeg8LYhL2+9C4p4E/OWKfeXFYeOz8=
+	t=1757098406; cv=none; b=YeDNLMOCtxIQRVIRUQyzZ808ws4VTAK2vLT2Ug5ITGnagF4t6XlClwfoYKLAVGiEy8ok/hPxugelWj+NvauSvArBBB+7tYLI0VijN5K4CPJE8h0Zgh4fsy3VWTkMlk2wliYJjvn25GCUipskRGicwbJXcTTJjmAAxqQ5c/clso4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098366; c=relaxed/simple;
-	bh=6D2aVBqqBKV07BwAyUrhJdhm3+fz0a7BNgGgi1w1Y8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m/0vYEq4kSsNQrpGVpy3a8UGtoJB4WleiSuLr7EmaKV/rsUjXnvONsKEP+ZT9H2tgrcsp0bu2mUtzyqYLCy27GLQbmftHswxFMSUG7XBRQIVeuzv0GOQidhu7QtIKtJgBP8SzJ6T72jtdF5MjQYoOqZ7pCrweotkP3Cottynn2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E1241BC0;
-	Fri,  5 Sep 2025 11:52:35 -0700 (PDT)
-Received: from [10.1.197.69] (unknown [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28DB93F6A8;
-	Fri,  5 Sep 2025 11:52:38 -0700 (PDT)
-Message-ID: <d4aa5d0d-da66-4350-a9e1-ce7fb39f2961@arm.com>
-Date: Fri, 5 Sep 2025 19:52:36 +0100
+	s=arc-20240116; t=1757098406; c=relaxed/simple;
+	bh=oPb2TPYHfeo8cqmRDO9/low/vym6O0VnZi1tHBBZWrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JodS2SJwH7FfyNkt/tuuB7Z/CSYKzjbHDFJQ2/TxLYSAMfA5R+c9CmHzBIFkC0/P2eqqxLxjqs5RP/U86YCvwIMrH4IexV5PyykhDL8X8DFQ2MBqcJoZJZM+H3S7f+ilJ0zGCaByKeDhNF305fU6o06yvBd19mccoj0KDOhMJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rWJfsIBe; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 5 Sep 2025 18:53:15 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757098399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GFrZHAdnL5vuRC8mNJl86GVBWYQcUC0CUwEWAjwZ5Os=;
+	b=rWJfsIBelsOcCsUfbSOTUwgGLrFU8FzW4E9TiZ9L/wgQQu/tUmCpA8DJ0fflwpGj8HHmDz
+	maqoRNr1+3dC7Ps/M2hGAZKsoUVvDsQxnHa9tApDxg36f84fDG3H/yatr8TuAx9EJ9xjjn
+	c8kxqnXdPY2O/abRQ0N3FGMkKPudomg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: zswap: interact directly with zsmalloc
+Message-ID: <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
+ <20250829162212.208258-2-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
- kbuild boiler plate
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-11-james.morse@arm.com>
- <CAL_JsqKUSJjmyj-E6eduZt3S=x6v7VUR5JEJV_Ow6O-O49TgEg@mail.gmail.com>
- <CAL_JsqJDpEHBcWeCqxSiUjpyBs0gEJKVyyR70xJO56x-pYQHMw@mail.gmail.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <CAL_JsqJDpEHBcWeCqxSiUjpyBs0gEJKVyyR70xJO56x-pYQHMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829162212.208258-2-hannes@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Rob,
+On Fri, Aug 29, 2025 at 05:15:26PM +0100, Johannes Weiner wrote:
+> zswap goes through the zpool layer to enable runtime-switching of
+> allocator backends for compressed data. However, since zbud and z3fold
+> were removed in 6.15, zsmalloc has been the only option available.
+> 
+> As such, the zpool indirection is unnecessary. Make zswap deal with
+> zsmalloc directly. This is comparable to zram, which also directly
+> interacts with zsmalloc and has never supported a different backend.
+> 
+> Note that this does not preclude future improvements and experiments
+> with different allocation strategies. Should it become necessary, it's
+> possible to provide an alternate implementation for the zsmalloc API,
+> selectable at compile time. However, zsmalloc is also rather mature
+> and feature rich, with years of widespread production exposure; it's
+> encouraged to make incremental improvements rather than fork it.
+> 
+> In any case, the complexity of runtime pluggability seems excessive
+> and unjustified at this time. Switch zswap to zsmalloc to remove the
+> last user of the zpool API.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+[..]
+> @@ -315,52 +292,29 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+>  error:
+>  	if (pool->acomp_ctx)
+>  		free_percpu(pool->acomp_ctx);
+> -	if (pool->zpool)
+> -		zpool_destroy_pool(pool->zpool);
+> +	if (pool->zs_pool)
+> +		zs_destroy_pool(pool->zs_pool);
+>  	kfree(pool);
+>  	return NULL;
+>  }
+>  
+>  static struct zswap_pool *__zswap_pool_create_fallback(void)
+>  {
+> -	bool has_comp, has_zpool;
+> -
+> -	has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
+> -	if (!has_comp && strcmp(zswap_compressor,
+> -				CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
+> +	if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
+> +	    strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
+>  		pr_err("compressor %s not available, using default %s\n",
+>  		       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
+>  		param_free_charp(&zswap_compressor);
+>  		zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
+> -		has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
+> -	}
+> -	if (!has_comp) {
+> -		pr_err("default compressor %s not available\n",
+> -		       zswap_compressor);
+> -		param_free_charp(&zswap_compressor);
+> -		zswap_compressor = ZSWAP_PARAM_UNSET;
+> -	}
+> -
+> -	has_zpool = zpool_has_pool(zswap_zpool_type);
+> -	if (!has_zpool && strcmp(zswap_zpool_type,
+> -				 CONFIG_ZSWAP_ZPOOL_DEFAULT)) {
+> -		pr_err("zpool %s not available, using default %s\n",
+> -		       zswap_zpool_type, CONFIG_ZSWAP_ZPOOL_DEFAULT);
+> -		param_free_charp(&zswap_zpool_type);
+> -		zswap_zpool_type = CONFIG_ZSWAP_ZPOOL_DEFAULT;
+> -		has_zpool = zpool_has_pool(zswap_zpool_type);
+> -	}
+> -	if (!has_zpool) {
+> -		pr_err("default zpool %s not available\n",
+> -		       zswap_zpool_type);
+> -		param_free_charp(&zswap_zpool_type);
+> -		zswap_zpool_type = ZSWAP_PARAM_UNSET;
+> +		if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
+> +			pr_err("default compressor %s not available\n",
+> +			       zswap_compressor);
+> +			zswap_compressor = ZSWAP_PARAM_UNSET;
+> +			return NULL;
+> +		}
 
-On 27/08/2025 17:16, Rob Herring wrote:
-> On Wed, Aug 27, 2025 at 10:39 AM Rob Herring <robh@kernel.org> wrote:
->>
->> On Fri, Aug 22, 2025 at 10:32 AM James Morse <james.morse@arm.com> wrote:
->>>
->>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
->>> only be accessible from those CPUs, and they may not be online.
->>> Touching the hardware early is pointless as MPAM can't be used until
->>> the system-wide common values for num_partid and num_pmg have been
->>> discovered.
->
-> [...]
->
->>> +static int mpam_dt_parse_resources(struct mpam_msc *msc, void *ignored)
->>> +{
->>> +       int err, num_ris = 0;
->>> +       const u32 *ris_idx_p;
->>> +       struct device_node *iter, *np;
->>> +
->>> +       np = msc->pdev->dev.of_node;
->>> +       for_each_child_of_node(np, iter) {
->>
->> Use for_each_available_child_of_node_scoped()
->>
->>> +               ris_idx_p = of_get_property(iter, "reg", NULL);
->>
->> This is broken on big endian and new users of of_get_property() are
->> discouraged. Use of_property_read_reg().
->
-> Err, this is broken on little endian as the DT is big endian.
->
-> So this was obviously not tested as I'm confident you didn't test on BE.
+Hmm it seems like there may be a change of behavior here. If
+zswap_compressor == CONFIG_ZSWAP_COMPRESSOR_DEFAULT at the beginning and
+crypto_has_acomp() returns false, the old code will go into the second
+if (!has_comp) block, printing an error, freeing the string, and setting
+zswap_compressor to ZSWAP_PARAM_UNSET, then we eventually return NULL.
 
-'not tested' is shades of grey. I fed the FVP ~6 different DTB files to hit the different
-paths through the driver. The FVP only has controls under RIS-0, so all of those only
-defined RIS-0, and unsurprisingly didn't notice the helper isn't endian safe.
+It seems like the new code will just call zswap_pool_create() anyway.
 
-
-Thanks,
-
-James
+Am I missing something here?
 
