@@ -1,150 +1,188 @@
-Return-Path: <linux-kernel+bounces-803554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A855B4624F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEF2B46246
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF085B61925
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BCD3AD3A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A90B1E47B3;
-	Fri,  5 Sep 2025 18:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB782305971;
+	Fri,  5 Sep 2025 18:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aaTiEZwj"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r/ichib7"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CFF274B4A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097058; cv=none; b=B6nAhualEvJ3ON/ctlI7V0bq9OFV+xxw3yR0DNGG3beimcdTnEUISgNvYQ1hnFEs5SDGlLFDhZGQbzAqQLzfgchixKnpk36qwVFyf+7pBEVzTemesNfD2voS/WUqFfMkRd+6tuCh/O9bQRnaesU0zVGChbvFEqeSiRwJ///s2Jc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097058; c=relaxed/simple;
-	bh=n39RLZzesXy3Ya0i5FeCxBO0PaTXwkPBg/RaOa1/0y0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kztG7ZQFMecAAOTmjV2RckQMzzEqDNYvPerZuOsyGy5WjUguKmwhKXxEZKcQFTO+vHsNP8AlHwDUGbq4MYi5HY9mjk44YMkQa9Ju2HBe49A09QwxveHJ6pp/M6OR/E9LeItGcY9MkZH6YTuC87Ug/0Cc3vvzylrB5nh7TIDXNwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aaTiEZwj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3df35a67434so1422541f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757097054; x=1757701854; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gBA+c06r4TFRMbFgk13btPJ6nLb1j4n/DqQJid5OtAA=;
-        b=aaTiEZwjqKOTAXvkl2XZ7CVfPI70XzkL3dgOSKksiWtOYubvLkVB5um6bCaUawjgF1
-         Ts2brFM7lPGck9PCOOVbbeLggsr41d4wuSckxVfVWEYL9ZKu117shHPXFzksUwrzKfr+
-         aBOj+RRgv4jkDTuP/xyohGzGbwnedh1v+e872vdnIA34Y0wYiEJ8qxowKxUDQZ9C7jpC
-         raneUvS6o5t7iEYLuw2iqYm9ShDPszUtQcMNm1WgmTPo0tXjxjUdNUspiFid1Ov/IOKB
-         Wba9Hz9C/myJm/UbVj6E8pYp6/Z2plO9gzzbbynQDKaycjb0XFAcINgLjLcdYuAey+io
-         mQ+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757097054; x=1757701854;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gBA+c06r4TFRMbFgk13btPJ6nLb1j4n/DqQJid5OtAA=;
-        b=rWHG5gRK/IH/e+AVwsBgpA6SGVHZ+dcDuZjZkBK81PsKmu4zDV+XcSsJNZgwwfE4CE
-         2HHlYHvr6mhR4fLQ1xEVgxnymwIRT4ruNDgShu+c4IhCvriplhOK1ql69YN+K3mf3Vq7
-         tzIY50hkVgcYiR6LseV9xhXeQj6HMyCx1I9arBmPNyC5gRcVMHOcWhLohvoANJmOM5Bz
-         Yqs4lvNB+INi0PMjlqLFECRztbXGJHIMKuTZLWYMlHIU/hT5B0+V8nzZzVYyMQpSM8hl
-         Jrq/deQOMmCQrp8dTbK1o1pUv6UN+GTVLspjHf1ZlgFOjXhegpdsQMlAEE64IsUqtKZk
-         qISg==
-X-Gm-Message-State: AOJu0YyhGlUTzsSRDQZa0ZGJCmn6AruYnag6E4b5ZVcIFjHHwJ8UZELe
-	A9ycC6kQJ8GmC+W6c6GH1HpiT37MsCdNmA64QafXaptBGTxQMvNwOgvp4N5OWrkXTWI=
-X-Gm-Gg: ASbGncvE7R2OWyjVLDr1ZZDRt8gk65nLvmTQX7goURM/VbvxO9xxY1zW4mtJvT6XUej
-	G9yU2e3C8ur/J2tRqk4jM36Wl1s1b/rsqwEqupA4/ZvJYlluyCmRIWkYD8JQrr3Y2R6s00QQoSX
-	HvXx7ngaGxRnW3V5cgpWf6GEPfTPuwhwbQ3qWwxRAiUfTES46l+yizB5bVo94G9SbKyk3koBaUi
-	E9s6Il2diMVobMxva8YzQxHrrdFx9dS8Kx5H4lzhbMS3Wjy3yrnoTgTrkIMqGUGQGSZbXQ74akj
-	xBEEmESi19/gBOihD8FFdmm4SMaHjLwv6bJlIhKrhZCbMkxTrPnmYC+JBaD9KTtjTjS1tzVT39D
-	ysXpmK/J6kSg7wWLH8i/U9hdltxgiG0FEL5yDxvjLh3KA3OlyfcyWivhl/BuM
-X-Google-Smtp-Source: AGHT+IF4mPKr9EHhGGhStUqmEX30pwsIH+zWFlH028qfz0Yo9D3G/S5D4m8JynrIhd9248xdacDfVQ==
-X-Received: by 2002:a05:6000:1ac7:b0:3e0:854b:20f9 with SMTP id ffacd0b85a97d-3e0854b247bmr5439437f8f.19.1757097054518;
-        Fri, 05 Sep 2025 11:30:54 -0700 (PDT)
-Received: from ?IPv6:2804:5078:9a0:f000:58f2:fc97:371f:2? ([2804:5078:9a0:f000:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-89a35fb95d2sm3700951241.15.2025.09.05.11.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 11:30:54 -0700 (PDT)
-Message-ID: <85defbcb97090bcfa0995bbd58f8e41d8288ca44.camel@suse.com>
-Subject: Re: [PATCH v3 3/4] printk: nbcon: Allow KDB to acquire the NBCON
- context
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: John Ogness <john.ogness@linutronix.de>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
- Rostedt	 <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
- Daniel Thompson <danielt@kernel.org>, Douglas Anderson	
- <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Date: Fri, 05 Sep 2025 15:30:48 -0300
-In-Reply-To: <84y0qtdk99.fsf@jogness.linutronix.de>
-References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
-	 <20250902-nbcon-kgdboc-v3-3-cd30a8106f1c@suse.com>
-	 <84y0qtdk99.fsf@jogness.linutronix.de>
-Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
- keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
- Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
- gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
- GO8seNG8sYiP6JfRjl7Hyqca6YsE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC3B79CF
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757097086; cv=fail; b=hByXbLqfqjba2WzwDXDsA+iWLGe0x45MoX6OX8WLYnF+9kFlLWwcF6gHUtwBayTFsdY/80Y2BH1cBYVjlvCgtyeULdgOvcTzmvICyGsF4fjaX56jFPQLDHP11ITR3+JuN8GuZ1o5NIFr+FL3cXeERKJR73HTRnStiqbh/LjphOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757097086; c=relaxed/simple;
+	bh=QqVT5x8+PjXTdDzPOY5nfqMl8HDKVo6m8HMVNE9ZM0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=exPh1SanmWDRSeOMXan26+8M6azA8/GzJ1sa7ZsGPkeFMvG1hXJWK+Ua0HaEgPuCluWFuClXKDqaD4tJKp6tDQeppgJuWu0+Lm6FlpM0dxOE5aUesuLzTOcuI9HpAZ/jNQZcq+af2I1C7vZMwP7JDVUwc5/XCbkDm0810D2DZKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r/ichib7; arc=fail smtp.client-ip=40.107.236.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wbv0d+AxX05D8vX+awCNPmcweX5aZoJEf/JDi4TXe6kDOp73c2PLNvAjOlpBGsTxhBKEkA69TdbcNVbZrlSs9J1JPIcJRsxIMEdjWBhM2ccPIa4IFMGRrdNEQwo1kGX1lVQHncsfNLkDcNTudX4BjcdwChjBQ8lFESoDqdFlAmd5DzfXx/uN9QIpSeYXZkyE+8xjmwT+BwwATV+Zc+rkqSNXfmbGp7dMs43H00SfylxfP3Msf5m7zTBxuvpitFxgF6KNuxrdy7gQnnw+sBb9k89CfF2b1UH9Rc0lfE/6Ds6zztKdI+mIstLwdyj6vXHWQtrXMIr0HcwDvDKLGf/fyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IC/uiljbL4bI3Ca4L964umUAQzkle1pUYAx69rwKhW4=;
+ b=wJyf4+VMhjnX0i+uVkKnu/6RzlprEuHDWc9pbnmhUyK024K7sL1bc7yrAsTPGdN4aXkELlAvKPODWFU85tZAXHoEfh5wNKH5SxHnRH/OsHD4qxajbuj+7RneM7kJ54og9rVVYEG7d/WDMJ/m0XvQfwOhYP3Umi34X+C/XwD4MTwRrKVUjoxeb5/w5+QIgpg5vPcH9DHelwIMasd55NkiTsR0u9RBIWJCcZ6FEyVB+51nff66VTA9lVaAtkFTJpl02UyfwfyErLbPCbPtaVamGd+CGA4l0mVYbVkdj1uAd36K/YEEZjnmXOM98+GNO3PPyPMUDezT4mRHt/+xnqWyKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IC/uiljbL4bI3Ca4L964umUAQzkle1pUYAx69rwKhW4=;
+ b=r/ichib7ftpCMjM5OGIcGCN2WjvdRDvpU/95OkIBGTe9nnisADR4eVWkKpkXIe7mycdrh5l47l4FKdpxWVhUDG+liX+ayLw869ICuQRdu/ATTeJqYHJprLBb3EESvbGo5UmGtcbAGwoiadRSxMRQZL4L8Qg9v2G5wIsy8TumQNy0ZXPKF9v+9KmqCAV3EXtJNckP7uBMKhge2E9Zek3Qvgv4z8RKUg/bADUS54ilHhAcKAliOnCfZETx6jReDBqr55b/ncemzkewkp5/hmLP06zLOXX4EAFOuFbVTRR+RQflp7JEW1wkgGDtlLVVStGMumoA098dr4j15+LsAqpZfg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by CY5PR12MB6528.namprd12.prod.outlook.com (2603:10b6:930:43::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Fri, 5 Sep
+ 2025 18:31:20 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
+ 18:31:20 +0000
+Date: Fri, 5 Sep 2025 15:31:18 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+	iommu@lists.linux.dev, security@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v4 4/8] mm: Introduce pure page table freeing function
+Message-ID: <20250905183118.GP616306@nvidia.com>
+References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+ <20250905055103.3821518-5-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905055103.3821518-5-baolu.lu@linux.intel.com>
+X-ClientProxiedBy: YT4P288CA0082.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d0::12) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CY5PR12MB6528:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f1e89c2-7062-4603-d732-08ddecaa68a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QrKmAf8HSc4s1bqmI5lJBRK/awMyGLSpMUlw1zv1uZDVfHN/6woa4+tPkJiZ?=
+ =?us-ascii?Q?zsivVWXheGLgXIULhaAqQWQHThLI4ZSZiUx3GFAY/oiAk+jeAeTSwAKLqqTb?=
+ =?us-ascii?Q?xPS8jSHlFfKVwXh2/rmg8fSZhwc/d6PeB82NIdLOiEb/iSVY+kuiy1boMzwW?=
+ =?us-ascii?Q?xZHeqwhQRRP1Dj0p31yWaTjsXixfukG+T+n1V0WakqNmi/fcAKN7hn/owsiL?=
+ =?us-ascii?Q?+tkTQLzygK8f4ygAa+XWnVpqohlfaTHY37uVeC4NXMpXQCHfBOVK21+GJaua?=
+ =?us-ascii?Q?SUHjolGrjDkRdtH8BnaXFOL5zBugHW4i29F+6gnVYBrNAzY8FsThOMToDdGW?=
+ =?us-ascii?Q?Hewz1vYhSibcDLFn17qIQEHtXb0HXkpq+RK0fIgYUarjVv/ctdYOd+XeSJYX?=
+ =?us-ascii?Q?guNRPfYMZ9nDOiXV8BXnQpvvD5+TxXAO49kPhbXXG3IzpGT9as6C/oxNFTmj?=
+ =?us-ascii?Q?M0G/Ny8ModmNM0uexw7ZgFn4YQ+0N4aooinZTsg2mcS02TIhpQef1qvRYS+P?=
+ =?us-ascii?Q?mAYubPNX4Zqd7G2bqov07BD+vyUII6dmtBcFcpsYk8Lgfhi3p4iRMRiyB4+1?=
+ =?us-ascii?Q?3VSzTls0Omh33eImembdo8zxCSHOjtOdL637XBEWZ+ZiyDc1fUUl1cWLASJb?=
+ =?us-ascii?Q?16CESQu9C4mIh8YYyyHr7SNrwUks1oqf4l20CNGxmzL/Zrz35I86hfUjX3Bc?=
+ =?us-ascii?Q?LVcH1vGx4kBP4YLcFf6abu3nfjZ+h8q3Q7Ro3C9tiLXZP0UOcOzFDi/iA2zv?=
+ =?us-ascii?Q?WIyYa4NKjCSIzK9BHOIPVGjDT/QXPdM3bry3180uSJDoZ8HMmlNCZko2cnzN?=
+ =?us-ascii?Q?Mok5G4u2sMh6JkQFWO8kteOPZHQldqe3MGOn/E7m8ssEHakdztj+CLofjqPP?=
+ =?us-ascii?Q?RqRfYh93Qibu4R+9AoT2o0ouE4sAF8goXJtJEbqQfGbgP27JEh6LWUGdtV76?=
+ =?us-ascii?Q?qvxxhrOOHdxSkpjNmb/x0YRLhuHGYIargjXnbVq5p3ZrmjUdL/J1bztqpYCx?=
+ =?us-ascii?Q?gy9HPYYFIHdniHbQWv54SEF77xkSOB+aaVOgjMWozIvmWvMER/HLPHx7/gjn?=
+ =?us-ascii?Q?BpG7aA8RZNABCnxqPSF6R91hLrcB69h93WwTVKuKS+oqSW+f2HpIGU23RBDQ?=
+ =?us-ascii?Q?jVKLzEV8EhhhEUPUL+bchi+6jfZNjaahhtS0wxtg6/v835ecZQznZq4n3rSI?=
+ =?us-ascii?Q?poiZTi9e2s6xpSeXgqYbzj8BBiIBPfgTSlVlEA1nMVoJC9NV9tmNhHFsaJ6P?=
+ =?us-ascii?Q?4PGXA3CBUCEBVsOkZ2EA7ABbfLAferc/bRcJDpafB42Ol+lgD/NpxQi9oe54?=
+ =?us-ascii?Q?wNYRli35k0yCter5Zrn8SSN2o8pJQSL6W+OTIfHVsQ9Ib0YJu6ICsZia8Z/s?=
+ =?us-ascii?Q?SFnZ3kqKMvLGp5KqsxghShJ/kvHbMb++8q9raB5ANFZMsgzeBFfqpGZgEcmu?=
+ =?us-ascii?Q?5U5+gBAVrFg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pQ6yvhv8j3HfmNbZTf21oROIhOfUPxzK7Y48W9aZBMOsCtqbTO/qsEQ+Ulgf?=
+ =?us-ascii?Q?cQEUArrNXMmRZOFyipp0snQRbb4PpEOIy4u72rIZvUB7tVKt4kd4TOUwJYXc?=
+ =?us-ascii?Q?cAkra2pxLIpTZm3eOfrVGVJZ3Jt06hFFNiHAriAsBOfkXX9InFp7hcJId1pP?=
+ =?us-ascii?Q?An5fI5rBIYCo7o1xQ4cpzihHJ6EKb4iisDtMBo9i5mFZ/YYmDxq48DUEog0f?=
+ =?us-ascii?Q?WrNCEBfKGOxxP+iceIVIhqps1shRW6rjN4i3pDKKZSsAelCOfEIwP/G6zIGG?=
+ =?us-ascii?Q?glWzmKSbfJbX/6XreOqiEI2Mx0tS4rJZWXcokWjJQJCbb9tN4WoVrXf6COMx?=
+ =?us-ascii?Q?UNsjoZltSIEHUwRL/wg5jIIiqjeA13+R57hscJ9bGTyxsXhl5NnldKMMyhf9?=
+ =?us-ascii?Q?0EG32JbMn/T/xSWZ2m9Dg5kyuMpQ+5p4eMotMwAZb8rHNiCTKbrcF/HXM+Da?=
+ =?us-ascii?Q?7Gldzl8jtoOAePHcTisF3MMDbfC+VEIGM7mW8/1OeAoyQ8PlDW0DF9HTQiii?=
+ =?us-ascii?Q?KmziRO1j/cONGNIreM2wZDu4Q53zaQJ6N6p86ZyfMNMaOsi6jl5T1erytI0R?=
+ =?us-ascii?Q?H9Ht34alGV3TapSXwzLANwdJNupl9cTr7nEjbrSxZj4m3jJdj96m+zHLgX+6?=
+ =?us-ascii?Q?RXdgRyMsOrPtJ+sQ+6mhpRoRdKtxIPkgczv0mWy/psVTIgilo2AoeolqTA5g?=
+ =?us-ascii?Q?PZOmaNE0RR6l5jehe399dXeovxg9pTTri6YbQL84kv0TdoFYS1HmGZTt0X13?=
+ =?us-ascii?Q?6frMAvSAvk1vP9zUu1kw2sFwzud5TfBiqpn6hE44Zr/x5mek9h89SR5ydu/C?=
+ =?us-ascii?Q?WP9u06vWHXQ1F4znrpHn4+GvwBUxSoGCKM4VLZ9WUoNA/5yxgB8RsLf7ZtQi?=
+ =?us-ascii?Q?5ZBoqaZsqs3EKO5jJPRb6KLZ9ZCxxvb23nvGRSSFenhcO3ZeAJ2aHNjioelA?=
+ =?us-ascii?Q?I3PH53Qsnvkjg8TbXv066SClUcXSFLBNiULoekNjDtle3v4WFx8lrNh/aBok?=
+ =?us-ascii?Q?D8Ofu0R7r+S5jAtbIoEtM8adCgLLiwQ0Ri8PZfmZ/5r4HqMe50OzVeW5Y1h/?=
+ =?us-ascii?Q?8qx+iPfgYgCQMKJEFNAxiKZomNg/WEyCHhrMUbPBdGCDsg26XNsEdrE+ACNC?=
+ =?us-ascii?Q?+GEKnisgXgF5MSjgHO3INwwrr4F2hPAqGZMqDou+K/sfm9hM4In4IZc0y9w6?=
+ =?us-ascii?Q?wf3haYEpX0GghVAuv7LIG5t+qVAGvI0o5DWFMlkn5OERj3iUMlHLE1vsOUdl?=
+ =?us-ascii?Q?Okl/a8tUpgOVVQtTnSo2kEeTNP2JV5TavGx9Sw+aLnhXl36gYU1mVZwjAosF?=
+ =?us-ascii?Q?GvUoXVaK6iZoWzT3lMCIwn/zAgNA21PfyW9Vi/aldf8FbAwzLE7OHAyrw96n?=
+ =?us-ascii?Q?9kFkYCMpHwlsrqN498W6rzGobof/dwxGnCSy5R4Qh9PntOSkUl28YJZB0NnT?=
+ =?us-ascii?Q?xoIuepUWbrKACChwL36VKmxCqH+wajOMXWLcC/B1XT4F9RPfD1GmVfDYfs3y?=
+ =?us-ascii?Q?O2rUJZvuylyJV7/EZ7OfbGYpIhYG2PBGZxLGOfspG6+cpePqyz1M+P9i9e+E?=
+ =?us-ascii?Q?U8AgEITjG5yl9EUv/No=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1e89c2-7062-4603-d732-08ddecaa68a5
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 18:31:20.2598
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LklgOqYqoMWwSoD8xA6z6TeFDK2nQzo9kDKRQGjXFvkS46+ZgWGc2TLM577y+lKN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6528
 
-On Fri, 2025-09-05 at 16:58 +0206, John Ogness wrote:
-> On 2025-09-02, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> > index
-> > ff218e95a505fd10521c2c4dfb00ad5ec5773953..352235a0eb4a484caccf86d3a
-> > 57d1a149218ecec 100644
-> > --- a/kernel/printk/nbcon.c
-> > +++ b/kernel/printk/nbcon.c
-> > @@ -255,6 +258,7 @@ static int
-> > nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
-> > =C2=A0		 * interrupted by the panic CPU while printing.
-> > =C2=A0		 */
-> > =C2=A0		if (other_cpu_in_panic() &&
-> > +		=C2=A0=C2=A0=C2=A0 READ_ONCE(kdb_printf_cpu) !=3D
-> > raw_smp_processor_id() &&
->=20
-> This needs some sort of ifdef CONFIG_KGDB_KDB wrapped around it.
-> Maybe
-> it would be cleaner to have some macro.
+On Fri, Sep 05, 2025 at 01:50:59PM +0800, Lu Baolu wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> The pages used for ptdescs are currently freed back to the allocator
+> in a single location. They will shortly be freed from a second
+> location.
+> 
+> Create a simple helper that just frees them back to the allocator.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  include/linux/mm.h | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 
-Ouch.. that's true!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
->=20
-> #ifdef CONFIG_KGDB_KDB
-> #define KGDB_IS_ACTIVE() (READ_ONCE(kdb_printf_cpu) =3D=3D
-> raw_smp_processor_id())
-> #else
-> #define KGDB_IS_ACTIVE() false
-> #endif
->=20
-> and then something like:
->=20
-> 	if (other_cpu_in_panic() &&
-> 	=C2=A0=C2=A0=C2=A0 !KGDB_IS_ACTIVE() &&
-> 	=C2=A0=C2=A0=C2=A0 (!is_reacquire || cur->unsafe_takeover)) {
-> 		return -EPERM;
-> 	}
->=20
-> Or however you prefer. We need to compile for !CONFIG_KGDB_KDB.
+Having the only way to free pages take in the struct pdesc is the
+right thing..
 
-I like the idea! Let me prepare it for v4.
-
->=20
-> John
+Jason
 
