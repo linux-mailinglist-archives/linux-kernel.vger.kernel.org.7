@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-802805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B38B4572D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:03:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94DCB4572E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3A0168CB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906753A9B3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DADB34A333;
-	Fri,  5 Sep 2025 12:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECF434A32A;
+	Fri,  5 Sep 2025 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lr1TrZr9"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="NZ4B7WJy";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ZErcmkJW"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C253319E7F8;
-	Fri,  5 Sep 2025 12:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF2527AC3D
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757073771; cv=none; b=sgKFQYEq8MwH13kGbU8YI5zlRx8r3gTp/O/MZQWVdcvH6k7yD2BN+PhQ3YIPf+sPWhVaJQIixonOPCJOxWAoth8dE7/SozGPrF8KCN5MmGCq1/sJ/425YFjKfT4iv1ORV1alxGRxoSV0T2J73BNVdpnHa+0HR5TuCNva6E++7+8=
+	t=1757073834; cv=none; b=Hu9cJFLXWWTQNJfjwNu833qIZTThhBbNDhmFcjceLu6cYF5paOIShuwUjPXHIWidDpOnRiC6zTDN+1Y4v4t2XaYnAxBp+hcU7D/vz+7eqM7FYdjsqXJYx+yt7aMEpDkB2lTv1giChZ4Sn5SgkV+MoaLoM9gQV8Q2p3THl+gyRs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757073771; c=relaxed/simple;
-	bh=xnlQwHesXOP2dDDQ+aWTnF4TrrBacXBh9qTURWV7gwQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q4DbYBCiXcSi/onB7rNa0IY4Wlvvie6JzSPraPjnD388fnmAqyzJByX2hHUWjbdl+iFelbsx+5lEoMtKDzXVj8JQIxbnFCxFVs+NPG6AFU3+vdE3mvXLza9BN54BXLb/oETJofMhPyDh3RkU2x5JMaa1NEIE0KTvSGOxifj7ok4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lr1TrZr9; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45cb5e5e71eso11785295e9.2;
-        Fri, 05 Sep 2025 05:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757073768; x=1757678568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2p9jOJsI9vaYor/gi7quDFPvwuxPBD5F0qxTD9otNVs=;
-        b=lr1TrZr9q5rxHfBoEGDh/LIL7xwuUJ87TdUpSTvJKD/Idzz4ixalH0rDKMfV9LQpUf
-         teCMieTFbyz7SYMWN6oGMTTE8DTiwaUqE+Bf1uvR6gHAw69ifr51AfEzW4MPqZctydr/
-         edTn2DROOxxhmMSvG21JYQuIn0viPyH9RqPtKToHZTM0+xd8dnmc1LlUzxNcNcUFdcJj
-         hOLYsU4lAL//CH1/fA8UVUndsWK10DpjMnYwjyoAvQh7wSM+zx5opCRPsaPJ0ETe2o5N
-         PSacupNmYSHlpH1nAp1c06WhxeKsv1TC8o12BmSIWCuGSRz5cwcgCEXJVTTDPr4nS2lB
-         HKKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757073768; x=1757678568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2p9jOJsI9vaYor/gi7quDFPvwuxPBD5F0qxTD9otNVs=;
-        b=K6XWGe6QPp/wNAKmd0jlh4BBjJ8pQDzkBSll/dKsgoyZB/bv8SgAG/qVJsrYTbLcxF
-         aEbtcWIE6TZDDZ7Sv5B2oUvEkEW0D95Bu3Mwz3sHYqxeT2MVTIiWv56gNg4DD4ZFciqQ
-         Eqz9kZe8rMPxig+B54VZ2LP7eKhKkIUX+pEOksddYzThr18Gw9bUxrNSb9aAXwk/Fa1o
-         oEouS9MT5IZrWmG2N+swjDeZqoe3v+/7fCsMI+5HUE8QN9FLxJk25YTwz3zdF2mdXkOM
-         NsO88xyPzQWd70QjvYcTWhvtLw0mnXrJzotkLkFXUBCHPAzkpC7ckKS8M4mj53e9NR4K
-         Te3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVULaNfNEXdwklhwRfzTJ6Ktn/jAo/2hVoyvmReMElOHwlPnNfsy7VMQUBoGTYG7T/WswSVUCKeia8n@vger.kernel.org, AJvYcCWDyUZIwZxp6MDguLjJnX3eWrVzOTzNQUE/46KiFesXLZoumT00A2GhzpPewODJIyRnDPlUrCsWpIM5kpK0@vger.kernel.org, AJvYcCWR3IMZm/nkdqAx5IsWPA3JJZfUP3lVs2oTa9UKpsIXJ8BBNlEtEL3isCupIGznlKo6xJt9nT59OK7m5+EwUEii5MM=@vger.kernel.org, AJvYcCWdzRK0gKkluXJaKL4dtgDr8uKQKiGL/oaaemlHBgkXzW059qNRPo2N0g6wiY2/ILL2DohBM45V@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/bQz5zhIV+hF0+WQBXTM9fMYV7OiCY5C9Cd5tuD2jxGHDScUG
-	aaQbfrVZUiCv/dLIqbn+ONZ6lOJfPK06R9JusHf39fE6oVtnR6KSMC+0gFbODcS0nJLf56kRqnq
-	RkyrNzVNUL62rJDVy9jRAfXmg7J2SLGQ=
-X-Gm-Gg: ASbGncs48aITaWUmOhoUKwCVsZbzEdzFfHTS7u3JB97N7E2HxPnwf7OC38IzUJ0Xwiy
-	nSP2X2Xvon/PsDxLANaJm5i4LsGOiwsWwIs7XrBqXnbBH7aCymqIzpxIhvjVjjsQiwdqSqkRNq5
-	NcvfYOkbWbrcG2ESyqG0LFU9bUn3RFURpI2F1afrv/fbrXtCzsyfwZtzlCz8LVhRXg5K8zSJDHi
-	BKW/UnzAR0cI+ocawzIESMSFD1qtRYqDVcIQ/4PnVpk5KzkPlg=
-X-Google-Smtp-Source: AGHT+IFdNbes9YOJazZ/jkcC7CpYUmvjmyTzctIHw8JngzIufBAJDltcfI9aEkGQ17kqK8mcwsYN3FEysIuAXVo08Ec=
-X-Received: by 2002:a05:6000:26c4:b0:3ca:4e3:6ea6 with SMTP id
- ffacd0b85a97d-3d1dee6d7e9mr19290849f8f.46.1757073767683; Fri, 05 Sep 2025
- 05:02:47 -0700 (PDT)
+	s=arc-20240116; t=1757073834; c=relaxed/simple;
+	bh=rCL2ASRdfQiNdcIJUceXJl8EfVMcj5aVO26he0VLMmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NzXT49bTqyYp70BpOIA5e37EZ3xhvUqHLtPSekHVDXZMVpcKX5T0yaen21JoF5SGfWaGJeDJK2IPNG7NIINBZtQKnOk0fe18XVPK/djHLi6t9de292AqttTWqoxTwhpuZxx37f2TxX03B2PXUxdoalHaXasb6WdEdswvGUl1bCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=NZ4B7WJy; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ZErcmkJW; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757073825; x=1757678625;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=4lT96qRu0B7WnFHrHqRSMSqB3AcU/t9e++Ul2OxkBts=;
+	b=NZ4B7WJyCkuvvWe+8/kOVc88qCQz1R09Sm/iphxSmGP/cLkImXIEZJteH9drIeedFoVO721rcI1ZB
+	 7YORVBtpEAQlSwSiguNyZZpy6fuO1wHBAMWSN3VakwZWxVGoelpCd2xUbS5/LO1EcjORfrktjwl+vk
+	 vwVN5O6R8AW4rt6zjiBbFUAdm0Ir/gu5F1qVFt9xi7Rr35STwviiq+q1J+3JD1oFXoZf8UZeu15QOG
+	 SPh7LX8XFG10s0TlsW6Cr/VrUiTpDiyS544OaLqDWUvTx8NrVV5MzAeNDEuJytjHC/IUl2ajexRh39
+	 0It9pSzN2mksSd3a2XXFhh8PtpOccwA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757073825; x=1757678625;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=4lT96qRu0B7WnFHrHqRSMSqB3AcU/t9e++Ul2OxkBts=;
+	b=ZErcmkJWrxAGuYVv6lFP9TeOcvcbIhp0ZtAnQMhQL89kJyKB8BCTmxnHMoBJLgdZ06kpqV1HOyeNh
+	 NaKweGRAQ==
+X-HalOne-ID: 5e268e94-8a50-11f0-a450-d510462faafc
+Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 5e268e94-8a50-11f0-a450-d510462faafc;
+	Fri, 05 Sep 2025 12:03:44 +0000 (UTC)
+Message-ID: <8feaad36-7d58-48a0-b83d-d503e3343ed6@konsulko.se>
+Date: Fri, 5 Sep 2025 14:03:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250904114204.4148520-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <021e970a-f606-4702-9f0e-b4b0576bc5d6@lunn.ch>
-In-Reply-To: <021e970a-f606-4702-9f0e-b4b0576bc5d6@lunn.ch>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 5 Sep 2025 13:02:21 +0100
-X-Gm-Features: Ac12FXzxz3naqLRqdbTKPufgNXpGKRJOQO-Ub4jeyjydA7gw1aMStbQP7vFttuI
-Message-ID: <CA+V-a8vudqkkdZDyvsBeuKCgGBYCeA4ydMgN5b-+1nkWcQe_0w@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 6/9] net: pcs: rzn1-miic: Make switch mode
- mask SoC-specific
-To: Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] rust: zpool: add abstraction for zpool drivers
+To: Vlastimil Babka <vbabka@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Yosry Ahmed <yosry.ahmed@linux.dev>,
+ Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org
+References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
+ <20250826124454.GA1502@cmpxchg.org>
+ <CB3E7E9C-2192-4C60-B79A-932AD6CB005A@konsulko.se>
+ <c0b9d34e-1a21-4a97-b898-c33f7c8b49dd@suse.cz>
+Content-Language: en-US
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <c0b9d34e-1a21-4a97-b898-c33f7c8b49dd@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew and Geert,
 
-Thank you for the review.
 
-On Thu, Sep 4, 2025 at 9:37=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Thu, Sep 04, 2025 at 12:42:00PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Move the hardcoded switch mode mask definition into the SoC-specific
-> > miic_of_data structure. This allows each SoC to define its own mask
-> > value rather than relying on a single fixed constant. For RZ/N1 the
-> > mask remains GENMASK(4, 0).
-> >
-> > This is in preparation for adding support for RZ/T2H, where the
-> > switch mode mask is GENMASK(2, 0).
->
-> > -#define MIIC_MODCTRL_SW_MODE         GENMASK(4, 0)
->
-> >       miic_reg_writel(miic, MIIC_MODCTRL,
-> > -                     FIELD_PREP(MIIC_MODCTRL_SW_MODE, cfg_mode));
-> > +                     ((cfg_mode << __ffs(sw_mode_mask)) & sw_mode_mask=
-));
->
-> _ffs() should return 0 for both GENMASK(2,0) and GENMASK(4, 0). So
-> this __ffs() is pointless.
->
-Agreed.
+On 9/5/25 08:58, Vlastimil Babka wrote:
+> On 8/26/25 16:56, Vitaly Wool wrote:
+>>
+>>
+>>> On Aug 26, 2025, at 2:44 PM, Johannes Weiner <hannes@cmpxchg.org> wrote:
+>>>
+>>> On Sat, Aug 23, 2025 at 03:04:19PM +0200, Vitaly Wool wrote:
+>>>> Zpool is a common frontend for memory storage pool implementations.
+>>>> These pools are typically used to store compressed memory objects,
+>>>> e. g. for Zswap, the lightweight compressed cache for swap pages.
+>>>>
+>>>> This patch provides the interface to use Zpool in Rust kernel code,
+>>>> thus enabling Rust implementations of Zpool allocators for Zswap.
+>>>
+>>> The zpool indirection is on its way out.
+>>>
+>>> When you submitted an alternate allocator backend recently, the
+>>> resounding feedback from the zswap maintainers was that improvements
+>>> should happen to zsmalloc incrementally. It is a lot of code and has a
+>>> lot of features that go beyond allocation strategy. We do not want to
+>>> fork it and fragment this space again with niche, incomplete backends.
+>>>
+>>> It's frustrating that you not only ignored this, but then went ahead
+>>> and made other people invest their time and effort into this as well.
+>>>
+>>
+>> I don’t think we have a consensus on that.
+>>
+>> And zblock is, after some additional improvements, just better than
+>> zsmalloc in all meaningful aspects, let alone the simplicity. It is fas
+>> easier to implement in Rust than zsmalloc, too. Besides, zram is a good
+>> candidate to be rewritten in Rust as well and after that is done, zblock
+> 
+> If your target is zram (not zswap) then I don't understand why insist on the
+> zpool layer, as zram refused to adopt it in the first place?
 
-> You might however want to add a comment that this assumption is being
-> made.
->
-I will add the below comment for this, so that once Geert's series [0]
-hits in it can be easily searched and replaced.
+The target is zswap in the first place.
 
-/*
-* TODO: Replace with FIELD_PREP() when compile-time
-* constant restriction is lifted. Currently __ffs() returns 0 for sw_mode_m=
-ask.
-*/
+Then, I apologize for quoting myself, but what I wrote was "zram is a 
+good candidate to be rewritten in Rust", and I still hold on to this 
+idea. zram can be greatly simplified by that rewrite and the code line 
+savings will be far more than 700.
 
-[0] https://lore.kernel.org/all/cover.1739540679.git.geert+renesas@glider.b=
-e
+So, back to my point in the initial post. When/if zram is rewritten in 
+Rust it will make more sense for it to use an allocator which is also 
+written in Rust rather then zsmalloc, provided that the allocator 
+written in Rust is good enough. And *that* will leave zsmalloc a niche 
+backend.
 
-Cheers,
-Prabhakar
+You see,
+
+>> will be even safer and faster. So while not being “incomplete", it’s
+>> zsmalloc that is becoming a niche backend moving forward, and I would
+>> argue that it could make more sense to eventually obsolete *it* rather
+>> than the zpool API.
+>>
+>> ~Vitaly
+> 
+> 
+
 
