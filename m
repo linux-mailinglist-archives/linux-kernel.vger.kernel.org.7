@@ -1,88 +1,216 @@
-Return-Path: <linux-kernel+bounces-802664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DFFB4554D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:49:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6894B45550
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0195158221C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03025C27A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EE030DD21;
-	Fri,  5 Sep 2025 10:48:08 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFEF2D7DCD;
+	Fri,  5 Sep 2025 10:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3MZ1pvT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753712E8B85
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00ED30E855;
+	Fri,  5 Sep 2025 10:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069288; cv=none; b=lKic29SuD5sny9wN/MatbqOe/loVD2ccmj8iy9A1GCX2i8Q3NjhjUvJZz93cl3eS3xbTMS7XzYsUZAmyX20MyhVHykm/8kr7ilEO/oNEkyMpMbXSoOSet/oBaInw3Cieku2s0hvGKYnRgbsBfUKmbsop1CFT/IGs9KnBFmVOMKQ=
+	t=1757069292; cv=none; b=ZRQe+lBxrVIhRwGvW3cDB/ycrI6XG1KK0sevg6KYKxG0Mc1793YfedPbGR4A3INXOJ7RVdXyFUwida7J1j7YB0k8nNxCqRmwnuAQtyv8/2Q7tVXnRJ9+PSc+nk4hWJvtB4Gp5b2ylDsIlVeYuBnyObXP/2nhsuU6BhSHKUynuS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069288; c=relaxed/simple;
-	bh=NmYKRAAmq6S9/OlEpo6/iUNc8QiidY1CJ9QsoS/Qjik=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bBNZEwx/yqjQYeZMAmpVHWBrCFnz7ndIB+1q8gEJ3eMdmcSCPNVUpF5lxCj82kJ+LhqxVsJvc72PS7whRg4MviqwnONqIan+WSihW5GwnY7UCAxuWRl9vH0ZAINyOhL7R9rUmliuXVH47h151EYYgBVXjf3usA27LM9XAwe0LT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-886e347d26bso264875139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:48:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757069285; x=1757674085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8rYsdGmrF6iYwCUNd1971cTTtCRjr0XxFrK/sEXkTUg=;
-        b=kHbhUYU8BKHUPiHOwzHJ1W6vcDg3w5ATkWgRnxZPUYj/n55C0OkasfKYQNK96BTQJ4
-         me+8ywyTXzjaibN/zmlOl5Tv7HKLWc69LKrcCNuSVyn5xwNR/QyjbmcOzZ7YGJS9fpG/
-         fp84qI63TCFp1Ox5W2bvxIZUnWwsndZefmb22ErGUamrmGK/QdMBNmjN6Heb50GMVMtl
-         BnYhAw+ts2Iwi8DZeBsMxp05JFYJ1q67ck3ogfG3xQQCNoKRRs/MiMntrxyWQq2nTslN
-         pcytoSIGzxjBpH3YsBVdCx63ldyOAGDcZ/0c5HGHLHjfM/QsJhEQp/8tDomyhk62grfV
-         UfPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsF+WiWzNVLkgWLIdQslYxhTX+vJvxpbl3NbOm3g7KNKpslDaD6V8qPZeTO76As3ou6xvs3/ULA94HHdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpiQzVrBcI7tN3NBTa5qNHNQZ5vIPJLZ3h+Cqv/OxTDl2SBJYk
-	DqY0YrDlkZhv/SM1I7Td+QsnbZ8NWPRhv84mEfEK4Nbf+WCkNOwqLGLFLanJkHKPWOrwEaLI6MD
-	/Ly1lITacTMr4aQ1DxYhRkIW0NGPzlMom0UxbfBHkaSFxRdfKpISBbNngAww=
-X-Google-Smtp-Source: AGHT+IEEVqzPOhxCpPpHKlGrgT5f2MUOn4yyJ6sp4ZmwI2NMNbAtYmdpd/SxIRa4CgBpUT8AHoH6G+6763nAOE2lWUYDoaq6eth8
+	s=arc-20240116; t=1757069292; c=relaxed/simple;
+	bh=3BMIevIPv5UuOOVHMNBtqTYriH3klwwZDMVfFyThPqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SfCmtdCLVJugzazECipCOe2ZPUCe6F7s+KsCu+Z312fA1dL6REhdFCJfUnYwgGqzvTp15o2G/siQI6JEiBptZQrzQigPMUy3sI/7jhwaG0OSb1AlryugweTxe+YTr+nSd/O1oktpl2xqT6fDJmNTN6ykeeI3dBshHa/ID43DNSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3MZ1pvT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566ADC4CEF7;
+	Fri,  5 Sep 2025 10:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757069291;
+	bh=3BMIevIPv5UuOOVHMNBtqTYriH3klwwZDMVfFyThPqw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k3MZ1pvTn1XZL5vGExYPBFL6Zz81+3p/Ox2kKbNWCZF7ueMAAtcLe3R6eckSxyqqx
+	 NZMxnGzeKsUhl/5SmKeuJfHMUxwRHkZmFctIlWaJXM4VHeaeK5TDDpvz+1iO/k68T7
+	 WMvSrYxYDWX9CDOScP+cTpx2aOFrBUmI3t7naO/c1jpYx7/SiT7ava4PD5fnDezox4
+	 MWG2IjyYELCMI9BiXiwegmCxM52zhEFJJzAnbR0OoSCNEs2U8xT+EuhKUt2PEt5A5B
+	 JWYYehK9X3ReHenH/HyUx/N0IEb5yCML4KWhVEALwLjzCA6bq6Ua2+OiVofThmLfKi
+	 n1gsAiHLouhzA==
+Message-ID: <dc42cadc-bfc9-4473-ad90-aaab88101b49@kernel.org>
+Date: Fri, 5 Sep 2025 12:48:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:486:b0:883:fc4a:ea55 with SMTP id
- ca18e2360f4ac-88767e26eb8mr470147239f.3.1757069285644; Fri, 05 Sep 2025
- 03:48:05 -0700 (PDT)
-Date: Fri, 05 Sep 2025 03:48:05 -0700
-In-Reply-To: <6177c4fd-227a-4dc1-89cc-eec44300f6fa@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68babfe5.a00a0220.eb3d.0011.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in io_sqe_buffer_register
-From: syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, david@redhat.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] thermal: versal-thermal: Support thermal management
+ in AI Engine
+To: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com
+Cc: Anish Kadamathikuttiyil Karthikeyan Pillai
+ <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba
+ <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Salih Erim <salih.erim@amd.com>, Zhang Rui <rui.zhang@intel.com>,
+ "open list:THERMAL" <linux-pm@vger.kernel.org>
+References: <cover.1757061697.git.michal.simek@amd.com>
+ <3636099d5d0b31ebf232a5b2e741f0ff7e7e1631.1757061697.git.michal.simek@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3636099d5d0b31ebf232a5b2e741f0ff7e7e1631.1757061697.git.michal.simek@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 05/09/2025 10:41, Michal Simek wrote:
+> +	vti->channel = iio_channel_get(NULL, SYSMON_TEMP_CH_NAME);
+> +	if (IS_ERR(vti->channel)) {
+> +		vti->num_aie_channels = 0;
+> +		versal_thermal_iio_chan_release(vti);
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(vti->channel),
+> +							"IIO channel %s not found\n",
+> +							SYSMON_TEMP_CH_NAME);
+> +	}
+> +
+>  	vti->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, vti, &thermal_zone_ops);
+>  	if (IS_ERR(vti->tzd))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(vti->tzd),
+>  				     "Thermal zone sensor register failed\n");
+>  
+> -	return devm_thermal_add_hwmon_sysfs(&pdev->dev, vti->tzd);
+> +	ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, vti->tzd);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "Failed to add hwmon sysfs for sysmon temp\n");
+> +
+> +	sysmon_node = of_find_node_by_name(NULL, "sysmon");
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Undocumented ABI. Please don't do that. sysmon is not an approved name
+and for sure can be changed anytime to anything.
 
-Reported-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
-Tested-by: syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com
+Phandles express relationships usually.
 
-Tested on:
 
-commit:         bfd07c99 fixup: mm/gup: remove record_subpages()
-git tree:       https://github.com/davidhildenbrand/linux.git nth_page
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a5a134580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=366a4ffc91f4ab4
-dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> +	if (sysmon_node) {
+> +		ret = of_property_read_u32(sysmon_node, "xlnx,numaiechannels",
+> +					   &num_aie_channels);
+> +		if (ret < 0)
+> +			num_aie_channels = 0;
+> +	}
+> +
+> +	if (num_aie_channels > 0) {
+> +		aie_temp_chan_names = devm_kcalloc(&pdev->dev, num_aie_channels,
+> +						   sizeof(*aie_temp_chan_names),
+> +						   GFP_KERNEL);
+> +		if (!aie_temp_chan_names)
+> +			return -ENOMEM;
+> +
+> +		for_each_child_of_node(sysmon_node, child_node) {
+> +			if (of_property_present(child_node, "xlnx,aie-temp")) {
+> +				ret = of_property_read_string(child_node, "xlnx,name",
+> +							      &aie_temp_chan_name);
+> +				if (ret < 0) {
+> +					of_node_put(child_node);
+> +					return ret;
+> +				}
+> +				aie_temp_chan_names[aie_ch_index] = aie_temp_chan_name;
+> +				aie_ch_index++;
+> +			}
+> +		}
+> +
+> +		/* Allocate memory for the dynamic aie temperature channels */
+> +		vti->channel_aie = devm_kcalloc(&pdev->dev, num_aie_channels,
+> +						sizeof(*vti->channel_aie), GFP_KERNEL);
+> +		if (!vti->channel_aie)
+> +			return -ENOMEM;
+> +
+> +		for (aie_ch_index = 0; aie_ch_index < num_aie_channels; aie_ch_index++) {
+> +			vti->channel_aie[aie_ch_index] =
+> +			    iio_channel_get(NULL, aie_temp_chan_names[aie_ch_index]);
+> +			if (IS_ERR(vti->channel_aie[aie_ch_index])) {
+> +				vti->num_aie_channels = aie_ch_index + 1;
+> +				versal_thermal_iio_chan_release(vti);
+> +				return dev_err_probe(&pdev->dev,
+> +						     PTR_ERR(vti->channel_aie[aie_ch_index]),
+> +						     "IIO AIE TEMP channel %s not found\n",
+> +						     aie_temp_chan_names[aie_ch_index]);
+> +			}
+> +		}
+> +
+> +		vti->tzd_aie = devm_thermal_of_zone_register(&pdev->dev, 1, vti,
+> +							     &thermal_zone_ops_aie);
+> +		if (IS_ERR(vti->tzd_aie))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(vti->tzd_aie),
+> +					      "Failed to register thermal zone aie temp\n");
+> +
+> +		ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, vti->tzd_aie);
+> +		if (ret)
+> +			return dev_err_probe(&pdev->dev, ret,
+> +					     "Failed to add hwmon sysfs for aie temp\n");
+> +	}
+> +	vti->num_aie_channels = num_aie_channels;
+> +	platform_set_drvdata(pdev, vti);
+> +	return 0;
+> +}
+> +
+> +static void versal_thermal_remove(struct platform_device *pdev)
+> +{
+> +	struct versal_thermal_info *vti = platform_get_drvdata(pdev);
+> +
+> +	versal_thermal_iio_chan_release(vti);
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Don't mix non-devm with devm. This should be a proper devm cleanup action.
+
+
+
+Best regards,
+Krzysztof
 
