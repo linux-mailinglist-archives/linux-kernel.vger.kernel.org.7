@@ -1,90 +1,138 @@
-Return-Path: <linux-kernel+bounces-802965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E1AB458F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8045CB45900
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4451CC3FAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6CD9A63629
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4051235A2AD;
-	Fri,  5 Sep 2025 13:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF54350D50;
+	Fri,  5 Sep 2025 13:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E76NbuJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPMG29dj"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F88034F497;
-	Fri,  5 Sep 2025 13:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565AF3451AF;
+	Fri,  5 Sep 2025 13:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078749; cv=none; b=ic46IZO3nfl19X4JVl9W/KKE6HeDcmZtosEakv2o+uxJR86jMnOkSLNM/NU0zl2spEEL26/WlbnuoQLIwwjijpvSlmUFDSUpK093NHhJGBQaF587lfo/+sJh0RMlTfcHa9rdif0v0TF+TLjoN/gj2sGP7h1b5H7JyMqu2wLk0Wk=
+	t=1757078796; cv=none; b=AGO/qcmKksPoHOZ2coqN2euuts4pRL9JfAecD2KTcwR9WdFrDt34Ik162k5FGlD2wf9ruInQUsuT8ogv+mZ0mmxlwXP3nbVjyeBuGtqaqEQjH8rNHuJ36FbclPb9+0X9BYK3ti8K8BlzUpnvqk/lIkcZnDQzYmR5uNcJomoaXMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078749; c=relaxed/simple;
-	bh=R1AXq4tboKPDj02j8ZcSeexsVBxOm5DIaVF9xRR7bfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2hSTCkd2RDnVARzebGaIOGukbO9+DUxRrr7MZ5ECLQIo5+r0/5irdtPPDvWcsqmKRXu2cI0sr02wngp28Chr6qVvTkh9K25GongxOqFHYUfYKm2hOq5tnWAr0wNXjD7rLPxrxDg/f0+qlE7LVyJA2EtNSbXKxLvDz9+Fue1U6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E76NbuJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05128C4CEF1;
-	Fri,  5 Sep 2025 13:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757078749;
-	bh=R1AXq4tboKPDj02j8ZcSeexsVBxOm5DIaVF9xRR7bfc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E76NbuJNf2kf/BhoQi8TEL7Ic7QymW5CnnfRYMvFmXpr+XLkXtiGilA67T0x+s7sg
-	 wtyEutZKLD8/Ic7i3+8R1apz+fRu7epFv5eJXPPhjkyaCi+/aUjYUAs/mosVetyXyc
-	 RtO5uq37ljl0z60pPUcXStrqibWbqTJyjEovcGiBdRDawKVDz9lZVmx3Wi5tsW6DaP
-	 M495girntXe/+L65UtPi+bCimkM0OFEGJvJHhELPfPtsgDX7ufkdswodcbZDtqzwav
-	 1q5wEcTUKnXLVjzn007IM7GSw0dlMO+qKSucwLafbMUfHLqUFYPEYEXDJCZsdgptC5
-	 FDbTmIE4R15fg==
-Date: Fri, 5 Sep 2025 14:25:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: alistair23@gmail.com
-Cc: chuck.lever@oracle.com, hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
-	kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	kch@nvidia.com, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
-Message-ID: <20250905132543.GG553991@horms.kernel.org>
-References: <20250905024659.811386-1-alistair.francis@wdc.com>
- <20250905024659.811386-8-alistair.francis@wdc.com>
+	s=arc-20240116; t=1757078796; c=relaxed/simple;
+	bh=AH1QiUP7NqGjmMOlveGWnNSOEFkmg/5MNNp/5BdcE68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uzzDsl9cuwHYqxtuezHrKy0NuHBesu+EvlOmQ1ETWg3+WW/GsKitaiiUzYMRKI3bFW0YM47oDIAnmpksiie1icqTMQXTBcxpWzrWaiQIbZfTj8C8qyr2my6PXJQx9FETPBtd8LZflhYD1kz9Y6vRLYYyZ0TVvgmJ0A7UZOAldxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPMG29dj; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so15581555e9.3;
+        Fri, 05 Sep 2025 06:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757078794; x=1757683594; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eb92Day+yfiw8MwDoCISojU3QFzdrjI3w4w/7hHek5c=;
+        b=EPMG29djZ+prgmuzyDRTg9A2bSO2+wXOLekYoysCG/hSD9bRXMkCsgUTO1l56e9ocu
+         L1SOaDh9AiZgPSBF8MhVv+6w3ppk5eAjoXoZ6RqBFDM2qxwh7kHuhWCsryZ4aRXckVf2
+         xIlwkbni/CK2DoQjfrbq71f7CpOCPhQ13zLa/643iy638s8VKniX1jOv3bmYrkTWp7wP
+         nSl4KQXXJJ/6U0vYi936VYONuFkZ9zZeD60mtG0BTzalM/YF0dH8wMBJmtZk2URfZfhi
+         fWP30JxnQ3qqUWjDZe6lOXu28LmDsQJ0ghCeqFmIR1ETnV4bV5nlCaEzpGMCdkBbgNzv
+         q0dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757078794; x=1757683594;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eb92Day+yfiw8MwDoCISojU3QFzdrjI3w4w/7hHek5c=;
+        b=s4wJF4FwJsvyYE+Xvox8mWu3TdlHq2aixxFGZf9xo7SUH1DY1UrkceQzlRUo2M/0lE
+         oLKVEu0kkHdCUyqoe1GpNMCuuZBdPV0qJSnOX8PK386pzP6+vTYUCKpPp/LUROEl8YZq
+         pMtiFru8wfLK/lqL2sPkNKbIXsYqOpAbFMUo3WdRo4zD5ihco5r0Cnlt7OvuTjp6+O4d
+         tE2sJQ5gWcjFyeoiFSAwf8BZOCZbdSIsSgJgJwxHs9lEwZebVqRxKLYtFk9uW2xFbuSZ
+         aiDm5ag/V/3oVrZk+D9AeDX4DPHVx7wJ4A4aPRumXjQ/rNkbFW7ctr9u76BWPQQVDJbU
+         yg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmY4at+LUcYgw4+4MgkPQPMwtJLKB8lKYPldE02y195TxknqL1AVjMtbDwb1FySVCMMi+0PkPiUku8INs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkZaqfImcyvnF2paKk88VCgKA3vXK8gVk9Da0EVL0MzMdM2h0p
+	NsKgwmEkJJt/17PZBSdZ/Vqv39WDLZFwJBiYAaIlnceh9sEmgCnoixyCWQedSXOOcX8=
+X-Gm-Gg: ASbGncuM1daPCF4p1ppeGQ3DY+XAtZww4ZWbnMducpMOB36/nEh8n6jYuNymS3a+hyD
+	21r0y6xkDNwTd+688Fg26c8LlArfETNR1p/pM72A1MJ5i2DCndi6236elsGDzrC3wsf9uQHLv6f
+	HZIz9a84uVXtr9aN88GMY1dByu//p97F7smeHzWcTFcxdRNFmqs+HHm/LPEmIr2nf5FaIPMXDWW
+	TPSyn5XwIji8yM7eGqTyJ8cD3lsy2LGrRHXIZk0DXnb94C4VHz7L/nN1aGsoLeCbePK9++7hu2/
+	rCkhIB7yrkE4XbHlznz7+CJoJj+yFlboigr0K23HtsoFfMOA6CSVvg1MrRjIGNU9V/4tgC6C1m0
+	69/k95tFFbFfwN6ergQs3tAL6TZ8QQjTtgDfMZ4w3y7IQba9Nzx2XZpjfISeSmTBxN64EPf8=
+X-Google-Smtp-Source: AGHT+IFfdHJ10HzRs7dHi47HmFmAVu5kFk9F5qKE3/3zjLp/MJzZUY0y3giMJSwUpo4hW1JEx9URvg==
+X-Received: by 2002:a05:600c:1d20:b0:45d:2ac9:4240 with SMTP id 5b1f17b1804b1-45d2ac94321mr75395875e9.17.1757078793329;
+        Fri, 05 Sep 2025 06:26:33 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::4:4f66])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcff67787sm80228455e9.16.2025.09.05.06.26.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 06:26:32 -0700 (PDT)
+Message-ID: <02ff9dc0-2ce2-4241-9969-e09f48026f8d@gmail.com>
+Date: Fri, 5 Sep 2025 14:26:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905024659.811386-8-alistair.francis@wdc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
+ PR_THP_DISABLE_EXCEPT_ADVISED
+Content-Language: en-GB
+To: alx@kernel.org
+Cc: linux-man@vger.kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
+ ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20250905132536.1998767-1-usamaarif642@gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20250905132536.1998767-1-usamaarif642@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 12:46:59PM +1000, alistair23@gmail.com wrote:
 
-...
 
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
+On 05/09/2025 14:25, Usama Arif wrote:
+> PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
+> THPs when advised. IOW, it allows individual processes to opt-out of THP =
+> "always" into THP = "madvise", without affecting other workloads on the
+> system. The series has been merged in [1]. Before [1], the following 2
+> calls were allowed with PR_SET_THP_DISABLE:
+> 
+> prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0); // to reset THP setting.
+> prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0); // to disable THPs completely.
+> 
+> Now in addition to the 2 calls above, you can do:
+> 
+> prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0); // to
+> disable THPs except madvise.
+> 
+> This patch documents the changes introduced due to the addition of
+> PR_THP_DISABLE_EXCEPT_ADVISED flag:
+> - PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
+>   is configured for the calling thread (with or without
+>   PR_THP_DISABLE_EXCEPT_ADVISED).
+> - PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
+>   completely for the process, or disable except madvise
+>   (PR_THP_DISABLE_EXCEPT_ADVISED).
+> 
+> [1] https://lore.kernel.org/all/20250815135549.130506-1-usamaarif642@gmail.com/
+> 
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+> v1 -> v2 (Alejandro Colomar):
+> - Fixed diuble negation on when MADV_HUGEPAGE will succeed
+> - Turn return values of PR_GET_THP_DISABLE into a table
+> - Turn madvise calls into full italics
+> - Use semantic newlines
+> ---
 
-...
+Ah forgot to add "v2" to subject.
 
->  static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
->  		struct msghdr *msg, char *cbuf)
->  {
->  	struct cmsghdr *cmsg = (struct cmsghdr *)cbuf;
-> -	u8 ctype, level, description;
-> +	u8 ctype, htype, level, description;
 
-nit: htype is unused in this function
-
-Flagged by W=1 builds.
-
->  	int ret = 0;
->  
->  	ctype = tls_get_record_type(queue->sock->sk, cmsg);
-
-...
 
