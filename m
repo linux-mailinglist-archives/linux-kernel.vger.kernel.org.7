@@ -1,153 +1,164 @@
-Return-Path: <linux-kernel+bounces-803569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB599B46280
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:43:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4BEB46283
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731713B9608
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A974584CE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D899C274B4A;
-	Fri,  5 Sep 2025 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077CF274FEB;
+	Fri,  5 Sep 2025 18:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="O+WAb/Q7";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UG8A1lIt"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VQqPVBcd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BF7BA42;
-	Fri,  5 Sep 2025 18:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E3C2737E7;
+	Fri,  5 Sep 2025 18:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097779; cv=none; b=mHXvqGLqt1trCx4Stq99ANWkQqJBqeZxPZxV5iIuiW4wWzX1AGDTupidm4P/xGXj6RanZXfArgZdNj+W3nsduoiDeoRGmv1ntGUdyPMmGhQEHj6NxyEyKNqen5Xh8Zevq53Mh3AKxPhr904FYXHkZQEBBdwXouw3oCwKlCnoBqM=
+	t=1757097828; cv=none; b=LYxrURVqVuIZsCtb847QaQfSQlA7zLQ5KRaUeZfVpWMtE7SsG321IJDFD66o0LOe8LD5eb1qijLHHE8SOf+RsPIMPUeZBMnfqrOlBACuADo+Ncjg4oYwRJelZU/vVym1u9NS5SbXmLjkNYkaiZ4iCm1bw1rYorMAXJx69LDC4Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097779; c=relaxed/simple;
-	bh=E8b8dxChwNwDlcqRRyz694U+QlBhMByyuUVVGHBkpCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YPiNFUv3i7XoXO9MejfKOtLe/UHtNGOOhWtdN2rkvI770Hn5J6Pi2A2HbElcCtkHfyeeJ5M2SKmDIQ6v7qT98O1CmsvBrgoOykx9oRRhsve4udwmCBiwjLh0p2gPrxxgRAcni8VJXA/4u5nnxFW5qBAlPUn2+84QUQA9k5iU6IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=O+WAb/Q7; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UG8A1lIt; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cJQFq5gLDz9sy4;
-	Fri,  5 Sep 2025 20:42:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757097775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XH2z8dk1aIBtC9igAXuw1MMQ+HESbem3MsiwJgT4haA=;
-	b=O+WAb/Q7oa3VzIsi8KIm5UVhLGZutU8rLNX43Gi/n5ecXUBDs0b7sWknZ6SiatBCQfW3Ax
-	WJp4QVHUwqVdC+39pmb/xgqBfGba0ZC6QGqjE3uOm3FVxGU509XLRx33QCwQNTGk9aAMvT
-	oktLAWWecPjxfbgMtm2TvJmm7VpQaclrTy1zaQayHC/uHqy6DUSwcIW8ujCRqBFK3vhm9w
-	ig9QKfCwYF4jawmLQvxYVkVW+52AeICurftHLZiHJv54e9qLvbRTnKBaZH/dXt/wTXGfaP
-	et/zsbkeLepnYM+QDYRbXgA1tg+vWhosghjc8yXAh2oDwj06dOhrLG8nIGG0Qg==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757097773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XH2z8dk1aIBtC9igAXuw1MMQ+HESbem3MsiwJgT4haA=;
-	b=UG8A1lItzjav2j5kpiT1aOQhjim1eRPVSCIQNjc1CTvXv4gRyyvDLA78JdDFgmRgInq03/
-	2Jaxot11h98nw22eeYVO18zkv4n9accWlfQkOT3AhQoyVQBQPzHLZM3z7dmCbSbouj3UzE
-	9r6gRLuCX4Q7lgu+jUc9W8rEFEM+ntcEYqTjT5XH573qoyLTDhh52mJqD7zXRFhRZsA/sY
-	opG+DelckW18syFTFTOOWKmAhQPBGZd/QSRgAUCI4Dl0ia4HMS6n+ECgwCgOQFyF6Zf0DQ
-	D3GHdbXOKf2tjMIucXKLmlqd3lV0boLMsVQdB0uG9wFi/77ytDS9iJ4k84kFhg==
-To: linux-pci@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Wang Jiang <jiangwang@kylinos.cn>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3] PCI: endpoint: pci-epf-test: Limit PCIe BAR size for fixed BARs
-Date: Fri,  5 Sep 2025 20:42:10 +0200
-Message-ID: <20250905184240.144431-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1757097828; c=relaxed/simple;
+	bh=F60wNoG+WGHTQCcsGL07856RUgL+Eiwk+zU7KZono2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Za3tpX9s2SRGotIzpbV50qbDnCOTcS24Ge+zZkhKVif/X6a/F/LdGHZGZhVTXANnBGGBCFCjpk/UCr9kSTRKKYYeGQRlIhvA+8cHNQX8mCo7BG2TAF1g/of8tMZT4ZeXrXnDMFuCDR+Au4NclZ0yPzSNb9b7Tvfg8+XRNQhY5WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VQqPVBcd; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757097827; x=1788633827;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=F60wNoG+WGHTQCcsGL07856RUgL+Eiwk+zU7KZono2A=;
+  b=VQqPVBcdCz/WAxtToxBhdXT1Oxr6nBefN9jYolIWvlFJhMo4ldAXEa0q
+   KKmLnMRExLixkmZGGLCFs/Mt/Mm2dgaJokLtdvBBcW0/EJDrQeEyd6r3o
+   NvhJMjBDJVafFhogZdDiGR7Ub4sqRSvIMcNK2lZv0x7m/Ga5opuzRuGXO
+   KhLq2fPoQOOUJ0TyYxF/KZMI1+e42Xs51FOeqhKHk4Vff93wTudlszt4z
+   EnCcglrc360U+Nj4xVUkRpKegtI2SGs0TLR0m98dMMAuZ0rMEsszl/WQk
+   8fx7HBksAkp0UsXCTpJurxFEuBm9Wn8q1Z5ImGjGCFf/2ZsY7nztnO5Io
+   g==;
+X-CSE-ConnectionGUID: o5jKojw8TRiIeFScbWwtqA==
+X-CSE-MsgGUID: hNqmiovQRRufhpIZipiCNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="58665111"
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="58665111"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 11:43:46 -0700
+X-CSE-ConnectionGUID: ZSAvoQKOSlWx9rMUHSGufw==
+X-CSE-MsgGUID: tbUkbG1WTzuGpH3gZm7EcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="173032678"
+Received: from xpardee-mobl.amr.corp.intel.com (HELO [10.246.154.149]) ([10.246.154.149])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 11:43:45 -0700
+Message-ID: <7714a30a-6505-43c8-949a-43f48049c1c9@linux.intel.com>
+Date: Fri, 5 Sep 2025 11:43:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 9b6542a1c96162241f4
-X-MBO-RS-META: 98qou455kri4u4y53yuk4mr7wzt9t3i8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] platform/x86:intel/pmc: Show substate requirement
+ for S0ix blockers
+To: Russell Haley <yumpusamongus@gmail.com>, irenic.rajneesh@gmail.com,
+ david.e.box@linux.intel.com, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250815224611.2460255-1-xi.pardee@linux.intel.com>
+ <20250815224611.2460255-5-xi.pardee@linux.intel.com>
+ <60e6b6da-ba46-4a75-b571-8b62f3186008@gmail.com>
+Content-Language: en-US
+From: Xi Pardee <xi.pardee@linux.intel.com>
+In-Reply-To: <60e6b6da-ba46-4a75-b571-8b62f3186008@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, the test allocates BAR sizes according to fixed table
-bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 } . This
-does not work with controllers which have fixed size BARs that
-is smaller than the requested BAR size. One such controller is
-Renesas R-Car V4H PCIe controller, which has BAR4 size limited
-to 256 Bytes, which is much less than 131072 currently requested
-by this test. a lot of controllers drivers in-tree have fixed
-size BARs, and they do work perfectly fine, but it is only
-because their fixed size is larger than the size requested
-by pci-epf-test.c
+Hi Russell,
 
-Adjust the test such that in case a fixed size BAR is detected,
-the fixed BAR size is used, as that is the only possibly option.
+Thanks for the review.
 
-This helps with test failures reported as follows:
-"
-pci_epf_test pci_epf_test.0: requested BAR size is larger than fixed size
-pci_epf_test pci_epf_test.0: Failed to allocate space for BAR4
-"
+On 9/1/2025 4:52 PM, Russell Haley wrote:
+> On 8/15/25 5:46 PM, Xi Pardee wrote:
+>> Add support to read and show S0ix blocker substate requirements.
+>> Starting from Panther Lake, substate requirement data is provided
+>> based on S0ix blockers instead of all low power mode requirements.
+>> For platforms that support this new feature, add support to display
+>> substate requirements based on S0ix blockers.
+>>
+>> Change the "substate_requirements" attribute of Intel PMC Core
+>> driver to show the substate requirements for each S0ix blocker
+>> and the corresponding S0ix blocker value.
+>>
+>> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+>> ---
+>>   drivers/platform/x86/intel/pmc/arl.c  |   4 +
+>>   drivers/platform/x86/intel/pmc/core.c | 126 ++++++++++++++++++++++++--
+>>   drivers/platform/x86/intel/pmc/core.h |  14 +++
+>>   drivers/platform/x86/intel/pmc/lnl.c  |   2 +
+>>   drivers/platform/x86/intel/pmc/mtl.c  |   2 +
+>>   5 files changed, 138 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
+>> index 9d66d65e75779..17ad87b392abe 100644
+>> --- a/drivers/platform/x86/intel/pmc/arl.c
+>> +++ b/drivers/platform/x86/intel/pmc/arl.c
+>> @@ -725,9 +725,11 @@ struct pmc_dev_info arl_pmc_dev = {
+>>   	.dmu_guid = ARL_PMT_DMU_GUID,
+>>   	.regmap_list = arl_pmc_info_list,
+>>   	.map = &arl_socs_reg_map,
+>> +	.sub_req_show = &pmc_core_substate_req_regs_fops,
+>>   	.suspend = cnl_suspend,
+>>   	.resume = arl_resume,
+>>   	.init = arl_core_init,
+>> +	.sub_req = pmc_core_pmt_get_lpm_req,
+>>   };
+>>   
+>>   struct pmc_dev_info arl_h_pmc_dev = {
+>> @@ -735,7 +737,9 @@ struct pmc_dev_info arl_h_pmc_dev = {
+>>   	.dmu_guid = ARL_PMT_DMU_GUID,
+>>   	.regmap_list = arl_pmc_info_list,
+>>   	.map = &mtl_socm_reg_map,
+>> +	.sub_req_show = &pmc_core_substate_req_regs_fops,
+>>   	.suspend = cnl_suspend,
+>>   	.resume = arl_h_resume,
+>>   	.init = arl_h_core_init,
+>> +	.sub_req = pmc_core_pmt_get_lpm_req,
+>>   };
+> The cover letter and commit messages say Panther Lake, but I see a bunch
+> of "arl" here. Is this just confusing file and struct names, or is my
+> Arrow Lake 265K getting idle-blocker-cause debug info? If so it should
+> probably be mentioned in the changelog.
+>
+> Same question about patch 5.
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>
-Cc: Wang Jiang <jiangwang@kylinos.cn>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Simplify the conditional to always use fixed size BAR size for test
-V3: - Update commit message
-    - Add RB from Niklas
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This patch series enables SSRAM supports of Lunar Lake and Panther Lake 
+platforms in intel_pmc_core driver. It would not modify the 
+functionality of intel_pmc_core driver in Arrow Lake platforms. Arrow 
+Lake would not get s0ix_blocker information with this patch series.
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index e091193bd8a8a..2418add64104a 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -1050,7 +1050,12 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 		if (bar == test_reg_bar)
- 			continue;
- 
--		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
-+		if (epc_features->bar[bar].type == BAR_FIXED)
-+			test_reg_size = epc_features->bar[bar].fixed_size;
-+		else
-+			test_reg_size = bar_size[bar];
-+
-+		base = pci_epf_alloc_space(epf, test_reg_size, bar,
- 					   epc_features, PRIMARY_INTERFACE);
- 		if (!base)
- 			dev_err(dev, "Failed to allocate space for BAR%d\n",
--- 
-2.50.1
+Starting from Panther Lake, the "substate_requirements" attribute in the 
+newer platforms will show only the requirements of s0ix blockers instead 
+of every substate status register. In order to support these two mutual 
+exclusive features, additional fields have been added to pmc_dev_info 
+struct. This change would not change the functionality of intel_pmc_core 
+driver in Arrow Lake platforms.
 
+Thanks for the suggestion, I will add this information to the changelog 
+of next version.
+
+Thanks!
+
+Xi
+
+>
+> - Russell Haley
+>
 
