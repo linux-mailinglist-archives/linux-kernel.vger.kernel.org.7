@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-802685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698BDB45580
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:01:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F18EB4558C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9254D163C81
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FAAE1C820F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3A9340D92;
-	Fri,  5 Sep 2025 11:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1916D3431F4;
+	Fri,  5 Sep 2025 11:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7+DnpZ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="auxSZN6V"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3390633EB0D;
-	Fri,  5 Sep 2025 11:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A03D265CA2;
+	Fri,  5 Sep 2025 11:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070064; cv=none; b=Oek1ao9xeNtto30nbIleFgjW+LFAHYG80h8oBYAuVV2AEXOcqkbhu6VC5hfI6lt/I+gK0tzkkHibmPtEEJutqzDAocqLu4JJlF7HYJe1KIwGFmr9WXVsjy+qseBrDF9poiKb17xmw3rvsQm95WvIB7vbr1jq5tN+kz212zG7TOc=
+	t=1757070093; cv=none; b=FZmCDrVDRYQ3lxbQRWLPyS6ijqfzRgEiMYSu0gRiWKZGcr7xeCZpY5YuryzZ2WtxK86LRezNDw553plpLaGfSybWdB5u/ERje9pb62HE+liVxHrqcE86Q6OlFwtymsTTM0+n3+BI0gprXt+YeG8u7VyvtT4Is+YrJuBg7fSALYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070064; c=relaxed/simple;
-	bh=YZ1wTIYoB930tSA5MeqtdhO0LxdCLchTUQFtsum00QY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9ddDMoaN8uVAr/WKDIwQtn/A+q+P2oYpg3z9SFsHjcKlMhh8Wvibg8pEgJgDvYffPycSJLREIGoDaab0dWo44l59+UTHrxHdhMBIqXInGksqbIfKOF0La61V83ZK5ucc6psDh6GSa7Mc1wDRv4zvjZ2cWyn7gcZ6mrC+ipV1Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7+DnpZ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2257C4CEF1;
-	Fri,  5 Sep 2025 11:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757070063;
-	bh=YZ1wTIYoB930tSA5MeqtdhO0LxdCLchTUQFtsum00QY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U7+DnpZ0s1JKbZszxSjLy0wzG4FuSPqezXeI+JVM+MWhXKMk7hbSMLMR/Ap70xViw
-	 Grd6dhed7yIRR8Yu73fJN0N7pkSYFsDBBJo92L9gty0NMlP0j/ofYzR8Udwhhqz0oh
-	 CUbTDNzSsrto9aiXPTcXZ/bGs5k+wjoB6qyCquH8g/JPTbP7OqDNsG+bte2OrVpi4n
-	 zx6H4iTAqk8cmGshjWzK/jnlqFQq/hJysU/x9N1c9QnwDh2XIGq4oxaydCWq1cwWGV
-	 2fRPyoqYacVZpZfy0SFEibM7KjqfNwOBpyIxsFAfubouuDw7Z5Ombt9MKgcN6WzQfQ
-	 4CK8xb4S08BQg==
-Date: Fri, 5 Sep 2025 14:00:50 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 1/7] mm: remove arch_flush_lazy_mmu_mode()
-Message-ID: <aLrC4reKPAz6YFn1@kernel.org>
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-2-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1757070093; c=relaxed/simple;
+	bh=Q/F3vdGPrInicj4pqHOWJ3LfYlIQedwsrx/RlWTjWoE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=I0KP5J1mN/zzmmwcw6N7zo22M1OOlJJFWuHH15zueAH1gmDJR99PHkrar5PbTQY6MtU9meqhW++OqLkYnfTCQiv+QDFm4Pq7HE9afo8cit3dbGWrP1N9IHRW9FZInv8tHyPr4mto0MoT1SloYhF4RxnEGu3/1zfIljOs9qvTijQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=auxSZN6V; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=YeME77c9vu1Q61ETUQEIXofBh9SzJIyBAylBCZ+54Xo=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1757070064; v=1; x=1757502064;
+ b=auxSZN6VGC+gIt93s0YIrQhFBshVbOXflIeIjYGDKjZKJSu4Jduc78n2jVn/Yso1D2NQGHQF
+ Kc538qEu1OCiObeZXWS3qYXcUEVq0zlkrOe/F5BVGMIU5V6VHg5Ks71odNAAzQLX6gezqqc9pPt
+ KLvQxf1lg8Gn/FXhu3D2xm2ECfeC/vQgh6Kd661Tc8CFxHIKO2L3VO4pJFOGm10Emxn22Kw5R7z
+ ycIZcRHvy5Hm6Y+00IKp8eHdRaXXmxvwVfXcKa7MKmlO9qEM29HIUUj7BV9AMTCyDMm5aFkHsAf
+ 1zi3fKHUudtLf9JRA/YTq9F0Eg1wmpZFqWNCAsNzE3iJA==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 0e3c747f; Fri, 05 Sep 2025 13:01:04 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Subject: [PATCH v3 0/3] Marvell 88PM886 PMIC GPADC driver
+Date: Fri, 05 Sep 2025 13:00:53 +0200
+Message-Id: <20250905-88pm886-gpadc-v3-0-4601ad9ccb51@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904125736.3918646-2-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOXCumgC/23O3wrCIBTH8VcJrzP0LJ3rqveILkSPm8H+oCVbY
+ ++eGwQxuvz+4Hw4M4kYPEZyOcwkYPLR912O4nggptFdjdTb3AQYCKagpEoNrVKS1oO2hiqOYDS
+ 3AgySfDMEdH7cvNs9d+Pjsw/Txie+rl+p2kmJU0adZCABpHSor/b1wNbnJ/rkzWmc3mQVE/woB
+ d8rkJVSVIYjP9tKuH/KsiwfmhdKtfgAAAA=
+X-Change-ID: 20250827-88pm886-gpadc-81e2ca1d52ce
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1473;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=Q/F3vdGPrInicj4pqHOWJ3LfYlIQedwsrx/RlWTjWoE=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBm7Dr3nsTpmsnWyV+ZeKeml7U/vbpdxLVtm9/jEwVP/b
+ 538I7NKpqOUhUGMi0FWTJEl97/jNd7PIlu3Zy8zgJnDygQyhIGLUwAm8uYfI8PnamXN+wVzfsVL
+ tN8/tSn/1v//E5wZLzkXMAedXBFUN+sxw//ixMSiOQHbXnQeOfx8geukk+EWU/0eRWzzy5Zx+Gz
+ f5ccAAA==
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-On Thu, Sep 04, 2025 at 01:57:30PM +0100, Kevin Brodsky wrote:
-> This function has only ever been used in arch/x86, so there is no
-> need for other architectures to implement it. Remove it from
-> linux/pgtable.h and all architectures besides x86.
-> 
-> The arm64 implementation is not empty but it is only called from
-> arch_leave_lazy_mmu_mode(), so we can simply fold it there.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+This series adds a driver for the GPADC found on the Marvell 88PM886
+PMIC. The GPADC monitors various system voltages and is a prerequisite
+for battery monitoring on boards using the PMIC.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+Changes in v3:
+- Refactor driver according to comments
+- Update trailers
+- Rebase on v6.17-rc4
+- Link to v2: https://lore.kernel.org/r/20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz
 
-> ---
->  arch/arm64/include/asm/pgtable.h                   | 9 +--------
->  arch/powerpc/include/asm/book3s/64/tlbflush-hash.h | 2 --
->  arch/sparc/include/asm/tlbflush_64.h               | 1 -
->  arch/x86/include/asm/pgtable.h                     | 3 ++-
->  include/linux/pgtable.h                            | 1 -
->  5 files changed, 3 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index abd2dee416b3..728d7b6ed20a 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -101,21 +101,14 @@ static inline void arch_enter_lazy_mmu_mode(void)
->  	set_thread_flag(TIF_LAZY_MMU);
->  }
->  
-> -static inline void arch_flush_lazy_mmu_mode(void)
-> +static inline void arch_leave_lazy_mmu_mode(void)
->  {
->  	if (in_interrupt())
->  		return;
->  
->  	if (test_and_clear_thread_flag(TIF_LAZY_MMU_PENDING))
->  		emit_pte_barriers();
-> -}
-> -
-> -static inline void arch_leave_lazy_mmu_mode(void)
-> -{
-> -	if (in_interrupt())
-> -		return;
->  
-> -	arch_flush_lazy_mmu_mode();
->  	clear_thread_flag(TIF_LAZY_MMU);
->  }
->  
-> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> index 146287d9580f..176d7fd79eeb 100644
-> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
-> @@ -55,8 +55,6 @@ static inline void arch_leave_lazy_mmu_mode(void)
->  	preempt_enable();
->  }
->  
-> -#define arch_flush_lazy_mmu_mode()      do {} while (0)
-> -
->  extern void hash__tlbiel_all(unsigned int action);
->  
->  extern void flush_hash_page(unsigned long vpn, real_pte_t pte, int psize,
-> diff --git a/arch/sparc/include/asm/tlbflush_64.h b/arch/sparc/include/asm/tlbflush_64.h
-> index 8b8cdaa69272..cd144eb31bdd 100644
-> --- a/arch/sparc/include/asm/tlbflush_64.h
-> +++ b/arch/sparc/include/asm/tlbflush_64.h
-> @@ -44,7 +44,6 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end);
->  void flush_tlb_pending(void);
->  void arch_enter_lazy_mmu_mode(void);
->  void arch_leave_lazy_mmu_mode(void);
-> -#define arch_flush_lazy_mmu_mode()      do {} while (0)
->  
->  /* Local cpu only.  */
->  void __flush_tlb_all(void);
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index e33df3da6980..14fd672bc9b2 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -117,7 +117,8 @@ extern pmdval_t early_pmd_flags;
->  #define pte_val(x)	native_pte_val(x)
->  #define __pte(x)	native_make_pte(x)
->  
-> -#define arch_end_context_switch(prev)	do {} while(0)
-> +#define arch_end_context_switch(prev)	do {} while (0)
-> +#define arch_flush_lazy_mmu_mode()	do {} while (0)
->  #endif	/* CONFIG_PARAVIRT_XXL */
->  
->  static inline pmd_t pmd_set_flags(pmd_t pmd, pmdval_t set)
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 4c035637eeb7..8848e132a6be 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -234,7 +234,6 @@ static inline int pmd_dirty(pmd_t pmd)
->  #ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
->  #define arch_enter_lazy_mmu_mode()	do {} while (0)
->  #define arch_leave_lazy_mmu_mode()	do {} while (0)
-> -#define arch_flush_lazy_mmu_mode()	do {} while (0)
->  #endif
->  
->  #ifndef pte_batch_hint
-> -- 
-> 2.47.0
-> 
+Changes in v2:
+- Refactor driver according to comments
+- Add binding patch
+- Link to v1: https://lore.kernel.org/r/20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz
 
+---
+Duje Mihanović (3):
+      dt-bindings: mfd: 88pm886: Add #io-channel-cells
+      iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+      mfd: 88pm886: Add GPADC cell
+
+ .../bindings/mfd/marvell,88pm886-a1.yaml           |   4 +
+ MAINTAINERS                                        |   5 +
+ drivers/iio/adc/88pm886-gpadc.c                    | 388 +++++++++++++++++++++
+ drivers/iio/adc/Kconfig                            |  13 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/mfd/88pm886.c                              |   1 +
+ include/linux/mfd/88pm886.h                        |  58 +++
+ 7 files changed, 470 insertions(+)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250827-88pm886-gpadc-81e2ca1d52ce
+
+Best regards,
 -- 
-Sincerely yours,
-Mike.
+Duje Mihanović <duje@dujemihanovic.xyz>
+
 
