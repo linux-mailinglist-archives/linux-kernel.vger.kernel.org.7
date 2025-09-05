@@ -1,174 +1,168 @@
-Return-Path: <linux-kernel+bounces-802930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C618B45883
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:13:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE0CB45885
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14AE51C268C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C9C5C0D14
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9C01C75E2;
-	Fri,  5 Sep 2025 13:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF933342CB6;
+	Fri,  5 Sep 2025 13:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbyVlZEC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB18819CCEC;
-	Fri,  5 Sep 2025 13:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4635B1BCA07;
+	Fri,  5 Sep 2025 13:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078020; cv=none; b=jHhdAjfQoPo1vW7/LllcJXWns5irsV0z8fVySWsM9HOAt20dCYkXx4sTow9ErytFBhf8Dq+uJbQzXUsvEL2wkpJnZCFZgwGaHeS0NGnbV6bau1hRLSGp7ik9LEjO6jFUYsBCSO8GFFVbi6yZkdUnrejB3mdG9l/uiWEbkZrjkOc=
+	t=1757078025; cv=none; b=Wm1OvyXL1rzQs8n0PpNKzyWgfwDue+Jx03OGcyloBcqnJ1Xj6SvgG4mGlS87wxPq/KhiH18d+BUMa8sKIaDf3B4dXCCZvalnWXc78gWnZoEP1jLXgFz08PElyud26PYKKBcFvJmIvlCZIKhhxPLUqsMm87nyaQC+EF9pSG8qXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078020; c=relaxed/simple;
-	bh=GKuxMe2A+mKDUW7bUgrTL/4xbuivAI7n6nsCHRDlrS0=;
+	s=arc-20240116; t=1757078025; c=relaxed/simple;
+	bh=psnf4hQKAp2Cx9mom1Q/QVqcoKJXFno8iWz7CTh6G1E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuZqD2YYjb2CWD3VxGkgi9mRyNOgPGiNQr80MSh5PcpXElgsUTITvysfHKwZMc9iP+CXn/BSv2/62/fn5lGrAJE8qqtibjNUulbA1DI5bsv15+mIGotN7pkqkgtX5dizDYqyK5tlh51qvRnTmo9fPlUBoKefR6LUWZJB++WarP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7C5C4CEF1;
-	Fri,  5 Sep 2025 13:13:37 +0000 (UTC)
-Date: Fri, 5 Sep 2025 14:13:34 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, robin.murphy@arm.com, suzuki.poulose@arm.com,
-	akpm@linux-foundation.org, jgg@ziepe.ca, steven.price@arm.com
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-Message-ID: <aLrh_rbzWLPw9LnH@arm.com>
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVSQcHHvXfZ2D7JRFDESZ95X4BmPzovkO/Xb8JRTQqWgSTEAe7adfbmpac1QEw4z6Nba70qljcdHZe+TpWA3bhP7n1F3qLhqPYk6z3UKNpSm4nB+kndXxZZCv0mTGOFyhWKLhJIRWp1tDExicnmIhZK/WmPbLeSofudd5Gwey7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbyVlZEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DFBC4CEF1;
+	Fri,  5 Sep 2025 13:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757078024;
+	bh=psnf4hQKAp2Cx9mom1Q/QVqcoKJXFno8iWz7CTh6G1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pbyVlZECJKfoODfPM/rXM+bFQ01/iGarOubsg1z/hjDn9oEGfCuewlUa3XZPmrhqh
+	 cqutQ7770wchsayQAWXiFP6lxnj5zNLr14klSO+mWbxgXwF4eQII4X9i+YAB88FEx3
+	 suQKqz2p7g0AgMozp2hsYbZFFQSC3C9ItcPZsRMLPrucqjkcvVPNQk5Ts+MQ4Ge5mR
+	 m4mxrwTVr2vr5TzIXWQN3gUBIM+Chb/UlzomWdrjwCjr+gaB5an2ScUg9+fPG77N+E
+	 8Jt+czJcDgwYLG5jAB4TlOrO/2lsq7bldRZ1pk0aHZ++3ROPF2NEy/0d1a4hrcqGe3
+	 pjFgXMqnPf1BA==
+Date: Fri, 5 Sep 2025 18:43:38 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH v5] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for  UFS controller v5
+Message-ID: <a7vqktgfrfr2u53e7vnr5mqhty5l5entmtsoafnewk3ess4evx@442o73xkmdio>
+References: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250905055441.950943-1-aneesh.kumar@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250818040905.1753905-1-quic_pkambar@quicinc.com>
 
-Hi Aneesh,
-
-On Fri, Sep 05, 2025 at 11:24:41AM +0530, Aneesh Kumar K.V (Arm) wrote:
-> When running with private memory guests, the guest kernel must allocate
-> memory with specific constraints when sharing it with the hypervisor.
+On Mon, Aug 18, 2025 at 09:39:05AM GMT, Palash Kambar wrote:
+> Disabling the AES core in Shared ICE is not supported during power
+> collapse for UFS Host Controller v5.0, which may lead to data errors
+> after Hibern8 exit. To comply with hardware programming guidelines
+> and avoid this issue, issue a sync reset to ICE upon power collapse
+> exit.
 > 
-> These shared memory buffers are also accessed by the host kernel, which
-> means they must be aligned to the host kernel's page size.
+> Hence follow below steps to reset the ICE upon exiting power collapse
+> and align with Hw programming guide.
+> 
+> a. Assert the ICE sync reset by setting both SYNC_RST_SEL and
+>    SYNC_RST_SW bits in UFS_MEM_ICE_CFG
+> b. Deassert the reset by clearing SYNC_RST_SW in  UFS_MEM_ICE_CFG
+> 
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
 
-So this is the case where the guest page size is smaller than the host
-one. Just trying to understand what would go wrong if we don't do
-anything here. Let's say the guest uses 4K pages and the host a 64K
-pages. Within a 64K range, only a 4K is shared/decrypted. If the host
-does not explicitly access the other 60K around the shared 4K, can
-anything still go wrong? Is the hardware ok with speculative loads from
-non-shared ranges?
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index ea84a61ed508..389070e9ee65 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -337,12 +337,14 @@ void __init bootmem_init(void)
->  
->  void __init arch_mm_preinit(void)
->  {
-> +	unsigned int swiotlb_align = PAGE_SIZE;
->  	unsigned int flags = SWIOTLB_VERBOSE;
->  	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
->  
->  	if (is_realm_world()) {
->  		swiotlb = true;
->  		flags |= SWIOTLB_FORCE;
-> +		swiotlb_align = arch_shared_mem_alignment();
->  	}
->  
->  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
-> @@ -356,7 +358,7 @@ void __init arch_mm_preinit(void)
->  		swiotlb = true;
->  	}
->  
-> -	swiotlb_init(swiotlb, flags);
-> +	swiotlb_init(swiotlb, swiotlb_align, flags);
->  	swiotlb_update_mem_attributes();
+- Mani
 
-I think there's too much change just to pass down an alignment. We have
-IO_TLB_MIN_SLABS, we could add an IO_TLB_MIN_ALIGN that's PAGE_SIZE by
-default but can be overridden to something dynamic for arm64.
-
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 467cb78435a9..e2142bbca13b 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -213,16 +213,20 @@ static gfp_t gfp_flags_quirk;
->  static struct page *its_alloc_pages_node(int node, gfp_t gfp,
->  					 unsigned int order)
->  {
-> +	long new_order;
->  	struct page *page;
->  	int ret = 0;
+> 
+> ---
+> changes from V1:
+> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
+>    between ICE reset assertion and deassertion.
+> 2) Removed magic numbers and replaced them with meaningful constants.
+> 
+> changes from V2:
+> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
+> 
+> changes from V3:
+> 1) Addressed Manivannan's comments and added bit field values and
+>    updated patch description.
+> 
+> change from V4:
+> 1) Addressed Konrad's comment and fixed reset bit to zero.
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
+>  drivers/ufs/host/ufs-qcom.h |  2 +-
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 444a09265ded..242f8d479d4a 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -38,6 +38,9 @@
+>  #define DEEMPHASIS_3_5_dB	0x04
+>  #define NO_DEEMPHASIS		0x0
 >  
-> -	page = alloc_pages_node(node, gfp | gfp_flags_quirk, order);
-> +	/* align things to hypervisor page size */
-> +	new_order = get_order(ALIGN((PAGE_SIZE << order), arch_shared_mem_alignment()));
+> +#define UFS_ICE_SYNC_RST_SEL	BIT(3)
+> +#define UFS_ICE_SYNC_RST_SW	BIT(4)
 > +
-> +	page = alloc_pages_node(node, gfp | gfp_flags_quirk, new_order);
+>  enum {
+>  	TSTBUS_UAWM,
+>  	TSTBUS_UARM,
+> @@ -751,11 +754,29 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  {
+>  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>  	int err;
+> +	u32 reg_val;
 >  
->  	if (!page)
->  		return NULL;
+>  	err = ufs_qcom_enable_lane_clks(host);
+>  	if (err)
+>  		return err;
 >  
->  	ret = set_memory_decrypted((unsigned long)page_address(page),
-> -				   1 << order);
-> +				   1 << new_order);
-
-At some point this could move to the DMA API.
-
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 24c359d9c879..5db5baad5efa 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -255,6 +255,9 @@ void *dma_direct_alloc(struct device *dev, size_t size,
->  	    dma_direct_use_pool(dev, gfp))
->  		return dma_direct_alloc_from_pool(dev, size, dma_handle, gfp);
->  
-> +	if (force_dma_unencrypted(dev))
-> +		/*  align to hypervisor size */
-> +		size = ALIGN(size, arch_shared_mem_alignment());
->  	/* we always manually zero the memory once we are done */
->  	page = __dma_direct_alloc_pages(dev, size, gfp & ~__GFP_ZERO, true);
-
-You align the size but does __dma_direct_alloc_pages() guarantee a
-natural alignment? Digging through cma_alloc_aligned(), it guarantees
-the minimum of size and CONFIG_CMA_ALIGNMENT. The latter can be
-configured to a page order of 2.
-
-> @@ -382,7 +384,7 @@ void __init swiotlb_init_remap(bool addressing_limit, unsigned int flags,
->  
->  	nslabs = default_nslabs;
->  	nareas = limit_nareas(default_nareas, nslabs);
-> -	while ((tlb = swiotlb_memblock_alloc(nslabs, flags, remap)) == NULL) {
-> +	while ((tlb = swiotlb_memblock_alloc(nslabs, alignment, flags, remap)) == NULL) {
->  		if (nslabs <= IO_TLB_MIN_SLABS)
->  			return;
->  		nslabs = ALIGN(nslabs >> 1, IO_TLB_SEGSIZE);
-> @@ -417,9 +419,9 @@ void __init swiotlb_init_remap(bool addressing_limit, unsigned int flags,
->  		swiotlb_print_info();
+> +	if ((!ufs_qcom_is_link_active(hba)) &&
+> +	    host->hw_ver.major == 5 &&
+> +	    host->hw_ver.minor == 0 &&
+> +	    host->hw_ver.step == 0) {
+> +		ufshcd_writel(hba, UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW, UFS_MEM_ICE_CFG);
+> +		reg_val = ufshcd_readl(hba, UFS_MEM_ICE_CFG);
+> +		reg_val &= ~(UFS_ICE_SYNC_RST_SEL | UFS_ICE_SYNC_RST_SW);
+> +		/*
+> +		 * HW documentation doesn't recommend any delay between the
+> +		 * reset set and clear. But we are enforcing an arbitrary delay
+> +		 * to give flops enough time to settle in.
+> +		 */
+> +		usleep_range(50, 100);
+> +		ufshcd_writel(hba, reg_val, UFS_MEM_ICE_CFG);
+> +		ufshcd_readl(hba, UFS_MEM_ICE_CFG);
+> +	}
+> +
+>  	return ufs_qcom_ice_resume(host);
 >  }
-
-We also have the dynamic swiotlb allocations via swiotlb_dyn_alloc() ->
-swiotlb_alloc_pool() -> swiotlb_alloc_tlb(). I don't see any alignment
-guarantees.
-
-TBH, I'm not too keen on this patch. It feels like a problem to be
-solved by the host - don't advertise smaller page sizes to guest or cope
-with sub-page memory sharing. Currently the streaming DMA is handled via
-bouncing but we may, at some point, just allow set_memory_decrypted() on
-the DMA-mapped page. The above requirements will not allow this.
-
-I cannot come up with a better solution though. I hope the hardware can
-cope with sub-page shared/non-shared ranges.
+>  
+> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+> index 6840b7526cf5..81e2c2049849 100644
+> --- a/drivers/ufs/host/ufs-qcom.h
+> +++ b/drivers/ufs/host/ufs-qcom.h
+> @@ -60,7 +60,7 @@ enum {
+>  	UFS_AH8_CFG				= 0xFC,
+>  
+>  	UFS_RD_REG_MCQ				= 0xD00,
+> -
+> +	UFS_MEM_ICE_CFG				= 0x2600,
+>  	REG_UFS_MEM_ICE_CONFIG			= 0x260C,
+>  	REG_UFS_MEM_ICE_NUM_CORE		= 0x2664,
+>  
+> -- 
+> 2.34.1
+> 
 
 -- 
-Catalin
+மணிவண்ணன் சதாசிவம்
 
