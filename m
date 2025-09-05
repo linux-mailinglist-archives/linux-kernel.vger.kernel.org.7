@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-803031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D045B459AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:54:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B543B459B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23172A63D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:54:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587DB7BD82A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F835E4C3;
-	Fri,  5 Sep 2025 13:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8844F35E4EF;
+	Fri,  5 Sep 2025 13:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTZZUtNK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NWVuXeMQ"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D9E35CED1;
-	Fri,  5 Sep 2025 13:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BD635E4EB
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080452; cv=none; b=golrRHmHGwgbcm1Ff9ZNIx1NEoo1SBkiAO9UO7C29GwxYq+kFt/2eZ/HBfQ47X9/kK3QwZHHotx0j8yAZcZA2Vggvc+txItKYNKnUsileMHgm5p9Q64PEhd/blusJ/CRMCh3kYY/3DkvPM1yMW3ozvyV4Tlj2/00K1oj8DNXCII=
+	t=1757080504; cv=none; b=Bwq4xSlggyIeiwWaWH7e1sCU5I2WFHOU6TuFEbPFGGAv1RSIoBrw3AJ+gFAsFmf4iB+tXpiaebdv2MSb5EO8P3XzZs7Ejw5r0OXVgTvYzcGkH4NOE4fXKWtg8/eJWmIhQ7EEcj67A+3yClrtYuRVBrVZlVDs4JlRaT2IbUP3zhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080452; c=relaxed/simple;
-	bh=5hFR82aFngQcdQcvd1+b8b9T/pUP9YunoyF6+F+9N0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UbII7oV0soohniwJeOdwAL1LL6/Ktp2fkuZ5bneVFShHJ8tEpjDc9gEYC/gfibDU0bSjgCE/JvmPN/3XYaYGeGUoc91BPXX5ZHpNRTJAl4KbtYSrBGjar+m9SvcvP7/1Hk8ghGTF+CUyDDPcQF8DQaSMXImo9lB73R/1q4S+iZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTZZUtNK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F7DC4CEF1;
-	Fri,  5 Sep 2025 13:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757080451;
-	bh=5hFR82aFngQcdQcvd1+b8b9T/pUP9YunoyF6+F+9N0o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cTZZUtNKNQC7rw3WkFEpnVdGV/SRYwTP8AKiW5kLkdTEkU6s8VYttO+AeEG8C1l1f
-	 D/frXbjxo8ulFtCznMfz7YWcniGkM1nTxvsAZggcHZNSUQniQI8WvykF9rdZyo3IGx
-	 86U69iiqOh1BDePwcC0Lz08Or3uR0XugHDEfkZaI5gwFHpHcchCesvB+hYFAnPFMAw
-	 YhO6TLjPF9J422SfeXvDuQRIDXGUV5zsO5yja4MllDWzn8o1XaDinb8ZhlA0YtR6Lq
-	 YVpsmbqlFKBzBIXEb3l5uBKikfu3D2SkHudWWZ4hc0n2hfe/ZkUkJ/nwTY4cp4qTiu
-	 m3HdzWDUXIlJA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Zihuan Zhang <zhangzihuan@kylinos.cn>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject:
- [PATCH v1 3/3] cpufreq: intel_pstate: Adjust frequency percentage
- computations
-Date: Fri, 05 Sep 2025 15:53:54 +0200
-Message-ID: <3395556.44csPzL39Z@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5028967.GXAFRqVoOG@rafael.j.wysocki>
-References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+	s=arc-20240116; t=1757080504; c=relaxed/simple;
+	bh=UCiGATb/qHq9xnqHinm4V+YkHiCr4MxapKsdsK8p3/M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nojwOXZmRvQ2SyGoJ34WJNChjWG5FoZfXf7zeKcnYI5BGeWAU6ql7b6r58+qWSXFbyPm0fbjcyjPvfsm6bp4Pv6XyMHu4OTJVUqBWmYDvIo2BKRxyCvLjo6LL1ikeDrmcYDWDjl9HyZjDA2DvvR5FbT7tT648pI12dE+adMeObM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NWVuXeMQ; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id A97BD1A0DD7;
+	Fri,  5 Sep 2025 13:54:59 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F8E56060B;
+	Fri,  5 Sep 2025 13:54:59 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 603E7102F27F9;
+	Fri,  5 Sep 2025 15:54:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757080498; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=wXuDvE2U7zArCNiE29U7rGYQ6gNdC7m1Plskv1PwsfQ=;
+	b=NWVuXeMQs40iG/K4xjae3frw9k+oo7GG4MkGDvrQaYSWA2HZsBGfgpCmlLE8+sJ76pBcb9
+	AfkX2KpluWe1Swv+rn3dFYmoRrK3MYGznIxlAVhUBSL9Xz5lH1qDMdT1ECWe8YS9dP22Dl
+	57ssoT1BiGT3s5A0gCd6hpm5HKUVK18DkNA/g3mJ+HOqilN7Vu2aN280IIMCNLuuOJ/jEj
+	iy3Z/d8fBf0tQhAqzpMjXuQIJxIADAJsQkvNm7gNVKlxuvk8aWQHX3ifL+SZal3Fkf8a0Z
+	v3ey4D0uKndOz5kgGQFMdK34MSjVuiX+BZChzKhinyLAwjQuVjRpyRFLJFPwsw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev
+In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+Subject: Re: (subset) [PATCH v2 0/9] drm/bridge: get/put the bridge when
+ looping over the encoder chain
+Message-Id: <175708046120.649333.5235747071021830726.b4-ty@bootlin.com>
+Date: Fri, 05 Sep 2025 15:54:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Adjust frequency percentage computations in update_cpu_qos_request() to
-avoid going above the exact numerical percentage in the FREQ_QOS_MAX
-case.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1696,8 +1696,8 @@ unlock_driver:
- static void update_cpu_qos_request(int cpunum, enum freq_qos_req_type type)
- {
- 	struct cpudata *cpu = all_cpu_data[cpunum];
-+	unsigned int freq = cpu->pstate.turbo_freq;
- 	struct freq_qos_request *req;
--	unsigned int freq, perf_pct;
- 
- 	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpunum);
- 	if (!policy)
-@@ -1711,14 +1711,12 @@ static void update_cpu_qos_request(int c
- 		intel_pstate_get_hwp_cap(cpu);
- 
- 	if (type == FREQ_QOS_MIN) {
--		perf_pct = global.min_perf_pct;
-+		freq = DIV_ROUND_UP(freq * global.min_perf_pct, 100);
- 	} else {
- 		req++;
--		perf_pct = global.max_perf_pct;
-+		freq = (freq * global.max_perf_pct) / 100;
- 	}
- 
--	freq = DIV_ROUND_UP(cpu->pstate.turbo_freq * perf_pct, 100);
--
- 	if (freq_qos_update_request(req, freq) < 0)
- 		pr_warn("Failed to update freq constraint: CPU%d\n", cpunum);
- }
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
 
+On Fri, 08 Aug 2025 16:49:07 +0200, Luca Ceresoli wrote:
+> This series adds drm_bridge_get/put() calls for DRM bridges used when
+> looping over bridges in an encoder chain.
+> 
+> This is part of the work towards removal of bridges from a still existing
+> DRM pipeline without use-after-free. The grand plan was discussed in [1].
+> Here's the work breakdown (➜ marks the current series):
+> 
+> [...]
+
+Applied, thanks!
+
+[2/9] drm/display: bridge-connector: remove unused variable assignment
+      commit: 9e05c8dc4e8bb14bdb86eccff1d07169cfd69df8
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
