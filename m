@@ -1,157 +1,289 @@
-Return-Path: <linux-kernel+bounces-803307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0978B45D4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:58:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781D8B45D4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2493416F0F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8311BC3817
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652431D752;
-	Fri,  5 Sep 2025 15:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F4D31D749;
+	Fri,  5 Sep 2025 15:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caWUVDQi"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LHp0aIcY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A1331D74A;
-	Fri,  5 Sep 2025 15:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7292831D74F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087912; cv=none; b=gJxXv9u4yzkue67JRMCzVd0FLcGL61OJuq4V+t+M0NdiuCeUIMkqRTTz3LCzulqdTHoF0i1eZ9BTSdQ/oWsPNtQ9iVjm2xkvFCuju5eHzXx4qPFnw7A86P/eqeATS7gbP9fLSfM/EbsQXObb0VLy1giD5QW/JgycYKc2Xu3lNhs=
+	t=1757087928; cv=none; b=WgO3KdhszKiVQy7MLnvsfdzPEOi7SYo4Yyk7fbvpUcRsxfMyWRxi2oPUqV1tXL5CuDIC++pJJfo6JtHw4BGEZj8ifE76S9xFJxXRkETlvRbPtAHuEWK/zo8El01F7BLpkjLXCiVj39uMBDFPMlpCmKVRrc03ECcf0NEldaS95mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087912; c=relaxed/simple;
-	bh=Gkssjx7P/bAyz0VtCSvr9tXr9DYbBcgRRMnpcZszQzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cRL5/mPzwsRn+fXXzKpFzYpovWLav2T7Z19lTFJv0Vsm5e/Jhc6SuA/ZmKC3GVkbiMLkUq3QchbN+NfvcZgetWlq8M1GV8eslb0VxFuq6SYbemwNxDREoekRMD9co6agmkR02lDbsZHZme3AXCCkaJdA4liA1wC2EpDoknGkB3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caWUVDQi; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7238b5d5780so30070697b3.0;
-        Fri, 05 Sep 2025 08:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757087910; x=1757692710; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uyr/he5D9kITqeXJFA1SSytjH8QVrJJ6K4/PuDRtOx0=;
-        b=caWUVDQirW2wvJ/8W0uYFNwTwUJO5yJvm0Jnl1XiVImjdIiDPlfdjcZ1SCwaxRyvVh
-         BIKQ7cUxeycqeHGwMMrQZ8RxzeU/ZbEgH9lhKoMpy8VfeKBR/gB5LM9Y+hkBAlAVj9yr
-         /Po5cE+LSxiIIEvFkmcI84cPi7A4qOMiCcId7S95oJNNgjNb2jzWbsPyxcJON5yT2aXL
-         DPqO19hKIAK3gg6tRUBYv8HafLQb2Mg0UUKjrUqIPmQKGKZ5FK5ym76Jb7LqQh76FPRk
-         WkoQF3c31MdCX4S5HCTWxJSF59AVXF1pc+DBU9iVdcieKs82N3uhkEL4aw8j3iCous67
-         Rffw==
+	s=arc-20240116; t=1757087928; c=relaxed/simple;
+	bh=ClfNbAEP8qya/8XtNqBjOzu/DIwdb5dxS3n+EJhESkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=auoNzCOrK+4c7zvDnNM2JbMsmp5ZDjuVESLg2xy/bpwLkK9s8OnZFYWaDsMe+1qPrOuWZHNLIrAvlKDYEStWVvK1qjEHZIjJrNx4jRS26ZE4UvofHW0qULHLbB5n7gnpXpVGSGIywmWbklLABZSsO3IzBhktPNcI/4vDSfS1E/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHp0aIcY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757087925;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=evLRFYt3UNymMNEcAX6nqhM5iAqoK2ROkZRbyKGwjHg=;
+	b=LHp0aIcYy10IlAUusxPh0mqCHQgRWroaivU9AyZQAIRd4JFIiWhBUryVvOYziLfddMDlBb
+	pNVldnshWMRGetNwOHQZOKQMS9BevIw8d+N0eCo7Ku54GpTjPAslfZeWCnA86ggQSRN/5C
+	bnVIxkpBSeleLzxAW9M6Dd1LMMwTDJw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-196-sVw57eqQNVe8gajZMqutfg-1; Fri, 05 Sep 2025 11:58:44 -0400
+X-MC-Unique: sVw57eqQNVe8gajZMqutfg-1
+X-Mimecast-MFC-AGG-ID: sVw57eqQNVe8gajZMqutfg_1757087923
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b96c2f4ccso14855065e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:58:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757087910; x=1757692710;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757087923; x=1757692723;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uyr/he5D9kITqeXJFA1SSytjH8QVrJJ6K4/PuDRtOx0=;
-        b=QnyWav3RRWDxiHONKxRbI7bcbTiL/C5i3TosO9bW1NfcynX3+ea5V67nQJtjFGZUwx
-         GGSFFCPb3Z69TZmGKO+YUNe9wqx8cPZFdVVodj8R2Okjc4DCauzNDfruEBCPdZSQ0bpL
-         u1F9K3oiI1bRULA2n2oZf9cfCow0Yk6UzMmwcyU7i4crokIukCvZ8C7F0iFUiI/m9Cor
-         Dk8hy3YFtO7dm1eU+dsB47jWxG/EIb9Uj/amM/0h/VDlowaH+ZijOKUqxBXRLfjAcv0m
-         w/IvwiiaFNelGTGcOTd/n9ZEt2XflUDZ/NkiawS487IEObwj/hgOz3GT/rYRHxviwqVK
-         xQZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPz+dvR60UrmwmgBU8H9gqS+ovhOOTm0qbiJwu018SEwP5Qs3hMdjohRZ5/dz3keaCi/c4GhaRGZlYdrU=@vger.kernel.org, AJvYcCVjNS72mEbH0dARkGyeqRpHYK8wbTTGjEq3mW/bfJe+jS36d6ESR8iF+1DoeJN/ZGRuB+7pcw+TvN74@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz2PegQu5jCT0hcPIwotTYLPkv+UeYI7NmrXQTJMiGnNk6E8OQ
-	LYn8iH60M2KfwaEG0ST3C8HKftQNMVXTvG6jHbJF1Ew5f9F9HjYhsLrZZEl4Bz2qNaWxXMg1QGn
-	ALnnVH6ze5Jec46lw1pwNCDLknIf7AsO+0co2
-X-Gm-Gg: ASbGncssPhz3dAmcLzemcjxe2L4oqVRH00SCxzdycx7ngjyTNrq0EjxQ3ftfbac69Vu
-	1uB/ldFxSq8NGBh6mNVAq9yOQJWAlz3bz+2UgN4IFClRtTFEjOo96W/aDfmwHwZnRQzvvDdqzL5
-	zFrFmh+ME5txY8LAIt310v+a/vhTlT1pEOxFuVQ4xEL/my+HDbPa/+OmcApSg1+m7+IF922ohpM
-	gp8SkI=
-X-Google-Smtp-Source: AGHT+IG4uoSlJC+DulaAkZUs3kXkHvTEqzrMo7RATCWWNPLzsKsYjsrGcL8ATqrvdSsnBbYlAom9C0YC75iWXNl0Q0g=
-X-Received: by 2002:a05:690c:891:b0:723:b1b8:fb94 with SMTP id
- 00721157ae682-72542fd4b2dmr37022537b3.10.1757087909643; Fri, 05 Sep 2025
- 08:58:29 -0700 (PDT)
+        bh=evLRFYt3UNymMNEcAX6nqhM5iAqoK2ROkZRbyKGwjHg=;
+        b=KX8PYSX3iDRYA6pwfYY/ZL3o5LFNw4Buqc2sR6iRsoFaVQb5C3N0tF1ZIVqmrj37Qt
+         HhEGvCqZb1a4AkKG6qMq1y2m7T6mYjBmNPgaCQLfGGmqhqQPFmVFmadVw07mEDKNwyF8
+         Mru8AcHUdkqJllC52KGBsKlgjdhAzYzfJDPhrsZrPEpWlINhLuj5b4nibdy2lF3jlHrg
+         ZJMM4ULLH3PpcmkzAa9yLd7txj7453IG1inmqdt7ToEVbBx+aRMZwp55FHIxxkbpdL0X
+         5yg0qVc8jijUUYUV3g7p3qhTo3m9WT0r6FZtfUdhL/u9D8i0zsr0ZsKiDZe/LcYL70h8
+         K+4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWnx0Ga70A1O82K6mZ1LEGcrgJTMl9pOGX9SIc3tPUqaOTUr9UgToZuVirhNOw8fwWzSXr4Y/Hum0CDmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO7pwKjyttmjkP+PbBXptGD6Zq88Hxhj9VHvGnkAHgjmJ3JhXA
+	9vtTST44JgfA6h/K5++hIcZFL26cLWmYIi6WD6czSRPMuA7Y+jFJ/+DXCoeSn4JKj2QaDf11B5n
+	xtqHXFk8Z4ZbJIg1rG6YbxzJl4JgqRRkmkwCyp/O5eEv/HXHwxfGThUASyc2IFZvjEg==
+X-Gm-Gg: ASbGncv2YqQshpmFYmcDRdzU3EzMCOky7EI4nZOTqVkAstGdzKFBgUcDw37ASRtgtcY
+	7NNzvznw5wD/C9JN14xw1vZ2GdhtICBYqum0u3RziL7KgMYzt5Eims5QzQyS+R3gM73jAbtlxIf
+	EwuFQxlYtAF9rFKbpB4MyyIGmVEBILMKVszbTP1/JTimwzZhY6xp3kNjBXN1g8z62GXV32FNO+x
+	9d6786dOC7uaERVIp2im83l++qhPla50yCzsqX5ieBAYN9lT0H27qs48oTLcwftSK5f0xRw0Qqx
+	eNQ/cxXapSettd+0Bv+SIOKIjIEB8iIusJzAyX9cORUJk1rXcXrdlbWWqH5Lh25E4jav3jO2hQK
+	CxnR3UcygfkUYMGKmT1mo0jSwJqb5EcXj58PxV2E4jC4Ay2XPXSKgYfHE
+X-Received: by 2002:a05:600c:1387:b0:45b:615c:cd2 with SMTP id 5b1f17b1804b1-45b85525da3mr231052785e9.8.1757087922793;
+        Fri, 05 Sep 2025 08:58:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlYTbzshuwgip8AqARcntuswSYuXuNnM+V4fp0Ahk+2j2BHbQnTrjYIr7ArN49BJka1MwcfQ==
+X-Received: by 2002:a05:600c:1387:b0:45b:615c:cd2 with SMTP id 5b1f17b1804b1-45b85525da3mr231052395e9.8.1757087922244;
+        Fri, 05 Sep 2025 08:58:42 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm420569445e9.14.2025.09.05.08.58.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:58:41 -0700 (PDT)
+Message-ID: <701d2994-5b9a-4657-a616-586652f42df5@redhat.com>
+Date: Fri, 5 Sep 2025 17:58:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-rtc-irq-v1-1-0133319406a7@solid-run.com>
-In-Reply-To: <20250825-rtc-irq-v1-1-0133319406a7@solid-run.com>
-From: Bruno Thomsen <bruno.thomsen@gmail.com>
-Date: Fri, 5 Sep 2025 17:58:13 +0200
-X-Gm-Features: Ac12FXwRAVUryhexz2IJs0wb5qNUzWwzMx1wS5_ZZSuSy8hRpm8TuuYXs7K6hM4
-Message-ID: <CAH+2xPBhD0=bv6ZJw-MjECJ9nGkwmuonxjCsx+qgXv+pdk13rw@mail.gmail.com>
-Subject: Re: [PATCH] rtc: pcf2127: clear minute/second interrupt
-To: Josua Mayer <josua@solid-run.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
+ max_ptes_none default
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>
+References: <20250905141137.3529867-1-david@redhat.com>
+ <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
+ <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
+ <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
+ <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
+ <8461f6df-a958-4c34-9429-d6696848a145@gmail.com>
+ <3737e6e5-9569-464c-8cd0-1ec9888be04b@redhat.com>
+ <3c857cdb-01d0-4884-85c1-dfae46d8e4a0@gmail.com>
+ <aadf50b1-151b-41c6-b60c-5f1f2a4f2d8e@redhat.com>
+ <d48af6f4-2ded-40f5-849d-7aa991727a59@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <d48af6f4-2ded-40f5-849d-7aa991727a59@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Den man. 25. aug. 2025 kl. 19.54 skrev Josua Mayer <josua@solid-run.com>:
->
-> PCF2127 can generate interrupt every full second or minute configured
-> from control and status register 1, bits MI (1) and SI (0).
->
-> On interrupt control register 2 bit MSF (7) is set and must be cleared
-> to continue normal operation.
->
-> While the driver never enables this interrupt on its own, users or
-> firmware may do so - e.g. as an easy way to test the interrupt.
->
-> Add preprocessor definition for MSF bit and include it in the irq
-> bitmask to ensure minute and second interrupts are cleared when fired.
->
-> This fixes an issue where the rtc enters a test mode and becomes
-> unresponsive after a second interrupt has fired and is not cleared in
-> time. In this state register writes to control registers have no
-> effect and the interrupt line is kept asserted [1]:
->
-> [1] userspace commands to put rtc into unresponsive state:
-> $ i2cget -f -y 2 0x51 0x00
-> 0x04
-> $ i2cset -f -y 2 0x51 0x00 0x05 # set bit 0 SI
-> $ i2cget -f -y 2 0x51 0x00
-> 0x84 # bit 8 EXT_TEST set
-> $ i2cset -f -y 2 0x51 0x00 0x05 # try overwrite control register
-> $ i2cget -f -y 2 0x51 0x00
-> 0x84 # no change
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+On 05.09.25 17:53, Usama Arif wrote:
+> 
+> 
+> On 05/09/2025 16:28, David Hildenbrand wrote:
+>> On 05.09.25 17:16, Usama Arif wrote:
+>>>
+>>>
+>>> On 05/09/2025 16:04, David Hildenbrand wrote:
+>>>> On 05.09.25 17:01, Usama Arif wrote:
+>>>>>
+>>>>>
+>>>>> On 05/09/2025 15:58, David Hildenbrand wrote:
+>>>>>> On 05.09.25 16:53, Usama Arif wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 05/09/2025 15:46, David Hildenbrand wrote:
+>>>>>>>> [...]
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The reason I did this is for the case if you change max_ptes_none after the THP is added
+>>>>>>>>> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
+>>>>>>>>> so that its considered for splitting.
+>>>>>>>>
+>>>>>>>> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
+>>>>>>>>
+>>>>>>>> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
+>>>>>>>
+>>>>>>> Yes, I do this as well, i.e. have a low value from the start.
+>>>>>>>
+>>>>>>> Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
+>>>>>>> the usecase you are describing below, but we wont encounter the increased CPU usage.>
+>>>>>>
+>>>>>> I don't really see why we should do that.
+>>>>>>
+>>>>>> If the shrinker is a problem than the shrinker should be disabled. But if it is enabled, we should be shrinking as documented.
+>>>>>>
+>>>>>> Without more magic around our THP toggles (we want less) :)
+>>>>>>
+>>>>>> Shrinking happens when we are under memory pressure, so I am not really sure how relevant the scanning bit is, and if it is relevant enought to change the shrinker default.
+>>>>>>
+>>>>>
+>>>>> yes agreed, I also dont have numbers to back up my worry, its all theoretical :)
+>>>>
+>>>> BTW, I was also wondering if we should just always add all THP to the deferred split list, and make the split toggle just affect whether we process them or not (scan or not).
+>>>>
+>>>> I mean, as a default we add all of them to the list already right now, even though nothing would ever get reclaimed as default.
+>>>>
+>>>> What's your take?
+>>>>
+>>>
+>>> hmm I probably didnt understand what you meant to say here:
+>>> we already add all of them to the list in __do_huge_pmd_anonymous_page and collapse_huge_page and
+>>> shrink_underused sets/clears split_underused_thp in deferred_split_folio decides whether we process or not.
+>>
+>> This is what I mean:
+>>
+>> commit 3952b6f6b671ca7d69fd1783b1abf4806f90d436 (HEAD -> max_ptes_none)
+>> Author: David Hildenbrand <david@redhat.com>
+>> Date:   Fri Sep 5 17:22:01 2025 +0200
+>>
+>>      mm/huge_memory: always add THPs to the deferred split list
+>>          When disabling the shrinker and then re-enabling it, any anon THPs
+>>      allocated in the meantime.
+>>          That also means that we cannot disable the shrinker as default during
+>>      boot, because we would miss some THPs later when enabling it.
+>>          So always add them to the deferred split list, and only skip the
+>>      scanning if the shrinker is disabled.
+>>          This is effectively what we do on all systems out there already, unless
+>>      they disable the shrinker.
+>>          Signed-off-by: David Hildenbrand <david@redhat.com>
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index aa3ed7a86435b..3ee857c1d3754 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -4052,9 +4052,6 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
+>>          if (folio_order(folio) <= 1)
+>>                  return;
+>>   
+>> -       if (!partially_mapped && !split_underused_thp)
+>> -               return;
+>> -
+>>          /*
+>>           * Exclude swapcache: originally to avoid a corrupt deferred split
+>>           * queue. Nowadays that is fully prevented by memcg1_swapout();
+>> @@ -4175,6 +4172,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>                  bool underused = false;
+>>   
+>>                  if (!folio_test_partially_mapped(folio)) {
+>> +                       if (!split_underused_thp)
+>> +                               goto next;
+>>                          underused = thp_underused(folio);
+>>                          if (!underused)
+>>                                  goto next;
+>>
+>>
+> 
+> 
+> Thanks for sending the diff! Now I know what you meant lol.
+> 
+> In the case of when shrinker is disabled, this could make the deferred split scan for partially mapped folios
+> very ineffective?
 
-Reviewed-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+I hope you realize that that's the default on each and every system out 
+there that ships this feature :)
 
-> ---
->  drivers/rtc/rtc-pcf2127.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-> index 2e1ac0c42e9323dbc6793840a265e8a663e52568..3ba1de30e89c22ae07ea319d530b58adc25b520d 100644
-> --- a/drivers/rtc/rtc-pcf2127.c
-> +++ b/drivers/rtc/rtc-pcf2127.c
-> @@ -42,6 +42,7 @@
->  #define PCF2127_BIT_CTRL2_AF                   BIT(4)
->  #define PCF2127_BIT_CTRL2_TSF2                 BIT(5)
->  #define PCF2127_BIT_CTRL2_WDTF                 BIT(6)
-> +#define PCF2127_BIT_CTRL2_MSF                  BIT(7)
->  /* Control register 3 */
->  #define PCF2127_REG_CTRL3              0x02
->  #define PCF2127_BIT_CTRL3_BLIE                 BIT(0)
-> @@ -96,7 +97,8 @@
->  #define PCF2127_CTRL2_IRQ_MASK ( \
->                 PCF2127_BIT_CTRL2_AF | \
->                 PCF2127_BIT_CTRL2_WDTF | \
-> -               PCF2127_BIT_CTRL2_TSF2)
-> +               PCF2127_BIT_CTRL2_TSF2 | \
-> +               PCF2127_BIT_CTRL2_MSF)
->
->  #define PCF2127_MAX_TS_SUPPORTED       4
->
->
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250825-rtc-irq-4d17b55204eb
->
-> Best regards,
-> --
-> Josua Mayer <josua@solid-run.com>
->
->
+And don't ask me how many people even know about disabling the shrinker 
+or would do it, when the default setting is mostly not splitting many 
+THPs ever.
+
+> 
+> I am making up numbers, but lets there are 128 THPs in the system, only 2 of them are partially mapped
+> and sc->nr_to_scan is 32.
+> 
+> In the current code, with shrinker disabled, only the 2 partially mapped THPs will be on the deferred list, so
+> we will reclaim them in the first go.
+> 
+> With your patch, the worst case scenario is that the partially mapped THPs are at the end of the deferred_list
+> and we would need 4 calls for the shrinker to split them.
+
+Probably at some point we would want split lists as well, not sure how 
+feasible that is.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
