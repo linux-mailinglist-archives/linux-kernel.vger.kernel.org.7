@@ -1,158 +1,170 @@
-Return-Path: <linux-kernel+bounces-802769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD861B456BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:43:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01173B456C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B6D3A9839
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:43:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68DF37B4F52
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A863469E0;
-	Fri,  5 Sep 2025 11:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8693469F9;
+	Fri,  5 Sep 2025 11:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVAAp2p5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JmF/Scg+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0yH5OsCc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JmF/Scg+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0yH5OsCc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E42334320C;
-	Fri,  5 Sep 2025 11:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247CC345721
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757072623; cv=none; b=l7FEe+mMZd8SiajPrMJWNL6Sgd98NEbkqzxm7mZG5NrqGVw0H3VkJkzLu1sSutC1AdajjeW9qZZw++KY3g3UOi5IcQ2DSMrmjp++A+ud+PQ/8DVqrycNDY409akGC3v72u3nNFMc2dzFyuOwj2+sYUwQRs5jmt1xTRYn6SK6Dzo=
+	t=1757072646; cv=none; b=hB/ips00Br9sXgGJzznKI0XC24RnD/jn9DBVSXypBSbPkDbt3K1OgYHvcyu8rziCPjH8gJjFbW+9lylXuOi5gBveQ+6SGAU9HlMCFSGXlNOhI7ZAaGr75A6tquoUblCo4C42XtIJorDia1zCnD4QfkRTKzpdB68U15Qwx2hZKSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757072623; c=relaxed/simple;
-	bh=NLML2PKuwuj+OYNgyIRQX3jQ9i3GAYhKH/CptvLMsng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shs882tuPaKcNAorrmjVvvUHBk8AH4L5vFRLrATnPv+/1/bwq2JocrjQRU4xCPZauRulN/Krm3A2smRXUP30S9SVx/oMRRCR8/Gu8VFOw8qbu7bVJV/nYMaDbTo/CjCNRDrrUmnRqpacp3dVkAxFbVBX+DNKe6BnS2n4UCrDV/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVAAp2p5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9BFC4CEF1;
-	Fri,  5 Sep 2025 11:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757072623;
-	bh=NLML2PKuwuj+OYNgyIRQX3jQ9i3GAYhKH/CptvLMsng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gVAAp2p5/E4CwAUtDQOLmC0Gc6y8NUeC9WK4IOPuAgfHEZGqaOwEdx5Ns+KcST7/F
-	 PEiLR4ES6kjCMJyP6JUoVYMTwauVS/C7EN+6JOLI8e72dxBRpxFsC670XT1tosCbIV
-	 +j2RxEFGc6BShuQ1ucZEqIo+44s6Kht+owFiJHJjxVDsCtrAa7o/EPQJr/P0ngV6p8
-	 CepXm6zV9tHmjLVHYf7uNmY7a1AB+gCUry6uzhfAh48NzCuj2RIyu3bpBa64JvnL5v
-	 4xNb3pI81ElcUK7Wg2+2tOA7IY5h/8L4hQrj8mjFDE6JML/QZG1ahsZRhqJGKGIU8k
-	 N0S/XtwEcZzZg==
-Date: Fri, 5 Sep 2025 17:13:31 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com, quic_vpernami@quicinc.com, 
-	mmareddy@quicinc.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v8 3/5] PCI: dwc: qcom: Switch to dwc ELBI resource
- mapping
-Message-ID: <xzzyhcuwfva6vqzmxkdqt5x7f7vxpkkyqnml6vjclb75f4ozwa@gugsrqfsbuor>
-References: <20250828-ecam_v4-v8-3-92a30e0fa02d@oss.qualcomm.com>
- <20250903191459.GA1214624@bhelgaas>
+	s=arc-20240116; t=1757072646; c=relaxed/simple;
+	bh=A0JZNcP/l7j7461GpAtddsPVcHGBybyL7IER6rtJFgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JWEG/9kvHSw6C2CHFzh3IAXBObjzY820rxBp8YxlQpxY3NgoQ9sGVqYBf9SsRe3un4e1CR8QMqsDUH0XGUxczRxSSnFmRdKlfTHOEaZAjxM9Yova+0m5APivRsg10l3cCzWAN++ye2cHYXsyLLYF0F7m2t9jnNTyRGoblIOt2pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JmF/Scg+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0yH5OsCc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JmF/Scg+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0yH5OsCc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C02154E440;
+	Fri,  5 Sep 2025 11:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757072642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uqGmq+/tciN/X02OS0kFJpbQdadqAWQTqIRmXPCqGYs=;
+	b=JmF/Scg+6OLJ+HjL08exUUQWkL3dkcCmpCHobuPze67W32iNvfeayZgBBtXwoTMTXnUUMo
+	vNUiih25jAU6ZH98n0cA/IOGTYXlr41QPRVNNZzMLv/u2tQXvuSduY+T1qRuA73udPwTSG
+	4wpqz2qqF1/LnDgYtVoP2vkDYG8sKwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757072642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uqGmq+/tciN/X02OS0kFJpbQdadqAWQTqIRmXPCqGYs=;
+	b=0yH5OsCcQHpkeCegKTHMMsW+mYK9nyzTahKp7a72BZqvHrUFMStoTYENaVX32I4v5RtZma
+	OtRxu4qlxiskNrBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757072642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uqGmq+/tciN/X02OS0kFJpbQdadqAWQTqIRmXPCqGYs=;
+	b=JmF/Scg+6OLJ+HjL08exUUQWkL3dkcCmpCHobuPze67W32iNvfeayZgBBtXwoTMTXnUUMo
+	vNUiih25jAU6ZH98n0cA/IOGTYXlr41QPRVNNZzMLv/u2tQXvuSduY+T1qRuA73udPwTSG
+	4wpqz2qqF1/LnDgYtVoP2vkDYG8sKwY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757072642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uqGmq+/tciN/X02OS0kFJpbQdadqAWQTqIRmXPCqGYs=;
+	b=0yH5OsCcQHpkeCegKTHMMsW+mYK9nyzTahKp7a72BZqvHrUFMStoTYENaVX32I4v5RtZma
+	OtRxu4qlxiskNrBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A665139B9;
+	Fri,  5 Sep 2025 11:44:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1qPKIgHNumgiVQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Fri, 05 Sep 2025 11:44:01 +0000
+Message-ID: <8574e531-fc4d-4f36-886b-6e7fc0656da3@suse.de>
+Date: Fri, 5 Sep 2025 14:43:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
+To: Jakub Kicinski <kuba@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil Elwell
+ <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <06017779-f03b-4006-8902-f0eb66a1b1a1@broadcom.com>
+ <20250904184757.1f7fb839@kernel.org> <20250904184941.207518c8@kernel.org>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20250904184941.207518c8@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903191459.GA1214624@bhelgaas>
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[dt,netdev];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-On Wed, Sep 03, 2025 at 02:14:59PM GMT, Bjorn Helgaas wrote:
-> On Thu, Aug 28, 2025 at 01:04:24PM +0530, Krishna Chaitanya Chundru wrote:
-> > Instead of using qcom ELBI resources mapping let the DWC core map it
-> > ELBI is DWC specific.
+Hi Jacub,
+
+On 9/5/25 4:49 AM, Jakub Kicinski wrote:
+> On Thu, 4 Sep 2025 18:47:57 -0700 Jakub Kicinski wrote:
+>>> netdev maintainers, I took patches 4 and 5 through the Broadcom ARM SoC 
+>>> tree, please take patches 1 through 3 inclusive, or let me know if I 
+>>> should take patch 2 as well.  
+>>
+>> Thanks for the heads up! Let me take patch 3 right now.
 > 
-> This seems like basically the same change you (Mani) added to the
-> "[PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping"
-> patch?  (The patch with Mani's additions is at
-> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc-ecam&id=d39e0103e38f9889271a77a837b6179b42d6730d)
+> s/patch 3/patch 2/
+> 
+>> I'm a bit unclear on where we landed with the parallel efforts to add
+>> the >32b address support :(
 > 
 
-Doh! This should've been squashed to patch 2/5 as we cannot split the conversion
-patches. The reason is, we cannot ioremap() the same region twice.
+If you talk about 1/5 from this series, you can ignore it for now. I'll
+monitor the fixes series from Théo Lebrun and will resend it if needed.
 
-This is now taken care in the branch.
-
-- Mani
-
-> If this qcom change is separated out, why can't the exynos and qcom-ep
-> changes from patch 2/5 be separated out?  If we ever had to bisect
-> and/or revert parts of this, it seems like it would be simpler to do
-> them consistently like this:
-> 
->   - PCI: dwc: Add ELBI resource mapping
->   - PCI: exynos: Switch to dwc ELBI resource mapping
->   - PCI: qcom: Switch to dwc ELBI resource mapping
->   - PCI: qcom-ep: Switch to dwc ELBI resource mapping
-> 
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 16 +++++++---------
-> >  1 file changed, 7 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..5092752de23866ef95036bb3f8fae9bb06e8ea1e 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -276,7 +276,6 @@ struct qcom_pcie_port {
-> >  struct qcom_pcie {
-> >  	struct dw_pcie *pci;
-> >  	void __iomem *parf;			/* DT parf */
-> > -	void __iomem *elbi;			/* DT elbi */
-> >  	void __iomem *mhi;
-> >  	union qcom_pcie_resources res;
-> >  	struct phy *phy;
-> > @@ -414,12 +413,17 @@ static void qcom_pcie_configure_dbi_atu_base(struct qcom_pcie *pcie)
-> >  
-> >  static void qcom_pcie_2_1_0_ltssm_enable(struct qcom_pcie *pcie)
-> >  {
-> > +	struct dw_pcie *pci = pcie->pci;
-> >  	u32 val;
-> >  
-> > +	if (!pci->elbi_base) {
-> > +		dev_err(pci->dev, "ELBI is not present\n");
-> > +		return;
-> > +	}
-> >  	/* enable link training */
-> > -	val = readl(pcie->elbi + ELBI_SYS_CTRL);
-> > +	val = readl(pci->elbi_base + ELBI_SYS_CTRL);
-> >  	val |= ELBI_SYS_CTRL_LT_ENABLE;
-> > -	writel(val, pcie->elbi + ELBI_SYS_CTRL);
-> > +	writel(val, pci->elbi_base + ELBI_SYS_CTRL);
-> >  }
-> >  
-> >  static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
-> > @@ -1861,12 +1865,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> >  		goto err_pm_runtime_put;
-> >  	}
-> >  
-> > -	pcie->elbi = devm_platform_ioremap_resource_byname(pdev, "elbi");
-> > -	if (IS_ERR(pcie->elbi)) {
-> > -		ret = PTR_ERR(pcie->elbi);
-> > -		goto err_pm_runtime_put;
-> > -	}
-> > -
-> >  	/* MHI region is optional */
-> >  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mhi");
-> >  	if (res) {
-> > 
-> > -- 
-> > 2.34.1
-> > 
-
--- 
-மணிவண்ணன் சதாசிவம்
+regards,
+~Stan
 
