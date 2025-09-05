@@ -1,132 +1,183 @@
-Return-Path: <linux-kernel+bounces-801956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6186BB44C0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:58:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11C9B44BF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 563E84E387A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB9B3A01F2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8774B274FEB;
-	Fri,  5 Sep 2025 02:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF4023FC41;
+	Fri,  5 Sep 2025 02:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4kY79d2"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ak3s5Rv0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBEB25C81B;
-	Fri,  5 Sep 2025 02:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE303230BEC;
+	Fri,  5 Sep 2025 02:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757041059; cv=none; b=roZ9NOxu0NO6MWVqChuvcvQMky9Say7QtA0rxKzuiEnVYnDBvGPzJ2H1jQReIhwfqJ7FxpbsPe2qb4BCflkBHk6lhkbQx9h23Ev2kqMeZYWGLCxB8qUGCPPH6q7MnMpqogQzSEMsK1zKmpjwiWgcGPyBWw1bDElOj4Y3lT0+Cp8=
+	t=1757041018; cv=none; b=nDbnwuVPtnMSTclOx4ZoYDOWnEamg5hJEUKnE6JV28ZZqTTaSa06AfS6OA6x4Fa1SvlTcuK9ne7CHSAZ9iOe1BjwGqpVUY3ueH089gdEWrDU8+KNQGOkmIyCmO3bytgXlCy6L1CryWQ9pwBf97n0DqynUD1yZnF89eLIydDGBPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757041059; c=relaxed/simple;
-	bh=lvIrY2FRB+n49uDbGffgaHvmurtJEX1Eal45Q9qqT9w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lN28rIsp/1O+N14i80nGrINj04ZFIucp9w/qLZxA1lNZdAAQ4SEPRSKlxoyJpEmC+fEfTV/rCL2OjH4Dy3bueCmGKgmQ09DeDwUAHERfw+b3rJscJD5qF9c0w4vrjSmuhCgW95HenVV/RbEU/Z+JWkkHENsPKRenSfPoBH+s0TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4kY79d2; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445826fd9dso20890975ad.3;
-        Thu, 04 Sep 2025 19:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757041057; x=1757645857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mRp6UU6DIJUEvKAJ/87UvE/hlm1P5JGXV4jsx+n8jPA=;
-        b=l4kY79d2GXFy90qj615wk/NiM0wa9ZegBUlBorMzHhdbeDAbX42iFlSPl421YcROj8
-         mep05vkxR8o3z9/hHtgacYiTR/oLBG//XSyKhnu+6ameFqRmswyD+qQueAtPNjjjkRzg
-         VRwGL4PShZFEZE00l7SoRYh5+tYqZ6qSaYth5tHhwP96a8Y6Ll2x3LvYAI+KHoypiBQu
-         JX6W5VoEvYRjJe1fuvvi+edHR5MYwXB958yJjVR6XZFYVAuBEKWESJBNRU4vzxKHA3Q4
-         yBb/nIdskvptx2ZCD98kCI2nlLLONom1q1Mr9TnvR1tAc8SjnxvC7cxbhUeeXBNz9HPs
-         H26A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757041057; x=1757645857;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mRp6UU6DIJUEvKAJ/87UvE/hlm1P5JGXV4jsx+n8jPA=;
-        b=JqcTWUIqpjEn89lJBDiWDjDwCx+7pslfVya0oBXF3GbzJ+nkN94f3BiM1RyxZKZixf
-         7YNRBs8emVsciwoORoiL7PMYsZYJxg7ewyQkAo6tHZVYxS2fWGuFlr8SRTxTPvA4bhYz
-         If6R7UeGn3bk1ql7GOe19hMeh5EyulJ/PNIf4OtmxzCu3SvLkGk1K8lD4+07TWgjYX7k
-         NGpMrwQ4Waw03AhKqU6j5sdD1ZmZgfydmLFXpozfDXNn4H+N1q0WzySYcvdrsOPATWKI
-         UJAPwofINoxYC7rB5wN6ZP4atfpRPjrmqsOIczY6H11Y8M5LEE/WUHJ7CUm7cpqxuDE2
-         j6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1E2NCxemQVhhqB9hv8D1x7WoCBS0Zv2Il2tMXjX9qzGZ/6YS1mzVWnAQk6z7V8WjobgvWmxvHZ4Z9@vger.kernel.org, AJvYcCW1lwR2/AfHb4yb47n12INSCYd7PSRRiAbLuc1lltHOQR6EnkzbZhx+nFIQB+5cXV3KITmGtscI11VA@vger.kernel.org, AJvYcCXz0DWQHleflXpLfhw0/PcBKGPfPx1tYHNkDJXldNAnmuYtVrOblGgnvqyCn5LbpTGjx5qkcvtJ4j2pJTjh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK1Q0Yt1ipfAyyJ9fVPMWF6kEw4N/unL/743k2S8PhJof+d0f0
-	5exK7+YuBl1JJuHz+mRBI8jwYD8sHfmv/by80vQOBpxtmbqmjYPTy8W0
-X-Gm-Gg: ASbGncvX5Ddiy1nR/X6g05u+Jh/f2XrwnGRhoeHTi3jVLWQy0iEv4SISdWCM34fiAjL
-	pPcRjqXMaHmcUB0+lKffBZYTo63+XeP9J5vIgdSvavJtq5gQJ7TqJnhhzfnY2a397Zm3rEM8f1c
-	6vuTa3ZTl3h0ATb+mrF5p1eOURszkbGBnyugRioRc/6MDSNgvnWMUswDt19QqDd66V3F4wO03LR
-	SR18IOAY8YkoZrl1RAeMvFNdvUZpFzgWjCe7lTh4WTlanV5kl5ssQpiioFdLMtha3myvBNZTE2J
-	6UPjGrU7DBm/Uios37bDxmd6GvuEnagHH3oNBMXTvegvXTsTOi8BMTMZ47wWkEzAvUUDNQV/ywB
-	c0b4Ua7Ycmm8=
-X-Google-Smtp-Source: AGHT+IFbbE99ORndFVlnLgJhcnpGQSRKqSs/VqX+oFl4ShJ9SUdAsUmhzucQekk/6sfybVgodkOxlQ==
-X-Received: by 2002:a17:902:e5cf:b0:242:8a45:a959 with SMTP id d9443c01a7336-24944ae5ff7mr282610105ad.47.1757041056691;
-        Thu, 04 Sep 2025 19:57:36 -0700 (PDT)
-Received: from localhost.localdomain ([2401:ce20:10::d4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e1c8e07bsm9428588a91.4.2025.09.04.19.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 19:57:36 -0700 (PDT)
-From: WeiHao Li <cn.liweihao@gmail.com>
-To: heiko@sntech.de,
-	robh@kernel.org
-Cc: hjc@rock-chips.com,
-	andy.yan@rock-chips.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WeiHao Li <cn.liweihao@gmail.com>
-Subject: [PATCH v2 8/8] dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3368 DSI
-Date: Fri,  5 Sep 2025 10:56:32 +0800
-Message-Id: <20250905025632.222422-9-cn.liweihao@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250905025632.222422-1-cn.liweihao@gmail.com>
-References: <20250905025632.222422-1-cn.liweihao@gmail.com>
+	s=arc-20240116; t=1757041018; c=relaxed/simple;
+	bh=59C8ioKoXyvkYBltlVln0DQNNJB6Qs+nvuvLu6vvarg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oP0N5OxgxB3i5NB6RLlTRp9k+Kh2qQ7ei6llrod5FCNSMcVV78Dh59MzzUiSjKCmdMq9oEpbniP6rtKrWtl/faFVV8sZ04PkpenFhYFsYnt4a4ZkQSOXpOUUjD2YlB5aujTGivMA+zBqXdpYqxITXjffAdgQ3SG/IXbKMbC0FZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ak3s5Rv0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757041014;
+	bh=ZG3QBvYIhuWmp00+bEl/UPV09HMJA2/iWeCyXeNUCOo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ak3s5Rv0C7bvZbolyazP6T1tVeZ8MN6iihQdYtcOjZixTmd7JPKCpWtkGUSGrZfsM
+	 Gp1TJnKTWvTZChwxGDmPhPRZG3OIybHC/XOAgqyG71MelNFpkugyNVpZMKbHna2zt1
+	 3f0gl8zxzH/RSIPTj6PDhrenERBSWo7OuR+bXokn7JRgAGZbKY72vUdPt6bsceM4Ap
+	 nCZrjt5aLBaWvrfgVZ0N7vQ2eCIPCH/Z5+cgc6A02YXAoyKpvOR/PZgdL9pXlwRF6n
+	 dDM8djZwAat/lFoFUFXhWCkTi5VvE0gszvsGMNxZ5QBI5s+SPSnw0Gn34MWYD3FpEo
+	 A5YbEHqAsIlPQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cJ1GG400zz4w91;
+	Fri,  5 Sep 2025 12:56:54 +1000 (AEST)
+Date: Fri, 5 Sep 2025 12:56:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Subject: linux-next: manual merge of the drm-rust tree with Linus' tree
+Message-ID: <20250905125653.0ebc7580@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/HlC4+STjxV7X2vUs9gGm79I";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Document the MIPI DSI controller for Rockchip RK3368.
+--Sig_/HlC4+STjxV7X2vUs9gGm79I
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
----
- .../bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml         | 2 ++
- 1 file changed, 2 insertions(+)
+Hi all,
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-index c59df3c1a..632b48bfa 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-mipi-dsi.yaml
-@@ -17,6 +17,7 @@ properties:
-           - rockchip,px30-mipi-dsi
-           - rockchip,rk3128-mipi-dsi
-           - rockchip,rk3288-mipi-dsi
-+          - rockchip,rk3368-mipi-dsi
-           - rockchip,rk3399-mipi-dsi
-           - rockchip,rk3568-mipi-dsi
-           - rockchip,rv1126-mipi-dsi
-@@ -73,6 +74,7 @@ allOf:
-             enum:
-               - rockchip,px30-mipi-dsi
-               - rockchip,rk3128-mipi-dsi
-+              - rockchip,rk3368-mipi-dsi
-               - rockchip,rk3568-mipi-dsi
-               - rockchip,rv1126-mipi-dsi
- 
--- 
-2.39.5
+Today's linux-next merge of the drm-rust tree got a conflict in:
 
+  rust/kernel/alloc/allocator_test.rs
+
+between commit:
+
+  0f580d5d3d9d ("rust: alloc: fix `rusttest` by providing `Cmalloc::aligned=
+_layout` too")
+
+from Linus' tree and commit:
+
+  7937dca77039 ("rust: alloc: implement VmallocPageIter")
+
+from the drm-rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/alloc/allocator_test.rs
+index 2e61cdbd2303,f46b4b671389..000000000000
+--- a/rust/kernel/alloc/allocator_test.rs
++++ b/rust/kernel/alloc/allocator_test.rs
+@@@ -9,11 -9,13 +9,13 @@@
+ =20
+  #![allow(missing_docs)]
+ =20
+ -use super::{flags::*, AllocError, Allocator, Flags};
+ +use super::{flags::*, AllocError, Allocator, Flags, NumaNode};
+  use core::alloc::Layout;
+  use core::cmp;
++ use core::marker::PhantomData;
+  use core::ptr;
+  use core::ptr::NonNull;
++ use kernel::page;
+ =20
+  /// The userspace allocator based on libc.
+  pub struct Cmalloc;
+@@@ -22,17 -24,33 +24,44 @@@ pub type Kmalloc =3D Cmalloc
+  pub type Vmalloc =3D Kmalloc;
+  pub type KVmalloc =3D Kmalloc;
+ =20
+ +impl Cmalloc {
+ +    /// Returns a [`Layout`] that makes [`Kmalloc`] fulfill the requested=
+ size and alignment of
+ +    /// `layout`.
+ +    pub fn aligned_layout(layout: Layout) -> Layout {
+ +        // Note that `layout.size()` (after padding) is guaranteed to be =
+a multiple of
+ +        // `layout.align()` which together with the slab guarantees means=
+ that `Kmalloc` will return
+ +        // a properly aligned object (see comments in `kmalloc()` for mor=
+e information).
+ +        layout.pad_to_align()
+ +    }
+ +}
+ +
++ pub struct VmallocPageIter<'a> {
++     _p: PhantomData<page::BorrowedPage<'a>>,
++ }
++=20
++ impl<'a> Iterator for VmallocPageIter<'a> {
++     type Item =3D page::BorrowedPage<'a>;
++=20
++     fn next(&mut self) -> Option<Self::Item> {
++         None
++     }
++ }
++=20
++ impl<'a> VmallocPageIter<'a> {
++     #[allow(clippy::missing_safety_doc)]
++     pub unsafe fn new(_buf: NonNull<u8>, _size: usize) -> Self {
++         Self { _p: PhantomData }
++     }
++=20
++     pub fn size(&self) -> usize {
++         0
++     }
++=20
++     pub fn page_count(&self) -> usize {
++         0
++     }
++ }
++=20
+  extern "C" {
+      #[link_name =3D "aligned_alloc"]
+      fn libc_aligned_alloc(align: usize, size: usize) -> *mut crate::ffi::=
+c_void;
+
+--Sig_/HlC4+STjxV7X2vUs9gGm79I
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi6UXUACgkQAVBC80lX
+0GykEwf+LFKaX5vo4hXFPM52RBInS8EpFtXvJwnyBg0yQij7bHtvOxGu3fSype2D
+J/itzTEa6kbGo9obbLhq6WYZGrDVeowajmx2Cyp+CaSD6WvQH3QEcEjYp6BKbiZQ
+EWc0Mz3D9H3+9AALX33/bJb0PqapHI1V/a4mNiF8LLxE3azRc//nOjdT/WRfDBk9
+QC6668n8do9tzR5odygA19IpNzVf20rZgOoXKFmfKlnBvXRT7GPMDPUe74xad9Wt
+ptfEZMD+g9Q5WwkNY/NwbYf+8UWS1c3WdodvQyq0AgZro7pUFwsBMGE+4oFMR2gG
+ISuvwfmCpQsO/o5YWQ1N/E9rfRw9bg==
+=CKQJ
+-----END PGP SIGNATURE-----
+
+--Sig_/HlC4+STjxV7X2vUs9gGm79I--
 
