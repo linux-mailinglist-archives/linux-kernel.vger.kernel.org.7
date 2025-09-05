@@ -1,115 +1,140 @@
-Return-Path: <linux-kernel+bounces-803705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED7BB463F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68C3B463F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4ABA66F9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E23C7C65A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4285F2820B7;
-	Fri,  5 Sep 2025 19:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65E280CC8;
+	Fri,  5 Sep 2025 19:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Zo/88RbZ"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoWEwhNT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE431DED5C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CA53AC1C;
+	Fri,  5 Sep 2025 19:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101749; cv=none; b=S7tF+KPwPBlYA4ana1XX3ZqBiTZSwjVdhMCtQJFqbQMIJzxUpcr6w3LYNWEPp8zmF5HV+buD5fif4JGN1fcSRRMfOZDJlGmFyScATr7sc+d3ZraTP1SycS4OyVBUpAmSfQ/kJAUe7ituzFGkwf9oobmIcaUA/7FyXbO+PmIwfUM=
+	t=1757101823; cv=none; b=gLp+Fg4Y/ZToDBFjhCPOiZRGYljFBhNCcuxdAvXinXicfCr6DMGyqs50RgC6YJ4gZAIqIP5JyzgDA8/yqemK+EvySb39wKa6ltoMiNkNoCU5XqatJ45Dpd8BfU1uP+jZEBFcCyO6jgDLQv8wlCVITk0PBKGaPPEOxvDq5ddSYfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101749; c=relaxed/simple;
-	bh=SDXmXmmQ1vFXl5JZs1WJtKI6JEciS/jqDcvT58tTS3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vDNBx8bkZVZY+VbW9DGCUNQcqYRovhu47wryqvmJYRXCzXjtJvtId4B2ugIHzo7xqMMmaWFqYZqQtqdeFveyVAV9sbbqbZUkIFXHalqUEcz7XRzwLFj+xGpSo2ggCb4HV++SMNNlvXNCJcFS5d9xp7q6dXquDIUjWJizndScw7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Zo/88RbZ; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30cce872d9cso2374439fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757101747; x=1757706547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Szv82Yg+I4qLiwXwVi16VMgcWXR81jSEFdZnsxSabZg=;
-        b=Zo/88RbZ8lyQFhw9ebZaQt80sP8CNUlPBN7QFTYbY7uYEhD9sEhlMiKaOWPucu9vYi
-         Z+vNYCJuXYTpkvPOprh3Ax1h0qj1Mas6y0HCobeHzgv4g/2Tiuamkt76y62jViwwH+h/
-         uqbBGWx8NoiCWMrPQpt5gkXd+VpRNWgLmkBWpjl6duA8Zf/esd4gZbxJypYlB/gkf0Ov
-         eUblqhPoltvH5PMDFaQhltsEX4bB4EVspdVkakHYifC4tSCeGamL9AnBO1D39JVX5aqk
-         9ec31rWFBRQQTaePZ33eaG92gUmoysdl52K66KMZlUOAvdRm09r4BRPmqQ8NIFPvXdxX
-         yVqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757101747; x=1757706547;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Szv82Yg+I4qLiwXwVi16VMgcWXR81jSEFdZnsxSabZg=;
-        b=oHWbPrIpEMvrCWPbDc0t6hCcmu980SkEFcvVq9VQI/6Wx2C5YzuHFkCJAQAaQHYdDR
-         V45hi6Ueg+3X9K22N7R7VkJayRW4ZPP9EKYu7JYdxzv453kRhn2FsWdSLhd7VN/945kE
-         ZDZXJXmubzvsY4Zn0BHUME/Z5ZObfvUx0T9BaKOYRMfx0JuhjSl2xRm7RLsJntqXqBNV
-         Lu/iXrIBtQhiARxgDCRd9lFAX3O0kHbIdLJU3z2d787XQB4aesavg+k1HLYq7SjVCNqg
-         YZ9oHRqjeEpfvjylLacfUybwcfSBFuzLOVxfBVunNw+KP9ujmg5HIymYEspExUhgh76h
-         rgdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsFW10igcjSwtkzygVZ8+Sk2P6qdrWW49CFhf2hXFy6ZBS+fJUmODBqv5GRlb81LqYwaZD9qtnSnh7yjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVPRfC9AUqkUBTGVTw85Ux9yb2dFbjmAuOwcSLKuxKmp3zt0nu
-	2yUtcsYN+m43895UY00fvXzg0UAIGmv+cMKAbZlZcV0uUx1uNtwstVqhQohT8YI4Vbo=
-X-Gm-Gg: ASbGncvHcoQ7GKwYXYhuYNsHbPhuXasmizxMnGYLDc7Rdb5vGVGoJudJWJOooQidOfa
-	lS4S4uSYoHo6qGxD+WtgdydsEW0PPncmntbSRwRrlfJXW3S/NAxaO4XzA1nTgLr/jodVfbvv5Ox
-	8hSTWAiW/05x0BeCUT2PopLyzZeUInaRU85Jk23Zyn3pfIvl5/5BGYmpPrmL4nvPV+HT0JzEvWA
-	AqM1R3VFm6MGK3t60DDcoFheELTugk2J0nNOd7O8b3uUvSpZQi9uq7lIaUeBuJGcX+SjDx/CCkL
-	gxlbf9CMhx2sI8XyPbbHtPMkybqtpSWqK12gMecRiF8DtMx6YZleD5EotvGP9cnF6II623NMz3g
-	k/dkvMO35S9DiGe4gTyERyy4YMDwpdrm7lzd2uW5xCr1sV71asmDYHZTfKGObscnFJmo5PKPFV6
-	Qw4DYsojM=
-X-Google-Smtp-Source: AGHT+IFRxRKk8LtvZ6He+rGVAow3FoQP7Fwy9rnhW18mDzyKWJ4V4U2SXMzMRn0S6iDAapzSQorQTA==
-X-Received: by 2002:a05:6870:b013:b0:321:8f88:a39c with SMTP id 586e51a60fabf-3218f88c130mr1286348fac.47.1757101746811;
-        Fri, 05 Sep 2025 12:49:06 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-319b5fcbbaasm3996358fac.15.2025.09.05.12.49.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 12:49:06 -0700 (PDT)
-Message-ID: <e97130f5-9ec6-4ac4-9944-96f992eb215f@baylibre.com>
-Date: Fri, 5 Sep 2025 14:49:05 -0500
+	s=arc-20240116; t=1757101823; c=relaxed/simple;
+	bh=CLXw4DN67XKGQfmhHzc4kdR7hzYM9eFmZ4ZDRbEwt+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q50MNNq9QH787XA5YQsONuz2oq0/chHS+Ym9gfD0md8XxuUSEuOhsdGsg0g5Pnr63YoieJHOOxkC/aBJIX/639qTDdst4l6eh3L8e3QVvXyc9Rp3+NHB98hZdZsBgsM0Xuz4/wsoNlWCSMUaFLTUAxSbvkIqp7NhEwIzW5Imofk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoWEwhNT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6DFC4CEF9;
+	Fri,  5 Sep 2025 19:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757101823;
+	bh=CLXw4DN67XKGQfmhHzc4kdR7hzYM9eFmZ4ZDRbEwt+0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UoWEwhNTl2+lYYy/BEPgYCuCn99esPHsPKIqwp3Cz0QhMbbth5iaIFzok2mC9aYtL
+	 Z6bl2VoMKBrIStUpbKbJl4bU8pP81dOYPNcaqm+5msC0fYUv+DlmT8z10VOnMruNvo
+	 i1FityfKlT6kGmV7rhhc67R9EZz0LOP7xJq+anwXXMlfeUWmdHsr1f0eO358PBObKC
+	 6NxRAgoc6CSgYEVWI9o0Hgw7NgFKaIshyNSeUNSwgg2/N/wwvDv0gNglfaMFnLBGYy
+	 lZRS336IcydcJet+4ywLXnkatJUBEomTU+VWFhS36wh9/Ty6D8GjfT8/RQVGJN2Sgl
+	 DmWJQvVk+xLBw==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61dd3b5cdd7so773819eaf.1;
+        Fri, 05 Sep 2025 12:50:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5JvcFyQTZ+4a3xsmRYe4wbviI+XXSqiKC7cGPNvN3Ju26ayLZ0aKqeqioNAQ9I9MchDVdsEtpk94q@vger.kernel.org, AJvYcCUBwZzV57L5KpxfvLCCzpl2BTF/2gZXFYiWdyDymhhPthtm9WHvuOIfsF5c4eBlraACjelixVousEQufVI7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPg0U6UZx2AD4vTl3CWH2Biwil5UyrqAMQ0Q+TyqPprgQnFmGn
+	pu+1rGWUFc4YHLeLTSPyan0GrXDVG4efbHLJoTniNKDoIRH2eX37+J/F8hWBPYYL6E9IEDqtkwW
+	ULB6w9dOljwzFcKY58Dj2fOMVDcv8ris=
+X-Google-Smtp-Source: AGHT+IF8sQYyCL9maiAio96EKgI4GjPLwuW+t4oZprRYAsEdtVg6Xdbc9lbCXJsNXFdo9GpYHEP7kGqxHN1ih8fmDLM=
+X-Received: by 2002:a05:6820:54b:b0:621:7704:b55f with SMTP id
+ 006d021491bc7-6217704b9b3mr284095eaf.7.1757101822552; Fri, 05 Sep 2025
+ 12:50:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] iio: imu: inv_icm42600: Use
- devm_regulator_get_enable() for vdd regulator
-To: Sean Nyekjaer <sean@geanix.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250901-icm42pmreg-v3-0-ef1336246960@geanix.com>
- <20250901-icm42pmreg-v3-4-ef1336246960@geanix.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250901-icm42pmreg-v3-4-ef1336246960@geanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250905081900.663869-1-lihuisong@huawei.com> <20250905081900.663869-3-lihuisong@huawei.com>
+In-Reply-To: <20250905081900.663869-3-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Sep 2025 21:50:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jF=1QdHMVY1=Cp_iOEPA2sMOsqQC3vK4uYJMWnpXethw@mail.gmail.com>
+X-Gm-Features: Ac12FXwfRtsokZks2As3V_9CBMMkOVJPNWPE2m83WSSpowp5qpMCSc5pKiq-LaU
+Message-ID: <CAJZ5v0jF=1QdHMVY1=Cp_iOEPA2sMOsqQC3vK4uYJMWnpXethw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ACPI: processor: Remove unused empty function
+ definition for processor_idle.c
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/1/25 2:49 AM, Sean Nyekjaer wrote:
-> The vdd regulator is not used for runtime power management, so it does
-> not need explicit enable/disable handling.
-> Use devm_regulator_get_enable() to let the regulator be managed
-> automatically by devm.
-> 
-> This simplifies the code by removing the manual enable and cleanup
-> logic.
-> 
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+On Fri, Sep 5, 2025 at 10:19=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> If CONFIG_ACPI_PROCESSOR=3Dn and CONFIG_ACPI_PROCESSOR_IDLE=3Dn, we may e=
+ncounter
+> some warnings about function defined but not used.
+> All external functions of processor_idle.c are just used in processor_dri=
+ver.c.
+> And if CONFIG_ACPI_PROCESSOR is selected and CONFIG_ACPI_PROCESSOR_IDLE a=
+lso
+> be selected automatically. So remove these empty function definitions.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
 > ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+>  include/acpi/processor.h | 22 +---------------------
+>  1 file changed, 1 insertion(+), 21 deletions(-)
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index ff864c1cee3a..d6a87dc42a9a 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -417,34 +417,14 @@ static inline void acpi_processor_throttling_init(v=
+oid) {}
+>  #endif /* CONFIG_ACPI_CPU_FREQ_PSS */
+>
+>  /* in processor_idle.c */
+> -extern struct cpuidle_driver acpi_idle_driver;
+>  #ifdef CONFIG_ACPI_PROCESSOR_IDLE
+> +extern struct cpuidle_driver acpi_idle_driver;
 
+The changes above don't belong to this patch IMV or at least I don't
+see why they belong to it.
+
+>  int acpi_processor_power_init(struct acpi_processor *pr);
+>  int acpi_processor_power_exit(struct acpi_processor *pr);
+>  int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
+>  int acpi_processor_hotplug(struct acpi_processor *pr);
+>  void acpi_processor_register_idle_driver(void);
+>  void acpi_processor_unregister_idle_driver(void);
+> -#else
+> -static inline int acpi_processor_power_init(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_power_exit(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_power_state_has_changed(struct acpi_pro=
+cessor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_hotplug(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+>  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+>
+>  /* in processor_thermal.c */
+> --
 
