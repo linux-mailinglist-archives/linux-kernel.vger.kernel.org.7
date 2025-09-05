@@ -1,214 +1,105 @@
-Return-Path: <linux-kernel+bounces-803845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECD2B4661F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:47:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E210B46619
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3BF91D21832
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01EC6AC3E7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FC2FC00B;
-	Fri,  5 Sep 2025 21:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43712F3C02;
+	Fri,  5 Sep 2025 21:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RBETcqgZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837102F83AF;
-	Fri,  5 Sep 2025 21:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t2KycOcQ"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3722D2FC863
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108520; cv=none; b=MQJqL/pGz2CFe2fkZl2KyT1aejkWRldRcNFE+8xoZ3zWm1i48uR7NWuUXgw0qFdnX7h9JBM75j0I9yf9Lq2m1mFTqeTeOs/z28I50wmnOqPnOviCO47QnkTP8X4OCWGMfd+Uz0J8saOBYMgUPNNXwPyWZiUxsPGFq2Ho6OsVRaM=
+	t=1757108536; cv=none; b=dNGUx5ZBQyRBjBbRpwIKnG4Ps+N0lSdbqXZTTm/qo8L/XWTYwFYt2Yf8ms3dfevob1P7Y8TsVbRrdUB3EpXEO19wajC2Ek4G3Xele7ROUbRggKfkB8zSDPBaJQnqQ+5chLmELsyRICPdX+hBC4n8Izz5LZgcUiwKzVcpUVtunh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108520; c=relaxed/simple;
-	bh=n1zL1dghlRy0+A8PIhiVW/ZsMjbvNqyCZS6VPJicZms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ULjqqPZZB6CNffRIHL9Z1SeaR67XtwP2lg2+kcfxU7Nyc4F30/DxK6V/2O+1C8z8kaPttbr7PT+7Du6Rh6RgA4SDDzAXYoDwnsrBtzOmW2iWhvSepkNDvhdWuyASaLfoGav0xNT6xEvX7ApAn0a7ZixX3aXj/A5eIB3+OMOwKp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RBETcqgZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7E61E20171D3;
-	Fri,  5 Sep 2025 14:41:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7E61E20171D3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757108514;
-	bh=pLTx4Rr8G6NQmZqkGo3pXfMpnw5bZX2ma0h+xMq8JrA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RBETcqgZyxhP4vA+SY74JeEifpJbs8CGGsV8LNL4b3jFuP9zvIq+hI8kC5wZPgcC6
-	 1WT2cgW4wYPCxkj6xOu4yy4jAknNRtnBrBlRHaMKitBQ2PX1olNc+ZlDBCF0VUFtnh
-	 NIUJ2ivqX8aQgh1dtNqaU2+PbzVKxt32fdpclyYk=
-Message-ID: <6a26cbf8-7877-4f39-0ed3-7bbc306f9fe5@linux.microsoft.com>
-Date: Fri, 5 Sep 2025 14:41:52 -0700
+	s=arc-20240116; t=1757108536; c=relaxed/simple;
+	bh=B9tHNEOeLaWdDARduEz/Vc9qdH2m8+ssRhq+4XnxwEI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Xpk4WsXarj2T1c5P2oxX6LrnqO+Q6SToebvKbWW/OUiW2DbMScMwvnP9BN/0A5FTHny4XnYu7fTZDWFqAS59mxs/R8HwwLL3jm0FIWJLjjZzacqLbh0EOiGHE5pNn+gvo2f/DLA7+kjdL8EItPvb2ao9NU6+DXMVV+aI393YwvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t2KycOcQ; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757108532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JdQSZQn4Ae0lf5/FOhW87b1E1rxb0mDC0qFKSsqhQ4I=;
+	b=t2KycOcQC6+Wj1X+FCLqCY3UI+yAR/kc8EnpBUKQbcoiI3YaZw2E1d0/VODIOXL7PgHDxn
+	cx8ZeTr9MJKBB+M9Js3cGU4Q+EWNRrxXAo2+/JlZABHc0nnNHLckybReBlDjxAcxjFpJGM
+	v9oWfeEywqHvK8z6TmlnCITZK8pSRzs=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
+  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,
+  Muchun Song <muchun.song@linux.dev>,  Alexei Starovoitov
+ <ast@kernel.org>,  Peilin Ye <yepeilin@google.com>,  Kumar Kartikeya
+ Dwivedi <memxor@gmail.com>,  bpf@vger.kernel.org,  linux-mm@kvack.org,
+  cgroups@vger.kernel.org,  linux-kernel@vger.kernel.org,  Meta kernel team
+ <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
+In-Reply-To: <mai3ndkvqrpkfpblkazbyejvpkizrp7dh22374tpkmepfji32o@3troawzsuvqe>
+	(Shakeel Butt's message of "Fri, 5 Sep 2025 14:31:13 -0700")
+References: <20250905201606.66198-1-shakeel.butt@linux.dev>
+	<87y0qsa95d.fsf@linux.dev>
+	<mai3ndkvqrpkfpblkazbyejvpkizrp7dh22374tpkmepfji32o@3troawzsuvqe>
+Date: Fri, 05 Sep 2025 14:42:01 -0700
+Message-ID: <87ecska85y.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH V0 0/2] Fix CONFIG_HYPERV and vmbus related anamoly
-Content-Language: en-US
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "jikos@kernel.org" <jikos@kernel.org>,
- "bentiss@kernel.org" <bentiss@kernel.org>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "deller@gmx.de" <deller@gmx.de>, "arnd@arndb.de" <arnd@arndb.de>,
- "sgarzare@redhat.com" <sgarzare@redhat.com>,
- "horms@kernel.org" <horms@kernel.org>
-References: <20250828005952.884343-1-mrathor@linux.microsoft.com>
- <SN6PR02MB4157917D84D00DBDAF54BD69D406A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ff4c58f1-564d-ddfa-bdff-48ffee6e0d72@linux.microsoft.com>
- <SN6PR02MB41573C5451F21286667C5441D400A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <4f38c613-255c-eaf6-0d50-28f8ffc02fff@linux.microsoft.com>
- <231f05cb-4f33-48ac-bb2e-1359ed52e606@linux.microsoft.com>
-From: Mukesh R <mrathor@linux.microsoft.com>
-In-Reply-To: <231f05cb-4f33-48ac-bb2e-1359ed52e606@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On 9/5/25 13:08, Nuno Das Neves wrote:
-> On 9/4/2025 11:18 AM, Mukesh R wrote:
->> On 9/4/25 09:26, Michael Kelley wrote:
->>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, September 3, 2025 7:17 PM
->>>>
->>>> On 9/2/25 07:42, Michael Kelley wrote:
->>>>> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Wednesday, August 27, 2025 6:00 PM
->>>>>>
->>>>>> At present, drivers/Makefile will subst =m to =y for CONFIG_HYPERV for hv
->>>>>> subdir. Also, drivers/hv/Makefile replaces =m to =y to build in
->>>>>> hv_common.c that is needed for the drivers. Moreover, vmbus driver is
->>>>>> built if CONFIG_HYPER is set, either loadable or builtin.
->>>>>>
->>>>>> This is not a good approach. CONFIG_HYPERV is really an umbrella config that
->>>>>> encompasses builtin code and various other things and not a dedicated config
->>>>>> option for VMBUS. Vmbus should really have a config option just like
->>>>>> CONFIG_HYPERV_BALLOON etc. This small series introduces CONFIG_HYPERV_VMBUS
->>>>>> to build VMBUS driver and make that distinction explicit. With that
->>>>>> CONFIG_HYPERV could be changed to bool.
->>>>>
->>>>> Separating the core hypervisor support (CONFIG_HYPERV) from the VMBus
->>>>> support (CONFIG_HYPERV_VMBUS) makes sense to me. Overall the code
->>>>> is already mostly in separate source files code, though there's some
->>>>> entanglement in the handling of VMBus interrupts, which could be
->>>>> improved later.
->>>>>
->>>>> However, I have a compatibility concern. Consider this scenario:
->>>>>
->>>>> 1) Assume running in a Hyper-V VM with a current Linux kernel version
->>>>>     built with CONFIG_HYPERV=m.
->>>>> 2) Grab a new version of kernel source code that contains this patch set.
->>>>> 3) Run 'make olddefconfig' to create the .config file for the new kernel.
->>>>> 4) Build the new kernel. This succeeds.
->>>>> 5) Install and run the new kernel in the Hyper-V VM. This fails.
->>>>>
->>>>> The failure occurs because CONFIG_HYPERV=m is no longer legal,
->>>>> so the .config file created in Step 3 has CONFIG_HYPERV=n. The
->>>>> newly built kernel has no Hyper-V support and won't run in a
->>>>> Hyper-V VM.
-> 
-> It surprises me a little that =m doesn't get 'fixed up' to =y in this case.
-> I guess any invalid value turns to =n, which makes sense most of the time.
-> 
->>>>>
->>>>> As a second issue, if in Step 1 the current kernel was built with
->>>>> CONFIG_HYPERV=y, then the .config file for the new kernel will have
->>>>> CONFIG_HYPERV=y, which is better. But CONFIG_HYPERV_VMBUS
->>>>> defaults to 'n', so the new kernel doesn't have any VMBus drivers
->>>>> and won't run in a typical Hyper-V VM.
->>>>>
->>>>> The second issue could be fixed by assigning CONFIG_HYPERV_VMBUS
->>>>> a default value, such as whatever CONFIG_HYPERV is set to. But
->>>>> I'm not sure how to fix the first issue, except by continuing to
->>>>> allow CONFIG_HYPERV=m.
-> 
-> I'm wondering, is there a path for this change, then? Are there some
-> intermediate step/s we could take to minimize the problem?
-> 
->>>>
->>>> To certain extent, imo, users are expected to check config files
->>>> for changes when moving to new versions/releases, so it would be a
->>>> one time burden. 
->>>
->>> I'm not so sanguine about the impact. For those of us who work with
->>> Hyper-V frequently, yes, it's probably not that big of an issue -- we can
->>> figure it out. But a lot of Azure/Hyper-V users aren't that familiar with
->>> the details of how the Kconfig files are put together. And the issue occurs
->>> with no error messages that something has gone wrong in building
->>> the kernel, except that it won't boot. Just running "make olddefconfig"
->>> has worked in the past, so some users will be befuddled and end up
->>> generating Azure support incidents. I also wonder about breaking
->>> automated test suites for new kernels, as they are likely to be running
->>> "make olddefconfig" or something similar as part of the automation.
->>>
->>>> CONFIG_HYPERV=m is just broken imo as one sees that
->>>> in .config but magically symbols in drivers/hv are in kerenel.
->>>>
->>>
->>> I agree that's not ideal. But note that some Hyper-V code and symbols
->>> like ms_hyperv_init_platform() and related functions show up when
->>> CONFIG_HYPERVISOR_GUEST=y, even if CONFIG_HYPERV=n. That's
->>> the code in arch/x86/kernel/cpu/mshyperv.c and it's because Hyper-V
->>> is one of the recognized and somewhat hardwired hypervisors (like
->>> VMware, for example).
->>>
->>> Finally, there are about a dozen other places in the kernel that use
->>> the same Makefile construct to make some code built-in even though
->>> the CONFIG option is set to "m". That may not be enough occurrences
->>> to make it standard practice, but Hyper-V guests are certainly not the
->>> only case.
->>>
->>> In my mind, this is judgment call with no absolute right answer. What
->>> do others think about the tradeoffs?
+Shakeel Butt <shakeel.butt@linux.dev> writes:
+
+> On Fri, Sep 05, 2025 at 02:20:46PM -0700, Roman Gushchin wrote:
+>> Shakeel Butt <shakeel.butt@linux.dev> writes:
+>> 
+>> > Generally memcg charging is allowed from all the contexts including NMI
+>> > where even spinning on spinlock can cause locking issues. However one
+>> > call chain was missed during the addition of memcg charging from any
+>> > context support. That is try_charge_memcg() -> memcg_memory_event() ->
+>> > cgroup_file_notify().
+>> >
+>> > The possible function call tree under cgroup_file_notify() can acquire
+>> > many different spin locks in spinning mode. Some of them are
+>> > cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
+>> > just skip cgroup_file_notify() from memcg charging if the context does
+>> > not allow spinning.
+>> 
+>> Hmm, what about OOM events? Losing something like MEMCG_LOW doesn't look
+>> like a bit deal, but OOM events can be way more important.
+>> 
+>> Should we instead preserve the event (e.g. as a pending_event_mask) and
+>> raise it on the next occasion / from a different context?
 >>
->> Wei had said in private message that he agrees this is a good idea. Nuno
->> said earlier above: 
->>
->> "FWIW I think it's a good idea, interested to hear what others think."
->>
-> That was before Michael pointed out the potential issues which I was
-> unaware of. Let's see if there's a path that is smoother for all the
-> downstream users who may be compiling with CONFIG_HYPERV=m.
+>
+> Thanks for the review. For now only MAX can happen in non-spinning
+> context. All others only happen in process context. Maybe with BPF OOM,
+> OOM might be possible in a different context (is that what you are
+> thinking?). I think we can add the complexity of preserving the event
+> when the actual need arise.
 
-Ok, we've already thought of it for sometime and not able to come up
-with any. IMO, it's a minor hickup, not major. This is stalling
-upcoming iommu and other patches which will use CONFIG_HYPERV and 
-add more dependencies, and it would be much harder to straighten 
-out then. So I hope you guys can come up with some solution sooner than
-later, I can't think of any.
+No, I haven't thought about any particular use case, just a bit
+worried about silently dropping some events. It might be not an issue
+now, but might be easy to miss a moment when it becomes a problem.
 
-Thanks,
--Mukesh
-
-
+So in my opinion using some delayed delivery mechanism is better
+than just dropping these events.
 
