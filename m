@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-802782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7BAB456EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14773B456F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD03A03A25
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CE0B189F80B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6038934DCD3;
-	Fri,  5 Sep 2025 11:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DF134A326;
+	Fri,  5 Sep 2025 11:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="n/5wTmOJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KMx/d56S"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8B53451C4;
-	Fri,  5 Sep 2025 11:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC1E26B747
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757073130; cv=none; b=pyaqCYN2Sd4sVijMRk1Jvt5DJH5l83hG8WUrDYkHCtyfK5fRsv4jDK4crVq60ykmFymLmVLuqL++u5hzSsVyfdg2HLWGJ7YCVceySOZHYoun2PQz4NpN9o+XDsTdAA8ijZqNRmJnRD1OgTQzD8numOMzlhTRHsj5g3NFg0uYZ84=
+	t=1757073215; cv=none; b=U7xV9jW0oCwwx7VJSvVhHnLqhLNuRWt+4mj9Kzcf0FCCag7e8AzjWGMp+vE1A62aId/15pqr4qIXFnU44+nWI5NJC7PQqNYUTvNfiHES1bEMgyNQFmsl8j0T1GfoXrA5YQJvXTKyTviKBA2Dghval76+lqz5X/pzri2GuVwyEKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757073130; c=relaxed/simple;
-	bh=zIcPzz4+ZUV4cxLri5m6RzjiaeHPYd2Q0gnoN2653mA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gsP4VTesYygaNog9KTEH8RenFsDnZGXgiBIDAcdQgv7iIPy+rZ6wv3V72cI1oQ7an9tmmmmPdCCvD8k75EgMFLIC152AJhpr7b19PY+m5i3Slps7KB3uGtAJKyGRp6jJHqU5VyF8XwlpxdSZc3T4dqo5kxnVT7l03LzWNr5+5no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=n/5wTmOJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757073127;
-	bh=zIcPzz4+ZUV4cxLri5m6RzjiaeHPYd2Q0gnoN2653mA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=n/5wTmOJizcJeU4glq9D89n5nNLNFkbZpRFaDOEH34cQ50NB3U7c1CU0/O7JwaNTA
-	 3Tt+eCqbDpu5MR4mScsm9u8LtOv5L/G/8INm66hPFwxrp18SuBwA+BdeNhx2bIKJRo
-	 VV1EIuzzgtiQ6xmiHuutnDmFJ1TcHf7G1N9MBe+E0+qfRTB9tMNRo8uXIez0Mg0Slz
-	 0SUKxGqewoDknKev/GpFeDBSW2fsPpKhadKKBn0YIO/wRqhkc78QPzA9jiGd0ue0T9
-	 LGgxDyuSfyMbaHCd/k0Amvp0oE8PtmATzKMD7Wfm26Vjr5AyJNV/2Y+1Q4fwTvcWrx
-	 J1JXqIApbA5VQ==
-Received: from localhost-live.home (2a01cb0892F2D600c8F85cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8FE6017E12BA;
-	Fri,  5 Sep 2025 13:52:06 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Fri, 05 Sep 2025 13:52:00 +0200
-Subject: [PATCH v3 3/3] arm64: dts: mediatek: mt8395-nio-12l: add support
- for blue and red LEDs
+	s=arc-20240116; t=1757073215; c=relaxed/simple;
+	bh=tXTx0khqBmsWWU+P4PnW2zGkwrJJZK3FQK11Bvgu8Fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RawkQAvjuhQSHnKtc1bvw8wOwPco42fGJFLaR+9yJ6LYoxrQG7eqnmWF+tyBLti/a78iA69ZtrA4HSWG6RevdXwDg0eZEYnjQOWq1izBE4nx2+1ueCFSBQ4RH8I6qVULIX2Eq3sJlGWQYCFGuekqeU1TNiT8A2yFhBu8qlarb00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KMx/d56S; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b47052620a6so2267987a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757073213; x=1757678013; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F41JthKB4C65sSuKjAh9iAVTRgSsULVhOOzeHvyaTPE=;
+        b=KMx/d56ScDM/SDv8lJgTaKxZr8qoswIPDdw8mkBxRfd1XYwq/aTMf9H15PnIgqxHSJ
+         hKUHD3oQS6GFW6IY9ZEisssY8+R8fTgwbK6IIbVTVt39zI+/qgNUPh7rQ6OT1dNiable
+         Aa9Sa28/t/FvDx+6eJAStiapQWmUzNty2WNJ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757073213; x=1757678013;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F41JthKB4C65sSuKjAh9iAVTRgSsULVhOOzeHvyaTPE=;
+        b=SG5ANFwgH+699CXVnzKIAxJqo6cbjTyIEMYT8D8GgTpeQoYnzH8y7oaWMVyozdtFKr
+         3CD3rT/Ma8OuYeXKJCfImwekZvbp1D/2jprouw53jdG2RO7TaI6gbLclwJvqLLZtj9/w
+         Rd3y8/MV8E3MpZyOPXC/d+Dun+fKfWEccst/eQmCVbLtyM+iXTOg8zxDfFYYOn4nl2f/
+         ACaXfxOdA9aBFKnVNdZW9GcKHOU1DEYcSkmeYmauWtryGws/w51irjkgyY0Qo47LM8Nh
+         G6XkorJOVRRDx6hTyoCr1VjbMpsDoaQsDIgw2+B9AqVhVxnpRtgRvTQ7YUrswu12JHIJ
+         EjMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoU+8sgpQGw9t1RLUaa1OHQdD0OjWCPeCiSCRJrZ3t5rD+/HiQ0KpLsvcFDS9kZ3K1/c0fuJmYJPQbuiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNuXptU0EKccZccWXkMBKOZ98CR5st+lIkVaXqofGvnBXhD2qP
+	qfiBkL6co9TOz3q2d+Zbd8LlCxG61HfGS9MNRT1106nYRvR2cym2xBVJ7WNFpbb1IGazwXf+ASe
+	jrHgqSSDDR8gu3Yn5pPdqzAPFQFKwd2u9w22be61Y
+X-Gm-Gg: ASbGncscFui7yaxmK1PeC7tZ+RPYpgWPz9XLBMEpqAdFdOXZPRtdw/ZGnoE++OdRjlW
+	Rr7qfr/3lyOaFNzPA9qVwk6K1Yao7s4ZTTqRnbnBl/R0RiVmeKYsqjtRFQkfZ/lmblbRvOmw5lZ
+	1/RcgOZIBlhwSMM2f2O7Vxmk4hvaSDiwT/cCWeU6VEC6Q8o8csiZvjxhyUQ80nC0r0gpteIRUka
+	ANH9o07V+DutuGuhNte1DRoNUOUezayBA==
+X-Google-Smtp-Source: AGHT+IEN1O0V/duOoV36FoG7uqX93rMwXWpvjMiuL+p5CH98oeicc+oRQqsaUN3czxuXHbTlA0O+Sji4kT9kRYHU9gw=
+X-Received: by 2002:a17:90b:1c08:b0:32b:6959:9a84 with SMTP id
+ 98e67ed59e1d1-32bbe1040a1mr3955599a91.11.1757073213062; Fri, 05 Sep 2025
+ 04:53:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-radxa-nio-12-l-gpio-v3-3-40f11377fb55@collabora.com>
-References: <20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com>
-In-Reply-To: <20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com>
-To: kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- devicetree@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+References: <20250825145750.58820-1-akuchynski@chromium.org>
+ <20250825145750.58820-2-akuchynski@chromium.org> <aLq0FCAq-LiB139t@kuha.fi.intel.com>
+In-Reply-To: <aLq0FCAq-LiB139t@kuha.fi.intel.com>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Fri, 5 Sep 2025 13:53:20 +0200
+X-Gm-Features: Ac12FXwtlyscSNNgxTecVI02owwO8UoR1t0SvM0NbByNpcnkqJWSEDXQoTY3or8
+Message-ID: <CAMMMRMeq2-kGZeZUi_UwcUjr_TORYcncgJEqAG5+jX2Hbs-ULA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] usb: typec: Add alt_mode_override field to port property
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
+	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Radxa NIO 12L board has an RGB LED, of which only red and blue
-are controllable.
+On Fri, Sep 5, 2025 at 11:57=E2=80=AFAM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> On Mon, Aug 25, 2025 at 02:57:46PM +0000, Andrei Kuchynski wrote:
+> > This new field in the port properties dictates whether the Platform Pol=
+icy
+> > Manager (PPM) allows the OS Policy Manager (OPM) to change the currentl=
+y
+> > active, negotiated alternate mode.
+> >
+> > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> > ---
+> >  drivers/usb/typec/class.c | 9 ++++++---
+> >  drivers/usb/typec/class.h | 2 ++
+> >  include/linux/usb/typec.h | 1 +
+> >  3 files changed, 9 insertions(+), 3 deletions(-)
+>
+> This is okay by me, but you forgot to document the file.
+>
+> thanks,
 
-Red and blue LEDs: no need to choose, both are enabled.
+Hi Heikki,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
- .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+I missed it.
+Thanks!
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-index fd596e2298285361ad7c2fb828feec598d75a73e..0ea36e7c960fc0b2607833d743c5e2e806864600 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-@@ -10,6 +10,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
- #include <dt-bindings/regulator/mediatek,mt6360-regulator.h>
- #include <dt-bindings/spmi/spmi.h>
-@@ -73,6 +74,26 @@ button-volume-up {
- 		};
- 	};
- 
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-0 = <&gpio_leds_pins>;
-+		pinctrl-names = "default";
-+
-+		/*
-+		 * This board has a RGB LED, of which only R and B
-+		 * are controllable.
-+		 */
-+		rgb-blue {
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&pio 6 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-1 {
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
- 	wifi_vreg: regulator-wifi-3v3-en {
- 		compatible = "regulator-fixed";
- 		regulator-name = "wifi_3v3_en";
-@@ -647,6 +668,14 @@ pins {
- 		};
- 	};
- 
-+	gpio_leds_pins: gpio-leds-pins {
-+		pins {
-+			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>,
-+				 <PINMUX_GPIO7__FUNC_GPIO7>;
-+			output-low;
-+		};
-+	};
-+
- 	i2c2_pins: i2c2-pins {
- 		pins-bus {
- 			pinmux = <PINMUX_GPIO12__FUNC_SDA2>,
 
--- 
-2.51.0
-
+Andrei
 
