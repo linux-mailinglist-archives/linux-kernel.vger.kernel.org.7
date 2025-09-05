@@ -1,213 +1,207 @@
-Return-Path: <linux-kernel+bounces-802751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0CDB4567D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:37:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56203B4567F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A362CA41032
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:37:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611287AC030
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49E1345721;
-	Fri,  5 Sep 2025 11:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60689345745;
+	Fri,  5 Sep 2025 11:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="O12qZHj8"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BTDRSI0u"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28D1166F1A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757072256; cv=none; b=Rlv7BF95fJXmEVpfsUhbOlj6RAnqFTVurzY4vi4yPdQguObMQdqKRwwiRKvXp03x2Ld8pFEiv1bCtG5PZj++xOFGLTXP8F56p+YjR7E1GbY6dldjLc5+97kY0QVBjD5MkAbCrzlcaUYCQHET0ES0KeEAXjf3Cd/t4GMlH0s1IoM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757072256; c=relaxed/simple;
-	bh=avNbLLm9e9Ta3S76+2w2Fme3j1rZ3Ppkpq5R0RkvrM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IkyTEnvXSMJUc2A5/O2qZZFtodF4Dt+PTFfW8EU9NFyVb0lEHYZH8EEtHaCCiLhzy/2tgR0apNLWiItcm1NtmQwmDL3VW3x9AdUjST27skIz8m5J2wu9xlUCsO/i436nHloXvoVOeZUK5pEPBroRdyXvtN4Z8qnwN0UJ5nz0oJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=O12qZHj8; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7722f2f2aa4so2665147b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757072251; x=1757677051; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIlcMsuKf7m9put4yLNSq+qSX+jmGO1EXe5mqywnCSM=;
-        b=O12qZHj8GAFDt1D00olm7pB+3edgDF1PZv6ShRGVNpEoBTvcMej0zqxvnwQo2xHsDA
-         20As37hlh+yBYeM9/8Oi3lB9YWr9olt7bpaoSn+/8mzbPqlWkc1taFCMo7IsrVwhe7Gl
-         L++wVdB5LgFQ7RejOXGMWaDqJ5dZcq9rldK5tQmu50LEc3CzBa7P3/KFADKRYbpUYysw
-         ZiFkz4rGhnwQTiUWFCwKyTvunMK76GVe6T3YV4A+cbztwray2ZldmkGNzFOXTCtwJOTp
-         l9I7yU2OmtUN7sf2rseXJLvI3L7FEjr5WrZF5MQkZLaN3Vg3TlAIo1OTFTExF17vXrvp
-         1olA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757072251; x=1757677051;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zIlcMsuKf7m9put4yLNSq+qSX+jmGO1EXe5mqywnCSM=;
-        b=koqDWR+XpoVCb57G6MOPq7DY5l+rhPRMej/D9teyP4ox8klPGvIHllPjeidBdtqkJP
-         Mgoybb3a2u4tBnQ8BuecG/nbOxKfBi8gtWO2chBs7KCxx8zr2+KggNHLAMGHcdHP+f8I
-         gvwhQGSIo817bwPB99yKrSz9VJlrqkKPfy9re8h1ZIdqLhCBQ/BuIJB0S+ZRt3bZQQMu
-         mxyy8+HW60DGSbigq3uzqEEgBVmRvr+tawWBfwxnwWQwkfjDspvyerpp2IJ/Bg9nxJNs
-         FHJVff9hih661U2eH47HW+MGIyW6O5T2ZknKfGZkvd/GgQElBP0/hGLfyzLG9gNXxcRs
-         y/eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsngti3XzC3O4ONW/BPBtEeGGL2izJnu1s0oUnFqX9UnP41gFNuCI500KJEJWJci+z6KjoFV4BcU1hBQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxyih0RbzXeQBafgF3zpQKiZ+iOfx1HHhzltHl3zFnjpzYyF7I
-	wymEBgxB0olKxxbRREolgFx96GUEWre9/YMVdYhAWAtGl/hbYCkQ131qTQ9bwfvEhg==
-X-Gm-Gg: ASbGnctQOc/aO0JWpLKfFus0rigGXbxGEi+HbWO7Fhw59VKCTHhAuRWVBiW1UzRxFf5
-	cT7/gfXpwx/p3MP4Xu9dq891H7HG2lh21wR5latnUT3TdqTVT68teKzAw0DJm53TnnAIu7pu729
-	ik/Qga1jUfQ1hgMw2WBUKmd4aZMeQZjSbnquyEtQsqMIG44hA4qZHYtOatIPevH6bOJY7l2E5r4
-	BKhkVCjm8ROgWOWcEzlLIspE9x2drInkTr5+ckaRvF0qTe6jFlLpZNjoi2O71D3s4Q+eH9eW3CN
-	JMttCGepS0CGjl6lgMZLPv1T0/gXpBmbfijlxzWEJgoW/eGDPK/CKwqXIJR2r1oDsIdYLKRhtf6
-	DslZ2SUPRQXNXlFzRwnkxoQH7/EdCett555eHbaTM3UEHeEf0lWxHfPev4Vgv
-X-Google-Smtp-Source: AGHT+IFWHnAb9j6vZshzDqvVii3Uf/KBB33Bnto3sYiPYiFnR7Gp0lU90AzE3X1ABlczyhY58iWXOw==
-X-Received: by 2002:a05:6a00:21cd:b0:772:4b05:78c1 with SMTP id d2e1a72fcca58-7724b057c56mr20792278b3a.3.1757072251283;
-        Fri, 05 Sep 2025 04:37:31 -0700 (PDT)
-Received: from bytedance ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4c2c86sm22187610b3a.52.2025.09.05.04.37.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 04:37:30 -0700 (PDT)
-Date: Fri, 5 Sep 2025 19:37:19 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal Koutn?? <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v4 3/5] sched/fair: Switch to task based throttle model
-Message-ID: <20250905113719.GL42@bytedance>
-References: <20250829081120.806-1-ziqianlu@bytedance.com>
- <20250829081120.806-4-ziqianlu@bytedance.com>
- <20250903145124.GM4067720@noisy.programming.kicks-ass.net>
- <14be66aa-e088-4267-ac10-d04d600b1294@amd.com>
- <20250903202703.GP4067720@noisy.programming.kicks-ass.net>
- <ddd2f979-43d5-43e8-a95c-37a1654189e5@amd.com>
- <20250904070407.GD42@bytedance>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC993451DC;
+	Fri,  5 Sep 2025 11:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757072277; cv=fail; b=m1kdos+QT3/L5vHepiOzWbdYied5fIDa8yBpx1XCk9OTb7d5Q3qf6V4e6Z+NJf7qkzfpcnMQrtqcogv7yWYDXm531I0zSogOnhohEkI4hkbLIBxMyKPbmsYwfVZTeGMvU2bP63fiw+9j5FUX/B8/vCG/tLaIieMb9HqNpfhJmRw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757072277; c=relaxed/simple;
+	bh=AWyvjdVq6j3pI4jV7BSed+OWCNrxDf02f9Ua5tG31FE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=euKop7p/j2/ml3ub+P5mvBqKQCCBd+VavkJ9jlp0iR+sI4RjbIwDfOIddsqSlowv4LX5oK+Xwd9sA1qjMFuyzgSaDATfEv4+Wz9qZ/dfQMixO0KwRo6+18Nphp8asWXWvAZdVxTiSMOqI6CbkmK1+ZYtF1OIeFpt92YzcMsHpIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BTDRSI0u; arc=fail smtp.client-ip=40.107.244.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QLc0uLY6VkyOO+5pUu/NstCxF8B7cuelztyyBhh1jjCXQJVfmDqZQpBK7ku74fi8lJq+1sUPK/NG/JnBkSPMFY4e3E0kZYe3PotyH6t8uEyjbw/blWwV4N15CsTwcIjTIvm3fsrB2nBeUaqNCBTnat0BhaUm8UCfr3zn6AaaL+Fp8ofBKWAGWQahBEiHgQfwe/49oXz7xr4b9VIkg8j4clJZKEur56gcoiH8QkpCYlOKMqa851zvbYzVHeMEG2xkRP+GCKPFqdPm1twcM8Fc+EMseBfFap8TI36Rh7wcnFmEmmcKww85EJmhHX0Rw4AaZGgvcUXPQZyAtK1jp8qjLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KtrsQYJNDjvjXvf2aab4yVGNWtOtFHMex3s6H3hZMo8=;
+ b=t5bL524/RUjJP0I/knYsWRhFW/RCKmTyEGW4bkY6zhntwsBDvqtkdd8uu/TkSYNy7cZqwERC5jzd7IxGQ8HX8Y+QpVzBSgwVG90QS2PNfXItu0Gu2GVgWdzCoXJT+BlHkZJvBpsShP2huKeSEH82j+zp6eVym2dQTwiKGtOaaScqkYSTrYAFHq3PisxDLynq4dDI2ZCOk6dVijTrSFxL9NEUBSvF6mnDCSZBANbZGvuI57Y822ROUdkrtndHdNMRQEcmjzGgP5OOIh6zfX0nbs5n1sfoorZTSUuE9OWcqbhMjlO5sjYAEgBxxAUqoPXcNa+thBn+M80M78htsRb3Uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KtrsQYJNDjvjXvf2aab4yVGNWtOtFHMex3s6H3hZMo8=;
+ b=BTDRSI0urreAoBxV5HvQ28rxTmGTUVSOKrL8dngkQzvNZreCN1FZffdjrVRwq1zR63NOMOQEuT7Y2sZL9WAFeNFVVyuYVP8YcbJokWbBQBn25MKk7Erhn58ameG2irc7VQgbZBrYRXiC/jR4mjWmmWPlVRJ+vHEMtYv0NUSrKfE=
+Received: from BYAPR07CA0095.namprd07.prod.outlook.com (2603:10b6:a03:12b::36)
+ by LV8PR12MB9359.namprd12.prod.outlook.com (2603:10b6:408:1fe::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
+ 2025 11:37:52 +0000
+Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
+ (2603:10b6:a03:12b:cafe::45) by BYAPR07CA0095.outlook.office365.com
+ (2603:10b6:a03:12b::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.19 via Frontend Transport; Fri,
+ 5 Sep 2025 11:37:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Fri, 5 Sep 2025 11:37:52 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 5 Sep
+ 2025 06:37:48 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Fri, 5 Sep
+ 2025 04:37:47 -0700
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 5 Sep 2025 06:37:43 -0500
+From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+To: <git@amd.com>, <michal.simek@amd.com>, <alexandre.belloni@bootlin.com>,
+	<Frank.Li@nxp.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <kees@kernel.org>, <gustavoars@kernel.org>,
+	<jarkko.nikula@linux.intel.com>, <linux-i3c@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
+	<shubhrajyoti.datta@amd.com>, <manion05gk@gmail.com>, Manikanta Guntupalli
+	<manikanta.guntupalli@amd.com>
+Subject: [PATCH V4 0/2] Add AMD I3C master controller driver and bindings
+Date: Fri, 5 Sep 2025 17:07:38 +0530
+Message-ID: <20250905113740.3841181-1-manikanta.guntupalli@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904070407.GD42@bytedance>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|LV8PR12MB9359:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9d4a3b2-7393-436d-a85b-08ddec70a609
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1Q+D+U9Yxh0ZfelunpOVgJopohUCAXTWT2RrJEibgAf29mBEg1IbW2gRpxol?=
+ =?us-ascii?Q?majzQa6B3akoqg1Y31904OhVzBY/RKTfAqjwnb0TosGilNP7GXGNvXtqXS1t?=
+ =?us-ascii?Q?9NNIWn1uxWsfk1w1IVWFicmRjssjwHd8gLgiB0CpUUgiszd3vZKIS1V7u0cT?=
+ =?us-ascii?Q?zIJoNn/tBwnSO6h7TttSnHMfTBt/lXiLp+ErSPHO42n++BnSIOonpS43jzR/?=
+ =?us-ascii?Q?7xXPzRyU8zbQasbKLEVGhqCkaGdhkba56OVvRgS15Tav85Oi0LKUl212H2z4?=
+ =?us-ascii?Q?IVTY6IoEbRq6zDpYcYXFTbQWxROvQYDF4XZtR4T9nrKwRvnNAg4QsN/0z93A?=
+ =?us-ascii?Q?Qw9T9zHiu8hPswzWoI26dlpB0J+Vy8pbte+UQSgtpC3m8lTnvZEXgBPSAnkf?=
+ =?us-ascii?Q?/iG6Iz14YAyGmzY/wPGd+1JtBmZiNU53XuEcmorIRESC3Nf8gBwBxCkqyAi2?=
+ =?us-ascii?Q?a4XT58GHkQxcanCTNaIRGXjK2iwhoWzNPdUfz9FBgttgqv1n1CSNd5HgA65S?=
+ =?us-ascii?Q?cJa783tQN4YoyWn7R22GzlxUaw+meIQRD+yh2NSHwOuEjET6SIIghMU8Duj2?=
+ =?us-ascii?Q?10Wy8LZNHBssv4KWQFEw8FoqEkVZ9hV1JllPtLqHINjFTApdNoqWoWvv5Q9r?=
+ =?us-ascii?Q?SttkA4/YaoFaILUjCRVx9f+tu+tHPzXlS8wR9fuML2LSA153naAj3THV0RMe?=
+ =?us-ascii?Q?is75JYI6DsTLZco04bc0EK5Z1RibsEHJgxpkdXXR5VSWDnEV1VcgF4zyYFDn?=
+ =?us-ascii?Q?IpO7HWKuOIM/opyRPuX9N4QHVV+cixyvX1NbGjvh7KHwcnrxbA2ylHmRhCgj?=
+ =?us-ascii?Q?eJSz1zzkxRUaUtOUkQSXUejFNmDuAZ3fE8qNXWzTOPgCyUWJ5UEGmCA/w9Rs?=
+ =?us-ascii?Q?XEBrnuxrrydY2+gB58dKUleG5GXPZZtYjH8gvLJwgpKXfvDknLgO8g8Ohfdr?=
+ =?us-ascii?Q?89L1GR6xAo7K2Eo2HvSWl8qu+RgkLLmzvT4F9QBGfZQVt4csFJMJZja4MMjX?=
+ =?us-ascii?Q?mDGTRgvR8tckT9pfxgoLabj5/EDl+gjYc/9pdHP9zJaarOGq421D0MdEeJvx?=
+ =?us-ascii?Q?7/pk1b0XXBT8ynKHXj3AcbXhbuh5YBZI0c7MqaDDynkC7BjkLrni/BVY+Hq9?=
+ =?us-ascii?Q?E3/okkJaSmZBe90bQAIj3/nfh+qVY4iQxliopUc7Z/l7qne4Pd7W1fFXLQwu?=
+ =?us-ascii?Q?maSRprzDxjkq4LDbEgV7gt4Ir3PiYsdL5ZceMyU3LLVSE03vfQ4MAxjTMxYd?=
+ =?us-ascii?Q?m91UttDVHPCDgUtUPCN3EVQtumY//bH7FgPbKc9uIIGz0MivRlDcjTYIqhDj?=
+ =?us-ascii?Q?egEAGVMxvfpSAfxVM5erot1m0/5RO0lwXbmsUavhsZMf5+fXaYFX8e/gnncT?=
+ =?us-ascii?Q?Xk5DbI1FuA6dThN8TeIMuFV1G+xu7Z8Q7pB1EfrqpY0YWKHnlkAQt0D82rLV?=
+ =?us-ascii?Q?7QDT/4M0Y6YIzSmfFjQVuj+isgnx5KfI3FhIAsHsOBPKNoBJCjFv3wWm+6nF?=
+ =?us-ascii?Q?cwOUI1Ze5c6rwlXBikhnh1pVwfutAfkC9hlNKQthmKrQx/TCpYUZkTnO1Q?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 11:37:52.1283
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9d4a3b2-7393-436d-a85b-08ddec70a609
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E5.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9359
 
-Hi Peter,
+This patch series introduces support for the AMD I3C master controller,
+including the device tree binding and driver implementation.
 
-On Thu, Sep 04, 2025 at 03:04:07PM +0800, Aaron Lu wrote:
-> On Thu, Sep 04, 2025 at 11:14:31AM +0530, K Prateek Nayak wrote:
-> > On 9/4/2025 1:57 AM, Peter Zijlstra wrote:
-> > > So this is mostly tasks leaving/joining the class/cgroup. And its
-> > > purpose seems to be to remove/add the blocked load component.
-> > > 
-> > > Previously throttle/unthrottle would {de,en}queue the whole subtree from
-> > > PELT, see how {en,de}queue would also stop at throttle.
-> > > 
-> > > But now none of that is done; PELT is fully managed by the tasks
-> > > {de,en}queueing.
-> > > 
-> > > So I'm thinking that when a task joins fair (deboost from RT or
-> > > whatever), we add the blocking load and fully propagate it. If the task
-> > > is subject to throttling, that will then happen 'naturally' and it will
-> > > dequeue itself again.
-> > 
-> > That seems like the correct thing to do yes. Those throttled_cfs_rq()
-> > checks in propagate_entity_cfs_rq() can be removed then.
-> >
-> 
-> Not sure if I understand correctly, I've come to the below code
-> according to your discussion:
->
+Changes for V2:
+Updated commit subject and description.
+Moved allOf to after required.
+Removed xlnx,num-targets property.
+Added mixed mode support with clock configuration.
+Converted smaller functions into inline functions.
+Used FIELD_GET() in xi3c_get_response().
+Updated xi3c_master_rd_from_rx_fifo() to use cmd->rx_buf.
+Used parity8() for address parity calculation.
+Added guards for locks.
+Dropped num_targets and updated xi3c_master_do_daa().
+Used __free(kfree) in xi3c_master_send_bdcast_ccc_cmd().
+Dropped PM runtime support.
+Updated xi3c_master_read() and xi3c_master_write() with
+xi3c_is_resp_available() check.
+Created separate functions: xi3c_master_init() and xi3c_master_reinit().
+Used xi3c_master_init() in bus initialization and xi3c_master_reinit()
+in error paths.
+Added DAA structure to xi3c_master structure.
 
-Does the below diff look sane to you? If so, shall I send a separate
-patch on top or fold it in patch3 and send an updated patch3?
+Changes for V3:
+Updated commit description.
+Corrected the order of properties and removed resets property.
+Added compatible to required list.
+Added interrupts to example.
+Resolved merge conflicts.
 
-Thanks.
+Changes for V4:
+Added h/w documentation details.
+Updated timeout macros.
+Removed type casting for xi3c_is_resp_available() macro.
+Used ioread32() and iowrite32() instead of readl() and writel()
+to keep consistency.
+Read XI3C_RESET_OFFSET reg before udelay().
+Removed xi3c_master_free_xfer() and directly used kfree().
+Skipped checking return value of i3c_master_add_i3c_dev_locked().
+Used devm_mutex_init() instead of mutex_init().
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 3e927b9b7eeb6..97ae561c60f5b 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5234,6 +5234,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  
->  static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
->  static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
-> +static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq);
->  
->  static void
->  requeue_delayed_entity(struct sched_entity *se);
-> @@ -5729,6 +5730,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->  	return cfs_bandwidth_used() && cfs_rq->throttled;
->  }
->  
-> +static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-> +{
-> +	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
-> +}
-> +
->  /* check whether cfs_rq, or any parent, is throttled */
->  static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->  {
-> @@ -6721,6 +6727,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->  	return 0;
->  }
->  
-> +static inline int cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->  {
->  	return 0;
-> @@ -13154,10 +13165,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
->  {
->  	struct cfs_rq *cfs_rq = cfs_rq_of(se);
->  
-> -	if (cfs_rq_throttled(cfs_rq))
-> -		return;
-> -
-> -	if (!throttled_hierarchy(cfs_rq))
-> +	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
->  		list_add_leaf_cfs_rq(cfs_rq);
->  
->  	/* Start to propagate at parent */
-> @@ -13168,10 +13176,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
->  
->  		update_load_avg(cfs_rq, se, UPDATE_TG);
->  
-> -		if (cfs_rq_throttled(cfs_rq))
-> -			break;
-> -
-> -		if (!throttled_hierarchy(cfs_rq))
-> +		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
->  			list_add_leaf_cfs_rq(cfs_rq);
->  	}
->  }
-> 
-> So this means when a task left/joined a cfs_rq, we will do propagate
-> immediately, no matter if the cfs_rq is throttled or has its pelt clock
-> stopped or not; if cfs_rq still has pelt clock running, it will be added
-> to leaf cfs_rq list to make sure its load can be decayed. If cfs_rq's
-> pelt clock is stopped, it will be added to leaf cfs_rq list if necessary
-> by enqueue_task_fair() or when it's unthrottled.
+Manikanta Guntupalli (2):
+  dt-bindings: i3c: Add AMD I3C master controller support
+  i3c: master: Add AMD I3C bus controller driver
+
+ .../devicetree/bindings/i3c/xlnx,axi-i3c.yaml |   55 +
+ MAINTAINERS                                   |    7 +
+ drivers/i3c/master/Kconfig                    |   16 +
+ drivers/i3c/master/Makefile                   |    1 +
+ drivers/i3c/master/amd-i3c-master.c           | 1014 +++++++++++++++++
+ 5 files changed, 1093 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/xlnx,axi-i3c.yaml
+ create mode 100644 drivers/i3c/master/amd-i3c-master.c
+
+-- 
+2.34.1
+
 
