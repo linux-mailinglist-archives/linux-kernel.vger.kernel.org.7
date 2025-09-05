@@ -1,149 +1,193 @@
-Return-Path: <linux-kernel+bounces-802572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA9AB453F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:01:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B5AB453FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75AE3A29CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E766C1C861C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A99295516;
-	Fri,  5 Sep 2025 10:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFxi6xLM"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F5A29D295;
+	Fri,  5 Sep 2025 10:01:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AABD3FF1;
-	Fri,  5 Sep 2025 10:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5167729B216;
+	Fri,  5 Sep 2025 10:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757066496; cv=none; b=bvmeQrOi7ufd73WxvSjQ6NNqHBtFLcJUOL0VLQjyFEUBp1W2GXDBbKXlTDuiW35IRxzFabitEpQmb0L/zGF2RMHPT+fm8WzP29YSLh6DlMAIpVyK7a8sPQ6HSjPRcHv3QCaVa5BP9/TUHaQ6acTT6A0Pk1LrblgQ3NBxLfsbR+s=
+	t=1757066502; cv=none; b=Q0ttCFqI1bT6J7Rd84QcYiGBVIuhruZ6cjarlvPafFfSkfiT1dhSB9Hn2ilX75VtsXY1wxqfg1uwPkt7CxaNJ1o3cst6XVOtkcqY5tlZl3Qxm/1OPAsi03onHMaTSjkWcWQJYflyGGoDcuy/8zntYQc9Jpt/GE40ulmOjm9OFkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757066496; c=relaxed/simple;
-	bh=MI++7xSl6D0d/tvMOVR8S7KiVropv9tJ4R/VEjlTswc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8kIqibjSEcTNTkqgvkZpGI6TMTGzhR8swqqL5jb23J/PICYcWkJAqQ45VT+o6rPmVTryKtQemK3Yju5AZmyVUiGjBbMoPl7O4e6f9U3Xqn/ac/dCKex9eDRsbFKIO9eWk9faKMoKA/ZdMkW4Oi6J3Le2wdho9CTAbehNYcphvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFxi6xLM; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3df35a67434so1097434f8f.3;
-        Fri, 05 Sep 2025 03:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757066493; x=1757671293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZEQHjjB0tYa1N8cGqzOlMz/FwpV1lIEE+NTIQ2azOHo=;
-        b=MFxi6xLMluKxY3AWeLBVWv/03CFKPLqZ73AE5riExwYq5+9AdrBJ1nBPWd2pMCs21h
-         71OoMpqEfCmTNXI7z64LZsapHeqYl9CJ0v2YXAk+QjIpwtilDYd2A57etV2WhJGkZW9J
-         KwfU0aT28Yuo0e6yiSztEGyKGAjrunvllFQ3ewYnH2Fko34CpC/VqG82CDw7aaBEoS0h
-         P7tz5c0XTBJ88X4dxJf9PSOICnLuywlTMeU0bZBslqmzRBiZ00bURJltrFkmKcNlDn6T
-         B6Wnd9F/lZro477fffcSEOiBd8dqr2HByBLGnOgO1WE+aNPRANEPwwd0pv2X+4yXjjDh
-         usNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757066493; x=1757671293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZEQHjjB0tYa1N8cGqzOlMz/FwpV1lIEE+NTIQ2azOHo=;
-        b=pJbgciep+1SAxmSQygJLZv3YDPcI5dHm2sS77Jpn0E37c/+fKbY2AwXHdg5fggLheY
-         zdzT9wR88dJh2IjGY1ogYGOsRWJMofo1uC14N8LsEYXShx5lO9S2bst154IotxPMlC4i
-         xEiPBsBRbP5ZrxNJUPKDnKwgZiKSLL6n325ctH1EGwmsZn4k8tPpv59OoTygleL+aMPn
-         dt7WP08aOQme+9KL44Z9WMPFxe+T7wTrmlcIVjUhD9vfDMBeJojokdYadHKvniRtsIVt
-         pFrW8pu4/y7RRUw0dhJ8IelihV3KVkGR8snoww3qYvsaA2npLIV7pXvlKv5CC94D0U5e
-         l7kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUITINBq1fW5O5ZrgLGCiY/NnsaQ2ksT1Jq1fBKjE2zFHJmCc2buvYqU2lI7fHIyBxB1aHLekgR@vger.kernel.org, AJvYcCUPP1Yph9Yr+0TWs9qAT9GmYi8u+vx9rcfHIvr/wsArU+CPpPjZFmH5uBMJR07HYd+hzyFNWW6dhaMC03ci@vger.kernel.org, AJvYcCURvPxZyF8LmeNWr4B1kkQb+pkAOv/PsR84ls51B3yHx5admBEEq6N0Vx3EronXlkvjaid5ndIE6xsi@vger.kernel.org, AJvYcCXDelpUeUog4cy7Lfk3gu0v13WaFh2HFLYvh4UyiOewxa/cLIpXR7ubI/cTJH/MGCIgdsyEN8hbxsSrUq5B1jmhQOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMNZxzMKfVnvhHpHbl0GSLvng4KHNBV6Bko9pHrzUhmwppGJNK
-	jLI9evPCAmXZ9TqyNmcjTd3QvuMnBrA8K7hxwqsMlwdH3t9yyJJkyMIJZ+XZCll5EtC5HsWcF+J
-	+ofr+iL9DddGRdIxMfMj92W4k7SubZtc=
-X-Gm-Gg: ASbGncvpeThzhS5hU8jSGnq6b4oK2pk5TPR4Keic1JkUYOb2ZrVKP3WMOFYRZuzairv
-	zFTOmSBzmAjjMh92MA0nVwIkvr2BPPsAyCNIcdCAdUYASiQV0oGgiw06Ggnksk5onZdxWg6CZma
-	AwmPFLGYu6ndvasTkfoVbIXzXQuZU+H8kHGN+RPPWqhjRMUsFaP75hMX5IYsQI4ONFlakpPFaFc
-	Yns44YvkDnEgZc1EPQbIisrZt6zTg==
-X-Google-Smtp-Source: AGHT+IENwDNnaA7LX8QdpGvHVZvc2cHkW8LLzE7YEDl4gIph1nAnHPcvvqrHhi6z/bmYC4D7PBM8OEiEwUc40Anwygw=
-X-Received: by 2002:a05:6000:2383:b0:3e2:6d96:b4da with SMTP id
- ffacd0b85a97d-3e26d96bc68mr3684568f8f.38.1757066493047; Fri, 05 Sep 2025
- 03:01:33 -0700 (PDT)
+	s=arc-20240116; t=1757066502; c=relaxed/simple;
+	bh=7zpKNMwWtLMOPy9aCSYvDFv9jTx14kVrWCqSWQwlke4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CigorIRBiCQJ5J/9Ka5AY358RjUjrHSrf+cbDn3gOVkbzi9GfaZPgtS4lEA7hFa1muTSqBfmsf5dw0of20HRbbGYMCtGNhDDCGR5SeknAwqvL4CsbZYwfEmiMd1Kip43mEjmgVKObQzplU5s5PdkP94cyXO4MpAsOHvaElOcflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJBg91Jm0z6JBRj;
+	Fri,  5 Sep 2025 18:00:37 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8815E140145;
+	Fri,  5 Sep 2025 18:01:35 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 5 Sep
+ 2025 12:01:33 +0200
+Date: Fri, 5 Sep 2025 11:01:32 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+CC: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham
+	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, "Jani Nikula"
+	<jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko
+ Ursulin <tursulin@ursulin.net>, "David Airlie" <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, Eduardo
+ Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan
+	<ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui
+	<rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, Lukasz Luba
+	<lukasz.luba@arm.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+	<festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, "Sumit Gupta"
+	<sumitg@nvidia.com>, Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<imx@lists.linux.dev>, <linux-omap@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 05/10] PM / devfreq: Use scope-based cleanup helper
+Message-ID: <20250905110132.00003987@huawei.com>
+In-Reply-To: <20250903131733.57637-6-zhangzihuan@kylinos.cn>
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
+	<20250903131733.57637-6-zhangzihuan@kylinos.cn>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904114204.4148520-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250904114204.4148520-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <021e970a-f606-4702-9f0e-b4b0576bc5d6@lunn.ch> <CAMuHMdVnhjA0xi+wojMc40Zmv_JBZpOm04GO_ewBSzFndbtegQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVnhjA0xi+wojMc40Zmv_JBZpOm04GO_ewBSzFndbtegQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 5 Sep 2025 11:01:06 +0100
-X-Gm-Features: Ac12FXxIWUyvkEfUz4q5orurH6BJWRXeslXNcn11rYAmFLfl-aoQgiX5uzP0Hng
-Message-ID: <CA+V-a8unTSqBottT7uDGkSxDYpRAYnpZvRC2RKsm9M0rw09iFQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 6/9] net: pcs: rzn1-miic: Make switch mode
- mask SoC-specific
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Geert,
+On Wed,  3 Sep 2025 21:17:28 +0800
+Zihuan Zhang <zhangzihuan@kylinos.cn> wrote:
 
-On Fri, Sep 5, 2025 at 8:02=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Andrew,
->
-> On Thu, 4 Sept 2025 at 22:37, Andrew Lunn <andrew@lunn.ch> wrote:
-> > On Thu, Sep 04, 2025 at 12:42:00PM +0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Move the hardcoded switch mode mask definition into the SoC-specific
-> > > miic_of_data structure. This allows each SoC to define its own mask
-> > > value rather than relying on a single fixed constant. For RZ/N1 the
-> > > mask remains GENMASK(4, 0).
-> > >
-> > > This is in preparation for adding support for RZ/T2H, where the
-> > > switch mode mask is GENMASK(2, 0).
-> >
-> > > -#define MIIC_MODCTRL_SW_MODE         GENMASK(4, 0)
-> >
-> > >       miic_reg_writel(miic, MIIC_MODCTRL,
-> > > -                     FIELD_PREP(MIIC_MODCTRL_SW_MODE, cfg_mode));
-> > > +                     ((cfg_mode << __ffs(sw_mode_mask)) & sw_mode_ma=
-sk));
-> >
-> > _ffs() should return 0 for both GENMASK(2,0) and GENMASK(4, 0). So
-> > this __ffs() is pointless.
-> >
-> > You might however want to add a comment that this assumption is being
-> > made.
->
-> I guess Prabhakar did it this way to make it easier to find
-> candidates for a future conversion to field_prep(), if this ever becomes
-> available[1].
->
-> [1] "[PATCH v3 0/4] Non-const bitfield helpers"
->     https://lore.kernel.org/all/cover.1739540679.git.geert+renesas@glider=
-.be
->
-Ah thanks, I wanted to explore this and add a new macro but I thought
-it might delay this series so I dropped it. Hopefully your series will
-get in soon.
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 
-Cheers,
-Prabhakar
+This falls into the mess of mixing gotos with cleanup.h usage.
+
+The guidance in cleanup.h IIRC say don't do this.  It isn't (I think) buggy here
+but it does make things harder to reason about and generally removes
+the point of doing __free.  So I think if you are going to do this one
+you need to do it fully which is a little more complex.
+Need to deal with parent_cpu_data which isn't that hard.
+
+If you mix the two, Linus may get grumpy!
+
+> ---
+>  drivers/devfreq/governor_passive.c | 25 +++++++++----------------
+>  1 file changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+> index 953cf9a1e9f7..a035cf44bdb8 100644
+> --- a/drivers/devfreq/governor_passive.c
+> +++ b/drivers/devfreq/governor_passive.c
+
+> @@ -256,7 +253,6 @@ static int cpufreq_passive_register_notifier(struct devfreq *devfreq)
+>  	struct device *dev = devfreq->dev.parent;
+>  	struct opp_table *opp_table = NULL;
+>  	struct devfreq_cpu_data *parent_cpu_data;
+> -	struct cpufreq_policy *policy;
+>  	struct device *cpu_dev;
+>  	unsigned int cpu;
+>  	int ret;
+> @@ -273,23 +269,23 @@ static int cpufreq_passive_register_notifier(struct devfreq *devfreq)
+>  	}
+>  
+>  	for_each_possible_cpu(cpu) {
+> -		policy = cpufreq_cpu_get(cpu);
+> +		struct cpufreq_policy *policy __free(put_cpufreq_policy) =
+> +			cpufreq_cpu_get(cpu);
+> +
+>  		if (!policy) {
+>  			ret = -EPROBE_DEFER;
+>  			goto err;
+Return directly here (and after changes below, in all error paths.
+>  		}
+>  
+>  		parent_cpu_data = get_parent_cpu_data(p_data, policy);
+> -		if (parent_cpu_data) {
+> -			cpufreq_cpu_put(policy);
+> +		if (parent_cpu_data)
+>  			continue;
+This is the first use of parent_cpu_data. If it's set at this point
+we don't use it at all.  So step 1. Rename this to split this
+use from the one that follows.
+
+
+> -		}
+>  
+>  		parent_cpu_data = kzalloc(sizeof(*parent_cpu_data),
+>  						GFP_KERNEL);
+This one needs to be
+		struct devfreq_cpu_data *parent_cpu_data __free(kfree) =
+			kzalloc(sizeof(*parent_cpu_data), GFP_KERNEL);
+
+		
+>  		if (!parent_cpu_data) {
+>  			ret = -ENOMEM;
+> -			goto err_put_policy;
+> +			goto err;
+>  		}
+>  
+>  		cpu_dev = get_cpu_device(cpu);
+> @@ -314,7 +310,6 @@ static int cpufreq_passive_register_notifier(struct devfreq *devfreq)
+>  		parent_cpu_data->max_freq = policy->cpuinfo.max_freq;
+>  
+>  		list_add_tail(&parent_cpu_data->node, &p_data->cpu_data_list);
+
+then here we need to ensure we don't free parent_cpu_data. Hence
+
+		list_add_tail(&(no_free_ptr(parent_cpu_data)->node,
+			      &p_data->cpu_data_list);
+
+That that point we have passed ownership of the data to the list.
+
+> -		cpufreq_cpu_put(policy);
+>  	}
+>  
+>  	mutex_lock(&devfreq->lock);
+> @@ -327,8 +322,6 @@ static int cpufreq_passive_register_notifier(struct devfreq *devfreq)
+>  
+>  err_free_cpu_data:
+>  	kfree(parent_cpu_data);
+And all this error block goes away.
+
+> -err_put_policy:
+> -	cpufreq_cpu_put(policy);
+>  err:
+>  
+>  	return ret;
+
 
