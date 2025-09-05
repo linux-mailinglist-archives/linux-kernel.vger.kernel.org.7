@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-803369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649B7B45E4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041C9B45E4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E6F1C240C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55579565B90
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC396306B17;
-	Fri,  5 Sep 2025 16:37:03 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F19230217B;
+	Fri,  5 Sep 2025 16:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="C69dkyVo";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="Qk2ea1Bs"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE6331D72C;
-	Fri,  5 Sep 2025 16:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F85031D72C
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757090223; cv=none; b=aGGQKseBgi8s+m0fJDBNWmOH0Ir3yn7dzZzqdPkQDJx7omEqS/0MtgTNhwlxSXzxb4eguwZSbMQJidWCcDHiLRM3TAO1ts6FP+BGNm3D7H2q1OxZhXvGlDt/JehBSnTcdp4nUXGNydt1Lpuc9HQc4kHqtsD+Yd/zGMfKYk4AKok=
+	t=1757090233; cv=none; b=ZI2T+LPfhYTRWv1Yo1RQ4GnqQJgK11VxEciBaWrgijcWvZV0DCnBUIpjoSROC2PGeZIHOMYt+6+uAQlgUV3ydc92REdKm5jVvUeAG1dQTUzvAuGJ2iPMTun0vKkoMw46wqfnxY9feDeTRg/KrUqa/WRTy+2MjQkP5zT/Z71tQ64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757090223; c=relaxed/simple;
-	bh=WMWV/zs7VqRch5M/3X1/0RlFh3MfGA58RBWGgbiM7Cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qUQAuOGbtqe9J1M4unug97MwwHw/s465e6JvlTxceoGlDzqoQyYr5N8pStj9OyIpY71tFKGWMzG9FjPu/5ZlD5SLE/NI2GRnTTyr6Y8MbVZOaQqELkAvsIDkS8RutFhIDfEOQ5LCVDw9rMIiEJbQqgGmJ7Q9fFOTlu108Zmbpcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.106] (unknown [114.241.87.235])
-	by APP-05 (Coremail) with SMTP id zQCowAAHqRJZEbtoxoHZAA--.36388S2;
-	Sat, 06 Sep 2025 00:35:37 +0800 (CST)
-Message-ID: <45053235-3b01-42d8-98aa-042681104d11@iscas.ac.cn>
-Date: Sat, 6 Sep 2025 00:35:37 +0800
+	s=arc-20240116; t=1757090233; c=relaxed/simple;
+	bh=sofE54YT1qF9RA6B6czOMDm06Z8ajhDsB5wvcToothc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l7ceIIEBdwISJR77r3rPzCtb9pfmMVsEX89+ICcbZqGnViJgn0+/B9CJKXO2KulXMLw9IDmBlB4XCEGpYpWV6IK2n3Dq+1x8jucfjif2Ungyzqi/bFhomcNt8/roFqqPdqwoK0UvLSsaWeaaFB8nl3a3uHn74FDD1DTpYNsus+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=C69dkyVo; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=Qk2ea1Bs; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 2AB0A209655C;
+	Sat,  6 Sep 2025 01:37:08 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1757090228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxYv8wvmwe8CZ4m5BCosbgsJRfJ3M/aSMrD/A1rZYhQ=;
+	b=C69dkyVokZfWbIvGujXS4rsX+qj3Rj36M20RVIkud5lxg5kbYxbA0QdXJ4NiRb0zlpk+Ke
+	SrNkXRCxgbRLJGaNWItsI42+L65yfLDwoRrAD5p4KtudSQptFkYIaEDhJagfqm872HpuxP
+	+nmgUFqdEjeLnnSWXMy4WB0PiKuX7sX1et0YB6zsgJrF4yKbkxlqJeIxoahdjRFuH5IQ+4
+	oZib8MHJZM5mve506BMwx+qusGJuM/1iG2BNOWPv3TjnX0Y8IqYEjjeq7eJGr4MuKq7uNC
+	ZyGglOsCmSFpGaQTwJ1yiW2PfzuV3bURtlWokCLfg7p8/bTgwkNqy7U99icIHw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1757090228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxYv8wvmwe8CZ4m5BCosbgsJRfJ3M/aSMrD/A1rZYhQ=;
+	b=Qk2ea1BsC4S4RzKk9DplqeYW+NzKKa9otpdADp0fxBHRMUy2vdWUDpt9I6YdPWKi6FwXLJ
+	OWXc586YH/B0PVCA==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 585Gb6YZ035171
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 6 Sep 2025 01:37:07 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 585Gb6Pj073457
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 6 Sep 2025 01:37:06 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 585Gb6KG073456;
+	Sat, 6 Sep 2025 01:37:06 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: zhoumin <teczm@foxmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfat:avoid unnecessary check
+In-Reply-To: <tencent_F5322517AD2A723568849905CF474A7D6C07@qq.com>
+References: <87bjnqkpns.fsf@mail.parknet.co.jp>
+	<tencent_F5322517AD2A723568849905CF474A7D6C07@qq.com>
+Date: Sat, 06 Sep 2025 01:37:06 +0900
+Message-ID: <87plc4n9e5.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
-References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
- <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
- <20250905153500.GH553991@horms.kernel.org>
- <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
- <20250905160158.GI553991@horms.kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250905160158.GI553991@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:zQCowAAHqRJZEbtoxoHZAA--.36388S2
-X-Coremail-Antispam: 1UD129KBjvJXoWruFW5Ary5JFW7Wr13trW8WFg_yoW8Jr4fpa
-	y8Ka1qyF4Ut347JrWDX397Ar92yFn3JrW3Xrn3WayYgas0yr13t34xtrWjkw1DCrWF9w40
-	va1jqr9FgFW5WFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUvaZXDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain
 
-On 9/6/25 00:01, Simon Horman wrote:
+zhoumin <teczm@foxmail.com> writes:
 
-> On Fri, Sep 05, 2025 at 11:45:29PM +0800, Vivian Wang wrote:
+>>> Remove redundant and unreachable name check code in dir.c.
 >
-> ...
+>> Looks like you changed the logic, but no explanation.
 >
-> Hi Vivian,
+> 1. In fat_parse_long:
+> If (*de)->name[0] equals DELETED_FLAG, the function returns immediately.
+> Consequently, the subsequent IS_FREE check can never evaluate to true.
+> Therefore, retaining only the ATTR_VOLUME verification should be sufficient.
 >
->>>> +		status = emac_rx_frame_status(priv, rx_desc);
->>>> +		if (unlikely(status == RX_FRAME_DISCARD)) {
->>>> +			ndev->stats.rx_dropped++;
->>> As per the comment in struct net-device,
->>> ndev->stats should not be used in modern drivers.
+> 2. In fat_search_long:
+> If (*de)->name[0] equals DELETED_FLAG, the loop skips to the next iteration.
+> This makes the subsequent checks for IS_FREE and ATTR_EXT unreachable.These
+> checks should therefore be removed.
+>
+> 3. In __fat_readdir:
+> The same reasoning as in fat_search_long applies here.
+
+Hm, IS_FREE() checks 0 and DELETED_FLAG, isn't it?
+
+>>> Remove flags check in fat_update_time since fat does not support
+>>> inode version.
 >>>
->>> Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
->>>
->>> Sorry for not mentioning this in an earlier review of
->>> stats in this driver.
->>>
->> On a closer look, these counters in ndev->stats seems to be redundant
->> with the hardware-tracked statistics, so maybe I should just not bother
->> with updating ndev->stats. Does that make sense?
-> For rx/tx packets/bytes I think that makes sense.
-> But what about rx/tx drops?
+>>> Optimize fat_truncate_time to return a meaningful value, allowing
+>>> the removal of redundant inode checks in fat_update_time. This
+>>> ensures non-root inodes are validated only once.
+>
+>> Also changed the logic, you removed the check of flags.
+>
+> Changing the return value of fat_truncate_time and removing the ino check in 
+> fat_update_time is a minor optimization, as mentioned in my previous patch email.
+>
+> The reason for removing the flags check is that the enum file_time_flags has
+> only four values. Since vfat does not support SB_I_VERSION, higher-level
+> functions such as inode_needs_update_time or inode_update_timestamps will never
+> set flags with S_VERSION. Thus, checking the flags is unnecessary.
+>
+> Note that __mark_inode_dirty will not be called only for the root inode. This
+> logic remains consistent with the previous version.
 
-Right... but tstats doesn't have *_dropped. It seems that tx_dropped and
-rx_dropped are considered "slow path" for real devices. It makes sense
-to me that those should be very rare.
+OK, thanks. I got the reason.
 
-So it seems that what I should do is to just track tx_dropped and
-rx_dropped myself in a member in emac_priv and report in the
-ndo_get_stats64 callback, and use the hardware stuff for the rest, as
-implemented now.
+However I would prefer to keep the current code, for readability and
+future changes, and explicitly check those time flags if there is no
+measurable improvement.
 
-Vivian "dramforever" Wang
-
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
