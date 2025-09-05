@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-802933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E55AB4588B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC4FB45888
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2F0B6109F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA495A4501F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00FA1C84B8;
-	Fri,  5 Sep 2025 13:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098041C701F;
+	Fri,  5 Sep 2025 13:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3bSByT7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EfWaZPkp"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A1F350848;
-	Fri,  5 Sep 2025 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0321C4609
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078034; cv=none; b=sVkI+qkd358fXpRtwDfgN2opRJLVQbs3+vj6UURibv1VXb+CEkBD5I73L/V3BpjJaNGJ6VOwOg2ZiU69EBvcye8yNuWiJtW3yEj4qnaT5t4L84mz+qQZh56c7EtxpUJda0CX4qEDGyM61JO5jtNJvvFXNacz2BOIm9nPCZTe4kA=
+	t=1757078031; cv=none; b=KvHroedicB7mK5xBz/cpzaiGuwoz1CB1dIK18lmFt8QD9uqitQ+0CG23zhtNlOMJ9ThF79//ort0435xCulb8ZvKQForiM0luEnOb38FZhLXPqlsCeG4qxYgZ2qSUcukuCJZAXZOeUaGLWB+1FEFT7pn4szLc/Ea2HQ9cUSV4hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078034; c=relaxed/simple;
-	bh=4fPiVUr8iqSHUA1048R7A5lGeRD0073y1e1CWCfad+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cR25W6bg+DtdK39Q4TsWkX2ro9Mie2s8/XZyGZK2kHbff5VRxkPo16syoT7mhAyoAx2JXlVeEfSrGL7Jm4lpSjC26XgKIRE5tmim1QPdofBuVPEK6Qru/CrQoTDVsFSBeSbPTmnAyXtSbURPyfF+C+VIpHLOqhHU6ToK4X/Bc5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3bSByT7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D40A3C4CEFB;
-	Fri,  5 Sep 2025 13:13:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757078033;
-	bh=4fPiVUr8iqSHUA1048R7A5lGeRD0073y1e1CWCfad+4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r3bSByT7fJh4/eg4OUCA7r/B+lOhcIzVlTUYOH0PkK7wnmHVVqhsF3hB31k1ee16k
-	 IE7zVoR7w6ItgNUPNeknoirAkgujWF7B057JqvQkoZZ5sjbJcGfBSy0mDB4Ix3HoPk
-	 zCWBm1bw6z5GzuJ3L/vY4jy0llOv7BJjIlh4bP+UWH2Z7RyyjSGIoCnqzFQvn4No6X
-	 4yAtGYd6SXsCR9XRlAe8Pb6Mn0U0Oq0ZtYn6fGBfEPw7+lths1xeo6AfQHcvdqm8vB
-	 S2AGmabgQC9PNIbNHe+1soaGzmldetgDNeRVbyzJud1Y0sgXSSDdDMGHBFX9VCrvum
-	 sFIhFmTZWT/4g==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7454cf6abf9so1023435a34.1;
-        Fri, 05 Sep 2025 06:13:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4o4v+fgI68T/pMdqmBO5cpirGeq8vESJ1Dsf97LE8mdFmg3p+YP+oI6E/hBqjMe8Nvn4zQ/G6VMG8vlk=@vger.kernel.org, AJvYcCVXNIyY43VtIehvNawsaFQTgVLqhC278oQFMiHaXh4DZXkuxETlKDJPfG2KzQQ17XRo8OZOJ7HtyHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo9hwI3Z7E6fYI6saKuGvAh2Cubvpecje8+epnUHXTcU1LLQe6
-	oQUDQBpoAY7menyA/wchME/Lq+kofYss8N4mZkbYwwRAmLenRyN5QRcOOgxiSChU9nWONGx93oe
-	BaYrJ5ZiW7Y/H1fqAAHbyKKbTRktToFM=
-X-Google-Smtp-Source: AGHT+IFffuiP30MgrkTsgngQV11TsWgdOrnGzK7NoEJFqBdCBOCtrraIWbEOd+sb7Dy7S/K5rYsbEu53ji3Zgc0AX60=
-X-Received: by 2002:a05:6830:6a8b:b0:746:d832:eb4d with SMTP id
- 46e09a7af769-746d832ee97mr3136923a34.6.1757078033181; Fri, 05 Sep 2025
- 06:13:53 -0700 (PDT)
+	s=arc-20240116; t=1757078031; c=relaxed/simple;
+	bh=pc2WPgJcGLhrpFaKlsLQahXKA9chhCVy7k7/gF1Cbmk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4SLh8hxjZZeAZcEoUiBo0WZ+UF3px2QdkZZY0t0Bi94UhCfojQ6SVE2CkDf4r6Nr5Ah1MbCZko2OTINiAKTfQfGySDqZJJfrsE8RSZ6jzDPD+Px0xNXieHgKLQRHxf90TY3eA8jiugR6FukpkFbuv/PjqWyMiBhiYy2pEAnZJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EfWaZPkp; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e2fdddd01dso177209f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757078027; x=1757682827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNWX8w7J5IcI97nXdwv0jKcOCYSaYB+ZFn87ka9R6Bg=;
+        b=EfWaZPkpSH4KTQKoh8fclPWGVfQ6EgSnmc9J+smP62pADd4qdYbLZOhZ4AyoeABjyY
+         U6stjICBkpDvN2XmrihPO5CSox9NALv/QhILpo7soII6xHQCMDXXjc0mfAsGVGCPQkpK
+         WmLN8r2fpkRtKdgmN8N8LQ31E78eB7MucVdnNQw5Cjdatz0TXz2yy69MWUPK4/XnW3Kc
+         h/aCxFEHlsznlrz2FfJ6iMj2bK4frl53jIHKoiJ0KvURpoTquiuvo5D3LXKAs1iJ0yFg
+         IMPjBiOVfyPyfMdcdr9FlBDu6Hfowqf5ADA9o3+tJx1p1SflB0aH6j1IaXz4xfqUb2Ov
+         8YkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757078027; x=1757682827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNWX8w7J5IcI97nXdwv0jKcOCYSaYB+ZFn87ka9R6Bg=;
+        b=ufyvUqnL3z+FiBGY773mkmjllfOcaQXqjitrl3eXUeiTeUMY/dWhDeR6zOZ/TaHKnA
+         YRXmpaCakswxmlnK8heTIkV0ZV6WygyboikaStkj9z7COAaiyHbTYb0kaGUJLOX3E2I4
+         9JlmkZunJ65u+TfgO/xoUJP7zmIpZnlmjcqH9erNVuite+yX2NlifVLaZPP/Msy6Dd1x
+         k5O1//Ovkh5lCWlpQhBNBmlhfNUp7fwYPMjfPoOYUgRb+zwFvanw42OocmW5xNECG8kZ
+         XQUlUWFAfTA/0yxIZ3E+CRjKuiRGATxbD2UaMMxOXTT6zcUBt00ZpiWwqUDYyc+SyBt3
+         zLKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJzsOY3T3QxRNc/Ir+KXAKWMrup8lcAIUgz70oXTU+ohvl5EKnyd77fcT/84bv64QQjtO50mcoGQrOxqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvK7g70sPa2QUjF5qvMyPQq4Ou6Z/ARwLwpXbjmv76jPW06fzP
+	96uhXhs7Z3j1isV0J/Ztr3AL2RfQGygUvM7VsU2oACKr3b3ZmZDzSG9kr+sYnDgSZ/0=
+X-Gm-Gg: ASbGncsDNJxmIMJb+kgcMT+fpTRb9ZwJ5T+QMBEM67Qx8YtFeoZdt+V95VKBWZmgkSx
+	bF2LXyLBEiuB+ElWIGJ7aEtg8I/TkcpPtiUZIqQQlE45fQWxZhG/8bFyEfKZDjpbipAa/p6ilKM
+	RZOOwGHvDtzbJB+875je2AvtJvYlbx+RH+unN8KHLzUhkviHthwdnwbk908iomqnnUSoscihQA6
+	ijpoMtcpeEOl6dN2a2Z9a/iRRPzn3G/M7KEYPiw76cwrwe4jHp1+JgVnpfrYCPF6f8oWoK0TUjZ
+	DCxVJ6AmuMPRJTYEsBATZIbYkqhMa7DOz5WTQvWaUdMHNi0VXYo5fCraz5d8RcADkuipe8q8cyh
+	WpyfJ2TN7NL9d7KCUMAIpazE=
+X-Google-Smtp-Source: AGHT+IFFbThKQaUMn97luKJ5NYCELBoHvf5CkKM0PAFFCnugiFcAZ60cVT3FxKj4IggIaIVjsWVqcw==
+X-Received: by 2002:a05:6000:18a8:b0:3d9:7021:fff0 with SMTP id ffacd0b85a97d-3d970220156mr11098273f8f.37.1757078027295;
+        Fri, 05 Sep 2025 06:13:47 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:35ed:b892:eb7c:cc5f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98e77231sm155189905e9.12.2025.09.05.06.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 06:13:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.17-rc5
+Date: Fri,  5 Sep 2025 15:13:45 +0200
+Message-ID: <20250905131345.105630-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
-In-Reply-To: <871polxs9c.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 15:13:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
-X-Gm-Features: Ac12FXytMQ0oah2eRFtPagBtfjslFVTgXfnj9GXfs5MDvT0D4yuymp6BzFyWryE
-Message-ID: <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 5, 2025 at 9:39=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Fri, Aug 29 2025 at 22:01, Rafael J. Wysocki wrote:
-> > --- a/kernel/cpu.c
-> > +++ b/kernel/cpu.c
-> > @@ -2710,6 +2710,12 @@
-> >       cpu_maps_update_begin();
-> >       cpu_smt_control =3D CPU_SMT_ENABLED;
-> >       for_each_present_cpu(cpu) {
-> > +             /*
-> > +              * Avoid accidentally onlining primary thread CPUs that h=
-ave
-> > +              * been taken offline.
-> > +              */
-> > +             if (topology_is_primary_thread(cpu))
-> > +                     continue;
->
-> Hmm. That's kinda solving the problem, but I think the proper solution
-> would be to implement topology_is_core_online() for x86.
->
-> The above is preventing the primary thread to be onlined, but then
-> onlines the corresponding hyperthread, which does not really make sense.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Well, manual online can be used for onlining the secondary thread of a
-core where the primary thread is offline, so this is technically
-possible already.
+Linus,
 
-> Something like the completely untested below.
+Please pull the following set of GPIO fixes for the next RC.
 
-So given the above, shouldn't topology_is_core_online() check if any
-thread in the given core is online?
+Thanks,
+Bartosz
 
-> ---
-> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topol=
-ogy.h
-> index 6c79ee7c0957..21041898157a 100644
-> --- a/arch/x86/include/asm/topology.h
-> +++ b/arch/x86/include/asm/topology.h
-> @@ -231,6 +231,16 @@ static inline bool topology_is_primary_thread(unsign=
-ed int cpu)
->  }
->  #define topology_is_primary_thread topology_is_primary_thread
->
-> +int topology_get_primary_thread(unsigned int cpu);
-> +
-> +static inline bool topology_is_core_online(unsigned int cpu)
-> +{
-> +       int pcpu =3D topology_get_primary_thread(cpu);
-> +
-> +       return pcpu >=3D 0 ? cpu_online(pcpu) : false;
-> +}
-> +#define topology_is_core_online topology_is_core_online
-> +
->  #else /* CONFIG_SMP */
->  static inline int topology_phys_to_logical_pkg(unsigned int pkg) { retur=
-n 0; }
->  static inline int topology_max_smt_threads(void) { return 1; }
-> diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topolog=
-y.c
-> index e35ccdc84910..6073a16628f9 100644
-> --- a/arch/x86/kernel/cpu/topology.c
-> +++ b/arch/x86/kernel/cpu/topology.c
-> @@ -372,6 +372,19 @@ unsigned int topology_unit_count(u32 apicid, enum x8=
-6_topology_domains which_uni
->         return topo_unit_count(lvlid, at_level, apic_maps[which_units].ma=
-p);
->  }
->
-> +#ifdef CONFIG_SMP
-> +int topology_get_primary_thread(unsigned int cpu)
-> +{
-> +       u32 apic_id =3D cpuid_to_apicid[cpu];
-> +
-> +       /*
-> +        * Get the core domain level APIC id, which is the primary thread
-> +        * and return the CPU number assigned to it.
-> +        */
-> +       return topo_lookup_cpuid(topo_apicid(apic_id, TOPO_CORE_DOMAIN));
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_ACPI_HOTPLUG_CPU
->  /**
->   * topology_hotplug_apic - Handle a physical hotplugged APIC after boot
->
->
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
+
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.17-rc5
+
+for you to fetch changes up to ed42d80f3bae89592fbb2ffaf8b6b2e720d53f6a:
+
+  tools: gpio: remove the include directory on make clean (2025-09-04 16:29:28 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.17-rc5
+
+- fix GPIO submenu regression in Kconfig
+- fix make clean under tools/gpio/
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpio: fix GPIO submenu in Kconfig
+
+zhang jiao (1):
+      tools: gpio: remove the include directory on make clean
+
+ drivers/gpio/Kconfig | 6 +++---
+ tools/gpio/Makefile  | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
