@@ -1,335 +1,303 @@
-Return-Path: <linux-kernel+bounces-803360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AE4B45E1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:27:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748ACB45E20
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441055C7995
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D632B3AB196
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18585306B1F;
-	Fri,  5 Sep 2025 16:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k7Zmm/l4"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7C431D750;
-	Fri,  5 Sep 2025 16:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7778C306B0F;
+	Fri,  5 Sep 2025 16:27:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BA631D750;
+	Fri,  5 Sep 2025 16:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089624; cv=none; b=of+rAsW2WGMSCgokaWDXa/0tra2s/UCFKLzWzFxzTX+ObwoVJrLSLYFSlMUgwfG4ksaHLXZH/6Vb7eWXznwd5X+DDb5+e2guIHYX8f2igjQ9XQ9nx4h5+gLfE4A6z2MnyMrsu9RTn8jBxpjC6zijSNRdKYQkPKHug2WaFKEM4FI=
+	t=1757089640; cv=none; b=noVbiy8rAY2HRSyCUE7nkfkGLqKjhH1SmJhUjm/TvpbZ+xIUiwwNYbUcGv0FluTXXdEq737+1egRfHK7K/MmTeIVu2HRqept9IW8qgOTNIZ2QxVchmSlpuccRfjuJOmjS+JySSoCgkK56XbDoyz7HOwYkG2CdacKXADOzPGSGC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089624; c=relaxed/simple;
-	bh=s23bDGi9zDAcfRynDwckaABDv2nJ6dzjUpVRzy1+VsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=M/1pohWvCWFm0/3qVfs2hQdVuZQGNoK+GHh4W3iR0Dk8rSk/4Dw3VKjz/n/sAZf3njEvR84MaPG6tnPn6dIud4lZ+i9SH99lZVryeepfezP+qV6Dutxs8NuUnj+5QrfMr+C6ma0AVxqSBdYXH0vHwnQqhCoJ+RucEuOPN++f6F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k7Zmm/l4; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250905162659euoutp0209439914e512e98f87c7003f3b7cb2ad~ib7L2Tvq02121121211euoutp02j;
-	Fri,  5 Sep 2025 16:26:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250905162659euoutp0209439914e512e98f87c7003f3b7cb2ad~ib7L2Tvq02121121211euoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757089619;
-	bh=JratdkJhfp1iQGSSFRxxu72lgWMqyE2NX54DSFPZHRY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=k7Zmm/l4ml+LB1qItvZOEqZY+Sox4+FPDDVEoRVLzx1Wvrm8UN4/WmasRnz/XdrC4
-	 Uz3NPTnr8v6KtMSyeOqg/plUlqcNjUQLJ68wa1aVQkIC0f+6gNInm3vAulUU4bbtBs
-	 bFH/HZYMbbkZGGDU62q/7lnZ1i5322h/6rAkdcfU=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250905162658eucas1p1a568426150516afc440f0b45dae6597c~ib7LZwBNr2591525915eucas1p15;
-	Fri,  5 Sep 2025 16:26:58 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250905162656eusmtip2af2311515d499a88f1b631068b965d1d~ib7JPIWTy2564625646eusmtip2E;
-	Fri,  5 Sep 2025 16:26:56 +0000 (GMT)
-Message-ID: <afcd9cd4-d563-41c3-9e50-7440365b9152@samsung.com>
-Date: Fri, 5 Sep 2025 18:26:55 +0200
+	s=arc-20240116; t=1757089640; c=relaxed/simple;
+	bh=v/S/LJTOi6ZyryPMzGyn1/L7NYUSdlZ0YVbue83lmz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVyXX2C5DmldK7MhLKbL8qvVMrzzD0fFHHd9QZK1BM55EOAGH7oskGKHB2ajNC2IlhtugomeEcpBT87p2QSIsx+4fzTqV5YnjYKiYBN/7sAntRiVctV7Gur144P2CD0Yw6RcoB7FXRPer7aVSbevUn8xeLW/ZZ/9sTTb5fSDLis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6141152B;
+	Fri,  5 Sep 2025 09:27:08 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A4F83F63F;
+	Fri,  5 Sep 2025 09:27:11 -0700 (PDT)
+Date: Fri, 5 Sep 2025 17:27:08 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 05/33] ACPI / PPTT: Find cache level by cache-id
+Message-ID: <aLsPXFI4VuueQVXM@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-6-james.morse@arm.com>
+ <aK7jEMqM/FoB4ABW@e133380.arm.com>
+ <cc4881e8-5d90-4992-8cbf-650ea2efa5ca@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 03/16] dma-debug: refactor to use physical addresses
- for page mapping
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, Alexander Potapenko
-	<glider@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Danilo
-	Krummrich <dakr@kernel.org>, iommu@lists.linux.dev, Jason Wang
-	<jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel
-	<joro@8bytes.org>, Jonathan Corbet <corbet@lwn.net>, Juergen Gross
-	<jgross@suse.com>, kasan-dev@googlegroups.com, Keith Busch
-	<kbusch@kernel.org>, linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Michael
-	Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>, Miguel
-	Ojeda <ojeda@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	rust-for-linux@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>, Stefano
-	Stabellini <sstabellini@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <478d5b7135008b3c82f100faa9d3830839fc6562.1755624249.git.leon@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250905162658eucas1p1a568426150516afc440f0b45dae6597c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d
-References: <cover.1755624249.git.leon@kernel.org>
-	<CGME20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d@eucas1p1.samsung.com>
-	<478d5b7135008b3c82f100faa9d3830839fc6562.1755624249.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc4881e8-5d90-4992-8cbf-650ea2efa5ca@arm.com>
 
-On 19.08.2025 19:36, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
->
-> Convert the DMA debug infrastructure from page-based to physical address-based
-> mapping as a preparation to rely on physical address for DMA mapping routines.
->
-> The refactoring renames debug_dma_map_page() to debug_dma_map_phys() and
-> changes its signature to accept a phys_addr_t parameter instead of struct page
-> and offset. Similarly, debug_dma_unmap_page() becomes debug_dma_unmap_phys().
-> A new dma_debug_phy type is introduced to distinguish physical address mappings
-> from other debug entry types. All callers throughout the codebase are updated
-> to pass physical addresses directly, eliminating the need for page-to-physical
-> conversion in the debug layer.
->
-> This refactoring eliminates the need to convert between page pointers and
-> physical addresses in the debug layer, making the code more efficient and
-> consistent with the DMA mapping API's physical address focus.
->
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Hi James,
 
-This change needs to be based on top of this patch 
-https://lore.kernel.org/all/20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com 
-so the easiest way would be to rebase this patchset onto 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git/log/?h=dma-mapping-fixes 
-branch (resolving conflicts is trivial) for the next version.
+On Thu, Aug 28, 2025 at 04:58:05PM +0100, James Morse wrote:
+> Hi Dave,
+> 
+> On 27/08/2025 11:50, Dave Martin wrote:
+> > Hi,
+> > 
+> > On Fri, Aug 22, 2025 at 03:29:46PM +0000, James Morse wrote:
+> >> The MPAM table identifies caches by id. The MPAM driver also wants to know
+> >> the cache level to determine if the platform is of the shape that can be
+> >> managed via resctrl. Cacheinfo has this information, but only for CPUs that
+> >> are online.
+> >>
+> >> Waiting for all CPUs to come online is a problem for platforms where
+> >> CPUs are brought online late by user-space.
+> >>
+> >> Add a helper that walks every possible cache, until it finds the one
+> >> identified by cache-id, then return the level.
+> >> Add a cleanup based free-ing mechanism for acpi_get_table().
+> 
+> > Does this mean that the early secondaries must be spread out across the
+> > whole topology so that everything can be probed?
+> >
+> > (i.e., a random subset is no good?)
+> 
+> For the mpam driver - it needs to see each cache with mpam hardware, which means a CPU
+> associated with each cache needs to be online. Random is fine - provided you get lucky.
 
-> ---
->   Documentation/core-api/dma-api.rst |  4 ++--
->   kernel/dma/debug.c                 | 28 +++++++++++++++++-----------
->   kernel/dma/debug.h                 | 16 +++++++---------
->   kernel/dma/mapping.c               | 15 ++++++++-------
->   4 files changed, 34 insertions(+), 29 deletions(-)
->
-> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
-> index 3087bea715ed..ca75b3541679 100644
-> --- a/Documentation/core-api/dma-api.rst
-> +++ b/Documentation/core-api/dma-api.rst
-> @@ -761,7 +761,7 @@ example warning message may look like this::
->   	[<ffffffff80235177>] find_busiest_group+0x207/0x8a0
->   	[<ffffffff8064784f>] _spin_lock_irqsave+0x1f/0x50
->   	[<ffffffff803c7ea3>] check_unmap+0x203/0x490
-> -	[<ffffffff803c8259>] debug_dma_unmap_page+0x49/0x50
-> +	[<ffffffff803c8259>] debug_dma_unmap_phys+0x49/0x50
->   	[<ffffffff80485f26>] nv_tx_done_optimized+0xc6/0x2c0
->   	[<ffffffff80486c13>] nv_nic_irq_optimized+0x73/0x2b0
->   	[<ffffffff8026df84>] handle_IRQ_event+0x34/0x70
-> @@ -855,7 +855,7 @@ that a driver may be leaking mappings.
->   dma-debug interface debug_dma_mapping_error() to debug drivers that fail
->   to check DMA mapping errors on addresses returned by dma_map_single() and
->   dma_map_page() interfaces. This interface clears a flag set by
-> -debug_dma_map_page() to indicate that dma_mapping_error() has been called by
-> +debug_dma_map_phys() to indicate that dma_mapping_error() has been called by
->   the driver. When driver does unmap, debug_dma_unmap() checks the flag and if
->   this flag is still set, prints warning message that includes call trace that
->   leads up to the unmap. This interface can be called from dma_mapping_error()
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index e43c6de2bce4..da6734e3a4ce 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -39,6 +39,7 @@ enum {
->   	dma_debug_sg,
->   	dma_debug_coherent,
->   	dma_debug_resource,
-> +	dma_debug_phy,
->   };
->   
->   enum map_err_types {
-> @@ -141,6 +142,7 @@ static const char *type2name[] = {
->   	[dma_debug_sg] = "scatter-gather",
->   	[dma_debug_coherent] = "coherent",
->   	[dma_debug_resource] = "resource",
-> +	[dma_debug_phy] = "phy",
->   };
->   
->   static const char *dir2name[] = {
-> @@ -1201,9 +1203,8 @@ void debug_dma_map_single(struct device *dev, const void *addr,
->   }
->   EXPORT_SYMBOL(debug_dma_map_single);
->   
-> -void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
-> -			size_t size, int direction, dma_addr_t dma_addr,
-> -			unsigned long attrs)
-> +void debug_dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
-> +		int direction, dma_addr_t dma_addr, unsigned long attrs)
->   {
->   	struct dma_debug_entry *entry;
->   
-> @@ -1218,19 +1219,24 @@ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
->   		return;
->   
->   	entry->dev       = dev;
-> -	entry->type      = dma_debug_single;
-> -	entry->paddr	 = page_to_phys(page) + offset;
-> +	entry->type      = dma_debug_phy;
-> +	entry->paddr	 = phys;
->   	entry->dev_addr  = dma_addr;
->   	entry->size      = size;
->   	entry->direction = direction;
->   	entry->map_err_type = MAP_ERR_NOT_CHECKED;
->   
-> -	check_for_stack(dev, page, offset);
-> +	if (!(attrs & DMA_ATTR_MMIO)) {
-> +		struct page *page = phys_to_page(phys);
-> +		size_t offset = offset_in_page(page);
->   
-> -	if (!PageHighMem(page)) {
-> -		void *addr = page_address(page) + offset;
-> +		check_for_stack(dev, page, offset);
->   
-> -		check_for_illegal_area(dev, addr, size);
-> +		if (!PageHighMem(page)) {
-> +			void *addr = page_address(page) + offset;
-> +
-> +			check_for_illegal_area(dev, addr, size);
-> +		}
->   	}
->   
->   	add_dma_entry(entry, attrs);
-> @@ -1274,11 +1280,11 @@ void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
->   }
->   EXPORT_SYMBOL(debug_dma_mapping_error);
->   
-> -void debug_dma_unmap_page(struct device *dev, dma_addr_t dma_addr,
-> +void debug_dma_unmap_phys(struct device *dev, dma_addr_t dma_addr,
->   			  size_t size, int direction)
->   {
->   	struct dma_debug_entry ref = {
-> -		.type           = dma_debug_single,
-> +		.type           = dma_debug_phy,
->   		.dev            = dev,
->   		.dev_addr       = dma_addr,
->   		.size           = size,
-> diff --git a/kernel/dma/debug.h b/kernel/dma/debug.h
-> index f525197d3cae..76adb42bffd5 100644
-> --- a/kernel/dma/debug.h
-> +++ b/kernel/dma/debug.h
-> @@ -9,12 +9,11 @@
->   #define _KERNEL_DMA_DEBUG_H
->   
->   #ifdef CONFIG_DMA_API_DEBUG
-> -extern void debug_dma_map_page(struct device *dev, struct page *page,
-> -			       size_t offset, size_t size,
-> -			       int direction, dma_addr_t dma_addr,
-> +extern void debug_dma_map_phys(struct device *dev, phys_addr_t phys,
-> +			       size_t size, int direction, dma_addr_t dma_addr,
->   			       unsigned long attrs);
->   
-> -extern void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
-> +extern void debug_dma_unmap_phys(struct device *dev, dma_addr_t addr,
->   				 size_t size, int direction);
->   
->   extern void debug_dma_map_sg(struct device *dev, struct scatterlist *sg,
-> @@ -55,14 +54,13 @@ extern void debug_dma_sync_sg_for_device(struct device *dev,
->   					 struct scatterlist *sg,
->   					 int nelems, int direction);
->   #else /* CONFIG_DMA_API_DEBUG */
-> -static inline void debug_dma_map_page(struct device *dev, struct page *page,
-> -				      size_t offset, size_t size,
-> -				      int direction, dma_addr_t dma_addr,
-> -				      unsigned long attrs)
-> +static inline void debug_dma_map_phys(struct device *dev, phys_addr_t phys,
-> +				      size_t size, int direction,
-> +				      dma_addr_t dma_addr, unsigned long attrs)
->   {
->   }
->   
-> -static inline void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
-> +static inline void debug_dma_unmap_phys(struct device *dev, dma_addr_t addr,
->   					size_t size, int direction)
->   {
->   }
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index 107e4a4d251d..4c1dfbabb8ae 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -157,6 +157,7 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
->   		unsigned long attrs)
->   {
->   	const struct dma_map_ops *ops = get_dma_ops(dev);
-> +	phys_addr_t phys = page_to_phys(page) + offset;
->   	dma_addr_t addr;
->   
->   	BUG_ON(!valid_dma_direction(dir));
-> @@ -165,16 +166,15 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
->   		return DMA_MAPPING_ERROR;
->   
->   	if (dma_map_direct(dev, ops) ||
-> -	    arch_dma_map_page_direct(dev, page_to_phys(page) + offset + size))
-> +	    arch_dma_map_page_direct(dev, phys + size))
->   		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
->   	else if (use_dma_iommu(dev))
->   		addr = iommu_dma_map_page(dev, page, offset, size, dir, attrs);
->   	else
->   		addr = ops->map_page(dev, page, offset, size, dir, attrs);
->   	kmsan_handle_dma(page, offset, size, dir);
-> -	trace_dma_map_page(dev, page_to_phys(page) + offset, addr, size, dir,
-> -			   attrs);
-> -	debug_dma_map_page(dev, page, offset, size, dir, addr, attrs);
-> +	trace_dma_map_page(dev, phys, addr, size, dir, attrs);
-> +	debug_dma_map_phys(dev, phys, size, dir, addr, attrs);
->   
->   	return addr;
->   }
-> @@ -194,7 +194,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
->   	else
->   		ops->unmap_page(dev, addr, size, dir, attrs);
->   	trace_dma_unmap_page(dev, addr, size, dir, attrs);
-> -	debug_dma_unmap_page(dev, addr, size, dir);
-> +	debug_dma_unmap_phys(dev, addr, size, dir);
->   }
->   EXPORT_SYMBOL(dma_unmap_page_attrs);
->   
-> @@ -712,7 +712,8 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
->   	if (page) {
->   		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
->   				      size, dir, gfp, 0);
-> -		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
-> +		debug_dma_map_phys(dev, page_to_phys(page), size, dir,
-> +				   *dma_handle, 0);
->   	} else {
->   		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
->   	}
-> @@ -738,7 +739,7 @@ void dma_free_pages(struct device *dev, size_t size, struct page *page,
->   		dma_addr_t dma_handle, enum dma_data_direction dir)
->   {
->   	trace_dma_free_pages(dev, page_to_virt(page), dma_handle, size, dir, 0);
-> -	debug_dma_unmap_page(dev, dma_handle, size, dir);
-> +	debug_dma_unmap_phys(dev, dma_handle, size, dir);
->   	__dma_free_pages(dev, size, page, dma_handle, dir);
->   }
->   EXPORT_SYMBOL_GPL(dma_free_pages);
+"Fine" = "not dependent on luck".  So, random is not fine.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> > If so, is this documented somewhere, such as in booting.rst?
+> 
+> booting.rst is for the bootloader.
+> Late secondaries is a bit of a niche sport, I've only seen it commonly done in VMs.
+> Most platforms so far have their MPAM controls on a global L3, so this requirement doesn't
+> make much of a difference.
+> 
+> The concern is that if resctrl gets probed after user-space has started, whatever
+> user-space service is supposed to set it up will have concluded its not supported. Working
+> with cache-ids for offline CPUs means you don't have to bring all the CPUs online - only
+> enough so that every piece of hardware is reachable.
+> 
+> 
+> > Maybe this is not a new requirement -- it's not an area that I'm very
+> > familiar with.
+> 
+> Hard to say - its a potentially surprising side effect of glomming OS accessible registers
+> onto the side of hardware that can be automatically powered off. (PSCI CPU_SUSPEND).
+> 
+> I did try getting cacheinfo to populate all the CPUs at boot, regardless of whether they
+> were online. Apparently that doesn't work for PowerPC where the properties of CPUs can
+> change while they are offline. (presumably due to RAS or a firmware update)
 
+So, it sounds like there is a requirement, but we don't document it,
+and if the requirement is not met then the user is presented with an
+obscure failure in the MPAM driver.  This seems a bit unhelpful?
+
+I'm not saying booting.rst is the right place for this -- maybe the
+appropriate document doesn't exist yet.
+
+I wonder whether the required property is reasonable and general enough
+that it should be treated as a kernel boot requirement.
+
+Or, we require caches to be symmetric for non-early CPUs and reject
+those that don't match when they try to come online (similarly to
+the way cpufeatures deals with mismatches).
+
+
+> >> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> >> index 8f9b9508acba..660457644a5b 100644
+> >> --- a/drivers/acpi/pptt.c
+> >> +++ b/drivers/acpi/pptt.c
+> >> @@ -907,3 +907,67 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+> >>  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
+> >>  					  ACPI_PPTT_ACPI_IDENTICAL);
+> >>  }
+> >> +
+> >> +/**
+> >> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
+> >> + * @cache_id: The id field of the unified cache
+> >> + *
+> >> + * Determine the level relative to any CPU for the unified cache identified by
+> >> + * cache_id. This allows the property to be found even if the CPUs are offline.
+> >> + *
+> >> + * The returned level can be used to group unified caches that are peers.
+> >> + *
+> >> + * The PPTT table must be rev 3 or later,
+> >> + *
+> >> + * If one CPUs L2 is shared with another as L3, this function will return
+> >> + * an unpredictable value.
+> >> + *
+> >> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
+> > 
+> > Nit: doesn't exist or its revision is too old.
+> 
+> ... its not old, but there is no published spec for that revision... unsupported?
+
+That seems OK, say,
+
+	"... if the PPTT doesn't exist or has an unsupported format, or ..."
+
+
+> >> + * Otherwise returns a value which represents the level of the specified cache.
+> >> + */
+> >> +int find_acpi_cache_level_from_id(u32 cache_id)
+> >> +{
+> >> +	u32 acpi_cpu_id;
+> >> +	int level, cpu, num_levels;
+> >> +	struct acpi_pptt_cache *cache;
+> >> +	struct acpi_pptt_cache_v1 *cache_v1;
+> >> +	struct acpi_pptt_processor *cpu_node;
+> >> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_PPTT, 0);
+> 
+> > acpi_get_pptt() ? (See comment on patch 3.)
+> 
+> Yup,
+> 
+> > Comments there also suggest that the acpi_put_table() may be
+> > unnecessary, at least on some paths.
+> > 
+> > I haven't tried to understand the ins and outs of this.
+> 
+> It's grabbing one reference and using it for everything, because it needs to 'map' the
+> table in atomic context due to cpuhp, but can't.
+> Given how frequently its used, there is no problem just leaving it mapped.
+
+That's rather what I thought -- in which case we can use it (as you
+already concluded, by the looks of it).
+
+> >> +
+> >> +	if (IS_ERR(table))
+> >> +		return PTR_ERR(table);
+> >> +
+> >> +	if (table->revision < 3)
+> >> +		return -ENOENT;
+> >> +
+> >> +	/*
+> >> +	 * If we found the cache first, we'd still need to walk from each CPU
+> >> +	 * to find the level...
+> >> +	 */
+> 
+> > ^ Possibly confusing comment?  The cache id is the starting point for
+> > calling this function.  Is there a world in which we are at this point
+> > without first having found the cache node?
+> > 
+> > (If the comment is just a restatement of part of the kerneldoc
+> > description, maybe just drop it.)
+> 
+> It's describing the alternate world where the table is searched to find the cache first,
+> but then we'd still need to walk the table another NR_CPUs times, which can't be avoided.
+> I'll drop it - it was justifying why its done this way round...
+
+Oh, I see, this is "if the code had been written in such-and-such a way",
+not "if such-and-such a runtime precondition is met" ?
+
+The comment can be read both ways, as it stands.
+
+> 
+> >> +	for_each_possible_cpu(cpu) {
+> >> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+> >> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
+> >> +		if (!cpu_node)
+> >> +			return -ENOENT;
+> >> +		num_levels = acpi_count_levels(table, cpu_node, NULL);
+> > 
+> > Is the initial call to acpi_count_levels() really needed here?
+> > 
+> > It feels a bit like we end up enumerating the whole topology two or
+> > three times here; once to count how many levels there are, and then
+> > again to examine the nodes, and once more inside acpi_find_cache_node().
+> > 
+> > Why can't we just walk until we run out of levels?
+> 
+> This is looking for a unified cache - and we don't know where those start.
+> We could walk the first 100 caches, and stop once we start getting unified caches, then
+> they stop again ... but this seemed simpler.
+
+I'm still a bit confused.
+
+We start at level one, and then trace parents until we hit a unified
+cache or run out of levels.
+
+Why do we need to know a priori how many levels there are, when the
+way to determine that is part of the same procedure we're already doing
+(i.e., start at level one and trace parents until we run out of levels)?
+
+> > I may be missing some details of how these functions interact -- if
+> > this is only run at probe time, compact, well-factored code is
+> > more important than making things as fast as possible.
+
+(This still stands.)
+
+
+> >> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+
+[...]
+
+> >> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
+> >>  void acpi_table_init_complete (void);
+> >>  int acpi_table_init (void);
+> >>  
+> >> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
+> >> +{
+> >> +	struct acpi_table_header *table;
+> >> +	int status = acpi_get_table(signature, instance, &table);
+> >> +
+> >> +	if (ACPI_FAILURE(status))
+> >> +		return ERR_PTR(-ENOENT);
+> >> +	return table;
+> >> +}
+> 
+> > This feels like something that ought to exist already.  If not, why
+> > not?  If so, are there open-coded versions of this spread around the
+> > ACPI tree that should be ported to use it?
+> 
+> 
+> It's a cleanup idiom helper that lets the compiler do this automagically - but its moot as
+> its not going to be needed in the pptt because of the acpi_get_pptt() thing.
+
+Ah, OK.
+
+Cheers
+---Dave
 
