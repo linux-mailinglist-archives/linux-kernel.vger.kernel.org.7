@@ -1,195 +1,282 @@
-Return-Path: <linux-kernel+bounces-802963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59430B458F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FB3B458FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575D55844BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF7DA63042
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFEB352087;
-	Fri,  5 Sep 2025 13:25:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AC135207B;
+	Fri,  5 Sep 2025 13:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAXKGkRr"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6C5342CB6
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F4A352FC9;
+	Fri,  5 Sep 2025 13:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078737; cv=none; b=NpkAF/eiTYHfrPiicWy5tutRcau5mlGUHegjdCaKGoCXKMRoEGCxLWv/2U2euYfVOmpJsrRRSjQvEh9SSi8rfafI5wRKSLtMPUUaUGqTSc8j56BTspe+byJ/GbS3q//sAGmoipznlXYOfmZl9JSft7raGVxCvcLIzNvQSJhiCNI=
+	t=1757078744; cv=none; b=AAXDGdmPDUKZPVG73h4mq/084QMIKsYXNO85kUQe1l3yt6IpqkVOHn80dMrEBb2pXdN+vxNAKY7jF6jJrxgxzYgEmId+Vn88+TS38t91oFzMqBKNdjnK4Nn5s6zl1Vm/8Og34pk0W83YAGP4fmpeKDZ+VyAAgHrDQgydjkc3Vnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078737; c=relaxed/simple;
-	bh=tGO4cCRapMvGI0EUV64jUXVAQdqrOE8X7PZsB2baUOs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BTXFU8/LkDkXzJfsjnHUHwzCHOZ9KJ4iks9FzttregD/4RpXCSfNgJYMlAlQMkYPMMrR+D4G8iqY0Ho6pTD4rTokVu8HzVZXTkKFfSiXYmeRiI2wAJfKmGOtlJsqlSnvjkpmQ5IOqmRmRu605Klaq0XCNZ2wNN2MOoS4Sbr5FCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3f29a0a7643so21793425ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:25:35 -0700 (PDT)
+	s=arc-20240116; t=1757078744; c=relaxed/simple;
+	bh=L4BAOHTwl0ipTwrFZMhJzeSd7efJ8slcz7WfQ3nADVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EydN5ANbzuHsMuGDMibJ2/RiDjTcUkI3zFztPF2GDHkVUoj/UE/rdKZc27kQD4DFryc1IFtHGGgEklyHgtPpIohF5gkoqdsTzSpB34nNDNNDZVu54eDsBrQkbPNT9z6bsF+zhxAYzC0BcYgfKCvp05zROamdQXHRzZgv1ohGk6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAXKGkRr; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-722e079fa1aso22625796d6.3;
+        Fri, 05 Sep 2025 06:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757078741; x=1757683541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zJ0T6U/T6UQ1qYc/4ZVKsxkWn4SoWZtNQkL/xv1llDQ=;
+        b=HAXKGkRrmJYmJ6NNoEpunwfA97xgZ6DFitAIg3uetWjnR2QWJ45iIKUtg2qFinAkrC
+         KQvErDtct5hxF804CaEbtfPDzA56aG7WZAzwfeyhXu1ffbv5xEk9OwQxtawV6Y6CPjIv
+         iGph5K2DhugIV3L1TrkN0JbTqYdS9xeFlUzu+MPpTcKwWiHd8MXJlAipkJYiXgDBjfct
+         UQ+mjyKlkgbnzFAmDyF5eo16NW7CqTlKmuxPKVPj+ftuu2QlwI6Dmut1mX0fZv8ZsCnx
+         29ICsSXIxgo/PZ+AEjlBucytMsfOUFL3okrzaeszECCNtatlrlObOsiRCAaPvJe9frU0
+         x2xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078735; x=1757683535;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/4Elh7QOytx4ZZgIek2zTHwssf7pXDqP3udNq6JZzVo=;
-        b=b2YA5jDmybbnH4XEhZlzPnk6sVeCPqvO36RyAqmixCUnbtjDOn7Mv3LYXzjAXPs1mM
-         OWzYExzRn5/N08ydA3mZBtIb4IyXcv/fMMX1BRjInvD2t1UZ2VjfelPLrqJcJYYOPupc
-         clNkuUaGGdtzj0ZM9Ei0P/YNEsRESviVh1/qgjsv/7CeGL0hWvG163/W/rV3Z3pO8hxn
-         f1FbSxLUSuQUELEvYbfxvKe2Afl67D/DZezldCv0iHmVpVTsYGGGdobcQyLhF/Of/RPg
-         ClTJ0PZlk/fPkAwCMm7yWrhrRtdxOSs4FPopBypAGmVxailTZmXHFOjKYWUUzEropOhW
-         zttA==
-X-Forwarded-Encrypted: i=1; AJvYcCWezRL7IS1f4YEBSdsdgBmx10Vkryyj55Iz8B7RmJ+65OvJKTdYkcqXXC6HUlmHGaBZ5AGXg5EWB1szmsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ1LhD6qEAxziS/5mdvcP6Ba+MhIvK/wjkwt/bT3B5yO9LXdtf
-	Fgt1ukzLkIA1e/wP6PM9OQDQcLlUcDlu35e045unT1QLbzLtcclu4Q0JhMFpya/4DlSuro5G3m+
-	/swUFiQXCazVhwXLakxNd9G5g2dcxZpY5MFE44uaFGoJC6Vcs+TOnpxBIOJs=
-X-Google-Smtp-Source: AGHT+IHwnwdRge0T4S8uURmNjM4GphB5kqRkJAS0qTVE25vmjSTY4Dd9PV0NRYsZElZozbPfLsk9iw1nBRpF7YF20+/HvE18CegU
+        d=1e100.net; s=20230601; t=1757078741; x=1757683541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zJ0T6U/T6UQ1qYc/4ZVKsxkWn4SoWZtNQkL/xv1llDQ=;
+        b=lQPRLMLiSfNE/THX+GHdM6RDhTJKxblmXB3/AaJtVyBqh2zGXwUrKRSWAAzv8Bb6Kr
+         PLrlyuO8x802rdQyUduijv08U0RwnMh+ofRWbsa1YZuQWxRSpzf0X6LbIUwGnu5F4wPL
+         0JG/OKmkT89Y1WR3UjiabSr5fHe1biu8AXgqZME5MztI12TUOSDOg+70lw516nzIkgQu
+         FMlSp0BetMUhHI7YTcW27R5V8o5e6Ozzc5xuqDVMbigmgukXsQaZ3y9tgkjksnRE55ZG
+         BmvMtier8M2fvo1xwb5fTmERAxelRbOoWjW5UsHyhlw2ETbTqse6sFstpbUI8YyB8jr0
+         6szg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2CBVJEGTD3SZnL3CJ7dyJuBsxpR4LzBnT2bDMqotSfB1VrDuI2RL7vYaDccyuVnEqBIldym6t8YEbc/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzhCMEc9TsbMPGBl2YBlI7meT9YTX0MF7XdWqNVL6k3aAHRdKz
+	iYnep4A89lDUb4G4xxzZGl5DS6AJnP+k74lXTCyyfecP2ZeWhJuUcdNo
+X-Gm-Gg: ASbGnct0BpiPFn6eChR4HJcuMNijPgtc2Du5jf1qz32t9xhNIkrVdIYE/gNAXJZlSJZ
+	yx3EHG75YlxXNgeBhR0iqs/Ax3/rtQBNlA+Yv9ABIgqboiFFJFeAMYZzHNrxK0QChAyxgblQk+u
+	ntOlv6cLkw+MOgQzFmZmxXqWzWcFb2x0hsKcK92iQkK8N2QOuSvGeJSvUxQGD+8ZC9fvH94jJ/z
+	cC/SF73tpaKxxOalf3wClfNfKBj2+D07W+wrmZAdpQPUc7xlhTti6HXwvuAsoJeJWGGnBQaJq63
+	uKJODHODfN/Qz6oSSRpmGF7JWG3SNLljDn+CjE1s/GxDXOWQtdHLwZquAmjiF5OrHOupUE3HJym
+	8RSphEVhd2VAEic/PTtvPCa4RjjtRyPA=
+X-Google-Smtp-Source: AGHT+IGEW5HH1l9cDiAN523W1dhqg0PghJovG7OwZuNXX/82e5lclhQQWm0Glat+o9SM4eOw+8ecXQ==
+X-Received: by 2002:a05:6214:acc:b0:725:f1c3:2ab with SMTP id 6a1803df08f44-725f1c30539mr110841746d6.43.1757078741100;
+        Fri, 05 Sep 2025 06:25:41 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:74::])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-73377c2acb1sm3375646d6.72.2025.09.05.06.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 06:25:40 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: alx@kernel.org
+Cc: linux-man@vger.kernel.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	hannes@cmpxchg.org,
+	baohua@kernel.org,
+	shakeel.butt@linux.dev,
+	ziy@nvidia.com,
+	laoar.shao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of PR_THP_DISABLE_EXCEPT_ADVISED
+Date: Fri,  5 Sep 2025 14:25:36 +0100
+Message-ID: <20250905132536.1998767-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:228f:b0:3f9:6c36:ca1e with SMTP id
- e9e14a558f8ab-3f96c36cc58mr21575495ab.4.1757078734659; Fri, 05 Sep 2025
- 06:25:34 -0700 (PDT)
-Date: Fri, 05 Sep 2025 06:25:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bae4ce.a00a0220.eb3d.0014.GAE@google.com>
-Subject: [syzbot] [mm?] general protection fault in unpin_user_page_range_dirty_lock
-From: syzbot <syzbot+0d2f32dad7098551e15d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, david@redhat.com, jgg@ziepe.ca, 
-	jhubbard@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	peterx@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
+THPs when advised. IOW, it allows individual processes to opt-out of THP =
+"always" into THP = "madvise", without affecting other workloads on the
+system. The series has been merged in [1]. Before [1], the following 2
+calls were allowed with PR_SET_THP_DISABLE:
 
-syzbot found the following issue on:
+prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0); // to reset THP setting.
+prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0); // to disable THPs completely.
 
-HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=138b087c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d2f32dad7098551e15d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a8a134580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159de962580000
+Now in addition to the 2 calls above, you can do:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
+prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0); // to
+disable THPs except madvise.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d2f32dad7098551e15d@syzkaller.appspotmail.com
+This patch documents the changes introduced due to the addition of
+PR_THP_DISABLE_EXCEPT_ADVISED flag:
+- PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
+  is configured for the calling thread (with or without
+  PR_THP_DISABLE_EXCEPT_ADVISED).
+- PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
+  completely for the process, or disable except madvise
+  (PR_THP_DISABLE_EXCEPT_ADVISED).
 
-mmap: syz.0.17 (6062) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 UID: 0 PID: 6062 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-RIP: 0010:gup_folio_range_next mm/gup.c:241 [inline]
-RIP: 0010:unpin_user_page_range_dirty_lock+0x63/0x4e0 mm/gup.c:369
-Code: 45 31 ed 4c 89 74 24 18 4c 89 6c 24 10 49 c1 e5 06 4b 8d 1c 2e 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 ff 3e 1c 00 4d 01 f5 4c 8b 23 4c 89
-RSP: 0018:ffffc9000413f6d0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffea0002d10037 R09: 1ffffd40005a2006
-R10: dffffc0000000000 R11: fffff940005a2007 R12: 0000000000000002
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555587af6500(0000) GS:ffff8881259fa000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000000 CR3: 0000000074024000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- batch_unpin+0x3eb/0x560 drivers/iommu/iommufd/pages.c:691
- iopt_pages_unpin_xarray drivers/iommu/iommufd/pages.c:1711 [inline]
- iopt_pages_unfill_xarray+0x813/0xaa0 drivers/iommu/iommufd/pages.c:1747
- iopt_area_remove_access+0x2c4/0x3f0 drivers/iommu/iommufd/pages.c:2196
- iommufd_access_unpin_pages+0x33b/0x4e0 drivers/iommu/iommufd/device.c:1357
- iommufd_test_access_unmap+0x28c/0x300 drivers/iommu/iommufd/selftest.c:1448
- iommufd_test_staccess_release+0x6a/0xb0 drivers/iommu/iommufd/selftest.c:1489
- __fput+0x44c/0xa70 fs/file_table.c:468
- task_work_run+0x1d1/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdd6e78ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd897539d8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 0000000000019b27 RCX: 00007fdd6e78ebe9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000789753ccf
-R10: 0000001b31420000 R11: 0000000000000246 R12: 00007fdd6e9c5fac
-R13: 00007fdd6e9c5fa0 R14: ffffffffffffffff R15: 0000000000000003
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-RIP: 0010:gup_folio_range_next mm/gup.c:241 [inline]
-RIP: 0010:unpin_user_page_range_dirty_lock+0x63/0x4e0 mm/gup.c:369
-Code: 45 31 ed 4c 89 74 24 18 4c 89 6c 24 10 49 c1 e5 06 4b 8d 1c 2e 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 ff 3e 1c 00 4d 01 f5 4c 8b 23 4c 89
-RSP: 0018:ffffc9000413f6d0 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffea0002d10037 R09: 1ffffd40005a2006
-R10: dffffc0000000000 R11: fffff940005a2007 R12: 0000000000000002
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555587af6500(0000) GS:ffff8881259fa000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000000 CR3: 0000000074024000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	45 31 ed             	xor    %r13d,%r13d
-   3:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
-   8:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
-   d:	49 c1 e5 06          	shl    $0x6,%r13
-  11:	4b 8d 1c 2e          	lea    (%r14,%r13,1),%rbx
-  15:	48 83 c3 08          	add    $0x8,%rbx
-  19:	48 89 d8             	mov    %rbx,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 ff 3e 1c 00       	call   0x1c3f37
-  38:	4d 01 f5             	add    %r14,%r13
-  3b:	4c 8b 23             	mov    (%rbx),%r12
-  3e:	4c                   	rex.WR
-  3f:	89                   	.byte 0x89
+[1] https://lore.kernel.org/all/20250815135549.130506-1-usamaarif642@gmail.com/
 
-
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1 -> v2 (Alejandro Colomar):
+- Fixed diuble negation on when MADV_HUGEPAGE will succeed
+- Turn return values of PR_GET_THP_DISABLE into a table
+- Turn madvise calls into full italics
+- Use semantic newlines
+---
+ man/man2/madvise.2                      |  6 ++-
+ man/man2const/PR_GET_THP_DISABLE.2const | 20 +++++++---
+ man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
+ 3 files changed, 64 insertions(+), 14 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/man/man2/madvise.2 b/man/man2/madvise.2
+index 10cc21fa4..847e7aea6 100644
+--- a/man/man2/madvise.2
++++ b/man/man2/madvise.2
+@@ -371,9 +371,11 @@ or
+ .BR VM_PFNMAP ,
+ nor can it be stack memory or backed by a DAX-enabled device
+ (unless the DAX device is hot-plugged as System RAM).
+-The process must also not have
++The process can have
+ .B PR_SET_THP_DISABLE
+-set (see
++set only if
++.B PR_THP_DISABLE_EXCEPT_ADVISED
++flag is set (see
+ .BR prctl (2)).
+ .IP
+ The
+diff --git a/man/man2const/PR_GET_THP_DISABLE.2const b/man/man2const/PR_GET_THP_DISABLE.2const
+index 38ff3b370..d63cff21c 100644
+--- a/man/man2const/PR_GET_THP_DISABLE.2const
++++ b/man/man2const/PR_GET_THP_DISABLE.2const
+@@ -6,7 +6,7 @@
+ .SH NAME
+ PR_GET_THP_DISABLE
+ \-
+-get the state of the "THP disable" flag for the calling thread
++get the state of the "THP disable" flags for the calling thread
+ .SH LIBRARY
+ Standard C library
+ .RI ( libc ,\~ \-lc )
+@@ -18,13 +18,23 @@ Standard C library
+ .B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
+ .fi
+ .SH DESCRIPTION
+-Return the current setting of
+-the "THP disable" flag for the calling thread:
+-either 1, if the flag is set, or 0, if it is not.
++Return a value whose bits indicate how THP-disable is configured
++for the calling thread.
++The returned value is interpreted as follows:
++.P
++.TS
++allbox;
++cb cb cb l
++c c c l.
++Bit 1	Bit 0	Value	Description
++0	0	0	No THP-disable behaviour specified.
++0	1	1	THP is entirely disabled for this process.
++1	1	3	THP-except-advised mode is set for this process.
++.TE
+ .SH RETURN VALUE
+ On success,
+ .BR PR_GET_THP_DISABLE ,
+-returns the boolean value described above.
++returns the value described above.
+ On error, \-1 is returned, and
+ .I errno
+ is set to indicate the error.
+diff --git a/man/man2const/PR_SET_THP_DISABLE.2const b/man/man2const/PR_SET_THP_DISABLE.2const
+index 564e005d4..82e694724 100644
+--- a/man/man2const/PR_SET_THP_DISABLE.2const
++++ b/man/man2const/PR_SET_THP_DISABLE.2const
+@@ -6,7 +6,7 @@
+ .SH NAME
+ PR_SET_THP_DISABLE
+ \-
+-set the state of the "THP disable" flag for the calling thread
++set the state of the "THP disable" flags for the calling thread
+ .SH LIBRARY
+ Standard C library
+ .RI ( libc ,\~ \-lc )
+@@ -15,24 +15,62 @@ Standard C library
+ .BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+ .B #include <sys/prctl.h>
+ .P
+-.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
++.BI "int prctl(PR_SET_THP_DISABLE, long " thp_disable ", unsigned long " flags ", 0L, 0L);"
+ .fi
+ .SH DESCRIPTION
+-Set the state of the "THP disable" flag for the calling thread.
++Set the state of the "THP disable" flags for the calling thread.
+ If
+-.I flag
+-has a nonzero value, the flag is set, otherwise it is cleared.
++.I thp_disable
++has a nonzero value,
++the THP disable flag is set according to the value of
++.I flags,
++otherwise it is cleared.
+ .P
+-Setting this flag provides a method
++This
++.BR prctl (2)
++provides a method
+ for disabling transparent huge pages
+ for jobs where the code cannot be modified,
+ and using a malloc hook with
+ .BR madvise (2)
+ is not an option (i.e., statically allocated data).
+-The setting of the "THP disable" flag is inherited by a child created via
++The setting of the "THP disable" flags is inherited by a child created via
+ .BR fork (2)
+ and is preserved across
+ .BR execve (2).
++.P
++The behavior depends on the value of
++.IR flags:
++.TP
++.B 0
++The
++.BR prctl (2)
++call will disable THPs completely for the process,
++irrespective of global THP controls or
++.BR MADV_COLLAPSE .
++.TP
++.B PR_THP_DISABLE_EXCEPT_ADVISED
++The
++.BR prctl (2)
++call will disable THPs for the process
++except when the usage of THPs is
++advised.
++Consequently, THPs will only be used when:
++.RS
++.IP \[bu] 3
++Global THP controls are set to "always" or "madvise" and
++.I \%madvise(...,\~MADV_HUGEPAGE)
++or
++.I \%madvise(...,\~MADV_COLLAPSE)
++is used.
++.IP \[bu]
++Global THP controls are set to "never" and
++.I \%madvise(...,\~MADV_COLLAPSE)
++is used.
++This is the same behavior
++as if THPs would not be disabled on
++a process level.
++.RE
+ .SH RETURN VALUE
+ On success,
+ 0 is returned.
+-- 
+2.47.3
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
