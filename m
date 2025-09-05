@@ -1,278 +1,220 @@
-Return-Path: <linux-kernel+bounces-803236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DC9B45C7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:26:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E1AB45C83
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6893B1AD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BAC3AB215
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B8B2F1FD1;
-	Fri,  5 Sep 2025 15:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AC32C21D0;
+	Fri,  5 Sep 2025 15:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O18InHgf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IRWe+QnJ"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558071EFF80;
-	Fri,  5 Sep 2025 15:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50491E4BE
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085889; cv=none; b=TqZSrtf9bYhOGDhuOZZD8pqC9tr6zsZFJ+vv+/oNIuE5g8YNUtg3HhhUaXe/CUM1XCkYkb6V50TLe12s3Pa2QxR4ilw2MuY2Ah0gmAvvSCivI3588E2lGVjuNGyKh1Dr4YKkNxuoGBok76o10Dw3GtJUri20vz0+PDBL/67j+Vk=
+	t=1757085910; cv=none; b=BTWcw2VYgviOj35jR8NG21MmFu1HUqMS7DoY/HRCQWbfbgR6ALYs9QXSkJ1KKabUHRtK/tqlybkAAvBRFsKlQ3oiaWFW1sCxVLu/C3cs0yuxpcfJ5vZPdhTPTyjBz2nmPcH7qw9VZz0EcBwxGzbiSQZA9cqx1TJGnqEyF8y+7gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085889; c=relaxed/simple;
-	bh=8YZ6X5KZJEhH4BEj11wZLZMihkQrfiHeRWmRqcL1PG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPV2hN4XlsgiilmMqbnQ4Ufudef0OBdBiGxTnjI4EMlo3iuCXJiHZDe/MvKq5mE+ALCL/+Wtl7X/56ggzzDifJGzDL0pND7AMUaLWN8AlFxlmF52vntF49aNWmrC3a6tfQ2Q69DO3vZ+0du7b6j/EfYS27ECo0C4ekkpXDkKlGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O18InHgf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28ADC4CEF1;
-	Fri,  5 Sep 2025 15:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085888;
-	bh=8YZ6X5KZJEhH4BEj11wZLZMihkQrfiHeRWmRqcL1PG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O18InHgfGkEe6qdiupEfZ/rxyk3ESsIOqG1A+gtZL2zWNFkB6hXBdJvwWWToXla3l
-	 wAt98PCKdsFUpkXrvSO4AHZQFJN9gCb9FDN+6TO7w2QBpBmkyosA7Z6oOO0MmhQeJZ
-	 kfqIdOEL1meUpPA0oxdHmKOeUpD3ym12FVjUvRasaK0Nm9fCZSA5ncNqfI3ZRl7h6h
-	 2kDNIl0XEdwDeQ0PwyHJFnc1IS7JKRaCP9WYPMVMfQ+L3e8uTAyuf8XhElTZd4GkYN
-	 T4AUBeJq9gzbC/BR5QXn3gafdVGsvkEmOkNALjs5UhaQSbWbazp5DLIM60otJkG2+3
-	 fUTIVO4pU9OWg==
-Date: Fri, 5 Sep 2025 16:24:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Asuna <spriteovo@gmail.com>
-Cc: Jason Montleon <jmontleo@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Tejun Heo <tj@kernel.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Matthew Maurer <mmaurer@google.com>, Jeff Xu <jeffxu@chromium.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
-Message-ID: <20250905-prolonged-chip-73be9d74ddb5@spud>
-References: <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250903190806.2604757-1-SpriteOvO@gmail.com>
- <20250903190806.2604757-2-SpriteOvO@gmail.com>
- <20250904-sterilize-swagger-c7999b124e83@spud>
- <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
+	s=arc-20240116; t=1757085910; c=relaxed/simple;
+	bh=pCssCAZOfH3pEc83kPgsxuJYzG6xdafoVP+lGf4sCEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aEmKqXoIfzeogc+KItbvqQGM3IVGo5uZitAHQ9dKRQ7GMon1D+UCoJ53sXFtwSfH1nLrGArewFFzuAiNeY0mj4eHU8bVjMoPluliKjoJL9tWn1gMxWlKvWD7MMlKXwQLGLpUlq5lqAy7ii71X1Ypv55lsJmUtuDdoEY03cpQAfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IRWe+QnJ; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e526608f3so1534721eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757085908; x=1757690708; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pohUBiCn9QjRHZYLkhaWb0quU2GyqpyHJzVGv2GHYcA=;
+        b=IRWe+QnJauD76B/HkjEJkf9PYsVkYb5KDcXX0HE2cUc42LspKTKRzFD4Nc56RFvASy
+         uG9Op8pwT5cv7cqUS+B3EikwIzJSxl/zNzBpk7BxC1q3p3f7dR/ux8omnHMGgg4EPw8y
+         ReQyU01dWZEWwXSJR25bpDFV7rcRmkfxmp1qz5GFipe1t093cZ/eM8Lj5m4trXkvfRu0
+         Kb1K27+UUYUoLTKsjMEtVczFlAKno5q77MQHOj06lQiRyENztSBZjG9Ex8AJgFLo/NQW
+         UsCZb4osjxvv7qdsPJRp84cbhXs7tLY2pixItPspDkFOOejyPyD+oCde6dGjcMtykZY9
+         VuQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757085908; x=1757690708;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pohUBiCn9QjRHZYLkhaWb0quU2GyqpyHJzVGv2GHYcA=;
+        b=UaNfb8nxonkmjptjiGrb7cPXogo883M8kr9lGnBEN400p5M9cZU0fH+jlP38VRvgmS
+         O6QVJGj+7DKdTD0gN6mRtsr2G9ancWBmRNCnlXj/fsBIr/rrvWc13IdyX8npwM88HstP
+         z4WE2rqF0pEyy76pJf0IaTeJGQb3Dq2PCkmEQVjUZJyXHvDE2Ak1uUwMwayDFs8SoeQM
+         4CjRvJW03sAMda8jsVdkxse4ptMSnKA+hhdxT3RjZpinEwnh7m9EtfPQEdwNf62ZqypF
+         PY8maLJLQ1Aa0AtnrKWY8QDgaF9nvC8kCEU0A/Kgl+Ytbe1SURXo0DqUZJP84k/fRf6p
+         93uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoaz0RCsw8QJSHZ22Cf1zqWbwBiKDUGcH6VhB9OWRTRgschmUv/EKnBRKGjdYCV0KR6IT4Ea5SRcBrQ24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDNkESuE+xCRvVhCgOLrKplWOV0r3woTdlm69zzPq+wOUWhR7f
+	IWmdzRuWOXMdVbq8Ndy98diP6zdzRh8xCG2/8nqDeAMnHjJFKocTvFqROWh7LBxcDX8=
+X-Gm-Gg: ASbGncu0xU4Wv9sZncgZpn/JT5cqqOlPDXE0pdBWKVsumWsXkgTXafqeFAYNcWF8meI
+	AwaXCBoCg6uw//S6h72i63h74uW2Kj4DY51Uq50cCTVkqrUxATr6EWK5Sa21ugMiBukNXSFkIpk
+	eP1DwBlD4pPdOFlKsJBnUoSrCLIBkXUTTVjNmYFcCwTdyojw22NDmjSL6k41K2lssS1gi3WWM3c
+	lkrMdoArFtCBsKWp9ihDjduz5tNeUjmdTb2f0IpG9NF/KQN3AERUw45YxT8ZTjMAt2WyapaNGqP
+	nlqlOWSwfRfrZCuz7Rv9ULh0/2sgT65zkf8kaHvoxgPXx+6iCE4GBFDqGq6+cxTJeA/UL25e9wu
+	dtF7Z53hw8D7igmmnwDC7TWhCBf/tZl/41LNdttH1uyOR2HmvEdGnUhCaTtwdXaYTGFvUEcgGH1
+	HpnuNSPcE=
+X-Google-Smtp-Source: AGHT+IEECzwl36a34ODawpMXccaR6JC9vsf6ijMfXMcknrv5Cxp2H7YtBDDER3SuB4FaTQgxiA3cVw==
+X-Received: by 2002:a05:6820:1ad5:b0:621:72dc:3df7 with SMTP id 006d021491bc7-62172dc404cmr617151eaf.0.1757085907222;
+        Fri, 05 Sep 2025 08:25:07 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61e723d320asm1178110eaf.18.2025.09.05.08.25.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:25:06 -0700 (PDT)
+Message-ID: <6b8cd005-b04c-4dd7-abf7-5a51319a5f0a@baylibre.com>
+Date: Fri, 5 Sep 2025 10:25:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nGPHKziLNNz0QDF3"
-Content-Disposition: inline
-In-Reply-To: <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, jic23@kernel.org,
+ nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+ krzk+dt@kernel.org
+Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+ <20250903102756.1748596-3-daniel.lezcano@linaro.org>
+ <eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
+ <0bfce1eb-69f1-4dae-b461-234eb98ffce1@linaro.org>
+ <a3373804-08a4-4526-a432-c21a74ea3d6b@baylibre.com>
+ <edc8e024-e425-49de-bfa2-44218fe72e26@linaro.org>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <edc8e024-e425-49de-bfa2-44218fe72e26@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 9/5/25 4:44 AM, Daniel Lezcano wrote:
+> On 04/09/2025 19:49, David Lechner wrote:
+>> On 9/4/25 12:40 PM, Daniel Lezcano wrote:
+>>>
+>>> Hi Nuno,
+>>>
+>>> On 03/09/2025 13:20, Nuno Sá wrote:
+>>>> On Wed, 2025-09-03 at 12:27 +0200, Daniel Lezcano wrote:
+>>>>> From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+>>>>>
+>>>>> The NXP S32G2 and S32G3 platforms integrate a successive approximation
+>>>>> register (SAR) ADC. Two instances are available, each providing 8
+>>>>> multiplexed input channels with 12-bit resolution. The conversion rate
+>>>>> is up to 1 Msps depending on the configuration and sampling window.
+>>>>>
+>>>>> The SAR ADC supports raw, buffer, and trigger modes. It can operate
+>>>>> in both single-shot and continuous conversion modes, with optional
+>>>>> hardware triggering through the cross-trigger unit (CTU) or external
+>>>>> events. An internal prescaler allows adjusting the sampling clock,
+>>>>> while per-channel programmable sampling times provide fine-grained
+>>>>> trade-offs between accuracy and latency. Automatic calibration is
+>>>>> performed at probe time to minimize offset and gain errors.
+>>>>>
+>>>>> The driver is derived from the BSP implementation and has been partly
+>>>>> rewritten to comply with upstream requirements. For this reason, all
+>>>>> contributors are listed as co-developers, while the author refers to
+>>>>> the initial BSP driver file creator.
+>>>>>
+>>>>> All modes have been validated on the S32G274-RDB2 platform using an
+>>>>> externally generated square wave captured by the ADC. Tests covered
+>>>>> buffered streaming via IIO, trigger synchronization, and accuracy
+>>>>> verification against a precision laboratory signal source.
+>>>>>
+>>>>> Co-developed-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
+>>>>> Signed-off-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
+>>>>> Co-developed-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+>>>>> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+>>>>> Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+>>>>> Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+>>>>> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+>>>>> Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>> ---
+>>>
+>>> [ ... ]
+>>>
+>>>> The above needs some discussion at the very least. Have you considered the IIO
+>>>> DMA buffer interface? It should be extendable to accommodate any particularity
+>>>> of your usecase (or we should at least discuss it).
+>>>>
+>>>> With it, you also gain a userspace interface where you can actually share DMA
+>>>> buffers in a zero copy fashion. You can also share these buffers with USB
+>>>> gadgets. For instance, with libiio, you would be able to fetch samples from your
+>>>> host machine (through USB) in a very fast way (zero copy between IIO and USB).
+>>>>
+>>>> Setting up DMA to then "having" to push it to a SW buffer and needing a syscall
+>>>> to retrieve the data seems counter-productive.
+>>>
+>>> I've read a bit about the DMA engine. It is unclear how to use it and there are very few examples in the different drivers to refer to.
+>>>
+>>> This proposed driver supports the RAW, BUFFER and TRIGGERED.
+>>>
+>>> Shall I create an IIO device with the modes:
+>>>
+>>> indio_dev->modes =
+>>>      INDIO_DIRECT_MODE |
+>>
+>> Only INDIO_DIRECT_MODE needs to be set here.
+>>
+>>>      INDIO_BUFFER_HARDWARE |
+>>>      INDIO_BUFFER_TRIGGERED
+>>>
+>>> And then use:
+>>>
+>>> devm_iio_triggered_buffer_setup()
+>>
+>> Yes, use this and it will add INDIO_BUFFER_TRIGGERED to the flags.
+>>
+>>>
+>>> and
+>>>
+>>> devm_iio_dmaengine_buffer_setup_with_handle
+>>
+>> Likewise, this will add INDIO_BUFFER_HARDWARE.
+>>
+>> And you likely only need to call devm_iio_dmaengine_buffer_setup() which will
+>> save some boilerplate code.
+> 
+> What is still unclear for me is the trigger and the dma modes.
+> 
+> If the dma engine is supported, I should use devm_iio_dmaengine_buffer_setup_with_handle(), but will the trigger mode be supported also automatically (I don't see a clear answer in the documentation neither in the drivers) ?
+> 
+> If not, shall I call devm_iio_triggered_buffer_setup() and devm_iio_dmaengine_buffer_setup_with_handle() ?
+> 
 
---nGPHKziLNNz0QDF3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Taking a step back, what sort of real-world uses cases do you need to support?
+Or are you just trying to implement everything that the ADC can do? The latter
+can be a bit risky because you might end making something where you can't do
+a buffered read and a single channel read at the same time, but later find out
+you have a real-world application that needs to do this.
 
-Yo,
+It looks like it would be possible to implement buffered reads in lots of ways.
+IIO devices can have more than one buffer per device so we can add more in the
+future if we need to. So I would just drop the DMA part of the implementation
+for now and implement the basic triggered buffer using MCR[NSTART] and ECH
+(End of Chain) interrupt request and just reading data from the ICDR registers.
 
-On Fri, Sep 05, 2025 at 06:56:35AM +0800, Asuna wrote:
-> > One thing - please don't send new versions
-> > of patchsets in response to earlier versions or other threads. It
-> > doesn't do you any favours with mailbox visibility.
->=20
-> I apologize for this, I'm pretty much new to mailing lists, so I had
-> followed the step "Explicit In-Reply-To headers" [1] in doc. For future
-> patches I'll send them alone instead of replying to existing threads.
->=20
-> [1]: https://www.kernel.org/doc/html/v6.9/process/submitting-patches.html=
-#explicit-in-reply-to-headers
->=20
-> > Other than Zicsr/Zifencei that may need explicit handling in a dedicated
-> > option, the approach here seems kinda backwards.
-> > Individually these symbols don't actually mean what they say they do,
-> > which is confusing: "recognises" here is true even when it may not be
-> > true at all because TOOLCHAIN_HAS_FOO is not set. Why can these options
-> > not be removed, and instead the TOOLCHAIN_HAS_FOO options grow a
-> > "depends on !RUST || <condition>"?
->=20
-> Yes, it's kinda "backwards", which is intentional, based on the following
-> considerations:
->=20
-> 1) As mentioned in rust/Makefile, filtering flags for libclang is a hack,
-> because currently bindgen only has libclang as backend, and ideally bindg=
-en
-> should support GCC so that the passed CC flags are supposed to be fully
-> compatible. On the RISC-V side, I tend to think that version checking for
-> extensions for libclang is also a hack, which could have been accomplished
-> with just the cc-option function, ideally.
->=20
-> 2) Rust bindgen only "generates" FFI stuff, it is not involved in the fin=
-al
-> assembly stage. In other words, it doesn't matter so much what RISC-V
-> extensions to turn on for bindgen (although it does have a little impact,
-> like some macro switches), it's more matter to CC.
+I would wait to have a real-world application that requires DMA to decide the
+best way to implement that. There are lots of possibilities, like does it need
+an external trigger or is continuous mode good enough? Does it need to be cyclic
+(something the IIO subsystem doesn't really support yet) or not. Is exact sample
+timing important or do we just need a big buffer? These questions we can't
+really answer without a specific application to use it.
 
-> Therefore, I chose not to modify the original extension config conditions=
- so
-> that if libclang doesn't support the CC flag for an extension, then the R=
-ust
-> build is not supported, rather than treating the extension as not support=
-ed.
-
-I don't agree with this take, I don't think that any extension should
-"blindly" take priority over rust like this. Got two or three main gripes
-with how it is being done here.
-Firstly, you're lumping every extension into one option even though many
-of them will not be even implemented on the target. There's no need to
-disable rust if the user has no intention of even making use of the
-extension that would block its use. That runs into the second point, in
-that you're using TOOLCHAIN_HAS_FOO here, which is only an indicator of
-whether the toolchain supports the extension not whether the kernel is
-even going to use it. The third problem I have is that the symbol you're
-interacting with is not user selectable, and therefore doesn't allow the
-user to decide whether or not a particular extension or rust support
-with the toolchain they have is the higher priority. If the check moves
-to the individual TOOLCHAIN_HAS_FOO options, they could be a
-
-	depends on !RUST || <condition>
-
-which would allow the user to make a decision about which has a greater
-priority while also handling the extensions individually.
-
-> Nonetheless, it occurred to me as I was writing this reply that if GCC
-> implements a new extension in the future that LLVM/Clang doesn't yet have,
-> this could once again lead to a break in GCC+Rust build support if the
-> kernel decides to use the new extension. So it's a trade-off, you guys
-> decide, I'm fine with both.
->=20
-> Regarding the name, initially I named it "compatible", and ended up chang=
-ed
-> it to "recognize" before sending the patch. If we continue on this path, =
-I'm
-> not sure what name is appropriate to use here, do you guys have any ideas?
->=20
-> > What does the libclang >=3D 17 requirement actually do here? Is that the
-> > version where llvm starts to require that Zicsr/Zifencei is set in order
-> > to use them? I think a comment to that effect is required if so. This
-> > doesn't actually need to be blocking either, should just be able to
-> > filter it out of march when passing to bindgen, no?
->=20
-> libclang >=3D 17 starts recognizing Zicsr/Zifencei in -march, passing the=
-m to
-> -march doesn't generate an error, and passing them or not doesn't have any
-> real difference. (still follows ISA before version 20190608 --
-> Zicsr/Zifencei are included in base ISA). I should have written a comment
-> there to avoid confusion.
->=20
-> Reference commit in LLVM/Clang 22e199e6af ("[RISCV] Accept zicsr and
-> zifencei command line options")
-> https://github.com/llvm/llvm-project/commit/22e199e6afb1263c943c0c0d44986=
-94e15bf8a16
->=20
-> > What about the case where TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI is not
-> > set at all? Currently your patch is going to block rust in that case,
-> > when actually nothing needs to be done at all - no part of the toolchain
-> > requires understanding Zicsr/Zifencei as standalone extensions in this
-> > case.
->=20
-> This is a bug, I missed this case. So it should be corrected to:
->=20
->    config RUST_BINDGEN_LIBCLANG_RECOGNIZES_ZICSR_ZIFENCEI
->     =A0 =A0 def_bool y
->     =A0 =A0 depends on TOOLCHAIN_NEEDS_OLD_ISA_SPEC ||
->    !TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI ||
->    RUST_BINDGEN_LIBCLANG_VERSION >=3D 170000
->=20
->=20
-> > The TOOLCHAIN_NEEDS_OLD_ISA_SPEC handling I don't remember 100% how it
-> > works, but if bindgen requires them to be set to use the extension
-> > this will return true but do nothing to add the extensions to march?
-> > That seems wrong to me.
-> > I'd be fairly amenable to disabling rust though when used in combination
-> > with gcc < 11.3 and gas >=3D2.36 since it's such a niche condition, rat=
-her
-> > doing work to support it. That'd be effectively an inversion of your
-> > first condition.
->=20
-> The current latest version of LLVM/Clang still does not require explicit
-> Zicsr/Zifence to enable these two extensions, Clang just accepts them in
-> -march and then silently ignores them.
->=20
-> Checking the usage of CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC:
->=20
->    ifdef CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC
->    KBUILD_CFLAGS +=3D -Wa,-misa-spec=3D2.2
->    KBUILD_AFLAGS +=3D -Wa,-misa-spec=3D2.2
->    else
->    riscv-march-$(CONFIG_TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI) :=3D
->    $(riscv-march-y)_zicsr_zifencei
->    endif
->=20
-> It just uses -Wa to force an older ISA version to GAS. So the
-> RUST_BINDGEN_LIBCLANG_RECOGNIZES_ZICSR_ZIFENCEI I corrected above should =
-be
-> fine now I guess? Or would you still prefer your idea of blocking Rust if
-> TOOLCHAIN_NEEDS_OLD_ISA_SPEC is true?
-
-Nah, if the explicit setting isn't required then it should be fine to
-not block on it being used. To be honest, I'm not concerned about
-Zicsr/Zifencei being communicated across to bindgen as much as I would
-be about other extensions, my motivation here is regarding build
-breakages - in particular when things like TOOLCHAIN_NEEDS_OLD_ISA_SPEC
-is set, since it's a very niche configuration that if someone told me
-they were using I would tell them to stop. As I said, the original
-reason for this existing was to support w/e old version of debian linaro
-were using that could not do LLVM=3D1 builds and I think the person who
-added to this handle gcc with older binutils was trying to do a gradual
-move from an old toolchain in steps to a modern one, so neither were
-instances of someone actually wanting to use such a strange mix.
-
-> (To be clear, the breaking changes regarding Zicsr/Zifence are since ISA
-> version 20190608, and versions 2.0, 2.1, 2.2 are older than 20190608)
->=20
-> The only thing I'm confused about is that according to the comment of
-> TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI, GCC-12.1.0 bumped the default ISA
-> to 20191213, but why doesn't the depends-on have condition || (CC_IS_GCC =
-&&
-> GCC_VERSION >=3D 120100)?
-
-It's probably something along the lines of there being no _C_ code that
-produces the Zicsr and Zifencei instructions, and therefore no build
-errors produced if they're missing. That's part of why I said my
-motivation in this particular case is build breakage, more than anything
-else.
-
---nGPHKziLNNz0QDF3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsApwAKCRB4tDGHoIJi
-0mwmAP9bDnlcc+95AWzyJyyoYFiI/Rtae49SrnuKHIhcU/MzCgD/XQD+0ddConmh
-ToGmliLxcwvMgLrAOpS8ZStzbjbnYQo=
-=xiVS
------END PGP SIGNATURE-----
-
---nGPHKziLNNz0QDF3--
 
