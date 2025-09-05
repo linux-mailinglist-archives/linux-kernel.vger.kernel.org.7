@@ -1,191 +1,303 @@
-Return-Path: <linux-kernel+bounces-803571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E2FB46285
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:44:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B008B46288
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A4D07AD16E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F3A1CC7FB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2052765E3;
-	Fri,  5 Sep 2025 18:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F069278170;
+	Fri,  5 Sep 2025 18:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hCSsdrTD"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FK8X93N+"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D7BA42
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097841; cv=fail; b=RNydUcTCxLA7vX8HXNjP8H1UJeM1HFXj/u12uWbZ2/kHM4sSt6Ko86O0IN+D0z851XpUySYyXkJVMXmEMyEMz++KK5rd8m1Hkk0bYlQStBwfq1DnfpdwW7imDDrTVUnsOZ6f82H53cIGRQZrhtD5EyIXNKibf6jaGdQXymAEl9A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097841; c=relaxed/simple;
-	bh=fIG+lYC5OhMozonvvoCXIGmSednt6SVI8v/3jlxpCGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DJ/hCItqkLVV9l5joALpT7vTbrgaP7bILRdf/2CgMQfFffbajrP6+tI0bDlO9wvLd9gbB5jGD0H8UZHHx16U+d9wz/kBcawNmUBuomeZ9j0op9Iey6KbAYPEaDrhk5R8Hc+GyfX99tIfRY4lS2EPu6fJlVt+z/PZw4cWHhK7b1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hCSsdrTD; arc=fail smtp.client-ip=40.107.95.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NRiHGXMzPlpD1exAgExcGfM/Vf2/cmJsQAmDJ0Q2gYwR409BuLB2+VxaHGitEl0XbmkSFwWH2cfVDt9brkxGkGasyteVEZb5Yv9EUyej8g5pbhDrcWuRjqkHCEMtjl33c1gVgtz5tj3sAuI+LQZCdyGCgqB8mYz77K/n3xflkRweih7+CBIzTWRsos6XICgwAZB93oiIFBuo+ZZ4ObtXTQmBjiWE2og24Z6WqlFefNoe25nk0ZMNqq/STkKGNdaAr2qTn6U9L8wIIwtZmsB97U90yhbIB1W23/ydrGNduWXIBsdaFV0cwOBc8AuqN8nZAdBusIWhIja65nJwKVm73A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DnlV7IK54VMzcwDKU3L1k6plG49KaRrWH7aTY8P91bk=;
- b=P3diAITck2J6Q0ZbQX9zXx0fwPeMyOXT2cyjiBze/ywZ2/vzHeBGx8lHxNfBKXH03LchLLZWfIzGowxJNR4xBpY8ELRNYlQSHyrEj7nsGzq0tTxiIivdyDNXFDOw6o/ZORBOLuPETYOIAc/LIexnex2ovhkoENMZ5cro+S+QnLerUBTFFHRXIvo8kXN1HMLCoribLiiBJYjNJ/lMoWLXXgvRGFZxyPckb9ABDLi9Lf3E+Qs/E+3xmnOGGlUczhxqWhkWwQDpt79NxXXF99rm4iJps7cQZj826nvxZUu1EpA/SSoCVsrgjqNnxsgweDanhjTeDpFblzyDop6qETAGdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DnlV7IK54VMzcwDKU3L1k6plG49KaRrWH7aTY8P91bk=;
- b=hCSsdrTD+6T65Ef0IWjlXcGoFIm95PSvTqMbMSwZWssaBo2+zeQaQ8auoXsDi05etec/fY+vKEVq7qASVyMGXzplNZczSEAVrs71431dWHrx0fLtwcbEZvjTxeMWFd6EQd3sbKnrbgNQ0/zDgYJRyoH0L1YM8bi+uk/lH9bqzIqUxTH2kK524qsXb5Dn5h9s4kO6cu9UdvcAiRv3QSrNkln0CmlYLLnuK5sLz25dwSY2rtVIIKfclgGpg1qP9U4kXt0xCkH1QnFDVMPCNHEQ4K0N8jIafzoOt73FBZew3uNxA7Mf69A3jqzSNf8LPebA2u2qQ+OfNAOmeaZhMUxlYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by CH3PR12MB9195.namprd12.prod.outlook.com (2603:10b6:610:1a3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
- 2025 18:43:57 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
- 18:43:57 +0000
-Date: Fri, 5 Sep 2025 15:43:55 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
-	iommu@lists.linux.dev, security@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v4 6/8] mm: Introduce deferred freeing for kernel page
- tables
-Message-ID: <20250905184355.GR616306@nvidia.com>
-References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
- <20250905055103.3821518-7-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905055103.3821518-7-baolu.lu@linux.intel.com>
-X-ClientProxiedBy: YT4PR01CA0325.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10a::8) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABEABA42;
+	Fri,  5 Sep 2025 18:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757097864; cv=none; b=kQctZ2OXUSQs2cTrQ7/PO+1ZrJrQTuhMKucM15XbmPPhwSKtZuYrEe3JoeeshOPFMP+YrvhDVTqADT0or71MAd9NVTUS2bpmGm/kq9exwRu89/rJFoLnd1MTUo2GgmroYx4bOFqfzMxA1iX7u8VMg26zWzkqO6nUL1EKGwINpyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757097864; c=relaxed/simple;
+	bh=ZQNgERA0y4yQFBZbBynTp7jtf+lJH6n/7LZjm0mmzOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8sncBoMb1zmFK4YIK5Q/N233Qnweg783S2T4qsV4XhsxnSugfxUvQpohCNR3N0213HWAairfPaczBZ1rvkNghWUFePZ00bQnrz6SlqswLHx/CI47HmvGKcdf7AqyL6MmEX/3xRkIUOJRgfA7edUVeIh59CurcpTDxBMTFJClXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FK8X93N+; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b4df220483fso1621657a12.2;
+        Fri, 05 Sep 2025 11:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757097861; x=1757702661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHnUDrUWgejp0WjuEKozA0AnSyb+zQSK0hfAp9o2nHQ=;
+        b=FK8X93N+BvmfBAzp2S4w/cDKHLBxIFsZ5WZypb2tfaE2azTES1HWo4PMxNKTLenzKB
+         XMQjqUb1b6xSXm8q7253+Wbn0kj/cFWu89nc32/JxSnXWDW8/rtVeqtgJsIOzNJ18hjv
+         +UJtRjcIenJSQFGGElXfQzws0zwS9aD/b4/qx9t3/vSU9vSPuDrX/CeTHiLiDkgRi+mZ
+         Oo9dZh/0aGhxRGLaOC6sb63LZ/PYo84aXnKLmLfaKSk48KhnNhadIpvFZJJvhm+0DXiE
+         mpMTTnqG8h3WY8E829V6adgnu4O8mp4MwZlXPvpDKns80HVGH4b5gc223mnAh14GhQYz
+         VeDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757097861; x=1757702661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHnUDrUWgejp0WjuEKozA0AnSyb+zQSK0hfAp9o2nHQ=;
+        b=LSJpc2WUbzJ/kk404NE27appYtkbkgkc6Fnc9Hrq8taj0ZcuCHp0Raa5L9DWSCTjf8
+         6J0uTsU/GOsnVdY5kjsMPpXewZqZUo8xlTNwXJJCvWSsz+YhLpIZYsmCX6cgd8KeSb0t
+         OGV0xu3rZINRmAzpZyPg6rIyUkOL6ZnmI+iZZ3NjXcTn8CFpouYhD81bf0nsw4+cD0vl
+         olLzBU6JYqynWs7ZtmtK9xH1S3qjRLrhJialw00CrJ1NN6tiF5fDzafPdv/qJ+NpPBvs
+         q7ZlvXW36DoNXeqglzEXzbmfhSAadBevkNdzkCx2dNYKysi8sb+gu0wVoLpYn4UF50a2
+         mZrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVC0GG2lLyfRugKEA3TJt6OpB0dTYdnHDLx4S8Q4DWyqoPln9ft6Z1h2OCJceCOeymjBHw=@vger.kernel.org, AJvYcCVrlISdudx+QPYWH2gqmJ/uTpK2B/+wUYDTDdGzeWOknYQLYcRVS6/WwS4+517PzuyLu7bP20HcBkMwCnNOvkOyvGFb@vger.kernel.org, AJvYcCXP683AMAXNmtb5u0fY+rzjMJlG0sCQ4A5US8VfK9hkSOFHJMfABdImYSD3sSmZX0Mw5DJ9gttyugssEY9n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr2A5Irr4o39G8Ygwd3+SW4TX/61tnGj2haalcbpunSGCsXZCs
+	8GxGmKrZOBxAp7CHeCWa19uTIRDYTA82h4ejoWRB2p3YdNEHNWT9TjsNVa+GYVH+HX7y7+JT5fR
+	nr0AzBDBAcQ7/1SYU85oGpRvNoHruPIU=
+X-Gm-Gg: ASbGncuih//iRMwP2FGy4Zc6Iw/lgG3hkDdq8/NAjGlSgNUic7YWwZRGyLIBJ0KLwX5
+	1FStRr+vk89SCdr/mq3aelf4gPU1q2BKcJrYTWqQuF4+xiyyYepsC5OILahiXNu18FX4HkLNbSD
+	fxjmFEz54L+rY/TiVU5PpCtv+20ULQxb9fnJj5OzwK0y+AKSVdaXuu5Sprt4f3QhrbDTmqzfmCo
+	ABnga0X4I0AiT/s3dIVs7/WJA==
+X-Google-Smtp-Source: AGHT+IE44Le1wqETGN6PLQEBfU45g/Rd2TNGJSruccfJLtkK7B0GmqnWICjAUKyeeo3IePvArhM05iwms89uJE+mRBw=
+X-Received: by 2002:a17:90b:3a50:b0:329:f110:fe9e with SMTP id
+ 98e67ed59e1d1-329f110ff48mr20394878a91.17.1757097861274; Fri, 05 Sep 2025
+ 11:44:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CH3PR12MB9195:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8ab9773-8d2a-4a82-8fcf-08ddecac2bad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F9JlHV2QNBsV3QEX5A30RYU04/n3Opg/+aV7FX0gZtWivzgqSE7/qqcL1fZw?=
- =?us-ascii?Q?yNxUN5lnfBwTSh9nb65do1lP8+faEC/VUbVz373ytHrHHK4sGPj2bktauo00?=
- =?us-ascii?Q?xkaZBuHuV4X9mxMGImc1UVgkbcPAF/wajUD5Ae4krX4ygnBqryTl5s2fL/EZ?=
- =?us-ascii?Q?PensMP+kkZGzFaVjgsYn+KaES+HmJF7rogS0/g/lPbLlfMxHr/pgkh+NSFBn?=
- =?us-ascii?Q?NbBPGSnL0elcVtKTwlxmqqBLZw1BZwFnbq81X8flkAOdrgVND9q0E9upoP0w?=
- =?us-ascii?Q?gH26tJMqeEj5H+8k121lz8UWRv6BAWvo72oPqV0leYDMVyJb7PM2o76+K+nX?=
- =?us-ascii?Q?scw0cuTeDBPsXBYw3u3Mqv+/EW0jedvIl5QEnGDIjRsoXt12NkgPhPlnVb+W?=
- =?us-ascii?Q?ORcIq6DSVTMgBpLEwpzuy5JzMt7Ayd0RTlQC1acKviiSFOFcCr1IONA1FaLw?=
- =?us-ascii?Q?c+k2Q52UAKL9rhhEa6C6SjAZOOBHZe6Ho+mcS9vrJQOllpg+Y3VsADI8mH+i?=
- =?us-ascii?Q?yEzZiPsuLgCdNwObziRT4RjnSayhELk3V8eIXTeMyh1cfw61E01O3g2hodeW?=
- =?us-ascii?Q?kWs1mjMCkVLPdcDtz/KGtuPvvV4vW0O0+06BTokVDHdcg8C/AXeoiCrDWcdQ?=
- =?us-ascii?Q?cH3hbJSDmW8ctg6xwr+zRskRgt1bYtTr1l7ZeHPpyd8yQkOCdOaSpP74m9Zc?=
- =?us-ascii?Q?4HgBIyyduy3UCP+gC6zZjzpy7PLNBz5dcLhyKP2s/UHxlgVo3cwg717A4SYb?=
- =?us-ascii?Q?M0mQEqRrBzynOBc2tKpjjwWaVOdRfeZz29vXLdK6O1QUiUaD0yA4Mxsvvzz6?=
- =?us-ascii?Q?gO3xSYAXynp3kRjx5O5kMG/EyR2eXGP7wnDFuG2fA3u3Ls5O94EFDQO4xwHD?=
- =?us-ascii?Q?Lcefr6xKCu8UiKeWul1dSE51oVlJRCbJ9x/jqVM0EfyrQDq57TyR0mHu+AwT?=
- =?us-ascii?Q?CS0zKlfWM0/rpvr3ob8DmztuSRlBW6G5NxZS4yhEdufr7fpi54nWwxuhpszE?=
- =?us-ascii?Q?xV3tp2xYTy8esen2bHwuzgTANhblLeGqwdNE4YBLBycN85w7kbTb3/ju4j+u?=
- =?us-ascii?Q?BDJvj6FWEFOPgH4KjfY/dWaHXVKheX6kD0BVprnA5pQoR5nKE3WngM4xvA/3?=
- =?us-ascii?Q?tBtpXEre46d9ZvQCGn+CTJwnrCgLv/hISEQdBlLVZ3qfgpiBXoMElCUNlbQ8?=
- =?us-ascii?Q?sU9SYepHWYl8ZwU2f7iCmV2D/i7GQ4Hn/e/4r2EwLdaG4DmdAYX9aa0yj8Ni?=
- =?us-ascii?Q?cqcuIYldQElUj3KlWaayU8OlTLShP4TJYyBsWgYlX99R55GnYcTmACFWQZ0f?=
- =?us-ascii?Q?KD4DD+erf8LbmGExnzlsdfDX5QwT2HvPFxhCe6zTWwWX0o0ADxcK3WuIad41?=
- =?us-ascii?Q?wZb1t/V63io5fr1n50BnAbIsDH4ON2hBKvJJhH49iwAfCK7YJQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KHJOe0lkO+2VsEwo930YuRKM/tKh6bjIPmJDCKOixTCFXRsKtRU6bmpiRFtc?=
- =?us-ascii?Q?WGgk8qUXYzSQezXxbfRy7QHHz2usDiIGqKfnSJdb/eVcbxUSsECYTXTEz/L8?=
- =?us-ascii?Q?9aN+AsVpMPQThEDSW6mfveB0DuCib5MTjBametxwXawOKkS23EtdAEh6NuUe?=
- =?us-ascii?Q?iFMqTkRY9yXhSXt2XXvasQWYZQHJ/EdtfsWd4Hb8wYEWzm1HFK7TSOZ7q8UC?=
- =?us-ascii?Q?VhRXZPbzsoD2jfr+bW8ViDUwwnWP8M9kTafBxYcFSA9s7SFsT1AZwB0QMMQK?=
- =?us-ascii?Q?x34KnDR+df7igiWSqJz7fivAGcp/NFcjGGWypChJOKizALjlOY8mVXAvXUsf?=
- =?us-ascii?Q?sW6XzKrVCK3DOdxjTfPbJG/H6n8M41ctdLgjdRQLEHt2TB5rTalpePp8btzK?=
- =?us-ascii?Q?D/j3i/FeBRgXe47k2aJvRu4rLmk9xHjRlUbB7zgAOTqlf6ACnBeK/EtbnSmn?=
- =?us-ascii?Q?LRM6hmRBSnUtARl3rOQQMtgr0+8+/lQgIBEO3+czbKIYIlRzLPxfBl38pouv?=
- =?us-ascii?Q?nbbzy+dUUQyZnqOUWDu69dygECo3RZsbc9ARnSfsYezpRf4q7OiNrDBY6tNT?=
- =?us-ascii?Q?zhPoFG1vK5vIUCJOvYs2A+RWATWa5PdKcr8wbC5kgSNNzJA2cIY9eNKApA/U?=
- =?us-ascii?Q?vQqUjtXVmu6DfXPRDezJIdBeKi1t44W6xhoU5Bqlxw0BIO2v2RDnT6SW43r+?=
- =?us-ascii?Q?ONprk8uebz8/M1tbOECF914ozOQgz21WNK7hWiIgFFgpSqtjFEce8F6ai0/G?=
- =?us-ascii?Q?Gx9+xonrub/hKIiIQED5RXqIiHGg3MeFZoMkFFZnnvxUEiFDhl0h5IgDFROm?=
- =?us-ascii?Q?kbxrvipTLvaSSwWAm7BNItU4wanJne8u8tbRr29SW4X7Xs76zDnCNJtWqEPW?=
- =?us-ascii?Q?Gk+Xv1l8I0Cff6yplDLCYNgPdTVQjuZfokuUDamF3tO7rlLtUsFWD+DOLpy/?=
- =?us-ascii?Q?BSAEqNh+BI6TsSK5rINQXeB+QqiTNrbRUnmGLqnRHl/EG0jBBbYpVwd9Gru7?=
- =?us-ascii?Q?/D5K99cvdHHfIVMGXHUUbqOGNv8NhkTHx7t9tqCXcrnqXgSff7WEHOZ1azZi?=
- =?us-ascii?Q?SkJK34VL/dDbWeKVIqulZtLsYIu/Uobrv+hpIIZzqnjUl6dQ8j1Bfj+lqSBy?=
- =?us-ascii?Q?vf6xM+cKdxbc+Jgka2QXZsJenTpkdjGS8UVFT2sgxu21nSOhBo0ET4iUfqRK?=
- =?us-ascii?Q?C/HicZuybqD5ZuwEff8yHbzdTG7cm15V1m3l74RdLALJpjXEiF3S34au5Blo?=
- =?us-ascii?Q?0oP4xe65NQRbzCW0X8QhDNaweFymbgR/l2uPvCTGD0C9ZEvI+zIiTVUUCgzi?=
- =?us-ascii?Q?NflgxXnI1aC/Si15QdvUUyHK3f2NwzbBqdAx5xsiPo2fVYoRGYjycLRSCO6G?=
- =?us-ascii?Q?2UVUUzuFcIB+itHbGVN9LhGH8cdbhhRKhBsAD6B3t6RG8o29jAWRXst+mNYI?=
- =?us-ascii?Q?FeAqwqb7BPAgFmBReiwE7nTY7rrjN+ME0Lu8yEH3fzJ0juDKBjERiwV/UYNf?=
- =?us-ascii?Q?T1iVWP8WRCz6C8MM0Kt5njLHS2Sn94pgurNEmWz1FVEc2H1KVyR08xUWgeyS?=
- =?us-ascii?Q?RyhI7fTcqPZ9KwCgByI=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8ab9773-8d2a-4a82-8fcf-08ddecac2bad
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 18:43:56.9418
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eLAYxiLcvJ/s98Ip0AxO3AGKSRXwh2E4QUoxiP6QILww7zQUBSyP38p7OGZy9q5Y
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9195
+References: <20250720112133.244369-1-jolsa@kernel.org> <20250720112133.244369-10-jolsa@kernel.org>
+ <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLirakTXlr4p2Z7K@krava> <20250903210112.GS4067720@noisy.programming.kicks-ass.net>
+ <CAEf4Bza-5u1j75YjvMdfgsEexv2W8nwikMaOUYpScie6ZWDOsg@mail.gmail.com>
+ <aLlGHSgTR5T17dma@krava> <CAG48ez2BBTiDGT1NNK2dfZLiYMF-C75EAcufcVKWtP+Y4v-Utw@mail.gmail.com>
+ <aLmcFp4Ya7SL6FxU@krava> <CAEf4BzbPSTEKs2ya6-d5ecR=wdsRtxRwLJO0r+oEm-_R-B2_yQ@mail.gmail.com>
+ <aLq_geGpgBKKfI7e@krava>
+In-Reply-To: <aLq_geGpgBKKfI7e@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 5 Sep 2025 11:44:09 -0700
+X-Gm-Features: Ac12FXz5drT-M1y1Zd0gBL7XliEZ-Yzb35NoflktN0p-5TQ9knOeeI-BMj3-Kac
+Message-ID: <CAEf4BzaXoyUCfDgy55FCvR_qCSoyAc51mSpMphWt4p9+t_60kg@mail.gmail.com>
+Subject: Re: [PATCHv6 perf/core 09/22] uprobes/x86: Add uprobe syscall to
+ speed up uprobe
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Jann Horn <jannh@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 05, 2025 at 01:51:01PM +0800, Lu Baolu wrote:
+On Fri, Sep 5, 2025 at 3:46=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
+>
+> On Thu, Sep 04, 2025 at 11:32:06AM -0700, Andrii Nakryiko wrote:
+> > On Thu, Sep 4, 2025 at 7:03=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> w=
+rote:
+> > >
+> > > On Thu, Sep 04, 2025 at 11:39:33AM +0200, Jann Horn wrote:
+> > > > On Thu, Sep 4, 2025 at 9:56=E2=80=AFAM Jiri Olsa <olsajiri@gmail.co=
+m> wrote:
+> > > > > On Wed, Sep 03, 2025 at 04:12:37PM -0700, Andrii Nakryiko wrote:
+> > > > > > On Wed, Sep 3, 2025 at 2:01=E2=80=AFPM Peter Zijlstra <peterz@i=
+nfradead.org> wrote:
+> > > > > > >
+> > > > > > > On Wed, Sep 03, 2025 at 10:56:10PM +0200, Jiri Olsa wrote:
+> > > > > > >
+> > > > > > > > > > +SYSCALL_DEFINE0(uprobe)
+> > > > > > > > > > +{
+> > > > > > > > > > +       struct pt_regs *regs =3D task_pt_regs(current);
+> > > > > > > > > > +       struct uprobe_syscall_args args;
+> > > > > > > > > > +       unsigned long ip, sp;
+> > > > > > > > > > +       int err;
+> > > > > > > > > > +
+> > > > > > > > > > +       /* Allow execution only from uprobe trampolines=
+. */
+> > > > > > > > > > +       if (!in_uprobe_trampoline(regs->ip))
+> > > > > > > > > > +               goto sigill;
+> > > > > > > > >
+> > > > > > > > > Hey Jiri,
+> > > > > > > > >
+> > > > > > > > > So I've been thinking what's the simplest and most reliab=
+le way to
+> > > > > > > > > feature-detect support for this sys_uprobe (e.g., for lib=
+bpf to know
+> > > > > > > > > whether we should attach at nop5 vs nop1), and clearly th=
+at would be
+> > > > > > > > > to try to call uprobe() syscall not from trampoline, and =
+expect some
+> > > > > > > > > error code.
+> > > > > > > > >
+> > > > > > > > > How bad would it be to change this part to return some un=
+ique-enough
+> > > > > > > > > error code (-ENXIO, -EDOM, whatever).
+> > > > > > > > >
+> > > > > > > > > Is there any reason not to do this? Security-wise it will=
+ be just fine, right?
+> > > > > > > >
+> > > > > > > > good question.. maybe :) the sys_uprobe sigill error path f=
+ollowed the
+> > > > > > > > uprobe logic when things go bad, seem like good idea to be =
+strict
+> > > > > > > >
+> > > > > > > > I understand it'd make the detection code simpler, but it c=
+ould just
+> > > > > > > > just fork and check for sigill, right?
+> > > > > > >
+> > > > > > > Can't you simply uprobe your own nop5 and read back the text =
+to see what
+> > > > > > > it turns into?
+> > > > > >
+> > > > > > Sure, but none of that is neither fast, nor cheap, nor that sim=
+ple...
+> > > > > > (and requires elevated permissions just to detect)
+> > > > > >
+> > > > > > Forking is also resource-intensive. (think from libbpf's perspe=
+ctive,
+> > > > > > it's not cool for library to fork some application just to chec=
+k such
+> > > > > > a seemingly simple thing as whether to
+> > > > > >
+> > > > > > The question is why all that? That SIGILL when !in_uprobe_tramp=
+oline()
+> > > > > > is just paranoid. I understand killing an application if it tri=
+es to
+> > > > > > screw up "protocol" in all the subsequent checks. But here it's
+> > > > > > equally secure to just fail that syscall with normal error, ins=
+tead of
+> > > > > > punishing by death.
+> > > > >
+> > > > > adding Jann to the loop, any thoughts on this ^^^ ?
+> > > >
+> > > > If I understand correctly, the main reason for the SIGILL is that i=
+f
+> > > > you hit an error in here when coming from an actual uprobe, and if =
+the
+> > > > syscall were to just return an error, then you'd end up not restori=
+ng
+> > > > registers as expected which would probably end up crashing the proc=
+ess
+> > > > in a pretty ugly way?
+> > >
+> > > for some cases yes, for the initial checks I think we could just skip
+> > > the uprobe and process would continue just fine
+> > >
+> >
+> > For non-buggy kernel implementation in_uprobe_trampoline(regs->ip)
+> > will (should) always be true when triggered for kernel-installed
+> > uprobe. So this check can fail only for cases when someone
+> > intentionally called sys_uprobe not from kernel-generated and
+> > kernel-controlled trampoline.
+> >
+> > At which point it's totally fine to just return an error and do nothing=
+.
+> >
+> > > we use sigill because the trap code paths use it for errors and to be
+> > > paranoid about the !in_uprobe_trampoline check
+> >
+> > Yeah, and it should be totally fine to keep doing that.
+> >
+> > It's just about that entry in_uprobe_trampoline() check. And that's
+> > sufficient to make all this nicely integrated with USDT use cases.
+> >
+> > (I'd say it would be nice to also amend this into original patch to
+> > avoid someone cherry picking original commit and forgetting/missing
+> > the follow up change. But that's up to Peter.)
+> >
+> > Jiri, can you please send a quick patch and see how that goes? Thanks!
+>
+> seems like it's as easy as the change below, I'll send formal patches
+> later if I don't hear otherwise.. we will also need man page change
+>
+> jirka
+>
+>
+> ---
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index 0a8c0a4a5423..845aeaf36b8d 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -810,7 +810,7 @@ SYSCALL_DEFINE0(uprobe)
+>
+>         /* Allow execution only from uprobe trampolines. */
+>         if (!in_uprobe_trampoline(regs->ip))
+> -               goto sigill;
+> +               return -ENXIO;
+>
 
-> +#ifdef CONFIG_ASYNC_PGTABLE_FREE
-> +void pagetable_free_async(struct ptdesc *pt);
-> +#else
-> +static inline void pagetable_free_async(struct ptdesc *pt)
-> +{
-> +	__pagetable_free(pt);
-> +}
-> +#endif
+thanks!
 
-I'd probably call this function pagetable_free_kernel() ? Weird to
-call it async when it isn't async..
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-ptdesc_clear_kernel()?
-
-> +	list_for_each_entry_safe(pt, next, &page_list, pt_list) {
-> +		list_del(&pt->pt_list);
-
-The list_del isn't necessary, it doesn't zero the list, just _safe
-iteration is fine.
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+>         err =3D copy_from_user(&args, (void __user *)regs->sp, sizeof(arg=
+s));
+>         if (err)
+> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/to=
+ols/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> index 5da0b49eeaca..6d75ede16e7c 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> @@ -757,34 +757,12 @@ static void test_uprobe_race(void)
+>  #define __NR_uprobe 336
+>  #endif
+>
+> -static void test_uprobe_sigill(void)
+> +static void test_uprobe_error(void)
+>  {
+> -       int status, err, pid;
+> +       long err =3D syscall(__NR_uprobe);
+>
+> -       pid =3D fork();
+> -       if (!ASSERT_GE(pid, 0, "fork"))
+> -               return;
+> -       /* child */
+> -       if (pid =3D=3D 0) {
+> -               asm volatile (
+> -                       "pushq %rax\n"
+> -                       "pushq %rcx\n"
+> -                       "pushq %r11\n"
+> -                       "movq $" __stringify(__NR_uprobe) ", %rax\n"
+> -                       "syscall\n"
+> -                       "popq %r11\n"
+> -                       "popq %rcx\n"
+> -                       "retq\n"
+> -               );
+> -               exit(0);
+> -       }
+> -
+> -       err =3D waitpid(pid, &status, 0);
+> -       ASSERT_EQ(err, pid, "waitpid");
+> -
+> -       /* verify the child got killed with SIGILL */
+> -       ASSERT_EQ(WIFSIGNALED(status), 1, "WIFSIGNALED");
+> -       ASSERT_EQ(WTERMSIG(status), SIGILL, "WTERMSIG");
+> +       ASSERT_EQ(err, -1, "error");
+> +       ASSERT_EQ(errno, ENXIO, "errno");
+>  }
+>
+>  static void __test_uprobe_syscall(void)
+> @@ -805,8 +783,8 @@ static void __test_uprobe_syscall(void)
+>                 test_uprobe_usdt();
+>         if (test__start_subtest("uprobe_race"))
+>                 test_uprobe_race();
+> -       if (test__start_subtest("uprobe_sigill"))
+> -               test_uprobe_sigill();
+> +       if (test__start_subtest("uprobe_error"))
+> +               test_uprobe_error();
+>         if (test__start_subtest("uprobe_regs_equal"))
+>                 test_uprobe_regs_equal(false);
+>         if (test__start_subtest("regs_change"))
 
