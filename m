@@ -1,185 +1,729 @@
-Return-Path: <linux-kernel+bounces-803598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8079B462DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A82B462E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1038ABA188E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC053AB32E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41328315D5F;
-	Fri,  5 Sep 2025 18:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8992868A9;
+	Fri,  5 Sep 2025 18:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="MsbNAmrs"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="c4UPrGsY"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D78315D5A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C12848B4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098223; cv=none; b=X94z9H5uRReMu6zZyD3LtS0g/AFHoI0odyBciWDCATUbXACQE4YdZEhoJ8/C0j2gm1AVOQEcmO+z6LvC3d4u3k4vZgwq1VWcW+9dlxb94hejqZhFBhbxHoOCfw4bpNM14Z+sUDdELB+D3N4HDlmZvBIKZ5MmhnaBu7qJ9VCzDRI=
+	t=1757098334; cv=none; b=PkAR2svfkQcw7EDTowPka8s5yTnFYgVz0RHqm8krwrwWwE3MDQ5IcHdgsgm+vyBhNFtCVaMKUJ1eeCpREV++sf0jVZei0NcmmS7Ww6uXuJAkAcsBqQBptwtlV/zmnStyTICwXPIFtYlOPV62YsWr0oX/ZuhH95Ri/StCEK+HjoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098223; c=relaxed/simple;
-	bh=0hYvnTz+R7sjXCKT6oK+dyNsXz+XwJzcx6mP2KzeeiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAqHzqlvC4eDNvrqUN6RViWARPtcjpsOM33V7McrLH7ZgCMdvFsuMTmxBSOwxk2FVJeqgI0m+HMnErrzJTR2jsOvUvhKWLfjWnATKSJURAWmn0GUvoQl86AyROdEnYPg3NIwIVQyqTQTejmVLrA8ezkbJD8fXLxDN36eidIVthM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=MsbNAmrs; arc=none smtp.client-ip=209.85.210.44
+	s=arc-20240116; t=1757098334; c=relaxed/simple;
+	bh=FCtqrA47dDgf2+DB29PSn1rt0dYQ3ePVuxi3u8wdN0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qmsszuJNoTFsKXqVcjM8agP3qqnggqLycdrju6EK49Xk298G2AXeAW/yN5La1sm9gncaAA/8mcFl6zz8x1BDdyxZSb+y2/ddJzPSXNcv59CWsupWNI/I7X1JUuqUhvhZSlOLjamucXLIuoEwGzjo8CwazovH5YwTZozP2cPLJoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=c4UPrGsY; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74be52f5447so45644a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:50:21 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-746d7c469a8so1234937a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:52:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1757098220; x=1757703020; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FEEk6xUwhvxiQOfwQMcWge63YTvzvqM+uAXEwNhtVtc=;
-        b=MsbNAmrsizfrJ9c/xKL4vtL/HemI+mu4h0B87BMe3blqlk9YqsXyHa5p4uxRsVSsAI
-         msiqFPDynZ8iBTXdwkmWpvhCwa9eC9cJU+fP7maLqfLxGgIXCIsVdVc3rSmsfMa4l5zg
-         k+msg9SSYbevw76Ab6YxisA5L2oA5UuKVnQEzIu8D5vozNLiUahPwNxciAqfazPv/eW4
-         LByLv0dvVQhbmMMrOHRU1R3qaTCqw4SGvBDa7Cb7bJuq7qHBz8B90EPpzhFXcqOrzAuk
-         H5VeK50WX4IeWloLoBa1YqQ+ZkUjezmARMnd7ww8NZe1gYHwdS3kuf+TPz88DeOYuCVE
-         UhvA==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1757098331; x=1757703131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tbsFfKFitsanLy6pRqo9t1TcuXiGYckqN4l73oCfxk4=;
+        b=c4UPrGsYiczE58EUiVw+QEl+gPo43lnqvfHzDbgLBZbNpBhdqm4hXZrky7xajejtwG
+         YexdQRH/gt2qTufCxVWPfXBA9ztDatiBhSsarxHZNP7LvjVHBSTX4d0ArnGmdA/JLo9f
+         UcM+/M1WhAdWcL27QTwxua3k5Fqth11yiASdzuYpxGYbAEqTO3pDzqaoK5EC07K9yg+r
+         6f10HA6kGvyaic56U5QUbszOjnnLi8AUb7Adva6cR1EszRY8BLz1JTTIKyi14ncY8BKO
+         eDlr6/3GZJMOchiq9kXUOODlASOXGo71VSpZPHafsjncq0MdmTe9uzYBsiWm/rP0xpTj
+         vfYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757098220; x=1757703020;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FEEk6xUwhvxiQOfwQMcWge63YTvzvqM+uAXEwNhtVtc=;
-        b=sjebhtt8ipjXhAdzVX1XH0I2NgVgzY/SyfF2/XXB/GZPfhJpQmVf61HX1GD9BlKE/w
-         ziXrgvBTdsyI+/vn962b0sA8qOOo7o3cUhShERKWIgfvo10B4gOnSfATu07FVIgW7hbg
-         VQMu8BSbhtxWtAVXoNo+JureeCts1rsQFU61fGKbSEhFw3LZONzXqZofSgAXElIHuMex
-         QIpCvJ8cTmUfffrpymtLV/pN5F+PtmUINXHh87o3nVkb2d/xm0xtRp4bVXJilwNwhGgM
-         GLRRMHH+LpAVgPGrqfxN5dFGvz2iQNZtYFlKTw2YU9E0gCdq7I8UHbG3etNqk3gyIwzz
-         NPIA==
-X-Gm-Message-State: AOJu0Yzu873ptkRaLNCHYcMTe9FT57reRBm3//N/Lwftg0S/8j1ZQ5XF
-	cmUl9JMzpjCfQPStG/kxNUzcyvyaA3oHJCRQF2aFEm7sEYsttVEo0H+b8zuqdsVmKmU=
-X-Gm-Gg: ASbGncsHmUjne91GnNNY3IYFcoxl02Z19cc3l5d1x/l6cHaCTeNVCJdtzm/BXp/EUcT
-	n60q7rPZw90cSNiXkuSBXkrdeCz+KYiE7yLJI+qKUNFHcsjC0zNF5gcWypmUVUx9dF7SF0uvPDr
-	/uz8IjHYRIxgE9dza0gJdzBLCkX3b1tIB7nxi5Wk2s+PoruX7Z2YF9xi3j5gJWmX0Qyklq3O4Eh
-	VYDXoKIcDid3Svsn3gzsun5b5cf9uLVyqjGI5gXnRKybEfNM/J9pD98r6Tk2N1+CX92oKUf0mzw
-	aXuuphc8FE1aaEb9VAP0jID+RhmEbiFHvdVMhgUrZs5DYBcQhi0P27luijqgFnoBJkTSeiWeJrQ
-	E9MrBu9pKErDvpS3WqJy8JLzt
-X-Google-Smtp-Source: AGHT+IGhE9dThViFZe1QFt4sm/cQOA52RjTcfkrT7ftr8yl7gfauhn1PktZuJ2w0amu5yhU2y/mqIA==
-X-Received: by 2002:a05:6830:498f:b0:742:fefe:4311 with SMTP id 46e09a7af769-74569deee96mr13615645a34.16.1757098220481;
-        Fri, 05 Sep 2025 11:50:20 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:e171:344b:daa:1a1a])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-746db51a7ccsm1049989a34.30.2025.09.05.11.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 11:50:19 -0700 (PDT)
-Date: Fri, 5 Sep 2025 13:50:16 -0500
+        d=1e100.net; s=20230601; t=1757098331; x=1757703131;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tbsFfKFitsanLy6pRqo9t1TcuXiGYckqN4l73oCfxk4=;
+        b=gQrQqbVsKyhgTitPowH2PPJlyjWRsHIFxM92FYo+OucBRC5CLzFZ4CYzE+whGCv/yW
+         rPC20dwrGkvhAbN2VYZUCgmUKlI9g1Ginf/QwH+J2dAoEwJx6FMu2V0J/0mtf2yXfxVX
+         sMTM8tmLhfKlqj6DkIkpTlW9dVWuZzttwJWHJHE1aKdCeW6+uDj9mn3cOBrjMDVjRaLl
+         WW2jjUCA93vAu7LRsjAGSTXLPOr0LJmhYB4eYjEUhTe6t79x6k9UCMqQ8m3OUyFYVU9D
+         xRpSWvXW1Lw6WuBxtw79pXpRgVzbmJN0RtA4eM4KGASVhVMg3No0sv1BFHTxQCwGr7F1
+         OFAA==
+X-Gm-Message-State: AOJu0YxTxeUECRim4iM5z0fwN5Ls2kdDI6ti0hTru/8nChypuFQA4gJK
+	xldAXCiDIlUvgT4EyGhibX+AUhOTgS8GuPQRWuVL5Zk/RVsDI1ESav51/rTO3I9N8Xc=
+X-Gm-Gg: ASbGncsS7YLO+yQlRMZCbQaN5fozriBv5S57ndVGAU8TjYX/fvrK2uM7aFaTFCfYP1I
+	sOz+s2YtoGxDCgdErCx7kNlduJ7PKzgtUJ0YBml4owBPKbjn3Bk87Ug0hbSQJd0CxsiZlrN1OHS
+	QNR8xjD1qDVHu7gO23V5ALuGhT7TCqMthLxOx5+3FkHB4kwyG4UfuPdakeYsVCJHFasQZA5kzqK
+	6f+MwKQUlfpINXcNYiwzfGqK8jDCUPlEXxLyExWxaEPeCyNWsRKoywwfJ+HYgH1UsICgCKgf4co
+	nNgc6daZUA8REWEbdCv+R6RZN+oDmcEOSvIfIW4uRDFCcAObDwGFrpv0JfV7exEwaqkKey1D9sS
+	i8ZVmcU6wUIRkIpw=
+X-Google-Smtp-Source: AGHT+IHefDWTJM7HUywPIeAQAUzgLBlayMQSkHjSlIoG9XeQwX9yFdfxtx23/WYXF9j9yKO7ADzHNg==
+X-Received: by 2002:a05:6808:13d5:b0:438:3830:9b4b with SMTP id 5614622812f47-43838309d29mr3495394b6e.33.1757098331288;
+        Fri, 05 Sep 2025 11:52:11 -0700 (PDT)
+Received: from localhost ([2001:470:b8f6:1b:e171:344b:daa:1a1a])
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-4383d9886bbsm1534918b6e.32.2025.09.05.11.52.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 11:52:09 -0700 (PDT)
 From: Corey Minyard <corey@minyard.net>
 To: Gilles BULOZ <gilles.buloz@kontron.com>
 Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-	OpenIPMI Developers <openipmi-developer@lists.sourceforge.net>
-Subject: Re: user->nr_msgs going negative in ipmi_msghandler.c
-Message-ID: <aLsw6G0GyqfpKs2S@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <5cc48305-d88d-ac15-ce0d-55306a60a0dd@kontron.com>
- <aLrPbzfho1d2kMsn@mail.minyard.net>
- <aLrRlQZdeToIgPBG@mail.minyard.net>
- <c3c0cba1-a45d-8619-06c0-64046d8ecd76@kontron.com>
- <f14bd1ca-c47a-13b3-fd5f-5f5ad0c89fad@kontron.com>
+	OpenIPMI Developers <openipmi-developer@lists.sourceforge.net>,
+	Corey Minyard <corey@minyard.net>
+Subject: [PATCH] ipmi: Rework user message limit handling
+Date: Fri,  5 Sep 2025 13:51:45 -0500
+Message-ID: <20250905185207.665207-1-corey@minyard.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f14bd1ca-c47a-13b3-fd5f-5f5ad0c89fad@kontron.com>
 
-I'm adding the OpenIPMI mailing list and the LKML.
+The limit on the number of user messages had a number of issues,
+improper counting in some cases and a use after free.
 
-On Fri, Sep 05, 2025 at 05:04:28PM +0200, Gilles BULOZ wrote:
-> Le 05/09/2025 à 15:15, Gilles BULOZ a écrit :
-> > Le 05/09/2025 à 14:03, Corey Minyard a écrit :
-> >> On Fri, Sep 05, 2025 at 06:54:23AM -0500, Corey Minyard wrote:
-> >>> On Fri, Sep 05, 2025 at 10:16:19AM +0200, Gilles BULOZ wrote:
-> >>>> Hi Corey,
-> >>>>
-> >>>> I'm HW/SW developer at Kontron (computer manufacturer) and don't know what to
-> >>>> think about an issue with user->nr_msgs going negative in ipmi_msghandler.c.
-> >>>> Not sure if it's a weakness in ipmi_msghandler.c or a bug in the IPMC software
-> >>>> of our computer board (satellite) with event messages.
-> >>> I worked with people from Kontron a long time ago.  Those were good
-> >>> times :).
-> >>>
-> >>>> I see this when I run ipmitool on this board while some event messages already
-> >>>> available. In this case deliver_response() is processing the messages and is
-> >>>> decreasing user->nr_msgs below 0. Then when ipmitool calls
-> >>>> ioctl(IPMICTL_SEND_COMMAND) it gets an error with errno=EBUSY because in
-> >>>> i_ipmi_request() user->nr_msgs is incremented but still negative, casted to
-> >>>> unsigned int so becomes huge, and found greater than max_msgs_per_user (100).
-> >>> Thanks for the detailed description.  The fix for the bug is:
-> >>>
-> >>> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> >>> index e12b531f5c2f..ba33070622b1 100644
-> >>> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> >>> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> >>> @@ -1634,6 +1634,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
-> >>>
-> >>>                 list_for_each_entry_safe(msg, msg2, &msgs, link) {
-> >>>                         msg->user = user;
-> >>> +                       atomic_add(1, &usr->nr_msgs);
-> >> Sorry, that should obviously be user->nr_msgs
-> > Thanks very much !
-> > I've tried it with kernel 6.11.8 and it's better but still not enough.
-> > Running "ipmitool sensor" with some debug in ipmi_msghandler.c shows that I always have nr_msgs=1 right after the atomic_add (called
-> > 9 times), then when in i_ipmi_request() I reach line "rv = -EBUSY;" with nr_msgs=-2 (twice).
-> My understanding is that ipmitool calls ioctl(IPMICTL_SET_GETS_EVENTS_CMD) calling ipmi_set_gets_events() and thanks to your patch
-> for each event available the nr_msgs is incremented here and decremented in deliver_response(). So your patch is OK for that.
-> But after that if other events are coming, deliver_response() is called and nr_msgs gets decremented. So when ipmitool calls
-> ioctl(IPMICTL_SEND_COMMAND), this calls i_ipmi_request() with nr_msgs < 0 and that returns -EBUSY
+Restructure how this is all done to handle more in the receive message
+allocation routine, so all refcouting and user message limit counts
+are done in that routine.  It's a lot cleaner and safer.
 
+Reported-by: Gilles BULOZ <gilles.buloz@kontron.com>
+Fixes: 8e76741c3d8b20df "ipmi: Add a limit on the number of users that may use IPMI"
+Signed-off-by: Corey Minyard <corey@minyard.net>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 420 +++++++++++++---------------
+ 1 file changed, 200 insertions(+), 220 deletions(-)
 
-Yeah, after I sent my email I started looking through the driver for
-other issues around this, and there were several.  That change wasn't
-well thought through.
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 90e2e126ef86..a0b67a35a5f0 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -38,7 +38,9 @@
+ 
+ #define IPMI_DRIVER_VERSION "39.2"
+ 
+-static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
++static struct ipmi_recv_msg *ipmi_alloc_recv_msg(struct ipmi_user *user);
++static void ipmi_set_recv_msg_user(struct ipmi_recv_msg *msg,
++				   struct ipmi_user *user);
+ static int ipmi_init_msghandler(void);
+ static void smi_work(struct work_struct *t);
+ static void handle_new_recv_msgs(struct ipmi_smi *intf);
+@@ -962,7 +964,6 @@ static int deliver_response(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
+ 		 * risk.  At this moment, simply skip it in that case.
+ 		 */
+ 		ipmi_free_recv_msg(msg);
+-		atomic_dec(&msg->user->nr_msgs);
+ 	} else {
+ 		/*
+ 		 * Deliver it in smi_work.  The message will hold a
+@@ -1626,8 +1627,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
+ 		}
+ 
+ 		list_for_each_entry_safe(msg, msg2, &msgs, link) {
+-			msg->user = user;
+-			kref_get(&user->refcount);
++			ipmi_set_recv_msg_user(msg, user);
+ 			deliver_local_response(intf, msg);
+ 		}
+ 	}
+@@ -2298,22 +2298,15 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 	int run_to_completion = READ_ONCE(intf->run_to_completion);
+ 	int rv = 0;
+ 
+-	if (user) {
+-		if (atomic_add_return(1, &user->nr_msgs) > max_msgs_per_user) {
+-			/* Decrement will happen at the end of the routine. */
+-			rv = -EBUSY;
+-			goto out;
+-		}
+-	}
+-
+-	if (supplied_recv)
++	if (supplied_recv) {
+ 		recv_msg = supplied_recv;
+-	else {
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (recv_msg == NULL) {
+-			rv = -ENOMEM;
+-			goto out;
+-		}
++		recv_msg->user = user;
++		if (user)
++			atomic_inc(&user->nr_msgs);
++	} else {
++		recv_msg = ipmi_alloc_recv_msg(user);
++		if (IS_ERR(recv_msg))
++			return PTR_ERR(recv_msg);
+ 	}
+ 	recv_msg->user_msg_data = user_msg_data;
+ 
+@@ -2324,8 +2317,7 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 		if (smi_msg == NULL) {
+ 			if (!supplied_recv)
+ 				ipmi_free_recv_msg(recv_msg);
+-			rv = -ENOMEM;
+-			goto out;
++			return -ENOMEM;
+ 		}
+ 	}
+ 
+@@ -2341,10 +2333,6 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 		goto out_err;
+ 	}
+ 
+-	recv_msg->user = user;
+-	if (user)
+-		/* The put happens when the message is freed. */
+-		kref_get(&user->refcount);
+ 	recv_msg->msgid = msgid;
+ 	/*
+ 	 * Store the message to send in the receive message so timeout
+@@ -2373,8 +2361,10 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 
+ 	if (rv) {
+ out_err:
+-		ipmi_free_smi_msg(smi_msg);
+-		ipmi_free_recv_msg(recv_msg);
++		if (!supplied_smi)
++			ipmi_free_smi_msg(smi_msg);
++		if (!supplied_recv)
++			ipmi_free_recv_msg(recv_msg);
+ 	} else {
+ 		dev_dbg(intf->si_dev, "Send: %*ph\n",
+ 			smi_msg->data_size, smi_msg->data);
+@@ -2384,9 +2374,6 @@ static int i_ipmi_request(struct ipmi_user     *user,
+ 	if (!run_to_completion)
+ 		mutex_unlock(&intf->users_mutex);
+ 
+-out:
+-	if (rv && user)
+-		atomic_dec(&user->nr_msgs);
+ 	return rv;
+ }
+ 
+@@ -3905,7 +3892,7 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
+ 	unsigned char            chan;
+ 	struct ipmi_user         *user = NULL;
+ 	struct ipmi_ipmb_addr    *ipmb_addr;
+-	struct ipmi_recv_msg     *recv_msg;
++	struct ipmi_recv_msg     *recv_msg = NULL;
+ 
+ 	if (msg->rsp_size < 10) {
+ 		/* Message not big enough, just ignore it. */
+@@ -3926,9 +3913,8 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
+ 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
+ 	if (rcvr) {
+ 		user = rcvr->user;
+-		kref_get(&user->refcount);
+-	} else
+-		user = NULL;
++		recv_msg = ipmi_alloc_recv_msg(user);
++	}
+ 	rcu_read_unlock();
+ 
+ 	if (user == NULL) {
+@@ -3958,47 +3944,41 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
+ 		 * causes it to not be freed or queued.
+ 		 */
+ 		rv = -1;
+-	} else {
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
+-			/*
+-			 * We couldn't allocate memory for the
+-			 * message, so requeue it for handling
+-			 * later.
+-			 */
+-			rv = 1;
+-			kref_put(&user->refcount, free_ipmi_user);
+-		} else {
+-			/* Extract the source address from the data. */
+-			ipmb_addr = (struct ipmi_ipmb_addr *) &recv_msg->addr;
+-			ipmb_addr->addr_type = IPMI_IPMB_ADDR_TYPE;
+-			ipmb_addr->slave_addr = msg->rsp[6];
+-			ipmb_addr->lun = msg->rsp[7] & 3;
+-			ipmb_addr->channel = msg->rsp[3] & 0xf;
++	} else if (!IS_ERR(recv_msg)) {
++		/* Extract the source address from the data. */
++		ipmb_addr = (struct ipmi_ipmb_addr *) &recv_msg->addr;
++		ipmb_addr->addr_type = IPMI_IPMB_ADDR_TYPE;
++		ipmb_addr->slave_addr = msg->rsp[6];
++		ipmb_addr->lun = msg->rsp[7] & 3;
++		ipmb_addr->channel = msg->rsp[3] & 0xf;
+ 
+-			/*
+-			 * Extract the rest of the message information
+-			 * from the IPMB header.
+-			 */
+-			recv_msg->user = user;
+-			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
+-			recv_msg->msgid = msg->rsp[7] >> 2;
+-			recv_msg->msg.netfn = msg->rsp[4] >> 2;
+-			recv_msg->msg.cmd = msg->rsp[8];
+-			recv_msg->msg.data = recv_msg->msg_data;
++		/*
++		 * Extract the rest of the message information
++		 * from the IPMB header.
++		 */
++		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
++		recv_msg->msgid = msg->rsp[7] >> 2;
++		recv_msg->msg.netfn = msg->rsp[4] >> 2;
++		recv_msg->msg.cmd = msg->rsp[8];
++		recv_msg->msg.data = recv_msg->msg_data;
+ 
+-			/*
+-			 * We chop off 10, not 9 bytes because the checksum
+-			 * at the end also needs to be removed.
+-			 */
+-			recv_msg->msg.data_len = msg->rsp_size - 10;
+-			memcpy(recv_msg->msg_data, &msg->rsp[9],
+-			       msg->rsp_size - 10);
+-			if (deliver_response(intf, recv_msg))
+-				ipmi_inc_stat(intf, unhandled_commands);
+-			else
+-				ipmi_inc_stat(intf, handled_commands);
+-		}
++		/*
++		 * We chop off 10, not 9 bytes because the checksum
++		 * at the end also needs to be removed.
++		 */
++		recv_msg->msg.data_len = msg->rsp_size - 10;
++		memcpy(recv_msg->msg_data, &msg->rsp[9],
++		       msg->rsp_size - 10);
++		if (deliver_response(intf, recv_msg))
++			ipmi_inc_stat(intf, unhandled_commands);
++		else
++			ipmi_inc_stat(intf, handled_commands);
++	} else {
++		/*
++		 * We couldn't allocate memory for the message, so
++		 * requeue it for handling later.
++		 */
++		rv = 1;
+ 	}
+ 
+ 	return rv;
+@@ -4011,7 +3991,7 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
+ 	int                      rv = 0;
+ 	struct ipmi_user         *user = NULL;
+ 	struct ipmi_ipmb_direct_addr *daddr;
+-	struct ipmi_recv_msg     *recv_msg;
++	struct ipmi_recv_msg     *recv_msg = NULL;
+ 	unsigned char netfn = msg->rsp[0] >> 2;
+ 	unsigned char cmd = msg->rsp[3];
+ 
+@@ -4020,9 +4000,8 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
+ 	rcvr = find_cmd_rcvr(intf, netfn, cmd, 0);
+ 	if (rcvr) {
+ 		user = rcvr->user;
+-		kref_get(&user->refcount);
+-	} else
+-		user = NULL;
++		recv_msg = ipmi_alloc_recv_msg(user);
++	}
+ 	rcu_read_unlock();
+ 
+ 	if (user == NULL) {
+@@ -4044,44 +4023,38 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
+ 		 * causes it to not be freed or queued.
+ 		 */
+ 		rv = -1;
+-	} else {
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
+-			/*
+-			 * We couldn't allocate memory for the
+-			 * message, so requeue it for handling
+-			 * later.
+-			 */
+-			rv = 1;
+-			kref_put(&user->refcount, free_ipmi_user);
+-		} else {
+-			/* Extract the source address from the data. */
+-			daddr = (struct ipmi_ipmb_direct_addr *)&recv_msg->addr;
+-			daddr->addr_type = IPMI_IPMB_DIRECT_ADDR_TYPE;
+-			daddr->channel = 0;
+-			daddr->slave_addr = msg->rsp[1];
+-			daddr->rs_lun = msg->rsp[0] & 3;
+-			daddr->rq_lun = msg->rsp[2] & 3;
++	} else if (!IS_ERR(recv_msg)) {
++		/* Extract the source address from the data. */
++		daddr = (struct ipmi_ipmb_direct_addr *)&recv_msg->addr;
++		daddr->addr_type = IPMI_IPMB_DIRECT_ADDR_TYPE;
++		daddr->channel = 0;
++		daddr->slave_addr = msg->rsp[1];
++		daddr->rs_lun = msg->rsp[0] & 3;
++		daddr->rq_lun = msg->rsp[2] & 3;
+ 
+-			/*
+-			 * Extract the rest of the message information
+-			 * from the IPMB header.
+-			 */
+-			recv_msg->user = user;
+-			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
+-			recv_msg->msgid = (msg->rsp[2] >> 2);
+-			recv_msg->msg.netfn = msg->rsp[0] >> 2;
+-			recv_msg->msg.cmd = msg->rsp[3];
+-			recv_msg->msg.data = recv_msg->msg_data;
+-
+-			recv_msg->msg.data_len = msg->rsp_size - 4;
+-			memcpy(recv_msg->msg_data, msg->rsp + 4,
+-			       msg->rsp_size - 4);
+-			if (deliver_response(intf, recv_msg))
+-				ipmi_inc_stat(intf, unhandled_commands);
+-			else
+-				ipmi_inc_stat(intf, handled_commands);
+-		}
++		/*
++		 * Extract the rest of the message information
++		 * from the IPMB header.
++		 */
++		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
++		recv_msg->msgid = (msg->rsp[2] >> 2);
++		recv_msg->msg.netfn = msg->rsp[0] >> 2;
++		recv_msg->msg.cmd = msg->rsp[3];
++		recv_msg->msg.data = recv_msg->msg_data;
++
++		recv_msg->msg.data_len = msg->rsp_size - 4;
++		memcpy(recv_msg->msg_data, msg->rsp + 4,
++		       msg->rsp_size - 4);
++		if (deliver_response(intf, recv_msg))
++			ipmi_inc_stat(intf, unhandled_commands);
++		else
++			ipmi_inc_stat(intf, handled_commands);
++	} else {
++		/*
++		 * We couldn't allocate memory for the message, so
++		 * requeue it for handling later.
++		 */
++		rv = 1;
+ 	}
+ 
+ 	return rv;
+@@ -4195,7 +4168,7 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
+ 	unsigned char            chan;
+ 	struct ipmi_user         *user = NULL;
+ 	struct ipmi_lan_addr     *lan_addr;
+-	struct ipmi_recv_msg     *recv_msg;
++	struct ipmi_recv_msg     *recv_msg = NULL;
+ 
+ 	if (msg->rsp_size < 12) {
+ 		/* Message not big enough, just ignore it. */
+@@ -4216,9 +4189,8 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
+ 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
+ 	if (rcvr) {
+ 		user = rcvr->user;
+-		kref_get(&user->refcount);
+-	} else
+-		user = NULL;
++		recv_msg = ipmi_alloc_recv_msg(user);
++	}
+ 	rcu_read_unlock();
+ 
+ 	if (user == NULL) {
+@@ -4249,49 +4221,44 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
+ 		 * causes it to not be freed or queued.
+ 		 */
+ 		rv = -1;
+-	} else {
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
+-			/*
+-			 * We couldn't allocate memory for the
+-			 * message, so requeue it for handling later.
+-			 */
+-			rv = 1;
+-			kref_put(&user->refcount, free_ipmi_user);
+-		} else {
+-			/* Extract the source address from the data. */
+-			lan_addr = (struct ipmi_lan_addr *) &recv_msg->addr;
+-			lan_addr->addr_type = IPMI_LAN_ADDR_TYPE;
+-			lan_addr->session_handle = msg->rsp[4];
+-			lan_addr->remote_SWID = msg->rsp[8];
+-			lan_addr->local_SWID = msg->rsp[5];
+-			lan_addr->lun = msg->rsp[9] & 3;
+-			lan_addr->channel = msg->rsp[3] & 0xf;
+-			lan_addr->privilege = msg->rsp[3] >> 4;
++	} else if (!IS_ERR(recv_msg)) {
++		/* Extract the source address from the data. */
++		lan_addr = (struct ipmi_lan_addr *) &recv_msg->addr;
++		lan_addr->addr_type = IPMI_LAN_ADDR_TYPE;
++		lan_addr->session_handle = msg->rsp[4];
++		lan_addr->remote_SWID = msg->rsp[8];
++		lan_addr->local_SWID = msg->rsp[5];
++		lan_addr->lun = msg->rsp[9] & 3;
++		lan_addr->channel = msg->rsp[3] & 0xf;
++		lan_addr->privilege = msg->rsp[3] >> 4;
+ 
+-			/*
+-			 * Extract the rest of the message information
+-			 * from the IPMB header.
+-			 */
+-			recv_msg->user = user;
+-			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
+-			recv_msg->msgid = msg->rsp[9] >> 2;
+-			recv_msg->msg.netfn = msg->rsp[6] >> 2;
+-			recv_msg->msg.cmd = msg->rsp[10];
+-			recv_msg->msg.data = recv_msg->msg_data;
++		/*
++		 * Extract the rest of the message information
++		 * from the IPMB header.
++		 */
++		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
++		recv_msg->msgid = msg->rsp[9] >> 2;
++		recv_msg->msg.netfn = msg->rsp[6] >> 2;
++		recv_msg->msg.cmd = msg->rsp[10];
++		recv_msg->msg.data = recv_msg->msg_data;
+ 
+-			/*
+-			 * We chop off 12, not 11 bytes because the checksum
+-			 * at the end also needs to be removed.
+-			 */
+-			recv_msg->msg.data_len = msg->rsp_size - 12;
+-			memcpy(recv_msg->msg_data, &msg->rsp[11],
+-			       msg->rsp_size - 12);
+-			if (deliver_response(intf, recv_msg))
+-				ipmi_inc_stat(intf, unhandled_commands);
+-			else
+-				ipmi_inc_stat(intf, handled_commands);
+-		}
++		/*
++		 * We chop off 12, not 11 bytes because the checksum
++		 * at the end also needs to be removed.
++		 */
++		recv_msg->msg.data_len = msg->rsp_size - 12;
++		memcpy(recv_msg->msg_data, &msg->rsp[11],
++		       msg->rsp_size - 12);
++		if (deliver_response(intf, recv_msg))
++			ipmi_inc_stat(intf, unhandled_commands);
++		else
++			ipmi_inc_stat(intf, handled_commands);
++	} else {
++		/*
++		 * We couldn't allocate memory for the message, so
++		 * requeue it for handling later.
++		 */
++		rv = 1;
+ 	}
+ 
+ 	return rv;
+@@ -4313,7 +4280,7 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
+ 	unsigned char         chan;
+ 	struct ipmi_user *user = NULL;
+ 	struct ipmi_system_interface_addr *smi_addr;
+-	struct ipmi_recv_msg  *recv_msg;
++	struct ipmi_recv_msg  *recv_msg = NULL;
+ 
+ 	/*
+ 	 * We expect the OEM SW to perform error checking
+@@ -4342,9 +4309,8 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
+ 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
+ 	if (rcvr) {
+ 		user = rcvr->user;
+-		kref_get(&user->refcount);
+-	} else
+-		user = NULL;
++		recv_msg = ipmi_alloc_recv_msg(user);
++	}
+ 	rcu_read_unlock();
+ 
+ 	if (user == NULL) {
+@@ -4357,48 +4323,42 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
+ 		 */
+ 
+ 		rv = 0;
+-	} else {
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
+-			/*
+-			 * We couldn't allocate memory for the
+-			 * message, so requeue it for handling
+-			 * later.
+-			 */
+-			rv = 1;
+-			kref_put(&user->refcount, free_ipmi_user);
+-		} else {
+-			/*
+-			 * OEM Messages are expected to be delivered via
+-			 * the system interface to SMS software.  We might
+-			 * need to visit this again depending on OEM
+-			 * requirements
+-			 */
+-			smi_addr = ((struct ipmi_system_interface_addr *)
+-				    &recv_msg->addr);
+-			smi_addr->addr_type = IPMI_SYSTEM_INTERFACE_ADDR_TYPE;
+-			smi_addr->channel = IPMI_BMC_CHANNEL;
+-			smi_addr->lun = msg->rsp[0] & 3;
+-
+-			recv_msg->user = user;
+-			recv_msg->user_msg_data = NULL;
+-			recv_msg->recv_type = IPMI_OEM_RECV_TYPE;
+-			recv_msg->msg.netfn = msg->rsp[0] >> 2;
+-			recv_msg->msg.cmd = msg->rsp[1];
+-			recv_msg->msg.data = recv_msg->msg_data;
++	} else if (!IS_ERR(recv_msg)) {
++		/*
++		 * OEM Messages are expected to be delivered via
++		 * the system interface to SMS software.  We might
++		 * need to visit this again depending on OEM
++		 * requirements
++		 */
++		smi_addr = ((struct ipmi_system_interface_addr *)
++			    &recv_msg->addr);
++		smi_addr->addr_type = IPMI_SYSTEM_INTERFACE_ADDR_TYPE;
++		smi_addr->channel = IPMI_BMC_CHANNEL;
++		smi_addr->lun = msg->rsp[0] & 3;
++
++		recv_msg->user_msg_data = NULL;
++		recv_msg->recv_type = IPMI_OEM_RECV_TYPE;
++		recv_msg->msg.netfn = msg->rsp[0] >> 2;
++		recv_msg->msg.cmd = msg->rsp[1];
++		recv_msg->msg.data = recv_msg->msg_data;
+ 
+-			/*
+-			 * The message starts at byte 4 which follows the
+-			 * Channel Byte in the "GET MESSAGE" command
+-			 */
+-			recv_msg->msg.data_len = msg->rsp_size - 4;
+-			memcpy(recv_msg->msg_data, &msg->rsp[4],
+-			       msg->rsp_size - 4);
+-			if (deliver_response(intf, recv_msg))
+-				ipmi_inc_stat(intf, unhandled_commands);
+-			else
+-				ipmi_inc_stat(intf, handled_commands);
+-		}
++		/*
++		 * The message starts at byte 4 which follows the
++		 * Channel Byte in the "GET MESSAGE" command
++		 */
++		recv_msg->msg.data_len = msg->rsp_size - 4;
++		memcpy(recv_msg->msg_data, &msg->rsp[4],
++		       msg->rsp_size - 4);
++		if (deliver_response(intf, recv_msg))
++			ipmi_inc_stat(intf, unhandled_commands);
++		else
++			ipmi_inc_stat(intf, handled_commands);
++	} else {
++		/*
++		 * We couldn't allocate memory for the message, so
++		 * requeue it for handling later.
++		 */
++		rv = 1;
+ 	}
+ 
+ 	return rv;
+@@ -4456,8 +4416,8 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
+ 		if (!user->gets_events)
+ 			continue;
+ 
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
++		recv_msg = ipmi_alloc_recv_msg(user);
++		if (IS_ERR(recv_msg)) {
+ 			mutex_unlock(&intf->users_mutex);
+ 			list_for_each_entry_safe(recv_msg, recv_msg2, &msgs,
+ 						 link) {
+@@ -4478,8 +4438,6 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
+ 		deliver_count++;
+ 
+ 		copy_event_into_recv_msg(recv_msg, msg);
+-		recv_msg->user = user;
+-		kref_get(&user->refcount);
+ 		list_add_tail(&recv_msg->link, &msgs);
+ 	}
+ 	mutex_unlock(&intf->users_mutex);
+@@ -4495,8 +4453,8 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
+ 		 * No one to receive the message, put it in queue if there's
+ 		 * not already too many things in the queue.
+ 		 */
+-		recv_msg = ipmi_alloc_recv_msg();
+-		if (!recv_msg) {
++		recv_msg = ipmi_alloc_recv_msg(NULL);
++		if (IS_ERR(recv_msg)) {
+ 			/*
+ 			 * We couldn't allocate memory for the
+ 			 * message, so requeue it for handling
+@@ -4922,12 +4880,10 @@ static void smi_work(struct work_struct *t)
+ 
+ 		list_del(&msg->link);
+ 
+-		if (refcount_read(&user->destroyed) == 0) {
++		if (refcount_read(&user->destroyed) == 0)
+ 			ipmi_free_recv_msg(msg);
+-		} else {
+-			atomic_dec(&user->nr_msgs);
++		else
+ 			user->handler->ipmi_recv_hndl(msg, user->handler_data);
+-		}
+ 	}
+ 	mutex_unlock(&intf->user_msgs_mutex);
+ 
+@@ -5245,27 +5201,51 @@ static void free_recv_msg(struct ipmi_recv_msg *msg)
+ 		kfree(msg);
+ }
+ 
+-static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void)
++static struct ipmi_recv_msg *ipmi_alloc_recv_msg(struct ipmi_user *user)
+ {
+ 	struct ipmi_recv_msg *rv;
+ 
++	if (user) {
++		if (atomic_add_return(1, &user->nr_msgs) > max_msgs_per_user) {
++			atomic_dec(&user->nr_msgs);
++			return ERR_PTR(-EBUSY);
++		}
++	}
++
+ 	rv = kmalloc(sizeof(struct ipmi_recv_msg), GFP_ATOMIC);
+-	if (rv) {
+-		rv->user = NULL;
+-		rv->done = free_recv_msg;
+-		atomic_inc(&recv_msg_inuse_count);
++	if (!rv) {
++		if (user)
++			atomic_dec(&user->nr_msgs);
++		return ERR_PTR(-ENOMEM);
+ 	}
++
++	rv->user = user;
++	rv->done = free_recv_msg;
++	if (user)
++		kref_get(&user->refcount);
++	atomic_inc(&recv_msg_inuse_count);
+ 	return rv;
+ }
+ 
+ void ipmi_free_recv_msg(struct ipmi_recv_msg *msg)
+ {
+-	if (msg->user && !oops_in_progress)
++	if (msg->user && !oops_in_progress) {
++		atomic_dec(&msg->user->nr_msgs);
+ 		kref_put(&msg->user->refcount, free_ipmi_user);
++	}
+ 	msg->done(msg);
+ }
+ EXPORT_SYMBOL(ipmi_free_recv_msg);
+ 
++static void ipmi_set_recv_msg_user(struct ipmi_recv_msg *msg,
++				   struct ipmi_user *user)
++{
++	WARN_ON_ONCE(msg->user); /* User should not be set. */
++	msg->user = user;
++	atomic_inc(&user->nr_msgs);
++	kref_get(&user->refcount);
++}
++
+ static atomic_t panic_done_count = ATOMIC_INIT(0);
+ 
+ static void dummy_smi_done_handler(struct ipmi_smi_msg *msg)
+-- 
+2.43.0
 
-So, I've added some tests around this in my test suite, and I've
-reworked this to be a much better implementation that's harder to get
-wrong.
-
-I'm going to send the fix in a separate email.
-
-Thanks,
-
--corey
-
-> >>>                         kref_get(&user->refcount);
-> >>>                         deliver_local_response(intf, msg);
-> >>>                 }
-> >>>
-> >>>
-> >>> Can you try that out?
-> >>>
-> >>> I'll forward port this to current kernel (if appropriate, this has all
-> >>> been rewritten) and required a backport.
-> >>>
-> >>> Thanks,
-> >>>
-> >>> -corey
-> >>>
-> >>>> As workaround I set module parameter max_msgs_per_user to 0xffffffff so that
-> >>>> user->nr_msgs is never greater than this value.
-> >>>> I was using kernel 6.11.8 but updated to 6.16.3 and get the same issue.
-> >>>> I'm also not sure if our board is supposed to receive such event messages as
-> >>>> it is not Shelf Manager, even if these events come from the local sensors of
-> >>>> the board.
-> >>>>
-> >>>> Best regards
-> >>>>
-> >>>> Gilles Buloz
-> >>>> Kontron Modular Computers France
-> >>>> R&D SW/HW senior developer
-> >>>>
-> >> .
-> 
 
