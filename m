@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-802310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54635B450D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517AFB450DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF37916416B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0CFA176982
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE82E2FD7C8;
-	Fri,  5 Sep 2025 08:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C7F2FE079;
+	Fri,  5 Sep 2025 08:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="F2V+zx6I"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WcfCalSB"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7438E2FD1D8;
-	Fri,  5 Sep 2025 08:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BFA2FD7A4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059467; cv=none; b=RbJu0a3dk3HtVZTQNLxJBCu3O0iOC2Hd3eJ1NF0lvmDcwUdvLya3SK/TNZYPkmsTZZxUVHMgNjG+/VTCIEE5183I/62Fttgeun0YeVWg7uYwdtjEJu07etHVC/aAY+77iKXwGcaLnTTFnaC10BZERomnLMfsA2q23zpKXsr4IyY=
+	t=1757059468; cv=none; b=hO1wWyBffXxk2lkttnFula66eT8+Pv9veitrLQ6zOZk4JJYE+b2Only7LMV1zTRgKoTIjEojp2YJ0Gsop8loP66xICxkYq5iNYTzUYku9h9P7QOTIvrMNyFrGdDfJKbGocMV3AAPdAU/2O4VYDSxvJhoE6gPig0ZAwDkJswGYKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059467; c=relaxed/simple;
-	bh=EjZA/lxVekrftyLm282p76tOjzm55CelzVQS4tiJ2Yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0jdOHiHgcl/cUbBuWcS1k9mg1JFe0N8taSzCNt1NxJri91G6awJxsnKAFKOKlWM/1WIAgVFQgjcpWYQXRJ7k2kZ1ZYJeP8FvrQYyjwsYO5B56EKdEufzNvyH2JK2IuYclUxCLztbtzX8NDCSwqln618dLV6JjfoWEBUOOhs+Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=F2V+zx6I reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cJ85015bYz1DDXC;
-	Fri,  5 Sep 2025 10:04:20 +0200 (CEST)
-Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cJ84z4RCTz1DDB7;
-	Fri,  5 Sep 2025 10:04:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1757059459;
-	bh=bfX4WwP6l4L7nuUkvsKK2kWfqcceycSxYP97lcTylMo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=F2V+zx6IxMZbR0mgxua/MDZVeAh9V1ANyfwP4c3s7CjFcQOik150ncyVgQLWZUoqj
-	 VrEQ9ux9MEC/2o1y12d9VPjMtvxFEaS3p3XaN5C2wk2G3+tLgzK3i+NLB/79YToufA
-	 9hlHGybISDsCDW1RjB+BDqI0ssjNCUjageS9ZBjemiBGpi9+WYdAOKzmHZUbl8mzzC
-	 xwtcLi2dhMFdN7MS67xjutfKqIrxJ7eseLTBaynXDzxo3J9UD6cBqSlwG639zcN6wD
-	 6iUKWcv8vGA1xwKntWw9xwJIZCZz7Da9E/F0ACHZi9BRW1fYJ0DRJM60x3qe+aV1hx
-	 CqdGOrKXliEgQ==
-Message-ID: <8deb9ed8-6c12-4fef-a78c-028de7928803@gaisler.com>
-Date: Fri, 5 Sep 2025 10:04:19 +0200
+	s=arc-20240116; t=1757059468; c=relaxed/simple;
+	bh=BK69GKXDo5Lr+Qkt1GmUdgKZZr1aJR2lLdycYBt0bJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bsoGtVVSm0rHcXheBrBRJo/Yn3ADJgALRXlWvRuz6TBxKg5UOFAeVmGw51wljM1Hvdm4qyVX06aOlUVLHaOI8e7vLyaiklBNsWFj8JBRmMDrUfKXoZUgjqh51fwqcC4i6y1jMqz1X39qeXcp2bf3rlQKine3hTXucrMnbBsj8Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WcfCalSB; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9853e630so17069005e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757059465; x=1757664265; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mEyqxPQTlvHE7Rb9nf0Ka5S6ku97HAqdoQLaDQei9o8=;
+        b=WcfCalSBQX5L5ITP6TimiMFu5LeZmc5lCsiv4UcIC7sgdWIAeacQi+ivcACERdRbJo
+         5K+hEqjm9Fzx8dyl2G/09eXEa8r9AjQKrB/SfEVqduRj6IGOGznuC+vvebSPNFePhQHW
+         HKQXFYWm04kQNz7C9nHmUfUYlqNdoVY+hzr8kXZQ0Ep2iS8+SYwifQaTV4lKRVpPWCKl
+         kQ8uOBE8MdobqhEks0IiblQjB9vZv7D+MJinT19M5p7sm17udyD5jxCtjpKuYo2cUC1b
+         UTJVhz2viI9Ds5vlyWoaH6DAn02bpN8b1jeyekVLEpRK/XX3hkAtqbCiyUnmQWNyxwzS
+         rSVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757059465; x=1757664265;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mEyqxPQTlvHE7Rb9nf0Ka5S6ku97HAqdoQLaDQei9o8=;
+        b=I24aJxIP9aZ2HmsR49KfgDXX4LvopRuP0vuIVf/TEg8qdtyNeLzdpUVyt5Cp8a5GzC
+         9ZGLp2hHpEp8kdhrD9aOz2ZtNho+g/NYbfttycSBRmoP7fVIJ3rdCDvtmkUURWyKgghm
+         T16ViaMVOmPDpO2wWG/tqY0JUjBv08T8ClnKTtWkI9IEE6OV+5wYbLI+8jevW+y1Z0Bu
+         8LMVRhRaEZQA5nPHBlEVvV786KdPmWwZ4x/zM1J+GBLzf6M/BW3MwRvE8pdcfIQqRWv5
+         FrkNErUSerr2qcocFvukrP6vtkfDABhnS3myvdw+LtwZYKjUGdhko8cc2titovsnnw4k
+         wdIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGcPBTmZzT386a+iICrjaDI3RGkYXBZDUTKyKulOhtZXFSDLu+RPxrXiwwq4w/Tk/i4emU6qMtpJlB2SY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGYWpeR0I3dPHuYR7+42tJIv6XAiBvqgwZoCgVJ7QEHtH73zpF
+	HYrIo9JHfTu68JwFveiKQRwXLSQwt6oHk97giRWPpI26Xb6OFSbJ3VPTX2n+exeYV9c=
+X-Gm-Gg: ASbGncusm3it+Bv33Yt+6mmsJlDlzXqWZgIvLxeNTEY5reUeC20zATupMr2DLVer3v5
+	/XNRnQ8c33t97+2sPRcgtOXvQPMvw17JZqyteqv+pEWoASp1kYhp/ri5nas41G6kNpKAOeQfbaA
+	V3FEuwfIjjoYuhNXmQygWBroXIWpiBJKCUsAiGI5yIwxiqwX7hvZUZILbmNV8HAFxxHCiWp+mS8
+	zAnVxr3Kgukqm91rmQb+HB9+IT794wh+FsQchBPArgqNz9eq09lcfdEmIhIhvYyeXgdlwNbpgf+
+	f+WzF4T3oM3jkAUfSRRhacH+S/YBI+9x56PXHc9dC8V3DrnIWPTYacjuCJ0A/PUkClysxoCMxfX
+	dOWaGvll5mAswaC5MXDwXEoBfcaJ3Kf348AaLYq4UIzqmULey
+X-Google-Smtp-Source: AGHT+IFg31bO3+yEGrU5RDt0pIsHa2/S7Tm9NAlDysnLBMH3Sorox3ujEfiAyqMx4B2CxZfrtHTl2w==
+X-Received: by 2002:a05:600c:35c5:b0:45d:cf5f:cff8 with SMTP id 5b1f17b1804b1-45dcf67429bmr53251585e9.11.1757059464523;
+        Fri, 05 Sep 2025 01:04:24 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf276d204asm30777648f8f.24.2025.09.05.01.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 01:04:24 -0700 (PDT)
+Date: Fri, 5 Sep 2025 11:04:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] PCI: stm32: clean up some error handling in probe()
+Message-ID: <aLqZhL-DV4LOnHlD@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Rene Rebe <rene@exactcode.com>, kernel@mkarcher.dialup.fu-berlin.de
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- anthony.yznaga@oracle.com
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
- <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
- <20250902.184011.440504961051160142.rene@exactcode.com>
- <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 2025-09-02 18:47, John Paul Adrian Glaubitz wrote:
-> On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
->> From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
->>
->>> Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accurate exception reporting.")
->>> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
->>
->> Tested-by: René Rebe <rene@exactcode.com> # UltraSparc T4 SPARC T4-1 Server
-> 
-> Thanks for the testing! However, this actually needs to be tested on a SPARC T1
-> as both T2 and T4 have their own implementation that is being used. Testing on a
-> T4 will therefore not invoke this particular code unless you modify the kernel in
-> head_64.S to employ the Niagara 1 code on Niagara 4.
+Smatch complains that the other error paths use gotos to clean up and
+these two don't.  Generally, the implication with that warning is that
+the error handly has been ommitted.  In this case, the error handling is
+fine, but we can avoid a bit of code duplication by using gotos to clean
+up.
 
-Hi Rene,
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pci/controller/dwc/pcie-stm32.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Did you have the fourth patch, that is for Niagara 4, applied as well
-when you did this testing? If so, we could add your Tested-by to that
-patch instead.
-
-Cheers,
-Andreas
+diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
+index 964fa6f674c8..96a5fb893af4 100644
+--- a/drivers/pci/controller/dwc/pcie-stm32.c
++++ b/drivers/pci/controller/dwc/pcie-stm32.c
+@@ -287,18 +287,16 @@ static int stm32_pcie_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_runtime_set_active(dev);
+ 	if (ret < 0) {
+-		clk_disable_unprepare(stm32_pcie->clk);
+-		stm32_remove_pcie_port(stm32_pcie);
+-		return dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
++		dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
++		goto err_disable_clk;
+ 	}
+ 
+ 	pm_runtime_no_callbacks(dev);
+ 
+ 	ret = devm_pm_runtime_enable(dev);
+ 	if (ret < 0) {
+-		clk_disable_unprepare(stm32_pcie->clk);
+-		stm32_remove_pcie_port(stm32_pcie);
+-		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
++		dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
++		goto err_disable_clk;
+ 	}
+ 
+ 	ret = dw_pcie_host_init(&stm32_pcie->pci.pp);
+-- 
+2.47.2
 
 
