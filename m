@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-803196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA27BB45BF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D2DB45C2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0693E3AD462
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A07B18968EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0861331B823;
-	Fri,  5 Sep 2025 15:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M8bMpnTz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F7D31B81F;
+	Fri,  5 Sep 2025 15:13:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F20302170
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC2931B80D;
+	Fri,  5 Sep 2025 15:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084744; cv=none; b=UiPAGdi9namM5Xil2ISTgefFzfysPjUx44Un/3eYvGOcN1Hpjl4ds5KOrhY7R20rGPAf69BiBLtP6g/5QN2XNh73VlJAnQv71ScmxSyrhdplBa/SQbtzfKzVlazn+sUqcbqKKFh2lXNnHuvAjx/zZtBtfGyB9rKVsp7/gOjiPS8=
+	t=1757085204; cv=none; b=Uy7OyGz97vFvdlhEmnN8mQfd+MDUH9+gQYIo5NWXnjneFcte9mPQ336NmaGQy+zWv4N+8gCn7YN1UN1uhkLsfgONXjKZ/FnNmxJsuY8ssL9ReX4Oqhdr4XJXxwUS+9R+DnAkPEXgenzG8XuPhSPHlS8dGXW76ird+gSATFAlPbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084744; c=relaxed/simple;
-	bh=wW7dIF9hg5FlDqjmM6YX0iZNQQw1lXp/0P0KvOe/ibA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WCGt4YFQTVijNCHYabLUmlguqqmg0LQ/J2t0DEnLrvCQGlvY4tLn83d3MNzwtrdMYJ2RvMlp0kU4kbIqXZxGX1q+hgH/ASclpcsSCQYOHKiNDB9l4xRkFFPd2R41+XaMBHNq6ZY9eKyHL6D49HHJ9TsB0hlkhEtktZRhaMeKcCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M8bMpnTz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58577WDv013673
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 15:05:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=rams1MK76xG
-	xbvTN1cUvij9c/QYVcgdlDejUrDnGUzQ=; b=M8bMpnTzdQb6zjIt7wcxk5/qLLj
-	k0VtqjhsZGPc/Odh6vsdX7lViuVGNxVMun3TZdW/mgr2Fj2Dukp9TjCrtCMzLgkz
-	eOaP1A5F973wcLwBoa8J6ukLxHn5+RvdbkV1k37xWBQAqDWHfopMnVfbDzCCLNpX
-	jjbnZKL9kGN3Bl4O3Ed6YMEV+0TcOXCr52Q7vBKAxZViJ6U7g4xjIMkU+PXNSKkJ
-	xHCXFxe6Zxkk0i7zFhIj8Yx2nC4qazzv8bMnFYYY+3EGF/aZ/oOVOkfRXuxU0i+J
-	4raDyAP41fa/7JtHxJXdqNuXXv3xWKO6E93QN9gcDHRMt0S1yLSgGidYs3Q==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48w8wyff3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:05:41 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2507ae2fb0fso1300975ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:05:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084740; x=1757689540;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rams1MK76xGxbvTN1cUvij9c/QYVcgdlDejUrDnGUzQ=;
-        b=SZbd+4Ckxv/4MS/e+iQPR9povddha5U6BAQFtDLmirFfL+25ZuOBhdwUOYmqiHrU4m
-         Mh9yjh8b+gh6FoJUKn9xq77DPoTCKB49ZPsJwO61FHr6WRCJyeuymoTdPN/FqPLfCkA6
-         DhnHu3R+mZVctO3MrZs7/WDEsaDhBAznTxJpzogEvAWLFiDH+8nBAAlJAy33FTl0uQtM
-         jwP9IttxyhC51Yj5tCeQYyNQvPn5pTLukGhcbWOId2xh+H+4hv72xp39AQHVOS0ISway
-         SpRQy4+0PFWkYZRGbJHPPCaGUEWo8u7fHnOR5vofBK1S5uglur/7mbY00u73+J2NmqCj
-         BpUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0utD0xd8cluUDRT/jZr5eRS5+jyH6ydqT7Si/2nddIPml1GUShHDfHIBgFs4Iuk014xfCoW3/kUbBm/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0mWUru0QRQvn8KZhh4G3XN8aePAOeS6aHj7xNp6DxOY63uPit
-	3bucCdvyK7/Uci5uKXYqjGDUm1WEOSI8QYDJDt25ij9QTrGpM0/YleOzKkz4TUChyBJY1oX1gLX
-	JBWVFIWpx33xxaEAevDwbSOpfTuFaSPnoxCz74ET3Lbda0Tu6G8hmHWbVsIivZ93Sn5Q=
-X-Gm-Gg: ASbGncvrUmZArpdbjdtzWSyO7uCE8T3WJ1/ssVzj8+Lgqmm0eYq0tfTC/M32gfhu77B
-	fj88zEeNGI7XI4APtdY7S/3NvEgGc+qts1bjhGA1UUShjr8UPFuLHHScJnTrdBj92XVT0DxDhVL
-	tARROQ/6MJeZEc0yNzXvf3nJgvfIPuQlmvyoCZkTKLJgswG7EXh3flevgUo2EyXCFZgxrppv7sS
-	11PQA1ApOTEQiykVvl/ER776Y1I38O3SL1DEZof/z5HQjbraEX6GXltS0Gd/zKMr6rCy0G2H2QT
-	mV+BrCNyCtIs1K+q48p6NsVpcBPHr07dcbJZ3c39l6ND63UYuLx2n1e1FX5eddFx+swR/4q4zVA
-	q
-X-Received: by 2002:a17:90b:5310:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-32ba2b9b3b7mr6442904a91.13.1757084740315;
-        Fri, 05 Sep 2025 08:05:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEx5KPPwVlb9iZR8T9g1aFHZ/PhPD4GNA1cvU17UqhbW9am2w2sCrWdN4XEZM5Yy+9fYcUdSw==
-X-Received: by 2002:a17:90b:5310:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-32ba2b9b3b7mr6442858a91.13.1757084739852;
-        Fri, 05 Sep 2025 08:05:39 -0700 (PDT)
-Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcf04b8sm28882840a91.26.2025.09.05.08.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 08:05:39 -0700 (PDT)
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
-        ajay.nandam@oss.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH v3 3/3] ASoC: qcom: sc8280xp: Fix DAI format setting for MI2S interfaces
-Date: Fri,  5 Sep 2025 20:34:45 +0530
-Message-Id: <20250905150445.2596140-4-mohammad.rafi.shaik@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250905150445.2596140-1-mohammad.rafi.shaik@oss.qualcomm.com>
-References: <20250905150445.2596140-1-mohammad.rafi.shaik@oss.qualcomm.com>
+	s=arc-20240116; t=1757085204; c=relaxed/simple;
+	bh=aX0skoyK6lzyBnPPEwaSlTRzaALmW1WARz4u1Q7KPC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pT0IpfL1IVpfAeoh70+/+Fq520g6HmsZ2cuiOCloKEKMj6q4iDdoEYQMloqGlzQvNZwWTecJI9O0XCfxtss4qnEQZWHuT4gc4OHkYwGpQt76eLuKyu2ve/kSb394kVf1aeMNWZu/uYJKOXHjreCibqL60GGu6VkeJavdsnAYC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cJKbt5YPbzYQvGy;
+	Fri,  5 Sep 2025 23:13:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 42B651A07BB;
+	Fri,  5 Sep 2025 23:13:13 +0800 (CST)
+Received: from k-arm6401.huawei.com (unknown [7.217.19.243])
+	by APP4 (Coremail) with SMTP id gCh0CgDnfYoF_rpoPC72BQ--.54678S2;
+	Fri, 05 Sep 2025 23:13:11 +0800 (CST)
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+To: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yhs@fb.com>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Willem de Bruijn <willemb@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Paul Chaignon <paul.chaignon@gmail.com>,
+	Tao Chen <chen.dylane@linux.dev>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>
+Subject: [PATCH bpf-next v2 0/3] Add overwrite mode for bpf ring buffer
+Date: Fri,  5 Sep 2025 23:06:38 +0800
+Message-ID: <20250905150641.2078838-1-xukuohai@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Ycq95xRf c=1 sm=1 tr=0 ts=68bafc45 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=tfJ7er6LdcoPz7dJv_wA:9
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: eML_3hATC29EMOgAE10epXj7ar1sMGyx
-X-Proofpoint-ORIG-GUID: eML_3hATC29EMOgAE10epXj7ar1sMGyx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDEwMSBTYWx0ZWRfX+st+3xqzNDSw
- s9gLVwKvo4cNmUiDyJ5y4pXd6qikdF/9CGVe/5pU2AzN2dDo5PKV5wMS75dLb+Gg+4Bi5X1vfdN
- qMuP5O1xTrhVdiUGqipWg2fWfMJRi4wI8nhudrp0jkBpEcWvBB03JQ/HyrpBDgJWc4Pg44UPjUG
- a+w7v+6JaHU3HVfhLRpFa7ix/cMG37weF7/EqBxtpbkwQ8FI28p5vsmGcVLUhjVGpaQFBfmiW2B
- +JuVB+qD9bRTnK9+T34OWtqriy2F3imJnzauE7Jeiw6to25paCqyhZqjRkRdlJ2KD6qhnDydYY9
- iLByeOIyee9hxEtzTGr7V2XgIC1v+3AsSw0UxtVwLNQVIMdlhNaJaXmkd+NBY6BngsbWhYsZukr
- +1D7MNb8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 malwarescore=0
- bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509010101
+X-CM-TRANSID:gCh0CgDnfYoF_rpoPC72BQ--.54678S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw4kGFWUCr4rtrW7tF43KFg_yoW8GF17pa
+	n5KF15trn2kFyxWw1fuF4IgryrAw4kZr1rKw1fXw15ZrWUJFWrXFyIkr15XrnxJrWIqr1F
+	k34qgryrW34jqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxkF7I0Ew4C26cxK6c8Ij28IcwCY02Avz4vEIxC_XrWl42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUhiFxUUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-The current implementation does not configure the CPU DAI format for
-MI2S interfaces, resulting in -EIO errors during audio playback and
-capture. This prevents the correct clock from being enabled for the
-MI2S interface. Configure the required DAI format to enable proper
-clock settings. Tested on Lemans evk platform.
+When the bpf ring buffer is full, new events can not be recorded util
+the consumer consumes some events to free space. This may cause critical
+events to be discarded, such as in fault diagnostic, where recent events
+are more critical than older ones.
 
-Fixes: 295aeea6646ad ("ASoC: qcom: add machine driver for sc8280xp")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
----
- sound/soc/qcom/sc8280xp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+So add ovewrite mode for bpf ring buffer. In this mode, the new event
+overwrites the oldest event when the buffer is full.
 
-diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-index 73f9f82c4e25..3067b95bcdbb 100644
---- a/sound/soc/qcom/sc8280xp.c
-+++ b/sound/soc/qcom/sc8280xp.c
-@@ -32,6 +32,10 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
- 	int dp_pcm_id = 0;
- 
- 	switch (cpu_dai->id) {
-+	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
-+	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
-+		snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_BP_FP);
-+		break;
- 	case WSA_CODEC_DMA_RX_0:
- 	case WSA_CODEC_DMA_RX_1:
- 		/*
+v2:
+- remove libbpf changes (Andrii)
+- update overwrite benchmark
+
+v1:
+https://lore.kernel.org/bpf/20250804022101.2171981-1-xukuohai@huaweicloud.com/
+
+Xu Kuohai (3):
+  bpf: Add overwrite mode for bpf ring buffer
+  selftests/bpf: Add test for overwrite ring buffer
+  selftests/bpf/benchs: Add producer and overwrite bench for ring buffer
+
+ include/uapi/linux/bpf.h                      |   4 +
+ kernel/bpf/ringbuf.c                          | 159 +++++++++++++++---
+ tools/include/uapi/linux/bpf.h                |   4 +
+ tools/testing/selftests/bpf/Makefile          |   3 +-
+ tools/testing/selftests/bpf/bench.c           |   2 +
+ .../selftests/bpf/benchs/bench_ringbufs.c     |  95 ++++++++++-
+ .../bpf/benchs/run_bench_ringbufs.sh          |   4 +
+ .../selftests/bpf/prog_tests/ringbuf.c        |  74 ++++++++
+ .../selftests/bpf/progs/ringbuf_bench.c       |  10 ++
+ .../bpf/progs/test_ringbuf_overwrite.c        |  98 +++++++++++
+ 10 files changed, 418 insertions(+), 35 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_overwrite.c
+
 -- 
-2.34.1
+2.43.0
 
 
