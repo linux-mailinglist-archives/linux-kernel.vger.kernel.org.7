@@ -1,205 +1,160 @@
-Return-Path: <linux-kernel+bounces-803067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DE7B45A21
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:11:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B566B45A25
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A1F5667DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A241A3A8F7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C42B36808F;
-	Fri,  5 Sep 2025 14:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9A369335;
+	Fri,  5 Sep 2025 14:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bYY+zzMo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SjinW2AM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B6917597
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15C13629AA;
+	Fri,  5 Sep 2025 14:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757081504; cv=none; b=O4q9JxoZsXFLaYr5xN6uzrtATjQn2JnjCMvM65P59fPcyFcbg/EVouTOCHUJ4N2OiW4YDsbr1fxQ60/GbesqXAu4FZKRYDiOp7TtDzKNnoY2WZpW71GN/KPbeg3PXQEY1qq1RULvS58GJhI+NlWF+jb0WFMbQKgsA7uhl0r+gXA=
+	t=1757081548; cv=none; b=cOpIyu5yY5amXZ80unqaHEfXuvp4QUHnkRJ/U6TCRJeTTyydgXQS/3bo/RJF86+Osn0cmuqUtmUzRh8e9oCliX3imG17fSEFa1DfN1uVhiQMcJx+BxyIxOw/yGGRRRq+veFHS9j/Ew7N8CLEJR1MdOA8dfIoMQtnzQ0bqMS/7QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757081504; c=relaxed/simple;
-	bh=qzRL6nIjbjmGDjrS4kIcDQkqTGTlvYWK4YBKHtPWoaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sy1OsTmECMrshSXxTRXoS7aw004kW4G5JaQmXBLLYLm5D7d/xY3JJqng4RrYwic96LLBSvVkVS1bTqYB/Z6L5Nzkzj2CR/oj4h00Wi+hsSQvcn8L5tBcXeB4jJ2f2xmb1Hn0J73ZTBSJsPcTLhqVauQZkeEYUUdxeY0EFT9AXBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bYY+zzMo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757081502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GgsRFe2do3K+Eon4rEy4MOebN7y4W7Y0WG9L41KSk7Q=;
-	b=bYY+zzMoFXMu043wECyYhvLu2MHdhcdgEJQ9S//wbQGqKxpU/x4kD5N0Jkk8i+5QiA4p4+
-	fzhX4Z+rXRVXo7/KCqp1EL7Lt2zDWttDQAkov+qYwTFc/dVDDk4Ez6Li/rqMP0gR2WXRX7
-	Kk6hPjZT1KizD+8nvYI464UuCO0jTV8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-iSG5nlMUOSCAPQrj2DK9sQ-1; Fri, 05 Sep 2025 10:11:41 -0400
-X-MC-Unique: iSG5nlMUOSCAPQrj2DK9sQ-1
-X-Mimecast-MFC-AGG-ID: iSG5nlMUOSCAPQrj2DK9sQ_1757081500
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3e40057d90aso320586f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:11:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757081500; x=1757686300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GgsRFe2do3K+Eon4rEy4MOebN7y4W7Y0WG9L41KSk7Q=;
-        b=u9qPtIUOyWnClxuHemtMMGD6wSjrOubaqEXzkAgAme0wNMKxrGQxn1xhNwsjByPvUu
-         FvYOtqbI3pcrNiCX75OaVGCCSTHVF1F+0MF5ZYgAW0oxjVcy/K+41YUQYIrRYs6DYOpA
-         DPjscYfS5f/WDfx+LzhqVEHQmwWuM6zchU4wvBDtNR1ZTRMN7w8EFDWIum2GPgcSWWjg
-         EruOGKq1qjxUf+X+fiJX2/4EOHelFDXyLYcdllp9IjcXSM0TTFU0xqr7f4onUPmzmhLp
-         dm3konb7BHhuX3x9rmveOsE59yw7LAqk5dP0HE31K9q+YlpoUM4p5naQlyOPeiZmI6ts
-         7i0g==
-X-Gm-Message-State: AOJu0Yx/7UvNOfwUMo8Frv4CuvPWaa8ttoOQV9bfl8QKOihltEt9wu5T
-	S7M+ff+YXW58+lRUB8RNANdLeBNE0wyTTmfzVd0weSY7mvXw8PMJ4Mk5MH59cAIROaMN0LsOXaw
-	xt2UVaStdEIuxuLCq/hRjP17nbumnWgs7WJl4C96EUmGHBdKwNbZ14DVduYVhpWjA7X9rDTSY4b
-	h7kw13BqtyAzokDJB2eWKsBO1xR4aWw5VwyFVPNaciZkitPA==
-X-Gm-Gg: ASbGncupaieY7gVZEYkk1bai0IE599z/sz3CGIQ54P447azKgpJCyvAiDcFijU9oazV
-	SQ5eF/W5/cBLuRctTdrrjm4mTwWynxF7w5boDrnMMqcqLoFqr+K+N3aEt52edT7ee6S67vMCxIt
-	zuPYI7ZdRaJc+RQ7iVdcaW8R0gUj7WWc8THQknSH0D4TxscuEHPt2m4FFeibeMQlh+ZWTlz3KEa
-	AC/gzoBs/2giF1sA6/qtm3V5ut32VeTNi13yuehYkjCcxY4/BLPhfsfLl1wHUA27lyzwUxiuwFu
-	+KqmJoOmjjRn6FfDyhd1uMi+1TBopA5u2HHFZoWsKOF/oVkadTqfsirWKkNGjXWyCvFbArTtevj
-	CWlLOvoo6albTawbT6VU=
-X-Received: by 2002:a05:6000:26cf:b0:3da:e7d7:f1eb with SMTP id ffacd0b85a97d-3dae7d7f7a8mr11388560f8f.22.1757081499612;
-        Fri, 05 Sep 2025 07:11:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbS3uPY4JafB96Ovf66PFgi6ZGs7+8QsZrgTjUwGTDYPGb2ZrMAPKBqZ7pui9VY1zMR2lTfg==
-X-Received: by 2002:a05:6000:26cf:b0:3da:e7d7:f1eb with SMTP id ffacd0b85a97d-3dae7d7f7a8mr11388511f8f.22.1757081499075;
-        Fri, 05 Sep 2025 07:11:39 -0700 (PDT)
-Received: from localhost (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3deb99d10a0sm10156163f8f.37.2025.09.05.07.11.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:11:38 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with max_ptes_none default
-Date: Fri,  5 Sep 2025 16:11:37 +0200
-Message-ID: <20250905141137.3529867-1-david@redhat.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757081548; c=relaxed/simple;
+	bh=d623E1liTi60iAjibtCqAAj0iSP9kDrLBmukVMoZ1bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjM9X/Ime8juQdzb/0xNyQRxJOj67G7dKvIjV+bG8nzXXsD+3WBn9N92CSp7+y84YC1QWMZR5v9rU3VM5e5JkIXCUVCPUZzhvDkz1+rI+HIjF+dH7Pk9YoBNyxamRjDnKex2QK7RLIxDnzb5WBBmuvcWOOolBHy0i3XxJvVJotQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SjinW2AM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757081547; x=1788617547;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d623E1liTi60iAjibtCqAAj0iSP9kDrLBmukVMoZ1bw=;
+  b=SjinW2AMkl6n+hWtGWiJfjLUszTi95scFPJuHB6xC4N9NMhYIppFTEOD
+   3QH+oUBAVvTaiTPNJOla4TARj+rCpgzwKPa83ZQwvIoyDNJbWvwOdoVRq
+   RdVMHJReSCymw7NyRSyfntY4i3TGSf3xDfr+z9Z8cVDX6b6K4FcmyDiMX
+   mt3tu+Fi1JrRDlIR0dzAnihx5yayBszH9aEi7zLlEvAqxhiZqKlzKwEX7
+   dxA1thkRgsFs2sCuNwmLv1dBKlw0UO/Vu8UYadQ9XDzIu6zFyhobF6xRu
+   QcUhJnAH1VD//86vmwnOuO4XkWorgX59aQAK7pOE7qriz4wTDcNWFjW1E
+   A==;
+X-CSE-ConnectionGUID: JTCJvgHKRc+ls2p+T2XNVg==
+X-CSE-MsgGUID: 32uftZGBSJOmtlIh3NRn/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="62065757"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="62065757"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 07:12:26 -0700
+X-CSE-ConnectionGUID: 9mM/JCghRqKBgJuUXE6PAQ==
+X-CSE-MsgGUID: X78LcsnRTRWksMka9TIijg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="176511026"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Sep 2025 07:12:22 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuXAq-0000UZ-1Z;
+	Fri, 05 Sep 2025 14:12:20 +0000
+Date: Fri, 5 Sep 2025 22:11:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kbusch@kernel.org, axboe@kernel.dk,
+	hch@lst.de, sagi@grimberg.me, kch@nvidia.com, alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v2 2/7] net/handshake: Make handshake_req_cancel public
+Message-ID: <202509052149.ChcoGfkh-lkp@intel.com>
+References: <20250905024659.811386-3-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905024659.811386-3-alistair.francis@wdc.com>
 
-We added an early exit in thp_underused(), probably to avoid scanning
-pages when there is no chance for success.
+Hi,
 
-However, assume we have max_ptes_none = 511 (default).
+kernel test robot noticed the following build errors:
 
-Nothing should stop us from freeing all pages part of a THP that
-is completely zero (512) and khugepaged will for sure not try to
-instantiate a THP in that case (512 shared zeropages).
+[auto build test ERROR on trondmy-nfs/linux-next]
+[also build test ERROR on net/main net-next/main linus/master linux-nvme/for-next v6.17-rc4 next-20250905]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This can just trivially happen if someone writes a single 0 byte into a
-PMD area, or of course, when data ends up being zero later.
+url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250905-105201
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20250905024659.811386-3-alistair.francis%40wdc.com
+patch subject: [PATCH v2 2/7] net/handshake: Make handshake_req_cancel public
+config: x86_64-randconfig-001-20250905 (https://download.01.org/0day-ci/archive/20250905/202509052149.ChcoGfkh-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509052149.ChcoGfkh-lkp@intel.com/reproduce)
 
-So let's remove that early exit.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509052149.ChcoGfkh-lkp@intel.com/
 
-Do we want to CC stable? Hm, not sure. Probably not urgent.
+All errors (new ones prefixed by >>):
 
-Note that, as default, the THP shrinker is active
-(/sys/kernel/mm/transparent_hugepage/shrink_underused = 1), and all
-THPs are added to the deferred split lists. However, with the
-max_ptes_none default we would never scan them. We would not do that. If
-that's not desirable, we should just disable the shrinker as default,
-also not adding all THPs to the deferred split lists.
+   net/handshake/handshake-test.c: In function 'handshake_req_submit_test4':
+>> net/handshake/handshake-test.c:237:9: error: implicit declaration of function 'handshake_req_cancel'; did you mean 'handshake_req_next'? [-Werror=implicit-function-declaration]
+     237 |         handshake_req_cancel(sock->sk);
+         |         ^~~~~~~~~~~~~~~~~~~~
+         |         handshake_req_next
+   cc1: some warnings being treated as errors
 
-Easy to reproduce:
 
-1) Allocate some THPs filled with 0s
+vim +237 net/handshake/handshake-test.c
 
-<prog.c>
- #include <string.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <unistd.h>
- #include <sys/mman.h>
+88232ec1ec5ecf Chuck Lever 2023-04-17  207  
+88232ec1ec5ecf Chuck Lever 2023-04-17  208  static void handshake_req_submit_test4(struct kunit *test)
+88232ec1ec5ecf Chuck Lever 2023-04-17  209  {
+88232ec1ec5ecf Chuck Lever 2023-04-17  210  	struct handshake_req *req, *result;
+88232ec1ec5ecf Chuck Lever 2023-04-17  211  	struct socket *sock;
+18c40a1cc1d990 Chuck Lever 2023-05-19  212  	struct file *filp;
+88232ec1ec5ecf Chuck Lever 2023-04-17  213  	int err;
+88232ec1ec5ecf Chuck Lever 2023-04-17  214  
+88232ec1ec5ecf Chuck Lever 2023-04-17  215  	/* Arrange */
+88232ec1ec5ecf Chuck Lever 2023-04-17  216  	req = handshake_req_alloc(&handshake_req_alloc_proto_good, GFP_KERNEL);
+88232ec1ec5ecf Chuck Lever 2023-04-17  217  	KUNIT_ASSERT_NOT_NULL(test, req);
+88232ec1ec5ecf Chuck Lever 2023-04-17  218  
+88232ec1ec5ecf Chuck Lever 2023-04-17  219  	err = __sock_create(&init_net, PF_INET, SOCK_STREAM, IPPROTO_TCP,
+88232ec1ec5ecf Chuck Lever 2023-04-17  220  			    &sock, 1);
+88232ec1ec5ecf Chuck Lever 2023-04-17  221  	KUNIT_ASSERT_EQ(test, err, 0);
+18c40a1cc1d990 Chuck Lever 2023-05-19  222  	filp = sock_alloc_file(sock, O_NONBLOCK, NULL);
+18c40a1cc1d990 Chuck Lever 2023-05-19  223  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, filp);
+88232ec1ec5ecf Chuck Lever 2023-04-17  224  	KUNIT_ASSERT_NOT_NULL(test, sock->sk);
+18c40a1cc1d990 Chuck Lever 2023-05-19  225  	sock->file = filp;
+88232ec1ec5ecf Chuck Lever 2023-04-17  226  
+88232ec1ec5ecf Chuck Lever 2023-04-17  227  	err = handshake_req_submit(sock, req, GFP_KERNEL);
+88232ec1ec5ecf Chuck Lever 2023-04-17  228  	KUNIT_ASSERT_EQ(test, err, 0);
+88232ec1ec5ecf Chuck Lever 2023-04-17  229  
+88232ec1ec5ecf Chuck Lever 2023-04-17  230  	/* Act */
+88232ec1ec5ecf Chuck Lever 2023-04-17  231  	result = handshake_req_hash_lookup(sock->sk);
+88232ec1ec5ecf Chuck Lever 2023-04-17  232  
+88232ec1ec5ecf Chuck Lever 2023-04-17  233  	/* Assert */
+88232ec1ec5ecf Chuck Lever 2023-04-17  234  	KUNIT_EXPECT_NOT_NULL(test, result);
+88232ec1ec5ecf Chuck Lever 2023-04-17  235  	KUNIT_EXPECT_PTR_EQ(test, req, result);
+88232ec1ec5ecf Chuck Lever 2023-04-17  236  
+88232ec1ec5ecf Chuck Lever 2023-04-17 @237  	handshake_req_cancel(sock->sk);
+4a0f07d71b0483 Jinjie Ruan 2023-09-19  238  	fput(filp);
+88232ec1ec5ecf Chuck Lever 2023-04-17  239  }
+88232ec1ec5ecf Chuck Lever 2023-04-17  240  
 
- const size_t size = 1024*1024*1024;
-
- int main(void)
- {
-         size_t offs;
-         char *area;
-
-         area = mmap(0, size, PROT_READ | PROT_WRITE,
-                     MAP_ANON | MAP_PRIVATE, -1, 0);
-         if (area == MAP_FAILED) {
-                 printf("mmap failed\n");
-                 exit(-1);
-         }
-         madvise(area, size, MADV_HUGEPAGE);
-
-         for (offs = 0; offs < size; offs += getpagesize())
-                 area[offs] = 0;
-         pause();
- }
-<\prog.c>
-
-2) Trigger the shrinker
-
-E.g., memory pressure through memhog
-
-3) Observe that THPs are not getting reclaimed
-
-$ cat /proc/`pgrep prog`/smaps_rollup
-
-Would list ~1GiB of AnonHugePages. With this fix, they would get
-reclaimed as expected.
-
-Fixes: dafff3f4c850 ("mm: split underused THPs")
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Nico Pache <npache@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Usama Arif <usamaarif642@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/huge_memory.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 26cedfcd74189..aa3ed7a86435b 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4110,9 +4110,6 @@ static bool thp_underused(struct folio *folio)
- 	void *kaddr;
- 	int i;
- 
--	if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
--		return false;
--
- 	for (i = 0; i < folio_nr_pages(folio); i++) {
- 		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
- 		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
