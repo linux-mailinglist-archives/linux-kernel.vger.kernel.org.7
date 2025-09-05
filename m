@@ -1,110 +1,166 @@
-Return-Path: <linux-kernel+bounces-802903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67597B45838
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC32AB4583C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76481C285F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B017B87EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79D5350840;
-	Fri,  5 Sep 2025 12:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E4350843;
+	Fri,  5 Sep 2025 12:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Mn7j76tW"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YphyGiUh"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5592747B;
-	Fri,  5 Sep 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DDE38DDB;
+	Fri,  5 Sep 2025 12:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757076786; cv=none; b=gKcMqoIzJ3XrqYUPiAmAP0Rb1WTSMowSbhKZEr+iODOvq+bVv5gNMWcHP3spub7ZOG17CPb4JDJ1Aq7UIl8Xent8ugxzAHwxk6PlsgM7bDLoy6M4g+qtCbDyIqqCrGpCBaUxhqIZCOdC7QTEhN13BXAVqTxQNMI9we2eGl8xnkI=
+	t=1757076831; cv=none; b=qYq7jJxT857o4fA5ePp/lzJmqy1qGjpgxdk8w/00ZnjXcfzUWZqyv84DujG8NTUR/zrtiaPW40Pw2LgEudYTnqEpx5RMaKVJFtXgQvzbLulsO7+sFhO6KKrJIYFnkqHABu9BqxzVYehyqfN2ZXXeUcfPEorIinyO5I8zaArYebs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757076786; c=relaxed/simple;
-	bh=6SqTKcQneO233FYjcvdQgSkXjHnyCeLjMSyz2Z7F2kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s0s2vwHfbx/b4MQj2plS0Okb+L5HkIYchq56Vl6fIvaiaUkqIXg0keTn+Lq0UGYoq81a7ATHs02MyOY3PLXwK+UPxzjwIVE6dCVRvLhvsrWkq6jktp6stE9R+qZJOk5lIRTKsKbkMUGCWICjIrKOaSq0Kux0HxNiV7oFHfZ003Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Mn7j76tW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757076782;
-	bh=6SqTKcQneO233FYjcvdQgSkXjHnyCeLjMSyz2Z7F2kc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Mn7j76tWe0MrwDnJ02YWcSQhm5ZfFi6ZNk+kaGkEcZl0AIeI7P+6O/uCpdCK7zddf
-	 hDcKy+hiVcODZT5VeWGshht9FB6cB5emIZM5qz9jodN+UwBg6yTOfjQN0cRzWlBYWG
-	 dOXlKYY87t3LpGsWi0crlUeV+2oFnd+mCEkgvzvrUN/ZLvUXujyE46LJ9VjWO85Q64
-	 VAaH/NNCo+VinLrENlXIjTPLxtayUG+hoJijfQQlKwpctNlYopQX+TO/pfi4Sqh1Ib
-	 XjIwAy2pA0ZzwYlVLBsFQk+qZSrGov6FssSjWm42Hoi8lx+WjhQGM7GptERRe8ZX4L
-	 ADHLXDncnLx7g==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9AC5C17E0237;
-	Fri,  5 Sep 2025 14:53:01 +0200 (CEST)
-Date: Fri, 5 Sep 2025 14:52:57 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>, "Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?="
- <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
- Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
- <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] panthor: use drm_gpuva_unlink_defer()
-Message-ID: <20250905145257.33339817@fedora>
-In-Reply-To: <20250905-vmbo-defer-v1-2-7ae1a382b674@google.com>
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
-	<20250905-vmbo-defer-v1-2-7ae1a382b674@google.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757076831; c=relaxed/simple;
+	bh=5ckxlBqChHNEt0/61pFY3yAoEfx3s3PCFryFHohgRR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pn9ITIVUVIh357xFPdsupq9EQYVvfeMX5bMqvSKbZBSzuZyAC2nATq1lskW8ODotXezEJIQoiT4V5/Q6KTZWb4cpKox6cSMIjT77I1FKyuF7UeZAyHF91T0oRz4qmlnLAUShSV28gPWtEQ6Rg4ncOo4WkuOuWcCn7hHLpxM/bc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YphyGiUh; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0415e03e25so306875066b.0;
+        Fri, 05 Sep 2025 05:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757076829; x=1757681629; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T33stcPp6bK9hL8nH81dnT87IxHmxbJraeRaG/h8CM0=;
+        b=YphyGiUhgigsdRDm36BD5rWIC3hM4UwvtuKDz6/mYohYs6x7v2u1xBvOf4GZFDEb6X
+         7PJzgVyZ0Ix+4ID0BJO7iQ8+TIBst9uny2qCE2hrd6eYZFeJRDcVUHlR4EMOdN7TuyxF
+         FBMgw55fsdKnrD16ylUg4fZS5TvtLJt66Gv2HTftuiT7s6sgi63khvs9dFZ+QVHm8z8i
+         rDBBYxk5UfjeUkViDGzEw9q88bcLFVZKgVw2Qe3+WUafpFgHYUC+VGa9zrK4hHFPWkQ7
+         hzPq0AkueN6IoIjh/XNFczGPP/C24c9d4nSzmfAV84Mw5tV1Dd/dolWVyhPQYC+uaSS+
+         pgFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757076829; x=1757681629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T33stcPp6bK9hL8nH81dnT87IxHmxbJraeRaG/h8CM0=;
+        b=w2tjjAur0afurwYkdUk/LzaQ41D4ZhqDgTgNmweCeJHCzYF6iB/OlkXiX1Qw9ezB+m
+         yPWMj1ZIrMHqkdq2o9X2/YrlSKsZfZItFfRekOtIuKRC7wTjeadmGgH5DntcYbgNrN46
+         P081S1/ZsipfTLy8Kbyj1dMbSVHVZ022XwG2zu244DtjRILnW1zvv7vUM5rwhlbtQT57
+         GO3PgN5XKTkonVpDs0pxPLVrp0vrQ2sBG+g3qdOsX9W0+kG7DPPPXUw+YBCKxHBXqOUE
+         YvgroQc7CCZWrna3xk2snfKOuGXpDsNaXkmVUVSnV2mUU/kpJ798Yh+QRVb4ve2mZLAS
+         De6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTgjGbdHzk7WhRu3N2KhnKKboOHi3CjYEO7JXoOQkELL9ZhwoZtOQg6FR4sw1rG84wGiTKgY4ivwm/CA==@vger.kernel.org, AJvYcCVZbyaIfJM3t51LlEqYUHsys0SZF/wtpmf2bLQTiiWRRBiJq46B75pKTfAT/21cnLt4p5xLzDkgRpwQ@vger.kernel.org, AJvYcCWHqYVk33KmJB0JLE09NsqDU2elqsTwEIGTvzaANr7sws14x19MAuTBG1N4aH7K7+GHmCaL2OqRE7vz@vger.kernel.org, AJvYcCXkriMFs/GUD8TLxMUgmc/FUROTLZasu2SYTEJ3MLdXfdg1oB1ez1ehVFeP/rNQf2nvdMYSdiQ/6rnmnoyR@vger.kernel.org
+X-Gm-Message-State: AOJu0YytpHSxaWZ1ddIBLh8YhobCC/F/R1Pogui3mtD+ePozMEF9fjdF
+	ygzEbSqGi/GJgFkR4av5W32BpwNoI1N9cFTgmv2hdHqWM61WWTuNeMPPW0CDCcbF34bs1Cc+okL
+	+xWpjJkc5Jygu4iYg3TcCcN+I6E2GBKu/Tfzp
+X-Gm-Gg: ASbGncsjwT3vOS6mtnaqL1bh5S0SwGPGiY3lrODHZPm4hQs5ybaCs+IRMj4E0V8BPSk
+	bALRgSP9imnCxwTNRuGLrtbHVQ0WVGjlnl4axWK9KKIzhyCp66uVxgxebwofza1JBAuhANRuKG0
+	bGKRQ6PFErKfYb+ELEZryF3edGcY4uVMPCTMCZl47/LJ04waL1BI0yRqyr4cdEHSmjmgj6sHA8V
+	/qDNfpV4g==
+X-Google-Smtp-Source: AGHT+IEsfu4gvqMD8OwVlaIS7RK7dSX5WGQAcTtTRrhsReDH3Vd1wM+apHYJwSdx0NbhTNcmTuGwy1GUhGONE1k9GQM=
+X-Received: by 2002:a17:907:3d55:b0:afe:9e58:754d with SMTP id
+ a640c23a62f3a-b01dda8645fmr2203141666b.64.1757076828364; Fri, 05 Sep 2025
+ 05:53:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1757053456.git.mazziesaccount@gmail.com>
+ <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+ <CAHp75VdaAH+1mh16KWoYtYFMV+_ec8x9YipeD3K8g6yQr-2VjA@mail.gmail.com> <2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
+In-Reply-To: <2c36496c-68bb-4c06-8580-3efc694429ea@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 5 Sep 2025 15:53:11 +0300
+X-Gm-Features: Ac12FXxynidtISOU6Dli41yMOcpy9qfjqFReTGh1U0WVTOgJVRzzEgetmIKArAE
+Message-ID: <CAHp75VcDJm9ZQwuHNDZf79LBAH=cEHLoNskT6On2v9zquLJESw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 05 Sep 2025 12:11:29 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Fri, Sep 5, 2025 at 10:10=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+> On 05/09/2025 09:54, Andy Shevchenko wrote:
+> > On Fri, Sep 5, 2025 at 9:42=E2=80=AFAM Matti Vaittinen <mazziesaccount@=
+gmail.com> wrote:
 
->  static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
->  				      struct panthor_vm *vm)
->  {
-> -	struct panthor_vma *vma, *tmp_vma;
-> -
->  	u32 remaining_pt_count = op_ctx->rsvd_page_tables.count -
->  				 op_ctx->rsvd_page_tables.ptr;
->  
-> @@ -1134,16 +1091,12 @@ static void panthor_vm_cleanup_op_ctx(struct panthor_vm_op_ctx *op_ctx,
->  	kfree(op_ctx->rsvd_page_tables.pages);
->  
->  	if (op_ctx->map.vm_bo)
-> -		panthor_vm_bo_put(op_ctx->map.vm_bo);
-> +		drm_gpuvm_bo_put_deferred(op_ctx->map.vm_bo);
->  
->  	for (u32 i = 0; i < ARRAY_SIZE(op_ctx->preallocated_vmas); i++)
->  		kfree(op_ctx->preallocated_vmas[i]);
->  
-> -	list_for_each_entry_safe(vma, tmp_vma, &op_ctx->returned_vmas, node) {
-> -		list_del(&vma->node);
-> -		panthor_vm_bo_put(vma->base.vm_bo);
-> -		kfree(vma);
+...
 
-Maybe I'm missing something, but I don't see the VMAs being freed in
-this new version.
+> >> +/*
+> >> + * The data-sheet explains register I/O communication as follows:
+> >> + *
+> >> + * Read, two 16-bit sequences separated by CSB:
+> >> + * MOSI:
+> >> + * SCK:        | 1 | 2 | 3   | 4      | 5 .. 8 | 9 .. 16 |
+> >> + * data:| 0 | 0 |IOSET| RW (1) | ADDR   | 8'b0    |
+> >> + *
+> >> + * MISO:
+> >> + * SCK:        | 1 .. 8 | 9 .. 16 |
+> >> + * data:| 8'b0   | data    |
+> >> + *
+> >> + * Note, CSB is shown to be released between writing the address (MOS=
+I) and
+> >> + * reading the register data (MISO).
+> >> + *
+> >> + * Write, single 16-bit sequence:
+> >> + * MOSI:
+> >> + * SCK:        | 1 | 2 | 3   | 4     | 5 .. 8 |
+> >> + * data:| 0 | 0 |IOSET| RW(0) | ADDR   |
+> >> + *
+> >> + * MISO:
+> >> + * SCK:        | 1 .. 8 |
+> >> + * data:| data   |
+> >> + */
+> >
+> > What I meant in previous reviews is that the | are not aligned (in the
+> > same columns). Is it on purpose? If so, I can't read that as I don't
+> > understand the meaning of | in each case. For example, the data starts
+> > with 0, followed by 0, and the latter one is when SCL is #1? Okay, but
+> > how to read IOSET that overlaps 2 SCK cycles and is unaligned with
+> > times... I'm really quite confused by these charts.
+>
+> Ah. I think I now know what you mean. Whitespaces are hard :)
+> I see I have '\t' between the SCK: and first |.
+>  >> + * SCK: /* '\t' here */       | 1 | 2 | 3   | 4     | 5 .. 8 |
+>
+> It works perfectly on my editor, which has tab width 8. Thus, all the
+> '|' on SCK and data rows are perfectly aligned for me. My original
+> thought has been to align the first '|' on all rows by tab, but since
+> the " * data:" is already 8 chars I didn't add a tab for this row...
+>
+> I now realize this will not work if tabs behave different from my setup.
+> I will do replacing the '\t' with ' '. Does this make it better for your
+> editor or do you see some other problem besides that?
 
-> -	}
-> +	drm_gpuvm_bo_deferred_cleanup(&vm->base);
->  }
+I can't answer before seeing. Can you reply with what you mean?
+
+> Thanks for the patience explaining it.
+
+You're welcome!
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
