@@ -1,94 +1,58 @@
-Return-Path: <linux-kernel+bounces-802671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D86AB4555B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CECB454DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9A3586722
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076D73A933E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEE31770D;
-	Fri,  5 Sep 2025 10:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CFE2D7818;
+	Fri,  5 Sep 2025 10:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I++wg3Ly"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="R+mJNJ2W"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DCC312802;
-	Fri,  5 Sep 2025 10:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955142D028A;
+	Fri,  5 Sep 2025 10:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069644; cv=none; b=ll3L1Fllhf63KPZUhbPnU39oZwJCu9jAfVRvquZQviSwJtKquyD5j4WhXCaamxHb3bs5dDmakBCvVvDj0ST2xAwfsn5dWoObxVbHXd30iu5iTbpjCFfK9kYgHQLBiY23ayqf8ksbP8+gN73JVt+1c8UL4SkmdLzziWTBNd41QaE=
+	t=1757068800; cv=none; b=XXuTiPAqebmqmCPYAFbtilxfXZ7vQgF6noQGd9gbEO+0ur32WrO7Spp5S2/zkiUvVMLi2g+9RJONcBp1oTEZmgi20FAMDPM6StlTIP27vOIQBA/cp4jrdW94syDW+5DUtcyOIB7lIEMt5jy222HvJYeAn1vCbjaHLvdGv704Ih8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069644; c=relaxed/simple;
-	bh=YacDwhjXx3hY8tZ2N+ln/+pHs9D2/60NzOdZt7FS4Nc=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=CJkMZBRSap3CZl2hf1TD+3OkjqZNu8pfK7Bpj9Rog+5TdZUWqvxlOpcvkvMBaFrTJpZvOcc/khCHRl7E58pDy3X0y/bymoN4ooGS3gpiHt72bzuGMPrRl10rHEXQTOcB6Zd2wDZT1dcxScKBabtHfE6bf168YMdX6IVsccwfqtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I++wg3Ly; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3d19699240dso1849434f8f.1;
-        Fri, 05 Sep 2025 03:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757069641; x=1757674441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3PE2H9c4PU9mZ+3SQGTV677ZdVh4m7lyinNpMQnj4Uo=;
-        b=I++wg3Ly6ISio7B2JSFRaQjgHLmeJbNb/Ot3X8yJOj6HjGoaYWyi7g+oqnpBvHUUOf
-         YcQzjckczjXcKD5sL8O9DUkSZbVZEJKuuRIwD5Z78QiAIOTCGX0yn5LI8bzHq4DrSet8
-         AsS7E8thSvOuviddWb8HSxJJJBw9OlzHlIvH2Wyo2beZDlLBEslLrqS82YUKsjK76523
-         ipylVbFfX/PgZ7xWVQajwYTGe4JTJmty99LuPl7B4kn2IfiB7E36y6Ta5g6cQxbpxgqV
-         qwNO14kcDNROr6jVXCO8rJJwxq+hfinpMueyXYC6sqUmIOdjjcmVxHFnfFpw0wxR3koX
-         9yBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757069641; x=1757674441;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3PE2H9c4PU9mZ+3SQGTV677ZdVh4m7lyinNpMQnj4Uo=;
-        b=U0jP/eqcDG1o6JIUh8xEiMOoP33Mlp+gIEKMZMW1K7Vc36VZyfWfpHuPJffhGViYOK
-         XK104BkVKMjJ0ccvhvLF92fRinlcBEI8nxtcPXMmn/enWm8QM/i5N4AhPtUTOD8+68BN
-         lQnSgFDZE8Q+Cytr6zMj0QbSKO+fXyPAB2gZ9jWFPSiWYJJycW9gmAQD676E6JKT2YE7
-         okY3+IPdIxrsjg02ctwV4J/Vb4LqFyKJ5DRlX/V80+13LuPg9UGRsH5wyslsXV/llpT5
-         WtQR5BHxEVQyafDlnhKZA+cEOJjq95N6sE96Q2Bfuca2ciWO3baVtI9SCIwY2Qp8kHY5
-         nykg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMuc5SlDJyZaAiBmGbuFttScHCf0Xc39hmcfKxL/oOxp1qa9bFVeBxOspU8SeQbItAsgXI4WemDEHz40U=@vger.kernel.org, AJvYcCVPyY7jjCV5Ya/eXR1Vush1kW6QzWVQC8VG7tv3vJPYl6h2aED/tNGNhHAI20Kxw8VJ/N2P3Iwa@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr1ykcrcfYIsDA4KJmESELdZjeo4Dn9276qTmqBT0Wkt//3ZFp
-	Z4XP3fRgv12oKuW6ihdFDQ6Q8CNCrnGE8Pq0FYzbdL/OTShF4n1DkHqdq14lEouG
-X-Gm-Gg: ASbGncvTQuQmdx8VkrNREiee9mDay5uRYtaSYHU3et6qLbIdDusarSBhpaEGnRa5a7q
-	fpnaV4SVRk0hnX+ACsU5fqjrzy3RkLMVIIVx5h8hAHDR7ZgX3HEpyCgXYD4zd9K4uUcpSRj6Yum
-	PhBiuM2+aiNcvMlTzUMSWgiUdzcdOeHHetuFdqHpgu3Dkm00Y/xl0HBf5hYzYTAoYS5uY9e3Ysq
-	0mAcX4CkFHdgMUhyvRYrmglN9NlOJ27GXT5ugBpY3yXJUZds8WX/IwAmFb5aPCVqEa9PRjNS+6I
-	1nMJCLd5+49e0wPI7XkDIIyq20CDsnpjmSTbcsMFPmOFolq5Naq3lsV7jZW8As7GEcY8iK3oie6
-	v1s7fzvKySCcVvychE3mBAG2c+ZktD/K7ktXNZczp+IZfsw==
-X-Google-Smtp-Source: AGHT+IGH0k2jiW81eo+bdHP+jTd9GYQqAP7UqoTgWM33icxIe688vEVyRB0t11dPEBCY6nUUQ6kJ1A==
-X-Received: by 2002:a05:6000:22c4:b0:3ce:7673:bb30 with SMTP id ffacd0b85a97d-3e3048266c8mr2409575f8f.14.1757069640448;
-        Fri, 05 Sep 2025 03:54:00 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:8157:959d:adbf:6d52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab14esm355347405e9.21.2025.09.05.03.53.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 03:54:00 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Andrew Lunn <andrew+netdev@lunn.ch>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 04/11] tools: ynl-gen: define count iterator in
- print_dump()
-In-Reply-To: <20250904220156.1006541-4-ast@fiberby.net>
-Date: Fri, 05 Sep 2025 11:37:58 +0100
-Message-ID: <m23491yyk9.fsf@gmail.com>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-4-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757068800; c=relaxed/simple;
+	bh=/SlyzfgVaz5SVbHY0pSaBSJpooFqAIbmo2KGxi6A7lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTqghEKeL9dN76TbPs/H1C2WWV3ZkfjYxLBmc7QCGCa1470CMjW85XdCUXwDEGO3Rz3Q+DFzqGBpeGGkVel7aCmSwjeYd0E0askLBgeXxm6176DM1axqEpVUuLN7kYxit3G3E97ZckmEHOWnBHkRewRLXjk6D7OTULtSI0o6TwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=R+mJNJ2W; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CE792F09;
+	Fri,  5 Sep 2025 12:38:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757068725;
+	bh=/SlyzfgVaz5SVbHY0pSaBSJpooFqAIbmo2KGxi6A7lE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R+mJNJ2WN1VUDWHCViREJhjMRCETKXoNXhNDEpstTFTfyNPtbIRFOpHPs94r7JQuY
+	 jYFarguhGnF56o+0wsg2oMQKIkA+4f5dJtUwNqZYCckCLQ50eJTLsbjfLhFIqWl5q/
+	 Y++NY7IsLJgaow7cQm668/4aaWsPkM8pnInBNF3M=
+Date: Fri, 5 Sep 2025 12:39:50 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Antoine Bouyer <antoine.bouyer@nxp.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/8] media: Introduce V4L2 extensible parameters
+Message-ID: <7l6ahcvujnpfqhzqsviwo72oyhenvcqklj4adivx5yv6fmux5o@bzpgpmmtgntc>
+References: <20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com>
+ <784dcb9e-4e72-44ca-975e-4eb1b0eed5cf@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,25 +60,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <784dcb9e-4e72-44ca-975e-4eb1b0eed5cf@nxp.com>
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
+Hello Antoine
 
-> In wireguard_get_device_dump(), as generated by print_dump(),
-> it didn't generate a declaration of `unsigned int i`:
+On Fri, Sep 05, 2025 at 12:14:39PM +0200, Antoine Bouyer wrote:
+> Hi Jacopo
 >
-> $ make -C tools/net/ynl/generated wireguard-user.o
-> -e      CC wireguard-user.o
-> wireguard-user.c: In function =E2=80=98wireguard_get_device_dump=E2=80=99:
-> wireguard-user.c:502:22: error: =E2=80=98i=E2=80=99 undeclared (first use=
- in this fn)
->   502 |                 for (i =3D 0; i < req->_count.peers; i++)
->       |                      ^
+> On 20/08/2025 14:58, Jacopo Mondi wrote:
+> > Extensible parameters meta formats have been introduced in the Linux
+> > kernel v6.12 initially to support different revision of the RkISP1 ISP
+> > implemented in different SoC. In order to avoid breaking userspace
+> > everytime an ISP configuration block is added or modified in the uAPI
+> > these new formats, which are versionated and extensible by their
+> > definition have been introduced.
+> >
+> > See for reference:
+> > e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
+> > 6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
+> >
+> > The Amlogic C3 ISP driver followed shortly, introducing an extensible
+> > format for the ISP configuration:
+> >
+> > 6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
+> >
+> > with a very similar, if not identical, implementation of the routines to
+> > validate and handle the ISP configuration in the ISP driver in the
+> > c3-isp-params.c file.
+> >
+> > fb2e135208f3 ("media: platform: Add C3 ISP driver")
+> >
+> > With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
+> > a third user of extensible parameters is going to be itroduced in the
+> > kernel, duplicating again in the driver the procedure for validating and
+> > handling the ISP configuration blocks
+> >
+> > https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
+> >
+> > To avoid duplicating again the validation routines and common types
+> > definition, this series introduces v4l2-params.c/.h for the kAPI
+> > and v4l2-extensible-params.h for the uAPI and re-organize the RkISP1
+> > and Amlogic C3 drivers to use the common types and the helper validation
+> > routines.
+> >
 >
-> Copy the logic from print_req() as it correctly generated the
-> iterator in wireguard_set_device().
+> I'm currently working on another ISP driver: NXP neo, and also use extended
+> params so as RkISP1.
 >
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Nice to hear!
+
+> Using common types looks like really interesting approach. However, only
+> params are taken into account, while NXP neo also provides statistics. I'm
+> currently testing extended approach for both params AND statistics. But
+> v4l2-params only applies to .. params, as stated in the name.
+>
+> Is there any plan to apply the same to statistics ?
+>
+
+Not a proper plan at the moment, but I agree it would indeed be
+beneficial to have a similar approach for stats...
+
+Are you suggesting we should drop 'params' at least from the file
+names ?
+
+> > If the here proposed approach is accepted, I propose to rebase the Mali
+> > C55 driver on top of this series, to use the new common types and
+> > helpers.
+> >
+> > I have been able to test this on RkISP1 but not on C3.
+>
+> Also tested on NXP neo locally.
+
+Great, could you maybe send a Tested-by tag ?
+
+Also, not sure if you have noticed this series for libcamera
+https://patchwork.libcamera.org/project/libcamera/list/?series=5413
+where I tried to generalize the extensible param helpers.
+
+Thanks
+  j
+
+>
+> Best regards
+> Antoine
+>
+> >
+> > Thanks
+> >    j
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> > Changes in v4:
+> > - Fix the definition of V4L2_PARAMS_FL_PLATFORM_FLAGS
+> > - Add __counted_by() attribute to the data[] flexible-array member of
+> >    v4l2_params_buffer
+> > - Minor style change
+> > - Link to v3: https://lore.kernel.org/r/20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com
+> >
+> > Changes in v3:
+> > - Rebased on latest media-committers/next
+> > - Take in Dan's suggestion in block size validation
+> > - Documentation minor spelling fixes
+> > - Link to v2: https://lore.kernel.org/r/20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com
+> >
+> > Changes in v2:
+> > - Make v4l2_params_buffer directly usable
+> > - Centralize ENABLE/DISABLE flags definition and validation
+> > - Take in Dan's v4l2_params_buffer_size()
+> > - Allow blocks to only contain the header if they're going to be
+> >    disabled
+> > - Documentation fixes as reported by Nicolas
+> > - Link to v1: https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com
+> >
+> > ---
+> > Jacopo Mondi (8):
+> >        media: uapi: Introduce V4L2 extensible params
+> >        media: uapi: Convert RkISP1 to V4L2 extensible params
+> >        media: uapi: Convert Amlogic C3 to V4L2 extensible params
+> >        media: Documentation: uapi: Add V4L2 extensible parameters
+> >        media: v4l2-core: Introduce v4l2-params.c
+> >        media: rkisp1: Use v4l2-params for validation
+> >        media: amlogic-c3: Use v4l2-params for validation
+> >        media: Documentation: kapi: Add v4l2 extensible parameters
+> >
+> >   Documentation/driver-api/media/v4l2-core.rst       |   1 +
+> >   Documentation/driver-api/media/v4l2-params.rst     |   5 +
+> >   .../media/v4l/extensible-parameters.rst            |  89 ++++++
+> >   .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+> >   MAINTAINERS                                        |  10 +
+> >   .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 263 ++++++----------
+> >   .../media/platform/rockchip/rkisp1/rkisp1-params.c | 349 +++++++++------------
+> >   drivers/media/v4l2-core/Makefile                   |   3 +-
+> >   drivers/media/v4l2-core/v4l2-params.c              | 126 ++++++++
+> >   include/media/v4l2-params.h                        | 164 ++++++++++
+> >   include/uapi/linux/media/amlogic/c3-isp-config.h   |  48 +--
+> >   include/uapi/linux/media/v4l2-extensible-params.h  | 146 +++++++++
+> >   include/uapi/linux/rkisp1-config.h                 |  67 ++--
+> >   13 files changed, 817 insertions(+), 455 deletions(-)
+> > ---
+> > base-commit: a75b8d198c55e9eb5feb6f6e155496305caba2dc
+> > change-id: 20250701-extensible-parameters-validation-c831f7f5cc0b
+> >
+> > Best regards,
 
