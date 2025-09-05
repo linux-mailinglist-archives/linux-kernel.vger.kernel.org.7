@@ -1,169 +1,158 @@
-Return-Path: <linux-kernel+bounces-803673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBED0B46397
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B251EB46398
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431717C092A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652AD563C07
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B968027AC31;
-	Fri,  5 Sep 2025 19:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B7F27F00A;
+	Fri,  5 Sep 2025 19:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFuPcJc0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="box3aR6e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066B62798FD;
-	Fri,  5 Sep 2025 19:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE02C27A12B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100268; cv=none; b=ls/ry5Dod1+EAJhrQ1ghcC934MlShTdZ9gNdaO2+l9EqQj9gpDS9AulSVU56FuPupbTfWZby+3qT9m3+gpX1VvuX0t1VD5ERUTLprZioUJuJIbb7n/M6FeiefONMFuUx6JCuTq1jH+JddrfCeZj/N72aGtD/ZGDNGVyUp672lPE=
+	t=1757100386; cv=none; b=GIEFdUoz3aVMF6oQhPdxp5cfHKSLTkqRWn5O63zAel47+/rbrWbzUVKx4q2XGsDbcYlrEFgNqtUBd/SuOcq/5lGcW8Ur2SVolRDA3bCmaSSk09L4KqMePun6HZgtgONzdtR+4uOC7n0d1aguaOlvIjshuD/PMVkMeoIA76l/Mg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100268; c=relaxed/simple;
-	bh=PneSr0UFkyje7hiRxdgfda0/0faF4NUEJ+o+j1qL+sc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hNK/ww4k5rfe3NHZZZP9YXNS5p6lpksdsXSUvYOJLNfG6i/8FoSz1f6zrbo7DQ79zkZPytgcRO/x73c/cN7U7X2q+tqsZ5egkjh3j7IWKPFiF7q3AAFBgBGvfPVHGacWXO0QN8YOzkJ+/DiWxWETcYCL3u1Ywu3/zMxvRpZpSdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFuPcJc0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22400C4CEF1;
-	Fri,  5 Sep 2025 19:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757100267;
-	bh=PneSr0UFkyje7hiRxdgfda0/0faF4NUEJ+o+j1qL+sc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=WFuPcJc0u1IB0G+xb6m54A2SVprt+VURztyXSXsOtv6TQZnjptkXW00SV5sqwpvmS
-	 J1omyhIE9VkmYjYz9RypCZES6Rn7i62OCf+SY1rr/A2Zi80lI5NfMqqJ4D8uI+tpQ6
-	 wLwPVciyTL915kWOBYVjwmW3ckYe+WR+9+P1siOV7Wqtul8PlyAExP/LVUZDWaHHnX
-	 GoQj7ODF1f3S0AAY20XKl2G3Uc8yTAEzZwBnLNEhWSVccpZ02Chesl2TshAMS08zN7
-	 T3tO3VA85anwXcenlxKlGjWxUNhWtzKgkpeOrAOfoKATdTMAQPBlRuguONXEjVYefk
-	 nGJzVSS/CFm4w==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Fri, 05 Sep 2025 12:24:17 -0700
-Subject: [PATCH] nilfs2: fix CFI failure when accessing
- /sys/fs/nilfs2/features/*
+	s=arc-20240116; t=1757100386; c=relaxed/simple;
+	bh=d0W9myEFzxlFCNsDcZbWHBOLrHisClca2fezS+1WXnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grOV+JWL1RAHNCcvF5KdMpHCkTubRSBPmSk7nVlyQEuv87YwSWkK4oXigMIo/BHtShr+S7wpHECBhxRQQia0jeD+XCMRAXeSocjIOekUgFtDo/PtQ6WuFwwYjwSqlgfeQkW9fViYdDLFrqqZ8fPo0U+zs3AkoaauJwGJzX0+MNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=box3aR6e; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757100385; x=1788636385;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=d0W9myEFzxlFCNsDcZbWHBOLrHisClca2fezS+1WXnw=;
+  b=box3aR6eDhQf+2gFUB3mMDRXGM17eZB6OuFJrufEnlW2Za2hBwEX+VID
+   0HOgwrUQovmnHC+0Amv5DaUFy9bBv6id7uLMwnAxbd7+0B1F6ufxQQEx5
+   bNfnbuAZJkF2d0rzl3X6K19Mi1Ghn5vDacGqcEa/dqSOid9KYok4Uazgo
+   1mhDVrKsdsgd2g08RBkN1Bs+LqPaziZwED6lFf0KVNq2KaQahbZrQf6dG
+   9AjQQQZ+xdkuYRGJzhyKEbkZ6pH5jGFNutwnwWbFoKLlpZcIqckHUH+ca
+   /OcgP2V7Xn3w99TtKvQR/JTdwCMaer38l9Y/r3YvzCT3yWPOjgJdapCgn
+   g==;
+X-CSE-ConnectionGUID: BNW4OGSFT6i8R0zFPQPUkQ==
+X-CSE-MsgGUID: aVvqUCq3QGmHnsk4vZP/bA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="59602793"
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="59602793"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:26:24 -0700
+X-CSE-ConnectionGUID: YKyKYSBmRqyVbEbeUbEaew==
+X-CSE-MsgGUID: 44WEHLWWTPWf7R2dF5uH1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
+   d="scan'208";a="172350183"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.42]) ([10.125.110.42])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:26:24 -0700
+Message-ID: <b780f8d9-b306-4061-abc3-b02d24676d63@intel.com>
+Date: Fri, 5 Sep 2025 12:26:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/8] mm: Introduce deferred freeing for kernel page
+ tables
+To: Jason Gunthorpe <jgg@nvidia.com>, Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+ iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+ <20250905055103.3821518-7-baolu.lu@linux.intel.com>
+ <20250905184355.GR616306@nvidia.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250905184355.GR616306@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-nilfs2-fix-features-cfi-violation-v1-1-b5d35136d813@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOA4u2gC/x2NQQqDQAxFryJZNxBHBtGrFBepZjQgY5lYKYh3N
- 7h88N9/J5gUFYO+OqHIoaZbdqhfFYwL51lQJ2cIFCJ1FDHrmixg0j8m4f1XxHBMioduK+9uY8O
- xkU8M3BKB/3yL+PppvIfrugEy5dlvcwAAAA==
-X-Change-ID: 20250905-nilfs2-fix-features-cfi-violation-3a53eb52a700
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, linux-nilfs@vger.kernel.org, 
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3674; i=nathan@kernel.org;
- h=from:subject:message-id; bh=PneSr0UFkyje7hiRxdgfda0/0faF4NUEJ+o+j1qL+sc=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBm7LV5O75mxwrtSTGB7lt4OySaL1axT1hyo3X23TPHVj
- zSXNUtvd5SyMIhxMciKKbJUP1Y9bmg45yzjjVOTYOawMoEMYeDiFICJfHjK8FdyqecGt+93zgof
- WWk4/esd/vmzVDu/7qrn84kRerXXc9sLhn96lipyE1R2aex6MTleduPdM0tnt1lmKTZNk7hVosz
- 5pJEFAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-When accessing one of the files under /sys/fs/nilfs2/features when
-CONFIG_CFI_CLANG is enabled, there is a CFI violation:
+On 9/5/25 11:43, Jason Gunthorpe wrote:
+> On Fri, Sep 05, 2025 at 01:51:01PM +0800, Lu Baolu wrote:
+>> +#ifdef CONFIG_ASYNC_PGTABLE_FREE
+>> +void pagetable_free_async(struct ptdesc *pt);
+>> +#else
+>> +static inline void pagetable_free_async(struct ptdesc *pt)
+>> +{
+>> +	__pagetable_free(pt);
+>> +}
+>> +#endif
+> 
+> I'd probably call this function pagetable_free_kernel() ? Weird to
+> call it async when it isn't async..
+> 
+> ptdesc_clear_kernel()?
 
-  CFI failure at kobj_attr_show+0x59/0x80 (target: nilfs_feature_revision_show+0x0/0x30; expected type: 0xfc392c4d)
-  ...
-  Call Trace:
-   <TASK>
-   sysfs_kf_seq_show+0x2a6/0x390
-   ? __cfi_kobj_attr_show+0x10/0x10
-   kernfs_seq_show+0x104/0x15b
-   seq_read_iter+0x580/0xe2b
-  ...
+Fine with me.
 
-When the kobject of the kset for /sys/fs/nilfs2 is initialized, its
-ktype is set to kset_ktype, which has a ->sysfs_ops of kobj_sysfs_ops.
-When nilfs_feature_attr_group is added to that kobject via
-sysfs_create_group(), the kernfs_ops of each files is
-sysfs_file_kfops_rw, which will call sysfs_kf_seq_show() when
-->seq_show() is called. sysfs_kf_seq_show() in turn calls
-kobj_attr_show() through ->sysfs_ops->show(). kobj_attr_show() casts the
-provided attribute out to a 'struct kobj_attribute' via container_of()
-and calls ->show(), resulting in the CFI violation since neither
-nilfs_feature_revision_show() nor nilfs_feature_README_show() match the
-prototype of ->show() in 'struct kobj_attribute'.
-
-Resolve the CFI violation by adjusting the second parameter in
-nilfs_feature_{revision,README}_show() from 'struct attribute' to
-'struct kobj_attribute' to match the expected prototype.
-
-Cc: stable@vger.kernel.org
-Fixes: aebe17f68444 ("nilfs2: add /sys/fs/nilfs2/features group")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202509021646.bc78d9ef-lkp@intel.com/
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- fs/nilfs2/sysfs.c | 4 ++--
- fs/nilfs2/sysfs.h | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/nilfs2/sysfs.c b/fs/nilfs2/sysfs.c
-index 14868a3dd592..bc52afbfc5c7 100644
---- a/fs/nilfs2/sysfs.c
-+++ b/fs/nilfs2/sysfs.c
-@@ -1075,7 +1075,7 @@ void nilfs_sysfs_delete_device_group(struct the_nilfs *nilfs)
-  ************************************************************************/
- 
- static ssize_t nilfs_feature_revision_show(struct kobject *kobj,
--					    struct attribute *attr, char *buf)
-+					    struct kobj_attribute *attr, char *buf)
- {
- 	return sysfs_emit(buf, "%d.%d\n",
- 			NILFS_CURRENT_REV, NILFS_MINOR_REV);
-@@ -1087,7 +1087,7 @@ static const char features_readme_str[] =
- 	"(1) revision\n\tshow current revision of NILFS file system driver.\n";
- 
- static ssize_t nilfs_feature_README_show(struct kobject *kobj,
--					 struct attribute *attr,
-+					 struct kobj_attribute *attr,
- 					 char *buf)
- {
- 	return sysfs_emit(buf, features_readme_str);
-diff --git a/fs/nilfs2/sysfs.h b/fs/nilfs2/sysfs.h
-index 78a87a016928..d370cd5cce3f 100644
---- a/fs/nilfs2/sysfs.h
-+++ b/fs/nilfs2/sysfs.h
-@@ -50,16 +50,16 @@ struct nilfs_sysfs_dev_subgroups {
- 	struct completion sg_segments_kobj_unregister;
- };
- 
--#define NILFS_COMMON_ATTR_STRUCT(name) \
-+#define NILFS_KOBJ_ATTR_STRUCT(name) \
- struct nilfs_##name##_attr { \
- 	struct attribute attr; \
--	ssize_t (*show)(struct kobject *, struct attribute *, \
-+	ssize_t (*show)(struct kobject *, struct kobj_attribute *, \
- 			char *); \
--	ssize_t (*store)(struct kobject *, struct attribute *, \
-+	ssize_t (*store)(struct kobject *, struct kobj_attribute *, \
- 			 const char *, size_t); \
- }
- 
--NILFS_COMMON_ATTR_STRUCT(feature);
-+NILFS_KOBJ_ATTR_STRUCT(feature);
- 
- #define NILFS_DEV_ATTR_STRUCT(name) \
- struct nilfs_##name##_attr { \
-
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250905-nilfs2-fix-features-cfi-violation-3a53eb52a700
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+>> +	list_for_each_entry_safe(pt, next, &page_list, pt_list) {
+>> +		list_del(&pt->pt_list);
+> 
+> The list_del isn't necessary, it doesn't zero the list, just _safe
+> iteration is fine.
+Ahh, yes, agreed. The list_head is on the stack and going away. The
+global list is now empty after the list splice.
 
