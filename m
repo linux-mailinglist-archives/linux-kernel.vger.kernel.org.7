@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-802022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903DBB44CD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628B2B44CD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69BEEA46CAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177CB1C27E50
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A03223DF6;
-	Fri,  5 Sep 2025 04:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF8A2BDC01;
+	Fri,  5 Sep 2025 04:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN9hJfNo"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zqr/wLnP"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5038F28AB0B;
-	Fri,  5 Sep 2025 04:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26D2272811;
+	Fri,  5 Sep 2025 04:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757047338; cv=none; b=dlMq2D90ej/4XZubboYd3DriacGbSJbLsAMJIhKGgjh+2CfF/UbeosPwngPJ+7nHwAOob4fo1TCeVubi3py0X66OYKKbj8QkrEt2Q2FoW+nB/1rOWH8wGNE/Xr/UGh9NZm6Br6o/Nvc+l79couEhaO6zCz8X/Hdan8TkVT2Kqos=
+	t=1757047339; cv=none; b=p1jHUKWwk94eBK/CJD/9jQYk1I96IC7Sj+T67IvHjroF0sx7ha0WhLVDR2aoKhcN1Z4DoPnPBAqo1yORsGMiAsyQq7FiKuL4AZx9Hf1UtlB9ZmDRRoQed4VNGbW1g2wfvVIbnwaFDPKwrVpHKDBO4I/2AocO+Opzf/CqYLsJiw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757047338; c=relaxed/simple;
-	bh=j2YdN2DLnG73EP20qSXS3K/LaCj4A/LCua+ypuuynYE=;
+	s=arc-20240116; t=1757047339; c=relaxed/simple;
+	bh=haoC4Iq605Rnw34oLAGAMEMRUfKlboNcZlioATaXcGs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pajVErpg9Mc3l+0+rifg7z2wu8xL0ymAQGV4KUGc3zyxRQSetSvgim0Bf14ZuDvThWmqkuzV/jENqtXbVD1pwDPsESGSyHhkdRhg/qBNBuTHZJE2+6hCl+pA48nAxN58jsIWMSWPtlqFZX2MIL3D51RzYCWnVkXyDX8XQv5pwKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN9hJfNo; arc=none smtp.client-ip=209.85.222.170
+	 MIME-Version; b=BEQ1IfD18lipXqmcXPc0jt87Wba6HJtQpwOzT1cnFlbFnh7L7LlyQ8YiLtyhhB4236gN7hsw9HSBsDXQirSsx8I2bNBJ2FIEoJLL3OON89mqewuqw/aY4EGAPHWLBJDyPkZMQW/J+f9SIKQWZmW8sRuwNK6giLNPUWqCq2h4Um8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zqr/wLnP; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8116af074e2so23837285a.0;
-        Thu, 04 Sep 2025 21:42:15 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b32ce93e30so14747881cf.2;
+        Thu, 04 Sep 2025 21:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757047334; x=1757652134; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757047337; x=1757652137; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=5GJOYi91DjBqstMJYjR/ItpKLOjz9cAZ2xl/jTvxcto=;
-        b=EN9hJfNoXwitAOrWyUaW1RTj5/2htRxRHgR8jpFAncUQ23cGeE9n5cpSgsCf/0lgif
-         zTG71rIqcQQUDJ0mnnIVacK/2pqBZlvgWgPKjd4kweb3rYYxFted5W3mzMfwf0Ki/zIp
-         +wNNziTsDwm+51ZPK311eO/EWT6iLwwaHSQC2v58bXX730Sqjqmla9TbyxhRRvS21n+v
-         jjz65nMpMsIrRz5O0Xv1xtvO4+jPBNydJc3sLytt78wDRp35vOeDteSPQasTl6zxwwuS
-         w2kytLZBzQnGJl0pvZ/Nmm1u/SGGaB8JHewk0qcELkuaK/5vti6TCj/kekG/2Ge8tu85
-         yjtA==
+        bh=FKmc3OiqoUCIGRN7E+h6XFxZ5GqGhS2cMHJIUmthqoE=;
+        b=Zqr/wLnPOcnutq/9gxALxeE4hybwvTPoFHW/IwOG6a9CdYHEN1NWJ0Tg9ufnj+spmX
+         J7VtrOjsl41FnOxEfkc5/rPQ2a/pol3j4vCqPL4ANA7ZWry+z1CWl364o18rhmo8ex9r
+         L/4UzApR05q4iz3MCM7+OC1TTP8hkKzrIpzUnbSqY1rtg6rJQDU3wzkA/zMKc837QxKh
+         EX/BNArEXT5eMFTaKVcfmo7QAdb7YSDryY9kauzKp2pjEuxZHxUvX/hFkIxbKu4siimI
+         fiM86QrMqC36SSXIG6g0mRMAUJpekLpCVbrjSSwF5LDNeAL2AKWEfoBLrC7ZBU9G3+HM
+         gmqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757047334; x=1757652134;
+        d=1e100.net; s=20230601; t=1757047337; x=1757652137;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5GJOYi91DjBqstMJYjR/ItpKLOjz9cAZ2xl/jTvxcto=;
-        b=JTdrOuwY4E9664cTP+AOKCCxTwkvfj0G9vqEMbtF9PNIOM0+zpG0QnKNaoFmI0T2el
-         rTSpZEJ0E5+aZi4hZUwk0CCob1WEc7/nuikJOHwUcYw3GdnsZvLOAW7BM4LFYsjCu3me
-         w2nZnXxqlLCp8ooUeZXLChd3rhJEpLOfBlcbojRIaR8SmC2gkIxArtsBW2Q1H+igNIga
-         qT1bVE+YZL3OWXUkUENsg0DfIbfRkes89MAPKy36sRYkwsUctURMULI8sf2/VRX1u7/R
-         JR0Zaa/0nJDrEmmdW864QDpAqFB1bda9202/A20lgiclY+TLMdPTuM9tJcjNiBL/44pi
-         aeZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeYA4Qx/mu/N2kBIDYPF1mDLbcOQ9X1G1eQ7j8HmhhPulTSRJd8PQLe58MyRlwIOyRpBX5MhKHUmbwBW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyGypYQLzAYbXMcM2LKVESdYLs3KusNwuZ06xQv2w8SMOJ8ngV
-	ph1Ne5v0Bsb00PCt9cO1OQyt9Yj/1NCLuLfYmv2vcKMFDUHWx/4UfAgF
-X-Gm-Gg: ASbGncvC0MaiZbUU1mmMB8d7JEr18GABEYCAPraz5P5CSUIyorKnvUiPauu51s6/4KG
-	qujRecmWFVO2UJzA964FQUFIxqJscQD0fe6RzxrD/SKiN0+wgdd/RwcQKTvUb+q6E0lpreruv0n
-	TL8yzMcZa8x3eeBbB2biyq/8bEwWz4SCg3xB+izfpxxKRWDrXh778zBX4EiVHbd9y8IDGwxQ7xI
-	qdrABticz6b5J66GhQslraSxQ/5XnISorzEj0MlgSjkrDngOVDEybJ29c4DWKcv0jqL4tjfKj0Z
-	QfWmbfBvnsu6SBa5cXjnSLAja8rVZsDJTN+/JXSzVsv5l4/uCtNVzf/FbP7C0RQltlH6re0mhlV
-	m48NCQH+w8OxQsiQ5zpfYfxeMtN5lKa+KZb8lE0yf4hzHJR+hB+lIAfJ7qMxf1As4slxzn4COqO
-	D7RWOO1xknsgx+snfr7+B/E8SFik1I1C2Vkg==
-X-Google-Smtp-Source: AGHT+IFjfaD9905yscYWLVswKCOSnwJBtSvmjutZmVVqmICXEjg8GdLTi/1Ibn8LVaDbLjLknLHX3A==
-X-Received: by 2002:a05:620a:1a0a:b0:80a:eb17:6385 with SMTP id af79cd13be357-80aeb176498mr888323185a.74.1757047334142;
-        Thu, 04 Sep 2025 21:42:14 -0700 (PDT)
+        bh=FKmc3OiqoUCIGRN7E+h6XFxZ5GqGhS2cMHJIUmthqoE=;
+        b=qjlER1mUQDdiI4yJhVOdKcqKUiJSyuUvMm5zZM0jQevq2aH65QKsDf1aNobOEwQkQX
+         7ZE2qqaW3HCxmwe1+otb5AGpUlE9eWVDf7Ni8//NHeST3qOSaXYGjmV3h+LuC1t7ijhy
+         JB6gwE+6L/w7tiU8QFFl50Up0V8HCJyX2xNgI4mm+2Psb9hioOG0qdwLvH4o4tFiJLCl
+         9vRnmW0nqMKSMxFVt59baG66OdTL1o8w1zwgGTVBet6NjCCrUQgUCbMC8QrEeWfFuYqq
+         ppjnMAICMxyJZzcP9dR6l5jWkX9usunUGD9vMX0K+MwJr4Cflyx3hIwVw4a7XqORzzcK
+         M7uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyhT5viUl0GKRmTCi6qrLf7Lg+w0/Tyx4OcG8A2FUQkbRManzAkm6z4+h1up5Q1zohu2mo3PLpZSdKq4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp6Q6XDQQhvqvVXzLg/AXh1Ef/15nnRggEKeX5fEog4rdtWIJe
+	h1ixOwUr5vVerZSVS7MTu+PQgWJfvacU4F4EfR3LIVggiWX24T1ekc99
+X-Gm-Gg: ASbGnctFU/l/z0i913WYSe+Zbctdv6BiGSCoc12K2Bv8ykdyGCAD8pR9Tznp1VBpaG3
+	+s+ep6Gfy9d8NW0nSF2vNT3xF9+EWUIhSQNJ0K0PwpjamP9yMIBmERuntxGT2np+UoIgMv7li+o
+	Wb0IJIWU6zHH48VMsrrt5dhxTL0fuu+/HdetCE2ujddDL6PZCVXUMY3q2Yfl+IC22sPS9GKRZjp
+	4U6+xdx14JCipHHlYPCMeVVMgmee94H0YIZRnS7NRRgEP47QhICZwcODsfCXy8kvXooo9j/j4h+
+	AhrRa/XHrJsX2ODm8GTOyTLhM4IzXqo137mzt2VeFGbx5UwXS4x9r1SNjx9pltajhlQqRB0oKwA
+	9CKg/mRkzE/0Kd8edHb1Hgi52PPLUkpYOKCGjyL3Mq9FTmuK4bvk4hvos1dw06xY6iZh35GB7Y+
+	sItLfDn7RjfJu9rwi3AwaAlyFzRXL8VKf0S385hKbQLe3Z
+X-Google-Smtp-Source: AGHT+IGrYb1U1PAKjzxlTYJ0D6BmDQ/4FzlKGlepVNh4VkMmJpfwfiq0jfQOV/6ptsw1/56zXKajKQ==
+X-Received: by 2002:a05:622a:15c8:b0:4b0:6205:d22b with SMTP id d75a77b69052e-4b31db6a3fbmr290693791cf.52.1757047336847;
+        Thu, 04 Sep 2025 21:42:16 -0700 (PDT)
 Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80aaacff0f0sm408185085a.43.2025.09.04.21.42.13
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f7838edsm39622771cf.39.2025.09.04.21.42.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 21:42:13 -0700 (PDT)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 4B06BF40067;
-	Fri,  5 Sep 2025 00:42:13 -0400 (EDT)
+        Thu, 04 Sep 2025 21:42:16 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C7A46F40066;
+	Fri,  5 Sep 2025 00:42:15 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 05 Sep 2025 00:42:13 -0400
-X-ME-Sender: <xms:JWq6aPg1EnLwOaxckofTAzm44MQJmljHYW8hD2YQ21qkLWKePqPwag>
-    <xme:JWq6aE3Ylz1PZYBeAZRhotLosr5eOz9jskd8Dcw9JE6g_EdKTK4_zAo-4a_p0d-yT
-    IqHhEhWmm7T1hQupQ>
-X-ME-Received: <xmr:JWq6aAb4yXDy22TfpZbTlVn2YWBTfvI93Peq3XA7IOI8A6tV2BWC_r1F0iz3MZVtg9S26jaoz5oQ2WJJ_J-zmWpOaZ8eo38v>
+  by phl-compute-03.internal (MEProxy); Fri, 05 Sep 2025 00:42:15 -0400
+X-ME-Sender: <xms:J2q6aIAiCx9mpiYFx93xX7ydaaKfSPcj1LfSExGNG-kRWRTtaWG1ZA>
+    <xme:J2q6aIOX0A-ry71GQjwfyJigy3qqdN1AIn_vQFHzOkR-h-jEcWSqiPMf4oV5ZbVub
+    9NZZDxDXTSnv9SQEA>
+X-ME-Received: <xmr:J2q6aNUeJ75ZQpxA5_EKnbE3JJiG3NWzeJ9yXbCL3a1xH_aHgJS4haO6RRqP7Rb5Q9fYAXM33z16W0qCiOrWoOBILrx9yhWH>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejleeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
     lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
     ephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepuehoqhhunhcuhfgv
     nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
     hnpefghfffvefhhfdvgfejgfekvdelgfekgeevueehlefhiedvgeffjefgteeugfehieen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgepudenuc
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgepvdenuc
     frrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhs
     ohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnh
     hgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuh
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuh
     igsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
     vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsth
     hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdp
@@ -100,14 +100,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejleeiucetufdoteggod
     hmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehmihhnghhosehk
     vghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
     dprhgtphhtthhopehprghulhhmtghksehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:JWq6aBgDi-9N11eTll7HFCM61RN7uL8jPyTpYDkY9lEeoVCHqPIbAg>
-    <xmx:JWq6aAiJ0zcwRijKLV2OL2PuQqcKrtETwTD9JfGWS9i3VYTmt9HcSw>
-    <xmx:JWq6aOAltFsh1YdbkBx5-wLcTaaREm602gvRIDSvSU7WgkJMmvZOTQ>
-    <xmx:JWq6aI8nqCtfJKORbsuLfY7f0EgV8VX9leun5_VFivUevhKPwlbTkQ>
-    <xmx:JWq6aHCVtfh32TetgdwU8Xat9IHn7viFOO2ODXdiy2eZCLJV-G1NxhlP>
+X-ME-Proxy: <xmx:J2q6aLQ3I7qGWGd0s8MnhDYWgovEQmbE_YAo-soEeqEa5UjzJmwbWQ>
+    <xmx:J2q6aD0GVheIQSyX8ej204tsknqPrsdCWKY-iBR6TqNwlfDvag8cLw>
+    <xmx:J2q6aIiXQemlz9MW7KWEE1vifjAcpt1iCmKwoUVjawA8VDMLZg9e1g>
+    <xmx:J2q6aBZpgKo-ZZmaosp4hJP89yBr0vxRjx6MnMQfRq2LhiRXkw0P8w>
+    <xmx:J2q6aBOQGGoaie_A3vaEEU60On6stRjiQL9amni_J9zH0tNFC1U34ju_>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 Sep 2025 00:42:11 -0400 (EDT)
+ 5 Sep 2025 00:42:14 -0400 (EDT)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -128,11 +128,10 @@ Cc: "Will Deacon" <will@kernel.org>,
 	"Trevor Gross" <tmgross@umich.edu>,
 	"Danilo Krummrich" <dakr@kernel.org>,
 	"Andreas Hindborg" <a.hindborg@kernel.org>,
-	David Gow <davidgow@google.com>,
 	Boqun Feng <boqun.feng@gmail.com>
-Subject: [PATCH 13/14] rust: block: convert `block::mq` to use `Refcount`
-Date: Thu,  4 Sep 2025 21:41:40 -0700
-Message-ID: <20250905044141.77868-14-boqun.feng@gmail.com>
+Subject: [PATCH 14/14] MAINTAINERS: update atomic infrastructure entry to include Rust
+Date: Thu,  4 Sep 2025 21:41:41 -0700
+Message-ID: <20250905044141.77868-15-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250905044141.77868-1-boqun.feng@gmail.com>
 References: <20250905044141.77868-1-boqun.feng@gmail.com>
@@ -146,238 +145,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Gary Guo <gary@garyguo.net>
 
-Currently there's a custom reference counting in `block::mq`, which uses
-`AtomicU64` Rust atomics, and this type doesn't exist on some 32-bit
-architectures. We cannot just change it to use 32-bit atomics, because
-doing so will make it vulnerable to refcount overflow. So switch it to
-use the kernel refcount `kernel::sync::Refcount` instead.
+I would like to help review atomic related patches, especially Rust
+related ones, hence add myself as an reviewer.
 
-There is an operation needed by `block::mq`, atomically decreasing
-refcount from 2 to 0, which is not available through refcount.h, so
-I exposed `Refcount::as_atomic` which allows accessing the refcount
-directly.
-
-Tested-by: David Gow <davidgow@google.com>
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Acked-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Gary Guo <gary@garyguo.net>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-[boqun: Adopt the LKMM atomic API]
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20250723233312.3304339-5-gary@kernel.org
+Link: https://lore.kernel.org/r/20250723233312.3304339-6-gary@kernel.org
 ---
- rust/kernel/block/mq/operations.rs |  7 +--
- rust/kernel/block/mq/request.rs    | 73 +++++++++---------------------
- rust/kernel/sync/refcount.rs       | 15 ++++++
- 3 files changed, 40 insertions(+), 55 deletions(-)
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
-index c2b98f507bcb..c0f95a9419c4 100644
---- a/rust/kernel/block/mq/operations.rs
-+++ b/rust/kernel/block/mq/operations.rs
-@@ -10,9 +10,10 @@
-     block::mq::Request,
-     error::{from_result, Result},
-     prelude::*,
-+    sync::Refcount,
-     types::ARef,
- };
--use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Ordering};
-+use core::marker::PhantomData;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 37a753ec2aca..65499b9303e8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3991,6 +3991,7 @@ M:	Will Deacon <will@kernel.org>
+ M:	Peter Zijlstra <peterz@infradead.org>
+ M:	Boqun Feng <boqun.feng@gmail.com>
+ R:	Mark Rutland <mark.rutland@arm.com>
++R:	Gary Guo <gary@garyguo.net>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/atomic_*.txt
+@@ -4000,6 +4001,7 @@ F:	include/linux/refcount.h
+ F:	scripts/atomic/
+ F:	rust/kernel/sync/atomic.rs
+ F:	rust/kernel/sync/atomic/
++F:	rust/kernel/sync/refcount.rs
  
- /// Implement this trait to interface blk-mq as block devices.
- ///
-@@ -78,7 +79,7 @@ impl<T: Operations> OperationsVTable<T> {
-         let request = unsafe { &*(*bd).rq.cast::<Request<T>>() };
- 
-         // One refcount for the ARef, one for being in flight
--        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
-+        request.wrapper_ref().refcount().set(2);
- 
-         // SAFETY:
-         //  - We own a refcount that we took above. We pass that to `ARef`.
-@@ -187,7 +188,7 @@ impl<T: Operations> OperationsVTable<T> {
- 
-             // SAFETY: The refcount field is allocated but not initialized, so
-             // it is valid for writes.
--            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(AtomicU64::new(0)) };
-+            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(Refcount::new(0)) };
- 
-             Ok(0)
-         })
-diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
-index fefd394f064a..f62a376dc313 100644
---- a/rust/kernel/block/mq/request.rs
-+++ b/rust/kernel/block/mq/request.rs
-@@ -8,13 +8,10 @@
-     bindings,
-     block::mq::Operations,
-     error::Result,
-+    sync::{atomic::Relaxed, Refcount},
-     types::{ARef, AlwaysRefCounted, Opaque},
- };
--use core::{
--    marker::PhantomData,
--    ptr::NonNull,
--    sync::atomic::{AtomicU64, Ordering},
--};
-+use core::{marker::PhantomData, ptr::NonNull};
- 
- /// A wrapper around a blk-mq [`struct request`]. This represents an IO request.
- ///
-@@ -37,6 +34,9 @@
- /// We need to track 3 and 4 to ensure that it is safe to end the request and hand
- /// back ownership to the block layer.
- ///
-+/// Note that the driver can still obtain new `ARef` even if there is no `ARef`s in existence by
-+/// using `tag_to_rq`, hence the need to distinguish B and C.
-+///
- /// The states are tracked through the private `refcount` field of
- /// `RequestDataWrapper`. This structure lives in the private data area of the C
- /// [`struct request`].
-@@ -98,13 +98,16 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<Self>) {
-     ///
-     /// [`struct request`]: srctree/include/linux/blk-mq.h
-     fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request, ARef<Self>> {
--        // We can race with `TagSet::tag_to_rq`
--        if let Err(_old) = this.wrapper_ref().refcount().compare_exchange(
--            2,
--            0,
--            Ordering::Relaxed,
--            Ordering::Relaxed,
--        ) {
-+        // To hand back the ownership, we need the current refcount to be 2.
-+        // Since we can race with `TagSet::tag_to_rq`, this needs to atomically reduce
-+        // refcount to 0. `Refcount` does not provide a way to do this, so use the underlying
-+        // atomics directly.
-+        if let Err(_old) = this
-+            .wrapper_ref()
-+            .refcount()
-+            .as_atomic()
-+            .cmpxchg(2, 0, Relaxed)
-+        {
-             return Err(this);
-         }
- 
-@@ -173,13 +176,13 @@ pub(crate) struct RequestDataWrapper {
-     /// - 0: The request is owned by C block layer.
-     /// - 1: The request is owned by Rust abstractions but there are no [`ARef`] references to it.
-     /// - 2+: There are [`ARef`] references to the request.
--    refcount: AtomicU64,
-+    refcount: Refcount,
- }
- 
- impl RequestDataWrapper {
-     /// Return a reference to the refcount of the request that is embedding
-     /// `self`.
--    pub(crate) fn refcount(&self) -> &AtomicU64 {
-+    pub(crate) fn refcount(&self) -> &Refcount {
-         &self.refcount
-     }
- 
-@@ -189,7 +192,7 @@ pub(crate) fn refcount(&self) -> &AtomicU64 {
-     /// # Safety
-     ///
-     /// - `this` must point to a live allocation of at least the size of `Self`.
--    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut AtomicU64 {
-+    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut Refcount {
-         // SAFETY: Because of the safety requirements of this function, the
-         // field projection is safe.
-         unsafe { &raw mut (*this).refcount }
-@@ -205,47 +208,13 @@ unsafe impl<T: Operations> Send for Request<T> {}
- // mutate `self` are internally synchronized`
- unsafe impl<T: Operations> Sync for Request<T> {}
- 
--/// Store the result of `op(target.load())` in target, returning new value of
--/// target.
--fn atomic_relaxed_op_return(target: &AtomicU64, op: impl Fn(u64) -> u64) -> u64 {
--    let old = target.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| Some(op(x)));
--
--    // SAFETY: Because the operation passed to `fetch_update` above always
--    // return `Some`, `old` will always be `Ok`.
--    let old = unsafe { old.unwrap_unchecked() };
--
--    op(old)
--}
--
--/// Store the result of `op(target.load)` in `target` if `target.load() !=
--/// pred`, returning [`true`] if the target was updated.
--fn atomic_relaxed_op_unless(target: &AtomicU64, op: impl Fn(u64) -> u64, pred: u64) -> bool {
--    target
--        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| {
--            if x == pred {
--                None
--            } else {
--                Some(op(x))
--            }
--        })
--        .is_ok()
--}
--
- // SAFETY: All instances of `Request<T>` are reference counted. This
- // implementation of `AlwaysRefCounted` ensure that increments to the ref count
- // keeps the object alive in memory at least until a matching reference count
- // decrement is executed.
- unsafe impl<T: Operations> AlwaysRefCounted for Request<T> {
-     fn inc_ref(&self) {
--        let refcount = &self.wrapper_ref().refcount();
--
--        #[cfg_attr(not(CONFIG_DEBUG_MISC), allow(unused_variables))]
--        let updated = atomic_relaxed_op_unless(refcount, |x| x + 1, 0);
--
--        #[cfg(CONFIG_DEBUG_MISC)]
--        if !updated {
--            panic!("Request refcount zero on clone")
--        }
-+        self.wrapper_ref().refcount().inc();
-     }
- 
-     unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
-@@ -257,10 +226,10 @@ unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
-         let refcount = unsafe { &*RequestDataWrapper::refcount_ptr(wrapper_ptr) };
- 
-         #[cfg_attr(not(CONFIG_DEBUG_MISC), allow(unused_variables))]
--        let new_refcount = atomic_relaxed_op_return(refcount, |x| x - 1);
-+        let is_zero = refcount.dec_and_test();
- 
-         #[cfg(CONFIG_DEBUG_MISC)]
--        if new_refcount == 0 {
-+        if is_zero {
-             panic!("Request reached refcount zero in Rust abstractions");
-         }
-     }
-diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
-index cc1a80ae7ae9..19236a5bccde 100644
---- a/rust/kernel/sync/refcount.rs
-+++ b/rust/kernel/sync/refcount.rs
-@@ -5,6 +5,7 @@
- //! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
- 
- use crate::build_assert;
-+use crate::sync::atomic::Atomic;
- use crate::types::Opaque;
- 
- /// Atomic reference counter.
-@@ -34,6 +35,20 @@ fn as_ptr(&self) -> *mut bindings::refcount_t {
-         self.0.get()
-     }
- 
-+    /// Get the underlying atomic counter that backs the refcount.
-+    ///
-+    /// NOTE: Usage of this function is discouraged as it can circumvent the protections offered by
-+    /// `refcount.h`. If there is no way to achieve the result using APIs in `refcount.h`, then
-+    /// this function can be used. Otherwise consider adding a binding for the required API.
-+    #[inline]
-+    pub fn as_atomic(&self) -> &Atomic<i32> {
-+        let ptr = self.0.get().cast();
-+        // SAFETY: `refcount_t` is a transparent wrapper of `atomic_t`, which is an atomic 32-bit
-+        // integer that is layout-wise compatible with `Atomic<i32>`. All values are valid for
-+        // `refcount_t`, despite some of the values being considered saturated and "bad".
-+        unsafe { &*ptr }
-+    }
-+
-     /// Set a refcount's value.
-     #[inline]
-     pub fn set(&self, value: i32) {
+ ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
+ M:	Bradley Grove <linuxdrivers@attotech.com>
 -- 
 2.51.0
 
