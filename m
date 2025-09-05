@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-803512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD29B4619A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D4CB4619E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586D95A2A5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81123A644BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E743E36CDF5;
-	Fri,  5 Sep 2025 18:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F97536CE1C;
+	Fri,  5 Sep 2025 18:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKnc1VSQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2UfK7QX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990E2F7AC1;
-	Fri,  5 Sep 2025 18:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DF02AD25;
+	Fri,  5 Sep 2025 18:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757095241; cv=none; b=eSHgOtDzbo5MpxslxHkEgO8bP12W9bHAy2PsIX9aFLDl/bwHDvcf2CV4dhBKFZY6PPqLY7mO/B8zGiVgH1tUDPJtDK9oHsBpCoq4tEKRjcNI740U8Gpl4BrUkIwSH2eHeds0/HuRK418akDdj6A2JpG74wk1AoPwLuzTwWGreCc=
+	t=1757095336; cv=none; b=cQctQwltk4CXs1RaHbG/QT+uRq5cGpFANI1EAiHGQYwjOcvBHMvmoykdpY+X17nc+tXq3KzW06wMDzA4wGhsRaVyDIE2cfrK9uRPK16cEkamPQB3Y2pcCNdYEikUl5uealfcPKgg/NS4QtbVeeWCoO4cTx6z9gizSO7ciq5/EN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757095241; c=relaxed/simple;
-	bh=pgmvmFb/8kCCNlf55iLem9HEzp6mMHv7i0NyicdLw3k=;
+	s=arc-20240116; t=1757095336; c=relaxed/simple;
+	bh=6+8JIJLbwNB4qZrpYNsQtnjhJwAgVff1bSa/FYZHBKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCv/y/DWpWIwFFVcFjouC2sFcLRLGIrcl0vXD+kdVBEcxX7aRZK92CddAgy07YZ1Lhpk8tniNuYJr/F/wJKVlAqHB4UBQ+vVJ0vpBxPZEc5o/86+RlitvAdcCsVNYyEGsRZTeA8/knuH5NPRLXCNwZu/66ibQ1euQNYblFf4JXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKnc1VSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9860C4CEF1;
-	Fri,  5 Sep 2025 18:00:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZ95oFQnYzvzXsDKK9A5GxjXM5jOVTXyBZt0xrCOqyXd5BmrZGpXQCYVYTbDNe16xXIDlt+xzYjxf+Mc6XrFJICHfmIodrWSYP0Yt/JdlsxJn66YD5dzA5aKz862PX3zFVDoft2uwsLKPEFnTG82LsNrj80WhDImvDEsofcoo/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2UfK7QX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B25FC4CEF1;
+	Fri,  5 Sep 2025 18:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757095240;
-	bh=pgmvmFb/8kCCNlf55iLem9HEzp6mMHv7i0NyicdLw3k=;
+	s=k20201202; t=1757095335;
+	bh=6+8JIJLbwNB4qZrpYNsQtnjhJwAgVff1bSa/FYZHBKM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oKnc1VSQDVaKcv7LYjjc1Ax66S7zi9xjI8eoRSSKLtpWLpad1IwKwL139iPbJqw8d
-	 /nw9jsxo++HfXkc05NrCuh8O4ih+0u3T9MBJprmNBQavnpW94hXOXlnwOH0ZbjizZh
-	 /0qrQK6UiwlrIq90H5Wlo7TrhMfhNYSurii0sxqgcB+TayNk8pNtLefUFR7fynA6l4
-	 IaOg+V19WQig0hjz8wtWOVdX2Oxv27tm2/zPsP1z6moVQOAUfs5vfVWxZ32cEsn8t9
-	 P2/ehrXLbgkj7lGWD01R6w9twLiQbR29b8bEQOGgwXWwjJp8o4zeDoOhDZoYEIvguh
-	 IX/FMnpfZzOtg==
-Date: Fri, 5 Sep 2025 13:00:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Russell King <linux@armlinux.org.uk>, Liu Ying <victor.liu@nxp.com>,
-	Maxime Ripard <mripard@kernel.org>, Robert Foss <rfoss@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Phong LE <ple@baylibre.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: bridge: Reference DAI common schema
-Message-ID: <175709523857.1011984.7960625628072770929.robh@kernel.org>
-References: <20250904083816.48076-2-krzysztof.kozlowski@linaro.org>
+	b=s2UfK7QXsPOsR4h1I7z4w80D4OJq0HUKhdxFzTJJXPQW76a/ymHqdFoShZGHOri27
+	 hUIngdSefZ9zAz6kgALIQOXKls+JFAxBrOXQedFuF7/bNjOAbdIegQQN9UkAogzIZt
+	 4gerN3GoA1WzegyqmRCTqiO1IDM/9DXScs+5qcWmY+XZ0TepXdr7Z1a4iQPgmIiZXi
+	 Ffdcaqr3SGeT60JfLFJKVvACXiy8LazmUV1LMvVCMeC1pigzw/GvLKEk5o3eZYnZes
+	 YQe+hO4MjJv5mDsPcaflz0Gi2b4mDfo5x8sKYIZATaXoMww/La75/NoUQPKIOb33Hk
+	 DmJ9FMbs7OwfA==
+Date: Fri, 5 Sep 2025 19:02:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Usama Arif <usamaarif642@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
+	riel@surriel.com, laoar.shao@gmail.com, dev.jain@arm.com,
+	baolin.wang@linux.alibaba.com, npache@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
+	Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kernel-team@meta.com, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
+ THPs completely
+Message-ID: <620a27cc-7a5f-473f-8937-5221d257c066@sirena.org.uk>
+References: <20250815135549.130506-1-usamaarif642@gmail.com>
+ <20250815135549.130506-7-usamaarif642@gmail.com>
+ <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
+ <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UFcG+34rk9hn3RB3"
 Content-Disposition: inline
-In-Reply-To: <20250904083816.48076-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <5F7011AF-8CC2-45E0-A226-273261856FF0@nvidia.com>
+X-Cookie: He who laughs, lasts.
 
 
-On Thu, 04 Sep 2025 10:38:17 +0200, Krzysztof Kozlowski wrote:
-> Several display bridges (e.g. LVDS to HDMI converters) are used as sound
-> Digital Audio Interface (DAI) and have '#sound-dai-cells', thus they
-> should reference dai-common.yaml schema to allow common properties, like
-> DAI name.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/display/bridge/ite,it6263.yaml       | 1 +
->  .../devicetree/bindings/display/bridge/ite,it66121.yaml      | 5 ++++-
->  .../devicetree/bindings/display/bridge/lontium,lt9611.yaml   | 5 ++++-
->  .../devicetree/bindings/display/bridge/nxp,tda998x.yaml      | 5 ++++-
->  .../devicetree/bindings/display/bridge/sil,sii9022.yaml      | 5 ++++-
->  5 files changed, 17 insertions(+), 4 deletions(-)
-> 
+--UFcG+34rk9hn3RB3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Fri, Sep 05, 2025 at 01:55:53PM -0400, Zi Yan wrote:
+> On 5 Sep 2025, at 13:43, Mark Brown wrote:
 
+> > but the header there is getting ignored AFAICT.  Probably the problem is
+> > fairly obvious and I'm just being slow - I'm not quite 100% at the
+> > minute.
+
+> prctl_thp_disable.c uses =E2=80=9C#include <sys/mman.h>=E2=80=9D but asm-=
+generic/mman-common.h
+> is included in asm/mman.h. And sys/mman.h gets MADV_COLLAPSE from
+> bits/mman-linux.h. Maybe that is why?
+
+Ah, of course - if glibc is reproducing the kernel definitions rather
+than including the kernel headers to get them then that'd do it.
+Probably the test needs to locally define the new MADV_COLLAPSE for
+glibc compatibility, IME trying to directly include the kernel headers
+when glibc doesn't normally use them tends to blow up on you sooner or
+later.
+
+I knew it'd be something simple, thanks.
+
+--UFcG+34rk9hn3RB3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi7JZwACgkQJNaLcl1U
+h9CXKQf8CLPDpCThx982MKFSA+6kIQN173w+JjtervyO0xBauOFpYhofXBOJ0T5F
+gBBx9/nVvRfBb2qz+9/c6b4AhAZU2soqeZMDTjDJ//eBUYiNlFLbsOMuFPg/s06w
+pWU765APcweYpKI8xj2QmAlP6HTEYcAIBhFGv1taQ7bVwS86HL0Rkl+4IUB5KtC+
+dyCYUXNJ0TIlxNXvHLzk/t/35IZ3IbphnAk7TcUpcxV2pKnztlzFtQLk66Mgr31j
+Af+RATFuHuhGnDOMbg3pUsVUMl2wZ1JfF3FoDs5oyNCUN+isKcmQFiaJMWR8BlzT
+/K7wOXmcgx0SuUXmECqvydHaxCcLXw==
+=A8qN
+-----END PGP SIGNATURE-----
+
+--UFcG+34rk9hn3RB3--
 
