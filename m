@@ -1,163 +1,267 @@
-Return-Path: <linux-kernel+bounces-801987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2ACB44C71
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A97B44C76
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB515858A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:45:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FD71B28015
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5DB25C6F1;
-	Fri,  5 Sep 2025 03:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2B025742C;
+	Fri,  5 Sep 2025 03:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fHtko7zr"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BtP78sm/"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6252214801;
-	Fri,  5 Sep 2025 03:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA225CA5A;
+	Fri,  5 Sep 2025 03:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757043906; cv=none; b=amgDq5tntQq3lcaaIjPlrjj6/N0lM2SX3h1CmSRvPqBWUU2iWUvQ5d28fdXJJb22QmUsz/EfHVXR8ZBdAPOHd8f3ksPRGqdWj5qSiiJh3fVl8xnTnYEuZIkSB/4NgB9ZHheEWZcBLJUP4SpdOZOPH75jZL/Fc7+PtgU9OUmsaJM=
+	t=1757043943; cv=none; b=m2d66Vu5ApYSTD3Q2D/3F5bPVQU6nKdaHdT4oILaxq5zG3sgY1n2RXgFf8aAbDsCN49U5uGynd8Cvjg0HHj5JnHcQTt5RYeWDdz4TlAVSo6j5d9jCebOUYCDuv6yz5rzFicTqnpNr2oTDzVk06/NsclcLVxA2l1zMIp4FaTVpX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757043906; c=relaxed/simple;
-	bh=SKXz5+gJpe7vLnNPYx7aREtRZh5QCQXznrSmeqMvKvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ez7A/VMxQttgtOitr1U9fhp+b+K1dfxz03LgjUVsvctsnIcKRJwBoWla9dq+G8Xea/yIIkCRAcgfLE/U5uar4w9yZPyNOV34skCxj+nDUBTHF/5RkeBWxp6bJXP1ZMtPA8p4WLtQk3S7Aaw3bkkUHyMPrlesW1xEenfSDjWBdjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fHtko7zr; arc=none smtp.client-ip=115.124.30.100
+	s=arc-20240116; t=1757043943; c=relaxed/simple;
+	bh=ODcJLz2yv8LUx5SB/Se6fulN0/HliBGOLlqT4v+rlYg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PwKLg7BbqseHsY84koTNUrxZpLVrNb4OmqDS+erfEASUXKp3CdWB/dZhBrWfJzzX6/lQ+/YFBPJouffZR6+SCU+YoCrzYI9SinFmYfXB1f1juJfUDH4eq2jcwDucoEjM30/XPAlg+aHh9HPzXA4YMF1cQ3qvGNS8F6Re0WgBVK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BtP78sm/; arc=none smtp.client-ip=115.124.30.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1757043895; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=I/4dsPBT5BQithObF8p15Q2iEGxmgkcnU0FM5Ioh94U=;
-	b=fHtko7zraJOmpPeQypN+FrVRMxIebWsEJirkphEciV05S5hn4coK81VBObh2e8Iv0r052BtMcsbDOZLa/xPEz/iUxInQ6sjxZC2POa/KYjXUkgUtZZUWodbXgrekzbXYRhImX+xaXFPYMxn7xovD7Qxmt7MCECURnwcV11AFW8M=
-Received: from 30.221.148.72(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0WnJ6SCa_1757043894 cluster:ay36)
+	t=1757043937; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=sUZboZ9UiPIP5KDhPN/lk7f2r5hzY8YgBdcI7qMPvJE=;
+	b=BtP78sm/Jrf5YHEwlz6HCxpVGSVoFPo1KMq/KNuIQz4SMbOtrCUX9a+qeFB4GAfCK5fLpfkBKwEM89S1k1EKB3HR1EA+fDOWzPn0kgsUX4EtIiu0j5D1SO2grd2UjuUNHXhEtP5hvIjgJJWIT59rcvfi6E+oV/hC0/7l0iJd4qw=
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WnJ07mG_1757043936 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 05 Sep 2025 11:44:54 +0800
-Message-ID: <93b146e5-08e4-4c10-bb90-8149e82263f0@linux.alibaba.com>
-Date: Fri, 5 Sep 2025 11:44:53 +0800
+          Fri, 05 Sep 2025 11:45:36 +0800
+Date: Fri, 5 Sep 2025 11:45:36 +0800
+From: Dust Li <dust.li@linux.alibaba.com>
+To: Halil Pasic <pasic@linux.ibm.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Sidraya Jayagond <sidraya@linux.ibm.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Mahanta Jambigi <mjambigi@linux.ibm.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net/smc: make wr buffer count configurable
+Message-ID: <aLpc4H_rHkHRu0nQ@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <20250904211254.1057445-1-pasic@linux.ibm.com>
+ <20250904211254.1057445-2-pasic@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-To: Tejun Heo <tj@kernel.org>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <cover.1756985260.git.escape@linux.alibaba.com>
- <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
- <aLm-2Lcnu602AB85@slm.duckdns.org>
- <11edd1da-7162-4f5a-b909-72c2f65e9db7@linux.alibaba.com>
- <aLpKr6_r5exdc3EQ@slm.duckdns.org>
-From: escape <escape@linux.alibaba.com>
-In-Reply-To: <aLpKr6_r5exdc3EQ@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904211254.1057445-2-pasic@linux.ibm.com>
 
-Hello,
+On 2025-09-04 23:12:52, Halil Pasic wrote:
+>Think SMC_WR_BUF_CNT_SEND := SMC_WR_BUF_CNT used in send context and
+>SMC_WR_BUF_CNT_RECV := 3 * SMC_WR_BUF_CNT used in recv context. Those
+>get replaced with lgr->max_send_wr and lgr->max_recv_wr respective.
 
-在 2025/9/5 10:27, Tejun Heo 写道:
-> Hello,
+Hi Halil,
+
+I think making the WR buffer count configurable helps make SMC more flexible.
+
+However, there are two additional issues we need to consider:
+
+1. What if the two sides have different max_send_wr/max_recv_wr configurations?
+IIUC, For example, if the client sets max_send_wr to 64, but the server sets
+max_recv_wr to 16, the client might overflow the server's QP receive
+queue, potentially causing an RNR (Receiver Not Ready) error.
+
+2. Since WR buffers are configurable, it’d be helpful to add some
+monitoring methods so we can keep track of how many WR buffers each QP
+is currently using. This should be useful now that you introduced a fallback
+retry mechanism, which can cause the number of WR buffers to change
+dynamically.
+
+
+Some other minor issues in the patch itself, see below
+
 >
-> On Fri, Sep 05, 2025 at 10:16:30AM +0800, escape wrote:
->>>> +	if (have_favordynmods)
->>>> +		up_read(&tsk->signal->group_rwsem);
->>>>    	percpu_up_read(&cgroup_threadgroup_rwsem);
->>> Hmm... I wonder whether turning on/off the flag is racy. ie. what prevents
->>> have_favordynmods flipping while a task is between change_begin and end?
->> have_favordynmods is read-only after initialization and will not change
->> during runtime.
-> I don't think that's necessarily true. favordynmods can also be specified as
-> a mount option and mount can race against forks, execs and exits. Also,
-> IIRC, cgroup2 doesn't allow remounts but there's nothing preventing someone
-> from unmounting and mounting it again with different options.
-There are two ways to set favordynmods. The first is through kernel 
-config or
-the kernel command line parameter cgroup_favordynmods, which sets the 
-value of
-the variable have_favordynmods and automatically sets the 
-CGRP_ROOT_FAVOR_DYNMODS
-flag on cgroup_root->flags at mount time. The second is by passing a 
-mount option,
-which only sets the CGRP_ROOT_FAVOR_DYNMODS flag on cgroup_root->flags 
-during mount.
-
-In this patch, the decision whether to use the per-threadgroup rwsem is 
-based on
-have_favordynmods, not on cgroup_root->flags. An umount & mount affects 
-cgroup_root->flags,
-but does not change have_favordynmods.
-
-Indeed, there is a minor flaw here: if favordynmods is enabled via a 
-mount option rather
-than the kernel command line, the per-threadgroup rwsem will not take 
-effect.
-
-To avoid the complexity of runtime changes to favordynmods, perhaps a 
-better approach
-would be to introduce a separate control variable, configured via a 
-kernel command line
-parameter such as cgroup_migration_lock=[global|thread_group] to 
-explicitly govern
-this behavior. What do you think about this approach?
->>>> @@ -3010,15 +3008,27 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
->>>>    	 */
->>>>    	if (tsk->no_cgroup_migration || (tsk->flags & PF_NO_SETAFFINITY)) {
->>>>    		tsk = ERR_PTR(-EINVAL);
->>>> -		goto out_unlock_threadgroup;
->>>> +		goto out_unlock_rcu;
->>>>    	}
->>>> -
->>>>    	get_task_struct(tsk);
->>>> -	goto out_unlock_rcu;
->>>> -out_unlock_threadgroup:
->>>> -	cgroup_attach_unlock(*threadgroup_locked);
->>>> -	*threadgroup_locked = false;
->>>> +	rcu_read_unlock();
->>>> +
->>>> +	/*
->>>> +	 * If we migrate a single thread, we don't care about threadgroup
->>>> +	 * stability. If the thread is `current`, it won't exit(2) under our
->>>> +	 * hands or change PID through exec(2). We exclude
->>>> +	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
->>>> +	 * callers by cgroup_mutex.
->>>> +	 * Therefore, we can skip the global lock.
->>>> +	 */
->>>> +	lockdep_assert_held(&cgroup_mutex);
->>>> +	*threadgroup_locked = pid || threadgroup;
->>>> +
->>>> +	cgroup_attach_lock(tsk, *threadgroup_locked);
->>> I'm not sure this relocation is safe. What prevents e.g. @tsk changing its
->>> group leader or signal struct before lock is grabbed?
->> When a non-leader thread in a thread group executes the exec system call,
->> the thread group leader is updated, but the signal_struct remains unchanged,
->> so this part is safe.
-> But the leader can change, right? So, we can end up in a situation where
-> threadgroup is set but the task is not the leader which I think can lead to
-> really subtle incorrect behaviors like write succeeding but nothing
-> happening when racing against exec.
+>While at it let us also remove a confusing comment that is either not
+>about the context in which it resides (describing
+>qp_attr.cap.max_send_wr and qp_attr.cap.max_recv_wr) or not applicable
+>any more when these values become configurable .
 >
-> Thanks.
+>Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+>Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+>---
+> Documentation/networking/smc-sysctl.rst | 37 +++++++++++++++++++++++++
+> net/smc/smc.h                           |  2 ++
+> net/smc/smc_core.h                      |  4 +++
+> net/smc/smc_ib.c                        |  7 ++---
+> net/smc/smc_llc.c                       |  2 ++
+> net/smc/smc_sysctl.c                    | 22 +++++++++++++++
+> net/smc/smc_wr.c                        | 32 +++++++++++----------
+> net/smc/smc_wr.h                        |  2 --
+> 8 files changed, 86 insertions(+), 22 deletions(-)
 >
-You are right. If the thread group leader changes, the task passed to
-cgroup_attach_task may not be the leader, which could lead to errors when
-iterating through all threads in while_each_thread.
+>diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
+>index a874d007f2db..c687092329e3 100644
+>--- a/Documentation/networking/smc-sysctl.rst
+>+++ b/Documentation/networking/smc-sysctl.rst
+>@@ -71,3 +71,40 @@ smcr_max_conns_per_lgr - INTEGER
+> 	acceptable value ranges from 16 to 255. Only for SMC-R v2.1 and later.
+> 
+> 	Default: 255
+>+
+>+smcr_max_send_wr - INTEGER
 
+Why call it max ? But not something like smcr_send_wr_cnt ?
 
-Similar to commit b78949ebfb56 ("cgroup: simplify double-check locking in
-cgroup_attach_proc"), it should check whether the leader has changed after
-acquiring the lock, to determine if a retry is needed. I will fix this in
-the next version patch.
+>+	So called work request buffers are SMCR link (and RDMA queue pair) level
+>+	resources necessary for performing RDMA operations. Since up to 255
+>+	connections can share a link group and thus also a link and the number
+>+	of the work request buffers is decided when the link is allocated,
+>+	depending on the workload it can a bottleneck in a sense that threads
+>+	have to wait for work request buffers to become available. Before the
+>+	introduction of this control the maximal number of work request buffers
+>+	available on the send path used to be hard coded to 16. With this control
+>+	it becomes configurable. The acceptable range is between 2 and 2048.
+>+
+>+	Please be aware that all the buffers need to be allocated as a physically
+>+	continuous array in which each element is a single buffer and has the size
+>+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
+>+	like before having this control.
+>+	this control.
+>+
+>+	Default: 16
+>+
+>+smcr_max_recv_wr - INTEGER
+>+	So called work request buffers are SMCR link (and RDMA queue pair) level
+>+	resources necessary for performing RDMA operations. Since up to 255
+>+	connections can share a link group and thus also a link and the number
+>+	of the work request buffers is decided when the link is allocated,
+>+	depending on the workload it can a bottleneck in a sense that threads
+>+	have to wait for work request buffers to become available. Before the
+>+	introduction of this control the maximal number of work request buffers
+>+	available on the receive path used to be hard coded to 16. With this control
+>+	it becomes configurable. The acceptable range is between 2 and 2048.
+>+
+>+	Please be aware that all the buffers need to be allocated as a physically
+>+	continuous array in which each element is a single buffer and has the size
+>+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
+>+	like before having this control.
+>+
+>+	Default: 48
+>diff --git a/net/smc/smc.h b/net/smc/smc.h
+>index 2c9084963739..ffe48253fa1f 100644
+>--- a/net/smc/smc.h
+>+++ b/net/smc/smc.h
+>@@ -33,6 +33,8 @@
+> 
+> extern struct proto smc_proto;
+> extern struct proto smc_proto6;
+>+extern unsigned int smc_ib_sysctl_max_send_wr;
+>+extern unsigned int smc_ib_sysctl_max_recv_wr;
+> 
+> extern struct smc_hashinfo smc_v4_hashinfo;
+> extern struct smc_hashinfo smc_v6_hashinfo;
+>diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
+>index 48a1b1dcb576..b883f43fc206 100644
+>--- a/net/smc/smc_core.h
+>+++ b/net/smc/smc_core.h
+>@@ -361,6 +361,10 @@ struct smc_link_group {
+> 						/* max conn can be assigned to lgr */
+> 			u8			max_links;
+> 						/* max links can be added in lgr */
+>+			u16			max_send_wr;
+>+						/* number of WR buffers on send */
+>+			u16			max_recv_wr;
+>+						/* number of WR buffers on recv */
+> 		};
+> 		struct { /* SMC-D */
+> 			struct smcd_gid		peer_gid;
+>diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
+>index 0052f02756eb..e8d35c22c525 100644
+>--- a/net/smc/smc_ib.c
+>+++ b/net/smc/smc_ib.c
+>@@ -669,11 +669,6 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
+> 		.recv_cq = lnk->smcibdev->roce_cq_recv,
+> 		.srq = NULL,
+> 		.cap = {
+>-				/* include unsolicited rdma_writes as well,
+>-				 * there are max. 2 RDMA_WRITE per 1 WR_SEND
+>-				 */
+>-			.max_send_wr = SMC_WR_BUF_CNT * 3,
+>-			.max_recv_wr = SMC_WR_BUF_CNT * 3,
+> 			.max_send_sge = SMC_IB_MAX_SEND_SGE,
+> 			.max_recv_sge = lnk->wr_rx_sge_cnt,
+> 			.max_inline_data = 0,
+>@@ -683,6 +678,8 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
+> 	};
+> 	int rc;
+> 
+>+	qp_attr.cap.max_send_wr = 3 * lnk->lgr->max_send_wr;
+>+	qp_attr.cap.max_recv_wr = lnk->lgr->max_recv_wr;
+> 	lnk->roce_qp = ib_create_qp(lnk->roce_pd, &qp_attr);
+> 	rc = PTR_ERR_OR_ZERO(lnk->roce_qp);
+> 	if (IS_ERR(lnk->roce_qp))
+>diff --git a/net/smc/smc_llc.c b/net/smc/smc_llc.c
+>index f865c58c3aa7..91c936bf7336 100644
+>--- a/net/smc/smc_llc.c
+>+++ b/net/smc/smc_llc.c
+>@@ -2157,6 +2157,8 @@ void smc_llc_lgr_init(struct smc_link_group *lgr, struct smc_sock *smc)
+> 	init_waitqueue_head(&lgr->llc_msg_waiter);
+> 	init_rwsem(&lgr->llc_conf_mutex);
+> 	lgr->llc_testlink_time = READ_ONCE(net->smc.sysctl_smcr_testlink_time);
+>+	lgr->max_send_wr = (u16)(READ_ONCE(smc_ib_sysctl_max_send_wr));
+>+	lgr->max_recv_wr = (u16)(READ_ONCE(smc_ib_sysctl_max_recv_wr));
+> }
+> 
+> /* called after lgr was removed from lgr_list */
+>diff --git a/net/smc/smc_sysctl.c b/net/smc/smc_sysctl.c
+>index 2fab6456f765..01da1297e150 100644
+>--- a/net/smc/smc_sysctl.c
+>+++ b/net/smc/smc_sysctl.c
+>@@ -29,6 +29,10 @@ static int links_per_lgr_min = SMC_LINKS_ADD_LNK_MIN;
+> static int links_per_lgr_max = SMC_LINKS_ADD_LNK_MAX;
+> static int conns_per_lgr_min = SMC_CONN_PER_LGR_MIN;
+> static int conns_per_lgr_max = SMC_CONN_PER_LGR_MAX;
+>+unsigned int smc_ib_sysctl_max_send_wr = 16;
+>+unsigned int smc_ib_sysctl_max_recv_wr = 48;
+>+static unsigned int smc_ib_sysctl_max_wr_min = 2;
+>+static unsigned int smc_ib_sysctl_max_wr_max = 2048;
+> 
+> static struct ctl_table smc_table[] = {
+> 	{
+>@@ -99,6 +103,24 @@ static struct ctl_table smc_table[] = {
+> 		.extra1		= SYSCTL_ZERO,
+> 		.extra2		= SYSCTL_ONE,
+> 	},
+>+	{
+>+		.procname       = "smcr_max_send_wr",
+>+		.data		= &smc_ib_sysctl_max_send_wr,
+>+		.maxlen         = sizeof(int),
+>+		.mode           = 0644,
+>+		.proc_handler   = proc_dointvec_minmax,
+>+		.extra1		= &smc_ib_sysctl_max_wr_min,
+>+		.extra2		= &smc_ib_sysctl_max_wr_max,
+>+	},
+>+	{
+>+		.procname       = "smcr_max_recv_wr",
+>+		.data		= &smc_ib_sysctl_max_recv_wr,
+>+		.maxlen         = sizeof(int),
+>+		.mode           = 0644,
+>+		.proc_handler   = proc_dointvec_minmax,
 
-Thanks.
+It's better to use tab instead of space before those '=' here.
+
+Best regards,
+Dust
 
 
