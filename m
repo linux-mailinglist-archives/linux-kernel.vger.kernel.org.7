@@ -1,286 +1,192 @@
-Return-Path: <linux-kernel+bounces-803200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EFCB45C05
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD34B45C0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF01A4593E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB2F3BE247
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3058831B815;
-	Fri,  5 Sep 2025 15:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3CF31B817;
+	Fri,  5 Sep 2025 15:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Hs1PFDyL"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XEpTXwnz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C831B803;
-	Fri,  5 Sep 2025 15:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085047; cv=pass; b=QHy9RSICMU+ctn1SkMXPcdxMvAFtNYYop51bPA9yD2tOMJyagIFWAQPc5DiYdgyv9p1PcVtuXJkNmxub9iAUva5/1U9rp077QtIbCQo6ArgwJzvBAT2CgnP5W1+RJAi0W18fWzAvQdyTEjS09ETBeANvJHHZMUGpYN8KmUOrR4M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085047; c=relaxed/simple;
-	bh=Sg5QloBmNBhbgnhTi7CRgmMaIQs8iusLYYFnEzlWotU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=c43Sg0fojYqDYp9yHkYYgUImFkD4rk4d/OZ/dYpSih8ekpbB5rbNvXT5Ss35oOc5u9UKZU77BVfuwwy22sEE2w/TfQtwM50sBSce1rN3fcwRJihk93ezHhj4UjavebnzQ09N+ePi1VaWbZDS7CTIfvpmY3dNleV3+XTj6kHs3BY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Hs1PFDyL; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757085004; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=muzTrFE0xFpqDKLtdyyFMZmWlc9glOkQ15V+K9e9MAr9MDD/IZ/cD1eFfq4EG5QzJ2EcvysfV2xSGw9d5zg6RLEW+XKtBbOkC8vntTFiyY8aWE+63zyHNpWR1mIHu6AQ5HXQzMnLiHvx4eO9ZB+3Zv9X29byEFCreyixzKUmHpo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757085004; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jbiMsBZ0PMAYhHiet9jWLejQpnmLCaVZIWGnKUvfBgw=; 
-	b=eKv1Mk+Pe/+yy+1iIYkaTCvIqzp6kY/+nC5+3a5THVb6BDEzW6fEzaUvvR/p5xmGPTucKgiqmLCD0vrBP2j6aQNhy6y0TA7nE5wLNSbA65ALGdewkOS5Xf4o49kqKQ78sEVrn07GHHLixs7JnPBgh6Nz1/arU0OWMnEVGmwTO4k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757085004;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=jbiMsBZ0PMAYhHiet9jWLejQpnmLCaVZIWGnKUvfBgw=;
-	b=Hs1PFDyLOgH2WIDI9i7X2cgb2TEegjw9O9CRWH22coFBO/5pul6A/xJY9DrTNJMx
-	UjiM3vZY9oGGpdf8CdH1vFvmYYSW8ez7gjJCGdCd0vrEeZXLd5TrSATwNIIQTppOHhN
-	TdapNNWVa08RV4mUmLaVYGsAZ+qLWy9UI3a9fUmI=
-Received: by mx.zohomail.com with SMTPS id 1757085001454158.55519036584815;
-	Fri, 5 Sep 2025 08:10:01 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F9231B809
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757085062; cv=none; b=QUy6SP0+ZIQhbtJ9d1EvhBgKYVPyAtxqIfH2qHLk9f67Msmg1hQ7zbRE3NZRwrmHkeJXLm0bvAgwnUSvojKdYfqDGzRybCqoeBGl4XJV1NsLGuAacZwZfAEymmscYwk8msr/g/nB9r5ULhzNL3Yrx+D3SKMwJC7kJc7lgGr5hcE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757085062; c=relaxed/simple;
+	bh=BqHA2KI7+E2wg1IN5Us0LjPUXVJRXh89VEgZqldP01g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZrdAEfBkhZklv3molS55Eo+mc4Y1dVoNhvH6J9+iIGe8QSWa1HItgO6n/JjAOnpqUoBZ5ciYsHbLyGjhCQx2GNLUcqPYDOu5VPOL+pnPkY8upuNqxAMoes26V2qEFpsfpqqM/gAGKvyeQPBW5buglBLttYYVp4PgfP0j1OeBI+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XEpTXwnz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857fxeT012208
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 15:11:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zCUHK4JFj9/T7BE19qN/qk
+	2a+SV8gFmOlRACJ/Kqf8I=; b=XEpTXwnz5PB6w5E3IGR7bKCDisTzDrgig6yQuA
+	ON6AdQ65OQQm0RQmsgMuwezC7utsjqe5XUWsMtXOtqjmF5dRLJ7iN5x69tYVawmQ
+	bPEKDOxXw40fN2LwchmwpUwRoKJHUADYt4le7jXlZiBMNjQye8OI3eVhkE+V1iWU
+	4gH+a1KuzV+6cIGFlC/yJaQpxekusFaSrWsOZrzrHIbE+rZ/WoheZ/tqexuARcDQ
+	vdvEnWAgPeOVsgPqaz0hC3+feaj4vj0d3h0Jnr4W5YzOkbdiIA4rCtueREOLiam3
+	MJ9yET6jcFJ+Khw/vkKqwVhrf+GhNpWYlwqWub/shxxi9z9Q==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48xmxj7u15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:11:00 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-244581953b8so26232685ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:10:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757085059; x=1757689859;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zCUHK4JFj9/T7BE19qN/qk2a+SV8gFmOlRACJ/Kqf8I=;
+        b=qpXfqNj7UdZvcWvQPzE9kzAg/vIwtxOsteq6OGJ9L4hKJdMyebCun4dkL16T+M49pl
+         MYUaHvfrdrEvwMnVbVz1f5gddP3PIpFse/DgjI3lExiGT8K2B+5rK79Zmkqvi2VIBT94
+         xGGwh8gcvFneWT/j69Hh+JoIDIHW93yxjlk+J38VIWfox8mD4s3XN7TfaJ3SNCgqlybY
+         SLQZ+BbBmx4jNAztMr0IVKfQ4Ve1toOLNf25CqCEGgDrs+e5mu6butyZeyhW5gZMJRWC
+         FhL4J1LwlHJ4O47skB0oUUZADcQUy6mG4GIXbdjw4IA2RYCoZtVCX7F/S8UytWV9nbgU
+         YNCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxwE4Qm9zX76hBNdCSBSGltCg50U/yT0ASDpzcrywEPS+96xni3/J/BJiwzlt3GdUQdAmKYeNnwcp8ksA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxyVsAgyAu3G+GI/Ki8XpiGLmj0NlwzevkIMMaj/irouj8C065
+	IQ5vM+ywlCBf3nyzHEqNcV18Z176/9DT3SdSRt6KDCn/2/1EtU3awFzdKMh/JRm8iFXSxk+PMgg
+	1VfCq06+D/2MUHb3OJut3KY/5ZIcYdU7fHXZGi59sRDxsBI7VVD5GlA6RmaqydBw4b+g=
+X-Gm-Gg: ASbGncsXBTPx+A7sQHv+y5FPhW79NOceiK+oENi+T3zsA+QNQRdVkb7G12cRf688mOo
+	g0KTtu7Y2gtetTxt47gm5Q4VR7p5a32p/llJgz2JAnnA+6OSNedDxwevON3pN7MfKH5VBYjJmZh
+	qv/lG0bGodVghShP3RLqLGy6QyQmX7ZU0k61idi7Ym/PqerX6rxBTfYXpiWbzPvb54IGg2QgerV
+	6WluMZmiphfsU38keki6CsoAurrBd7TDVutaVok+pfC7ANAF7jfsvvTc2xZO67otT+OXRD5rTAo
+	CAROwUsjWKI/iJ8Q8hbrnLr1JYtW3aGFMQqgxmO3WSwXJx2SG1C+LSbXpmHQgmzQdfADz01o5xj
+	cf4XFJicGf4AUzPeiW0yhbJRRF6+U45OcIKD40KjGI5iAbVzHQl4FwxzZNCzM
+X-Received: by 2002:a17:902:d552:b0:248:ff5a:b768 with SMTP id d9443c01a7336-249448dfcd7mr276291165ad.10.1757085058997;
+        Fri, 05 Sep 2025 08:10:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg4+nMFAS/BPgW9bPSO2Z4RPxKHv0LPQfTZ6rcqDIJDLKIhTOAJ1a06wN5qeR/MIqSzQ9cVg==
+X-Received: by 2002:a17:902:d552:b0:248:ff5a:b768 with SMTP id d9443c01a7336-249448dfcd7mr276290355ad.10.1757085057885;
+        Fri, 05 Sep 2025 08:10:57 -0700 (PDT)
+Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f5a0bf9sm29279908a91.13.2025.09.05.08.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 08:10:57 -0700 (PDT)
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Subject: [PATCH v6 0/2] pinctrl: qcom: Introduce Pinctrl for Glymur
+Date: Fri, 05 Sep 2025 20:40:18 +0530
+Message-Id: <20250905-v6_tlmm-v6-0-1720e5080415@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 13/14] rust: drm: gem: Add export() callback
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-14-lyude@redhat.com>
-Date: Fri, 5 Sep 2025 12:09:42 -0300
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	"open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linux-media"@vger.kernel.org (ope>),
-	"moderated list:DMA BUFFER SHARING  FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linaro-mm-sig"@lists.linaro.org (mod>)
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D47EACDC-76CE-4D36-9564-210B390C9A82@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-14-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFr9umgC/2WMQQrCMBBFr1JmbUpMmrG68h5SJNSMDTSNZmpQS
+ u9u7NbNh/d5vAXYJe8YTtUCyWXPPk4FcFdBP9jp7oS/FQYllZFHaUTG6zyGILTSZFE3FvcExX4
+ kR/69lS5d4cHzHNNnC2f8vf+NjEKKAxEZao1pWnWOzPXzZcc+hlCXgW5d1y/+AXS1pQAAAA==
+X-Change-ID: 20250905-v6_tlmm-323fa634a61f
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, rajendra.nayak@oss.qualcomm.com
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDExNyBTYWx0ZWRfX8M+0eU9fnz9+
+ kN4mD6NVoKb4rhnuazZLOd/MrpAxivk/Foc8h/Oio2ZaT2/5TePZQ2A2B4KSraXDOS7uCO0fMNk
+ fuBg8Cq7bkNHHPLWy1BTBSSXC02vbUKyPtg5vFQcBDYbADO7eGVY1WyOFrI83A3e/ktqRa25jzG
+ XhGcMyqPaP7IhFmCbp8QjrOPGPJMuFcvwiRfV66WMUwk3bZTIrQ5tvFHH+5R6yV1PeDXneD6z2L
+ Kj5XUKfMzSRGYs10hR3o6MugMmpFLwmyOFRHEi+S0WN1AM/Y/bqszdjy8GPIdNMsuGvFYsVYF9p
+ dcT4YsZZcOgxQ+9D3+E23FRx7JzWWD/s4qKw9KvbO7EiSczDdcRpIS/T6F73UDrT3naUvVffn2X
+ AkBLSbIS
+X-Authority-Analysis: v=2.4 cv=a5cw9VSF c=1 sm=1 tr=0 ts=68bafd84 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=XKE42yAn20ll-QmRT3oA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: yU-PadjZ3jSBSFIIX8WMAM8igGhe49mq
+X-Proofpoint-ORIG-GUID: yU-PadjZ3jSBSFIIX8WMAM8igGhe49mq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509030117
 
+Introduce Top Level Mode Multiplexer dt-binding and driver for
+Qualcomm's next gen compute SoC - Glymur.
+Device tree changes aren't part of this series and will be posted
+separately after the official announcement of the Glymur SoC
 
+Changes in v6:
+Fixed maxItems for gpio-reserved-ranges in bindings
+Rebased on top of devel branch
+Link to v5 -
+https://lore.kernel.org/linux-arm-msm/20250813065533.3959018-1
+-pankaj.patil@oss.qualcomm.com/
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> This introduces an optional export() callback for GEM objects, which =
-is
-> used to implement the drm_gem_object_funcs->export function.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> drivers/gpu/drm/nova/gem.rs  |  1 +
-> rust/kernel/drm/gem/mod.rs   | 72 +++++++++++++++++++++++++++++++++++-
-> rust/kernel/drm/gem/shmem.rs |  6 ++-
-> 3 files changed, 76 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-> index 015cb56061a56..bbce6b0f4e6a4 100644
-> --- a/drivers/gpu/drm/nova/gem.rs
-> +++ b/drivers/gpu/drm/nova/gem.rs
-> @@ -16,6 +16,7 @@
-> #[pin_data]
-> pub(crate) struct NovaObject {}
->=20
-> +#[vtable]
-> impl gem::DriverObject for NovaObject {
->     type Driver =3D NovaDriver;
->     type Object =3D gem::Object<Self>;
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index f9f9727f14e4a..1ac25fc6d527b 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -8,7 +8,7 @@
->=20
-> use crate::{
->     alloc::flags::*,
-> -    bindings,
-> +    bindings, dma_buf,
->     drm::driver::{AllocImpl, AllocOps},
->     drm::{self, private::Sealed},
->     error::{to_result, Result},
-> @@ -45,6 +45,7 @@ fn as_ref(&self) -> =
-&kernel::drm::gem::OpaqueObject<D> {
-> pub(crate) use impl_as_opaque;
->=20
-> /// GEM object functions, which must be implemented by drivers.
-> +#[vtable]
-> pub trait DriverObject: Sync + Send + Sized {
->     /// Parent `Driver` for this object.
->     type Driver: drm::Driver;
-> @@ -69,6 +70,11 @@ fn open(_obj: &Self::Object, _file: =
-&DriverFile<Self>) -> Result {
->=20
->     /// Close a handle to an existing object, associated with a File.
->     fn close(_obj: &Self::Object, _file: &DriverFile<Self>) {}
-> +
-> +    /// Optional handle for exporting a gem object.
-> +    fn export(_obj: &Self::Object, _flags: u32) -> =
-Result<DmaBuf<Self::Object>> {
-> +        unimplemented!()
+Changes in v5:
+Rebased on top of v6.17-rc1
+RESOUT_GPIO_N changed to lowercase in bindings and driver
+Link to v4 -
+https://lore.kernel.org/all/20250723103644.4058213-1
+-pankaj.patil@oss.qualcomm.com/
 
-Shouldn=E2=80=99t this be the vtable-specific build error?
+Changes in v4:
+Updated bindings to column length of 80 char
+Link to v3 -
+https://lore.kernel.org/all/20250721163221.310746-1
+-pankaj.patil@oss.qualcomm.com/
 
-> +    }
-> }
->=20
-> /// Trait that represents a GEM object subtype
-> @@ -138,6 +144,21 @@ extern "C" fn close_callback<T: DriverObject>(
->     T::close(obj, file);
-> }
->=20
-> +extern "C" fn export_callback<T: DriverObject>(
-> +    raw_obj: *mut bindings::drm_gem_object,
-> +    flags: i32,
-> +) -> *mut bindings::dma_buf {
-> +    // SAFETY: `export_callback` is specified in the AllocOps =
-structure for `Object<T>`, ensuring
-> +    // that `raw_obj` is contained within a `Object<T>`.
-> +    let obj =3D unsafe { T::Object::from_raw(raw_obj) };
-> +
-> +    match T::export(obj, flags as u32) {
-> +        // DRM takes a hold of the reference
-> +        Ok(buf) =3D> buf.into_raw(),
-> +        Err(e) =3D> e.to_ptr(),
-> +    }
-> +}
-> +
-> impl<T: DriverObject> IntoGEMObject for Object<T> {
->     fn as_raw(&self) -> *mut bindings::drm_gem_object {
->         self.obj.get()
-> @@ -248,7 +269,11 @@ impl<T: DriverObject> Object<T> {
->         open: Some(open_callback::<T>),
->         close: Some(close_callback::<T>),
->         print_info: None,
-> -        export: None,
-> +        export: if T::HAS_EXPORT {
-> +            Some(export_callback::<T>)
-> +        } else {
-> +            None
-> +        },
->         pin: None,
->         unpin: None,
->         get_sg_table: None,
-> @@ -375,6 +400,49 @@ fn as_raw(&self) -> *mut bindings::drm_gem_object =
-{
->=20
-> impl<D: drm::Driver> Sealed for OpaqueObject<D> {}
->=20
-> +/// A [`dma_buf::DmaBuf`] which has been exported from a GEM object.
-> +///
-> +/// The [`dma_buf::DmaBuf`] will be released when this type is =
-dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `self.0` points to a valid initialized [`dma_buf::DmaBuf`] for =
-the lifetime of this object.
-> +/// - The GEM object from which this [`dma_buf::DmaBuf`] was exported =
-from is guaranteed to be of
-> +///   type `T`.
-> +pub struct DmaBuf<T: IntoGEMObject>(NonNull<dma_buf::DmaBuf>, =
-PhantomData<T>);
-> +
-> +impl<T: IntoGEMObject> Deref for DmaBuf<T> {
-> +    type Target =3D dma_buf::DmaBuf;
-> +
-> +    #[inline]
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: This pointer is guaranteed to be valid by our type =
-invariants.
-> +        unsafe { self.0.as_ref() }
+Changes in v3:
+Fixed indentation for example tlmm node in bindings file
+Fixed s-o-b and review comments in the driver
+Link to v2 -
+https://lore.kernel.org/all/20250721143037.20983-1
+-pankaj.patil@oss.qualcomm.com/
 
-> +    }
-> +}
-> +
-> +impl<T: IntoGEMObject> Drop for DmaBuf<T> {
-> +    #[inline]
-> +    fn drop(&mut self) {
-> +        // SAFETY:
-> +        // - `dma_buf::DmaBuf` is guaranteed to have an identical =
-layout to `struct dma_buf`
-> +        //   by its type invariants.
-> +        // - We hold the last reference to this `DmaBuf`, making it =
-safe to destroy.
+Changes in v2:
+Fixed dt-bindings error from example node's reg propery
+Fixed gpio-line-name maxItems
+Driver UFS_RESET macro updated
+Removed obsolete comment for pingroups
+Updated ngpio to include ufs_reset pin
+Link to v1 -
+https://lore.kernel.org/all/20250716150822.4039250-1
+-pankaj.patil@oss.qualcomm.com/
 
-How can we be sure of this?
+Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+---
+Pankaj Patil (2):
+      dt-bindings: pinctrl: qcom: Add Glymur pinctrl
+      pinctrl: qcom: Add glymur pinctrl driver
 
-> +        unsafe { =
-bindings::drm_gem_dmabuf_release(self.0.cast().as_ptr()) }
-> +    }
-> +}
-> +
-> +impl<T: IntoGEMObject> DmaBuf<T> {
-> +    /// Leak the reference for this [`DmaBuf`] and return a raw =
-pointer to it.
-> +    #[inline]
-> +    pub(crate) fn into_raw(self) -> *mut bindings::dma_buf {
+ .../bindings/pinctrl/qcom,glymur-tlmm.yaml         |  133 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-glymur.c              | 1777 ++++++++++++++++++++
+ 4 files changed, 1921 insertions(+)
+---
+base-commit: 578c9ce6071995e1c2e7ec3ecd2fd2f5498a1dbc
+change-id: 20250905-v6_tlmm-323fa634a61f
 
-Then this should perhaps be called leak()? At least if we=E2=80=99re =
-following the std nomenclature.
-
-> +        let dma_ptr =3D self.as_raw();
-> +
-> +        core::mem::forget(self);
-> +        dma_ptr
-> +    }
-> +}
-> +
-> pub(super) const fn create_fops() -> bindings::file_operations {
->     // SAFETY: As by the type invariant, it is safe to initialize =
-`bindings::file_operations`
->     // zeroed.
-> diff --git a/rust/kernel/drm/gem/shmem.rs =
-b/rust/kernel/drm/gem/shmem.rs
-> index 1437cda27a22c..b3a70e6001842 100644
-> --- a/rust/kernel/drm/gem/shmem.rs
-> +++ b/rust/kernel/drm/gem/shmem.rs
-> @@ -66,7 +66,11 @@ impl<T: DriverObject> Object<T> {
->         open: Some(super::open_callback::<T>),
->         close: Some(super::close_callback::<T>),
->         print_info: Some(bindings::drm_gem_shmem_object_print_info),
-> -        export: None,
-> +        export: if T::HAS_EXPORT {
-> +            Some(super::export_callback::<T>)
-> +        } else {
-> +            None
-> +        },
->         pin: Some(bindings::drm_gem_shmem_object_pin),
->         unpin: Some(bindings::drm_gem_shmem_object_unpin),
->         get_sg_table: =
-Some(bindings::drm_gem_shmem_object_get_sg_table),
-> --=20
-> 2.50.0
->=20
+Best regards,
+-- 
+Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 
 
