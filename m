@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-803346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C245B45DE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:22:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7018B45DD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321CFA61093
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45475C619F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA9631328E;
-	Fri,  5 Sep 2025 16:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="e/lpQsFX"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E54E313269
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848DC306B1F;
+	Fri,  5 Sep 2025 16:19:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558272F7ABF;
+	Fri,  5 Sep 2025 16:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089230; cv=none; b=nsupmV90j77SsxFwUY806Ri096O805zRH1UX1doUsuj0qlFLuAfR+tyG9e5cAPYNW0FLBSj87ADyXNXNS2f5ImPq9Ek/gL9d1gQrs50s3yg1jUIrJKkAYvoKNRoP5Jg6f6jIKfG6eEI2pAWNHMne/FIGVAr2oUjjuBWhHlkJiVQ=
+	t=1757089190; cv=none; b=pCQjDyGxJj6KMPsER8rtC6w77vtNbqdCsYcjFzbTCe7Y2v9FQYKVNga2mg2I+HDwI3h06lMWj1V4XQwXruOTfilxkBr0kmY+Hxkph+8G2E+F01+JJmZNmOD3wjasu+uMGxInhpMklS382LvT1qLQvLxniGV/Uw6wV27WrV90wK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089230; c=relaxed/simple;
-	bh=1Ma0P84kMdX0KtHlfXVIGg61VZSElqS2BKBMDWGbg0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Axu8O0AwkJfuDhZszo4nqOOMbtYzPgKLR0OELuSR7dHcmMMi+0EHCocf8W1pIqI62rFhz8tw5I5hjh83AartgtCo2HO8OaOQs//4n+Zxo/rim8SoX00JkDZubSOD1WcY+7NGK9h7ATJ1FZC0oQWmUh5MP0zxvXwqZA18WeghDBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=e/lpQsFX; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1757089228; bh=heghjJ1ZyKj3HH53+DkN1wBdADEuuQYiJXxp+teA+vw=;
- b=e/lpQsFXZlNqbGDVDDxZcF1Rk3C3umT1w581sG5gDZ+b7rTxGVe+BVAtgD/oXzsBf9szQd4ut
- FUOjX0o4oGfLiJRzm9aNcSDGwt71Hj+ZDLZWfBP0hAx+LKkKVp69QSEnIrSI1oKbrEw+/4sTGL2
- a9EMnOIkgab0CKkSIYBuA9ylbvix+kqDoWDdKABRiO0beM1/P3QeRkPQPzPaNOP7dfJmQOzJpWj
- +vDZ5C5/rWecpikHVUpmvA6csAAjlE+bAlz8WtLsnY0qTjhA/S+MsQqob4V3ek92wMqlDsKc2Eu
- f8TbgM4ToZj0Z5kLXuOfxZdiPN0heo1fjF4r60swCj6w==
-X-Forward-Email-ID: 68bb0dcb90d039a4fd84d728
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.13
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1757089190; c=relaxed/simple;
+	bh=4hbd2XwoLVVA/f+86Q5KT4OHBRHzD7m8e0OymCmsTgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqKrTp5Q8QIhPMIYGXRnhqoVJgoMgW1YH9Jt/SZGWHfMAiwRH8jMMQE+t15d5e6ptCtJmKXhTLoBYr1wvR8p3xQaTDy67mWLFvj4Ajk1JMdV0VfO7rs3Ilxd9gRNVjFGaw7114e7JEbqkPDqgE+XdbeCNBjRjDPydggA+RutSgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA7DF152B;
+	Fri,  5 Sep 2025 09:19:38 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 654D73F63F;
+	Fri,  5 Sep 2025 09:19:41 -0700 (PDT)
+Date: Fri, 5 Sep 2025 17:19:34 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Alex Bee <knaerzche@gmail.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v3 7/7] ARM: dts: rockchip: Add vdec node for RK3288
-Date: Fri,  5 Sep 2025 16:19:25 +0000
-Message-ID: <20250905161942.3759717-8-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905161942.3759717-1-jonas@kwiboo.se>
-References: <20250905161942.3759717-1-jonas@kwiboo.se>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 02/33] drivers: base: cacheinfo: Add helper to find the
+ cache size from cpu+level
+Message-ID: <aLsNljxM+DN7kmC7@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-3-james.morse@arm.com>
+ <aK7iDey7LATOXIUb@e133380.arm.com>
+ <2ac66605-ee6a-495b-a0fb-910926abd8b0@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ac66605-ee6a-495b-a0fb-910926abd8b0@arm.com>
 
-From: Alex Bee <knaerzche@gmail.com>
+Hi,
 
-RK3288 contains a Rockchip VDEC block that only support HEVC
-decoding. Add a vdec node for this.
+On Wed, Aug 27, 2025 at 06:11:43PM +0100, James Morse wrote:
+> Hi Dave,
+> 
+> On 27/08/2025 11:46, Dave Martin wrote:
+> > Hi,
+> > 
+> > On Fri, Aug 22, 2025 at 03:29:43PM +0000, James Morse wrote:
+> >> MPAM needs to know the size of a cache associated with a particular CPU.
+> >> The DT/ACPI agnostic way of doing this is to ask cacheinfo.
+> >>
+> >> Add a helper to do this.
+> 
+> >> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
-Changes in v3:
-- No change
+[...]
 
-Changes in v2:
-- No change
----
- arch/arm/boot/dts/rockchip/rk3288.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+> >> +static inline unsigned int get_cpu_cacheinfo_size(int cpu, int level)
+> >> +{
+> >> +	struct cacheinfo *ci = get_cpu_cacheinfo_level(cpu, level);
+> >> +
+> >> +	return ci ? ci->size : 0;
+> >> +}
+> >> +
+> > 
+> > Orphaned function?
+> > 
+> > Can fs/resctrl/rdtgroup.c:rdtgroup_cbm_to_size() be ported to use this?
+> > If so, this wouldn't just be dead code in this series.
+> 
+> Ah - I thought the MPAM driver was pulling this value in, but its the resctrl glue code.
+> I was trying to reduce the number of trees this touches - its probably best to kick this
+> into the next series that adds the resctrl code as its pretty trivial.
+> 
+> 
+> Thanks,
+> 
+> James
+> 
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3288.dtsi b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-index 42d705b544ec..eab0c9a2d482 100644
---- a/arch/arm/boot/dts/rockchip/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-@@ -1293,6 +1293,21 @@ vpu_mmu: iommu@ff9a0800 {
- 		power-domains = <&power RK3288_PD_VIDEO>;
- 	};
- 
-+	hevc: video-codec@ff9c0000 {
-+		compatible = "rockchip,rk3288-vdec";
-+		reg = <0x0 0xff9c0000 0x0 0x440>;
-+		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>,
-+			 <&cru SCLK_HEVC_CABAC>, <&cru SCLK_HEVC_CORE>;
-+		clock-names = "axi", "ahb", "cabac", "core";
-+		assigned-clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>,
-+				  <&cru SCLK_HEVC_CABAC>, <&cru SCLK_HEVC_CORE>;
-+		assigned-clock-rates = <400000000>, <100000000>,
-+				       <300000000>, <300000000>;
-+		iommus = <&hevc_mmu>;
-+		power-domains = <&power RK3288_PD_HEVC>;
-+	};
-+
- 	hevc_mmu: iommu@ff9c0440 {
- 		compatible = "rockchip,iommu";
- 		reg = <0x0 0xff9c0440 0x0 0x40>, <0x0 0xff9c0480 0x0 0x40>;
-@@ -1300,7 +1315,7 @@ hevc_mmu: iommu@ff9c0440 {
- 		clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>;
- 		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
--		status = "disabled";
-+		power-domains = <&power RK3288_PD_HEVC>;
- 	};
- 
- 	gpu: gpu@ffa30000 {
--- 
-2.51.0
+Fair enough.
 
+Cheers
+---Dave
 
