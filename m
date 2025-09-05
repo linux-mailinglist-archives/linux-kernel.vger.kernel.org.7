@@ -1,154 +1,197 @@
-Return-Path: <linux-kernel+bounces-802580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1637AB45422
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B051B45427
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28B21BC6C72
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:11:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A215A2681
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFFA2C08A8;
-	Fri,  5 Sep 2025 10:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED722C1589;
+	Fri,  5 Sep 2025 10:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aisle.com header.i=@aisle.com header.b="ialhU408"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LSCJf015"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012001.outbound.protection.outlook.com [52.101.66.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEF229CB56
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067051; cv=none; b=HdVSf/7rQwMk4vKHVUTmEKWRgyLkSErQkgr9d2JLJZnqq9IcDV2+yYEqsT9m2VjxCicFG7epPV/trWWkx6MLZDHB7DgXzTIdG7WcyILJ3dr86bXu/LX2pR2juuUIV6QLjuQVNNwJjPubVB2T51aDZQjUcUYeG7Tz/VwWftfTNrA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067051; c=relaxed/simple;
-	bh=jkTCp3P+yr42VXTfabfgzJWvbpYCF5TmBIOuVAlfHhA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VAYV110eWHeOB6iLSbvxpzUWP1u+vH+pNoiXO+Ejq8/o8YQDzfuorW/9sy9dmNqYObMbmeKfua9wftb2Lx7nTSqEv7nB/rJwUJFUyuHBbaEWfF50hNoQRIIBmft93vc4Ps7pm5MN5drs+nD4MX5EjZWnGIOS8sIPa0N75R5UPuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisle.com; spf=pass smtp.mailfrom=aisle.com; dkim=pass (2048-bit key) header.d=aisle.com header.i=@aisle.com header.b=ialhU408; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aisle.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso4011619a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aisle.com; s=google; t=1757067048; x=1757671848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DAnIhBQbDm9gjZjqjenS6A8LuOGC08UU7yZ4phQFyfQ=;
-        b=ialhU408DIw5ysdBqvErPllGXmUWgKO4N0yr0ZJQ3z+x+aLM/XM6TUKJNjRFwU5QpN
-         HUIAzkBZZb8VR1zvSAIWElqEHNsAOgpB8AJ/52FcyC9Bgtv1QRMd4yTqXYUi+bJ60TlV
-         zldC02jrWSFqPGObqAx/Vwx3BZAHMqzi+qLVOTRJEVpuVifhWFWNYv85DdNZSRBvqyc2
-         rUrTWqZm9DkZVXtftmQB6NuziCArBVH+agbn36y8+ypvvykXiDqV69mgyJxSjnwAbGQF
-         GBA/mlV6ltJroVaZH+8dxZ2opQYZaZwFnAbf7laNzp3k5WNtz0Ive54pIGk5+CgE+8R0
-         ZcOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757067048; x=1757671848;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DAnIhBQbDm9gjZjqjenS6A8LuOGC08UU7yZ4phQFyfQ=;
-        b=RkeGqER5Bd5gMWqkK7+0pYKkhXCQLU1V7VbEnGQBgdhLvFaI0l3Ndk9JxKlR+ksCSi
-         wp1ZvN2NpTNL1Nd1T8CIsKsC1i80gQOD7cWBp8S//DS5Iag2zTOjBNhRvxWJM4IsKvQ0
-         6aQhuMEe19yhEVR5VXBr/4CVN1gKNipO3lLXlul6R1EKh2xoXN+IWO5P75Mv3jo/UkQO
-         2KhDWaub6gYle+T4XG2bBjlvZwpQJXYcIiZd9m3TxcrtZ8r/dmWN5xHUEUmQYRlTGu30
-         Xl7GX1GyEf8sdpJH9JSrwH3bfZr6bGDNmljd5b92+g0h5IBSA1mAb8TQbT+9LAwY9xF3
-         tiqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSrnTAepaPcvMZwZmLcOIIpz5/lQhV+SKCtRmuyz1/W+wu9o8ECWLa2SFoKMnGnl7KpMwo2TkNM68meWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznUtW1ivpwZaBqhxTI3JR+aCh9Y/ymvkZkN3SeKgez+WQOe9u3
-	kijKN9M8fjdu2h23qIiyKkiJZjwYtARYU3j6KIZKq3wopS3/K7i07To0cI8423yhLWagbTXcyzj
-	VLMkn0MlHN6D3
-X-Gm-Gg: ASbGncucpCxX9yEHghxZmDFL/C6hRa5aRaEY/mJrMPaPdpF+JMLSHJzzHUELvL+bglA
-	BDKTyngRDo9xp835KXvjUtXhL+bsQARa+N+kuHntbAtHwBprzwwnOgOlM4VfjQlBy3L2EMNU0wZ
-	IFHwwc8PlH8fyvOeJptDd/hf5jYxMYPamDYoEiEUIiDcm+Xax0rVfryan0wmAzy72d27TLilZxD
-	Yj84Mq5QJpZAeFdpUDCjdCeXdp02/oA23GVpkTnWdUh/1nPLTe3Z1WECfPoVdkOCgkuq4sIsIcl
-	Eoy5h3fpFz2sDqlbr1I4HHpqpwUay+2GCisajDhxVTI7moCSvYzDs5LaN/GE9/5NHTGmPaDFF/D
-	56lT8XVTGHyc/PZAh6Jz1ihNUaC0wnTtWl4vdWWGq2bq5jA4AJo9UF5nSWA==
-X-Google-Smtp-Source: AGHT+IGp1pr9JZHYShV64sfeXi9j9BsKxp4VYxKhIH6aW6aeCKq4sV+NmvY4luz6jw3F75rB7Ogdww==
-X-Received: by 2002:a17:906:e57:b0:aff:1586:14c2 with SMTP id a640c23a62f3a-b0493086abbmr283824166b.4.1757067048302;
-        Fri, 05 Sep 2025 03:10:48 -0700 (PDT)
-Received: from localhost ([149.102.246.23])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b02152cc1b8sm1530574566b.36.2025.09.05.03.10.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 03:10:48 -0700 (PDT)
-From: Stanislav Fort <stanislav.fort@aisle.com>
-X-Google-Original-From: Stanislav Fort <disclosure@aisle.com>
-To: sj@kernel.org,
-	damon@lists.linux.dev
-Cc: linux-mm@kvack.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D632C08C2;
+	Fri,  5 Sep 2025 10:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757067136; cv=fail; b=IEWRXbejPrT5KYS3DWqk8nALnXdeLVDCuejMGdIOmivNIUoLNyiiRLbTtjGoRiGyadTBU+8CWsisKePCBbDbKb3qFBq2GiTJNUqyycGm2pd6SlK67273u6nbUpPepnEh8J+5cYTAK9SAgUhv+8bV7GeNc4c1dBExD8L+zMVQkHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757067136; c=relaxed/simple;
+	bh=IKYT5mX8cIejcPrlDC6FFfWNDIg7iveK2UHK5nHIYAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=K+6tH1WUpvKxmSPLKRAB1KLG6fPDWDGL9vc11mcyusKtIlWczFZT/XWxcJtAIkvAf5zlSfeAn6NrdEGZPczElusAQSZJ77Y/T1/EusnEf9bvvGJ7b/M+26Rx7niPjgAWkGVuFY7khVCGfTAjW699CNJwfX9mAy7UUpfFYcMOj/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LSCJf015; arc=fail smtp.client-ip=52.101.66.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gEadx5Pu6J+WuQ5YdCXPU2ZBjF/L3WVpz1sKqqnql/ct+hMZgarExgSu8SBO/mWkbGFAp4MLZwQOovqd2tZF/vUdqhBmZ8hiBjFZBP9ZwUGMID4SlZc6NMyHD8T1GX8D61oz8YnQF/8EcbPjtPPbpL3E3GVB/8T+oXOP25h7+nxUvnwvDS3s83yJhhvkCD80WjL81jp1HZWTVvp4npgQKCtU4X+Q7IEsNUeiZYxfDQBiu0q3t28MSiLw6VqPr940Lo3kZnjgAR6FyA9ymnOx2EBbWO2Ynpnr5U6kzXdozU3xIPQPTGOifVO13jwB34gTooNwGgDxl2iAqDJQJDuR8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hbeed06TN+9ipmLaXBkrIev5q/1bvc215Ry8vERkvms=;
+ b=NIwuuAEhA4jVBzxmBcqPfYCCX1rQltHps1sFqsXQx9JSHweozfiXFKs2HoB7rVbbFNcx3/CgrGrbSri1Psf/pPdbQh5j0iLOg78t4H/lNdM/UhtgSWN9e/Tro+wBweWYKqDDHmfnEBPtp3SWaK3sTmu2RZ0MHVuRzhHSotnHLDRUYzz6hpbeNzdGZbWwLpJNcEJx1KjCgWau1sK3rjd36EWdyOqyYekH9bO9HK6Q1OtdASgBJFU6CG6oDbKGmqfKmrdLnrrpJqRSxxGNC4twOn3+/tww2LQF/V95eHHDNPa7pK8sQVMYR5piw4y26DCu6wH5CwjtLwNiAPIQvolEdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hbeed06TN+9ipmLaXBkrIev5q/1bvc215Ry8vERkvms=;
+ b=LSCJf015pKaltNKeiEQrjbr8aT6gb7zLQ3pGlAn3wG6+XwCQT/00RZe3sr6laqkqGGCXuh+J6TX0gKW4VEcDr3QNDfLxaA1izTuf81W4KnN0uaSDcMbqT6CowRGbSFitVuLYDBVmpRwsXVEuhhgBYGiuDer2qXna8ky8QYBORl21xquRdrqgT0+7FOiMJDe99OoCs9OhipVTCBq+Aq2KjVhxGIY5AOc13/My1iHZxa89Qg9w404t9QoKDKSgNTXf/+XUgXA3yq1riX45pxWSGWu299xERt6p12J5OtEPqZOlUsEVDxP8yamoIjxMSkL0TBrAzBh8uXe6jReHlAj++w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB8409.eurprd04.prod.outlook.com (2603:10a6:10:244::6)
+ by PR3PR04MB7338.eurprd04.prod.outlook.com (2603:10a6:102:80::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
+ 2025 10:12:11 +0000
+Received: from DB9PR04MB8409.eurprd04.prod.outlook.com
+ ([fe80::1436:d8ba:25b8:1637]) by DB9PR04MB8409.eurprd04.prod.outlook.com
+ ([fe80::1436:d8ba:25b8:1637%5]) with mapi id 15.20.9094.018; Fri, 5 Sep 2025
+ 10:12:11 +0000
+From: Gaurav Jain <gaurav.jain@nxp.com>
+To: Horia Geanta <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Varun Sethi <V.Sethi@nxp.com>,
+	Silvano Di Ninno <silvano.dininno@nxp.com>,
+	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>
+Cc: linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Stanislav Fort <disclosure@aisle.com>
-Subject: [PATCH v2] mm/damon/sysfs: fix use-after-free in state_show()
-Date: Fri,  5 Sep 2025 13:10:46 +0300
-Message-Id: <20250905101046.2288-1-disclosure@aisle.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	Gaurav Jain <gaurav.jain@nxp.com>
+Subject: [PATCH] crypto: caam - double the entropy delay interval for retry
+Date: Fri,  5 Sep 2025 15:41:48 +0530
+Message-Id: <20250905101148.212722-1-gaurav.jain@nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0050.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::12) To DB9PR04MB8409.eurprd04.prod.outlook.com
+ (2603:10a6:10:244::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8409:EE_|PR3PR04MB7338:EE_
+X-MS-Office365-Filtering-Correlation-Id: 989351b3-8e52-47ab-7a3d-08ddec64ad84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|19092799006|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bma7N3lNLaIRlnVp+NrN2KXFUN6Gs3eEGTr9dZn3IJNChAHac5yX8WMapc2M?=
+ =?us-ascii?Q?38OasX/68FoWd3t1/KR61ICmjPqbXWSrNwzFgjAlULEM3SnsMNBbva2+N8LW?=
+ =?us-ascii?Q?ChpfMQYgQMBNP01S08F+B9SgRl85cx+7Q33Lm/Gk3HRNm2skSOFt2NVgBUb5?=
+ =?us-ascii?Q?QWu3a3EmNeTpqNPJ1MoDN+XtJa1Q04/qMbOL1J+cewEu9nwRWd9yNjKODXyT?=
+ =?us-ascii?Q?QruYYihYvWK7pHDqZ0rh2+OkBmRmiHi4d3PVWCj+zTlOpDIh1N8H0ot3oL2r?=
+ =?us-ascii?Q?ACKdtCkmsWQPHT/EpzaJBvwlkKsWo3j2SHzg648fXbvExTnd0zMCOM7+nWnB?=
+ =?us-ascii?Q?RVyGm8slUQjDbASLvh1SXKD0ur7GztKlRbvr4suAqZy5sndD8ieWMf7QQ6RM?=
+ =?us-ascii?Q?T3/XKC8ge7Thl4Bd001/ZBfHa+iyarsG/XYcgZX929FoUQ6t1NVcohBnB0On?=
+ =?us-ascii?Q?MQ83j26QZaPvbZ6MF/K9JMcZ0O+YVfkeKc2yrZelctTgVcXnCWhmQKfsGWlD?=
+ =?us-ascii?Q?yITNirYrbCPwPUSUquJLY0ze+X9/SHpEWIWV3ENCcbfzvZGb9qw0/AJSNIF5?=
+ =?us-ascii?Q?j9qY+0spX0RFKcHo/xe7JYvMhAKldccOHSaiVIfrtMTLVUBB7zTISO824y7/?=
+ =?us-ascii?Q?YYsgcCsPJJS3ePuIKEWFMzemtwN0yirKBqbEK55lz15ZJEyH7XuaFdNva5pA?=
+ =?us-ascii?Q?vnyhhsxEQmuaPbNOfveqjv58Le2+P//0tbCDSEr0ZBDkLnMHYHnIWxecYqpb?=
+ =?us-ascii?Q?ml5styuqyt9dRrpvGPAFWB68sqM7burDyGk6wXFxGzr4ijh6XsWRsXFrHC5W?=
+ =?us-ascii?Q?C/wb+i+5kIqAGqmLCuXgKDRr9hx0av1ZZ58eF59+/dOZEMpjbS1d88J3V+Yz?=
+ =?us-ascii?Q?Sb4S32MrWgthoBPGtVdVoqnf0ZgmPPMjQsTPhm7q43x8xLnKRJhYvBR1mwwX?=
+ =?us-ascii?Q?4LKZY10R3u/twJts87GfjL6BWOvk3KDO4cOwbzZuNBIuYmk7fffVMuUMa5pY?=
+ =?us-ascii?Q?pxHIQ5Yqku3TBRABUx9c85nxJAKRuYCH7nbgrFa5gprX+ob23e8R1oztHdtQ?=
+ =?us-ascii?Q?0+ogpmL5Qaxlqz7MsBVgi8zksO0j1C/svShdR2jnRS1RNYO6mFxhR4WPLeKg?=
+ =?us-ascii?Q?bI6yF2GGD+KE75UjP+ZMsVsRgWyAL6Z1ILwDtd45q+WOvVDdnNryvAnHUhwJ?=
+ =?us-ascii?Q?oNI2CVa/AZxPGrcQywSXybf875LJCppvzizB7u65PtwIeHd8J7rPtiHGFP1z?=
+ =?us-ascii?Q?CabLUlIIdbCu/xm5ZkY5qvz0+bv0eCQ14qkLJgeYWY4nP4WSAH3R+iaKAnZQ?=
+ =?us-ascii?Q?tTIPuRdJ2qkBLnKKviW+8kugCvFvvAMwmADNpKVw+33WMeP0lqCvourlC4wR?=
+ =?us-ascii?Q?cJU3FBVCuzNJR6UgErBzpueesTHleKXYbZRYCmgPDn0zRmttj7Xw2cPKAGQ6?=
+ =?us-ascii?Q?ZL9+d3qv38DRDnnFCLwfjWIyN7cuH85WAnJmX8H37LOMq128fxTqgg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8409.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(19092799006)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?coiOvqpnmOx4JsX1iMNOQOsD/3+lCEt1D93rVgTI6wbQHiae1kOr+8tP12Xt?=
+ =?us-ascii?Q?IDiHdT2+aRhpry4EZORX6WnS/7jbMtplv/C2wK2wXf7DVdHiLsfzBTCfcdL3?=
+ =?us-ascii?Q?j1489DTcGec1I8sH+n1l6+s/iie9bWxBXXyXS3moVzTOnXfwTZME+4hpw/mG?=
+ =?us-ascii?Q?wk0Uvev0R1mAeRjAvGc6babNpImVax/gJAhkWpFbegLH3tM7P2BHG6jPLHev?=
+ =?us-ascii?Q?fXWcnD7r/pm9syedXFX+lrib3yJMYC6L+/9bn/aDTpSCYNySemp9TxjW6BBM?=
+ =?us-ascii?Q?M+svATM9YmpSxYF7bwEunLaZubGiQ24lk5RgCMhGviJfNDTELEUyeM5x0Aco?=
+ =?us-ascii?Q?NBswbkrYqKNZ/fIkO0NVxSSci4EY7aUyeLuRQMEU8I4+OmWqSQaJMrL384nC?=
+ =?us-ascii?Q?/GFGOhO8XrnUiSljIpCqRpqYUKDV1Oq4glpih4ThDoyD4qOw1nbjA/OG6SS4?=
+ =?us-ascii?Q?9A0TF/iwam74NyVUzVfdT9lHe05VwxD0AZYHLdC9eW988yl43HTKsMl8Ifuq?=
+ =?us-ascii?Q?n75DVDMCKx1qM/LHs3xFaBDKR/G6DAFV0ly46jpdE92RuY4pEIQyJdwYDoHf?=
+ =?us-ascii?Q?f/8SiSodh+CXGWVsOF4KzzYMedYGXHsFznKC5Er6FymhO+gzQnV/s3AKoPnu?=
+ =?us-ascii?Q?d6+XOoKb3xbpQJkYjlninAXQFW2Ddq8nmUNAT+Ajg+1rjBCrxErla97crOzt?=
+ =?us-ascii?Q?dTHOYsMt/QozgVp2P2YY5JywParQmywYnIF0idXeLTgdGe1vA4ny7BrTCNJr?=
+ =?us-ascii?Q?JK95GfjgNyvIRxC6dB7DJs8eBGYJlMn0l4EUUNiRA8NYV65X3A0+1M24GR9m?=
+ =?us-ascii?Q?aFtObUZRb3KU2WpLcA0tmDHmmkczOKpax96uf69iPQsK5Nd9bTpiiYnKk8PM?=
+ =?us-ascii?Q?AGmBCO6UODiGDfoJZelbapnyNGJwL64OoWQjrWjibb5ZFxIGw/0ML7ZyOlnW?=
+ =?us-ascii?Q?vYBu9/amDfBa9CjNBASVj//oVyFF+fqX7njv1ZpHel1uqw0ZjzLhUxz7MLjn?=
+ =?us-ascii?Q?+bFctgadh5TmluV9ExYvEaxJggFGOHeqU57JVRy2sBYUFSPloa+MBWWfbxNc?=
+ =?us-ascii?Q?6mhYrinh2UnG8GfJPQ8SymqoKd11ZCBZIrJGUgJnjaOCuh+zth1gVo9D5QR6?=
+ =?us-ascii?Q?0G4kfMPa1SriPKgM8Cg+hZGVvOrY1F7voigkkMiHiRFPhfuWoNV3rrTMBxKX?=
+ =?us-ascii?Q?wVjKQYRxxfRnlxazA2Xi6pOJcsJHdwhm10IcCkt3tFBig/Dm1YoEhurwywaC?=
+ =?us-ascii?Q?b1E10vSaeLeFvAdCdnWPhPvB6J/iVMYmKGW4OmN2PUcb2OtYzJZE9vHySOue?=
+ =?us-ascii?Q?rF98MH29nX9ZjB5uq2/wiHVSXhKs1PP6PVsS1BLuCtqiYEowIr5PpKbbwi5R?=
+ =?us-ascii?Q?YEW9Fw0TfkTpRwHk7Udnf/BWulknvLB5jwKfUC0mk8U7wWe/cUyhIooTdBaL?=
+ =?us-ascii?Q?M9xJNfhtUc7wjyfzzyutuZnOMR/SAnzOHnWZSy9/cBgDhLFVBk8WlevR/Ga/?=
+ =?us-ascii?Q?6GU0x55g2AQZryIVVIuXfN0nOWRhFhMRcn1fuP2lrMuSCLliR3Uz2nfiSXuN?=
+ =?us-ascii?Q?2ZnZd6+7Wy8nndlUzbEo62cKuhZLhBT6o9eu3uKy?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 989351b3-8e52-47ab-7a3d-08ddec64ad84
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8409.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 10:12:11.2482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6QF6q1B8Gw6LC4BN6m8nHpBYSUddl0wH/+tjin0/0D5trkkZHKcrs9wVoMEjbYkJWfDwhAySzBvQR7za5VLqLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7338
 
-state_show() reads kdamond->damon_ctx without holding damon_sysfs_lock.
-This allows a use-after-free race:
+during entropy evaluation, if the generated samples fail
+any statistical test, then, all of the bits will be discarded,
+and a second set of samples will be generated and tested.
 
-CPU 0                         CPU 1
------                         -----
-state_show()                  damon_sysfs_turn_damon_on()
-ctx = kdamond->damon_ctx;     mutex_lock(&damon_sysfs_lock);
-                              damon_destroy_ctx(kdamond->damon_ctx);
-                              kdamond->damon_ctx = NULL;
-                              mutex_unlock(&damon_sysfs_lock);
-damon_is_running(ctx);        /* ctx is freed */
-mutex_lock(&ctx->kdamond_lock); /* UAF */
+the entropy delay interval should be doubled before performing the
+retry.
 
-(The race can also occur with damon_sysfs_kdamonds_rm_dirs() and
-damon_sysfs_kdamond_release(), which free or replace the context under
-damon_sysfs_lock.)
+also, ctrlpriv->rng4_sh_init and inst_handles both reads RNG DRNG
+status register, but only inst_handles is updated before every retry.
+so only check inst_handles and removing ctrlpriv->rng4_sh_init
 
-Fix by taking damon_sysfs_lock before dereferencing the context,
-mirroring the locking used in pid_show().
-
-The bug has existed since state_show() first accessed kdamond->damon_ctx.
-
-Fixes: a61ea561c871 ("mm/damon/sysfs: link DAMON for virtual address spaces monitoring")
-Reported-by: Stanislav Fort <disclosure@aisle.com>
-Closes: N/A # non-publicly reported
-Signed-off-by: Stanislav Fort <disclosure@aisle.com>
+Signed-off-by: Gaurav Jain <gaurav.jain@nxp.com>
 ---
- mm/damon/sysfs.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/crypto/caam/ctrl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index 6d2b0dab50cb..7b9254cadd5f 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -1260,14 +1260,18 @@ static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
- {
- 	struct damon_sysfs_kdamond *kdamond = container_of(kobj,
- 			struct damon_sysfs_kdamond, kobj);
--	struct damon_ctx *ctx = kdamond->damon_ctx;
--	bool running;
-+	struct damon_ctx *ctx;
-+	bool running = false;
- 
--	if (!ctx)
--		running = false;
--	else
-+	if (!mutex_trylock(&damon_sysfs_lock))
-+		return -EBUSY;
-+
-+	ctx = kdamond->damon_ctx;
-+	if (ctx)
- 		running = damon_is_running(ctx);
- 
-+	mutex_unlock(&damon_sysfs_lock);
-+
- 	return sysfs_emit(buf, "%s\n", running ?
- 			damon_sysfs_cmd_strs[DAMON_SYSFS_CMD_ON] :
- 			damon_sysfs_cmd_strs[DAMON_SYSFS_CMD_OFF]);
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index a93be395c878..18a850cf0f97 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -703,12 +703,12 @@ static int caam_ctrl_rng_init(struct device *dev)
+ 			 */
+ 			if (needs_entropy_delay_adjustment())
+ 				ent_delay = 12000;
+-			if (!(ctrlpriv->rng4_sh_init || inst_handles)) {
++			if (!inst_handles) {
+ 				dev_info(dev,
+ 					 "Entropy delay = %u\n",
+ 					 ent_delay);
+ 				kick_trng(dev, ent_delay);
+-				ent_delay += 400;
++				ent_delay = ent_delay * 2;
+ 			}
+ 			/*
+ 			 * if instantiate_rng(...) fails, the loop will rerun
 -- 
-2.39.3 (Apple Git-146)
+2.25.1
 
 
