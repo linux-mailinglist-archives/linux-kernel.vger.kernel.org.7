@@ -1,181 +1,141 @@
-Return-Path: <linux-kernel+bounces-802713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A076B455E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD97AB455ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42AA1B24E9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B41C7C8235
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980B034DCF0;
-	Fri,  5 Sep 2025 11:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C167345741;
+	Fri,  5 Sep 2025 11:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="plCrPNYZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="kVbIoThB"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F534DCE7;
-	Fri,  5 Sep 2025 11:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2561A342CA5;
+	Fri,  5 Sep 2025 11:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070681; cv=none; b=UNHlXLcTpkK3ON9JTrlzFVWbllz8AGDeb2skyt3LKvPLHTaQZh6HaqWPqaRvBbv6aYrD/VPllLjFkFYxbokVevqienQRERKZRNs0cyF2Lg7y2fXms7tSKDDrXJmOFF/A+iTz2FbIJZpZ7DMNsi+mNyjWFTeXEAH8gOrF8aNErso=
+	t=1757070727; cv=none; b=hlxIoh08SDJhCinIvOVtT6Em5XMHBrf4jg7VVQj3xEC73qBt61Gr0VhJ7/Wwz4nEH2ChhSdCjqXgQ05HPPgv0bynrAkd/ucnvebEfcxvYCi1+E7gdf0CLMMASYIaj6826HkLsxgDwZYFAyLWzpXf/3wWRt4SNKFowk/sGmUlXpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070681; c=relaxed/simple;
-	bh=Tdmh/rrDhjA6qSA8AQTunmy/z48vnc+TipqIicgz1SU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qhlw5QdZQ5RunF4G/CzXLL1dZXJ63mjU/w890m0jtiNKw0m1CeIbyUbzHjYbt3vX7vjK7aZalmENST41XJgHoyUyrsa41xQtxi22H7K7SB+Z+KC2dOxIRfV4VXyIdEnH6K6KLp9ASJUIHn2OMfNMkZxkj9ZeomOShtZDV2DTYVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=plCrPNYZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c67:84a2:d86d:fcf7:24b4:e467])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6AE017F0;
-	Fri,  5 Sep 2025 13:10:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757070607;
-	bh=Tdmh/rrDhjA6qSA8AQTunmy/z48vnc+TipqIicgz1SU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=plCrPNYZSvWC5/1nqQP6T+WdgFxqfMEvJgUOTN2umt/QyxF86aHD18uKkCxBWdQw8
-	 4f5JjnEf3zirwsPCuTlYZS/vUUTWl7XPNL6Z3xbYglaASbIYOqn80vO5JDRwYIj7im
-	 WDwJG1Y3VmqKHd7BGcwY39THE1vxzgo3CiDUdu2c=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757070727; c=relaxed/simple;
+	bh=glh5P06NCOevpZ9Sp5glEkCB0eLqJHhinW20Q0pz7pM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rIAwq/QixcFTVBSvtIT46yWWjaxWZLArDmSG4s9JE74pGkauvAFFbCJBeKLRcSrXuydkNXSFww+SlmEqNm2pcr15Oa3vGxQZtkSi5gJmQMdsm//w31Ri7qztF3Yyvlv7XW5CcXr8EulwOsHYDQuO7KkFK783WTLiDb+QAwZmCA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=kVbIoThB; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uuUMK-003UQI-8Y; Fri, 05 Sep 2025 13:12:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From; bh=jZMIXDdUUTfEaODnK4UbKydDgc130U4hQ1ir/5FWrj8=
+	; b=kVbIoThBdF/pnJV9uhuDsN6t/KmTirGB9NqdKrB78HQq33bZwJcbCcra2oRSzBo9rS287semZ
+	2go0P2eZZ0/nnbSor2tNe/Tlb8h+sIwkvjfqDre33kb+/InsYIxVDyLCstwl2nYzlgWhtjHyQPOvg
+	H1rTe5N1OIwIGnHFZHuViwLyYYbCCrH1O/WbtLNO3+uQ0yw35DAjpGtuMJf8VWfxmyZLEXoMUExDY
+	g0k9ldpo3J4d8YBSZYDo1pTVgCJrVnDWByf28EGQ5awnuli1G+/yyWZ35eN9KV2sviiWlzk29NdJ6
+	PP9q+G1wzhvxII43Z48nMPE0BLJ1W4VWREQtSg==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uuUMJ-0002Ga-Ky; Fri, 05 Sep 2025 13:11:59 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uuUM9-002yZ1-1E; Fri, 05 Sep 2025 13:11:49 +0200
+From: Michal Luczaj <mhal@rbox.co>
+Subject: [PATCH bpf-next 0/5] selftests/bpf: Extend sockmap_redir to test
+ no-redir SK_DROP/SK_PASS
+Date: Fri, 05 Sep 2025 13:11:40 +0200
+Message-Id: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250825142522.1826188-15-r-donadkar@ti.com>
-References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-15-r-donadkar@ti.com>
-Subject: Re: [PATCH v5 14/14] media: ti: j721e-csi2rx: Wait for the last drain completion
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
-Date: Fri, 05 Sep 2025 16:41:11 +0530
-Message-ID: <175707067154.8095.10777597561482124941@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGzFumgC/x3MMQ6DMAxG4asgz7UErtKhV6kYUvKn9RIiO0JIi
+ LsTMX7Dewc5TOH0Hg4ybOq6lo7pMdDyj+UH1tRNMkoYgzzZkNS4wRvX6M7J1sqSJQakJb4wUU+
+ rIet+bz/0rZkL9kbzeV6bonpvcAAAAA==
+X-Change-ID: 20250523-redir-test-pass-drop-2f2a5edca6e1
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>, 
+ Jiayuan Chen <mrpre@163.com>
+X-Mailer: b4 0.14.2
 
-Quoting Rishikesh Donadkar (2025-08-25 19:55:22)
-> dmaengine_terminate_sync() causes all activity for the DMA channel to be
-> stopped, and may discard data in the DMA FIFO which hasn't been fully
-> transferred. No callback functions will be called for any
-> incomplete transfers[1].
->=20
-> In multistream use case, calling dmaengine_terminate_sync() immediately
-> after issuing the last drain transaction will result in no callback
-> for the last drain cycle.
->=20
-> Implement complete callback for the last drain cycle to make sure that
-> the last drain has completed properly, this will ensure that stale data
-> is not left out in the HW FIFO.
->=20
-> [1] : https://docs.kernel.org/driver-api/dmaengine/client.html
->=20
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
-> ---
->  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
-ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 4ac6a76b9409..520ee05eb5b4 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -62,6 +62,7 @@
->  #define TI_CSI2RX_MAX_PADS             (1 + TI_CSI2RX_MAX_SOURCE_PADS)
-> =20
->  #define DRAIN_BUFFER_SIZE              SZ_32K
-> +#define DRAIN_TIMEOUT_MS               50
+sockmap_redir was introduced to comprehensively test the BPF redirection.
+This series strives to increase the tested sockmap/sockhash code coverage;
+adds support for skipping the actual redirect part, allowing to simply
+SK_DROP or SK_PASS the packet.
 
-This was dropped in the previous patch, and now reintroduce.
+BPF_MAP_TYPE_SOCKMAP
+BPF_MAP_TYPE_SOCKHASH
+	x
+sk_msg-to-egress
+sk_msg-to-ingress
+sk_skb-to-egress
+sk_skb-to-ingress
+	x
+AF_INET, SOCK_STREAM
+AF_INET6, SOCK_STREAM
+AF_INET, SOCK_DGRAM
+AF_INET6, SOCK_DGRAM
+AF_UNIX, SOCK_STREAM
+AF_UNIX, SOCK_DGRAM
+AF_VSOCK, SOCK_STREAM
+AF_VSOCK, SOCK_SEQPACKET
+	x
+SK_REDIRECT
+SK_DROP
+SK_PASS
 
-IIUC this patch is fixing a bug introduced by the previous one, so it's
-better to squash them together, and have a combined commit description that
-goes over this end-of-stream case, as well as why continuous drain was
-needed for mid-stream scenario.
+Patch 5 ("Support no-redirect SK_DROP/SK_PASS") implements the feature.
+Patches 3 ("Rename functions") and 4 ("Let test specify skel's
+redirect_type") make preparatory changes.
 
-> =20
->  #define CSI2RX_BRIDGE_SOURCE_PAD       1
-> =20
-> @@ -137,6 +138,7 @@ struct ti_csi2rx_dev {
->                 size_t                  len;
->         } drain;
->         bool                            vc_cached;
-> +       struct completion drain_complete;
+I also took the opportunity to clean up (Patch 1, "Simplify try_recv()")
+and improve a bit (Patch 2, "Fix OOB handling").
 
-Why is the struct completion shared amongst all contexts in the
-ti_csi2rx_dev structure?
+$ cd tools/testing/selftests/bpf
+$ make
+$ sudo ./test_progs -t sockmap_redir
+...
+Summary: 1/720 PASSED, 0 SKIPPED, 0 FAILED
 
-What happens when two streams are stopped together?
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
+---
+Michal Luczaj (5):
+      selftests/bpf: sockmap_redir: Simplify try_recv()
+      selftests/bpf: sockmap_redir: Fix OOB handling
+      selftests/bpf: sockmap_redir: Rename functions
+      selftests/bpf: sockmap_redir: Let test specify skel's redirect_type
+      selftests/bpf: sockmap_redir: Support no-redirect SK_DROP/SK_PASS
 
->  };
-> =20
->  static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
-> @@ -624,12 +626,14 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_c=
-tx *ctx)
->  static void ti_csi2rx_drain_callback(void *param)
->  {
->         struct ti_csi2rx_ctx *ctx =3D param;
-> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
->         struct ti_csi2rx_dma *dma =3D &ctx->dma;
->         unsigned long flags;
-> =20
->         spin_lock_irqsave(&dma->lock, flags);
-> =20
->         if (dma->state =3D=3D TI_CSI2RX_DMA_STOPPED) {
-> +               complete(&csi->drain_complete);
+ .../selftests/bpf/prog_tests/sockmap_redir.c       | 143 +++++++++++++++------
+ 1 file changed, 105 insertions(+), 38 deletions(-)
+---
+base-commit: e8a6a9d3e8cc539d281e77b9df2439f223ec8153
+change-id: 20250523-redir-test-pass-drop-2f2a5edca6e1
 
-Please also add comment above this if case explaining why we need to wait
-for the drain to complete when dma->state =3D=3D STOPPED, which is set by t=
-he
-driver elsewhere when streamoff was requested, and no more data will be
-coming in from the source.
+Best regards,
+-- 
+Michal Luczaj <mhal@rbox.co>
 
->                 spin_unlock_irqrestore(&dma->lock, flags);
->                 return;
->         }
-> @@ -774,6 +778,7 @@ static int ti_csi2rx_start_dma(struct ti_csi2rx_ctx *=
-ctx,
->  static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
->  {
->         struct ti_csi2rx_dma *dma =3D &ctx->dma;
-> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
->         enum ti_csi2rx_dma_state state;
->         unsigned long flags;
->         int ret;
-> @@ -783,6 +788,8 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *=
-ctx)
->         dma->state =3D TI_CSI2RX_DMA_STOPPED;
->         spin_unlock_irqrestore(&dma->lock, flags);
-> =20
-> +       init_completion(&csi->drain_complete);
-> +
->         if (state !=3D TI_CSI2RX_DMA_STOPPED) {
->                 /*
->                  * Normal DMA termination does not clean up pending data =
-on
-> @@ -796,6 +803,10 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx =
-*ctx)
->                                  "Failed to drain DMA. Next frame might b=
-e bogus\n");
->         }
-> =20
-> +       if (!wait_for_completion_timeout(&csi->drain_complete,
-> +                                        msecs_to_jiffies(DRAIN_TIMEOUT_M=
-S)))
-> +               dev_dbg(csi->dev, "DMA transfer timed out for drain buffe=
-r\n");
-> +
->         ret =3D dmaengine_terminate_sync(ctx->dma.chan);
->         if (ret)
->                 dev_err(ctx->csi->dev, "Failed to stop DMA: %d\n", ret);
-> --=20
-> 2.34.1
->
-
-Thanks,
-    Jai
 
