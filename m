@@ -1,111 +1,134 @@
-Return-Path: <linux-kernel+bounces-803073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56922B45A37
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E496B45A3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1555A79A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26DD017BA0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DC336CC7C;
-	Fri,  5 Sep 2025 14:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7CF36CE0C;
+	Fri,  5 Sep 2025 14:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WDor94x+"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FZfJVvqE"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B169F36CDE9
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9219936CDE8
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082115; cv=none; b=HDfTyjC5FbF8paJ/X1MJEHXOcRf52Uw9Z3WNRZ+UR5eLn7s7kU5Cjlq9lWAffg1r4oUQwariPnpUmoAHZHuf+m2kEInB2KIpmj7pUt8M0VaKqHQS4tEtc3D9aWcNxEEHXi3Amp180rpX/ZSY3hHwZLgsFkJCd8D9xoSfydrdMfs=
+	t=1757082136; cv=none; b=sIBA0wjXs1RhX4Fh3G7E6xl/sqRADbC2MJNwY5hayibxd8qfFHPSCTaMFHneXNnlSTthcxExWh3OaHStNDdRGCJl7vWqW+vhO5O0mmjgMsq3oezXBU2mQnmYluk9jVHV4/25uYwGGL3zkNpZDWujoJoeu2cOBoMAyZJp8KUsj3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082115; c=relaxed/simple;
-	bh=oxUImwhK8PCX5aXJPu6YXlDrtbpPUKA4Yd9Mnt3Xf38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENStYHnUglFehOZmDMjUcUMIG11YRs1wOjqiHJiOvXVMpNYIBM0SsPHYWvvg70jQ4hDbEfWxX5Hl5LPekDWUsxRWHORWRIrrVc7ree1Z7mEbvZvqxBIm47N1YM37c5eaafzreXGv4RwbcSXK9C8o1geoOrPLNXIIgxLEeM/vcuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WDor94x+; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3f30b2b2d46so18844165ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:21:53 -0700 (PDT)
+	s=arc-20240116; t=1757082136; c=relaxed/simple;
+	bh=dQJtx4Q2JUyqNMwcbEs3oXSjlN1XB+uw8hAQFiczs/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GA3gX5xJNtSfYQ2T95crE6LRYSVFcXGHFD8lcEh/krya0BCqAtxy99UHOh0ykUTJhsLsRleKDyiwwEI0I3+w+jNivv91o6c0jQZqUeS4GMYcwNRl2vh7KWf44JvVGFfg/Br1u7en4KkIlKC1bQcki4oy1UBo8HTSdRkhmdjHJs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FZfJVvqE; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b0428b537e5so383107766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1757082113; x=1757686913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WAIXNF/yhxj3WIda95HMOmBhnbf7MpGftHHpVlcqDy4=;
-        b=WDor94x+a30PsCd8eKo7y/hwzZozoyy8N/X/5ZTOXIR21HkIsfU4ybqfFbznbM1QuV
-         hOoIv9ysNc9EKDDIjQ9bLXrEgncDt7LE3/++NPrcbeULM5on6bYbRLB/NABybZa6dvyC
-         iqioslBMr59lrmupnf6ZxnaNSWOxTiDYcdWi6Rv7bs3rEslr3ydWd7gCfTcnT4JlQ4Gu
-         5vnIVerOkndj4PI8QEksNoqXFgRZmRz1zcefZVBLz3knON8w/hJGmZh2kFXo7GtoXGea
-         OKvuHjcSaxqDVCwJl+dfoqBinYSL7lsIOxwXq+GMJmkp3GsWhn/7bilHmiPAjY0RrjbG
-         ky9A==
+        d=chromium.org; s=google; t=1757082133; x=1757686933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGF9orEjre2K9KjUIRS6u93YNSWcj3hSYdLRvughM9A=;
+        b=FZfJVvqEHLumcOHI2CZokbKuyUXgC6N1tVrnSgRtbbzbi0P9h0Sive5rRg7nW0IfSX
+         mJcOIx3j0sLfizrklE6VcD7JB1NDD3uLPhRMJnQ544yQaALrwySMdIS6j92GZZDyuCTA
+         RItizXH88p+pK0lQmBWkh5bLEMSKd/RWDzM5g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082113; x=1757686913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WAIXNF/yhxj3WIda95HMOmBhnbf7MpGftHHpVlcqDy4=;
-        b=bKT4eS+4ITqUyg5g2THu/b925JvA0XramLJcaNQa39aRPatI787cVu4oY0Uw8jd49W
-         c7rdIqXg/nUuwmi9dZ36tyShc2dw9CGqSdtt+DWAaDWJbg0leB+u/++jsrwl5LARFtcZ
-         hTQtKvN6p1NNt5eCJ+2yfCtGa5WT+2DRKpIaOEX5Wr2xJzEiTrTYeQhis0bfXqYjfyDI
-         D5ZY4c1j7m9QRWE3CaYyNFqzp41ui/e+3Zw18ukexq32uQobil2aDFHIYtVvvRphdbFr
-         hlT9NRL15LWNEsoZsCXDM5w4qLBLc6YfGaBM8j9fNQ28qSO4OIuJvH4A52C+VuHkXIj5
-         ZKMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXabigaIOmtPBGh8Crb7xGMX0SeaKdyECgzU1vKvE2xbpAe9KA2M3JJ+grPMP0wCSOTDt0BHkCoxXdW1yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJL2kK8YzZZKZ2RhKm7BPUR69uSazEDsLOHcxtFybta0jyXshF
-	RO80nXskkTcvYUGSETka1PnlJIb6uyR2wQWshs6nGvDaSWZX9fuIbcDUAJaFGDGoLTA=
-X-Gm-Gg: ASbGncstcJdGwGt60xZpZQr+1uaNshGv9ATc32CDe2wR4TlW67CVYwQ2bnsleREG+jh
-	sMUgXDy0gN7mUR6NTv3GnwJJ/KUy0diqyATV6jjPzpczOSXHPbJA81G1D81fNzSnqxKPAFb/2EE
-	itvGOgKaBJHvzuJB9xzlezKdusaBQgzTF+PFhkWxoT4TSmMDH1v7PqDvyFXxDbKMOXn+ymFNjg+
-	gnkwZmrN0Pu/fEv8D3+CGcPp6aeMqt7Ibb2oNX6MYgv0VkbcM94ieiMyDCE6GOoMAsgTLF7d2H7
-	xJbBog1uUV1fu6L0JuSmy4PpxAqF0vS8yG01uWBLMT5OPXfwzhODGObYXcTSpG8wxtMT2G2dEMc
-	b6j2e1Ilu6EEQcMCBRUuRt0WL
-X-Google-Smtp-Source: AGHT+IGf4qxxSXO6iewjkiZTlmr4yvaEZFX/IytJuUl4Nj32J40fOreM/84N8MX0m+sgaZr+dqFiDw==
-X-Received: by 2002:a05:6e02:240c:b0:3f6:6198:b39e with SMTP id e9e14a558f8ab-3f7b6808028mr57130415ab.0.1757082112699;
-        Fri, 05 Sep 2025 07:21:52 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f0d594fsm6185353173.23.2025.09.05.07.21.51
+        d=1e100.net; s=20230601; t=1757082133; x=1757686933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nGF9orEjre2K9KjUIRS6u93YNSWcj3hSYdLRvughM9A=;
+        b=TA9L8ewHvFmPWE65n/ib3cA23txrwTpM/3rRl/4euI4OA4yIOdoHnKDkkQjWe/IMhw
+         +lQM49iDlwiUP4ePyku3HpNGKSjn9qqvhy6542QNSp77Nh8FEU7zk22ttagIux7fskrV
+         LclpP4cR3Q4LEuIPRz8x9D2xvt0Mmea/APcm0xF+pwO75WX6SUOHO1ojHbZUyyP4NE+N
+         6naDQHREhHEfTrnlMRfjMYOeX81+2Pgam2KHISniM9S5AiS8bIjA58MJ/yuipc7Ld014
+         PsrNAHmQ6DezlUe0a6TkrWWarY+EHqW7kiAeDhpkkE8Tb5unA62zBi+QMlgR38IwqB1I
+         S1xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkR77ANDifK2lZ/wgfNlhL3t8OkpxwoM2Rsb4Ik+uHIx/5qa9lIuJ4HOr7rPGvYgm35YraUJm68sbLrsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycc6QI0OGed8lv2HyZDgk2hSxR6R9mB9lGQIBUB/2NHl9idkor
+	1TsCWY4idjSZ6vP6lOb42wDShDgUcTfiZry7wP0iXDSh302LNxJMDniEqR9SOmE98A==
+X-Gm-Gg: ASbGncsrdwIFqU5yTEw8uol0I4+DLDnM0X+Lo6e0n4OfWCF8zkv5S9WEFfibmNWEWDA
+	7VE0+pkMI4dB3g1zgjLm3gbSgaP34gy6hu0Ugd/Et2h6NUt6O7a8+KyNeqX6nSsz1WO87Ud3Dlh
+	fFNpgzHH9CF4q0f+xjei7/YxIsJYn+f++c56j7XVqd9wpYhUHWux7Z/ge2z9njY7PLtgVfxEqIN
+	4RzgYtXgtvWmfswbeXEex7N9n2pX4qkdROfFh75rlAttSVzEjXHdTl0vtyqk6xm9sP7q8hNMUWO
+	yjHZW+7dh1b5oGg3rtB0Ze3waRlt0b4Z+pTT96wi1cVkKcJfCF5iVIr5rbabjCALD2OOEBzXT68
+	H+IQXpnsE2GI3eyjKJXOAUPypbNKMgt/01DQjZb7R+FXJ3BjcB8ZUfsxVs5W2zWgQ/y4PAZkBSi
+	8fPh+DLB0p0r1faQ4=
+X-Google-Smtp-Source: AGHT+IFl2mgGV4P7dgOmJwsBFf/zdptfBe4eibQa6wFZqzQSCjDkYJsW2x4P8b1GwYro1fca0TgUXA==
+X-Received: by 2002:a17:907:3f21:b0:b04:76b5:739f with SMTP id a640c23a62f3a-b0476b57484mr827180166b.23.1757082131682;
+        Fri, 05 Sep 2025 07:22:11 -0700 (PDT)
+Received: from akuchynski.c.googlers.com.com (240.225.32.34.bc.googleusercontent.com. [34.32.225.240])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0476e0d61esm502141066b.53.2025.09.05.07.22.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 07:21:52 -0700 (PDT)
-Date: Fri, 5 Sep 2025 09:21:51 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Atish Patra <atish.patra@linux.dev>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Anup Patel <anup@brainfault.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] RISC-V: KVM: Implement ONE_REG interface for SBI
- FWFT state
-Message-ID: <20250905-005c0bc3e16e909c5d91eef4@orel>
-References: <20250823155947.1354229-1-apatel@ventanamicro.com>
- <20250823155947.1354229-6-apatel@ventanamicro.com>
+        Fri, 05 Sep 2025 07:22:11 -0700 (PDT)
+From: Andrei Kuchynski <akuchynski@chromium.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev
+Cc: Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Andrei Kuchynski <akuchynski@chromium.org>
+Subject: [PATCH v3 0/5] USB Type-C alternate mode priorities
+Date: Fri,  5 Sep 2025 14:22:01 +0000
+Message-ID: <20250905142206.4105351-1-akuchynski@chromium.org>
+X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823155947.1354229-6-apatel@ventanamicro.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 23, 2025 at 09:29:46PM +0530, Anup Patel wrote:
-> The KVM user-space needs a way to save/restore the state of
-> SBI FWFT features so implement SBI extension ONE_REG callbacks.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |   1 +
->  arch/riscv/include/uapi/asm/kvm.h          |  15 ++
->  arch/riscv/kvm/vcpu_sbi_fwft.c             | 197 +++++++++++++++++++--
->  3 files changed, 200 insertions(+), 13 deletions(-)
->
+This patch series introduces a mechanism for setting USB Type-C alternate
+mode priorities. It allows the user to specify their preferred order for
+mode selection, such as USB4, Thunderbolt, or DisplayPort.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+A new sysfs attribute named 'priority' is exposed to provide user-space
+control over the mode selection process.
+
+This series was tested on a Android OS device running kernel 6.16.
+
+Changes in v3:
+- minor changes related to code style and documentation
+
+Andrei Kuchynski (5):
+  usb: typec: Add mode_control field to port property
+  platform/chrome: cros_ec_typec: Set no_mode_control flag
+  usb: typec: ucsi: Set no_mode_control flag
+  usb: typec: Implement alternate mode priority handling
+  usb: typec: Expose alternate mode priority via sysfs
+
+ Documentation/ABI/testing/sysfs-class-typec | 11 ++++++
+ drivers/platform/chrome/cros_ec_typec.c     |  1 +
+ drivers/usb/typec/Makefile                  |  2 +-
+ drivers/usb/typec/class.c                   | 41 +++++++++++++++++++--
+ drivers/usb/typec/class.h                   |  2 +
+ drivers/usb/typec/mode_selection.c          | 38 +++++++++++++++++++
+ drivers/usb/typec/mode_selection.h          |  6 +++
+ drivers/usb/typec/ucsi/ucsi.c               |  1 +
+ include/linux/usb/typec.h                   |  2 +
+ include/linux/usb/typec_altmode.h           |  1 +
+ 10 files changed, 100 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/usb/typec/mode_selection.c
+ create mode 100644 drivers/usb/typec/mode_selection.h
+
+-- 
+2.51.0.355.g5224444f11-goog
+
 
