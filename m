@@ -1,360 +1,327 @@
-Return-Path: <linux-kernel+bounces-803580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB2AB462B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:49:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3CCB4629E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F36A61B24
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456EA7AFBDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1ED2868A9;
-	Fri,  5 Sep 2025 18:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqvOitLp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA123266EF1;
-	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B24225A29;
+	Fri,  5 Sep 2025 18:48:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A484277017;
+	Fri,  5 Sep 2025 18:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098130; cv=none; b=uYh293t1ev7x7EB94GK65tPfTNnM4nskBb8TW+T2uzn6C9+Bawdh9t61joC3OBx3XcYJJtNWaA4RY+JNJf2Zse6lPLsDKJGjdpToOjOLY7WahBtE7GD48Y7nD9gzodGvADgE1hlRqdsdWpxsfkyIm2mojO+AoFpVM706HPM4Qjk=
+	t=1757098122; cv=none; b=KXWGcs4MNJrLK0xRfzOnDND9/I+ocfQ88gUHeUII8Sx8YjDPYjKfRwd7lILcu8fbf1THNZ7GZFAfADGOHLKAF6GpwhOqls+R2EKwocMVAkSQYJa5M7DNdfDqT19yE1QmKGx8F4Gc7STU0aAh2MWfIn8UzHFUuyFHvvIlHkI1ils=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098130; c=relaxed/simple;
-	bh=Rw+cTPsK8UY84BYmUMrDlUQJRiodAoy6jQpwhK25JPM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VmMPxG3D6OvMSViM9DeT5JUf+WM25uDUxiO6AomEKJ4id2o9HdQNkWM5SCKhkZVPdt3R7HCh8RtX5bQbguum1BQYcZBbxjeTQ2jARt7K7CZtzNEO3Sonrgca25RyGe/SFm7EEvTwK3aWIVovt3ZRkvKFmgSV9vEwAdQpC0mlYZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqvOitLp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FD83C4CEF7;
-	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757098130;
-	bh=Rw+cTPsK8UY84BYmUMrDlUQJRiodAoy6jQpwhK25JPM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lqvOitLphJb7KVP3y7zZwHqQFf7hfcak6X3LeqPyva1h3dbcyITyMFXPu3OIeXGTa
-	 HWApatfHGkr51P8n4Nyleqd52cQ4WyTl+ydL/hJnA4/reknegOnekVtx7bKnuXpZZz
-	 3nrV9tUOOWBGrzBKxVal1vp+AF4YTy7wgE7JS2sXnRV+3y7Fh1EHHQJhFAUa4aW4ti
-	 kBIfrjJbU222ClZdCrpkVlT1JmWFne5Ek/+HS/0muMf8cfN7mN2X07gXD89hgWGdgo
-	 PlomLc2PA9HUWECZVTEOAscMGth4r76VE0ItKnYn/6nwHOdyqSlnLO0JuaeE4Ob7vq
-	 g/b0pQu/MGmCg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7B9CA1016;
-	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
-From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
-Date: Fri, 05 Sep 2025 13:48:25 -0500
-Subject: [PATCH RFC 02/13] dmaengine: sdxi: Add control structure
- definitions
+	s=arc-20240116; t=1757098122; c=relaxed/simple;
+	bh=7UqTyz8zP8i8yfRiTBv/BTxviF7lQMms4rKZ92n/Ydc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tvs1WT3iUbf8cItcHbFEMQ+KdbP9H0vTsNqgBxjvSmFCZ+6UckiBsdvEJmQM5xmgKdM/g7AwTdDznbaXV2+cSo515xyE+AQyGOgG1mNdui5jP+0wfMTYAhPx5FE9UldiYQ95NNYOsu4tcQ3oqcuHptHzowxhjNtG3lWRs3q4tmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17137152B;
+	Fri,  5 Sep 2025 11:48:31 -0700 (PDT)
+Received: from [10.1.197.69] (unknown [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C6113F63F;
+	Fri,  5 Sep 2025 11:48:33 -0700 (PDT)
+Message-ID: <c129a5ca-066b-4a78-a1fe-be474b592022@arm.com>
+Date: Fri, 5 Sep 2025 19:48:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-11-james.morse@arm.com>
+ <120b4049-a28d-40ad-9def-c901e12c7a68@arm.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <120b4049-a28d-40ad-9def-c901e12c7a68@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-sdxi-base-v1-2-d0341a1292ba@amd.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-In-Reply-To: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Wei Huang <wei.huang2@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757098128; l=8206;
- i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
- bh=LtALJDsZZcNVuQomuX0ryG8qKKEmQgfZsMY945HU3DI=;
- b=VmhOE7l2pTRn9K5Irjx4OXk1BllKBLscXAZDVayTXJ71gxJU1AwvUwRf2VshAqUaKDoy/g1sG
- 8vZtgtr3NQHAquGGB+oQ27rqTvDFsiUkPvWm633XR4m+91DhTf5ay4d
-X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
- pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
-X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
- auth_id=241
-X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
-Reply-To: nathan.lynch@amd.com
 
-From: Nathan Lynch <nathan.lynch@amd.com>
+Hi Ben,
 
-SDXI defines a multitude of control structures that reside in system
-memory and are shared between software and the implementation.
+On 27/08/2025 14:03, Ben Horgan wrote:
+> On 8/22/25 16:29, James Morse wrote:
+>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+>> only be accessible from those CPUs, and they may not be online.
+>> Touching the hardware early is pointless as MPAM can't be used until
+>> the system-wide common values for num_partid and num_pmg have been
+>> discovered.
+>>
+>> Start with driver probe/remove and mapping the MSC.
 
-Add:
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> new file mode 100644
+>> index 000000000000..a0d9a699a6e7
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -0,0 +1,336 @@
 
-* C struct definitions for the SDXI control structures to be used by
-  the driver;
-* Bitmask constants for accessing fields and subfields of the control
-  structures;
-* Symbolic constants corresponding to significant values such as
-  context states and commands.
+>> +static int mpam_dt_parse_resource(struct mpam_msc *msc, struct device_node *np,
+>> +				  u32 ris_idx)
+>> +{
+>> +	int err = 0;
+>> +	u32 level = 0;
+>> +	unsigned long cache_id;
+>> +	struct device_node *cache;
+>> +
+>> +	do {
+>> +		if (of_device_is_compatible(np, "arm,mpam-cache")) {
+>> +			cache = of_parse_phandle(np, "arm,mpam-device", 0);
+>> +			if (!cache) {
+>> +				pr_err("Failed to read phandle\n");
+>> +				break;
+>> +			}
+> This looks like this allows "arm,mpam-cache" and "arm,mpam-device" to be
+> used on an msc node when there are no ris children. This usage could be
+> reasonable but doesn't match the schema in the previous patch. Should
+> this usage be rejected or the schema extended?
 
-Co-developed-by: Wei Huang <wei.huang2@amd.com>
-Signed-off-by: Wei Huang <wei.huang2@amd.com>
-Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
----
- drivers/dma/sdxi/hw.h | 249 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 249 insertions(+)
+The DT/ACPI stuff is only going to describe the things that make sense at a high level,
+e.g. the controls for the L3. There may be other controls for stuff that doesn't make
+sense in the hardware - these get discovered, grouped as 'unknown' and left alone.
 
-diff --git a/drivers/dma/sdxi/hw.h b/drivers/dma/sdxi/hw.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..4ac0e200773b0646e84a65794e02cdf9e583db6d
---- /dev/null
-+++ b/drivers/dma/sdxi/hw.h
-@@ -0,0 +1,249 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (C) 2025 Advanced Micro Devices, Inc. */
-+
-+/*
-+ * Control structures and constants defined in the SDXI specification,
-+ * with low-level accessors. The ordering of the structures here
-+ * follows the order of their definitions in the SDXI spec.
-+ *
-+ * Names of structures, members, and subfields (bit ranges within
-+ * members) are written to match the spec, generally. E.g. struct
-+ * sdxi_cxt_l2_ent corresponds to CXT_L2_ENT in the spec.
-+ *
-+ * Note: a member can have a subfield whose name is identical to the
-+ * member's name. E.g. CXT_L2_ENT's lv01_ptr.
-+ *
-+ * All reserved fields and bits (usually named "rsvd" or some
-+ * variation) must be set to zero by the driver unless otherwise
-+ * specified.
-+ */
-+
-+#ifndef LINUX_SDXI_HW_H
-+#define LINUX_SDXI_HW_H
-+
-+#include <asm/byteorder.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/build_bug.h>
-+#include <linux/log2.h>
-+#include <linux/stddef.h>
-+#include <linux/types.h>
-+
-+/* Context Level 2 Table Entry (CXT_L2_ENT) */
-+struct sdxi_cxt_l2_ent {
-+	__le64 lv01_ptr;
-+#define SDXI_CXT_L2_ENT_LV01_PTR GENMASK_ULL(63, 12)
-+#define SDXI_CXT_L2_ENT_VL       BIT_ULL(0)
-+} __packed;
-+static_assert(sizeof(struct sdxi_cxt_l2_ent) == 8);
-+
-+/*
-+ * The level 2 table is 4KB and has 512 level 1 pointer entries.
-+ */
-+#define SDXI_L2_TABLE_ENTRIES 512
-+struct sdxi_cxt_l2_table {
-+	struct sdxi_cxt_l2_ent entry[SDXI_L2_TABLE_ENTRIES];
-+};
-+static_assert(sizeof(struct sdxi_cxt_l2_table) == 4096);
-+
-+/* Context level 1 table entry (CXT_L1_ENT) */
-+struct sdxi_cxt_l1_ent {
-+	__le64 cxt_ctl_ptr;
-+#define SDXI_CXT_L1_ENT_VL             BIT_ULL(0)
-+#define SDXI_CXT_L1_ENT_KA             BIT_ULL(1)
-+#define SDXI_CXT_L1_ENT_PV             BIT_ULL(2)
-+#define SDXI_CXT_L1_ENT_CXT_CTL_PTR    GENMASK_ULL(63, 6)
-+	__le64 akey_ptr;
-+#define SDXI_CXT_L1_ENT_AKEY_SZ        GENMASK_ULL(3, 0)
-+#define SDXI_CXT_L1_ENT_AKEY_PTR       GENMASK_ULL(63, 12)
-+	__le32 misc0;
-+#define SDXI_CXT_L1_ENT_PASID          GENMASK(19, 0)
-+#define SDXI_CXT_L1_ENT_MAX_BUFFER     GENMASK(23, 20)
-+	__le32 opb_000_enb;
-+	__u8 rsvd_0[8];
-+} __packed;
-+static_assert(sizeof(struct sdxi_cxt_l1_ent) == 32);
-+
-+#define SDXI_L1_TABLE_ENTRIES 128
-+struct sdxi_cxt_l1_table {
-+	struct sdxi_cxt_l1_ent entry[SDXI_L1_TABLE_ENTRIES];
-+};
-+static_assert(sizeof(struct sdxi_cxt_l1_table) == 4096);
-+
-+/* Context control block (CXT_CTL) */
-+struct sdxi_cxt_ctl {
-+	__le64 ds_ring_ptr;
-+#define SDXI_CXT_CTL_VL             BIT_ULL(0)
-+#define SDXI_CXT_CTL_QOS            GENMASK_ULL(3, 2)
-+#define SDXI_CXT_CTL_SE             BIT_ULL(4)
-+#define SDXI_CXT_CTL_CSA            BIT_ULL(5)
-+#define SDXI_CXT_CTL_DS_RING_PTR    GENMASK_ULL(63, 6)
-+	__le32 ds_ring_sz;
-+	__u8 rsvd_0[4];
-+	__le64 cxt_sts_ptr;
-+#define SDXI_CXT_CTL_CXT_STS_PTR    GENMASK_ULL(63, 4)
-+	__le64 write_index_ptr;
-+#define SDXI_CXT_CTL_WRITE_INDEX_PTR GENMASK_ULL(63, 3)
-+	__u8 rsvd_1[32];
-+} __packed;
-+static_assert(sizeof(struct sdxi_cxt_ctl) == 64);
-+
-+/* Context Status (CXT_STS) */
-+struct sdxi_cxt_sts {
-+	__u8 state;
-+#define SDXI_CXT_STS_STATE GENMASK(3, 0)
-+	__u8 misc0;
-+	__u8 rsvd_0[6];
-+	__le64 read_index;
-+} __packed;
-+static_assert(sizeof(struct sdxi_cxt_sts) == 16);
-+
-+/* Valid values for FIELD_GET(SDXI_CXT_STS_STATE, sdxi_cxt_sts.state) */
-+enum cxt_sts_state {
-+	CXTV_STOP_SW  = 0x0,
-+	CXTV_RUN      = 0x1,
-+	CXTV_STOPG_SW = 0x2,
-+	CXTV_STOP_FN  = 0x4,
-+	CXTV_STOPG_FN = 0x6,
-+	CXTV_ERR_FN   = 0xf,
-+};
-+
-+static inline enum cxt_sts_state sdxi_cxt_sts_state(const struct sdxi_cxt_sts *sts)
-+{
-+	return FIELD_GET(SDXI_CXT_STS_STATE, READ_ONCE(sts->state));
-+}
-+
-+/* Access key entry (AKEY_ENT) */
-+struct sdxi_akey_ent {
-+	__le16 intr_num;
-+#define SDXI_AKEY_ENT_VL BIT(0)
-+#define SDXI_AKEY_ENT_PV BIT(2)
-+	__le16 tgt_sfunc;
-+	__le32 pasid;
-+#define SDXI_AKEY_ENT_PASID GENMASK(19, 0)
-+	__le16 stag;
-+	__u8   rsvd_0[2];
-+	__le16 rkey;
-+	__u8   rsvd_1[2];
-+} __packed;
-+static_assert(sizeof(struct sdxi_akey_ent) == 16);
-+
-+/* Error Log Header Entry (ERRLOG_HD_ENT) */
-+struct sdxi_errlog_hd_ent {
-+	__le32 opcode;
-+	__le16 misc0;
-+	__le16 cxt_num;
-+	__le64 dsc_index;
-+	__u8   rsvd_0[28];
-+	__le16 err_class;
-+	__u8   rsvd_1[2];
-+	__le32 vendor[4];
-+} __packed;
-+static_assert(sizeof(struct sdxi_errlog_hd_ent) == 64);
-+
-+/* Completion status block (CST_BLK) */
-+struct sdxi_cst_blk {
-+	__le64 signal;
-+	__le32 flags;
-+#define SDXI_CST_BLK_ER_BIT BIT(31)
-+	__u8 rsvd_0[20];
-+} __packed;
-+static_assert(sizeof(struct sdxi_cst_blk) == 32);
-+
-+/*
-+ * Size of the "body" of each descriptor between the common opcode and
-+ * csb_ptr fields.
-+ */
-+#define DSC_OPERATION_BYTES 52
-+
-+#define define_sdxi_dsc(tag_, name_, op_body_)				\
-+	struct tag_ {							\
-+		__le32 opcode;						\
-+		op_body_						\
-+		__le64 csb_ptr;						\
-+	} name_;							\
-+	static_assert(sizeof(struct tag_) ==				\
-+		      sizeof(struct sdxi_dsc_generic));			\
-+	static_assert(offsetof(struct tag_, csb_ptr) ==			\
-+		      offsetof(struct sdxi_dsc_generic, csb_ptr))
-+
-+struct sdxi_desc {
-+	union {
-+		__le64 qw[8];
-+
-+		/* DSC_GENERIC - common header and footer */
-+		struct_group_tagged(sdxi_dsc_generic, generic,
-+			__le32 opcode;
-+#define SDXI_DSC_VL  BIT(0)
-+#define SDXI_DSC_SE  BIT(1)
-+#define SDXI_DSC_FE  BIT(2)
-+#define SDXI_DSC_CH  BIT(3)
-+#define SDXI_DSC_CSR BIT(4)
-+#define SDXI_DSC_RB  BIT(5)
-+#define SDXI_DSC_FLAGS   GENMASK(5, 0)
-+#define SDXI_DSC_SUBTYPE GENMASK(15, 8)
-+#define SDXI_DSC_TYPE    GENMASK(26, 16)
-+			__u8 operation[DSC_OPERATION_BYTES];
-+			__le64 csb_ptr;
-+#define SDXI_DSC_NP BIT_ULL(0)
-+#define SDXI_DSC_CSB_PTR GENMASK_ULL(63, 5)
-+		);
-+
-+		/* DmaBaseGrp: DSC_DMAB_NOP */
-+		define_sdxi_dsc(sdxi_dsc_dmab_nop, nop,
-+			__u8 rsvd_0[DSC_OPERATION_BYTES];
-+		);
-+
-+#define SDXI_DSC_OP_TYPE_DMAB 0x001
-+#define SDXI_DSC_OP_SUBTYPE_COPY 0x03
-+		/* DmaBaseGrp: DSC_DMAB_COPY */
-+		define_sdxi_dsc(sdxi_dsc_dmab_copy, copy,
-+				__le32 size;
-+				__u8 attr;
-+				__u8 rsvd_0[3];
-+				__le16 akey0;
-+				__le16 akey1;
-+				__le64 addr0;
-+				__le64 addr1;
-+				__u8 rsvd_1[24];
-+				);
-+
-+#define SDXI_DSC_OP_TYPE_INTR 0x004
-+#define SDXI_DSC_OP_SUBTYPE_INTR 0x00
-+		/* IntrGrp: DSC_INTR */
-+		define_sdxi_dsc(sdxi_dsc_intr, intr,
-+			__u8 rsvd_0[8];
-+			__le16 akey;
-+			__u8 rsvd_1[42];
-+		);
-+
-+#define SDXI_DSC_OP_TYPE_ADMIN 0x002
-+#define SDXI_DSC_OP_SUBTYPE_CXT_START_NM 0x03
-+#define SDXI_DSC_OP_SUBTYPE_CXT_START_RS 0x08
-+		/* AdminGrp: DSC_CXT_START */
-+		define_sdxi_dsc(sdxi_dsc_cxt_start, cxt_start,
-+				__u8 rsvd_0;
-+				__u8 vflags;
-+				__le16 vf_num;
-+				__le16 cxt_start;
-+				__le16 cxt_end;
-+				__u8 rsvd_1[4];
-+				__le64 db_value;
-+				__u8 rsvd_2[32];
-+				);
-+
-+#define SDXI_DSC_OP_SUBTYPE_CXT_STOP     0x04
-+		/* AdminGrp: DSC_CXT_STOP */
-+		define_sdxi_dsc(sdxi_dsc_cxt_stop, cxt_stop,
-+			__u8 rsvd_0;
-+			__u8 vflags;
-+			__le16 vf_num;
-+			__le16 cxt_start;
-+			__le16 cxt_end;
-+			__u8 rsvd_1[44];
-+		);
-+	};
-+};
-+static_assert(sizeof(struct sdxi_desc) == 64);
-+
-+#endif /* LINUX_SDXI_HW_H */
+Another angle on this is where there is an MSC that the OS will never make use of, but
+needs to know about to find the system wide minimum value. (there is a comment about
+this in the ACPI spec...)
 
--- 
-2.39.5
+I don't think its a problem if the magic dt-binding machinery is overly restrictive, that
+is about validating DTB files...
 
 
+>> +		} else if (of_device_is_compatible(np->parent, "cache")) {
+>> +			cache = of_node_get(np->parent);
+>> +		} else {
+>> +			/* For now, only caches are supported */
+>> +			cache = NULL;
+>> +			break;
+>> +		}
+>> +
+>> +		err = of_property_read_u32(cache, "cache-level", &level);
+>> +		if (err) {
+>> +			pr_err("Failed to read cache-level\n");
+>> +			break;
+>> +		}
+>> +
+>> +		cache_id = cache_of_calculate_id(cache);
+>> +		if (cache_id == ~0UL) {
+>> +			err = -ENOENT;
+>> +			break;
+>> +		}
+>> +
+>> +		err = mpam_ris_create(msc, ris_idx, MPAM_CLASS_CACHE, level,
+>> +				      cache_id);
+>> +	} while (0);
+>> +	of_node_put(cache);
+>> +
+>> +	return err;
+>> +}
+
+>> +static int mpam_msc_drv_probe(struct platform_device *pdev)
+>> +{
+>> +	int err;
+>> +	struct mpam_msc *msc;
+>> +	struct resource *msc_res;
+>> +	void *plat_data = pdev->dev.platform_data;
+>> +
+>> +	mutex_lock(&mpam_list_lock);
+>> +	do {
+>> +		msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+>> +		if (!msc) {
+>> +			err = -ENOMEM;
+>> +			break;
+>> +		}
+>> +
+>> +		mutex_init(&msc->probe_lock);
+>> +		mutex_init(&msc->part_sel_lock);
+>> +		mutex_init(&msc->outer_mon_sel_lock);
+>> +		raw_spin_lock_init(&msc->inner_mon_sel_lock);
+>> +		msc->id = mpam_num_msc++;
+>> +		msc->pdev = pdev;
+>> +		INIT_LIST_HEAD_RCU(&msc->glbl_list);
+>> +		INIT_LIST_HEAD_RCU(&msc->ris);
+>> +
+>> +		err = update_msc_accessibility(msc);
+>> +		if (err)
+>> +			break;
+>> +		if (cpumask_empty(&msc->accessibility)) {
+>> +			pr_err_once("msc:%u is not accessible from any CPU!",
+>> +				    msc->id);
+>> +			err = -EINVAL;
+>> +			break;
+>> +		}
+>> +
+>> +		if (device_property_read_u32(&pdev->dev, "pcc-channel",
+>> +					     &msc->pcc_subspace_id))
+>> +			msc->iface = MPAM_IFACE_MMIO;
+>> +		else
+>> +			msc->iface = MPAM_IFACE_PCC;
+>> +
+>> +		if (msc->iface == MPAM_IFACE_MMIO) {
+>> +			void __iomem *io;
+>> +
+>> +			io = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +								    &msc_res);
+>> +			if (IS_ERR(io)) {
+>> +				pr_err("Failed to map MSC base address\n");
+>> +				err = PTR_ERR(io);
+>> +				break;
+>> +			}
+>> +			msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
+>> +			msc->mapped_hwpage = io;
+>> +		} else if (msc->iface == MPAM_IFACE_PCC) {
+>> +			msc->pcc_cl.dev = &pdev->dev;
+>> +			msc->pcc_cl.rx_callback = mpam_pcc_rx_callback;
+>> +			msc->pcc_cl.tx_block = false;
+>> +			msc->pcc_cl.tx_tout = 1000; /* 1s */
+>> +			msc->pcc_cl.knows_txdone = false;
+>> +
+>> +			msc->pcc_chan = pcc_mbox_request_channel(&msc->pcc_cl,
+>> +								 msc->pcc_subspace_id);
+>> +			if (IS_ERR(msc->pcc_chan)) {
+>> +				pr_err("Failed to request MSC PCC channel\n");
+>> +				err = PTR_ERR(msc->pcc_chan);
+>> +				break;
+>> +			}
+> I don't see pcc support added in this series. Should we fail the probe
+> if this interface is specified?
+
+I've got patches from Andre P to support it on DT - but the platforms that need it keeping
+popping in and out of existence. I'll pull these bits out - they were intended to check
+the ACPI table wasn't totally rotten...
+
+
+> (If keeping, there is a missing pcc_mbox_free_channel() on the error path.)
+
+When pcc_mbox_request_channel() fails? It already called mbox_free_channel() itself.
+
+
+>> +		}
+>> +
+>> +		list_add_rcu(&msc->glbl_list, &mpam_all_msc);
+>> +		platform_set_drvdata(pdev, msc);
+>> +	} while (0);
+>> +	mutex_unlock(&mpam_list_lock);
+>> +
+>> +	if (!err) {
+>> +		/* Create RIS entries described by firmware */
+>> +		if (!acpi_disabled)
+>> +			err = acpi_mpam_parse_resources(msc, plat_data);
+>> +		else
+>> +			err = mpam_dt_parse_resources(msc, plat_data);
+>> +	}
+>> +
+>> +	if (!err && fw_num_msc == mpam_num_msc)
+>> +		mpam_discovery_complete();
+>> +
+>> +	if (err && msc)
+>> +		mpam_msc_drv_remove(pdev);
+>> +
+>> +	return err;
+>> +}
+
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> new file mode 100644
+>> index 000000000000..07e0f240eaca
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_internal.h
+>> @@ -0,0 +1,62 @@
+
+>> +struct mpam_msc {
+>> +	/* member of mpam_all_msc */
+>> +	struct list_head        glbl_list;
+>> +
+>> +	int			id;
+>> +	struct platform_device *pdev;
+>> +
+>> +	/* Not modified after mpam_is_enabled() becomes true */
+>> +	enum mpam_msc_iface	iface;
+>> +	u32			pcc_subspace_id;
+>> +	struct mbox_client	pcc_cl;
+>> +	struct pcc_mbox_chan	*pcc_chan;
+>> +	u32			nrdy_usec;
+>> +	cpumask_t		accessibility;
+>> +
+>> +	/*
+>> +	 * probe_lock is only take during discovery. After discovery these
+> nit: s/take/taken/
+
+Fixed,
+
+>> +	 * properties become read-only and the lists are protected by SRCU.
+>> +	 */
+>> +	struct mutex		probe_lock;
+>> +	unsigned long		ris_idxs[128 / BITS_PER_LONG];
+>> +	u32			ris_max;
+>> +
+>> +	/* mpam_msc_ris of this component */
+>> +	struct list_head	ris;
+>> +
+>> +	/*
+>> +	 * part_sel_lock protects access to the MSC hardware registers that are
+>> +	 * affected by MPAMCFG_PART_SEL. (including the ID registers that vary
+>> +	 * by RIS).
+>> +	 * If needed, take msc->lock first.
+>> +	 */
+>> +	struct mutex		part_sel_lock;
+>> +
+>> +	/*
+>> +	 * mon_sel_lock protects access to the MSC hardware registers that are
+>> +	 * affeted by MPAMCFG_MON_SEL.
+> nit: s/affeted/affected/
+Fixed,
+
+
+>> +	 * If needed, take msc->lock first.
+>> +	 */
+>> +	struct mutex		outer_mon_sel_lock;
+>> +	raw_spinlock_t		inner_mon_sel_lock;
+>> +	unsigned long		inner_mon_sel_flags;
+>> +
+>> +	void __iomem		*mapped_hwpage;
+>> +	size_t			mapped_hwpage_sz;
+>> +};
+>> +
+>> +#endif /* MPAM_INTERNAL_H */
+
+Thanks,
+
+James
 
