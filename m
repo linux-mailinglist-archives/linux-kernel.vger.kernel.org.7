@@ -1,176 +1,232 @@
-Return-Path: <linux-kernel+bounces-803226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B412B45C61
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3A9B45C5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97CBB175FA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DB63BA2AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4E019CCEC;
-	Fri,  5 Sep 2025 15:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AE123BF91;
+	Fri,  5 Sep 2025 15:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CJO5fkgn"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjmV76Of"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9569931B81B;
-	Fri,  5 Sep 2025 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085582; cv=pass; b=QwaHKrdsMLiqd6HN32g9NnB//7SFjT79eTBQIGaojrOJkP2yIVYotfgh+CPeAk/xuH0ghvIXacQIaJ/bjQpgnEa9kpoDINkyu+dvZtLKAXuGL8mdYr5BATFT2NG90kv/DHrGFfuncTn3rx8mLE7zLEGaoPC1vuEvwSH2HAUfAWc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085582; c=relaxed/simple;
-	bh=TQ1Yli/mjvLpY76C5SbFhJX/Muh/7iPRfCGOv9erSQw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oJB7DFzBGbvm002TBtm5vYYWrzcFAOTRGAb/6Xg9DklLDUHnI0URNfwRq21x5b64w9LC44tit121DCyP7qYS9HSIFXjBaOjjKQm/y1FXDpXmFo9jt1oA658N3PYAPlhwReLbsxEDFRbqfrPN7TqLBkZ31UH/H5rHo4RrkNtByPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CJO5fkgn; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757085547; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JGlElhOkLBJPIeqbwCoHjSjJ5NI7enbdWrKyrw8q+sY0J7oK8hfY9lIgNoLH8yZ1YDdxLOnOCB2ZXWfD7+fF2XQDuicLZl5lPi7Nx9nL/ggaiXXlPU4ThbaVnQEtRmNwxB7d83fTENPmwvowYjvQy56L4UCvgVnvAXmAxcvze4k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757085547; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WvMWIb097CAfEDcALNW+hr4jEjolOIJhOGMsgheYVik=; 
-	b=hfYLkWeLSn8haeiazMARP7lJh0oiOjboJdyhHyOWT0p7GbkIYWwzoYX6ZqXV2ziLsF5/Udk9lnaaGlgwH9w+Y4DV3457zMDjP0f8sQzcgYsOZY91ghdfLTV16VgkaDEZ8eE5saN4Q1FJOX7ibBgFy5FagWWdTRdL4+vrJGOSBfE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757085547;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=WvMWIb097CAfEDcALNW+hr4jEjolOIJhOGMsgheYVik=;
-	b=CJO5fkgnV/OpTh5xLkfsJmyl1URRXq8Jwyl2Hjo+uvk/WOvg8fMrttWXzUpr3jbs
-	U+S6Ldw2zcEdCgblxfAqAqNgRfyef4jqn7gjFhk0vcsi2F3N5edqvUKDaXelKQxgyp9
-	NyRzvjHp307Wl0lDivuM3YdHi5iA6phdFBtaAwnA=
-Received: by mx.zohomail.com with SMTPS id 1757085544614181.09692545870018;
-	Fri, 5 Sep 2025 08:19:04 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3EA23D7F4;
+	Fri,  5 Sep 2025 15:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757085591; cv=none; b=AzaQAkZOqLxScHXnF/iyaNt4MpvSdRlLs967sVQ5M9L8C5fLiuhj/3Th/NBv36wm9Aau2m5DBzhlZIZt+/83qGvcQuqIc3kBBjeuvARGQF1rfWKusS3mRFY25jHQcsqfmLJQqeBm3vfwWzCVo9f/W6uhWYa8VUS+e8Oju7mrK4I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757085591; c=relaxed/simple;
+	bh=y5FWRAJBx3f/xXiDDwXlkp5hhXm0zlSYbUucIyHKar4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bwv2Pa74CAPYkbydtRY9so/2ZmPeF1W8hJfU8m2Ovz9F8nXtjighpEEsZXcMhbIpNSDSZReOJr4CSao0calxgNOYIhbHUnTZWMd3UKTBbmrjTKU3ydc1Cho5gEueJZRh81a5YdWpR3bT+kQcKeopbpeV3ho0G014EQFzPjUg+3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjmV76Of; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 002FCC4CEFA;
+	Fri,  5 Sep 2025 15:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757085591;
+	bh=y5FWRAJBx3f/xXiDDwXlkp5hhXm0zlSYbUucIyHKar4=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=qjmV76OfZ4aFiVBxWMcc28e9cu8DpRCFGWaTUiodlQ//bhKP2NpP8O0Tzl/+ehHti
+	 HN/v1y1hL0NQtYQF7jLa4leC1Mof5lL0SeAMqPyfqbk3eBiLc8ur9JxhIEMZl1RItX
+	 sHVJNKr2Krivkm+B/kvc3ILpCGPRVj52q2uB2UxBU7iTVQus2G1TNOH8iQtVM+Mw5p
+	 8wz12P04C0GeEW74/nNScQxjKHJbygQOZHGgo16bNoseCCZGefUSQ8ODGo7CGnnAoz
+	 dlBoYkatZqGqP2w4Clvgn3XZYSxYiUlAFG0CHWxPsroZEeVQ12tpFbFO75BiYO38uQ
+	 dlxfSDXBKx5qg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-33730e1cda7so21639001fa.3;
+        Fri, 05 Sep 2025 08:19:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVoXOWPJLIh4IiCRURx6d0GUGlZZO9UtLdTEY9DdcLB+pFl6gYG3dC5kguBEwtwsp6/SFfVf9ieROYcXq5c@vger.kernel.org, AJvYcCWM/+m5S5OKA4567K3GU6fiO6qM7qCD6/8A6sNv8s3MSGLab2dA9SET1Evdp+kXz9QIryy8x9NT1k7E@vger.kernel.org, AJvYcCWouPurGDfGpHgzjgeQxArp4DbRejJNjWc9vT9QidUCup8MBauGVTBHyfpjQAhRIVU4WIPspG8zsZQi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws0YMszrLogTgKzkey2/Bd6u1RfFDWmJnXD5Osrp36Spqljc6J
+	6qu3SBjygkvbGM5KFuSlFb+Dixdn/HElnuiZrjqhHJ818/1IsMmwWs2TBBxhUSKpNycbWEZsYbk
+	NpqF8PQg5zP6SeG4EoVPxKmoYNONJi58=
+X-Google-Smtp-Source: AGHT+IGw5JL+ddMtdE3BQh71M7lhvXq9J8ApGrLUEWl3SKfWxfjfiN2RBYCBDlu9iDRVCU4h8u56mOEq1l3VDv70LW8=
+X-Received: by 2002:a2e:a7ca:0:b0:338:1286:bc77 with SMTP id
+ 38308e7fff4ca-3381286c3cfmr19018051fa.42.1757085589283; Fri, 05 Sep 2025
+ 08:19:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3 14/14] rust: drm: gem: Add BaseObject::prime_export()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250829224116.477990-15-lyude@redhat.com>
-Date: Fri, 5 Sep 2025 12:18:47 -0300
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	Asahi Lina <lina+kernel@asahilina.net>, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linux-media"@vger.kernel.org (ope>),
-	"moderated list:DMA BUFFER SHARING  FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linaro-mm-sig"@lists.linaro.org (mod>)
+MIME-Version: 1.0
+References: <20250830170901.1996227-1-wens@kernel.org> <20250830170901.1996227-5-wens@kernel.org>
+ <20250905161418.30562637@donnerap>
+In-Reply-To: <20250905161418.30562637@donnerap>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 5 Sep 2025 23:19:34 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64DmDXaduf7RrYynb+v7TCFA+ni6xPHfyCrwduYW0g=HA@mail.gmail.com>
+X-Gm-Features: Ac12FXz4TVFzN3HD-VOVeq3SjMBNL_nE1S2Xp7SCIBD9qEo_VYAnoswTc0k_Tws
+Message-ID: <CAGb2v64DmDXaduf7RrYynb+v7TCFA+ni6xPHfyCrwduYW0g=HA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU
+ module clock
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <282C2384-D046-43E3-88DE-70A130961D93@collabora.com>
-References: <20250829224116.477990-1-lyude@redhat.com>
- <20250829224116.477990-15-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
 
+On Fri, Sep 5, 2025 at 11:14=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> On Sun, 31 Aug 2025 01:08:57 +0800
+> Chen-Yu Tsai <wens@kernel.org> wrote:
+>
+> Hi,
+>
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > The main clock controller on the A523/T527 has the NPU's module clock.
+> > It was missing from the original submission, likely because that was
+> > based on the A523 user manual; the A523 is marketed without the NPU.
+>
+> Ah, sorry, I missed that one. I think I spotted writable bits in that
+> register, but didn't find a clue what this clock was about. Anyway, check=
+ed
+> the bits against the T527 manual, they match up.
+>
+> > Also, merge the private header back into the driver code itself. The
+> > header only contains a macro containing the total number of clocks.
+> > This has to be updated every time a missing clock gets added. Having
+> > it in a separate file doesn't help the process. Instead just drop the
+> > macro, and thus the header no longer has any reason to exist.
+>
+> Interesting, looks nice, and solves Krzysztof's complaint the other
+> day about the binding header inclusion missing from the driver as well.
+> Just one thought:
+>
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 21 ++++++++++++++++++---
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.h | 14 --------------
+> >  2 files changed, 18 insertions(+), 17 deletions(-)
+> >  delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi=
+-ng/ccu-sun55i-a523.c
+> > index 1a9a1cb869e2..88405b624dc5 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > @@ -11,6 +11,9 @@
+> >  #include <linux/module.h>
+> >  #include <linux/platform_device.h>
+> >
+> > +#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> > +#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> > +
+>
+> Should we have the number #define here, at a more central location? Seems=
+ a
+> bit buried down in there. And then use a plural name while at it:
+>
+> #define NUM_CLOCKS      CLK_NPU + 1
+>
+> Alternatively, put .num behind .hws below, so that the last clock and the
+> number definition are close together?
 
+I think this works better. One less place to look at.
 
-> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> We just added an export() callback that GEM objects can implement, but
-> without any way of actually exporting a DmaBuf<T>. So let's add one by
-> introducing bindings for drm_gem_prime_export().
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/dma_buf.rs     |  1 -
-> rust/kernel/drm/gem/mod.rs | 24 +++++++++++++++++++++++-
-> 2 files changed, 23 insertions(+), 2 deletions(-)
->=20
-> diff --git a/rust/kernel/dma_buf.rs b/rust/kernel/dma_buf.rs
-> index a66829afcd129..a2086918efd17 100644
-> --- a/rust/kernel/dma_buf.rs
-> +++ b/rust/kernel/dma_buf.rs
-> @@ -20,7 +20,6 @@ unsafe impl Send for DmaBuf {}
-> // SAFETY: `struct dma_buf` is thread-safe
-> unsafe impl Sync for DmaBuf {}
->=20
-> -#[expect(unused)]
-> impl DmaBuf {
->     /// Convert from a `*mut bindings::dma_buf` to a [`DmaBuf`].
->     ///
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index 1ac25fc6d527b..75ffd5541e84c 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -11,7 +11,7 @@
->     bindings, dma_buf,
->     drm::driver::{AllocImpl, AllocOps},
->     drm::{self, private::Sealed},
-> -    error::{to_result, Result},
-> +    error::{from_err_ptr, to_result, Result},
->     prelude::*,
->     types::{ARef, AlwaysRefCounted, Opaque},
-> };
-> @@ -225,6 +225,28 @@ fn lookup_handle<D, F, O>(file: &drm::File<F>, =
-handle: u32) -> Result<ARef<Self>
->         Ok(unsafe { ARef::from_raw(obj.into()) })
->     }
->=20
-> +    /// Export a [`DmaBuf`] for this GEM object using the DRM prime =
-helper library.
-> +    ///
-> +    /// `flags` should be a set of flags from =
-[`fs::file::flags`](kernel::fs::file::flags).
-> +    fn prime_export(&self, flags: u32) -> Result<DmaBuf<Self>> {
-> +        // SAFETY: `as_raw()` always returns a valid pointer to an =
-initialized `drm_gem_object`.
-> +        let dma_ptr =3D unsafe { =
-bindings::drm_gem_prime_export(self.as_raw(), flags as i32) };
-> +
-> +        // `drm_gem_prime_export()` returns either an error pointer, =
-or a valid pointer to an
-> +        // initialized `dma_buf` on success.
-> +        let dma_ptr =3D from_err_ptr(dma_ptr)?;
-> +
-> +        // SAFETY:
-> +        // - We checked that dma_ptr is not an error, so it must =
-point to an initialized dma_buf
-> +        // - We used drm_gem_prime_export(), so `dma_ptr` will remain =
-valid until a call to
-> +        //   `drm_gem_prime_release()` which we don't call here.
-> +        let dma_buf =3D unsafe { dma_buf::DmaBuf::from_raw(dma_ptr) =
-};
-> +
-> +        // INVARIANT: We used drm_gem_prime_export() to create this =
-dma_buf, fulfilling the
-> +        // invariant that this dma_buf came from a GEM object of type =
-`Self`.
-> +        Ok(DmaBuf(dma_buf.into(), PhantomData))
-> +    }
-> +
->     /// Creates an mmap offset to map the object from userspace.
->     fn create_mmap_offset(&self) -> Result<u64> {
->         // SAFETY: The arguments are valid per the type invariant.
-> --=20
-> 2.50.0
->=20
+ChenYu
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+> Cheers,
+> Andre
+>
+> >  #include "../clk.h"
+> >
+> >  #include "ccu_common.h"
+> > @@ -25,8 +28,6 @@
+> >  #include "ccu_nkmp.h"
+> >  #include "ccu_nm.h"
+> >
+> > -#include "ccu-sun55i-a523.h"
+> > -
+> >  /*
+> >   * The 24 MHz oscillator, the root of most of the clock tree.
+> >   * .fw_name is the string used in the DT "clock-names" property, used =
+to
+> > @@ -486,6 +487,18 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", =
+ve_parents, 0x690,
+> >
+> >  static SUNXI_CCU_GATE_HWS(bus_ve_clk, "bus-ve", ahb_hws, 0x69c, BIT(0)=
+, 0);
+> >
+> > +static const struct clk_hw *npu_parents[] =3D {
+> > +     &pll_periph0_480M_clk.common.hw,
+> > +     &pll_periph0_600M_clk.hw,
+> > +     &pll_periph0_800M_clk.common.hw,
+> > +     &pll_npu_2x_clk.hw,
+> > +};
+> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(npu_clk, "npu", npu_parents, 0x6e0=
+,
+> > +                                 0, 5,       /* M */
+> > +                                 24, 3,      /* mux */
+> > +                                 BIT(31),    /* gate */
+> > +                                 CLK_SET_RATE_PARENT);
+> > +
+> >  static SUNXI_CCU_GATE_HWS(bus_dma_clk, "bus-dma", ahb_hws, 0x70c, BIT(=
+0), 0);
+> >
+> >  static SUNXI_CCU_GATE_HWS(bus_msgbox_clk, "bus-msgbox", ahb_hws, 0x71c=
+,
+> > @@ -1217,6 +1230,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =
+=3D {
+> >       &bus_ce_sys_clk.common,
+> >       &ve_clk.common,
+> >       &bus_ve_clk.common,
+> > +     &npu_clk.common,
+> >       &bus_dma_clk.common,
+> >       &bus_msgbox_clk.common,
+> >       &bus_spinlock_clk.common,
+> > @@ -1343,7 +1357,7 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =
+=3D {
+> >  };
+> >
+> >  static struct clk_hw_onecell_data sun55i_a523_hw_clks =3D {
+> > -     .num    =3D CLK_NUMBER,
+> > +     .num    =3D CLK_NPU + 1,
+> >       .hws    =3D {
+> >               [CLK_PLL_DDR0]          =3D &pll_ddr_clk.common.hw,
+> >               [CLK_PLL_PERIPH0_4X]    =3D &pll_periph0_4x_clk.common.hw=
+,
+> > @@ -1524,6 +1538,7 @@ static struct clk_hw_onecell_data sun55i_a523_hw_=
+clks =3D {
+> >               [CLK_FANOUT0]           =3D &fanout0_clk.common.hw,
+> >               [CLK_FANOUT1]           =3D &fanout1_clk.common.hw,
+> >               [CLK_FANOUT2]           =3D &fanout2_clk.common.hw,
+> > +             [CLK_NPU]               =3D &npu_clk.common.hw,
+> >       },
+> >  };
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h b/drivers/clk/sunxi=
+-ng/ccu-sun55i-a523.h
+> > deleted file mode 100644
+> > index fc8dd42f1b47..000000000000
+> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+> > +++ /dev/null
+> > @@ -1,14 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 */
+> > -/*
+> > - * Copyright 2024 Arm Ltd.
+> > - */
+> > -
+> > -#ifndef _CCU_SUN55I_A523_H
+> > -#define _CCU_SUN55I_A523_H
+> > -
+> > -#include <dt-bindings/clock/sun55i-a523-ccu.h>
+> > -#include <dt-bindings/reset/sun55i-a523-ccu.h>
+> > -
+> > -#define CLK_NUMBER   (CLK_FANOUT2 + 1)
+> > -
+> > -#endif /* _CCU_SUN55I_A523_H */
+>
 
