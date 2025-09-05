@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-803251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23E8B45CA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4EAB45CAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CDC1C25848
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C800C1BC29BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A02A2FB083;
-	Fri,  5 Sep 2025 15:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA0302141;
+	Fri,  5 Sep 2025 15:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgziJwA8"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="CempboGf"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1A22F7AA3;
-	Fri,  5 Sep 2025 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBA72FB0A8;
+	Fri,  5 Sep 2025 15:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086288; cv=none; b=ZpmfqcZ3DibvIb7oJVX+3sw2e82E4ps7JOHFOftdzYUZtp9bgZDYuEV/njtoKkUyN4xTKv12S6RoB9WXJqazpxrVcahb1pEUpYkRpeElj8JrDhUSVfHgMdOLF4ESeaWpb4XqoD2jH5ocv2BstAEfrRzNshufYswe6bhacmbfFY0=
+	t=1757086484; cv=none; b=QdGZQ6WuKmITfewsb8DRndajY30erZK4w2PsMCP0LkBygDN4tSBHT9z61m8lB6M03vW7n5+xVB+f1Gn4oLEf+TmFXC+g/Z9+bTzw1iGjyKQQUZcGhtFzycBe8Cd2S70z+w18Q6R8rPUl7cRXXsKFabNPQSxBIxZ6qdjWUwXBsBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086288; c=relaxed/simple;
-	bh=8ms1d9Vg7jwuzgSpvzREZ+LF+iaiBlwiLlIb00axx9k=;
+	s=arc-20240116; t=1757086484; c=relaxed/simple;
+	bh=wtTFmaz+N02R+TrK0pbOOzB15g2M3Ec/dVGk2zh3GXY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUIGhXjtMukhK9J2K73SeCz4qBQq3NARkkp3p9o804B3cIJhWgHAjSP5ZJHUT6gsgl434nBEU7Y1ZzOYRYntbsFiKNXWh0FHBIU6zAH6hP9BtZRXhz75Z8bNpYv3d02rr4WdTFFgKBJLff98ugAH6QCvxavUkfi92wffSXRDOD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgziJwA8; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-74381df387fso976960a34.0;
-        Fri, 05 Sep 2025 08:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757086286; x=1757691086; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dqFxb/2bKobkfbDbds8z6V/6zpNwI0zDXWRf77DMUQw=;
-        b=lgziJwA8ehhc4y1d9JBO8q08sBtX8J9fOZkHjt4+VJWy+etU38yTJi1Z2x7kNjpr6j
-         /lnAOqXyt7/pvEhFASV57idHAZMJ3nRq8ISYf2++gnyrwvsyHs6u2P5K7u4KBRDFF5te
-         6Kh1ksdk78s0mtDupGrudtWEZ9w7+P+wo9n9cI0mnmLo3stOdtMPLbZgk+REf1EPJ5wK
-         f2NFuZvrEE0nK276V21Gyui37ysmO72Yl6e4fapGZPyTRXOdqnB+QTHs+plLTdi6BINB
-         yankLqZ+w9FOOrLCK6H8FBDATUwKGs9mHwVcTKC5SjDgsofywdMrpwHIXtNEFSEFYF1F
-         TR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757086286; x=1757691086;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dqFxb/2bKobkfbDbds8z6V/6zpNwI0zDXWRf77DMUQw=;
-        b=ZpbDoG69fTx5vNx0OU6LvbezKQO4S06UdYxe6MCZtB/TMfu9Y8wypEc/cpmgtjco9b
-         Y8olLC2bhNg69/xgc55GQce1uzl0zQhOSupLk6flxzua/AEW5VUxNM6vAxG6ZF++PJMS
-         WuvHEsowg9j5NDG5FK57OUWs6IrHpJXGgds+OVFOUDgs6HlBY7fnDdONTx9zkXircllO
-         heikulr97kB0X+vrZ2oQVP0Wja1FMYshhNgITXMM8073jyxS5xf9qdlgrHTcYdZcpx5T
-         APwC7EZne3ljL6yijzAkp38HxnK0Ca2XPh2am/H+vR+Z30hy9erxU95cNmhPOdXjMl/2
-         AVQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJQtRkNpB+OvkNCx7olafVE9MCRzgwlCFEOad4H/U7RwvUD2UH76q1w3pmrnHSQt9hgLU3ZY2J0THqIFs=@vger.kernel.org, AJvYcCVTci6mCLd7bMky4IIQT5ZFw5hpovUgoiUFfCwkGtNZ1qYX18MLxa8JxBQjaOoOeqmKUf9w57GK4hujuF0y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaxIgMB6yYz1JWqlUf7z1+AAsmkw6CKR1dycvOiDzfzor9C7Ed
-	HlsojhUepfIqSDN/1xxjeOpJ0heazlJqn7St/qGmCU6lXqXeJDlxsrf5
-X-Gm-Gg: ASbGncsUvMCvbQJgZWdJngorjD3N5iKVBnoQ1o1TiW4wL5KQwxBfGhIXaDC0dfxCzzA
-	DQksKpP+e7M/W6D24IGPhr2CI4+sJh4CSvY0rLFSLWoNpk2QJ0yukAiNKAK1bscwFpkNIAD/P+w
-	GjUjKmbAdKBo/LFdSRh3fNiyXZTPR72xwFQMtclpjRG1tHuzKqcf4RW2dJtDq+/dMnNcjv7DAFy
-	C+sqSm1rADNOgJ76cgp5NJDfBKM7O47tlGCIX7T8pJ6J4kAwMIqK6VDZ52zFPh8FjzYiZi9yY1I
-	/e23Co9T4hglDU82OX4Uk7B+NRyFT7hRrfFTeG6xWk/zIGgxffYXXOHb+7m3MooDX6uYBRYu9Js
-	0XHgJEPq8HNn2r8B1x8yXZMQ1Sp/BfSD6hPqX9vB2UA==
-X-Google-Smtp-Source: AGHT+IFTyiHCKjvnrH5SDgWBVlLUoi6IFbmlSm+rVdwh4zLkj59MaVAd2eJCS8Zeo1lwwC9KPWoUug==
-X-Received: by 2002:a05:6830:4708:b0:742:f9b1:ee7d with SMTP id 46e09a7af769-74569e08887mr11473916a34.16.1757086284374;
-        Fri, 05 Sep 2025 08:31:24 -0700 (PDT)
-Received: from ?IPV6:2603:8081:c640:1::1007? ([2603:8081:c640:1::1007])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74abb1a9845sm156037a34.13.2025.09.05.08.31.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 08:31:23 -0700 (PDT)
-Message-ID: <644647df-64d5-44eb-b7ac-13bd4b81d422@gmail.com>
-Date: Fri, 5 Sep 2025 10:31:21 -0500
+	 In-Reply-To:Content-Type; b=UE/1o9q6maIG4fDkGLoO7nCRntQECbqWeJdhEfmxOKJykn8GOUK9gBCxU0cTYou5Ntkr0jmT6+hdpg5fk9V5E96kAkfugVruxXW7rTbIrqEnN+d1TfSQIGKfspik5Vxl/qLBwP/EX1pfIterpiXdKW+LAJhucIHt2fiAutSyfaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=CempboGf; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757086477;
+	bh=wtTFmaz+N02R+TrK0pbOOzB15g2M3Ec/dVGk2zh3GXY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CempboGfU5BbL6MvuQKGRxTq8ENz2ywbtLsQw+a5bYzwe9C35xnI3k5YCaHBxwGjn
+	 Sl6s3hIRoVSzYWnBsWgXc9ZJVTVFnG0jhqmZpgfHqGkXzh6D6usbMe/GWYh4wO9hv5
+	 CTG81e9yn3QpQ5HZDhmA2D1WxxdYguvLXgUJRNtLxLtMBvzy2Z6arqa1rgdAfdGm5l
+	 qSFYqUl6IqMCiF+6t4r61zioeI1EjaCvWGP37SCPLK7I3q7nMOJCa2RK3WfoSqCns5
+	 9fhR/ceX5G3OnsdGCZGWXAsI2UrsZa05wFw0gQf4F6oEOrVBMkWptZFw8+Rn9DdcbL
+	 2qEyYp8mCXUow==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 2E4A960078;
+	Fri,  5 Sep 2025 15:34:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 1923B200402;
+	Fri, 05 Sep 2025 15:34:33 +0000 (UTC)
+Message-ID: <ab1ee9d4-8cf6-46ae-8c97-56d9a27fbb32@fiberby.net>
+Date: Fri, 5 Sep 2025 15:34:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,130 +55,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+Subject: Re: [PATCH net-next 09/11] tools: ynl: encode indexed-array
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-wg-ynl-prep@fiberby.net>
+ <20250904220156.1006541-9-ast@fiberby.net> <m2ldmtxjh6.fsf@gmail.com>
 Content-Language: en-US
-From: Praveen K Paladugu <praveenkpaladugu@gmail.com>
-In-Reply-To: <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <m2ldmtxjh6.fsf@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Hi Donald,
 
+Thanks for the reviews.
 
-On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+On 9/5/25 10:49 AM, Donald Hunter wrote:
+> Asbjørn Sloth Tønnesen <ast@fiberby.net> writes:
 > 
-> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
-> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
-> request.
->
-Is this behavior limited to VP stats? Or does it extend to other
-stats (hypervisor, partition, etc) as well?
+>> This patch adds support for encoding indexed-array
+>> attributes with sub-type nest in pyynl.
+>>
+>> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+>> ---
+>>   tools/net/ynl/pyynl/lib/ynl.py | 17 +++++++++++++++++
+>>   1 file changed, 17 insertions(+)
+>>
+>> diff --git a/tools/net/ynl/pyynl/lib/ynl.py b/tools/net/ynl/pyynl/lib/ynl.py
+>> index 4928b41c636a..a37294a751da 100644
+>> --- a/tools/net/ynl/pyynl/lib/ynl.py
+>> +++ b/tools/net/ynl/pyynl/lib/ynl.py
+>> @@ -564,6 +564,11 @@ class YnlFamily(SpecFamily):
+>>               nl_type |= Netlink.NLA_F_NESTED
+>>               sub_space = attr['nested-attributes']
+>>               attr_payload = self._add_nest_attrs(value, sub_space, search_attrs)
+>> +        elif attr['type'] == 'indexed-array' and attr['sub-type'] == 'nest':
+>> +            nl_type |= Netlink.NLA_F_NESTED
+>> +            sub_space = attr['nested-attributes']
+>> +            attr_payload = self._encode_indexed_array(value, sub_space,
+>> +                                                      search_attrs)
+>>           elif attr["type"] == 'flag':
+>>               if not value:
+>>                   # If value is absent or false then skip attribute creation.
+>> @@ -617,6 +622,9 @@ class YnlFamily(SpecFamily):
+>>           else:
+>>               raise Exception(f'Unknown type at {space} {name} {value} {attr["type"]}')
+>>   
+>> +        return self._add_attr_raw(nl_type, attr_payload)
+>> +
+>> +    def _add_attr_raw(self, nl_type, attr_payload):
+>>           pad = b'\x00' * ((4 - len(attr_payload) % 4) % 4)
+>>           return struct.pack('HH', len(attr_payload) + 4, nl_type) + attr_payload + pad
+>>   
+>> @@ -628,6 +636,15 @@ class YnlFamily(SpecFamily):
+>>                                              sub_attrs)
+>>           return attr_payload
+>>   
+>> +    def _encode_indexed_array(self, vals, sub_space, search_attrs):
+>> +        attr_payload = b''
+>> +        nested_flag = Netlink.NLA_F_NESTED
+> 
+> This line is not doing anything, right?
 
-> This results a failure in module init. Instead of failing, gracefully
-nit: s/This results in a failure during module init/> fall back to 
-populating stats_pages[HV_STATS_AREA_PARENT] with the
-> already-mapped stats_pages[HV_STATS_AREA_SELF].
-> 
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
->   drivers/hv/mshv_root_hv_call.c | 43 ++++++++++++++++++++++++++++++----
->   drivers/hv/mshv_root_main.c    |  3 +++
->   2 files changed, 42 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
-> index c9c274f29c3c..1c38576a673c 100644
-> --- a/drivers/hv/mshv_root_hv_call.c
-> +++ b/drivers/hv/mshv_root_hv_call.c
-> @@ -724,6 +724,24 @@ hv_call_notify_port_ring_empty(u32 sint_index)
->   	return hv_result_to_errno(status);
->   }
->   
-> +static int
-> +hv_stats_get_area_type(enum hv_stats_object_type type,
-> +		       const union hv_stats_object_identity *identity)
-> +{
-> +	switch (type) {
-> +	case HV_STATS_OBJECT_HYPERVISOR:
-> +		return identity->hv.stats_area_type;
-> +	case HV_STATS_OBJECT_LOGICAL_PROCESSOR:
-> +		return identity->lp.stats_area_type;
-> +	case HV_STATS_OBJECT_PARTITION:
-> +		return identity->partition.stats_area_type;
-> +	case HV_STATS_OBJECT_VP:
-> +		return identity->vp.stats_area_type;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
->   int hv_call_map_stat_page(enum hv_stats_object_type type,
->   			  const union hv_stats_object_identity *identity,
->   			  void **addr)
-> @@ -732,7 +750,7 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
->   	struct hv_input_map_stats_page *input;
->   	struct hv_output_map_stats_page *output;
->   	u64 status, pfn;
-> -	int ret = 0;
-> +	int hv_status, ret = 0;
->   
->   	do {
->   		local_irq_save(flags);
-> @@ -747,11 +765,28 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
->   		pfn = output->map_location;
->   
->   		local_irq_restore(flags);
-> -		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
-> -			ret = hv_result_to_errno(status);
-> +
-> +		hv_status = hv_result(status);
-> +		if (hv_status != HV_STATUS_INSUFFICIENT_MEMORY) {
->   			if (hv_result_success(status))
->   				break;
-> -			return ret;
-> +
-> +			/*
-> +			 * Some versions of the hypervisor do not support the
-> +			 * PARENT stats area. In this case return "success" but
-> +			 * set the page to NULL. The caller checks for this
-> +			 * case instead just uses the SELF area.
-> +			 */
-> +			if (hv_stats_get_area_type(type, identity) == HV_STATS_AREA_PARENT &&
-> +			    hv_status == HV_STATUS_INVALID_PARAMETER) {
-> +				pr_debug_once("%s: PARENT area type is unsupported\n",
-> +					      __func__);
-> +				*addr = NULL;
-> +				return 0;
-> +			}
-> +
-> +			hv_status_debug(status, "\n");
-> +			return hv_result_to_errno(status);
->   		}
->   
->   		ret = hv_call_deposit_pages(NUMA_NO_NODE,
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index bbdefe8a2e9c..56ababab57ce 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -929,6 +929,9 @@ static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
->   	if (err)
->   		goto unmap_self;
->   
-> +	if (!stats_pages[HV_STATS_AREA_PARENT])
-> +		stats_pages[HV_STATS_AREA_PARENT] = stats_pages[HV_STATS_AREA_SELF];
-> +
->   	return 0;
->   
->   unmap_self:
+Right, that line shouldn't be there, it is a remain of an early version, where
+I didn't add the indexes, as NLA_NESTED_ARRAY is actually an unindexed-array.
+
+The wireguard kernel code only sends zero types, and it doesn't care that user-
+space sends an indexed array back, eg. when setting multiple allowed ips.
+
+>> +        for i, val in enumerate(vals):
+>> +            idx = i | Netlink.NLA_F_NESTED
+>> +            val_payload = self._add_nest_attrs(val, sub_space, search_attrs)
+>> +            attr_payload += self._add_attr_raw(idx, val_payload)
+>> +        return attr_payload
+>> +
+>>       def _get_enum_or_unknown(self, enum, raw):
+>>           try:
+>>               name = enum.entries_by_val[raw].name
 
 -- 
-Regards,
-Praveen K Paladugu
-
+pw-bot: cr
 
