@@ -1,156 +1,187 @@
-Return-Path: <linux-kernel+bounces-802170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E46B44E73
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:58:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51937B44E74
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D6A06536
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1155A54245B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE652E1755;
-	Fri,  5 Sep 2025 06:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FD62D320E;
+	Fri,  5 Sep 2025 06:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms4kB5hR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VoXxllUZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F602D320E;
-	Fri,  5 Sep 2025 06:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7792D0C62
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055419; cv=none; b=EjRv+4DrDR9qgh9YFj5fIqWLRjSXWSy56TfIIxa1rLGsItNLI6C6lUgMqzeBJ9EujPT65f3kNu83TVrpyV6UmlNuGwVDNV7bmsWNGJzxoQpTuEYii9oaiM946qRmuBsbwLEJgyHu1nDFxNWZOmrQLA4DwUNQMPoBx7QBPc5ZrYs=
+	t=1757055464; cv=none; b=dvI3I1YCU+vQnzlTrq3k/ZSxMYsoJeBtUVcX5NjPGhZHpbIew5OGywcYjhPxZqJvaoxIg44ZH4vYPl8eKSTbtksmi4p5v3prIeo/As106SeDcseRlvVlz29iague4HoFLKai7Bm/tkDJ70yn9OHyeVvE1CeNJBhUcTxJK0W5Nyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055419; c=relaxed/simple;
-	bh=uyFr8wxxfdR7aQYmyIRkP6+JdlV8SLol7rwk9pzJiHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9usu1k7g7TeV3irZyFFFY2TzNIp0K9WFawjBQJldaebQMf2oyAzebEGXnjEGJTncGIWkG6GQBPPfVKG7PhsSX1oOdh1K4SspjHYOLNGYCGzcQgMISi67xW1637SJceRxL1vaX0/NCSuzqQQX294hPREQAHAObkSMHa+EOjkhHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms4kB5hR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B87C4CEF1;
-	Fri,  5 Sep 2025 06:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757055419;
-	bh=uyFr8wxxfdR7aQYmyIRkP6+JdlV8SLol7rwk9pzJiHU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ms4kB5hRXdSwJtIEDgY176SzYJ9i7DwB6lYiJLEo7v2gsHfkawDrVvJxqcy5OkaZP
-	 eK/D6IvM6esNyKcKvI3475cQVfDQ675K1YAVUpfgDS8etfrbPYX7NeBYS2GAhFfYhN
-	 NddOOi3O9Ui9M4yFx4U5d6QacamueHaUSi6AeJg+Rtg8Kvh00dRLtQoPJQ7vDQ0xgn
-	 uTz/VyJeBAAVE/WViT94o+vXysBHUdKlcyRn6C/QxHFmG8v9WAQ3zwhWLmQYfF2OwP
-	 /lzkdwtBh9FnTwt0mAw6hiRlWgwghjM1GkVVG+w6GN6iNY+KYzmeObBrfcXsGUq90G
-	 Hc7YpocH8z04w==
-Message-ID: <c64f09f5-440f-411d-b2f1-6c85b9adffb7@kernel.org>
-Date: Fri, 5 Sep 2025 08:56:53 +0200
+	s=arc-20240116; t=1757055464; c=relaxed/simple;
+	bh=symcSdEcMgL3wu1d4IhrGnXzfSncHVDnyjcq9WEZlVM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j1xnJ75GxXyKmv8eonPYgf7kYvGkmo7JRUDpbT5M46Su+K+PdSe6U5jNTtg2xNC4ozg0FJycsWxEi0jcibipvcpXyWpH168UYF5ZlZ7MISetAj63J+6/fmT22ZKrZ7py0nYjGDDHX9WHjH5CZOHSjt6//xCuxnZmY7nQoUtlDs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VoXxllUZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584K5SFc012012;
+	Fri, 5 Sep 2025 06:57:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=i6iIRw
+	lL08m7ddD00gWRDzn7fpP62voWSOHllYdsQfM=; b=VoXxllUZm8+7DgckRp/NLN
+	zPYc8QI+ZJf5ogWCoo7J5wJRm06a8olnHUjPs5I4lnlQ1pJ2SVDXYCMOnl1yfuDz
+	IRdUBU3ovvzTd9CfzMYu9JseXs2+QDOMHsAXJERd+pwKPw4qWWv5Nh05Lk0kuKMb
+	46dkr7qUULAlXRms5uaUgiq6a+zMEoSr2LXCiAxDfEsdKasNhfI/FN9cYaw285Ob
+	x34bbjE+AK7fRdORJ6RsxSgN4iQ9EKI6yPsoJfx4kQHbj3BEegmP0XJr7zU4h6BQ
+	G7S/9kusQKbeFzhqa1bl7UvW7gePEjBse2wfS38iWiCCFJxDKgV/m2SrjoqE+biw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurerb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:57:17 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5856vGnm000584;
+	Fri, 5 Sep 2025 06:57:16 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurerb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:57:16 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58567HMB014052;
+	Fri, 5 Sep 2025 06:57:15 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3qy6w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 06:57:15 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5856vFrs27919074
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Sep 2025 06:57:15 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4191558054;
+	Fri,  5 Sep 2025 06:57:15 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D502158060;
+	Fri,  5 Sep 2025 06:57:12 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (unknown [9.90.171.232])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  5 Sep 2025 06:57:12 +0000 (GMT)
+Message-ID: <977ad5eef4f8726e9d5bff31b758918f0341659d.camel@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/32: Remove PAGE_KERNEL_TEXT to fix startup
+ failure
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman	
+ <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Madhavan
+ Srinivasan	 <maddy@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Erhard
+ Furtner	 <erhard_f@mailbox.org>
+Date: Fri, 05 Sep 2025 16:57:11 +1000
+In-Reply-To: <4b5e6eb281d7b1ea77619bee17095f905a125168.1757003584.git.christophe.leroy@csgroup.eu>
+References: <342b4120-911c-4723-82ec-d8c9b03a8aef@mailbox.org>
+	 <4b5e6eb281d7b1ea77619bee17095f905a125168.1757003584.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: memory: tegra210: Add memory client
- IDs
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-1-e0d534d4f8ea@gmail.com>
- <20250904-honest-accurate-bullfrog-fdeaf9@kuoka>
- <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALHNRZ8DEYq-DOC6jV8TAqGznd8e2mzfS7Xs61Gp3R5visPFzw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfXzvkHakOeeGWc
+ xIxAT6pze9qsFX2mdazJPm3UogZYYT8H/DDeR0e3NxWMqNV+L/KW/42Mqwo+Vj4yLHIwlNsxCRw
+ y4Cx1kEVZuv6j3lI0TcUCBHkL7YnImsOkm/1JuLhTws//g8cUABTtC8ph+r1EC+TalhoX3WG9v+
+ pvrcoWem1opzF2XFSOCtmMEht2oey7X0tS6pHW7HV47XoRLT4jer/ihdax65sHV//YjCa1ADgP9
+ qtuClyebYb4sdNW+ig9lIGnicxh/e74/+EmIYPkG1MmVz5u/HtnuamGZuCVlzOn+BTdTWM5DVrF
+ AAuvR8dr4sH6JcM8jC3uKEAH7/Fu6+vDPPx3x/OlXoNOAP7Eci/sRHqssn/lmEp2fs9aBD5TIuW
+ M+MFTaX+
+X-Proofpoint-GUID: HLJBueF4UV6soL6npRI4I6Onc-nK5ppq
+X-Proofpoint-ORIG-GUID: O4JRA3B6Hh-HfKmWIdX2yTs_2TdtcoRY
+X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68ba89cd cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=b3CbU_ItAAAA:8
+ a=VnNF1IyMAAAA:8 a=1UX6Do5GAAAA:8 a=kZQNDw5qEIdUIES3TQEA:9 a=QEXdDO2ut3YA:10
+ a=Rv2g8BkzVjQTVhhssdqe:22 a=Et2XPkok5AAZYJIKzHr1:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300030
 
-On 04/09/2025 19:33, Aaron Kling wrote:
-> On Thu, Sep 4, 2025 at 3:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Wed, Sep 03, 2025 at 02:50:07PM -0500, Aaron Kling wrote:
->>> Each memory client has unique hardware ID, add these IDs.
->>>
->>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
->>> ---
->>>  include/dt-bindings/memory/tegra210-mc.h | 58 ++++++++++++++++++++++++++++++++
->>>  1 file changed, 58 insertions(+)
->>>
->>> diff --git a/include/dt-bindings/memory/tegra210-mc.h b/include/dt-bindings/memory/tegra210-mc.h
->>> index 5e082547f1794cba1f72872782e04d8747863b6d..48474942a000e049142014e3bcc132b88bf1a92d 100644
->>> --- a/include/dt-bindings/memory/tegra210-mc.h
->>> +++ b/include/dt-bindings/memory/tegra210-mc.h
->>> @@ -75,4 +75,62 @@
->>>  #define TEGRA210_MC_RESET_ETR                28
->>>  #define TEGRA210_MC_RESET_TSECB              29
->>>
->>> +#define TEGRA210_MC_PTCR             0
->>
->> There is no driver user of this ABI, so does not look like a binding.
->>
->> You have entire commit msg to clarify such unusual things, like lack of
->> users. Please use it.
-> 
-> The tegra210-mc driver has these hardcoded and should probably be
-> updated to use the bindings instead, but I think that's outside of the
-> scope of this series. I will clarify such in the updated message.
+On Thu, 2025-09-04 at 18:33 +0200, Christophe Leroy wrote:
+> PAGE_KERNEL_TEXT is an old macro that is used to tell kernel whether
+> kernel text has to be mapped read-only or read-write based on build
+> time options.
+>=20
+> But nowadays, with functionnalities like jump_labels, static links,
+> etc ... more only less all kernels need to be read-write at some
+> point, and some combinations of configs failed to work due to
+> innacurate setting of PAGE_KERNEL_TEXT. On the other hand, today
+> we have CONFIG_STRICT_KERNEL_RWX which implements a more controlled
+> access to kernel modifications.
+>=20
+> Instead of trying to keep PAGE_KERNEL_TEXT accurate with all
+> possible options that may imply kernel text modification, always
+> set kernel text read-write at startup and rely on
+> CONFIG_STRICT_KERNEL_RWX to provide accurate protection.
+>=20
+> Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+> Closes:
+> https://lore.kernel.org/all/342b4120-911c-4723-82ec-d8c9b03a8aef@mailbox.=
+org/
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-If you introduce the binding, change the drivers to use it. Otherwise
-there is no point benefit in this binding, really.
+The original issue that Erhard and I were investigating was why the latest
+version of the PowerPC page table check series[0] was failing on his G4, wh=
+en
+built as part of a config with many other debugging options enabled.
 
-> 
-> Aaron
+With further instrumentation, it turns out that this was due to a failed
+instruction patch while setting up a jump label for the
+page_table_check_disabled static key, which was being checked in
+page_table_check_pte_clear(), which was in turn inlined ultimately into
+debug_vm_pgtable().
 
+This patch seems to fix the problem, so:
 
-Best regards,
-Krzysztof
+Tested-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+But I'm still curious about why I only see the issue when:
+
+  (a) CONFIG_KFENCE=3Dy (even when disabled using kfence.sample_interval=3D=
+0) -
+noting that changing CONFIG_KFENCE doesn't change the definition of
+PAGE_KERNEL_TEXT; and
+
+  (b) when the jump label ends up in a __init function (removing __init fro=
+m
+debug_vm_pgtable() and its associated functions, or changing the code in su=
+ch a
+way that the static key check doesn't get inlined, resolves the issue, and
+similarly for test_static_call_init() when CONFIG_STATIC_CALL_SELFTEST=3Dy)=
+.
+
+I don't understand the mm code well enough to make sense of this.
+
+[0] https://lore.kernel.org/all/20250813062614.51759-1-ajd@linux.ibm.com/
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
