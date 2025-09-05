@@ -1,67 +1,60 @@
-Return-Path: <linux-kernel+bounces-802344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C1FB4514C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:26:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33E7B45151
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA5D4863AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E62A545EDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8E7301008;
-	Fri,  5 Sep 2025 08:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E65301497;
+	Fri,  5 Sep 2025 08:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAkeWCZ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIyBx6iS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F231285C91;
-	Fri,  5 Sep 2025 08:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC22FD1A4;
+	Fri,  5 Sep 2025 08:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060754; cv=none; b=VkUTcoV4IQ4fw8z9e0MNHnptg/wmOMrSzlUZiitsAHVIWY14PVEJqAao0iU6ocpIwDRTkeo1UJUBlfCAod9NsIxRFphB3C/HX+xGPveuIM23dDt5PUfxhReut2K+wrcjNuMd92LqxRMLJfXVF943dA1E6/tzd/Omz8pdlMjEsCU=
+	t=1757060806; cv=none; b=YlFCy7sc7ABPkSJzBOIQ0R2o7wkGq3e7A47kvSah9x6wpfoSkwMDa8WzChyV5Y8nFIsZpSZHlgML12rK+TEKVj+wsqU95deQSMPqmkxa+xi9688J2FNJ1U/LX43/vk2YeRMC7IZqPWgNWmI7z9gNWONv5xvaY3luqgkD48Y1EnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060754; c=relaxed/simple;
-	bh=byLXk9YayQb5A+568vEFCj3ja7YrbHK9oUjWII1CRMw=;
+	s=arc-20240116; t=1757060806; c=relaxed/simple;
+	bh=CLdI6ur32afEiqGlVI3tRuJmZiIibp0yrP4zf7xjWyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXt29rKNfPEmF3wpqKnTmSUsWsfNSs3Cysp0r2cBf38pC0PTZ3AVBB9+maJmKtyNinAfW+cJkZiJJSdEMUd2rD2K2Ycb7iGII0Dt7MGlBPMsCChG1VUQmsWJdNNlpShOM1aUZ88HK3FBItN1K/FdtVHhkaDx0FvQEvzraJxyvmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAkeWCZ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BC9C4CEF1;
-	Fri,  5 Sep 2025 08:25:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuV0DnG2R6P/WA5U6i50YhgJT4Tc/KTbCoCoSMZHtaswCm3n0k5VqFkp20mYl57OcMyRHB9EdxL2tYTW39tG4bW7BGZH+l3x59JfmNPuPgSePaDj64u0WzT0kMySU9ziDM0L63IJluulLWpGmAr8ESz5Fj2FaINchee49QURDHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIyBx6iS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0657C4CEF1;
+	Fri,  5 Sep 2025 08:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757060754;
-	bh=byLXk9YayQb5A+568vEFCj3ja7YrbHK9oUjWII1CRMw=;
+	s=k20201202; t=1757060806;
+	bh=CLdI6ur32afEiqGlVI3tRuJmZiIibp0yrP4zf7xjWyc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dAkeWCZ/gzpXF2Q2PSsgNCE5CsXed3wRSgTFrNouN6appNs/7efas11Pny+ikmiX8
-	 BvyC7wwxM3X+cxdBt3MxANNtSw9RS5qIZQ59gzAm5aThIVqQiJwsYGogA9u4PdBuYl
-	 QzbJJqVMEid9O3KHD15YX1PF/xmv9mfZ+bUtBcdgFoTdVcGX+JtloixRoEnmUaocU5
-	 4wcfdeC+VDoWw6mbBkrRPWwPcJV1Z6H937QEnj3J5H4MhJoUCc/zX7luGpwwIg/wVg
-	 E/Qt/l1MUO3/SUS0KBtYTPUoVVQXIwWwlDQi9QC2sFtBuBoVyYVJg6RoCGAsLD2Qi4
-	 ZwE/tk74XBnjQ==
-Date: Fri, 5 Sep 2025 10:25:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 2/6] dt-bindings: display/msm: dp-controller:
- document QCS8300 compatible
-Message-ID: <20250905-indigo-mastiff-of-aptitude-b89e0a@kuoka>
-References: <20250904-qcs8300_mdss-v11-0-bc8761964d76@oss.qualcomm.com>
- <20250904-qcs8300_mdss-v11-2-bc8761964d76@oss.qualcomm.com>
- <p2okyfwfl23bip65koaqezlvhyo3z47bnugojcieuspr37xc7b@s3qwgbqmts4l>
- <d8aaff46-9e3b-4b53-a690-351253753edd@oss.qualcomm.com>
+	b=SIyBx6iSgZ9Kn2f2NyibdwkBYeeFf6rKD6Bn1S2Om0IdJ+TIbQyLwO/MmW9cQls8R
+	 yjOyC53OqpDbotMzePlWX7BsPu8EGo68qrQuiugDRhbtdhvLXUIl+cIbIycwD0asSO
+	 593JZZPtRHHi886wZ2Qh/RysPIFsewc2QmjHRXOLgJX4VlSRvVLBYS6YMyh6EZqr5U
+	 0zJ9Xz4mNRS8Orsc/uIBpnyjBL2KNr8TzdpIE/6ig2rKAT5B9OWDKhLCQA8ak0Mlmm
+	 3VWaPdwjgmj0TtMIZRFJIYnx0pRctas/r68vP+BjXm9c+iAdMjvcVoxm6zVyH9SHBL
+	 sX7fhHCBG48YA==
+Date: Fri, 5 Sep 2025 10:26:43 +0200
+From: 'Krzysztof Kozlowski' <krzk@kernel.org>
+To: Faraz Ata <faraz.ata@samsung.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, alim.akhtar@samsung.com, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, rosa.pila@samsung.com, 
+	pritam.sutar@samsung.com, dev.tailor@samsung.com
+Subject: Re: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+ compatible
+Message-ID: <20250905-cocky-woodoo-copperhead-9dadfd@kuoka>
+References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
+ <20250904072844.358759-1-faraz.ata@samsung.com>
+ <5643d3e6-a034-4e2a-babd-d82fb3d58e9d@kernel.org>
+ <08cd01dc1d9e$00d416d0$027c4470$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,47 +63,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d8aaff46-9e3b-4b53-a690-351253753edd@oss.qualcomm.com>
+In-Reply-To: <08cd01dc1d9e$00d416d0$027c4470$@samsung.com>
 
-On Fri, Sep 05, 2025 at 10:50:33AM +0800, Yongxing Mou wrote:
+On Thu, Sep 04, 2025 at 06:45:08PM +0530, Faraz Ata wrote:
+> Hi Krzysztof,
 > 
-> 
-> On 9/4/2025 9:43 PM, Dmitry Baryshkov wrote:
-> > On Thu, Sep 04, 2025 at 03:22:37PM +0800, Yongxing Mou wrote:
-> > > Add compatible string for the DisplayPort controller found on the
-> > > Qualcomm QCS8300 SoC.
-> > > 
-> > > The Qualcomm QCS8300 platform comes with one DisplayPort controller
-> > > that supports 4 MST streams.
-> > > 
-> > > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > Sent: Thursday, September 4, 2025 1:35 PM
+> > To: Faraz Ata <faraz.ata@samsung.com>; andi.shyti@kernel.org;
+> > robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > alim.akhtar@samsung.com
+> > Cc: linux-i2c@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; rosa.pila@samsung.com;
+> > pritam.sutar@samsung.com; dev.tailor@samsung.com
+> > Subject: Re: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+> > compatible
+> > 
+> > On 04/09/2025 09:28, Faraz Ata wrote:
+> > > Add "samsung,exynosautov920-hsi2c" dedicated compatible for HSI2C
+> > > found in ExynosAutov920 SoC.
+> > >
+> > > Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
 > > > ---
-> > >   .../bindings/display/msm/dp-controller.yaml        | 22 ++++++++++++++++++++++
-> > >   1 file changed, 22 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > index aeb4e4f36044a0ff1e78ad47b867e232b21df509..ad08fd11588c45698f7e63ecc3218a749fc8ca67 100644
-> > > --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> > > @@ -18,6 +18,7 @@ properties:
-> > >     compatible:
-> > >       oneOf:
-> > >         - enum:
-> > > +          - qcom,qcs8300-dp
 > > 
-> > Can we use fallback to qcom,sa8775p-dp instead of declaring a completely
-> > new one?
+> > Where is any user of it? I looked on lore and found nothing.
 > > 
-> I think we can not use fallback to sa8775p, since we don't have DP1
-> controller for QCS8300. SA8775P actually have 4 DP controllers (now only 2
-> really used). So in the hardware, i think it is different with SA8775P and
-> we need a new one.>>             - qcom,sa8775p-dp
+> I will send dt patch shortly.
 
-I don't understand how this rationale explains what Dmitry asked.
-
-Why number of IP blocks (and this is DPx, right?) matter? Are you sure
-you understand what compatibility means? Please read the slides from
-OSSE25 or just read writing bindings.
+Still no users. I will mark it as changes requested in the patchwork.
 
 Best regards,
 Krzysztof
