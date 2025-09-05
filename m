@@ -1,138 +1,178 @@
-Return-Path: <linux-kernel+bounces-803490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF36DB4607F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:44:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7019B46082
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FFDC16DE83
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:44:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A697B7A7DCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FD536CDE5;
-	Fri,  5 Sep 2025 17:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C736CDE5;
+	Fri,  5 Sep 2025 17:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlX8viSt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJ7xzK8v"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6CB3568EA;
-	Fri,  5 Sep 2025 17:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACDA352FC1;
+	Fri,  5 Sep 2025 17:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094242; cv=none; b=SlFruBpjPAR6OE2E6eJd2AMQP+YOow9owedJuEB7nJ+R7Yr7DUWgKXIV8hcmzg+S90p/9Me+yBACOeSFwkTRVfay32/Kqc8SkvtFIcsBAKzVgGcFa9c58QEhGEOTVJuwwQbc2gWATFWJXryUz8H9cB0E1Mh8K/HGnBnTDS2dFlA=
+	t=1757094268; cv=none; b=QNG4ArVxjUeF4kCQ0p1OvlR1xho9N4qy826m7F1/VkedOSKG5BvA44ev6oZqFHjcoO2HTlCwWlhJtV4dMJTMezL4+ElfJrdIL/qI6Gf+/yjFeUQwpkc7A02O1L1CLCI6Jt2LLzYbquXwUZTakZMu7Yc5KicEsXAJZJC6CqeR/3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094242; c=relaxed/simple;
-	bh=0R6uBNi0AxfzUpfBexoCE08XIxfXyiwY7sLKg5k0QaA=;
+	s=arc-20240116; t=1757094268; c=relaxed/simple;
+	bh=LO4KiE6jpQ41am0D/szy6V46uqgfkA0SAqGzswi/1yI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/dutFdNK3E93c2mq6JN5dRyuhdaOvfyDXtigZLhD3+MS4hngxDKhPTewH/+DI2cIHd6DQ1WhccgEsAwE6LchCA2ao/B7w/X8YsISXXVLp/m/dDd0xLB/etIMXs1Bqdd/8rxz3/XVwGNb3ISLPZVwM0bhg3kY5JuXIgRQX1UnN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlX8viSt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F5AC4CEF4;
-	Fri,  5 Sep 2025 17:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757094242;
-	bh=0R6uBNi0AxfzUpfBexoCE08XIxfXyiwY7sLKg5k0QaA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nlX8viStcFxK79FfJuuymzNpbjrTTtyuePmbEcriYprpXNyHMPVynqL6XQhSJCXiW
-	 4vhqgm49kw8WKmrk6DdElWfQmQfP7+Or1iQEMwjD0WJUicJccWcmFH4mUnXxjAlLqD
-	 gsu66JjFHfS6Du7juXWBtoZ1G5Tq+zQfyT71Kg/oV0EpczIOFG6uL0+r+M/5kur/r9
-	 X1eciZId07CH09tPojFm6OMji6KQ4FV8//PSWz+jVcNLPEjNbwbLGvQxBCwk57VDuQ
-	 bru1m+TRFmp+EbI4MP1c3j3cR13WPotrZMNKrjvhdRmUeLkKk43RrCkFBh1B9Pt1uu
-	 pSwr9Lo+72vIQ==
-Date: Fri, 5 Sep 2025 18:43:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
-	riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com,
-	dev.jain@arm.com, baolin.wang@linux.alibaba.com, npache@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
-	Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel-team@meta.com, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/7] selftests: prctl: introduce tests for disabling
- THPs completely
-Message-ID: <c8249725-e91d-4c51-b9bb-40305e61e20d@sirena.org.uk>
-References: <20250815135549.130506-1-usamaarif642@gmail.com>
- <20250815135549.130506-7-usamaarif642@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9wR4RDYGCS+vjoMnbYId+K6PwdtN+3cr644KJzzV7HxcFU3zbw6+8J6GNI35kylEJ3KWN6/rnTjsfoMBduvEeS2ovg1+5k9Wp/AXTLVhYnVZu3FC6wv3SZchyDJCj+pnvQ/XE5mYn3IohYrh7evuAGjwUUt1noRLK+YZMfNKRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WJ7xzK8v; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-726549f81bdso22591406d6.3;
+        Fri, 05 Sep 2025 10:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757094266; x=1757699066; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MMivriApdvV+J9nTlsMLl7BHebvMmERCWEMObfeZeI=;
+        b=WJ7xzK8vKcDlS9KixzuZZcjua0hbZ+v9dwvqi5FI8Y886eklTzAXMepcGisA+oPUJ+
+         9eVG1CtMfriLGH8Ch8tUu9qB+2AD+RPJTI/Hq/zuwWVMaNaRG4wuQA/RGJtR9pEIE7vQ
+         GjPfn7KSfsy0lxClxNHRf5K1necxE4yG4RfWfYpsSXooKp9JaEIMGMAwa7a5O8gbMOcS
+         IorzmivD6FFatd7V0FHviLZZjkj67AkzaO9/ssPEFtDpD53earuiSDZAN8nDdQ6vNtDs
+         kSCW46MPnMUJ4diEpgl5dU/Wn9aT+bDqqISCweihrzXvaCWxL6AIRLY86Ho5dNcN3l2F
+         9clA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757094266; x=1757699066;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4MMivriApdvV+J9nTlsMLl7BHebvMmERCWEMObfeZeI=;
+        b=BHoY9BgwY1X3fuXSdC+s+K0gndQJP5i+rVX9o6Dkuco50O5a6X47Pv/G+Xtjd0IRTC
+         EPR1zANaUZZ/TCsQ/9MOXwfupzp5wjQmGqmJQ0wS4rHKSnk2b8aljiYeB0jfmSd+cL6O
+         Y5BEDieb6HknbwdSKKv3Fa/3lZozsxnS3u1qyMqRN4Gw5VQHSLPY1jWYe9oNXr/j94pv
+         3yrPT8T5knegpyLldLbPUGe9C4P4CRvGmERnnOlr0JTspAOCA9Dtkpu1xAOKrKs9XVit
+         vdOUgWCMMmq8pNoJlEesEkinW7PHcaYRmJ8Hi0j3b1mp+8lM/KPixlBhavxVZyRQCXzp
+         SedA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/dLh2IDtvKlWUyCdRUPgc9zhQz7uZgoBkSb9vw2mDWb3VILuqhHHocTSfIfEnyS0rvccrt5EHVXgkuU+rOk=@vger.kernel.org, AJvYcCWK1InkV+BbqGwHT/gEuVWOzW+VgOY+vEc+JJlVzYsjTcpgjVxjDP17QxY7sVBZYDKYt9E2pAqjJlTnWoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8Jf4gW0yGmYJedvSXtZZNQt/eXS3PoOXQOtYy9Yp2kVwNvkwh
+	Hm+XQbIxXQO7BSgtnMq9zF4AdM9IxBV+zlQiVmf3g3gg+1Ik0AzCudhc
+X-Gm-Gg: ASbGncvVc7cOOVoEwYajuhoHiu5v9IpbZrxKntDX0XX2SrAdywWkJ3Vp/R72jwlJqRq
+	z7q93JOEJYGcEXJbL+sS0aplYZ40uSGQ78O21YlnSnagvRoupqq7cDNRdjFccMjszpNCNrK8Jb9
+	y+w4URCzsAGoN0iL6Mrh35nNPEDQtzt4MOsikY1rArXFRy2IjXFjK7kDiaRauuIMIrhCr6HWdU7
+	ab1fkIPGBfNeB+l9v4S/s8SE32kwqBDND5pOWkOb1g6mB4RIb/lkpPGZAwxRHwTs3ws30eRSQNe
+	FBypNLz0NZ+IphibsMhIssBuzKGxws2J20FchuOI7brtyBSHTj7VYmE+/r52M+gkMADw5Ijxj4/
+	ONVXQub0ysMYNyinixoj18jJZACMtTVjlGOw4Jecr9jjG+JnIQbB/BWLOLybLspU5AMb5LhTXTo
+	EiqgzVeqxgXSNaCqqs5UDSJHU=
+X-Google-Smtp-Source: AGHT+IF1L+URg8U4WwEJK3U9L8xlVjJwUAqGmeZJKAKWvFMcsKy3K6HHiQnl0D0H2clT6ss5q74CfA==
+X-Received: by 2002:a05:6214:2249:b0:71b:6414:fd06 with SMTP id 6a1803df08f44-71b6414fe25mr217741486d6.27.1757094266007;
+        Fri, 05 Sep 2025 10:44:26 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-72708307ba3sm42881716d6.42.2025.09.05.10.44.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:44:25 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F15E7F40066;
+	Fri,  5 Sep 2025 13:44:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 05 Sep 2025 13:44:24 -0400
+X-ME-Sender: <xms:eCG7aOBpqh2-YuqnMGF62OmhNcTAi-hhGMVHrJN9z5lBuTspHyA1Ew>
+    <xme:eCG7aDMt1LluMLCqGb2gGaSMOAHarcEOK5jWGr8YtLPDx7zNJJfDz7XuQYUSygxnB
+    zXEQtFg_SGJKVchcw>
+X-ME-Received: <xmr:eCG7aIPDtrFWHHG8_w3igFUYPAa8KhBonIqypWSzBdYfrfQXjFtheXeBAE6753DmvE8xaxN_fhyD6X5-XfEvMKvcj1wO_kJX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelhedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgv
+    nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
+    hnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffeivden
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquh
+    hnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudej
+    jeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrd
+    hnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehlohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdr
+    tghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhope
+    gsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhh
+    ihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlh
+    esghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmghhrohhsshesuhhmihgthhdrvggu
+    uhdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:eCG7aHuMZVLkncjrMRhp5xBwUc2Lr5BLrCZZ9Qq-ze3fa8URIKZYSw>
+    <xmx:eCG7aN9xdseulAesFhyIIvBoeJCD7T3xfDQgY3k4TOAwtFkt2EPnFQ>
+    <xmx:eCG7aDFtaxXoJTWbL17b0ULAdw3Qdzf9XpvY8Qnzu_qhkRtw3TNGUg>
+    <xmx:eCG7aERDumWmO30M27ZBIX4T1B6Oebb2ADigBTeAhhpQhvDitq708g>
+    <xmx:eCG7aJtyZKcll_gAzmiOX6PHyrcbgG19Ux0WljGObCguioMJNTbk_u1d>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 5 Sep 2025 13:44:24 -0400 (EDT)
+Date: Fri, 5 Sep 2025 10:44:23 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>,
+	Alban Kurti <kurti@invicto.ai>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: pin-init: add references to previously initialized
+ fields
+Message-ID: <aLshd0_C-1rh3FAg@tardis-2.local>
+References: <20250905140047.3325945-1-lossin@kernel.org>
+ <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wfr62XQcW9Sye/W3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250815135549.130506-7-usamaarif642@gmail.com>
-X-Cookie: Yow!  I threw up on my window!
+In-Reply-To: <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org>
 
+On Fri, Sep 05, 2025 at 07:18:25PM +0200, Benno Lossin wrote:
+[...]
+> index 606946ff4d7f..1ac0b06fa3b3 100644
+> --- a/samples/rust/rust_driver_pci.rs
+> +++ b/samples/rust/rust_driver_pci.rs
+> @@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> Result<Pin<KBox<Self>
+>  
+>          let drvdata = KBox::pin_init(
+>              try_pin_init!(Self {
+> -                pdev: pdev.into(),
+>                  bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c_str!("rust_driver_pci")),
+> +                pdev: pdev.into(),
 
---wfr62XQcW9Sye/W3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, this example is good enough for me to express the concern here: the
+variable shadowing behavior seems not straightforward (maybe because in
+normal Rust initalization expression, no binding is created for
+previous variables, neither do we have a `let` here).
 
-On Fri, Aug 15, 2025 at 02:54:58PM +0100, Usama Arif wrote:
-> The test will set the global system THP setting to never, madvise
-> or always depending on the fixture variant and the 2M setting to
-> inherit before it starts (and reset to original at teardown).
-> The fixture setup will also test if PR_SET_THP_DISABLE prctl call can
-> be made to disable all THPs and skip if it fails.
+Would the future inplace initialization have the similar behavior? I
+asked because a natural resolution is adding a special syntax like:
 
-I don't think this is an issue in this patch but with it we're seeing
-build failures in -next on arm64 with:
+    let a = ..;
 
-  make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgcc =
-CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnueabi=
-hf- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/kci=
-/linux -j98 kselftest-gen_tar
+    try_pin_init!(Self {
+        b: a,
+	let a = a.into(); // create the new binding here.
+	c: a, // <- use the previous initalized `a`.
+    }
 
-  ...
+(Since I lost tracking of the discussion a bit, maybe there is a
+previous discussion I've missed here?)
 
-    CC       prctl_thp_disable
-  prctl_thp_disable.c: In function =E2=80=98test_mmap_thp=E2=80=99:
-  prctl_thp_disable.c:64:39: error: =E2=80=98MADV_COLLAPSE=E2=80=99 undecla=
-red (first use in this function); did you mean =E2=80=98MADV_COLD=E2=80=99?
-     64 |                 madvise(mem, pmdsize, MADV_COLLAPSE);
-        |                                       ^~~~~~~~~~~~~
-        |                                       MADV_COLD
+Regards,
+Boqun
 
-since the headers_install copy of asm-generic/mman-common.h doesn't
-appear to being picked up with the above build invocation (most others
-are fine).  I'm not clear why, it looks like an appropriate -isystem
-ends up getting passed to the compiler:
-
-  aarch64-linux-gnu-gcc -Wall -O2 -I /linux/tools/testing/selftests/../../.=
-=2E  -isystem /tmp/kci/linux/build/usr/include -isystem /linux/tools/testin=
-g/selftests/../../../tools/include/uapi -U_FORTIFY_SOURCE -D_GNU_SOURCE=3D =
-    prctl_thp_disable.c vm_util.c thp_settings.c -lrt -lpthread -lm -o /tmp=
-/kci/linux/build/kselftest/mm/prctl_thp_disable
-
-but the header there is getting ignored AFAICT.  Probably the problem is
-fairly obvious and I'm just being slow - I'm not quite 100% at the
-minute.
-
-Thanks to Aishwarya for confirming which patch triggered the issue.
-
---wfr62XQcW9Sye/W3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi7IVgACgkQJNaLcl1U
-h9BkKAf+JqqrHvX7cSXvElB+KK5JJPomvr2GjT43I3RCnUxuhhf+HNozf1vZSVsh
-8ouaFjM+bdFsoFZGH+lHQrwf1jASur/DGPQf77HWkWGyXoT9DU0TC4/aFBydTyHD
-HOhxlD64/GHWMcf4EiYbqAQUVwWItGmpA7A02pWTHKMqP2mRlNfAIBnuGYhX+yng
-T5icV/TPDU+vgWkkGTq5gNCWwwsD6aoxTE5mXDPkiGvQwJ5APXoYiAei4h7bj3Ob
-aWBr719s4YylshIwSt4XX7WP6FYex3GtCSrOGUCFoV9JA18UBWbWKb/Kemgb/drt
-Um6GBJNcKG8OSXdAFAeidRIrg5wqGg==
-=7I+y
------END PGP SIGNATURE-----
-
---wfr62XQcW9Sye/W3--
+>                  index: *info,
+>              }),
+>              GFP_KERNEL,
 
