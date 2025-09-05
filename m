@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-803108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336F2B45AA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B55B45AA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD367C34D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818175C0575
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56653705BB;
-	Fri,  5 Sep 2025 14:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A98D3705BE;
+	Fri,  5 Sep 2025 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcESRKBR"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hj9h4lTw"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBF02D77E6;
-	Fri,  5 Sep 2025 14:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600233705B4
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757082888; cv=none; b=LvJGR9KCKe+OMbDs7zG5yPToAW+recdpl6Gzpbiwkx6+gTbkYwGUDGo0/9U1nnHWcDY3+uo8KYcllcP0FkHb1At43+J7QeWsjzWsQlrJs9xEGDt/HlRFB0cHhqnl+Xw42mKAmSIvsP5ggozxU/8XIdRwDNtRLItyqTQ3Lf2WZeI=
+	t=1757082931; cv=none; b=TEGvX0ClbCWVaVG9juZJ8CCzwruJFK42wl96sPjIpqVn/ERWDa39wpCQzpTU0yhbYJHXFEhvpPZSg0ZTv6P4Omrvn51nQD5qh8GcAXA+bNCktcdE7GsANYo+kdO9MPdhQyyjmjJlNQfwf9bzBilsXO4H6TXoLRZmLKTyt2sXVw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757082888; c=relaxed/simple;
-	bh=An5OeLhhktgvzZSR/tjElJ0ESuFfsrsCFiF1iASjjyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=knwB9w5du1qQ7DOSM2wn1zOfgQ/R6h4fQBctgDP+2EE+ikmE4DWahxIIiYKqn61iuWxm37f+pscDpnxU/281Gu1DUG/lUUhC0gqZuAXc9trzgr5yB6telfdBHhTKyr81BRTLP/Qyx3aS0/Soc7N0A4tCCHS9jEU0JGcYDQGNNik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcESRKBR; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1757082931; c=relaxed/simple;
+	bh=nBqVJvIHpZ/hhIkh512pJcRlR7IMGeiScyT8OJkadCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FyLT3WaVRH4kR5SDSLj61pgs53BBIr/VWGwJcIpnfGWhrkBom1L4T5RocOuV+HvDVeefmYwinFXbNwcTn/tLW5/ie1YY8XprQSByTngb+LxqN978MD8DQtsjP5jVoE0WAkgjK3Y9nXhvNjhrgslXuHK8rpDc+4CV7WkT4ViRiuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hj9h4lTw; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b804ed966so9525655e9.2;
-        Fri, 05 Sep 2025 07:34:46 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f6d7a2a09so302527e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757082885; x=1757687685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/swEdJd1Td5Geu1KnF2rcQJUWdhHiYAaX5DDanlgkU=;
-        b=hcESRKBRiy0dqH+iOrBfnx61wg+KJU1qdBtD++Wi6Rz3N4AbsVf9FxL23A0b1JKsNe
-         6MJIYEkUQ57Fc41W9r0OS2lEwbZk+vCbw7SgzzGjx6tug0YGUWtGts3EkX+R37HbY5+B
-         Eo2aDspZYg8Sxm0t0RvmWiKTBqndS7jHM+UitmJOaBi2STEaXCBnUcoQorbRo/iKcrPN
-         yzuQkKGliIUS2Qw1ww+mqblPWreBrQ0fKqUfA/zHQi6m3LWYXF4w/23ec1/JcHoa6EQs
-         MFoZ/VGYlr5N4/NbR6KUNhMHTd5sOW+UokBMiIXs3bCwO/Xd5SDibySzpVQ41i2m8euu
-         qeRQ==
+        d=gmail.com; s=20230601; t=1757082928; x=1757687728; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wBMMkeCxHosHV7c8FxU0uPkYWEXN7KfNUsOKbUcY+ww=;
+        b=Hj9h4lTwniaEeGeFQdFctyeqaC/S8l9svytLS/XYKNcMU2ajeYZYKSdJFvZu0X8Zxw
+         1n9QxxYkXSXmjjbPagNc3erjXiV7oP0aD9BkbO/62vNqrkiz39TQLJ8kxYvj+nIcyqEW
+         KOGTbvhgAC0U1Pb0mMxL8TKgG12fdMwi8XnjjLhqhoriWiWXQDMg27uy4Tz1rHvELxnX
+         S5vNvVKxq+nqJwd8Bm0s9Sg6oQgNZnDz1HLT3ZegU41R/P60ZMKPshXFLVN7anDwo3Dm
+         OwUtjFM1cYRRYdKXVE/s1Dt8Ua8077tZe+UZudUZFZiyenzqjKDplKkZGNYceJgBaRZt
+         BA6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757082885; x=1757687685;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1/swEdJd1Td5Geu1KnF2rcQJUWdhHiYAaX5DDanlgkU=;
-        b=lNRTdkgUc33m1ba2nAgfm16YCorqGi3WSR+8vWyBm3PXnpeWVy6IsNWsjSz1kHIJeO
-         +aWIik41oqgPZzuCmRjxG20V1/d24tv4BDbEqTd4l502+GNqSBY26MJCxImJkKDHAOaT
-         aVIDILnF9Dxmi73lPxzlkpPzuMWihh2C3ob/FZEljtgr0KpQWA+qYAzCZX+PVKSaaxfQ
-         RneRdjbpcLmU2m3eFprKGhZnePxFCo2JrXlOws6Qh6Pdjmp0bFkNGBQaD0pyFkQZD+IV
-         kg2dBy2/2P2mMROJxIOio0uiIGjpla11Kuax8Xo19xjGz4mpQTXUcR8RWLckpsbDizrl
-         uUyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5HrH4iqFvjd30QqPOKtkeAx2huW4E4cZsGCip1RExpahXfzgUOgAZ+KeukHZy2H9Jrehqyoj37zHkRj2TwLP0HIs=@vger.kernel.org, AJvYcCVfj4yb1b6t8bo8I9FTV16ltC07gQrIpWcoWyjdnkkDd9A2wfUZFrV8Qbd9e+FCYKGhSneJ2UCPrPgjh6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWJDeJSmyId0LeQPcEvrzcWwPz/FYg6F+eWCh9aES9cVdX0aR9
-	rMFHRadJayHT/F5bjfALEOTyo2O5edEl0waHB+whxjunRXKaqn5C3Ido
-X-Gm-Gg: ASbGncuUl+JenLdb5SJCKjNHu9c6YlhWDHWsWpgIRCrIuV33/to8tPiT4nch92ZQqqU
-	m4owvkLsph9lgv+zYXDdHYABbAewpGkOiN4u2IGVn89Yd8W5690Lv2a7N0Sibm0u8JWSDrg4nMV
-	Sb88mNCLm9FI6z/MjEmD6GJejDF5Cu1ofJtlbJj/tn0b3yqF5g1DfXRKpHCVMz4yRTsCHAqeRlH
-	ihMJAoSrGr07YIi478ryhJ4uGTmK9j18UE6WIZTbjFm8hRr6TL1AFOXDr3fc4Iy/5aj3deCVoGc
-	v0eCBCnDXgPVGArkO608r20koMLLR4js+KpG1Kkd1zg3PnuIv1h7rRSO6gDRmL846tZ3uuqJ1dn
-	xkl3/PlPlCsxZxEKn3OoJpp1ll5uF0yXGlSIxNu+/R+LPx00EGhJcGckmULMA2JgT1yBG76Llt3
-	AXyg==
-X-Google-Smtp-Source: AGHT+IG+J6hq5ma4/laDmyWTiAnHplDrbt1185O+2JmrbNZtNtlGgTZRZIVJnlXYwEVxq7AHjEQhyA==
-X-Received: by 2002:a05:600c:1394:b0:45a:236a:23ba with SMTP id 5b1f17b1804b1-45b85575801mr182513835e9.22.1757082884841;
-        Fri, 05 Sep 2025 07:34:44 -0700 (PDT)
-Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd6891d23sm35355095e9.4.2025.09.05.07.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 07:34:44 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Brian Masney <bmasney@redhat.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH] MAINTAINERS: Add entries for Renesas Versaclock {3,7} clock drivers
-Date: Fri,  5 Sep 2025 15:34:38 +0100
-Message-ID: <20250905143441.7082-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1757082928; x=1757687728;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBMMkeCxHosHV7c8FxU0uPkYWEXN7KfNUsOKbUcY+ww=;
+        b=HQGI1dL64T3hdVP+y48yhGnsuu8wR4vFd2qSJfwojCPYzw09NFW6OqlgeXEHP+mafg
+         HSvQwzlkw20OlCp957sqtI1DicQqHX8PIJiw44INXndD4UpMSur1w1nZKR2FkvxIrW0G
+         TONWcStXFrvriVFWq1jJOCJyhAcSIAFF9Ttj3f6DEvVOuacDQsgGiAGeyEs8vsoU1hsL
+         P18g1owX67KLxO++BDNrssU3j+5+UKX+6qSPn2nYQ6LkhJBkXILYZT95HVW94I6Rnmbi
+         L9156vCk7ydkO/ZS/rvsAlVZzeEt4vOhH5XxAXDdXvcCxNHRi+l2PFR19sp8PIxCgoX0
+         wTcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpSOegbcq/bOHHLFTzCNLVkF3iLkCw2GxaOwztj1eag2lW9uQD8AYUg6sVflB7UACIL9I3HrFd1e3x1U4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzERiZvLRM47p9KN1apZg+eC9gikeUqKZXFNyEpNRwutuUgGlhj
+	1gf/vPR5l44VeBiEizy38rXOMpE7mK1hXyemnjzPWj8bk6cXlEaT/sBX
+X-Gm-Gg: ASbGnctbFOOFl7dpIudHE6kwv9OLDibdmiDSbZpKqbaVZaSp2znUqenJ0B70LrILQUf
+	dh4eL3RPs23s0zzY9dE4waodBbnuQEk9IL5a9wrlU39xod6dR8Cn1aLCVwdhogtt8IQoRWwZw46
+	E+oJ9/tcHffkJyb/XO8sAL37X5V4UQL2l2WXnVo0CiWR0nb2C+Q2Gz5G92+7m+L2FqnG8z1N8zO
+	/nKAoBqM05zw9x4EOqRcxBgp0ddm2bh4Yaslxj5MjEm39GJvlzW4LcBcReWBrhEdz4XV6lN2y48
+	iJ5hkptR14o2ZAI4H2pb9+BEB04ikJ1KE4SfMEMK1cnrsSwNR0+l8a8npeFpf80LPsQAvOOoGX7
+	4XKoThMuUiwn4Y0kRHz1iLhhsfYrE7S4jOZnoun4=
+X-Google-Smtp-Source: AGHT+IG4masltMaevxRMKJ471lFxHbeaLe9lEpEOz6RdTaqnQgxzkAWchzUMWXSGkj3L9K+f4Q+ZOA==
+X-Received: by 2002:a05:6512:31c7:b0:55f:67de:343e with SMTP id 2adb3069b0e04-55f68b7d516mr4140045e87.1.1757082928376;
+        Fri, 05 Sep 2025 07:35:28 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfc25bsm1820494e87.98.2025.09.05.07.35.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 07:35:27 -0700 (PDT)
+Message-ID: <7563a670-0118-4110-8ad6-7771f22bd046@gmail.com>
+Date: Fri, 5 Sep 2025 16:35:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/vmalloc, mm/kasan: respect gfp mask in
+ kasan_populate_vmalloc()
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
+ LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+References: <20250831121058.92971-1-urezki@gmail.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250831121058.92971-1-urezki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add entries for Renesas versaclock 3 clock driver. While at it
-add myself as maintainer for versaclock 7 clock driver as Alex's
-email address bounces.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- MAINTAINERS | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 8/31/25 2:10 PM, Uladzislau Rezki (Sony) wrote:
+> kasan_populate_vmalloc() and its helpers ignore the caller's gfp_mask
+> and always allocate memory using the hardcoded GFP_KERNEL flag. This
+> makes them inconsistent with vmalloc(), which was recently extended to
+> support GFP_NOFS and GFP_NOIO allocations.
+> 
+> Page table allocations performed during shadow population also ignore
+> the external gfp_mask. To preserve the intended semantics of GFP_NOFS
+> and GFP_NOIO, wrap the apply_to_page_range() calls into the appropriate
+> memalloc scope.
+> 
+> This patch:
+>  - Extends kasan_populate_vmalloc() and helpers to take gfp_mask;
+>  - Passes gfp_mask down to alloc_pages_bulk() and __get_free_page();
+>  - Enforces GFP_NOFS/NOIO semantics with memalloc_*_save()/restore()
+>    around apply_to_page_range();
+>  - Updates vmalloc.c and percpu allocator call sites accordingly.
+> 
+> To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 451769ebb7e7 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc")
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b13848dade9e..7a7478305bf1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21704,10 +21704,12 @@ L:	linux-renesas-soc@vger.kernel.org
- S:	Maintained
- F:	drivers/phy/renesas/phy-rcar-gen3-usb*.c
- 
--RENESAS VERSACLOCK 7 CLOCK DRIVER
--M:	Alex Helms <alexander.helms.jy@renesas.com>
-+RENESAS VERSACLOCK 3 and VERSACLOCK 7 CLOCK DRIVER
-+M:	Biju Das <biju.das.jz@bp.renesas.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
- F:	Documentation/devicetree/bindings/clock/renesas,versaclock7.yaml
-+F:	drivers/clk/clk-versaclock3.c
- F:	drivers/clk/clk-versaclock7.c
- 
- RENESAS X9250 DIGITAL POTENTIOMETERS DRIVER
--- 
-2.43.0
+Reported-by: syzbot+3470c9ffee63e4abafeb@syzkaller.appspotmail.com
+Reviewed-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+
 
 
