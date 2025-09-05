@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-802681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37760B4556E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:57:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DF1B45575
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097931BC09D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E915016D801
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804D230F92E;
-	Fri,  5 Sep 2025 10:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D323164A4;
+	Fri,  5 Sep 2025 10:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C3Cy+9n/"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="np7fmyJ5"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AACD304971
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62C331196F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069836; cv=none; b=D7Oc9Vc1cwAm4V2lnUrn/McYDEr840y0Qrs2sQE9dmJBn8LqqOTceyMSVwHWyyneJa1+Wmbtlk4d7EjDujfM+y/MvJiAZP7w4aMUjUZOL4jEZUKncaeJhvBRo5VR865KRw6n8LmEokMjJqxRlxG52LwohjHSySup0iAIm5TrsB4=
+	t=1757069840; cv=none; b=Avt5OXISiGjiBJMrGsrJ8ORn/nJBX1Tk04W6qbwAPBkDpvnIups9DeGRlAuWlSiNzZfSyKps1X8KtQdty4dv69N6XjmbCfJ6qR0XyPHg3SSOXPNM6vzc+YxTlDnNH9yY8H5/8qaeMwdDC3Qf6BvyEidBQ3JsuJZrawJnPCXqMmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069836; c=relaxed/simple;
-	bh=RSJzYZlDxkL2Zy3UrARBJp312LIvbf6NXFLstWjbGVA=;
+	s=arc-20240116; t=1757069840; c=relaxed/simple;
+	bh=y0fxstX70POgWyLYj4Oli9B/nfM1S2JwmH1qdfNILbM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=cR3+PAzb6CWuzezxgiWpk+FGRj6kPcRNcSYjz5g/5SLikvSjOSJs+vkM6RuI3zNN6Wk/YrdejL3hYZCDJQu5CNE6HlhKutWqmVC9wxo2ZLbkfKO+R9PXJSkYvqDwF2Yhlzul1XebJBkrxL+EXBfm8sHCwB076A5FRZF56bG0p/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=C3Cy+9n/; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=mUNRFKsGoIPq7egNE6+ta5IxlvuyDGsHyihtpOZ73zZaZuMpWKh3PjEdKLK3STPRjoh6B8YR2vi9oYSLKCK0Qj+I2f80pTaR83RZ+8mQuuym5gwOCUlfd9nuuZ+/nH8xrZ0EZm/UDoe7jB0jkzDK/xNS4tc/MuZoQaHa6HS2BcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=np7fmyJ5; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905105712epoutp034ce1da1dc50378cba335fcd6ea85797b~iXbQHA-hd2111321113epoutp03c
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905105712epoutp034ce1da1dc50378cba335fcd6ea85797b~iXbQHA-hd2111321113epoutp03c
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250905105715epoutp0431db32695af1a0a63a6ffe94815640b7~iXbTCZVvh1299012990epoutp046
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:57:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250905105715epoutp0431db32695af1a0a63a6ffe94815640b7~iXbTCZVvh1299012990epoutp046
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1757069832;
-	bh=qJD/glqqVPAbqFKdjl/N/YrzUzP6uBCpQtLsG4jXb+0=;
+	s=mail20170921; t=1757069835;
+	bh=ooWfYBgMzL1HgRQvYlxiux0h/MzDlMT3KW8zBL4DMug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C3Cy+9n/uklU9Di4eZN5DibPU851q1xpx8CoAzByIZTyXsCQBaP0DcN4HU2MmWfpd
-	 ssAxJgNyjhKD5AjLeBVLecHIPB7s1lkio9kcJ4dqt29LA34EWXtZXTGD93gCDIfudR
-	 tCn+u8KF/WU4qMxxZAFZQLDmk4W9EiOXS6Hy81/A=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	b=np7fmyJ5H9lGa1PORLtAIWKDb92ferHWfmhRaXTwdusrOLUZmZfSFeO8hldaUW2lW
+	 4AXYN/aVqsQ99X5X3PPPxKLeTtdCJMyaL5vLRGj1zdJePPLLolGEMY1b7t1LVPRyyn
+	 8/5UVhrrgKEbbHq1/mADOW3N/TylU6osBGRGvflE=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
 	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250905105711epcas5p4a6a8fa6a9a2ecf20b1b1cf1ce26e905d~iXbPjhsFA2254422544epcas5p4y;
-	Fri,  5 Sep 2025 10:57:11 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cJCwQ65Myz6B9m6; Fri,  5 Sep
-	2025 10:57:10 +0000 (GMT)
+	20250905105713epcas5p41d465581cf2290d58cd98c4b0a4c643c~iXbRWBSlb2479124791epcas5p4b;
+	Fri,  5 Sep 2025 10:57:13 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cJCwS5XCdz6B9m5; Fri,  5 Sep
+	2025 10:57:12 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250905105710epcas5p10516745944f09e262f41a5e5dcfce5f8~iXbOCGQz32174421744epcas5p1c;
-	Fri,  5 Sep 2025 10:57:10 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250905105712epcas5p35b5f24b8570c050b7ee675cb26f8ce43~iXbP9aZN20553305533epcas5p3r;
+	Fri,  5 Sep 2025 10:57:12 +0000 (GMT)
 Received: from bose.samsungds.net (unknown [107.108.83.9]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250905105708epsmtip243c001c810412d90b37b72a2aca06f3f~iXbMURmgC0714207142epsmtip2A;
-	Fri,  5 Sep 2025 10:57:08 +0000 (GMT)
+	20250905105710epsmtip26d1fd9792e6bbd2ec4ada09f930c876f~iXbOQqDrP0831308313epsmtip2T;
+	Fri,  5 Sep 2025 10:57:10 +0000 (GMT)
 From: Devang Tailor <dev.tailor@samsung.com>
 To: alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
 	conor+dt@kernel.org, alim.akhtar@samsung.com, linux-rtc@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	henrik@grimler.se, faraz.ata@samsung.com
-Cc: Devang Tailor <dev.tailor@samsung.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 1/3] dt-bindings: rtc: s3c-rtc: add compatible for
- exynosautov9
-Date: Fri,  5 Sep 2025 16:35:52 +0530
-Message-Id: <20250905110554.2212304-2-dev.tailor@samsung.com>
+Cc: Devang Tailor <dev.tailor@samsung.com>
+Subject: [PATCH v3 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
+Date: Fri,  5 Sep 2025 16:35:53 +0530
+Message-Id: <20250905110554.2212304-3-dev.tailor@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250905110554.2212304-1-dev.tailor@samsung.com>
 Precedence: bulk
@@ -77,37 +75,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250905105710epcas5p10516745944f09e262f41a5e5dcfce5f8
+X-CMS-MailID: 20250905105712epcas5p35b5f24b8570c050b7ee675cb26f8ce43
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-542,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250905105710epcas5p10516745944f09e262f41a5e5dcfce5f8
+X-CMS-RootMailID: 20250905105712epcas5p35b5f24b8570c050b7ee675cb26f8ce43
 References: <20250905110554.2212304-1-dev.tailor@samsung.com>
-	<CGME20250905105710epcas5p10516745944f09e262f41a5e5dcfce5f8@epcas5p1.samsung.com>
+	<CGME20250905105712epcas5p35b5f24b8570c050b7ee675cb26f8ce43@epcas5p3.samsung.com>
 
-Add "samsung,exynosautov9-rtc" dedicated compatible for
-on-chip RTC found in ExynosAutov9 SoC.
+The on-chip RTC of this SoC is almost similar to the previous version of
+SoCs except for S3C2410_TICNT tick time counter, which is used in this
+driver but not applicable for exynosautov9. So re-use the existing driver
+skipping disablement of S3C2410_TICNT in s3c24xx_rtc_disable() callback
+via a new boolean member of s3c_rtc_data.
 
+This has been tested with 'hwclock' & 'date' utilities
+
+Suggested-by: Henrik Grimler <henrik@grimler.se>
 Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/rtc/s3c-rtc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-s3c.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-index bf4e11d6dffb..5daee2a5f866 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-@@ -13,6 +13,7 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
-+          - samsung,exynosautov9-rtc
-           - samsung,s3c2410-rtc
-           - samsung,s3c2416-rtc
-           - samsung,s3c2443-rtc
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 79b2a16f15ad..8fc5b4582b6d 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -48,6 +48,7 @@ struct s3c_rtc {
+ 
+ struct s3c_rtc_data {
+ 	bool needs_src_clk;
++	bool use_s3c2410_ticnt;
+ 
+ 	void (*irq_handler) (struct s3c_rtc *info, int mask);
+ 	void (*enable) (struct s3c_rtc *info);
+@@ -369,9 +370,11 @@ static void s3c24xx_rtc_disable(struct s3c_rtc *info)
+ 	con &= ~S3C2410_RTCCON_RTCEN;
+ 	writew(con, info->base + S3C2410_RTCCON);
+ 
+-	con = readb(info->base + S3C2410_TICNT);
+-	con &= ~S3C2410_TICNT_ENABLE;
+-	writeb(con, info->base + S3C2410_TICNT);
++	if (info->data->use_s3c2410_ticnt) {
++		con = readb(info->base + S3C2410_TICNT);
++		con &= ~S3C2410_TICNT_ENABLE;
++		writeb(con, info->base + S3C2410_TICNT);
++	}
+ }
+ 
+ static void s3c6410_rtc_disable(struct s3c_rtc *info)
+@@ -550,18 +553,21 @@ static void s3c6410_rtc_irq(struct s3c_rtc *info, int mask)
+ }
+ 
+ static const struct s3c_rtc_data s3c2410_rtc_data = {
++	.use_s3c2410_ticnt	= true,
+ 	.irq_handler		= s3c24xx_rtc_irq,
+ 	.enable			= s3c24xx_rtc_enable,
+ 	.disable		= s3c24xx_rtc_disable,
+ };
+ 
+ static const struct s3c_rtc_data s3c2416_rtc_data = {
++	.use_s3c2410_ticnt	= true,
+ 	.irq_handler		= s3c24xx_rtc_irq,
+ 	.enable			= s3c24xx_rtc_enable,
+ 	.disable		= s3c24xx_rtc_disable,
+ };
+ 
+ static const struct s3c_rtc_data s3c2443_rtc_data = {
++	.use_s3c2410_ticnt	= true,
+ 	.irq_handler		= s3c24xx_rtc_irq,
+ 	.enable			= s3c24xx_rtc_enable,
+ 	.disable		= s3c24xx_rtc_disable,
+@@ -574,6 +580,12 @@ static const struct s3c_rtc_data s3c6410_rtc_data = {
+ 	.disable		= s3c6410_rtc_disable,
+ };
+ 
++static const struct s3c_rtc_data exynosautov9_rtc_data = {
++	.irq_handler		= s3c6410_rtc_irq,
++	.enable			= s3c24xx_rtc_enable,
++	.disable		= s3c24xx_rtc_disable,
++};
++
+ static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
+ 	{
+ 		.compatible = "samsung,s3c2410-rtc",
+@@ -590,6 +602,9 @@ static const __maybe_unused struct of_device_id s3c_rtc_dt_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos3250-rtc",
+ 		.data = &s3c6410_rtc_data,
++	}, {
++		.compatible = "samsung,exynosautov9-rtc",
++		.data = &exynosautov9_rtc_data,
+ 	},
+ 	{ /* sentinel */ },
+ };
 -- 
 2.34.1
 
