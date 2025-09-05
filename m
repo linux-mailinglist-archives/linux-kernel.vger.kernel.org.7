@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-803033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDDCB459B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40611B45999
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B28A63F5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 143561C21F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56AE35E4FC;
-	Fri,  5 Sep 2025 13:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4B735E4C8;
+	Fri,  5 Sep 2025 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc1kqRMb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bsp2NMjD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A5535CED2;
-	Fri,  5 Sep 2025 13:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAFA27AC5A;
+	Fri,  5 Sep 2025 13:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080461; cv=none; b=s0TKKnsRK3oCrOERzRmNwmxtfVLtiiDF4AZwr5G19fYNvveiABVlX8u96sFfIWXutpazsl6TVtOuyvr6njMNLxSI0iOGQuu+CR3X5BuG5zC96Dt7YKyslN3rpKe7wJpQBuTdmm9TtvK2xTMeQaIdt0EUrJqp8KKRRy6k0x3TCPg=
+	t=1757080348; cv=none; b=A+9sRqAxhJo35LoGlU2ZqjEO1EuDbiESoUFwLq9EG2i1qoM1nMpTMBYTjc0r7oR3+MXZdhmdHqlK8xtkb5hW8DBXjjuQfBK0PY+zZbINl8YVa9KzVEI6yX5WlJQ8pnZ4JrZlDJxiEPFI8edM9PLYjfGui1DZvV2GLc3/xM5xbjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080461; c=relaxed/simple;
-	bh=/UIL3+WZ7W7nXE8WmYcAAMrqnGI16yhjDphQT5v2ZUw=;
+	s=arc-20240116; t=1757080348; c=relaxed/simple;
+	bh=dJfF0Rw0L4xSQFtUq3anCWc2bDQRv8Coe7/OfF8Ir/I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gn5+mvTjFKhGE4ieHOTnEJqyyxj3488YS+mRLS2rCF+B1Kf4w/WrwfVDBkTmDcQSx5Y0ZFbNwwUakqGyy0LLTaxwHy9TvFM9Ac23SakBMNcNi8/dNwn+5cZwO1Qj5nlJX8+6rYj6GFJ1/Kfy9tWTK8IBTZHxXbuU7rK8jlORx8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc1kqRMb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8B4C4CEF5;
-	Fri,  5 Sep 2025 13:54:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QvxMz8pbMZcRKkqyU0cv4K/bn4OoFdBsmDRZpvmjDdde/crvwcNdoFLGLu1UTh7dMSEqlISkLK6NbbPy/4Szl7vGbk42row1EUn0Cs4KBl4P6irqQs6Nmi74oYO+J43EGZb8WanGErreTDR8ydHrjqJp7SnbbYX2b56N1V/qVeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bsp2NMjD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBE52C4CEF1;
+	Fri,  5 Sep 2025 13:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757080459;
-	bh=/UIL3+WZ7W7nXE8WmYcAAMrqnGI16yhjDphQT5v2ZUw=;
+	s=k20201202; t=1757080347;
+	bh=dJfF0Rw0L4xSQFtUq3anCWc2bDQRv8Coe7/OfF8Ir/I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fc1kqRMbUuMMUQw4YBHwYNhK89erJwY2h9fP496hLCXNqNa9KBrNa4mXv/2SCcrLn
-	 /u80c294kFE9OlCaylkXg0seaDXVFwbDi7puW0bfRT9wBUQ81rD5T0ZN0QS7if49u4
-	 jyNn8EqkFsyKQGDfSqTjOHcDCwCjpKUYGPLtwiDklit1PNQEUsanpdRVT/JwfYi0Oc
-	 vL33w/vi1upNbogSdLva7ZXuzClbOyThYXHy6svgGg2N5XSvbhhastxEEUOaRrwWCt
-	 DyivHbo8+Ht0W/flYiXyr+To/Uv32WshuMji6K9GcTZndWDt4mPal3oF6oR83USxQ+
-	 hzAAY0qf5/ChA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Zihuan Zhang <zhangzihuan@kylinos.cn>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject:
- [PATCH v1 1/3] cpufreq: intel_pstate: Fix object lifecycle issue in
- update_qos_request()
-Date: Fri, 05 Sep 2025 15:52:03 +0200
-Message-ID: <2255671.irdbgypaU6@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5028967.GXAFRqVoOG@rafael.j.wysocki>
-References: <5028967.GXAFRqVoOG@rafael.j.wysocki>
+	b=Bsp2NMjDEx+QYI95iBU62+tuqV+aboQL/7r+IezDpFXfH0YoWm9FLYiFiv/9RzKYe
+	 rRr/VPIa9mh3/DHl8ca3DxU7+a+3gIjcAOBQ7cXwFeIDGgu1MmWHpa/AK/O9rXTzjW
+	 knK1tkiRc+X8ddpFL0yehZTsH9G00Uw6ZTOwr9gLSEmvPbQ8kx+yH2KOFqjk1HxApE
+	 fBC0GF6IxYnRAXSndRP1tpI2ZMam/sLggsCIpZAdPB6zBf3vHrii5K0ZzmvZGS1VOy
+	 lQ1DaihOMRkjuH2xiCBKMMWNOyF8RqUk6IYCTSmK96hfvjzpqF0RwoDruVGF82Rnx7
+	 nvYVN9BGCk1Gw==
+From: Christian Brauner <brauner@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v4 0/1] eventpoll: Fix priority inversion problem
+Date: Fri,  5 Sep 2025 15:52:14 +0200
+Message-ID: <20250905-weltoffen-eintopf-551fba944be9@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <cover.1752581388.git.namcao@linutronix.de>
+References: <cover.1752581388.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1303; i=brauner@kernel.org; h=from:subject:message-id; bh=dJfF0Rw0L4xSQFtUq3anCWc2bDQRv8Coe7/OfF8Ir/I=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTsei3im99+fsm+Ceukai8q/BXf6NbE/oFj1qJp63I1d 9yMWe9b3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAR8W8M/8McY7duPLDX1H3t ZfV8tvhZLyd+6X84xWbJr66ALbfS7Hcy/OHPe+Xx0P1s7LcHFSd2lix2vC71Qtnypcvx1pU8ujN nJLEAAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, 15 Jul 2025 14:46:33 +0200, Nam Cao wrote:
+> This v4 is the follow-up to v3 at:
+> https://lore.kernel.org/linux-fsdevel/20250527090836.1290532-1-namcao@linutronix.de/
+> which resolves a priority inversion problem.
+> 
+> The v3 patch was merged, but then got reverted due to regression.
+> 
+> The direction of v3 was wrong in the first place. It changed the
+> eventpoll's event list to be lockless, making the code harder to read. I
+> stared at the patch again, but still couldn't figure out what the bug is.
+> 
+> [...]
 
-The cpufreq_cpu_put() call in update_qos_request() takes place too early
-because the latter subsequently calls freq_qos_update_request() that
-indirectly accesses the policy object in question through the QoS request
-object passed to it.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-Fortunately, update_qos_request() is called under intel_pstate_driver_lock,
-so this issue does not matter for changing the intel_pstate operation
-mode, but it theoretically can cause a crash to occur on CPU device hot
-removal (which currently can only happen in virt, but it is formally
-supported nevertheless).
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Address this issue by modifying update_qos_request() to drop the
-reference to the policy later.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Fixes: da5c504c7aae ("cpufreq: intel_pstate: Implement QoS supported freq constraints")
-Cc: 5.4+ <stable@vger.kernel.org> # 5.4+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1708,10 +1708,10 @@ static void update_qos_request(enum freq
- 			continue;
- 
- 		req = policy->driver_data;
--		cpufreq_cpu_put(policy);
--
--		if (!req)
-+		if (!req) {
-+			cpufreq_cpu_put(policy);
- 			continue;
-+		}
- 
- 		if (hwp_active)
- 			intel_pstate_get_hwp_cap(cpu);
-@@ -1727,6 +1727,8 @@ static void update_qos_request(enum freq
- 
- 		if (freq_qos_update_request(req, freq) < 0)
- 			pr_warn("Failed to update freq constraint: CPU%d\n", i);
-+
-+		cpufreq_cpu_put(policy);
- 	}
- }
- 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
 
-
-
+[1/1] eventpoll: Replace rwlock with spinlock
+      https://git.kernel.org/vfs/vfs/c/0c43094f8cc9
 
