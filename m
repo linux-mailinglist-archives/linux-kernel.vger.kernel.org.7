@@ -1,101 +1,78 @@
-Return-Path: <linux-kernel+bounces-802319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5C1B450F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E8EB450FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9288A1BC53D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1317F1BC6E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D252FDC24;
-	Fri,  5 Sep 2025 08:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666C42FE59C;
+	Fri,  5 Sep 2025 08:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Cou6lLEc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjBIK5wn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1885E2045B7;
-	Fri,  5 Sep 2025 08:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68A82045B7;
+	Fri,  5 Sep 2025 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059918; cv=none; b=eaTYhQlea3fx6L1MET5urRJjOBCk3wQhI9zmpBNe7GSV3BjlW0+UPDHcSwqLiHdNCZrRWjXL2r8/IVnOHBezh1fd7Rp9O89UPGaM/rZPqSK77tYfyK9nEi2VYq5M1eCX8HnuRSTKhiG2p+PO3NPXwdmInSWBipXL8ke8bctyA8s=
+	t=1757059923; cv=none; b=d1JUY/kkaeGLxA/Nbro4m+1W5mSOpg4v98fnV1izpOLWk9Fx5EUhWJhKfkEWOpWSv4WL1108L7c3RviB/JkTkUHnxAj0zUG5rsdjyrW0UOI80vKRi+t/gSL7nZrrFA+J4IxLIsxFaQKw6eFV6FE6I0I17846dhbPHTK9RYutOj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059918; c=relaxed/simple;
-	bh=UIitS/BrAV5TC2kzay8yvqoEA1Xou313F2oKC/IdHNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hDkOSNRnj+qQcUUrFOx71Ce8eUEJraaO6pRpig6lf7Cj2IzsWilh/lPQA4tAb+X+XlPGhx+PMfdoawfNiyzuldcSAXnO2ipGbR1qbe28CJuvet+s/RBPqDEJ8cvT6hHT56cNoaFX7euw8gYbRhEogW6RTKj+kESFwrhj3cfoDJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Cou6lLEc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757059914;
-	bh=UIitS/BrAV5TC2kzay8yvqoEA1Xou313F2oKC/IdHNs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cou6lLEcxEINkpQGfimSKKIWWcAbo+MdxXQjYZFPNNR2yIAlRw8uyMHj4oWSylfiN
-	 28Pn9kh9sOM4k5PVEtEa7zx5p7NgEAImXzEplalngZKZuHAeS8jaPeeG6NrxMj2fJk
-	 CzuIrGyAxM5Izl1GrzQoctTgWFQCaGU6JFjd1WaBJvX2d+NI5/ptpaOQemXGLGbVUt
-	 smiqE15JQ+xrl+PDad4IWGoYdXS15vco7rK8mtto8oSTjj0YaI9QsAj6QNFdAZpA8f
-	 vATYKCAkU+G6Xz6HRV84OFT1Iqs64MFkA802+usc8pAI+O2HPnq+p3xNMCUFNc+LIm
-	 bFpry9LDd9K5g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5D5FB17E12B9;
-	Fri,  5 Sep 2025 10:11:53 +0200 (CEST)
-Message-ID: <2c681013-ca03-4f0f-8fe9-44475a97dfef@collabora.com>
-Date: Fri, 5 Sep 2025 10:11:52 +0200
+	s=arc-20240116; t=1757059923; c=relaxed/simple;
+	bh=mNHu3Dq59LBMQxbgLxMaQI+8a9Nh6j71J6ILlJhwpkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZY21FQ2nwIw39hFrH3Jjs8jrc0rWeok4VxLyN4jWImp4eYEkTXRaJC7y/5t23bDsNVU2Aekb0uzpCbNYEEcQSHhSUKSLwDQyRpy4V9ubclhajcWiAZbzM+C5fG0uT97hqvKleEhsG1/CGSpZ9U6lTeTyNAwVc2wHoW15vV7rM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjBIK5wn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0666C4CEF1;
+	Fri,  5 Sep 2025 08:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757059923;
+	bh=mNHu3Dq59LBMQxbgLxMaQI+8a9Nh6j71J6ILlJhwpkI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rjBIK5wn6f7pd2b8kgpHsnktswpp0jsDZKR+mzoJkrpRqXsGOQ8Hq09cIY3lkFHJg
+	 nzUh8vJeVvCdy9sg3kNocvcU8WKjE48Xzke8Ix1mGA+L6jOujXWlGqEKQiScJzXtiT
+	 5hu0HdszSfr9/RVGP78AH7xeJ5J0/kP61EnA1qETBh7gigujUy74ck5aukJnDbbpdo
+	 ceEGFRzCva4VFLytCgA8BZFa31Uh77McjxyDjNeh9C9WbrRs7irDuQZ2wO9B2dsW3q
+	 R4hHdZ5RcHXuB6vVQasltt21cL+OyQihQpV+b/IXU6ogkDBDmcHSHfmCi11schly5c
+	 SSVP5k2l+rypA==
+Date: Fri, 5 Sep 2025 10:12:00 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2 0/4] Add pinctrl support for AST2700 SoC
+Message-ID: <20250905-rough-notorious-leech-dd7a0d@kuoka>
+References: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 14/27] clk: mediatek: Add MT8196 peripheral clock
- support
-To: Chen-Yu Tsai <wenst@chromium.org>, Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
- p.zabel@pengutronix.de, richardcochran@gmail.com,
- guangjie.song@mediatek.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org, kernel@collabora.com
-References: <20250829091913.131528-1-laura.nao@collabora.com>
- <20250829091913.131528-15-laura.nao@collabora.com>
- <CAGXv+5Fj9Hwmk2y_bZhGX0EUEY42tm3t0nTrjtV-sYhD_B-xVg@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5Fj9Hwmk2y_bZhGX0EUEY42tm3t0nTrjtV-sYhD_B-xVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
 
-Il 05/09/25 07:05, Chen-Yu Tsai ha scritto:
-> On Fri, Aug 29, 2025 at 5:21 PM Laura Nao <laura.nao@collabora.com> wrote:
->>
->> Add support for the MT8196 peripheral clock controller, which provides
->> clock gate control for dma/flashif/msdc/pwm/spi/uart.
->>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+On Thu, Sep 04, 2025 at 06:33:57PM +0800, Billy Tsai wrote:
+> Document and add the pinctrl driver for AST2700 SoC.
 > 
-> Not sure why CLK_OPS_PARENT_ENABLE was removed, but it does seem like the
-> right thing to do, since this block is always on and doesn't require a
-> clock to be enabled before accessing the registers.
-> 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org> # CLK_OPS_PARENT_ENABLE change
-> 
-> Note that I did not go through the bit definitions. I assume the other
-> Collabora folks did a good job of reviewing those.
+> Changes since v1:
+> - Update pinctrl aspeed binding files.
 
-Yes, I did :-)
+Anything is an update.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Really too vague and some time ago I am sure I complained about this to
+Aspeed.
 
-Cheers,
-Angelo
+Best regards,
+Krzysztof
+
 
