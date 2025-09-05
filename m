@@ -1,363 +1,174 @@
-Return-Path: <linux-kernel+bounces-802117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D7DB44DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:56:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09558B44DC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476941C822F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C361B209DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F146E279780;
-	Fri,  5 Sep 2025 05:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D741B2820BA;
+	Fri,  5 Sep 2025 06:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="oVt7UuR0"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022078.outbound.protection.outlook.com [52.101.126.78])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pd31JRqV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5105232369;
-	Fri,  5 Sep 2025 05:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757051756; cv=fail; b=G8D+aSY1N6YhXS8Xk/2W+pIgV0ic78VwFcWk4Wf0r2ReGaBMlBp0ysfd1SbkHc4U3Z1ZxHpLf+2ju8HsFNA5/WSi9lQCXudFUJ7xfkyDNseC5iH5i+CgqWBdLs4mZfy7OE0e+HF0n9G1pgXjKVB0iqhDdIPS+o+gREsYIRoZfuA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757051756; c=relaxed/simple;
-	bh=i8j+kYwDRcG2m548RSljiQ8FZnD//cS/w96VWBSqnOY=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BoBlHxnkBrxjWrTibG3mdcdF2yKXeukrQqccJ5R/uh5sJhH6pou2CujlZ4FWoqBN8QHkTIsRwpCyKKPT7ZtxVTYNekqaY6hTnC14LZk10BR0Na2nli9I5jhcKZIMiNMBvFhAHNh3Zs92oU7kAVd5zULHsHVdmWAVgxr+6oOahtA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=oVt7UuR0; arc=fail smtp.client-ip=52.101.126.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QC4T6msUm/EcbX7Io6e+9fp4awtCKc2stuPqa5TTpiQBAlgFUdO2oaSh3opH0A9HD11hIpCqaZnP45Ft7ABIJXYSkti2QRPNM8xpJZdh/xZLzllwQ2Bpue9dLDEUYSOQHpzQm+qqXARTa0iRu+lenF6YLNUzh0WaNa9wvkJkD1qYds31S6IbrMfDekww48meIxtpl5YJOBfr4SSyZKjzmik8stAnTrOu2rndAwWEQqbv5Hp4S9x6mF9eRtCkh1nlmcYfFyUEzcBFabrm2xkWPMiLQ1jTre3zxt/ecNbtmLxjlBiOmqvZZRTGBQG02zeu33deO0GNv/cbBkEMO1Q7XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K16rJq70k8N4iGe6InYmrZNs4ntaAMbO0Q5y4pW/zJ8=;
- b=Cr9ePfoFX1vR4vf0In3ZkYHUb1NKTjciMpj33YEkididMfFPubF1DWtU9JT6NQbRMK0jBPXLa0rh7eC+YCmPjksdrO7vlOuSQYa2vawlOsA9XoS5jAhjjMFdy7tDhIattX3QEQDUsXin6+XxPtDOy925LQXBM9FxFpJ09BY8JAPkxBTQdfYsSJAMQuIRXEnq/kllcPm7pQoWFWo3s/vdAVflr+lcOv/3CFzv67bpxxGvYnOgrOXaEhUP3AqIC0P3fplUooWKb9i1DnbEuDK1bMgoBosq/geyPyYRQji9Jpjo1YusNt0cEO0fdiZyNzESYPoOf6u8WlJk1hKesF3clQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K16rJq70k8N4iGe6InYmrZNs4ntaAMbO0Q5y4pW/zJ8=;
- b=oVt7UuR0Qj6KLS14YE86MZDs0PhqpxbuLnQgCcZTpVwyY+KuyRDQ3rN74wDdk39QS0XxayF8st+ViKodY+Awpi64pzBWm4lC5AZPhBra/Ri4hT8NvDIBFqfwo/+lCptjG/B8yb/nuu98VPwZKjcSZ0skG9rVUEwINBqWpBANAD2jLj9dOtvbi407REv6EmqvTbYjH1Q2YMw8+jMicpPtQMXbtt1DRadpp0TglfODJ1eTIJicPub8EwX0+TvhNYKdaEm6CrLPy+/lA+jFPmvkC9KpUJgAAKMZSFklPeoSSelhe50Kb5ia5pM+ukAnOuVhv+gN56pM4BWUrPYpgJ8fVw==
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
- by TYZPR06MB5507.apcprd06.prod.outlook.com (2603:1096:400:289::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
- 2025 05:55:50 +0000
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.9094.016; Fri, 5 Sep 2025
- 05:55:50 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Eddie James <eajames@linux.ibm.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU
- interrupt controllers
-Thread-Topic: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU
- interrupt controllers
-Thread-Index: AQHcGh0GPU6Ub5O2HU61CmoAvkdS+LR/4M6AgAJX8wA=
-Date: Fri, 5 Sep 2025 05:55:49 +0000
-Message-ID:
- <OS8PR06MB7541CD16E659666868EAECB9F203A@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
- <20250831021438.976893-5-ryan_chen@aspeedtech.com> <87y0qx0zqu.ffs@tglx>
-In-Reply-To: <87y0qx0zqu.ffs@tglx>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|TYZPR06MB5507:EE_
-x-ms-office365-filtering-correlation-id: c9b83b17-b016-4d40-100b-08ddec40ddd5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?e4AJKcVdiDpgRasa9pmoftdZ3KAFjt8bMD1zLOCRJvbdyCz+rsAxjm62+nNC?=
- =?us-ascii?Q?ndjcCfx6EDSZgAppuV8yEEOsm8AoDAqPBxikv0EwSGl3eBoS90j8yERYnhDV?=
- =?us-ascii?Q?7oK7XFtapHyF3dVTP2M0A9yKl8r/tc1be/ipQ2z+7eXYE9X4zAJ1zNCMxIUU?=
- =?us-ascii?Q?QoOwUxLn3KIeDGaL2CTGuZrv+aiFYT835GcyN9eCyfOmMCsPZmQMMXNH4NjV?=
- =?us-ascii?Q?o8fSTM7quiiwqZ1UkW7eTKRf1w2WmhbRu+Eh1DEkQtsVORUf9OmCdxAWZzEE?=
- =?us-ascii?Q?uHe6dfLz4XdmBODMPgaF4kOp9vXcfSE5tG6Ja0VS6yfhPXsTDrNoeJgLjqaZ?=
- =?us-ascii?Q?/GXGu4DPME68n8NR35namCJZVX4f9wyyp1gn5vK9Thho6g6PZm15SEENxti5?=
- =?us-ascii?Q?ZmJBH4kLyVH5Ly4SQEexzScp7WaVx0yI69DB67BkkmoWU/XK6WiTYhcbz3t2?=
- =?us-ascii?Q?RMnP5e6xJHB8Md41rnVatwpZbIprYgdJhm5+qFdhUWPnNxt2lkGIRW61oY24?=
- =?us-ascii?Q?biHcLOx+s5C9FTe+zcBv5Ef13Zb8tx0ClgWD7nRIbvbmk3GVv+PLcw/MFu99?=
- =?us-ascii?Q?/NV8HymoOeQSr6BtCs5dlCB+mD77Qh7/pG8her4dIG/Xzge2phR+svwAl/oZ?=
- =?us-ascii?Q?G6cpBXHL8Yzjovsv9QJzIdtpioJuFXo++fSRudfZ4Re1nSBctDdu96Zv1cN+?=
- =?us-ascii?Q?ngUqy2QWv7cGte/RfBjsd648CjfaHwEGz+FgSzRFiZTSaanS8Rlovx+R0iih?=
- =?us-ascii?Q?gJWsdqdL8+Eg65gJ117hxPEvFAtnReV9WlRAkpGZYJI8TxP7JpavkL85aumj?=
- =?us-ascii?Q?sL9kZ/TpI6gd8J9/vOSCb1DINp/UWohfFYh27aRYjT6UybTg/zztz5TgabRo?=
- =?us-ascii?Q?AECPf+O9A99Mxzj+KVsQN3SmfSmGoLNiKoWrigfqJiXQBk+gHonhieBoxoqQ?=
- =?us-ascii?Q?wiUGa07OE63CDnjGwuWyK7fkehUl3Q3v+pGxt4tKMoZC57mSK40Db8A8iekM?=
- =?us-ascii?Q?23I7mVlP2XQVYNGshEpCAgY0XXdSNUzw4QR4E7PcwybfN56M0Q29UtL/L7j3?=
- =?us-ascii?Q?oNBwDxIdYRSgShpCuRbRY9Iy+1CqVHPVhLcd4AIEthXbfBuAGU+pACAvgxzm?=
- =?us-ascii?Q?YbvZkbd25Quwy5+hbAyTvwhlrsukFd3qFGRSy0G0ghGyyEtQkxsCpsGsNG62?=
- =?us-ascii?Q?MyNTBq8+BMFjYsKNWG3VbjU77P0F5SvmKu9dTTznESJDjetfCigps724kPF2?=
- =?us-ascii?Q?Gh0fjrPkhYIqWK/tVjs+lTQCrVREa3PcDcKINYAeFSBp5X6tmOq8/Uqez72I?=
- =?us-ascii?Q?Un+drsDxBy7haIhtQI5XprUIZIk6z9JtMy63jLy0oV8B9akLV41jCi1CTIDe?=
- =?us-ascii?Q?fMLEOqHAOBybKN49ngt9VASEmhnZcifi9xcouhZStJNVg43N2mp+Txd5Z/Ab?=
- =?us-ascii?Q?VfO5V9SYR9u0UH6v/HmYWHpToAr2VIXsijDrouSXX61caaZX5RglMahQlwoa?=
- =?us-ascii?Q?C859468/Y6ew700=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?5ryovjTy9IGrrsfArXqQkIir6gl9cp3Yfj9uf7hriWW/DPU5sG/dsEhrvx7e?=
- =?us-ascii?Q?ez2bIBzF8J8g2rrU5EAJSVf1ltd64W4BqVyqLf4smagkV67GodzEk+SqFAP/?=
- =?us-ascii?Q?ii4xJkGmS/+ceFR9es/ZhAhExT/wudIsIWW86i94fgocfVGSZQgIwkjGjx9e?=
- =?us-ascii?Q?CtDmlx5nQ0qVlubj+gGETLMwDImcunDVws5J8ANx6uuxF6bm87ACwazZKa3q?=
- =?us-ascii?Q?IY+FXH+/Lzi12BgvDsNtCU6wxrH8hms3w6S/RHm8aIdzyuR/2AN0/KcwuqX0?=
- =?us-ascii?Q?EQ/ISi1Hgcioeyy9sGgc4r2fOi21H0wNz+npL2FS2tb0ycJ56ToWXY00a4P0?=
- =?us-ascii?Q?wXodOhfKCxTgliP4RveqQ25N/9nOxgzFRRiQCeh3g3jS75OU1OkGxW6XdeuG?=
- =?us-ascii?Q?HMzLzilUcs1EYf179fg50xAFnSw/nhXDLSocTgJBf1ig6P83/T6qia5NkqfZ?=
- =?us-ascii?Q?nPAh8HnDPHFiswXVTZqx0tnjWGG9pT8oL8O8jHwSuo7tRSHhwNkxC0ZePSja?=
- =?us-ascii?Q?GuAL1JD3F8tJ8gZXkhlDNsfPQblv/NL0JNew+9GES0OKQ2ewnfvdlh7E/krp?=
- =?us-ascii?Q?1znoGdijoM9e8qViBM05pi8ZN+Rr/AfTDwvGhjaTWK8RBga3rUbRmqfrbVxO?=
- =?us-ascii?Q?fOFbZvyMnXX1CD3R/8EZ+/J1nfWxgkigU77dZstN9nnLVxMt/3HNyVBGeVDi?=
- =?us-ascii?Q?lX36Le1LSpbi00X2sNxafa83dX0E+wZeztLDWPw5eAwcmLHuy6JPAQfaOcJc?=
- =?us-ascii?Q?/PE41tioSCqbhkuz0N1G2ZCsDVtYlrVxEooaf1naGr9IS2YTBqMEOllFIsDJ?=
- =?us-ascii?Q?DkU7jhkYdJehTJTjFhB67WSLXIw0VNB4UfeCzL0VXIxP+/6eFtXSxkKJ82JP?=
- =?us-ascii?Q?3OafVMJD+gAIAUQuA+73ioMiBZwr+5Ehwjn6hZrl7E7pCZH3garCMnaUAz5B?=
- =?us-ascii?Q?7gHRcaMjbRpRdTi1ynQQvqL5rUxuHOmn+WcGV5FDSmMcTm/oZWurxR8FFKdo?=
- =?us-ascii?Q?FL2RKXnl1qu+zUpfJZH6Sre80mWyfREZJB2K5vctEZWBoqVpz14N4X+4/S7Y?=
- =?us-ascii?Q?S+Q74nJ2t63Z36D8Y+ytvylV/1+KkYn+K+0VClhq7oXCnrwYZwh0L04BVnHn?=
- =?us-ascii?Q?r27iv64c7fhQiJqgYgWNRiwpvDQ1y+hUYrsvbLI3gXkXIUey6UOQLJkQfrYT?=
- =?us-ascii?Q?Besx2GygRgUGb9B+lCZvPUZpngUP+CjUmalxJfrvlfVz3+HzHhU1/dCknqrU?=
- =?us-ascii?Q?DCnzb1r+GTdDGgHAcA/MqmLopvtdWZXT5Z1QLtN435wZ92QeSY5wIy58JG4w?=
- =?us-ascii?Q?d8KYOzsUYrB1nZ3UQm3qTSjVRqmQJoY0wrNpBKcEpNVMpQ7tzCvOT7nB1SEe?=
- =?us-ascii?Q?pyNz1vKIF5+EiF6k1D5hxbFjQe+llxGGzUwh1Y36lm+5covy6nH2az1MayI6?=
- =?us-ascii?Q?lE5tymIRVC46RF/uHi3rpXACU7NJIsPQ49f/HVlt91HTH6qz+hGDKsvrjCAF?=
- =?us-ascii?Q?MOAwfAm+KDuqK5hP4709br6yS9NS+xSdTk0JkZ04cf1idYnLuTilbTQqanIV?=
- =?us-ascii?Q?UCZe+ebqruy1Wz8s8DK9yX7bVjit0hPDtp39+DBg?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0D283121
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757052017; cv=none; b=UokSrK+AvHnrckv5iuio41cylcBTiDvLKQXSN4Paeh9XIOI7nJLp9MiUOvisqMmUxY9kyOvhOW7YaY68rzkBnPCyk/m+CaFyX/ggZzp1wizaWfVs2ECCjotuxspdtfqchnStxw88bXgO/GW86M9+E9ESAwkwlx3Z/Bbjp05Uxe0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757052017; c=relaxed/simple;
+	bh=AFb+9QCqjGbJ/1m/HKU4siOLrQoCZ646eOELHAiI0rI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0CfE/6w2joffqBXwwfqH/7LKKZktYoqCAuGgb1wGsRf0TWCo+zbZcsXs+6OsuMCNei78bUBjTWUYu8w93gEGxg/0de/638F3bKqLT4a1phH/VnlkL2crTYEELRbZIbxCyYnF0Rp3JyDdj6w9NGZysG0zmtjTYzUeDDvUhsOU/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pd31JRqV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IF2mI003172
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 06:00:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	K3wvqQmO4VlXSkPHtA+kQ1G3ijV/kY/N6LPpzZ6ALdc=; b=Pd31JRqVJVL455fW
+	iIxfXyF8FHxyLPsYD50i5INO954E8+4E8CgDJvSkSUPXRi4n4BONKqIgl4QGd943
+	03MyVmB4xG87yWf20teujpwDINGn/TATUWK+azJkm33sQQGnre5qjBG3S78wEZPG
+	G0NwL7FqJPkAl9lLDLr95cvmAtu53e6W07/hFeXDwJM+LBwdxyEcT9HqH4FVxoxR
+	KOH4tiV0MYfrtHtnGk5viR/duYta8IJN04n9kHVoFt7AkHkhjaEIWbB2iuUnP6Aj
+	HJRIDVRVBMzGOFvX75adZRmrGIBiuKiHlzhWXypWO96+myK2HGUXBC3CeoKJdZPB
+	roipUw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush39vsq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:00:14 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b2336e513so29532715ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:00:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757052011; x=1757656811;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3wvqQmO4VlXSkPHtA+kQ1G3ijV/kY/N6LPpzZ6ALdc=;
+        b=tslRVLTxmFFdm4gKXOZlz/MBLSOK51R65z6ymo1rWNItpPJg88InMDZ3UlmzVsdVoz
+         jS/0FvJXny8PnTznO5ZZLdKKDnM8BmeaqosOVjQY99IRGxbqOAlJLaTPYGFonKJDX1tD
+         FcDiz2SWPUfvmUOEjLuVS2TTszeQ4TtJnlo3FsBlF7zvYCHYp1cCfZ+9JSLImE0e2dZn
+         2ZahnVwPjLuquFybG6ebxnpQekqJ2Jks4mx1GRfLU8ysPBTy1tdebCjCVqAbpW9kVN8L
+         vnEr7APwiL/PIGqnJpLFQmV7mG3i0ShfiBdj/Z43/VBN7sI8zUNI/MuPGEHw34u7kwZx
+         AYng==
+X-Forwarded-Encrypted: i=1; AJvYcCUvN6gXk2x7Y+cKCsvlwB2rZtWgBQNc1M92AANOYl7uIyRKQMNGDEr30b38McDpkDA8YqskzHJLGu4CvO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVqnzVrrideXx0rQjt6dU6ycH4PVtQSAc4e3LXt+GXhEuq2h+S
+	so2MNrYGNi7qQRosdcu/GlzN302uO5eG8UCF9qgxPv3G/p37rAB0DKGjgQLZmlnXmBDfhPNB4K4
+	z8ssBu/BtT+obLQbigB63kUVNUiHw9quL3TyQvY2iaHqjpcrhggsg4fT8vTT+96whizA=
+X-Gm-Gg: ASbGncs1MsJhJ0pG+3fY1L6+fu9GYK0vIQHd78bPPmymPFnWzcm0EqTajrjbNk7BZOh
+	9PXlZ8avZYe4Nh1hcwObo4EWajaJ1rgNhZ8YKT05+0EQ6YgBVxECcu7cflN2FqBo72HensI8FNH
+	7vzLclbWQID+LLyjAozhztDXDw1wcV2wOHP1lzjmIvGAQwgpt/03T1Sh64Ih67cf5Oo6WSXIItD
+	x30P5/10O3vBpp2fEPUv19X81wi1K4W+ckqDU+9zsyf8IvgEu881TjhTByb/JE+DNJKInbLBr1T
+	8bI35R4e6uVKWUSO6IYzwWoeZi+ZQt9VV4FtuMGMFpshuOywqgFsRu0laeQaiwBBCicQj362giI
+	Rm2Y7Nv5Jbke+Vb9qbluF9+gsoMW5EXJZ
+X-Received: by 2002:a17:902:ce8e:b0:24a:d582:fbaa with SMTP id d9443c01a7336-24ad582ff65mr218517375ad.12.1757052011483;
+        Thu, 04 Sep 2025 23:00:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/cHmFw51D0GHNL0K6FHmxYOYqdRzziDWguo5c6iA+8dTLIn0jYMYcaSVHHWMsKF7j5DIKqg==
+X-Received: by 2002:a17:902:ce8e:b0:24a:d582:fbaa with SMTP id d9443c01a7336-24ad582ff65mr218516805ad.12.1757052010969;
+        Thu, 04 Sep 2025 23:00:10 -0700 (PDT)
+Received: from [10.133.33.61] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cbe170977sm37426225ad.42.2025.09.04.23.00.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 23:00:10 -0700 (PDT)
+Message-ID: <d8a885b5-3054-4dff-aa64-5ba194be4cc2@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 14:00:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9b83b17-b016-4d40-100b-08ddec40ddd5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2025 05:55:49.9705
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XQ3KC2hdVDfnBJsUR3pbLvKSk8A/VoLiGP+SL1JL0R/ZN6b+q8tifDj24WT0G0K8df+Yqa9XQXcBSYsaOCcQjTIOfqe/JOZgmmEgPtk3cpY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5507
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/3] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+ <20250904-hamoa_initial-v9-2-d73213fa7542@oss.qualcomm.com>
+ <2o2ypmxo6wbohrb5edkj27ueqpgbqhsnqu4ofzfubtfwg7vyri@mdsu4ca63fr5>
+ <wturd73lfutj4njzrmatzli356cfyehbtr45fjcttmbo2pieu5@he3fnsqzumfv>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <wturd73lfutj4njzrmatzli356cfyehbtr45fjcttmbo2pieu5@he3fnsqzumfv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX4lPdyc6Z+5uH
+ cpIljmpFgPehljXK0y+XGMRI5SLCWS2PsJPRgqXg5l8rRsI0/fIUFkXhJ1w4jTBIIRaMV7ZiNIQ
+ xrORobQQrXgC/e42hyykTBc3yzqkIxHcByDshi4YoUW2eMEtaRFB0E2eeMWVOy/ELqsqENlNVB1
+ fzqGeJypawDr+iKEjOINxE3brq2ReTD2eUR6L7Zri/dBurqGk5JEvTfQGGkIapthathVU27qsTh
+ WNugqpE3rb25V6+jnPbcC5QFczzl+CfrWQ2zIFcpbqNUuS0DtK/yCV0j+h7uJhf7L+lftuHvBI3
+ LveoAwax8Lf0+uP9GsWkYXsYaly4TZMGBhmFWqoecEmjVTZOfQxC1uqL/rtERihhL2JXC0apEp5
+ 6hYnVE3N
+X-Proofpoint-ORIG-GUID: 3edf-1-4RIkWgEWbsIEEsGowSe5IYGAI
+X-Proofpoint-GUID: 3edf-1-4RIkWgEWbsIEEsGowSe5IYGAI
+X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68ba7c6e cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=5pxm4SLHXydbrukv4qEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300032
 
-> Subject: Re: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SC=
-U
-> interrupt controllers
->=20
-> On Sun, Aug 31 2025 at 10:14, Ryan Chen wrote:
->=20
-> > The AST2700 continues the multi-instance SCU interrupt controller
-> > model introduced in the AST2600, with four independent interrupt
-> > domains
-> > (scu-ic0 to 3).
-> >
-> > Unlike earlier generations that combine interrupt enable and status
-> > bits into a single register, the AST2700 separates these into distinct
-> > IER and ISR registers. Support for this layout is implemented by using
-> > register offsets and separate chained IRQ handlers.
-> >
-> > The variant table is extended to cover AST2700 IC instances, enabling
-> > shared initialization logic while preserving support for previous SoCs.
-> >
-> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > ---
-> >  drivers/irqchip/irq-aspeed-scu-ic.c | 123
-> > +++++++++++++++++++++-------
-> >  1 file changed, 95 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c
-> > b/drivers/irqchip/irq-aspeed-scu-ic.c
-> > index cbfc35919281..ffdd9b4e44c1 100644
-> > --- a/drivers/irqchip/irq-aspeed-scu-ic.c
-> > +++ b/drivers/irqchip/irq-aspeed-scu-ic.c
-> > @@ -17,12 +17,16 @@
-> >
-> >  #define ASPEED_SCU_IC_STATUS		GENMASK(28, 16)
-> >  #define ASPEED_SCU_IC_STATUS_SHIFT	16
-> > +#define AST2700_SCU_IC_STATUS		GENMASK(15, 0)
-> >
-> >  struct aspeed_scu_ic_variant {
-> >  	const char		*compatible;
-> >  	unsigned long	irq_enable;
-> >  	unsigned long	irq_shift;
-> >  	unsigned int	num_irqs;
-> > +	bool			split_ier_isr;
->=20
-> How does that end up aligned?
 
-Will update with Tab.
->=20
-> > +	unsigned long	ier;
-> > +	unsigned long	isr;
-> >  };
-> >
-> >  #define SCU_VARIANT(_compat, _shift, _enable, _num) { \ @@ -30,13
-> > +34,20 @@ struct aspeed_scu_ic_variant {
-> >  	.irq_shift		=3D	_shift,		\
-> >  	.irq_enable		=3D	_enable,	\
-> >  	.num_irqs		=3D	_num,		\
-> > +	.split_ier_isr	=3D	_split,		\
->=20
-> Ditto.
-Will update
->=20
-> > +	.ier			=3D	_ier,		\
-> > +	.isr			=3D	_isr,		\
->=20
-> But what's worse is that '_split, _ier and _isr' come out of thin air as
-> SCU_VARIANT does not have corresponding arguments. So how is that
-> supposed to work?
 
-Mistake, will update.
->=20
-> >  }
-> >
-> >  struct aspeed_scu_ic {
-> > @@ -45,9 +56,12 @@ struct aspeed_scu_ic {
-> >  	unsigned int		num_irqs;
-> >  	void __iomem		*base;
-> >  	struct irq_domain	*irq_domain;
-> > +	bool				split_ier_isr;
->=20
-> Sigh...
+On 2025-09-04 21:58, Dmitry Baryshkov wrote:
+> On Thu, Sep 04, 2025 at 04:52:26PM +0300, Dmitry Baryshkov wrote:
+>> On Thu, Sep 04, 2025 at 03:48:33PM +0800, Yijie Yang wrote:
+>>> The HAMOA-IOT-SOM is a compact computing module that integrates a System
+>>> on Chip (SoC) — specifically the x1e80100 — along with essential
+>>> components optimized for IoT applications. It is designed to be mounted on
+>>> carrier boards, enabling the development of complete embedded systems.
+>>>
+>>> This change enables the following components:
+>>
+>> Documentation/process/submitting-patches.rst, "[This patch] makes xyzzy
+>> do frot".
+>>
+>>> - Regulators on the SOM
+>>> - Reserved memory regions
+>>> - PCIe6a and its PHY
+>>> - PCIe4 and its PHY
+>>> - USB0 through USB6 and their PHYs
+>>> - ADSP, CDSP
+>>> - WLAN, Bluetooth (M.2 interface)
+>>
+>> No, you don't. WiFi and BT are not present on the SoM.
+
 Will update.
->=20
-> > +	unsigned long		ier;
-> > +	unsigned long		isr;
-> >  };
-> >
-> > -static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
-> > +static void aspeed_scu_ic_irq_handler_combined(struct irq_desc *desc)
-> >  {
-> >  	struct aspeed_scu_ic *scu_ic =3D irq_desc_get_handler_data(desc);
-> >  	struct irq_chip *chip =3D irq_desc_get_chip(desc); @@ -84,33 +98,69 @=
-@
-> > static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
-> >  	chained_irq_exit(chip, desc);
-> >  }
-> >
-> > +static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc) {
->=20
-> ...
->=20
-> >  static void aspeed_scu_ic_irq_mask(struct irq_data *data)  {
-> >  	struct aspeed_scu_ic *scu_ic =3D irq_data_get_irq_chip_data(data);
-> > -	unsigned int mask =3D BIT(data->hwirq + scu_ic->irq_shift) |
-> > -		(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
-> >
-> > -	/*
-> > -	 * Status bits are cleared by writing 1. In order to prevent the mask
-> > -	 * operation from clearing the status bits, they should be under the
-> > -	 * mask and written with 0.
-> > -	 */
-> > -	writel(readl(scu_ic->base) & ~mask, scu_ic->base);
-> > +	if (scu_ic->split_ier_isr) {
-> > +		writel(readl(scu_ic->base) & ~BIT(data->hwirq + scu_ic->irq_shift),
-> > +		       scu_ic->base + scu_ic->ier);
-> > +	} else {
-> > +		unsigned int mask =3D BIT(data->hwirq + scu_ic->irq_shift) |
-> > +			(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
-> > +
-> > +		/*
-> > +		 * Status bits are cleared by writing 1. In order to prevent the mas=
-k
-> > +		 * operation from clearing the status bits, they should be under the
-> > +		 * mask and written with 0.
-> > +		 */
-> > +		writel(readl(scu_ic->base) & ~mask, scu_ic->base);
-> > +	}
->=20
-> So you have two different handlers. Why can't you provide two different
-> mask/unmask/ functions along with a seperate irq chip instead of clutteri=
-ng
-> the code with conditionals. Thes two variants share no code at all.
 
-I will add irq_chip in SCU_VARIANT, like following.
+>>
+>>>
+>>> Written in collaboration with Yingying Tang (PCIe4 and WLAN)
+>>> <quic_yintang@quicinc.com>.
+>>
+>> Co-developed-by, Signed-off-by.
+> 
+> After checking old thread, you can ignore this comment.
+> 
 
-struct aspeed_scu_ic_variant {
-..
-+	struct irq_chip	*irq_chip;=09
-};
-
-#define SCU_VARIANT(_compat, _shift, _enable, _num,  +_irq_chip, _split, _i=
-er, _isr) { \
-+	.irq_chip		=3D	_irq_chip,	\
-.....
-}
-
-static const struct aspeed_scu_ic_variant scu_ic_variants[]	__initconst =3D=
- {
-	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7, &aspeed_scu_ic_=
-chip_combined,	false,	0,	0),
-	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7, &aspeed_scu_ic_=
-chip_combined,	false,	0,	0),
-	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6, &aspeed_scu_ic_=
-chip_combined,	false,	0,	0),
-	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2, &aspeed_scu_ic_=
-chip_combined,	false,	0,	0),
-	SCU_VARIANT("aspeed,ast2700-scu-ic0",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_=
-chip_split,	true,	0x00, 0x04),
-	SCU_VARIANT("aspeed,ast2700-scu-ic1",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_=
-chip_split,	true,	0x00, 0x04),
-	SCU_VARIANT("aspeed,ast2700-scu-ic2",	0, GENMASK(3, 0),	4, &aspeed_scu_ic_=
-chip_split,	true,	0x04, 0x00),
-	SCU_VARIANT("aspeed,ast2700-scu-ic3",	0, GENMASK(1, 0),	2, &aspeed_scu_ic_=
-chip_split,	true,	0x04, 0x00),
-};
-
-Is this ok?
-
->=20
-> > -	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
-> > -					 scu_ic);
-> > +	if (scu_ic->split_ier_isr)
-> > +		irq_set_chained_handler_and_data(irq,
-> aspeed_scu_ic_irq_handler_split,
-> > +						 scu_ic);
-> > +	else
-> > +		irq_set_chained_handler_and_data(irq,
-> aspeed_scu_ic_irq_handler_combined,
-> > +						 scu_ic);
-> >
->=20
-> Please get rid of the line break. You have 100 characters....
-
-I will update by following. Is it ok?
-       irq_set_chained_handler_and_data(irq, scu_ic->split_ier_isr ?
-                                         aspeed_scu_ic_irq_handler_split :
-                                         aspeed_scu_ic_irq_handler_combined=
-,
-                                         scu_ic);
-
-
->=20
-> Thanks,
->=20
->         tglx
+-- 
+Best Regards,
+Yijie
 
 
