@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-802308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47022B450DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54635B450D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0E8A058E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF37916416B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C8E2FC87C;
-	Fri,  5 Sep 2025 08:04:05 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE82E2FD7C8;
+	Fri,  5 Sep 2025 08:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="F2V+zx6I"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10C6270557;
-	Fri,  5 Sep 2025 08:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7438E2FD1D8;
+	Fri,  5 Sep 2025 08:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059445; cv=none; b=u/A3X19Im7nZegLPRucGFdZoNUPSEchJUpNXKWeMHL9Bpz+3AS/9Wew8l5e87Rv54yQd6+eNjGdGBpUnNZZKverJoSTQ4DetweD62LpAFi9ih03+bgyxPOGKgbPJkYR4JY4OUfuZWYEh95DqbFayVZ3bPJx9Csb40pQjYZAgzsc=
+	t=1757059467; cv=none; b=RbJu0a3dk3HtVZTQNLxJBCu3O0iOC2Hd3eJ1NF0lvmDcwUdvLya3SK/TNZYPkmsTZZxUVHMgNjG+/VTCIEE5183I/62Fttgeun0YeVWg7uYwdtjEJu07etHVC/aAY+77iKXwGcaLnTTFnaC10BZERomnLMfsA2q23zpKXsr4IyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059445; c=relaxed/simple;
-	bh=cbxXU01GVgzyxmNZKhm6Cjgn0TAgIz4SAbFBFOPg7+o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cMIcaOr7u8+Q+3GNQ2HCD5bYZ3zNJdlJ2bhcGkCFGmBXGH9qWs1NP7gLoGueoD7afrNLKlOgSKmGUhixVDgJfUVMX4kVg+z4nOueOLzSvjEzhr4BENvFF9zfiwIfYMnhEIx1q6jiWlsVAT0NPGMx+qfi2iN/CYC7nSI59QcsBVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cJ84909gjzYl2R8;
-	Fri,  5 Sep 2025 16:03:37 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 5 Sep
- 2025 16:04:00 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 5 Sep
- 2025 16:04:00 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <akpm@linux-foundation.org>
-CC: <adobriyan@gmail.com>, <brauner@kernel.org>, <jirislaby@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sbrivio@redhat.com>, <spender@grsecurity.net>, <viro@zeniv.linux.org.uk>,
-	<wangzijie1@honor.com>
-Subject: Re: [PATCH] proc: fix type confusion in pde_set_flags()
-Date: Fri, 5 Sep 2025 16:03:59 +0800
-Message-ID: <20250905080359.4063152-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250904155517.d623a254e8c25027c41e8e41@linux-foundation.org>
-References: <20250904155517.d623a254e8c25027c41e8e41@linux-foundation.org>
+	s=arc-20240116; t=1757059467; c=relaxed/simple;
+	bh=EjZA/lxVekrftyLm282p76tOjzm55CelzVQS4tiJ2Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N0jdOHiHgcl/cUbBuWcS1k9mg1JFe0N8taSzCNt1NxJri91G6awJxsnKAFKOKlWM/1WIAgVFQgjcpWYQXRJ7k2kZ1ZYJeP8FvrQYyjwsYO5B56EKdEufzNvyH2JK2IuYclUxCLztbtzX8NDCSwqln618dLV6JjfoWEBUOOhs+Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=F2V+zx6I reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cJ85015bYz1DDXC;
+	Fri,  5 Sep 2025 10:04:20 +0200 (CEST)
+Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cJ84z4RCTz1DDB7;
+	Fri,  5 Sep 2025 10:04:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1757059459;
+	bh=bfX4WwP6l4L7nuUkvsKK2kWfqcceycSxYP97lcTylMo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=F2V+zx6IxMZbR0mgxua/MDZVeAh9V1ANyfwP4c3s7CjFcQOik150ncyVgQLWZUoqj
+	 VrEQ9ux9MEC/2o1y12d9VPjMtvxFEaS3p3XaN5C2wk2G3+tLgzK3i+NLB/79YToufA
+	 9hlHGybISDsCDW1RjB+BDqI0ssjNCUjageS9ZBjemiBGpi9+WYdAOKzmHZUbl8mzzC
+	 xwtcLi2dhMFdN7MS67xjutfKqIrxJ7eseLTBaynXDzxo3J9UD6cBqSlwG639zcN6wD
+	 6iUKWcv8vGA1xwKntWw9xwJIZCZz7Da9E/F0ACHZi9BRW1fYJ0DRJM60x3qe+aV1hx
+	 CqdGOrKXliEgQ==
+Message-ID: <8deb9ed8-6c12-4fef-a78c-028de7928803@gaisler.com>
+Date: Fri, 5 Sep 2025 10:04:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for Niagara
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Rene Rebe <rene@exactcode.com>, kernel@mkarcher.dialup.fu-berlin.de
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ anthony.yznaga@oracle.com
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+ <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
+ <20250902.184011.440504961051160142.rene@exactcode.com>
+ <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
- (10.68.31.243)
 
-> On Thu, 4 Sep 2025 21:57:15 +0800 wangzijie <wangzijie1@honor.com> wrote:
+On 2025-09-02 18:47, John Paul Adrian Glaubitz wrote:
+> On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
+>> From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+>>
+>>> Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accurate exception reporting.")
+>>> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+>>
+>> Tested-by: René Rebe <rene@exactcode.com> # UltraSparc T4 SPARC T4-1 Server
 > 
-> > Commit 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-> > missed a key part in the definition of proc_dir_entry:
-> > 
-> > union {
-> > 	const struct proc_ops *proc_ops;
-> > 	const struct file_operations *proc_dir_ops;
-> > };
-> > 
-> > So dereference of ->proc_ops assumes it is a proc_ops structure results in
-> > type confusion and make NULL check for 'proc_ops' not work for proc dir.
-> > 
-> > Add !S_ISDIR(dp->mode) test before calling pde_set_flags() to fix it.
-> > 
-> > Fixes: 2ce3d282bd50 ("proc: fix missing pde_set_flags() for net proc files")
-> 
-> 2ce3d282bd50 had cc:stable, so I added cc:stable to this patch.
-> 
-> > Reported-by: Brad Spengler <spender@grsecurity.net>
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> 
-> A link to Brad's report would be helpful please, if available.  We
-> typically use Closes: for such things.
+> Thanks for the testing! However, this actually needs to be tested on a SPARC T1
+> as both T2 and T4 have their own implementation that is being used. Testing on a
+> T4 will therefore not invoke this particular code unless you modify the kernel in
+> head_64.S to employ the Niagara 1 code on Niagara 4.
 
-Closes: https://lore.kernel.org/all/20250903065758.3678537-1-wangzijie1@honor.com/
+Hi Rene,
 
-Thanks for reminder, I'm not sure if this link is appropriate.
+Did you have the fourth patch, that is for Niagara 4, applied as well
+when you did this testing? If so, we could add your Tested-by to that
+patch instead.
+
+Cheers,
+Andreas
+
 
