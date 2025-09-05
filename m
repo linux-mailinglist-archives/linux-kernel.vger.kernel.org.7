@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-803771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B480AB46504
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:57:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328E8B46506
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C881CC2105
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001325C5C1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81902E285B;
-	Fri,  5 Sep 2025 20:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFED2E36F2;
+	Fri,  5 Sep 2025 20:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DStwtmWh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMUFBYxy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A887285CB9;
-	Fri,  5 Sep 2025 20:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7ED2C17A3;
+	Fri,  5 Sep 2025 20:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757105816; cv=none; b=K15wTx4Yd27SzYPMGNZY0mxHVVla+6j0mvyKkAMR99nFUs4V/aBKHmEbVdSXxDUpxwnm0J46AY7+BMyN08kZXJPydevr6ylDO9oc1+gr801R1apSWQW22OnQsgjrvZ9XCZf1rTiovTC8D1zWvDbHgowMgZRgegtWlrR9Tr6Ica8=
+	t=1757105866; cv=none; b=lcg6lT4C927tivzSXP7vZmO0MwZSeIsqjTAfrgc0AxBtBrH46vAg+kvyZiM6aloCfy/TYBRqe4K9QMN1hzN3tMkyPHt+ImEI1sZbT4xBWNPD1si9HTDHOqv/V/gxP/Uoj3IRWCrkhheO3y4wM6M/Q2wHIZ1ZXFiWo78l2uR63c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757105816; c=relaxed/simple;
-	bh=+NdlnWi1jiW2LaPBnbNA3C/ANQGT3Y7PYpJ/cx4Icxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrPbGNHWONyCWFbx5nDUhYPJVaJWWBtXkrfGtXsX5pYGjNYF+AptRB9bhJcZiRDEM6+xNU1yMwgoiOWBg0dsQ0vD7UGud7iB3LZhc2e/xB6I84yf5ZUAa7TyunFjKNz1AGbxbfWilm4X9nlvqpU0BCPM3uOACYjdQHAGva69kIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DStwtmWh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B43C4CEFB;
-	Fri,  5 Sep 2025 20:56:55 +0000 (UTC)
+	s=arc-20240116; t=1757105866; c=relaxed/simple;
+	bh=n0FHDW3YG/QaSMYvc6CMm7we6inPdibj+d+gLQ9pWd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oz9e+zHd27BpS67vNtVxncgx+Ums5gf7AB/EMeCCKrRCRWW1uCU5nfxcHzaydXc4BhMmS8KL2CqkP+zIiqxstuIuv7SaKP6I0z2zVvE7OmSR9n1bTbsH7uSCuouJLee8YiIfa91WEuV3vmGDudap84Z+EpaFlgyW0+y7elBGC14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMUFBYxy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA76C4CEF1;
+	Fri,  5 Sep 2025 20:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757105815;
-	bh=+NdlnWi1jiW2LaPBnbNA3C/ANQGT3Y7PYpJ/cx4Icxs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DStwtmWhfG/EADn9saTkpRdlA/0Q/rsfcItMVlZOLSlVqrPP1P//UOehpUCDYhxDC
-	 VsMEpgHM26aAYtbEUeWB0GARi2AimNULv8BesWN7tX+qSfIpBodiGCM4+ow6BSkTgW
-	 So4SkE07ivu6O4cdZcnuw2TYFNhse2jkS8+n5GDdo2w1xzaLld86t3brVpUk2idsrA
-	 qNc+DF9X3dWdSGaoshd6DRdRd5shQFenoehEtfyu773JV+8KelloK459BtW6+1bafU
-	 7/fpan+TegQajqVQV1h1sR/fWD/4P1IxF6s2qO+qVMsmxnRWtxljhpmkz7XU4XIVRu
-	 w/+IHjLXEZSmw==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74526ca79c2so1163630a34.3;
-        Fri, 05 Sep 2025 13:56:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9CoIsUCZ2cdtryoAQqS+hXXPDUJvTXIW+b0Xy3HvRO+mxOrXweIJ5secE/Z+OXHMvUT10jbvCrKh/Tbs=@vger.kernel.org, AJvYcCW8z3L7TWf48UQ/TbCNzH7qH7obnJUdweZnbt/cGjgs9/905ycAx//XFCxwQziop8gXeR8VtVO73bA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFOqiwbla+9r8dXlj2mjJFNmeeerxhA0lcVASQlkAqIjaIAJzI
-	eiUOJTDtpj3xkpeXrmGF8+9TggPqFDoBjduJtGsFmnk+sKuRR+JEebQoL9uOtv9ZcXfYRYh+R5b
-	qiYJHD19oshwgWj6eLizG6II8dM0ATX8=
-X-Google-Smtp-Source: AGHT+IEmbtYzZnRaxFvuXlG+2hlLcxMCbzonW/f42gHadQVNSEi7W7HL6UaIY6YZexkGAOUDo49QnV6WftSq9iTrcsE=
-X-Received: by 2002:a05:6808:181d:b0:437:d885:a4d8 with SMTP id
- 5614622812f47-43b29a3dabemr91718b6e.6.1757105815068; Fri, 05 Sep 2025
- 13:56:55 -0700 (PDT)
+	s=k20201202; t=1757105866;
+	bh=n0FHDW3YG/QaSMYvc6CMm7we6inPdibj+d+gLQ9pWd8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SMUFBYxyDrZsLbh5dKppGgCCn/j2gkhQhcZgAuayS0c4E1cggEKzM7g7lMlQVullR
+	 I5gSmjumoy+ZtwK1jEf/Nbccw3Rjurrn2mE0jij6yBPAkBgAWK5batgIIS0rU2bO+S
+	 aBLgCzHzKFhq4cnJRSx+1IhopYVRXPQW1jcvUHS5xDGoeURBGeUN4RkvSxvzPEBetr
+	 5tqZ+U8M5Bqil1QnPLY4/xmAmExYTQ6XIIYkIflq8D+ayYK5xuHtfhBNnN27Ipo9c+
+	 BvBvfOmlZ7V5tkn1zx10Zf5C8MVerTRgQ0Yrx2v3L663CPruUWw3c9IL3RGmQyzmx4
+	 C2dFzC9OYPFlw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Alejandro Colomar <alx@kernel.org>
+Subject: [PATCH perf/core 0/3] uprobes/x86: change error path for uprobe syscall
+Date: Fri,  5 Sep 2025 22:57:28 +0200
+Message-ID: <20250905205731.1961288-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
- <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
- <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com> <87o6rowrsp.ffs@tglx>
-In-Reply-To: <87o6rowrsp.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 22:56:43 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
-X-Gm-Features: Ac12FXwYG6vx63kgSUHoTXbXe4b5qG4C5mVZk6O6qouX_co66kEe_LbA6Z6rT80
-Message-ID: <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 5, 2025 at 10:47=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Fri, Sep 05 2025 at 15:27, Rafael J. Wysocki wrote:
-> > On Fri, Sep 5, 2025 at 3:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
-.org> wrote:
-> >> Well, manual online can be used for onlining the secondary thread of a
-> >> core where the primary thread is offline, so this is technically
-> >> possible already.
-> >>
-> >> > Something like the completely untested below.
-> >>
-> >> So given the above, shouldn't topology_is_core_online() check if any
-> >> thread in the given core is online?
-> >
-> > Besides, this would cause the siblings of offline SMT threads to be
-> > skipped while enabling SMT via sysfs (using
-> > /sys/devices/system/cpu/smt/control), but I'm not sure if this is the
-> > expectation in the field today.  The current behavior is to online all
-> > secondary SMT threads (and more, but that part is quite arguably
-> > broken).
->
-> It is broken, because the initial logic is to bring up primary threads
-> unconditionally and then refuse to bring up sibling threads.
->
-> With "maxcpus=3Dxxx" this obviously limits the amount of primary threads,
-> so there is arguably no point to online any of the related secondary
-> threads of them.
->
-> The initial implementation was naively making that assumption, but the
-> core check which was added due to PPC made this actually correct.
->
-> It just did not snap with me back then, but it's actually the correct
-> thing to do, no?
+hi,
+as suggested by Andrii [1] it'd be helpful for uprobe syscall
+detection to return error value for the !in_uprobe_trampoline
+check instead of forcing SIGILL.
 
-It would at least be consistent with the existing PPC behavior. :-)
+This way we could just call uprobe syscall and based on return
+value we will find out if the kernel supports it.
+
+Alejandro,
+I included the full man page change from [2], because IIUC this
+was not applied yet, and as usual I butchered the wording, so I'd
+appreciate your review on that.
+
+thanks,
+jirka
+
+
+[1] https://lore.kernel.org/bpf/CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com/
+[2] https://lore.kernel.org/bpf/20250720112133.244369-23-jolsa@kernel.org/
+---
+Jiri Olsa (2):
+      uprobes/x86: Return error from uprobe syscall when not called from trampoline
+      selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
+
+ arch/x86/kernel/uprobes.c                               |  2 +-
+ tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c | 34 ++++++----------------------------
+ 2 files changed, 7 insertions(+), 29 deletions(-)
+
+Jiri Olsa (1):
+      man2: Add uprobe syscall page
+
+ man/man2/uprobe.2    |  1 +
+ man/man2/uretprobe.2 | 42 +++++++++++++++++++++++++++++-------------
+ 2 files changed, 30 insertions(+), 13 deletions(-)
+ create mode 100644 man/man2/uprobe.2
 
