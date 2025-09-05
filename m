@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-803239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA54B45C8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8DBB45C8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 839D5565EF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7530A025CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEB82F7AB9;
-	Fri,  5 Sep 2025 15:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217F52FB0AE;
+	Fri,  5 Sep 2025 15:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5coExKt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccCQGv8S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7294F231845;
-	Fri,  5 Sep 2025 15:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B94C231845;
+	Fri,  5 Sep 2025 15:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085966; cv=none; b=GDJRPm0TJQQqGt8wB71VTTfZIe72NJndGfB2pzwtPoo6Q+Y7bIU3ORfb06v57FT0eJRyabiNDsVLq5w3jBcCn6bLx4FCyX5D19hL1ZeQ8V5yHVG3cin9ljumYdncD7MXweLV0Gi3GpV5mnZ3kkpGuX/tLooiE0B5MVW50P5uOzw=
+	t=1757085970; cv=none; b=qmu/LPtEj3sRXeeuy/MQD3UtZMZhP1dNCylbc3Xwq3oa66Jnl8B2xKpn28Kd3f1c78PxGgkY8dye56sdzg/4EAzZ5IKpMr+48ozgxsHni2/+pz3sgsxRL9kGAGwDREBMpWXX0ZmQaOExrFMo/Q5Mhik2p/O1nJPpvofcAPtqtdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085966; c=relaxed/simple;
-	bh=HeSmTEkMZa5aYj4W+/yA7FOCufTHzp4QQTSxsuJZE1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEStt7Ue/8tLmyKibXUcM83Su5w6CRkS00CynDxlrdNohXZ7TZkcsN8uKzN1AbbGKYsiE1hf4fOZYWFwURfZ6FTd90mu2kgRF+EPkV47TFER8AV8WGJ7IgKGvD0IshdRmklwc4mUIEPkLD9ahzyG3CLAw0/wn0xOnQURFln/PWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5coExKt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95369C4CEF1;
-	Fri,  5 Sep 2025 15:25:58 +0000 (UTC)
+	s=arc-20240116; t=1757085970; c=relaxed/simple;
+	bh=d84qHJOKae+uQlsSzi8MeOLR+fbLmJB9FdZwQLaJoN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=u6rLb73GlbVSExsTKwZqGNIDcROAv5Crhq07ffTTy44x1RoQh1SQIX7W3hetsd5jRpt2JhcXWPfdFrUBiWFFrwqcUPTPJWiihYCnO5DuuIxS7ikvHRDmYrEhiG+dSpf1ZqPQRZORL291yv63J9hGMKkhrYQmoMAi+J7PN4KW9T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccCQGv8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1649FC4CEF1;
+	Fri,  5 Sep 2025 15:26:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757085966;
-	bh=HeSmTEkMZa5aYj4W+/yA7FOCufTHzp4QQTSxsuJZE1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V5coExKt3JFlpn19Eh/CX6P8SbVNODKaVutXfs0yU0xu8ok2KvaAAHxVRuNAXmY9m
-	 JdcAnimbzcKMzcu4NXIiz6SWsyshIqac2oE3lqMNq926ekkR18m/uo1RT5N4p6R7gQ
-	 IHAcu1cJOOuZo3jvJNVyATQQ3gTPH6adbIme1r5T+V41ffhmCLO4WJBazIptDQrQwN
-	 jKZQjNVz7i/nXi441Yln43I1FQZCBovg+l8Yq9GNZ/mE+l9Z/kGIdM0xk2KwtV4I0s
-	 6rBixDmc1FaR9+rcesjmSIPl9wh2/B4MDhjTZkpyySVoHhrwY7/LwDbnffAz/SaayM
-	 /4o4yimnhYZbw==
-Date: Fri, 5 Sep 2025 16:25:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Asuna <spriteovo@gmail.com>
-Cc: Jason Montleon <jmontleo@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Tejun Heo <tj@kernel.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Matthew Maurer <mmaurer@google.com>, Jeff Xu <jeffxu@chromium.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
-Message-ID: <20250905-domain-theater-214254632b87@spud>
-References: <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250903190806.2604757-1-SpriteOvO@gmail.com>
- <20250903190806.2604757-2-SpriteOvO@gmail.com>
- <20250904-sterilize-swagger-c7999b124e83@spud>
- <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
- <1b95b2f0-e916-4a86-a274-da2ff7f9d516@gmail.com>
+	s=k20201202; t=1757085970;
+	bh=d84qHJOKae+uQlsSzi8MeOLR+fbLmJB9FdZwQLaJoN8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ccCQGv8SBYYUdxV2oW25sTbpCs4xUYzFu5kokr6HhIMR+8+38U7MfvcSdqzKnuo0V
+	 Kz55FmdR4VH9Z9e6Q0BpJrN2CGIvZKA2oHm+iRJsSQsjppWLaP5+Rk/rWL378I88a8
+	 BMqbZMkzxrbw7d2JWBCIt4ZWvUxT5EzQ3BNDNAiVwsylscYKzJfdiqZfVXnQmtFCoU
+	 37kCeF7MZReusr5rj2+upd8ucYpHLPGwyOAfIIZ8hwLw4uwMGBemOy1ibLVppkxlHq
+	 ++LVuIP5tjOZkuGgBhonnOTcc6h2D6tqzYEdQLjayc2O7eG4Z+cE2kiKq2wf7vDAkH
+	 C4Zzh7yfy5lZA==
+Date: Fri, 5 Sep 2025 10:26:08 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
+	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
+	mmareddy@quicinc.com
+Subject: Re: [PATCH v8 5/5] PCI: qcom: Add support for ECAM feature
+Message-ID: <20250905152608.GA1305931@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+82/AboaHQrENvzx"
-Content-Disposition: inline
-In-Reply-To: <1b95b2f0-e916-4a86-a274-da2ff7f9d516@gmail.com>
-
-
---+82/AboaHQrENvzx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <79d44c24-d853-4128-b966-8a25aaefad73@oss.qualcomm.com>
 
-On Fri, Sep 05, 2025 at 07:07:20AM +0800, Asuna wrote:
-> CC rust-for-linux list, I missed it in copying from get_maintainer.pl, the
-> thread is a bit of a mess now :(
+On Fri, Sep 05, 2025 at 10:47:42AM +0530, Krishna Chaitanya Chundru wrote:
+> On 9/4/2025 1:42 AM, Bjorn Helgaas wrote:
+> > On Thu, Aug 28, 2025 at 01:04:26PM +0530, Krishna Chaitanya Chundru wrote:
+> > > The ELBI registers falls after the DBI space, PARF_SLV_DBI_ELBI register
+> > > gives us the offset from which ELBI starts. So override ELBI with the
+> > > offset from PARF_SLV_DBI_ELBI and cfg win to map these regions.
+> > > 
+> > > On root bus, we have only the root port. Any access other than that
+> > > should not go out of the link and should return all F's. Since the iATU
+> > > is configured for the buses which starts after root bus, block the
+> > > transactions starting from function 1 of the root bus to the end of
+> > > the root bus (i.e from dbi_base + 4kb to dbi_base + 1MB) from going
+> > > outside the link through ECAM blocker through PARF registers.
 
-If you're doing that, keep the whole message in the mail. Think I just
-perpetuated the problem by replying to the mail a body rather than the
-one with the amended CC list.
+> > > @@ -1322,6 +1383,15 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+> > >   	if (ret)
+> > >   		return ret;
+> > > +	if (pp->ecam_enabled) {
+> > > +		/*
+> > > +		 * Override ELBI when ECAM is enabled, as when ECAM
+> > > +		 * is enabled ELBI moves along with the dbi config space.
+> > > +		 */
+> > > +		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
+> > > +		pci->elbi_base = pci->dbi_base + offset;
+> > 
+> > This looks like there might be a bisection hole between this patch and
+> > the previous patch that enables ECAM in the DWC core?  Obviously I
+> > would want to avoid a bisection hole.
+> > 
+> > What happens to qcom ELBI accesses between these two patches?  It
+> > looks like they would go to the wrong address until this elbi_base
+> > update.
 
---+82/AboaHQrENvzx
-Content-Type: application/pgp-signature; name="signature.asc"
+> > Is this connection between DBI and ELBI specific to qcom, or might
+> > other users of ELBI (only exynos, I guess) need a similar update to
+> > elbi_base?
+> > 
+> This is specific to QCOM only, with the commit 10ba0854c5e61 ("PCI:
+> qcom: Disable mirroring of DBI and iATU register space in BAR region")
+> The DBI address can moved to upper region of the PCIe region. When DBI
+> is moved ELBI also moves along with it. So if this patch is not present
+> elbi will not point to correct ELBI address.
 
------BEGIN PGP SIGNATURE-----
+So I think you're saying this [5/5] patch should be squashed into the
+[4/5] patch that changes the way pci->dbi_base is computed?
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsBBAAKCRB4tDGHoIJi
-0vPPAP0WJW3cfKzXqItvB2XzxRMkipRGuzMESsAFO02Trs2WgwD+KeERdtt4LZdp
-OrpmtNGQfWOFHR1lVYnmonUUL88WawI=
-=lC0v
------END PGP SIGNATURE-----
+After [4/5], pcie-qcom.c still uses pci->elbi_base, but apparently the
+value is wrong until this update in [5/5]?
 
---+82/AboaHQrENvzx--
+Bjorn
 
