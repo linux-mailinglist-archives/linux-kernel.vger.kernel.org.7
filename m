@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-803322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB39AB45D7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:09:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712A9B45D83
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3623AF8C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD000A46395
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A6F302145;
-	Fri,  5 Sep 2025 16:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bmOIF4uE"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216C2FB09F;
+	Fri,  5 Sep 2025 16:10:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6216236457;
-	Fri,  5 Sep 2025 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177B0296BB7;
+	Fri,  5 Sep 2025 16:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757088535; cv=none; b=fXD35N7idZHxUl9SWMsSrLgw9KapZWlKKKt/tenLXMr+9j8silc7zB4ZsD8FDIIatYR7cnDze2ZrQP+CgQl/R87y2Pt9v08H1jg1IjDv+lryiuVlWWuWV/+9d+F3/8QFOGN/SHblQrtclw5CNuev6F70SWGegL5d4ZQ4ZQ/OT7U=
+	t=1757088638; cv=none; b=KcC0g6ff0DrgmCwgT6G1DUr4NyNdC1xZa5n5E8D6L7J0BPEDxgKw+5ukDXOZZ03k89411vFZ0bKi4sHRyxfXnqNKqD4EhTt3klGSXHbyNc8Xw+exv6NCVna4MQrOtRZsbRJKBStAD/3+EWcX6RUYmhR0v4LPiIYDQwxH0ulyaNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757088535; c=relaxed/simple;
-	bh=nPpJvasC2DK5ppa7wvwPL+vx2OAKPNgu3EpBElhr7gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ODjIMoXWXZQBUM+fzDrWLfXiEXaq59Fq8KQOhAx97GnaxpADWa0CyUgqz5HIWxPd5CjC0Kits9idKYmBUr4d+zraFFUhj9dBbjfEC3GAPQ7jRm08Y8YyS9lqrQlNg1Pvn8x99ffbOW/9Pyp2eRyQjh4SPJxvScK3GqiEHS0/xic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bmOIF4uE; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 435AF443A8;
-	Fri,  5 Sep 2025 16:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1757088524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xrhMd6Y01ZfU4qwF2AV9SLKzPf3ah/kgRKLRN4Qdg4=;
-	b=bmOIF4uEDhyQ/gSY3E2IpE7paLD0TvkAsnDqEqGGHUPiaVH93qBa3+mE+uHEHjLVoP3mTS
-	R9XX7nWq7gK2TwhDeIu4QVt9/atjJQ32FrjNpDEaRLupTex62eLBo6hzazrn8xXjcIYyNO
-	KDrb+Diz08Sz6xZ0joY1XtHa/TLlG4snKWvdl+zTOIWN+gSS7o/X/ec6PxZOLu4ahaWNBw
-	ZragYU8GmhblUNoK2VR1qdGZxoCSN+X17FaF8sI4+HNR+13ast3HVQUcnclPE3q+xnL3cK
-	6JnB+tcrcBLx2a6x4R09k8g2JvV5f/bqc+oTumZNQIXBeUm5XB7sb3Pqt+qOug==
-Date: Fri, 5 Sep 2025 18:08:37 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
- <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
- <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter De
- Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
- <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>,
- linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: Re: [PATCH v1 13/19] staging: media: tegra-video: tegra20: set VI
- HW revision
-Message-ID: <20250905180837.35547304@booty>
-In-Reply-To: <20250819121631.84280-14-clamor95@gmail.com>
-References: <20250819121631.84280-1-clamor95@gmail.com>
-	<20250819121631.84280-14-clamor95@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757088638; c=relaxed/simple;
+	bh=WdpLG7wX8l/TXJRm2yFFtzya3FCCPZBcf2UO2HIN6jo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JlvGQsoXfUvQzzJaYaCKZqQVFVn74/Rl3X1pS0witOBfGcy+++WEk1qcDwSVDzHMIEiqG483+2og4BYtN6lf4FWEpkwK1HTJ8iJrVpqKgquaUvCEqdVXqwV7/Rp0EUs9sFFaSDq2IzanqalsptO+iLCgYegb3ZOycB85H5r4n5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJLrs43nPz6L51Y;
+	Sat,  6 Sep 2025 00:09:33 +0800 (CST)
+Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id B62D21400D4;
+	Sat,  6 Sep 2025 00:10:32 +0800 (CST)
+Received: from a2303103017.china.huawei.com (10.202.66.105) by
+ frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 5 Sep 2025 18:10:30 +0200
+From: Alireza Sanaee <alireza.sanaee@huawei.com>
+To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <coresight@lists.linaro.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <jonathan.cameron@huawei.com>, <krzk@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<robh@kernel.org>, <ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<suzuki.poulose@arm.com>
+Subject: [PATCH v4 0/6] Refactoring finding CPU phandles in DT
+Date: Fri, 5 Sep 2025 17:10:22 +0100
+Message-ID: <20250905161028.649-1-alireza.sanaee@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelfeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeehffejffekudfhkeeklefgjeeuheekffelheejgfeijeehieelkedttdfhjedtnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdelpdhrtghpthhtoheptghlrghmohhrleehsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhrvgguihhnghesnhhvihguihgrrdgtohhmpdhrt
- ghpthhtohepmhhpvghrthhtuhhnvghnsehnvhhiughirgdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopehskhhomhgrthhinhgvnhhisehnvhhiughirgdrtghomhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500003.china.huawei.com (7.182.85.28)
 
-On Tue, 19 Aug 2025 15:16:25 +0300
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+This series refactor the way CPU IDs are retrieved from the device
+tree.
 
-> Tegra20, Tegra30 and Tegra114 have VI revision 1.
+Usually, there is a for loop that goes over every single CPU that can be
+avoided. This also reduces the amount of NULL pointer checks in drivers.
+I have abstracted away that loop and introduced a new function
+(of_cpu_node_to_id) for this.
 
-Why? You should mention the reason in the commit message.
+This patchset is a subset of [1], where I removed content and patches
+relevant to hyper-threaded cores for DT. Based on the discussion, the
+code refactor is still useful, hence this patchset.
 
-But I don't see hw_revision used in the series, so unless I missed
-something you should drop this patch.
+[1]
+https://lore.kernel.org/all/20250512080715.82-1-alireza.sanaee@huawei.co
 
-Luca
+Changes since v3:
+    - Rebased to d69eb204c255c35abd9e8cb621484e8074c75eaa
+
+Changes since v2:
+    - Addressed Jonathan Cameron's comments.
+    - Added reviewed-by tags.
+    - Added a new commit where I suggest simplfing the code in
+      arch_topology.c to remove the use of cpu_node on failure path.
+    - Improve documentation.
+    - Caught a bug in patch 1.
+    - Commit message fixed for patch 2.
+
+Changes since v1:
+    - Rebased on top of the latest mainline.
+    - Addressed Krzysztof Kozlowski's comments -- Hopefully :-)
+    - Addressed Jonathan Cameron's comments.
+
+
+Alireza Sanaee (6):
+  of: add infra for finding CPU id from phandle
+  arch_topology: drop the use of cpu_node in the pr_info
+  arch_topology: update CPU map to use of_cpu_phandle_to_id
+  coresight: cti: Use of_cpu_phandle_to_id for grabbing CPU id
+  coresight: Use of_cpu_phandle_to_id for grabbing CPU ID
+  perf/arm-dsu: refactor cpu id retrieval via new API
+    of_cpu_phandle_to_id
+
+ drivers/base/arch_topology.c                  | 22 ++++-----
+ .../coresight/coresight-cti-platform.c        | 13 +----
+ .../hwtracing/coresight/coresight-platform.c  | 15 +-----
+ drivers/of/cpu.c                              | 48 +++++++++++++++++++
+ drivers/perf/arm_dsu_pmu.c                    |  7 +--
+ include/linux/of.h                            |  9 ++++
+ 6 files changed, 71 insertions(+), 43 deletions(-)
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
+
 
