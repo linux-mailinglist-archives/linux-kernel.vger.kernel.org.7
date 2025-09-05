@@ -1,257 +1,146 @@
-Return-Path: <linux-kernel+bounces-802745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192B3B4565F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:30:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A3FB45665
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 509723B1DE7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE325A4D71
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DEF1F2BAB;
-	Fri,  5 Sep 2025 11:30:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8315032A3FD;
+	Fri,  5 Sep 2025 11:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wv1ats1l"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C72343D93;
-	Fri,  5 Sep 2025 11:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B613594B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757071813; cv=none; b=b71B1dsMkpGqAIqRDZUvtkuVAtkrkaArTRZ2FdEbBsK33n4vCl3NG5Rbqn4B/KkAzeIijYhAm+TE3gpEkShVKP0jR4e9gmr8QHXA5n9AAA0jh1lmP97UiurxWdttmbkgNOF1mJOWtwbWetoW8g8sa/qu92bnCuvazPsfjRF6img=
+	t=1757072004; cv=none; b=C25E0lTQLq1kxxybec6Oqw/3AvZx6G0xrNluVOR4D3B0hoWcJCJ1GTAiq4fyJbAVLAA8OeZaJYw/kh4hMHGRoxRPBgwU1UNjPBTp4HwaOala7vOQ934IRu5LOozk97nDfaioW8EwIop8XXvGWRy4mL+50WJpM6A+t8ibiKpgeXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757071813; c=relaxed/simple;
-	bh=zZUdFcHQdplrd87XGHnTotjQT+LmlMsdcMKJPBMo+7M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bfc5E4EqYPnNBqztvjyLGUh/XlupgwwmRkRWGTNg1uJStKlKyhrvxyDSwmZjiK5KGv0Zwi7rM7Dvo60YPQwnDT5dQEFx63WCaYz5bHjzA4s11cQG0yPSGgOXg1FtgA6hKkcymdQ+kJ42YYhV8E+Y3Otuw3paZG9TThGY2waLp68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJDbY21trz6M4wc;
-	Fri,  5 Sep 2025 19:27:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6DDFF1402F1;
-	Fri,  5 Sep 2025 19:30:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 5 Sep
- 2025 13:30:07 +0200
-Date: Fri, 5 Sep 2025 12:30:06 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Michal Simek <michal.simek@amd.com>
-CC: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-	<michal.simek@xilinx.com>, <git@xilinx.com>, Salih Erim <salih.erim@amd.com>,
-	Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, Anish Kadamathikuttiyil
- Karthikeyan Pillai <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>, Andy
- Shevchenko <andy@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David
- Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open
- list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: iio: xilinx: Add Documentation for
- Sysmon
-Message-ID: <20250905123006.000031a9@huawei.com>
-In-Reply-To: <610690b9cc4ab3854b56df550b688b4cc72a5653.1757061697.git.michal.simek@amd.com>
-References: <cover.1757061697.git.michal.simek@amd.com>
-	<610690b9cc4ab3854b56df550b688b4cc72a5653.1757061697.git.michal.simek@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757072004; c=relaxed/simple;
+	bh=o3hildMwaW8SKO7ju4TnjzbgldI5VhKTu/M3PBEf9Pg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQpQIx0PdMW9jrI4mTRl0ysP7BX32FSx7rSS1+5ziYiSBx7gVfp3Dmr4K9oX3cQjIMmEt5+d7S0yO1kH+frdSCl7drJnBJucVnoCqGxcAKN38tHgDZ4okl+kftLjr0Q9wMiqa6C4BIJ/eLRdbH2flCZxgr9lyGjKLpRZfJ0IdLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wv1ats1l; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-33730e1cda7so19234821fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:33:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757072001; x=1757676801; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e737NFCnB1pAiZwFeuIFUAdoH1qix+jNDtR6tlkeuzc=;
+        b=Wv1ats1lENeDFeCHltS6z4eXYjp2PkHp41U/KSjwkprIJpiwUA2iVdzBaZiRrx1Mt0
+         qHGzczd2Z5jSluwCy8P8ACWB3Gle0ScrGvwq4D87K+DQ+Kn1EKuy9V/NtvOQhoVvhDw1
+         VlhaCRenYJr1p6TqCwmNzarskvRPWlEJDa2Nj8Rx+vO3RPTFL8o/Q46mAI6+DAl6RbDn
+         ZYZKDb0HjPYXY9TG0yQXthJbEdx7DvqMucAOcim7XURySnkfmfW2beuJwk8vwC9AIaRY
+         bPmuFP2vDrK4ShsfmwWPEdFTsf1mqOJIf3RdGn/j4v4G0Gq7NWGy2otXfxbf4BukM+3s
+         cpgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757072001; x=1757676801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e737NFCnB1pAiZwFeuIFUAdoH1qix+jNDtR6tlkeuzc=;
+        b=U16bL2nGx6RvrRo4kiZ6OayO5asmgNRPdEaNrDvK9P7jf6NmIxXocMmd2YVNAT12xp
+         MLIRagOTT77rtzilpo8rTMvBHhq4ZJTV/KlnBxZOpQXCiwUfT6SUzOEc1R4I0QTmh63c
+         84MMmihLQ9t1sGRINPFBxx6ZvzlRmcx8QjvBdDtlhwEc4OeK4MBeuWPO2QZuY2ALzJSS
+         OP851MiuHQFWxwo2NvsAZrGdBLOOXGiV1nLrV0C2/eirwSQmfM2MgeUNrT65zOO/Cee+
+         YnN8GnUSwtKb5PpO4GC5Dueh480IH7GLPpi1WiFvgxbTvhYKGpD3MaYmRSfNB8I5uDbq
+         WgPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVd8kUfOhJxXzeRNn0AeBUURaP6n1eOqO/FnS8ohCnMdhiprEkrsAmBisGkC/RkgVzrte/klqlbvozG/W0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxx01VINq/xtsy2ZAj1uA4RfW29MhpKpOt+q7ulloDVK4Hmrr0B
+	arZSxodonHCSkeEJ7kNtqEd/+M6du1Bq/frdYXqiR0bP+Qe0GYAWjJ+Uv2MKQZihukohjxSW94B
+	j9ul2Ag+oxAd8RzBfMm4EBilqMOHh/vPZKyR/VhZaCg==
+X-Gm-Gg: ASbGncvHh9OpZnKyns5DG5NrVKor1JytvjktN/yXCtWn2rh2Oae2N1AMyPb3LJaj6pr
+	C1iJiM1MD7l5+XMm+QXagTExbsVu0uyGLi/BpFVAmNu08g2IU+sjM9StcWG2URfy57hblv798T7
+	B9I1wrLFAEs1Z8/GrnRX7Tpr2eC4ljwUNLV1X6MnZ47Cel11O1KwvFgTivFYHpWJPNTLKyFSLoW
+	8Xh0A57QwGlx1iItA==
+X-Google-Smtp-Source: AGHT+IGSWO4nCHB8o/6t/y6RH8BOysPzoQ6jiv8gZqcTwwokf+Kq7hYmaaHYY9kCJZ1mu3fJ8bEoY6l6Nt8aDc5ponQ=
+X-Received: by 2002:a2e:a482:0:b0:336:7c7c:5ba5 with SMTP id
+ 38308e7fff4ca-336cad21f17mr50388961fa.23.1757072001159; Fri, 05 Sep 2025
+ 04:33:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
+ <20250820171302.324142-14-ariel.dalessandro@collabora.com>
+ <CACRpkdbpKqKyebADj0xPFq3g0biPh-vm4d6C3sd8r0URyfyYRg@mail.gmail.com> <caguo7ud4dapb4yupeq2x4ocwoh4dt5nedwjsyuqsaratugcgz@ozajhsqwfzq6>
+In-Reply-To: <caguo7ud4dapb4yupeq2x4ocwoh4dt5nedwjsyuqsaratugcgz@ozajhsqwfzq6>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 5 Sep 2025 13:33:09 +0200
+X-Gm-Features: Ac12FXx6o0aglHH6TQGfVH200HSX_9WYooYS5LFefZX_Ln3xQz4XYXPyVN0c3dY
+Message-ID: <CACRpkdZRHQ6vuchN8x8d0uPCVMPPHOdBVWiUhzFJNs2paHGbYw@mail.gmail.com>
+Subject: Re: [PATCH v1 13/14] dt-bindings: input/touchscreen: Convert MELFAS
+ MIP4 Touchscreen to YAML
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>, airlied@gmail.com, 
+	amergnat@baylibre.com, andrew+netdev@lunn.ch, andrew-ct.chen@mediatek.com, 
+	angelogioacchino.delregno@collabora.com, broonie@kernel.org, 
+	chunkuang.hu@kernel.org, ck.hu@mediatek.com, conor+dt@kernel.org, 
+	davem@davemloft.net, edumazet@google.com, flora.fu@mediatek.com, 
+	houlong.wei@mediatek.com, jeesw@melfas.com, jmassot@collabora.com, 
+	kernel@collabora.com, krzk+dt@kernel.org, kuba@kernel.org, 
+	kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com, 
+	louisalexis.eyraud@collabora.com, maarten.lankhorst@linux.intel.com, 
+	matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com, 
+	mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com, 
+	robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch, 
+	support.opensource@diasemi.com, tiffany.lin@mediatek.com, tzimmermann@suse.de, 
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 5 Sep 2025 10:41:44 +0200
-Michal Simek <michal.simek@amd.com> wrote:
+On Fri, Sep 5, 2025 at 12:02=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Thu, Aug 21, 2025 at 01:56:24PM +0200, Linus Walleij wrote:
+> > Hi Ariel,
+> >
+> > thanks for your patch!
+> >
+> > On Wed, Aug 20, 2025 at 7:17=E2=80=AFPM Ariel D'Alessandro
+> > <ariel.dalessandro@collabora.com> wrote:
+> >
+> > > +  ce-gpios:
+> > > +    description: GPIO connected to the CE (chip enable) pin of the c=
+hip
+> > > +    maxItems: 1
+> >
+> > Mention that this should always have the flag GPIO_ACTIVE_HIGH
+> > as this is required by the hardware.
+> >
+> > Unfortunately we have no YAML syntax for enforcing flags :/
+>
+> Theoretically there can be an inverter on the line, so from the AP point
+> of view the line is active low while from the peripheral POV the pin is
+> active high...
 
-> From: Salih Erim <salih.erim@amd.com>
-> 
-> Add devicetree documentation for Xilinx Sysmon IP which is used for
-> internal chip monitoring on Xilinx Versal SOCs.
-> 
-> Co-developed-by: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>
-> Signed-off-by: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>
-> Co-developed-by: Anish Kadamathikuttiyil Karthikeyan Pillai <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>
-> Signed-off-by: Anish Kadamathikuttiyil Karthikeyan Pillai <anish.kadamathikuttiyil-karthikeyan-pillai@amd.com>
-> Signed-off-by: Salih Erim <salih.erim@amd.com>
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
->  .../bindings/iio/adc/xlnx,versal-sysmon.yaml  | 235 ++++++++++++++++++
->  1 file changed, 235 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml b/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
-> new file mode 100644
-> index 000000000000..a768395cade7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/xlnx,versal-sysmon.yaml
-> @@ -0,0 +1,235 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/xlnx,versal-sysmon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx Versal Sysmon
-> +
-> +maintainers:
-> +  - Salih Erim <salih.erim@amd.com>
-> +
-> +description:
-> +  The Xilinx Sysmon provides on-chip monitoring and control for the supply
-> +  voltages and temperatures across the chip. Since there are only 160 supply
-> +  voltage registers and 184 measurement points, there is no constant mapping
-> +  of supply voltage registers and the measurement points. User has to select
-> +  the voltages to monitor in design tool. Depending on the selection, a voltage
-> +  supply gets mapped to one of the supply registers. So, this mapping information
-> +  is provided via description which contain the information of name of
-> +   the supply enabled and the supply register it maps to.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: xlnx,versal-sysmon
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: Sysmon Registers.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Interrupt line for Sysmon.
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  '#io-channel-cells':
-> +    const: 0
-> +
-> +  xlnx,hbm:
-> +    type: boolean
-> +    description:
-> +      Exists if node refers to a HBM (High Bandwidth Memory) SLR (Super Logic Region).
-> +
-> +  xlnx,nodeid:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      PLM specified sysmon node id.
-> +
-> +  xlnx,numaiechannels:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 64
-> +    description:
-> +      Total number of sysmon satellites close to AI Engine exposed as channels.
+Yes, I think someone even proposed adding inverters to the
+device tree and was nixed.
 
-Feels like some use - would make this easier to parse.  xlnx,num-aie-channels.
-Similar to the next one. How is this related to the number of child nodes?
+It's a matter of phrasing I would say:
 
+"Mention that this should nominally have the flag GPIO_ACTIVE_HIGH
+as this is required by the hardware."
 
-> +
-> +  xlnx,numchannels:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 160
-> +    description:
-> +      Number of supply channels enabled in the design.
+s/always/nominally/g
 
-Given you have subnodes called supplyxxx why is a count
-of those needed or is this not counting those?
-
-> +
-> +patternProperties:
-> +  "^supply@([0-9]{1,2}|1[0-5][0-9])$":
-> +    type: object
-> +    description:
-> +      Represents the supplies configured in the design.
-> +
-> +    properties:
-> +      reg:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 159
-> +        description:
-> +          The supply number associated with the voltage.
-> +
-> +      xlnx,name:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description:
-> +          Name of the supply enabled
-
-Would the generic property "label" be useable here?
-
-> +
-> +      xlnx,bipolar:
-> +        $ref: /schemas/types.yaml#/definitions/flag
-> +        description:
-> +          If the supply has a bipolar type and the output will be signed.
-
-This is very generic.  We have it described for ADC channels already in
-bindings/iio/adc/adc.yaml.  Why can't we use that here?
-That binding does rely on matching against 'channel' for node names though.
-Where a 'type of channel' has been relevant IIRC we've always added
-a separate property rather than using the child node name.
-
-> +
-> +    required:
-> +      - reg
-> +      - xlnx,name
-> +
-> +    additionalProperties: false
-> +
-> +  "^temp@([1-9]|[1-5][0-9]|6[0-4])$":
-> +    type: object
-> +    description:
-> +      Represents the sysmon temperature satellites.
-> +
-> +    properties:
-> +      reg:
-> +        minimum: 1
-> +        maximum: 64
-> +        description:
-> +          The sysmon temperature satellite number.
-> +
-> +      xlnx,aie-temp:
-> +        $ref: /schemas/types.yaml#/definitions/flag
-> +        description:
-> +          If present it indicates the temperature satellite is in
-> +          close proximity with AI Engine
-
-This one seems unusual.  I guess it makes a configuration difference
-of some type.  I'll look at the code to see if that answers the question.
-
-> +
-> +      xlnx,name:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description:
-> +          Name of temperature satellite exposed
-
-As above. label tends to get used for things like this.
-
-> +
-> +    required:
-> +      - reg
-> +      - xlnx,name
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - xlnx,numchannels
-> +
-> +additionalProperties: false
-
+Yours,
+Linus Walleij
 
