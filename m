@@ -1,134 +1,183 @@
-Return-Path: <linux-kernel+bounces-802375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE91B451AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4839FB451B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7FA1C83A94
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 890FA7BE4F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7D92750FA;
-	Fri,  5 Sep 2025 08:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368ED27AC4C;
+	Fri,  5 Sep 2025 08:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qhh7vQ7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R4b+CBZZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5360413AA2D;
-	Fri,  5 Sep 2025 08:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80F1222594;
+	Fri,  5 Sep 2025 08:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061509; cv=none; b=AVBFWjdS9Wc0SrFFfNl/21AftpZchUq3Gm/N66YPNMmRum2U7TXoogn6uonTnzmlVznCKaeeJCIzl6h3j6WYra2XfIOCJesNLcUgDdyIMluTCHW2bQYxUH8WEuEQYTxrpKPaFRIMoBk/9tqdRAryByE9pLqwUt6isADvG45DDgo=
+	t=1757061530; cv=none; b=D2ks8FjOYMp1zzo2MrggSsAJQk3fj/IJoNxOGhyo2N/v2J0wF2QFB8wSYRCfqshm6G0HduqnhE1O7xXkEYZ/NtfOYFqOjigCiS+kmb4dlO0qh6bjaI/kz/NAc4nDV5E4YVhkm/CyFl45/8FtRdPDzmyow7yVdvFgRLuwxoywIyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061509; c=relaxed/simple;
-	bh=GfFt0NZ4p1rN6zuathfBgehAphXRvkjy/J3DLHMj5sg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=dV646+b8d7AMxTolnfF/B4YZdicldutuk9DDb6/R59EGtIbo3QxakVp4tMbgExHFGe3QFjAxvVjOjBqAaEoyfwxC0iqtDNmeV7OHQ3OoyMbb89el0ZNEb8GZLrDKDW7YaeZZL3t9NjRvk7m5YiPssvZbEBuW8AkSXEG7NooV+Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qhh7vQ7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F25C4CEF1;
-	Fri,  5 Sep 2025 08:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757061508;
-	bh=GfFt0NZ4p1rN6zuathfBgehAphXRvkjy/J3DLHMj5sg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=Qhh7vQ7M2oiu5S0aayywFct6/WWZRJHYLpPjfZ01qm8uxJCxiWi9kfPP+dQDLH+Ay
-	 aCZ8OoN2kTfSPN1tmfe7IaKoyfVTpv+AqzUmh0fSQ3xaw6vUH86ddoHP/IMHm8Bisi
-	 8ieMq8AVGF6ktc4Tzb9gTUxt0CStQY/Lp4Uz5loJ+36fipXSnNC8Lhta2NgtodJT0s
-	 /yzEpqgcxGIT+44SSS5KoySSKDh0t49EEvGiWz3eABM4qHM+jlG7c0T4FAI83LpX8F
-	 pnvsEEWOhnI5BGCn0v5K2DKnFV0h1gGlPARbkV04a8vXM00sma9fWS5+MemSSWQNBh
-	 ohlZXtPVedyYg==
+	s=arc-20240116; t=1757061530; c=relaxed/simple;
+	bh=jkLTVGDQyGvp2VGSJ84Q/tzQ9JUtr5HITxCZfTbHdoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=APYDPjEUYaTnbU8RCKGXZ71gRzL3pb2dcVcsNRUxmCEyeX0pyuZndg11alMDAG1dBSLlCX4KKDUyfR8hqKEm9yabakOdTtemImzxlGtRZ1N70xDMsGZCm20mMCZ8/pH4MT3w75gTTbNLkxJba6OiCyizOjfAv8S7zIytqOrTLJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R4b+CBZZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Om9p5nchqSzMFiVI8uUuwUfI4UaRwvpBhNH4IXNq5Hg=; b=R4b+CBZZ5G4FtZxCDVm1UoPQUo
+	v8kkly1N6o0/AOPJPJi0TJ5nUWajzLZOyYrf78kCoF+932Cpdv+JJ4VQxrLdu4TNxPt9IaR0w296U
+	nXMQGyQ5T2RtynQVzL2lME7/S8r1r/9ZxHG7APSRZRPYtoZWXyz/da/yg0idzNOzK5enKZkGJsAFh
+	TcdGonZKELB7XMFN94kFo6HeXtJ6qwbQG1/J/fSLpHLmOeCpAYMG8MvTfXqDWKksKjIl5e7RDrI9Y
+	NQ/a4ybnXuCNqzl+ylEf/k5CX2XyL5RnOwNFfXvKQZKBkw0kF4gfEyOCE7803jHKZEzVcWHY3Rrep
+	yYbpn5vQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuRxp-0000000EmVO-3F3o;
+	Fri, 05 Sep 2025 08:38:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 552C530034B; Fri, 05 Sep 2025 10:38:33 +0200 (CEST)
+Date: Fri, 5 Sep 2025 10:38:33 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: nop5-optimized USDTs WAS: Re: [PATCHv6 perf/core 09/22]
+ uprobes/x86: Add uprobe syscall to speed up uprobe
+Message-ID: <20250905083833.GR4068168@noisy.programming.kicks-ass.net>
+References: <CAEf4BzaxtW_W1M94e3q0Qw4vM_heHqU7zFeH-fFHOQBwy5+7LQ@mail.gmail.com>
+ <aLlKJWRs5etuvFuK@krava>
+ <CAEf4BzYUyOP_ziQjXshVeKmiocLjtWH+8LVHSaFNN1p=sp2rNg@mail.gmail.com>
+ <20250904203511.GB4067720@noisy.programming.kicks-ass.net>
+ <CAEf4BzZ6xSc7cFy7rF=G2+gPAfK+5cvZ0eDhnd5eP5m1t9EK-A@mail.gmail.com>
+ <20250904205210.GQ3245006@noisy.programming.kicks-ass.net>
+ <CAEf4BzY216jgetzA_TBY7_jSkcw-TGCj64s96ijoi3iAhcyHuw@mail.gmail.com>
+ <20250904215617.GR3245006@noisy.programming.kicks-ass.net>
+ <20250904215826.GP4068168@noisy.programming.kicks-ass.net>
+ <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Sep 2025 10:38:26 +0200
-Message-Id: <DCKQBKR9NYGI.33LVD1OKBQ6OZ@kernel.org>
-Subject: Re: linux-next: manual merge of the drm-rust tree with Linus' tree
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250905125653.0ebc7580@canb.auug.org.au>
-In-Reply-To: <20250905125653.0ebc7580@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905082447.GQ4068168@noisy.programming.kicks-ass.net>
 
-On Fri Sep 5, 2025 at 4:56 AM CEST, Stephen Rothwell wrote:
-> diff --cc rust/kernel/alloc/allocator_test.rs
-> index 2e61cdbd2303,f46b4b671389..000000000000
-> --- a/rust/kernel/alloc/allocator_test.rs
-> +++ b/rust/kernel/alloc/allocator_test.rs
-> @@@ -9,11 -9,13 +9,13 @@@
->  =20
->   #![allow(missing_docs)]
->  =20
->  -use super::{flags::*, AllocError, Allocator, Flags};
->  +use super::{flags::*, AllocError, Allocator, Flags, NumaNode};
->   use core::alloc::Layout;
->   use core::cmp;
-> + use core::marker::PhantomData;
->   use core::ptr;
->   use core::ptr::NonNull;
-> + use kernel::page;
->  =20
->   /// The userspace allocator based on libc.
->   pub struct Cmalloc;
-> @@@ -22,17 -24,33 +24,44 @@@ pub type Kmalloc =3D Cmalloc
->   pub type Vmalloc =3D Kmalloc;
->   pub type KVmalloc =3D Kmalloc;
->  =20
->  +impl Cmalloc {
->  +    /// Returns a [`Layout`] that makes [`Kmalloc`] fulfill the request=
-ed size and alignment of
->  +    /// `layout`.
->  +    pub fn aligned_layout(layout: Layout) -> Layout {
->  +        // Note that `layout.size()` (after padding) is guaranteed to b=
-e a multiple of
->  +        // `layout.align()` which together with the slab guarantees mea=
-ns that `Kmalloc` will return
->  +        // a properly aligned object (see comments in `kmalloc()` for m=
-ore information).
->  +        layout.pad_to_align()
->  +    }
->  +}
->  +
-> + pub struct VmallocPageIter<'a> {
-> +     _p: PhantomData<page::BorrowedPage<'a>>,
-> + }
-> +=20
-> + impl<'a> Iterator for VmallocPageIter<'a> {
-> +     type Item =3D page::BorrowedPage<'a>;
-> +=20
-> +     fn next(&mut self) -> Option<Self::Item> {
-> +         None
-> +     }
-> + }
-> +=20
-> + impl<'a> VmallocPageIter<'a> {
-> +     #[allow(clippy::missing_safety_doc)]
-> +     pub unsafe fn new(_buf: NonNull<u8>, _size: usize) -> Self {
-> +         Self { _p: PhantomData }
-> +     }
-> +=20
-> +     pub fn size(&self) -> usize {
-> +         0
-> +     }
-> +=20
-> +     pub fn page_count(&self) -> usize {
-> +         0
-> +     }
-> + }
-> +=20
->   extern "C" {
->       #[link_name =3D "aligned_alloc"]
->       fn libc_aligned_alloc(align: usize, size: usize) -> *mut crate::ffi=
-::c_void;
+On Fri, Sep 05, 2025 at 10:24:47AM +0200, Peter Zijlstra wrote:
+> +bool insn_is_nop(struct insn *insn)
+> +{
+> +	u8 rex, rex_b = 0, rex_x = 0, rex_r = 0, rex_w = 0;
+> +	u8 modrm, modrm_mod, modrm_reg, modrm_rm;
+> +	u8 sib = 0, sib_scale, sib_index, sib_base;
+> +
+> +	if (insn->rex_prefix.nbytes) {
+> +		rex = insn->rex_prefix.bytes[0];
+> +		rex_w = !!X86_REX_W(rex);
+> +		rex_r = !!X86_REX_R(rex);
+> +		rex_x = !!X86_REX_X(rex);
+> +		rex_b = !!X86_REX_B(rex);
+> +	}
+> +
+> +	if (insn->modrm.nbytes) {
+> +		modrm = insn->modrm.bytes[0];
+> +		modrm_mod = X86_MODRM_MOD(modrm);
+> +		modrm_reg = X86_MODRM_REG(modrm) + 8*rex_r;
+> +		modrm_rm  = X86_MODRM_RM(modrm)  + 8*rex_b;
+> +	}
+> +
+> +	if (insn->sib.nbytes) {
+> +		sib = insn->sib.bytes[0];
+> +		sib_scale = X86_SIB_SCALE(sib);
+> +		sib_index = X86_SIB_INDEX(sib) + 8*rex_x;
+> +		sib_base  = X86_SIB_BASE(sib)  + 8*rex_b;
+> +
+> +		modrm_rm = sib_base;
+> +	}
+> +
+> +	switch (insn->opcode.bytes[0]) {
+> +	case 0x0f: /* 2nd byte */
+> +		break;
+> +
+> +	case 0x89: /* MOV */
+> +		if (modrm_mod != 3) /* register-direct */
+> +			return false;
+> +
+> +		if (insn->x86_64 && !rex_w) /* native size */
+> +			return false;
+> +
+> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
+> +			if (insn->prefixes.bytes[i] == 0x66) /* OSP */
+> +				return false;
+> +		}
+> +
+> +		return modrm_reg == modrm_rm; /* MOV %reg, %reg */
+> +
+> +	case 0x8d: /* LEA */
+> +		if (modrm_mod == 0 || modrm_mod == 3) /* register-indirect with disp */
+> +			return false;
+> +
+> +		if (insn->x86_64 && !rex_w) /* native size */
+> +			return false;
+> +
+> +		if (insn->displacement.value != 0)
+> +			return false;
+> +
+> +		if (sib & (sib_scale != 0 || sib_index != 4)) /* (%reg, %eiz, 1) */
 
-Looks good, thanks!
+Argh, that should obviously be: &&
+
+> +			return false;
+> +
+> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
+> +			if (insn->prefixes.bytes[i] != 0x3e) /* DS */
+> +				return false;
+> +		}
+> +
+> +		return modrm_reg == modrm_rm; /* LEA 0(%reg), %reg */
+> +
+> +	case 0x90: /* NOP */
+> +		for (int i = 0; i < insn->prefixes.nbytes; i++) {
+> +			if (insn->prefixes.bytes[i] == 0xf3) /* REP */
+> +				return false; /* REP NOP -- PAUSE */
+> +		}
+> +		return true;
+> +
+> +	case 0xe9: /* JMP.d32 */
+> +	case 0xeb: /* JMP.d8 */
+> +		return insn->immediate.value == 0; /* JMP +0 */
+> +
+> +	default:
+> +		return false;
+> +	}
+> +
+> +	switch (insn->opcode.bytes[1]) {
+> +	case 0x1f:
+> +		return modrm_reg == 0; /* 0f 1f /0 -- NOPL */
+> +
+> +	default:
+> +		return false;
+> +	}
+> +}
 
