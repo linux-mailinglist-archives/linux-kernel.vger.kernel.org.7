@@ -1,212 +1,288 @@
-Return-Path: <linux-kernel+bounces-803142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C59B45AFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:54:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE605B45B14
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83ECA1B25600
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:54:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7968A7AC8C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABDC36CDE5;
-	Fri,  5 Sep 2025 14:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B9A37C104;
+	Fri,  5 Sep 2025 14:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcpsaLdl"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="XI+znNCD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Zyg+gHrh"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3E9148850
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2069136CDE5;
+	Fri,  5 Sep 2025 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084046; cv=none; b=ncDqWovFJTam2eumVzZjFKTxbXG7gIwgbo5w8PEIj0i/1wXqRlDBsQtN22fHup8dBs63F8v/iWjrPXYKVaJ2esFhObBHzt3kGNKgOESzVFTOrNkqTdGwKgaZbFZyeEDYR+SSCJIxfwTlqQ63C32QSxA1xICs/uMBmxtw8VGt4aY=
+	t=1757084086; cv=none; b=pdEqwCj0V8msWGopCmT8wkABYTtpoeZDd4hxkibuMPU4sP10wm2lKnUiW3mh1mtQ+bUhpyQjXH1/+bybSxc6mrraPp9Kt/ISV77Cu71iiOBiWMJHBv4LF4TBacBtZ8w7Ko9Ue4gk6wd7xwvPVS/FVyNq4JUaa8vWZ+ahjQ3+P1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084046; c=relaxed/simple;
-	bh=4lV2YquFrBwumWDqjtPf6vrYgYIZl4BT+5bpmKTmkWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KmtpytRIpBeDyRODvjoRb/D8+Wprp+bcaXrzQ60yRaymlMWfjv+JOigA8epav88fALaBFRDyYv+KjXkUSfWe/JCJAA5x+5wmoB0rS2EPbHJcerb4DmJ59uOzoo4PmEwImgyihmrtjZ1Z1LkOQCAhjpoLMAVPLqGg8AXrBDRk7Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcpsaLdl; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e34dbc38easo555160f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757084043; x=1757688843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+1ki06iYpj+ewE6s7Y+9ZydcBaRBzNiVkNilJgQiAH8=;
-        b=YcpsaLdl2e4XkX0gbMVRbtWK6G9dIhszF+AhffrU+Cvk77pgBl+yxjKlspYpJ+AF7G
-         O+JD/CY70z8P1bjA/xWYTzOPYHelNXmbEJ1gX1WdYRkzKY+uPAXHndgyzRCbaMKDXPzl
-         aOKot7wlXuI1A781GwT+MmxKLf2BHkGNKULCGydYXPwvmuxgFAFfZj7MIMTbHY4rpPWD
-         wzNnxxyrA1LkhihEYiwNRM63omf/GwSrDW+ud88qyQ9LnCYj3FSDZ9jGEAgUsgt1k/Ru
-         iljUZXwJyvQS71S1az8OHUcPgwHVjecvxLPUfGj9L6oyOy7LoDHCcvB7cLu+gmNN2Ren
-         o5rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084043; x=1757688843;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1ki06iYpj+ewE6s7Y+9ZydcBaRBzNiVkNilJgQiAH8=;
-        b=hUCM2upyDsYYvmsOwp5tz7LuyqwFc1VBrB9+JXvFcY7vcNLClsyo7EG3eLyHoR0+mt
-         NhYIsaXQx68dCJYlquI2ZN0ZtfxA190ikzzQhGlVKmdS/K3/gwxujxYpD4nMBCixI1Mz
-         QCOvV/kB4cR2KCmWjDSkaJFxUZejgba227jvWONbmqJY49hVNCPYec5hIh95JDXu23WI
-         2sz+JqGuHstThdZYi4JgiGx7FInrCSVji+NODTZmRKC7qhJii65Mp1YMSdYUk0A2+RAx
-         SEFderfPOjRfFVuQ/rI1+p1NBF1R4QpahHxov6A1AAUjTVM5rhC5mcMCyPcdQ3h/NH6c
-         iz+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWH7pouzI+QKmrl4gviIFTpawZzcvMfh+QXpSJpfWgaSeyg5WcbTSZY8cIbhHZRtJwXjgiq4qXJWXPFsJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqhCMFpAsKHsAfLvqbU5PWECfFk5kPq6ZM2G+F0LgrIDJV8lyz
-	dkQYCh0hbgezD49vpWMqwe6U/JhKL4FVts6IdbpNC1nUp/iep7ui6HhLZ+xCK/U+A1o=
-X-Gm-Gg: ASbGncvbwXJySH5Hv8GindKFvyNlHY+0quEwJNNAMvbPqBzaCrFJP5pIC0eQcOTFdhV
-	JoQVawzUyWaed/yaluOxy0cM63q+fTpd7ghhF9DUt0nbDCVbW6sw1mTB+VttLtux8ECb4Uatps8
-	FCfOR3Qpk70ona/zLVfdmtrEB1vfrHVmceF5JpqkS+NoRCUC3RF2dKsO3NBi/BV3UD2H/ISgcTe
-	ZL7FhkQFzhV+HfeN2R0Xuq9D5oRf3q8z/mn52mjZVykaq/UNj6oeRL3p5mo7OhwZUSu270ZnAOC
-	HHaP4zqAChqkNwAa91A4YgN9m5XuTET1piezJP1OEfNPxnmnsNVw3W+VKx1E/leRnXR/IcpDtKa
-	JtANxNmp3ZTuRzYyll9/Adp1uBWtqNKPzVIk4/dEFd9Ce1oXSn7rYYA7DUqGbSTGC2bMaGnUPvK
-	ZYxdl/yg==
-X-Google-Smtp-Source: AGHT+IHGutNFXBpxj8SMepvOz4hjsxKNNsZIUg4ENk/gO7vKInJCsTI+b65PQGjSrF51dESUxTVGiQ==
-X-Received: by 2002:a05:6000:2f84:b0:3e4:74dc:a3bb with SMTP id ffacd0b85a97d-3e474dcd583mr1734804f8f.40.1757084042867;
-        Fri, 05 Sep 2025 07:54:02 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::4:4f66])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm16689769f8f.23.2025.09.05.07.54.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:54:01 -0700 (PDT)
-Message-ID: <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
-Date: Fri, 5 Sep 2025 15:53:58 +0100
+	s=arc-20240116; t=1757084086; c=relaxed/simple;
+	bh=zH4I7Gzopyb/6MKNHKYa8OVdx+ftcABF297zdepy2tE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DPW+7bBbPi+SgKd2jMvq8Q3QaIAEPwmnXwPIA5Rr33d4kpoj2mkbb7qcil03fMj3SiV/6GvQtPDayeEOXvXyHzmv7n4LwWEhv4H0y1slNF0NusaS5/a+bxmtTK8+ZeCdAbigNNBjFDfpuhf44zyiybYpvB9uuXl2UWr2EeR+Cwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=XI+znNCD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Zyg+gHrh; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 28F31EC02D6;
+	Fri,  5 Sep 2025 10:54:43 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 05 Sep 2025 10:54:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757084083;
+	 x=1757170483; bh=0UkrqJEXREoh6L/TfU0tfmsT28ith9kllz3OHAzvYbA=; b=
+	XI+znNCD2iuWm2SyVrv9KVkqexXESs8EJHIYZ0C1YPp0d1VjlYooaJfbejuNo5YB
+	qitjNN/3a2iMX252fvMQtkT7DqXzggRNvhQZrppn8YbPA4ygRAHYe/mIioTAnuDg
+	+lqtGa0BqCe2Tzvuh9goni7U0F3rrI1LQ5kUUSJbjd6K0Fi0dOSc+wHdJbHmwAoo
+	OLNBhX5zomoyaA89vPE5i8kwttZcR9WM+EfoEycu13wqIQDCab7m9/D0Y3Hh22r7
+	TMi9BrFDLyTtpRRqazLxrySGiwZLU8JJRRLKaU3OY68z0IHgyZzSW6Ec0Vi+/ojn
+	1DWl5EfcWtPfcOgWnPPiPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757084083; x=
+	1757170483; bh=0UkrqJEXREoh6L/TfU0tfmsT28ith9kllz3OHAzvYbA=; b=Z
+	yg+gHrhzIi8deB/erZ0BGCPG2ZJwzi1DpvRkB/RS/i3Dnw6qnhSQqSzjuoTZe8ff
+	aGdMvbasaURqo2EYslQ44mXcMzQ5wrjAI09UJ/J2lJpPMzZ0O8Og++xe07l2dLu3
+	UODnshOjd3d6gmZKBQQAJJNKoFUEn9qMulJuMOXU00J9wr3u/gx4vzDh1aSz/Dfw
+	EW5i9wIm33uc0iil2Cy56MU244ZJLevnhECK1D0TszE8P4DC2hm3oQs4A2HpLZx+
+	ei7yHy3koQd7JUXsc0R7yR8vyGcy0G5BUh1JZV2rNyA7wRMjNi5GCB3Y+gh7Y7pf
+	v8ruN3UXAZGrSQUEswnnA==
+X-ME-Sender: <xms:svm6aCHWP1ibHs6ltiyJslw7KtRM-PPykVRkuQazcV1E0yhtPTwSDA>
+    <xme:svm6aDXu8TlasNJDZZkk57ksBeDKFXnkwGXtAsdPuGsRH_DhNo0C6Ew9rom3qgUDB
+    is47Xwl_yWSiK6aY0Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeludekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    ephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
+    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehluhgtrgdrfigvihhsshesfhgrihhrphhhohhnvgdrtghomhdprhgtph
+    htthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrohhonhhivges
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinh
+    grrhhordhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhi
+    ohhnrdhorhhgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtoh
+    epqhhuihgtpgiftghhvghnghesqhhuihgtihhntgdrtghomhdprhgtphhtthhopehtihif
+    rghisehsuhhsvgdrtghomhdprhgtphhtthhopehtihifrghisehsuhhsvgdruggv
+X-ME-Proxy: <xmx:svm6aBdd6sdJaS4iM8ZekJBl781EkxBaxN3pUZlU7Kj8RpeVMg39nQ>
+    <xmx:svm6aOZna0HMFrm1HVpB0daD5el3soTGd0NcF_7NQZDLaJmMkFHvTQ>
+    <xmx:svm6aNNLTVOzZTZn2jiE8iz9roMgfaUOg7bjeDvro6SOAnL8657WsA>
+    <xmx:svm6aEUU3pINoss3x4CJ1U46IzlVnqlfXeqDmwjU9XIrtDX_wo1CYg>
+    <xmx:s_m6aGHGE-kFQlcBG98dfWv-A2gAyBN3cR4kizYE5MZg9bQBJmZr_4lw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B900F700069; Fri,  5 Sep 2025 10:54:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
- max_ptes_none default
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-References: <20250905141137.3529867-1-david@redhat.com>
- <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
- <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AJ-KNcceaLbJ
+Date: Fri, 05 Sep 2025 16:54:06 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Takashi Iwai" <tiwai@suse.de>, "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Mark Brown" <broonie@kernel.org>,
+ "Wesley Cheng" <quic_wcheng@quicinc.com>, "Jaroslav Kysela" <perex@perex.cz>,
+ "Takashi Iwai" <tiwai@suse.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+In-Reply-To: <87bjnpqe45.wl-tiwai@suse.de>
+References: <20250513123442.159936-1-arnd@kernel.org>
+ <20250513123442.159936-4-arnd@kernel.org>
+ <DBR2363A95M1.L9XBNC003490@fairphone.com> <87v7n72pg0.wl-tiwai@suse.de>
+ <DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com> <87ms8j2on6.wl-tiwai@suse.de>
+ <DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com> <87bjnpqe45.wl-tiwai@suse.de>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+On Fri, Sep 5, 2025, at 14:26, Takashi Iwai wrote:
+> On Fri, 05 Sep 2025 13:47:28 +0200,
+
+> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct 
+> snd_usb_substream *subs,
+>  	if (!xfer_buf)
+>  		return -ENOMEM;
+> 
+> -	/* Remapping is not possible if xfer_buf is outside of linear map */
+> -	xfer_buf_pa = virt_to_phys(xfer_buf);
+> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+> -		ret = -ENXIO;
+> -		goto unmap_sync;
+> -	}
+>  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+>  			xfer_buf_dma, len);
+> 
+>  	/* map the physical buffer into sysdev as well */
+> +	/* note: 0 is passed to pa argument as we use sgt */
+>  	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> +					       0, len, &xfer_buf_sgt);
+>  	if (!xfer_buf_dma_sysdev) {
+>  		ret = -ENOMEM;
+>  		goto unmap_sync;
 
 
+Makes sense. I had to rework the code a little more to actually
+understand how it fits together, for reference the below version
+(I don't expect it to build cleanly) would split up
+uaudio_iommu_map() into one function that takes a physical
+address and another function that takes an sg table.
 
-On 05/09/2025 15:46, David Hildenbrand wrote:
-> [...]
-> 
->>
->> The reason I did this is for the case if you change max_ptes_none after the THP is added
->> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
->> so that its considered for splitting.
-> 
-> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
-> 
-> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
+       Arnd
 
-Yes, I do this as well, i.e. have a low value from the start.
-
-Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
-the usecase you are describing below, but we wont encounter the increased CPU usage.> 
->>
->>> Easy to reproduce:
->>>
->>> 1) Allocate some THPs filled with 0s
->>>
->>> <prog.c>
->>>   #include <string.h>
->>>   #include <stdio.h>
->>>   #include <stdlib.h>
->>>   #include <unistd.h>
->>>   #include <sys/mman.h>
->>>
->>>   const size_t size = 1024*1024*1024;
->>>
->>>   int main(void)
->>>   {
->>>           size_t offs;
->>>           char *area;
->>>
->>>           area = mmap(0, size, PROT_READ | PROT_WRITE,
->>>                       MAP_ANON | MAP_PRIVATE, -1, 0);
->>>           if (area == MAP_FAILED) {
->>>                   printf("mmap failed\n");
->>>                   exit(-1);
->>>           }
->>>           madvise(area, size, MADV_HUGEPAGE);
->>>
->>>           for (offs = 0; offs < size; offs += getpagesize())
->>>                   area[offs] = 0;
->>>           pause();
->>>   }
->>> <\prog.c>
->>>
->>> 2) Trigger the shrinker
->>>
->>> E.g., memory pressure through memhog
->>>
->>> 3) Observe that THPs are not getting reclaimed
->>>
->>> $ cat /proc/`pgrep prog`/smaps_rollup
->>>
->>> Would list ~1GiB of AnonHugePages. With this fix, they would get
->>> reclaimed as expected.
->>>
->>> Fixes: dafff3f4c850 ("mm: split underused THPs")
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Cc: Zi Yan <ziy@nvidia.com>
->>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>> Cc: Nico Pache <npache@redhat.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Dev Jain <dev.jain@arm.com>
->>> Cc: Barry Song <baohua@kernel.org>
->>> Cc: Usama Arif <usamaarif642@gmail.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>   mm/huge_memory.c | 3 ---
->>>   1 file changed, 3 deletions(-)
->>>
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 26cedfcd74189..aa3ed7a86435b 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -4110,9 +4110,6 @@ static bool thp_underused(struct folio *folio)
->>>       void *kaddr;
->>>       int i;
->>>   -    if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
->>> -        return false;
->>> -
->>
->> I do agree with your usecase, but I am really worried about the amount of
->> work and cpu time the THP shrinker will consume when max_ptes_none is 511
->> (I dont have any numbers to back up my worry :)), and its less likely that
->> we will have these completely zeroed out THPs (again no numbers to back up
->> this statement).
-> 
-> Then then shrinker shall be deactivated as default if that becomes a problem.
-> 
-> Fortunately you documented the desired semantics:
-> 
-> "All THPs at fault and collapse time will be added to _deferred_list,
-> and will therefore be split under memory pressure if they are considered
-> "underused". A THP is underused if the number of zero-filled pages in
-> the THP is above max_ptes_none (see below)."
-> 
->> We have the huge_zero_folio as well which is installed on read.
-> 
-> Yes, only if the huge zero folio is not available. Which will then also get properly reclaimed.
-> 
-
+diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+index a25c5a531690..f843c2181da5 100644
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -539,32 +539,24 @@ static void uaudio_iommu_unmap(enum mem_type mtype, unsigned long iova,
+ }
+ 
+ /**
+- * uaudio_iommu_map() - maps iommu memory for adsp
++ * uaudio_iommu_map_pa() - maps iommu memory for adsp
+  * @mtype: ring type
+  * @dma_coherent: dma coherent
+  * @pa: physical address for ring/buffer
+  * @size: size of memory region
+- * @sgt: sg table for memory region
+  *
+  * Maps the XHCI related resources to a memory region that is assigned to be
+  * used by the adsp.  This will be mapped to the domain, which is created by
+  * the ASoC USB backend driver.
+  *
+  */
+-static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+-				      phys_addr_t pa, size_t size,
+-				      struct sg_table *sgt)
++static unsigned long uaudio_iommu_map_pa(enum mem_type mtype, bool dma_coherent,
++				      phys_addr_t pa, size_t size)
+ {
+ 	struct scatterlist *sg;
+ 	unsigned long iova = 0;
+-	size_t total_len = 0;
+-	unsigned long iova_sg;
+-	phys_addr_t pa_sg;
+ 	bool map = true;
+-	size_t sg_len;
+ 	int prot;
+-	int ret;
+-	int i;
+ 
+ 	prot = IOMMU_READ | IOMMU_WRITE;
+ 
+@@ -583,20 +575,42 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 				     &uaudio_qdev->xfer_ring_iova_size,
+ 				     &uaudio_qdev->xfer_ring_list, size);
+ 		break;
+-	case MEM_XFER_BUF:
+-		iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+-				     &uaudio_qdev->xfer_buf_iova_size,
+-				     &uaudio_qdev->xfer_buf_list, size);
+-		break;
+ 	default:
+ 		dev_err(uaudio_qdev->data->dev, "unknown mem type %d\n", mtype);
+ 	}
+ 
+ 	if (!iova || !map)
+-		goto done;
++		return 0;
+ 
+-	if (!sgt)
+-		goto skip_sgt_map;
++	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
++
++done:
++	return iova;
++}
++
++static unsigned long uaudio_iommu_map_xfer_buf(bool dma_coherent,
++				      size_t size, struct sg_table *sgt)
++{
++	struct scatterlist *sg;
++	unsigned long iova = 0;
++	size_t total_len = 0;
++	unsigned long iova_sg;
++	phys_addr_t pa_sg;
++	size_t sg_len;
++	int prot;
++	int ret;
++	int i;
++
++	prot = IOMMU_READ | IOMMU_WRITE;
++
++	if (dma_coherent)
++		prot |= IOMMU_CACHE;
++
++	iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
++			     &uaudio_qdev->xfer_buf_iova_size,
++			     &uaudio_qdev->xfer_buf_list, size);
++	if (!iova)
++		goto done;
+ 
+ 	iova_sg = iova;
+ 	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
+@@ -618,11 +632,6 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 		uaudio_iommu_unmap(MEM_XFER_BUF, iova, size, total_len);
+ 		iova = 0;
+ 	}
+-	return iova;
+-
+-skip_sgt_map:
+-	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+-
+ done:
+ 	return iova;
+ }
+@@ -1061,8 +1070,8 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 			xfer_buf_dma, len);
+ 
+ 	/* map the physical buffer into sysdev as well */
+-	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+-					       xfer_buf_pa, len, &xfer_buf_sgt);
++	xfer_buf_dma_sysdev = uaudio_iommu_map_xfer_buf(dma_coherent, xfer_buf_pa,
++							len, &xfer_buf_sgt);
+ 	if (!xfer_buf_dma_sysdev) {
+ 		ret = -ENOMEM;
+ 		goto unmap_sync;
+@@ -1143,8 +1152,8 @@ uaudio_endpoint_setup(struct snd_usb_substream *subs,
+ 	sg_free_table(sgt);
+ 
+ 	/* data transfer ring */
+-	iova = uaudio_iommu_map(MEM_XFER_RING, dma_coherent, tr_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_XFER_RING, dma_coherent, tr_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
+@@ -1207,8 +1216,8 @@ static int uaudio_event_ring_setup(struct snd_usb_substream *subs,
+ 	mem_info->dma = sg_dma_address(sgt->sgl);
+ 	sg_free_table(sgt);
+ 
+-	iova = uaudio_iommu_map(MEM_EVENT_RING, dma_coherent, er_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_EVENT_RING, dma_coherent, er_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
 
