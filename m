@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-802395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D2CB451E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:44:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F864B451FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CBF5A0E43
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EBF188B87B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E667628726C;
-	Fri,  5 Sep 2025 08:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF5D1A5BA2;
+	Fri,  5 Sep 2025 08:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ALk4RXbf"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3V5gAgo"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC3327FB28
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766D62C9D;
+	Fri,  5 Sep 2025 08:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061855; cv=none; b=gDWpJNtsmQ++MblqO2CR9BbGFmI1iw9THRSvDv06ZSch9b7u39YbM3X7a6T0kFf/0YKRy7Y6h+Ds+3rUByj7ZL4pg4BfUGP06hhWGdcnPi19dtT+m7KbpqxOsmGZ9WBt8OO82ZPLvx2KowZWcRrNM1wQePJBY/jsFiLn8IaVCTI=
+	t=1757061985; cv=none; b=A+X8NvausH80jqdQK4QUaNuJ1JAsWWDCOGn7UVGdb2FGBIH6JI8gOB0F++Oa8xRzd/n3aZA35nLdX3LGEonOAbJnf7YQ0TFBYv+0bpQFurx/CGSuclPxEy/6IicNeUj8LirKRD47mNsskBFTvj8VBB/0q355K5WzuE7wGm0q7vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061855; c=relaxed/simple;
-	bh=Qdx8UmZRXzK8qYDVu0N8OvZfN2UCea6wjbMidO7B3Xw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiAEgOU0DJgj6xjnttYTFUTC2UsZjvNAcugReIH+gA6XkRweBVzfKa7C1BCiEPgg1SRgZVLbtdHGBdyWELAy3uuSrn58UlhOe2lvoZdG1IfaFVLTXBTWvCEemC4WPeiazQxagYe1o8ZoAMaoGvpTWBaj9IfqTzQSTaiv0VWGok0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ALk4RXbf; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61ebe5204c2so2611837a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:44:13 -0700 (PDT)
+	s=arc-20240116; t=1757061985; c=relaxed/simple;
+	bh=00exLymqkvnpp3T8dxyEGh2QBjDNwmc2T2vb2kDYJ6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KT7k8E1MTBYhNtxwIj/gu4p6m7b5t5kTYcp/urDt+7la6M1N41K4hvgGRLs1jDaE2M91o6Vwr2GOAod5UpeSlDzbH7S9+ywfQFcprlGAEyobINIC0UKkzicsLNlGs8tfNNJaa9anIsBmGvzfgL+ouCZjv4rE7SLTUX/bCEkBC/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g3V5gAgo; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b52047b3f19so629684a12.2;
+        Fri, 05 Sep 2025 01:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757061852; x=1757666652; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yR4MNdZIy35U00ccIKzjKaOutSLR2GPJ6bo+zIk+aFo=;
-        b=ALk4RXbfEjbP3gxZtWV5wtVx/G5AVmoi7CujDXWKpHIZjcPtm/21P8Uqsx0XteQDK1
-         1OzUC600rpu99ZT+4zYyIzs7hWzXf+QyFN/bfLFQy2ZtaZafK/zTYbj6HkHq7nAn+lYj
-         yzLl0VKyCyjpLiKVt0suKfrJIIiqpV6okpFHYC24qk9mOM3g7wNI4fXwJIyrq+eau6wb
-         ywYWg2FJKc0bg3vQbre38qR7Y6RyccaJoEvQd5r8H3o+zTl1WBUK5dJobVHnL74J4Sam
-         FTq7AfPmh9W1Zc3orUuJA8k2Fwf3/8YL96Oz/ghwXk2h8MzhZfCO3BzIA1ezU5kanzRJ
-         mQmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757061852; x=1757666652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757061984; x=1757666784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yR4MNdZIy35U00ccIKzjKaOutSLR2GPJ6bo+zIk+aFo=;
-        b=SNcYT6SNNF4bi3JgXXyl4GDHLkNsQOr3+R/mqn4+eZuGYGDWplP6oNWE6n68zFAbvN
-         4J8RFUdOFqGBhj1kuRUXsy5z+7m1155eahBZw0i/W9ioPqjPM9G6Ncozcx0cdZcMvHax
-         Be0VAdkNUqMeN7kLGQnObcspnzCa04VFJvgy6/FIgMhzxlHJbAzfmnO+SHM5tALkD5KA
-         nDfQzQ8cNvaOLt16nmgeCsZSON8i+wSxK4ddYFLszSIQJbrWuf0xSwHXyHgN2YsqP3Zr
-         U9WMjbrKM3HL9ws6LTcAxm2UPVYAsvrIIdj0IefmsHHwRMvxWcMf9Fn0xQ4Rc/0YhnHs
-         nZVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtThAnse1mXcCMSlkvfdyLOykQcjlOroRbUdSUNfA8EtFTkWU9GDC97UnbVMxwAOxCJV5TG2FL9dKhzo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTrjguovmTnXUOfY2AWta7D8nvO5jY4Bc2VSSuf74uX5P8nfvc
-	ju1WWJM4ShGKVGZONkLhamm07opNl4xQW00tJhsNRV4N1xjJIvs8nKv4+ebM3e/7ARo=
-X-Gm-Gg: ASbGnctrLcNXSNXgH+FHYQUWiy8SXELoXYJGjcIHSrUmPmCw8lG0J0pF8VxoYjcUw3e
-	z8Li2pYRjDA3VCu0F7fq/EjRik4QmFLo6eEfNBdxK2oQJNam54zYyBaq0o16TKdaPD3LxI7mAb3
-	4MEraFqUV7Fht48ue1BX8NIodZ4uNmc/UCzTtssJ1mN1H75UZ/roX7FK7kj6wUcGRZ0uJweAohF
-	kY7RzCZJqVs59xH5ivKrGysoikShLNd9gFOfpxl1UlaNq48ExHD+/k2DNGhZqYG5b6zXbOsjv+u
-	dL4l2ZTzcmyidszeMUIe4T/dqG+Z0HxJGXeytynUa2LZ9gqg3+E3Ehhlkrfe+lQ1Nv3rMcErVHW
-	SH6B3hUVSVotBiK+VYsN5kDWLZWVyo62+E6RR9wqIjLNmFFFsL+AP8q3ZrNr/gNDV/YWZG4MzZ+
-	LsmgAUJIfUH9RrbjvMurceRw==
-X-Google-Smtp-Source: AGHT+IGDLfdyG4Skr26W8CIxq2lA8TSvgcUdWiR0PPFTvWtp/0QiihczvwRvoN05VyOwttajNkcHvw==
-X-Received: by 2002:a05:6402:2807:b0:61e:a13a:27ce with SMTP id 4fb4d7f45d1cf-61ea13a2c3emr14799399a12.20.1757061851705;
-        Fri, 05 Sep 2025 01:44:11 -0700 (PDT)
-Received: from localhost (host-79-31-194-29.retail.telecomitalia.it. [79.31.194.29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc4bbc51sm15734349a12.27.2025.09.05.01.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 01:44:11 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 5 Sep 2025 10:46:08 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	iivanov@suse.de, svarbanov@suse.de, mbrugger@suse.com,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 1/2] arm64: dts: broadcom: rp1: Add USB nodes
-Message-ID: <aLqjUNAdremFoM-F@apocalypse>
-References: <4e026a66001da7b4924d75bd7bee158cbb978eed.1756387905.git.andrea.porta@suse.com>
- <f7bb0739-3161-4d70-87e5-8c978a023361@kernel.org>
+        bh=w/3us9q7SO3a7mU0skwVqh5PccHM5efYByNeek2KuIo=;
+        b=g3V5gAgoTPvUx2iHiXsT+RZQFb0uAB+07v+D/dFKwfA323RQX/Zh3uy5ZG/HAadXd/
+         1ElSI8IAmYD3PMnQOgrTUjHhBk87LTCyoC5R2zVGPl1h8eY6q2Mts3QGEWp4MpK1X/Zt
+         Oc4wcCJMtgzztqUcHkd5sHN+lU0rRt3AdUlp1Yg7LG3L+JWoy0lLKQiZdsgc7QFJf3P3
+         1PULP1SVR4YEtif3WsjS9RjZG5PWpZDjsxyGfEvHJIc2Lq86k+/q1DRkuPfBIiX7lNXn
+         rfICeZQbU7ErBN7A1CaUx1pZFNCoGDYYWSW+Ul2uw6U49aGC+F8s1HNbxD1lYgsPeCCm
+         gv1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757061984; x=1757666784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/3us9q7SO3a7mU0skwVqh5PccHM5efYByNeek2KuIo=;
+        b=klg9LGYbFW8CIyyrP923NsMiEu7XEVEZ49vI2ZXRei+Qtx5/3iC05c+abdNuyuoMo5
+         60+wtMGcfDkNGOSQuHAVtW4raGw2eYlKrDBu8kpp+xlW2pOf0iVLI+FSIMzY0+GPiMwP
+         lNDuSi0+CDM2xrqba6Jyldjxoy3K74yroYPTJD6CaKc9U/plDEBmLYanOfj/2lt4vC7q
+         jSHb+bjf9cjr9/e6bZmMjNKGExXEmFQZIMrSKqYx8IUfw8yClfUa9zg6yXmESh/SKoZk
+         w6++J5Ob1nXaHEn+jD0pf94z1chEfjolQSYVHoQrh9Ol/ViyuAzc2/aryixzBiPP2CFW
+         S3iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy7ANDlaHifHr66NwSkx+MaIA6BXq7E+E9Opfcww5jbz1CtULVJCHEjWScjGg0tD8xnbgmaC3TSF8cRHE=@vger.kernel.org, AJvYcCXcJ+TbW2vAmr8dxIdojPso5OPCzD9/7zPEuCOhHqLpWI4JTfHQFcz2XD7rdfNZ9yaBBr6vbqwK/CPMYWnn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8LjyoKPIEUnCjNoDU7I7ovgijzMOI5uy48R0Rb9nlxR36X5rG
+	0AEAbdG69jnAFfBFLbBMCWz6/eWUo1qps/YmGOi+5v36NtgS629iqIeDqSkyxYN02bwTEnmxs/8
+	kquQI+eiWrVNoiFvLr9cgatwXDga/zQI=
+X-Gm-Gg: ASbGncvHqVhK8U/iOIxgBUfI1f78krjD+u53vObhqoQibz3g7Yn4kSXGYnpfTREaVsj
+	sp2C1R5UsC082qeO06Shnp0h/kuEcSKvE0ZDcEBkJZoH9/6Rs9yhE2jdl/O/PS4TBuNUdA3LEGq
+	wzBwp/ZuNgIzPRI43nwf2c/TAtdW4J13HNA8yz64nLTsCsUDw1WQQ1P8N8qBW80gi2MDXLMUatZ
+	Mc2RmQBjN3F+vrk3C//atH3t5+eS4zy+4nwzA==
+X-Google-Smtp-Source: AGHT+IEgZ3Eftrkppq1vXGap76yLwC8VeWEdDVcer7sGUvlg3ifsdfCIykIdtTSslNhI1Xh7L4rf7v+2AN+/xauuHq8=
+X-Received: by 2002:a17:903:19e5:b0:249:11c3:2db9 with SMTP id
+ d9443c01a7336-24944b498a8mr331935075ad.46.1757061983557; Fri, 05 Sep 2025
+ 01:46:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7bb0739-3161-4d70-87e5-8c978a023361@kernel.org>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
+ <20250901164212.460229-2-ethan.w.s.graham@gmail.com> <CAG_fn=UfKBSxgcNp5dB3DDoNAnCpDbYoV8HC4BhS7LbgQSpwQw@mail.gmail.com>
+In-Reply-To: <CAG_fn=UfKBSxgcNp5dB3DDoNAnCpDbYoV8HC4BhS7LbgQSpwQw@mail.gmail.com>
+From: Ethan Graham <ethan.w.s.graham@gmail.com>
+Date: Fri, 5 Sep 2025 10:46:11 +0200
+X-Gm-Features: Ac12FXzjiY59pui3__MIUUA0N5euXw0YDQBMc9KrPXFvKz93QZm3lShTvhMy6Y4
+Message-ID: <CANgxf6wziVLi5F5ZoF2nwGhoCyLhk5YJ_MBtHaCaGtuzFky_Vw@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 1/7] mm/kasan: implement kasan_poison_range
+To: Alexander Potapenko <glider@google.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
+	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
+	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Fri, Sep 5, 2025 at 10:33=E2=80=AFAM Alexander Potapenko <glider@google.=
+com> wrote:
+> > + * - The poisoning of the range only extends up to the last full granu=
+le before
+> > + *     the end of the range. Any remaining bytes in a final partial gr=
+anule are
+> > + *     ignored.
+>
+> Maybe we should require that the end of the range is aligned, as we do
+> for e.g. kasan_unpoison()?
+> Are there cases in which we want to call it for non-aligned addresses?
 
-On 13:05 Thu 04 Sep     , Krzysztof Kozlowski wrote:
-> On 28/08/2025 15:50, Andrea della Porta wrote:
-> > The RaspberryPi 5 has RP1 chipset containing two USB host controller,
-> > while presenting two USB 2.0 and two USB 3.0 ports to the outside.
-> > 
-> > Add the relevant USB nodes to the devicetree.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  arch/arm64/boot/dts/broadcom/rp1-common.dtsi | 28 ++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> > index 5002a375eb0b..116617fcb1eb 100644
-> > --- a/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> > +++ b/arch/arm64/boot/dts/broadcom/rp1-common.dtsi
-> > @@ -39,4 +39,32 @@ rp1_gpio: pinctrl@400d0000 {
-> >  			     <1 IRQ_TYPE_LEVEL_HIGH>,
-> >  			     <2 IRQ_TYPE_LEVEL_HIGH>;
-> >  	};
-> > +
-> > +	rp1_usb0: usb@40200000 {
-> > +		reg = <0x00 0x40200000  0x0 0x100000>;
-> > +		compatible = "snps,dwc3";
-> Please order properties and nodes according to DTS coding style.
+It's possible in the current KFuzzTest input format. For example you have
+an 8 byte struct with a pointer to a 35-byte string. This results in a payl=
+oad:
+struct [0: 8), padding [8: 16), string: [16: 51), padding: [51: 59). The
+framework will poison the unaligned region [51, 59).
 
-I'll do. 
+We could enforce that the size of the payload (including all padding) is
+a multiple of KASAN_GRANULE_SIZE, thus resulting in padding [51, 64)
+at the end of the payload. It makes encoding a bit more complex, but it
+may be a good idea to push that complexity up to the user space encoder.
 
-Many thanks,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
+What do you think?
 
