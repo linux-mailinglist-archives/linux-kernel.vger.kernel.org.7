@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-802423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7C1B45246
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32745B45247
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DBF67B6796
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7511C82A9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE7F304971;
-	Fri,  5 Sep 2025 08:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D583306D37;
+	Fri,  5 Sep 2025 08:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZMDciYUV"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RLPiPT6J"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC96D27EFF1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250CF2F744B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062700; cv=none; b=lBKTPzodlBWcVjYe/YDlpQp5eK3wHiQcBPDpftova6vcBEI53bcIxWaNkrvh1dqFL12oImLukYgWGPLil+q5qP1PX21J25gntjfzdgA7ue5moGahDCVGrjiZynvMnJqL2b6QBSLrcsC4TcBe0I2x37gk5tGtY+NTkVuCXx50OBA=
+	t=1757062702; cv=none; b=MnBo9t2VEGHbaiZyWrEz9Ztj6p7oeXtV5JpNzPgQbZKrJpNPA9WMDF084AU9Kg3h3AyzKerGCojI10ChtCXiZgRDJW/lIlw11UwRsMsrAHF+ZYkxLVPSw9q6GozOAYsiw8Ukrj4L3s34eyDiBaysoEjGMxxqdujG0OlUuxQNhVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062700; c=relaxed/simple;
-	bh=R0l4XrPwXgzBxVkQOZKkFG7NHoT9MIdOrDwhEx40wD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HpqPDPXhtx6t/6ZR193Lnojdq2JFOzA/jvgsMZ6eWbjrlYR9tYBQ7dQj2qM72XER6cdNJJG9np9hmmlJgNtBNCp42JCnoQoeNOSBo9CUDhOvez894jbS7JNxw89JydEef1NCDw5kE8ZQGv+2WYTdsw6yXx5YWnvKpkaC8NUvCnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZMDciYUV; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1757062702; c=relaxed/simple;
+	bh=tF242wQiq0s2VjfBhaD6BuhbNUTYvFfKOIZhpWcLxfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JobBdCiYBtpR9u/eobWOR3oSodntYgsb+OBOkCWgY1IYSADPt5rNEs3e6sDx4tYXYLpFG49BhWm//NS22djb1EvTGWOIvz5GbSp+yXRbEiBVY6atpW6Bgdv69b0rzhEo6u4cuC1rhDGKaoc2XKuXEtfNluKEnMvV2VhJ3maY3es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RLPiPT6J; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45dda7d87faso1829285e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:58:16 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7c01a708so7163345e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757062695; x=1757667495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7V3pgdSHRJyKNYS9vikNrp4o7srnjxgZBD+Za6Nu15Y=;
-        b=ZMDciYUVrKm0mi2C0/6OftiXnWCM5NneqyfJJYvlPkxjqu4y3KTJNlaoamY4+4YSHi
-         DMoMK+/lqyUlj98SxfgQc8mQFZ2P2mp2v8id/THLWDBWNS5pTdNKUOdfDgXn/AfioKNN
-         fFfJbmdQMpfhhXMeF7xpph14y1+7auVuS6+cVI2Q5OOH5uAHHQCnPQobMuNjTVnsGeCy
-         7mIPbA110t3CmD4Vly/aAlVi6P+7qFuiGgTT8tDqLOmB/TcocEHJ8gDTm6l5Co4rs5tv
-         c9AR1Lm2Um5LxFKqZZ+5Cmj8SvfIqvQvEC+8EEwFUjgX//cj4WeV5LZE9m4nl+vhcJ4V
-         FV7Q==
+        d=suse.com; s=google; t=1757062696; x=1757667496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Qf/wKXybwj4KBwf4y1z4rbclrACQum4L0J8eR2SCtk=;
+        b=RLPiPT6JzlX2QF1DlpWRdhCpC42WnA8Iv21zqTKRxsHf+8l8cwYXfVSs11aVw4uVfl
+         N0ocBWDNbF/+lGMOJsY7WKXSdwUYO+HZg0nINKZQpEsYQhMC7Hij+1rJso9l/fCdv69M
+         +6SJyNZP31yF6CLjKTbPu/6HBt3k7EZn4nNmGss7PvM3XaFnikjJY/FrsHmY6Btip/GW
+         loy7pHwJZJKdINdfpk5V0pIxlU64e2lZornFDMrBupGnzzVK+9H9pOI/0YkFm6xGJgFR
+         7AavGWz2BfA+WPIj3uSkP0v3AIRNohReGMKBlQQCK8SPBX+v0fdANvr9M4bcTjGf1/AW
+         VUeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757062695; x=1757667495;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7V3pgdSHRJyKNYS9vikNrp4o7srnjxgZBD+Za6Nu15Y=;
-        b=YWbu/4G0yVBMlDuWFimbvH3qJLEjR5EbvE4oZiEucs3409MERZSh6FHaaKNQsvwShW
-         HvG52rRZa3gk5CmC9YOaiey8LUEbJT+/iQW9/eb4Umco83FiCZdFMUSoLffq5LIjx1AH
-         ZuMPPewTZmjksPX/NRCCP4X8egcoS3xXQTtHIA2j6ZykyruZXpRZaLz+OZRXJ38pJG3d
-         5fTo1ST4MjhlxLRnUYQ3NzBYBUSUfKpyNb/gl8odZ48tGwSg7A9974CazCBbYl0Bi9CZ
-         22q5r5KVypaBD8Hv87LLLbgdZzI/SkvNCMiFBqR30VMf+sBeGuxiQdSxD4c/L8BlFItH
-         0HBw==
-X-Gm-Message-State: AOJu0Yz8oxzqbDxh5ZcTZTOFCdTCQl4wUlOOVOxawZn6FPcrDjXNPFRO
-	phPKs8Oal7LZvvyBYVyR/ncJZFAJyTBud+KPASrsTw8ezDS++Hg4wOoZEoVMgKybqIEOTRZFAT2
-	ZFygP
-X-Gm-Gg: ASbGncswATBjtl7Ik8QUx4OSJN3ou0/rhM84Dyo0FFxCQnYn9mYCaC9IKFhETDU5BLe
-	zusawlIVwZ2R1pNyUjyuxob+O9HEW96VjE1LR3rAxFYAWAZrRhNofN9H+2zb4G59rao3umNImGR
-	hMZArWQpkURaN25UAo2Q83fWgh/MKvHYGsTyY7Rw5bP3hlTKZRro1uAjVInITG+0dz2AgAqHlXq
-	wIHeGOzPlAFbNcZfwKNhHnu0RcS+//9y560MLV6KqxHsU0agputu8il9LYjhRDO5d07LHS5DGXg
-	1myB5ye+s9hOr/4WHj9aBb2H1HR3c6DOsQz3E3+crRbflDVCxWncQEoMxVwbrZ/apNOX1vzhQ3e
-	0xp3fpAVM+m/2A2hJlfvC+NYPmfH/tu9A7Pe+c/z47CZBgk4=
-X-Google-Smtp-Source: AGHT+IEQMR1u/jnMHBYtbFlF7cZx1C2BRvYwWr0K4/ww9MjlI6VkyOS8D8Q9WiuaPg3IBgJzA/oyRQ==
-X-Received: by 2002:a05:600c:4686:b0:45d:db2a:ce3e with SMTP id 5b1f17b1804b1-45ddb2acfc0mr5014375e9.9.1757062694723;
-        Fri, 05 Sep 2025 01:58:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757062696; x=1757667496;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Qf/wKXybwj4KBwf4y1z4rbclrACQum4L0J8eR2SCtk=;
+        b=FUJb3CCRq9eq0muLuLo4b8tIxZw3KjDfFwDScqqsC7gIkI3KhWwZBmbPRBbAiOTI47
+         6xnZC2E+l1aLdwpk7sRQ/2IFmOOiCicrW/DuEtdZkE5NlYnFlZA5TaPKMfYav/iwfFGs
+         EpIizFMyDKvNZcXhFa/ySONUe1YZcNeQmXzanUsIFBMFrXDE2nthGvW/kO62iS0znxy1
+         QRDXxNaFgx78stLDqPQr1qBDN1/fbxCN6ikfhgpahUslnC2F1Qov8Uy6gO7wMpynHu7+
+         Xm3Vfdn1x5CXjOfpOK+X7+5+d94Eh4uauK/7DGkeaXY5wgUjZhxNSxhImQ1VKj718pHG
+         aMEA==
+X-Gm-Message-State: AOJu0YwhUwb1/MF7emNXZBoqb0CyE8ryc6hQSm7aRgHqLuWKYS5nE+YS
+	m0eFbxRcgCdGSuF1b+pWrvpGE4kStCAQvBNVLC35uRi8BAb8wwO3BRbLuCq+mTc9dJidhXE3Qke
+	rNINe
+X-Gm-Gg: ASbGnctHRMFB65CQygTfuciyQXG/lpWuZym/gNxXq8mvUxJ9x40dvjl7Jcunl36HxzY
+	zcfdc69v2z4g9DK8oqketDtm1xwW+A2x3zTBkueuJXB2Me16ZVWDm2O0zbLU/BORH8JnBlXI9JR
+	/QFcBTrNoThQ6djs/lAdrPkz/cVqXh6JN0vT15vaysZQM1sq7TtbO7R+B4GEt1m/blrFZoPHN+z
+	OIg0HVUzs3XFg+YrS324PyIQ14sh65qc7ZUVY4HEpSs7edaPILRYSSSFw1e+O1s4JmVBbJtqaqW
+	6RmeySXNkGjg0PJvLAbNoO89MbZlmlwfACylm+ndMZNX10RFLap8g54Z8RMURnKLLta74XMKQrs
+	nGRkjhBU/dWnKkL5MYsmciZdvT6aXMdzrvEYKAiMI8EDgISzxCrJ3UQPTFw==
+X-Google-Smtp-Source: AGHT+IEGRegOu2yPFo7rH87XVO1sN+JByvnCkG0k+rirq75sl8++4jV0FHt6f6aJW9W0I/ZBaMV+hg==
+X-Received: by 2002:a05:600c:4513:b0:45b:7eb4:cee4 with SMTP id 5b1f17b1804b1-45b8557b769mr158819535e9.32.1757062695754;
+        Fri, 05 Sep 2025 01:58:15 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b81a9e971sm334698915e9.18.2025.09.05.01.58.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b81a9e971sm334698915e9.18.2025.09.05.01.58.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 01:58:14 -0700 (PDT)
+        Fri, 05 Sep 2025 01:58:15 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
@@ -81,42 +83,19 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 0/3] drivers: replace wq users and add WQ_PERCPU to alloc_workqueue() users
-Date: Fri,  5 Sep 2025 10:57:58 +0200
-Message-ID: <20250905085801.98754-1-marco.crivellari@suse.com>
+Subject: [PATCH 1/3] drivers: replace use of system_unbound_wq with system_dfl_wq
+Date: Fri,  5 Sep 2025 10:57:59 +0200
+Message-ID: <20250905085801.98754-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250905085801.98754-1-marco.crivellari@suse.com>
+References: <20250905085801.98754-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-Hi!
-
-Below is a summary of a discussion about the Workqueue API and cpu isolation
-considerations. Details and more information are available here:
-
-        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
-        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an isolated
-CPU where "delay" value is 0 or greater then 0:
-        schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-        schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
 
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
@@ -126,264 +105,734 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-=== Plan and future plans ===
+system_unbound_wq should be the default workqueue so as not to enforce
+locality constraints for random work whenever it's not required.
 
-This patchset is the first stone on a refactoring needed in order to
-address the points aforementioned; it will have a positive impact also
-on the cpu isolation, in the long term, moving away percpu workqueue in
-favor to an unbound model.
+Adding system_dfl_wq to encourage its use when unbound work should be used.
 
-These are the main steps:
-1)  API refactoring (that this patch is introducing)
-    -   Make more clear and uniform the system wq names, both per-cpu and
-        unbound. This to avoid any possible confusion on what should be
-        used.
+queue_work() / queue_delayed_work() / mod_delayed_work() will now use the
+new unbound wq: whether the user still use the old wq a warn will be
+printed along with a wq redirect to the new one.
 
-    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
-        introduced in this patchset and used on all the callers that are not
-        currently using WQ_UNBOUND.
+The old system_unbound_wq will be kept for a few release cycles.
 
-        WQ_UNBOUND will be removed in a future release cycle.
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+---
+ drivers/accel/ivpu/ivpu_pm.c                         | 2 +-
+ drivers/acpi/scan.c                                  | 2 +-
+ drivers/base/dd.c                                    | 2 +-
+ drivers/char/random.c                                | 8 ++++----
+ drivers/gpu/drm/amd/amdgpu/aldebaran.c               | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c           | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c            | 2 +-
+ drivers/gpu/drm/drm_atomic_helper.c                  | 6 +++---
+ drivers/gpu/drm/i915/display/intel_display_power.c   | 2 +-
+ drivers/gpu/drm/i915/display/intel_tc.c              | 4 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c         | 2 +-
+ drivers/gpu/drm/i915/gt/uc/intel_guc.c               | 4 ++--
+ drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c            | 4 ++--
+ drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c    | 6 +++---
+ drivers/gpu/drm/i915/i915_active.c                   | 2 +-
+ drivers/gpu/drm/i915/i915_sw_fence_work.c            | 2 +-
+ drivers/gpu/drm/i915/i915_vma_resource.c             | 2 +-
+ drivers/gpu/drm/i915/pxp/intel_pxp.c                 | 2 +-
+ drivers/gpu/drm/i915/pxp/intel_pxp_irq.c             | 2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c              | 2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c          | 2 +-
+ drivers/gpu/drm/xe/xe_devcoredump.c                  | 2 +-
+ drivers/gpu/drm/xe/xe_execlist.c                     | 2 +-
+ drivers/gpu/drm/xe/xe_guc_ct.c                       | 4 ++--
+ drivers/gpu/drm/xe/xe_oa.c                           | 2 +-
+ drivers/gpu/drm/xe/xe_vm.c                           | 4 ++--
+ drivers/hte/hte.c                                    | 2 +-
+ drivers/infiniband/core/ucma.c                       | 2 +-
+ drivers/infiniband/hw/mlx5/odp.c                     | 4 ++--
+ drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 8 ++++----
+ drivers/scsi/qla2xxx/qla_os.c                        | 2 +-
+ drivers/scsi/scsi_transport_iscsi.c                  | 2 +-
+ drivers/soc/xilinx/zynqmp_power.c                    | 6 +++---
+ drivers/target/sbp/sbp_target.c                      | 8 ++++----
+ drivers/tty/serial/8250/8250_dw.c                    | 4 ++--
+ drivers/tty/tty_buffer.c                             | 8 ++++----
+ 36 files changed, 61 insertions(+), 61 deletions(-)
 
-        Most users don't need to be per-cpu, because they don't have
-        locality requirements, because of that, a next future step will be
-        make "unbound" the default behavior.
-
-2)  Check who really needs to be per-cpu
-    -   Remove the WQ_PERCPU flag when is not strictly required.
-
-3)  Add a new API (prefer local cpu)
-    -   There are users that don't require a local execution, like mentioned
-        above; despite that, local execution yeld to performance gain.
-
-        This new API will prefer the local execution, without requiring it.
-
-=== Introduced Changes by this series ===
-
-1) [P 1-2] Replace use of system_wq and system_unbound_wq
-
-        system_wq is a per-CPU workqueue, but his name is not clear.
-        system_unbound_wq is to be used when locality is not required.
-
-        Because of that, system_wq has been renamed in system_percpu_wq, and
-        system_unbound_wq has been renamed in system_dfl_wq.
-
-2) [P 3] add WQ_PERCPU to remaining alloc_workqueue() users
-
-        Every alloc_workqueue() caller should use one among WQ_PERCPU or
-        WQ_UNBOUND. This is actually enforced warning if both or none of them
-        are present at the same time.
-
-        WQ_UNBOUND will be removed in a next release cycle.
-
-=== For Maintainers ===
-
-There are prerequisites for this series, already merged in the master branch.
-The commits are:
-
-128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
-system_dfl_wq")
-
-930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
-
-
-Thanks!
-
-Marco Crivellari (3):
-  drivers: replace use of system_unbound_wq with system_dfl_wq
-  drivers: replace use of system_wq with system_percpu_wq
-  drivers: WQ_PERCPU added to alloc_workqueue users
-
- drivers/accel/ivpu/ivpu_hw_btrs.c             |  2 +-
- drivers/accel/ivpu/ivpu_ipc.c                 |  2 +-
- drivers/accel/ivpu/ivpu_job.c                 |  2 +-
- drivers/accel/ivpu/ivpu_mmu.c                 |  2 +-
- drivers/accel/ivpu/ivpu_pm.c                  |  4 +--
- drivers/acpi/ec.c                             |  3 +-
- drivers/acpi/osl.c                            |  6 ++--
- drivers/acpi/scan.c                           |  2 +-
- drivers/acpi/thermal.c                        |  3 +-
- drivers/ata/libata-sff.c                      |  3 +-
- drivers/base/core.c                           |  2 +-
- drivers/base/dd.c                             |  2 +-
- drivers/base/devcoredump.c                    |  2 +-
- drivers/bus/mhi/ep/main.c                     |  2 +-
- drivers/char/random.c                         |  8 ++---
- drivers/char/tpm/tpm-dev-common.c             |  3 +-
- drivers/char/xillybus/xillybus_core.c         |  2 +-
- drivers/char/xillybus/xillyusb.c              |  4 +--
- drivers/cpufreq/tegra194-cpufreq.c            |  3 +-
- drivers/crypto/atmel-i2c.c                    |  2 +-
- drivers/crypto/cavium/nitrox/nitrox_mbx.c     |  2 +-
- drivers/crypto/intel/qat/qat_common/adf_aer.c |  4 +--
- drivers/crypto/intel/qat/qat_common/adf_isr.c |  3 +-
- .../crypto/intel/qat/qat_common/adf_sriov.c   |  3 +-
- .../crypto/intel/qat/qat_common/adf_vf_isr.c  |  3 +-
- drivers/cxl/pci.c                             |  2 +-
- drivers/extcon/extcon-intel-int3496.c         |  4 +--
- drivers/firewire/core-transaction.c           |  3 +-
- drivers/firewire/ohci.c                       |  3 +-
- drivers/gpio/gpiolib-cdev.c                   |  4 +--
- drivers/gpu/drm/amd/amdgpu/aldebaran.c        |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c    |  6 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c     |  2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_process.c      |  3 +-
- drivers/gpu/drm/bridge/analogix/anx7625.c     |  3 +-
- drivers/gpu/drm/bridge/ite-it6505.c           |  2 +-
- drivers/gpu/drm/bridge/ti-tfp410.c            |  2 +-
- drivers/gpu/drm/drm_atomic_helper.c           |  6 ++--
- drivers/gpu/drm/drm_probe_helper.c            |  2 +-
- drivers/gpu/drm/drm_self_refresh_helper.c     |  2 +-
- drivers/gpu/drm/exynos/exynos_hdmi.c          |  2 +-
- .../drm/i915/display/intel_display_driver.c   |  3 +-
- .../drm/i915/display/intel_display_power.c    |  2 +-
- drivers/gpu/drm/i915/display/intel_tc.c       |  4 +--
- drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c  |  2 +-
- drivers/gpu/drm/i915/gt/uc/intel_guc.c        |  4 +--
- drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c     |  4 +--
- .../gpu/drm/i915/gt/uc/intel_guc_submission.c |  6 ++--
- drivers/gpu/drm/i915/i915_active.c            |  2 +-
- drivers/gpu/drm/i915/i915_driver.c            |  5 ++--
- drivers/gpu/drm/i915/i915_drv.h               |  2 +-
- drivers/gpu/drm/i915/i915_sw_fence_work.c     |  2 +-
- drivers/gpu/drm/i915/i915_vma_resource.c      |  2 +-
- drivers/gpu/drm/i915/pxp/intel_pxp.c          |  2 +-
- drivers/gpu/drm/i915/pxp/intel_pxp_irq.c      |  2 +-
- .../gpu/drm/i915/selftests/i915_sw_fence.c    |  2 +-
- .../gpu/drm/i915/selftests/mock_gem_device.c  |  2 +-
- drivers/gpu/drm/nouveau/dispnv50/disp.c       |  2 +-
- drivers/gpu/drm/nouveau/nouveau_drm.c         |  2 +-
- drivers/gpu/drm/nouveau/nouveau_sched.c       |  3 +-
- drivers/gpu/drm/radeon/radeon_display.c       |  3 +-
- .../gpu/drm/rockchip/dw_hdmi_qp-rockchip.c    |  4 +--
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  2 +-
- drivers/gpu/drm/scheduler/sched_main.c        |  2 +-
- drivers/gpu/drm/tilcdc/tilcdc_crtc.c          |  2 +-
- drivers/gpu/drm/vc4/vc4_hdmi.c                |  4 +--
- drivers/gpu/drm/xe/xe_devcoredump.c           |  2 +-
- drivers/gpu/drm/xe/xe_device.c                |  4 +--
- drivers/gpu/drm/xe/xe_execlist.c              |  2 +-
- drivers/gpu/drm/xe/xe_ggtt.c                  |  2 +-
- drivers/gpu/drm/xe/xe_gt_tlb_invalidation.c   |  6 ++--
- drivers/gpu/drm/xe/xe_guc_ct.c                |  4 +--
- drivers/gpu/drm/xe/xe_hw_engine_group.c       |  3 +-
- drivers/gpu/drm/xe/xe_oa.c                    |  2 +-
- drivers/gpu/drm/xe/xe_pt.c                    |  2 +-
- drivers/gpu/drm/xe/xe_sriov.c                 |  2 +-
- drivers/gpu/drm/xe/xe_vm.c                    |  4 +--
- drivers/greybus/operation.c                   |  2 +-
- drivers/hid/hid-nintendo.c                    |  3 +-
- drivers/hte/hte.c                             |  2 +-
- drivers/hv/mshv_eventfd.c                     |  2 +-
- drivers/i3c/master.c                          |  2 +-
- drivers/iio/adc/pac1934.c                     |  2 +-
- drivers/infiniband/core/cm.c                  |  2 +-
- drivers/infiniband/core/device.c              |  4 +--
- drivers/infiniband/core/ucma.c                |  2 +-
- drivers/infiniband/hw/hfi1/init.c             |  3 +-
- drivers/infiniband/hw/hfi1/opfn.c             |  3 +-
- drivers/infiniband/hw/mlx4/cm.c               |  2 +-
- drivers/infiniband/hw/mlx5/odp.c              |  4 +--
- drivers/infiniband/sw/rdmavt/cq.c             |  3 +-
- drivers/infiniband/ulp/iser/iscsi_iser.c      |  2 +-
- drivers/infiniband/ulp/isert/ib_isert.c       |  2 +-
- drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  2 +-
- drivers/infiniband/ulp/rtrs/rtrs-srv.c        |  2 +-
- drivers/input/keyboard/gpio_keys.c            |  2 +-
- drivers/input/misc/palmas-pwrbutton.c         |  2 +-
- drivers/input/mouse/psmouse-smbus.c           |  2 +-
- drivers/input/mouse/synaptics_i2c.c           |  8 ++---
- drivers/isdn/capi/kcapi.c                     |  2 +-
- drivers/leds/trigger/ledtrig-input-events.c   |  2 +-
- drivers/md/bcache/btree.c                     |  3 +-
- drivers/md/bcache/super.c                     | 30 ++++++++++---------
- drivers/md/bcache/writeback.c                 |  2 +-
- drivers/md/dm-bufio.c                         |  3 +-
- drivers/md/dm-cache-target.c                  |  3 +-
- drivers/md/dm-clone-target.c                  |  3 +-
- drivers/md/dm-crypt.c                         |  6 ++--
- drivers/md/dm-delay.c                         |  4 ++-
- drivers/md/dm-integrity.c                     | 15 ++++++----
- drivers/md/dm-kcopyd.c                        |  3 +-
- drivers/md/dm-log-userspace-base.c            |  3 +-
- drivers/md/dm-mpath.c                         |  5 ++--
- drivers/md/dm-raid1.c                         |  5 ++--
- drivers/md/dm-snap-persistent.c               |  3 +-
- drivers/md/dm-stripe.c                        |  2 +-
- drivers/md/dm-verity-target.c                 |  4 ++-
- drivers/md/dm-writecache.c                    |  3 +-
- drivers/md/dm.c                               |  3 +-
- drivers/md/md.c                               |  4 +--
- drivers/media/pci/ddbridge/ddbridge-core.c    |  2 +-
- .../platform/mediatek/mdp3/mtk-mdp3-core.c    |  6 ++--
- .../platform/synopsys/hdmirx/snps_hdmirx.c    |  8 ++---
- drivers/message/fusion/mptbase.c              |  7 +++--
- drivers/mmc/core/block.c                      |  3 +-
- drivers/mmc/host/mtk-sd.c                     |  4 +--
- drivers/mmc/host/omap.c                       |  2 +-
- drivers/nvdimm/security.c                     |  4 +--
- drivers/nvme/host/tcp.c                       |  2 ++
- drivers/nvme/target/admin-cmd.c               |  2 +-
- drivers/nvme/target/core.c                    |  5 ++--
- drivers/nvme/target/fabrics-cmd-auth.c        |  2 +-
- drivers/nvme/target/fc.c                      |  6 ++--
- drivers/nvme/target/tcp.c                     |  2 +-
- drivers/pci/endpoint/functions/pci-epf-mhi.c  |  2 +-
- drivers/pci/endpoint/functions/pci-epf-ntb.c  |  5 ++--
- drivers/pci/endpoint/functions/pci-epf-test.c |  3 +-
- drivers/pci/endpoint/functions/pci-epf-vntb.c |  5 ++--
- drivers/pci/endpoint/pci-ep-cfs.c             |  2 +-
- drivers/pci/hotplug/pnv_php.c                 |  3 +-
- drivers/pci/hotplug/shpchp_core.c             |  3 +-
- drivers/phy/allwinner/phy-sun4i-usb.c         | 14 ++++-----
- .../platform/cznic/turris-omnia-mcu-gpio.c    |  2 +-
- .../surface/aggregator/ssh_packet_layer.c     |  2 +-
- .../surface/aggregator/ssh_request_layer.c    |  2 +-
- .../platform/surface/surface_acpi_notify.c    |  2 +-
- drivers/platform/x86/gpd-pocket-fan.c         |  4 +--
- .../x86/x86-android-tablets/vexia_atla10_ec.c |  2 +-
- drivers/rapidio/rio.c                         |  2 +-
- drivers/ras/cec.c                             |  2 +-
- drivers/regulator/irq_helpers.c               |  2 +-
- drivers/regulator/qcom-labibb-regulator.c     |  4 +--
- drivers/scsi/be2iscsi/be_main.c               |  3 +-
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |  2 +-
- drivers/scsi/device_handler/scsi_dh_alua.c    |  2 +-
- drivers/scsi/fcoe/fcoe.c                      |  2 +-
- drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c      |  3 +-
- drivers/scsi/lpfc/lpfc_init.c                 |  2 +-
- drivers/scsi/pm8001/pm8001_init.c             |  2 +-
- drivers/scsi/qedf/qedf_main.c                 | 15 ++++++----
- drivers/scsi/qedi/qedi_main.c                 |  2 +-
- drivers/scsi/qla2xxx/qla_os.c                 |  4 +--
- drivers/scsi/qla2xxx/qla_target.c             |  2 +-
- drivers/scsi/qla2xxx/tcm_qla2xxx.c            |  2 +-
- drivers/scsi/qla4xxx/ql4_os.c                 |  3 +-
- drivers/scsi/scsi_transport_fc.c              |  7 +++--
- drivers/scsi/scsi_transport_iscsi.c           |  2 +-
- drivers/soc/fsl/qbman/qman.c                  |  2 +-
- drivers/soc/xilinx/zynqmp_power.c             |  6 ++--
- drivers/staging/greybus/sdio.c                |  2 +-
- drivers/target/sbp/sbp_target.c               |  8 ++---
- drivers/target/target_core_transport.c        |  4 +--
- drivers/target/target_core_xcopy.c            |  2 +-
- drivers/target/tcm_fc/tfc_conf.c              |  2 +-
- drivers/thunderbolt/tb.c                      |  2 +-
- drivers/tty/serial/8250/8250_dw.c             |  4 +--
- drivers/tty/tty_buffer.c                      |  8 ++---
- drivers/usb/core/hub.c                        |  2 +-
- drivers/usb/dwc3/gadget.c                     |  2 +-
- drivers/usb/gadget/function/f_hid.c           |  3 +-
- drivers/usb/host/xhci-dbgcap.c                |  8 ++---
- drivers/usb/host/xhci-ring.c                  |  2 +-
- drivers/usb/storage/uas.c                     |  2 +-
- drivers/usb/typec/anx7411.c                   |  3 +-
- drivers/vdpa/vdpa_user/vduse_dev.c            |  3 +-
- drivers/virtio/virtio_balloon.c               |  3 +-
- drivers/xen/events/events_base.c              |  6 ++--
- drivers/xen/privcmd.c                         |  3 +-
- 188 files changed, 351 insertions(+), 286 deletions(-)
-
+diff --git a/drivers/accel/ivpu/ivpu_pm.c b/drivers/accel/ivpu/ivpu_pm.c
+index b5891e91f7ab..118e6ca9a3de 100644
+--- a/drivers/accel/ivpu/ivpu_pm.c
++++ b/drivers/accel/ivpu/ivpu_pm.c
+@@ -181,7 +181,7 @@ void ivpu_pm_trigger_recovery(struct ivpu_device *vdev, const char *reason)
+ 	if (atomic_cmpxchg(&vdev->pm->reset_pending, 0, 1) == 0) {
+ 		ivpu_hw_diagnose_failure(vdev);
+ 		ivpu_hw_irq_disable(vdev); /* Disable IRQ early to protect from IRQ storm */
+-		queue_work(system_unbound_wq, &vdev->pm->recovery_work);
++		queue_work(system_dfl_wq, &vdev->pm->recovery_work);
+ 	}
+ }
+ 
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index fb1fe9f3b1a3..14fbac0b65c8 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -2389,7 +2389,7 @@ static bool acpi_scan_clear_dep_queue(struct acpi_device *adev)
+ 	 * initial enumeration of devices is complete, put it into the unbound
+ 	 * workqueue.
+ 	 */
+-	queue_work(system_unbound_wq, &cdw->work);
++	queue_work(system_dfl_wq, &cdw->work);
+ 
+ 	return true;
+ }
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index f0e4b4aba885..fc778ed5552d 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -192,7 +192,7 @@ void driver_deferred_probe_trigger(void)
+ 	 * Kick the re-probe thread.  It may already be scheduled, but it is
+ 	 * safe to kick it again.
+ 	 */
+-	queue_work(system_unbound_wq, &deferred_probe_work);
++	queue_work(system_dfl_wq, &deferred_probe_work);
+ }
+ 
+ /**
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 38f2fab29c56..97435cd6b819 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -259,8 +259,8 @@ static void crng_reseed(struct work_struct *work)
+ 	u8 key[CHACHA_KEY_SIZE];
+ 
+ 	/* Immediately schedule the next reseeding, so that it fires sooner rather than later. */
+-	if (likely(system_unbound_wq))
+-		queue_delayed_work(system_unbound_wq, &next_reseed, crng_reseed_interval());
++	if (likely(system_dfl_wq))
++		queue_delayed_work(system_dfl_wq, &next_reseed, crng_reseed_interval());
+ 
+ 	extract_entropy(key, sizeof(key));
+ 
+@@ -739,8 +739,8 @@ static void __cold _credit_init_bits(size_t bits)
+ 
+ 	if (orig < POOL_READY_BITS && new >= POOL_READY_BITS) {
+ 		crng_reseed(NULL); /* Sets crng_init to CRNG_READY under base_crng.lock. */
+-		if (static_key_initialized && system_unbound_wq)
+-			queue_work(system_unbound_wq, &set_ready);
++		if (static_key_initialized && system_dfl_wq)
++			queue_work(system_dfl_wq, &set_ready);
+ 		atomic_notifier_call_chain(&random_ready_notifier, 0, NULL);
+ #ifdef CONFIG_VDSO_GETRANDOM
+ 		WRITE_ONCE(vdso_k_rng_data->is_ready, true);
+diff --git a/drivers/gpu/drm/amd/amdgpu/aldebaran.c b/drivers/gpu/drm/amd/amdgpu/aldebaran.c
+index e13fbd974141..d6acacfb6f91 100644
+--- a/drivers/gpu/drm/amd/amdgpu/aldebaran.c
++++ b/drivers/gpu/drm/amd/amdgpu/aldebaran.c
+@@ -164,7 +164,7 @@ aldebaran_mode2_perform_reset(struct amdgpu_reset_control *reset_ctl,
+ 	list_for_each_entry(tmp_adev, reset_device_list, reset_list) {
+ 		/* For XGMI run all resets in parallel to speed up the process */
+ 		if (tmp_adev->gmc.xgmi.num_physical_nodes > 1) {
+-			if (!queue_work(system_unbound_wq,
++			if (!queue_work(system_dfl_wq,
+ 					&tmp_adev->reset_cntl->reset_work))
+ 				r = -EALREADY;
+ 		} else
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index a30111d2c3ea..d4a2886d8c58 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -5762,7 +5762,7 @@ int amdgpu_do_asic_reset(struct list_head *device_list_handle,
+ 		list_for_each_entry(tmp_adev, device_list_handle, reset_list) {
+ 			/* For XGMI run all resets in parallel to speed up the process */
+ 			if (tmp_adev->gmc.xgmi.num_physical_nodes > 1) {
+-				if (!queue_work(system_unbound_wq,
++				if (!queue_work(system_dfl_wq,
+ 						&tmp_adev->xgmi_reset_work))
+ 					r = -EALREADY;
+ 			} else
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
+index dabfbdf6f1ce..1596b94b110d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c
+@@ -116,7 +116,7 @@ static int amdgpu_reset_xgmi_reset_on_init_perform_reset(
+ 	/* Mode1 reset needs to be triggered on all devices together */
+ 	list_for_each_entry(tmp_adev, reset_device_list, reset_list) {
+ 		/* For XGMI run all resets in parallel to speed up the process */
+-		if (!queue_work(system_unbound_wq, &tmp_adev->xgmi_reset_work))
++		if (!queue_work(system_dfl_wq, &tmp_adev->xgmi_reset_work))
+ 			r = -EALREADY;
+ 		if (r) {
+ 			dev_err(tmp_adev->dev,
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 5302ab324898..aa539f316bf8 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -2100,13 +2100,13 @@ int drm_atomic_helper_commit(struct drm_device *dev,
+ 	 * current layout.
+ 	 *
+ 	 * NOTE: Commit work has multiple phases, first hardware commit, then
+-	 * cleanup. We want them to overlap, hence need system_unbound_wq to
++	 * cleanup. We want them to overlap, hence need system_dfl_wq to
+ 	 * make sure work items don't artificially stall on each another.
+ 	 */
+ 
+ 	drm_atomic_state_get(state);
+ 	if (nonblock)
+-		queue_work(system_unbound_wq, &state->commit_work);
++		queue_work(system_dfl_wq, &state->commit_work);
+ 	else
+ 		commit_tail(state);
+ 
+@@ -2139,7 +2139,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
+  *
+  * Asynchronous workers need to have sufficient parallelism to be able to run
+  * different atomic commits on different CRTCs in parallel. The simplest way to
+- * achieve this is by running them on the &system_unbound_wq work queue. Note
++ * achieve this is by running them on the &system_dfl_wq work queue. Note
+  * that drivers are not required to split up atomic commits and run an
+  * individual commit in parallel - userspace is supposed to do that if it cares.
+  * But it might be beneficial to do that for modesets, since those necessarily
+diff --git a/drivers/gpu/drm/i915/display/intel_display_power.c b/drivers/gpu/drm/i915/display/intel_display_power.c
+index f7171e6932dc..ff5166037ab5 100644
+--- a/drivers/gpu/drm/i915/display/intel_display_power.c
++++ b/drivers/gpu/drm/i915/display/intel_display_power.c
+@@ -611,7 +611,7 @@ queue_async_put_domains_work(struct i915_power_domains *power_domains,
+ 						     power.domains);
+ 	drm_WARN_ON(display->drm, power_domains->async_put_wakeref);
+ 	power_domains->async_put_wakeref = wakeref;
+-	drm_WARN_ON(display->drm, !queue_delayed_work(system_unbound_wq,
++	drm_WARN_ON(display->drm, !queue_delayed_work(system_dfl_wq,
+ 						      &power_domains->async_put_work,
+ 						      msecs_to_jiffies(delay_ms)));
+ }
+diff --git a/drivers/gpu/drm/i915/display/intel_tc.c b/drivers/gpu/drm/i915/display/intel_tc.c
+index b8d14ed8a56e..7de1006f844d 100644
+--- a/drivers/gpu/drm/i915/display/intel_tc.c
++++ b/drivers/gpu/drm/i915/display/intel_tc.c
+@@ -1760,7 +1760,7 @@ bool intel_tc_port_link_reset(struct intel_digital_port *dig_port)
+ 	if (!intel_tc_port_link_needs_reset(dig_port))
+ 		return false;
+ 
+-	queue_delayed_work(system_unbound_wq,
++	queue_delayed_work(system_dfl_wq,
+ 			   &to_tc_port(dig_port)->link_reset_work,
+ 			   msecs_to_jiffies(2000));
+ 
+@@ -1842,7 +1842,7 @@ void intel_tc_port_unlock(struct intel_digital_port *dig_port)
+ 	struct intel_tc_port *tc = to_tc_port(dig_port);
+ 
+ 	if (!tc->link_refcount && tc->mode != TC_PORT_DISCONNECTED)
+-		queue_delayed_work(system_unbound_wq, &tc->disconnect_phy_work,
++		queue_delayed_work(system_dfl_wq, &tc->disconnect_phy_work,
+ 				   msecs_to_jiffies(1000));
+ 
+ 	mutex_unlock(&tc->lock);
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c
+index 2f6b33edb9c9..008d5909a010 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c
+@@ -408,7 +408,7 @@ static void __memcpy_cb(struct dma_fence *fence, struct dma_fence_cb *cb)
+ 
+ 	if (unlikely(fence->error || I915_SELFTEST_ONLY(fail_gpu_migration))) {
+ 		INIT_WORK(&copy_work->work, __memcpy_work);
+-		queue_work(system_unbound_wq, &copy_work->work);
++		queue_work(system_dfl_wq, &copy_work->work);
+ 	} else {
+ 		init_irq_work(&copy_work->irq_work, __memcpy_irq_work);
+ 		irq_work_queue(&copy_work->irq_work);
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc.c b/drivers/gpu/drm/i915/gt/uc/intel_guc.c
+index 9df80c325fc1..8dbf6c82e241 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc.c
+@@ -617,7 +617,7 @@ int intel_guc_crash_process_msg(struct intel_guc *guc, u32 action)
+ 	else
+ 		guc_err(guc, "Unknown crash notification: 0x%04X\n", action);
+ 
+-	queue_work(system_unbound_wq, &guc->dead_guc_worker);
++	queue_work(system_dfl_wq, &guc->dead_guc_worker);
+ 
+ 	return 0;
+ }
+@@ -639,7 +639,7 @@ int intel_guc_to_host_process_recv_msg(struct intel_guc *guc,
+ 		guc_err(guc, "Received early exception notification!\n");
+ 
+ 	if (msg & (INTEL_GUC_RECV_MSG_CRASH_DUMP_POSTED | INTEL_GUC_RECV_MSG_EXCEPTION))
+-		queue_work(system_unbound_wq, &guc->dead_guc_worker);
++		queue_work(system_dfl_wq, &guc->dead_guc_worker);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
+index 0d5197c0824a..2575f380d17d 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c
+@@ -30,7 +30,7 @@ static void ct_dead_ct_worker_func(struct work_struct *w);
+ 	do { \
+ 		if (!(ct)->dead_ct_reported) { \
+ 			(ct)->dead_ct_reason |= 1 << CT_DEAD_##reason; \
+-			queue_work(system_unbound_wq, &(ct)->dead_ct_worker); \
++			queue_work(system_dfl_wq, &(ct)->dead_ct_worker); \
+ 		} \
+ 	} while (0)
+ #else
+@@ -1240,7 +1240,7 @@ static int ct_handle_event(struct intel_guc_ct *ct, struct ct_incoming_msg *requ
+ 	list_add_tail(&request->link, &ct->requests.incoming);
+ 	spin_unlock_irqrestore(&ct->requests.lock, flags);
+ 
+-	queue_work(system_unbound_wq, &ct->requests.worker);
++	queue_work(system_dfl_wq, &ct->requests.worker);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+index f8cb7c630d5b..54d17548d4aa 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+@@ -3385,7 +3385,7 @@ static void guc_context_sched_disable(struct intel_context *ce)
+ 	} else if (!intel_context_is_closed(ce) && !guc_id_pressure(guc, ce) &&
+ 		   delay) {
+ 		spin_unlock_irqrestore(&ce->guc_state.lock, flags);
+-		mod_delayed_work(system_unbound_wq,
++		mod_delayed_work(system_dfl_wq,
+ 				 &ce->guc_state.sched_disable_delay_work,
+ 				 msecs_to_jiffies(delay));
+ 	} else {
+@@ -3600,7 +3600,7 @@ static void guc_context_destroy(struct kref *kref)
+ 	 * take the GT PM for the first time which isn't allowed from an atomic
+ 	 * context.
+ 	 */
+-	queue_work(system_unbound_wq, &guc->submission_state.destroyed_worker);
++	queue_work(system_dfl_wq, &guc->submission_state.destroyed_worker);
+ }
+ 
+ static int guc_context_alloc(struct intel_context *ce)
+@@ -5371,7 +5371,7 @@ int intel_guc_engine_failure_process_msg(struct intel_guc *guc,
+ 	 * A GT reset flushes this worker queue (G2H handler) so we must use
+ 	 * another worker to trigger a GT reset.
+ 	 */
+-	queue_work(system_unbound_wq, &guc->submission_state.reset_fail_worker);
++	queue_work(system_dfl_wq, &guc->submission_state.reset_fail_worker);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
+index 0dbc4e289300..4b7238db08c4 100644
+--- a/drivers/gpu/drm/i915/i915_active.c
++++ b/drivers/gpu/drm/i915/i915_active.c
+@@ -193,7 +193,7 @@ active_retire(struct i915_active *ref)
+ 		return;
+ 
+ 	if (ref->flags & I915_ACTIVE_RETIRE_SLEEPS) {
+-		queue_work(system_unbound_wq, &ref->work);
++		queue_work(system_dfl_wq, &ref->work);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/i915/i915_sw_fence_work.c b/drivers/gpu/drm/i915/i915_sw_fence_work.c
+index d2e56b387993..366418108f78 100644
+--- a/drivers/gpu/drm/i915/i915_sw_fence_work.c
++++ b/drivers/gpu/drm/i915/i915_sw_fence_work.c
+@@ -38,7 +38,7 @@ fence_notify(struct i915_sw_fence *fence, enum i915_sw_fence_notify state)
+ 			if (test_bit(DMA_FENCE_WORK_IMM, &f->dma.flags))
+ 				fence_work(&f->work);
+ 			else
+-				queue_work(system_unbound_wq, &f->work);
++				queue_work(system_dfl_wq, &f->work);
+ 		} else {
+ 			fence_complete(f);
+ 		}
+diff --git a/drivers/gpu/drm/i915/i915_vma_resource.c b/drivers/gpu/drm/i915/i915_vma_resource.c
+index 53d619ef0c3d..a8f2112ce81f 100644
+--- a/drivers/gpu/drm/i915/i915_vma_resource.c
++++ b/drivers/gpu/drm/i915/i915_vma_resource.c
+@@ -202,7 +202,7 @@ i915_vma_resource_fence_notify(struct i915_sw_fence *fence,
+ 			i915_vma_resource_unbind_work(&vma_res->work);
+ 		} else {
+ 			INIT_WORK(&vma_res->work, i915_vma_resource_unbind_work);
+-			queue_work(system_unbound_wq, &vma_res->work);
++			queue_work(system_dfl_wq, &vma_res->work);
+ 		}
+ 		break;
+ 	case FENCE_FREE:
+diff --git a/drivers/gpu/drm/i915/pxp/intel_pxp.c b/drivers/gpu/drm/i915/pxp/intel_pxp.c
+index f8da693ad3ce..df854c961c6e 100644
+--- a/drivers/gpu/drm/i915/pxp/intel_pxp.c
++++ b/drivers/gpu/drm/i915/pxp/intel_pxp.c
+@@ -276,7 +276,7 @@ static void pxp_queue_termination(struct intel_pxp *pxp)
+ 	spin_lock_irq(gt->irq_lock);
+ 	intel_pxp_mark_termination_in_progress(pxp);
+ 	pxp->session_events |= PXP_TERMINATION_REQUEST;
+-	queue_work(system_unbound_wq, &pxp->session_work);
++	queue_work(system_dfl_wq, &pxp->session_work);
+ 	spin_unlock_irq(gt->irq_lock);
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/pxp/intel_pxp_irq.c b/drivers/gpu/drm/i915/pxp/intel_pxp_irq.c
+index d81750b9bdda..735325e828bc 100644
+--- a/drivers/gpu/drm/i915/pxp/intel_pxp_irq.c
++++ b/drivers/gpu/drm/i915/pxp/intel_pxp_irq.c
+@@ -48,7 +48,7 @@ void intel_pxp_irq_handler(struct intel_pxp *pxp, u16 iir)
+ 		pxp->session_events |= PXP_TERMINATION_COMPLETE | PXP_EVENT_TYPE_IRQ;
+ 
+ 	if (pxp->session_events)
+-		queue_work(system_unbound_wq, &pxp->session_work);
++		queue_work(system_dfl_wq, &pxp->session_work);
+ }
+ 
+ static inline void __pxp_set_interrupts(struct intel_gt *gt, u32 interrupts)
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index 504cb3f2054b..d179c81d8306 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -2466,7 +2466,7 @@ nv50_disp_atomic_commit(struct drm_device *dev,
+ 	pm_runtime_get_noresume(dev->dev);
+ 
+ 	if (nonblock)
+-		queue_work(system_unbound_wq, &state->commit_work);
++		queue_work(system_dfl_wq, &state->commit_work);
+ 	else
+ 		nv50_disp_atomic_commit_tail(state);
+ 
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index e3596e2b557d..a13098ec5df0 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1771,7 +1771,7 @@ static void vop_handle_vblank(struct vop *vop)
+ 	spin_unlock(&drm->event_lock);
+ 
+ 	if (test_and_clear_bit(VOP_PENDING_FB_UNREF, &vop->pending))
+-		drm_flip_work_commit(&vop->fb_unref_work, system_unbound_wq);
++		drm_flip_work_commit(&vop->fb_unref_work, system_dfl_wq);
+ }
+ 
+ static irqreturn_t vop_isr(int irq, void *data)
+diff --git a/drivers/gpu/drm/xe/xe_devcoredump.c b/drivers/gpu/drm/xe/xe_devcoredump.c
+index 81b9d9bb3f57..02ca9abd9e76 100644
+--- a/drivers/gpu/drm/xe/xe_devcoredump.c
++++ b/drivers/gpu/drm/xe/xe_devcoredump.c
+@@ -316,7 +316,7 @@ static void devcoredump_snapshot(struct xe_devcoredump *coredump,
+ 
+ 	xe_engine_snapshot_capture_for_queue(q);
+ 
+-	queue_work(system_unbound_wq, &ss->work);
++	queue_work(system_dfl_wq, &ss->work);
+ 
+ 	xe_force_wake_put(gt_to_fw(q->gt), fw_ref);
+ 	dma_fence_end_signalling(cookie);
+diff --git a/drivers/gpu/drm/xe/xe_execlist.c b/drivers/gpu/drm/xe/xe_execlist.c
+index 788f56b066b6..171a5796e0fb 100644
+--- a/drivers/gpu/drm/xe/xe_execlist.c
++++ b/drivers/gpu/drm/xe/xe_execlist.c
+@@ -416,7 +416,7 @@ static void execlist_exec_queue_kill(struct xe_exec_queue *q)
+ static void execlist_exec_queue_fini(struct xe_exec_queue *q)
+ {
+ 	INIT_WORK(&q->execlist->fini_async, execlist_exec_queue_fini_async);
+-	queue_work(system_unbound_wq, &q->execlist->fini_async);
++	queue_work(system_dfl_wq, &q->execlist->fini_async);
+ }
+ 
+ static int execlist_exec_queue_set_priority(struct xe_exec_queue *q,
+diff --git a/drivers/gpu/drm/xe/xe_guc_ct.c b/drivers/gpu/drm/xe/xe_guc_ct.c
+index 72ad576fc18e..4e239d8195cd 100644
+--- a/drivers/gpu/drm/xe/xe_guc_ct.c
++++ b/drivers/gpu/drm/xe/xe_guc_ct.c
+@@ -472,7 +472,7 @@ int xe_guc_ct_enable(struct xe_guc_ct *ct)
+ 	spin_lock_irq(&ct->dead.lock);
+ 	if (ct->dead.reason) {
+ 		ct->dead.reason |= (1 << CT_DEAD_STATE_REARM);
+-		queue_work(system_unbound_wq, &ct->dead.worker);
++		queue_work(system_dfl_wq, &ct->dead.worker);
+ 	}
+ 	spin_unlock_irq(&ct->dead.lock);
+ #endif
+@@ -1811,7 +1811,7 @@ static void ct_dead_capture(struct xe_guc_ct *ct, struct guc_ctb *ctb, u32 reaso
+ 
+ 	spin_unlock_irqrestore(&ct->dead.lock, flags);
+ 
+-	queue_work(system_unbound_wq, &(ct)->dead.worker);
++	queue_work(system_dfl_wq, &(ct)->dead.worker);
+ }
+ 
+ static void ct_dead_print(struct xe_dead_ct *dead)
+diff --git a/drivers/gpu/drm/xe/xe_oa.c b/drivers/gpu/drm/xe/xe_oa.c
+index 7ffc98f67e69..1878e50eb687 100644
+--- a/drivers/gpu/drm/xe/xe_oa.c
++++ b/drivers/gpu/drm/xe/xe_oa.c
+@@ -956,7 +956,7 @@ static void xe_oa_config_cb(struct dma_fence *fence, struct dma_fence_cb *cb)
+ 	struct xe_oa_fence *ofence = container_of(cb, typeof(*ofence), cb);
+ 
+ 	INIT_DELAYED_WORK(&ofence->work, xe_oa_fence_work_fn);
+-	queue_delayed_work(system_unbound_wq, &ofence->work,
++	queue_delayed_work(system_dfl_wq, &ofence->work,
+ 			   usecs_to_jiffies(NOA_PROGRAM_ADDITIONAL_DELAY_US));
+ 	dma_fence_put(fence);
+ }
+diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
+index 60303998bd61..3e25b71749d4 100644
+--- a/drivers/gpu/drm/xe/xe_vm.c
++++ b/drivers/gpu/drm/xe/xe_vm.c
+@@ -1289,7 +1289,7 @@ static void vma_destroy_cb(struct dma_fence *fence,
+ 	struct xe_vma *vma = container_of(cb, struct xe_vma, destroy_cb);
+ 
+ 	INIT_WORK(&vma->destroy_work, vma_destroy_work_func);
+-	queue_work(system_unbound_wq, &vma->destroy_work);
++	queue_work(system_dfl_wq, &vma->destroy_work);
+ }
+ 
+ static void xe_vma_destroy(struct xe_vma *vma, struct dma_fence *fence)
+@@ -1973,7 +1973,7 @@ static void xe_vm_free(struct drm_gpuvm *gpuvm)
+ 	struct xe_vm *vm = container_of(gpuvm, struct xe_vm, gpuvm);
+ 
+ 	/* To destroy the VM we need to be able to sleep */
+-	queue_work(system_unbound_wq, &vm->destroy_work);
++	queue_work(system_dfl_wq, &vm->destroy_work);
+ }
+ 
+ struct xe_vm *xe_vm_lookup(struct xe_file *xef, u32 id)
+diff --git a/drivers/hte/hte.c b/drivers/hte/hte.c
+index 23a6eeb8c506..e2804636f2bd 100644
+--- a/drivers/hte/hte.c
++++ b/drivers/hte/hte.c
+@@ -826,7 +826,7 @@ int hte_push_ts_ns(const struct hte_chip *chip, u32 xlated_id,
+ 
+ 	ret = ei->cb(data, ei->cl_data);
+ 	if (ret == HTE_RUN_SECOND_CB && ei->tcb) {
+-		queue_work(system_unbound_wq, &ei->cb_work);
++		queue_work(system_dfl_wq, &ei->cb_work);
+ 		set_bit(HTE_TS_QUEUE_WK, &ei->flags);
+ 	}
+ 
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 6e700b974033..ccfcf8e4b712 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -361,7 +361,7 @@ static int ucma_event_handler(struct rdma_cm_id *cm_id,
+ 	if (event->event == RDMA_CM_EVENT_DEVICE_REMOVAL) {
+ 		xa_lock(&ctx_table);
+ 		if (xa_load(&ctx_table, ctx->id) == ctx)
+-			queue_work(system_unbound_wq, &ctx->close_work);
++			queue_work(system_dfl_wq, &ctx->close_work);
+ 		xa_unlock(&ctx_table);
+ 	}
+ 	return 0;
+diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
+index 86d8fa63bf69..24efd9a2d82b 100644
+--- a/drivers/infiniband/hw/mlx5/odp.c
++++ b/drivers/infiniband/hw/mlx5/odp.c
+@@ -253,7 +253,7 @@ static void destroy_unused_implicit_child_mr(struct mlx5_ib_mr *mr)
+ 
+ 	/* Freeing a MR is a sleeping operation, so bounce to a work queue */
+ 	INIT_WORK(&mr->odp_destroy.work, free_implicit_child_mr_work);
+-	queue_work(system_unbound_wq, &mr->odp_destroy.work);
++	queue_work(system_dfl_wq, &mr->odp_destroy.work);
+ }
+ 
+ static bool mlx5_ib_invalidate_range(struct mmu_interval_notifier *mni,
+@@ -2062,6 +2062,6 @@ int mlx5_ib_advise_mr_prefetch(struct ib_pd *pd,
+ 		destroy_prefetch_work(work);
+ 		return rc;
+ 	}
+-	queue_work(system_unbound_wq, &work->work);
++	queue_work(system_dfl_wq, &work->work);
+ 	return 0;
+ }
+diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+index 3d2913de9a86..8c5142fc80ef 100644
+--- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
++++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+@@ -1735,7 +1735,7 @@ static void process_signal_change(struct snps_hdmirx_dev *hdmirx_dev)
+ 			   FIFO_UNDERFLOW_INT_EN |
+ 			   HDMIRX_AXI_ERROR_INT_EN, 0);
+ 	hdmirx_reset_dma(hdmirx_dev);
+-	queue_delayed_work(system_unbound_wq,
++	queue_delayed_work(system_dfl_wq,
+ 			   &hdmirx_dev->delayed_work_res_change,
+ 			   msecs_to_jiffies(50));
+ }
+@@ -2190,7 +2190,7 @@ static void hdmirx_delayed_work_res_change(struct work_struct *work)
+ 
+ 		if (hdmirx_wait_signal_lock(hdmirx_dev)) {
+ 			hdmirx_plugout(hdmirx_dev);
+-			queue_delayed_work(system_unbound_wq,
++			queue_delayed_work(system_dfl_wq,
+ 					   &hdmirx_dev->delayed_work_hotplug,
+ 					   msecs_to_jiffies(200));
+ 		} else {
+@@ -2209,7 +2209,7 @@ static irqreturn_t hdmirx_5v_det_irq_handler(int irq, void *dev_id)
+ 	val = gpiod_get_value(hdmirx_dev->detect_5v_gpio);
+ 	v4l2_dbg(3, debug, &hdmirx_dev->v4l2_dev, "%s: 5v:%d\n", __func__, val);
+ 
+-	queue_delayed_work(system_unbound_wq,
++	queue_delayed_work(system_dfl_wq,
+ 			   &hdmirx_dev->delayed_work_hotplug,
+ 			   msecs_to_jiffies(10));
+ 
+@@ -2441,7 +2441,7 @@ static void hdmirx_enable_irq(struct device *dev)
+ 	enable_irq(hdmirx_dev->dma_irq);
+ 	enable_irq(hdmirx_dev->det_irq);
+ 
+-	queue_delayed_work(system_unbound_wq,
++	queue_delayed_work(system_dfl_wq,
+ 			   &hdmirx_dev->delayed_work_hotplug,
+ 			   msecs_to_jiffies(110));
+ }
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index b44d134e7105..87eeb8607b60 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -5292,7 +5292,7 @@ void qla24xx_sched_upd_fcport(fc_port_t *fcport)
+ 	qla2x00_set_fcport_disc_state(fcport, DSC_UPD_FCPORT);
+ 	spin_unlock_irqrestore(&fcport->vha->work_lock, flags);
+ 
+-	queue_work(system_unbound_wq, &fcport->reg_work);
++	queue_work(system_dfl_wq, &fcport->reg_work);
+ }
+ 
+ static
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 9c347c64c315..e2754c1cb0a5 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -3957,7 +3957,7 @@ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
+ 			list_del_init(&session->sess_list);
+ 			spin_unlock_irqrestore(&sesslock, flags);
+ 
+-			queue_work(system_unbound_wq, &session->destroy_work);
++			queue_work(system_dfl_wq, &session->destroy_work);
+ 		}
+ 		break;
+ 	case ISCSI_UEVENT_UNBIND_SESSION:
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index ae59bf16659a..6145c4fe192e 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -82,7 +82,7 @@ static void subsystem_restart_event_callback(const u32 *payload, void *data)
+ 	memcpy(zynqmp_pm_init_restart_work->args, &payload[0],
+ 	       sizeof(zynqmp_pm_init_restart_work->args));
+ 
+-	queue_work(system_unbound_wq, &zynqmp_pm_init_restart_work->callback_work);
++	queue_work(system_dfl_wq, &zynqmp_pm_init_restart_work->callback_work);
+ }
+ 
+ static void suspend_event_callback(const u32 *payload, void *data)
+@@ -95,7 +95,7 @@ static void suspend_event_callback(const u32 *payload, void *data)
+ 	memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
+ 	       sizeof(zynqmp_pm_init_suspend_work->args));
+ 
+-	queue_work(system_unbound_wq, &zynqmp_pm_init_suspend_work->callback_work);
++	queue_work(system_dfl_wq, &zynqmp_pm_init_suspend_work->callback_work);
+ }
+ 
+ static irqreturn_t zynqmp_pm_isr(int irq, void *data)
+@@ -140,7 +140,7 @@ static void ipi_receive_callback(struct mbox_client *cl, void *data)
+ 		memcpy(zynqmp_pm_init_suspend_work->args, &payload[1],
+ 		       sizeof(zynqmp_pm_init_suspend_work->args));
+ 
+-		queue_work(system_unbound_wq,
++		queue_work(system_dfl_wq,
+ 			   &zynqmp_pm_init_suspend_work->callback_work);
+ 
+ 		/* Send NULL message to mbox controller to ack the message */
+diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
+index 3b89b5a70331..b8457477cee9 100644
+--- a/drivers/target/sbp/sbp_target.c
++++ b/drivers/target/sbp/sbp_target.c
+@@ -730,7 +730,7 @@ static int tgt_agent_rw_orb_pointer(struct fw_card *card, int tcode, void *data,
+ 		pr_debug("tgt_agent ORB_POINTER write: 0x%llx\n",
+ 				agent->orb_pointer);
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 
+ 		return RCODE_COMPLETE;
+ 
+@@ -764,7 +764,7 @@ static int tgt_agent_rw_doorbell(struct fw_card *card, int tcode, void *data,
+ 
+ 		pr_debug("tgt_agent DOORBELL\n");
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 
+ 		return RCODE_COMPLETE;
+ 
+@@ -990,7 +990,7 @@ static void tgt_agent_fetch_work(struct work_struct *work)
+ 
+ 		if (tgt_agent_check_active(agent) && !doorbell) {
+ 			INIT_WORK(&req->work, tgt_agent_process_work);
+-			queue_work(system_unbound_wq, &req->work);
++			queue_work(system_dfl_wq, &req->work);
+ 		} else {
+ 			/* don't process this request, just check next_ORB */
+ 			sbp_free_request(req);
+@@ -1618,7 +1618,7 @@ static void sbp_mgt_agent_rw(struct fw_card *card,
+ 		agent->orb_offset = sbp2_pointer_to_addr(ptr);
+ 		agent->request = req;
+ 
+-		queue_work(system_unbound_wq, &agent->work);
++		queue_work(system_dfl_wq, &agent->work);
+ 		rcode = RCODE_COMPLETE;
+ 	} else if (tcode == TCODE_READ_BLOCK_REQUEST) {
+ 		addr_to_sbp2_pointer(agent->orb_offset, ptr);
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 1902f29444a1..50a5ee546373 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -361,7 +361,7 @@ static int dw8250_clk_notifier_cb(struct notifier_block *nb,
+ 	 * deferred event handling complication.
+ 	 */
+ 	if (event == POST_RATE_CHANGE) {
+-		queue_work(system_unbound_wq, &d->clk_work);
++		queue_work(system_dfl_wq, &d->clk_work);
+ 		return NOTIFY_OK;
+ 	}
+ 
+@@ -678,7 +678,7 @@ static int dw8250_probe(struct platform_device *pdev)
+ 		err = clk_notifier_register(data->clk, &data->clk_notifier);
+ 		if (err)
+ 			return dev_err_probe(dev, err, "Failed to set the clock notifier\n");
+-		queue_work(system_unbound_wq, &data->clk_work);
++		queue_work(system_dfl_wq, &data->clk_work);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, data);
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index 79f0ff94ce00..60066ece9d96 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -76,7 +76,7 @@ void tty_buffer_unlock_exclusive(struct tty_port *port)
+ 	mutex_unlock(&buf->lock);
+ 
+ 	if (restart)
+-		queue_work(system_unbound_wq, &buf->work);
++		queue_work(system_dfl_wq, &buf->work);
+ }
+ EXPORT_SYMBOL_GPL(tty_buffer_unlock_exclusive);
+ 
+@@ -531,7 +531,7 @@ void tty_flip_buffer_push(struct tty_port *port)
+ 	struct tty_bufhead *buf = &port->buf;
+ 
+ 	tty_flip_buffer_commit(buf->tail);
+-	queue_work(system_unbound_wq, &buf->work);
++	queue_work(system_dfl_wq, &buf->work);
+ }
+ EXPORT_SYMBOL(tty_flip_buffer_push);
+ 
+@@ -561,7 +561,7 @@ int tty_insert_flip_string_and_push_buffer(struct tty_port *port,
+ 		tty_flip_buffer_commit(buf->tail);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+-	queue_work(system_unbound_wq, &buf->work);
++	queue_work(system_dfl_wq, &buf->work);
+ 
+ 	return size;
+ }
+@@ -614,7 +614,7 @@ void tty_buffer_set_lock_subclass(struct tty_port *port)
+ 
+ bool tty_buffer_restart_work(struct tty_port *port)
+ {
+-	return queue_work(system_unbound_wq, &port->buf.work);
++	return queue_work(system_dfl_wq, &port->buf.work);
+ }
+ 
+ bool tty_buffer_cancel_work(struct tty_port *port)
 -- 
 2.51.0
 
