@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-802698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333D7B455B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:05:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C02B455AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C9D5A850D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:05:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CE194E400F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3C4342CB5;
-	Fri,  5 Sep 2025 11:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF4C33CEB1;
+	Fri,  5 Sep 2025 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hayVNcaJ"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y8/Nz5um"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D1034166C;
-	Fri,  5 Sep 2025 11:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940C42C028F;
+	Fri,  5 Sep 2025 11:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070303; cv=none; b=XG5xZoRwmaQLhMwmOukSs5EfSQnrzSbP1xs/chIHqXARmTVjaK8dd4N+0MA7KO7zFRA1KqcbsvlB3QPAvdzJvvk+xskMoDo6NIvhwVOn0vDnPyoCgPc9PKb1ghs1MM1lDl8YhQLGM90IBnKlooPsi9xS2wZTeooIE9LxqqbRmmk=
+	t=1757070300; cv=none; b=BuMFTNr40ynMR45ZgPz+hR6GDGw3h0hy1sMPboa1JyFvgrGrpVhiz5bis0StKMTQh5k9krj3VzWfohY1S1Avi7dFbUQbQDkWDLPkJw7w0oFbR+QqsvZGxfPx7DROJrW0Y0bnnqRDIqzQ+hk5cjXbKoC5QCWTKceNExdlaCWZHyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070303; c=relaxed/simple;
-	bh=z94UH18wEDTWuKbXydUnW9LoB+6yMEbgmCQLR68OqnY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5WSfxIH3MgSLXkDP5RvnCCmHFeWQoPZTMaQsl+jP3Pbl7ovnVTNvkrwAsgcATYG9wvjPAU4+lzb+VYeqwirIZK/okLvapdA0bp6/bx5hh7YSGBawEZvmXLp448ov64MGDBI1gPd5iChnULirWT8ZoYIUOP/B+L4m2r+pwnDG+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hayVNcaJ; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584Gvudu029451;
-	Fri, 5 Sep 2025 04:04:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
-	2iOvuXzHrhkIoaofGS46Rn+lBRShu3PnRtqUUYUkhI=; b=hayVNcaJVPB1FPRxn
-	s0AjQBkT9fQPwJSyLj6kM2eT/fPTWma57co+IYqddMgYJ5d3YI6BnGc7obhHAsuJ
-	88Iho1Y+p7edTyxXylzJJ/LmTo4DMX7pbu3DdKH7nmlWsjrrVlyi0+w9K5eK71uX
-	WHKbTWZ+jyReTL0fO2YiVGeSm1/uL7MM5UHzR5aRZdmtFxF5vMLlLNcwGyvnPu+o
-	Anwac3RYH5xfgMWd+NupO5fvwDbQPqs5H0RGquJgKLc9yppqOwpOKnIaHdk+55mE
-	9Vfa26pLW4iimSps6bNf0ph3w0IVevcFgdyrJj33m+S7MwppitQTzWzemG1d0h9M
-	I6RbQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48yerk9wh3-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 04:04:36 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 5 Sep 2025 04:04:41 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Fri, 5 Sep 2025 04:04:41 -0700
-Received: from naveenm-PowerEdge-T630 (unknown [10.29.37.44])
-	by maili.marvell.com (Postfix) with ESMTP id 2F6EE3F7104;
-	Fri,  5 Sep 2025 04:04:30 -0700 (PDT)
-Date: Fri, 5 Sep 2025 16:34:30 +0530
-From: Naveen Mamindlapalli <naveenm@marvell.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <corbet@lwn.net>, <andrew@lunn.ch>,
-        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] docs: networking: clarify expectation of
- persistent stats
-Message-ID: <aLrDvpAsVq4vTytH@naveenm-PowerEdge-T630>
-References: <20250825134755.3468861-1-naveenm@marvell.com>
- <20250826174457.56705b46@kernel.org>
+	s=arc-20240116; t=1757070300; c=relaxed/simple;
+	bh=EpAWTnA0ZnhGgrRsfJ/hwLbEyGNGPdnqOjUA/fdzGV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W4LKTCa8fOnTlMRRkwRwe1FoIo52BsJpgEZiSEhxvR8AO2lFKP4mkhv1DiXQkzywWMl5VKvoNsHRDJip26xD1t/XT1s73GW1FapOrliuB+FlMACdhTtSxD9X8oND/xCiKwoqp/q9kcCZzGkgN5s8c6FvA3DAuL3fsQn0DH95Wa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y8/Nz5um; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585B4ggY3241033;
+	Fri, 5 Sep 2025 06:04:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757070282;
+	bh=8POGANUaGtk8l/kZY4KsjfjRvxgMxfmAgPnwN0aOE10=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=y8/Nz5umPHsWtDoSLToQwA959r73Ea1TItfSmRlMs8MTPFrzNIdW8ajgO5F9wVrCA
+	 8Z9Nz5iWCPEG1+0J6Ke6ttkk3ZJvICBh4XpoCINhiLlc+SD9TNKOUXaX2a6a92tGlg
+	 pYkBv4gXOpcMsDA4rL+wwhbxtiB/X4p7HOCqs2/Y=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585B4fcc846507
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 06:04:42 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 06:04:41 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 06:04:41 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585B4blY345501;
+	Fri, 5 Sep 2025 06:04:38 -0500
+Message-ID: <8ea6162e-5154-48ec-9570-07a800c9235b@ti.com>
+Date: Fri, 5 Sep 2025 16:34:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] spi: cadence-quadspi: Fix cqspi_setup_flash()
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+        <miquel.raynal@bootlin.com>, <broonie@kernel.org>, <vigneshr@ti.com>,
+        <marex@denx.de>, <computersforpeace@gmail.com>,
+        <grmoore@opensource.altera.com>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
+        <u-kumar1@ti.com>, <s-k6@ti.com>
+References: <20250904133130.3105736-1-s-k6@ti.com>
+ <20250904133130.3105736-4-s-k6@ti.com>
+ <DCK4I00CCR4R.2K7P9IEDI0OA2@bootlin.com>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <DCK4I00CCR4R.2K7P9IEDI0OA2@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826174457.56705b46@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2NyBTYWx0ZWRfX8owaW6XsXbmz iCxUxMWzFq/FsC4cBuTKze3Sl/MUBbI8ATPpa4JKvtsSoc4oMAkxQ3dT2VuJg9JV33ZyV0VOssj rk4H3BQVHi3HUQPDCrAx2ICCH0QQCnadT7QeJEU0Wwee12nPVHiTgIVUr23pj7NKfvs2a5YGEVf
- EWkXawH2I6vQrETOu8mNFpIDXioPQyywuDFPe1fNFTkkdxKGggwoLNoQBirjEN42nDK+RR5JRJj BpRluJf7Qkr2qYh/pEw6MxVn4VNSnoUwNYoveCh9dPDNXFmvm/VysjsPPo0OeiyOkne0+JyoEAV fSkO1lnFSyDovEsrbpSu/ktAB0EADLANK4YZ0kqmRilwNMjL52BjBAfBUV/9hU0/lhoSkhaEuqR hAObYZvC
-X-Authority-Analysis: v=2.4 cv=JL47s9Kb c=1 sm=1 tr=0 ts=68bac3c4 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=SfNP0LW7rUpxNmXbRPgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=lhd_8Stf4_Oa5sg58ivl:22
-X-Proofpoint-GUID: 0WeGHb-qpZOFV9vkSHIGbsjOjNyHYN_e
-X-Proofpoint-ORIG-GUID: 0WeGHb-qpZOFV9vkSHIGbsjOjNyHYN_e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2025-08-27 at 06:14:57, Jakub Kicinski (kuba@kernel.org) wrote:
-> On Mon, 25 Aug 2025 19:17:55 +0530 Naveen Mamindlapalli wrote:
-> > -Statistics must persist across routine operations like bringing the interface
-> > -down and up.
-> > +Statistics are expected to persist across routine operations like bringing the
+Hello Theo,
+
+On 04/09/25 21:02, Théo Lebrun wrote:
+> Hello Santhosh,
 > 
-> Please don't weaken the requirement. The requirements is what it is.
-Ack on not weakening the requirement.
+> On Thu Sep 4, 2025 at 3:31 PM CEST, Santhosh Kumar K wrote:
+>> The 'max_cs' stores the largest chip select number. It should only
+>> be updated when the current 'cs' is greater than existing 'max_cs'. So,
+>> fix the condition accordingly.
 > 
-> > +interface down and up. This includes both standard interface statistics and
-> > +driver-defined statistics reported via `ethtool -S`.
+> Good catch. Current code can only work with one chip-select.
 > 
-> Rest of the paragraph looks good, but I think the preferred form of
-> quotations is double back ticks? Most of this doc doesn't comply but
-> let's stick to double when adding new stuff.
-Ack.
+> Reviewed-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > 
-> > +However, this behavior is not always strictly followed, and some drivers do
-> > +reset these counters to zero when the device is closed and reopened. This can
-> > +lead to misinterpretation of network behavior by monitoring tools, such as
-> > +SNMP, that expect monotonically increasing counters.
-> > +
-> > +Driver authors are expected to preserve statistics across interface down/up
-> > +cycles to ensure consistent reporting and better integration with monitoring
-> > +tools that consume these statistics.
+> Maybe we should error out if we don't enter the loop, ie if we have no
+> flash declared?
+>   - Before your patch, cqspi->num_chipselect was set to num-cs DT prop or
+>     CQSPI_MAX_CHIPSELECT as fallback.
+>   - After your patch, cqspi->num_chipselect is set to one.
 > 
-> This feels like too many words. How about:
+> In neither case do we get an error if no flash is defined in DT.
 > 
-> Note that the following legacy drivers do not comply with this requirement
-> and cannot be fixed without breaking existing users:
->  - driver1
->  - driver2
->  ...
-I don’t have a definitive list of non-compliant drivers. Would you prefer to add
-a brief note stating that some drivers may not comply, without naming them explicitly?
+> We could either return some error code or set cqspi->num_chipselect=0
+> which will lead to spi_register_controller() to fail [0].
+
+Yeah, we can use max_cs for this. Initiate max_cs with -1, check if it's 
+still negative after the loop part - if yes, then it didn't enter the 
+loop as there was no flash declared - return failure. I'll add this 
+logic in v2. Thanks!
 
 Regards,
-Naveen
-> -- 
-> pw-bot: cr
+Santhosh.
+
 > 
+> [0]: https://elixir.bootlin.com/linux/v6.16.4/source/drivers/spi/spi.c#L3322-L3329
+> 
+> Thanks,
+> 
+> --
+> Théo Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
+> 
+
 
