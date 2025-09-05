@@ -1,173 +1,108 @@
-Return-Path: <linux-kernel+bounces-803170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39064B45B94
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:06:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6363EB45BA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A15560583
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901CA188FB6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22842F7AD6;
-	Fri,  5 Sep 2025 15:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA2423E320;
+	Fri,  5 Sep 2025 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ofn9I9iQ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8/gzUtv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D42FB09F;
-	Fri,  5 Sep 2025 15:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A800B30217B;
+	Fri,  5 Sep 2025 15:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084403; cv=none; b=NuUNxbfMU6LJk/GnjKvW3f+MQK6aIJdWRIcZTOJ7bS4gkbMBAJXQxdo0jLvFSsmZ+1dG77PpqP/lYLaIbcYe1rOw1TmuEAfrGl94cxqhJwtOFU4SezkoHKIfkRPEDeS9LLiJgVrPx5BVsW9vLwBhE9MQiXPsGrQXo1Oi+/Dkvrg=
+	t=1757084417; cv=none; b=jmPlWOsl7Rlfl6uJ/Bozf3jL9lzFY6JiouHwrUEMUYj4jx6Tt6fhl/gsGcRkWEjFDmy7NEdfQiHzVNx3996iXgh4LpUfl1ZWJz6laU8hmDVPIwrsXPdRwODiY89s310jzTy2E6355A6XZOP7oCYlf5gudyDb0jXXQrcViFlclDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084403; c=relaxed/simple;
-	bh=ALhbWpBuIHESZ3w6gZ/J34pjJGe0uGkxAAoVB4VKwp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uYpdIAG1oIZefZKNIHS3tu/wIK1bUGbhxa6rcXhpNR2bIT/G+gdxk+SIt+to0+9mYKLiXRZbO9J74EqKka6e9EdrzzdjQDUXoN08zY5j48cYq99+C8AX7V6+aIaaD+eZqfO+wHuduC14v6qyBQ2ko8Akumzdpq+gqsNtGFwp7/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ofn9I9iQ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24c863e852aso20343835ad.1;
-        Fri, 05 Sep 2025 08:00:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757084402; x=1757689202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=BM3As/mXgJWAMTQFyUrVqvwBh5qWHLokM1O/8LYhcBk=;
-        b=Ofn9I9iQzk5qPViU8AkPjJLb7B7cyBIOn6o1JKzU7efAFi2ZDxEekFNeroA8fqROUB
-         g8eKBXoXzReEvPZp2e0CU8xnqvfTDfJQ8E0FN7dyNgzzi3hrQuJfjyhPTkx36rIscOhf
-         f6JDm2tf1KuuUDClPkDm6hekNfwbST38gCEboD2s1QR9Zo1AZ5FstmWCuyzXYyVBUNle
-         8Cy3596PmEGQ5bLmprowsScxuYAFR8008SJkSBLWdJiX48Kwj9GEXkm2YEUpk4VpXghV
-         30FzyJFi89KyW8JxzMjL+RBWui+mCpT/1Fa9UlCF959wY41H7JK5VrBEfHHJ0kgAHM3y
-         C9lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084402; x=1757689202;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BM3As/mXgJWAMTQFyUrVqvwBh5qWHLokM1O/8LYhcBk=;
-        b=rQrzen107ng6pEJgwwl44WCzJpLjIRCiBCG471VTVEcS39bt9swOzFEsYzjmw0p/0F
-         nULEpJ7tnI9pBNcfHv7IRm5ssAbn3w5/N3NdvoKvM+LYuygDnqdt+G8bX23NmM/oy7vE
-         +Q1hR+1VbvXcTj0D553SJaG4WXRZ10PfmPUFIsmZJW7xf4qt/pAWQ3DpK7Fag140NCX2
-         R58+T1pip/I/fUnpGL50c24E6imp5F15h3gzkrNSNXhNiScChrstlUNXMe5HgMwyJIie
-         Bj+tC44CKWCFw2gPFi/e8Bg1B6R7JDFkLBbPN9qYFW9UkjG2nOgGwbwb7/y9DHeyLC0l
-         BQyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAcWnYZIaNT3qF11jRoYRBCRtd+IeBGinKzB/SRjAtDkD35VXXE82bRnbqFpFkftDFg+hzuuoHs7Sf@vger.kernel.org, AJvYcCUywUkvEVjdrQAfwdFlJoiwLsLwDdft0njyLwI/IXb9txzFQ3NEhWHqMeWkc7OzctqrAui5NwQ5e4TBGT1Bbh8TBbo=@vger.kernel.org, AJvYcCW4Zcob0xfVPWGLruCvdapdq2MCGlqswWSADluowAlvUtgWRKJ3VYQpj2TvLVZfRzynigSXW+Dhz0BwvLgU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCpmJuDPRrYJP135xLoHZxfBMOmSPRZvFFOIf2ni3dbAYRql8E
-	9RYjQx04kfwy8AD+NaI/dLszzakUL/3QE2yZ27Y3CB+i8zdT0yjif6cS
-X-Gm-Gg: ASbGncvj6sivGB2xsWevJi/zbHJKgmg8OC6RdpKTyq9IFmjHK1SIjkWdkGuju2DoM5D
-	ykBJUVcHJDPaBy/px+mBxVq7vfuMeoaUMz96wBcGuoXCygN5MGCGxpdDA+IcSWbDehG5UxaMqXK
-	CkWLgHTAyx33Vrcl64JSv+PcrDwGBfIniU243YEkkdjeaepDhyvZ5IWT6/j4Rk153v3qAGOaUx/
-	CDzuJYjDUBMBkSVR3UNAoMoUnBYbvH+xQrvGdnCKYbj3SJUKAqkdWWT6Z0Ka0O94HZ7LOaYEzwq
-	BJfgfyhpZZi/KyVlPKg0qbhw9WZoH9a717jQVlwBQ67WeMxxtENQhwYeqM2txbNpjfyKQHPhMJv
-	HyONil80ZCB7M+vKfVjW1nYlOfFJNvH6fhSIR1mMhpjs2/2HbO7XXlrtTPOf2ZB8zd/uyUkgVmR
-	M7ccUpDg==
-X-Google-Smtp-Source: AGHT+IHuVBtMRqO9E/uDVUcKzPUIj51uxl5WcTxllKIkah/7JqHcVhk+jjGOeTjkxr4voewoXYTYjA==
-X-Received: by 2002:a17:903:2b05:b0:24b:e55:334 with SMTP id d9443c01a7336-24b0e550925mr175545175ad.8.1757084401493;
-        Fri, 05 Sep 2025 08:00:01 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9c2b12f9sm70866975ad.101.2025.09.05.08.00.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 08:00:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <bf67130a-6a33-4725-bd60-c8599ff92d23@roeck-us.net>
-Date: Fri, 5 Sep 2025 07:59:59 -0700
+	s=arc-20240116; t=1757084417; c=relaxed/simple;
+	bh=ri4clsiuu0TGnICYGMR3lnjIIOKj/dmNCRfheklY2bE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KY8l37reJmP9lMbQaFG8FjQPFrQgoeyb1Y94UGfgfrpfoPH2xODY1mjowmtox/SyHeBW2Uw5Ccd825taxrkvgrIpKBfZLtJhtR9ErrSpr3HRZVbLZ7EJBnJ8imrqrljPMLwY/bFWv0F0JCNV+BnD3ZSxclzC9Gg+DWQbcQmVQdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8/gzUtv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C32C4CEF4;
+	Fri,  5 Sep 2025 15:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757084417;
+	bh=ri4clsiuu0TGnICYGMR3lnjIIOKj/dmNCRfheklY2bE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N8/gzUtvAl7Q91n2WthpKhZE6uvbUNVuXBExoMGA+QJ0JgPaN5VCtQuHi2UFHOl7D
+	 kaTGn9LJ9lzh8D2DI7Scl+/2BSUI+vLCiTiioSPgnzAetP/sp64v94bNaQL9sgSWKd
+	 1BGuRvxrMUwe9l8M4a2z2XuXzlyZuwqjOBA/PwH2Age2UFR36UWNZAGODHj2pZlyBo
+	 crPW9lUrHVUFFqWc88DPym5WR56aEmPXFQuEAYy+ebbqbMYJgUVpIxC6ucuoOmj1yP
+	 EpcW6pp8/S56sSS4FI69mIYU/DujB5JyOcZKQxtRpI68mpU+g+6cTGKgxNp90XJbq8
+	 xlG3woLsHo7rQ==
+Date: Fri, 5 Sep 2025 20:30:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v3 5/6] bus: mhi: core: Improve mhi_sync_power_up
+ handling for SYS_ERR state
+Message-ID: <sh3doz6uhkvbp4iy76eyhnh7ycigka3gmrod423rmgarhkhlxj@oet5rikyjhee>
+References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
+ <20250821-vdev_next-20250821_sriov-v3-5-e1b017c48d4a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] watchdog: rzv2h: Make "oscclk" and reset
- controller optional
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250804195723.3963524-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250804195723.3963524-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-5-e1b017c48d4a@quicinc.com>
 
-On 8/4/25 12:57, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Aug 21, 2025 at 06:25:37PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
 > 
-> Update the rzv2h_wdt driver to make the "oscclk" clock and reset
-> controller optional.
+> In power-up, reboot, or recovery scenarios, mhi_sync_power_up() is invoked
+> by the controller driver to wait for the device to enter Mission Mode.
 > 
-> Use devm_clk_get_optional_prepared() to obtain the "oscclk" clock,
-> allowing the driver to work on platforms that do not provide this clock,
-> such as the RZ/T2H SoC.
+> However, in some cases, the device may be in SYS_ERR state due to a
+> previous device reset. SYS_ERR is a valid state, but currently, the host
+> exits at wait_event_timeout() prematurely when MHI_PM_IN_ERROR_STATE is
+> detected, causing mhi_sync_power_up() to fail.
 > 
-> Similarly, use devm_reset_control_get_optional_exclusive() to allow the
-> driver to function on platforms that lack a reset controller.
+> If MHI is torn down before SYS_ERR is serviced, recovery is not possible.
+> Instead of aborting, the SYS_ERR handler should process the error and queue
+> the next state transition to bring the device into Mission Mode.
 > 
-> These changes are preparatory steps for supporting the RZ/T2H SoC, which
-> does not provide an "oscclk" clock or a reset controller.
+> This change ensures mhi_sync_power_up() waits for Mission Mode even
+> after SYS_ERR, enabling proper recovery and improving robustness.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reword the description in imperative mood. Also, if this is an independent fix,
+this patch should be moved to the start of the series.
 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+>  drivers/bus/mhi/host/internal.h | 2 ++
+>  drivers/bus/mhi/host/pm.c       | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
+> index 034be33565b78eff9bdefd93faa4f3ce93825bad..9e37e5c9a6c7e07d54300adce51c9db9052e477a 100644
+> --- a/drivers/bus/mhi/host/internal.h
+> +++ b/drivers/bus/mhi/host/internal.h
+> @@ -170,6 +170,8 @@ enum mhi_pm_state {
+>  							MHI_PM_IN_ERROR_STATE(pm_state))
+>  #define MHI_PM_IN_SUSPEND_STATE(pm_state)		(pm_state & \
+>  							(MHI_PM_M3_ENTER | MHI_PM_M3))
+> +#define MHI_PM_IN_UNRECOVERABLE_ERROR(pm_state)		((pm_state == MHI_PM_FW_DL_ERR) || \
+
+MHI_PM_IN_UNRECOVERABLE_STATE?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
