@@ -1,136 +1,284 @@
-Return-Path: <linux-kernel+bounces-802088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BD3B44D76
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C82B44D83
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2141C81018
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D0D27BD837
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115272F069A;
-	Fri,  5 Sep 2025 05:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABA2EC56F;
+	Fri,  5 Sep 2025 05:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="WaFnr3jY"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0CmTSir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51792EFDAB;
-	Fri,  5 Sep 2025 05:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578B2EBBA3;
+	Fri,  5 Sep 2025 05:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049697; cv=none; b=uSlwZBHqmZp41kAITPRmQNz+sqha5uqthCsrmUckU5Vv6lVxbD3MGwaSx9Flv2zYnCfG+IZC5UWRShMXt6IqqfRJ47eGKdRTIrE8D5bnADF5laPEv4nElIjUdR2/t4Fx/NbpAMPPDcPw5bY1qFF9ypEGhNuSS3uuHORZL5uRmOA=
+	t=1757049684; cv=none; b=PZe32einFQHSiJwlSLIyEMN7Msx9DO2NB0WGNaFajgtEVH92llCnXM1xiJGMDqGHbf8ljeUrEtUWROFbHWqP8kwCp4cbrvsCcZgJe1ujmQbe8Zi/nuVnyE9fRwJ9jWHT59vcvR2Ti31/FnYf2H1me3ESDGYkonS2JUZcwn41ZqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049697; c=relaxed/simple;
-	bh=IvqLa41Rgi5MStRNwS+3vZ63wEGrIeqTNh3mmJUDLuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ClnGUAJ07VoNSyyTEm25RHCr0kE3Am00fFmGJRaqkaDBtNxFECL60U38ethJhJtZkt70rrKwEHKcdEX5HnuhpDuWFoDN0zTPLGINwHJeEWw22Q2lKlHvCpNq5rw5KwbM0BBGfrP/gDHYPxkEkLuOqJbhMd9hWzZc9ujXQdFuRsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=WaFnr3jY; arc=none smtp.client-ip=212.227.126.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1757049666; x=1757654466;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=IvqLa41Rgi5MStRNwS+3vZ63wEGrIeqTNh3mmJUDLuc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WaFnr3jYim3zobWPzFyjE7uIAigGtvl8F40hi4JltJgyoKa0kl+ns5gF3aCU7h92
-	 MRe9tSIyP1VmkzjseAiHhtKH9Bm7ZDAl2pYkCJdTAjXyYNXltbhVa4SCn0lGNhtZs
-	 6Ymzo2BJWyf6JQNqBYNyMKbDZrt6ZtU1HopPsgI3poA0ATPli/A7FYhq0lhY5MATn
-	 lh6HLauJmdrUuiTM25UnyZGZ83Mnz/sVn9M7rkmkjdaH8tHLXogCKxfJBH7nepG2m
-	 LLM3ibOQ5wuTAicE/drVPuXqXHImu7gOQykAJ3VEnhgef5TVAF0EBJr81Ju2YaKw6
-	 FzfJSVnDjuvVIJgP6g==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.145] ([91.64.235.193]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1Myb8P-1uXdm83dgj-012Zfc; Fri, 05 Sep 2025 07:21:06 +0200
-Message-ID: <2fca6922-c312-4ac6-9b1e-f2aa492e1c6d@oldschoolsolutions.biz>
-Date: Fri, 5 Sep 2025 07:19:43 +0200
+	s=arc-20240116; t=1757049684; c=relaxed/simple;
+	bh=mqIISEo7LPLprFNDEUcKEaTHvMz7CvLt6reLpOwI+yU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WP+LBbGFv1gMNaizmqR3WxNUH6K5ppHy7Q2LMT/kB78vSh1Ph6Xj1Ql1Em+cPhYY0dzEjivAMYBhI3zJ2SRHJjAKn5UglIJohNSbNB91AfWnJtZWqCkM/h7Z8cAnSUHGlfYUq5hY+8XAuqkiCr8/ZX1ZpWdsy0cYTVeknUuM0jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0CmTSir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26279C4CEF5;
+	Fri,  5 Sep 2025 05:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757049683;
+	bh=mqIISEo7LPLprFNDEUcKEaTHvMz7CvLt6reLpOwI+yU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0CmTSirH7yBCDozYoC9DlsvzZCfvAFIewxsKM229y/tgJZn5KvA0nn3sSZy76qey
+	 0S5HgHbORGIloKt+m8EPv9nwzjEz43zvj3GBh53cftXZ8LLcH2zIdfbPPrP54KB6BQ
+	 Y2h836z0EzbOsronUrzBLoG3jbU4WNYmVjvqvhHWcF1NTZg3/tqWeUc2cGUFYxeukL
+	 kfQqw2XDwWAaZUdqwkQ76KnorupCoWqE331UKGXqY7Fus4/Dm24wxaW1aZzCZRbE2e
+	 gkSyeEO9z828d4a56/6cKYREIuv1xIUvsIvs2LWAKAjEAlx31YF3I/J3fbDyUTP1PM
+	 JQ3SWIjkiqXVQ==
+Date: Fri, 5 Sep 2025 10:51:12 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Jacky Chou <jacky_chou@aspeedtech.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, andrew@codeconstruct.com.au, vkoul@kernel.org, kishon@kernel.org, 
+	linus.walleij@linaro.org, p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] dt-bindings: PCI: Add ASPEED PCIe RC support
+Message-ID: <xg5avkbsoux7rw7dg67bhf7rupgr66nzak27y2jmcerrqhlb4u@l63vz3jaie2g>
+References: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
+ <20250901055922.1553550-4-jacky_chou@aspeedtech.com>
+ <20250902211221.GA1179675-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v7] arm64: dts: qcom: x1e78100-t14s-oled: Add eDP panel
-To: Christopher Obbard <christopher.obbard@linaro.org>,
- Douglas Anderson <dianders@chromium.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Rajendra Nayak <quic_rjendra@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>,
- Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>,
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LCJFX39gSHvMklOr93P1mOJM7P4b9qcXgpSoFcZkrYwLAOCad08
- qy2mWKK7IydJ9UKDeNFYsbw939l+e/isCLilco/K2AkEUUMciYONWHqGaHB8ny1WqLKOUHj
- 8DVHhXGVMilw3wz0nHAWtLBDMqCu6Zw8sao1HXnNdHJRupM1bzpAYbr9yU8sWwLuvG8dwGd
- BpqEhaFW9uzlWa0Jlx5CQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+QBQyDHBlms=;2IonQUqzHq2LnYp6i3VkQ2d0i3r
- TXVqC9rlkdIeaxw6rzfFBP1Y+pXcH7XgkG8KcPZ96bJflB2I1c0PONBhGJvzuq/sH0pAzwyjv
- 9oZcjtt3JxoWxyj49aB3yplXGJUK1CGcsvf+o8qqCvCcTNOy+KaA2RBfbaISvwa9nbLfmQJQE
- 7V2Un6KSQpjH+KTul8O37K0QX2xYx7jby2iJgSLkJQjPO8UVkjAL1HnTo6BtZWHkLoRMxdPwv
- 9EJC+z0OI97h+Gd/mZSOY8TXAvLacC5/RlKZL+nFP4kTNh6+9Wbf4xDyOJAI/ZcRvrHFRUosF
- nsVXP2sJsNKhg+9SSib96Db4fQ4n7EDM6DLZpNhhoHrzV4fDkJkm07Cd/dn30HgNn23dgRkJr
- KflSykmlwj4Zzw5O8qCeNmzMMNk7ln5b6YjYsfc3GJgyVUbM0WAxsKHzQUK/uiN5iAJbCuqNl
- /s5vzi2Q3qCmehVeLlZAaSzjWQWUgjIxIg2qrvrqLqUdKfjMLzF/zQT4BrWTSPrwNe2C4QPCS
- eORhTrrf45/I+v04uyfV2CEuyxnn3B3si9eMgR7x1+agl8ANXWeaNbqYEmebYkGpAh9aC3RV1
- AH+xZslX8wr4G/Efw6+o4Y2CUS9/YiBlPILB/zSScw7vT+RCMVnzLf+XsdIjXmzuTk7wIX2pr
- fV0kEBvfusuVLA88sVAZK2fVyTfvK4yV+1rtZ6b9IkDENXfIuQsm1oQGfg6RiTzWhYJ8GX0GQ
- Iw+LUwHOMALaP5tmc8lJ7KXpPclA8fxE68zRd+613ohW050ZkXEhsqLwP47VDhgLthYUgpvGZ
- y3kk7tlh+e4aWQuyKnr1w0Pdtl7+gnFadRh3rWbx/NmgqJAvxYcuQ5h+3AMY2V93+1C8Qa8Zx
- 1e9OoznArU++TTdmdPB2GslcUbzrfuVEcqj5cPVoY2YEANYPFMewQghG/OM+Tc/dvWojDrRu7
- IcR/GHkx7Og3279gU0hVXzP39Kewe4htMcEKAXVNCBezVPW8M+iicJF66NOd/RULRWXs1kPAP
- BJaRYh4ib6oxvxUUJ2ruTkkq8z/t0YPDr6ANzsvW05Y6WjSy07tFu3XjUHb7MAQlCJ4Ijfw0O
- gBTBvI1AOLB/kh3GsEhCPL6BLYvlgKR8UkmPWP/I89lWjKZ+kV/Uyc8BP6/e4mekkyh0Oem3L
- ubdW6WdzarOWdpyRWOOQRxWNrNhYFXFd/7ZsbHJlpkZACexNuusiU/Yo540MX+pDgKoHvnuIV
- i07xtgKG+V2idzCK6BaMHpZKgaw1aTjIfwlozzz30fgZP+QMKr2yNlhF1e93+1YzPS6wK/+P0
- 3u+aBaky/wG+EFiavKEkOhtJPB4U3/x5w0EutZDGssddSbJOiDoIXHM2VdrdjiLbKBHrSz1Iw
- kmEU7V2U4etJZTJ9QF+znAtzsK4DLuZiVtclIfLqzQknav8x4rGfOBFGDDDV8ywMvFhhqGbjW
- V3HTASx8dOGeIiJZ4UfL0/wMLWWrxpAikRReE/qws6z9dQ4m6FmZrnNkypB+be3v7Iemqwk7n
- +/6k/icRYwV2KniJZF+Z2A0P4xNQB517eX10R5LwFg+WtR6568s/vXd6BNLHhvdQdZfgk9RDL
- hjA3+5y1BxtKpSTPx7zuQM/WHR7YbbhTreyixdtNSuqGiFV3EBvakZOsRSR2gQdAWqrah9YSB
- LepRHzoQzKPUtzQShD5ZIGsyEdZ7kO74ujxCc6IGRDHuZ0MbW5T4yCzkyaOQ9ox3aUL4VJ9+h
- VRB1tjcN6jDhVPevtscNppc3g5SlVEAfhWmza11Hb/zxz/mTDQEo4nPo=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902211221.GA1179675-robh@kernel.org>
 
-On 8/14/25 22:16, Christopher Obbard wrote:
+On Tue, Sep 02, 2025 at 04:12:21PM GMT, Rob Herring wrote:
+> On Mon, Sep 01, 2025 at 01:59:15PM +0800, Jacky Chou wrote:
+> > ASPEED AST2600 provides one PCIe RC for Gen2 and AST2700 provides three
+> > PCIe RC for two Gen4 and one Gen2. All of these RCs have just one root
+> > port to connect to PCIe device. And also have Mem, I/O access, legacy
+> > interrupt and MSI.
+> > 
+> > Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> > ---
+> >  .../bindings/pci/aspeed,ast2600-pcie.yaml     | 179 ++++++++++++++++++
+> >  1 file changed, 179 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml b/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..fe75bf2961c8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+> > @@ -0,0 +1,179 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/aspeed,ast2600-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: ASPEED PCIe Root Complex Controller
+> > +
+> > +maintainers:
+> > +  - Jacky Chou <jacky_chou@aspeedtech.com>
+> > +
+> > +description:
+> > +  The ASPEED PCIe Root Complex controller provides PCI Express Root Complex
+> > +  functionality for ASPEED SoCs, such as the AST2600 and AST2700.
+> > +  This controller enables connectivity to PCIe endpoint devices, supporting
+> > +  memory and I/O windows, MSI and legacy interrupts, and integration with
+> > +  the SoC's clock, reset, and pinctrl subsystems.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - aspeed,ast2600-pcie
+> > +      - aspeed,ast2700-pcie
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  ranges:
+> > +    minItems: 2
+> > +    maxItems: 2
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +    description: IntX and MSI interrupt
+> > +
+> > +  resets:
+> > +    items:
+> > +      - description: PCIe controller reset
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: h2x
+> > +
+> > +  msi-parent: true
+> > +
+> > +  aspeed,ahbc:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      Phandle to the ASPEED AHB Controller (AHBC) syscon node.
+> > +      This reference is used by the PCIe controller to access
+> > +      system-level configuration registers related to the AHB bus.
+> > +      To enable AHB access for the PCIe controller.
+> > +
+> > +  aspeed,pciecfg:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      Phandle to the ASPEED PCIe configuration syscon node.
+> > +      This reference allows the PCIe controller to access
+> > +      SoC-specific PCIe configuration registers. There are the others
+> > +      functions such PCIe RC and PCIe EP will use this common register
+> > +      to configure the SoC interfaces.
+> > +
 
-> Add the Samsung ATNA40YK20 eDP panel to the device tree for the
-> Snapdragon T14s OLED model.
->
-Hi Christopher,
+So these config registers are part of the PCIe domain? Is so, accessing them as
+syscon is wrong. You should configure the registers directly from the RC and EP
+controller drivers.
 
-I have this model and the prerequisite patches in my tree and using it=20
-daily. Working very well.
+> > +  interrupt-controller:
+> > +    description: Interrupt controller node for handling legacy PCI interrupts.
 
-Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+s/legacy PCI interrupts/INTx
 
-with best regards
+> > +    type: object
+> > +    properties:
+> > +      '#address-cells':
+> > +        const: 0
+> > +      '#interrupt-cells':
+> > +        const: 1
+> > +      interrupt-controller: true
+> > +
+> > +    required:
+> > +      - '#address-cells'
+> > +      - '#interrupt-cells'
+> > +      - interrupt-controller
+> > +
+> > +    additionalProperties: false
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: aspeed,ast2600-pcie
+> > +    then:
+> > +      required:
+> > +        - aspeed,ahbc
+> > +    else:
+> > +      properties:
+> > +        aspeed,ahbc: false
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: aspeed,ast2700-pcie
+> > +    then:
+> > +      required:
+> > +        - aspeed,pciecfg
+> > +    else:
+> > +      properties:
+> > +        aspeed,pciecfg: false
+> > +
+> > +required:
+> > +  - reg
+> > +  - interrupts
+> > +  - bus-range
+> > +  - ranges
+> > +  - resets
+> > +  - reset-names
+> > +  - msi-parent
+> > +  - msi-controller
+> > +  - interrupt-map-mask
+> > +  - interrupt-map
+> > +  - interrupt-controller
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/clock/ast2600-clock.h>
+> > +
+> > +    apb {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <1>;
+> 
+> No need to show this node.
+> 
+> > +
+> > +      pcie0: pcie@1e770000 {
+> > +        compatible = "aspeed,ast2600-pcie";
+> > +        device_type = "pci";
+> > +        reg = <0x1e770000 0x100>;
+> > +        linux,pci-domain = <0>;
+> > +        #address-cells = <3>;
+> > +        #size-cells = <2>;
+> > +        interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+> > +        bus-range = <0x80 0xff>;
 
-Jens
+Why bus number starts from 128?
 
+> > +
+> > +        ranges = <0x01000000 0x0 0x00018000 0x00018000 0x0 0x00008000
+> > +            0x02000000 0x0 0x70000000 0x70000000 0x0 0x10000000>;
+> > +
+> > +        status = "disabled";
+> 
+> Examples should be enabled. Drop.
+> 
+> > +
+> > +        resets = <&syscon ASPEED_RESET_H2X>;
+> > +        reset-names = "h2x";
+> > +
+> > +        #interrupt-cells = <1>;
+> > +        msi-parent = <&pcie0>;
+> 
+> There shouldn't be any need to point to yourself.
+> 
+> > +        msi-controller;
+> > +
+> > +        aspeed,ahbc = <&ahbc>;
+> > +
+> > +        interrupt-map-mask = <0 0 0 7>;
+> > +        interrupt-map = <0 0 0 1 &pcie_intc0 0>,
+> > +                        <0 0 0 2 &pcie_intc0 1>,
+> > +                        <0 0 0 3 &pcie_intc0 2>,
+> > +                        <0 0 0 4 &pcie_intc0 3>;
+> > +        pcie_intc0: interrupt-controller {
+> > +          interrupt-controller;
+> > +          #address-cells = <0>;
+> > +          #interrupt-cells = <1>;
+> > +        };
+> > +
+> > +        pcie@8,0 {
+> > +          reg = <0x804000 0 0 0 0>;
+
+Why the device number starts from 8?
+
+If there are platform specific reasons behind this numbering scheme, it should
+be mentioned in the description.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
