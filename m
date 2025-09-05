@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-802054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F37B44D34
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBF4B44D37
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455BD1887EB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32918481C50
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A232798FD;
-	Fri,  5 Sep 2025 05:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52B227B50F;
+	Fri,  5 Sep 2025 05:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EApnSEfF"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="omX2bvQp"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63CC2773CA;
-	Fri,  5 Sep 2025 05:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697726B2C8;
+	Fri,  5 Sep 2025 05:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049562; cv=none; b=ac3AADOedf8Yw3VVJK/8sQZ6AsG7ccv0f6/9V8hKrwHW1hE4awZoEkraPbm3rNMqG+SVf8OvBFPyCx9dXeGKJrn7zDs0gptjJ2dlqAlt6H02uG92A/FLBsMH7SAyp/suF1kTMIQofcfZ/YIcgxWHBYE0jtXj60lWkjijwJdn0fI=
+	t=1757049567; cv=none; b=GovWl1hzn1jjuZ1RPS6mvltmftch0ZD2wSQpuSUqp3XcZYOQc4sGdkyp3ivxt4+0ndBlPTTgFOv1l6eeYZFDS8Ss1RsMIyDhQfptWRcxpLfnbuSahqWUwCisYM8gaXkiW03x3zcgX/g51ptmNTpHGk+eqGvKxO9AjkuMDxdsijk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049562; c=relaxed/simple;
-	bh=3154Xqz/e1Ndx4POft8TOjovNb0TSLbayv8lVflL864=;
+	s=arc-20240116; t=1757049567; c=relaxed/simple;
+	bh=Egl3LBU8kwgVEojpc0WkM5rMiTqK2545VfdeOxh3QN0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+vcaelhOWfJiqFSiEBuOLWSwH8J1G87xtycgavxI1GzonfSj4TnbB211kHr3QND04Bx3VzRC5qBNv4P5Muk1HuLDd3HxpBLPCxvVOiVY5clHJTp/O0i8zSb6B+P7U3Zmi2j4B5hPXrYZPS6OH42QDKg1L+IjvcLWS0TPIO5/6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EApnSEfF; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=pJoj8jJ8W4w6ch6ZyatG9L+51O51SyMECFt0R6a5CppT8Xoq2XbA3eVL7NZNzi8UZ0z8vwBouiPn8myd6qUCrL5Ar+hE5J2SXa4S2OL5IZ+dR5sM9Teq3fcECXs4iZ0An2eLflcMI6++HfEVuOWFzWHLlvpk+GddVdeA1igPTIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=omX2bvQp; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855JGk43246146;
-	Fri, 5 Sep 2025 00:19:16 -0500
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855JK5h3637178;
+	Fri, 5 Sep 2025 00:19:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757049556;
-	bh=UBit72BfcGBSoaxIVed4Us5mOEUdHwjJDdHW4L4Muh8=;
+	s=ti-com-17Q1; t=1757049560;
+	bh=5L0RZjjh4AWa9ANLwiQ5lj+1d3o5izAz/z+vBhd22hM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=EApnSEfFtQsgimrj5SDF+Crj7QST2FrQd+S3UT9gV8SKBOdFZifWQ+oRDV09bDD0K
-	 tK6DdzsaB9A/2IqI2SThDYFPCRht7eWvMA+TLEYa4GA9bhROLD5Y0EO1u5phaihfrp
-	 BCh7a3jErkjoZ2HPcfaw/TLI0+wQkf+6xIvqeGnI=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855JGqZ688568
+	b=omX2bvQp+9Xa8YdRzsVw3DBduzWgog+0XpkNm72RT7MHCXX7PnF0RkSllyRPLnX+w
+	 lVlKpAQMDqpxtitrfyJRohyww3efNgR2V1IrstLsdEKd4WDPqmIpgl1nCfDkS9YvNl
+	 efFC0aN/W+4YJGooaLEIDuc2HZOQqT91aF/cr4Yg=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855JKD4688598
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 00:19:16 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 5 Sep 2025 00:19:20 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 00:19:15 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 00:19:19 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 00:19:15 -0500
+ Frontend Transport; Fri, 5 Sep 2025 00:19:19 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855IoiX220581;
-	Fri, 5 Sep 2025 00:19:12 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855IoiY220581;
+	Fri, 5 Sep 2025 00:19:16 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
         <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v3 04/33] arm64: dts: ti: k3-j784s4-j742s2: Enable remote processors at board level
-Date: Fri, 5 Sep 2025 10:48:17 +0530
-Message-ID: <20250905051846.1189612-5-b-padhi@ti.com>
+Subject: [PATCH v3 05/33] arm64: dts: ti: k3-am62p-j722s: Enable remote processors at board level
+Date: Fri, 5 Sep 2025 10:48:18 +0530
+Message-ID: <20250905051846.1189612-6-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250905051846.1189612-1-b-padhi@ti.com>
 References: <20250905051846.1189612-1-b-padhi@ti.com>
@@ -77,7 +77,7 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Remote Processors defined in top-level J784S4-J742S2 common SoC dtsi
+Remote Processors defined in top-level AM62P-J722S common SoC dtsi
 files are incomplete without the memory carveouts and mailbox
 assignments which are only known at board integration level.
 
@@ -86,242 +86,133 @@ board level where above information is available.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 Acked-by: Andrew Davis <afd@ti.com>
+Tested-by: Judith Mendez <jm@ti.com>
 ---
 v3: Changelog:
-1. Carried A/B tag.
+1. Carried A/B and T/B tags.
 
 Link to v2:
-https://lore.kernel.org/all/20250823160901.2177841-5-b-padhi@ti.com/
+https://lore.kernel.org/all/20250823160901.2177841-6-b-padhi@ti.com/
 
 v2: Changelog:
-1. Re-ordered patch from [PATCH 10/33] to [PATCH v2 04/33].
+1. Re-ordered patch from [PATCH 13/33] to [PATCH v2 05/33].
 
 Link to v1:
-https://lore.kernel.org/all/20250814223839.3256046-11-b-padhi@ti.com/
+https://lore.kernel.org/all/20250814223839.3256046-14-b-padhi@ti.com/
 
- arch/arm64/boot/dts/ti/k3-am69-sk.dts             | 15 +++++++++++++++
- .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi  |  7 +++++++
- .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi |  9 +++++++++
- .../ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi    |  3 +++
- 4 files changed, 34 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi    | 1 +
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi | 1 +
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                  | 2 ++
+ arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts           | 3 +++
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts                  | 3 +++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                | 1 +
+ 6 files changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index f4f7b89bf0d2..af8eafc3f54a 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -992,24 +992,32 @@ &mcu_cpsw_port1 {
- 	bootph-all;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+index bd6a00d13aea..5288c959f3c1 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+@@ -205,6 +205,7 @@ mcu_r5fss0_core0: r5f@79000000 {
+ 			ti,atcm-enable = <0>;
+ 			ti,btcm-enable = <1>;
+ 			ti,loczrama = <0>;
++			status = "disabled";
+ 		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+index 6757b37a9de3..8612b45e665c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+@@ -136,6 +136,7 @@ wkup_r5fss0_core0: r5f@78000000 {
+ 			ti,atcm-enable = <1>;
+ 			ti,btcm-enable = <1>;
+ 			ti,loczrama = <1>;
++			status = "disabled";
+ 		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+index 899da7896563..2755598fd1f5 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+@@ -725,6 +725,7 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
++	status = "okay";
  };
  
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
- &mcu_r5fss0_core0 {
- 	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core0>;
+ &mcu_r5fss0 {
+@@ -735,6 +736,7 @@ &mcu_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
  	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
  			<&mcu_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
  
- &mcu_r5fss0_core1 {
- 	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core1>;
- 	memory-region = <&mcu_r5fss0_core1_dma_memory_region>,
- 			<&mcu_r5fss0_core1_memory_region>;
+ &main_uart0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+index bf9b23df1da2..b329e4cb0c37 100644
+--- a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
++++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+@@ -515,6 +515,7 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0 &mbox_wkup_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
++	status = "okay";
+ };
+ 
+ &mcu_r5fss0 {
+@@ -525,6 +526,7 @@ &mcu_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+ 	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+ 			<&mcu_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
  
  &main_r5fss0 {
- 	ti,cluster-mode = <0>;
-+	status = "okay";
- };
- 
- &main_r5fss1 {
- 	ti,cluster-mode = <0>;
-+	status = "okay";
- };
- 
- /* Timers are used by Remoteproc firmware */
-@@ -1055,42 +1063,49 @@ &main_timer9 {
- 
- &main_r5fss2 {
- 	ti,cluster-mode = <0>;
-+	status = "okay";
- };
- 
- &main_r5fss0_core0 {
- 	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core0>;
+@@ -535,6 +537,7 @@ &main_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
  			<&main_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
  
- &main_r5fss0_core1 {
- 	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core1>;
- 	memory-region = <&main_r5fss0_core1_dma_memory_region>,
- 			<&main_r5fss0_core1_memory_region>;
+ &c7x_0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+index 9d8abfa9afd2..2b9e007432a9 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+@@ -850,6 +850,7 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0 &mbox_wkup_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
  
- &main_r5fss1_core0 {
- 	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss1_core0>;
- 	memory-region = <&main_r5fss1_core0_dma_memory_region>,
- 			<&main_r5fss1_core0_memory_region>;
+ &mcu_r5fss0 {
+@@ -860,6 +861,7 @@ &mcu_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+ 	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+ 			<&mcu_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
- 
- &main_r5fss1_core1 {
- 	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss1_core1>;
- 	memory-region = <&main_r5fss1_core1_dma_memory_region>,
- 			<&main_r5fss1_core1_memory_region>;
-+	status = "okay";
- };
- 
- &main_r5fss2_core0 {
- 	mboxes = <&mailbox0_cluster3 &mbox_main_r5fss2_core0>;
- 	memory-region = <&main_r5fss2_core0_dma_memory_region>,
- 			<&main_r5fss2_core0_memory_region>;
-+	status = "okay";
- };
- 
- &main_r5fss2_core1 {
- 	mboxes = <&mailbox0_cluster3 &mbox_main_r5fss2_core1>;
- 	memory-region = <&main_r5fss2_core1_dma_memory_region>,
- 			<&main_r5fss2_core1_memory_region>;
-+	status = "okay";
- };
- 
- &c71_0 {
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index 6afa802544e9..c269e5b29b96 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -1154,6 +1154,10 @@ mbox_c71_2: mbox-c71-2 {
- 	};
- };
- 
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
- &mcu_r5fss0_core0 {
- 	status = "okay";
- 	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core0>;
-@@ -1170,14 +1174,17 @@ &mcu_r5fss0_core1 {
  
  &main_r5fss0 {
- 	ti,cluster-mode = <0>;
+@@ -870,6 +872,7 @@ &main_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
+ 	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+ 			<&main_r5fss0_core0_memory_region>;
 +	status = "okay";
  };
  
- &main_r5fss1 {
- 	ti,cluster-mode = <0>;
-+	status = "okay";
- };
- 
- &main_r5fss2 {
- 	ti,cluster-mode = <0>;
-+	status = "okay";
- };
- 
- /* Timers are used by Remoteproc firmware */
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index fbbe768e7a30..9cc0901d58fb 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -2174,6 +2174,7 @@ main_r5fss0: r5fss@5c00000 {
- 		ranges = <0x5c00000 0x00 0x5c00000 0x20000>,
- 			 <0x5d00000 0x00 0x5d00000 0x20000>;
- 		power-domains = <&k3_pds 336 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
- 
- 		main_r5fss0_core0: r5f@5c00000 {
- 			compatible = "ti,j721s2-r5f";
-@@ -2188,6 +2189,7 @@ main_r5fss0_core0: r5f@5c00000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 
- 		main_r5fss0_core1: r5f@5d00000 {
-@@ -2203,6 +2205,7 @@ main_r5fss0_core1: r5f@5d00000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 	};
- 
-@@ -2214,6 +2217,7 @@ main_r5fss1: r5fss@5e00000 {
- 		ranges = <0x5e00000 0x00 0x5e00000 0x20000>,
- 			 <0x5f00000 0x00 0x5f00000 0x20000>;
- 		power-domains = <&k3_pds 337 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
- 
- 		main_r5fss1_core0: r5f@5e00000 {
- 			compatible = "ti,j721s2-r5f";
-@@ -2228,6 +2232,7 @@ main_r5fss1_core0: r5f@5e00000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 
- 		main_r5fss1_core1: r5f@5f00000 {
-@@ -2243,6 +2248,7 @@ main_r5fss1_core1: r5f@5f00000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 	};
- 
-@@ -2254,6 +2260,7 @@ main_r5fss2: r5fss@5900000 {
- 		ranges = <0x5900000 0x00 0x5900000 0x20000>,
- 			 <0x5a00000 0x00 0x5a00000 0x20000>;
- 		power-domains = <&k3_pds 338 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
- 
- 		main_r5fss2_core0: r5f@5900000 {
- 			compatible = "ti,j721s2-r5f";
-@@ -2268,6 +2275,7 @@ main_r5fss2_core0: r5f@5900000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 
- 		main_r5fss2_core1: r5f@5a00000 {
-@@ -2283,6 +2291,7 @@ main_r5fss2_core1: r5f@5a00000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi
-index 52e2965a3bf5..cc22bfb5f599 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi
-@@ -595,6 +595,7 @@ mcu_r5fss0: r5fss@41000000 {
- 		ranges = <0x41000000 0x00 0x41000000 0x20000>,
- 			 <0x41400000 0x00 0x41400000 0x20000>;
- 		power-domains = <&k3_pds 345 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
- 
- 		mcu_r5fss0_core0: r5f@41000000 {
- 			compatible = "ti,j721s2-r5f";
-@@ -609,6 +610,7 @@ mcu_r5fss0_core0: r5f@41000000 {
- 			ti,atcm-enable = <1>;
- 			ti,btcm-enable = <1>;
- 			ti,loczrama = <1>;
-+			status = "disabled";
- 		};
- 
- 		mcu_r5fss0_core1: r5f@41400000 {
-@@ -624,6 +626,7 @@ mcu_r5fss0_core1: r5f@41400000 {
+ &c7x_0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+index 993828872dfb..d57fdd38bdce 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+@@ -368,6 +368,7 @@ main_r5fss0_core0: r5f@78400000 {
  			ti,atcm-enable = <1>;
  			ti,btcm-enable = <1>;
  			ti,loczrama = <1>;
