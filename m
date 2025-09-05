@@ -1,284 +1,164 @@
-Return-Path: <linux-kernel+bounces-802084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C82B44D83
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:29:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BFBB44DA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D0D27BD837
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60F717E999
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ABA2EC56F;
-	Fri,  5 Sep 2025 05:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBF326B2C8;
+	Fri,  5 Sep 2025 05:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0CmTSir"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKs5UCub"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E578B2EBBA3;
-	Fri,  5 Sep 2025 05:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33F41EE7B7
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 05:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049684; cv=none; b=PZe32einFQHSiJwlSLIyEMN7Msx9DO2NB0WGNaFajgtEVH92llCnXM1xiJGMDqGHbf8ljeUrEtUWROFbHWqP8kwCp4cbrvsCcZgJe1ujmQbe8Zi/nuVnyE9fRwJ9jWHT59vcvR2Ti31/FnYf2H1me3ESDGYkonS2JUZcwn41ZqA=
+	t=1757051050; cv=none; b=mRS/7DU4Vi4vhWaPMyX1KP+eSrZaTBThwBKrq6zYgxu0mUn0pdNj+Z/6z/xogYkTu1AjH+t4ebqYFhN86l5++ceGfZUV87YNWZt1p2KPG4QPv89G+B4vyaNkgTrOLnnq1bqBJ/nIYVpLW8VFHtY86b2PgrJQACL4xi+6Bmv1vMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049684; c=relaxed/simple;
-	bh=mqIISEo7LPLprFNDEUcKEaTHvMz7CvLt6reLpOwI+yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WP+LBbGFv1gMNaizmqR3WxNUH6K5ppHy7Q2LMT/kB78vSh1Ph6Xj1Ql1Em+cPhYY0dzEjivAMYBhI3zJ2SRHJjAKn5UglIJohNSbNB91AfWnJtZWqCkM/h7Z8cAnSUHGlfYUq5hY+8XAuqkiCr8/ZX1ZpWdsy0cYTVeknUuM0jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0CmTSir; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26279C4CEF5;
-	Fri,  5 Sep 2025 05:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757049683;
-	bh=mqIISEo7LPLprFNDEUcKEaTHvMz7CvLt6reLpOwI+yU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0CmTSirH7yBCDozYoC9DlsvzZCfvAFIewxsKM229y/tgJZn5KvA0nn3sSZy76qey
-	 0S5HgHbORGIloKt+m8EPv9nwzjEz43zvj3GBh53cftXZ8LLcH2zIdfbPPrP54KB6BQ
-	 Y2h836z0EzbOsronUrzBLoG3jbU4WNYmVjvqvhHWcF1NTZg3/tqWeUc2cGUFYxeukL
-	 kfQqw2XDwWAaZUdqwkQ76KnorupCoWqE331UKGXqY7Fus4/Dm24wxaW1aZzCZRbE2e
-	 gkSyeEO9z828d4a56/6cKYREIuv1xIUvsIvs2LWAKAjEAlx31YF3I/J3fbDyUTP1PM
-	 JQ3SWIjkiqXVQ==
-Date: Fri, 5 Sep 2025 10:51:12 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Jacky Chou <jacky_chou@aspeedtech.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	joel@jms.id.au, andrew@codeconstruct.com.au, vkoul@kernel.org, kishon@kernel.org, 
-	linus.walleij@linaro.org, p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] dt-bindings: PCI: Add ASPEED PCIe RC support
-Message-ID: <xg5avkbsoux7rw7dg67bhf7rupgr66nzak27y2jmcerrqhlb4u@l63vz3jaie2g>
-References: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
- <20250901055922.1553550-4-jacky_chou@aspeedtech.com>
- <20250902211221.GA1179675-robh@kernel.org>
+	s=arc-20240116; t=1757051050; c=relaxed/simple;
+	bh=wcWIrNRwQk6Nsqy6HsCF9uoW5dArDRStpUeK2uhW8ZY=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:Date:References:
+	 MIME-version:Content-type; b=hbzdtVywctq1ho8uCp5Fxo/c2E0eHAwtIlj5G82vQHHjWm1J0kUaEpuKMjFFeCIoHq134G6Ce8iJnhWBgEoCen4WBHS3fR0RKMN7ARQlorGv47cHbnbKy9bQ9efVwEsL1/1Xpg7EiRZN/mlhKbMzXO/v4eF0AEAKT1PZ/Kqxk4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKs5UCub; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4c53892a56so1568626a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 22:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757051048; x=1757655848; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:date:in-reply-to
+         :subject:cc:to:from:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=79phlt9YKWJP1LdbQMpCO0EI87IvQ11v1Ke3cLVyv0I=;
+        b=TKs5UCub1ZEScAuY7e/Kt2Mdo8kqa3CdWbjMBTC3e5J2Y/bGHf8Y+CsmHDJCfhYe36
+         L77ILxorOyDpexzybuKeYkax2uzWgi+q5BPrlvYb6VzSPiHkVWzgme5N653D8/T7ela0
+         Fjb/HRyqlG9PLmOGcs1dnAlES5d07eJJBqfzEqrjhsSPYdLggDO9TtFo8clbYx3mfxkj
+         OOIP6kmzVtPKmP2aqsnzAdFqCWSOwBCGPhOBjUJtkeFdhVUTlWo1MO1dH2Zl78WgbfSA
+         qySs6NQl63Gf3Sf48ugPETrxjy1n2tJKdZtOXIKnOl4f7oog8h5OLLHSPQhTLnD8fo+h
+         ZPfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757051048; x=1757655848;
+        h=content-transfer-encoding:mime-version:references:date:in-reply-to
+         :subject:cc:to:from:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=79phlt9YKWJP1LdbQMpCO0EI87IvQ11v1Ke3cLVyv0I=;
+        b=lG2IsT6xRB9EoYBL/6ZDIITNdyh8ke2yHfnJp9VgksHJO4HYhqKv2PaJfzCZXk173s
+         pjhkueusRaE0Cr/l8OPwkW9+hrGX9WJVq9jwkBPNsWGC3b3vVcID09CY0NjZ8ybw/juo
+         4QvwF0EtPAhmnctvhInaBWBGELwAKv3C5V/4DFbniVIGwABbD2sEacyKgYPzT3SVAmqX
+         nlRDjsDH0FmY/v8f+GYC3h/MRuutBDw0yXm8TmxTd1tRR0nKWqYSOc0KmuYEihOxyBNZ
+         0/J7l9GbxzLPfAl6NEFJWNOlaQD+0CxFandKKWpmsbPw0/WjeFLR+EiN5v39wemR/uV5
+         L8Qg==
+X-Gm-Message-State: AOJu0YwaOqbh4pCR6nMmR4OteHokccPyzRo8fOBxE0FHfn3c13K3TA24
+	TijNwTTJ0X5JHDMUSBNryUBHTDmjcefixLTXng9UKSqkis/dFIeaVEEN
+X-Gm-Gg: ASbGnctWLJ3EPqHHxr8pUro1PzxFa1EOQcNnWHflUqR8zrwcbvMp0uubvxZozA0a8Dt
+	l3R3ndpPFQx8DeznBsclsnCyd2QBy5LbcVVn2SN/FmrTDyzHrrYKVyg6e0KzeWxPP93d21L4/C4
+	hDRz99fwSBJ01GXeDGCIkF1oqugtXP6z4mb52He6zwluj6bKWGcywpr+RpMf/tXVV5a5pSJoGEq
+	U+89QCEPLVH8Ffj2HBRU6rKw3bvI9jWXLdsvEXseGOMCkOSHFX7n6/InaMLSlamTka3/RJe0TjQ
+	MlFUBczuj9iGDJ9gvX/rd+LdKjpcvqQzf0QEXoQ+zWI7olCVbWMzbEVyEWLQjhywIzXMA3Jojxw
+	8Qb2/ZhrXZ+aDaHgqqj6vf3PzNw==
+X-Google-Smtp-Source: AGHT+IH9lLLY8qCmwDEbPCg1+l9Lsg2X6aU3JD9OZkfGn6D2tlodVc/S78BdhkhXeCIn3LZCid9ILg==
+X-Received: by 2002:a17:90b:2751:b0:312:e731:5a66 with SMTP id 98e67ed59e1d1-32815412c9emr27732394a91.3.1757051047830;
+        Thu, 04 Sep 2025 22:44:07 -0700 (PDT)
+Received: from dw-tp ([171.76.86.143])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7724f079b88sm14774607b3a.40.2025.09.04.22.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 22:44:07 -0700 (PDT)
+Message-ID: <68ba78a7.a70a0220.2f582b.f2d1@mx.google.com>
+X-Google-Original-Message-ID: <87seh1iibr.fsf@ritesh.list@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Andrew Donnellan <ajd@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Erhard Furtner <erhard_f@mailbox.org>
+Subject: Re: [PATCH] powerpc/32: Remove PAGE_KERNEL_TEXT to fix startup failure
+In-Reply-To: <7b3c83c1-bdf1-4778-948f-223ef0bce2a0@csgroup.eu>
+Date: Fri, 05 Sep 2025 10:53:04 +0530
+References: <342b4120-911c-4723-82ec-d8c9b03a8aef@mailbox.org> <4b5e6eb281d7b1ea77619bee17095f905a125168.1757003584.git.christophe.leroy@csgroup.eu> <68ba6bee.170a0220.3b821b.ca9d@mx.google.com> <7b3c83c1-bdf1-4778-948f-223ef0bce2a0@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902211221.GA1179675-robh@kernel.org>
 
-On Tue, Sep 02, 2025 at 04:12:21PM GMT, Rob Herring wrote:
-> On Mon, Sep 01, 2025 at 01:59:15PM +0800, Jacky Chou wrote:
-> > ASPEED AST2600 provides one PCIe RC for Gen2 and AST2700 provides three
-> > PCIe RC for two Gen4 and one Gen2. All of these RCs have just one root
-> > port to connect to PCIe device. And also have Mem, I/O access, legacy
-> > interrupt and MSI.
-> > 
-> > Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> > ---
-> >  .../bindings/pci/aspeed,ast2600-pcie.yaml     | 179 ++++++++++++++++++
-> >  1 file changed, 179 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml b/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
-> > new file mode 100644
-> > index 000000000000..fe75bf2961c8
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
-> > @@ -0,0 +1,179 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pci/aspeed,ast2600-pcie.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: ASPEED PCIe Root Complex Controller
-> > +
-> > +maintainers:
-> > +  - Jacky Chou <jacky_chou@aspeedtech.com>
-> > +
-> > +description:
-> > +  The ASPEED PCIe Root Complex controller provides PCI Express Root Complex
-> > +  functionality for ASPEED SoCs, such as the AST2600 and AST2700.
-> > +  This controller enables connectivity to PCIe endpoint devices, supporting
-> > +  memory and I/O windows, MSI and legacy interrupts, and integration with
-> > +  the SoC's clock, reset, and pinctrl subsystems.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - aspeed,ast2600-pcie
-> > +      - aspeed,ast2700-pcie
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  ranges:
-> > +    minItems: 2
-> > +    maxItems: 2
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +    description: IntX and MSI interrupt
-> > +
-> > +  resets:
-> > +    items:
-> > +      - description: PCIe controller reset
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: h2x
-> > +
-> > +  msi-parent: true
-> > +
-> > +  aspeed,ahbc:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Phandle to the ASPEED AHB Controller (AHBC) syscon node.
-> > +      This reference is used by the PCIe controller to access
-> > +      system-level configuration registers related to the AHB bus.
-> > +      To enable AHB access for the PCIe controller.
-> > +
-> > +  aspeed,pciecfg:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Phandle to the ASPEED PCIe configuration syscon node.
-> > +      This reference allows the PCIe controller to access
-> > +      SoC-specific PCIe configuration registers. There are the others
-> > +      functions such PCIe RC and PCIe EP will use this common register
-> > +      to configure the SoC interfaces.
-> > +
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
 
-So these config registers are part of the PCIe domain? Is so, accessing them as
-syscon is wrong. You should configure the registers directly from the RC and EP
-controller drivers.
+> Le 05/09/2025 à 05:55, Ritesh Harjani a écrit :
+>> Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+>> 
+>>> PAGE_KERNEL_TEXT is an old macro that is used to tell kernel whether
+>>> kernel text has to be mapped read-only or read-write based on build
+>>> time options.
+>>>
+>>> But nowadays, with functionnalities like jump_labels, static links,
+>>> etc ... more only less all kernels need to be read-write at some
+>>> point, and some combinations of configs failed to work due to
+>>> innacurate setting of PAGE_KERNEL_TEXT. On the other hand, today
+>>> we have CONFIG_STRICT_KERNEL_RWX which implements a more controlled
+>>> access to kernel modifications.
+>>>
+>>> Instead of trying to keep PAGE_KERNEL_TEXT accurate with all
+>>> possible options that may imply kernel text modification, always
+>>> set kernel text read-write at startup and rely on
+>>> CONFIG_STRICT_KERNEL_RWX to provide accurate protection.
+>>>
+>>> Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+>>> Closes: https://lore.kernel.org/all/342b4120-911c-4723-82ec-d8c9b03a8aef@mailbox.org/
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>> ---
+>>>   arch/powerpc/include/asm/pgtable.h | 12 ------------
+>>>   arch/powerpc/mm/book3s32/mmu.c     |  4 ++--
+>>>   arch/powerpc/mm/pgtable_32.c       |  2 +-
+>>>   3 files changed, 3 insertions(+), 15 deletions(-)
+>>>
+>> 
+>> AFAIU - mmu_mark_initmem_nx gets called during kernel_init() which is
+>> way after static call initialization correct? i.e.
+>> 
+>> start_kernel
+>>    ...
+>>    jump_label_init()
+>>    static_call_init()
+>>    ...
+>>    ...
+>>    rest_init()      /* Do the rest non-__init'ed, we're now alive */
+>>      kernel_init()
+>>        free_initmem() -> mark_initmem_nx() -> __mark_initmem_nx -> mmu_mark_initmem_nx()
+>>        mark_readonly()
+>>          if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX) && rodata_enabled) {
+>>             jump_label_init_ro()
+>>             mark_rodata_ro() -> ....
+>>             ...
+>>          ...
+>> 
+>> Then I guess we mainly only need __mapin_ram_chunk() to be PAGE_KERNEL_X (RWX)
+>> instead of PAGE_KERNEL_TEXT (ROX), isn't it?
+>> 
+>> Let me quickly validate it...
+>> ...Ok, so I was able to get just this diff to be working.
+>> 
+>> Thoughts?
+>
+> setibat() doesn't take into account whether it is RO or RW. Only X or NX 
+> is taken into account, so it doesn't matter whether it is X or ROX.
+>
+> Then allthough you are right in principle, once the PAGE_KERNEL_TEXT is 
+> removed from __mapin_ram_chunk() it becomes completely useless, so 
+> better get rid of PAGE_KERNEL_TEXT completely.
+>
 
-> > +  interrupt-controller:
-> > +    description: Interrupt controller node for handling legacy PCI interrupts.
+Aah yes, I checked the function setibat() and as you mentioned, it
+doesn't honour RW permission anyways. Can we please update the same in
+the commit message too? That makes it more clear then. 
 
-s/legacy PCI interrupts/INTx
+-ritesh
 
-> > +    type: object
-> > +    properties:
-> > +      '#address-cells':
-> > +        const: 0
-> > +      '#interrupt-cells':
-> > +        const: 1
-> > +      interrupt-controller: true
-> > +
-> > +    required:
-> > +      - '#address-cells'
-> > +      - '#interrupt-cells'
-> > +      - interrupt-controller
-> > +
-> > +    additionalProperties: false
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> > +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: aspeed,ast2600-pcie
-> > +    then:
-> > +      required:
-> > +        - aspeed,ahbc
-> > +    else:
-> > +      properties:
-> > +        aspeed,ahbc: false
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: aspeed,ast2700-pcie
-> > +    then:
-> > +      required:
-> > +        - aspeed,pciecfg
-> > +    else:
-> > +      properties:
-> > +        aspeed,pciecfg: false
-> > +
-> > +required:
-> > +  - reg
-> > +  - interrupts
-> > +  - bus-range
-> > +  - ranges
-> > +  - resets
-> > +  - reset-names
-> > +  - msi-parent
-> > +  - msi-controller
-> > +  - interrupt-map-mask
-> > +  - interrupt-map
-> > +  - interrupt-controller
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/clock/ast2600-clock.h>
-> > +
-> > +    apb {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <1>;
-> 
-> No need to show this node.
-> 
-> > +
-> > +      pcie0: pcie@1e770000 {
-> > +        compatible = "aspeed,ast2600-pcie";
-> > +        device_type = "pci";
-> > +        reg = <0x1e770000 0x100>;
-> > +        linux,pci-domain = <0>;
-> > +        #address-cells = <3>;
-> > +        #size-cells = <2>;
-> > +        interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-> > +        bus-range = <0x80 0xff>;
-
-Why bus number starts from 128?
-
-> > +
-> > +        ranges = <0x01000000 0x0 0x00018000 0x00018000 0x0 0x00008000
-> > +            0x02000000 0x0 0x70000000 0x70000000 0x0 0x10000000>;
-> > +
-> > +        status = "disabled";
-> 
-> Examples should be enabled. Drop.
-> 
-> > +
-> > +        resets = <&syscon ASPEED_RESET_H2X>;
-> > +        reset-names = "h2x";
-> > +
-> > +        #interrupt-cells = <1>;
-> > +        msi-parent = <&pcie0>;
-> 
-> There shouldn't be any need to point to yourself.
-> 
-> > +        msi-controller;
-> > +
-> > +        aspeed,ahbc = <&ahbc>;
-> > +
-> > +        interrupt-map-mask = <0 0 0 7>;
-> > +        interrupt-map = <0 0 0 1 &pcie_intc0 0>,
-> > +                        <0 0 0 2 &pcie_intc0 1>,
-> > +                        <0 0 0 3 &pcie_intc0 2>,
-> > +                        <0 0 0 4 &pcie_intc0 3>;
-> > +        pcie_intc0: interrupt-controller {
-> > +          interrupt-controller;
-> > +          #address-cells = <0>;
-> > +          #interrupt-cells = <1>;
-> > +        };
-> > +
-> > +        pcie@8,0 {
-> > +          reg = <0x804000 0 0 0 0>;
-
-Why the device number starts from 8?
-
-If there are platform specific reasons behind this numbering scheme, it should
-be mentioned in the description.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
