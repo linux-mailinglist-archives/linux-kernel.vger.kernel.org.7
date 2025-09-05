@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-803396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37957B45E96
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62489B45E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98791C83D17
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752FB172318
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B7309EFE;
-	Fri,  5 Sep 2025 16:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PdAciHQ2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D22306B3A;
+	Fri,  5 Sep 2025 16:48:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4EC2FB0A2
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B35259CB3
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757090868; cv=none; b=lCJWwWEXC7uHbGlqabNzIyU8m4U1g4AqkNk2GUTKbXhQswDxvcGJzWqAuxiSVZtNoVbwg+osFIRaTHH2oVQ28JE9xrG4Kd/URxkpNRJAfRf/GM+Lr44bBCBqKxN+GcMu7WE8D6vlQhOEwlkW/SEj/c349ZFvp/1tuyeJaIBazIU=
+	t=1757090885; cv=none; b=TYQ8ytlgYoJ0CUm1Ti3iS0IfEXENrw6PgVy+F2trC6SIlYs7wvhelc8DQpLHksvY4QZEXwfAW6LWVVt4TFFCfE8KEBjBskP0QSrqu/J1qBXMarUZFzkQyRw4ZxMpKkeA3N00AJkCBGuBS1Ca6laoJAvx0XwAfAfKYPPLtU0GSOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757090868; c=relaxed/simple;
-	bh=TkfY89RKRXEALwgB2aNVJLpg692JYnKY4FfUhrmhjUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aVWG2ds3qHbdVb/jGC89bKAQFNo1nEV9Vn/Tty8wngIkmYbE5u+/SMf5Oni1oSVMgMpE1MPjaThdiwsf3XaOihQxDgKKuiYJtY2iFzY9Ezno5zSbIPkJBEUZoIYxFaSh+sfEQ97+VfQh+YAVj4R2LWm5HsYj+NSRpXmZM27+kb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PdAciHQ2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585GKM2c031930
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 16:47:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UUdgNg/39urdaUGy5tuNL+v9wjA5hMimn7UR8IzRX/Q=; b=PdAciHQ2LJAlN3lz
-	mhfyemdXnUhAmCxtsYv54lZFu/YK+QqDMz9kGCQys1dPqVHD/b2muwcqnzvC4RaO
-	nkW0KBEzjPRZ7o8UL/I/qrEQCG4soGkbi6y3GUpCev3WtEY//5mc32yEInyBXeFe
-	hcjDPgfoaHE/j92vUC1xCyRznE7QMlR/3VDlzq/dsowpB4D0/Ojf6phUR90hGkSy
-	q/1w+aQ0L5hGwBSU4E7SFZEiZq++32A/Ys+XvNs0A+Kzi48Vs11OCKA8+ZTeDHyg
-	WV0KqaxhM/YrHWwFqbkZfYeJ/KjBl1/E+b8intGJlkacHB1gEEhBcm6hI/9ENAWx
-	47RKIA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw0bx8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 16:47:45 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-718c2590e94so65199236d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:47:45 -0700 (PDT)
+	s=arc-20240116; t=1757090885; c=relaxed/simple;
+	bh=vpFAyupKqUIPxdB7EanQJ7sA9RfZSCYLMiZsN1o0ESg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j8XMthYDrG89/s5sTg8EPMaIfIL9bYJR2t5+xqGg1gRhnM1nExhLWTh2BlrQnZ7hLP/wKu4bV8S3nAXB9wRYx1XX09+//QOdGvj+EGK3x94FyKOW2UfzBUhGiMkzCz9/SiuaUdum0KshFDgFCS4FmnblqSCnyiUDmD2oIGcntP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3f0c32654afso21838825ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:48:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757090865; x=1757695665;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1757090882; x=1757695682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UUdgNg/39urdaUGy5tuNL+v9wjA5hMimn7UR8IzRX/Q=;
-        b=DaC41D+RF/6UUtrsJbZKejfMbdEztt5yysyji5QdqVuQJQa9PQ0bBRV6rpYMS1V971
-         m5O1CHVLXl/58wzBsEqbCBq+kCPwwEeYhFhrkD1qhM4zi5Qv0hrZkUT7jD+D0AyIeIly
-         pkl+h1SJUI/2oFovGcy75BI0Z2kAoWfYCJQ1VKsLvgmmtHzXReyl657EkVILtPX+yaEm
-         GgK0/uhARZKotVZIJy7DsHGatdzY5ae6FHSBYy+QmVIH/wNll3nIePw21rBtyfkVKZ9D
-         NF3b35JkZ8Mmx2OzO7hOHz5vlXLKq/yAiv1qu6M9PiuB1h6hEX9FOHaiy2Os4m6IVK24
-         gYwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy+IaRj56vPZU9rQo8Jik2x4rmTt45VYM7crSe9PgJtfbzbhqqZDg7edIUjyn0n9RD6sEohCvxVyJcDSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9WvxY7z9ojoeea1UxafZG4ukdjc0bgeNm1cbPvCJVh4LMl1+E
-	hloMnjoRupDMIS4YlpiuyhlkcoJ/SSguwsEK2LYCBxurS14MMtIKCfgk4AbGYlQTHuPj4iN/Pts
-	FvTCWZ9qyWpkKA4VN+MQnNm++IDOBH2WfRglHRZmwbRBsKFvtu2DWpx7eMGVZw5OWfAo=
-X-Gm-Gg: ASbGncuuvQVJaoou3C65uXlN0VYK3KpJC+/1PIKvt1Qz59A1xSu/wh63j5zeAk12j4+
-	FevbYIWfKF+hLnnYYD5PskDLXNkcNBOIXzCQfIF6lFFnCCaFEodeog6lL2IANUn1wTQff5s/gKU
-	sMk9R5XmCjJyWg81Bq0+uoUnjYr++/oZJVzTUBjziaHJProk8mX7S3/WqhGOk+dJNIzhTGgypru
-	P//MZoAAtP6h9hhsU1+Pmw2Hkh8asdKuj4+DrnK4inPPnYN1ERN2kvNHk0oVLhAy2yfYTqjXxPq
-	Vnw9Cn64rsL54nwIHq89hcHkLMKtA1kNXVHgg7lajh2bwLZkMOQCanVwtVfp7AAk1Xk=
-X-Received: by 2002:ad4:5fc5:0:b0:707:6cf8:5963 with SMTP id 6a1803df08f44-72bbf3fb0b1mr43965526d6.9.1757090864920;
-        Fri, 05 Sep 2025 09:47:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZ8+8+MxEUmtiGkpVpKbOO3CIojnpVHP4pNFKV12I5SozNXXmspK50f6RKTZrWEioefG8OdQ==
-X-Received: by 2002:ad4:5fc5:0:b0:707:6cf8:5963 with SMTP id 6a1803df08f44-72bbf3fb0b1mr43965196d6.9.1757090864286;
-        Fri, 05 Sep 2025 09:47:44 -0700 (PDT)
-Received: from [192.168.68.119] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3d66b013b7dsm20987137f8f.28.2025.09.05.09.47.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 09:47:43 -0700 (PDT)
-Message-ID: <08afe342-e108-4f0c-9903-fb4df4eb860e@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 17:47:42 +0100
+        bh=wu/5ukm0ZlTlcgF4Blqa4i3v1Jijb97FpXJs2n2sI7w=;
+        b=o76GxUYoLKQt31yAn5SdWtm3jf9pGTbRdyTi1avxRL1l26uTfzVnSvrNsM7+bPYaav
+         K76MPUGvbwAOs2rBAblX1mmhvvSV83RuN2ySLdCYkzR/CkGAJSprfb0pqwTdgeOkhjyx
+         lhSCTaNdIariDO7EireM7TaE/Ocey50iIbNHKzq+NdOwVrNjSfYcTCXLJfFx+u9BgQkJ
+         iVJ0wPlh+RcxMLAm8R9M78jId/PmnYMgl9KFpeYyCwjB0uySY2SfL93QsBAyBCxpFdex
+         FZolXClB1jBUnw6rZGyWDh2efM2e8g/VRpBLjyXPtC+TDnkYTsJNqMOhPPJkHeLnTpND
+         2OFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTOeQzPjLl48hD7aLLb4psK3lFaSav5liK62xNuj61Sr58CeAekkgvIc4DDfCziWdg3POIT926EQ0XB9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEtQjGXkF+7Iz/KqwP2YX5/dzJ97+Syk3XUUGsoQXDk8QFxb2H
+	NpJDbxb8cUV3rq5yilmv+7RxEbiXC7FusVXiGE7la9QwOg289cRp656ta4DFeP6PStqyvMXkZK8
+	7BcYr7Uz1y/9O2PvRHiLIE+SymSwqwBtwwENaOnhDLl9+qBqlzzhhRpensVM=
+X-Google-Smtp-Source: AGHT+IGIDS7a4z+EuDQHwpKYUNd2f0KIepTXhtKNl9epzuiHt3xEpg4nv/Gl7P2dl+jDGxn9tFdn5byIlGJL7wX1q5XmbYhCLOXg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/12] ASoC: codecs: wcd937x: set the comp soundwire
- port correctly
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, tiwai@suse.com, vkoul@kernel.org,
-        srini@kernel.org, yung-chuan.liao@linux.intel.com,
-        pierre-louis.bossart@linux.dev, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, neil.armstrong@linaro.org,
-        krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
-        Stable@vger.kernel.org
-References: <20250905154430.12268-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250905154430.12268-2-srinivas.kandagatla@oss.qualcomm.com>
- <as3wxoths3rgy2qpbqwyys6zydhjo3lbueu7ibrwbinxt3sffw@wyprroihsjs7>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <as3wxoths3rgy2qpbqwyys6zydhjo3lbueu7ibrwbinxt3sffw@wyprroihsjs7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: DxnOfT02X8s6FrXvrNwIn1tMU2_QQ84X
-X-Proofpoint-ORIG-GUID: DxnOfT02X8s6FrXvrNwIn1tMU2_QQ84X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX1kw4zPPaikc5
- zDMMs1eB/bXlLwfvU0ZXsXS1BQDwmkerknVkcWrohe0Dwlqemdr8cvGhfEHIslM6OIwX5DEc6a0
- 5hUrTx7YyUe1WSF8fNhyoVi9Vp9AJ/6ZMF0siKJuch3Iil7GfbeULJlEojcqi7riiUsI8/OWNW7
- WYVDxQ+2LVI+dfrMWGsAUN1xJkYCt3Kt+wpvduw/83dVFcO0RuOEhartPUE+opzwt7KNPmuTaFK
- 2Wkly9u6l447cq5gBzxBLzd9MgGmWfrXt9MHClzbJX5Vid208pKMtoWdle9vGx9wYQ/6MQHfaif
- B/HXN132OFv7Tjd0X6FDZQO+KTqyi2Wc9Ll0rbja567kNhbczrOuBVnNWIU079jkEb6nf3ioaEo
- sSOBkIUb
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68bb1431 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=OWw5mONqTAKyzQI3keYA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+X-Received: by 2002:a05:6e02:2703:b0:3f3:dd9a:63e4 with SMTP id
+ e9e14a558f8ab-3f7b6fb55e4mr57890345ab.0.1757090882595; Fri, 05 Sep 2025
+ 09:48:02 -0700 (PDT)
+Date: Fri, 05 Sep 2025 09:48:02 -0700
+In-Reply-To: <20250905160645.4152096-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bb1442.050a0220.192772.0195.GAE@google.com>
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/5/25 5:14 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 05, 2025 at 04:44:19PM +0100, Srinivas Kandagatla wrote:
->> For some reason we endup with setting soundwire port for
->> HPHL_COMP and HPHR_COMP as zero, this can potentially result
->> in a memory corruption due to accessing and setting -1 th element of
->> port_map array.
-> 
-> Nit: if passing 0 here might result in a memory corrution, then
-> corresponding code should be fixed to warn loudly and ignore that 0.
+Hello,
 
-Agreed, This is something that should be fixed at source am on it.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in az6007_i2c_xfer
 
---srini
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
+WARNING: CPU: 1 PID: 6699 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
+Modules linked in:
+CPU: 1 UID: 0 PID: 6699 Comm: syz.3.19 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
+Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 d0 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 59 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 40 e3 9a 48 b8 00 00 00 00 00 fc ff df
+RSP: 0018:ffffc9000381f938 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a2388
+RDX: ffff888030cbc880 RSI: ffffffff817a2395 RDI: 0000000000000001
+RBP: 1ffff92000703f2c R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
+R13: fffffbfff35c6810 R14: ffffc9000381f9c0 R15: ffff888022ff8000
+FS:  00007fd9a0eac6c0(0000) GS:ffff8881247e3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000557fb7ffc108 CR3: 0000000022b5f000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ az6007_i2c_xfer+0x8a3/0xa90 drivers/media/usb/dvb-usb-v2/az6007.c:832
+ __i2c_transfer+0x6b3/0x2190 drivers/i2c/i2c-core-base.c:2264
+ i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
+ i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
+ i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
+ i2c_master_recv include/linux/i2c.h:79 [inline]
+ i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
+ do_loop_readv_writev fs/read_write.c:847 [inline]
+ do_loop_readv_writev fs/read_write.c:835 [inline]
+ vfs_readv+0x5be/0x8b0 fs/read_write.c:1020
+ do_preadv+0x1a6/0x270 fs/read_write.c:1132
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd99ff8e169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd9a0eac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007fd9a01b5fa0 RCX: 00007fd99ff8e169
+RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
+RBP: 00007fd9a0010a68 R08: 000000000000007e R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fd9a01b5fa0 R15: 00007fffaa2a4bc8
+ </TASK>
 
-> 
->>
->> Fixes: 82be8c62a38c ("ASoC: codecs: wcd937x: add basic controls")
->> Cc: <Stable@vger.kernel.org>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  sound/soc/codecs/wcd937x.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
->> index 3b0a8cc314e0..de2dff3c56d3 100644
->> --- a/sound/soc/codecs/wcd937x.c
->> +++ b/sound/soc/codecs/wcd937x.c
->> @@ -2046,9 +2046,9 @@ static const struct snd_kcontrol_new wcd937x_snd_controls[] = {
->>  	SOC_ENUM_EXT("RX HPH Mode", rx_hph_mode_mux_enum,
->>  		     wcd937x_rx_hph_mode_get, wcd937x_rx_hph_mode_put),
->>  
->> -	SOC_SINGLE_EXT("HPHL_COMP Switch", SND_SOC_NOPM, 0, 1, 0,
->> +	SOC_SINGLE_EXT("HPHL_COMP Switch", WCD937X_COMP_L, 0, 1, 0,
->>  		       wcd937x_get_compander, wcd937x_set_compander),
->> -	SOC_SINGLE_EXT("HPHR_COMP Switch", SND_SOC_NOPM, 1, 1, 0,
->> +	SOC_SINGLE_EXT("HPHR_COMP Switch", WCD937X_COMP_R, 1, 1, 0,
->>  		       wcd937x_get_compander, wcd937x_set_compander),
->>  
->>  	SOC_SINGLE_TLV("HPHL Volume", WCD937X_HPH_L_EN, 0, 20, 1, line_gain),
->> -- 
->> 2.50.0
->>
-> 
+
+Tested on:
+
+commit:         d69eb204 Merge tag 'net-6.17-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a31962580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2b271b97d244fd0a
+dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13626134580000
 
 
