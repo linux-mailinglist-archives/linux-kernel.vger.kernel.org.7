@@ -1,131 +1,201 @@
-Return-Path: <linux-kernel+bounces-803679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299B0B463A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:29:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC55B463A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89BABB6130C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536E5A66CA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794842773DB;
-	Fri,  5 Sep 2025 19:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E6927B336;
+	Fri,  5 Sep 2025 19:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GuoWSHhS"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h/vr7Oav";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rSPc+n2D"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2691B0437
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B7E1ADC97;
+	Fri,  5 Sep 2025 19:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100575; cv=none; b=BhxfhvfM8lKf35pdKaMSwzJMM71ua1kzo1I2EshgeRtAqVJN2IgnFNa0bsqwQyzCj1HxOPUbvAg/STdleEsVjEyVIcKJ+NUFFVkZiRM9k4leh959MwTFa0DTNXL+h+sJtzpa0+TEzts+aPO/BGE8yGfyu7c2teVthBPwaURDkBs=
+	t=1757100790; cv=none; b=TBmToPtHfCGMeXNz1ghSpw6fWUdPQjvLsIqFeeZqAswxUhSANTnaZIWaSSdn9C9KnmVARLYr7WkJcLND8laxMWk5wAQqeI7unQsONBRoTwz6YEaX7P+TIkZULqM+Jn9u41hWxIOdCA/bh9qW7PxjOCYPDwEiqxIj4P09/LlgFYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100575; c=relaxed/simple;
-	bh=45wlAR80iTJXd/llXMmkzBDPgoF5VQC7g1kmFtJctW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7AY9SVahjU6Tmu6R3BOPTYXHAbDJf/aL4q94okdBPnjoTC8oD+XCot0xJZgMpLdkT8egA5MzN8FQQ1Hsv/JlTuSkjfhQhrufOLpA5gNrxZ4E4C2Sy1VTapcn43b+FJjloy7gbTAmzUh+4HloWeaJ90OiE5ERYA/eG4ARqByW7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GuoWSHhS; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-746d3b0f7e5so1550317a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757100572; x=1757705372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+g+5lforXyEuqg4W8dX6c7NFSSdIzchmf9h56lBoXdU=;
-        b=GuoWSHhSv3gWdEJO2LW0T2P+PZrF8WnykOzipzN2SlkNTrr63ADXxr6o1DtrUeQ4Me
-         AMi2SliE1dValyVsONREaU+FLh4CPNJfuzAmnz5CvpOGAAkuwUj9ebD8DTUTjQgtjQbz
-         VQ6pp0gBEWQ/qfDnDOXBEVvue2SLTNcegoNjz8R4WgChXxpShQ/1eZRibNoVoBiXdH1H
-         ghvfVX/iFlr3o561nVdFLvV76YdpXoeLY2js3UUEVo3QkWFpi+xgt5f2vJEZemsfxBtY
-         gzItt24XylT6E8fx9NgKLnyPWxHFtGxNWzqqDuXu1fbD9DMwTrQj+XVJiUE7LYqbL557
-         cemA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757100572; x=1757705372;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+g+5lforXyEuqg4W8dX6c7NFSSdIzchmf9h56lBoXdU=;
-        b=Hk3hXrQ9N4zglF/Q53gVCJ+qGfp22zoN4Br8P8RxYG+J8SVe8E9Z5z+jsup8RdVOn7
-         L2pNNbZRZwyNxzXkI3s2w+soCsezi1NiHdnOjyApuZ2SfWCNOXL8Q+F2I5g8G44RsUUK
-         MHS5I6j+aaRF6DaDu1u0SOHs3z57YZdjDH48MG+PYbGDKcL9AiqEUcW8W6WK2woSQInv
-         e4f2jUZpGK8Jd4O701dr2Z5bmq84xBdNbjXSuuymfiiU6evdjrNzksTBYdQ57i3UpUPk
-         VjP8b30A6uui8GNilCeaX9ky94oQdbbKZTSCVMBoj7BlnLVN3f0ZrOE8rBUgD+NU9qpr
-         58QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJDTHCwLDczIuJ2L3MamdpcnX0Z4cruxO8fp/+vaRBcuDGi7rcmnHqORsksiiN8VLnWcRURvDHpxJDY80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/UIKqd9tOIoYB5UqXivxH7Hrs8NNCZQONxa90dvr81v14Vx23
-	6mGdCQRqAC2/zrBwgr+n6X46GBNZwsU7Lavf7S/Kz6t8rdVMhOADw5DX/huV0lPugOQ=
-X-Gm-Gg: ASbGncuqHcMDgt8InMqcMm1RhCVgi68wm/Lx4uDj2qbvg7r3MJwgUnpPkhYqZKzDuCb
-	uVZYFLMLRst/jFtR91dCCkgD6PpR5npJcc2enRmmlbHELWR3lKEFjMgI74vI7rInFKx73KE+gTo
-	etqozeDV0MGUZ4bFgsaNvYoftDIPgjVM2V9mXJjLBpKIqMt8hZv4ERCyNTgbYccK5rJjwdAEXEf
-	hb1pTa9y27dOZytoyLVW9J9Y2hXv817/vXGzP74uSwTsYw5GqwhwlHyfe6u5lH+R5iRhBuInv8U
-	U7ZbdJRuPch0HqGEtf9nQ2khW/zVNsDBTSzneE18Z6efRCyRTbeCPjReHpbKboo942irOtSyWMd
-	5s4ReEGtW4EVrn7GDrkQCqKAbR4mlBUXA8fR1DcCiS/0ZNhfGZAW36XnuB2t/bkc3rgdiLsjb
-X-Google-Smtp-Source: AGHT+IHn2V7ETZFEtt07s7/dwRywKF9uaieyn00nGQKviQB66glTz8VWPcgFktJvmad+rsH5s4ufmQ==
-X-Received: by 2002:a05:6830:65d0:10b0:745:a0bd:d71 with SMTP id 46e09a7af769-745a0bd0f2amr3951400a34.23.1757100572644;
-        Fri, 05 Sep 2025 12:29:32 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-746db95ecd2sm1054074a34.37.2025.09.05.12.29.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 12:29:32 -0700 (PDT)
-Message-ID: <57fa4ea0-36eb-4e1d-981d-7b2a1178c84b@baylibre.com>
-Date: Fri, 5 Sep 2025 14:29:31 -0500
+	s=arc-20240116; t=1757100790; c=relaxed/simple;
+	bh=+8u/KZiIpgsuvmdpT0jzcGifxPiDjcl+HGyQGZO7e/c=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=q4p7CeQqLYbk5G9b5VWCguIzrHNXtSMorEpS9Zztc4Ox3brT8Ptq5vOcHN3Fyza7tQxUuD+nsFE/akM+Tt0w6eW6vcPoMWhxsTR8xmdJk0RPjUVmpBQFZiiz7rMCPZf2JSYl95U8vmz6p0dlR/j90hzquyu86gdSlTfQiXZ+HAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h/vr7Oav; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rSPc+n2D; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 05 Sep 2025 19:33:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757100786;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=hSdSIcSInoehyBkz+fWc+SORoj/vrx1sYUOHa3ILjX0=;
+	b=h/vr7Oavj5vGfaqIMZPr/YLTceafMSdSAjXrGOLGdC3BVEJRfIzd65xuJze+2MuIp5sf8j
+	O7muSQ9UfZcmI4xOf9brEM0b+OwY33WT2yKeEJejLMUJjU+P3FswCvJgNBoXOVdWYXH60/
+	23pY3JdHSsIeZyRt5cbCF9hvvwLrIof9SUCZGdBk3zcvjVefbfvNSVDOPKwS3YI3d5uku0
+	fhkeTwLcxctM2etMrz+f5/KDGYoDlfZF0lmHXNb0gEGLpyfb3P0d5qfBv+//igbhX2XH/l
+	Ui8UcgyrF2+9YWk+W2z57sKq1eFhCN5Ma/jFGzfLnA3GKV/JOUna4jePmfaPcw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757100786;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=hSdSIcSInoehyBkz+fWc+SORoj/vrx1sYUOHa3ILjX0=;
+	b=rSPc+n2DbR2/lzRgu3eu5Dn46l12uclXv1yEfxE3IBEvjUs+6iEtRQSZn3zySdRsuBt97B
+	mmHlKF2YUaGMLfCw==
+From: "tip-bot2 for Kai Huang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/tdx] KVM/TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
+Cc: Kai Huang <kai.huang@intel.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Farrah Chen <farrah.chen@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: proximity: isl29501: fix buffered read on
- big-endian systems
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
- <20250724120329.671dc192@jic23-huawei>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250724120329.671dc192@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <175710078473.1920.4613730592644125505.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/24/25 6:03 AM, Jonathan Cameron wrote:
-> On Tue, 22 Jul 2025 15:54:21 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
->> Fix passing a u32 value as a u16 buffer scan item. This works on little-
->> endian systems, but not on big-endian systems.
->>
->> A new local variable is introduced for getting the register value and
->> the array is changed to a struct to make the data layout more explicit
->> rather than just changing the type and having to recalculate the proper
->> length needed for the timestamp.
->>
->> Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ok. This probably is the best minimal fix but there is a bunch of other type
-> confusion around this in the driver (not as far as I can see actual bugs though).
-> 
-> Might be good to circle back and make the val parameter of isl29501_register_read()
-> a u16 as a follow up.
+The following commit has been merged into the x86/tdx branch of tip:
 
-There are a lot of places where *val from isl29501_read_raw() is being passed
-straight through to isl29501_register_read(), so we would have to add more
-temporary variables to handle this. Not sure if it is worth it.
+Commit-ID:     61221d07e815008ba758995d79fd442b5217f51a
+Gitweb:        https://git.kernel.org/tip/61221d07e815008ba758995d79fd442b521=
+7f51a
+Author:        Kai Huang <kai.huang@intel.com>
+AuthorDate:    Mon, 01 Sep 2025 18:09:30 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 05 Sep 2025 10:40:41 -07:00
 
-> 
-> Applied to my temporary fixes-togreg-for-6.17 branch on iio.git and marked
-> for stable.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
+KVM/TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
+
+On TDX platforms, during kexec, the kernel needs to make sure there
+are no dirty cachelines of TDX private memory before booting to the new
+kernel to avoid silent memory corruption to the new kernel.
+
+To do this, the kernel has a percpu boolean to indicate whether the
+cache of a CPU may be in incoherent state.  During kexec, namely in
+stop_this_cpu(), the kernel does WBINVD if that percpu boolean is true.
+TDX turns on that percpu boolean on a CPU when the kernel does SEAMCALL,
+Thus making sure the cache will be flushed during kexec.
+
+However, kexec has a race condition that, while remaining extremely rare,
+would be more likely in the presence of a relatively long operation such
+as WBINVD.
+
+In particular, the kexec-ing CPU invokes native_stop_other_cpus()
+to stop all remote CPUs before booting to the new kernel.
+native_stop_other_cpus() then sends a REBOOT vector IPI to remote CPUs
+and waits for them to stop; if that times out, it also sends NMIs to the
+still-alive CPUs and waits again for them to stop.  If the race happens,
+kexec proceeds before all CPUs have processed the NMI and stopped[1],
+and the system hangs.
+
+But after tdx_disable_virtualization_cpu(), no more TDX activity
+can happen on this cpu.  When kexec is enabled, flush the cache
+explicitly at that point; this moves the WBINVD to an earlier stage than
+stop_this_cpus(), avoiding a possibly lengthy operation at a time where
+it could cause this race.
+
+[1] https://lore.kernel.org/kvm/b963fcd60abe26c7ec5dc20b42f1a2ebbcc72397.1750=
+934177.git.kai.huang@intel.com/
+
+[Make the new function a stub for !CONFIG_KEXEC_CORE. - Paolo]
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
+Link: https://lore.kernel.org/all/20250901160930.1785244-8-pbonzini%40redhat.=
+com
+---
+ arch/x86/include/asm/tdx.h  |  6 ++++++
+ arch/x86/kvm/vmx/tdx.c      | 10 ++++++++++
+ arch/x86/virt/vmx/tdx/tdx.c | 19 +++++++++++++++++++
+ 3 files changed, 35 insertions(+)
+
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index c178360..6120461 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -228,5 +228,11 @@ static inline const char *tdx_dump_mce_info(struct mce *=
+m) { return NULL; }
+ static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL=
+; }
+ #endif	/* CONFIG_INTEL_TDX_HOST */
+=20
++#ifdef CONFIG_KEXEC_CORE
++void tdx_cpu_flush_cache_for_kexec(void);
++#else
++static inline void tdx_cpu_flush_cache_for_kexec(void) { }
++#endif
++
+ #endif /* !__ASSEMBLER__ */
+ #endif /* _ASM_X86_TDX_H */
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index f457b2e..04b6d33 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -423,6 +423,16 @@ void tdx_disable_virtualization_cpu(void)
+ 		tdx_flush_vp(&arg);
+ 	}
+ 	local_irq_restore(flags);
++
++	/*
++	 * Flush cache now if kexec is possible: this is necessary to avoid
++	 * having dirty private memory cachelines when the new kernel boots,
++	 * but WBINVD is a relatively expensive operation and doing it during
++	 * kexec can exacerbate races in native_stop_other_cpus().  Do it
++	 * now, since this is a safe moment and there is going to be no more
++	 * TDX activity on this CPU from this point on.
++	 */
++	tdx_cpu_flush_cache_for_kexec();
+ }
+=20
+ #define TDX_SEAMCALL_RETRIES 10000
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 2abf53e..330b560 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1872,3 +1872,22 @@ u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page =
+*page)
+ 	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
+ }
+ EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_hkid);
++
++#ifdef CONFIG_KEXEC_CORE
++void tdx_cpu_flush_cache_for_kexec(void)
++{
++	lockdep_assert_preemption_disabled();
++
++	if (!this_cpu_read(cache_state_incoherent))
++		return;
++
++	/*
++	 * Private memory cachelines need to be clean at the time of
++	 * kexec.  Write them back now, as the caller promises that
++	 * there should be no more SEAMCALLs on this CPU.
++	 */
++	wbinvd();
++	this_cpu_write(cache_state_incoherent, false);
++}
++EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache_for_kexec);
++#endif
 
