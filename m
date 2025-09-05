@@ -1,155 +1,161 @@
-Return-Path: <linux-kernel+bounces-801993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E9FB44C8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2CCB44C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD5E1BC8A07
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CB35A1E1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AFA1EEA55;
-	Fri,  5 Sep 2025 04:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54111EEA55;
+	Fri,  5 Sep 2025 04:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r4/2gz2F"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9X3nXto"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA70149C6F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA641E0DE3;
+	Fri,  5 Sep 2025 04:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757044867; cv=none; b=p91K0GgMbqm3rDnKlsh4b5lt48ZSPecpFYVH2LfnfDL9lALmvoL5BYuv29H3GlHA1t9PoAEEodgF3cBtj4luckCkZ5rnXvKnrhJaJyuO3ZfYioFJzWEl8Qv0ggCiQSgpEH0BQ7LDBHLb0oVqZrDk03GD8LWIIl2Qwd81i+3LCwI=
+	t=1757044898; cv=none; b=QWgrnbF/8me/TGTz9StXJIS+7thahoKGw2Y4q0aGpXN3hDCcWGNy+N2G9zlO4reMX/Di0GH0Ge+EvcgIQgC7uzJN4GIAOwGCBQmNHaXpX1wleL7iRyj45FP52Pzvt0WvqG91VrKyZkJuSHMyVQ8Ghi9BdSCcWbqvG91Nenb+W6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757044867; c=relaxed/simple;
-	bh=rLaqlph0538ajH36AIEbPc/SPTncMLcESZo0Bgf6XgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UBkX7N7RN922KHMHLJ1oXtVAwYIxUZCsm0796EuJ6WXXSGn9qFAshz8hcnCJWolC06YKawBM+MGrXa9+67udt6gcamXMs/CCbyeojkd2C9Gqq1Z31EGnfsaUiE6bT5NQJjLBCDL+TO0frn+DqcwB/cIkoW7t3ByuTr8zxXNIGuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r4/2gz2F; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6b52caf8-51f0-45ed-8f59-11f24dd2861e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757044852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xU4WiHHqDbAwz19vt8XJQJ1JAgeIb0EHNdRyJYIcNnw=;
-	b=r4/2gz2FDcv4CZMR9YY/B2P6q/X5hJ1+gOJZfwzKQAE/DHa/BQd7plMzDAumvl6o9piLwI
-	vz5dSpNo1DHizUdQaJIXDY9mppn/bavc1UjkTm77TBq+TIcMDxqx/3clpOMtC3Eou/N8G7
-	JTN/ZOuBtsYTNxZBtK0zXZO2mr5Sil8=
-Date: Thu, 4 Sep 2025 21:00:41 -0700
+	s=arc-20240116; t=1757044898; c=relaxed/simple;
+	bh=Y5UHBgVOjh02K86+IEXp4zDmoDF/+ibze6K/APHV/hw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3UQ52OkSYd1VdiQa4/qOd16jfaOjY1ISKu4+zp6LAdfvT4oaP6qNc8F33GSv2JN1UCQpocwERG7GVYap5a44vVwvhAznuxd1uHSVPnf8gkhBZUKzY8YbwpyQcQTEPDZl1XtgysSb8YvAJFR21cV63X4OH1sNZ9zhogCmoEkQ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9X3nXto; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so3977860a12.1;
+        Thu, 04 Sep 2025 21:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757044894; x=1757649694; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YGmnk9Y7kDaqvngUdy9AiDHXDEmTlZrFIomlpm38Cxs=;
+        b=D9X3nXtosj8vgBnZxDWjiUKHjvdzHyv8jdy0nY1WesvpLHaO/MzsrAsYOi8Tup7f3X
+         PTvg//41gf5v6gAf2H0l1QmiEBtRxOo3HDD8ul93A+0xD1HE1SKESV1o8ySZK9rgMFb+
+         Efk7anfV1jMD7T+4ByFUIaoeBCNHhLqkOr5MbrbrNsOT0McEneSuWz8fcfe46ziW21tS
+         C91hVvbXqUnwmfsGkZNeT7GQi+u2qPkMNcMNudBexkymh4b5zuZu7BP3HspbBzF01waD
+         mpPLzkIRuo6OMwp8/K9xHbZKyCLPGHOueAUK+c58/iaYn5uuOFkh7E/9rirRxcA2g+4/
+         G3rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757044894; x=1757649694;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YGmnk9Y7kDaqvngUdy9AiDHXDEmTlZrFIomlpm38Cxs=;
+        b=rlfHVTphOMAn14+kplVLEi5PDB97Z9RTNn998p6YB/iPA3UPCIWJYiaZNPzUHllb5D
+         k0URbrIGjIq8VqWEf8fOtlDy3RgIltcWLd365+o8MTTRYtYA6g82PZEFZCknKXuSAbeq
+         aYFxr9utEMKfyNsiBS9eqpKVHOSPWIURaZGVioluVkTffYq4rZSUgT2IeMlYDw7lyOkI
+         Ugyi+3JNqDU1t+lvODs6h1ucmOqAcVXhOn/YySbLqyKpe9zDIJgzXqbVjSbMelpvz+T9
+         3iNsR+43Yo+hvqJiHqFo4hiLalo+f29Mu3F4iHt/ZsIC0UHaGLXabGw3NEqcfnOT3hQp
+         wqnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1AbQdl4b0Xk+BfHSo6NAGR3HqdKgx96Kj8LaZGpHQC6EcBXOg9Ultg+3bY/Cv8039e8Awg8WbInT@vger.kernel.org, AJvYcCWq+gZds8/Ki9gEU4U4JIKB5+cbddr3umyhdISZ74Kh4uHa0+/q5IQ7+kf5tFBhMnqaF0SSBUzOzG9fWwuw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHROOKqyabxwjFQe0JzbjPIF99SfM1gG/jx39g/W0d1tan8msK
+	mXWl/FPnQRHr2CcjBQALyJKglE/EI0qSBY8NrE+JUkQ+DHjButTf10i4S1eTuLkmjNGo162rv4i
+	swcubK2oenpNEYXS50CSqyMHf3HD8WQQ=
+X-Gm-Gg: ASbGnctvB6JDWDRfvYYB2jBDhD7R4+m5+uTY/Z3bCYVWFPjegtRKFGNfPeMYKiS+kEt
+	FPkg6ziheqPjGFoZ53kgjktVKxmk11ji5WDuOh4AcLg6l/kk+UC75Vwv3LUyCICWM/ArFxfnwBm
+	OC7Jtv4eIVyvQBFGk4pLWfdCLAx0IIenl2on8fR8DH5Flu/FAOAJ0mdA/1OS5RH1V+hUpt3+U8A
+	lRvAJDlzvQw43ze
+X-Google-Smtp-Source: AGHT+IGI90WvQ1OL6qzT0UTrxnDzkKtA7u7gnGXFuOteAw9bkUI6xf+wizPLY6+YzR0GtxSZAJQl+LWmGOlaRBQLAUQ=
+X-Received: by 2002:a05:6402:430c:b0:61c:e3cd:a515 with SMTP id
+ 4fb4d7f45d1cf-620f549b25cmr1673091a12.9.1757044894512; Thu, 04 Sep 2025
+ 21:01:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC bpf-next 1/1] libbpf: add compile-time OOB warning to
- bpf_tail_call_static
-Content-Language: en-GB
-To: Hoyeon Lee <hoyeon.lee@suse.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- "open list:BPF [LIBRARY] (libbpf)" <bpf@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b"
- <llvm@lists.linux.dev>
-References: <20250905025314.245650-1-hoyeon.lee@suse.com>
- <20250905025314.245650-2-hoyeon.lee@suse.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250905025314.245650-2-hoyeon.lee@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250825065240.22577-1-linux.amoon@gmail.com> <175699250964.3374853.16885676491827667777.b4-ty@linaro.org>
+In-Reply-To: <175699250964.3374853.16885676491827667777.b4-ty@linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 5 Sep 2025 09:31:18 +0530
+X-Gm-Features: Ac12FXw6Duul3YjCrLSMtIq3Ki1Yxh-YbEkzS0fLz92JkUkwkfAjtBL1MXoQ11A
+Message-ID: <CANAwSgQGCTs46DVm3gt4PpdSTBTvVg5zga_oBt=rUJh2yhRLtw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Add cache information to Amlogic SoC
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Neil,
 
-
-On 9/4/25 7:53 PM, Hoyeon Lee wrote:
-> Add a compile-time check to bpf_tail_call_static() to warn when a
-> constant slot(index) is >= map->max_entries. This uses a small
-> BPF_MAP_ENTRIES() macro together with Clang's diagnose_if attribute.
+On Thu, 4 Sept 2025 at 18:58, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 >
-> Clang front-end keeps the map type with a '(*max_entries)[N]' field,
-> so the expression
+> Hi,
 >
->      sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)
+> On Mon, 25 Aug 2025 12:21:40 +0530, Anand Moon wrote:
+> > Most publicly available Amlogic datasheets mention that the CPU employs
+> > a architecture, quad-core ARM Cortex-A53 and ARM Cortex A55 and
+> > Cortex-A73 and Cortex-A53 cluster, sharing a unified L2 cache to enhance
+> > overall system performance.
+> >
+> > However, these documents typically omit details regarding the sizes of the
+> > L1 data cache, L1 instruction cache, and L2 cache.
+> >
+> > [...]
 >
-> is resolved to N entirely at compile time. This allows diagnose_if()
-> to emit a warning when a constant slot index is out of range.
+> Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.18/arm64-dt)
 >
-> Out-of-bounds tail call checkup is no-ops at runtime. Emitting a
-> compile-time warning can help developers detect mistakes earlier. The
-> check is currently limited to Clang (due to diagnose_if) and constant
-> indices, but should catch common errors.
+> [01/11] arm64: dts: amlogic: Add cache information to the Amlogic GXBB and GXL SoC
+>         https://git.kernel.org/amlogic/c/d7fc05da8ba28d22fb9bd79d9308f928fcb81c19
+> [02/11] arm64: dts: amlogic: Add cache information to the Amlogic SM1 SoC
+>         https://git.kernel.org/amlogic/c/fd7b48b1f91e1830e22e73744e7525af24d8ae25
+> [03/11] arm64: dts: amlogic: Add cache information to the Amlogic G12A SoCS
+>         https://git.kernel.org/amlogic/c/a4428e52babdb682f47f99b0b816e227e51a3835
+> [04/11] arm64: dts: amlogic: Add cache information to the Amlogic AXG SoCS
+>         https://git.kernel.org/amlogic/c/3b6ad2a433672f4ed9e1c90e4ae6b94683d1f1a2
+> [05/11] arm64: dts: amlogic: Add cache information to the Amlogic GXM SoCS
+>         https://git.kernel.org/amlogic/c/fe2c12bc0a8f9e5db87bfbf231658eadef4cdd47
+> [06/11] arm64: dts: amlogic: Add cache information to the Amlogic A1 SoC
+>         https://git.kernel.org/amlogic/c/2d97773212f8516b2fe3177077b1ecf7b67a4e09
+> [07/11] arm64: dts: amlogic: Add cache information to the Amlogic A4 SoC
+>         https://git.kernel.org/amlogic/c/57273dc063d5a80e8cebc20878369099992be01a
+> [08/11] arm64: dts: amlogic: Add cache information to the Amlogic C3 SoC
+>         https://git.kernel.org/amlogic/c/6d4ab38a0a21c82076105e4cc37087ef92253c7b
+> [09/11] arm64: dts: amlogic: Add cache information to the Amlogic S7 SoC
+>         https://git.kernel.org/amlogic/c/494c362fa1633bba127045ace8f0eea0b277af28
+> [10/11] arm64: dts: amlogic: Add cache information to the Amlogic S922X SoC
+>         https://git.kernel.org/amlogic/c/e7f85e6c155aed3e10e698dd05bd04b2d52edb59
+> [11/11] arm64: dts: amlogic: Add cache information to the Amlogic T7 SoC
+>         https://git.kernel.org/amlogic/c/e97fdb9b8a0f8bd349de48815694f8a7200e3d62
 >
-> Signed-off-by: Hoyeon Lee <hoyeon.lee@suse.com>
-> ---
->   tools/lib/bpf/bpf_helpers.h | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
+> These changes has been applied on the intermediate git tree [1].
 >
-> diff --git a/tools/lib/bpf/bpf_helpers.h b/tools/lib/bpf/bpf_helpers.h
-> index 80c028540656..0d9551bb90c0 100644
-> --- a/tools/lib/bpf/bpf_helpers.h
-> +++ b/tools/lib/bpf/bpf_helpers.h
-> @@ -173,6 +173,26 @@ bpf_tail_call_static(void *ctx, const void *map, const __u32 slot)
->   		     :: [ctx]"r"(ctx), [map]"r"(map), [slot]"i"(slot)
->   		     : "r0", "r1", "r2", "r3", "r4", "r5");
->   }
-> +
-> +#if __has_attribute(diagnose_if)
-> +static __always_inline void __bpf_tail_call_warn(int oob)
-> +	__attribute__((diagnose_if(oob, "bpf_tail_call: slot >= max_entries", "warning")));
-> +
-> +#define BPF_MAP_ENTRIES(m) \
-> +	((__u32)(sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)))
-> +
-> +#ifndef bpf_tail_call_static
-> +#define bpf_tail_call_static(ctx, map, slot)				      \
-> +({									      \
-> +	/* wrapped to avoid double evaluation. */                             \
-> +	const __u32 __slot = (slot);                                          \
-> +	__bpf_tail_call_warn(__slot >= BPF_MAP_ENTRIES(map));                 \
-> +	/* Avoid re-expand & invoke original as (bpf_tail_call_static)(..) */ \
-> +	(bpf_tail_call_static)(ctx, map, __slot);                             \
-> +})
-> +#endif /* bpf_tail_call_static */
-> +#endif
-> +
->   #endif
->   #endif
-
-I got compilation failures with llvm21.
-
-In file included from progs/bpf_flow.c:19:
-/home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:178:29: error: function '__bpf_tail_call_warn' has internal
-       linkage but is not defined [-Werror,-Wundefined-internal]
-   178 | static __always_inline void __bpf_tail_call_warn(int oob)
-       |   CLNG-BPF [test_progs] btf_type_tag_percpu.bpf.o
-                             ^
-progs/bpf_flow.c:122:3: note: used here
-   122 |                 bpf_tail_call_static(skb, &jmp_table, IP);
-       |                 ^
-/home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/bpf/bpf_helpers.h:189:2: note: expanded from macro 'bpf_tail_call_static'
-   189 |         __bpf_tail_c  CLNG-BPF [test_progs] btf_type_tag_user.bpf.o
-all_warn(__slot >= BPF_MAP_ENTRIES(map));             CLNG-BPF [test_progs] cb_refs.bpf.o
-       \
-       |         ^
-
-
+> The v6.18/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+> for inclusion in their intermediate git branches in order to be sent to Linus during
+> the next merge window, or sooner if it's a set of fixes.
 >
+> In the cases of fixes, those will be merged in the current release candidate
+> kernel and as soon they appear on the Linux master branch they will be
+> backported to the previous Stable and Long-Stable kernels [2].
+>
+> The intermediate git branches are merged daily in the linux-next tree [3],
+> people are encouraged testing these pre-release kernels and report issues on the
+> relevant mailing-lists.
+>
+> If problems are discovered on those changes, please submit a signed-off-by revert
+> patch followed by a corrective changeset.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>
+Received feedback from Krzysztof to omit the comments in the commit message.
+Should I respin accordingly?
 > --
-> 2.51.0
-
+> Neil
+>
+Thanks
+-Anand
 
