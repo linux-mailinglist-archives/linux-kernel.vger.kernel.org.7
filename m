@@ -1,546 +1,321 @@
-Return-Path: <linux-kernel+bounces-802438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8D0B45267
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDEBB45269
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6DBF3AA629
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845473AC36A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83088305073;
-	Fri,  5 Sep 2025 09:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A48228A704;
+	Fri,  5 Sep 2025 09:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="U/hVSbtP"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dkc/llix"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1B528468C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8C8289824;
+	Fri,  5 Sep 2025 09:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062954; cv=none; b=azd+hZ6MZDgo5ehVKQTUC/XOqwQ9KoDZpWicFwDI+NjL807xYkwQrRFJTwEr03VVfMhq3yu3ooON3BiCbLF2blqB2SrfuuB81cnV1YAP3LRM339fe+bLEgank0L2jj43cFEsXXBqsHnxsEjoBodXlYImUjmm1gpnNNZtSqPvzzg=
+	t=1757062955; cv=none; b=FZd06XvJl3Mxf1g1Qs7W60x1aIuRcJWkqgGLXUtQhHZuoO/ZJDyVvwyebVOfzjumNeO3n3AIt2cG4QCPUKr7+z7RynHrnU4kvUGxoAagOikFbmRoGHBCixYnynvUbvIilogrTb2P7JfcrI+qkSgUXR1z9ttpBm7cCtJYkotlv5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062954; c=relaxed/simple;
-	bh=JJjSmx5BhY/AJQUx4xsx3foinAt8ECFnWjoHNMkm8u0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LE24hSoqeBWY9YthjgGIEMOtYCPwxL2FhKJRPSdn+FK6MGO6tNNzrY3oco4h1ERgrm4vfRtMiljObzXyXjy6nGZvqPo55dca+MnNyH3ag735ZnzoeQq55/M89vbW42MYcjqKh2CPmKa1Afg32/LGGcspt6LiGCWgGe6W8fGg758=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=U/hVSbtP; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso13350325e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:02:31 -0700 (PDT)
+	s=arc-20240116; t=1757062955; c=relaxed/simple;
+	bh=NM4vh7Y6amQgjxH0/DqheIDPbYhjnlxQF3rh5Z5U7/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GYs7pbaKeJ/fPVPPaXW5tC1yq4CPW4IpY9aOwAxgFRn2teIY1ZJpORtAp8g7YvjvOBpe3Zc7cggwQCsv5pu7kn13PEvtlxfrTcOmgsuT/OXWZ8Qc7k+iMCSUBXNCfxqt8gV6dC7G9uHlOlmccai4sTFg9Ppqm6bLLfmJeR9TRfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dkc/llix; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7725de6b57dso2261321b3a.0;
+        Fri, 05 Sep 2025 02:02:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757062950; x=1757667750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxot5Hn8c7fljR2KmOgHwdgGmRvc38YiwNgTDVLdMd4=;
-        b=U/hVSbtPuKlj0VoTwsr+XiInFe3hTFgtLk6TAove2qwdDNWZVfea8tTXzAnh0pFk2p
-         8WeU8JSI1aQzKMUd/0zwGuA4wuk1Avs8f8cGsoKkzfOZEYE3QuHDJKQ/52xaS7Av6nIS
-         axhats03SrhXUG/flKjP3H5b6cQh+6lzwi7D4uF6wNV4wsDVHZ2EhwGZIxjBqPdcGxhM
-         X9yhfAexklFhLmjfFxFuCYglZV1USQUo7A5RF8TI4MtZdgF+pk7dYquP5be+3Sg7Ygyy
-         zSuOQATWJSJNxbKHutE5AOG42FabXXum5mmwYkNZxDwVv5FTqgZaTaitLU5e3tgQI+lQ
-         00Eg==
+        d=gmail.com; s=20230601; t=1757062952; x=1757667752; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CbWJrrsJi1lQoWWgSTtwrCIE35YEtTJx5WTUVLvwNGE=;
+        b=Dkc/llix3jvnD875YFbd3YQ+1Bx/NzCF7N8eF3Fq4QteU0WCv2CVEaHvwr7D5gJfkf
+         kcZmlig60E1gqjHkojD7DGHvy5QUXrMHodAFlto78Z2NY1pyJOyURe5N+Dg4eeb/pwxB
+         TDz0ycefeoPKPpZCX5v1qv8jDbYQhqxPS5oSWlDbVY5Zw5IJQAOq6xBGUHdd7dUA7IB1
+         t9GT3TJKYhEsoS1HIH/FSFlOuGtDgd04xiRVIz5P9VaPx6RWBJcuP9ie78pHfuS40oqA
+         6UpobAzhwGojDSwhWa4Zrm4lGcWRuhsOjzSk6xb86gDmv6091GsTD6wivzjMIAZ9xp2X
+         +Dxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757062950; x=1757667750;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxot5Hn8c7fljR2KmOgHwdgGmRvc38YiwNgTDVLdMd4=;
-        b=EDNzbExARbn9Ab/93Ny7k8Y56a4aFcCW5YR6nM54PFW/LJuaYLMFkprH5tP8YSkw+2
-         bEm9oKReFPu/BbpRA0TJloKh3YFQF2/6tWH7DEYEFClaGD1DmYQpFSH5OowUIxolWKAJ
-         GQpY9Y20MdUgRwvzLr7oc2fvYPPK8HazFR20ncwbBS9yRa3H52hs7b5G7pm9ORWWNMpU
-         1KSacg4LpWSjVU2tYGibEdcDecYWNKmKTzVgIwDUSEl8iDhtc16r692CigAWZy52307e
-         lqlfgF6r+ZqTNpmaHvSikS8XYz67/eu4ZlQi94yUezkvReXSjyW8s5ELdWvtnaaoIjBX
-         6GDg==
-X-Gm-Message-State: AOJu0YxoeUIS90Mksmb+AU1EhzSGWycCaSKgryRsfq/9zqaHjNXHFZ7C
-	ymvZ1I+6jJH4pyDLBEr9Zr+z/XFZUbmRPqzECcIiDvmHnTLz2L8ZkCcA4JdHmPboa1w9sMaGWL5
-	osZQQ
-X-Gm-Gg: ASbGncsLOCFdnC3e4eqiRtkT5tDbCcW23oaHyo7xADgRMLVIitAsiNvTAwvBZpFHo4j
-	Nzbk97WyHcA0BJtE2wsQbglwUZx3M84xxvdLtyELyqWhyZn9Y+hGi+ykX6haXFegghVLmtSiIfS
-	tnSe0TmbQbWOhScR4hOKpgfIBCAB+uyjI9IhliZSZ9z1CQ8KsPb8CR5uNvI9zyxAS1g5MCLIjhU
-	aeq1WSxQ5eO6N8cB5WgrRHDqUMhB87xFhjSdfVQYhL6pSUmE8Ds7zHLg2ipIj3XTGhNZtUprN4w
-	yMDJivTagmfAvSlfeWwruFquwJiViAu9HUEyG+jriuphrbx2jJrgvCZzQvdt8Fc7Dz/RfCYdh4G
-	te+yVdeU/ZXZQ5pF44eoCCOxf5REv3Q3FbxJsX/Uq25wqlSF5ZjxLELC8wvvV798a0zwM
-X-Google-Smtp-Source: AGHT+IHoGJIGtfKKdjXYpqXcPfCoHuMuneaFgMfxugQ5lq/PwG+mc9kHBJoyyu920q/ao/OU5oED3A==
-X-Received: by 2002:a05:600c:3b05:b0:45d:d099:873 with SMTP id 5b1f17b1804b1-45dd09909d6mr50432925e9.6.1757062949372;
-        Fri, 05 Sep 2025 02:02:29 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfd000dasm35324565e9.5.2025.09.05.02.02.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:02:28 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 3/3] fs: WQ_PERCPU added to alloc_workqueue users
-Date: Fri,  5 Sep 2025 11:02:14 +0200
-Message-ID: <20250905090214.102375-4-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905090214.102375-1-marco.crivellari@suse.com>
-References: <20250905090214.102375-1-marco.crivellari@suse.com>
+        d=1e100.net; s=20230601; t=1757062952; x=1757667752;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbWJrrsJi1lQoWWgSTtwrCIE35YEtTJx5WTUVLvwNGE=;
+        b=iGhOknWxbQXzxKuvNThmRbiZ9KGTgMwnNOisGA/+RjOkxNat8MmcMLXxOm+haHzK9D
+         2ZVzexjv2+sabE2mJG/w8O53iX0zf3mXp7/iUoz/UoGYjGeEfGna1LtjK+H7DklQLJtt
+         Nov4Zo34+OCNZls/6P5OMPJgNhhADgrqI5oCJ0xY1+eY7CqhzekICTeddXm+ENOWvtEv
+         uoc4j7gneWByRcp21HTpfv0T+wtyK1MaEaeS63s3H6jY/CpoOSW/Tz1XLmzqOyS+SWK3
+         jAlgdndCC/+/pWzpgR1ojj4YCbXJh7x6J753HaauxOC3AxjnRjkzbFzlbp2dkaKr3sa/
+         Kygg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMegcuZ4gbc+wkmYt14ORgeALSP8nhYBoj+F9y22t5GN78jrFK5Lj943ibwS8MPV8O0ExrJanxwheeRuvj@vger.kernel.org, AJvYcCWEu/a5WdLW7XBJ8suEbdcXsETw/WyyDTzuuC4n+dC0BJVlRqLpQUnkoT9oxXTMwpOfZoXUKawrMJ+NGccPkzBw0K4y@vger.kernel.org, AJvYcCWMiLxueWBBznIVc2rx9+bmcrqQKILAPvVsSOVs7k+z7etTdPBmWpyo5eaOr87UE18FLM8rVjkFsCE=@vger.kernel.org, AJvYcCWYawRfw3B7A1EvPPdj8zDqD4wMMgKKw8CfhIzh+v3elZO+YBzN3MP/SmxIS5oqoqwxUgasGG3Xxb4Q+iXsbze/lA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4EvvaMxrMtGQSItraHFK2ytHE0AJwsXEIrCud2w0GxAWNVtyu
+	UbR693MBZS8GbS+3YbZBNYykqDPy7Q2nj8K1M+jeiDCBZnJcM506tqrh
+X-Gm-Gg: ASbGncsqBjdCCg5Fdpve7aH8lMTquMvPHc9OSgaAGWP8bkvvp+oBRiUksdw3YGm5bpx
+	SrtAc5ZmYbuDnvDwHDZm6qp1SaPdukupX16mEHLEB9dLnpWyEmih6c/D3uzAQGkGYNNAu62a6b5
+	0Jijp2K4sUGCGXukuLMxf8C2SEnZ3AUvUOJfOPK8YhRed+QNhvY1hMjWXfWREvyuo3ZWuMMX9OI
+	83Ol1sL+4uF4JH6t/LSrNLpdTaB70jf2A807F2O1cZH7G3YZmRpKSOhtjB8dWh7o8xCOWpyv0a1
+	VyFD4c/KKDRXQG8yKKrzbE9hSePO5C8JiWAXwT9rJLMlXXZeB0VCZtl+zyY22jSdPftoZZQXBE9
+	/ts3zZmDdMDUpVth/NhylfUacLe8hb0OcmIGx
+X-Google-Smtp-Source: AGHT+IGPJDd0ZbcKmwOmMjvq98qz8SQzZoZzRttT4FvuKGdN6vETbbaK8w6DZAAbiwn1p8ByUXjIUA==
+X-Received: by 2002:a05:6a00:1495:b0:736:5664:53f3 with SMTP id d2e1a72fcca58-7723e36282amr26130625b3a.15.1757062952047;
+        Fri, 05 Sep 2025 02:02:32 -0700 (PDT)
+Received: from [127.0.0.1] ([2604:a840:3::10f3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2af911sm21018350b3a.23.2025.09.05.02.02.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 02:02:31 -0700 (PDT)
+Message-ID: <bab08c27-cf0a-445e-8071-dac2a0f8c6d1@gmail.com>
+Date: Fri, 5 Sep 2025 17:02:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/6] tracing: wprobe: Add wprobe for watchpoint
+Content-Language: en-US
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <175673787502.478080.3342912952394010967.stgit@devnote2>
+ <20250902230204.f3e81b03e7f6805caba1b717@kernel.org>
+ <c8a312e9-644a-45e0-8184-6eac8d8f4af1@gmail.com>
+ <20250905110852.2c9a0be5f5e5338f1a00cdd4@kernel.org>
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <20250905110852.2c9a0be5f5e5338f1a00cdd4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
-This lack of consistentcy cannot be addressed without refactoring the API.
+On 9/5/25 10:08, Masami Hiramatsu (Google) wrote:
+> On Thu, 4 Sep 2025 14:35:33 +0800
+> Jinchao Wang <wangjinchao600@gmail.com> wrote:
+> 
+>> On 9/2/25 22:02, Masami Hiramatsu (Google) wrote:
+>>> (Adding Jinchao)
+>>>
+>>> On Mon,  1 Sep 2025 23:44:35 +0900
+>>> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+>>>
+>>>> Hi,
+>>>>
+>>>> Here is an RFC series for adding new wprobe (watch probe) which
+>>>> provides memory access tracing event. Moreover, this can be used via
+>>>> event trigger. Thus it can trace memory access on a dynamically
+>>>> allocated objects too.
+>>>
+>>> BTW, this series is on the top of probes/for-next branch in the
+>>> linux-trace tree.
+>>>
+>>
+>> Hi, Masami
+>>
+>> Thanks for including me. I only received the cover letter, so I'm
+>> providing my feedback here:
+> 
+> Thanks for your feedback! I'll send v2.
+> 
+>>
+>> - trigger_data issue:
+>>     it appears that the instance being removed is not the same as
+>>     the one that was originally set.
+> 
+> Did you mean it will free invalid struct event_trigger_data by
+> wprobe_trigger_free(), or hw_breakpoint instance?
+> 
+> When trace_event_enable_disable(wprobe_data->file, 1, 1) at
+> wprobe_trigger_cmd_parse(), the trace_wprobe is enabled == call
+> enable_trace_wprobe(), which eventually call register_wide_hw_breakpoint()
+> with dummy address. IOW, the (wide)hw_breakpoint is allocated here.
+> 
+> When the trigger is hit, modify_wide_hw_breakpoint_local() is called
+> for updating local target address on the same hw_breakpoint.
+> So latter instance should be the same.
+In wprobe_trigger_cmd_parse(), consider removing:
+   echo '!set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+The trigger_data passed to event_trigger_unregister() is freshly allocated.
+> 
+>>
+>>    - the function call issue:
+>>      `trace_wprobe_update_local()` is called twice, once in the trigger
+>>      callback and again in `wprobe_work_func`.
+> 
+> Yes, I found it can happen. Maybe I need a cpumask to skip the first one.
+> 
+>> I also noticed that the Watchpoint probe and KStackWatch implementations
+>> share very similar logic for managing hardware breakpoints/watchpoints
+>> (`hwbp/watch`):
+>> - `watch_init(unsigned long &place_holder)`
+>> - `watch_on(struct perf_event_attr *attr)`
+>> - `watch_off()` (or reset to the `place_holder` value)
+>> - `watch_uninit()`
+> 
+> Hmm, I agree that we are using hwbp in a similar way but
+> I think current interface is enough.
+> 
+>>
+>> Their primary difference lies in their handler functions, specifically
+>> the `perf_overflow_handler_t triggered` callback.
+>>
+>> I believe we could work together to unify this logic. I am open to
+>> either approach: I can refactor my watch.c, or you can introduce new
+>> helpers. This would help us save duplicated work and review time.
+> 
+> I'm not sure what you mean. Is there any concern to use the same
+> (current hwbp) interfaces?
+> 
+It is not the _current_ HWBP interface, it needs review. We will write
+the same logic except for the HWBP interface regarding atomic context
+watch switch (addr/type/len) and the process to sync with other CPUs.
 
-alloc_workqueue() treats all queues as per-CPU by default, while unbound
-workqueues must opt-in via WQ_UNBOUND.
+The only difference is the HWBP handler.
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
+I am not familiar with the process of how we usually do roughly the
+same thing. Maybe I am thinking about it the wrong way; I will look
+at it later. > Thank you,
+> 
+>>
+>>> Thanks,
+>>>
+>>>>
+>>>> In this version, I reuse Jinchao's arch_reinstall_hw_breakpoint()
+>>>> patch[1].
+>>>>
+>>>> [1] https://lore.kernel.org/all/20250828073311.1116593-6-wangjinchao600@gmail.com/
+>>>>
+>>>> The basic usage of this wprobe is similar to other probes;
+>>>>
+>>>>     w:[GRP/][EVENT] [r|w|rw]@<ADDRESS|SYMBOL[+OFFS]> [FETCHARGS]
+>>>>
+>>>> This defines a new wprobe event. For example, to trace jiffies update,
+>>>> you can do;
+>>>>
+>>>>    echo 'w:my_jiffies w@jiffies:8 value=+0($addr)' >> dynamic_events
+>>>>    echo 1 > events/wprobes/my_jiffies/enable
+>>>>
+>>>> Moreover, this can be combined with event trigger to trace the memory
+>>>> accecss on slab objects. The trigger syntax is;
+>>>>
+>>>>     set_wprobe:WPROBE_EVENT:FIELD[+ADJUST]
+>>>>     clear_wprobe:WPROBE_EVENT
+>>>>
+>>>> For example, trace the first 8 byte of the dentry data structure passed
+>>>> to do_truncate() until it is deleted by __dentry_kill().
+>>>> (Note: all tracefs setup uses '>>' so that it does not kick do_truncate())
+>>>>
+>>>>     # echo 'w:watch rw@0:8 address=$addr value=+0($addr)' > dynamic_events
+>>>>
+>>>>     # echo 'f:truncate do_truncate dentry=$arg2' >> dynamic_events
+>>>>     # echo 'set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+>>>>
+>>>>     # echo 'f:dentry_kill __dentry_kill dentry=$arg1' >> dynamic_events
+>>>>     # echo 'clear_wprobe:watch' >> events/fprobes/dentry_kill/trigger
+>>>>
+>>>>     # echo 1 >> events/fprobes/truncate/enable
+>>>>     # echo 1 >> events/fprobes/dentry_kill/enable
+>>>>
+>>>>     # echo aaa > /tmp/hoge
+>>>>     # echo bbb > /tmp/hoge
+>>>>     # echo ccc > /tmp/hoge
+>>>>     # rm /tmp/hoge
+>>>>
+>>>> Then, the trace data will show;
+>>>>
+>>>> # tracer: nop
+>>>> #
+>>>> # entries-in-buffer/entries-written: 16/16   #P:8
+>>>> #
+>>>> #                                _-----=> irqs-off/BH-disabled
+>>>> #                               / _----=> need-resched
+>>>> #                              | / _---=> hardirq/softirq
+>>>> #                              || / _--=> preempt-depth
+>>>> #                              ||| / _-=> migrate-disable
+>>>> #                              |||| /     delay
+>>>> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+>>>> #    [    7.026136] sh (113) used greatest stack depth: 12912 bytes left
+>>>>             | |         |   |||||     |         |
+>>>>                 sh-113     [002] .....     7.024402: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+>>>>                 sh-113     [002] ..Zff     7.024822: watch: (lookup_fast+0xaa/0x150) address=0xffff8880069194b8 value=0x200008
+>>>>                 sh-113     [002] ..Zff     7.024830: watch: (step_into+0x82/0x360) address=0xffff8880069194b8 value=0x200008
+>>>>                 sh-113     [002] ..Zff     7.024834: watch: (step_into+0x9f/0x360) address=0xffff8880069194b8 value=0x200008
+>>>>                 sh-113     [002] ..Zff     7.024839: watch: (path_openat+0xb3a/0xe70) address=0xffff8880069194b8 value=0x200008
+>>>>                 sh-113     [002] ..Zff     7.024843: watch: (path_openat+0xb9a/0xe70) address=0xffff8880069194b8 value=0x200008
+>>>>                 sh-113     [002] .....     7.024847: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+>>>>                 sh-113     [002] ...1.     7.025364: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888006919380
+>>>>                 sh-113     [002] ...1.     7.025511: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069195f0
+>>>>                 rm-118     [003] ...1.     7.027543: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069194b8
+>>>>                 sh-113     [002] ...2.     7.027825: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880044429c0
+>>>>                 sh-113     [002] ...2.     7.027833: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888004442270
+>>>>
+>>>>
+>>>> Thank you,
+>>>>
+>>>> ---
+>>>>
+>>>> Jinchao Wang (1):
+>>>>         x86/HWBP: introduce arch_reinstall_hw_breakpoint() for atomic context
+>>>>
+>>>> Masami Hiramatsu (Google) (5):
+>>>>         tracing: wprobe: Add watchpoint probe event based on hardware breakpoint
+>>>>         HWBP: Add modify_wide_hw_breakpoint_local() API
+>>>>         tracing: wprobe: Add wprobe event trigger
+>>>>         selftests: tracing: Add a basic testcase for wprobe
+>>>>         selftests: tracing: Add syntax testcase for wprobe
+>>>>
+>>>>
+>>>>    Documentation/trace/index.rst                      |    1
+>>>>    Documentation/trace/wprobetrace.rst                |  129 ++
+>>>>    arch/Kconfig                                       |   10
+>>>>    arch/x86/Kconfig                                   |    1
+>>>>    arch/x86/include/asm/hw_breakpoint.h               |    3
+>>>>    arch/x86/kernel/hw_breakpoint.c                    |   61 +
+>>>>    include/linux/hw_breakpoint.h                      |    6
+>>>>    include/linux/trace_events.h                       |    3
+>>>>    kernel/events/hw_breakpoint.c                      |   36 +
+>>>>    kernel/trace/Kconfig                               |   24
+>>>>    kernel/trace/Makefile                              |    1
+>>>>    kernel/trace/trace.c                               |    9
+>>>>    kernel/trace/trace.h                               |    5
+>>>>    kernel/trace/trace_probe.c                         |   20
+>>>>    kernel/trace/trace_probe.h                         |    8
+>>>>    kernel/trace/trace_wprobe.c                        | 1111 ++++++++++++++++++++
+>>>>    .../ftrace/test.d/dynevent/add_remove_wprobe.tc    |   68 +
+>>>>    .../test.d/dynevent/wprobes_syntax_errors.tc       |   20
+>>>>    18 files changed, 1513 insertions(+), 3 deletions(-)
+>>>>    create mode 100644 Documentation/trace/wprobetrace.rst
+>>>>    create mode 100644 kernel/trace/trace_wprobe.c
+>>>>    create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+>>>>    create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/wprobes_syntax_errors.tc
+>>>>
+>>>> --
+>>>> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>>>
+>>>
+>>
+>>
+>> -- 
+>> Best regards,
+>> Jinchao
+> 
+> 
 
-This default is suboptimal: most workloads benefit from unbound queues,
-allowing the scheduler to place worker threads where they’re needed and
-reducing noise when CPUs are isolated.
 
-This patch adds a new WQ_PERCPU flag to all the fs subsystem users to
-explicitly request the use of the per-CPU behavior. Both flags coexist
-for one release cycle to allow callers to transition their calls.
-
-Once migration is complete, WQ_UNBOUND can be removed and unbound will
-become the implicit default.
-
-With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-must now use WQ_PERCPU.
-
-All existing users have been updated accordingly.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- fs/afs/main.c                  |  4 ++--
- fs/bcachefs/super.c            | 10 +++++-----
- fs/btrfs/async-thread.c        |  3 +--
- fs/btrfs/disk-io.c             |  2 +-
- fs/ceph/super.c                |  2 +-
- fs/dlm/lowcomms.c              |  2 +-
- fs/dlm/main.c                  |  2 +-
- fs/fs-writeback.c              |  2 +-
- fs/gfs2/main.c                 |  5 +++--
- fs/gfs2/ops_fstype.c           |  6 ++++--
- fs/ocfs2/dlm/dlmdomain.c       |  3 ++-
- fs/ocfs2/dlmfs/dlmfs.c         |  3 ++-
- fs/smb/client/cifsfs.c         | 16 +++++++++++-----
- fs/smb/server/ksmbd_work.c     |  2 +-
- fs/smb/server/transport_rdma.c |  3 ++-
- fs/super.c                     |  3 ++-
- fs/verity/verify.c             |  2 +-
- fs/xfs/xfs_log.c               |  3 +--
- fs/xfs/xfs_mru_cache.c         |  3 ++-
- fs/xfs/xfs_super.c             | 15 ++++++++-------
- 20 files changed, 52 insertions(+), 39 deletions(-)
-
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index c845c5daaeba..6b7aab6abd78 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -168,13 +168,13 @@ static int __init afs_init(void)
- 
- 	printk(KERN_INFO "kAFS: Red Hat AFS client v0.1 registering.\n");
- 
--	afs_wq = alloc_workqueue("afs", 0, 0);
-+	afs_wq = alloc_workqueue("afs", WQ_PERCPU, 0);
- 	if (!afs_wq)
- 		goto error_afs_wq;
- 	afs_async_calls = alloc_workqueue("kafsd", WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
- 	if (!afs_async_calls)
- 		goto error_async;
--	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM, 0);
-+	afs_lock_manager = alloc_workqueue("kafs_lockd", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!afs_lock_manager)
- 		goto error_lockmgr;
- 
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index a58edde43bee..8bba5347a36e 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -909,15 +909,15 @@ static struct bch_fs *bch2_fs_alloc(struct bch_sb *sb, struct bch_opts opts)
- 	if (!(c->btree_update_wq = alloc_workqueue("bcachefs",
- 				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_UNBOUND, 512)) ||
- 	    !(c->btree_io_complete_wq = alloc_workqueue("bcachefs_btree_io",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 1)) ||
- 	    !(c->copygc_wq = alloc_workqueue("bcachefs_copygc",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_CPU_INTENSIVE | WQ_PERCPU, 1)) ||
- 	    !(c->btree_read_complete_wq = alloc_workqueue("bcachefs_btree_read_complete",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 512)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 512)) ||
- 	    !(c->btree_write_submit_wq = alloc_workqueue("bcachefs_btree_write_sumit",
--				WQ_HIGHPRI|WQ_FREEZABLE|WQ_MEM_RECLAIM, 1)) ||
-+				WQ_HIGHPRI | WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU, 1)) ||
- 	    !(c->write_ref_wq = alloc_workqueue("bcachefs_write_ref",
--				WQ_FREEZABLE, 0)) ||
-+				WQ_FREEZABLE | WQ_PERCPU, 0)) ||
- #ifndef BCH_WRITE_REF_DEBUG
- 	    percpu_ref_init(&c->writes, bch2_writes_disabled,
- 			    PERCPU_REF_INIT_DEAD, GFP_KERNEL) ||
-diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
-index f3bffe08b290..0a84d86a942d 100644
---- a/fs/btrfs/async-thread.c
-+++ b/fs/btrfs/async-thread.c
-@@ -109,8 +109,7 @@ struct btrfs_workqueue *btrfs_alloc_workqueue(struct btrfs_fs_info *fs_info,
- 		ret->thresh = thresh;
- 	}
- 
--	ret->normal_wq = alloc_workqueue("btrfs-%s", flags, ret->current_active,
--					 name);
-+	ret->normal_wq = alloc_workqueue("btrfs-%s", flags, ret->current_active, name);
- 	if (!ret->normal_wq) {
- 		kfree(ret);
- 		return NULL;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 3dd555db3d32..f817b29a43de 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1963,7 +1963,7 @@ static int btrfs_init_workqueues(struct btrfs_fs_info *fs_info)
- {
- 	u32 max_active = fs_info->thread_pool_size;
- 	unsigned int flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_UNBOUND;
--	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE;
-+	unsigned int ordered_flags = WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU;
- 
- 	fs_info->workers =
- 		btrfs_alloc_workqueue(fs_info, "worker", flags, max_active, 16);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index f3951253e393..a0302a004157 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -862,7 +862,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
- 	if (!fsc->inode_wq)
- 		goto fail_client;
--	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
-+	fsc->cap_wq = alloc_workqueue("ceph-cap", WQ_PERCPU, 1);
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index 70abd4da17a6..6ced1fa90209 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1702,7 +1702,7 @@ static int work_start(void)
- 		return -ENOMEM;
- 	}
- 
--	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH, 0);
-+	process_workqueue = alloc_workqueue("dlm_process", WQ_HIGHPRI | WQ_BH | WQ_PERCPU, 0);
- 	if (!process_workqueue) {
- 		log_print("can't start dlm_process");
- 		destroy_workqueue(io_workqueue);
-diff --git a/fs/dlm/main.c b/fs/dlm/main.c
-index 4887c8a05318..a44d16da7187 100644
---- a/fs/dlm/main.c
-+++ b/fs/dlm/main.c
-@@ -52,7 +52,7 @@ static int __init init_dlm(void)
- 	if (error)
- 		goto out_user;
- 
--	dlm_wq = alloc_workqueue("dlm_wq", 0, 0);
-+	dlm_wq = alloc_workqueue("dlm_wq", WQ_PERCPU, 0);
- 	if (!dlm_wq) {
- 		error = -ENOMEM;
- 		goto out_plock;
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index cf51a265bf27..4b1a53a3266b 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1180,7 +1180,7 @@ void cgroup_writeback_umount(struct super_block *sb)
- 
- static int __init cgroup_writeback_init(void)
- {
--	isw_wq = alloc_workqueue("inode_switch_wbs", 0, 0);
-+	isw_wq = alloc_workqueue("inode_switch_wbs", WQ_PERCPU, 0);
- 	if (!isw_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index 0727f60ad028..9d65719353fa 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -151,7 +151,8 @@ static int __init init_gfs2_fs(void)
- 
- 	error = -ENOMEM;
- 	gfs2_recovery_wq = alloc_workqueue("gfs2_recovery",
--					  WQ_MEM_RECLAIM | WQ_FREEZABLE, 0);
-+					  WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU,
-+					  0);
- 	if (!gfs2_recovery_wq)
- 		goto fail_wq1;
- 
-@@ -160,7 +161,7 @@ static int __init init_gfs2_fs(void)
- 	if (!gfs2_control_wq)
- 		goto fail_wq2;
- 
--	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", 0, 0);
-+	gfs2_freeze_wq = alloc_workqueue("gfs2_freeze", WQ_PERCPU, 0);
- 
- 	if (!gfs2_freeze_wq)
- 		goto fail_wq3;
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index e83d293c3614..0dccb5882ef6 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1189,13 +1189,15 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	error = -ENOMEM;
- 	sdp->sd_glock_wq = alloc_workqueue("gfs2-glock/%s",
--			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE, 0,
-+			WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_FREEZABLE | WQ_PERCPU,
-+			0,
- 			sdp->sd_fsname);
- 	if (!sdp->sd_glock_wq)
- 		goto fail_free;
- 
- 	sdp->sd_delete_wq = alloc_workqueue("gfs2-delete/%s",
--			WQ_MEM_RECLAIM | WQ_FREEZABLE, 0, sdp->sd_fsname);
-+			WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU, 0,
-+			sdp->sd_fsname);
- 	if (!sdp->sd_delete_wq)
- 		goto fail_glock_wq;
- 
-diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-index 2018501b2249..2347a50f079b 100644
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -1876,7 +1876,8 @@ static int dlm_join_domain(struct dlm_ctxt *dlm)
- 	dlm_debug_init(dlm);
- 
- 	snprintf(wq_name, O2NM_MAX_NAME_LEN, "dlm_wq-%s", dlm->name);
--	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM, 0);
-+	dlm->dlm_worker = alloc_workqueue(wq_name, WQ_MEM_RECLAIM | WQ_PERCPU,
-+					  0);
- 	if (!dlm->dlm_worker) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
-diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-index 5130ec44e5e1..0b730535b2c8 100644
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -595,7 +595,8 @@ static int __init init_dlmfs_fs(void)
- 	}
- 	cleanup_inode = 1;
- 
--	user_dlm_worker = alloc_workqueue("user_dlm", WQ_MEM_RECLAIM, 0);
-+	user_dlm_worker = alloc_workqueue("user_dlm",
-+					  WQ_MEM_RECLAIM | WQ_PERCPU, 0);
- 	if (!user_dlm_worker) {
- 		status = -ENOMEM;
- 		goto bail;
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index a08c42363ffc..3d3a76fa7210 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1883,7 +1883,9 @@ init_cifs(void)
- 		cifs_dbg(VFS, "dir_cache_timeout set to max of 65000 seconds\n");
- 	}
- 
--	cifsiod_wq = alloc_workqueue("cifsiod", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+	cifsiod_wq = alloc_workqueue("cifsiod",
-+				     WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				     0);
- 	if (!cifsiod_wq) {
- 		rc = -ENOMEM;
- 		goto out_clean_proc;
-@@ -1911,28 +1913,32 @@ init_cifs(void)
- 	}
- 
- 	cifsoplockd_wq = alloc_workqueue("cifsoplockd",
--					 WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					 WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					 0);
- 	if (!cifsoplockd_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_fileinfo_put_wq;
- 	}
- 
- 	deferredclose_wq = alloc_workqueue("deferredclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!deferredclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_cifsoplockd_wq;
- 	}
- 
- 	serverclose_wq = alloc_workqueue("serverclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					   0);
- 	if (!serverclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_deferredclose_wq;
- 	}
- 
- 	cfid_put_wq = alloc_workqueue("cfid_put_wq",
--				      WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+				      WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU,
-+				      0);
- 	if (!cfid_put_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_serverclose_wq;
-diff --git a/fs/smb/server/ksmbd_work.c b/fs/smb/server/ksmbd_work.c
-index 72b00ca6e455..4a71f46d7020 100644
---- a/fs/smb/server/ksmbd_work.c
-+++ b/fs/smb/server/ksmbd_work.c
-@@ -78,7 +78,7 @@ int ksmbd_work_pool_init(void)
- 
- int ksmbd_workqueue_init(void)
- {
--	ksmbd_wq = alloc_workqueue("ksmbd-io", 0, 0);
-+	ksmbd_wq = alloc_workqueue("ksmbd-io", WQ_PERCPU, 0);
- 	if (!ksmbd_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/smb/server/transport_rdma.c b/fs/smb/server/transport_rdma.c
-index 4998df04ab95..43b7062335fa 100644
---- a/fs/smb/server/transport_rdma.c
-+++ b/fs/smb/server/transport_rdma.c
-@@ -2198,7 +2198,8 @@ int ksmbd_rdma_init(void)
- 	 * for lack of credits
- 	 */
- 	smb_direct_wq = alloc_workqueue("ksmbd-smb_direct-wq",
--					WQ_HIGHPRI | WQ_MEM_RECLAIM, 0);
-+					WQ_HIGHPRI | WQ_MEM_RECLAIM | WQ_PERCPU,
-+					0);
- 	if (!smb_direct_wq)
- 		return -ENOMEM;
- 
-diff --git a/fs/super.c b/fs/super.c
-index 97a17f9d9023..0a9af48f30dd 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2174,7 +2174,8 @@ int sb_init_dio_done_wq(struct super_block *sb)
- {
- 	struct workqueue_struct *old;
- 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
--						      WQ_MEM_RECLAIM, 0,
-+						      WQ_MEM_RECLAIM | WQ_PERCPU,
-+						      0,
- 						      sb->s_id);
- 	if (!wq)
- 		return -ENOMEM;
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4fcad0825a12..b8f53d1cfd20 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -357,7 +357,7 @@ void __init fsverity_init_workqueue(void)
- 	 * latency on ARM64.
- 	 */
- 	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
--						  WQ_HIGHPRI,
-+						  WQ_HIGHPRI | WQ_PERCPU,
- 						  num_online_cpus());
- 	if (!fsverity_read_workqueue)
- 		panic("failed to allocate fsverity_read_queue");
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 6493bdb57351..3fecb066eeb3 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1489,8 +1489,7 @@ xlog_alloc_log(
- 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
- 
- 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
--				    WQ_HIGHPRI),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!log->l_ioend_workqueue)
- 		goto out_free_iclog;
-diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
-index d0f5b403bdbe..152032f68013 100644
---- a/fs/xfs/xfs_mru_cache.c
-+++ b/fs/xfs/xfs_mru_cache.c
-@@ -293,7 +293,8 @@ int
- xfs_mru_cache_init(void)
- {
- 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
-+			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			1);
- 	if (!xfs_mru_reap_wq)
- 		return -ENOMEM;
- 	return 0;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index b2dd0c0bf509..38584c5618f4 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -565,19 +565,19 @@ xfs_init_mount_workqueues(
- 	struct xfs_mount	*mp)
- {
- 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_buf_workqueue)
- 		goto out;
- 
- 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_unwritten_workqueue)
- 		goto out_destroy_buf;
- 
- 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			0, mp->m_super->s_id);
- 	if (!mp->m_reclaim_workqueue)
- 		goto out_destroy_unwritten;
-@@ -589,13 +589,14 @@ xfs_init_mount_workqueues(
- 		goto out_destroy_reclaim;
- 
- 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_PERCPU),
- 			1, mp->m_super->s_id);
- 	if (!mp->m_inodegc_wq)
- 		goto out_destroy_blockgc;
- 
- 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
--			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_PERCPU), 0,
-+			mp->m_super->s_id);
- 	if (!mp->m_sync_workqueue)
- 		goto out_destroy_inodegc;
- 
-@@ -2499,8 +2500,8 @@ xfs_init_workqueues(void)
- 	 * AGs in all the filesystems mounted. Hence use the default large
- 	 * max_active value for this workqueue.
- 	 */
--	xfs_alloc_wq = alloc_workqueue("xfsalloc",
--			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
-+	xfs_alloc_wq = alloc_workqueue("xfsalloc", XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE | WQ_PERCPU),
-+			0);
- 	if (!xfs_alloc_wq)
- 		return -ENOMEM;
- 
 -- 
-2.51.0
-
+Best regards,
+Jinchao
 
