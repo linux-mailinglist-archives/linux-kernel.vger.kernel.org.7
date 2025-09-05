@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-802066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA3FB44D4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ECDB44D4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4346B3B7BC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AEC55A439C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5F2773DB;
-	Fri,  5 Sep 2025 05:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DE02C15B0;
+	Fri,  5 Sep 2025 05:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P3+LLW8G"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wE39hKqd"
 Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA68274B37;
-	Fri,  5 Sep 2025 05:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCC2274B37;
+	Fri,  5 Sep 2025 05:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757049609; cv=none; b=Naacu9e+U6KhGfatKfaggIu7a+ibwk9D7Zp0lVb1AijdiH6cNiff8HNIPRwpVwC8rfLpQLkLAUEyVHU+tttLyqDfV6X+sR5NUXu+m0rOsj4C9A13C6U0p80336onvTlX7ohzEap7+9zhseYZ02YFrqecA+vLLojOWGlA+RhoB0A=
+	t=1757049615; cv=none; b=eUpFgFDCKyq726eBrsdr8b36AViT1498T95eMofyv9G2GrGOxe+8Hr8BVtIuW9PtF+7PFlJYCD0pDkdbwfNZHAcYTIx9JXeHItnIGRGGM+dXLiU5UWSUkV5A0S7wXKpvZRR/Cwj+xSjSL4xRKIhYyhNvY27AKnANCm9vIgQ3Jyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757049609; c=relaxed/simple;
-	bh=l+tvVqOCKvMmxPZG0rEZ7kAZBatLraD68JKhRHetlLM=;
+	s=arc-20240116; t=1757049615; c=relaxed/simple;
+	bh=xuCJXYTcS5uBSzEMavtuY9guXY+ssB++irhNuM52DcA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aK3k4nMlUXwsUuHRZRBye18SkhNYj3D+aQ2/HDr88PquPxivGL+pFUuTYwFNZCsRxZ66QdYa8r2Go97zEP94bcDLx4vHmX7oOE13rr/OHzCnf8hQxR8LP/SCcelULW/9gRi1B1E2gIx02srjwcv20a0GlMngYW0B3O1KANQNHlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P3+LLW8G; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=RQ3haBJa3P8eay1N3uHcE4k5NmOFmJtqubyDYI9uaoBVvW+3IbIJ2LS+ob5TCC55pMf7rKWqmlPooa3QQK6PknUrI0Hc4OfcmZZUbhJJRsL6ITMnTQGTyMyo1SHatjYu6LOrg+nHOe6sToS7mG9ldDaUi1uck8fIQ0YgGXTpcDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wE39hKqd; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855K0ji3637374;
-	Fri, 5 Sep 2025 00:20:00 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5855K5sG3637518;
+	Fri, 5 Sep 2025 00:20:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757049600;
-	bh=PhVFUXd2wHVd4WJ6eHJtIkupEd4YoON8Be6DruPRCvU=;
+	s=ti-com-17Q1; t=1757049605;
+	bh=A9fThXWyz4P9om+uWqHmLbCB5XXGZxrc4CDimZXFd7E=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=P3+LLW8GEAU7XWLoHupMh81ao/KufotZWPfUZpg+hs7RF/VRuoI/N9rdmBLB/qlmE
-	 JZLNkE0d3z5p+hAD9Qhl6WpvRXOInVvYNByKLqWOd6RoLBlyagefLQ8HwCPWmDpoBc
-	 i7GwoeyLQZakaJzqRw0QKR2c7LeJRXPq9huSV+NM=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855JxAx1405039
+	b=wE39hKqdTBliNOcMo1sZuNfcj/0DFijsgFxP0QKinUPWlpDu+qtO6io4IZBQoeP9u
+	 Rt4rFqQWUfdwJAk5tVcfAD440LAvhCM5+B1A64zMQhgwLeaNo8SPhmaMX0cIxgbBZn
+	 3+2GKFVdpvIHDLl2w3ZyRzK/DAiISoIVo/7zkLmU=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5855K57B688977
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 00:20:00 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 5 Sep 2025 00:20:05 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 00:19:59 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 00:20:05 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 00:19:59 -0500
+ Frontend Transport; Fri, 5 Sep 2025 00:20:05 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855Ioih220581;
-	Fri, 5 Sep 2025 00:19:54 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5855Ioii220581;
+	Fri, 5 Sep 2025 00:20:00 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
@@ -65,13 +65,17 @@ CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
  De Franco <hiago.franco@toradex.com>,
         Francesco Dolcini
 	<francesco.dolcini@toradex.com>,
-        Emanuele Ghidoli
-	<emanuele.ghidoli@toradex.com>,
-        Parth Pancholi <parth.pancholi@toradex.com>,
-        Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
-Subject: [PATCH v3 14/33] arm64: dts: ti: k3-am62p-verdin: Add missing cfg for TI IPC Firmware
-Date: Fri, 5 Sep 2025 10:48:27 +0530
-Message-ID: <20250905051846.1189612-15-b-padhi@ti.com>
+        Jo_o Paulo Gon_alves
+	<joao.goncalves@toradex.com>,
+        Stefan Eichenberger
+	<stefan.eichenberger@toradex.com>,
+        Max Krummenacher
+	<max.krummenacher@toradex.com>,
+        Andrejs Cainikovs
+	<andrejs.cainikovs@toradex.com>
+Subject: [PATCH v3 15/33] arm64: dts: ti: k3-am62-verdin: Add missing cfg for TI IPC Firmware
+Date: Fri, 5 Sep 2025 10:48:28 +0530
+Message-ID: <20250905051846.1189612-16-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250905051846.1189612-1-b-padhi@ti.com>
 References: <20250905051846.1189612-1-b-padhi@ti.com>
@@ -90,75 +94,91 @@ sections of the Device Manager (DM) firmware itself and is necessary for
 platform boot. Whereas the wkup_r5fss0_core0_dma_memory_region is used
 for allocating the Virtio buffers needed for IPC with the DM core which
 could be optional. The labels were incorrectly used in the
-k3-am62p-verdin.dtsi file. Correct the firmware memory region label.
+k3-am62-verdin.dtsi file. Correct the firmware memory region label.
 
-Currently, only mailbox node is enabled with FIFO assignment. However,
-there are no users of the enabled mailboxes. Add the missing carveouts
-for WKUP and MCU R5F remote processors, and enable those by associating
-to the above carveout and mailboxes. This config aligns with other AM62P
-boards and can be refactored out later.
+Currently, only mailbox node is enabled with FIFO assignment for a
+single M4F remote core. However, there are no users of the enabled
+mailboxes. Add the missing carveouts for WKUP R5F and MCU M4F remote
+processors, and enable those by associating to the above carveout and
+mailboxes. This config aligns with other AM62 boards and can be
+refactored out later.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Verdin AM62P
+Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Verdin AM62
 ---
 Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>
-Cc: Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
 Cc: Hiago De Franco <hiago.franco@toradex.com>
-Requesting for a review/test.
+Cc: Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
+Cc: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Cc: Max Krummenacher <max.krummenacher@toradex.com>
+Cc: Andrejs Cainikovs <andrejs.cainikovs@toradex.com>
+Requesting for review/test of this patch
 
 v3: Changelog:
 1. Changed carveout node names to memory@addr.
 
 Link to v2:
-https://lore.kernel.org/all/20250823160901.2177841-15-b-padhi@ti.com/
+https://lore.kernel.org/all/20250823160901.2177841-16-b-padhi@ti.com/
 
 v2: Changelog:
-1. Re-ordered patch from [PATCH 16/33] to [PATCH v2 14/33].
+1. Re-ordered patch from [PATCH 18/33] to [PATCH v2 15/33].
 2. Added T/B tag.
 
 Link to v1:
-https://lore.kernel.org/all/20250814223839.3256046-17-b-padhi@ti.com/
+https://lore.kernel.org/all/20250814223839.3256046-19-b-padhi@ti.com/
 
- arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi | 42 ++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi | 43 +++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-index 6a04b370d149..671d367b40d1 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-@@ -162,7 +162,25 @@ secure_ddr: optee@9e800000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+index cbbcb96e2e24..5ecdd833587e 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+@@ -206,7 +206,25 @@ secure_ddr: optee@9e800000 {
  			no-map;
  		};
  
--		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
-+		mcu_r5fss0_core0_dma_memory_region: memory@9b800000 {
+-		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9db00000 {
++		mcu_m4fss_dma_memory_region: memory@9cb00000 {
 +			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b800000 0x00 0x100000>;
++			reg = <0x00 0x9cb00000 0x00 0x100000>;
 +			no-map;
 +		};
 +
-+		mcu_r5fss0_core0_memory_region: memory@9b900000 {
++		mcu_m4fss_memory_region: memory@9cc00000 {
 +			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b900000 0x00 0xf00000>;
++			reg = <0x00 0x9cc00000 0x00 0xe00000>;
 +			no-map;
 +		};
 +
-+		wkup_r5fss0_core0_dma_memory_region: memory@9c800000 {
++		wkup_r5fss0_core0_dma_memory_region: memory@9da00000 {
 +			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9c800000 0x00 0x100000>;
++			reg = <0x00 0x9da00000 0x00 0x100000>;
 +			no-map;
 +		};
 +
-+		wkup_r5fss0_core0_memory_region: memory@9c900000 {
++		wkup_r5fss0_core0_memory_region: memory@9db00000 {
  			compatible = "shared-dma-pool";
- 			reg = <0x00 0x9c900000 0x00 0x01e00000>;
+ 			reg = <0x00 0x9db00000 0x00 0xc00000>;
  			no-map;
-@@ -848,6 +866,28 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
+@@ -1323,6 +1341,29 @@ mbox_m4_0: mbox-m4-0 {
+ 		ti,mbox-rx = <0 0 0>;
+ 		ti,mbox-tx = <1 0 0>;
  	};
- };
- 
++
++	mbox_r5_0: mbox-r5-0 {
++		ti,mbox-rx = <2 0 0>;
++		ti,mbox-tx = <3 0 0>;
++	};
++};
++
++&mcu_m4fss {
++	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
++	memory-region = <&mcu_m4fss_dma_memory_region>,
++			<&mcu_m4fss_memory_region>;
++	status = "okay";
++};
++
 +&wkup_r5fss0 {
 +	status = "okay";
 +};
@@ -168,22 +188,9 @@ index 6a04b370d149..671d367b40d1 100644
 +	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
 +			<&wkup_r5fss0_core0_memory_region>;
 +	status = "okay";
-+};
-+
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+	status = "okay";
-+};
-+
- &main0_alert {
- 	temperature = <95000>;
  };
+ 
+ /* Verdin CAN_1 */
 -- 
 2.34.1
 
