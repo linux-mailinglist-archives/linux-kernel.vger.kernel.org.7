@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-802581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2F2B45424
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1637AB45422
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA80D1BC6CE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28B21BC6C72
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696602C0F8A;
-	Fri,  5 Sep 2025 10:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFFA2C08A8;
+	Fri,  5 Sep 2025 10:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lLsXw72F"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aisle.com header.i=@aisle.com header.b="ialhU408"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B672BE63F;
-	Fri,  5 Sep 2025 10:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEF229CB56
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757067084; cv=none; b=avRLlnF0icqsPpwewWtueC7hhV/5xXjJQb8iXDU46xO6VmX8dhcRKl9zX8LCgTmOq+jC9ubWx8d+obNQXBNIcAUBfK5wo4W86ypBQG7nbkbF3w/REQmwWwUivXgyH7MMMsKFrdc5RTGM/+dz7J08nt8USc3xXSNDbYV8wZO6HGA=
+	t=1757067051; cv=none; b=HdVSf/7rQwMk4vKHVUTmEKWRgyLkSErQkgr9d2JLJZnqq9IcDV2+yYEqsT9m2VjxCicFG7epPV/trWWkx6MLZDHB7DgXzTIdG7WcyILJ3dr86bXu/LX2pR2juuUIV6QLjuQVNNwJjPubVB2T51aDZQjUcUYeG7Tz/VwWftfTNrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757067084; c=relaxed/simple;
-	bh=ThBn18nAS7wJ7vMOdpeb1ZxEp1+peLlkusB0r1MRcuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B1lp7pbcZMs5BSSQvNH7fqdodgIzElKELqc86l5SsWRUrnZgkpzm+AxotPP8gUXKIPcabZoSmc6IKepryXc0FXQf27v4Rtww180VHi9zXndgcVRyiSz1lDDTZU1sPTPat1jTtSSnBIOHZAIPwAgLCS4M6Lp9mQllZbbaGDfYw8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lLsXw72F; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585AAlq73690348;
-	Fri, 5 Sep 2025 05:10:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757067047;
-	bh=Pm6PWBRGwS3wo5s1g4KMnXdseJb2mzIZCAFL9ZdKaO8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lLsXw72FaEZsJs3ufzxwB2VJbL5/MMudEd8WBULnPSp9vVWBuas1kr3Q1rsclVPj5
-	 4QLyxviVKCdDue205V5jk2I4Ab00RiA40nGskneh4prg4Y2Qs53W6eKJg2++MScNSS
-	 fZUVQLl3LFNbY1Aj4oOhqeDRgisLYsygZYimMUXU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585AAlJ61569668
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 5 Sep 2025 05:10:47 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
- Sep 2025 05:10:47 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 5 Sep 2025 05:10:47 -0500
-Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585AAfTC284138;
-	Fri, 5 Sep 2025 05:10:42 -0500
-Message-ID: <3bb314a8-2ce0-4c54-bab0-e0af70bf22b9@ti.com>
-Date: Fri, 5 Sep 2025 15:40:40 +0530
+	s=arc-20240116; t=1757067051; c=relaxed/simple;
+	bh=jkTCp3P+yr42VXTfabfgzJWvbpYCF5TmBIOuVAlfHhA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VAYV110eWHeOB6iLSbvxpzUWP1u+vH+pNoiXO+Ejq8/o8YQDzfuorW/9sy9dmNqYObMbmeKfua9wftb2Lx7nTSqEv7nB/rJwUJFUyuHBbaEWfF50hNoQRIIBmft93vc4Ps7pm5MN5drs+nD4MX5EjZWnGIOS8sIPa0N75R5UPuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisle.com; spf=pass smtp.mailfrom=aisle.com; dkim=pass (2048-bit key) header.d=aisle.com header.i=@aisle.com header.b=ialhU408; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aisle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aisle.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso4011619a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 03:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=aisle.com; s=google; t=1757067048; x=1757671848; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DAnIhBQbDm9gjZjqjenS6A8LuOGC08UU7yZ4phQFyfQ=;
+        b=ialhU408DIw5ysdBqvErPllGXmUWgKO4N0yr0ZJQ3z+x+aLM/XM6TUKJNjRFwU5QpN
+         HUIAzkBZZb8VR1zvSAIWElqEHNsAOgpB8AJ/52FcyC9Bgtv1QRMd4yTqXYUi+bJ60TlV
+         zldC02jrWSFqPGObqAx/Vwx3BZAHMqzi+qLVOTRJEVpuVifhWFWNYv85DdNZSRBvqyc2
+         rUrTWqZm9DkZVXtftmQB6NuziCArBVH+agbn36y8+ypvvykXiDqV69mgyJxSjnwAbGQF
+         GBA/mlV6ltJroVaZH+8dxZ2opQYZaZwFnAbf7laNzp3k5WNtz0Ive54pIGk5+CgE+8R0
+         ZcOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757067048; x=1757671848;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DAnIhBQbDm9gjZjqjenS6A8LuOGC08UU7yZ4phQFyfQ=;
+        b=RkeGqER5Bd5gMWqkK7+0pYKkhXCQLU1V7VbEnGQBgdhLvFaI0l3Ndk9JxKlR+ksCSi
+         wp1ZvN2NpTNL1Nd1T8CIsKsC1i80gQOD7cWBp8S//DS5Iag2zTOjBNhRvxWJM4IsKvQ0
+         6aQhuMEe19yhEVR5VXBr/4CVN1gKNipO3lLXlul6R1EKh2xoXN+IWO5P75Mv3jo/UkQO
+         2KhDWaub6gYle+T4XG2bBjlvZwpQJXYcIiZd9m3TxcrtZ8r/dmWN5xHUEUmQYRlTGu30
+         Xl7GX1GyEf8sdpJH9JSrwH3bfZr6bGDNmljd5b92+g0h5IBSA1mAb8TQbT+9LAwY9xF3
+         tiqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSrnTAepaPcvMZwZmLcOIIpz5/lQhV+SKCtRmuyz1/W+wu9o8ECWLa2SFoKMnGnl7KpMwo2TkNM68meWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznUtW1ivpwZaBqhxTI3JR+aCh9Y/ymvkZkN3SeKgez+WQOe9u3
+	kijKN9M8fjdu2h23qIiyKkiJZjwYtARYU3j6KIZKq3wopS3/K7i07To0cI8423yhLWagbTXcyzj
+	VLMkn0MlHN6D3
+X-Gm-Gg: ASbGncucpCxX9yEHghxZmDFL/C6hRa5aRaEY/mJrMPaPdpF+JMLSHJzzHUELvL+bglA
+	BDKTyngRDo9xp835KXvjUtXhL+bsQARa+N+kuHntbAtHwBprzwwnOgOlM4VfjQlBy3L2EMNU0wZ
+	IFHwwc8PlH8fyvOeJptDd/hf5jYxMYPamDYoEiEUIiDcm+Xax0rVfryan0wmAzy72d27TLilZxD
+	Yj84Mq5QJpZAeFdpUDCjdCeXdp02/oA23GVpkTnWdUh/1nPLTe3Z1WECfPoVdkOCgkuq4sIsIcl
+	Eoy5h3fpFz2sDqlbr1I4HHpqpwUay+2GCisajDhxVTI7moCSvYzDs5LaN/GE9/5NHTGmPaDFF/D
+	56lT8XVTGHyc/PZAh6Jz1ihNUaC0wnTtWl4vdWWGq2bq5jA4AJo9UF5nSWA==
+X-Google-Smtp-Source: AGHT+IGp1pr9JZHYShV64sfeXi9j9BsKxp4VYxKhIH6aW6aeCKq4sV+NmvY4luz6jw3F75rB7Ogdww==
+X-Received: by 2002:a17:906:e57:b0:aff:1586:14c2 with SMTP id a640c23a62f3a-b0493086abbmr283824166b.4.1757067048302;
+        Fri, 05 Sep 2025 03:10:48 -0700 (PDT)
+Received: from localhost ([149.102.246.23])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b02152cc1b8sm1530574566b.36.2025.09.05.03.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 03:10:48 -0700 (PDT)
+From: Stanislav Fort <stanislav.fort@aisle.com>
+X-Google-Original-From: Stanislav Fort <disclosure@aisle.com>
+To: sj@kernel.org,
+	damon@lists.linux.dev
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Stanislav Fort <disclosure@aisle.com>
+Subject: [PATCH v2] mm/damon/sysfs: fix use-after-free in state_show()
+Date: Fri,  5 Sep 2025 13:10:46 +0300
+Message-Id: <20250905101046.2288-1-disclosure@aisle.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/14] media: ti: j721e-csi2rx: Remove word size
- alignment on frame width
-To: Rishikesh Donadkar <r-donadkar@ti.com>, <jai.luthra@linux.dev>,
-        <laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
-CC: <devarsht@ti.com>, <vaishnav.a@ti.com>, <s-jain1@ti.com>,
-        <vigneshr@ti.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
-        <tomi.valkeinen@ideasonboard.com>, <jai.luthra@ideasonboard.com>,
-        <changhuang.liang@starfivetech.com>, <jack.zhu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20250825142522.1826188-1-r-donadkar@ti.com>
- <20250825142522.1826188-2-r-donadkar@ti.com>
-Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <20250825142522.1826188-2-r-donadkar@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-Hi Rishikesh,
+state_show() reads kdamond->damon_ctx without holding damon_sysfs_lock.
+This allows a use-after-free race:
 
-Thanks for the patches.
+CPU 0                         CPU 1
+-----                         -----
+state_show()                  damon_sysfs_turn_damon_on()
+ctx = kdamond->damon_ctx;     mutex_lock(&damon_sysfs_lock);
+                              damon_destroy_ctx(kdamond->damon_ctx);
+                              kdamond->damon_ctx = NULL;
+                              mutex_unlock(&damon_sysfs_lock);
+damon_is_running(ctx);        /* ctx is freed */
+mutex_lock(&ctx->kdamond_lock); /* UAF */
 
-On 25/08/25 19:55, Rishikesh Donadkar wrote:
-> j721e-csi2rx driver has a limitation of frame width being a multiple
-> word size. However, there is no such limitation imposed by the
-> hardware [1].
-> 
-> Remove this limitation from the driver.
-> 
-> Link: https://www.ti.com/lit/pdf/spruj16
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
-> ---
+(The race can also occur with damon_sysfs_kdamonds_rm_dirs() and
+damon_sysfs_kdamond_release(), which free or replace the context under
+damon_sysfs_lock.)
 
-Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Fix by taking damon_sysfs_lock before dereferencing the context,
+mirroring the locking used in pid_show().
 
->   .../platform/ti/j721e-csi2rx/j721e-csi2rx.c     | 17 +++--------------
->   1 file changed, 3 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 3992f8b754b7..b3a27f4c3210 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -260,9 +260,6 @@ static void ti_csi2rx_fill_fmt(const struct ti_csi2rx_fmt *csi_fmt,
->   			     MAX_WIDTH_BYTES * 8 / csi_fmt->bpp);
->   	pix->height = clamp_t(unsigned int, pix->height, 1, MAX_HEIGHT_LINES);
->   
-> -	/* Width should be a multiple of transfer word-size */
-> -	pix->width = rounddown(pix->width, pixels_in_word);
-> -
->   	v4l2_fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
->   	pix->pixelformat = csi_fmt->fourcc;
->   	pix->bytesperline = pix->width * (csi_fmt->bpp / 8);
-> @@ -360,23 +357,15 @@ static int ti_csi2rx_enum_framesizes(struct file *file, void *fh,
->   				     struct v4l2_frmsizeenum *fsize)
->   {
->   	const struct ti_csi2rx_fmt *fmt;
-> -	unsigned int pixels_in_word;
->   
->   	fmt = find_format_by_fourcc(fsize->pixel_format);
->   	if (!fmt || fsize->index != 0)
->   		return -EINVAL;
->   
-> -	/*
-> -	 * Number of pixels in one PSI-L word. The transfer happens in multiples
-> -	 * of PSI-L word sizes.
-> -	 */
-> -	pixels_in_word = PSIL_WORD_SIZE_BYTES * 8 / fmt->bpp;
-> -
->   	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
-> -	fsize->stepwise.min_width = pixels_in_word;
-> -	fsize->stepwise.max_width = rounddown(MAX_WIDTH_BYTES * 8 / fmt->bpp,
-> -					      pixels_in_word);
-> -	fsize->stepwise.step_width = pixels_in_word;
-> +	fsize->stepwise.min_width = 1;
-> +	fsize->stepwise.max_width = MAX_WIDTH_BYTES * 8 / fmt->bpp;
-> +	fsize->stepwise.step_width = 1;
->   	fsize->stepwise.min_height = 1;
->   	fsize->stepwise.max_height = MAX_HEIGHT_LINES;
->   	fsize->stepwise.step_height = 1;
+The bug has existed since state_show() first accessed kdamond->damon_ctx.
+
+Fixes: a61ea561c871 ("mm/damon/sysfs: link DAMON for virtual address spaces monitoring")
+Reported-by: Stanislav Fort <disclosure@aisle.com>
+Closes: N/A # non-publicly reported
+Signed-off-by: Stanislav Fort <disclosure@aisle.com>
+---
+ mm/damon/sysfs.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
+index 6d2b0dab50cb..7b9254cadd5f 100644
+--- a/mm/damon/sysfs.c
++++ b/mm/damon/sysfs.c
+@@ -1260,14 +1260,18 @@ static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
+ {
+ 	struct damon_sysfs_kdamond *kdamond = container_of(kobj,
+ 			struct damon_sysfs_kdamond, kobj);
+-	struct damon_ctx *ctx = kdamond->damon_ctx;
+-	bool running;
++	struct damon_ctx *ctx;
++	bool running = false;
+ 
+-	if (!ctx)
+-		running = false;
+-	else
++	if (!mutex_trylock(&damon_sysfs_lock))
++		return -EBUSY;
++
++	ctx = kdamond->damon_ctx;
++	if (ctx)
+ 		running = damon_is_running(ctx);
+ 
++	mutex_unlock(&damon_sysfs_lock);
++
+ 	return sysfs_emit(buf, "%s\n", running ?
+ 			damon_sysfs_cmd_strs[DAMON_SYSFS_CMD_ON] :
+ 			damon_sysfs_cmd_strs[DAMON_SYSFS_CMD_OFF]);
+-- 
+2.39.3 (Apple Git-146)
 
 
