@@ -1,85 +1,370 @@
-Return-Path: <linux-kernel+bounces-803700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2562EB463DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B642FB463E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10C75C379E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70112A62608
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9D5275B0F;
-	Fri,  5 Sep 2025 19:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C7927A92D;
+	Fri,  5 Sep 2025 19:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KCj+cC0s"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B0iOfmJ7"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA341096F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05031096F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101528; cv=none; b=rPy1cCIjB7kMHreDJRyRHqSAzesg0+QWkinnX1oogTD31VYGrBd4wd94tQyYasc5+zp/XhKXncU6RLSwytBnDCGke1vS6Wuxf/JgZCoh/8EUDXmRulvzlUvfh+1yyTRNSlJugBvBYcXj9y6ejr9qlp3Erd99+cq79ovL6fSeOmY=
+	t=1757101557; cv=none; b=lL83UQigUpxRfiGzFwSbKaW/UwVLpEhAH6WxE4EnfOVXCvZmtHaCbxEP+qCir8Zaf1mjalbVWYfXljtA7bu7/yftTkoPbda1lqM0KD6HXWCEy4TgJOUfZUfBMYZGozGCs7kMsfUOOoI5lW/NZrO55JEAEw1jt4ic0bwXhsg2m7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101528; c=relaxed/simple;
-	bh=Mp7cPbd1ldUQ/LPkcr0bS/WmEXRs1oY+5Rs2q0Zqdl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0LYoT4btp5jzyi3wOLXC+3QoDrZHL2rDzvVdf1KErGsCWwFxNTBsBG1C69mrrOErQOEHcibdOhF/e5l4ow/flObMAQsnYx8l5h864IdtUytEK0YIM/d9w9cRpmvNmzThEXlcq30Z2IZTOqd84hlP0Y05UkGqFWqpax9w32ndxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KCj+cC0s; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 5 Sep 2025 19:45:12 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757101522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zThdamV/JarxGl4cUxG9WAPKrvszQh4PaJJmLAyEpBA=;
-	b=KCj+cC0slLrUOaDbX8hyEpTfYNkUVkKGyyiVnykcTf0+8NoHtIqCnpp6frMPwhlYNBgaOg
-	ogPI8nnitcTX749CWfm12X/PzGopqbDRJgjo6hOqRpBfSIVluMJIeJhdNw8TzxIqMtuQyE
-	YMNJ+mNs5YVlXcD+FaspF0MxDF8Z8ew=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] mm: remove zpool
-Message-ID: <4vpqew3bfs74kesmgd6kaafgm6nr6zbtt2t3hl2khkc6ds4zep@hllgy77hdumf>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <CAKEwX=M8ccnsOUc4_ZcFrg-8MSwDDF250=LCFKctvTrL5vJZ6g@mail.gmail.com>
+	s=arc-20240116; t=1757101557; c=relaxed/simple;
+	bh=GWjv41PMUSh+0GnLBueQAN/lr4mkZwzdenfEYc23+Ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TAYnV8dlCgwTp0jJEp91G8q8fZbJh2y4y5nEkeew2JmdMQUpgAWfcjUQ+xSEMoac+Naw2qb7380Xz4fjFwV94d68owoEOiavg8cMngSRqs+EIfzjhhpxYoZVmRZvCbGqUKeac98nGkLlOKd5lBFRk8EtU4CjxvilBfrwpczwTWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B0iOfmJ7; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30ccec928f6so1209507fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:45:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757101554; x=1757706354; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wMVeeupO7nVyHlPShS7/JEp2FA1z8twjRoXKQINqTCY=;
+        b=B0iOfmJ74p7iZJtHKc5xF0lDC3G3YOecd5do4E879d0Rjkinr9mgJFIqEaVpju2FLD
+         BoRpdxpvM121FSAzbgN2VP18IVNKB14/rAyTp396jMzExD46tD8N3kKHmm1uByTCDimH
+         zvWAdUtam04ABu7oOwjNg96mPuoeDeWt4wCIEBEy4owgg7U/pPwxWyJNJETwbumoEiO2
+         aWN1tCGujvWe6n/1xG44YlNmHMPfi0HBaJh1knFKuv17UMXmcbD6+xc7nnHCh8lthZfR
+         z4ID8NzlyLRADHvk3mhrC3WSq0O8hWBGjAnekFFTapR301ai9W6rUAaYwpUczwombnBY
+         HKvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757101554; x=1757706354;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wMVeeupO7nVyHlPShS7/JEp2FA1z8twjRoXKQINqTCY=;
+        b=Ucz/5IQootShS0H4g1vD3OztswD0/OlX6UCFdoat1ZcJmF/P8wTZdxy1LsiPCN80PA
+         lWU9Msi9W4SDrMBnAUBI3g2cWBCs8y8bxEv54rALLJaHo9q4bC6ifWpAHJm6ymu75jlj
+         ijLm5Msz52Gj9DnIY1pTSOT78QgcRMeAH6dNDSGnKWZDhQtTA99/W7DEzRE10Y8nlLXV
+         l0rOq7Evql+gA4mV+fKLLh0ztO8OygY0rXpHn8o+rhW5C3aoaI1UROPVhcFaPw8WDf6/
+         15KI6LccfxYyXb9k6OjmUy7wJ5+7jGHSO1Tc/FebkjRbDmRxhUeS6th5nGah3HPCKyRj
+         lJww==
+X-Forwarded-Encrypted: i=1; AJvYcCXrtZuOkKA94ocoXXtWHeQOWahYRaoFywUi78xFKaGOH6biGNZfFgTHH/THShIXznDG8ork1TwojM7UhKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTck1XUrh2Y1XtgJ+e1sMAIys2Kwds4hyttYOCYS0juUm4dFkA
+	xVsy0Q8USD1Mh3at+CNHbaXMku1xDYnLyyaPCHaGMxvLhKLO3Vuwmyw//in9Y2/70LCiGmInmbi
+	8RFUB
+X-Gm-Gg: ASbGnctEkiIVD5hi4Q4AB4QPZpwGuvrod3hcxOhnetYpIUn22F+obGcY/a5kc3Ra0k9
+	QKaYPESBMij4eKcFX1J1Ylsb3zkyI+MFIFZcf8gpldt7gYUitzOvCQtz/cNqaZpNttm3RvtkXmA
+	c59LvyXTsfm6W7hHvlHPj5WJfPh7/Ni3Nj6o/s/YItufTTAQqAyusQUudY+4hKI5d3WZs6zxers
+	iw1RDzod9G32SZCrBDJqcTGDUvudhCbMCfc484EYa6L/mIxiN2rN3Zvc8KvUWefBFn/etNo7ixI
+	cXJI+y4WQ17CsgxgmcFBv6VPPE2of1N00Xc4IGCgeGPEym/54/O4QurvgtfVHS83kkw4Gcp9oOE
+	hWyUEyZdF6YMOg/fvxjb19oH2dacbF7lej8o2ewtpAjuKL2QnT0AnLIuM53DhsdHzHg7CIK+DV7
+	7mFo8dPbf40/wS2O5fuw==
+X-Google-Smtp-Source: AGHT+IFbh169pik9dmu9QkSK7T9MHlBuCFpEWz92nq4qGC+TAIYCdE8K289Mo31SYJE/GyDqbaBLNQ==
+X-Received: by 2002:a05:6870:a919:b0:2d5:1232:b081 with SMTP id 586e51a60fabf-319633450fbmr13205311fac.29.1757101553907;
+        Fri, 05 Sep 2025 12:45:53 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-319b58e2312sm3954351fac.10.2025.09.05.12.45.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 12:45:53 -0700 (PDT)
+Message-ID: <fbea7d45-bf92-4f6b-a464-0f7a6f921bde@baylibre.com>
+Date: Fri, 5 Sep 2025 14:45:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKEwX=M8ccnsOUc4_ZcFrg-8MSwDDF250=LCFKctvTrL5vJZ6g@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] iio: imu: inv_icm42600: use guard() to release
+ mutexes
+To: Sean Nyekjaer <sean@geanix.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, rafael@kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250901-icm42pmreg-v3-0-ef1336246960@geanix.com>
+ <20250901-icm42pmreg-v3-5-ef1336246960@geanix.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250901-icm42pmreg-v3-5-ef1336246960@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 10:52:18AM -0700, Nhat Pham wrote:
-> On Fri, Aug 29, 2025 at 9:22 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > zpool is an indirection layer for zswap to switch between multiple
-> > allocator backends at runtime. Since 6.15, zsmalloc is the only
-> > allocator left in-tree, so there is no point in keeping zpool around.
-> >
+On 9/1/25 2:49 AM, Sean Nyekjaer wrote:
+> Replace explicit mutex_lock() and mutex_unlock() with the guard() macro
+> for cleaner and safer mutex handling.
 > 
-> Taking a step back, even if we do have needs for multiple allocators
-> for different setups, having it runtime-selectable makes no sense.
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c  | 25 +++------
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_buffer.c | 27 ++++-----
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   | 65 +++++++++-------------
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c   | 20 +++----
+>  4 files changed, 55 insertions(+), 82 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> index 48014b61ced335eb2c8549cfc2e79ccde1934308..fbed6974ef04ac003c9b7bd38f87bd77f4b55509 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+> @@ -561,11 +561,11 @@ static int inv_icm42600_accel_write_scale(struct iio_dev *indio_dev,
+>  	conf.fs = idx / 2;
+>  
+>  	pm_runtime_get_sync(dev);
+> -	mutex_lock(&st->lock);
+>  
+> -	ret = inv_icm42600_set_accel_conf(st, &conf, NULL);
+> +	scoped_guard(mutex, &st->lock) {
+> +		ret = inv_icm42600_set_accel_conf(st, &conf, NULL);
+> +	}
 
-Honestly I think we should take it a step further and make the
-compressor selection only at build/boot time and completely get rid of
-supporting having multiple pools. We'd create one pool at initilization
-and that would be it.
+Don't need braces here.
 
-I believe this will simplify things considerably, and I doubt changing
-the compressor at runtime has a valid use case beyond experimentation.
+>  
+> -	mutex_unlock(&st->lock);
+>  	pm_runtime_put_autosuspend(dev);
+>  
+>  	return ret;
 
-WDYT?
+
+...
+
+> @@ -299,7 +298,7 @@ static int inv_icm42600_buffer_postenable(struct iio_dev *indio_dev)
+>  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+>  	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	/* exit if FIFO is already on */
+>  	if (st->fifo.on) {
+> @@ -311,30 +310,29 @@ static int inv_icm42600_buffer_postenable(struct iio_dev *indio_dev)
+>  	ret = regmap_set_bits(st->map, INV_ICM42600_REG_INT_SOURCE0,
+>  			      INV_ICM42600_INT_SOURCE0_FIFO_THS_INT1_EN);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* flush FIFO data */
+>  	ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
+>  			   INV_ICM42600_SIGNAL_PATH_RESET_FIFO_FLUSH);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* set FIFO in streaming mode */
+>  	ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
+>  			   INV_ICM42600_FIFO_CONFIG_STREAM);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* workaround: first read of FIFO count after reset is always 0 */
+>  	ret = regmap_bulk_read(st->map, INV_ICM42600_REG_FIFO_COUNT, st->buffer, 2);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  out_on:
+>  	/* increase FIFO on counter */
+>  	st->fifo.on++;
+
+I would be tempted to get rid of out_on as well even if we have to repeat
+`st->fifo.on++;` in two places.
+
+> -out_unlock:
+> -	mutex_unlock(&st->lock);
+> +
+>  	return ret;
+
+Can just return 0 here and simplify if (st->fifo.on).
+
+>  }
+>  
+> @@ -343,7 +341,7 @@ static int inv_icm42600_buffer_predisable(struct iio_dev *indio_dev)
+>  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+>  	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	/* exit if there are several sensors using the FIFO */
+>  	if (st->fifo.on > 1) {
+> @@ -355,25 +353,24 @@ static int inv_icm42600_buffer_predisable(struct iio_dev *indio_dev)
+>  	ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
+>  			   INV_ICM42600_FIFO_CONFIG_BYPASS);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* flush FIFO data */
+>  	ret = regmap_write(st->map, INV_ICM42600_REG_SIGNAL_PATH_RESET,
+>  			   INV_ICM42600_SIGNAL_PATH_RESET_FIFO_FLUSH);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* disable FIFO threshold interrupt */
+>  	ret = regmap_clear_bits(st->map, INV_ICM42600_REG_INT_SOURCE0,
+>  				INV_ICM42600_INT_SOURCE0_FIFO_THS_INT1_EN);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  out_off:
+>  	/* decrease FIFO on counter */
+>  	st->fifo.on--;
+> -out_unlock:
+> -	mutex_unlock(&st->lock);
+> +
+>  	return ret;
+
+Same comments apply here.
+
+>  }
+>  
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index 4bf436c46f1cfd7e7e1bb911d94a0a566d63e791..4db8bc68075a30c59e6e358bb0b73b1e6b9175ea 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -439,18 +439,13 @@ int inv_icm42600_debugfs_reg(struct iio_dev *indio_dev, unsigned int reg,
+>  			     unsigned int writeval, unsigned int *readval)
+>  {
+>  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+> -	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	if (readval)
+> -		ret = regmap_read(st->map, reg, readval);
+> +		return regmap_read(st->map, reg, readval);
+>  	else
+
+Don't need the `else` anymore.
+
+> -		ret = regmap_write(st->map, reg, writeval);
+> -
+> -	mutex_unlock(&st->lock);
+> -
+> -	return ret;
+> +		return regmap_write(st->map, reg, writeval);
+>  }
+>  
+>  static int inv_icm42600_set_conf(struct inv_icm42600_state *st,
+> @@ -820,22 +815,23 @@ static int inv_icm42600_suspend(struct device *dev)
+>  	struct device *accel_dev;
+>  	bool wakeup;
+>  	int accel_conf;
+> -	int ret = 0;
+> +	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	st->suspended.gyro = st->conf.gyro.mode;
+>  	st->suspended.accel = st->conf.accel.mode;
+>  	st->suspended.temp = st->conf.temp_en;
+> -	if (pm_runtime_suspended(dev))
+> -		goto out_unlock;
+> +	ret = pm_runtime_suspended(dev);
+> +	if (ret)
+> +		return ret;
+
+pm_runtime_suspended() returns a bool, so this doesn't make sense.
+
+Probably should be:
+
+	if (pm_runtime_suspended(dev))
+		return 0;
+
+>  
+>  	/* disable FIFO data streaming */
+>  	if (st->fifo.on) {
+>  		ret = regmap_write(st->map, INV_ICM42600_REG_FIFO_CONFIG,
+>  				   INV_ICM42600_FIFO_CONFIG_BYPASS);
+>  		if (ret)
+> -			goto out_unlock;
+> +			return ret;
+>  	}
+>  
+>  	/* keep chip on and wake-up capable if APEX and wakeup on */
+> @@ -851,7 +847,7 @@ static int inv_icm42600_suspend(struct device *dev)
+>  		if (st->apex.wom.enable) {
+>  			ret = inv_icm42600_disable_wom(st);
+>  			if (ret)
+> -				goto out_unlock;
+> +				return ret;
+>  		}
+>  		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
+>  	}
+> @@ -859,15 +855,13 @@ static int inv_icm42600_suspend(struct device *dev)
+>  	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
+>  					 accel_conf, false, NULL);
+>  	if (ret)
+> -		goto out_unlock;
+> +		return ret;
+>  
+>  	/* disable vddio regulator if chip is sleeping */
+>  	if (!wakeup)
+>  		regulator_disable(st->vddio_supply);
+>  
+> -out_unlock:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  /*
+> @@ -881,12 +875,13 @@ static int inv_icm42600_resume(struct device *dev)
+>  	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
+>  	struct device *accel_dev;
+>  	bool wakeup;
+> -	int ret = 0;
+> +	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+> -	if (pm_runtime_suspended(dev))
+> -		goto out_unlock;
+> +	ret = pm_runtime_suspended(dev);
+> +	if (ret)
+> +		return ret;
+
+same here.
+
+>  
+>  	/* check wakeup capability */
+>  	accel_dev = &st->indio_accel->dev;
+
+...
+
+> @@ -690,13 +690,11 @@ static int inv_icm42600_gyro_hwfifo_set_watermark(struct iio_dev *indio_dev,
+>  	struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+>  	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+>  
+>  	st->fifo.watermark.gyro = val;
+>  	ret = inv_icm42600_buffer_update_watermark(st);
+
+Can return directly now.
+
+>  
+> -	mutex_unlock(&st->lock);
+> -
+>  	return ret;
+>  }
+>  
 
