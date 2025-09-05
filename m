@@ -1,79 +1,188 @@
-Return-Path: <linux-kernel+bounces-803012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08FDB45966
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:44:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4A2B45969
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72ECC16BC76
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:44:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0454A4E4530
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15144352FDC;
-	Fri,  5 Sep 2025 13:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84020352FFF;
+	Fri,  5 Sep 2025 13:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TLqoNqLR"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVIShrRC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0BB25557;
-	Fri,  5 Sep 2025 13:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98A4350D56;
+	Fri,  5 Sep 2025 13:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757079859; cv=none; b=l/TQMLEtdP6qUUBa9Ss0Ku+mZSS10xcPQh5hg+0RT2q0THnUfjVJqfUDUxt6pg2jbiQyPTxg6d5VUMwooRHXfWJxuCbqAac26ik3lGk/M0kQ/gtNj/4Xgmu1mzpnP95UWlVM+0rqDvI4c2BSyt5U8K4OaJO7hKPVPL9HZzT9TuA=
+	t=1757079890; cv=none; b=T4mBUfUKg0FdsybQard3nH9IP76iV7fv/TDh1Tz/beNS2lApT6HNI8ZUTdU/UX5LYW/0uZMDh6SZVOgRgX0fbWKoxr2c3rjYKZSF5i8OgofIcxuX4nC5gfIW/gWOiRN5aCD8M/PjFt6Zc4zHTqH93hRnr3b3i56q6Ax8uZqWmME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757079859; c=relaxed/simple;
-	bh=7jO5M4dxRxab8w3goordHgPq1t2aDB/9tElwXjDmNRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6jXq1MpQqMEzEJprwBgfuPyifErPMelNA6IL0zZrD7dyRcjPhjuxKeRawyg3v15iw7Mc3ZgtHnkfM3b3pDcyUtxMxsIuFpeOqgtu52LZtVrPjCOhbj882PoyTXGsvIst5ewTb8yl2/XiN+LVz9kzX2ZXiZIFxv2joM4hi+I5Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TLqoNqLR; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1WKz+CUCVTpXCW4x1MmW4FRgp0BslUwCgj8AnFSebyM=; b=TLqoNqLRMQ/rFC1uxV/EPhacWn
-	ysO0xj0Sc/1iHqPKULu1SojBXgNBQNSCXdxLBXQEzsUKJlW/VeTCEzaHh2SIjp4oKWZDj7cwGFCR1
-	0VarXi5eP/sS7vaCJmEcTpkZJKiwSKNp3HTzmP+Rcgy7ZF7MCmEWt/XzfEWez3uy4dDOSTWrngBlS
-	IVuafdZGVOmK4D5V35MZR8k/WaHBbffMV30fFfSeTE1wFUDJY3T5/8EoZ4W8j00+IK1cgBULjBvyP
-	/Hqbz2gp8QeP9rbk5hT/KaKf9x9PjbupII1TpogirvXbWMLM9c7d9H8wv6Dg2jkRd7IQYuwh+Z3Pp
-	G47XZQTw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuWja-00000004b29-2bpx;
-	Fri, 05 Sep 2025 13:44:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1FCAD3001D4; Fri, 05 Sep 2025 15:44:09 +0200 (CEST)
-Date: Fri, 5 Sep 2025 15:44:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v2 5/7] arm64/efi: Use a semaphore to protect the EFI
- stack and FP/SIMD state
-Message-ID: <20250905134409.GD4067720@noisy.programming.kicks-ass.net>
-References: <20250905133035.275517-9-ardb+git@google.com>
- <20250905133035.275517-14-ardb+git@google.com>
+	s=arc-20240116; t=1757079890; c=relaxed/simple;
+	bh=MO/H6RoJQwVx0rcd9VosdsqoSJCVLIh+OTCyOC4yNF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V/8J0PvZrSXiBLADAYTCSFMHQJ3+zZIkMsfcqkFVDsSd+Sa6e6r/TpE1hCrzw1jqFtFj4/+GijovOz05YZCJqZDDo8PzAI1Q6INfd7uXmHXwiPkCaUshMcIITYK9OkAYv9HBs/f++wJ65w3vbvSuUBhOAGA3MI/RDlZOKjQoHZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVIShrRC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830A1C4CEF1;
+	Fri,  5 Sep 2025 13:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757079890;
+	bh=MO/H6RoJQwVx0rcd9VosdsqoSJCVLIh+OTCyOC4yNF8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tVIShrRCjTgQhefAZ9nH4dNzLg+Oa9YoRK3fGtifwoVeSwVIWuasOhXPJSRiLGPuN
+	 /z1Q/waEoo/+6eeWx60Y827WkNpGPjPxhuyTZy9leqjgEhWsEdpUHLk+y7mv5060w0
+	 bMeqA+KLQYU9Bx+8pnx9li7i7gowCdhBFe+8l5OEHZf/F2jyruD4SWFzzXj2ZV0Q3q
+	 0qcbJoyJbnZbEvyE+/oIvImHjlzSOVGvlykoher8e6PX8Uurbt8bdS6tz7AX4vZCvL
+	 Cj2mLoJwzHypMS+6rbFddq71LJT1esaJLg8x+W0lrgGIqCmua8W0j+6KufXaL9ydjW
+	 Igh+TItoTW7uQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Lukasz Luba <lukasz.luba@arm.com>, LKML <linux-kernel@vger.kernel.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Kenneth R. Crudup" <kenny@panix.com>
+Subject:
+ [PATCH v1] PM: EM: Add function for registering a PD without capacity update
+Date: Fri, 05 Sep 2025 15:44:45 +0200
+Message-ID: <5939134.DvuYhMxLoT@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905133035.275517-14-ardb+git@google.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 03:30:41PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Replace the spinlock in the arm64 glue code with a semaphore, so that
-> the CPU can preempted while running the EFI runtime service.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Gotta ask, why a semaphore and not a mutex?
+The intel_pstate driver manages CPU capacity changes itself and it does
+not need an update of the capacity of all CPUs in the system to be
+carried out after registering a PD.
+
+Moreover, in some configurations (for instance, an SMT-capable
+hybrid x86 system booted with nosmt in the kernel command line) the
+em_check_capacity_update() call at the end of em_dev_register_perf_domain()
+always fails and reschedules itself to run once again in 1 s, so
+effectively it runs in vain every 1 s forever.
+
+To address this, introduce a new variant of em_dev_register_perf_domain(),
+called em_dev_register_pd_no_update(), that does not invoke
+em_check_capacity_update(), and make intel_pstate use it instead of the
+original.
+
+Fixes: 7b010f9b9061 ("cpufreq: intel_pstate: EAS support for hybrid platforms")
+Link: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f72b8144d@panix.com/
+Reported-by: Kenneth R. Crudup <kenny@panix.com>
+Tested-by: Kenneth R. Crudup <kenny@panix.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: 6.16+ <stable@vger.kernel.org> # 6.16+
+---
+
+Normally, I would place the definition of em_dev_register_pd_no_update()
+before the definition of em_dev_register_perf_domain() which called it,
+but in this particular case that would cause the real change to be much
+harder to grasp.
+
+---
+ drivers/cpufreq/intel_pstate.c |    4 ++--
+ include/linux/energy_model.h   |   10 ++++++++++
+ kernel/power/energy_model.c    |   29 +++++++++++++++++++++++++----
+ 3 files changed, 37 insertions(+), 6 deletions(-)
+
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -1034,8 +1034,8 @@ static bool hybrid_register_perf_domain(
+ 	if (!cpu_dev)
+ 		return false;
+ 
+-	if (em_dev_register_perf_domain(cpu_dev, HYBRID_EM_STATE_COUNT, &cb,
+-					cpumask_of(cpu), false))
++	if (em_dev_register_pd_no_update(cpu_dev, HYBRID_EM_STATE_COUNT, &cb,
++					 cpumask_of(cpu), false))
+ 		return false;
+ 
+ 	cpudata->pd_registered = true;
+--- a/include/linux/energy_model.h
++++ b/include/linux/energy_model.h
+@@ -171,6 +171,9 @@ int em_dev_update_perf_domain(struct dev
+ int em_dev_register_perf_domain(struct device *dev, unsigned int nr_states,
+ 				const struct em_data_callback *cb,
+ 				const cpumask_t *cpus, bool microwatts);
++int em_dev_register_pd_no_update(struct device *dev, unsigned int nr_states,
++				 const struct em_data_callback *cb,
++				 const cpumask_t *cpus, bool microwatts);
+ void em_dev_unregister_perf_domain(struct device *dev);
+ struct em_perf_table *em_table_alloc(struct em_perf_domain *pd);
+ void em_table_free(struct em_perf_table *table);
+@@ -350,6 +353,13 @@ int em_dev_register_perf_domain(struct d
+ {
+ 	return -EINVAL;
+ }
++static inline
++int em_dev_register_pd_no_update(struct device *dev, unsigned int nr_states,
++				 const struct em_data_callback *cb,
++				 const cpumask_t *cpus, bool microwatts)
++{
++	return -EINVAL;
++}
+ static inline void em_dev_unregister_perf_domain(struct device *dev)
+ {
+ }
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -553,6 +553,30 @@ int em_dev_register_perf_domain(struct d
+ 				const struct em_data_callback *cb,
+ 				const cpumask_t *cpus, bool microwatts)
+ {
++	int ret = em_dev_register_pd_no_update(dev, nr_states, cb, cpus, microwatts);
++
++	if (_is_cpu_device(dev))
++		em_check_capacity_update();
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(em_dev_register_perf_domain);
++
++/**
++ * em_dev_register_pd_no_update() - Register a perf domain for a device
++ * @dev : Device to register the PD for
++ * @nr_states : Number of performance states in the new PD
++ * @cb : Callback functions for populating the energy model
++ * @cpus : CPUs to include in the new PD (mandatory if @dev is a CPU device)
++ * @microwatts : Whether or not the power values in the EM will be in uW
++ *
++ * Like em_dev_register_perf_domain(), but does not trigger a CPU capacity
++ * update after registering the PD, even if @dev is a CPU device.
++ */
++int em_dev_register_pd_no_update(struct device *dev, unsigned int nr_states,
++				 const struct em_data_callback *cb,
++				 const cpumask_t *cpus, bool microwatts)
++{
+ 	struct em_perf_table *em_table;
+ 	unsigned long cap, prev_cap = 0;
+ 	unsigned long flags = 0;
+@@ -636,12 +660,9 @@ int em_dev_register_perf_domain(struct d
+ unlock:
+ 	mutex_unlock(&em_pd_mutex);
+ 
+-	if (_is_cpu_device(dev))
+-		em_check_capacity_update();
+-
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(em_dev_register_perf_domain);
++EXPORT_SYMBOL_GPL(em_dev_register_pd_no_update);
+ 
+ /**
+  * em_dev_unregister_perf_domain() - Unregister Energy Model (EM) for a device
+
+
+
 
