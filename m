@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-802193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33575B44EAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74ECFB44EAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AE15A3751
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CA61C266A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CCC221577;
-	Fri,  5 Sep 2025 07:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8FB2D837E;
+	Fri,  5 Sep 2025 07:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cru9ELLZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ti5XDrz5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6cma45P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mhTlUizg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O1UCHN8W"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA95C32F76C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027CE2D4801
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 07:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757055815; cv=none; b=RzXBmEjFWu1R9gPO2dmBIB1hhViS7ZfrcNF/0QZtzDdIPQJeuMfYzbOruBAqIFxwaFpyvzdNmuAFr4CNrNvU23uplK6M+8XHayMz+m8pOYWDIm7QmzyIIT4AhSFNsxZHOKxNtnb4BR7pZ+8Xdy069OwjdPtjqRlPlrGF4lJzV9I=
+	t=1757055836; cv=none; b=DqSp9GY5IcjM5BJvMHn4i9UJW9hzWZ7YbwpsGG3uqsPeZpF7XI7Jb4ptijxjHJiQ5EMZAMLoD0x2nDpu1zPBaAAWJ9P3cM35TIIkXzLVQI7qkXmwfN75YkmW8zxF2A+5wfKuhDEHkSekCJF084RVJI6tPy3++QLiwyqhP4n0Gb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757055815; c=relaxed/simple;
-	bh=RT+r6hlMHArgqbMrlIInfNBfGoODjIChhrDxB+D54Mw=;
+	s=arc-20240116; t=1757055836; c=relaxed/simple;
+	bh=VM0nKVBbJC3EXcL+2r1nh5KaJBUzAyVK/5lsmjwQ2TI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=px5kPHbj/MMeWcXR45Qy85HidjiKlBB42rZGgXsvPRE3VsiJFig59rqf0GagyZ0OPYf3r8e3rx08cfaKJ6UjM/VPOMViyQJVXWT9vhV3ajjCDtLKkAm1Hgf+MnIv1JN8ezWuz3R/QhJruFJz0IlOkyvOc9tAw58WmXPy4qAOrPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cru9ELLZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ti5XDrz5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6cma45P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mhTlUizg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E41FB77546;
-	Fri,  5 Sep 2025 07:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757055811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jDNWK+o1y/YS0I0en7giH/VTc//fJxSmKllevpf87QM=;
-	b=cru9ELLZ7vFm1hK3pc3dq8HZYa0y6Zy/Wsqk4YcYCOuMwAz7MXpVltRmJX6arKSKyUo80G
-	cPPBjGFZS9pm+kPG92CWTodhyJzUt5uqU1Dx2pqeOh+HdeOxWX/8NYZERUUj6V2rF10Cw6
-	YaD+CedpZC3VWEtQHW4GWFC5I/Pg2dY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757055811;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jDNWK+o1y/YS0I0en7giH/VTc//fJxSmKllevpf87QM=;
-	b=Ti5XDrz5bE95df90H7aDmTBCfiR2MYC/p616nHahMw2v4zfdc7UuhzdzvOIaE9nCZNIU/E
-	cesRJLZqhy3/kRCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=H6cma45P;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mhTlUizg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757055810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jDNWK+o1y/YS0I0en7giH/VTc//fJxSmKllevpf87QM=;
-	b=H6cma45Pko6dHyuctdaUcpBLRePQTjTqD+usWr+0LEENBjgNz4qLgJEA7Ea9uJ1YmEYJ7g
-	TLft15KRHmCvFFlSCjx5Fu92iHcJrCR3oMRvcZSXY6UMfj5krgDWosul4O2x1IbXfaLwXd
-	IkOg7RAPCLof/Hr+oi2MzoRKQLx91rM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757055810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jDNWK+o1y/YS0I0en7giH/VTc//fJxSmKllevpf87QM=;
-	b=mhTlUizgM90FEVoygwbWmbCkbgC46Y6adCQELffj6rkoDztQg9KC2UAvRnkdTlFFBnCEAo
-	92k0WMQK4TdS1LCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D0245139B9;
-	Fri,  5 Sep 2025 07:03:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cvEQMUKLumiPfwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 05 Sep 2025 07:03:30 +0000
-Message-ID: <b371c436-1af9-41f1-811f-0425bcc468d3@suse.cz>
-Date: Fri, 5 Sep 2025 09:03:30 +0200
+	 In-Reply-To:Content-Type; b=K7sUI+8VZNqC1Ywj8rLje9KtRwOKtvGnIvHQyOHRhPEl0bzYOm1ze5rAxzMFsQii+zib66G/Fq3Ush6mUMHhPABdI/W5WJBmBKdQrjWZNjQkmciO6BKskhLVqhKFehqn9vhzom4Qt3xAbNjAC5kiRF2o6nlldiOFbnGT/6rsIx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O1UCHN8W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856hnqh022174
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 07:03:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Uh0zHPqensMvXDsKJ/9Mhe+pmsC/EijM0tWsWvi8kEQ=; b=O1UCHN8WC97vjYZZ
+	HQDZWIFmZIQ4qKqGMXT5X6HeLjpiPQPpx5JctW96J4S4dEenQjD/UXfLN6gaBOAO
+	8gkxhFeptvAr0AWXVActyILCKrNApNne09l4WZWh7n1hbWoHLRuSfaV54jvmHNjS
+	nrp7MeNseUepje+n/GuywGdDlYSahWdn4CC8EAkFdBtJIBMHe98Po9JPS2NdQjLY
+	9oxW+WGXgIJNOAPelHTFWUWxUoNNANnMmYxvyH+oJHGzvjE5O4JD+dx7/YNxtXIS
+	cFCWyGEKilV4X3TAArof6gNI5lhNzYgVlPkuXXMkJmqJrTKVeflcSkaj/b87+fX2
+	Hvkk8Q==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk9a1th-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:03:54 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b31bea5896so21386051cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:03:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757055833; x=1757660633;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uh0zHPqensMvXDsKJ/9Mhe+pmsC/EijM0tWsWvi8kEQ=;
+        b=OI+8usZi00z8E7ZzwTfPDOqzEwiTuPWMl6sCFjUOAMgDezvC6cr6FTzcY3bbxWIMK4
+         Xv2zZfGc7G5JR37i1EOUhd5IOJ4Wagr61pGOzs6+Xh2R5KbTNt1WwcHOdw5qXVZuRiA7
+         DemE2vG1vwM706Ee7ZHEbPA0O3CvAD2bgzzQn/wFTuJ5xMZPug43lZ2j8Q1VXb0RC/Xj
+         bLTuq2v9uTrddyyn5GC8P84N52TMPMFkpS23REaINgJfQ07s09bQK+EBacLetgifUMM7
+         EggVER8RSnkHlOud0Vypd6CNuziPMnCCRH3I5ftHWWiCIYUz7JIziXddyS34Krd7EMUb
+         sw6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXoLkHbdGNAvwbqbf+dQBRhT650sOqM9zWFv8qMRgfy3klnFVYTF6322gTXKiJat9qMVbeggDO97jqdOJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywes4Y70rrBe2Jr1rfkVzybaOICIceCly4pKGVAEGznnuhucHvv
+	/CI2CJRTvhIRKVVR7Mt1zyIKBQo+nzTcCUOBBhIlAbT4pkmjQCNQZ8OlHOYTzSmUUsFIA/BHz49
+	s4SOOjVZOXvAVLfUFvALLqeLsZetXGG4wqfbIeNlsWVCUGoj+dGTykB9ubGC4RWx1KNk=
+X-Gm-Gg: ASbGncuRmv2mgwjy6gRmB9imx2uHhI1ss2wysLncFUGv3FOQDY4tLbUkwk4PlFsBuPZ
+	fTYDdOlp86p5iOQO2LHLa3bq5uWRyjIzyeogKcVVCH4K2jvsH4zWEtTcAhaEC3DEigZ2w+dRjeB
+	5rx+80rxKnvCgs8hav8UiKnCforF6ai60AImD9nrpdg3mRym6h7OH4iYhpDOmnuneFaBpEexkAW
+	gD7DImoUzigHw2AlS07tH86fUrcZCVA5ZzSPwTSSn+iW313o7JJak7bpOo6IUPEZIkxEfPPOmRn
+	SHFTICgowjRlAGybTiZXzcvuad0OV6QGAfVD08G9u+lRozYGHbouC5fSL+dtOt6uiyw=
+X-Received: by 2002:a05:622a:8ca:b0:4b3:4fdb:f2a4 with SMTP id d75a77b69052e-4b34feb3e21mr151706411cf.73.1757055831879;
+        Fri, 05 Sep 2025 00:03:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHG2WGOBevUmbvF6L6SlA1g/1cS0fHSL6yPVxAnOVTWc4dOXAnkfXOBDdkJYebg/JKqxCflAg==
+X-Received: by 2002:a05:622a:8ca:b0:4b3:4fdb:f2a4 with SMTP id d75a77b69052e-4b34feb3e21mr151706061cf.73.1757055831200;
+        Fri, 05 Sep 2025 00:03:51 -0700 (PDT)
+Received: from [192.168.68.119] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b8f2d3c88sm183965295e9.19.2025.09.05.00.03.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 00:03:50 -0700 (PDT)
+Message-ID: <f6a631bb-d17d-4eba-adfc-4db08540f5a0@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 08:03:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,110 +88,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: remove zpool
+Subject: Re: [PATCH v2 2/8] ASoC: codecs: wcd: add common helper for wcd
+ codecs
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        lgirdwood@gmail.com, linux-sound@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, neil.armstrong@linaro.org
+References: <20250822104927.2621866-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250822104927.2621866-3-srinivas.kandagatla@oss.qualcomm.com>
+ <kmm4e5bg7uehmlsgrfhzo4agr6ga6d5gxtpxq5sg4t3wql5p6m@llwyz4kzsj7y>
 Content-Language: en-US
-To: Vitaly Wool <vitaly.wool@konsulko.se>, hannes@cmpxchg.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
- <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+In-Reply-To: <kmm4e5bg7uehmlsgrfhzo4agr6ga6d5gxtpxq5sg4t3wql5p6m@llwyz4kzsj7y>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E41FB77546
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,cmpxchg.org:email];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+X-Proofpoint-GUID: QZG0NI7K-N3wTH98L9wOhvn6hipsj20M
+X-Proofpoint-ORIG-GUID: QZG0NI7K-N3wTH98L9wOhvn6hipsj20M
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68ba8b5a cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Jf94gfbLdGj3VxC-8ggA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX7HuicEVJDENg
+ vHOUZYpImy/62i4Aj8eID1WeOTjbIHQgaNy757BsvCbL/BS9hlld60nVkrBx1dQdHJmS6SHY4vD
+ CDd+94lZS2lR79cKHHTcmyKGlSWInirOGODZdxD7yE7Dpx71K4MYfIuSMar+igyMHdqTV1G2ex2
+ H8/ci4cjX1Q9aBRN/oiyl0iQGBwPBlEfXPb+U4TaAe00dUJCUjryCxIjU0F7xFCsvuL3H+bayYL
+ 5opg/CtLKBxo+7FV3JanFFBzGFHX9ghn3r7KRPWAC9ypoeiBa3qJ2mHF1FUj3XRE14JqXp1FW7C
+ HJRCBe7yjAR/VwjF2UaqcUQqDDNA9djL2L9vFOOnFwttpmANL0c8OsV2pQomzQ/S8byhZIH34M4
+ G2HRjtkk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-On 9/4/25 16:11, Vitaly Wool wrote:
-> On 9/4/25 12:13, Vlastimil Babka wrote:
->> On 9/4/25 11:33, Vitaly Wool wrote:
->>>> With zswap using zsmalloc directly, there are no more in-tree users of
->>>> this code. Remove it.
->>>>
->>>> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
->>>
+Sorry for some reason I did not notice this email!.
+
+On 8/22/25 12:18 PM, Dmitry Baryshkov wrote:
+>> + */
+>> +
+>> +#ifndef __WCD_COMMON_H__
+>> +#define __WCD_COMMON_H___
+>> +
+>> +#define WCD_MIN_MICBIAS_MV	1000
+>> +#define WCD_DEF_MICBIAS_MV	1800
+>> +#define WCD_MAX_MICBIAS_MV	2850
+> These do not belong to a public header.
+
+
+All the wcd codecs have same MICBIAS circuitry, this is the internal
+micbias circuit we are talking about here.
+
+Actual micbias value comes from device tree, but these are min/max
+ranges that are supported by all WCD codecs.
+
+Why do you think it should not be part of common header?
+
+--srini
 > 
-> Things keep changing, and some of the proven solutions may not be a good 
-> fit moving forward. While not suggesting that we should have a handful 
-> of zpool backends just for the sake of variety, I'd like to emphasize 
-> that there are good reasons to have zblock (especially the Rust one), 
-> and there are good reasons to keep zsmalloc. That leads to the 
-> conclusion that zpool should stay.
+>> +#define WCD_MAX_MICBIAS		4
+>> +
+>> +struct wcd_common {
+>> +	struct device *dev;
+>> +	int max_bias;
+>> +	u32 micb_mv[WCD_MAX_MICBIAS];
+>> +	u32 micb_vout[WCD_MAX_MICBIAS];
+>> +};
+>> +
+>> +int wcd_get_micb_vout_ctl_val(struct device *dev, u32 micb_mv);
+>> +int wcd_dt_parse_micbias_info(struct wcd_common *common);
+>> +
+>> +#endif /* __WCD_COMMON_H___  */
 
-Johannes already suggested it's possible to do that by reimplementing
-zsmalloc APIs without the runtime switch layer and choosing at config time.
-It would also mean zram would be able to switch.
-
-Your argument was "zpool API is neutral and well-defined" but we don't
-really care about API/KABI/etc stability inside the kernel:
-Documentation/process/stable-api-nonsense.rst
-So that's not a sufficient argument.
 
