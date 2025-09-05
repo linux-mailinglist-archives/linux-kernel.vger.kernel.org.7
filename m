@@ -1,256 +1,108 @@
-Return-Path: <linux-kernel+bounces-801997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811A3B44C9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9462CB44CA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4542D58000B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612DF1C27671
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5B5221265;
-	Fri,  5 Sep 2025 04:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A93326B2D2;
+	Fri,  5 Sep 2025 04:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l7cQTifw"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="NZElVJmd"
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F94BCA5A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757045523; cv=none; b=mz3m6qqmhsOjOHCNYCKHnZvtFj3nsHhnuNcFXCyFOZW5MBTnUh2z/T77QXuHlsJf/lZLUco3E8uY6pVaxPwCLRTBqL/NFBN7l4a+ruA262xXgI0OGu7PzsdeRFBXs/JwZA4wRkbSri7dq7+ft/qYzpO4+JeqTeM5TQ4qnNqpjkA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757045523; c=relaxed/simple;
-	bh=GzadoSFoHf9ktPEx0Sr+SSQSuPfeH8BntcvB+4d6yPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwyxAGFF7VxMYQ7RRKV3DRTSNFs0wUV48iQdyuooD/hM0VIfshshV1jRRbvaseAE5rKyFv8YZspW9AgDt1kdvvzHJojSw4Z2RFlTXVuNcLg21qYglPgtekDp8XgjxfpUN1mjwIQN4Axh1l/Q878JQxmSa1uNfG37zAb4pa0htM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l7cQTifw; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f92d60ddso15619561fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 21:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757045519; x=1757650319; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B01bmRXAH2QxWeqvPvWQshPIhSklJV5XtS7pyRMi7sU=;
-        b=l7cQTifwxjqS/Xi9q2iEcfedDQqgxZKIgy+zW1UQOi1JbBvTpMTG0jIxdKn5mI476l
-         0lSKDpkh+kGoXPMHwW5llWOWPkyCKs0oh/Aut+Q5AYmzCWs6JswvJcjHyCXPiyGTQO6Y
-         CcFe5ENXN855ojWzAnn6AiO29dLqZD8n6+X6o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757045519; x=1757650319;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B01bmRXAH2QxWeqvPvWQshPIhSklJV5XtS7pyRMi7sU=;
-        b=ZwSCShJ3ClvwP5KjlJ5jy4ekCAWYaK8fjYeWzFnl5LInfB2QSpI+rAb8Q2OwilGe+0
-         rZlxgOlYby3h5dj7EiAHAAFW58S444M2f6tgMd5DHBP9wkEAKoQTPoNSPCjTkFGc0/TW
-         KECKDCDJcC6OZDbRF/9iVRjojFzZlSwi2YO/5FP2giykRhJ5EbfpJWir54Pqqp7bQEHE
-         YAYeqH+3O6OCxfgaeWK8voFwQWs6vrOm2hbMvAWL/ZqoHXaGfAeOTnMtJ+fGCWqptjLl
-         SfzZEH9jAU7o1WLQYT66BWWwYWTFdIU7chHHivTCLYaZSK3WaJ8HJ6q7d6gEU+DcOPJp
-         uxKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWahRAbrHXk70vccI36v/RhdvI4T/LZHulcZY2R+1oe5qTV6rzsMa4uzXXXydyYt9BlPvpFlAXFGYl2SCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc7judr9eS26vyrLOCl6bISCSaYEJawGrSNuTRRuYCWJltD1Qr
-	+wNisgKT6mF94hbc/cII2r96iW/o9N2XuTODl9JYSv9SR4XqK+q4oaaNzVblfwDhOWDEQd211Qr
-	lv3t5MxjOiBNqTqba4aB8UX9lmqn+FQ27hIIzHs+/
-X-Gm-Gg: ASbGncvOltWEpbiwcMfO3pCYeDWP9Ppy8veB/IOWmjR1rOk5R9pab79i7HFej7AV0Au
-	QN/GS+S4fv5vYydB0MG2cTfNpZ32IaunA/2kKldGszIaDhB7YK5gJDgnfDMTNKzwlY79r9TwgKV
-	YVM5Nlhi9Ny7psU2BCLO8tTrYn16ymuvJY7noxXdi6CvdBqfumFHdCI9oDmWcXIAgoNFxzg0b5q
-	T3EUGVfWbLo2prG1mthsnTC3mA0c88u7juQSw==
-X-Google-Smtp-Source: AGHT+IHYbfT4YDZymjaehpt2dXCn45+LCQHpybmvo8P6U3yHsdZLz6BM1N5npkfa7ulF9V213ctJPW+ye/twek7OL9E=
-X-Received: by 2002:a2e:b88e:0:b0:336:831d:9e00 with SMTP id
- 38308e7fff4ca-336caafcd05mr54910501fa.25.1757045519418; Thu, 04 Sep 2025
- 21:11:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EA5258ED7;
+	Fri,  5 Sep 2025 04:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757045590; cv=pass; b=NOfAA6d71ASU2SdE4q5xpP1tZqIIw5jOpa1zL+lCMPWpPo7TyecD/AJ3hhNjKaWxqKsv739ChnHFjaPdPjEl8qY8jJHAQvFgBeto+E2VdmQBb023MQgl4khldqKYDTZ8l/g76IRQ9UWqKr4pNR6opS2XXcfzyayr5VlrcwbkYlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757045590; c=relaxed/simple;
+	bh=8+kKazWjIzpOs5Dolw2JwxTR50n4ZUL4PclLiZ60jic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yoh3O3A9Zv86/OWr6EeOQcfNHCdZPKpXlFjKwL0gH6oJjtcXDe2FqMehROFE3vEO8ouKBRrhpRRB3R/0Yjp37XaPtKYcLpnA36Uw1oknaOTi+KIt1N8zpTad2wG+Wf9FYZKc6gRPrnYP4GMwOl+he/YvBoG/8iTcU7nJXJJWZ9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=NZElVJmd; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757045567; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gM/Sls9VZ5T1dHf2Z1rAFKT1cspPYL35GR25pDh+8laJ42bY7UJ1J05cWvEL48knRhFcHTIfoD/96gWesM7VQZLXnM4lUgvXtq1bklTf+exzJkqZxW5jQUepiPZ1/NJQvincmXcjAhWsDPsZ9WRD9+DliciSKoTO6ymCUPwH1No=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757045567; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6j8WVHUzpjmtLTPxg0zlXLMcBS5g1yEiQQDtA+CKY3s=; 
+	b=jVma1J2O5vrPhl0q1pbGJGQpMoWcV1sL9LwMP7Y+OEf0ftbvLfOnPn4+3M4HA+p5gg672FKY3GZoHAXHKe8WEG8w8iicdYDzIRwTWb7o9UnSNiDiCnrqKc9xMfFF1WtcvJqFUOW/ao+/5e7aXBfXk+4CxDase0pL/Ks7hSsuwac=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757045567;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=6j8WVHUzpjmtLTPxg0zlXLMcBS5g1yEiQQDtA+CKY3s=;
+	b=NZElVJmd0ndkhsNVJtUQSDK85slBkQPcXeL78AZDCE62ojFznh07Twt7hjZab9f6
+	iQjgHMOQIuxN3OPiIOs5x54Tusq6aWAOouc6ZqLRm+N6u+nxmW9agI4Ta6vnGv7tNBR
+	S5gSlBFdCWuWWQyRLuIyAPlCUsT1QHJbng9fPNyw=
+Received: by mx.zohomail.com with SMTPS id 1757045559172945.1322496024884;
+	Thu, 4 Sep 2025 21:12:39 -0700 (PDT)
+Message-ID: <c0775df8-f959-4c70-9f06-bfa22dd27d54@zohomail.com>
+Date: Fri, 5 Sep 2025 12:12:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-6-laura.nao@collabora.com>
-In-Reply-To: <20250829091913.131528-6-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 5 Sep 2025 12:11:48 +0800
-X-Gm-Features: Ac12FXxJqW2o_w5uvmk3WVayIoiyKNEplrPyOCeaEvIjyu6tO3A5A0cEjAtjJqA
-Message-ID: <CAGXv+5HaKD_2oUnYkRX+AswFre__ZKah27=+c-RH_W_J5Gio3A@mail.gmail.com>
-Subject: Re: [PATCH v5 05/27] clk: mediatek: clk-mux: Add ops for mux gates
- with HW voter and FENC
-To: Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, guangjie.song@mediatek.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	kernel@collabora.com, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/3] clk: canaan: Add clock driver for Canaan K230
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Conor Dooley <conor@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com>
+ <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20250905-b4-k230-clk-v8-2-96caa02d5428@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112276c7d67b73e77bdc8490d709c0000502e5d5094ca03801f33702c9bd07a306ca3328e5fa12003bc:zu080112277d54128bb0a004aa7d227705000049afec9605f2514ce51188b05b1ed005e393bf07381131e24f:rf0801122cd74f153e3036c567b85a7cd7000082ae154bd1fb4dfc1866f22e5df40d10ed18265ec4bb620f84aae37cb6ed:ZohoMail
+X-ZohoMailClient: External
 
-On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
+Hi Stephen Boyd,
+
+Is the driver in this series satisfactory to you?
+
+If you have any concerns or suggestions, I would appreciate your
+feedback.Otherwise, I would like to know if it is ready for merging.
+
+Thank you for your time and consideration.
+
+On 2025/9/5 11:10, Xukai Wang wrote:
+> This patch provides basic support for the K230 clock, which covers
+> all clocks in K230 SoC.
 >
-> MT8196 use a HW voter for mux gate enable/disable control, along with a
-> FENC status bit to check the status. Voting is performed using
-> set/clr/upd registers, with a status bit used to verify the vote state.
-> Add new set of mux gate clock operations with support for voting via
-> set/clr/upd regs and FENC status logic.
+> The clock tree of the K230 SoC consists of a 24MHZ external crystal
+> oscillator, PLLs and an external pulse input for timerX, and their
+> derived clocks.
 >
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 > ---
->  drivers/clk/mediatek/clk-mtk.h |  2 +
->  drivers/clk/mediatek/clk-mux.c | 73 +++++++++++++++++++++++++++++++++-
->  drivers/clk/mediatek/clk-mux.h | 42 +++++++++++++++++++
->  3 files changed, 116 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mt=
-k.h
-> index 11962fac43ea..c381d6a6d908 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -20,6 +20,8 @@
->
->  #define MHZ (1000 * 1000)
->
-> +#define MTK_WAIT_HWV_DONE_US   30
-> +
->  struct platform_device;
->
->  /*
-> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mu=
-x.c
-> index 3931d157b262..2c2679e158e7 100644
-> --- a/drivers/clk/mediatek/clk-mux.c
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -8,6 +8,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/compiler_types.h>
->  #include <linux/container_of.h>
-> +#include <linux/dev_printk.h>
->  #include <linux/err.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> @@ -15,6 +16,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/slab.h>
->
-> +#include "clk-mtk.h"
->  #include "clk-mux.h"
->
->  #define MTK_WAIT_FENC_DONE_US  30
-> @@ -22,6 +24,7 @@
->  struct mtk_clk_mux {
->         struct clk_hw hw;
->         struct regmap *regmap;
-> +       struct regmap *regmap_hwv;
->         const struct mtk_mux *data;
->         spinlock_t *lock;
->         bool reparent;
-> @@ -119,6 +122,41 @@ static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
->         return (val & BIT(mux->data->gate_shift)) =3D=3D 0;
->  }
->
-> +static int mtk_clk_mux_hwv_fenc_enable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> +       u32 val;
-> +       int ret;
-> +
-> +       regmap_write(mux->regmap_hwv, mux->data->hwv_set_ofs,
-> +                    BIT(mux->data->gate_shift));
-> +
-> +       ret =3D regmap_read_poll_timeout_atomic(mux->regmap_hwv, mux->dat=
-a->hwv_sta_ofs,
-> +                                             val, val & BIT(mux->data->g=
-ate_shift), 0,
-> +                                             MTK_WAIT_HWV_DONE_US);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D regmap_read_poll_timeout_atomic(mux->regmap, mux->data->f=
-enc_sta_mon_ofs,
-> +                                             val, val & BIT(mux->data->f=
-enc_shift), 1,
-> +                                             MTK_WAIT_FENC_DONE_US);
-> +
-> +       return ret;
-> +}
-> +
-> +static void mtk_clk_mux_hwv_disable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> +       u32 val;
-> +
-> +       regmap_write(mux->regmap_hwv, mux->data->hwv_clr_ofs,
-> +                    BIT(mux->data->gate_shift));
-> +
-> +       regmap_read_poll_timeout_atomic(mux->regmap_hwv, mux->data->hwv_s=
-ta_ofs,
-> +                                       val, (val & BIT(mux->data->gate_s=
-hift)),
-> +                                       0, MTK_WAIT_HWV_DONE_US);
-> +}
-> +
->  static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
->  {
->         struct mtk_clk_mux *mux =3D to_mtk_clk_mux(hw);
-> @@ -190,6 +228,14 @@ static int mtk_clk_mux_determine_rate(struct clk_hw =
-*hw,
->         return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
->  }
->
-> +static bool mtk_clk_mux_uses_hwv(const struct clk_ops *ops)
-> +{
-> +       if (ops =3D=3D &mtk_mux_gate_hwv_fenc_clr_set_upd_ops)
-> +               return true;
-> +
-> +       return false;
-> +}
-> +
->  const struct clk_ops mtk_mux_clr_set_upd_ops =3D {
->         .get_parent =3D mtk_clk_mux_get_parent,
->         .set_parent =3D mtk_clk_mux_set_parent_setclr_lock,
-> @@ -217,9 +263,20 @@ const struct clk_ops mtk_mux_gate_fenc_clr_set_upd_o=
-ps =3D {
->  };
->  EXPORT_SYMBOL_GPL(mtk_mux_gate_fenc_clr_set_upd_ops);
->
-> +const struct clk_ops mtk_mux_gate_hwv_fenc_clr_set_upd_ops =3D {
-> +       .enable =3D mtk_clk_mux_hwv_fenc_enable,
-> +       .disable =3D mtk_clk_mux_hwv_disable,
-> +       .is_enabled =3D mtk_clk_mux_fenc_is_enabled,
-> +       .get_parent =3D mtk_clk_mux_get_parent,
-> +       .set_parent =3D mtk_clk_mux_set_parent_setclr_lock,
-> +       .determine_rate =3D mtk_clk_mux_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(mtk_mux_gate_hwv_fenc_clr_set_upd_ops);
-> +
->  static struct clk_hw *mtk_clk_register_mux(struct device *dev,
->                                            const struct mtk_mux *mux,
->                                            struct regmap *regmap,
-> +                                          struct regmap *regmap_hwv,
->                                            spinlock_t *lock)
->  {
->         struct mtk_clk_mux *clk_mux;
-> @@ -235,8 +292,14 @@ static struct clk_hw *mtk_clk_register_mux(struct de=
-vice *dev,
->         init.parent_names =3D mux->parent_names;
->         init.num_parents =3D mux->num_parents;
->         init.ops =3D mux->ops;
-> +       if (mtk_clk_mux_uses_hwv(init.ops) && !regmap_hwv) {
-> +               return dev_err_ptr_probe(
-> +                       dev, -ENXIO,
-> +                       "regmap not found for hardware voter clocks\n");
-> +       }
-
-Nit: The braces aren't really needed. But no need to respin just for this.
-
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>  drivers/clk/Kconfig    |    6 +
+>  drivers/clk/Makefile   |    1 +
+>  drivers/clk/clk-k230.c | 2456 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 2463 insertions(+)
 
