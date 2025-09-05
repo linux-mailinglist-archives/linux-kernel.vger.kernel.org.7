@@ -1,166 +1,155 @@
-Return-Path: <linux-kernel+bounces-802702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB7AB455C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCA7B455C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3C75C3313
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:09:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E0035C33A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AF7342C8D;
-	Fri,  5 Sep 2025 11:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btMw55hj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0DE3431E7;
+	Fri,  5 Sep 2025 11:10:46 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A47296BB0;
-	Fri,  5 Sep 2025 11:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C5C29DB6E;
+	Fri,  5 Sep 2025 11:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070582; cv=none; b=OUqnLq+1KfiH3nLjZ5dvwVQw7DB32ibNrKNWWdreKZ1Un42tiasuHGqNfG2ifdMgJaTyJNm3m9ULrsNHdX19bPvSdLe7/rNykbwIhLZsCq5d3Z1q9LywCyy9HpGMjJ3JoaQEh3RCxYydwqqXBgra/UwW1bpTz8JDmncgpLSw5Z4=
+	t=1757070645; cv=none; b=sdddhuanXKCWu9cVJEpQ4QuVF+UolYUMeWkU4ueFe9FXJLZLeKrgRRFd2ecU0kU04oGbFUAe22efsswX1a3/MZ6QxRzpaDClt18MT232r48bqjCeU0Wmc6fm2sBsAk26ztbljLX7zrjFTHvBNoaNlI8ecAciae0aOALNwcGTtbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070582; c=relaxed/simple;
-	bh=7m/86o3yQ77TEdGSH2MiSbmes09C1SQZCM+n87rz7fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoNuWo6SDAO0eQiq4dE/3eN0w2BI4lMnPQVOpJNoCf72jvK7+h81IHzoSuhR7pmGZcPQRyWvzx1R1GEtcD+IHjySMo1iCBfHhmWAdwjwcCw5PNWV5L4JsGnubNrqVPOielaQCh5qSq3KRBIc66FaBRtdBFqKVpnzm5Ctjv8Dgag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btMw55hj; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757070581; x=1788606581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7m/86o3yQ77TEdGSH2MiSbmes09C1SQZCM+n87rz7fg=;
-  b=btMw55hjbBZs6N/QPh47X4FjGcefjA4z+UmuZG5jcrM9XXjd9jbsgQhg
-   Z4RnK8wP1i0w8bSypqZ/FNU45tFfqXIqPyeROlII+vrOiBUIrzSU+8Ihr
-   Tj4hDO+aiuRpI+AlazFkxh32nMHnegT9D4z7o+SKCbnAHpoqS5f9wILkO
-   J46UbmxS7BUcpZpPsw7drfPk3axRm3hKsL/zv/ETEAXUUDryykI07+rc8
-   Enpu91XHMzTdWk+WMYUjM2vYXXDbhB5baCAjBXjclz4COsZMff9B7514V
-   dZpvhJ9808hJAtpS/RDB92In2lZ49Sg8FC0kPZLnZ1XlM2js2Jh8EoBwo
-   g==;
-X-CSE-ConnectionGUID: 2DmGJfxPSe6pezeaP5nM3Q==
-X-CSE-MsgGUID: 1HMOVnrDQs2fRjR+ORZejw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="58454999"
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="58454999"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:09:40 -0700
-X-CSE-ConnectionGUID: Q+k0m8w6TqGxOoJFGC8I5g==
-X-CSE-MsgGUID: NcHeEyL0SVK7RRDj8ZOf7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="202960490"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa002.jf.intel.com with SMTP; 05 Sep 2025 04:09:35 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 14:09:34 +0300
-Date: Fri, 5 Sep 2025 14:09:34 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH RFC 10/22] usb: typec: tipd: Move switch_power_state to
- tipd_data
-Message-ID: <aLrE7uzHH-ZloOWS@kuha.fi.intel.com>
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-10-172beda182b8@kernel.org>
+	s=arc-20240116; t=1757070645; c=relaxed/simple;
+	bh=5uErrrV3rp6pA/pHEkzJKprTkfL5j3WOFyZrL2Ec1jM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BaSGtiyZ2gR3n2Ez+17PhhYYDy5H70NxnAPxqYT5JDtSF/JtctM8q7+TIgph09ZDrPi0ji0vmJgARrbA0uKCurD8HrJzlvFV34qhcuN7DUf4uMQVFXdlOTz/eA438JhNepwn/rMA91ppImKwQzUX3bAl7RAXDq9QmgDYgLsGGOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowACnu4X1xLpoFdfLAA--.1807S7;
+	Fri, 05 Sep 2025 19:09:44 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Date: Fri, 05 Sep 2025 19:09:34 +0800
+Subject: [PATCH net-next v9 5/5] riscv: dts: spacemit: Add Ethernet support
+ for Jupiter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821-atcphy-6-17-v1-10-172beda182b8@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250905-net-k1-emac-v9-5-f1649b98a19c@iscas.ac.cn>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+In-Reply-To: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:rQCowACnu4X1xLpoFdfLAA--.1807S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw43Gw1ftrWfAF43Cr45Jrb_yoW8WFW8pa
+	y3CFsaqFZ7Cr1fKw43Zr9F9F13Ga95GrWkC3y3uF1rJ3yIvFZ0vw1ftw1xtr1DGrW5X34Y
+	vr1IyFyxurnFkw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+	z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
+	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
+	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
+	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
+	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
+	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
+	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
+	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
+	daVFxhVjvjDU0xZFpf9x0pRQJ5wUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, Aug 21, 2025 at 03:39:02PM +0000, Sven Peter wrote:
-> When support for CD321x was originally added no other hardware variant
-> was supported and there was no need for struct tipd_data. Now that it
-> exists move the special case in there so that we can drop the
-> of_device_is_compatible_check entirely.
-> 
-> Signed-off-by: Sven Peter <sven@kernel.org>
+Milk-V Jupiter uses an RGMII PHY for each port and uses GPIO for PHY
+reset.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
+---
+ arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts | 46 +++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-> ---
->  drivers/usb/typec/tipd/core.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index 6d8bcbc9cad8a1394e066504d4c5ca570edd4e4f..4815c5c462837865a5f9d37bbc139249c82c2f75 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -118,6 +118,7 @@ struct tipd_data {
->  	void (*trace_status)(u32 status);
->  	int (*apply_patch)(struct tps6598x *tps);
->  	int (*init)(struct tps6598x *tps);
-> +	int (*switch_power_state)(struct tps6598x *tps, u8 target_state);
->  	int (*reset)(struct tps6598x *tps);
->  };
->  
-> @@ -1293,7 +1294,6 @@ tps25750_register_port(struct tps6598x *tps, struct fwnode_handle *fwnode)
->  
->  static int tps6598x_probe(struct i2c_client *client)
->  {
-> -	struct device_node *np = client->dev.of_node;
->  	struct tps6598x *tps;
->  	struct fwnode_handle *fwnode;
->  	u32 status;
-> @@ -1331,18 +1331,16 @@ static int tps6598x_probe(struct i2c_client *client)
->  	if (i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
->  		tps->i2c_protocol = true;
->  
-> -	if (np && of_device_is_compatible(np, "apple,cd321x")) {
-> -		/* Switch CD321X chips to the correct system power state */
-> -		ret = cd321x_switch_power_state(tps, TPS_SYSTEM_POWER_STATE_S0);
-> -		if (ret)
-> -			return ret;
-> -
-> -	}
-> -
->  	tps->data = i2c_get_match_data(client);
->  	if (!tps->data)
->  		return -EINVAL;
->  
-> +	if (tps->data->switch_power_state) {
-> +		ret = tps->data->switch_power_state(tps, TPS_SYSTEM_POWER_STATE_S0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	/* Make sure the controller has application firmware running */
->  	ret = tps6598x_check_mode(tps);
->  	if (ret < 0)
-> @@ -1525,6 +1523,7 @@ static const struct tipd_data cd321x_data = {
->  	.trace_status = trace_tps6598x_status,
->  	.init = cd321x_init,
->  	.reset = cd321x_reset,
-> +	.switch_power_state = cd321x_switch_power_state,
->  };
->  
->  static const struct tipd_data tps6598x_data = {
-> 
-> -- 
-> 2.34.1
-> 
+diff --git a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
+index 4483192141049caa201c093fb206b6134a064f42..c5933555c06b66f40e61fe2b9c159ba0770c2fa1 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
+@@ -20,6 +20,52 @@ chosen {
+ 	};
+ };
+ 
++&eth0 {
++	phy-handle = <&rgmii0>;
++	phy-mode = "rgmii-id";
++	pinctrl-names = "default";
++	pinctrl-0 = <&gmac0_cfg>;
++	rx-internal-delay-ps = <0>;
++	tx-internal-delay-ps = <0>;
++	status = "okay";
++
++	mdio-bus {
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++
++		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
++		reset-delay-us = <10000>;
++		reset-post-delay-us = <100000>;
++
++		rgmii0: phy@1 {
++			reg = <0x1>;
++		};
++	};
++};
++
++&eth1 {
++	phy-handle = <&rgmii1>;
++	phy-mode = "rgmii-id";
++	pinctrl-names = "default";
++	pinctrl-0 = <&gmac1_cfg>;
++	rx-internal-delay-ps = <0>;
++	tx-internal-delay-ps = <250>;
++	status = "okay";
++
++	mdio-bus {
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++
++		reset-gpios = <&gpio K1_GPIO(115) GPIO_ACTIVE_LOW>;
++		reset-delay-us = <10000>;
++		reset-post-delay-us = <100000>;
++
++		rgmii1: phy@1 {
++			reg = <0x1>;
++		};
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_2_cfg>;
 
 -- 
-heikki
+2.50.1
+
 
