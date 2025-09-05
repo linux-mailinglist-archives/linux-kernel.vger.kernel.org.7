@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-802313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B1AB450DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134F7B450E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96A95A49BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D2A189A8AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724C72FA0E9;
-	Fri,  5 Sep 2025 08:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7AC2FDC4F;
+	Fri,  5 Sep 2025 08:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DqzZy77y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Btp6hzfz"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E297D2FD1A1;
-	Fri,  5 Sep 2025 08:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8F2FDC3F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059479; cv=none; b=ZKdlOmBUc4g1ES71Kw8BDmmjEyzqnA7nIwenjasav0ftZE4tpY9+YLH6T613Cl8Me92ED6wRABw0/GaQOGzD/JMSeP7ZrVumUE1bsHCmYZLUC2ekthX671ToGhTo4axuOjV8RMdHYjsOnfF7FvUbqCILP9dgZfN0ABhkLsLzZa8=
+	t=1757059486; cv=none; b=kzpJF1AglFo2JR43LX/KOXPYGQN9B0pvu4TvXZ8xbibLfvQC0nmteRehcuw+LOQ4mcH3BU0GwcrdHz2t3PHOBkBShxM+kAKEn+VMia6pxqc6cd/lZVh+DpowMg2E3WvqCseDctqRZSz3CK2t8+ZcZNyUgsUAeoAx4FfW5y1/Vjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059479; c=relaxed/simple;
-	bh=Y4OW2NlyscQTI3fNszjhP+YqdyCAN+FN0ThPKnfR+gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0mKRE29z/5CJk9X185ToOK4o5ijKTj/6pJF4bBEYuaKZe0CGV01UWO3muX3jmQHCByF/U1bTssmGkWh+hJMIOramTAVcgYDXSOe9t9Zrc57QSU+01XjkCCThZsK43v9P4nLkl7dgQQk8IV7GTgvstR5A67otoAoXdmZ0JFjXfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DqzZy77y; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757059477; x=1788595477;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y4OW2NlyscQTI3fNszjhP+YqdyCAN+FN0ThPKnfR+gk=;
-  b=DqzZy77y661f27lMQVgO+Psu/mJN9M/aJZOQgGvGiKy4ufRtM0v0gIrk
-   C3rB671rwmYAlCuKDsiNo8keo+XHPEtSes8JW5vVvrA1sOALYRCgQq6Ip
-   U339fgmaV550Md28WKvtGzDOeaHuJ6qsux0ZkrUtFoehjlNMeEtZJ0h8Q
-   00dj3HYSVJ6rdW4zXlXgYJYEiIbuiMMIk0E9MzNOrWXPj8PgnOrFHx4Hh
-   LFwHDBpXgmJmoMP0l8NnQr0YGtXLn6xlk96+qA/PLioR0hN8IzwsXKoCh
-   RnRDnFzsAwHzdLOljSY2XYlzMuQelv4qVND8RVAXzzc96Xe6jHOxu7c4T
-   g==;
-X-CSE-ConnectionGUID: TYlweBfSQkOKscwMcDDPhw==
-X-CSE-MsgGUID: gyMPCPyuR+yZCzDmFUOFAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70022847"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="70022847"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 01:04:36 -0700
-X-CSE-ConnectionGUID: Xavvb35tR22mlZyztUFXWw==
-X-CSE-MsgGUID: KBxfAavPSDmHDY9vd6Xo3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="176449218"
-Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
-  by orviesa004.jf.intel.com with ESMTP; 05 Sep 2025 01:04:33 -0700
-Message-ID: <61ecd626-1081-4bf0-8db7-a68980f31e45@linux.intel.com>
-Date: Fri, 5 Sep 2025 11:04:32 +0300
+	s=arc-20240116; t=1757059486; c=relaxed/simple;
+	bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j0uuVpJX/QhPrzcUTpE+Drp1yK58LQjV5rHERap6A1RhkptjjUacEjsM3KBsDp68qdf3mbQNJafZeUbUipXreanKh6lHHHjuLePKhT+6ftjV/owoKqAYfX9ktnzNU371oCg8LnspbPawndFD0AknDEbOeYAUhg2hFI/086uBwIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Btp6hzfz; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336b071e806so16880541fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757059483; x=1757664283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
+        b=Btp6hzfz4fIMQsarTFsMnLAfWVos9BkEPbBYhpuEYLDx26tordIN89lnk28EowcLDu
+         Q0jXZGTXpVQtlsKCOFau9WlFu41K8TSr21Z6X2DbsH/kUm65eyg4FxoMMUt5ZSwZDWfn
+         wns9vAoveW4954lfmyROdyO4NHh+xajzi7N+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757059483; x=1757664283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3J4+g2V4sWrtHtemeApia0D1CwSCabpiECH2Gc7jqHs=;
+        b=PFM8uoB0+aVaQT5jNRS1d5BrGd1CIqNmTsED+Fu/MrDo9npUZaYPWr+rIQbTAHNb5h
+         FTn8P9Jtuy3iOC6cryltVdVwZvDKnUtn+AnQBmFIRgA6bEhniyesHGlckEZoaAdXopZK
+         nf9eqOvYauqOlSzaZsGkhgTLmcBKex8Tfj+C5bzSEOhZ3lI7bTBkb65mIiNAOJkuV8f/
+         672Aq057WMyVsMIRUa38voLUnbWEpVUfApqUvbJ59y2crW4AjGSBakkPNW9edpkKm/bN
+         iGXZx5zhINtnMrbYlB/yWo7X5NuL8Wm8BO/yDI7uNsPaqUxTdG4Jo2VrpEAga2eQJeIq
+         kB/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWrouRWrPvoPLS4aK7oOVLYLL7G6VFpYW7VOAqBkeNfkNovgFU+QuiuJByQCwjd4a/znVdu3IVt+xwYpKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx28ZAwvqi7DXX3t4jUIuSW6FsDW9ABUtcG/oL2XkSuox9pKrjx
+	6DIwHoC3UdH4YWBQQSr1FFblegUpBMP8o6vi7a40OUWh+FEn6gB0eQuEER+58JnbzEkLmNhpBaw
+	Kd04s7kUNiHdeAUFOc7ZOqVzQt3Z/uZQ9vLDikF58
+X-Gm-Gg: ASbGnctXOCN89sA1cZo+64Gb2ogfOUAp+2XHLA2hy5tXPR+KN0Z3mi8oyDAYy2RFm6w
+	nGwSWwwCk7JIy1FTK1YjucbvXOZhZ7VzWNPSjTzjDdQ1gSZhgoM0UXpS/JuCp1iIicS0bYwI9bZ
+	OqmpZX2WcSZyjo4urX/Mpyf2TM6U4S2QYiUKCEQiHot+AgEl1JiX9HPrIm5CiBJF7Np1NXhoZmN
+	6GTLISgWzJEK2tRI0O2p5Q2qVul/gnk1RuhbwDtMLWe2L5o
+X-Google-Smtp-Source: AGHT+IFYc+QgjrNQcnNX0OlLPGUtYQKqYiLrIJbM/loEuXaaE2NFn67DssV7d5/BEdo89ntnizvXLq3xRVbqrk9nj5U=
+X-Received: by 2002:a05:651c:2106:b0:336:e176:cd3c with SMTP id
+ 38308e7fff4ca-336e176d479mr52475301fa.38.1757059483084; Fri, 05 Sep 2025
+ 01:04:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] i2c: designware: use dev_err_probe() when probing
- platform device
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250904-i2c-dw-dev-err-probe-v2-0-e59da34815fa@bootlin.com>
- <20250904-i2c-dw-dev-err-probe-v2-2-e59da34815fa@bootlin.com>
- <aLmqfQm2w3y1MM_2@smile.fi.intel.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <aLmqfQm2w3y1MM_2@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-20-laura.nao@collabora.com>
+In-Reply-To: <20250829091913.131528-20-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 5 Sep 2025 16:04:32 +0800
+X-Gm-Features: Ac12FXyKW6bhjZsI-yGgtsh7BXxxyLqh5BQG4iFyVSU7pOJ_sKap2vxzQ5qbqlw
+Message-ID: <CAGXv+5F0pWn5+iE+3pgpZ+GMoXDV-eoEx4zKTfsmV5cpa-WC5Q@mail.gmail.com>
+Subject: Re: [PATCH v5 19/27] clk: mediatek: Add MT8196 mdpsys clock support
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/25 6:04 PM, Andy Shevchenko wrote:
-> On Thu, Sep 04, 2025 at 04:31:07PM +0200, Benoît Monin wrote:
->> Add calls to dev_err_probe() on error paths that can return
->> -EPROBE_DEFER when probing platform device. Namely when requesting the
->> reset controller, when probing for lock support and when requesting the
->> clocks.
->>
->> PCI device probing already use dev_err_probe().
-> 
-> Makes sense by at least two aspects:
-> 1) less log spamming for deferred probes;
-> 2) easier to debug an issue (I assume it's your case).
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
+ wrote:
+>
+> Add support for the MT8196 mdpsys clock controller, which provides clock
+> gate control for MDP.
+>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+
+IMO removing CLK_OPS_PARENT_ENABLE is the right thing to do.
+
+However if the hardware ends up does having a requirement that _some_
+clock be enabled before touching the registers, then I think the
+MTK clock library needs to be refactored, so that a register access
+clock can be tied to the regmap. That might also require some work
+on the syscon API.
+
+Whether the hardware needs such a clock or not, we would need some input
+from MediaTek. There's nothing in the datasheet on this.
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org> # CLK_OPS_PARENT_ENABLE remo=
+val
 
