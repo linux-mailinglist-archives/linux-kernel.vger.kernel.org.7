@@ -1,205 +1,290 @@
-Return-Path: <linux-kernel+bounces-802142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8C5B44E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F821B44E17
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C201BC79AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0591BC7AB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E956B2C0280;
-	Fri,  5 Sep 2025 06:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2E22C0F69;
+	Fri,  5 Sep 2025 06:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbWv+LFL"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EpW1p9MM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774AA2AD2F;
-	Fri,  5 Sep 2025 06:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A5D2C0F7F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757054490; cv=none; b=NCP8d3jml9K5E+2b+QYZPLcGEAZv6vqfynTeFAWSCO8GsH7F2kbiRYAjqUNqQV0f5AIBtLyok2WDTMUJl7o6SDaIR5t8Z8mmj9RC+CUe5HT1m5qVT3Yc7M80Bew+A4JBqpW6C/3nPtQ7N91TPm6xOjqe7ErzVq2kz18mfLAMdIM=
+	t=1757054493; cv=none; b=bVscYG0dMoCOiOQRkveXkLImUi2rII/EPGvEmm5tw7YdMQUn5PVjz3oCMcPZU3Fb8nmDHixjJ879f2h8q4NAuSKSwpLvvlR6/dBHtoWD0/eWPu30MFCJnpTyqrFihEhXocWzlB2ZqJrndtLrVLC/CtKy870/08/nU1Qv/Mnb0LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757054490; c=relaxed/simple;
-	bh=NZFkseZkjzL6Fkv0b6NxwoHKiu8b5mIGz+R6t2D1ZbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LlKSAB6fBMbQGUJvD69iz04kc3W/S632WcVP9itkNxvTe8HElofNwFlk5LeeDp4QJTkrURvPTENMPJjA710Jk1D4yoRcHJkY6r3ZbwFwoWMZGXkpIx1qv/hHBGYhapUtxTG8y7eD7MJz/SGabgGaynOrY6C3mZKLEAiUSARCauU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbWv+LFL; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so1826508e87.2;
-        Thu, 04 Sep 2025 23:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757054486; x=1757659286; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VjdBUoIejYQ0d1liNcdBl+wSNDEtAg+1bA2FnYRKKT4=;
-        b=UbWv+LFLdklKa2szFdso1BVx8zaqREOntSVYTYrD0fKJuJmayPKZBJViDnlFYcwPRe
-         9eW75K+l6v8XDh+nSyWPQH+tZdDcj3tXWCr7U8V/zoSRN0i39KhekukBCUZw3WySvG3C
-         maTIvFBRwDpu7b8MLJ4PjJkHW9Jy9onKlOS2nywYFt6tVRccZj7MGb+Psna0uRr5M8QM
-         UKDHPMGdG12FFYYej8+HQiIiDC35iZNQIxe7LIoYP7fs4fHjRciwk/FMgZP0HZC5kyY0
-         Te2afbAg3eGW6c9bIXjOi7Bc3QU772UDbegKtgIVapQ9UIEUfbVH6s4A80MsljO5Onar
-         k8Pw==
+	s=arc-20240116; t=1757054493; c=relaxed/simple;
+	bh=5PP9Qy2JI0RylA8NM1X5jhoGp1Vq+k7r7Qo0XW9WsLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t1hxt39eYjUbcNyKQIlJKFMcDwAHncCQ3l3EV9fpNqQAUESomE5WT/tF2HR3+yLZEd16tI0Xn94yb5W++H1+84mf0wsrWOdW63ZyuTN4+ld9sMKRZ5dZE5I2mkyAPyyGdQozHJOHcTQlQ9yaypf/5/1ZiSboBXlmOFcxJKUSQ2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EpW1p9MM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757054490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oF3HN1Q6ZNxZN3c5DymWi4LgFv8yUurotu5FuTflls4=;
+	b=EpW1p9MMbSDUi+SxAEcAL7HZbTLcxXjgKuaRcCee2TDI+3yZ8eGcUiDWKX1LvVr1KMVCwy
+	T7qi/fNDlIqPoU6ENhlQYJskkfhBCl2fSkz8yo+wadhzWXbqUY27ziyTlMA8I3rIjIU15r
+	IVbvW8HRUhpw8oXoa+xYLYjM4qDzqN4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-3nIq5mkOPSCSwFlfOXeUAQ-1; Fri, 05 Sep 2025 02:41:29 -0400
+X-MC-Unique: 3nIq5mkOPSCSwFlfOXeUAQ-1
+X-Mimecast-MFC-AGG-ID: 3nIq5mkOPSCSwFlfOXeUAQ_1757054488
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso1788855e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:41:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757054486; x=1757659286;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VjdBUoIejYQ0d1liNcdBl+wSNDEtAg+1bA2FnYRKKT4=;
-        b=Abd4vdIFFu1Zzdrxyuqt5L2um5yORRCT6AGBHpcy62vDaTjvQZ10OWPVyj198XZdwZ
-         CTU9EK+w4Sue/H5qHkg1zbkhm8bnuoza0gZ87VlCO84eG0I8Y85dU1z7vJztB6aWMS+Z
-         rmFzw8gx/IB8GYVHtoHEbC5bqBHa4/20O2UdpW/EUM9e0WQtqxEZMGvdUnWWIvbxaHeC
-         5JVqHKQlWeeNDA4bf60CTasZg/kd03m2YcWGAeYbR6mIhW0mzILqan+vDpBPJ3uyC0dv
-         kR6CDDNpCt76ReduYgrCYtOguT7skKPQxBIADTK+StQyJTLUr8jmia95MV7IU45clEfS
-         g0Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUA8TtrP7xiRiSGetBFvynIfozixNQGYAk2n8pKgElYg432qjHJwv0iuYBiq16DSp32YKwU9V4MJnAa@vger.kernel.org, AJvYcCVjZoYnLjSAb64YQ5EjMRTVrPDU3KNsq1PJcEC7bEGJ1nsmoGg64dX3AekEbMJGBHzhE6O0hitfQPzHoA==@vger.kernel.org, AJvYcCVkCNS5FCA/bOGmN2JDe89WXildC4Jt8weJ01p7tYVTc5TqlTnzkMyyDHZL43q99LXC4qW30tK1FK+YvhMI@vger.kernel.org, AJvYcCWzqj2GVY6VLMirYiA/JhbsS8af/DhXtXUrZbH+pafFuw/tll8pdMvdPyZDkWYYryUVPr8smk2+stNV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnZVnKCr/5TzMQNa5E7Xw7iywcy38GMOS7KTwcztQlVaOmcQML
-	8FUP6k6F/q5h3Uv8dqx2+AioQFVD+jcRPATunEEwb6mZsA1ZZjvYUNmh
-X-Gm-Gg: ASbGncslvYw1RhvDPvGjTY4DE4EEH3pldp+uhyW8mbkwHBH2w7Rj5ha+nywA8D4eqkH
-	i/piV++4NYsSoU0XjI3IhoCK7eQrGEzfhLzqj0hmCyxaqeBSO8WDAz4QyigxW+xVgms+BYM5ns2
-	3yZui3BIgUgfObLDEhDf/Ao/cTB0LV0BD4PjRYNVY5APPjY8yGvjdyWFGteuaCNv2+B13sJVXBw
-	vUO5/7rX+SuVq3meShuT+dSi3A4rcVOvhHpssIX27fUfhiCj7ajYYMOcPnTrNeSAlD7M+tby6iD
-	G8mCy0zG6sViS/S30fAXZO2c/Obaf+Q7/Btmonny6RZdXhs0Oq+ixagv3+7fWj2xsSepACuMLkx
-	0rKuHItLTxDPI+JHPUiyKtDypG8ilpw==
-X-Google-Smtp-Source: AGHT+IEbLkFl3txe5G1HbR7RZN6w2pzEdTHoGNMvuNcVeSEtMS6A2m9FCsGIxZ3RMv5fS/n1bDB+Ug==
-X-Received: by 2002:a05:6512:2347:b0:55f:6ddb:25 with SMTP id 2adb3069b0e04-55f708a2b1amr7633064e87.3.1757054486339;
+        d=1e100.net; s=20230601; t=1757054488; x=1757659288;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oF3HN1Q6ZNxZN3c5DymWi4LgFv8yUurotu5FuTflls4=;
+        b=Ela7T3qiUsysIeY4t0A/pDP26mZIIRI1/vXo6XJRb2BKRJaZpcZGr522oE3aCGp3jf
+         j3sJILfc/y2JoStV0ySzkTJ2gbI8wM6lo7pxg46GyaV4G+GkAABBSgYAqEx6iW4VioxW
+         2BoZkkpjkRf1jt7NXiYapo2fAo6Fd0hCGX8YRMt2puNRRUGwAwK0ltduqYDlHxiHrbro
+         VXcrORu+TMyb0sJytRL0sb+GUF3byq9AwHYumfeXfTughnfmN4DueDT+7RTSYWJ2wkc1
+         rKRGX4+RILOiX6Rd4YY9Utf7yaodfz4yPgun2ERrIgY6RMNOTpHWIAu+nDThkwCxuFJX
+         0lNQ==
+X-Gm-Message-State: AOJu0YyocEz9MRHTlF5DdAtd4tzeBQcjB47uJXlVokjLUTy9lV+AfSzO
+	DLAauGoGGUMjFbwRW2ZUVCOsCjJS4oiMcEUCxpZWSRsqCQt0KArP2kSj7PVbqVxicLp1GBYKSsj
+	UpROKAdSJ4oX8DMmlBcWhTqOj6BMdIkcp5EFASlOT2Xl5A+nLchq8jnLtHsYQPyZc7Xr9tvNv6A
+	w/8ejR6k5Gu2ULkYCUSA5komZUwVqOdJtmVMMaBHug0oR39A==
+X-Gm-Gg: ASbGncsc2Y51DOIgy2I+/PYXtQEI/tqga5gArclcfKyNhbfwYiaGtnJI9TGA0VAJMS8
+	AExu487TmJIdzvwZ+BWQLTkfUX+41Q6wASXmBUj+EUO+PHY+4KXpy8ziacF5wV15MH60r2+xTna
+	Oj+Kc8T7H8iS1vVZPQSi35AJHL5hWJvvydpA2IQ28qsmmsZ65S+LpD0RTBHyuhMKKBUkJY8WgPj
+	9H1pZEEBPB9CgkyXCXIKIBMXX/Ksnz6S2sjRhbNSnY+juw2R+FC8CcHxtnYzZSrBfYtrr1KemYg
+	/rjRcnNhe7XZVvGU/XMxQEkDUdLLAGt+gy9tgomwKMB/Py+mwEqB4sN4ejstwV/xvcXickNHJvB
+	U0mgxuSmghOUqCYSk/wUJ9ULKmrqZ7vL/nR+0t1xhd23hJ1wQCc8CwZ1R
+X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr114233305e9.23.1757054487956;
+        Thu, 04 Sep 2025 23:41:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEj1Q4ueRZg61r58J+1sq7/RpmSeqvAcWabr/Sq37OcVKAf1elh8/EonCz3Jhepl0SBZP4Cg==
+X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr114232615e9.23.1757054487185;
+        Thu, 04 Sep 2025 23:41:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8879cesm316420125e9.12.2025.09.04.23.41.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 04 Sep 2025 23:41:26 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ab93ebcsm1649573e87.47.2025.09.04.23.41.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 23:41:25 -0700 (PDT)
-Date: Fri, 5 Sep 2025 09:41:19 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	v3-0001-dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO.patch@mva-rohm.smtp.subspace.kernel.org,
-	v3-0002-iio-adc-Support-ROHM-BD79112-ADC-GPIO.patch@mva-rohm.smtp.subspace.kernel.org,
-	v3-0003-MAINTAINERS-Support-ROHM-BD79112-ADC.patch@mva-rohm.smtp.subspace.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v3 0/3] Support ROHM BD79112 ADC
-Message-ID: <cover.1757053456.git.mazziesaccount@gmail.com>
+Message-ID: <5090355d-546a-4d06-99e1-064354d156b5@redhat.com>
+Date: Fri, 5 Sep 2025 08:41:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UFdqrImNvPq8YtRT"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 19/37] mm/gup: remove record_subpages()
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>, Jens Axboe <axboe@kernel.dk>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-20-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250901150359.867252-20-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 01.09.25 17:03, David Hildenbrand wrote:
+> We can just cleanup the code by calculating the #refs earlier,
+> so we can just inline what remains of record_subpages().
+> 
+> Calculate the number of references/pages ahead of times, and record them
+> only once all our tests passed.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>   mm/gup.c | 25 ++++++++-----------------
+>   1 file changed, 8 insertions(+), 17 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index c10cd969c1a3b..f0f4d1a68e094 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -484,19 +484,6 @@ static inline void mm_set_has_pinned_flag(struct mm_struct *mm)
+>   #ifdef CONFIG_MMU
+>   
+>   #ifdef CONFIG_HAVE_GUP_FAST
+> -static int record_subpages(struct page *page, unsigned long sz,
+> -			   unsigned long addr, unsigned long end,
+> -			   struct page **pages)
+> -{
+> -	int nr;
+> -
+> -	page += (addr & (sz - 1)) >> PAGE_SHIFT;
+> -	for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
+> -		pages[nr] = page++;
+> -
+> -	return nr;
+> -}
+> -
+>   /**
+>    * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
+>    * @page:  pointer to page to be grabbed
+> @@ -2967,8 +2954,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>   	if (pmd_special(orig))
+>   		return 0;
+>   
+> -	page = pmd_page(orig);
+> -	refs = record_subpages(page, PMD_SIZE, addr, end, pages + *nr);
+> +	refs = (end - addr) >> PAGE_SHIFT;
+> +	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+>   
+>   	folio = try_grab_folio_fast(page, refs, flags);
+>   	if (!folio)
+> @@ -2989,6 +2976,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+>   	}
+>   
+>   	*nr += refs;
+> +	for (; refs; refs--)
+> +		*(pages++) = page++;
+>   	folio_set_referenced(folio);
+>   	return 1;
+>   }
+> @@ -3007,8 +2996,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+>   	if (pud_special(orig))
+>   		return 0;
+>   
+> -	page = pud_page(orig);
+> -	refs = record_subpages(page, PUD_SIZE, addr, end, pages + *nr);
+> +	refs = (end - addr) >> PAGE_SHIFT;
+> +	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+>   
+>   	folio = try_grab_folio_fast(page, refs, flags);
+>   	if (!folio)
+> @@ -3030,6 +3019,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+>   	}
+>   
+>   	*nr += refs;
+> +	for (; refs; refs--)
+> +		*(pages++) = page++;
+>   	folio_set_referenced(folio);
+>   	return 1;
+>   }
+
+Okay, this code is nasty. We should rework this code to just return the nr and receive a the proper
+pages pointer, getting rid of the "*nr" parameter.
+
+For the time being, the following should do the trick:
+
+commit bfd07c995814354f6b66c5b6a72e96a7aa9fb73b (HEAD -> nth_page)
+Author: David Hildenbrand <david@redhat.com>
+Date:   Fri Sep 5 08:38:43 2025 +0200
+
+     fixup: mm/gup: remove record_subpages()
+     
+     pages is not adjusted by the caller, but idnexed by existing *nr.
+     
+     Signed-off-by: David Hildenbrand <david@redhat.com>
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 010fe56f6e132..22420f2069ee1 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2981,6 +2981,7 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+                 return 0;
+         }
+  
++       pages += *nr;
+         *nr += refs;
+         for (; refs; refs--)
+                 *(pages++) = page++;
+@@ -3024,6 +3025,7 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+                 return 0;
+         }
+  
++       pages += *nr;
+         *nr += refs;
+         for (; refs; refs--)
+                 *(pages++) = page++;
 
 
---UFdqrImNvPq8YtRT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-- 
 
-Support ROHM BD79112 ADC/GPIO
+Cheers
 
-The ROHM BD79112 is a 12-bit, 32 channel SAR ADC / GPIO IC. Or, a "Signal
-Monitor Hub IC" as data-sheet describes it.
+David / dhildenb
 
-Data sheet states the maximum sampling rate to be 1 MSPS, but achieving
-this would probably require the SPI and samples to be processed by
-something else but the CPU running Linux. This could work with the "SPI
-offloading" which has recently landed upstream - but I have no HW to test
-this so nothing fancy is implemented here. It's still worth mentioning
-if someone needs the speed and wants to try implementing it :)
-
-The SPI protocol is slightly peculiar. Accesses are done in 16-bit
-sequences, separated by releasing and re-aquiring the chip-select.
-
-Register write takes 1 such sequence. The 8-bit register data to write,
-is stored in the last 8 bits. The high 8 bits contain register address
-and an I/O-bit which needs to be set for register accesses.
-
-Register read consists of two 16-bit sequences (separated by
-chip-select). First sequence has again the register address and an IO
-bit in the high byte. Additionally, reads must have a 'read bit' set.
-The last 8 bits must be zero. The register data will be carried in the
-last 8 bits of the next 16-bit sequence while high bits in reply are zero.
-
-ADC data reading is similar to register reading except:
- - No R/W bit or I/O bit should be set.
- - Register address is replaced by channel number (0 - 31).
- - Reply data is carried in the 12 low bits (instead of 8 bits) of the
-   reply sequence.
-
-The protocol is implemented using custom regmap read() and write()
-operations.
-
-Other than that, pretty standard device and driver.
-
-Revision history:
- v2 =3D> v3:
- - Mostly cosmetic changes to the driver
- - dt-bindings and MAINTAINERS unchanged
-
- v1 =3D> v2:
- - Plenty of fixes to the driver (thanks to reviewers, Andy and David)
- - Add gpio-controller information to the device-tree bindings
-
- See individual patches for more accurate changelog
-
----
-
-Matti Vaittinen (3):
-  dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
-  iio: adc: Support ROHM BD79112 ADC/GPIO
-  MAINTAINERS: Support ROHM BD79112 ADC
-
- .../bindings/iio/adc/rohm,bd79112.yaml        | 116 ++++
- MAINTAINERS                                   |   3 +-
- drivers/iio/adc/Kconfig                       |  10 +
- drivers/iio/adc/Makefile                      |   1 +
- drivers/iio/adc/rohm-bd79112.c                | 547 ++++++++++++++++++
- 5 files changed, 676 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79112.=
-yaml
- create mode 100644 drivers/iio/adc/rohm-bd79112.c
-
-
-base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
---=20
-2.51.0
-
-
---UFdqrImNvPq8YtRT
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmi6hgkACgkQeFA3/03a
-ocX5mQgAgZX2gG6uk6+4Vq5z5rhopLNRaYgcYTmAKLy85KASCFJytTw3zKijiKDY
-xV3qproNsBPUspXwTwygaVtNWWwgcBEFgmrukcrsQK5qaHa46uIro4VbcK+Rs2W8
-toc4ozHJvvwwXuGuCkGeGc9waOijnq03rd6Jsb2TIVdzkI4jxh7dbim5fJWC3aQq
-/CtKYjsmn2SL6yKFWc648OWGWCtJKNg1prFhiUOVXh3Jije8Rcx2XNp8ivO7aAY2
-X4M0zPwzxECJTpqLQqFY3Q+9Wsd3rSput0bKsKC/rMR74I/FLuqHbkPtwH6QJPxt
-gpIcMH5BTPhOEKuAPw5ebvBMMSJPcQ==
-=PK4a
------END PGP SIGNATURE-----
-
---UFdqrImNvPq8YtRT--
 
