@@ -1,251 +1,121 @@
-Return-Path: <linux-kernel+bounces-803357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF1B45E0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7619CB45E12
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8F757B5BE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62EC8188DD70
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BF1296BD1;
-	Fri,  5 Sep 2025 16:24:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C73A27AC3D;
-	Fri,  5 Sep 2025 16:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48778306B3A;
+	Fri,  5 Sep 2025 16:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjyvTC4r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9283B1F61C;
+	Fri,  5 Sep 2025 16:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089474; cv=none; b=IwPtbG2Vxl/fKNoaO4clM0zGLB9d5eUmoLQCE/IUxvzVkpBYbXjt7KBv4WennMPIx36ABDrrVDfQnzeZKSDPxuJH6rZuoBmbARbMhXkjOcmCR0cWWnXeqnFfSzQ0EVse+FIgQxWyemfM3iB62tSUhkJQ2jOMWxl30y/UwS4LwKc=
+	t=1757089483; cv=none; b=ibZHLA0FuF945CyODAN0LQOwASB1/3Tpok3w23Wt9OKDIipCej2GiFKVTIjydyT6l+QWPIoQ0CYPGGjeQ5J2vODt+LtfH2ElbzDjNzkqwKE4n5u/wRpyycXO7zgqVgoDa1U3Yr1IdpzFzTX+krdRkgGNXH4LN48umGruPz00tp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089474; c=relaxed/simple;
-	bh=WvIHFzUl3Av8I2RQ/GFgqZySs7WZ+xyp12KqrfwTLy0=;
+	s=arc-20240116; t=1757089483; c=relaxed/simple;
+	bh=RC1Pffwa1OxcNnbVPqhWoqVwAryGyPeS0l0/vSql3J4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCvuPebblciM8Sgjj6jWBVzwT+y5c11PXWztBBtfuzfE2HCS0UWhtv0NAK2KAZtee3CbIAcigXf6vNyztUsVj9HA46LrpqzfS8+OBSDJLslR66wMULqs2+R/I9RVoCIdTHXvHe3F6/iBt4CY1fSyUO0+slvWZDH+0da84u+WrJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCB75152B;
-	Fri,  5 Sep 2025 09:24:23 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 873AA3F63F;
-	Fri,  5 Sep 2025 09:24:26 -0700 (PDT)
-Date: Fri, 5 Sep 2025 17:24:23 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 03/33] ACPI / PPTT: Add a helper to fill a cpumask from a
- processor container
-Message-ID: <aLsOt5Tr+ThuHmSS@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-4-james.morse@arm.com>
- <aK7id14+Spr2VIqR@e133380.arm.com>
- <29d0a34d-71d3-42ac-ba66-b5536f576f3a@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zde5P8VA3gYhCEUNf81q2vGy1Km9+Epft5Ot8fAkOCBWCaymfK7a/kWJgbGxyDDbPBSEV0n1wVbFAfNti/2WwkEaZSgcNxFflKLz/updc7ArTeReoxHCfxwcL+PtC6fUB3I/qGLW70qBhdtk8tfcksXMREevKiVAfHhm2VOhOog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjyvTC4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D174C4CEF1;
+	Fri,  5 Sep 2025 16:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757089483;
+	bh=RC1Pffwa1OxcNnbVPqhWoqVwAryGyPeS0l0/vSql3J4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AjyvTC4rktQ2MyRDuB5bI1wPYHRjy+Zk7cDDH410eEhoty1YHOBZIRffC3/uwcLZd
+	 BdVbLWaOF3Ngz7msISwbLii/tZRUhMO2DdV3NffMmu3fhmxDA3HaGQOdgX1s22Cc3C
+	 ptTjIM/A1/Ij4hcduLvREjvpCNgCRnyz8FiVNcCKgLNiVUyhr/EN0cnDVFMZEeSSl3
+	 8rMGtHhUZrIB2SZSRMqGVpyPeCVmE5HziD8BTPh7wPY+lqPbyMRc7avON3E3+/Ol7t
+	 oSk30wAvtcZ/8VUsNvZ4wFVtpp2eAwEDWm9hFy8eW5O5RaZq+enQgxZ7y8niy1OWQ8
+	 RE2f3ae5N3dRw==
+Date: Fri, 5 Sep 2025 09:24:42 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
+ migration support
+Message-ID: <202509050923.28C878FFA1@keescook>
+References: <20250830020109.it.598-kees@kernel.org>
+ <59c4f103-7f1b-4829-bd82-0d392047fea4@oracle.com>
+ <202509010949.9A61A98@keescook>
+ <d25b2c63-32e2-4a41-b982-da5131cffd2f@oracle.com>
+ <202509011125.5879901C@keescook>
+ <0d9ef42f-57c7-472b-89c1-4534f40991f7@oracle.com>
+ <202509031949.375138FB13@keescook>
+ <4cbc348d-02ca-4743-b8d4-21db2ebf4460@oracle.com>
+ <18c2c59e-edae-4281-ac7c-8524d9cde1c5@oracle.com>
+ <2bf12be7-7fd5-41e2-a0a2-da82903d0ccd@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <29d0a34d-71d3-42ac-ba66-b5536f576f3a@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2bf12be7-7fd5-41e2-a0a2-da82903d0ccd@oracle.com>
 
-Hi James,
-
-On Thu, Aug 28, 2025 at 04:57:06PM +0100, James Morse wrote:
-> Hi Dave,
+On Fri, Sep 05, 2025 at 11:41:18AM +0200, Vegard Nossum wrote:
 > 
-> On 27/08/2025 11:48, Dave Martin wrote:
-> > On Fri, Aug 22, 2025 at 03:29:44PM +0000, James Morse wrote:
-> >> The PPTT describes CPUs and caches, as well as processor containers.
-> >> The ACPI table for MPAM describes the set of CPUs that can access an MSC
-> >> with the UID of a processor container.
-> >>
-> >> Add a helper to find the processor container by its id, then walk
-> >> the possible CPUs to fill a cpumask with the CPUs that have this
-> >> processor container as a parent.
-> 
-> > Nit: The motivation for the change is not clear here.
+> On 04/09/2025 19:10, Vegard Nossum wrote:
+> > On 04/09/2025 19:03, Vegard Nossum wrote:
+> > > @@ -214,6 +214,11 @@ static void sym_calc_visibility(struct symbol *sym)
+> > >          struct property *prop;
+> > >          tristate tri;
+> > > 
+> > > +       if (sym->flags & SYMBOL_HIDDEN) {
+> > > +               sym->visible = yes;
 > > 
-> > I guess this boils down to the need to map the MSC topology information
-> > in the the ACPI MPAM table to a cpumask for each MSC.
+> > ...I just saw the irony here after having already pressed "Send".
 > > 
-> > If so, a possible rearrangement and rewording might be, say:
+> > Let me explain:
 > > 
-> > --8<--
+> > SYMBOL_HIDDEN is your new flag that indicates that somebody used
+> > "transitional" on the config entry.
 > > 
-> > The ACPI MPAM table uses the UID of a processor container specified in
-> > the PPTT, to indicate the subset of CPUs and upstream cache topology
-> > that can access each MPAM Memory System Component (MSC).
-> > 
-> > This information is not directly useful to the kernel.  The equivalent
-> > cpumask is needed instead.
-> > 
-> > Add a helper to find the processor container by its id, then [...]
-> > 
-> > -->8--
+> > sym->visible is tristate value that gives you the condition for whether
+> > a symbol can take on a value -- y/m means the option is visible to the
+> > user (hence the name) and thus eligible to have a value assigned to it.
 > 
-> Thanks, that is clearer!
-
-Thanks
-
-> >> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-
-[...]
-
-> >> @@ -298,6 +298,92 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
-
-[...]
-
-> >> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
-> >> +				     struct acpi_pptt_processor *parent_node,
-> >> +				     cpumask_t *cpus)
-> >> +{
-> >> +	struct acpi_pptt_processor *cpu_node;
-> >> +	u32 acpi_id;
-> >> +	int cpu;
-> >> +
-> >> +	cpumask_clear(cpus);
-> >> +
-> >> +	for_each_possible_cpu(cpu) {
-> >> +		acpi_id = get_acpi_id_for_cpu(cpu);
+> Another small clarification: Replace "is visible to the user" by "can be
+> set by .config".
 > 
-> > ^ Presumably this can't fail?
-> 
-> It'll return something! This could only be a problem if this raced with a CPU becoming
-> impossible, and there is no mechanism to do that.
+> Actual user visibility is controlled by menu_is_visible(), not
+> sym->visible, so my patch still doesn't show transitional symbols to the
+> user in menuconfig. AFAICT, menu_is_visible() is completely independent
+> of sym->visible.
 
-Yep, now I go and look more closely at that function, my question looks
-misguided.
+Yeah, and I think this is another very good reason to rename stuff.
 
-[...]
+> I tested menuconfig/mconf and oldconfig/conf --oldconfig with scripts/
+> kconfig/tests/transitional/Kconfig and my patch and it looks correct
+> (only the new options are displayed).
 
-> >> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
-> >> +{
-> >> +	struct acpi_pptt_processor *cpu_node;
-> >> +	struct acpi_table_header *table_hdr;
-> >> +	struct acpi_subtable_header *entry;
-> >> +	unsigned long table_end;
-> >> +	acpi_status status;
-> >> +	bool leaf_flag;
-> >> +	u32 proc_sz;
-> >> +
-> >> +	cpumask_clear(cpus);
-> >> +
-> >> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table_hdr);
-> >> +	if (ACPI_FAILURE(status))
-> >> +		return;
-> 
-> > Is acpi_get_pptt() applicable here?
-> 
-> Oh, that is new, and would let me chuck the reference counting.
-> I guess this replaces Jonthan's magic table free'ing cleanup thing!
+Great! Thank you for looking at this. :)
 
-Ah, rightho.
-
-> > (That function is not thread-safe, but then, perhaps most/all of these
-> > functions are not thread safe.  If we are still on the boot CPU at this
-> > point (?) then this wouldn't be a concern.)
-> 
-> I think that relies on the first caller being from somewhere that can't race.
-> In this case its the architecture's smp_prepare_cpus() call to setup the acpi topology.
-> That is sufficiently early its not a concern.
-
-I guess so.
-
-[...]
-
-> >> +		cpu_node = (struct acpi_pptt_processor *)entry;
-> >> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
-> >> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
-> >> +			leaf_flag = acpi_pptt_leaf_node(table_hdr, cpu_node);
-> >> +			if (!leaf_flag) {
-> >> +				if (cpu_node->acpi_processor_id == acpi_cpu_id)
-> 
-> 
-> > Is there any need to distinguish processor containers from (leaf) CPU
-> > nodes, here?  If not, dropping the distinction might simplify the code
-> > here (even if callers do not care).
-> 
-> In the namespace the object types are different, so I assumed they have their own UID
-> space. The PPTT holds both - hence the check for which kind of thing it is. The risk is
-> looking for processor-container-4 and finding CPU-4 instead...
->
-> The relevant ACPI bit is "8.4.2.1 Processor Container Device", its says:
-> | A processor container declaration must supply a _UID method returning an ID that is
-> | unique in the processor container hierarchy.
-> 
-> Which doesn't quite let me combine them here.
-
-I was going by the PPTT spec, where the types are not distinct --
-you're probably right, though.
-
-According to that, isn't it the "ACPI Processor ID valid" flag, not the
-"Node is a Leaf" flag, that says whether this field is meaningful?
-
-It's reasonable not to bother to try to enumerate the children of a
-node that claims to be a leaf (even if there actually are children),
-but I wonder what happens if acpi_processor_id is not declared to be
-valid and matches by accident.  That's probably not a valid table (?)
-but does anything bad happen on the kernel side?
-
-> > Otherwise, maybe eliminate leaf_flag and collapse these into a single
-> > if(), as suggested by Ben [1].
-> > 
-> >> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-> > 
-> > Can there ever be multiple matches?
-> > 
-> > The possibility of duplicate processor IDs in the PPTT sounds weird to
-> > me, but then I'm not an ACPI expert.
-> 
-> Multiple processor-containers with the same ID? That would be a corrupt table.
-> acpi_pptt_get_child_cpus() then walks the tree again to find the CPUs below this
-> processor-container - those have a different kind of id.
-
-Does anything bad happen if we encounter duplicates?
-
-(Other then the MPAM driver never getting enabled, or not working as
-advertised, that is.)
-
-I haven't tried to think through all the implications, here.
-
-> > If there can only be a single match, though, then we may as well break
-> > out of the loop here, unless we want to be paranoid and report
-> > duplicates as an error -- but that would require extra implementation,
-> > so I'm not sure that would be worth it.
-> 
-> Hmmm, the PPTT node should map to only one processor or processor-container.
-> I'll chuck the break in.
-
-Ack
-
-Cheers
----Dave
+-- 
+Kees Cook
 
