@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-803070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BBCB45A2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3B7B45A2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F393AF36A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E2566CD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B9C36808F;
-	Fri,  5 Sep 2025 14:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BB336932A;
+	Fri,  5 Sep 2025 14:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZO6Zk1Qx"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDeFXjmt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3A4362061
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7449622D4F9;
+	Fri,  5 Sep 2025 14:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757081578; cv=none; b=r9hclGwyGSYkK+kWaQVmY3UNA4iNGkdiJ6CGHenN70rR+hZPxM7SCVnRMP3IMGJoE9jRYALXXF46Bvqz39zUklx+MGSDNbp4IMJ3+E2t7nI1CRlL65llfoVq+2EpgxNv2B5tW9cPqCU4PYniFU/MknLSVMmbwPlpF+rusAZ/dso=
+	t=1757081622; cv=none; b=XePpV/5k2y8vMbnFVvbQCUpRFgztQHNtiOdClLT4Bd/PXfklf9ipof+FqddppxjPQHaaMrifNj6DnQqiIaw/VUhdxMttVXknV1gO2yoYTICg/+3VUN1GuOfaCWjPJBsNcrid9wR2m6WZjV9nqPBL3j52fwEe9+Ylo79rjJ67daY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757081578; c=relaxed/simple;
-	bh=K+/vJ1tGgqKgyQZv1jVkzBjgkemzM7IqP/9bVzcLYD4=;
+	s=arc-20240116; t=1757081622; c=relaxed/simple;
+	bh=5ByBZVvQYtKrh9v0XQD1JR0lk/UjO24AJymTKBHmmBU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fGSweBDX3a/LFmd0HmoTYvqKF4V50lj4MPHrLVoGtxM3B+c4Ws0Ozy2+oZVVz+piZm+SxDNCTfyNHlPO0qtc1AC9Cs2oQ3tm7IsSkPcL44Eet2iXpz0ly+h7z+w+qSJ6S1DxKj+H1Q22qJkLP29ig4VN9HizGC+xn2sm2a5Bw/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZO6Zk1Qx; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55ce5221f0bso372251e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757081575; x=1757686375; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qNIM8R1x/7yzpF+VhHfpd33myaTbFu2Eq9aory2fbt8=;
-        b=ZO6Zk1QxwLEBgBncwctxUzew2hze29Nn0CZhPrqKnBfQ9O6ygelBWx8w3p08NHRL2f
-         ctV6pY4N1oGCLX94Bbb80t32f+BpiAbimVEZIDDf+qr5g5cmB+c0EccyHHOjkxhCpysc
-         hYxSsMRxSbJHmV2resIFaRGcZSgr2V/afNmfrQpDWzfArv3FPwhmkNE/LIbzkLlRQebF
-         4Q4yjbv62xB/wgPWtB6Qm3YVt4mPIFnSIRLkCj6VuCrlocZuIFQcBQgQfyooe6m4Now2
-         DnumdnPOhEvQ5+DPxcL8Wz2TMssorQpy0ips55z499sfqQqzLKXU8M+QD+mxlLQ0FfUN
-         duZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757081575; x=1757686375;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNIM8R1x/7yzpF+VhHfpd33myaTbFu2Eq9aory2fbt8=;
-        b=UwIQvGgIvOULVJ2i/qcoYyBrkGeJ6Kb2yxSaWarosOt2bwb9UciN5a4qYrDIfmMNiL
-         gnD2tInenM9WKvH453fu9A3gY6U39bcpsHC7Gly8zCFSa+RlA0+AtGtfbJQKPSH7w/ic
-         pXPBSHzs937n0Vuw2ZfEzxmxEzydSeiDF0QEcM7mrloLPVfao3BcviCJqLQI2EL/zZSU
-         JRz+Ew1gawkUdlvLGuBRpmNvglOH7R6aFioyFOwU4mGNJ3tKvR5UP5On1clHT3R0wdYO
-         TGXQrJG3fZGbRiiW9TBhq5pLL5FBpA4s+XaWoEvb4YKBPav4bRkUSz/EeqA17ZzAwrnQ
-         mNBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLW1YQWi2S74qroFwizf/ywzT1R31ftxWJZwVMx1py/y7bz6cZYMTsHrrKMV3aXWM5cpKQI3+2mMOt30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPCzWPG0RNf+DoXeA+/TwN1gvUyciZ70Eg938LQqDAenC2wu2R
-	My32nXkK8/7c7Jaf+xbRTCfLev5k0o+7AKM/Rjh0NOQEIb8qKWmeAjMb
-X-Gm-Gg: ASbGnctkzsezljyeCqaEUYBQxOJ4METAaeBWPjuF+4DsDYY3JctNPsJjfFxsU043oit
-	QvO3kmYhFgH7cMDCprSrR60pkFeXTxI5rXaGX4e6m9FGNbfEAFCFyn639wdS7syDdXt/qfwoVsz
-	fEKq8QVUiuWKhGB95QOVqlMWOId0LJYyzyYzMOS2kyA+sWNa8KoNb9dfRxt5ABq/l8zRY/YnWWh
-	SpVcZtGRkBPf1aji1TnJdbE4a1AsbKf8qgPyjPovjynVL6Z9hjBscQFpGfjSPH7M3swVl0dvVno
-	AhgaxPWf2OeFnZ+Y8hKurTglEdP1spqBZ+ztG3RrHXgcBHbk0Pe9EOLVAnRIvyT5ZT/5DclVdJ/
-	MR447QBU9veyKkuyA7bnbLvhKVpI50Lw7tZxtYwA=
-X-Google-Smtp-Source: AGHT+IEfNTI/6WSD3WRB8RpqbaQVi4CaDeSa7b+YRq4kEmhqfw9wFx/wZI/iLKEByvwhvIhqmPVoUQ==
-X-Received: by 2002:a2e:96c1:0:b0:32f:3e83:4389 with SMTP id 38308e7fff4ca-336be137752mr29425441fa.7.1757081574352;
-        Fri, 05 Sep 2025 07:12:54 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4cb9b5esm19558321fa.28.2025.09.05.07.12.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:12:53 -0700 (PDT)
-Message-ID: <1c54cadb-36e7-4e72-83e9-53c597570c9b@gmail.com>
-Date: Fri, 5 Sep 2025 16:12:29 +0200
+	 In-Reply-To:Content-Type; b=qqCjG2Umb+qHoL9FPdxTlAI2v5YwonC72Dt4z2lPjoejrbG8XcHpDcW83qJnkWSMXB3iIPwjXjKsI6EI8XAKst+Aovcbyratzrz3gDAZ4jNV1Ws6nhSvSGzXNyQ54iqAsATvqXMEgeS1qbtuMssJ9u7WRPaU7c0NOOnxV/67RO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDeFXjmt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824DEC4CEF1;
+	Fri,  5 Sep 2025 14:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757081622;
+	bh=5ByBZVvQYtKrh9v0XQD1JR0lk/UjO24AJymTKBHmmBU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EDeFXjmtPNAhpqTUALINLmlGCWKWw93MOzcVp3Ti5Hii8F2xSRk/0CfnupzU2IA55
+	 hiBx3leoJQd2cbpaYlnMMIUSHTZO/PtYVtlJ+EGAKxEmmdOVe9SkV/LrGlve4BQxDm
+	 fsIBvPMkIANH/KQglphh9dT9RvKLHhvfyLchm3qcfzcDSeYFrXFQFzhHIsA4NvqBTl
+	 /DTct40r3OB/aQ7czqUo2d1scIs2BvfggJmBIgC6o/2mGE0RLD+sVw+UgnGlrbWCcW
+	 06arWzp16UdeEblJNjOEPFc8qFooPmaRmMQ6eag9pJEjBABTq3qIbmXVK8aUAy0ERb
+	 dy96COkAxBvcw==
+Message-ID: <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
+Date: Fri, 5 Sep 2025 16:13:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,93 +49,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v3] x86/dumpstack: Prevent KASAN false positive
- warnings in __show_regs
-To: Tengda Wu <wutengda@huaweicloud.com>, x86@kernel.org,
- jpoimboe@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>,
- Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20250830092556.3360776-1-wutengda@huaweicloud.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+To: WeiHao Li <cn.liweihao@gmail.com>, heiko@sntech.de, robh@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250905132328.9859-1-cn.liweihao@gmail.com>
+ <20250905132328.9859-3-cn.liweihao@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <20250830092556.3360776-1-wutengda@huaweicloud.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250905132328.9859-3-cn.liweihao@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 05/09/2025 15:23, WeiHao Li wrote:
+> We need a clock id to assign clock parent when use i2s 8ch as audio
+> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can get
+> frequency we want.
+> 
+> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+> ---
+>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
+> index b951e29069..795e721957 100644
+> --- a/include/dt-bindings/clock/rk3368-cru.h
+> +++ b/include/dt-bindings/clock/rk3368-cru.h
+> @@ -183,6 +183,9 @@
+>  #define HCLK_BUS		477
+>  #define HCLK_PERI		478
+>  
+> +#define CLK_I2S_8CH_PRE		500
+
+479
+
+> +#define CLK_I2S_8CH_FRAC	501
+
+480, no?
 
 
-On 8/30/25 11:25 AM, Tengda Wu wrote:
-> When task A walks task B's stack without suspending it, the continuous
-> changes in task B's stack (and corresponding KASAN shadow tags) may cause
-> task A to hit KASAN redzones when accessing obsolete values on the stack,
-> resulting in false positive reports. [1][2]
-> 
-> The specific issue occurs as follows:
-> 
-> Task A (walk other tasks' stacks)           Task B (running)
-> 1. echo t > /proc/sysrq-trigger
-> 
-> show_trace_log_lvl
->   regs = unwind_get_entry_regs()
->   show_regs_if_on_stack(regs)
->                                             2. The stack data pointed by
->                                                `regs` keeps changing, and
->                                                so are the tags in its
->                                                KASAN shadow region.
->     __show_regs(regs)
->       regs->ax, regs->bx, ...
->         3. hit KASAN redzones, OOB
-> 
-> Fix this by detecting asynchronous stack unwinding scenarios through
-> `task != current` during unwinding, and disabling KASAN checks when this
-> scenario occurs.
-> 
-> [1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
-> [2] KASAN out-of-bounds:
-> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
-> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
-> [332706.552562]
-> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
-> [332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
-> [332706.552906] Call Trace:
-> [332706.552998]  <TASK>
-> [332706.553089]  dump_stack_lvl+0x32/0x50
-> [332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
-> [332706.553303]  print_report+0xbe/0x280
-> [332706.553409]  ? __virt_addr_valid+0xed/0x160
-> [332706.553512]  ? __show_regs+0x4b/0x340
-> [332706.553612]  kasan_report+0xa8/0xe0
-> [332706.553716]  ? __show_regs+0x4b/0x340
-> [332706.553816]  ? asm_exc_page_fault+0x22/0x30
-> [332706.553919]  __show_regs+0x4b/0x340
-> [332706.554021]  ? asm_exc_page_fault+0x22/0x30
-> [332706.554123]  show_trace_log_lvl+0x274/0x3b0
-> [332706.554229]  ? load_elf_binary+0xf6e/0x1610
-> [332706.554330]  ? rep_stos_alternative+0x40/0x80
-> [332706.554439]  sched_show_task+0x211/0x290
-> [332706.554544]  ? __pfx_sched_show_task+0x10/0x10
-> [332706.554648]  ? _find_next_bit+0x6/0xc0
-> [332706.554749]  ? _find_next_bit+0x37/0xc0
-> [332706.554852]  show_state_filter+0x72/0x130
-> [332706.554956]  sysrq_handle_showstate+0x7/0x10
-> [332706.555062]  __handle_sysrq+0x146/0x2d0
-> [332706.555165]  write_sysrq_trigger+0x2f/0x50
-> [332706.555270]  proc_reg_write+0xdd/0x140
-> [332706.555372]  vfs_write+0x1ff/0x5f0
-> [332706.555474]  ? __pfx_vfs_write+0x10/0x10
-> [332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
-> [332706.555682]  ? __fget_light+0x99/0xf0
-> [332706.555785]  ksys_write+0xb8/0x150
-> [332706.555887]  ? __pfx_ksys_write+0x10/0x10
-> [332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
-> [332706.556094]  do_syscall_64+0x55/0x100
-> [332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
-> Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
-> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-
-Reviewed-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Best regards,
+Krzysztof
 
