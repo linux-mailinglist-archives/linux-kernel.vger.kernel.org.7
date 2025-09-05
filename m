@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-801865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2038B44AE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:40:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C3EB44AEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D086C3B5448
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F404F188FD23
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0A21E521E;
-	Fri,  5 Sep 2025 00:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4E01DE4FB;
+	Fri,  5 Sep 2025 00:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UAlKFWoy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VE5ESYjl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F221DDC35
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 00:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C271E51E1
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 00:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757032740; cv=none; b=jPbLprfehDMH9SnVQoMpryX9L1xqK9LioeT3JNaQ4dEDgkB9BU4f1lsOPQdADWj6bZSRwyRyOENPeTlWE1lz3ufk1MVNtepjsvlXGxijOHBX7++8utghQ+gg43kXkJvJ9ry0biN4bW2pVuvMikmyC8eWAiooJwmcrCpZHqYiJyE=
+	t=1757032742; cv=none; b=fv90qMOyDipIyRG8JN7p5liLADl+/sQEn8500hvsfIXAGzhEOKwTqssIX8A2Y4zcer4pvGpCpaLHpaKXbr/7RZlFiafF52W0maamMohXGwWHDZZUo9bismmoWIBMSg0dQNqIPUJyT3AriZLOoJeqeCBQdNAgWj0j8vG5FmrvdhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757032740; c=relaxed/simple;
-	bh=T764qGaUs1J9VFKtvepXHsiXpOOMX042xzB4mztK948=;
+	s=arc-20240116; t=1757032742; c=relaxed/simple;
+	bh=XLkwtyygZJdPj3GjkZgZ1aANtwazJqGOIEmkYbUxRwQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oWJ2iai+fwaUDv2Komofa+rru8f/Gf7hnsqMLrldXkxBBjjgvn6Y7q91+CnSoCDFRlncoI0R5zP6BJqBfHc/FNOAsdNOnUnXt7mnFbem7zx+oDz7WhFSt7sUJMN/9hvNC+SpVv6PNF7LlnspiHgza8tOPwAWsPT17lvmMNinnPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UAlKFWoy; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=JDz5+2MsHsp7lpKr2Su4S90joma9xES2x46imZOOnJjgJUWVqT1nZcW0YKYgnGgKQsGOI1Z4bw92VSYPZmr8Vlblg5h/HFOWFd6jB2nEJOBv5c+4wpldgC8X1qikei2MFxpc1hoo0M26LV0jZSd41Ivufi5HAkJz7Rn9Ccgnp/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VE5ESYjl; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IScQk012198
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 00:38:58 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584GUjtB017818
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 00:39:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9brpOFp+/3/6vV4g7EI38M1O3ti6c1WPwrR8J+VQwpE=; b=UAlKFWoyVvB7CyPE
-	Nlvg0Sg+fFeWVIeDfuo+4jbax5cJ7h8ZXtsS3+dHpihKgxWC93cU3ND5N663+4pI
-	xdqefPyl9lJDAWc+uSxHWmBBhHMfYe0INp37Wt+QagDegVmYi/KkQeRwB04Ol3a/
-	Yv0BIZy3oyEa+obXQ3SNSaQgqkN4kilIOcNjd75iZKUb+YTJT2JSBYSU3p2uW84o
-	1dZnAct7+Mg8vV8UXXzgFTRJX1IplwEE1lbnK+pPfrOWnrCeWWz9M51MoQ2XTpJb
-	iiDYbUSO12O066hWaa1Zap4o5GhR5AFpvXjbMkSXWhxCUiRR8VXnxjwu9faJG1MV
-	kv1kHg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48xmxj5pym-1
+	bLiIOtcLE7wWiaqufYm5bdrdybL14BNM8N/yFfbsTSY=; b=VE5ESYjllYEICnuR
+	D+Vcj5mbyBY0Ok7ERnQG2ZMTt6JiQzXKuJjGttNEr5NrumYFafTrlw9RxDz/QwzH
+	niqcWvxyiVSOFqgMCbLMKKRg3Txhb3AR26xlE+gkAre1HRTLCGfAJ8jQGZ/UQ02D
+	UszrjoReuu+sXBg6faQRIOajSLNQq0hJDz6Naopre4wXIzRNuDUF3n93PpO+tZ/4
+	SUkcwDUjHXx8eKpvV3ewQWyG/1AcihAmzIIFhsN+5AZsvFWjt8f2JhXO0b+sjonu
+	7fQo8cFEzg7DKzhnGeBf0LuYb0inQxZnb1wUTowSMB+4PtIjoniG3fIqhv4UgdwT
+	6yv1lA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48yebus55v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:38:58 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7296c012f86so22178006d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 17:38:58 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 00:39:00 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b49715fdfbso47508601cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 17:39:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757032737; x=1757637537;
+        d=1e100.net; s=20230601; t=1757032740; x=1757637540;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9brpOFp+/3/6vV4g7EI38M1O3ti6c1WPwrR8J+VQwpE=;
-        b=tFQiiMk9q6+km+7V1ZmMWVujysIhY+/wys1XDEIUymJjgBjWpR0j6+vMHVco/kQmDG
-         DKxmPStliw4JjZhbb/GuAPvEKEZ1kDRKTca4qYpPnor7l900i1hNIVg8fEifWzBgIJlN
-         Adf6ZihzWxgJwxNyR4u2TIf2iLSpbbCJvolkqtqu5dRZ3BrVVoB4/PpiNEs8i+cgDTPp
-         mRLENu1Ka1VJGd7+84u6aMp0MowgN+/zE6uasMVqf/6cUg5E2imFMzsT5gjuqlV6xheG
-         FncNEH+c4wf8U4SQq/yDCztjGCYpdo46H5cXtbt73kMw8u1TeEdA0gRhJdDJD62MetUK
-         CAug==
-X-Forwarded-Encrypted: i=1; AJvYcCVK4YWp8jGTOwXQ+sgOjrhVRYoriaZdHBQ2Ma5EAdeoVXpKmgu6udfJTy1yDF6DzaDswaQDSDfzLVkWeIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCLR42hXSb72uFZI+2pIzGdfypTnzG/VYIdol+M8TknITwFvZi
-	BWPGeJsSjxeEg3k+g9lGf8cCJoMmlND+znzamXPt+2TvtuQLeuO7eGI/e/WSw5M+QMJnonZDVRp
-	mJypGGDfs5zajFmE2kB8uc3AL1s3T3NbIbMyMq6GFoECyP4EINU1EKWDJt/JRrVgw9eI=
-X-Gm-Gg: ASbGncvZZp/2EtvqcpSdEjsyFxrcxIIXDASIZeHP4ypYhV7tFrwQYYMzEg9t74YXsro
-	xRJAcPTbdt/RrKUR+8qLjRDfs3sy4/aDz7OPLePMHIPPOFc+0N2yg32xh3e0xJ6UZMe3xIaBoI6
-	8foMrtjLhBj4A1rhRhoRyGi5I8L4XIdUeDfkT92ueJhWOFANTyW4oBdQEHMS2mHG5cY4jlYMXn9
-	NPWdj3KUBuw7hHkXWVul7e8X+0WiBlXrYpcE295nqZe7vQh8R6SMjgpNbm12b1sh2zdQwmxHOTf
-	XQBV3kH3TS5bKlXt7maPoUfT2JMG0PYXDAzioHZxCrvZKWI4BFHHEbZUJSxBIJHa6ngaTCa9Mne
-	NKkc1oRm/LHHXN5HJP91TaXcXmATEjNrch/2wqG3VA/dnUzsPphGX
-X-Received: by 2002:a05:6214:2469:b0:72c:cc04:c3a4 with SMTP id 6a1803df08f44-72ccc04c455mr9697156d6.8.1757032737099;
-        Thu, 04 Sep 2025 17:38:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGggptVB7yJzNpKmjyKL+r1E5aqNrdPD/lf2zm9l0aUlD3mzu8IDaTE/VSOjY55ioVtIEDZgQ==
-X-Received: by 2002:a05:6214:2469:b0:72c:cc04:c3a4 with SMTP id 6a1803df08f44-72ccc04c455mr9696816d6.8.1757032736562;
-        Thu, 04 Sep 2025 17:38:56 -0700 (PDT)
+        bh=bLiIOtcLE7wWiaqufYm5bdrdybL14BNM8N/yFfbsTSY=;
+        b=s+fdRIIiGLG4HB5N1AMXOn2k9V59/Q93y67APthUIzd/ziijThxDbs94+iNAE7TbHY
+         79cosYZ5OoFNZNetoFTaAWPvPJug4xYMDogvJEYKjFIsKojkvXzQMj+p4+PtvQrSxGVV
+         iZGADQPg3WN11WfNoMTtmC7trC3fNpnZk+3nXLdn8XAvTz/1pfPcP9CvzaPuF65146R9
+         K0V9SOZdwmyfNytEUbnSqz1qNuBCpoSDS95Ob8bPdyQwZj3XTOAjTEcgqHiXqSWkq+SR
+         u0AaoCFDBgMtcTwmPpyXXW6pKT4HKPAaOEXOZT5293seGr+XSuU6izGsjXMEaViVMYd2
+         cc4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWzjhbljrYoLMKhIl6NOAPmOAA0nIXELDtb+QdwJXCggLOjMRVWyitv1fctXwT23PuEynIF6jV2eMdxJM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkOkumpdmJ/XiXtEQ5qVtKP8+VgQGfu07zY5rEvbkYRefGjqso
+	gTxIvc3Ziu0wnjDEHrlfG6lPwfB7yu7YD6Enk8ALEOM2fRkIkFybj5jjdPi3Wzb+/VCI/GTRzQ5
+	sPh+c10+VL0QZq5c25/5P5GHxLe2BF6rXiYaUblO6nnQJnHguO4uwAz52sM5caAlYQT4=
+X-Gm-Gg: ASbGncu58Z43beFdpbl5WBZ6wP7BiGJhQ5wCJhRfThqllz2h7iAVnlQpwWfE0Q0+Pyt
+	X/IOOuqil9R0/6ghmh3VhGPQcIA5QiU2PVo3fc4HdRL6TZUrJHrK3Uj09dsgGIAcMkdj97ML/Fv
+	7qQiXAeb8UJ6GMQ2ieczUPxkfDHggz/I81VKodYAAofs6A/VHa1Wdq9zgDFNqqq0J1eDdW9u2Ch
+	uZofCOWnWHsSVC/rqHSUUdzwj5cJcBFUPyIycCySI0xoyztEfvhx0+Dl1AbQ6AdEO6fnKp5G0KD
+	8skTWUCzwnCio3PvZotYI1+z4ScjIK8zKSduY/AtGLGohDulT8a9419Ct1oj4Q2fLC+5MJQw6JO
+	ZsD5uGZfkFtiCgotF2X76Q7pxJhT8jQjn2hJWbHGa5QiNrHlhRGdL
+X-Received: by 2002:a05:622a:551:b0:4b3:61b:58f4 with SMTP id d75a77b69052e-4b5e18395b0mr40913331cf.53.1757032739623;
+        Thu, 04 Sep 2025 17:38:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEP0nB2Vt3LMYDBx118zsJ4giTEWN/hLJl0xD4HXyg7zzaWIFQByUuhZsTTOJxoycKJ8OS8WA==
+X-Received: by 2002:a05:622a:551:b0:4b3:61b:58f4 with SMTP id d75a77b69052e-4b5e18395b0mr40913091cf.53.1757032739088;
+        Thu, 04 Sep 2025 17:38:59 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfd938sm1510059e87.109.2025.09.04.17.38.55
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfd938sm1510059e87.109.2025.09.04.17.38.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 17:38:55 -0700 (PDT)
+        Thu, 04 Sep 2025 17:38:58 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 05 Sep 2025 03:38:36 +0300
-Subject: [PATCH v2 07/12] drm/msm/disp: pull in common tiled YUV format
- parameters
+Date: Fri, 05 Sep 2025 03:38:37 +0300
+Subject: [PATCH v2 08/12] drm/msm/disp: drop PSEUDO_YUV_FMT_LOOSE_TILED
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-dpu-formats-v2-7-7a674028c048@oss.qualcomm.com>
+Message-Id: <20250905-dpu-formats-v2-8-7a674028c048@oss.qualcomm.com>
 References: <20250905-dpu-formats-v2-0-7a674028c048@oss.qualcomm.com>
 In-Reply-To: <20250905-dpu-formats-v2-0-7a674028c048@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
@@ -106,107 +105,79 @@ To: Rob Clark <robin.clark@oss.qualcomm.com>,
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3220;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2270;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=T764qGaUs1J9VFKtvepXHsiXpOOMX042xzB4mztK948=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoujEKmhozhM/+m0ojp5V0LfFbrvFkofA6W7eN2
- zog3jTw8leJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaLoxCgAKCRCLPIo+Aiko
- 1WBWCACkbqlPExGRCdiT0UZihOTCLMIN0u56fVd4JKEr4W83H1+sgCf0pawMxOGZCTHPFT5hvxM
- FujC3WWVbcsz1hnM2oRWtPtya6sCIPWKRskqGvJDUsGEa9mW4SP23z9y2AXAk5CgHNcFH9lu7g0
- IeaSCENfkEevQlYsG+m++UAQF+YBbwAI9gEmh2lcqlJG6LFBrkZQz6wPG4Ew9gynLcX5Gl7iSGg
- fQVzC2kJNG94q4D0gQV3mwBX1eqbvgxkfiqY9Ww+ao6uTJBM1ZBucWHIsfj/Ad3oe0m9FbpDFYD
- YIQo8lZLTi8QTq24/iy09Ml0oFMwtxweD1VrgixjGOcT8icP
+ bh=XLkwtyygZJdPj3GjkZgZ1aANtwazJqGOIEmkYbUxRwQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoujEK71uU2bZ8JQXFBGN1IDBH5OYQyC9Xm8v8v
+ tnUi8qYOuOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaLoxCgAKCRCLPIo+Aiko
+ 1b2yB/wKB4v8Bk2zFkuQDoVspBPY3bca3px+IzVDe5SyzF0FfBVY/9ca/uty+7qgAX9i8dVh8NV
+ LdCBJWXW7Wfb6sEB9hw323dwH4NlMLa8gY1KW5GQiOVPehuK5Pwc8yCxUOs+oG1gD9zkpY3crTj
+ HvtY8KdCmsZZcOKPOGb5b1apoatF0mT/b3xWXFicKF/NQ7Tb80KTtgvQsZkQTzvDn0gbyk7bzLD
+ gWxUFA9aIalzlrIfuxodQxpj5zPC/dCyc9LKMSgC8Zm+tco4YF6FhId2X3J1vDIKPmNfidpAC7J
+ /RBiA+aOsGY62ro7QEhoCaSHJla3hJbN+kFDytWN6VvHG/SP
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDExNyBTYWx0ZWRfXwmtYsiZhMgng
- 5JnhJTEI8y61dpHkKHcczuiWzUyOqD0aolO5F7XCDj0TvVmvhZgXo70jINTChG26KpUDg/WL26S
- lQru2cnzEaKqlpaq0Em6ESegn66SJSIQGlP7lkX9wtTV871C+41WCeCQtluOjiAyehMDGwNi7nM
- pP+YdVWCcapPXcGFvZGCWptvX/GBRgHvmflMELrpCzqLotDKbUPUc4p56BTkm7GqNxm0RvV1nCW
- 2qUUHmi+JGkfwLS/AdMOUH4UCDAph6Iyr/vw9KmzM7dQzrHc6HH7BQXgLRCZ4KGaoTEV5C3vxuz
- mjmhoqIJkHtMOALxt4zRFNnLy+MgPuaaTOyt0KMISDZRh4x8A0Hz7h6HmN6qLr20GKYBx1sH4pV
- PAshB+4x
-X-Authority-Analysis: v=2.4 cv=a5cw9VSF c=1 sm=1 tr=0 ts=68ba3122 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=FCw1dLDEiFPyt24oSuoA:9 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: 10MqLYBiugtvy_FRR0hrI5Jq4civTRzk
-X-Proofpoint-ORIG-GUID: 10MqLYBiugtvy_FRR0hrI5Jq4civTRzk
+X-Proofpoint-GUID: e4sIXU1AWCdkibvzrK8M7Ksnlsqvihr2
+X-Authority-Analysis: v=2.4 cv=X+ZSKHTe c=1 sm=1 tr=0 ts=68ba3124 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=iz29p33r4uX7jxN-whAA:9 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2MyBTYWx0ZWRfXyqYl9r4l9pNo
+ nsWno8v23eQTmBcvsQ9b8pBpdjwd+t14RftaJRaVKFy9X1FLHDl3Zf0h6aiA0WIas6rUnb8OWlr
+ hTq1P1O52gvocnLNRBacnLM0b3eN831jhZsMIYpJa/dNVheMSklggr+FrFzP20j1MzY91JAWVTF
+ 9gMya/C3pxLWpC84JtS4NlaarzX0VF7/MldTH8YKYO0/XJ6vssxtaO8x7JXcGxY3D7p1lVvOfZm
+ hQrIyClBmrpuHEayNO1Nwy+93vVFGOYXtBnxwjGutLyaYmsVbQgWDbrdLPTzdK50sxHfqkqZMov
+ 0z0agfJZtOx3rzB7T10d5YoQKbpjJA3NFORvapsCsSoUlN9rFF1fu9GMwK2A25nLNloGwn7JUMm
+ wUUKsS7y
+X-Proofpoint-ORIG-GUID: e4sIXU1AWCdkibvzrK8M7Ksnlsqvihr2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-04_08,2025-09-04_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509030117
+ spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509040163
 
-Pull common params of tiled YUV formats into corresponding macro
-definitions, simplifying format table.
+Drop PSEUDO_YUV_FMT_LOOSE_TILED(), the macro is unused.
 
+Reviewed-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/disp/mdp_format.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/msm/disp/mdp_format.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
-index 900b2de252a6eb2eac3d0670f1aaa77f7520fd77..79f7f973dbf348acf2c06e66afedeb8f22e7a8ca 100644
+index 79f7f973dbf348acf2c06e66afedeb8f22e7a8ca..35c443f006bbbde446cfcc0862c49d06a8e10bb4 100644
 --- a/drivers/gpu/drm/msm/disp/mdp_format.c
 +++ b/drivers/gpu/drm/msm/disp/mdp_format.c
-@@ -284,8 +284,7 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
+@@ -325,26 +325,6 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
  	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
  }
  
--#define PSEUDO_YUV_FMT_TILED(fmt, a, r, g, b, e0, e1, chroma,             \
+-#define PSEUDO_YUV_FMT_LOOSE_TILED(fmt, a, r, g, b, e0, e1, chroma,       \
 -flg, fm, np, th)                                                          \
-+#define PSEUDO_YUV_FMT_TILED(fmt, r, g, b, e0, e1, chroma, flg, th)       \
+-{                                                                         \
+-	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+-	.fetch_type = MDP_PLANE_PSEUDO_PLANAR,                            \
+-	.alpha_enable = 0,                                                \
+-	.element = { (e0), (e1), 0, 0 },                                  \
+-	.bpc_g_y = g,                                                     \
+-	.bpc_b_cb = b,                                                    \
+-	.bpc_r_cr = r,                                                    \
+-	.bpc_a = a,                                                       \
+-	.chroma_sample = chroma,                                          \
+-	.unpack_count = 2,                                                \
+-	.bpp = 2,                                                         \
+-	.fetch_mode = fm,                                                 \
+-	.flags = MSM_FORMAT_FLAG_UNPACK_ALIGN_MSB | flg,                  \
+-	.num_planes = np,                                                 \
+-	.tile_height = th                                                 \
+-}
+-
+ #define PLANAR_YUV_FMT(fmt, bp, r, g, b, e0, e1, e2, chroma)              \
  {                                                                         \
  	.pixel_format = DRM_FORMAT_ ## fmt,                               \
- 	.fetch_type = MDP_PLANE_PSEUDO_PLANAR,                            \
-@@ -294,13 +293,14 @@ flg, fm, np, th)                                                          \
- 	.bpc_g_y = g,                                                     \
- 	.bpc_b_cb = b,                                                    \
- 	.bpc_r_cr = r,                                                    \
--	.bpc_a = a,                                                       \
-+	.bpc_a = 0,                                                       \
- 	.chroma_sample = chroma,                                          \
- 	.unpack_count = 2,                                                \
- 	.bpp = 2,                                                         \
--	.fetch_mode = fm,                                                 \
--	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT | flg,                      \
--	.num_planes = np,                                                 \
-+	.fetch_mode = MDP_FETCH_UBWC,                                     \
-+	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
-+		 MSM_FORMAT_FLAG_COMPRESSED | flg,                        \
-+	.num_planes = 4,                                                  \
- 	.tile_height = th                                                 \
- }
- 
-@@ -623,19 +623,16 @@ static const struct msm_format mdp_formats_ubwc[] = {
- 		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
- 
- 	PSEUDO_YUV_FMT_TILED(NV12,
--		0, BPC8, BPC8, BPC8,
-+		BPC8, BPC8, BPC8,
- 		C1_B_Cb, C2_R_Cr,
--		CHROMA_420, MSM_FORMAT_FLAG_YUV |
--				MSM_FORMAT_FLAG_COMPRESSED,
--		MDP_FETCH_UBWC, 4, MDP_TILE_HEIGHT_NV12),
-+		CHROMA_420, 0,
-+		MDP_TILE_HEIGHT_NV12),
- 
- 	PSEUDO_YUV_FMT_TILED(P010,
--		0, BPC8, BPC8, BPC8,
-+		BPC8, BPC8, BPC8,
- 		C1_B_Cb, C2_R_Cr,
--		CHROMA_420, MSM_FORMAT_FLAG_DX |
--				MSM_FORMAT_FLAG_YUV |
--				MSM_FORMAT_FLAG_COMPRESSED,
--		MDP_FETCH_UBWC, 4, MDP_TILE_HEIGHT_UBWC),
-+		CHROMA_420, MSM_FORMAT_FLAG_DX,
-+		MDP_TILE_HEIGHT_UBWC),
- };
- 
- const struct msm_format *mdp_get_format(struct msm_kms *kms, uint32_t format,
 
 -- 
 2.47.2
