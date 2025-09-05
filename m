@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-803292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36715B45D06
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451F6B45D0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88AC188F245
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70623B2E45
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33D830214A;
-	Fri,  5 Sep 2025 15:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226E12F7AB0;
+	Fri,  5 Sep 2025 15:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DRFTEJUz"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MIovDv00"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9262024EA9D;
-	Fri,  5 Sep 2025 15:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5170242910
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087365; cv=none; b=JtkcUCRL0WcjHn5gmsJFVld/u5MktpXRg8/gM6PyZo/mLB7valdBm5H2/Jvl0ymb7qbYphqEY1/pqe9SC/vvb17bdNWOy5dEwYRVD6bXyJ4agyhszfqkd5fTbZ/hij+e9XoTWwf/u9PYbMGRBAwkQsckr696s56Tlmp3MtFxxu0=
+	t=1757087351; cv=none; b=FEhqnT1YxeTIS7grInYGW7IFWSRTTCKgKJAwiDKmj9gXFBWyC2RsffLywKvUxzmlaDglx+TnUwzsHRIleJFVPMMCP+3eUn5hyLapSByM5OmZQzjUEpPQrHEAD00rbtUW9l+CIKoyfHXJY1oxgZbr6dWsL1TCIxFW0wx9HZQVzbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087365; c=relaxed/simple;
-	bh=4mIxP72eS0LmGYvRHu+tYBXtiieXUi8pm8fU9+ptrI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lSUDqXLnxbqF/GOBLUc5+myiFXCvK6cwp6V2fb4ETWK5ahqQN9wK6//kwpO+xjLlB1E7nHohrdMmLjchEBpWKmJopqMxnVAjkuq5oqdu+wKMfTTemD8gRJlJGnj7azz5vDhZI0qDshvG72uIqzfrSsZXROpz7sTKWFzH8shJvm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DRFTEJUz; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585AgQoa017948;
-	Fri, 5 Sep 2025 15:48:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=mCfoUYLMC6HNsYLC2Cmci4imZfw/Ws
-	ROhnMAP3rAWN8=; b=DRFTEJUzUMLxbxYuAXuLuwNqrzv8c+DrkFqe89wjY27c9F
-	HPKmwnL0ffbZLOY3Rz5gz7HsHuFYQX6DqipN3T17S7pXXoPQ0OUX26rpw2bM2Ta4
-	HCoGI8+peE6wgvdwt4ZhOwwGmSI9acpU5CBc496pJ6Kl9gzxQDChu/+1O6PlEWaS
-	HHHSSQvfm9GSge31HtdVFwim+meO0SH5sOxV9j5RYTRpeOEqPos2duD1GYvhAUwk
-	Y1ASxol3ifR8yNeQRkjgWqPhocL/iRqrC9el8+zCXSORnp/lvdaNXU7o8ETDqd86
-	PWf/tQ2g4yPndZLt/k4Lq6iGIW8zebN60vYAGngw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurhfn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 15:48:31 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 585FkhKr005421;
-	Fri, 5 Sep 2025 15:48:30 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurhfmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 15:48:30 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 585D0Hpj019442;
-	Fri, 5 Sep 2025 15:48:29 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4na0hb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 15:48:29 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 585FmRQ252298180
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Sep 2025 15:48:27 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB1582004E;
-	Fri,  5 Sep 2025 15:48:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EE2320043;
-	Fri,  5 Sep 2025 15:48:25 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.48.240])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  5 Sep 2025 15:48:25 +0000 (GMT)
-Date: Fri, 5 Sep 2025 17:48:23 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 4/7] x86/xen: support nested lazy_mmu sections (again)
-Message-ID: <d3adc2a0-5888-411e-ac7c-9df45e3389c9-agordeev@linux.ibm.com>
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-5-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1757087351; c=relaxed/simple;
+	bh=ja7Jw+Lb6NvFKnBlHZ66VaaJStdLwLSOhpRkRPCFFNY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=gYeHQOL+htDSehDLtFTSBgDVvfWEDDWtPnGbxTZcT/NClog3BaiWQ+afHTiT5pWzALXcFoEwjRHAiwjvosyos7kQQp+Ugvt5JFJUQ5rn+wTrjrUIuIo2iJsS4B0waMWm15HB8t4K7M6SXUZcOpxR93JrgHkDwC5iNHISpVD5PYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MIovDv00; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1757087346;
+	bh=3677tYUB7TkZpg+MOWNyHVCZvAIfuuou9nHpuxE/LIY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MIovDv00Xj+YThRreqSt5esDyHct2rFsH1HnASRamAyjxh76EFT1zXiibXqnwcmZ5
+	 kSVNvFKB1sanzH+bh9P986jSGXgTw/MDXLGwugkSlfk1a3dGBJNKCcSizGViMlQbox
+	 NZOG2io8GOqd2jchMxyrrfhBB7zaNw+WZW2p5gZQ=
+Received: from zm.. ([2408:8340:a2e:f9b0:20c:29ff:fe69:94c7])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id C4531636; Fri, 05 Sep 2025 23:49:05 +0800
+X-QQ-mid: xmsmtpt1757087345t0jq1vxhb
+Message-ID: <tencent_F5322517AD2A723568849905CF474A7D6C07@qq.com>
+X-QQ-XMAILINFO: NyLjhNUPA19gjKd30bMH6BjLZEU0ME1aKZgIXTwXKbLeXRly0R+TQUlIoic7e2
+	 kKFzviAJIY6EQw4GQ1mS6RO10Lg1lkkTSVUDlXEpACtKP51oKChg7fM5lr2eh81I6/HFbhEvnwQH
+	 hyHcz0Vbn51jN9pAPrrRKq0NQ3OwZuozot23M6e6Uw1zQjO6KXyeu+LBfSRhU5Bwjei/VU6d7pXn
+	 xBeQMnlLSGAtXZxLgVpxgNZoFDca5tOmUGg1RBnvBNO5TpCXGRn/NZTsMVJiCL68nCFuzhjD3rqj
+	 teL4QpLVdJReO2ZZCARmu+4+CHdLhG9xbcMn8k1aOrdCw7opQKcLg0iX5gB8ZoUqZTlttl5KKKTK
+	 pjkyYI7vsEYG757loIUkum9nhg+H0hOepUOO3IT+E6ri8Khb3tnx4DwMnp2aYhl5K0OjynUmbGqg
+	 uKpL277hRlR8M69oERvc2KQ3i/owa4ngv6JcwZkFr0puwDlmumRFK0ur0MhDSUrrrAyJCjleljfX
+	 9tSxzhxZdEaUVL2rM3SrTdM8rDxs9Zn4rUpMom6ZQJ0xxm5xmIXNNdAvjP6YRT/QcHTe9ArNaJhy
+	 izbgZp6wGkezjahmRB9bKfAiqjvE4ijqwty4+KDDB/Xt6ADW2DrRlXQUj4nYhgMj7xgCX7zt6b1z
+	 hZn5//kYyCOA/C8oF2QIM5GXlVkvDxBdiji7BEq2WGeaInIaqRzqprSMimpTX7E+S0TPg14cfuba
+	 ANI3Hp9ATuy9rfrYH0j0hsxYYWsM0E20gUp5do5ZkAp8oQSmbL90ogHn+CgL+J93Svk75evXXTEM
+	 r0VSAOux/1VVK9dQ0gjeZ+O0LCcPsPRrjLoIk17VxfKOsLIVb+4WddFE4bKaMSiC8819JkZxmLBi
+	 kFeCm7l05LwhT0Azm0GYGcEynrUEsPWyHEibn1CbDsnDVq21drXxLY5xWBxA7M65lm4tTL7BTnr4
+	 bxNEzQjZIIoPJuBovm0cvQsSuMbsWr8VfPGTEdlfp8LfbQoKD1FzmADAHHz+f2I7kq2oG/uixLcp
+	 IPiBgzSL8xO6MPqJUGbV0IKTQgEu5q/UArQLUdE0nFMc1Qp967UwpvPpxI2zlbmfC7eU1nzg==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: zhoumin <teczm@foxmail.com>
+To: hirofumi@mail.parknet.co.jp
+Cc: linux-kernel@vger.kernel.org,
+	teczm@foxmail.com
+Subject: Re: [RFC PATCH] vfat:avoid unnecessary check
+Date: Fri,  5 Sep 2025 23:49:05 +0800
+X-OQ-MSGID: <20250905154905.1150433-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87bjnqkpns.fsf@mail.parknet.co.jp>
+References: <87bjnqkpns.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904125736.3918646-5-kevin.brodsky@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX5iXkXHtPokV2
- s58RZ7e813edv+vWWoqJUrrtWQXbub6NiX58yP1v9mbmzE5GTo4wfrfFkR/YZ/MbCR+iaBSdaCX
- adCNlkxNA/nEsZ3agSOH3KgEWq38b6wGZtWAzoLq+mKBzCvbn/uEMkBgl3O9f5obeDeeWy94B3P
- LgKQGohc5o/PIli23EYmnTGZI+Oj8pYgiOworIhg3wrM4u606YHplewCbIn1zTW8AdxtJuUJDYA
- iMBC7cL5Ca1p2IQg+1kqXYCy73F3DoQq/aCn8/pSszhndcjXi11V8uX0tGswVehF3dhVd7AerLt
- JrqhsabJDFJw5fzoqnl1EhDRooO7y32BwqH5cYOjZy4q0rOcELXv53bz54YHJ9HbXtIGc4qdlip
- ckpxcnXd
-X-Proofpoint-GUID: u6h_butZCR90wxuVu6ifBPi5r4KK37UM
-X-Proofpoint-ORIG-GUID: HU44fewV-eZEBpYhS3NFrN8FS6mJ4q6n
-X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68bb064f cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=36QzpkCBnVJsay_x71QA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300030
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 01:57:33PM +0100, Kevin Brodsky wrote:
-...
-> -static void xen_enter_lazy_mmu(void)
-> +static lazy_mmu_state_t xen_enter_lazy_mmu(void)
->  {
-> +	if (this_cpu_read(xen_lazy_mode) == XEN_LAZY_MMU)
-> +		return LAZY_MMU_NESTED;
-> +
->  	enter_lazy(XEN_LAZY_MMU);
-> +	return LAZY_MMU_DEFAULT;
->  }
->  
->  static void xen_flush_lazy_mmu(void)
-> @@ -2167,11 +2171,12 @@ static void __init xen_post_allocator_init(void)
->  	pv_ops.mmu.write_cr3 = &xen_write_cr3;
->  }
->  
-> -static void xen_leave_lazy_mmu(void)
-> +static void xen_leave_lazy_mmu(lazy_mmu_state_t state)
->  {
->  	preempt_disable();
->  	xen_mc_flush();
-> -	leave_lazy(XEN_LAZY_MMU);
-> +	if (state != LAZY_MMU_NESTED)
-> +		leave_lazy(XEN_LAZY_MMU);
+Hi Hirofumi
 
-Based on xen_enter_lazy_mmu(), whether this condition needs to be
-executed with the preemption disabled?
+>> Remove redundant and unreachable name check code in dir.c.
 
-Or may be this_cpu_read(xen_lazy_mode) + enter_lazy(XEN_LAZY_MMU)
-should be executed with the preemption disabled?
+> Looks like you changed the logic, but no explanation.
 
->  	preempt_enable();
->  }
+1. In fat_parse_long:
+If (*de)->name[0] equals DELETED_FLAG, the function returns immediately.
+Consequently, the subsequent IS_FREE check can never evaluate to true.
+Therefore, retaining only the ATTR_VOLUME verification should be sufficient.
 
-Thanks!
+2. In fat_search_long:
+If (*de)->name[0] equals DELETED_FLAG, the loop skips to the next iteration.
+This makes the subsequent checks for IS_FREE and ATTR_EXT unreachable.These
+checks should therefore be removed.
+
+3. In __fat_readdir:
+The same reasoning as in fat_search_long applies here.
+
+
+
+>> Remove flags check in fat_update_time since fat does not support
+>> inode version.
+>>
+>> Optimize fat_truncate_time to return a meaningful value, allowing
+>> the removal of redundant inode checks in fat_update_time. This
+>> ensures non-root inodes are validated only once.
+
+> Also changed the logic, you removed the check of flags.
+
+Changing the return value of fat_truncate_time and removing the ino check in 
+fat_update_time is a minor optimization, as mentioned in my previous patch email.
+
+The reason for removing the flags check is that the enum file_time_flags has
+only four values. Since vfat does not support SB_I_VERSION, higher-level
+functions such as inode_needs_update_time or inode_update_timestamps will never
+set flags with S_VERSION. Thus, checking the flags is unnecessary.
+
+Note that __mark_inode_dirty will not be called only for the root inode. This
+logic remains consistent with the previous version.
+
+
+Thanks,
+
+zhoumin
+
 
