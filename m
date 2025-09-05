@@ -1,265 +1,275 @@
-Return-Path: <linux-kernel+bounces-803135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D4B45AE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:48:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEF0B45AEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840A216F7B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFBAA1CC0EA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133923570A6;
-	Fri,  5 Sep 2025 14:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735363728BB;
+	Fri,  5 Sep 2025 14:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JqCoWqXB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="0THawW7w"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74684202F7B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490536CDE5;
+	Fri,  5 Sep 2025 14:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757083709; cv=none; b=bI0auL4dg9AhAoCjZ2YsYTUDbYOsZXQhAfIIQ+7PiUzpR0m09Stteow31NOFOQrvAYlGo5rTftfVroft0vqjNbtSn/vxhsrw9QEfzN2IJ8D+twAEtrfJHyL798MgKGvs9p/NYqUaqYSWjDAHUsncruVu4jlJajlzu6e4tKAugh0=
+	t=1757083713; cv=none; b=mrQ5PWecnpLb03nyZS2gbFWz30vPWFHd8bfzFmmlJUdBjcMl3P1DM4dghI57QU7JLVsAD0yI7yp5ZqQ8YY0RSalK9zS84VXus3vKpRL6o/d2eYYYjX7LPN9HNwo6DIrRj3/TwDeZxZeNBQNgJgJn3jQAIkl0P36EumM8Z0BXvMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757083709; c=relaxed/simple;
-	bh=b/N6N3j0Ae/OQ1+hBRJDp18/IQlHk4UbIm3zQN9HLxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l6O8HzAU2uFaIUTB5Xp0a6KaiX37GM+bc4Df1dMWEv6JhQAcW5tNFvRk7WwNRK371coJxLsdQmOCRlWyp/FXqMkjNwcKcI0ZFoFava6ytyjQD9MtVPzSEtpQ4T+vIhh6hQ5v3DQdc1mzVtAVMSjix1/hiQTRSkxBMQOmCGy8RJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JqCoWqXB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757083706;
+	s=arc-20240116; t=1757083713; c=relaxed/simple;
+	bh=IeuCwHP7fxBMyZnUg7lRAegA+KMiIxaSfVE4kK3bhJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkcykVlyiggWhuhXbWVIl8/2WJP/KESF70iDWybknVmL14MyHbi2jwRmOPD2r1JX7JCcVxqJIf2EfODfYxafOcLBevrS85CqzOIbroltFm2JWz8r1o2BiRJBNyLQ5qWwJYD74m5Dvl5qXkSJaPzKm+fVHM3b2UsbS3L8E8P8Kg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=0THawW7w; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cJK3G0wV2z9spq;
+	Fri,  5 Sep 2025 16:48:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1757083706;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4SQ0Ro6r3VEH/SXK6+NjfaydDSDk6LrxamH9i5Bcmx4=;
-	b=JqCoWqXBWN6nG1VqdbpjkkkcvvVfnMkeHDtR/1dw0KyOPKKRNRT5UxmDbP+PGguQGGGd4k
-	Zaf5z8ejTRQs1HK9nUw/x+UEOg67rbo1jDJNHDgdNN0EIZLhSnd7hzuFhkxQLZaPnxWldb
-	c4v9FVqYL+hwry7txBXQHqq/slS2w9k=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-Q7TwUV6eP5iICe8JuDj5uQ-1; Fri, 05 Sep 2025 10:47:17 -0400
-X-MC-Unique: Q7TwUV6eP5iICe8JuDj5uQ-1
-X-Mimecast-MFC-AGG-ID: Q7TwUV6eP5iICe8JuDj5uQ_1757083635
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3df9f185c7cso1871258f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:47:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757083635; x=1757688435;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4SQ0Ro6r3VEH/SXK6+NjfaydDSDk6LrxamH9i5Bcmx4=;
-        b=raVnLre1IF53iQdZBVrtiL8gZ7eUxx3bt6ZjSlXI7F0FJQfbQiXJzHnFuORtcH8g+K
-         dwODAa+LGyu/yxGTQXEdLFfgGES0YpHE2ReiRkvoNKGz8Yvokh85V1kS1X+/kBM3VSEE
-         b7xCoCD+QP6g18E9RyL7mWlof75oFygm0eN8qsnlzkrnE6jUTH9pxre7BOkKwQGpfg4h
-         I6NKczIS8YSUV9xgh8s7npLuanIRXe/daqSQyRnc79Y7vdjXMLcDckgGWn0DUV+eHzCK
-         DAhKlCa920195ZDzyQAOjuiVj6mPu/fb7T6haM2TMXvHA3SBrM2S88+1SXievuiqT43r
-         AUBA==
-X-Gm-Message-State: AOJu0Yx6fg9MbzFpXzkDjDTaBdvoQ07CBhE1xmhCoU9OKzVmDTa5Pcxa
-	0BE4GWjEWVX/h4SMkCwvn5AcAwZhLaMEqPbHLlJXA+J5ym0bd32T8G2uddlKNdkn0CBSCLDdJaB
-	yOp5EArGbMcJGHb/5LvWAeFW+20xQuOGQFaOj58W95LknZCk2upu91dkt2wOLkTV3ig==
-X-Gm-Gg: ASbGncsd+bpTzJsB65yH0e3WdgU9DuiBmNV7p4G5xXQwDVVB7m8da5Gh5uD11SS3Muj
-	S1nRJ3icyIvQ49LfdkSo/j9QqWJ6+unhR7L46xEnBDvwmCsuZQb3DohWwBFdIrrAsj0PVBts+lL
-	Fdkgzf5U22VjQgq37/cy77I56cfecTcYcwTc3HMDPngIMN8gEUcRpudwIehm33VISzLmFYl/IZW
-	TJhxmQg574KyO/89NGywh2v+6Tw4Ux+2XR/1CNPyJAnNT0h6ECY1ul3Cd9g6TSD4IN0qh/lb7N7
-	DED+s0iqX94Xxoohq9yDsPMQoQK8qBI2svZI4/T9nJOnlaJ+axDkXD5I2dfqtg/c7vE6lm7JafJ
-	wSu2ySEJvgys2cfJJk0W1mCxeKEthPkcwCy+xQ6thQpg9ls1bNQ8zwlKP
-X-Received: by 2002:a5d:5d12:0:b0:3e5:25c2:9635 with SMTP id ffacd0b85a97d-3e525d1dc27mr438668f8f.56.1757083634855;
-        Fri, 05 Sep 2025 07:47:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsUupoJXbadFaOODLu7jEx9s5JVw11Dqu700eHEpd8jEbAgw1rjB4CH/KLDO9aKS3NLxFfjQ==
-X-Received: by 2002:a5d:5d12:0:b0:3e5:25c2:9635 with SMTP id ffacd0b85a97d-3e525d1dc27mr438641f8f.56.1757083634411;
-        Fri, 05 Sep 2025 07:47:14 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fba9fbsm31805962f8f.50.2025.09.05.07.47.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 07:47:13 -0700 (PDT)
-Message-ID: <e50c8f08-5739-4b12-bb7f-85ff045800d6@redhat.com>
-Date: Fri, 5 Sep 2025 16:47:12 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=2yxz7OYC7knSMwqm1/ga1qwzQ1qS/2PhiFrxz5xbnhg=;
+	b=0THawW7wLt4yGtJVklnGykWYvtdY8tmFTAYk6XeFDA+dALD0RH0oFkl36NAnq5puArcylf
+	3jMlvKTeGHbF28yVP4qN7S4zrKl6yWo8wnAARcZPsylin9gDNCSnIdV0ykR+S4SPJoK8Fq
+	02Emfx/ZPuEQalW9jyhYm4OPs4Xrhk1wbjkdl5i8i3hPndBGVjw+0Gj94XJIRQb+yFU2e0
+	FQqf2K/6UeL5hdIw1cdYeLMsXupx9uNPzPYvd9EONNfjL+SpSS/03/nzkM1dMbPbXH3Is1
+	o7WCb/Bow5ALIIPYd+A9RZ2Laizw2G1waOO3dQG+qcdXoyRzwDRxihdk/9JY1w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Sat, 6 Sep 2025 00:48:13 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+	Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] procfs: make reference pidns more user-visible
+Message-ID: <2025-09-05-kinky-napping-auction-creeks-pbN1Vi@cyphar.com>
+References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
+ <20250902-gehofft-ruheraum-3c286b25b6d3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
- max_ptes_none default
-To: Usama Arif <usamaarif642@gmail.com>, Zi Yan <ziy@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-References: <20250905141137.3529867-1-david@redhat.com>
- <7B0B1E09-5083-449F-851D-FD63D32D2B3D@nvidia.com>
- <d5c34688-30b8-4360-bb71-8c85f01bc8f4@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d5c34688-30b8-4360-bb71-8c85f01bc8f4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s6blnnuwdbg65wg3"
+Content-Disposition: inline
+In-Reply-To: <20250902-gehofft-ruheraum-3c286b25b6d3@brauner>
+X-Rspamd-Queue-Id: 4cJK3G0wV2z9spq
 
-On 05.09.25 16:43, Usama Arif wrote:
-> 
-> 
-> On 05/09/2025 15:37, Zi Yan wrote:
->> On 5 Sep 2025, at 10:11, David Hildenbrand wrote:
->>
->>> We added an early exit in thp_underused(), probably to avoid scanning
->>> pages when there is no chance for success.
->>>
->>> However, assume we have max_ptes_none = 511 (default).
->>>
->>> Nothing should stop us from freeing all pages part of a THP that
->>> is completely zero (512) and khugepaged will for sure not try to
->>> instantiate a THP in that case (512 shared zeropages).
->>>
->>> This can just trivially happen if someone writes a single 0 byte into a
->>> PMD area, or of course, when data ends up being zero later.
->>>
->>> So let's remove that early exit.
->>>
->>> Do we want to CC stable? Hm, not sure. Probably not urgent.
->>>
->>> Note that, as default, the THP shrinker is active
->>> (/sys/kernel/mm/transparent_hugepage/shrink_underused = 1), and all
->>> THPs are added to the deferred split lists. However, with the
->>> max_ptes_none default we would never scan them. We would not do that. If
->>> that's not desirable, we should just disable the shrinker as default,
->>> also not adding all THPs to the deferred split lists.
->>>
->>> Easy to reproduce:
->>>
->>> 1) Allocate some THPs filled with 0s
->>>
->>> <prog.c>
->>>   #include <string.h>
->>>   #include <stdio.h>
->>>   #include <stdlib.h>
->>>   #include <unistd.h>
->>>   #include <sys/mman.h>
->>>
->>>   const size_t size = 1024*1024*1024;
->>>
->>>   int main(void)
->>>   {
->>>           size_t offs;
->>>           char *area;
->>>
->>>           area = mmap(0, size, PROT_READ | PROT_WRITE,
->>>                       MAP_ANON | MAP_PRIVATE, -1, 0);
->>>           if (area == MAP_FAILED) {
->>>                   printf("mmap failed\n");
->>>                   exit(-1);
->>>           }
->>>           madvise(area, size, MADV_HUGEPAGE);
->>>
->>>           for (offs = 0; offs < size; offs += getpagesize())
->>>                   area[offs] = 0;
->>>           pause();
->>>   }
->>> <\prog.c>
->>>
->>> 2) Trigger the shrinker
->>>
->>> E.g., memory pressure through memhog
->>>
->>> 3) Observe that THPs are not getting reclaimed
->>>
->>> $ cat /proc/`pgrep prog`/smaps_rollup
->>>
->>> Would list ~1GiB of AnonHugePages. With this fix, they would get
->>> reclaimed as expected.
->>>
->>> Fixes: dafff3f4c850 ("mm: split underused THPs")
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Cc: Zi Yan <ziy@nvidia.com>
->>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>> Cc: Nico Pache <npache@redhat.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Dev Jain <dev.jain@arm.com>
->>> Cc: Barry Song <baohua@kernel.org>
->>> Cc: Usama Arif <usamaarif642@gmail.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>   mm/huge_memory.c | 3 ---
->>>   1 file changed, 3 deletions(-)
->>>
->> LGTM. Acked-by: Zi Yan <ziy@nvidia.com>
->>
->> I also notice that thp_underused() checks num_zero_pages directly
->> against khugepaged_max_ptes_none. This means mTHPs will never be regarded
->> as underused. A similar issue you are discussing in Nico’s khugepaged
->> mTHP support. Maybe checks against these khugepaged_max* variables
->> should be calculated based on nr_pages of a large folio, like
->> making these variables a ratio in other discussion.
-> 
-> I unfortunately didnt follow the series in the latest revisions.
-> 
-> In the earlier revisions, I think it was decided to not add mTHPs to shrinker
-> as a start, as there are diminshing returns for smaller THPs and having a lot
-> of smaller mTHPs in the deferred list might mean that we get to PMD mapped THPs
-> a lot slower?
 
-Probably we would want lists per order etc.
+--s6blnnuwdbg65wg3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/4] procfs: make reference pidns more user-visible
+MIME-Version: 1.0
 
--- 
-Cheers
+On 2025-09-02, Christian Brauner <brauner@kernel.org> wrote:
+> On Tue, Aug 05, 2025 at 03:45:07PM +1000, Aleksa Sarai wrote:
+> > Ever since the introduction of pid namespaces, procfs has had very
+> > implicit behaviour surrounding them (the pidns used by a procfs mount is
+> > auto-selected based on the mounting process's active pidns, and the
+> > pidns itself is basically hidden once the mount has been constructed).
+> >=20
+> > /* pidns mount option for procfs */
+> >=20
+> > This implicit behaviour has historically meant that userspace was
+> > required to do some special dances in order to configure the pidns of a
+> > procfs mount as desired. Examples include:
+> >=20
+> >  * In order to bypass the mnt_too_revealing() check, Kubernetes creates
+> >    a procfs mount from an empty pidns so that user namespaced containers
+> >    can be nested (without this, the nested containers would fail to
+> >    mount procfs). But this requires forking off a helper process because
+> >    you cannot just one-shot this using mount(2).
+> >=20
+> >  * Container runtimes in general need to fork into a container before
+> >    configuring its mounts, which can lead to security issues in the case
+> >    of shared-pidns containers (a privileged process in the pidns can
+> >    interact with your container runtime process). While
+> >    SUID_DUMP_DISABLE and user namespaces make this less of an issue, the
+> >    strict need for this due to a minor uAPI wart is kind of unfortunate.
+> >=20
+> > Things would be much easier if there was a way for userspace to just
+> > specify the pidns they want. Patch 1 implements a new "pidns" argument
+> > which can be set using fsconfig(2):
+> >=20
+> >     fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+> >     fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid",=
+ 0);
+> >=20
+> > or classic mount(2) / mount(8):
+> >=20
+> >     // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
+> >     mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns/p=
+id");
+> >=20
+> > The initial security model I have in this RFC is to be as conservative
+> > as possible and just mirror the security model for setns(2) -- which
+> > means that you can only set pidns=3D... to pid namespaces that your
+> > current pid namespace is a direct ancestor of and you have CAP_SYS_ADMIN
+> > privileges over the pid namespace. This fulfils the requirements of
+> > container runtimes, but I suspect that this may be too strict for some
+> > usecases.
+> >=20
+> > The pidns argument is not displayed in mountinfo -- it's not clear to me
+> > what value it would make sense to show (maybe we could just use ns_dname
+> > to provide an identifier for the namespace, but this number would be
+> > fairly useless to userspace). I'm open to suggestions. Note that
+> > PROCFS_GET_PID_NAMESPACE (see below) does at least let userspace get
+> > information about this outside of mountinfo.
+> >=20
+> > Note that you cannot change the pidns of an already-created procfs
+> > instance. The primary reason is that allowing this to be changed would
+> > require RCU-protecting proc_pid_ns(sb) and thus auditing all of
+> > fs/proc/* and some of the users in fs/* to make sure they wouldn't UAF
+> > the pid namespace. Since creating procfs instances is very cheap, it
+> > seems unnecessary to overcomplicate this upfront. Trying to reconfigure
+> > procfs this way errors out with -EBUSY.
+> >=20
+> > /* ioctl(PROCFS_GET_PID_NAMESPACE) */
+> >=20
+> > In addition, being able to figure out what pid namespace is being used
+> > by a procfs mount is quite useful when you have an administrative
+> > process (such as a container runtime) which wants to figure out the
+> > correct way of mapping PIDs between its own namespace and the namespace
+> > for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
+> > alternative ways to do this, but they all rely on ancillary information
+> > that third-party libraries and tools do not necessarily have access to.
+> >=20
+> > To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
+> > can be used to get a reference to the pidns that a procfs is using.
+> >=20
+> > Rather than copying the (fairly strict) security model for setns(2),
+> > apply a slightly looser model to better match what userspace can already
+> > do:
+> >=20
+> >  * Make the ioctl only valid on the root (meaning that a process without
+> >    access to the procfs root -- such as only having an fd to a procfs
+> >    file or some open_tree(2)-like subset -- cannot use this API). This
+> >    means that the process already has some level of access to the
+> >    /proc/$pid directories.
+> >=20
+> >  * If the calling process is in an ancestor pidns, then they can already
+> >    create pidfd for processes inside the pidns, which is morally
+> >    equivalent to a pidns file descriptor according to setns(2). So it
+> >    seems reasonable to just allow it in this case. (The justification
+> >    for this model was suggested by Christian.)
+> >=20
+> >  * If the process has access to /proc/1/ns/pid already (i.e. has
+> >    ptrace-read access to the pidns pid1), then this ioctl is equivalent
+> >    to just opening a handle to it that way.
+> >=20
+> >    Ideally we would check for ptrace-read access against all processes
+> >    in the pidns (which is very likely to be true for at least one
+> >    process, as SUID_DUMP_DISABLE is cleared on exec(2) and is rarely set
+> >    by most programs), but this would obviously not scale.
+> >=20
+> > I'm open to suggestions for whether we need to make this stricter (or
+> > possibly allow more cases).
+> >=20
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>=20
+> Thanks for the patchset. Being able to specify what pid namespace the
+> procfs instance is supposed to belong to is super useful and will make
+> things easier for userspace for sure.
 
-David / dhildenb
+I was going to send a new version changing the whole thing to be struct
+path based (and adding FSCONFIG_SET_PATH{,_EMPTY} support) so we don't
+need to allocate a file explicitly for the non-FSCONFIG_SET_FD case, but
+we can do that as a follow-up I guess.
 
+> The code you added contains a minor wrinkle that I disliked which I've
+> changed and you tell me if you can live with this restriction or not.
+>=20
+> The way you've implemented it specifying a pid namespace that the caller
+> holds privilege over would silently also override the user namespace the
+> filesystem is supposed to belong to.
+>=20
+> Specifically, you did something like:
+>=20
+>         put_pid_ns(ctx->pid_ns);
+>         ctx->pid_ns =3D get_pid_ns(target);
+>         put_user_ns(fc->user_ns);
+>         fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
+>=20
+> This silently overrides the user namespace recorded at fsopen() time. I
+> think that's too subtle and we should just not allow that at all for
+> now.
+>=20
+> Instead I've changed this to:
+>=20
+>         if (fc->user_ns !=3D target->user_ns)
+>                 return invalfc(fc, "owning user namespace of pid namespac=
+e doesn't match procfs user namespace");
+>=20
+>         put_pid_ns(ctx->pid_ns);
+>         ctx->pid_ns =3D get_pid_ns(target);
+>=20
+> so we just refuse different owernship.
+
+That sounds fine, I wasn't quite sure what to do with fc->user_ns to be
+honest. Being more conservative is probably the right call here.
+
+> I've also dropped the procfs ioctl because I'm not sure how much value
+> it will actually add given that you can do this via /proc/1/ns/pid.
+>=20
+> If that is something that libpathrs despearately needs I would like to
+> do it as a separate patch anyways.
+
+The main issues are:
+
+1. pid1 can often be non-dumpable, which can block you from doing that.
+   In principle, because the dumpable flag is reset on execve, it is
+   theoretically possible to get access to /proc/$pid/ns/pid if you win
+   the race in a pid namespace with lots of process activity, but this
+   kind of sucks.
+
+2. This approach doesn't work for empty pid namesapces.
+   pidns_for_children doesn't let you get a handle to an empty pid
+   namespace either (I briefly looked at the history and it seems this
+   was silently changed in v2 of the patchset based on some feedback
+   that I'm not sure was entirely correct).
+
+3. Now that you can configure the procfs mount, it seems like a
+   half-baked interface to not provide diagnostic information about the
+   namespace. (I suspect the criu folks would be happy to have this too
+   ;).)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--s6blnnuwdbg65wg3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaLr4LRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+mLwD+OBLrKDjD/AagMCzfrvCF
+gB1Co3GReX99caLh6G7vUqMA/2ZGF2udlINLu5ajN5rT7zw4nvJfvN+ZrkwDzJ9A
+9YwG
+=VwoX
+-----END PGP SIGNATURE-----
+
+--s6blnnuwdbg65wg3--
 
