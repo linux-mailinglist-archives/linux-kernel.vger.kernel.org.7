@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-802139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722E9B44E02
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D704B44E05
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C2EA47E5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65ED1BC79F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7FC2BEC3A;
-	Fri,  5 Sep 2025 06:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892332C0266;
+	Fri,  5 Sep 2025 06:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="lXpX8BPt"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IzulrF9u"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F84827935C;
-	Fri,  5 Sep 2025 06:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E2F212545
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757054193; cv=none; b=BML4DoBQ0/j1iTFoPIGGqy4qG1NyNccDlD5lKrtulPJgYaP6+C1nMS6vBHUIdskExH1ODZjmkdhqeWs9tJZ2oUw/jmg8o2Yu6e87sXTg13cPigwtIBc23FrSPRhKWtFt3ofIgq+u38lpgWheqUY5s/Mm8WaCGtU93LGNFu8Exco=
+	t=1757054209; cv=none; b=lgF9cS+9niEhqtrPZA5cuDA7HFqUDnEFHiEcB8sBBGk8QbO3058V/Z3Ab2Z8LTtmd0WjazMwyrcDMd+efoKHH/ky/LvbWUTJ3Sx4KK0SeHdG0CJCivijEm80wJSMiW2rl3N7s6o+vVbwAIAahP92LcHu5YvjGa58qsLZprvusnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757054193; c=relaxed/simple;
-	bh=QUYBHIKAY450Fz4IIvEy5zG10OnMD8Rl9D4aIeaPjAY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cV6oxN2TvwrSjs0v39jYZHlANWK4eqAJYU40LWGtkIQeMsk3WSmqKz8Pe/80Gm4Nbp578qLN7GlhaHSQaAtfQyR4mEGQscBMkVtiJ1heJ7LzZ2/ztdmYLpcQCSj+duF/+EZ++yi8ZLGt/5lvSNx1Njq5OjzW35lFHgnBQZU7/sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=lXpX8BPt; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=+K7HTFND7UVMspMIl+Drzz6wetYdHSVytzh9KFZKRLw=; t=1757054190;
-	x=1757658990; b=lXpX8BPtJD5JQQ8+fy5RnquzWo3Ai5c43TafpDWfvhIRTTKC4WHnSFeUwJJks
-	EArbyCbHnCHWNJ83XZfSeYbvRS1tuq1wwQ6nDQiV9fTFGpT5E32e2fAe3owslrlaruiWSdX2wvFVr
-	iPYkQ3s5R+RvbKYRl88BqKn1siooc6lPBZyXAWqo3BOaLlXeHJC1DOU0lGxyhWnNaYNpY44WkzKLa
-	wkPEAQzy+GrpWjhL4kFDug7OT0jL4ka51Q+on7CDVT+38Byu+9ifydT+SzV7KrK/2+SPLY2hDTo6X
-	uOkf7/1BEr7dr9HY3tefkdlh2iJluoYYtxugDF+9nkohyihLCQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uuQ3e-00000002VMq-3m6Z; Fri, 05 Sep 2025 08:36:26 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uuQ3e-00000003qV9-2oBS; Fri, 05 Sep 2025 08:36:26 +0200
-Message-ID: <332d8b631eec7fbf0234ab699e49f19ee059510d.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Ken Link <iissmart@numberzero.org>, Magnus Lindholm <linmag7@gmail.com>
-Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, Andreas Larsson
-	 <andreas@gaisler.com>, Anthony Yznaga <anthony.yznaga@oracle.com>
-Date: Fri, 05 Sep 2025 08:36:26 +0200
-In-Reply-To: <CAPZdOsbQYRV=6D1Y62BZw2QH24tx0-+26n0yyG_YutvrocygiQ@mail.gmail.com>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	 <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
-	 <CA+=Fv5To0A3N0fajWVhP1SfjD4uv1oaPNOpi9dnFVt9yHfaPQw@mail.gmail.com>
-	 <CAPZdOsbQYRV=6D1Y62BZw2QH24tx0-+26n0yyG_YutvrocygiQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1757054209; c=relaxed/simple;
+	bh=wFJS1RHxYpPdjfElWjyoww5Tm6gmIS00MsIdtooweP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=liUN8T1wBFm7IDSyR4aqvRVg1vf8CvKx0WiEyy/qRmc2mmHHeVU1NdTh26g00kQ/S7PwputGDxvAwsH2AQgiBNQRN6b7bPtqvtPsXigh5FfpVxhDuulpEK69svfWDZDLSOTPethXS+NqZ5jf4mgwAa2Phnjri3SJhp7d4n1oI+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IzulrF9u; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-333f901b2d2so17953851fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757054206; x=1757659006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wFJS1RHxYpPdjfElWjyoww5Tm6gmIS00MsIdtooweP0=;
+        b=IzulrF9u/DSrT3zqQPUsDOY21AVLbnTTjCEcARRgy+OT8PlJcHAQS2yebbq6X5XqAI
+         duf0IS7+JJA0PmNyMahxFhjyjto1zT3e/bruHK35GFkh4cfA2R3kdPC5QsbW3Vrvd55b
+         7kjrMqfl55s/CSa4u6ru9TyGum0qbFn4WRis0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757054206; x=1757659006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wFJS1RHxYpPdjfElWjyoww5Tm6gmIS00MsIdtooweP0=;
+        b=WiZsIimVgiGk7fDXCWIh8MJ+sNT63vi7+eMsV5HJQi44EiwiQnIwWXa6Miw8DCo0zW
+         CAMzYWE7OhOOBUStbHQJ55ow0pcT+OXg6J4jU0STiEJj+oH6h18f0RWWbo3BHZlzUi0R
+         qM9OJQuUb/XGtjxNp0h4xfG2DMqTD1zerGnaCwGCtvLhPCsrUBgHuglQLrpLRpwv58XF
+         o+JNyD69WatqEgwuxojMM17ykB/HYQJTllWLdf7qIDvDqh5F2/0DYZjUgPDWvm9xxJWP
+         7j/T/6y1HsvZZcdxZpwVdO+O7+Gd6PVjifW8i11b3a6lAIjroFNAIxsKhBH4Wn2UBG7F
+         8Z+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfi7SEimeFNF4VYzq506or70VAxVo9x/nXPdp2LH7DqhA3RBSCCe5fasOglPUr21AMs5dm20YdU4fe7Vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY0qKuUSDkVAlPJVdbEFyO7vh+a/Xz7tZVLsiXSepxj4jxNRKH
+	W7jKeS2ZZWYyVgXRhQv6VNOYql9eteeyxfIzx6J82W32UEvmcLA7cQyfh3WzrUr7tXPH1+KVSyF
+	uqgAR9g9htl/jjZaAevcq9cD4E0U9UEukFFbB/iUh
+X-Gm-Gg: ASbGnctuNkLXuYJFCr+TqlgGvmqkXs+BdYb1sf5MUKAIvTzZMfkwhAiyw79JmSDsmYu
+	CvmTUI3YBXlY+aLd7FBCi+XBigDESfIIAAf1Uc3pku0k5TFLZwmQPsiWtxCPCvWBGNkWAT+GLMP
+	oQF5oDlDoX5dcmAA7IKLJbIj+l0m+6kfLfHDo0hJ7dTm20fRAYyOhwyMzbSAplR5h1y4WIM2WAv
+	kjDNFSDPsbwH2lv36muLpmhgSnlGgi5V7LhVg==
+X-Google-Smtp-Source: AGHT+IEgVbxQy/DxXsDzvdrcOfC49jBWiMtOAGepTowcEVXECREwr9aIaRDx8B4CTbXxL/deN9wUH95NSxy3a5X8TKE=
+X-Received: by 2002:a05:651c:20cd:10b0:337:d2e2:d467 with SMTP id
+ 38308e7fff4ca-337d2e2dcfbmr42859621fa.43.1757054206408; Thu, 04 Sep 2025
+ 23:36:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250829091913.131528-1-laura.nao@collabora.com> <20250829091913.131528-16-laura.nao@collabora.com>
+In-Reply-To: <20250829091913.131528-16-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 5 Sep 2025 14:36:35 +0800
+X-Gm-Features: Ac12FXwXWypau4EdANuUrgXmxAn5bymNrHkP7HBNlw9rFp2Nbb7jmA3VYZ8UsYk
+Message-ID: <CAGXv+5GjZusKNCe+EshMktmyDcfjm6i5oD+h8LvObymvD9QXqg@mail.gmail.com>
+Subject: Re: [PATCH v5 15/27] clk: mediatek: Add MT8196 ufssys clock support
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, guangjie.song@mediatek.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ken,
+On Fri, Aug 29, 2025 at 5:21=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
+ wrote:
+>
+> Add support for the MT8196 ufssys clock controller, which provides clock
+> gate control for UFS.
+>
+> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 
-On Thu, 2025-09-04 at 22:31 -0500, Ken Link wrote:
-> I can provide additional test coverage on a T1000, using Adrian's patched=
- kernel package from:
-> https://people.debian.org/~glaubitz/sparc64/linux-image-6.12.3-sparc64-sm=
-p_6.12.3-1+sparc64_sparc64.deb
->=20
-> $ uname -a
-> Linux t1000a 6.12.3-sparc64-smp #1 SMP Debian 6.12.3-1+sparc64 (2025-08-2=
-8) sparc64 GNU/Linux
-> $ lsb_release -a
->=20
-> No LSB modules are available.
-> Distributor ID: Debian
-> Description: =C2=A0 =C2=A0Debian GNU/Linux bookworm/sid
-> Release: =C2=A0 =C2=A0 =C2=A0 =C2=A0unstable
-> Codename: =C2=A0 =C2=A0 =C2=A0 sid
-> $ sudo dmesg | grep T1000
-> [ =C2=A0 =C2=A00.979644] PLATFORM: banner-name [Sun Fire(TM) T1000]
-> [ =C2=A0 =C2=A00.980069] PLATFORM: name [SUNW,Sun-Fire-T1000]
-> $ lscpu
-> Architecture: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0sparc64
-> =C2=A0 CPU op-mode(s): =C2=A0 =C2=A0 =C2=A032-bit, 64-bit
-> =C2=A0 Byte Order: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Big Endian
-> CPU(s): =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A024
-> =C2=A0 On-line CPU(s) list: 0-23
-> Model name: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0UltraSparc T1 (Niaga=
-ra)
-> =C2=A0 Thread(s) per core: =C2=A04
-> =C2=A0 Core(s) per socket: =C2=A06
-> =C2=A0 Socket(s): =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 1
-> =C2=A0 Flags: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sun4v
-> Caches (sum of all): =C2=A0=20
-> =C2=A0 L1d: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 192 K=
-iB (24 instances)
-> =C2=A0 L1i: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 384 K=
-iB (24 instances)
-> =C2=A0 L2: =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
-72 MiB (24 instances)
->=20
-> Tested-by: Ken Link <iissmart@numberzero.org>
+Assuming the previous reviews for the bits are correct, the removal
+of CLK_OPS_PARENT_ENABLE IMO is the right thing to do.
 
-Thanks for the testing. I think Michael will add this as well.
+However if the hardware ends up does having a requirement that _some_
+clock be enabled before touching the registers, then I think the
+MTK clock library needs to be refactored, so that a register access
+clock can be tied to the regmap. That might also require some work
+on the syscon API.
 
-For clarification to Michael, this is a "Sun Fire T1000".
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
