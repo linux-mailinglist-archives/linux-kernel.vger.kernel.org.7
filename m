@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-803238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E15AB45C88
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA54B45C8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7749166782
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:25:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 839D5565EF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC492F7AA6;
-	Fri,  5 Sep 2025 15:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEB82F7AB9;
+	Fri,  5 Sep 2025 15:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIsvlS5s"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5coExKt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9042B31B83D;
-	Fri,  5 Sep 2025 15:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7294F231845;
+	Fri,  5 Sep 2025 15:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085944; cv=none; b=BN9SqohMnAGEcRdiTUOkKTYpV0X8Gk9+wNGeLQ/smUCV68qquh0Ogc15nuUqRtKzoqPKJmtOpbGEi20xkoHNiDodrSagMbMLvt31SD9Pa8PksV5OgTAIo9NIG4uoTQ4lf750V5fgZ2CaPct4GeG5OSdTc9e1FK9FvbEbA4y4BmI=
+	t=1757085966; cv=none; b=GDJRPm0TJQQqGt8wB71VTTfZIe72NJndGfB2pzwtPoo6Q+Y7bIU3ORfb06v57FT0eJRyabiNDsVLq5w3jBcCn6bLx4FCyX5D19hL1ZeQ8V5yHVG3cin9ljumYdncD7MXweLV0Gi3GpV5mnZ3kkpGuX/tLooiE0B5MVW50P5uOzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085944; c=relaxed/simple;
-	bh=MN6V+Y3hpzY4is2NXs+lXCxQkkhsRZ7URUJHenOu5Nw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TXmSlqW6uOqx0EQWQ6ZXJrRQJ3+A9MWboQ2XO1Tz0weAKbHU+Jp36JlXcc4K+h2COwjehcNMbwi5Q+HkZ4VaLdsfNS6Md4si9NQWlSM8riW1mbrN0WdSuIEx8nHHq7LLPGI5Q8zrOFKye04PENIzUb5ApKb2eU74dbfxs/rGWE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIsvlS5s; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f7039aa1eso2546311e87.1;
-        Fri, 05 Sep 2025 08:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757085940; x=1757690740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x3pmyKBsJrKrGNfyGEltelPSlSrpEyGASt0DhsOg+OQ=;
-        b=FIsvlS5syNLoCIlQATgniGI09pZa4JIRu3lF+Ba2sLKXvOvDGzrP0OwKxriqjYu0Np
-         zM5OjQqKn1q5ej2wYHl0dJVu7WNqE6P0wNYZxp7F9XXCVB0bvN+wbnvxS9c5OUuxEu1w
-         jb5idVqHL0bJLTwm47iq0o9aQNHuYDd5Bhy+aj4kOPiX3EUIbleGSxXoZYICdZuBYj0L
-         loR14o7tVDicRTUVkUJVUFZhDCpZMeAoYVYB55hOBDV33lhLtg8r4yOq0XMcR862vCc4
-         M5St24wHPtYusGsqFqI2wcrsh98QWIIM2CQYIa32ZTgonu0Z18CADNJPuAJocOpNwFPv
-         Jk3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757085940; x=1757690740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x3pmyKBsJrKrGNfyGEltelPSlSrpEyGASt0DhsOg+OQ=;
-        b=N0CVAo3OV7HN27fwS38l9Jwk+Kp6/LIYD1IxkBtw6R/rwqr6pPRZgcnCBFCLP0jP5X
-         sf5uWvmymBNf+ZKYxo9mtgzZ4CJjHnUQoh8sDxIWvQvW843bSGcvWGQZYdrOrP8KjgIW
-         nJ3yT97uL/xwmSQP4hXC56ZT2Drl68O+PVTf33VZxMPxS/xZZG9Yn+aRoFaseWKG/B0Z
-         bSPiZSsZ9HGkjrvf+iw+nzSpswbMmnDniZOBAqTMXa5ALSPHNc/Sru2PixEN5kU0ub6T
-         pXiKRNHogWvK6BkHrrcgDuzZCNkt58Zni3uJLXQLg9QSDDcILCZnAxDy3hIKkR/oaiPg
-         rqIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQfhUTlhgZO7xuGYD9VkK89Sjadi5YmbOqwfUlafJ9oNtr51f/bxydPJwgSk6JYUtvnotSD5lXtcFIS8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIpKoDl64bKMe8x+66ahngQvmnyvH0FDy9AW6jK+uDGaKhXiwb
-	5c4i1ukWEIwJ87BuTv7KDqvJ5Gvc9bBurYBcTyQ01jK06w4N3KwSDkXxNcN/i3LKhPnf3hlzDci
-	7i/WPNvTX8Pme7B4LYKmt9lERvpAKPCcTlLfQ4A4=
-X-Gm-Gg: ASbGncusZ+j2JXFz8moVcP/spHH/hNYqDUyoriXA+otpuGLWKYei7OGzM6aF9nYf9vJ
-	qNII4DsJBmeADVWu7s5qVlZ4fjL7xqCK1O76N3fe+Ulqe6ESd5+EmrsKk5jQNNIu5gOTfnGhqqu
-	FCHrsjo0FE21oybSaTjc6cwMhef5Z9/Rex9WZgee7FE2SR4ErS+3tBLbGukk1Xv8xweawcsh3lI
-	NaPtbXHgz/x0JyICZwcas5UQTip
-X-Google-Smtp-Source: AGHT+IGpruc9CIHPhhinpZZKBqMZPliWHUdQL2QQWrv01xxkWXWTYECsm3BN2S+2OZs+my24BVqyWdMvAYcNO73hAw8=
-X-Received: by 2002:a05:6512:15a6:b0:55f:4495:51a with SMTP id
- 2adb3069b0e04-55f709dd602mr6287322e87.52.1757085940075; Fri, 05 Sep 2025
- 08:25:40 -0700 (PDT)
+	s=arc-20240116; t=1757085966; c=relaxed/simple;
+	bh=HeSmTEkMZa5aYj4W+/yA7FOCufTHzp4QQTSxsuJZE1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEStt7Ue/8tLmyKibXUcM83Su5w6CRkS00CynDxlrdNohXZ7TZkcsN8uKzN1AbbGKYsiE1hf4fOZYWFwURfZ6FTd90mu2kgRF+EPkV47TFER8AV8WGJ7IgKGvD0IshdRmklwc4mUIEPkLD9ahzyG3CLAw0/wn0xOnQURFln/PWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5coExKt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95369C4CEF1;
+	Fri,  5 Sep 2025 15:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757085966;
+	bh=HeSmTEkMZa5aYj4W+/yA7FOCufTHzp4QQTSxsuJZE1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V5coExKt3JFlpn19Eh/CX6P8SbVNODKaVutXfs0yU0xu8ok2KvaAAHxVRuNAXmY9m
+	 JdcAnimbzcKMzcu4NXIiz6SWsyshIqac2oE3lqMNq926ekkR18m/uo1RT5N4p6R7gQ
+	 IHAcu1cJOOuZo3jvJNVyATQQ3gTPH6adbIme1r5T+V41ffhmCLO4WJBazIptDQrQwN
+	 jKZQjNVz7i/nXi441Yln43I1FQZCBovg+l8Yq9GNZ/mE+l9Z/kGIdM0xk2KwtV4I0s
+	 6rBixDmc1FaR9+rcesjmSIPl9wh2/B4MDhjTZkpyySVoHhrwY7/LwDbnffAz/SaayM
+	 /4o4yimnhYZbw==
+Date: Fri, 5 Sep 2025 16:25:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Asuna <spriteovo@gmail.com>
+Cc: Jason Montleon <jmontleo@redhat.com>, Han Gao <rabenda.cn@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Tejun Heo <tj@kernel.org>,
+	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Matthew Maurer <mmaurer@google.com>, Jeff Xu <jeffxu@chromium.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Brian Gerst <brgerst@gmail.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/2] RISC-V: re-enable gcc + rust builds
+Message-ID: <20250905-domain-theater-214254632b87@spud>
+References: <20250830-cheesy-prone-ee5fae406c22@spud>
+ <20250903190806.2604757-1-SpriteOvO@gmail.com>
+ <20250903190806.2604757-2-SpriteOvO@gmail.com>
+ <20250904-sterilize-swagger-c7999b124e83@spud>
+ <f7434b76-49d0-4ef3-8c77-c1642dc211cd@gmail.com>
+ <1b95b2f0-e916-4a86-a274-da2ff7f9d516@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905151734.12729-1-hsukrut3@gmail.com> <55a80c17-6fab-4a5e-82e7-25274c5d9579@igalia.com>
-In-Reply-To: <55a80c17-6fab-4a5e-82e7-25274c5d9579@igalia.com>
-From: sukrut heroorkar <hsukrut3@gmail.com>
-Date: Fri, 5 Sep 2025 17:25:27 +0200
-X-Gm-Features: Ac12FXzfiFIdZCKxpLn6spu_fWYMyorNOEeTr7ej5xneE57RJPONwCO4fXqD2mg
-Message-ID: <CAHCkknpK5Be=dj2=cFs6GEofH=0h_sL0uwJi+cJnEo7hXVukDQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/futex: Fix -Wformat-security warnings in futex_priv_hash
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Thomas Gleixner <tglx@linutronix.de>, 
-	Colin Ian King <colin.i.king@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	"open list:FUTEX SUBSYSTEM" <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andr=C3=A9,
-
-On Fri, Sep 5, 2025 at 5:21=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@igal=
-ia.com> wrote:
->
-> Hi Sukrut,
->
-> Em 05/09/2025 12:17, Sukrut Heroorkar escreveu:
-> > Fix several -Wformat-security warnings in futex_priv_hash by passing
-> > the test message strings as arguments to %s format specifiers in
-> > ksft_*() logging functions.
-> >
-> > This silences the warnings without changing the functional behavior
-> > of the test.
-> >
-> >
-> This is already fixed upstream:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=3Dl=
-ocking/futex&id=3Df8ef9c24029c85cd0328a9c668283017d8c292ad
->
-> https://lore.kernel.org/all/20250827130011.677600-4-bigeasy@linutronix.de=
-/
->
-> Thanks,
->          Andr=C3=A9
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+82/AboaHQrENvzx"
+Content-Disposition: inline
+In-Reply-To: <1b95b2f0-e916-4a86-a274-da2ff7f9d516@gmail.com>
 
 
-Thanks for pointing this out.
+--+82/AboaHQrENvzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Sep 05, 2025 at 07:07:20AM +0800, Asuna wrote:
+> CC rust-for-linux list, I missed it in copying from get_maintainer.pl, the
+> thread is a bit of a mess now :(
+
+If you're doing that, keep the whole message in the mail. Think I just
+perpetuated the problem by replying to the mail a body rather than the
+one with the amended CC list.
+
+--+82/AboaHQrENvzx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsBBAAKCRB4tDGHoIJi
+0vPPAP0WJW3cfKzXqItvB2XzxRMkipRGuzMESsAFO02Trs2WgwD+KeERdtt4LZdp
+OrpmtNGQfWOFHR1lVYnmonUUL88WawI=
+=lC0v
+-----END PGP SIGNATURE-----
+
+--+82/AboaHQrENvzx--
 
