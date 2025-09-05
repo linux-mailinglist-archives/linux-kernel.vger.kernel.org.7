@@ -1,99 +1,253 @@
-Return-Path: <linux-kernel+bounces-803805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCDABB4659A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:34:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B41EB465B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858B3561C84
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:34:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA427B59A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ED62F069A;
-	Fri,  5 Sep 2025 21:34:07 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8332FA0ED;
+	Fri,  5 Sep 2025 21:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="obDGNJr1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06F2DAFB1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108047; cv=none; b=gfpumfRiS8lQUGdp3eFEK8dUuyI4d3gOLC/7K21i4zG36WXG2AtWxSXWk3UBdtdjQfhPZ+6CHiL1uftItdLwS+dmIMfGDiVBtGqpFJVQ9vrsigp0zJQ9HaDCVUK55kSFPtAYRH85gZdBLZUT3iOUydCj3hJjWT+AfYwe5Vzv3tY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108047; c=relaxed/simple;
-	bh=OsQ/XCKuRqaR6esTNv31pT1uTGcb2x5eU2Mmmfq90VI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eGxHhTs0Fj824n0WHfH+WRW97L9Lh6bqhQZR6RWa1zoqhMzYRF5Y4UUmXBQ4gUEVlYyXgAK54kDsDzY0yo1ATVX9FiwLvFStvKCS0lzYIJA1jgl+a1nLd4UewnhnOIA7ME9hdphx/valX8IcMTNKmjmPdZpsc5eIV5lrdNMNDLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7742adc1f25so348842b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757108045; x=1757712845;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OsQ/XCKuRqaR6esTNv31pT1uTGcb2x5eU2Mmmfq90VI=;
-        b=Ek4ssJeOzA8QroInzfm/vC8P45j6L08psi2VfVT/ZR9QQf9WCnmi9aNiPQbFZKoTwp
-         g3tbKASzQEnmZf64ayIZhwHRnMfovW8LmuqmZs8s+vSbGO/6N3PbXx7kBtBTtM0+8EOQ
-         Q+0Dka8HVg84mP0KiKh7vi2+8vcTxwmWZJAsEPpUG0Xz0qs88UOTjER8omW/CKLIdRrZ
-         0xlo+0KfqSHW8Zr1jqIkkbqkwIFysfqJR2r3VaD/pPcUs+7mJFslHYqXKI0DGolKoxrm
-         cWO43gNWgwOghiRmScdMxrQJdqRVDTZZBoSEkmMJ+zhPDt9RUowuU9+bCVEw1rgOj3CG
-         KZQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsEsDwkwB7wwbpa3hEf/e12dAV4KntEhcH3h546SR2r883djhn/Z0Tq+c8fn/4TfCeFXkkV0ct7VZiOaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxizq2GbUU9WYOFsb8Qj5k86tIB1PIxYsj/WWFedJNKyob0h4uO
-	neNtdXO5uHug/FKkCb1T7yThwsoFMM7I/HGYnuzaNz8IVIDu+BaZ31kMMF/5/ReCZkI=
-X-Gm-Gg: ASbGncvs3biB+pCFTlAKPO57eMLmFvi44c/Bv1mgmOywqd+7NNW8md7l2hFxoUCBUVn
-	KERRt3XZo03AqdfQcz5OFiMKz7hIFEEZVOyHIKw7KeZqzPQC8hvX/RwLkKVm0YxhMVXF1F8+ATR
-	6X2/4povylfeaWYbNTjYYf+xsoTLk64r+S2hGKRXLg6EVYeoNdS9qtvqeJUBGISyTd32PHrUAMW
-	7MqAwYFGwcAovlFQB4v6wYko5IskemeEPdm63UlNyYHWu3F1RPFf6n73d3t92O5SF1DaEtyofCi
-	vCAwM5G58LkAfXebQ981jWAFnmJKWMc/sGii4biPTkRz/HC7MkZ1GzJIIIfmcjfdW2di1VIgNmy
-	e1367aTGCBetj4tfOv8V/
-X-Google-Smtp-Source: AGHT+IF98k8Va16MpWzLp3ZggTUXIe4e54bFUIoKsXM557PE3M1cHZME6evE4tizbxZ5oXDsMeINTQ==
-X-Received: by 2002:a05:6a00:181e:b0:774:1be4:dced with SMTP id d2e1a72fcca58-7742dccafdbmr309740b3a.9.1757108045347;
-        Fri, 05 Sep 2025 14:34:05 -0700 (PDT)
-Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1b21sm23273993b3a.69.2025.09.05.14.34.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 14:34:04 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, tony@atomide.com
-Cc: krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, shuah@kernel.org, jihed.chaibi.dev@gmail.com
-Subject: Re: [PATCH] ARM: dts: ti: omap: am335x-baltos: Fix ti,en-ck32k-xtal
- property in DTS to use correct boolean syntax
-In-Reply-To: <20250822222530.113520-1-jihed.chaibi.dev@gmail.com>
-References: <20250822222530.113520-1-jihed.chaibi.dev@gmail.com>
-Date: Fri, 05 Sep 2025 14:34:04 -0700
-Message-ID: <7hplc4a8j7.fsf@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699DF2F657F;
+	Fri,  5 Sep 2025 21:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757108158; cv=fail; b=St/5gefZc6rupqeZULU3i+8MIToaZy2u7cBVtBjVm86xAYqASNDkUh+BceFvtF243fvJ7db4zpmOEDEHor6mtXVO6+0GxkvtcvGTE1PxgYKfZ2Q0+yAJdGt/FmJUENOvtAyNsGWjdHBH6tuwHYnN6qNhRPXDPWf8hxfyCjPwl9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757108158; c=relaxed/simple;
+	bh=y7Y2joKxgkzc3K7n3uRHkbUqOz89YeTpHh4j0DHOU+E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EX3ux6sA/Lg1BnbLi2zt4wc2RWKsiCizoQP10i8Fwt3CaBBx60tqFrcqYKeJVVQERPuVRUtRNeL4DPwejZvUf/NPUgJksF0EP8dhsAwZ1yuq+YU7YRNg9BAXDuI3VmZuwh7ukklyTfmKRsiEefGbc2X7r+4QriN9csYatXzhG7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=obDGNJr1; arc=fail smtp.client-ip=40.107.220.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Iti1PhxemzPCNYmnqgMsTu0fpOVnj8NMmS8sh3RyEKMPLYha+blhezx2B3I3yEFtewk5nTMtIl88BU64vlcA0IOjP9bzVbTwiWTD1FFdjyFzPnhh73dleByKd2uLdP9SniqZ/gX5a6RD0opxf/bn5tSmEcXRa84G9LV+5kT+ehnBSuBb5ScY4vCC/hN6i+bvzrdEgFcJU/6+tWHUXSa6/0uq5FSeG8NwKX53lQT2rs7aWmcbNrpT0jzH3jCwzpw8Bk3g+mivH/TFTZ11gLfCB3U87g3UeVKgznbB7a69uZhy3VQ1k2xj4yAP/qu+Zo1ZZS4+BQVAsopv1iumKHrrPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TIjEhjoTSmNEdbSfnQVMcHhKMCJLqYCH63WKq2CtQOY=;
+ b=wIJyzPLbHln2N6eomGT1O3JzBEhnpeLHYoglpxmFYanuIXpFax4ly61TwMjqX5PkGBK8kGm8RBizGsbEwFAn/QqLOuxC6CdRIApFpAHtyRrmNTdNiJBPDKsufZ+24Y5g5/nugY5vo8CUAh8juCthxYX2sk+tEqHRWTMKs+sGo6los47EfhE+ESNyehAB4LVZCnw7LjLcCIVYl+PzGFuiiq2ELdgFlwmH209h88XR/inl7iMKjqgNwOos27iKVZ54Se5gox0PmgbDoVvDU73NJCoYleWQBEMFKaDuVINBYbCBN8MFhWu633vLbmn2seKQD1bzfT05eEZ1UcBT5Hnasw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TIjEhjoTSmNEdbSfnQVMcHhKMCJLqYCH63WKq2CtQOY=;
+ b=obDGNJr1PvJdbnufgKTsdB0sXiN5HGxhjL4299qdZE5tFoZxNsISuuGRWAu+o9rSjDkLR7CN8Ne9zpgZPPmDZ0Dj81uJl95FlMAMYV7lXX5imBnIp+ExkIfV8KEDl0xZhwGR/c0kXwCdCPrTJLJvYoDUE/jnUCMvrcdOOWxFhdY=
+Received: from BN0PR03CA0024.namprd03.prod.outlook.com (2603:10b6:408:e6::29)
+ by IA1PR12MB8539.namprd12.prod.outlook.com (2603:10b6:208:446::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
+ 2025 21:35:50 +0000
+Received: from BN2PEPF000044AC.namprd04.prod.outlook.com
+ (2603:10b6:408:e6:cafe::ed) by BN0PR03CA0024.outlook.office365.com
+ (2603:10b6:408:e6::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.20 via Frontend Transport; Fri,
+ 5 Sep 2025 21:35:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN2PEPF000044AC.mail.protection.outlook.com (10.167.243.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Fri, 5 Sep 2025 21:35:49 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 5 Sep
+ 2025 16:35:49 -0500
+Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Fri, 5 Sep
+ 2025 14:35:47 -0700
+From: Babu Moger <babu.moger@amd.com>
+To: <corbet@lwn.net>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <babu.moger@amd.com>, <x86@kernel.org>, <hpa@zytor.com>, <kas@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <akpm@linux-foundation.org>,
+	<paulmck@kernel.org>, <frederic@kernel.org>, <pmladek@suse.com>,
+	<rostedt@goodmis.org>, <kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>,
+	<seanjc@google.com>, <thomas.lendacky@amd.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <perry.yuan@amd.com>,
+	<manali.shukla@amd.com>, <sohil.mehta@intel.com>, <xin@zytor.com>,
+	<Neeraj.Upadhyay@amd.com>, <peterz@infradead.org>, <tiala@microsoft.com>,
+	<mario.limonciello@amd.com>, <dapeng1.mi@linux.intel.com>,
+	<michael.roth@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <kvm@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
+Subject: [PATCH v18 06/33] x86/resctrl: Add ABMC feature in the command line options
+Date: Fri, 5 Sep 2025 16:34:05 -0500
+Message-ID: <e1595037b15882dc861fab098c3d9325b7ce1735.1757108044.git.babu.moger@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1757108044.git.babu.moger@amd.com>
+References: <cover.1757108044.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044AC:EE_|IA1PR12MB8539:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7105afc7-3046-4dba-61e9-08ddecc42edc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oP9T3NTdzP3l+vHhKzOqdmBgMYrn1hMtVGOVEkA4gmTmDfHrD59Dm/ipiHGD?=
+ =?us-ascii?Q?8CC/WYPb5SeJVdr8km8xWRV+VaOHJnlP8QgiySoOsw8MTEhlcS1qx/Xt13q/?=
+ =?us-ascii?Q?yKK8auO5zGbOrHBTu/+LOMiFG9azT4/W6AOoMNSvKHLi3u97a9/c39ohvxDE?=
+ =?us-ascii?Q?vYOp/lk9OSy2NXJXEp54Q9adhAQ7R6/VOyl8WWOcwHOy3u4glNRfKU6AxmhA?=
+ =?us-ascii?Q?D1NWto+NpKAsnxBNf9D1uEzKGnV0Bmw277LgrkUxYLqAjwGihxWT96yhPQKh?=
+ =?us-ascii?Q?BJmDKUDoXLDmRk6E99J97hgY7jqVUkL7sZgW1H7A/gzn5kR2FsVaQF6YkcF3?=
+ =?us-ascii?Q?q7D+yUrSR0i/fYRib3tt1G5xMm7VolFyaKeVAukZ1SovwNluCe7TsnnCgaLu?=
+ =?us-ascii?Q?+ppOPM0nqCfL5fAJkdHJLTU0KIrC1MzzGWsi4ftykX4b/zJczlLHHQFop7+B?=
+ =?us-ascii?Q?UgWAU23GEXgjnth+ro6tSZe77egSEkyRNYE9fYU8z9R+TD6SG7goGD2MrijK?=
+ =?us-ascii?Q?sX1CgXIgrgbHEzPfVyGuxCCW+lBAH0qSgLMMYwsu/B913UFFEepZM7n8HHnm?=
+ =?us-ascii?Q?OPr3XrTD0vk0vhxG+8UeZdpkF7x2XXX1SAZKvfOWY753piz4SXNZ54Le7z/B?=
+ =?us-ascii?Q?AJGuympMeJqtAfY9ghGCf8PEOYc6WLlpCqAbXdtiM7SfHUhtvKcP0CwW6ILS?=
+ =?us-ascii?Q?6gz1Eur/P2nfCRlYWla0M7ZxzzWyJc9wa2VW7rGRvzsCw83Vr8KsaoU5gMzv?=
+ =?us-ascii?Q?oHyrPKyo+WZpKsY3AzWm823ck8aiHu8t4ZDTeefhSRLDdncnMeMAS5WeROWO?=
+ =?us-ascii?Q?Ha3HxRPEAreJX4xucDD+IedlbQ5LVLZGtggHos6UWjatHK5S+LwEDnL9I6Ru?=
+ =?us-ascii?Q?qBcxchIafy2tWEc9mCAw9edLTNPLNEoV/84nveP8Lr1Li59Gsb32n7MrMw8t?=
+ =?us-ascii?Q?heKB+crKqyi1YcWyJwlQ9cg64MKPezbRY29nN6Xhr0rz6UsvEYxck/39LKem?=
+ =?us-ascii?Q?d7sIv2fQLTtl5epV+z1/Oeg5J2bzhSAitrKN2mEbJERl6k28qTc5S2TbSBYB?=
+ =?us-ascii?Q?f3oD/Bl78CsJQDDk6hA2+RNPPLgn1VB8VprPzxwBAdJlpUoGfjKBw8Npkoca?=
+ =?us-ascii?Q?H8BX1FRZS46A3OfYq9uDd64/xzDVIk4wPJOY2jpAlEwFiTJfx9yxi1LV0K8B?=
+ =?us-ascii?Q?q116WVj1QFUiJVwMloHu5jtJDwnC9KY4qMNAT0VVDLyWRLndTIy4hpcUbJEr?=
+ =?us-ascii?Q?DFeMC98rB9y9anHESC+znXAvddDOzerT+kT5tvX984C5x2THa78So37oZsFE?=
+ =?us-ascii?Q?0wPq4bfjMDggacMXir9dT9ZAQaMk2QZPrnzK8EJlxIbtErr5fnEnW6XJKKjQ?=
+ =?us-ascii?Q?QrhyZiUv33KcHm/4SVAvUZOeRbznNFWokUk96VJqwYOFL66z8Hkc/dUJVbww?=
+ =?us-ascii?Q?ZCtw72u7cJw4COTfvWP79nPiXlw6Ex2v7kuCyrwFV6i2rytziUtnXWX5yzLR?=
+ =?us-ascii?Q?WrImt5iUmng12iiqfVDrqTfDGLlb8BJUTZea?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 21:35:49.9988
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7105afc7-3046-4dba-61e9-08ddecc42edc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044AC.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8539
 
-Jihed Chaibi <jihed.chaibi.dev@gmail.com> writes:
+Add a kernel command-line parameter to enable or disable the exposure of
+the ABMC (Assignable Bandwidth Monitoring Counters) hardware feature to
+resctrl.
 
-> The ti,en-ck32k-xtal property, defined as a boolean in the Device Tree
-> schema, was incorrectly assigned a value (<1>) in the DTS file, causing
-> a validation error: "size (4) error for type flag". The driver uses
-> of_property_read_bool(), expecting a boolean. Remove the value to fix
-> the dtbs_check error.
->
-> Fixes: 262178b6b8e5
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+v18: No changes.
 
-Nit: fixes tag should include short log like:
+v17: No changes.
 
-Fixes: 262178b6b8e5 ("ARM: dts: split am335x-baltos-ir5221 into dts and dtsi files")
+v16: Added Reviewed-by tag.
 
-I'll fix this up when applying.
+v15: No changes.
 
-Thanks for the fix!
+v14: Slight changelog modification.
 
-Kevin
+v13: Removed the Reviewed-by as the file resctrl.rst is moved to
+     Documentation/filesystems/resctrl.rst. In that sense patch has changed.
+
+v12: No changes.
+
+v11: No changes.
+
+v10: No changes.
+
+v9: No code changes. Added Reviewed-by.
+
+v8: Commit message update.
+
+v7: No changes
+
+v6: No changes
+
+v5: No changes
+
+v4: No changes
+
+v3: No changes
+
+v2: No changes
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 +-
+ Documentation/filesystems/resctrl.rst           | 1 +
+ arch/x86/kernel/cpu/resctrl/core.c              | 2 ++
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 747a55abf494..5bab2eff81eb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6154,7 +6154,7 @@
+ 	rdt=		[HW,X86,RDT]
+ 			Turn on/off individual RDT features. List is:
+ 			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
+-			mba, smba, bmec.
++			mba, smba, bmec, abmc.
+ 			E.g. to turn on cmt and turn off mba use:
+ 				rdt=cmt,!mba
+ 
+diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+index c7949dd44f2f..c97fd77a107d 100644
+--- a/Documentation/filesystems/resctrl.rst
++++ b/Documentation/filesystems/resctrl.rst
+@@ -26,6 +26,7 @@ MBM (Memory Bandwidth Monitoring)		"cqm_mbm_total", "cqm_mbm_local"
+ MBA (Memory Bandwidth Allocation)		"mba"
+ SMBA (Slow Memory Bandwidth Allocation)         ""
+ BMEC (Bandwidth Monitoring Event Configuration) ""
++ABMC (Assignable Bandwidth Monitoring Counters) ""
+ ===============================================	================================
+ 
+ Historically, new features were made visible by default in /proc/cpuinfo. This
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index fbf019c1ff11..b07b12a05886 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -711,6 +711,7 @@ enum {
+ 	RDT_FLAG_MBA,
+ 	RDT_FLAG_SMBA,
+ 	RDT_FLAG_BMEC,
++	RDT_FLAG_ABMC,
+ };
+ 
+ #define RDT_OPT(idx, n, f)	\
+@@ -736,6 +737,7 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
+ 	RDT_OPT(RDT_FLAG_MBA,	    "mba",	X86_FEATURE_MBA),
+ 	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
+ 	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
++	RDT_OPT(RDT_FLAG_ABMC,	    "abmc",	X86_FEATURE_ABMC),
+ };
+ #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
+ 
+-- 
+2.34.1
+
 
