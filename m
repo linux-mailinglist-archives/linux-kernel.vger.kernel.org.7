@@ -1,202 +1,127 @@
-Return-Path: <linux-kernel+bounces-803886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B78B466C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:44:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D2CB466C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4919188199F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5B11B259E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22A229E10C;
-	Fri,  5 Sep 2025 22:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j91+qH+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E6028C871;
+	Fri,  5 Sep 2025 22:44:29 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084C5225761;
-	Fri,  5 Sep 2025 22:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA707225761;
+	Fri,  5 Sep 2025 22:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757112274; cv=none; b=ic/157qgV2IVJ72Ge5bv44WVTpAmtQgjvsdx4VfJ/Ca6uEhd6+I1OaN8yt3xsITb0/H2tRsBrGm8j3iVD8P6l2oCDt8EnnoGgVsP3lLakPOG0dxtXYTNPItpINm/9cbXxYHXqGmGEkr9yOnKMNa0eEvgc46rbTTJQJ4hN/hJJFo=
+	t=1757112269; cv=none; b=XzKZ3m2JRiGAN815DNWcNAY4QJIydzD/Gyt/UcIrIH7N+n071wkGZNpjRp60yR524ptFmPntYQOw66R1rmHwpQQybxrUTspCpP5tKhkbsv4BNt09S/4M79c1qDoQt0K+XZ5BVCOkIVJuSu9MKcxc+UbTltHEHYi9h4IgVpcyF+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757112274; c=relaxed/simple;
-	bh=ecdRr8yDz4LhdbWsw8D/b4SVpMQdJT71OK6gvoVHdrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JGzBmzYiw1z7U7Gvmc2vkXfPWYO3Nq6iL+e1g2GQBiSNPC5yB1eQZpAG28rKV4mctZ/wVhZupj4C04g5TfHT07gTybvEbJuEfo+7QSTO11iMFE+Hs6NTNhqwPZlwuACW78YJxEjl2OUoVmHe2q9Ba4WyMh0o1XkTruPLzTpjq/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j91+qH+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479A1C4CEF1;
-	Fri,  5 Sep 2025 22:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757112272;
-	bh=ecdRr8yDz4LhdbWsw8D/b4SVpMQdJT71OK6gvoVHdrE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=j91+qH+F+7zrhgPA7QmOREMjCCY9jtWORQ1GQgSLE3gNhaZ3EpcULfXyQskbKzPq7
-	 Bc79AGYEReaJ5iPsPpaUTcUE6bkoJnidMz/2KoE1upgmW73yrZpisxEtFHnGd5Mtq+
-	 O5cVz/EZOipDCa0Bt+O1SdlU8+6aeMbTxyALo7LZDo5dperTV9qRvAqc5041zQXgxI
-	 X9+xyXQgUyyfWGPNocJQp/IxBpzyq+8d3H+zzmP6dyR4lDh+C8KlMxxaWHdDXhA+et
-	 KxhhVX5wGOk/qLJhXRNS4y3Y5RPF4tO67RFV/RuIh+V5M8lKmJPfsxHJ/KY8+8G8OT
-	 nCzrZrxp/DyhQ==
-Date: Fri, 5 Sep 2025 17:44:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Brian Norris <briannorris@chromium.org>,
-	stable+noautosel@kernel.org
-Subject: Re: [PATCH v2 1/5] PCI: qcom: Wait for PCIE_RESET_CONFIG_WAIT_MS
- after PERST# deassert
-Message-ID: <20250905224430.GA1325412@bhelgaas>
+	s=arc-20240116; t=1757112269; c=relaxed/simple;
+	bh=b4E7YUBbTxDl1IdysgCGqbCapfo4w1LJG0OG5yD8YxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K6Wy7GZdPyu242O+lKvdzZWhif/6LUBaABc4IicjPC2kpWe1vfThJ8kpaziR2aKgbZ3gjv9KtE+HxpyM4aTcSJ7qSd00qq7n5/0Ga773K+qZh7zAEapbb3SXI85j0yEXSA4I8xKnSgD0RvnLJxpkWNc0ZaNv1aQHNpZSYVjpUHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id EAC60855CF;
+	Fri,  5 Sep 2025 22:44:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id DDBB92F;
+	Fri,  5 Sep 2025 22:44:16 +0000 (UTC)
+Date: Fri, 5 Sep 2025 18:44:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+ <tglozar@redhat.com>, <yuehaibing@huawei.com>,
+ <zhangchangzhong@huawei.com>, <linux-trace-kernel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] tracing/osnoise: fix null-ptr-deref in
+ bitmap_parselist
+Message-ID: <20250905184456.084d1ff3@gandalf.local.home>
+In-Reply-To: <20250905032544.231962-1-wangliang74@huawei.com>
+References: <20250905032544.231962-1-wangliang74@huawei.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903-pci-pwrctrl-perst-v2-1-2d461ed0e061@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: DDBB92F
+X-Stat-Signature: sjoifturoeki6aihikoggsk8y3dmy1i3
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+SWaqcfkOCS2nIjaR4KErsCdEd0BUKlF0=
+X-HE-Tag: 1757112256-800584
+X-HE-Meta: U2FsdGVkX18i4FTtYOVj3V6ntD6buYHMMmm1w5EGeVUV8ilFeNUH4cD91YMIjgLLGmdtEh3QFPa47ad2xaJFpqrOMJOKOmJ0BPjO5iaHAKHv5O1um9Sq3i+bpx9zyLvWJTPYXkIfM2uYlqQoteurtVZkcwiMSRIo351D+3kVWotfElcvezUibVNR1Ub3p+Rv1EPmFYcec3mMRNk7u333XRwkgNPWr1dO3DQyk28jfb6N2JSD0doxzDYEOfmSR/Q3vCRceiq9WxGDUp+R260OWd5qOAsVXqiF/gzCe5wEzaFWUzz3V3QDHQIVf5BVwFFFVFNhzdC7fhMOJyTEkYK9q9nuYM+SOAj0
 
-On Wed, Sep 03, 2025 at 12:43:23PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> PCIe spec r6.0, sec 6.6.1 mandates waiting for 100ms before deasserting
-> PERST# if the downstream port does not support Link speeds greater than
-> 5.0 GT/s.
+On Fri, 5 Sep 2025 11:25:44 +0800
+Wang Liang <wangliang74@huawei.com> wrote:
 
-I guess you mean we need to wait 100ms *after* deasserting PERST#?
+Hi Wang,
 
-I.e., this wait before sending config requests to a downstream device:
+FYI, the tracincg subsystem requires capital subject:
 
-  ◦ With a Downstream Port that does not support Link speeds greater
-    than 5.0 GT/s, software must wait a minimum of 100 ms following
-    exit from a Conventional Reset before sending a Configuration
-    Request to the device immediately below that Port.
+  tracing/osnoise: Fix null-ptr-deref in bitmap_parselist()
 
-> But in practice, this delay seem to be required irrespective of
-> the supported link speed as it gives the endpoints enough time to
-> initialize.
+And parenthesis for function names.
 
-Saying "but in practice ... seems to be required" suggests that the
-spec requirement isn't actually enough.  But the spec does say the
-100ms delay before config requests is required for all link speeds.
-The difference is when we start that timer: for 5 GT/s or slower it
-starts at exit from Conventional Reset; for faster than 5 GT/s it
-starts when link training completes.
-
-> Hence, add the delay by reusing the PCIE_RESET_CONFIG_WAIT_MS definition if
-> the linkup_irq is not supported. If the linkup_irq is supported, the driver
-> already waits for 100ms in the IRQ handler post link up.
-
-I didn't look into this, but I wondered whether it's possible to miss
-the interrupt, especially the first time during probe.
-
-> Also, remove the redundant comment for PCIE_T_PVPERL_MS. Finally, the
-> PERST_DELAY_US sleep can be moved to PERST# assert where it should be.
-
-Unless this PERST_DELAY_US move is logically part of the
-PCIE_RESET_CONFIG_WAIT_MS change, putting it in a separate patch would
-make *this* patch easier to read.
-
-> Cc: stable+noautosel@kernel.org # non-trivial dependency
-> Fixes: 82a823833f4e ("PCI: qcom: Add Qualcomm PCIe controller driver")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> A crash was observed with the following output:
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..bcd080315d70e64eafdefd852740fe07df3dbe75 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -302,20 +302,22 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
->  	else
->  		list_for_each_entry(port, &pcie->ports, list)
->  			gpiod_set_value_cansleep(port->reset, val);
-> -
-> -	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
->  }
+> BUG: kernel NULL pointer dereference, address: 0000000000000010
+> Oops: Oops: 0000 [#1] SMP NOPTI
+> CPU: 2 UID: 0 PID: 92 Comm: osnoise_cpus Not tainted 6.17.0-rc4-00201-gd69eb204c255 #138 PREEMPT(voluntary)
+> RIP: 0010:bitmap_parselist+0x53/0x3e0
+> Call Trace:
+>  <TASK>
+>  osnoise_cpus_write+0x7a/0x190
+>  vfs_write+0xf8/0x410
+>  ? do_sys_openat2+0x88/0xd0
+>  ksys_write+0x60/0xd0
+>  do_syscall_64+0xa4/0x260
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  </TASK>
+> 
+> This issue can be reproduced by below code:
+> 
+> fd=open("/sys/kernel/debug/tracing/osnoise/cpus", O_WRONLY);
+> write(fd, "0-2", 0);
+> 
+> When user pass 'count=0' to osnoise_cpus_write(), kmalloc() will return
+> ZERO_SIZE_PTR (16) and cpulist_parse() treat it as a normal value, which
+> trigger the null pointer dereference. Add check for the parameter 'count'.
+> 
+> Fixes: 17f89102fe23 ("tracing/osnoise: Allow arbitrarily long CPU string")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  kernel/trace/trace_osnoise.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+> index fd259da0aa64..edf5178d0317 100644
+> --- a/kernel/trace/trace_osnoise.c
+> +++ b/kernel/trace/trace_osnoise.c
+> @@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
+>  	int running, err;
+>  	char *buf __free(kfree) = NULL;
 >  
->  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
->  {
->  	qcom_perst_assert(pcie, true);
-> +	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
->  }
->  
->  static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
->  {
-> -	/* Ensure that PERST has been asserted for at least 100 ms */
-> +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> +	if (count < 1)
+> +		return -EINVAL;
+
+Sending a count of 0 is not invalid. This should simply return 0;
+
+-- Steve
+
 > +
->  	msleep(PCIE_T_PVPERL_MS);
->  	qcom_perst_assert(pcie, false);
-> +	if (!pp->use_linkup_irq)
-> +		msleep(PCIE_RESET_CONFIG_WAIT_MS);
+>  	buf = kmalloc(count, GFP_KERNEL);
+>  	if (!buf)
+>  		return -ENOMEM;
 
-I'm a little confused about why you test pp->use_linkup_irq here
-instead of testing the max supported link speed.  And I'm not positive
-that this is the right place, at least at this point in the series.
-
-At this point, qcom_ep_reset_deassert() is only used by
-qcom_pcie_host_init(), so the flow is like this:
-
-  qcom_pcie_probe
-    irq = platform_get_irq_byname_optional(pdev, "global")
-    if (irq > 0)
-      pp->use_linkup_irq = true
-    dw_pcie_host_init
-      pp->ops->init
-        qcom_pcie_host_init                         # .init
-          qcom_ep_reset_deassert                    # <--
- +          if (!pp->use_linkup_irq)
- +            msleep(PCIE_RESET_CONFIG_WAIT_MS)     # 100ms
-      if (!dw_pcie_link_up(pci))
-        dw_pcie_start_link
-      if (!pp->use_linkup_irq)
-        dw_pcie_wait_for_link
-          for (retries = 0; retries < PCIE_LINK_WAIT_MAX_RETRIES; retries++)
-            if (dw_pcie_link_up(pci))
-              break
-            msleep(PCIE_LINK_WAIT_SLEEP_MS)         # 90ms
-          if (pci->max_link_speed > 2)              # > 5.0 GT/s
-            msleep(PCIE_RESET_CONFIG_WAIT_MS)       # 100ms
-
-For slow links (<= 5 GT/s), it's possible that the link comes up
-before we even call dw_pcie_link_up() the first time, which would mean
-we really don't wait at all.
-
-My guess is that most links wouldn't come up that fast but *would*
-come up within 90ms.  Even in that case, we wouldn't quite meet the
-spec 100ms requirement.
-
-I wonder if dw_pcie_wait_for_link() should look more like this:
-
-  dw_pcie_wait_for_link
-    if (pci->max_link_speed <= 2)                   # <= 5.0 GT/s
-      msleep(PCIE_RESET_CONFIG_WAIT_MS)             # 100ms
-
-    for (retries = 0; retries < PCIE_LINK_WAIT_MAX_RETRIES; retries++)
-      if (dw_pcie_link_up(pci))
-        break;
-      msleep(...)
-
-    if (pci->max_link_speed > 2)                    # > 5.0 GT/s
-      msleep(PCIE_RESET_CONFIG_WAIT_MS)             # 100ms
-
-Then we'd definitely wait the required 100ms even for the slow links.
-The retry loop could start with a much shorter interval and back off.
-
-I wish the max_link_speed checks used some kind of #define to make
-them readable.
-
-Bjorn
 
