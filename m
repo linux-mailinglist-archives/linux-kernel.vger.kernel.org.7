@@ -1,60 +1,75 @@
-Return-Path: <linux-kernel+bounces-803798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F36B4656E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:21:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA31B46571
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB0A6A45131
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7113B97A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DF22E9ED4;
-	Fri,  5 Sep 2025 21:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T92UJ6nl"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BF02EFD98;
+	Fri,  5 Sep 2025 21:23:46 +0000 (UTC)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C2A1F30AD;
-	Fri,  5 Sep 2025 21:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB11295DA6
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757107268; cv=none; b=kKBsghcjQoat04jWawFhFhDKWzFHjp6NK7dQIet+9TzjhE6S1j4uX21ck/3U+4WVlrv+V3YBAY9GOTrV7JFH0YuJFY0KwQ3k55y6TQI/590EX2vT/2m/jgysz1rkOHNmtZ+tvxlk7hBJ593WTYT2TDTpeo+zdW4/C57xkrAGbIU=
+	t=1757107425; cv=none; b=D4Sh8EJJsHT7nG1D2j3iepfy5TrWly03IlqMUmNvTxti5ddo7y2PYOpsdJV96dfckVADEtREnQrqwIbx0xk5tYikIrTxrXJGzozNo5+6iTXWOZ9GgnLNLtwctfuOeqEolS9tfluPn2P+WpAyNtV90TJLnc76TMU6ETWAKJPnTzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757107268; c=relaxed/simple;
-	bh=osQ9Lif183itocSuB65QNUmR7DDdBX3nJ25Dd19v7/A=;
+	s=arc-20240116; t=1757107425; c=relaxed/simple;
+	bh=o/PqQhK0PKkxH5IBGjaZ5xFiBra8PzKV7+1t1tFVm/g=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZeyuPOgHu4RT6luJO6OqeJnnUFH9kxJqQOUXt6sfwMnjyhLeJ+S4SnMad/PZZMRUM4iUpwj7mNPeDagb3zd+/S490DgIC78JSlh4no76tCKeGLqeV2NElEMwXQPkYeI9IUaWWTMp2wMwpg9zFtIql9+iMgBYZe07BtusaMUtV08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T92UJ6nl; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757107260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osQ9Lif183itocSuB65QNUmR7DDdBX3nJ25Dd19v7/A=;
-	b=T92UJ6nlCLVsFWAjC543fR6YxZ7eSKX4N/EozztC9mQXQQZDNQpa1JqppUr7HfB/1DqVC1
-	eMMGdMAl5kM/wbqM9bnCE4A7yj8zaOMAzfc1girqTcnRs2VN1F4AGpd0+z+Rm87itDCCbG
-	IVdmYsC+5yZnrIvGVfOGBtML1s5j1Pg=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
-  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,
-  Muchun Song <muchun.song@linux.dev>,  Alexei Starovoitov
- <ast@kernel.org>,  Peilin Ye <yepeilin@google.com>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>,  bpf@vger.kernel.org,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  linux-kernel@vger.kernel.org,  Meta kernel team
- <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-In-Reply-To: <20250905201606.66198-1-shakeel.butt@linux.dev> (Shakeel Butt's
-	message of "Fri, 5 Sep 2025 13:16:06 -0700")
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
-Date: Fri, 05 Sep 2025 14:20:46 -0700
-Message-ID: <87y0qsa95d.fsf@linux.dev>
+	 MIME-Version:Content-Type; b=lnO5C6NZaKO5owBnBrkg9mOFZASYeRmoSPto4+FJpy/IIMPsPaHOSyK4q4xIO2uh9aV8kjzaQUhrQP8uJqfh0EEKjKEGfSV8wCwbpcnuadsfVKS7/pHvonK8npW4S0pSdAXKl41x3RZf91DLwIf5jXv5cFV5qHEfk1kZ6z2vJ4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso2084104b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:23:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757107423; x=1757712223;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W6wZ9HgdgMtQgRD7Hr86g025jE/p6E3Wse2CcjqMIiw=;
+        b=lJ788zXz26I1Hs//OynyiOnGyBALRE7iQHc28sE4vFHCSNRa2NZ5rjEhd54OBH4Cb5
+         i8Ywzq3tbezZfuohO+eoJ/uBPm0lnfQc4+vcbL6dvS0M1iXB1lZYFulFInTpKuw+B3a8
+         BunzfchBsMyHyFdvnhtvKh2j+pyXDeB1wyjlRgNhWRB9tuLy47BhcEvVyHnqIisqND7V
+         0w3fL5ZZYCVplltFaN/XaoodVv+g74w11dXOJYlijo48Z8MUIisJZ+4ykC+aIFjnbRWm
+         9eHeCAYcTjwPUMaJRoZSJkVTngkL4xey+oPDjFC4fPKxzWPE5VdaT/FrVYbu2lAFPRiB
+         HIUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGD21wuBZWhF9ByhIIZcKxzQ5F22pEtWMUEyBix6oBr/ULiyKrXh6i/pmYDyHWNHfLVAABPX2zZXtAmaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHrIyRgvc/NPaWMypK17fxIOPSzXAGmO/TRutXMEkDmoD2MRdb
+	QxeLM0ClhljPPPCOksKHNwRlClDtkXIRdLyS4LqKdpRkCGdokywTdg0YiS02CNctx48=
+X-Gm-Gg: ASbGncvYdJapOL/8o8lbBjVhEvz+EcYylOBqgllokb0QL6VBYG7qdennTnNMmZcd7i+
+	2d0nd9fBHrsLtOK/CxQu6xiUUEprQAUXnzWRAVV0f1s2Vrz6lz3WG7DhvPFnjN/vh1QcmLO7Vbc
+	1ESE8Mf0ExO5AoJJ+70wQ6kGwd46bBdxKCP7nykr2Bnm5I19s92vZG2EAJ2nKc06LgAcAU49DND
+	6kdygzsCRvwzdGOSB2hI7fh81I1ZrRkIR41o4DDSW/WARYlPbif71f1Kl+WhVkN74Ur5N9t7/Kj
+	o8/DDHxtVib1OOopFhigzpP0kd4HOtFk4312q5IE6hVVUFkZt9VbVZEBRON3naNG0xksP3/mrSs
+	aR3Hf1uIsf9ozkdOhDGhW
+X-Google-Smtp-Source: AGHT+IECEsSQkwfBCZIu4aCVdg/6xbbfhAHy0KA5ITM5kpE6xl3JxGGtEoATFjZl9SBoRxWqA+Li6A==
+X-Received: by 2002:a05:6a20:3d89:b0:246:f1:bec3 with SMTP id adf61e73a8af0-25344415094mr362891637.42.1757107423576;
+        Fri, 05 Sep 2025 14:23:43 -0700 (PDT)
+Received: from localhost ([71.212.208.158])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4bf561sm23001252b3a.59.2025.09.05.14.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 14:23:43 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>, Brian Masney <bmasney@redhat.com>
+Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
+ <mripard@kernel.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] clk: ti: convert from clk round_rate() to
+ determine_rate()
+In-Reply-To: <20250814094527.29745592@akair>
+References: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
+ <20250814094527.29745592@akair>
+Date: Fri, 05 Sep 2025 14:23:42 -0700
+Message-ID: <7hseh0a90h.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,27 +77,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
 
-Shakeel Butt <shakeel.butt@linux.dev> writes:
+Andreas Kemnade <andreas@kemnade.info> writes:
 
-> Generally memcg charging is allowed from all the contexts including NMI
-> where even spinning on spinlock can cause locking issues. However one
-> call chain was missed during the addition of memcg charging from any
-> context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> cgroup_file_notify().
+> Am Mon, 11 Aug 2025 08:48:05 -0400
+> schrieb Brian Masney <bmasney@redhat.com>:
 >
-> The possible function call tree under cgroup_file_notify() can acquire
-> many different spin locks in spinning mode. Some of them are
-> cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> just skip cgroup_file_notify() from memcg charging if the context does
-> not allow spinning.
+>> The round_rate() clk ops is deprecated in the clk framework in favor
+>> of the determine_rate() clk ops. The first two patches in this series
+>> drops the round_rate() function since a determine_rate() function is
+>> already implemented. The remaining patches convert the drivers using
+>> the Coccinelle semantic patch posted below. I did a few minor cosmetic
+>> cleanups of the code in a few cases.
+>> 
+>> I want to call out the changes to the dpll driver since a fair number
+>> of changes had to be done outside of Coccinelle. I unfortunately don't
+>> have this particular hardware on hand, so I was not able to test it.
+>> I broke the changes to this driver up into smaller chunks to make it
+>> easier to review.
+>> 
+> Tested-by: Anddreas Kemnade <andreas@kemnade.info> # OMAP3 GTA04, OMAP4 Panda
+>
+> No new scary things seen on boot. Can someone check this on AM3, too?
 
-Hmm, what about OOM events? Losing something like MEMCG_LOW doesn't look
-like a bit deal, but OOM events can be way more important.
+I gave this a basic boot test on am335x-boneblack.  All is well.
 
-Should we instead preserve the event (e.g. as a pending_event_mask) and
-raise it on the next occasion / from a different context?
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-Thanks
+Kevin
 
