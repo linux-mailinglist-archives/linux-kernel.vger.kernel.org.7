@@ -1,316 +1,210 @@
-Return-Path: <linux-kernel+bounces-801853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CFCB44AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEF2B44AB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4513BE073
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:10:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6213B59E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 00:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC24C7483;
-	Fri,  5 Sep 2025 00:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D733433C4;
+	Fri,  5 Sep 2025 00:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgz0TO5h"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jY/QQlXW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637A610E3;
-	Fri,  5 Sep 2025 00:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8F486342
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 00:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757031023; cv=none; b=JwAUFBzhR/qZrnbow7H4ltEekuel5MAiQJOYPPlpN0Bbv1ZDte3g55odk604SIohohIpZ/Q7VICcLkypXy6O9ZkaZfkm5/TXBjAz3uu8DQ+4ygRmm0I6K6Nxs5btgZhyjTFPmB9iAAQWpOL67cSdNpp3HjodOC47S53zEwkHHq8=
+	t=1757031313; cv=none; b=Wuy6rsVaYQtKgeQaQ90zvqjTPAuj9Aj2ZHjxphw6dAexHWVQv1GmVoQap+rxYrNoNM/rC2kwrEFtaL0ER67YWERFqYJLPaEJ+fwmk5dzptZw3suaFB8vGxLfEzbFUd5MmN3JGpA7oznV4W+yy4sdzQk2LdZsUqfUurX+giLqIMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757031023; c=relaxed/simple;
-	bh=Wqt0zoEmu9173NVgTwhdZ2M7MsZCPaLd/KKYZq92uO0=;
+	s=arc-20240116; t=1757031313; c=relaxed/simple;
+	bh=Nq0tYidYcWS7UH25GXS90yDlOI6V78+FMA1zNge1d5M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E7cGEgE7wxkpOJJpMmmrFdm5kxzyzlu8sIQE9b3BvQ3d025aG4+7akASywK0Ks9BoKvPGZEN6wRlza8gLnuVEjtf0RcpXnkTzOVz4uQ6TgG1qXQYVKW1KACLV6/uFjijKKLYNf4A1k4CaoqnH/GF4PmZ3gAH8GGoikCvELA8Y8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgz0TO5h; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3f0651cb971so10246435ab.3;
-        Thu, 04 Sep 2025 17:10:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=FEnD8QTq5Gz1+pjQLM1GJ+LPIPU+fgFwH+Xvc3thpv4RFyVar+iHoxFvUAaHnITOObXTjRwuzDfGnpb886ti0Tkj6dGKmmFzjnJ1Umvc0nhGcCiyJVqjjjQksDV22kfbFvBcXQ6c9rvTGGvIclAFbRiLmPN5jfnIVL3ON0RcxEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jY/QQlXW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so10188675e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 17:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757031020; x=1757635820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/TjQo4jPuViIaMKeRLpkPebSAj9mMxtTxcu+Ya09Fs=;
-        b=bgz0TO5h/3g4emSFJ0d1zpvrxBx5Z3WVutvoR5eg01VpKolzUzg4D/TsA1lJXMYvWn
-         oJG755jbjXj4iH+uwTCUCdg9ZYku9wzTQu3nepca3afdMvkMnLxMP7Wxp+QznDM29Th/
-         J427gO2mjGiKmSNQNCBXBSR3s65cpcz/MV6RrtRHKDPFl5EviMTivLBiEaTwRZMHodVI
-         3npJcb1rVm/LJtqHx+yIqaoAYRKcTuJJd2ZpSmrlYJxf0fcxTgZaA6w3S0HGjY8MbxU2
-         NVV9MTE0/WhYAEBgBjpaa3Z6+E5xmusnAdc8lck75xKayRdYmt53/tDLH7FYJAh7Alg2
-         jzjw==
+        d=linaro.org; s=google; t=1757031309; x=1757636109; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1n/rQnUEn7GyoDZq+ztDxxjMsob+AoSXhZdfC132cBM=;
+        b=jY/QQlXW+u68hBDecsKP+XYKy00bhXjjQHeBt18e0JUeqhlLcEtM1K023F8DYbq4hc
+         HA2az4zSd7QeLuVCbypOT/SrkbSkRot5cngY5Vti4rbVYmEGlpf18PlhV0BdNkiH879f
+         ws6j2bB8G75JN74+SKVbyUF12Tjd7ZQH7WfLnydPmgtmf4Lm4eMj2fbIX754DVfmnw3n
+         KxtL7Wth7cZW6oGjyKBlLi4YjxBUg6tv1Ks4FCEmpBiUl/Mq3Nw20+wxEpnA0mr4R4FX
+         DQNAt/WRFY9MOBhMAaYssvKPUhxJ7wyvZ8CKbCq/Li6/imzxLwCf/2FW5O+mD0pSC2No
+         7s7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757031020; x=1757635820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/TjQo4jPuViIaMKeRLpkPebSAj9mMxtTxcu+Ya09Fs=;
-        b=jHz1VmlLKLOjC6BmCYG0CfARTcJtu/By5p1C8jaCeO/FmaUIAbOWGlgjbzMpD5QSbW
-         /epSXKutI9mkwAuhIil7xJ+/Q2I+jDPzC0U5fJhdM1qOoOgNbcG+3MZ5ou8XxedBGQHi
-         56R7klGKniMoRnzrH7D4DeXTY2WenJGYh3ue58aLxil2ErfVj9pzRs+3XG33BvBQXZFU
-         3A0EfBrYFnsze2cCnkCYWHO2VjS8XGR5gvfTBGFhXWXGlIXcTzK0QWJSDnOP9zRo8pdI
-         5sCNlWc37GxzjlAav5aqIwqdTIt1dET5m6rAdUhrgl1vDkudD+8NvoTKi9VDieWP7CGi
-         vTZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU43Hu23FbJBKFIHkwl7cJk45zFDUQciY/WhOwa6QtElzMTn11BcTXbRFE8xmJOk/MbojF60NxuDX2amJQ=@vger.kernel.org, AJvYcCU7om92DXdu4tSsyrDBs4Nzb2C2E09oFHSiiTikOCihFeq2XkXwdWgs56bIcdMWQjfuy63JO02q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlZqX/lZ37m4tY4XQVOnlxLMD0f7tHBnA96myjHHFCGaPQPm2j
-	wTlsyYbOwq2TCTgP1tZnIiLA0XYxzce2o/Fdok7WBSIwDRLFN12OJtgx4rjOF55jXy+vMHcVyOB
-	QlxzhIKuaaAC4qPpfGIYnC3tUhS48Yn0=
-X-Gm-Gg: ASbGncvBBCOiaBnPG7uVaVZdIYpks/rG5BFkSDxDbkIdhy1sR61HIaVeL/ngl/lTVxb
-	M/I/GnqU7DZrB4PCeM65TJq9Gz8Nz1o6xIYhEauijuM2cVMbltZuk/uoRsmXdWt1Ac87BP7PkP2
-	Bgr3MC+PLEHOP9szpEgBU52kOkLc+RKEw8t87K0mjlz8wW5ib5n2NhiEIkEDh5RsyT+4CvXN7xC
-	7y2O6ksTJapc5q42XIVHA==
-X-Google-Smtp-Source: AGHT+IGljxce7x4jBgkKnW0xO1cr+poR4gowOY+QS/LFAGZa+oChfry7jhVX4j4dfrilczpUv3hMuwTcUyeJJw3ZKn0=
-X-Received: by 2002:a05:6e02:3a06:b0:3f0:b1ba:f72e with SMTP id
- e9e14a558f8ab-3f4021c42d0mr369846055ab.25.1757031020238; Thu, 04 Sep 2025
- 17:10:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757031309; x=1757636109;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1n/rQnUEn7GyoDZq+ztDxxjMsob+AoSXhZdfC132cBM=;
+        b=VK1hl3xZiq9nI3ZWPMnYh02J9Zod8RZoZ8CVgvewPwtqKoVIyi/5T2/JVZIZI/+63O
+         T+ZdHs2DgxyKfVY5295tYRFnZi4ewObfr+50qPsC8rXKDMJOc5fDozYoKpucbVyzXDSc
+         rZH4hKDhPLyH+550fj3jU1LfTE/2kZB1/wdJh/iP2NGMbnz4qHuLI+Q4LdOjdy03FGBx
+         p7cU9pl4Qa/yMGYItiia50VwT/BSSlu+10C+fzpwSLaJkg2mS/pfcYFR1QPoVnyonzzu
+         134f/mlNihG2xN2IMBLrx7noVTalP08y+pMHG228YUENW+QeqQIf3HIN1bqjStshtYb8
+         1BDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWc9oB4wsLi3bLPTAV5NAtZ8MEXgEJ+OxAunhWzX7pcmhKcrR/RLBTzIofUFopXW9ktNKv+iBOKU+p5xYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlL/pHIjRB+yFfAlgUZjrcSE9YiMNQoByBvVO1NKVaWObLXh80
+	aUjiXMiWi+MHqudEBy4d+P1j0buXl5f+D9hoWuOWEhEtb+Ea8Apo+Tm4V45fJbJdCM5+VXI7ByJ
+	MtEOV6vQjq/bVVKAjzOhYdeQ9r5SsVX/jY3pqtDkvhw==
+X-Gm-Gg: ASbGncvMhw82tIJidOHntN4G6SOBqEji/cdBnLtmRhEM3piGGr0jS0bzbj5ImW20stD
+	PPv9YND/Zw091tHAvG5lB0KWbAzlgYQofCQa+6ypz0pwVhf1mb4A97lZPTnOTG+3luVxc0dSHTz
+	yAXVoLpAS/ZnjHTjH+adF5NvPrWDXoo5e3nDw76mfsOY6pEKJFiCUmRCJF3dmLI5XGIC31xTaMP
+	TFD0Q==
+X-Google-Smtp-Source: AGHT+IGj15U2Ts3kcu6tXtZt1/h5FIY/A1yk077GAC+Jyg1MndthZQ2lQpMOj8u6CbNn4gsvAMKWNZ1fsXJvpx9WBYE=
+X-Received: by 2002:a5d:5f46:0:b0:3d5:6551:4016 with SMTP id
+ ffacd0b85a97d-3d565515fe6mr13823174f8f.14.1757031308792; Thu, 04 Sep 2025
+ 17:15:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904145920.1431219-1-jackzxcui1989@163.com>
-In-Reply-To: <20250904145920.1431219-1-jackzxcui1989@163.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Fri, 5 Sep 2025 08:09:43 +0800
-X-Gm-Features: Ac12FXx5HaEwRNNl1C4OlwRjbLRkrmMCplt0TWXlIzpz9u1BH4C52pIlpbXG6-g
-Message-ID: <CAL+tcoB8d3jvD50oa3p5eZT+qLAXFXtuEQ9TvRr3jHzkxeXtSg@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
+In-Reply-To: <20250814-wip-obbardc-qcom-t14s-oled-panel-v7-1-89966ae886a3@linaro.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Fri, 5 Sep 2025 01:14:57 +0100
+X-Gm-Features: Ac12FXzgGD8FfSa_WME3qIhlvvQzp0tW_Hx2PtWKp2ZbsjrohS1FvpsYw3rDPSs
+Message-ID: <CACr-zFCjrQAM0W9NnWJTwGYc=MnR8ODawW-DK+LJjRJYJznaEQ@mail.gmail.com>
+Subject: Re: [PATCH v7] arm64: dts: qcom: x1e78100-t14s-oled: Add eDP panel
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Konrad Dybcio <quic_kdybcio@quicinc.com>, 
+	Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Srinivas Kandagatla <srini@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 11:00=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> wr=
-ote:
->
-> On Thu, Sep 4, 2025 at 10:50=E2=80=AF+0800 Jason Xing <kerneljasonxing@gm=
-ail.com> wrote:
->
-> > > In the description of [PATCH net-next v10 0/2] net: af_packet: optimi=
-ze retire operation:
-> > >
-> > > Changes in v7:
-> > >   When the callback return, without sk_buff_head lock protection, __r=
-un_hrtimer will
-> > >   enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer ex=
-pires while
-> > >   enqueuing a timer may cause chaos in the hrtimer red-black tree.
-> > >
-> > > Neither hrtimer_set_expires nor hrtimer_forward_now is allowed when t=
-he hrtimer has
-> > > already been enqueued. Therefore, the only place where the hrtimer ti=
-meout can be set is
-> > > within the callback, at which point the hrtimer is in a non-enqueued =
-state and can have
-> > > its timeout set.
-> >
-> > Can we use hrtimer_is_queued() instead? Please see tcp_pacing_check()
-> > as an example. But considering your following explanation, I think
-> > it's okay now.
->
-> Okay=EF=BC=8C let's keep the current logic as it is.
+Hi Bjorn,
 
-In case I didn't clearly state it, you don't need to change the
-overall logic but only add back one missing point as I replied in the
-last email? That is lookup path needing to refresh/update the timer.
+Any feedback on this patch ?
+I'd love it if you could consider it for inclusion in your next qcom
+pull request.
+Or if there is any issues, I can send another version quickly. Let me know !
 
->
->
->
-> > > /* kbdq - kernel block descriptor queue */
-> > > struct tpacket_kbdq_core {
-> > >         struct pgv      *pkbdq;
-> > >         unsigned int    feature_req_word;
-> > >         unsigned int    hdrlen;
-> > >         unsigned short  kactive_blk_num;
-> > >         unsigned short  blk_sizeof_priv;
-> > >         unsigned char   reset_pending_on_curr_blk;
-> > >
-> > >         char            *pkblk_start;
-> > >         char            *pkblk_end;
-> > >         int             kblk_size;
-> > >         unsigned int    max_frame_len;
-> > >         unsigned int    knum_blocks;
-> > >         char            *prev;
-> > >         char            *nxt_offset;
-> > >
-> > >         unsigned short  version;
-> > >
-> > >         uint64_t        knxt_seq_num;
-> > >         struct sk_buff  *skb;
-> > >
-> > >         rwlock_t        blk_fill_in_prog_lock;
-> > >
-> > >         /* timer to retire an outstanding block */
-> > >         struct hrtimer  retire_blk_timer;
-> > >
-> > >         /* Default is set to 8ms */
-> > > #define DEFAULT_PRB_RETIRE_TOV  (8)
-> > >
-> > >         ktime_t         interval_ktime;
-> > > };
-> >
-> > Could you share the result after running 'pahole --hex -C
-> > tpacket_kbdq_core vmlinux'?
->
-> I change the struct tpacket_kbdq_core as following:
->
-> /* kbdq - kernel block descriptor queue */
-> struct tpacket_kbdq_core {
->         struct pgv      *pkbdq;
->         unsigned int    feature_req_word;
->         unsigned int    hdrlen;
->         unsigned char   reset_pending_on_curr_blk;
->         unsigned short  kactive_blk_num;
->         unsigned short  blk_sizeof_priv;
->
->         unsigned short  version;
->
->         char            *pkblk_start;
->         char            *pkblk_end;
->         int             kblk_size;
->         unsigned int    max_frame_len;
->         unsigned int    knum_blocks;
->         char            *prev;
->         char            *nxt_offset;
->
->         uint64_t        knxt_seq_num;
->         struct sk_buff  *skb;
->
->         rwlock_t        blk_fill_in_prog_lock;
->
->         /* timer to retire an outstanding block */
->         struct hrtimer  retire_blk_timer;
->
->         /* Default is set to 8ms */
-> #define DEFAULT_PRB_RETIRE_TOV  (8)
->
->         ktime_t         interval_ktime;
-> };
->
->
-> pahole --hex -C tpacket_kbdq_core vmlinux
->
-> running results:
->
-> struct tpacket_kbdq_core {
->         struct pgv *               pkbdq;                /*     0   0x8 *=
-/
->         unsigned int               feature_req_word;     /*   0x8   0x4 *=
-/
->         unsigned int               hdrlen;               /*   0xc   0x4 *=
-/
->         unsigned char              reset_pending_on_curr_blk; /*  0x10   =
-0x1 */
->
->         /* XXX 1 byte hole, try to pack */
->
->         short unsigned int         kactive_blk_num;      /*  0x12   0x2 *=
-/
->         short unsigned int         blk_sizeof_priv;      /*  0x14   0x2 *=
-/
->         short unsigned int         version;              /*  0x16   0x2 *=
-/
->         char *                     pkblk_start;          /*  0x18   0x8 *=
-/
->         char *                     pkblk_end;            /*  0x20   0x8 *=
-/
->         int                        kblk_size;            /*  0x28   0x4 *=
-/
->         unsigned int               max_frame_len;        /*  0x2c   0x4 *=
-/
->         unsigned int               knum_blocks;          /*  0x30   0x4 *=
-/
->
->         /* XXX 4 bytes hole, try to pack */
->
->         char *                     prev;                 /*  0x38   0x8 *=
-/
->         /* --- cacheline 1 boundary (64 bytes) --- */
->         char *                     nxt_offset;           /*  0x40   0x8 *=
-/
->         uint64_t                   knxt_seq_num;         /*  0x48   0x8 *=
-/
->         struct sk_buff *           skb;                  /*  0x50   0x8 *=
-/
->         rwlock_t                   blk_fill_in_prog_lock; /*  0x58  0x30 =
-*/
->         /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
->         struct hrtimer             retire_blk_timer __attribute__((__alig=
-ned__(8))); /*  0x88  0x40 */
->
->         /* XXX last struct has 4 bytes of padding */
->
->         /* --- cacheline 3 boundary (192 bytes) was 8 bytes ago --- */
->         ktime_t                    interval_ktime;       /*  0xc8   0x8 *=
-/
->
->         /* size: 208, cachelines: 4, members: 19 */
->         /* sum members: 203, holes: 2, sum holes: 5 */
->         /* paddings: 1, sum paddings: 4 */
->         /* forced alignments: 1 */
->         /* last cacheline: 16 bytes */
-> } __attribute__((__aligned__(8)));
+Cheers!
 
-How about this one? The 'size' would be shrinked to168 and the 'sum
-holes' remains 5.
-# pahole --hex -C tpacket_kbdq_core vmlinux
-struct tpacket_kbdq_core {
-        struct pgv *               pkbdq;                /*     0   0x8 */
-        unsigned int               feature_req_word;     /*   0x8   0x4 */
-        unsigned int               hdrlen;               /*   0xc   0x4 */
-        short unsigned int         kactive_blk_num;      /*  0x10   0x2 */
-        short unsigned int         blk_sizeof_priv;      /*  0x12   0x2 */
-        short unsigned int         version;              /*  0x14   0x2 */
-        unsigned char              reset_pending_on_curr_blk; /*  0x16   0x=
-1 */
+Chris
 
-        /* XXX 1 byte hole, try to pack */
 
-        char *                     pkblk_start;          /*  0x18   0x8 */
-        char *                     pkblk_end;            /*  0x20   0x8 */
-        int                        kblk_size;            /*  0x28   0x4 */
-        unsigned int               max_frame_len;        /*  0x2c   0x4 */
-        unsigned int               knum_blocks;          /*  0x30   0x4 */
-
-        /* XXX 4 bytes hole, try to pack */
-
-        uint64_t                   knxt_seq_num;         /*  0x38   0x8 */
-        /* --- cacheline 1 boundary (64 bytes) --- */
-        char *                     prev;                 /*  0x40   0x8 */
-        char *                     nxt_offset;           /*  0x48   0x8 */
-        struct sk_buff *           skb;                  /*  0x50   0x8 */
-        rwlock_t                   blk_fill_in_prog_lock; /*  0x58   0x8 */
-        ktime_t                    interval_ktime;       /*  0x60   0x8 */
-        struct hrtimer             retire_blk_timer
-__attribute__((__aligned__(8))); /*  0x68  0x40 */
-
-        /* XXX last struct has 4 bytes of padding */
-
-        /* size: 168, cachelines: 3, members: 19 */
-        /* sum members: 163, holes: 2, sum holes: 5 */
-        /* paddings: 1, sum paddings: 4 */
-        /* forced alignments: 1 */
-        /* last cacheline: 40 bytes */
-} __attribute__((__aligned__(8)));
-
-I didn't want a more aggressive adjustment around the remaining holes.
-At least, the current statistics show a better result than before :)
-
-Thanks,
-Jason
-
+On Thu, 14 Aug 2025 at 21:16, Christopher Obbard
+<christopher.obbard@linaro.org> wrote:
 >
-> Thanks
-> Xin Zhao
+> Add the Samsung ATNA40YK20 eDP panel to the device tree for the
+> Snapdragon T14s OLED model.
+>
+> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+> ---
+> The Snapdragon Lenovo T14s Gen6 can be bought with a number of different
+> panels. This patch series adds support for the OLED model which has a
+> Samsung ATNA40YK20 panel.
+>
+> This series depends on [0] which adds the edp_hpd_active pinctrl node.
+>
+> With this patch series the backlight of the OLED eDP panel does not
+> illuminate since the brightness is incorrectly read from the eDP panel
+> as (to be clear this is not a regression). This is fixed in [1].
+>
+> [0]: https://lore.kernel.org/linux-arm-msm/20250814-x1e80100-add-edp-hpd-v1-0-a52804db53f6@linaro.org/
+> [1]: https://lore.kernel.org/all/20250814-topic-x1e80100-t14s-oled-dp-brightness-v7-1-b3d7b4dfe8c5@linaro.org/
+> ---
+> Changes in v7:
+> - Remove patch adding edp_hpd_active since now handled in Stephan's series [0].
+> - Properly add OLED brighness patch as dependency [1].
+> - Link to v6: https://lore.kernel.org/r/20250731-wip-obbardc-qcom-t14s-oled-panel-v6-0-4782074104d1@linaro.org
+>
+> Changes in v6:
+> - Squash patches adding "edp_hpd_active" node & its user (Johan).
+> - Sort new pinctrl node correctly by name (Johan).
+> - Use correct function "edp0_hot" instead of "edp_hot" (Johan).
+> - Drop review tags.
+> - Link to v5: https://lore.kernel.org/r/20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org
+>
+> Changes in v5:
+> - Move edp_hpd_active from T14s DTS into SoC DTSI (Dmitry).
+> - Link to v4: https://lore.kernel.org/r/20250402-wip-obbardc-qcom-t14s-oled-panel-v4-0-41ba3f3739d0@linaro.org
+>
+> Changes in v4:
+> - Rework HPD GPIO into eDP device rather than panel (Johan).
+> - Drop review tags for HPD GPIO patch.
+> - Link to v3: https://lore.kernel.org/r/20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org
+>
+> Changes in v3:
+> - Added review trailers from v2.
+> - Dropped dt-binding documentation patch (applied by Douglas Anderson into
+>   drm-misc-next).
+> - Dropped eDP maximum brightness patch (will be sent in separate
+>   series).
+> - Removed duplicate nodes in T14s OLED device tree.
+> - Reworked WIP comments from commit messages.
+> - Link to v2: https://lore.kernel.org/r/20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org
+>
+> Changes in v2:
+> - Use the existing atna33xc20 driver rather than panel-edp.
+> - Add eDP panel into OLED devicetree.
+> - Add patch to read the correct maximum brightness from the eDP panel.
+> - Link to v1: https://lore.kernel.org/r/20250320-wip-obbardc-qcom-t14s-oled-panel-v1-1-05bc4bdcd82a@linaro.org
+> ---
+>  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+> index be65fafafa736a0401a5872c40f69cb20cfbbd90..d524afa12d19b2a6f22a24b9bed6b6b40248375f 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+> @@ -10,3 +10,11 @@ / {
+>         compatible = "lenovo,thinkpad-t14s-oled", "lenovo,thinkpad-t14s",
+>                      "qcom,x1e78100", "qcom,x1e80100";
+>  };
+> +
+> +&panel {
+> +       compatible = "samsung,atna40yk20", "samsung,atna33xc20";
+> +       enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
+> +
+> +       pinctrl-0 = <&edp_bl_en>;
+> +       pinctrl-names = "default";
+> +};
+>
+> ---
+> base-commit: 33a21dab19b31540dfeb06dde02e55129a10aec4
+> change-id: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
+> prerequisite-message-id: <20250814-x1e80100-add-edp-hpd-v1-0-a52804db53f6@linaro.org>
+> prerequisite-patch-id: 658fd45e0cb953e3c667a30f2cf78cfd3582d552
+> prerequisite-patch-id: fc665d8cdd099464e6fa4401489fde70b65bed30
+> prerequisite-patch-id: 13ff38b40f2dcb283be82485e88ca4efc249599b
+> prerequisite-patch-id: 7d02075f074ad8f32eeaf5ee8833d0c6a230cea8
+> prerequisite-patch-id: 380fed6c07ca1ecdb73768054454e47c984d00e9
+> prerequisite-patch-id: 1f8b24fc983fa23abc97512e15626394ce760ffe
+> prerequisite-patch-id: 7d29e2fee2b19cf2d12d54cca052b1c1fb808c9d
+> prerequisite-patch-id: c5bf1706ecf4df7782707bbf0d18a0568842b562
+> prerequisite-patch-id: 34889448fd92cdc916e7e19eac8446710d2a646a
+> prerequisite-message-id: <20250814-topic-x1e80100-t14s-oled-dp-brightness-v7-1-b3d7b4dfe8c5@linaro.org>
+> prerequisite-patch-id: ceed93f46ae27c7980c5b57022068daaad8dc8c9
+>
+> Best regards,
+> --
+> Christopher Obbard <christopher.obbard@linaro.org>
 >
 
