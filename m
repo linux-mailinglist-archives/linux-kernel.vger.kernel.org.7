@@ -1,145 +1,95 @@
-Return-Path: <linux-kernel+bounces-802734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A611CB45627
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B303B4562B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831451881FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAED189D9EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEA922758F;
-	Fri,  5 Sep 2025 11:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8581E342CA5;
+	Fri,  5 Sep 2025 11:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/QIh2dd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="KHzKYrYG"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A8E2BE020;
-	Fri,  5 Sep 2025 11:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B972EC543;
+	Fri,  5 Sep 2025 11:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757071164; cv=none; b=qniqAUSpk0ox4m041ZQ2mKVDRnbDluG7EzMA80PxIeUZeirkbjSNfyODYme/Q233mopGkFwUj+dbc5L1ckcJ6+Kydg4bC0m3wfWHlrMLjFK52YpmdWktA5zt9+v+gbWX84h5FtTO4aw3CyF0Jl53QBlWy7LKQHG6WzQz9PlDbz4=
+	t=1757071203; cv=none; b=e3j3vkS8MKOqgATLkHScgsm4aqt7gRhobN9DV2vwSZWd1LIrqOf0UHMhAiZo2VIu/bW54pZ7X0MjCXor/UhQ/sdD9/VJtGKqApnMx3Tp722qRM+0EmKWTV4fNMbxpqMQBQTLJtRq9+5YZcuQafP0vJmkf5IOL3C09my0j1xAxA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757071164; c=relaxed/simple;
-	bh=RHLqjtmoQ09sM+x+rrDllENxQeIkKdioDv+JW9P+Aos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZkFlX8WdU0BYZXkuih1EDx9b9WFyZBXvP5HKsJB+m4TTC9mR4DkHofETH0SabVGLhBb2wH5x0zWQEI9lghETaC4A8+zC1wqa2U8PSE5vhxSi/fj6Mye68gd+DZtOmnvg6RcUJgCo0AKSoQyJQXBxugoGTva+uWMGPhr9QGGJT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/QIh2dd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C27C4CEF1;
-	Fri,  5 Sep 2025 11:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757071164;
-	bh=RHLqjtmoQ09sM+x+rrDllENxQeIkKdioDv+JW9P+Aos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A/QIh2ddmPQW9GbhkGscvwZJAOdlvRvh05eTseLWqDi0NqX5VoUz3c+rFGi5te6gs
-	 FeVf6cxesM0g4NssvOVujDWyj9mrdK8LpKlTGDp/6FZss2dq4STW6zOMrER9uue5m7
-	 gYM0YJqrGGelTJTg/Wae0ezZ+Ln5Z9a7rQdsrtvsC5aJMkzJDUejnZeo9niA5S9ZsO
-	 rAiiZhiID4hhFyLR0EPR+sXVy1LHpEREWSJ9XWSwcd0WYCKy66BICmsJmvPOks/99s
-	 KUtvAv0iw5WXUoAptM66b1336WnWvdA8iRqYrawyqjKazn3DqpgdPmx5ld20pIZHkT
-	 94jShf4NQqhcQ==
-Date: Fri, 5 Sep 2025 14:19:11 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 2/7] mm: introduce local state for lazy_mmu sections
-Message-ID: <aLrHL-C_UXfUbCd9@kernel.org>
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-3-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1757071203; c=relaxed/simple;
+	bh=afsUc8PuRjeLuXlJZmnGleBbwTGv/Ox5bm7DtxcjOtE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UOgOqzIHjrtfZBtFll9pi/XQWsh/AP6ezwFp9S3zHiO16zQ53a+OQ488woc/qUoTSkppGyB68Pfz8dX91AHwkM309VP6fYLWiWYYdcJcAd6vQPI8Qjf5Gk4DrxbdOboWZfbraw5l7Wyn9Py+45zgHJXv5PelvMgKcvb+hwBEepY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=KHzKYrYG; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uuUTx-003Tyt-AY; Fri, 05 Sep 2025 13:19:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=WF84LVkGbsTgdjp1EaQWr79paSh3G2ATCF8bfgOuj4w=; b=KHzKYrYGr7nsC+F4is/85HX8L/
+	BhTGQ7uSN/EaGs7ngg2bqHfnsp6zk5BsZ4Xpq6ba0Vrf+7WCNUx7Uwgdj8GYGQdbk1nu/RsvdqmqN
+	Jz55MgnLHjEBkOP/LoJ6FlM85yjOtGD2eF1jG5yuz1oufosAGkOMoysCGvy0mPppEusZmmpe6gwqY
+	e9PfkK0V8vOFRsY75F+TtqKN9D5e3nzwQ/mcpOqzLn0hg0aYaS1wC6AVSLXRon6Rj9qHRXkz4PqVU
+	KeUBl/WYTjFTzK/zYX67VFgirGSVFM1DmBhEzZXs5h/DVRG5ykZho6vTpZVwlkfp4RpjkCvfVo238
+	VKYOmEhQ==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uuUTw-0000fy-MQ; Fri, 05 Sep 2025 13:19:52 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uuUTr-002zcS-Nw; Fri, 05 Sep 2025 13:19:47 +0200
+Message-ID: <01f6c3f5-be73-4505-8a34-212dee30b5fc@rbox.co>
+Date: Fri, 5 Sep 2025 13:19:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904125736.3918646-3-kevin.brodsky@arm.com>
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH bpf-next 2/5] selftests/bpf: sockmap_redir: Fix OOB
+ handling
+To: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
+ <20250905-redir-test-pass-drop-v1-2-9d9e43ff40df@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <20250905-redir-test-pass-drop-v1-2-9d9e43ff40df@rbox.co>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 04, 2025 at 01:57:31PM +0100, Kevin Brodsky wrote:
-> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
-> (taking and returning no value). This is proving problematic in
-> situations where leave() needs to restore some context back to its
-> original state (before enter() was called). In particular, this
-> makes it difficult to support the nesting of lazy_mmu sections -
-> leave() does not know whether the matching enter() call occurred
-> while lazy_mmu was already enabled, and whether to disable it or
-> not.
+On 9/5/25 13:11, Michal Luczaj wrote:
+> In some test cases, OOB packets might have been left unread. Flush them out
+> and introduce additional checks.
 > 
-> This patch gives all architectures the chance to store local state
-> while inside a lazy_mmu section by making enter() return some value,
-> storing it in a local variable, and having leave() take that value.
-> That value is typed lazy_mmu_state_t - each architecture defining
-> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
-> For now we define it as int everywhere, which is sufficient to
-> support nesting.
-> 
-> The diff is unfortunately rather large as all the API changes need
-> to be done atomically. Main parts:
-> 
-> * Changing the prototypes of arch_{enter,leave}_lazy_mmu_mode()
->   in generic and arch code, and introducing lazy_mmu_state_t.
-> 
-> * Introducing LAZY_MMU_{DEFAULT,NESTED} for future support of
->   nesting. enter() always returns LAZY_MMU_DEFAULT for now.
->   (linux/mm_types.h is not the most natural location for defining
->   those constants, but there is no other obvious header that is
->   accessible where arch's implement the helpers.)
-> 
-> * Changing all lazy_mmu sections to introduce a lazy_mmu_state
->   local variable, having enter() set it and leave() take it. Most of
->   these changes were generated using the Coccinelle script below.
-> 
-> @@
-> @@
-> {
-> + lazy_mmu_state_t lazy_mmu_state;
-> ...
-> - arch_enter_lazy_mmu_mode();
-> + lazy_mmu_state = arch_enter_lazy_mmu_mode();
-> ...
-> - arch_leave_lazy_mmu_mode();
-> + arch_leave_lazy_mmu_mode(lazy_mmu_state);
-> ...
-> }
-> 
-> Note: it is difficult to provide a default definition of
-> lazy_mmu_state_t for architectures implementing lazy_mmu, because
-> that definition would need to be available in
-> arch/x86/include/asm/paravirt_types.h and adding a new generic
->  #include there is very tricky due to the existing header soup.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> Signed-off-by: Michal Luczaj <mhal@rbox.co>
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Sorry, this should also have:
 
--- 
-Sincerely yours,
-Mike.
+Fixes: f0709263a07e ("selftests/bpf: Add selftest for sockmap/hashmap
+redirection")
+
 
