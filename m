@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-802311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517AFB450DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC31B450E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0CFA176982
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7945A612A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C7F2FE079;
-	Fri,  5 Sep 2025 08:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C7D2FF165;
+	Fri,  5 Sep 2025 08:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WcfCalSB"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BahF6hnq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BFA2FD7A4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CA22FD7BD;
+	Fri,  5 Sep 2025 08:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059468; cv=none; b=hO1wWyBffXxk2lkttnFula66eT8+Pv9veitrLQ6zOZk4JJYE+b2Only7LMV1zTRgKoTIjEojp2YJ0Gsop8loP66xICxkYq5iNYTzUYku9h9P7QOTIvrMNyFrGdDfJKbGocMV3AAPdAU/2O4VYDSxvJhoE6gPig0ZAwDkJswGYKI=
+	t=1757059469; cv=none; b=am1hacp3zX88q770cYFzMTMbYOtIOIoiGYtFDi9QWblZ0sS3afCW1lE87IdqG29INjrsHvdx4FXsYeIOXyu40CQwrv2c4m905N3d3OlHt4d7OJqurmevzk4Y8fkEC4XWcHGg7aNNCbPJfgOs2fQVpnu+jeXZY0apXmZ/zWoqZ7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757059468; c=relaxed/simple;
-	bh=BK69GKXDo5Lr+Qkt1GmUdgKZZr1aJR2lLdycYBt0bJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bsoGtVVSm0rHcXheBrBRJo/Yn3ADJgALRXlWvRuz6TBxKg5UOFAeVmGw51wljM1Hvdm4qyVX06aOlUVLHaOI8e7vLyaiklBNsWFj8JBRmMDrUfKXoZUgjqh51fwqcC4i6y1jMqz1X39qeXcp2bf3rlQKine3hTXucrMnbBsj8Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WcfCalSB; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9853e630so17069005e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757059465; x=1757664265; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mEyqxPQTlvHE7Rb9nf0Ka5S6ku97HAqdoQLaDQei9o8=;
-        b=WcfCalSBQX5L5ITP6TimiMFu5LeZmc5lCsiv4UcIC7sgdWIAeacQi+ivcACERdRbJo
-         5K+hEqjm9Fzx8dyl2G/09eXEa8r9AjQKrB/SfEVqduRj6IGOGznuC+vvebSPNFePhQHW
-         HKQXFYWm04kQNz7C9nHmUfUYlqNdoVY+hzr8kXZQ0Ep2iS8+SYwifQaTV4lKRVpPWCKl
-         kQ8uOBE8MdobqhEks0IiblQjB9vZv7D+MJinT19M5p7sm17udyD5jxCtjpKuYo2cUC1b
-         UTJVhz2viI9Ds5vlyWoaH6DAn02bpN8b1jeyekVLEpRK/XX3hkAtqbCiyUnmQWNyxwzS
-         rSVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757059465; x=1757664265;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mEyqxPQTlvHE7Rb9nf0Ka5S6ku97HAqdoQLaDQei9o8=;
-        b=I24aJxIP9aZ2HmsR49KfgDXX4LvopRuP0vuIVf/TEg8qdtyNeLzdpUVyt5Cp8a5GzC
-         9ZGLp2hHpEp8kdhrD9aOz2ZtNho+g/NYbfttycSBRmoP7fVIJ3rdCDvtmkUURWyKgghm
-         T16ViaMVOmPDpO2wWG/tqY0JUjBv08T8ClnKTtWkI9IEE6OV+5wYbLI+8jevW+y1Z0Bu
-         8LMVRhRaEZQA5nPHBlEVvV786KdPmWwZ4x/zM1J+GBLzf6M/BW3MwRvE8pdcfIQqRWv5
-         FrkNErUSerr2qcocFvukrP6vtkfDABhnS3myvdw+LtwZYKjUGdhko8cc2titovsnnw4k
-         wdIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGcPBTmZzT386a+iICrjaDI3RGkYXBZDUTKyKulOhtZXFSDLu+RPxrXiwwq4w/Tk/i4emU6qMtpJlB2SY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGYWpeR0I3dPHuYR7+42tJIv6XAiBvqgwZoCgVJ7QEHtH73zpF
-	HYrIo9JHfTu68JwFveiKQRwXLSQwt6oHk97giRWPpI26Xb6OFSbJ3VPTX2n+exeYV9c=
-X-Gm-Gg: ASbGncusm3it+Bv33Yt+6mmsJlDlzXqWZgIvLxeNTEY5reUeC20zATupMr2DLVer3v5
-	/XNRnQ8c33t97+2sPRcgtOXvQPMvw17JZqyteqv+pEWoASp1kYhp/ri5nas41G6kNpKAOeQfbaA
-	V3FEuwfIjjoYuhNXmQygWBroXIWpiBJKCUsAiGI5yIwxiqwX7hvZUZILbmNV8HAFxxHCiWp+mS8
-	zAnVxr3Kgukqm91rmQb+HB9+IT794wh+FsQchBPArgqNz9eq09lcfdEmIhIhvYyeXgdlwNbpgf+
-	f+WzF4T3oM3jkAUfSRRhacH+S/YBI+9x56PXHc9dC8V3DrnIWPTYacjuCJ0A/PUkClysxoCMxfX
-	dOWaGvll5mAswaC5MXDwXEoBfcaJ3Kf348AaLYq4UIzqmULey
-X-Google-Smtp-Source: AGHT+IFg31bO3+yEGrU5RDt0pIsHa2/S7Tm9NAlDysnLBMH3Sorox3ujEfiAyqMx4B2CxZfrtHTl2w==
-X-Received: by 2002:a05:600c:35c5:b0:45d:cf5f:cff8 with SMTP id 5b1f17b1804b1-45dcf67429bmr53251585e9.11.1757059464523;
-        Fri, 05 Sep 2025 01:04:24 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf276d204asm30777648f8f.24.2025.09.05.01.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 01:04:24 -0700 (PDT)
-Date: Fri, 5 Sep 2025 11:04:20 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] PCI: stm32: clean up some error handling in probe()
-Message-ID: <aLqZhL-DV4LOnHlD@stanley.mountain>
+	s=arc-20240116; t=1757059469; c=relaxed/simple;
+	bh=BrKdr3XhHJwQOgkC5TmuWzJqeC1gvilVU3T6N7RnYM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JnyFN15em6aTC2rCqblW2HujKmalLt61l5Vs/Af+ky0AUBcPJOOpNdBHRpfnjt1aESAX1840hNSkOE1Lky630JG+2wZTzgBFuC92TCCMsS0G+DDtH0f3Xqeg6I4MV9vUsWOZpoRZYBjxhbsU8AmjRH4dn9WosX4Cpdh5IZAmoKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BahF6hnq; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757059468; x=1788595468;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BrKdr3XhHJwQOgkC5TmuWzJqeC1gvilVU3T6N7RnYM4=;
+  b=BahF6hnqShQEYTyiWR9mPNdvg7qkj9HO6/pIzXJ7MFWmjMwI25KB1/N4
+   i6BcmYnxAU3mjPaF92pByAnqTnT/PGYRPS7xkn1TN4Reb37CC1S4VfvjQ
+   as4frV+eIShpviRxaETu+ZGCUToUPWxklSDnprB8FjzxMcfsXbfzpmBU6
+   IVqiTcTHtRi39ppJqnS1HzJ7hO2AyQET02dbglF3Ct5Cn2mzvw/Z4+MUx
+   dg4ThRGJTJVtW5cOQJq/EkFtnuf/jcEFuRFmpgSghhc5y9ea0W4wS5x5g
+   f0BfXRSlll/JafryQHC20f0mdDhvXOle0WMK+SnjR1ReNL+IRpIHpKKxh
+   g==;
+X-CSE-ConnectionGUID: xAGfFTPeQH60wT0FQuWaIg==
+X-CSE-MsgGUID: Do//6EnASp+qAF2DKM2WkQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70022839"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="70022839"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 01:04:26 -0700
+X-CSE-ConnectionGUID: HSDSkKWZRr2B9g6b0gXcKQ==
+X-CSE-MsgGUID: DXK6EYcYQBitEt57En04Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="176449192"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by orviesa004.jf.intel.com with ESMTP; 05 Sep 2025 01:04:23 -0700
+Message-ID: <38c8816c-408c-4f9f-9c31-84072326f066@linux.intel.com>
+Date: Fri, 5 Sep 2025 11:04:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] i2c: designware: convert to dev_err_probe() on
+ request IRQ error
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904-i2c-dw-dev-err-probe-v2-0-e59da34815fa@bootlin.com>
+ <20250904-i2c-dw-dev-err-probe-v2-1-e59da34815fa@bootlin.com>
+ <aLmqCW1YwrhZkNSG@smile.fi.intel.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <aLmqCW1YwrhZkNSG@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Smatch complains that the other error paths use gotos to clean up and
-these two don't.  Generally, the implication with that warning is that
-the error handly has been ommitted.  In this case, the error handling is
-fine, but we can avoid a bit of code duplication by using gotos to clean
-up.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pci/controller/dwc/pcie-stm32.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
-index 964fa6f674c8..96a5fb893af4 100644
---- a/drivers/pci/controller/dwc/pcie-stm32.c
-+++ b/drivers/pci/controller/dwc/pcie-stm32.c
-@@ -287,18 +287,16 @@ static int stm32_pcie_probe(struct platform_device *pdev)
- 
- 	ret = pm_runtime_set_active(dev);
- 	if (ret < 0) {
--		clk_disable_unprepare(stm32_pcie->clk);
--		stm32_remove_pcie_port(stm32_pcie);
--		return dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
-+		dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
-+		goto err_disable_clk;
- 	}
- 
- 	pm_runtime_no_callbacks(dev);
- 
- 	ret = devm_pm_runtime_enable(dev);
- 	if (ret < 0) {
--		clk_disable_unprepare(stm32_pcie->clk);
--		stm32_remove_pcie_port(stm32_pcie);
--		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
-+		dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
-+		goto err_disable_clk;
- 	}
- 
- 	ret = dw_pcie_host_init(&stm32_pcie->pci.pp);
--- 
-2.47.2
-
+On 9/4/25 6:02 PM, Andy Shevchenko wrote:
+> On Thu, Sep 04, 2025 at 04:31:06PM +0200, Benoît Monin wrote:
+>> Simplify the error handling of devm_request_irq() in
+>> i2c_dw_probe_master() and i2c_dw_probe_slave() by converting to:
+>>
+>>      return dev_err_probe();
+>>
+>> instead of calling:
+>>
+>>      dev_err();
+>>      return ret;
+>>
+>> This also handle deferred probe error without spamming the log.
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
