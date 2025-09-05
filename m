@@ -1,169 +1,168 @@
-Return-Path: <linux-kernel+bounces-803056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC8DB45A00
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:02:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E34B459FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C123BBCA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2A5188D068
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA46935E4FA;
-	Fri,  5 Sep 2025 14:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADED521A94F;
+	Fri,  5 Sep 2025 14:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIZcQgY/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqONnOoI"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5431D618A;
-	Fri,  5 Sep 2025 14:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F342B2D7;
+	Fri,  5 Sep 2025 14:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080947; cv=none; b=qncSgy06pbyZRkaRWJOYgeXimMC/nE50Hyg5pEdp2RAl+hGQh9BC1x57bax/yozzVxjBZ3rKGyNvUP81YLf5D07Pvk+l4XSvtKi6Y1RgljUaif6Fovv0CSvrGEYj8jSjZ1eqhs28VdmnbORks02HGpGsWtnPCbgZwVVhZGIoDlE=
+	t=1757080933; cv=none; b=PfMdGyKBtsVLlyAhqGBStuiOcVAyE4IQ4/XLt5+dWUmCmMaRFLXzu6d/pfcUEo6fw6ET81pBPkqJzfJ4Ai2+BWZlJ8Zbq8Kgg9JjWvViLOUHoxv4SvoYlEIXTbQkTAlVJqWAUi/+0UPEZhTHMjfrybbPppEY2Wx8kepeVVywk3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080947; c=relaxed/simple;
-	bh=p7SNkxBMDceyrMBtDVw3FbEQeKmi497N1GJZiGp7K9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oc316BLdvNCXfmE+b5o0VJJENgMJ05/sAXsHqDAIp3lEBwQm0FP0w25FSbIsNgbCOk0mOsoR12VTysa+8FkDKMdLbAMkZUU5+LCJKJKT27uRXdcahS0sBvFRpwnKeUOx9sxDfL2NBComrnxJgWuzFkFGqya0KkpTyyPyLRx1/Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIZcQgY/; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757080946; x=1788616946;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p7SNkxBMDceyrMBtDVw3FbEQeKmi497N1GJZiGp7K9k=;
-  b=CIZcQgY/UgTrpQDy7tvqE7qRdj7EkebKTSYpSElU+ramiHAxVofjivR1
-   4XdF0w8VyMGHSvy+iRSMggwaM1t7rgY2gGuaiBvXXtuQsbzV20EA44Emf
-   8GYTefXRFmes0i6vMR1c+bpF1y6BdRM/7lbqasIFwN0mpIo3A5s8FpK8B
-   9gpXc1ZHJAOW6UFs8Dqlee0mZHMJarvBJNiNw4JwYFt0xNlANFNjiUebT
-   6uMeqwfN+GH7gJJeSU/AttVW+CQGtZoabA+hqW/hM7/a0PGFXrlAw0AJO
-   3uyy9RdSFEVAZz36r7FzIKXZz3WkudQdh4TmPDBNFSaO1BGW4DKXTt7nt
-   A==;
-X-CSE-ConnectionGUID: i4KiG2UOQceQaajlYYW2gg==
-X-CSE-MsgGUID: xojMqzQCS5ynXaeHcwlpjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="70046424"
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="70046424"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 07:02:25 -0700
-X-CSE-ConnectionGUID: 7tJWMnQ6TUWYlbJDxGoMTg==
-X-CSE-MsgGUID: FiViECbySquhBvzeXiGqtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="195826206"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 05 Sep 2025 07:02:21 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuX19-0000Tv-05;
-	Fri, 05 Sep 2025 14:02:19 +0000
-Date: Fri, 5 Sep 2025 22:01:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kbusch@kernel.org, axboe@kernel.dk,
-	hch@lst.de, sagi@grimberg.me, kch@nvidia.com, alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
-Message-ID: <202509052153.luapQMZm-lkp@intel.com>
-References: <20250905024659.811386-8-alistair.francis@wdc.com>
+	s=arc-20240116; t=1757080933; c=relaxed/simple;
+	bh=rdLO+iSC9YCqe675tWrXmT/Mj9ER/EzhNzwbwpiMWYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JapJSqxnRP1HWZdkKtniFyFyigMCU7dA1QJIdcczGG5NjWScI7gOVPzDxsqPG/kCcI7zo64kUh2M5FKL0Sdz0dkH9GnT9bBQFOKmOR2rbhzp2Pkm6grVSIhbezMsJZJPj3lMLMuKZDFbGVCZCIH/tEQ1QYtMtrfULcpbLb03neg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqONnOoI; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7725d367d44so248243b3a.0;
+        Fri, 05 Sep 2025 07:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757080931; x=1757685731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmzENMw6YNHe2IJ7FAYcIAfnTl3HXJqQlHsorHVRbJc=;
+        b=TqONnOoISU+CcKnRRsPbRbxpUzHIH7BwxKLO8eBZXu8PfjHFTMoonhQp0Gc4vkP+kG
+         iOY/b4aPuJqu168CCmQRfnKnCnuQm6EG2XBCpuuN/x4RvYF8XvWBrcZj5soC44UUJoIj
+         5BHp3vVwONLfr8PSw4mY1inxQOOCrVS/+iQEC7/A47xfyaEOYFVbzFqBHlv83Sqg3NC9
+         gHVdQVX5IBqdnZhFAiddT2LJo9/eaX18kfcS9dTNX2tR7c2Qo1YH4egTyiOfxSUfUwoJ
+         NXfYvUwHgviwLTg/qSHX4dt9W+NBtO/vOIQY7/p+V24njkxscoSeV9Y+BOKmdFJniIqh
+         SlNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757080931; x=1757685731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gmzENMw6YNHe2IJ7FAYcIAfnTl3HXJqQlHsorHVRbJc=;
+        b=H2tGsWvtdS9y1Tox+0co9Bij/OAFuP/pBl/YLNqcYBm/4AH06xsM2q+kWLNMig4kM6
+         hhLMq9GzuaqXLzBCcIhQO9t3QMXz3nJ92laYriI6ZLjII3XJlix6Lu3BWT1m92G2ZHOF
+         2Z1aBiCK3ovRPRU9h/oIYsydorxXuzlQUISra1uIdGObA0gdyfWew2LVLulIiAmRsQMy
+         hNPMzVOZ/rq91c6zYZWAKUCTeypgHQANVoEI5y4sNOL+v1vrWkeXt0k8angb+B2Exx7e
+         N58eweldfXvFNHziZAs5MoFP2YY1ChL88dh7IDdM9Fqq1EcSwsCoBiM6Z9bwcgxvOfY1
+         QpzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkl1kgatfi6TOYW1MQqcIDDrbb29hhuJ/xueHzgy1sNAl9NFiCRFzviN0ZzGZrRffKxIPeenzle5Bcj4VeVMI=@vger.kernel.org, AJvYcCWe9gJt1qQgSY6bTtXQQdPFDu3GaHGAWzNLtIj0kj1jaBJk/XNjUdreQjpjA1wLdWv/3zuRNwLv0G985v/T@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzC/tMZzNdsfUUp5YF1Y+2p1lpi2sCFVdSAG8JtOD89YHI648l
+	lRMIq61M3ixHcnS02Gsk4FDz4HFSLCCf80Id3QOvAj711X/3v+tNOYdm8CDJfGUR/r3QL3kO5ec
+	a8JCjnaLfD/TSJ5zpvtAX4x32CZpVFUA=
+X-Gm-Gg: ASbGncu71AX/rZVajhXyNR+PHEEuzy7KHyFLZ4loyO/EHR8zeBNsk/EFiwjBv/9cwwp
+	q+VbXvHPND5ISWSUk1EPoshEcs8giHjiKw8YNfbQHqOZLGzNNhDAR9BJxo7TfY5j5rmwK329WEi
+	RP0RkqX73IaAjXNazoPhemWhmjhIXhEZD5WdNRMReMg+RHpP90TKm2AwvRSwX/CqyGaerC/tbVD
+	PM+dZnKjbdwPERTNQ==
+X-Google-Smtp-Source: AGHT+IF9rkgtoSMCl0jYFSHVZuyZeCWt9XZMNT1MGcboLMsN9CKxcNZU79FEyRdNtyL0WU9L2+FyKsOgYQInTvQ6ias=
+X-Received: by 2002:a17:902:dac8:b0:24f:8286:9e5a with SMTP id
+ d9443c01a7336-24f8286a133mr5036715ad.6.1757080930194; Fri, 05 Sep 2025
+ 07:02:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905024659.811386-8-alistair.francis@wdc.com>
+References: <aLnhaU9cLeAdim7J@stanley.mountain> <SA1PR12MB814473BD381D10C842F30422EF03A@SA1PR12MB8144.namprd12.prod.outlook.com>
+In-Reply-To: <SA1PR12MB814473BD381D10C842F30422EF03A@SA1PR12MB8144.namprd12.prod.outlook.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 5 Sep 2025 10:01:58 -0400
+X-Gm-Features: Ac12FXx-WGJ-F0--XB5dXIw5UpADiQRdi1GA0k5IIwFmngy8mfiqzoc0IpdRJ0c
+Message-ID: <CADnq5_PZgPKjARKaKrxtKOUhuk8KBOOba75SxnFJD_76W8yDKw@mail.gmail.com>
+Subject: Re: [PATCH next] drm/amdgpu: Fix error codes if copy_to_user() fails
+To: "Francis, David" <David.Francis@amd.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
+	"Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Arvind Yadav <Arvind.Yadav@amd.com>, 
+	"Sharma, Shashank" <Shashank.Sharma@amd.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Applied.  Thanks!
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on trondmy-nfs/linux-next]
-[also build test WARNING on net/main net-next/main linus/master v6.17-rc4 next-20250905]
-[cannot apply to linux-nvme/for-next horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250905-105201
-base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
-patch link:    https://lore.kernel.org/r/20250905024659.811386-8-alistair.francis%40wdc.com
-patch subject: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
-config: s390-randconfig-001-20250905 (https://download.01.org/0day-ci/archive/20250905/202509052153.luapQMZm-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509052153.luapQMZm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509052153.luapQMZm-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/nvme/target/tcp.c: In function 'nvmet_tcp_tls_record_ok':
->> drivers/nvme/target/tcp.c:1173:12: warning: unused variable 'htype' [-Wunused-variable]
-    1173 |  u8 ctype, htype, level, description;
-         |            ^~~~~
-   drivers/nvme/target/tcp.c: In function 'nvmet_tcp_io_work':
-   drivers/nvme/target/tcp.c:1479:5: error: implicit declaration of function 'update_tls_keys'; did you mean 'update_cr_regs'? [-Werror=implicit-function-declaration]
-    1479 |     update_tls_keys(queue);
-         |     ^~~~~~~~~~~~~~~
-         |     update_cr_regs
-   cc1: some warnings being treated as errors
-
-
-vim +/htype +1173 drivers/nvme/target/tcp.c
-
-  1168	
-  1169	static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
-  1170			struct msghdr *msg, char *cbuf)
-  1171	{
-  1172		struct cmsghdr *cmsg = (struct cmsghdr *)cbuf;
-> 1173		u8 ctype, htype, level, description;
-  1174		int ret = 0;
-  1175	
-  1176		ctype = tls_get_record_type(queue->sock->sk, cmsg);
-  1177		switch (ctype) {
-  1178		case 0:
-  1179			break;
-  1180		case TLS_RECORD_TYPE_DATA:
-  1181			break;
-  1182		case TLS_RECORD_TYPE_ALERT:
-  1183			tls_alert_recv(queue->sock->sk, msg, &level, &description);
-  1184			if (level == TLS_ALERT_LEVEL_FATAL) {
-  1185				pr_err("queue %d: TLS Alert desc %u\n",
-  1186				       queue->idx, description);
-  1187				ret = -ENOTCONN;
-  1188			} else {
-  1189				pr_warn("queue %d: TLS Alert desc %u\n",
-  1190				       queue->idx, description);
-  1191				ret = -EAGAIN;
-  1192			}
-  1193			break;
-  1194		case TLS_RECORD_TYPE_HANDSHAKE:
-  1195			ret = -EAGAIN;
-  1196			break;
-  1197		default:
-  1198			/* discard this record type */
-  1199			pr_err("queue %d: TLS record %d unhandled\n",
-  1200			       queue->idx, ctype);
-  1201			ret = -EAGAIN;
-  1202			break;
-  1203		}
-  1204		return ret;
-  1205	}
-  1206	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Sep 5, 2025 at 8:59=E2=80=AFAM Francis, David <David.Francis@amd.co=
+m> wrote:
+>
+> [AMD Official Use Only - AMD Internal Distribution Only]
+>
+> Whoops. Yep, story checks out.
+>
+> This is
+> Reviewed-By: David Francis <David.Francis@amd.com>
+> ________________________________
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Thursday, September 4, 2025 2:58 PM
+> To: Francis, David <David.Francis@amd.com>
+> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian <Ch=
+ristian.Koenig@amd.com>; David Airlie <airlied@gmail.com>; Simona Vetter <s=
+imona@ffwll.ch>; Arvind Yadav <Arvind.Yadav@amd.com>; Sharma, Shashank <Sha=
+shank.Sharma@amd.com>; Thomas Zimmermann <tzimmermann@suse.de>; amd-gfx@lis=
+ts.freedesktop.org <amd-gfx@lists.freedesktop.org>; dri-devel@lists.freedes=
+ktop.org <dri-devel@lists.freedesktop.org>; linux-kernel@vger.kernel.org <l=
+inux-kernel@vger.kernel.org>; kernel-janitors@vger.kernel.org <kernel-janit=
+ors@vger.kernel.org>
+> Subject: [PATCH next] drm/amdgpu: Fix error codes if copy_to_user() fails
+>
+> The copy_to_user() function returns the number of bytes that it wasn't
+> able to copy, but we should return -EFAULT to the user.
+>
+> Fixes: 4d82724f7f2b ("drm/amdgpu: Add mapping info option for GEM_OP ioct=
+l")
+> Fixes: f9db1fc52ceb ("drm/amdgpu: Add ioctl to get all gem handles for a =
+process")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_gem.c
+> index 63eb75a579ce..2b58bc805374 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+> @@ -1067,7 +1067,8 @@ int amdgpu_gem_op_ioctl(struct drm_device *dev, voi=
+d *data,
+>                  drm_exec_fini(&exec);
+>
+>                  if (num_mappings > 0 && num_mappings <=3D args->num_entr=
+ies)
+> -                       r =3D copy_to_user(u64_to_user_ptr(args->value), =
+vm_entries, num_mappings * sizeof(*vm_entries));
+> +                       if (copy_to_user(u64_to_user_ptr(args->value), vm=
+_entries, num_mappings * sizeof(*vm_entries)))
+> +                               r =3D -EFAULT;
+>
+>                  args->num_entries =3D num_mappings;
+>
+> @@ -1159,7 +1160,8 @@ int amdgpu_gem_list_handles_ioctl(struct drm_device=
+ *dev, void *data,
+>          args->num_entries =3D bo_index;
+>
+>          if (!ret)
+> -               ret =3D copy_to_user(u64_to_user_ptr(args->entries), bo_e=
+ntries, num_bos * sizeof(*bo_entries));
+> +               if (copy_to_user(u64_to_user_ptr(args->entries), bo_entri=
+es, num_bos * sizeof(*bo_entries)))
+> +                       ret =3D -EFAULT;
+>
+>          kvfree(bo_entries);
+>
+> --
+> 2.47.2
+>
 
