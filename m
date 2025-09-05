@@ -1,57 +1,65 @@
-Return-Path: <linux-kernel+bounces-802365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9302CB4518D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886D8B4519E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6528B5A66A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:34:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23047BBA29
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D80731813F;
-	Fri,  5 Sep 2025 08:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyF9DvME"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AED3093B2;
+	Fri,  5 Sep 2025 08:29:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A984F3090CA;
-	Fri,  5 Sep 2025 08:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D033090E8
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060976; cv=none; b=B5V2uSVQm8g/RfTSWyMb8HCbSII5nyTwBkXvO7UAhvpL/fKZY81Z8jfLsI0nQqmcZMC/AlqsGN1FPsxoqtq9yYq84WcqNXfHyLqdp6820CduNJqveU0BRYaaKrIC+Vj2XtQa4fKxJXgb7cqJ8oJYh7pLRn/YtVFEZW/MeiLDJ4U=
+	t=1757060992; cv=none; b=bSqC4iVo0VCgGuTTcYiK3D116PXWzz8wgBfcElL3TxWRxeNAl7RcRNhFFt7ul5m/d59keB0ZVgHR5yPsapck/BDQtkINVWpw+2++RjlNXn752Zmt9ANMPKn9HzBOw/nuWG2yT46gFJIzBNbSD8lbo7hM4FCEGbVeVxygDxfo9XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060976; c=relaxed/simple;
-	bh=qTwRtRE61zsPY4Oik1TKuwEr2YgkQWcTIA6AodbDFbY=;
+	s=arc-20240116; t=1757060992; c=relaxed/simple;
+	bh=9rdfJyKG2DUhxz14oH6OZktd5zK8IUdQCnL8L2Q9QpU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuvGiOzCunlaHrVYzVLbagz0GEpj2PMXlQ4Z0l1Yg9JwGYWXhr8HGZiPvPjx+TxxiEweN9+H8ByvF1nx4WV+u+J1d6Vuix1ZK91yAbS+CnNfsvdGGaLqVqVMY7Gdlo56s8VNwmn9xFiBmX2E7goDj4BtD+h66TznKcDIgnU1e1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyF9DvME; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B22C4CEF1;
-	Fri,  5 Sep 2025 08:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757060976;
-	bh=qTwRtRE61zsPY4Oik1TKuwEr2YgkQWcTIA6AodbDFbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyF9DvMEwnV5F2vH9gRUZIMZfim4cZhMh63nrQaXMvNQjJl/4Ri8WSywsq2l81CU9
-	 ccDxiyhVMJNjeSSdDp0qu2qFf/RJvGTgK22FQda7UjES7SSAb4uF+fd/4EVK7OmLEh
-	 NsG8WxdAtiT+Abc6fZiVs9P4bhB8WLQQSGSggExIGBWwkbXQcHZecPUkMH3AWRnLkh
-	 KgL0azlZq3Ar0vx0wjx97yMYMrB+yhBCpua3HoliUHxTh/ewRTOLNwpF214mpgJIDs
-	 /lVKkpWfDljD8d7co/3/N+CY+gRt6LjgnPjXWAfKY1JQTaJ2FzuJay1Ky9xPSoDxis
-	 wx9GOZfGOaxEw==
-Date: Fri, 5 Sep 2025 10:29:33 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Ioana Ciornei <ioana.ciornei@nxp.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH phy 13/14] dt-bindings: phy: lynx-28g: add compatible
- strings per SerDes and instantiation
-Message-ID: <20250905-bulky-umber-jaguarundi-1bf81c@kuoka>
-References: <20250904154402.300032-1-vladimir.oltean@nxp.com>
- <20250904154402.300032-14-vladimir.oltean@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxRVZDpoewRRjXkzNb/c+EphwDBWxGnIq5w7d5CbaIzyLdmmejOkU6t+dvG+8mXkMs38M6L2MYEtoROrndEwBOpvi1RXw5OqVU39P8BlU01OYLScTIP+4TN6dpDY4/mbu/CJzzK2QqehmU3KHDyi/aqfH5tX7Dlmmojbb8BEiN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uuRpA-0006ET-8M; Fri, 05 Sep 2025 10:29:36 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uuRp8-003rTW-20;
+	Fri, 05 Sep 2025 10:29:34 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uuRp8-004GpZ-1T;
+	Fri, 05 Sep 2025 10:29:34 +0200
+Date: Fri, 5 Sep 2025 10:29:34 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Network Development <netdev@vger.kernel.org>,
+	Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+Subject: Re: [PATCH] can: j1939: implement NETDEV_UNREGISTER notification
+ handler
+Message-ID: <aLqfbnVEdoS1whkR@pengutronix.de>
+References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
+ <aKg9mTaSxzBVpTVI@pengutronix.de>
+ <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
+ <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
+ <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,57 +68,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250904154402.300032-14-vladimir.oltean@nxp.com>
+In-Reply-To: <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 04, 2025 at 06:44:01PM +0300, Vladimir Oltean wrote:
-> Going by the generic "fsl,lynx-28g" compatible string and expecting all
-> SerDes instantiations on all SoCs to use it was a mistake.
+On Mon, Aug 25, 2025 at 11:07:24PM +0900, Tetsuo Handa wrote:
+> syzbot is reporting
 > 
-> They all share the same register map, sure, but the number of protocol
-> converters and lanes which are instantiated differs in a way that isn't
-> detectable by software. So distinguish them by compatible strings.
-> At the same time, keep "fsl,lynx-28g" as backup.
+>   unregister_netdevice: waiting for vcan0 to become free. Usage count = 2
 > 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
->  .../devicetree/bindings/phy/fsl,lynx-28g.yaml     | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
+> problem, for j1939 protocol did not have NETDEV_UNREGISTER notification
+> handler for undoing changes made by j1939_sk_bind().
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
-> index ff9f9ca0f19c..55d773c8d0e4 100644
-> --- a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
-> +++ b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
-> @@ -11,8 +11,17 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - fsl,lynx-28g
-> +    oneOf:
-> +      - items:
-> +          - const: fsl,lynx-28g
+> Commit 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct
+> callback") expects that a call to j1939_priv_put() can be unconditionally
+> delayed until j1939_sk_sock_destruct() is called. But we need to call
+> j1939_priv_put() against an extra ref held by j1939_sk_bind() call
+> (as a part of undoing changes made by j1939_sk_bind()) as soon as
+> NETDEV_UNREGISTER notification fires (i.e. before j1939_sk_sock_destruct()
+> is called via j1939_sk_release()). Otherwise, the extra ref on "struct
+> j1939_priv" held by j1939_sk_bind() call prevents "struct net_device" from
+> dropping the usage count to 1; making it impossible for
+> unregister_netdevice() to continue.
+> 
+> Reported-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
+> Tested-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
+> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
+> Fixes: 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct callback")
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Don't change that part. Previous enum was correct. You want oneOf and
-enum.
+Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-> +      - items:
-> +          - enum:
-> +              - fsl,lx2160a-serdes1
-> +              - fsl,lx2160a-serdes2
-> +              - fsl,lx2160a-serdes3
-
-What are the differences? number of lanes? For this you can take
-num-lanes property.
-
-> +              - fsl,lx2162a-serdes1
-> +              - fsl,lx2162a-serdes2
-> +          - const: fsl,lynx-28g
-
-Best regards,
-Krzysztof
-
+Thank you!
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
