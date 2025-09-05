@@ -1,122 +1,140 @@
-Return-Path: <linux-kernel+bounces-802273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E555B4502C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:45:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4041AB45032
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D9C3A89EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1FA1C239FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A82270572;
-	Fri,  5 Sep 2025 07:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1188C26B951;
+	Fri,  5 Sep 2025 07:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E8Atzsl3"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gxj5SjIz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCDF25949A;
-	Fri,  5 Sep 2025 07:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C77514E2F2;
+	Fri,  5 Sep 2025 07:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757058296; cv=none; b=fG9/ZtGsoMfQrGuXgUw5DeL0l51wE9eDSw/RMrBEeFdOzbcvHXUwdtWeGbetvPUCXl/rAqVeX1OOFBbodB9sOXGX3HGtlpI/QuD1OozbHRwS/ZpdKlXA8rwbIE30jG8it64exdWUekt27KPsUfpN2momFMjJE9+wc80TpDp3kkc=
+	t=1757058424; cv=none; b=kMXKbaMJ+2zu8gcZtreNBuDncemtTzY6VW2vmyykJk8gna3DHcUFMsRdehgjtx+ZFd57n0m4OEwGpeUEZovymIEYTAhIPa5d8XoU/cqlqb2c2ZqIGWZ0eBreJydsChi8x0hAGFDb0rA7o9iUAdjKpIrYoJtOOHiuB82prmewqzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757058296; c=relaxed/simple;
-	bh=9FriGNAMQK60A3zi1qw0sJL8xNzp+kQ4bPAmGrninAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hbnfwOi2O6WtG2Qb0iuFbr1KA971hN9nTwjacQ6MJ7D0N3OElRgu7wnZr9qB+Khj0eCVGFalxjLHcBV9gCLV+DLCCXGC/3TqiBqrBbrTtpvEq0KoXTGowX+G3Uk2khmQ7UESraBGPNv6Ell95bJHZUNeujgWIPBKwEwKcZKm9zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E8Atzsl3; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b157ba91bso3742275ad.3;
-        Fri, 05 Sep 2025 00:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757058294; x=1757663094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9FriGNAMQK60A3zi1qw0sJL8xNzp+kQ4bPAmGrninAY=;
-        b=E8Atzsl3SwipG4Km1RjAtj9ZTMXwHyNV6sdMNs9KpRyQNrGvm08xyT3HA5Q5R0NhMx
-         5Y3nlGJK3Oehh+2nzBEF3hrrqxzhFwfjdmohksMGgJuvqzeDOpaSn6J3sGi23oEdQWFb
-         j/U1jFJJaADN8VInw+teFH+bQz1E0oZBpvClNp40TKNRJEN81G1kpBXjTj9QL7pzIgJV
-         YQeNEgJTcQYEuyemj3G3CbLJW2Q0guLyd8SuYOhStm+jRpZ4q4g08CUvmr8Q0ahL/DXu
-         jEshUGxUhIFMgCISGMPwj3iPit3nmYss4qd1uz5PUc80WK7dgV0LxP0/iuPaDTtEMu8H
-         N5iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757058294; x=1757663094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9FriGNAMQK60A3zi1qw0sJL8xNzp+kQ4bPAmGrninAY=;
-        b=cloA5Egf1rMgvJ/7+V6naP/EpPJpThjKixGElgjMQ1Q3q2aOpK5r3optuGtj6sMmnh
-         zhk2LcumWfwZ9jB4gq6ahhORUZHvItOTaH0xNjagEscP2e/FmPcbOe015vBQt3pG7iR7
-         H5e41Wc3SUB0lqBA5+ZsowlSM7e4X3BsALG6qZ2zs1w0umZ0LODoqEqRMFZtWW1f6YrC
-         FoaUHnOGJ3RUjpvKQEbo6ox4QySRTaCPR2ziEnt2+F5eY0/G6E+zIa9aQ+M/b8ITLp61
-         gwghA+4nbGwp3kz8bdBJflRgzf3uMTy7821YEcWaOSocegm5eKpZxli8zj40DhqdgQGe
-         Btww==
-X-Forwarded-Encrypted: i=1; AJvYcCUGTkv/LesNnpld45UuH1z3dRcSXYkiD/rMi+1Pho0125h0yzsNzY8B2YVlZMR4f4EqVL4DBkjkZLGpIBnQrlR3@vger.kernel.org, AJvYcCUlTnsmtHbXTaqADnMGZiiZgwvZu4nO/t3SgJ13ZktAJOSJ9PUTHIwca8HiCLXZi9UxsPRppD/vMjSPSqvP@vger.kernel.org, AJvYcCVnHVUid+jqP/BGxiMuPoz2V4aTmj2dX792yVRTKZYuSneGguzPiY6O/fCwP44r55MoT0+imGbvWoQ=@vger.kernel.org, AJvYcCVzATrv2h2IIkcOjChye53720Sfd2QC2cXIwmfdh/U/IX9sP4nLnUiVLqepUGfnS9oi5MXdcZlaE0cTyr3V@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmWX0BnCW+/e6ITg/w2+F2d5GrkrrlQ5iZdnDhzYQCOwqd8bVN
-	LuX8iYjvCZrPmfYCoc0i6cl+CNOSaVncKu6DK5GqAazT3olDUUP1sBJm/pdYCEGFAonlReNkYjx
-	2bKA9M3v1oBMV1SMfEPOEkK0kFO3Cjbg=
-X-Gm-Gg: ASbGncsHawJ/E9kVFw88qA9NNtEY+oKx0n6qk+HxtU7YgTza6Rs1cnMqCKVvqEk4BZT
-	NtqPV6iYGASHBMu1Izes/oJIv6AiGBeZ+mSZ9s+2sD0JssPTjRXMmA8+dPbQ8423EpmlzwltFcJ
-	ZIbazJSgQ3ylEoxLFOagLy2EDFwqDuNUVEhqfKDZJXVOXnTakfyLn1ozklIj814r2GXk6XoFGvs
-	OdaFGVOTvm8ZNCPuncNXvk0NECz8vFv5vvNr35DQqjFplFtCW38h0YV2SHRBxagReRdMYejHjiP
-	eGuEH+6myaIznfyF6adq6RSPDQ==
-X-Google-Smtp-Source: AGHT+IGp+cfcPTE7KjWQu/swfr5iYBHHS7MaJe/UBLnqHcZT/xW+eAFQaePAZ9b+NKm2RPENGVUXqKIAn3gIBqf29BI=
-X-Received: by 2002:a17:902:d488:b0:24c:b6b6:e54c with SMTP id
- d9443c01a7336-24cb6b6e5f9mr45340275ad.3.1757058293921; Fri, 05 Sep 2025
- 00:44:53 -0700 (PDT)
+	s=arc-20240116; t=1757058424; c=relaxed/simple;
+	bh=X9O/FE8yapu+Tkiylk8h8PPSZSi+4NrKdxIeBU484kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTKhTeb+Tt9yzUnIjzboQDOGjzOQxvUptyu3Ra8B9AY4aIjUdcG9Z4visN592TCC6AuzZWbXmZFFkv7JSZHyxcAvQ2n5BkVQSjCzdP4wZp74RtkFRG7+sDtmNvdstw7YI3jB6VUKZDLk8R/p8h9XJ+2Prb6KY/NVb8JFPG6fXnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gxj5SjIz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EE9C4CEF1;
+	Fri,  5 Sep 2025 07:47:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757058424;
+	bh=X9O/FE8yapu+Tkiylk8h8PPSZSi+4NrKdxIeBU484kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gxj5SjIz8HB3amYF0S1DCJ+jzsknGXqtqizW8Ic844n58B0W/1NwOufsacin/xUOX
+	 YzyBqXTRzstrJ8c8/a9xgCM+YVx8DnJGoMI3xY7HPoMD5oQBwUtdIxwAp7yLEEW8bV
+	 CjueosZpoZFkTc/lRe+X6okqFErtp9eXDUocp9OoRTGJKWYYf0VISpKusxM/X+mFw4
+	 Rt7lVsu3J8D++lKtMuLQaCsirDs1vJ6tjg0grnOIa63yBkRIv/NatX4Za1hvGMuBAq
+	 q3Q3oXEvtBoDraxVrjORcIwytJ2Z0dbEW53ZmeRs2x8SPfhnUlO+7wIgUYnt/hlqMA
+	 T0SdFDh79HDTg==
+Date: Fri, 5 Sep 2025 09:47:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Woodrow Douglass <wdouglass@carnegierobotics.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] regulator: pf530x: Add a driver for the NXP
+ PF5300 Regulator
+Message-ID: <20250905-chirpy-utopian-platypus-bea05f@kuoka>
+References: <20250902-pf530x-v6-0-ae5efea2198d@carnegierobotics.com>
+ <20250902-pf530x-v6-2-ae5efea2198d@carnegierobotics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904033217.it.414-kees@kernel.org> <20250904070410.GX4067720@noisy.programming.kicks-ass.net>
- <202509040933.06AF02E714@keescook> <20250904200134.GA4067720@noisy.programming.kicks-ass.net>
- <202509041740.1007FFEA@keescook>
-In-Reply-To: <202509041740.1007FFEA@keescook>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 5 Sep 2025 09:44:41 +0200
-X-Gm-Features: Ac12FXxuAyzV67ABgZG5WJnwUzLnA_eITH6K0nXKAnUgoCmOACBUUDhH7lZTQYk
-Message-ID: <CANiq72==vG_L35sQDGF6OFmTf=17qGs0k1NKiD17JYoforR30w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] kcfi: Prepare for GCC support
-To: Kees Cook <kees@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, David Woodhouse <dwmw2@infradead.org>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Marco Elver <elver@google.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Ramon de C Valle <rcvalle@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	x86@kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250902-pf530x-v6-2-ae5efea2198d@carnegierobotics.com>
 
-On Fri, Sep 5, 2025 at 2:42=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
->
-> Assuming Nathan (and Vegard? or other folks from the other thread?) are
-> okay with the kconfig changes, I'll take it via hardening.
+On Thu, Sep 04, 2025 at 04:44:36PM -0400, Woodrow Douglass wrote:
+> +
+> +static const struct regulator_ops pf530x_regulator_ops = {
+> +	.enable = regulator_enable_regmap,
+> +	.disable = regulator_disable_regmap,
+> +	.is_enabled = regulator_is_enabled_regmap,
+> +	.map_voltage = regulator_map_voltage_linear_range,
+> +	.list_voltage = regulator_list_voltage_linear_range,
+> +	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+> +	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+> +	.get_status = pf530x_get_status,
+> +	.get_error_flags = pf530x_get_error_flags,
+> +	.set_bypass = regulator_set_bypass_regmap,
+> +	.get_bypass = regulator_get_bypass_regmap,
+> +};
+> +
+> +static struct linear_range vrange = REGULATOR_LINEAR_RANGE(500000, 0, 140, 5000);
 
-I haven't had time to take a proper look, test it etc., so I didn't
-reply, sorry -- but I am following the thread and I am glad if we have
-something to easily/properly support this, so thanks for this.
+This looks like could be const
 
-(And sorry for having triggered all this discussion/work -- at least
-if we get this done it will have been worth it :)
+> +
+> +static struct regulator_desc pf530x_reg_desc = {
 
-I will leave a quick message about the commit message.
+This as well (unless I missed something)
 
-Cheers,
-Miguel
+> +	.name = "SW1",
+> +	.ops = &pf530x_regulator_ops,
+> +	.linear_ranges = &vrange,
+> +	.n_linear_ranges = 1,
+> +	.type = REGULATOR_VOLTAGE,
+> +	.id = 0,
+> +	.owner = THIS_MODULE,
+> +	.vsel_reg = PF530X_SW1_VOLT,
+> +	.vsel_mask = 0xFF,
+> +	.bypass_reg = PF530X_SW1_CTRL2,
+> +	.bypass_mask = 0x07,
+> +	.bypass_val_on = 0x07,
+> +	.bypass_val_off = 0x00,
+> +	.enable_reg = PF530X_SW1_CTRL1,
+> +	.enable_mask = GENMASK(5, 2),
+> +	.enable_val = GENMASK(5, 2),
+> +	.disable_val = 0,
+> +};
+> +
+
+...
+
+> +	config.dev = chip->dev;
+> +	config.driver_data = &pf530x_reg_desc;
+> +	config.of_node = chip->dev->of_node;
+> +	config.regmap = chip->regmap;
+> +	config.init_data = init_data;
+> +
+> +	// the config parameter gets copied, it's ok to pass a pointer on the stack here
+> +	rdev = devm_regulator_register(&client->dev, &pf530x_reg_desc, &config);
+> +	if (IS_ERR(rdev)) {
+> +		dev_err(&client->dev, "failed to register %s regulator\n", pf530x_reg_desc.name);
+> +		return PTR_ERR(rdev);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id pf530x_dt_ids[] = {
+> +	{ .compatible = "nxp,pf5300",},
+> +	{ .compatible = "nxp,pf5301",},
+
+Drop
+
+> +	{ .compatible = "nxp,pf5302",},
+
+Drop, that's the point of compatibility - less clutter in the drivers.
+
+Best regards,
+Krzysztof
+
 
