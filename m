@@ -1,115 +1,197 @@
-Return-Path: <linux-kernel+bounces-802098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156F8B44D9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 515DBB44D9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16F117417B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2905A3F0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123B21E570D;
-	Fri,  5 Sep 2025 05:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C089271468;
+	Fri,  5 Sep 2025 05:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="U6RueJvg";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="IXh94vyA"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQwzYtm2"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0930823B609
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 05:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8BB23B609
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 05:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757050591; cv=none; b=GLIiDNg7ncGHWDdmOoUl+xd/iLGBgIiGFimKCtGEMxfWNBwrl6PlGVPTCz+eN+1BX2H7FnKTB8HnFUhJ4OCMUBPrv9z+2g25vRihszMMql2ibTwxgjqY+TGj8i6tkf9bbtKCLhMbN9igGjObGbIFJ+fQE2XJLHHSIxtWd/Nb7tQ=
+	t=1757050788; cv=none; b=iOlMgxbpGg2GPZ27iuMgxhJdMKD/VHMFW1/+sBpk6WLpfWcbDO3vtd4n1FhbZSqhrVetairHJY/77O4fLAqBNFcfR13mGJWwrk8U7TXOrmUy9F7e7QEPl9s3sM/sXypsf/aOQ+9vM0jQvG5y05on3thjcFm9P30hEBpaScnNwR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757050591; c=relaxed/simple;
-	bh=6jknBRFyZCyttZl2fMVMz8rouQM9SLmqAPqEkX/zc6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ph0+/p5WgzHWZrIV07X15fo7ttFL2NnA/eoWuDfX25b8wip7G11Jg8JguUbHS6D7CmT14jsefffrhKWcihSuvk3idgp/7kLjDFBY0rdxnEiH1KUdReQZDp+SgImUl+7RmCKIXOgzcoe0s0wrThzgkTWDvX68CYwZ97lO2Cqm91A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=U6RueJvg; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=IXh94vyA; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757050581; x=1757655381;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=yJz2nmOPN6XlfPRfntHnHCKTk/nsiJ7oT+wmn7ndJ9g=;
-	b=U6RueJvga2W0r8/6brgwvK6DLdXTlIwDtceuWCrS9SUaa4ik/QQ3Xmne0Nv9c76kpNJ1wLLK033dz
-	 jUIr6IBnRFp4aN12GrixITh7VRvEPfOt+jNdeRDoHyRx6IA6FpBUse3gM1UAj9KDWGZgw6yUy+na22
-	 oHjUMxjs/idk6DPy8+crvfHQJ9t8Ee2KMs+WCaPl5i97Yq3bCZ0Tp5EhLrhivNThES83WmvSaewQ9F
-	 lBRYJ+0mozbtjKEpSw49o6LySGV5j0xBQ/v0Uvq37WvWSHcNgy7hU74ek+VlsZ7EjCeOR8BPgITJwZ
-	 XVQcXqSUlykymAECYl9qE92NZ0JLNiw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757050581; x=1757655381;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=yJz2nmOPN6XlfPRfntHnHCKTk/nsiJ7oT+wmn7ndJ9g=;
-	b=IXh94vyAqu9+nL4OhOa0uG7cGlT7oNYUn4pQX+fiohR4ZLrmDrJ9ym7zvejDHdIytJgNd5OCCnpfs
-	 +buo4E2DQ==
-X-HalOne-ID: 40416bf4-8a1a-11f0-a503-81a63d10fb2d
-Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 40416bf4-8a1a-11f0-a503-81a63d10fb2d;
-	Fri, 05 Sep 2025 05:36:21 +0000 (UTC)
-Message-ID: <bd3d2c7f-93a1-441c-b475-873d8d92e839@konsulko.se>
-Date: Fri, 5 Sep 2025 07:36:20 +0200
+	s=arc-20240116; t=1757050788; c=relaxed/simple;
+	bh=wP0Nh39SvLrrUzcjoVyfrVPxYIzy1SY/V7/2kWcMIHU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WUQRSRZvIFvLGbSOplSa7TS5P1kXlVX1Uu/g50bE52jx7tXvrmee2Xn5ErtgUeI+OpADJAXLnOLTOWi3C1LWjwk+Fi7KK6HdVeU7WOLDSWoKiCLcaO4x6eOdTULkLap3O0gpeGRDPJzg7Jr4bhz00co8G1S6mo2LCUjPfAYzOqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lQwzYtm2; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32b58eeb874so1686305a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 22:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757050785; x=1757655585; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3udnh9xsllR+FkjIGPPOo5bX8r6scLid4vmBPD5wmTc=;
+        b=lQwzYtm2NV4Io4r/i3BCtkCOVhcIr4Ap4aY1jaLJulrXaLdfg75M9pjFwojB5+NfTR
+         yHNRD18Y2qWcloAz3pRVhvfcE1ozVRkyC4xMA5+5XuqA3HgIOgoAZRLlWS5Ar0NFszU2
+         OZ6iyQ1zLlPxMtI7rbEhXVGLS65b9oBWuz2O2LPIJQnIddCHaMwaA2q3X5/wVYuPCV4A
+         ltJ6N26FjQ5ruch2n5EzaV7VzoWAeO0rn+jMgaJhMYg0zGD/lnaNlFwReK6FUlwFh67/
+         VIMIFskP0SM4Yl9o+nH4nt9Ysq/iV1lH3rr4bl8GwXz8DWXh+4346twU30d/LpBESjku
+         9DOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757050785; x=1757655585;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3udnh9xsllR+FkjIGPPOo5bX8r6scLid4vmBPD5wmTc=;
+        b=dO4dSPy4k/JNUzKMbQjk7yxcpQ+OpJEwrjZ8MVoztU9NnkhvZGny19N5g0BvC0Ajgq
+         KYo8vxEyTi7IedUd0Cy5zhaCpRd542l0EzzK3cdwGD/FBuIgIjActqJebYrJHIwCl17C
+         rEEKwCOY0+pBI613JeCvkmGEy0pGfYmb+NyKJpNEqjuBzzBg1oJBYJh+A3zTiYai/wBz
+         kRi6n40/xsHhhdJCzGUVl/5Eb1EzEWdYSnTgX5LTiQJkPR3+2VBMHFg6NbmMf54P+jrR
+         JWcdFlU7ssu+6skzHoQEKVonyUdTd1LJC2z54m0tXt5v/2aHlb5tkx64HpotrIVcCkH4
+         3ZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbefn89FLRh6bCvn815qIXZaVmmYoY7jd7iqeQ5tWCYtu+yqTAjp93Ysz47Ub/7D4jwzWPbY1tAJ8rhbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+i6MNCxIaZDr1xslpI2Z4yYcpcNHBdNrGR4rDjdtozSX3oFzA
+	i7qg5tEEtczxDmQI4CNCoUGCC1N5l55VivdCpK0W1Ynm+bYQ7lYBzvN8RQk2cqWjCS6n2FDKqFc
+	WwDMjWw==
+X-Google-Smtp-Source: AGHT+IEl3aDxdJxOeFOgsIqqYfLRUExl039yXm0dtHzzby5zYzVGU35ZbpW1dVjZIdU0C50mCLd9IUYMCJw=
+X-Received: from pjuw15.prod.google.com ([2002:a17:90a:d60f:b0:325:5e4e:4bd4])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3809:b0:329:dff0:701b
+ with SMTP id 98e67ed59e1d1-329dff070c6mr19066965a91.17.1757050784899; Thu, 04
+ Sep 2025 22:39:44 -0700 (PDT)
+Date: Thu, 4 Sep 2025 22:39:37 -0700
+In-Reply-To: <aLojpyTwAMdb1z6D@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: remove zpool
-To: David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
- hannes@cmpxchg.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
- <8984f395-9043-49dd-a53d-bd344fd419bc@redhat.com>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <8984f395-9043-49dd-a53d-bd344fd419bc@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250828000156.23389-1-seanjc@google.com> <aLojpyTwAMdb1z6D@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+Message-ID: <aLp3makY6FzuUwor@google.com>
+Subject: Re: [PATCH v2 0/7] Drivers: hv: Fix NEED_RESCHED_LAZY and use common APIs
+From: Sean Christopherson <seanjc@google.com>
+To: Wei Liu <wei.liu@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	rcu@vger.kernel.org, Nuno Das Neves <nunodasneves@linux.microsoft.com>, 
+	Mukesh R <mrathor@linux.microsoft.com>
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 9/4/25 13:26, David Hildenbrand wrote:
-> On 04.09.25 12:13, Vlastimil Babka wrote:
->> On 9/4/25 11:33, Vitaly Wool wrote:
->>>> With zswap using zsmalloc directly, there are no more in-tree users of
->>>> this code. Remove it.
->>>>
->>>> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
->>>
->>> Per the previous discussions, this gets a *NACK* from my side. There is
->>> hardly anything _technical_ preventing new in-tree users of zpool API.
->>> zpool API is neutral and well-defined, I don’t see *any* good reason for
->>> it to be phased out.
->>
->> AFAIK it's a policy that unused code should be removed ASAP. And 
->> that's the
->> case for zpool after Patch 1, no? It could be different if another 
->> user was
->> about to be merged (to avoid unnecessary churn), but that doesn't seem 
->> the
->> case for zblock?
+On Thu, Sep 04, 2025, Wei Liu wrote:
+> On Wed, Aug 27, 2025 at 05:01:49PM -0700, Sean Christopherson wrote:
+> > Fix a bug where MSHV root partitions (and upper-level VTL code) don't honor
+> > NEED_RESCHED_LAZY, and then deduplicate the TIF related MSHV code by turning
+> > the "kvm" entry APIs into more generic "virt" APIs.
+> > 
+> > This version is based on
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git hyperv-next
+> > 
+> > in order to pickup the VTL changes that are queued for 6.18.  I also
+> > squashed the NEED_RESCHED_LAZY fixes for root and VTL modes into a single
+> > patch, as it should be easy/straightforward to drop the VTL change as needed
+> > if we want this in 6.17 or earlier.
+> > 
+> > That effectively means the full series is dependent on the VTL changes being
+> > fully merged for 6.18.  But I think that's ok as it's really only the MSHV
+> > changes that have any urgency whatsoever, and I assume that Microsoft is
+> > the only user that truly cares about the MSHV root fix.  I.e. if the whole
+> > thing gets delayed, I think it's only the Hyper-V folks that are impacted.
+> > 
+> > I have no preference what tree this goes through, or when, and can respin
+> > and/or split as needed.
+> > 
+> > As with v1, the Hyper-V stuff and non-x86 architectures are compile-tested
+> > only.
+> > 
+> > v2:
+> >  - Rebase on hyperv-next.
+> >  - Fix and converge the VTL code as well. [Peter, Nuno]
+> > 
+> > v1: https://lore.kernel.org/all/20250825200622.3759571-1-seanjc@google.com
+> > 
 > 
-> Right, and
-> 
->   13 files changed, 84 insertions(+), 715 deletions(-)
-> 
-> speaks for itself if there is no new user anticipated.
+> I dropped the mshv_vtl changes in this series and applied the rest
+> (including the KVM changes) to hyperv-next.
 
-Well, there surely is.
+mshv_do_pre_guest_mode_work() ended up getting left behind since its removal was
+in the last mshv_vtl patch.
 
-> IIRC, we did a similar approach when we removed frontswap.
-> 
+  $ git grep mshv_do_pre_guest_mode_work
+  drivers/hv/mshv.h:int mshv_do_pre_guest_mode_work(ulong th_flags);
+  drivers/hv/mshv_common.c:int mshv_do_pre_guest_mode_work(ulong th_flags)
+  drivers/hv/mshv_common.c:EXPORT_SYMBOL_GPL(mshv_do_pre_guest_mode_work);
 
+Want to squash this into 3786d7d6b3c0 ("mshv: Use common "entry virt" APIs to do
+work in root before running guest")?
+
+---
+ drivers/hv/mshv.h        |  2 --
+ drivers/hv/mshv_common.c | 22 ----------------------
+ 2 files changed, 24 deletions(-)
+
+diff --git a/drivers/hv/mshv.h b/drivers/hv/mshv.h
+index 0340a67acd0a..d4813df92b9c 100644
+--- a/drivers/hv/mshv.h
++++ b/drivers/hv/mshv.h
+@@ -25,6 +25,4 @@ int hv_call_set_vp_registers(u32 vp_index, u64 partition_id, u16 count,
+ int hv_call_get_partition_property(u64 partition_id, u64 property_code,
+ 				   u64 *property_value);
+ 
+-int mshv_do_pre_guest_mode_work(ulong th_flags);
+-
+ #endif /* _MSHV_H */
+diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
+index eb3df3e296bb..aa2be51979fd 100644
+--- a/drivers/hv/mshv_common.c
++++ b/drivers/hv/mshv_common.c
+@@ -138,25 +138,3 @@ int hv_call_get_partition_property(u64 partition_id,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(hv_call_get_partition_property);
+-
+-/*
+- * Handle any pre-processing before going into the guest mode on this cpu, most
+- * notably call schedule(). Must be invoked with both preemption and
+- * interrupts enabled.
+- *
+- * Returns: 0 on success, -errno on error.
+- */
+-int mshv_do_pre_guest_mode_work(ulong th_flags)
+-{
+-	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
+-		return -EINTR;
+-
+-	if (th_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
+-		schedule();
+-
+-	if (th_flags & _TIF_NOTIFY_RESUME)
+-		resume_user_mode_work(NULL);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(mshv_do_pre_guest_mode_work);
+
+base-commit: 3786d7d6b3c0a412ebe4439ba4a7d4b0e27d9a12
+--
 
