@@ -1,282 +1,217 @@
-Return-Path: <linux-kernel+bounces-803288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E968B45CFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:50:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99561B45D04
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C078D5A7EE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86927C7953
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB3231D722;
-	Fri,  5 Sep 2025 15:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lRDZpA6o";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lRDZpA6o"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010041.outbound.protection.outlook.com [52.101.84.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC6931D74F;
+	Fri,  5 Sep 2025 15:46:09 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7B230B53B;
-	Fri,  5 Sep 2025 15:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.41
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087153; cv=fail; b=QPwv1qVmoqg1m6R6cHXndrn8Wjp3q4zFTWlKQa1AoVlNZBJlXQ9vkV1kcJwUmDmrK6uBDpK3VUYhl1t0DSesnh8T/5ZhgUTeVBV8m4w1X02Oi5IeE3yml9CJgVxjK7JXzwUJ6Nfpexp62J3b7Rt/jDijSq00asTW9b+DDgLm/yg=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087153; c=relaxed/simple;
-	bh=1dIXeB6evzNQq/5+m1x1G5rHll9SJUtWLsBMvgpDI0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JQwr+6IXk6NIuLwVcFT3U0K0853eFUWQlXSlZZyTApFBkJwfJqTVO77nVVYf++BCgMNrcboSdlK6jFAWuAN/buR5radLYH1RjlG1R0S7LUH2R55gcAwsAykm7HD0KlCrjKVbE2MaoIc4Wjsj5CjxuoF0edSSr30pDioQo17+6zo=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lRDZpA6o; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lRDZpA6o; arc=fail smtp.client-ip=52.101.84.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=E4C2C5nt81+qv0ErPFWGz4JHQM7PYXnY+enTbCgFdVgmyNmf2cK8Zv6lyE0pIVNOCu+fJxkdVIYkC64WVlv8L0DUnLITVcYCxR9zGJqXUOb1PpxRJnwHId9aR49d9+ckgKKSVatb9JVAjf0auG0sLqhhSmTGEH7Jho3nSkVOfDmU+S223J4tl7Ek4I5RGrFlxIQbJgEtsBKbjt0l0VpyGRxo8KV4FX0sBCC5X8EjTJlB5h7PT5Qd1Yxvks5QK0KoVkJwHHdr2l/MEHcuDiPWz5hfQtC7smxzFF7+JvKP5Oub0pH9bXJKBXTAHf+pNnvsMo3sG28lMJS6qboQyi1MqQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kml+z2YaOGVFQRRqN5Be1BeDW3Wx+k6y0RAjj7TZSeA=;
- b=Fkd0V97uTWbPnQEmpl7H0vDYPQtjl3CM/0F2CZ7+ATBLmJFz8G9r5JTh4d3BWCsDE+3/PAArN6V/LZSM/9gTvZAcnlqj6NbjBTGTWiRRcT1ADtPSXWOHXe2HmauuElmcrOiWnNQTAGKE2wdVyhlsoTytxk8+DYd+7xiX57so0rnm+a/k/lVLnG9lEQnHa+wQ+xINhadGSMhWQp2pS2koRXYE0eIKz+KaHN2jPpaCpZuciJkKW2xxZTu+AFnNq7Xc+lh0ZMGJNBSOcLJIXCF7JJmTwz0UfOx1Hw6pXUihoKJ1IURYdmxu4ze8RZXE+HcVuQlQCDYIJYx1VJ3oh1hgcw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=google.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kml+z2YaOGVFQRRqN5Be1BeDW3Wx+k6y0RAjj7TZSeA=;
- b=lRDZpA6odgv8ONgBEPBInl/RnaMkLVrgFHjSMlFHBDKixlx4t5lQ17yRJTqA64jaV504g1xqRymnXl8jq9PRy3RTB1ld/Ap7yAo6tVAIWPqjJR36fXRnCVS6EBDqCDYC90fxeQyFDdDrnu1Ejwk/8ggrWiTnRxFSpSacCit0pxo=
-Received: from AM6PR04CA0069.eurprd04.prod.outlook.com (2603:10a6:20b:f0::46)
- by DB8PR08MB5356.eurprd08.prod.outlook.com (2603:10a6:10:f9::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.18; Fri, 5 Sep
- 2025 15:45:45 +0000
-Received: from AM4PEPF00027A67.eurprd04.prod.outlook.com
- (2603:10a6:20b:f0:cafe::6e) by AM6PR04CA0069.outlook.office365.com
- (2603:10a6:20b:f0::46) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.20 via Frontend Transport; Fri,
- 5 Sep 2025 15:45:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM4PEPF00027A67.mail.protection.outlook.com (10.167.16.84) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.14
- via Frontend Transport; Fri, 5 Sep 2025 15:45:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b3yYIsy7JUl7Hr+10ciTNKS+W71fDgXbegO2aNsbsL7M3N0p468H37A0wYE7xMemzL7w0am1laVsARicxbxB+CTwk6Aqq1QmYR3vxesM2u1xiKVsBEr2m6p5Db8vQmQBAlrXErOAk9TnIjiKlj1f8N937SaKM6zuJ8elCXxiDOuJWR70a//q1Kz0rBiTyDdfuSpVm03035GJqw9YzhXgKlasjs9x/7ssU8HxHC7HzTfmDyfWlZHV/rBT8WMiMOoaa8a11uN6ag2wHo909Id0t8VmEpm0kU7hXQTP0Sg7D06ZQEUW7NsjOsPmQy6DyfflJMVxK9IGFYIaDlrX1CKU4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kml+z2YaOGVFQRRqN5Be1BeDW3Wx+k6y0RAjj7TZSeA=;
- b=byrOjpiHnqYkKqqJ8rfF+TI64JypWXvlZWdeHuVJ7QF2hISu8bv4J7bhR0CReVyh3GJTAomN+tTwHUAbBh16dukqdjyWPZZgbWxMSw/anS49lmOVjzB6fqHOcdqwu5oKA6xAZNRqXLDLezw65fQZzr5FO5bAi0wJVEsYjgcH34nsyeVOGAvRmd7P6FKJ8HN3X6d1e6osPjwx/m/VOk8F9u62tR89vTtTRy1Jw4HcRjkBptk2EY3XiASz2w6XvLoohvnsHFHsgYWW52M3L0H8GYNyyB6qxvzX4zD6yOZwph+AAL0iy0+3aRbanvHJQPU1rwyB6fTk7Goa1ptb1ObMDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kml+z2YaOGVFQRRqN5Be1BeDW3Wx+k6y0RAjj7TZSeA=;
- b=lRDZpA6odgv8ONgBEPBInl/RnaMkLVrgFHjSMlFHBDKixlx4t5lQ17yRJTqA64jaV504g1xqRymnXl8jq9PRy3RTB1ld/Ap7yAo6tVAIWPqjJR36fXRnCVS6EBDqCDYC90fxeQyFDdDrnu1Ejwk/8ggrWiTnRxFSpSacCit0pxo=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DU0PR08MB7541.eurprd08.prod.outlook.com
- (2603:10a6:10:312::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
- 2025 15:45:12 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
- 15:45:12 +0000
-Date: Fri, 5 Sep 2025 16:45:09 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/7] arm64: Make EFI calls preemptible
-Message-ID: <aLsFhe/whtmKyFus@e129823.arm.com>
-References: <20250905133035.275517-9-ardb+git@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905133035.275517-9-ardb+git@google.com>
-X-ClientProxiedBy: LO6P123CA0058.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:310::19) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821ED31D746;
+	Fri,  5 Sep 2025 15:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757087168; cv=none; b=l5IhRk+MPpUkUWf+CgkEutaAw9LHYJnr+SXgAjzY6BAAF+qHNXJSkiyQLzCEa3e9Vc9/SA+GOIgCve57zcHHbjTyk5L56YW6cGuT5ks8tcOEDRI+fUSSlAwcpdK8VdoCBni+THJQmoTVQ0qmnnrSZpHskuICR9T/f792cGlukL4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757087168; c=relaxed/simple;
+	bh=OKhzNW9ZD2RgTy4457MbKDaoTUd9Wh+DG8e3zQRGXwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s7LPeZV/tvrPO7YnVmvbHY19Ti86okmIdLbHKka6Ftpb0kl/+2qvNYSZMQmTec3tfVkeiwRHwZSzGoZ5OxBouxkCxd8oh/t4aooy4gOFL3QrdD8PfMveWvFCZkUNsWWS2TG/g6lHtEMfzn0RdyKam8ygE0cMA8FicmHGFWVxkn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.106] (unknown [114.241.87.235])
+	by APP-03 (Coremail) with SMTP id rQCowAAnd4GZBbtosNvWAA--.30834S2;
+	Fri, 05 Sep 2025 23:45:29 +0800 (CST)
+Message-ID: <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
+Date: Fri, 5 Sep 2025 23:45:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DU0PR08MB7541:EE_|AM4PEPF00027A67:EE_|DB8PR08MB5356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8416a9a2-f256-4994-0431-08ddec934734
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?Pu0jQOJWrVj+730WjAOoAfMTIWXynW7JmjRQFRviPbK3wlRgtiF0+Z2fX+bc?=
- =?us-ascii?Q?bsVoA0zWGGb/0BNvovOdUHEgAdEFpmbKi0bgHnJSp9u35sAHtRQbxQ7Rihvz?=
- =?us-ascii?Q?iTdr1JK/JM0iOzGIWYw5keUnAPTcjw+G5hBwUQXhuXVNaPOpB0Q9kUmMwTxu?=
- =?us-ascii?Q?0l19UPgM+IdgnkbUPkZqoUhQO2WJahDHKacCWOfjaqMklrivWm0d3ouEX6J9?=
- =?us-ascii?Q?BhsMPklTfkVtCKIRLRym+1u/p9E/+FkizlfAsZQfSEFMO15ibwvPR7opoNa5?=
- =?us-ascii?Q?ySVUGlQMBHx8DQKbtOH4uSEBRHyS1nNuiTFWz3/ZEkg+5ejpKZt00289UVR3?=
- =?us-ascii?Q?sKOOVzCPBaa6vzCdDBwH4D7w68s6Llbdgb1lqcCmqTjW1FmlIA12l43bfYZl?=
- =?us-ascii?Q?n/Ga25UJyByBep+5plqf7h9s8yljnuYRySSY56HrVLfVy4SoUn2sIUpDUXnj?=
- =?us-ascii?Q?UJRNmviK76YiGo6+aKOhtqGzazJwxMLSwSS8lWgS2YWFAh72Yf9NAIkV4PBi?=
- =?us-ascii?Q?NG4wOs+IQyluxpOSYDUfwtLDmdcaYh9OThBavuixIvLNo/28f65WYbGOH4YO?=
- =?us-ascii?Q?vym697MHjzwNu30CxYtHTiz5G0YIRmlZUldT9MsMtHP6O1GH5Dhk5FwyX2kW?=
- =?us-ascii?Q?8fP9FhQcFsjhTXFDLz1kNRWYMRM5t2Fo8qb1cxfUjbfmwakL0dp1vX99GHLR?=
- =?us-ascii?Q?uFHD9Or+YyxGyFsWg2bRZlY5mqhPjtXJ7axPmvhxo8TTqRHqHLiZLjM/w1xj?=
- =?us-ascii?Q?5BVHaUz7EmGrZSOojjOOmiFYsFBJiMwbOhFLn0xwIK+jaOPzqgF5Ylq1TQGe?=
- =?us-ascii?Q?jqfTtpvrlqpk5W577gtIXHwaInTRmbYegMGm3G2Xtha4xXG7OkG5yfWxkuUH?=
- =?us-ascii?Q?a+I7Z5gdfkhFKtHpJ08Oh4bli/Nw6uhNsRyC2i4a54saWHoVcepj2oqRxg4q?=
- =?us-ascii?Q?+8bGTKE6tKKH6CSygTO55CVk/F3RWcn6ozI1Wrb6MrGgwRRcGlJ/j0jeCrIj?=
- =?us-ascii?Q?+3/TurN4I1s2SFVyY4m8ixZLtMoygVnhDlfl5+tLxgaSWbtzix/I3rNr+TwD?=
- =?us-ascii?Q?Sl/9HFPfWyAUs4avDoWU7huAIhARBOQPKoAo05xZEVd+JT6yNYGNMp1zZaee?=
- =?us-ascii?Q?q+JMUtmB7lcxsGDcXYBD6AwnOVHGWYGwtyFp2o6SluV87o6wOlXS0rB2I+3o?=
- =?us-ascii?Q?0FD8q40MA/+XzkRQeB4JoNQcpYlzv/3lAwXVYhnCq5Uqb5C3XotaWjIpJb8g?=
- =?us-ascii?Q?03m3DRRmwkV4HHrvgvXkROFF425H4OaubCSV5QyPO3KYiJT+1BURJPWynSLo?=
- =?us-ascii?Q?bQM4Rt+84hNpDaRLkbaj62SI7XMhaYCjVV2SgpYQ/+lF6Mb7GCruItF0Ti8+?=
- =?us-ascii?Q?2SXeurmHBbvwY+fhVSqj7XzHQCPzpdagAgMKGkPl8Be/I3g8t+sKStPROF3U?=
- =?us-ascii?Q?Z71KpOOTq78=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB7541
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM4PEPF00027A67.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	e718d70c-4d30-4e91-093c-08ddec933359
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|35042699022|1800799024|14060799003|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9SaJ/bMdhXPniksqWp44yh6Q2TCgkgGBqgf8gK4t1unm+vJAO4nKIjgk34y3?=
- =?us-ascii?Q?ipZ5f8+oW6qvBHfBFr6RKfsWtBGM5YnzeK6MuZy3k1JSdPqmSO2vUocbWeyO?=
- =?us-ascii?Q?S6RIjC0ixb/SnOvX7juXtvv1hIb0lAtEAenm74/Gvn9hy7s0QFegx61H7FXq?=
- =?us-ascii?Q?0UoqupfaOasvLFU9xub28IopAWIDVB3D1fVdFVecns/79pQX5ffJDdfBq7m5?=
- =?us-ascii?Q?7pnuGI6LUSg6xezSczx/VucswHKb5Wrc9B0KtFliQ+nK3JxOxrs/MEKwl5oW?=
- =?us-ascii?Q?XB/apcmGHIN4PzbCCX6NG8mix3+T+m/1cKyDuzekKQDXwZUa06h8/+QXybVL?=
- =?us-ascii?Q?AWbCvIek5pysZ0tvUgRiwqyK0baziY4gfC7BykNDgRl03SIOuHYiVs43NcfF?=
- =?us-ascii?Q?AwWt2y9fb83K0FAiI54pghY25wh4c5DUD6Enp8r+7kgG+n2m3FWKDJFSL9Gq?=
- =?us-ascii?Q?vUFnygmDnCosqMV0z0ct94NDHRHZhizoMDfM2P4D2aW3mrXVf7tqBrIUnrbU?=
- =?us-ascii?Q?bBK0yltTYpHz6uuA2z0S1FF/4xUwzWmTZOk8ndKgsOyWpC0ewZKoaAQ6Css5?=
- =?us-ascii?Q?3KEZFA1jdeCtx/u1+xeW/SKKBe2HE+3uArcXhjGvPeTRis4scNOEzuGoOq8x?=
- =?us-ascii?Q?836JNJIIlSH9weUgJ2WOzLs1NQMr2gfD/whwBnnCDxIcM1uO7zT2A4KhQMvl?=
- =?us-ascii?Q?zvAskbW3wrZtZe9S5GvMGEEvWTFenV3D7tgBCqOFgYql2ah8p1KoZt6HIc/b?=
- =?us-ascii?Q?9RJQ7WLdlHBbiypH0Y5Wb6CncMsCwrAiWkY7SqfU/CgbLzYJvzsa07tn1sex?=
- =?us-ascii?Q?+YPTs7NOX4xJ+U2kBh2H599UpCwmHaiax/NCvFRppv6NfrmE8ein8TscMCT+?=
- =?us-ascii?Q?N3KJ2Ly/zdzXE8hbgH9mMGv9RxjlbM14DiBKavEITMcVDnZgRyG/6iok7MTf?=
- =?us-ascii?Q?01lZFydVTeB07mRqiOmY3r8GXU5Z4flXml45eaqisfcjIKuSVMmZim5ekJFB?=
- =?us-ascii?Q?JMivo6/LHRiuscreiJUMNTfBRvByq3WQFOj7QumVl9RalgPmBCCzmipQc1dc?=
- =?us-ascii?Q?A0cnlGzWKhOP1WcAGxpxjaFMNFVNwASrJZu6jfGemAlzNzZg5J5NtL1TASSQ?=
- =?us-ascii?Q?80Br4oklBPDnFzjK651lOFYmKPh95C1kF1orhKwtcV2/Fw7gG9IGPMZw9uJY?=
- =?us-ascii?Q?nM+G6yRja1Fi5LEwe20EjKmLx8Q+eL6vrelSZ1UCD1hRGOuZR2XLZcTv07dI?=
- =?us-ascii?Q?a8UIilMcV/T5nKkZeaRqVycG6gEdR8Kx76/EbEjDjgfV533XC8sTkJomjd6Q?=
- =?us-ascii?Q?PRBwTJbl2XJiKhc/3wSiJC7PpFqtifhMAOtuRteMB5qGqY1WjkcHoJWLZv6Y?=
- =?us-ascii?Q?Zhievtt/CboojmRx5n2nSqGy5SSv8I957YSeTtKI5t4Ej7qT9pytKRmAJgMK?=
- =?us-ascii?Q?pZ3lm4w4eFuHNnNln832+CpdntUDrQsbkByL57meter7eEmDQFAZkLOitTng?=
- =?us-ascii?Q?FVFnY+c0Vdoh2g/9BDAa08Tqcw0FWp/OSCNq?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(35042699022)(1800799024)(14060799003)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 15:45:45.4370
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8416a9a2-f256-4994-0431-08ddec934734
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A67.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5356
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
+References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
+ <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+ <20250905153500.GH553991@horms.kernel.org>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250905153500.GH553991@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:rQCowAAnd4GZBbtosNvWAA--.30834S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFy8tw4rWFykAF18GFy7trb_yoW7JrWrpa
+	y5ta1DCF1UXF4jgrnaqF4UZFn3t3WfJr1UuFyYyrWF9FnFyrs7KFy8Kr17K34xCFW8uF4Y
+	9w1j9347GFZ8ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUvaZXDUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-This series looks good to me.
+Hi Simon,
 
-Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Thanks for the review.
 
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> The arm64 port permits the use of the baseline FP/SIMD register file in
-> kernel mode, and no longer requires preemption to be disabled. Now that
-> the EFI spec is being clarified to state that EFI runtime services may
-> only use baseline FP/SIMD, the fact that EFI may code may use FP/SIMD
-> registers (while executing at the same privilege level as the kernel) is
-> no longer a reason to disable preemption when invoking them.
->
-> This means that the only remaining reason for disabling preemption is
-> the fact that the active mm is swapped out and replaced with efi_mm in a
-> way that is hidden from the scheduler, and so scheduling is not
-> supported currently. However, given that virtually all (*) EFI runtime
-> calls are made from the efi_rts_wq workqueue, the efi_mm can simply be
-> loaded into the workqueue worker kthread while the call is in progress,
-> and this does not require preemption to be disabled.
->
-> Note that this is only a partial solution in terms of RT guarantees,
-> given that the runtime services execute at the same privilege level as
-> the kernel, and can therefore disable interrupts (and therefore
-> preemption) directly. But it should prevent scheduling latency spikes
-> for EFI calls that simply take a long time to run to completion.
->
-> Changes since v1/RFC:
-> - Disable uaccess for SWPAN before updating the preserved TTBR0 value
-> - Document why disabling migration is needed
-> - Rebase onto v6.17-rc1
->
-> (*) only efi_reset_system() and EFI pstore invoke EFI runtime services
->     without going through the workqueue, and the latter only when saving
->     a kernel oops log to the EFI varstore
->
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
->
-> Ard Biesheuvel (7):
->   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
->   efi/runtime: Return success/failure from arch_efi_call_virt_setup()
->   efi/runtime: Deal with arch_efi_call_virt_setup() returning failure
->   arm64/fpsimd: Don't warn when EFI execution context is preemptible
->   arm64/efi: Use a semaphore to protect the EFI stack and FP/SIMD state
->   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
->   arm64/efi: Call EFI runtime services without disabling preemption
->
->  arch/arm/include/asm/efi.h              |  2 +-
->  arch/arm64/include/asm/efi.h            | 15 ++----
->  arch/arm64/kernel/efi.c                 | 57 +++++++++++++++++---
->  arch/arm64/kernel/fpsimd.c              |  4 +-
->  arch/loongarch/include/asm/efi.h        |  2 +-
->  arch/riscv/include/asm/efi.h            |  2 +-
->  arch/x86/include/asm/efi.h              |  2 +-
->  arch/x86/platform/efi/efi_32.c          |  3 +-
->  arch/x86/platform/efi/efi_64.c          |  3 +-
->  arch/x86/platform/uv/bios_uv.c          |  3 +-
->  drivers/firmware/efi/efi.c              |  3 ++
->  drivers/firmware/efi/riscv-runtime.c    |  3 +-
->  drivers/firmware/efi/runtime-wrappers.c | 20 ++++---
->  include/linux/efi.h                     |  8 +--
->  14 files changed, 89 insertions(+), 38 deletions(-)
->
->
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> --
-> 2.51.0.355.g5224444f11-goog
->
->
+(I have a question about the use of ndev->stats - see below.)
 
---
-Sincerely,
-Yeoreum Yun
+On 9/5/25 23:35, Simon Horman wrote:
+> On Fri, Sep 05, 2025 at 07:09:31PM +0800, Vivian Wang wrote:
+>> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+>> that only superficially resembles some other embedded MACs. SpacemiT
+>> refers to them as "EMAC", so let's just call the driver "k1_emac".
+>>
+>> Supports RGMII and RMII interfaces. Includes support for MAC hardware
+>> statistics counters. PTP support is not implemented.
+>>
+>> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+>> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+>> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ...
+>
+>> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
+> ...
+>
+>> +static void emac_init_hw(struct emac_priv *priv)
+>> +{
+>> +	/* Destination address for 802.3x Ethernet flow control */
+>> +	u8 fc_dest_addr[ETH_ALEN] = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
+>> +
+>> +	u32 rxirq = 0, dma = 0;
+>> +
+>> +	regmap_set_bits(priv->regmap_apmu,
+>> +			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
+>> +			AXI_SINGLE_ID);
+>> +
+>> +	/* Disable transmit and receive units */
+>> +	emac_wr(priv, MAC_RECEIVE_CONTROL, 0x0);
+>> +	emac_wr(priv, MAC_TRANSMIT_CONTROL, 0x0);
+>> +
+>> +	/* Enable MAC address 1 filtering */
+>> +	emac_wr(priv, MAC_ADDRESS_CONTROL, MREGBIT_MAC_ADDRESS1_ENABLE);
+>> +
+>> +	/* Zero initialize the multicast hash table */
+>> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE1, 0x0);
+>> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE2, 0x0);
+>> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE3, 0x0);
+>> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE4, 0x0);
+>> +
+>> +	/* Configure thresholds */
+>> +	emac_wr(priv, MAC_TRANSMIT_FIFO_ALMOST_FULL, DEFAULT_TX_ALMOST_FULL);
+>> +	emac_wr(priv, MAC_TRANSMIT_PACKET_START_THRESHOLD,
+>> +		DEFAULT_TX_THRESHOLD);
+>> +	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
+>> +
+>> +	/* Configure flow control (enabled in emac_adjust_link() later) */
+>> +	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
+>> +	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
+>> +	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
+>> +	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
+>> +
+>> +	/* RX IRQ mitigation */
+>> +	rxirq = EMAC_RX_FRAMES & MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK;
+>> +	rxirq |= (EMAC_RX_COAL_TIMEOUT
+>> +		  << MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT) &
+>> +		 MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_MASK;
+> Probably this driver can benefit from using FIELD_PREP and FIELD_GET
+> in a number of places. In this case I think it would mean that
+> MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT can be removed entirely.
+
+That looks useful. There's a few more uses of *_SHIFT in this driver,
+and I think I can get them all to use FIELD_PREP. I'll change those in
+the next version.
+
+>> +
+>> +	rxirq |= MREGBIT_RECEIVE_IRQ_MITIGATION_ENABLE;
+>> +	emac_wr(priv, DMA_RECEIVE_IRQ_MITIGATION_CTRL, rxirq);
+> ...
+>
+>> +/* Returns number of packets received */
+>> +static int emac_rx_clean_desc(struct emac_priv *priv, int budget)
+>> +{
+>> +	struct net_device *ndev = priv->ndev;
+>> +	struct emac_rx_desc_buffer *rx_buf;
+>> +	struct emac_desc_ring *rx_ring;
+>> +	struct sk_buff *skb = NULL;
+>> +	struct emac_desc *rx_desc;
+>> +	u32 got = 0, skb_len, i;
+>> +	int status;
+>> +
+>> +	rx_ring = &priv->rx_ring;
+>> +
+>> +	i = rx_ring->tail;
+>> +
+>> +	while (budget--) {
+>> +		rx_desc = &((struct emac_desc *)rx_ring->desc_addr)[i];
+>> +
+>> +		/* Stop checking if rx_desc still owned by DMA */
+>> +		if (READ_ONCE(rx_desc->desc0) & RX_DESC_0_OWN)
+>> +			break;
+>> +
+>> +		dma_rmb();
+>> +
+>> +		rx_buf = &rx_ring->rx_desc_buf[i];
+>> +
+>> +		if (!rx_buf->skb)
+>> +			break;
+>> +
+>> +		got++;
+>> +
+>> +		dma_unmap_single(&priv->pdev->dev, rx_buf->dma_addr,
+>> +				 rx_buf->dma_len, DMA_FROM_DEVICE);
+>> +
+>> +		status = emac_rx_frame_status(priv, rx_desc);
+>> +		if (unlikely(status == RX_FRAME_DISCARD)) {
+>> +			ndev->stats.rx_dropped++;
+> As per the comment in struct net-device,
+> ndev->stats should not be used in modern drivers.
+>
+> Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
+>
+> Sorry for not mentioning this in an earlier review of
+> stats in this driver.
+>
+On a closer look, these counters in ndev->stats seems to be redundant
+with the hardware-tracked statistics, so maybe I should just not bother
+with updating ndev->stats. Does that make sense?
+
+Thanks,
+Vivian "dramforever" Wang
+
 
