@@ -1,129 +1,285 @@
-Return-Path: <linux-kernel+bounces-803404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05E2B45F61
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1495EB45F66
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6194F3AB3D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF061CC2BFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5002230B51F;
-	Fri,  5 Sep 2025 16:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5572F309F0B;
+	Fri,  5 Sep 2025 16:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YlkRttTM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OICIoC7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FDD30B50D;
-	Fri,  5 Sep 2025 16:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8720231D736;
+	Fri,  5 Sep 2025 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757091122; cv=none; b=Cq6Z6co6z00MyYqrrOJgqI64PiU1QV2Kf14tBpN3syKeY+Q8LuyMxqH/OzT07RCCiXD7wB26oS/6iIhxoyO7Fq4afgKB4WUuQ0PQ8NQzwAVExU+uJn0XztVPYEpRSX0bsOjNAvjhxQIsKQbqZDyb6/4NovVywIbYtVrdh/IVJ0k=
+	t=1757091268; cv=none; b=SyF1EMj0w5Zxqx/Z2Ze0r3NjSHrK3nzru4U7sDVPCX1aL3MyPZBfqzP1dOfRGIKvqM7xdXZbXTiPN52OJK6wXOsZ72lUqURVTI+Mk/iJbv3R6vHsC6VjpRpt9kss8RnQSO0KBqn1AmRObxpsEWzI0PfGjxZYx/274LzdUmVWxoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757091122; c=relaxed/simple;
-	bh=WYLWUcPSd5jrYSeGhSGOmpkf3UQu+Fvp70h1FOBvL/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vF7GqAe8PAQjvpqq8fH3AZ0gOCb1aQNzt9cf+IRGDh+pphfN5xWzmIIrZ0rW0MsbcROEaUMQw63V+8DMVitDWpjLWVCUB3wNcvLMhR1mJ3kml4REp4mIUpSboLXVxv0TkAZtNT6CphroqdcFRaKHdW4JPcE6uDpMXBP1n0t/wxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YlkRttTM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Lu0hDzSntfixagIqqAnPk5EmBO+qEzDTbOWkYSk//uM=; b=YlkRttTMuOxt4e5t6VZxxC+R2B
-	qUI4Vvdh/3JOYCS5R5IHKka+RFJw40TpFNd5VUJ1+a1oM9rWUuHVBG1lAwMyfBklvRXLXR03eZkqU
-	KCKXDGoQpWFEFqNyuDQONEYbefoGUCqKII6Kr0DeoKaJ9Q7Jdexo7zrutYslDUsYwBtzH0MpmLaIR
-	Xz8P7bx2u2QnilfFRFgoJ4acvkyMdb4mBcmyE5AljkiLg1dPBq6IElFAh67dp3ml3AElNi6/QgpB1
-	bzmsBSzYIt5fpR3xDcZPAGy0vQ32JS+i/gep+yxNAMJMxhxVbMFjZaofyYd1pVUg1ztzECdDDGik9
-	FbneDyAw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uuZfL-00000003GDO-2eRP;
-	Fri, 05 Sep 2025 16:51:59 +0000
-Message-ID: <00378f4c-ac64-459d-a990-6246a29c0ced@infradead.org>
-Date: Fri, 5 Sep 2025 09:51:59 -0700
+	s=arc-20240116; t=1757091268; c=relaxed/simple;
+	bh=Iz8mTq/GEt9A4ZHGarw24hhU9Mlb6/EwBsMoab+mPtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GgW51QQysqJ2ehjZ5ZMNa31Qu8EmsNw28rKWh/tY2ljph/Uf6cgdJe5L49t0ml4AdR7ibI73apwytHZ0iFn9zqoupE2mdDG9sGxXOosJfodW+Z5N/ed5ZCOYp3jDWVK3yKgALzVbpdxKeUWKtSwYbzwVpc+Frn904g+xxLN1sag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OICIoC7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5E4C4CEF1;
+	Fri,  5 Sep 2025 16:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757091268;
+	bh=Iz8mTq/GEt9A4ZHGarw24hhU9Mlb6/EwBsMoab+mPtk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OICIoC7/LLKx9fTTyxBxRcGy4DbUKkKVichVDNEOiapVC4hlwFdwbzVpx3HaZIScj
+	 LAN12dddrAPyuDATCQpXKBcBwOs6DGvCsPOdl3A1mVq3uVaIA/LQ6Zeo6llPEaVNOP
+	 42E286+2qeHqhaE8QZ2lvMQpwjZHGGa4AuzVHULiUBaDPoJazjPZ8CHXq8WsV1nyPc
+	 iWDsoHrd/R6sVt+aYYdab8MJOzuo8OR5CRayL3P5HpHwAm9c8vEtSnZQX1h/fOE58o
+	 7CNKIqS5XTp/9h9AGrP7+zDOSDJVYj/g8gRFQrqgHwvG744dhAUcMUevtbuNHIWAWZ
+	 W4OcFT6Sd0t7A==
+Date: Fri, 5 Sep 2025 11:54:26 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Devendra K Verma <devendra.verma@amd.com>
+Cc: bhelgaas@google.com, mani@kernel.org, vkoul@kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com
+Subject: Re: [PATCH 1/2] dmaengine: dw-edma: Add AMD MDB Endpoint Support
+Message-ID: <20250905165426.GA1307227@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: KVM: Add reference specs for PIT and LAPIC
- ioctls
-To: Jiaming Zhang <r772577952@gmail.com>, pbonzini@redhat.com,
- seanjc@google.com, corbet@lwn.net, kvm@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CANypQFZKnwafAFm2v5S_kbgr=p0UBBsmcSVsE2r65cayObaoiA@mail.gmail.com>
- <20250905075115.779749-1-r772577952@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250905075115.779749-1-r772577952@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905101659.95700-2-devendra.verma@amd.com>
 
-Hi,
-
-On 9/5/25 12:51 AM, Jiaming Zhang wrote:
-> The behavior of KVM_SET_PIT2 and KVM_SET_LAPIC conforms to their
-> respective hardware specifications. Add references to the Intel 8254
-> PIT datasheet and the Software Developer's Manual (SDM)  to ensure
-> users can rely on the official datasheets for behavioral details.
+On Fri, Sep 05, 2025 at 03:46:58PM +0530, Devendra K Verma wrote:
+> AMD MDB PCIe endpoint support. For AMD specific support
+> added the following
+>   - AMD supported PCIe Device IDs and Vendor ID (Xilinx).
+>   - AMD MDB specific driver data
+>   - AMD MDB specific VSEC capability to retrieve the device DDR
+>     base address.
 > 
-> Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+> Signed-off-by: Devendra K Verma <devendra.verma@amd.com>
 > ---
->  Documentation/virt/kvm/api.rst | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  drivers/dma/dw-edma/dw-edma-pcie.c | 83 +++++++++++++++++++++++++++++++++++++-
+>  include/linux/pci_ids.h            |  1 +
+>  2 files changed, 82 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 6aa40ee05a4a..d21494aa7dc2 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -2083,6 +2083,11 @@ The format of the APIC ID register (bytes 32-35 of struct kvm_lapic_state's
->  regs field) depends on the state of the KVM_CAP_X2APIC_API capability.
->  See the note in KVM_GET_LAPIC.
+> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
+> index 3371e0a7..749067b 100644
+> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
+> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
+> @@ -18,10 +18,12 @@
+>  #include "dw-edma-core.h"
 >  
-> +.. Tip::
-> +  ``KVM_SET_LAPIC`` ioctl strictly adheres to Intel® 64 and IA-32 Architectures
-> +  Software Developer's Manual (SDM). Refer volume 3A of the `Intel SDM <https://
-
-                                        Refer to volume 3A of the Intel SDM
-
-> +  www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html>`_.
-
-Please put the full URL on one line -- don't split it on 2 lines.
-
+>  #define DW_PCIE_VSEC_DMA_ID			0x6
+> +#define DW_PCIE_AMD_MDB_VSEC_ID			0x20
+>  #define DW_PCIE_VSEC_DMA_BAR			GENMASK(10, 8)
+>  #define DW_PCIE_VSEC_DMA_MAP			GENMASK(2, 0)
+>  #define DW_PCIE_VSEC_DMA_WR_CH			GENMASK(9, 0)
+>  #define DW_PCIE_VSEC_DMA_RD_CH			GENMASK(25, 16)
+> +#define DW_PCIE_AMD_MDB_INVALID_ADDR		(~0ULL)
+>  
+>  #define DW_BLOCK(a, b, c) \
+>  	{ \
+> @@ -50,6 +52,7 @@ struct dw_edma_pcie_data {
+>  	u8				irqs;
+>  	u16				wr_ch_cnt;
+>  	u16				rd_ch_cnt;
+> +	u64				phys_addr;
+>  };
+>  
+>  static const struct dw_edma_pcie_data snps_edda_data = {
+> @@ -90,6 +93,44 @@ struct dw_edma_pcie_data {
+>  	.rd_ch_cnt			= 2,
+>  };
+>  
+> +static const struct dw_edma_pcie_data amd_mdb_data = {
+> +	/* MDB registers location */
+> +	.rg.bar				= BAR_0,
+> +	.rg.off				= 0x00001000,	/*  4 Kbytes */
+> +	.rg.sz				= 0x00002000,	/*  8 Kbytes */
+> +	/* MDB memory linked list location */
+> +	.ll_wr = {
+> +		/* Channel 0 - BAR 2, offset 0 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00000000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 2 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00200000, 0x00000800)
+> +	},
+> +	.ll_rd = {
+> +		/* Channel 0 - BAR 2, offset 4 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00400000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 6 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00600000, 0x00000800)
+> +	},
+> +	/* MDB memory data location */
+> +	.dt_wr = {
+> +		/* Channel 0 - BAR 2, offset 8 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00800000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 9 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00900000, 0x00000800)
+> +	},
+> +	.dt_rd = {
+> +		/* Channel 0 - BAR 2, offset 10 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00a00000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 11 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00b00000, 0x00000800)
+> +	},
+> +	/* Other */
+> +	.mf				= EDMA_MF_HDMA_NATIVE,
+> +	.irqs				= 1,
+> +	.wr_ch_cnt			= 2,
+> +	.rd_ch_cnt			= 2,
+> +};
 > +
+>  static int dw_edma_pcie_irq_vector(struct device *dev, unsigned int nr)
+>  {
+>  	return pci_irq_vector(to_pci_dev(dev), nr);
+> @@ -120,9 +161,14 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
+>  	u32 val, map;
+>  	u16 vsec;
+>  	u64 off;
+> +	u16 vendor;
 >  
->  4.59 KVM_IOEVENTFD
->  ------------------
-> @@ -3075,6 +3080,14 @@ This IOCTL replaces the obsolete KVM_GET_PIT.
->  Sets the state of the in-kernel PIT model. Only valid after KVM_CREATE_PIT2.
->  See KVM_GET_PIT2 for details on struct kvm_pit_state2.
->  
-> +.. Tip::
+> -	vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+> -					DW_PCIE_VSEC_DMA_ID);
+> +	vendor = pdev->vendor;
+> +	if (vendor != PCI_VENDOR_ID_SYNOPSYS &&
+> +	    vendor != PCI_VENDOR_ID_XILINX)
+> +		return;
 > +
-> +  ``KVM_SET_PIT2`` ioctl strictly adheres to the spec of Intel 8254 PIT.
-> +  For example, a ``count`` value of 0 in ``struct kvm_pit_channel_state`` is
-> +  interpreted as 65536, which is the maximum count value. Refer `Intel
+> +	vsec = pci_find_vsec_capability(pdev, vendor, DW_PCIE_VSEC_DMA_ID);
 
-                                                             Refer to
+The vendor of a device assigns VSEC IDs and determines what each ID
+means, so the semantics of a VSEC Capability are determined by the
+tuple of (device Vendor ID, VSEC ID), where the Vendor ID is the value
+at 0x00 in config space.
 
-> +  8254 programmable interval timer <https://www.scs.stanford.edu/10wi-cs140/
-> +  pintos/specs/8254.pdf>`_.
+This code assumes that Synopsys and Xilinx agreed on the same VSEC ID
+(6) and semantics of that Capability.
 
-Put the full URL on one line, please.
+I assume you know this is true in this particular case, but it is not
+safe for in general because even if other vendors incorporate this
+same IP into their devices, they may choose different VSEC IDs because
+they may have already assigned the VSEC ID 6 for something else.
 
+So you should add a comment to the effect that "Synopsys and Xilinx
+happened to use the same VSEC ID and semantics.  This may vary for
+other vendors."
+
+The DVSEC Capability is a more generic solution to this problem.  The
+VSEC ID namespace is determined by the Vendor ID of the *device*.
+
+By contrast, the DVSEC ID namespace is determined by a Vendor ID in
+the DVSEC Capability itself, not by the Vendor ID of the device.
+
+So AMD could define a DVSEC ID, e.g., 6, and define the semantics of
+that DVSEC.  Then devices from *any* vendor could include a DVSEC
+Capability with (PCI_VENDOR_ID_AMD, 6), and generic code could look
+for that DVSEC independent of what is at 0x00 in config space.
+
+>  	if (!vsec)
+>  		return;
+>  
+> @@ -155,6 +201,27 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
+>  	off <<= 32;
+>  	off |= val;
+>  	pdata->rg.off = off;
 > +
->  This IOCTL replaces the obsolete KVM_SET_PIT.
->  
->  
-Thanks.
--- 
-~Randy
+> +	/* AMD specific VSEC capability */
+> +	if (vendor != PCI_VENDOR_ID_XILINX)
+> +		return;
+> +
+> +	vsec = pci_find_vsec_capability(pdev, vendor,
+> +					DW_PCIE_AMD_MDB_VSEC_ID);
 
+pci_find_vsec_capability() finds a Vendor-Specific Extended Capability
+defined by the vendor of the device (Xilinx in this case).
+
+pci_find_vsec_capability() already checks that dev->vendor matches the
+vendor argument so you don't need the "vendor != PCI_VENDOR_ID_XILINX"
+check above.
+
+DW_PCIE_AMD_MDB_VSEC_ID should include "XILINX" because this ID is in
+the namespace created by PCI_VENDOR_ID_XILINX, i.e., it's somewhere in
+the (PCI_VENDOR_ID_XILINX, x) space.
+
+This code should look something like this (you could add "MDB" or
+something if it makes sense):
+
+  #define PCI_VSEC_ID_XILINX_DMA_DATA               0x20
+
+  vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+                                  PCI_VSEC_ID_XILINX_DMA_DATA);
+
+> +	if (!vsec)
+> +		return;
+> +
+> +	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
+> +	if (PCI_VNDR_HEADER_ID(val) != 0x20 ||
+> +	    PCI_VNDR_HEADER_REV(val) != 0x1)
+> +		return;
+> +
+> +	pci_read_config_dword(pdev, vsec + 0xc, &val);
+> +	off = val;
+> +	pci_read_config_dword(pdev, vsec + 0x8, &val);
+> +	off <<= 32;
+> +	off |= val;
+> +	pdata->phys_addr = off;
+>  }
+>  
+>  static int dw_edma_pcie_probe(struct pci_dev *pdev,
+> @@ -179,6 +246,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	}
+>  
+>  	memcpy(vsec_data, pdata, sizeof(struct dw_edma_pcie_data));
+> +	vsec_data->phys_addr = DW_PCIE_AMD_MDB_INVALID_ADDR;
+>  
+>  	/*
+>  	 * Tries to find if exists a PCIe Vendor-Specific Extended Capability
+> @@ -186,6 +254,15 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	 */
+>  	dw_edma_pcie_get_vsec_dma_data(pdev, vsec_data);
+>  
+> +	if (pdev->vendor == PCI_VENDOR_ID_XILINX) {
+> +		/*
+> +		 * There is no valid address found for the LL memory
+> +		 * space on the device side.
+> +		 */
+> +		if (vsec_data->phys_addr == DW_PCIE_AMD_MDB_INVALID_ADDR)
+> +			return -EINVAL;
+> +	}
+> +
+>  	/* Mapping PCI BAR regions */
+>  	mask = BIT(vsec_data->rg.bar);
+>  	for (i = 0; i < vsec_data->wr_ch_cnt; i++) {
+> @@ -367,6 +444,8 @@ static void dw_edma_pcie_remove(struct pci_dev *pdev)
+>  
+>  static const struct pci_device_id dw_edma_pcie_id_table[] = {
+>  	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, &snps_edda_data) },
+> +	{ PCI_VDEVICE(XILINX, PCI_DEVICE_ID_AMD_MDB_B054),
+> +	  (kernel_ulong_t)&amd_mdb_data },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(pci, dw_edma_pcie_id_table);
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index 92ffc43..c15607d 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -636,6 +636,7 @@
+>  #define PCI_DEVICE_ID_AMD_HUDSON2_SMBUS		0x780b
+>  #define PCI_DEVICE_ID_AMD_HUDSON2_IDE		0x780c
+>  #define PCI_DEVICE_ID_AMD_KERNCZ_SMBUS  0x790b
+> +#define PCI_DEVICE_ID_AMD_MDB_B054	0xb054
+
+Unless PCI_DEVICE_ID_AMD_MDB_B054 is used in more than one driver,
+move the #define into the file that uses it.  See the note at the top
+of pci_ids.h.
 
