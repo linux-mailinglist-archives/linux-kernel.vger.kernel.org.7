@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-802723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60278B455FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73357B45604
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8C0D7B4F74
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5815B5C5E9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90AD341AC8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23133343D94;
 	Fri,  5 Sep 2025 11:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihMD5Uip"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gqzNFz1m"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D2D343D9B;
-	Fri,  5 Sep 2025 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D0B343217
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070845; cv=none; b=HPHiMJl6IUmcSPGODxU3/fnmteSKxnKuvP2P5j2VH6ynyihZ/yXTMcKFFC2EuRG93X9aPy6xBx4kixQwn01+iXNZMxxGcdoi2ZhjhSwz4kQTYL8K5GwA6LVpw5mJYNlxp4F7OtqjVomTOFjszmcVjfT/rCFfMBlgI7YPPA+P4Mc=
+	t=1757070844; cv=none; b=FmE5/77XKSQqA2ty6FjUN8uvBj29xBEnJqJNYRdwPJSR76CxHZNBenEIHRnp7Tzs6Is/iDPmSY1e+RLZ1ye1rPyUXBNOjWfkEltg3lLJb6wpG6MjH6UlCjCMVmrOYGcGKTALDI/7QNXq1w6RjWG6enEl9zaQNTbnEXp9rFSCodY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070845; c=relaxed/simple;
-	bh=kDpzhB/6Cz5cknkR7vg25nX23vQb619EzR6gJMWg0zE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4d/XtVdZlsYBRiTJij9Y3pMwb3keIrr1EZ2+BFhWXp/RcXx7Gg/6+RxkSR6nadUViG7y+dxDwoAD/wuD78VbCFvGcBiC6QKMzDyxbqXpu2GGA6QHGj48GzZSgv1ZDJfl5hjCkr1OPWfUSOyK3srLhafuYEvf+6KUY4q8J34FYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihMD5Uip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F34C4CEF1;
-	Fri,  5 Sep 2025 11:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757070844;
-	bh=kDpzhB/6Cz5cknkR7vg25nX23vQb619EzR6gJMWg0zE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihMD5UipqP42+z3YN+MrXn99n6Ycd3YsueOx6CaMNo+hdxO5RgsqI0SQxPdExPL3V
-	 BxsONFBqcXHbav7x1SkdqIDD48PmtLWsgPm58G0QlMiay/oaIVskT0KF8NuPaK9VFd
-	 /7wzkSZr/Kf5WRucMN8/UCNMZojnjOtaAmAF95Bjf8RmpqIT1ej5HygOv9JaajJW8G
-	 3sqfezMFb01ibM/+0hkAjFN8sRUuYHQxj5dBVnj+if/YJu29wWq859HwQBz6EYrcmA
-	 3EU4AmTwTsfLSifdqQkLCIzFzeBG/3X8Ze/ePLiEQWW6Tfu9V10hDtY4xQjiB241cI
-	 b5217/1pBB0Eg==
-Date: Fri, 5 Sep 2025 14:13:50 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 7/7] mm: update lazy_mmu documentation
-Message-ID: <aLrF7qi85tmHfWRf@kernel.org>
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
- <20250904125736.3918646-8-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1757070844; c=relaxed/simple;
+	bh=LvPr8ZjWkY5j+R/qUcEAtG1qh+P4cINY04MmTiG6eqg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EvmwPqw69HW9cN2OkeiKpwRHpLkgcY3W3TKNmrvc3G5dlqof0v0mTyNNNPixAwZOa720Yt3H6/7mi4c4yT/7nIdaOZfwPAuXijqyaCBiKVIp+cGx+jaFn5q/thLCAUHNghc4njCa0yBaL5XAFkVtNxOQsn3fQptQAD3PRi9Euj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gqzNFz1m; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e98a18faa35so2242108276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 04:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757070841; x=1757675641; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XohVMPelRMi1Z40i3tKGQQ26fQqgID8bfPjyJfPTGog=;
+        b=gqzNFz1mw/RyfOr8p+8dsnHybe2Xgi5MFxK7bkUScLF4P+GwroQv5LmqvHyDaOmA04
+         x45cU9xuqHeia30AWAyNX0AvgiT3EavB8GlcWcFiL8K+Gww/QqYG5RPQMUkdIgXz+BiN
+         LQE3hpB+eWz3H3xqHSB6/mQ5ago+9/8HNN/M5cpoKTJDlRFauEvUIp4aGO9cnHB9ajAu
+         6mzURfUCiwoLxOgA774AUPO61mPyQ+dXHIOzXDpr/LdgOHEkjKEOKXzXFYVAUEhfeJmB
+         z67XJGwS5UFf4KIT7otVBvEGejKkdMgknQOLlqUbwXDt+l9B5lOmiT2hlIBd5SC/ePKh
+         RxZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757070841; x=1757675641;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XohVMPelRMi1Z40i3tKGQQ26fQqgID8bfPjyJfPTGog=;
+        b=vSAZQM02jmol1btSSUesY3+T2/eMSPYkSXTq9xZ+4vhgFF4aAMe0+k5bEMuJd6PaS7
+         EkmdLineKVueWkqkYeQdy4av6j+4gwdybEuOSGvl7OFbVh1LoDR7Kl/7Ub8HQ2DoGVgw
+         NZQ5So+nLwAPzo51VAV3YX/Us4Vz1ueMU/Si54DKMxS9dA2zDzA63CleYWj4nOWqTQ/g
+         8wv8pfbtn7sONKpb9GRVrW9cduq5CT7rJ+2NZYwjgnUdAgJNsVHYoaVFbRcseOSXIBhy
+         fpEb+iqZZG/jUfGwL7cMfNZ/IZUQCwD3EJsWh+kJT0CgtEUzYDUiK9rmZKaqGX17PAzc
+         UYHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo94wF0iSsc0lnirmXwWDGgcZAdrQ9rfw2GfTVNC2qA4jOMcNRQJnRYkFPCNeWJJW+FP5vXwXWtUX/SPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEHjrCecbl4KC+XHuKzY2j7vgUOAazZ5GIMBccjlXsC34FPi+X
+	dqtgLKprqXd2v/KK86bDwy7OJWW8vRo+GTdcW14TLc6N6a0Rl3R9c4CZnkQZ++ANlOw=
+X-Gm-Gg: ASbGncsiLEGFBjij5xJAjfGKWXwcihsLy4cLgiSOycRiQmnItEqdPB5zNWkRc1PYMMS
+	mc+pgLotdqYLNVOF0s79o1uDJlXifSafXojhurYC47usKwrcwGXOvGSAJZYg6osZHWGBo4G7ST5
+	OQPHV5RGHnQrvvOF4LRIYcOFq+5e0Xn3rX1xvQn8ybo7+lW9v5FDf61aLwC7vo6vyM+fSvnMt0o
+	s++gX5UKwv6Qr/AakvmDKhYBSjy0jR1ZIBDyfjhVPAld+KfVchUq+lcGo9vPYria6NMQiEGcu7S
+	SkZlBgLOK+nHdR2TJ9+5gc4lHVE/VZPDqeQrhT4lHRCOPVSkJIuLSP9vUlCbWdgWAUW/Klerhgw
+	OgfgNE+K1mf6eE19bgV0FX81LT96j
+X-Google-Smtp-Source: AGHT+IFQGiEhr5yUMqGKD0P94jeQvBpJEYwhpNf7H1jqUT7KYojcKEb7y1jTd42pBM7o87Xc40g0jg==
+X-Received: by 2002:a05:6902:120a:b0:e96:c6da:5bcc with SMTP id 3f1490d57ef6-e98a5759523mr20552127276.1.1757070841316;
+        Fri, 05 Sep 2025 04:14:01 -0700 (PDT)
+Received: from [127.0.0.1] ([50.227.229.138])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbdf57266sm2999999276.14.2025.09.05.04.14.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 04:14:00 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250904161223.2600435-1-csander@purestorage.com>
+References: <20250904161223.2600435-1-csander@purestorage.com>
+Subject: Re: [PATCH v2] io_uring: remove WRITE_ONCE() in io_uring_create()
+Message-Id: <175707084052.356946.85147804002646222.b4-ty@kernel.dk>
+Date: Fri, 05 Sep 2025 05:14:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904125736.3918646-8-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On Thu, Sep 04, 2025 at 01:57:36PM +0100, Kevin Brodsky wrote:
-> We now support nested lazy_mmu sections on all architectures
-> implementing the API. Update the API comment accordingly.
+
+On Thu, 04 Sep 2025 10:12:22 -0600, Caleb Sander Mateos wrote:
+> There's no need to use WRITE_ONCE() to set ctx->submitter_task in
+> io_uring_create() since no other task can access the io_ring_ctx until a
+> file descriptor is associated with it. So use a normal assignment
+> instead of WRITE_ONCE().
 > 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> ---
->  include/linux/pgtable.h | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 6932c8e344ab..be0f059beb4d 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -228,8 +228,18 @@ static inline int pmd_dirty(pmd_t pmd)
->   * of the lazy mode. So the implementation must assume preemption may be enabled
->   * and cpu migration is possible; it must take steps to be robust against this.
->   * (In practice, for user PTE updates, the appropriate page table lock(s) are
-> - * held, but for kernel PTE updates, no lock is held). Nesting is not permitted
-> - * and the mode cannot be used in interrupt context.
-> + * held, but for kernel PTE updates, no lock is held). The mode cannot be used
-> + * in interrupt context.
-> + *
-> + * Calls may be nested: an arch_{enter,leave}_lazy_mmu_mode() pair may be called
-> + * while the lazy MMU mode has already been enabled. An implementation should
-> + * handle this using the state returned by enter() and taken by the matching
-> + * leave() call; the LAZY_MMU_{DEFAULT,NESTED} flags can be used to indicate
-> + * whether this enter/leave pair is nested inside another or not. (It is up to
-> + * the implementation to track whether the lazy MMU mode is enabled at any point
-> + * in time.) The expectation is that leave() will flush any batched state
-> + * unconditionally, but only leave the lazy MMU mode if the passed state is not
-> + * LAZY_MMU_NESTED.
->   */
->  #ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
->  typedef int lazy_mmu_state_t;
-> -- 
-> 2.47.0
 > 
 
+Applied, thanks!
+
+[1/1] io_uring: remove WRITE_ONCE() in io_uring_create()
+      (no commit info)
+
+Best regards,
 -- 
-Sincerely yours,
-Mike.
+Jens Axboe
+
+
+
 
