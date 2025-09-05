@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-802394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C213FB451E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8ABBB45204
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576275A0C87
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791A61892020
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198FC27CCE2;
-	Fri,  5 Sep 2025 08:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CF72FFDF6;
+	Fri,  5 Sep 2025 08:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm5LhzqF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VokOjQNR"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7A127F756;
-	Fri,  5 Sep 2025 08:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C85527144A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061827; cv=none; b=PtE/8dd8xQZJojIxCpC1fPxyZYFIPYtBWA23COqy7vIX/FaH/x3Uev7mDOS6DY019GUymmb+iOUQFl6eEbo3H09TefqH0apEze/i34FeHftiDFaxmTLum5aiiEzPYbWKxinLIuuoTQestJUEPhQGnNSW7UALvSf3SabOGS1yFRg=
+	t=1757062069; cv=none; b=MunwDRcnHVVGsV5qaKVgDlcbtrwHN3k7uVFVN9N/la1hzWyAoB7GELr9xjAUewqzbXD7PHnMnvEJNXrOBb2/n0J03Pyn+KYhXw744xehQTOsPDzMDsFdU0QfFYk1IB4BGDrILFQBBchtCTLHBANzLdSEMR3zICiBYibjrBPjj2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061827; c=relaxed/simple;
-	bh=oEwTWadZNkJA3jji4rn9QqpCSfJM+iGAZQK5tLETGYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ON8VR7vgwbbIBSXCz0gmNleAWPMGwOCx6GiO5w6mfDKs9ERmpEaxJqoT3L7OTO4uWZu5tcgWYVI++3COjeyi1ZDEjBZx38aSO+LKSjdZigQ7ACG35+vi2jamgsIWFMRXoGRXmMPAeQ4vfFAyh2fI+31M5z+1NI+N4TX5JOO6uZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm5LhzqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F77C4CEF1;
-	Fri,  5 Sep 2025 08:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757061826;
-	bh=oEwTWadZNkJA3jji4rn9QqpCSfJM+iGAZQK5tLETGYY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wm5LhzqFKLlDiWm86N6Qv5ZBplEUa/ExXAJaHqbEeIkcSWBVQVg2Mjr9u6XkejaLH
-	 /zwCqptHSQAYqM3d00UGf7jRLB8a9PZJReoLI62nu5W3wSnWFfB53QRe2YbtnMbkvQ
-	 3viNVr4hZJA2t5ePmZm7vN6Kapy3fkEaBwOkEMCyCYayPys/mINcom2rXYj/pzTnja
-	 LtYB1PCgMKAeY7sKXSYxtGbHmPtLmZg4pjbiyqeBnF4LlNaHE3JOgOWF0wkmxdE37X
-	 GxAuyW2pxftWtd69lNlUrfACsvo0qr0yEoArdQcKLft/SYOlCVt3YPbUCh5TMWz3bp
-	 /Bnqes8RUqiUQ==
-Message-ID: <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
-Date: Fri, 5 Sep 2025 10:43:41 +0200
+	s=arc-20240116; t=1757062069; c=relaxed/simple;
+	bh=fOZPrfeirJR+JDRPn+8B9LZz7+N94QcXaMJ5P19eoWc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=RIQ0lJAkACwSGQ6/PlzUaUUIeGu7Hn1Rb+rGbQgvRboPiXsokf4lilqZwfb7XCVnW3TXmHrTRpCVd3isFiPTrNw/pTrSbhNtUTQcXYT9BVqZLN7deLQMZf6MJHUESRtsmixfr7xIDGVG7LfZUWWwFGAVtG0yfSiEtrDHGbae/WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VokOjQNR; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250905084744epoutp03b7bfb7bbe0735558761bc13dfa2f4b78~iVqNVdLw-0475604756epoutp03X
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:47:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250905084744epoutp03b7bfb7bbe0735558761bc13dfa2f4b78~iVqNVdLw-0475604756epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757062064;
+	bh=mGHoIy1u5YwF44RSJWPpqSfDEUJvtheqWLknK2zHyFU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=VokOjQNRa8qIcm/dtJHJLnFz4cy+2SXpSsrUeiIjUgZb52kFbUykbkZSNSPzbAbpK
+	 JskakR2E3dhwPWqjxKeaJ7obpfG0rmiJLZoVzkCT6YyyodrgQJeq8uqzTMY0Z4Ywax
+	 4WlxLolGlOritOGvJtNx2tTBdqjH62OcyBmCan/A=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250905084743epcas2p1209d3973b38799f3420a2824b3332e6b~iVqM0BAPM2283222832epcas2p11;
+	Fri,  5 Sep 2025 08:47:43 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cJ8zC2rZ7z6B9mB; Fri,  5 Sep
+	2025 08:44:23 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250905084422epcas2p3adcac9df0246c693fccd56c6321633a0~iVnRzknAo1169711697epcas2p3z;
+	Fri,  5 Sep 2025 08:44:22 +0000 (GMT)
+Received: from KORCO115296 (unknown [12.36.150.221]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250905084422epsmtip1c3a98abb7296146ebad52327dc761bfb~iVnRuW2Wo1642316423epsmtip1R;
+	Fri,  5 Sep 2025 08:44:22 +0000 (GMT)
+From: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: "'Bartlomiej Zolnierkiewicz'" <bzolnier@gmail.com>, "'Rafael J .
+ Wysocki'" <rafael@kernel.org>, "'Daniel Lezcano'"
+	<daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>, "'Lukasz
+ Luba'" <lukasz.luba@arm.com>, "'Rob Herring'" <robh@kernel.org>, "'Conor
+ Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+	<linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20250904-chocolate-kangaroo-of-order-2cced3@kuoka>
+Subject: RE: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
+ sensor-index-ranges properties
+Date: Fri, 5 Sep 2025 17:44:22 +0900
+Message-ID: <022001dc1e41$46f7ba60$d4e72f20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/1] Bluetooth: mediatek: add gpio pin to reset bt
-To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
- Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
- Hao Qin <Hao.qin@mediatek.com>,
- linux-bluetooth <linux-bluetooth@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-mediatek <linux-mediatek@lists.infradead.org>
-References: <20250905084059.26959-1-ot_zhangchao.zhang@mediatek.com>
- <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQJcDpuT0zWDya8nliyk6vzs/32vBQIURjbqAvLO/ccDYiYaWLNA+7WQ
+Content-Language: ko
+X-CMS-MailID: 20250905084422epcas2p3adcac9df0246c693fccd56c6321633a0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91
+References: <20250903073634.1898865-1-shin.son@samsung.com>
+	<CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
+	<20250903073634.1898865-2-shin.son@samsung.com>
+	<20250904-chocolate-kangaroo-of-order-2cced3@kuoka>
 
-On 05/09/2025 10:40, Zhangchao Zhang wrote:
-> Makes the platform Bluetooth to be reset by hardware pin,
-> it provides two methods to do it for mediatek controller,
-> and it has been tested locally many times and can reset normally.
-> 
-> When an exception occurs, resetting Bluetooth by hardware pin
-> is more stable than resetting Bluetooth by software.
-> If the corresponding pin is not found in dts,
-> bluetooth can also be reset successfully.
-> 
-> Co-developed: Hao Qin <hao.qin@mediatek.com>
-> Co-developed: Chris Lu <chris.lu@mediatek.com>
-> Co-developed: Jiande Lu <jiande.lu@mediatek.com>
-> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> ---
->  drivers/bluetooth/btmtk.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index 4390fd571dbd..29d6a93f255d 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -6,6 +6,8 @@
->  #include <linux/firmware.h>
->  #include <linux/usb.h>
->  #include <linux/iopoll.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/of.h>
->  #include <linux/unaligned.h>
->  
->  #include <net/bluetooth/bluetooth.h>
-> @@ -359,11 +361,41 @@ int btmtk_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
->  }
->  EXPORT_SYMBOL_GPL(btmtk_set_bdaddr);
->  
-> +static int btmtk_hw_gpio_reset(struct hci_dev *hdev, struct btmtk_data *reset_work)
-> +{
-> +	struct gpio_desc *reset_gpio;
-> +
-> +	/* Find device node*/
-> +	hdev->dev.of_node = of_find_compatible_node(NULL, NULL, "mediatek,mt7925-bluetooth");
+Hello Krzysztof Kozlowski,
 
-Nothing improved.
+> -----Original Message-----
+> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
+> Sent: Thursday, September 4, 2025 5:00 PM
+> To: Shin Son <shin.son=40samsung.com>
+> Cc: Bartlomiej Zolnierkiewicz <bzolnier=40gmail.com>; Rafael J . Wysocki
+> <rafael=40kernel.org>; Daniel Lezcano <daniel.lezcano=40linaro.org>; Zhan=
+g Rui
+> <rui.zhang=40intel.com>; Lukasz Luba <lukasz.luba=40arm.com>; Rob Herring
+> <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>; Alim Akhtar
+> <alim.akhtar=40samsung.com>; linux-pm=40vger.kernel.org; linux-samsung-
+> soc=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH v2 1/3=5D dt-bindings: thermal: samsung: Add tmu-na=
+me
+> and sensor-index-ranges properties
+>=20
+> On Wed, Sep 03, 2025 at 04:36:32PM +0900, Shin Son wrote:
+> > The exynosautov920 TMU requires per-sensor interrupt enablement for
+> > its critical trip points.
+> > Add a DT property to the Samsung thermal bindings to support this
+> > requirement:
+>=20
+> That's pretty redundant sentence.
 
-You just keep ignoring comments.
+I'll remove this sentence.
 
-NAK
+> >
+> > - **samsung,hw-sensor-indices**: Defines the sensors currently
+> >                                  mapped to the TMU hardware.
+> > 				 Indices not listed are absent or fused off
+>=20
+> Don't write here any code, but concise prose dxescribing hardware.
+>=20
+> If sensors are fused out, you certainly can read their status from efuse,
+> no?
 
-Best regards,
-Krzysztof
+=22fused out=22 was a wrong expression =E2=80=94=20sensors=20are=20not=20in=
+dicated=20in=20any=20register.=20Sorry=20for=20the=20confusion.=0D=0AThe=20=
+hardware=20does=20not=20provide=20a=20bitmask=20of=20present=20sensors.=0D=
+=0ATherefore,=20the=20DT=20must=20explicitly=20list=20which=20indices=20bel=
+ong=20to=20this=20TMU=20instance.=0D=0A=0D=0AAdditionally,=20I'll=20rephras=
+e=20this=20sentence=20to=20clearly=20describe=20the=20TMU=20hardware=20only=
+.=0D=0A=0D=0A>=20=0D=0A>=20This=20is=20really=20vague=20description=20of=20=
+hardware.=20I=20don't=20understand=20why=20you=0D=0A>=20are=20changing=20se=
+nsor-cells,=20why=20older=20variants=20of=20tmu=20gets=20now=20cells=3D1=0D=
+=0A>=20(missing=20constraints?).=0D=0A>=20=0D=0A>=20Why=20older=20variants=
+=20also=20get=20that=20property=20for=20sensors?=20It=20does=20not=20make=
+=0D=0A>=20sense=20there,=20because=20they=20have=20one-to-one=20mapping=20b=
+etween=20TMU=20and=20sensor.=0D=0A=0D=0AOlder=20variants=20should=20be=20fi=
+xed=20to=200,=0D=0Abut=20my=20patch=20mistakenly=20opened=20it=20with=20an=
+=20enum=20so=20that=201=20was=20also=20allowed=20there,=20I'll=20fix=20this=
+.=0D=0AI'll=20also=20restrict=20the=20sensor=20indices=20property=20to=20v9=
+20=20only.=0D=0A=0D=0A>=20=0D=0A>=20>=0D=0A>=20>=20Additionally,=20add=20my=
+self=20to=20the=20bindings'=20maintainers=20list,=20as=20I=20plan=0D=0A>=20=
+>=20to=20actively=20work=20on=20the=20exynosautov920=20TMU=20support=20and=
+=20handle=20further=0D=0A>=20>=20updates=20in=20this=20area.=0D=0A>=20>=0D=
+=0A>=20>=20Signed-off-by:=20Shin=20Son=20<shin.son=40samsung.com>=0D=0A>=20=
+>=20---=0D=0A>=20>=20=20.../bindings/thermal/samsung,exynos-thermal.yaml=20=
+=7C=2016=0D=0A>=20>=20+++++++++++++++-=0D=0A>=20>=20=201=20file=20changed,=
+=2015=20insertions(+),=201=20deletion(-)=0D=0A>=20>=0D=0A>=20>=20diff=20--g=
+it=0D=0A>=20>=20a/Documentation/devicetree/bindings/thermal/samsung,exynos-=
+thermal.yam=0D=0A>=20>=20l=0D=0A>=20>=20b/Documentation/devicetree/bindings=
+/thermal/samsung,exynos-thermal.yam=0D=0A>=20>=20l=20index=2029a08b0729ee..=
+abd89902d33a=20100644=0D=0A>=20>=20---=0D=0A>=20>=20a/Documentation/devicet=
+ree/bindings/thermal/samsung,exynos-thermal.yam=0D=0A>=20>=20l=0D=0A>=20>=
+=20+++=20b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal=
+=0D=0A>=20>=20+++=20.yaml=0D=0A>=20>=20=40=40=20-8,6=20+8,7=20=40=40=20titl=
+e:=20Samsung=20Exynos=20SoC=20Thermal=20Management=20Unit=0D=0A>=20>=20(TMU=
+)=0D=0A>=20>=0D=0A>=20>=20=20maintainers:=0D=0A>=20>=20=20=20=20-=20Krzyszt=
+of=20Kozlowski=20<krzk=40kernel.org>=0D=0A>=20>=20+=20=20-=20Shin=20Son=20<=
+shin.son=40samsung.com>=0D=0A>=20>=0D=0A>=20>=20=20description:=20=7C=0D=0A=
+>=20>=20=20=20=20For=20multi-instance=20tmu=20each=20instance=20should=20ha=
+ve=20an=20alias=20correctly=0D=0A>=20>=20numbered=20=40=40=20-27,6=20+28,7=
+=20=40=40=20properties:=0D=0A>=20>=20=20=20=20=20=20=20=20-=20samsung,exyno=
+s5420-tmu-ext-triminfo=0D=0A>=20>=20=20=20=20=20=20=20=20-=20samsung,exynos=
+5433-tmu=0D=0A>=20>=20=20=20=20=20=20=20=20-=20samsung,exynos7-tmu=0D=0A>=
+=20>=20+=20=20=20=20=20=20-=20samsung,exynosautov920-tmu=0D=0A>=20>=0D=0A>=
+=20>=20=20=20=20clocks:=0D=0A>=20>=20=20=20=20=20=20minItems:=201=0D=0A>=20=
+>=20=40=40=20-62,11=20+64,22=20=40=40=20properties:=0D=0A>=20>=20=20=20=20=
+=20=20minItems:=201=0D=0A>=20>=0D=0A>=20>=20=20=20=20'=23thermal-sensor-cel=
+ls':=0D=0A>=20>=20-=20=20=20=20const:=200=0D=0A>=20>=20+=20=20=20=20enum:=
+=0D=0A>=20>=20+=20=20=20=20=20=20-=200=0D=0A>=20>=20+=20=20=20=20=20=20-=20=
+1=0D=0A>=20>=0D=0A>=20>=20=20=20=20vtmu-supply:=0D=0A>=20>=20=20=20=20=20=
+=20description:=20The=20regulator=20node=20supplying=20voltage=20to=20TMU.=
+=0D=0A>=20>=0D=0A>=20>=20+=20=20samsung,hw-sensor-indices:=0D=0A>=20>=20+=
+=20=20=20=20description:=20=7C=0D=0A>=20=0D=0A>=20Drop=20=7C=0D=0A=0D=0AI'l=
+l=20drop=20this.=0D=0A=0D=0A>=20=0D=0A>=20>=20+=20=20=20=20=20=20List=20of=
+=20hardware=20sensor=20indices=20that=20are=20physically=20present=20and=0D=
+=0A>=20usable=0D=0A>=20>=20+=20=20=20=20=20=20in=20this=20TMU=20instance.=
+=20Indices=20not=20listed=20are=20either=20unmapped=20or=0D=0A>=20unused.=
+=0D=0A>=20>=20+=20=20=20=20=24ref:=20/schemas/types.yaml=23/definitions/uin=
+t32-array=0D=0A>=20>=20+=20=20=20=20minItems:=201=0D=0A>=20>=20+=20=20=20=
+=20maxItems:=2016=0D=0A>=20>=20+=20=20=20=20uniqueItems:=20true=0D=0A>=20=
+=0D=0A>=20Best=20regards,=0D=0A>=20Krzysztof=0D=0A=0D=0AThanks.=0D=0A=0D=0A=
+Best=20regards,=0D=0AShin=20Son=0D=0A=0D=0A
 
