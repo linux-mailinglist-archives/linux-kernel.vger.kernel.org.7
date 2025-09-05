@@ -1,280 +1,169 @@
-Return-Path: <linux-kernel+bounces-803054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B1EB459F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC8DB45A00
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2BF5A85EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C123BBCA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7AF2116E7;
-	Fri,  5 Sep 2025 14:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA46935E4FA;
+	Fri,  5 Sep 2025 14:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLe9MdJC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIZcQgY/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE114D599;
-	Fri,  5 Sep 2025 14:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5431D618A;
+	Fri,  5 Sep 2025 14:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080865; cv=none; b=hZxtJ/E+1vtjc1QG6I/2DxVKP8ZflzCcZCaCUuicechpRhjNXJLmKs9Wr5cS4bBPMa+omh3u1M47IcyrQcNRKUW5nwnUHYJFta2qSarEh99oZ4P4GpJ3rSgnBycW5pNWmuzS+FgwJvtxjYbFr8IJTVeA/GwS4ZnsQTCqYAF7rXk=
+	t=1757080947; cv=none; b=qncSgy06pbyZRkaRWJOYgeXimMC/nE50Hyg5pEdp2RAl+hGQh9BC1x57bax/yozzVxjBZ3rKGyNvUP81YLf5D07Pvk+l4XSvtKi6Y1RgljUaif6Fovv0CSvrGEYj8jSjZ1eqhs28VdmnbORks02HGpGsWtnPCbgZwVVhZGIoDlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080865; c=relaxed/simple;
-	bh=XJYeR1vMRPrhidXf4LWEzRXzk+3oKK02B8DIM7yIL0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OI7K8+7xn668Pg84z6+E1xSjjKPYrVSB2x8rqkYDDkkj7GRc4kxn3KkI3jQPucON3K5gvFU8CbMAtvsrKpnmgtCMukMP32y71GMxrBcosZkwBHLfRXjRkF3dssVrn9WXqwO8kjHF13WDNSxvncKdnXFtYWBP9vhESWSzfatgmBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLe9MdJC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2CAC4CEF1;
-	Fri,  5 Sep 2025 14:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757080865;
-	bh=XJYeR1vMRPrhidXf4LWEzRXzk+3oKK02B8DIM7yIL0g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fLe9MdJC25o6uCUtbKqbiA2ZwS+Ha6/0k1EInFOUjg8eARkP8fCTQ23psp890tNYw
-	 b9GonNquH0DdfBsCcwIIIAfLSwggTbJy8NsWt5w0wVCDUhmL6gNM5gsVbv4YhLbZjs
-	 OU3SIO6gUQZuwGFtvZbEMrwOQ5neWys4tH1pfo6zHJP6B8WOE7kG0SJfy4Wn6zHp/q
-	 En8hAiZB9QKHX+bSwjWoWOcz4yVfWNW2AlhAeEVEEXGpbboiKf/0Av8Dwxnktt5ETT
-	 b0u9/+e0JMkatiDI5N5L1hg+Kofvnuj4/AgPaGLHtKp3IRvjpypWXXpq1aH+80d5Yt
-	 Ghj6CP71WiquA==
-From: Benno Lossin <lossin@kernel.org>
-To: Benno Lossin <lossin@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Alban Kurti <kurti@invicto.ai>
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: pin-init: add references to previously initialized fields
-Date: Fri,  5 Sep 2025 16:00:46 +0200
-Message-ID: <20250905140047.3325945-1-lossin@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757080947; c=relaxed/simple;
+	bh=p7SNkxBMDceyrMBtDVw3FbEQeKmi497N1GJZiGp7K9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oc316BLdvNCXfmE+b5o0VJJENgMJ05/sAXsHqDAIp3lEBwQm0FP0w25FSbIsNgbCOk0mOsoR12VTysa+8FkDKMdLbAMkZUU5+LCJKJKT27uRXdcahS0sBvFRpwnKeUOx9sxDfL2NBComrnxJgWuzFkFGqya0KkpTyyPyLRx1/Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIZcQgY/; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757080946; x=1788616946;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=p7SNkxBMDceyrMBtDVw3FbEQeKmi497N1GJZiGp7K9k=;
+  b=CIZcQgY/UgTrpQDy7tvqE7qRdj7EkebKTSYpSElU+ramiHAxVofjivR1
+   4XdF0w8VyMGHSvy+iRSMggwaM1t7rgY2gGuaiBvXXtuQsbzV20EA44Emf
+   8GYTefXRFmes0i6vMR1c+bpF1y6BdRM/7lbqasIFwN0mpIo3A5s8FpK8B
+   9gpXc1ZHJAOW6UFs8Dqlee0mZHMJarvBJNiNw4JwYFt0xNlANFNjiUebT
+   6uMeqwfN+GH7gJJeSU/AttVW+CQGtZoabA+hqW/hM7/a0PGFXrlAw0AJO
+   3uyy9RdSFEVAZz36r7FzIKXZz3WkudQdh4TmPDBNFSaO1BGW4DKXTt7nt
+   A==;
+X-CSE-ConnectionGUID: i4KiG2UOQceQaajlYYW2gg==
+X-CSE-MsgGUID: xojMqzQCS5ynXaeHcwlpjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="70046424"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="70046424"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 07:02:25 -0700
+X-CSE-ConnectionGUID: 7tJWMnQ6TUWYlbJDxGoMTg==
+X-CSE-MsgGUID: FiViECbySquhBvzeXiGqtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="195826206"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 05 Sep 2025 07:02:21 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuX19-0000Tv-05;
+	Fri, 05 Sep 2025 14:02:19 +0000
+Date: Fri, 5 Sep 2025 22:01:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: alistair23@gmail.com, chuck.lever@oracle.com, hare@kernel.org,
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kbusch@kernel.org, axboe@kernel.dk,
+	hch@lst.de, sagi@grimberg.me, kch@nvidia.com, alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
+Message-ID: <202509052153.luapQMZm-lkp@intel.com>
+References: <20250905024659.811386-8-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905024659.811386-8-alistair.francis@wdc.com>
 
-After initializing a field in an initializer macro, create a variable
-holding a reference that points at that field. The type is either
-`Pin<&mut T>` or `&mut T` depending on the field's structural pinning
-kind.
+Hi,
 
-Link: https://github.com/Rust-for-Linux/pin-init/pull/83/commits/0f658594c39398f58cd5cb99a8141e370e225e74
-Signed-off-by: Benno Lossin <lossin@kernel.org>
----
- rust/pin-init/src/macros.rs | 149 ++++++++++++++++++++++++++++--------
- 1 file changed, 115 insertions(+), 34 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/rust/pin-init/src/macros.rs b/rust/pin-init/src/macros.rs
-index 9ced630737b8..1100c5a0b3de 100644
---- a/rust/pin-init/src/macros.rs
-+++ b/rust/pin-init/src/macros.rs
-@@ -988,38 +988,56 @@ fn drop(&mut self) {
-         @pinned($($(#[$($p_attr:tt)*])* $pvis:vis $p_field:ident : $p_type:ty),* $(,)?),
-         @not_pinned($($(#[$($attr:tt)*])* $fvis:vis $field:ident : $type:ty),* $(,)?),
-     ) => {
--        // For every field, we create a projection function according to its projection type. If a
--        // field is structurally pinned, then it must be initialized via `PinInit`, if it is not
--        // structurally pinned, then it can be initialized via `Init`.
--        //
--        // The functions are `unsafe` to prevent accidentally calling them.
--        #[allow(dead_code)]
--        #[expect(clippy::missing_safety_doc)]
--        impl<$($impl_generics)*> $pin_data<$($ty_generics)*>
--        where $($whr)*
--        {
--            $(
--                $(#[$($p_attr)*])*
--                $pvis unsafe fn $p_field<E>(
--                    self,
--                    slot: *mut $p_type,
--                    init: impl $crate::PinInit<$p_type, E>,
--                ) -> ::core::result::Result<(), E> {
--                    // SAFETY: TODO.
--                    unsafe { $crate::PinInit::__pinned_init(init, slot) }
--                }
--            )*
--            $(
--                $(#[$($attr)*])*
--                $fvis unsafe fn $field<E>(
--                    self,
--                    slot: *mut $type,
--                    init: impl $crate::Init<$type, E>,
--                ) -> ::core::result::Result<(), E> {
--                    // SAFETY: TODO.
--                    unsafe { $crate::Init::__init(init, slot) }
--                }
--            )*
-+        $crate::macros::paste! {
-+            // For every field, we create a projection function according to its projection type. If a
-+            // field is structurally pinned, then it must be initialized via `PinInit`, if it is not
-+            // structurally pinned, then it can be initialized via `Init`.
-+            //
-+            // The functions are `unsafe` to prevent accidentally calling them.
-+            #[allow(dead_code)]
-+            #[expect(clippy::missing_safety_doc)]
-+            impl<$($impl_generics)*> $pin_data<$($ty_generics)*>
-+            where $($whr)*
-+            {
-+                $(
-+                    $(#[$($p_attr)*])*
-+                    $pvis unsafe fn $p_field<E>(
-+                        self,
-+                        slot: *mut $p_type,
-+                        init: impl $crate::PinInit<$p_type, E>,
-+                    ) -> ::core::result::Result<(), E> {
-+                        // SAFETY: TODO.
-+                        unsafe { $crate::PinInit::__pinned_init(init, slot) }
-+                    }
-+
-+                    $(#[$($p_attr)*])*
-+                    $pvis unsafe fn [<__project_ $p_field>]<'__slot>(
-+                        self,
-+                        slot: &'__slot mut $p_type,
-+                    ) -> ::core::pin::Pin<&'__slot mut $p_type> {
-+                        ::core::pin::Pin::new_unchecked(slot)
-+                    }
-+                )*
-+                $(
-+                    $(#[$($attr)*])*
-+                    $fvis unsafe fn $field<E>(
-+                        self,
-+                        slot: *mut $type,
-+                        init: impl $crate::Init<$type, E>,
-+                    ) -> ::core::result::Result<(), E> {
-+                        // SAFETY: TODO.
-+                        unsafe { $crate::Init::__init(init, slot) }
-+                    }
-+
-+                    $(#[$($attr)*])*
-+                    $fvis unsafe fn [<__project_ $field>]<'__slot>(
-+                        self,
-+                        slot: &'__slot mut $type,
-+                    ) -> &'__slot mut $type {
-+                        slot
-+                    }
-+                )*
-+            }
-         }
-     };
- }
-@@ -1216,6 +1234,13 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         // return when an error/panic occurs.
-         // We also use the `data` to require the correct trait (`Init` or `PinInit`) for `$field`.
-         unsafe { $data.$field(::core::ptr::addr_of_mut!((*$slot).$field), init)? };
-+        // SAFETY:
-+        // - the project function does the correct field projection,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        #[allow(unused_variables)]
-+        let $field = $crate::macros::paste!(unsafe { $data.[< __project_ $field >](&mut (*$slot).$field) });
-+
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1247,6 +1272,14 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-         // SAFETY: `slot` is valid, because we are inside of an initializer closure, we
-         // return when an error/panic occurs.
-         unsafe { $crate::Init::__init(init, ::core::ptr::addr_of_mut!((*$slot).$field))? };
-+
-+        // SAFETY:
-+        // - the field is not structurally pinned, since the line above must compile,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        #[allow(unused_variables)]
-+        let $field = unsafe { &mut (*$slot).$field };
-+
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1265,7 +1298,48 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-             );
-         }
-     };
--    (init_slot($($use_data:ident)?):
-+    (init_slot(): // No `use_data`, so all fields are not structurally pinned
-+        @data($data:ident),
-+        @slot($slot:ident),
-+        @guards($($guards:ident,)*),
-+        // Init by-value.
-+        @munch_fields($field:ident $(: $val:expr)?, $($rest:tt)*),
-+    ) => {
-+        {
-+            $(let $field = $val;)?
-+            // Initialize the field.
-+            //
-+            // SAFETY: The memory at `slot` is uninitialized.
-+            unsafe { ::core::ptr::write(::core::ptr::addr_of_mut!((*$slot).$field), $field) };
-+        }
-+
-+        #[allow(unused_variables)]
-+        // SAFETY:
-+        // - the field is not structurally pinned, since no `use_data` was required to create this
-+        //   initializer,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        let $field = unsafe { &mut (*$slot).$field };
-+
-+        // Create the drop guard:
-+        //
-+        // We rely on macro hygiene to make it impossible for users to access this local variable.
-+        // We use `paste!` to create new hygiene for `$field`.
-+        $crate::macros::paste! {
-+            // SAFETY: We forget the guard later when initialization has succeeded.
-+            let [< __ $field _guard >] = unsafe {
-+                $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
-+            };
-+
-+            $crate::__init_internal!(init_slot():
-+                @data($data),
-+                @slot($slot),
-+                @guards([< __ $field _guard >], $($guards,)*),
-+                @munch_fields($($rest)*),
-+            );
-+        }
-+    };
-+    (init_slot($use_data:ident):
-         @data($data:ident),
-         @slot($slot:ident),
-         @guards($($guards:ident,)*),
-@@ -1279,6 +1353,13 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-             // SAFETY: The memory at `slot` is uninitialized.
-             unsafe { ::core::ptr::write(::core::ptr::addr_of_mut!((*$slot).$field), $field) };
-         }
-+        // SAFETY:
-+        // - the project function does the correct field projection,
-+        // - the field has been initialized,
-+        // - the reference is only valid until the end of the initializer.
-+        #[allow(unused_variables)]
-+        let $field = $crate::macros::paste!(unsafe { $data.[< __project_ $field >](&mut (*$slot).$field) });
-+
-         // Create the drop guard:
-         //
-         // We rely on macro hygiene to make it impossible for users to access this local variable.
-@@ -1289,7 +1370,7 @@ fn assert_zeroable<T: $crate::Zeroable>(_: *mut T) {}
-                 $crate::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
-             };
- 
--            $crate::__init_internal!(init_slot($($use_data)?):
-+            $crate::__init_internal!(init_slot($use_data):
-                 @data($data),
-                 @slot($slot),
-                 @guards([< __ $field _guard >], $($guards,)*),
+[auto build test WARNING on trondmy-nfs/linux-next]
+[also build test WARNING on net/main net-next/main linus/master v6.17-rc4 next-20250905]
+[cannot apply to linux-nvme/for-next horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+url:    https://github.com/intel-lab-lkp/linux/commits/alistair23-gmail-com/net-handshake-Store-the-key-serial-number-on-completion/20250905-105201
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20250905024659.811386-8-alistair.francis%40wdc.com
+patch subject: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
+config: s390-randconfig-001-20250905 (https://download.01.org/0day-ci/archive/20250905/202509052153.luapQMZm-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250905/202509052153.luapQMZm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509052153.luapQMZm-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/nvme/target/tcp.c: In function 'nvmet_tcp_tls_record_ok':
+>> drivers/nvme/target/tcp.c:1173:12: warning: unused variable 'htype' [-Wunused-variable]
+    1173 |  u8 ctype, htype, level, description;
+         |            ^~~~~
+   drivers/nvme/target/tcp.c: In function 'nvmet_tcp_io_work':
+   drivers/nvme/target/tcp.c:1479:5: error: implicit declaration of function 'update_tls_keys'; did you mean 'update_cr_regs'? [-Werror=implicit-function-declaration]
+    1479 |     update_tls_keys(queue);
+         |     ^~~~~~~~~~~~~~~
+         |     update_cr_regs
+   cc1: some warnings being treated as errors
+
+
+vim +/htype +1173 drivers/nvme/target/tcp.c
+
+  1168	
+  1169	static int nvmet_tcp_tls_record_ok(struct nvmet_tcp_queue *queue,
+  1170			struct msghdr *msg, char *cbuf)
+  1171	{
+  1172		struct cmsghdr *cmsg = (struct cmsghdr *)cbuf;
+> 1173		u8 ctype, htype, level, description;
+  1174		int ret = 0;
+  1175	
+  1176		ctype = tls_get_record_type(queue->sock->sk, cmsg);
+  1177		switch (ctype) {
+  1178		case 0:
+  1179			break;
+  1180		case TLS_RECORD_TYPE_DATA:
+  1181			break;
+  1182		case TLS_RECORD_TYPE_ALERT:
+  1183			tls_alert_recv(queue->sock->sk, msg, &level, &description);
+  1184			if (level == TLS_ALERT_LEVEL_FATAL) {
+  1185				pr_err("queue %d: TLS Alert desc %u\n",
+  1186				       queue->idx, description);
+  1187				ret = -ENOTCONN;
+  1188			} else {
+  1189				pr_warn("queue %d: TLS Alert desc %u\n",
+  1190				       queue->idx, description);
+  1191				ret = -EAGAIN;
+  1192			}
+  1193			break;
+  1194		case TLS_RECORD_TYPE_HANDSHAKE:
+  1195			ret = -EAGAIN;
+  1196			break;
+  1197		default:
+  1198			/* discard this record type */
+  1199			pr_err("queue %d: TLS record %d unhandled\n",
+  1200			       queue->idx, ctype);
+  1201			ret = -EAGAIN;
+  1202			break;
+  1203		}
+  1204		return ret;
+  1205	}
+  1206	
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
