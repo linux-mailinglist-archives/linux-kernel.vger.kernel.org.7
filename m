@@ -1,119 +1,286 @@
-Return-Path: <linux-kernel+bounces-803199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7436B45C04
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:14:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EFCB45C05
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B99817EEFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF01A4593E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9E131B828;
-	Fri,  5 Sep 2025 15:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3058831B815;
+	Fri,  5 Sep 2025 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8/t02kD"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Hs1PFDyL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433F31B827
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084982; cv=none; b=pOhIm6SlHHhKrq5PQT7c5jZvJ/i4VpQ/MmrzoKXkL7sLz6Zh0yRZFxqPQiOjI0er97tTYco4GE8icjSMK5keBW6cfZ1vTIBrTIab55cBv58YslKuoOS5sBgIgWIniRoKS1sroQCH7OZOBVmLMIYrhttP2bkqjbqqtivfTBauyWA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084982; c=relaxed/simple;
-	bh=dFdVomeaxD4LPhyoEmMyXlkg6qCcKVW87KQws4WwyuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kkIpkGuXCzyIjE31c4bSDgWL0ZQoftY4VK1nbg4z5knDqxs5MQ8HFQ0B7CRjkTru/Ggo84LZRHqLMt5wlGmqso3ZFpW4F05l7PuNd2znFQaRQU85Q4TyNEuhteG6sD+/JksSglXRmdgkgHIn4tlc79pVBQ2ImZFujSjqajPZyis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8/t02kD; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24cca557085so168995ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757084980; x=1757689780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dFdVomeaxD4LPhyoEmMyXlkg6qCcKVW87KQws4WwyuE=;
-        b=I8/t02kDYls1rrpwAmxAWi8JdyOA4wccts+YEjFZuyf0FJ/84NJzq1V5B+h3agBL9f
-         R5Xjpw9MNrNYzFmdYjQwQfoHm9F13dfHursuLcEOkazXJkOsDNdOutrTFpfsHAJaD7dg
-         N1C4cpKAVeuP079/xWoZuAOXagGIKuAk/V6sGZ1Qy98X1X3hpNMUoB6EDHc//YkS4U1S
-         yr4qx6RdNWouDWSTwtrUpU5E7/8S1aZ+2JLYUqLAt56BPbhyHOkaQhCFbZuQT7tx7eBn
-         QQ2vtqFUxwoD07rCA+a8/3oe/s+p6/bpep3L5M51vsQ0KAlZ9Y3/VaWlhiCI79YSCPZT
-         uLig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084980; x=1757689780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dFdVomeaxD4LPhyoEmMyXlkg6qCcKVW87KQws4WwyuE=;
-        b=uXDqshlOYlgvhEP6WVt/ZR5c1mCjEQbtZZWKkNsZulAPMowUpFkjlqvdfurdGyqxba
-         kooKu1x6VJZH9+gom689iACdfdPyJHorW9OVsXBOy0kLPnq4jCwYx+3SB0HYCl1x22/X
-         PovBTvWLcau2GllZ+X38w/Ios04QNrciKgxvXGGkRuD+iFFwJv9eoMGAKN4adNxcpLka
-         9yCGLPUoD+qNa1MRa0aja0uKW2v/ij6fiGphbLu524wmibTpmiGTTCTxfWmHUvKSOb6l
-         k0r1IYlGSUrctxO4GzLrlNHqEtuhESd0ofZARcDk6dr6lLakUCbL7NH/Vwen4mPdtlte
-         7Z3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVU/Hmo5ZGXTgv3hFdkixo2FJie3vJEO565E+PrckR5SDyi+pT4mDRTnWHNZv9reZ8ob6z4Qly7merdB90=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz06DWJwn8CVfAIgX3JiGFo2izvGCOIIzTURB1B7FeDPkbBIIQY
-	QF09TKw2axcE/0jeQxrm1O2HaLsZCNYp0fAD2WL6nGZjEys2eXz86hAy3y0jgU0/APO2FRhGjkw
-	olknLY+87ArHsnemFHFefDSPyHH9Buraa0u4n8fjh
-X-Gm-Gg: ASbGncvDiyxhFfuKpC3UQjTImGIcW3eYn7LaELQOF4+vGaTVYYhYU7agupjTf4Z7zDd
-	T0cqSZeWTum6ww6EZxwEwEQcQMYEqE7/COMJJew7m3tY5nbqTP32kOv88lZtN3NV9wY+CBoRiIy
-	YLNEzUUfXi19yxNbFgMrYjX7xyyZcha3s1H8oYtLDwtwRwWKAAReszLlTSVRX2g76mSUMj5DNkQ
-	F2kjeYJynIPV8xJsukmqpviI76IN1Dj
-X-Google-Smtp-Source: AGHT+IFigRlugHFu64XYH5E1HhI8NlSyNuAc3Xp90gTVTmK4u8CmaCMLRItGgVFLK1yt7YLP9pFW/NA0U37fFcFhCUQ=
-X-Received: by 2002:a17:903:2f85:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-24cf5c29233mr4503325ad.8.1757084979941; Fri, 05 Sep 2025
- 08:09:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C831B803;
+	Fri,  5 Sep 2025 15:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757085047; cv=pass; b=QHy9RSICMU+ctn1SkMXPcdxMvAFtNYYop51bPA9yD2tOMJyagIFWAQPc5DiYdgyv9p1PcVtuXJkNmxub9iAUva5/1U9rp077QtIbCQo6ArgwJzvBAT2CgnP5W1+RJAi0W18fWzAvQdyTEjS09ETBeANvJHHZMUGpYN8KmUOrR4M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757085047; c=relaxed/simple;
+	bh=Sg5QloBmNBhbgnhTi7CRgmMaIQs8iusLYYFnEzlWotU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=c43Sg0fojYqDYp9yHkYYgUImFkD4rk4d/OZ/dYpSih8ekpbB5rbNvXT5Ss35oOc5u9UKZU77BVfuwwy22sEE2w/TfQtwM50sBSce1rN3fcwRJihk93ezHhj4UjavebnzQ09N+ePi1VaWbZDS7CTIfvpmY3dNleV3+XTj6kHs3BY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Hs1PFDyL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757085004; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=muzTrFE0xFpqDKLtdyyFMZmWlc9glOkQ15V+K9e9MAr9MDD/IZ/cD1eFfq4EG5QzJ2EcvysfV2xSGw9d5zg6RLEW+XKtBbOkC8vntTFiyY8aWE+63zyHNpWR1mIHu6AQ5HXQzMnLiHvx4eO9ZB+3Zv9X29byEFCreyixzKUmHpo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757085004; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jbiMsBZ0PMAYhHiet9jWLejQpnmLCaVZIWGnKUvfBgw=; 
+	b=eKv1Mk+Pe/+yy+1iIYkaTCvIqzp6kY/+nC5+3a5THVb6BDEzW6fEzaUvvR/p5xmGPTucKgiqmLCD0vrBP2j6aQNhy6y0TA7nE5wLNSbA65ALGdewkOS5Xf4o49kqKQ78sEVrn07GHHLixs7JnPBgh6Nz1/arU0OWMnEVGmwTO4k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757085004;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=jbiMsBZ0PMAYhHiet9jWLejQpnmLCaVZIWGnKUvfBgw=;
+	b=Hs1PFDyLOgH2WIDI9i7X2cgb2TEegjw9O9CRWH22coFBO/5pul6A/xJY9DrTNJMx
+	UjiM3vZY9oGGpdf8CdH1vFvmYYSW8ez7gjJCGdCd0vrEeZXLd5TrSATwNIIQTppOHhN
+	TdapNNWVa08RV4mUmLaVYGsAZ+qLWy9UI3a9fUmI=
+Received: by mx.zohomail.com with SMTPS id 1757085001454158.55519036584815;
+	Fri, 5 Sep 2025 08:10:01 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <a40e660e-5a45-420a-8d37-51324242ab9b@kzalloc.com>
-In-Reply-To: <a40e660e-5a45-420a-8d37-51324242ab9b@kzalloc.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 5 Sep 2025 08:09:02 -0700
-X-Gm-Features: Ac12FXwsBG___TZgBCnwrUiXvtQzs6bTFvY2gqQx0WiC1kXwGKAPta7iWLhYPhc
-Message-ID: <CABCJKufSRmYnbjcwvhuGgC=xkyPgJyi7FMrAdDm3N0fun1cLAg@mail.gmail.com>
-Subject: Re: [Question] Non-usage of PKEY_ID_PGP and PKEY_ID_X509 in module signing
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Daniel Gomez <da.gomez@kernel.org>, 
-	"Sami Tolvanen <samitolvanen@google.com> David Howells" <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, linux-modules@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 13/14] rust: drm: gem: Add export() callback
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250829224116.477990-14-lyude@redhat.com>
+Date: Fri, 5 Sep 2025 12:09:42 -0300
+Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	"open list:DRM DRIVER FOR NVIDIA GPUS [RUST]" <nouveau@lists.freedesktop.org>,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linux-media"@vger.kernel.org (ope>),
+	"moderated list:DMA BUFFER SHARING  FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b <linaro-mm-sig"@lists.linaro.org (mod>)
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <D47EACDC-76CE-4D36-9564-210B390C9A82@collabora.com>
+References: <20250829224116.477990-1-lyude@redhat.com>
+ <20250829224116.477990-14-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-Hi,
 
-On Tue, Aug 26, 2025 at 11:58=E2=80=AFAM Yunseong Kim <ysk@kzalloc.com> wro=
-te:
->
-> Given that the module signature infrastructure seems hardcoded to use
-> PKCS#7, could anyone clarify if PKEY_ID_PGP and PKEY_ID_X509 are used
-> elsewhere in the kernel? Are they perhaps placeholders for future
-> implementations or remnants of past ones?
 
-If you search LKML archives, you'll find some past efforts to add PGP
-signing support at least. The patches never ended up being merged
-though. See the discussion here, for example:
+> On 29 Aug 2025, at 19:35, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> This introduces an optional export() callback for GEM objects, which =
+is
+> used to implement the drm_gem_object_funcs->export function.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> drivers/gpu/drm/nova/gem.rs  |  1 +
+> rust/kernel/drm/gem/mod.rs   | 72 +++++++++++++++++++++++++++++++++++-
+> rust/kernel/drm/gem/shmem.rs |  6 ++-
+> 3 files changed, 76 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
+> index 015cb56061a56..bbce6b0f4e6a4 100644
+> --- a/drivers/gpu/drm/nova/gem.rs
+> +++ b/drivers/gpu/drm/nova/gem.rs
+> @@ -16,6 +16,7 @@
+> #[pin_data]
+> pub(crate) struct NovaObject {}
+>=20
+> +#[vtable]
+> impl gem::DriverObject for NovaObject {
+>     type Driver =3D NovaDriver;
+>     type Object =3D gem::Object<Self>;
+> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+> index f9f9727f14e4a..1ac25fc6d527b 100644
+> --- a/rust/kernel/drm/gem/mod.rs
+> +++ b/rust/kernel/drm/gem/mod.rs
+> @@ -8,7 +8,7 @@
+>=20
+> use crate::{
+>     alloc::flags::*,
+> -    bindings,
+> +    bindings, dma_buf,
+>     drm::driver::{AllocImpl, AllocOps},
+>     drm::{self, private::Sealed},
+>     error::{to_result, Result},
+> @@ -45,6 +45,7 @@ fn as_ref(&self) -> =
+&kernel::drm::gem::OpaqueObject<D> {
+> pub(crate) use impl_as_opaque;
+>=20
+> /// GEM object functions, which must be implemented by drivers.
+> +#[vtable]
+> pub trait DriverObject: Sync + Send + Sized {
+>     /// Parent `Driver` for this object.
+>     type Driver: drm::Driver;
+> @@ -69,6 +70,11 @@ fn open(_obj: &Self::Object, _file: =
+&DriverFile<Self>) -> Result {
+>=20
+>     /// Close a handle to an existing object, associated with a File.
+>     fn close(_obj: &Self::Object, _file: &DriverFile<Self>) {}
+> +
+> +    /// Optional handle for exporting a gem object.
+> +    fn export(_obj: &Self::Object, _flags: u32) -> =
+Result<DmaBuf<Self::Object>> {
+> +        unimplemented!()
 
-https://lore.kernel.org/lkml/20220111180318.591029-1-roberto.sassu@huawei.c=
-om/
+Shouldn=E2=80=99t this be the vtable-specific build error?
 
-> If they are indeed unused and there are no plans to support them, would
-> a patch to clean up these unused enum values be welcome? Or is there
-> another reason for keeping them?
+> +    }
+> }
+>=20
+> /// Trait that represents a GEM object subtype
+> @@ -138,6 +144,21 @@ extern "C" fn close_callback<T: DriverObject>(
+>     T::close(obj, file);
+> }
+>=20
+> +extern "C" fn export_callback<T: DriverObject>(
+> +    raw_obj: *mut bindings::drm_gem_object,
+> +    flags: i32,
+> +) -> *mut bindings::dma_buf {
+> +    // SAFETY: `export_callback` is specified in the AllocOps =
+structure for `Object<T>`, ensuring
+> +    // that `raw_obj` is contained within a `Object<T>`.
+> +    let obj =3D unsafe { T::Object::from_raw(raw_obj) };
+> +
+> +    match T::export(obj, flags as u32) {
+> +        // DRM takes a hold of the reference
+> +        Ok(buf) =3D> buf.into_raw(),
+> +        Err(e) =3D> e.to_ptr(),
+> +    }
+> +}
+> +
+> impl<T: DriverObject> IntoGEMObject for Object<T> {
+>     fn as_raw(&self) -> *mut bindings::drm_gem_object {
+>         self.obj.get()
+> @@ -248,7 +269,11 @@ impl<T: DriverObject> Object<T> {
+>         open: Some(open_callback::<T>),
+>         close: Some(close_callback::<T>),
+>         print_info: None,
+> -        export: None,
+> +        export: if T::HAS_EXPORT {
+> +            Some(export_callback::<T>)
+> +        } else {
+> +            None
+> +        },
+>         pin: None,
+>         unpin: None,
+>         get_sg_table: None,
+> @@ -375,6 +400,49 @@ fn as_raw(&self) -> *mut bindings::drm_gem_object =
+{
+>=20
+> impl<D: drm::Driver> Sealed for OpaqueObject<D> {}
+>=20
+> +/// A [`dma_buf::DmaBuf`] which has been exported from a GEM object.
+> +///
+> +/// The [`dma_buf::DmaBuf`] will be released when this type is =
+dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `self.0` points to a valid initialized [`dma_buf::DmaBuf`] for =
+the lifetime of this object.
+> +/// - The GEM object from which this [`dma_buf::DmaBuf`] was exported =
+from is guaranteed to be of
+> +///   type `T`.
+> +pub struct DmaBuf<T: IntoGEMObject>(NonNull<dma_buf::DmaBuf>, =
+PhantomData<T>);
+> +
+> +impl<T: IntoGEMObject> Deref for DmaBuf<T> {
+> +    type Target =3D dma_buf::DmaBuf;
+> +
+> +    #[inline]
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: This pointer is guaranteed to be valid by our type =
+invariants.
+> +        unsafe { self.0.as_ref() }
 
-Perhaps the folks involved back then can chime in, but I'm fine with
-removing these. I'm not sure how likely it is, but if someone at some
-point makes a compelling case for supporting other key and signature
-types, I'm sure they can add back the constants too.
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> Drop for DmaBuf<T> {
+> +    #[inline]
+> +    fn drop(&mut self) {
+> +        // SAFETY:
+> +        // - `dma_buf::DmaBuf` is guaranteed to have an identical =
+layout to `struct dma_buf`
+> +        //   by its type invariants.
+> +        // - We hold the last reference to this `DmaBuf`, making it =
+safe to destroy.
 
-Sami
+How can we be sure of this?
+
+> +        unsafe { =
+bindings::drm_gem_dmabuf_release(self.0.cast().as_ptr()) }
+> +    }
+> +}
+> +
+> +impl<T: IntoGEMObject> DmaBuf<T> {
+> +    /// Leak the reference for this [`DmaBuf`] and return a raw =
+pointer to it.
+> +    #[inline]
+> +    pub(crate) fn into_raw(self) -> *mut bindings::dma_buf {
+
+Then this should perhaps be called leak()? At least if we=E2=80=99re =
+following the std nomenclature.
+
+> +        let dma_ptr =3D self.as_raw();
+> +
+> +        core::mem::forget(self);
+> +        dma_ptr
+> +    }
+> +}
+> +
+> pub(super) const fn create_fops() -> bindings::file_operations {
+>     // SAFETY: As by the type invariant, it is safe to initialize =
+`bindings::file_operations`
+>     // zeroed.
+> diff --git a/rust/kernel/drm/gem/shmem.rs =
+b/rust/kernel/drm/gem/shmem.rs
+> index 1437cda27a22c..b3a70e6001842 100644
+> --- a/rust/kernel/drm/gem/shmem.rs
+> +++ b/rust/kernel/drm/gem/shmem.rs
+> @@ -66,7 +66,11 @@ impl<T: DriverObject> Object<T> {
+>         open: Some(super::open_callback::<T>),
+>         close: Some(super::close_callback::<T>),
+>         print_info: Some(bindings::drm_gem_shmem_object_print_info),
+> -        export: None,
+> +        export: if T::HAS_EXPORT {
+> +            Some(super::export_callback::<T>)
+> +        } else {
+> +            None
+> +        },
+>         pin: Some(bindings::drm_gem_shmem_object_pin),
+>         unpin: Some(bindings::drm_gem_shmem_object_unpin),
+>         get_sg_table: =
+Some(bindings::drm_gem_shmem_object_get_sg_table),
+> --=20
+> 2.50.0
+>=20
+
 
