@@ -1,108 +1,73 @@
-Return-Path: <linux-kernel+bounces-802093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C607B44D8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B07B44D8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B7C1C221E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D099EA0689B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A685266591;
-	Fri,  5 Sep 2025 05:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17C4261596;
+	Fri,  5 Sep 2025 05:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWn/XXJ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvZL850A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828D51A23A9;
-	Fri,  5 Sep 2025 05:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC61EE7B7;
+	Fri,  5 Sep 2025 05:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757050251; cv=none; b=WtwyVpKPy7FwluZBYPT7Db1sQDbGNIOmuAzaxKHB9svsQxunGKzp3vQwIEDLSvfaRvV59BqW3sJXXYAS2xCFDJRX49j9shNbCo8ZH5IGc6cgCb89OPJw8+jdny76h1B6W2xBBYBfnAZKK2jMZ/OE0tar89uJhnhYUBZok94MMW0=
+	t=1757050278; cv=none; b=TMjZ9ka5GeqY5CapGnH6a/mjqOCKnhfG7G5nSBDYD6r4spZZ78CtmzUqTGf03QZ8isNAtfnKo5DNyfRZDFlGbs6JEvJ305UoUBYUOV/nwoj7gHbgCEV/v1WgPRDrdP5w8cKtU8OuHCpLA5qMob/nxcCKW4dxDHaZ3z2idZrMZ08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757050251; c=relaxed/simple;
-	bh=cbLNZDh3PTn7q6E4OQ+QN+0z7GabqhC5AvixloSfBOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UqRaW04TPLlSRqa5NZgQbAowzbg4TquPpPJYnY0KQVJjPA3P6jrgYghpDIGBhNN4myYhj8gaucVed6/Mxko1LjGmC7cnW/OQziv9Q7W2EonBgsAI7bGDN6MhWDyd/x/zirUztlnfvV1ubr3e8sTDZM4pPlLSBe0/lqnmTjCs0EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWn/XXJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A60C4CEF1;
-	Fri,  5 Sep 2025 05:30:49 +0000 (UTC)
+	s=arc-20240116; t=1757050278; c=relaxed/simple;
+	bh=B6p92QnrwLoUhy5ItBNmZqqaK+oJcT6N691xFQLsoXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWtPTekWO5H1EfWawMQRMP+yKZJxoIPQOZURRxx/MEscJQTc0cdSv2YTnb6OKB9/fDe7Q1201xnPaRWcTWzlxvvnVdliOmUUnkYbEYX+WCUBgWttEXlO4q1FrIrXjR8LKe7xTkqsMlvt2NbOakws+ymn2/82MBhQUwwYPAV9Tl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvZL850A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79655C4CEF1;
+	Fri,  5 Sep 2025 05:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757050251;
-	bh=cbLNZDh3PTn7q6E4OQ+QN+0z7GabqhC5AvixloSfBOw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MWn/XXJ+ofi0MQ6yNLOAOXyj0R0mJTamEQtYDYO3Rq805Q8XWzAoqlgfdxUdVINc+
-	 8ZJzdc5fvu6lucTJnI7xExC3GNZ/4Q2GZPg8aXAUFJ+wBmArdR+7QDPXVi8GqYjKre
-	 w8HETk4wIzk2BRpgX2yTV2CP0R+5UHpniDut0EWGNA9i12aAPnmc25TVcFupkyyMIv
-	 hJ0WrtWCkAkemIzf5tROqvSzKWZI9h17xRGf5FiVfmmaDqEgRyYPRZJFD7xB8tYSKy
-	 Lv9gBDntewXUM6wXywt4p2Vj+dfO5wd/YcnODeFS3SChYhA3EO2oqshNyLDQadmN5P
-	 naXijp2RR6Gmg==
-Message-ID: <82906e08-9583-4f4c-91ad-d5b53b2dffd6@kernel.org>
-Date: Fri, 5 Sep 2025 06:30:47 +0100
+	s=k20201202; t=1757050274;
+	bh=B6p92QnrwLoUhy5ItBNmZqqaK+oJcT6N691xFQLsoXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uvZL850AUFquP8eX/EjGcP5UvZqUgEGiGHeDBebLxx5EyAoqDu+GNWtVIfvRJ1X4f
+	 CXrBE6QStd3dgp+P+Fh9Lcd5/ksWKQ4Cv9Oloh/2nsAC72yZHoYH9+VNVEY+ZEjQtq
+	 Jj23eg3Q5Szo/NjlVkUUQikx2xnjr5f3IzvoaRMtt3UMq6hD8LzpybgeeMTQixmR1o
+	 0+hhq8ces5yOSvBqME2V9VNV0IZWd7REciw13t/WE67MGjh/QYmfnJj4Kq/zLUM9q0
+	 SHsOIuIElfABiEI5oehqWLhfBUbWpqEQZ7zGzWtH8RCtUJvnWXvslBT4JSmP/X3869
+	 timn6Upki0iDA==
+Date: Thu, 4 Sep 2025 22:31:14 -0700
+From: Kees Cook <kees@kernel.org>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: bhelgaas@google.com, ojeda@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, arnd@arndb.de,
+	dan.carpenter@linaro.org, benjamin.copeland@linaro.org,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] drivers/pci: Fix FIELD_PREP compilation error with gcc-8
+Message-ID: <202509042228.A2332756A5@keescook>
+References: <20250828101237.1359212-1-anders.roxell@linaro.org>
+ <202509032125.F41E71AF19@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
-To: Rob Herring <robh@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: srini@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
- <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
- <990cb5af-3846-44a3-b373-ded62d3309b9@oss.qualcomm.com>
- <CAL_Jsq+zC91GPdzQQa9F8KEw5UL4xc13u5U_5vTyQG1WeJa5rw@mail.gmail.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <CAL_Jsq+zC91GPdzQQa9F8KEw5UL4xc13u5U_5vTyQG1WeJa5rw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509032125.F41E71AF19@keescook>
 
+On Wed, Sep 03, 2025 at 09:29:40PM -0700, Kees Cook wrote:
+> Thanks for examining this! It seems rather alarming -- why did it
+> work before?
 
+I've proposed an alternative:
+https://lore.kernel.org/lkml/20250905052836.work.425-kees@kernel.org/
 
-On 9/5/25 12:08 AM, Rob Herring wrote:
-> On Tue, Aug 19, 2025 at 8:44 AM Srinivas Kandagatla
-> <srinivas.kandagatla@oss.qualcomm.com> wrote:
->>
->> Thanks Rob for reporting this,
->>
->> On 8/19/25 2:35 PM, Rob Herring wrote:
->>> On Thu, Jul 24, 2025 at 8:28 AM <srinivas.kandagatla@oss.qualcomm.com> wrote:
->>>>
->>>> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>>>
->>>> Qcom Slimbus controller driver is totally unused and dead code, there is
->>>> no point in keeping this driver in the kernel without users.
->>>>
->>>> This patch removes the driver along with device tree bindings.
->>>>
->>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>>> ---
->>>>  .../bindings/slimbus/qcom,slim.yaml           |  86 --
->>>>  drivers/slimbus/Kconfig                       |   7 -
->>>>  drivers/slimbus/Makefile                      |   3 -
->>>>  drivers/slimbus/qcom-ctrl.c                   | 735 ------------------
->>>>  4 files changed, 831 deletions(-)
->>>>  delete mode 100644 Documentation/devicetree/bindings/slimbus/qcom,slim.yaml
->>>>  delete mode 100644 drivers/slimbus/qcom-ctrl.c
->>>
->>> This adds warnings to dt_binding_check:
->>>
->>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->>> /example-0/soc/slim@28080000: failed to match any schema with
->>> compatible: ['qcom,apq8064-slim', 'qcom,slim']
->>
->> Will replace this example with slim-ngd and fold it in the original patch.
-> 
-> Still warning in linux-next...
-Its done now!
-
---srini
+-- 
+Kees Cook
 
