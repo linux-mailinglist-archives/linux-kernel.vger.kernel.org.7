@@ -1,729 +1,590 @@
-Return-Path: <linux-kernel+bounces-803600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A82B462E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:55:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9157BB462E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC053AB32E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4598C3B49A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8992868A9;
-	Fri,  5 Sep 2025 18:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="c4UPrGsY"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C12848B4
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F072428BAAB;
+	Fri,  5 Sep 2025 18:52:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6250D28725D;
+	Fri,  5 Sep 2025 18:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098334; cv=none; b=PkAR2svfkQcw7EDTowPka8s5yTnFYgVz0RHqm8krwrwWwE3MDQ5IcHdgsgm+vyBhNFtCVaMKUJ1eeCpREV++sf0jVZei0NcmmS7Ww6uXuJAkAcsBqQBptwtlV/zmnStyTICwXPIFtYlOPV62YsWr0oX/ZuhH95Ri/StCEK+HjoA=
+	t=1757098339; cv=none; b=jCA1BBqlxHiU8CzNI2/DFctS/+3MOmcLRp/CuXJeJUSQgAgzg1YBL8HE2t6TaZyS3DS64dAVeWCp4/VQCYymcA2SObALXSRt26tTpbz/GKWOEneirMrLdj6Y0sxAw+Pz/irp0OzoJNcT12l2K/mId0xFotWwHdTDs0JAzEQiywI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098334; c=relaxed/simple;
-	bh=FCtqrA47dDgf2+DB29PSn1rt0dYQ3ePVuxi3u8wdN0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qmsszuJNoTFsKXqVcjM8agP3qqnggqLycdrju6EK49Xk298G2AXeAW/yN5La1sm9gncaAA/8mcFl6zz8x1BDdyxZSb+y2/ddJzPSXNcv59CWsupWNI/I7X1JUuqUhvhZSlOLjamucXLIuoEwGzjo8CwazovH5YwTZozP2cPLJoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=c4UPrGsY; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-746d7c469a8so1234937a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 11:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1757098331; x=1757703131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbsFfKFitsanLy6pRqo9t1TcuXiGYckqN4l73oCfxk4=;
-        b=c4UPrGsYiczE58EUiVw+QEl+gPo43lnqvfHzDbgLBZbNpBhdqm4hXZrky7xajejtwG
-         YexdQRH/gt2qTufCxVWPfXBA9ztDatiBhSsarxHZNP7LvjVHBSTX4d0ArnGmdA/JLo9f
-         UcM+/M1WhAdWcL27QTwxua3k5Fqth11yiASdzuYpxGYbAEqTO3pDzqaoK5EC07K9yg+r
-         6f10HA6kGvyaic56U5QUbszOjnnLi8AUb7Adva6cR1EszRY8BLz1JTTIKyi14ncY8BKO
-         eDlr6/3GZJMOchiq9kXUOODlASOXGo71VSpZPHafsjncq0MdmTe9uzYBsiWm/rP0xpTj
-         vfYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757098331; x=1757703131;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tbsFfKFitsanLy6pRqo9t1TcuXiGYckqN4l73oCfxk4=;
-        b=gQrQqbVsKyhgTitPowH2PPJlyjWRsHIFxM92FYo+OucBRC5CLzFZ4CYzE+whGCv/yW
-         rPC20dwrGkvhAbN2VYZUCgmUKlI9g1Ginf/QwH+J2dAoEwJx6FMu2V0J/0mtf2yXfxVX
-         sMTM8tmLhfKlqj6DkIkpTlW9dVWuZzttwJWHJHE1aKdCeW6+uDj9mn3cOBrjMDVjRaLl
-         WW2jjUCA93vAu7LRsjAGSTXLPOr0LJmhYB4eYjEUhTe6t79x6k9UCMqQ8m3OUyFYVU9D
-         xRpSWvXW1Lw6WuBxtw79pXpRgVzbmJN0RtA4eM4KGASVhVMg3No0sv1BFHTxQCwGr7F1
-         OFAA==
-X-Gm-Message-State: AOJu0YxTxeUECRim4iM5z0fwN5Ls2kdDI6ti0hTru/8nChypuFQA4gJK
-	xldAXCiDIlUvgT4EyGhibX+AUhOTgS8GuPQRWuVL5Zk/RVsDI1ESav51/rTO3I9N8Xc=
-X-Gm-Gg: ASbGncsS7YLO+yQlRMZCbQaN5fozriBv5S57ndVGAU8TjYX/fvrK2uM7aFaTFCfYP1I
-	sOz+s2YtoGxDCgdErCx7kNlduJ7PKzgtUJ0YBml4owBPKbjn3Bk87Ug0hbSQJd0CxsiZlrN1OHS
-	QNR8xjD1qDVHu7gO23V5ALuGhT7TCqMthLxOx5+3FkHB4kwyG4UfuPdakeYsVCJHFasQZA5kzqK
-	6f+MwKQUlfpINXcNYiwzfGqK8jDCUPlEXxLyExWxaEPeCyNWsRKoywwfJ+HYgH1UsICgCKgf4co
-	nNgc6daZUA8REWEbdCv+R6RZN+oDmcEOSvIfIW4uRDFCcAObDwGFrpv0JfV7exEwaqkKey1D9sS
-	i8ZVmcU6wUIRkIpw=
-X-Google-Smtp-Source: AGHT+IHefDWTJM7HUywPIeAQAUzgLBlayMQSkHjSlIoG9XeQwX9yFdfxtx23/WYXF9j9yKO7ADzHNg==
-X-Received: by 2002:a05:6808:13d5:b0:438:3830:9b4b with SMTP id 5614622812f47-43838309d29mr3495394b6e.33.1757098331288;
-        Fri, 05 Sep 2025 11:52:11 -0700 (PDT)
-Received: from localhost ([2001:470:b8f6:1b:e171:344b:daa:1a1a])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-4383d9886bbsm1534918b6e.32.2025.09.05.11.52.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 11:52:09 -0700 (PDT)
-From: Corey Minyard <corey@minyard.net>
-To: Gilles BULOZ <gilles.buloz@kontron.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-	OpenIPMI Developers <openipmi-developer@lists.sourceforge.net>,
-	Corey Minyard <corey@minyard.net>
-Subject: [PATCH] ipmi: Rework user message limit handling
-Date: Fri,  5 Sep 2025 13:51:45 -0500
-Message-ID: <20250905185207.665207-1-corey@minyard.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757098339; c=relaxed/simple;
+	bh=8Uzns22OfU+DBCcL90KJRu1ulT0ZuTWyxXnwRelryJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFSJVVqUu7tmAAeij+sn3V27zsNPVuEluD+S2jGtkP6vj212zcXemKDBwyfA0Y/cPZ12N51y7Yg2rGLLFe6976yk6s7rsIzPZgk+Hri80yipnwZ+Ci7CXZeKYHkMfHLS8se4emYPT5tyskc16KnQjoQEY/B2gdOym+iCL8XMOCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A091C1424;
+	Fri,  5 Sep 2025 11:52:08 -0700 (PDT)
+Received: from [10.1.197.69] (unknown [10.1.197.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 411963F6A8;
+	Fri,  5 Sep 2025 11:52:09 -0700 (PDT)
+Message-ID: <dc431877-b3c7-4682-a264-9b235934ab1d@arm.com>
+Date: Fri, 5 Sep 2025 19:52:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-11-james.morse@arm.com>
+ <CAL_JsqKUSJjmyj-E6eduZt3S=x6v7VUR5JEJV_Ow6O-O49TgEg@mail.gmail.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <CAL_JsqKUSJjmyj-E6eduZt3S=x6v7VUR5JEJV_Ow6O-O49TgEg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The limit on the number of user messages had a number of issues,
-improper counting in some cases and a use after free.
+Hi Rob,
 
-Restructure how this is all done to handle more in the receive message
-allocation routine, so all refcouting and user message limit counts
-are done in that routine.  It's a lot cleaner and safer.
+On 27/08/2025 16:39, Rob Herring wrote:
+> On Fri, Aug 22, 2025 at 10:32 AM James Morse <james.morse@arm.com> wrote:
+>>
+>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+>> only be accessible from those CPUs, and they may not be online.
+>> Touching the hardware early is pointless as MPAM can't be used until
+>> the system-wide common values for num_partid and num_pmg have been
+>> discovered.
+>>
+>> Start with driver probe/remove and mapping the MSC.
 
-Reported-by: Gilles BULOZ <gilles.buloz@kontron.com>
-Fixes: 8e76741c3d8b20df "ipmi: Add a limit on the number of users that may use IPMI"
-Signed-off-by: Corey Minyard <corey@minyard.net>
----
- drivers/char/ipmi/ipmi_msghandler.c | 420 +++++++++++++---------------
- 1 file changed, 200 insertions(+), 220 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 90e2e126ef86..a0b67a35a5f0 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -38,7 +38,9 @@
- 
- #define IPMI_DRIVER_VERSION "39.2"
- 
--static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
-+static struct ipmi_recv_msg *ipmi_alloc_recv_msg(struct ipmi_user *user);
-+static void ipmi_set_recv_msg_user(struct ipmi_recv_msg *msg,
-+				   struct ipmi_user *user);
- static int ipmi_init_msghandler(void);
- static void smi_work(struct work_struct *t);
- static void handle_new_recv_msgs(struct ipmi_smi *intf);
-@@ -962,7 +964,6 @@ static int deliver_response(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
- 		 * risk.  At this moment, simply skip it in that case.
- 		 */
- 		ipmi_free_recv_msg(msg);
--		atomic_dec(&msg->user->nr_msgs);
- 	} else {
- 		/*
- 		 * Deliver it in smi_work.  The message will hold a
-@@ -1626,8 +1627,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
- 		}
- 
- 		list_for_each_entry_safe(msg, msg2, &msgs, link) {
--			msg->user = user;
--			kref_get(&user->refcount);
-+			ipmi_set_recv_msg_user(msg, user);
- 			deliver_local_response(intf, msg);
- 		}
- 	}
-@@ -2298,22 +2298,15 @@ static int i_ipmi_request(struct ipmi_user     *user,
- 	int run_to_completion = READ_ONCE(intf->run_to_completion);
- 	int rv = 0;
- 
--	if (user) {
--		if (atomic_add_return(1, &user->nr_msgs) > max_msgs_per_user) {
--			/* Decrement will happen at the end of the routine. */
--			rv = -EBUSY;
--			goto out;
--		}
--	}
--
--	if (supplied_recv)
-+	if (supplied_recv) {
- 		recv_msg = supplied_recv;
--	else {
--		recv_msg = ipmi_alloc_recv_msg();
--		if (recv_msg == NULL) {
--			rv = -ENOMEM;
--			goto out;
--		}
-+		recv_msg->user = user;
-+		if (user)
-+			atomic_inc(&user->nr_msgs);
-+	} else {
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+		if (IS_ERR(recv_msg))
-+			return PTR_ERR(recv_msg);
- 	}
- 	recv_msg->user_msg_data = user_msg_data;
- 
-@@ -2324,8 +2317,7 @@ static int i_ipmi_request(struct ipmi_user     *user,
- 		if (smi_msg == NULL) {
- 			if (!supplied_recv)
- 				ipmi_free_recv_msg(recv_msg);
--			rv = -ENOMEM;
--			goto out;
-+			return -ENOMEM;
- 		}
- 	}
- 
-@@ -2341,10 +2333,6 @@ static int i_ipmi_request(struct ipmi_user     *user,
- 		goto out_err;
- 	}
- 
--	recv_msg->user = user;
--	if (user)
--		/* The put happens when the message is freed. */
--		kref_get(&user->refcount);
- 	recv_msg->msgid = msgid;
- 	/*
- 	 * Store the message to send in the receive message so timeout
-@@ -2373,8 +2361,10 @@ static int i_ipmi_request(struct ipmi_user     *user,
- 
- 	if (rv) {
- out_err:
--		ipmi_free_smi_msg(smi_msg);
--		ipmi_free_recv_msg(recv_msg);
-+		if (!supplied_smi)
-+			ipmi_free_smi_msg(smi_msg);
-+		if (!supplied_recv)
-+			ipmi_free_recv_msg(recv_msg);
- 	} else {
- 		dev_dbg(intf->si_dev, "Send: %*ph\n",
- 			smi_msg->data_size, smi_msg->data);
-@@ -2384,9 +2374,6 @@ static int i_ipmi_request(struct ipmi_user     *user,
- 	if (!run_to_completion)
- 		mutex_unlock(&intf->users_mutex);
- 
--out:
--	if (rv && user)
--		atomic_dec(&user->nr_msgs);
- 	return rv;
- }
- 
-@@ -3905,7 +3892,7 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
- 	unsigned char            chan;
- 	struct ipmi_user         *user = NULL;
- 	struct ipmi_ipmb_addr    *ipmb_addr;
--	struct ipmi_recv_msg     *recv_msg;
-+	struct ipmi_recv_msg     *recv_msg = NULL;
- 
- 	if (msg->rsp_size < 10) {
- 		/* Message not big enough, just ignore it. */
-@@ -3926,9 +3913,8 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
- 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
- 	if (rcvr) {
- 		user = rcvr->user;
--		kref_get(&user->refcount);
--	} else
--		user = NULL;
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+	}
- 	rcu_read_unlock();
- 
- 	if (user == NULL) {
-@@ -3958,47 +3944,41 @@ static int handle_ipmb_get_msg_cmd(struct ipmi_smi *intf,
- 		 * causes it to not be freed or queued.
- 		 */
- 		rv = -1;
--	} else {
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
--			/*
--			 * We couldn't allocate memory for the
--			 * message, so requeue it for handling
--			 * later.
--			 */
--			rv = 1;
--			kref_put(&user->refcount, free_ipmi_user);
--		} else {
--			/* Extract the source address from the data. */
--			ipmb_addr = (struct ipmi_ipmb_addr *) &recv_msg->addr;
--			ipmb_addr->addr_type = IPMI_IPMB_ADDR_TYPE;
--			ipmb_addr->slave_addr = msg->rsp[6];
--			ipmb_addr->lun = msg->rsp[7] & 3;
--			ipmb_addr->channel = msg->rsp[3] & 0xf;
-+	} else if (!IS_ERR(recv_msg)) {
-+		/* Extract the source address from the data. */
-+		ipmb_addr = (struct ipmi_ipmb_addr *) &recv_msg->addr;
-+		ipmb_addr->addr_type = IPMI_IPMB_ADDR_TYPE;
-+		ipmb_addr->slave_addr = msg->rsp[6];
-+		ipmb_addr->lun = msg->rsp[7] & 3;
-+		ipmb_addr->channel = msg->rsp[3] & 0xf;
- 
--			/*
--			 * Extract the rest of the message information
--			 * from the IPMB header.
--			 */
--			recv_msg->user = user;
--			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
--			recv_msg->msgid = msg->rsp[7] >> 2;
--			recv_msg->msg.netfn = msg->rsp[4] >> 2;
--			recv_msg->msg.cmd = msg->rsp[8];
--			recv_msg->msg.data = recv_msg->msg_data;
-+		/*
-+		 * Extract the rest of the message information
-+		 * from the IPMB header.
-+		 */
-+		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
-+		recv_msg->msgid = msg->rsp[7] >> 2;
-+		recv_msg->msg.netfn = msg->rsp[4] >> 2;
-+		recv_msg->msg.cmd = msg->rsp[8];
-+		recv_msg->msg.data = recv_msg->msg_data;
- 
--			/*
--			 * We chop off 10, not 9 bytes because the checksum
--			 * at the end also needs to be removed.
--			 */
--			recv_msg->msg.data_len = msg->rsp_size - 10;
--			memcpy(recv_msg->msg_data, &msg->rsp[9],
--			       msg->rsp_size - 10);
--			if (deliver_response(intf, recv_msg))
--				ipmi_inc_stat(intf, unhandled_commands);
--			else
--				ipmi_inc_stat(intf, handled_commands);
--		}
-+		/*
-+		 * We chop off 10, not 9 bytes because the checksum
-+		 * at the end also needs to be removed.
-+		 */
-+		recv_msg->msg.data_len = msg->rsp_size - 10;
-+		memcpy(recv_msg->msg_data, &msg->rsp[9],
-+		       msg->rsp_size - 10);
-+		if (deliver_response(intf, recv_msg))
-+			ipmi_inc_stat(intf, unhandled_commands);
-+		else
-+			ipmi_inc_stat(intf, handled_commands);
-+	} else {
-+		/*
-+		 * We couldn't allocate memory for the message, so
-+		 * requeue it for handling later.
-+		 */
-+		rv = 1;
- 	}
- 
- 	return rv;
-@@ -4011,7 +3991,7 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
- 	int                      rv = 0;
- 	struct ipmi_user         *user = NULL;
- 	struct ipmi_ipmb_direct_addr *daddr;
--	struct ipmi_recv_msg     *recv_msg;
-+	struct ipmi_recv_msg     *recv_msg = NULL;
- 	unsigned char netfn = msg->rsp[0] >> 2;
- 	unsigned char cmd = msg->rsp[3];
- 
-@@ -4020,9 +4000,8 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
- 	rcvr = find_cmd_rcvr(intf, netfn, cmd, 0);
- 	if (rcvr) {
- 		user = rcvr->user;
--		kref_get(&user->refcount);
--	} else
--		user = NULL;
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+	}
- 	rcu_read_unlock();
- 
- 	if (user == NULL) {
-@@ -4044,44 +4023,38 @@ static int handle_ipmb_direct_rcv_cmd(struct ipmi_smi *intf,
- 		 * causes it to not be freed or queued.
- 		 */
- 		rv = -1;
--	} else {
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
--			/*
--			 * We couldn't allocate memory for the
--			 * message, so requeue it for handling
--			 * later.
--			 */
--			rv = 1;
--			kref_put(&user->refcount, free_ipmi_user);
--		} else {
--			/* Extract the source address from the data. */
--			daddr = (struct ipmi_ipmb_direct_addr *)&recv_msg->addr;
--			daddr->addr_type = IPMI_IPMB_DIRECT_ADDR_TYPE;
--			daddr->channel = 0;
--			daddr->slave_addr = msg->rsp[1];
--			daddr->rs_lun = msg->rsp[0] & 3;
--			daddr->rq_lun = msg->rsp[2] & 3;
-+	} else if (!IS_ERR(recv_msg)) {
-+		/* Extract the source address from the data. */
-+		daddr = (struct ipmi_ipmb_direct_addr *)&recv_msg->addr;
-+		daddr->addr_type = IPMI_IPMB_DIRECT_ADDR_TYPE;
-+		daddr->channel = 0;
-+		daddr->slave_addr = msg->rsp[1];
-+		daddr->rs_lun = msg->rsp[0] & 3;
-+		daddr->rq_lun = msg->rsp[2] & 3;
- 
--			/*
--			 * Extract the rest of the message information
--			 * from the IPMB header.
--			 */
--			recv_msg->user = user;
--			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
--			recv_msg->msgid = (msg->rsp[2] >> 2);
--			recv_msg->msg.netfn = msg->rsp[0] >> 2;
--			recv_msg->msg.cmd = msg->rsp[3];
--			recv_msg->msg.data = recv_msg->msg_data;
--
--			recv_msg->msg.data_len = msg->rsp_size - 4;
--			memcpy(recv_msg->msg_data, msg->rsp + 4,
--			       msg->rsp_size - 4);
--			if (deliver_response(intf, recv_msg))
--				ipmi_inc_stat(intf, unhandled_commands);
--			else
--				ipmi_inc_stat(intf, handled_commands);
--		}
-+		/*
-+		 * Extract the rest of the message information
-+		 * from the IPMB header.
-+		 */
-+		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
-+		recv_msg->msgid = (msg->rsp[2] >> 2);
-+		recv_msg->msg.netfn = msg->rsp[0] >> 2;
-+		recv_msg->msg.cmd = msg->rsp[3];
-+		recv_msg->msg.data = recv_msg->msg_data;
-+
-+		recv_msg->msg.data_len = msg->rsp_size - 4;
-+		memcpy(recv_msg->msg_data, msg->rsp + 4,
-+		       msg->rsp_size - 4);
-+		if (deliver_response(intf, recv_msg))
-+			ipmi_inc_stat(intf, unhandled_commands);
-+		else
-+			ipmi_inc_stat(intf, handled_commands);
-+	} else {
-+		/*
-+		 * We couldn't allocate memory for the message, so
-+		 * requeue it for handling later.
-+		 */
-+		rv = 1;
- 	}
- 
- 	return rv;
-@@ -4195,7 +4168,7 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
- 	unsigned char            chan;
- 	struct ipmi_user         *user = NULL;
- 	struct ipmi_lan_addr     *lan_addr;
--	struct ipmi_recv_msg     *recv_msg;
-+	struct ipmi_recv_msg     *recv_msg = NULL;
- 
- 	if (msg->rsp_size < 12) {
- 		/* Message not big enough, just ignore it. */
-@@ -4216,9 +4189,8 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
- 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
- 	if (rcvr) {
- 		user = rcvr->user;
--		kref_get(&user->refcount);
--	} else
--		user = NULL;
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+	}
- 	rcu_read_unlock();
- 
- 	if (user == NULL) {
-@@ -4249,49 +4221,44 @@ static int handle_lan_get_msg_cmd(struct ipmi_smi *intf,
- 		 * causes it to not be freed or queued.
- 		 */
- 		rv = -1;
--	} else {
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
--			/*
--			 * We couldn't allocate memory for the
--			 * message, so requeue it for handling later.
--			 */
--			rv = 1;
--			kref_put(&user->refcount, free_ipmi_user);
--		} else {
--			/* Extract the source address from the data. */
--			lan_addr = (struct ipmi_lan_addr *) &recv_msg->addr;
--			lan_addr->addr_type = IPMI_LAN_ADDR_TYPE;
--			lan_addr->session_handle = msg->rsp[4];
--			lan_addr->remote_SWID = msg->rsp[8];
--			lan_addr->local_SWID = msg->rsp[5];
--			lan_addr->lun = msg->rsp[9] & 3;
--			lan_addr->channel = msg->rsp[3] & 0xf;
--			lan_addr->privilege = msg->rsp[3] >> 4;
-+	} else if (!IS_ERR(recv_msg)) {
-+		/* Extract the source address from the data. */
-+		lan_addr = (struct ipmi_lan_addr *) &recv_msg->addr;
-+		lan_addr->addr_type = IPMI_LAN_ADDR_TYPE;
-+		lan_addr->session_handle = msg->rsp[4];
-+		lan_addr->remote_SWID = msg->rsp[8];
-+		lan_addr->local_SWID = msg->rsp[5];
-+		lan_addr->lun = msg->rsp[9] & 3;
-+		lan_addr->channel = msg->rsp[3] & 0xf;
-+		lan_addr->privilege = msg->rsp[3] >> 4;
- 
--			/*
--			 * Extract the rest of the message information
--			 * from the IPMB header.
--			 */
--			recv_msg->user = user;
--			recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
--			recv_msg->msgid = msg->rsp[9] >> 2;
--			recv_msg->msg.netfn = msg->rsp[6] >> 2;
--			recv_msg->msg.cmd = msg->rsp[10];
--			recv_msg->msg.data = recv_msg->msg_data;
-+		/*
-+		 * Extract the rest of the message information
-+		 * from the IPMB header.
-+		 */
-+		recv_msg->recv_type = IPMI_CMD_RECV_TYPE;
-+		recv_msg->msgid = msg->rsp[9] >> 2;
-+		recv_msg->msg.netfn = msg->rsp[6] >> 2;
-+		recv_msg->msg.cmd = msg->rsp[10];
-+		recv_msg->msg.data = recv_msg->msg_data;
- 
--			/*
--			 * We chop off 12, not 11 bytes because the checksum
--			 * at the end also needs to be removed.
--			 */
--			recv_msg->msg.data_len = msg->rsp_size - 12;
--			memcpy(recv_msg->msg_data, &msg->rsp[11],
--			       msg->rsp_size - 12);
--			if (deliver_response(intf, recv_msg))
--				ipmi_inc_stat(intf, unhandled_commands);
--			else
--				ipmi_inc_stat(intf, handled_commands);
--		}
-+		/*
-+		 * We chop off 12, not 11 bytes because the checksum
-+		 * at the end also needs to be removed.
-+		 */
-+		recv_msg->msg.data_len = msg->rsp_size - 12;
-+		memcpy(recv_msg->msg_data, &msg->rsp[11],
-+		       msg->rsp_size - 12);
-+		if (deliver_response(intf, recv_msg))
-+			ipmi_inc_stat(intf, unhandled_commands);
-+		else
-+			ipmi_inc_stat(intf, handled_commands);
-+	} else {
-+		/*
-+		 * We couldn't allocate memory for the message, so
-+		 * requeue it for handling later.
-+		 */
-+		rv = 1;
- 	}
- 
- 	return rv;
-@@ -4313,7 +4280,7 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
- 	unsigned char         chan;
- 	struct ipmi_user *user = NULL;
- 	struct ipmi_system_interface_addr *smi_addr;
--	struct ipmi_recv_msg  *recv_msg;
-+	struct ipmi_recv_msg  *recv_msg = NULL;
- 
- 	/*
- 	 * We expect the OEM SW to perform error checking
-@@ -4342,9 +4309,8 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
- 	rcvr = find_cmd_rcvr(intf, netfn, cmd, chan);
- 	if (rcvr) {
- 		user = rcvr->user;
--		kref_get(&user->refcount);
--	} else
--		user = NULL;
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+	}
- 	rcu_read_unlock();
- 
- 	if (user == NULL) {
-@@ -4357,48 +4323,42 @@ static int handle_oem_get_msg_cmd(struct ipmi_smi *intf,
- 		 */
- 
- 		rv = 0;
--	} else {
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
--			/*
--			 * We couldn't allocate memory for the
--			 * message, so requeue it for handling
--			 * later.
--			 */
--			rv = 1;
--			kref_put(&user->refcount, free_ipmi_user);
--		} else {
--			/*
--			 * OEM Messages are expected to be delivered via
--			 * the system interface to SMS software.  We might
--			 * need to visit this again depending on OEM
--			 * requirements
--			 */
--			smi_addr = ((struct ipmi_system_interface_addr *)
--				    &recv_msg->addr);
--			smi_addr->addr_type = IPMI_SYSTEM_INTERFACE_ADDR_TYPE;
--			smi_addr->channel = IPMI_BMC_CHANNEL;
--			smi_addr->lun = msg->rsp[0] & 3;
--
--			recv_msg->user = user;
--			recv_msg->user_msg_data = NULL;
--			recv_msg->recv_type = IPMI_OEM_RECV_TYPE;
--			recv_msg->msg.netfn = msg->rsp[0] >> 2;
--			recv_msg->msg.cmd = msg->rsp[1];
--			recv_msg->msg.data = recv_msg->msg_data;
-+	} else if (!IS_ERR(recv_msg)) {
-+		/*
-+		 * OEM Messages are expected to be delivered via
-+		 * the system interface to SMS software.  We might
-+		 * need to visit this again depending on OEM
-+		 * requirements
-+		 */
-+		smi_addr = ((struct ipmi_system_interface_addr *)
-+			    &recv_msg->addr);
-+		smi_addr->addr_type = IPMI_SYSTEM_INTERFACE_ADDR_TYPE;
-+		smi_addr->channel = IPMI_BMC_CHANNEL;
-+		smi_addr->lun = msg->rsp[0] & 3;
-+
-+		recv_msg->user_msg_data = NULL;
-+		recv_msg->recv_type = IPMI_OEM_RECV_TYPE;
-+		recv_msg->msg.netfn = msg->rsp[0] >> 2;
-+		recv_msg->msg.cmd = msg->rsp[1];
-+		recv_msg->msg.data = recv_msg->msg_data;
- 
--			/*
--			 * The message starts at byte 4 which follows the
--			 * Channel Byte in the "GET MESSAGE" command
--			 */
--			recv_msg->msg.data_len = msg->rsp_size - 4;
--			memcpy(recv_msg->msg_data, &msg->rsp[4],
--			       msg->rsp_size - 4);
--			if (deliver_response(intf, recv_msg))
--				ipmi_inc_stat(intf, unhandled_commands);
--			else
--				ipmi_inc_stat(intf, handled_commands);
--		}
-+		/*
-+		 * The message starts at byte 4 which follows the
-+		 * Channel Byte in the "GET MESSAGE" command
-+		 */
-+		recv_msg->msg.data_len = msg->rsp_size - 4;
-+		memcpy(recv_msg->msg_data, &msg->rsp[4],
-+		       msg->rsp_size - 4);
-+		if (deliver_response(intf, recv_msg))
-+			ipmi_inc_stat(intf, unhandled_commands);
-+		else
-+			ipmi_inc_stat(intf, handled_commands);
-+	} else {
-+		/*
-+		 * We couldn't allocate memory for the message, so
-+		 * requeue it for handling later.
-+		 */
-+		rv = 1;
- 	}
- 
- 	return rv;
-@@ -4456,8 +4416,8 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
- 		if (!user->gets_events)
- 			continue;
- 
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
-+		recv_msg = ipmi_alloc_recv_msg(user);
-+		if (IS_ERR(recv_msg)) {
- 			mutex_unlock(&intf->users_mutex);
- 			list_for_each_entry_safe(recv_msg, recv_msg2, &msgs,
- 						 link) {
-@@ -4478,8 +4438,6 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
- 		deliver_count++;
- 
- 		copy_event_into_recv_msg(recv_msg, msg);
--		recv_msg->user = user;
--		kref_get(&user->refcount);
- 		list_add_tail(&recv_msg->link, &msgs);
- 	}
- 	mutex_unlock(&intf->users_mutex);
-@@ -4495,8 +4453,8 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
- 		 * No one to receive the message, put it in queue if there's
- 		 * not already too many things in the queue.
- 		 */
--		recv_msg = ipmi_alloc_recv_msg();
--		if (!recv_msg) {
-+		recv_msg = ipmi_alloc_recv_msg(NULL);
-+		if (IS_ERR(recv_msg)) {
- 			/*
- 			 * We couldn't allocate memory for the
- 			 * message, so requeue it for handling
-@@ -4922,12 +4880,10 @@ static void smi_work(struct work_struct *t)
- 
- 		list_del(&msg->link);
- 
--		if (refcount_read(&user->destroyed) == 0) {
-+		if (refcount_read(&user->destroyed) == 0)
- 			ipmi_free_recv_msg(msg);
--		} else {
--			atomic_dec(&user->nr_msgs);
-+		else
- 			user->handler->ipmi_recv_hndl(msg, user->handler_data);
--		}
- 	}
- 	mutex_unlock(&intf->user_msgs_mutex);
- 
-@@ -5245,27 +5201,51 @@ static void free_recv_msg(struct ipmi_recv_msg *msg)
- 		kfree(msg);
- }
- 
--static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void)
-+static struct ipmi_recv_msg *ipmi_alloc_recv_msg(struct ipmi_user *user)
- {
- 	struct ipmi_recv_msg *rv;
- 
-+	if (user) {
-+		if (atomic_add_return(1, &user->nr_msgs) > max_msgs_per_user) {
-+			atomic_dec(&user->nr_msgs);
-+			return ERR_PTR(-EBUSY);
-+		}
-+	}
-+
- 	rv = kmalloc(sizeof(struct ipmi_recv_msg), GFP_ATOMIC);
--	if (rv) {
--		rv->user = NULL;
--		rv->done = free_recv_msg;
--		atomic_inc(&recv_msg_inuse_count);
-+	if (!rv) {
-+		if (user)
-+			atomic_dec(&user->nr_msgs);
-+		return ERR_PTR(-ENOMEM);
- 	}
-+
-+	rv->user = user;
-+	rv->done = free_recv_msg;
-+	if (user)
-+		kref_get(&user->refcount);
-+	atomic_inc(&recv_msg_inuse_count);
- 	return rv;
- }
- 
- void ipmi_free_recv_msg(struct ipmi_recv_msg *msg)
- {
--	if (msg->user && !oops_in_progress)
-+	if (msg->user && !oops_in_progress) {
-+		atomic_dec(&msg->user->nr_msgs);
- 		kref_put(&msg->user->refcount, free_ipmi_user);
-+	}
- 	msg->done(msg);
- }
- EXPORT_SYMBOL(ipmi_free_recv_msg);
- 
-+static void ipmi_set_recv_msg_user(struct ipmi_recv_msg *msg,
-+				   struct ipmi_user *user)
-+{
-+	WARN_ON_ONCE(msg->user); /* User should not be set. */
-+	msg->user = user;
-+	atomic_inc(&user->nr_msgs);
-+	kref_get(&user->refcount);
-+}
-+
- static atomic_t panic_done_count = ATOMIC_INIT(0);
- 
- static void dummy_smi_done_handler(struct ipmi_smi_msg *msg)
--- 
-2.43.0
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> new file mode 100644
+>> index 000000000000..a0d9a699a6e7
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -0,0 +1,336 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (C) 2025 Arm Ltd.
+>
+> Given the 2024 below, should this be 2024-2025?
 
+I've never known what this year is really for. People clearly expect it to be this year
+... I've evidently missed one somewhere. I'll fix that. ... I wrote some of this code in
+2018, so there are a range of options on what it 'should' be ...
+
+
+>> +
+>> +#define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/arm_mpam.h>
+>> +#include <linux/cacheinfo.h>
+>> +#include <linux/cpu.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/device.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/gfp.h>
+>> +#include <linux/list.h>
+>> +#include <linux/lockdep.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/printk.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/srcu.h>
+>> +#include <linux/types.h>
+>> +
+>> +#include <acpi/pcc.h>
+>> +
+>> +#include "mpam_internal.h"
+>> +
+>> +/*
+>> + * mpam_list_lock protects the SRCU lists when writing. Once the
+>> + * mpam_enabled key is enabled these lists are read-only,
+>> + * unless the error interrupt disables the driver.
+>> + */
+>> +static DEFINE_MUTEX(mpam_list_lock);
+>> +static LIST_HEAD(mpam_all_msc);
+>> +
+>> +static struct srcu_struct mpam_srcu;
+>> +
+>> +/* MPAM isn't available until all the MSC have been probed. */
+>> +static u32 mpam_num_msc;
+>> +
+>> +static void mpam_discovery_complete(void)
+>> +{
+>> +       pr_err("Discovered all MSC\n");
+
+> Perhaps print out how many MSCs.
+Once the whole thing is assembled the mpam_enable() call prints the number of PARTID/PMG,
+which is something user-space can do something with. I don't think the number of MSC is
+useful to anyone as some of them are grouped together and can't be configured independently.
+
+
+>> +}
+
+>> +static int mpam_dt_parse_resource(struct mpam_msc *msc, struct device_node *np,
+>> +                                 u32 ris_idx)
+>> +{
+>> +       int err = 0;
+>> +       u32 level = 0;
+>> +       unsigned long cache_id;
+>> +       struct device_node *cache;
+>> +
+>> +       do {
+>> +               if (of_device_is_compatible(np, "arm,mpam-cache")) {
+>> +                       cache = of_parse_phandle(np, "arm,mpam-device", 0);
+>> +                       if (!cache) {
+>> +                               pr_err("Failed to read phandle\n");
+>> +                               break;
+>> +                       }
+>> +               } else if (of_device_is_compatible(np->parent, "cache")) {
+>
+> Don't access device_node members. I'm trying to make it opaque. And
+> technically it can be racy to access parent ptr when/if nodes are
+> dynamic. I think this should suffice:
+>
+> else {
+>   cache = of_get_parent(np);
+>   if (!of_device_is_compatible(cache, "cache")) {
+>     cache = NULL;
+>     break;
+>   }
+> }
+
+Thanks!
+
+The if/else-if ladder needs to stay, I've grabbed the parent earlier, and added a
+of_node_put() of it after the do/while.
+
+
+>> +                       cache = of_node_get(np->parent);
+>> +               } else {
+>> +                       /* For now, only caches are supported */
+>> +                       cache = NULL;
+>> +                       break;
+>> +               }
+>> +
+>> +               err = of_property_read_u32(cache, "cache-level", &level);
+>> +               if (err) {
+>> +                       pr_err("Failed to read cache-level\n");
+>> +                       break;
+>> +               }
+>> +
+>> +               cache_id = cache_of_calculate_id(cache);
+>> +               if (cache_id == ~0UL) {
+>> +                       err = -ENOENT;
+>> +                       break;
+>> +               }
+>> +
+>> +               err = mpam_ris_create(msc, ris_idx, MPAM_CLASS_CACHE, level,
+>> +                                     cache_id);
+>> +       } while (0);
+>> +       of_node_put(cache);
+>> +
+>> +       return err;
+>> +}
+>> +
+>> +static int mpam_dt_parse_resources(struct mpam_msc *msc, void *ignored)
+>> +{
+>> +       int err, num_ris = 0;
+>> +       const u32 *ris_idx_p;
+>> +       struct device_node *iter, *np;
+>> +
+>> +       np = msc->pdev->dev.of_node;
+>> +       for_each_child_of_node(np, iter) {
+>
+> Use for_each_available_child_of_node_scoped()
+
+Sure,
+
+
+>> +               ris_idx_p = of_get_property(iter, "reg", NULL);
+>
+> This is broken on big endian and new users of of_get_property() are
+> discouraged. Use of_property_read_reg().
+
+Done,
+
+
+>> +               if (ris_idx_p) {
+>> +                       num_ris++;
+>> +                       err = mpam_dt_parse_resource(msc, iter, *ris_idx_p);
+>> +                       if (err) {
+>> +                               of_node_put(iter);
+>
+> And then drop the put.
+>
+>> +                               return err;
+>> +                       }
+>> +               }
+>> +       }
+>> +
+>> +       if (!num_ris)
+>> +               mpam_dt_parse_resource(msc, np, 0);
+>> +
+>> +       return err;
+>> +}
+
+
+>> +/*
+>> + * An MSC can control traffic from a set of CPUs, but may only be accessible
+>> + * from a (hopefully wider) set of CPUs. The common reason for this is power
+>> + * management. If all the CPUs in a cluster are in PSCI:CPU_SUSPEND, the
+>> + * the corresponding cache may also be powered off. By making accesses from
+>> + * one of those CPUs, we ensure this isn't the case.
+>> + */
+>> +static int update_msc_accessibility(struct mpam_msc *msc)
+>> +{
+>> +       struct device_node *parent;
+>> +       u32 affinity_id;
+>> +       int err;
+>> +
+>> +       if (!acpi_disabled) {
+>> +               err = device_property_read_u32(&msc->pdev->dev, "cpu_affinity",
+>> +                                              &affinity_id);
+>> +               if (err)
+>> +                       cpumask_copy(&msc->accessibility, cpu_possible_mask);
+>> +               else
+>> +                       acpi_pptt_get_cpus_from_container(affinity_id,
+>> +                                                         &msc->accessibility);
+>> +
+>> +               return 0;
+>> +       }
+>> +
+>> +       /* This depends on the path to of_node */
+
+> I'm failing to understand what has to be at the root node?
+
+The accessibility bitmap. If the MSC is at the root of the tree - its assumed to be
+global. If its buried in a device, its assumed to be in the same power domain as that
+device. Practically this only matters for caches where PSCI's CPU_SUSPEND can turn the
+cache off, so the cache MSC can only be accessed from the CPU's local to it, that way we
+know its not about to be turned off by PSCI.
+
+I'll rephrase the comment - its trying to explain why its not explicitly encoded.
+| /* Where an MSC can be accessed from depends on the path to of_node. */
+
+
+>> +       parent = of_get_parent(msc->pdev->dev.of_node);
+>> +       if (parent == of_root) {
+>> +               cpumask_copy(&msc->accessibility, cpu_possible_mask);
+>> +               err = 0;
+>> +       } else {
+>> +               err = -EINVAL;
+>> +               pr_err("Cannot determine accessibility of MSC: %s\n",
+>> +                      dev_name(&msc->pdev->dev));
+>> +       }
+>> +       of_node_put(parent);
+>> +
+>> +       return err;
+>> +}
+>> +static void mpam_msc_drv_remove(struct platform_device *pdev)
+>> +{
+>> +       struct mpam_msc *msc = platform_get_drvdata(pdev);
+>> +
+>> +       if (!msc)
+>> +               return;
+>> +
+>> +       mutex_lock(&mpam_list_lock);
+>> +       mpam_num_msc--;
+>> +       platform_set_drvdata(pdev, NULL);
+>> +       list_del_rcu(&msc->glbl_list);
+>> +       synchronize_srcu(&mpam_srcu);
+>> +       devm_kfree(&pdev->dev, msc);
+>
+> This should happen automagically.
+>
+>> +       mutex_unlock(&mpam_list_lock);
+>> +}
+>> +
+>> +static int mpam_msc_drv_probe(struct platform_device *pdev)
+>> +{
+>> +       int err;
+>> +       struct mpam_msc *msc;
+>> +       struct resource *msc_res;
+>> +       void *plat_data = pdev->dev.platform_data;
+>> +
+>> +       mutex_lock(&mpam_list_lock);
+>> +       do {
+>> +               msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+>> +               if (!msc) {
+>> +                       err = -ENOMEM;
+>> +                       break;
+>> +               }
+>> +
+>> +               mutex_init(&msc->probe_lock);
+>> +               mutex_init(&msc->part_sel_lock);
+>> +               mutex_init(&msc->outer_mon_sel_lock);
+>> +               raw_spin_lock_init(&msc->inner_mon_sel_lock);
+>> +               msc->id = mpam_num_msc++;
+>
+> Multiple probe functions can run in parallel, so this needs to be
+> atomic. Maybe it is with mpam_list_lock, but then the name of the
+> mutex is misleading given this is not the list. It's not really clear
+> to me what all needs the mutex here. Certainly a lot of it doesn't.
+> Like everything else above here except the increment.
+
+It's more about the class/component/device lists that get added later - but more on this
+mpam_num_msc thing below...
+
+
+>> +               msc->pdev = pdev;
+>> +               INIT_LIST_HEAD_RCU(&msc->glbl_list);
+>> +               INIT_LIST_HEAD_RCU(&msc->ris);
+>> +
+>> +               err = update_msc_accessibility(msc);
+>> +               if (err)
+>> +                       break;
+>> +               if (cpumask_empty(&msc->accessibility)) {
+>> +                       pr_err_once("msc:%u is not accessible from any CPU!",
+>> +                                   msc->id);
+>> +                       err = -EINVAL;
+>> +                       break;
+>> +               }
+>> +
+>> +               if (device_property_read_u32(&pdev->dev, "pcc-channel",
+
+> Does this property apply to DT? It would as the code is written. It is
+> not documented though.
+
+I don't think so - on DT PCC is going to be spelled SCMI which somes with some kind of
+discovery instead. This property is added by the ACPI table 'driver'.
+
+
+>> +                                            &msc->pcc_subspace_id))
+>> +                       msc->iface = MPAM_IFACE_MMIO;
+>> +               else
+>> +                       msc->iface = MPAM_IFACE_PCC;
+>> +
+>> +               if (msc->iface == MPAM_IFACE_MMIO) {
+>> +                       void __iomem *io;
+>> +
+>> +                       io = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +                                                                   &msc_res);
+>> +                       if (IS_ERR(io)) {
+>> +                               pr_err("Failed to map MSC base address\n");
+>> +                               err = PTR_ERR(io);
+>> +                               break;
+>> +                       }
+>> +                       msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
+>> +                       msc->mapped_hwpage = io;
+>> +               } else if (msc->iface == MPAM_IFACE_PCC) {
+>> +                       msc->pcc_cl.dev = &pdev->dev;
+>> +                       msc->pcc_cl.rx_callback = mpam_pcc_rx_callback;
+>> +                       msc->pcc_cl.tx_block = false;
+>> +                       msc->pcc_cl.tx_tout = 1000; /* 1s */
+>> +                       msc->pcc_cl.knows_txdone = false;
+>> +
+>> +                       msc->pcc_chan = pcc_mbox_request_channel(&msc->pcc_cl,
+>> +                                                                msc->pcc_subspace_id);
+>> +                       if (IS_ERR(msc->pcc_chan)) {
+>> +                               pr_err("Failed to request MSC PCC channel\n");
+>> +                               err = PTR_ERR(msc->pcc_chan);
+>> +                               break;
+>> +                       }
+>> +               }
+>> +
+>> +               list_add_rcu(&msc->glbl_list, &mpam_all_msc);
+>> +               platform_set_drvdata(pdev, msc);
+>> +       } while (0);
+>> +       mutex_unlock(&mpam_list_lock);
+>> +
+>> +       if (!err) {
+>> +               /* Create RIS entries described by firmware */
+>> +               if (!acpi_disabled)
+>> +                       err = acpi_mpam_parse_resources(msc, plat_data);
+>> +               else
+>> +                       err = mpam_dt_parse_resources(msc, plat_data);
+>
+> Isn't there a race here if an error occurs since you already added the
+> MSC to the list? Something like this sequence with 2 MSCs:
+>
+> device 1 probe
+> device 1 added
+>     device 2 probe
+>     device 2 added
+> device 1 calls mpam_discovery_complete()
+>     device 2 error on parse_resources
+>     device 2 removed
+
+By the time the whole thing is assembled the 'discovery complete' work is scheduled by a
+cpuhp callback and has better protection against this. That discovery-complete call is
+just to help illustrate that there is stuff that happens once all the MSC have been
+discovered, as that code gets much more complicated later in teh series.
+
+Combined with your comment about the msc_id increment above - I'll stop using that as both
+a count and an id, re-using the pdev->id as its more likely to be stable from boot to
+boot. mpam_num_msc can then become an atomic_t that is incremented once we know we're not
+going to remove the MSC from the list.
+
+
+
+>> +       }
+>> +
+>> +       if (!err && fw_num_msc == mpam_num_msc)
+>> +               mpam_discovery_complete();
+>> +
+>> +       if (err && msc)
+>> +               mpam_msc_drv_remove(pdev);
+>> +
+>> +       return err;
+>> +}
+>> +/*
+>> + * MSC that are hidden under caches are not created as platform devices
+>> + * as there is no cache driver. Caches are also special-cased in
+>> + * update_msc_accessibility().
+>> + */
+>> +static void mpam_dt_create_foundling_msc(void)
+>> +{
+>> +       int err;
+>> +       struct device_node *cache;
+>> +
+>> +       for_each_compatible_node(cache, NULL, "cache") {
+>> +               err = of_platform_populate(cache, mpam_of_match, NULL, NULL);
+>
+> This is going to create platform devices for all caches (except L1)
+> regardless of whether they support MPAM or not. Isn't it likely or
+> possible that only L3 or SLC caches support MPAM?
+
+Likely - but all things are possible. You could put an MPAM MSC in your L1-I cache.
+(or even in the CPU - but lets not go there)
+
+I'll attempt to fix that up, what I have doesn't quite work, but I'll keep picking at it:
+|        for_each_compatible_node(cache, NULL, "cache") {
+|               struct device_node *cache_device;
+|
+|               if (of_node_check_flag(cache, OF_POPULATED))
+|                       continue;
+|
+|               cache_device = of_find_matching_node_and_match(cache, mpam_of_match, NULL);
+|               if (!cache_device)
+|                       continue;
+|               of_node_put(cache_device);
+|
+|               pdev = of_platform_device_create(cache, "cache", NULL);
+|               if (!pdev)
+|                       pr_err_once("Failed to create MSC devices under caches\n");
+|          }
+
+
+>> +               if (err)
+>> +                       pr_err("Failed to create MSC devices under caches\n");
+>> +       }
+>> +}
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+>> new file mode 100644
+>> index 000000000000..07e0f240eaca
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_internal.h
+>> @@ -0,0 +1,62 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +// Copyright (C) 2024 Arm Ltd.
+>
+> It's 2025.
+... and I wrote this in 2018, but missed the annual update. I'll fix it.
+
+
+>> +
+>> +struct mpam_msc {
+>> +       /* member of mpam_all_msc */
+>> +       struct list_head        glbl_list;
+>> +
+>> +       int                     id;
+>> +       struct platform_device *pdev;
+>> +
+>> +       /* Not modified after mpam_is_enabled() becomes true */
+>> +       enum mpam_msc_iface     iface;
+>> +       u32                     pcc_subspace_id;
+>> +       struct mbox_client      pcc_cl;
+>> +       struct pcc_mbox_chan    *pcc_chan;
+>> +       u32                     nrdy_usec;
+>> +       cpumask_t               accessibility;
+>> +
+>> +       /*
+>> +        * probe_lock is only take during discovery. After discovery these
+
+> s/take/taken/
+
+Fixed,
+
+
+>> +        * properties become read-only and the lists are protected by SRCU.
+>> +        */
+>> +       struct mutex            probe_lock;
+>> +       unsigned long           ris_idxs[128 / BITS_PER_LONG];
+>> +       u32                     ris_max;
+>> +
+>> +       /* mpam_msc_ris of this component */
+>> +       struct list_head        ris;
+>> +
+>> +       /*
+>> +        * part_sel_lock protects access to the MSC hardware registers that are
+>> +        * affected by MPAMCFG_PART_SEL. (including the ID registers that vary
+>> +        * by RIS).
+>> +        * If needed, take msc->lock first.
+
+> Stale comment? I don't see any 'lock' member.
+
+Yes, it should say probe_lock .. renamed after more locks got added in here, and the
+comment got fixed up in the wrong patch. Fixed.
+
+
+>> +        */
+>> +       struct mutex            part_sel_lock;
+>> +
+>> +       /*
+>> +        * mon_sel_lock protects access to the MSC hardware registers that are
+>> +        * affeted by MPAMCFG_MON_SEL.
+>> +        * If needed, take msc->lock first.
+>> +        */
+>> +       struct mutex            outer_mon_sel_lock;
+>> +       raw_spinlock_t          inner_mon_sel_lock;
+>> +       unsigned long           inner_mon_sel_flags;
+>> +
+>> +       void __iomem            *mapped_hwpage;
+>> +       size_t                  mapped_hwpage_sz;
+>> +};
+>> +
+>> +#endif /* MPAM_INTERNAL_H */
+>> --
+>> 2.20.1
+>>
+
+Thanks,
+
+James
 
