@@ -1,140 +1,107 @@
-Return-Path: <linux-kernel+bounces-803706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68C3B463F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A136B463F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E23C7C65A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9867BCA87
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65E280CC8;
-	Fri,  5 Sep 2025 19:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E95D281508;
+	Fri,  5 Sep 2025 19:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoWEwhNT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSJuEUj5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CA53AC1C;
-	Fri,  5 Sep 2025 19:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88194248176;
+	Fri,  5 Sep 2025 19:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101823; cv=none; b=gLp+Fg4Y/ZToDBFjhCPOiZRGYljFBhNCcuxdAvXinXicfCr6DMGyqs50RgC6YJ4gZAIqIP5JyzgDA8/yqemK+EvySb39wKa6ltoMiNkNoCU5XqatJ45Dpd8BfU1uP+jZEBFcCyO6jgDLQv8wlCVITk0PBKGaPPEOxvDq5ddSYfE=
+	t=1757101832; cv=none; b=GYCDcpZGSnkVlVRdlHCBHgGnrPoGCsLJK4oqo46/lhdKUiJxVTjs+gHytkWaJPUCm0GB3wPes9WD4evYAKHwwioNdLyi1Stc6Z8CeXUgaO+/KEfQCYQdoTumalTTh16o8hEmbZCawqnQylwHwD7xrSyy7NuPbtSp/PnkwP9xly0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101823; c=relaxed/simple;
-	bh=CLXw4DN67XKGQfmhHzc4kdR7hzYM9eFmZ4ZDRbEwt+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q50MNNq9QH787XA5YQsONuz2oq0/chHS+Ym9gfD0md8XxuUSEuOhsdGsg0g5Pnr63YoieJHOOxkC/aBJIX/639qTDdst4l6eh3L8e3QVvXyc9Rp3+NHB98hZdZsBgsM0Xuz4/wsoNlWCSMUaFLTUAxSbvkIqp7NhEwIzW5Imofk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoWEwhNT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6DFC4CEF9;
-	Fri,  5 Sep 2025 19:50:23 +0000 (UTC)
+	s=arc-20240116; t=1757101832; c=relaxed/simple;
+	bh=EY9a/qJowNnGiBZRmmgNcKTqSiUenKGV9TjPNYFySFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXGUWQV6h1yRG8Uam2emxobJtBOwc55F71vkAMySvYFiOPQk8QcWJZn96vsq1qT1jba3O6eT8zW/vOUvC8UBBpv16Pi4KWcpqRkzfQvIScxSmfGOe4GqWFnDTciLxd4hiW0ZI4fQOByc0XzZE/E72OduMKgrdgNufsL+rMDatpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSJuEUj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924B2C4CEF1;
+	Fri,  5 Sep 2025 19:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757101823;
-	bh=CLXw4DN67XKGQfmhHzc4kdR7hzYM9eFmZ4ZDRbEwt+0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UoWEwhNTl2+lYYy/BEPgYCuCn99esPHsPKIqwp3Cz0QhMbbth5iaIFzok2mC9aYtL
-	 Z6bl2VoMKBrIStUpbKbJl4bU8pP81dOYPNcaqm+5msC0fYUv+DlmT8z10VOnMruNvo
-	 i1FityfKlT6kGmV7rhhc67R9EZz0LOP7xJq+anwXXMlfeUWmdHsr1f0eO358PBObKC
-	 6NxRAgoc6CSgYEVWI9o0Hgw7NgFKaIshyNSeUNSwgg2/N/wwvDv0gNglfaMFnLBGYy
-	 lZRS336IcydcJet+4ywLXnkatJUBEomTU+VWFhS36wh9/Ty6D8GjfT8/RQVGJN2Sgl
-	 DmWJQvVk+xLBw==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61dd3b5cdd7so773819eaf.1;
-        Fri, 05 Sep 2025 12:50:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5JvcFyQTZ+4a3xsmRYe4wbviI+XXSqiKC7cGPNvN3Ju26ayLZ0aKqeqioNAQ9I9MchDVdsEtpk94q@vger.kernel.org, AJvYcCUBwZzV57L5KpxfvLCCzpl2BTF/2gZXFYiWdyDymhhPthtm9WHvuOIfsF5c4eBlraACjelixVousEQufVI7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPg0U6UZx2AD4vTl3CWH2Biwil5UyrqAMQ0Q+TyqPprgQnFmGn
-	pu+1rGWUFc4YHLeLTSPyan0GrXDVG4efbHLJoTniNKDoIRH2eX37+J/F8hWBPYYL6E9IEDqtkwW
-	ULB6w9dOljwzFcKY58Dj2fOMVDcv8ris=
-X-Google-Smtp-Source: AGHT+IF8sQYyCL9maiAio96EKgI4GjPLwuW+t4oZprRYAsEdtVg6Xdbc9lbCXJsNXFdo9GpYHEP7kGqxHN1ih8fmDLM=
-X-Received: by 2002:a05:6820:54b:b0:621:7704:b55f with SMTP id
- 006d021491bc7-6217704b9b3mr284095eaf.7.1757101822552; Fri, 05 Sep 2025
- 12:50:22 -0700 (PDT)
+	s=k20201202; t=1757101832;
+	bh=EY9a/qJowNnGiBZRmmgNcKTqSiUenKGV9TjPNYFySFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MSJuEUj50C4lXsNFIagLrB9IqmozQ+JzO9v5HaAbxoFl55kh8DwztNseiEncuTYn2
+	 7VRmk7Eagnwb5KH2BpuYLsaamNPsIEEPQS1JiRu/GpCwFbGmGGKgKhwo/5miG3uCtV
+	 f9SbV0dbbRcyQq2VncWkzKGpAN1+O/l8cSOXo7J8wPFHaHqC4B2SfcXKMihYR2Pj6w
+	 uN0qXuj94YcuA0MWssNhiVJe1z2FRlPFxng0/axd1dbcU4AtU2g7jQiGTYUDNvGbtQ
+	 u4+Jvbzji9/ux2/rWuzwnpozxE5qHaa38nScP/6RJHJkIaWfqYsj+F+6ECjd4m//bs
+	 fLNX1guYV15bg==
+Date: Fri, 5 Sep 2025 12:50:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] perf dwarf-aux: Use signed variable types in
+ match_var_offset
+Message-ID: <aLs_BuzNJZt6Wl2g@google.com>
+References: <20250825195412.223077-1-zecheng@google.com>
+ <20250825195412.223077-2-zecheng@google.com>
+ <aK_8kt5Yf9MDoPdu@google.com>
+ <aLhjnex4_SXpV_8N@x1>
+ <aLi7o0hB23v7wpJ9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905081900.663869-1-lihuisong@huawei.com> <20250905081900.663869-3-lihuisong@huawei.com>
-In-Reply-To: <20250905081900.663869-3-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 21:50:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jF=1QdHMVY1=Cp_iOEPA2sMOsqQC3vK4uYJMWnpXethw@mail.gmail.com>
-X-Gm-Features: Ac12FXwfRtsokZks2As3V_9CBMMkOVJPNWPE2m83WSSpowp5qpMCSc5pKiq-LaU
-Message-ID: <CAJZ5v0jF=1QdHMVY1=Cp_iOEPA2sMOsqQC3vK4uYJMWnpXethw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] ACPI: processor: Remove unused empty function
- definition for processor_idle.c
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aLi7o0hB23v7wpJ9@x1>
 
-On Fri, Sep 5, 2025 at 10:19=E2=80=AFAM Huisong Li <lihuisong@huawei.com> w=
-rote:
->
-> If CONFIG_ACPI_PROCESSOR=3Dn and CONFIG_ACPI_PROCESSOR_IDLE=3Dn, we may e=
-ncounter
-> some warnings about function defined but not used.
-> All external functions of processor_idle.c are just used in processor_dri=
-ver.c.
-> And if CONFIG_ACPI_PROCESSOR is selected and CONFIG_ACPI_PROCESSOR_IDLE a=
-lso
-> be selected automatically. So remove these empty function definitions.
->
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  include/acpi/processor.h | 22 +---------------------
->  1 file changed, 1 insertion(+), 21 deletions(-)
->
-> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-> index ff864c1cee3a..d6a87dc42a9a 100644
-> --- a/include/acpi/processor.h
-> +++ b/include/acpi/processor.h
-> @@ -417,34 +417,14 @@ static inline void acpi_processor_throttling_init(v=
-oid) {}
->  #endif /* CONFIG_ACPI_CPU_FREQ_PSS */
->
->  /* in processor_idle.c */
-> -extern struct cpuidle_driver acpi_idle_driver;
->  #ifdef CONFIG_ACPI_PROCESSOR_IDLE
-> +extern struct cpuidle_driver acpi_idle_driver;
+On Wed, Sep 03, 2025 at 07:05:23PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Sep 03, 2025 at 12:49:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Aug 27, 2025 at 11:52:02PM -0700, Namhyung Kim wrote:
+> > > On Mon, Aug 25, 2025 at 07:54:03PM +0000, Zecheng Li wrote:
+> > > > match_var_offset compares address offsets to determine if an access
+> > > > falls within a variable's bounds. The offsets involved for those
+> > > > relative to base registers from DW_OP_breg can be negative.
+>  
+> > > > The current implementation uses unsigned types (u64) for these offsets,
+> > > > which rejects almost all negative values.
+>   
+> > > Right, I thought it cannot get negative offsets except for stack access
+> > > (e.g. fbreg).  But it turns out that container_of() trick can generate
+> > > them with optimizing compilers.
+>   
+> > > > Change the signature of match_var_offset to use signed types (s64). This
+> > > > ensures correct behavior when addr_offset or addr_type are negative.
+>  
+> > > > Signed-off-by: Zecheng Li <zecheng@google.com>
+>   
+> > > I've confirmed it produced slightly better results on my test sets.
+>   
+> > > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+>  
+> > Cherry picked this first patch to make a bit of progress in the
+> > perf-tools-next front.
+> 
+> It is in perf-tools-next/perf-tools-next now (this first reviewed one):
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
 
-The changes above don't belong to this patch IMV or at least I don't
-see why they belong to it.
+Thanks for doing that.  Please pick up the patch 2 and 3 as well.
+Namhyung
 
->  int acpi_processor_power_init(struct acpi_processor *pr);
->  int acpi_processor_power_exit(struct acpi_processor *pr);
->  int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
->  int acpi_processor_hotplug(struct acpi_processor *pr);
->  void acpi_processor_register_idle_driver(void);
->  void acpi_processor_unregister_idle_driver(void);
-> -#else
-> -static inline int acpi_processor_power_init(struct acpi_processor *pr)
-> -{
-> -       return -ENODEV;
-> -}
-> -
-> -static inline int acpi_processor_power_exit(struct acpi_processor *pr)
-> -{
-> -       return -ENODEV;
-> -}
-> -
-> -static inline int acpi_processor_power_state_has_changed(struct acpi_pro=
-cessor *pr)
-> -{
-> -       return -ENODEV;
-> -}
-> -
-> -static inline int acpi_processor_hotplug(struct acpi_processor *pr)
-> -{
-> -       return -ENODEV;
-> -}
->  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
->
->  /* in processor_thermal.c */
-> --
 
