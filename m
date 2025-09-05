@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-803888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806C3B466CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB709B466DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C67D3AD9DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7797BA064BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B02882A9;
-	Fri,  5 Sep 2025 22:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29441FF7C8;
+	Fri,  5 Sep 2025 22:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcAR77h4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VHb1V8bG"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796BFE552;
-	Fri,  5 Sep 2025 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E569D25A2C9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757112461; cv=none; b=sMt6JgTnILekSPflSFBcju7EnCgf2MYEVpAWKcSsMsUV9Z4fZI+Bxdn37Ri5Y08CZ4iULL5zFB8DR/s7cq1AOo9dEEpVkPNFyjKQmI610tq0lbQERJZS99GL5NCEuZoYsLsVG1bFKweBFvvKYBlcpp64Ern4/O+SiiMzBcgMhA8=
+	t=1757112493; cv=none; b=dGjJPfsiXrgoGXC8g1xn8nzoTRmCy9U4rtM7BcqBm/NWsiKdDXvaDc9qXIpo2QTKa8kAcE0gX7IWVtn5E+EMGP1zoVvuCokEmiNEJs+no3OQe95RmNBokhBEAQdA+ycRY9zYBqxhP/BE05U3c8Tjtb8NWVJUYnRs8iiOUTAzCfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757112461; c=relaxed/simple;
-	bh=tGd46iQZ4DRbpvmkNmCnAZN6AsD9LicfdvyOISy1Mw4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=gn78l7j/Ox9nS2XAppEc2ymBfQGgqTMbzfFjTq5mfhlyFTHgeYTuNl/kylgJoAgbCRu0b2F5EfLvg93UcNLgl1ldACHR3fgHXOF2lAVZA/yCGyK1i41CA0Ldtme4M2c6BZDFTP/WutTQRr9ov6L6aBUGf+FJd3nkPM2f4vpxzyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcAR77h4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B005C4CEF1;
-	Fri,  5 Sep 2025 22:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757112460;
-	bh=tGd46iQZ4DRbpvmkNmCnAZN6AsD9LicfdvyOISy1Mw4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=TcAR77h4nbsHt3U50oejIjGSj8BdrAIgFlSpDcx5NiYDyXpLea7shRMuTA609gocg
-	 u9S6lrMd3bUWK76TBOgERnUWkorsz9Wovc3lehCAtg2NSfDovhYa2Ho11Qn0o8MaHp
-	 wFkQz2NlQtk61Y7D+m7/8/VTDSZRK2y2z0Ewl62j/FwG45YPA5CdZD5bhSC5jWoo0l
-	 1DCw1wM9dSSG+7SGCocKZr5yqhGbDh4lKYEUDQR8i/3c9aJ93B8aU9jRlWKXzuK8ku
-	 VsYKvmq4jL5s5CcsBNaJC64l/Ru45zCJ9NzYznJ8Z4W7QAbbfnuul28DgCUsapwhF6
-	 zKGo7P4oLHQHQ==
+	s=arc-20240116; t=1757112493; c=relaxed/simple;
+	bh=/NeEPoYmo/i+0mCtYCXzvr6NHSeL+V/e7VCNvcbNorE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=enkUYCaGC843KiDogJOFh4AfIAMe34gG+JpKN9NOgPd2T92DrnfnzK3IcAzYiY4NvX/fhwIalD/0tgNqRmr+V0lphnjL/GmJB61g5GfgWB7AFPFpBUlOqNUhlQjOpEWxZ7r0f8rxOkxGG+U1vqE9vnokrGSySGsNMBdX8UIlRZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VHb1V8bG; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3f665747b4fso14701925ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757112491; x=1757717291; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0WdnLhIU8eeSscRHjrKmNdJs/lkEli5/RHH0KzOqfe0=;
+        b=VHb1V8bGMo2farAf3P13aEdYcPOc9g4nG2kFTMekl6BmMkfVGbkO/qXDKTiZXzGB5Z
+         Gf4CjNCy4PWr/5HOyuyg9oW1vprp2xk6amwn+EmdpJ2oxHlKj+gvAhAy3tx9QZO8NAPo
+         yyRFExnei29FbdpQQW20mK9j09oLBRmddh7x9R2C/DDoY2Mzv/rHJHLkGMpoiXxVEpUw
+         xC+0vJ0fwO6jzthbFp9VRkZghgvUm9bSnQV59GSfZqMAhH1s7g5MYr32rtxPrBpQAzFl
+         clfrPuYYLGbNFkwZTwB6ncBNdWRTflwEBvBFNa+UtXgtSkMW+YpQmplhkRJgutJm560Q
+         wbWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757112491; x=1757717291;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WdnLhIU8eeSscRHjrKmNdJs/lkEli5/RHH0KzOqfe0=;
+        b=tLNjcxmP33jYkU7cSDLaRbG7tXj1o9cSReCmeLtGMw9hWinjyBCfPnCAjwT5XyGoxG
+         Bvy7lu4ISC+rsTZJQ4szcSUeXZd57xOjpxQXwQmXZfcskN1a0AyBuPTkOwSeyzagpgos
+         0+ft9CEU0TuliYeoxH5aEFD3tavArRKVHC8EMDJDhYStbS8r0rpMmEMuP3QBum96rLPH
+         SgTrboIRLEQReEKxEOpqNp7Smk3R17T7uBZDMyHD/jZiruZKhXfnTznEGDkRGBMkeqg6
+         NYpUudRVuA3dC+3eJa03Nmwhfc7CWWHQVAvai/UPJftUz+6GVYAq54LrYmp6al2RGyFn
+         bfrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQwRk5+u9FvQlJoXY0KSxUsYDYynJcd4Mv0TGzddi2jQgpfF+kE/6NQo16bYMkwLigENeW8yVPBoxuP6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybBg2XJH47eej+2hWh29UGQU0JQ1DaXv+IwHNiMT/7d2PnA3Gh
+	TZcR087euAC3ApiOuERj/ZQoMWA895RhX+RaGGvPZ6V4M12jhLROmyV+FHdNNGp10GBuyRafDRy
+	/TEGF7Ps9
+X-Gm-Gg: ASbGncvLBV+Cypg6DuDX5st/b5HN4qljZq6y7v7C1BT4FU60QTExV2CHhXyaL+Dr7/a
+	3nJ5tA/kTaSQf+dZkBtWk+Ozyb/bwyb8BfbL8YVxTkoeNso0w0yl0Znj8llu/d4dTGIiDNxyLVq
+	/2y9QQlyVhs5PubLpxZtiIr3ZKqDf3o7xMiyG3bv5LDTI9MA7cq1kyrAaF6qKddvYPefgvHkDjT
+	nxLyH/T5doZtnAhzAdBVkpQe3wGV6pjegde3PfBjQIgy+cVjhwciQdZNiPC9nrWhNX/FzrqF67K
+	unwz8atqTHjTFMDn/0bcXrlrCM+oAhRcxZ/BIj2xjZ0qaLArLUGb/hYiiptDj4Eob3tUi4faBaX
+	yAaXvAPqgqinAVqgApNaR6Af9IizXtI+gvG33l/NzRR5bseVPyeqHd2ejktZk2jbdXg==
+X-Google-Smtp-Source: AGHT+IGteJPTUg7Q4dY55bVPcXcRiRPHeCcc/yp3td6K98DG8HYiAWfdNzDYCCb8HPGJ8iqvMzuTDQ==
+X-Received: by 2002:a05:6e02:1a41:b0:3f6:5688:a088 with SMTP id e9e14a558f8ab-3fd7fc2166fmr11006485ab.10.1757112490698;
+        Fri, 05 Sep 2025 15:48:10 -0700 (PDT)
+Received: from google.com (189.227.72.34.bc.googleusercontent.com. [34.72.227.189])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5104e42de56sm1991680173.32.2025.09.05.15.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 15:48:10 -0700 (PDT)
+Date: Fri, 5 Sep 2025 22:48:08 +0000
+From: Neill Kapron <nkapron@google.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com,
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] selinux: enable per-file labeling for functionfs
+Message-ID: <aLtoqKL8plKOF0Ed@google.com>
+References: <20250828170317.2322582-1-nkapron@google.com>
+ <e2c4c055ff356b4fe5d49bc9df3fd2ab@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 06 Sep 2025 00:47:36 +0200
-Message-Id: <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org>
-Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
-Cc: "Boris Brezillon" <boris.brezillon@collabora.com>, "Matthew Brost"
- <matthew.brost@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Steven Price"
- <steven.price@arm.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
- "Liviu Dudau" <liviu.dudau@arm.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
- <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com>
- <20250905152505.005a610d@fedora>
- <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
-In-Reply-To: <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2c4c055ff356b4fe5d49bc9df3fd2ab@paul-moore.com>
 
-On Fri Sep 5, 2025 at 8:18 PM CEST, Alice Ryhl wrote:
-> On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
-> <boris.brezillon@collabora.com> wrote:
->> On Fri, 05 Sep 2025 12:11:28 +0000
->> Alice Ryhl <aliceryhl@google.com> wrote:
->> > +static bool
->> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
->> > +{
->> > +     return !kref_read(&vm_bo->kref);
->>
->> I'm not too sure I like the idea of [ab]using vm_bo::kref to defer the
->> vm_bo release. I get why it's done like that, but I'm wondering why we
->> don't defer the release of drm_gpuva objects instead (which is really
->> what's being released in va_unlink()). I can imagine drivers wanting to
->> attach resources to the gpuva that can't be released in the
->> dma-signalling path in the future, and if we're doing that at the gpuva
->> level, we also get rid of this kref dance, since the va will hold a
->> vm_bo ref until it's destroyed.
->>
->> Any particular reason you went for vm_bo destruction deferral instead
->> of gpuva?
+On Thu, Sep 04, 2025 at 04:15:52PM -0400, Paul Moore wrote:
+> 
+> Merged into selinux/dev, thanks!
 >
-> All of the things that were unsafe to release in the signalling path
-> were tied to the vm_bo, so that is why I went for vm_bo cleanup.
-> Another advantage is that it lets us use the same deferred logic for
-> the vm_bo_put() call that drops the refcount from vm_bo_obtain().
->
-> Of course if gpuvas might have resources that need deferred cleanup,
-> that might change the situation somewhat.
 
-I think we want to track PT(E) allocations, or rather reference counts of p=
-age
-table structures carried by the drm_gpuva, but we don't need to release the=
-m on
-drm_gpuva_unlink(), which is where we drop the reference count of the vm_bo=
-.
+My appologies, I introduced a logic bug between v1 and v2, and have sent
+a patch which fixes it [1].
 
-Deferring drm_gpuva_unlink() isn't really an option I think, the GEMs list =
-of
-VM_BOs and the VM_BOs list of VAs is usually used in ttm_device_funcs::move=
- to
-map or unmap all VAs associated with a GEM object.
+Thanks,
+Neill
 
-I think PT(E) reference counts etc. should be rather released when the drm_=
-gpuva
-is freed, i.e. page table allocations can be bound to the lifetime of a
-drm_gpuva. Given that, I think that eventually we'll need a cleanup list fo=
-r
-those as well, since once they're removed from the VM tree (in the fence
-signalling critical path), we loose access otherwise.
-
->> > +static void
->> > +drm_gpuvm_bo_defer_locked(struct kref *kref)
->> > +{
->> > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm_gpu=
-vm_bo,
->> > +                                               kref);
->> > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
->> > +
->> > +     if (!drm_gpuvm_resv_protected(gpuvm)) {
->> > +             drm_gpuvm_bo_list_del(vm_bo, extobj, true);
->> > +             drm_gpuvm_bo_list_del(vm_bo, evict, true);
->> > +     }
->> > +
->> > +     list_del(&vm_bo->list.entry.gem);
->> > +     mutex_unlock(&vm_bo->obj->gpuva.lock);
->>
->> I got tricked by this implicit unlock, and the conditional unlocks it
->> creates in drm_gpuva_unlink_defer(). Honestly, I'd rather see this
->> unlocked moved to drm_gpuva_unlink_defer() and a conditional unlock
->> added to drm_gpuvm_bo_put_deferred(), because it's easier to reason
->> about when the lock/unlock calls are in the same function
->> (kref_put_mutex() being the equivalent of a conditional lock).
->
-> Ok. I followed the docs of kref_put_mutex() that say to unlock it from
-> the function.
-
-Yes, please keep it the way it is, I don't want to deviate from what is
-documented and everyone else does. Besides that, I also think it's a little
-less error prone.
+[1] https://lore.kernel.org/selinux/20250905222656.3692837-1-nkapron@google.com/
 
