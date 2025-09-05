@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-802690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764F2B45592
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:02:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F25DB45593
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D98DB619BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361531C82D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BDB33CEB1;
-	Fri,  5 Sep 2025 11:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA29341AC1;
+	Fri,  5 Sep 2025 11:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="gWSqpyMf";
-	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="aiQNrA+9"
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="0ZU9oZw3";
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="jdd8BC/n"
 Received: from haruka.juszkiewicz.com.pl (haruka.juszkiewicz.com.pl [185.243.53.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26030286439;
-	Fri,  5 Sep 2025 11:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F282B321422;
+	Fri,  5 Sep 2025 11:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.243.53.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070163; cv=none; b=jG+bFsmIUMw1DI45/w2m6hSfy5a3TWM8RiCjNSrnFwXeRsofZ4XIJvPhp+Cg4lkZeAFByqiAnZEOvh7SvW4RqkL+n2VxBX3sU4bpWY7UBPyu4HJgygdaHzZiq4I+Bn/l/S7iyW/liV/GMaTqr7v3JyaJQHR76F5TsyeWd8MMHCQ=
+	t=1757070164; cv=none; b=G5emlB2jZ059xGazrFvimoPAVzHbIaPTVlrzOysIToBgluBbu3QopTXUo4XRdiC0n7aNNXlySFn6AuEuPMBRdupg540iq7eeD3mnvty3MbLuiXYd8GxASd8tSI4/o8kYvMttmIQG/nv5go/oDoyzGAf3IiHhb5In2xsHCUrg5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070163; c=relaxed/simple;
-	bh=0WWTGQsEQ9lzz7bJ7y89bwI1VZur0nT4lh7qtGAWR4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PaZquc5bnICvS430TepRv/l+YOoRMrSEUrxo9lvLiQLpXB+MHarpmYlGZM267rUagJ7n/HLuWApvV5/9g2NdqvgiUmNJrGVfvso8Zb7Xtl8AL2tbzybycQW2mc5cOHloThldOv2JIoWBa14BB8D899r2j13eNLpCBrCG0PfvhI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl; spf=pass smtp.mailfrom=juszkiewicz.com.pl; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=gWSqpyMf; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=aiQNrA+9; arc=none smtp.client-ip=185.243.53.191
+	s=arc-20240116; t=1757070164; c=relaxed/simple;
+	bh=GDquDPQwE7myiK7wYOqpSjbnjrunWfiKQHBxJv7TDEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gUaxTR4uwSxLF7ZxaNYmvNXfTHlVfBiZ8DsiaHilhso6CAY2zhvSy3OhJymYbQNXwCpGW9AoSIHS7BPE1wy8LBvWYDKx+nhWSzzcg1cbPAyi6wu9oNX6WyFLCrTrk1FBg+2oV3HHw6l/6XloSeaVjFvgWjGjgYZd/xKmFJZKb3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl; spf=pass smtp.mailfrom=juszkiewicz.com.pl; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=0ZU9oZw3; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=jdd8BC/n; arc=none smtp.client-ip=185.243.53.191
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juszkiewicz.com.pl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=juszkiewicz.com.pl;
-	s=mail; t=1757070159;
-	bh=0WWTGQsEQ9lzz7bJ7y89bwI1VZur0nT4lh7qtGAWR4Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gWSqpyMfGPMwxB+fAyLvrmVa3xWV7K6GM8o6Wp641za9iXv68v45NEJeGa9jul0hy
-	 fbMbstBXwCdBPeHFxcYA6J7syabjRcCJpEW+JPkBMwHy3YeUEw4Rydlm6DLUzBrURr
-	 cTBaANzIjaN8ZXhQdGJY4u6TWX1PlQNx39/nO6yoD5JkXVQmBjxmUfQ2QE/EF/q/Au
-	 btdAUI00sAi/r6T7aCY33q3Op6xhT1wX7mi3U/pPq7HD1PEuHeMQwodi0qoWqQ6lxi
-	 2jc1rVUfPXOVqJ/pzueRVBRinxQMMsQ1lWakq2m/FmkqSQv+4dhzDmX7svdo+so3BG
-	 SBuS13MbFf8Og==
+	s=mail; t=1757070160;
+	bh=GDquDPQwE7myiK7wYOqpSjbnjrunWfiKQHBxJv7TDEE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=0ZU9oZw3bMvBmqIKXiHYHrJUEO+54FZXp8N1uujkk9hqW2PIKwEhsPxTLRMER/kz6
+	 0Gmo0PZh3cSD4LccimY75W1FiYrGdjSt33z1MRtSLqgob9geTJLNHHNFjMAL/a+q/V
+	 PdZCLH29Jl6o4jfTZjn/lFJtz1TQJ+CLImwZQIxMh9D0r0MY8liyYwX0LM+4rdWqaP
+	 kaLTcsnuftOKqFhp0mzzrNO3+8E3nzIy6BnoadufFEx7lOfoSBVqA7i5itFzzC9BwH
+	 sxb4SCGg8KnJMsEa6g137JbYNM7FqkqYWCIgxnwDOzaIc3T+d69om+T0l6U7bNaLPy
+	 l+hzPxiBbRDFw==
 Received: from utena.juszkiewicz.com.pl (utena.juszkiewicz.com.pl [158.101.208.177])
-	by haruka.juszkiewicz.com.pl (Postfix) with ESMTPSA id 70A751FB29;
-	Fri, 05 Sep 2025 13:02:39 +0200 (CEST)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB62B453F5;
-	Fri,  5 Sep 2025 13:02:37 +0200 (CEST)
+	by haruka.juszkiewicz.com.pl (Postfix) with ESMTPSA id 99A771FB80;
+	Fri, 05 Sep 2025 13:02:40 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D3B845400;
+	Fri,  5 Sep 2025 13:02:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juszkiewicz.com.pl;
-	s=mail; t=1757070158; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=AQznFZ2/CAp5Ia9g3+t36AoVZFqyxkghcnOS1fDxNvI=;
-	b=aiQNrA+9ezwZkkfwIxLK7lUExyZ+S4bj0MGCyYKQ2eqcljH/5xS/nNQ1J0ap8losZOWfTb
-	NrNhAsr5MA3n7MdDTrAv6g1vFZuyv9gxH1lpfdxRA6peIA5wE8RvHmVVxl1o+WHDxrke3X
-	J7vBDLAbbfTzr3iYsqLYz/Ro5jWKQcMKmEbxK8oANCUJqMJaJAML03F84aFQh5NPzEVu5T
-	WaBN2vqNMadKGKtwn3kAIvJ8A6S03I4F6z63HUnDfnxvZ8OSKOiHQj6uWqUFJOdhkgb/Hg
-	8RcbxZz86Fi4QMoWuA9bEUr+JHfpehWh8DHAW3GYXrL65HYGL1PFOL259PwJQQ==
+	s=mail; t=1757070159; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=bmM37TIebFwc91NhuXnorA0dNpqLiDvcznMp+hRuFu8=;
+	b=jdd8BC/n1OesgTO6l/Axdof0r/fcOuuXchbuYEJZ6G8gLdq5lOl5JNxn4VFsSsKkxgkDLU
+	6QWT/KGNCa4Zjf4jCmVzUX+J3zSwWL9bpar9VjRVhWifpHDfhIAMHJLLZdehDHhRrcvn9k
+	hkMNeMKOarkADE8AXi23V8AcykB1YQsKWOgpwtOxpKrDxTyCmATsGpmsuRa+3PJY74Jt2V
+	EgElnb1q152ttxn5nKHsQqwDAwlv/Eh8XzzyiICvAOPY+2LyQN0VYUdq/2kRuAGh79H4VH
+	CgIeJ+lHoMCx9LFGVynJSePY++PykprfmM0GrHgK2sYrDweqYtzxFxWrctXbUg==
 From: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -63,10 +65,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
-Subject: [PATCH 0/1] Enable HDMI Receiver on NanoPC-T6
-Date: Fri,  5 Sep 2025 13:02:29 +0200
-Message-ID: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
+Subject: [PATCH 1/1] arm64: dts: rockchip: enable HDMI Receiver on NanoPC T6
+Date: Fri,  5 Sep 2025 13:02:30 +0200
+Message-ID: <579370818ef3b70b57bc5b8846f3b330d091d9a4.1757068166.git.marcin@juszkiewicz.com.pl>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
+References: <cover.1757068166.git.marcin@juszkiewicz.com.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,43 +80,48 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-For quite a while I had this patch in my local tree but never made it
-work. Kernel generates the following messages all the time:
+Let enable HDMI input port.
 
-fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: signal not lock, tmds_clk_ratio:0
-fdee0000.hdmi_receiver: hdmirx_wait_signal_lock: mu_st:0x2, scdc_st:0x0, dma_st10:0x10
-
-"v4l2-ctrl --all" reports that HDMI In is detected, /dev/video[0-4]
-exist.
-
-I tried two signal sources:
-- AMD Radeon WX2100 (via passive DisplayPort -> HDMI adapter)
-- AMD Radeon RX6700XT (HDMI port)
-
-Same situation with both - kernel messages as above on RK3588 system, no
-connected monitor on host side.
-
-Usually I used MPlayer or MPV to check v4l2 devices but here it fails
-too:
-
-$ mpv av://v4l2:/dev/video3
-[ffmpeg/demuxer] video4linux2,v4l2: Not a video capture device.
-[lavf] avformat_open_input() failed
-Failed to recognize file format.
-Exiting... (Errors when loading file)
-
-
-Checked SBC schematics again and HDMIIRX_DET_L line is GPIO1_D5 like it
-my patch.
-
-What I go wrong?
-
-Marcin Juszkiewicz (1):
-  arm64: dts: rockchip: enable HDMI Receiver on NanoPC T6
-
+Signed-off-by: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
+---
  .../boot/dts/rockchip/rk3588-nanopc-t6.dtsi     | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+index e359d74f20885..6fe151d2cdb45 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+@@ -391,6 +391,17 @@ &hdmi1_sound {
+ 	status = "okay";
+ };
+ 
++&hdmi_receiver_cma {
++	status = "okay";
++};
++
++&hdmi_receiver {
++	hpd-gpios = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
++	pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_hpd>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &hdptxphy0 {
+ 	status = "okay";
+ };
+@@ -629,6 +640,12 @@ usr_led_pin: usr-led-pin {
+ 		};
+ 	};
+ 
++	hdmirx {
++		hdmirx_hpd: hdmirx-5v-detection {
++			rockchip,pins = <1 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	headphone {
+ 		hp_det: hp-det {
+ 			rockchip,pins = <1 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
 -- 
 2.51.0
 
