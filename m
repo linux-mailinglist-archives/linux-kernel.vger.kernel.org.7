@@ -1,339 +1,264 @@
-Return-Path: <linux-kernel+bounces-802462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ED8B452B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:13:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED10B452AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52AD37BA595
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF883B61B5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEE728466D;
-	Fri,  5 Sep 2025 09:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E2B2FDC4D;
+	Fri,  5 Sep 2025 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZG5blmF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SaHNrXTa"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8B028A704;
-	Fri,  5 Sep 2025 09:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702E727FD68
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757063206; cv=none; b=MACspXxJKhJYTtGhp0OG7adgLIZWgfYe6BHhs4nFskNscRe3q53CaoX/F54Jp5MuFU9OOcf6ucyEec9ExPEFkT5wcMkLPHbI/OueRd6QM0sv1oO/2p1IyhuTus8wOCc3s9BPNcW3CpaKrLmsV5kRM0OViID+tuMnVoxWbhj8IBI=
+	t=1757063234; cv=none; b=nHnQF2nxnaVZZ7fSorw/h4DV48eoo+0KDzQjjYsrM5IM7YGqgIq9Q4oWQfvGfZuMRa9+5DvA/SepI9obU6oxKD+ZFYRmAtkR+ZicVyfrkcRoUSb3QByjDjwO0tvIyIBAdgt/uwOR5bouy8AaBM9hIOBsJ5PGu1uOCWLPuCyVgpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757063206; c=relaxed/simple;
-	bh=Nf4BNlj92A6Gq2vl04S2lCAj8pMT1QldYLkShSHu178=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ofrnjJg9D/o3NwZOvGH5Aq725uyhXDrP+0v2xZdjeiEKB6Hauzhyu5d+P4VLxLP0JYH6WOlg3Csttmh11ayq/G6DhSD1g35Doibhg2SfjqLYhjaiMFVNNvuIV9pNOK6pwHUt97rXlazVbuooECcqq0bLTVk4OGVCbhz87Ucja0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZG5blmF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 05E21C4CEFB;
-	Fri,  5 Sep 2025 09:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757063206;
-	bh=Nf4BNlj92A6Gq2vl04S2lCAj8pMT1QldYLkShSHu178=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JZG5blmFIaQPAQuViZoIXaY17JqFnqoY8c2N+iP+QeRohxocLqKH87oqTW9nbwPmD
-	 KWUwdhbFbpB0jpyfHMKwnmCG0HaAG9j33NBFA1gIB4zEcYDxLeOc5u86px77UNhxbc
-	 o8onfsUJZHn3fctc5XqZ454u3DQQhIFG0g5dIn7oITXlPcgDRKtkwc/bRT2kiL0Jrl
-	 l9jsA8kPH8lUCPtt4jdpYPJx6QpqPjDDtlzlwO+JYGHTu3jyhv158qRiLytrvTPkqR
-	 JoOvle+gBwCMbeQqEPuQ0tzalH/wHj5VW97cW5YYqqzDn1t12pVMN23zmS0/mMSkeM
-	 ocgzayxkwtTZA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC38CA0FED;
-	Fri,  5 Sep 2025 09:06:45 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 05 Sep 2025 17:06:39 +0800
-Subject: [PATCH v3 2/2] clk: amlogic: add video-related clocks for S4 SoC
+	s=arc-20240116; t=1757063234; c=relaxed/simple;
+	bh=dypwkIDDK2CppEh3SElXi9CvlbTKiIUDaVTS7Gkyl18=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ahJ9PZjloQXtfg3T8AMtxpQ0uox4R0pu6WHioh+pOGFIAkIhDr/Noz1lPa8+0Mt+muFEnXH07y2PQw4ynoL/JN7VCGaNSNhoOUUpTNuxlmHVjL3mHM+1dSSWQJh7Nz/Z+ZB3teOjLDcqxuV7X2PtItp8liE/VL0jKbZSx5s/vXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SaHNrXTa; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3cf991e8bb8so1334757f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757063230; x=1757668030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxAbvWJC59UYqF45rKaqQZziatIuw5ZItEvXiiII52k=;
+        b=SaHNrXTa2hL250y0Ww8UGA5s0OYaPyfPG9vGo8Ww8d/tBYpnl25092/P6l44Zwu4L+
+         cp+KDMuNAkCDxfED6tm1+c4GdSY8LNLm6lcn5k1oAwJ73ZAODS64ZSblnspeZDnp62FH
+         x6QcHlU/ZecUD5DedSYrItMFbIh2C3NMLSGLM/8OJ/YK7xqqwKB0CSly8vWsEMecgQ+z
+         CYTAkrZiy5D6vB7/J+Mp2IUFixqcgL1UW49lc1kWhXCdW3oy9fIOmuWzX/YTW8V8KhGb
+         GP9stY+xZFnaakiVKq3BC7ZJQ9K3pB8EhjO/MjbkOXMzPjKSMF4SG28ipmjmAeEJ1AJG
+         cafQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757063230; x=1757668030;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fxAbvWJC59UYqF45rKaqQZziatIuw5ZItEvXiiII52k=;
+        b=iBt24S8cJ2VG8wOz5PTTMGsjTn7Z6d+gKKKuCTPMQl6XZIj3DqZ/q9ylE1CyMSDTFY
+         6E/L5R7M13zBWK81P2ruVRE7gpYdB44mYPgHxc8U1uZvjEGj9wPOYZTJWGR65wJMySfF
+         +psBj/jI9Nw/fM6gUpiUp93TcaTaBushncfTfBR7dAm5KKMmIZBnbQRCzKBE1PTe/ZEn
+         zAvAG2LHRKe3NI+G/Mm/j01lVpCAlc3xjfkz4yS+2mrWBz5cCYt+p+Y+RFUse/cumQvN
+         S+CvEkQPoyPW9Fg9dq7PGzXMo433XEKgNGWPQKNP/NLIwFkXOT6KTwvmtbp6nE7buI0G
+         116Q==
+X-Gm-Message-State: AOJu0Yzde7y5pQdKg+5UysSNGA5ddgLjKfz4bwVm7MxWc+I4bUIG1C86
+	n1kEsXmFoPEKryWIe8o63+aB/4r+Dt5tA+OyAPkY+kDs432KLohdSDj+3or3BCFhS4unIEH6OKb
+	Td4Mh
+X-Gm-Gg: ASbGncutNzPrBLk5eY1H03MNGU7q9cyKaeKEZEcpmlGpm3X4bkU7zPuGqTQsMAXVHiQ
+	Wz7Kpm7YoBYTkHIPaZu+fDMpZtvBQwUy3ydfeEfeqllfL368CQZBmYjwoyb0SHwfrrLOqW3ywcQ
+	xTZMcdqegDtvgE21VsEcm2KwHZ8oxfkO/ZwmuEbpTM1bQEk6/12YESQDC9ZP6FRvjGEimY6hB+3
+	Ux53wQqKK8jT8IZgEgz4utn8DHkxWacWhqYVK8ZXIXvRPKTqZQbeqZJgV56N3uHc/bNuWUpMV1S
+	Ceo1xM2IVXd9qwraL+BLl6wsM8dtrGh1fVRmTuA1QYQ2FQJw4CZ6TanCazUlTvTrAkQGLYJf7r/
+	TKI0XB7ZWScyf7eKNK6ugBz/KMnLWcWLZD4NxKCGWKI/jGIOViDeAcJs1fg==
+X-Google-Smtp-Source: AGHT+IHfNYMGrd+KAN2rfzAtHCICclBHcGlu0L/H5dSYahLdT4Veg3VdsixFBGsLDuhNWmwzhjpFgQ==
+X-Received: by 2002:a05:6000:24c4:b0:3d6:3af4:7cd9 with SMTP id ffacd0b85a97d-3d63af4818emr17510764f8f.12.1757063230376;
+        Fri, 05 Sep 2025 02:07:10 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfcf3de7sm35952735e9.4.2025.09.05.02.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 02:07:09 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 1/2] power: supply: replace use of system_wq with system_percpu_wq
+Date: Fri,  5 Sep 2025 11:06:40 +0200
+Message-ID: <20250905090641.106297-2-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250905090641.106297-1-marco.crivellari@suse.com>
+References: <20250905090641.106297-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-add_video_clk-v3-2-8304c91b8b94@amlogic.com>
-References: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
-In-Reply-To: <20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757063204; l=7141;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=kLmXzk491eV2x81ro4ZED7Iyt5KXxTTTzbVBOuqxLYA=;
- b=QmC/l58/sloPfIy5YK9Z1FVq75GuUgALvxzAREqNgwP7JwIOzanXydlUyAE4u1or3EOQq5eVN
- MpGpDf+BwBiD0KSvE5uuhqf0aHUOGVezhejOxbUq2YEBTrSd1PA2etz
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Add video encoder, demodulator and CVBS clocks.
+This lack of consistentcy cannot be addressed without refactoring the API.
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+system_unbound_wq should be the default workqueue so as not to enforce
+locality constraints for random work whenever it's not required.
+
+Adding system_dfl_wq to encourage its use when unbound work should be used.
+
+queue_work() / queue_delayed_work() / mod_delayed_work() will now use the
+new unbound wq: whether the user still use the old wq a warn will be
+printed along with a wq redirect to the new one.
+
+The old system_unbound_wq will be kept for a few release cycles.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/clk/meson/s4-peripherals.c | 203 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 203 insertions(+)
+ drivers/power/supply/bq2415x_charger.c | 2 +-
+ drivers/power/supply/bq24190_charger.c | 2 +-
+ drivers/power/supply/bq27xxx_battery.c | 6 +++---
+ drivers/power/supply/rk817_charger.c   | 6 +++---
+ drivers/power/supply/ucs1002_power.c   | 2 +-
+ drivers/power/supply/ug3105_battery.c  | 6 +++---
+ 6 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 6d69b132d1e1..c0f877ce0993 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -44,6 +44,7 @@
- #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
- #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
- #define CLKCTRL_HDCP22_CTRL                        0x100
-+#define CLKCTRL_CDAC_CLK_CTRL                      0x108
- #define CLKCTRL_VDEC_CLK_CTRL                      0x140
- #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
- #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
-@@ -1126,6 +1127,22 @@ static struct clk_regmap s4_cts_encp_sel = {
- 	},
- };
+diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
+index 9e3b9181ee76..03837c831643 100644
+--- a/drivers/power/supply/bq2415x_charger.c
++++ b/drivers/power/supply/bq2415x_charger.c
+@@ -842,7 +842,7 @@ static int bq2415x_notifier_call(struct notifier_block *nb,
+ 	if (bq->automode < 1)
+ 		return NOTIFY_OK;
  
-+static struct clk_regmap s4_cts_encl_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = CLKCTRL_VIID_CLK_DIV,
-+		.mask = 0xf,
-+		.shift = 12,
-+		.table = mux_table_cts_sel,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_encl_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = s4_cts_parent_hws,
-+		.num_parents = ARRAY_SIZE(s4_cts_parent_hws),
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac_sel = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = CLKCTRL_VIID_CLK_DIV,
-@@ -1205,6 +1222,22 @@ static struct clk_regmap s4_cts_encp = {
- 	},
- };
+-	mod_delayed_work(system_wq, &bq->work, 0);
++	mod_delayed_work(system_percpu_wq, &bq->work, 0);
  
-+static struct clk_regmap s4_cts_encl = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 3,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cts_encl",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cts_encl_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac = {
- 	.data = &(struct clk_regmap_gate_data){
- 		.offset = CLKCTRL_VID_CLK_CTRL2,
-@@ -2735,6 +2768,165 @@ static struct clk_regmap s4_gen_clk = {
- 	},
- };
+ 	return NOTIFY_OK;
+ }
+diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
+index f0d97ab45bd8..a19fca6d0a29 100644
+--- a/drivers/power/supply/bq24190_charger.c
++++ b/drivers/power/supply/bq24190_charger.c
+@@ -1474,7 +1474,7 @@ static void bq24190_charger_external_power_changed(struct power_supply *psy)
+ 	 * too low default 500mA iinlim. Delay setting the input-current-limit
+ 	 * for 300ms to avoid this.
+ 	 */
+-	queue_delayed_work(system_wq, &bdi->input_current_limit_work,
++	queue_delayed_work(system_percpu_wq, &bdi->input_current_limit_work,
+ 			   msecs_to_jiffies(300));
+ }
  
-+/* CVBS DAC */
-+static struct clk_regmap s4_cdac_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal", },
-+			{ .fw_name = "fclk_div5" },
-+		},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.shift = 0,
-+		.width = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "fclk_div4" }
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 0,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 8
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/* CVBS ADC */
-+static struct clk_regmap s4_adc_extclk_in_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x7,
-+		.shift = 25,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div4" },
-+			{ .fw_name = "fclk_div3" },
-+			{ .fw_name = "fclk_div5" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "mpll2" },
-+			{ .fw_name = "gp0_pll" },
-+			{ .fw_name = "hifi_pll" }
-+		},
-+		.num_parents = 8,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 16,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 24
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index 2f31d750a4c1..d670ccf9661b 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -1127,7 +1127,7 @@ static int poll_interval_param_set(const char *val, const struct kernel_param *k
  
- #define S4_PCLK(_name, _reg, _bit, _flags) \
-@@ -3028,6 +3220,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
- 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_sel.hw,
- 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
- 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk.hw,
-+	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
-+	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
-+	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
-+	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
-+	[CLKID_CDAC]			= &s4_cdac.hw,
-+	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
-+	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
-+	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
-+	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
-+	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
-+	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
- };
+ 	mutex_lock(&bq27xxx_list_lock);
+ 	list_for_each_entry(di, &bq27xxx_battery_devices, list)
+-		mod_delayed_work(system_wq, &di->work, 0);
++		mod_delayed_work(system_percpu_wq, &di->work, 0);
+ 	mutex_unlock(&bq27xxx_list_lock);
  
- static const struct meson_clkc_data s4_peripherals_clkc_data = {
-
+ 	return ret;
+@@ -1945,7 +1945,7 @@ static void bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
+ 	di->last_update = jiffies;
+ 
+ 	if (!di->removed && poll_interval > 0)
+-		mod_delayed_work(system_wq, &di->work, poll_interval * HZ);
++		mod_delayed_work(system_percpu_wq, &di->work, poll_interval * HZ);
+ }
+ 
+ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+@@ -2221,7 +2221,7 @@ static void bq27xxx_external_power_changed(struct power_supply *psy)
+ 	struct bq27xxx_device_info *di = power_supply_get_drvdata(psy);
+ 
+ 	/* After charger plug in/out wait 0.5s for things to stabilize */
+-	mod_delayed_work(system_wq, &di->work, HZ / 2);
++	mod_delayed_work(system_percpu_wq, &di->work, HZ / 2);
+ }
+ 
+ static void bq27xxx_battery_mutex_destroy(void *data)
+diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
+index 945c7720c4ae..032b191ddbf5 100644
+--- a/drivers/power/supply/rk817_charger.c
++++ b/drivers/power/supply/rk817_charger.c
+@@ -1046,7 +1046,7 @@ static void rk817_charging_monitor(struct work_struct *work)
+ 	rk817_read_props(charger);
+ 
+ 	/* Run every 8 seconds like the BSP driver did. */
+-	queue_delayed_work(system_wq, &charger->work, msecs_to_jiffies(8000));
++	queue_delayed_work(system_percpu_wq, &charger->work, msecs_to_jiffies(8000));
+ }
+ 
+ static void rk817_cleanup_node(void *data)
+@@ -1206,7 +1206,7 @@ static int rk817_charger_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	/* Force the first update immediately. */
+-	mod_delayed_work(system_wq, &charger->work, 0);
++	mod_delayed_work(system_percpu_wq, &charger->work, 0);
+ 
+ 	return 0;
+ }
+@@ -1226,7 +1226,7 @@ static int __maybe_unused rk817_resume(struct device *dev)
+ 	struct rk817_charger *charger = dev_get_drvdata(dev);
+ 
+ 	/* force an immediate update */
+-	mod_delayed_work(system_wq, &charger->work, 0);
++	mod_delayed_work(system_percpu_wq, &charger->work, 0);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/power/supply/ucs1002_power.c b/drivers/power/supply/ucs1002_power.c
+index d32a7633f9e7..fe94435340de 100644
+--- a/drivers/power/supply/ucs1002_power.c
++++ b/drivers/power/supply/ucs1002_power.c
+@@ -493,7 +493,7 @@ static irqreturn_t ucs1002_alert_irq(int irq, void *data)
+ {
+ 	struct ucs1002_info *info = data;
+ 
+-	mod_delayed_work(system_wq, &info->health_poll, 0);
++	mod_delayed_work(system_percpu_wq, &info->health_poll, 0);
+ 
+ 	return IRQ_HANDLED;
+ }
+diff --git a/drivers/power/supply/ug3105_battery.c b/drivers/power/supply/ug3105_battery.c
+index 38e23bdd4603..15b62952f953 100644
+--- a/drivers/power/supply/ug3105_battery.c
++++ b/drivers/power/supply/ug3105_battery.c
+@@ -276,7 +276,7 @@ static void ug3105_work(struct work_struct *work)
+ out:
+ 	mutex_unlock(&chip->lock);
+ 
+-	queue_delayed_work(system_wq, &chip->work,
++	queue_delayed_work(system_percpu_wq, &chip->work,
+ 			   (chip->poll_count <= UG3105_INIT_POLL_COUNT) ?
+ 					UG3105_INIT_POLL_TIME : UG3105_POLL_TIME);
+ 
+@@ -352,7 +352,7 @@ static void ug3105_external_power_changed(struct power_supply *psy)
+ 	struct ug3105_chip *chip = power_supply_get_drvdata(psy);
+ 
+ 	dev_dbg(&chip->client->dev, "external power changed\n");
+-	mod_delayed_work(system_wq, &chip->work, UG3105_SETTLE_TIME);
++	mod_delayed_work(system_percpu_wq, &chip->work, UG3105_SETTLE_TIME);
+ }
+ 
+ static const struct power_supply_desc ug3105_psy_desc = {
+@@ -373,7 +373,7 @@ static void ug3105_init(struct ug3105_chip *chip)
+ 				  UG3105_MODE_RUN);
+ 	i2c_smbus_write_byte_data(chip->client, UG3105_REG_CTRL1,
+ 				  UG3105_CTRL1_RESET_COULOMB_CNT);
+-	queue_delayed_work(system_wq, &chip->work, 0);
++	queue_delayed_work(system_percpu_wq, &chip->work, 0);
+ 	flush_delayed_work(&chip->work);
+ }
+ 
 -- 
-2.42.0
-
+2.51.0
 
 
