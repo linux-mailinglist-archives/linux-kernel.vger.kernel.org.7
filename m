@@ -1,559 +1,180 @@
-Return-Path: <linux-kernel+bounces-803590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34428B462C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:51:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB56B46297
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE11F16BD07
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D291CC1A11
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFDF31C57E;
-	Fri,  5 Sep 2025 18:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71A9266EF1;
+	Fri,  5 Sep 2025 18:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hE1WC3xm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EA727FD59;
-	Fri,  5 Sep 2025 18:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HqBTFhzW"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964FF305967;
+	Fri,  5 Sep 2025 18:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098131; cv=none; b=eDnbLwNYq2SQ84Vg6VFokSH/P9MFoAiWYNJe9ZhmnJj/Ww+urRp5Oecd3GTfVlc+vxkTlLvXz/iRN/C9rLsu1AWAzx/8tUQrAsiChlTeimtf/mp4gLI3bS/MY0//vbNrnkcDtM2qpSmLdtaGj76xA8Ud9FTyfQ8HvQ6BTcNaOaY=
+	t=1757098118; cv=none; b=O2pYmSghvuGABT5Npt1m9gXYXbA6115LW7XeeTaqzUIYXDgIJF6oIOIsBi+yWE9hjRLDHwFHY/TU2I2e41CSd9kGOPdLC8fZEXucWJatn3myT86jdPEwMRL/ZgEkZ0pH7SlNe6MJCtzH0/MCtyUOxvcoggYU8FZ41iP/Peq7qgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098131; c=relaxed/simple;
-	bh=lxQ0PBEDBMqbgoT/wr1UNF+vxzeTB+WN2igvu5+vg6g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XzcFcJQPqbWVgX68bRAuhnviRHgmGUT2R71LT4nK2QsXxdnArg+ZfroraBUxo1W8xJK6n9XSRNOTVue7T8ytCiO8pyXmr88sNO1FjhB8y5XcwGMmT3Oli3hwl6M+YOgdGBvnUELpo0Q5ANgM0R14ufCTlK6YmqlmNVjCfyO6TFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hE1WC3xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EBC21C116C6;
-	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757098131;
-	bh=lxQ0PBEDBMqbgoT/wr1UNF+vxzeTB+WN2igvu5+vg6g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=hE1WC3xmZOriWPx1nFi9okT2uGF1/1Q+RqVPaui5po+4SGVDcHAEwZAqStQ9GwVdq
-	 /pxGhj4812kVjnoZA6v2COMq5EDi1AcoxuN03j+etgEo8DA32i0c35o9u2drz3IOLX
-	 luK3nR23OcraTEWwZRCJcNy8hyx3TmbXm+wfh4Y9RTf6ZoljYiPt3NGxjpB+QsZQg8
-	 bQ2gsPa2Cq3EEGcSMf8n3px5q8bFSg2OVLxYx6DQWLBIctOuW5QsolmSDBPM1z3250
-	 iELolA5fIqtCs2Hp1g7KyLBuIAZj8ATAv/KouLP1QjCoSW4H3oLw6BKiLywRfksnDe
-	 PFch8us+j/WNw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A72CA101F;
-	Fri,  5 Sep 2025 18:48:50 +0000 (UTC)
-From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
-Date: Fri, 05 Sep 2025 13:48:34 -0500
-Subject: [PATCH RFC 11/13] dmaengine: sdxi: Add DMA engine provider
+	s=arc-20240116; t=1757098118; c=relaxed/simple;
+	bh=ZYN7kjgpp1SBstT/IbRXfImDXToxoMIu7t63iDp4TqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kBafr9HRTduLEsb1CDtUbMIycA601YbTAywJW5kaTSjJXxRcXeBvn8HQchwErd6Nl2jtZ4osBcZ44fFNBPsLbr8zp1iSof8TALKvFDFztLKHSpEFlnco/zoWGbPiCmrNNiqPQcfrnQyE8D9rLJ707xad6LLoDJXjVKikk5jpyUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HqBTFhzW; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.33.189] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9ED3520171D4;
+	Fri,  5 Sep 2025 11:48:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9ED3520171D4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757098115;
+	bh=UEf1JD/aGiC3VLU1cDq4oELHOZ+jOkavOtqU41LSL24=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HqBTFhzWNpOzIk6YsS4ZMbeBlQyeO7WAx+3otw9Y/JlPGOwY/+ACb7aL0pwjLk3pl
+	 yRsFfAhUaEFF+jparHEF77hOr3ERORImJUKeAIlJt83EfGWRJgVddq4aqAGftsd8SP
+	 17cYi4N/uH2gTc2/tRIItR3tDyixz0Mkpe8IeFbI=
+Message-ID: <75bb740c-a539-4e95-b0b0-52cb3f5060d5@linux.microsoft.com>
+Date: Fri, 5 Sep 2025 11:48:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-sdxi-base-v1-11-d0341a1292ba@amd.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-In-Reply-To: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Wei Huang <wei.huang2@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757098129; l=12485;
- i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
- bh=oicl0mAaS0xJnaRPITeh2PX2Yd+o4ZUX9+VqlDQ+2I4=;
- b=f4JgqMzOx0UfzHT/2tsJX1m9aMQnsbM3C/SEsrWL3bisPI70rFtEUkflIwWzjP81qRMg3/eng
- c3EzrtwAx24A2JEqJZ9kUp98FqdzqzzDg3ssgmcxTEy18QSEczJgu7x
-X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
- pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
-X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
- auth_id=241
-X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
-Reply-To: nathan.lynch@amd.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
+To: Praveen K Paladugu <praveenkpaladugu@gmail.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+ <644647df-64d5-44eb-b7ac-13bd4b81d422@gmail.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <644647df-64d5-44eb-b7ac-13bd4b81d422@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Nathan Lynch <nathan.lynch@amd.com>
+On 9/5/2025 8:31 AM, Praveen K Paladugu wrote:
+> 
+> 
+> On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
+>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>>
+>> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
+>> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
+>> request.
+>>
+> Is this behavior limited to VP stats? Or does it extend to other
+> stats (hypervisor, partition, etc) as well?
+> 
+In practice we will only need to worry about partition and VP.
 
-Add support for memcpy and interrupt capabilities. Register one
-channel per SDXI function discovered for now.
+In the current code in hyperv-next, it's only VP stats. Upcoming patches
+to add debugfs code will also need it for partition stats.
 
-Co-developed-by: Wei Huang <wei.huang2@amd.com>
-Signed-off-by: Wei Huang <wei.huang2@amd.com>
-Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
----
- drivers/dma/sdxi/device.c |   4 +
- drivers/dma/sdxi/dma.c    | 409 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/dma/sdxi/dma.h    |  12 ++
- 3 files changed, 425 insertions(+)
+>> This results a failure in module init. Instead of failing, gracefully
+> nit: s/This results in a failure during module init/
 
-diff --git a/drivers/dma/sdxi/device.c b/drivers/dma/sdxi/device.c
-index 61123bc1d47b6547538b6e783ad96a9c2851494e..e5e1593189993717cae311906885ae268385b28d 100644
---- a/drivers/dma/sdxi/device.c
-+++ b/drivers/dma/sdxi/device.c
-@@ -18,6 +18,7 @@
- 
- #include "context.h"
- #include "descriptor.h"
-+#include "dma.h"
- #include "hw.h"
- #include "error.h"
- #include "sdxi.h"
-@@ -354,6 +355,8 @@ int sdxi_device_init(struct sdxi_dev *sdxi, const struct sdxi_dev_ops *ops)
- 	if (err)
- 		goto fn_stop;
- 
-+	sdxi_dma_register(sdxi->dma_cxt);
-+
- 	return 0;
- fn_stop:
- 	sdxi_stop(sdxi);
-@@ -362,6 +365,7 @@ int sdxi_device_init(struct sdxi_dev *sdxi, const struct sdxi_dev_ops *ops)
- 
- void sdxi_device_exit(struct sdxi_dev *sdxi)
- {
-+	sdxi_dma_unregister(sdxi->dma_cxt);
- 	sdxi_working_cxt_exit(sdxi->dma_cxt);
- 
- 	/* Walk sdxi->cxt_array freeing any allocated rows. */
-diff --git a/drivers/dma/sdxi/dma.c b/drivers/dma/sdxi/dma.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..ad8515deba53898b2b4ea0d38c40042b566abe1f
---- /dev/null
-+++ b/drivers/dma/sdxi/dma.c
-@@ -0,0 +1,409 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * SDXI DMA engine implementation
-+ *   Derived from ptdma code
-+ *
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
-+
-+#include "../dmaengine.h"
-+#include "context.h"
-+#include "descriptor.h"
-+#include "dma.h"
-+#include "sdxi.h"
-+
-+struct sdxi_dma_desc {
-+	struct virt_dma_desc vd;
-+	struct sdxi_cxt *cxt;
-+	enum dma_status status;
-+	bool issued_to_hw;
-+	struct sdxi_cmd sdxi_cmd;
-+};
-+
-+static inline struct sdxi_dma_chan *to_sdxi_dma_chan(struct dma_chan *dma_chan)
-+{
-+	return container_of(dma_chan, struct sdxi_dma_chan, vc.chan);
-+}
-+
-+static inline struct sdxi_dma_desc *to_sdxi_dma_desc(struct virt_dma_desc *vd)
-+{
-+	return container_of(vd, struct sdxi_dma_desc, vd);
-+}
-+
-+static void sdxi_dma_free_chan_resources(struct dma_chan *dma_chan)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+
-+	vchan_free_chan_resources(&chan->vc);
-+	/* NB: more configure with sdxi_cxt? */
-+}
-+
-+static void sdxi_dma_synchronize(struct dma_chan *c)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(c);
-+
-+	vchan_synchronize(&chan->vc);
-+}
-+
-+static void sdxi_do_cleanup(struct virt_dma_desc *vd)
-+{
-+	struct sdxi_dma_desc *dma_desc = to_sdxi_dma_desc(vd);
-+	struct sdxi_cmd *cmd = &dma_desc->sdxi_cmd;
-+	struct device *dev = sdxi_to_dev(dma_desc->cxt->sdxi);
-+
-+	dma_free_coherent(dev, sizeof(*cmd->cst_blk),
-+			  cmd->cst_blk, cmd->cst_blk_dma);
-+	kfree(dma_desc);
-+}
-+
-+static int sdxi_dma_start_desc(struct sdxi_dma_desc *dma_desc)
-+{
-+	struct sdxi_dev *sdxi;
-+	struct sdxi_cmd *sdxi_cmd;
-+	struct sdxi_cxt *cxt;
-+	struct sdxi_desc desc;
-+	struct sdxi_copy copy;
-+	struct sdxi_cst_blk *cst_blk;
-+	dma_addr_t cst_blk_dma;
-+	int err;
-+
-+	sdxi_cmd = &dma_desc->sdxi_cmd;
-+	sdxi = sdxi_cmd->cxt->sdxi;
-+
-+	cxt = dma_desc->cxt;
-+
-+	if (sdxi_cmd->len > MAX_DMA_COPY_BYTES)
-+		return -EINVAL;
-+
-+	copy = (typeof(copy)) {
-+		.src = sdxi_cmd->src_addr,
-+		.dst = sdxi_cmd->dst_addr,
-+		.src_akey = 0,
-+		.dst_akey = 0,
-+		.len = sdxi_cmd->len,
-+	};
-+
-+	err = sdxi_encode_copy(&desc, &copy);
-+	if (err)
-+		return err;
-+
-+	err = sdxi_encode_copy(&desc, &copy);
-+	if (err)
-+		return err;
-+
-+	/* FIXME convert to pool */
-+	cst_blk = dma_alloc_coherent(sdxi_to_dev(sdxi), sizeof(*cst_blk),
-+				     &cst_blk_dma, GFP_NOWAIT);
-+	if (!cst_blk)
-+		return -ENOMEM;
-+
-+	cst_blk->signal = cpu_to_le64(0xff);
-+
-+	sdxi_cmd->cst_blk = cst_blk;
-+	sdxi_cmd->cst_blk_dma = cst_blk_dma;
-+	sdxi_cmd->ret = 0; /* TODO: get desc submit status & update ret value */
-+
-+	sdxi_desc_set_csb(&desc, cst_blk_dma);
-+	err = sdxi_submit_desc(cxt, &desc);
-+	if (err)
-+		goto free_cst_blk;
-+
-+	sdxi->tdata.cmd = sdxi_cmd; /* FIXME: this is not compatible w/multiple clients */
-+	dma_desc->issued_to_hw = 1;
-+	return 0;
-+free_cst_blk:
-+	dma_free_coherent(sdxi_to_dev(sdxi), sizeof(*cst_blk),
-+			  cst_blk, cst_blk_dma);
-+	return err;
-+}
-+
-+static struct sdxi_dma_desc *sdxi_next_dma_desc(struct sdxi_dma_chan *chan)
-+{
-+	/* Get the next DMA descriptor on the active list */
-+	struct virt_dma_desc *vd = vchan_next_desc(&chan->vc);
-+
-+	return vd ? to_sdxi_dma_desc(vd) : NULL;
-+}
-+
-+static struct sdxi_dma_desc *sdxi_handle_active_desc(struct sdxi_dma_chan *chan,
-+						     struct sdxi_dma_desc *desc)
-+{
-+	struct dma_async_tx_descriptor *tx_desc;
-+	struct virt_dma_desc *vd;
-+	unsigned long flags;
-+
-+	/* Loop over descriptors until one is found with commands */
-+	do {
-+		if (desc) {
-+			if (!desc->issued_to_hw) {
-+				/* No errors, keep going */
-+				if (desc->status != DMA_ERROR)
-+					return desc;
-+			}
-+
-+			tx_desc = &desc->vd.tx;
-+			vd = &desc->vd;
-+		} else {
-+			tx_desc = NULL;
-+		}
-+
-+		spin_lock_irqsave(&chan->vc.lock, flags);
-+
-+		if (desc) {
-+
-+			if (desc->status != DMA_COMPLETE) {
-+				if (desc->status != DMA_ERROR)
-+					desc->status = DMA_COMPLETE;
-+
-+				dma_cookie_complete(tx_desc);
-+				dma_descriptor_unmap(tx_desc);
-+				list_del(&desc->vd.node);
-+			} else {
-+				/* Don't handle it twice */
-+				tx_desc = NULL;
-+			}
-+		}
-+
-+		desc = sdxi_next_dma_desc(chan);
-+
-+		spin_unlock_irqrestore(&chan->vc.lock, flags);
-+
-+		if (tx_desc) {
-+			dmaengine_desc_get_callback_invoke(tx_desc, NULL);
-+			dma_run_dependencies(tx_desc);
-+			vchan_vdesc_fini(vd);
-+		}
-+	} while (desc);
-+
-+	return NULL;
-+}
-+
-+static void sdxi_cmd_callback(void *data, int err)
-+{
-+	struct sdxi_dma_desc *desc = data;
-+	struct dma_chan *dma_chan;
-+	struct sdxi_dma_chan *chan;
-+	int ret;
-+
-+	if (err == -EINPROGRESS)
-+		return;
-+
-+	dma_chan = desc->vd.tx.chan;
-+	chan = to_sdxi_dma_chan(dma_chan);
-+
-+	if (err)
-+		desc->status = DMA_ERROR;
-+
-+	while (true) {
-+		/* Check for DMA descriptor completion */
-+		desc = sdxi_handle_active_desc(chan, desc);
-+
-+		/* Don't submit cmd if no descriptor or DMA is paused */
-+		if (!desc)
-+			break;
-+
-+		ret = sdxi_dma_start_desc(desc);
-+		if (!ret)
-+			break;
-+
-+		desc->status = DMA_ERROR;
-+	}
-+}
-+
-+static struct sdxi_dma_desc *sdxi_dma_alloc_dma_desc(struct sdxi_dma_chan *chan,
-+						     unsigned long flags)
-+{
-+	struct sdxi_dma_desc *desc;
-+
-+	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
-+	if (!desc)
-+		return NULL;
-+
-+	desc->cxt = chan->cxt;
-+
-+	vchan_tx_prep(&chan->vc, &desc->vd, flags);
-+
-+	desc->cxt->sdxi = chan->cxt->sdxi;
-+	desc->issued_to_hw = 0;
-+	desc->status = DMA_IN_PROGRESS;
-+
-+	return desc;
-+}
-+
-+static struct sdxi_dma_desc *sdxi_dma_create_desc(struct dma_chan *dma_chan,
-+						  dma_addr_t dst,
-+						  dma_addr_t src,
-+						  unsigned int len,
-+						  unsigned long flags)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+	struct sdxi_dma_desc *desc;
-+	struct sdxi_cmd *sdxi_cmd;
-+
-+	desc = sdxi_dma_alloc_dma_desc(chan, flags);
-+	if (!desc)
-+		return NULL;
-+
-+	sdxi_cmd = &desc->sdxi_cmd;
-+	sdxi_cmd->cxt = chan->cxt;
-+	sdxi_cmd->cxt->sdxi = chan->cxt->sdxi;
-+	sdxi_cmd->src_addr = src;
-+	sdxi_cmd->dst_addr = dst;
-+	sdxi_cmd->len = len;
-+	sdxi_cmd->sdxi_cmd_callback = sdxi_cmd_callback;
-+	sdxi_cmd->data = desc;
-+
-+	return desc;
-+}
-+
-+static struct dma_async_tx_descriptor *
-+sdxi_dma_prep_memcpy(struct dma_chan *dma_chan, dma_addr_t dst,
-+		     dma_addr_t src, size_t len, unsigned long flags)
-+{
-+	struct sdxi_dma_desc *desc;
-+
-+	desc = sdxi_dma_create_desc(dma_chan, dst, src, len, flags);
-+	if (!desc)
-+		return NULL;
-+
-+	return &desc->vd.tx;
-+}
-+
-+static struct dma_async_tx_descriptor *
-+sdxi_prep_dma_interrupt(struct dma_chan *dma_chan, unsigned long flags)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+	struct sdxi_dma_desc *desc;
-+
-+	desc = sdxi_dma_alloc_dma_desc(chan, flags);
-+	if (!desc)
-+		return NULL;
-+
-+	return &desc->vd.tx;
-+}
-+
-+static void sdxi_dma_issue_pending(struct dma_chan *dma_chan)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+	struct sdxi_dma_desc *desc;
-+	unsigned long flags;
-+	bool engine_is_idle = true;
-+
-+	spin_lock_irqsave(&chan->vc.lock, flags);
-+
-+	desc = sdxi_next_dma_desc(chan);
-+	if (desc)
-+		engine_is_idle = false;
-+
-+	vchan_issue_pending(&chan->vc);
-+
-+	desc = sdxi_next_dma_desc(chan);
-+
-+	spin_unlock_irqrestore(&chan->vc.lock, flags);
-+
-+	/* If there was nothing active, start processing */
-+	if (engine_is_idle)
-+		sdxi_cmd_callback(desc, 0);
-+}
-+
-+static void sdxi_check_trans_status(struct sdxi_dma_chan *chan)
-+{
-+	struct sdxi_cxt *cxt = chan->cxt;
-+	struct sdxi_cmd *cmd;
-+
-+	if (!cxt)
-+		return;
-+
-+	cmd = cxt->sdxi->tdata.cmd;
-+
-+	if (le64_to_cpu(cmd->cst_blk->signal) == 0xfe)
-+		sdxi_cmd_callback(cmd->data, cmd->ret);
-+}
-+
-+static enum dma_status sdxi_tx_status(struct dma_chan *dma_chan, dma_cookie_t cookie,
-+				      struct dma_tx_state *tx_state)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+
-+	sdxi_check_trans_status(chan);
-+
-+	return dma_cookie_status(dma_chan, cookie, tx_state);
-+}
-+
-+static int sdxi_dma_terminate_all(struct dma_chan *dma_chan)
-+{
-+	struct sdxi_dma_chan *chan = to_sdxi_dma_chan(dma_chan);
-+	unsigned long flags;
-+	LIST_HEAD(head);
-+
-+	spin_lock_irqsave(&chan->vc.lock, flags);
-+	vchan_get_all_descriptors(&chan->vc, &head);
-+	spin_unlock_irqrestore(&chan->vc.lock, flags);
-+
-+	vchan_dma_desc_free_list(&chan->vc, &head);
-+	vchan_free_chan_resources(&chan->vc);
-+
-+	return 0;
-+}
-+
-+int sdxi_dma_register(struct sdxi_cxt *dma_cxt)
-+{
-+	struct sdxi_dma_chan *chan;
-+	struct sdxi_dev *sdxi = dma_cxt->sdxi;
-+	struct device *dev = sdxi_to_dev(sdxi);
-+	struct dma_device *dma_dev = &sdxi->dma_dev;
-+	int ret = 0;
-+
-+	sdxi->sdxi_dma_chan = devm_kzalloc(dev, sizeof(*sdxi->sdxi_dma_chan),
-+					   GFP_KERNEL);
-+	if (!sdxi->sdxi_dma_chan)
-+		return -ENOMEM;
-+
-+	sdxi->sdxi_dma_chan->cxt = dma_cxt;
-+
-+	dma_dev->dev = dev;
-+	dma_dev->src_addr_widths = DMA_SLAVE_BUSWIDTH_64_BYTES;
-+	dma_dev->dst_addr_widths = DMA_SLAVE_BUSWIDTH_64_BYTES;
-+	dma_dev->directions = BIT(DMA_MEM_TO_MEM);
-+	dma_dev->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
-+	dma_cap_set(DMA_MEMCPY, dma_dev->cap_mask);
-+	dma_cap_set(DMA_INTERRUPT, dma_dev->cap_mask);
-+
-+	dma_cap_set(DMA_PRIVATE, dma_dev->cap_mask);
-+
-+	INIT_LIST_HEAD(&dma_dev->channels);
-+
-+	chan = sdxi->sdxi_dma_chan;
-+	chan->cxt->sdxi = sdxi;
-+
-+	/* Set base and prep routines */
-+	dma_dev->device_free_chan_resources = sdxi_dma_free_chan_resources;
-+	dma_dev->device_prep_dma_memcpy = sdxi_dma_prep_memcpy;
-+	dma_dev->device_prep_dma_interrupt = sdxi_prep_dma_interrupt;
-+	dma_dev->device_issue_pending = sdxi_dma_issue_pending;
-+	dma_dev->device_tx_status = sdxi_tx_status;
-+	dma_dev->device_terminate_all = sdxi_dma_terminate_all;
-+	dma_dev->device_synchronize = sdxi_dma_synchronize;
-+
-+	chan->vc.desc_free = sdxi_do_cleanup;
-+	vchan_init(&chan->vc, dma_dev);
-+
-+	dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-+
-+	ret = dma_async_device_register(dma_dev);
-+	if (ret)
-+		goto err_reg;
-+
-+	return 0;
-+
-+err_reg:
-+	return ret;
-+}
-+
-+void sdxi_dma_unregister(struct sdxi_cxt *dma_cxt)
-+{
-+	dma_async_device_unregister(&dma_cxt->sdxi->dma_dev);
-+}
-diff --git a/drivers/dma/sdxi/dma.h b/drivers/dma/sdxi/dma.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..cdea77cd274043a76b658fa93716f6cea2867216
---- /dev/null
-+++ b/drivers/dma/sdxi/dma.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (C) 2025 Advanced Micro Devices, Inc. */
-+
-+#ifndef DMA_SDXI_DMA_H
-+#define DMA_SDXI_DMA_H
-+
-+struct sdxi_cxt;
-+
-+int sdxi_dma_register(struct sdxi_cxt *dma_cxt);
-+void sdxi_dma_unregister(struct sdxi_cxt *dma_cxt);
-+
-+#endif /* DMA_SDXI_DMA_H */
+Thanks, I'll change it for v2
 
--- 
-2.39.5
+Nuno
 
+>> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
+>> already-mapped stats_pages[HV_STATS_AREA_SELF].
+>>
+>> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>   drivers/hv/mshv_root_hv_call.c | 43 ++++++++++++++++++++++++++++++----
+>>   drivers/hv/mshv_root_main.c    |  3 +++
+>>   2 files changed, 42 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+>> index c9c274f29c3c..1c38576a673c 100644
+>> --- a/drivers/hv/mshv_root_hv_call.c
+>> +++ b/drivers/hv/mshv_root_hv_call.c
+>> @@ -724,6 +724,24 @@ hv_call_notify_port_ring_empty(u32 sint_index)
+>>       return hv_result_to_errno(status);
+>>   }
+>>   +static int
+>> +hv_stats_get_area_type(enum hv_stats_object_type type,
+>> +               const union hv_stats_object_identity *identity)
+>> +{
+>> +    switch (type) {
+>> +    case HV_STATS_OBJECT_HYPERVISOR:
+>> +        return identity->hv.stats_area_type;
+>> +    case HV_STATS_OBJECT_LOGICAL_PROCESSOR:
+>> +        return identity->lp.stats_area_type;
+>> +    case HV_STATS_OBJECT_PARTITION:
+>> +        return identity->partition.stats_area_type;
+>> +    case HV_STATS_OBJECT_VP:
+>> +        return identity->vp.stats_area_type;
+>> +    }
+>> +
+>> +    return -EINVAL;
+>> +}
+>> +
+>>   int hv_call_map_stat_page(enum hv_stats_object_type type,
+>>                 const union hv_stats_object_identity *identity,
+>>                 void **addr)
+>> @@ -732,7 +750,7 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
+>>       struct hv_input_map_stats_page *input;
+>>       struct hv_output_map_stats_page *output;
+>>       u64 status, pfn;
+>> -    int ret = 0;
+>> +    int hv_status, ret = 0;
+>>         do {
+>>           local_irq_save(flags);
+>> @@ -747,11 +765,28 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
+>>           pfn = output->map_location;
+>>             local_irq_restore(flags);
+>> -        if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+>> -            ret = hv_result_to_errno(status);
+>> +
+>> +        hv_status = hv_result(status);
+>> +        if (hv_status != HV_STATUS_INSUFFICIENT_MEMORY) {
+>>               if (hv_result_success(status))
+>>                   break;
+>> -            return ret;
+>> +
+>> +            /*
+>> +             * Some versions of the hypervisor do not support the
+>> +             * PARENT stats area. In this case return "success" but
+>> +             * set the page to NULL. The caller checks for this
+>> +             * case instead just uses the SELF area.
+>> +             */
+>> +            if (hv_stats_get_area_type(type, identity) == HV_STATS_AREA_PARENT &&
+>> +                hv_status == HV_STATUS_INVALID_PARAMETER) {
+>> +                pr_debug_once("%s: PARENT area type is unsupported\n",
+>> +                          __func__);
+>> +                *addr = NULL;
+>> +                return 0;
+>> +            }
+>> +
+>> +            hv_status_debug(status, "\n");
+>> +            return hv_result_to_errno(status);
+>>           }
+>>             ret = hv_call_deposit_pages(NUMA_NO_NODE,
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index bbdefe8a2e9c..56ababab57ce 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -929,6 +929,9 @@ static int mshv_vp_stats_map(u64 partition_id, u32 vp_index,
+>>       if (err)
+>>           goto unmap_self;
+>>   +    if (!stats_pages[HV_STATS_AREA_PARENT])
+>> +        stats_pages[HV_STATS_AREA_PARENT] = stats_pages[HV_STATS_AREA_SELF];
+>> +
+>>       return 0;
+>>     unmap_self:
+> 
 
 
