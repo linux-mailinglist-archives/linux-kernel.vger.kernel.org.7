@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-802684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83164B4557C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698BDB45580
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 363934E0253
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9254D163C81
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FE430F541;
-	Fri,  5 Sep 2025 11:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3A9340D92;
+	Fri,  5 Sep 2025 11:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUI5oZU+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7+DnpZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F09E30BB9C;
-	Fri,  5 Sep 2025 11:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3390633EB0D;
+	Fri,  5 Sep 2025 11:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070004; cv=none; b=rT5GH+aj0rt14+rAt49roymol76q4JlDA3A0a8jXEW7VsSOaI6YS/u+wGG2SOI8lFBfvBfm5b+Wzb2pZGp+5lVPOxj8K70UzCn23kBSLVeJ2XGe2wdJj80xSUsJ+qnksRBU093lV/umurSkVErd4/VewLp2v2YS2H8hUGcIihQQ=
+	t=1757070064; cv=none; b=Oek1ao9xeNtto30nbIleFgjW+LFAHYG80h8oBYAuVV2AEXOcqkbhu6VC5hfI6lt/I+gK0tzkkHibmPtEEJutqzDAocqLu4JJlF7HYJe1KIwGFmr9WXVsjy+qseBrDF9poiKb17xmw3rvsQm95WvIB7vbr1jq5tN+kz212zG7TOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070004; c=relaxed/simple;
-	bh=xWFG9IcSFRaAzKyA5Lio/LJJoAzp+33hlHZFKOaExJw=;
+	s=arc-20240116; t=1757070064; c=relaxed/simple;
+	bh=YZ1wTIYoB930tSA5MeqtdhO0LxdCLchTUQFtsum00QY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4k5wIUoWOSTh0ctg4N5JfRxMN1t9Skf9k7n0UTmkSkr3bbUbEKAgFOEeyNQzxIvNGCGQ7QO97ell8J8lncYTmxCywioKv+gCryk6pwonlLyaWNck9b7oY6v8WuflLdj7lns4Nu5YgzEfF+29NLqMhjQdegUeDyp/hI7LRIbYh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUI5oZU+; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757070002; x=1788606002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xWFG9IcSFRaAzKyA5Lio/LJJoAzp+33hlHZFKOaExJw=;
-  b=PUI5oZU+WbcD5TRE5B1gzpA3ji46yxWYYV84kOnwJvwNgxtAxrR4p28b
-   q50qbhe6Zl9eC69UepGrKFCU556x/KiKT8R84Z8AbBr8wpxZ0xC98pnSC
-   yFhyTm7+BZpv3pcxjrfGGEVvLRfyVPg51Oege4jd+2he6TJpfVta9SQja
-   JiQz7/XfVDM7AmNPBYprAMlFj1/V+swY2mQHX+xgxsCqvbOiKEZ3fsuMW
-   8AXK9eNwyjzyxeXfEcRNDovFIdIh9auNKJVvINAYufKcJq5KHAjyh8wqH
-   UK5bC/dj9w/7topFCYZK2SrRMpwGnWwXgt5Bk//TvLTIUK35+lfaYpmWc
-   w==;
-X-CSE-ConnectionGUID: p9S9SDCySq2s9KefkPIA7Q==
-X-CSE-MsgGUID: Azqi8x4kS5CuwXXMYLbkFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="59118962"
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="59118962"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:00:01 -0700
-X-CSE-ConnectionGUID: zgDOmaF0S/+OTUlsH0/d9g==
-X-CSE-MsgGUID: 7w6td42BQWaRq1lJzsfd3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
-   d="scan'208";a="172579445"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa009.fm.intel.com with SMTP; 05 Sep 2025 03:59:58 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 13:59:57 +0300
-Date: Fri, 5 Sep 2025 13:59:57 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Fedor Pchelkin <boddah8794@gmail.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-usb@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: ucsi: stm32: Use min() to improve
- ucsi_stm32g0_fw_cb()
-Message-ID: <aLrCrQOdLsqq0U37@kuha.fi.intel.com>
-References: <20250830110426.10007-2-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9ddDMoaN8uVAr/WKDIwQtn/A+q+P2oYpg3z9SFsHjcKlMhh8Wvibg8pEgJgDvYffPycSJLREIGoDaab0dWo44l59+UTHrxHdhMBIqXInGksqbIfKOF0La61V83ZK5ucc6psDh6GSa7Mc1wDRv4zvjZ2cWyn7gcZ6mrC+ipV1Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7+DnpZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2257C4CEF1;
+	Fri,  5 Sep 2025 11:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757070063;
+	bh=YZ1wTIYoB930tSA5MeqtdhO0LxdCLchTUQFtsum00QY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U7+DnpZ0s1JKbZszxSjLy0wzG4FuSPqezXeI+JVM+MWhXKMk7hbSMLMR/Ap70xViw
+	 Grd6dhed7yIRR8Yu73fJN0N7pkSYFsDBBJo92L9gty0NMlP0j/ofYzR8Udwhhqz0oh
+	 CUbTDNzSsrto9aiXPTcXZ/bGs5k+wjoB6qyCquH8g/JPTbP7OqDNsG+bte2OrVpi4n
+	 zx6H4iTAqk8cmGshjWzK/jnlqFQq/hJysU/x9N1c9QnwDh2XIGq4oxaydCWq1cwWGV
+	 2fRPyoqYacVZpZfy0SFEibM7KjqfNwOBpyIxsFAfubouuDw7Z5Ombt9MKgcN6WzQfQ
+	 4CK8xb4S08BQg==
+Date: Fri, 5 Sep 2025 14:00:50 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 1/7] mm: remove arch_flush_lazy_mmu_mode()
+Message-ID: <aLrC4reKPAz6YFn1@kernel.org>
+References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
+ <20250904125736.3918646-2-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,48 +80,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250830110426.10007-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250904125736.3918646-2-kevin.brodsky@arm.com>
 
-On Sat, Aug 30, 2025 at 01:04:20PM +0200, Thorsten Blum wrote:
-> Use min() to improve ucsi_stm32g0_fw_cb() and avoid calculating
-> 'end - data' twice.
+On Thu, Sep 04, 2025 at 01:57:30PM +0100, Kevin Brodsky wrote:
+> This function has only ever been used in arch/x86, so there is no
+> need for other architectures to implement it. Remove it from
+> linux/pgtable.h and all architectures besides x86.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> The arm64 implementation is not empty but it is only called from
+> arch_leave_lazy_mmu_mode(), so we can simply fold it there.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
 > ---
->  drivers/usb/typec/ucsi/ucsi_stm32g0.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>  arch/arm64/include/asm/pgtable.h                   | 9 +--------
+>  arch/powerpc/include/asm/book3s/64/tlbflush-hash.h | 2 --
+>  arch/sparc/include/asm/tlbflush_64.h               | 1 -
+>  arch/x86/include/asm/pgtable.h                     | 3 ++-
+>  include/linux/pgtable.h                            | 1 -
+>  5 files changed, 3 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> index 57ef7d83a412..838ac0185082 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-> @@ -10,6 +10,7 @@
->  #include <linux/firmware.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
-> +#include <linux/minmax.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/unaligned.h>
-> @@ -523,11 +524,7 @@ static void ucsi_stm32g0_fw_cb(const struct firmware *fw, void *context)
->  	data = fw->data;
->  	end = fw->data + fw->size;
->  	while (data < end) {
-> -		if ((end - data) < STM32G0_I2C_BL_SZ)
-> -			size = end - data;
-> -		else
-> -			size = STM32G0_I2C_BL_SZ;
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index abd2dee416b3..728d7b6ed20a 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -101,21 +101,14 @@ static inline void arch_enter_lazy_mmu_mode(void)
+>  	set_thread_flag(TIF_LAZY_MMU);
+>  }
+>  
+> -static inline void arch_flush_lazy_mmu_mode(void)
+> +static inline void arch_leave_lazy_mmu_mode(void)
+>  {
+>  	if (in_interrupt())
+>  		return;
+>  
+>  	if (test_and_clear_thread_flag(TIF_LAZY_MMU_PENDING))
+>  		emit_pte_barriers();
+> -}
 > -
-> +		size = min(end - data, STM32G0_I2C_BL_SZ);
->  		ret = ucsi_stm32g0_bl_write(g0->ucsi, addr, data, size);
->  		if (ret) {
->  			dev_err(g0->dev, "Write failed %d\n", ret);
+> -static inline void arch_leave_lazy_mmu_mode(void)
+> -{
+> -	if (in_interrupt())
+> -		return;
+>  
+> -	arch_flush_lazy_mmu_mode();
+>  	clear_thread_flag(TIF_LAZY_MMU);
+>  }
+>  
+> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> index 146287d9580f..176d7fd79eeb 100644
+> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+> @@ -55,8 +55,6 @@ static inline void arch_leave_lazy_mmu_mode(void)
+>  	preempt_enable();
+>  }
+>  
+> -#define arch_flush_lazy_mmu_mode()      do {} while (0)
+> -
+>  extern void hash__tlbiel_all(unsigned int action);
+>  
+>  extern void flush_hash_page(unsigned long vpn, real_pte_t pte, int psize,
+> diff --git a/arch/sparc/include/asm/tlbflush_64.h b/arch/sparc/include/asm/tlbflush_64.h
+> index 8b8cdaa69272..cd144eb31bdd 100644
+> --- a/arch/sparc/include/asm/tlbflush_64.h
+> +++ b/arch/sparc/include/asm/tlbflush_64.h
+> @@ -44,7 +44,6 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end);
+>  void flush_tlb_pending(void);
+>  void arch_enter_lazy_mmu_mode(void);
+>  void arch_leave_lazy_mmu_mode(void);
+> -#define arch_flush_lazy_mmu_mode()      do {} while (0)
+>  
+>  /* Local cpu only.  */
+>  void __flush_tlb_all(void);
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index e33df3da6980..14fd672bc9b2 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -117,7 +117,8 @@ extern pmdval_t early_pmd_flags;
+>  #define pte_val(x)	native_pte_val(x)
+>  #define __pte(x)	native_make_pte(x)
+>  
+> -#define arch_end_context_switch(prev)	do {} while(0)
+> +#define arch_end_context_switch(prev)	do {} while (0)
+> +#define arch_flush_lazy_mmu_mode()	do {} while (0)
+>  #endif	/* CONFIG_PARAVIRT_XXL */
+>  
+>  static inline pmd_t pmd_set_flags(pmd_t pmd, pmdval_t set)
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 4c035637eeb7..8848e132a6be 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -234,7 +234,6 @@ static inline int pmd_dirty(pmd_t pmd)
+>  #ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>  #define arch_enter_lazy_mmu_mode()	do {} while (0)
+>  #define arch_leave_lazy_mmu_mode()	do {} while (0)
+> -#define arch_flush_lazy_mmu_mode()	do {} while (0)
+>  #endif
+>  
+>  #ifndef pte_batch_hint
 > -- 
-> 2.50.1
+> 2.47.0
+> 
 
 -- 
-heikki
+Sincerely yours,
+Mike.
 
