@@ -1,115 +1,166 @@
-Return-Path: <linux-kernel+bounces-803156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F576B45B61
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DF8B45B64
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CFFA66AC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8460E1CC2971
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C20C2F7AC5;
-	Fri,  5 Sep 2025 14:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACA02F7AC2;
+	Fri,  5 Sep 2025 14:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gNy9tD/9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6fatnkG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15CD72633
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 14:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE98306B1D;
+	Fri,  5 Sep 2025 14:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084307; cv=none; b=s0E7dC9dRQ980+//wi3m6cyemb/5mDb+j+y/Mync8NdtSthwM+pQgxU4MwGiP9trk384WZCWa0Fqf2ZG8agtCDPKZbMjlvYRIx1M6K9xtRtbed8592hBB31b7SWHQngDyAMK6Z8C7CpL8gtjCftzfQiQ2oS9uLlXKgNimVKeEks=
+	t=1757084307; cv=none; b=lqsFmd14p5XVf4hM7B4YsjC8JT3w98vnkr8deVqY+94zEk9fUf0EPeQnfPJYzbjOKhuGpylPqhD6XAdZneEbPZVplMTCZU8Aspru/n2X2PwLVptD1MnnjlPH9dSPJw5viBxVG6q4pMZX73mB1W/DkqkM88THU/AOJ0nw0/jsH5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757084307; c=relaxed/simple;
-	bh=G56oMzOjsYVrjlf9HgLRUbAv1aA5ITWzZQDv2p0HDok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=neM5MRB5NONQGtAB2pyOSNwyJfQSWHT02PU+04VBIZNcS4pJscRW9CqdppCxNOs76mb+n+LwuG3uAPxd5oNUhkhBs93sKOqg5SlP/Otr95k6/CEQ+DWGCyCVHFAa4BH7p0EAuPNtLQf2Nop2pDZ68FvTjXYJ2qbgaVZecMLR5V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gNy9tD/9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757084304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8sWmtjiwnBLMCNvHDa+POELZazfSy48Vst2ZjiMCgD8=;
-	b=gNy9tD/9qoZn5TGsep5PLHjr6Uo99AJZypF4HbLE3cve3rM+7RX0iLHeJsEULg4oowCHqv
-	vhY/z59Whka20eNbp8U5FmXyEzubNvL7fn0xEzluN0YAd1gVJGup/cyGjl1DAzh9R3hnW0
-	EbPNPMYIWm11n44hFNVXyLuX35v9fu0=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-BYCzL1sXP-y0G1IRB9swtA-1; Fri, 05 Sep 2025 10:58:23 -0400
-X-MC-Unique: BYCzL1sXP-y0G1IRB9swtA-1
-X-Mimecast-MFC-AGG-ID: BYCzL1sXP-y0G1IRB9swtA_1757084302
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8064b9dd37eso405459785a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 07:58:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084302; x=1757689102;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8sWmtjiwnBLMCNvHDa+POELZazfSy48Vst2ZjiMCgD8=;
-        b=FLnjUQDPbTiD9LOWTTq0OjhT9zu+7L9Ye34agIdHo3Ny1TTP45CCg2O/O3FImdxyq9
-         MzkgN7fQK76TRP3rJjvzwTNVZEBthKmuu8lflOEvJ1fmef57ZJRCUakMO94Ph9B2N6Rm
-         JfNenVOl9FEPscjCkz6KKZ8trMre6sXYPLmqZl1VHzQROlMT1yX4yOQjRjh5m/x5wVDO
-         AZfWlVxhiVZU1UcrtCo1vT9Q68yIGByhQ5NHLJBl+KFx0lb+GlOlh9HvxZsJugW+DzqG
-         dNgy690X9szoDIbjdnz2Jnd7gGRWo2x9+JdLuWQd5OnaQLqDk0fKvmD9ecf85NBtFTvM
-         wKGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0IVyFCNWMkm5B65o8DYVc2KOHHdggSWUHu+/Kx+q/pIhdalcx4AX/Bfdo98besIMME81R8QSkP89ZFAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMVqiuq1frjgdAS4vaihQxdn9hVYSXb3NZIkb1sd6Eq9KzNfXQ
-	C3ANH88HfeIGRtJ2JBbG4HfzEHSD5y9LJ12gS+Dn+wI4wvk1WwSkYWJV2dkM9MMZp6Nm9c+bEfM
-	64Hz2wt2JT7eX4DSxoKOm5MQlJnMPMbDo9v/xz/lOM/HC+GTmutCcMxTJ2UsOptA/uw==
-X-Gm-Gg: ASbGncsf5GNqmSCC4ybziyl0378g+BEQHm2PlLpni0jVZvBiG4mzyodJqz8ICT+biR7
-	vWHilbAc2+Ub8auvBoiDCvUKzwrlpEF3765j4FyZiqybLBZCuQY1Z6fMLWfvuEESgsteLkjEHVq
-	GhaoVjrO7BNMjG8hRgHyxDHS+i+a8mxorRnbMZPJkHIyxfGE8H/hITdvaPi4NbQFXlIIpmBi28k
-	sXSX04kiQgOU6wA+x5jMF3u75bmMQ89Or7Q5vdoU1F+ODNqWE4syQwfdHS9PEQzVJA6L3HJcjgu
-	ofdDG65VAFtJNrP05dk0opEFPavC+62PDrggbBoZ7VHJxat3qfOVFC7o1Qup5bc34N9KDoPoM+U
-	HrxifDvRZyXM5YbIFdJk=
-X-Received: by 2002:a05:620a:2585:b0:7f2:d9d3:f5da with SMTP id af79cd13be357-7ff284b1c36mr2949666585a.33.1757084302592;
-        Fri, 05 Sep 2025 07:58:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRAz5VwtsVUROYHU2rQWET40PGS5RQKqxfBOTI59DzOUvzzQv/XtrECGGTQvfuYUXLNygGQQ==
-X-Received: by 2002:a05:620a:2585:b0:7f2:d9d3:f5da with SMTP id af79cd13be357-7ff284b1c36mr2949663185a.33.1757084302145;
-        Fri, 05 Sep 2025 07:58:22 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80b65dea673sm436066085a.71.2025.09.05.07.58.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 07:58:21 -0700 (PDT)
-Date: Fri, 5 Sep 2025 10:58:19 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] MAINTAINERS: Add entries for Renesas Versaclock {3,7}
- clock drivers
-Message-ID: <aLr6ixZr4Lek5p9X@x1>
-References: <20250905143441.7082-1-biju.das.jz@bp.renesas.com>
+	bh=u2SnMniYqIdTGMz3VmsvHD4YSv0VfLGBYGvO+y0pNYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YW9chzuV/V1Xewr65gb59jaACVdrQtwAFZX+z3XFQVGzbTS0PW3eelcKUXs4h8zoK+/9trprehz2S2zD3SUy3Za+o0POUockpyZabKz2tPX1UbVCEERU7wnWPhB9a/a0H6ppjZj19OHcqigv6LZOcVbjaf89+hxe6rIKFGgMOBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6fatnkG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC101C4CEF1;
+	Fri,  5 Sep 2025 14:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757084306;
+	bh=u2SnMniYqIdTGMz3VmsvHD4YSv0VfLGBYGvO+y0pNYU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=j6fatnkGBPB+79JlcIDN/NOow/R8Hu4RM7TCm4idjTODgKVQ7KOOU35927qBCtvys
+	 Qb4giQ1tDXN2c00OulbSsy8qAgftreaVCyP4FjPDPJJojArs5V39+M96pDA7WxKgpf
+	 9LajZWAGG0ed3QxD3NIm3y5QZjSjYfxCRth++Vq03Nkm4+l6P+hcGQmxXQR3kqW6rM
+	 eUqlTeugjwH+qLuziOH6QlWDOqNVt3SRsRpvDr4EaUCLXhTrUTl3M+fLhI1krdH1Xd
+	 HY+6fkPUDe85I4AJas2pEYc0Mm7fE8FdbvZQWqDP505itN+baCwt0kTH63oCPDcGbM
+	 /I/OcwAVW4+CA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 2/6] x86/HWBP: introduce arch_reinstall_hw_breakpoint() for atomic context
+Date: Fri,  5 Sep 2025 23:58:20 +0900
+Message-ID: <175708430003.64001.2912914200195124153.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <175708427997.64001.11661389635019507808.stgit@devnote2>
+References: <175708427997.64001.11661389635019507808.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905143441.7082-1-biju.das.jz@bp.renesas.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 05, 2025 at 03:34:38PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Add entries for Renesas versaclock 3 clock driver. While at it
-> add myself as maintainer for versaclock 7 clock driver as Alex's
-> email address bounces.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+From: Jinchao Wang <wangjinchao600@gmail.com>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Introduce arch_reinstall_hw_breakpoint() to update hardware breakpoint
+parameters (address, length, type) without freeing and reallocating the
+debug register slot.
+
+This allows atomic updates in contexts where memory allocation is not
+permitted, such as kprobe handlers.
+
+Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+---
+ arch/x86/include/asm/hw_breakpoint.h |    1 +
+ arch/x86/kernel/hw_breakpoint.c      |   50 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+
+diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+index 0bc931cd0698..bb7c70ad22fe 100644
+--- a/arch/x86/include/asm/hw_breakpoint.h
++++ b/arch/x86/include/asm/hw_breakpoint.h
+@@ -59,6 +59,7 @@ extern int hw_breakpoint_exceptions_notify(struct notifier_block *unused,
+ 
+ 
+ int arch_install_hw_breakpoint(struct perf_event *bp);
++int arch_reinstall_hw_breakpoint(struct perf_event *bp);
+ void arch_uninstall_hw_breakpoint(struct perf_event *bp);
+ void hw_breakpoint_pmu_read(struct perf_event *bp);
+ void hw_breakpoint_pmu_unthrottle(struct perf_event *bp);
+diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+index b01644c949b2..89135229ed21 100644
+--- a/arch/x86/kernel/hw_breakpoint.c
++++ b/arch/x86/kernel/hw_breakpoint.c
+@@ -132,6 +132,56 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
+ 	return 0;
+ }
+ 
++/*
++ * Reinstall a hardware breakpoint on the current CPU.
++ *
++ * This function is used to re-establish a perf counter hardware breakpoint.
++ * It finds the debug address register slot previously allocated for the
++ * breakpoint and re-enables it by writing the address to the debug register
++ * and setting the corresponding bits in the debug control register (DR7).
++ *
++ * It is expected that the breakpoint's event context lock is already held
++ * and interrupts are disabled, ensuring atomicity and safety from other
++ * event handlers.
++ */
++int arch_reinstall_hw_breakpoint(struct perf_event *bp)
++{
++	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
++	unsigned long *dr7;
++	int i;
++
++	lockdep_assert_irqs_disabled();
++
++	for (i = 0; i < HBP_NUM; i++) {
++		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
++
++		if (*slot == bp)
++			break;
++	}
++
++	if (WARN_ONCE(i == HBP_NUM, "Can't find a matching breakpoint slot"))
++		return -EINVAL;
++
++	set_debugreg(info->address, i);
++	__this_cpu_write(cpu_debugreg[i], info->address);
++
++	dr7 = this_cpu_ptr(&cpu_dr7);
++	*dr7 |= encode_dr7(i, info->len, info->type);
++
++	/*
++	 * Ensure we first write cpu_dr7 before we set the DR7 register.
++	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
++	 */
++	barrier();
++
++	set_debugreg(*dr7, 7);
++	if (info->mask)
++		amd_set_dr_addr_mask(info->mask, i);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(arch_reinstall_hw_breakpoint);
++
+ /*
+  * Uninstall the breakpoint contained in the given counter.
+  *
 
 
