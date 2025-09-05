@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-803500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E7CB46100
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AAEB46106
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7C61C24727
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9549D17900C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647035CEB8;
-	Fri,  5 Sep 2025 17:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12F0353366;
+	Fri,  5 Sep 2025 17:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MeAap+sk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RijEcKMp"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD4D23E342;
-	Fri,  5 Sep 2025 17:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A4623E342
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094634; cv=none; b=fDiDMerTFXUrZKqzCgOmyZuVGOnLy65PFOMhrZcNUrYvcBYgJYJi74h7voTMOGqRQERcMW5aEFglN2bUbzyxD+k72/wtvuLF4k6Vag3v+tTAdIYWfN4gppr/e7yLqe6zqVq13QiKygCATgXMGFGKaPqkCBEXEqjS5y9YABaQIn8=
+	t=1757094664; cv=none; b=IHWWxx0J2MFjEX4v9p/FRPmBpCmEh3uW4zBc1jXVFscLUZdVa+lTH9D92G7m1LFogxZk7MhF4+aFUAoGxuhtd6fC+n2Xd2Z5vRksIlCleBgiJjgpprUlkFLoaNlLjxIAHBDfLrtpLYDhgARmiPiawvW/eioLv1jYASMFco6W5ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094634; c=relaxed/simple;
-	bh=fEvOC+Hb5Uih6l7ipb42YGCKy5ESrhPsjYdJkhOP85s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PqmmsWYgbF+n6GcRUOsOuOagNvKVmvXsKeE8RucJsQuC9YCFVYuVaKgaogy/DjsEmwgEiN0KE1k1xztgp/JjZJrPIcV5C3jbWAdP37fGX5Z/nhcwUA1xotVz1sKGYV1YzAtNCAw+D5mVwwrVZq0ejsHyFo3e3SKGGMiZNYGHTRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MeAap+sk; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 34ABD40E016D;
-	Fri,  5 Sep 2025 17:50:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 5uOUeExJDHzu; Fri,  5 Sep 2025 17:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757094622; bh=nvYUl9QmXcZhGV7LDMivTR1R7SodOASqEywSNEZXCFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MeAap+sk+VdwfyCrswiOc5REIH3s9U7SaP0ra9piDtNpViHKJrjiiXC+OYwbEnjcT
-	 vwbogjD2xQul6ZxKUnv7+8p/uvByda2LQ9ycJvqg+iaTvEDQdy9sJBj06686iAO05u
-	 LYk91Odqh2reQIDbVXE62GJ/SEHiShROwNqiWov8ZplEJ8dGU2H1o2LOqjuJUFPYnH
-	 Hl+/PMD8BvMWnnq9L74fYprFl1mAEdcKlMLwU1XuOaLLcme2lQlb8wB1EKeF1Wkr4w
-	 LPM1FpPt6mnOkHIE9/9ieU3LBDgDcugFeP301vE3tSOReDbOxcanvOnV9REpx/V79V
-	 kfDbtKEyGS+YKgf0/TkIDFi8HgFuTi+wPxplFJsKSbpkO+19/x25dNs7Yx2ChXhYA9
-	 nPABWcUYMaDxUwaTEk4fUX6JFbTPtsJX7TaU/qqXqIhLRLk9YuaagdbqQjdSVL1ZPz
-	 bVURNzkLucbI0Ny6oLRtekjNLnYlGwfAjPpE9J1xw8qkQ6Ea7DOkkTa1/3ISF7wWw4
-	 8G4tfgbnQEIkhkmQlAQseuKbvB3XWcCxvk0N/X8c1Ep28yuffQIMOl3KMycFMzcT1s
-	 76pK91UNExnVDSeaQTE2egOD0fCWDWZkFiJ4UCsr4k78nblHLZu4xXeaf2cCLYd3/h
-	 Ka+nU1Z9wTcsmovkAE+m7C4c=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EFA6B40E00DE;
-	Fri,  5 Sep 2025 17:49:34 +0000 (UTC)
-Date: Fri, 5 Sep 2025 19:49:28 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
-	Ben Horgan <ben.horgan@arm.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>,
-	Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] cpufreq: use __free() for all cpufreq_cpu_get()
- references
-Message-ID: <20250905174928.GFaLsiqKV36JDowX94@fat_crate.local>
-References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1757094664; c=relaxed/simple;
+	bh=xnZs4CJraYZQ5wDbYLO6uLnEPPN/QIdzXCOFwkslhQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9Bm8FOI0X9Wc2LSXgAW5Vb7pfXJJn5FbOQje3Qqtep3Bj4qDX2IkSZaDORqvebOsogel8CdkeXNWzHA6T8skIKR4aDbectHfnm0PgG5JmvftoBSRlRZpWXS5zaJ/YSqei7B5+rD+G9vvW5vts5r0q1g2kTbCIK3wdJ5ieDAMpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RijEcKMp; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f720ffe34so3150185e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757094661; x=1757699461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZaXyfPMqwoi89bLGQQm9R1wibinvU7q12XwB+QMftqw=;
+        b=RijEcKMpKZ0l18MgdTMdElLGaCAM6JF8JL80UrDqQYFy2Q34XWx+/TDQ5AeSp/bHi+
+         HXJyF+A28Od0ayhZlX0m9NAKRF6oLYZq9lKfbKLMuGWTOrK7YYeHYu2ctQtOrLJAt/zj
+         iiVE+yBeqGDYwiQ/sMSvOulGvRcpYOJgfene43VHGzCUNvH6vB4nFtwYGt+YlhfFnCFO
+         Db+qGVbMt+93hZX9Oujee9Ms0b6MHs1M72F9eZ7A2Ic+erikPqn9r/BplLoBVpkedMfD
+         WahPm64uRdohDNKORitbUXmoIB+9li7aKlSvnU/JOgXA6zVUKYXX4LPpYXK4F/81IZg4
+         EW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757094661; x=1757699461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZaXyfPMqwoi89bLGQQm9R1wibinvU7q12XwB+QMftqw=;
+        b=BGK3XgI5CaeyffcPNIIx04UkpOLSaeVyviNO6kwlsYWPw5eUeK9QCqKPQKEWgFHZow
+         IO2pbC4myWXSL2OupoH+m7bv+P6qcKdnjW8HlOxwH4mSuhrAa1NP/j5B3MMFiBsYnhN0
+         BSWSxLRoDS/2bF6yo/9oFyeBkWVlGB2PW05g7Bx5hVSAOtlhQvDHPtvsa0N3IhgtqIBT
+         DRB4D+9+quNkUDAJJJ4Z8QUyCXrnSabzvN6ln0d1hvusCj/adQbR3iaO5Az+5U7fR6mN
+         /WDmho7qj6pcPNEs3uqEaA2tcw3jn26GvPQo8GLpFED+lCrc/qnnsPttY+bNg7bvyXO8
+         USdw==
+X-Gm-Message-State: AOJu0Yyozje4WEbeXzSoFqEo36cyLxk3BtO8Ze9TiPknzwpiIfqsh7B7
+	6niCJmzF6Tlks4/4IA6EE8MunDTe4nC8F8cE02k2GCBe+rP9sPI1iRCGmOwTei6MTbTOn7ICTtE
+	K+KB0gRbxBdFbwAOfCoslpSjOrpqarw1mAzxANWA=
+X-Gm-Gg: ASbGncvp7A8wioNkaeCNlsXJxcXy9LSzVRslE5Md5EGUzUalTwqcnltyOwCTQT/QN8d
+	6euS37l8LncxCQg8bxJuD93tbco5b8M7kpdnBAXG1g37O9hdJdV3Hw+9P3cegrIydmT9eH/IDaw
+	TO6dv57RuFdY1aR2UN/0iSxYklcFn58SLAv3N8DwQuOJ9BRWrInVOGm551IkKg3ujrz8xz45H24
+	RBGfzmcyLQTuRnZuS1QbbpPCtPaxWYqt2Zvk5eQzG8=
+X-Google-Smtp-Source: AGHT+IHovfJi9UxsADA1y41PVTn87JQTAj3Hx1c4SPMGqx4uQRvjNmPj9yRmM3NVbenXyWcNvhGxjH9edA0XcuveD74=
+X-Received: by 2002:a05:6512:b8f:b0:55f:4ac2:a59a with SMTP id
+ 2adb3069b0e04-560995d4d53mr1317878e87.22.1757094660686; Fri, 05 Sep 2025
+ 10:51:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250905132413.1376220-1-zhangzihuan@kylinos.cn>
+References: <CA+G9fYv0mbEBVs0oTiM+H4X-y7ZCwYpfa0hGCQCeVkW2ufGD_w@mail.gmail.com>
+In-Reply-To: <CA+G9fYv0mbEBVs0oTiM+H4X-y7ZCwYpfa0hGCQCeVkW2ufGD_w@mail.gmail.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 5 Sep 2025 10:50:48 -0700
+X-Gm-Features: Ac12FXzVJdbZI6etdAi_p7uTw8KZ7iah-8DwGxTzPcTMM_M3HAoZ1BASAyToy4g
+Message-ID: <CANDhNCpWWNpBQfeGq_Bj1pEWTYULJGaubTuPJ2Yxjg4_ESzgBw@mail.gmail.com>
+Subject: Re: arm64/juno-r2: Kernel panic in cgroup_fj_stress.sh on next-20250904
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Cgroups <cgroups@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 05, 2025 at 09:24:07PM +0800, Zihuan Zhang wrote:
-> This patchset converts all remaining cpufreq users to rely on the
-> __free(put_cpufreq_policy) annotation for policy references, instead of
-> calling cpufreq_cpu_put() manually.
+On Fri, Sep 5, 2025 at 6:21=E2=80=AFAM Naresh Kamboju <naresh.kamboju@linar=
+o.org> wrote:
+>
+> Kernel warnings and a panic were observed on Juno-r2 while running
+> LTP controllers (cgroup_fj_stress.sh) on the Linux next-20250904 with
+> SCHED_PROXY_EXEC=3Dy enabled build.
+>
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+>
+> First seen on next-20250904
+> Bad: next-20250904
+> Good: next-20250822
+>
+> Test regression: next-20250904 juno-r2 cgroup_fj_stress.sh kernel panic
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Sep 01 Zihuan Zhang ( :8.6K|) [PATCH v3 00/12] cpufreq: use __free() for all cpufreq_cpu_get() references
-Sep 03 Zihuan Zhang ( :  65|) [PATCH v4 00/10] cpufreq: use __free() for all cpufreq_cpu_get() references
-Sep 05 Zihuan Zhang ( :8.3K|) [PATCH v5 0/6] cpufreq: use __free() for all cpufreq_cpu_get() references
+Thank you for the testing and the report here!
 
-Please stop the spamming. While waiting, go read how this kernel process thing
-works:
+> Juno-r2:
+>  * LTP controllers
+>    * cgroup_fj_stress.sh
+>
+> Test crash:
+> cgroup_fj_stress_net_cls_1_200_one:
+> [  365.917504] /usr/local/bin/kirk[402]: cgroup_fj_stress_net_cls_1_200_o=
+ne:
+> start (command: cgroup_fj_stress.sh net_cls 1 200 one)
+> [  374.230110] ------------[ cut here ]------------
+> [  374.230132] WARNING: lib/timerqueue.c:55 at
+> timerqueue_del+0x68/0x70, CPU#5: swapper/5/0
 
-From: Documentation/process/submitting-patches.rst
+This looks like we are removing a timer that was already removed from the q=
+ueue.
 
-Don't get discouraged - or impatient
-------------------------------------
+I don't see anything obvious right away in the delta that would clue
+me into what's going on, but I'll try to reproduce this.
 
-After you have submitted your change, be patient and wait.  Reviewers are
-busy people and may not get to your patch right away.
-
-Once upon a time, patches used to disappear into the void without comment,
-but the development process works more smoothly than that now.  You should
-receive comments within a week or so; if that does not happen, make sure
-that you have sent your patches to the right place.  Wait for a minimum of
-one week before resubmitting or pinging reviewers - possibly longer during
-busy times like merge windows.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+thanks
+-john
 
