@@ -1,229 +1,86 @@
-Return-Path: <linux-kernel+bounces-803551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4B7B46240
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE7BB4625D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E511B227F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B8FA45CF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D573C27467F;
-	Fri,  5 Sep 2025 18:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135182737E7;
+	Fri,  5 Sep 2025 18:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbqpgLIz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="bdMLygMy";
+	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="p4922yrA"
+Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828C3267B12
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219D7273D68
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757096972; cv=none; b=IrrLnbYtCsFjzvr+uPcHVOTRsgmood+mqWdHFt7aFH7dEPVKQMJZyMzipKdOIX/BCsSOIVjla877djaZcDI728vrau43/cVO0qKn8TFW6KvxnWUBAhXK52LAqxqOUBMqzrmMq2ZXlp33xIu65NNHYODvNbTz1MsRbA7daAAVPd8=
+	t=1757097475; cv=none; b=OapBsLA7IzSJFX9MP2DVXR3pNWvliPI8ECq+4qfQfUMXGXpdBY3ASAOOEU3fttR3r5/WAVMkZKg0whF+qzJDv25oEYe7Elrnf0CW0P6XU92EyDsGqUhO6izRerknpWqNNRciGQ3pT4nXbZVt0NEi35djEpAgPKfFhRegLmeFCLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757096972; c=relaxed/simple;
-	bh=TJrjwblla40PWTt/UlYDXqgDomVS+SIW/Cz0hqOAefE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nYI9ZvS03RpD8KAN7e+tXkOwZZx51nf5QPGZg7r0RnDSL273T3vRgIQvQm0o92rpzCVLuL//09cymhG+i2jqZSMaor8zotJgBrxRS2eJy3On9k2kqemROB6RiHWju15GPgXareYQ7WCKAKddm5PxTAm43eJXoQz5fOIDWGPAFFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbqpgLIz; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757096970; x=1788632970;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TJrjwblla40PWTt/UlYDXqgDomVS+SIW/Cz0hqOAefE=;
-  b=lbqpgLIzAkFKCA7jTGnnN0SoQMpqNJtMPdYiNlN+2QDSZ8zKuqQiunUU
-   r4B9PvPx8mXGaPEX5fyj+jJcZl9RoIIYoCNEgETRZaifyA62WmzFdoZ7w
-   pg631WKCMrP6SWWDSc24cCxwjuWBAm6TCSNXiFPGb0bsh3TzphAL+9D+7
-   St8WAaNKFoQ5Ub2qhJ867yG7TnDgWuxpfFt0NzztwacyPkvtF0/utDmq5
-   00ws1peY0m6Yi0O5pxmbqwKpL+Bc07fmGYDDFclg+hAfsuil4dMt6Gs6h
-   Az5uCybhKZzTobVwTcdGH4ckvN5iEaZG1t2JVpvTsIg46yYd8H6k+iTfL
-   g==;
-X-CSE-ConnectionGUID: OuoHYQxaQAaals0Yi3DnyQ==
-X-CSE-MsgGUID: 394Yhc12SYWTZI3DhZWmLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="63281091"
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="63281091"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 11:29:30 -0700
-X-CSE-ConnectionGUID: 0/972cx1QnW11umyYLM+7A==
-X-CSE-MsgGUID: 2waXvBh0QWCWpCUNPH/6ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="177456544"
-Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa005.jf.intel.com with ESMTP; 05 Sep 2025 11:29:30 -0700
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Libo Chen <libo.chen@oracle.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Len Brown <len.brown@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Zhao Liu <zhao1.liu@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH v2 2/2] sched: Fix sched domain build error for GNR, CWF in SNC-3 mode
-Date: Fri,  5 Sep 2025 11:36:25 -0700
-Message-Id: <7cf61ac1dbe665bac68bfee344f2eb2906915fd7.1757097030.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1757097030.git.tim.c.chen@linux.intel.com>
-References: <cover.1757097030.git.tim.c.chen@linux.intel.com>
+	s=arc-20240116; t=1757097475; c=relaxed/simple;
+	bh=AmzYGcVQORtZ5c4apljZBYaDRvLCZWpZz4Bzml7Y1i0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4tEZHe+Q4T56aVchiyMf96f92FmamlgnavY3XE6MZRIp2mdzVutGrCasDKZbd9sW5eMUo50HBt735CGQ2qav47Y2AfCeOdA2djvi+/gtNWfq4ClAh7/WoPuu05p7dy+l49HgH/pmlpkrnBjUGeSIERddOr2j2A3sp5js2eyYeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=bdMLygMy; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=p4922yrA; arc=none smtp.client-ip=46.30.211.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757097470; x=1757702270;
+	d=ravnborg.org; s=rsa1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=P13HvUfB9+hmK7dH65uYyDJo/LYux5XpE6ItWJpimrM=;
+	b=bdMLygMyGMIhkCuvBp42jg3BoSRJQBpxFG3nh1NpU2ZD0+VPm+AWM99dEnv2Gs04DgceNs24HJcM8
+	 Pb578XTpbnyU0Yb2QeZo0jxW88ZrUd6rTcQZzKgXIuj+I/juagSXQ/X0SK/oAkkQsBlPAk9EumMqGp
+	 BiDQpz5Z/0ItJGT9kHUae0LZzmC1+rHCJnIEpfBVtOOpsO0wRfYlXcq1YplqqwdbVd6/3Tc/oseiq9
+	 58MLvlgUuzQNibNXGLhHoBB/tp8953pcbNNBPAGzRKgyifoX6X9gZtgvbxXNgD9wYgEdRe3nzR7fZO
+	 XeSG8ExuS5ImH5jbB2FI8SeiscUTetQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757097470; x=1757702270;
+	d=ravnborg.org; s=ed1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=P13HvUfB9+hmK7dH65uYyDJo/LYux5XpE6ItWJpimrM=;
+	b=p4922yrA6E3K37M5RVLUEQq0XbmNc/8pNK/JE1XIWurFi5cWJfWi/IGXHCDPAClJVWvY17WJLAfAK
+	 3OQXywxCg==
+X-HalOne-ID: 6bb947bd-8a87-11f0-9d80-494313b7f784
+Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
+	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 6bb947bd-8a87-11f0-9d80-494313b7f784;
+	Fri, 05 Sep 2025 18:37:50 +0000 (UTC)
+Date: Fri, 5 Sep 2025 20:37:48 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] fbcon: Set rotate_font callback with related
+ callbacks
+Message-ID: <20250905183748.GB360685@ravnborg.org>
+References: <20250818104655.235001-1-tzimmermann@suse.de>
+ <20250818104655.235001-4-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818104655.235001-4-tzimmermann@suse.de>
 
-It is possible for Granite Rapids (GNR) and Clearwater Forest
-(CWF) to have up to 3 dies per package. When sub-numa cluster (SNC-3)
-is enabled, each die will become a separate NUMA node in the package
-with different distances between dies within the same package.
-
-For example, on GNR, we see the following NUMA distances for a 2 socket
-system with 3 dies per socket:
-
-    package 1       package2
-	----------------
-	|               |
-    ---------       ---------
-    |   0   |       |   3   |
-    ---------       ---------
-	|               |
-    ---------       ---------
-    |   1   |       |   4   |
-    ---------       ---------
-	|               |
-    ---------       ---------
-    |   2   |       |   5   |
-    ---------       ---------
-	|               |
-	----------------
-
-node distances:
-node     0    1    2    3    4    5
-0:   	10   15   17   21   28   26
-1:   	15   10   15   23   26   23
-2:   	17   15   10   26   23   21
-3:   	21   28   26   10   15   17
-4:   	23   26   23   15   10   15
-5:   	26   23   21   17   15   10
-
-The node distances above led to 2 problems:
-
-1. Asymmetric routes taken between nodes in different packages led to
-asymmetric scheduler domain perspective depending on which node you
-are on.  Current scheduler code failed to build domains properly with
-asymmetric distances.
-
-2. Multiple remote distances to respective tiles on remote package create
-too many levels of domain hierarchies grouping different nodes between
-remote packages.
-
-For example, the above GNR-X topology lead to NUMA domains below:
-
-Sched domains from the perspective of a CPU in node 0, where the number
-in bracket represent node number.
-
-NUMA-level 1    [0,1] [2]
-NUMA-level 2    [0,1,2] [3]
-NUMA-level 3    [0,1,2,3] [5]
-NUMA-level 4    [0,1,2,3,5] [4]
-
-Sched domains from the perspective of a CPU in node 4
-NUMA-level 1    [4] [3,5]
-NUMA-level 2    [3,4,5] [0,2]
-NUMA-level 3    [0,2,3,4,5] [1]
-
-Scheduler group peers for load balancing from the perspective of CPU 0
-and 4 are different.  Improper task could be chosen for load balancing
-between groups such as [0,2,3,4,5] [1].  Ideally you should choose nodes
-in 0 or 2 that are in same package as node 1 first.  But instead tasks
-in the remote package node 3, 4, 5 could be chosen with an equal chance
-and could lead to excessive remote package migrations and imbalance of
-load between packages.  We should not group partial remote nodes and
-local nodes together.
-Simplify the remote distances for CWF-X and GNR-X for the purpose of
-sched domains building, which maintains symmetry and leads to a more
-reasonable load balance hierarchy.
-
-The sched domains from the perspective of a CPU in node 0 NUMA-level 1
-is now
-NUMA-level 1    [0,1] [2]
-NUMA-level 2    [0,1,2] [3,4,5]
-
-The sched domains from the perspective of a CPU in node 4 NUMA-level 1
-is now
-NUMA-level 1    [4] [3,5]
-NUMA-level 2    [3,4,5] [0,1,2]
-
-We have the same balancing perspective from node 0 or node 4.  Loads are
-now balanced equally between packages.
-
-Tested-by: Zhao Liu <zhao1.liu@intel.com>
-Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- arch/x86/kernel/smpboot.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 33e166f6ab12..3f894c525e49 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -515,6 +515,34 @@ static void __init build_sched_topology(void)
- 	set_sched_topology(topology);
- }
- 
-+int arch_sched_node_distance(int from, int to)
-+{
-+	int d = node_distance(from, to);
-+
-+	if (!x86_has_numa_in_package)
-+		return d;
-+
-+	switch (boot_cpu_data.x86_vfm) {
-+	case INTEL_GRANITERAPIDS_X:
-+	case INTEL_ATOM_DARKMONT_X:
-+		if (d < REMOTE_DISTANCE)
-+			return d;
-+
-+		/*
-+		 * Trim finer distance tuning for nodes in remote package
-+		 * for the purpose of building sched domains.  Put NUMA nodes
-+		 * in each remote package in the same sched group.
-+		 * Simplify NUMA domains and avoid extra NUMA levels including
-+		 * different NUMA nodes in remote packages.
-+		 *
-+		 * GNR and CWF don't expect systmes with more than 2 packages
-+		 * and more than 2 hops between packages.
-+		 */
-+		d = sched_avg_remote_numa_distance;
-+	}
-+	return d;
-+}
-+
- void set_cpu_sibling_map(int cpu)
- {
- 	bool has_smt = __max_threads_per_core > 1;
--- 
-2.32.0
-
+On Mon, Aug 18, 2025 at 12:36:38PM +0200, Thomas Zimmermann wrote:
+> The field struct fbcon.rotate_font points to fbcon_rotate_font() if
+> the console is rotated. Set the callback in the same place as the other
+> callbacks. Prepares for declaring all fbcon callbacks in a dedicated
+> struct type.
+> 
+> If not rotated, fbcon_set_bitops() still clears the callback to NULL.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 
