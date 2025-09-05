@@ -1,153 +1,154 @@
-Return-Path: <linux-kernel+bounces-802814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7DCB45758
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7A8B4575D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A3A188BC9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:11:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEA93A68FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6670034AB15;
-	Fri,  5 Sep 2025 12:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9C934AB07;
+	Fri,  5 Sep 2025 12:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m0r9UQ4C"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TazNyOEp"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FA226A09F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899C072615
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074233; cv=none; b=FSzaSleWFuEuuuiY0dN/AMURmDjCud/A9yDGrdWTkKxF7ywOaBV3+wjH6SFBe82XIkiD/4Zuwyi5o4YPNF5KhJymyCptLPTdF85p8RDDwqhzHPAvonnvujak5YAsyxu7jRmjWozWEYqaTootCT/+V8/qRB+ll7SIO8GrRLhNEkU=
+	t=1757074299; cv=none; b=mKXnr2dj1713rlQcjiGBccF7MQJzdUiEO9XuRbP6c9xp1J1TyaVmOrkjDpk+cAwJ6LlLhGJIJ1PKI1xoWclee2DbDP3uPZ6lPiGWX7YICFW1dv2NBv+Ks05Zrw76Z/zIrFgIrFj79110excXrLDlTgYJYa6j1SCGI0UTdWB15gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074233; c=relaxed/simple;
-	bh=ErCJ6Ql1rDMt2vKVLJW9jn9Ni3tpQtFY2dmm34Q5uBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N7+JNWFlCGbODU+tEYpJv4CrIWQWlSOyW8ZIbDrJGD/0CpcA3wGKOETnUsWnUMyGSki7CLgo+MH0orgm877BBfdPUkoIyYXtecfd/I4pL1pgFoUqegDLZjulkUt0abI4DE75g34XeqhUsB7bBsjC5VY/DcmHBWxMVE1gjwGRD3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m0r9UQ4C; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5854oqlC018660
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 12:10:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B3CXvHZCGtK3JzFKnruevi9kzIT/zr8k7RvjkNKrle0=; b=m0r9UQ4CLWMjutZQ
-	qETbEc2XdgjwRETjCNkkIMt0KynIg4Qxw3/QNyNYNWIoF5s6EQK+MmTf8jkzQ1KK
-	SlRMk0Y2Cn+TAsMW10hykObKOX/tZ/7PRIJ7tLOoNGnN2dZOPm7XzgnJKyGOVZmn
-	FC85p/oGlW/yqEQvbmqO7FTO01Wu5ktI+iuC31bDI8/ydyfM6taqlZaAw9dwc+P/
-	oxO2b/8jg+eaF4roRMEgRimjFezbnlVumB4ywh+Sckr2BOFj5tMpQKwOK1v1VuKy
-	T5Rysd6oAMP0z2HdnqLBFPgfl+tgqE8TIyZmPkO5h7HZHYWi8LupJLaQ6Q+ORNds
-	oCOtlA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48yebutxmu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:10:31 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5eb710c8eso1929831cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:10:31 -0700 (PDT)
+	s=arc-20240116; t=1757074299; c=relaxed/simple;
+	bh=av2PCZN3iHw31m2KXa/hGZSNvzXXs4uH3KJeadBo61w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CkmLCQbjoYrEMpbByrXLAtSiJRD2JsFkMR2JeDzPXY9X/pGgntbtfnLPlMnaYNeQ0vwKo+4L5aB9O3v1MnCCqZ34q3EOO9c/QYhuaSSIGtjWwGmnPOd8ZdyLOyXc0qNFERd1ODL8c92PkJKwISHaqaHDv2vjrxCywcQ9RM1MpNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TazNyOEp; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso4389415e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757074296; x=1757679096; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZOPSONkb/oHrdvEnVNIWH6qwbQDR8wyTn/LimFEqbTE=;
+        b=TazNyOEp+4Quk6P3MHvTTJvhA5eaEd1F3kcyE/i5djzReyEOGCpywgvxVV+der/+5c
+         XgXT9+O7J8fl2naSM4CAA6qiOGnXKyIvMOSQ/ueEAh73yoFDFASTmsOnMPUzjrhMaV48
+         NOF/gPCn606tbDcxtN8pf2qjxDTxHdNfxQOi09D5X8I2k/0wG7IfgDF0L8wLR+tUhgfC
+         ZSFeDXvuAjNKsB4J76dPItkKHlLzgSusDGRWf6Wv97WAbCBCxV6MtaoBBb1nZsUrShzd
+         OyL1snaWUcoYfz+DGkdCmP1kEadB2EPFWMS22z9hCymNkAWoYsvZUb8lAeJPk9NDpWQH
+         YOOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757074230; x=1757679030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3CXvHZCGtK3JzFKnruevi9kzIT/zr8k7RvjkNKrle0=;
-        b=Mqw6E2Mq+UQfutyH+JV41qKUtEgbOB0vH1rR6xZg6X1KAZwneO4kJETzI81KSZZTVd
-         a2d3I4EtcRlqaQWSnUtYFz0eZ5NFTtiGV+XFLIxq0RjaYZu/jBCnf2/cAApfbSt+ffsg
-         qSYPICE0GSUr6FaVkytkNCoKhRYnvqkRYt3rU1pR9+VqmIci6J8hMGmVOutdNzDirBHn
-         d/QLY/gHXKBU31XKrvAMUCFXv+aca+4rY2dLqHtmVl0dol7G7iRy1SzSbwMXs5EXivDm
-         gjgodPjTfymRYW8IPJGXtfoHoDoYjNqbi0e/NHfZLjispwkFJ5Rjzc8cEV/eBWMPW81B
-         3SBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgxu0RG/7lXk4dWZb+1+XuxG3CfJxuI027yYKboO3yqgr2hA0vJZSn6+toiFReTuwzA0Rd+wif+1vAhns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU1DIsJJ3ATQLt1MoD6iOzmwmzuBfIq8B7KCkGAHixhDn5WtnQ
-	v+i1QIQJD27fesC3bIIw9yT4hH/gNSkirc0MOJU1XkQRYOGeNBX9QWKSC6nBlCZ0vixScrL1+/P
-	VKls77XcWhvikDE6rOWryS5KP6aG/AaCeTw7MLtPla1fJoWGvu8oXY9YIqr/TP6pN2Fo=
-X-Gm-Gg: ASbGncsOFEb4KI1Dp0EMe3mKBKkrS7uDrUSnkR7mS1jitnzT6GFcW2K44vPVYDfinl4
-	Ru3261rLYumRfBu+xYckd2usW4Rd4/UxKn7FMIt1wIOuWtzc7VFl3akCGUqzeLyeBjAQ0jmwNAn
-	YDP6pe3Wn57aMd8VL/i86Apr71c7k1idYqRA5OZ4yehVvHJCWRutOQ3VZhe92fKBdjdA6yFfSfi
-	b84LI5lqv1uN9AXZAlI4Uf9cWU1dqJxwzJNCPtkRlou4dp7hJQe3v05U4vhh72kOFZR0/TVFp9N
-	Z5RxfldtBpb81f5bR5KcyWF0EZTphPc7ehkLT1QZiFjvWZqUAfauKN1BkDZMtWzX25V2X5zxr6i
-	gl7aPEH1f/0SvPrlcEJVelw==
-X-Received: by 2002:a05:622a:11c3:b0:4b4:946a:df22 with SMTP id d75a77b69052e-4b4946ae541mr79002011cf.9.1757074230290;
-        Fri, 05 Sep 2025 05:10:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/V1Ut9FoAm3PMIuMlaHnEJiGeKOqT+3I7Y49huAY9u92oCVKu3lzCxSzcPEtH0e3dxFF09g==
-X-Received: by 2002:a05:622a:11c3:b0:4b4:946a:df22 with SMTP id d75a77b69052e-4b4946ae541mr79001621cf.9.1757074229739;
-        Fri, 05 Sep 2025 05:10:29 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7caesm16131666a12.9.2025.09.05.05.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 05:10:29 -0700 (PDT)
-Message-ID: <a61d5e22-6a0b-49df-a203-aa408856cf43@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 14:10:26 +0200
+        d=1e100.net; s=20230601; t=1757074296; x=1757679096;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZOPSONkb/oHrdvEnVNIWH6qwbQDR8wyTn/LimFEqbTE=;
+        b=jZIIw7u59IC5Jt/aMGO0nSeKzDOMF3KshOKJdySJdF1ChP/0Tay8BnO/z8kT7MsCD7
+         Dcsm4hWAvBcxb8d3m3XHYyx6RXOa5JPkq8hdafm0wlXORrIj/OUNmEcH0aztoTBHMGwg
+         iBXtfkIAI58wZJY3Iw6axYEsDmeneNfHge4Wid4VivREiKoCXCWfiPhMxHhFUsKCceq7
+         AFh9N4AidEh1H61KEfnVOQIgsCvTLgP1KqGaMGKHcEb++XvSJe18PfgD++3PR7WxuFTV
+         SHA86Pc+qKlj1ynA3VYTMjt8/aLWpMceIPqb3w/yRdVfRN+vTEk+sC4n2YNHMJPngOuy
+         64RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB+PwFSvWK7mAE+qIUhvIiTcYsZ36jxR7CY1f0+HOiD/1NMowbfl0yFRuZO+zV80muJGjUPsLzSkwc4Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKDETmoMrY32+eSRTy2/A43MaIgMeOADH0DA8DkFso/ed8wx4i
+	umLv9iyWrMIIcfx/xAza+4+XScgixeHeCqwx7O3jGk/QPvGUh9tffXAET7rK/a+mRaxrOfzh6lT
+	oRYxsR5xIpt1/EkN3Hg==
+X-Google-Smtp-Source: AGHT+IHsrGQX8qcCZ9HxIK99VE+RHo02K97912TeGraChWZB2JeehQ4Mi9OmJ8LtBxrYUIHXz75LaPtSikynI1Q=
+X-Received: from wmbds21.prod.google.com ([2002:a05:600c:6295:b0:45b:88d8:5042])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:470b:b0:45b:90fc:1ede with SMTP id 5b1f17b1804b1-45c8e725fbdmr99877055e9.6.1757074295980;
+ Fri, 05 Sep 2025 05:11:35 -0700 (PDT)
+Date: Fri, 05 Sep 2025 12:11:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/14] arm64: dts: qcom: lemans-evk: Enable 2.5G
- Ethernet interface
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: kernel@oss.qualcomm.com, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
-        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-References: <20250904-lemans-evk-bu-v3-0-8bbaac1f25e8@oss.qualcomm.com>
- <20250904-lemans-evk-bu-v3-12-8bbaac1f25e8@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250904-lemans-evk-bu-v3-12-8bbaac1f25e8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 2Ii-G-jr9zYSdy7SiPBK4UVaHK4C5Bno
-X-Authority-Analysis: v=2.4 cv=X+ZSKHTe c=1 sm=1 tr=0 ts=68bad337 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=eKh8lGy-H4yf2MGC_tcA:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA0MDE2MyBTYWx0ZWRfX93TN+U5Wgs1K
- BSyvYO6MelEV19nKs071/ZJvrqCpJujwHGNPXcf+0P2WS+GYPXiDccsTbsyUVW3gBXRStcWwVHn
- kCKU8Di+PpugPkyAa6PrKJ7y8JQp868EgkFwgPAQh2hUr/ZG32jFvQB163o2sZ6/2Mn4OmtTHG4
- MDskqoR6en9w2XRTbnk5IHJkWQggyMVNjLYusLF+ExNHMvJW+x99KG/IhI54Mte8iW7PdoRAIi/
- tGtl2stiCuVGUWeKH8JQIpNO1iv1RFqt9E+R17IF4E4efA/ewVNy8AliNysWcZ5z/sMZF1Yde2V
- R4hoWrRiCW+QIY3Mqq7dqnUuXRxK+LuKRAyotMDMt4u28E/3sw2r09Icu6Lk1C2Wtv6/UyIPF1a
- JI0ZsWKX
-X-Proofpoint-ORIG-GUID: 2Ii-G-jr9zYSdy7SiPBK4UVaHK4C5Bno
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509040163
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAG/TumgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwNT3bLcpHzdlNS01CJd47TENEuDFAsjwzRTJaCGgqLUtMwKsGHRsbW 1AJu26iRcAAAA
+X-Change-Id: 20250905-vmbo-defer-3faf90d821f5
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2215; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=av2PCZN3iHw31m2KXa/hGZSNvzXXs4uH3KJeadBo61w=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBoutNyxOpFZ42DS+TtcDs65lWJgcI/hgupquxoE
+ NNEcJ4qa8SJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaLrTcgAKCRAEWL7uWMY5
+ RpvTD/48s9S0nMHsl6JehxEXr8PtHD7thHl/lFxQWMfgSrMadcAmIJHO+zwYADWnzmomYuJky2n
+ gNQvGc++T3PO/n2sAU9PhqruPaukq5/lCRv/maHDgqhIE3xfN9OYftlTwVAdPf4yN9uGrKPSxkJ
+ bAeP+WcoY3QwXAV7805QTP+9gv5hK2sc4AymngGBMfiuwVQqsn35huTRpv8lhD/qRlx5SnVH2G2
+ yzO4mFdQVlBRfqIz9dSM0R2EoPpt8fRCLQ3RoRRYs2af6pGpL5+JKAu+GwSHUQXkQcNop+wdycF
+ 7gLhpE6RVpXEWumcinMC0UVYea+0CVXIYk4kuYPou8wEYDuWlas+PV1aEpkdYnAiBQoIHBoMFm+
+ pwmLLHTVHFXsjjCise4kQ2UyRNpZoctvkgGskOfWpgvgcVNt+IH7l3Ukimv+0Rf7LupUrdZ3kOq
+ fDjDWwXfu9BCSgCH8zvwZCuTHqdLRqdwFXCIB+Zjqd8L8eDdsUkwoehj/xQfZ2s9Ro35RjDGw64
+ kfw3LMXZRXlOLuFOVUbZWLECPYklrRcHXkeA8XTOPdVl3GAfJd7G+xcomZ05f/z+2HAoEwX53Xg
+ hu576GcCaXnIrA3e9tiGLrSSOFJkOShBBfziv4M3rt5d5zAinz9AtybVyuloRybGPJFp1GepKRz ECEpmW5DmEnP3/A==
+X-Mailer: b4 0.14.2
+Message-ID: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
+Subject: [PATCH 0/2] Defer vm_bo cleanup in GPUVM with DRM_GPUVM_IMMEDIATE_MODE
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 9/4/25 6:39 PM, Wasim Nazir wrote:
-> From: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> 
-> Enable the QCA8081 2.5G Ethernet PHY on port 0. Add MDC and MDIO pin
-> functions for ethernet0, and enable the internal SGMII/SerDes PHY node.
-> Additionally, support fetching the MAC address from EEPROM via an nvmem
-> cell.
-> 
-> Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> ---
+There are two main ways that GPUVM might be used:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+* staged mode, where VM_BIND ioctls update the GPUVM immediately so that
+  the GPUVM reflects the state of the VM *including* staged changes that
+  are not yet applied to the GPU's virtual address space.
+* immediate mode, where the GPUVM state is updated during run_job(),
+  i.e., in the DMA fence signalling critical path, to ensure that the
+  GPUVM and the GPU's virtual address space has the same state at all
+  times.
 
-Konrad
+Currently, only Panthor uses GPUVM in immediate mode, but the Rust
+drivers Tyr and Nova will also use GPUVM in immediate mode, so it is
+worth to support both staged and immediate mode well in GPUVM. To use
+immediate mode, we must manage the vm_bos and vas during the fence
+signalling critical path.
+
+The first part of that work was the introduction of a fence signalling
+safe mutex for the GEMs GPUVA list in commit e7fa80e2932c ("drm_gem: add
+mutex to drm_gem_object.gpuva").
+
+This is series the second part of that work: Dropping a vm_bo object in
+the fence signalling critical path is problematic for two reasons:
+
+* When using DRM_GPUVM_RESV_PROTECTED, you cannot remove the vm_bo from
+  the extobj/evicted lists during the fence signalling path.
+* Dropping a vm_bo could lead to the GEM object getting destroyed.
+  The requirement that GEM object cleanup is fence signalling safe is
+  dubious and likely to be violated in practice.
+
+Panthor already has its own custom implementation of postponing vm_bo
+cleanup. Take inspiration from that by moving the logic into GPUVM, and
+adjust Panthor to use the new GPUVM logic.
+
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (2):
+      drm/gpuvm: add deferred vm_bo cleanup
+      panthor: use drm_gpuva_unlink_defer()
+
+ drivers/gpu/drm/drm_gpuvm.c           | 167 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_mmu.c | 112 ++++-------------------
+ include/drm/drm_gpuvm.h               |  26 ++++++
+ 3 files changed, 211 insertions(+), 94 deletions(-)
+---
+base-commit: 4c67b73907214994f87cad795195c46fe63c1e1c
+change-id: 20250905-vmbo-defer-3faf90d821f5
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
