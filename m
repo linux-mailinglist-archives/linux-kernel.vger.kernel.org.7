@@ -1,247 +1,154 @@
-Return-Path: <linux-kernel+bounces-802133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A8AB44DF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:31:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F8EB44DF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020BE4816B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754B01C242DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C9D29B766;
-	Fri,  5 Sep 2025 06:30:54 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81E02BE7D6;
+	Fri,  5 Sep 2025 06:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AzVtrVzJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBBE2A1B2
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2902BDC23
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 06:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757053853; cv=none; b=ijJys86Wxl2LtfQGEnaPbIPzWEf8T6kBr8mnbaghVQdSJhBliNtzQ6mgc0MGPtIe+/7hR2Rtuz+6WvcWsVdfRnIMcEZVQ9bcrIuyiOcXmVAO+qn2JnUNIe4qODWfLS360vaDNK9LXp3YWUMNxah7C/KzvPyTytc1zjoME0Aobnw=
+	t=1757053882; cv=none; b=MtPrJGoNFjz3JUMVPo1bpFpsyIvBn6pgKRMtrVEF8oSo9TzSZ8sIXcdycjIw+GIClK+NrKvmmjt2TIvoofK2rJoONZF1p4CaCVLuEhz/838MkG01IrrJfsKM6VAbAeBy0sy3harap1DWBdt7Bu64UXO9IbzLmrB67gn40cvax3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757053853; c=relaxed/simple;
-	bh=iXAyYs38ed5hZ71z4u1jPBV+remIZ+GjM5oilrzVLkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFHLo8eUuzC48dPzCRjYOoT/WmuQm0Ybxmoy0X225SfulAzLulan4naJSNZibcP9m6ZNzkYiXWiwELymQPkUvy+BUb4HosCUF6FFV3K224nW6wCdu3C1w2xTrOAlxcBOMazBQ2VS//CFA8mY10k++Ca87GVAsrA6OviYESHfqJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 5 Sep 2025 15:30:42 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Fri, 5 Sep 2025 15:30:42 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330>
-References: <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330>
- <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
- <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
- <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
- <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
- <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
- <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
+	s=arc-20240116; t=1757053882; c=relaxed/simple;
+	bh=c+qCkBwUcNTbqtKHddqUYexmmRMT9xAUaD45trrVIqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BOKZX7r7zkXBW/3PQgVe+v2xm8fneaR1VWyC216bgUP3hRMAmTgMlHp0cm7s27QvfVFPvUX767JNQoWrWDd70Pj2pai4H6pR1ob5qdvpTzVbHcoMUCfMK+4fGMOh1JudP07gZhCfpx1OANa4eObxdxsm3kBLRdpSu8y7mrj5+Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AzVtrVzJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584IAL8H022145
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 06:31:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ihUchhbr+BPTutSAMH3QPkZ1k4UUvBlJqLlucFmaUzQ=; b=AzVtrVzJcsW7ElbT
+	DqPGbcveokIzhJepOdZCV4f3wFdinbwoKmCv3EtfGrbzcUsHDYAwD6hH5EhbODVj
+	dWbTjF2IYUA4f1Uf3lo8K27VoTIPcncYjP9qpUBFWz3PSner+u064gTqQro4RWS9
+	33g65acPdZRHB2MdJu9Lx2EEx49d5FFgH3O6xGaywnCRxli/foUdEAhDYMyQlmqA
+	EafcfT9dOt2z58QRMGjT80f3VK8piYI6eq7K/69Q0O/z/9F65azI20lArTEOswzy
+	TSpCHGOOZDjBQ8WOCz41jVRFRmj4+XFAVHYeN6Vi0knWoDKIAEZSbQbr62bBjU5f
+	z3q+lg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk99xy4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:31:19 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4c46fbb997so2254958a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 23:31:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757053878; x=1757658678;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihUchhbr+BPTutSAMH3QPkZ1k4UUvBlJqLlucFmaUzQ=;
+        b=gR0DWC8g3PFBcqtHQmDTKcn90fXnxmE+2BnbvDqf8gMHoA+kCAlH7o4RAJkweSBJFX
+         fXRWMrgY6WlrWijHEQkWGe7zg6sGEGIJn8ruYmNzyfk+ynRoB8RseULMxmZU7Jr3S7lL
+         Ydl6/ufbTMz6wIZtCmu50V7wQrc1TPnUEX03Q5uboJJtrqPXuzM2p59XemOXjgVYuXhS
+         r6qGV9qU1oKjvvKpg+xA+3ISnHQOos8c9iS2XqRVTtK4tivbS56nVO8UD3doRrJlWB7U
+         S5ea2GPHvaSGwDUtgEc/UP2MJXxqLkQ4DBvcScDX0dam9NZnoEdxVb+Ex/rvvqeWsbo0
+         u1mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOStaSy1jbWRhqK6oGYiPUNGjelnGcX4cXAbYstRk27jOFMBDGzsDDAuHjqFV+v6WSnXjl6hqsuJYnei8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwOmwv4G03fJ/bExqxia5zHnqXPUzf+T4C+gqHu7M7Ww2yQ3U7
+	aEPLWKoKoAUNnM/ecK49exDdxU1URn+j+OqSiGJOCaQZD58maNnZDCxNK6mUaxUUJSreikC/JnA
+	o0fZ+FFe7rka7ueaqk/bKwUgBzWP0Ef6fOIMG2p832KInPv2CNnZcsZJZGRETHqq6ap0=
+X-Gm-Gg: ASbGncv0DDZ1s/4K6zugNXyTLbuFbpeSKwgC9jCMCxphv3ID/mUTTrWa9BB3gX8GKDc
+	4V7pp6P+M+2corxhiIoNjtxFtIZMnlQNqT4sYw4CrON6fDtPTqcucGKrzlnJXyvhXgax2kSOGum
+	HXpiTgkGSAAP46J0OGnKWPnOHEtmd3AviauDOpnjxObdwpd/E6kyCkOe8QFUUb+EwZ2eVq7BDMC
+	vnjF3YJ29E6Ag5hF+wwKfn6yebuQJWbPMdhTT7mAn2RJpdHuBRcyyvXFznFmYfeD/7jiSioFU+C
+	Qk0QnubS8spMqchTYozYK9mMVmr65ru55sKX+atp61ZGg0fU731HIsjJHP7xmlJSCHmWrMpZT/c
+	kPNBPQbwrWiPiFpRFbn+0tMKGcGReIy+T
+X-Received: by 2002:a05:6a20:1611:b0:240:1e4a:64cc with SMTP id adf61e73a8af0-24e7f5ad1c8mr3634916637.12.1757053878337;
+        Thu, 04 Sep 2025 23:31:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnzYt3qIjxJ2UxKLfHlG3uR/JqPIbskDDWIrtlfTXdYVFfX5BCyUCF90DYXyEmWrm4+f7kkg==
+X-Received: by 2002:a05:6a20:1611:b0:240:1e4a:64cc with SMTP id adf61e73a8af0-24e7f5ad1c8mr3634875637.12.1757053877874;
+        Thu, 04 Sep 2025 23:31:17 -0700 (PDT)
+Received: from [10.133.33.61] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f80181dacsm12244112a12.40.2025.09.04.23.31.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Sep 2025 23:31:17 -0700 (PDT)
+Message-ID: <d7e5cc9c-4918-496f-82de-05924c61d06e@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 14:31:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250904-hamoa_initial-v9-0-d73213fa7542@oss.qualcomm.com>
+ <20250904-hamoa_initial-v9-3-d73213fa7542@oss.qualcomm.com>
+ <cf873dbd-1f97-4796-b973-a0d6ed569f37@kernel.org>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <cf873dbd-1f97-4796-b973-a0d6ed569f37@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
+X-Proofpoint-GUID: 52Oy_tzAt_eOrQRjc6ZNtqn0gFTeRb9G
+X-Proofpoint-ORIG-GUID: 52Oy_tzAt_eOrQRjc6ZNtqn0gFTeRb9G
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68ba83b7 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=K1182fJEmGhiR4m-f2wA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=M91JV_wKSCcA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX94ZKWw/lyE2e
+ 8Lp9ROHD1NXIUyt6csyCfeza8WBdpLy6xuW2ZgNltihmGn6uphSh5SAxybJecll8Qp/1vsNAdd2
+ ZqI3RC9w2+fPi6Kv6Pa4aBHbatVdtnToZYuMSttMaHxtQQEYjmFXyZ1Fh5HldZ+RsGMGtM8ViDE
+ 9IGYgEzW4XVn1ouFbmVuG+WxfXM4vazE7tvpnO+YAIukkH8cDILowJdcWA178h6fGredCX6PszO
+ 5LsP9rIeWiM5q2d5E/PK+wAWSpy6RiiSxEvOUrFZ2XA6qeMD1/FivZYjTPzxZgLlNQNFTLaqMAd
+ v7EazAPlgY+Y+iH02wQCr6xuIG7F3Ws5sn1bNepTFOIwe03jmRFF+hAyosyhkixJ+uUFf2I3ind
+ nE9mh4xB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-> Yes, that works. I would skip the "add" keyword.
-> Also I notice that we can allow " " in place of "," as a separator as well.
 
-Yes, supporting both " " and "," sounds convenient.
 
-> Maybe instead of "remove hdd", just "-hdd" which is similar to how to
-> operate on swap.tiers.
+On 2025-09-04 23:15, Krzysztof Kozlowski wrote:
+> On 04/09/2025 09:48, Yijie Yang wrote:
+>> +		#sound-dai-cells = <1>;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0: 115200n8";
+> 
+> Huh, why bothering with testing prior to sending to mailing list if
+> community can work for free...
 
-Agreed, "+" for add and "-" for remove is simpler.
+Sorry I missed this — I’ll fix it.
 
-> Oh, you mean the tier not listed in the above will be deleted.
-> I prefer the above option 1) then.
+> 
+> Best regards,
+> Krzysztof
 
-That makes sense. Option 1) looks simplest overall.
+-- 
+Best Regards,
+Yijie
 
-> I don't understand what is this "removing" and "in stage"...
-> What is it trying to solve?
-
-That came from an idea to pre-add a new tier before removing another.
-But I now think returning an error on overlap is simpler, so staging is
-not needed.
-
-> What do you mean by "visible"? Previous discussions haven't defined
-> what is visible vs invisible.
-
-By “visible” I meant a staged state becoming active. I realize the term
-was confusing. and it is not needed as I already explained.
-
-> Trigger event to notify user space? Who consumes the event and what
-> can that user space tool do?
-
-I agree, sending user events is unnecessary. It is simpler to let tiers merge or
-be recreated and let the allocator handle it.
-
-> If you remove the
-> swap tier. the range of that tier merges to the neighbour tier.  That
-> way you don't need to worry about the swap file already having an
-> entry in this tier you swap out.
-
-Should the configured mask simply be left as-is,
-even if (a) the same key is later reintroduced with a different order (e.g.,
-first → third), or (b) a merge causes the cgroup to use a lower tier it did not
-explicitly select? 
-I infer that leaving the mask unchanged is acceptable and this concern
-may be unnecessary. if you consider this unnecessary, I am fine
-to follow the simpler direction you suggested.
-
-> If the fast path fails, it will go through the slow path. So the slow
-> path is actually a catch all.
-
-I think my intention may not have come across clearly. I was not trying
-to propose a new optimization, but to describe a direction that requires
-almost no changes from the current behavior. Looking back, I realize the
-ideas I presented may not have looked like small adjustments, even
-though that was my intent.
-
-As a simple approach I had in mind:
-- Fastpath can just skip clusters outside the selected tier.
-- Slowpath naturally respects the tier bitmask.
-- The open point is how to treat the per-CPU cache.
-
-If we insert clusters back, tiered and non-tiered cgroups may see
-low-priority clusters. If we skip insertion, tiered cgroups may lose
-caching benefits.
-
-Chris, do you have another workable approach in mind here, or is this
-close to what you were also thinking?
-
-> In my original proposal, if a parent removes ssd then the child will
-> automatically get it as well.
-
-I now see you mean the effective mask is built by walking parents with local
-settings taking precedence, top to bottom, preferring the nearest local
-setting. Conceptually this yields two data structures: a local-setting mask and
-a runtime/effective mask. Does the above capture your intention, or is there
-anything else I should mention?
-
-A few thoughts aligned with the above:
-- There is no separate “default setting” knob to control inheritance.
-- If unset locally, the effective value is derived by walking the cgroup
-  hierarchy from top to bottom.
-- Once set locally, the local setting overrides everything inherited.
-- There is no special “default tier” when tiers are absent.
-- If nothing is set anywhere in the hierarchy, the initial mask is treated as
-  fully set at configuration time (selecting all tiers; global swap behavior).
-  However, reading the local file should return an empty value to indicate
-  “not set”.
-
-One idea is to precompute the effective mask at interface write time, since
-writes are rarer than swap I/O. You may have intended runtime recomputation
-instead—which approach do you prefer? This implies two masks: a local
-configuration mask and a computed effective mask.
-
-And below is a spec summary I drafted, based on our discussion so far for
-note and alignment. 
-(Some points in this reply remain unresolved, and there are additional TBD items.)
-
-* **Tier specification**
-  - Priority >= 0 range is divided into intervals, each identified by a
-    tier name. The full 0+ range must be covered.
-  - NUMA autobind and tiering are mutually exclusive.
-  - Max number of tiers = MAX_SWAPFILES (single swap device can also be
-    assigned as a tier).
-  - A tier holds references when swap devices are assigned to its
-    priority range. Removal is only possible after swapoff clears the
-    references.
-  - Cgroups referencing a tier do not hold references. If the tier is
-    removed, the cgroup’s configured mask is dropped. (TBD)
-  - Each tier has an order (tier1 is highest priority) and an internal
-    bit for allocation logic.
-  - Until it is set, there is no default tier. 
-    (may internally conceptually used? but not exported)
-
-* **/sys/kernel/mm/swap/tiers**
-  - Read/write interface. Multiple entries allowed, delimiters: space or
-    comma.
-  - Format:
-      + "tier name":priority  → add (priority and above)
-      - "tier name"           → remove
-    Note: a space must follow "+" or "-" before the tier name.
-  - Edge cases:
-      * If not all ranges are specified: input is accepted, but cgroups
-        cannot use incomplete ranges. (TBD)
-	e.g) echo "hdd:50" > /sys/kernel/mm/swap/tiers. (0~49 not specifeid)
-      * Overlap with existing range: removal fails until all swap
-        devices in that range are swapped off.
-  - Output is sorted, showing tier order along with name, bit, and
-    priority range. (It may be more user-friendly to explicitly show
-    tier order. (TBD))
-
-* **Cgroup interface**
-  - New files (under memcg): memory.swap.tier, memory.swap.tier.effective
-    * Read/write: memory.swap.tier returns the local named set exactly
-      as configured (cpuset-like "+/-" tokens; space/comma preserved).
-    * Read-only: memory.swap.tier.effective is computed from the cgroup
-      hierarchy, with the nearest local setting taking precedence
-      (similar to cpuset.effective). (TBD)
-    * Example (named-set display, cpuset-like style)
-
-      Suppose tier order:
-        ssd (tier1), hdd (tier2), hdd2 (tier3), net (tier4)
-
-      Input:
-        echo "ssd-hdd, net" > memory.swap.tier
-
-      Readback:
-        cat memory.swap.tier
-          ssd-hdd, net     # exactly as configured (named set)
-
-        cat memory.swap.tier.effective
-          ssd-hdd, net     # same format; inherited/effective result
-
-  - Inheritance: effective mask built by walking from parent to child,
-    with local settings taking precedence.
-  - Mask computation: precompute at interface write-time vs runtime
-    recomputation. (TBD; preference?)
-  - Syntax modeled after cpuset:
-      echo "ssd-hdd,net" > memory.swap.tier
-    Here “-” specifies a range and must respect tier order. Items
-    separated by “,” do not need to follow order and may overlap; they
-    are handled appropriately (similar to cpuset semantics).
-
-* **Swap allocation**
-  - Simple, workable implementation (TBD; to be revisited with
-    measurements).
-
-I tried to summarize the discussion and my inline responses as clearly as
-possible. If anything is unclear or I misinterpreted something, please
-tell me and I’ll follow up promptly to clarify. If you have comments, I
-will be happy to continue the discussion. Hopefully this time our
-alignment will be clearer.
-
-Best regards,
-Youngjun Park
 
