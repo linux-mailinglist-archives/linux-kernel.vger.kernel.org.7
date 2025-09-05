@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-802863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE934B457AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:25:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A0BB457A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C187C6A3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:22:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 398547BF7FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D92F350823;
-	Fri,  5 Sep 2025 12:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LZx99oRA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D71FE444
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C833734F492;
+	Fri,  5 Sep 2025 12:18:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F4B34F489
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074821; cv=none; b=sSTEA3yVmxPyPmj2BlXt8WMBHenBrA3E4XrFwHM/5FtMi0KeezsypVDVyDLI7eayVat5gae4gkfVKxKoxGDbUcEj6evaMdUJZFMzr6n/R4/D9bfwz6p1tUm2Wqy6gietulrMsiNoupXody8UGMwX4TuuXYN6Oy+C3eGAp/NX8jo=
+	t=1757074687; cv=none; b=uQhf5FUfFUrRzUUnHpIZBx0n2U2CkDmgGa28QmHYZLSOvsyJ3mRR+wLYPGzSfm0AG3hGXsGcCGAm9xiR72J+pzDsm81mUZ/PrMjuV6AXemNYwzoDVQzHpkXaILtV2IDjAzM8Ux+JU/QVxK4orrhuEEzHAaZ9sfzSuGLd+oqV1nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074821; c=relaxed/simple;
-	bh=oHOTTPExMQImJmzFtGSl2bugeWJp0tEccYalf3LU7b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+pyGHtAZI/3mmgY9uhnWXj7gETMvilDBzz2BFeEfisAnLzKtx3ngF6RLDLUIldNjVwi681ffLAQwQe1dDdyNI7bkhsZf9USHs72Wq1QNchmUcmbKAU3YHhjBst7wSPrhVO1hyT1kXV48EdqkQJ6Z/+dnQV7Ee9lnnLfPn/geFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LZx99oRA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 53EA240E01E8;
-	Fri,  5 Sep 2025 12:20:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dtZlmLK8XpmJ; Fri,  5 Sep 2025 12:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757074656; bh=lP3bBvdRK+Uf3nvlk9NuJSKDhTy/BCK4LnNy+ZcBC+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZx99oRA/xcpteFWmoO8X+J/OXqazZ1r13+hxHwS4PJCjVcHCwPcxvPHJR97zRanY
-	 aT4r1Bh4OZBGJH1lPd1F77bouJb8S/mj9wd0tHmw6vb8g0aSCyA/qRdLY++RYENBhQ
-	 Pzkf/YYEqcpsiedg+X7aSv4a3ryQ02w6FAU6QOq2ZxP4s2HpZtoG0/jrq7qi8SpLrW
-	 hfKMNCu8Z0ENE2uyjgzki2+BD9aWsAFU1I4QmUiIABJ6p/P7VSDnuTZVsN7pEbaJRw
-	 wNJ+oSt59QjpOh0owaGnt//fvUjYJf4dgjBNfEFA4jXj7yPddXrqZCx8TiR17Y8AUY
-	 tCX7IIO36CLJLfJ+cAIHXwy1hDg8SpRXukZdOpn7RVwn10zNJYVgAKewuUPgmfVulm
-	 vSCknhYbKpiBb1+i2pDISlmDJLI4GsZLUPu8ogL5MPRbbhl1dvzs0WyHqQRM5ae9d4
-	 M7+29chUahW5oKCRtN3t7GiCYcOkJMty8aHHF8xUOmp73dKy5MWrAsgmctH3qjKbr8
-	 futqm2FuRzdrju5t8Fxluv8EsIfIg5tYXUb9g17ahsyl7LyrxmJFtEAcagXxIRzG/G
-	 iX9NkW5tggKZD2OFoPy9fDhBcvceRH3JGwAUEYC9X9B/6BeYbSvZk+o3wQBMOEbIl2
-	 4LpEUVBbkbPoJetBQNNpIFxM=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C081A40E01AC;
-	Fri,  5 Sep 2025 12:17:29 +0000 (UTC)
-Date: Fri, 5 Sep 2025 14:17:23 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip] x86: Remove code depending on
- __GCC_ASM_FLAG_OUTPUTS__
-Message-ID: <20250905121723.GCaLrU04lP2A50PT-B@fat_crate.local>
-References: <20250828072958.3922703-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1757074687; c=relaxed/simple;
+	bh=L/C+m9ufsyaQuo766Va79VvxCnNIpyK39d30W1Odl5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=huSv9Qhnhbr/bpjbhsFTtFBylc2urajHV1i2aDKdRrke3zwTu3sMttH4gypFOnylB0HAGNdpY5TovOXDvzC+YfMqm8VOAdiFKE0qUW6x8Gm7n+BZ5zGbhCb7GstKQZ1fj7G0JVA0mNDwYeLZLgNYr0+Y/S3spKxd99qNdLRD7H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4BA8153B;
+	Fri,  5 Sep 2025 05:17:56 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A8C223F63F;
+	Fri,  5 Sep 2025 05:18:03 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/10] coresight: Fix and improve clock usage
+Date: Fri,  5 Sep 2025 13:17:53 +0100
+Message-ID: <175707466024.1601998.6971273893151391969.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
+References: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828072958.3922703-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 09:29:29AM +0200, Uros Bizjak wrote:
-> diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-> index 371f7906019e..1f80a62be969 100644
-> --- a/arch/x86/include/asm/cmpxchg_32.h
-> +++ b/arch/x86/include/asm/cmpxchg_32.h
-> @@ -46,8 +46,7 @@ static __always_inline u64 __cmpxchg64_local(volatile u64 *ptr, u64 old, u64 new
->  	bool ret;							\
->  									\
->  	asm_inline volatile(_lock "cmpxchg8b %[ptr]"			\
-> -		     CC_SET(e)						\
-> -		     : CC_OUT(e) (ret),					\
-> +		     : "=@ccz" (ret),					\
 
-Any particular reason you're not using =@cce here?
+On Thu, 31 Jul 2025 13:23:36 +0100, Leo Yan wrote:
+> This series fixes and improves clock usage in the Arm CoreSight drivers.
+> 
+> Based on the DT binding documents, the trace clock (atclk) is defined in
+> some CoreSight modules, but support is absent. In most cases, the issue
+> is hidden because the atclk clock is shared by multiple CoreSight
+> modules and the clock is enabled anyway by other drivers. The first
+> three patches address this issue.
+> 
+> [...]
 
-I know, they're equivalent but why then switch to =@ccz?
+Applied, thanks!
 
+[01/10] coresight: tmc: Support atclk
+        https://git.kernel.org/coresight/c/cbcf4373629d
+[02/10] coresight: catu: Support atclk
+        https://git.kernel.org/coresight/c/d2d97e8a0700
+[03/10] coresight: etm4x: Support atclk
+        https://git.kernel.org/coresight/c/7787ef97c205
+[04/10] coresight: Appropriately disable programming clocks
+        https://git.kernel.org/coresight/c/e0e41ef8c77c
+[05/10] coresight: Appropriately disable trace bus clocks
+        https://git.kernel.org/coresight/c/f4eb5567107c
+[06/10] coresight: Avoid enable programming clock duplicately
+        https://git.kernel.org/coresight/c/7529307188a1
+[07/10] coresight: Consolidate clock enabling
+        https://git.kernel.org/coresight/c/3fd383a81052
+[08/10] coresight: Refactor driver data allocation
+        https://git.kernel.org/coresight/c/e95ed1a3434e
+[09/10] coresight: Make clock sequence consistent
+        https://git.kernel.org/coresight/c/8d4432949012
+[10/10] coresight: Refactor runtime PM
+        https://git.kernel.org/coresight/c/70104caa4f29
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
