@@ -1,113 +1,180 @@
-Return-Path: <linux-kernel+bounces-802440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBB4B4526B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:03:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDADB4526F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842A43AEAD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE119169005
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98B1308F22;
-	Fri,  5 Sep 2025 09:02:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAFB30BBA0;
+	Fri,  5 Sep 2025 09:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fihQykp9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00C62D0636;
-	Fri,  5 Sep 2025 09:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100CA30BBBE;
+	Fri,  5 Sep 2025 09:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062956; cv=none; b=Xg1kSogxzcxcRUt2vgygDZ1gFPPInPLlMAZ0LFGyz1gtMRNftmqu46yAYMF8VGqJAfRmlLq9hSz/Ft+ZkST1S1b1KKbaSAxDBahI6Q77O4Y3CsAKprahNUxDseSrG3ZbRPC/esgU+58u4fkMkOm6xh1yPNjtr8kZ2tP7n7PKpAU=
+	t=1757062970; cv=none; b=oQmzOf1D5Cr66Le6LhRLdg3/T4OQtsbVtkH/ec5U6QX/LlKjxwDmuha3K7WnjPrY4CaJJzqWlRWKkGNIN2cg2V4kUC5tEaBmSq2ojD9nemN3qPyo53CPD+xcpbrVK2/PxG27sh2PusoCoOComquM0kWWJmUZ1bTT5rz609jspiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062956; c=relaxed/simple;
-	bh=KT7TYlwSF7ukf4zSB0FdcwITV86mOnoX+raOv04H5Pg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GPR7IAfnDoiPD0J5V6Ymte/kVCvrUfbfL3gix8+4Wdi+VoLnl9GjIXQEa12ZVLiYJ2x8WYqo5JWfNwKteC2DIZm061g6xTGQHPcM/DN9BJY3vF/UBBPgK8V93YiaJX7nMuWs7xyYk3HcLobMR9EJAieGCSaS8Vcr7+fgqYHQF3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cJ9N74331zYQtJF;
-	Fri,  5 Sep 2025 17:02:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 140161A1965;
-	Fri,  5 Sep 2025 17:02:30 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY0lp7powuzYBQ--.44441S3;
-	Fri, 05 Sep 2025 17:02:29 +0800 (CST)
-Subject: Re: [PATCH] md/md-linear: Enable atomic writes
-To: John Garry <john.g.garry@oracle.com>, song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- martin.petersen@oracle.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250903161052.3326176-1-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <b6820280-cc1f-beae-2c1c-077d46bbf721@huaweicloud.com>
-Date: Fri, 5 Sep 2025 17:02:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757062970; c=relaxed/simple;
+	bh=htQCVoc2LB/ZnnX+4UcaXgxK1ZhVp38DyEImWWT66k0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RuLRrlhbiC9fqKLaF15P5BnK3lYfHWRQNPrbVq7EhkrgWlNSaXIfvlBadCWU0fOFgPl3ShhWaSzhCoZIYkDBVh874EY+d41WOBE3QVa7z+vPfnqKABTGQmee7oMxZ0oouXIcw71LdNswasc5z5GXPNZTOKF2tBbuHZmS1MiJ3qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fihQykp9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757062968; x=1788598968;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=htQCVoc2LB/ZnnX+4UcaXgxK1ZhVp38DyEImWWT66k0=;
+  b=fihQykp9rMh2Df0VkK2sSIg2rz3xJVTsQb98e64ih0RJ4Q8bX10oTDrK
+   4+XoV44ikzhRDYsPIaNvB2H5N5FVith3qBUNJL2r31Zx63Gj+8oFBvvlS
+   aVNIYDLPzhHg6OEnqJ2lgV4TSIzfXsBE5u5BrmKGZwvXSXBLxBth1JQ+6
+   zXBJ8hAWq26bCBkfS0EVNMa4FabtDy5jEpYNtXgL9PtIgLCrLpVyWWlYU
+   Q01mypXEWB3VbD+QnF8w5VHvQW7bpLzKu5rGm+HoIW+lbxWLO5EcYeu8e
+   JxlnSCRhU3r/3ELoB9qPLsAMzj5xFHrVVlSkrk/LK7R/43ihWbeZDoR5W
+   w==;
+X-CSE-ConnectionGUID: OMTj4lt5R1iAZ7RTr1c/Lg==
+X-CSE-MsgGUID: Xrf8LTIpQwKlpTdG4pKf7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70790573"
+X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
+   d="scan'208";a="70790573"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:02:44 -0700
+X-CSE-ConnectionGUID: DmcS02mySRiIcT7eRjaRww==
+X-CSE-MsgGUID: /vGvNcxbSwGSPkSECRYcOg==
+X-ExtLoop1: 1
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.159])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 02:02:40 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>,
+ Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH v4] kernel.h: add comments for system_states
+In-Reply-To: <20250904063631.2364995-1-rdunlap@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250904063631.2364995-1-rdunlap@infradead.org>
+Date: Fri, 05 Sep 2025 12:02:37 +0300
+Message-ID: <6089e22ddfdc135040cdeb69329d817846026728@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250903161052.3326176-1-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY0lp7powuzYBQ--.44441S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DZFWDAw1DCFy5Gr17Wrg_yoW8Gw4Dp3
-	yxXa4IyFyDJFyUWay5X3yxuF4Fgr98Jr47KFy3Xw40kFn5WrnrCFy3tws8XF9rAw1ru3Zr
-	J3W0kryqv3Wqg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
-	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
-	iF4tUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
 
-ÔÚ 2025/09/04 0:10, John Garry Ð´µÀ:
-> All the infrastructure has already been plumbed to support this for
-> stacked devices, so just enable the request_queue limits features flag.
-> 
-> A note about chunk sectors for linear arrays:
-> While it is possible to set a chunk sectors param for building a linear
-> array, this is for specifying the granularity at which data sectors from
-> the device are used. It is not the same as a stripe size, like for RAID0.
-> 
-> As such, it is not appropriate to set chunk_sectors request queue limit to
-> the same value, as chunk_sectors request limit is a boundary for which
-> requests cannot straddle.
-> 
-> However, request_queue limit max_hw_sectors is set to chunk sectors, which
-> almost has the same effect as setting chunk_sectors limit.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> 
-> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
-> index 5d9b081153757..30ac29b990c9b 100644
-> --- a/drivers/md/md-linear.c
-> +++ b/drivers/md/md-linear.c
-> @@ -74,6 +74,7 @@ static int linear_set_limits(struct mddev *mddev)
->   	lim.max_hw_sectors = mddev->chunk_sectors;
->   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
->   	lim.io_min = mddev->chunk_sectors << 9;
-> +	lim.features |= BLK_FEAT_ATOMIC_WRITES;
->   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
->   	if (err)
->   		return err;
-> 
+On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:
+> Provide some basic comments about the system_states and what they imply.
+> Also convert the comments to kernel-doc format.
+>
+> However, kernel-doc does not support kernel-doc notation on extern
+> struct/union/typedef/enum/etc. So I made this a DOC: block so that
+> I can use (insert) it into a Documentation (.rst) file and have it
+> look decent.
 
-LGRM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+The simple workaround is to separate the enum type and the variable:
 
+/**
+ * kernel-doc for the enum
+ */
+enum system_states {
+	...
+};
+
+/**
+ * kernel-doc for the variable
+ */
+extern enum system_states system_state;
+
+BR,
+Jani.
+
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+> ---
+> v2: add Rafael's Ack.
+> v3: add Andrew
+> v4: add DOC: so that this DOC: block can be used in Documentation/
+>     add Greg K-H
+>     add Jon Corbet, Mauro Chehab, & linux-doc
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Len Brown <len.brown@intel.com>
+> Cc: linux-pm@vger.kernel.org
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> ---
+>  Documentation/driver-api/pm/devices.rst |    8 ++++++++
+>  include/linux/kernel.h                  |   18 ++++++++++++++++--
+>  2 files changed, 24 insertions(+), 2 deletions(-)
+>
+> --- linux-next-20250819.orig/include/linux/kernel.h
+> +++ linux-next-20250819/include/linux/kernel.h
+> @@ -164,8 +164,22 @@ extern int root_mountflags;
+>  
+>  extern bool early_boot_irqs_disabled;
+>  
+> -/*
+> - * Values used for system_state. Ordering of the states must not be changed
+> +/**
+> + * DOC: General system_states available for drivers
+> + *
+> + * enum system_states - Values used for system_state.
+> + *
+> + * * @SYSTEM_BOOTING:	%0, no init needed
+> + * * @SYSTEM_SCHEDULING:	system is ready for scheduling; OK to use RCU
+> + * * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
+> + * * @SYSTEM_RUNNING:	system is up and running
+> + * * @SYSTEM_HALT:	system entered clean system halt state
+> + * * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
+> + * * @SYSTEM_RESTART:	system entered emergency power off or normal restart
+> + * * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
+> + *
+> + * Note:
+> + * Ordering of the states must not be changed
+>   * as code checks for <, <=, >, >= STATE.
+>   */
+>  extern enum system_states {
+> --- linux-next-20250819.orig/Documentation/driver-api/pm/devices.rst
+> +++ linux-next-20250819/Documentation/driver-api/pm/devices.rst
+> @@ -241,6 +241,14 @@ before reactivating its class I/O queues
+>  More power-aware drivers might prepare the devices for triggering system wakeup
+>  events.
+>  
+> +System states available for drivers
+> +-----------------------------------
+> +
+> +These system states are available for drivers to help them determine how to
+> +handle state transitions.
+> +
+> +.. kernel-doc:: include/linux/kernel.h
+> +   :doc: General system_states available for drivers
+>  
+>  Call Sequence Guarantees
+>  ------------------------
+>
+
+-- 
+Jani Nikula, Intel
 
