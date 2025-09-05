@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-802535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1B1B4537A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:37:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BEEB4537E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8D6582A47
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:37:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1F37AA64C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304EE284B42;
-	Fri,  5 Sep 2025 09:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="inXntreZ"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E27E276057;
+	Fri,  5 Sep 2025 09:38:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEB62571CD
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7EC1E487;
+	Fri,  5 Sep 2025 09:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065039; cv=none; b=Xz2DgRr/awhMOzNkXPeReLLackoKVJyiy+ITHpvsbSidJ+R/aPruo6f6wvO9l6cgCeCSEwSyIkg53QFgXgUsZQZd9NUjaju7XpWJNR9GgPkaqTMau6L8zlNZPPkhTMIPPoNs2SUZjZzUW/Rp+bUEGIy8oeM5fE8kaAFhVeeXUAw=
+	t=1757065123; cv=none; b=Wgp9zyoVTNUGCDvJ8kGHKcpIxbN/MtGbVkth0vocPcO9KPQHA6Cs92t7LeDhDPqlkSbaVfECtI3HeIqlM0wAtMf0RDAWCM6zxYYW5z4hwezcBfrt8rbnj1pqE4nqAW1jPyqike4Ijj0vJ7zJ7NsmM4DUQ06WmrzcPDMP4NTPaco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065039; c=relaxed/simple;
-	bh=w6GDFIJ+X63yvl142zHgW4KfFmPUnPR8J/fwB+G5Rgc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MJd/pMvY28oAUHH5QAhtmo9OzmniZgkD+jwRLtl/fGb4RNg/pXtjooJePYX0s02Cjt+Eso+E4E/Cg/qcAXqdQoq2fbGT76MkNuZ4pT3uD7jj2nuG9MfeVzUs7FMGEkT+V6d5EUYUMn7z68aLxUmQYgYbrAppAkoqgQiYHdYRS2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=inXntreZ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0415e03e25so280839566b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1757065034; x=1757669834; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SI/TqVlWRD+p2wdRTf7lXSCZ6jSplSGXljjBzdG21/U=;
-        b=inXntreZnoSm7MxD/KOtYT/M1mQBi0KWWpSAdg97YufFoYgr2k5/YlTh9ZfCiXwEZQ
-         JAXT8b0YMJtG4e4zPn8im6YNN7/pUsWqejmK5EUN9jyFJpTjqbLErUB7aBq6CW0E0qnu
-         qzuW5Cl34k3XMIfnMfQ3ey+L69fzzUm/MhZx5dgMjm5Rxmi7ziRHtzlTTbTeapveyCqv
-         Cf8KKXxkwTkOlng52zAZL7mHkrpiEG2CEVu/HRKmkMK4yja8Woawh44+R1IfB93DpKLl
-         BLJlGVZk0RtbU6WNGt/vcEjZRhFAZie4lynHGjSyBVcqI760xalwFYNvqKjXUR04H3vI
-         aGYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757065034; x=1757669834;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SI/TqVlWRD+p2wdRTf7lXSCZ6jSplSGXljjBzdG21/U=;
-        b=rxhLVK/4seJ9OnNc0LAA9RfmBNzJwbPf000vAviV3U0xSrKUW9XH9DPdEsK88iRGqU
-         rrXTkJFuZlc3tb6KeNo82JBe0FMmT5U/YhPFRPkqGxSsHhncEx/lm/yo/PeUV32YLqSV
-         vGcJ69qqN/czKslaYu3OV3E1+jhFho2awkAe9yBu1qGVmL8VT8glgMcrFVch5ytAfum9
-         jPhiwo39FHjIssHjFrEpHlDnoK+ghSDKBWJwWUaOSBMcy2DP/ohaMcNGxDnG/D2VLcaC
-         ELIQcJVm2mmys8j5AVY0fmvBS5AN63KrnH7JKcE9cmDO0vw78thcl2aPjNqG0dMfvY3v
-         MAUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaBCBRGOHGBnQVzEFPVQsT4VaHJiwZLpyyaU0BzTMXprm0tTUUhZ4k1nQPzpQmxxmkzFqFpZw9ZbxSvcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJk7A8zG0Q7Mu6dpZS7TES4LvmgOv0U+brT6LGJLY39z1hApna
-	IrXZb7RnVvFolO/coOoBYxo2VkeWFALumXQoieWWlRgNhLBQoFrzGuFga0QW8epuM7w=
-X-Gm-Gg: ASbGncutcxxbJZG5/VyBFxSTKn4Moh1C5uIbhSb8V8b1DF4CmKupzFsqqIExahYK7X0
-	hELa6UfuMyC8wfjZAgeB651Ijb7hB10lwnL6/2wldWw/eWTcZOiap9mHTylIOcrYiGEpSMRIFcO
-	Af0kOWU+2JmZY7a9vOM3nsrzEyED1dDsq/9wSgnNLoYQJQTRgfQ9a94vjiiHnECY9Coz1oflGKA
-	Lqy3OAPWeYNkzD46iyhNWWwqmH1F/09WkLZi/KoKdMn4rPkggV+jLGn4gzWkb3NQXOJXnI5zwq4
-	e6Yye2LeZqB5jd4K0GOEGBFqZEKza0j/3wwD3r4m8P1qQGh4wFC5kUoZjX2TOVYaVwGsOuoEkfp
-	ZIJ4QyFAj54cqpEiCoqAX5ZhnrHX+h5zPfboZv8MniLPvy7UqDausbLjj8cksBfgLTUXwdjZrT7
-	aCeRCvInMVQx1SEnaMhPQ+xZGqdfzG4w==
-X-Google-Smtp-Source: AGHT+IGWzvz7Jd4OjcFPWdH5oL6V/J6WBtEASHEF1I5b9fS5dO04CE1hh46ZiWnFvbAOp5lSYlOmsA==
-X-Received: by 2002:a17:907:1c0f:b0:afe:9880:8a9b with SMTP id a640c23a62f3a-b01d8a30e2bmr2250841966b.2.1757065032263;
-        Fri, 05 Sep 2025 02:37:12 -0700 (PDT)
-Received: from [172.18.170.139] (ip-185-104-138-158.ptr.icomera.net. [185.104.138.158])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0416842ffasm1361597866b.38.2025.09.05.02.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:37:12 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 05 Sep 2025 11:37:05 +0200
-Subject: [PATCH v4 2/2] remoteproc: qcom: pas: Add Milos remoteproc support
+	s=arc-20240116; t=1757065123; c=relaxed/simple;
+	bh=zzHB9CnyjEjIaQbhpukUYwYkaSdUqi220Hab2T3S/oM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JLTN/PQCwJ/XDw5+sW7qLOqUmuATagwDYOv/WTgj8JwPa+F53GMYOf95SW4Zopy8fgJlbxsl8n8+FP/KrzwtNq/cpxPXwzOYZJrKwhXUCfd2rOx6xakP73RyFd/6cS9FnmJbty8qopqYpf/9zPc70HXwIrmfhm0bGpHzULSnhcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJB5B08w6z6L5Vh;
+	Fri,  5 Sep 2025 17:34:38 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CEA161402CB;
+	Fri,  5 Sep 2025 17:38:31 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 5 Sep
+ 2025 11:38:29 +0200
+Date: Fri, 5 Sep 2025 10:38:28 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+CC: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham
+	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, "Jani Nikula"
+	<jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko
+ Ursulin <tursulin@ursulin.net>, "David Airlie" <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, Eduardo
+ Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan
+	<ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui
+	<rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, Lukasz Luba
+	<lukasz.luba@arm.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+	<festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, "Sumit Gupta"
+	<sumitg@nvidia.com>, Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<imx@lists.linux.dev>, <linux-omap@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 01/10] arm64: topology: Use scope-based cleanup
+ helper
+Message-ID: <20250905103828.0000726c@huawei.com>
+In-Reply-To: <20250903131733.57637-2-zhangzihuan@kylinos.cn>
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
+	<20250903131733.57637-2-zhangzihuan@kylinos.cn>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-sm7635-remoteprocs-v4-2-9e24febcb246@fairphone.com>
-References: <20250905-sm7635-remoteprocs-v4-0-9e24febcb246@fairphone.com>
-In-Reply-To: <20250905-sm7635-remoteprocs-v4-0-9e24febcb246@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757065028; l=1934;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=w6GDFIJ+X63yvl142zHgW4KfFmPUnPR8J/fwB+G5Rgc=;
- b=0B8vnxm1AvzPVVeUgAQf02vyF1lJ/7BCN8e1OLXPuvneDRXLt2hKLZh0rYQLIiQjv9b4ySsH1
- mG3q+u1RqC7D8G0AoKe+f0cx1Tj6jej7gUFhxAQnBsqKO3/8nnFmvzi
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Add the different remoteprocs found on the Milos SoC: ADSP, CDSP, MPSS
-and WPSS.
+On Wed,  3 Sep 2025 21:17:24 +0800
+Zihuan Zhang <zhangzihuan@kylinos.cn> wrote:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Diff is being slightly annoying in not quite showing enough context
+to see that it is fine to release this at the end of scope.
+What you have done looks correct to me but there is a further
+potential cleanup
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 55a7da801183d54569452dbb48041fdc52bf9234..be4edd0c3eeefb80d3b25a48f6dfe0b7590bc624 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1255,6 +1255,26 @@ static const struct qcom_pas_data sdx55_mpss_resource = {
- 	.ssctl_id = 0x22,
- };
- 
-+static const struct qcom_pas_data milos_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mbn",
-+	.dtb_firmware_name = "cdsp_dtb.mbn",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mx",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
-+};
-+
- static const struct qcom_pas_data sm8450_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1429,6 +1449,10 @@ static const struct qcom_pas_data sm8750_mpss_resource = {
- };
- 
- static const struct of_device_id qcom_pas_of_match[] = {
-+	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource},
-+	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource},
-+	{ .compatible = "qcom,milos-mpss-pas", .data = &sm8450_mpss_resource},
-+	{ .compatible = "qcom,milos-wpss-pas", .data = &sc7280_wpss_resource},
- 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+	for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
+		if (ref_cpu == start_cpu) {
+			/* Prevent verifying same CPU twice */
+			ref_cpu = nr_cpu_ids;
+			break;
+//here, might as well return -EAGAIN as only thing in this block
+//and now no advantage in sharing the exit path with the one that
+//says we never matched the next condition.
+		}
+		if (!idle_cpu(ref_cpu))
+			break;
+		}
 
--- 
-2.51.0
+Either way I'm fine with this.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> ---
+>  arch/arm64/kernel/topology.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 5d07ee85bdae..0eebd3492669 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
+>  		 */
+>  		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+>  		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+> -			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> +			struct cpufreq_policy *policy __free(put_cpufreq_policy) =
+> +				cpufreq_cpu_get(cpu);
+>  			int ref_cpu;
+>  
+>  			if (!policy)
+>  				return -EINVAL;
+>  
+>  			if (!cpumask_intersects(policy->related_cpus,
+> -						housekeeping_cpumask(HK_TYPE_TICK))) {
+> -				cpufreq_cpu_put(policy);
+> +						housekeeping_cpumask(HK_TYPE_TICK)))
+>  				return -EOPNOTSUPP;
+> -			}
+>  
+>  			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
+>  				if (ref_cpu == start_cpu) {
+> @@ -329,8 +328,6 @@ int arch_freq_get_on_cpu(int cpu)
+>  					break;
+>  			}
+>  
+> -			cpufreq_cpu_put(policy);
+> -
+>  			if (ref_cpu >= nr_cpu_ids)
+>  				/* No alternative to pull info from */
+>  				return -EAGAIN;
 
 
