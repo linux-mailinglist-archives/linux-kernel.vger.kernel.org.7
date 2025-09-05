@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-803418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA3DB45F94
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2925DB45F9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A841CC608A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA26B17536F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1975322C83;
-	Fri,  5 Sep 2025 17:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Gi8Ie0zb"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70A430B518;
+	Fri,  5 Sep 2025 17:07:35 +0000 (UTC)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078B31B801
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 17:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD6631D736;
+	Fri,  5 Sep 2025 17:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757092008; cv=none; b=BGEy3nTwBkXKVolbxJXWDr/Lh/A2/pEmJbfS95XfmdKY49uGV1S72P7zBXEZBt+S69ELl5cb/qE7+cfs5corFg80sRT53obDqzKpZEmQQiWbGiI9PJYzBPdARNKIG9iqL+aN7B8qRkKP9P0L/s+DX7XFDe59gMKH/CkKoUWdkXw=
+	t=1757092055; cv=none; b=lgFStWZf6xtmUprrgD/tqO3yvTsg4kY2//qbJrFhxUOXXs9W3VE20blh3VFIEbd43ctX9HVTHGumF/Pdmh+XtTkm0GGxFMn1dAEwxYivQp6+rhGi3cIXsE1zLbQvfgUcpzW4Nlo2CgEiYvAN3uwtSa7UiW7p34R+hXGL907dxsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757092008; c=relaxed/simple;
-	bh=jN0s/h7c25JUNJUarwGqsw47/AYuJ42K931uUXRodvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URkrkD8dTuIBhRHsfQjwc/R+tX0RmHK+XRdzI6tKHkp8Boo9FbSLnGAOllfRS7QMYiTRq6IsVrAxXsQPfUT05CamAAIElIHQRFbIBn6i/LKeg3zHqzqnd+yxeW+lnxQx+8N8lilP9FW1+WJalXOZuLMupRK+oMCQg9F4bD1mFW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Gi8Ie0zb; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61bd4ad64c7so727474eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 10:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757092005; x=1757696805; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DVItyR2m2+5QjtGCrAbeXGO+ngiTgRfmo3zC9GGSyMY=;
-        b=Gi8Ie0zbP8BPPd/qSAEaaNTfW/Z7wVTa0NxQ6jGwSwNlcDR2xwxBpxb8Dp8I6r8luL
-         9kMG2jWsCriWDQAZp+OANr0MP5zNuGuwF/nljJSaOBhT29mko8B4owi/CLriWIJrmkIe
-         mAuTX3KXQFITPgsCV0/ImYEzhFmXePg7FOFbicZhKVloaJ7wzfnGF139dhDd/Xn0oNnn
-         nq7papv4pLpbpzBsaspoQUTubh6mA61w06fjoHDRBAWklprlXFkYo3cH313IQRNEoMGK
-         yftZAv6bv7RVmObWtK7EJ52/EgZg07/i15LQsWT6Sy24wSOWtlmSZooo4G2JDYvPCJPI
-         KxaQ==
+	s=arc-20240116; t=1757092055; c=relaxed/simple;
+	bh=0EOcrMhcWueCDh5l6OK0C0E4vXhFTYGM7kPjerjhzxY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UWqLm3DPwfm0GGjgidGvdVUbc3MDWGPe0J/teZzjXMyz7Yjdlno/BFH08ejyzXUXuKcErj3BDeFOTTK7F4RMHxgf2CQwopsRyqJZnq+yE+AosuPJ3XtndLAmuQZx37fRRLYiuP3JDRyjIaRlbLXg3MBVpUFHACULzO9S9tzrpHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61cd3748c6dso4651008a12.3;
+        Fri, 05 Sep 2025 10:07:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757092005; x=1757696805;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DVItyR2m2+5QjtGCrAbeXGO+ngiTgRfmo3zC9GGSyMY=;
-        b=R1W7wo9Q1o1dbOAtxjjEMDVgBp9qbEpjGbRfevwFNPMHEDowOvfqXkqR7RLu8+tagA
-         pDWJ9Am9N7gb1qMJQ06BW0SHD+w3RvHUc8wkxM+zZ19zXOq7FHGcXmNH9CVBjFoRCKXH
-         gTc8Ldmk3YqXs7+4FhbeSjAxk7VKeQyJyzjpY0z831exjpAwG/e/LY+DCqJV3MKI0ScJ
-         YSaa2OKoNbrGeB9gPkPSvPXAAtAxhAEGmCptcAGl8meqCq5q7Y5TxQUAPOQO3vPR2FMb
-         ST6cj4ZpKwe4GMibdwgDMDqXOAs4q4fAioviQEORs/7wAFA+3LN0N0Euo75zwvml0O9f
-         VJ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWjZgNxCKpQi+GGEVP5vktE6cvdFtOG7n9YwpxwFYWQ4kuKbss8hD/so/7XE8i+hlXgO8quJbkJOVEPWjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhrNiEjEFMDg+8kAfxJ+X655/WMYeIXm4VvutcrAr7m9Ocd+Sy
-	rwInw09VNVAFvVGkgiEm/sJB/b0sjpQKOdjfFhc04BFdILfGjs5XPpNuNBANCkQ0Iy8=
-X-Gm-Gg: ASbGnctUqj6/YCnn82ciLttxoiGgGsiqoOlwBOX5u0AHc043H4fbfh8W95dOO/iNLdY
-	duU8bWN9+wAquGJ1EDZ5mYqF0jb4VezlNwwEX2Eoqlq50KQMAk1rX65sfKLAXneAEYkMEmN4vK/
-	6jP4HKVqYaZ4zUdXXAEWF1uBQKTgj6CwYje5W+CTxhYEJFkLlFMCLinKtl27H8pvTyhvnIcU+OR
-	ZtBnBpOBVx4SNgtqpY5rhesUh38v2FEfg9lbgFnajYphnSrDMu0Omp4+fQ16GDPY7HysLa1PS/O
-	wBkG9SN7X/+QV1GrmOmXTUVR26QglWSad7KzZOjnmyg3HRdOzIIaoh+WptvpH9ZSXopPwy8jNuK
-	tJTZM7aGHKtV7kEToaoKx2UYDhigFhpSXkTRqAWWxq+aA2DzIzAiyzOyn00Bjs0bIjS1WElkU
-X-Google-Smtp-Source: AGHT+IGCip+t0CW1JF3kCxDlGyKFDm8SFolIuf1wSJVnpOilreSjhclhFmaFcTthQJmi9hElEWUmJg==
-X-Received: by 2002:a05:6808:48d6:b0:437:d7b0:878d with SMTP id 5614622812f47-437f7ddeecbmr10847393b6e.50.1757092004820;
-        Fri, 05 Sep 2025 10:06:44 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:52e:cda3:16cc:72bb? ([2600:8803:e7e4:1d00:52e:cda3:16cc:72bb])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437ffed9f15sm3544740b6e.10.2025.09.05.10.06.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 10:06:44 -0700 (PDT)
-Message-ID: <09cbea15-1b14-4a0e-b643-563253e2a918@baylibre.com>
-Date: Fri, 5 Sep 2025 12:06:42 -0500
+        d=1e100.net; s=20230601; t=1757092052; x=1757696852;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RY8BMBAiVlca/JISqNcGIbo3OoAJnUqb7CifAzyf/sE=;
+        b=gOABGlws74FBUl04sVRPcc3pZModJTRHX4BHoPqgj8u3rQrO68pI+d6vrSTEoVsioH
+         pQBNEy+YDuG6Y0HCp3/hZNoku2MEPEfQSQx1YsHTcl5FE2xvPlJly17QpDiyrIKJPhrV
+         Vmf6YyI2/vB4ljvOfB383nrW596Jt6AnVYu/pPwj8HS3QSI3iWrvInrCsZIR11gZwvyx
+         OyMJOPFZW09lMjb+SZV54fiQ7VM9Wc+0tesXeO/r58PLHVZjTqN4QzYGTNP1GUzDVe5v
+         N/uBrnh90u5+qxgU/sSXDBcAjh6g294BtN7x6AtBIDR5A4kOBtNFfGP46sZVQd6Wgh55
+         jIwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcHdrGmM0m6KE7tjvkdIIljIsJKncYzT7TjFpnoQxxc3uzRk7B32i5rLnXr1lkmwxV4PTX3Tga80bV+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMI+YaCty/uS1HZQBnZ8agYfLbBuvqkN7q76vAALKu/Rz25ZDV
+	ueC0Q6vUyMazgeDkedj4KueqZ0TSOUodDYtolbBf/B2obUn1mSa4FfiY
+X-Gm-Gg: ASbGncu0cVQWUu+ewvixMHDoY5AOYae5ZfevQ86WAC5K+UcvM8Cixj/ahW6Ye6qgyR7
+	A/m7x5Et4Ls/5YwqsMruqCVi+Zu86olQVRzrH+Y9jAt8yVpWbmYkl+uh5et6Hd5k8fPt3xsYr9q
+	u58EN6L0VRd2po6EGoTrZ6wgRe1KLHm9RF5PTvZwtUph/sMpI3gQvdf0fla6ESKLHp707lLwLyE
+	Ll55M65DEZjBGYd2Oh07wnkNCd3OgaEiNnLY9fLg5py3/afxWqEZPUoh0GBWb9QkfqkJF1MVgQc
+	E1OR0pvKKP4vZlKLhKoWJ3NXGk4alq9d15t2XFJrVRXY56TWQouSfjK/ld10/aczWuzucR9mw6I
+	AgS3ubaP/VDFc
+X-Google-Smtp-Source: AGHT+IHfWCGweo3JIBsmVcJNnns1yTxokeaOdlaOGQrwOC09kQZgu7y2+K/7jaIJ+9khoHwUaLyDZg==
+X-Received: by 2002:a05:6402:2686:b0:61f:167:7749 with SMTP id 4fb4d7f45d1cf-61f01677a43mr6571017a12.5.1757092051806;
+        Fri, 05 Sep 2025 10:07:31 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61edb0fdf1dsm6807813a12.18.2025.09.05.10.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 10:07:31 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH RFC net-next 0/7] net: ethtool: add dedicated GRXRINGS
+ driver callbacks
+Date: Fri, 05 Sep 2025 10:07:19 -0700
+Message-Id: <20250905-gxrings-v1-0-984fc471f28f@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] iio: adc: ad7768-1: introduce chip info for future
- multidevice support
-To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: lars@metafoo.de, jic23@kernel.org, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
-References: <cover.1757001160.git.Jonathan.Santos@analog.com>
- <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <098a8b2556ea95fdce5f81cbac98983f91ca1a9d.1757001160.git.Jonathan.Santos@analog.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMcYu2gC/x3MQQrCMBAF0KsMf91AHOii2QoewK24CPE3zmaUp
+ Eig9O4F3wHejs5m7Eiyo/Fn3T6OJJdJUN7ZK4O9kAQadY5LnEMdzbz2kJVFldTMgknwbVxt/Kc
+ H7rerOLfgHBuex3ECSDko8mcAAAA=
+X-Change-ID: 20250905-gxrings-a2ec22ee2aec
+To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ kuba@kernel.org, Simon Horman <horms@kernel.org>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
+ jdamato@fastly.com, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1697; i=leitao@debian.org;
+ h=from:subject:message-id; bh=0EOcrMhcWueCDh5l6OK0C0E4vXhFTYGM7kPjerjhzxY=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBouxjRK8DZPSlVWGynPj5+x4GgWL0TvS2RRj5/8
+ w4Oo5LUkPaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaLsY0QAKCRA1o5Of/Hh3
+ bZa1D/wKUVjeI3P6noz6Fn3DYFnwz6ieLI5dzmURluZwQXX9jPIJTPb6sAgb9fiJLpxWavDtuJ0
+ RwsHbzH72e4kBaGMRX/TT0WIsFmaKxYUJF8d+anSWr45RQey6P7r63QD+tZdYlYIq1RoX543Vbs
+ 7gxM/s3HVIYZc7tCDDbtTzf2lob9AZT1yEtzsXHz5H2b6pb8hLpq02exdZGqb4ia982ApBZzH/g
+ 9wj03iujc6mSXskf92wEnTZn1sVU3Pzqq0qm9lI6MacGj6TrwfIJBjrw0KskBPeSAqDYzevtuIf
+ hd1HxSL28cm5554JZgadApVIkuAIuA7CYmvg/hN2FsW67HJgSMkYQi9K7xkHqlEKwLxJ4ZLuVay
+ PAakhPI/diyAw/duDwIaok6vMwF6L9f8UFSLZzWrC5Dg9lfpH/8/IAkqEq6V0AtW1P4+Z78d/TK
+ 8E7C9H03fFylNT/8DIaG/gGe4ZsOlhQNb3tMnMCaGKfv4h0Auqa4smiHcxpO9n7R7oeaCl5gIIs
+ eaUP1oyO/I5869ra7sry7lE2iyRHtDOxc1NiHHHSa0J5m/5jVaLl5eFXn5Z/5GeKVw65VeyTzWt
+ HU53KyrUajCapscT0z/MOa3i+46Zr2GToAWpjKxaYFDlwXgcSdfwh/g2zQuBd9cc+/gikGPQKgh
+ C0SjL4nyRTIvMew==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 9/5/25 4:49 AM, Jonathan Santos wrote:
-> Add Chip info struct in SPI device to store channel information for
-> each supported part.
-> 
+This patchset introduces a new dedicated ethtool_ops callback,
+.get_rxrings, which enables drivers to provide the number of RX rings
+directly, improving efficiency and clarity in RX ring queries and RSS
+configuration.
 
-...
+Number of drivers no implement .get_rxnfc just to report the ring count,
+so, having a proper callback makes sense and simplify .get_rxnfc.
 
-> @@ -1371,9 +1387,14 @@ static int ad7768_probe(struct spi_device *spi)
->  
->  	st->mclk_freq = clk_get_rate(st->mclk);
->  
-> -	indio_dev->channels = ad7768_channels;
-> -	indio_dev->num_channels = ARRAY_SIZE(ad7768_channels);
-> -	indio_dev->name = spi_get_device_id(spi)->name;
-> +	st->chip = spi_get_device_match_data(spi);
+This has been suggested by Jakub, and follow the same idea as RXFH
+driver callbacks [1].
 
-Generally, we want this early in probe so that chip info is available as early
-as possible. Might not need it now, but would save us from having to move this
-later if we ever do.
+This also port virtio_net to this new callback. Once there is consensus
+on this approach, I can start moving the drivers to this new callback.
 
-> +	if (!st->chip)
-> +		return dev_err_probe(&spi->dev, -ENODEV,
-> +				     "Could not find chip info data\n");
-> +
+Link: https://lore.kernel.org/all/20250611145949.2674086-1-kuba@kernel.org/ [1]
+
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Breno Leitao (7):
+      net: ethtool: pass the num of RX rings directly to ethtool_copy_validate_indir
+      net: ethtool: add support for ETHTOOL_GRXRINGS ioctl
+      net: ethtool: remove the duplicated handling from ethtool_get_rxrings
+      net: ethtool: add get_rxrings callback to optimize RX ring queries
+      net: ethtool: update set_rxfh to use get_num_rxrings helper
+      net: ethtool: update set_rxfh_indir to use get_num_rxrings helper
+      net: virtio_net: add get_rxrings ethtool callback for RX ring queries
+
+ drivers/net/virtio_net.c | 15 ++--------
+ include/linux/ethtool.h  |  1 +
+ net/ethtool/ioctl.c      | 75 ++++++++++++++++++++++++++++++++++++++----------
+ 3 files changed, 64 insertions(+), 27 deletions(-)
+---
+base-commit: 16c610162d1f1c332209de1c91ffb09b659bb65d
+change-id: 20250905-gxrings-a2ec22ee2aec
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
