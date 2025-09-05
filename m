@@ -1,260 +1,158 @@
-Return-Path: <linux-kernel+bounces-802115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD779B44DBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 07:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB97B44DE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3389248871F
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF711C280F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C1127EFFE;
-	Fri,  5 Sep 2025 05:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evy9xbAl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA3B289376;
+	Fri,  5 Sep 2025 06:19:33 +0000 (UTC)
+Received: from bsdbackstore.eu (128-116-240-228.dyn.eolo.it [128.116.240.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B90B2765E3;
-	Fri,  5 Sep 2025 05:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4052AD2F;
+	Fri,  5 Sep 2025 06:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.116.240.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757051631; cv=none; b=CiJn71CRMh+5VX5PYhqP5/r96PhYxIlO/ilVsHnaFJwN7nppVoR/Gmw9jPS1T20M9cSCjRi981glm8WbpjzgOifeVrCyHU9Ds/X0t8ItgEqhYc829cdaObI0UutJxO/OU9rZpM3eea+dI6yBnfGMOBpUqHmuSZJhFitYDPrPrJc=
+	t=1757053173; cv=none; b=FHRJiEng2ZI4ncvHsZwYz2Wo/iHDxWAXRTt7kBTkTehlr1YXphG+TFo1QILGV85vWpDl0gXmjSu7kgKbKxISUef8mq4/jIfTKPEoy7kJlTP9AyZYashgl3/q6yepTho/5YTy+GOlJp6EVcVc0v44XXsE8TV9rub68tEIxCx2Whk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757051631; c=relaxed/simple;
-	bh=6GHT4PiZ6qBzFbzaFMfbG7VyjEvCdedpy+KfqQr0cZ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fX80+qsL+5/MMvTTyyW6dl6VxYf/1XPcM/NPDztLqh9VZdNLl36Up/v3CX7D9qjDxF6WlnrUDxlrWfdKuPpEB2LTMnlJBIborBriVqEeC+An2hZ+XxuJliqqTOZi+IIIbS2LhW7xLb8oww1x3iUcAK97owF0BU5mRFuCQwGcbgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evy9xbAl; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757051629; x=1788587629;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6GHT4PiZ6qBzFbzaFMfbG7VyjEvCdedpy+KfqQr0cZ8=;
-  b=evy9xbAlYyNdcPPE6VxRCflsGjIJuI9JiIYpQWA0xoEIMFYwilRxadHF
-   kpG//9Ob5gerU6kHEcFY+LltQ/wO5wjbQfSgcRBIWM7+VBezM31leBB8E
-   +ogWOR+HBIsT2gliPrvREqKqYCbYSIVK87kPAhfbTMjgv4EHvwsQeQ/hY
-   qlE0ePk4rkcJu+Hjfu3SuUm7piCy20ijybBAWok60ZVjMqXtxCL3LeO1D
-   C4Lddzn80vnRm1ibd8QTkOIorTX32Rr8lD3aPc5JB4MT1iWaqXXRnws+B
-   VNmLyyKokeL38GNy9Qhq+aAdR1c3dRXe/ISh2xlwq9tKZfSIl2TPqp5BP
-   w==;
-X-CSE-ConnectionGUID: 6kwxkRpzQMi/R4n8h292ZQ==
-X-CSE-MsgGUID: 0DUBRJ6zTlq6L1LDMjQr+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70015180"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="70015180"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 22:53:49 -0700
-X-CSE-ConnectionGUID: Z7MYerB1TmmAc0gm/frbvg==
-X-CSE-MsgGUID: Xl6B3EtVSOqbHDEK8Zr86Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="209257788"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa001.jf.intel.com with ESMTP; 04 Sep 2025 22:53:45 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev,
-	security@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v4 8/8] iommu/sva: Invalidate stale IOTLB entries for kernel address space
-Date: Fri,  5 Sep 2025 13:51:03 +0800
-Message-ID: <20250905055103.3821518-9-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
-References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1757053173; c=relaxed/simple;
+	bh=NhlN6InMMn588qcAitktClqWH4WsbE2cjvjyyXVGWpU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Lq/TVbymN3ZSHQXPvt/+v1kjREH8VTdFIlZDqs+ufiTPrKgOsesti15Atj8XGdHDJ+g3WPBT/nWmc0RFIjT7/0UTEN0NBhjyatyS8o2XBiBnHddQvkWi6qSl2z9h6CkAEP1Z680VXXjvi3GWgQ2GW5D8inO+lsqpr8XHnAbKREk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu; spf=pass smtp.mailfrom=bsdbackstore.eu; arc=none smtp.client-ip=128.116.240.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdbackstore.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsdbackstore.eu
+Received: from localhost (128-116-240-228.dyn.eolo.it [128.116.240.228])
+	by bsdbackstore.eu (OpenSMTPD) with ESMTPSA id cf8a8994 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 5 Sep 2025 07:52:41 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Sep 2025 07:52:41 +0200
+Message-Id: <DCKMSNY3N59V.3KQCDWA1VJQNQ@bsdbackstore.eu>
+Cc: <kbusch@kernel.org>, <axboe@kernel.dk>, <hch@lst.de>,
+ <sagi@grimberg.me>, <kch@nvidia.com>, "Alistair Francis"
+ <alistair.francis@wdc.com>
+Subject: Re: [PATCH v2 7/7] nvmet-tcp: Support KeyUpdate
+From: "Maurizio Lombardi" <mlombard@bsdbackstore.eu>
+To: <alistair23@gmail.com>, <chuck.lever@oracle.com>, <hare@kernel.org>,
+ <kernel-tls-handshake@lists.linux.dev>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-nvme@lists.infradead.org>, <linux-nfs@vger.kernel.org>
+X-Mailer: aerc
+References: <20250905024659.811386-1-alistair.francis@wdc.com>
+ <20250905024659.811386-8-alistair.francis@wdc.com>
+In-Reply-To: <20250905024659.811386-8-alistair.francis@wdc.com>
 
-In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
-shares and walks the CPU's page tables. The x86 architecture maps the
-kernel's virtual address space into the upper portion of every process's
-page table. Consequently, in an SVA context, the IOMMU hardware can walk
-and cache kernel page table entries.
+On Fri Sep 5, 2025 at 4:46 AM CEST, alistair23 wrote:
+> From: Alistair Francis <alistair.francis@wdc.com>
+>
+> If the nvmet_tcp_try_recv() function return EKEYEXPIRED or if we receive
+> a KeyUpdate handshake type then the underlying TLS keys need to be
+> updated.
+>
+> If the NVMe Host (TLS client) initiates a KeyUpdate this patch will
+> allow the NVMe layer to process the KeyUpdate request and forward the
+> request to userspace. Userspace must then update the key to keep the
+> connection alive.
+>
+> This patch allows us to handle the NVMe host sending a KeyUpdate
+> request without aborting the connection. At this time we don't support
+> initiating a KeyUpdate.
+>
+> Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> ---
+> v2:
+>  - Use a helper function for KeyUpdates
+>  - Ensure keep alive timer is stopped
+>  - Wait for TLS KeyUpdate to complete
+>
+>  drivers/nvme/target/tcp.c | 90 ++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 84 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
+> index bee0355195f5..dd09940e9635 100644
+> --- a/drivers/nvme/target/tcp.c
+> +++ b/drivers/nvme/target/tcp.c
+> @@ -175,6 +175,7 @@ struct nvmet_tcp_queue {
+> =20
+>  	/* TLS state */
+>  	key_serial_t		tls_pskid;
+> +	key_serial_t		user_session_id;
+>  	struct delayed_work	tls_handshake_tmo_work;
+> =20
+>  	unsigned long           poll_end;
+> @@ -186,6 +187,8 @@ struct nvmet_tcp_queue {
+>  	struct sockaddr_storage	sockaddr_peer;
+>  	struct work_struct	release_work;
+> =20
+> +	struct completion       tls_complete;
+> +
+>  	int			idx;
+>  	struct list_head	queue_list;
+> =20
+> @@ -836,6 +839,11 @@ static int nvmet_tcp_try_send_one(struct nvmet_tcp_q=
+ueue *queue,
+>  	return 1;
+>  }
+> =20
+> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
+> +static int nvmet_tcp_try_peek_pdu(struct nvmet_tcp_queue *queue);
+> +static void nvmet_tcp_tls_handshake_timeout(struct work_struct *w);
+> +#endif
+> +
+>  static int nvmet_tcp_try_send(struct nvmet_tcp_queue *queue,
+>  		int budget, int *sends)
+>  {
+> @@ -844,6 +852,13 @@ static int nvmet_tcp_try_send(struct nvmet_tcp_queue=
+ *queue,
+>  	for (i =3D 0; i < budget; i++) {
+>  		ret =3D nvmet_tcp_try_send_one(queue, i =3D=3D budget - 1);
+>  		if (unlikely(ret < 0)) {
+> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
+> +			if (ret =3D=3D -EKEYEXPIRED &&
+> +				queue->state !=3D NVMET_TCP_Q_DISCONNECTING &&
+> +				queue->state !=3D NVMET_TCP_Q_TLS_HANDSHAKE) {
+> +					goto done;
+> +			}
+> +#endif
+>  			nvmet_tcp_socket_error(queue, ret);
+>  			goto done;
+>  		} else if (ret =3D=3D 0) {
+> @@ -1110,11 +1125,52 @@ static inline bool nvmet_tcp_pdu_valid(u8 type)
+>  	return false;
+>  }
+> =20
+> +#ifdef CONFIG_NVME_TARGET_TCP_TLS
+> +static int update_tls_keys(struct nvmet_tcp_queue *queue)
+> +{
+> +	int ret;
+> +
+> +	cancel_work(&queue->io_work);
+> +	handshake_req_cancel(queue->sock->sk);
+> +	handshake_sk_destruct_req(queue->sock->sk);
+> +	queue->state =3D NVMET_TCP_Q_TLS_HANDSHAKE;
+> +
+> +	/* Restore the default callbacks before starting upcall */
+> +	read_lock_bh(&queue->sock->sk->sk_callback_lock);
+> +	queue->sock->sk->sk_data_ready =3D  queue->data_ready;
+> +	queue->sock->sk->sk_state_change =3D queue->state_change;
+> +	queue->sock->sk->sk_write_space =3D queue->write_space;
+> +	queue->sock->sk->sk_user_data =3D NULL;
 
-The Linux kernel currently lacks a notification mechanism for kernel page
-table changes, specifically when page table pages are freed and reused.
-The IOMMU driver is only notified of changes to user virtual address
-mappings. This can cause the IOMMU's internal caches to retain stale
-entries for kernel VA.
+Shouldn't "sk_user_data =3D NULL" be protected by a write lock?
 
-A Use-After-Free (UAF) and Write-After-Free (WAF) condition arises when
-kernel page table pages are freed and later reallocated. The IOMMU could
-misinterpret the new data as valid page table entries. The IOMMU might
-then walk into attacker-controlled memory, leading to arbitrary physical
-memory DMA access or privilege escalation. This is also a Write-After-Free
-issue, as the IOMMU will potentially continue to write Accessed and Dirty
-bits to the freed memory while attempting to walk the stale page tables.
-
-Currently, SVA contexts are unprivileged and cannot access kernel
-mappings. However, the IOMMU will still walk kernel-only page tables
-all the way down to the leaf entries, where it realizes the mapping
-is for the kernel and errors out. This means the IOMMU still caches
-these intermediate page table entries, making the described vulnerability
-a real concern.
-
-To mitigate this, a new IOMMU interface is introduced to flush IOTLB
-entries for the kernel address space. This interface is invoked from the
-x86 architecture code that manages combined user and kernel page tables,
-specifically when a kernel page table update requires a CPU TLB flush.
-
-Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
-Cc: stable@vger.kernel.org
-Suggested-by: Jann Horn <jannh@google.com>
-Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
----
- drivers/iommu/iommu-sva.c | 29 ++++++++++++++++++++++++++++-
- include/linux/iommu.h     |  4 ++++
- mm/pgtable-generic.c      |  2 ++
- 3 files changed, 34 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
-index 1a51cfd82808..d236aef80a8d 100644
---- a/drivers/iommu/iommu-sva.c
-+++ b/drivers/iommu/iommu-sva.c
-@@ -10,6 +10,8 @@
- #include "iommu-priv.h"
- 
- static DEFINE_MUTEX(iommu_sva_lock);
-+static bool iommu_sva_present;
-+static LIST_HEAD(iommu_sva_mms);
- static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
- 						   struct mm_struct *mm);
- 
-@@ -42,6 +44,7 @@ static struct iommu_mm_data *iommu_alloc_mm_data(struct mm_struct *mm, struct de
- 		return ERR_PTR(-ENOSPC);
- 	}
- 	iommu_mm->pasid = pasid;
-+	iommu_mm->mm = mm;
- 	INIT_LIST_HEAD(&iommu_mm->sva_domains);
- 	/*
- 	 * Make sure the write to mm->iommu_mm is not reordered in front of
-@@ -132,8 +135,13 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
- 	if (ret)
- 		goto out_free_domain;
- 	domain->users = 1;
--	list_add(&domain->next, &mm->iommu_mm->sva_domains);
- 
-+	if (list_empty(&iommu_mm->sva_domains)) {
-+		if (list_empty(&iommu_sva_mms))
-+			iommu_sva_present = true;
-+		list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
-+	}
-+	list_add(&domain->next, &iommu_mm->sva_domains);
- out:
- 	refcount_set(&handle->users, 1);
- 	mutex_unlock(&iommu_sva_lock);
-@@ -175,6 +183,13 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
- 		list_del(&domain->next);
- 		iommu_domain_free(domain);
- 	}
-+
-+	if (list_empty(&iommu_mm->sva_domains)) {
-+		list_del(&iommu_mm->mm_list_elm);
-+		if (list_empty(&iommu_sva_mms))
-+			iommu_sva_present = false;
-+	}
-+
- 	mutex_unlock(&iommu_sva_lock);
- 	kfree(handle);
- }
-@@ -312,3 +327,15 @@ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
- 
- 	return domain;
- }
-+
-+void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
-+{
-+	struct iommu_mm_data *iommu_mm;
-+
-+	guard(mutex)(&iommu_sva_lock);
-+	if (!iommu_sva_present)
-+		return;
-+
-+	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
-+		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, start, end);
-+}
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index c30d12e16473..66e4abb2df0d 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -1134,7 +1134,9 @@ struct iommu_sva {
- 
- struct iommu_mm_data {
- 	u32			pasid;
-+	struct mm_struct	*mm;
- 	struct list_head	sva_domains;
-+	struct list_head	mm_list_elm;
- };
- 
- int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode);
-@@ -1615,6 +1617,7 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev,
- 					struct mm_struct *mm);
- void iommu_sva_unbind_device(struct iommu_sva *handle);
- u32 iommu_sva_get_pasid(struct iommu_sva *handle);
-+void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end);
- #else
- static inline struct iommu_sva *
- iommu_sva_bind_device(struct device *dev, struct mm_struct *mm)
-@@ -1639,6 +1642,7 @@ static inline u32 mm_get_enqcmd_pasid(struct mm_struct *mm)
- }
- 
- static inline void mm_pasid_drop(struct mm_struct *mm) {}
-+static inline void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end) {}
- #endif /* CONFIG_IOMMU_SVA */
- 
- #ifdef CONFIG_IOMMU_IOPF
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index cf884e8300ca..4c81ca8b196f 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -13,6 +13,7 @@
- #include <linux/swap.h>
- #include <linux/swapops.h>
- #include <linux/mm_inline.h>
-+#include <linux/iommu.h>
- #include <asm/pgalloc.h>
- #include <asm/tlb.h>
- 
-@@ -430,6 +431,7 @@ static void kernel_pgtable_work_func(struct work_struct *work)
- 	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
- 	spin_unlock(&kernel_pgtable_work.lock);
- 
-+	iommu_sva_invalidate_kva_range(PAGE_OFFSET, TLB_FLUSH_ALL);
- 	list_for_each_entry_safe(pt, next, &page_list, pt_list) {
- 		list_del(&pt->pt_list);
- 		__pagetable_free(pt);
--- 
-2.43.0
-
+Maurizio
 
