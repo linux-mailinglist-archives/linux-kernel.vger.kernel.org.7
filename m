@@ -1,94 +1,108 @@
-Return-Path: <linux-kernel+bounces-803666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64105B46380
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA14B4637E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244495A7878
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD9C567277
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1ED33E7;
-	Fri,  5 Sep 2025 19:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A802257837;
+	Fri,  5 Sep 2025 19:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kHuJkxbn"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A381DE89A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qwkrnSnb"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C25315D2E;
+	Fri,  5 Sep 2025 19:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100123; cv=none; b=CauUjRtw9eh8ZXWz+EPQYamjpH0EEwaReXQL9+CTCSYD6dGSwYxTCBDV6KbQhRuQW54K4cU/daL8AOoHJy/zdvEs/Ea6rwD0Xg+jOTNVj1gVFmX/LjvAJU479Pxz0VlQ8AogVR1BaJz0Ero8A+YhakzSj0JGwxnLo/ZLskRjt08=
+	t=1757100101; cv=none; b=qYqLDBiXnPyRbeIKKo0c7sGrbVoiAx25tBrNI81gov4ueUfqfJNjmI5R1IhEACrYgU4TTdr3VSeHUeVC6LF2XLhJQvHB8UH9QbcPQYjO/vPzsMpS9Ml6G8QRjR27bz4Cx7WqFUoFUV0QT9pLvQBIq3ml9cb0hwxa7+fB9sm9Fc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100123; c=relaxed/simple;
-	bh=b56PyGhSnpNehYj6T1uMpp+w6UN1jN6CXg65rEyxeJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izluahPlSKTVIr2TOPrc7Pn3Q/EkJ+LyH7UsGDCE5MBE0+MladyqhEhun2kadJ3YP7EojOLIoo/gLNG6+Qz1unqF/kCAhjyQYpDC1woyRjAmU90kWDC+itkv6AJOZSk8OG99WaeoKcCtYBTe91TyVIJgcE6bsPxieD8RAjDVD2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kHuJkxbn; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757100108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pkHeOlPdETL+hOiJxj40JWxkGH5nYJc3pWzCiTMWFoo=;
-	b=kHuJkxbn5aslX+Zb/pLJs/nh2LGXYLdEnJKKVehgS/i/Py87oGfiuSK6wZRNNMSPrfhC57
-	MY1FkJtBFsO6yMyE7uPm5fepGrwsHEUd9DDj1jRja1pK0c2LIosJDpZtorYAM6gYSV1wUB
-	bEPLZ6N6zbgVKLnvjFAn+i6w/dPaMNQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing/osnoise: Replace kmalloc() + copy_from_user() with memdup_user()
-Date: Fri,  5 Sep 2025 21:21:17 +0200
-Message-ID: <20250905192116.554018-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757100101; c=relaxed/simple;
+	bh=HFExsZAjt04o91q55okXg46Lg6g/Gcza/Z0hZ0hCIas=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=D6Tuas7jBevfxAKyhkHWMPV7pao8VNtq+vhEHMwAKw3f1MRacIO6EPJdQV3RDtu3W0cjqKYROSiZh7xokwfuQidtpR/kCsZ15sSNwuNblANftvmjAWIfeUH+cmoLzD+IsEfys6PYKXjeGgoSAc3sO4n4tOu8cCzFtI+5lIYE0xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qwkrnSnb; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.233.45] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8CF8B20171D4;
+	Fri,  5 Sep 2025 12:21:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8CF8B20171D4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757100099;
+	bh=nRs4iS9p7PuLIEnIetsWg9TgJBFkyB36QaPF2H1O4eI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=qwkrnSnbTda7tWd7PI9lZhrh37nyF8CmtmmXvOT/m/N0LmgxWk4k4jnNf7x9jFwB2
+	 RU4g9tNWXzkKwrohgYjH2d1C794XeYBOE7ziP5+60vxdy/vvtKgdzNxh4F92Gt2tWZ
+	 YYr+Poxw1W9BBrOfYsgjfp9kd1ssA5xE5y/m6HzA=
+Message-ID: <efc78065-3556-410a-866f-961a7f1fc1ac@linux.microsoft.com>
+Date: Fri, 5 Sep 2025 12:21:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ easwar.hariharan@linux.microsoft.com, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+ decui@microsoft.com, paekkaladevi@linux.microsoft.com
+Subject: Re: [PATCH 2/6] mshv: Ignore second stats page map result failure
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <1756428230-3599-3-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace kmalloc() followed by copy_from_user() with memdup_user() to
-improve and simplify osnoise_cpus_write().
+On 8/28/2025 5:43 PM, Nuno Das Neves wrote:
+> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> 
+> Some versions of the hypervisor do not support HV_STATUS_AREA_PARENT and
+> return HV_STATUS_INVALID_PARAMETER for the second stats page mapping
+> request.
+> 
+> This results a failure in module init. Instead of failing, gracefully
+> fall back to populating stats_pages[HV_STATS_AREA_PARENT] with the
+> already-mapped stats_pages[HV_STATS_AREA_SELF].
 
-No functional changes intended.
+What's the impact of this graceful fallback? It occurs to me that if a stats
+accumulator, in userspace perhaps, expected to get stats from the 2 pages,
+it'd get incorrect values.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- kernel/trace/trace_osnoise.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root_hv_call.c | 43 ++++++++++++++++++++++++++++++----
+>  drivers/hv/mshv_root_main.c    |  3 +++
+>  2 files changed, 42 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> index c9c274f29c3c..1c38576a673c 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -724,6 +724,24 @@ hv_call_notify_port_ring_empty(u32 sint_index)
+>  	return hv_result_to_errno(status);
+>  }
+>  
+> +static int
+> +hv_stats_get_area_type(enum hv_stats_object_type type,
 
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index fd259da0aa64..dd97f6bd03a4 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2322,12 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
- 	int running, err;
- 	char *buf __free(kfree) = NULL;
- 
--	buf = kmalloc(count, GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
--
--	if (copy_from_user(buf, ubuf, count))
--		return -EFAULT;
-+	buf = memdup_user(ubuf, count);
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
- 
- 	if (!zalloc_cpumask_var(&osnoise_cpumask_new, GFP_KERNEL))
- 		return -ENOMEM;
--- 
-2.51.0
+One line please, i.e.
+
+static int hv_stats_get_area_type(...)
+
+<snip>
+
+Thanks,
+Easwar (he/him)
 
 
