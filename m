@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-802942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D91B458A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9252BB458A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDFD58470C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901FE7C37C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D703B1D7995;
-	Fri,  5 Sep 2025 13:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3893C34DCD2;
+	Fri,  5 Sep 2025 13:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="McPcmgFW"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kSBe4BfI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB7811713
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C05727AC5A
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078373; cv=none; b=E8U8g16FD0+O1sn5lSNCBvSQYuAax3UAUSmvaZWb4LgUxF2aDSJTGNHp3u0Bmid9PPE+2yLjEAattXbkCrsO8hiJvUM2euHuMDeCBj0WPZUE5ZqWQsnwPxMkTR30gYokqwORPqVBshjA5EiCT9G6xNRW9i3Ji/wLuP6oW4B3y+0=
+	t=1757078375; cv=none; b=QcNUgDFDDIPgN3ZOL6Exy/YK0kbzyb8JSZmoxlqguzr4kfkyKbB3ixa5QisRlb+wS+N0WnEcCS45a/1Pr/mNFVjVh9TI5iUrYj4SCh9pExF/aifZMKvgEcfJr/aWoxixZ94VQpIKZLSqs8tFE5PP+d4q8ccYtCHR+XYz1qGOojA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078373; c=relaxed/simple;
-	bh=4+aBu1QYPkiVf6s77hX2MEWDjitw9I++XXnLuguNv6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3BPVI+Yk7noveQ1PPhsVSywZ15MQFWocW1Vo57xs64o1NRCSdyGpePnor/M7qnyJbS4SXwy/FzV4MFvn3Z2Kr+gKRL+ptlpyKgTdi+kDFDGZjlUzeX47uRVQjvenE3MMCiG69R4/0xR/hf7A1a5pL2ItCFnhf1D2FmBpJuZhfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=McPcmgFW reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E95E140E01A5;
-	Fri,  5 Sep 2025 13:19:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8G6JW74q3WKi; Fri,  5 Sep 2025 13:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757078362; bh=+75vthP3JRfPmr4G0ovrKndN5n6E7CyQChLfsO/D918=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=McPcmgFWWndOeR1OONO4boLM2w7NrPV2ABZuYAwmrobY4JXQwB2ff0/PfZZl5LAqh
-	 dhpiyXXZ8t3IcRXr+y3n/Hi1DsM1baU9tIJ9zKMjBoAsC7Dc0JxHUm6oE/AH2gbeM6
-	 JBiRcvICSd1xriF97NKxM4QSGm+vKl/MtoNm8GUB7Yoe92G5QZwrhdZNdxkKJbGA/S
-	 +RC0ZoGf+X9nHTfzIbUv0Btxbl17GUn7JBpPz+mSqNOuA9nmKDwhhdpDmOLcAmX2ST
-	 1q0hdcYZMj1Bn1ZWjys/+E7AEU47iruAl3a9mUwSklNz62XGAQISn5ByuPbqnYViLI
-	 s2VljS32Y0u99SnYm4HKIoBxGqnLscpF39FvZikpOG0j+/xW17zw9Q7rye0D7xB3+s
-	 ZBUXfQZ142QDhkUnQ6/nM8SuD3UWb88tIjTP3T8Tf/ckpdRvNs45ueeqlMQsnTsf/Q
-	 R6JVJy0Vr2/fM5JSimvJvLZBr4MA0LqT3HivJYxhfXdtOKtvabZFpzMMB9pGjt64wB
-	 6rL8OUgTCd0TNxNEaClRhL9wGZTptXvyUHg8YF+NGLOhUiiC6RAJ8w1G7StaEmWTgm
-	 HiSu2v2QdOrowVUh4Rin+UNLaCumA6J6Dn7v8RAu7p81ET1KcLWQG820OASzx1czLJ
-	 aC8jRWGgoD4m6mWHatUT4Cms=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 27C3B40E016D;
-	Fri,  5 Sep 2025 13:19:15 +0000 (UTC)
-Date: Fri, 5 Sep 2025 15:19:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip] x86: Remove code depending on
- __GCC_ASM_FLAG_OUTPUTS__
-Message-ID: <20250905131909.GDaLrjTTw0PyFHeCHp@fat_crate.local>
-References: <20250828072958.3922703-1-ubizjak@gmail.com>
- <20250905121723.GCaLrU04lP2A50PT-B@fat_crate.local>
- <CAFULd4auQGQ3Ro_3GHJAoGDTnHW1hNzrK+9W_0mVwTEQeWTDUg@mail.gmail.com>
+	s=arc-20240116; t=1757078375; c=relaxed/simple;
+	bh=f9dg9f79cEQYwrNo5ZvWpn7K6mPR3qTgf9FIhmyJUKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DDhtLm+kulp9htID2C7bcAE53p2KQTzWLSG/6IlIkWX5oTQOp+yhWgH2bGpUsnJ6XKlc2wtJz4yYl/WV+CIdCgkXsdF2id55scJbzyrtnpmqMaA2oIbvfGQnq9bb6X2QpQZYC8sNUoG8R9hO7buWKM+Mn6iBVG9IeE7NYILsBCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kSBe4BfI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856LKbE004616
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 13:19:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	U0Bhjhxk+tpvajQc7hWGH3X0z8vhyfUm5KLA3GKOkgE=; b=kSBe4BfIxrRDISVO
+	fFe1nqQ9zNjhlm6th8gyoWVyI7V85NuzBr3Vm5oSs7ci1nl/zp7b5t4tYmZFJDUL
+	a3K4lGv5PTGcaztAUitXrmzCXGVQXcFERsolprSG64IGIdwzjdx4f4ZlPA+q0gpN
+	m4Sf6SyfcUCG1dmW4os9pGizcTIcWDwthvm+8W7EAW+CKGIyLmb5GdIuu4ETcxJO
+	/tIlmoZv+U/vhOVBpHEM5TVsE03LxGC2sZQQFKK6qpT5OI6BfMOxSOk8pmKFPHej
+	aSAMk81jLkrNyekRvUCxSjZQiQXD2liJdo4FRBTOsQ2lfOzWWtdO6pASOUY9qwi2
+	uYoZTg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8sbb2v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:19:33 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b4bcb1e32dso9741781cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:19:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757078372; x=1757683172;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0Bhjhxk+tpvajQc7hWGH3X0z8vhyfUm5KLA3GKOkgE=;
+        b=bdGbGzJsHl/cJttwrl1dckG4XxCtxnO9h4loAMQ9UGGgl1HPEOXDs9rcI1dTBw3d+M
+         FvMELnB7zNiaDs740Vx9JlKCwWxfgLb7Y/QJ71ooLv21oXSfo3QyXc8f5QBv44aKlzi8
+         qki7/aUSyClM6BGtv+qsQpahEKakaBW48DGSKiuVsDU0Rbi+FDpbRy9O5LrE2W8p3ikQ
+         SavdfSWpMVkxIGcgIPk/iQf+wW5Q1q+fWzznHz1iqR+CH1knODT5okvGEPSXk/GLBlSj
+         RvDu/i8+52hSQSyXmSGy7wj412qF2rmVyQh7duwMWGtm28GrPaA35CiMtRMRoZLngK2C
+         RScA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP1E4SDKkhwZ+zrj1by+d8tePK0cPqcm4cgYNA/t7mUQ/YcovK3IajqrJqNSA+4yBlPWxWIDwUGwv5o5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUgDzm7KDbrKjcNyZJzsWme2E7PZGRHaJv8uE2XXAzz+QSUaGj
+	CWU4e1bNn7IdChkC/7clnUYzjFqWrDrq3Z8tF94sxdQASsxYzi9KtzKr209YxABUbiNEao2OC3l
+	HyMj/+tSRA56np/sH2QUIDlxMt5VIBARGKfKfzSLSk2uySxNUCA/5R3xyLBcNJmqixH4=
+X-Gm-Gg: ASbGncuRDb5ujFUE6oB4i04hEBnfK6OVgiHu0E5nIgm4tIwNNZUCMuT/57hEjQHU9Cp
+	uWJl0xMvh+rNROTP6nXPQJH0b3wA7KTXfpgBePZBoAJ7KdNY3ARXApX9AjSv9h4RPGQueMpm335
+	9xN3UL43E3XJm4N4MgxRlkqlRrrNS9/gk5itnjqEkgLM+/8IAa174hBoVeoATjH65OxBbcTTO7d
+	FtbFGs4ZedKQB9Ey3NyAcwGk76P86qWP1RBgxOB8JS5bzIHWOmSmU8iskc96KOVgl2QzMCAVFT6
+	i2ZGtal5+ILzAnA2LrY5kByDvz+f04EycqieX5oZP6L33Pdt0jhst4MFg/L+7iHPimjtPVCHpDY
+	mrI6tXQrOC9Bl6oWkbJLSsg==
+X-Received: by 2002:a05:622a:1a1e:b0:4b5:eb40:b1c4 with SMTP id d75a77b69052e-4b5eb40b475mr15321821cf.10.1757078371975;
+        Fri, 05 Sep 2025 06:19:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuoHXh+KD08XcnAE/jgm1vEO0s+IDJTiD+07YDOxNry7G/om/NzxaG8um/RprAJT1rWU9rbA==
+X-Received: by 2002:a05:622a:1a1e:b0:4b5:eb40:b1c4 with SMTP id d75a77b69052e-4b5eb40b475mr15321611cf.10.1757078371453;
+        Fri, 05 Sep 2025 06:19:31 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5306e6sm16320205a12.47.2025.09.05.06.19.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 06:19:30 -0700 (PDT)
+Message-ID: <91fd1e35-7e3c-44ca-9ffa-9393dc9e904e@oss.qualcomm.com>
+Date: Fri, 5 Sep 2025 15:19:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFULd4auQGQ3Ro_3GHJAoGDTnHW1hNzrK+9W_0mVwTEQeWTDUg@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Alejandro Tafalla <atafalla@dnyon.com>, Luca Weiss <luca@lucaweiss.eu>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX3TwgsFO1J2nI
+ 8YZA+ffzRVFz6+HQXNdubkBkN6duiUjrW7Pi6YNSUtsOqJ0g9scS1pr6zuHijMgU5NHAF/TI+e4
+ bJA3n/LbSAgdS/kHJv7tUQM+vfaEpn1XETDNfwz/VB86xGVTKtrkyM9nr1pHISyKD6KsGlUYywX
+ hqMDexDj+vmToHE3PQWmXy1ZCp8mdPLcqbcOJo/+/ufHZIrijwEoXF8RZPxCQA6twBVft518FOD
+ Ii5NdulWheHcXb1FBrEeQMnh52rJT4ksteB01p5KiTpDLclhxgrmlR+aSNFDg8dlziha9Anf34m
+ glX/tPng0lVPvc3eEVdWSYIr95ylKY8GDMKkaLVFW2aqImKawhyLX9sPUg77z5knw7ygxAVH3+e
+ uUL9MYsM
+X-Proofpoint-GUID: 1IJ34ZpRrGk3bB7oig72lj--S0eYEec7
+X-Proofpoint-ORIG-GUID: 1IJ34ZpRrGk3bB7oig72lj--S0eYEec7
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68bae365 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=OuZLqq7tAAAA:8 a=EUspDBNiAAAA:8
+ a=P2Z3rHzvZxtGOU_tVGkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22 a=AKGiAy9iJ-JzxKVHQNES:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-On Fri, Sep 05, 2025 at 02:36:24PM +0200, Uros Bizjak wrote:
-> There we are testing the value of a single flag bit, set by the CMPXCHG=
-=C2=A0
-> instruction. =3D@ccz is used here to distinguish the CC user from compa=
-rison
-> instructions, where ZERO flag indeed means that values are equal.
+On 9/3/25 11:27 PM, Barnabás Czémán wrote:
+> SD detection was not working because cd-gpios flag
+> was wrongly configured, according to downstream sources
+> device is using GPIO_ACTIVE_HIGH.
+> Fix SD detection with change cd-gpios from GPIO_ACTIVE_LOW
+> to GPIO_ACTIVE_HIGH.
+> 
+> Fixes: 38d779c26395 ("arm64: dts: qcom: msm8953: Add device tree for Xiaomi Mi A2 Lite")
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
 
-No, this is not what I mean. I mean SETE and SETZ are the same insn: 0F 9=
-4 /0
+That's better, one can now reason that the change actually works and
+is not only made to make the DT inline with downstream
 
-What you mean is that CMPXCHG8B modifies the zero flag, thus you want to =
-use
-ccz which denotes the flag while "set equal" doesn't correspond to a flag=
- in
-rFLAGS.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-But then you need to say that in the commit message instead of me asking =
-about
-it.
-
-> The same situation is with carry bit setting BT instructions, where we =
-use
-> =3D@ccc instead of =3D@ccb.
-
-Ditto.
-
-Thx.
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Konrad
 
