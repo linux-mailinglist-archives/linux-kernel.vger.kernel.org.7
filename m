@@ -1,97 +1,178 @@
-Return-Path: <linux-kernel+bounces-803753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A69B464A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:38:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFD1B464A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6024BA05ECC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:38:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BCF5C791A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3BB2C1788;
-	Fri,  5 Sep 2025 20:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TboLt5L/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D00A2D130A;
+	Fri,  5 Sep 2025 20:38:34 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BBF270557;
-	Fri,  5 Sep 2025 20:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A7C2C2361
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 20:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757104711; cv=none; b=BS6EbUMVyY1FcBKM74wb43U2Lc4kqOtxmwaZqZd/6WOQKzaY/Etiw4rSGOukfUYptB2N63wV07Oz5sH8sWTPUaRsWQDfhGQq0IxomK2qPsJ8TPRK8xWqzRcix8KtOqgjPFZz5O46GqmDQU/19AvCxIti3/qWgIEuGVzFWOiPOd0=
+	t=1757104714; cv=none; b=LZx22YCK0cG/ftIPyJyipdDJPwPG7p2J9Tr0qGkkJbE/eij7/jDXowrnaE7bx0D125hobq5BWTYTvNItLmj4fkgmZjupvaK3hW/ReIsmeiaDBF6zt681yBI//MdXpeCJP74mt9anfEchWK+wLpbTdk+0/Bd24K8upRhYxwWBy1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757104711; c=relaxed/simple;
-	bh=1jzKDgZMiPtHutvrnfgdjjHYpvwH6zlRmiSOv9As9Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XR3PNOkTtEd5m+lxivaJ1IrZuAcTqRVAE2pDpgrLZFRDHvbx4nOgfxzvY1E5AdExECh/Ur6dQiLEpS7/V6D7P4eAFH6QtfjnX9OZncr3e3mnKd7DveVCGYUG0cYwGslF0POt5F81tNNG36C8Dg5geMVEhwiAaTcJbkafuvYozfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TboLt5L/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AAEC4CEF1;
-	Fri,  5 Sep 2025 20:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757104710;
-	bh=1jzKDgZMiPtHutvrnfgdjjHYpvwH6zlRmiSOv9As9Ok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TboLt5L/1XzMHZmVcNRsMUNW+rC2Mh3IDtafTLxBVs7T5elDXTLGZTk7tYDYTztjM
-	 gh7Fwrzl3HxluttGLY4iEb/Rbmq8CK4LOm1BETmJWdetT2UxGT8AScoPqIBL8nDq24
-	 JR35GMOxW9InfEkQNnjfs4IaCXLg2TC7M0pPP0k//z5x0G7Hd0E5TGFK22AiHHqxRS
-	 RECGQv6ZsgHeKNhZhw0uFhG4aFo/nWgYJ95Xl4mipJ5qu+5vYM2DpA+yMDUMhY9oSg
-	 DV+UmAS/AHtiQ0D5nY9txqX31NoM9wO/rg3T8zmrAE+k2TDnvME1k5P+N3rGapD1me
-	 h1Xw//46MNbCg==
-Date: Fri, 5 Sep 2025 15:38:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Kendall Willis <k-willis@ti.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, vigneshr@ti.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	d-gole@ti.com, vishalm@ti.com, sebin.francis@ti.com,
-	msp@baylibre.com, khilman@baylibre.com, a-kaur@ti.com,
-	john.ogness@linutronix.de, andriy.shevchenko@linux.intel.com,
-	yujiaoliang@vivo.com, b-liu@ti.com, u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH 1/3] dt-bindings: serial: 8250_omap: Update wakeup-source
- type property
-Message-ID: <20250905203829.GA1269545-robh@kernel.org>
-References: <20250904212455.3729029-1-k-willis@ti.com>
- <20250904212455.3729029-2-k-willis@ti.com>
+	s=arc-20240116; t=1757104714; c=relaxed/simple;
+	bh=9dorNw5jr4FBw8MkC+mwzxxCuwfiFEKuQOXDCLquBZw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nreF+Zjf0VGKNR696Bj9wEWEpgQZcJ9HAHUt8U2iFILOfJh3+OKwDbnhBqii32Fm5fmzP5+2r6/no0wSi7laSgYD6TrNtlWL/6SRb0WadiJ5n2KnTYTrxljKUqpF9AR9H3/+YeS32RcLbkU1w/HTqXH7BQLu2XJWH0bilRmZUjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f66898cc14so28793005ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:38:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757104711; x=1757709511;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WRbZrxqubglPD7W9p4Azl0oNpWCe0BcsXik3ULMlO1A=;
+        b=g0XbYUnxXa7MTAwGHuIRkn74ZgJP/TZJb0LYtHANyAedytfy1aGoNfPNtEXXbE2nzV
+         5hPPHyajGyAymH97gxPkBJf61gIPsUIJf7vxxvH5oue3+pB5DOC9LXsiC/EZFlhann8+
+         TRP0xatzRyLfugqi9CTmd1C/yRa1y9BGr0+RMU0UC4CVnYlkNARIoLMYpS33rTgtgmK6
+         m4BqIPJ5P3PPg7hDDq37KBQR/cQxHL+RugaqbK6bBTkzlNCJVbSqMN7uo7TUhDPrVGx+
+         OJCMRGM6/97WtqpDm+n0KgY2zHDSj1P8yAGoPoP72y2LJDUHi3xdD7FeHpgqqmYzS04T
+         dqLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVto4UzfLJDaNtoE7wLc7yheoFblfKBaGQTco+RiP7JXyytxLdRhuWDxX9nNDy+0Kz9xOMRfAxGX1bl/iY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4OaTtOir5Zp24Ww5Usju2TzoQfOnqscPruIgD4hCMkWr1FBx6
+	bz+9jFQ3KZLtSQVCFWC91n5Y3KyU1PGTDvlI9kM+72lokcaZWE6jNFPtZVOSbCyj8obBU878/OB
+	QcPOM8MWtSPx6ZKWYIeVIrx1ZwunC38F/Po70weyTW2UZ9TDApJvIbMppcug=
+X-Google-Smtp-Source: AGHT+IF26XOIwoqn7XoCgF2pbJnVnnS+jDcvBdg3uxxLuPFgYOz1TlJqcCqSPMhUW3+f05h5FdkCaH6S5O5185rDhP3cbWb3cm95
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904212455.3729029-2-k-willis@ti.com>
+X-Received: by 2002:a05:6e02:168e:b0:3f6:69ec:ea1e with SMTP id
+ e9e14a558f8ab-3fd963dc775mr4244575ab.23.1757104711604; Fri, 05 Sep 2025
+ 13:38:31 -0700 (PDT)
+Date: Fri, 05 Sep 2025 13:38:31 -0700
+In-Reply-To: <683d677f.a00a0220.d8eae.004b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bb4a47.a00a0220.eb3d.001a.GAE@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in __netdev_update_features
+From: syzbot <syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com>
+To: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, stfomichev@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 04, 2025 at 04:24:53PM -0500, Kendall Willis wrote:
-> Allow the wakeup-source property to be either of type boolean or of a
-> phandle array. The phandle array points to the system idle states that the
-> UART can wakeup the system from.
-> 
-> Signed-off-by: Kendall Willis <k-willis@ti.com>
-> ---
->  Documentation/devicetree/bindings/serial/8250_omap.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> index 1859f71297ff2..851a5291b4be4 100644
-> --- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> +++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
-> @@ -69,7 +69,13 @@ properties:
->    clock-frequency: true
->    current-speed: true
->    overrun-throttle-ms: true
-> -  wakeup-source: true
-> +
-> +  wakeup-source:
-> +    oneOf:
-> +      - type: boolean
-> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        description:
-> +          List of phandles to system idle states in which UARTs can wakeup the system.
+syzbot has found a reproducer for the following issue on:
 
-You don't need to be defining the type here. Did you find either type 
-didn't work?
+HEAD commit:    d69eb204c255 Merge tag 'net-6.17-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a2f162580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c302bcfb26a48af
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e0f89fb6cae5d002de0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12942962580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16942962580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d2a8d25d4378/disk-d69eb204.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4574714ede3c/vmlinux-d69eb204.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e5bae1ec81fb/bzImage-d69eb204.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com
+
+netlink: 8 bytes leftover after parsing attributes in process `syz.0.17'.
+netdevsim netdevsim0 netdevsim0: entered promiscuous mode
+macsec1: entered allmulticast mode
+netdevsim netdevsim0 netdevsim0: entered allmulticast mode
+============================================
+WARNING: possible recursive locking detected
+syzkaller #0 Not tainted
+--------------------------------------------
+syz.0.17/6023 is trying to acquire lock:
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2761 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_sync_lower_features net/core/dev.c:10649 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __netdev_update_features+0xcb1/0x1be0 net/core/dev.c:10819
+
+but task is already holding lock:
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2761 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __dev_ethtool net/ethtool/ioctl.c:3235 [inline]
+ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_ethtool+0x716/0x19b0 net/ethtool/ioctl.c:3502
+and the lock comparison function returns 0:
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&dev_instance_lock_key#20);
+  lock(&dev_instance_lock_key#20);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by syz.0.17/6023:
+ #0: ffffffff8f539288 (rtnl_mutex){+.+.}-{4:4}, at: dev_ethtool+0x1d0/0x19b0 net/ethtool/ioctl.c:3501
+ #1: ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2761 [inline]
+ #1: ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ #1: ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __dev_ethtool net/ethtool/ioctl.c:3235 [inline]
+ #1: ffff88802911cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_ethtool+0x716/0x19b0 net/ethtool/ioctl.c:3502
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6023 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3041
+ check_deadlock kernel/locking/lockdep.c:3093 [inline]
+ validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3895
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+ __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+ netdev_lock include/linux/netdevice.h:2761 [inline]
+ netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ netdev_sync_lower_features net/core/dev.c:10649 [inline]
+ __netdev_update_features+0xcb1/0x1be0 net/core/dev.c:10819
+ netdev_update_features+0x6d/0xe0 net/core/dev.c:10876
+ macsec_notify+0x2f5/0x660 drivers/net/macsec.c:4533
+ notifier_call_chain+0x1b3/0x3e0 kernel/notifier.c:85
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ netdev_features_change+0x85/0xc0 net/core/dev.c:1570
+ __dev_ethtool net/ethtool/ioctl.c:3469 [inline]
+ dev_ethtool+0x1536/0x19b0 net/ethtool/ioctl.c:3502
+ dev_ioctl+0x392/0x1150 net/core/dev_ioctl.c:759
+ sock_do_ioctl+0x22c/0x300 net/socket.c:1252
+ sock_ioctl+0x576/0x790 net/socket.c:1359
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f08c1f8ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff0a699878 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f08c21c5fa0 RCX: 00007f08c1f8ebe9
+RDX: 0000200000000080 RSI: 0000000000008946 RDI: 0000000000000006
+RBP: 00007f08c2011e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f08c21c5fa0 R14: 00007f08c21c5fa0 R15: 0000000000000003
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
