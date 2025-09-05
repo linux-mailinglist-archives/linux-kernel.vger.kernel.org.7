@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-802368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29887B45195
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75900B45197
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97424E61B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:34:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4098B5A6923
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090FE27F727;
-	Fri,  5 Sep 2025 08:31:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1628303CAB;
+	Fri,  5 Sep 2025 08:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aP3mZzXq"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C53A244694
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631E267B90
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757061083; cv=none; b=Rkb8AvPTtDy1vAm8DmsARhrIqcewwD4XQM86ZkAYcHR2ar9LFC4ifip7hJWDqcrDz7CvB4YNYUJqY+PLmF69oVseM8RUEAHMMvNuiCjeayzXVoSCOKSwfUtgQQ1Wker6+SPt9iEQEfwUjxRMtNaflwWwUnqDDLmZTF0lvWvjNEQ=
+	t=1757061106; cv=none; b=VLIMWws1TPQYSFWXD30D/U0PRYzahLRQ/qi430tuAkVu3/HnqQfG1xP8tGsNH2+fsaAGv5SmWwBgjs8CiV73Keg7v3j+aGO04xeFsE6Q113rAYM0OyKDBd6XZe3awC8RScdNP5FLspLSuEL5K+VXdgyUvlECYxd5dLFujBL8BAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757061083; c=relaxed/simple;
-	bh=YESrZQLIjow9fJ2MHXhfuYa6/NvnQpk2ZHbTaa1FY/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvTU7M99dEapbIptSCdZGTpx4plpb+G5aCzRLxsAFlVW8eJASqOPK09nYuXJz1hVoaX6pc01+AVwohMhI9275GGMnNF7e4Mzfe/jQQ0NC2nA5IjPcDc9keMJqn59+gPRltc11zd5zecx8THhtDsmtxMifHtJp0TSYKEdZ04HkOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uuRql-0006tm-Q9; Fri, 05 Sep 2025 10:31:15 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uuRql-003rTl-1O;
-	Fri, 05 Sep 2025 10:31:15 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uuRql-004GrL-10;
-	Fri, 05 Sep 2025 10:31:15 +0200
-Date: Fri, 5 Sep 2025 10:31:15 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Maxime Jayat <maxime.jayat@mobile-devices.fr>,
-	Elenita Hinds <ecathinds@gmail.com>,
-	Bastian Stender <bst@pengutronix.de>, linux-can@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] can: j1939: undo increment when j1939_local_ecu_get()
- fails
-Message-ID: <aLqf0-WGRA8-Qb15@pengutronix.de>
-References: <e7f80046-4ff7-4ce2-8ad8-7c3c678a42c9@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1757061106; c=relaxed/simple;
+	bh=Cqt9y5Sd8p1bw7JwUAV6Zf77Tsf7orn/JfVBQl95338=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XjNWmop1LxjMaNHtUuG3YDRVR0YTp/UrDK77Wf8n2QKrNk0zKf/gcyVMuVNPwU/2BynvyMeeyzBFqkmREvB0r+Hub9+ZEHlmj9WF/PQZabisHNVt5ya9AAiqEA7EU8mUn2sDJ5VrR9ZTjYn6L+DNDH8sfHVPpSFKMbOSH7QbH3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aP3mZzXq; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-336ce4a8bfcso15935031fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757061102; x=1757665902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9f+++oJEJogx7iunr2Qwd9nxHYBvpJqjgZ7eo+XnEyw=;
+        b=aP3mZzXqbuXN6P0CrCqMWEhnbpuDcTCN748SKuhKIDSYlqbHc9DIi7/afmqqShYQUb
+         vMmZe2/GXwv5yz1Nu+KnmbSwFub3vo+DuxxBOdaHkvM9eQR3kfH3A3WnWRC86IG7hP2t
+         lw5y5QX/Eh7NEKFk/QHVaEv2gZu3LmEDDg9LHE3CDSMpQzjiB9c/Z0g8lkCTYeFTWedX
+         4lz1rEAlZ8aWo3oUe9lhqkFZ2KISzWCL/1xzLDiXiTAO1XtDmSUWDZnKx252u4UbFUrp
+         t8T1UuaydpPZw2YNInHEbPZFS482MfzN0EfjBdMo+gqe6uNg6R9EVRDOTsufCn3dELIv
+         /JPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757061102; x=1757665902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9f+++oJEJogx7iunr2Qwd9nxHYBvpJqjgZ7eo+XnEyw=;
+        b=AmmXr68UYxaX3sQqqmp0pGBN9zJmRpgk3NTYhEstXsXok98Amb84cB9vcBotH4Ww9h
+         tc8HbVDnlflia1oc/4mdLfUh/6Y+qInVXzuGHnkaE0bQgI6Lf3OQTkGtqHam5emuXj+h
+         Jot6r2m3pZK7HnptOrG+8A57+BkwlUJXCewr1o+QJj6S7zHyvhNTmppoYEHYiCG1+NzI
+         6NVD1CPIAhxvnXDkLVmZTUvTllSsJ59HWqO7QssVAlyry6gk3jph/lIwAOjngDQfzWLD
+         vJRo8nWFBqiCI0IG0wP+oeFo+fxe+n8177swwnKChpnfqEZwpPUoP3PwR2MMAVoVceZz
+         T+og==
+X-Forwarded-Encrypted: i=1; AJvYcCWWRUZzsCsYkWQgu6HPnxO5Dwz6fWxQxp1HOLffHJ+MdmvYEsU1u1PDKABdxMUlhad8kSH/P9vPQREP2+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP+uu09Mhlo7ndN3YA7r5MywVCnqDJcx+edk+aSPCUB6yLEX/O
+	ZFQAW5ccz3imc9zKJRn5pwus1d1sKvugI+wvv636Tm4nd/c2sfR2x8sS1HId2hX4qJeOx1PwIxr
+	TkbcU5olne2zMOT7lMspHzI+NBVRZgtBm4n/aJyNwKQ==
+X-Gm-Gg: ASbGncvp/L53BHcw6QwK0v+Z+KvFRZ+uL+BdbrWe11EMYgMKQ5/yFp3MRq1zCXtZHSD
+	XlzZdSQ09cpi9jBDLKJhgpP7OLxNZ2JSl2M3QdNspvDRSWorQYRGP/s3AFiSTRCcqzWX9DIz99v
+	F9b8+RugRcQ+joSPAkjlR8QB3Yn0CNidAZ4NH4SSAmGNk2GukFH4vTx46y5dD7tkYxwKfPXv2F5
+	FOc7Azv5ZC/xxl5JA==
+X-Google-Smtp-Source: AGHT+IHp+LpzTnlm/ik4qcZ3pH7JoklV/VwhpQ2B9YB70/pzgPXeMXc+xQDV0rAGZGWmglV837F6DBjwLozLyJEQpSM=
+X-Received: by 2002:a05:651c:503:b0:338:3d1:60a7 with SMTP id
+ 38308e7fff4ca-33803d165d1mr29380981fa.38.1757061101675; Fri, 05 Sep 2025
+ 01:31:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e7f80046-4ff7-4ce2-8ad8-7c3c678a42c9@I-love.SAKURA.ne.jp>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <cover.1753039612.git.dan.carpenter@linaro.org>
+ <6f732f53-7e00-4f0d-82a3-480bc81497bd@sabinyo.mountain> <CACRpkdZ9EHoHiKit+T-ur0xDKMEoN_=TydzTfoggNBQGdra2bQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZ9EHoHiKit+T-ur0xDKMEoN_=TydzTfoggNBQGdra2bQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 5 Sep 2025 10:31:30 +0200
+X-Gm-Features: Ac12FXxg4bL_8E-D_W-eOel8gQZzsIXFhPs68sNRK9cduffuB3-nHYnzZaiCCko
+Message-ID: <CACRpkdY3_ifPsQOTqa2e-kHR24Khy0axrZ=K+vO4OJB+FjdB2A@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 4/7] pinctrl-scmi: add PIN_CONFIG_INPUT_VALUE
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
+	Michal Simek <michal.simek@amd.com>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 24, 2025 at 07:27:40PM +0900, Tetsuo Handa wrote:
-> Since j1939_sk_bind() and j1939_sk_release() call j1939_local_ecu_put()
-> when J1939_SOCK_BOUND was already set, but the error handling path for
-> j1939_sk_bind() will not set J1939_SOCK_BOUND when j1939_local_ecu_get()
-> fails, j1939_local_ecu_get() needs to undo priv->ents[sa].nusers++ when
-> j1939_local_ecu_get() returns an error.
-> 
-> Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Fri, Sep 5, 2025 at 10:27=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+> On Sun, Jul 20, 2025 at 9:39=E2=80=AFPM Dan Carpenter <dan.carpenter@lina=
+ro.org> wrote:
+>
+> > In SCMI the value of the pin is just another configuration option.  Add
+> > this as an option in the pin_config_param enum and creating a mapping t=
+o
+> > SCMI_PIN_INPUT_VALUE in pinctrl_scmi_map_pinconf_type()
+> >
+> > Since this is an RFC patch, I'm going to comment that I think the SCMI
+> > pinctrl driver misuses the PIN_CONFIG_OUTPUT enum.  It should be for
+> > enabling and disabling output on pins which can serve as both input and
+> > output.  Enabling it is supposed to write a 1 and disabling it is
+> > supposed to write a 0 but we use that side effect to write 1s and 0s.  =
+I
+> > did't change this because it would break userspace but I'd like to add =
+a
+> > PIN_CONFIG_OUTPUT_VALUE enum as well and use that in the GPIO driver.
+> > But in this patchset I just use PIN_CONFIG_OUTPUT.
+> >
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> I tweaked this patch around a bit and applied: removed the second comment
+> in the commit message and wrote the docs to be more generic since
+> in the future other things than SCMI might want to use this
+> config option.
 
-Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>                                                                                                             
-Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Then I thought about it some more. ...
 
-Thank you!
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Isn't it more intuitive that we rewrite the curren PIN_CONFIG_OUTPUT_VALUE
+to just PIN_CONFIG_VALUE that can be used for both reading and
+writing binary low/high instead of having two different things like this?
+
+I will look over current users and maybe propose a patch.
+
+Yours,
+Linus Walleij
 
