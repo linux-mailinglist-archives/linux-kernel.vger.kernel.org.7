@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-802544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3447AB45390
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:41:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614F5B45393
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DFD3B2B99
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:41:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C95D7ACA9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AA927C17F;
-	Fri,  5 Sep 2025 09:41:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABB1283683;
+	Fri,  5 Sep 2025 09:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qQKQUc4r"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F1D43147
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896E3283FFA
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065265; cv=none; b=JcwROQDNP/5ObU5p1LQH91uDFTIoJP4cfW/Z9dhU2skIT+2206e7OhxmUJwq1RWXRVpkv8WBGmhov+ZUL4q792DcU98A9vD+jRVgo+DK9o1suc1iucj0ZEMyhU9PijvyJ84ct9PECUiuMmZQBNUgSWvgd9chBNbXHDfxkdzh5G8=
+	t=1757065295; cv=none; b=nbFI4FQ3Fusl6Te/w7IGc/+uJh3GeSWFfeDYtk405UvXYrsGHS+rKoBRxk9R1sXsJzbqvnwchOfVGmIJ45VeaJzPFPENub/gZEG2Q6JUwUCXS7yBWsdFbwT+yUmiXiSlMHGBmbVlyOi7kgt7fYzCC72fe5S3J7yFJmbrRyvEE+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065265; c=relaxed/simple;
-	bh=zY3iPCrHKjavbVIMB6JWljwaLMmTnlvXQG8FRJBM1pw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iO7pCTtCbc8VruoHuygam3/kbyUN/VHJHgwlOYSzLooTL88V4zEqtfsyrBF8Ult5lco8w5C0S4tQcesFlOd7+VXKVRZp3wqBpwOAXVgwksT2wxEtxbhqXJIarvcHE17SSbN13b13pOyoLwbw5jLpgbMjdvklXsM1zYuszAhrvIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-886b58db928so219874239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757065263; x=1757670063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jcO9YHpqobesarBM3yKY5yBwnh+DabzfkdcwLv1S+YM=;
-        b=LE+wj9GADCP5NytvKbcjbRgrIbgovd+TSf3ko9DoVDYRFmX6eXzSdkDcGxYAy87INH
-         d6CYTTGp9wDvbaiFeT40js/Mbogwl6d5KPXPOmPh4MQsLvTrc/Afj17SBqSfR+teYHzy
-         cKTz5I7qBk9TZMihkKhnRSXDDafpL7MEE8i4igOY2bCz90Ts27+Xjt/zWqRbWWDjIY+t
-         SL8gqQLHd37Pvc1//bnacTF3inH3PgQ3cumJ0KPeBoffx7aaVUFhSVSvjkK2j/0oUXjC
-         MXeAxGC9Pw6HDZjcbVPDFyDW2lyC0nedBouvkHV9vTusCBSpTSi+gTGHMOz0fVJ0g2oB
-         rW7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXnSp5PVbMGyKzHBAGd3Pxo2aM1pIbns5SsWg8OaE3o45z2FFCem612tPHz/BlBiqOloYT5uP1nr7Xnjwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHCuZ8csn78D0o6X3jI6TErmdYHbK/UuYEuSPbW1yG+xt5VoXb
-	sWLnJfhEJmLcmQyXBzvvtkT7wX+fkEHXdiLXS+/x7S6pHSQ+YVrVowUBHqTrg3HZfoOzDCpXyq6
-	Jil1DlOL7UU+hQRBSwAlo+2RE2zy9Inj4m7w5bKNL9werWg2QIXOY3TNUMsc=
-X-Google-Smtp-Source: AGHT+IHBN4mhIWYJqdlTPOYVgJ1hmlil3M4t2rTTnp8qFHKFxHD6XafcxWiVyjvT1/R8uTkZuE6jg+80noBzTXVCSqKMb8s1XeeT
+	s=arc-20240116; t=1757065295; c=relaxed/simple;
+	bh=WFFFe+YY5Z20PKUMXrEZ7PLZOjEeLnGn1ppTLHfM0HU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aqFPDm/9X9qFQ3iTc+PN4pSkxUl+On0iohxpa1OGxF2dws9to0q6ud9fYkDxqWjsCO4179+yNLYqGgpNLSrAEy1aUixg54kqfZ/d9nDTw/0lO9rqd+sJls5sWYKTsunkgdHI2mTNZTN3g5L8pABL7s3KWwO2kE+GfbpJHkrbHOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qQKQUc4r; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757065291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iU8cYU3B3yAKoLkyUXfgY8bgL90q9YRQAluD1Tl1gR4=;
+	b=qQKQUc4rbHC+yqm4Kw1VeM0/JPrfqHRYxOrwTqeA5pOc0roLCustMIbsbrG7juGN2ZgXRP
+	72KpUaYOUhlowN4HRoX/+CdnjXthMu7ipFrjbsTPjf/ZMszRxqI7gksxdtcC+QMi40jmNK
+	xYZKYe7wSpvtcR/MXTIzXtdtnjZhogI=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev,
+	Geonha Lee <w1nsom3gna@korea.ac.kr>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: nested: fix VNCR TLB ASID match logic for non-Global entries
+Date: Fri,  5 Sep 2025 02:41:10 -0700
+Message-Id: <175706523473.1669883.17269564627952159753.b4-ty@linux.dev>
+In-Reply-To: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
+References: <20250903150421.90752-1-w1nsom3gna@korea.ac.kr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2cce:b0:887:3ae9:c3d9 with SMTP id
- ca18e2360f4ac-8873ae9c618mr2474046039f.2.1757065263535; Fri, 05 Sep 2025
- 02:41:03 -0700 (PDT)
-Date: Fri, 05 Sep 2025 02:41:03 -0700
-In-Reply-To: <cc7f03f8-da8b-407e-a03a-e8e5a9ec5462@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bab02f.050a0220.192772.0189.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in io_sqe_buffer_register
-From: syzbot <syzbot+1ab243d3eebb2aabf4a4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, david@redhat.com, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Thu, 04 Sep 2025 00:04:21 +0900, Geonha Lee wrote:
+> kvm_vncr_tlb_lookup() is supposed to return true when the cached VNCR
+> TLB entry is valid for the current context. For non-Global entries, that
+> means the entry’s ASID must match the current ASID.
+> 
+> The current code returns true when the ASIDs do *not* match, which
+> inverts the logic. This is a potential vulnerability:
+> 
+> [...]
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Applied to fixes, thanks!
 
-failed to apply patch:
-checking file mm/gup.c
-patch: **** unexpected end of file in patch
+[1/1] KVM: arm64: nested: fix VNCR TLB ASID match logic for non-Global entries
+      https://git.kernel.org/kvmarm/kvmarm/c/06f66db9bda4
 
-
-
-Tested on:
-
-commit:         be5d4872 Add linux-next specific files for 20250905
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=1ab243d3eebb2aabf4a4
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1127e962580000
-
+--
+Best,
+Oliver
 
