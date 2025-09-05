@@ -1,172 +1,75 @@
-Return-Path: <linux-kernel+bounces-803784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DCEB46532
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:09:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE90EB46530
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE88DAA4C5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79E11CC7CF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A892ED848;
-	Fri,  5 Sep 2025 21:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OUhiTyiG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5639B2ED144;
+	Fri,  5 Sep 2025 21:08:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A3A2ED143
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E460D23BCE7;
+	Fri,  5 Sep 2025 21:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757106551; cv=none; b=RSjSCF8lvk4ccraiTyxh4Syudd+t5AfGcBbbO67ge9UixGgjIyJbPr835HqCZEX9EICTphGU91j2aqfkbk2pYmVKozfkHXA6b8uYig6C6a9N1J9wucm5lAa069ztO7IYO2JB0swoxdZzpWpHh0cEqo6lLttw6I/ZeNMQtJLTfoY=
+	t=1757106533; cv=none; b=al1nVNs55S/nRLGNQ0Zm4+aG7tF5V+cfzVTBLFoRVc+UV3atR6S8GnNLc7XCDwi9QkWc5bNmmM1yVeoNia2LmAtDn5t7e7yygEskE+jF8maaWN+pwV7AXJvWCPJwXBMGL9n8fWvdnJZNdX2w7FXYwIN/XBpSBdtFJ32kNuE5Kd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757106551; c=relaxed/simple;
-	bh=Q4/Hy3I/j5BNl0X6z2Pxo3w50TkPZNmdARahvFuu1ZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0DyxalI72hzrn4C1j5IFSdfFlYneFJ+wnndRcmTfYjr6IQTU6ZdXr19d+B/pmIbc2GBrtvBr2Zg/YbXCst9hmXA4AzuhLfA7cDNn+GNhPfmSUWE9jgy5iA2a15H941ArEwOkL0WhNMiH3qMYDfBt4ST+hNAQbyS/rYnCJtIjRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OUhiTyiG; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757106550; x=1788642550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q4/Hy3I/j5BNl0X6z2Pxo3w50TkPZNmdARahvFuu1ZQ=;
-  b=OUhiTyiGsWxhmX78IdDcEfhA14iXvJKCeyZvneladrfIQAPwhXlNczEJ
-   F3OhGaN9YPvns4hNLMrIEYE0J6E5NtJPl0s/ZbA7bnlUpPbig/JH+XByW
-   ieJbXNltStB1h/cApb/4HnIe1znHoq7RCdjt1u/ihMumQw1b63SJNG/Pg
-   wjKiHo8D0DHAmx8Gzd5yKtB41kL3tZwtZlFDfIcOOXRQnY/9bojTqFAwv
-   nNVnNpnkJ6bjV0G4qqI4btkHlyqObe8BgGDrDzgcTs/uiBjY+px3+NURH
-   ZhYTIp+WITLzUiT0nTmf6LdTclK1JiCf95OYIXyknIoco5AWrBJ33/UJx
-   g==;
-X-CSE-ConnectionGUID: 1BJaNdToR+iVtroWol5jiQ==
-X-CSE-MsgGUID: nBpLX0FASVu0SJMeXo/FCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59531463"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59531463"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 14:09:09 -0700
-X-CSE-ConnectionGUID: VOWIU12ASdy49fjY+iID5g==
-X-CSE-MsgGUID: 1Ts5C591QMqIbNOwjdMlSQ==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 05 Sep 2025 14:09:05 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uudg7-0000rF-1I;
-	Fri, 05 Sep 2025 21:09:03 +0000
-Date: Sat, 6 Sep 2025 05:08:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <lumag@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Liu Ying <victor.liu@nxp.com>
-Subject: Re: [PATCH] drm/bridge: ite-it6263: Support HDMI vendor specific
- infoframe
-Message-ID: <202509060412.LmXs40Rg-lkp@intel.com>
-References: <20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com>
+	s=arc-20240116; t=1757106533; c=relaxed/simple;
+	bh=4rPsrvP5ud7ZdUTA9Et+F3ysR950L5eJc5+JLoFGr84=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Vzrc9pSxN18qHCnKOOf2JpJKj+lLG+4fH1bfYJ7DRcWoV625xAWKW282Qvr/oKg70O1cmEcgod6x74bOvk8XSmzfJnnBi0i8PuSfD4NdYB2UwKX8QKffZiw1q7Aw2cFr1pjRyknxcnWwZBx7kBAuzafFx9z2tzWm0+vVsp69wYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A5AC4CEF1;
+	Fri,  5 Sep 2025 21:08:53 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 74B05180B21; Fri, 05 Sep 2025 23:08:50 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: linux-pm@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+Subject: Re: (subset) [PATCH 00/80] treewide: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-Id: <175710653046.85438.14429572500422818899.b4-ty@collabora.com>
+Date: Fri, 05 Sep 2025 23:08:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634@nxp.com>
-
-Hi Liu,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 4ac65880ebca1b68495bd8704263b26c050ac010]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Liu-Ying/drm-bridge-ite-it6263-Support-HDMI-vendor-specific-infoframe/20250904-171143
-base:   4ac65880ebca1b68495bd8704263b26c050ac010
-patch link:    https://lore.kernel.org/r/20250904-it6263-vendor-specific-infoframe-v1-1-6efe6545b634%40nxp.com
-patch subject: [PATCH] drm/bridge: ite-it6263: Support HDMI vendor specific infoframe
-config: i386-buildonly-randconfig-001-20250906 (https://download.01.org/0day-ci/archive/20250906/202509060412.LmXs40Rg-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250906/202509060412.LmXs40Rg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509060412.LmXs40Rg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/gpu/drm/bridge/ite-it6263.c:810:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     810 |                 const char zero_bulk[HDMI_PKT_HB_PB_CHUNK_SIZE] = { };
-         |                 ^
-   1 warning generated.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-vim +810 drivers/gpu/drm/bridge/ite-it6263.c
+On Fri, 04 Jul 2025 10:52:25 +0300, Sakari Ailus wrote:
+> Late last year I posted a set to switch to __pm_runtime_mark_last_busy()
+> and gradually get rid of explicit pm_runtime_mark_last_busy() calls in
+> drivers, embedding them in the appropriate pm_runtime_*autosuspend*()
+> calls. The overall feedback I got at the time was that this is an
+> unnecessary intermediate step, and removing the
+> pm_runtime_mark_last_busy() calls can be done after adding them to the
+> relevant Runtime PM autosuspend related functions. The latter part has
+> been done and is present in Rafael's tree at the moment, also see
+> <URL:https://lore.kernel.org/linux-pm/CAJZ5v0g7-8UWp6ATOy+=oGdxDaCnfKHBG_+kbiTr+VeuXZsUFQ@mail.gmail.com/>:
+> 
+> [...]
 
-   782	
-   783	static int it6263_hdmi_write_infoframe(struct drm_bridge *bridge,
-   784					       enum hdmi_infoframe_type type,
-   785					       const u8 *buffer, size_t len)
-   786	{
-   787		struct it6263 *it = bridge_to_it6263(bridge);
-   788		struct regmap *regmap = it->hdmi_regmap;
-   789	
-   790		switch (type) {
-   791		case HDMI_INFOFRAME_TYPE_AVI:
-   792			/* write the first AVI infoframe data byte chunk(DB1-DB5) */
-   793			regmap_bulk_write(regmap, HDMI_REG_AVI_DB1,
-   794					  &buffer[HDMI_INFOFRAME_HEADER_SIZE],
-   795					  HDMI_AVI_DB_CHUNK1_SIZE);
-   796	
-   797			/* write the second AVI infoframe data byte chunk(DB6-DB13) */
-   798			regmap_bulk_write(regmap, HDMI_REG_AVI_DB6,
-   799					  &buffer[HDMI_INFOFRAME_HEADER_SIZE +
-   800						  HDMI_AVI_DB_CHUNK1_SIZE],
-   801					  HDMI_AVI_DB_CHUNK2_SIZE);
-   802	
-   803			/* write checksum */
-   804			regmap_write(regmap, HDMI_REG_AVI_CSUM, buffer[3]);
-   805	
-   806			regmap_write(regmap, HDMI_REG_AVI_INFOFRM_CTRL,
-   807				     ENABLE_PKT | REPEAT_PKT);
-   808			break;
-   809		case HDMI_INFOFRAME_TYPE_VENDOR:
- > 810			const char zero_bulk[HDMI_PKT_HB_PB_CHUNK_SIZE] = { };
-   811	
-   812			/* clear NULL packet registers due to undefined default value */
-   813			regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0),
-   814					  zero_bulk, sizeof(zero_bulk));
-   815	
-   816			/* write header and payload */
-   817			regmap_bulk_write(regmap, HDMI_REG_PKT_HB(0), buffer, len);
-   818	
-   819			regmap_write(regmap, HDMI_REG_PKT_NULL_CTRL,
-   820				     ENABLE_PKT | REPEAT_PKT);
-   821			break;
-   822		default:
-   823			dev_dbg(it->dev, "unsupported HDMI infoframe 0x%x\n", type);
-   824		}
-   825	
-   826		return 0;
-   827	}
-   828	
+Applied, thanks!
 
+[21/80] HSI: omap_ssi_port: Remove redundant pm_runtime_mark_last_busy() calls
+        commit: ca50b295fd473ef797b69b8538036cca716f3d55
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
