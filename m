@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-802540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A40B45388
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBACDB4538A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3413B26CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E21482B08
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67FC27B32C;
-	Fri,  5 Sep 2025 09:40:05 +0000 (UTC)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4CD28505C;
+	Fri,  5 Sep 2025 09:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay8n49Yf"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76244263C91;
-	Fri,  5 Sep 2025 09:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B632459E7;
+	Fri,  5 Sep 2025 09:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065205; cv=none; b=gzx8c4ceOCV/M4uGQ1ottL0kp0ZtR1l85GnPmIL//H3lWfLKBiq3nb+t7awBFtWg+NF4x5+KNS0RfKcK8QixoXr2LRjxgfOc/uRwVp9+3Rle1Q/AeEWgUOAeHP/UDDM5tgC4/qr0nBakh9HHUlHjxVu9Q7hfi5feB+MCHidmc80=
+	t=1757065211; cv=none; b=aeDquasLVYMF7HtJcBXDSORs2hWv2x8K6xKbrb1cbn+6T/DzGc0k0LWxMBRuie7vJWlEraaZvoXWtUq2/BKsmJkFZYgDqz7YdpddlCc4f459fS19Ls8xjwcUJSlM8dzOrHuVYZoaN113LVrt05Ep0A6XM4lLZd3NosiXpzj8SSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065205; c=relaxed/simple;
-	bh=uH4ASOvviKG4mPCbrhkKIG5yf/DQJkUk4Ade9UY/ke8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PXk4049cffYRoAvJAC1o5Hih60sg4vLOdyftoQqwkftHdZW41V1iHwYH+yW3RtPsZ8tQxwuFtSou7gBlH9290WAbREur3To0GvQUt2WFNNidz+XqvQyOFirsVZy1VLIWSzR+NoDFIlQ+nv5qz3oHzuWURwLG6jydu15YN7Og6Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1757065211; c=relaxed/simple;
+	bh=T7Dn+UMP6guluDBFGXIXjtR5pTQmj81vr55vFFP2Sd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/Zf72/hElYJK17chnM2EyQoFJ/QJtNc3dNkYg9RlmjCNfOGRRZiUCA9C67dvot7/Lposmjwy7fu2s8FQoI6136JsgXFLLOObUcD58rG+0bHEG6bAahfpIoz2kIs0OCGd42khEHJXFbOQrsgwT0mKBxP6dbnJXygV962dA3gCxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay8n49Yf; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-538e108f6cfso475178137.0;
-        Fri, 05 Sep 2025 02:40:03 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso8279255e9.3;
+        Fri, 05 Sep 2025 02:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757065208; x=1757670008; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cDXueAm94KqHBVVmI3hMHAqXI/fD3/tN6fLM/2JMEZg=;
+        b=Ay8n49YfweTArLPddO4VUsOmm4nHKi3qiH/F75D6EnXZmcl3rBGNjMPnsGNvPUuSVT
+         FZLdgvPFkAT1nQ0YfHQKg6TiZ+bYqjWCL7xfJUlxwIZ39kUpICdJjINsOQ9Wa0ZZ7ac4
+         nyFRzMBTTunvmfVEYezzcsVGwQg3v9yoDBI2JBgJPQCZ/bG2eEx/HRXttamGh7ZB6mvl
+         pLoZ5qCkdddRP2kHWa4tlE4fdxXdn1iu9c3gshfU6dTDJ0c65LlsxniK90Onc0aByMPM
+         t9Pd/Pu+D7m2rB+KAxBGmwHMmQUhGtQv5bMr78/GfJVdnSeV6/2G7Gc3YKVmTguVNnSB
+         39gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757065202; x=1757670002;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pPuHH9wR+3JMtwt0Mt/r9BQgDVGSAd7W7JN3EdSC2gA=;
-        b=HyTM3jKUdTxCgYBa5bu+jt2UpYJrN5ZJxGTq+wqFnB2idSNOyNWSXwu5jwpYYg3JCc
-         CGVdIb+/Oxxd+8AipSSijlzVbadWwCIw0KONJwPhMTSF9OVJ2kA6Mpx3rttSI74d3Esj
-         RzAFZdFburiZhm8j6kxVOeX6BKDroUN9GTy1NQ6H3PqpUHm3d7kF/lHoAFNz/tecpmJn
-         XK4+Ub/I4xwKZ0L6+4MHmoRSjD2bCIgD6QnNpt7stFG2BgFXspsiv1MBN78QmveLFFg/
-         LLKK0r4fdeaTBgCBkliEHwsQaODye+tJuIkHSnQ69utnYwepvvPI6UxMKueSLUjANX2s
-         X+rA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXLTkBicQeQYvXt0+Uo4jV+YbcZpjSLHcfA5ugbhJd/7LfTHb73Chc19M94blbjJYfHIoKbVime5oByr9t3OovmN4=@vger.kernel.org, AJvYcCW3LGXdlTih0Ku71tLrZrVamxGxkpi0ca6zUtGzsCQElCCnmFAdtyF6ZpOU8xIuwmVkdXlpYr/u8AolRzFP@vger.kernel.org, AJvYcCWOX30ZHKhQ54X+iVLZCoNWfYrH15BlBJLiWuoxmDmOfp+TfMu+aiGykEaZ5tPpuIWHki/kKnedB7zY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOqHx8hY0hkxAfeGU1YbylaflaRqkoTVkl2yhNfkHpeqfq/ifa
-	ZMkhHtByHUaDhmFYh0leKhxSu9vqnyTT+hoq/36YV3hnTUL7df5eoGjPUYU3GgcX
-X-Gm-Gg: ASbGncuRiudaeBIgSqz7CwKS5hNTTPw3YSTPLwqJ+i6n1YrrKRAQKRLWAPZrL5+f6ED
-	v46SZubT/WEEiy9sjwxVQQMf/55LAv+3h76zMXFVl4WugeXoILN7bXAZnPAbpA6NRjXLSX+0Roc
-	9nuLUIb3bjWw6TxLcRPMvF/CWrLnkm5lXyxN88KSPuVGBWv4uEmRa8XaISqLiSsG10dtoAx/7Z/
-	B9UOGWWHbKBxg3vW+rIwX1IGCfiZ13m3e9kAXx077aQacwCtvffp2AxayBAXJENVj2vboRi0kF9
-	9pAca6qUDZVxeXsdiGqFrcv0gMBQ/OzDpzF6+VpDvroW4FeOV4Pgqn99jowqO1XwkXsxXl6o8+M
-	h6aCr/AIK0E9gk2wNqksvhhoG+264hR4o5OTKEliKgGcK/q7dHW7jmW0Kvp7Wip8C
-X-Google-Smtp-Source: AGHT+IHJ4+sOHwJPe9u8+PrAh5hMEZl+9oQks3ENTqg0K1Mx8AqhxnW/WnR+xYJx67+aPTd8QKtMnQ==
-X-Received: by 2002:a05:6102:5121:b0:4c3:6393:83f4 with SMTP id ada2fe7eead31-52b19846470mr7901759137.2.1757065202102;
-        Fri, 05 Sep 2025 02:40:02 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af19156ecsm8097146137.12.2025.09.05.02.40.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 02:40:01 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-544aa9b536eso1454158e0c.3;
-        Fri, 05 Sep 2025 02:40:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/LJ7rQalGQ3IUteBBKpwCPGnStXVu+2WQv3xxE/GPrNAletfuRJgAJxcGguBtllyPj2g5bHw83ykQ@vger.kernel.org, AJvYcCWWCJ0lwmqSNFroc3Ji2hQDTyv7QBrqMiMNb1t5hTz++wyHslL685f8vGZ/uU3D+0+0NAdTEFaU6N/bqKC+oChTY30=@vger.kernel.org, AJvYcCWvqABIqDHtxfnl1+Pig6GeZwICTWIvAITwCAI1XM3WkSN+DdzSEcbg9zs0UQcOCcuRI6El2NGo4HgCAjBx@vger.kernel.org
-X-Received: by 2002:a05:6122:2225:b0:538:d438:15bd with SMTP id
- 71dfb90a1353d-544a0215b05mr7768579e0c.8.1757065201574; Fri, 05 Sep 2025
- 02:40:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757065208; x=1757670008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cDXueAm94KqHBVVmI3hMHAqXI/fD3/tN6fLM/2JMEZg=;
+        b=OIMKOBZujG07/gZvZOl/7tDlV9dhaLuWiTgr2YCZXH+t0K6NghYa8MJFfPN1bLt22M
+         ZtMHYB+rFZs++F04cItdM3V1FhPr6F+SPeC4wOfEQbmule8yTBDw9EitIl9cxXhbmOch
+         K+i5UHSlYlmLkqGgWmgMv1Z8jkSTq3zEsjwvnWmy83HBxOOCpDjAsaiwQXOg/B+Li/Io
+         jydkEKplKwP56HLmBh0uNm3CUWxdVBOgqLF7fQBBJbyI0uoFFObyR6Se5AsEuWgAi/PC
+         yWiLU5VehuKwHPDwwLb4tRZQTm8LZRue6hr8HXVDTQzKCmDdvjaX9e87NaWt1sl7c+du
+         pEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV65iDFu7sVaQ7gOHO4oVHZX25Py3wFMQM5DmStrbZknCm5YVPIBgZx759W6fGzR0ojyaHDZEKCkKveIf6s@vger.kernel.org, AJvYcCVshanDlwf2JlZW/BkkmiALNiNXX2OP++WJ3wQVHCKgeerSqn9rHLEWwxL5hjopSW6p0CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJoswPumg2ov6/UJVAOWHu5omDJVtiQQkic6ZFxBQ92V8+EWbn
+	1yjl2iiB/EN/chVDy+k9akg5Vne8rgoAWbJZPEa4whE9IQp78Ks3iE6H
+X-Gm-Gg: ASbGncvu8K38SyNkD3ujtED8Yl4RFOLcbIq9sK9LM/mmoMH3kz2IPW/NTCgwaaEYHTr
+	hVvgdlKv/8FaZoP4VL1AiHgmGQVPg0/Q4N6n1ZdQfedpc87SuMGGc/xkd/Kfqf4IOIdvEaJwLKQ
+	Z2RGClPXMToLIxyo3K6bnc5Pq1nEDnlVvEnB8VtZswbqQazy1n7V5aoI17/otm87bwhnyK/TPFE
+	jO5LdpUdgMFq8fvpPHfPo3ixlVuGG186RkgXwpOfjxLC/Yq/7D7r7ZvsxQGHXILH5OwVbdTm9CK
+	W0ee4yigzQct11vtkV7GjPTogIzFwkxQWIue4Wzzzrm7/PJLl1HibYe19wXIwbvVYzAs7RR5Jaq
+	oVRQ43L52/Rq3Ao/yB2sTXFB+eYH3u5JQc/KP1WITzDE6rj3jCJ+XmSc6Vy5I9KAt4P9bCZQzNF
+	pA8gQhAocQsrsSsNZy95IY
+X-Google-Smtp-Source: AGHT+IFLdFLDnkXmyR9//mdmtR2QUfWftcs/5AQACkI3TrR2yNt4BWtpKvaLdxjNPbOmqvVSW4pAig==
+X-Received: by 2002:a05:600c:8b42:b0:45b:7e86:7378 with SMTP id 5b1f17b1804b1-45b8558be6emr167500725e9.34.1757065207644;
+        Fri, 05 Sep 2025 02:40:07 -0700 (PDT)
+Received: from mail.gmail.com (2a01cb0889497e00d0182e7ce2f9547e.ipv6.abo.wanadoo.fr. [2a01:cb08:8949:7e00:d018:2e7c:e2f9:547e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd296ed51sm61343195e9.3.2025.09.05.02.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 02:40:06 -0700 (PDT)
+Date: Fri, 5 Sep 2025 11:40:05 +0200
+From: Paul Chaignon <paul.chaignon@gmail.com>
+To: syzbot <syzbot+27689b73d9cffb8c6bca@syzkaller.appspotmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev
+Subject: Re: [syzbot] [bpf?] WARNING in bpf_check (5)
+Message-ID: <aLqv9eV-wDfZj-gI@mail.gmail.com>
+References: <68ba3053.a00a0220.eb3d.000d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817143024.165471-1-biju.das.jz@bp.renesas.com> <20250817143024.165471-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250817143024.165471-2-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Sep 2025 11:39:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW3_-3qC99htcUT-R0wTmXuLhLE=Tx5yKUeG-KiD+x3zA@mail.gmail.com>
-X-Gm-Features: Ac12FXwjNxsXkzEiflViwn8T6QWVO6M_cvlX8tpA1Zz-WWT4TeCb2FyJuC6r-iY
-Message-ID: <CAMuHMdW3_-3qC99htcUT-R0wTmXuLhLE=Tx5yKUeG-KiD+x3zA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: renesas: rzg2l: Fix OEN resume
-To: Biju <biju.das.au@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68ba3053.a00a0220.eb3d.000d.GAE@google.com>
 
-Hi Biju,
+On Thu, Sep 04, 2025 at 05:35:31PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10dc087c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=27689b73d9cffb8c6bca
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16342134580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10e75a42580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+27689b73d9cffb8c6bca@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> verifier bug: not inlined functions bpf_perf_event_read#22 is missing func(1)
+> WARNING: CPU: 1 PID: 6725 at kernel/bpf/verifier.c:22840 do_misc_fixups kernel/bpf/verifier.c:22838 [inline]
+> WARNING: CPU: 1 PID: 6725 at kernel/bpf/verifier.c:22840 bpf_check+0x1559c/0x15d8c kernel/bpf/verifier.c:24742
 
-On Sun, 17 Aug 2025 at 16:30, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> The write to PFC_OEN register is controlled by the write protect register
-> (PWPR). Currently OEN register write in resume() is done without enabling
-> the write access in PWPR leading to incorrect operation.
->
-> Fixes: cd39805be85b ("pinctrl: renesas: rzg2l: Unify OEN handling across RZ/{G2L,V2H,V2N}")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+This one was already reported as
+https://syzkaller.appspot.com/bug?extid=a9ed3d9132939852d0df and fixed
+in e4414b01c1cd ("bpf: Check the helper function is valid in
+get_helper_proto") (in bpf tree).
 
-Thanks for your patch!
+#syz dup: [syzbot] [bpf?] WARNING in do_misc_fixups
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.18.
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-
-> @@ -3174,7 +3176,15 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
->         }
->
->         writeb(cache->qspi, pctrl->base + QSPI);
-> +       spin_lock_irqsave(&pctrl->lock, flags);
-> +       if (pctrl->data->hwcfg->oen_pwpr_lock) {
-> +               pwpr = readb(pctrl->base + regs->pwpr);
-> +               writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
-> +       }
->         writeb(cache->oen, pctrl->base + pctrl->data->hwcfg->regs.oen);
-> +       if (pctrl->data->hwcfg->oen_pwpr_lock)
-> +               writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
-> +       spin_unlock_irqrestore(&pctrl->lock, flags);
->         for (u8 i = 0; i < 2; i++) {
->                 if (regs->sd_ch)
->                         writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
-
-Would you mind if I moved the spin_*lock* calls inside the if-statements
-while applying?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+[...]
 
