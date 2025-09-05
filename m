@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-802830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EBCB4577C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:16:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9528DB45781
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DD57B14F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696D77C4AD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C676634AAFA;
-	Fri,  5 Sep 2025 12:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C339E34DCEF;
+	Fri,  5 Sep 2025 12:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="14uhMAOG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mP45w36u"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tGsK9NcW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="drrTUPEo"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F031135083F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B234334DCEA
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074545; cv=none; b=XcSR7GPj2znoRCe8SWVc7yVoD3x8fR3pN7UZvNmQphF//qlVkovmF3iHwFPUQplmyBrQhZdTwIULNsP4FZwrL3GCz1yBY8GbC8l1Oy5Tb3W1rWY8M0sVH11HHIZaBTe+KPYIeUkmqbMuTA0HkV/DCutJQe/6FqDjUHprkaFywGQ=
+	t=1757074546; cv=none; b=T2kwat8PzQsh6mte59fywSCeP3gAOQ6xf/9ux1GV+muanqLVrU+/YY6lelykt47Le3neTUqnLIBaT7F7zepLRapLtDokiogzY9+gjwVZGqg+DA+KtnA7Njpx6bOR5HOuYO/rcO4tR1Yfu8ggP0KDVkOaT1T/WywzTtg++7lKmEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074545; c=relaxed/simple;
-	bh=oOhQBG9xl2aBxJBwS3jmV/5r98KsvhPXxdqEA1mK1cM=;
+	s=arc-20240116; t=1757074546; c=relaxed/simple;
+	bh=nVzmx+VBFMAIeK1xZkch6zN41rKSSM7fSfVwTKYfqmw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KxAkc2yuyvTUc6KZiy13buNBd2kfaj07Gj6T3V479+MfqupKuabe+EFjLIq5gHdqZX99isXnvaGIm2JWneso3EV9y8qNGSiXVKF7VZCiuuwWyOHKV/N43VqmjxB4YZPj+yVLIhNOgRJBNEbUqlnvrOyNSc1wXAzm1T5P26osDFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=14uhMAOG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mP45w36u; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=OHL+rAN8LNXkkTlePQ5GCJ6T4xkncky+Foyf98YYq4QDZ1j3dAb+IaWtwXfihryU7d7aQFjTfm1dPYXr4zhLRv32oI6XfwU42ExhuhkKEP4K6xlPXNewBbT3lLkTzkKLcWjoaY27JIxspmD3QxMItHrL9PH9CqEm2gtxE+xMD7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tGsK9NcW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=drrTUPEo; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757074539;
+	s=2020; t=1757074542;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NVJGugy/teKFrnKZ5pz/A1xp+ILKbeCzJreQ3rnKiec=;
-	b=14uhMAOGQHkLu25hVtspzZoX0cIPmKm1raInZjOBJUcUOIOTqUk69yOQjHVGPdwVe4pkmO
-	VBiNES/iMVPfVaCso1ro3bwyq03TVzszXwjcUNSvusQg+M81EfX3IGOU5hYxqZ0CDQvGwA
-	oT31Lan++Ccwck3745lgI3i1JR7vvWpGimFhqjhzfsAmho4J7tjjsr/1TYg2c3aT6PYa+S
-	rbpKq4TQqTddTYRrN4b9aBN1nWEiIIx1Bs+pZ4uxV20/+31RQ/JHmC3L5teQjOx4OVbL0C
-	6YodrKNjKzQN9ipgKZUsF+oWTtWmYCzV08zsZ2FA9d6NJOK3di3uH7/KSmrlrw==
+	bh=PL+ILi/B3wQ4riPW8csosjR4rJ3qnOvXyB/TuLz+BUk=;
+	b=tGsK9NcWqsQ1DpPm8Rf85bOUvwQ41FVRXgexE/tb/o0bKqs2p1XvxEnVQ5ezOu2TaB06Fz
+	7KVXww2yYZ3Q9czmfJ/M0280sxk7ZH/T6QdiWkFPL6OSgg43uXGF2RbR4zh5uJG/76Z736
+	fQucvg9gCqlXMZftT1q2IGTAuCbErwvXZnB6eZkDupFW0ZgnUeTyX/tfOqn9KSkpOgbun6
+	HIPZ3QJGGDVWLh7vTwc5NwbRud9/Pfi3YvfYVJIPltRlEOOGAGCjg2NJKwVRNyTeI8zoHM
+	5HPH2wjTe1nxnetcB1yqFrtrJpk/SSBeePQVrFAF7WDNjR1ksWRHHYTmcO4tWA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757074539;
+	s=2020e; t=1757074542;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NVJGugy/teKFrnKZ5pz/A1xp+ILKbeCzJreQ3rnKiec=;
-	b=mP45w36uNtuJkdo9GlxCl/gNcG7jWrxyLxm5q6hPB0OPj59ofmQ8Tl7/hen209+M4vd2pQ
-	wp/wZu8TVQ4JjTAw==
+	bh=PL+ILi/B3wQ4riPW8csosjR4rJ3qnOvXyB/TuLz+BUk=;
+	b=drrTUPEoIH/SyYafrTY3IOp+lQ6+ug7Kgk48XLNlflZFwha3l7oKiHQE75GnfYm24BhAVn
+	xJThLTA1C5X/jzBg==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v5 06/35] x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
-Date: Fri,  5 Sep 2025 14:14:46 +0200
-Message-ID: <20250905121515.192792-7-darwi@linutronix.de>
+Subject: [PATCH v5 07/35] x86: Introduce a centralized CPUID data model
+Date: Fri,  5 Sep 2025 14:14:47 +0200
+Message-ID: <20250905121515.192792-8-darwi@linutronix.de>
 In-Reply-To: <20250905121515.192792-1-darwi@linutronix.de>
 References: <20250905121515.192792-1-darwi@linutronix.de>
 Precedence: bulk
@@ -79,2132 +79,616 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-To centralize CPUID access across the x86 subsystem, introduce
-<asm/cpuid/leaf_types.h>.  It is generated by the x86-cpuid-db project
-and includes detailed C99 bitfield listings for all publicly known CPUID
-leaves.
+** Context
 
-Add the header to MAINTAINERS x86 CPUID database entry.
+The x86-cpuid-db project generates a C header file with full C99 bitfield
+listings for all known CPUID leaf/subleaf query outputs.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+That header is now merged by parent commits at <asm/cpuid/leaf_types.h>,
+and is in the form:
+
+    struct leaf_0x0_0 { /* CPUID(0x0).0 C99 bitfields */ };
+    ...
+    struct leaf_0x4_n { /* CPUID(0x4).n C99 bitfields */ };
+    ...
+    struct leaf_0xd_0 { /* CPUID(0xd).0 C99 bitfields */ };
+    struct leaf_0xd_1 { /* CPUID(0xd).1 C99 bitfields */ };
+    struct leaf_0xd_n { /* CPUID(0xd).n C99 bitfields */ };
+    ...
+
+** Goal
+
+Introduce a structured, size-efficient, per-CPU, CPUID data repository.
+
+Use the x86-cpuid-db auto-generated data types, and custom CPUID leaf
+parsers, to build that repository.  Given a leaf, subleaf, and index,
+provide direct memory access to the parsed and cached per-CPU CPUID
+output.
+
+** Long-term goal
+
+Remove the need for drivers and other areas in the kernel to invoke
+direct CPUID queries.  Only one place in the kernel should be allowed to
+use the CPUID instruction: the CPUID parser code.
+
+** Implementation
+
+Introduce CPUID_LEAF()/CPUID_LEAF_N() to build a compact CPUID storage
+layout in the form:
+
+    struct leaf_0x0_0		leaf_0x0_0[1];
+    struct leaf_query_info	leaf_0x0_0_info;
+
+    struct leaf_0x1_0		leaf_0x1_0[1];
+    struct leaf_query_info	leaf_0x0_0_info;
+
+    struct leaf_0x4_n		leaf_0x4_n[8];
+    struct leaf_query_info	leaf_0x4_n_info;
+    ...
+
+where each CPUID query stores its output at the designated leaf/subleaf
+array and has an associated "CPUID query info" structure.
+
+Introduce 'struct cpuid_leaves' to group all the parsed CPUID outputs and
+their metadata –in the layout above– in one structure.  Define a 'struct
+cpuid_table' to wrap it, so that global per-table CPUID data can be added
+later.  Embed 'struct cpuid_table' inside 'struct cpuinfo_x86' to ensure
+early-boot and per-CPU access through the CPU(s) capability structures.
+
+Given the data layout above, and assuming a CPU capability structure 'c',
+a macro can access CPUID(0x7) subleaf 0 parsed query output using the
+compile-time tokenization below:
+
+    const struct leaf_0x7_0 *l7_0;
+
+    l7_0 = cpuid_subleaf(c, 0x7, 0);
+                         |   |   └────────┐
+                         |   └─────────┐  |
+                         *             *  *
+                        &c.cpuid.leaf_0x7_0[0]
+
+Similarly, CPUID(0x7) subleaf 1 output can be accessed using the CPP
+tokenization:
+
+    const struct leaf_0x7_1 *l7_1;
+
+    l7_1 = cpuid_subleaf(c, 0x7, 1);
+                         |   |   └────────┐
+                         |   └─────────┐  |
+                         *             *  *
+                        &c.cpuid.leaf_0x7_1[0]
+
+which all translate to a single assembly instruction offset calculation.
+
+Use an array of CPUID output storage entries for each leaf/subleaf
+combination to accommodate leaves which produce the same output format
+for a large subleaf range.  This is typical for CPUID leaves enumerating
+hierarchical objects; e.g. CPUID(0x4) cache topology enumeration,
+CPUID(0xd) XSAVE enumeration, and CPUID(0x12) SGX Enclave Page Cache
+enumeration.
+
+In the CPUID table layout above, CPUID(0x4) has 8 storage entries to
+accomodate suleaves 0 to 7, which all have the same bitfield's output
+format.  With that, CPUID(0x4) can be accessed using the compile time
+tokenization:
+
+    const struct leaf_0x4_n *l4_0, *l4_1, l4_2;
+
+    l4_0 = cpuid_subleaf_n(c, 0x4, 0);
+                           |   |   └──────────┐
+                           |   └─────────┐    |
+                           *             *    v
+                          &c.cpuid.leaf_0x4_n[0]
+
+    l4_1 = cpuid_subleaf_n(c, 0x4, 1);
+                           |   |   └──────────┐
+                           |   └─────────┐    |
+                           *             *    v
+                          &c.cpuid.leaf_0x4_n[1]
+
+    l4_2 = cpuid_subleaf_n(c, 0x4, 2);
+                           |   |   └──────────┐
+                           |   └─────────┐    |
+                           *             *    v
+                          &c.cpuid.leaf_0x4_n[2]
+
+where dynamic leaf types are marked by their "_n" suffix and the indices
+0, 1, 2 above can be passed dynamically.  This is by design: hierarchical
+CPUID enumeration usually passes the CPUID subleaf dynamically; e.g.,
+within a for loop.
+
+For each of the CPUID leaf/subleaf output storage entries, attach a
+'struct leaf_query_info' instance.  It is to be set by the CPUID parser
+while filling the CPUID tables.  For now, this info structure has one
+element: the number of filled slots at the respective output storage
+array.
+
+** Call-site APIs
+
+Introduce below APIs for CPUID leaves with static subleaves:
+
+    cpuid_leaf(_cpuinfo, _leaf)
+    cpuid_leaf_raw(_cpuinfo, _leaf)
+    cpuid_subleaf(_cpuinfo, _leaf, _subleaf)
+
+and below APIs for CPUID leaves with dynamic subleaves:
+
+    cpuid_subleaf_n(_cpuinfo, _leaf, _idx)
+    cpuid_subleaf_n_raw(_cpuinfo, _leaf, _idx)
+    cpuid_subleaf_count(_cpuinfo, _leaf)
+
+At <asm/cpuid/api.h>, add a clear rationale for why call sites should use
+the above APIs instead of directly invoking CPUID queries.
+
+** Next steps
+
+For now, define entries for CPUID(0x0) and CPUID(0x1) in the CPUID table.
+
+Generic CPUID parser logic to fill the CPUID tables, along with more
+CPUID leaves support, will be added next.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>	# CPUID data model
+Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>	# x86-cpuid-db schema
+Suggested-by: Borislav Petkov <bp@alien8.de>		# Early CPUID centralization drafts
+Suggested-by: Ingo Molnar <mingo@kernel.org>		# CPUID APIs restructuring
+Suggested-by: Sean Christopherson <seanjc@google.com>	# Dynamic leaves CPUID API
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Link: https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/blob/v2.5/CHANGELOG.rst
+Link: https://lore.kernel.org/lkml/874ixernra.ffs@tglx
+Link: https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+Link: https://lore.kernel.org/lkml/aBnSgu_JyEi8fvog@gmail.com
+Link: https://lore.kernel.org/lkml/aJ9TbaNMgaplKSbH@google.com
 ---
- MAINTAINERS                             |    1 +
- arch/x86/include/asm/cpuid/leaf_types.h | 2090 +++++++++++++++++++++++
- 2 files changed, 2091 insertions(+)
- create mode 100644 arch/x86/include/asm/cpuid/leaf_types.h
+ arch/x86/include/asm/cpuid/api.h   | 273 +++++++++++++++++++++++++++++
+ arch/x86/include/asm/cpuid/types.h | 125 +++++++++++++
+ arch/x86/include/asm/processor.h   |   2 +
+ 3 files changed, 400 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6dcfbd11efef..0804bb080908 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27270,6 +27270,7 @@ R:	Ahmed S. Darwish <darwi@linutronix.de>
- L:	x86-cpuid@lists.linux.dev
- S:	Maintained
- W:	https://x86-cpuid.org
-+F:	arch/x86/include/asm/cpuid/leaf_types.h
- F:	tools/arch/x86/kcpuid/
+diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
+index 2b9750cc8a75..dbe94c8c4900 100644
+--- a/arch/x86/include/asm/cpuid/api.h
++++ b/arch/x86/include/asm/cpuid/api.h
+@@ -289,4 +289,277 @@ static inline bool cpuid_amd_hygon_has_l3_cache(void)
+ 	return cpuid_edx(0x80000006);
+ }
  
- X86 ENTRY CODE
-diff --git a/arch/x86/include/asm/cpuid/leaf_types.h b/arch/x86/include/asm/cpuid/leaf_types.h
-new file mode 100644
-index 000000000000..d141138d4bc0
---- /dev/null
-+++ b/arch/x86/include/asm/cpuid/leaf_types.h
-@@ -0,0 +1,2090 @@
-+/* SPDX-License-Identifier: MIT */
-+/* Generator: x86-cpuid-db v2.5 */
-+
 +/*
-+ * Auto-generated file.
-+ * Please submit all updates and bugfixes to https://x86-cpuid.org
++ * 'struct cpuid_leaves' accessors (without sanity checks):
++ *
++ * For internal use by the CPUID parser.
 + */
 +
-+#ifndef _ASM_X86_CPUID_LEAF_TYPES
-+#define _ASM_X86_CPUID_LEAF_TYPES
-+
-+#include <linux/types.h>
++/*
++ * Return constified pointers for all call-site APIs
++ */
++#define __const_ptr(_ptr)							\
++	((const __typeof__(*(_ptr)) *)(_ptr))
 +
 +/*
-+ * Leaf 0x0
-+ * Maximum standard leaf + CPU vendor string
++ * __cpuid_leaves_subleaf() - Get parsed CPUID output (without sanity checks)
++ * @_leaves:	&struct cpuid_leaves instance
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ * @_subleaf:	CPUID subleaf, in compile-time decimal format
 + */
-+
-+struct leaf_0x0_0 {
-+	// eax
-+	u32	max_std_leaf			: 32; // Highest standard CPUID leaf
-+	// ebx
-+	u32	cpu_vendorid_0			: 32; // CPU vendor ID string bytes 0 - 3
-+	// ecx
-+	u32	cpu_vendorid_2			: 32; // CPU vendor ID string bytes 8 - 11
-+	// edx
-+	u32	cpu_vendorid_1			: 32; // CPU vendor ID string bytes 4 - 7
-+};
++#define __cpuid_leaves_subleaf(_leaves, _leaf, _subleaf)			\
++	__const_ptr(&((_leaves)->leaf_ ## _leaf ## _ ## _subleaf)[0])
 +
 +/*
-+ * Leaf 0x1
-+ * CPU FMS (Family/Model/Stepping) + standard feature flags
++ * __cpuid_leaves_subleaf_n() - Get parsed CPUID output for dynamic subleaf (without checks)
++ * @_leaves:	&struct cpuid_leaves instance
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ * @_index:	Index within the dynamic subleaf storage array
 + */
-+
-+struct leaf_0x1_0 {
-+	// eax
-+	u32	stepping			:  4, // Stepping ID
-+		base_model			:  4, // Base CPU model ID
-+		base_family_id			:  4, // Base CPU family ID
-+		cpu_type			:  2, // CPU type
-+						:  2, // Reserved
-+		ext_model			:  4, // Extended CPU model ID
-+		ext_family			:  8, // Extended CPU family ID
-+						:  4; // Reserved
-+	// ebx
-+	u32	brand_id			:  8, // Brand index
-+		clflush_size			:  8, // CLFLUSH instruction cache line size
-+		n_logical_cpu			:  8, // Logical CPU count
-+		local_apic_id			:  8; // Initial local APIC physical ID
-+	// ecx
-+	u32	sse3				:  1, // Streaming SIMD Extensions 3 (SSE3)
-+		pclmulqdq			:  1, // PCLMULQDQ instruction support
-+		dtes64				:  1, // 64-bit DS save area
-+		monitor				:  1, // MONITOR/MWAIT support
-+		dscpl				:  1, // CPL Qualified Debug Store
-+		vmx				:  1, // Virtual Machine Extensions
-+		smx				:  1, // Safer Mode Extensions
-+		est				:  1, // Enhanced Intel SpeedStep
-+		tm2				:  1, // Thermal Monitor 2
-+		ssse3				:  1, // Supplemental SSE3
-+		cntxt_id			:  1, // L1 Context ID
-+		sdbg				:  1, // Silicon Debug
-+		fma				:  1, // FMA extensions using YMM state
-+		cx16				:  1, // CMPXCHG16B instruction support
-+		xtpr_update			:  1, // xTPR Update Control
-+		pdcm				:  1, // Perfmon and Debug Capability
-+						:  1, // Reserved
-+		pcid				:  1, // Process-context identifiers
-+		dca				:  1, // Direct Cache Access
-+		sse4_1				:  1, // SSE4.1
-+		sse4_2				:  1, // SSE4.2
-+		x2apic				:  1, // X2APIC support
-+		movbe				:  1, // MOVBE instruction support
-+		popcnt				:  1, // POPCNT instruction support
-+		tsc_deadline_timer		:  1, // APIC timer one-shot operation
-+		aes				:  1, // AES instructions
-+		xsave				:  1, // XSAVE (and related instructions) support
-+		osxsave				:  1, // XSAVE (and related instructions) are enabled by OS
-+		avx				:  1, // AVX instructions support
-+		f16c				:  1, // Half-precision floating-point conversion support
-+		rdrand				:  1, // RDRAND instruction support
-+		guest_status			:  1; // System is running as guest; (para-)virtualized system
-+	// edx
-+	u32	fpu				:  1, // Floating-Point Unit on-chip (x87)
-+		vme				:  1, // Virtual-8086 Mode Extensions
-+		de				:  1, // Debugging Extensions
-+		pse				:  1, // Page Size Extension
-+		tsc				:  1, // Time Stamp Counter
-+		msr				:  1, // Model-Specific Registers (RDMSR and WRMSR support)
-+		pae				:  1, // Physical Address Extensions
-+		mce				:  1, // Machine Check Exception
-+		cx8				:  1, // CMPXCHG8B instruction
-+		apic				:  1, // APIC on-chip
-+						:  1, // Reserved
-+		sep				:  1, // SYSENTER, SYSEXIT, and associated MSRs
-+		mtrr				:  1, // Memory Type Range Registers
-+		pge				:  1, // Page Global Extensions
-+		mca				:  1, // Machine Check Architecture
-+		cmov				:  1, // Conditional Move Instruction
-+		pat				:  1, // Page Attribute Table
-+		pse36				:  1, // Page Size Extension (36-bit)
-+		psn				:  1, // Processor Serial Number
-+		clflush				:  1, // CLFLUSH instruction
-+						:  1, // Reserved
-+		ds				:  1, // Debug Store
-+		acpi				:  1, // Thermal monitor and clock control
-+		mmx				:  1, // MMX instructions
-+		fxsr				:  1, // FXSAVE and FXRSTOR instructions
-+		sse				:  1, // SSE instructions
-+		sse2				:  1, // SSE2 instructions
-+		selfsnoop			:  1, // Self Snoop
-+		htt				:  1, // Hyper-threading
-+		tm				:  1, // Thermal Monitor
-+		ia64				:  1, // Legacy IA-64 (Itanium) support bit, now reserved
-+		pbe				:  1; // Pending Break Enable
-+};
++#define __cpuid_leaves_subleaf_n(_leaves, _leaf, _index)			\
++	__const_ptr(&((_leaves)->leaf_ ## _leaf ## _ ## n)[_index])
 +
 +/*
-+ * Leaf 0x2
-+ * Intel cache and TLB information one-byte descriptors
++ * __cpuid_leaves_subleaf_info() - Get CPUID query info for @_leaf/@_subleaf
++ * @_leaves:	&struct cpuid_leaves instance
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ * @_subleaf:	CPUID subleaf, in compile-time decimal format, or just 'n' for
++ *		leaves with a dynamic subleaf range.
 + */
-+
-+struct leaf_0x2_0 {
-+	// eax
-+	u32	iteration_count			:  8, // Number of times this leaf must be queried
-+		desc1				:  8, // Descriptor #1
-+		desc2				:  8, // Descriptor #2
-+		desc3				:  7, // Descriptor #3
-+		eax_invalid			:  1; // Descriptors 1-3 are invalid if set
-+	// ebx
-+	u32	desc4				:  8, // Descriptor #4
-+		desc5				:  8, // Descriptor #5
-+		desc6				:  8, // Descriptor #6
-+		desc7				:  7, // Descriptor #7
-+		ebx_invalid			:  1; // Descriptors 4-7 are invalid if set
-+	// ecx
-+	u32	desc8				:  8, // Descriptor #8
-+		desc9				:  8, // Descriptor #9
-+		desc10				:  8, // Descriptor #10
-+		desc11				:  7, // Descriptor #11
-+		ecx_invalid			:  1; // Descriptors 8-11 are invalid if set
-+	// edx
-+	u32	desc12				:  8, // Descriptor #12
-+		desc13				:  8, // Descriptor #13
-+		desc14				:  8, // Descriptor #14
-+		desc15				:  7, // Descriptor #15
-+		edx_invalid			:  1; // Descriptors 12-15 are invalid if set
-+};
++#define __cpuid_leaves_subleaf_info(_leaves, _leaf, _subleaf)			\
++	__const_ptr(&((_leaves)->leaf_ ## _leaf ## _ ## _subleaf ## _ ## info))
 +
 +/*
-+ * Leaf 0x4
-+ * Intel deterministic cache parameters
++ * 'struct cpuid_table' accessors (with sanity checks):
++ *
++ * For internal use by the CPUID parser.
 + */
 +
-+struct leaf_0x4_n {
-+	// eax
-+	u32	cache_type			:  5, // Cache type field
-+		cache_level			:  3, // Cache level (1-based)
-+		cache_self_init			:  1, // Self-initializing cache level
-+		fully_associative		:  1, // Fully-associative cache
-+						:  4, // Reserved
-+		num_threads_sharing		: 12, // Number logical CPUs sharing this cache
-+		num_cores_on_die		:  6; // Number of cores in the physical package
-+	// ebx
-+	u32	cache_linesize			: 12, // System coherency line size (0-based)
-+		cache_npartitions		: 10, // Physical line partitions (0-based)
-+		cache_nways			: 10; // Ways of associativity (0-based)
-+	// ecx
-+	u32	cache_nsets			: 31, // Cache number of sets (0-based)
-+						:  1; // Reserved
-+	// edx
-+	u32	wbinvd_rll_no_guarantee		:  1, // WBINVD/INVD not guaranteed for Remote Lower-Level caches
-+		ll_inclusive			:  1, // Cache is inclusive of Lower-Level caches
-+		complex_indexing		:  1, // Not a direct-mapped cache (complex function)
-+						: 29; // Reserved
-+};
++#define __cpuid_table_nr_filled_subleaves(_table, _leaf, _subleaf)				\
++	__cpuid_leaves_subleaf_info(&((_table)->leaves), _leaf, _subleaf)->nr_entries
 +
-+#define LEAF_0x4_SUBLEAF_N_FIRST		0
-+#define LEAF_0x4_SUBLEAF_N_LAST			31
++#define __cpuid_table_dynamic_subleaf_storage(_table, _leaf)					\
++	ARRAY_SIZE((_table)->leaves.leaf_ ## _leaf ## _n)
++
++#define __cpuid_table_invalid_dynamic_subleaf(_table, _leaf, _subleaf)				\
++	(((_subleaf) < (__cpuid_leaf_first_dynamic_subleaf(_leaf))) ||				\
++	 ((_subleaf) > (__cpuid_leaf_first_dynamic_subleaf(_leaf) +				\
++			__cpuid_table_dynamic_subleaf_storage(_table, _leaf) - 1)))
 +
 +/*
-+ * Leaf 0x5
-+ * MONITOR/MWAIT instructions
++ * __cpuid_table_subleaf() - Get parsed CPUID output (with sanity checks)
++ * @_table:	&struct cpuid_table instance
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ * @_subleaf:	CPUID subleaf, in compile-time decimal format
++ *
++ * A return of NULL implies that the CPUID parser did not fill that leaf.  This
++ * can happen due to the conditions listed at cpuid_leaf().
 + */
-+
-+struct leaf_0x5_0 {
-+	// eax
-+	u32	min_mon_size			: 16, // Smallest monitor-line size, in bytes
-+						: 16; // Reserved
-+	// ebx
-+	u32	max_mon_size			: 16, // Largest monitor-line size, in bytes
-+						: 16; // Reserved
-+	// ecx
-+	u32	mwait_ext			:  1, // MONITOR/MWAIT extensions
-+		mwait_irq_break			:  1, // Interrupts as a break event for MWAIT
-+						: 30; // Reserved
-+	// edx
-+	u32	n_c0_substates			:  4, // Number of C0 sub C-states
-+		n_c1_substates			:  4, // Number of C1 sub C-states
-+		n_c2_substates			:  4, // Number of C2 sub C-states
-+		n_c3_substates			:  4, // Number of C3 sub C-states
-+		n_c4_substates			:  4, // Number of C4 sub C-states
-+		n_c5_substates			:  4, // Number of C5 sub C-states
-+		n_c6_substates			:  4, // Number of C6 sub C-states
-+		n_c7_substates			:  4; // Number of C7 sub C-states
-+};
++#define __cpuid_table_subleaf(_table, _leaf, _subleaf)						\
++({												\
++	unsigned int ____f = __cpuid_table_nr_filled_subleaves(_table, _leaf, _subleaf);	\
++												\
++	/* CPUID parser fills exactly one entry for static leaves */				\
++	(____f != 1) ? NULL : __cpuid_leaves_subleaf(&((_table)->leaves), _leaf, _subleaf);	\
++})
 +
 +/*
-+ * Leaf 0x6
-+ * Thermal and power management
++ * __cpuid_table_subleaf_n() - Get parsed CPUID output (with sanity checks)
++ * @_table:	&struct cpuid_table instance
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ * @_subleaf:	CPUID subleaf, which can be given dynamically
++ *
++ * A return of NULL implies that the CPUID parser did not fill this leaf, or that
++ * the given dynamic subleaf value is out of range.  Check cpuid_subleaf_n().
 + */
-+
-+struct leaf_0x6_0 {
-+	// eax
-+	u32	digital_temp			:  1, // Digital temperature sensor
-+		turbo_boost			:  1, // Intel Turbo Boost
-+		lapic_timer_always_on		:  1, // Always-Running APIC Timer (not affected by p-state)
-+						:  1, // Reserved
-+		power_limit_event		:  1, // Power Limit Notification (PLN) event
-+		ecmd				:  1, // Clock modulation duty cycle extension
-+		package_thermal			:  1, // Package thermal management
-+		hwp_base_regs			:  1, // HWP (Hardware P-states) base registers
-+		hwp_notify			:  1, // HWP notification (IA32_HWP_INTERRUPT MSR)
-+		hwp_activity_window		:  1, // HWP activity window (IA32_HWP_REQUEST[bits 41:32])
-+		hwp_energy_perf_pr		:  1, // HWP Energy Performance Preference
-+		hwp_package_req			:  1, // HWP Package Level Request
-+						:  1, // Reserved
-+		hdc_base_regs			:  1, // HDC base registers
-+		turbo_boost_3_0			:  1, // Intel Turbo Boost Max 3.0
-+		hwp_capabilities		:  1, // HWP Highest Performance change
-+		hwp_peci_override		:  1, // HWP PECI override
-+		hwp_flexible			:  1, // Flexible HWP
-+		hwp_fast			:  1, // IA32_HWP_REQUEST MSR fast access mode
-+		hw_feedback			:  1, // HW_FEEDBACK MSRs
-+		hwp_ignore_idle			:  1, // Ignoring idle logical CPU HWP request is supported
-+						:  2, // Reserved
-+		thread_director			:  1, // Intel thread director
-+		therm_interrupt_bit25		:  1, // IA32_THERM_INTERRUPT MSR bit 25
-+						:  7; // Reserved
-+	// ebx
-+	u32	n_therm_thresholds		:  4, // Digital thermometer thresholds
-+						: 28; // Reserved
-+	// ecx
-+	u32	aperf_mperf			:  1, // MPERF/APERF MSRs (effective frequency interface)
-+						:  2, // Reserved
-+		energy_perf_bias		:  1, // IA32_ENERGY_PERF_BIAS MSR
-+						:  4, // Reserved
-+		thrd_director_nclasses		:  8, // Number of classes, Intel thread director
-+						: 16; // Reserved
-+	// edx
-+	u32	perfcap_reporting		:  1, // Performance capability reporting
-+		encap_reporting			:  1, // Energy efficiency capability reporting
-+						:  6, // Reserved
-+		feedback_sz			:  4, // Feedback interface structure size, in 4K pages
-+						:  4, // Reserved
-+		this_lcpu_hwfdbk_idx		: 16; // This logical CPU hardware feedback interface index
-+};
++#define __cpuid_table_subleaf_n(_table, _leaf, _subleaf)					\
++({												\
++	unsigned int ____i = (_subleaf) - __cpuid_leaf_first_dynamic_subleaf(_leaf);		\
++	unsigned int ____f = __cpuid_table_nr_filled_subleaves(_table, _leaf, n);		\
++												\
++	/* CPUID parser might not have filled the entire dynamic subleaf range */		\
++	((____i >= ____f) || __cpuid_table_invalid_dynamic_subleaf(_table, _leaf, _subleaf)) ?	\
++		NULL : __cpuid_leaves_subleaf_n(&((_table)->leaves), _leaf, ____i);		\
++})
 +
 +/*
-+ * Leaf 0x7
-+ * Extended CPU features
++ * Compile-time checks for leaves with a dynamic subleaf range:
 + */
 +
-+struct leaf_0x7_0 {
-+	// eax
-+	u32	leaf7_n_subleaves		: 32; // Number of leaf 0x7 subleaves
-+	// ebx
-+	u32	fsgsbase			:  1, // FSBASE/GSBASE read/write
-+		tsc_adjust			:  1, // IA32_TSC_ADJUST MSR
-+		sgx				:  1, // Intel SGX (Software Guard Extensions)
-+		bmi1				:  1, // Bit manipulation extensions group 1
-+		hle				:  1, // Hardware Lock Elision
-+		avx2				:  1, // AVX2 instruction set
-+		fdp_excptn_only			:  1, // FPU Data Pointer updated only on x87 exceptions
-+		smep				:  1, // Supervisor Mode Execution Protection
-+		bmi2				:  1, // Bit manipulation extensions group 2
-+		erms				:  1, // Enhanced REP MOVSB/STOSB
-+		invpcid				:  1, // INVPCID instruction (Invalidate Processor Context ID)
-+		rtm				:  1, // Intel restricted transactional memory
-+		pqm				:  1, // Intel RDT-CMT / AMD Platform-QoS cache monitoring
-+		zero_fcs_fds			:  1, // Deprecated FPU CS/DS (stored as zero)
-+		mpx				:  1, // Intel memory protection extensions
-+		rdt_a				:  1, // Intel RDT / AMD Platform-QoS Enforcement
-+		avx512f				:  1, // AVX-512 foundation instructions
-+		avx512dq			:  1, // AVX-512 double/quadword instructions
-+		rdseed				:  1, // RDSEED instruction
-+		adx				:  1, // ADCX/ADOX instructions
-+		smap				:  1, // Supervisor mode access prevention
-+		avx512ifma			:  1, // AVX-512 integer fused multiply add
-+						:  1, // Reserved
-+		clflushopt			:  1, // CLFLUSHOPT instruction
-+		clwb				:  1, // CLWB instruction
-+		intel_pt			:  1, // Intel processor trace
-+		avx512pf			:  1, // AVX-512 prefetch instructions
-+		avx512er			:  1, // AVX-512 exponent/reciprocal instructions
-+		avx512cd			:  1, // AVX-512 conflict detection instructions
-+		sha				:  1, // SHA/SHA256 instructions
-+		avx512bw			:  1, // AVX-512 byte/word instructions
-+		avx512vl			:  1; // AVX-512 VL (128/256 vector length) extensions
-+	// ecx
-+	u32	prefetchwt1			:  1, // PREFETCHWT1 (Intel Xeon Phi only)
-+		avx512vbmi			:  1, // AVX-512 Vector byte manipulation instructions
-+		umip				:  1, // User mode instruction protection
-+		pku				:  1, // Protection keys for user-space
-+		ospke				:  1, // OS protection keys enable
-+		waitpkg				:  1, // WAITPKG instructions
-+		avx512_vbmi2			:  1, // AVX-512 vector byte manipulation instructions group 2
-+		cet_ss				:  1, // CET shadow stack features
-+		gfni				:  1, // Galois field new instructions
-+		vaes				:  1, // Vector AES instructions
-+		vpclmulqdq			:  1, // VPCLMULQDQ 256-bit instruction
-+		avx512_vnni			:  1, // Vector neural network instructions
-+		avx512_bitalg			:  1, // AVX-512 bitwise algorithms
-+		tme				:  1, // Intel total memory encryption
-+		avx512_vpopcntdq		:  1, // AVX-512: POPCNT for vectors of DWORD/QWORD
-+						:  1, // Reserved
-+		la57				:  1, // 57-bit linear addresses (five-level paging)
-+		mawau_val_lm			:  5, // BNDLDX/BNDSTX MAWAU value in 64-bit mode
-+		rdpid				:  1, // RDPID instruction
-+		key_locker			:  1, // Intel key locker
-+		bus_lock_detect			:  1, // OS bus-lock detection
-+		cldemote			:  1, // CLDEMOTE instruction
-+						:  1, // Reserved
-+		movdiri				:  1, // MOVDIRI instruction
-+		movdir64b			:  1, // MOVDIR64B instruction
-+		enqcmd				:  1, // Enqueue stores (ENQCMD{,S})
-+		sgx_lc				:  1, // Intel SGX launch configuration
-+		pks				:  1; // Protection keys for supervisor-mode pages
-+	// edx
-+	u32					:  1, // Reserved
-+		sgx_keys			:  1, // Intel SGX attestation services
-+		avx512_4vnniw			:  1, // AVX-512 neural network instructions
-+		avx512_4fmaps			:  1, // AVX-512 multiply accumulation single precision
-+		fsrm				:  1, // Fast short REP MOV
-+		uintr				:  1, // User interrupts
-+						:  2, // Reserved
-+		avx512_vp2intersect		:  1, // VP2INTERSECT{D,Q} instructions
-+		srdbs_ctrl			:  1, // SRBDS mitigation MSR
-+		md_clear			:  1, // VERW MD_CLEAR microcode
-+		rtm_always_abort		:  1, // XBEGIN (RTM transaction) always aborts
-+						:  1, // Reserved
-+		tsx_force_abort			:  1, // MSR TSX_FORCE_ABORT, RTM_ABORT bit
-+		serialize			:  1, // SERIALIZE instruction
-+		hybrid_cpu			:  1, // The CPU is identified as a 'hybrid part'
-+		tsxldtrk			:  1, // TSX suspend/resume load address tracking
-+						:  1, // Reserved
-+		pconfig				:  1, // PCONFIG instruction
-+		arch_lbr			:  1, // Intel architectural LBRs
-+		cet_ibt				:  1, // CET indirect branch tracking
-+						:  1, // Reserved
-+		amx_bf16			:  1, // AMX-BF16: tile bfloat16
-+		avx512_fp16			:  1, // AVX-512 FP16 instructions
-+		amx_tile			:  1, // AMX-TILE: tile architecture
-+		amx_int8			:  1, // AMX-INT8: tile 8-bit integer
-+		spec_ctrl			:  1, // Speculation Control (IBRS/IBPB: indirect branch restrictions)
-+		intel_stibp			:  1, // Single thread indirect branch predictors
-+		flush_l1d			:  1, // FLUSH L1D cache: IA32_FLUSH_CMD MSR
-+		arch_capabilities		:  1, // Intel IA32_ARCH_CAPABILITIES MSR
-+		core_capabilities		:  1, // IA32_CORE_CAPABILITIES MSR
-+		spec_ctrl_ssbd			:  1; // Speculative store bypass disable
++#define __cpuid_assert_dynamic_subleaves(_cpuinfo, _leaf)					\
++	static_assert(__cpuid_table_dynamic_subleaf_storage(&(_cpuinfo)->cpuid, _leaf) > 1)
++
++#define __cpuid_assert_dynamic_subleaf_range(_cpuinfo, _leaf, _subleaf)				\
++	BUILD_BUG_ON(__builtin_constant_p(_subleaf) &&						\
++		     __cpuid_table_invalid_dynamic_subleaf(&(_cpuinfo)->cpuid, _leaf, _subleaf))
++
++/*
++ *                     CPUID Parser Call-site APIs
++ *
++ * Call sites should use below APIs instead of invoking direct CPUID queries.
++ *
++ * Benefits include:
++ *
++ * - Return CPUID output as typed C structures that are auto-generated from a
++ *   centralized database (see <asm/cpuid/leaf_types.h).  Such data types have a
++ *   full C99 bitfield layout per CPUID leaf/subleaf combination.  Call sites
++ *   can thus avoid doing ugly and cryptic bitwise operations on raw CPUID data.
++ *
++ * - Return cached, per-CPU, CPUID output.  Below APIs do not invoke any CPUID
++ *   queries, thus avoiding their side effects like serialization and VM exits.
++ *   Call-site-specific hard coded constants and macros for caching CPUID query
++ *   outputs can also be avoided.
++ *
++ * - Return sanitized CPUID data.  Below APIs return NULL if the given CPUID
++ *   leaf/subleaf input is not supported by hardware, or if the hardware CPUID
++ *   output was deemed invalid by the CPUID parser.  This centralizes all CPUID
++ *   data sanitization in one place (the kernel's CPUID parser.)
++ *
++ * - A centralized global view of system CPUID data.  Below APIs will reflect
++ *   any kernel-enforced feature masking or overrides, unlike ad hoc parsing of
++ *   raw CPUID output by drivers and individual call sites.
++ */
++
++/*
++ * Call-site APIs for CPUID leaves with a static subleaf:
++ */
++
++/**
++ * cpuid_subleaf() - Access parsed CPUID
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format; e.g. 0x7, 0xf
++ * @_subleaf:	CPUID subleaf, in compile-time decimal format; e.g. 0, 1, 3
++ *
++ * Returns a pointer to parsed CPUID output, from the CPUID table inside
++ * @_cpuinfo, as a <cpuid/leaf_types.h> data type: 'struct leaf_0xM_N', where
++ * 0xM is the token provided at @_leaf, and N is the token provided at
++ * @_subleaf; e.g. struct leaf_0x7_0.
++ *
++ * Returns NULL if the requested CPUID @_leaf/@_subleaf query output is not
++ * present at the parsed CPUID table inside @_cpuinfo.  This can happen if:
++ *
++ * - The CPUID table inside @_cpuinfo has not yet been populated.
++ * - The CPUID table inside @_cpuinfo was populated, but the CPU does not
++ *   implement the requested CPUID @_leaf/@_subleaf combination.
++ * - The CPUID table inside @_cpuinfo was populated, but the kernel's CPUID
++ *   parser has predetermined that the requested CPUID @_leaf/@_subleaf
++ *   hardware output is invalid or unsupported.
++ *
++ * Example usage::
++ *
++ *	const struct leaf_0x7_0 *l7_0 = cpuid_subleaf(c, 0x7, 0);
++ *	if (!l7_0) {
++ *		// Handle error
++ *	}
++ *
++ *	const struct leaf_0x7_1 *l7_1 = cpuid_subleaf(c, 0x7, 1);
++ *	if (!l7_1) {
++ *		// Handle error
++ *	}
++ */
++#define cpuid_subleaf(_cpuinfo, _leaf, _subleaf)				\
++	__cpuid_table_subleaf(&(_cpuinfo)->cpuid, _leaf, _subleaf)		\
++
++/**
++ * cpuid_leaf() - Access parsed CPUID data
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format; e.g. 0x0, 0x2, 0x80000000
++ *
++ * Similar to cpuid_subleaf(), but with a CPUID subleaf = 0.
++ *
++ * Example usage::
++ *
++ *	const struct leaf_0x0_0 *l0 = cpuid_leaf(c, 0x0);
++ *	if (!l0) {
++ *		// Handle error
++ *	}
++ *
++ *	const struct leaf_0x80000000_0 *el0 = cpuid_leaf(c, 0x80000000);
++ *	if (!el0) {
++ *		// Handle error
++ *	}
++ */
++#define cpuid_leaf(_cpuinfo, _leaf)						\
++	cpuid_subleaf(_cpuinfo, _leaf, 0)
++
++/**
++ * cpuid_leaf_regs() - Access parsed CPUID data in raw format
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format
++ *
++ * Similar to cpuid_leaf(), but returns a raw 'struct cpuid_regs' pointer to
++ * the parsed CPUID data instead of a "typed" <asm/cpuid/leaf_types.h> pointer.
++ */
++#define cpuid_leaf_regs(_cpuinfo, _leaf)					\
++	((const struct cpuid_regs *)(cpuid_leaf(_cpuinfo, _leaf)))
++
++/*
++ * Call-site APIs for leaves with a dynamic subleaf range:
++ */
++
++/**
++ * cpuid_subleaf_n() - Access parsed CPUID data for leaf with dynamic subleaf range
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format; e.g. 0x4, 0x8000001d
++ * @_subleaf:	Subleaf number, which can be passed dynamically.  It must be smaller
++ *		than cpuid_subleaf_count(@_cpuinfo, @_leaf).
++ *
++ * Build-time errors will be emitted in the following cases:
++ *
++ * - @_leaf has no dynamic subleaf range.  Dynamic leaves have an '_n' data type
++ *   suffix and are listed at <asm/cpuid/types.h> using the CPUID_LEAF_N() macro.
++ *
++ * - @_subleaf is known at compile-time but is out of range.
++ *
++ * Example usage::
++ *
++ *	const struct leaf_0x4_n *l4;
++ *
++ *	for (int i = 0; i < cpuid_subleaf_count(c, 0x4); i++) {
++ *		l4 = cpuid_subleaf_n(c, 0x4, i);
++ *		if (!l4) {
++ *			// Handle error
++ *		}
++ *		...
++ *	}
++ *
++ * Beside the standard error situations detailed at cpuid_subleaf(), this
++ * macro will also return NULL if @_subleaf is out of runtime range.
++ */
++#define cpuid_subleaf_n(_cpuinfo, _leaf, _subleaf)				\
++({										\
++	__cpuid_assert_dynamic_subleaves(_cpuinfo, _leaf);			\
++	__cpuid_assert_dynamic_subleaf_range(_cpuinfo, _leaf, _subleaf);	\
++	__cpuid_table_subleaf_n(&(_cpuinfo)->cpuid, _leaf, _subleaf);		\
++})
++
++/**
++ * cpuid_subleaf_n_regs() - Access parsed CPUID data for leaf with dynamic subleaf range
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format; e.g. 0x4, 0x8000001d
++ * @_subleaf:	Subleaf number, which can be passed dynamically.  It must be smaller
++ *		than cpuid_subleaf_count(@_cpuinfo, @_leaf).
++ *
++ * Similar to cpuid_subleaf_n(), but returns a raw 'struct cpuid_regs' pointer to
++ * the parsed CPUID data instead of a "typed" <asm/cpuid/leaf_types.h> pointer.
++ */
++#define cpuid_subleaf_n_regs(_cpuinfo, _leaf, _subleaf)				\
++	((const struct cpuid_regs *)cpuid_subleaf_n(_cpuinfo, _leaf, _subleaf))
++
++/**
++ * cpuid_subleaf_count() - Number of filled subleaves for dynamic @_leaf
++ * @_cpuinfo:	CPU capability structure reference ('struct cpuinfo_x86')
++ * @_leaf:	CPUID leaf, in compile-time 0xN format; e.g. 0x4, 0x8000001d
++ *
++ * Return the number of dynamic subleaves filled by the CPUID parser for @_leaf.
++ *
++ * @_leaf must have a dynamic subleaf range.  Dynamic leaves have an '_n' type
++ * suffix and are listed at <asm/cpuid/types.h> using the CPUID_LEAF_N() macro.
++ */
++#define cpuid_subleaf_count(_cpuinfo, _leaf)					\
++({										\
++	__cpuid_assert_dynamic_subleaves(_cpuinfo, _leaf);			\
++	__cpuid_table_nr_filled_subleaves(&(_cpuinfo)->cpuid, _leaf, n);	\
++})
++
+ #endif /* _ASM_X86_CPUID_API_H */
+diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
+index 8a00364b79de..bd6e016ef035 100644
+--- a/arch/x86/include/asm/cpuid/types.h
++++ b/arch/x86/include/asm/cpuid/types.h
+@@ -5,6 +5,8 @@
+ #include <linux/build_bug.h>
+ #include <linux/types.h>
+ 
++#include <asm/cpuid/leaf_types.h>
++
+ /*
+  * Types for raw CPUID access:
+  */
+@@ -124,4 +126,127 @@ extern const struct leaf_0x2_table cpuid_0x2_table[256];
+  */
+ #define TLB_0x63_2M_4M_ENTRIES		32
+ 
++/*
++ * Types for centralized CPUID tables:
++ *
++ * For internal use by the CPUID parser.
++ */
++
++/**
++ * struct leaf_query_info - Parse info for a CPUID leaf/subleaf query
++ * @nr_entries:	Number of valid output storage entries filled by the CPUID parser
++ *
++ * In a CPUID table (struct cpuid_leaves), each CPUID leaf/subleaf query output
++ * storage entry from <cpuid/leaf_types.h> is paired with a unique instance of
++ * this type.
++ */
++struct leaf_query_info {
++	unsigned int		nr_entries;
 +};
 +
-+struct leaf_0x7_1 {
-+	// eax
-+	u32					:  4, // Reserved
-+		avx_vnni			:  1, // AVX-VNNI instructions
-+		avx512_bf16			:  1, // AVX-512 bfloat16 instructions
-+		lass				:  1, // Linear address space separation
-+		cmpccxadd			:  1, // CMPccXADD instructions
-+		arch_perfmon_ext		:  1, // ArchPerfmonExt: leaf 0x23
-+						:  1, // Reserved
-+		fzrm				:  1, // Fast zero-length REP MOVSB
-+		fsrs				:  1, // Fast short REP STOSB
-+		fsrc				:  1, // Fast Short REP CMPSB/SCASB
-+						:  4, // Reserved
-+		fred				:  1, // FRED: Flexible return and event delivery transitions
-+		lkgs				:  1, // LKGS: Load 'kernel' (userspace) GS
-+		wrmsrns				:  1, // WRMSRNS instruction (WRMSR-non-serializing)
-+		nmi_src				:  1, // NMI-source reporting with FRED event data
-+		amx_fp16			:  1, // AMX-FP16: FP16 tile operations
-+		hreset 				:  1, // HRESET (Thread director history reset)
-+		avx_ifma			:  1, // Integer fused multiply add
-+						:  2, // Reserved
-+		lam				:  1, // Linear address masking
-+		rd_wr_msrlist			:  1, // RDMSRLIST/WRMSRLIST instructions
-+						:  4; // Reserved
-+	// ebx
-+	u32	intel_ppin			:  1, // Protected processor inventory number (PPIN{,_CTL} MSRs)
-+						: 31; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					:  4, // Reserved
-+		avx_vnni_int8			:  1, // AVX-VNNI-INT8 instructions
-+		avx_ne_convert			:  1, // AVX-NE-CONVERT instructions
-+						:  2, // Reserved
-+		amx_complex			:  1, // AMX-COMPLEX instructions (starting from Granite Rapids)
-+						:  5, // Reserved
-+		prefetchit_0_1			:  1, // PREFETCHIT0/1 instructions
-+						:  3, // Reserved
-+		cet_sss				:  1, // CET supervisor shadow stacks safe to use
-+						: 13; // Reserved
-+};
++/**
++ * __CPUID_LEAF() - Define a CPUID output storage and query info entry
++ * @_name:	Struct type name of the CPUID leaf/subleaf (e.g. 'leaf_0x7_0'). Such
++ *		types are defined at <cpuid/leaf_types.h> and follow the leaf_0xM_N
++ *		format, where 0xM is the leaf and N is the subleaf.  If N is 'n' instead
++ *		of a decimal literal, then this storage entry is for a "dynamic" leaf.
++ * @_count:	Number of storage entries to allocate for this leaf/subleaf.  Static
++ *		leaves need only one entry, while dynamic leaves require more.
++ *
++ * For the given leaf/subleaf combination, define an array of CPUID output storage
++ * entries and an associated query info structure — both residing at a
++ * 'struct cpuid_leaves' instance.
++ *
++ * Use an array of storage entries to accommodate "dynamic" CPUID leaves. Such leaves
++ * have the same subleaf output format for a large subleaf range.  This is common for
++ * hierarchical enumeration; e.g., CPUID(0x4), CPUID(0x12), and CPUID(0x8000001d).
++ *
++ * The example invocation::
++ *
++ *	__CPUID_LEAF(leaf_0x7_0, 1);
++ *	__CPUID_LEAF(leaf_0x7_1, 1);
++ *
++ * generates 'struct cpuid_leaves' storage entries in the form::
++ *
++ *	struct leaf_0x7_0		leaf_0x7_0[1];
++ *	struct leaf_query_info		leaf_0x7_0_info;
++ *
++ *	struct leaf_0x7_1		leaf_0x7_1[1];
++ *	struct leaf_query_info		leaf_0x7_1_info;
++ *
++ * While the example invocation for CPUID(0x4) storage::
++ *
++ *	__CPUID_LEAF(leaf_0x4_n, 8);
++ *
++ * generates storage entries in the form::
++ *
++ *	struct leaf_0x4_n		leaf_0x4_n[8];
++ *	struct leaf_query_info		leaf_0x4_n_info;
++ *
++ * where the 'leaf_0x4_n[8]' storage array can accommodate the output of CPUID(0x4)
++ * subleaves 0 -> 7, since they all have the same output format.
++ */
++#define __CPUID_LEAF(_name, _count)				\
++	struct _name		_name[_count];			\
++	struct leaf_query_info	_name##_info
 +
-+struct leaf_0x7_2 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32	intel_psfd			:  1, // Intel predictive store forward disable
-+		ipred_ctrl			:  1, // MSR bits IA32_SPEC_CTRL.IPRED_DIS_{U,S}
-+		rrsba_ctrl			:  1, // MSR bits IA32_SPEC_CTRL.RRSBA_DIS_{U,S}
-+		ddp_ctrl			:  1, // MSR bit  IA32_SPEC_CTRL.DDPD_U
-+		bhi_ctrl			:  1, // MSR bit  IA32_SPEC_CTRL.BHI_DIS_S
-+		mcdt_no				:  1, // MCDT mitigation not needed
-+		uclock_disable			:  1, // UC-lock disable
-+						: 25; // Reserved
++/**
++ * CPUID_LEAF() - Define a 'struct cpuid_leaves' storage entry for static leaf
++ * @_leaf:	Leaf number, in compile-time 0xN format
++ * @_subleaf:	Subleaf number, in compile-time decimal format
++ *
++ * Convenience wrapper around __CPUID_LEAF().
++ */
++#define CPUID_LEAF(_leaf, _subleaf)				\
++	__CPUID_LEAF(leaf_ ## _leaf ## _ ## _subleaf, 1)
++
++#define __cpuid_leaf_first_dynamic_subleaf(_l)			\
++	LEAF_ ## _l ## _ ## SUBLEAF_N_FIRST
++#define __cpuid_leaf_last_dynamic_subleaf(_l)			\
++	LEAF_ ## _l ## _ ## SUBLEAF_N_LAST
++
++#define __cpuid_leaf_subleaf_count_min(_l)			2
++#define __cpuid_leaf_subleaf_count_max(_l)			\
++	(__cpuid_leaf_last_dynamic_subleaf(_l) - __cpuid_leaf_first_dynamic_subleaf(_l) + 1)
++
++/**
++ * CPUID_LEAF_N() - Define a 'struct cpuid_leaves' storage entry for dynamic leaf
++ * @_leaf:	Leaf number, in compile-time 0xN format
++ * @_count:	Number of storage entries to allocate for that leaf with dynamic subleaf
++ *		range.  It must not exceed the limits defined at <cpuid/leaf_types.h>.
++ *
++ * Convenience wrapper around __CPUID_LEAF().
++ */
++#define CPUID_LEAF_N(_leaf, _count)					\
++	static_assert(_count >= __cpuid_leaf_subleaf_count_min(_leaf));	\
++	static_assert(_count <= __cpuid_leaf_subleaf_count_max(_leaf));	\
++	__CPUID_LEAF(leaf_ ## _leaf ## _ ## n, _count)
++
++/*
++ * struct cpuid_leaves - Structured CPUID data repository
++ */
++struct cpuid_leaves {
++	/*		Leaf		Subleaf number (or max number of dynamic subleaves) */
++	CPUID_LEAF   (	0x0,		0  );
++	CPUID_LEAF   (	0x1,		0  );
 +};
 +
 +/*
-+ * Leaf 0x9
-+ * Intel DCA (Direct Cache Access)
++ * Types for centralized CPUID tables:
++ *
++ * For external use.
 + */
 +
-+struct leaf_0x9_0 {
-+	// eax
-+	u32	dca_enabled_in_bios		:  1, // DCA is enabled in BIOS
-+						: 31; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0xa
-+ * Intel PMU (Performance Monitoring Unit)
++/**
++ * struct cpuid_table - Per-CPU CPUID data repository
++ * @leaves:	CPUID leaf/subleaf queries output storage and metadata
++ *
++ * This is to be embedded inside 'struct cpuinfo_x86' to provide cached, parsed, and
++ * sanitized CPUID query output per CPU.  Thus removing the need for direct CPUID
++ * queries from call sites code.
 + */
-+
-+struct leaf_0xa_0 {
-+	// eax
-+	u32	pmu_version			:  8, // Performance monitoring unit version ID
-+		pmu_n_gcounters			:  8, // Number of general PMU counters per logical CPU
-+		pmu_gcounters_nbits		:  8, // Bitwidth of PMU general counters
-+		pmu_cpuid_ebx_bits		:  8; // Length of leaf 0xa EBX bit vector
-+	// ebx
-+	u32	no_core_cycle_evt		:  1, // Core cycle event not available
-+		no_insn_retired_evt		:  1, // Instruction retired event not available
-+		no_refcycle_evt			:  1, // Reference cycles event not available
-+		no_llc_ref_evt			:  1, // LLC-reference event not available
-+		no_llc_miss_evt			:  1, // LLC-misses event not available
-+		no_br_insn_ret_evt		:  1, // Branch instruction retired event not available
-+		no_br_mispredict_evt		:  1, // Branch mispredict retired event not available
-+		no_td_slots_evt			:  1, // Topdown slots event not available
-+						: 24; // Reserved
-+	// ecx
-+	u32	pmu_fcounters_bitmap		: 32; // Fixed-function PMU counters support bitmap
-+	// edx
-+	u32	pmu_n_fcounters			:  5, // Number of fixed PMU counters
-+		pmu_fcounters_nbits		:  8, // Bitwidth of PMU fixed counters
-+						:  2, // Reserved
-+		anythread_depr			:  1, // AnyThread deprecation
-+						: 16; // Reserved
-+};
-+
-+/*
-+ * Leaf 0xb
-+ * CPU extended topology v1
-+ */
-+
-+struct leaf_0xb_n {
-+	// eax
-+	u32	x2apic_id_shift			:  5, // Bit width of this level (previous levels inclusive)
-+						: 27; // Reserved
-+	// ebx
-+	u32	domain_lcpus_count		: 16, // Logical CPUs count across all instances of this domain
-+						: 16; // Reserved
-+	// ecx
-+	u32	domain_nr			:  8, // This domain level (subleaf ID)
-+		domain_type			:  8, // This domain type
-+						: 16; // Reserved
-+	// edx
-+	u32	x2apic_id			: 32; // x2APIC ID of current logical CPU
-+};
-+
-+#define LEAF_0xb_SUBLEAF_N_FIRST		0
-+#define LEAF_0xb_SUBLEAF_N_LAST			1
-+
-+/*
-+ * Leaf 0xd
-+ * CPU extended state
-+ */
-+
-+struct leaf_0xd_0 {
-+	// eax
-+	u32	xcr0_x87			:  1, // XCR0.X87
-+		xcr0_sse			:  1, // XCR0.SSE
-+		xcr0_avx			:  1, // XCR0.AVX
-+		xcr0_mpx_bndregs		:  1, // XCR0.BNDREGS: MPX BND0-BND3 registers
-+		xcr0_mpx_bndcsr			:  1, // XCR0.BNDCSR: MPX BNDCFGU/BNDSTATUS registers
-+		xcr0_avx512_opmask		:  1, // XCR0.OPMASK: AVX-512 k0-k7 registers
-+		xcr0_avx512_zmm_hi256		:  1, // XCR0.ZMM_Hi256: AVX-512 ZMM0->ZMM7/15 registers
-+		xcr0_avx512_hi16_zmm		:  1, // XCR0.HI16_ZMM: AVX-512 ZMM16->ZMM31 registers
-+						:  1, // Reserved
-+		xcr0_pkru			:  1, // XCR0.PKRU: XSAVE PKRU registers
-+						:  1, // Reserved
-+		xcr0_cet_u			:  1, // XCR0.CET_U: CET user state
-+		xcr0_cet_s			:  1, // XCR0.CET_S: CET supervisor state
-+						:  4, // Reserved
-+		xcr0_tileconfig			:  1, // XCR0.TILECONFIG: AMX can manage TILECONFIG
-+		xcr0_tiledata			:  1, // XCR0.TILEDATA: AMX can manage TILEDATA
-+						: 13; // Reserved
-+	// ebx
-+	u32	xsave_sz_xcr0			: 32; // XSAVE/XRSTOR area byte size, for XCR0 enabled features
-+	// ecx
-+	u32	xsave_sz_max			: 32; // XSAVE/XRSTOR area max byte size, all CPU features
-+	// edx
-+	u32					: 30, // Reserved
-+		xcr0_lwp			:  1, // AMD XCR0.LWP: Light-weight Profiling
-+						:  1; // Reserved
-+};
-+
-+struct leaf_0xd_1 {
-+	// eax
-+	u32	xsaveopt			:  1, // XSAVEOPT instruction
-+		xsavec				:  1, // XSAVEC instruction
-+		xgetbv1				:  1, // XGETBV instruction with ECX = 1
-+		xsaves				:  1, // XSAVES/XRSTORS instructions (and XSS MSR)
-+		xfd				:  1, // Extended feature disable
-+						: 27; // Reserved
-+	// ebx
-+	u32	xsave_sz_xcr0_xss		: 32; // XSAVES/XSAVEC area byte size, for XCR0|XSS enabled features
-+	// ecx
-+	u32					:  8, // Reserved
-+		xss_pt				:  1, // PT state
-+						:  1, // Reserved
-+		xss_pasid			:  1, // PASID state
-+		xss_cet_u			:  1, // CET user state
-+		xss_cet_p			:  1, // CET supervisor state
-+		xss_hdc				:  1, // HDC state
-+		xss_uintr			:  1, // UINTR state
-+		xss_lbr				:  1, // LBR state
-+		xss_hwp				:  1, // HWP state
-+						: 15; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0xd_n {
-+	// eax
-+	u32	xsave_sz			: 32; // Subleaf-N feature save area size, in bytes
-+	// ebx
-+	u32	xsave_offset			: 32; // Subleaf-N feature save area offset, in bytes
-+	// ecx
-+	u32	is_xss_bit			:  1, // Subleaf N describes an XSS bit (otherwise XCR0)
-+		compacted_xsave_64byte_aligned	:  1, // When compacted, subleaf-N XSAVE area is 64-byte aligned
-+						: 30; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+#define LEAF_0xd_SUBLEAF_N_FIRST		2
-+#define LEAF_0xd_SUBLEAF_N_LAST			63
-+
-+/*
-+ * Leaf 0xf
-+ * Intel RDT / AMD PQoS resource monitoring
-+ */
-+
-+struct leaf_0xf_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32	core_rmid_max			: 32; // RMID max within this core (0-based)
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					:  1, // Reserved
-+		llc_qos_mon			:  1, // LLC QoS-monitoring
-+						: 30; // Reserved
-+};
-+
-+struct leaf_0xf_1 {
-+	// eax
-+	u32	l3c_qm_bitwidth			:  8, // L3 QoS-monitoring counter bitwidth (24-based)
-+		l3c_qm_overflow_bit		:  1, // QM_CTR MSR bit 61 is an overflow bit
-+						: 23; // Reserved
-+	// ebx
-+	u32	l3c_qm_conver_factor		: 32; // QM_CTR MSR conversion factor to bytes
-+	// ecx
-+	u32	l3c_qm_rmid_max			: 32; // L3 QoS-monitoring max RMID
-+	// edx
-+	u32	l3c_qm_occupancy		:  1, // L3 QoS occupancy monitoring
-+		l3c_qm_mbm_total		:  1, // L3 QoS total bandwidth monitoring
-+		l3c_qm_mbm_local		:  1, // L3 QoS local bandwidth monitoring
-+						: 29; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x10
-+ * Intel RDT / AMD PQoS allocation
-+ */
-+
-+struct leaf_0x10_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32					:  1, // Reserved
-+		cat_l3				:  1, // L3 Cache Allocation Technology
-+		cat_l2				:  1, // L2 Cache Allocation Technology
-+		mba				:  1, // Memory Bandwidth Allocation
-+						: 28; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x10_n {
-+	// eax
-+	u32	cat_cbm_len			:  5, // L3/L2_CAT capacity bitmask length, minus-one notation
-+						: 27; // Reserved
-+	// ebx
-+	u32	cat_units_bitmap		: 32; // L3/L2_CAT allocation units bitmap
-+	// ecx
-+	u32					:  1, // Reserved
-+		l3_cat_cos_infreq_updates	:  1, // L3_CAT COS updates should be infrequent
-+		cat_cdp_supported		:  1, // L3/L2_CAT Code and Data Prioritization
-+		cat_sparse_1s			:  1, // L3/L2_CAT non-contiguous 1s value
-+						: 28; // Reserved
-+	// edx
-+	u32	cat_cos_max			: 16, // L3/L2_CAT max Class of Service
-+						: 16; // Reserved
-+};
-+
-+#define LEAF_0x10_SUBLEAF_N_FIRST		1
-+#define LEAF_0x10_SUBLEAF_N_LAST		2
-+
-+struct leaf_0x10_3 {
-+	// eax
-+	u32	mba_max_delay			: 12, // Max MBA throttling value; minus-one notation
-+						: 20; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32	mba_per_thread			:  1, // Per-thread MBA controls
-+						:  1, // Reserved
-+		mba_delay_linear		:  1, // Delay values are linear
-+						: 29; // Reserved
-+	// edx
-+	u32	mba_cos_max			: 16, // MBA max Class of Service
-+						: 16; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x12
-+ * Intel SGX (Software Guard Extensions)
-+ */
-+
-+struct leaf_0x12_0 {
-+	// eax
-+	u32	sgx1				:  1, // SGX1 leaf functions
-+		sgx2				:  1, // SGX2 leaf functions
-+						:  3, // Reserved
-+		enclv_leaves			:  1, // ENCLV leaves
-+		encls_leaves			:  1, // ENCLS leaves
-+		enclu_everifyreport2		:  1, // ENCLU leaf EVERIFYREPORT2
-+						:  2, // Reserved
-+		encls_eupdatesvn		:  1, // ENCLS leaf EUPDATESVN
-+		enclu_edeccssa			:  1, // ENCLU leaf EDECCSSA
-+						: 20; // Reserved
-+	// ebx
-+	u32	miscselect_exinfo		:  1, // SSA.MISC frame: Enclave #PF and #GP reporting
-+		miscselect_cpinfo		:  1, // SSA.MISC frame: Enclave #CP reporting
-+						: 30; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32	max_enclave_sz_not64		:  8, // Maximum enclave size in non-64-bit mode (log2)
-+		max_enclave_sz_64		:  8, // Maximum enclave size in 64-bit mode (log2)
-+						: 16; // Reserved
-+};
-+
-+struct leaf_0x12_1 {
-+	// eax
-+	u32	secs_attr_init			:  1, // Enclave initialized by EINIT
-+		secs_attr_debug			:  1, // Enclave permits debugger read/write
-+		secs_attr_mode64bit		:  1, // Enclave runs in 64-bit mode
-+						:  1, // Reserved
-+		secs_attr_provisionkey		:  1, // Provisioning key
-+		secs_attr_einittoken_key	:  1, // EINIT token key
-+		secs_attr_cet			:  1, // CET attributes
-+		secs_attr_kss			:  1, // Key Separation and Sharing
-+						:  2, // Reserved
-+		secs_attr_aexnotify		:  1, // Enclave threads: AEX notifications
-+						: 21; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32	xfrm_x87			:  1, // Enclave XFRM.X87
-+		xfrm_sse			:  1, // Enclave XFRM.SEE
-+		xfrm_avx			:  1, // Enclave XFRM.AVX
-+		xfrm_mpx_bndregs		:  1, // Enclave XFRM.BNDREGS (MPX BND0-BND3 registers)
-+		xfrm_mpx_bndcsr			:  1, // Enclave XFRM.BNDCSR (MPX BNDCFGU/BNDSTATUS registers)
-+		xfrm_avx512_opmask		:  1, // Enclave XFRM.OPMASK (AVX-512 k0-k7 registers)
-+		xfrm_avx512_zmm_hi256		:  1, // Enclave XFRM.ZMM_Hi256 (AVX-512 ZMM0->ZMM7/15 registers)
-+		xfrm_avx512_hi16_zmm		:  1, // Enclave XFRM.HI16_ZMM (AVX-512 ZMM16->ZMM31 registers)
-+						:  1, // Reserved
-+		xfrm_pkru			:  1, // Enclave XFRM.PKRU (XSAVE PKRU registers)
-+						:  7, // Reserved
-+		xfrm_tileconfig			:  1, // Enclave XFRM.TILECONFIG (AMX can manage TILECONFIG)
-+		xfrm_tiledata			:  1, // Enclave XFRM.TILEDATA (AMX can manage TILEDATA)
-+						: 13; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x12_n {
-+	// eax
-+	u32	subleaf_type			:  4, // Subleaf type
-+						:  8, // Reserved
-+		epc_sec_base_addr_0		: 20; // EPC section base address, bits[12:31]
-+	// ebx
-+	u32	epc_sec_base_addr_1		: 20, // EPC section base address, bits[32:51]
-+						: 12; // Reserved
-+	// ecx
-+	u32	epc_sec_type			:  4, // EPC section type / property encoding
-+						:  8, // Reserved
-+		epc_sec_size_0			: 20; // EPC section size, bits[12:31]
-+	// edx
-+	u32	epc_sec_size_1			: 20, // EPC section size, bits[32:51]
-+						: 12; // Reserved
-+};
-+
-+#define LEAF_0x12_SUBLEAF_N_FIRST		2
-+#define LEAF_0x12_SUBLEAF_N_LAST		31
-+
-+/*
-+ * Leaf 0x14
-+ * Intel Processor Trace
-+ */
-+
-+struct leaf_0x14_0 {
-+	// eax
-+	u32	pt_max_subleaf			: 32; // Maximum leaf 0x14 subleaf
-+	// ebx
-+	u32	cr3_filtering			:  1, // IA32_RTIT_CR3_MATCH is accessible
-+		psb_cyc				:  1, // Configurable PSB and cycle-accurate mode
-+		ip_filtering			:  1, // IP/TraceStop filtering; Warm-reset PT MSRs preservation
-+		mtc_timing			:  1, // MTC timing packet; COFI-based packets suppression
-+		ptwrite				:  1, // PTWRITE instruction
-+		power_event_trace		:  1, // Power Event Trace
-+		psb_pmi_preserve		:  1, // PSB and PMI preservation
-+		event_trace			:  1, // Event Trace packet generation
-+		tnt_disable			:  1, // TNT packet generation disable
-+						: 23; // Reserved
-+	// ecx
-+	u32	topa_output			:  1, // ToPA output scheme
-+		topa_multiple_entries		:  1, // ToPA tables can hold multiple entries
-+		single_range_output		:  1, // Single-range output
-+		trance_transport_output		:  1, // Trace Transport subsystem output
-+						: 27, // Reserved
-+		ip_payloads_lip			:  1; // IP payloads have LIP values (CS base included)
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x14_1 {
-+	// eax
-+	u32	num_address_ranges		:  3, // Number of configurable Address Ranges
-+						: 13, // Reserved
-+		mtc_periods_bmp			: 16; // MTC period encodings bitmap
-+	// ebx
-+	u32	cycle_thresholds_bmp		: 16, // Cycle Threshold encodings bitmap
-+		psb_periods_bmp			: 16; // Configurable PSB frequency encodings bitmap
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x15
-+ * Intel TSC (Time Stamp Counter)
-+ */
-+
-+struct leaf_0x15_0 {
-+	// eax
-+	u32	tsc_denominator			: 32; // Denominator of the TSC/'core crystal clock' ratio
-+	// ebx
-+	u32	tsc_numerator			: 32; // Numerator of the TSC/'core crystal clock' ratio
-+	// ecx
-+	u32	cpu_crystal_hz			: 32; // Core crystal clock nominal frequency, in Hz
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x16
-+ * Intel processor frequency
-+ */
-+
-+struct leaf_0x16_0 {
-+	// eax
-+	u32	cpu_base_mhz			: 16, // Processor base frequency, in MHz
-+						: 16; // Reserved
-+	// ebx
-+	u32	cpu_max_mhz			: 16, // Processor max frequency, in MHz
-+						: 16; // Reserved
-+	// ecx
-+	u32	bus_mhz				: 16, // Bus reference frequency, in MHz
-+						: 16; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x17
-+ * Intel SoC vendor attributes
-+ */
-+
-+struct leaf_0x17_0 {
-+	// eax
-+	u32	soc_max_subleaf			: 32; // Maximum leaf 0x17 subleaf
-+	// ebx
-+	u32	soc_vendor_id			: 16, // SoC vendor ID
-+		is_vendor_scheme		:  1, // Assigned by industry enumeration scheme (not Intel)
-+						: 15; // Reserved
-+	// ecx
-+	u32	soc_proj_id			: 32; // SoC project ID, assigned by vendor
-+	// edx
-+	u32	soc_stepping_id			: 32; // Soc project stepping ID, assigned by vendor
-+};
-+
-+struct leaf_0x17_n {
-+	// eax
-+	u32	vendor_brand_a			: 32; // Vendor Brand ID string, bytes subleaf_nr * (0 -> 3)
-+	// ebx
-+	u32	vendor_brand_b			: 32; // Vendor Brand ID string, bytes subleaf_nr * (4 -> 7)
-+	// ecx
-+	u32	vendor_brand_c			: 32; // Vendor Brand ID string, bytes subleaf_nr * (8 -> 11)
-+	// edx
-+	u32	vendor_brand_d			: 32; // Vendor Brand ID string, bytes subleaf_nr * (12 -> 15)
-+};
-+
-+#define LEAF_0x17_SUBLEAF_N_FIRST		1
-+#define LEAF_0x17_SUBLEAF_N_LAST		3
-+
-+/*
-+ * Leaf 0x18
-+ * Intel deterministic address translation (TLB) parameters
-+ */
-+
-+struct leaf_0x18_n {
-+	// eax
-+	u32	tlb_max_subleaf			: 32; // Maximum leaf 0x18 subleaf
-+	// ebx
-+	u32	tlb_4k_page			:  1, // TLB supports 4KB-page entries
-+		tlb_2m_page			:  1, // TLB supports 2MB-page entries
-+		tlb_4m_page			:  1, // TLB supports 4MB-page entries
-+		tlb_1g_page			:  1, // TLB supports 1GB-page entries
-+						:  4, // Reserved
-+		hard_partitioning		:  3, // Partitioning between logical CPUs
-+						:  5, // Reserved
-+		n_way_associative		: 16; // Ways of associativity
-+	// ecx
-+	u32	n_sets				: 32; // Number of sets
-+	// edx
-+	u32	tlb_type			:  5, // Translation cache type (TLB type)
-+		tlb_cache_level			:  3, // Translation cache level (1-based)
-+		is_fully_associative		:  1, // Fully-associative
-+						:  5, // Reserved
-+		tlb_max_addressible_ids		: 12, // Max number of addressable IDs - 1
-+						:  6; // Reserved
-+};
-+
-+#define LEAF_0x18_SUBLEAF_N_FIRST		0
-+#define LEAF_0x18_SUBLEAF_N_LAST		31
-+
-+/*
-+ * Leaf 0x19
-+ * Intel key locker
-+ */
-+
-+struct leaf_0x19_0 {
-+	// eax
-+	u32	kl_cpl0_only			:  1, // CPL0-only key Locker restriction
-+		kl_no_encrypt			:  1, // No-encrypt key locker restriction
-+		kl_no_decrypt			:  1, // No-decrypt key locker restriction
-+						: 29; // Reserved
-+	// ebx
-+	u32	aes_keylocker			:  1, // AES key locker instructions
-+						:  1, // Reserved
-+		aes_keylocker_wide		:  1, // AES wide key locker instructions
-+						:  1, // Reserved
-+		kl_msr_iwkey			:  1, // Key locker MSRs and IWKEY backups
-+						: 27; // Reserved
-+	// ecx
-+	u32	loadiwkey_no_backup		:  1, // LOADIWKEY NoBackup parameter
-+		iwkey_rand			:  1, // IWKEY randomization
-+						: 30; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x1a
-+ * Intel hybrid CPUs identification (e.g. Atom, Core)
-+ */
-+
-+struct leaf_0x1a_0 {
-+	// eax
-+	u32	core_native_model		: 24, // This core's native model ID
-+		core_type			:  8; // This core's type
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x1b
-+ * Intel PCONFIG (Platform configuration)
-+ */
-+
-+struct leaf_0x1b_n {
-+	// eax
-+	u32	pconfig_subleaf_type		: 12, // CPUID 0x1b subleaf type
-+						: 20; // Reserved
-+	// ebx
-+	u32	pconfig_target_id_x		: 32; // A supported PCONFIG target ID
-+	// ecx
-+	u32	pconfig_target_id_y		: 32; // A supported PCONFIG target ID
-+	// edx
-+	u32	pconfig_target_id_z		: 32; // A supported PCONFIG target ID
-+};
-+
-+#define LEAF_0x1b_SUBLEAF_N_FIRST		0
-+#define LEAF_0x1b_SUBLEAF_N_LAST		31
-+
-+/*
-+ * Leaf 0x1c
-+ * Intel LBR (Last Branch Record)
-+ */
-+
-+struct leaf_0x1c_0 {
-+	// eax
-+	u32	lbr_depth_8			:  1, // Max stack depth = 8
-+		lbr_depth_16			:  1, // Max stack depth = 16
-+		lbr_depth_24			:  1, // Max stack depth = 24
-+		lbr_depth_32			:  1, // Max stack depth = 32
-+		lbr_depth_40			:  1, // Max stack depth = 40
-+		lbr_depth_48			:  1, // Max stack depth = 48
-+		lbr_depth_56			:  1, // Max stack depth = 56
-+		lbr_depth_64			:  1, // Max stack depth = 64
-+						: 22, // Reserved
-+		lbr_deep_c_reset		:  1, // LBRs maybe cleared on MWAIT C-state > C1
-+		lbr_ip_is_lip			:  1; // LBR IP contain Last IP (otherwise effective IP)
-+	// ebx
-+	u32	lbr_cpl				:  1, // CPL filtering
-+		lbr_branch_filter		:  1, // Branch filtering
-+		lbr_call_stack			:  1, // Call-stack mode
-+						: 29; // Reserved
-+	// ecx
-+	u32	lbr_mispredict			:  1, // Branch misprediction bit
-+		lbr_timed_lbr			:  1, // Timed LBRs (CPU cycles since last LBR entry)
-+		lbr_branch_type			:  1, // Branch type field
-+						: 13, // Reserved
-+		lbr_events_gpc_bmp		:  4, // PMU-events logging support
-+						: 12; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x1d
-+ * Intel AMX (Advanced Matrix Extensions) tile information
-+ */
-+
-+struct leaf_0x1d_0 {
-+	// eax
-+	u32	amx_max_palette			: 32; // Highest palette ID / subleaf ID
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x1d_1 {
-+	// eax
-+	u32	amx_palette_size		: 16, // AMX palette total tiles size, in bytes
-+		amx_tile_size			: 16; // AMX single tile's size, in bytes
-+	// ebx
-+	u32	amx_tile_row_size		: 16, // AMX tile single row's size, in bytes
-+		amx_palette_nr_tiles		: 16; // AMX palette number of tiles
-+	// ecx
-+	u32	amx_tile_nr_rows		: 16, // AMX tile max number of rows
-+						: 16; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x1e
-+ * Intel TMUL (Tile-matrix Multiply)
-+ */
-+
-+struct leaf_0x1e_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32	tmul_maxk			:  8, // TMUL unit maximum height, K (rows or columns)
-+		tmul_maxn			: 16, // TMUL unit maximum SIMD dimension, N (column bytes)
-+						:  8; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x1f
-+ * Intel extended topology v2
-+ */
-+
-+struct leaf_0x1f_n {
-+	// eax
-+	u32	x2apic_id_shift			:  5, // Bit width of this level (previous levels inclusive)
-+						: 27; // Reserved
-+	// ebx
-+	u32	domain_lcpus_count		: 16, // Logical CPUs count across all instances of this domain
-+						: 16; // Reserved
-+	// ecx
-+	u32	domain_level			:  8, // This domain level (subleaf ID)
-+		domain_type			:  8, // This domain type
-+						: 16; // Reserved
-+	// edx
-+	u32	x2apic_id			: 32; // x2APIC ID of current logical CPU
-+};
-+
-+#define LEAF_0x1f_SUBLEAF_N_FIRST		0
-+#define LEAF_0x1f_SUBLEAF_N_LAST		5
-+
-+/*
-+ * Leaf 0x20
-+ * Intel HRESET (History Reset)
-+ */
-+
-+struct leaf_0x20_0 {
-+	// eax
-+	u32	hreset_nr_subleaves		: 32; // CPUID 0x20 max subleaf + 1
-+	// ebx
-+	u32	hreset_thread_director		:  1, // Intel thread director HRESET
-+						: 31; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x21
-+ * Intel TD (Trust Domain)
-+ */
-+
-+struct leaf_0x21_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32	tdx_vendorid_0			: 32; // TDX vendor ID string bytes 0 - 3
-+	// ecx
-+	u32	tdx_vendorid_2			: 32; // CPU vendor ID string bytes 8 - 11
-+	// edx
-+	u32	tdx_vendorid_1			: 32; // CPU vendor ID string bytes 4 - 7
-+};
-+
-+/*
-+ * Leaf 0x23
-+ * Intel Architectural Performance Monitoring Extended (ArchPerfmonExt)
-+ */
-+
-+struct leaf_0x23_0 {
-+	// eax
-+	u32					:  1, // Reserved
-+		subleaf_1_counters		:  1, // Subleaf 1, PMU counters bitmaps, is valid
-+						:  1, // Reserved
-+		subleaf_3_events		:  1, // Subleaf 3, PMU events bitmaps, is valid
-+						: 28; // Reserved
-+	// ebx
-+	u32	unitmask2			:  1, // IA32_PERFEVTSELx MSRs UnitMask2
-+		zbit				:  1, // IA32_PERFEVTSELx MSRs Z-bit
-+						: 30; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x23_1 {
-+	// eax
-+	u32	pmu_gp_counters_bitmap		: 32; // General-purpose PMU counters bitmap
-+	// ebx
-+	u32	pmu_f_counters_bitmap		: 32; // Fixed PMU counters bitmap
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x23_3 {
-+	// eax
-+	u32	core_cycles_evt			:  1, // Core cycles event
-+		insn_retired_evt		:  1, // Instructions retired event
-+		ref_cycles_evt			:  1, // Reference cycles event
-+		llc_refs_evt			:  1, // Last-level cache references event
-+		llc_misses_evt			:  1, // Last-level cache misses event
-+		br_insn_ret_evt			:  1, // Branch instruction retired event
-+		br_mispr_evt			:  1, // Branch mispredict retired event
-+		td_slots_evt			:  1, // Topdown slots event
-+		td_backend_bound_evt		:  1, // Topdown backend bound event
-+		td_bad_spec_evt			:  1, // Topdown bad speculation event
-+		td_frontend_bound_evt		:  1, // Topdown frontend bound event
-+		td_retiring_evt			:  1, // Topdown retiring event
-+						: 20; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x40000000
-+ * Maximum hypervisor leaf + hypervisor vendor string
-+ */
-+
-+struct leaf_0x40000000_0 {
-+	// eax
-+	u32	max_hyp_leaf			: 32; // Maximum hypervisor leaf
-+	// ebx
-+	u32	hypervisor_id_0			: 32; // Hypervisor ID string bytes 0 - 3
-+	// ecx
-+	u32	hypervisor_id_1			: 32; // Hypervisor ID string bytes 4 - 7
-+	// edx
-+	u32	hypervisor_id_2			: 32; // Hypervisor ID string bytes 8 - 11
-+};
-+
-+/*
-+ * Leaf 0x80000000
-+ * Maximum extended leaf + CPU vendor string
-+ */
-+
-+struct leaf_0x80000000_0 {
-+	// eax
-+	u32	max_ext_leaf			: 32; // Maximum extended CPUID leaf
-+	// ebx
-+	u32	cpu_vendorid_0			: 32; // Vendor ID string bytes 0 - 3
-+	// ecx
-+	u32	cpu_vendorid_2			: 32; // Vendor ID string bytes 8 - 11
-+	// edx
-+	u32	cpu_vendorid_1			: 32; // Vendor ID string bytes 4 - 7
-+};
-+
-+/*
-+ * Leaf 0x80000001
-+ * Extended CPU features
-+ */
-+
-+struct leaf_0x80000001_0 {
-+	// eax
-+	u32	e_stepping_id			:  4, // Stepping ID
-+		e_base_model			:  4, // Base processor model
-+		e_base_family			:  4, // Base processor family
-+		e_base_type			:  2, // Base processor type (Transmeta)
-+						:  2, // Reserved
-+		e_ext_model			:  4, // Extended processor model
-+		e_ext_family			:  8, // Extended processor family
-+						:  4; // Reserved
-+	// ebx
-+	u32	brand_id			: 16, // Brand ID
-+						: 12, // Reserved
-+		pkg_type			:  4; // Package type
-+	// ecx
-+	u32	lahf_lm				:  1, // LAHF and SAHF in 64-bit mode
-+		cmp_legacy			:  1, // Multi-processing legacy mode (No HT)
-+		svm				:  1, // Secure Virtual Machine
-+		extapic				:  1, // Extended APIC space
-+		cr8_legacy			:  1, // LOCK MOV CR0 means MOV CR8
-+		lzcnt_abm			:  1, // LZCNT advanced bit manipulation
-+		sse4a				:  1, // SSE4A support
-+		misaligned_sse			:  1, // Misaligned SSE mode
-+		_3dnow_prefetch			:  1, // 3DNow PREFETCH/PREFETCHW support
-+		osvw				:  1, // OS visible workaround
-+		ibs				:  1, // Instruction based sampling
-+		xop				:  1, // XOP: extended operation (AVX instructions)
-+		skinit				:  1, // SKINIT/STGI support
-+		wdt				:  1, // Watchdog timer support
-+						:  1, // Reserved
-+		lwp				:  1, // Lightweight profiling
-+		fma4				:  1, // 4-operand FMA instruction
-+		tce				:  1, // Translation cache extension
-+						:  1, // Reserved
-+		nodeid_msr			:  1, // NodeId MSR (0xc001100c)
-+						:  1, // Reserved
-+		tbm				:  1, // Trailing bit manipulations
-+		topoext				:  1, // Topology Extensions (leaf 0x8000001d)
-+		perfctr_core			:  1, // Core performance counter extensions
-+		perfctr_nb			:  1, // NB/DF performance counter extensions
-+						:  1, // Reserved
-+		data_bp_ext			:  1, // Data access breakpoint extension
-+		perf_tsc			:  1, // Performance time-stamp counter
-+		perfctr_llc			:  1, // LLC (L3) performance counter extensions
-+		mwaitx				:  1, // MWAITX/MONITORX support
-+		addr_mask_ext			:  1, // Breakpoint address mask extension (to bit 31)
-+						:  1; // Reserved
-+	// edx
-+	u32	e_fpu				:  1, // Floating-Point Unit on-chip (x87)
-+		e_vme				:  1, // Virtual-8086 Mode Extensions
-+		e_de				:  1, // Debugging Extensions
-+		e_pse				:  1, // Page Size Extension
-+		e_tsc				:  1, // Time Stamp Counter
-+		e_msr				:  1, // Model-Specific Registers (RDMSR and WRMSR support)
-+		pae				:  1, // Physical Address Extensions
-+		mce				:  1, // Machine Check Exception
-+		cx8				:  1, // CMPXCHG8B instruction
-+		apic				:  1, // APIC on-chip
-+						:  1, // Reserved
-+		syscall				:  1, // SYSCALL and SYSRET instructions
-+		mtrr				:  1, // Memory Type Range Registers
-+		pge				:  1, // Page Global Extensions
-+		mca				:  1, // Machine Check Architecture
-+		cmov				:  1, // Conditional Move Instruction
-+		pat				:  1, // Page Attribute Table
-+		pse36				:  1, // Page Size Extension (36-bit)
-+						:  1, // Reserved
-+		obsolete_mp_bit			:  1, // Out-of-spec AMD Multiprocessing bit
-+		nx				:  1, // No-execute page protection
-+						:  1, // Reserved
-+		mmxext				:  1, // AMD MMX extensions
-+		e_mmx				:  1, // MMX instructions
-+		e_fxsr				:  1, // FXSAVE and FXRSTOR instructions
-+		fxsr_opt			:  1, // FXSAVE and FXRSTOR optimizations
-+		page1gb				:  1, // 1-GB large page support
-+		rdtscp				:  1, // RDTSCP instruction
-+						:  1, // Reserved
-+		lm				:  1, // Long mode (x86-64, 64-bit support)
-+		_3dnowext			:  1, // AMD 3DNow extensions
-+		_3dnow				:  1; // 3DNow instructions
-+};
-+
-+/*
-+ * Leaf 0x80000002
-+ * CPU brand ID string, bytes 0 - 15
-+ */
-+
-+struct leaf_0x80000002_0 {
-+	// eax
-+	u32	cpu_brandid_0			: 32; // CPU brand ID string, bytes 0 - 3
-+	// ebx
-+	u32	cpu_brandid_1			: 32; // CPU brand ID string, bytes 4 - 7
-+	// ecx
-+	u32	cpu_brandid_2			: 32; // CPU brand ID string, bytes 8 - 11
-+	// edx
-+	u32	cpu_brandid_3			: 32; // CPU brand ID string, bytes 12 - 15
-+};
-+
-+/*
-+ * Leaf 0x80000003
-+ * CPU brand ID string, bytes 16 - 31
-+ */
-+
-+struct leaf_0x80000003_0 {
-+	// eax
-+	u32	cpu_brandid_4			: 32; // CPU brand ID string bytes, 16 - 19
-+	// ebx
-+	u32	cpu_brandid_5			: 32; // CPU brand ID string bytes, 20 - 23
-+	// ecx
-+	u32	cpu_brandid_6			: 32; // CPU brand ID string bytes, 24 - 27
-+	// edx
-+	u32	cpu_brandid_7			: 32; // CPU brand ID string bytes, 28 - 31
-+};
-+
-+/*
-+ * Leaf 0x80000004
-+ * CPU brand ID string, bytes 32 - 47
-+ */
-+
-+struct leaf_0x80000004_0 {
-+	// eax
-+	u32	cpu_brandid_8			: 32; // CPU brand ID string, bytes 32 - 35
-+	// ebx
-+	u32	cpu_brandid_9			: 32; // CPU brand ID string, bytes 36 - 39
-+	// ecx
-+	u32	cpu_brandid_10			: 32; // CPU brand ID string, bytes 40 - 43
-+	// edx
-+	u32	cpu_brandid_11			: 32; // CPU brand ID string, bytes 44 - 47
-+};
-+
-+/*
-+ * Leaf 0x80000005
-+ * AMD/Transmeta L1 cache and TLB
-+ */
-+
-+struct leaf_0x80000005_0 {
-+	// eax
-+	u32	l1_itlb_2m_4m_nentries		:  8, // L1 ITLB #entries, 2M and 4M pages
-+		l1_itlb_2m_4m_assoc		:  8, // L1 ITLB associativity, 2M and 4M pages
-+		l1_dtlb_2m_4m_nentries		:  8, // L1 DTLB #entries, 2M and 4M pages
-+		l1_dtlb_2m_4m_assoc		:  8; // L1 DTLB associativity, 2M and 4M pages
-+	// ebx
-+	u32	l1_itlb_4k_nentries		:  8, // L1 ITLB #entries, 4K pages
-+		l1_itlb_4k_assoc		:  8, // L1 ITLB associativity, 4K pages
-+		l1_dtlb_4k_nentries		:  8, // L1 DTLB #entries, 4K pages
-+		l1_dtlb_4k_assoc		:  8; // L1 DTLB associativity, 4K pages
-+	// ecx
-+	u32	l1_dcache_line_size		:  8, // L1 dcache line size, in bytes
-+		l1_dcache_nlines		:  8, // L1 dcache lines per tag
-+		l1_dcache_assoc			:  8, // L1 dcache associativity
-+		l1_dcache_size_kb		:  8; // L1 dcache size, in KB
-+	// edx
-+	u32	l1_icache_line_size		:  8, // L1 icache line size, in bytes
-+		l1_icache_nlines		:  8, // L1 icache lines per tag
-+		l1_icache_assoc			:  8, // L1 icache associativity
-+		l1_icache_size_kb		:  8; // L1 icache size, in KB
-+};
-+
-+/*
-+ * Leaf 0x80000006
-+ * (Mostly AMD) L2/L3 cache and TLB
-+ */
-+
-+struct leaf_0x80000006_0 {
-+	// eax
-+	u32	l2_itlb_2m_4m_nentries		: 12, // L2 iTLB #entries, 2M and 4M pages
-+		l2_itlb_2m_4m_assoc		:  4, // L2 iTLB associativity, 2M and 4M pages
-+		l2_dtlb_2m_4m_nentries		: 12, // L2 dTLB #entries, 2M and 4M pages
-+		l2_dtlb_2m_4m_assoc		:  4; // L2 dTLB associativity, 2M and 4M pages
-+	// ebx
-+	u32	l2_itlb_4k_nentries		: 12, // L2 iTLB #entries, 4K pages
-+		l2_itlb_4k_assoc		:  4, // L2 iTLB associativity, 4K pages
-+		l2_dtlb_4k_nentries		: 12, // L2 dTLB #entries, 4K pages
-+		l2_dtlb_4k_assoc		:  4; // L2 dTLB associativity, 4K pages
-+	// ecx
-+	u32	l2_line_size			:  8, // L2 cache line size, in bytes
-+		l2_nlines			:  4, // L2 cache number of lines per tag
-+		l2_assoc			:  4, // L2 cache associativity
-+		l2_size_kb			: 16; // L2 cache size, in KB
-+	// edx
-+	u32	l3_line_size			:  8, // L3 cache line size, in bytes
-+		l3_nlines			:  4, // L3 cache number of lines per tag
-+		l3_assoc			:  4, // L3 cache associativity
-+						:  2, // Reserved
-+		l3_size_range			: 14; // L3 cache size range
-+};
-+
-+/*
-+ * Leaf 0x80000007
-+ * CPU power management (mostly AMD) and AMD RAS
-+ */
-+
-+struct leaf_0x80000007_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32	mca_overflow_recovery		:  1, // MCA overflow conditions not fatal
-+		succor				:  1, // Software containment of uncorrectable errors
-+		hw_assert			:  1, // Hardware assert MSRs
-+		scalable_mca			:  1, // Scalable MCA (MCAX MSRs)
-+						: 28; // Reserved
-+	// ecx
-+	u32	cpu_pwr_sample_ratio		: 32; // CPU power sample time ratio
-+	// edx
-+	u32	digital_temp			:  1, // Digital temperature sensor
-+		powernow_freq_id		:  1, // PowerNOW! frequency scaling
-+		powernow_volt_id		:  1, // PowerNOW! voltage scaling
-+		thermal_trip			:  1, // THERMTRIP (Thermal Trip)
-+		hw_thermal_control		:  1, // Hardware thermal control
-+		sw_thermal_control		:  1, // Software thermal control
-+		_100mhz_steps			:  1, // 100 MHz multiplier control
-+		hw_pstate			:  1, // Hardware P-state control
-+		constant_tsc			:  1, // TSC ticks at constant rate across all P and C states
-+		core_perf_boost			:  1, // Core performance boost
-+		eff_freq_ro			:  1, // Read-only effective frequency interface
-+		proc_feedback			:  1, // Processor feedback interface (deprecated)
-+		proc_power_reporting		:  1, // Processor power reporting interface
-+		connected_standby		:  1, // CPU Connected Standby support
-+		rapl_interface			:  1, // Runtime Average Power Limit interface
-+						: 17; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000008
-+ * CPU capacity parameters and extended feature flags (mostly AMD)
-+ */
-+
-+struct leaf_0x80000008_0 {
-+	// eax
-+	u32	phys_addr_bits			:  8, // Max physical address bits
-+		virt_addr_bits			:  8, // Max virtual address bits
-+		guest_phys_addr_bits		:  8, // Max nested-paging guest physical address bits
-+						:  8; // Reserved
-+	// ebx
-+	u32	clzero				:  1, // CLZERO instruction
-+		insn_retired_perf		:  1, // Instruction retired counter MSR
-+		xsave_err_ptr			:  1, // XSAVE/XRSTOR always saves/restores FPU error pointers
-+		invlpgb				:  1, // INVLPGB broadcasts a TLB invalidate
-+		rdpru				:  1, // RDPRU (Read Processor Register at User level)
-+						:  1, // Reserved
-+		mba				:  1, // Memory Bandwidth Allocation (AMD bit)
-+						:  1, // Reserved
-+		mcommit				:  1, // MCOMMIT instruction
-+		wbnoinvd			:  1, // WBNOINVD instruction
-+						:  2, // Reserved
-+		ibpb				:  1, // Indirect Branch Prediction Barrier
-+		wbinvd_int			:  1, // Interruptible WBINVD/WBNOINVD
-+		ibrs				:  1, // Indirect Branch Restricted Speculation
-+		stibp				:  1, // Single Thread Indirect Branch Prediction mode
-+		ibrs_always_on			:  1, // IBRS always-on preferred
-+		stibp_always_on			:  1, // STIBP always-on preferred
-+		ibrs_fast			:  1, // IBRS is preferred over software solution
-+		ibrs_same_mode			:  1, // IBRS provides same mode protection
-+		no_efer_lmsle			:  1, // Long-Mode Segment Limit Enable unsupported
-+		tlb_flush_nested		:  1, // INVLPGB RAX[5] bit can be set
-+						:  1, // Reserved
-+		amd_ppin			:  1, // Protected Processor Inventory Number
-+		amd_ssbd			:  1, // Speculative Store Bypass Disable
-+		virt_ssbd			:  1, // virtualized SSBD (Speculative Store Bypass Disable)
-+		amd_ssb_no			:  1, // SSBD is not needed (fixed in hardware)
-+		cppc				:  1, // Collaborative Processor Performance Control
-+		amd_psfd			:  1, // Predictive Store Forward Disable
-+		btc_no				:  1, // CPU not affected by Branch Type Confusion
-+		ibpb_ret			:  1, // IBPB clears RSB/RAS too
-+		branch_sampling			:  1; // Branch Sampling
-+	// ecx
-+	u32	cpu_nthreads			:  8, // Number of physical threads - 1
-+						:  4, // Reserved
-+		apicid_coreid_len		:  4, // Number of thread core ID bits (shift) in APIC ID
-+		perf_tsc_len			:  2, // Performance time-stamp counter size
-+						: 14; // Reserved
-+	// edx
-+	u32	invlpgb_max_pages		: 16, // INVLPGB maximum page count
-+		rdpru_max_reg_id		: 16; // RDPRU max register ID (ECX input)
-+};
-+
-+/*
-+ * Leaf 0x8000000a
-+ * AMD SVM (Secure Virtual Machine)
-+ */
-+
-+struct leaf_0x8000000a_0 {
-+	// eax
-+	u32	svm_version			:  8, // SVM revision number
-+						: 24; // Reserved
-+	// ebx
-+	u32	svm_nasid			: 32; // Number of address space identifiers (ASID)
-+	// ecx
-+	u32					:  4, // Reserved
-+		pml				:  1, // Page Modification Logging (PML)
-+						: 27; // Reserved
-+	// edx
-+	u32	nested_pt			:  1, // Nested paging
-+		lbr_virt			:  1, // LBR virtualization
-+		svm_lock			:  1, // SVM lock
-+		nrip_save			:  1, // NRIP save support on #VMEXIT
-+		tsc_rate_msr			:  1, // MSR based TSC rate control
-+		vmcb_clean			:  1, // VMCB clean bits support
-+		flush_by_asid			:  1, // Flush by ASID + Extended VMCB TLB_Control
-+		decode_assists			:  1, // Decode Assists support
-+						:  2, // Reserved
-+		pause_filter			:  1, // Pause intercept filter
-+						:  1, // Reserved
-+		pf_threshold			:  1, // Pause filter threshold
-+		avic				:  1, // Advanced virtual interrupt controller
-+						:  1, // Reserved
-+		v_vmsave_vmload			:  1, // Virtual VMSAVE/VMLOAD (nested virtualization)
-+		v_gif				:  1, // Virtualize the Global Interrupt Flag
-+		gmet				:  1, // Guest mode execution trap
-+		x2avic				:  1, // Virtual x2APIC
-+		sss_check			:  1, // Supervisor Shadow Stack restrictions
-+		v_spec_ctrl			:  1, // Virtual SPEC_CTRL
-+		ro_gpt				:  1, // Read-Only guest page table support
-+						:  1, // Reserved
-+		h_mce_override			:  1, // Host MCE override
-+		tlbsync_int			:  1, // TLBSYNC intercept + INVLPGB/TLBSYNC in VMCB
-+		nmi_virt			:  1, // NMI virtualization
-+		ibs_virt			:  1, // IBS Virtualization
-+		ext_lvt_off_chg			:  1, // Extended LVT offset fault change
-+		svme_addr_chk			:  1, // Guest SVME address check
-+						:  3; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000019
-+ * AMD TLB characteristics for 1GB pages
-+ */
-+
-+struct leaf_0x80000019_0 {
-+	// eax
-+	u32	l1_itlb_1g_nentries		: 12, // L1 iTLB #entries, 1G pages
-+		l1_itlb_1g_assoc		:  4, // L1 iTLB associativity, 1G pages
-+		l1_dtlb_1g_nentries		: 12, // L1 dTLB #entries, 1G pages
-+		l1_dtlb_1g_assoc		:  4; // L1 dTLB associativity, 1G pages
-+	// ebx
-+	u32	l2_itlb_1g_nentries		: 12, // L2 iTLB #entries, 1G pages
-+		l2_itlb_1g_assoc		:  4, // L2 iTLB associativity, 1G pages
-+		l2_dtlb_1g_nentries		: 12, // L2 dTLB #entries, 1G pages
-+		l2_dtlb_1g_assoc		:  4; // L2 dTLB associativity, 1G pages
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x8000001a
-+ * AMD instruction optimizations
-+ */
-+
-+struct leaf_0x8000001a_0 {
-+	// eax
-+	u32	fp_128				:  1, // Internal FP/SIMD exec data path is 128-bits wide
-+		movu_preferred			:  1, // SSE: MOVU* better than MOVL*/MOVH*
-+		fp_256				:  1, // internal FP/SSE exec data path is 256-bits wide
-+						: 29; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x8000001b
-+ * AMD IBS (Instruction-Based Sampling)
-+ */
-+
-+struct leaf_0x8000001b_0 {
-+	// eax
-+	u32	ibs_flags			:  1, // IBS feature flags
-+		ibs_fetch_sampling		:  1, // IBS fetch sampling
-+		ibs_op_sampling			:  1, // IBS execution sampling
-+		ibs_rdwr_op_counter		:  1, // IBS read/write of op counter
-+		ibs_op_count			:  1, // IBS OP counting mode
-+		ibs_branch_target		:  1, // IBS branch target address reporting
-+		ibs_op_counters_ext		:  1, // IBS IbsOpCurCnt/IbsOpMaxCnt extend by 7 bits
-+		ibs_rip_invalid_chk		:  1, // IBS invalid RIP indication
-+		ibs_op_branch_fuse		:  1, // IBS fused branch micro-op indication
-+		ibs_fetch_ctl_ext		:  1, // IBS Fetch Control Extended MSR
-+		ibs_op_data_4			:  1, // IBS op data 4 MSR
-+		ibs_l3_miss_filter		:  1, // IBS L3-miss filtering (Zen4+)
-+						: 20; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x8000001c
-+ * AMD LWP (Lightweight Profiling)
-+ */
-+
-+struct leaf_0x8000001c_0 {
-+	// eax
-+	u32	os_lwp_avail			:  1, // OS: LWP is available to application programs
-+		os_lpwval			:  1, // OS: LWPVAL instruction
-+		os_lwp_ire			:  1, // OS: Instructions Retired Event
-+		os_lwp_bre			:  1, // OS: Branch Retired Event
-+		os_lwp_dme			:  1, // OS: Dcache Miss Event
-+		os_lwp_cnh			:  1, // OS: CPU Clocks Not Halted event
-+		os_lwp_rnh			:  1, // OS: CPU Reference clocks Not Halted event
-+						: 22, // Reserved
-+		os_lwp_cont			:  1, // OS: LWP sampling in continuous mode
-+		os_lwp_ptsc			:  1, // OS: Performance Time Stamp Counter in event records
-+		os_lwp_int			:  1; // OS: Interrupt on threshold overflow
-+	// ebx
-+	u32	lwp_lwpcb_sz			:  8, // Control Block size, in quadwords
-+		lwp_event_sz			:  8, // Event record size, in bytes
-+		lwp_max_events			:  8, // Max EventID supported
-+		lwp_event_offset		:  8; // Control Block events area offset
-+	// ecx
-+	u32	lwp_latency_max			:  5, // Cache latency counters number of bits
-+		lwp_data_addr			:  1, // Cache miss events report data cache address
-+		lwp_latency_rnd			:  3, // Cache latency rounding amount
-+		lwp_version			:  7, // LWP version
-+		lwp_buf_min_sz			:  8, // LWP event ring buffer min size, 32 event records units
-+						:  4, // Reserved
-+		lwp_branch_predict		:  1, // Branches Retired events can be filtered
-+		lwp_ip_filtering		:  1, // IP filtering (IPI, IPF, BaseIP, and LimitIP @ LWPCP)
-+		lwp_cache_levels		:  1, // Cache-related events: filter by cache level
-+		lwp_cache_latency		:  1; // Cache-related events: filter by latency
-+	// edx
-+	u32	hw_lwp_avail			:  1, // HW: LWP available
-+		hw_lpwval			:  1, // HW: LWPVAL available
-+		hw_lwp_ire			:  1, // HW: Instructions Retired Event
-+		hw_lwp_bre			:  1, // HW: Branch Retired Event
-+		hw_lwp_dme			:  1, // HW: Dcache Miss Event
-+		hw_lwp_cnh			:  1, // HW: Clocks Not Halted event
-+		hw_lwp_rnh			:  1, // HW: Reference clocks Not Halted event
-+						: 22, // Reserved
-+		hw_lwp_cont			:  1, // HW: LWP sampling in continuous mode
-+		hw_lwp_ptsc			:  1, // HW: Performance Time Stamp Counter in event records
-+		hw_lwp_int			:  1; // HW: Interrupt on threshold overflow
-+};
-+
-+/*
-+ * Leaf 0x8000001d
-+ * AMD deterministic cache parameters
-+ */
-+
-+struct leaf_0x8000001d_n {
-+	// eax
-+	u32	cache_type			:  5, // Cache type field
-+		cache_level			:  3, // Cache level (1-based)
-+		cache_self_init			:  1, // Self-initializing cache level
-+		fully_associative		:  1, // Fully-associative cache
-+						:  4, // Reserved
-+		num_threads_sharing		: 12, // Number of logical CPUs sharing cache
-+						:  6; // Reserved
-+	// ebx
-+	u32	cache_linesize			: 12, // System coherency line size (0-based)
-+		cache_npartitions		: 10, // Physical line partitions (0-based)
-+		cache_nways			: 10; // Ways of associativity (0-based)
-+	// ecx
-+	u32	cache_nsets			: 31, // Cache number of sets (0-based)
-+						:  1; // Reserved
-+	// edx
-+	u32	wbinvd_rll_no_guarantee		:  1, // WBINVD/INVD not guaranteed for Remote Lower-Level caches
-+		ll_inclusive			:  1, // Cache is inclusive of Lower-Level caches
-+						: 30; // Reserved
-+};
-+
-+#define LEAF_0x8000001d_SUBLEAF_N_FIRST		0
-+#define LEAF_0x8000001d_SUBLEAF_N_LAST		31
-+
-+/*
-+ * Leaf 0x8000001e
-+ * AMD CPU topology
-+ */
-+
-+struct leaf_0x8000001e_0 {
-+	// eax
-+	u32	ext_apic_id			: 32; // Extended APIC ID
-+	// ebx
-+	u32	core_id				:  8, // Unique per-socket logical core unit ID
-+		core_nthreas			:  8, // #Threads per core (zero-based)
-+						: 16; // Reserved
-+	// ecx
-+	u32	node_id				:  8, // Node (die) ID of invoking logical CPU
-+		nnodes_per_socket		:  3, // #nodes in invoking logical CPU's package/socket
-+						: 21; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x8000001f
-+ * AMD encrypted memory capabilities (SME/SEV)
-+ */
-+
-+struct leaf_0x8000001f_0 {
-+	// eax
-+	u32	sme				:  1, // Secure Memory Encryption
-+		sev				:  1, // Secure Encrypted Virtualization
-+		vm_page_flush			:  1, // VM Page Flush MSR
-+		sev_encrypted_state		:  1, // SEV Encrypted State
-+		sev_nested_paging		:  1, // SEV secure nested paging
-+		vm_permission_levels		:  1, // VMPL
-+		rpmquery			:  1, // RPMQUERY instruction
-+		vmpl_sss			:  1, // VMPL supervisor shadow stack
-+		secure_tsc			:  1, // Secure TSC
-+		virt_tsc_aux			:  1, // Hardware virtualizes TSC_AUX
-+		sme_coherent			:  1, // Cache coherency enforcement across encryption domains
-+		req_64bit_hypervisor		:  1, // SEV guest mandates 64-bit hypervisor
-+		restricted_injection		:  1, // Restricted Injection supported
-+		alternate_injection		:  1, // Alternate Injection supported
-+		debug_swap			:  1, // SEV-ES: Full debug state swap
-+		disallow_host_ibs		:  1, // SEV-ES: Disallowing IBS use by the host
-+		virt_transparent_enc		:  1, // Virtual Transparent Encryption
-+		vmgexit_paremeter		:  1, // SEV_FEATURES: VmgexitParameter
-+		virt_tom_msr			:  1, // Virtual TOM MSR
-+		virt_ibs			:  1, // SEV-ES guests: IBS state virtualization
-+						:  4, // Reserved
-+		vmsa_reg_protection		:  1, // VMSA register protection
-+		smt_protection			:  1, // SMT protection
-+						:  2, // Reserved
-+		svsm_page_msr			:  1, // SVSM communication page MSR
-+		nested_virt_snp_msr		:  1, // VIRT_RMPUPDATE/VIRT_PSMASH MSRs
-+						:  2; // Reserved
-+	// ebx
-+	u32	pte_cbit_pos			:  6, // PTE bit number to enable memory encryption
-+		phys_addr_reduction_nbits	:  6, // Reduction of phys address space in bits
-+		vmpl_count			:  4, // Number of VM permission levels (VMPL)
-+						: 16; // Reserved
-+	// ecx
-+	u32	enc_guests_max			: 32; // Max number of simultaneous encrypted guests
-+	// edx
-+	u32	min_sev_asid_no_sev_es		: 32; // Minimum ASID for SEV-enabled SEV-ES-disabled guest
-+};
-+
-+/*
-+ * Leaf 0x80000020
-+ * AMD PQoS (Platform QoS) extended features
-+ */
-+
-+struct leaf_0x80000020_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32					:  1, // Reserved
-+		mba				:  1, // Memory Bandwidth Allocation support
-+		smba				:  1, // Slow Memory Bandwidth Allocation support
-+		bmec				:  1, // Bandwidth Monitoring Event Configuration support
-+		l3rr				:  1, // L3 Range Reservation support
-+		abmc				:  1, // Assignable Bandwidth Monitoring Counters
-+		sdciae				:  1, // Smart Data Cache Injection (SDCI) Allocation Enforcement
-+						: 25; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+struct leaf_0x80000020_1 {
-+	// eax
-+	u32	mba_limit_len			: 32; // MBA enforcement limit size
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32	mba_cos_max			: 32; // MBA max Class of Service number (zero-based)
-+};
-+
-+struct leaf_0x80000020_2 {
-+	// eax
-+	u32	smba_limit_len			: 32; // SMBA enforcement limit size
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32	smba_cos_max			: 32; // SMBA max Class of Service number (zero-based)
-+};
-+
-+struct leaf_0x80000020_3 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32	bmec_num_events			:  8, // BMEC number of bandwidth events available
-+						: 24; // Reserved
-+	// ecx
-+	u32	bmec_local_reads		:  1, // Local NUMA reads can be tracked
-+		bmec_remote_reads		:  1, // Remote NUMA reads can be tracked
-+		bmec_local_nontemp_wr		:  1, // Local NUMA non-temporal writes can be tracked
-+		bmec_remote_nontemp_wr		:  1, // Remote NUMA non-temporal writes can be tracked
-+		bmec_local_slow_mem_rd		:  1, // Local NUMA slow-memory reads can be tracked
-+		bmec_remote_slow_mem_rd		:  1, // Remote NUMA slow-memory reads can be tracked
-+		bmec_all_dirty_victims		:  1, // Dirty QoS victims to all types of memory can be tracked
-+						: 25; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000021
-+ * AMD extended CPU features 2
-+ */
-+
-+struct leaf_0x80000021_0 {
-+	// eax
-+	u32	no_nested_data_bp		:  1, // No nested data breakpoints
-+		fsgs_non_serializing		:  1, // WRMSR to {FS,GS,KERNEL_GS}_BASE is non-serializing
-+		lfence_serializing		:  1, // LFENCE always serializing / synchronizes RDTSC
-+		smm_page_cfg_lock		:  1, // SMM paging configuration lock
-+						:  2, // Reserved
-+		null_sel_clr_base		:  1, // Null selector clears base
-+		upper_addr_ignore		:  1, // EFER MSR Upper Address Ignore
-+		auto_ibrs			:  1, // EFER MSR Automatic IBRS
-+		no_smm_ctl_msr			:  1, // SMM_CTL MSR not available
-+		fsrs				:  1, // Fast Short Rep STOSB
-+		fsrc				:  1, // Fast Short Rep CMPSB
-+						:  1, // Reserved
-+		prefetch_ctl_msr		:  1, // Prefetch control MSR
-+						:  2, // Reserved
-+		opcode_reclaim			:  1, // Reserves opcode space
-+		user_cpuid_disable		:  1, // #GP when executing CPUID at CPL > 0
-+		epsf				:  1, // Enhanced Predictive Store Forwarding
-+						:  3, // Reserved
-+		wl_feedback			:  1, // Workload-based heuristic feedback to OS
-+						:  1, // Reserved
-+		eraps				:  1, // Enhanced Return Address Predictor Security
-+						:  2, // Reserved
-+		sbpb				:  1, // Selective Branch Predictor Barrier
-+		ibpb_brtype			:  1, // Branch predictions flushed from CPU branch predictor
-+		srso_no				:  1, // No SRSO vulnerability
-+		srso_uk_no			:  1, // No SRSO at user-kernel boundary
-+		srso_msr_fix			:  1; // MSR BP_CFG[BpSpecReduce] SRSO mitigation
-+	// ebx
-+	u32	microcode_patch_size		: 16, // Microcode patch size, in 16-byte units
-+		rap_size			:  8, // Return Address Predictor size
-+						:  8; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000022
-+ * AMD extended performance monitoring
-+ */
-+
-+struct leaf_0x80000022_0 {
-+	// eax
-+	u32	perfmon_v2			:  1, // Performance monitoring v2
-+		lbr_v2				:  1, // Last Branch Record v2 extensions (LBR Stack)
-+		lbr_pmc_freeze			:  1, // Freezing core performance counters / LBR Stack
-+						: 29; // Reserved
-+	// ebx
-+	u32	n_pmc_core			:  4, // Number of core performance counters
-+		lbr_v2_stack_size		:  6, // Number of LBR stack entries
-+		n_pmc_northbridge		:  6, // Number of northbridge performance counters
-+		n_pmc_umc			:  6, // Number of UMC performance counters
-+						: 10; // Reserved
-+	// ecx
-+	u32	active_umc_bitmask		: 32; // Active UMCs bitmask
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000023
-+ * AMD multi-key encrypted memory
-+ */
-+
-+struct leaf_0x80000023_0 {
-+	// eax
-+	u32	mem_hmk_mode			:  1, // MEM-HMK encryption mode
-+						: 31; // Reserved
-+	// ebx
-+	u32	mem_hmk_avail_keys		: 16, // Total number of available encryption keys
-+						: 16; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80000026
-+ * AMD extended CPU topology
-+ */
-+
-+struct leaf_0x80000026_n {
-+	// eax
-+	u32	x2apic_id_shift			:  5, // Bit width of this level (previous levels inclusive)
-+						: 24, // Reserved
-+		core_has_pwreff_ranking		:  1, // This core has a power efficiency ranking
-+		domain_has_hybrid_cores		:  1, // This domain level has hybrid (E, P) cores
-+		domain_core_count_asymm		:  1; // The 'Core' domain has asymmetric cores count
-+	// ebx
-+	u32	domain_lcpus_count		: 16, // Number of logical CPUs at this domain instance
-+		core_pwreff_ranking		:  8, // This core's static power efficiency ranking
-+		core_native_model_id		:  4, // This core's native model ID
-+		core_type			:  4; // This core's type
-+	// ecx
-+	u32	domain_level			:  8, // This domain level (subleaf ID)
-+		domain_type			:  8, // This domain type
-+						: 16; // Reserved
-+	// edx
-+	u32	x2apic_id			: 32; // x2APIC ID of current logical CPU
-+};
-+
-+#define LEAF_0x80000026_SUBLEAF_N_FIRST		0
-+#define LEAF_0x80000026_SUBLEAF_N_LAST		3
-+
-+/*
-+ * Leaf 0x80860000
-+ * Maximum Transmeta leaf + CPU vendor string
-+ */
-+
-+struct leaf_0x80860000_0 {
-+	// eax
-+	u32	max_tra_leaf			: 32; // Maximum Transmeta leaf
-+	// ebx
-+	u32	cpu_vendorid_0			: 32; // Transmeta Vendor ID string bytes 0 - 3
-+	// ecx
-+	u32	cpu_vendorid_2			: 32; // Transmeta Vendor ID string bytes 8 - 11
-+	// edx
-+	u32	cpu_vendorid_1			: 32; // Transmeta Vendor ID string bytes 4 - 7
-+};
-+
-+/*
-+ * Leaf 0x80860001
-+ * Transmeta extended CPU features
-+ */
-+
-+struct leaf_0x80860001_0 {
-+	// eax
-+	u32	stepping			:  4, // Stepping ID
-+		base_model			:  4, // Base CPU model ID
-+		base_family_id			:  4, // Base CPU family ID
-+		cpu_type			:  2, // CPU type
-+						: 18; // Reserved
-+	// ebx
-+	u32	cpu_rev_mask_minor		:  8, // CPU revision ID, mask minor
-+		cpu_rev_mask_major		:  8, // CPU revision ID, mask major
-+		cpu_rev_minor			:  8, // CPU revision ID, minor
-+		cpu_rev_major			:  8; // CPU revision ID, major
-+	// ecx
-+	u32	cpu_base_mhz			: 32; // CPU nominal frequency, in MHz
-+	// edx
-+	u32	recovery			:  1, // Recovery CMS is active (after bad flush)
-+		longrun				:  1, // LongRun power management capabilities
-+						:  1, // Reserved
-+		lrti				:  1, // LongRun Table Interface
-+						: 28; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80860002
-+ * Transmeta CMS (Code Morphing Software)
-+ */
-+
-+struct leaf_0x80860002_0 {
-+	// eax
-+	u32	cpu_rev_id			: 32; // CPU revision ID
-+	// ebx
-+	u32	cms_rev_mask_2			:  8, // CMS revision ID, mask component 2
-+		cms_rev_mask_1			:  8, // CMS revision ID, mask component 1
-+		cms_rev_minor			:  8, // CMS revision ID, minor
-+		cms_rev_major			:  8; // CMS revision ID, major
-+	// ecx
-+	u32	cms_rev_mask_3			: 32; // CMS revision ID, mask component 3
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0x80860003
-+ * Transmeta CPU information string, bytes 0 - 15
-+ */
-+
-+struct leaf_0x80860003_0 {
-+	// eax
-+	u32	cpu_info_0			: 32; // CPU info string bytes 0 - 3
-+	// ebx
-+	u32	cpu_info_1			: 32; // CPU info string bytes 4 - 7
-+	// ecx
-+	u32	cpu_info_2			: 32; // CPU info string bytes 8 - 11
-+	// edx
-+	u32	cpu_info_3			: 32; // CPU info string bytes 12 - 15
-+};
-+
-+/*
-+ * Leaf 0x80860004
-+ * Transmeta CPU information string, bytes 16 - 31
-+ */
-+
-+struct leaf_0x80860004_0 {
-+	// eax
-+	u32	cpu_info_4			: 32; // CPU info string bytes 16 - 19
-+	// ebx
-+	u32	cpu_info_5			: 32; // CPU info string bytes 20 - 23
-+	// ecx
-+	u32	cpu_info_6			: 32; // CPU info string bytes 24 - 27
-+	// edx
-+	u32	cpu_info_7			: 32; // CPU info string bytes 28 - 31
-+};
-+
-+/*
-+ * Leaf 0x80860005
-+ * Transmeta CPU information string, bytes 32 - 47
-+ */
-+
-+struct leaf_0x80860005_0 {
-+	// eax
-+	u32	cpu_info_8			: 32; // CPU info string bytes 32 - 35
-+	// ebx
-+	u32	cpu_info_9			: 32; // CPU info string bytes 36 - 39
-+	// ecx
-+	u32	cpu_info_10			: 32; // CPU info string bytes 40 - 43
-+	// edx
-+	u32	cpu_info_11			: 32; // CPU info string bytes 44 - 47
-+};
-+
-+/*
-+ * Leaf 0x80860006
-+ * Transmeta CPU information string, bytes 48 - 63
-+ */
-+
-+struct leaf_0x80860006_0 {
-+	// eax
-+	u32	cpu_info_12			: 32; // CPU info string bytes 48 - 51
-+	// ebx
-+	u32	cpu_info_13			: 32; // CPU info string bytes 52 - 55
-+	// ecx
-+	u32	cpu_info_14			: 32; // CPU info string bytes 56 - 59
-+	// edx
-+	u32	cpu_info_15			: 32; // CPU info string bytes 60 - 63
-+};
-+
-+/*
-+ * Leaf 0x80860007
-+ * Transmeta live CPU information
-+ */
-+
-+struct leaf_0x80860007_0 {
-+	// eax
-+	u32	cpu_cur_mhz			: 32; // Current CPU frequency, in MHz
-+	// ebx
-+	u32	cpu_cur_voltage			: 32; // Current CPU voltage, in millivolts
-+	// ecx
-+	u32	cpu_cur_perf_pctg		: 32; // Current CPU performance percentage, 0 - 100
-+	// edx
-+	u32	cpu_cur_gate_delay		: 32; // Current CPU gate delay, in femtoseconds
-+};
-+
-+/*
-+ * Leaf 0xc0000000
-+ * Maximum Centaur/Zhaoxin leaf
-+ */
-+
-+struct leaf_0xc0000000_0 {
-+	// eax
-+	u32	max_cntr_leaf			: 32; // Maximum Centaur/Zhaoxin leaf
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32					: 32; // Reserved
-+};
-+
-+/*
-+ * Leaf 0xc0000001
-+ * Centaur/Zhaoxin extended CPU features
-+ */
-+
-+struct leaf_0xc0000001_0 {
-+	// eax
-+	u32					: 32; // Reserved
-+	// ebx
-+	u32					: 32; // Reserved
-+	// ecx
-+	u32					: 32; // Reserved
-+	// edx
-+	u32	ccs_sm2				:  1, // CCS SM2 instructions
-+		ccs_sm2_en			:  1, // CCS SM2 enabled
-+		rng				:  1, // Random Number Generator
-+		rng_en				:  1, // RNG enabled
-+		ccs_sm3_sm4			:  1, // CCS SM3 and SM4 instructions
-+		ccs_sm3_sm4_en			:  1, // CCS SM3/SM4 enabled
-+		ace				:  1, // Advanced Cryptography Engine
-+		ace_en				:  1, // ACE enabled
-+		ace2				:  1, // Advanced Cryptography Engine v2
-+		ace2_en				:  1, // ACE v2 enabled
-+		phe				:  1, // PadLock Hash Engine
-+		phe_en				:  1, // PHE enabled
-+		pmm				:  1, // PadLock Montgomery Multiplier
-+		pmm_en				:  1, // PMM enabled
-+						:  2, // Reserved
-+		parallax			:  1, // Parallax auto adjust processor voltage
-+		parallax_en			:  1, // Parallax enabled
-+						:  2, // Reserved
-+		tm3				:  1, // Thermal Monitor v3
-+		tm3_en				:  1, // TM v3 enabled
-+						:  3, // Reserved
-+		phe2				:  1, // PadLock Hash Engine v2 (SHA384/SHA512)
-+		phe2_en				:  1, // PHE v2 enabled
-+		rsa				:  1, // RSA instructions (XMODEXP/MONTMUL2)
-+		rsa_en				:  1, // RSA instructions enabled
-+						:  3; // Reserved
-+};
-+
-+#endif /* _ASM_X86_CPUID_LEAF_TYPES */
++struct cpuid_table {
++	struct cpuid_leaves	leaves;
++};
++
+ #endif /* _ASM_X86_CPUID_TYPES_H */
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 910e36b0c00d..88f8ee33bfca 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -16,6 +16,7 @@ struct vm86;
+ #include <uapi/asm/sigcontext.h>
+ #include <asm/current.h>
+ #include <asm/cpufeatures.h>
++#include <asm/cpuid/types.h>
+ #include <asm/page.h>
+ #include <asm/pgtable_types.h>
+ #include <asm/percpu.h>
+@@ -164,6 +165,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	struct cpuinfo_topology	topo;
++	struct cpuid_table	cpuid;
+ 	/* in KB - valid for CPUS which support this call: */
+ 	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
 -- 
 2.50.1
 
