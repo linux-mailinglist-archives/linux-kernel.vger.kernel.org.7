@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-803025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D13B45995
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F8FB45997
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB4C581F4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E4B581DD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779ED35CECF;
-	Fri,  5 Sep 2025 13:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA3B35CEC2;
+	Fri,  5 Sep 2025 13:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgNTZZ0f"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MXEp56+k"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456D33451BE;
-	Fri,  5 Sep 2025 13:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274C435CEB2
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757080232; cv=none; b=cAhPQUKfR42NmRVt9qpmzVIgs6MXBVZhAeMEC5BzifYLHMTVaG8zYYWQILlbOQRQHWwrU2Z2T0cC3pA2/AOj7u7UMaNFBkhNXOtA6edRHbjeXZbFVFPZ1cEkl5jSZmGw+A+PWYv9+N0uUEua/B+RA8StoUH5hgKs0Da7WBUG5qs=
+	t=1757080244; cv=none; b=rbQI0Zuc5+M7lIjBhCrvhstft4RACN8onlVN0w/lwZvouMOOdasIKwl1uh81MDu86NiaSKeAFd/MIMXAOAM7teE0npZ/lu4zDd6YioJiO137MA/h0YDxTxz1Ap8nfrZdBLzNOzQ6XCCiHL361AiXpxGhclHC3tmgdNnLCoAqcXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757080232; c=relaxed/simple;
-	bh=P3Q4uhxPRcsG6nzEVg3XOmj0dNzFAkDhoZFytzRFyL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cL9diCae7YQyy7MIw8CuxFMPmD+rud5dqg4vwvb5PTXBcJuxArU9/CufM2as/Z37fXyNT/lYEGGqmPv/Cj4gUJoJAwGTWNIOXm9gL91CAvEEbeJO+i2jMgVb+KIDldpWnwuHQft7H+FuoVPhn0yX7CAdB6I1P0Xsefn0MA8qn10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgNTZZ0f; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso4276483a12.0;
-        Fri, 05 Sep 2025 06:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757080229; x=1757685029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GsDRGR++bormrxuQpTob+gGR1rNtwUxynLJUN3PiAt4=;
-        b=jgNTZZ0fV1eGLD60bf0ZbogA1PWZb/mkrXhl/PNvjw9HOEhwvVnNt6PTJgkCsvvmop
-         kMkR/1M+zTT1S9vZMnIlVWmhozT1ia52OHfqa0wM9w/DB8PIy2HWKcMj0Tm6FYK4DtF/
-         tF576tdISNGSHGQyXmKmYKaOy2LqMLB12mfYOpLfGA3xaiiD3opT7OOlnNweNAj1FwWW
-         BWsIqPAx0VGjCo5L52dX8fTdIG2jo6YbtYX6/WrPzaWX1o9jsaaXiZiEf2BoIIyOY5oq
-         EpGPe+M5XLk7HlNIhhyjAwW79BsaHQhXjxKcx8FG1/jhJZKJeKwHuhUdifzBFF3JAfZ6
-         ZyZg==
+	s=arc-20240116; t=1757080244; c=relaxed/simple;
+	bh=4XGnut1KQ5kuNGnU7q5t4kWQ8e03NglGs0Fl6o2RhkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X43VvjPeNYnaSTk0Q7xPfubJKSrccV/zt1XcUA3lyOE99Hozq0R6Xnjom++rdzjEvetnknKbvhUTuHKDFqD8+8gVtWXbTxmtA3LeLipJIrCAkjLUnAvIMxonfRRVWrWI6unx2mD0sdVikOQUcSO3RK9xfUOJgFgrejUbAnjR9Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MXEp56+k; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58572Ooc003799
+	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 13:50:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gEQXFpfF2RLL/Hgz4KyNGpY0
+	IZf9BMj2+2h8HwgD2BY=; b=MXEp56+kNC0f0+Vd/QsFAwauK0Ede9zrelhvaL19
+	ysQXCRYbW6pWYu7qYVcWq+qAKbZUJO7lr/FHbCEv2+ktYku8QYWufBVv4uFg/qhq
+	YonFxqrkHGSaTU+TRrkJ+Vh2FYEGJ2ONex/EOWstxez3VLrzVS8PkTj6dhjWGBYu
+	K1e4mrWPZRZSJ8tq4HE9L8G8gY4/WabljOc3sau0AgjnLe/fpwfG9cO8Rstd6SC2
+	RspuvTdRgkyEDLLhGaNWdJLQrLNkCETyXyLrR3C5HG63mBDVIymnTm83kJc8g01u
+	Tjeo9USBVsIGpR+gjoVwE4Z0bph0IWCN5abnnQgH/TCxjw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8sbdmw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 13:50:42 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5d5cc0f25so39243671cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:50:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757080229; x=1757685029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GsDRGR++bormrxuQpTob+gGR1rNtwUxynLJUN3PiAt4=;
-        b=pIUPz1lZXGmPOV67VZMnnL4saTYT0POUa1AoPpYDU55ju1TID5gcc86AjoSviR1qQv
-         MGA/rNXQBw41cDIaFi7ghsGLs6Xf8zaPok7HT8/j0W9/qhJeeFSBkyNWXJJ/BNQohHvL
-         /vPEOizBWaXAI4TPRnsTWa6O5jYZGrDZ+g9TKlA8/zbzXWpFZkJPh4lKsxbRP/r4ns++
-         RlfH5HuDIu5zTpHkk3W1KtL7iX5D2mSJjtNNvn2iBbaFJUI1A5P/TT6b8mOqc6+jaPIt
-         drpTa6GX15jRp3PwNW8as6lLbV3T2RC5GEgiZFEAO/xAA0S8r2y5L1jSuVI6H7KfT1SI
-         auBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs7YLobpxsFhw2SZSh45T7D3FpDVD+lWInWUIgIcfoYJuSf7ji/O2QUs38SI2aTB/ezKoyUvAAK9G4HxoT@vger.kernel.org, AJvYcCV3gHaswnjkYUYEiqkxQL70P8fKjVa3v+i2bLSTasQJLIfuCcAJ7Kd4UiR4yFnMYH1rO1IeN5OtZaej@vger.kernel.org, AJvYcCXKc6TIbhimAxVzBeRqPi9m/a8NpqhE+wBv6hhpaEwwvAcmLWjMz0gE8CtouM8NAQc4Vj4EtcQLZlYT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyF3U8FMFw5tQOh2ZoATCweSjQGCiFNwev3M8dGdNuu5lwX56p
-	1Oi0vr4BsXcKki9e4BH30tjHHI5gTom5hqpMwW99kR1r3zpCDaDml1leysApi+PT8RyqRThgyYy
-	SEc45WkKcsrP9fCGEErfJuAMNK4MhCSs=
-X-Gm-Gg: ASbGncsnU0qQXOounx4g55lR2PQ5Y84BCWDP1KyuVawngLBYufg6DAwlZhmHt4csniN
-	uV2PCnS95l4SUtGUpUpU7IbsKAcvuasEkpM3h9E4e6Sq6BxmeD8lzijf07JtO3ugyRko95RpZC1
-	upJ2rtTfXb+rmmlX06umjgEk/pAa22ErAIlap2kqnn13RI9UqWX0w55/lqN8nmpVu5LXMnR9bS0
-	Z/rUp4Rt2542lkP5e3E
-X-Google-Smtp-Source: AGHT+IHjWWI9HbRGOxg6LjImm1wlKdJKXEOOX3NTMgz3aDtQ5bkt1lgUY0YKC8oZiVEVz59Ge+csrDJT51esVT2Tq4A=
-X-Received: by 2002:a17:906:37da:b0:b04:7eba:1b55 with SMTP id
- a640c23a62f3a-b04931013c1mr293547266b.19.1757080229304; Fri, 05 Sep 2025
- 06:50:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757080241; x=1757685041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gEQXFpfF2RLL/Hgz4KyNGpY0IZf9BMj2+2h8HwgD2BY=;
+        b=B/aKw6AWEqi4uG2S0hkvCbg5FRb/CER6gYJ6JkbQmqTtBuzJptFWZ70kAjWou9csvT
+         cvE90QLldq3ajscv1mK5V6mtR79/JpG1eiYSbMowsT5M5oRhUrC0iqEVoEtmonA1GvQb
+         MFndj/c7m1c3m27M1KzckQ6sXEsLFM9KXyt60NhAWKgfK9eE7dB/BvUnixKLa48Alu54
+         6kZTVKUnz6od1f/VYkh8Hp4mtRg32sQQRQY1P+nAF1PTEnJGqNcqQZHVsTZHPachtbjE
+         DjiAnt/zYZf+biaySrA8yXABGty1gzjqE862KpQhCcGmnqFoSYood4cGRSM5smYcTEMM
+         XWcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZj7TefAt03E57ECVkVDkSULW4/kx/3884O1IAkhtsaRquxJZyzIk0EECyLAyLyl2EgHwl5INY/CPzwYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpK2PbPum2Iudh0gz0C0/SOlAaZ1wJ5NEMM9Cw2nsgpZmoC6eD
+	QVxZjWLSex7MCUm3K/3IGnquYj/B4R8d5rqXmTqv4/uSCbaoW2sVRaUUCnNent2cN/B0+8Kzdc4
+	keoxLSbxIbEUVAW1JnH2Y4i0STuXS/BlykN2Umzw6Fp9CZVIrhDybCgDhERekIoyv1Jk=
+X-Gm-Gg: ASbGncsk/VoXvpGvRTF8l/8taSdSrK9/dyFu3Uc7K6xJFJOpcoTBCBUWwJy5DWEp96B
+	bwU9OKLkWeDxEVRkSxs44z8VlBemqzsvZeNqJ53G+BTULtX6bfONZh3WYm78D+gnAifJIt/OSAC
+	0nlqjv/0qf17Gex+TAq5PoNRJcwZS4uzIB/qv19TpWD8Iui8QwY3dvSZCBQKqWwrCmRz68gsfIP
+	iGPIee8SBl+LjWWTY7uy4DG9WvxsbgW2PAf2HgOiVXJco8CWZINb9uBpQpfzRRm7g2rnoU3umPq
+	jn7iwZh+A3Zzljx7ebtKPfofHvYpv70Yv+KfT/6YUAw3yiAwcHP8S5AlKOjmt5jA3SeeAYWJPpF
+	rcW31BZkCvfT62ykhKS9HIkpK/Nwt4TkKKJacSEIhYGe4YZzYauB4
+X-Received: by 2002:ac8:7f88:0:b0:4b5:eea8:3658 with SMTP id d75a77b69052e-4b5eea83886mr16446661cf.63.1757080240746;
+        Fri, 05 Sep 2025 06:50:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9MeUrOkje/yhcJw0U3KyLgE4LLXgaLmVOt6iaIs6F82Zo+mL6i2IiNuAwDQlzVrfywNScMA==
+X-Received: by 2002:ac8:7f88:0:b0:4b5:eea8:3658 with SMTP id d75a77b69052e-4b5eea83886mr16446201cf.63.1757080239973;
+        Fri, 05 Sep 2025 06:50:39 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace9c65sm1789340e87.85.2025.09.05.06.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 06:50:39 -0700 (PDT)
+Date: Fri, 5 Sep 2025 16:50:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        lgirdwood@gmail.com, linux-sound@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/8] ASoC: codecs: wcd: add common helper for wcd
+ codecs
+Message-ID: <6igcrtfra6h75v5g3wucokxw3ncj3k66ui3jnhfpdf2lmxc3tm@3hzihrpgjaz3>
+References: <20250822104927.2621866-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250822104927.2621866-3-srinivas.kandagatla@oss.qualcomm.com>
+ <kmm4e5bg7uehmlsgrfhzo4agr6ga6d5gxtpxq5sg4t3wql5p6m@llwyz4kzsj7y>
+ <f6a631bb-d17d-4eba-adfc-4db08540f5a0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
- <20250820-add_newport_driver-v5-3-2fc9f13dddee@tdk.com> <aKbk9WYtfb5L5la4@smile.fi.intel.com>
- <FR2PPF4571F02BCCFD984FDD99C69CAE7298C00A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
- <aLmY2mKg_FsPOpsq@smile.fi.intel.com> <FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-In-Reply-To: <FR2PPF4571F02BCEB6C4FA4B3641299A72C8C03A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 5 Sep 2025 16:49:52 +0300
-X-Gm-Features: Ac12FXzLd2wqWO1IzNY4C04FzCYHy2I8A2mtoLZ2cJjriRJysLqX_toKQl18uwM
-Message-ID: <CAHp75VcLo__aS1GJCN_zgd5PgNKgtSGbCWbY07qngEFVXBtQVA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/9] iio: imu: inv_icm45600: add buffer support in iio devices
-To: Remi Buisson <Remi.Buisson@tdk.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6a631bb-d17d-4eba-adfc-4db08540f5a0@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX3IeJvLVkIzmS
+ gQGtsjmIcbnAY5Uh+xZde+s9q+S5vn8Oo0i/cQl61Femh2fzV3o4us290yZuCqZOsgS2+1ly18+
+ DF35JEX2mKZ8Jmfbw7ganttH0fMSe+LthEp9k8SxbVfgIlNvdAgmYdiZ+ZiXO75et2o7AcyXzRC
+ 12L07dHmz4Su0mmM8sRqgfCHXhutXELLGBB3AMP/6dxa+FDCBOtxGVi9E2XzPIIZP9gabTihCZx
+ nCZ/zcezPrSzB+GdMyCvHYvAD8YiPVYHQPdTtCOtYmKi7XMEpL9LED6wHhUJQSEKs2XhUBr78u3
+ l6T4hBq/nwdj1s9zUVlRFLhPNm30lWZeGKQ3KewtAhO5h+nf85UkIdLIjr0kuHRvZBbe8eYu5d6
+ 8EJAkf9K
+X-Proofpoint-GUID: lUlYXnsLBNDBUWbIZvKmCrZ66AEQPRcV
+X-Proofpoint-ORIG-GUID: lUlYXnsLBNDBUWbIZvKmCrZ66AEQPRcV
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68baeab2 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=vlklIGvXIyMSkDzfuDYA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-On Fri, Sep 5, 2025 at 3:44=E2=80=AFPM Remi Buisson <Remi.Buisson@tdk.com> =
-wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >Sent: Thursday, September 4, 2025 3:49 PM
-> >On Thu, Sep 04, 2025 at 01:01:32PM +0000, Remi Buisson wrote:
-> >> >From: Andy Shevchenko <andriy.shevchenko@intel.com>
-> >> >Sent: Thursday, August 21, 2025 11:21 AM
-> >> >On Wed, Aug 20, 2025 at 02:24:21PM +0000, Remi Buisson via B4 Relay w=
-rote:
+On Fri, Sep 05, 2025 at 08:03:49AM +0100, Srinivas Kandagatla wrote:
+> Sorry for some reason I did not notice this email!.
+> 
+> On 8/22/25 12:18 PM, Dmitry Baryshkov wrote:
+> >> + */
+> >> +
+> >> +#ifndef __WCD_COMMON_H__
+> >> +#define __WCD_COMMON_H___
+> >> +
+> >> +#define WCD_MIN_MICBIAS_MV	1000
+> >> +#define WCD_DEF_MICBIAS_MV	1800
+> >> +#define WCD_MAX_MICBIAS_MV	2850
+> > These do not belong to a public header.
+> 
+> 
+> All the wcd codecs have same MICBIAS circuitry, this is the internal
+> micbias circuit we are talking about here.
+> 
+> Actual micbias value comes from device tree, but these are min/max
+> ranges that are supported by all WCD codecs.
+> 
+> Why do you think it should not be part of common header?
 
-...
+Because they are not used by any of the users of the header.
 
-> >> >> + /* Disable FIFO and set depth. */
-> >> >> + val =3D FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
-> >> >> +                  INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS);
-> >> >> + val |=3D INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX;
-> >> >
-> >> >FIELD_MODIFY()
-> >> Ok, great.
-> >
-> >Actually this is not a modification per se, it's just an assignment (PRE=
-P)
-> >split to two lines, can you just make it a single expression (wrapped on=
- a few
-> >lines, though)?
-> >
-> You mean droping the FIELD_MODIFY suggestion and doing something like:
-> val =3D FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_MODE_MASK,
->                  INV_ICM45600_FIFO_CONFIG0_MODE_BYPASS) |
->          FIELD_PREP(INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MASK,
->                  INV_ICM45600_FIFO_CONFIG0_FIFO_DEPTH_MAX);
+> 
+> --srini
+> > 
+> >> +#define WCD_MAX_MICBIAS		4
+> >> +
+> >> +struct wcd_common {
+> >> +	struct device *dev;
+> >> +	int max_bias;
+> >> +	u32 micb_mv[WCD_MAX_MICBIAS];
+> >> +	u32 micb_vout[WCD_MAX_MICBIAS];
+> >> +};
+> >> +
+> >> +int wcd_get_micb_vout_ctl_val(struct device *dev, u32 micb_mv);
+> >> +int wcd_dt_parse_micbias_info(struct wcd_common *common);
+> >> +
+> >> +#endif /* __WCD_COMMON_H___  */
+> 
 
-Yes.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+With best wishes
+Dmitry
 
