@@ -1,106 +1,205 @@
-Return-Path: <linux-kernel+bounces-802149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FF3B44E31
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8C5B44E10
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30361188082C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:45:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C201BC79AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F20D2C15A5;
-	Fri,  5 Sep 2025 06:44:41 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E956B2C0280;
+	Fri,  5 Sep 2025 06:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbWv+LFL"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E8127935C;
-	Fri,  5 Sep 2025 06:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774AA2AD2F;
+	Fri,  5 Sep 2025 06:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757054680; cv=none; b=bJjWQz321QUfyLKVWVW8CAg5JGTV0GjdvdhBlxiJ4oXECvTeewgECdWlw01e3tcuWE6vyPYbYj1mkuM/SCHrRZnxgkXdWZTqacZBglj+uLiD0VDRWygWvgEVqDBBH43x49LqjxD/FvhDaKxDwq46sMowkZy/O0Jg3MEEtIIKdi0=
+	t=1757054490; cv=none; b=NCP8d3jml9K5E+2b+QYZPLcGEAZv6vqfynTeFAWSCO8GsH7F2kbiRYAjqUNqQV0f5AIBtLyok2WDTMUJl7o6SDaIR5t8Z8mmj9RC+CUe5HT1m5qVT3Yc7M80Bew+A4JBqpW6C/3nPtQ7N91TPm6xOjqe7ErzVq2kz18mfLAMdIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757054680; c=relaxed/simple;
-	bh=xCbZ0OC2D6dK4DEuY+6kFETEtfde45wGVI9WtSustIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DAaQzbMyu5AU7HtKVFvVCA1lQcxy45a03ifLqIuadiokoAJ9gPdw8pwY5EB2O1BULMJYYaWMMTs6AjQMpWw2u+38Ngd15ZTzefp2vtNl8h5KQ2Yke+GzQ27GP98mYP2A/tjVIznKPagCRZRHifUE3QzqSuF85/ejOKsdO25GeNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 125a72548a2311f0b29709d653e92f7d-20250905
-X-CID-CACHE: Type:Local,Time:202509051438+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:ebc0d553-b6b3-4b3d-b2d1-42ccbcc89bb8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:fe34e70d8ada746319231e1bc6db2edf,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 125a72548a2311f0b29709d653e92f7d-20250905
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <tanzheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2141632053; Fri, 05 Sep 2025 14:39:28 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 51DCF160038C1;
-	Fri,  5 Sep 2025 14:39:28 +0800 (CST)
-X-ns-mid: postfix-68BA859E-8633652120
-Received: from localhost.localdomain (unknown [10.42.20.101])
-	by node4.com.cn (NSMail) with ESMTPA id 7F2E1160038C0;
-	Fri,  5 Sep 2025 06:39:25 +0000 (UTC)
-From: tanzheng <tanzheng@kylinos.cn>
-To: johannes@sipsolutions.net
-Cc: arend.vanspriel@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	tanzheng@kylinos.cn
-Subject: [PATCH v3] wifi: cfg80211: Remove the redundant wiphy_dev
-Date: Fri,  5 Sep 2025 14:39:23 +0800
-Message-Id: <20250905063923.1170764-1-tanzheng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757054490; c=relaxed/simple;
+	bh=NZFkseZkjzL6Fkv0b6NxwoHKiu8b5mIGz+R6t2D1ZbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LlKSAB6fBMbQGUJvD69iz04kc3W/S632WcVP9itkNxvTe8HElofNwFlk5LeeDp4QJTkrURvPTENMPJjA710Jk1D4yoRcHJkY6r3ZbwFwoWMZGXkpIx1qv/hHBGYhapUtxTG8y7eD7MJz/SGabgGaynOrY6C3mZKLEAiUSARCauU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbWv+LFL; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so1826508e87.2;
+        Thu, 04 Sep 2025 23:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757054486; x=1757659286; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VjdBUoIejYQ0d1liNcdBl+wSNDEtAg+1bA2FnYRKKT4=;
+        b=UbWv+LFLdklKa2szFdso1BVx8zaqREOntSVYTYrD0fKJuJmayPKZBJViDnlFYcwPRe
+         9eW75K+l6v8XDh+nSyWPQH+tZdDcj3tXWCr7U8V/zoSRN0i39KhekukBCUZw3WySvG3C
+         maTIvFBRwDpu7b8MLJ4PjJkHW9Jy9onKlOS2nywYFt6tVRccZj7MGb+Psna0uRr5M8QM
+         UKDHPMGdG12FFYYej8+HQiIiDC35iZNQIxe7LIoYP7fs4fHjRciwk/FMgZP0HZC5kyY0
+         Te2afbAg3eGW6c9bIXjOi7Bc3QU772UDbegKtgIVapQ9UIEUfbVH6s4A80MsljO5Onar
+         k8Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757054486; x=1757659286;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VjdBUoIejYQ0d1liNcdBl+wSNDEtAg+1bA2FnYRKKT4=;
+        b=Abd4vdIFFu1Zzdrxyuqt5L2um5yORRCT6AGBHpcy62vDaTjvQZ10OWPVyj198XZdwZ
+         CTU9EK+w4Sue/H5qHkg1zbkhm8bnuoza0gZ87VlCO84eG0I8Y85dU1z7vJztB6aWMS+Z
+         rmFzw8gx/IB8GYVHtoHEbC5bqBHa4/20O2UdpW/EUM9e0WQtqxEZMGvdUnWWIvbxaHeC
+         5JVqHKQlWeeNDA4bf60CTasZg/kd03m2YcWGAeYbR6mIhW0mzILqan+vDpBPJ3uyC0dv
+         kR6CDDNpCt76ReduYgrCYtOguT7skKPQxBIADTK+StQyJTLUr8jmia95MV7IU45clEfS
+         g0Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA8TtrP7xiRiSGetBFvynIfozixNQGYAk2n8pKgElYg432qjHJwv0iuYBiq16DSp32YKwU9V4MJnAa@vger.kernel.org, AJvYcCVjZoYnLjSAb64YQ5EjMRTVrPDU3KNsq1PJcEC7bEGJ1nsmoGg64dX3AekEbMJGBHzhE6O0hitfQPzHoA==@vger.kernel.org, AJvYcCVkCNS5FCA/bOGmN2JDe89WXildC4Jt8weJ01p7tYVTc5TqlTnzkMyyDHZL43q99LXC4qW30tK1FK+YvhMI@vger.kernel.org, AJvYcCWzqj2GVY6VLMirYiA/JhbsS8af/DhXtXUrZbH+pafFuw/tll8pdMvdPyZDkWYYryUVPr8smk2+stNV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnZVnKCr/5TzMQNa5E7Xw7iywcy38GMOS7KTwcztQlVaOmcQML
+	8FUP6k6F/q5h3Uv8dqx2+AioQFVD+jcRPATunEEwb6mZsA1ZZjvYUNmh
+X-Gm-Gg: ASbGncslvYw1RhvDPvGjTY4DE4EEH3pldp+uhyW8mbkwHBH2w7Rj5ha+nywA8D4eqkH
+	i/piV++4NYsSoU0XjI3IhoCK7eQrGEzfhLzqj0hmCyxaqeBSO8WDAz4QyigxW+xVgms+BYM5ns2
+	3yZui3BIgUgfObLDEhDf/Ao/cTB0LV0BD4PjRYNVY5APPjY8yGvjdyWFGteuaCNv2+B13sJVXBw
+	vUO5/7rX+SuVq3meShuT+dSi3A4rcVOvhHpssIX27fUfhiCj7ajYYMOcPnTrNeSAlD7M+tby6iD
+	G8mCy0zG6sViS/S30fAXZO2c/Obaf+Q7/Btmonny6RZdXhs0Oq+ixagv3+7fWj2xsSepACuMLkx
+	0rKuHItLTxDPI+JHPUiyKtDypG8ilpw==
+X-Google-Smtp-Source: AGHT+IEbLkFl3txe5G1HbR7RZN6w2pzEdTHoGNMvuNcVeSEtMS6A2m9FCsGIxZ3RMv5fS/n1bDB+Ug==
+X-Received: by 2002:a05:6512:2347:b0:55f:6ddb:25 with SMTP id 2adb3069b0e04-55f708a2b1amr7633064e87.3.1757054486339;
+        Thu, 04 Sep 2025 23:41:26 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ab93ebcsm1649573e87.47.2025.09.04.23.41.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 23:41:25 -0700 (PDT)
+Date: Fri, 5 Sep 2025 09:41:19 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	v3-0001-dt-bindings-iio-adc-ROHM-BD79112-ADC-GPIO.patch@mva-rohm.smtp.subspace.kernel.org,
+	v3-0002-iio-adc-Support-ROHM-BD79112-ADC-GPIO.patch@mva-rohm.smtp.subspace.kernel.org,
+	v3-0003-MAINTAINERS-Support-ROHM-BD79112-ADC.patch@mva-rohm.smtp.subspace.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v3 0/3] Support ROHM BD79112 ADC
+Message-ID: <cover.1757053456.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UFdqrImNvPq8YtRT"
+Content-Disposition: inline
+
+
+--UFdqrImNvPq8YtRT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-There is no need to call wiphy_dev again.Simplifying the
-code makes it more readable.
+Support ROHM BD79112 ADC/GPIO
 
-Signed-off-by: Zheng tan <tanzheng@kylinos.cn>
-Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+The ROHM BD79112 is a 12-bit, 32 channel SAR ADC / GPIO IC. Or, a "Signal
+Monitor Hub IC" as data-sheet describes it.
+
+Data sheet states the maximum sampling rate to be 1 MSPS, but achieving
+this would probably require the SPI and samples to be processed by
+something else but the CPU running Linux. This could work with the "SPI
+offloading" which has recently landed upstream - but I have no HW to test
+this so nothing fancy is implemented here. It's still worth mentioning
+if someone needs the speed and wants to try implementing it :)
+
+The SPI protocol is slightly peculiar. Accesses are done in 16-bit
+sequences, separated by releasing and re-aquiring the chip-select.
+
+Register write takes 1 such sequence. The 8-bit register data to write,
+is stored in the last 8 bits. The high 8 bits contain register address
+and an I/O-bit which needs to be set for register accesses.
+
+Register read consists of two 16-bit sequences (separated by
+chip-select). First sequence has again the register address and an IO
+bit in the high byte. Additionally, reads must have a 'read bit' set.
+The last 8 bits must be zero. The register data will be carried in the
+last 8 bits of the next 16-bit sequence while high bits in reply are zero.
+
+ADC data reading is similar to register reading except:
+ - No R/W bit or I/O bit should be set.
+ - Register address is replaced by channel number (0 - 31).
+ - Reply data is carried in the 12 low bits (instead of 8 bits) of the
+   reply sequence.
+
+The protocol is implemented using custom regmap read() and write()
+operations.
+
+Other than that, pretty standard device and driver.
+
+Revision history:
+ v2 =3D> v3:
+ - Mostly cosmetic changes to the driver
+ - dt-bindings and MAINTAINERS unchanged
+
+ v1 =3D> v2:
+ - Plenty of fixes to the driver (thanks to reviewers, Andy and David)
+ - Add gpio-controller information to the device-tree bindings
+
+ See individual patches for more accurate changelog
+
 ---
-Changes in v3:
-- Modify the patch description=09
 
-Changes in v2:
-- Delete the use of dev_name instead of pdev->driver->name.
-  This is incorrect.
+Matti Vaittinen (3):
+  dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
+  iio: adc: Support ROHM BD79112 ADC/GPIO
+  MAINTAINERS: Support ROHM BD79112 ADC
 
- net/wireless/ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/iio/adc/rohm,bd79112.yaml        | 116 ++++
+ MAINTAINERS                                   |   3 +-
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rohm-bd79112.c                | 547 ++++++++++++++++++
+ 5 files changed, 676 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79112.=
+yaml
+ create mode 100644 drivers/iio/adc/rohm-bd79112.c
 
-diff --git a/net/wireless/ethtool.c b/net/wireless/ethtool.c
-index 2613d6ac0fda..46e4317cbd7e 100644
---- a/net/wireless/ethtool.c
-+++ b/net/wireless/ethtool.c
-@@ -23,7 +23,7 @@ void cfg80211_get_drvinfo(struct net_device *dev, struc=
-t ethtool_drvinfo *info)
- 	else
- 		strscpy(info->fw_version, "N/A", sizeof(info->fw_version));
-=20
--	strscpy(info->bus_info, dev_name(wiphy_dev(wdev->wiphy)),
-+	strscpy(info->bus_info, dev_name(pdev),
- 		sizeof(info->bus_info));
- }
- EXPORT_SYMBOL(cfg80211_get_drvinfo);
+
+base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
 --=20
-2.25.1
+2.51.0
 
+
+--UFdqrImNvPq8YtRT
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmi6hgkACgkQeFA3/03a
+ocX5mQgAgZX2gG6uk6+4Vq5z5rhopLNRaYgcYTmAKLy85KASCFJytTw3zKijiKDY
+xV3qproNsBPUspXwTwygaVtNWWwgcBEFgmrukcrsQK5qaHa46uIro4VbcK+Rs2W8
+toc4ozHJvvwwXuGuCkGeGc9waOijnq03rd6Jsb2TIVdzkI4jxh7dbim5fJWC3aQq
+/CtKYjsmn2SL6yKFWc648OWGWCtJKNg1prFhiUOVXh3Jije8Rcx2XNp8ivO7aAY2
+X4M0zPwzxECJTpqLQqFY3Q+9Wsd3rSput0bKsKC/rMR74I/FLuqHbkPtwH6QJPxt
+gpIcMH5BTPhOEKuAPw5ebvBMMSJPcQ==
+=PK4a
+-----END PGP SIGNATURE-----
+
+--UFdqrImNvPq8YtRT--
 
