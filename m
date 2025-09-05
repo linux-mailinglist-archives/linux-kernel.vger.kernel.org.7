@@ -1,39 +1,46 @@
-Return-Path: <linux-kernel+bounces-803595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E20DB462D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A78B462D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBCC173AF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1B77189C09A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDE532CF80;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C03393DC9;
+	Fri,  5 Sep 2025 18:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oCkJT14J"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDAA2737E6;
 	Fri,  5 Sep 2025 18:49:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041CC25A343;
-	Fri,  5 Sep 2025 18:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757098159; cv=none; b=ej6zG9sSP8Q0ILE8bXVMIwzl/DYDcjX2fvmp9xo+mg2HCxY4NLYPUeciMG7rHmtjxQqKWF26aIbKfYpIi0QE/i6q3I/ogPbtSxBSPCUi+BQw3IDI17Q06e+P1PILgBsqgNd+oc0tnrON9ToTbkltKPMammdtEr3K6J1+MHXbIcY=
+	t=1757098161; cv=none; b=XW0iJOxsAt9Ym1MEJUkotkBsdvWzONdyCybJXr6/AZsUyuwpeTtgwBofJL7ON4P6FzUH6c6tPaumukjMYs9XRPcRWmdiaBSzd53wrx/orgzyD1Aw7QfQokYSNfyIjzkYN6sMZoe6pc+fsSNxq0mRlkMQ3uUF54Zz1tJZj0JSSr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757098159; c=relaxed/simple;
-	bh=uVVjYy4LXPDttbkCjYxdRX08KrZ8tDWcmNAWFIUOCSI=;
+	s=arc-20240116; t=1757098161; c=relaxed/simple;
+	bh=1/nuSTD5GWcvPkNQ6+aJ2ZX10mVfvAGh2/eWLRpsF5g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3nCPGPcYr3CcYkuteOB+0Zzpdq/X1VVwjreby3qgTGOzGyWEx0tFpNAgfMLLotNw7mN0iZIEvmBN6Q1ZtRASisulArrtASGo38qAQJuZCbOfdP81D83aSqfPvj2ZEiKUBWvxMDAY833KJed/kt/X/m8dHcP5fVGeO46f4IoTpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B94FF152B;
-	Fri,  5 Sep 2025 11:49:08 -0700 (PDT)
-Received: from [10.1.197.69] (unknown [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA9A23F63F;
-	Fri,  5 Sep 2025 11:49:10 -0700 (PDT)
-Message-ID: <6a050b35-1b4d-4ea1-aa40-974aafa89b52@arm.com>
-Date: Fri, 5 Sep 2025 19:49:08 +0100
+	 In-Reply-To:Content-Type; b=IWYqNorqE9m0uuYOAPkKoZgjzTBI3RP0uVgGGAaWEUlhbXW5IpIsU9xE9w1ew0WOW0G38RVJUU5bbo5Ox5NY99qPKy6OKuJAzx+9cS/AZRyj+LE4BQgkvzUC1y7hQcpvYMI7eex0xSxlF5EbDCI/6CaQ9QfjJlXHtVjhBGO8o1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oCkJT14J; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.33.189] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7EBB120171D4;
+	Fri,  5 Sep 2025 11:49:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7EBB120171D4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757098159;
+	bh=dp/kEQKkUi0D1zVyET/IHUg9weUbnlvPbW7U8vYE2eE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oCkJT14JuoJIS6ddd+kfb34hDe7iofsOyLbHyJiVM3ximql0cDkINpdrRwcxiMrOK
+	 XGDZ3iI+RaHlU2T9wsrQmryHoPCGy8V5R9uuxZPAXbwmk0531DZ5WKn8itUShcL2GM
+	 U/+VehwvLE7iHxNz0eY+jsTTsAORjj5JXrkwGhs4=
+Message-ID: <dee3a22e-935c-4500-b9d1-b43109f4897a@linux.microsoft.com>
+Date: Fri, 5 Sep 2025 11:49:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,119 +48,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
- kbuild boiler plate
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-11-james.morse@arm.com>
- <e5b2fa8d-c77e-49ac-a328-1363e472cc42@arm.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <e5b2fa8d-c77e-49ac-a328-1363e472cc42@arm.com>
+Subject: Re: [PATCH 4/6] mshv: Get the vmm capabilities offered by the
+ hypervisor
+To: Praveen K Paladugu <praveenkpaladugu@gmail.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
+ <64adc508-d18b-4075-835d-97ce5b68c4eb@gmail.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <64adc508-d18b-4075-835d-97ce5b68c4eb@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Ben,
-
-On 01/09/2025 10:11, Ben Horgan wrote:
-> On 8/22/25 16:29, James Morse wrote:
->> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
->> only be accessible from those CPUs, and they may not be online.
->> Touching the hardware early is pointless as MPAM can't be used until
->> the system-wide common values for num_partid and num_pmg have been
->> discovered.
+On 9/5/2025 8:43 AM, Praveen K Paladugu wrote:
+> 
+> 
+> On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
+>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
 >>
->> Start with driver probe/remove and mapping the MSC.
+>> Some newer hypervisor APIs are gated by feature bits in the so-called
+>> "vmm capabilities" partition property. Store the capabilities on
+> nit: s/xx/Some hypervisor APIs are gated by feature bits exposed in
+> "vmm capabilities" partition property./g
 
->> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
->> new file mode 100644
->> index 000000000000..07e0f240eaca
->> --- /dev/null
->> +++ b/drivers/resctrl/mpam_internal.h
->> @@ -0,0 +1,62 @@
+Thanks, I'll update it for v2
 
->> +struct mpam_msc {
->> +	/* member of mpam_all_msc */
->> +	struct list_head        glbl_list;
->> +
->> +	int			id;
->> +	struct platform_device *pdev;
->> +
->> +	/* Not modified after mpam_is_enabled() becomes true */
->> +	enum mpam_msc_iface	iface;
->> +	u32			pcc_subspace_id;
->> +	struct mbox_client	pcc_cl;
->> +	struct pcc_mbox_chan	*pcc_chan;
->> +	u32			nrdy_usec;
->> +	cpumask_t		accessibility;
->> +
->> +	/*
->> +	 * probe_lock is only take during discovery. After discovery these
->> +	 * properties become read-only and the lists are protected by SRCU.
->> +	 */
->> +	struct mutex		probe_lock;
->> +	unsigned long		ris_idxs[128 / BITS_PER_LONG];
+Nuno
 
-> Why is this sized this way? RIS_MAX is 4 bits and so there are at most
-> 16 RIS per msc.
-
-Hmmm, lost in time - I agree with the 16 reasoning. Fixed.
-(It's likely due to RES0 space above the field - but that has been filled in with other
- stuff since then. RIS was added as a 'backward compatible feature' - I was wary of them
- extending it)
-
-
->> +	u32			ris_max;
+>> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
+>>>> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>   drivers/hv/mshv_root.h      |  1 +
+>>   drivers/hv/mshv_root_main.c | 28 ++++++++++++++++++++++++++++
+>>   2 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+>> index 4aeb03bea6b6..0cb1e2589fe1 100644
+>> --- a/drivers/hv/mshv_root.h
+>> +++ b/drivers/hv/mshv_root.h
+>> @@ -178,6 +178,7 @@ struct mshv_root {
+>>       struct hv_synic_pages __percpu *synic_pages;
+>>       spinlock_t pt_ht_lock;
+>>       DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
+>> +    struct hv_partition_property_vmm_capabilities vmm_caps;
+>>   };
+>>     /*
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index 56ababab57ce..29f61ecc9771 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -2327,6 +2327,28 @@ static int __init mshv_root_partition_init(struct device *dev)
+>>       return err;
+>>   }
+>>   +static int mshv_init_vmm_caps(struct device *dev)
+>> +{
+>> +    int ret;
 >> +
->> +	/* mpam_msc_ris of this component */
->> +	struct list_head	ris;
+>> +    memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
+>> +    ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
+>> +                        HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
+>> +                        0, &mshv_root.vmm_caps,
+>> +                        sizeof(mshv_root.vmm_caps));
 >> +
->> +	/*
->> +	 * part_sel_lock protects access to the MSC hardware registers that are
->> +	 * affected by MPAMCFG_PART_SEL. (including the ID registers that vary
->> +	 * by RIS).
->> +	 * If needed, take msc->lock first.
->> +	 */
->> +	struct mutex		part_sel_lock;
+>> +    /*
+>> +     * HV_PARTITION_PROPERTY_VMM_CAPABILITIES is not supported in
+>> +     * older hyperv. Ignore the -EIO error code.
+>> +     */
+>> +    if (ret && ret != -EIO)
+>> +        return ret;
 >> +
->> +	/*
->> +	 * mon_sel_lock protects access to the MSC hardware registers that are
->> +	 * affeted by MPAMCFG_MON_SEL.
->> +	 * If needed, take msc->lock first.
->> +	 */
->> +	struct mutex		outer_mon_sel_lock;
->> +	raw_spinlock_t		inner_mon_sel_lock;
->> +	unsigned long		inner_mon_sel_flags;
+>> +    dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
 >> +
->> +	void __iomem		*mapped_hwpage;
->> +	size_t			mapped_hwpage_sz;
->> +};
+>> +    return 0;
+>> +}
 >> +
->> +#endif /* MPAM_INTERNAL_H */
+>>   static int __init mshv_parent_partition_init(void)
+>>   {
+>>       int ret;
+>> @@ -2377,6 +2399,12 @@ static int __init mshv_parent_partition_init(void)
+>>       if (ret)
+>>           goto remove_cpu_state;
+>>   +    ret = mshv_init_vmm_caps(dev);
+>> +    if (ret) {
+>> +        dev_err(dev, "Failed to get VMM capabilities\n");
+>> +        goto exit_partition;
+>> +    }
+>> +
+>>       ret = mshv_irqfd_wq_init();
+>>       if (ret)
+>>           goto exit_partition;
+> 
+> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
 
-Thanks,
-
-James
 
