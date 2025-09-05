@@ -1,65 +1,56 @@
-Return-Path: <linux-kernel+bounces-803140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23C7B45AF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:52:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEB2B45AF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF8F1B26F92
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74FF17474B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758183728BA;
-	Fri,  5 Sep 2025 14:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC661371E98;
+	Fri,  5 Sep 2025 14:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="k8HCIN4c"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqTKqtHJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FD3371E82;
-	Fri,  5 Sep 2025 14:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFB6275106;
+	Fri,  5 Sep 2025 14:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757083911; cv=none; b=O6uHl/6NHnXgG+bUwoKqPyMpuZ4EypiojdRYVCGOTF5pXXTgJPys6cdhJNPnEdI56qKYnS9HnrPf6QteRAPPRiP67ol79Jk41ljDECPwmHDz6pYIuWd+AtVq7sSiqRKQiOjVCXIGaWdjqvRmP+JAIYpPt72j+esa1HWlPk+hrNM=
+	t=1757083905; cv=none; b=XtObkKrvvj/HW6iAROcL1Im2DcIkBTurlhCCP+G/FWKhbhBOet79sT361oN3VEaeWU/TrfuuGQFRkzOS/9h4SAUIfXKXm28PTqe+51R85Q4tVOM0sX6azh3E2dMxocCruTcU8TOzdOD4sFHsuYohFy1LxbgZenU/qUZ84OIyvEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757083911; c=relaxed/simple;
-	bh=NINthk2Vb5S+39FpwzP6GkKDoawCYgVCOooHYiXLYts=;
+	s=arc-20240116; t=1757083905; c=relaxed/simple;
+	bh=OulwDIpATpaTJKhVFbj1IKtDag7TbmPUGG9Y/1g4th4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NROM1/BqQqs5LV2rxsRRIcvotXEgwXy6hTBgnON3yGjdx5vXVb69+BMhxAkgm9hLNYGQUMdaMxB8hLQ8RmKLOEwJ6xH8aB134OLXPFKtfUNp0xQ4rWXgwTtUJBmwcQKOguU5hUGWFUQhuHywCaXFkNil/fvR9dPRwwy/nUUG9kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=k8HCIN4c; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757083898; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=8toPA74+StY+xnHhFcZe0zsBV8eIr3WqRFPMCw6KEcU=;
-	b=k8HCIN4c4kvTmAVDqrOwCEFCtOSuNesT14ySY0LgMxKJKoYdg6eCgUltAocALi0rJ8Hr/7e9sweWeAqiD149ZtNNJalGnHj+j7q8B9kc+ozszBFq7dJ2HU6SNYS9RXyxBbDJa8b5V7VZNSsoUggbD5a0Lmuv/DPMRVze1dKXQtU=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WnKvOJQ_1757083897 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 05 Sep 2025 22:51:37 +0800
-Date: Fri, 5 Sep 2025 22:51:37 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] net/smc: make wr buffer count configurable
-Message-ID: <aLr4-V8V1ZWGMrOj@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250904211254.1057445-1-pasic@linux.ibm.com>
- <20250904211254.1057445-2-pasic@linux.ibm.com>
- <aLpc4H_rHkHRu0nQ@linux.alibaba.com>
- <20250905110059.450da664.pasic@linux.ibm.com>
- <20250905140135.2487a99f.pasic@linux.ibm.com>
- <aLryOL-fahUINVg0@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhLlO4yJTAr0EP0GLUOyAn5pgsPywTdpxuf2woh/laZIM9X38/ZXL3EMRh/2vFomexY42MOGuv9xGmtt7DUB7qxnLWZuxv6dPSD6z+AYLrMCujltNnJ9gU6LypGG1Ml681Znnq8p1jW8SQ24HsXhK7K3cLKIsj5VNpjw51ysr58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqTKqtHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778F8C4CEF1;
+	Fri,  5 Sep 2025 14:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757083904;
+	bh=OulwDIpATpaTJKhVFbj1IKtDag7TbmPUGG9Y/1g4th4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZqTKqtHJ/7IhKd3dkSmI3W9CZyTKo7t3mNerylRaXD+t7fcvUOMJnD0A1da/LQEVI
+	 6TZHb3FMgm8pnhc+XrK/XTQ+GB9Z9DJUAsQNpGIwbtDcvbVqiYPg+uou22+HHNfmm7
+	 AsxEYFfscn19ova7CuY1ElBdmDeGoDJcAmTACdnDX/gl4s64NJRLkdQHlJO5Kjw9Vk
+	 K3jUs/gjrCkFrIBkvf+agSyp+F3/JLN1qcpyyv5cW4mtUcDH8uAvfZs0ex3w+umTJu
+	 nsELlj5nTEXPNovLJxZymo00Gc2IOtVTnvLjZQy5DAYZtmz/ZyjcPMdu8XdLSbabg7
+	 CIAZ9UDbfNY4Q==
+Date: Fri, 5 Sep 2025 20:21:38 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH v3 3/6] bus: mhi: host: pci_generic: Add SRIOV support
+ for PCIe device
+Message-ID: <bp4vxovymcz44zqdexidroeexzlmsd4tm5ntgtju4ohmw6erhw@lssi565zabps>
+References: <20250821-vdev_next-20250821_sriov-v3-0-e1b017c48d4a@quicinc.com>
+ <20250821-vdev_next-20250821_sriov-v3-3-e1b017c48d4a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,54 +60,46 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLryOL-fahUINVg0@linux.alibaba.com>
+In-Reply-To: <20250821-vdev_next-20250821_sriov-v3-3-e1b017c48d4a@quicinc.com>
 
-On 2025-09-05 22:22:48, Dust Li wrote:
->On 2025-09-05 14:01:35, Halil Pasic wrote:
->>On Fri, 5 Sep 2025 11:00:59 +0200
->>Halil Pasic <pasic@linux.ibm.com> wrote:
->>
->>> > 1. What if the two sides have different max_send_wr/max_recv_wr configurations?
->>> > IIUC, For example, if the client sets max_send_wr to 64, but the server sets
->>> > max_recv_wr to 16, the client might overflow the server's QP receive
->>> > queue, potentially causing an RNR (Receiver Not Ready) error.  
->>>
->>> I don't think the 16 is spec-ed anywhere and if the client and the server
->>> need to agree on the same value it should either be speced, or a
->>> protocol mechanism for negotiating it needs to exist. So what is your
->>> take on this as an SMC maintainer?
->
->Right — I didn't realize that either until I saw this patch today :)
->But since the implementation's been set to 16 since day one, bumping it
->up might break things.
->
->>>
->>> I think, we have tested heterogeneous setups and didn't see any grave
->>> issues. But let me please do a follow up on this. Maybe the other
->>> maintainers can chime in as well.
->
->I'm glad to hear from others.
->
->>
->>Did some research and some thinking. Are you concerned about a
->>performance regression for e.g. 64 -> 16 compared to 16 -> 16? According
->>to my current understanding the RNR must not lead to a catastrophic
->>failure, but the RDMA/IB stack is supposed to handle that.
->
->No, it's not just a performance regression.
->If we get an RNR when going from 64 -> 16, the whole link group gets
->torn down — and all SMC connections inside it break.
->So from the user’s point of view, connections will just randomly drop
->out of nowhere.
+On Thu, Aug 21, 2025 at 06:25:35PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> 
+> Add SR-IOV support for PCIe devices.
 
-I double-checked the code and noticed we set qp_attr.rnr_retry =
-SMC_QP_RNR_RETRY = 7, which means "infinite retries."
-So the QP will just keep retrying — we won't actually get an RNR.
-That said, yeah, just performance regression.
+pci_generic file name itself indicates that this is a PCIe device driver. So no
+need to mention 'for PCIe device' in subject and description.
 
-So in this case, I would regard it as acceptable. We can go with this.
+- Mani
 
-Best regards,
-Dust
+> pci_sriov_configure_simple() will enable or disable SR-IOV for devices
+> that don't require any specific PF setup before enabling SR-IOV.
+> 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index df18627a9feb4f2d53ba1ca6a4e8087dc23c7873..351b177cdf84057fb5a4e2f5b52279d7f1da41c2 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -1696,7 +1696,8 @@ static struct pci_driver mhi_pci_driver = {
+>  	.remove		= mhi_pci_remove,
+>  	.shutdown	= mhi_pci_shutdown,
+>  	.err_handler	= &mhi_pci_err_handler,
+> -	.driver.pm	= &mhi_pci_pm_ops
+> +	.driver.pm	= &mhi_pci_pm_ops,
+> +	.sriov_configure = pci_sriov_configure_simple,
+>  };
+>  module_pci_driver(mhi_pci_driver);
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
