@@ -1,158 +1,98 @@
-Return-Path: <linux-kernel+bounces-803674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B251EB46398
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:26:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7F0B4639B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652AD563C07
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EA61C8766D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B7F27F00A;
-	Fri,  5 Sep 2025 19:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E296278157;
+	Fri,  5 Sep 2025 19:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="box3aR6e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwWHb8IJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE02C27A12B
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 19:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE75E1FF1AD;
+	Fri,  5 Sep 2025 19:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757100386; cv=none; b=GIEFdUoz3aVMF6oQhPdxp5cfHKSLTkqRWn5O63zAel47+/rbrWbzUVKx4q2XGsDbcYlrEFgNqtUBd/SuOcq/5lGcW8Ur2SVolRDA3bCmaSSk09L4KqMePun6HZgtgONzdtR+4uOC7n0d1aguaOlvIjshuD/PMVkMeoIA76l/Mg0=
+	t=1757100448; cv=none; b=hQbllRvGCbmqDFIT9YSIuDLcFaUGeOFO7lRIPGgcPlFh/lDTyf149CWOukBUSZI+StNVuDPnCj81xLoy94pcfWw4GxOKhkdQ//IQ1kho7Mc9Twx1Y/6hnijy5/TVeYQhxe/trArSed2h/jJZiy7ajq/rt2dXPBTQxI9pqPhaQdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757100386; c=relaxed/simple;
-	bh=d0W9myEFzxlFCNsDcZbWHBOLrHisClca2fezS+1WXnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=grOV+JWL1RAHNCcvF5KdMpHCkTubRSBPmSk7nVlyQEuv87YwSWkK4oXigMIo/BHtShr+S7wpHECBhxRQQia0jeD+XCMRAXeSocjIOekUgFtDo/PtQ6WuFwwYjwSqlgfeQkW9fViYdDLFrqqZ8fPo0U+zs3AkoaauJwGJzX0+MNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=box3aR6e; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757100385; x=1788636385;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=d0W9myEFzxlFCNsDcZbWHBOLrHisClca2fezS+1WXnw=;
-  b=box3aR6eDhQf+2gFUB3mMDRXGM17eZB6OuFJrufEnlW2Za2hBwEX+VID
-   0HOgwrUQovmnHC+0Amv5DaUFy9bBv6id7uLMwnAxbd7+0B1F6ufxQQEx5
-   bNfnbuAZJkF2d0rzl3X6K19Mi1Ghn5vDacGqcEa/dqSOid9KYok4Uazgo
-   1mhDVrKsdsgd2g08RBkN1Bs+LqPaziZwED6lFf0KVNq2KaQahbZrQf6dG
-   9AjQQQZ+xdkuYRGJzhyKEbkZ6pH5jGFNutwnwWbFoKLlpZcIqckHUH+ca
-   /OcgP2V7Xn3w99TtKvQR/JTdwCMaer38l9Y/r3YvzCT3yWPOjgJdapCgn
-   g==;
-X-CSE-ConnectionGUID: BNW4OGSFT6i8R0zFPQPUkQ==
-X-CSE-MsgGUID: aVvqUCq3QGmHnsk4vZP/bA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="59602793"
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="59602793"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:26:24 -0700
-X-CSE-ConnectionGUID: YKyKYSBmRqyVbEbeUbEaew==
-X-CSE-MsgGUID: 44WEHLWWTPWf7R2dF5uH1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,242,1751266800"; 
-   d="scan'208";a="172350183"
-Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.110.42]) ([10.125.110.42])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 12:26:24 -0700
-Message-ID: <b780f8d9-b306-4061-abc3-b02d24676d63@intel.com>
-Date: Fri, 5 Sep 2025 12:26:23 -0700
+	s=arc-20240116; t=1757100448; c=relaxed/simple;
+	bh=Vtr83F2L6kKubPifGwcdN/hY3XxdzmzMzf8d1wZU58o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLhPzPaQFazmYsPNgEh6OC+rr8yog4iVhBSfRSR09jstYCDrpfI/aVgb1uCWEZZ6BdUhYyCucufHRURfZ9JxgE5ycL9HJixSeqCZU2WUnaKly81TnaL08cfbHppfEGHCyh0VhPW+t3qmh8qcgc+P5qzIktonstbqaJE+q2KLqx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwWHb8IJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C21B2C4CEF1;
+	Fri,  5 Sep 2025 19:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757100447;
+	bh=Vtr83F2L6kKubPifGwcdN/hY3XxdzmzMzf8d1wZU58o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZwWHb8IJZJsXVV3zatK6netRu0wiIctVFVsH8k4ObZq2VtuCsIt7nhW45lpCzXNee
+	 LPEx+VnosYbgUsaG3r2NMErJVcitSZP/ao1WJ1Fa0SfRLcbzIfeX9a2aKFlaxH+RFD
+	 WCgCLoJuXoiJrcgthgOTVoFqe3jIg9Rqyrhe+DC2uJOMkxZr90BOUD9CWnvto39uDU
+	 6g1iW9y7RgzWjptEASkzcdxrmsMRgBo1Zc5P3rwCKd8AJaA7Y/fJS+xoqOdgjYxrjC
+	 wPtzuBhLRvQCXAtORPkArOUjtWnepb+M6VdcvXEYMAaV10/wqm/0/6cpb/S0vl/NPp
+	 KClUeCDRJNmqA==
+Date: Fri, 5 Sep 2025 12:27:22 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	kernel test robot <oliver.sang@intel.com>,
+	Borislav Petkov <bp@kernel.org>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, X86 ML <x86@kernel.org>,
+	"Chang S. Bae" <chang.seok.bae@intel.com>,
+	Sohil Mehta <sohil.mehta@intel.com>, linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH -v1 1/2] x86/microcode: Add microcode= cmdline parsing
+Message-ID: <20250905192722.GA1274334@ax162>
+References: <20250820135043.19048-2-bp@kernel.org>
+ <202509021646.bc78d9ef-lkp@intel.com>
+ <20250904113752.GDaLl6ELJRd3LZYBQl@fat_crate.local>
+ <20250904232952.GA875818@ax162>
+ <CAKFNMo=QxweJwTxf-ubYfmBVYBpNEennGLFLRxqhB+evre7zhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] mm: Introduce deferred freeing for kernel page
- tables
-To: Jason Gunthorpe <jgg@nvidia.com>, Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
- <20250905055103.3821518-7-baolu.lu@linux.intel.com>
- <20250905184355.GR616306@nvidia.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250905184355.GR616306@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKFNMo=QxweJwTxf-ubYfmBVYBpNEennGLFLRxqhB+evre7zhw@mail.gmail.com>
 
-On 9/5/25 11:43, Jason Gunthorpe wrote:
-> On Fri, Sep 05, 2025 at 01:51:01PM +0800, Lu Baolu wrote:
->> +#ifdef CONFIG_ASYNC_PGTABLE_FREE
->> +void pagetable_free_async(struct ptdesc *pt);
->> +#else
->> +static inline void pagetable_free_async(struct ptdesc *pt)
->> +{
->> +	__pagetable_free(pt);
->> +}
->> +#endif
+On Fri, Sep 05, 2025 at 10:17:26PM +0900, Ryusuke Konishi wrote:
+> Thank you very much, Nathan, for sharing your detailed report and
+> proposing a fix.
 > 
-> I'd probably call this function pagetable_free_kernel() ? Weird to
-> call it async when it isn't async..
+> I actually performed a reproduction test in an environment with
+> CONFIG_LTO_CLANG_THIN=y and confirmed that the CFI panic reoccurs, and
+> that your patch fixes it.
 > 
-> ptdesc_clear_kernel()?
+> I also followed your analysis of sysfs and concluded that it is
+> correct and that your changes to the two
+> nilfs_feature_{revision,README}_show() functions are necessary. I'll
+> check whether these were necessary from the beginning or whether they
+> became necessary later.
+> 
+> I'd like to send your proposed fixes upstream, but could you please
+> send it to me and linux-nilfs in the form of a proper patch? (I'll
+> need at least your SoB line).
 
-Fine with me.
+Thanks for taking a look and confirming :) I have sent a patch with a
+proper changelog along for you to take a look at.
 
->> +	list_for_each_entry_safe(pt, next, &page_list, pt_list) {
->> +		list_del(&pt->pt_list);
-> 
-> The list_del isn't necessary, it doesn't zero the list, just _safe
-> iteration is fine.
-Ahh, yes, agreed. The list_head is on the stack and going away. The
-global list is now empty after the list splice.
+https://lore.kernel.org/20250905-nilfs2-fix-features-cfi-violation-v1-1-b5d35136d813@kernel.org/
+
+From what I can tell, this has always been wrong, hence that Fixes tag
+but if you disagree, feel free to update it!
+
+Cheers,
+Nathan
 
