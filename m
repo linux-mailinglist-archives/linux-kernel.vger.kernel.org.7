@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-802578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CC7B4541B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2F2B45424
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468361895992
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:06:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA80D1BC6CE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB902C0278;
-	Fri,  5 Sep 2025 10:06:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696602C0F8A;
+	Fri,  5 Sep 2025 10:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lLsXw72F"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0782029DB61;
-	Fri,  5 Sep 2025 10:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B672BE63F;
+	Fri,  5 Sep 2025 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757066759; cv=none; b=r5n927lB49aARCCCTlTl45HKD+JsbeklJHVdfA/XaB1wrwdbD1BQMQ8XlkH1L/sqnvFT4WcER52rhAmL5Y1NTFT+KADXRRE9tU34oQ69zoVAkKqKiJo5fIXfsm/dYKzUJezwghbDe+1EkyIBxA1X/qcH2dGrzs1SSqZnFiygll8=
+	t=1757067084; cv=none; b=avRLlnF0icqsPpwewWtueC7hhV/5xXjJQb8iXDU46xO6VmX8dhcRKl9zX8LCgTmOq+jC9ubWx8d+obNQXBNIcAUBfK5wo4W86ypBQG7nbkbF3w/REQmwWwUivXgyH7MMMsKFrdc5RTGM/+dz7J08nt8USc3xXSNDbYV8wZO6HGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757066759; c=relaxed/simple;
-	bh=wenfa45yXzz3Ie0WAoc3CoSUI/TsM3QA/mIu3NiP9gs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LFfDOlETkHaeoNeHdhuIPCDOzBfFzAi9rVG7ipqakirG/2Exou7vNIQy5dOGTckadexmD7LebfUL/0h4YQPszxrPCWXJ5XC+Mq0xv9bWmN9wIRvMSsQJ9Rjz6hr3BmQfjxGIu7apd7sDEpN8brZwZV6tT5hI1LLC11PcM06CJ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJBhn0xyXz6L5ly;
-	Fri,  5 Sep 2025 18:02:01 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 03F6A1402CB;
-	Fri,  5 Sep 2025 18:05:55 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 5 Sep
- 2025 12:05:53 +0200
-Date: Fri, 5 Sep 2025 11:05:51 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-CC: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Srinivas Pandruvada
-	<srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham
-	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, "Jani Nikula"
-	<jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko
- Ursulin <tursulin@ursulin.net>, "David Airlie" <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, Eduardo
- Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan
-	<ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui
-	<rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, Lukasz Luba
-	<lukasz.luba@arm.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
-	<festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, "Sumit Gupta"
-	<sumitg@nvidia.com>, Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep
- Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
-	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<imx@lists.linux.dev>, <linux-omap@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 08/10] thermal: imx: Use scope-based cleanup helper
-Message-ID: <20250905110551.00006588@huawei.com>
-In-Reply-To: <20250903131733.57637-9-zhangzihuan@kylinos.cn>
-References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
-	<20250903131733.57637-9-zhangzihuan@kylinos.cn>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757067084; c=relaxed/simple;
+	bh=ThBn18nAS7wJ7vMOdpeb1ZxEp1+peLlkusB0r1MRcuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B1lp7pbcZMs5BSSQvNH7fqdodgIzElKELqc86l5SsWRUrnZgkpzm+AxotPP8gUXKIPcabZoSmc6IKepryXc0FXQf27v4Rtww180VHi9zXndgcVRyiSz1lDDTZU1sPTPat1jTtSSnBIOHZAIPwAgLCS4M6Lp9mQllZbbaGDfYw8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lLsXw72F; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585AAlq73690348;
+	Fri, 5 Sep 2025 05:10:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757067047;
+	bh=Pm6PWBRGwS3wo5s1g4KMnXdseJb2mzIZCAFL9ZdKaO8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=lLsXw72FaEZsJs3ufzxwB2VJbL5/MMudEd8WBULnPSp9vVWBuas1kr3Q1rsclVPj5
+	 4QLyxviVKCdDue205V5jk2I4Ab00RiA40nGskneh4prg4Y2Qs53W6eKJg2++MScNSS
+	 fZUVQLl3LFNbY1Aj4oOhqeDRgisLYsygZYimMUXU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585AAlJ61569668
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 05:10:47 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 05:10:47 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 05:10:47 -0500
+Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585AAfTC284138;
+	Fri, 5 Sep 2025 05:10:42 -0500
+Message-ID: <3bb314a8-2ce0-4c54-bab0-e0af70bf22b9@ti.com>
+Date: Fri, 5 Sep 2025 15:40:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/14] media: ti: j721e-csi2rx: Remove word size
+ alignment on frame width
+To: Rishikesh Donadkar <r-donadkar@ti.com>, <jai.luthra@linux.dev>,
+        <laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
+CC: <devarsht@ti.com>, <vaishnav.a@ti.com>, <s-jain1@ti.com>,
+        <vigneshr@ti.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
+        <tomi.valkeinen@ideasonboard.com>, <jai.luthra@ideasonboard.com>,
+        <changhuang.liang@starfivetech.com>, <jack.zhu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250825142522.1826188-1-r-donadkar@ti.com>
+ <20250825142522.1826188-2-r-donadkar@ti.com>
+Content-Language: en-US
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <20250825142522.1826188-2-r-donadkar@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed,  3 Sep 2025 21:17:31 +0800
-Zihuan Zhang <zhangzihuan@kylinos.cn> wrote:
+Hi Rishikesh,
 
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
+Thanks for the patches.
+
+On 25/08/25 19:55, Rishikesh Donadkar wrote:
+> j721e-csi2rx driver has a limitation of frame width being a multiple
+> word size. However, there is no such limitation imposed by the
+> hardware [1].
 > 
-> No functional change intended.
+> Remove this limitation from the driver.
 > 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-
-This radically changes the lifetime of the reference to policy.
-If that is valid, then I'd expect a lot more description of why!
-
+> Link: https://www.ti.com/lit/pdf/spruj16
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 > ---
->  drivers/thermal/imx_thermal.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
+
+Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+
+>   .../platform/ti/j721e-csi2rx/j721e-csi2rx.c     | 17 +++--------------
+>   1 file changed, 3 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-> index 38c993d1bcb3..cd1d9d419275 100644
-> --- a/drivers/thermal/imx_thermal.c
-> +++ b/drivers/thermal/imx_thermal.c
-> @@ -201,7 +201,6 @@ static struct thermal_soc_data thermal_imx7d_data = {
->  
->  struct imx_thermal_data {
->  	struct device *dev;
-> -	struct cpufreq_policy *policy;
->  	struct thermal_zone_device *tz;
->  	struct thermal_cooling_device *cdev;
->  	struct regmap *tempmon;
-> @@ -541,22 +540,20 @@ MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
->  static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
->  {
->  	struct device_node *np;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(0);
->  	int ret = 0;
->  
-> -	data->policy = cpufreq_cpu_get(0);
-> -	if (!data->policy) {
-> +	if (!policy) {
->  		pr_debug("%s: CPUFreq policy not found\n", __func__);
->  		return -EPROBE_DEFER;
->  	}
->  
-> -	np = of_get_cpu_node(data->policy->cpu, NULL);
-> +	np = of_get_cpu_node(policy->cpu, NULL);
->  
->  	if (!np || !of_property_present(np, "#cooling-cells")) {
-> -		data->cdev = cpufreq_cooling_register(data->policy);
-> -		if (IS_ERR(data->cdev)) {
-> +		data->cdev = cpufreq_cooling_register(policy);
-> +		if (IS_ERR(data->cdev))
->  			ret = PTR_ERR(data->cdev);
-> -			cpufreq_cpu_put(data->policy);
-> -		}
->  	}
->  
->  	of_node_put(np);
-> @@ -567,7 +564,6 @@ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
->  static void imx_thermal_unregister_legacy_cooling(struct imx_thermal_data *data)
->  {
->  	cpufreq_cooling_unregister(data->cdev);
-> -	cpufreq_cpu_put(data->policy);
->  }
->  
->  #else
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index 3992f8b754b7..b3a27f4c3210 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -260,9 +260,6 @@ static void ti_csi2rx_fill_fmt(const struct ti_csi2rx_fmt *csi_fmt,
+>   			     MAX_WIDTH_BYTES * 8 / csi_fmt->bpp);
+>   	pix->height = clamp_t(unsigned int, pix->height, 1, MAX_HEIGHT_LINES);
+>   
+> -	/* Width should be a multiple of transfer word-size */
+> -	pix->width = rounddown(pix->width, pixels_in_word);
+> -
+>   	v4l2_fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+>   	pix->pixelformat = csi_fmt->fourcc;
+>   	pix->bytesperline = pix->width * (csi_fmt->bpp / 8);
+> @@ -360,23 +357,15 @@ static int ti_csi2rx_enum_framesizes(struct file *file, void *fh,
+>   				     struct v4l2_frmsizeenum *fsize)
+>   {
+>   	const struct ti_csi2rx_fmt *fmt;
+> -	unsigned int pixels_in_word;
+>   
+>   	fmt = find_format_by_fourcc(fsize->pixel_format);
+>   	if (!fmt || fsize->index != 0)
+>   		return -EINVAL;
+>   
+> -	/*
+> -	 * Number of pixels in one PSI-L word. The transfer happens in multiples
+> -	 * of PSI-L word sizes.
+> -	 */
+> -	pixels_in_word = PSIL_WORD_SIZE_BYTES * 8 / fmt->bpp;
+> -
+>   	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+> -	fsize->stepwise.min_width = pixels_in_word;
+> -	fsize->stepwise.max_width = rounddown(MAX_WIDTH_BYTES * 8 / fmt->bpp,
+> -					      pixels_in_word);
+> -	fsize->stepwise.step_width = pixels_in_word;
+> +	fsize->stepwise.min_width = 1;
+> +	fsize->stepwise.max_width = MAX_WIDTH_BYTES * 8 / fmt->bpp;
+> +	fsize->stepwise.step_width = 1;
+>   	fsize->stepwise.min_height = 1;
+>   	fsize->stepwise.max_height = MAX_HEIGHT_LINES;
+>   	fsize->stepwise.step_height = 1;
 
 
