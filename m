@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-802969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E02EB458FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:30:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37867B458FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8E15C21F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:28:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF1187BC736
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03A835208D;
-	Fri,  5 Sep 2025 13:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9672027E7DD;
+	Fri,  5 Sep 2025 13:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z8aA43d8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OvzIcV8o"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1B6352074
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0AD352074
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 13:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757078873; cv=none; b=M21SjY5N+M5NezF3Zx8hCaCMxxMb2VdCnTCigh9s9hj4zp3zEwQSr+zPoWEYNorrOaC4W/m1ns40FXbvDsDinpGwQ9WmmBB6C7bwCwzigcfAwVoUPoLRJ9Oqlr7DNSCCnn4zDQKcnFrmah5RTNPdZODPQTeyN9xweAg/wGi3wqw=
+	t=1757078889; cv=none; b=dB6YirwnQN7+VfCjGuKTeSZb5lZgqg2BwYB+CIip3kTlVFOS2oACayl5GO3oH9AA5WcG8EYxK2yENtfGQ70LLZtLmyj1jExmjPwy45ecAE0dTi6cf4XyVw/TYqHbfIO3wFldO4OGGsoOZ5VmSkNDMGLB+pD1ij6Qz1RS7XFvpJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757078873; c=relaxed/simple;
-	bh=FmxNxO623Tm8MorWLRJER1eI7bob9k4u6JJzK9+UhY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XVFky3Iy9bgJrjWNr7e67gBHBlHWNO9XHb3kyq8DpC80qhGsDRG4IctIjvL/fMJRdKGzs9AV+tkPpnD1rjiZZ+jXtgzlVq7OAyltfA/d7FQX1HH+NuqAr3IKrCSeynN99LiXLeLWHSyv2utCYGSVxGjvgBv5x5ZCx5xxS7aA8Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z8aA43d8; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1757078889; c=relaxed/simple;
+	bh=00lP1MO7V96rpDy5Iqjhv/dbeh8Q0ASIz04S3hGBHjA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BEfdC1eE6MSGRssBBGQ9b4uwhWLDzA+0iBCCl0Q7Ug1pg8J/4mxPTiSddXelfx+IyMWyM7FzHwaimDS0blMWdDm9xq/LwPWsZSQ+5mYUHIwn77GefZ9Y91mEITMqh31ml//orLHCovuLd0WHPkqHtubxjByYdKua5PfXgriE8kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OvzIcV8o; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757078870;
+	s=mimecast20190719; t=1757078885;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=w+HJzw3vtqVXsw40E0BOixM6XDjjd+gcatIWkGtLLJo=;
-	b=Z8aA43d8PTfPRqCTb+eP5gS6PYgfN8QmomAmdBwPufC+hJ8N5DL8WyURC/Jvx2AjSbxjPh
-	Onizmy8DcogeU8orvdd9Ojg3UUt5g3PRG+lF6rA5itQ0Y4mUgh8Rqy+hZAbX+U85OHh6/5
-	kNxTXtomZlpTZrzUyU8IvsJuJGAJbq0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=3WiqqmvmkyU9dyNVWkSqj8OsGhyXBJbKIwB2/k8dKmc=;
+	b=OvzIcV8oKiGX/LOJsTCvfrx/sTgGcBXSghXuz6gkMZVeWEXjFzniNuLz06e4ZGuyv74bG0
+	rkMPRmY/Q7REZhpFpvDszKoNrmkHqvgHRZyrwlXBIYzQ/CEjuRTVjn/cEXzngi07CMoaE0
+	PKz7VYEEQw244w0BdfG/eR1iRYlK+iw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-25-EEmOvnajOguEVk1dbRuLHw-1; Fri, 05 Sep 2025 09:27:44 -0400
-X-MC-Unique: EEmOvnajOguEVk1dbRuLHw-1
-X-Mimecast-MFC-AGG-ID: EEmOvnajOguEVk1dbRuLHw_1757078863
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3e1260394dcso1081025f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:27:44 -0700 (PDT)
+ us-mta-377-rbr-IEEXMU6wG0NJPQj2dQ-1; Fri, 05 Sep 2025 09:28:04 -0400
+X-MC-Unique: rbr-IEEXMU6wG0NJPQj2dQ-1
+X-Mimecast-MFC-AGG-ID: rbr-IEEXMU6wG0NJPQj2dQ_1757078883
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b467f5173so15670825e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 06:28:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757078863; x=1757683663;
+        d=1e100.net; s=20230601; t=1757078883; x=1757683683;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+HJzw3vtqVXsw40E0BOixM6XDjjd+gcatIWkGtLLJo=;
-        b=dl7MZm6KrWfX9E8aWLcponkBWJEinuVwbo7D/MZnJmGWv2JKHxpoGIHie3MHGbRrLj
-         om8H9jp4LidNQaKzHuzI8IO3eOpYZhbvHvGz7c4TDNqn0z3MgiNF8x+PGB6omtLTxmsw
-         AM5OZkCmr93SDXgSRqkX96+vXY3x90QUeocGge1lkZdXMl99oBoASiebD3FBjHoLDKIj
-         FpkP/+Ut/f9TJex2pmpPKxHpIRzXyPtA4ZdCd3imsfdB7FT5tVAkut0QHqLF4fWUjcCF
-         dG0gWgfULl7iERNGpHL1SXP8FrB5oJt7PZlvtrOMgs1DLpXHMFCVCOEwQcTp38OGWk0W
-         VOJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnvQc5jRuFrzVtSmvIgNy+zd8vihLj8N+L4vHhfcSGjawo4vvY54e8Eh4Uhd2rN0JbDtqEzVlA12BfLog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI0uctX68SCqxlrQzOAsS6q2h5M6A6jC8/bqTAK8Q9N6DX3QqG
-	3T9CUDIEdGvUJkknf9nQOVnEysTuQVa3vC3lu8l5jUj1FCiKp+3VM8fsRXee+qQzIk6Z94a2jOK
-	EcbJE9p3/uzL1lTD08ij8cJOK9j/1yU1YCfLEmv08g7NbPZ7D1A0UZ8EirbKzQWhLiQ==
-X-Gm-Gg: ASbGnctchyBoCuc72sE4PEMpbl4gDmkCjQwawXLu2e/x95Fy3cM+kEikRKSAvZ/Tlvv
-	ZBUafVDWHTu2XY/Dl02AJAuPRgePKyPtz62I4qNiNCMjzWpDZzZOE/hDgHZXuIL60MBKxPFa/YK
-	j5tOcr3i3/Nw3DXjoPfQs6CS6jS05PSrOO9uVfGdphe2cF2ZahPjDKXj5KJxcyPJS8guxCdOaYS
-	ptJTRmqVPfozkv+Y8Ov9vt/jyD4NQdtvKxAsPQ4RSaf+5LXaI9fahoJhGBPQ71aLPh2w/vP5N79
-	4C5NnQA6p9EdajZWS8UFK1vXacCGO53YrArxSnCfWKVKJ8ZI9gf9APw8/oiM+apG/fT/xCmqSut
-	tS3IhzSQXvZhUELzDmAXoHMhISqeYwaZUq4DcU5yG4Xr99bYAiuDr7oHf
-X-Received: by 2002:a05:6000:2112:b0:3d2:6129:5505 with SMTP id ffacd0b85a97d-3d261295a85mr15734970f8f.36.1757078863078;
-        Fri, 05 Sep 2025 06:27:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZVGmOwcxzS6bCHYMi5kxOeAkyusM/0MaTTJuiCZfznajBXiRf8SwJWTPxKS7bzDRNkpDXeg==
-X-Received: by 2002:a05:6000:2112:b0:3d2:6129:5505 with SMTP id ffacd0b85a97d-3d261295a85mr15734950f8f.36.1757078862585;
-        Fri, 05 Sep 2025 06:27:42 -0700 (PDT)
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3WiqqmvmkyU9dyNVWkSqj8OsGhyXBJbKIwB2/k8dKmc=;
+        b=uwopSCfFgdUhZvNFmHfkgUkEMXOKXFEFDYNcGDycq3RpqcauaIhozwx4lw22KOk8gm
+         rb2f/jF1wB+ScdyXnOgbkVV3c59hIxElrq3fhOrwZbbxJ+vy+Gdj4SqR8LPqfwE9Qsbq
+         vRwLA++cxKNmtnM5sjaC0gKbnyu1aIOe9AQVHq+Oet5p1ankag5KL33UZdhXB8HZCTEz
+         BTEQ2Vsn5HkzLqPBZCB5lo4jRrcJz5xSgsLq++5FWOkoxKE2MoN6u2kxwMMO9UZM5nC5
+         ygQWN95JYCiPHe38bidksPmYznE0zIyc6A76fKZsH2P4GbiPzC7nEnfrCNe+x5YQ89/m
+         1cbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXV1kyblvzrr6yCV568x2xMtrW1uXM9/0C1wp0c+Y9mPxXl9O8q3zb9AdGSlq/YST7UrP9Rxv9tmjPObtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ/uMZETvktPqyItUu1anmZkOAkUAAtWo1/wMLPmPxjhsiE3tW
+	3leNMd6mGOzPWcLoCRD7R2LT94o2S9ipPhINDRlmWcFi9ISzglJ+RVFOd6ISGIM/4n+iXFuWKUK
+	XF5N2ruZnJ5WhFYZeefYtqGly3oZwKyow158OCNBnfilc1VxPr5d2CH8R5yg36so2sw==
+X-Gm-Gg: ASbGncvyZWo1grzieH2yYa/S58ysWYIVdKWCzxZ4yp1xJx3gOg4Qe2a0bzB9iTmY2N8
+	V6sXXjgBqWV7Amuo018fTx4K2XseXurwf9cI6i44GRpheVruPLDCYtX8N0OCvQpkMQ5oaGDmu8d
+	zfD8KPsl8kXT2EbpYv0pmfb9p5ZRIUn1FQhnPe97AdjZHWeUieAKH2O4ikmURQXPU5iwaLW8M5X
+	tt08/b5MY6NFmxM4Wry5orhkpw0U7/JX0CgiuSnPqXNQu++CwiX6igLOyORwyum6CZ+5EC6jSnW
+	3EbiBv0QdpNmn+FHCOc27CdCy9k+yLb933RdXwNAuuZc7RFBlqA9MBOLirn+AYYY9vzWPMyf8K3
+	0l28yuEx+l8Kd01D1KaefdvSwkGwXBm9Dgz5QzMnOySWZkbDjax/Zvfe8
+X-Received: by 2002:a5d:64c3:0:b0:3e4:d981:e31f with SMTP id ffacd0b85a97d-3e4d981e979mr899298f8f.60.1757078882915;
+        Fri, 05 Sep 2025 06:28:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmzbvGKGMXC1b4s32EUu5W51ZgOauNi8Zf/J3DfcPBT1LhN4y6O0qNuzW+PSJeZxpA24bWOw==
+X-Received: by 2002:a5d:64c3:0:b0:3e4:d981:e31f with SMTP id ffacd0b85a97d-3e4d981e979mr899266f8f.60.1757078882342;
+        Fri, 05 Sep 2025 06:28:02 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3dedea839c1sm9930047f8f.63.2025.09.05.06.27.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9db4sm31599368f8f.47.2025.09.05.06.28.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 06:27:41 -0700 (PDT)
-Message-ID: <4a0c3727-9043-41e3-a5b4-fd3763c94d05@redhat.com>
-Date: Fri, 5 Sep 2025 15:27:40 +0200
+        Fri, 05 Sep 2025 06:28:01 -0700 (PDT)
+Message-ID: <0118a233-90fc-484b-b539-d8df641a25ad@redhat.com>
+Date: Fri, 5 Sep 2025 15:28:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,14 +89,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] general protection fault in
- unpin_user_page_range_dirty_lock
-To: syzbot <syzbot+0d2f32dad7098551e15d@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, jgg@ziepe.ca, jhubbard@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com,
- syzkaller-bugs@googlegroups.com
-References: <68bae4ce.a00a0220.eb3d.0014.GAE@google.com>
+Subject: Re: next-20250905: x86_64: udpgso_bench.sh triggers NULL deref in
+ zerocopy_fill_skb_from_iter
 From: David Hildenbrand <david@redhat.com>
+To: Eric Dumazet <edumazet@google.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Netdev <netdev@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Eric Biggers <ebiggers@google.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Ben Copeland <benjamin.copeland@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>, Shuah Khan <shuah@kernel.org>,
+ Willem de Bruijn <willemb@google.com>, Pengtao He <hept.hept.hept@gmail.com>
+References: <CA+G9fYsmo39mXw-U7VKJgHWTBB5bXNgwOqNfmDWRqvbqmxnD2g@mail.gmail.com>
+ <CANn89iKciN019j88sGYpi_Boi7ggJoSnV4gOW=5grp+skkKnBA@mail.gmail.com>
+ <a4e4be39-b0e6-4632-878d-0765c9475984@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -141,138 +152,270 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <68bae4ce.a00a0220.eb3d.0014.GAE@google.com>
+In-Reply-To: <a4e4be39-b0e6-4632-878d-0765c9475984@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05.09.25 15:25, syzbot wrote:
-> Hello,
+On 05.09.25 15:07, David Hildenbrand wrote:
+> On 05.09.25 14:55, Eric Dumazet wrote:
+>> On Fri, Sep 5, 2025 at 2:30 AM Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>>>
+>>> The following kernel crash was noticed on x86_64 running selftests net
+>>> udpgso_bench.sh
+>>> on Linux next-20250905 tag.
+>>>
+>>> Regression Analysis:
+>>> - New regression? yes
+>>> - Reproducibility? Re-validation is in progress
+>>>
+>>> First seen on next-20250905
+>>> Bad: next-20250905
+>>> Good: next-20250904
+>>>
+>>> Test regression: next-20250905 x86_64 selftests net BUG kernel NULL
+>>> pointer dereference zerocopy_fill_skb_from_iter
+>>>
+>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>>
+>>> x86_64:
+>>>    Test:
+>>>       * selftests: net: udpgso_bench.sh
+>>>
+>>> Test error:
+>>> selftests: net: udpgso_bench.sh
+>>> ipv4
+>>> tcp
+>>>
+>>> <trim>
+>>>
+>>> # tcp zerocopy
+>>> [  991.110488] SELinux: unrecognized netlink message: protocol=4
+>>> nlmsg_type=19 sclass=netlink_tcpdiag_socket pid=64835 comm=ss
+>>> # RTNETLINK answers: Invalid argument
+>>> [  991.129878] BUG: kernel NULL pointer dereference, address: 0000000000000008
+>>> [  991.136850] #PF: supervisor read access in kernel mode
+>>> [  991.141986] #PF: error_code(0x0000) - not-present page
+>>> [  991.147118] PGD 0 P4D 0
+>>> [  991.149657] Oops: Oops: 0000 [#1] SMP PTI
+>>> [  991.153661] CPU: 0 UID: 0 PID: 64842 Comm: udpgso_bench_tx Tainted:
+>>> G S                  6.17.0-rc4-next-20250905 #1 PREEMPT(voluntary)
+>>> [  991.165907] Tainted: [S]=CPU_OUT_OF_SPEC
+>>> [  991.169825] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+>>> 2.7 12/07/2021
+>>> [  991.177209] RIP: 0010:zerocopy_fill_skb_from_iter
+>>> (include/linux/page-flags.h:284)
+>>> [ 991.182954] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
+>>> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
+>>> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
+>>> f7
+>>> All code
+>>> ========
+>>>      0: 4d 85 c0              test   %r8,%r8
+>>>      3: 0f 84 04 01 00 00    je     0x10d
+>>>      9: 44 39 c7              cmp    %r8d,%edi
+>>>      c: 41 0f 4d f8          cmovge %r8d,%edi
+>>>     10: 4c 63 de              movslq %esi,%r11
+>>>     13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
+>>>     18: 49 89 d6              mov    %rdx,%r14
+>>>     1b: 4d 29 ce              sub    %r9,%r14
+>>>     1e: 49 c1 fe 06          sar    $0x6,%r14
+>>>     22: 49 d3 ee              shr    %cl,%r14
+>>>     25: 4d 85 f6              test   %r14,%r14
+>>>     28: 74 24                je     0x4e
+>>>     2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
+>>>     2e: f6 c1 01              test   $0x1,%cl
+>>>     31: 0f 85 cb 00 00 00    jne    0x102
+>>>     37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+>>>     3c: 31 c9                xor    %ecx,%ecx
+>>>     3e: 48                    rex.W
+>>>     3f: f7                    .byte 0xf7
+>>>
+>>> Code starting with the faulting instruction
+>>> ===========================================
+>>>      0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
+>>>      4: f6 c1 01              test   $0x1,%cl
+>>>      7: 0f 85 cb 00 00 00    jne    0xd8
+>>>      d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+>>>     12: 31 c9                xor    %ecx,%ecx
+>>>     14: 48                    rex.W
+>>>     15: f7                    .byte 0xf7
+>>> [  991.201691] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
+>>> [  991.206910] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
+>>> [  991.214033] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
+>>> [  991.221156] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
+>>> [  991.228280] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
+>>> [  991.235406] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
+>>> [  991.242529] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
+>>> knlGS:0000000000000000
+>>> [  991.250608] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [  991.256378] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
+>>> [  991.263513] Call Trace:
+>>> [  991.265956]  <TASK>
+>>> [  991.268055] __zerocopy_sg_from_iter (net/core/datagram.c:?)
+>>> [  991.272674] ? kmalloc_reserve (net/core/skbuff.c:581)
+>>> [  991.276599] skb_zerocopy_iter_stream (net/core/skbuff.c:1867)
+>>> [  991.281219] tcp_sendmsg_locked (net/ipv4/tcp.c:1283)
+>>> [  991.285493] tcp_sendmsg (net/ipv4/tcp.c:1393)
+>>> [  991.288896] inet6_sendmsg (net/ipv6/af_inet6.c:661)
+>>> [  991.292466] __sock_sendmsg (net/socket.c:717)
+>>> [  991.296126] __sys_sendto (net/socket.c:?)
+>>> [  991.299785] __x64_sys_sendto (net/socket.c:2235 net/socket.c:2231
+>>> net/socket.c:2231)
+>>> [  991.303622] x64_sys_call (arch/x86/entry/syscall_64.c:41)
+>>> [  991.307462] do_syscall_64 (arch/x86/entry/syscall_64.c:?)
+>>> [  991.311128] ? irqentry_exit (kernel/entry/common.c:210)
+>>> [  991.314881] ? exc_page_fault (arch/x86/mm/fault.c:1536)
+>>> [  991.318720] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+>>> [  991.323762] RIP: 0033:0x7f41e814b687
+>>> [ 991.327352] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00
+>>> 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10
+>>> 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff
+>>> ff
+>>> All code
+>>> ========
+>>>      0: 48 89 fa              mov    %rdi,%rdx
+>>>      3: 4c 89 df              mov    %r11,%rdi
+>>>      6: e8 58 b3 00 00        call   0xb363
+>>>      b: 8b 93 08 03 00 00    mov    0x308(%rbx),%edx
+>>>     11: 59                    pop    %rcx
+>>>     12: 5e                    pop    %rsi
+>>>     13: 48 83 f8 fc          cmp    $0xfffffffffffffffc,%rax
+>>>     17: 74 1a                je     0x33
+>>>     19: 5b                    pop    %rbx
+>>>     1a: c3                    ret
+>>>     1b: 0f 1f 84 00 00 00 00 nopl   0x0(%rax,%rax,1)
+>>>     22: 00
+>>>     23: 48 8b 44 24 10        mov    0x10(%rsp),%rax
+>>>     28: 0f 05                syscall
+>>>     2a:* 5b                    pop    %rbx <-- trapping instruction
+>>>     2b: c3                    ret
+>>>     2c: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
+>>>     33: 83 e2 39              and    $0x39,%edx
+>>>     36: 83 fa 08              cmp    $0x8,%edx
+>>>     39: 75 de                jne    0x19
+>>>     3b: e8 23 ff ff ff        call   0xffffffffffffff63
+>>>
+>>> Code starting with the faulting instruction
+>>> ===========================================
+>>>      0: 5b                    pop    %rbx
+>>>      1: c3                    ret
+>>>      2: 0f 1f 80 00 00 00 00 nopl   0x0(%rax)
+>>>      9: 83 e2 39              and    $0x39,%edx
+>>>      c: 83 fa 08              cmp    $0x8,%edx
+>>>      f: 75 de                jne    0xffffffffffffffef
+>>>     11: e8 23 ff ff ff        call   0xffffffffffffff39
+>>> [  991.346124] RSP: 002b:00007ffdd843ba50 EFLAGS: 00000202 ORIG_RAX:
+>>> 000000000000002c
+>>> [  991.353680] RAX: ffffffffffffffda RBX: 00007f41e80b9740 RCX: 00007f41e814b687
+>>> [  991.360806] RDX: 000000000000f180 RSI: 000056251f1fd100 RDI: 0000000000000005
+>>> [  991.367931] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+>>> [  991.375063] R10: 0000000004000000 R11: 0000000000000202 R12: 0000000000000000
+>>> [  991.382193] R13: 000056251f1fb080 R14: 000001a670e438d8 R15: 0000000000000005
+>>> [  991.389357]  </TASK>
+>>> [  991.391571] Modules linked in: mptcp_diag tcp_diag inet_diag
+>>> xt_conntrack xfrm_user ipip bridge stp llc geneve vxlan act_csum
+>>> act_pedit openvswitch nsh nf_nat nf_conntrack nf_defrag_ipv6
+>>> nf_defrag_ipv4 psample cls_flower sch_prio xt_mark nft_compat
+>>> nf_tables sch_ingress act_mirred cls_basic sch_fq_codel vrf pktgen
+>>> macvtap macvlan tap x86_pkg_temp_thermal ip_tables x_tables [last
+>>> unloaded: test_bpf]
+>>> [  991.426812] CR2: 0000000000000008
+>>> [  991.430121] ---[ end trace 0000000000000000 ]---
+>>> [  991.434733] RIP: 0010:zerocopy_fill_skb_from_iter
+>>> (include/linux/page-flags.h:284)
+>>> [ 991.440477] Code: 4d 85 c0 0f 84 04 01 00 00 44 39 c7 41 0f 4d f8 4c
+>>> 63 de 4a 8b 54 dc 30 49 89 d6 4d 29 ce 49 c1 fe 06 49 d3 ee 4d 85 f6
+>>> 74 24 <48> 8b 4a 08 f6 c1 01 0f 85 cb 00 00 00 0f 1f 44 00 00 31 c9 48
+>>> f7
+>>> All code
+>>> ========
+>>>      0: 4d 85 c0              test   %r8,%r8
+>>>      3: 0f 84 04 01 00 00    je     0x10d
+>>>      9: 44 39 c7              cmp    %r8d,%edi
+>>>      c: 41 0f 4d f8          cmovge %r8d,%edi
+>>>     10: 4c 63 de              movslq %esi,%r11
+>>>     13: 4a 8b 54 dc 30        mov    0x30(%rsp,%r11,8),%rdx
+>>>     18: 49 89 d6              mov    %rdx,%r14
+>>>     1b: 4d 29 ce              sub    %r9,%r14
+>>>     1e: 49 c1 fe 06          sar    $0x6,%r14
+>>>     22: 49 d3 ee              shr    %cl,%r14
+>>>     25: 4d 85 f6              test   %r14,%r14
+>>>     28: 74 24                je     0x4e
+>>>     2a:* 48 8b 4a 08          mov    0x8(%rdx),%rcx <-- trapping instruction
+>>>     2e: f6 c1 01              test   $0x1,%cl
+>>>     31: 0f 85 cb 00 00 00    jne    0x102
+>>>     37: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+>>>     3c: 31 c9                xor    %ecx,%ecx
+>>>     3e: 48                    rex.W
+>>>     3f: f7                    .byte 0xf7
+>>>
+>>> Code starting with the faulting instruction
+>>> ===========================================
+>>>      0: 48 8b 4a 08          mov    0x8(%rdx),%rcx
+>>>      4: f6 c1 01              test   $0x1,%cl
+>>>      7: 0f 85 cb 00 00 00    jne    0xd8
+>>>      d: 0f 1f 44 00 00        nopl   0x0(%rax,%rax,1)
+>>>     12: 31 c9                xor    %ecx,%ecx
+>>>     14: 48                    rex.W
+>>>     15: f7                    .byte 0xf7
+>>> [  991.459215] RSP: 0018:ffffb11281d0ba90 EFLAGS: 00010202
+>>> [  991.464434] RAX: ffffe14ec4208000 RBX: 0000000000005000 RCX: 0000000000000009
+>>> [  991.471557] RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000001000
+>>> [  991.478681] RBP: ffffb11281d0bb88 R08: 00000000000020ff R09: ffffe14ec4208000
+>>> [  991.485807] R10: 0000000000000005 R11: 0000000000000006 R12: ffff96b4825f4200
+>>> [  991.492930] R13: 0000000000000001 R14: 000000003d6277bf R15: 0000000000000000
+>>> [  991.500054] FS:  00007f41e80b9740(0000) GS:ffff96b83bc1b000(0000)
+>>> knlGS:0000000000000000
+>>> [  991.508132] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [  991.513870] CR2: 0000000000000008 CR3: 0000000106c42003 CR4: 00000000003706f0
+>>> [  991.520994] note: udpgso_bench_tx[64842] exited with irqs disabled
+>>>
+>>>
+>>> ## Source
+>>> * Kernel version: 6.17.0-rc4
+>>> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+>>> * Git describe: next-20250905
+>>> * Git commit: be5d4872e528796df9d7425f2bd9b3893eb3a42c
+>>> * Architectures: x86_64
+>>> * Toolchains: clang-nightly
+>>> * Kconfigs: defconfig+selftests/*/config
+>>>
+>>> ## Build
+>>> * Test log: https://qa-reports.linaro.org/api/testruns/29777495/log_file/
+>>> * LAVA test log: https://lkft.validation.linaro.org/scheduler/job/8434053#L16943
+>>> * Test details:
+>>> https://regressions.linaro.org/lkft/linux-next-master/next-20250905/log-parser-test/oops-oops-oops-smp-pti/
+>>> * Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32GkXBGNRNDEj5d64zd73eXhXQC
+>>> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/
+>>> * Kernel config:
+>>> https://storage.tuxsuite.com/public/linaro/lkft/builds/32GkU7mdlpISpPeeeEwIfAJuzqG/config
+>>>
+>>> --
+>>> Linaro LKFT
+>>> https://lkft.linaro.org
+>>
+>> I suspect a bug added in mm/gup.c recently
+>>
+>> commit db076b5db550aa34169dceee81d0974c7b2a2482
+>> Author: David Hildenbrand <david@redhat.com>
+>> Date:   Mon Sep 1 17:03:40 2025 +0200
+>>
+>>       mm/gup: remove record_subpages()
+>>
+>>       We can just cleanup the code by calculating the #refs earlier, so we can
+>>       just inline what remains of record_subpages().
+>>
+>>       Calculate the number of references/pages ahead of times, and record them
+>>       only once all our tests passed.
+>>
+>>       Link: https://lkml.kernel.org/r/20250901150359.867252-20-david@redhat.com
+>>       Signed-off-by: David Hildenbrand <david@redhat.com>
+>>       Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>
 > 
-> syzbot found the following issue on:
+> Yes, fix already on its way:
 > 
-> HEAD commit:    4ac65880ebca Add linux-next specific files for 20250904
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=138b087c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fbc16d9faf3a88a4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0d2f32dad7098551e15d
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a8a134580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159de962580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/36645a51612c/disk-4ac65880.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/bba80d634bef/vmlinux-4ac65880.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e58dd70dfd0f/bzImage-4ac65880.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0d2f32dad7098551e15d@syzkaller.appspotmail.com
-> 
-> mmap: syz.0.17 (6062) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-> CPU: 0 UID: 0 PID: 6062 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-> RIP: 0010:gup_folio_range_next mm/gup.c:241 [inline]
-> RIP: 0010:unpin_user_page_range_dirty_lock+0x63/0x4e0 mm/gup.c:369
-> Code: 45 31 ed 4c 89 74 24 18 4c 89 6c 24 10 49 c1 e5 06 4b 8d 1c 2e 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 ff 3e 1c 00 4d 01 f5 4c 8b 23 4c 89
-> RSP: 0018:ffffc9000413f6d0 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: dffffc0000000000 R08: ffffea0002d10037 R09: 1ffffd40005a2006
-> R10: dffffc0000000000 R11: fffff940005a2007 R12: 0000000000000002
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> FS:  0000555587af6500(0000) GS:ffff8881259fa000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000000000 CR3: 0000000074024000 CR4: 00000000003526f0
-> Call Trace:
->   <TASK>
->   batch_unpin+0x3eb/0x560 drivers/iommu/iommufd/pages.c:691
->   iopt_pages_unpin_xarray drivers/iommu/iommufd/pages.c:1711 [inline]
->   iopt_pages_unfill_xarray+0x813/0xaa0 drivers/iommu/iommufd/pages.c:1747
->   iopt_area_remove_access+0x2c4/0x3f0 drivers/iommu/iommufd/pages.c:2196
->   iommufd_access_unpin_pages+0x33b/0x4e0 drivers/iommu/iommufd/device.c:1357
->   iommufd_test_access_unmap+0x28c/0x300 drivers/iommu/iommufd/selftest.c:1448
->   iommufd_test_staccess_release+0x6a/0xb0 drivers/iommu/iommufd/selftest.c:1489
->   __fput+0x44c/0xa70 fs/file_table.c:468
->   task_work_run+0x1d1/0x260 kernel/task_work.c:227
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop+0xec/0x130 kernel/entry/common.c:43
->   exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
->   syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
->   syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
->   do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fdd6e78ebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd897539d8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-> RAX: 0000000000000000 RBX: 0000000000019b27 RCX: 00007fdd6e78ebe9
-> RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000789753ccf
-> R10: 0000001b31420000 R11: 0000000000000246 R12: 00007fdd6e9c5fac
-> R13: 00007fdd6e9c5fa0 R14: ffffffffffffffff R15: 0000000000000003
->   </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:_compound_head include/linux/page-flags.h:284 [inline]
-> RIP: 0010:gup_folio_range_next mm/gup.c:241 [inline]
-> RIP: 0010:unpin_user_page_range_dirty_lock+0x63/0x4e0 mm/gup.c:369
-> Code: 45 31 ed 4c 89 74 24 18 4c 89 6c 24 10 49 c1 e5 06 4b 8d 1c 2e 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 ff 3e 1c 00 4d 01 f5 4c 8b 23 4c 89
-> RSP: 0018:ffffc9000413f6d0 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: dffffc0000000000 R08: ffffea0002d10037 R09: 1ffffd40005a2006
-> R10: dffffc0000000000 R11: fffff940005a2007 R12: 0000000000000002
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> FS:  0000555587af6500(0000) GS:ffff8881259fa000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000000000 CR3: 0000000074024000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess):
->     0:	45 31 ed             	xor    %r13d,%r13d
->     3:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
->     8:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
->     d:	49 c1 e5 06          	shl    $0x6,%r13
->    11:	4b 8d 1c 2e          	lea    (%r14,%r13,1),%rbx
->    15:	48 83 c3 08          	add    $0x8,%rbx
->    19:	48 89 d8             	mov    %rbx,%rax
->    1c:	48 c1 e8 03          	shr    $0x3,%rax
->    20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
->    27:	fc ff df
-> * 2a:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
->    2e:	74 08                	je     0x38
->    30:	48 89 df             	mov    %rbx,%rdi
->    33:	e8 ff 3e 1c 00       	call   0x1c3f37
->    38:	4d 01 f5             	add    %r14,%r13
->    3b:	4c 8b 23             	mov    (%rbx),%r12
->    3e:	4c                   	rex.WR
->    3f:	89                   	.byte 0x89
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+> https://lkml.kernel.org/r/5090355d-546a-4d06-99e1-064354d156b5@redhat.com
 > 
 
 #syz dup: [syzbot] [io-uring?] KASAN: null-ptr-deref Read in io_sqe_buffer_register
