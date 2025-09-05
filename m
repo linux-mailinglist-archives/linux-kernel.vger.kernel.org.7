@@ -1,182 +1,155 @@
-Return-Path: <linux-kernel+bounces-802554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3B4B453B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8534B453B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BCEF189DAF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86343189C226
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BE2288527;
-	Fri,  5 Sep 2025 09:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VMha2oUb"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AE128A73A;
+	Fri,  5 Sep 2025 09:47:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7192882AC;
-	Fri,  5 Sep 2025 09:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D41F2882BD;
+	Fri,  5 Sep 2025 09:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757065659; cv=none; b=urFQF9KeRKdIw9L+GmI+8QHj/QJcUZ2DC/1GHPrhuyUkoCt1X/8Bp6KI0UGJXHbF4L7hvHdR7R0CfC6iRYLV5IFJkIS/dV50YJpTcf07e0TXcKM76Zi1iR15T5j/D0eZL5Fxbe+ra8KabVTJFPf6oZK1u83/BwvkzEaMT9ICL2o=
+	t=1757065672; cv=none; b=MOpTSKT7Jt26QXwoMEw9PDZe0SxVuHVensT459JcUbRuedA1aSzN9XhnIegoiFGeotiFFFPvVQjCCgNkkLG7o/pVNiil9EaWcDgYkQFOu/flm1CSSs0Bdg83mhUeKB7kzc699KlaCup0CFSf4VRCzTf21SQIC9vuiZkrNyv5oJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757065659; c=relaxed/simple;
-	bh=3WQg3eWAskqkXuHDFUHlOHClUh0YGXWQ+kY9tRT0Qho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4PMkkFi/8joZGBkUGaL1nNyvR1TlBHBwAKCEMw2bQiFkfVvmxaadnkQCFHJKiFt+DxglBUQne1WYX1Yx8+TMtfnxp5XNSvk/RBOUZF8s4DjxZhNj9SvWRcH39RGAZ3FpbqP0CJEkjZpjpOVpQf3Gm/1HGj+tT/gS7sVCWViouE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VMha2oUb; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5858E7UF022544;
-	Fri, 5 Sep 2025 09:46:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6wm0ttcidOnuuW+7W5s4enprUWnKXF
-	XXBpVS5cSOiYc=; b=VMha2oUbllfJfLMtOLr57qJJz6vzFJD7LJ8gk5XShnJjc7
-	IbrZHVpXb0CrQB5ykpgaxxSFsvvfNEanPBHuuHOGbETD14NXO2pqfL1MNf784mVy
-	uvjiyf12/QVwQ2mZmkqASP9O1WaaViYltK6jPW1ia7fc4z77ZZIcxHNd6zZP5Nha
-	CbH/zL34/kidtMFkhDHPIOsMEJbRBMwe8T8wEPT/Ddq6WBOoaLYfsZ8bm+i7vTSv
-	P1GmCBCUdyPpWD67R2YaTENZDIlFGnxT+oj4rEpMuGkVtfQCqHsL9/re90DkKZLP
-	0DLbyK939ud6LvSGoOT7rBnWZkhI2AUGLtGlCZgg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurfkcd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 09:46:31 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5859bi0p009310;
-	Fri, 5 Sep 2025 09:46:30 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usurfkc7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 09:46:30 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5856Gg3M013959;
-	Fri, 5 Sep 2025 09:46:29 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48veb3rk09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 09:46:28 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5859kQ0M52101484
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Sep 2025 09:46:26 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BCE5220040;
-	Fri,  5 Sep 2025 09:46:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF00220063;
-	Fri,  5 Sep 2025 09:46:24 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.88.103])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  5 Sep 2025 09:46:24 +0000 (GMT)
-Date: Fri, 5 Sep 2025 11:46:23 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 0/7] Nesting support for lazy MMU mode
-Message-ID: <9fd076c7-f163-4b92-8201-d8a259a338c1-agordeev@linux.ibm.com>
-References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1757065672; c=relaxed/simple;
+	bh=WxBMlDcI1gNv1hytp9jLWeQmFhxZS9MagRnSSDkwk2E=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ugC/JhqmcjP6zMY4g7M/rztXsEvBF5XoaIuORMVBm7IP7ynGJAMi2sj7IRYXHIFZyxZiwgAbmPgNmQcBpl2fZ+WNWJJ5XMtlDfXBlvmn+ycij3c+yr2WPzNVb6vs1UW6M98c1WDmTY3ZvXQ/9pnBIzhOBOsTdQrtgwi2SAvSI10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cJBHr7169z6L5Zv;
+	Fri,  5 Sep 2025 17:43:52 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C5FBC1402F1;
+	Fri,  5 Sep 2025 17:47:46 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 5 Sep
+ 2025 11:47:44 +0200
+Date: Fri, 5 Sep 2025 10:47:43 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+CC: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham
+	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, "Jani Nikula"
+	<jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko
+ Ursulin <tursulin@ursulin.net>, "David Airlie" <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, Eduardo
+ Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan
+	<ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui
+	<rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, Lukasz Luba
+	<lukasz.luba@arm.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+	<festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, "Sumit Gupta"
+	<sumitg@nvidia.com>, Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<imx@lists.linux.dev>, <linux-omap@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 03/10] cpufreq: intel_pstate: Use scope-based cleanup
+ helper
+Message-ID: <20250905104743.00004177@huawei.com>
+In-Reply-To: <20250903131733.57637-4-zhangzihuan@kylinos.cn>
+References: <20250903131733.57637-1-zhangzihuan@kylinos.cn>
+	<20250903131733.57637-4-zhangzihuan@kylinos.cn>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904125736.3918646-1-kevin.brodsky@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMCBTYWx0ZWRfX0b7vKa9wIqUd
- 15JIKVxY/eFyoNy0/rx0rVDv/Yc4PB6ogniG6U5JZlC8qyn8Y0NgFv6oYYbeCaWjZF7P/Etub/q
- /XnEYzafYNkoOrYQMbqj6nFHYpYxymufPYjcGAjaRnVt2jxUzS3zPb6lpNjC6s5Oxrs0WYMRvbR
- dBvy+J/7pMy+teTA+x9T/E6ggkXyizQGe//4AxcBxcrhCKNqzem6rRKcxJLTefmrfU0CU2VW6uC
- 5x2JqlOAMSNtXM1AfGSytrxIFOr2S3XPEdTEP1QyOTNlKzTtGtrjaWkIbxQVZc7XyWa9Ggbdnl8
- wkgYg373aI71Rh0ZOzmEr1tWX4M68Yz9HwoQbCiqMpeXkMBa3EZ9mW+HowhL506x5+1yPvl4rLU
- 90pIQxaV
-X-Proofpoint-GUID: NmMecPGQNEFV5Z6yet56qjNF4vqqAdRy
-X-Proofpoint-ORIG-GUID: 1xCeVzb0bz4EbY7yd5ySncyf5nvF03Hn
-X-Authority-Analysis: v=2.4 cv=Ao/u3P9P c=1 sm=1 tr=0 ts=68bab177 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8
- a=PE-dCK3ueRk4C2obWmcA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_02,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300030
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Sep 04, 2025 at 01:57:29PM +0100, Kevin Brodsky wrote:
+On Wed,  3 Sep 2025 21:17:26 +0800
+Zihuan Zhang <zhangzihuan@kylinos.cn> wrote:
 
-Hi Kevin,
-
-> When the lazy MMU mode was introduced eons ago, it wasn't made clear
-> whether such a sequence was legal:
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
 > 
-> 	arch_enter_lazy_mmu_mode()
-> 	...
-> 		arch_enter_lazy_mmu_mode()
-> 		...
-> 		arch_leave_lazy_mmu_mode()
-> 	...
-> 	arch_leave_lazy_mmu_mode()
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 
-I did not take too deep - sorry if you already answered this.
-Quick question - whether a concern Ryan expressed is addressed
-in general case?
+One trivial comment inline.  This LGTM
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-https://lore.kernel.org/all/3cad01ea-b704-4156-807e-7a83643917a8@arm.com/
+> ---
+>  drivers/cpufreq/intel_pstate.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index f366d35c5840..925efb1e65be 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1209,6 +1209,17 @@ static bool hybrid_clear_max_perf_cpu(void)
+>  	return ret;
+>  }
+>  
+> +static struct freq_qos_request *intel_pstate_cpufreq_get_req(int cpu)
+> +{
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) =
+> +		cpufreq_cpu_get(cpu);
+> +
+> +	if (!policy)
+> +		return NULL;
+> +
+> +	return policy->driver_data;
+> +}
+> +
+>  static void __intel_pstate_get_hwp_cap(struct cpudata *cpu)
+>  {
+>  	u64 cap;
+> @@ -1698,19 +1709,13 @@ static ssize_t store_no_turbo(struct kobject *a, struct kobj_attribute *b,
+>  static void update_qos_request(enum freq_qos_req_type type)
+>  {
+>  	struct freq_qos_request *req;
+> -	struct cpufreq_policy *policy;
+>  	int i;
+>  
+>  	for_each_possible_cpu(i) {
+>  		struct cpudata *cpu = all_cpu_data[i];
+>  		unsigned int freq, perf_pct;
+>  
+> -		policy = cpufreq_cpu_get(i);
+> -		if (!policy)
+> -			continue;
+> -
+> -		req = policy->driver_data;
+> -		cpufreq_cpu_put(policy);
+> +		req = intel_pstate_cpufreq_get_req(i);
+>  
 
-	enter_lazy_mmu
-		for_each_pte {
-			read/modify-write pte
+I'd drop this blank line as it'll keep the setting or req and checking it
+closely coupled.  Previously the put inbetween stopped that but now
+we can improve the formatting!
 
-			alloc_page
-				enter_lazy_mmu
-					make page valid
-				exit_lazy_mmu
+>  		if (!req)
+>  			continue;
 
-			write_to_page
-		}
-	exit_lazy_mmu
-
-<quote>
-This example only works because lazy_mmu doesn't support nesting. The "make page
-valid" operation is completed by the time of the inner exit_lazy_mmu so that the
-page can be accessed in write_to_page. If nesting was supported, the inner
-exit_lazy_mmu would become a nop and write_to_page would explode.
-</quote>
-
-...
-
-Thanks!
 
