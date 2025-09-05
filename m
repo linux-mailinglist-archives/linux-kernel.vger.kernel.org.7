@@ -1,259 +1,209 @@
-Return-Path: <linux-kernel+bounces-803790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3EBB4654C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:15:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB83B46550
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37085171C32
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:15:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176C07BB846
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F3F2E8B86;
-	Fri,  5 Sep 2025 21:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5242F1FE5;
+	Fri,  5 Sep 2025 21:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TWvEoZeE"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QEqt2BR6"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1BC2A1D1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26722F0683
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757106935; cv=none; b=OTs0qM2ufz1LCc3e5f90Zu/Q+rAWuYykGf4Imq6ZrVypOGrYBNSieKPSw7SphdV4iS8f0S5ms/qwuF6thgVbMoStVMwJu/uYubL/TOGQbZZgkDSScSEEtBXkt3N2VhyR2ObG79GrcbZ5G9fSvY2CHX3xgc3P3nrLbnc3SqkJ/bA=
+	t=1757106940; cv=none; b=oVtXeFt+yXPDvCkGpbclIQgqpkyvfA/aa/Wp482b1qSpXspbSxgA/u+OuSLB07sm0WKN14o+2hMI/YfVqxr+l5ahgMicX7DZOWXhA8f8jTDN5SlbdR8yWxKjhZSk05A1Aivskd5HRDu+Z+7nDvtMH8EnJy+tKIJmFHGnkXEXgSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757106935; c=relaxed/simple;
-	bh=/8tWXyK01BUftfjDEJ4/szUwSxDZKVjf4+gGZGWq6bU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNQCHWNPnbc0WpaA6Gssez9XRZwreM+A8RHjpq9g+Z8PyXTfo1AS5KFVC5rAJAzw9s3NfJgvULga6dxzNLYmb1Vqz/8TgoChSvBqViivX9cy5rL83LWGU0qfpjpRgTr/32psLEGFqY7Qf1IT4zXtLRmkD5vyA+xiQc5CrS/ySP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TWvEoZeE; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D77CBC6B3A0;
-	Fri,  5 Sep 2025 21:15:15 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 066BC6060B;
-	Fri,  5 Sep 2025 21:15:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9EC41102F27C5;
-	Fri,  5 Sep 2025 23:15:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757106929; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=BzF69i8sbsV4lHhMGJFDV0kULvsuOaaNGSx928va4PQ=;
-	b=TWvEoZeEoOT6wH092I3ZUStRLUzYTVzALG9QlbXYsl8XSZyduJ0n7+cN5j0xNzkn576Yvv
-	8Y1ktU4lftXn7wKshiVwTWkuZ7zMbTObazX15NXT4yGLc/JqUY2fd3jdSmypv5Jc1/B2pG
-	fGftNkteL50Mp7mXkG9nwdjDjhk6F18Nnqoyw/wIsQsQxrL2hBw6jYqweexeSBYQB3xcKY
-	dccx7pNvh9KJFtK/etQjfnluTd7lyclUrY2QaQiYe65zZcCzQrTw3en6OX3s/Eiv9bOaTw
-	L6HycEYIEFXHJvTI116bURJey5xQpz1YgceE8bmTwGGCibs3Wz27dy8PQCkj6g==
-Message-ID: <0c8f0331-13a8-492c-980e-3af17ecf0fdc@bootlin.com>
-Date: Fri, 5 Sep 2025 23:15:07 +0200
+	s=arc-20240116; t=1757106940; c=relaxed/simple;
+	bh=ZbpTJpgq5eLZVl33raMdiFnvHNLuPpzwtxq8hWiMSh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0UqIkSUKWa4PjkgjskaGOb4CmZimzoNgCOvvp15D6LTroojd2+EdikZV2SbOX/1O/iS4zsllrO7IlbErd1zC7/H4WU72RzMu8Kw1R5/v1lL3T0XvXzeO/ZcoGrw0InsWcrQ6D/c1V76SMtr2bgM//G72gXhSp8EmD2LPCzBhzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QEqt2BR6; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b042eb09948so477009866b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1757106936; x=1757711736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
+        b=QEqt2BR6/Y+P4loZL4Fxi4YgPMVPzPDPExdrMSbcCzjV+Li2LxmIWA1JRN9IRDDJ3H
+         STy7JFQnEmUgSpb6aa2g/JsGfyA+Abu1gFOLAnb9qTqmC0wJi7zXrxCj4MEaEiuMyeTJ
+         +xNSOUFn0lS4VoaDn0mLoju+Vrd5z1M0ouuJBTk8l+Z/BsVL43/1SPld+0M+CsMky1jl
+         8G2efjJGK6WylmPdsVcWlk6Zk/GmB84lhOpKw4OBd1nxE6Wl+9d7JZ2tN+S0ma06Phei
+         M/LgcdA/srbQm4l+tgGs6F0CvoKSjsCGC0o5yDwLI30hCoBCJ33HrgoWFhuzFSAxjszd
+         ouEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757106936; x=1757711736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
+        b=DIPML7fxLETK2EnvwewaB+Ah/dBDG/1LC2ushtObtyFjyku8klQqvgGrDuPesJqlBQ
+         p+QwL2HRzqa8CBjIsf71Ik68xCUNQoHn758ILbCFddGJa2Omuf9mE2u7Kx6VUAr9eO41
+         6Gb5Hwwbhgilk8unSObGJzbw6pnuRYAYHJVd/pp9vanbpNog8HSFeYklLyBwc34HOzrz
+         zULZf63znyS3khyzpG6TX8y+g1uBwhPkLbX4kr4VIMPejzGBPJhRh3NeTw1O/2drXvez
+         YYt4MqcTWORIkn+W77LAg/wHIVwh8l41Onk4sbr0pjeBgV2ioWFcpejdMlgQMLksOLP8
+         g7LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyalmr5OsBQekZtxNpjuotZhRYj8pKViyYSksGXXD/hoAhNfs217UJm4lcsIuqYsNPtjXn9PF6kowPSNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw47iVWMgSHeDdK90UntYP8OxztLfY2mXu9Nnh2mwF5Q+hb0VHQ
+	fSxukI3tPXxopSwX169ivsS0fIXZt+APzli9ULRQ4T6Eefq513Y/XMA8jIB7+NvdCGg=
+X-Gm-Gg: ASbGncvR+NhOyVqkFrTgsMHG7PO2MJOdjA2qeoaxDoNg3i0ST4tQRlt8spEjjNd513j
+	cHTkSqKtWFhU4EsITRA3HOTbKRaWVCu061U3Y1g59LieAwOu52KcpsLsM03b8NroBlmUTdaC6Ek
+	0SBwcjA+5hqsGhmBvzi4cgAjSWsR1R+QT1Rv3Qusa5suOwd/rInsnGWOmrOvsx56fiUL5D1aKNo
+	DQlAkNAqYaQAbXxFI4FnHrUjC5VC/nCgIAd3sTmtnJjI97h1eRvsFPgCFnSEdxm6sPZjc0RN+hJ
+	02pEJEef+bgumuQOcWbJoPiUwRRTGZ3/I2IsWb5s8oCO8+582aRf0+RGPJELLG6FUC/hcKaI/cw
+	b4zcieGq4YjSz0dRvCPSbrC/cFcEnq618ANvy5jDcmdUbd9lFX0MzO1nqzyGsMX0eZth7Q9I06o
+	bwlVUF3GMoCZT0ekgQgy10vm/mwBVKlVKJTcY6QQFMw1oS
+X-Google-Smtp-Source: AGHT+IEI0UMFbxLDbFHi93Xgr79JgLgv6e0CgFXtb2r6z2caSDYapP71MxTt7L0Jmccte/7ICI7YVw==
+X-Received: by 2002:a17:907:3c92:b0:b04:1249:2b24 with SMTP id a640c23a62f3a-b04b1696062mr15691166b.37.1757106936248;
+        Fri, 05 Sep 2025 14:15:36 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f356800023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f35:6800:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047373afcesm604498166b.57.2025.09.05.14.15.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 14:15:35 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: slava.dubeyko@ibm.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	amarkuze@redhat.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/ceph/dir: fix `i_nlink` underrun during async unlink
+Date: Fri,  5 Sep 2025 23:15:30 +0200
+Message-ID: <20250905211530.43296-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/58] dyndbg: hoist classmap-filter-by-modname up to
- ddebug_add_module
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org,
- robdclark@gmail.com, groeck@google.com, yanivt@google.com,
- bleung@google.com, quic_saipraka@quicinc.com, will@kernel.org,
- catalin.marinas@arm.com, quic_psodagud@quicinc.com, maz@kernel.org,
- arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, mingo@redhat.com
-References: <20250803035816.603405-1-jim.cromie@gmail.com>
- <20250803035816.603405-15-jim.cromie@gmail.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250803035816.603405-15-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
+During async unlink, we drop the `i_nlink` counter before we receive
+the completion (that will eventually update the `i_nlink`) because "we
+assume that the unlink will succeed".  That is not a bad idea, but it
+races against deletions by other clients (or against the completion of
+our own unlink) and can lead to an underrun which emits a WARNING like
+this one:
 
+ WARNING: CPU: 85 PID: 25093 at fs/inode.c:407 drop_nlink+0x50/0x68
+ Modules linked in:
+ CPU: 85 UID: 3221252029 PID: 25093 Comm: php-cgi8.1 Not tainted 6.14.11-cm4all1-ampere #655
+ Hardware name: Supermicro ARS-110M-NR/R12SPD-A, BIOS 1.1b 10/17/2023
+ pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : drop_nlink+0x50/0x68
+ lr : ceph_unlink+0x6c4/0x720
+ sp : ffff80012173bc90
+ x29: ffff80012173bc90 x28: ffff086d0a45aaf8 x27: ffff0871d0eb5680
+ x26: ffff087f2a64a718 x25: 0000020000000180 x24: 0000000061c88647
+ x23: 0000000000000002 x22: ffff07ff9236d800 x21: 0000000000001203
+ x20: ffff07ff9237b000 x19: ffff088b8296afc0 x18: 00000000f3c93365
+ x17: 0000000000070000 x16: ffff08faffcbdfe8 x15: ffff08faffcbdfec
+ x14: 0000000000000000 x13: 45445f65645f3037 x12: 34385f6369706f74
+ x11: 0000a2653104bb20 x10: ffffd85f26d73290 x9 : ffffd85f25664f94
+ x8 : 00000000000000c0 x7 : 0000000000000000 x6 : 0000000000000002
+ x5 : 0000000000000081 x4 : 0000000000000481 x3 : 0000000000000000
+ x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff08727d3f91e8
+ Call trace:
+  drop_nlink+0x50/0x68 (P)
+  vfs_unlink+0xb0/0x2e8
+  do_unlinkat+0x204/0x288
+  __arm64_sys_unlinkat+0x3c/0x80
+  invoke_syscall.constprop.0+0x54/0xe8
+  do_el0_svc+0xa4/0xc8
+  el0_svc+0x18/0x58
+  el0t_64_sync_handler+0x104/0x130
+  el0t_64_sync+0x154/0x158
 
-Le 03/08/2025 à 05:57, Jim Cromie a écrit :
-> The body of ddebug_attach_module_classes() is dominated by a
-> code-block that finds the contiguous subrange of classmaps matching on
-> modname, and saves it into the ddebug_table's info record.
-> 
-> Implement this block in a macro to accommodate different component
-> vectors in the "box" (as named in the for_subvec macro).
-> 
-> And hoist its invocation out of ddebug_attach_module_classes() up into
-> ddebug_add_module().  This moves the filtering step up closer to
-> dynamic_debug_init(), which effectively does the same for builtin
-> pr_debug descriptors; segmenting them into subranges by modname.
-> 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> ---
->   lib/dynamic_debug.c | 56 ++++++++++++++++++++++++++-------------------
->   1 file changed, 32 insertions(+), 24 deletions(-)
-> 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index 53ce282554266..bbbdb8aba0716 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -161,8 +161,8 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
->   }
->   
->   static struct _ddebug_class_map *ddebug_find_valid_class(struct ddebug_table const *dt,
-> -							const char *class_string,
-> -							int *class_id)
-> +							 const char *class_string,
-> +							 int *class_id)
->   {
->   	struct _ddebug_class_map *map;
->   	int i, idx;
-> @@ -1224,30 +1224,34 @@ static const struct proc_ops proc_fops = {
->   
->   static void ddebug_attach_module_classes(struct ddebug_table *dt, struct _ddebug_info *di)
->   {
-> -	struct _ddebug_class_map *cm;
-> -	int i, nc = 0;
-> -
-> -	/*
-> -	 * Find this module's classmaps in a subrange/wholerange of
-> -	 * the builtin/modular classmap vector/section.  Save the start
-> -	 * and length of the subrange at its edges.
-> -	 */
-> -	for_subvec(i, cm, di, maps) {
-> -		if (!strcmp(cm->mod_name, dt->mod_name)) {
-> -			if (!nc) {
-> -				v2pr_info("start subrange, class[%d]: module:%s base:%d len:%d ty:%d\n",
-> -					  i, cm->mod_name, cm->base, cm->length, cm->map_type);
-> -				dt->info.maps.start = cm;
-> -			}
-> -			nc++;
-> -		}
-> -	}
-> -	if (nc) {
-> -		dt->info.maps.len = nc;
-> -		vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
-> -	}
-> +	vpr_info("module:%s attached %d classes\n", dt->mod_name, dt->info.maps.len);
->   }
->   
-> +/*
-> + * Walk the @_box->@_vec member, over @_vec.start[0..len], and find
-> + * the contiguous subrange of elements matching on ->mod_name.  Copy
-> + * the subrange into @_dst.  This depends on vars defd by caller.
-> + *
-> + * @_i:   caller provided counter var, init'd by macro
-> + * @_sp:  cursor into @_vec.
-> + * @_box: contains member named @_vec
-> + * @_vec: an array-ref, with: .start .len fields.
-> + * @_dst: an array-ref: to remember the module's subrange
+In ceph_unlink(), a call to ceph_mdsc_submit_request() submits the
+CEPH_MDS_OP_UNLINK to the MDS, but does not wait for completion.
 
-Can you change to:
+Meanwhile, between this call and the following drop_nlink() call, a
+worker thread may process a CEPH_CAP_OP_IMPORT, CEPH_CAP_OP_GRANT or
+just a CEPH_MSG_CLIENT_REPLY (the latter of which could be our own
+completion).  These will lead to a set_nlink() call, updating the
+`i_nlink` counter to the value received from the MDS.  If that new
+`i_nlink` value happens to be zero, it is illegal to decrement it
+further.  But that is exactly what ceph_unlink() will do then.
 
-@_dst: an array-rf: to remember the module's subrange, with: .info.@_vec 
-.mod_name fields
+The WARNING can be reproduced this way:
 
-With this: Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+1. Force async unlink; only the async code path is affected.  Having
+   no real clue about Ceph internals, I was unable to find out why the
+   MDS wouldn't give me the "Fxr" capabilities, so I patched
+   get_caps_for_async_unlink() to always succeed.
 
-> + */
-> +#define dd_mark_vector_subrange(_i, _dst, _sp, _box, _vec) ({		\
-> +	int nc = 0;							\
-> +	for_subvec(_i, _sp, _box, _vec) {				\
-> +		if (!strcmp((_sp)->mod_name, (_dst)->mod_name)) {	\
-> +			if (!nc++)					\
-> +				(_dst)->info._vec.start = (_sp);	\
-> +		} else {						\
-> +			if (nc)						\
-> +				break; /* end of consecutive matches */ \
-> +		}							\
-> +	}								\
-> +	(_dst)->info._vec.len = nc;					\
-> +})
-> +
->   /*
->    * Allocate a new ddebug_table for the given module
->    * and add it to the global list.
-> @@ -1255,6 +1259,8 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt, struct _ddebug
->   static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   {
->   	struct ddebug_table *dt;
-> +	struct _ddebug_class_map *cm;
-> +	int i;
->   
->   	if (!di->descs.len)
->   		return 0;
-> @@ -1277,6 +1283,8 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   
->   	INIT_LIST_HEAD(&dt->link);
->   
-> +	dd_mark_vector_subrange(i, dt, cm, di, maps);
-> +
->   	if (di->maps.len)
->   		ddebug_attach_module_classes(dt, di);
->   
+   (Note that the WARNING dump above was found on an unpatched kernel,
+   without this kludge - this is not a theoretical bug.)
 
+2. Add a sleep call after ceph_mdsc_submit_request() so the unlink
+   completion gets handled by a worker thread before drop_nlink() is
+   called.  This guarantees that the `i_nlink` is already zero before
+   drop_nlink() runs.
+
+The solution is to skip the counter decrement when it is already zero,
+but doing so without a lock is still racy (TOCTOU).  Since
+ceph_fill_inode() and handle_cap_grant() both hold the
+`ceph_inode_info.i_ceph_lock` spinlock while set_nlink() runs, this
+seems like the proper lock to protect the `i_nlink` updates.
+
+I found prior art in NFS and SMB (using `inode.i_lock`) and AFS (using
+`afs_vnode.cb_lock`).  All three have the zero check as well.
+
+Fixes: 2ccb45462aea ("ceph: perform asynchronous unlink if we have sufficient caps")
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/dir.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 8478e7e75df6..67f04e23f78a 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1341,6 +1341,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+ 	struct ceph_client *cl = fsc->client;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	struct inode *inode = d_inode(dentry);
++	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_mds_request *req;
+ 	bool try_async = ceph_test_mount_opt(fsc, ASYNC_DIROPS);
+ 	struct dentry *dn;
+@@ -1427,7 +1428,19 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+ 			 * We have enough caps, so we assume that the unlink
+ 			 * will succeed. Fix up the target inode and dcache.
+ 			 */
+-			drop_nlink(inode);
++
++			/*
++			 * Protect the i_nlink update with i_ceph_lock
++			 * to precent racing against ceph_fill_inode()
++			 * handling our completion on a worker thread
++			 * and don't decrement if i_nlink has already
++			 * been updated to zero by this completion.
++			 */
++			spin_lock(&ci->i_ceph_lock);
++			if (inode->i_nlink > 0)
++				drop_nlink(inode);
++			spin_unlock(&ci->i_ceph_lock);
++
+ 			d_delete(dentry);
+ 		} else {
+ 			spin_lock(&fsc->async_unlink_conflict_lock);
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.47.2
 
 
