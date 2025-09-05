@@ -1,77 +1,101 @@
-Return-Path: <linux-kernel+bounces-801941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5859AB44BE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C26B44BEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1563A5A304C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3761BC3C13
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13C223DEC;
-	Fri,  5 Sep 2025 02:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C40226CFF;
+	Fri,  5 Sep 2025 02:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brUkuW/U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YqipehSF"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A9D7FBA1;
-	Fri,  5 Sep 2025 02:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84D41FAC4B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 02:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757040754; cv=none; b=DM+5kKzGLi7KyqnzRmIOpaq9niVSR0AOV6VVoEeIF9wqSB1JM7IEPfA99kofwI7ru2udedmCYpWqra4ifspCITSpINSut8YPl4kZI3ZZBQ9VfL25QRksg1GyoAaHZnT96RoXWDCtaFqvCNKHOZEhcOOkxaPnd9znT1+OIeMAO9g=
+	t=1757040874; cv=none; b=H6yDQDY74fVCIwa/CQmQefQnd3U3qRNVPhXajbQLzpiW6F2+74Hj0IGYLYM/rNcu3dAtk2TPt/VvuW4nhX0rMedtEpF9OZc0zw75NYVv93KJbj8oGMtIQLD8I+xmmF0Fhb8NLO4I7Hpm/B2y+9jXs70y75uX3QN6+ejJ1UOY/CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757040754; c=relaxed/simple;
-	bh=Qw8lFrrwAIMrp6pijQTLAWkAiH0l7fTpk2w47qaYv9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B3Y9cQ3H19yDluqbxe4FqWyxpJRnJi0x9DU+hwABwuYLyBlKzKCjN9I05YSwZGNCZ4faNCJT6wFyLnGsb2MOcN3hUfxHp2r+1evs7As/dscZj00pJfVAVVUCrRc9zIHQmfMfbaF//Jj5rAAfVXRgkB0Yzn39pXw+WVWwO9hyHCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brUkuW/U; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757040753; x=1788576753;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Qw8lFrrwAIMrp6pijQTLAWkAiH0l7fTpk2w47qaYv9Y=;
-  b=brUkuW/UPQHdHnVhd73Q7t5pFgh0WghfE5JGwwoYwDWlosL+fm7Y5Fx9
-   EP6RnuzfIXGagMd9uk5JwJnccYyj/3PdysXtBfEySLD/EdXFZRan8g4JR
-   RscXCUezY8uIunDmoWr65cJgsM3aN1H9XFpbjPYYmuASNBHvMTbmsS6ne
-   cIjfF75ugvmXSbbqbYEsaU88uGcSNMX0M1a3JgIaSOCMq8pvfmf5mT5Dh
-   9cpy0iv984fQeaAT37uavqi7gNYxd0LcA2NGZLY987U9PYSlBpKPVYDeF
-   SJ9YHX/w2fXVS6HeoHA3J1jmY7tUHyTivHcY4sYnsiXj9l+e+5+ElEQEE
-   w==;
-X-CSE-ConnectionGUID: rhhxeJecS5adCY0Nt+B7+A==
-X-CSE-MsgGUID: RmAHx27dR5qGN/rMiAEzqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="70769902"
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="70769902"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2025 19:52:32 -0700
-X-CSE-ConnectionGUID: UyVjQjNhQjOMnh4X7lEpGQ==
-X-CSE-MsgGUID: IOZ9qkX5Q+yz0PCs1x2YjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,240,1751266800"; 
-   d="scan'208";a="177304808"
-Received: from shsensorbuild.sh.intel.com ([10.239.132.250])
-  by orviesa005.jf.intel.com with ESMTP; 04 Sep 2025 19:52:30 -0700
-From: Even Xu <even.xu@intel.com>
-To: xinpeng.sun@intel.com
-Cc: bentiss@kernel.org,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rui1.zhang@intel.com,
-	srinivas.pandruvada@linux.intel.com,
-	Even Xu <even.xu@intel.com>
-Subject: Re: [PATCH RESEND v2] hid: intel-thc-hid: intel-quicki2c: support ACPI config for advanced features
-Date: Fri,  5 Sep 2025 10:52:22 +0800
-Message-Id: <20250905025222.1421870-1-even.xu@intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250905013935.1356008-1-xinpeng.sun@intel.com>
-References: <20250905013935.1356008-1-xinpeng.sun@intel.com>
+	s=arc-20240116; t=1757040874; c=relaxed/simple;
+	bh=undCemkUqZF9gBus1X/Ltrp7nF3cY3rXTXb46EMVxBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hWaNvEaCqfYURHdlqTZPxHEc6rYKnEpiqfUDWLf0hnfU2RCMaRcMkvsOg7JRLuW3F0V8MrcFYZxnffaFKuP1NPqSOfGUGIek6Ae+sph1TFSLqSuqQqs3LsxP93FzH1V14FD0d6cExFyNpY0e408schY4FSJqwbdWQCe18I6DFEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YqipehSF; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3e3aafe06a7so145693f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 19:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757040870; x=1757645670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CHgv0NAqDCmZyIrAUaPsVJq1dy+s9KkgFo573UQUBVs=;
+        b=YqipehSFpj6XeradFN5rBMGGYV7W1mErq33XBFw8KtBxEsfeYThJ3cm1XBGpODmTcA
+         Pd3plpOHym7pJcU3wIyrnEj6r9YDvgJBO6SF5W+R41Nd+9AKOtduwoyQgqpIv4fgyGYe
+         3L4YPFixcXJ/3l+eqiqjFssSUnbvCzKIWN4eOj9zqKPAj3UDw+tgOT6mzjOtv08undh/
+         R45LbrbsQkcAUZc/YuKCjsXop+2tgtyJPJ8zVTMUB63Y8qVLYyGbds86jkqU7s0WoST/
+         EWiKggkVUOkRfeeCjzT9nlS+jV0doGBXl608j9OucvHRScvtTAFpAA0fOnJ6PpoxFPdc
+         k9mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757040870; x=1757645670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CHgv0NAqDCmZyIrAUaPsVJq1dy+s9KkgFo573UQUBVs=;
+        b=Ft5mMFM7I+6z4NzK84pdqrJHmKo0L2Q69rr7npp88qifG4T7nc1WTb3l1M/XGLFWYC
+         n0Pu9uFKY7vq+zN3O2y9xV6jARxrYdasq5twIqWmQft5QFxOP/0P4T6E5RO31abzDSDa
+         wuRXl7SrGQcOt57Poqq9q70GtHm41YCArVm8t8FuoqWKk7POL+oNiDByiUTsU4WuuDaQ
+         j8rWuVDbtmmBv/hGNlykBazIM8pX0hfjxx/Y6UZh4swrwAbBEdbUnVeS6isju0BXQaLl
+         FBl3aWCCpIVbfi+XxHIZwdnWWTjIfgcEmLDbz8/Ne23QBv+4388/D+dNRt43tY6OIq/w
+         gXDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1RQ1Wwd/h+MsWHYooj+aOFFBySd+4inGbl3AvLFjaOCXOn1/7JfQBboSBfgZpFnSy7waisEYXvYAedwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4kgIH3LdV4SBXLYSckncyftbOqvTF8w4LGc1S9P0pvV3PQryc
+	Qf32bIVUWevp9nLew1dl2fXF8AU89cIUgRkpPvWe6OnMQrk3lpwgZneGqQ8AwibZzqI=
+X-Gm-Gg: ASbGnctorrs8B1EGTb0S8ipC2UwmUIgsn1crjevrVS1SCMKXHG/o/Y0PiYLBZ+r9hBu
+	6/IVhWSyDnCsnYNowLqBGfQ1qWxAn/htrizfArWnQuKjY1AM2JjFpiiwI8UPGVS1cGy8323qU3D
+	KC746EjVn2Ir7YuAdxFJ2Cmf0LPrxuCWzOfBpQ5GJNuMynARxP/t8CsDx2qYHnxpe0USnj/67u/
+	7KP+gFNAXUoFtqn7DXGt0z+xn2eL/WY+KACJiTB4jDZ03LetZKsr215n6lO2Ro9ZB7NOli+RpX9
+	GEyr8L6i6Da6wSFSS31yx0ajgrCkzyCpmYe7Jwbt06kuIdAlcPmMg47Ku+Ihff9UAMOiZfR510E
+	iGEXXn08XqfRe20f+SJ5IZvu0+GA=
+X-Google-Smtp-Source: AGHT+IHlQ5NtCWhhn706uFBkQkHtdTdgPPiLOwM5uLuiEP1poKNVs7I6ylodCTB9/wLUvkUlnXWfJg==
+X-Received: by 2002:a05:6000:1887:b0:3e2:4a3e:d3cf with SMTP id ffacd0b85a97d-3e24a3ef8a9mr2789665f8f.5.1757040870188;
+        Thu, 04 Sep 2025 19:54:30 -0700 (PDT)
+Received: from F5.localdomain ([121.167.230.140])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b520b545a96sm457225a12.20.2025.09.04.19.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Sep 2025 19:54:29 -0700 (PDT)
+From: Hoyeon Lee <hoyeon.lee@suse.com>
+To: 
+Cc: Hoyeon Lee <hoyeon.lee@suse.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	bpf@vger.kernel.org (open list:BPF [LIBRARY] (libbpf)),
+	linux-kernel@vger.kernel.org (open list),
+	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
+Subject: [RFC bpf-next 0/1] libbpf: add compile-time OOB warning to bpf_tail_call_static
+Date: Fri,  5 Sep 2025 11:53:10 +0900
+Message-ID: <20250905025314.245650-1-hoyeon.lee@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,199 +104,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add comment inline.
+This RFC adds a compile-time check to bpf_tail_call_static() to warn
+when a constant slot(index) is >= map->max_entries. This uses a small
+BPF_MAP_ENTRIES() macro together with Clang's diagnose_if attribute.
 
-> From: Xinpeng Sun <xinpeng.sun@intel.com>
-> To: jikos@kernel.org, bentiss@kernel.org
-> Cc: srinivas.pandruvada@linux.intel.com, linux-input@vger.kernel.org,
-> 	linux-kernel@vger.kernel.org, Xinpeng Sun <xinpeng.sun@intel.com>,
-> 	Rui Zhang <rui1.zhang@intel.com>
-> Subject: [PATCH RESEND v2] hid: intel-thc-hid: intel-quicki2c: support ACPI config for advanced features
-> Date: Fri,  5 Sep 2025 09:39:35 +0800	[thread overview]
-> Message-ID: <20250905013935.1356008-1-xinpeng.sun@intel.com> (raw)
-> 
-> There is a new BIOS enhancement that adds the capability to configure the
-> following two features of I2C subsystem introduced in commit 1ed0b48
-> ("Intel-thc: Introduce max input size control") and commit 3f2a921
-> ("Intel-thc: Introduce interrupt delay control"):
-> - Max input size control
-> - Interrupt delay control
-> 
-> As BIOS is used for the configuration of these two features, change driver
-> data usage to indicate hardware capability, and add corresponding ACPI
-> configuration support in QuickI2C driver.
-> 
-> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-> Tested-by: Rui Zhang <rui1.zhang@intel.com>
-> ---
->  .../intel-quicki2c/pci-quicki2c.c             | 43 ++++++++++++++-----
->  .../intel-quicki2c/quicki2c-dev.h             | 24 ++++++++++-
->  2 files changed, 55 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> index 854926b3cfd4..787c32557d24 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> @@ -23,6 +23,7 @@
->  
->  static struct quicki2c_ddata ptl_ddata = {
->  	.max_detect_size = MAX_RX_DETECT_SIZE_PTL,
-> +	.max_interrupt_delay = MAX_RX_INTERRUPT_DELAY,
->  };
->  
->  /* THC QuickI2C ACPI method to get device properties */
-> @@ -123,8 +124,8 @@ static int quicki2c_acpi_get_dsd_property(struct acpi_device *adev, acpi_string
->  static int quicki2c_get_acpi_resources(struct quicki2c_device *qcdev)
->  {
->  	struct acpi_device *adev = ACPI_COMPANION(qcdev->dev);
-> -	struct quicki2c_subip_acpi_parameter i2c_param;
-> -	struct quicki2c_subip_acpi_config i2c_config;
-> +	struct quicki2c_subip_acpi_parameter i2c_param = {0};
-> +	struct quicki2c_subip_acpi_config i2c_config = {0};
+Clang front-end keeps the map type with a '(*max_entries)[N]' field,
+so the expression
 
-Remove the initialization {0}, it's unnecessary.
+    sizeof(*(m)->max_entries) / sizeof(**(m)->max_entries)
 
->  	u32 hid_desc_addr;
->  	int ret = -EINVAL;
->  
-> @@ -200,6 +201,21 @@ static int quicki2c_get_acpi_resources(struct quicki2c_device *qcdev)
->  		return -EOPNOTSUPP;
->  	}
->  
-> +	if (qcdev->ddata) {
-> +		qcdev->i2c_max_frame_size_enable = i2c_config.FSEN;
-> +		qcdev->i2c_int_delay_enable = i2c_config.INDE;
-> +
-> +		if (i2c_config.FSVL <= qcdev->ddata->max_detect_size)
-> +			qcdev->i2c_max_frame_size = i2c_config.FSVL;
-> +		else
-> +			qcdev->i2c_max_frame_size = qcdev->ddata->max_detect_size;
-> +
-> +		if (i2c_config.INDV <= qcdev->ddata->max_interrupt_delay)
-> +			qcdev->i2c_int_delay = i2c_config.INDV;
-> +		else
-> +			qcdev->i2c_int_delay = qcdev->ddata->max_interrupt_delay;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -441,17 +457,24 @@ static void quicki2c_dma_adv_enable(struct quicki2c_device *qcdev)
->  	 * max input length <= THC detect capability, enable the feature with device
->  	 * max input length.
->  	 */
-> -	if (qcdev->ddata->max_detect_size >=
-> -	    le16_to_cpu(qcdev->dev_desc.max_input_len)) {
-> -		thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> -					le16_to_cpu(qcdev->dev_desc.max_input_len));
-> +	if (qcdev->i2c_max_frame_size_enable) {
-> +		if (qcdev->i2c_max_frame_size >=
-> +		    le16_to_cpu(qcdev->dev_desc.max_input_len)) {
-> +			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> +						le16_to_cpu(qcdev->dev_desc.max_input_len));
-> +		} else {
-> +			dev_warn(qcdev->dev,
-> +				 "Max frame size is smaller than hid max input length!");
-> +			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-> +						le16_to_cpu(qcdev->i2c_max_frame_size));
-> +		}
->  		thc_i2c_rx_max_size_enable(qcdev->thc_hw, true);
->  	}
->  
->  	/* If platform supports interrupt delay feature, enable it with given delay */
-> -	if (qcdev->ddata->interrupt_delay) {
-> +	if (qcdev->i2c_int_delay_enable) {
->  		thc_i2c_set_rx_int_delay(qcdev->thc_hw,
-> -					 qcdev->ddata->interrupt_delay);
-> +					 qcdev->i2c_int_delay * 10);
->  		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, true);
->  	}
->  }
-> @@ -464,10 +487,10 @@ static void quicki2c_dma_adv_enable(struct quicki2c_device *qcdev)
->   */
->  static void quicki2c_dma_adv_disable(struct quicki2c_device *qcdev)
->  {
-> -	if (qcdev->ddata->max_detect_size)
-> +	if (qcdev->i2c_max_frame_size_enable)
->  		thc_i2c_rx_max_size_enable(qcdev->thc_hw, false);
->  
-> -	if (qcdev->ddata->interrupt_delay)
-> +	if (qcdev->i2c_int_delay_enable)
->  		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, false);
->  }
->  
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> index d412eafcf9ea..0d423d5dd7a7 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> @@ -38,6 +38,8 @@
->  
->  /* PTL Max packet size detection capability is 255 Bytes */
->  #define MAX_RX_DETECT_SIZE_PTL			255
-> +/* Max interrupt delay capability is 2.56ms */
-> +#define MAX_RX_INTERRUPT_DELAY			256
->  
->  /* Default interrupt delay is 1ms, suitable for most devices */
->  #define DEFAULT_INTERRUPT_DELAY_US		(1 * USEC_PER_MSEC)
-> @@ -101,6 +103,10 @@ struct quicki2c_subip_acpi_parameter {
->   * @HMTD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Transmit HOLD Period
->   * @HMRD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Receive HOLD Period
->   * @HMSL: Maximum length (in ic_clk_cycles) of suppressed spikes in High Speed Mode
-> + * @FSEN: Maximum Frame Size Feature Enable Control
-> + * @FSVL: Maximum Frame Size Value (unit in Bytes)
-> + * @INDE: Interrupt Delay Feature Enable Control
-> + * @INDV: Interrupt Delay Value (unit in 10 us)
->   *
->   * Those properties get from QUICKI2C_ACPI_METHOD_NAME_ISUB method, used for
->   * I2C timing configure.
-> @@ -127,17 +133,22 @@ struct quicki2c_subip_acpi_config {
->  	u64 HMTD;
->  	u64 HMRD;
->  	u64 HMSL;
-> +
-> +	u64 FSEN;
-> +	u64 FSVL;
-> +	u64 INDE;
-> +	u64 INDV;
->  	u8 reserved;
->  };
->  
->  /**
->   * struct quicki2c_ddata - Driver specific data for quicki2c device
->   * @max_detect_size: Identify max packet size detect for rx
-> - * @interrupt_delay: Identify interrupt detect delay for rx
-> + * @interrupt_delay: Identify max interrupt detect delay for rx
->   */
->  struct quicki2c_ddata {
->  	u32 max_detect_size;
-> -	u32 interrupt_delay;
-> +	u32 max_interrupt_delay;
->  };
->  
->  struct device;
-> @@ -170,6 +181,10 @@ struct acpi_device;
->   * @report_len: The length of input/output report packet
->   * @reset_ack_wq: Workqueue for waiting reset response from device
->   * @reset_ack: Indicate reset response received or not
-> + * @i2c_max_frame_size_enable: Indicate max frame size feature enabled or not
-> + * @i2c_max_frame_size: Max RX frame size (unit in Bytes)
-> + * @i2c_int_delay_enable: Indicate interrupt delay feature enabled or not
-> + * @i2c_int_delay: Interrupt detection delay value (unit in 10 us)
->   */
->  struct quicki2c_device {
->  	struct device *dev;
-> @@ -200,6 +215,11 @@ struct quicki2c_device {
->  
->  	wait_queue_head_t reset_ack_wq;
->  	bool reset_ack;
-> +
-> +	u32 i2c_max_frame_size_enable;
-> +	u32 i2c_max_frame_size;
-> +	u32 i2c_int_delay_enable;
-> +	u32 i2c_int_delay;
->  };
->  
->  #endif /* _QUICKI2C_DEV_H_ */
-> -- 
-> 2.40.1
+is resolved to N entirely at compile time. This allows diagnose_if()
+to emit a warning when a constant slot index is out of range.
+
+Example:
+
+    struct { /* BPF_MAP_TYPE_PROG_ARRAY = 3 */
+        __uint(type, 3);             // int (*type)[3];
+        __uint(max_entries, 100);    // int (*max_entries)[100];
+        __type(key, __u32);          // typeof(__u32) *key;
+        __type(value, __u32);        // typeof(__u32) *value;
+    } progs SEC(".maps");
+
+    bpf_tail_call_static(ctx, &progs, 111);
+
+produces:
+
+    bound.bpf.c:26:9: warning: bpf_tail_call: slot >= max_entries [-Wuser-defined-warnings]
+       26 |         bpf_tail_call_static(ctx, &progs, 111);
+          |         ^
+    /usr/local/include/bpf/bpf_helpers.h:190:54: note: expanded from macro 'bpf_tail_call_static'
+      190 |          __bpf_tail_call_warn(__slot >= BPF_MAP_ENTRIES(map));                  \
+          |                                                             ^
+    /usr/local/include/bpf/bpf_helpers.h:183:20: note: from 'diagnose_if' attribute on '__bpf_tail_call_warn':
+      183 |     __attribute__((diagnose_if(oob, "bpf_tail_call: slot >= max_entries", "warning")));
+          |                    ^           ~~~
+
+Out-of-bounds tail call checkup is no-ops at runtime. Emitting a
+compile-time warning can help developers detect mistakes earlier. The
+check is currently limited to Clang (due to diagnose_if) and constant
+indices, but should catch common errors.
+
+Hoyeon Lee (1):
+  libbpf: add compile-time OOB warning to bpf_tail_call_static
+
+ tools/lib/bpf/bpf_helpers.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+--
+2.51.0
 
