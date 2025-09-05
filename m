@@ -1,231 +1,232 @@
-Return-Path: <linux-kernel+bounces-803633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923ACB46336
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE49B4633A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C301C24EF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6670176E80
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C994726C39E;
-	Fri,  5 Sep 2025 19:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095AA1DE89A;
+	Fri,  5 Sep 2025 19:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7N8h4My"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XKKCdNi2"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A4315D22;
-	Fri,  5 Sep 2025 19:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174EC315D22;
+	Fri,  5 Sep 2025 19:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757099323; cv=none; b=FDCAaiau56RGY+5wAp53KmcOAW0E9b4I6wTj70aVvOicLpx0AX+qNDG7pZw4NIVmb8LJjdqPqqRcdYYbNzg5PNhs4tVdCfnDhl5UJ/f+x8cUoQpPoesT4WdchQL0FhmLCgtvQouRtFirnN73390fN2R93yvkLtINAAOieKs1PqE=
+	t=1757099373; cv=none; b=TI9F0Laz1D/qZly+dyYgnEeYuSYx65yRVuTr8oGZZLjtXrySlSUHlRfveEvz2fzHA7UpdouvC7OJXQwP0MZZdv8WkTrN3TSoqJ6nl2xW9oiArRdpU33c4Fy8GQw5NpACK/ChTF8EOpSSP8ICfq9TBKF28Bwdvdc8QfZ7I/iUfvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757099323; c=relaxed/simple;
-	bh=2QZ1aUC6v2Bk9UWUc2KWtsBZRzERC1eNroBBEihneJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=f4f2cLmCCo556GYnzneLUDPdRyIgCGCBiQ1aezokHFKEZ8YaXG1YySfdqBFn61Gy9h0eVp6e5/8UX6sTt4zy/C/CHRPAZ7zAvTB39Depm9U3TLZjkkiDbfqpjxcfMk/U/DN/vo4xfH+ilUj9+qeOz2nQh0DQcX36L16MKfyXpPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7N8h4My; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57832C4CEF1;
-	Fri,  5 Sep 2025 19:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757099322;
-	bh=2QZ1aUC6v2Bk9UWUc2KWtsBZRzERC1eNroBBEihneJ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=A7N8h4MyWl5boMQzfWQal2WavPKOWECLXTgPzm+rYkU3PBr19kBJ2zff/930/KJBR
-	 XzscaP9xYzCdRpF49RZhsfLIazZXyEQlsB4BBg204ir2LP8/k4VCjl+KhKyypXQazD
-	 rWjD7HYWUYAdUHLYsLinFbFQrPXm84tNi68CNZfxdWc5iMRfX+fmx3ini27g5q9xQA
-	 EYRNWXgj7r2sEZeQrSdBgbPL4ccx6tkSwgKklT6Aq2OoYxdB5wdzVPRNb1ekBT7udS
-	 o8hz4oIf4uuk2gjZM5amlgvijt1otc3vhYNYS0OxTWhBlSYR2axSTclGp5JnFWymQx
-	 Ljveg+wlXiYzA==
-Date: Fri, 5 Sep 2025 14:08:40 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
-	mmareddy@quicinc.com
-Subject: Re: [PATCH v8 5/5] PCI: qcom: Add support for ECAM feature
-Message-ID: <20250905190840.GA1318549@bhelgaas>
+	s=arc-20240116; t=1757099373; c=relaxed/simple;
+	bh=FOvYnQSiNl8pemFCHlVa0ESbQyOKLecA7twxglo8mQ4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXKmkVNcYYCXKb6SZ/2/bwOpZz/gYFwjV9QZuZpv9iG52ZiwKIXCih+9qe8/daKlObmXR5xJlUanV9wHiHIB1D1ldwU4+DJWJLeBZbtxFrSeziEgw5mdfv01KlSLStjgrrRftg07iPaMbMws/it6DFS6LPxrx4iH1XH7GggBoSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XKKCdNi2; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 585J9PCM3318147;
+	Fri, 5 Sep 2025 14:09:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757099365;
+	bh=2ozhSc9fWCXpoZo6y9/TJu376fK1mD4abGnuKuDNvF0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=XKKCdNi2IUzEX3vMRNXUQnhm+b2vkVFZHG3UvPsKREzHJCAMJsOseVYbMEfD5m8wc
+	 ioNEia+GKDmnAIzo/t+RmOZQ46AWekaYqBGXTZfRf8qKfzgb2Fcu738jUyP/XnnhKj
+	 r49Bcn+fCgdsCqeezxy7qV+4kJx0xB0oVftGgCO4=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 585J9PlF1117620
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 14:09:25 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 14:09:24 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 14:09:24 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 585J9Nkc1190511;
+	Fri, 5 Sep 2025 14:09:24 -0500
+Date: Sat, 6 Sep 2025 00:39:23 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
+        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 05/33] arm64: dts: ti: k3-am62p-j722s: Enable remote
+ processors at board level
+Message-ID: <20250905190923.c6uxxurvt6kkxxo4@lcpd911>
+References: <20250905051846.1189612-1-b-padhi@ti.com>
+ <20250905051846.1189612-6-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <gwaz7563akxeai4gar7etf4jp3c775fphkipn37alzjcjy6t66@2pa3ykv6kejp>
+In-Reply-To: <20250905051846.1189612-6-b-padhi@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Sep 05, 2025 at 10:08:54PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Sep 05, 2025 at 10:47:42AM GMT, Krishna Chaitanya Chundru wrote:
-> > On 9/4/2025 1:42 AM, Bjorn Helgaas wrote:
-> > > On Thu, Aug 28, 2025 at 01:04:26PM +0530, Krishna Chaitanya Chundru wrote:
-> > > > The ELBI registers falls after the DBI space, PARF_SLV_DBI_ELBI register
-> > > > gives us the offset from which ELBI starts. So override ELBI with the
-> > > > offset from PARF_SLV_DBI_ELBI and cfg win to map these regions.
-> > > > 
-> > > > On root bus, we have only the root port. Any access other than that
-> > > > should not go out of the link and should return all F's. Since the iATU
-> > > > is configured for the buses which starts after root bus, block the
-> > > > transactions starting from function 1 of the root bus to the end of
-> > > > the root bus (i.e from dbi_base + 4kb to dbi_base + 1MB) from going
-> > > > outside the link through ECAM blocker through PARF registers.
-> > > > 
-> > > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > > > ---
-> > > >   drivers/pci/controller/dwc/pcie-qcom.c | 70 ++++++++++++++++++++++++++++++++++
-> > > >   1 file changed, 70 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > index 5092752de23866ef95036bb3f8fae9bb06e8ea1e..8f3c86c77e2604fd7826083f63b66b4cb62a341d 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > @@ -55,6 +55,7 @@
-> > > >   #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
-> > > >   #define PARF_Q2A_FLUSH				0x1ac
-> > > >   #define PARF_LTSSM				0x1b0
-> > > > +#define PARF_SLV_DBI_ELBI			0x1b4
-> > > >   #define PARF_INT_ALL_STATUS			0x224
-> > > >   #define PARF_INT_ALL_CLEAR			0x228
-> > > >   #define PARF_INT_ALL_MASK			0x22c
-> > > > @@ -64,6 +65,16 @@
-> > > >   #define PARF_DBI_BASE_ADDR_V2_HI		0x354
-> > > >   #define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
-> > > >   #define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35c
-> > > > +#define PARF_BLOCK_SLV_AXI_WR_BASE		0x360
-> > > > +#define PARF_BLOCK_SLV_AXI_WR_BASE_HI		0x364
-> > > > +#define PARF_BLOCK_SLV_AXI_WR_LIMIT		0x368
-> > > > +#define PARF_BLOCK_SLV_AXI_WR_LIMIT_HI		0x36c
-> > > > +#define PARF_BLOCK_SLV_AXI_RD_BASE		0x370
-> > > > +#define PARF_BLOCK_SLV_AXI_RD_BASE_HI		0x374
-> > > > +#define PARF_BLOCK_SLV_AXI_RD_LIMIT		0x378
-> > > > +#define PARF_BLOCK_SLV_AXI_RD_LIMIT_HI		0x37c
-> > > > +#define PARF_ECAM_BASE				0x380
-> > > > +#define PARF_ECAM_BASE_HI			0x384
-> > > >   #define PARF_NO_SNOOP_OVERRIDE			0x3d4
-> > > >   #define PARF_ATU_BASE_ADDR			0x634
-> > > >   #define PARF_ATU_BASE_ADDR_HI			0x638
-> > > > @@ -87,6 +98,7 @@
-> > > >   /* PARF_SYS_CTRL register fields */
-> > > >   #define MAC_PHY_POWERDOWN_IN_P2_D_MUX_EN	BIT(29)
-> > > > +#define PCIE_ECAM_BLOCKER_EN			BIT(26)
-> > > >   #define MST_WAKEUP_EN				BIT(13)
-> > > >   #define SLV_WAKEUP_EN				BIT(12)
-> > > >   #define MSTR_ACLK_CGC_DIS			BIT(10)
-> > > > @@ -134,6 +146,9 @@
-> > > >   /* PARF_LTSSM register fields */
-> > > >   #define LTSSM_EN				BIT(8)
-> > > > +/* PARF_SLV_DBI_ELBI */
-> > > > +#define SLV_DBI_ELBI_ADDR_BASE			GENMASK(11, 0)
-> > > > +
-> > > >   /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
-> > > >   #define PARF_INT_ALL_LINK_UP			BIT(13)
-> > > >   #define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
-> > > > @@ -317,6 +332,48 @@ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
-> > > >   	qcom_perst_assert(pcie, false);
-> > > >   }
-> > > > +static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
-> > > > +{
-> > > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> > > > +	u64 addr, addr_end;
-> > > > +	u32 val;
-> > > > +
-> > > > +	/* Set the ECAM base */
-> > > > +	writel_relaxed(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
-> > > > +	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
-> > > > +
-> > > > +	/*
-> > > > +	 * The only device on root bus is the Root Port. Any access to the PCIe
-> > > > +	 * region will go outside the PCIe link. As part of enumeration the PCI
-> > > > +	 * sw can try to read to vendor ID & device ID with different device
-> > > > +	 * number and function number under root bus. As any access other than
-> > > > +	 * root bus, device 0, function 0, should not go out of the link and
-> > > > +	 * should return all F's. Since the iATU is configured for the buses
-> > > > +	 * which starts after root bus, block the transactions starting from
-> > > > +	 * function 1 of the root bus to the end of the root bus (i.e from
-> > > > +	 * dbi_base + 4kb to dbi_base + 1MB) from going outside the link.
-> > > > +	 */
-> > > > +	addr = pci->dbi_phys_addr + SZ_4K;
-> > > > +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
-> > > > +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE_HI);
-> > > > +
-> > > > +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE);
-> > > > +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE_HI);
-> > > > +
-> > > > +	addr_end = pci->dbi_phys_addr + SZ_1M - 1;
-> > > > +
-> > > > +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT);
-> > > > +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT_HI);
-> > > > +
-> > > > +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT);
-> > > > +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT_HI);
-> > > > +
-> > > > +	val = readl_relaxed(pcie->parf + PARF_SYS_CTRL);
-> > > > +	val |= PCIE_ECAM_BLOCKER_EN;
-> > > > +	writel_relaxed(val, pcie->parf + PARF_SYS_CTRL);
-> > > > +}
-> > > > +
-> > > >   static int qcom_pcie_start_link(struct dw_pcie *pci)
-> > > >   {
-> > > >   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> > > > @@ -326,6 +383,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
-> > > >   		qcom_pcie_common_set_16gt_lane_margining(pci);
-> > > >   	}
-> > > > +	if (pci->pp.ecam_enabled)
-> > > > +		qcom_pci_config_ecam(&pci->pp);
-> > > > +
-> > > >   	/* Enable Link Training state machine */
-> > > >   	if (pcie->cfg->ops->ltssm_enable)
-> > > >   		pcie->cfg->ops->ltssm_enable(pcie);
-> > > > @@ -1314,6 +1374,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >   {
-> > > >   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > >   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> > > > +	u16 offset;
-> > > >   	int ret;
-> > > >   	qcom_ep_reset_assert(pcie);
-> > > > @@ -1322,6 +1383,15 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >   	if (ret)
-> > > >   		return ret;
-> > > > +	if (pp->ecam_enabled) {
-> > > > +		/*
-> > > > +		 * Override ELBI when ECAM is enabled, as when ECAM
-> > > > +		 * is enabled ELBI moves along with the dbi config space.
-> > > > +		 */
-> > > > +		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
-> > > > +		pci->elbi_base = pci->dbi_base + offset;
-> > > 
-> > > This looks like there might be a bisection hole between this
-> > > patch and the previous patch that enables ECAM in the DWC core?
-> > > Obviously I would want to avoid a bisection hole.
+On Sep 05, 2025 at 10:48:18 +0530, Beleswar Padhi wrote:
+> Remote Processors defined in top-level AM62P-J722S common SoC dtsi
+> files are incomplete without the memory carveouts and mailbox
+> assignments which are only known at board integration level.
 > 
-> Theoretically there is a hole, but practically there isn't. ELBI
-> register is only used by legacy Qcom SoCs and they do not support
-> ECAM. So they will continue to use the valid ELBI register region
-> from DT.
-
-That's a real pain to figure out from code analysis, so I would prefer
-to squash them to avoid even the appearance of a bisection hole.
-
-> > > What happens to qcom ELBI accesses between these two patches?
-> > > It looks like they would go to the wrong address until this
-> > > elbi_base update.
+> Therefore, disable the remote processors at SoC level and enable them at
+> board level where above information is available.
 > 
-> Though there is no practical issue, it still makes sense to set
-> 'elbi_base' to a valid region before enabling ECAM.
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> Acked-by: Andrew Davis <afd@ti.com>
+> Tested-by: Judith Mendez <jm@ti.com>
+> ---
+> v3: Changelog:
+> 1. Carried A/B and T/B tags.
+> 
+> Link to v2:
+> https://lore.kernel.org/all/20250823160901.2177841-6-b-padhi@ti.com/
+> 
+> v2: Changelog:
+> 1. Re-ordered patch from [PATCH 13/33] to [PATCH v2 05/33].
+> 
+> Link to v1:
+> https://lore.kernel.org/all/20250814223839.3256046-14-b-padhi@ti.com/
+> 
+>  arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi    | 1 +
+>  arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi | 1 +
+>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts                  | 2 ++
+>  arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts           | 3 +++
+>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts                  | 3 +++
+>  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                | 1 +
+>  6 files changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> index bd6a00d13aea..5288c959f3c1 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> @@ -205,6 +205,7 @@ mcu_r5fss0_core0: r5f@79000000 {
+>  			ti,atcm-enable = <0>;
+>  			ti,btcm-enable = <1>;
+>  			ti,loczrama = <0>;
+> +			status = "disabled";
+>  		};
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> index 6757b37a9de3..8612b45e665c 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> @@ -136,6 +136,7 @@ wkup_r5fss0_core0: r5f@78000000 {
+>  			ti,atcm-enable = <1>;
+>  			ti,btcm-enable = <1>;
+>  			ti,loczrama = <1>;
+> +			status = "disabled";
+>  		};
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+> index 899da7896563..2755598fd1f5 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+> @@ -725,6 +725,7 @@ &wkup_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
+>  	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>  			<&wkup_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &mcu_r5fss0 {
+> @@ -735,6 +736,7 @@ &mcu_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+>  	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>  			<&mcu_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &main_uart0 {
+> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> index bf9b23df1da2..b329e4cb0c37 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> @@ -515,6 +515,7 @@ &wkup_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster0 &mbox_wkup_r5_0>;
+>  	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>  			<&wkup_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &mcu_r5fss0 {
+> @@ -525,6 +526,7 @@ &mcu_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+>  	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>  			<&mcu_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &main_r5fss0 {
+> @@ -535,6 +537,7 @@ &main_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
+>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>  			<&main_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &c7x_0 {
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index 9d8abfa9afd2..2b9e007432a9 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -850,6 +850,7 @@ &wkup_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster0 &mbox_wkup_r5_0>;
+>  	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>  			<&wkup_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &mcu_r5fss0 {
+> @@ -860,6 +861,7 @@ &mcu_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
+>  	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>  			<&mcu_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &main_r5fss0 {
+> @@ -870,6 +872,7 @@ &main_r5fss0_core0 {
+>  	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
+>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>  			<&main_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>  };
+>  
+>  &c7x_0 {
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 993828872dfb..d57fdd38bdce 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -368,6 +368,7 @@ main_r5fss0_core0: r5f@78400000 {
+>  			ti,atcm-enable = <1>;
+>  			ti,btcm-enable = <1>;
+>  			ti,loczrama = <1>;
+> +			status = "disabled";
+>  		};
+>  	};
+
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
