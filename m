@@ -1,152 +1,210 @@
-Return-Path: <linux-kernel+bounces-802432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FF1B4525D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5AEB4526D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C09A87B8C45
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DD23B5CF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 09:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EFF283C9D;
-	Fri,  5 Sep 2025 09:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAA230AD06;
+	Fri,  5 Sep 2025 09:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Qr+/XM3Y"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="u3Hpc2fg"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBA5238D22
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 09:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D028468C;
+	Fri,  5 Sep 2025 09:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062901; cv=none; b=MAOZRqBmPZObt6P2wMlizzbB65KHW8gCrAcrWpdNjkM06myKDoJmHrGTXqJ+uUdbAFDMPkNFalfezxIbVYol04F3F1Z8uiaO4jZlimnC/tdX8J4nOxdkDNmRaV9VGpbeQqfRf1atCK7eydI6Axa3WFzUi/BoCqJbJB/G97f2in8=
+	t=1757062964; cv=none; b=ce9jOvdQ8N4uPXPx2Q3VGsimzU23BcYumJEjcY07YGXFERNAnoIk630317Zi7QtcEirZ5rtETpFPhiey3HJI4b1CfF3YG++Wv4/0azkFziJ0wD3G6c/lC4pcPP4SV/bc5HtzbWvFNyFWItL6rK++8AM8pl91uU6SHJDx2xl+OS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062901; c=relaxed/simple;
-	bh=qvqSjoO/mRLjIPV/1wtDFk60TiCvaNH/heT36hH/Qq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HdbV38s2GPZqIlnI/GwLtY95DhRnkRwhYHXFLTmBsXm3aXgrCgFdZ0BPv4LxAXkQHCn2q+PPB3cn7K6ZRW4eQLGuM43JKRjDVDuYtf2ZZs0beOCjm3mLVMyxROnCJY29d/s5NxUOAQt3ncqsAbcauo4cljAUQ5uquAbBK2YWZAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Qr+/XM3Y; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ceb9c3d98cso1152268f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 02:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757062898; x=1757667698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5KHWEqaXSiQRHQD3PSK3TviVXz938qrA11SI1DLfq0=;
-        b=Qr+/XM3YIRot+XEKx6VXfPVY1M9qTnHPED3PapGgMMjexiJkYzp1xMptTZPAL00Bsy
-         1XkybDnqWauSnnnA0RMBM7rhsaJ/mqNHO47RfF4YUdYcOr/h+vyw4AMN8SUeW+Cws/hu
-         YsHorwa/ZOQwpewcc8Jk8Lqg4YAW3O1Av1MWNb9jolDRTGqNUo5ZKDGHv9DnTvqYEDam
-         AOKs0EWI0LZW6wNp2qrTFqGgCh2SFWQonkbxnQNIKd/JotNgFPQ11y31h1+69BquahRL
-         +nHQB3kCHGC4xUBTpuEWlF4Qk67yYOW0Eu5vCjfQ73oywrdwEe3Y4YbikFzve66Gg1wv
-         TmrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757062898; x=1757667698;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5KHWEqaXSiQRHQD3PSK3TviVXz938qrA11SI1DLfq0=;
-        b=N44gNkorHhz9SU/AfA9mmc+1Qfod5g6Hz6xkEiQb4WZ68lANHLUPIcvFFNeDtEoTbk
-         nyh5emwHGHtzLEXTfCy6eBOAy4jJpAukT0KvuaK0QnrLQCBa03xHy6FZcQVJKEsKtKKf
-         lNwnLUgI/e1bl0HNpNeW6ulRcj8H14g5b6hBf/ed5wEHkypZXCn9ddtRsA0IHse7WeCX
-         CC05crZprrn4K2UJAToeWDAVLs0/m7WTld9EQ7N4I6qpuW0fXNsSEu4/+Vw1+k27gCES
-         FRVsGYeNC7J3kfpnC+X1xXOLaSw/3X6LW6+XKn4cC+gB7Cw+5gbW/rGTfiBpU1T733IC
-         YeYQ==
-X-Gm-Message-State: AOJu0YydiTRpniWYwpqYcKSu4RcmnM5TjezbJo2qKBwzc3IGV5dhqIck
-	XZJJs3wp24ATI+fc0yO0Fvc5GEwxo+OU0vrX4dLWZ8D9QSWf4s4hl6Hk6yRGrjNLaC+v+mEzJwP
-	GSbL6
-X-Gm-Gg: ASbGncs5vmELaQtVNHULA8Aa03wycl9tBJP9U6ieqYfDHu530jDzCGrGGgpEBPf7bUG
-	uOzHPUPjN7l+fBy3z5x9kerID8B3nVX6k0o6DK3ZXMHznkCApcNec/a96YUbVnyW63C4EKytx2F
-	HOz3flBwGifBS0v34k5NyqQ3irUSuzFUSq6xyYzCKLKMGaKluB6z3roic6KPIs71PJ0qFJS73oi
-	5cE4lDT2y/dr4gDvs2G/Om/JdYn1swwR0DbUKZCyUaft///JAXC/gC7hALKc45r1eXyJtbkHKyR
-	39vwwB9W664bgrISgkgWb1dJ/DeCKIa3Yb8emxizjBQCo/NYYceBw6mUtbDKEVzI6ddrqhe9Fmg
-	aCq23iUVt+UQVWPRwns/tEWIWEl/gAIdkmNfGMVh7w7gfjBwBDEOFy1FgBA==
-X-Google-Smtp-Source: AGHT+IEauwqdmqEn4hr445iqcOmm/sJaiG6o1U1wFAlO1tWFtAfZ1VjOWTJlAJ6GuL9SVs/bjIcxfA==
-X-Received: by 2002:a05:6000:22c8:b0:3e2:bbd1:e914 with SMTP id ffacd0b85a97d-3e2bbd1eb93mr2650150f8f.51.1757062897600;
-        Fri, 05 Sep 2025 02:01:37 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e411219ddfsm1317713f8f.57.2025.09.05.02.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 02:01:37 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH 1/1] module: replace use of system_wq with system_percpu_wq
-Date: Fri,  5 Sep 2025 11:01:30 +0200
-Message-ID: <20250905090130.101724-2-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250905090130.101724-1-marco.crivellari@suse.com>
-References: <20250905090130.101724-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1757062964; c=relaxed/simple;
+	bh=Y0krQ/dhwVEvyq75DSLzb/wzwZ/mZamFxcekM86ZgJw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=U1g9hT0d4xdbmgoFlvJl556QbCVj2RLoGnoNAZFJwKKR3tYbP0FOPukrnMhteeJb40NZK0H5iuNIRB9UYP6T36iTChbBQ/IiMrFrnfmxj2VwQwpVx+c95IboSsePLKDru5wbfGmzup0GwqdwjcnGsvP9wpYLVAX9qcKmEoVpnSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=u3Hpc2fg; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 17EA74E40C32;
+	Fri,  5 Sep 2025 09:02:40 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D54AA606C5;
+	Fri,  5 Sep 2025 09:02:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A86AB102F1D40;
+	Fri,  5 Sep 2025 11:02:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757062958; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=EDM06GeR+DIfdwsC7qFlc6kZpFptQC37v7RnCGNQQKY=;
+	b=u3Hpc2fgxgudUL1L7iVhLC/HJ6hJFJp3owJHuqHzqSR/F+RFOeZQXHU++sPksWik/VpHZ7
+	n4ThcCSUb9T/cnX4HUV7sXfu9taxSru6Qi4dGl3U5LrvPS/mrK+BFq9dOdx/SLi9Wlmlst
+	DP2Ph0MTF1kSUQINhx0HqbWLYHyv5bqvcN8PN3eTiiNkYmoOghzrZ6Xk8yCrWLIA6IphKw
+	LMuaVu869ncqTjA0Y6nbscZRKOszn1TfngNf6yubsHw4DbRUyz2UtEzbdqA5OSXj3hEr3k
+	iBzF0T123MCy8QP1KH0dHfa1rP0UmnmFVuYRNZ0ywQMhuINwRD1M2ebq3jpnUQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 05 Sep 2025 11:02:03 +0200
+Message-Id: <DCKQTNSCJD5Q.BKVVU59U0MU@bootlin.com>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, "Harini Katakam"
+ <harini.katakam@xilinx.com>, "Richard Cochran" <richardcochran@gmail.com>,
+ <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Sean Anderson" <sean.anderson@linux.dev>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH net v4 5/5] net: macb: avoid double endianness swap in
+ macb_set_hwaddr()
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250820-macb-fixes-v4-0-23c399429164@bootlin.com>
+ <20250820-macb-fixes-v4-5-23c399429164@bootlin.com>
+ <aKXo_jihNKyJmxVQ@shell.armlinux.org.uk>
+In-Reply-To: <aKXo_jihNKyJmxVQ@shell.armlinux.org.uk>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+Hello Russell,
 
-This lack of consistentcy cannot be addressed without refactoring the API.
+On Wed Aug 20, 2025 at 5:25 PM CEST, Russell King (Oracle) wrote:
+> On Wed, Aug 20, 2025 at 04:55:09PM +0200, Th=C3=A9o Lebrun wrote:
+>> writel() does a CPU->LE conversion. Drop manual cpu_to_le*() calls.
+>>=20
+>> On little-endian system:
+>>  - cpu_to_le32() is a no-op (LE->LE),
+>>  - writel() is a no-op (LE->LE),
+>>  - dev_addr will therefore not be swapped and written as-is.
+>>=20
+>> On big-endian system:
+>>  - cpu_to_le32() is a swap (BE->LE),
+>>  - writel() is a swap (BE->LE),
+>>  - dev_addr will therefore be swapped twice and written as a BE value.
+>
+> I'm not convinced by this, I think you're missing something.
+>
+> writel() on a BE or LE system will give you bits 7:0 of the CPU value
+> written to LE bit 7:0 of the register. It has to be this way, otherwise
+> we would need to do endian conversions everwhere where we write simple
+> numbers to device registers.
+>
+> Why?
+>
+> Remember that on a LE system with a 32-bit bus, a hex value of
+> 0x76543210 at the CPU when written without conversion will appear
+> as:
+> 	0 on bus bits 0:3
+> 	1 on bus bits 4:7
+> 	...
+> 	6 on bus bits 24:27
+> 	7 on bus bits 28:31
+>
+> whereas on a BE system, this is reversed:
+> 	6 on bus bits 0:3
+> 	7 on bus bits 4:7
+> 	...
+> 	0 on bus bits 24:27
+> 	1 on bus bits 28:31
+>
+> The specification is that writel() will write in LE format even on
+> BE systems, so there is a need to do an endian conversion for BE
+> systems.
+>
+> So, if a device expects bits 0:7 on the bus to be the first byte of
+> the MAC address (high byte of the OUI) then this must be in CPU
+> bits 0:7 as well.
+>
+>
+> Now, assuming that a MAC address of AA:BB:CC:DD:EE:FF gets read as
+> 0xDDCCBBAA by the first read on a LE machine, it will get read as
+> 0xAABBCCDD on a BE machine.
+>
+> We can now see that combining these two, getting rid of the
+> cpu_to_le32() is likely wrong.
+>
+> Therefore, I am not convinced this patch is actually correct.
 
-system_wq is a per-CPU worqueue, yet nothing in its name tells about that
-CPU affinity constraint, which is very often not required by users. Make
-it clear by adding a system_percpu_wq.
+Thanks for the above, in-detail, explanation. I agree with it all.
+I've always have had a hard time wrapping my head around endianness
+conversion.
 
-queue_work() / queue_delayed_work() mod_delayed_work() will now use the
-new per-cpu wq: whether the user still stick on the old name a warn will
-be printed along a wq redirect to the new one.
+Indeed the patch is wrong: the swap is required on BE platforms.
+My gripe is more with the semantic of the current code:
 
-This patch add the new system_percpu_wq except for mm, fs and net
-subsystem, whom are handled in separated patches.
+   bottom =3D cpu_to_le32(*((u32 *)bp->dev->dev_addr));
+   macb_or_gem_writel(bp, SA1B, bottom);
+   top =3D cpu_to_le16(*((u16 *)(bp->dev->dev_addr + 4)));
+   macb_or_gem_writel(bp, SA1T, top);
 
-The old wq will be kept for a few release cylces.
+Notice how:
+ - The type of the argument to cpu_to_le32(); pointer is to a CPU-endian
+   value (u32) but in reality is to a BE32.
+ - We apply cpu_to_le32() to get a swap but the semantic is wrong; input
+   value is BE32 that we want to turn into CPU-endian.
+ - Above two points apply to `u16 top` as well.
+ - writel() are unrelated to the issue; they do the right thing by
+   writing a CPU value into a LE device register.
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- kernel/module/dups.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sparse is complaining about the second bulletpoint; it won't complain
+about the first one because it trusts that you know what you are doing
+with explicit casts.
 
-diff --git a/kernel/module/dups.c b/kernel/module/dups.c
-index bd2149fbe117..e72fa393a2ec 100644
---- a/kernel/module/dups.c
-+++ b/kernel/module/dups.c
-@@ -113,7 +113,7 @@ static void kmod_dup_request_complete(struct work_struct *work)
- 	 * let this linger forever as this is just a boot optimization for
- 	 * possible abuses of vmalloc() incurred by finit_module() thrashing.
- 	 */
--	queue_delayed_work(system_wq, &kmod_req->delete_work, 60 * HZ);
-+	queue_delayed_work(system_percpu_wq, &kmod_req->delete_work, 60 * HZ);
- }
- 
- bool kmod_dup_request_exists_wait(char *module_name, bool wait, int *dup_ret)
-@@ -240,7 +240,7 @@ void kmod_dup_request_announce(char *module_name, int ret)
- 	 * There is no rush. But we also don't want to hold the
- 	 * caller up forever or introduce any boot delays.
- 	 */
--	queue_work(system_wq, &kmod_req->complete_work);
-+	queue_work(system_percpu_wq, &kmod_req->complete_work);
- 
- out:
- 	mutex_unlock(&kmod_dup_mutex);
--- 
-2.51.0
+   warning: incorrect type in assignment (different base types)
+      expected unsigned int [usertype] bottom
+      got restricted __le32 [usertype]
+
+If we want to keep to the same structure, this does the exact same but
+its semantic is more aligned to reality (to my eyes):
+
+   bottom =3D le32_to_cpu(*((__le32 *)bp->dev->dev_addr));
+   macb_or_gem_writel(bp, SA1B, bottom);
+   top =3D le16_to_cpu(*((__le16 *)(bp->dev->dev_addr + 4)));
+   macb_or_gem_writel(bp, SA1T, top);
+
+Notice how:
+ - Casts are fixed to signal proper types.
+ - Use le32_to_cpu().
+
+Sparse is happy and code has been tested on a BE platform.
+Assembly generated is strictly identical.
+
+However, I think we can do better. Second option:
+
+   const unsigned char *addr =3D bp->dev->dev_addr;
+
+   bottom =3D addr[0] << 0 | addr[1] << 8 | addr[2] << 16 | addr[3] << 24;
+   top =3D addr[4] << 0 | addr[5] << 8;
+
+This is a bit of a mouthful, what about this one?
+
+   bottom =3D get_unaligned_le32(addr);
+   top =3D get_unaligned_le16(addr + 4);
+
+It is my preferred. I found those helpers reading more code that reads
+the `unsigned char *dev_addr` field. Explicit and straight forward.
+
+Can you confirm that last option fits well?
+
+Thanks Russell,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
