@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-802676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3A2B45564
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192BDB45553
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DEA2189E169
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC56585DFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBAA3218B3;
-	Fri,  5 Sep 2025 10:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2771030C61C;
+	Fri,  5 Sep 2025 10:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiaNPqZA"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jH4lr9KD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QmEL5ag9"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934B13203A5;
-	Fri,  5 Sep 2025 10:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E208D179BD;
+	Fri,  5 Sep 2025 10:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757069651; cv=none; b=bxX0aZGqOOHgc/AKKlragagWkd8/D8UBiyZTTkOSbYr3g87LxEOJgJYkHGq+Ms6noPG31o0ZVvdVrGRR/nUh/19K5kLNck1N2U3RuQmG4wKyOhYxtPN8jAitLIEL3qUt1a3JKHaQwLX3/VGJbhIG1ZoAYyNQmyEGf63NJJitYYE=
+	t=1757069593; cv=none; b=V4LzuaQMeKj05wfs1tGs/KHyu6b6eYC9iYuqHyEbxUKBsWIHWlAny2b0VQMJXGoDgSR1mDJ+EKdyXDyCVeB4QoJpYcZb5ARKhCKCmWAQ4/HF57vEgKT0U9ZzWWxBBTRh/egFawBBcqdQrykOIrt823TE7y8ybYOvO+Qd58T1hYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757069651; c=relaxed/simple;
-	bh=7tPnz7ssRCFXwwpDsxLmPm7tdmZ+Zo7pD+rEuTZds6k=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=CiQtWwavSgkRbAc43KO4+aoG+XxyZ337Cuc/7APSlOBFAJTXIw2KIaKz4Z7nEUkECB2Hnicdz2p5ygKRjAGgwTmHxs2T4rpQAk6S5ebRGaOYlHKulYMqDrNFWZJ/v9B/C50Y2AcS9SPypnYAkMLTmE/H4oOLVLlCq+mNlp5KDzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiaNPqZA; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so13206125e9.0;
-        Fri, 05 Sep 2025 03:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757069648; x=1757674448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QF5aHDOe/RINI2mjAwVr/DvcIRAlm1Z12kISJhmvEiM=;
-        b=iiaNPqZAwCPOVrZNv/yrAZoNy/8fleeXaHZqytZDAIIoZJBontrVMeLiioNR6ppWG0
-         ctlP2qok6Rh34E871agk2zr3gwUXn3hWnh97RL9tZHem8EzijKoM9ZjSVkzdyoQc3tYT
-         bg8MMEEjqcpJRBt+Ob5Q9O7J9DNKOIqVGxozr1TKjCfVJeyQ3Q7LmFdvZwtHP83zFu8u
-         En83mo1oFshLdCwY7bRPn9aXgwEPvvqOSsyZSsVbcTlXZoeRQzYMCe2uy778tmez1NeQ
-         LIk1uwgcr3ah8Hjf4bMtWma0SQ52JtKNxvLt8Rgka+rkcrwoasrDPOji4vmGH3TznFab
-         1nWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757069648; x=1757674448;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QF5aHDOe/RINI2mjAwVr/DvcIRAlm1Z12kISJhmvEiM=;
-        b=RlNEwUEat4gqzUx1t4TgPDTMIKPNqiZjIyVYiCYfMqtKA6ztd+gN5/FHNqfO/8+Vu2
-         VsfBr294Y/S+ZfENe8FBdTCu68/On/cG2Nk2yaEcr0Ui5NkvvAyf9GBybsd8bZLA0ROu
-         YjLIyxA3Fp1mmD+PVelIVb8iGOIEVyMR5Fueh53S7g3ckY4v8E6QJbtR6ALjBLsPGueF
-         3txX6kSzVhPu4lqVbFzAyP7xOYZLYgM2ado0+0iiqj5uWekgUx6IkuxNJwFPQuic73nv
-         dl7KNg/TajJRzrbkQYJeMNEp6PAVZlW22KkcTKoHiunlRTpI0xlEnUewb+DFXCfLeiKC
-         Nvug==
-X-Forwarded-Encrypted: i=1; AJvYcCW8+0lzQZqWjreEkKMqBxGwaok653xq0qX2kaBAmkDPDEAycW8c3FT0twsYO2FN/eAGdVug7aTx@vger.kernel.org, AJvYcCWpD4p+D36+JcJCdiVJEqBhtn8aOcUBKlx3L2i8Zni7eXY3Zunv0yyFuU7jSnar7E30oaQOtAdi1cV5KA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1gkSoz5fYeUZLZiAlErRijqYiRRmXT5sIAsk37F02xPgnTHhs
-	ZuWkxx2pTrDYL40l8SZkx9oBhztHeiwfwxwCDs54lkbixeZJW8GhFFwPx8gaYOmt
-X-Gm-Gg: ASbGncu0I3k+n46PyzH1xyG1R8nLWT45Gx4HNsEVIzB7MGfj7zvfRvsBh1x2x7XEcVf
-	XOZZbiONhAThn/mKktN6OzBJRly+aAzndqpIEPdKO5O7ftqkXz2UR7NSSyTqbwNesbA28dMCntJ
-	IS9/6nLeC6ZRpmewdLp2ea6mGgWGhuldbnAt5ZidMZ/W5Rxl9injNEN8zGhClU28pqVvOTQ+UI6
-	DUWXWSxlmAxY1bSqlvtYBz8cTceepDlr48IKxj+qrzVbFPE2+afbr0K9ALgMilsbgX7JP57xpdo
-	hx3WXGc9QqruWvSGPg3GqceWwX65AMfY4RxdIP0xC1uW7zena+nQVARNvEDn04dW1RlMFvQaL+J
-	4WGB9ys5wO4PnE+ahjrdDmlv2A3sFr/8eO8NsM4XAv3Fytg==
-X-Google-Smtp-Source: AGHT+IE4h9xaKFFB+jg6jXUNHyf7TN+VxDEKHWg97267A3zCXVPEAozhpOfzu1jpwOA1O/9P9hllMg==
-X-Received: by 2002:a05:600c:8b2a:b0:45b:8600:2be1 with SMTP id 5b1f17b1804b1-45b86002e27mr192622385e9.7.1757069647630;
-        Fri, 05 Sep 2025 03:54:07 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:8157:959d:adbf:6d52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda6da5casm17288345e9.7.2025.09.05.03.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 03:54:07 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Andrew Lunn <andrew+netdev@lunn.ch>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 10/11] tools: ynl: decode hex input
-In-Reply-To: <20250904220156.1006541-10-ast@fiberby.net>
-Date: Fri, 05 Sep 2025 11:51:34 +0100
-Message-ID: <m2h5xhxjd5.fsf@gmail.com>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-10-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757069593; c=relaxed/simple;
+	bh=o7v/HNWnjHt/Uzn1Ge3TzJ7eh0hyU3DB0ZeYdCA8Zk8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Jj4cNL6316CnbAYksra0BurB0fqMpcXcACG4Awjr3wD0z1SOFBGhT5U5aOzERt5kDX/2oVaw4kMHhGltsjXadv4kZVLDqoQddefWpTXR7y8Z1otIPStc/oCGciar2rVHKHGIzX0tuY+yhGluvwpk1lEAYC+o1VUfmzvLvQH8qU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jH4lr9KD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QmEL5ag9; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 24212EC03F9;
+	Fri,  5 Sep 2025 06:53:10 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 05 Sep 2025 06:53:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757069590;
+	 x=1757155990; bh=LLX3L6AOVZij89L899m4GOoTR6qvTds5RNaEn3slUp0=; b=
+	jH4lr9KDGzqJf3o9wPt8s35oNXSKy5YUhWK4AWy+zrd2Lz7QDfZUNbRmjME6kf63
+	u2lOCEwcjey642T8NpEBeEHLbQyufe4Tp0z0klSpY+HyXfd2D8NBBE0OdoRQxmW6
+	Avu0bnOg3dMWvCWoSHPlTZUcK6qaAE03Ee0f1BpFM7CoaDA8atty/6EUP78QoeXA
+	1ExaSub1qp38LG6DIB1PACOmgoha68w/FUK8nM+hqfwQErfExKUtaCevx8EaYND8
+	L+axBmjn5NivHKsVAkeO8OBpTj2/BnyiTodlvMWQTAgbxMDtpl0BAsS/tTTkfm8N
+	6nC8iHOl/V7RqW4pY0glKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757069590; x=
+	1757155990; bh=LLX3L6AOVZij89L899m4GOoTR6qvTds5RNaEn3slUp0=; b=Q
+	mEL5ag9goV29QlI2c24+hx/oAx4oWyV8b5vCwUVAExSeA5fjX1NNQp34EY0iDF9z
+	5KRq5vGbIkT/v9rDc+Qo/G2sAFepcOCShNhWOzdBOqier1GPAXzsKcd1i5n1Llqt
+	nnrpCdLuJ3mNDRQAaN3uly/GD8PPOoLjE81W4kYL0SbSipE6IP4nMXZPgxxrL8YE
+	jQwCTwxg7b2Oag9SZ9y3MxlN2DpF9C2//gGoYXqU0VgCTbUWQMmTCkTBQMPL5/s0
+	FLJplIgZxgSRlLyCCyMVy809F6BiRTTETCTRie2vMHn77PBvgb9uGSdKn0p+CEga
+	Hkg7QvG61EGlriR5/JygA==
+X-ME-Sender: <xms:FcG6aG48mVVtE-tVka-hZF0wTFYusVXo9DWMC914E8dZEDjSjHv0IA>
+    <xme:FcG6aP6q538NkYX-o-njEIuQLMk5FQFUnBshrms8GQHILltbLC8unsYuZ4Gvne9ZI
+    zURj8l_zjKNlbtufQ4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekjedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    ephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
+    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepph
+    gvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepkhgvvghssehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghroh
+    drohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlhgrnhgusehlihhnrghr
+    ohdrohhrghdprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdroh
+    hrghdprhgtphhtthhopehlkhhftheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgr
+    rhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdprhgtphhtthhopehlkhhfth
+    dqthhrihgrghgvsehlihhsthhsrdhlihhnrghrohdrohhrgh
+X-ME-Proxy: <xmx:FcG6aABbyTmpwQCB5B1ukcfVsjGJ8ALCSDbQGb915dStrKnMhfBBwA>
+    <xmx:FcG6aHFS-Ugn6hBNjQVt_BhZ8V2QqzKuTOlBT3OjYVhP1CtzB1IJVg>
+    <xmx:FcG6aAsgRlGuUAz_TUFvY3Dht7UDMpqqpM6wBD7rRTDDDILlLs3w8w>
+    <xmx:FcG6aNkXhfJ3-_wPhSXJa4CVMG4EyMK5XJdkj18KPS3kJTz6jgzPCw>
+    <xmx:FsG6aMOQcHjgRB3ah_2HvCAog_UPeWTqXlgVtrAS07LZLHqhj86HCRr6>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6A4E0700065; Fri,  5 Sep 2025 06:53:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: ABrrY9NwCfcB
+Date: Fri, 05 Sep 2025 12:52:44 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anders Roxell" <anders.roxell@linaro.org>, "Kees Cook" <kees@kernel.org>
+Cc: "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Linaro Kernel Functional Testing" <lkft@linaro.org>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>, lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Benjamin Copeland" <benjamin.copeland@linaro.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Peter Zijlstra" <peterz@infradead.org>, linux-hardening@vger.kernel.org
+Message-Id: <f5db760e-c143-4f6c-9389-309a362f0baf@app.fastmail.com>
+In-Reply-To: 
+ <CADYN=9Kd9w0pAMJJD1jq4RSum5+Xzk04yPZiQxi9tmEBtHPEMA@mail.gmail.com>
+References: <20250905052836.work.425-kees@kernel.org>
+ <CADYN=9Kd9w0pAMJJD1jq4RSum5+Xzk04yPZiQxi9tmEBtHPEMA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
-
-> This patch add support for decoding hex input, so
-> that binary attributes can be read through --json.
+On Fri, Sep 5, 2025, at 10:16, Anders Roxell wrote:
+> On Fri, 5 Sept 2025 at 07:28, Kees Cook <kees@kernel.org> wrote:
+>> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>>                         rq = mps;
+>>         }
+>>
+>> -       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+>> +       firstbit = ffs(rq);
+>> +       if (firstbit < 8)
+>> +               return -EINVAL;
+>> +       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
 >
-> Example (using future wireguard.yaml):
->  $ sudo ./tools/net/ynl/pyynl/cli.py --family wireguard \
->    --do set-device --json '{"ifindex":3,
->      "private-key":"2a ae 6c 35 c9 4f cf <... to 32 bytes>"}'
+> Hi Kees,
 >
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+> Thank you for looking into this.
+>
+> These warnings are not a one time thing.  the later versions of gcc
+> can figure it
+> out that firstbit is at least 8 based on the "rq < 128" (i guess), so
+> we're adding
+> bogus code.  maybe we should just disable the check for gcc-8.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Out of the three failures I saw, two also happened with gcc-9, but
+gcc-10 looks clean so far.
 
-FWIW, the hex can include spaces or not when using bytes.fromhex(). When
-formatting hex for output, I chose to include spaces, but I don't really
-know if that was a good choice or not.
+>          \
+> +                                       (0 + (_val)) : 0,
+>          \
+>                                  _pfx "value too large for the field"); \
+>                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+>                                  __bf_cast_unsigned(_reg, ~0ull),       \
+>
+> I found similar patterns with ffs and FIELD_PREP here
+> drivers/dma/uniphier-xdmac.c row 156 and 165
+> drivers/gpu/drm/i915/display/intel_cursor_regs.h row 17
+
+I did not come across build failures for these.
+
+    Arnd
 
