@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-802006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB72B44CB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:34:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C0EB44CB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 06:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08741C249C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:34:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5DF44E127F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48772255E40;
-	Fri,  5 Sep 2025 04:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BCA21FF55;
+	Fri,  5 Sep 2025 04:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMA9ktnb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKaYSqtP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4128E0F
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E2928E0F
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757046852; cv=none; b=Vn46BlhMFk2Majh6ClJ2jkO2XHnmPmE2wZG8OqXlknb1t6urReXB2Ea6xmdJSTYUuQ5MSE4XaEyUAkD5BvHs8oqXhqJ/DNGacAVEiopiwEWoqNNU2zUHhvGPaTHpiLIp/Z+G51AsUm6JuQQrzNUD16t+PfvggYL6lA+raun8PQQ=
+	t=1757046992; cv=none; b=tH90xThiAaL7LSWH4lHkT76ziJ/p/DKpRUCQdYLIL9vONk5QboCjP/tjHNJU0zfnYfclnE3kHRSAP5wuZ0hbBl9IwDdg/uV4I5EYYEzKAWFq4zeJkz9d8VfL8h0ooGZcreaVmfUDy7tC52Lm1CL7bSjgEY/6ESpmhgk/E+EuTCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757046852; c=relaxed/simple;
-	bh=93eYOwzmhYqlVId6ScwG0fiTFyob9ZihP0QmlRDRW0U=;
+	s=arc-20240116; t=1757046992; c=relaxed/simple;
+	bh=yPCY3lVmywqDkbOmEn53ZKo6Bn/QGuG7ByGf4+wtExM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehuS5KDbunnnl031W2EIs3QjBkmQDXOCQuMy5VE7YbOYgkUaOKTUJVIjnSIZj67PIhcNaYqsMXeHBaDJiyzlZ60CVsS/8vGtKS0k90TBgx3cOCnLbJInvOSHFfMbcbUceUgpyItzq+OwbgC6RG5VO6J5TdOG3FLzDP1mhfsDYIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMA9ktnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BADC4CEF1
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:34:12 +0000 (UTC)
+	 To:Cc:Content-Type; b=sOusVzGCWhMYWt1y9Qx9KceFigoMewHCrspvadNea3R+EtHkhsyE6eWnu7JaOlDaqSnrCpe5hfw4jY1jrOPg/3kZWQ5t7H68RHx3J06osiVExJ6n9Oo1oygOZ8W15SuIMswk6gTxJHaK0gMrMEVBTpNyLAsJyFiz4rUbPuqBKSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKaYSqtP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 511FDC4CEF9
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 04:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757046852;
-	bh=93eYOwzmhYqlVId6ScwG0fiTFyob9ZihP0QmlRDRW0U=;
+	s=k20201202; t=1757046992;
+	bh=yPCY3lVmywqDkbOmEn53ZKo6Bn/QGuG7ByGf4+wtExM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qMA9ktnbRuyc9CxJoNhUOhr0XDdk8khX4Bb/VwkOgm+3qiC447l2CoT1FB+ZL3V8T
-	 CEKUqRjUOXxx0Ct0ShTUZK3lR2uFnzm5Q+n8BTGneuc3CMv6kRMrRCU06aR3oqQT3b
-	 C8fTG0laYAIqySsqtsEVXG+ykTDCz5KLHTjVFi/we5M+XJA/jB7pQhvkj7kUAikXdA
-	 zudbG1A7+hlHIgZGNcdSay8hgLSoqB1IheyCk6Z2Hvvr5gigFHXSgONlLulezMqpH5
-	 AkDcQx0piyp2DCSzAwwSb1yygpobmHetCANaZg7UW3HUUfgwX1TRzyVuXnY8uYNLLz
-	 Ac7+SLzgFZvgw==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61cf8280f02so2541150a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 21:34:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3PMw15vV7Yu1eTEqgyzt3xBQGBrPhixMG7vdY698A/KsTeFd2g+XfKJyj+99ay5YbpNOUbmLrXF8iGlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJah+4Y/SoscewyI5JVt6BYGJydX70OvjKoxWyRn4yFSZRP5Ka
-	zC2f0S9LyCXqrYmyGxcetu5u4SupGcaTvmTIHYyQfKeQcoMAJv+AxsPiYP2gLeBxu4XIfk94Ad8
-	CMoDfHx0t3MUTF8LLF7VdSWMTFt7hp+w=
-X-Google-Smtp-Source: AGHT+IEYnRnv6QyrFFLhU335oaNE1Pi7Pbzml+RbS5eygSj1BA3oxMC/GHg7k/yIqAzQswqXkSslAQ5J0kbs6d1oqdo=
-X-Received: by 2002:a05:6402:84e:b0:61a:9385:c78b with SMTP id
- 4fb4d7f45d1cf-61d26ecf561mr18232926a12.38.1757046850740; Thu, 04 Sep 2025
- 21:34:10 -0700 (PDT)
+	b=uKaYSqtP9smPhhSCZidz78a6QxH+dttpBub/t2qBY9ov//1OJUAFh4sJk/2bY16rb
+	 wlxi7/J53gzkwWlUf0TVxGn4kS0kIxccBoeT+MEKt5LIhBudNC9Vw4Dyzk+YasrMpN
+	 OY/YqVcLna9qf8aQO6CwhYrYTxQ/ig/01OjwzwVxXbHaF6BhfMHL8qknY6ZHwfarO+
+	 HsYldM2DOcrf9MFExGrmLK2bz3nAa7FrcUhWIanATQ4Twz528QJe0v3tCvFsbyjKFH
+	 O7auJBCG6yOvfDiWhtemVxTg0+tj9T9QQmsVMrSxBw9FrZyB9n/ISyuGWr3LBs+VAB
+	 4E+RtBPDTJ9JQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61ec59e833aso2873874a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 04 Sep 2025 21:36:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX+YT0ea+Wo0Iu96OwzhkbXkg1t978YhAFjQVEvb2ajiRk5sExBspPVJcMwNAmGRIAbCNOGhOgRkGC4M7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa26gjsWcYhGamnjHcizug8Bh9QB20G044YJz3qKmzj2MCGDPi
+	275tlEpz5reGAxdDJ9Goazw4TCqwOfIE2kf4nl+EW1lq9278nMF8scwWFI74eYyb1UWcblI+dli
+	t7sHNqYLOfLeb/GPswU0DEtLOrnLjTvE=
+X-Google-Smtp-Source: AGHT+IHPAGa1sckTb6ehpoUalUQEhlunhpypz7EyS3aWkqsVSyz9d23QdzUyYH3FwjOwTr5LGVpOaOIwvtsPZanjpyQ=
+X-Received: by 2002:a05:6402:84e:b0:61c:f0cb:94f1 with SMTP id
+ 4fb4d7f45d1cf-61d26fd1008mr19027061a12.18.1757046990861; Thu, 04 Sep 2025
+ 21:36:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,16 +57,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-2-yangtiezhu@loongson.cn> <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
- <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn> <qvatvh7rixtdtaflqtgphlva7kkr47drijklkvmae3xh54vn6y@y5v75lwgjdyu>
- <CAAhV-H5u4xHcuLhyPe+a_YqPoCX2uVoqcW94i=HvU1NooL_efg@mail.gmail.com> <mqyjt5cabahlvezowt6plurkyrrbputvg776rhgaxhpwsqnuq3@onr5svx5heuf>
-In-Reply-To: <mqyjt5cabahlvezowt6plurkyrrbputvg776rhgaxhpwsqnuq3@onr5svx5heuf>
+ <20250901072156.31361-3-yangtiezhu@loongson.cn> <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
+ <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn> <wt4qpgi5isj5m6wq33pomvm6borvafuzktekc7lgtoitscar5q@brixzj3lccbw>
+ <ccbb40c1-5f2d-77e9-e8d2-52f2fdbad645@loongson.cn> <CAAhV-H5qhKepa-8sz3_AC=_RCChbVeEmnHKESMqpiJ0phMORbg@mail.gmail.com>
+ <52056c29-4f21-83c9-db1f-ebd1875a3675@loongson.cn> <CAAhV-H47VKERJCKRi7uAS7OmCWaE4yxZ07Hwz_si2DMVRDrsag@mail.gmail.com>
+ <ybv2ndrzbqztkctzwhfphpdqrqbxlougs75glm22rcuzdmnrfp@lqwcms3j2d55> <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
+In-Reply-To: <4thrzifl6ntk7kdf65egt4srzkbrxqoqf7yzmasblwvaq3qwmt@vigfgpbxzjkq>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 5 Sep 2025 12:33:58 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6Cntwxo2XcPtB+zH0VE5J3N=Wb2Ad8RZ6DjwopGsXALw@mail.gmail.com>
-X-Gm-Features: Ac12FXz9jRiihPx90RyWQNG9n-1NNt8T63C-bXFnz9VDkt98kudWbfYzJncG-SY
-Message-ID: <CAAhV-H6Cntwxo2XcPtB+zH0VE5J3N=Wb2Ad8RZ6DjwopGsXALw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about efi_boot_kernel()
+Date: Fri, 5 Sep 2025 12:36:16 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
+X-Gm-Features: Ac12FXzyaxEAfv0tGTmiXTq2qXlqAh3gd8BmwcT2vD2WrTQ69D2Xh_g7cxepTEA
+Message-ID: <CAAhV-H53DkR6oK1chXQtoczqxYBCU-FMKrD99bjEvfXapND1Vw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
+ warnings about EFISTUB
 To: Josh Poimboeuf <jpoimboe@kernel.org>
 Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Peter Zijlstra <peterz@infradead.org>, 
 	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
@@ -75,116 +78,107 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi, Josh,
 
-On Fri, Sep 5, 2025 at 1:26=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org>=
+On Fri, Sep 5, 2025 at 5:46=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org>=
  wrote:
 >
-> On Thu, Sep 04, 2025 at 10:17:11AM +0800, Huacai Chen wrote:
-> > Hi, Josh,
-> >
-> > On Thu, Sep 4, 2025 at 3:17=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.=
-org> wrote:
+> On Thu, Sep 04, 2025 at 10:39:30AM -0700, Josh Poimboeuf wrote:
+> > On Thu, Sep 04, 2025 at 11:59:30AM +0800, Huacai Chen wrote:
+> > > This is from RISC-V code.
 > > >
-> > > On Mon, Sep 01, 2025 at 04:31:36PM +0800, Tiezhu Yang wrote:
-> > > > On 2025/9/1 =E4=B8=8B=E5=8D=884:16, Peter Zijlstra wrote:
-> > > > > On Mon, Sep 01, 2025 at 03:21:54PM +0800, Tiezhu Yang wrote:
-> > > > > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exi=
-sts
-> > > > > > the following objtool warning:
-> > > > > >
-> > > > > >    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
-> > > > > >    falls through to next function __efistub_exit_boot_func()
-> > > > > >
-> > > > > > This is because efi_boot_kernel() doesn't end with a return ins=
-truction
-> > > > > > or an unconditional jump, then objtool has determined that the =
-function
-> > > > > > can fall through into the next function.
-> > > > > >
-> > > > > > At the beginning, try to do something to make efi_boot_kernel()=
- ends with
-> > > > > > an unconditional jump instruction, but it is not a proper way.
-> > > > > >
-> > > > > > After more analysis, one simple way is to ignore these EFISTUB =
-functions
-> > > > > > in validate_branch() of objtool since they are useless for stac=
-k unwinder.
-> > > > > >
-> > > > >
-> > > > > This is drivers/firmware/efi/libstub/loongarch.c:efi_boot_kernel(=
-),
-> > > > > right?
-> > > > >
-> > > > > Why not simply do something like:
-> > > > >
-> > > > > diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/f=
-irmware/efi/libstub/loongarch.c
-> > > > > index 3782d0a187d1..082611a5f1f0 100644
-> > > > > --- a/drivers/firmware/efi/libstub/loongarch.c
-> > > > > +++ b/drivers/firmware/efi/libstub/loongarch.c
-> > > > > @@ -81,4 +81,5 @@ efi_status_t efi_boot_kernel(void *handle, efi_=
-loaded_image_t *image,
-> > > > >     real_kernel_entry(true, (unsigned long)cmdline_ptr,
-> > > > >                       (unsigned long)efi_system_table);
-> > > > > +   BUG();
-> > > > >   }
-> > > >
-> > > > At the beginning, I did the above change, but no effect.
-> > > >
-> > > > The first thing is to remove the attribute __noreturn for
-> > > > real_kernel_entry(), otherwise the compiler can not generate
-> > > > instructions after that.
-> > > >
-> > > > But there is an argument in the previous RFC [1]:
-> > > >
-> > > > "From my point of view this is incorrect, this function is indeed a
-> > > > noreturn function, and this modification makes LoongArch different =
-to
-> > > > other architectures."
-> > > >
-> > > > Josh suggested to do something so that the EFI stub code isn't link=
-ed into
-> > > > vmlinux.o [2], it needs to modify the link process and seems too
-> > > > complicated and expensive for this warning to some extent.
-> > > >
-> > > > So I did this change for objtool.
+> > > __HEAD
+> > > SYM_CODE_START(_start)
+> > >         /*
+> > >          * Image header expected by Linux boot-loaders. The image hea=
+der data
+> > >          * structure is described in asm/image.h.
+> > >          * Do not modify it without modifying the structure and all b=
+ootloaders
+> > >          * that expects this header format!!
+> > >          */
+> > > #ifdef CONFIG_EFI
+> > >         /*
+> > >          * This instruction decodes to "MZ" ASCII required by UEFI.
+> > >          */
+> > >         c.li s4,-13
+> > >         j _start_kernel
+> > > #else
+> > >         /* jump to start kernel */
+> > >         j _start_kernel
+> > >         /* reserved */
+> > >         .word 0
+> > > #endif
 > > >
-> > > I don't like adding these workarounds to objtool.  Is it really that
-> > > complicated to link efistub separately?  That seems like the proper
-> > > design.  vmlinux.o should only have real kernel code.
-> > I don't think this is just a "workaround", ARM64, RISC-V and LoongArch
-> > share the same logic in efistub which may be different from X86. When
-> > ARM64 and RISC-V add objtool support, they will also need to ignore
-> > the __efistub_ functions.
-> >
-> > The other patch is similar.
+> > > The HEAD section has instructions, if you change it into a data
+> > > section then it loses the "x" attribute.
 >
-> Objtool expects/enforces certain rules.  One of them is that vmlinux.o
-> is proper runtime kernel code.  efistub is not that.
+> Actually, the "x" attribute isn't needed for vmlinux.  The vmlinux
+> linker script places it in the text region regardless.
 >
-> Is there some technical reason why vmlinux.o needs efistub linked in?
-I think so. For example, EFISTUB prefer to directly use screen_info
-that defined in vmlinux, see the comments in
-drivers/firmware/efi/libstub/screen_info.c:
-
-/*
- * There are two ways of populating the core kernel's struct
-screen_info via the stub:
- * - using a configuration table, like below, which relies on the EFI init =
-code
- *   to locate the table and copy the contents;
- * - by linking directly to the core kernel's copy of the global symbol.
- *
- * The latter is preferred because it makes the EFIFB earlycon available ve=
-ry
- * early, but it only works if the EFI stub is part of the core kernel imag=
-e
- * itself. The zboot decompressor can only use the configuration table
- * approach.
- */
+> Moving the data to a data section should be really simple, something
+> like the below.
+>
+> And yes, even the above RISC-V code can be in a data section.  Those
+> instructions are part of the 'struct riscv_image_header' data structure.
+This may work but also look strange (code in data section), it is more
+like a "workaround". :)
 
 Huacai
 
 >
-> --
-> Josh
+> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+> index e3865e92a917a..c42500d9fad81 100644
+> --- a/arch/loongarch/kernel/head.S
+> +++ b/arch/loongarch/kernel/head.S
+> @@ -17,7 +17,7 @@
+>
+>  #include "efi-header.S"
+>
+> -       __HEAD
+> +       __HEADDATA
+>
+>  _head:
+>         .word   IMAGE_DOS_SIGNATURE     /* "MZ", MS-DOS header */
+> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/=
+vmlinux.lds.S
+> index 08ea921cdec16..fc35ef349aba6 100644
+> --- a/arch/loongarch/kernel/vmlinux.lds.S
+> +++ b/arch/loongarch/kernel/vmlinux.lds.S
+> @@ -38,6 +38,7 @@ SECTIONS
+>         . =3D VMLINUX_LOAD_ADDRESS;
+>
+>         _text =3D .;
+> +       HEAD_DATA_SECTION
+>         HEAD_TEXT_SECTION
+>
+>         . =3D ALIGN(PECOFF_SEGMENT_ALIGN);
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
+nux.lds.h
+> index 6b2311fa41393..c74492e1baa5a 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -629,6 +629,11 @@
+>                 *(.static_call.text)                                    \
+>                 __static_call_text_end =3D .;
+>
+> +#define HEAD_DATA_SECTION                                              \
+> +       .head.data : AT(ADDR(.head.data) - LOAD_OFFSET) {               \
+> +               KEEP(*(.head.data))                                     \
+> +       }
+> +
+>  /* Section used for early init (in .S files) */
+>  #define HEAD_TEXT  KEEP(*(.head.text))
+>
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index 331886205049e..fcb02ab3faae2 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -98,6 +98,7 @@
+>
+>  /* For assembly routines */
+>  #define __HEAD         .section        ".head.text","ax"
+> +#define __HEADDATA     .section        ".head.data","aw"
+>  #define __INIT         .section        ".init.text","ax"
+>  #define __FINIT                .previous
+>
+>
 
