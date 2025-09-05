@@ -1,424 +1,232 @@
-Return-Path: <linux-kernel+bounces-801906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37AA9B44B71
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:03:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EC9B44B74
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 04:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5CB5A5096
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:02:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 207267A2C4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 02:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2421F239B;
-	Fri,  5 Sep 2025 02:02:46 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537B720C00E;
+	Fri,  5 Sep 2025 02:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="a5VUL67h"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023128.outbound.protection.outlook.com [40.107.44.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ED48834;
-	Fri,  5 Sep 2025 02:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757037765; cv=none; b=ufVrK63BdqOK2IBzrILjGuj8J0HR/wbeToxYrNTEmxYp3XFIeYICf7Uh1sG35OeFwC5AVHEs/rgLuG3jS4W8e1aecpyrPl+FxZM+Hkno2r0FmRQQoRNkSvSa4bqr7t6g4Uip6pkqIoygSbZauVHHi0gIyrvTG/1mW9Yd18H3cic=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757037765; c=relaxed/simple;
-	bh=sycBsRU6cy5fpqWM1w3XzUu2dkD6pKzbc+cm9sWAa0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PaDjaPH0+ttl+LNOn0iiXKJeq88i9phGSqGARw/vlgE4AY336sCrgahBVcrRHAD58yAxJXuX99l2o0LOhDkbtA+5cLUghturW5M29kl8fkpZQFMtFYev6baqeByaSzJ9N9gqmb4HzvMc3AGj9NchB7p0Tt2Vjq98m7rjJ0DjMhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cJ03f3ShTzKHMmt;
-	Fri,  5 Sep 2025 10:02:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 703611A1AAF;
-	Fri,  5 Sep 2025 10:02:38 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgAX1nu8RLpo68OcBQ--.14942S2;
-	Fri, 05 Sep 2025 10:02:38 +0800 (CST)
-Message-ID: <26471ac4-457e-4090-b1f6-275478dacec9@huaweicloud.com>
-Date: Fri, 5 Sep 2025 10:02:36 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FF8834;
+	Fri,  5 Sep 2025 02:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.128
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757037827; cv=fail; b=tLNF7IYIef/tAeMG42NIidDx5FQSle03qwin087SLlcLkUrjk+CDwJmTxk2bcQtaaSOlVjVDx4oWljqu36rPcGPCdclXGj7L9s9iTdDEbsYvvtUCwLHXTSKbjyEyCNeY6K5ie0665tY+yyo7V9tgRzgddIdoElmK1rG5BDSYqfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757037827; c=relaxed/simple;
+	bh=HUeOFiMvaNbvuqpoJX0hjGRxPL0qxS2seYMcEFssNVs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qYCZ1OuxDc3cP0ydE94EOnK8HBhh9KfCHo4zsKAPCuQQQiFZAC6CVehzSbcAeC6aaekEPc76KeHZN6EnzmFglDxAuyqm2JmdVuN30aRhwfZWqgDfXPDQj6PpGCjHMYUOJxlZ63qvvEEWGWap6vBfl1RjOV8kAqWUoJCyZz+tQw4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=a5VUL67h; arc=fail smtp.client-ip=40.107.44.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y1D2eegkKw4+mCTky/iZmvkPLaiActxJdbhUdxIvog/pukD4hrrWAs/1z/RCMvF5L1rHxoNQN0n4pJRnFurZEgfF/24YYuqMz0QwIDT+tYthl8Zju01+L0q5Bdz655GKu5cE3wdzRsSfnwxJYSsSs7Jhhq+bT5/pPTb6anwGc0Omo4ZZSFzuluhF2cbtz9nI3Y282MrUicw39F1Fqc6Q1pfOs659AAOFIBn0OkX0m6HYnAtnzSHKyl84yTFMD+0pwxHye+I/d03cs2nGd4xwW2Wf82gIIQFRfOVy3XkvMz7e2JITo7t1yjlR4FRLvmZcUdZls3nGC83vAKb+kdmbjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SrAcpKaow+1jf0FfON4G6WRqtYiAVAWah5JsgOE4y00=;
+ b=ukZzjGHmWtlI8zJgkXSL3AC66V3Xw8cN+Og8+3JUoL+M045vhQZvHui5TNRbQc/1epLCsc5l3psE4MUWHdSE/z48A09cY4X5peZajSXWGuEoMdtPHa0ZQ6R/CAcidERFm0hOsgr9RuvUoDWWLO88sVPJB21z+ogikULFrtYtnxZX/HaDhtpuBcHDq4lGsFvLymFQqH4fc2J+d5QjrZDEUf1jlACNqrBDy678IxbLu2KV7xXDVTWunEoX2QNgIAUUec3fARV0CD4iOx2TIyvAo1Cf8qigzo0PBmKDeK6VqaztcqQk/XLMK+icyYbOiR37SEAvw9IBru0AxVNErOvHSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SrAcpKaow+1jf0FfON4G6WRqtYiAVAWah5JsgOE4y00=;
+ b=a5VUL67h4hY4dJJ1iNrU912oSWpR+a7ARmCtK2A8oZ3/vb56/zOoEoteG+aDzaUATu5E8h/JJXHrFlFhomGsnikdrb8Izci8U9uxoMLFU8K3zFToZmEYgQwZ6txCnjJKiu94nR3KIxo1axl1dcO5aBFOdKl8FVfNQARnX8G26mII023XR3dkcw9KPBzffmJZoR+Tp1uozpqIEywLzDsruRh0JdEcLLHOqH4vUTFQJ7DCcMXXvMahhSuHYrd12C3tMX7q8TK7Kq7ivQm6FEwjtYYSA34vDNfmEyQRwmP9uwcgGSFp1qd8mHt/3f806Uwn/0Ft4okvaMghsF8njMpkmw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by OSQPR03MB8675.apcprd03.prod.outlook.com (2603:1096:604:295::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
+ 2025 02:03:41 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.9073.026; Fri, 5 Sep 2025
+ 02:03:40 +0000
+Message-ID: <5477f412-22bb-4a2e-8c78-192d8171d5e6@amlogic.com>
+Date: Fri, 5 Sep 2025 10:03:37 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: power: add Amlogic S6 S7 S7D power
+ domains
+Content-Language: en-US
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jianxin Pan <jianxin.pan@amlogic.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ "hongyu.chen1" <hongyu.chen1@amlogic.com>
+References: <20250822-pm-s6-s7-s7d-v1-0-82e3f3aff327@amlogic.com>
+ <20250822-pm-s6-s7-s7d-v1-1-82e3f3aff327@amlogic.com>
+ <cce649b1-511b-4895-84be-2c85e748cfa8@kernel.org>
+ <CAPDyKFrE8CafoKDkdHQKf=yxJjNcJUu9vFrpAASQYXhtUg6cVA@mail.gmail.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <CAPDyKFrE8CafoKDkdHQKf=yxJjNcJUu9vFrpAASQYXhtUg6cVA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0020.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::9) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] cgroup: replace global percpu_rwsem with
- signal_struct->group_rwsem when writing cgroup.procs/threads
-To: Yi Tao <escape@linux.alibaba.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f460f494245710c5b6649d6cc7e68b3a28a0a000.1756896828.git.escape@linux.alibaba.com>
- <cover.1756985260.git.escape@linux.alibaba.com>
- <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <068d58f1f497bc4971c6ac0bae58bf53b98451fd.1756985260.git.escape@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAX1nu8RLpo68OcBQ--.14942S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3KFWDWrWrury5JFy3GFWDCFg_yoW8JFy7Ko
-	W3tF43Zw1kXa9rtayUGwn3Ja47WrWkG3y7Zr45Kr1DGF1xZ3yqgrW7AF13Jry5X3WayF47
-	Ar1IvFyrGF4xt3Wxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUU5M7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
-	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|OSQPR03MB8675:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c1f748b-1149-401c-08cc-08ddec206f38
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2ZhWEJSR2tmOTZUUUppQXFvZGtOa3MybExYZ21hQW9EeXJlTituSG8wNjQ0?=
+ =?utf-8?B?VHFwYjZtanVUUE5ZMHhvSjJvS3pKeEYrbFRDeUwxdjg4WmhIVGpjWUdRQmVm?=
+ =?utf-8?B?bDl0Y2xuQWdHYjJLQk1MM2F0QzJPWWZvYW9YZmdDRitPZHdNWXBTU0tVTENN?=
+ =?utf-8?B?OXJDWkN0U0tjRElVV2J1WHYxZ1NMRDhTRlZiaUg3TnhqRzMzMVdubnhydXBm?=
+ =?utf-8?B?VDRZLzhZQ1QvdC9zaE12UHZsdDIxNzU0dTJSTFNxVFAzZU1SdUhNbCtCclhI?=
+ =?utf-8?B?ZE5aa2tlUGgya2NEcExSZGhabU9aa04wWEpUbFpxZi9wWjVHd0xYWUozdzNx?=
+ =?utf-8?B?Q21ta21YUkdpSW5NYzBDY1FvN2N3VE1IcTRXSFBIYVQ5ZTJZeGdGczc3dHY5?=
+ =?utf-8?B?dERNSWlDN2xWZDFWU2h5SmJOYXdCQVhrb0s0QWJRTExzV0xKV252azFveWh2?=
+ =?utf-8?B?WU5mL29TWW4zYVR2SUxqZmVNUmhaNHlFU1QxSEpCcmdlYjRpazMwUFRHZmxj?=
+ =?utf-8?B?UForZkY0L2w4S3VFejNvbXl6cWZyMkFhb21YaUlYdkx0dVd2QjZBTUZTK2Rw?=
+ =?utf-8?B?VUxYYS90RXkvOVF5MDRyNjQwMXE3eU40VzhITGhmYkNLeUxjMUdRWkVleXRW?=
+ =?utf-8?B?a0w2TXdEb2N4U2VTR0FYRDAwZmpGYllobW9FWnROKzRNdFh3TDE3eHZ3aGVQ?=
+ =?utf-8?B?NWh3SHdIY1RXUFcybmlkOWJvR1BEMDNqdWhDZ09aVjNmUlh5OS9vNVZEQ21j?=
+ =?utf-8?B?dERiR1JyWnV0TWZzdFRDOTVnNDR2eWJ5eXo3L3A5dWJVb2R2dGpkdW1CQ254?=
+ =?utf-8?B?RmhJeUd6Y043YWJRWE45WjlaTzROS0R1eUNaTWQ3bkYvWFQ0d2NoaUorclJo?=
+ =?utf-8?B?enRUbklsS3h5bEZxbFlVa2ZCSjFyRkFQeG8xdzVWRHNiWDA0NlBSNkFXekRY?=
+ =?utf-8?B?UXkwMHcySlkwVjMvMVJJa0NtejJzN0pReGRyOHFiQVBlSERaRWFTM0ZVcjJT?=
+ =?utf-8?B?V2dXVVBPNUppNVhZYzVlTHFlb2MrWkIvNmhWbGh3d1M0c2cyaDlwZ2xWTXRz?=
+ =?utf-8?B?NmJzMnc4NWFpQmcranUvbnpvd3pWWVRTbjc2MEJGTjdEZkt0bW83THpaTWFV?=
+ =?utf-8?B?dFNPZ0FkTmVqZkpyMUw4MjRQanFhZGoyYWpuQVFGbDYzbW96VU5PbWRLNVVD?=
+ =?utf-8?B?MndOdGhneHlzYTRHZllZRGZlN3d4OUMyR0xSRlhJY0Jwc0swK24xTVRzcS90?=
+ =?utf-8?B?L25hejNUb1RnV1dUcGFoekwydDdvbEs0Q2lUQjJES1g2dGpQcDkrU0FEWnNR?=
+ =?utf-8?B?MUwwQy94RFlPZ2xOTjkyUEVqZDcyNFZVTEFhZ1JjVnorclZ5aWRPaGRTekNT?=
+ =?utf-8?B?OUxOUDl0ZlJMNzdUUzN6dXl1KzZIK05oZ2ViVXVKRlZYY0NWK3ZzalBWTFFH?=
+ =?utf-8?B?WStQQTRwZkw4OWYxekdhWTRUdS9IeEVCMzRiTjZabkk1cjBZMTNoSnpRb29y?=
+ =?utf-8?B?cFFrbzhWTitSRGdNakFkRTVvd2Z3SW0veUI4TnBDNTRkdzhSRldGeVdkVHhJ?=
+ =?utf-8?B?VG56UlFVMHRxdVdpdkx5WW9vMldPUkxieXNMTUZEcjhCWUNFb05WTjhuOVph?=
+ =?utf-8?B?blBSWFJUc1MwMXRiMWZwNUFwUGJKT0hxSm1IZk9IVzIxbFYwVHVtNjYyZTlL?=
+ =?utf-8?B?S1RtZ2lacUdRQXNzNkVyMlpsWWZRWjA0cGhIeEgzSkFEZER4YUxtMmI3N2RT?=
+ =?utf-8?B?anhmOTNsVnBqYUhSN1ZXTXRwMHFCMFltaXRvOVpncUpCclhPM2RZdnZueHZF?=
+ =?utf-8?B?c29YdEgwV2d6WTdhT0s3VFJwUTVyY25tQjVCTUtYblFPTmZxeHBhcHpSL3Nn?=
+ =?utf-8?B?VjhyMkY4SXJCUFRjWktuZFdaMlNhdWovZEZoQVFqdDR4ZzFtK1F4NnhGWU1y?=
+ =?utf-8?Q?YtUcnpviqto=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a3RxemNsUG12bkRlZ3pKemo3czBDN1BqYS9yeDVzVHF3R045NHhvT05zV0gv?=
+ =?utf-8?B?a09oU0RmMy9abXZEUysySlRNRmVGb1psVzMrVDNQalVBYUNhZHVtd0daZUNV?=
+ =?utf-8?B?SmYvQTlFSXo1RUZTRzlNL3dQY2VtUnV0ZHpoTWdVb000ZlpVcWxwM1BGTkY5?=
+ =?utf-8?B?U0FIdWVUbFQ2Wmp6TW9FbDNxaUlJdXZoMU5qOGlSVU5FMlVrc0xFYUE4dzFI?=
+ =?utf-8?B?T0VpcXBNcXBvYWt5cjJFT3JmWmZWSDI4c1VFYWlhVHZ3alRraktSdmdBbHhM?=
+ =?utf-8?B?M2JzQzVDdElVWGJ4L1dia1E3Y1o0Z1ZDUld0T1l4U1pkcFlmQTJUMmxEUFhH?=
+ =?utf-8?B?Mk9OdWUrLzY4K1BhaU5vdnE0OGRlOU9yMHlwdXdza0ZpbHNWcFVYdlR6ajd2?=
+ =?utf-8?B?MUZ0MXhOa0lTMHVTcEg4Mm81eUoyS1cvZzhyeVU2Qk5VRmZnU1Zqak1jelhP?=
+ =?utf-8?B?WlJ3UG1vZVlzUXBVKy9WU0ZodmlhdGorR2FSUHY2bEhPeUdIYk51MHJqTVBZ?=
+ =?utf-8?B?QVErT0xPdHdoU29USko4cUhTSmFoU2s5MWFFcXNOUVY5d3ZKTEZ0QlFWK1E0?=
+ =?utf-8?B?cHlxZmdoRUwvQ2orOGljZllUTCsvdW9ZYUptbEpReXNhUWU5WXc3cGF3ZDFY?=
+ =?utf-8?B?YkoxdzBxOG9hb0lISUJOdi9VRmFKTmdQeTc2S2JycGlzMlF5UXRwNldDbDha?=
+ =?utf-8?B?aWFZY2hjRW1YUnpaV2krVWx5aGZhS01IQ2FUdjFGV0toZnp6dEhpbi9FVTVt?=
+ =?utf-8?B?clZKUkV2S3dQSSt6WW9PSDlTcXl5UnllN0dRMThjMVJNNmROUmYwcm42bGhS?=
+ =?utf-8?B?aU9HSTFHMDdyYWtLREdGWUJWa1dBd3h1d2JTa3dKZDFJM040YnpxSmtEcWhT?=
+ =?utf-8?B?QURlRW5GVjVGZTlxTFNIdzdVbXZZRXVIcndhanIvd2hoZjdSbmcxSWdvMWJ4?=
+ =?utf-8?B?dUNMZk1zOTRHQ0NCNkM3cVhBS2QrL2wzdytsZ2FTUUdpQldwdEl6VmtJSGtE?=
+ =?utf-8?B?Nk05Z1Q3TDB1Unp1NFBOM214RC80d3lxRVFkRjBIOUNhdzdKT3prd3ZEZjJ6?=
+ =?utf-8?B?aDEvK2x5VUxsZ2FWamczbTc0TlFNYi95UW9zYjNmWE5WaFduVExwUzBZSWc5?=
+ =?utf-8?B?VUFzSGozYjNWNmNSR3U2MU9haE9Hb3ZPLzk3b3d2NHltUU1seVVYNEU3M2x3?=
+ =?utf-8?B?N0xsKzhsakd1QmYydzNNbHp5OVFGL1JNVGUxTE5jL2FnVmlXbTV2RnFaSjVp?=
+ =?utf-8?B?TWczcDhxSTJ2RHRqbCtmbnJaa0t4RlFQc1gyTmcrOTRZeTRkOFdiVkpkN2VT?=
+ =?utf-8?B?b3FxMW5BQVNYSWVHVUhUNHozUUo1SjlHazlzVHNtU3Nua0tFRGJMOExUdmNY?=
+ =?utf-8?B?eExXYmRlN0tOTk9JVVZ2NEJrUlh0Um5weHpCRWNNMWs5aVBya1R3emErYzJC?=
+ =?utf-8?B?S1REcEhuVjBkOXE5V253UkJDNTJXU3N1TFUzWlZHSVUrZlQ2TWhvdnJWdFhx?=
+ =?utf-8?B?Wk5LMnQ3clY3OFJZM1plbXlvOXozRVYwb2ZEMWZxWlhpWkQwNVVpSUV2N0ha?=
+ =?utf-8?B?dTYwcStQRVVsUWx2d09IN3EyQzNYMG44VGVmdEtqa3c4LzdxZ3p2ZkRqTzgr?=
+ =?utf-8?B?Y3BnZU1QRnBVU0ViNC96VndJNWtYUjdIV1lhZDIxS1BTWnJOQ3NsY05SVm5X?=
+ =?utf-8?B?YlRCdGhlbmxlZ2h2bmtUczNJdCtwR1NYQnpHWkh3TEV3Tys4QnFuc2FhS25n?=
+ =?utf-8?B?dU5TWXNyNWd2WEJqN3Znbk9HR21hc3hSbjI3R3BPaFg2TENEaVllWDNtdzBl?=
+ =?utf-8?B?SnNwTFltbGRPTnVhTkdUSE9hcE8zeHd6QWNVVVhnUGkwWUM2dzQ3UEdmY2hP?=
+ =?utf-8?B?ZC9MZmNma1FPRkkxSC9DLzVMKzRtUTcyS1I1Q2ZVVVc1aUlKeHpIUVZLdGNT?=
+ =?utf-8?B?bHk5NVZjVW1XYnV6alFKUTBRT2hPMENneU02dUtIeFJNK1ZrNTYwMzFPdGEw?=
+ =?utf-8?B?TGhKMFE3dFBKK0tDcFhjWFlVc1hxY0dONGtid2ZkazBOTnhYMkh4dUVqR25o?=
+ =?utf-8?B?TmJ5NWRhenF4RWxxRmtuSFg2ZmNvbmNGcFZrbHpySVg0MDZyR3ZROHhkbFlw?=
+ =?utf-8?B?aFpCdVp4RDRLa2hVYnlxdTlKckJyMUxRVzdHN2dTNWU1YnpVS2RLMlVISnU0?=
+ =?utf-8?B?cUE9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c1f748b-1149-401c-08cc-08ddec206f38
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 02:03:40.7674
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M7JYC7uaXkorMQy34H027T9fDUUEuyXP6rmKanBXcZdncNDERpFZoVQ3GvmzPeJyMz72o+F+uwNEep/Io9/r/Ms8d99leGI1EtfNZfaeFd0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR03MB8675
 
+Hi Ulf,
+    Thanks.
 
+On 2025/9/5 00:15, Ulf Hansson wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On Thu, 4 Sept 2025 at 13:07, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 22/08/2025 07:39, Xianwei Zhao via B4 Relay wrote:
+>>> From: "hongyu.chen1" <hongyu.chen1@amlogic.com>
+>>>
+>>> Add devicetree binding document and related header file for
+>>> Amlogic S6 S7 S7D secure power domains.
+>>>
+>>> Signed-off-by: hongyu.chen1 <hongyu.chen1@amlogic.com>
+>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>> ---
+>>>   .../bindings/power/amlogic,meson-sec-pwrc.yaml     |  3 +++
+>>>   include/dt-bindings/power/amlogic,s6-pwrc.h        | 29 ++++++++++++++++++++++
+>>>   include/dt-bindings/power/amlogic,s7-pwrc.h        | 20 +++++++++++++++
+>>>   include/dt-bindings/power/amlogic,s7d-pwrc.h       | 27 ++++++++++++++++++++
+>>>   4 files changed, 79 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>>> index 15d74138baa3..12b71688dd34 100644
+>>> --- a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>>> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>>> @@ -24,6 +24,9 @@ properties:
+>>>         - amlogic,a5-pwrc
+>>>         - amlogic,c3-pwrc
+>>>         - amlogic,t7-pwrc
+>>> +      - amlogic,s6-pwrc
+>>> +      - amlogic,s7-pwrc
+>>> +      - amlogic,s7d-pwrc
+>>
+>>
+>> If there is going to be new version:
+>> Please keep alphabetical order.
+> 
+> I have just applied this, so please send a fixup patch on-top.
+>
 
-On 2025/9/4 19:39, Yi Tao wrote:
-> As computer hardware advances, modern systems are typically equipped
-> with many CPU cores and large amounts of memory, enabling the deployment
-> of numerous applications. On such systems, container creation and
-> deletion become frequent operations, making cgroup process migration no
-> longer a cold path. This leads to noticeable contention with common
-> process operations such as fork, exec, and exit.
-> 
-> To alleviate the contention between cgroup process migration and
-> operations like process fork, this patch modifies lock to take the write
-> lock on signal_struct->group_rwsem when writing pid to
-> cgroup.procs/threads instead of holding a global write lock.
-> 
-> Cgroup process migration has historically relied on
-> signal_struct->group_rwsem to protect thread group integrity. In commit
-> <1ed1328792ff> ("sched, cgroup: replace signal_struct->group_rwsem with
-> a global percpu_rwsem"), this was changed to a global
-> cgroup_threadgroup_rwsem. The advantage of using a global lock was
-> simplified handling of process group migrations. This patch retains the
-> use of the global lock for protecting process group migration, while
-> reducing contention by using per thread group lock during
-> cgroup.procs/threads writes.
-> 
-> The locking behavior is as follows:
-> 
-> write cgroup.procs/threads  | process fork,exec,exit | process group migration
-> ------------------------------------------------------------------------------
-> cgroup_lock()               | down_read(&g_rwsem)    | cgroup_lock()
-> down_write(&p_rwsem)        | down_read(&p_rwsem)    | down_write(&g_rwsem)
-> critical section            | critical section       | critical section
-> up_write(&p_rwsem)          | up_read(&p_rwsem)      | up_write(&g_rwsem)
-> cgroup_unlock()             | up_read(&g_rwsem)      | cgroup_unlock()
-> 
-> g_rwsem denotes cgroup_threadgroup_rwsem, p_rwsem denotes
-> signal_struct->group_rwsem.
-> 
-> This patch eliminates contention between cgroup migration and fork
-> operations for threads that belong to different thread groups, thereby
-> reducing the long-tail latency of cgroup migrations and lowering system
-> load.
-> 
-> To avoid affecting other users, the per-thread-group rwsem is only used
-> when the `favordynmods` flag is enabled.
-> 
-> Signed-off-by: Yi Tao <escape@linux.alibaba.com>
-> ---
->  include/linux/cgroup-defs.h     |  6 +++
->  include/linux/sched/signal.h    |  4 ++
->  init/init_task.c                |  3 ++
->  kernel/cgroup/cgroup-internal.h |  4 +-
->  kernel/cgroup/cgroup-v1.c       |  8 ++--
->  kernel/cgroup/cgroup.c          | 72 +++++++++++++++++++--------------
->  kernel/fork.c                   |  4 ++
->  7 files changed, 64 insertions(+), 37 deletions(-)
-> 
-> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-> index 6b93a64115fe..0c068dc3e08d 100644
-> --- a/include/linux/cgroup-defs.h
-> +++ b/include/linux/cgroup-defs.h
-> @@ -828,6 +828,8 @@ struct cgroup_of_peak {
->  	struct list_head	list;
->  };
->  
-> +extern bool have_favordynmods;
-> +
->  /**
->   * cgroup_threadgroup_change_begin - threadgroup exclusion for cgroups
->   * @tsk: target task
-> @@ -838,6 +840,8 @@ struct cgroup_of_peak {
->  static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
->  {
->  	percpu_down_read(&cgroup_threadgroup_rwsem);
-> +	if (have_favordynmods)
-> +		down_read(&tsk->signal->group_rwsem);
->  }
->  
->  /**
-> @@ -848,6 +852,8 @@ static inline void cgroup_threadgroup_change_begin(struct task_struct *tsk)
->   */
->  static inline void cgroup_threadgroup_change_end(struct task_struct *tsk)
->  {
-> +	if (have_favordynmods)
-> +		up_read(&tsk->signal->group_rwsem);
->  	percpu_up_read(&cgroup_threadgroup_rwsem);
->  }
->  
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 1ef1edbaaf79..86fbc99a9174 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -226,6 +226,10 @@ struct signal_struct {
->  	struct tty_audit_buf *tty_audit_buf;
->  #endif
->  
-> +#ifdef CONFIG_CGROUPS
-> +	struct rw_semaphore group_rwsem;
-> +#endif
-> +
->  	/*
->  	 * Thread is the potential origin of an oom condition; kill first on
->  	 * oom
-> diff --git a/init/init_task.c b/init/init_task.c
-> index e557f622bd90..0450093924a7 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -27,6 +27,9 @@ static struct signal_struct init_signals = {
->  	},
->  	.multiprocess	= HLIST_HEAD_INIT,
->  	.rlim		= INIT_RLIMITS,
-> +#ifdef CONFIG_CGROUPS
-> +	.group_rwsem	= __RWSEM_INITIALIZER(init_signals.group_rwsem),
-> +#endif
->  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
->  	.exec_update_lock = __RWSEM_INITIALIZER(init_signals.exec_update_lock),
->  #ifdef CONFIG_POSIX_TIMERS
-> diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-> index b14e61c64a34..35005543f0c7 100644
-> --- a/kernel/cgroup/cgroup-internal.h
-> +++ b/kernel/cgroup/cgroup-internal.h
-> @@ -249,8 +249,8 @@ int cgroup_migrate(struct task_struct *leader, bool threadgroup,
->  
->  int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
->  		       bool threadgroup);
-> -void cgroup_attach_lock(bool lock_threadgroup);
-> -void cgroup_attach_unlock(bool lock_threadgroup);
-> +void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup);
-> +void cgroup_attach_unlock(struct task_struct *tsk, bool lock_threadgroup);
->  struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
->  					     bool *locked)
->  	__acquires(&cgroup_threadgroup_rwsem);
-> diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-> index 2a4a387f867a..9f1a4d1fc741 100644
-> --- a/kernel/cgroup/cgroup-v1.c
-> +++ b/kernel/cgroup/cgroup-v1.c
-> @@ -68,7 +68,7 @@ int cgroup_attach_task_all(struct task_struct *from, struct task_struct *tsk)
->  	int retval = 0;
->  
->  	cgroup_lock();
-> -	cgroup_attach_lock(true);
-> +	cgroup_attach_lock(NULL, true);
->  	for_each_root(root) {
->  		struct cgroup *from_cgrp;
->  
-> @@ -80,7 +80,7 @@ int cgroup_attach_task_all(struct task_struct *from, struct task_struct *tsk)
->  		if (retval)
->  			break;
->  	}
-> -	cgroup_attach_unlock(true);
-> +	cgroup_attach_unlock(NULL, true);
->  	cgroup_unlock();
->  
->  	return retval;
-> @@ -117,7 +117,7 @@ int cgroup_transfer_tasks(struct cgroup *to, struct cgroup *from)
->  
->  	cgroup_lock();
->  
-> -	cgroup_attach_lock(true);
-> +	cgroup_attach_lock(NULL, true);
->  
->  	/* all tasks in @from are being moved, all csets are source */
->  	spin_lock_irq(&css_set_lock);
-> @@ -153,7 +153,7 @@ int cgroup_transfer_tasks(struct cgroup *to, struct cgroup *from)
->  	} while (task && !ret);
->  out_err:
->  	cgroup_migrate_finish(&mgctx);
-> -	cgroup_attach_unlock(true);
-> +	cgroup_attach_unlock(NULL, true);
->  	cgroup_unlock();
->  	return ret;
->  }
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index 312c6a8b55bb..22b1659b623c 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -214,7 +214,7 @@ static u16 have_exit_callback __read_mostly;
->  static u16 have_release_callback __read_mostly;
->  static u16 have_canfork_callback __read_mostly;
->  
-> -static bool have_favordynmods __ro_after_init = IS_ENABLED(CONFIG_CGROUP_FAVOR_DYNMODS);
-> +bool have_favordynmods __ro_after_init = IS_ENABLED(CONFIG_CGROUP_FAVOR_DYNMODS);
->  
+Will do.
 
-If have_favordynmods is gating the acquisition of tsk->signal->group_rwsem, would it be better to
-replace it with a static key?
-
->  /* cgroup namespace for init task */
->  struct cgroup_namespace init_cgroup_ns = {
-> @@ -2459,7 +2459,8 @@ EXPORT_SYMBOL_GPL(cgroup_path_ns);
->  
->  /**
->   * cgroup_attach_lock - Lock for ->attach()
-> - * @lock_threadgroup: whether to down_write cgroup_threadgroup_rwsem
-> + * @tsk: thread group to lock
-> + * @lock_threadgroup: whether to down_write rwsem
->   *
->   * cgroup migration sometimes needs to stabilize threadgroups against forks and
->   * exits by write-locking cgroup_threadgroup_rwsem. However, some ->attach()
-> @@ -2480,21 +2481,30 @@ EXPORT_SYMBOL_GPL(cgroup_path_ns);
->   * write-locking cgroup_threadgroup_rwsem. This allows ->attach() to assume that
->   * CPU hotplug is disabled on entry.
->   */
-> -void cgroup_attach_lock(bool lock_threadgroup)
-> +void cgroup_attach_lock(struct task_struct *tsk, bool lock_threadgroup)
->  {
->  	cpus_read_lock();
-> -	if (lock_threadgroup)
-> -		percpu_down_write(&cgroup_threadgroup_rwsem);
-> +	if (lock_threadgroup) {
-> +		if (tsk && favor_dynmods)
-> +			down_write(&tsk->signal->group_rwsem);
-> +		else
-> +			percpu_down_write(&cgroup_threadgroup_rwsem);
-> +	}
->  }
->  
->  /**
->   * cgroup_attach_unlock - Undo cgroup_attach_lock()
-> - * @lock_threadgroup: whether to up_write cgroup_threadgroup_rwsem
-> + * @tsk: thread group to lock
-> + * @lock_threadgroup: whether to up_write rwsem
->   */
-> -void cgroup_attach_unlock(bool lock_threadgroup)
-> +void cgroup_attach_unlock(struct task_struct *tsk, bool lock_threadgroup)
->  {
-> -	if (lock_threadgroup)
-> -		percpu_up_write(&cgroup_threadgroup_rwsem);
-> +	if (lock_threadgroup) {
-> +		if (tsk && favor_dynmods)
-> +			up_write(&tsk->signal->group_rwsem);
-> +		else
-> +			percpu_up_write(&cgroup_threadgroup_rwsem);
-> +	}
->  	cpus_read_unlock();
->  }
->  
-> @@ -2976,24 +2986,12 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
->  	if (kstrtoint(strstrip(buf), 0, &pid) || pid < 0)
->  		return ERR_PTR(-EINVAL);
->  
-> -	/*
-> -	 * If we migrate a single thread, we don't care about threadgroup
-> -	 * stability. If the thread is `current`, it won't exit(2) under our
-> -	 * hands or change PID through exec(2). We exclude
-> -	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
-> -	 * callers by cgroup_mutex.
-> -	 * Therefore, we can skip the global lock.
-> -	 */
-> -	lockdep_assert_held(&cgroup_mutex);
-> -	*threadgroup_locked = pid || threadgroup;
-> -	cgroup_attach_lock(*threadgroup_locked);
-> -
->  	rcu_read_lock();
->  	if (pid) {
->  		tsk = find_task_by_vpid(pid);
->  		if (!tsk) {
->  			tsk = ERR_PTR(-ESRCH);
-> -			goto out_unlock_threadgroup;
-> +			goto out_unlock_rcu;
->  		}
->  	} else {
->  		tsk = current;
-> @@ -3010,15 +3008,27 @@ struct task_struct *cgroup_procs_write_start(char *buf, bool threadgroup,
->  	 */
->  	if (tsk->no_cgroup_migration || (tsk->flags & PF_NO_SETAFFINITY)) {
->  		tsk = ERR_PTR(-EINVAL);
-> -		goto out_unlock_threadgroup;
-> +		goto out_unlock_rcu;
->  	}
-> -
->  	get_task_struct(tsk);
-> -	goto out_unlock_rcu;
->  
-> -out_unlock_threadgroup:
-> -	cgroup_attach_unlock(*threadgroup_locked);
-> -	*threadgroup_locked = false;
-> +	rcu_read_unlock();
-> +
-> +	/*
-> +	 * If we migrate a single thread, we don't care about threadgroup
-> +	 * stability. If the thread is `current`, it won't exit(2) under our
-> +	 * hands or change PID through exec(2). We exclude
-> +	 * cgroup_update_dfl_csses and other cgroup_{proc,thread}s_write
-> +	 * callers by cgroup_mutex.
-> +	 * Therefore, we can skip the global lock.
-> +	 */
-> +	lockdep_assert_held(&cgroup_mutex);
-> +	*threadgroup_locked = pid || threadgroup;
-> +
-> +	cgroup_attach_lock(tsk, *threadgroup_locked);
-> +
-> +	return tsk;
-> +
->  out_unlock_rcu:
->  	rcu_read_unlock();
->  	return tsk;
-> @@ -3032,7 +3042,7 @@ void cgroup_procs_write_finish(struct task_struct *task, bool threadgroup_locked
->  	/* release reference from cgroup_procs_write_start() */
->  	put_task_struct(task);
->  
-> -	cgroup_attach_unlock(threadgroup_locked);
-> +	cgroup_attach_unlock(task, threadgroup_locked);
->  
->  	for_each_subsys(ss, ssid)
->  		if (ss->post_attach)
-> @@ -3119,7 +3129,7 @@ static int cgroup_update_dfl_csses(struct cgroup *cgrp)
->  	 * write-locking can be skipped safely.
->  	 */
->  	has_tasks = !list_empty(&mgctx.preloaded_src_csets);
-> -	cgroup_attach_lock(has_tasks);
-> +	cgroup_attach_lock(NULL, has_tasks);
->  
->  	/* NULL dst indicates self on default hierarchy */
->  	ret = cgroup_migrate_prepare_dst(&mgctx);
-> @@ -3140,7 +3150,7 @@ static int cgroup_update_dfl_csses(struct cgroup *cgrp)
->  	ret = cgroup_migrate_execute(&mgctx);
->  out_finish:
->  	cgroup_migrate_finish(&mgctx);
-> -	cgroup_attach_unlock(has_tasks);
-> +	cgroup_attach_unlock(NULL, has_tasks);
->  	return ret;
->  }
->  
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index af673856499d..5218f9b93c77 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1688,6 +1688,10 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
->  	tty_audit_fork(sig);
->  	sched_autogroup_fork(sig);
->  
-> +#ifdef CONFIG_CGROUPS
-> +	init_rwsem(&sig->group_rwsem);
-> +#endif
-> +
->  	sig->oom_score_adj = current->signal->oom_score_adj;
->  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
->  
-
--- 
-Best regards,
-Ridong
-
+> Kind regards
+> Uffe
 
