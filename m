@@ -1,134 +1,147 @@
-Return-Path: <linux-kernel+bounces-802887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784EFB457FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:41:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E70B45801
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4201E567977
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769C9A03CAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05C534AB1D;
-	Fri,  5 Sep 2025 12:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA0A34F482;
+	Fri,  5 Sep 2025 12:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yrk2MU6b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RsdeZiHP"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A545B32A81A
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517B1F1513
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757076054; cv=none; b=UCpKjR1dRP17UuKfu3hRiAxWgTg3QOwt+/mAvt3qkpKuqz+gB/WP/4rnKdXB6PTlr48T/7PtUF2NJ8fV35y+ruYjHfrq12dF0zBDKBTIEf+9uT36/vAgG5GztEG4hPyCgzY8Uq0EmpFoDXfl0OcXusL5C2W46BVHKMOhOy5p0wE=
+	t=1757076076; cv=none; b=lzvaFPhJlZmnlwxB8rZWJgIr0u+leI3ArdqJfe+VRf7eQ9PstQfKgsaoWysSmXwiNXJ+a487cdCtoJZKJZOvl6Y1PY3IY7ahZ2chDRV5ccECJSrtkYeoFYvAPnKL1ATqfM6NZPNxIaJZoUVmYOKuy2QaMhO+hOmiyDT8NjU0GLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757076054; c=relaxed/simple;
-	bh=RCvW+v+WM4Nm5wMAGPraUo2CrUGI6VSVlbDrWsaLXAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ptZzUygdh7ck3h4lp1o5gziEy5bOe5gDGWAEYIeaGGFP49eeQvLU+Uf8OAP3ptWy3CQZN7lG9qGLl9PYyGgY3RhslBzKBd01m1yVqdlEuYklPhW58/9b4DynvY5zxq1oFF0zHGFLy0O/mwVgUGxSNHKVDCfxxtOaQJf+EDWEbUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yrk2MU6b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5857GZF4031853
-	for <linux-kernel@vger.kernel.org>; Fri, 5 Sep 2025 12:40:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RCvW+v+WM4Nm5wMAGPraUo2CrUGI6VSVlbDrWsaLXAY=; b=Yrk2MU6biv7gcNOl
-	dkOKktv5V14eoWw9FdK0pOkhfEqLFuX7WIcDIU9fjNeKTcKAHgIb3eGLRYIY+a5x
-	foIbnY+zxbT6ldQesjFPyIftRKGfafC9eW+Ym5t1gUJleQNreJ0Q+6862MnJUYdN
-	u/V01tJOrqBEFUE4N0SQMRiJawdklu14kIHgPe/Ui5A1BU5l2qo3U7bjp7BzXek/
-	u0sPinUXpmUEPW9KvkMJ4w/P8rh3ks3OeARDuDhonAmMKcWGE0MuIv0ith7lXIfl
-	E1XKzFJStNLQ8YWDFFmkZmfj5dvy2HbfAdEX0cELQ0/fIwNQ5RGgqJmjGQhj0llQ
-	8NdvxQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw0b709-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 12:40:51 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b48f648249so6571761cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:40:51 -0700 (PDT)
+	s=arc-20240116; t=1757076076; c=relaxed/simple;
+	bh=oBXHKrWN/b8xEphfOBxvMXuoVFvsOyyVX+52kY7ZBjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MrJEUjHqFgaw+aUns8VyCtsoLpaM2aQS5yCtKro2fR4BgffKPvu4WM1EyZ99arMKgy2sSNfnemi/sj0vPz26T2epoZzOrvBmE1UzZvdbAdJkP2zjrnuv4cQjnET0cwdXj6+p4zNxdMZ/EauBh3J614r5Tt7tE/s8i2ywbMpWUNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RsdeZiHP; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4c53892a56so1829913a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 05:41:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757076073; x=1757680873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CDIiR34iXezMR7BHEFFCv6iSUlhvz1mav6TCgrGlsTQ=;
+        b=RsdeZiHPpHq0LgG1fPIuYRZOQ1TgGLw+legfSIYFUisEzOVuZOyPPmpViTDn16AGqj
+         aOfr57mpsU6y5hKF2L0XSqFBPVU0+LtzeL5MUaYeLDiQUCVIqpm1fgTRZtactURtMHVx
+         0HqxcUqhCl7w0PUv687i96Abswp1MapFMgGAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757076051; x=1757680851;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCvW+v+WM4Nm5wMAGPraUo2CrUGI6VSVlbDrWsaLXAY=;
-        b=CB3mEAxp1SSa4diYlJEHCdk63cGkw3UWXBJoeFTYYthdrZBm0qx1yN+JRtzzw0LB1h
-         2BzwuvST6Iu0+1upAMQnP/9P/WXhXg+mqHBadBHIJ3VBbs4i/RYk3Yibg9YTBVeUULmF
-         7i2lCpPzGWK17XJgqwh98SMpfI+M+jnRNMF3pQkpgSEAjAt5VN+slYCcHFPRYlblvWbU
-         DLrNjvUuuNzsGvvl2OoIxjqQ59YCZ0kEQ/RSMLMH1HI4l6rkdJQzDQnRvQWxXctw/DJ1
-         4TgovMs/VHA/Cn4Pxg1UG0z6BfDLTyM53rYl/gSBo7B7ExMmIphfGSBP3g4NyIdQbtgV
-         +MrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvw+n0P6l4hGnviecsC9Qnv5U1rPY/Cfi+/TOxg2vz2ddLeeoAX9oLoj8Xhw7rbGQHs+AK3tGBqiywefM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdb8nIuv+Kzce/YJeB+k2H91K9QKNcCTnfd57LB02IFYqlBedJ
-	4iULNTlBs36zT4agm8XhA3kYIi7o2sQ2VGrO1GqE4qNYyMwgGGWL3fwFYSHjitN3VPyVR3DBfCS
-	IEY+1F1T3/nIhaSXBSZ2I9L1tqJic6pb4TU3OauCs4RrVuubP3BXhk1V/tSwuEzKI6xE=
-X-Gm-Gg: ASbGncuxvKK5/lx45mNV+FUor4mRykB4B5PdEYnB43LWaPVY3EbTfQM2CxdaDVQdNam
-	Geia1TbVycBBB8ikg866isV3en5Re340SKV66bdQoqBP1AyayiZX9RST8MoqJVH7KdoF42Jscpi
-	aAj6N/UX6oBwj1PZrrBNrp+UHcgaOe7+y3VeRGaaX70nT3WvDkhdfyXEOuF4JDunKB2f9Z+7Ild
-	SK4hJJuCADGVamQZ/SuPENmpAM6MStDSE7/EuWtM9io8URtcORX7exiC7IfBQGqEMAbpn+Xrmgr
-	+YDYqzYeslKgU5icc0mMqCD0TA2VhH0MKY0hUon/e1LO+P45B+OVgS81aj3y01UIEfRaJllsk0J
-	Wn4u1gEeLelbJtD9ViBIemg==
-X-Received: by 2002:ac8:5a48:0:b0:4b5:eeb8:9dbd with SMTP id d75a77b69052e-4b5eeb8a299mr9780801cf.5.1757076050536;
-        Fri, 05 Sep 2025 05:40:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhwQd/eQ/Fwu0ttahhKY21yFepGgyDfwsgnKKPIe1LttWQUPiyRGUF7MyOygLic0H9YbExGg==
-X-Received: by 2002:ac8:5a48:0:b0:4b5:eeb8:9dbd with SMTP id d75a77b69052e-4b5eeb8a299mr9780531cf.5.1757076050011;
-        Fri, 05 Sep 2025 05:40:50 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7a27sm16591905a12.10.2025.09.05.05.40.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 05:40:49 -0700 (PDT)
-Message-ID: <daa84fc7-b191-470a-933a-b41b8713d1d6@oss.qualcomm.com>
-Date: Fri, 5 Sep 2025 14:40:47 +0200
+        d=1e100.net; s=20230601; t=1757076073; x=1757680873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CDIiR34iXezMR7BHEFFCv6iSUlhvz1mav6TCgrGlsTQ=;
+        b=kWc7ugfIZ1u2jOMl2/sX7am4c883KrQau3RRQssKtjXWss2bpKIRze3xx08M3E3/nU
+         qjPYSOCU4831WF+bfUgqgZG7eOTCMqzUNEHh4c4+hmvCbihrrxqT1PipDUgrUq2EePTp
+         90AVSEBfb2HQp6XOUltTue5NJfyKgFpASsD65RyIiJTXXTwwud8mD18EpNviTkNQMKsr
+         CjUoGX/CLVE6ltdWYQWjj5Q4XKmzaY9YdqYqEdBeP8KTy3WvMaojDnShfxMmW2F3F35Y
+         7c0gDJ5Ves4Zc5wE9Y4nvDarLPfQIDReXOBUjkuTySK17N1tc+t+C+yfCME/pAofnQsb
+         08hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk91hTXxjkP8eWxStdNO6HtdyhbDCCiJ1yk4/Gvk2d/1vzvNHviw9JMOwee3seCARQsiyX+Fb6pHEawbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxkWqlWfLjbW7XzYS569tJNnkJzVVxbrPd0xacSppe+38OiqWC
+	UVTVijuXHwKO9bCBFY8a3tOOKCrdfAnAgrhM64+NCETjEI+RL2dfAdEFfnHJDUF7bV19BbFl5Jl
+	XR6h9JULntiyBx49JRnUAc5iRWdd64G+D+ds/7Aek
+X-Gm-Gg: ASbGncteNCdT95NBbVlSn/dHexPW6OeMjMRFl5K8hsmS8eCGbA5t3PKMapPj075u7D5
+	yx8oDEaQJ2WY20IKMpBUolfyz5PXAGxTSQwhBdlH6iuttI1Tyv0eIHzKc1fD6pC6yMKM7mWjgR7
+	Hed5PR1vBslmFsOKbkgpfewpc6iniZCFNDuc0LjbyEXZGXQdvwlLbcAk6ini8q/nmZMhfXRyFIV
+	j0mwimENcDTHxUXPxAoVpvg+nskM40DMQ==
+X-Google-Smtp-Source: AGHT+IE1e9GdET1HkJdnTcqNZ6pmew3/GoNUVVNslDsopYdaiOZRiWcX4ix6U/VN/o6VHJOiC5A+QLarYg2TUdmWIjE=
+X-Received: by 2002:a17:90b:3d48:b0:32b:70a7:16da with SMTP id
+ 98e67ed59e1d1-32b70a71b2fmr11961610a91.20.1757076073274; Fri, 05 Sep 2025
+ 05:41:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: qcom: sm8250: Add egpio support
-To: Sean Parker <sean.parker@viasat.com>, andersson@kernel.org,
-        linus.walleij@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250904170613.68855-1-sean.parker@viasat.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250904170613.68855-1-sean.parker@viasat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: kpZgOD8-TMaHCcoN6IIAEQI7YYlcSYzH
-X-Proofpoint-ORIG-GUID: kpZgOD8-TMaHCcoN6IIAEQI7YYlcSYzH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX+8CMc7DxEcTP
- JHG0AMyRgfAfye7xNn1K4Z3pGi2dZqZVfN+JivN20GPH/7XLTxCvdf5M7uFR+JeOrRcN4gIEg4V
- 7lquLYcU7vBUul/fOCRo1azpgNm1Dcz/YYoUz76s3Eg6jgwSMPWN5WY+2y6la1sLitT/nuZLI28
- sUYFqxIzzhJuHW2i4iV6tu3wBv+iBTFhVn3UcZLlcjHOYs9qsSMSQn5viFaWBQuyT6MRKyBfSkM
- rSr1kix5McTSo3Ts8tU0BoOYKJZBplpwmi8LZkX5/A2iPFknTsJJi2ZUl5assk3luGZD318qJuD
- osXICcKz8lH3ahZuf62aZZQG4XRPlgLz1IdF5z0unDg60BeXyf9vw+S9zPb48laD+pMM/K3u+PO
- VxeDONj0
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68bada53 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=o8bG7SlRqXj42srI09MA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_04,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+References: <20250825145750.58820-1-akuchynski@chromium.org> <aLrQKurGZkbCkjlw@kuha.fi.intel.com>
+In-Reply-To: <aLrQKurGZkbCkjlw@kuha.fi.intel.com>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Fri, 5 Sep 2025 14:41:01 +0200
+X-Gm-Features: Ac12FXyxvfhy8ARaoEcCu19f2V-MoHQ9ApY5WO6r6Z4u1iuoDkWCmEuJxuSbxjQ
+Message-ID: <CAMMMRMcYiB8Sb5sjjdH_TcX8b2kGZFcM=r8L_txpZtyBGZt4Gg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] USB Type-C alternate mode priorities
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
+	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/4/25 7:04 PM, Sean Parker wrote:
-> This mirrors the egpio support added to sc7280/sm8450/etc. This change
-> is necessary for GPIOs 146 - 180 (34 GPIOs) to be used as normal GPIOs.
+On Fri, Sep 5, 2025 at 1:57=E2=80=AFPM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> Hi Andrei,
+>
+> On Mon, Aug 25, 2025 at 02:57:45PM +0000, Andrei Kuchynski wrote:
+> > This patch series introduces a mechanism for setting USB Type-C alterna=
+te
+> > mode priorities. It allows the user to specify their preferred order fo=
+r
+> > mode selection, such as USB4, Thunderbolt, or DisplayPort.
+> >
+> > A new sysfs attribute named 'priority' is exposed to provide user-space
+> > control over the mode selection process.
+> >
+> > This series was tested on a Android OS device running kernel 6.16.
+> >
+> > Changes in v2:
+> > - The priority variable is now a member of the typec_altmode struct
+> > - typec_altmode2port is used to obtain the typec_port struct pointer
+> > - Default priorities are now set based on the order of registration
+> > - The mode_control capability is enabled by default
+> > - The mode_selection_state struct will be introduced in a separate seri=
+es
+> > - svid will be used instead of the typec_mode_type enum
+> >
+> > Andrei Kuchynski (5):
+> >   usb: typec: Add alt_mode_override field to port property
+> >   platform/chrome: cros_ec_typec: Set alt_mode_override flag
+> >   usb: typec: ucsi: Set alt_mode_override flag
+> >   usb: typec: Implement alternate mode priority handling
+> >   usb: typec: Expose alternate mode priority via sysfs
+>
+> I'm sorry for keeping you waiting. I think these are okay - although,
+> I had to put a few nitpicks :) but they are minor - but can you
+> include a patch where you use the priority member in a driver (maybe
+> cros_ec_typec.c)?
+>
+> thanks,
+>
+> --
+> heikki
 
-* -179 (in line with the code)
+Thank you for your review and feedback! I appreciate you taking the time to
+provide these notes.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The patch using the priority member is part of a subsequent series that I
+have ready. I will send it shortly. This functionality is implemented in
+mode_selection.c to determine the mode order, and we plan to use it for
+both the cros_ec_typec and UCSI implementations.
 
-Konrad
+I will send a new v3 patch set shortly with the minor changes you suggested=
+.
+
+Thanks!
+Andrei
 
