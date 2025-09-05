@@ -1,408 +1,137 @@
-Return-Path: <linux-kernel+bounces-803222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7ECB45C4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:20:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD571B45C55
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B793A574A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:17:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A229B16E4F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4007931B83D;
-	Fri,  5 Sep 2025 15:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117FA31B803;
+	Fri,  5 Sep 2025 15:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nv4p8/xj";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bXfGpgIU"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogeoxe37"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D37B31B831
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757085444; cv=fail; b=t9KxZfyrIsiK6lgdActjJaq2lzop/8NMP2M5PFbnxwyzy33DGic+pdwtQACJ/C0/hAqSPfW/e7rWunc+IUaLSM0dLs8fjV3Y+RfGzo2b9DPR01iYnLhBcDRRqAnvSHNqiG+hlV2cxMuxw9mfbEbZjhRB5nQsInUtxh4C1O96ZNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757085444; c=relaxed/simple;
-	bh=mYMCBD6x9B00drSgcQmBiUEvDFFboqczXCCibp8l5E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KQOXG4o0oFTpJfE7P7CUJdBaCADskRy/LUe0vSkiXYytTxJxt+d0LTliwQriWA/aUse1vFW6OPg3xaifxd1I3wxR8t4zlIIEgXFIwt6aIe6tN+k4QMB8fwhIKfPEGm/GFYMl29pvqldruKTH9Gmp0Fj6I9Rqs1N1P6f404QetvE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nv4p8/xj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bXfGpgIU; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 585FEbKK031974;
-	Fri, 5 Sep 2025 15:17:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=ql0WJ2L+tEQxxWhy2v
-	YpOoYXpfnez61YuwZ8KsEoFcU=; b=nv4p8/xjTL762ctiOyq+3GEi2xO6HBk2JW
-	RmQ5yRWUFTrGtDy1TWrpNeG4pNP0lxbvWL5UhxqKTuG8T8kbykwSIE4gTK9qlMWZ
-	SgyteJqqwjF0plspIL9ljslewsxHY6UQowue9W9RAw87msQ6NGj+y2ynAwmNerZX
-	Fild6HBdZaQJRtJcn7WwIlglpXZs4ATGSVIWgqpW3OfWVnbjYMuSLCDkXEiNo7kK
-	MuvA7raN81dBPCrGe2oEJecF5TGgn79qbz4T6TXlSTCWki52Tu79N+WJ6tFKEhEq
-	6DVZQ9N/v9ciN2j7Ftz31A/tstxUjDssxKVmv5vyc97hwgQZ5M7g==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4902b2g067-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Sep 2025 15:17:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 585F5Xw0031681;
-	Fri, 5 Sep 2025 15:17:04 GMT
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012011.outbound.protection.outlook.com [52.101.43.11])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqrkc9km-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 05 Sep 2025 15:17:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lRg7JC0V2lzu+IeBcAgPxpgLw1N62nG9LDwD7txx7yhqupUI5OHFoS1sdmAmwKSbwe3dcPv3HwIqZXLppgndmbqfRkXb1Z/oAObJoKtFwq0XoP54oSddbInjxiyyixkn42SbnE41tOD2dDfIMq0YNVEX8At0cf2TDaIgPVbQOnuJYyV8hgQ0j3wfNPHaSHbDTA60Q4SxKowi0BNdV21vwTuHqfUPafGW9NbBTi8JxQOG2ERpW6SaSEGPZeBgnpPPYAaBp4aa8iy/FG/9kTuGrOWW32dWCVCx3AVYSYvkQCIWFYuoff8B6M4aD981qZo6o5Pnz5NZnfwOG8qJHBAblQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ql0WJ2L+tEQxxWhy2vYpOoYXpfnez61YuwZ8KsEoFcU=;
- b=yn+2W3s51iimkZSuRhai1XcdyXxeXN+K0B9ZZQk9H0wDrN90xkKFA6KFO3MGdWudPBGlp4h3XZHFQCGVid0g8tLNBIellwH9LuyLbNEUYaAsIm0ByGJ1MGP3upT0FHvEP4LPh6ZJMtgYTgO4ViitfMbtxPsCL5v6pwuKROsnlLfahAKOEugyhU3bnayrFUqCii3GMT9djjiqH2Ljh4DuUH8ULN3csnJc166JmQRmg+ajGsl3DVYAL/X3DMAw83R72m/GaTz7ZY9MBNYPsjluxuM7IuMtdHO4duEn4wjRU0aW/K0x27IvRNdFK8+ewN8t8LmXvUY7npjbNwzqbOwePQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ql0WJ2L+tEQxxWhy2vYpOoYXpfnez61YuwZ8KsEoFcU=;
- b=bXfGpgIUiLyS58WktaD3hBwz2p2Qowgg5avE51LDqbHAsGxmtTZu/yAbgU/Rk2B/EW/KnN7GmK5HJ52dseIgX+rT/QXPqWxtoc1c/VClpJOvub6O5w8wflutxk2QL0UaH9c8A3IYLrAEaZOQvoUnYAMshRBEvVz+VXkANQmVLgk=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by SJ0PR10MB5717.namprd10.prod.outlook.com (2603:10b6:a03:3ec::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Fri, 5 Sep
- 2025 15:16:59 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9094.017; Fri, 5 Sep 2025
- 15:16:59 +0000
-Date: Fri, 5 Sep 2025 11:16:56 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Yajun Deng <yajun.deng@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-        riel@surriel.com, vbabka@suse.cz, harry.yoo@oracle.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/rmap: make num_children and num_active_vmas update in
- internally
-Message-ID: <4ifsfk44so7ychuu57mkbhujjl4lh5bxt2ufdseskunxsle366@3p6oo7qulwef>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Yajun Deng <yajun.deng@linux.dev>, akpm@linux-foundation.org, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, riel@surriel.com, vbabka@suse.cz, harry.yoo@oracle.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250905132019.18915-1-yajun.deng@linux.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905132019.18915-1-yajun.deng@linux.dev>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YQBPR0101CA0243.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:66::24) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567BE31B835;
+	Fri,  5 Sep 2025 15:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757085455; cv=none; b=pzPwatmIWNKNDlV+R05zRRKSefUV6Yj+a0r5U5UfdiH5bZkOB5EIJxQEEWQS4VCz7EVPWgHF+OuAJP0UQoj+yEEOsuX08Lby8JDzDiixugfuKyQfd3pEXXWj/GSa2o5ws/kre0KBGMk/PbD95N9lwOFdc1P70iDd9xGPpqyXa7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757085455; c=relaxed/simple;
+	bh=dr+T2rwp5B5VrM1rUBLT6viu/Q1Jhzb6unLFntNx2/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezGnHePKgqwFNRccoYFNoZcEs4oCj7hVf+csIorIVOvvP/tD+mIovKRXslbLaB98/mK86sgzjHN+moqDFbL9uBh0UE3Lo6S7s8X6YsCuzOYIiXjuEZjIdEAYRujDPqsMkl5hjTMcNJkY+lDhUJXXV7ICHdB2m+4H3xy1dWBq+6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogeoxe37; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84D8C4CEF4;
+	Fri,  5 Sep 2025 15:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757085454;
+	bh=dr+T2rwp5B5VrM1rUBLT6viu/Q1Jhzb6unLFntNx2/o=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=ogeoxe37ksPcj8h2cL77V8KZpT6J9875/nOiZH8QepCfGPkYjNt4/oEh+JrcY9A7z
+	 N8GUmBWx/xFZ7LADTDAO5JNKmlzxSn+KnCpRDfdgT0T3OitF2zcX1sG3gl2zeo+6Ac
+	 UjySxmwlZ+kb8C4NrmUhr3oVsV/nngOC+NTZNgyGJs1Y9rW6b+whoMLEvD5y4DfnTB
+	 Zx3gi2SljRWd78NWlgL6BzJNH7EUwe3eaMG8HXLH/2zElwL0K0nfFojueWpIuh4u24
+	 714E5DefpgOSSuvuJpI+fsSLn6UDl4zcleFT2LH1YdVqjOhmNj7dafCIE/85utTudH
+	 z6t6IugrwJkfg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-336dc57f3f2so22264221fa.3;
+        Fri, 05 Sep 2025 08:17:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUV+jKgaBUjJyD8pylkxggLh4gAz5LdM/ngjEc883bmDH1X3D4FZRscVtu4UojzW/yC9A2dSy4NUqHy@vger.kernel.org, AJvYcCUgrNY+jE344RS/2EALE1ofqtssmBWmd0QBP9YDxWoCP76P8Hk+G+ag0kKWVNu5D8RfA3wPJ8SbwrAKIpdG@vger.kernel.org, AJvYcCWlayOM5zFXEi2e+l3PnsqLQ+zoQzeDvLXt50AEukCD6Oy5oGEjkJ6G2Qj0a8eVrMRMIs9I9HiA7aNg@vger.kernel.org
+X-Gm-Message-State: AOJu0YztXxpuJk6upK7IEytpALJDr0odqkL5Rhkvb7p54Z3aqW0Jxzwe
+	fGK5cw/19b0QssSmQ7CiTrpSMcxt2X3gI8oy+w5j60IvzWUbF2FOe9KozLp/Sbr3Yfy5QWp+QqC
+	UBZ7CjLti/w2sTLCFqkmEbKlTLJoAqqM=
+X-Google-Smtp-Source: AGHT+IHuctgvaReJVM5L6lLElO1ujTh+IJ3xit6qqIlU8KTDuhaXRGGAdYM2dar503Kj7x8VhbLVORGMlP0Lcie3F3I=
+X-Received: by 2002:a05:651c:b23:b0:337:e410:cb1d with SMTP id
+ 38308e7fff4ca-337e410ccf5mr52525011fa.43.1757085453105; Fri, 05 Sep 2025
+ 08:17:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|SJ0PR10MB5717:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13a9ffa3-c211-4394-a2f2-08ddec8f4240
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IF1tq0T2YXT7dlc7TewOTUN72ZrwhniJO3Rnb/ZCqlQ7pZ5b2SOj2PJkym8V?=
- =?us-ascii?Q?158Lh7CPwNh5507cbWTUIOKGNs40PdNGkLI7Lyj1tpFrHldSSkJ05VqbGKYW?=
- =?us-ascii?Q?gM7wJR4SA8QwCsm434u6mEOJs1x/9vfvcQZHCGldbK/SRfZvJ0Zr+6ChdoVL?=
- =?us-ascii?Q?wnLs4pMmVD8zmRDV8Uxq+nN37SCQ+/kjUep7KTYnnCf+cV64aus3Szlo9LAk?=
- =?us-ascii?Q?26UUQs9i8UgDz+FNAGxmJtIbQXLdqI/1gyp2+DOZ4aGrPPdz3AjTsoKVOUbb?=
- =?us-ascii?Q?TYzr7lFM6FU5IJFbrA60HkJ2e7Bf/wOABr5sIegVQHasW7Z6GUIjq68Z0l7r?=
- =?us-ascii?Q?KQXv696ERB0Qg4LnjCFm1DeL1ztnb0aB8pUmqsTAuv4QHncCp7xj5qWFTU+J?=
- =?us-ascii?Q?jdV5ZjQiGuYbRaxvKjTAlv7hoSCeITv182t8lXWWJetPyRhSu92Se2G0xnDS?=
- =?us-ascii?Q?DoxEvKkSaXDdAG9vtbLTX0FH59ZjTGlYP0nYvrpO+m8sLnoGa8L7LlCXXFZB?=
- =?us-ascii?Q?MNh6mjqpcTptP8og0qPOdaa9Wa55NHv9j8CsZzjrMgLN2/VE4wEbsP0G0Pyr?=
- =?us-ascii?Q?l2UEo2tvKYbIIxQj+JDNuh5B2NCGcHxgzgIgB1V2MBaVFrcthAURP8q/dtyg?=
- =?us-ascii?Q?9sPifkhB7L7x7trv+DivrZVoERtQ4Bt/ZoGDZq8VoT1mo0UgT9/w80qTKK3C?=
- =?us-ascii?Q?Ay+4xk0HfDcf2tBRQULGyXVKQS7Pvja7O5RL4AtUeVl2APbeKCEDVLlmEN0u?=
- =?us-ascii?Q?MHnSkl3r8j59xmq+Q7seE2uYvyk4nBtayXpTNWhxe2b7q/lOphpp6QVeDvrL?=
- =?us-ascii?Q?kZzWlaysvQGKEDNT8LZdg2/v5VCStP01xVOX/U4Cyg417RPTn2+rwb02SUaU?=
- =?us-ascii?Q?U/nBbgkFRBxJ0VCUwwFNnD39heTy3PgoXOg+EofYdecC5sGAkWSxQkymUzP8?=
- =?us-ascii?Q?uWbjT8QQfE41SeEmrThhvt/ifVUzgWBm0tFCRAoU91jNFyntEUNqLEKfFDy6?=
- =?us-ascii?Q?GWj7T2GwjymmLQaNU1+teQpn/sK6lEWc69kHjR7NK7hUuKOMf0cYMiRSN616?=
- =?us-ascii?Q?TtZNv7S/tPWp8U8NqXf66YScZXezsp573q/LOLgzQnm8LBasvPaLaZm0lVJ2?=
- =?us-ascii?Q?VXPQfrMUnIp1Tlqete8A3H2w9cHVAA9smDAdCgYUcO7I8QbQ/DqVEurySf4m?=
- =?us-ascii?Q?RT+MNZVq+GrMcvsA2A7KBuJ4Vz4ghuShN+WbQmJiCBKemAW+o/u3W8epInSs?=
- =?us-ascii?Q?gvNlCZ/dGAV5TtvjOouvc2k/XD80CbkNWhgr3Z/Vr+HJGIzImIcoHKytXD9r?=
- =?us-ascii?Q?rm7vdb2kuX3CMKSS96kb51JsPRLYQpcME4YoPjBu+ix8duDAHxULEoJ1YNqI?=
- =?us-ascii?Q?zmXvBqToCWhlao8+S5m3q5uTax617LAraE83MerH3gMD4ezMHQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XfyfuYNiaBMBdl7Ed0tzdcLXkIolGdoCP1K4T9JBCgdKZPaXE17KzAgOfOGj?=
- =?us-ascii?Q?2aj7RHEA4+q1BH/zS1DbJI0xhOR7NSsrreHHa9OFDV8Lsu6oNLUcLSbFN3qv?=
- =?us-ascii?Q?WVVh97zTBT4GNdJLJJ0DrDEJOC/eBd2RdUd68niuwdLrTtfqxuPyl3qphp9o?=
- =?us-ascii?Q?Pjuln8E4sKfcRz4olabyAjRcfMnIQnOIkalP4Eg3VaUZVablGTakfSUmFEVm?=
- =?us-ascii?Q?2I90oB3vz4J/Gt2mFrngBozu19pblisEcV0wXoBlIF3oXcgaWlL6vvbybVS6?=
- =?us-ascii?Q?iuS1RNLRS+190TtTQNJFX3CG2l0IxLvzRdD2ENHiFHCaklO6Nc20pifzK+dn?=
- =?us-ascii?Q?RkN9ZzpIoyEsQodoukgdb9O7XIAfOl8luCAZrEmaw040Z/J80j8QkultjCxB?=
- =?us-ascii?Q?DUSsaxntpMmCEMc+NWY2NYfFvW7q0q95+J++OmTDnrZLVxC18yX1aRUUrZzF?=
- =?us-ascii?Q?/lzualtLEuv69JBL0sWnHqsu2WuQu6dH52r5MKWfx0tOTHYTTF6aB+j5cr5t?=
- =?us-ascii?Q?Rce9XPJqjl4U1UbXlWIyCklPfqaoelsoOICbkmqOdlxW/tuQ9JZSV4hQoCTl?=
- =?us-ascii?Q?1PzlyZRmEZhxBFXaKTu0rAePkwCYMCGfT1Oe6hMX2ld65ALXHxRUMlMr/4fb?=
- =?us-ascii?Q?c8CzaqZzAcnugt1oox9ac89ysDufbM4kL9F1TOGnlZOSX52raWTCW0lkI0Wp?=
- =?us-ascii?Q?iwImSj0V02olGVzu3tt8zJ4dP7ZzS20QWAzoZ0V+PrgPJQxrJ86OYT+TCNja?=
- =?us-ascii?Q?L0h7DZz2nKLk6CL7xxjts4IUEqKlR1psAyTcrh2xFPdiG8K/RVJBU7JlISlT?=
- =?us-ascii?Q?BHr/2RY/B+0KFEl6oWNzChnylzGSzIwsVv5HfuDtfeb3MYNE5p47ULc9BQSc?=
- =?us-ascii?Q?CYrpr9vgiZQ+xQ5q+YomCW+7zbWv0mE/nthksloqy0HOssbIvNGniwJKc0JO?=
- =?us-ascii?Q?Y0oDTrJy2kRtR9w8xGUc6fr15FzXDCrZNLZ3PHFV7E8E40xeFGS+zVny4xzP?=
- =?us-ascii?Q?vQTExa7LXMsOQJoY0c+44dk1DIBEE83/dGfmef3VKGojYv0v22NYAI2KNKLm?=
- =?us-ascii?Q?x9BjA72BXxOlYEZczPjiBrNLDLMJwFVZAqtldqH/Siaf6NwyjVxAnx5zLNR6?=
- =?us-ascii?Q?y0EtzOAU1A+GxCz6L/7FKfxCJG3QYv58HwOXluqdFQK/fMDIeVaOtdKmdEmd?=
- =?us-ascii?Q?q5gqXUEVVKbrGL3km0ARJ8ox0vPqGONrjKkRnNB//QCWqQE/2c7RhAw1xiPX?=
- =?us-ascii?Q?mOzH3RzjmMm8z6cODXsw9ZfjkhO8mh8xgCXStK5Pg6RcWiAs+8IlA/zsaxMS?=
- =?us-ascii?Q?MUSc0tgS2mppLZXXJwcCMao90TEmitfb0zhEZMZiyVi4g6T8G+cXb+ZgZLM6?=
- =?us-ascii?Q?nouXhNfMjog94LIGy0vgbQ7JuvzNtwRBNyl5iwAxHUCzxzEsmCswzVdd6FpJ?=
- =?us-ascii?Q?iA/0hze1y62yVjKnH00p3NqGi0qEmig3zsskazxTWC0SRc/7SZWpovW/vbmz?=
- =?us-ascii?Q?LkbOyONQnCz3ojqPSO7lUESBMpZI7oNL0W0mkwgVQrllaewXy1y89jdBqne6?=
- =?us-ascii?Q?LrCMwPu1uvw8gIkSs/9gafjeP2lAObR5bPyZTuim?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	62Xi0+uID5vMpMhrGl+ZRPfynj+bf/dMqBzxZ0JbT5I+93RBVVITw7HflSvNsJlZDxVl2/+0PB8jo1mnaSk09ymmufPEfus3ldOBQvBTWujpeSBZ7amla6e5V8Pg37dLfEba+fwJn0UblKMteKdclkKef3hUISq1f28oAo4Okuuzn0sAvAJLJ4D9kloJrRM4oR6yVKv7DftwyQZE8vZGrK9dXTBWI9aVUgsVNNWWp7VnlvB4F8r5ey5fEQjbkuljfiOR9dUarSmEsmwuWmDndhAQElHBjrke4jwoFj8U2knl4KwLQiKNlIjdlKwuPdeSxUmMzfxNRzeWxPgBgOUZKUE9KDtP/tJySODFYXzePli0E3SV8BsOL7g5IaGatFnWYGXBGg2xz+i7zfRjnunS8jaQAji6a5jfLuFwyQHF3WwHdEUPPp/R75Cxxcd53hiYgaAqxA+bW9uYI/pbboRVjs65uI3kqzsOM40kQd8u6IQZFFCo09yqcuYQZqOdhvX7/KLmk8oVpybaQJPJvS+2puvpNR/l2HByoYHahY1f/Leg6UtFWCid2cSLgWtONZrwafkMre2HchZQMMnX97wihTgcYuF6eSp0SEkwOCorkNw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13a9ffa3-c211-4394-a2f2-08ddec8f4240
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 15:16:59.4001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6px9RUCrTf43GB7o3Sdb48Bk5VeE68nzo77MdprmqWxBGv5ACp+gWdt6UtI6QlPGrrHfpMOlrDAStaV0mJL5ZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5717
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_05,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=833 adultscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509050150
-X-Proofpoint-GUID: UVD3VfBFJnnz12cqpd3m7WhEcyuKRMjP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA1MDE1MCBTYWx0ZWRfX+2YNtQjimpv+
- H5NcThgucFbt/3B9ZS+GTv06QajpJxt69HNDoTHCF707ADJmIgM+/XS5zI8KH4QlGI8zKZZZScq
- VWWfStZdlYKWVj9wYGG9IoTMGt640gSuJofCUe4dmSHKCtMAaRTyaoR9US0sFlcxTecVvQ5Ioxk
- xEtfl8TbpT3r2vqSTuIeOfaohDbd0a6P5+iuRDNUDqvcnyZSGg16O6HBLhqt1spzvi7dFhsMwsw
- XdfdZ071LlNSK19U52fZ+hZSWjugnZC9J/M0F00IHcEqZzUhMWCa/99jSD64mBQ0DJ4unSyOruk
- FqX/KGQfqfOBgQ3vHfkCk7rbmUu4Bgz5yv2HsoaYBrk0yKxVK5dNGHtcqPlATkX2udfvk9d6o7A
- OzTyd7HG7J1NmcHbd51q6JebZL1hhw==
-X-Authority-Analysis: v=2.4 cv=X8lSKHTe c=1 sm=1 tr=0 ts=68bafef0 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=az9HnChzLeXBlw-Kcn8A:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12069
-X-Proofpoint-ORIG-GUID: UVD3VfBFJnnz12cqpd3m7WhEcyuKRMjP
+References: <20250830170901.1996227-1-wens@kernel.org> <20250830170901.1996227-4-wens@kernel.org>
+ <20250905161236.51b6ecee@donnerap>
+In-Reply-To: <20250905161236.51b6ecee@donnerap>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 5 Sep 2025 23:17:19 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65utA6PsoAS-wLPskYy9GGXfESvtiwOBC4qSdi1XvLeKQ@mail.gmail.com>
+X-Gm-Features: Ac12FXx524PiYu7fy0CjI9wjWYIIgWKZl0OQuhFEwY-L-xvtcN5IjLcA6m5m72w
+Message-ID: <CAGb2v65utA6PsoAS-wLPskYy9GGXfESvtiwOBC4qSdi1XvLeKQ@mail.gmail.com>
+Subject: Re: [PATCH 3/8] clk: sunxi-ng: mp: Fix dual-divider clock rate readback
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Yajun Deng <yajun.deng@linux.dev> [250905 09:21]:
-> If the anon_vma_alloc() is called, the num_children of the parent of
-> the anon_vma will be updated. But this operation occurs outside of
-> anon_vma_alloc().
-> 
-> The num_active_vmas are also updated outside of anon_vma.
-> 
-> Pass the parent of anon_vma to the anon_vma_alloc() and update the
-> num_children inside it.
-> 
-> Introduce anon_vma_attach() and anon_vma_detach() to update
-> num_active_vmas with the anon_vma.
-> 
-> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> ---
->  mm/rmap.c | 63 ++++++++++++++++++++++++++++---------------------------
->  1 file changed, 32 insertions(+), 31 deletions(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 34333ae3bd80..2a28edfa5734 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -86,15 +86,21 @@
->  static struct kmem_cache *anon_vma_cachep;
->  static struct kmem_cache *anon_vma_chain_cachep;
->  
-> -static inline struct anon_vma *anon_vma_alloc(void)
-> +static inline struct anon_vma *anon_vma_alloc(struct anon_vma *parent)
->  {
->  	struct anon_vma *anon_vma;
->  
->  	anon_vma = kmem_cache_alloc(anon_vma_cachep, GFP_KERNEL);
-> -	if (anon_vma) {
-> -		atomic_set(&anon_vma->refcount, 1);
-> -		anon_vma->num_children = 0;
-> -		anon_vma->num_active_vmas = 0;
-> +	if (!anon_vma)
-> +		return NULL;
-> +
-> +	atomic_set(&anon_vma->refcount, 1);
-> +	anon_vma->num_children = 0;
-> +	anon_vma->num_active_vmas = 0;
-> +	if (parent) {
-> +		anon_vma->parent = parent;
-> +		anon_vma->root = parent->root;
-> +	} else {
->  		anon_vma->parent = anon_vma;
->  		/*
->  		 * Initialise the anon_vma root to point to itself. If called
-> @@ -102,6 +108,7 @@ static inline struct anon_vma *anon_vma_alloc(void)
->  		 */
->  		anon_vma->root = anon_vma;
->  	}
-> +	anon_vma->parent->num_children++;
->  
->  	return anon_vma;
->  }
-> @@ -146,6 +153,19 @@ static void anon_vma_chain_free(struct anon_vma_chain *anon_vma_chain)
->  	kmem_cache_free(anon_vma_chain_cachep, anon_vma_chain);
->  }
->  
-> +static inline void anon_vma_attach(struct vm_area_struct *vma,
-> +				   struct anon_vma *anon_vma)
-> +{
-> +	vma->anon_vma = anon_vma;
-> +	vma->anon_vma->num_active_vmas++;
-> +}
-> +
-> +static inline void anon_vma_detach(struct vm_area_struct *vma)
-> +{
-> +	vma->anon_vma->num_active_vmas--;
-> +	vma->anon_vma = NULL;
-> +}
-> +
+On Fri, Sep 5, 2025 at 11:12=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> On Sun, 31 Aug 2025 01:08:56 +0800
+> Chen-Yu Tsai <wens@kernel.org> wrote:
+>
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > When dual-divider clock support was introduced, the P divider offset wa=
+s
+> > left out of the .recalc_rate readback function. This causes the clock
+> > rate to become bogus or even zero (possibly due to the P divider being
+> > 1, leading to a divide-by-zero).
+>
+> Ah, a nice catch, thanks for that! Just curious, how did you find this?
+> The MMC clocks use the dual divider type as well, but I didn't observe
+> them being wrong?
 
-It is a bit odd that you are setting a vma value with the prefix of
-anon_vma.  Surely there is a better name: vma_attach_anon() ?  And since
-this is editing the vma, should it be in rmap.c or vma.h?
+I was looking at clk_summary in debugfs and kept seeing some of the audio
+clocks returning 0 and dumped the register to get the actual value. I then
+did a printk trace of the .determine_rate callback and saw that one of the
+dividers was always 1. I guessed that the .recalc_rate callback was to blam=
+e.
 
->  static void anon_vma_chain_link(struct vm_area_struct *vma,
->  				struct anon_vma_chain *avc,
->  				struct anon_vma *anon_vma)
-> @@ -198,10 +218,9 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
->  	anon_vma = find_mergeable_anon_vma(vma);
->  	allocated = NULL;
->  	if (!anon_vma) {
-> -		anon_vma = anon_vma_alloc();
-> +		anon_vma = anon_vma_alloc(NULL);
+> Regardless:
+>
+> > Fix this by incorporating the P divider offset into the calculation.
+> >
+> > Fixes: 45717804b75e ("clk: sunxi-ng: mp: introduce dual-divider clock")
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-I don't love passing NULL for parent, it's two if statements to do the
-same work as before - we already know that parent is NULL by this point,
-but we call a function to check it again.
+Thanks!
 
->  		if (unlikely(!anon_vma))
->  			goto out_enomem_free_avc;
-> -		anon_vma->num_children++; /* self-parent link for new root */
->  		allocated = anon_vma;
->  	}
->  
-> @@ -209,9 +228,8 @@ int __anon_vma_prepare(struct vm_area_struct *vma)
->  	/* page_table_lock to protect against threads */
->  	spin_lock(&mm->page_table_lock);
->  	if (likely(!vma->anon_vma)) {
-> -		vma->anon_vma = anon_vma;
-> +		anon_vma_attach(vma, anon_vma);
->  		anon_vma_chain_link(vma, avc, anon_vma);
-> -		anon_vma->num_active_vmas++;
->  		allocated = NULL;
->  		avc = NULL;
->  	}
-> @@ -306,10 +324,8 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
->  		if (!dst->anon_vma && src->anon_vma &&
->  		    anon_vma->num_children < 2 &&
->  		    anon_vma->num_active_vmas == 0)
-> -			dst->anon_vma = anon_vma;
-> +			anon_vma_attach(dst, anon_vma);
->  	}
-> -	if (dst->anon_vma)
-> -		dst->anon_vma->num_active_vmas++;
->  	unlock_anon_vma_root(root);
->  	return 0;
 
-anon_vma_clone() has a goto label of enomem_failure that needs to be
-handled correctly.  Looks like you have to avoid zeroing dst before
-unlink_anon_vmas(vma) there.
-
->  
-> @@ -356,31 +372,22 @@ int anon_vma_fork(struct vm_area_struct *vma, struct vm_area_struct *pvma)
->  		return 0;
->  
->  	/* Then add our own anon_vma. */
-> -	anon_vma = anon_vma_alloc();
-> +	anon_vma = anon_vma_alloc(pvma->anon_vma);
->  	if (!anon_vma)
->  		goto out_error;
-> -	anon_vma->num_active_vmas++;
->  	avc = anon_vma_chain_alloc(GFP_KERNEL);
->  	if (!avc)
->  		goto out_error_free_anon_vma;
-
-At this point anon_vma has a parent set and the parent->num_children++,
-but vma->anon_vma != anon_vma yet.  If avc fails here, we will put the
-anon_vma but leave the parent with num_children incremented, since
-unlink_anon_vmas() will not find anything.
-
->  
-> -	/*
-> -	 * The root anon_vma's rwsem is the lock actually used when we
-> -	 * lock any of the anon_vmas in this anon_vma tree.
-> -	 */
-
-This information is lost when adding the parent passthrough.
-
-> -	anon_vma->root = pvma->anon_vma->root;
-> -	anon_vma->parent = pvma->anon_vma;
->  	/*
->  	 * With refcounts, an anon_vma can stay around longer than the
->  	 * process it belongs to. The root anon_vma needs to be pinned until
->  	 * this anon_vma is freed, because the lock lives in the root.
->  	 */
->  	get_anon_vma(anon_vma->root);
-> -	/* Mark this anon_vma as the one where our new (COWed) pages go. */
-> -	vma->anon_vma = anon_vma;
-> +	anon_vma_attach(vma, anon_vma);
-
-So now we are in the same situation, we know what we need to do with the
-parent, but we have to run through another if statement to get it to
-happen instead of assigning it.
-
->  	anon_vma_lock_write(anon_vma);
->  	anon_vma_chain_link(vma, avc, anon_vma);
-> -	anon_vma->parent->num_children++;
->  	anon_vma_unlock_write(anon_vma);
->  
->  	return 0;
-> @@ -419,15 +426,9 @@ void unlink_anon_vmas(struct vm_area_struct *vma)
->  		list_del(&avc->same_vma);
->  		anon_vma_chain_free(avc);
->  	}
-> -	if (vma->anon_vma) {
-> -		vma->anon_vma->num_active_vmas--;
-> +	if (vma->anon_vma)
-> +		anon_vma_detach(vma);
->  
-> -		/*
-> -		 * vma would still be needed after unlink, and anon_vma will be prepared
-> -		 * when handle fault.
-> -		 */
-
-It is still worth keeping the comment here too.
-
-> -		vma->anon_vma = NULL;
-> -	}
->  	unlock_anon_vma_root(root);
->  
->  	/*
-> -- 
-> 2.25.1
-> 
-> 
+> Thanks,
+> Andre
+>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu_mp.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_m=
+p.c
+> > index 354c981943b6..4221b1888b38 100644
+> > --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> > @@ -185,7 +185,7 @@ static unsigned long ccu_mp_recalc_rate(struct clk_=
+hw *hw,
+> >       p &=3D (1 << cmp->p.width) - 1;
+> >
+> >       if (cmp->common.features & CCU_FEATURE_DUAL_DIV)
+> > -             rate =3D (parent_rate / p) / m;
+> > +             rate =3D (parent_rate / (p + cmp->p.offset)) / m;
+> >       else
+> >               rate =3D (parent_rate >> p) / m;
+> >
+>
 
