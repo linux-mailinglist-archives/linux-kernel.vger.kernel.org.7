@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-802624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D8DB454C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A10B454CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F9A3AEA77
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D48A5A70B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523662C3761;
-	Fri,  5 Sep 2025 10:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F0C2C3761;
+	Fri,  5 Sep 2025 10:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cOrDJcJh"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k8IdPkbP"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C2C2628D;
-	Fri,  5 Sep 2025 10:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA0D25C81B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 10:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757068354; cv=none; b=crpylc2dBfVZeZ3tiT8wLCt0ajkj2u/qqocZHN/Wf5uTTVzyFekBwI2iMGSuJ+l689zhuSgtBLw19FttDg8Jfuc8h+AarDw/ilYqijvYSXjGFRsKfM5fVoYVbsaahjuoiibGUYN6vGeaGC4Rkn0MdI9O7raHcDqgt3O1VqAWPmk=
+	t=1757068415; cv=none; b=Ikr7Wx3vfIeri/p0P/yC66TvvhJat6Btm8lLlmockOQcwr3FFg5SDmHLECJnDsC3xKjKl+rapGOZS/9GBF/2cjX6KVrZznuruBifwiLfcHdNPwCP4j+qWK98JUlJrxlIP3tdm4qvW/WLoS6Ajyt9bG17SjJ/ULPHZtQqc7eezVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757068354; c=relaxed/simple;
-	bh=yohfxdj2aycTd3jKIyuUEtNqZk7V8m0p0Prxdk8XVSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CemnCCmchMWl27Wr4un2FK76YIGaeG3ajMHj7z3azQpyjZ87JCkhoFDlpSY1m5XySH4Rh+viRqMs9UKFDXJbEEhZt5hQ9jpY/YXJXUjQhWnH+3WKmLYj0LmOEVVtEn7shQP8xQLFHLidsjHoZ2EZFBO0l1Tz5ctrVCzblcuduK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cOrDJcJh; arc=none smtp.client-ip=91.218.175.171
+	s=arc-20240116; t=1757068415; c=relaxed/simple;
+	bh=D7YdwhW1vYvMcOjQRLMZzGjxkzyVgthdK5KrId8iQBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lO/g7SgEycKptGC26bGZA975yUFHJ87XChsDqoD4vlBXEM5Ew8Xfo4i/SkOuDEkR8Uc5ZkJAWroa3Jnx3PMsWPcPAks3VOt2OjFNTVIARsJH3wA0gAPSwtK390buArlaGEeli0vuaXLVL92jqkjqb7VBCcKknwGFGCf9IhI4/bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k8IdPkbP; arc=none smtp.client-ip=95.215.58.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757068350;
+	t=1757068409;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=eAkguRwUj6+C2dt+eyFSAKiiA8Ihkil8qDykC68qjkk=;
-	b=cOrDJcJhNo+9ClX86pZUlZEv6kLcwRc6h+ILLGxwWxTRohMHHHQE+327pGUfO8PAfsu/v5
-	blTu9NMjJMlUxDwrcUxwQyPRzHZX9ztfq0rzzVHkAv6aJWAk+NvOH+/+ErM3J30FWbG0GP
-	J8xD23gGb+vKNHjP6xvAppgaWulxCLo=
+	bh=93WUhwR/8sRIdEVQbXn2jRw424RE7/R4H5cbMH5sd+U=;
+	b=k8IdPkbPuKwiN0WQtnVQSqlrWPc0gupOr48El0oaEMvMfD5qFg9dIpDTPvqBwdRXW+TaNf
+	GhqrKAtq2q7IKzvF2uT0ArfsLLOpaA+DhFmUbMbF/YgFZGbOqmMBtcH1gZ1rvwcZH4Egfx
+	XWGc0V4zIiMDg2MUXy+cy5CZ5kE8e2o=
 From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: scsi_debug: Replace kzalloc() + copy_from_user() with memdup_user_nul()
-Date: Fri,  5 Sep 2025 12:31:45 +0200
-Message-ID: <20250905103144.423722-3-thorsten.blum@linux.dev>
+Subject: [PATCH] ibmasm: Replace kzalloc() + copy_from_user() with memdup_user_nul()
+Date: Fri,  5 Sep 2025 12:32:44 +0200
+Message-ID: <20250905103247.423840-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,37 +57,38 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
 Replace kzalloc() followed by copy_from_user() with memdup_user_nul() to
-improve and simplify sdebug_error_write().
+improve and simplify remote_settings_file_write().
 
 No functional changes intended.
 
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/scsi/scsi_debug.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/misc/ibmasm/ibmasmfs.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 353cb60e1abe..83d49c58b11d 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -1155,14 +1155,9 @@ static ssize_t sdebug_error_write(struct file *file, const char __user *ubuf,
- 	struct sdebug_err_inject *inject;
- 	struct scsi_device *sdev = (struct scsi_device *)file->f_inode->i_private;
+diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs.c
+index c44de892a61e..2d5c1df82732 100644
+--- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -525,15 +525,9 @@ static ssize_t remote_settings_file_write(struct file *file, const char __user *
+ 	if (*offset != 0)
+ 		return 0;
  
--	buf = kzalloc(count + 1, GFP_KERNEL);
--	if (!buf)
+-	buff = kzalloc (count + 1, GFP_KERNEL);
+-	if (!buff)
 -		return -ENOMEM;
 -
--	if (copy_from_user(buf, ubuf, count)) {
--		kfree(buf);
+-
+-	if (copy_from_user(buff, ubuff, count)) {
+-		kfree(buff);
 -		return -EFAULT;
 -	}
-+	buf = memdup_user_nul(ubuf, count);
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
++	buff = memdup_user_nul(ubuff, count);
++	if (IS_ERR(buff))
++		return PTR_ERR(buff);
  
- 	if (buf[0] == '-')
- 		return sdebug_err_remove(sdev, buf, count);
+ 	value = simple_strtoul(buff, NULL, 10);
+ 	writel(value, address);
 -- 
 2.51.0
 
