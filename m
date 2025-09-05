@@ -1,136 +1,198 @@
-Return-Path: <linux-kernel+bounces-802327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF86B45113
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:16:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC29B4511C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51F2A07FD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1913348116C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8650285C91;
-	Fri,  5 Sep 2025 08:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A762FF168;
+	Fri,  5 Sep 2025 08:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dW9ueFKZ"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqH1H+KC"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913C313E898
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706425C81B
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060152; cv=none; b=O68dMO6I55HQDH+l3WOD8461QKtG7hE6Nic+guT/iktsb3KslFPIbtzT8xzqKoc+HukuPCeI02a7tXFgK9SdA1tiguR5EP15lW+2WORpfSOUHY3kVfp0BScm6ezBs+rn8Ill13SCiG89GE7yDjRFEwD/5iQsWPpnAOxrhfx8ye8=
+	t=1757060209; cv=none; b=PR+P0pZR3lcjgTe0QaSfuY80CYXkBmH3KgBiXicwh/Ib58FHnE5J3zfrKtX39uxmt7potbxt5OnE18VVAWbHUyRjvv6WC0hvteoabsO1N9Z/5LJGFLRbFtzMpm56z9J3kaTUedwq4C1m5UI9LEcQx5SNUfvOLZATSfdo0y08ISw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060152; c=relaxed/simple;
-	bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
+	s=arc-20240116; t=1757060209; c=relaxed/simple;
+	bh=r34BaPjjnAxEk0pYZF1gJK7z2l/adNB3vzB+6aApLLk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euj8p42iydKRxyhe4YeE22PU9IEfkM8igW/3xzXQ4ad4ckyKa4PSRJe8DLZE+eF23LdcrglD8YUQJ0yjzCLauefH6vfPHpxFfrg74KM3IYisOW871ckPtY/NWqrqz8WmHbukmcG+GMQnjia3t6GpjegmWOREOz+DeEVwMwltBd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dW9ueFKZ; arc=none smtp.client-ip=209.85.161.52
+	 To:Cc:Content-Type; b=Z3eii5ftlMZMI+O1uDgq/IHn/qEmlEpOh+Q2BrK5k5+d97qqmkHfeSCsR6oE5RJo0AUK0V6VneAXUkWERFFm/FdfkLBTSRrC+FAktaJmOZjHJujDT1YF9Cxl9DjOcguld5Ppy3nAL72her/rB46w35Hv7ulF7ZSXd1ZvA4cEThw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VqH1H+KC; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e266ab733so1857931eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:15:50 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70dc6d81b87so485466d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:16:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757060149; x=1757664949; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757060205; x=1757665005; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
-        b=dW9ueFKZs4M7zxcPMiQ3QlFCW+75uhcRIkSOiuKiNh+ng0O3pmPG0tZsQoSrckigtA
-         195AZo6mxsI/d186cDNBwW8ZfnNGrzdJuvsuY5+MFSMLqLPIqi1yLGRacqS+ZEQiQ3Sn
-         SUW15j0XADsBxDueQm06pyf6M47NUaSzDFayW55eec4MkzhM/wJ9GcdjkF2zZ7mfDoF2
-         181mXP10Y1Pa9yZPjCogHmgAH8fc5IrdvS2RNoAvr+4rc8aCIjt9v07KngM6bwXGJzg1
-         aIlBi+hv9/xgZsjnqbDadi73eA6m7aoHdUEnmcLmh4zJZqsFcyK3m2EtehbtoGzGDwWt
-         EqTg==
+        bh=pmRMEuNmJqUQDrfbifQMhcZYMdkhFlWyXwwtuzWLPlM=;
+        b=VqH1H+KCUWU4657PsFvLhiEzB1qE8Kz5Dc0tHJuwxVRlG3AKc1tco7REkHb2AllmsU
+         GDaOX8YedV7ETQmapML4qR5fmjrv5FkeodrmTA5FLt7PGQArdFI+howebmZIuatxcZQt
+         4IoRmgG0D8pubpRF69bml6Rs6kyk8KDREK9GerWjncrSWLJwfm6RHvXpdNLeFQoMJWUL
+         nKqOwQoaBII1A0r2HBlr6MwrIfZnxs+jtTXz+x/HLdnTA2GvAo25Ucao+iDqA0XDTYtH
+         FHU/8A9qbWGX2nWFUNeBeeYYk3FAMaaRQbmfF+D5pQbsYq5BkN7bAQV66orOPlVadfSF
+         RFMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757060149; x=1757664949;
+        d=1e100.net; s=20230601; t=1757060205; x=1757665005;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zs5lBTGy/yS1ggSU34qVv6o4t9wLKCiyHdoPZSLF9sk=;
-        b=mzd9tH+FpQV+Zo7ZpN7lN0rjiE0UYQtqA8KtluG54viJEgwkAciQnAPIQ9lEWyT0VR
-         V1KbbucnRaB2YcKsGwTIoVM7OvreEVefjv7wnFVhdWESMB8WNlgTDXDal3IodkwChYDK
-         8LzK8vkzDGyIQXe1fIsrAwd4wo/Xt5q/yYRyRHrRt8hm2oYur2cVEO8rAGJfYpJH6/jg
-         XnWI24hAb+hAXz29Ga79C7//CKuq441+dgeizs+0UAPGdLkDUmiv6loh78MYhItEMx/p
-         tqrvFUhTmZsFL+hTqj95NfcQF6i+P1v4fCsZTblmOH/snzK6VSKEXCkmulRr03NM0eBV
-         damg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxiLUZExNZ5jQhNh7x+7r3KwthweQPi8ISZRm/tdhQLo4ROWyNPIrNZSnPcdX2AdTw8rtvQbs4hfhFVaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylcmA7Nm1G8uK1Efq9fvjyEulR0wsz5muLkbU3ubP2QTSgdYzy
-	gbphOKwXVCctKyGGtY4hRR+kVSc+jsPlrzCfrgAEpK0zsBbP4ga7k0Hb0fknopmHbrvIKb7mTmK
-	m9qPUFsxUUTwBzW+g0lzI5KGFZXBlDf7BBP5VmKN34A==
-X-Gm-Gg: ASbGncugSxlqaC8I5cI+1MzpPFv8IfJFEB75+KdLLFWKEFAClGF1EzLqM7kB1bNvt0q
-	au2t5DjDoWtm/R/DLe/en/0bEHOPnkH0Mzod3Skebdrfnw7a5K6geUwHLyLHcMrpc/szsu+rrIO
-	1OLNUHM6yowiA7UbKbX7X1HuUEBBQjv/V/hY+Nju7DJR0eygT4gTlCQ7C8iHX274BWXJSyFG3ez
-	a7YdDy8
-X-Google-Smtp-Source: AGHT+IHQj7XWIg+aHFhxE5wA0mBU6jl6RILB2uf8bPMyU1ck849cJn5VIU0gR4I4BwUtKnrjZoeB3FBwyczpBjhB1PU=
-X-Received: by 2002:a05:6808:6d8d:b0:438:384b:be51 with SMTP id
- 5614622812f47-439ae5b57d0mr1719731b6e.14.1757060149490; Fri, 05 Sep 2025
- 01:15:49 -0700 (PDT)
+        bh=pmRMEuNmJqUQDrfbifQMhcZYMdkhFlWyXwwtuzWLPlM=;
+        b=i04XMuWH9RDx1Tl5BSYMNq3EuAfNgTkBt74C8DIsoefOsenJFOM6GBOdvNR84Nzick
+         WnkD3uYgPzFCTXFMmB+gKF759VLByJYzVJBwGn5n96m0BjjpKFXH2Aky6N40106d4kNn
+         xrSUNKIDBWu+QZJOk4hn+VVI3MBV4zQR0pbsvYfcO/Cojb4AmIojSJEZQ4ZonYECMgdO
+         IXoDRe6ihH8hTa8Yq1ksxN871kN6Ildh5AGxavcddVvOqiALrlWdZyUZMQ35z+4g4Cuv
+         +x3UE41ohfIPjvFdIOBEMaz0QOiKWIy9F5T1MWMTLl8D6eRDP+ZinSeUf3wUC2N69VX0
+         2mog==
+X-Forwarded-Encrypted: i=1; AJvYcCVKN+n0/sqpxlcVLp5plv8l4f10oNJx6VADeDN4+Xe0TTZgkjQjgSD5qXH86xRgcKZeh3pFPtEXuxHdQvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxFR8STE2WZmbgbS7NfGilnb6MwJWf420LhickHbkB93WKI6fe
+	yXUuCPaRHgWMNsOD8ddex64KmsX1hl6GXDts9p05DyoytuGvp1mrYUpknAbIB6qtMXoo3aCYMiH
+	bKdYGwZHmYL8/4+pmKkOwjyKwLVvvRiTZ4kPtNx6DAA==
+X-Gm-Gg: ASbGncsugBmkL+oAvLlPvykE9SqF9q06KeZg8X6lsWuQnZlfwy3ZNDtZGx1FWRRzbfC
+	1WmgGAjxkujW4ZIrESDer/2QtUWaYsyMH0cqu4aNwyMxiCNb77xfCO9H3zhMnO8MZqSFvKO68Ki
+	ykpQVjg+VUsKYm/naMoaTHjiDeCl9/06kwun5Jy03clH+Tl1/Ex9wKuXiTQZiN72Tgoj/o3tyR4
+	rRfqxlNocPteH5aHAypFNtetbYSFxpdjx8IcQ==
+X-Google-Smtp-Source: AGHT+IG1/H0XgF1Z0mVwgA+Hm/3Z8WnWU7aR5gwqaxhSAw9EmueUjpEcG/rJ6rBmj73ByYwqulnJNifibNyClBj0MK0=
+X-Received: by 2002:a05:6214:4405:b0:72f:27de:9443 with SMTP id
+ 6a1803df08f44-72f27deb20bmr6495506d6.0.1757060205056; Fri, 05 Sep 2025
+ 01:16:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250904153242eucas1p12841f999bf68861f7386b0c9f3f4f60f@eucas1p1.samsung.com>
- <20250904-exynos-mct-arm32-cpuhp-regression-v1-1-5d9e4dd356ab@linaro.org> <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
-In-Reply-To: <28a9be50-2432-49b5-b10c-bf8b4f9ebd8b@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 5 Sep 2025 09:15:37 +0100
-X-Gm-Features: Ac12FXzCRgR8yHlathKqigOEKqZV5Lvkwxo4wgJo10cx69pMLAPLfx34mAd5JLQ
-Message-ID: <CADrjBPqjw82MuxctT5oxHWX7J4D0yghtO6Md8WkJHz5-6LkP3g@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/exynos_mct: only use IRQF_PERCPU flag
- on ARM64 SoCs
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Ingo Molnar <mingo@kernel.org>, Will McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	John Stultz <jstultz@google.com>, kernel-team@android.com, youngmin.nam@samsung.com, 
-	hoony.yu@samsung.com
+References: <20250905052836.work.425-kees@kernel.org>
+In-Reply-To: <20250905052836.work.425-kees@kernel.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Fri, 5 Sep 2025 10:16:33 +0200
+X-Gm-Features: Ac12FXxXBCiJZ6j6Q-_OR5jc0zqm4NYxAPnOlmCg3M0Qu-SVhJpAaiy5I8LGFng
+Message-ID: <CADYN=9Kd9w0pAMJJD1jq4RSum5+Xzk04yPZiQxi9tmEBtHPEMA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Test for bit underflow in pcie_set_readrq()
+To: Kees Cook <kees@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux Kernel Functional Testing <lkft@linaro.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek,
-
-On Thu, 4 Sept 2025 at 18:49, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+On Fri, 5 Sept 2025 at 07:28, Kees Cook <kees@kernel.org> wrote:
 >
-> On 04.09.2025 17:32, Peter Griffin wrote:
-> > This patch addresses a regression reported in [1] whereby CPU hotplug now
-> > fails on little CPUs (for reasons that aren't fully understood) for Arm
-> > 32bit platforms such as Exynos 5422 used in OdroidXU3/XU4 boards.
-> >
-> > Note: This patch makes an assumption that the exynos_mct driver is only
-> > used on Arm 32/64 bit SoCs.
-> >
-> > Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
-> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Closes: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/
-> > Link: https://lore.kernel.org/lkml/8c861182-7e90-4bbf-ac04-173d59f5af69@samsung.com/ [1]
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > Hi Marek & Krzysztof,
-> >
-> > Can you test this patch on your Exynos5422 based boards and see if it
-> > resolves the issue Marek reported of CPU hot plug failing on the little
-> > cores of Exynos 5422 based boards?
-> >
-> > Unfortunately I only have gs101 based Exynos hardware (which is Arm 64 bit
-> > SoC) to test on. I can confirm CPU hotplug is functional on the little
-> > cluster CPUs with IRQF_PERCPU flag on Pixel6/gs101 though.
+> After commit cbc654d18d37 ("bitops: Add __attribute_const__ to generic
+> ffs()-family implementations"), which allows GCC's value range tracker
+> to see past ffs(), GCC 8 on ARM thinks that it might be possible that
+> "ffs(rq) - 8" used here:
 >
-> This is a duplicate of
-> https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
+>         v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
 >
-> and yes, it fixes the reported issue.
+> could wrap below 0, leading to a very large value, which would be out of
+> range for the FIELD_PREP() usage:
 >
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> drivers/pci/pci.c: In function 'pcie_set_readrq':
+> include/linux/compiler_types.h:572:38: error: call to '__compiletime_assert_471' declared with attribute error: FIELD_PREP: value too large for the field
+> ...
+> drivers/pci/pci.c:5896:6: note: in expansion of macro 'FIELD_PREP'
+>   v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+>       ^~~~~~~~~~
+>
+> If the result of the ffs() is bounds checked before being used in
+> FIELD_PREP(), the value tracker seems happy again. :)
+>
+> Fixes: cbc654d18d37 ("bitops: Add __attribute_const__ to generic ffs()-family implementations")
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/linux-pci/CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com/
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: lkft-triage@lists.linaro.org
+> Cc: Linux Regressions <regressions@lists.linux.dev>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+> Cc: Ben Copeland <benjamin.copeland@linaro.org>
+> Cc: <lkft-triage@lists.linaro.org>
+> Cc: <linux-pci@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> ---
+>  drivers/pci/pci.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b0f4d98036cd..005b92e6585e 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5932,6 +5932,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>  {
+>         u16 v;
+>         int ret;
+> +       unsigned int firstbit;
+>         struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+>
+>         if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
+> @@ -5949,7 +5950,10 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+>                         rq = mps;
+>         }
+>
+> -       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
+> +       firstbit = ffs(rq);
+> +       if (firstbit < 8)
+> +               return -EINVAL;
+> +       v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, firstbit - 8);
 
-Sorry I hadn't noticed your patch for this. Let's go with your fix
-then as it seems more succinct.
+Hi Kees,
 
-Thanks,
+Thank you for looking into this.
 
-Peter
+These warnings are not a one time thing.  the later versions of gcc
+can figure it
+out that firstbit is at least 8 based on the "rq < 128" (i guess), so
+we're adding
+bogus code.  maybe we should just disable the check for gcc-8.
+
+Maybe something like this:
+
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 5355f8f806a9..4716025c98c7 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -65,9 +65,20 @@
+                BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
+                                 _pfx "mask is not constant");          \
+                BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+-               BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+-                                ~((_mask) >> __bf_shf(_mask)) &        \
+-                                       (0 + (_val)) : 0,               \
++               /* Value validation disabled for gcc < 9 due to
+__attribute_const__ issues.
++                */ \
++               BUILD_BUG_ON_MSG(__GNUC__ >= 9 &&
+__builtin_constant_p(_val) ?  \
++                                ~((_mask) >> __bf_shf(_mask)) &
+         \
++                                       (0 + (_val)) : 0,
+         \
+                                 _pfx "value too large for the field"); \
+                BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                                 __bf_cast_unsigned(_reg, ~0ull),       \
+
+I found similar patterns with ffs and FIELD_PREP here
+drivers/dma/uniphier-xdmac.c row 156 and 165
+drivers/gpu/drm/i915/display/intel_cursor_regs.h row 17
+
+Cheers,
+Anders
 
