@@ -1,86 +1,127 @@
-Return-Path: <linux-kernel+bounces-803561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE7BB4625D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5705EB4625F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B8FA45CF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2720A47F50
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135182737E7;
-	Fri,  5 Sep 2025 18:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA092749ED;
+	Fri,  5 Sep 2025 18:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="bdMLygMy";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="p4922yrA"
-Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKX9Ju1m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219D7273D68
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 18:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBAF17F4F6;
+	Fri,  5 Sep 2025 18:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097475; cv=none; b=OapBsLA7IzSJFX9MP2DVXR3pNWvliPI8ECq+4qfQfUMXGXpdBY3ASAOOEU3fttR3r5/WAVMkZKg0whF+qzJDv25oEYe7Elrnf0CW0P6XU92EyDsGqUhO6izRerknpWqNNRciGQ3pT4nXbZVt0NEi35djEpAgPKfFhRegLmeFCLk=
+	t=1757097487; cv=none; b=KahHWuyCwVwp4VgFaPcMR2mlIoqxXeHSAAGP7E3DKDtCMBJ10bBDUE7R7oBbtjFRoXBd8AnxolFEWqAL4Cc1GMUm56CcfMlQV2CMXX9+kBaT8uosngYyvBndVED8hh0fUiHBYr7O2g4hUqFco+7kQmyYdLgg9vTNUtPypEhOwfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097475; c=relaxed/simple;
-	bh=AmzYGcVQORtZ5c4apljZBYaDRvLCZWpZz4Bzml7Y1i0=;
+	s=arc-20240116; t=1757097487; c=relaxed/simple;
+	bh=zBznowgcA9KRpPYdFjqyySbRdKkl9xdj5USfqCcnRzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4tEZHe+Q4T56aVchiyMf96f92FmamlgnavY3XE6MZRIp2mdzVutGrCasDKZbd9sW5eMUo50HBt735CGQ2qav47Y2AfCeOdA2djvi+/gtNWfq4ClAh7/WoPuu05p7dy+l49HgH/pmlpkrnBjUGeSIERddOr2j2A3sp5js2eyYeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=bdMLygMy; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=p4922yrA; arc=none smtp.client-ip=46.30.211.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757097470; x=1757702270;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=P13HvUfB9+hmK7dH65uYyDJo/LYux5XpE6ItWJpimrM=;
-	b=bdMLygMyGMIhkCuvBp42jg3BoSRJQBpxFG3nh1NpU2ZD0+VPm+AWM99dEnv2Gs04DgceNs24HJcM8
-	 Pb578XTpbnyU0Yb2QeZo0jxW88ZrUd6rTcQZzKgXIuj+I/juagSXQ/X0SK/oAkkQsBlPAk9EumMqGp
-	 BiDQpz5Z/0ItJGT9kHUae0LZzmC1+rHCJnIEpfBVtOOpsO0wRfYlXcq1YplqqwdbVd6/3Tc/oseiq9
-	 58MLvlgUuzQNibNXGLhHoBB/tp8953pcbNNBPAGzRKgyifoX6X9gZtgvbxXNgD9wYgEdRe3nzR7fZO
-	 XeSG8ExuS5ImH5jbB2FI8SeiscUTetQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1757097470; x=1757702270;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=P13HvUfB9+hmK7dH65uYyDJo/LYux5XpE6ItWJpimrM=;
-	b=p4922yrA6E3K37M5RVLUEQq0XbmNc/8pNK/JE1XIWurFi5cWJfWi/IGXHCDPAClJVWvY17WJLAfAK
-	 3OQXywxCg==
-X-HalOne-ID: 6bb947bd-8a87-11f0-9d80-494313b7f784
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 6bb947bd-8a87-11f0-9d80-494313b7f784;
-	Fri, 05 Sep 2025 18:37:50 +0000 (UTC)
-Date: Fri, 5 Sep 2025 20:37:48 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: simona@ffwll.ch, deller@gmx.de, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] fbcon: Set rotate_font callback with related
- callbacks
-Message-ID: <20250905183748.GB360685@ravnborg.org>
-References: <20250818104655.235001-1-tzimmermann@suse.de>
- <20250818104655.235001-4-tzimmermann@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbtbhkImDdIC2Yfe9YR5IfDm6G8M+19cdzYKRoD3vO7AGbdKEVWeCR3hsCxP0ESXH1quat/z9ynE75Eg0yTv5HpY593dza+PKSupJLJBeRcBZx2Zn3W8iu2HdBfm7QQ+ld0r/jX/C6JKH4BrkeaTnOEivN1aAsDeMALzQlZpbfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKX9Ju1m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18486C4CEF1;
+	Fri,  5 Sep 2025 18:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757097487;
+	bh=zBznowgcA9KRpPYdFjqyySbRdKkl9xdj5USfqCcnRzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LKX9Ju1mWOXI6N75KfrsrKrwLfvt94Xo7Jbvycrs9IXgcAFnJc1MoWmjzHNi1e8bV
+	 b7oIiDbtVqIwoFAbp7CuQUaSqsm05FRccpW8RQGc7uBYl1iQ6/ORuE37l+zFqol7tv
+	 N3109/8CwbsVFqDjUOjdmOL+7kqMTH4eLzEgZDLlnaEosbQSwQ3zj4grFA1h9/Egd+
+	 vwKy64+AOVyk8yoWTurZAmQ8WJMj1wHeoRhO1r4v+0x4TxtPsgXpTCf2CA3cGcc9MV
+	 D/TSUGfak+q+Gn1FXUVoAlQ+Mw5uT2M4bk8z2YLK7HCfSQSvZbJA/TR8VyqSbxXxSo
+	 JU8ShV4YUxkMw==
+Date: Fri, 5 Sep 2025 19:38:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kendall Willis <k-willis@ti.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vigneshr@ti.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, d-gole@ti.com, vishalm@ti.com,
+	sebin.francis@ti.com, msp@baylibre.com, khilman@baylibre.com,
+	a-kaur@ti.com, john.ogness@linutronix.de,
+	andriy.shevchenko@linux.intel.com, yujiaoliang@vivo.com,
+	b-liu@ti.com, u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH 1/3] dt-bindings: serial: 8250_omap: Update wakeup-source
+ type property
+Message-ID: <20250905-saloon-siesta-77da98d7ae02@spud>
+References: <20250904212455.3729029-1-k-willis@ti.com>
+ <20250904212455.3729029-2-k-willis@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YBHU1HQe3eAUtz/k"
+Content-Disposition: inline
+In-Reply-To: <20250904212455.3729029-2-k-willis@ti.com>
+
+
+--YBHU1HQe3eAUtz/k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818104655.235001-4-tzimmermann@suse.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 18, 2025 at 12:36:38PM +0200, Thomas Zimmermann wrote:
-> The field struct fbcon.rotate_font points to fbcon_rotate_font() if
-> the console is rotated. Set the callback in the same place as the other
-> callbacks. Prepares for declaring all fbcon callbacks in a dedicated
-> struct type.
-> 
-> If not rotated, fbcon_set_bitops() still clears the callback to NULL.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+On Thu, Sep 04, 2025 at 04:24:53PM -0500, Kendall Willis wrote:
+> Allow the wakeup-source property to be either of type boolean or of a
+> phandle array. The phandle array points to the system idle states that the
+> UART can wakeup the system from.
+>=20
+> Signed-off-by: Kendall Willis <k-willis@ti.com>
+> ---
+>  Documentation/devicetree/bindings/serial/8250_omap.yaml | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/serial/8250_omap.yaml b/Do=
+cumentation/devicetree/bindings/serial/8250_omap.yaml
+> index 1859f71297ff2..851a5291b4be4 100644
+> --- a/Documentation/devicetree/bindings/serial/8250_omap.yaml
+> +++ b/Documentation/devicetree/bindings/serial/8250_omap.yaml
+> @@ -69,7 +69,13 @@ properties:
+>    clock-frequency: true
+>    current-speed: true
+>    overrun-throttle-ms: true
+> -  wakeup-source: true
+> +
+> +  wakeup-source:
+> +    oneOf:
+> +      - type: boolean
+> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description:
+> +          List of phandles to system idle states in which UARTs can wake=
+up the system.
+
+Is there a single other instance of the wakeup-source property being
+used like this?
+
+> =20
+>  required:
+>    - compatible
+> --=20
+> 2.34.1
+>=20
+
+--YBHU1HQe3eAUtz/k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLsuCAAKCRB4tDGHoIJi
+0sCOAP0YKRfgNPuWmw0VBD7mFYv3TWGmnWOS9WQUj1ptbhD6ygEA2tj71JTgNmGh
+//hKbMoedfGWmP9EJpLiTCdPihC7agU=
+=B5j5
+-----END PGP SIGNATURE-----
+
+--YBHU1HQe3eAUtz/k--
 
