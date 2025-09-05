@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-803495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42241B4608B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:45:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B41B46090
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114131C20286
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC6D5C267E
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096FA374298;
-	Fri,  5 Sep 2025 17:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECE37C0FE;
+	Fri,  5 Sep 2025 17:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzyi46qJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugt0Gko+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5570737428F;
-	Fri,  5 Sep 2025 17:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE4F37C0FA;
+	Fri,  5 Sep 2025 17:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757094306; cv=none; b=WAUxAYy/siq8PNBylqd3IvJ/cJQaxL6NijLq5Ivs1x/GrplDNaeU9u49k/5EJSUvS53rcSELLBbWRS5rfokx+vvcipTjY0JUViXmkvbJe7oqDllNIq5DIU2d8Jz5k5TeKADzzd/OPy99QXr4gchvQFjUcoIRV4PXPRGLnDFPmSA=
+	t=1757094307; cv=none; b=tf9/UullWtvii4nabmC+c5p84TR3vuKJ/pHs6pJa5P9sz+LhjqMQzzraKycKr/ft6VoD6jKR+S6Pm3pFMjAYgkTIcNv2uTp1byhD0B91bh24xDy+se+8k3FU3tgLsvWfeip8LOcMguaTfKBo/QLxNd8kFkQgUkKljjfAp8OtIdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757094306; c=relaxed/simple;
-	bh=IPNf+uj9SwG7V/HqvpgImlpeKFozAwz0O2IbujFna2o=;
+	s=arc-20240116; t=1757094307; c=relaxed/simple;
+	bh=qTi3deyURA+o4yjmNVEYbTqALgAHIt7cNmW+V7nDrPQ=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=jOqxKDS9R0sEhA/Jf/LJMBRQjtZcVN7+jq5ygzrNe/o7PPIRUENTQN6YoznuAhnVa7v9E3XN4EHFhJn5AAfaRAYfQkn9SEP07MptSwh6vxLIXRxLmYpDeKvBpyHZc0dyBte1MUsTPFSIteKaldhyagBOWkDf1y28Mvd3J4UQ4nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzyi46qJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BACB9C4CEF4;
-	Fri,  5 Sep 2025 17:45:05 +0000 (UTC)
+	 Message-Id:Subject; b=LatVf+pQ6UF1blrVzcEKq35MqS4S1cgJWM606GIUIczB6BjebVCNCxf2CH0O0jOvDxwW7A6+XgAv7TIFLLYFuuzO3rs5m260+pFQ9ynEzPsgx1oFj2XU5jUBqLZuGvyOxGZR5lU3kYRrn4aKuIwCMF27GYyWaMZN5JaBXOdA/QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugt0Gko+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E92DC4CEF1;
+	Fri,  5 Sep 2025 17:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757094305;
-	bh=IPNf+uj9SwG7V/HqvpgImlpeKFozAwz0O2IbujFna2o=;
+	s=k20201202; t=1757094306;
+	bh=qTi3deyURA+o4yjmNVEYbTqALgAHIt7cNmW+V7nDrPQ=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=lzyi46qJ8z8SSmnuN6eSFC8fsENvLGZKQIoz3l+oZiQ5zbEpeW87DXlg8+fL9b5m/
-	 D6ESW9bnIXtEHHE30zNZFn7OwHzHmbbh11k/5dxyaS8X4NpG93WouApo6/080orBsG
-	 8sg1Kqn8mxcCjJqoKlD+iqWTOr2Pb92pBGmtclgNav4M2zDPGeoNrCVvOgpuzLGZbr
-	 ClWh/jRUICF5GjHRSaxmSAqfP6auKs6ipL+M9ifKtlpoF1EB2wa7lbqgTDs9L0ZoA7
-	 Djc6lZKFUiHLk16YphYGbxj3ztUC1TObz/wLtgaYlXmXtJsj965Wj8wE5dHh5Nv9g1
-	 EMlzwLJWdvDVg==
-Date: Fri, 05 Sep 2025 12:45:05 -0500
+	b=Ugt0Gko+03jwdaV6Miq6KVIAwzYFR6iqsRO9o5y9GQYZfyAiaNQcZs1/cX1yj3d11
+	 iJ2l0iqV1qLbzMpFceBhP9G8pMRUpUeSHvNdlyf62QZP9Cq0BhWeI79lGZHLpgg/pX
+	 mKmBQFapHk/enEo1HFX3G9z10MfRIv7vvmZW4ff4NyihaNM6KvWvvhAjnKqdvENbdT
+	 UV1eHVeUx9Xk9W7QmNDndZ61rYa09P21sVd5c7KRNuVBI3GpFBnQw3/4uuCRLHIpqj
+	 qFfr2j+d6tY7rYEUfgs2v0FVbkPxgI9WY5+0uEJVvrzcPvh52ScV5gM9fVftVoOccw
+	 j2ZLmGPN/QHeg==
+Date: Fri, 05 Sep 2025 12:45:06 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,60 +50,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
- kernel@collabora.com, linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org
-To: Julien Massot <julien.massot@collabora.com>
-In-Reply-To: <20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com>
-References: <20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com>
-Message-Id: <175709416307.988711.14636876024281997557.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] Radxa NIO 12L: Add GPIO keys and LED support
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
+In-Reply-To: <de71cbe5db3347756d3173245d01e091d3ad1b50.1757062843.git.marcin@juszkiewicz.com.pl>
+References: <de71cbe5db3347756d3173245d01e091d3ad1b50.1757062843.git.marcin@juszkiewicz.com.pl>
+Message-Id: <175709416351.988787.3563603110895477506.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add vcc supply for SPI Flash on
+ NanoPC-T6
 
 
-On Fri, 05 Sep 2025 13:51:57 +0200, Julien Massot wrote:
-> This patchset adds support for the GPIO-connected red and blue LEDs,
-> as well as the various hardware buttons present on the Radxa NIO 12L
-> board.
+On Fri, 05 Sep 2025 11:18:59 +0200, Marcin Juszkiewicz wrote:
+> FriendlyELEC NanoPC-T6 LTS schematics shows VCC_1V8_S3 being used to
+> power SPI NOR chip.
 > 
-> It also includes a fix for the missing release (key-up) interrupt
-> handling for PMIC-managed GPIO keys.
+> This fixes the following kernel message:
 > 
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> spi-nor spi5.0: supply vcc not found, using dummy regulator
+> 
+> Signed-off-by: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
 > ---
-> Changes in v3:
-> Patch 3/3: drop the deprecated LEDs label property
-> - Link to v2: https://lore.kernel.org/r/20250826-radxa-nio-12-l-gpio-v2-0-7f18fa3fbfc8@collabora.com
-> 
-> Changes in v2:
-> PATCH 1/3
-> - Add Fixes tag
-> - Drop Angelo's Reviewed-By since I'm now introducing the
-> 'key_release_irq' member that was missing in v1.
-> - Link to v1: https://lore.kernel.org/r/20250801-radxa-nio-12-l-gpio-v1-0-d0840f85d2c8@collabora.com
-> 
-> ---
-> Julien Massot (3):
->       Input: mtk-pmic-keys - MT6359 has a specific release irq
->       arm64: dts: mediatek: mt8395-nio-12l: add PMIC and GPIO keys support
->       arm64: dts: mediatek: mt8395-nio-12l: add support for blue and red LEDs
-> 
->  .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 65 ++++++++++++++++++++++
->  drivers/input/keyboard/mtk-pmic-keys.c             |  5 +-
->  2 files changed, 69 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 6c68f4c0a147c025ae0b25fab688c7c47964a02f
-> change-id: 20250801-radxa-nio-12-l-gpio-54f208c25333
-> 
-> Best regards,
-> --
-> Julien Massot <julien.massot@collabora.com>
-> 
-> 
+>  arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 
@@ -122,15 +92,28 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit 6c68f4c0a147c025ae0b25fab688c7c47964a02f
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250904 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250905-radxa-nio-12-l-gpio-v3-0-40f11377fb55@collabora.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for de71cbe5db3347756d3173245d01e091d3ad1b50.1757062843.git.marcin@juszkiewicz.com.pl:
 
-arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dtb: gpio-leds (gpio-leds): 'rgb-blue' does not match any of the regexes: '(^led-[0-9a-f]$|led)', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+vcc-supply: size (14) error for type phandle
+vcc-supply: size (14) error for type phandle
+arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-lts.dtb: flash@0 (jedec,spi-nor): vcc-supply: 'oneOf' conditional failed, one must be fixed:
+	b'<&vcc_1v8_s3>\x00' is not of type 'object'
+	b'<&vcc_1v8_s3>\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6-lts.dtb: flash@0 (jedec,spi-nor): vcc-supply: b'<&vcc_1v8_s3>\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: flash@0 (jedec,spi-nor): vcc-supply: 'oneOf' conditional failed, one must be fixed:
+	b'<&vcc_1v8_s3>\x00' is not of type 'object'
+	b'<&vcc_1v8_s3>\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: flash@0 (jedec,spi-nor): vcc-supply: b'<&vcc_1v8_s3>\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
 
 
 
