@@ -1,231 +1,213 @@
-Return-Path: <linux-kernel+bounces-803254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45125B45CAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:35:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9034B45CAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C761F17289A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:35:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75FD04E13E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB3E2FB0AD;
-	Fri,  5 Sep 2025 15:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FD42F7ABA;
+	Fri,  5 Sep 2025 15:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIOs0MwU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i9kEhlQ5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6E288C0E;
-	Fri,  5 Sep 2025 15:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF190CA5E
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757086508; cv=none; b=IO8s2wrfhJ4FUroP9q9wi0mmavS78sb7giqMVeoA3YmjdhBvH8ZIvHM0B2pzIgAzapiYaGwIox8rpKYELG48acz8/0equ2bDjt5m54WmTXNpUqhb/aPxpJ2BZ7/y5PYdQDFZfT6NOi32VMJKA1/3PLD+kpNduAZKkOtwHmRTURg=
+	t=1757086571; cv=none; b=az1XEFPo6E4nvgSKaYA1RQSV6YTfFpUYeeNwRf/melpyviTY7UrlLvrVgqA2zQt+4HNieaIy2wPO4eOWXwERpLWzRTOeNcdA+XL2PsJbdcOLSihZXHezRdpKGIYOmK5puCJafPxLluw6VroJZDVSDWR4kGSVxzCW0qbSwn3qe0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757086508; c=relaxed/simple;
-	bh=Dd9GrN9GAAxETey0gekWGcwpoSTvYJkigJI730T+I/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPV0jWWAYr9jpmhgnB9aszkqsEnngwGaZ7f2t4d33UOgfhFDWlUSiv358ESGqHNesCp28HsMGhSBNTx4GT3NMbwcPbvjTnzlKPCtBJY5bnJb7ytfXyDMBi5AlxWn66zMVAX5DGVIVLCeeDg0qVt5XsNvJwyk8RIIlD8+ebOI1Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIOs0MwU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC64C4CEF1;
-	Fri,  5 Sep 2025 15:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757086507;
-	bh=Dd9GrN9GAAxETey0gekWGcwpoSTvYJkigJI730T+I/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CIOs0MwUE2I3vXSEEPPTN+UByCEoKcgiRiHDw6TewSKVGn4/U8x5RRsuDen7Pv75K
-	 K9i75Y8ZRfml3R3Q1JnpNWMYn34xSqNuDVLpxxgG5HxeJe23vnQtFVTNanWHk41xRo
-	 dn94M2R3O7wAFnCVyCqxqFnWmwNKCJzlhT7uNvn71z5+bXgFxeBmpxwsnmVCJVGXJ0
-	 M3vbD4qErghqHC6JQSa3SvMb/rVimU6/KS1ERkLxBMxnQBnuBxxCH6h500PlXA4ZX3
-	 MIRmtSIRaFJ8WT6T5z5f1J/+8E/HTp/rn9O2xpmyUfu+VnWWNZE96DieKtFu5xkgXi
-	 SRz6ymsmWx+Sw==
-Date: Fri, 5 Sep 2025 16:35:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <uwu@dram.page>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Junhui Liu <junhui.liu@pigmoral.tech>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
-Message-ID: <20250905153500.GH553991@horms.kernel.org>
-References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
- <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+	s=arc-20240116; t=1757086571; c=relaxed/simple;
+	bh=+HDacU3EEaVdzBWAK9nyoiF1fUnST5mquHRlsvVcQl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hmTILzlf3Nu1Ty6pFlg9WvY1fkmFE23Q1E1QerX5fx+HxfRrAf/o5Le3ISxfW29P29tdy9t0iFliX7mDLH7gzGSWa5Z8+FmHQm7YgYygJ0rHU8hwlTvG6HAxmM5Xr2YOmLfzalA0yRZG5F/hquFSD0HkrDfVhnSCCJkbBrpFz9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i9kEhlQ5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757086568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=t+1Bqq+FnslisdW0YRe0dxNCffyMt+IzohJvV6m4RhE=;
+	b=i9kEhlQ5DHrvted0g1iiAsRE8FRaFVhu7yvIi6OivByRulHAjPM983FjhuosYrUq19RDKd
+	ypx9b085jvqgUdHCgGGWMzM9Yk0flur5svVRDtodnyLypyT9990B62vRBUwOyqyx1RVkhk
+	4MpbdHcsI3+MTBxP5pu9ACnyvzctN7g=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-373-hIGyN0XJPk6ymmmE2k80gQ-1; Fri, 05 Sep 2025 11:36:05 -0400
+X-MC-Unique: hIGyN0XJPk6ymmmE2k80gQ-1
+X-Mimecast-MFC-AGG-ID: hIGyN0XJPk6ymmmE2k80gQ_1757086564
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45cb4f23156so12978345e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:36:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757086564; x=1757691364;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t+1Bqq+FnslisdW0YRe0dxNCffyMt+IzohJvV6m4RhE=;
+        b=VuYEhUNPi3/cRb8y0sjelwu9Q4n1gv0UHMzNvKkFsCjliXA1yE36gExaWDYZvGba/t
+         7btpwKTX/FjDlhvborHktCj5qQbpi29bLjWfi3fCOufngXXBhypmh4kd2cLKpBv553DQ
+         dm1KDXPvOufK3hgBgLEOHpfXUc4vh8DPJ/EvQrZcGBC9AZTNxgXE7EcENJnGdm7t+4+7
+         h9gVpVlebnX3hgKY4Bod/CgfXm5iVxkO7i3M6L3qs2yM2L1doHnTyDroF7WIofNA9qy+
+         XX2JaOOhAqvo2OBoTvU+RZKiIwZ0ZLg7jsNG4m2q8K+9CLlj1qzc88Okiz72OR+OQ2G8
+         EPoA==
+X-Gm-Message-State: AOJu0Yw+pJMknwwYappC4smfpMC6lGGgRiTCzn8l3Oq0QY0NFO2Rqh8I
+	HKXoFdRFW5mFOjLBLsZyXq23Bi6YMfDzSYGHJSHL7O8YqEaL0icK/3UvKuwXdrsf3E7tnnuM4rg
+	DXrHQpJA+ECnVXxtyAZlMl+u29OFvQzMcOTYKV+2KAgYk8EAPxpfWkfrLfQzvKjPBzw==
+X-Gm-Gg: ASbGncsFoBv3MwNO0WDvp5b+KIJEz9f+NfbLd1Phr1O3pGQl46uK7SiYYnvF1R6Gz0J
+	cVO5/exW5VoUzR+lGIE0MZuECXg9Rv1KCt8od9VJp9FpXxvccRxTP+I/K8jmq9Y9qXgDDFyWMt9
+	Bj/CMg60077Eesd+9iTYxmlVNoe63J7CmESHnr0NDG9qu10fFJujJ+wcDS7bPHuTZf5rDYRTeDy
+	c0dKBO2YVDBOb8+q5avLk3pHjcrS9bM9cF01EnUjOWomcMVfJHi5KlbUBMYbZfSIvVsJ1zyzTcE
+	0QIX9UBBOb6WTagadCFdH9/16sul3lXxHk2zvdA4DRPcXrh7tqnd51fCXeL3FYXRZSVNGHLnpz+
+	TbU1Hl5FEMG/jqiTFlxQoIXF6lKNfSNOVf5V1r5+uBNo2d6tInoIU0sTt
+X-Received: by 2002:a05:6000:2dca:b0:3e1:6a9f:38c with SMTP id ffacd0b85a97d-3e16a9f0881mr4572183f8f.49.1757086563872;
+        Fri, 05 Sep 2025 08:36:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPlMc8QhnvcGKMFuw3VSmRdAqDXHHYXYoy8CclQh9OSK0B+Zxf4DNSi509b0SGeITY1Jg8gw==
+X-Received: by 2002:a05:6000:2dca:b0:3e1:6a9f:38c with SMTP id ffacd0b85a97d-3e16a9f0881mr4572156f8f.49.1757086563428;
+        Fri, 05 Sep 2025 08:36:03 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4d:e00:298:59cc:2514:52? (p200300d82f4d0e00029859cc25140052.dip0.t-ipconnect.de. [2003:d8:2f4d:e00:298:59cc:2514:52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfcb1497sm43961335e9.1.2025.09.05.08.36.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:36:02 -0700 (PDT)
+Message-ID: <ebb2a888-a111-4c27-925e-58bfa8e07852@redhat.com>
+Date: Fri, 5 Sep 2025 17:36:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
+ max_ptes_none default
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Usama Arif <usamaarif642@gmail.com>
+References: <20250905141137.3529867-1-david@redhat.com>
+ <0cd87ad4-206c-4367-b7e8-9c1ccddc15c7@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <0cd87ad4-206c-4367-b7e8-9c1ccddc15c7@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 07:09:31PM +0800, Vivian Wang wrote:
-> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
-> that only superficially resembles some other embedded MACs. SpacemiT
-> refers to them as "EMAC", so let's just call the driver "k1_emac".
+On 05.09.25 17:30, Lorenzo Stoakes wrote:
+> On Fri, Sep 05, 2025 at 04:11:37PM +0200, David Hildenbrand wrote:
+>> We added an early exit in thp_underused(), probably to avoid scanning
+>> pages when there is no chance for success.
+>>
+>> However, assume we have max_ptes_none = 511 (default).
+>>
+>> Nothing should stop us from freeing all pages part of a THP that
 > 
-> Supports RGMII and RMII interfaces. Includes support for MAC hardware
-> statistics counters. PTP support is not implemented.
+> Freeing 'all pages which are part of a THP' rather?
+
+I'm German, I don't know what I'm doing. :D
+
 > 
-> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> is completely zero (512) and khugepaged will for sure not try to
+> 
+> that is -> that are?
 
-...
+the THP is zero?
 
-> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
+> 
+>> instantiate a THP in that case (512 shared zeropages).
+> 
+> But if you write faulted they're not the zero page? And how are they shared? I
+> mean be being dumb here.
 
-...
+The shrinker will replace zeroed pages by the shared zeropages.
 
-> +static void emac_init_hw(struct emac_priv *priv)
-> +{
-> +	/* Destination address for 802.3x Ethernet flow control */
-> +	u8 fc_dest_addr[ETH_ALEN] = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x01 };
-> +
-> +	u32 rxirq = 0, dma = 0;
-> +
-> +	regmap_set_bits(priv->regmap_apmu,
-> +			priv->regmap_apmu_offset + APMU_EMAC_CTRL_REG,
-> +			AXI_SINGLE_ID);
-> +
-> +	/* Disable transmit and receive units */
-> +	emac_wr(priv, MAC_RECEIVE_CONTROL, 0x0);
-> +	emac_wr(priv, MAC_TRANSMIT_CONTROL, 0x0);
-> +
-> +	/* Enable MAC address 1 filtering */
-> +	emac_wr(priv, MAC_ADDRESS_CONTROL, MREGBIT_MAC_ADDRESS1_ENABLE);
-> +
-> +	/* Zero initialize the multicast hash table */
-> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE1, 0x0);
-> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE2, 0x0);
-> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE3, 0x0);
-> +	emac_wr(priv, MAC_MULTICAST_HASH_TABLE4, 0x0);
-> +
-> +	/* Configure thresholds */
-> +	emac_wr(priv, MAC_TRANSMIT_FIFO_ALMOST_FULL, DEFAULT_TX_ALMOST_FULL);
-> +	emac_wr(priv, MAC_TRANSMIT_PACKET_START_THRESHOLD,
-> +		DEFAULT_TX_THRESHOLD);
-> +	emac_wr(priv, MAC_RECEIVE_PACKET_START_THRESHOLD, DEFAULT_RX_THRESHOLD);
-> +
-> +	/* Configure flow control (enabled in emac_adjust_link() later) */
-> +	emac_set_mac_addr_reg(priv, fc_dest_addr, MAC_FC_SOURCE_ADDRESS_HIGH);
-> +	emac_wr(priv, MAC_FC_PAUSE_HIGH_THRESHOLD, DEFAULT_FC_FIFO_HIGH);
-> +	emac_wr(priv, MAC_FC_HIGH_PAUSE_TIME, DEFAULT_FC_PAUSE_TIME);
-> +	emac_wr(priv, MAC_FC_PAUSE_LOW_THRESHOLD, 0);
-> +
-> +	/* RX IRQ mitigation */
-> +	rxirq = EMAC_RX_FRAMES & MREGBIT_RECEIVE_IRQ_FRAME_COUNTER_MASK;
-> +	rxirq |= (EMAC_RX_COAL_TIMEOUT
-> +		  << MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT) &
-> +		 MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_MASK;
+> 
+>>
+>> This can just trivially happen if someone writes a single 0 byte into a
+>> PMD area, or of course, when data ends up being zero later.
+>>
+>> So let's remove that early exit.
+>>
+>> Do we want to CC stable? Hm, not sure. Probably not urgent.
+> 
+> Surely this is worth having?
 
-Probably this driver can benefit from using FIELD_PREP and FIELD_GET
-in a number of places. In this case I think it would mean that
-MREGBIT_RECEIVE_IRQ_TIMEOUT_COUNTER_SHIFT can be removed entirely.
+Alrighty, let me cc stable.
 
-> +
-> +	rxirq |= MREGBIT_RECEIVE_IRQ_MITIGATION_ENABLE;
-> +	emac_wr(priv, DMA_RECEIVE_IRQ_MITIGATION_CTRL, rxirq);
+> 
+>>
+>> Note that, as default, the THP shrinker is active
+>> (/sys/kernel/mm/transparent_hugepage/shrink_underused = 1), and all
+>> THPs are added to the deferred split lists. However, with the
+>> max_ptes_none default we would never scan them. We would not do that. If
+> 
+> Nit but 'we would not do that' is kinda duplicative here :)
 
-...
+Yeah, fixed it already while rewriting: this was meant to be "would now".
 
-> +/* Returns number of packets received */
-> +static int emac_rx_clean_desc(struct emac_priv *priv, int budget)
-> +{
-> +	struct net_device *ndev = priv->ndev;
-> +	struct emac_rx_desc_buffer *rx_buf;
-> +	struct emac_desc_ring *rx_ring;
-> +	struct sk_buff *skb = NULL;
-> +	struct emac_desc *rx_desc;
-> +	u32 got = 0, skb_len, i;
-> +	int status;
-> +
-> +	rx_ring = &priv->rx_ring;
-> +
-> +	i = rx_ring->tail;
-> +
-> +	while (budget--) {
-> +		rx_desc = &((struct emac_desc *)rx_ring->desc_addr)[i];
-> +
-> +		/* Stop checking if rx_desc still owned by DMA */
-> +		if (READ_ONCE(rx_desc->desc0) & RX_DESC_0_OWN)
-> +			break;
-> +
-> +		dma_rmb();
-> +
-> +		rx_buf = &rx_ring->rx_desc_buf[i];
-> +
-> +		if (!rx_buf->skb)
-> +			break;
-> +
-> +		got++;
-> +
-> +		dma_unmap_single(&priv->pdev->dev, rx_buf->dma_addr,
-> +				 rx_buf->dma_len, DMA_FROM_DEVICE);
-> +
-> +		status = emac_rx_frame_status(priv, rx_desc);
-> +		if (unlikely(status == RX_FRAME_DISCARD)) {
-> +			ndev->stats.rx_dropped++;
 
-As per the comment in struct net-device,
-ndev->stats should not be used in modern drivers.
+Thanks!
 
-Probably you want to implement NETDEV_PCPU_STAT_TSTATS.
 
-Sorry for not mentioning this in an earlier review of
-stats in this driver.
+-- 
+Cheers
 
-> +			dev_kfree_skb_irq(rx_buf->skb);
-> +			rx_buf->skb = NULL;
-> +		} else {
-> +			skb = rx_buf->skb;
-> +			skb_len = rx_frame_len(rx_desc) - ETH_FCS_LEN;
-> +			skb_put(skb, skb_len);
-> +			skb->dev = ndev;
-> +			ndev->hard_header_len = ETH_HLEN;
-> +
-> +			skb->protocol = eth_type_trans(skb, ndev);
-> +
-> +			skb->ip_summed = CHECKSUM_NONE;
-> +
-> +			napi_gro_receive(&priv->napi, skb);
-> +
-> +			ndev->stats.rx_packets++;
-> +			ndev->stats.rx_bytes += skb_len;
-> +
-> +			memset(rx_desc, 0, sizeof(struct emac_desc));
-> +			rx_buf->skb = NULL;
-> +		}
-> +
-> +		if (++i == rx_ring->total_cnt)
-> +			i = 0;
-> +	}
-> +
-> +	rx_ring->tail = i;
-> +
-> +	emac_alloc_rx_desc_buffers(priv);
-> +
-> +	return got;
-> +}
+David / dhildenb
 
-...
 
