@@ -1,149 +1,126 @@
-Return-Path: <linux-kernel+bounces-801976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CEBB44C44
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:28:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD2AB44C5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041D35875DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6FBC3AD587
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC7E24A06A;
-	Fri,  5 Sep 2025 03:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF021ADA7;
+	Fri,  5 Sep 2025 03:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="X8ihi48I"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TKrcZdo0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF12EEBD;
-	Fri,  5 Sep 2025 03:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757042874; cv=pass; b=CuuMtugnQNtv1qqZw/UTU8rGkUnMtEXAdJIHAP/xzU2n0ylSIzOHlB8WXshpup75yjP23DgMccCuiBDHbswZs0LpVKb6oQmidAlP9ZnTI536fArZ5BWJr1ryiVRNRZUqZRpRPReT+Xe6yr7AmvPDXT59kG0nvf46DqxibhwrGcY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757042874; c=relaxed/simple;
-	bh=vfcYQ/FN9o6FE/ZXdUwR8GaKdJ3N3R19zv6RknNZVBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ckeC8zUmrJ+XsnNFItrV5UnOj035Dnhx3ZqkbFwfIAhbrrAvfJXAAvbhwaBJqJsA4+6tUCvH2scpwKbYkMFa6FPqdBuEOTsKm+ggLp8oRyj7coz448rXO5RRJePXJaPXsfF0gRDnWkI0B4esHxtO2Cs8fhIhNKn4SkXUlSwJDnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=X8ihi48I; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 5853Rhhi097613
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 5 Sep 2025 12:27:43 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id CCB5E109D5675;
-	Fri,  5 Sep 2025 12:27:42 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id J8YCdhpB346I; Fri,  5 Sep 2025 12:27:38 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id D7892109EFCDE; Fri,  5 Sep 2025 12:27:37 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757042857;
-	cv=none; b=xhmau25KID8WkN1isQ6OAcje5eV+Nf3oK5pEOKpiHH6fKG/RM2RxtFiYyNQcjPueLRoZFdhqWkhxzfDbvVXKdonX5gkESVKo1QuOwhslmoyrqm+yRKQ3xKYLjNfsxkfAD4z8lGf33heyhMi2Y21x8IIm2pvUBIWAmiZ6STYchlk=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1757042857; c=relaxed/relaxed;
-	bh=66+PbdQB6GijM0MPBjzUoqsDFZwav04yEvjAynzsHNM=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Type:Content-Transfer-Encoding; b=vjd+2ooFDZ5BmKWZT4cWgN4cmd57f9Xy06LoMpAMNi9IgI7K3VUUABmjVkEBZPiE372w5bLh8DcixSZraFUdjAjCO8r/ggC2RTZMynAkys9aAjer6sBPCAzkyel4zJbsrYizHTgjaKvgJ4Tdl8pPpH3FdKVIbFTTopUbtxKhgic=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org D7892109EFCDE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1757042857;
-	bh=66+PbdQB6GijM0MPBjzUoqsDFZwav04yEvjAynzsHNM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X8ihi48IhdHypotbGm/cos/F004+HsdK6bszWjygNrVsFyTeWcNpOlusfXaBLpzAd
-	 4h/P6Gld/tE39HW9xEWuZ5Y1l5Pw7YM13Y0mt1H9mWYzopKX88x/k1B3zcfDos7m4J
-	 S9LC3pgasMwlFcJMq8VwXJqnFklVsHqDiJPZYzPg=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, corbet@lwn.net, akiyks@gmail.com,
-        Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] docs: ja_JP: add guidance for the Fixes: tag in SubmittingPatches
-Date: Fri,  5 Sep 2025 12:27:29 +0900
-Message-ID: <20250905032729.2284883-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81111C27;
+	Fri,  5 Sep 2025 03:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757043264; cv=none; b=P13fOsaKWNbJyiOhjecRn8ji2VeWH9AVeRGN0z4hT/sPW8t1aU/A7ye53KZktJRQ+nhi4K0fuoRiUA4YpTVSS6xn+0vY6FT1CE2lP1tQ8JZ6uvGPJ+SjTYZD9hmyO8dcCEGqtKLQgDzP3yFcVeh8laPvjgtaJVd97hP37KezYUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757043264; c=relaxed/simple;
+	bh=bg9B2eeRJo3gUlWIVEoP03Qfn9/40VtBXttXUotEDb4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=We4CJTSEjVEhh9aavSS32T/3ooMJu9HjRNYomAGlfH3KQ0U5n1osNLvhd6aRU52uIeGDRiPcT77BHhZUNEKi3Cc1OJ1HOJN1XSxQeAn3navK/qMqWkoJtjxim9HhscvMYku1VlFc5Yt2TCK01R92BdWXvod4+icx8QxoE9yS3kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qti.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TKrcZdo0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qti.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 584JA1C5031806;
+	Fri, 5 Sep 2025 03:34:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JpuyT/5XEpYp3ndZ4kv1I9X8npAH/eSsVWL2KX4ktNI=; b=TKrcZdo00DSshiNA
+	0dwjXllg43qgxRjxBQRs7YSdHIkhCjGdrI+mko1XxgCHQ6Ccp4H1tlT1zOuDa/ok
+	SWD3s0y4Pqvi/42GtiaR35DmYtBYNW5JcqgjL3yu83ZjoI0idy6SNSV+RwKV8Uu6
+	Wkd+FuAGlw17Uy4nS7pIMCGo8ioPnqEHzbNB1MkmQV6PscBrJIpWBVeGzcCHoAWS
+	pzYMWrmeAD6DuksQRdGGEnnjK+H2NYmpDSVn//tA/nIC39xA3nUsXwHdyFxxHsZe
+	IAxgHcLRUuRtVcd9srb2+rHfdLKLN3N65jT/NPFQEgWcr3gotiJkqT7YpggPS+K9
+	kE91VQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw09r6n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Sep 2025 03:34:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5853YBL5012620
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 5 Sep 2025 03:34:11 GMT
+Received: from hu-panfan-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Thu, 4 Sep 2025 20:34:10 -0700
+From: panfan <panfan@qti.qualcomm.com>
+To: <mark.rutland@arm.com>
+CC: <ardb@kernel.org>, <catalin.marinas@arm.com>, <dylanbhatch@google.com>,
+        <kdong@qti.qualcomm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <mhiramat@kernel.org>, <panfan@qti.qualcomm.com>,
+        <rostedt@goodmis.org>, <samitolvanen@google.com>, <song@kernel.org>,
+        <will@kernel.org>
+Subject: Re: [PATCH v1] arm64: ftrace: fix unreachable PLT for ftrace_caller in init_module with CONFIG_DYNAMIC_FTRACE
+Date: Thu, 4 Sep 2025 20:34:00 -0700
+Message-ID: <20250905033400.3223310-1-panfan@qti.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aLnLpArhiT-mQxn9@J2N7QTR9R3>
+References: <aLnLpArhiT-mQxn9@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -nGpMRxczFvANa0QEIhaqcP3dSibql49
+X-Proofpoint-ORIG-GUID: -nGpMRxczFvANa0QEIhaqcP3dSibql49
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX5fEsYrnRho3S
+ o4Pi+LhZFvauQW2USB8/LkFfz1t4j//E3zUe1hTM9FDdUwbXsEimtRuadlPCwhx0LLqwYATsLXI
+ hTxSheKEFaDYLweuJOY1g4DqVUilKDiYr7FArQatpWag+fm8TTJ73udnY2A6I+eV0iHooJ7yQYg
+ ZvmIXziDqk7TukQE417FbaIQh6hHsP3Gd+cX4KoTl+Evi6A47NY6X0ZxWUd0p0usMZ9Rg7Ae/al
+ fEEgyxaR1C0TBImiVKN7ZGVHQWiE8vw0sHqRDdUjgxHvZz31YonS39v7oxeLznAvg//LWK+jCMq
+ G7sq+4/FjAeOO6Bf0KnKLYV0s/S12PE7X8oVU6o3a4WdxcK78e+SYV0FOHdnzOeQw2p4MF+rUWO
+ K6Bef+tm
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68ba5a34 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=1vadqSz47zZtUf88aekA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ZXulRonScM0A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_01,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
+
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The Japanese translation of SubmittingPatches was missing the section
-describing the use of the 'Fixes:' tag. This patch adds the missing
-description, aligning the translation with commit 8401aa1f5997
-("Documentation/SubmittingPatches: describe the Fixes: tag") in the
-English version.
+Hi Mark,
 
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
----
- .../translations/ja_JP/SubmittingPatches      | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Thank you for the review and ACK.
 
-diff --git a/Documentation/translations/ja_JP/SubmittingPatches b/Documenta=
-tion/translations/ja_JP/SubmittingPatches
-index 5334db471744..28ad83171252 100644
---- a/Documentation/translations/ja_JP/SubmittingPatches
-+++ b/Documentation/translations/ja_JP/SubmittingPatches
-@@ -132,6 +132,27 @@ http://savannah.nongnu.org/projects/quilt
-        platform_set_drvdata(), but left the variable "dev" unused,
-        delete it.
-=20
-+=E7=89=B9=E5=AE=9A=E3=81=AE=E3=82=B3=E3=83=9F=E3=83=83=E3=83=88=E3=81=AE=
-=E3=83=90=E3=82=B0=E3=82=92=E4=BF=AE=E6=AD=A3=E3=81=99=E3=82=8B=E3=83=91=E3=
-=83=83=E3=83=81=E3=81=AE=E5=A0=B4=E5=90=88=EF=BC=88=E4=BE=8B=EF=BC=9A``git =
-bisect``=E3=81=A7=E5=95=8F=E9=A1=8C=E3=82=92=E7=99=BA=E8=A6=8B=E3=81=97=E3=
-=81=9F=E5=A0=B4=E5=90=88=EF=BC=89=E3=80=81
-+=E5=B0=91=E3=81=AA=E3=81=8F=E3=81=A8=E3=82=82 SHA-1 ID =E3=81=AE=E6=9C=80=
-=E5=88=9D=E3=81=AE 12 =E6=96=87=E5=AD=97=E3=81=A8 1 =E8=A1=8C=E3=81=AE=E8=
-=A6=81=E7=B4=84=E3=82=92=E8=A8=98=E8=BC=89=E3=81=97=E3=81=9F=E3=80=8CFixes:=
-=E3=80=8D=E3=82=BF=E3=82=B0=E3=82=92=E4=BD=BF=E7=94=A8=E3=81=97=E3=81=A6=E3=
-=81=8F=E3=81=A0=E3=81=95=E3=81=84=E3=80=82
-+=E3=82=BF=E3=82=B0=E3=82=92=E8=A4=87=E6=95=B0=E8=A1=8C=E3=81=AB=E5=88=86=
-=E5=89=B2=E3=81=97=E3=81=AA=E3=81=84=E3=81=A7=E3=81=8F=E3=81=A0=E3=81=95=E3=
-=81=84=E3=80=82=E8=A7=A3=E6=9E=90=E3=82=B9=E3=82=AF=E3=83=AA=E3=83=97=E3=83=
-=88=E3=82=92=E7=B0=A1=E7=B4=A0=E5=8C=96=E3=81=99=E3=82=8B=E3=81=9F=E3=82=81=
-=E3=80=81=E3=82=BF=E3=82=B0=E3=81=AF
-+=E3=80=8C75 =E6=96=87=E5=AD=97=E3=81=A7=E6=8A=98=E3=82=8A=E8=BF=94=E3=81=
-=99=E3=80=8D=E3=83=AB=E3=83=BC=E3=83=AB=E3=81=8B=E3=82=89=E9=99=A4=E5=A4=96=
-=E3=81=95=E3=82=8C=E3=81=BE=E3=81=99=E3=80=82
-+
-+=E4=BE=8B:
-+
-+        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the=
- number of pages it actually freed")
-+
-+=E4=BB=A5=E4=B8=8B=E3=81=AE ``git config`` =E8=A8=AD=E5=AE=9A=E3=82=92=E4=
-=BD=BF=E7=94=A8=E3=81=99=E3=82=8B=E3=81=A8=E3=80=81``git log`` =E3=82=84 ``=
-git show`` =E3=82=B3=E3=83=9E=E3=83=B3=E3=83=89=E3=81=A7
-+=E4=B8=8A=E8=A8=98=E5=BD=A2=E5=BC=8F=E3=82=92=E5=87=BA=E5=8A=9B=E3=81=99=
-=E3=82=8B=E9=9A=9B=E3=81=AB=E3=83=97=E3=83=AA=E3=83=86=E3=82=A3=E3=83=95=E3=
-=82=A9=E3=83=BC=E3=83=9E=E3=83=83=E3=83=88=E3=82=92=E8=BF=BD=E5=8A=A0=E3=81=
-=A7=E3=81=8D=E3=81=BE=E3=81=99::
-+
-+        [core]
-+                abbrev =3D 12
-+        [pretty]
-+                fixes =3D Fixes: %h (\"%s\")
-+
-+=E5=91=BC=E3=81=B3=E5=87=BA=E3=81=97=E4=BE=8B::
-+
-+        $ git log -1 --pretty=3Dfixes 54a4f0239f2e
-+        Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the=
- number of pages it actually freed")
-=20
- 3) =E3=83=91=E3=83=83=E3=83=81=E3=81=AE=E5=88=86=E5=89=B2
-=20
---=20
-2.47.3
+I’ve addressed the comment by adding an explicit check to ensure the
+address is within MOD_INIT_TEXT or MOD_TEXT, and sent a new revision:
 
+[PATCH v2] arm64: ftrace: fix unreachable PLT for ftrace_caller in
+ init_module with CONFIG_DYNAMIC_FTRACE
+
+Link: https://lore.kernel.org/all/20250905032236.3220885-1-panfan@qti.qualcomm.com/   # v2
+
+Please let me know if anything else is needed.
+
+Best regards,
+Pan Fan
 
