@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-802330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7B3B4511E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728A2B45126
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F411C26250
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1133B560003
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C6293C42;
-	Fri,  5 Sep 2025 08:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdN+o1B+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9083425C81B;
+	Fri,  5 Sep 2025 08:19:13 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA49D13E898;
-	Fri,  5 Sep 2025 08:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36CA3002A4;
+	Fri,  5 Sep 2025 08:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757060277; cv=none; b=Y9zl3V+uLxNdV+EY+kGDRoCruw5R+vfkX/1YzoGDT0SdzF1n4H6Sp86tJ9ShGdMou1MSs//vLmVvaNyAvur9lBVETZhOUIyTcrwsaG/OAsVJ60l4vE+DvjFk1hHQPpfxx3GElDtW0nO/Z+xW/AI5OwxcxWXxXUJpY+yYwLmeVaY=
+	t=1757060353; cv=none; b=R2CwxGkToS5yHVtX8nm6K3/Cv+c0OEPI/QA5jnBF0hXE43c7JiqxAHAzuRP4Kj1JvE6lbEVbS92wmSy4kkaxPRFv8zCqXWsmMaZjPWbkw8PkkPckQD4sVSvQjiOMUzdgu2TNBdSqP5viIzDJSX2f8TtyFqtF4uDTiZcO0LN9+Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757060277; c=relaxed/simple;
-	bh=y9VH9c1nH0kxxxroJ0e7TZw+lVlM7zSLrtdSOs2uKac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XqbOLKvcM3X1RjleFu9FyRR5UPqstU+Z6004prJy10HZfiG9xEze2kNq2lBYC3wFSxh1bt2M/AOAgFGku0TyTV016XhxXojLG4X/Wx/8v8As04JLr2bQJzALJFL2krgNFujLyTH7f0q+j9t2NE0aaWYjIyjscIPTG2m6QNEi/Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdN+o1B+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3CCC4CEF1;
-	Fri,  5 Sep 2025 08:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757060276;
-	bh=y9VH9c1nH0kxxxroJ0e7TZw+lVlM7zSLrtdSOs2uKac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kdN+o1B+lV/nwhlHDkaeB/Yyd3W0xvtHeZdYOYPEDKyYqZugeXHsHO+40xiVSBf70
-	 xujWeNE4LXCe1mwMTCxqgCENABhRjZKmeLFMX1N3ti/K+Zf9QQQzhHzHYv/z8/YONx
-	 HRdLa4a9gW8ZEFqpONxapCtzryqu4zk0s85xFcgYcEtCufnzeebjkY48QnrBTO6r5o
-	 nLIhjA8qB/pKGgCEGq2bjRqNZAStEu7/lWas6JBlMZ/g914BpUgjd1JHZn1UfvsR1Y
-	 RuWjOCqnVzMwvumm/iHv+rVxGnDauY7y33sSki4G0ld+R3X61ZT8NORwDSgTUF47g/
-	 L7cazTTK/QibA==
-Date: Fri, 5 Sep 2025 10:17:51 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Hans Holmberg <Hans.Holmberg@wdc.com>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
-	Dave Chinner <david@fromorbit.com>, "Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	brauner@kernel.org
-Subject: Re: [PATCH 1/3] fs: add an enum for number of life time hints
-Message-ID: <gzj54cob33ecyfdabfbvci7nj7gl5sc2cbujpkg6qax7vgoph2@3ubnb4d2dfim>
-References: <20250901105128.14987-1-hans.holmberg@wdc.com>
- <kcwEWPeEOk9wQLfYFJ-h2ttYjtf0Wq-SjdLpIAqoJzT3jysu_U4uhYJj1RZys6tWgxVKxq833URcLKj-5faenA==@protonmail.internalid>
- <20250901105128.14987-2-hans.holmberg@wdc.com>
+	s=arc-20240116; t=1757060353; c=relaxed/simple;
+	bh=Nb9uxhklrOEqQvdTIqK88a6N93vj10RsRMXZVm/d7Vg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=busv2n9+kh+xjTIhf4A8jG67QpyTQT+p3307wtAzq4NXxxEjmGFmEf/AfkmkMS4Z+pkJADAWcTr4tFoHLXCSMpttMxxg3g+M4uM61ulITmO9Jyn8nH/iVUDbqoGDnTRbTfPyjHWP5yos4XlLyKwb4JzPN6U+k6dEjF2QPwG9u8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cJ8Ns4YD4ztTW6;
+	Fri,  5 Sep 2025 16:18:05 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA0B81800B1;
+	Fri,  5 Sep 2025 16:19:01 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 5 Sep 2025 16:19:01 +0800
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 5 Sep 2025 16:19:00 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
+	<lihuisong@huawei.com>
+Subject: [PATCH v2 0/3] ACPI: processor: Fix function declaration of processor_idle.c
+Date: Fri, 5 Sep 2025 16:18:57 +0800
+Message-ID: <20250905081900.663869-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901105128.14987-2-hans.holmberg@wdc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Mon, Sep 01, 2025 at 10:52:04AM +0000, Hans Holmberg wrote:
-> Add WRITE_LIFE_HINT_NR into the rw_hint enum to define the number of
-> values write life time hints can be set to. This is useful for e.g.
-> file systems which may want to map these values to allocation groups.
-> 
-> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+The patch 1/3 is reported by kernel test robot.
+And patch 2/3 and patch 3/3 are modified by the way.
 
-Cc'ing Chris Brauner here, as I think he is who will be picking this up.
+---
+Changelog
+ v2:
+  - split patch v1
 
-The other two can go through XFS tree.
+Huisong Li (3):
+  ACPI: processor: Fix function defined but not used warning
+  ACPI: processor: Remove unused empty function definition for
+    processor_idle.c
+  ACPI: processor: Fix acpi_processor_ffh_lpi_xxx() declaration
 
-> ---
->  include/linux/rw_hint.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-> index 309ca72f2dfb..adcc43042c90 100644
-> --- a/include/linux/rw_hint.h
-> +++ b/include/linux/rw_hint.h
-> @@ -14,6 +14,7 @@ enum rw_hint {
->  	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
->  	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
->  	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
-> +	WRITE_LIFE_HINT_NR,
->  } __packed;
-> 
->  /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
-> --
-> 2.34.1
-> 
+ include/acpi/processor.h | 35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
+
+-- 
+2.33.0
+
 
