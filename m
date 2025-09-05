@@ -1,95 +1,112 @@
-Return-Path: <linux-kernel+bounces-803770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EC3B46500
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:52:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B480AB46504
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A739416BDAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:52:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C881CC2105
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 20:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFB42E36F2;
-	Fri,  5 Sep 2025 20:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81902E285B;
+	Fri,  5 Sep 2025 20:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="xqGhZ52O"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DStwtmWh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1712701B1;
-	Fri,  5 Sep 2025 20:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A887285CB9;
+	Fri,  5 Sep 2025 20:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757105531; cv=none; b=d/ehArb5UbVjIuOErjEJ7gNbRg8Rg+r0y001T7ub/AzM8qdNEkwiORzvdl3ptR2jBQJysCogJmDN1wNHQvsZe37x+odbhgg8kCDv/7NtUb9+4EZizKux1pTJuWlzl/FJlrYG3PT0JInJBgl+sjFIY3fpUht9EiDS8E+NlWB1DE8=
+	t=1757105816; cv=none; b=K15wTx4Yd27SzYPMGNZY0mxHVVla+6j0mvyKkAMR99nFUs4V/aBKHmEbVdSXxDUpxwnm0J46AY7+BMyN08kZXJPydevr6ylDO9oc1+gr801R1apSWQW22OnQsgjrvZ9XCZf1rTiovTC8D1zWvDbHgowMgZRgegtWlrR9Tr6Ica8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757105531; c=relaxed/simple;
-	bh=MH1dvyQhbZ2LyJE/U6It+nD9aHTBaDz3j2nrAemnVVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3EofPR663cSJB14WXNAfRlj1eW8YaeMaj5CTOBN0WeW7L9ZFB4hmGC4YCNexnTooxJOKh9aU3LgcE7Rc8OQ4XkfLKoKOX0ILtB0raVYFZ/+lrz/GPkx77kNncfNdokRlvq1einQazUzh20x8WqzlLehb/zDj7EPrgfCXsubnQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=xqGhZ52O; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cJT6w6wP3zlgqVX;
-	Fri,  5 Sep 2025 20:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1757105518; x=1759697519; bh=MH1dvyQhbZ2LyJE/U6It+nD9
-	aHTBaDz3j2nrAemnVVQ=; b=xqGhZ52Oxws0e5yTr9AwYeFfTbfAr6OXhksk7Ch4
-	98kZbzstJbkX4Wijp8d8hUi4T3hGCjO0AGrDMwU+vYJb2RqySBb46ayVh0nd6UnM
-	z/kX3VYi7994z2GEFhgBeSmttJjf9iNkl3eygaQ5tI2nx2Uym7XH3EjYeLkYLnpu
-	RhRLqUKLMcPC+JPj30z+5O/ZAoNBzhRWM7H+WYQZHaeZfhO1LzE7z6miJ9+l9wJF
-	22ZPGF0CmdsM3Jiu3b4sXpr105JEM1U8zrMTQAWZIJd2fvbQqlnYi+t4oGNUFODk
-	lQfILXKcnJYmjS4B81np9Npz8ru4toSr2MB7+XcOD5xVaQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id GMK5kSaFDd5J; Fri,  5 Sep 2025 20:51:58 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cJT6P3DbwzlgqVS;
-	Fri,  5 Sep 2025 20:51:39 +0000 (UTC)
-Message-ID: <a7ad5eb2-d64c-4d45-817a-f590100ab970@acm.org>
-Date: Fri, 5 Sep 2025 13:51:38 -0700
+	s=arc-20240116; t=1757105816; c=relaxed/simple;
+	bh=+NdlnWi1jiW2LaPBnbNA3C/ANQGT3Y7PYpJ/cx4Icxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NrPbGNHWONyCWFbx5nDUhYPJVaJWWBtXkrfGtXsX5pYGjNYF+AptRB9bhJcZiRDEM6+xNU1yMwgoiOWBg0dsQ0vD7UGud7iB3LZhc2e/xB6I84yf5ZUAa7TyunFjKNz1AGbxbfWilm4X9nlvqpU0BCPM3uOACYjdQHAGva69kIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DStwtmWh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B43C4CEFB;
+	Fri,  5 Sep 2025 20:56:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757105815;
+	bh=+NdlnWi1jiW2LaPBnbNA3C/ANQGT3Y7PYpJ/cx4Icxs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DStwtmWhfG/EADn9saTkpRdlA/0Q/rsfcItMVlZOLSlVqrPP1P//UOehpUCDYhxDC
+	 VsMEpgHM26aAYtbEUeWB0GARi2AimNULv8BesWN7tX+qSfIpBodiGCM4+ow6BSkTgW
+	 So4SkE07ivu6O4cdZcnuw2TYFNhse2jkS8+n5GDdo2w1xzaLld86t3brVpUk2idsrA
+	 qNc+DF9X3dWdSGaoshd6DRdRd5shQFenoehEtfyu773JV+8KelloK459BtW6+1bafU
+	 7/fpan+TegQajqVQV1h1sR/fWD/4P1IxF6s2qO+qVMsmxnRWtxljhpmkz7XU4XIVRu
+	 w/+IHjLXEZSmw==
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-74526ca79c2so1163630a34.3;
+        Fri, 05 Sep 2025 13:56:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9CoIsUCZ2cdtryoAQqS+hXXPDUJvTXIW+b0Xy3HvRO+mxOrXweIJ5secE/Z+OXHMvUT10jbvCrKh/Tbs=@vger.kernel.org, AJvYcCW8z3L7TWf48UQ/TbCNzH7qH7obnJUdweZnbt/cGjgs9/905ycAx//XFCxwQziop8gXeR8VtVO73bA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFOqiwbla+9r8dXlj2mjJFNmeeerxhA0lcVASQlkAqIjaIAJzI
+	eiUOJTDtpj3xkpeXrmGF8+9TggPqFDoBjduJtGsFmnk+sKuRR+JEebQoL9uOtv9ZcXfYRYh+R5b
+	qiYJHD19oshwgWj6eLizG6II8dM0ATX8=
+X-Google-Smtp-Source: AGHT+IEmbtYzZnRaxFvuXlG+2hlLcxMCbzonW/f42gHadQVNSEi7W7HL6UaIY6YZexkGAOUDo49QnV6WftSq9iTrcsE=
+X-Received: by 2002:a05:6808:181d:b0:437:d885:a4d8 with SMTP id
+ 5614622812f47-43b29a3dabemr91718b6e.6.1757105815068; Fri, 05 Sep 2025
+ 13:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-6.18/block 15/16] block: fix reordered IO in the case
- recursive split
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org, yukuai3@huawei.com,
- satyat@google.com, ebiggers@google.com, kmo@daterainc.com,
- akpm@linux-foundation.org, neil@brown.name
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250905070643.2533483-1-yukuai1@huaweicloud.com>
- <20250905070643.2533483-16-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250905070643.2533483-16-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
+ <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
+ <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com> <87o6rowrsp.ffs@tglx>
+In-Reply-To: <87o6rowrsp.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 5 Sep 2025 22:56:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
+X-Gm-Features: Ac12FXwYG6vx63kgSUHoTXbXe4b5qG4C5mVZk6O6qouX_co66kEe_LbA6Z6rT80
+Message-ID: <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
+Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/5/25 12:06 AM, Yu Kuai wrote:
-> Currently, split bio will be chained to original bio, and original bio
-> will be resubmitted to the tail of current->bio_list, waiting for
-> split bio to be issued. However, if split bio get split again, the IO
-> order will be messed up. This problem, on the one hand, will cause
-> performance degradation, especially for mdraid will large IO size; on
-> the other hand, will cause write errors for zoned block devices[1].
+On Fri, Sep 5, 2025 at 10:47=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Fri, Sep 05 2025 at 15:27, Rafael J. Wysocki wrote:
+> > On Fri, Sep 5, 2025 at 3:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> >> Well, manual online can be used for onlining the secondary thread of a
+> >> core where the primary thread is offline, so this is technically
+> >> possible already.
+> >>
+> >> > Something like the completely untested below.
+> >>
+> >> So given the above, shouldn't topology_is_core_online() check if any
+> >> thread in the given core is online?
+> >
+> > Besides, this would cause the siblings of offline SMT threads to be
+> > skipped while enabling SMT via sysfs (using
+> > /sys/devices/system/cpu/smt/control), but I'm not sure if this is the
+> > expectation in the field today.  The current behavior is to online all
+> > secondary SMT threads (and more, but that part is quite arguably
+> > broken).
+>
+> It is broken, because the initial logic is to bring up primary threads
+> unconditionally and then refuse to bring up sibling threads.
+>
+> With "maxcpus=3Dxxx" this obviously limits the amount of primary threads,
+> so there is arguably no point to online any of the related secondary
+> threads of them.
+>
+> The initial implementation was naively making that assumption, but the
+> core check which was added due to PPC made this actually correct.
+>
+> It just did not snap with me back then, but it's actually the correct
+> thing to do, no?
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-
+It would at least be consistent with the existing PPC behavior. :-)
 
