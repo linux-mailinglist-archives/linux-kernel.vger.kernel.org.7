@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-803811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BCEB465AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:36:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1071CB4660A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 23:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BD5AC0615
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64E41889ADF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494702F83CD;
-	Fri,  5 Sep 2025 21:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdSx+pZx"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1E2FF66E;
+	Fri,  5 Sep 2025 21:40:08 +0000 (UTC)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2486A2F3C28
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED9B30749E
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 21:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757108126; cv=none; b=rFUjHoBxBvTovQ0l6hvtX85CK/CbXqfTN1zTOyqZnCqraCJBMCSX+RACerIGhi5laKYiUTUed2BUz0vy3NGkGbaHn0VvZZLuS9CLdtOtki3gTvLcVbnc2Wldv9Knmd3cs9TJY+oaiMs5ABy+wcxu2Heim8stHSxjTmjynJvWT2g=
+	t=1757108408; cv=none; b=aU6WwD2L7DvEHsECU4xPFE2duYJ4vcpfW2bNI7WFlTEGW29FcC9jecPldqisH9V042IqeelXm3dqlZozYxe/f8jsafM4y0lznzp9nmS4nz7Okcna9AXIZ9zd5IBAS5h+PoMfuPsI5+pQQQQvB7bdNyFQfBofYSHKv+U8KzyHYaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757108126; c=relaxed/simple;
-	bh=hEZdWRv/z7iciKhuDKF1kowxhp5PcLo5vzJehKUARp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FHSuINSlLSgiLBtq9Ginh9swq92EsNaPAnskF+zoViHdKaQu9I6h6yKwqGkkOFXYaUyUmXVsR3fitFR6n9CEeovEMLDUzKcdKho70xzXrpwdVLGl91Fz1i6A60UWAihYFhAzp+vpNls3ZrCRnxb2A4oeJrunVn96qXG/mHglT9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdSx+pZx; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3ed0be20147so26050155ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757108124; x=1757712924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hEZdWRv/z7iciKhuDKF1kowxhp5PcLo5vzJehKUARp4=;
-        b=YdSx+pZxT/JuyaGkkYUW1/W2LHqjjGxdpUjZmARWqUWTV6Wv12vRvAX3Ldz73blzvk
-         46c10sIUYHAhZ1zmayTBgqbesfdHLOgEhRuI/bazVQExyprmX+8hu5faPaN3+yJNTi8Z
-         03hvZXJSTcJsmt8IGIGOudl0pONEd6vb0hv4KAyzAqCnLYaiv1ZBUOdKmDn1ojtyPCYO
-         PobYeNbSnFQb73EtZv5WlqSe8qGP0kZE0eElJEJhaseOXj5I5d9IL9QirScEQOSZSqw3
-         KxT3KoaMq0zFhxInny5qSkQ0cUAd/C0aokJtNNOnhFXt0wQkcDMKNZb/ujh4KdgDkiXz
-         MrSw==
+	s=arc-20240116; t=1757108408; c=relaxed/simple;
+	bh=EuwPVtHyZtk0Y1lc41SsIpHNM6KNvdVwwJODJaVH/gM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pkzjmKiR9kgBsKbbrBRcMbj1xz0n3Xr+FZQYl0Wm3bSnzokEOBtlCPypBbDBzlUoGhsQ5mwhqt8Jn3UUWPTti5XJPSgj1L8WBTDcjXnbbNrNzrLPu39n40C871SHiLr1uzVPFwSxpW206PGafSC0U1p7uxEyg47kIma1Zq/zAiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2518a38e7e4so118805ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 14:40:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757108124; x=1757712924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hEZdWRv/z7iciKhuDKF1kowxhp5PcLo5vzJehKUARp4=;
-        b=qp0G3vYXErGCC5aq5ZhX9LCGJ+cbO0ouzFECBbQUfyT02/SNQnuhN0rocxidBd46l/
-         qk2FgrYfsQHYIFK9geWX/bO9eO5kx8GrtkYrVUX6WV4sECIuyAG79BA5UWpiWhGEmuni
-         oVlDfoPJHwvtJnZgfAvmVGeywDkGPMrsZkK6FYMEIRa7qjN3U3xmpJVLa4hC75kgsUgy
-         RjNApVXjX23k4k6ca8upb0jcv6hT6bc4BnL5JZqVPn4+Ijf4Dd6PZzcNpmU1gwMxyKCD
-         uuLgXzf0DRCj1eScpuqq4PIw6QsgKMcjYr++xqAq24TMWoCAfNwNwvBPnBCcpfiqt5yM
-         FCCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVc5pYLuvFFoYHgNPYaf+p9uSPLQzZ6dllvmmRgjeBHZsLJa7qVd5rCwIzy+3s8LzmCcQPF9vYUXEEGgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw17+5H1xOZ7TFDXKjKmdnaIK0HE5h0KtssVuAWYSH0AlURXSTK
-	ME3PQGfcp9CJYRK1b6TJdFd/Oj6ic2g/pMYTXUkHAjGG9tZ7eZ9mkZlTTnuGPQQ9A0qCpUiKtiv
-	LSdOekO55p3jix2T8gqZV/o55zJ3URnY=
-X-Gm-Gg: ASbGnctYIhrPkpKM4sg2K5GOtmFyI58yjICVO5iBGf8KlYZXaETddAYsB1Iz2ACzcyX
-	0IeH3Cq5dE8UrfWKXXBcdNt0M5iHjwUUm1uGkSW3xS1fvaD15btRBAzljjs8avbMi/vrYd4Q6VI
-	/Lsd9oVTKXhfQFH4S8YPoHQpyFtKNeDpthjfl1s+jz0ltskZKy0ZuDhUFAwkRGaPtSnjaye1xLe
-	r6Y0sCUTosa7LHDwqQ=
-X-Google-Smtp-Source: AGHT+IF8WVpB/g1JMlOdobaIjwrWwlXDO20YTmdhB82E33R4jbv8LdlESlw9MlPJrT6Dgk8ja2BuPEbvb3+xGqZlJy8=
-X-Received: by 2002:a05:6e02:164e:b0:3fc:d8b1:7a96 with SMTP id
- e9e14a558f8ab-3fd8e98d13cmr6645145ab.8.1757108124237; Fri, 05 Sep 2025
- 14:35:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757108406; x=1757713206;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xirptwLPscOOrD6MjERvQR7+JKo3MLBeTIYrgAFmkYE=;
+        b=GyRt6ErXhTOGaCI8CgEL2GP864mG9xRXHkKGCNErtbrz7AiFsQOJ7NKcrti29FyDGj
+         LBifCowljnWw1bw96XQvhBEOETvgiM023rpDsg7OdpFKIUjH632UBmvwoX796UWENKxf
+         WSrY1sm7PavtXGOvXe1Lo1Q/T2XkwYTG7yLs1MsWBnjWKTUDPBpXT5E7F6SxyDNRtT7f
+         STkcE/D9RLSJn5VWpk09naOQuzmkzEwP9p5RDH/ttvuLT07CQtFDkX7cvLHqCZHsGEhJ
+         2AydZjUXE5k24fy20iTjMndYbgHsvJ2CkyS3hdN/2RsWP5eZfzjKhrkmq0P4wbDMf5mr
+         /L1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwoilreJqfi5o60AtKoJwbS3BQ9Zu341xEKnLY9QTpCHCK3b5c7G+HYPPCdPdoyhgXr0E/Du5cpLvIXkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz/m7xrGBRKKD4mptRykVrnbEsOJMYa53ZEfmy5nzyP9FIMcUe
+	loc5KwiTOh1603vTH20ClSbdP/AUr+aDpP70ze39JVeOyrLx0LS+lQ+Q5xmWnhXF+kI=
+X-Gm-Gg: ASbGncsBccxUJ62cXfIZtq1zifLqxrg1KmUh4bpY985n4pfMzv6qxQ51TrYkltG75Pb
+	sfU0OhfL7N9hYp3z5b5k+SNVJj/w0nkgh6L0JqiM2AUqPnNwv4e/UrG1z1sfycVBr2EW1xDGuaI
+	v+LQvDk4ctnzgNQsWSOx0rCoC1GLmg0JF2/n3rBuLWaLPpZSz3IEWCQEGMceKGU4X2DkGLejT2f
+	VsqOLddElnrPJOYXlQLniceWIGds9reWuHypqhQqOksPqxi+i5v5YCfOjNrryiFnx4WhnRhRSHT
+	jkqJUZ5XUgS2vQObI7eWJTBfo5dlIxiQ8iZr0quDFL7UpSK10pUogxmIJcqB4y5PnJdK/SAEeX5
+	n1SDkbbN6XFxJKaANgoa5
+X-Google-Smtp-Source: AGHT+IFw9MwANXAgB0eCLMrfpT9FSIah/S2jHqgdaTFzPWLL5Scc72YKTjtxBqxKZTvx50aR9gsoUA==
+X-Received: by 2002:a17:903:1c2:b0:24c:affd:6f00 with SMTP id d9443c01a7336-24cef52790fmr57400485ad.14.1757108405639;
+        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
+Received: from localhost ([71.212.208.158])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9df827besm74488265ad.152.2025.09.05.14.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 14:40:05 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Tero Kristo
+ <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>
+Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexander Stein
+ <alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH 1/1] clk: ti: am33xx: keep WKUP_DEBUGSS_CLKCTRL enabled
+In-Reply-To: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
+References: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
+Date: Fri, 05 Sep 2025 14:40:04 -0700
+Message-ID: <7hms78a897.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829162212.208258-1-hannes@cmpxchg.org> <CAKEwX=M8ccnsOUc4_ZcFrg-8MSwDDF250=LCFKctvTrL5vJZ6g@mail.gmail.com>
- <4vpqew3bfs74kesmgd6kaafgm6nr6zbtt2t3hl2khkc6ds4zep@hllgy77hdumf>
-In-Reply-To: <4vpqew3bfs74kesmgd6kaafgm6nr6zbtt2t3hl2khkc6ds4zep@hllgy77hdumf>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 5 Sep 2025 14:35:12 -0700
-X-Gm-Features: Ac12FXz1xIEuR5P_UzNwabExfIPEV8sQerJraRtHn2GEfVW4UeX0axaUNE1zkPY
-Message-ID: <CAKEwX=P=2cm7X4VMGO==xqmcFfBj4tq_YU9DqCSbyAmCioDccg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mm: remove zpool
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Sep 5, 2025 at 12:45=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
+Alexander Stein <alexander.stein@ew.tq-group.com> writes:
+
+> From: Matthias Schiffer <matthias.schiffer@tq-group.com>
 >
-> On Fri, Sep 05, 2025 at 10:52:18AM -0700, Nhat Pham wrote:
-> > On Fri, Aug 29, 2025 at 9:22=E2=80=AFAM Johannes Weiner <hannes@cmpxchg=
-.org> wrote:
-> > >
-> > > zpool is an indirection layer for zswap to switch between multiple
-> > > allocator backends at runtime. Since 6.15, zsmalloc is the only
-> > > allocator left in-tree, so there is no point in keeping zpool around.
-> > >
-> >
-> > Taking a step back, even if we do have needs for multiple allocators
-> > for different setups, having it runtime-selectable makes no sense.
+> As described in AM335x Errata Advisory 1.0.42, WKUP_DEBUGSS_CLKCTRL
+> can't be disabled - the clock module will just be stuck in transitioning
+> state forever, resulting in the following warning message after the wait
+> loop times out:
 >
-> Honestly I think we should take it a step further and make the
-> compressor selection only at build/boot time and completely get rid of
-> supporting having multiple pools. We'd create one pool at initilization
-> and that would be it.
+>     l3-aon-clkctrl:0000:0: failed to disable
 >
-> I believe this will simplify things considerably, and I doubt changing
-> the compressor at runtime has a valid use case beyond experimentation.
+> Just add the clock to enable_init_clks, so no attempt is made to disable
+> it.
+>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-You are completely right.
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-And, even if there's a setup where we benefit from multiple
-compressors, the current setup is definitely not it. How are we
-realistically going to use these sysfs knobs? Change to one
-compressor, then quickly change it back? How is this remotely useful?
-
-Let's remove it all. In the future, if we want to do multiple
-compression tiers, or per-cgroup compression algorithm, we will need a
-completely different architecture anyway.
+> ---
+>  drivers/clk/ti/clk-33xx.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+> index 85c50ea39e6da..9269e6a0db6a4 100644
+> --- a/drivers/clk/ti/clk-33xx.c
+> +++ b/drivers/clk/ti/clk-33xx.c
+> @@ -258,6 +258,8 @@ static const char *enable_init_clks[] = {
+>  	"dpll_ddr_m2_ck",
+>  	"dpll_mpu_m2_ck",
+>  	"l3_gclk",
+> +	/* WKUP_DEBUGSS_CLKCTRL - disable fails, AM335x Errata Advisory 1.0.42 */
+> +	"l3-aon-clkctrl:0000:0",
+>  	/* AM3_L3_L3_MAIN_CLKCTRL, needed during suspend */
+>  	"l3-clkctrl:00bc:0",
+>  	"l4hs_gclk",
+> -- 
+> 2.43.0
 
