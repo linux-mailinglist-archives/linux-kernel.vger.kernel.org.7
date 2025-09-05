@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-802760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD4DB456A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E04B456A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A843B2AE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EC0A41A54
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F53469E9;
-	Fri,  5 Sep 2025 11:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714734A307;
+	Fri,  5 Sep 2025 11:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nftj2L7o"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SBnNCUSt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528893431E7;
-	Fri,  5 Sep 2025 11:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FF2343218;
+	Fri,  5 Sep 2025 11:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757072387; cv=none; b=B/ukRtqeEqCWldY7bABmUXfrcp+vnoteJRBA8HwLXOTrJMBRWTgVu/NOSvY3C/9rb5AGCkCBdaqN7TQDcIVC1lP+EnPyWIEgNn8AHgoQwQ5HFQrBgoPJdJZAxMU4vISkAZFj+Zt2vqxh4hWrge+8rZT15bLJcWm57L65DttLpGs=
+	t=1757072409; cv=none; b=TGQMi5UKmOjXWzkzK+C7wyGDtJeyfSyKn7g7dn2wI2CZpadxDzVy/W+OSibYlSDhxpO0dqm+2EqyoZDA1eqnZQ0Fm2OLavPkgkDG2lLjuVt1RfPk/uzefseLFZCo64wA860L2aZbwjNzc78uMCQxDG7eOHhZZQxjpss/rTZfcA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757072387; c=relaxed/simple;
-	bh=sA1Qa9eAFu4jKg9STm99bgdrKQUviZF2tsq0paX7kxI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CfzIIF7oCdf3KPSkeV0kAaEsrCIfc9dg2FJCEingNxht3byUd0Z0zNz5pFOLy0CfhzurXcb8aLixo3IlcxRdv8/3Zk+qc78kbBK6Q2fgo5SKu1wShtCtgwQa0fJmvajXC/Cdujc87tcFanEMWF89NdImI2tBcEq8lL6uaLv0P8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nftj2L7o; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5856lapW024267;
-	Fri, 5 Sep 2025 11:39:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=JO0ByhWMlXZgHRV2oIb9njmZj8dDlepqv38
-	U0FSCO30=; b=Nftj2L7odX9NX42BG+L6n5x4I98RLIWUQ+YtGJAJfCluZs1EIeL
-	ZIoo4PXKmtFGQyd49E1/pdtDM9D5zEwpIMOQRtub8EgdqsCruLe8k/YCwY8PKzhF
-	qkpkJcyjsIVCNQOR+xdzW+6WS959acnyVu4aZRWvOfv0UeZmWH6IXUz6WwhsT12i
-	pdVgsIEP+cx8wgq31MsG1ZF6FSqm2niiNiyuFyLlmtGWwAOho0RgHgkOP5BXQtgF
-	GzTtsMbohIEvTbUt/LDo2jCeJJvcizVEXrs5ro/pruny9RdoUJ0knWO7IGG8MbY3
-	EKgPgCoizSnpqvDr5Et9BsCw0l9qEiW1sRw==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2ftu45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 11:39:41 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 585BdcqF029947;
-	Fri, 5 Sep 2025 11:39:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48utcmfs6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 11:39:38 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 585BdcVK029937;
-	Fri, 5 Sep 2025 11:39:38 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pussin-hyd.qualcomm.com [10.147.247.182])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 585Bdbfu029934
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Sep 2025 11:39:38 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4706513)
-	id 7095253B; Fri,  5 Sep 2025 17:09:36 +0530 (+0530)
-From: Pushpendra Singh <quic_pussin@quicinc.com>
-To: quic_bjorande@quicinc.com
-Cc: andersson@kernel.org, krzysztof.kozlowski@linaro.org,
-        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rgottimu@quicinc.com,
-        Shivnandan Kumar <quic_kshivnan@quicinc.com>,
-        Pushpendra Singh <quic_pussin@quicinc.com>
-Subject: [PATCH V2] soc: qcom: icc-bwmon: Update zone1_thres_count to 3
-Date: Fri,  5 Sep 2025 17:09:23 +0530
-Message-Id: <20250905113923.3944347-1-quic_pussin@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757072409; c=relaxed/simple;
+	bh=sx2wz53gv4OIUWMCEXeNS8i0YplTPAB4OZ9qODA9qog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yq1ExSVckm+9XO1wGnhh8YtSCU0RE6YXwxsLOmgEVJUTFRt9Wv6js9XKqbWlmIglWwIGZiFJFainXr5PHbCiXMoTgTARiBnIcwsyeur0tEZ1cQWUKibk2E1E4ToI6lmQOkFwq7beu2YW6vo+ds60Lrp1wCH+VR9iF/oMVAi7osA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SBnNCUSt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757072408; x=1788608408;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sx2wz53gv4OIUWMCEXeNS8i0YplTPAB4OZ9qODA9qog=;
+  b=SBnNCUStDUL8/JU+555300KEYJqMKh87/udKHLgCPI8aYRdDCjWyf+HH
+   J/XeWcr05hfN7fZ99VbPcOW7GMdjSiv8urOg2/PuOWC7ls+yYT0rS1+Hp
+   8qMda3aFHc81hPO8FfSU2yG5bJ86J424+lzCFWpCixOJc+e8KwAkNTALv
+   cZ3T162/4IXaz39sq4e11W3VQgHh3h7zssBKWhItn/bPzx7JiWTzkBOQH
+   YPsIff6m5zRlHu+rdkAyY3HJDh1Oo6G1H6inNmssLXFF1LqzGIWe9C2U1
+   zlJ3qGyKfAy+tc1kWS/cf+5Yrn5wCmjSG4GStGxJiQeFGFuLWBicJWISE
+   Q==;
+X-CSE-ConnectionGUID: ctwFtdUfRUKCae+fE+b6gA==
+X-CSE-MsgGUID: ZlCcPbIKRliMa9oxkWWuFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11543"; a="63064752"
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="63064752"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 04:40:07 -0700
+X-CSE-ConnectionGUID: 7ivWf5SiTburyJTsZYw9/Q==
+X-CSE-MsgGUID: Mm1LtjFKRfexLBEV4Qw4+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,241,1751266800"; 
+   d="scan'208";a="171710329"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa007.fm.intel.com with SMTP; 05 Sep 2025 04:40:01 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 05 Sep 2025 14:40:00 +0300
+Date: Fri, 5 Sep 2025 14:40:00 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sven Peter <sven@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH RFC 15/22] usb: typec: tipd: Update partner identity when
+ power status was updated
+Message-ID: <aLrMEL_St_0JlZYG@kuha.fi.intel.com>
+References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
+ <20250821-atcphy-6-17-v1-15-172beda182b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfXzHII4DoBvFSn
- CV6jPfqaHDLZdrpFaT7APr1p9uu8XfcaFdLG6eshh4ePkbR1sv90v/WeIhnCgjnidaP516HP8Ww
- ++FxBGV3fSzM+ac/9BfnSU2KBrSNVhoTVnMwe4VpbJQ1V1RVcJGcXKFBmc3XOyGbxgo+wgEki4+
- l1zzXcPtf+u35CHSVAJ/Hiw5nMYoGDbzwEGUfbDqs3ofY70Xge0J1aIbdq0mxsKj+sCAtGU2aNf
- VVcxk2LiBcoipsbLx9wXWuHYjZQV0Y3QO4OpvrDoSXuQyT537s12hOzlgNSK4hpl4YGcnSHt6MO
- 859umM+wavFTEkyA9A5UnJ4YkzpJNl1H/X4rDAlJ4dzrs3Z6QAKTrRBKox5Bh9oMhdOvc/NvzvQ
- LeMtSJ2H
-X-Proofpoint-ORIG-GUID: nfseTv96nNwb-Qd6i1edfjJO_wKGC9hf
-X-Proofpoint-GUID: nfseTv96nNwb-Qd6i1edfjJO_wKGC9hf
-X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68bacbfd cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=O-FpyXNYiwpG-GJNJQQA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_03,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-atcphy-6-17-v1-15-172beda182b8@kernel.org>
 
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Hi,
 
-Update zone1_thres_count to 3 from 16 so that
-driver can reduce bus vote in 3 sample windows instead
-of waiting for 16 windows.
+On Thu, Aug 21, 2025 at 03:39:07PM +0000, Sven Peter wrote:
+> From: Hector Martin <marcan@marcan.st>
+> 
+> Whenever the power status is changed make sure to also update the
+> partner identity to be able to detect changes once de-bouncing and mode
+> changes arre added for CD321x.
 
-The 16-window (64 ms) waiting time is too long to reduce the
-bus vote. At higher FPS, there will be multiple frames in 64ms
-e.g. 4 frames at 60FPS in 64ms. Hence, delay of 64ms in decision
-making will lead to higher power regression. We tested across
-multiple usecases, and observed significant power savings.
+s/arre/are/
 
-USECASE				zone1_thres_count=16     zone1_thres_count=3
-4K video playback       236.15 mA                  203.15 mA
-Sleep					   7mA			   			6.9mA
-Display (dle display)    71.95mA			       67.11mA
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Sven Peter <sven@kernel.org>
+> ---
+>  drivers/usb/typec/tipd/core.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index e369897bfa017ca96e559a8bd70da11207d4513a..b0fdd4dddd3a490dbc2a8ced21ea0803658f36a7 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -636,9 +636,16 @@ static irqreturn_t cd321x_interrupt(int irq, void *data)
+>  	if (!tps6598x_read_status(tps, &status))
+>  		goto err_unlock;
+>  
+> -	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE)
+> +	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE) {
+>  		if (!tps6598x_read_power_status(tps))
+>  			goto err_unlock;
+> +		if (TPS_POWER_STATUS_PWROPMODE(tps->pwr_status) == TYPEC_PWR_MODE_PD) {
+> +			if (tps6598x_read_partner_identity(tps)) {
+> +				dev_err(tps->dev, "%s: failed to partner identity\n", __func__);
 
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Pushpendra Singh <quic_pussin@quicinc.com>
----
-Changes in v2:
--Update commit message
--Link to v1:https://lore.kernel.org/lkml/463eb7c8-00fc-4441-91d1-6e48f6b052c8@quicinc.com
+				dev_err(tps->dev, "failed to read partner identity\n");
 
- drivers/soc/qcom/icc-bwmon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +				tps->partner_identity = (struct usb_pd_identity) {0};
+> +			}
+> +		}
+> +	}
+>  
+>  	if (event & APPLE_CD_REG_INT_DATA_STATUS_UPDATE)
+>  		if (!tps->data->read_data_status(tps))
 
-diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-index 3dfa448bf8cf..a245a8b2cfef 100644
---- a/drivers/soc/qcom/icc-bwmon.c
-+++ b/drivers/soc/qcom/icc-bwmon.c
-@@ -827,7 +827,7 @@ static const struct icc_bwmon_data msm8998_bwmon_data = {
- static const struct icc_bwmon_data sdm845_cpu_bwmon_data = {
- 	.sample_ms = 4,
- 	.count_unit_kb = 64,
--	.zone1_thres_count = 16,
-+	.zone1_thres_count = 3,
- 	.zone3_thres_count = 1,
- 	.quirks = BWMON_HAS_GLOBAL_IRQ,
- 	.regmap_fields = sdm845_cpu_bwmon_reg_fields,
-@@ -846,7 +846,7 @@ static const struct icc_bwmon_data sdm845_llcc_bwmon_data = {
- static const struct icc_bwmon_data sc7280_llcc_bwmon_data = {
- 	.sample_ms = 4,
- 	.count_unit_kb = 64,
--	.zone1_thres_count = 16,
-+	.zone1_thres_count = 3,
- 	.zone3_thres_count = 1,
- 	.quirks = BWMON_NEEDS_FORCE_CLEAR,
- 	.regmap_fields = sdm845_llcc_bwmon_reg_fields,
+thanks,
+
 -- 
-2.34.1
-
+heikki
 
