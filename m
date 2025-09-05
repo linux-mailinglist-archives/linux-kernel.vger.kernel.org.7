@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-803326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4451AB45DAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:14:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182E1B45DC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1DE9A4638C
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:14:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5596AB63187
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B75930214B;
-	Fri,  5 Sep 2025 16:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB360306B2A;
+	Fri,  5 Sep 2025 16:13:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFC92F49E9;
-	Fri,  5 Sep 2025 16:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF27306B1D;
+	Fri,  5 Sep 2025 16:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757088830; cv=none; b=TXGFTHjrFLY7TdemhZpyTlt8ePr99c7uxWE7PX2xYdfBlSykJHUqKQOtk7y7SN5KJ3fDl7fE1ezRx4hZUi6h3yNXhKVefghd3JkOqkDwgsgBlYAYVT8Ka8ZXioXNLFkH6HBCef5z21aYxH4SYbrTcUATLyQ3pmArzBjPpbqkQ8o=
+	t=1757088839; cv=none; b=UREPym5UfmrPbnxhjdMDC8z+Gievhje4b8hN/LkNCWd+S9/5fi3BUPOMmBljKTqyJSQkzlY0h9HwE0b77dJtqc02p95BlDbGX3P9fMtL0PKoNK8ek0N3VK542L7LkvCBiYJMVw1ILtX1g3qyPiMszrrZk4eYU67TvPwoBpL0uQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757088830; c=relaxed/simple;
-	bh=7LYt8wC/dkDb1seY5kd6KKYJfmiholW07fGWmChvZDE=;
+	s=arc-20240116; t=1757088839; c=relaxed/simple;
+	bh=YdFIG94YPJs4n/3rT3ux8EbJmDGtB2Mn/Eam+IehyD4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DqoYxeYmNFUIm6AjuO2x9vuhcTPTjzUzpDLHPhB41vZDGCojSmOD5G/JizMHaI7MdpzdXm1c7gpTByZnTlZ1yEfIzFEQKgsMm4bfPMcHcBKzS8/7QTuG9O1sA+shh8s72+6HnUJ1DRi+NVI6Fi/1g1ZsaGnL0KF1W/GeXDO1lMU=
+	 MIME-Version:Content-Type; b=Yc2vWmHCmr3mvK+m4MZw5NXcAhoBnvaMA6wS3RMz/6Pntn8C6v4OS93uhCdeYBFK020Ro/DyQ6Xf0fiz8LRn+gWqJN938Dq0j4/epqIBk7zMNYAWRH4ThXgHIFOoSlh4mR5d/UZyqt2o1S6KIRbBnVIt2z/ICXN7BKblnkD6HX4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71ACC4CEF1;
-	Fri,  5 Sep 2025 16:13:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4FEC4CEF1;
+	Fri,  5 Sep 2025 16:13:56 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Joerg Roedel <jroedel@suse.de>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: will@kernel.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mark.rutland@arm.com,
+	samitolvanen@google.com,
+	song@kernel.org,
+	ardb@kernel.org,
+	dylanbhatch@google.com,
+	panfan <panfan@qti.qualcomm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Miaoqian Lin <linmq006@gmail.com>
-Cc: Will Deacon <will@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ACPI/IORT: Fix memory leak in iort_rmr_alloc_sids()
-Date: Fri,  5 Sep 2025 17:13:38 +0100
-Message-ID: <175708881848.3546185.8093132917549688443.b4-ty@arm.com>
+	linux-trace-kernel@vger.kernel.org,
+	kdong@qti.qualcomm.com,
+	haijianc@qti.qualcomm.com
+Subject: Re: [PATCH v2] arm64: ftrace: fix unreachable PLT for ftrace_caller in init_module with CONFIG_DYNAMIC_FTRACE
+Date: Fri,  5 Sep 2025 17:13:50 +0100
+Message-ID: <175708881849.3546185.8607701618216308416.b4-ty@arm.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250828112243.61460-1-linmq006@gmail.com>
-References: <20250828112243.61460-1-linmq006@gmail.com>
+In-Reply-To: <20250905032236.3220885-1-panfan@qti.qualcomm.com>
+References: <20250905032236.3220885-1-panfan@qti.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,18 +58,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 28 Aug 2025 19:22:43 +0800, Miaoqian Lin wrote:
-> If krealloc_array() fails in iort_rmr_alloc_sids(), the function returns
-> NULL but does not free the original 'sids' allocation. This results in a
-> memory leak since the caller overwrites the original pointer with the
-> NULL return value.
+On Thu, 04 Sep 2025 20:22:36 -0700, panfan wrote:
+> On arm64, it has been possible for a module's sections to be placed more
+> than 128M away from each other since commit:
 > 
+>   commit 3e35d303ab7d ("arm64: module: rework module VA range selection")
 > 
+> Due to this, an ftrace callsite in a module's .init.text section can be
+> out of branch range for the module's ftrace PLT entry (in the module's
+> .text section). Any attempt to enable tracing of that callsite will
+> result in a BRK being patched into the callsite, resulting in a fatal
+> exception when the callsite is later executed.
+> 
+> [...]
 
 Applied to arm64 (for-next/fixes), thanks!
 
-[1/1] ACPI/IORT: Fix memory leak in iort_rmr_alloc_sids()
-      https://git.kernel.org/arm64/c/f3ef7110924b
+[1/1] arm64: ftrace: fix unreachable PLT for ftrace_caller in init_module with CONFIG_DYNAMIC_FTRACE
+      https://git.kernel.org/arm64/c/a7ed7b9d0ebb
 
 -- 
 Catalin
