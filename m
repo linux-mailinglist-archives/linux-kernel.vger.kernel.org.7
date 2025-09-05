@@ -1,164 +1,335 @@
-Return-Path: <linux-kernel+bounces-803359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A16B45E0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36AE4B45E1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 18:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B7634E3D62
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441055C7995
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 16:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F399423D7F8;
-	Fri,  5 Sep 2025 16:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18585306B1F;
+	Fri,  5 Sep 2025 16:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eRAq79L7"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k7Zmm/l4"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6217830215C
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 16:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7C431D750;
+	Fri,  5 Sep 2025 16:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757089511; cv=none; b=uyPT0XPDVEQvO+QPjKpaw/uUiiITKQne8wX7USSZUQ/No0pXfiCwDjiPUGf1RZN1XNcI/ekp/BenOZro4L0ZskESwdzv0U9XkWty9LG7ymQibdJNr5PyJBZF1L/KUCGIf97au4qyy3mCny08y8Yw1yphTrjP7oIdLAb3LxxKnJw=
+	t=1757089624; cv=none; b=of+rAsW2WGMSCgokaWDXa/0tra2s/UCFKLzWzFxzTX+ObwoVJrLSLYFSlMUgwfG4ksaHLXZH/6Vb7eWXznwd5X+DDb5+e2guIHYX8f2igjQ9XQ9nx4h5+gLfE4A6z2MnyMrsu9RTn8jBxpjC6zijSNRdKYQkPKHug2WaFKEM4FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757089511; c=relaxed/simple;
-	bh=guIcHIKYeFDX9C4HN1q3ElT4g6Ed4YixRaeM6K0q/jg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CrVyJA8terkRxZkh/UZfuRiqHCfzRY4ochmXc8zAa31XJfikEDXhF2fuOBRrgEXioRMU7tUu8mIx/UeikWrRCofc+bP1YtHggvNr7ihcnDlxf2Zm396TJbaUMbasinrKqJwWKq6VRUgB8zvI7lngAXPBFYpWvoSes88KmlCQWf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eRAq79L7; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3dc3f943e6eso1517893f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 09:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757089508; x=1757694308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdHOLLqwx7tJvI93Mas6xLDQ23Ec8f9ZA36n15YArp4=;
-        b=eRAq79L7IdKxIQ0U5MWTvvq1wEVbWiyEJO9pnkSgrHFQlJnCFNZDXh6G/5udLVndS9
-         hZQjGvjD95LloAlmYscmLALZG16dwQJCJmxKG0LSL2mwLGTXL6Qsgh4xKKwKTCXYTFG6
-         AkLSTDP0BThkHLEy498+Onhtj+HGj6odz5eYl61PV++Q3y+5bvqUo9XXM9ZIq0ZLQE5f
-         LybZ0vIu1+HTPSxDlS/3gJfrFXaaiStlKmizdh08D0b3faNgh31x8PimgMSY0OwIXnNf
-         KKpEy88Vhsu/B2jI7mYirANleouWssbHAcs4Jf7qjEYQFyEuyZxj94rAQ16d0b+kxT+U
-         voSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757089508; x=1757694308;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RdHOLLqwx7tJvI93Mas6xLDQ23Ec8f9ZA36n15YArp4=;
-        b=e/8W6KZCk+KVoB57CHBEGKxIzcDvTz5E4wHbbK0Hytifmy04SOvUQfXD4ArRDY4m6G
-         tzjL4ObbQKZV8VV1opTfce1NtvO2V/cJ5uqGVMKhM++iaDDf8hVHGpA/XqiS9W2wBju6
-         ovgFOyKaRh8eHMYX2dEDcCZUUm4X8reGNDOegyxPiEdrRPknP31hgnz9VOT/g2d06iVg
-         WmAPP95jqqF2JZL4HfqyGdSx9tAYTvzf5oLqrRxY++4w5T5i0kHJj/ytb620eoYz6emN
-         fqU8AjYCPAVwaW2lxHX5a8nZVr9MA8R5Ls+yb3KZNYiqRSDer1Hn4ihYhzgcASYtazt2
-         zVuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhckeopuX5JglA2zUafrqDOmMiYFmtWwEjdbY/UfFRn330clmUeCM8mKOEP2AVfXrpmgSgM3DxUpwPy40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBQwcrZJksKvCOSUPLpgKIMKAeV2EueB1gpj3LSkU4D8afYS9H
-	isXN6Y2qN0p4OGKztPg5dE3Zhg2842ohiH6RskA1lS+vbtMHvblGegg6Y9Dj049Tcu8vArVJeb9
-	pkyj/uA3CksmQrg==
-X-Google-Smtp-Source: AGHT+IFCF8RSEKc2M561aTeMp6Eg3cFM8Srz5/Q2pYIUE/bN9+Udlr5Snzmc+NupcbxxSPDUPWNVnLF2ct7JsA==
-X-Received: from wmbhg14.prod.google.com ([2002:a05:600c:538e:b0:45c:b52d:d2ee])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:4284:b0:3e0:152a:87b8 with SMTP id ffacd0b85a97d-3e0152a89b4mr5750276f8f.8.1757089507832;
- Fri, 05 Sep 2025 09:25:07 -0700 (PDT)
-Date: Fri,  5 Sep 2025 16:24:46 +0000
+	s=arc-20240116; t=1757089624; c=relaxed/simple;
+	bh=s23bDGi9zDAcfRynDwckaABDv2nJ6dzjUpVRzy1+VsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=M/1pohWvCWFm0/3qVfs2hQdVuZQGNoK+GHh4W3iR0Dk8rSk/4Dw3VKjz/n/sAZf3njEvR84MaPG6tnPn6dIud4lZ+i9SH99lZVryeepfezP+qV6Dutxs8NuUnj+5QrfMr+C6ma0AVxqSBdYXH0vHwnQqhCoJ+RucEuOPN++f6F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k7Zmm/l4; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250905162659euoutp0209439914e512e98f87c7003f3b7cb2ad~ib7L2Tvq02121121211euoutp02j;
+	Fri,  5 Sep 2025 16:26:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250905162659euoutp0209439914e512e98f87c7003f3b7cb2ad~ib7L2Tvq02121121211euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757089619;
+	bh=JratdkJhfp1iQGSSFRxxu72lgWMqyE2NX54DSFPZHRY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=k7Zmm/l4ml+LB1qItvZOEqZY+Sox4+FPDDVEoRVLzx1Wvrm8UN4/WmasRnz/XdrC4
+	 Uz3NPTnr8v6KtMSyeOqg/plUlqcNjUQLJ68wa1aVQkIC0f+6gNInm3vAulUU4bbtBs
+	 bFH/HZYMbbkZGGDU62q/7lnZ1i5322h/6rAkdcfU=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250905162658eucas1p1a568426150516afc440f0b45dae6597c~ib7LZwBNr2591525915eucas1p15;
+	Fri,  5 Sep 2025 16:26:58 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250905162656eusmtip2af2311515d499a88f1b631068b965d1d~ib7JPIWTy2564625646eusmtip2E;
+	Fri,  5 Sep 2025 16:26:56 +0000 (GMT)
+Message-ID: <afcd9cd4-d563-41c3-9e50-7440365b9152@samsung.com>
+Date: Fri, 5 Sep 2025 18:26:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250905162446.88987-1-smostafa@google.com>
-Subject: [PATCH] soc: samsung: exynos-pmu: Fix for CONFIG_DEBUG_PREEMPT
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, 
-	Mostafa Saleh <smostafa@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 03/16] dma-debug: refactor to use physical addresses
+ for page mapping
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, Alexander Potapenko
+	<glider@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Danilo
+	Krummrich <dakr@kernel.org>, iommu@lists.linux.dev, Jason Wang
+	<jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel
+	<joro@8bytes.org>, Jonathan Corbet <corbet@lwn.net>, Juergen Gross
+	<jgross@suse.com>, kasan-dev@googlegroups.com, Keith Busch
+	<kbusch@kernel.org>, linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org, Madhavan Srinivasan
+	<maddy@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Michael
+	Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>, Miguel
+	Ojeda <ojeda@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	rust-for-linux@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>, Stefano
+	Stabellini <sstabellini@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <478d5b7135008b3c82f100faa9d3830839fc6562.1755624249.git.leon@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250905162658eucas1p1a568426150516afc440f0b45dae6597c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d
+X-EPHeader: CA
+X-CMS-RootMailID: 20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d
+References: <cover.1755624249.git.leon@kernel.org>
+	<CGME20250819173739eucas1p104ee9e80546f92ef250115edd799fc6d@eucas1p1.samsung.com>
+	<478d5b7135008b3c82f100faa9d3830839fc6562.1755624249.git.leon@kernel.org>
 
-Booting the kernel on Pixel-6 with `CONFIG_DEBUG_PREEMPT` prints the
-following WARN:
+On 19.08.2025 19:36, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+>
+> Convert the DMA debug infrastructure from page-based to physical address-based
+> mapping as a preparation to rely on physical address for DMA mapping routines.
+>
+> The refactoring renames debug_dma_map_page() to debug_dma_map_phys() and
+> changes its signature to accept a phys_addr_t parameter instead of struct page
+> and offset. Similarly, debug_dma_unmap_page() becomes debug_dma_unmap_phys().
+> A new dma_debug_phy type is introduced to distinguish physical address mappings
+> from other debug entry types. All callers throughout the codebase are updated
+> to pass physical addresses directly, eliminating the need for page-to-physical
+> conversion in the debug layer.
+>
+> This refactoring eliminates the need to convert between page pointers and
+> physical addresses in the debug layer, making the code more efficient and
+> consistent with the DMA mapping API's physical address focus.
+>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 
-[    0.784187][    T1] BUG: using smp_processor_id() in preemptible [000000=
-00] code: swapper/0/1
-[    0.784328][    T1] caller is debug_smp_processor_id+0x20/0x30
-[    0.784433][    T1] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.1=
-7.0-rc4-gd69eb204c255 #1 PREEMPT
-[    0.784439][    T1] Hardware name: Oriole (DT)
-[    0.784441][    T1] Call trace:
-[    0.784443][    T1]  show_stack+0x34/0xa0 (C)
-[    0.784453][    T1]  dump_stack_lvl+0x7c/0xb0
-[    0.784460][    T1]  dump_stack+0x18/0x24
-[    0.784464][    T1]  check_preemption_disabled+0xf8/0x100
-[    0.784470][    T1]  debug_smp_processor_id+0x20/0x30
-[    0.784476][    T1]  gs101_cpuhp_pmu_online+0x40/0x108
-[    0.784483][    T1]  cpuhp_invoke_callback+0x188/0x2d8
-[    0.784490][    T1]  cpuhp_issue_call+0xec/0x240
-[    0.784494][    T1]  __cpuhp_setup_state_cpuslocked+0x140/0x2c0
-[    0.784499][    T1]  __cpuhp_setup_state+0x58/0x88
-[    0.784504][    T1]  exynos_pmu_probe+0x2a4/0x380
-[    0.784508][    T1]  platform_probe+0x64/0xd0
-[    0.784516][    T1]  really_probe+0xd0/0x3b0
-[    0.784520][    T1]  __driver_probe_device+0x8c/0x170
-[    0.784524][    T1]  driver_probe_device+0x44/0x140
-[    0.784528][    T1]  __device_attach_driver+0xd8/0x180
-[    0.784532][    T1]  bus_for_each_drv+0x90/0xf8
-[    0.784536][    T1]  __device_attach+0xa8/0x1d0
-[    0.784540][    T1]  device_initial_probe+0x1c/0x30
-[    0.784544][    T1]  bus_probe_device+0xb4/0xc0
-[    0.784547][    T1]  device_add+0x4d0/0x700
-[    0.784550][    T1]  of_device_add+0x4c/0x78
-[    0.784556][    T1]  of_platform_device_create_pdata+0x9c/0x148
-[    0.784560][    T1]  of_platform_bus_create+0x1d0/0x370
-[    0.784563][    T1]  of_platform_bus_create+0x234/0x370
-[    0.784567][    T1]  of_platform_populate+0x84/0x178
-[    0.784571][    T1]  of_platform_default_populate_init+0xf0/0x120
-[    0.784579][    T1]  do_one_initcall+0x68/0x2d0
-[    0.784585][    T1]  kernel_init_freeable+0x2d8/0x358
-[    0.784589][    T1]  kernel_init+0x28/0x168
-[    0.784595][    T1]  ret_from_fork+0x10/0x20
+This change needs to be based on top of this patch 
+https://lore.kernel.org/all/20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com 
+so the easiest way would be to rebase this patchset onto 
+https://web.git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git/log/?h=dma-mapping-fixes 
+branch (resolving conflicts is trivial) for the next version.
 
-As this value is only read once, it doesn't require to be stable, so
-just use "raw_smp_processor_id" instead.
+> ---
+>   Documentation/core-api/dma-api.rst |  4 ++--
+>   kernel/dma/debug.c                 | 28 +++++++++++++++++-----------
+>   kernel/dma/debug.h                 | 16 +++++++---------
+>   kernel/dma/mapping.c               | 15 ++++++++-------
+>   4 files changed, 34 insertions(+), 29 deletions(-)
+>
+> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
+> index 3087bea715ed..ca75b3541679 100644
+> --- a/Documentation/core-api/dma-api.rst
+> +++ b/Documentation/core-api/dma-api.rst
+> @@ -761,7 +761,7 @@ example warning message may look like this::
+>   	[<ffffffff80235177>] find_busiest_group+0x207/0x8a0
+>   	[<ffffffff8064784f>] _spin_lock_irqsave+0x1f/0x50
+>   	[<ffffffff803c7ea3>] check_unmap+0x203/0x490
+> -	[<ffffffff803c8259>] debug_dma_unmap_page+0x49/0x50
+> +	[<ffffffff803c8259>] debug_dma_unmap_phys+0x49/0x50
+>   	[<ffffffff80485f26>] nv_tx_done_optimized+0xc6/0x2c0
+>   	[<ffffffff80486c13>] nv_nic_irq_optimized+0x73/0x2b0
+>   	[<ffffffff8026df84>] handle_IRQ_event+0x34/0x70
+> @@ -855,7 +855,7 @@ that a driver may be leaking mappings.
+>   dma-debug interface debug_dma_mapping_error() to debug drivers that fail
+>   to check DMA mapping errors on addresses returned by dma_map_single() and
+>   dma_map_page() interfaces. This interface clears a flag set by
+> -debug_dma_map_page() to indicate that dma_mapping_error() has been called by
+> +debug_dma_map_phys() to indicate that dma_mapping_error() has been called by
+>   the driver. When driver does unmap, debug_dma_unmap() checks the flag and if
+>   this flag is still set, prints warning message that includes call trace that
+>   leads up to the unmap. This interface can be called from dma_mapping_error()
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index e43c6de2bce4..da6734e3a4ce 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -39,6 +39,7 @@ enum {
+>   	dma_debug_sg,
+>   	dma_debug_coherent,
+>   	dma_debug_resource,
+> +	dma_debug_phy,
+>   };
+>   
+>   enum map_err_types {
+> @@ -141,6 +142,7 @@ static const char *type2name[] = {
+>   	[dma_debug_sg] = "scatter-gather",
+>   	[dma_debug_coherent] = "coherent",
+>   	[dma_debug_resource] = "resource",
+> +	[dma_debug_phy] = "phy",
+>   };
+>   
+>   static const char *dir2name[] = {
+> @@ -1201,9 +1203,8 @@ void debug_dma_map_single(struct device *dev, const void *addr,
+>   }
+>   EXPORT_SYMBOL(debug_dma_map_single);
+>   
+> -void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+> -			size_t size, int direction, dma_addr_t dma_addr,
+> -			unsigned long attrs)
+> +void debug_dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
+> +		int direction, dma_addr_t dma_addr, unsigned long attrs)
+>   {
+>   	struct dma_debug_entry *entry;
+>   
+> @@ -1218,19 +1219,24 @@ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+>   		return;
+>   
+>   	entry->dev       = dev;
+> -	entry->type      = dma_debug_single;
+> -	entry->paddr	 = page_to_phys(page) + offset;
+> +	entry->type      = dma_debug_phy;
+> +	entry->paddr	 = phys;
+>   	entry->dev_addr  = dma_addr;
+>   	entry->size      = size;
+>   	entry->direction = direction;
+>   	entry->map_err_type = MAP_ERR_NOT_CHECKED;
+>   
+> -	check_for_stack(dev, page, offset);
+> +	if (!(attrs & DMA_ATTR_MMIO)) {
+> +		struct page *page = phys_to_page(phys);
+> +		size_t offset = offset_in_page(page);
+>   
+> -	if (!PageHighMem(page)) {
+> -		void *addr = page_address(page) + offset;
+> +		check_for_stack(dev, page, offset);
+>   
+> -		check_for_illegal_area(dev, addr, size);
+> +		if (!PageHighMem(page)) {
+> +			void *addr = page_address(page) + offset;
+> +
+> +			check_for_illegal_area(dev, addr, size);
+> +		}
+>   	}
+>   
+>   	add_dma_entry(entry, attrs);
+> @@ -1274,11 +1280,11 @@ void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+>   }
+>   EXPORT_SYMBOL(debug_dma_mapping_error);
+>   
+> -void debug_dma_unmap_page(struct device *dev, dma_addr_t dma_addr,
+> +void debug_dma_unmap_phys(struct device *dev, dma_addr_t dma_addr,
+>   			  size_t size, int direction)
+>   {
+>   	struct dma_debug_entry ref = {
+> -		.type           = dma_debug_single,
+> +		.type           = dma_debug_phy,
+>   		.dev            = dev,
+>   		.dev_addr       = dma_addr,
+>   		.size           = size,
+> diff --git a/kernel/dma/debug.h b/kernel/dma/debug.h
+> index f525197d3cae..76adb42bffd5 100644
+> --- a/kernel/dma/debug.h
+> +++ b/kernel/dma/debug.h
+> @@ -9,12 +9,11 @@
+>   #define _KERNEL_DMA_DEBUG_H
+>   
+>   #ifdef CONFIG_DMA_API_DEBUG
+> -extern void debug_dma_map_page(struct device *dev, struct page *page,
+> -			       size_t offset, size_t size,
+> -			       int direction, dma_addr_t dma_addr,
+> +extern void debug_dma_map_phys(struct device *dev, phys_addr_t phys,
+> +			       size_t size, int direction, dma_addr_t dma_addr,
+>   			       unsigned long attrs);
+>   
+> -extern void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
+> +extern void debug_dma_unmap_phys(struct device *dev, dma_addr_t addr,
+>   				 size_t size, int direction);
+>   
+>   extern void debug_dma_map_sg(struct device *dev, struct scatterlist *sg,
+> @@ -55,14 +54,13 @@ extern void debug_dma_sync_sg_for_device(struct device *dev,
+>   					 struct scatterlist *sg,
+>   					 int nelems, int direction);
+>   #else /* CONFIG_DMA_API_DEBUG */
+> -static inline void debug_dma_map_page(struct device *dev, struct page *page,
+> -				      size_t offset, size_t size,
+> -				      int direction, dma_addr_t dma_addr,
+> -				      unsigned long attrs)
+> +static inline void debug_dma_map_phys(struct device *dev, phys_addr_t phys,
+> +				      size_t size, int direction,
+> +				      dma_addr_t dma_addr, unsigned long attrs)
+>   {
+>   }
+>   
+> -static inline void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
+> +static inline void debug_dma_unmap_phys(struct device *dev, dma_addr_t addr,
+>   					size_t size, int direction)
+>   {
+>   }
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 107e4a4d251d..4c1dfbabb8ae 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -157,6 +157,7 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+>   		unsigned long attrs)
+>   {
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +	phys_addr_t phys = page_to_phys(page) + offset;
+>   	dma_addr_t addr;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> @@ -165,16 +166,15 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+>   		return DMA_MAPPING_ERROR;
+>   
+>   	if (dma_map_direct(dev, ops) ||
+> -	    arch_dma_map_page_direct(dev, page_to_phys(page) + offset + size))
+> +	    arch_dma_map_page_direct(dev, phys + size))
+>   		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+>   	else if (use_dma_iommu(dev))
+>   		addr = iommu_dma_map_page(dev, page, offset, size, dir, attrs);
+>   	else
+>   		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+>   	kmsan_handle_dma(page, offset, size, dir);
+> -	trace_dma_map_page(dev, page_to_phys(page) + offset, addr, size, dir,
+> -			   attrs);
+> -	debug_dma_map_page(dev, page, offset, size, dir, addr, attrs);
+> +	trace_dma_map_page(dev, phys, addr, size, dir, attrs);
+> +	debug_dma_map_phys(dev, phys, size, dir, addr, attrs);
+>   
+>   	return addr;
+>   }
+> @@ -194,7 +194,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
+>   	else
+>   		ops->unmap_page(dev, addr, size, dir, attrs);
+>   	trace_dma_unmap_page(dev, addr, size, dir, attrs);
+> -	debug_dma_unmap_page(dev, addr, size, dir);
+> +	debug_dma_unmap_phys(dev, addr, size, dir);
+>   }
+>   EXPORT_SYMBOL(dma_unmap_page_attrs);
+>   
+> @@ -712,7 +712,8 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
+>   	if (page) {
+>   		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
+>   				      size, dir, gfp, 0);
+> -		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
+> +		debug_dma_map_phys(dev, page_to_phys(page), size, dir,
+> +				   *dma_handle, 0);
+>   	} else {
+>   		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
+>   	}
+> @@ -738,7 +739,7 @@ void dma_free_pages(struct device *dev, size_t size, struct page *page,
+>   		dma_addr_t dma_handle, enum dma_data_direction dir)
+>   {
+>   	trace_dma_free_pages(dev, page_to_virt(page), dma_handle, size, dir, 0);
+> -	debug_dma_unmap_page(dev, dma_handle, size, dir);
+> +	debug_dma_unmap_phys(dev, dma_handle, size, dir);
+>   	__dma_free_pages(dev, size, page, dma_handle, dir);
+>   }
+>   EXPORT_SYMBOL_GPL(dma_free_pages);
 
-Cc: Peter Griffin <peter.griffin@linaro.org>
-Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
----
- drivers/soc/samsung/exynos-pmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-=
-pmu.c
-index a77288f49d24..338f4758a089 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -338,7 +338,7 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
-=20
- static int gs101_cpuhp_pmu_online(unsigned int cpu)
- {
--	unsigned int cpuhint =3D smp_processor_id();
-+	unsigned int cpuhint =3D raw_smp_processor_id();
- 	u32 reg, mask;
-=20
- 	/* clear cpu inform hint */
-@@ -361,7 +361,7 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
- static int gs101_cpuhp_pmu_offline(unsigned int cpu)
- {
- 	u32 reg, mask;
--	unsigned int cpuhint =3D smp_processor_id();
-+	unsigned int cpuhint =3D raw_smp_processor_id();
-=20
- 	/* set cpu inform hint */
- 	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
---=20
-2.51.0.355.g5224444f11-goog
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
