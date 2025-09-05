@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-802846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B86B4578A
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F03B4578C
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 14:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB3A1C871B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C0D1C872DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 12:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521D21DA21;
-	Fri,  5 Sep 2025 12:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7275350843;
+	Fri,  5 Sep 2025 12:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YSS6XjTk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VuUY4Ebw"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2vXCPdK/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GZ0uzxc8"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004C5356909
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFAC350850
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 12:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757074590; cv=none; b=JSBe4UoEvQWj9JgpNgnSZNqWFVcYw8bsSNIyx0XskDGiCtAA+obkd3g8hxmo4+nNuj2ZF9sepMmd0GgQUZrDutBnu+GbWhnQ40mGHaLIA9EK4gaOiIo2m2HC76AGHO0DTWB9zGsqyvcK6uXt/99BTyX38EK8epwV0NmWD4iyXks=
+	t=1757074601; cv=none; b=dTn4mNAXRsjKgMXnme+2SMSPwdN6Wetaj0EbwmsR8dj9t2bjjq+KqPtKB/lr1CXK1m7I7jdzq9iS8FHKmGLbzssivm9oSL5LkuA9nCxAbzyjPoc1e1w1DK53DqzLxleyrV2DseY2Mp9G1SFJXRVT6eJR3WkO/FVxe685Tk5rJq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757074590; c=relaxed/simple;
-	bh=jNgEx2eDog9agelm0hZ1d2Hksj0ecKsAQbeVdX6jQcw=;
+	s=arc-20240116; t=1757074601; c=relaxed/simple;
+	bh=vrilB8Pp2o05wrxQDrd+PviVOlyflql/qEV4JyceAE4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GSzvxQELIZSLoIeSGeZZKX/5l352qkP9umli+tY+QlOo4QKPbIJBD5BavJGoHLW0hHmVJmppfOZgBWXCYpxEffQVaM2Tqfgo+6Ef/VStnxM3v4QlRhwN+8zZBY3DvR1hCdzbTL8ffb2pdlkQyJMjc1s4jp48/9bMceij0Rra0to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YSS6XjTk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VuUY4Ebw; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=S0pTk5yqpK/njx37cleJuUYJJj+Kc3RlsYBPoaCyoMWGc4zBcbSfPIRLnkfVGEZo+da+DPj5b7/IpDHSXswQXzpP+sAyMZ0ANWzerS9fTb2K31sU3n36YhJJcFFoUwkF6XjNiS7wOSwGV0lz7SdGZawDOk4Ko11ZeuBf/oTTIbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2vXCPdK/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GZ0uzxc8; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757074585;
+	s=2020; t=1757074589;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UtKNAecyTmIQEvsVids3IFeQilSYo0cBXCC3LBkklLc=;
-	b=YSS6XjTk/fqWbAswF9vdydJiw0IOncAxCRw99zdHTKDl1eg0jqfnEDum5bEufX+rPhWiMp
-	znhJxyQawUVj4AyFR2Gk+/KHfmvn/sul4l/TEbRYQG/pvpn8ODWQReGhJ/QbFUYK5VWXvo
-	Ag6cqnAg/4rnnN7y+c6OqElkzuLQCcES9UEo9Uy/OvrRGvmueB01nTF4pVSpHj+BQWM3FL
-	T7nYUAuYc0k5DtmbgrtR/FO2/G4FXsSXxid3rufspDrTiwoDDH209O9nxP7u8sMbAMqY/s
-	yKJwRoB9KQv2+awpbaLwRXnzOXNTbvFutSNpdJbdlo+nAVvnqHo2w3dRaaF1Ew==
+	bh=vnhfp7RG9+kQXAh3FHU78TA6UXd+wPzE4jdCgJfYuRU=;
+	b=2vXCPdK/cDM/fFaCVa7+M/HEZCFqCrdX3V26yelvqpDZg+Ktm6eM+RelgwYd3rITUYtQPA
+	qB2pyQtvxryyfXbwFLeXPOn7KSYuSu3PpEhMaaZNvjEVL5dsL+i9l+sIjttTFYmZ1qKhsX
+	VR73HrL15rvNcIG6pidUgAacp4TUsYbaXTO6haqrvVAOL9R0x/kJOB2RJs737ygAeaVzo0
+	uG/RDYlQXvqRkZxPhUt6BO32iUaJ+sKN3WfecYjpQhxbNKoUhbGxXuhTmKx0mpzNfLfYqk
+	kcYWTHPw01ganVjKXdOOqkNXDVwa4n9pWc4WDnY85xNMHC+NsX+V/M6oo+CpQg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757074585;
+	s=2020e; t=1757074589;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UtKNAecyTmIQEvsVids3IFeQilSYo0cBXCC3LBkklLc=;
-	b=VuUY4Ebww20rmu/VDBW6IvEafbuv0+Gs1lzIQcb8Xf99P9b5SxFZefwtFsvnlcXu3FCdJg
-	1t1Bw7p9/MMaUPDg==
+	bh=vnhfp7RG9+kQXAh3FHU78TA6UXd+wPzE4jdCgJfYuRU=;
+	b=GZ0uzxc8oZF987oRDh1i/2wt8uFNiMa4UVH2bXKNxLsPQxWI3vHoUK8/UYF+KnfMaJPz9c
+	CHq9u20r61/6mqCA==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v5 21/35] x86/cpu: Use parsed CPUID(0x2)
-Date: Fri,  5 Sep 2025 14:15:01 +0200
-Message-ID: <20250905121515.192792-22-darwi@linutronix.de>
+Subject: [PATCH v5 22/35] x86/cacheinfo: Use parsed CPUID(0x2)
+Date: Fri,  5 Sep 2025 14:15:02 +0200
+Message-ID: <20250905121515.192792-23-darwi@linutronix.de>
 In-Reply-To: <20250905121515.192792-1-darwi@linutronix.de>
 References: <20250905121515.192792-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,24 +81,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-At the Intel cacheinfo code, use parsed CPUID(0x2) access instead of a
-direct CPUID query.
+Use parsed CPUID(0x2) access instead of direct CPUID queries.
 
-Remove the "maximum standard CPUID level >= 0x2" check as the parsed
-CPUID API output NULL check is equivalent.
+Remove the max standard CPUID level check since the NULL check of
+cpuid_leaf_raw()'s result is equivalent.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/intel.c | 8 ++++----
+ arch/x86/kernel/cpu/cacheinfo.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 98ae4c37c93e..7078b4264294 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -710,14 +710,14 @@ static void intel_tlb_lookup(const struct leaf_0x2_table *desc)
- static void intel_detect_tlb(struct cpuinfo_x86 *c)
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 51a95b07831f..4c3a08593ec4 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -391,14 +391,14 @@ static void intel_cacheinfo_0x2(struct cpuinfo_x86 *c)
  {
+ 	unsigned int l1i = 0, l1d = 0, l2 = 0, l3 = 0;
  	const struct leaf_0x2_table *desc;
 -	union leaf_0x2_regs regs;
 +	const struct cpuid_regs *regs;
@@ -110,11 +109,11 @@ index 98ae4c37c93e..7078b4264294 100644
  		return;
  
 -	cpuid_leaf_0x2(&regs);
--	for_each_cpuid_0x2_desc(regs, ptr, desc)
-+	for_each_parsed_cpuid_0x2_desc(regs, ptr, desc)
- 		intel_tlb_lookup(desc);
- }
- 
+-	for_each_cpuid_0x2_desc(regs, ptr, desc) {
++	for_each_parsed_cpuid_0x2_desc(regs, ptr, desc) {
+ 		switch (desc->c_type) {
+ 		case CACHE_L1_INST:	l1i += desc->c_size; break;
+ 		case CACHE_L1_DATA:	l1d += desc->c_size; break;
 -- 
 2.50.1
 
