@@ -1,612 +1,108 @@
-Return-Path: <linux-kernel+bounces-803875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120E0B466AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DF2B466B1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192E4A483C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB58856563D
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 22:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8838728934D;
-	Fri,  5 Sep 2025 22:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D839288C16;
+	Fri,  5 Sep 2025 22:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="bsxj5Vc4"
-Received: from mail-106112.protonmail.ch (mail-106112.protonmail.ch [79.135.106.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eYP0RDnn"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E17286428;
-	Fri,  5 Sep 2025 22:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE34286428
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 22:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757111088; cv=none; b=W62+qZqNgfHHsabhVSlLRpnLeMBOIQE8Tl5BjXVDctHJO/FthBXYtVszUz97opNOUsXBhGY9mPt4ZPXE/u5I14mFwRvTtgj+cqeEDmQKJ2yMrMnBUDbkjWIzdtGeCj86ET/J3nFHjJws8RNo+VknI7V7HGEsREM/rtWouEgf+0U=
+	t=1757111238; cv=none; b=PaIr2C2gZ6kX2kAeZGm0D33r9qIitxKPG7yWXjD2QCaladIhWPAqpb0VFmbEHWIURkIKIQe4+/mSsnqHdjJVnQO6dVB3Ss8Co3YpavFpY3j2tzq3AL9/iK+IRyKqkBEZF8II3/ZK+ClCJjpeolkHHpMx6+M5be5svZ7kcS608bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757111088; c=relaxed/simple;
-	bh=09vECX9RzrptiI5h7jc3i7H07wXMfDXNLBDYP2KZaYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5gWLTZPlKMPAjoTvumLhD3SQ5WnlOhUKg1lhYo26zBu8L1/b4Hw4twov6PfhqIWl0KtYaQNHYBIf0hSFfboDqGUpj3iH3LfY/CTM956/kF1I2mos894nAtp5r/myrQ445eYYB3tkW5WCmdPRoRjLM9Ucx5200cfY3CPUeOMI0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=bsxj5Vc4; arc=none smtp.client-ip=79.135.106.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1757111078; x=1757370278;
-	bh=i93EW/8ikm2pmoxKM3tODrWihAsKH9ShDBF4UztUg8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=bsxj5Vc4qYCuYztxM3FSUNTnDj0zYwTc635vHh6H3in39lzl1EehiB+BHRgigoJTE
-	 OCvx+MN4jXAPeuE4JRWYkEBginF/WTOe1g77p3DDcaFd9HSFJln2XzGyPPAfvA5rGQ
-	 R9vJjTPiZv9XhIrOzz/2wQt7tu3n7xvVoR9UwdSjCdRf070I+xE1debXWQw2hUU6ge
-	 8uXD/7OCQ07uvwZaBDOgvkcEOC+bvaY/TdnzRPgT+GZejRbqkuyqWKkFnnbyPInwN0
-	 GVGirG7jQR+csRMMwZvL+7tQQM4puti2k1xMMQDlY50s66u3Il0Dgd7HYGAzCzTzAo
-	 t+ohpbB8+RFFw==
-X-Pm-Submission-Id: 4cJW9b3x9tz2ScCs
-Date: Fri, 5 Sep 2025 22:24:32 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] rust: Move register and bitstruct macros out of
- Nova
-Message-ID: <aLtjILVe4JaDoh1A@archiso>
-References: <20250903215428.1296517-1-joelagnelf@nvidia.com>
- <20250903215428.1296517-5-joelagnelf@nvidia.com>
+	s=arc-20240116; t=1757111238; c=relaxed/simple;
+	bh=AZppQpwuWqYUy9syMAiud+b8ut6j2XrYuweM1e9f9cs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mD6X+kXR5Bq7gZoyW8Poh+0SSxoqCZxtGZEepaF5plbzyaMCPCvhl2E8jGdzHCMVqZoj5gvqHpWMbXAS1PUTgF4ydAHKtP802ppKq706ymEfvocvUMSNJU88mNBjFoO/b9GenicnD3/Ap8B667nj/SfGFkaEuFjFl5L2kiySVMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eYP0RDnn; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-8875a8663d0so276287439f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 15:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757111236; x=1757716036; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WBrKuX2LN/XLXYsBo8MKK/22tPKbOLoG+RYV/aRIhhY=;
+        b=eYP0RDnnSPUVrTmn4eouwLg8yo47tOJwsYKJSsjDVSCqOExJIOJZswtjNH57pjkrpU
+         5YIVlj7XRzJB6K3FlfuaOWpMtFyrT2+5ng0J+K1nkCYUdOrJB/3oPRL7N25k/NTwaBn0
+         nfs55z7tNc2tLD3NYJO4pecqvsYJaxsI377FizDGsaAnlImbuRqLfVsUcLssfwv01w62
+         83Ile7Ih6rd1zNppavwGx/7qlHgJomun9AgWvZyDzBtu4qXlacRhcQezB5fG/MOWI/mC
+         +C/M+XfwFn5IYTsGBNc7/au2AY3yus+FLHgCbExWj/X3zFFtHhFeBMiDQVd3pLUDD4a6
+         iokg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757111236; x=1757716036;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WBrKuX2LN/XLXYsBo8MKK/22tPKbOLoG+RYV/aRIhhY=;
+        b=PNmUN3fJpyQEpWrXmpGPFRwqeOpLe3fxjQl8JeeREmfCnTqDYsZh83w5SfyLUpY5Jm
+         dVQqEp9vsbVcy74wWwvXFoVPtU8Y8DU9jXUw+kkimX5taFIX77pCDy0jUqWHP+Cabz3h
+         2EUl389nRGO/+CsxDCUOIiXlMs4ffV8n0k7HhCcPLFfzWTvplM1akO3bJQBGAM8m+1JX
+         vdUWwAAmkI5tueS0J9HcFocds1pc/ddI22Fylq9+qXaCQeBww9vNIZKgmwjq7uB9lTlz
+         a6/ly944Wu8Q0gMTupx0vTJGfbOg0ZES8p/LzJTPACyrmUl33h/tH8/YtQayezc2ghwK
+         u8aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTr2WbFa7T9/SIy4B9u5K99Bed46eyIh4I94MSYbcM73msjxVEP0DeqBWAM+cVlykF7UVP4g6Uj+FQM6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPH3qdsPtSwKl92+i0VM0b1ICKDTGCREFJUKUCOBvlK7SY2Cf+
+	nMVGC6VKfmtBIZhwc75g3mZ/zSIwN8ggNUzBybmA8ruWJW2+HsqysbuA350wSpIqslYtgLyuxTv
+	g0Aa08JKSiQ==
+X-Google-Smtp-Source: AGHT+IGXSFXfkWoQEoRGV7ycAUlfjOG//VdVmLeu9tSMlVvNgEhGD2juMvgtuMG1rJACmxFDuGO2oVJYmjNI
+X-Received: from iouw30.prod.google.com ([2002:a05:6602:35e:b0:887:7b4:58ea])
+ (user=nkapron job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:1492:b0:881:87f1:7258
+ with SMTP id ca18e2360f4ac-887774d8692mr70242739f.3.1757111235762; Fri, 05
+ Sep 2025 15:27:15 -0700 (PDT)
+Date: Fri,  5 Sep 2025 22:26:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903215428.1296517-5-joelagnelf@nvidia.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
+Message-ID: <20250905222656.3692837-1-nkapron@google.com>
+Subject: [PATCH] selinux: fix logic issue with per-file labeling for functionfs
+From: Neill Kapron <nkapron@google.com>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Neill Kapron <nkapron@google.com>
+Cc: kernel-team@android.com, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 03, 2025 at 05:54:28PM -0400, Joel Fernandes wrote:
-> Out of broad need for these macros in Rust, move them out. Several folks
-> have shown interest (Nova, Tyr GPU drivers).
-> 
-> bitstruct - defines bitfields in Rust structs similar to C.
-> register - support for defining hardware registers and accessors.
-> 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  drivers/gpu/nova-core/falcon.rs               |  2 +-
->  drivers/gpu/nova-core/falcon/gsp.rs           |  3 +-
->  drivers/gpu/nova-core/falcon/sec2.rs          |  2 +-
->  drivers/gpu/nova-core/nova_core.rs            |  3 -
->  drivers/gpu/nova-core/regs.rs                 |  5 +-
->  .../nova-core => rust/kernel}/bitstruct.rs    | 31 ++++---
->  rust/kernel/lib.rs                            |  2 +
->  rust/kernel/prelude.rs                        |  2 +
->  .../regs/macros.rs => rust/kernel/register.rs | 92 ++++++++++---------
->  9 files changed, 74 insertions(+), 68 deletions(-)
->  rename {drivers/gpu/nova-core => rust/kernel}/bitstruct.rs (92%)
->  rename drivers/gpu/nova-core/regs/macros.rs => rust/kernel/register.rs (90%)
-> 
-> diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-> index be91aac6976a..06da6ce24482 100644
-> --- a/drivers/gpu/nova-core/falcon.rs
-> +++ b/drivers/gpu/nova-core/falcon.rs
-> @@ -7,6 +7,7 @@
->  use kernel::bindings;
->  use kernel::device;
->  use kernel::prelude::*;
-> +use kernel::register::RegisterBase;
->  use kernel::sync::aref::ARef;
->  use kernel::time::Delta;
->  
-> @@ -14,7 +15,6 @@
->  use crate::driver::Bar0;
->  use crate::gpu::Chipset;
->  use crate::regs;
-> -use crate::regs::macros::RegisterBase;
->  use crate::util;
->  
->  pub(crate) mod gsp;
-> diff --git a/drivers/gpu/nova-core/falcon/gsp.rs b/drivers/gpu/nova-core/falcon/gsp.rs
-> index f17599cb49fa..9287ab148da8 100644
-> --- a/drivers/gpu/nova-core/falcon/gsp.rs
-> +++ b/drivers/gpu/nova-core/falcon/gsp.rs
-> @@ -3,8 +3,9 @@
->  use crate::{
->      driver::Bar0,
->      falcon::{Falcon, FalconEngine, PFalcon2Base, PFalconBase},
-> -    regs::{self, macros::RegisterBase},
-> +    regs,
->  };
-> +use kernel::register::RegisterBase;
->  
->  /// Type specifying the `Gsp` falcon engine. Cannot be instantiated.
->  pub(crate) struct Gsp(());
-> diff --git a/drivers/gpu/nova-core/falcon/sec2.rs b/drivers/gpu/nova-core/falcon/sec2.rs
-> index 815786c8480d..8f7b63b6c2b2 100644
-> --- a/drivers/gpu/nova-core/falcon/sec2.rs
-> +++ b/drivers/gpu/nova-core/falcon/sec2.rs
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
->  use crate::falcon::{FalconEngine, PFalcon2Base, PFalconBase};
-> -use crate::regs::macros::RegisterBase;
-> +use kernel::register::RegisterBase;
->  
->  /// Type specifying the `Sec2` falcon engine. Cannot be instantiated.
->  pub(crate) struct Sec2(());
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index b218a2d42573..cb2bbb30cba1 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -2,9 +2,6 @@
->  
->  //! Nova Core GPU Driver
->  
-> -#[macro_use]
-> -mod bitstruct;
-> -
->  mod dma;
->  mod driver;
->  mod falcon;
-> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> index 206dab2e1335..6d2f20623259 100644
-> --- a/drivers/gpu/nova-core/regs.rs
-> +++ b/drivers/gpu/nova-core/regs.rs
-> @@ -4,9 +4,6 @@
->  // but are mapped to types.
->  #![allow(non_camel_case_types)]
->  
-> -#[macro_use]
-> -pub(crate) mod macros;
-> -
->  use crate::falcon::{
->      DmaTrfCmdSize, FalconCoreRev, FalconCoreRevSubversion, FalconFbifMemType, FalconFbifTarget,
->      FalconModSelAlgo, FalconSecurityModel, PFalcon2Base, PFalconBase, PeregrineCoreSelect,
-> @@ -331,6 +328,7 @@ pub(crate) fn mem_scrubbing_done(self) -> bool {
->  
->  pub(crate) mod gm107 {
->      // FUSE
-> +    use kernel::prelude::*;
->  
->      register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00021c04 {
->          0:0     display_disabled as bool;
-> @@ -339,6 +337,7 @@ pub(crate) mod gm107 {
->  
->  pub(crate) mod ga100 {
->      // FUSE
-> +    use kernel::prelude::*;
->  
->      register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00820c04 {
->          0:0     display_disabled as bool;
-> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/rust/kernel/bitstruct.rs
-> similarity index 92%
-> rename from drivers/gpu/nova-core/bitstruct.rs
-> rename to rust/kernel/bitstruct.rs
-> index 1047c5c17e2d..06e5435df383 100644
-> --- a/drivers/gpu/nova-core/bitstruct.rs
-> +++ b/rust/kernel/bitstruct.rs
-> @@ -1,9 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -//
-> -// bitstruct.rs — Bitfield library for Rust structures
-> -//
-> -// A library that provides support for defining bit fields in Rust
-> -// structures. Also used from things that need bitfields like register macro.
-> +
-> +//! Bitfield library for Rust structures
-> +//!
-> +//! A library that provides support for defining bit fields in Rust
-> +//! structures. Also used from things that need bitfields like register macro.
->  ///
->  /// # Syntax
->  ///
-> @@ -32,6 +32,7 @@
->  ///   the result.
->  /// - `as <type> ?=> <try_into_type>` calls `<try_into_type>`'s `TryFrom::<<type>>` implementation
->  ///   and returns the result. This is useful with fields for which not all values are valid.
-> +#[macro_export]
->  macro_rules! bitstruct {
->      // Main entry point - defines the bitfield struct with fields
->      ($vis:vis struct $name:ident : $storage:ty $(, $comment:literal)? { $($fields:tt)* }) => {
-> @@ -125,7 +126,7 @@ impl $name {
->      (@check_field_bounds $hi:tt:$lo:tt $field:ident as bool) => {
->          #[allow(clippy::eq_op)]
->          const _: () = {
-> -            ::kernel::build_assert!(
-> +            build_assert!(
->                  $hi == $lo,
->                  concat!("boolean field `", stringify!($field), "` covers more than one bit")
->              );
-> @@ -136,7 +137,7 @@ impl $name {
->      (@check_field_bounds $hi:tt:$lo:tt $field:ident as $type:tt) => {
->          #[allow(clippy::eq_op)]
->          const _: () = {
-> -            ::kernel::build_assert!(
-> +            build_assert!(
->                  $hi >= $lo,
->                  concat!("field `", stringify!($field), "`'s MSB is smaller than its LSB")
->              );
-> @@ -198,15 +199,15 @@ impl $name {
->          @leaf_accessor $name:ident $vis:vis $storage:ty, $hi:tt:$lo:tt $field:ident
->              { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
->      ) => {
-> -        ::kernel::macros::paste!(
-> +        $crate::macros::paste!(
->          const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
->          const [<$field:upper _MASK>]: $storage = {
->              // Generate mask for shifting
->              match ::core::mem::size_of::<$storage>() {
-> -                1 => ::kernel::bits::genmask_u8($lo..=$hi) as $storage,
-> -                2 => ::kernel::bits::genmask_u16($lo..=$hi) as $storage,
-> -                4 => ::kernel::bits::genmask_u32($lo..=$hi) as $storage,
-> -                8 => ::kernel::bits::genmask_u64($lo..=$hi) as $storage,
-> +                1 => $crate::bits::genmask_u8($lo..=$hi) as $storage,
-> +                2 => $crate::bits::genmask_u16($lo..=$hi) as $storage,
-> +                4 => $crate::bits::genmask_u32($lo..=$hi) as $storage,
-> +                8 => $crate::bits::genmask_u64($lo..=$hi) as $storage,
->                  _ => <$storage>::MAX
->              }
->          };
-> @@ -219,7 +220,7 @@ impl $name {
->          )?
->          #[inline(always)]
->          $vis fn $field(self) -> $res_type {
-> -            ::kernel::macros::paste!(
-> +            $crate::macros::paste!(
->              const MASK: $storage = $name::[<$field:upper _MASK>];
->              const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
->              );
-> @@ -228,7 +229,7 @@ impl $name {
->              $process(field)
->          }
->  
-> -        ::kernel::macros::paste!(
-> +        $crate::macros::paste!(
->          $(
->          #[doc="Sets the value of this field:"]
->          #[doc=$comment]
-> @@ -267,7 +268,7 @@ fn default() -> Self {
->                  #[allow(unused_mut)]
->                  let mut value = Self(Default::default());
->  
-> -                ::kernel::macros::paste!(
-> +                $crate::macros::paste!(
->                  $(
->                  value.[<set_ $field>](Default::default());
->                  )*
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index c859a8984bae..9c492fa10967 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -64,6 +64,7 @@
->  #[cfg(CONFIG_AUXILIARY_BUS)]
->  pub mod auxiliary;
->  pub mod bits;
-> +pub mod bitstruct;
->  #[cfg(CONFIG_BLOCK)]
->  pub mod block;
->  pub mod bug;
-> @@ -112,6 +113,7 @@
->  pub mod prelude;
->  pub mod print;
->  pub mod rbtree;
-> +pub mod register;
->  pub mod regulator;
->  pub mod revocable;
->  pub mod security;
-> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> index 25fe97aafd02..a98c7b7ab6af 100644
-> --- a/rust/kernel/prelude.rs
-> +++ b/rust/kernel/prelude.rs
-> @@ -39,6 +39,8 @@
->  
->  pub use super::static_assert;
->  
-> +pub use super::{bitstruct, register};
-> +
->  pub use super::error::{code::*, Error, Result};
->  
->  pub use super::{str::CStr, ThisModule};
-> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/rust/kernel/register.rs
-> similarity index 90%
-> rename from drivers/gpu/nova-core/regs/macros.rs
-> rename to rust/kernel/register.rs
-> index 22a53a73b765..1f48c5335e70 100644
-> --- a/drivers/gpu/nova-core/regs/macros.rs
-> +++ b/rust/kernel/register.rs
-> @@ -16,7 +16,8 @@
->  /// The `T` generic argument is used to distinguish which base to use, in case a type provides
->  /// several bases. It is given to the `register!` macro to restrict the use of the register to
->  /// implementors of this particular variant.
-> -pub(crate) trait RegisterBase<T> {
-> +pub trait RegisterBase<T> {
-> +    /// The base address for the register.
->      const BASE: usize;
->  }
->  
-> @@ -281,6 +282,7 @@ pub(crate) trait RegisterBase<T> {
->  /// # Ok(())
->  /// # }
->  /// ```
-> +#[macro_export]
->  macro_rules! register {
->      // Creates a register at a fixed offset of the MMIO space.
->      ($name:ident @ $offset:literal $(, $comment:literal)? { $($fields:tt)* } ) => {
-> @@ -378,7 +380,7 @@ impl $name {
->              /// Read the register from its address in `io`.
->              #[inline(always)]
->              pub(crate) fn read<const SIZE: usize, T>(io: &T) -> Self where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  Self(io.read32($offset))
->              }
-> @@ -386,7 +388,7 @@ pub(crate) fn read<const SIZE: usize, T>(io: &T) -> Self where
->              /// Write the value contained in `self` to the register address in `io`.
->              #[inline(always)]
->              pub(crate) fn write<const SIZE: usize, T>(self, io: &T) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  io.write32(self.0, $offset)
->              }
-> @@ -398,7 +400,7 @@ pub(crate) fn alter<const SIZE: usize, T, F>(
->                  io: &T,
->                  f: F,
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io));
-> @@ -421,13 +423,13 @@ pub(crate) fn read<const SIZE: usize, T, B>(
->                  #[allow(unused_variables)]
->                  base: &B,
->              ) -> Self where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  const OFFSET: usize = $name::OFFSET;
->  
->                  let value = io.read32(
-> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> +                    <B as $crate::register::RegisterBase<$base>>::BASE + OFFSET
->                  );
->  
->                  Self(value)
-> @@ -442,14 +444,14 @@ pub(crate) fn write<const SIZE: usize, T, B>(
->                  #[allow(unused_variables)]
->                  base: &B,
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  const OFFSET: usize = $name::OFFSET;
->  
->                  io.write32(
->                      self.0,
-> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> +                    <B as $crate::register::RegisterBase<$base>>::BASE + OFFSET
->                  );
->              }
->  
-> @@ -462,8 +464,8 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
->                  base: &B,
->                  f: F,
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io, base));
-> @@ -486,7 +488,7 @@ pub(crate) fn read<const SIZE: usize, T>(
->                  io: &T,
->                  idx: usize,
->              ) -> Self where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> @@ -503,7 +505,7 @@ pub(crate) fn write<const SIZE: usize, T>(
->                  io: &T,
->                  idx: usize
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> @@ -520,7 +522,7 @@ pub(crate) fn alter<const SIZE: usize, T, F>(
->                  idx: usize,
->                  f: F,
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io, idx));
-> @@ -535,13 +537,13 @@ pub(crate) fn alter<const SIZE: usize, T, F>(
->              pub(crate) fn try_read<const SIZE: usize, T>(
->                  io: &T,
->                  idx: usize,
-> -            ) -> ::kernel::error::Result<Self> where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +            ) -> $crate::error::Result<Self> where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(Self::read(io, idx))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->  
-> @@ -554,13 +556,13 @@ pub(crate) fn try_write<const SIZE: usize, T>(
->                  self,
->                  io: &T,
->                  idx: usize,
-> -            ) -> ::kernel::error::Result where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +            ) -> $crate::error::Result where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(self.write(io, idx))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->  
-> @@ -574,14 +576,14 @@ pub(crate) fn try_alter<const SIZE: usize, T, F>(
->                  io: &T,
->                  idx: usize,
->                  f: F,
-> -            ) -> ::kernel::error::Result where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> +            ) -> $crate::error::Result where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  if idx < Self::SIZE {
->                      Ok(Self::alter(io, idx, f))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->          }
-> @@ -607,12 +609,12 @@ pub(crate) fn read<const SIZE: usize, T, B>(
->                  base: &B,
->                  idx: usize,
->              ) -> Self where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> +                let offset = <B as $crate::register::RegisterBase<$base>>::BASE +
->                      Self::OFFSET + (idx * Self::STRIDE);
->                  let value = io.read32(offset);
->  
-> @@ -629,12 +631,12 @@ pub(crate) fn write<const SIZE: usize, T, B>(
->                  base: &B,
->                  idx: usize
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  build_assert!(idx < Self::SIZE);
->  
-> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> +                let offset = <B as $crate::register::RegisterBase<$base>>::BASE +
->                      Self::OFFSET + (idx * Self::STRIDE);
->  
->                  io.write32(self.0, offset);
-> @@ -650,8 +652,8 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
->                  idx: usize,
->                  f: F,
->              ) where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  let reg = f(Self::read(io, base, idx));
-> @@ -668,14 +670,14 @@ pub(crate) fn try_read<const SIZE: usize, T, B>(
->                  io: &T,
->                  base: &B,
->                  idx: usize,
-> -            ) -> ::kernel::error::Result<Self> where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +            ) -> $crate::error::Result<Self> where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(Self::read(io, base, idx))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->  
-> @@ -690,14 +692,14 @@ pub(crate) fn try_write<const SIZE: usize, T, B>(
->                  io: &T,
->                  base: &B,
->                  idx: usize,
-> -            ) -> ::kernel::error::Result where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +            ) -> $crate::error::Result where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->              {
->                  if idx < Self::SIZE {
->                      Ok(self.write(io, base, idx))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->  
-> @@ -713,17 +715,19 @@ pub(crate) fn try_alter<const SIZE: usize, T, B, F>(
->                  base: &B,
->                  idx: usize,
->                  f: F,
-> -            ) -> ::kernel::error::Result where
-> -                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> -                B: crate::regs::macros::RegisterBase<$base>,
-> +            ) -> $crate::error::Result where
-> +                T: ::core::ops::Deref<Target = $crate::io::Io<SIZE>>,
-> +                B: $crate::register::RegisterBase<$base>,
->                  F: ::core::ops::FnOnce(Self) -> Self,
->              {
->                  if idx < Self::SIZE {
->                      Ok(Self::alter(io, base, idx, f))
->                  } else {
-> -                    Err(EINVAL)
-> +                    Err($crate::error::code::EINVAL)
->                  }
->              }
->          }
->      };
->  }
-> +
-> +pub use register;
-> -- 
-> 2.34.1
-> 
-> 
+This patch resolves a logic issue with selinux_set_mnt_opts when
+selinux_policycap_functionfs_seclabel is enabled. The issue was
+introduced between v1 and v2 of the original patchset.
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+Fixes: 1b22454bb5e6 ("selinux: enable per-file labeling for functionfs")
+Signed-off-by: Neill Kapron <nkapron@google.com>
+---
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 333bb6cba25e..0e47b4bb8d40 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -745,7 +745,7 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	    !strcmp(sb->s_type->name, "pstore") ||
+ 	    !strcmp(sb->s_type->name, "securityfs") ||
+ 	    (selinux_policycap_functionfs_seclabel() &&
+-	     strcmp(sb->s_type->name, "functionfs")))
++	     !strcmp(sb->s_type->name, "functionfs")))
+ 		sbsec->flags |= SE_SBGENFS;
+ 
+ 	if (!strcmp(sb->s_type->name, "sysfs") ||
+-- 
+2.51.0.355.g5224444f11-goog
+
 
