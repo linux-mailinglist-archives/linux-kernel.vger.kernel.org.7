@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-803263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF12B45CC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:43:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78E5B45CC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4065B3B3469
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6385A2712
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67A030214B;
-	Fri,  5 Sep 2025 15:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7E9302145;
+	Fri,  5 Sep 2025 15:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4sp4gpf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP8CJ997"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A062FB0B2;
-	Fri,  5 Sep 2025 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491031B833;
+	Fri,  5 Sep 2025 15:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757087012; cv=none; b=KmYsfLa0m6JnuG2YjV2BX2IzGu2PGJS9l6WZhy/YhvqblI2glBtghyS7wNBsl+GiW+fckotgLFzDYGE6LUK+QdwbAzpRoiTvbJ6kpR81lUyW0CX0CgMLwMwNbMXrDdSkDa6YmZF90s9JrsvJ2hT6p6GiuP+9uWaa42Cf9LElqVE=
+	t=1757087045; cv=none; b=dpCkup0QjecTPGVEL8dx/KjOYEgaf8HPsI7rdreShMrIGHiOA2x52YTDiufJSF7EUYZtgil58chdh4CBeo3KweQQPPWTUezAiK2AhBZU3LSLaPRb+o7Mj/rnNOw7G551uCEKiaJfu/jo/9nj9PMiNa5mUa3K91rfNIZEmlqI80g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757087012; c=relaxed/simple;
-	bh=4kRUO/9jXo8X9s/nzE/lUlckvZsyrWBNGB44GH9GDQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVo34Pf2NnsL81fSCn3mYvH2QDK48uZ7csggQhjY9LjwnaXU9wCS266UHbSxgaubbdciBcdHgm5+Lkozh0JsD3pHzMuY2sTlGxD8yRx7UxI6OruLVft0SVC9GhlmPigTUkddk6reodgKUVxmP/E3qZ7I4uBESSSjtfLtSxCtq/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4sp4gpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D989C4CEF1;
-	Fri,  5 Sep 2025 15:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757087011;
-	bh=4kRUO/9jXo8X9s/nzE/lUlckvZsyrWBNGB44GH9GDQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f4sp4gpfU2PExUYTCIwD5e3+oChKnpLSLcTrkQQpldrDPO54uE0/IBizlbPLVR25M
-	 iPWUIDyIx4j57STdvwliY0Nqhb/5ffB+Wb2QJ639ogUNLzJhlFDDx4yiiEaclbgDxw
-	 794Cjqjt9pMs2wTCOGFwm7RnDnWRHkbsM7q0q4KZ3JDpIHUoLftx9qfhA14NHHsiLq
-	 yOdhYbG/InrcZt+filmTbsWyZyDAzGVYirfxL5Iu+xMBkKBxYIqxJo7Ko8EemOG5HW
-	 jWs8gresg4IQfxfMDo94hMo/sDoqsHSxF2gH5N0rp42euvwPytkn4WCLIU5w6sqfRC
-	 oCR8/MhB3L0/Q==
-Date: Fri, 5 Sep 2025 16:43:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v20 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <0ff8b70e-283f-4d56-8bab-bcae11cd5bdb@sirena.org.uk>
-References: <20250902-clone3-shadow-stack-v20-0-4d9fff1c53e7@kernel.org>
- <20250902-clone3-shadow-stack-v20-4-4d9fff1c53e7@kernel.org>
- <20250905-nutria-befund-2f3e92003734@brauner>
+	s=arc-20240116; t=1757087045; c=relaxed/simple;
+	bh=jQ6wRH+vPe3IDPH5gDvEWz6iLi0di+IZLYpz3tvhhKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/Mqry5FAgKDiDqaKt7Erbw50sfsXwtHvE6Obzf8AVTFpLbrpt+MnKT0so6RmF8pQZuTB1GI4CZ8xHakQdktCLXnoj6yEeSJmQ0Es4D/Z9cPHKBqeXkT4YNIM544hrHeVbq+5cPUyinZtD4dOwRk4lrMyRMatN6KNOi+5qKbZCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP8CJ997; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7459fa1ef2aso2356405a34.1;
+        Fri, 05 Sep 2025 08:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757087042; x=1757691842; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f2ag447guJJ+5SXVnrwNqP+lUfwxcxZXABgH6xXWAjI=;
+        b=kP8CJ997zPOG8NV//kxz7Pv34MblpbCVNFp/HuyBczTwLf+GVdTIIFBWjhkVQHPOSP
+         G/PlBIR2rD39BSq5Y/RGFLPJg3wZIAmSj8u2fDrVeUz7t8M0Pl3yVr5750jdsqCh3iuI
+         r2ZA8MmMlSDHGdGqXRBcgSywoHytMTNcCDPf14UFLT1mk2joBbYshrtneY1wgP1TtB4y
+         9n0yYTIcE8mLvUoLtMLifCjPpPXdG1c0jHekWuqgYJWyEFDSuKyx11yFQUn6XsfmeEYR
+         X5SyYuG3rttXJ1GVOqMQSd6C/6kRN7to7z72oGgpoEChG+Mc1EpWcmdSS+04kRQYVCaS
+         1qzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757087042; x=1757691842;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f2ag447guJJ+5SXVnrwNqP+lUfwxcxZXABgH6xXWAjI=;
+        b=s2dAyyGGjdtYjGXpEDFsWJpKR6df0VkEIUPJ2UXwZLfwwRlVGnYbp2l7YVEJXWtj45
+         mVkiVo1KdDkJ5PfHJK3xLSqPwniGHMExnKqdCxWxdKo+Qt47pCzk/EsijVxf0/pVSOWk
+         57YGR8jd9kHSQxMPkkR5iYgsIcizL7R3XbrnxJXaGQvd4ujlo+QabEUod0KSmO+mpdBZ
+         DpvrWd4kUqXga45Y76H9lNRpyXhCwgupuaRHcUPqCY5ec9f0gn13mukyu68HSujRwqOv
+         y4A9KdGk55jYQWEWKgVggN2rEzbHxCKksyJ2FwJFI+PDMzpT0AT6HMfihu8DD9TVUpR0
+         qncQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxEd5kvGOdbXn7ZBTHXe5pMjBgrxBu9IuyigkiKZXf3uDNP8v4gpXX25dNiXmR/dkB8eSd7ojGAcZuBBu5@vger.kernel.org, AJvYcCVzJu42U43OxbGOhUt9cJpuRyQOUf5Cd2TLeMqZc4tEhLHYj4mZKolwyrHjsdyiOcFVbCIpdCQ0VOiu1r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzF0a4TjRrmyBnqToR92w2Em4CLSAh7fiH5AFxIROmr+FNt/r8
+	tLY9/p1kJ6PY8LU+/t0r46wMiJBLg9JpRwbUcO8x9dOaeKYFZQ0Fa3Zi
+X-Gm-Gg: ASbGnct7Qzm+RMgTbSiz5iOt8WvToTjy7g4C89g//PdynxHx8/zvInsUYQLkt3JLQQA
+	uhoVIldAM3XezIMAgaRAy2ViBhEOTQWvDcq0q8Ie+YHXg2d1Y6h5yqkdHv3U0weE23oxGsiBk2K
+	SsJKHosY6BIoMLeKk207GdwktDCvCGA/f6St8yIClX/PFuDjWqT4m8cYFIzD5UgnZegsEJV8VuR
+	fBYjJoJ4/p4xioPgCRilI5JtZhJ/LW8t+FLm2S9fmvBwkNdIdlzlvgMeDPIFK2VZTk10H+6ZVK5
+	lqdKp6MufUD/di6PpxpIi9Sz6wn0m8E3QxjnQHDIvKZHiw23O5YOrDeo7Gjc0HQD4LoRLR3KZhI
+	Z9UOb13STil+TCpQN+5ogU7jywMo6M8R1MxnPVJCjsg==
+X-Google-Smtp-Source: AGHT+IESoaKFNwvJ2zmh3m5L9WabCBNHQw5n+iPtShwEM3j+ZEPGJykW8vK3WMjwFC0559P80frv3g==
+X-Received: by 2002:a05:6830:3898:b0:743:968b:3440 with SMTP id 46e09a7af769-74569e8b89emr10587473a34.20.1757087042507;
+        Fri, 05 Sep 2025 08:44:02 -0700 (PDT)
+Received: from ?IPV6:2603:8081:c640:1::1007? ([2603:8081:c640:1::1007])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61e6feb11a7sm1347327eaf.10.2025.09.05.08.44.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Sep 2025 08:44:01 -0700 (PDT)
+Message-ID: <64adc508-d18b-4075-835d-97ce5b68c4eb@gmail.com>
+Date: Fri, 5 Sep 2025 10:43:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H+cLuqqTYYiGS0aY"
-Content-Disposition: inline
-In-Reply-To: <20250905-nutria-befund-2f3e92003734@brauner>
-X-Cookie: He who laughs, lasts.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] mshv: Get the vmm capabilities offered by the
+ hypervisor
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
+References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Language: en-US
+From: Praveen K Paladugu <praveenkpaladugu@gmail.com>
+In-Reply-To: <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---H+cLuqqTYYiGS0aY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Sep 05, 2025 at 05:21:59PM +0200, Christian Brauner wrote:
-> On Tue, Sep 02, 2025 at 11:21:48AM +0100, Mark Brown wrote:
+On 8/28/2025 7:43 PM, Nuno Das Neves wrote:
+> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> 
+> Some newer hypervisor APIs are gated by feature bits in the so-called
+> "vmm capabilities" partition property. Store the capabilities on
+nit: s/xx/Some hypervisor APIs are gated by feature bits exposed in
+"vmm capabilities" partition property./g> mshv_root module init, using 
+HVCALL_GET_PARTITION_PROPERTY_EX.
+> 
+> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>   drivers/hv/mshv_root.h      |  1 +
+>   drivers/hv/mshv_root_main.c | 28 ++++++++++++++++++++++++++++
+>   2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index 4aeb03bea6b6..0cb1e2589fe1 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -178,6 +178,7 @@ struct mshv_root {
+>   	struct hv_synic_pages __percpu *synic_pages;
+>   	spinlock_t pt_ht_lock;
+>   	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
+> +	struct hv_partition_property_vmm_capabilities vmm_caps;
+>   };
+>   
+>   /*
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index 56ababab57ce..29f61ecc9771 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -2327,6 +2327,28 @@ static int __init mshv_root_partition_init(struct device *dev)
+>   	return err;
+>   }
+>   
+> +static int mshv_init_vmm_caps(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
+> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
+> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
+> +						0, &mshv_root.vmm_caps,
+> +						sizeof(mshv_root.vmm_caps));
+> +
+> +	/*
+> +	 * HV_PARTITION_PROPERTY_VMM_CAPABILITIES is not supported in
+> +	 * older hyperv. Ignore the -EIO error code.
+> +	 */
+> +	if (ret && ret != -EIO)
+> +		return ret;
+> +
+> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
+> +
+> +	return 0;
+> +}
+> +
+>   static int __init mshv_parent_partition_init(void)
+>   {
+>   	int ret;
+> @@ -2377,6 +2399,12 @@ static int __init mshv_parent_partition_init(void)
+>   	if (ret)
+>   		goto remove_cpu_state;
+>   
+> +	ret = mshv_init_vmm_caps(dev);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to get VMM capabilities\n");
+> +		goto exit_partition;
+> +	}
+> +
+>   	ret = mshv_irqfd_wq_init();
+>   	if (ret)
+>   		goto exit_partition;
 
-> > +		.shadow_stack_token	= args.shadow_stack_token,
+Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+-- 
+Regards,
+Praveen K Paladugu
 
-> I'm not sure why this has to be named "shadow_stack_token" I think
-> that's just confusing and we should just call it "shadow_stack" and be
-> done with it. It's also a bit long of a field name imho.
-
-I'm not hugely attached to the name, if you want to rename that's
-perfectly fine by me.  My thinking was that there's a potential
-confusion with it being a pointer to the base of the shadow stack by
-comparison with the existing "stack" but I do agree that the resulting
-name is quite long and if someone does actually get confused they should
-discover the problem fairly rapidly in testing.  ss_token would shorter
-but the abbreviation is less clear, whatever name you prefer is fine by
-me.
-
-> I have a kernel-6.18.clone3 branch
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=kernel-6.18.clone3
-> because there's another cross-arch cleanup that cleans up copy_thread(),
-> copy_sighand(), and copy_process() and - surprisingly - also adds
-> clone3() support for nios2...
-
-> Anyway, if you just want me to slap it on top of that branch then I can
-> simply rename while applying so no need to resend in that case.
-
-That would be amazing, I'm totally happy with you doing that.  If I do
-need to rebase and resend let me know.
-
-It's probably worth mentioning that the RISC-V shadow stack support was
-getting near to being merged, if that ends up being OK for this release
-(it's not been posted yet though) there might be some cross tree merge
-needed or something.
-
---H+cLuqqTYYiGS0aY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi7BRoACgkQJNaLcl1U
-h9DGtQgAhZoW07nRePXYFKl87wwVwrLw08jemTnqtO8iIwqJMDNZEtFsM5vbI2FW
-lKJ10vTz+GBynt/YFq15g3Pn8G8KpqbZH1cV1bCNCdGlBhnvJ5YwHHkV0iPyMIEF
-iux5PzpYcf8755igN1mvHtyML4T70gHywSjqrxyPDHz4nghBgG+CL/se/cINsvH5
-/WKmPvi9PFxa+oVCJoaveyqV8ZmwkhXq+80bUTUJkERlvAA1kusK6eyxbdyJfhp9
-0kLEXnMFRaGbzlO5tRp//EZNVIoYDPQI929EQoISPYLlyZv8iwpqS2u8abSjdChm
-+kkS+dg4X5lNLaH7OmnLyyI2YycU3A==
-=LTFu
------END PGP SIGNATURE-----
-
---H+cLuqqTYYiGS0aY--
 
