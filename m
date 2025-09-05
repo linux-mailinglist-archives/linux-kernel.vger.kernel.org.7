@@ -1,69 +1,77 @@
-Return-Path: <linux-kernel+bounces-802733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B773B45622
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A611CB45627
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 13:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D58166CED
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831451881FA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 11:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE89343D9B;
-	Fri,  5 Sep 2025 11:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEA922758F;
+	Fri,  5 Sep 2025 11:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Az302rKe"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/QIh2dd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773732ED151
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 11:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A8E2BE020;
+	Fri,  5 Sep 2025 11:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757070982; cv=none; b=Zca6bvv5rMr3PMzF7AV1XwFar7ulClmi4as/mHKE2IEwW9nGdluMdrUnfyeCYQiguo3vyBaXfJaXASHz87aVI6I1NXcWRMH5Dy2NO8Q4nDUY9IfcACR9LIyHA7cX03wkOvHvJw/XJ4LTagswnDFZGeZhlWsJRHtrkL27W4QGyFM=
+	t=1757071164; cv=none; b=qniqAUSpk0ox4m041ZQ2mKVDRnbDluG7EzMA80PxIeUZeirkbjSNfyODYme/Q233mopGkFwUj+dbc5L1ckcJ6+Kydg4bC0m3wfWHlrMLjFK52YpmdWktA5zt9+v+gbWX84h5FtTO4aw3CyF0Jl53QBlWy7LKQHG6WzQz9PlDbz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757070982; c=relaxed/simple;
-	bh=bOAYj291jkUOw3rHJJrmHKmXeWOQO9TtjeihHIB/ndg=;
+	s=arc-20240116; t=1757071164; c=relaxed/simple;
+	bh=RHLqjtmoQ09sM+x+rrDllENxQeIkKdioDv+JW9P+Aos=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qowwCFyCB/hGMnj3NqR0i+qKATvvGai4VgizpOMH1ur5OAl9FSt+Gb6VjqSzP8zjpwyEMlmWiMq7bZW+eOb8bzkTnErAGCT96uxEio2ozX+ZYr+g+oEB/0qZ0m02uXnrhLOttn1EP9mIafPNo56eLlSql7PFOrVhanGUcgVNtt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Az302rKe; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=zVWE
-	ldUDLWXndlkuAPr07pm2azCdz/l59iuF+leqIYs=; b=Az302rKeRwRyNr72awQg
-	TlQq3AF47qfdya83T1YdQG1z9ouFaKMVUItbvI6Mz29NLN8qu1PU+bIijnKsVufB
-	cHsEB43Qrk+cvXhiwbr/q44d33Kg9pTr9eHDoobfG6rFtNOLOHgNvP3Fk3dhZDGs
-	74zwjAnYFKPTIGzUnaw/FKpw+TVCMcECtojnZNmgmm8XyuIlSP2Otsro+ySaP7WT
-	XaZXPv7jCRK3HfPHMBqzYrL1XSf2OWeVEh0Z87VKkMbvCOGUj3Q5x9lBfbvdiLbO
-	GRddJoK+lNXHBrQ3iMkxZUZHW28gOelkKOr1gSHAKRl56vVA9y4RG9F5naQ0SMbI
-	/g==
-Received: (qmail 4018941 invoked from network); 5 Sep 2025 13:16:11 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Sep 2025 13:16:11 +0200
-X-UD-Smtp-Session: l3s3148p1@Ye0P9ws+as0gAwDPXxPDAOCjMSL5jkIv
-Date: Fri, 5 Sep 2025 13:16:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N
- support
-Message-ID: <aLrGehz-3FA4qO3C@shikoro>
-References: <20250904160305.247618-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aLm5kbgRIcomBo6a@ninjato>
- <aLrF1OnctYZwy15y@tom-desktop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZkFlX8WdU0BYZXkuih1EDx9b9WFyZBXvP5HKsJB+m4TTC9mR4DkHofETH0SabVGLhBb2wH5x0zWQEI9lghETaC4A8+zC1wqa2U8PSE5vhxSi/fj6Mye68gd+DZtOmnvg6RcUJgCo0AKSoQyJQXBxugoGTva+uWMGPhr9QGGJT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/QIh2dd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C27C4CEF1;
+	Fri,  5 Sep 2025 11:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757071164;
+	bh=RHLqjtmoQ09sM+x+rrDllENxQeIkKdioDv+JW9P+Aos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A/QIh2ddmPQW9GbhkGscvwZJAOdlvRvh05eTseLWqDi0NqX5VoUz3c+rFGi5te6gs
+	 FeVf6cxesM0g4NssvOVujDWyj9mrdK8LpKlTGDp/6FZss2dq4STW6zOMrER9uue5m7
+	 gYM0YJqrGGelTJTg/Wae0ezZ+Ln5Z9a7rQdsrtvsC5aJMkzJDUejnZeo9niA5S9ZsO
+	 rAiiZhiID4hhFyLR0EPR+sXVy1LHpEREWSJ9XWSwcd0WYCKy66BICmsJmvPOks/99s
+	 KUtvAv0iw5WXUoAptM66b1336WnWvdA8iRqYrawyqjKazn3DqpgdPmx5ld20pIZHkT
+	 94jShf4NQqhcQ==
+Date: Fri, 5 Sep 2025 14:19:11 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Hocko <mhocko@suse.com>, Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 2/7] mm: introduce local state for lazy_mmu sections
+Message-ID: <aLrHL-C_UXfUbCd9@kernel.org>
+References: <20250904125736.3918646-1-kevin.brodsky@arm.com>
+ <20250904125736.3918646-3-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,13 +80,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLrF1OnctYZwy15y@tom-desktop>
+In-Reply-To: <20250904125736.3918646-3-kevin.brodsky@arm.com>
 
-
-> Maybe "Renesas RZ I3C Bus Interface"
+On Thu, Sep 04, 2025 at 01:57:31PM +0100, Kevin Brodsky wrote:
+> arch_{enter,leave}_lazy_mmu_mode() currently have a stateless API
+> (taking and returning no value). This is proving problematic in
+> situations where leave() needs to restore some context back to its
+> original state (before enter() was called). In particular, this
+> makes it difficult to support the nesting of lazy_mmu sections -
+> leave() does not know whether the matching enter() call occurred
+> while lazy_mmu was already enabled, and whether to disable it or
+> not.
 > 
-> ?
+> This patch gives all architectures the chance to store local state
+> while inside a lazy_mmu section by making enter() return some value,
+> storing it in a local variable, and having leave() take that value.
+> That value is typed lazy_mmu_state_t - each architecture defining
+> __HAVE_ARCH_ENTER_LAZY_MMU_MODE is free to define it as it sees fit.
+> For now we define it as int everywhere, which is sufficient to
+> support nesting.
+> 
+> The diff is unfortunately rather large as all the API changes need
+> to be done atomically. Main parts:
+> 
+> * Changing the prototypes of arch_{enter,leave}_lazy_mmu_mode()
+>   in generic and arch code, and introducing lazy_mmu_state_t.
+> 
+> * Introducing LAZY_MMU_{DEFAULT,NESTED} for future support of
+>   nesting. enter() always returns LAZY_MMU_DEFAULT for now.
+>   (linux/mm_types.h is not the most natural location for defining
+>   those constants, but there is no other obvious header that is
+>   accessible where arch's implement the helpers.)
+> 
+> * Changing all lazy_mmu sections to introduce a lazy_mmu_state
+>   local variable, having enter() set it and leave() take it. Most of
+>   these changes were generated using the Coccinelle script below.
+> 
+> @@
+> @@
+> {
+> + lazy_mmu_state_t lazy_mmu_state;
+> ...
+> - arch_enter_lazy_mmu_mode();
+> + lazy_mmu_state = arch_enter_lazy_mmu_mode();
+> ...
+> - arch_leave_lazy_mmu_mode();
+> + arch_leave_lazy_mmu_mode(lazy_mmu_state);
+> ...
+> }
+> 
+> Note: it is difficult to provide a default definition of
+> lazy_mmu_state_t for architectures implementing lazy_mmu, because
+> that definition would need to be available in
+> arch/x86/include/asm/paravirt_types.h and adding a new generic
+>  #include there is very tricky due to the existing header soup.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 
-It is on R-Car Gen5 as well, so... no :)
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
+-- 
+Sincerely yours,
+Mike.
 
