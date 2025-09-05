@@ -1,256 +1,201 @@
-Return-Path: <linux-kernel+bounces-802412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-802413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566D7B4522D
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:55:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6342EB45232
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 10:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C630EB624E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0FDC4803DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF043002C4;
-	Fri,  5 Sep 2025 08:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6941B3002B2;
+	Fri,  5 Sep 2025 08:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b="fWsxNIDo"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023073.outbound.protection.outlook.com [52.101.83.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IcprrIPu"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4675927E040;
-	Fri,  5 Sep 2025 08:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757062479; cv=fail; b=iIA3minxyfhQF4NQ5HgXi42injq6ip3/TL6zY6Bx/goo2y1p2zVNRx9kP8igyy0CEUFdLURs6stcSrvOuBYvCA7USeAUItCVLjgZDo1UWD1M7cw0LBA5ETTkbH3Z5MKgYK0t7t2VqdrmnYR9aN4R4fztTR0tPLeksOsUIdW82SM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757062479; c=relaxed/simple;
-	bh=g2DAYD+G+C49NafAtiwoI7o6jcpwbGb3dBWRlwRCowc=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=ZlupqcrEtW6SMjXVBPWMZ5Cr4GdxaPZZEfqueGENuO9uI4dY2s9kdy2t2PFySK5S33mSkGy8N+7V84G38ICddc/OpmD19G4N85c2ojf2PxVcxka5cvg/7TbTnuz6enDrC8J8tLJ8yZvSXrjhXre50XmMeWO4Mo6Mpa7gCuz9ARY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com; spf=pass smtp.mailfrom=vaisala.com; dkim=pass (2048-bit key) header.d=vaisala.com header.i=@vaisala.com header.b=fWsxNIDo; arc=fail smtp.client-ip=52.101.83.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vaisala.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaisala.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lUjqV4yQA65zzLkg7R8iGI5gN98heJ4aUo/vgM93jW1AApDq9mkgaosUgR86REwa9w5HB89zX1CPp1mQ/Wu8atxcFN6hBi3J3jAMm31L5OsQyPGATGlzk8oT8zJR37Om5codqXHGP1QXSeeOZ1HznpFHG6h7w7S5L5mRvShmHLCLp/wLVNrGj6rHh9rNrW8PeB7xmb6oEOb7KnI9pw0kgY//od4OdZC8UAorN9UNf/Jnlqilb9PfFmkAXTwtyPuz3rjUyxgESOCHvy6l7lSOhz4rZ+Jg7mh9uvB3Kh4viZWwpt0NVi07bdT6ifPwwv3/DBO/xx/eoE6tlDJuVy03Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yz0MdCTHC5MdlcGYw/YWrhrSRgKfkWnz1awQ5lYL28U=;
- b=pndP/ed6z3KHqJmlbh5spe005Taz9vXggjCnbQBZleiA+3PGp5kKZOYq3xfM4sffJ5CnAZN7jCXnrDTzj7ewL6pZQEIID8qyEhY9uxpnQPfkR7sjPoz3fOD5zBIzCjOGr/1D9HGWZfbZZBlawpoGq6soER22R08Z/yZk6rVZ1HWQCX2pMIVdjKs29AHDGFusQEQHexzkM2EGQKGzFnlLQIQq9y2SvIe7PtkbQ/kXB1O9o2VR7iceqwetSJuqhxb6OAjNbxSd48VQd0cjSYvPTWGH7EmvxYkIl0onMI58H9pOiDsxXkFtilu5mjL+GGBaAyDyS9ijcVAHhv7IVnmAWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vaisala.com; dmarc=pass action=none header.from=vaisala.com;
- dkim=pass header.d=vaisala.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vaisala.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yz0MdCTHC5MdlcGYw/YWrhrSRgKfkWnz1awQ5lYL28U=;
- b=fWsxNIDo7HRkAMTwRGaz0YgCxJ5UQjcnZqjRS0DaREFdfztk1FI1QfqqB//taEODK9FKRjY1Cq7SPU56ayRdGPsXk2h7zd5AhlnOa+n9x0sQYjAnMrOyvYmioW/s6CnQtm/wxZdwcM8t2qj9EQuqKNEiK0Q5zN9VK9yd8aHSaVs+4I81nhx2oxG8FFE1VKrWibQzsQ3Ak50GV+4K8UUA9e0fv3Fq/vrtLJrIUivvmRCqGwETTxFDUcjedmPjDi3SCJ1ja8qG9Gd61pZQhAvrxHzUfM+ftviKe5kVXOgcIc461GF8gkRvhnCkysZVQp+NlwDL1tgBW7UdH8s2Jm37Fg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vaisala.com;
-Received: from AS5PR06MB9040.eurprd06.prod.outlook.com (2603:10a6:20b:676::22)
- by VI1PR06MB6477.eurprd06.prod.outlook.com (2603:10a6:800:122::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Fri, 5 Sep
- 2025 08:54:30 +0000
-Received: from AS5PR06MB9040.eurprd06.prod.outlook.com
- ([fe80::f8cf:8122:6cad:4cf7]) by AS5PR06MB9040.eurprd06.prod.outlook.com
- ([fe80::f8cf:8122:6cad:4cf7%5]) with mapi id 15.20.9094.016; Fri, 5 Sep 2025
- 08:54:30 +0000
-From: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Date: Fri, 05 Sep 2025 08:54:19 +0000
-Subject: [PATCH v2] serial: max310x: improve interrupt handling
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250905-master-max310x-improve-interrupt-handling-v2-1-7387651a5ed2@vaisala.com>
-X-B4-Tracking: v=1; b=H4sIADqlumgC/52NQQ6CMBBFr0JmbU1bUISV9zAsplBgEmhJiw2Gc
- HdHjuDq5/3M/LdDtIFshDrbIdhEkbxj0JcM2hHdYAV1zKClvslK5mLGuNrAseVKboLmJfjEV47
- b8F5WwV/dRG4QiFqb0qBqVQe8twTb03a6Xg3zSHH14XOqk/q1/1iSEkqY3hTFQ1e2vMtnQoo44
- bX1MzTHcXwB+Xt93uQAAAA=
-X-Change-ID: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- Tapio Reijonen <tapio.reijonen@vaisala.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757062469; l=2375;
- i=tapio.reijonen@vaisala.com; s=20250903; h=from:subject:message-id;
- bh=g2DAYD+G+C49NafAtiwoI7o6jcpwbGb3dBWRlwRCowc=;
- b=DR54zTDw9rk5DWvg4S+ojByKR7bTJF+7tmVF5gNx6a3kpCPyW8aZbYPnkf5UY25ddX/zIcSZZ
- zoIuBAjiirpB/qQ4RIgt9GJmG9PWhkI2e+R7FMJwhYFxzAdWPnhTp0R
-X-Developer-Key: i=tapio.reijonen@vaisala.com; a=ed25519;
- pk=jWBz3VD84WbWgfEgIqB5iFFiyVIHZr52zVBPOm7qiGo=
-X-ClientProxiedBy: GV2PEPF00004534.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::35f) To AS5PR06MB9040.eurprd06.prod.outlook.com
- (2603:10a6:20b:676::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C633F27FB27
+	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 08:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757062522; cv=none; b=I8HleU8WmCWp+elgkQcUJxjk+1AtRPzPQmyslclv9cuvPlobgugJGyJpn7hsZ7t+UgjKSnx4sPrghmtGcNSFH3lPkdBHO6yLUddeAn169JvssUqtIF4TCIniYd9I8U9OIj35vn8Gh/WUHh4BAr6vAgTzM8Pu9ZVC+L61xDJ83Jg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757062522; c=relaxed/simple;
+	bh=ZNmTX3oAdF44H3USpk7f7fW//sb77ehYji7toAjzm70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dns1ERYc7GcwccKAmIEjPikbTxR5Agva1QzHKrhV1j76tMch02vzBE61MV14bpGZCvccZXf/CC4ZuIFtsYNXO8/V2E589C53XxY31Uw+1wtAo/BHvHj3RU0EpyyfjV9V4G8+ployq1a33ADL/tfW+gb5s5a7jk2jcqBE1xsC2WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IcprrIPu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so17916425e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 01:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757062518; x=1757667318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TmD8jC/Hvu39/0Cbcsv+8PlqynIT2eeLiLbe6yPBxLs=;
+        b=IcprrIPu1tjHDRYYZMYmOAd00d3I8MIvlXSed3QasEEZJ1Gd6mjitRJj/vHITGSFFN
+         Fzd+whucTNh6BV7OxxYV7QU0UdFASbD7amaoGgVnRJRu34r0KampcyaxNwSvpjBmwNAb
+         evD9H/cYUV+Wt9XOoTdM+AMtn4eM0iLj+zEsVAvborNwLjiVP4iOk9KJuCZCK6vNfA7B
+         itbErYPqScCRLK4GbrogBNprONXmFylqBkNFyh78WfO3BgrfwzL7rkbin/gOQYMzfL47
+         YEZehceqtyoQB6Ksawn9ApY+cV50JBqIP06SVZGbKNCyCDzuwVJL+ZaX356YXeufdThg
+         fk5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757062518; x=1757667318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TmD8jC/Hvu39/0Cbcsv+8PlqynIT2eeLiLbe6yPBxLs=;
+        b=Cx8lkZfiPaz7ohuTLhB0Yf5VqyNV+D03SyNg/q4auJG9ATvso1GG2ENMHI2pAvslhT
+         LVCj0EKxmecVJETSttGKneOwMbecZWbnGMX/yHshqga1samOUkUwh2cHxqkkeLpt+k6m
+         f+Zd5jO+O+XpVhdBa9S4h1DnEHRvF6kS/6ZR2sJjZLCMyHVpFYX3NNfZqYMiXYTJIE71
+         fY9BuhEXPScJSKGWnARC+S0conjM7EAImjch1aYFxWMGWO/CmpavacLjDjtimHAs1o4E
+         7vknhLnSc8eFjTiNFxlMW7+AXXhDvOs2/lr1nMLYdRnAWnnsH0r7yv+zEKCuNtVB/I56
+         WYYg==
+X-Gm-Message-State: AOJu0YzcEG+Lw1RPcHnlXvvm9X6BxZyjZd6Xd8PkK44BYWmjwhj4Y4eG
+	0se3WNk1cJsxDf8Lop28opsbu6iXEf7dbS1V7YC++5qSPrserVX+JbigAzmMVYDRmJknk+sTudz
+	yjmit
+X-Gm-Gg: ASbGnctzSSlOj5IJBFoDEs4eZmSfeUxZauPzO7nlHhAneDdhYzdZQ9t7VWfDUvXFjNQ
+	S4HQR2VrEZ7tDoH5fzi2xeLgAAPE+ERDsBiQIP5cD82utUHcaLjW9uUUvK1VpRVIN+P/t+Kh2Fl
+	N8JdR4Et8wwS91bfAwhBuzvJURCbcjorhZlSbYScZRIdxYPyH+B+IVkz/ptm/Fr8buVpEZtLBQY
+	8qDkJLor7+vMRmDdM5FqH384zt6yXonqCzy31NJPxBHXIiNSxD9IvKP77SdD0+rek5eSPmANnk/
+	teBgoqpE19m/crOmzL9N5Trj5m4jBKnwxcjR2DTMLc9MhHVY0cJ13DOYwPxfxa8hEN/zlpN/t8v
+	KVIGGMxvzSTVEGnd885S/ggB5SW044BTdo5lajVpqXQT6TkRFz+icrySP5oFfVjXd8Tft
+X-Google-Smtp-Source: AGHT+IHhROF317+2kjAbdQsZUZQMjt0NEFfP1/BNsJKXzDUoqvrYtUTX3aoZfTb6ShDt+JT4bSrlpg==
+X-Received: by 2002:a05:6000:230c:b0:3e3:5951:962a with SMTP id ffacd0b85a97d-3e35951994amr1663286f8f.47.1757062517581;
+        Fri, 05 Sep 2025 01:55:17 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d21a32dbc5sm28178346f8f.11.2025.09.05.01.55.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 01:55:17 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>
+Subject: [PATCH 0/2] cgroup: replace wq users and add WQ_PERCPU to alloc_workqueue() users
+Date: Fri,  5 Sep 2025 10:54:34 +0200
+Message-ID: <20250905085436.95863-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS5PR06MB9040:EE_|VI1PR06MB6477:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac0705df-6218-455a-6b9b-08ddec59d3bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mk1Wam9NVjlRS2lkZlRTenh4QzJiWVh3QVNWS09MOXFnN0lucUJOdUtadmx1?=
- =?utf-8?B?bTFSb08vTjN2endqQXl5a2VJVkpIOHpsYUFUOVV2eHdyd3c5THN5R1ZRUUtn?=
- =?utf-8?B?Q0RVQWFWbEY4MCtYQldTczBUeTFWMkdMYVJyV2lHMHdzVGp4aER6Nk5wWGR5?=
- =?utf-8?B?bmNoSnB3cnkrMnltM3ZlZno5d2tzeTJLV09KdDZQblI1cGtZd1NTU2k4eE9I?=
- =?utf-8?B?bzRLT0xNMEI2aThXajVuLzY3aTBBT2lzVEQ4ZzlhMXNYQnlyT1NIbHl4Q1ND?=
- =?utf-8?B?SWlaenBZZmRjaDJpVHBpYVFJRUJSaThGaXFpMDZyK0I1MnF2UDJ0a25uU3lJ?=
- =?utf-8?B?aGlKV2tTclFwZTkxVUhIMjdLNTFkZGx6UTAyM0dCRnFvVmc2R3BOZUpzZkNP?=
- =?utf-8?B?Y3NWK2h2QjNRNUhZTG1oWks5M1V1THplNzU1aWpsam14djhVWFQ0Vno5R1Fp?=
- =?utf-8?B?SmgwTUVkNEdTeWwra0Z1bVZSVkhtQnkyUmRQYUh5N0xndXlaY0kzSEFyeFJ4?=
- =?utf-8?B?Nlowc2xaS1VuOGM2KzMyZkdmNTZpZGptVk5XRGkyYUV1c0pwbEIybmpTMm5N?=
- =?utf-8?B?L28rMitUMlVtVktqYUxYS3BETmV2MTBKaWJ1bExac0hSNXl1V2ZkUlo3Qzcy?=
- =?utf-8?B?ZkNJdlVDNW10b2ZDa1ZJcHcwVndzRDVUbjkvYzVYYVQrcHBOSDFLUEJlbCt5?=
- =?utf-8?B?VWhNY0lDbzRlVTdaTnZaQlFnNlNPRnZJUlNVaVVhVDBzNzBwclBtV1BoUDc3?=
- =?utf-8?B?TEVqVXN1Y29FVUIvOFV6YUh5YVpxUGpIaitZN0svWGFwdkVWTEZFOFp6dTgv?=
- =?utf-8?B?MDFEYnZLU3p6aFRudzNzeW45Znprazh0YXVQVTN3VkEvYjI4RDIycEkyZjJ4?=
- =?utf-8?B?d1BCTXZTSzRGZWxoUHZOSWZQOXZBakJVZFdNNU02cTNsTFpEMTBuREFFYk5v?=
- =?utf-8?B?RkVsOS9xdmhHaWd5Q0FTSUJwVDM1azBYMmZBdFdKVnF6Wk1DNld6aXgrbDg2?=
- =?utf-8?B?a0JaTmVEWGFFTXhma2VFdWdvQ0R1Vmdaa2JjMm85TStQb0p4SElaUS9WOFRT?=
- =?utf-8?B?QVdEcE5RbG9zOHBWbUZKYU9CY3pSZC9pTWVTSFZHYzBEQ0lDbVJvV2ZUcHQy?=
- =?utf-8?B?cllFbmJrdjlWak5HdUhQQ3N3N0R4bHpDWXZ2b1J1VXFoeWVEdHE5VlZVZlNB?=
- =?utf-8?B?c00zeExMSzhJWk4zaWZBOWhhK21MZVlSVFZKMkxSU1ZRUFlwSVFZc3JaeTRX?=
- =?utf-8?B?NmlubWxJaUJ0MEJ4Q2szWGUzMHdYTnNJM2JLNmwyZ0k0SU9EajFGUzB4Ulo2?=
- =?utf-8?B?V0dPOC9vbEszeFdJeHRLRHROZlhITXJ5NTdFZk41U2huQ211RzFzaWVOK3c2?=
- =?utf-8?B?ZnA0MzJlc2hwRjlReDJnVEdlQkY5TzM3VytUNmZEeDE3UWVNODcwZFJzWG9V?=
- =?utf-8?B?MlRkbGZjSFZzaStYc0dJSlp0K2dlNGhTRlBPejR0a28za20rZ1NsS0wzQmk2?=
- =?utf-8?B?YWJWSUZ3ZFF0eDZQUzFXakRXdGdQdWNnbER4U3dra1pSWFRaVkYyK1F6TW5i?=
- =?utf-8?B?YWhGZnRHZWt0dXVNUHVFTW1IdXpxOFl1WDNOT1dCWE41aVpaSUprck55T3Fa?=
- =?utf-8?B?a3RYZC9ENmI5Wk9oSm1pUVFhNFVFdnJaeVNpZWFValkweHVpNnFrbXJPRFZL?=
- =?utf-8?B?SWY5UDg3RWRnTzF2NVdueGZINzNBSzFqbTdwQkJyR2dDcnNlUDZtUUYxUE1E?=
- =?utf-8?B?N284UlVTWW1Ca2pCUXZUSkxZN2RaWlhxVlphV1QxaWV1Tlo3UU9ITHlEMjF0?=
- =?utf-8?B?KzVwZi84UWpkMmdxZVpHVVJ4dURtSVJCemlZN2pocDJrVUxFWmJFT282b1JS?=
- =?utf-8?B?ajgwOGM5Qm5xdmNiaUJRZms1Q0VYRldqM3dST2hZUVlGMHA2WG5hU0VCLzJY?=
- =?utf-8?Q?iszoapOF8T0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR06MB9040.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QXJldE5tUjJ5TnBQdzVNOTVTSEdkU1VYR3FBcHlCRkRrdWFNWGJYQlV4TXNn?=
- =?utf-8?B?eE1XdVVXM1VuNDFweXVwN3dCOWg4anBwNTYxN0pMdzgrWUFXNU92Y1MySFFy?=
- =?utf-8?B?OEZKbGJGYjhwQUFOUkJBWXVaeFRyV3NWYlppMFhOMUhSWUxKdElYUnJZVW9T?=
- =?utf-8?B?Yml6R1Q3bEgzU0dSVWJsaDhIcDdacTNPQ1RwL2p5SkdNOXQzUG85RFVteWNw?=
- =?utf-8?B?bFN0VCswUkU2Rm1PcnZrMmgxZUJlUlErdFJUL21XNG1kMnNKeFN1VkJhU01T?=
- =?utf-8?B?a0FjeTlScTdsekw2UjRaOVNrOFM1Q0dZN2Q2Z1o5cW8vUjNzQ1d2OWNBOExY?=
- =?utf-8?B?aDc4UVZTdnFsSkdEdTRFVy9ZdXcvblRaZkJsOExWY2Y0akJtQ0FqZkdzY3Fh?=
- =?utf-8?B?ZjFvT3NPZ3hLSFNJMGdNaDQ2WHh3bjFGeUsyRTB1eE85cFg1ejM5YVVGS3cz?=
- =?utf-8?B?bHdid2tiYXYzUW9nN3N4OFB1Yk1DamtJVXIrQmxKdG5yTTJyT1JIRmcxNU9S?=
- =?utf-8?B?OE5sM2dQV2lQdm9HWmtLek0rOWRoRkJvSEpVNUFrU0JKbVVsN3ZPU25TWU11?=
- =?utf-8?B?NGxWMDdGTlh0S2FOTGVDVFo3TGkvSUNkNjFMOWkxd0p4OVNBT0pGL1Jqb0xn?=
- =?utf-8?B?N0dSOUtrdStFQUhwUTd3cmFWTzZGVnB3TXJ6MG1kekpmY1hETG5vNXN1TElu?=
- =?utf-8?B?R1UwZ3NNdDNUT2lIVVR1aG5mOWNCcFh1aXkrS3ZJbldVMmZXMHFlcHQ5ZXRU?=
- =?utf-8?B?NGpLR2wvazN0Q01NcytRSDMvbDlML1kyK1ZNd0hiblV2V3JKVTM3YVBNcUQ0?=
- =?utf-8?B?Nlh1cTMwQllETWtOWTNTUDJaVHlEZ1lNNkF1NUNqWVBLOVhUQlNOdTFkUnpi?=
- =?utf-8?B?d2d6Q0pxd3REQkJKTERzckxya0E0bjlGMkpZVGJDK3RrUHNmTkFNeFM2OFEz?=
- =?utf-8?B?WS8yNVVnVnZrZ2s1d05yVjUwU0ZMQmM0RDd1QW9EdWFXbnZGRXNLM2hSV01a?=
- =?utf-8?B?bXNpdmQxdWNpUVgwelA3bUxTQVRtZlN0amZPRzkyNGtocGRFNnBNTjByczFu?=
- =?utf-8?B?dDBqMFRFTHdsMXp2RUdkd3pjdHpMQ0JkSk03RC9pQmYxTWNLdFFYTU1UODFD?=
- =?utf-8?B?SU1ZSFErV250YzNjczhCSDRLa09xM0crcFBURURicWhkcVVZVzBydTFaK3BB?=
- =?utf-8?B?Ynp1dEIyTDBudkRQdkhCQllCVUtJMVp4YmNZM0xuMU1ESTRFRnFhcTJMOHRo?=
- =?utf-8?B?SDB4MGJaV1FLTzdXL3YzSFNJUVhTbjM4ZlliRHdPb1J6Zi9aWVBCdDlBZjFz?=
- =?utf-8?B?TFAxOEdkMFRLT0pIM29XVE9SNDJNMTgwQVJQMUhrR2IveXNuUEcyTnhkODJx?=
- =?utf-8?B?eTdjMm1jMCsyVElvNzZaczRyOWVJV2tvditocXVKN2hHSW5WL1ZtaWtNRGgw?=
- =?utf-8?B?OEpUYW52SjBjRWJvNTQzRXc2RC9VNlN0Z0VUR2Ivb1VxZHJlOGMvUFNLanlL?=
- =?utf-8?B?dFZYR1c0YUNqbVFvZlNneUd3c1ovb0NqT1lCRjFISGp4K2V5UytqY0RTQ0E0?=
- =?utf-8?B?NTBOMTRjOVY1aTdMSXRraFNnQmJnaEJ4UmNMZHRBMmViS1V1S2FtOGVzck5r?=
- =?utf-8?B?ZDdvTzh3clVWQXIwNVZYZ3VURVlYZ1BKS3VGblF5TzN2WHJlY2dDcytLNEZS?=
- =?utf-8?B?QU9HL0FRb3V6bW1ISTFLWmhRQkJ0K1dPc1JzTEtJczA4VGhWYUtNdUFrUi9O?=
- =?utf-8?B?dktpVFlvMUJVQWlhVUp5TkdqME82YkNxS1FJV2RjUEtxQ2kyVEVrM2I3allE?=
- =?utf-8?B?aFZpdSt0aDV1dHdLM01hclhuL2tDYzVJeXY4TEhHemJ2TFpCbEhZWkJuSnN2?=
- =?utf-8?B?WEtFK1NRWDN1ZUhGWUp4cDBZUENqT1lTeUNZSnphVjhoWGFvQitWdEFDY0Jl?=
- =?utf-8?B?elluSVhRQkdUYm5zVEZ4anVsVHUxMnZhZ2dhOEYwcS9PUUJCelBkQURXVmhm?=
- =?utf-8?B?N3ZNTW5hTE5VMjNvNkhsWUREbjRmeWZVWDNxdUJjTW5QcFhvbjZLUGF6cCtE?=
- =?utf-8?B?aEhNTXpYcXJOYTNkUzlmMnR4WENDWVBrTFN4L2YxVDZaYjlZYTF5Ym9RN3hw?=
- =?utf-8?B?cWVOdE90NDhJckt6K3N6NEZWVGJHN2RGcHNsRXBhb3RWTWphU2N4NGlpOXR2?=
- =?utf-8?B?Vmc9PQ==?=
-X-OriginatorOrg: vaisala.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac0705df-6218-455a-6b9b-08ddec59d3bd
-X-MS-Exchange-CrossTenant-AuthSource: AS5PR06MB9040.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2025 08:54:30.7794
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 6d7393e0-41f5-4c2e-9b12-4c2be5da5c57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +B7R0HlI6AIq9bwLUIlObN5FTF4lCG8sWBPdDzbd3f5CXnTgEpo0So7R2UUKzClzb/Hj2N/T6pzTGAk5PZu2D8aXw+qQQc/W0oPEhD76Z3c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB6477
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When there is a heavy load of receiving characters to all
-four UART's, the warning 'Hardware RX FIFO overrun' is
-sometimes detected.
-The current implementation always service first the highest UART
-until no more interrupt and then service another UART
-(ex: UART3 will be serviced for as long as there are interrupts
-for it, then UART2, etc).
+Hi!
 
-This commit handle all individual interrupt sources before
-reading the global IRQ register again.
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
 
-This commit has also a nice side-effect of improving the efficiency
-of the driver by reducing the number of reads of the global
-IRQ register.
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 
-Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
----
-Changes in v2:
-- Improve content of the commit message
-- Fix a line indention in prevoius patch
-- According review comments, changed to use for_each_clear_bit
-  to simplify serve all IRQs in a loop.
-  NOTE: When a bit in IRQ[n] is set 0 the associated UART’s
-  internal IRQ is generated.
-- Link to v1: https://lore.kernel.org/r/20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com
----
- drivers/tty/serial/max310x.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+=== Current situation: problems ===
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index ce260e9949c3c268e706b2615d6fc01adc21e49b..464f2828bd304198d79046e79b2a8a0893e5cd77 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -825,14 +825,24 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
- 	if (s->devtype->nr > 1) {
- 		do {
- 			unsigned int val = ~0;
-+			unsigned long irq;
-+			unsigned long port;
-+			bool done = true;
- 
- 			WARN_ON_ONCE(regmap_read(s->regmap,
- 						 MAX310X_GLOBALIRQ_REG, &val));
--			val = ((1 << s->devtype->nr) - 1) & ~val;
--			if (!val)
-+
-+			irq = val;
-+
-+			for_each_clear_bit(port, &irq, s->devtype->nr) {
-+				done = false;
-+
-+				if (max310x_port_irq(s, port) == IRQ_HANDLED)
-+					handled = true;
-+			}
-+
-+			if (done)
- 				break;
--			if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
--				handled = true;
- 		} while (1);
- 	} else {
- 		if (max310x_port_irq(s, 0) == IRQ_HANDLED)
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
----
-base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
-change-id: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
 
-Best regards,
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Plan and future plans ===
+
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
+
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
+
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a future release cycle.
+
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] Replace use of system_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+
+        Because of that, system_wq has been renamed in system_percpu_wq.
+
+2) [P 2] add WQ_PERCPU to remaining alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND. This is actually enforced warning if both or none of them
+        are present at the same time.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+=== For Maintainers ===
+
+There are prerequisites for this series, already merged in the master branch.
+The commits are:
+
+128ea9f6ccfb6960293ae4212f4f97165e42222d ("workqueue: Add system_percpu_wq and
+system_dfl_wq")
+
+930c2ea566aff59e962c50b2421d5fcc3b98b8be ("workqueue: Add new WQ_PERCPU flag")
+
+
+Thanks!
+
+Marco Crivellari (2):
+  cgroup: replace use of system_wq with system_percpu_wq
+  cgroup: WQ_PERCPU added to alloc_workqueue users
+
+ kernel/cgroup/cgroup-v1.c | 2 +-
+ kernel/cgroup/cgroup.c    | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-Tapio Reijonen <tapio.reijonen@vaisala.com>
+2.51.0
 
 
