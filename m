@@ -1,111 +1,257 @@
-Return-Path: <linux-kernel+bounces-801960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-801962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43676B44C15
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049F5B44C1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 05:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F292E3A3F85
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19161C26612
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 03:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4721F4177;
-	Fri,  5 Sep 2025 03:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379E623507B;
+	Fri,  5 Sep 2025 03:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="R29iIDVE"
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BwtbmYMN"
+Received: from mail-m3270.qiye.163.com (mail-m3270.qiye.163.com [220.197.32.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277532628D
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 03:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C151EF0B9;
+	Fri,  5 Sep 2025 03:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757041498; cv=none; b=LZ8toFVBG6IZdpyPHPJ66TndjGw4QZ4cuMo1DXCGoXCpmBWul7+9zLWeRZ55IDC1LTfCQBu0laBpGT3YdHPaV1iiO/zTUwXd763I+SGIS+r6iHV2RW2bJ9d3ln8XR4ZgPqd24P/MkYkH3y8g1Dx4G0SSpJASpFx800yctXBFooQ=
+	t=1757041616; cv=none; b=odr5jpjuVAnWnomuai2gyFygUEu9uxVfq2+rF5Fh/WZzO4TStvaKO0q//jDkNBElhdynwC/ANQ9nk1PlHXuWqwe30grKAXSporFAEshJizBUy8kPunr4kRADs2ZvsxJthshl0Lk01zBU9+rnPUUVAIuPdTyms5h/dTYTjNI9S/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757041498; c=relaxed/simple;
-	bh=Fa9QEYvq8U1239ffQ9FXV8vf18xnM6NBpeumwYql1Go=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NJ3wmy8g5+bWwvLcvJ+7roDFdHvfs9HFGmMkt3G/N+WR5RnL9zujuvyDmMq70c8uqbs2OuWd3czBbvHrBxHRgFdH7TA0KfPqZHLuVsL5MPfV3bXn3gqsY4zywPKDftcEA9pNFd9G9eUq77bkLmoYKqZxUFdmOYA09jaeojSSdRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=R29iIDVE; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757041489;
-	bh=UM+dj6qPa3stsp1QOw+zpoObjbjaHbOlW3JqlYRyYMg=;
-	h=From:Subject:Date:Message-ID;
-	b=R29iIDVEfvrOBJ0raYd/0I/cQfRlK0cfvgBzHmbZ5n98WpgHaqbSXFYI/cjucBh3T
-	 Is6eA680seK90cu9AZffIDhuKTMH2mJotEhEq5cVxmiOJcFYebK5F2WxRNaeYW2Whm
-	 jVp961ggCc7INWKvf90o7M6u41VIGPh9IifIBPsw=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68BA534600005335; Fri, 5 Sep 2025 11:04:39 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4972666685191
-X-SMAIL-UIID: 2ABD3BF3762D4C96B8179C7EFFA9A17E-20250905-110439-1
-From: Hillf Danton <hdanton@sina.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
-Date: Fri,  5 Sep 2025 11:04:29 +0800
-Message-ID: <20250905030430.6482-1-hdanton@sina.com>
-In-Reply-To: <20250904061245.pqGf3VwT@linutronix.de>
-References: <68b269e9.a00a0220.1337b0.001f.GAE@google.com> <20250830065638.6116-1-hdanton@sina.com> <20250904010529.6410-1-hdanton@sina.com>
+	s=arc-20240116; t=1757041616; c=relaxed/simple;
+	bh=NQty9wCp6vRJtkHOlaJ/iEGX4DwlGUS9Q3AZEXK+72I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hsrwmUSiI3HKvKT7N8m0BD1hBO7QxuFhOzVxIu1sP02BqtKsulUTBMwudsC79/M0m1JHvqu2zt6yrcEU4IP+9yA6qm3gFV0NE9/EmbuDjFE5ZINycVhxfKwyU8vrqDa8RbBZ4oqV1OJE/+VIOGxDhabIc5blJZjiGeBByLUvqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BwtbmYMN; arc=none smtp.client-ip=220.197.32.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 21c51f9ff;
+	Fri, 5 Sep 2025 11:06:41 +0800 (GMT+08:00)
+Message-ID: <22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com>
+Date: Fri, 5 Sep 2025 11:06:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ l.stach@pengutronix.de, dianders@chromium.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+ <20250814104753.195255-1-damon.ding@rock-chips.com>
+ <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+ <7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+ <1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+ <f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
+ <a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
+ <461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
+ <46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
+ <ea57ca6e-4000-49f7-8e0b-899f34b7693a@samsung.com>
+ <825ff59f-0a97-49a1-a210-a7ee275364bc@rock-chips.com>
+ <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9917d72c0e03a3kunmbaa24fa91f77c7
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5IGVYeGEJMTkJKTU8fTE5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BwtbmYMNkLOfYppAy+wuG3dRf3rgy/c5fhy0xfkxwjm4IP/EavUY+x5tkpRceqRJiBu+2UIRw4usYHfbUd9Y/L0yFePemizYbPmz3Q8nZ8ysLJ0O3T7nBxiPvA/aIkc9b4hwf3HatRCTgkqwI47m9DmdxumhhRdXH5+51C+XPQc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=yYRsnu1zQIxv1Gvs6bfNQCy9syx23j16FxOMbpuMt9Y=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, 4 Sep 2025 08:12:45 +0200 Sebastian Andrzej Siewior wrote:
-> On 2025-09-04 09:05:28 [+0800], Hillf Danton wrote:
-> > On Wed, 3 Sep 2025 16:59:05 +0200 Sebastian Andrzej Siewior wrote:
-> > > On 2025-08-30 14:56:37 [+0800], Hillf Danton wrote:
-> > > > > syz.0.46/6843 is trying to acquire lock:
-> > > > > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-> > > > > ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
-> > > > > 
-> > > > Given softirq_ctrl is percpu, this report is false positive.
-> > > 
-> > > No. This can happen on a single CPU.
-> > > 
-> > But the single CPU theory fails to explain the deadlock reported.
-> > 
-> > > > >  Possible unsafe locking scenario:
-> > > > > 
-> > > > >        CPU0                    CPU1
-> > > > >        ----                    ----
->                Thead0                  Thread1
-> 	       ------                  -------c
-> > > > >   lock(&group->lock#2);
->            preempt to ->
-> > > > >                                lock((softirq_ctrl.lock));
-> > > > >                                lock(&group->lock#2);
->                                        <- preempt to
-> > > > >   lock((softirq_ctrl.lock));
-> > > > > 
-> > > > >  *** DEADLOCK ***
->                now nobody makes progress
+Hi Marek,
+
+On 9/4/2025 9:27 PM, Marek Szyprowski wrote:
+> On 04.09.2025 05:19, Damon Ding wrote:
+>> On 9/1/2025 6:25 PM, Marek Szyprowski wrote:
+>>> On 01.09.2025 05:41, Damon Ding wrote:
+>>>> On 8/29/2025 4:23 PM, Marek Szyprowski wrote:
+>>>>> On 29.08.2025 10:08, Damon Ding wrote:
+>>>>>> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
+>>>>>>> On 15.08.2025 04:59, Damon Ding wrote:
+>>>>>>>> On 2025/8/15 5:16, Marek Szyprowski wrote:
+>>>>>>>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>>>>>>>>>> On 14.08.2025 12:47, Damon Ding wrote:
+>>>>>>>>>>> PATCH 1 is a small format optimization for struct
+>>>>>>>>>>> analogid_dp_device.
+>>>>>>>>>>> PATCH 2 is to perform mode setting in
+>>>>>>>>>>> &drm_bridge_funcs.atomic_enable.
+>>>>>>>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector
+>>>>>>>>>>> helper.
+>>>>>>>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>>>>>>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix
+>>>>>>>>>>> side.
+>>>>>>>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>>>>>>>>>> PATCH 13 is to apply the panel_bridge helper.
+>>>>>>>>>> ...
+>>>>>>>
+>>>>>>
+>>>>>> Could you please provide the related DTS file for the test? I will
+>>>>>> also try to find out the reason for this unexpected issue. ;-)
+>>>>>
+>>>>> Unfortunately I didn't find enough time to debug this further. The
+>>>>> above
+>>>>> log is from Samsung Snow Chromebook,
+>>>>> arch/arm/boot/dts/samsung/exynos5250-snow.dts
+>>>>>
+>>>>>
+>>>>
+>>>> I compare the differences in the following display path before and
+>>>> after this patch series:
+>>>>
+>>>> exynos_dp -> nxp-ptn3460 -> panel "auo,b116xw03"
+>>>>
+>>>> The issue is likely caused by the &drm_connector_funcs.detect()
+>>>> related logic. Before this patch series, the nxp-ptn3460 connector is
+>>>> always connector_status_connected because there is not available
+>>>> &drm_connector_funcs.detect(). After it, the DRM_BRIDGE_OP_DETECT flag
+>>>> make the connection status depend on analogix_dp_bridge_detect().
+>>>>
+>>>> Could you please add the following patches additionally and try again?
+>>>> (Not the final solution, just validation)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> index a93ff8f0a468..355911c47354 100644
+>>>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>>>> @@ -1491,9 +1491,11 @@ int analogix_dp_bind(struct analogix_dp_device
+>>>> *dp, struct drm_device *drm_dev)
+>>>>                   }
+>>>>           }
+>>>>
+>>>> -       bridge->ops = DRM_BRIDGE_OP_DETECT |
+>>>> -                     DRM_BRIDGE_OP_EDID |
+>>>> +       bridge->ops = DRM_BRIDGE_OP_EDID |
+>>>>                         DRM_BRIDGE_OP_MODES;
+>>>> +       if (drm_bridge_is_panel(dp->plat_data->next_bridge))
+>>>> +               bridge->ops |= DRM_BRIDGE_OP_DETECT;
+>>>> +
+>>>>           bridge->of_node = dp->dev->of_node;
+>>>>           bridge->type = DRM_MODE_CONNECTOR_eDP;
+>>>>           ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
+>>>
+>>> It is better. Now the display panel is detected and reported to
+>>> userspace, but it looks that something is not properly initialized,
+>>> because there is garbage instead of the proper picture.
+>>>
+>>
+>> I simulated the display path mentioned above on my RK3588S EVB1 Board.
+>> To my slight surprise, it displayed normally with the reported
+>> connector type DRM_MODE_CONNECTOR_LVDS. ;-)
+>>
+>> The modifications included:
+>> 1.Synchronized the Analogix DP ralated DT configurations with Samsung
+>> Snow Chromebook.
+>> 2.Skipped the I2C transfers and GPIO operations in nxp-ptn3460 driver.
+>> 3.Set the EDID to that of eDP Panel LP079QX1-SP0V forcibly.
+>>
+>> Additionally, I added debug logs to verify whether the functions in
+>> ptn3460_bridge_funcs were actually called.
+>>
+>> Did you encounter any unexpected logs during your investigation? I'd
+>> like to perform additional tests on this issue. :-)
 > 
-Because of the absense of the deadlock detecting mechanism in timer, see
-lock_map_acquire() in call_timer_fn() for detail, hrtimer is unable to
-detect deadlock like the reported one.
+> 
+> Okay, I've finally went to the office and tested manually all 3
+> Chromebook boards witch use exynos-dp based display hardware. Previously
+> I only did the remote tests and observed result on a webcam, which was
+> not directed directly at the tested displays, so I only saw the glare
+> from the display panel.
+> 
+> The results are as follows:
+> 
+> 1. Snow (arch/arm/boot/dts/samsung/exynos5250-snow.dts) - exynos-dp ->
+> nxp-ptn3460 1366x768 lvds panel - works fine with the above mentioned
+> change.
+> 
+> 2. Peach-Pit (arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts) -
+> exynos-dp -> parade,ps8625 -> auo,b116xw03 1366x768 lvds panel -
+> displays garbage, this was the only board I previously was able to see
+> partially on the webcam.
+> 
+> 3. Peach-Pi (arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts) -
+> exynos-dp -> auo,b133htn01 1920x1080 edp panel - also displays garbage.
+> 
+> Then I found why both Peach boards displays garbage on boot - the
+> framebuffer emulation is initialized for 1024x786 resolution, which is
+> not handled by those panels. This is a bit strange, because the
+> connector implemented by the panel reports proper native mode to drm and
+> userspace. 'modetest -c' shows the right resolution. Also when I run
+> 'modetest -s' with the panel's native resolution then the test pattern
+> is correctly displayed on all three boards.
+> 
+> 
+> Then I've played a bit with the analogix code and it looks that this
+> 1024x768 mode is some kind default mode which comes from
+> analogix_dp_bridge_edid_read() function, which has been introduced by
+> this patchset. When I removed DRM_BRIDGE_OP_EDID flag from bridge->ops,
+> then I got it finally working again properly on all three boards. I hope
+> this helps fixing this issue.
+> 
 
-	CPU0			CPU1
-	----			----
-	lock A			hrtimer B callback
-	cancel hrtimer B	lock A
+Thank you for your help with the investigation. :-)
 
-On the other hand softirq_ctrl plays such a detecting role in accident, but
-they are two entirely different things. 
+Based on your helpful findings and Dmitry's earlier suggestions[0], it 
+is better to distinguish the &drm_bridge->ops of Analogix bridge based 
+on whether the downstream device is a panel, a bridge or neither.
+
+1. If there is a panel after, the &drm_bridge->ops should be set to 
+DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT.
+
+Since the &drm_bridge->ops of panel_bridge is DRM_BRIDGE_OP_MODES and 
+the panel-edp driver reads EDID in &drm_panel_funcs.get_modes(), the 
+DRM_BRIDGE_OP_EDID should be removed to ensure proper invocation for the 
+&drm_bridge_funcs.get_modes() of panel_bridge.
+
+2. If there is a bridge after, the &drm_bridge->ops should be set to NULL.
+
+The OP_EDID and OP_MODES supports depends on the next bridge rather than 
+the Analogix bridge. According to your investigation, nxp-ptn3460 
+supports &drm_bridge_funcs.edid_read() while parade-ps8625 do not.
+
+Additionally, since some bridges does not support 
+&drm_bridge_funcs.detect(), which regards as connector_status_connected 
+by default according to 
+drm_helper_probe_detect()(drivers/gpu/drm_probe_helper.c), the 
+connection status should also depends on the next bridge rather than the 
+Analogix bridge.
+
+3. If there is neither a panel nor a bridge, the &drm_bridge->ops should 
+be set to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
+
+In this case, the Analogix DP driver may work in the DP mode, so the 
+OP_EDID and OP_DETECT supports should be helpful.
+
+Best regards,
+Damon
+
+[0]https://lore.kernel.org/all/incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim/
+
 
