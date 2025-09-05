@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-803184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB98B45BC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:10:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2312B45BA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 17:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD8E17D17B
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:06:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84C107B737F
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 15:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975C306B3C;
-	Fri,  5 Sep 2025 15:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA32D2F7ADF;
+	Fri,  5 Sep 2025 15:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOX008XP"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtLaoeuO"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662F9306B37
-	for <linux-kernel@vger.kernel.org>; Fri,  5 Sep 2025 15:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70742F7AC1;
+	Fri,  5 Sep 2025 15:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757084493; cv=none; b=RH2rfGPDLmhsZ3zU9KV1LvGbyycxcw5tRBGIJ1ERaZd4wapBWx//B39Jqk/GEZ3G+ZgV0yLd757h7gtQfp//Vb873Hmgh+bwOVwzvXLSLEXnH5c6zTISvXvIUxq27NtJum9H6/RiYIJZrlmfJ16HRDQ87hccxoSbNONIKJr8vXw=
+	t=1757084514; cv=none; b=r8AyGacHYgHT89ElrfgeMtQa54rKvMcPzmYn8ZAUJjg/rwQv3lFCWl5Y5o9AOGV95iONPcq/L3ZQLxKAZsGPAMlTyR/6WNCjtPl3ZXigrm8UbM1MlArerqXkM9FWVwfMJLrSVqil4blxKKNiA3Fr4LZEjdD/vq+aPfqhtzAwm5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757084493; c=relaxed/simple;
-	bh=7ENsG1Yb2Kwq37ijF+KbmuknAG28/y9TcWRUDHuGQno=;
+	s=arc-20240116; t=1757084514; c=relaxed/simple;
+	bh=6g49r1WfDLr2gJrcBJ2bSggSPIdb0X8L7J3xZ/uvUUE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FArR9OC4KjEfqSYaua63srR5qBUa7ATof4GEVnt7j7WIHFDWIPix0tc8sHrXPhceEyfvTIG1kaj+hC150kxbwp6VGoY67JLzg5ORpEt2QDIPeOQ625QuwG6ewFfvbFNrBIJ+u85b/SCt1Y8t7bAuxGssR+qpQUulERU6irOuHzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOX008XP; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 In-Reply-To:Content-Type; b=CgbhDefp+tk+YPc6Vde2X3FPgBaUNuW/erPihF7xQeUkpAhP++3bsykliZ5eJzlCpeRdkPdYsUuj9xkK9N2DqChWGJmTiNboXlSDjr8kOlukQoQ1T+M8T+zIGbLvCjoZfEgEC8CSJIddhfLb4qSlSQU0q2P9XPjh46Fs1u84ook=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtLaoeuO; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so21267685e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 08:01:30 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7722c88fc5fso2073951b3a.2;
+        Fri, 05 Sep 2025 08:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757084489; x=1757689289; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cqm8/MpfOR7y7rPAbRaZnCO/4JEe1n2rO7vX6ndNO4I=;
-        b=AOX008XPysEffUafzdepdjX0M5Yf6IUFZOWoMC951y/5JejXVsBZHrrhzSU+pjTfcl
-         DNsIPjQuQiLJgU3kOhpxu2x6znML947x2d28CLQEPeJXlttI0lc5F4xyoEa0nyzz2KkB
-         wRPPHKbcMeEvi/54RLkm0LYLr0Ta6uKfECvr3eL+bOCEx936VUE021Av4AlvQuAvpmZY
-         6bV5Z7drdFyxUNKXaNMS8NryGdKXgEb1oBDVS/lW7p1CNgBGNPHU911ji47kOoeEf48m
-         MWumUHl4/fbMW4c9LO6DH8gkmV/GAWTpEj2K6GFPeFIl//SCnfQV7JvJtZmamgG304M2
-         v7zw==
+        d=gmail.com; s=20230601; t=1757084512; x=1757689312; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5NpTVLv6KeF4StwU0LUhtXKywArenU2xh55ACd/9V8=;
+        b=DtLaoeuOHtafdKb77uKCGmyp+8+88o6AUkQrjNFmRFaQUJG0no8eBfj2/OXeU2ccFy
+         WJ9XWr+Ai/U6HkL4zwf1vD9xAOoQmxOB05ITjvk3uetfYSp9eSrfGZyQd3V6CkWj/gcA
+         O9eHGJ8WkvT2NNBRN/+DpY041iPTV2l4KjNafj2OyqY4MCzDFQELaPuIPMSXqYUBqzXQ
+         apJrI4+8PkZuSHDik6UpbbQNGLuvfcXKU3qHTJVIMwPvndsVd/n+xi99E1gDRWjE2zyN
+         +AD3YJYXFz4391OvpD8IghoiltukjSfjzsJhVyNVDBw4aolOHUIIJOvcXAXro03ruLcM
+         mJgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757084489; x=1757689289;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqm8/MpfOR7y7rPAbRaZnCO/4JEe1n2rO7vX6ndNO4I=;
-        b=pEYmw6eRteWe+nPuwiJQOCioCglcVe0l+SOD1+313SzGi7lIU2cb2sj2BaJEpqABcX
-         wPCfPuNYHKdHlLjCeKTHSy5s78WFvpDlMAzoQsC3KgrmPSXaqpsct3tw7sBdXrQ4b2Rt
-         0hIH3G+H4oNW4JKLKcpOXrppo0jw87Lg7pk0RNeza52NBa06vUKurSTNKN8jBqeaxeh7
-         thgF/YkJ9YkXDJifmVFu33Zs31t4K2NmW7qp19FVKm6fOAPH/HWSyiWtGN/Py5bud5fF
-         xv5lLl/PGC6Ej8FAmtWdjq55YiGihBMz5W1bv4PEGC9k5LG16KC0ImFFJBWgB6d90QdR
-         IVzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFiukdb4Jz1p8g532TnkZGyO01tmfXm6wuCNBF3O15Tbc07UUDG1QXBC8PtkXNqBKM3fL4KZFDpW8VwK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU0EuBhQSwud0K+UyiOfMOZrlYeV/tR30czN6P573JGmF3OJKX
-	jHysl/sV66Wan/Izhhci8pk6wT4YfoFlMSHG/W1wX/oiwGDIhB3PGC1C
-X-Gm-Gg: ASbGncsd/9b/FdTbiFGEM6UK/ANS2u6hdqsaQ633kB3kzf9BAm8e3kWEgsHSgCcyouW
-	o5h1ihsLcJf6OEhnnsrRNzNuA1HpTj2MrPpR4kB4NatYJtPTLGkiTnmWUUlEmGOzLlPEz4LLcCb
-	rTwQY1A7PLaPXemjnRpXXgzb6/SNjiMmJhdoxpBplUL+n3Rz1LZvG4KWX5rs1fgu/LjIkS5lyL+
-	04l4eWP4zRQcVJ87gdDl1Vc+xcFfzTioBkFx8VOjMDdRZferX6QYj1c+LHE/MPf5foz23r38Y0d
-	yBBRNLIbR1h3RNqkpJCLuAzjM+mN7xbWZhXqGqAsGv5guRVDxHk5Mv2nHpcwzI44JNemWNYGaEN
-	5P4P2ovO2GY48qXD2F3j4HVKVS51C3VlCLspNY41Q308H7bcifeOP8fuyC7uTewtib3UMdHcHfN
-	YA2ZLhMI/aQA5P/Kxg
-X-Google-Smtp-Source: AGHT+IGe+fILrap8cGg9dZVGpK+9sA4k4FV6nVfCljYfVknfZyIkZg/8sGEneiKua6ClriufuvNqiA==
-X-Received: by 2002:a05:600c:1914:b0:45b:88d6:8db5 with SMTP id 5b1f17b1804b1-45b88d694d3mr186079445e9.12.1757084488540;
-        Fri, 05 Sep 2025 08:01:28 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::4:4f66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd4affb6bsm51876115e9.1.2025.09.05.08.01.27
+        d=1e100.net; s=20230601; t=1757084512; x=1757689312;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5NpTVLv6KeF4StwU0LUhtXKywArenU2xh55ACd/9V8=;
+        b=N2Tx0PMJRX/W1zXoCw/jKH+IlQ23M1wTb6LUCjDcBuesQJsmHJ4chl0ApE93zo7Ta/
+         eHHBXh2PoTJaIDkzBWBI5mmNGlLWYExmXSSonhB+ki7Q6SXYxSYM7xwRfJ6N5loEBjfY
+         SaDivGIQQgno0Y6c2dtxnwNYQhk+cJ0X1obp4G/uF3OrPyKy2I/G/cTka81iW2KR6RK7
+         vMSvgRW/US0vcIEGHbNS8x8qtX/cP+a+LRc2oUqHem4igfh5/g2C6oTAploda2N6ZT3u
+         3xy5ZN0F+Gbt1jjE5W8NKbOMqdk2r7mNnf8aKR0/B1N0Rwxk112i09PSD91y/xNczLpI
+         q2Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGtVbUNfyyWsQ8XhYiCdpsKAQaaQY9mouKqqZDY+NmNozV2Va3IwLvgH7Jg3Atgjih4NFbwXVKqTy1@vger.kernel.org, AJvYcCVfSF531QD/AYRrqmg7n4N4EJvycTK2GDzJFX6KFlYQajal+3kb1EFR6ua63bbuUyDp/QRgH2XtQTxyahseaYnK+nc=@vger.kernel.org, AJvYcCXN1wovnuzs18IHwmc/ZsZyHVgkZpKdM8u5/8PElaFD38K2O0nSMBxwznF0bD7Rk+l0e4aldvwzP+exayn+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2FV097iDOHXTSNaDDotg3dGLDUwibwFQ/iRQpk1rk6Lobx3I/
+	sIaSjmTQWBZIPI+4V2VkeyEGpbZr5d6XMEYj3zcq1QlIVS4S9FjtASZR
+X-Gm-Gg: ASbGncuFhRsjYMTb4wdpCtTukMmN6pr+g9TT6gNKycs4TK17qcpvdM/Ab3o/ICvHHph
+	ovOq25fBVj4eYxYIRg7IQy3Yqp+2t9//bKLnXW5DEcCukdRop7WIBpaEjSGgmWv0wmeso2uumV1
+	tvOLuGv2KuoM2/d8a/0jUIktHaxT45z6EIjkLF50pB6Pm06AKyE7xmaQ5ieQcNeRl9DWzQDgSbI
+	C/7TuBswEPMSkDYfJ46L4PWWi3fuNnQDtENzPSlQJMGFr4R0iUY0mSX/eTIX46nfN4kFW9wpd5l
+	ClXGnz44MxMBoTa5tAXBhKJHtfiR/b0KR1c5AaRDAkg8gmzrKJWHHGvwDq6hyd1vrDwf8CZqwZL
+	ywMbBx5Be4DRI8YUbU6ksGq17CXkZw4ScAaaEmrUbdz7v3r19Rd974HqiZb4xofBV08MpfGchxK
+	q1nJZIsA==
+X-Google-Smtp-Source: AGHT+IHjUXQX+11r322qAU0woyUZ4rop33lW/UHzJXz5HZBwwQNXsRwUGFfhRlx0Y+S8o7T/gYBP1A==
+X-Received: by 2002:a05:6a20:7488:b0:240:1a3a:d7bc with SMTP id adf61e73a8af0-243d6dc873dmr31209889637.3.1757084511507;
+        Fri, 05 Sep 2025 08:01:51 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4e5684da06sm16482310a12.17.2025.09.05.08.01.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Sep 2025 08:01:27 -0700 (PDT)
-Message-ID: <8461f6df-a958-4c34-9429-d6696848a145@gmail.com>
-Date: Fri, 5 Sep 2025 16:01:23 +0100
+        Fri, 05 Sep 2025 08:01:50 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5e36cc05-1084-4abe-b3b1-fb54ad0318da@roeck-us.net>
+Date: Fri, 5 Sep 2025 08:01:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,58 +84,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/huge_memory: fix shrinking of all-zero THPs with
- max_ptes_none default
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-References: <20250905141137.3529867-1-david@redhat.com>
- <06874db5-80f2-41a0-98f1-35177f758670@gmail.com>
- <1aa5818f-eb75-4aee-a866-9d2f81111056@redhat.com>
- <8b9ee2fe-91ef-4475-905c-cf0943ada720@gmail.com>
- <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <b56b43c1-d49d-4302-a171-9b00bf9cfa54@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 5/6] watchdog: rzv2h: Add support for RZ/T2H
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250804195723.3963524-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250804195723.3963524-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 8/4/25 12:57, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add support for the RZ/T2H watchdog timer. The RZ/T2H requires control of
+> the watchdog counter using the WDT Debug Control Register (WDTDCR), which
+> allows explicitly stopping and starting the counter. This behavior differs
+> from RZ/V2H, which doesn't have WDTDCR, so the driver is extended to handle
+> this requirement.
+> 
+> To support this, a new `wdtdcr` flag is introduced in the `rzv2h_of_data`
+> structure. When set, the driver maps the WDTDCR register and uses it to
+> control the watchdog counter in the start, stop, and restart callbacks.
+> Additionally, the clock divisor and count source for RZ/T2H are defined
+> to match its hardware configuration.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-
-On 05/09/2025 15:58, David Hildenbrand wrote:
-> On 05.09.25 16:53, Usama Arif wrote:
->>
->>
->> On 05/09/2025 15:46, David Hildenbrand wrote:
->>> [...]
->>>
->>>>
->>>> The reason I did this is for the case if you change max_ptes_none after the THP is added
->>>> to deferred split list but *before* memory pressure, i.e. before the shrinker runs,
->>>> so that its considered for splitting.
->>>
->>> Yeah, I was assuming that was the reason why the shrinker is enabled as default.
->>>
->>> But in any sane system, the admin would enable the shrinker early. If not, we can look into handling it differently.
->>
->> Yes, I do this as well, i.e. have a low value from the start.
->>
->> Does it make sense to disable shrinker if max_ptes_none is 511? It wont shrink
->> the usecase you are describing below, but we wont encounter the increased CPU usage.>
-> 
-> I don't really see why we should do that.
-> 
-> If the shrinker is a problem than the shrinker should be disabled. But if it is enabled, we should be shrinking as documented.
-> 
-> Without more magic around our THP toggles (we want less) :)
-> 
-> Shrinking happens when we are under memory pressure, so I am not really sure how relevant the scanning bit is, and if it is relevant enought to change the shrinker default.
-> 
-
-yes agreed, I also dont have numbers to back up my worry, its all theoretical :)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
 
