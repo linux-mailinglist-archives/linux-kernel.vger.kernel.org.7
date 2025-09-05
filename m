@@ -1,175 +1,131 @@
-Return-Path: <linux-kernel+bounces-803702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A252B463E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAC4B463EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 21:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429D93B589E
-	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9721B27883
+	for <lists+linux-kernel@lfdr.de>; Fri,  5 Sep 2025 19:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7221F28136C;
-	Fri,  5 Sep 2025 19:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A5F279912;
+	Fri,  5 Sep 2025 19:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9qmJFw1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhPukp9w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2991E55A;
-	Fri,  5 Sep 2025 19:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18B1BA42;
+	Fri,  5 Sep 2025 19:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757101616; cv=none; b=bhcsTvN08m6K1gYjbTWdut/RFcnhYxRtIrdUFke4+Szyb2auuprzgpwm0d/3hnIiS+2NamV3bleU50/1+aNYBtuZrNHcDK3UQiGaF0cCBLMDd2hHFuGtq7B70yvZt3zRm2rQjVHuUchyIRRHf3XNUEcTZ1Rw1KeNzRHv9LH3NOU=
+	t=1757101666; cv=none; b=OhwQSIscNnXmoajlbi/YAViUzReoMkwSAnLJR0kFF2OEnYZBSQIQyYEYH5tpd9eOa/ovP0VPGisd7SN4a2+oLH1wRB9M3SOejjyE3TYNxdjYQYfQPXHs8+FSiwf5TswU7gI+E/+3OyK7pEehYj+9DJmtZ1TE1I6CMnMvvHo/Ugc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757101616; c=relaxed/simple;
-	bh=H8MVjkz4o17difHvr2cD8D+8FZU1fUcKjhpmn4rwijw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WdL+FXdXaV4Vxv2rgURKF2t1691RLE4C4e51qrtP2E70rrprfSrDEJLYKVsOBcfc63Y49tsj4kNvFjtTY5BaZS5VyV/XEru6mx2QEKL+GE9XV1/NXHF/Uv/8+28pO25p3ahOKIz81N58Byk52Rhex83GnDQAye1GiUSF1JfCvNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9qmJFw1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548FBC4CEFD;
-	Fri,  5 Sep 2025 19:46:56 +0000 (UTC)
+	s=arc-20240116; t=1757101666; c=relaxed/simple;
+	bh=cx6/CPIGyA61osR31aBMtV68j0uHciyN4n8/YHwijxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKPgaFOgMdeaJefJ0PG8yxWExSOPL0lYf7EnV7eThNFmfD7U9rOoqpvAdzRN/CYKLhPlySGWeijSWVrDniy4/n73exXZXbJTGb6CAWU0NUS4Hfrpb/RZBswqkgXChOetRIUvB70wIWjj7f3VF05J3p1lDa4Db4hnxsPAkeGVIdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhPukp9w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10D6C4CEF1;
+	Fri,  5 Sep 2025 19:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757101616;
-	bh=H8MVjkz4o17difHvr2cD8D+8FZU1fUcKjhpmn4rwijw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G9qmJFw1HIMkEhpfwD6F7o3JbvpRO1V95WZ/oUz3+r2CZmbDws6CbBgur6Wekx+qi
-	 ldlGPU37Uj/fIsJfq8C0T5mwgtAEI7Vqo36+np24YoWw6Q+UqAD0c8vsYKdD1WmilJ
-	 I5H7EyGxJaGj6hrAng2kuUlTjEtq88UjwDYdjemQkTgF2roSvOtH1g1Vers9Vmn/8H
-	 hFTpK0+yBM6BJf93iSTpneRiwZTgqB03L5VCqcDIKq1c7x0wnA4m2OtzWFieeGFXd2
-	 UYnynJnuCo/OhHIYLgJZetquSD940EGwlIBAqodji7zBapVVl2I0pI39J7QYdGVk0c
-	 YFNdRZkp+5nBw==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61bf9ef4cc0so1504532eaf.0;
-        Fri, 05 Sep 2025 12:46:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVlApuecRYOSAKujtolI5t41KBULgOai196UHtAyH8Lyuw3Wpr4ePMpVvWugsN/BTd2cRNWHosQBCGEfqJw@vger.kernel.org, AJvYcCVz65MaQFbPFT6bDVbFcc9JE1ZZklCtf/+p9fxInyMsAIMsX2X6YH/aOpD2XT0XyEa23HfYS6rSjo8=@vger.kernel.org, AJvYcCWhtLKgt9nRXwikPAE3Erg/ML44bLMJzbadQUDCNGbj2YD6OuHEscsU7z6s5RbAQsT/E5JKNoned0Vv@vger.kernel.org, AJvYcCXhyZwRL+VFnghEngsCXpSnXYdycazofSlZ6vO7Ah5A7iLMC4HHjljrKg9Mga56e21iumMcVbm4n6KKhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5HyrX1RPVPTjUVTgnoRb8P1sTB1djd6Usn2Y6vGdpM8A+30Yp
-	KmYAqp5E6LygVhTjWPE7amIg90+CKETa0BTxIRRJD5QdrGmDbmoLKaLwVl6wfD/6igs9X8jvMs4
-	xx8+XmP/4ubc3Wks+jTTMRjY9t9nLxSk=
-X-Google-Smtp-Source: AGHT+IEKuvslbgpS+jFT9kCZO9ZHrI6mBjYptsMiCaePE1pyVsHfodMLw3nmAqVy7Bw/fuUlRNZZYUO91WEjIayPMsY=
-X-Received: by 2002:a05:6820:548:b0:621:71c3:eab8 with SMTP id
- 006d021491bc7-62171c3ecffmr1197889eaf.3.1757101615563; Fri, 05 Sep 2025
- 12:46:55 -0700 (PDT)
+	s=k20201202; t=1757101665;
+	bh=cx6/CPIGyA61osR31aBMtV68j0uHciyN4n8/YHwijxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PhPukp9wqFMmK54Ys/i8mi0gMYUym3eMdN0inVJLZ4MpsouRFNwkM9cievyBDfZcm
+	 eGxazwzI5Np4kX/6gAgiAEdukrYDO2aWN1KLLEAjrZy5Vckor/TWiTExZwIcSx020v
+	 t6G2k3rf/0M4DRt5Yv79/AcMTgTlruVOJDYMtdrlukxA0DSVs34JhuLQHk2rmvyrlX
+	 3e5Z7U/s3+mNpKwX/1YEpamD1n9vgDlo4B7+Cq8EuEmd3qPFf1HdFA1OQGgwQtzkea
+	 E2XXhjR1i/h2TJPlYdf6Zdv2/vvhMzCYmdKGFEda0p0J4KXsI2Yu7cYAPnmSL6Uaah
+	 ql5afQ/6hS4cw==
+Date: Fri, 5 Sep 2025 14:47:43 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Pushpendra Singh <quic_pussin@quicinc.com>
+Cc: quic_bjorande@quicinc.com, krzysztof.kozlowski@linaro.org, 
+	konradybcio@kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_rgottimu@quicinc.com, Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Subject: Re: [PATCH V2] soc: qcom: icc-bwmon: Update zone1_thres_count to 3
+Message-ID: <zywvspwty3be4eadssi6sylqkhgsioramuamvvoui5tfmml2i6@zsl2nuuos377>
+References: <20250905113923.3944347-1-quic_pussin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905132413.1376220-1-zhangzihuan@kylinos.cn> <20250905132413.1376220-7-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250905132413.1376220-7-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 5 Sep 2025 21:46:43 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0izu1_xVe_pGeJiXZqEXLxg_o30NkEjMiwzDgeU4mOGmA@mail.gmail.com>
-X-Gm-Features: Ac12FXylOWQRbtZy4tXGis9fcvrx9xAWhEYFwKXiKvA-TbpGOjwSaXBXEfvwt6M
-Message-ID: <CAJZ5v0izu1_xVe_pGeJiXZqEXLxg_o30NkEjMiwzDgeU4mOGmA@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] PM: EM: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905113923.3944347-1-quic_pussin@quicinc.com>
 
-On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Zihuan Zhang <zhangzihuan@kylinos.cn=
-> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+On Fri, Sep 05, 2025 at 05:09:23PM +0530, Pushpendra Singh wrote:
+> From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> 
+> Update zone1_thres_count to 3 from 16 so that
+> driver can reduce bus vote in 3 sample windows instead
+> of waiting for 16 windows.
+> 
+
+Please start your commit message by describing the problem.
+
+> The 16-window (64 ms) waiting time is too long to reduce the
+> bus vote. At higher FPS, there will be multiple frames in 64ms
+> e.g. 4 frames at 60FPS in 64ms. Hence, delay of 64ms in decision
+> making will lead to higher power regression. We tested across
+> multiple usecases, and observed significant power savings.
+> 
+
+I asked in v1 what the tradeoff is here. Is lower number better in all
+cases? What are we loosing by making it 3?
+
+And why 3, why not 2 or 4, or 7?
+
+
+I'm not saying that 3 is wrong, just saying that the commit message
+needs to sufficiently explain why 3 is the "best" number.
+
+Regards,
+Bjorn
+
+> USECASE				zone1_thres_count=16     zone1_thres_count=3
+> 4K video playback       236.15 mA                  203.15 mA
+> Sleep					   7mA			   			6.9mA
+> Display (dle display)    71.95mA			       67.11mA
+> 
+> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> Signed-off-by: Pushpendra Singh <quic_pussin@quicinc.com>
 > ---
->  kernel/power/energy_model.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index ea7995a25780..5ec63b3e7d85 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -451,7 +451,6 @@ static void
->  em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state =
-*table)
->  {
->         struct em_perf_domain *pd =3D dev->em_pd;
-> -       struct cpufreq_policy *policy;
->         int found =3D 0;
->         int i, cpu;
->
-> @@ -465,7 +464,7 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
->                 return;
->         }
->
-> -       policy =3D cpufreq_cpu_get(cpu);
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
-req_cpu_get(cpu);
->         if (!policy) {
->                 dev_warn(dev, "EM: Access to CPUFreq policy failed\n");
->                 return;
-> @@ -479,8 +478,6 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
->                         found++;
->         }
->
-> -       cpufreq_cpu_put(policy);
-> -
->         if (!found)
->                 return;
->
-
-The above changes are fine now and can be a separate patch.
-
-> @@ -787,21 +784,19 @@ static void em_check_capacity_update(void)
->
->         /* Check if CPUs capacity has changed than update EM */
->         for_each_possible_cpu(cpu) {
-
-But I'd prefer the code in this loop to be moved into a separate
-function, in a separate patch, before the __free()-based
-simplification of it.
-
-> -               struct cpufreq_policy *policy;
->                 struct em_perf_domain *pd;
->                 struct device *dev;
->
->                 if (cpumask_test_cpu(cpu, cpu_done_mask))
->                         continue;
->
-> -               policy =3D cpufreq_cpu_get(cpu);
-> +               struct cpufreq_policy *policy __free(put_cpufreq_policy) =
-=3D cpufreq_cpu_get(cpu);
->                 if (!policy) {
->                         pr_debug("Accessing cpu%d policy failed\n", cpu);
->                         schedule_delayed_work(&em_update_work,
->                                               msecs_to_jiffies(1000));
->                         break;
->                 }
-> -               cpufreq_cpu_put(policy);
->
->                 dev =3D get_cpu_device(cpu);
->                 pd =3D em_pd_get(dev);
-> --
+> Changes in v2:
+> -Update commit message
+> -Link to v1:https://lore.kernel.org/lkml/463eb7c8-00fc-4441-91d1-6e48f6b052c8@quicinc.com
+> 
+>  drivers/soc/qcom/icc-bwmon.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+> index 3dfa448bf8cf..a245a8b2cfef 100644
+> --- a/drivers/soc/qcom/icc-bwmon.c
+> +++ b/drivers/soc/qcom/icc-bwmon.c
+> @@ -827,7 +827,7 @@ static const struct icc_bwmon_data msm8998_bwmon_data = {
+>  static const struct icc_bwmon_data sdm845_cpu_bwmon_data = {
+>  	.sample_ms = 4,
+>  	.count_unit_kb = 64,
+> -	.zone1_thres_count = 16,
+> +	.zone1_thres_count = 3,
+>  	.zone3_thres_count = 1,
+>  	.quirks = BWMON_HAS_GLOBAL_IRQ,
+>  	.regmap_fields = sdm845_cpu_bwmon_reg_fields,
+> @@ -846,7 +846,7 @@ static const struct icc_bwmon_data sdm845_llcc_bwmon_data = {
+>  static const struct icc_bwmon_data sc7280_llcc_bwmon_data = {
+>  	.sample_ms = 4,
+>  	.count_unit_kb = 64,
+> -	.zone1_thres_count = 16,
+> +	.zone1_thres_count = 3,
+>  	.zone3_thres_count = 1,
+>  	.quirks = BWMON_NEEDS_FORCE_CLEAR,
+>  	.regmap_fields = sdm845_llcc_bwmon_reg_fields,
+> -- 
+> 2.34.1
+> 
 
