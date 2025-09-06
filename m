@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-803999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B42AB4688F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C81B46890
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9BE1BC23AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14FD458686B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AFDF9D6;
-	Sat,  6 Sep 2025 03:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MQlVNbzK"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD2015667D;
+	Sat,  6 Sep 2025 03:16:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E10B15E97
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 03:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E2AD2C
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 03:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757128524; cv=none; b=bcd8UxximwfcS7MES+j6XbgDb1HJaT+BF/JGc1gjwk9vg7sLZfU2adH9pnrcYnyYd1QFS56CYitk5S6a0IXjV+QS6Dl701wwhU7Yq0BXtZw+fFfEFAMrGyWEBLy+YmoLvIoqF6KwRm5ievQ3eY6CTZU/WzSn6vWdqGwOVUt/DXk=
+	t=1757128564; cv=none; b=Tn4WAocMHT0o9EZ5kS7wxeyLKYIBRXScdTAfVj/b2448K/AgTM0fR0gkwhy5p3C5OTXBHJ6rzh7bB3Zy0u0wlWyItYOk71xU25VIzsnkAQuruxFuUaNqMe5+AlPCaGBoOVUtIQ5XcKPuheeLrrEtETrBKkQA+rF+veU22aqLXFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757128524; c=relaxed/simple;
-	bh=AvlMdw25eCgMu0dHMlriCCLoeoNd2IN9QRBLOBFWx7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtDHui6XD1oGduvI6qqDlruvL4WWGrnUc1pobzOXTPMC5FP2TzXzb1UyNhZiSUxQpp3H9sd+FH0tzBCR+gLEyxGBKgpT4VDL4XUF57u5nRpn7FzwA9M24+o0usiUfnuKxxFCknSzvrl0HVy6Nv8nga+QLH9pEaioxviaWvCDq/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MQlVNbzK; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-88762f20125so190316339f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 20:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757128522; x=1757733322; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g44f+BPw5Hi5G4yK4fXujHmXwUWXbVPu3RwfoHic3HA=;
-        b=MQlVNbzK2Bw7FkR9TCxyaX09JnoIb3E+dRTTiprwhrB9FF964ngajLGdYZI8FT+UQ/
-         PwmDs3HId3pZ/gBzpMRrGE2rjY+dKaajO+cmJm2v7PxbP3vu8GFwtAm+bQD1kPXyQSD/
-         q4nYPz5OHLT06osuiR75mfsW601HjFfcCTkJbwJIAKYF9/OF6kzDDUN2R6BKT3LBCQS4
-         b98sTR7VUyFNGA0yws5PR0yIfPmsSNoq4Sh7mbE+OSqITpW8UiYbSot2fuflTfzYYo9W
-         cxQ8ZhZvvsMnSM/Z3YuLknkWL+ZrpByX2eX++sM4eEndOpDJIiobEEZR9xUeJ2+E1CtL
-         W64Q==
+	s=arc-20240116; t=1757128564; c=relaxed/simple;
+	bh=8ege3dqs598RpSHGFvuNx1GmqLeYWMDAYlTIopt4S8M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=urTOHrLP684mhhEiltXkCwcycSoD2YZUKYnb9C0JWmViJzHjbZu49/4Viitf3yQ+hd1KaN156gAaeHpoqsmgWJVOw3RBB8TuYR9yOcQOW013xAYYgNbMF40lxL2mCzU+w/z8QJZ19zIIqFrOi28fI7T283dAKCXscofqOdxxUmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8874f33d067so352324739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 20:16:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757128522; x=1757733322;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g44f+BPw5Hi5G4yK4fXujHmXwUWXbVPu3RwfoHic3HA=;
-        b=Bmij2M+eugt+CCYlXIRNwaL+GsB8roasVZGRBh0BA0eYmLxHYX5uJCdzPp4f+NARfu
-         p+KiKYJMUYTTO5yg/g0zbN/1AJAe78nP+45eRJREnfkT/FSLFkO4SGPs550ArH4rAoNg
-         5oTcyPutVe778qJRHXQh6sFkPHx+7iZlY4GpJh+jRcEYwjI2IUccaN9KnCNJr0fkb2Jx
-         jryIm/PMH3hSuNU5CP5XjCYBTjHj4kiJOEQr+0Rh1KpNZS/dys78597f7W1wcoEyxXLs
-         Oy9yZrSbgL9CBJjOXiuR+XFmI5aWpfN0NQilUuvzabn+qR7Rr7kkiwxxsJbyX+jr0ep3
-         VKZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCM6CtA8+i6m9wGgLhRbgyD/1oHNNy75k1Bz0o+RJP20HFBRbo6a85vxdQau+HsXs9AYeCDluzIPhE4zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9XdmIW+LQCtXSbGrM94tu7+pqDccaDPkuEi1pd1KBlWafh30N
-	tlEzeR3ds9aLrpFqHsJy0spRXvzWsPTC5xCOwDR2Ux6kgupSDQ7WfzJt1uDF2tiJ0A==
-X-Gm-Gg: ASbGncssu2u7qJUwPn+ns8ZPOMtvthuPF30AFWAY3hX/Mr4ChcqAmTu4HbFTnak6NZM
-	3VZXp6iVcDnipFA71zgY0NizlSWjMZXpIX3cZwt3RPF9FRh0yWJAoFxnesHTszNivgOR1XVLR8V
-	ux0EnEFoUdlV0p40dLAJxQg/bsDbxNzvBLHveHz0AbAqRJ0NEAkZeojk8jFUuvxBJhfRWcJFq5V
-	FMbhg8XYOWsc3/23rek5BGvr/C8iQxKHrt8+qo1WPzTAMEssSKCqenOYhGxZ5kGtKqoB89jDfwA
-	Ni1D1JrLSWJ0PmSh7WWSPz3N3NpJVxwjX1R4K1gePrXO6jXBD9UvaIdhQ/vVFAAJHO1h4mt2Jck
-	3i5PALf0BUY/LMTzXbpv7xyxEQOv9MDQk1OlfXfDbRkniQEM2noSUZ3pgd15voLiNYnvFog==
-X-Google-Smtp-Source: AGHT+IGLw2fIxxDwuYWLRzhDla8WwJDRsF96LtIboEPn6HhOZqGVG9ZppVZ6OQM5ivQzCu68n0DXrQ==
-X-Received: by 2002:a05:6e02:214d:b0:3f6:63c5:74e3 with SMTP id e9e14a558f8ab-3fd94a140camr15675845ab.16.1757128521855;
-        Fri, 05 Sep 2025 20:15:21 -0700 (PDT)
-Received: from google.com (189.227.72.34.bc.googleusercontent.com. [34.72.227.189])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f3de24e723sm81698055ab.7.2025.09.05.20.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 20:15:21 -0700 (PDT)
-Date: Sat, 6 Sep 2025 03:15:19 +0000
-From: Neill Kapron <nkapron@google.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com,
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selinux: fix logic issue with per-file labeling for
- functionfs
-Message-ID: <aLunR_0BPCrATnBP@google.com>
-References: <20250905222656.3692837-1-nkapron@google.com>
- <CAHC9VhT8NrsXMM-PPZJ0EPLxFHQ1vOu+ASCd+82Xth_mJPnDiA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1757128562; x=1757733362;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3NayDvUeck/2j5RXEAOYdhcDnjymDDZKc4jRn/waV2Q=;
+        b=AsJoVzqquWEXEj50ZLKTy+LhZr+uHXOQ/vcDF7y2DEM1O4u9DFDxLO5l8dV99dvZrZ
+         jekKZT6IIFyGnVCN0R1hYFFPHAtwuRaKyisXWiJPM6GB9OUmdwBusKD8l4+0bIRTiQaH
+         oKb9gE/xjxfuglErIUSrukC/PNPOgFC/gmR/LMPM1sc32vuHupKAhFCUb4tQbD8O9kQp
+         Fs0cIg5nx8jyV/djfxUio7icYlWiWSc9sg3B1WAog5jFImutP6LXtkIIqOtxBTB6g627
+         liiZ+KjDSNRMMeSutA7LViui73mAvZqA5R1upk8mBioxIRIfTwVwBFGBrbr2WYkRc5jn
+         SzMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTQ2K62DyyQjyD369EwOY2NhQOPKq99hDmpd4sRZsi5vX0P5FghrKN+j4FwPW4pfHmDKPQgyZl/6biSQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5BhAWqTGGr0JqJ7AeZs1J265L8R2Xx+8WZWlWRUxkNu6s/cvN
+	0gPCjle6+uL1SIXQmdC0LdsGrh87wzvCeu30F0CeiRxwAL1PMFlOigIQFq3/MlRJX+46CRE0BXH
+	CEHdiYcXiat+qgbx9u0B4ZzynHbDWv8OyJIwVy3ekNgPeTaG+DA7X8f6eiWY=
+X-Google-Smtp-Source: AGHT+IFwZUqdgzs/5Q4pqx3aDCD9i2ZGKgL8ncyh5I5VxS4b1jXbizZlwsBrOxRV4GnDsZJRUOqIhB9ez/YyswIIpQswXI0x7jVW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT8NrsXMM-PPZJ0EPLxFHQ1vOu+ASCd+82Xth_mJPnDiA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:190c:b0:3ed:6cee:f83d with SMTP id
+ e9e14a558f8ab-3fd94a14120mr13963125ab.20.1757128562118; Fri, 05 Sep 2025
+ 20:16:02 -0700 (PDT)
+Date: Fri, 05 Sep 2025 20:16:02 -0700
+In-Reply-To: <20250906025840.28498-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bba772.050a0220.192772.01a5.GAE@google.com>
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 05, 2025 at 10:13:01PM -0400, Paul Moore wrote:
-> 
-> With the original patch sitting at the top of the selinux/dev branch,
-> are you okay if I simply fixup the existing patch by adding the
-> missing '!'?
->
+Hello,
 
-Yes, that is fine by me. I could submit a v4 if you would prefer that.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in az6007_i2c_xfer
 
-Sorry for the thrash,
-Neill
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
+WARNING: CPU: 0 PID: 6596 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
+Modules linked in:
+CPU: 0 UID: 0 PID: 6596 Comm: syz.0.16 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
+Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 ba 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 39 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 60 e3 9a 48 b8 00 00 00 00 00 fc ff df
+RSP: 0018:ffffc9000363f930 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8880349e8000 RCX: ffffffff817a2388
+RDX: ffff888031ecc880 RSI: ffffffff817a2395 RDI: 0000000000000001
+RBP: 1ffff920006c7f2b R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
+R13: fffffbfff35c6c10 R14: ffffc9000363f9b8 R15: ffff88807bb38000
+FS:  00007f69a67d26c0(0000) GS:ffff8881246e1000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc57ebcf368 CR3: 0000000074c33000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ az6007_i2c_xfer+0x8c5/0xaf0 drivers/media/usb/dvb-usb-v2/az6007.c:832
+ __i2c_transfer+0x6b6/0x2190 drivers/i2c/i2c-core-base.c:2264
+ i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
+ i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
+ i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
+ i2c_master_recv include/linux/i2c.h:79 [inline]
+ i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
+ do_loop_readv_writev fs/read_write.c:847 [inline]
+ do_loop_readv_writev fs/read_write.c:835 [inline]
+ vfs_readv+0x5c1/0x8b0 fs/read_write.c:1020
+ do_preadv+0x1a6/0x270 fs/read_write.c:1132
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f69a598e169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f69a67d2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007f69a5bb5fa0 RCX: 00007f69a598e169
+RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
+RBP: 00007f69a5a10a68 R08: 000000000000007e R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f69a5bb5fa0 R15: 00007ffe339695e8
+ </TASK>
+
+
+Tested on:
+
+commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1028ba42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
+dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17dee134580000
+
 
