@@ -1,128 +1,134 @@
-Return-Path: <linux-kernel+bounces-804000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C81B46890
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:16:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D172B46894
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14FD458686B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:16:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197C37BCD9F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD2015667D;
-	Sat,  6 Sep 2025 03:16:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1A322F177;
+	Sat,  6 Sep 2025 03:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Utz0GLM"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54E2AD2C
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 03:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A0A22A808
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 03:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757128564; cv=none; b=Tn4WAocMHT0o9EZ5kS7wxeyLKYIBRXScdTAfVj/b2448K/AgTM0fR0gkwhy5p3C5OTXBHJ6rzh7bB3Zy0u0wlWyItYOk71xU25VIzsnkAQuruxFuUaNqMe5+AlPCaGBoOVUtIQ5XcKPuheeLrrEtETrBKkQA+rF+veU22aqLXFc=
+	t=1757128792; cv=none; b=lmOMtLyceVaW6Gh4tMtQ6tU/YV3ah7Y4wX+3s09yS+mlKJVNmQYnrGlgIPAf505ktgy6chxFNB2TL9kzEdupOBp+cd9ocqoQ1evE/SBoaoWEjQRe0vSTewlmDtihRY99ZYDR3Aw+QMa2oGOO0pWgED8Dytq1DYRZ5wPWJoqEUrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757128564; c=relaxed/simple;
-	bh=8ege3dqs598RpSHGFvuNx1GmqLeYWMDAYlTIopt4S8M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=urTOHrLP684mhhEiltXkCwcycSoD2YZUKYnb9C0JWmViJzHjbZu49/4Viitf3yQ+hd1KaN156gAaeHpoqsmgWJVOw3RBB8TuYR9yOcQOW013xAYYgNbMF40lxL2mCzU+w/z8QJZ19zIIqFrOi28fI7T283dAKCXscofqOdxxUmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8874f33d067so352324739f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 20:16:02 -0700 (PDT)
+	s=arc-20240116; t=1757128792; c=relaxed/simple;
+	bh=i0jDtPuAuQMt1NM0OTOsP3ZSUoN0wBDTLoW32cCtkys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9i1AjSDL80Ll59SRlk7EFlcCO8xWWKvuAtHSsjI+P8CC4bmaMlByLW0bRw9t2kdwzsLXIT5dxjcYGaNz5QdM0I0V+Sdmi/n8piCnXRbmhAhcOW/oAlIjCoGAUIR3A5Rf4BUI11Z/feGo8fTChMd9Lz53aIni1L+lINXja1wsYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Utz0GLM; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cfbb21fd1so4344a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 20:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757128789; x=1757733589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUnrEbym8cWaiMWORTWqmwUrvmW7nXo4vpAgjGxb8aQ=;
+        b=0Utz0GLMuP8tViw6Sga50ji7n51DEttRaPkRwSYoYkYxK7Kd7OCcjDn2CKLtSZCL+8
+         rj7OURbwlM2I1rCmuS1vj1zwNYdjiYKdaihLYeiy9xcXreS3gdqFHiGeLlW2QT7e+xp8
+         2unFmSPXZPRM5wO2sLcEz11rUS2ifITnjL4W4J//S2fGlDPNSxmhbc1Pk68R3eGa198s
+         Ngm2HE7VKAp5UTy8JDohS0Y1LjUKj8ql7y6GgdCN9gVDoBhVvsC/yje+M7Kbj0x/3Ia/
+         lPDlwqT7NUmtcdfV8cJ9k9nUGOddgKqSSvULwMOmK5c3H8oyZDFAOkY2Vt8UuI1eFeVm
+         DiHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757128562; x=1757733362;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NayDvUeck/2j5RXEAOYdhcDnjymDDZKc4jRn/waV2Q=;
-        b=AsJoVzqquWEXEj50ZLKTy+LhZr+uHXOQ/vcDF7y2DEM1O4u9DFDxLO5l8dV99dvZrZ
-         jekKZT6IIFyGnVCN0R1hYFFPHAtwuRaKyisXWiJPM6GB9OUmdwBusKD8l4+0bIRTiQaH
-         oKb9gE/xjxfuglErIUSrukC/PNPOgFC/gmR/LMPM1sc32vuHupKAhFCUb4tQbD8O9kQp
-         Fs0cIg5nx8jyV/djfxUio7icYlWiWSc9sg3B1WAog5jFImutP6LXtkIIqOtxBTB6g627
-         liiZ+KjDSNRMMeSutA7LViui73mAvZqA5R1upk8mBioxIRIfTwVwBFGBrbr2WYkRc5jn
-         SzMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTQ2K62DyyQjyD369EwOY2NhQOPKq99hDmpd4sRZsi5vX0P5FghrKN+j4FwPW4pfHmDKPQgyZl/6biSQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5BhAWqTGGr0JqJ7AeZs1J265L8R2Xx+8WZWlWRUxkNu6s/cvN
-	0gPCjle6+uL1SIXQmdC0LdsGrh87wzvCeu30F0CeiRxwAL1PMFlOigIQFq3/MlRJX+46CRE0BXH
-	CEHdiYcXiat+qgbx9u0B4ZzynHbDWv8OyJIwVy3ekNgPeTaG+DA7X8f6eiWY=
-X-Google-Smtp-Source: AGHT+IFwZUqdgzs/5Q4pqx3aDCD9i2ZGKgL8ncyh5I5VxS4b1jXbizZlwsBrOxRV4GnDsZJRUOqIhB9ez/YyswIIpQswXI0x7jVW
+        d=1e100.net; s=20230601; t=1757128789; x=1757733589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fUnrEbym8cWaiMWORTWqmwUrvmW7nXo4vpAgjGxb8aQ=;
+        b=BNKU+5LOvUDveITQQTw1JbVr2fd6i0t1kJqpXLd1+319i5CSG0rBJ0y3gx0ictTGq3
+         8iNs8RI0VvidJmjp1JRciahvuESTzx6IGuxMzgibbrISWcheR+/tadj12kqZlVv3rpUu
+         QHpJ4Lg0Op3lvE+yXQk6FcZD7oag1Rk7QTkjpSfhKUPdFcGHdTAtUj42twClF59CjJhP
+         EeYYYwuW/6CQu6nqHF82AOz3dFzV6S5VIYLD98xALT0wHarSXOQ8zwPfk0AobbUIRdHn
+         dRPsXJGHlS0Wfy7gkjL94xledv4TVdIsWisZrT3eaMQFxx8gqRRsaBSUG3Hmz0IZ8JHt
+         8tqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ZU3cfmf4/YawO3mGQBoz3pUQBFw30YVXQ13oSxIGNdEDh8ftLmDjXmke48kG3WygY6vMq2anyLdeMxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfYgrlFBM8icy2NooJbC8G5DnpqslNDme6ac1932hWBiG4wHw0
+	D2+adzYHp13+XPL017dJlJ6qZmvJ9Bkb/47DjJEkHE8I2oT3pRCU1iBC/s0m7lQLU7/ZiHuALqr
+	ONCTEp7qpq/podQbiSItVeMePCA6gesVimi3wpGHc
+X-Gm-Gg: ASbGncsuUCTcmCP/8sMqfNPxDeTKx4rEkgFYUtEhmRKGVdj3OJkDZHVjgaI+3tSUt9w
+	OAM8A56PXTGHu+7Ymu9ySrbSNA9OBqmDMQN/ndm0pMghE/lEux9wsaRm+TgTqKlrje4orXHzocT
+	PyroJizNE8XwV0FZz6f0TYiBqoXkNTR1P/sV23VqHIAo3mePa1zKNu/boB6feWypD+9gR4su8ep
+	0gQqKVhkvRkEb1dChjmuaLQi0kwlqE+ys6Y8/zs8w4bRQ5Cgf4=
+X-Google-Smtp-Source: AGHT+IEpbvl1msst8Y8AhGIvfgeiQKuRecMVvBy0eQgxYcmCQKMzwJNAg62WHMaeTshzfL236ebrPRRUZ+ytR5USn9g=
+X-Received: by 2002:a50:d506:0:b0:61e:ce79:1da7 with SMTP id
+ 4fb4d7f45d1cf-62356cc4e97mr35864a12.6.1757128788834; Fri, 05 Sep 2025
+ 20:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190c:b0:3ed:6cee:f83d with SMTP id
- e9e14a558f8ab-3fd94a14120mr13963125ab.20.1757128562118; Fri, 05 Sep 2025
- 20:16:02 -0700 (PDT)
-Date: Fri, 05 Sep 2025 20:16:02 -0700
-In-Reply-To: <20250906025840.28498-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bba772.050a0220.192772.01a5.GAE@google.com>
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250904-debugfs-rust-v11-0-7d12a165685a@google.com>
+ <20250904-debugfs-rust-v11-5-7d12a165685a@google.com> <DCKQS4126EVC.38ZJ0GOFDYCP7@kernel.org>
+In-Reply-To: <DCKQS4126EVC.38ZJ0GOFDYCP7@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Fri, 5 Sep 2025 20:19:37 -0700
+X-Gm-Features: Ac12FXyiznx642yKmGiPP2r86OtClJU0KrUs-LmHZJ_nsO5FoE6RnPhhD18rLLU
+Message-ID: <CAGSQo01He7cNvcOQBxAqLicSjKniSp=97K6GupnxS4B=G9p4rw@mail.gmail.com>
+Subject: Re: [PATCH v11 5/7] samples: rust: Add debugfs sample driver
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, 
+	Dirk Beheme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Sep 5, 2025 at 2:00=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> On Thu Sep 4, 2025 at 11:13 PM CEST, Matthew Maurer wrote:
+> > +kernel::acpi_device_table!(
+> > +    ACPI_TABLE,
+> > +    MODULE_ACPI_TABLE,
+> > +    <RustDebugFs as platform::Driver>::IdInfo,
+> > +    [(acpi::DeviceId::new(c_str!("LNUXDEBF")), ())]
+>
+> This should use "LNUXBEEF", as we explicitly reserved it for sample and t=
+est
+> code.
+>
+> I think we could reserve more if we see a benefit, but so far it's only u=
+sed by
+> the platform driver sample, so we should be good.
+>
+> Either way, no need to resend for this only, it can be fixed up on apply.=
+ :)
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in az6007_i2c_xfer
+Ah, thanks, I was unaware that it was specially reserved and so tried
+to pick something distinct. You fixing up this and the `OF_ID_TABLE`
+on apply SGTM.
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
-WARNING: CPU: 0 PID: 6596 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Modules linked in:
-CPU: 0 UID: 0 PID: 6596 Comm: syz.0.16 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 ba 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 39 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 60 e3 9a 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc9000363f930 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff8880349e8000 RCX: ffffffff817a2388
-RDX: ffff888031ecc880 RSI: ffffffff817a2395 RDI: 0000000000000001
-RBP: 1ffff920006c7f2b R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
-R13: fffffbfff35c6c10 R14: ffffc9000363f9b8 R15: ffff88807bb38000
-FS:  00007f69a67d26c0(0000) GS:ffff8881246e1000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc57ebcf368 CR3: 0000000074c33000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- az6007_i2c_xfer+0x8c5/0xaf0 drivers/media/usb/dvb-usb-v2/az6007.c:832
- __i2c_transfer+0x6b6/0x2190 drivers/i2c/i2c-core-base.c:2264
- i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
- i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
- i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
- i2c_master_recv include/linux/i2c.h:79 [inline]
- i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
- do_loop_readv_writev fs/read_write.c:847 [inline]
- do_loop_readv_writev fs/read_write.c:835 [inline]
- vfs_readv+0x5c1/0x8b0 fs/read_write.c:1020
- do_preadv+0x1a6/0x270 fs/read_write.c:1132
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f69a598e169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f69a67d2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007f69a5bb5fa0 RCX: 00007f69a598e169
-RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
-RBP: 00007f69a5a10a68 R08: 000000000000007e R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f69a5bb5fa0 R15: 00007ffe339695e8
- </TASK>
-
-
-Tested on:
-
-commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1028ba42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17dee134580000
-
+>
+> > +);
+> > +
+> > +impl platform::Driver for RustDebugFs {
+> > +    type IdInfo =3D ();
+> > +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D None;
+>
+> NIT: This defaults to None, so it can be omitted.
+>
+> > +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> =3D Some(=
+&ACPI_TABLE);
 
