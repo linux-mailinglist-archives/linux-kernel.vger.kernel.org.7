@@ -1,179 +1,160 @@
-Return-Path: <linux-kernel+bounces-804246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1449B46E32
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610EBB46E36
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A012A7C7085
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7561784A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8F62F3628;
-	Sat,  6 Sep 2025 13:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EDB2F0669;
+	Sat,  6 Sep 2025 13:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8MyhB+K"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="karuOkNi"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D4B2F291A
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 13:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD575225A29;
+	Sat,  6 Sep 2025 13:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757165528; cv=none; b=Mfn/QZmSEYj36FyUxd1+XKaIVGu4ZbKWuVZF6NX3O6ZcRd4WCsR42F+hbhRUq1k0zFQHAXKpq2Pjdst2/fCz3A6mMhvqehCa0Hs5zNHNMDmQ1SJqLDgP5mKbi3reOkM7cebf9/JQPzCyAeo/Gccou00s5a3Gt/3/ur3G5EigUpc=
+	t=1757165685; cv=none; b=ecIESbCSxDwWE9CrfJf3ZepnZgejsy3g3GT/FqiFm0kW2wfBLdu8uv7HrmqGy1allnev2Vxs2Gpxy4hGZv3GhsiYnnM8sS3dyug9QyeCge3nEzJsdvP49aCrIx29OUfji+reSXrzxC0WfSXVRuuG++vXIDC3WKE7afJGZR9zXIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757165528; c=relaxed/simple;
-	bh=nTaTLwL902o3beij35jMmUsrVFPps0PVnHFZw6FN21E=;
+	s=arc-20240116; t=1757165685; c=relaxed/simple;
+	bh=A/O9bArQgchRCNE4YOOq/nXP7u364U1IIbj9QaZZDwg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JnSElDS8MBFxy2VtQtZbOdXZDd6c+opv/kJvatSnb0kEPuNBfzD5ezTNcqLz1I+aUmVqSCQkgK5bOGac8/0+WQTQu2PoYnp00ejuwLVqmdTbDnzl0rAh9vZkpffWSJECYOvtMo2+ydcEcqKmyL2QLiwygmT/xKXJAHKa2jizuWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8MyhB+K; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=oPdIbrl0gMPtNRRAFXS7FVfpwGUzmwxwIM9wa0/3ex+CDUZfSlXCV4LOcEla+ZVCJPelHwTntu6EKccKVDXf8kdmcGuGxs6tcw4BI+ZSKQeP1F3jQJGAS/vLqM7s7h83uI5xRpX33k/joKkyViOZGpP+I543CKNxSFSvVCLaTJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=karuOkNi; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6228de281baso1797176a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 06:32:05 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso488882a12.3;
+        Sat, 06 Sep 2025 06:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757165524; x=1757770324; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757165682; x=1757770482; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qOjr16z3iFFG0GZCJDInNOhhVNmobQ6kWnPwwzJcCqk=;
-        b=G8MyhB+KX5iNsKwBWLOEmyINv5nq0u2gsFtaHCPzfz1NQBB3fErmOCnPETE7DuZGox
-         Ejfa6c3fSqESj2SgVxDhm5XH0f+pUYx7DIh6Y0Ue9dXyezJvugh+oKX3oTFSifEAF35x
-         +f9D6qtWritcfQ2tEX6x6kR2VkJXKzA/NKdLkI+fxa/4FoegIMZmErfIUGJ5tjssUZYz
-         IP19F+Da0tAKe3r8hLQ+CGjy7Jvl6+FhHbKrrC/Gor1vWgUG3+R+bLOw1A3D6m8Fz6nm
-         m+tn9cWjWgt+V3EM5ScRWDCo0hw5XXDH0XQMGZ92eAYdtgj3e8UJzGda0ZLbOL+blIU6
-         3Bpw==
+        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
+        b=karuOkNiwcNI8+X5MVYiz8+d5jix0m56PJDucveZsgZIERIg/Evh5lCis4thXgrHCd
+         Sjw1E2GQZ0xglXTntXPzKS8TXP/Qrk55WcvHAPAKRgjDPdxzINq2srn6vylzrAjyXBfy
+         RR7NSylPu2Agv18OU2LLETLSIZDjVZqYkuLl3tzPmy5mDDgG2APV7cP274a2h1zDPvss
+         4tznogsTuJo6NX0Yg2qbkr++spJzOTwY0fMavCnPyqDJU2HUhtbYWdGnhqF0ngP/4j0b
+         79AjveWxhRWNKLALF0J3Ib0q6i9zP+TD+TvFms39vvpo2fRz+cJeATKCbu5RMegmRC3P
+         KTfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757165524; x=1757770324;
+        d=1e100.net; s=20230601; t=1757165682; x=1757770482;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qOjr16z3iFFG0GZCJDInNOhhVNmobQ6kWnPwwzJcCqk=;
-        b=wIFYGgA4Kc9cADSIDpAX9yHKa6ATPenqq/9Qeua8yeICjq0CuJnTxCo6ThMG6r2aM1
-         pJbodVUJGwGMItcBaa58/M6E+aDkYj3b37EJu9btw5HHDJYvwsPpj995dXDyuhkogcy9
-         eL3i4xVKH7FLfUUHVPOcPcpaE0SdeKubFzs9aBjQ2Cm6TyuFTsXpMluNmyYzai3Xno8a
-         lr2r2OPvCls+5kB1QCqogl5g4JvoIqZkKxwwZA1n00XY5tBwPicPH5VqytY9vj0sRkdv
-         CWv700ToB519SLkMI12y3dCK5XU8hFs2GzNsR4PnFyxC9cuWcGhWe70k5SjLNm02InHt
-         Bq/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2nXjYwcYODG5f73hQxteOz9O5BbslclSwfIxwAzo5iApDQCJhcuk/3uLVMr3tdOPlRi8BT2uvRNORkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGwATNNi0mGT7OKZxmsu+R7OjowR2pMuU2X0aJkai2zjWkmSrI
-	3mkfKdOw3Tpo1Ma+GqeXkZrH/oXY7Eimo3U3sFwDyhedvd7da8sqnrTnbjG0IV7VRPibyk2DM5D
-	3zYDIbFSusuKvpKsVayT5CoIFKiDX4CU=
-X-Gm-Gg: ASbGncsVXN7BGKC/eb/ePkZQuFRX3EWdONTYivgY0KgvXmHOHUKaewTYY3lJc0JrGez
-	OGCX+OpWIlGBnJGftouyxB+Wmb6z6KbXGrgoGbWTiBemSWhpYMhLRLtupfBy2YgChJj5vdBvHQh
-	G9uLLaHCg2neOnGIwu5DjKAamjVzP6qjsYaUCOV64JaTEKRW65P3CZ/gC/WR5rgoJQC5EbDn2we
-	smc2IWMS2g=
-X-Google-Smtp-Source: AGHT+IHG6G4gWpwGqJxGHLfIICndYKim+2bE+CSRWqJCCNL3LoUe3y6m0/pSNCmqqsFFeG1iBJd4Ef2O5yds5STYhhQ=
-X-Received: by 2002:a05:6402:348d:b0:625:aaae:c199 with SMTP id
- 4fb4d7f45d1cf-625aaaec3a8mr1264054a12.1.1757165524254; Sat, 06 Sep 2025
- 06:32:04 -0700 (PDT)
+        bh=aJ6kAa7oShKc/lpiM+bPhxWta9HH3iqlBxnqLQNfAj0=;
+        b=ZZmu6yzWX8rp0hivCdcavyvxN68GV/lo473+d0BcRSk4VyaxgGYVa0VTMf4i6AulhV
+         gTPthAr6LPKYHEaNzwA3jRUoWedQU72b0aQdzwsaCoH6XMXl7nC+AiSsD8FhOFeISIA/
+         AmfwV160dPtVKqMZ0au/LTD7ImVjI0gXCOD1KmbxKQrtw6oHHpzivrH5k/xRtwymv1t9
+         pGGMhS6IcPW6kEMR356cEA6CjT4VTTEifDc3tuYH9xnQ0qBq6IxSnFTqaCSUmwowMPXq
+         tzbBXaWnOesEiynh5QbJfbC4y6sh3DpbGwLtIOxz+14zKQEJ6qOMXlp3ZpuH2zUplmMT
+         c43Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvLZrda18nSPMDEkBa/JhnTUKtPMtZFE3OypDmgOKGLq/eGSAdniuzF+RX4KVwvqaISe1tS7SoBOyzwFQV@vger.kernel.org, AJvYcCXSYxzvizK7dDMzie0EHAAIN1lm7gh+leRiSE7yI3UZZWOLAJ7FtaCtyCOGLJqU/V4KgZCWpsLKa4Lm@vger.kernel.org, AJvYcCXnogxRojYsJ0rPUi8RMcYw0Aga8lKmjaltb/9Y2QaSzYYO/f+3QarCGrOKPqRyJCjXK4vs4szsyegm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmb4CcchjSos8sU/GeS0fU++iE58qFReXm+ap2wDmlAMye2C07
+	wfK+8TWxk2NbQpVMJ8LeM9yMtthYrGJUNfJpj9RJ1GM0nSvQQgnlSDP3QiuB+iQTAosUu10Ihaq
+	/iHQ2cdpAzeQmCfiwL4PBDPad44eHgFw=
+X-Gm-Gg: ASbGnctpTubDRA6u2w81gQ6btRPjs5LtnvfRobtx3r98WAv5BgSI1NRhmLki5Y8ykzA
+	iErZD1Q+8jdCfEvIgEdTwRYhnGSKDWseUr/SZqv8zEdMaOkrv6SOOh+G0WgW+jbyUBq1JZcBYUl
+	KW1PvNMrWS2q31laCfMF+3BMX/hjhKL0p0LWPsi3Dt/MUwmUAmOHQDVplvFcwSbnk2sc0mJzCdn
+	QktBAVKb7f0IJlGoA==
+X-Google-Smtp-Source: AGHT+IFG1phE+ZeZqgW1zMy+uFKSv2Qx1hsWmfAK05w/g8wdzyZKfVxtUYHEK5SPBjzsv/309PI16u5CYZdBDd/9NL0=
+X-Received: by 2002:a05:6402:909:b0:624:6ba9:52c0 with SMTP id
+ 4fb4d7f45d1cf-6246ba9555fmr1617735a12.15.1757165681932; Sat, 06 Sep 2025
+ 06:34:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-2-ryncsn@gmail.com>
- <CAF8kJuMsGGtOuPpDwFKq0sNhX7HKbQWWK31uWpqeqW-RGTo-0A@mail.gmail.com>
-In-Reply-To: <CAF8kJuMsGGtOuPpDwFKq0sNhX7HKbQWWK31uWpqeqW-RGTo-0A@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Sat, 6 Sep 2025 21:31:27 +0800
-X-Gm-Features: AS18NWDELQkUGhXFIMgs5YM77ANpVCaP_i9mrVBu93dI7V9Pvwt8b0jXtcdeeYk
-Message-ID: <CAMgjq7CtEwBMVz67nA7wL6PryZuTmaOut4yPhUyhQV0xkuc=1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/15] docs/mm: add document for swap table
-To: Chris Li <chrisl@kernel.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
+References: <20250905132328.9859-1-cn.liweihao@gmail.com> <20250905132328.9859-3-cn.liweihao@gmail.com>
+ <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org> <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+ <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+In-Reply-To: <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
+Date: Sat, 6 Sep 2025 21:34:25 +0800
+X-Gm-Features: AS18NWBAYmmcyxx9GhaGWWnfw6zHk7za_4uCKBVeQx-mNiFJOJIfxAZlKy9QaMc
+Message-ID: <CAPEOAkSpEzVtUqyUJQbDmbmPOjORnAfuehhvo1qqZgAAeY=ZVA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 6, 2025 at 8:05=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
->
-> On Fri, Sep 5, 2025 at 12:14=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > From: Chris Li <chrisl@kernel.org>
-> >
-> > Swap table is the new swap cache.
-> >
-> > Signed-off-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  Documentation/mm/swap-table.rst | 72 +++++++++++++++++++++++++++++++++
-> >  MAINTAINERS                     |  1 +
-> >  2 files changed, 73 insertions(+)
-> >  create mode 100644 Documentation/mm/swap-table.rst
-> >
-> > diff --git a/Documentation/mm/swap-table.rst b/Documentation/mm/swap-ta=
-ble.rst
-> > new file mode 100644
-> > index 000000000000..929cd91aa984
-> > --- /dev/null
-> > +++ b/Documentation/mm/swap-table.rst
-> > @@ -0,0 +1,72 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +:Author: Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com=
->
-> > +
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Swap Table
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Swap table implements swap cache as a per-cluster swap cache value arr=
-ay.
-> > +
-> > +Swap Entry
-> > +----------
-> > +
-> > +A swap entry contains the information required to serve the anonymous =
-page
-> > +fault.
-> > +
-> > +Swap entry is encoded as two parts: swap type and swap offset.
-> > +
-> > +The swap type indicates which swap device to use.
-> > +The swap offset is the offset of the swap file to read the page data f=
-rom.
-> > +
-> > +Swap Cache
-> > +----------
-> > +
-> > +Swap cache is a map to look up folios using swap entry as the key. The=
- result
-> > +value can have three possible types depending on which stage of this s=
-wap entry
-> > +was in.
-> > +
-> > +1. NULL: This swap entry is not used.
-> > +
-> > +2. folio: A folio has been allocated and bound to this swap entry. Thi=
-s is
-> > +   the transient state of swap out or swap in. The folio data can be i=
-n
-> > +   the folio or swap file, or both.
-> > +
-> > +3. shadow: The shadow contains the working set information of the swap
->
-> I just noticed a typo here, should be "swapped out page"
->
-> > +   outed folio. This is the normal state for a swap outed page.
->
-> Same here. "swap outed page" -> "swapped out page"
+Hi,
 
-Thanks, I used some grammar check tools and it seems they are not
-perfect with kernel terminologies.
+Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=886=E6=
+=97=A5=E5=91=A8=E5=85=AD 15:21=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 06/09/2025 03:34, =E6=9D=8E=E7=BB=B4=E8=B1=AA wrote:
+> > Hi,
+> >
+> > Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=885=
+=E6=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On 05/09/2025 15:23, WeiHao Li wrote:
+> >>> We need a clock id to assign clock parent when use i2s 8ch as audio
+> >>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can g=
+et
+> >>> frequency we want.
+> >>>
+> >>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+> >>> ---
+> >>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+> >>>  1 file changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bind=
+ings/clock/rk3368-cru.h
+> >>> index b951e29069..795e721957 100644
+> >>> --- a/include/dt-bindings/clock/rk3368-cru.h
+> >>> +++ b/include/dt-bindings/clock/rk3368-cru.h
+> >>> @@ -183,6 +183,9 @@
+> >>>  #define HCLK_BUS             477
+> >>>  #define HCLK_PERI            478
+> >>>
+> >>> +#define CLK_I2S_8CH_PRE              500
+> >>
+> >> 479
+> >>
+> >>> +#define CLK_I2S_8CH_FRAC     501
+> >>
+> >> 480, no?
+> >>
+> >
+> > Neither of these clocks belong to the previous grouping in terms of
+> > type, so I chose to start with a new integer id here.
+>
+> I don't know what is "previous grouping" here, but IDs are abstract and
+> are incremented by 1.
 
->
-> Chris
->
+In the current kernel code, the RK3368 clock IDs are categorized by
+SCLK, ACLK, PCLK, and HCLK.
+
+However, for the I2S 8CH peripheral, the default MCLK output frequency
+depends on I2S_8CH_PRE, which has four possible clock sources:
+i2s_8ch_src, i2s_8ch_frac, ext_i2s, and xin12m.
+
+The parent clock of i2s_8ch_frac is i2s_8ch_src, and the frequency of
+i2s_8ch_src comes from either the CPLL or GPLL.
+
+Due to the clock topology, CLK_I2S_8CH_PRE and CLK_I2S_8CH_FRAC cannot
+be simply categorized as SCLK, ACLK, PCLK, and HCLK mentioned above,
+so I choose to start counting from a new ID.
+
+If this way of assigning IDs is not appropriate, I can modify it to
+increment based on the previous one.
+
+Besh wishes,
+WeiHao
 
