@@ -1,115 +1,252 @@
-Return-Path: <linux-kernel+bounces-804355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77540B4733F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:59:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364E6B4734E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074D81C201F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F86567F63
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1B12264A0;
-	Sat,  6 Sep 2025 15:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3084A21D3F2;
+	Sat,  6 Sep 2025 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="BhKe6DCS"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxJm2k8o"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F3C221264;
-	Sat,  6 Sep 2025 15:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939B71C5F10;
+	Sat,  6 Sep 2025 16:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757174357; cv=none; b=Nel7CD/WdQ9/JqhXQBmpezm8jiVBURs2cN/I7dd2XU7//XGy///UIpoUu+C/NO1r0fR6eJMcFO1X4QBVe6F08T7dm6oTr9Xf1aiF/elcLCJj01qpgeOlg5lG9edvU+3xU4PF+/r5Slx9afKpqu9oE/BeAv2UNrqtJYwh5jckXHM=
+	t=1757174429; cv=none; b=mN3R2+1bR6fg7l1Mb6O/xJ5G482AICkbE3zjh0KZXkANxplIW4YtSG0bi+GwKwAZT7gi87EQbD+FuiF3nMc6QU+TvkAqda9Z+e62Thm03G5fo0+MOK/ftw2I5Fw8Tgvw8WelyZVBksWrD64qtZsP7DRvwqzVZ1Fzd6gY3NNldug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757174357; c=relaxed/simple;
-	bh=XzuoT0WSkJbb6iiSwS7U92Qd0e3ls3F0BkGucQXz1Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1qGYXtikYF60N6ropv73Ql9Ur7sZVbn0IpmCqNnQqPcoBsCyvGLtEdlm/nvfgVbD8aLCR3YUS1KU0EHontldV/XJRl0fPQP8TrOkxuPXvic19fOZ3OeF2VfOY8AZvS7BYApfb4lvpxaezRhqnaRi1lUClE6OakP+BrilIu8X5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=BhKe6DCS; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1757174351;
-	bh=XzuoT0WSkJbb6iiSwS7U92Qd0e3ls3F0BkGucQXz1Wk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BhKe6DCS6msxct+OYYzo3wFMOUo2t7DP8KsaQkhrTgjY9mmBggADOXmB2wSJcsihs
-	 s+3HZqDxnYYhcwDdRovP9TEfAdjl1fpnPHKVIbIqO/VtMcsUzLvBb80gCoL+SBI259
-	 P8P3k/KVlTRw9nsBsK0ApOTbojRG8B4h4ii/Yua4vXHQUPDSHaPff3XUn0sFfexFxm
-	 uvyaUStaEWqgg6Fo5tx5T2Z5IEismxmGDI93gsqFs46UQuE6T92RuKiT9f7Bwn/A8j
-	 06Cq2n9Nj7DQzaekOe5O9MERpSC6mkSbFpaqLRF0nSozEB0lI/+xERcNkCgIVJcQ5B
-	 60icJeU/6N8KQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id BE8416000C;
-	Sat,  6 Sep 2025 15:59:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id 5FD50201DC8;
-	Sat, 06 Sep 2025 15:59:07 +0000 (UTC)
-Message-ID: <228eae2b-5a52-48c0-a3a2-afbd3e45adf2@fiberby.net>
-Date: Sat, 6 Sep 2025 15:59:07 +0000
+	s=arc-20240116; t=1757174429; c=relaxed/simple;
+	bh=kt4ZRqsjyWbyiunkwTd+cAol7wA86lovQZhhVf07LuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mBnuzJqxeEL663UHBL6YLhz0q4D7W4Fq9aJxVZeH+XY2c4ziYO5qUQDDRAd6MbC7unlBgOxFkzcM/h0t9pwbn0yL+GWksDAPOzffBZPqBKVvC6Nu32V4ugiLD47n3AgkQ4hpiKUr4HWJISezKGo3FUIJrRiF1Z2D2UF7h0eSIEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SxJm2k8o; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so15331875e9.0;
+        Sat, 06 Sep 2025 09:00:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757174426; x=1757779226; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LGPJKwcboHWX/IcVFu8FVAiq199ldM/4DzbDNSj65bE=;
+        b=SxJm2k8o3+mNtMBSnp+eA4f0gl2MtY+RBBDlfeOf5rK08ZEXbm455c8wQC/0Fni0RY
+         vMUhnJg2HxLBx8fFfSoMDd0+LZg8cP2kWNrXZ7eCelOagD7p5NaKGAaVZKnPwl9wizyy
+         Hcru6SmoyAwiZMMzp7XE4+vsCCw1R60Uf3BOH6uyKtZCbQpiyfv2cg70UdyYI0RDSZr1
+         Gm25Ycs603DPjXUu+8Rd/SkStES90VgceJhJMCD5/DFScZg2bwNEq/pNVo3fpnFXvpGJ
+         ahGSL/eSS6cg2gYMosDj0WlLCV3JosSy86zoJXd7fo0VFo+SHGQj1Ngs/ALZJPUCcoed
+         FSQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757174426; x=1757779226;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LGPJKwcboHWX/IcVFu8FVAiq199ldM/4DzbDNSj65bE=;
+        b=eZPZkKPDtRH3k3buSow+xnE0aJOysJUjY8jbuPA0O8VKZA59IB2hMohMS+pbAo8Hjd
+         ndMu2yd+jpGorHHjIdUSmoXFKv7KMhRSnRSd03lQizr99i6Q13LqpDQpDQRpWgsqmp2q
+         mMuREiSpprKTYPrBzNyRAMWMSGLJv4WvDDNuSxhWVMFsXpOOb2IPdTC6dMpGS8vXsv6d
+         Ygz9ezgHKK/3OxxxBKLq0PssD2aGYHRGT4BbJ7Jd67e29m3YkgBhJwUCL1lkf6BkV4xX
+         w4g+lsUK0fh772KDywcBlKwCxUzsA/egyWX5D8AfvnPGhq2EZQ5b5OMSklcvLXXRT2dh
+         lbQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBQqsS1E3+Lsqq6I3UPmpvRT4rXcAltDolYnt+TMEF4bq31fHTST9QgMxwwJuKuUw+k24f1F4EZiASgO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWZunlhXIj+0GNrgXM8hwtjycnklh32C0t1er50SPB3xW45YDY
+	B6a0YBybmUft5UmvGnDkWq18wGPmCWADFgIfK+yLFNxOWrdC7ipxGmywchZVIg==
+X-Gm-Gg: ASbGncvVVmj+cWZJVeK0uuKsGyBTCymWwtnGBSKdvsQ50Be/9CT2Lwk2HCCFrAfCtnp
+	n7msRX//ny4yqzDEyWOWubzIIzuh25ch9HsEJDEzMSKKX0Yzw3PkZYrB3iD5QnVkJ+ZQ9tnioNc
+	ehPeHg2bCA6nVYguvIgPDy/jvzNZFXo8XTz0arM+IKF/i5OrrjBnwDw4FQth3jbgUcqVnTQ/u8F
+	wW6gce2ehrGxaO3+YhmHv2f6WlB9n8ZMUPv8H3qjHru94XYD/7NWRJHmz9/Y7VrfszmNZuTFyn5
+	mciUjSb5Rb4DgNK5R9LhZo6S3JwrGwP3BEObcbjGP2L1EufJkE0M7K958fVwDISXGnEikEiCtp/
+	0hbZoOdMdjAi58A8pGqZtPFCPmnnO8iIiurXBltQnQmbuIMJXkCw=
+X-Google-Smtp-Source: AGHT+IFfkTllRvQnRTGxTcmJgLuigxP8noNDXGg6hoWaTwMLCGyCeUWVxOP28+6pq/1l91Fhow3P/g==
+X-Received: by 2002:a05:600c:8b5b:b0:45d:dc6c:9e30 with SMTP id 5b1f17b1804b1-45dde20ea5bmr21584945e9.14.1757174425595;
+        Sat, 06 Sep 2025 09:00:25 -0700 (PDT)
+Received: from hangmanPC.. ([86.124.200.102])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dcfa3ec60sm123676105e9.15.2025.09.06.09.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 09:00:25 -0700 (PDT)
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: wsa+renesas@sang-engineering.com
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cezar Chiru <chiru.cezar.89@gmail.com>
+Subject: [PATCH v2] i2c: i2c-dev: Fixed warnings generated by checkpatch
+Date: Sat,  6 Sep 2025 18:59:26 +0300
+Message-ID: <20250906155926.32699-1-chiru.cezar.89@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250906143119.21803-1-chiru.cezar.89@gmail.com>
+References: <20250906143119.21803-1-chiru.cezar.89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 11/11] tools: ynl: add ipv4-or-v6 display hint
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250904-wg-ynl-prep@fiberby.net>
- <20250904220156.1006541-11-ast@fiberby.net> <m2cy85xj9h.fsf@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <m2cy85xj9h.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/5/25 10:53 AM, Donald Hunter wrote:
-> Asbjørn Sloth Tønnesen <ast@fiberby.net> writes:
->> The attribute WGALLOWEDIP_A_IPADDR can contain either an IPv4
->> or an IPv6 address depending on WGALLOWEDIP_A_FAMILY, however
->> in practice it is enough to look at the attribute length.
->>
->> This patch implements an ipv4-or-v6 display hint, that can
->> deal with this kind of attribute.
->>
->> It only implements this display hint for genetlink-legacy, it
->> can be added to other protocol variants if needed, but we don't
->> want to encourage it's use.
->>
->> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> 
-> Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
-> 
-> I suspect there are occurrences of ipv4 or ipv6 in the existing specs
-> that really should be ipv4-or-ipv6 but the python code doesn't care.
+Fixed all warnings in i2c-dev.c file in drivers/i2c/ folder
+The errors were: missing '*' from multiple line comment blocks,
+missing new blank line after declarations and found 'unsigned'
+instead of 'unsigned int'.
+My motivation was to fix all possible warnings and errors from
+/drivers/i2c/ subsystem. I will skip false positives.
+Testing:
+   * Built kernel with I2C_CHARDEV=y + my patch on and it succeeded.
+   Date of last git pull: 06-September-2025 around 12:00 UTC + 03:00
+   Latest commit SHA: <d1d10cea0895264cc3769e4d9719baa94f4b250b>
+   Build succeeded
+   * Installed kernel and external modules on my laptop with Ubuntu 24
+   * Checked dmesg for i2c-dev using grep and checked for errors or
+     success. Found 1 line related to i2c_dev:
+     [    0.662406] i2c_dev: i2c /dev entries driver
 
-I haven't been able to find any, containing 'ip' or 'addr'.
+v2: fixed commit message to not generate error and warning as in v1
 
-Speaking of display hints, then WGPEER_A_ENDPOINT is another interesting
-case, it is struct sockaddr_in or struct sockaddr_in6, I have left that
-as a plain binary for now, but maybe that could be a struct map, based
-on struct length.
+Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+---
+ drivers/i2c/i2c-dev.c | 51 +++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 19 deletions(-)
 
-attribute-sets:
-   -
-     name: wgpeer
-     [..]
-     attributes:
-       [..]
-       -
-         name: endpoint
-         type: binary
-         struct-map:
-           - sockaddr_in
-           - sockaddr_in6
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index e9577f920286..0902b7b9cca6 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -1,16 +1,18 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+-    i2c-dev.c - i2c-bus driver, char device interface
+-
+-    Copyright (C) 1995-97 Simon G. Vogl
+-    Copyright (C) 1998-99 Frodo Looijaard <frodol@dds.nl>
+-    Copyright (C) 2003 Greg Kroah-Hartman <greg@kroah.com>
+-
+-*/
++ *   i2c-dev.c - i2c-bus driver, char device interface
++ *
++ *   Copyright (C) 1995-97 Simon G. Vogl
++ *   Copyright (C) 1998-99 Frodo Looijaard <frodol@dds.nl>
++ *   Copyright (C) 2003 Greg Kroah-Hartman <greg@kroah.com>
++ *
++ */
+ 
+-/* Note that this is a complete rewrite of Simon Vogl's i2c-dev module.
+-   But I have used so much of his original code and ideas that it seems
+-   only fair to recognize him as co-author -- Frodo */
++/*
++ * Note that this is a complete rewrite of Simon Vogl's i2c-dev module.
++ *  But I have used so much of his original code and ideas that it seems
++ *  only fair to recognize him as co-author -- Frodo
++ */
+ 
+ /* The I2C_RDWR ioctl code is written by Kolja Waschk <waschk@telos.de> */
+ 
+@@ -50,7 +52,7 @@ struct i2c_dev {
+ static LIST_HEAD(i2c_dev_list);
+ static DEFINE_SPINLOCK(i2c_dev_list_lock);
+ 
+-static struct i2c_dev *i2c_dev_get_by_minor(unsigned index)
++static struct i2c_dev *i2c_dev_get_by_minor(unsigned int index)
+ {
+ 	struct i2c_dev *i2c_dev;
+ 
+@@ -222,9 +224,11 @@ static int i2cdev_check_mux_children(struct device *dev, void *addrp)
+ 	return result;
+ }
+ 
+-/* This address checking function differs from the one in i2c-core
+-   in that it considers an address with a registered device, but no
+-   driver bound to it, as NOT busy. */
++/*
++ * This address checking function differs from the one in i2c-core
++ *  in that it considers an address with a registered device, but no
++ *  driver bound to it, as NOT busy.
++ */
+ static int i2cdev_check_addr(struct i2c_adapter *adapter, unsigned int addr)
+ {
+ 	struct i2c_adapter *parent = i2c_parent_is_i2c_adapter(adapter);
+@@ -241,7 +245,7 @@ static int i2cdev_check_addr(struct i2c_adapter *adapter, unsigned int addr)
+ }
+ 
+ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+-		unsigned nmsgs, struct i2c_msg *msgs)
++		unsigned int nmsgs, struct i2c_msg *msgs)
+ {
+ 	u8 __user **data_ptrs;
+ 	int i, res;
+@@ -297,6 +301,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 	}
+ 	if (res < 0) {
+ 		int j;
++
+ 		for (j = 0; j < i; ++j)
+ 			kfree(msgs[j].buf);
+ 		kfree(data_ptrs);
+@@ -337,8 +342,10 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
+ 			size);
+ 		return -EINVAL;
+ 	}
+-	/* Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1,
+-	   so the check is valid if size==I2C_SMBUS_QUICK too. */
++	/*
++	 * Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1,
++	 * so the check is valid if size==I2C_SMBUS_QUICK too.
++	 */
+ 	if ((read_write != I2C_SMBUS_READ) &&
+ 	    (read_write != I2C_SMBUS_WRITE)) {
+ 		dev_dbg(&client->adapter->dev,
+@@ -380,8 +387,10 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
+ 			return -EFAULT;
+ 	}
+ 	if (size == I2C_SMBUS_I2C_BLOCK_BROKEN) {
+-		/* Convert old I2C block commands to the new
+-		   convention. This preserves binary compatibility. */
++		/*
++		 * Convert old I2C block commands to the new
++		 * convention. This preserves binary compatibility.
++		 */
+ 		size = I2C_SMBUS_I2C_BLOCK_DATA;
+ 		if (read_write == I2C_SMBUS_READ)
+ 			temp.block[0] = I2C_SMBUS_BLOCK_MAX;
+@@ -471,6 +480,7 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	case I2C_SMBUS: {
+ 		struct i2c_smbus_ioctl_data data_arg;
++
+ 		if (copy_from_user(&data_arg,
+ 				   (struct i2c_smbus_ioctl_data __user *) arg,
+ 				   sizeof(struct i2c_smbus_ioctl_data)))
+@@ -531,6 +541,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ {
+ 	struct i2c_client *client = file->private_data;
+ 	unsigned long funcs;
++
+ 	switch (cmd) {
+ 	case I2C_FUNCS:
+ 		funcs = i2c_get_functionality(client->adapter);
+@@ -560,6 +571,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ 		p = compat_ptr(rdwr_arg.msgs);
+ 		for (i = 0; i < rdwr_arg.nmsgs; i++) {
+ 			struct i2c_msg32 umsg;
++
+ 			if (copy_from_user(&umsg, p + i, sizeof(umsg))) {
+ 				kfree(rdwr_pa);
+ 				return -EFAULT;
+@@ -578,6 +590,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ 	}
+ 	case I2C_SMBUS: {
+ 		struct i2c_smbus_ioctl_data32	data32;
++
+ 		if (copy_from_user(&data32,
+ 				   (void __user *) arg,
+ 				   sizeof(data32)))
+-- 
+2.43.0
 
-With the requirement being, that all structs must have a unique length.
 
