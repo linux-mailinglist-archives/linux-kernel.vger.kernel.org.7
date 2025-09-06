@@ -1,181 +1,128 @@
-Return-Path: <linux-kernel+bounces-804156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732C8B46ADE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:45:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684B4B46AE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55813188BB0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:45:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6227A7B846F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEADF130A73;
-	Sat,  6 Sep 2025 10:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6E326A0AF;
+	Sat,  6 Sep 2025 10:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="g5Xe0hbO"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCZXlFuP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1A199FB0
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 10:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40A3235044;
+	Sat,  6 Sep 2025 10:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757155523; cv=none; b=cMNMeFqPHkK9YVQLkqutwDutjkP9wi/LYDhi8S5JB+HV8SqRh0gzKygb+0QCmpK361zonxQ8kWePyduF3J1N0B8dFHy1uY5S3XVo4DZ3NRjH+CAUQ5L6X1VD9bGB/EqHyalSovjQjECJrgzz3ZJN4wRTEZwm5utEXesElu4uqxo=
+	t=1757155947; cv=none; b=SqnGptOAGqqRm9fqtNC3cn1pwHJDHYRJZGeAuGytCwnqSFF6BbSamUPLdOBry46ljHh1yhzWaHijp8QYCeTbB3cMJo5oDJFX2/akxbtBsu5XJDsbeSOJYJZ61XAr0eZiF0XM9OmCuFvIGjwLdxe2zQNJvVnTLvKxZbdyWWP6ink=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757155523; c=relaxed/simple;
-	bh=ynKkKQPKqXap9DQeskGJLQvUGb4qyaEcv5CLyIVOSkM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To:
-	 References:In-Reply-To; b=tXprCwmC81LH1UJNtRDo3ibr3QbF08indJFiDJVw50a061HB/ccEfICVNS3W6cXCVcwpZ57PUbLlY4QZ7oVaofWCHZ19/dx0gapwD+rfCh68NUmAM91N9ey65dhS7PmJF3prd/y2kY8FwBgOqzvtBDDsVOsRWwkaBm4ZgEctjkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=g5Xe0hbO; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1757155947; c=relaxed/simple;
+	bh=T0VuvwF88QcLHB8kFbQob1Y/uKb+MvwSbApDgh7mNAQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=bHZzO2ZP0Q7sKP8Sdw1VSrY9MISw2A0FSF7zjK9bAp6dluv0uLOqEw6zD4SglTNajrXAg+0XUlJlubAPaRLmQqvlAv2H1amrK3x4grkiym4SruUQwepELv8s3njiHf2P8wtY88fp5f5IU8mPpeHhEjhV7eIBULSiKbOqjR9A2bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCZXlFuP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FDFC4CEE7;
+	Sat,  6 Sep 2025 10:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757155947;
+	bh=T0VuvwF88QcLHB8kFbQob1Y/uKb+MvwSbApDgh7mNAQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=KCZXlFuPnLV99RlybDypXh6IdQZ5C7L12Qz0nN2vVfqoksxKq0IueOfX57S1C8+E7
+	 +dgVtHIkWaicTQLhycbsq0A9O9TeWLdouUrha6K1CbVko7ZXg1xT5PR0ddiQCCOsQf
+	 KSNXrcYM/pP7ScYfkmSHXGyk5+PYVw4JeluPih4uFGnf0Uca275CTgxbyaN212dKYR
+	 L9WtVZNwf1Wr9wiqq805as3cfLddsKT/6vUkq+1FAPXUcg4VtclBiESm9LTyDBk0uP
+	 P2ZPLnY6vWPxOccn08hBUMYduTzFMUt1+UDDMnVFPRtbjd0UvG+YLPrjyAuo4mUyMq
+	 b0ObibdyVJw6A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1757155517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KWcMbbpWIN+FZp/dqVtxO/yiBkqQjBf3ubyVT6lX0jE=;
-	b=g5Xe0hbOmiJ+4Tjxwyrb9wHVFPZAeIvFOXNm43tHbO9XszKd6RANE7DdKnW8nWJM056AFd
-	52Oq41xklhYtBjFGPBR4A5dLBH3YXP7mgm0Kca9iEzzAXGwvkiryhMvIc5+qFmJe5bgi3m
-	IaTNf49fsmKuOSFX11WOvIvOslV4O7NqZWHkrIE+1KF6Dp73q6dW64Mo3Yg52xyuYiIyOo
-	eHWPcpE0cIFdpYZJGAVPAB6GpIEr+sL/l9ZkH6CU1aATXErZb5Ut+rq8BP5y7HKcZiabN7
-	s9D4VrcRZPXEMjmOSjYZE9CXrDAxGLnqoT9ghw76EWam51aeK7giff7jWUSUuw==
-Content-Type: multipart/signed;
- boundary=aa8f6cab7102cb8c9f5c1de5473582a640e558b7c971361d91f09e28c3f1;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 06 Sep 2025 12:45:08 +0200
-Message-Id: <DCLNN4LYO8CS.1BHUZRHOVX9IA@cknow.org>
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: add GPU powerdomain, opps,
- and cooling to rk3328
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Alex
- Bee" <knaerzche@gmail.com>
-To: "Christian Hewitt" <christianshewitt@gmail.com>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-References: <20250830115135.3549305-1-christianshewitt@gmail.com>
-In-Reply-To: <20250830115135.3549305-1-christianshewitt@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
---aa8f6cab7102cb8c9f5c1de5473582a640e558b7c971361d91f09e28c3f1
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
+Date: Sat, 06 Sep 2025 12:52:22 +0200
+Message-Id: <DCLNSNWA7AT7.19OWOXUMJ5ZRJ@kernel.org>
+Subject: Re: [PATCH] rust: pin-init: add references to previously
+ initialized fields
+Cc: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Fiona Behrens" <me@kloenk.dev>, "Alban
+ Kurti" <kurti@invicto.ai>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250905140047.3325945-1-lossin@kernel.org>
+ <DCL1DPN708H0.3JTL93J2GD2DR@kernel.org> <aLshd0_C-1rh3FAg@tardis-2.local>
+In-Reply-To: <aLshd0_C-1rh3FAg@tardis-2.local>
 
-Hi Christian,
-
-On Sat Aug 30, 2025 at 1:51 PM CEST, Christian Hewitt wrote:
-> From: Alex Bee <knaerzche@gmail.com>
+On Fri Sep 5, 2025 at 7:44 PM CEST, Boqun Feng wrote:
+> On Fri, Sep 05, 2025 at 07:18:25PM +0200, Benno Lossin wrote:
+> [...]
+>> index 606946ff4d7f..1ac0b06fa3b3 100644
+>> --- a/samples/rust/rust_driver_pci.rs
+>> +++ b/samples/rust/rust_driver_pci.rs
+>> @@ -78,8 +78,8 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo=
+) -> Result<Pin<KBox<Self>
+>> =20
+>>          let drvdata =3D KBox::pin_init(
+>>              try_pin_init!(Self {
+>> -                pdev: pdev.into(),
+>>                  bar <- pdev.iomap_region_sized::<{ Regs::END }>(0, c_st=
+r!("rust_driver_pci")),
+>> +                pdev: pdev.into(),
 >
-> Add GPU powerdomain, opp-table, and cooling map nodes for the Mali
-> GPU on the RK3328 SoC. Opp-table frequencies are sourced from the
-
-I very recently saw a patch somewhere with these changes and wondered
-why it wouldn't be sent upstream, so thanks for doing exactly that!
-
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
+> Ok, this example is good enough for me to express the concern here: the
+> variable shadowing behavior seems not straightforward (maybe because in
+> normal Rust initalization expression, no binding is created for
+> previous variables, neither do we have a `let` here).
 >
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 39 +++++++++++++++++++++++-
->  1 file changed, 38 insertions(+), 1 deletion(-)
+> Would the future inplace initialization have the similar behavior? I
+> asked because a natural resolution is adding a special syntax like:
 >
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/d=
-ts/rockchip/rk3328.dtsi
-> index 7d992c3c01ce..b99c78ecc4a9 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> @@ -331,6 +331,11 @@ power: power-controller {
->  			#address-cells =3D <1>;
->  			#size-cells =3D <0>;
-> =20
-> +			power-domain@RK3328_PD_GPU {
-> +				reg =3D <RK3328_PD_GPU>;
-> +				clocks =3D <&cru ACLK_GPU>;
-> +				#power-domain-cells =3D <0>;
-> +			};
->  			power-domain@RK3328_PD_HEVC {
->  				reg =3D <RK3328_PD_HEVC>;
->  				clocks =3D <&cru SCLK_VENC_CORE>;
-> @@ -570,9 +575,13 @@ map0 {
->  							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->  					contribution =3D <4096>;
->  				};
-> +				map1 {
-> +					trip =3D <&target>;
-> +					cooling-device =3D <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +					contribution =3D <4096>;
-> +				};
->  			};
->  		};
-> -
->  	};
-> =20
->  	tsadc: tsadc@ff250000 {
-> @@ -651,7 +660,35 @@ gpu: gpu@ff300000 {
->  				  "ppmmu1";
->  		clocks =3D <&cru ACLK_GPU>, <&cru ACLK_GPU>;
->  		clock-names =3D "bus", "core";
-> +		operating-points-v2 =3D <&gpu_opp_table>;
-> +		power-domains =3D <&power RK3328_PD_GPU>;
->  		resets =3D <&cru SRST_GPU_A>;
-> +		#cooling-cells =3D <2>;
-> +	};
-> +
-> +	gpu_opp_table: gpu-opp-table {
+>     let a =3D ..;
+>
+>     try_pin_init!(Self {
+>         b: a,
+> 	let a =3D a.into(); // create the new binding here.
+> 	c: a, // <- use the previous initalized `a`.
+>     }
 
-As noticed by Rob's bot, this node name is incorrect.
-If you do ``s/gpu-opp-table/opp-table-gpu/`` and move it to above the
-'pinctrl' node, then DTB validation succeeds.
+Can you please clarify the example? I'm a bit confused that this is not a f=
+ield
+of Self, so currently this can just be written as:
 
-Cheers,
-  Diederik
+	try_pin_init!(Self {
+	   b: a,
+	   c: a.into,
+	})
 
-> +		compatible =3D "operating-points-v2";
-> +		opp-200000000 {
-> +			opp-hz =3D /bits/ 64 <200000000>;
-> +			opp-microvolt =3D <1075000>;
-> +		};
-> +
-> +		opp-300000000 {
-> +			opp-hz =3D /bits/ 64 <300000000>;
-> +			opp-microvolt =3D <1075000>;
-> +		};
-> +
-> +		opp-400000000 {
-> +			opp-hz =3D /bits/ 64 <400000000>;
-> +			opp-microvolt =3D <1075000>;
-> +		};
-> +
-> +		opp-500000000 {
-> +			/* causes stability issues */
-> +			opp-hz =3D /bits/ 64 <500000000>;
-> +			opp-microvolt =3D <1150000>;
-> +			status =3D "disabled";
-> +		};
->  	};
-> =20
->  	h265e_mmu: iommu@ff330200 {
+Of course assuming that a is Clone, as the code above does as well.
 
+So, if we are concerned by the variable shadowing, which I'm less concerned
+about, maybe we can do this:
 
---aa8f6cab7102cb8c9f5c1de5473582a640e558b7c971361d91f09e28c3f1
-Content-Type: application/pgp-signature; name="signature.asc"
+	// The "original" `a` and `b`.
+	let a: A =3D ...;
+	let b: B =3D ...;
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaLwQtgAKCRDXblvOeH7b
-btXoAP4/UMRYf+nXwetnS1zQ9fI3fAREyIDXC4JH8ippVgrJ5wEA9miNplHhC+yJ
-G40zy0Diz9zovrvVlpTv1lv02bOUwws=
-=GMNc
------END PGP SIGNATURE-----
-
---aa8f6cab7102cb8c9f5c1de5473582a640e558b7c971361d91f09e28c3f1--
+	try_pin_init!(Self {
+	   a,                   // Initialize the field only.
+	   let b <- b,          // Initialize the field and create a `&B` named `b=
+`.
+	   c: a.into(),         // That's the "original" `a`.
+	   d <- D::new(b),      // Not the original `b`, but the pin-init one.
+	})
 
