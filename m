@@ -1,106 +1,145 @@
-Return-Path: <linux-kernel+bounces-804194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D08B46C6F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1047B46C71
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26F41898FC4
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03CDF3BE732
 	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76692877F7;
-	Sat,  6 Sep 2025 12:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF92877D0;
+	Sat,  6 Sep 2025 12:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MyJ3NIWb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="I2WNNwF4"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0941C6FF6;
-	Sat,  6 Sep 2025 12:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423C3284684;
+	Sat,  6 Sep 2025 12:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757160604; cv=none; b=m/O/GXOVL2udgd/qSaSxQapwCaIv7aqMCuul1nZuLtXcM2inSQu2H6whBfthfUYyq3W2hrYIKJbfmvvf+r5hCKafhiLn+idF86qAaB+L7NitMIzgkMTd3tSxMrXSl8WjwBfbEvPDnKqP5VGUcUl2Ifsf70PzvWiGObLmaY6uqdM=
+	t=1757160628; cv=none; b=dhMnP4ZblSyeK891BeH67J1y2dt1IOpwKelTLlEdcwTkoOm6dxcuxBrfWtNYDOMckbcGinmcWdaq3VdffZtZHJCrHteFh97YfMaFgZBSWfUEGFnfIRg/+XU9COAp/dimOlfxHNykX6Gt/m2XBMxmXHRyrvNvU2Mwcw8M36yZXyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757160604; c=relaxed/simple;
-	bh=5dQ1FHAiqFGqeRjhyzOo1dwscoGiMgElpqrF9vHE2so=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9iUQxLXfWTsLuiB1LDGQn6vkJKSBMHzmRmoLiE/3tXct/vH81jpwvtZ8YRDOTqA/+9J7NSdFp91ETwTXcKkHDtKhwCiWvHk8oG5hKjjCzif2OeLznoAsncvqIYdMoPf7r6Ty5bMgMtqx/65C93UY7mgurHrVpMDipNizY+XXWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MyJ3NIWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF6AC4CEE7;
-	Sat,  6 Sep 2025 12:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757160603;
-	bh=5dQ1FHAiqFGqeRjhyzOo1dwscoGiMgElpqrF9vHE2so=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MyJ3NIWb2jxVgGJCIndaOG/g4tbN0uCN0IgYwNwoUs/CwikrdYbW07XRa60E0XvXW
-	 Ggttwu4M5CsLL787HjwDASx9PSPx9p+qLUaYaY3YL7vyl/Td8Em79XEPzCYhGjAB/9
-	 Xo+iZO8c5vPzmMYMuKd3v3Ldqbv3OAnKXPK13oqc=
-Date: Sat, 6 Sep 2025 14:10:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
-Message-ID: <2025090601-iron-glitter-c77d@gregkh>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
- <2025090618-smudgy-cringing-a7a4@gregkh>
- <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
+	s=arc-20240116; t=1757160628; c=relaxed/simple;
+	bh=byIIaNYjmBTmMjH1augUUyia9CWgYF63JuQOxkuOFqw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=EU8vN0+9AQWFCqJK7Xpy4fDwp/ONr4tuK7EnTUpB2XndIjQtopGMvw8RmPhoEwncDgVY1ITbB0pB9hm6gvrYvuQqJefKhn2pcJv7e3VfGO7Sy5S4XUjtYX8pv2EZEtV4aEk1kWBFOe3B2wfOXbz6wrtv8gXvxDics0hAbsKwwhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=I2WNNwF4; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1757160623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vADT7opWRct2rqiVIZqiOBr/+HV23dbzmDRf/TThZaM=;
+	b=I2WNNwF4OGGTvLxzCQRJVFYSr9v8AEMmTidkPl7lrNUOX9p+fRjbSL5qlvuEvadMuVGNw/
+	8+qMS1iCO2Ju4h/qCAtQVAJHq8ygoMPUAfoNUwdBS/5Rh6X+saNi6xCfSka8zUXt/HQybP
+	f3ZBdJoupsOKXgY1LWZtQrGnQS8lwq0Ykmu8prGC3CXyVfOsf0DifWm02nqn3C14f3WbTY
+	bG7BXzqk21FEktYf42VV8m4rVGmt6zIiP7BMywYJ4brQNtCgwFGpRqJB4BgBJeHNkI8wnn
+	5FoSF3/zb3Xe05M+c2Alm5YApbRXiF2IOGYNe4nkeMZXFRDbCB22BG2VTbOppw==
+Date: Sat, 06 Sep 2025 14:10:22 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Make RK3588 GPU OPP table naming
+ uniform
+In-Reply-To: <DCLOTR9Y380M.22GZYL11XXZM2@cknow.org>
+References: <355c16ab070688fc6285e0d4419eb54a3f699eee.1757152740.git.dsimic@manjaro.org>
+ <DCLOTR9Y380M.22GZYL11XXZM2@cknow.org>
+Message-ID: <47cf50f2f497108a923815c12b1f8c9b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Sat, Sep 06, 2025 at 09:04:04AM -0300, Daniel Almeida wrote:
-> Hi Greg,
+Hello Diederik,
+
+On 2025-09-06 13:40, Diederik de Haas wrote:
+> On Sat Sep 6, 2025 at 12:01 PM CEST, Dragan Simic wrote:
+>> Unify the naming of the existing GPU OPP table nodes found in the 
+>> RK3588
+>> and RK3588J SoC dtsi files with the other SoC's GPU OPP nodes, 
+>> following
+>> the more "modern" node naming scheme.
 > 
-> […]
-> 
-> > 
-> > Sorry for the delay.
-> > 
-> > But these bindings really are only for a usb interface probe/disconnect
-> > sequence, right?  no real data flow at all?
-> > 
-> > I recommend looking at the usb-skeleton.c driver, and implementing that
-> > as your sample driver for rust.  That will ensure that you actually have
-> > the correct apis implemented and the reference count logic working
-> > properly.  You have urb anchors and callbacks and other stuff as well to
-> > ensure that you get right.  That driver pretty much should handle
-> > everything that you need to do to write a usb driver for any type of
-> > "real" device.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> 
-> I thought that an iterative approach would work here, i.e.: merge this, then
-> URBs, then more stuff, etc.
+> Like we discussed in private (without an agreement), I think it would 
+> be
+> beneficial if the (gpu) opp naming would be made consistent across SoC
+> series as right now there are several different naming schemes applied.
+> They're all valid, but inconsistent. And if consistency is improved,
+> which I like, then let's go 'all the way'?
 
-Ah, that makes sense, I didn't realize you want that here.  What USB
-device do you want to write a rust driver for?  Are you going to need
-bindings to the usb major number, or is it going to talk to some other
-subsystem instead?
+As we discussed it already in private, I fully agree about performing
+the "opp-table-X => opp-table-{clusterX,gpu}" naming cleanup 
+consistently
+for all Rockchip SoCs, but I'm afraid it would be seen as an unnecessary
+"code churn" at this point, especially because my upcoming Rockchip SoC
+binning patch series is a good candidate for such a cleanup.
 
-Right now, these bindings don't really do anything USB specific at all
-except allow a driver to bind to a device.
+On top of that, I'd be a bit weary about performing at least some of the
+testing associated with such a platform-wide cleanup, despite actually
+performing no functional changes and being a safe change.  On the other
+hand, "bundling" such a cleanup with the Rockchip SoC binning patches
+would get us detailed testing for free, so to speak.
 
-thanks,
+Of course, if the maintainers see this as a good opportunity to perform
+a platform-wide cleanup at this point, instead of seeing it as a "code
+churn", I'll still be happy to extend this small patch into a platform-
+wide naming cleanup of the "opp-table-X" nodes.  On the other hand, if
+this patch remains as-is, it may hit a good balance between resolving
+the currently present naming ambiguity and the amount of introduced
+changes.
 
-greg k-h
+>> Fixes: a7b2070505a2 ("arm64: dts: rockchip: Split GPU OPPs of RK3588 
+>> and RK3588j")
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi | 2 +-
+>>  arch/arm64/boot/dts/rockchip/rk3588j.dtsi    | 2 +-
+>>  2 files changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi 
+>> b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+>> index 0f1a77697351..b5d630d2c879 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+>> @@ -115,7 +115,7 @@ opp-2400000000 {
+>>  		};
+>>  	};
+>> 
+>> -	gpu_opp_table: opp-table {
+>> +	gpu_opp_table: opp-table-gpu {
+>>  		compatible = "operating-points-v2";
+>> 
+>>  		opp-300000000 {
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi 
+>> b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+>> index 9884a5df47df..e1e0e3fc0ca7 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+>> @@ -66,7 +66,7 @@ opp-1608000000 {
+>>  		};
+>>  	};
+>> 
+>> -	gpu_opp_table: opp-table {
+>> +	gpu_opp_table: opp-table-gpu {
+>>  		compatible = "operating-points-v2";
+>> 
+>>  		opp-300000000 {
 
