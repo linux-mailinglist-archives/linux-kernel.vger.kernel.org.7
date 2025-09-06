@@ -1,112 +1,314 @@
-Return-Path: <linux-kernel+bounces-804013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129A0B468A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:34:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D99B468BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE14F1CC4CFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0567D5827FD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C243A23BD13;
-	Sat,  6 Sep 2025 03:34:34 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF67212D83;
+	Sat,  6 Sep 2025 04:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I47FtOf/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B796C15E97;
-	Sat,  6 Sep 2025 03:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACAD29A2
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 04:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757129674; cv=none; b=WXlJENKNrlDd3/05HmpUI5NjBgc5zrQbu+2rkgdc883nU3gTdreRVVkBa60O0tQvtFe9/kBWsy9jla44FcPkC2+CwWDiVw8JFIWXd3wlNoxfCiaXwnmzlTI/8fNRXhKapWtkw/KqprNf0Xzz8chn1Loo0g51k1FohDL6WBsPXqY=
+	t=1757131314; cv=none; b=UB5RYyg9pwiegbI3/t0aJWwlRyYOUuObB/VYJFNNG13IedYK+7u39sJLoKOuROmpULFPvizCnw/J1+w1WDZDnMPtx3AeqKvYBISfmrzKGT9+tFniTCVUroSexBx+GrhcCowa2+05Meb0Js9htredSywLmQ+SznctzMbbCOzE3p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757129674; c=relaxed/simple;
-	bh=BkfQXGoIBGeEqN3hFs43ySKIy0EFlnO2ZSfJuF00Shs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g2Ldl4x4gdGEQmETPpCOYkcxUdWMmY5YhiM79lZi7EOx2Xb4YOJ5zDo2hCIQJ1xMJSRRdVnNbb82U8ZI8y2tYxqtvM5sf0PhEytDRWpCztPU5m7mf+UoQ1d8AS7msxmEJzod2Q4Va/rtrlfyZIEazXk6/u5Hl+xkSAje62ph2kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cJdxr2dr4zJsX3;
-	Sat,  6 Sep 2025 11:29:52 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id E02AE18007F;
-	Sat,  6 Sep 2025 11:34:22 +0800 (CST)
-Received: from huawei.com (10.50.159.234) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 6 Sep
- 2025 11:34:21 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <tglozar@redhat.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] tracing/osnoise: Fix null-ptr-deref in bitmap_parselist()
-Date: Sat, 6 Sep 2025 11:56:10 +0800
-Message-ID: <20250906035610.3880282-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757131314; c=relaxed/simple;
+	bh=P4w1uvfs8m1hAegKzk3JfdNopcebaX5FEIUMd5WLm6o=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=liK5vmjSNB1jwZZVZ+kR5X7frbCg1jbsI/oSyMlm6LRFhjCj9Qy5WhUwUH6d3osNpM0fY+9SEDqrtEqYmO0djP0MHGh5HszkatymonQuIV2pyHjrXjnfLX+sRzaxIh0OpdHT5H2n6feFkN1YWyrdGQh7SCcP7W0WVIEsTauxhk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I47FtOf/; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757131312; x=1788667312;
+  h=date:from:to:cc:subject:message-id;
+  bh=P4w1uvfs8m1hAegKzk3JfdNopcebaX5FEIUMd5WLm6o=;
+  b=I47FtOf/YiLRjB5ZrdIbYACwnZerV3Cov0dmCqyokrWIlf7JRPZ5n+0b
+   swT2K6wgmGS5GnFNcZ4HLdiSPiA++vfx7phe2/d7kSs5+ehpOcxCVZhB6
+   y0cP6IKUzMApZEU6IBG3XGUWNg1bf62zy367T8UdFRBb+xf7IIwgTrivp
+   MwSQPmP4qwOTFj5HxtaVpEW0DN7Jt1KRDl+TLvJe1b2UgvcNRfXzwCcnU
+   Ic8OqaK8vMxbn/ZN7jtMbhTuwaohNElVMTNHUudolhUE86kMY2RtN44E8
+   wfEdXiEauLdhhcA9uBRm7Y1l0p4zLXG4T1G2OnA630NjzaRh474qfhW75
+   g==;
+X-CSE-ConnectionGUID: 3F/SA4YYSGCJlBjkd8/YNw==
+X-CSE-MsgGUID: JeGbCi4bRvC5pFvmDGqTpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="77090542"
+X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
+   d="scan'208";a="77090542"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2025 21:01:51 -0700
+X-CSE-ConnectionGUID: jJcHwGR2S6mhfyUIdHK4Qg==
+X-CSE-MsgGUID: wN96xcK9RRixRZsYdd7r4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
+   d="scan'208";a="176397871"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 05 Sep 2025 21:01:48 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuk7X-0001BR-2s;
+	Sat, 06 Sep 2025 04:01:47 +0000
+Date: Sat, 06 Sep 2025 12:01:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/microcode] BUILD SUCCESS
+ 43181a47263dd9f2bee0afd688a841b09f9b7d12
+Message-ID: <202509061238.GxXSAnYE-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500016.china.huawei.com (7.185.36.197)
 
-A crash was observed with the following output:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
+branch HEAD: 43181a47263dd9f2bee0afd688a841b09f9b7d12  x86/microcode: Add microcode loader debugging functionality
 
-BUG: kernel NULL pointer dereference, address: 0000000000000010
-Oops: Oops: 0000 [#1] SMP NOPTI
-CPU: 2 UID: 0 PID: 92 Comm: osnoise_cpus Not tainted 6.17.0-rc4-00201-gd69eb204c255 #138 PREEMPT(voluntary)
-RIP: 0010:bitmap_parselist+0x53/0x3e0
-Call Trace:
- <TASK>
- osnoise_cpus_write+0x7a/0x190
- vfs_write+0xf8/0x410
- ? do_sys_openat2+0x88/0xd0
- ksys_write+0x60/0xd0
- do_syscall_64+0xa4/0x260
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- </TASK>
+elapsed time: 1001m
 
-This issue can be reproduced by below code:
+configs tested: 222
+configs skipped: 3
 
-fd=open("/sys/kernel/debug/tracing/osnoise/cpus", O_WRONLY);
-write(fd, "0-2", 0);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-When user pass 'count=0' to osnoise_cpus_write(), kmalloc() will return
-ZERO_SIZE_PTR (16) and cpulist_parse() treat it as a normal value, which
-trigger the null pointer dereference. Add check for the parameter 'count'.
+tested configs:
+alpha                             allnoconfig    clang-22
+alpha                            allyesconfig    clang-19
+alpha                               defconfig    clang-19
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    clang-22
+arc                              allyesconfig    clang-19
+arc                                 defconfig    clang-19
+arc                   randconfig-001-20250905    gcc-11.5.0
+arc                   randconfig-001-20250906    gcc-8.5.0
+arc                   randconfig-002-20250905    gcc-13.4.0
+arc                   randconfig-002-20250906    gcc-8.5.0
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    clang-19
+arm                                 defconfig    clang-19
+arm                         nhk8815_defconfig    clang-22
+arm                   randconfig-001-20250905    clang-22
+arm                   randconfig-001-20250906    gcc-8.5.0
+arm                   randconfig-002-20250905    clang-22
+arm                   randconfig-002-20250906    gcc-8.5.0
+arm                   randconfig-003-20250905    clang-16
+arm                   randconfig-003-20250906    gcc-8.5.0
+arm                   randconfig-004-20250905    gcc-14.3.0
+arm                   randconfig-004-20250906    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    clang-22
+arm64                               defconfig    clang-19
+arm64                 randconfig-001-20250905    clang-22
+arm64                 randconfig-001-20250906    gcc-8.5.0
+arm64                 randconfig-002-20250905    clang-17
+arm64                 randconfig-002-20250906    gcc-8.5.0
+arm64                 randconfig-003-20250905    clang-17
+arm64                 randconfig-003-20250906    gcc-8.5.0
+arm64                 randconfig-004-20250905    clang-22
+arm64                 randconfig-004-20250906    gcc-8.5.0
+csky                              allnoconfig    clang-22
+csky                                defconfig    clang-19
+csky                  randconfig-001-20250906    gcc-11.5.0
+csky                  randconfig-001-20250906    gcc-15.1.0
+csky                  randconfig-002-20250906    gcc-11.5.0
+csky                  randconfig-002-20250906    gcc-15.1.0
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-19
+hexagon                             defconfig    clang-19
+hexagon               randconfig-001-20250906    clang-20
+hexagon               randconfig-001-20250906    gcc-11.5.0
+hexagon               randconfig-002-20250906    clang-22
+hexagon               randconfig-002-20250906    gcc-11.5.0
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250905    clang-20
+i386        buildonly-randconfig-001-20250906    clang-20
+i386        buildonly-randconfig-002-20250905    clang-20
+i386        buildonly-randconfig-002-20250906    clang-20
+i386        buildonly-randconfig-003-20250905    clang-20
+i386        buildonly-randconfig-003-20250906    clang-20
+i386        buildonly-randconfig-004-20250905    gcc-13
+i386        buildonly-randconfig-004-20250906    clang-20
+i386        buildonly-randconfig-005-20250905    clang-20
+i386        buildonly-randconfig-005-20250906    clang-20
+i386        buildonly-randconfig-006-20250905    clang-20
+i386        buildonly-randconfig-006-20250906    clang-20
+i386                                defconfig    clang-20
+i386                  randconfig-001-20250906    gcc-13
+i386                  randconfig-002-20250906    gcc-13
+i386                  randconfig-003-20250906    gcc-13
+i386                  randconfig-004-20250906    gcc-13
+i386                  randconfig-005-20250906    gcc-13
+i386                  randconfig-006-20250906    gcc-13
+i386                  randconfig-007-20250906    gcc-13
+i386                  randconfig-011-20250906    clang-20
+i386                  randconfig-012-20250906    clang-20
+i386                  randconfig-013-20250906    clang-20
+i386                  randconfig-014-20250906    clang-20
+i386                  randconfig-015-20250906    clang-20
+i386                  randconfig-016-20250906    clang-20
+i386                  randconfig-017-20250906    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch                 loongson3_defconfig    clang-22
+loongarch             randconfig-001-20250906    clang-22
+loongarch             randconfig-001-20250906    gcc-11.5.0
+loongarch             randconfig-002-20250906    gcc-11.5.0
+loongarch             randconfig-002-20250906    gcc-15.1.0
+m68k                             allmodconfig    clang-19
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    clang-19
+m68k                                defconfig    clang-19
+m68k                        mvme16x_defconfig    clang-22
+microblaze                       allmodconfig    clang-19
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    clang-19
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                           jazz_defconfig    clang-22
+mips                   sb1250_swarm_defconfig    clang-22
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-15.1.0
+nios2                 randconfig-001-20250906    gcc-11.5.0
+nios2                 randconfig-002-20250906    gcc-11.5.0
+openrisc                          allnoconfig    clang-22
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-13
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-22
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250906    gcc-11.5.0
+parisc                randconfig-002-20250906    gcc-11.5.0
+parisc                randconfig-002-20250906    gcc-8.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-22
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                      cm5200_defconfig    clang-22
+powerpc               randconfig-001-20250906    gcc-11.5.0
+powerpc               randconfig-001-20250906    gcc-14.3.0
+powerpc               randconfig-002-20250906    clang-20
+powerpc               randconfig-002-20250906    gcc-11.5.0
+powerpc               randconfig-003-20250906    clang-22
+powerpc               randconfig-003-20250906    gcc-11.5.0
+powerpc64             randconfig-001-20250906    gcc-11.5.0
+powerpc64             randconfig-001-20250906    gcc-13.4.0
+powerpc64             randconfig-002-20250906    gcc-10.5.0
+powerpc64             randconfig-002-20250906    gcc-11.5.0
+powerpc64             randconfig-003-20250906    clang-22
+powerpc64             randconfig-003-20250906    gcc-11.5.0
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-22
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-13
+riscv                 randconfig-001-20250905    gcc-14.3.0
+riscv                 randconfig-001-20250906    gcc-15.1.0
+riscv                 randconfig-002-20250905    clang-22
+riscv                 randconfig-002-20250906    gcc-15.1.0
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-13
+s390                  randconfig-001-20250905    gcc-9.5.0
+s390                  randconfig-001-20250906    gcc-15.1.0
+s390                  randconfig-002-20250905    clang-22
+s390                  randconfig-002-20250906    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-13
+sh                    randconfig-001-20250905    gcc-15.1.0
+sh                    randconfig-001-20250906    gcc-15.1.0
+sh                    randconfig-002-20250905    gcc-15.1.0
+sh                    randconfig-002-20250906    gcc-15.1.0
+sh                           se7712_defconfig    clang-22
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250905    gcc-8.5.0
+sparc                 randconfig-001-20250906    gcc-15.1.0
+sparc                 randconfig-002-20250905    gcc-15.1.0
+sparc                 randconfig-002-20250906    gcc-15.1.0
+sparc64                             defconfig    gcc-13
+sparc64               randconfig-001-20250905    gcc-8.5.0
+sparc64               randconfig-001-20250906    gcc-15.1.0
+sparc64               randconfig-002-20250905    clang-22
+sparc64               randconfig-002-20250906    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    clang-19
+um                                  defconfig    gcc-13
+um                             i386_defconfig    gcc-13
+um                    randconfig-001-20250905    clang-22
+um                    randconfig-001-20250906    gcc-15.1.0
+um                    randconfig-002-20250905    gcc-13
+um                    randconfig-002-20250906    gcc-15.1.0
+um                           x86_64_defconfig    gcc-13
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250905    clang-20
+x86_64      buildonly-randconfig-001-20250906    gcc-13
+x86_64      buildonly-randconfig-002-20250905    clang-20
+x86_64      buildonly-randconfig-002-20250906    gcc-13
+x86_64      buildonly-randconfig-003-20250905    gcc-13
+x86_64      buildonly-randconfig-003-20250906    gcc-13
+x86_64      buildonly-randconfig-004-20250905    clang-20
+x86_64      buildonly-randconfig-004-20250906    gcc-13
+x86_64      buildonly-randconfig-005-20250905    clang-20
+x86_64      buildonly-randconfig-005-20250906    gcc-13
+x86_64      buildonly-randconfig-006-20250905    gcc-13
+x86_64      buildonly-randconfig-006-20250906    gcc-13
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250906    gcc-13
+x86_64                randconfig-002-20250906    gcc-13
+x86_64                randconfig-003-20250906    gcc-13
+x86_64                randconfig-004-20250906    gcc-13
+x86_64                randconfig-005-20250906    gcc-13
+x86_64                randconfig-006-20250906    gcc-13
+x86_64                randconfig-007-20250906    gcc-13
+x86_64                randconfig-008-20250906    gcc-13
+x86_64                randconfig-071-20250906    clang-20
+x86_64                randconfig-072-20250906    clang-20
+x86_64                randconfig-073-20250906    clang-20
+x86_64                randconfig-074-20250906    clang-20
+x86_64                randconfig-075-20250906    clang-20
+x86_64                randconfig-076-20250906    clang-20
+x86_64                randconfig-077-20250906    clang-20
+x86_64                randconfig-078-20250906    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-13
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-13
+x86_64                           rhel-9.4-ltp    gcc-13
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                  audio_kc705_defconfig    clang-22
+xtensa                randconfig-001-20250905    gcc-8.5.0
+xtensa                randconfig-001-20250906    gcc-15.1.0
+xtensa                randconfig-002-20250905    gcc-8.5.0
+xtensa                randconfig-002-20250906    gcc-15.1.0
 
-Link: https://lore.kernel.org/all/20250905032544.231962-1-wangliang74@huawei.com/
-Fixes: 17f89102fe23 ("tracing/osnoise: Allow arbitrarily long CPU string")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
-v2: return 0 when sending a count of 0.
----
- kernel/trace/trace_osnoise.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index fd259da0aa64..337bc0eb5d71 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
- 	int running, err;
- 	char *buf __free(kfree) = NULL;
- 
-+	if (count < 1)
-+		return 0;
-+
- 	buf = kmalloc(count, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
--- 
-2.34.1
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
