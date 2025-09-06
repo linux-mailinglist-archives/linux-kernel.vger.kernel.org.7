@@ -1,138 +1,272 @@
-Return-Path: <linux-kernel+bounces-803996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AF6B46885
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:58:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378A7B46886
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612F1A476FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:58:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACEE14E1307
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9AB21A434;
-	Sat,  6 Sep 2025 02:58:33 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9C221D590;
+	Sat,  6 Sep 2025 02:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8XhccfG"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6858B1A841C;
-	Sat,  6 Sep 2025 02:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE234219319
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 02:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757127513; cv=none; b=GChzP8iubG1YvxNBoVW1rnS0ayJlwwKwGyc2IfEof9MPOOg/arcq1j6iwXp0aR7shAhs+MW0bAqE98GnYLATTN2iaV1vA293v3Riqe7sGzre4H+8gNbLzMMTbk6fDjgdIVr68iSxghlS1c3c0qGeLDXXSchER199ZaYfAMrddiw=
+	t=1757127527; cv=none; b=AmOVbmtiXJythWRE/noa3hUQ106liL8RKf0p620fFuQ8pPixa62PPS5llvti++Iqnvmn8fk6ZdSoRlTOvUxs9G/yDsD3OvidShuWBBhf7iobQacA3PhJe9TRijvD7JsXNnMdxbpI4sBo5XV5C1YrBvQUMQC7qWNXyLCJv93cPwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757127513; c=relaxed/simple;
-	bh=BR7AZm0ueoFOlG4zYEazaHx31PCYTwxVD+hG2a9IOk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eYMnMe9PNIZIABEyBQTdYmrvW2qF+SNbTr75UYnkoHBYl0uF9Oyic6+FiOdA3zBbZXE9Dp6AbVfgUtofkbLgcxWENXEHjMLvTTgrJ2qpXQS2jOsjMQ5Xf+f6SgjnJLcI56py5RXFq+jKy4NGmvOYomSZCTwcvrHUjqE35al0NBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cJdDW6KKjztTTS;
-	Sat,  6 Sep 2025 10:57:31 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6F111402EA;
-	Sat,  6 Sep 2025 10:58:27 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 6 Sep 2025 10:58:26 +0800
-Message-ID: <54df95d3-e8fe-4aa2-966d-bd580cdf2b86@huawei.com>
-Date: Sat, 6 Sep 2025 10:58:25 +0800
+	s=arc-20240116; t=1757127527; c=relaxed/simple;
+	bh=Hl9NQC/66bQJOXLOAPc5OoBlo/Dv+7HkYaNfCrO7pEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CfRmsj/fwTyuI2pVNWffk8sDJFNV4jB6a1546jTbKP79rLzQn80tAIZ7evR/2EPowgsMG4U2c7qgjH8hPX6QSh5BooOfyagQWaQ1T+94Ebb0DpQsKjNxh1wbsl4n99CKVbdcng9YoiH5RdFTGlvuni0vFdMrKAIW0GW4Y0/kweE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8XhccfG; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24c786130feso25273855ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 19:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757127525; x=1757732325; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jB62UIofw386Ye3wboJLaeupc8QVHXDvYKqES7Q4TFg=;
+        b=b8XhccfGRszF83GmEj7RX4go99a9Oqr4+D7k8FSU+2UjTtu7PKKyr8xbKRB8Dz6cMR
+         mZpgO76lgpash4FFIuxLG829P3NDtEgH0MS15YwHnMUsUZwaWN/29OIX67XrrV8ZT7Ns
+         q7AjLDDqA2Ua6kJQ4upH7FYWdmGIqv++I/vdv+Lr49WJqVrIlFxWE4UIPEQPPhep+BR9
+         j3C4ZVbQsXyCC/tigbzakgoxWA16lyPFTNaRdK+yv9RP8LSx2uuZoj5tpMoBnhuRBj37
+         7+Co/c9z8HSer0KYp7OmUKqknyqcMKfM4zvsNWIBC8RAS3cHvqMm1SoiHBkExTU6dQYd
+         O5ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757127525; x=1757732325;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jB62UIofw386Ye3wboJLaeupc8QVHXDvYKqES7Q4TFg=;
+        b=Gg5Me71oznVSPIgPjr23swibEn5N4mKlj74rPo5vdPTFXe3mdLTUdYwPgPD3emApZo
+         aNxhc4ki+vfVZN/Go3G35iTCznoI4z7sz+lVtDfyPcePhWgdPAHLqKWTyoj9STe9efND
+         Q6Dn/xdDXcJpDlLvfwXwl2fu1jn//DrqjFpaMPA/9ZuvdNg+Vu06pHchu10ZwXeAb0Tl
+         tdTQ2wHIgGBWZ1JxZIFtzVZMbEFxC3pZY+EeXHtXVi0TH7UjXzzAdw17VNWMiNEJns4H
+         zQCZJ4SdzJoO+23JsdzYHXOu2w7qjhj5DQZaipXDdIlQKvvoy83yBEOOGJapKmKvG3nu
+         V0sw==
+X-Gm-Message-State: AOJu0Yygmv8QorfkZoZBpD60kj7QzCUlOVpSpeaSoG4gd0sVZKRDA/8u
+	r6HwlRqru/p2wM3i4BBok/pjm7wu4TMml4WRkor9WriG/Is7j5LOxUiopg/wLVB6
+X-Gm-Gg: ASbGnctk+AP5Fxlbm7IsnA3fJp1GkByWs/EVg9/4y6Bkixk4137l9Ijmcs/pDvR/tz7
+	PY7i5FgizzeoKsmsFazVW1x8zgteyQozuWNy7Afa819wVpph6jpNScNAQWjlXGT/kAodcsOOgRC
+	c1yEiopmJxOX+FjDzt5ZiX0T1V4i4jXK5pfZzF0L0y0Q4non4gcRd8mCTZMRtQS+FGtgJj0n5GR
+	2GJVqObu6z/J0y9qjmWpOF6D7ajaHvGypNcF+c4fJ7NzHhXPc79JkVMVKZwg3eIWSkIsHqvHq8N
+	SbV1jbngOxB9daP+vBdvupmobF8XFpSf1wOej8/7AqHdrBZWvxjb4NVSyIExPD3iXoS4KlCX/ir
+	Jqa3aKBMn4Dq6Ni5U8VE3ndp521qw37QCpe+XjbJBZR4TClRklf77uEAKkWVL
+X-Google-Smtp-Source: AGHT+IH6YGSpdPGL8s9B5cF10oy3pTwwEr1m1KjrG7dle3jACaD1SD8vP9T00SW+LV+353QzEZhC1Q==
+X-Received: by 2002:a17:903:2b05:b0:24c:ca55:6d90 with SMTP id d9443c01a7336-2517493a0bfmr7923905ad.61.1757127524947;
+        Fri, 05 Sep 2025 19:58:44 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702396sm228744225ad.14.2025.09.05.19.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 19:58:44 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	aha310510@gmail.com
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+Date: Sat,  6 Sep 2025 11:58:40 +0900
+Message-Id: <20250906025840.28498-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] tracing/osnoise: fix null-ptr-deref in
- bitmap_parselist
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
-	<tglozar@redhat.com>, <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250905032544.231962-1-wangliang74@huawei.com>
- <20250905184456.084d1ff3@gandalf.local.home>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <20250905184456.084d1ff3@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500016.china.huawei.com (7.185.36.197)
 
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-在 2025/9/6 6:44, Steven Rostedt 写道:
-> On Fri, 5 Sep 2025 11:25:44 +0800
-> Wang Liang <wangliang74@huawei.com> wrote:
->
-> Hi Wang,
->
-> FYI, the tracincg subsystem requires capital subject:
->
->    tracing/osnoise: Fix null-ptr-deref in bitmap_parselist()
->
-> And parenthesis for function names.
+---
+ drivers/media/usb/dvb-usb-v2/az6007.c | 72 +++++++++++++++------------
+ 1 file changed, 39 insertions(+), 33 deletions(-)
 
-
-Thanks for your guide, it is clear and helpful!
-
->> A crash was observed with the following output:
->>
->> BUG: kernel NULL pointer dereference, address: 0000000000000010
->> Oops: Oops: 0000 [#1] SMP NOPTI
->> CPU: 2 UID: 0 PID: 92 Comm: osnoise_cpus Not tainted 6.17.0-rc4-00201-gd69eb204c255 #138 PREEMPT(voluntary)
->> RIP: 0010:bitmap_parselist+0x53/0x3e0
->> Call Trace:
->>   <TASK>
->>   osnoise_cpus_write+0x7a/0x190
->>   vfs_write+0xf8/0x410
->>   ? do_sys_openat2+0x88/0xd0
->>   ksys_write+0x60/0xd0
->>   do_syscall_64+0xa4/0x260
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>   </TASK>
->>
->> This issue can be reproduced by below code:
->>
->> fd=open("/sys/kernel/debug/tracing/osnoise/cpus", O_WRONLY);
->> write(fd, "0-2", 0);
->>
->> When user pass 'count=0' to osnoise_cpus_write(), kmalloc() will return
->> ZERO_SIZE_PTR (16) and cpulist_parse() treat it as a normal value, which
->> trigger the null pointer dereference. Add check for the parameter 'count'.
->>
->> Fixes: 17f89102fe23 ("tracing/osnoise: Allow arbitrarily long CPU string")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   kernel/trace/trace_osnoise.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
->> index fd259da0aa64..edf5178d0317 100644
->> --- a/kernel/trace/trace_osnoise.c
->> +++ b/kernel/trace/trace_osnoise.c
->> @@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
->>   	int running, err;
->>   	char *buf __free(kfree) = NULL;
->>   
->> +	if (count < 1)
->> +		return -EINVAL;
-> Sending a count of 0 is not invalid. This should simply return 0;
->
-> -- Steve
-
-
-Ok. I will correct it and send a v2 patch later.
-
-------
-Best regards
-Wang Liang
-
->> +
->>   	buf = kmalloc(count, GFP_KERNEL);
->>   	if (!buf)
->>   		return -ENOMEM;
->
+diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+index 65ef045b74ca..5de511ffd210 100644
+--- a/drivers/media/usb/dvb-usb-v2/az6007.c
++++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+@@ -97,13 +97,19 @@ static struct mt2063_config az6007_mt2063_config = {
+ 	.refclock = 36125000,
+ };
+ 
+-static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
+-			    u16 index, u8 *b, int blen)
++static int __az6007_read(struct dvb_usb_device *d, struct az6007_device_state *st,
++			    u8 req, u16 value, u16 index, u8 *b, int blen)
+ {
+ 	int ret;
+ 
+-	ret = usb_control_msg(udev,
+-			      usb_rcvctrlpipe(udev, 0),
++	if (blen > sizeof(st->data)) {
++		pr_err("az6007: tried to read %d bytes, but I2C max size is %lu bytes\n",
++		       blen, sizeof(st->data));
++		return -EOPNOTSUPP;
++	}
++
++	ret = usb_control_msg(d->udev,
++			      usb_rcvctrlpipe(d->udev, 0),
+ 			      req,
+ 			      USB_TYPE_VENDOR | USB_DIR_IN,
+ 			      value, index, b, blen, 5000);
+@@ -125,24 +131,30 @@ static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
+ static int az6007_read(struct dvb_usb_device *d, u8 req, u16 value,
+ 			    u16 index, u8 *b, int blen)
+ {
+-	struct az6007_device_state *st = d->priv;
++	struct az6007_device_state *st = d_to_priv(d);
+ 	int ret;
+ 
+ 	if (mutex_lock_interruptible(&st->mutex) < 0)
+ 		return -EAGAIN;
+ 
+-	ret = __az6007_read(d->udev, req, value, index, b, blen);
++	ret = __az6007_read(d, st, req, value, index, b, blen);
+ 
+ 	mutex_unlock(&st->mutex);
+ 
+ 	return ret;
+ }
+ 
+-static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
+-			     u16 index, u8 *b, int blen)
++static int __az6007_write(struct dvb_usb_device *d, struct az6007_device_state *st,
++			    u8 req, u16 value, u16 index, u8 *b, int blen)
+ {
+ 	int ret;
+ 
++	if (blen > sizeof(st->data) - 1) {
++		pr_err("az6007: tried to write %d bytes, but I2C max size is %lu bytes\n",
++		       blen, sizeof(st->data));
++		return -EOPNOTSUPP;
++	}
++
+ 	if (az6007_xfer_debug) {
+ 		printk(KERN_DEBUG "az6007: OUT req: %02x, value: %04x, index: %04x\n",
+ 		       req, value, index);
+@@ -150,14 +162,8 @@ static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
+ 				     DUMP_PREFIX_NONE, b, blen);
+ 	}
+ 
+-	if (blen > 64) {
+-		pr_err("az6007: tried to write %d bytes, but I2C max size is 64 bytes\n",
+-		       blen);
+-		return -EOPNOTSUPP;
+-	}
+-
+-	ret = usb_control_msg(udev,
+-			      usb_sndctrlpipe(udev, 0),
++	ret = usb_control_msg(d->udev,
++			      usb_sndctrlpipe(d->udev, 0),
+ 			      req,
+ 			      USB_TYPE_VENDOR | USB_DIR_OUT,
+ 			      value, index, b, blen, 5000);
+@@ -172,13 +178,13 @@ static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
+ static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
+ 			    u16 index, u8 *b, int blen)
+ {
+-	struct az6007_device_state *st = d->priv;
++	struct az6007_device_state *st = d_to_priv(d);
+ 	int ret;
+ 
+ 	if (mutex_lock_interruptible(&st->mutex) < 0)
+ 		return -EAGAIN;
+ 
+-	ret = __az6007_write(d->udev, req, value, index, b, blen);
++	ret = __az6007_write(d, st, req, value, index, b, blen);
+ 
+ 	mutex_unlock(&st->mutex);
+ 
+@@ -775,13 +781,12 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr | (1 << 8);
+ 			length = 6 + msgs[i + 1].len;
+ 			len = msgs[i + 1].len;
+-			ret = __az6007_read(d->udev, req, value, index,
++			ret = __az6007_read(d, st, req, value, index,
+ 					    st->data, length);
+-			if (ret >= len) {
++			if (ret >= len + 5) {
+ 				for (j = 0; j < len; j++)
+ 					msgs[i + 1].buf[j] = st->data[j + 5];
+-			} else
+-				ret = -EIO;
++			}
+ 			i++;
+ 		} else if (!(msgs[i].flags & I2C_M_RD)) {
+ 			/* write bytes */
+@@ -797,10 +802,8 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr | (1 << 8);
+ 			length = msgs[i].len - 1;
+ 			len = msgs[i].len - 1;
+-			for (j = 0; j < len; j++)
+-				st->data[j] = msgs[i].buf[j + 1];
+-			ret =  __az6007_write(d->udev, req, value, index,
+-					      st->data, length);
++			ret = __az6007_write(d, st, req, value, index,
++					      &msgs[i].buf[1], length);
+ 		} else {
+ 			/* read bytes */
+ 			if (az6007_xfer_debug)
+@@ -815,10 +818,12 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 			value = addr;
+ 			length = msgs[i].len + 6;
+ 			len = msgs[i].len;
+-			ret = __az6007_read(d->udev, req, value, index,
++			ret = __az6007_read(d, st, req, value, index,
+ 					    st->data, length);
+-			for (j = 0; j < len; j++)
+-				msgs[i].buf[j] = st->data[j + 5];
++			if (ret >= len + 5) {
++				for (j = 0; j < len; j++)
++					msgs[i].buf[j] = st->data[j + 5];
++			}
+ 		}
+ 		if (ret < 0)
+ 			goto err;
+@@ -845,6 +850,7 @@ static const struct i2c_algorithm az6007_i2c_algo = {
+ 
+ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ {
++	struct az6007_device_state *state = d_to_priv(d);
+ 	int ret;
+ 	u8 *mac;
+ 
+@@ -855,7 +861,7 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ 		return -ENOMEM;
+ 
+ 	/* Try to read the mac address */
+-	ret = __az6007_read(d->udev, AZ6007_READ_DATA, 6, 0, mac, 6);
++	ret = __az6007_read(d, state, AZ6007_READ_DATA, 6, 0, mac, 6);
+ 	if (ret == 6)
+ 		ret = WARM;
+ 	else
+@@ -864,9 +870,9 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
+ 	kfree(mac);
+ 
+ 	if (ret == COLD) {
+-		__az6007_write(d->udev, 0x09, 1, 0, NULL, 0);
+-		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
+-		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
++		__az6007_write(d, state, 0x09, 1, 0, NULL, 0);
++		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
++		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
+ 	}
+ 
+ 	pr_debug("Device is on %s state\n",
+--
 
