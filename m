@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-804328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD02B4723D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:44:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB73B47250
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A455A0D41
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 840F47AF7D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E8E2F1FE1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4EB2F39A7;
 	Sat,  6 Sep 2025 15:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWA8+H3o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+iCzZly"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1AA20469E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB267221DA5;
 	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757173419; cv=none; b=HVOXv43rtfgCdaQesdcioWD3QbB6LBCSaI6FfXXBZnmF6ho3I4uYiiW8SWD1uon/C8aB8W8B9jdemdYxHQPaH8jrIJOxXhvpcjnV06kE61ONaYUQ8Pn8xi7pYsbQgabrxrlU+tCvhxJ0QwE9iXV7MZjUkBoO7eXZXfSiJDkQ1vk=
+	t=1757173419; cv=none; b=cFQ+yZwXQAh4LKq3V96xqIZHHS8bwg4+KzL6Q2Bq69v9lhUI0xivcVAXhUEDwf8Y2Al1XxupiGFWmCd3LN9Vo5dmNij2ZFG8IhmoyeC6sLlYH7zpuEUmyNIGQWwLUzX9KIlQPz+3pwk6fSBqBVu9qmGik1y3+xhSG0FaracqSFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757173419; c=relaxed/simple;
-	bh=Q8PS/CHcVU9sVoFvstzk8Tw0m//oeM0x0Mm79e4aeeQ=;
+	bh=IwSlnxJ2iq6EBFsK6qtAtYW5ioFRlILFFMPbZlRxlX4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RScCXJsqzzY3sABVXQPtBYLf/rhKO8t5qsLQyOq3mMAOhsJPwMGaiEncvr7wvQy8Ts/J7bQ4poyg6JArIMJ/2fhr+6tbU/el3xMuDjGsZsmgDH+20vwSUuhx9h9aqeAzuBQ5uZw5PCBn3y/ZKYEKWjNxwdu5VCU5ACBmO2H2w4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWA8+H3o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 51894C4CEF9;
+	 In-Reply-To:To:Cc; b=qiCkdFOt3WtZx4Pp0ja36bv3jiaAAnyv6puRITxMCBEW9f+cUWvm6oGKzSHnXAzyjCLgvIxGTaqYTwVUr6zR5ih6aKYavWJ/Gs1+Qj725kgYTjAwFG+ZH7LKnRfLFgkaqsoDaI6vjc0f/hiKEvfmGPlau/O+lGPLv1KOF1T12Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+iCzZly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 59EC3C4AF09;
 	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1757173419;
-	bh=Q8PS/CHcVU9sVoFvstzk8Tw0m//oeM0x0Mm79e4aeeQ=;
+	bh=IwSlnxJ2iq6EBFsK6qtAtYW5ioFRlILFFMPbZlRxlX4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZWA8+H3o5lxJeOz0/0ZNMqEOZ1XJgDCUXDnU+EyAZEJxThMe8qLib7FqcCigQyRv0
-	 lsS4FIaDfDOhg8rzANlfvhOYvQEVaaDTj9EhlubhMT2LryGTLY9CVgR7lXhgtHmqD8
-	 f1SFd7Ljc9bfNd5izXyE7qxcUyd6WLNYTbSLdZQink2CM3p6zGCDObQC/GuzWq7tSn
-	 8BX2EUCyTPzELyzZxuMn0w6AgXaA05UislMxj4Suev5NL0ChH6zeNJedrsb4/bijVV
-	 24UHW8rvQskhGIQsl2mf+AFNmGFA7yH8DviijBKxQWqsNUhQECQGG5gkmTE8cj4Ilr
-	 xUz3AWZItKUBg==
+	b=N+iCzZlybG3lxFbOJUeEZOnutJZ4MfPOTSWPKeJu9ypAQEBgFMPWAdmR0X9c1JkOP
+	 CtHTpTl/9zNU2sP6o2zfdTwbq/dNQbTacirCpw/2WnKoKUmMSaKTuVrJVTNoHQhCri
+	 xeXmMYHZc/ZU1Mgvj3F9ZBPQDlCBckUeYCwe48uyGZZoia0VMJE4kEX5hCLo9DihpP
+	 Xl1VkKWmSfqsQNkZZHtW/+uhUpmC3YZkAPV2zsCtPkXVzZ4d4OT6kZelmQ7MGX5Odc
+	 Rkf0Xf+X5oZ5kVsTsJlVb9s8O3mT+OPykCQn4PDW+A/a28SVIgqdWNuXr7RykGnMlj
+	 okKjAIRELIXZw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFE2CA1002;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC35CAC582;
 	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
 From: Sven Peter <sven@kernel.org>
-Date: Sat, 06 Sep 2025 15:43:15 +0000
-Subject: [PATCH v2 02/22] usb: dwc3: dwc3_power_off_all_roothub_ports: Use
- ioremap_np when required
+Date: Sat, 06 Sep 2025 15:43:16 +0000
+Subject: [PATCH v2 03/22] usb: dwc3: glue: Allow more fine grained control
+ over mode switches
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250906-atcphy-6-17-v2-2-52c348623ef6@kernel.org>
+Message-Id: <20250906-atcphy-6-17-v2-3-52c348623ef6@kernel.org>
 References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
 In-Reply-To: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -71,48 +71,175 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
  linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
- Sven Peter <sven@kernel.org>, stable@kernel.org
+ Sven Peter <sven@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1330; i=sven@kernel.org;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5254; i=sven@kernel.org;
  h=from:subject:message-id;
- bh=Q8PS/CHcVU9sVoFvstzk8Tw0m//oeM0x0Mm79e4aeeQ=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ8aesNktsybFzVVaed8xlyc7weRDuT6/vvjjdfN7r61Rf
- JT+s3luRykLgxgHg6yYIsv2/famTx6+EVy66dJ7mDmsTCBDGLg4BWAia6Yw/I9KuJ5ww0JJXST2
- usDtWCcJRrW1egs23c5g0n/g/756HRvD/7I81oyq2YXTBMt2dE0x8olUj6iwvPPhfaeK+McVTpP
- ZeAE=
+ bh=IwSlnxJ2iq6EBFsK6qtAtYW5ioFRlILFFMPbZlRxlX4=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8aesDnPY2Ond928YnA9uuWW1bl/lYqLu3+/Zt9/kyfvy
+ IrsBXpcHaUsDGIcDLJiiizb99ubPnn4RnDppkvvYeawMoEMYeDiFICJzFnGyLDYkctWMFzeSmRX
+ RL6f4oKJaeohC9xK/zdNdPtj8OvXgQCG/7kKQWFudh5ibxl4uQ6frqlwey4ofdDK7eV3zp9z772
+ 0ZAQA
 X-Developer-Key: i=sven@kernel.org; a=openpgp;
  fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
 X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
  auth_id=407
 
-On Apple Silicon machines we can't use ioremap() / Device-nGnRE to map most
-regions but must use ioremap_np() / Device-nGnRnE whenever
-IORESOURCE_MEM_NONPOSTED is set. Make sure this is also done inside
-dwc3_power_off_all_roothub_ports to prevent SErrors.
+We need fine grained control over mode switched on the DWC3 controller
+present on Apple Silicon. Export core, host and gadget init and exit,
+ptrcap and susphy control functions. Also introduce an additional
+parameter to probe_data that allows to skip the final initialization
+step that would bring up host or gadget mode.
 
-Fixes: 2d2a3349521d ("usb: dwc3: Add workaround for host mode VBUS glitch when boot")
-Cc: stable@kernel.org
 Signed-off-by: Sven Peter <sven@kernel.org>
 ---
- drivers/usb/dwc3/host.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/core.c   | 16 +++++++++++-----
+ drivers/usb/dwc3/gadget.c |  2 ++
+ drivers/usb/dwc3/glue.h   | 14 ++++++++++++++
+ drivers/usb/dwc3/host.c   |  2 ++
+ 4 files changed, 29 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 8002c23a5a02acb8f3e87b2662a53998a4cf4f5c..18056fac44c8732278a650ac2be8b493892c92dd 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -132,6 +132,7 @@ void dwc3_enable_susphy(struct dwc3 *dwc, bool enable)
+ 		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(i), reg);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(dwc3_enable_susphy);
+ 
+ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
+ {
+@@ -157,6 +158,7 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
+ 
+ 	dwc->current_dr_role = mode;
+ }
++EXPORT_SYMBOL_GPL(dwc3_set_prtcap);
+ 
+ static void __dwc3_set_mode(struct work_struct *work)
+ {
+@@ -974,7 +976,7 @@ static void dwc3_clk_disable(struct dwc3 *dwc)
+ 	clk_disable_unprepare(dwc->bus_clk);
+ }
+ 
+-static void dwc3_core_exit(struct dwc3 *dwc)
++void dwc3_core_exit(struct dwc3 *dwc)
+ {
+ 	dwc3_event_buffers_cleanup(dwc);
+ 	dwc3_phy_power_off(dwc);
+@@ -982,6 +984,7 @@ static void dwc3_core_exit(struct dwc3 *dwc)
+ 	dwc3_clk_disable(dwc);
+ 	reset_control_assert(dwc->reset);
+ }
++EXPORT_SYMBOL_GPL(dwc3_core_exit);
+ 
+ static bool dwc3_core_is_valid(struct dwc3 *dwc)
+ {
+@@ -1327,7 +1330,7 @@ static void dwc3_config_threshold(struct dwc3 *dwc)
+  *
+  * Returns 0 on success otherwise negative errno.
+  */
+-static int dwc3_core_init(struct dwc3 *dwc)
++int dwc3_core_init(struct dwc3 *dwc)
+ {
+ 	unsigned int		hw_mode;
+ 	u32			reg;
+@@ -1527,6 +1530,7 @@ static int dwc3_core_init(struct dwc3 *dwc)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(dwc3_core_init);
+ 
+ static int dwc3_core_get_phy(struct dwc3 *dwc)
+ {
+@@ -2298,9 +2302,11 @@ int dwc3_core_probe(const struct dwc3_probe_data *data)
+ 	dwc3_check_params(dwc);
+ 	dwc3_debugfs_init(dwc);
+ 
+-	ret = dwc3_core_init_mode(dwc);
+-	if (ret)
+-		goto err_exit_debugfs;
++	if (!data->skip_core_init_mode) {
++		ret = dwc3_core_init_mode(dwc);
++		if (ret)
++			goto err_exit_debugfs;
++	}
+ 
+ 	pm_runtime_put(dev);
+ 
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 25db36c63951bf5654f4bf5a98d7073a028364cd..7b92eb8c4ccf118b81f27afaf3f31bf56e1b6f74 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -4794,6 +4794,7 @@ int dwc3_gadget_init(struct dwc3 *dwc)
+ err0:
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(dwc3_gadget_init);
+ 
+ /* -------------------------------------------------------------------------- */
+ 
+@@ -4812,6 +4813,7 @@ void dwc3_gadget_exit(struct dwc3 *dwc)
+ 	dma_free_coherent(dwc->sysdev, sizeof(*dwc->ep0_trb) * 2,
+ 			  dwc->ep0_trb, dwc->ep0_trb_addr);
+ }
++EXPORT_SYMBOL_GPL(dwc3_gadget_exit);
+ 
+ int dwc3_gadget_suspend(struct dwc3 *dwc)
+ {
+diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
+index 2efd00e763be4fc51911f32d43054059e61fb43a..633268c76fe4c7fdc312c9705dfa7cf7ccf3544c 100644
+--- a/drivers/usb/dwc3/glue.h
++++ b/drivers/usb/dwc3/glue.h
+@@ -15,16 +15,30 @@
+  * @res: resource for the DWC3 core mmio region
+  * @ignore_clocks_and_resets: clocks and resets defined for the device should
+  *		be ignored by the DWC3 core, as they are managed by the glue
++ * @skip_core_init_mode: skip the finial initialization of the target mode, as
++ *		it must be managed by the glue
+  */
+ struct dwc3_probe_data {
+ 	struct dwc3 *dwc;
+ 	struct resource *res;
+ 	bool ignore_clocks_and_resets;
++	bool skip_core_init_mode;
+ };
+ 
+ int dwc3_core_probe(const struct dwc3_probe_data *data);
+ void dwc3_core_remove(struct dwc3 *dwc);
+ 
++int dwc3_core_init(struct dwc3 *dwc);
++void dwc3_core_exit(struct dwc3 *dwc);
++
++int dwc3_host_init(struct dwc3 *dwc);
++void dwc3_host_exit(struct dwc3 *dwc);
++int dwc3_gadget_init(struct dwc3 *dwc);
++void dwc3_gadget_exit(struct dwc3 *dwc);
++
++void dwc3_enable_susphy(struct dwc3 *dwc, bool enable);
++void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy);
++
+ int dwc3_runtime_suspend(struct dwc3 *dwc);
+ int dwc3_runtime_resume(struct dwc3 *dwc);
+ int dwc3_runtime_idle(struct dwc3 *dwc);
 diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index 1c513bf8002ec9ec91b41bfd096cbd0da1dd2d2e..e77fd86d09cf0a36161c20ad3c83f10e67099775 100644
+index e77fd86d09cf0a36161c20ad3c83f10e67099775..cf6512ed17a69134e6ca1b884f76c1439693fab1 100644
 --- a/drivers/usb/dwc3/host.c
 +++ b/drivers/usb/dwc3/host.c
-@@ -37,7 +37,10 @@ static void dwc3_power_off_all_roothub_ports(struct dwc3 *dwc)
+@@ -220,6 +220,7 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 	platform_device_put(xhci);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(dwc3_host_init);
  
- 	/* xhci regs are not mapped yet, do it temporarily here */
- 	if (dwc->xhci_resources[0].start) {
--		xhci_regs = ioremap(dwc->xhci_resources[0].start, DWC3_XHCI_REGS_END);
-+		if (dwc->xhci_resources[0].flags & IORESOURCE_MEM_NONPOSTED)
-+			xhci_regs = ioremap_np(dwc->xhci_resources[0].start, DWC3_XHCI_REGS_END);
-+		else
-+			xhci_regs = ioremap(dwc->xhci_resources[0].start, DWC3_XHCI_REGS_END);
- 		if (!xhci_regs) {
- 			dev_err(dwc->dev, "Failed to ioremap xhci_regs\n");
- 			return;
+ void dwc3_host_exit(struct dwc3 *dwc)
+ {
+@@ -230,3 +231,4 @@ void dwc3_host_exit(struct dwc3 *dwc)
+ 	platform_device_unregister(dwc->xhci);
+ 	dwc->xhci = NULL;
+ }
++EXPORT_SYMBOL_GPL(dwc3_host_exit);
 
 -- 
 2.34.1
