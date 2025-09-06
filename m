@@ -1,158 +1,123 @@
-Return-Path: <linux-kernel+bounces-804122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7608B46A3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E65B46A46
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E28D5C16D4
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:44:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80AE35A81A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1CE2C11F8;
-	Sat,  6 Sep 2025 08:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45F3288CA6;
+	Sat,  6 Sep 2025 08:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHOMNemF"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="PCg0Yy7a"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2975827F74B
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 08:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE63F214A64;
+	Sat,  6 Sep 2025 08:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757148255; cv=none; b=O9rZgvFS3RaIiI7ZFoSE56w28Dl8fBgeqALlQtsYGDPFtAynWrDqOlmAg9BNvXSsrg4sxiRisBEQ3mS1zBIggm/T0uCpr20bpXTQQ4WkzRwTjLEcFf7OYKDwd0RH2X13p0W70mKyX5hpiZKEI6YN4sFYGcFPDDiEN1UaJObm6LA=
+	t=1757148660; cv=none; b=YvENRn1Jv3zE+fKb0wPPCL3BfwtMbF9vIISmr8lXZUABKMc3NWyyfFM7buP1A8j9e5E3co03/n/dC0HN5Lg4QHpPjoyhd9UHeFHnYE2I28VXtnFvY6wHrHu6+KY0WH/jUKrZ7te2VA4PJnEWbsRXtUHDyNaNAQo90kaAPuwfdjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757148255; c=relaxed/simple;
-	bh=ioBMi4/eFSTZR/gwR4miHwSmbvpNL7DYm9ThLt7uKdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jL+ivifqtSwwGHf+cZjm/ux1it6enMvKfpk7NgxZrOPd2Bm0cq3sUHyMsaVzyQ4EI5K8wxsEsi/TRhvy82NOicaEe0g4O5rJ0W5M5pba2rJT9A5oMcuwfjQsbO/QEN6sKyITG/Qw7ZcazRSC8ac7ziDOjbL94LyEWJYo2ULDgbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XHOMNemF; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32b4c6a2a98so2874510a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 01:44:12 -0700 (PDT)
+	s=arc-20240116; t=1757148660; c=relaxed/simple;
+	bh=Qk0Ugz0RYhBkqBiOH6TLDHgmGaQbSmhEOLE0qSMFHWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QYRldk0pVvGR6SbcU986AXQv2dNgS8Oc5fH+pI3gpUzV7z1TQs8EgBl/o8sOBVZkHa9Dc0uQG092X9Nq1ig7jPWn42F1SF2jglOy47xwx55kYIWIglTAFGBW9cclEAmxBoNyzh1qEAuAgyaibwRlUCbRrZSsr/izURz8pptXnYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=PCg0Yy7a; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757148252; x=1757753052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ew5mxc5caN5gcDtxTwu7IwmhCpTzTpkvaeyIZ+j1bkQ=;
-        b=XHOMNemF/8sYH/D18TbUO8uFwC0m7wBJwVycT0ANqt3VXAWbx12GO0acw+aikZFrn+
-         jcEHPIZHiLOFc99bb1qEl6ASCBNWJzCtRPgKQzVtPBYRpq6F4kOh6QW0i9HFjy+ALp/D
-         TrEY3/4aRDiNDuG5TsWvynSP5Aax6DNYNSI2BWl1wTZ89Va2ZsUhdAxqjcER5JjrYTmX
-         Dco+RK5qBbqnvMRcUCkBG23jOUuvqR0RMV9Pb/TY4B8wZ6dt/lDYrDNuShxArGMbIjXQ
-         VItfgYhG1PzejJNYty+qawXp3AWOEWIIbV7NZqfPkPlyEp560AvKME9Y0zAS3LARYJdW
-         9wsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757148252; x=1757753052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ew5mxc5caN5gcDtxTwu7IwmhCpTzTpkvaeyIZ+j1bkQ=;
-        b=nAAQBKiiRsTdQ4SHJ0PDUS9Z4IVdkom/mnBp8mzIKsIaV8VIS76r45Ma1MdiPrYPWj
-         IxaAg7f2z7MLoEPvgFfibUEMoR4ITQRtR4QsUF0msIHOXthh+wJZZk7W+JokNUt826aq
-         4lqfD2CanmDyJwFL9Gq6Lqlims+5lrMeZB/2b5Soa9udpT0/H6t1ABaYhwzwLHIVqf03
-         2GPCYLADZfkALvJcLBTyjwzOhaWazQrUBsWgpw53YGUnWcc9NnAnLiaXHZg0cP3z1D5w
-         Kifh6admbLTrc+6Pzl9s3QZcKRT+Q2w+ZDzY/nbSAdsBoMoy03iPtr668CH4XubWuJZM
-         J6jg==
-X-Gm-Message-State: AOJu0Yx0n7coTZYwR6vpdqLKr31pa0BA/yAfhxa8i91iP6V4akwXtZWG
-	uWq2cyrR4hy/S9tz1Ahaxs1z2eWu7y/G2DvV97RhGE8iAQjtUgtrlVNdOX2uH57cWvUeg/qTnEJ
-	sVA2FSzRjcgionjvpkEXVdjMtIyZ/Y/5jAXtE18T5bA==
-X-Gm-Gg: ASbGnctVoIyIckl2TwtKO7r9bPweqKCULE++jmSkyRLTqaJrdt4yTsEPdkWAwQ1RiVe
-	+YBYMloJKR4pSjyJW60txvWQYTtPFzSaokYiUEejDyRMAfzy7LpcZbg/dIy81cxTvPWKl+sxN4p
-	HkYCYw2XwTkve72qcZyBPG+z71MKqQcz/9iWzycdUoGFuiPesU9/cncwzjNv8TsIwAAS9JW0Axe
-	UtvxEg54ktt+sP46d4eDNWDOzISbtDDa0eUkTzhmp6C6q1+lQ==
-X-Google-Smtp-Source: AGHT+IFWY6ZjZ54pmmCwZjzjcEHYHuEaPv0XvwL3Eflpm/wFl4W2+BYv03gcg0aI3CC8OEM/T3fJ+UI2CYpLLpEbOeM=
-X-Received: by 2002:a17:90b:3852:b0:329:e729:b2a1 with SMTP id
- 98e67ed59e1d1-32d440d9ff0mr2516690a91.35.1757148252335; Sat, 06 Sep 2025
- 01:44:12 -0700 (PDT)
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1757148649; x=1757753449;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=Qk0Ugz0RYhBkqBiOH6TLDHgmGaQbSmhEOLE0qSMFHWU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=PCg0Yy7aEVQfqQ/C5WJvqNmI/tCo3jbVB2b1miz1NlCBRn6SG3kKjvTES6Zt3WM2
+	 Apid8PQ4ZquLxTS2HfRBzimRH0eK7n9ciuKsV5kr4J07ah6tkQtPlm1Y0ab1f+SpV
+	 lc+tu7WKVrXl4YAzhb8DMGxnWX2Ru2fUV4lOsZ1nXnajSXPc8uPYYnoBU2BuoU70r
+	 3UaMATrOM3ZSBd9mOiarIAQ8WmYXSxKKJk3Ni7t51z0gY/kEb9eXb2mltyAgYYMq2
+	 ISk8f50BihUJt9oFvV67XiO07/F3v22lZdsTKca6bdq651H+l8s5oI3P7CQSWJf7D
+	 BM9VBY+6KBVlDq3MrQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.235.193]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MD9nd-1ulhrc1W2j-000Zxp; Sat, 06 Sep 2025 10:45:37 +0200
+Message-ID: <fe92c4e7-6a1d-4cec-a3d1-c50adff9f7f5@oldschoolsolutions.biz>
+Date: Sat, 6 Sep 2025 10:45:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYv0mbEBVs0oTiM+H4X-y7ZCwYpfa0hGCQCeVkW2ufGD_w@mail.gmail.com>
- <CANDhNCpWWNpBQfeGq_Bj1pEWTYULJGaubTuPJ2Yxjg4_ESzgBw@mail.gmail.com> <CANDhNCrJYMcK+dak8ASX6uoVFkNSHMf3Bn1kOXDtqNqFb7LkJQ@mail.gmail.com>
-In-Reply-To: <CANDhNCrJYMcK+dak8ASX6uoVFkNSHMf3Bn1kOXDtqNqFb7LkJQ@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 6 Sep 2025 14:14:00 +0530
-X-Gm-Features: Ac12FXyDB-xmFe72rMp4oqEaC6ssFIEBHl2K-2wenWmXDkTJZrm_JyQxx_K7VTs
-Message-ID: <CA+G9fYuhDU=5b0my6yMy+ni=K_SFCRxncWJFvj0DVuLftTWYUA@mail.gmail.com>
-Subject: Re: arm64/juno-r2: Kernel panic in cgroup_fj_stress.sh on next-20250904
-To: John Stultz <jstultz@google.com>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Cgroups <cgroups@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH RFC 0/3] phy: qcom: qmp-combo: set default qmpphy_mode
+ from DT for Thinkpad HDMI support
+To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20250821-topic-x1e80100-hdmi-v1-0-f14ad9430e88@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:j0IpGjLN4L2a45GZ4Oi2D2xcseqh1/fdJ7qcBOxJv2vVMhM8MPI
+ EpBO8SBj3tyAMK+Is+Pmtt8Wi5b4FUilaiJsANMJVvZuB57mS3JWHGFFRv5e70Uya3g37MS
+ OA5C1q440a5BfTq60NUoE8HZ6yyV1nEYoU6REgra5z0kMyjyH6xm6+3uYuHX2kSpRhYEJjS
+ S3Do19QuJsF+bEpCo05JA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fEuuSSqziCs=;3y1J0TtGNwZ1Dcc3aDAySTMYPWd
+ B7DYzP4KtppxCUMS28q5++WFXjj47xSFXtjEpaaLDfjZ1CpP2Xjcf0H2dmmmXg5dYAyTmmCpN
+ 32RpXL7Znx2a8vFZmBFC/xSYK8UMfRyVB+VU0I0qRjpzg+XDJ3A8BjDqtUCS5wFuXnFR0MRlq
+ ZL/gGPQG9E+KeBQdWEqKjqgkqtc8+xit8RNEoWhAjBDJzxt0kwuqOFv4yuYNkR1ZMOD5cNZRt
+ ZaoK3ZWvtm2uebbApMX3XlN0vDAuHfGK/7Ia1gDdtC2izB8ieTrUG40V14leNBLwYqhsHNGH6
+ T7BhZNTl/DeLf+bZVch88vASjBmOaiU4so7eB/MdS7eOpSE/QQIyrCVx+JPl2vQ4Voq1zyLZ6
+ S9f1XsdFRaoKtMrXLUxBqgWbxbzGsP4A2PCPIYaSWi0jYNKoDsqDZpjdz6MJqhOBtuywlCKT5
+ dYOh/YBe+kCdmEKf69B7t2lKz21hk/JYlwUeeR33s8GaYGGh8JMkv+EBzHRlcPEPpcXk7jAnA
+ JhZUKdCDyhNp751F+RZkPHbXpzOL7cceuOoStvJRGELzB5rGvASOVjv8gS4UxpiDB44jbgthu
+ VavZT52g+x3kj5r4GS/K/fm9gtyHu3XNwwlQZeVJirmq4h3bn6UKP2vah3Gc6zHz0NoVgxNLj
+ QfCT7oCCzM04RwjpkFPwyi0e43rvcH9bD6Lzkml3KKNIZ1ftdJ4jZZRXYuEHudU5iPf/8HzBi
+ 87uaJg8BjxzWPNUMDAPdbsNjaJ0oVLuT0BHSYW2zgD1tCJ9QaPGymo7DW4eZRk6ydXlP1u2ps
+ ssB3L2qZKPKnm/ZTrl1N8NrTXR82Vx9MrxxI+ACELwqnx5/ks4KT+Zbm8S392h8xaNQx1bfW9
+ DU2jLo8qbu1PUBV5L31XFbL1vOU1XUI/sfp/JXgUCvsjC9My8O6MxUiNUStaJ/qLT5hypSX9/
+ 14cA9TerZZxMEawWrL9v/Ax5oYGL5ppJK8/Qgxx4oI3gC60URF+kE6G/Tjx9BVUSfhEt+FOdi
+ dfVSlStO3X9uh49m2bxEVn0cXscm0nf2uIGoBvqT11ub1u5/+BejpaI6Jx6q6771TZcXV2Kr5
+ G7ubeGXoIIe1rRLsa6WxCoDd//HS5HU9MbYTK5RPdwXXMQSlRA4y0/Uiaq+8i0HPRSZAVXrzh
+ tUjw6pqEAILaUhOOR3ozdXjrTYnSYt/3Hq8eSZSRJmm69e/L7/oLQw1/JVeEcFCwP96avTxAM
+ Wyih74u5IU/n7zZSFYMGqV0VnslCNoWkZ8I43uEC5fUTpMyNyzHULQE88FHzV2lYbpgQBQWd8
+ sHCPzSQgOkLZmmVMbSHo+CzX+eGtlsxL2t8foSkpckIc5ODtvWbRHFHo3NS+j2VY0xxD8GkBR
+ pF3C+FfrpS6nwxUa15tTXuvjeKaYw2iDHhlRScwm60pvuMVPll0Bt7PEXN7Il65TCLpk1zGSa
+ kVLHHusHwfsZR8bW4MXbNjX2UevYoIpGm1+SxsvMCTFkXYjmVgCV5rsuXrfvZP50FVBBep854
+ hlB904PCRqwKjNvvAmjllv+C4sy2XiVrLbA9plF7a+eaUFBY4D+M0lcuG7wH+Y0MSQmI12acg
+ 4wlpKFUmzPGzGxuRcwqvbvPL0gCRpcMtpT08lsjC5ADMiCFOzd+pTwJ/PN+LjJlpfvL7B/Sdk
+ ge2eWSlP6ctPtQc5gN1FIiJGSXLdWi7/oDpAE9OCDwN2/BLcmRk/f1Ne75ud16AllXApUGewV
+ o/fk08VTlXqrhR6DsqkO7y/mK5jFg7ts2nXapcEJc83EK/kTp/THMOe8=
 
-On Sat, 6 Sept 2025 at 02:50, John Stultz <jstultz@google.com> wrote:
->
-> On Fri, Sep 5, 2025 at 10:50=E2=80=AFAM John Stultz <jstultz@google.com> =
-wrote:
-> >
-> > On Fri, Sep 5, 2025 at 6:21=E2=80=AFAM Naresh Kamboju <naresh.kamboju@l=
-inaro.org> wrote:
-> > >
-> > > Kernel warnings and a panic were observed on Juno-r2 while running
-> > > LTP controllers (cgroup_fj_stress.sh) on the Linux next-20250904 with
-> > > SCHED_PROXY_EXEC=3Dy enabled build.
-> > >
-> > > Regression Analysis:
-> > > - New regression? yes
-> > > - Reproducibility? yes
-> > >
-> > > First seen on next-20250904
-> > > Bad: next-20250904
-> > > Good: next-20250822
-> > >
-> > > Test regression: next-20250904 juno-r2 cgroup_fj_stress.sh kernel pan=
-ic
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > Thank you for the testing and the report here!
-> >
-> > > Juno-r2:
-> > >  * LTP controllers
-> > >    * cgroup_fj_stress.sh
-> > >
-> > > Test crash:
-> > > cgroup_fj_stress_net_cls_1_200_one:
-> > > [  365.917504] /usr/local/bin/kirk[402]: cgroup_fj_stress_net_cls_1_2=
-00_one:
-> > > start (command: cgroup_fj_stress.sh net_cls 1 200 one)
-> > > [  374.230110] ------------[ cut here ]------------
-> > > [  374.230132] WARNING: lib/timerqueue.c:55 at
-> > > timerqueue_del+0x68/0x70, CPU#5: swapper/5/0
-> >
-> > This looks like we are removing a timer that was already removed from t=
-he queue.
-> >
-> > I don't see anything obvious right away in the delta that would clue
-> > me into what's going on, but I'll try to reproduce this.
->
-> So far I've not been able to reproduce this in my environment.  If you
-> are able to reproduce this easily, could you try enabling
-> CONFIG_DEBUG_OBJECTS_TIMERS to see if it shows anything?
+On 21.08.25 15:53, Neil Armstrong wrote:
+> The Thinkpad T14s embeds a transparent 4lanes DP->HDMI transceiver
+> connected to the third QMP Combo PHY 4 lanes.
 
-I have been running in CI loop for these tests to reproduce and did not
-find this again.
+Hi Neil,
 
-I will add this extra Kconfig CONFIG_DEBUG_OBJECTS_TIMERS
-and re-run to reproduce this reported regression.
+thank you for the patch. Integrated it on my tree and tested on the=20
+T14s, working very well. Also tested hotplug and suspend/resume.
 
-- Naresh
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
->
-> thanks
-> -john
+with best regards
+
+Jens
+
 
