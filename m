@@ -1,133 +1,198 @@
-Return-Path: <linux-kernel+bounces-804209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950EDB46CDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B39ECB46CDF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D8C189835F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72168189438E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CC228B400;
-	Sat,  6 Sep 2025 12:28:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA14E298CA2;
+	Sat,  6 Sep 2025 12:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e1Nnok++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16CF23D7EC
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073BA266EF1;
+	Sat,  6 Sep 2025 12:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161687; cv=none; b=uAeTDKiuYy0iNxc+CXHTnzU+QAAKFGRmd6BPPm8nmI+wNUhaZaqGZpqhZ7XDT2NcpkE1xBBRmApvOrs98+frbS2rmEBpp3cJDitgyCl5Z48arWvwN0yxI4UaC9OPmOzJ4oXXfCC4yDW59igyGDrAC8xNmqrX52KV2GiVixZc+q8=
+	t=1757161721; cv=none; b=GvXMMGphDSCqMZqmiDELHEVEAOU9+vMhYpXyU9vfKVSQ6wgMg6G71ByPGuAsR/5P7cGWHykkc/AQOKvnzchLDK9tvnIzpS2xtWOI8sazP0b7RcfP5zkDoyVcART33ugCafrH0zQ8/j5ZQtPI3Ctn7d2PZQyU+b4MVWMlUwK9+Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161687; c=relaxed/simple;
-	bh=5ZyoqMOkY+4CP0jcTsZM23+GLIPv5N31NwuHpJDGZKM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rvwMY7cQi4dB33o4G8bQyvimKRLTYrk4HxNgikiZ1BttR+ec7qRZ9yHttXFhF94g1OBsqkmlr2o7MRTCiJxaiaUDVQpGoKnTP+oMmhtqrhfJBpBNySmdCdg58xF4yQPJARyp4jHOSN/+B7woP82XC0v6ZoIbDCEnSutWsDhrgds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f761116867so61543095ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 05:28:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757161685; x=1757766485;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gZC6RWwXtyOq+69ZLGlh8HKD0iDGwhDSE+K1DCcE7zI=;
-        b=havgEfLXCZt8dznEhU2VRU5r8kXyb0U3Y0vjr8w5i3xe1qxwY6Bso90Rz74U6JRbLF
-         45RrGl8Z0x7Z4T+2j1wGbE1eftWOz9keVG1WW9e7MotaL6Qq1Do+Iyq6Peu4tnETMI9Z
-         CwGjkdS+80mylZ0gwA8pX9wyzeP+1TA28VWkc9ATJVDcrCNmIDgX/ivRVvFzzGJIbbs8
-         SE37SkXPw4cEOQm0YvXIe6+aOcTd5BHkESKpPAc81+RsbNRvo3D5+sXNKfR7EQM3rCrP
-         Xp6qI7XzrNKzCReKwwRBeoqgArqmxdjqAAYzScd6dQHHzfI3mIszpJyowrQ7S9KEuPok
-         Aw7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1BZWL6XL5fVUTwvDkz+Cg+82BdXkLYaSi6K4VUn0v9XZWveYtFf0j6pLMRUVo2oRbfgD6dxA3yl1cGoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8CBcsBIjBoRXNN6DUjEEjd5AY6fNEe9HbbeBiagPenhvg4Y6i
-	oEKkOugsVv9SXFIbmTh9WMj6wRFFQe3BR8gqMrqhPt8gMbsgmxUi9It7v6WR/blk17dlC3R0KOO
-	X/sPzPue9d79ZYaNejsLbFviKSl5RfLQPw3kT5Ovv4u992yCkiGJLK9prSq8=
-X-Google-Smtp-Source: AGHT+IEoAQIGC05m9rCvKcdSriDAVJrBCz8p/ZxSxG8lhxJ5lC814iyDJO2CI/SYLIbfQ2Y8rq7tj1MaROkKuGxuFdHQ7hQCzEBK
+	s=arc-20240116; t=1757161721; c=relaxed/simple;
+	bh=I4i+IgJmgw5WM8bIZquAFLkwMBcSojuAyx5U4cuiJxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1LJ4psN4ZNEyk2Cq610DYtfrh+9koaGJBjLuxLaM3cm3ZKRB687ByObnfvA4bJDTIXg0BiKy6JzB/JVAVip4ewDQyMMS+fpjVD261S9VYXLUnqPyZsSp8VfzqOu9szdhvZ3O3VtAHESulvYt+xvfBjCMWljvQ3Mfy59BTxvZ+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e1Nnok++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AA9C4CEE7;
+	Sat,  6 Sep 2025 12:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757161720;
+	bh=I4i+IgJmgw5WM8bIZquAFLkwMBcSojuAyx5U4cuiJxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e1Nnok++md1RI2K/nanVK36/O5Fze7xgAVc14dXXVDm8SF6b5lGnvSb4QdymqBqkr
+	 /T2F63D2VJapngpnsEy+CTldYCah9o68Ue8M8a8rAgVIj6vvhlYiBb/hRfjb5jYt+A
+	 /Uvr4Xykb4hTK0MYjfOow60EI8HX8NFDgeGBNkYA=
+Date: Sat, 6 Sep 2025 14:28:37 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Akshay Gujar <Akshay.Gujar@harman.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	naveen.v@harman.com, sankarkumar.krishnasamy@harman.com
+Subject: Re: [PATCH] usb: core: notify unrecognized usb device
+Message-ID: <2025090610-donation-sprawl-f6f7@gregkh>
+References: <2025022131-silo-impeach-3f24@gregkh>
+ <20250826165244.22283-1-Akshay.Gujar@harman.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0d:b0:3f3:180b:cfd7 with SMTP id
- e9e14a558f8ab-3fd88114d37mr32061195ab.15.1757161684933; Sat, 06 Sep 2025
- 05:28:04 -0700 (PDT)
-Date: Sat, 06 Sep 2025 05:28:04 -0700
-In-Reply-To: <20250906105611.103868-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bc28d4.a00a0220.eb3d.0022.GAE@google.com>
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826165244.22283-1-Akshay.Gujar@harman.com>
 
-Hello,
+On Tue, Aug 26, 2025 at 04:52:44PM +0000, Akshay Gujar wrote:
+> Sorry for delayed response.
+> 
+> On Fri, Feb 21, 2025 11:53:01AM +0100, Greg KH wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in az6007_i2c_xfer
+That was many months :)
 
-az6007_i2c_xfer 1 : ffff8880273c0000
-az6007_i2c_xfer 6 : ffff8880273c0000
-az6007: tried to read 4109 bytes, but I2C max size is 4096 bytes
-az6007_i2c_xfer 7 : 0
-az6007_i2c_xfer 8 : 0
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
-WARNING: CPU: 0 PID: 6819 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Modules linked in:
-CPU: 0 UID: 0 PID: 6819 Comm: syz.0.46 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 ac 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 29 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 60 e3 9a 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc90003f77918 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a2388
-RDX: ffff8880273c0000 RSI: ffffffff817a2395 RDI: 0000000000000001
-RBP: 1ffff920007eef28 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000003
-R13: fffffbfff35c6c10 R14: ffffc90003f779a0 R15: ffff88807cef0000
-FS:  00007f6691eda6c0(0000) GS:ffff8881246e1000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00002000000025c0 CR3: 00000000250f0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- az6007_i2c_xfer+0x821/0xe50 drivers/media/usb/dvb-usb-v2/az6007.c:859
- __i2c_transfer+0x6b6/0x2190 drivers/i2c/i2c-core-base.c:2264
- i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
- i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
- i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
- i2c_master_recv include/linux/i2c.h:79 [inline]
- i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
- do_loop_readv_writev fs/read_write.c:847 [inline]
- do_loop_readv_writev fs/read_write.c:835 [inline]
- vfs_readv+0x5c1/0x8b0 fs/read_write.c:1020
- do_preadv+0x1a6/0x270 fs/read_write.c:1132
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6690f8e169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6691eda038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007f66911b5fa0 RCX: 00007f6690f8e169
-RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
-RBP: 00007f6691010a68 R08: 000000000000007e R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f66911b5fa0 R15: 00007ffc5efdc628
- </TASK>
+> >> As per the usb compliance, USB-IF enforces a "no silent failure" rule.
+> >> This means that an implementation of USB must not appear broken to the
+> >> consumer. In configurations where the consumer's expectations are not
+> >> met, either the peripheral or host must provide appropriate and useful
+> >> feedback to the consumer regarding the problem.
+> >> 
+> >> Link: https://compliance.usb.org/index.asp?UpdateFile=Embedded%20Host&Format=Standard#10
+> 
+> >Odd, many Linux devices have passed usb-if testing since 2005 when this
+> >was made a "rule", how did that happen?  What recently changed to
+> >suddenly require this be a kernel issue?
+> 
+> Previously, OEMs handled this with private kernel patches or custom modifications. 
+> However, with Android's Generic Kernel Image (GKI) initiative, vendors can no longer make arbitrary kernel modifications. 
+> GKI requires using a common upstream kernel, so functionality like this needs to be up streamed rather than handled with vendor-specific patches.
+> This patch provides a standard upstream solution for what was previously handled with custom kernel modifications.
 
+That's good, but that does not mean that what you are attempting to do
+really is the correct thing to do.  Here you were trying to say that
+this is a requirement of USB-IF, but it really is not.  This is just
+wanting to add a new feature to the USB core that previously was only
+out-of-tree for your devices.  Please be more specific in your
+description of the problem and issues involved.
 
-Tested on:
+> >And does usb-if even matter these days?  You do know what they think
+> >about Linux overall, right (hint, they kicked us out from
+> >participating...) so why should we follow their "requirements" when they
+> >do not allow us to even participate or provide feedback when they create
+> >them?
+> 
+> I understand your frustration with USB-IF's treatment of Linux.
+> Rather than frame this as following USB-IF requirements, this patch addresses a practical Automotive ecosystem need: providing userspace notification of USB enumeration failures.
+> However, this patch isn't really about following USB-IF requirements - it's about providing useful functionality.
 
-commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=116d5962580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d6d312580000
+Then don't say it has anything to do with USB-IF if it does not.
 
+> >> ---
+> >>  drivers/usb/core/hub.c | 24 +++++++++++++++++++++++-
+> >>  1 file changed, 23 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> >> index c3f839637..d00129b59 100644
+> >> --- a/drivers/usb/core/hub.c
+> >> +++ b/drivers/usb/core/hub.c
+> >> @@ -5343,6 +5343,26 @@ static int descriptors_changed(struct usb_device *udev,
+> >>  	return changed;
+> >>  }
+> >>  
+> >> +static void unrecognized_usb_device_notify(struct usb_port *port_dev)
+> >> +{
+> >> +	char *envp[2] = { NULL, NULL };
+> >> +	struct device *hub_dev;
+> >> +
+> >> +	hub_dev = port_dev->dev.parent;
+> >> +
+> >> +	if (!hub_dev)
+> >> +		return;
+> 
+> >How can this be true?
+> 
+> You're absolutely right. This check is unnecessary. I'll remove this in v2.
+> 
+> >> +
+> >> +	envp[0] = kasprintf(GFP_KERNEL, "UNRECOGNIZED_USB_DEVICE_ON_PORT=%s",
+> >> +				kobject_name(&port_dev->dev.kobj));
+> 
+> >Hint, if a driver ever starts calling into kobject or sysfs functions,
+> >usually something is wrong.  This should just use dev_name(), right?
+> 
+> Correct! I'll change this to use dev_name(&port_dev->dev) in v2.
+> 
+> >> +	if (!envp[0])
+> >> +		return;
+> >> +
+> >> +	kobject_uevent_env(&hub_dev->kobj, KOBJ_CHANGE, envp);
+> 
+> >Where is this new uevent documented?  What userspace tool will see this
+> >and do something about it?  How was this tested?
+> 
+> I'll add documentation to Documentation/ABI/testing/ describing 
+> the uevent format and intended consumers.
+> 
+> For testing: I used "udevadm monitor --property" to verify uevent 
+> generation during enumeration failures.
+> 
+> For Android usage: Our USB HAL service uses a NetlinkListener to 
+> capture these events and provide user feedback for connection issues.
+> 
+> >> +
+> >> +	kfree(envp[0]);
+> >> +}
+> >> +
+> >>  static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+> >>  		u16 portchange)
+> >>  {
+> >> @@ -5569,9 +5589,11 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+> >>  	if (hub->hdev->parent ||
+> >>  			!hcd->driver->port_handed_over ||
+> >>  			!(hcd->driver->port_handed_over)(hcd, port1)) {
+> >> -		if (status != -ENOTCONN && status != -ENODEV)
+> >> +		if (status != -ENOTCONN && status != -ENODEV) {
+> >>  			dev_err(&port_dev->dev,
+> >>  					"unable to enumerate USB device\n");
+> >> +			unrecognized_usb_device_notify(port_dev);
+> 
+> >This is only if a hub acts up with talking to a device, it does not mean
+> >the device was not supported at all.  So this isn't going to meet the
+> >standard that you describe above.  Userspace is really the only thing
+> >that can know if a device is "supported" or not, not the kernel.
+> 
+> I mischaracterized this. This detects enumeration failures, not unsupported devices. 
+
+That's a very big difference.  Enumeration failures happen all the time
+due to horrible cables and other hardware issues.  If you are now going
+to flood userspace with this information, it better be ready to handle
+it and do something with it.
+
+But, for an enumeration failure, you can't do anything with it, so why
+report it at all?
+
+> Userspace determines device support. I'll rename the function to "usb_enumeration_failure_notify" and update.
+> The use case is for USB-IF compliance testing (DevNoResponse tests) where test equipment needs to verify enumeration failure detection. 
+
+There is no such requirement for the kernel to provide this information,
+why can't you just do this all in userspace with the information that
+you have?  You know if a device is active or bound to a driver properly,
+why not just rely on that instead of making the kernel do something
+different here?
+
+thanks,
+
+greg k-h
 
