@@ -1,164 +1,384 @@
-Return-Path: <linux-kernel+bounces-804165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F1AB46AFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:20:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A002BB46B50
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454C93B97AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9983AFA87
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9580284684;
-	Sat,  6 Sep 2025 11:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500392836A3;
+	Sat,  6 Sep 2025 11:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOfs7rW3"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="VG5EH3ik"
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEE523C51D;
-	Sat,  6 Sep 2025 11:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040C42165E2;
+	Sat,  6 Sep 2025 11:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757157639; cv=none; b=hADS5AB0kTYJkhHzMirHd7aUf+F1NDohQRJ7sbuWaCsH4rFlYvspSNzquTWi1KxTLUnfC1H26LTNgbgZwmokXEbUQdg+AvBmdMHuEth8obhM84utBx8rhW7JJbTi8DvP1zNBVqzaZzW4Ur4wQXQGML6G/D/LXdIcx1qS2IrhezA=
+	t=1757158103; cv=none; b=SK7Wf7KftJGSKIXz9MfplteuoCLDXlV55wKRWASx7NKZuRrrZ9Cl4YX7vdaQIfL4IPlr87qEjFiWSr2ccDAkCBFZR7M1e8JOxgmqy/hfikFjLDS+J5dudh9zRwQGA5Yf8tbLXZzen6vTFSNxdVswDIdntRnQHjb49Uc9p5IFGik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757157639; c=relaxed/simple;
-	bh=NP25UIE0+x01UR7gmr+DnY3vcN0HGnNza7b3p0mgBVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VbzEnRa24pIIevkI0lMh8aDIGtmw2VHgzUG6wFgzbQC9h2+DbdDsx3Y8QjoK476KQbYGjJH+0vCrbjj2g8eeTrGwFThWv+hQKZcwX4hZKQwnIKH+rBNZILNyKl/J9GchFVxlmuyq1OCL+5S5T9ntfcHSy7Rjjpa3ZPN9+KLtH2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOfs7rW3; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45ddcf50e95so6088255e9.0;
-        Sat, 06 Sep 2025 04:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757157636; x=1757762436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKcui5kqlHLRoGonq2UNIvF4/eUOOrD4c41D8AoISsY=;
-        b=DOfs7rW3tZWnJhdqi1A+uexVJDeEjYbylFP9Atton2JwOGNkd49uChy2L4AeyxEKKz
-         s3ohuaMQDajEdEd3tVZPOP7nKYFXapWygwz+aUBpJREo9qfTKdj0qGsiXpvoYoseKUpq
-         ooI98j5VTWD9F5CfYUXK5DFQMFtvIhD7djImpy8gi4rti41PmHRFSG6p22NwdeNur6GC
-         Q3H0/C3qVPeXeEgbEy70vsmmwUYujeY23zBwCbQuusuLOVqx2ijtKAjaZxXN3V/PHsvQ
-         eZk4HKFeLcXyj7W92A+bGnneGVS3sRBtD8C8TP8xaKIp6EmWgK4HN1yMNKy6sPdE5E4z
-         4sIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757157636; x=1757762436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sKcui5kqlHLRoGonq2UNIvF4/eUOOrD4c41D8AoISsY=;
-        b=J/ubfkkUBXki4Cg+2cLKOLsry1JgZMSJmzerqDczkOk0kSjZJCO/Q/RJigXS/NUlX/
-         mxvr8JJcF5Xp/O9yWpjWaIrht8ZQ08o3Ulzn3I8kH9+M3OJaZAubgPxvNYzG9YLZjlYh
-         UR+OKDxeh14I9D/iPr1Yfuv2M23/kt4cdiBU0WsIMras+tsk7Ae+M4QwD4rIqOPpCpzC
-         +amMCwtrULrC9bj0HBm0XQR74n2SwB7Oqmb7qex8Fn+2RpMZgLktBEqzgDnUyUxu2YJP
-         A/27uZxZhEYYstTUOtmYdV70IlHsftZgI1J179oc4GfdnP78YKk4SOZ1cQCKROKAMwcN
-         Bx5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVajQRsV/rON880ff3ad6bGpHKixMSdeZEA+/FfF9spyY+o8XPXBMZ0UrHJGELarXPqc6YuZDfT/r7S@vger.kernel.org, AJvYcCXAg3scMzlrHKSASsNODpw7BRXLa6/hbQ+1EADdE6WOZhbbfpAqqw3IMr3I17TTilrq3Rp9KjWGict0/VzB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK5bWMIRGNW2kflgKIW6u2WOiK4Q3re6bN3FzfSCevRtr8eD0u
-	LcWybqVmScuM2TXu570XWsDDCP3kbGHYGLosGdnaOb90yT3CTkN5TbXQ
-X-Gm-Gg: ASbGncvOtiW9ehTJCeI52KBKqhyGcuXV4uD+TIVUHJfMJk5m5bbGQr2uJCnlWSgyiEh
-	+wyqIM4HVY+mtC624cFvtCfJHSMnXh6+NiWPehCXnINovTmUr406fUt/WvOj6YBznxb+vDMD366
-	rB8rCvE02UvEq8Ign6kmrIpFKOsCOh5mbVrlRFq3eCHPqOf6mJYgPt1Z6+Y55CYtZLK6FnnP7iY
-	pjlCaGbmXssxhD+9oFKQPhsWUSUDa6Kd7YlK3eYQQ+TAAHj33+YKFd25hDDnUiZiXG7vL0iYMaH
-	LTmxHJa479i9HCzuTIjNiGINDi48xmokTZY8V4B6f1AfUOBuK9zYQdEHc49FGj52CwqXnU+Xs9t
-	Zpd6zy5yFelSaJ+BYiSVNIalGz2f5fW7wrHlEhQ==
-X-Google-Smtp-Source: AGHT+IFv8cE90LFD5yJ/sYFcSqb8G8+DIxE6PJiMga9p7H+75K2qsCzvml9epgjQGTdfAnAhHf5Ufg==
-X-Received: by 2002:a05:600c:1c0d:b0:45b:9961:9c01 with SMTP id 5b1f17b1804b1-45ddde832ebmr18317335e9.16.1757157635521;
-        Sat, 06 Sep 2025 04:20:35 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45de18f4824sm6646655e9.10.2025.09.06.04.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 04:20:35 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: enable the Mali GPU on RK3328 boards
-Date: Sat,  6 Sep 2025 11:20:30 +0000
-Message-Id: <20250906112030.1829706-2-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250906112030.1829706-1-christianshewitt@gmail.com>
-References: <20250906112030.1829706-1-christianshewitt@gmail.com>
+	s=arc-20240116; t=1757158103; c=relaxed/simple;
+	bh=MrP8jt3+NKI4KBa5MR5lEb7qK4sSqVmSyRr5DvEMErg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QONuH4cWtWb0vlbjhd3JRmvnLBgpbGq3Ue5ERvgv0vckEYn+ap1Sqpxpg46Tk0c9bG4PVMep2PCxIrY4OqjcEbEF0Rsfc9J5Bc4f2Yx/O27twhn0mTFYGFx7mONMHy28z6m8n6h8deS0d5WzzGlGd2rhZN2zNUkirKZN6Cgl3ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=VG5EH3ik; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:14a6:0:640:e35f:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 79CCE81152;
+	Sat, 06 Sep 2025 14:21:04 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id xKhrQWhM1eA0-dl8zAIlT;
+	Sat, 06 Sep 2025 14:21:03 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1757157663;
+	bh=9J6cIE61cUlbr0W2N2gsc8+dpG5X8UO0m1iQ9d4R7tE=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=VG5EH3ikwCvms4tzh6vbJucdHnAY0fml6tE0irNpPpSekqNHd/9MgRfQ1k7GfGwcJ
+	 p9HPX3BgIg6RLWtOt5CQyKcfWJfGr3YsIW41exbH1wT0Iw5Nb+UyjQfGAqt/tCXiFT
+	 HcSzAkNJznOtxUZXUMjlpqtYDe0t4QJKJ9ORpb58=
+Authentication-Results: mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Sat, 6 Sep 2025 14:20:59 +0300
+From: Onur <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+ dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+ longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
+ bjorn3_gh@protonmail.com
+Subject: Re: [PATCH v6 5/7] rust: ww_mutex: add context-free locking
+ functions
+Message-ID: <20250906142059.35bf5fc1@nimda.home>
+In-Reply-To: <392B3416-61A7-4A41-8BDA-3A114F23D3F8@collabora.com>
+References: <20250903131313.4365-1-work@onurozkan.dev>
+	<20250903131313.4365-6-work@onurozkan.dev>
+	<392B3416-61A7-4A41-8BDA-3A114F23D3F8@collabora.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Alex Bee <knaerzche@gmail.com>
+On Fri, 5 Sep 2025 16:14:59 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-Add a gpu node to the rock64 board to enable the Mali GPU and
-move the existing node from roc-pc to the shared roc dtsi to
-enable it also for the roc-cc board.
+> Hi Onur
+>=20
+> > On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+> >=20
+> > Adds new `WwMutex` functions (`lock`, `lock_interruptible`,
+> > `lock_slow`, `lock_slow_interruptible` and `try_lock`) that
+> > can be used without `WwAcquireCtx`. This provides simpler API
+> > when deadlock avoidance grouping is not needed.
+> >=20
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > ---
+> > rust/kernel/sync/lock/ww_mutex.rs | 162
+> > ++++++++++++++++++++++-------- 1 file changed, 122 insertions(+),
+> > 40 deletions(-)
+> >=20
+> > diff --git a/rust/kernel/sync/lock/ww_mutex.rs
+> > b/rust/kernel/sync/lock/ww_mutex.rs index
+> > d289718d2c98..b415d6deae9b 100644 ---
+> > a/rust/kernel/sync/lock/ww_mutex.rs +++
+> > b/rust/kernel/sync/lock/ww_mutex.rs @@ -138,6 +138,75 @@ pub fn
+> > new_wound_wait(name: &'static CStr) -> impl PinInit<Self> { }
+> > }
+> >=20
+> > +/// Locking kinds used by [`lock_common`] to unify internal FFI
+> > locking logic.
+>=20
+> Can you please mention how this is not exposed to the outside world?
+>=20
+> It should be obvious from its private visibility, but still.
+>=20
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
-Changes since v1:
-- No changes
+I would like to keep this private and force users to go through the
+public ones. This function contains the entire internal locking logic
+and its signature may need to change if we update any of the internals.
+Since it's private, we can safely make breaking changes without
+affecting external calls.
 
- arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts | 4 ----
- arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi   | 4 ++++
- arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 4 ++++
- 3 files changed, 8 insertions(+), 4 deletions(-)
+The public functions on the other hand are much more stable (at worst,
+only one or two of them might need a breaking change).
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-index 329d03172433..c0b7b98ff788 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
-@@ -44,10 +44,6 @@ &codec {
- 	mute-gpios = <&grf_gpio 0 GPIO_ACTIVE_LOW>;
- };
- 
--&gpu {
--	mali-supply = <&vdd_logic>;
--};
--
- &pinctrl {
- 	ir {
- 		ir_int: ir-int {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-index b5bd5e7d5748..7eef6f7f108f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
-@@ -160,6 +160,10 @@ &gmac2io {
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&vdd_logic>;
-+};
-+
- &hdmi {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-index 5367e5fa9232..592fd8ca21df 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-@@ -152,6 +152,10 @@ &gmac2io {
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&vdd_logic>;
-+};
-+
- &hdmi {
- 	avdd-0v9-supply = <&vdd_10>;
- 	avdd-1v8-supply = <&vcc_18>;
--- 
-2.34.1
+> > +#[derive(Copy, Clone, Debug)]
+> > +enum LockKind {
+> > +    /// Blocks until lock is acquired.
+> > +    Regular,
+> > +    /// Blocks but can be interrupted by signals.
+> > +    Interruptible,
+> > +    /// Used in slow path after deadlock detection.
+> > +    Slow,
+> > +    /// Slow path but interruptible.
+> > +    SlowInterruptible,
+> > +    /// Does not block, returns immediately if busy.
+> > +    Try,
+> > +}
+> > +
+> > +/// Internal helper that unifies the different locking kinds.
+> > +fn lock_common<'a, T: ?Sized>(
+> > +    ww_mutex: &'a WwMutex<'a, T>,
+> > +    ctx: Option<&WwAcquireCtx<'_>>,
+> > +    kind: LockKind,
+> > +) -> Result<WwMutexGuard<'a, T>> {
+> > +    let ctx_ptr =3D ctx.map_or(core::ptr::null_mut(), |c|
+> > c.inner.get()); +
+> > +    match kind {
+> > +        LockKind::Regular =3D> {
+> > +            // SAFETY: `WwMutex` is always pinned. If
+> > `WwAcquireCtx` is `Some`, it is pinned,
+> > +            // if `None`, it is set to `core::ptr::null_mut()`.
+> > Both cases are safe.
+> > +            let ret =3D unsafe {
+> > bindings::ww_mutex_lock(ww_mutex.mutex.get(), ctx_ptr) };
+>=20
+> Use an intermediary variable to refer to the actual function. Then
+> call this only once below the match statement.
+>=20
+> This will consolidate all the safety comments and "to_result()" calls
+> into a single place, considerably reducing the clutter here.
+>
+
+Good idea!
+=20
+> > +
+> > +            to_result(ret)?;
+> > +        }
+> > +        LockKind::Interruptible =3D> {
+> > +            // SAFETY: `WwMutex` is always pinned. If
+> > `WwAcquireCtx` is `Some`, it is pinned,
+> > +            // if `None`, it is set to `core::ptr::null_mut()`.
+> > Both cases are safe.
+> > +            let ret =3D
+> > +                unsafe {
+> > bindings::ww_mutex_lock_interruptible(ww_mutex.mutex.get(),
+> > ctx_ptr) }; +
+> > +            to_result(ret)?;
+> > +        }
+> > +        LockKind::Slow =3D> {
+> > +            // SAFETY: `WwMutex` is always pinned. If
+> > `WwAcquireCtx` is `Some`, it is pinned,
+> > +            // if `None`, it is set to `core::ptr::null_mut()`.
+> > Both cases are safe.
+> > +            unsafe {
+> > bindings::ww_mutex_lock_slow(ww_mutex.mutex.get(), ctx_ptr) };
+> > +        }
+> > +        LockKind::SlowInterruptible =3D> {
+> > +            // SAFETY: `WwMutex` is always pinned. If
+> > `WwAcquireCtx` is `Some`, it is pinned,
+> > +            // if `None`, it is set to `core::ptr::null_mut()`.
+> > Both cases are safe.
+> > +            let ret =3D unsafe {
+> > +
+> > bindings::ww_mutex_lock_slow_interruptible(ww_mutex.mutex.get(),
+> > ctx_ptr)
+> > +            };
+> > +
+> > +            to_result(ret)?;
+> > +        }
+> > +        LockKind::Try =3D> {
+> > +            // SAFETY: `WwMutex` is always pinned. If
+> > `WwAcquireCtx` is `Some`, it is pinned,
+> > +            // if `None`, it is set to `core::ptr::null_mut()`.
+> > Both cases are safe.
+> > +            let ret =3D unsafe {
+> > bindings::ww_mutex_trylock(ww_mutex.mutex.get(), ctx_ptr) }; +
+> > +            if ret =3D=3D 0 {
+> > +                return Err(EBUSY);
+> > +            } else {
+> > +                to_result(ret)?;
+> > +            }
+> > +        }
+> > +    };
+> > +
+> > +    Ok(WwMutexGuard::new(ww_mutex))
+> > +}
+> > +
+> > /// Groups multiple mutex acquisitions together for deadlock
+> > avoidance. ///
+> > /// Must be used when acquiring multiple mutexes of the same class.
+> > @@ -196,14 +265,9 @@ pub fn done(&self) {
+> >         unsafe { bindings::ww_acquire_done(self.inner.get()) };
+> >     }
+> >=20
+> > -    /// Locks the given mutex.
+> > +    /// Locks the given mutex on this acquire context
+> > ([`WwAcquireCtx`]). pub fn lock<'a, T>(&'a self, ww_mutex: &'a
+> > WwMutex<'a, T>) -> Result<WwMutexGuard<'a, T>> {
+> > -        // SAFETY: The mutex is pinned and valid.
+> > -        let ret =3D unsafe {
+> > bindings::ww_mutex_lock(ww_mutex.mutex.get(), self.inner.get()) }; -
+> > -        to_result(ret)?;
+> > -
+> > -        Ok(WwMutexGuard::new(ww_mutex))
+> > +        lock_common(ww_mutex, Some(self), LockKind::Regular)
+> >     }
+> >=20
+> >     /// Similar to `lock`, but can be interrupted by signals.
+> > @@ -211,24 +275,14 @@ pub fn lock_interruptible<'a, T>(
+> >         &'a self,
+> >         ww_mutex: &'a WwMutex<'a, T>,
+> >     ) -> Result<WwMutexGuard<'a, T>> {
+> > -        // SAFETY: The mutex is pinned and valid.
+> > -        let ret =3D unsafe {
+> > -
+> > bindings::ww_mutex_lock_interruptible(ww_mutex.mutex.get(),
+> > self.inner.get())
+> > -        };
+> > -
+> > -        to_result(ret)?;
+> > -
+> > -        Ok(WwMutexGuard::new(ww_mutex))
+> > +        lock_common(ww_mutex, Some(self), LockKind::Interruptible)
+> >     }
+> >=20
+> > -    /// Locks the given mutex using the slow path.
+> > +    /// Locks the given mutex on this acquire context
+> > ([`WwAcquireCtx`]) using the slow path. ///
+> >     /// This function should be used when `lock` fails (typically
+> > due to a potential deadlock). pub fn lock_slow<'a, T>(&'a self,
+> > ww_mutex: &'a WwMutex<'a, T>) -> Result<WwMutexGuard<'a, T>> {
+> > -        // SAFETY: The mutex is pinned and valid, and we're in the
+> > slow path.
+> > -        unsafe {
+> > bindings::ww_mutex_lock_slow(ww_mutex.mutex.get(),
+> > self.inner.get()) }; -
+> > -        Ok(WwMutexGuard::new(ww_mutex))
+> > +        lock_common(ww_mutex, Some(self), LockKind::Slow)
+> >     }
+> >=20
+> >     /// Similar to `lock_slow`, but can be interrupted by signals.
+> > @@ -236,30 +290,14 @@ pub fn lock_slow_interruptible<'a, T>(
+> >         &'a self,
+> >         ww_mutex: &'a WwMutex<'a, T>,
+> >     ) -> Result<WwMutexGuard<'a, T>> {
+> > -        // SAFETY: The mutex is pinned and valid, and we are in
+> > the slow path.
+> > -        let ret =3D unsafe {
+> > -
+> > bindings::ww_mutex_lock_slow_interruptible(ww_mutex.mutex.get(),
+> > self.inner.get())
+> > -        };
+> > -
+> > -        to_result(ret)?;
+> > -
+> > -        Ok(WwMutexGuard::new(ww_mutex))
+> > +        lock_common(ww_mutex, Some(self),
+> > LockKind::SlowInterruptible) }
+> >=20
+> > -    /// Tries to lock the mutex without blocking.
+> > +    /// Tries to lock the mutex on this acquire context
+> > ([`WwAcquireCtx`]) without blocking. ///
+> >     /// Unlike `lock`, no deadlock handling is performed.
+> >     pub fn try_lock<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>)
+> > -> Result<WwMutexGuard<'a, T>> {
+> > -        // SAFETY: The mutex is pinned and valid.
+> > -        let ret =3D unsafe {
+> > bindings::ww_mutex_trylock(ww_mutex.mutex.get(), self.inner.get())
+> > }; -
+> > -        if ret =3D=3D 0 {
+> > -            return Err(EBUSY);
+> > -        } else {
+> > -            to_result(ret)?;
+> > -        }
+> > -
+> > -        Ok(WwMutexGuard::new(ww_mutex))
+> > +        lock_common(ww_mutex, Some(self), LockKind::Try)
+> >     }
+> > }
+> >=20
+> > @@ -355,7 +393,7 @@ pub fn new(t: T, ww_class: &'ww_class WwClass)
+> > -> impl PinInit<Self> { }
+> > }
+> >=20
+> > -impl<T: ?Sized> WwMutex<'_, T> {
+> > +impl<'ww_class, T: ?Sized> WwMutex<'ww_class, T> {
+> >     /// Returns a raw pointer to the inner mutex.
+> >     fn as_ptr(&self) -> *mut bindings::ww_mutex {
+> >         self.mutex.get()
+> > @@ -370,6 +408,35 @@ fn is_locked(&self) -> bool {
+> >         // SAFETY: The mutex is pinned and valid.
+> >         unsafe { bindings::ww_mutex_is_locked(self.mutex.get()) }
+> >     }
+> > +
+> > +    /// Locks the given mutex without acquire context
+> > ([`WwAcquireCtx`]).
+> > +    pub fn lock<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
+> > +        lock_common(self, None, LockKind::Regular)
+> > +    }
+> > +
+> > +    /// Similar to `lock`, but can be interrupted by signals.
+> > +    pub fn lock_interruptible<'a>(&'a self) ->
+> > Result<WwMutexGuard<'a, T>> {
+> > +        lock_common(self, None, LockKind::Interruptible)
+> > +    }
+> > +
+> > +    /// Locks the given mutex without acquire context
+> > ([`WwAcquireCtx`]) using the slow path.
+> > +    ///
+> > +    /// This function should be used when `lock` fails (typically
+> > due to a potential deadlock).
+> > +    pub fn lock_slow<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
+> > +        lock_common(self, None, LockKind::Slow)
+> > +    }
+> > +
+> > +    /// Similar to `lock_slow`, but can be interrupted by signals.
+> > +    pub fn lock_slow_interruptible<'a>(&'a self) ->
+> > Result<WwMutexGuard<'a, T>> {
+> > +        lock_common(self, None, LockKind::SlowInterruptible)
+> > +    }
+> > +
+> > +    /// Tries to lock the mutex without acquire context
+> > ([`WwAcquireCtx`]) and without blocking.
+>=20
+> =E2=80=9CWith no acquire context=E2=80=9D.
+>=20
+> > +    ///
+> > +    /// Unlike `lock`, no deadlock handling is performed.
+> > +    pub fn try_lock<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
+> > +        lock_common(self, None, LockKind::Try)
+> > +    }
+> > }
+> >=20
+> > /// A guard that provides exclusive access to the data protected
+> > @@ -547,4 +614,19 @@ fn test_with_global_classes() -> Result {
+> >=20
+> >         Ok(())
+> >     }
+> > +
+> > +    #[test]
+> > +    fn test_mutex_without_ctx() -> Result {
+> > +        let mutex =3D Arc::pin_init(WwMutex::new(100,
+> > &TEST_WOUND_WAIT_CLASS), GFP_KERNEL)?;
+> > +        let guard =3D mutex.lock()?;
+> > +
+> > +        assert_eq!(*guard, 100);
+> > +        assert!(mutex.is_locked());
+> > +
+> > +        drop(guard);
+> > +
+> > +        assert!(!mutex.is_locked());
+> > +
+> > +        Ok(())
+> > +    }
+> > }
+> > --
+> > 2.50.0
+> >=20
+> >=20
+>=20
 
 
