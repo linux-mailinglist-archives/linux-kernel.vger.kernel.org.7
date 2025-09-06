@@ -1,403 +1,253 @@
-Return-Path: <linux-kernel+bounces-804161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B92B46AE9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 907F0B46AEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4D6A082C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46657A08551
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6217283C9D;
-	Sat,  6 Sep 2025 11:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D386128505E;
+	Sat,  6 Sep 2025 11:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="OkxPHkF8"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYbvkvGn"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0F227B32B;
-	Sat,  6 Sep 2025 11:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330EF27B32B;
+	Sat,  6 Sep 2025 11:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757157210; cv=none; b=N40WBCRcg10rheKJWyi8JmEjiczQjeLDOI9dt5DSJaCkwsAh9HV809HSbs+O/ts5ffjdirrAXpiYDfU6vImutT0YqnVVx1hQZmvj1v8pdMikZbxJUW8KbGP7pl13LUIZuONU5ACX0DmoSC5zwuCPSJC021vzz6cUpL03gBJ1vRg=
+	t=1757157253; cv=none; b=V+KmJ5exg2Tpm9lQ0ut4I0ovwXLEVr+HPYZFUDFrTcTeW7YMfAvuTkLlaYUulol2Wi5cAmsz5ZHanjd/Kw9NgabCQGDDi5WkXeigFm9XHIgnyd+Nhzlj/TOXid7rRgBinUU4RhSz4apcyUudZuyMVjl2poIeo1o6nt/3tdsooD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757157210; c=relaxed/simple;
-	bh=oLkCwW3bmwI6aDgacrIM9H7Mu2tjXybKLg3++ZwrU24=;
+	s=arc-20240116; t=1757157253; c=relaxed/simple;
+	bh=79tZSDjissr69qWLTtGDszHMBwdmGZrw62SonGZBniU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rvj0pYTTFMkZxtQ/TSqz/iVAFMdeN+7Gy6mzn3f6rm5x+Pojoxk6yq9hz4p47ek63lx2ZvEnDIBY1mJNIdt4oTvZ9yrYTzVFNjhMM89mnN1ogs221v6D/7D7DykqS+K8MbmVnZhebt9Vj59sclNEX11e8Vg97SYtW7q4VgS2XMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=OkxPHkF8; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1b:3715:0:640:1185:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id BA05DC0AB9;
-	Sat, 06 Sep 2025 14:13:17 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id BDhPTRTL3Ko0-5VpRIetM;
-	Sat, 06 Sep 2025 14:13:16 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1757157196;
-	bh=ITACWoCzYsXVdJZpGO6qE8kq+WSCC/iOE8WQ4nZOUEY=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=OkxPHkF8UlO2LliBAUP65z2xJsjif20gCd3VYX6PdEmR6UFk3m08JuCKkC6s9OX9n
-	 qAqDAf//2gM9TEq5DoUMBEnak8NSMnFwzFXWDUgNMqHJSKjlzUSGHumy66Lt9UJ2Sy
-	 S7AtvuS792JPvpeMLOur4XvbmqDHiiHj3LudlQCI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Sat, 6 Sep 2025 14:13:10 +0300
-From: Onur <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, will@kernel.org,
- longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Subject: Re: [PATCH v6 6/7] rust: ww_mutex/exec: add high-level API
-Message-ID: <20250906141310.2c29aa8e@nimda.home>
-In-Reply-To: <6D30FEF7-07E7-4851-A7A2-76649AD0B217@collabora.com>
-References: <20250903131313.4365-1-work@onurozkan.dev>
-	<20250903131313.4365-7-work@onurozkan.dev>
-	<6D30FEF7-07E7-4851-A7A2-76649AD0B217@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	 MIME-Version:Content-Type; b=MEti/0Mnn034YwLslcXgxptf6lZeiA5fPMYixv/EoVHT0W04u8sc5ZvKOldh9dWzqJupm05PHuM2HRcDVnPzjd4rz8VucZfgnRJHLaC7Aqk88p+K0LYg76HXwl3Sf+qiUHtu2whypAY8ugGIcW8o33U60ticFX0i/OgTSXxYaW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYbvkvGn; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45cb5e1adf7so23942925e9.0;
+        Sat, 06 Sep 2025 04:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757157249; x=1757762049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WK+GAzkyID6tHGg5RxAC2Li9CcM3O7oCVmbbRYNKra8=;
+        b=CYbvkvGninhN3Z6wZDkqj1ky315/omElwOsnJhbHb6iC9VwVpkmMYAAjrAjWjIvhTZ
+         aRHYBMK50v+otki+AXE4aZa0zm53auBCH45ZIhHXh+JoBSF1PMnKCe9R+iQZ2L8gwgUg
+         eYustfZ0nmh6TmVZl5ux2ulECwz3Uanm3Cm8Wv2Hn6BKtqUYU/ftnVEZp2ut61xOa0ER
+         kmaLRdodfwcaNGdh/rMosPqH6F8ngIo/rzQVrWW/ecoJXCsUbVQh38eCxJlpCzvH3uIE
+         YE9d4cS+yz7M471SqXjXC+qz0PA/Zzc6c+Qh6eiZYcQA+a2jwj0boGnkPJXAM5nMhese
+         gEeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757157249; x=1757762049;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WK+GAzkyID6tHGg5RxAC2Li9CcM3O7oCVmbbRYNKra8=;
+        b=B2Yh9tDz+2Wi5MZ/gZ1utsFGKfXnhmZFCPVg20iyLOv0JrRxvLxTwyecM72xU8zL93
+         bPMCG0IUiTvYNMu63XdfDS7j7C2BxXq5yii+IbLUFOzn4XK25ouKLc0SvxaYypkZUn5T
+         mKCI9o547JAeMNKtuy7jOgsuxsxcC2ydAgUMmM1PM0O0wdMmo69BzqJhYpB2ia2rxUyb
+         w7oKaNJ3iapwIAIVOe2hrcb+9mV9Vt4awtQ1K4gRp4z/NAoLOJ2qGbAUgtrCt2JwNtgm
+         Tz0ZIbM7UcmSVb0dgD21nEtTfAQBcojyd3L2DrzIxOoggaw29d0QIrL8hHQOA/8lwAxN
+         Kslg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlVkvx5e5RYNKIFjUdywuFx0LlfqiNS5qafon1j5KFKn/80sXMcTsdy3YtuNjE2FCqWRE=@vger.kernel.org, AJvYcCWXFB6v0Z5svnbmn/2GbZAaC4xGP4vbN8Y4V7SBMsfq+MeQazIVT5U7JFEEVWLiEXcPUnrr0hx0bhSbpOPT2jfUzfyW@vger.kernel.org, AJvYcCWmIfRjO72M8PIGCPzCa+4BlY+/BTZYnVLWbsf0PoJvqvVKDg8PuLque4IMxjh0to4dRXx/2EigVInvt6L8mQ==@vger.kernel.org, AJvYcCWpruacRg6IZEmkWP3K+KGTHTrg+tg6RuEjEYiZaiR6RxRf4Qc+6W+UlM0I98RSq7e6XNiTSY2SkwEgs5NS@vger.kernel.org, AJvYcCX3qQg9FvRn/9yRYM6FtzpWydoqN42V5A/v1a5gYP2nBiz7zw48sgMzwSS61x+ixmkRzGE2znPW62St9fzzO6h3LQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIMSBWptRKUoIU0Nt0FUM+ucUvK6TB/0O629xdrxAwSuYfRDtD
+	0s5nsCP7PY1EFDKJNv5fisHINAfVaOAmyfagv+QnCMNv4zZ9KHKrmAtm
+X-Gm-Gg: ASbGncvuXlpomYSjclIG1pwbLoGuhMZmy2vbT92ptLY6JFwcVnnc7DxCq2niBz0x5Cq
+	/OsMbWOsmAwrFOyIxVuq95U/TMgQ9b7i44S/V6RyfN6pQZVcc6gAdgXa7NAx4vk18aZ10OLt5u1
+	ghkeEF5xj3d0CDgKhxr/V898GquisNLBSDFA9Y31SySpdyTyiSWhlgxNp94R+jjQ1x7Q7XcKEQ8
+	b90JHuEgZx+zkBpHW/Q3xedopHmjlPIyOdA3I4N1zNrfG3/yM3eXKrccJkd/bY4KlEGJxJ+VXdo
+	uTAQRmZkJ4NnTAUyOWJC3y8R6oU5Ip7bqxbQjnh869ZXGw8LgVXjRVBgOIURxhSQjJOJ5TcsPn/
+	90O2LC2wGpeMB8tlJb6VMqkyAFIdOClXPjM9AHDvEo4YBjNwJKEHqT7KE0/HJfOkw
+X-Google-Smtp-Source: AGHT+IFW/5FOxyFqj1+gS4iZbWkrMnNm7SEPeZdXIRSlHu3qHTX/3ekqpxHZW/pRpI0qkbfG1hNoJg==
+X-Received: by 2002:a05:600c:4fc9:b0:45b:7aae:7a92 with SMTP id 5b1f17b1804b1-45ddded75e1mr12963215e9.21.1757157249223;
+        Sat, 06 Sep 2025 04:14:09 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm361608935e9.19.2025.09.06.04.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 04:14:08 -0700 (PDT)
+Date: Sat, 6 Sep 2025 12:13:46 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Bhupesh Sharma <bhsharma@igalia.com>
+Cc: Kees Cook <kees@kernel.org>, Bhupesh <bhupesh@igalia.com>,
+ akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-trace-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH v8 4/5] treewide: Switch memcpy() users of 'task->comm'
+ to a more safer implementation
+Message-ID: <20250906121346.3fa6ea16@pumpkin>
+In-Reply-To: <d48f66cf-9843-1575-bcf0-5117a5527004@igalia.com>
+References: <20250821102152.323367-1-bhupesh@igalia.com>
+	<20250821102152.323367-5-bhupesh@igalia.com>
+	<202508250656.9D56526@keescook>
+	<d48f66cf-9843-1575-bcf0-5117a5527004@igalia.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 5 Sep 2025 16:42:09 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
+On Mon, 1 Sep 2025 10:58:17 +0530
+Bhupesh Sharma <bhsharma@igalia.com> wrote:
 
-> Hi Onur,
->=20
-> > On 3 Sep 2025, at 10:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
-> >=20
-> > `ExecContext` is a helper built on top of ww_mutex
->=20
-> Again, I wonder what people think about this particular name.
->=20
-> > that provides a retrying interface for lock acquisition.
-> > When `EDEADLK` is hit, it drops all held locks, resets
-> > the acquire context and retries the given (by the user)
-> > locking algorithm until it succeeds.
-> >=20
-> > The API keeps track of acquired locks, cleans them up
-> > automatically and allows data access to the protected
-> > data through `with_locked()`. The `lock_all()` helper
-> > allows implementing multi-mutex algorithms in a simpler
-> > and less error-prone way while keeping the ww_mutex
-> > semantics.
-> >=20
->=20
-> Great, this was exactly what I was looking for! :)
->=20
-> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> > ---
-> > rust/kernel/sync/lock/ww_mutex.rs      |   2 +
-> > rust/kernel/sync/lock/ww_mutex/exec.rs | 176
-> > +++++++++++++++++++++++++ 2 files changed, 178 insertions(+)
-> > create mode 100644 rust/kernel/sync/lock/ww_mutex/exec.rs
-> >=20
-> > diff --git a/rust/kernel/sync/lock/ww_mutex.rs
-> > b/rust/kernel/sync/lock/ww_mutex.rs index
-> > b415d6deae9b..7de6578513e5 100644 ---
-> > a/rust/kernel/sync/lock/ww_mutex.rs +++
-> > b/rust/kernel/sync/lock/ww_mutex.rs @@ -16,6 +16,8 @@
-> > use core::cell::UnsafeCell;
-> > use core::marker::PhantomData;
-> >=20
-> > +pub mod exec;
-> > +
-> > /// Create static [`WwClass`] instances.
-> > ///
-> > /// # Examples
-> > diff --git a/rust/kernel/sync/lock/ww_mutex/exec.rs
-> > b/rust/kernel/sync/lock/ww_mutex/exec.rs new file mode 100644
-> > index 000000000000..2f1fc540f0b8
-> > --- /dev/null
-> > +++ b/rust/kernel/sync/lock/ww_mutex/exec.rs
-> > @@ -0,0 +1,176 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! A high-level [`WwMutex`] execution helper.
-> > +//!
-> > +//! Provides a retrying lock mechanism on top of [`WwMutex`] and
-> > [`WwAcquireCtx`]. +//! It detects [`EDEADLK`] and handles it by
-> > rolling back and retrying the +//! user-supplied locking algorithm
-> > until success. +
-> > +use crate::prelude::*;
-> > +use crate::sync::lock::ww_mutex::{WwAcquireCtx, WwClass, WwMutex,
-> > WwMutexGuard}; +use core::ptr;
-> > +
-> > +/// High-level execution type for ww_mutex.
-> > +///
-> > +/// Tracks a series of locks acquired under a common
-> > [`WwAcquireCtx`]. +/// It ensures proper cleanup and retry
-> > mechanism on deadlocks and provides +/// type-safe access to locked
-> > data via [`with_locked`]. +///
-> > +/// Typical usage is through [`lock_all`], which retries a
-> > user-supplied +/// locking algorithm until it succeeds without
-> > deadlock. +pub struct ExecContext<'a> {
-> > +    class: &'a WwClass,
-> > +    acquire: Pin<KBox<WwAcquireCtx<'a>>>,
-> > +    taken: KVec<WwMutexGuard<'a, ()>>,
-> > +}
-> > +
-> > +impl<'a> Drop for ExecContext<'a> {
-> > +    fn drop(&mut self) {
-> > +        self.release_all_locks();
->=20
-> If we move this to the acquire context, then we can do away with this
-> drop impl.
->=20
-> > +    }
-> > +}
-> > +
-> > +impl<'a> ExecContext<'a> {
-> > +    /// Creates a new [`ExecContext`] for the given lock class.
-> > +    ///
-> > +    /// All locks taken through this context must belong to the
-> > same class.
-> > +    ///
-> > +    /// TODO: Add some safety mechanism to ensure classes are not
-> > different.
->=20
-> core::ptr::eq()?
->
+> Hi Kees,
+> 
+> On 8/25/25 7:31 PM, Kees Cook wrote:
+> > On Thu, Aug 21, 2025 at 03:51:51PM +0530, Bhupesh wrote:  
+> >> As Linus mentioned in [1], currently we have several memcpy() use-cases
+> >> which use 'current->comm' to copy the task name over to local copies.
+> >> For an example:
+> >>
+> >>   ...
+> >>   char comm[TASK_COMM_LEN];
+> >>   memcpy(comm, current->comm, TASK_COMM_LEN);
+> >>   ...
+> >>
+> >> These should be rather calling a wrappper like "get_task_array()",
+> >> which is implemented as:
+> >>
+> >>     static __always_inline void
+> >>         __cstr_array_copy(char *dst,
+> >>              const char *src, __kernel_size_t size)
+> >>     {
+> >>          memcpy(dst, src, size);
+> >>          dst[size] = 0;
+> >>     }
+> >>
+> >>     #define get_task_array(dst,src) \
+> >>        __cstr_array_copy(dst, src, __must_be_array(dst))
+> >>
+> >> The relevant 'memcpy()' users were identified using the following search
+> >> pattern:
+> >>   $ git grep 'memcpy.*->comm\>'
+> >>
+> >> Link:https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/  #1
+> >>
+> >> Signed-off-by: Bhupesh<bhupesh@igalia.com>
+> >> ---
+> >>   include/linux/coredump.h                      |  2 +-
+> >>   include/linux/sched.h                         | 32 +++++++++++++++++++
+> >>   include/linux/tracepoint.h                    |  4 +--
+> >>   include/trace/events/block.h                  | 10 +++---
+> >>   include/trace/events/oom.h                    |  2 +-
+> >>   include/trace/events/osnoise.h                |  2 +-
+> >>   include/trace/events/sched.h                  | 13 ++++----
+> >>   include/trace/events/signal.h                 |  2 +-
+> >>   include/trace/events/task.h                   |  4 +--
+> >>   tools/bpf/bpftool/pids.c                      |  6 ++--
+> >>   .../bpf/test_kmods/bpf_testmod-events.h       |  2 +-
+> >>   11 files changed, 54 insertions(+), 25 deletions(-)
+> >>
+> >> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+> >> index 68861da4cf7c..bcee0afc5eaf 100644
+> >> --- a/include/linux/coredump.h
+> >> +++ b/include/linux/coredump.h
+> >> @@ -54,7 +54,7 @@ extern void vfs_coredump(const kernel_siginfo_t *siginfo);
+> >>   	do {	\
+> >>   		char comm[TASK_COMM_LEN];	\
+> >>   		/* This will always be NUL terminated. */ \
+> >> -		memcpy(comm, current->comm, sizeof(comm)); \
+> >> +		get_task_array(comm, current->comm); \
+> >>   		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
+> >>   			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
+> >>   	} while (0)	\
+> >> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> >> index 5a58c1270474..d26d1dfb9904 100644
+> >> --- a/include/linux/sched.h
+> >> +++ b/include/linux/sched.h
+> >> @@ -1960,12 +1960,44 @@ extern void wake_up_new_task(struct task_struct *tsk);
+> >>   
+> >>   extern void kick_process(struct task_struct *tsk);
+> >>   
+> >> +/*
+> >> + * - Why not use task_lock()?
+> >> + *   User space can randomly change their names anyway, so locking for readers
+> >> + *   doesn't make sense. For writers, locking is probably necessary, as a race
+> >> + *   condition could lead to long-term mixed results.
+> >> + *   The logic inside __set_task_comm() should ensure that the task comm is
+> >> + *   always NUL-terminated and zero-padded. Therefore the race condition between
+> >> + *   reader and writer is not an issue.
+> >> + */
+> >> +
+> >>   extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
+> >>   #define set_task_comm(tsk, from) ({			\
+> >>   	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
+> >>   	__set_task_comm(tsk, from, false);		\
+> >>   })
+> >>   
+> >> +/*
+> >> + * 'get_task_array' can be 'data-racy' in the destination and
+> >> + * should not be used for cases where a 'stable NUL at the end'
+> >> + * is needed. Its better to use strscpy and friends for such
+> >> + * use-cases.
+> >> + *
+> >> + * It is suited mainly for a 'just copy comm to a constant-sized
+> >> + * array' case - especially in performance sensitive use-cases,
+> >> + * like tracing.
+> >> + */
+> >> +
+> >> +static __always_inline void
+> >> +	__cstr_array_copy(char *dst, const char *src,
+> >> +			  __kernel_size_t size)
+> >> +{
+> >> +	memcpy(dst, src, size);
+> >> +	dst[size] = 0;
+> >> +}  
+> > Please don't reinvent the wheel. :) We already have memtostr, please use
+> > that (or memtostr_pad).  
+> 
+> Sure, but wouldn't we get a static assertion failure: "must be array" 
+> for memtostr() usage, because of the following:
+> 
+> #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
+> __must_be_array(arr))
+> 
+> I think it would be easier just to set:
+> 
+>    memcpy(dst, src, size);
+>    dst[size -1] = 0;
+> 
+> instead as Linus and Steven suggested.
 
-I was thinking more of a type-level mechanism to do ensure that.
+The compiler is still likely to make a mess of it.
+You really want:
+	*(u64 *)dst = *(u64 *)src;
+	*(u64 *)(dst + 8) = *(u64 *)(src + 8) & ~htobe64(0xff);
+That may need something to force 8 byte alignment.
+Or force 4 byte alignment and use a u64 type with 4 byte alignment.
 
-> > +    pub fn new(class: &'a WwClass) -> Result<Self> {
-> > +        Ok(Self {
-> > +            class,
-> > +            acquire: KBox::pin_init(WwAcquireCtx::new(class),
-> > GFP_KERNEL)?,
-> > +            taken: KVec::new(),
-> > +        })
-> > +    }
-> > +
-> > +    /// Attempts to lock a [`WwMutex`] and records the guard.
-> > +    ///
-> > +    /// Returns [`EDEADLK`] if lock ordering would cause a
-> > deadlock.
-> > +    pub fn lock<T>(&mut self, mutex: &'a WwMutex<'a, T>) ->
-> > Result<()> {
-> > +        let guard =3D self.acquire.lock(mutex)?;
-> > +        // SAFETY: Type is erased for storage. Actual access uses
-> > `with_locked`
-> > +        // which safely casts back.
->=20
-> Why?
->=20
-> > +        let erased: WwMutexGuard<'a, ()> =3D unsafe {
-> > core::mem::transmute(guard) };
->=20
-> We should really try our very best to avoid transmuting things.
->=20
-> Why can=E2=80=99t you store a KVec<MutexGuard<=E2=80=98a, T>>? Seems stra=
-ightforward
-> if you add a T parameter to ExecContext.
->=20
-> Also, someone correct me if I am wrong, but users can explicitly have
-> T be e.g.: KBox<dyn SomeTrait> if they want to.
+	David
 
-So it can run different types inside the same execution context (see
-test_with_different_input_type). If there isn't a use-case for this, I
-can change it into `T`.
-
-> > +        self.taken.push(erased, GFP_KERNEL)?;
-> > +
-> > +        Ok(())
-> > +    }
-> > +
-> > +    /// Runs `locking_algorithm` until success with retrying on
-> > deadlock.
-> > +    ///
-> > +    /// `locking_algorithm` should attempt to acquire all needed
-> > locks.
-> > +    /// If [`EDEADLK`] is detected, this function will roll back,
-> > reset
-> > +    /// the context and retry automatically.
-> > +    ///
-> > +    /// Once all locks are acquired successfully,
-> > `on_all_locks_taken` is
-> > +    /// invoked for exclusive access to the locked values.
-> > Afterwards, all
-> > +    /// locks are released.
-> > +    ///
-> > +    /// # Example
-> > +    ///
-> > +    /// ```
-> > +    /// use kernel::alloc::KBox;
-> > +    /// use kernel::c_str;
-> > +    /// use kernel::prelude::*;
-> > +    /// use kernel::sync::Arc;
-> > +    /// use kernel::sync::lock::ww_mutex;
-> > +    /// use pin_init::stack_pin_init;
-> > +    ///
-> > +    /// stack_pin_init!(let class =3D
-> > ww_mutex::WwClass::new_wound_wait(c_str!("lock_all_example")));
-> > +    ///
-> > +    /// let mutex1 =3D Arc::pin_init(ww_mutex::WwMutex::new(0,
-> > &class), GFP_KERNEL)?;
-> > +    /// let mutex2 =3D Arc::pin_init(ww_mutex::WwMutex::new(0,
-> > &class), GFP_KERNEL)?;
-> > +    /// let mut ctx =3D
-> > KBox::pin_init(ww_mutex::exec::ExecContext::new(&class)?,
-> > GFP_KERNEL)?;
-> > +    ///
-> > +    /// ctx.lock_all(
-> > +    ///     |ctx| {
-> > +    ///         // Try to lock both mutexes.
-> > +    ///         ctx.lock(&mutex1)?;
-> > +    ///         ctx.lock(&mutex2)?;
-> > +    ///
-> > +    ///         Ok(())
-> > +    ///     },
-> > +    ///     |ctx| {
-> > +    ///         // Safely mutate both values while holding the
-> > locks.
-> > +    ///         ctx.with_locked(&mutex1, |v| *v +=3D 1)?;
-> > +    ///         ctx.with_locked(&mutex2, |v| *v +=3D 1)?;
-> > +    ///
-> > +    ///         Ok(())
-> > +    ///     },
-> > +    /// )?;
->=20
-> Can you add intermediary variables to hold the closures, just for
-> extra clarity?
->=20
-> i.e.:
->=20
-> let locking_algorithm =3D =E2=80=A6;
-> let on_all_locks_taken =3D =E2=80=A6;
->=20
-> This is of course identical, but it conveys the meaning just a bit
-> better.
->=20
-
-Sure, I will do that in the following patch.
-
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn lock_all<T, Y, Z>(
-> > +        &mut self,
-> > +        mut locking_algorithm: T,
-> > +        mut on_all_locks_taken: Y,
-> > +    ) -> Result<Z>
-> > +    where
-> > +        T: FnMut(&mut ExecContext<'a>) -> Result<()>,
->=20
-> Just =E2=80=9CResult=E2=80=9D.
->=20
-> > +        Y: FnMut(&mut ExecContext<'a>) -> Result<Z>,
-> > +    {
-> > +        loop {
-> > +            match locking_algorithm(self) {
-> > +                Ok(()) =3D> {
-> > +                    // All locks in `locking_algorithm` succeeded.
-> > +                    // The user can now safely use them in
-> > `on_all_locks_taken`.
-> > +                    let res =3D on_all_locks_taken(self);
-> > +                    self.release_all_locks();
-> > +
-> > +                    return res;
-> > +                }
-> > +                Err(e) if e =3D=3D EDEADLK =3D> {
-> > +                    // Deadlock detected, retry from scratch.
-> > +                    self.cleanup_on_deadlock()?;
-> > +                    continue;
-> > +                }
-> > +                Err(e) =3D> {
-> > +                    return Err(e);
-> > +                }
-> > +            }
-> > +        }
-> > +    }
->=20
-> This apparently looks ok.
->=20
-> > +
-> > +    /// Executes `f` with a mutable reference to the data behind
-> > `mutex`.
-> > +    ///
-> > +    /// Fails with [`EINVAL`] if the mutex was not locked in this
-> > context.
-> > +    pub fn with_locked<T, Y>(
-> > +        &mut self,
-> > +        mutex: &'a WwMutex<'a, T>,
-> > +        f: impl FnOnce(&mut T) -> Y,
-> > +    ) -> Result<Y> {
-> > +        // Find the matching guard.
-> > +        for guard in &mut self.taken {
-> > +            if mutex.as_ptr() =3D=3D guard.mutex.as_ptr() {
->=20
-> core::ptr::eq() ?
->=20
-> > +                // SAFETY: We know this guard belongs to `mutex`
-> > and holds the lock.
-> > +                let typed =3D unsafe { &mut
-> > *ptr::from_mut(guard).cast::<WwMutexGuard<'a, T>>() };
-> > +                return Ok(f(&mut **typed));
->=20
-> This doesn=E2=80=99t look good, but it will probably improve once we get =
-rid
-> of the transmute.
->=20
->  Also, can you find a comparable use-case for this in the C code?
->=20
-
-I think there is no use case in C code that can be compared to what I
-was aiming for (the multi-type support in single context). I thought it
-was cool thing to have but I am not sure if it's really needed. :)
-
-> > +            }
-> > +        }
-> > +
-> > +        // `mutex` isn't locked in this `ExecContext`.
-> > +        Err(EINVAL)
-> > +    }
-> > +
-> > +    /// Releases all currently held locks in this context.
-> > +    ///
-> > +    /// It is intended to be used for internal implementation only.
-> > +    fn release_all_locks(&mut self) {
-> > +        self.taken.clear();
-> > +    }
-> > +
-> > +    /// Resets this context after a deadlock detection.
-> > +    ///
-> > +    /// Drops all held locks and reinitializes the
-> > [`WwAcquireCtx`].
-> > +    ///
-> > +    /// It is intended to be used for internal implementation only.
->=20
-> ^ This last line can go away as this is private.
->=20
-> > +    fn cleanup_on_deadlock(&mut self) -> Result {
-> > +        self.release_all_locks();
-> > +        // Re-init fresh `WwAcquireCtx`.
-> > +        self.acquire =3D
-> > KBox::pin_init(WwAcquireCtx::new(self.class), GFP_KERNEL)?;
->=20
-> This will require one allocation per rollback.
->=20
-
-Good point, will re-work on that too.
-
-> > +
-> > +        Ok(())
-> > +    }
-> > +}
-> > --
-> > 2.50.0
-> >=20
->=20
+> 
+> Thanks,
+> Bhupesh
+> 
+> >> +
+> >> +#define get_task_array(dst, src) \
+> >> +	__cstr_array_copy(dst, src, __must_be_array(dst))  
+> > Uh, __must_be_array(dst) returns 0 on success. :P Are you sure you
+> > tested this?
+> >  
+> 
+> 
 
 
