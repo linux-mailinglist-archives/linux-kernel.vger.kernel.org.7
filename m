@@ -1,159 +1,78 @@
-Return-Path: <linux-kernel+bounces-804438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365DFB476E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F83B476EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB2D3AA947
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCAD5A00CF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58091288C0E;
-	Sat,  6 Sep 2025 19:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722C9292B2E;
+	Sat,  6 Sep 2025 19:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIcqwMkw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a33Uqv2W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36921A76B1;
-	Sat,  6 Sep 2025 19:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB45710E0;
+	Sat,  6 Sep 2025 19:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757186980; cv=none; b=kq68AlheaQmgqCGpS/dk5pyvzA12yAKzKhOwECIa0OSESOG/thI/bTy/4UZ3LRXmfYOqPb+5qCH9SMDAeEbZwMJhKhZ6NQ7eNEYQJfMdnm9MdIlBpcefS8BBu8pmyXM9JMUTY66J9jM//fOSFiynRdbagvQl0uGKYclhZvtywtA=
+	t=1757188156; cv=none; b=J5WQlLH1tugvnVPUwK061uJgPK3eAWchrBF7l9LC7MgStZIfOQZF7Rwrtjx0XkUF68X3uv0Y7OZ/5dbsXXDOvHoJxessclgmpGodR9/F3KzZ+WZmKAj4gr+gTduNJX1IoETVA66bKpAvrGz/9l1fGp0XOJNjGEW65tLJDAF/w9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757186980; c=relaxed/simple;
-	bh=oofUon7TKCp2rF2DC7eS4zrof2y9W5dAO3wKX4EvhrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eZ0QAFPoJmMsp3Yi4HUzIHLR6UXbiYQY6JwVjGgba2BqBezqlHDMF/t0elcxNmNPmJCx3IHoBaSQPFWJ1j+Hn7+wrjhzfzk/4075DW9JdW1WGRo59bnwJey1af4PLVGf1Zf12rLmK7DVa2CreQGV6CrCFqMm0IvjC/SyMxU78FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIcqwMkw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF204C4CEE7;
-	Sat,  6 Sep 2025 19:29:39 +0000 (UTC)
+	s=arc-20240116; t=1757188156; c=relaxed/simple;
+	bh=rIiPK07wJbss6Qbgul68MJIwu5jVzOiPI2vWJrjuYkI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=A/D7mj0K2J/Te1wBzF4G3LKtR2qDimFsZamjYTsSDW/tmDH88EchxObk8JHrjipwrbyVsFuezDDax7dKguXGiZMJjjoPfw4j7q5UR7QDqwdlK4hT7LN7p5Oz40+ZWw3WNnl6fd5tzbv2eHAI+i4FUlL0nwFWfWSP8CPwOGRSrj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a33Uqv2W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522A8C4CEE7;
+	Sat,  6 Sep 2025 19:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757186980;
-	bh=oofUon7TKCp2rF2DC7eS4zrof2y9W5dAO3wKX4EvhrM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pIcqwMkw5k9xWSuHn9pDlEmINSW4q4DYjjt2ItSD4v7Yz8NS+it5MtLNlarDproTL
-	 uw1+5iKlQ2Zd5fWR8fvHjkFZB2hy8N2MArY3Zmb9qN4WjkOVQuSP6tWqaACMLNcLOy
-	 KYHtg0muWAuD9cxgjjTFq/zg/Y7g5ZapXHEEqjA3zRW8YL6VnqnUvuCp2BkGLlmdYu
-	 Si4Z6Z6s5MHdErLB6YusEAtXiwOPa1xnlDrXbATmDK8XJwhM0o2NI0ZH97nXUVcKox
-	 awX5AG8E8SnsDyYXr4b/BxpjNLEaecsZOe11AataWHNdgbHMKvJwauyUqPtCc/hzC8
-	 7g2EIM/4bU1+Q==
-Date: Sat, 6 Sep 2025 12:29:38 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 06/11] tools: ynl-gen: don't validate nested
- array attribute types
-Message-ID: <20250906122938.30566de3@kernel.org>
-In-Reply-To: <0a9a7c41-7deb-4078-8cc9-aee8f8784443@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-6-ast@fiberby.net>
-	<20250905172334.0411e05e@kernel.org>
-	<0a9a7c41-7deb-4078-8cc9-aee8f8784443@fiberby.net>
+	s=k20201202; t=1757188156;
+	bh=rIiPK07wJbss6Qbgul68MJIwu5jVzOiPI2vWJrjuYkI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=a33Uqv2Wzd0lgrCj65q/pRfhRj7nSv+GOlFm6isRDXezw3GAI/u+i2iuqoya4MRsQ
+	 swoDuDvafs3YDoeejWnQSK4EZgztLuRlNrlYwLYusrrUky60jdMRV8poVAJk6+5pH8
+	 U7DUEalcHoakNSs+Pc/oJq4Mcc4k29c5EYykJf5j1HL5ntb2AJ80jlOv4GAxSYLsCz
+	 9FlaEc1XER2HE3ykPf0d77H+ahv98Y6iQOn56LKxZObojziSfMilWZ7Y8IFm7bJpuL
+	 WPqoYj2GmdZzuWnXfbTp6WG2sC028/jIbLQtWY6X600lzRZkZXiWqGZDQ+Y/lF3lB6
+	 o+RbAUMNjeKAQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFE7383BF69;
+	Sat,  6 Sep 2025 19:49:21 +0000 (UTC)
+Subject: Re: [GIT PULL] Rust fixes for 6.17 (2nd)
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250906174901.1244166-1-ojeda@kernel.org>
+References: <20250906174901.1244166-1-ojeda@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250906174901.1244166-1-ojeda@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.17-2
+X-PR-Tracked-Commit-Id: 8851e27d2cb947ea8bbbe8e812068f7bf5cbd00b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b236920731dd90c3fba8c227aa0c4dee5351a639
+Message-Id: <175718816052.2921744.15177006160768320115.pr-tracker-bot@kernel.org>
+Date: Sat, 06 Sep 2025 19:49:20 +0000
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 6 Sep 2025 13:22:01 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> > I don't understand, please provide more details.
-> > This is an ArrayNest, right?
-> >=20
-> > [ARRAY-ATTR]
-> >    [ENTRY]
-> >      [MEMBER1]
-> >      [MEMBER2]
-> >    [ENTRY]
-> >      [MEMBER1]
-> >      [MEMBER2]
-> >=20
-> > Which level are you saying doesn't matter?
-> > If entry is a nest it must be a valid nest.
-> > What the comment you're quoting is saying is that the nla_type of ENTRY
-> > doesn't matter. =20
->=20
-> I will expand this in v2, but the gist of it is that this is part of the
-> "split attribute counting, and later allocating an array to hold them" co=
-de.
->=20
-> The check that I remove for nested arrays, is an early exit during the
-> counting phase. Later in the allocation and parse phase it validates the
-> nested payload.
->=20
-> In include/uapi/linux/wireguard.h:
->  > WGDEVICE_A_PEERS: NLA_NESTED
->  >   0: NLA_NESTED
->  >     WGPEER_A_PUBLIC_KEY: NLA_EXACT_LEN, len WG_KEY_LEN
->  >     [..]
->  >   0: NLA_NESTED
->  >     ...
->  >   ... =20
->=20
-> The current check requires that the nested type is valid in the nested
-> attribute set, which in this case resolves to WGDEVICE_A_UNSPEC, which is
-> YNL_PT_REJECT, and it takes the early exit and returns YNL_PARSE_CB_ERROR.
+The pull request you sent on Sat,  6 Sep 2025 19:49:01 +0200:
 
-I see your point now. We're validating ENTRY as an attribute in the
-parent attribute set, but it's just a meaningless id.
+> https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.17-2
 
-I think we need more fixing here. The real parsing loop will only
-validate what's _inside_ the [MEMBER]. Which doesn't matter all
-that much to nests, but look at what happens if subtype is a scalar.
-We'll just call ynl_attr_get_u32(), type is never really validate.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b236920731dd90c3fba8c227aa0c4dee5351a639
 
-I think we need this, and make the codegen feed in the ARRAY-ATTR type
-to validate ENTRY?
+Thank you!
 
-diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
-index 2a169c3c0797..e43167398c69 100644
---- a/tools/net/ynl/lib/ynl.c
-+++ b/tools/net/ynl/lib/ynl.c
-@@ -360,15 +360,15 @@ static int ynl_cb_done(const struct nlmsghdr *nlh, st=
-ruct ynl_parse_arg *yarg)
-=20
- /* Attribute validation */
-=20
--int ynl_attr_validate(struct ynl_parse_arg *yarg, const struct nlattr *att=
-r)
-+int __ynl_attr_validate(struct ynl_parse_arg *yarg, const struct nlattr *a=
-ttr,
-+			unsigned int type)
- {
- 	const struct ynl_policy_attr *policy;
--	unsigned int type, len;
- 	unsigned char *data;
-+	unsigned int len;
-=20
- 	data =3D ynl_attr_data(attr);
- 	len =3D ynl_attr_data_len(attr);
--	type =3D ynl_attr_type(attr);
- 	if (type > yarg->rsp_policy->max_attr) {
- 		yerr(yarg->ys, YNL_ERROR_INTERNAL,
- 		     "Internal error, validating unknown attribute");
-@@ -450,6 +450,11 @@ int ynl_attr_validate(struct ynl_parse_arg *yarg, cons=
-t struct nlattr *attr)
- 	return 0;
- }
-=20
-+int ynl_attr_validate(struct ynl_parse_arg *yarg, const struct nlattr *att=
-r)
-+{
-+	return __ynl_attr_validate(yarg, attr, ynl_attr_type(attr));
-+}
-+
- int ynl_submsg_failed(struct ynl_parse_arg *yarg, const char *field_name,
- 		      const char *sel_name)
- {
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
