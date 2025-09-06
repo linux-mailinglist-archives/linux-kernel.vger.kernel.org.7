@@ -1,152 +1,178 @@
-Return-Path: <linux-kernel+bounces-804302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D156AB4718D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:57:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56C7B471A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE375811E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8635B5814E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754D7204C1A;
-	Sat,  6 Sep 2025 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2E920C000;
+	Sat,  6 Sep 2025 15:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kxmQckzF"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOr2KTzj"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228151E1E00;
-	Sat,  6 Sep 2025 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757170642; cv=pass; b=NNGfQ0rV62wjKYRQB0tfXcygLEie49qXqN2pPZBwr/sGzHXFvT1B7AvYpcJbs71rF0tyF4Cv0L+o/Ml2ZsiDMUVLJuS6xyQSxxtujDBZtrAWUWtrl2Y5uVt8QsxEUWvz0onPZc0tYD12heDcIPxRoChwWfyLgTmFCIG10IYnxBE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757170642; c=relaxed/simple;
-	bh=yGVTbbGSln3zcU/ebSXpd0IRjw4GsNTVz1EOh9Nc5cE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Xp2tbVmgXdAgJqCdhJmqEaQwOTtBvwcXBPhTmizIFH2PpczOAk37b70Qv3KAtnpxR3rJMMQvKaRxDpOV5eG2qkp4rS4H8TgQ7ISoivFFfgNUB0tKQ3xQ3uiNLbPTnkiineKMhaSN9DZXUoSI43920DjjYxEq0KF070yeV60eaZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kxmQckzF; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757170626; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IvpoD5mfEgklB/WyfW0em1Jd6j1tVsmavwBHB5sa17lN3SYd9ScS7AzPItj4KUzZ8bKr0oUevY8J/PEJKVAp7SEggv3nQq6bEn4DQkJ+/QORV7rYOv2W/SJ9gayi7YjsOp2CiSVrXiF8Rs58WkbublymUnOmlHpgd1+0JkVLRGg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757170626; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=O8C/DJfsbnE6LaSqS1bMEgYiPxUfZO2osNHlbL1OPfA=; 
-	b=dvT3HtHeGe3UbDkvhc8MZSQrEjb5xkUqv5NwHRDX5BSKcAg06Ek5eFoyM6t1sYHHE+W1XvoRAUwBBEWjoYQUVBtS7zVBz0PSVz3++d4/lhdz7D5GJ3Lwf8CQGUGS7bcUZKoQIB4ID2WpJSp6oGR+UddYmNH4yZ0vx6+44Nm493o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757170626;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=O8C/DJfsbnE6LaSqS1bMEgYiPxUfZO2osNHlbL1OPfA=;
-	b=kxmQckzF6edq9nayu3MT/rSFBJJh/tKC8cxO/wiVN/2yhEyNlxk00Ty5b5LCt68c
-	GyNEvGwGkCFhdFEMgKJu8wL73EOfeuEHcWtj5ScHd1GPs68OPK3I6KWVqBkQ/nbBEgN
-	9I1uIrly4rdjf+sOyzy/bTpupJIZjCATXqrzMKas=
-Received: by mx.zohomail.com with SMTPS id 1757170624820333.870751580259;
-	Sat, 6 Sep 2025 07:57:04 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356151E5701;
+	Sat,  6 Sep 2025 14:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757170801; cv=none; b=iENe4ptfEfv9MeLPVwIsbij1GYjvSRuthVpuRkofdSCK0f1INe9AxvudoQDKxX9gJqP/18+Ju1kz4I2sEyJtN4spTMBpocrl3q/JBRfwRp9mmC3/WtEEk4/TWx/PfFQFFQYg/srqgO1QUyM3ftrbYyfm/bm+hPBdf9QZn6l9Nbw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757170801; c=relaxed/simple;
+	bh=XncNrK5kT8meDtQO8JNmHnftDmoaeTD0I+F9yFes8lE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PwBmctSJhOT9ZvtdV94JYTHdBjLcbr68h6DqrlztBPfqA0502M3hDQsmAnRCXFNYAFaKrV8U6/h5B0V0Qa+K1H/RZfoKzeMPWa/nuPVP9uoJ20ebPgY/L8fGrGxPfV3wXp1Wm3FFN1BrZL4Ik0YGhHLw3TqvysWc55oQ+BggXfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOr2KTzj; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d1bf79d758so2838859f8f.1;
+        Sat, 06 Sep 2025 07:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757170797; x=1757775597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nQtur+J2AJTC1Awcz7aDVAZ/e2OJSwAAO1Rdfay5zx4=;
+        b=OOr2KTzjRESV2ahH3Xdl8DpV/Jik3f8pTLCO/Gf9U57ZOx4YVz9TJfFvMzG5Hq9Dw/
+         FUWIgkeRsvmPbnme1gpxPlnBzw81tyTW+kA0HiG4bVqlusRmuHUnMxiQOFccNGP5EAWr
+         YYf6hh5MmN6SJKY8HO5zCoBOGNyy3RXIqUgzFII5xvfNM4l4mvH3NaCe3R8wIcncoXnM
+         UMKHSd7g7f8MyuWhob2Bn1w1cY7nX4r9UJctH4H+ILhCrhM32Qdy3q0RM1iFlLAhPiSC
+         IvxvBoExK4LaFfdza9L4pBZ6a6S+7RrEVFOSKPNuxxwsxOOYoyWaodwwTe7FUw2dVcEp
+         A0CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757170797; x=1757775597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nQtur+J2AJTC1Awcz7aDVAZ/e2OJSwAAO1Rdfay5zx4=;
+        b=mtPg7beWPb9X5m+0WNNpeTpMPt06Yki2fNMHKHcoiarLTldh+XN+aooC8juH8/Eev1
+         sOPQ5BAshrNYGSzYej+mNlQX/LQB4y0wtVFpTKA5Y+8Eh/rFoffwUWjdBfIciqjb/8uG
+         tkTQgsIt44OSBNEYkRdBL3PIVUnX6xMjvVo9cf5EmRx6LbgjOLt9+gDQEUc7kFeOjnqR
+         HwwuLe6JRCSm6kebtQcL1siGBC5wy6cb9IAyik4+5qlRSf+5R72hczz1ABXXNHxCXaV1
+         WgEegnowEskYjb5c/dgEgTbvF6uRFiGQ0H/vYUS2hmtviWvwm5WiVGdQgvgnTuYfK2yq
+         pDXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUsgB+7oJDRbSHMj7is0708pJkH/WtD8ZKaX1TcOlH3GIOb2edvNdnGU+gt6++t1zGlOjKRkGPHE8EIw==@vger.kernel.org, AJvYcCUaut+yhuhw73w48LMknRxY07TXidn7/WRPRgx9pYtaNcSvIUk5ByT4F8ZxU++ey5WkMc+SWGX1dMq6buEM@vger.kernel.org, AJvYcCVgiCv8cqvka5zzfTp5aQOJh/bFN4V4/GCml5ihAbpzspINzHkniHXCR4X67olMcjIYTjS9e514/x5q@vger.kernel.org, AJvYcCWSpNiA53E9kguApI1wNmCDiGVc7QwfrQpIuBhliiqlCbAeUVx0CUQimECVo/Jy/2OG+78d6GYkcCeM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5XMaIskqOEBtxDq9LbmKBrI0JfGdbNbu6JO002SN+4ZFBkn0W
+	ebbCM8hHnDjjXpHCzfO/cfb/blBUGoS9fo92s8W5g+jT6c1ES4rqXw4=
+X-Gm-Gg: ASbGnctQOQXVxpRKrPHbsE/5+TLX+9wRBDd9IQj9+yrvXKJ6NDpXExwTBJTpd7yVzUL
+	IDAh0rCPuxfumQ40cjKAORWy8vu1DC67gGQNmkh9e4uB5qZ20IpphVXv3yrD8pJ3QwXn6gIjiDM
+	XgthR3Zk8bdwdsi4X57gSxvGpMrfGd48mkWMDpVO4zLze0CVgrBEUZPdeO01LcuuY5MwifVOJm2
+	UKO0Wk/A4SfylghhGkkLHuVVxxOe/ux1agBUSeNUHN652ijgPHcpGu2Rj0YpXgpUw98EmPG/ofD
+	NGqYE5slJSNoeci9DLkRzcTenF/z54qsg7v135JZ99dPCUMEKJPXbVb8C4r1XpNaQ0OqEocuNHM
+	PYkmH8wBNYZRMnmchpHPpcELNfdYJjR6kMze5R9Oe7Gd7i/g=
+X-Google-Smtp-Source: AGHT+IEs9RATz2qgLuJA5chn4JXaeYgqNLc630vWFgxHwxIDhFUvnnJzs/h1dP2JZIxOXl5NODbOIQ==
+X-Received: by 2002:a05:6000:2907:b0:3d8:e1de:7e77 with SMTP id ffacd0b85a97d-3e641d46744mr1684604f8f.1.1757170797178;
+        Sat, 06 Sep 2025 07:59:57 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:143f:cf9:d8da:f38a:fb6d:ea])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fba9fbsm35106544f8f.50.2025.09.06.07.59.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 07:59:56 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: robh@kernel.org,
+	andreas@kemnade.info
+Cc: lee@kernel.org,
+	krzk+dt@kernel.org,
+	tony@atomide.com,
+	conor+dt@kernel.org,
+	ukleinek@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v6 0/3] dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
+Date: Sat,  6 Sep 2025 16:59:02 +0200
+Message-Id: <20250906145905.93845-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <2025090629-economy-geologist-3548@gregkh>
-Date: Sat, 6 Sep 2025 11:56:49 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FAC86B63-854F-494C-A55E-4A01BE7511D3@collabora.com>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
- <2025090618-smudgy-cringing-a7a4@gregkh>
- <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
- <2025090601-iron-glitter-c77d@gregkh>
- <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
- <2025090629-economy-geologist-3548@gregkh>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Update the main TI TWL-family binding to be self-contained and to fix
+pre-existing validation errors.
 
+v6 key changes:
+  - (1/3) The binding file is updated with stricter rules for the
+    twl4030-power node.
+  - Added two new patches, (2/3) & (3/3); The beagleboard-xm & n900 DTS
+    files are respectively corrected to comply with the new binding.
 
-> On 6 Sep 2025, at 10:07, Greg Kroah-Hartman =
-<gregkh@linuxfoundation.org> wrote:
->=20
-> On Sat, Sep 06, 2025 at 09:41:16AM -0300, Daniel Almeida wrote:
->>=20
->>=20
->>>>=20
->>>> I thought that an iterative approach would work here, i.e.: merge =
-this, then
->>>> URBs, then more stuff, etc.
->>>=20
->>> Ah, that makes sense, I didn't realize you want that here.  What USB
->>> device do you want to write a rust driver for?  Are you going to =
-need
->>> bindings to the usb major number, or is it going to talk to some =
-other
->>> subsystem instead?
->>>=20
->>> Right now, these bindings don't really do anything USB specific at =
-all
->>> except allow a driver to bind to a device.
->>>=20
->>> thanks,
->>>=20
->>> greg k-h
->>=20
->> To be honest, I'm trying to pave the way for others.
->>=20
->> I often hear people saying that they would look into Rust drivers if =
-only they
->> did not have to write all the surrounding infrastructure themselves. =
-On the
->> other hand, there is no infrastructure because there are no drivers. =
-It's a
->> chicken and egg problem that I am trying to solve.
->=20
-> Sure, but a framework like this (probe/disconnect), really isn't USB,
-> it's just driver core stuff :)
->=20
->> It's also a cool opportunity to learn about USB, but I don't have any =
-plans
->> for a driver at the moment other than a instructional sample driver =
-in Rust.
->=20
-> Then let's not add bindings without a real user please.  We don't want
-> to maintain them for no good reason.
->=20
+The complete dtbs_check for this binding is clean except for two
+warnings originating from pre-existing bugs in the OMAP DTS files,
+for which fixes have already been submitted separately [1][2].
 
-That=E2=80=99s OK Greg, I totally see your point here. I guess we can =
-shelve this
-work for the time being then.
+---
+Changes in v6:
+  - Refactored the ti,twl4030-power compatible schema to be much stricter,
+    removing obsolete board-specific compatibles (-n900, -beagleboard-xm),
+    that were added in v5. The schema now only permits specific, valid
+    fallback combinations.
+  - This series presents two new patches (2/3) & (3/3), which update the
+    affected DTS files by removing obsolete entries.
+  - Enforced the presence of the compatible property on all relevant
+    sub-nodes by adding 'required: - compatible', closing a key validation
+    loophole.
+  - Applied various formatting cleanups for readability and correctness.
 
-To everybody else: if anyone is willing to write USB drivers, let me =
-know. I
-will work with you to get the abstractions in place so that we have both =
-the
-abstractions and a real user.
+Changes in v5:
+  - Restructured the entire binding to define properties at the top
+    level instead of if/then blocks, per maintainer feedback.
+  - Added specific compatible enums for new child nodes instead of a
+    generic 'compatible: true'.
+  - Set 'unevaluatedProperties: false' for 'pwm' and 'pwmled' nodes to
+    enforce strict validation.
+  - Expanded 'power' node compatible enum to include all board-specific
+    compatible strings (used in existing device trees, e.g. OMAP3-based
+    boards) for more complete coverage.
+  - Corrected the schema for the 'power' node compatible to properly
+    handle single and fallback entries.
 
--- Daniel=
+Changes in v4:
+  - Reworked binding to be independent and bisectable per maintainer
+    feedback by using 'additionalProperties: true' for child nodes.
+  - Added board-specific compatibles to the 'power' node enum.
+  - Added definitions for 'clocks' and 'clock-names' properties.
+  - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
+    existing Device Tree usage (twl6030.dtsi).
+  - Fixed some spelling/grammar erros in the description.
+
+Changes in v3:
+  - New patch to consolidate simple bindings (power, pwm) and add
+    definitions for all child nodes to fix dtbs_check validation
+    errors found in v2.
+
+Changes in v2:
+  - This patch is split from larger series [3] per maintainer feedback.
+  - Added missing sub-node definitions, resolving dtbs_check errors.
+
+[1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
+[2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
+[3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+
+Jihed Chaibi (3):
+  dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
+  ARM: dts: omap3: beagle-xm: Correct obsolete TWL4030 power compatible
+  ARM: dts: omap3: n900: Correct obsolete TWL4030 power compatible
+
+ .../devicetree/bindings/mfd/ti,twl.yaml       | 221 +++++++++++++++++-
+ .../devicetree/bindings/mfd/twl4030-power.txt |  48 ----
+ .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+ .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+ arch/arm/boot/dts/ti/omap/omap3-beagle-xm.dts |   2 +-
+ arch/arm/boot/dts/ti/omap/omap3-n900.dts      |   2 +-
+ 6 files changed, 212 insertions(+), 95 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+
+-- 
+2.39.5
+
 
