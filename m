@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-804390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5100FB4759F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:21:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADD0B475C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F900580F54
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB96564F6D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2596C2571A5;
-	Sat,  6 Sep 2025 17:21:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1240A269CF1;
+	Sat,  6 Sep 2025 17:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcRTwoQe"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1161D7999
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 17:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80B15D5B6;
+	Sat,  6 Sep 2025 17:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757179264; cv=none; b=j7tm6HGxBCBrU735OswKkn20dQDZUTymOwi/sgzIn42XbGkb57080WySNFgtVjuC4Bk8qh3k2/+wsiYqfTOY807fdQKOU1MuRgSQ8ji82x6Do48TW8U7akYFDW6cRzM0PNMzQLBfTTY02HtndpTLPIpJFjDuDc61UpDJ9QpMqp4=
+	t=1757179337; cv=none; b=uXqvMqJip1EgWAy7ZwlcPhj51Kh3e/Yt489K//k3+E2HsOZuL2gUckd5KZOohvf6R+RihmiujWOUvU+Q70rJwRHe4KBqTBJT9dvySiIdYgC96C9lLJ1+VtrddX6hNbEMx6CA8DEDtmFA5TyJkFg5NbfQo7dns/2Kmr+K/QjPqxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757179264; c=relaxed/simple;
-	bh=tQxZTMo28pR74Eba+y+tCQVhhsHZi3p/ioyT1ofUnS4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r1sXOtm2wlUMdG/DR6Imp5JyeoN2/aNl+XpzPF2FNB0HQ6PaS3ThpzTuen8CtOTA1VxmdNlBpXs149ABFcrQZFRTh1W+2TkR38z6V1L+5qzJJ+HqEDiCVazbElf36tVT63cCyQ1HyzYSI9pKj5fQUlgTULQiBARhOfFDzoNp5Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ec58544f79so87024265ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 10:21:03 -0700 (PDT)
+	s=arc-20240116; t=1757179337; c=relaxed/simple;
+	bh=GEjc/MZiSs5pA+NLyK1ocRIWX/r07ZJrV7YSReaHnLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ucsc0Ln7sjDBjvb91x/SMl/aKISe7tYcAsn3aPtaiv/qEGwkRQXeHTD8mXPayNiL22knb4dJCizVFrrm9dkd60slDMpDa2Wp6O+7/5vzWlKusGfXt1+oT8z7044Nt0qld8ZIwdCsxSA6md1iqlPGtvV9l4PzlWX8RNumaqHc1GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcRTwoQe; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-337cc414358so26404861fa.3;
+        Sat, 06 Sep 2025 10:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757179334; x=1757784134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SLBswoadtY/Z1Rk6E4ozam6v04Xnc0YdjRNFILOtZyE=;
+        b=ZcRTwoQe3h+uBR4IR5TzfldISycKzJOIZgqn9QPBTPeHUogOwuJuYcNq9T/X57Guv+
+         gBrX8jHoGcHq1RpMO4W5iUWLsfZOglrqLKOwFPnvRzqBvmGJF64jU5lfmnjIlykfsM8o
+         e3kr2qTa2SVbts25JbI6ANFJA1DZWutwVFUx0I28zLqpeeumjBnFx1hhJGBwvVobg4Gv
+         QqjmuFaSl8WxwSujQM/1t/P2eAT6v+3SWhzsFLWWHM0t7EoLakayL0ef9JYoTVk+qyaV
+         aJ/kiHjjlwoXpyX0tlxDjb4C1Esd+bwSuNjeMr6EWczDgABXGSNcdrr3t4/YZ0reh2J/
+         ZuGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757179262; x=1757784062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5KVdAtfXYXQWJRdIiNCPgVS46Oso5VqxBYZAHrli6R0=;
-        b=wCZgCXOApMekMk+X7QuJnh/cAh10R5r1SlXnw9Gob+HaBFork23DIuqTmrpKBZba5W
-         4IRiUKHGf4P4iElcrAFQzPFN/rheNo26OL38yzwVAiMFtOI6cB08lgoq4/tL/tvDxodr
-         G3+cHMH7HQKFsIo75UwzGg6hSDJLH3cS8VUN95UZrHjp11xLBj5ZKPpf7R47HmSntIPK
-         bPT/i0uL2aq5gz0sqjIkXejSiTBcg1bZyKfutXsD5KVPcHL31UM+eOGz/3T6hLL+Su9h
-         pzSpGFZwqkRY/x1g6D1tH+UKPSqyZD1fpGXArlGko/E9S1XKEmrdfQYEO1M5JTHJPCYr
-         iTOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQQctTBcM6QKmvx5FrpWLiWdcW7dTg33TSUUEAAAN6yfoMt1kfqJ22/+5aq8aBEAv26oqw+VR3+FYQwT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznjOU/r5qjAR5ZmWJpX+XFjFs0s3tvvNOq7gmV6+ZPnW8B3Dub
-	/xoC8I/Dfe2KaDdQkw+4u/MBs1V5i4/4KK3dDBxwbMy2Up9NUgaQdsS/4Zr+7+oYsYaHPDRf6+k
-	gXJmj8a1C52b/l6HlmA4JPrOXd1bPjRmqJat82REpSyGqM+rOviVVSRrFCg4=
-X-Google-Smtp-Source: AGHT+IHjtfsAvPlaAzgSpHJHqk93cwZfo+vC6d2Vdsdn/XJ0hGFuwgH1fqhtUvx/ZoGiBZhoYO/DOO8EDgCAUc6eoR+ho8iJJqNT
+        d=1e100.net; s=20230601; t=1757179334; x=1757784134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SLBswoadtY/Z1Rk6E4ozam6v04Xnc0YdjRNFILOtZyE=;
+        b=PoMOHHVfbDd/g11JNV9ja+5lzbGF1PTykBl2C+THZs8x9Ac9/rNpAHtqcCXU565FBH
+         gNePl9EqUHGxjnHoI/rU6oAOMUnEKDsRhjNefHHPhJ9VuVrTcC0Zr5WVycuNW/E2Gb/S
+         FmLkT+6vQiwKiR3Vp7QfU2Yh8I7WGcEjZq+VM3/JyEnHHI5wASE5/9u8JwLV4PbWbhRf
+         3CvfEZtoVdST3Qf0ojkpEz9heT1FfGTA7xJety5rPHs3CIl6A3nvNLRLEd9tEJWRgu7x
+         IEilyqwszfXXkg1yLYMOC8mZhYZ7uNmGT1Y5/C+zkZaAQoPugXLrTaGTDNPUr6+iuCCo
+         LCuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU41S8XL+nmzVfBgOZ9zEyw4DeV3NVrRCvSoTRt5DnaFAzL2SRtVa/fCS2JVzHv2VArptOdBjgBzbo8BKZD@vger.kernel.org, AJvYcCUdsyFSFVSa6g0M8z7FkTBaeNNETLqLzxg9pT2Wi9wWJzliJexHMnQun1Zu/yDCx6QFcqHqwfQDf9Y=@vger.kernel.org, AJvYcCUw6s/VuT7TGw+PnUNL42eYi4Iv0rdmq7/Lz2Iu1D/KDyObAb8Dcqd3dcw/w9Jqb5fvthSWvruPnpAx@vger.kernel.org, AJvYcCWWnkgwT5tgDEb7iPckkMWjTprgomop5LJATv7OmDvdrRRoSi4xy1UxiKK5mhhTeWgYznqsSj8yJ2G9N5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBOt/++rXcq4I9p2EnjeVmL0CZuIH8h/J/UdoWfQdxAVFfn4j
+	miAgANuK9rxZqhPkYBD3mhXS9n1xKFm7sNd/vOo/kGwI5mCDULMGknWANQz9DbPoyQ8zL5+szkp
+	AZ/7V28MZ+I49qVTETXGqHuF5wQAMQVw=
+X-Gm-Gg: ASbGncvbN+ujHR5+kJBXcU3/rwUeQ6s2RDIpJj0LEiaKCIc/hKtfKEgyT6RXLYEVKk9
+	iA/arEMXpYZMxy3pKaPqHqETPxWcVlOIVxIUhjWVpxkWrx8buOhWJgTN+aYc9s0WB6joNWjpg49
+	39SJtZp0dbV5Cxq0pxeupHonl0yx+RDLGNNckIZBT6ne0uiXBKW1Hj74XPAIqJUidYJGydAYhAn
+	iyQe1g7G8I08bx/vQ==
+X-Google-Smtp-Source: AGHT+IGUttnd6bDIZZjIggXw9ycYs2qWr2c6QGeJLhOasz1kEwDXyb69WjepMI4Phdw9wN75p2CmHZHYwxDU9qdmFR0=
+X-Received: by 2002:a2e:b8c9:0:b0:338:f:5ce9 with SMTP id 38308e7fff4ca-33b52891a56mr8562581fa.20.1757179333524;
+ Sat, 06 Sep 2025 10:22:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152c:b0:3f6:6068:8382 with SMTP id
- e9e14a558f8ab-3fd978f4c6bmr34467045ab.31.1757179262485; Sat, 06 Sep 2025
- 10:21:02 -0700 (PDT)
-Date: Sat, 06 Sep 2025 10:21:02 -0700
-In-Reply-To: <20250906164038.153124-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bc6d7e.050a0220.192772.01b1.GAE@google.com>
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
+ <20250903-t210-actmon-v2-3-e0d534d4f8ea@gmail.com> <20250904-groovy-sheep-of-wizardry-ad0ae9@kuoka>
+In-Reply-To: <20250904-groovy-sheep-of-wizardry-ad0ae9@kuoka>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Sat, 6 Sep 2025 12:22:02 -0500
+X-Gm-Features: Ac12FXzXqB-Wxx7_0jaBO62-jVTmudr9H9J1HjyTysGTyoh4yJxcTiHR8B2v-C0
+Message-ID: <CALHNRZ-3paF4jEVJCbaWt3S3BYLdDT2tHo9K6XrB-eiB6qSEHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] dt-bindings: memory: tegra210: emc: Document OPP
+ table and interconnect
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Sep 4, 2025 at 3:11=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Wed, Sep 03, 2025 at 02:50:09PM -0500, Aaron Kling wrote:
+> > These are needed for dynamic frequency scaling of the EMC controller.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  .../bindings/memory-controllers/nvidia,tegra210-emc.yaml    | 13 +++++=
+++++++++
+> >  1 file changed, 13 insertions(+)
+>
+> I asked to order patches within patchset in some logical way. First
+> patch was memory, second other, third again memory.
+>
+> There are no dependencies explained, so this looks like groupping
+> unrelated patches, therefore SPLIT finally the patchset per subsystem.
+>
+> >
+> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidi=
+a,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra210-emc.yaml
+> > index bc8477e7ab193b7880bb681037985f3fccebf02f..6cc1c7fc7a328bd18c7c0be=
+b535c1ff918bcdb2a 100644
+> > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
+210-emc.yaml
+> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra=
+210-emc.yaml
+> > @@ -33,6 +33,9 @@ properties:
+> >      items:
+> >        - description: EMC general interrupt
+> >
+> > +  "#interconnect-cells":
+> > +    const: 0
+> > +
+> >    memory-region:
+> >      maxItems: 1
+> >      description:
+> > @@ -44,12 +47,19 @@ properties:
+> >      description:
+> >        phandle of the memory controller node
+> >
+> > +  operating-points-v2:
+> > +    description:
+> > +      Should contain freqs and voltages and opp-supported-hw property,=
+ which
+> > +      is a bitfield indicating SoC speedo ID mask.
+> > +
+>
+> No opp-table?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+All other tegra devices have the opp tables in standalone nodes, not
+as subnodes to their users. I followed that style here, see patch 8.
 
-Reported-by: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
-Tested-by: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13687a42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17e7d312580000
-
-Note: testing is done by a robot and is best-effort only.
+Aaron
 
