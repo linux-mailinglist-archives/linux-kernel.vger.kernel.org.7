@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-803968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E569FB46810
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9327B46813
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DEB17B45A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A83EF5C6159
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0596186E40;
-	Sat,  6 Sep 2025 01:47:07 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF60C1991CB;
+	Sat,  6 Sep 2025 01:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aMPgdkMy"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5BB1DA23;
-	Sat,  6 Sep 2025 01:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547051CD2C;
+	Sat,  6 Sep 2025 01:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757123227; cv=none; b=Puefzu92+6fgCTjTGAn3sctU35abTWwauWNVg0UKfuY6D6u2IMOcvrGKLYUQ4p6ziaykKbwyJ4GFYqFhbDpsYJ9fK3eK4rSIszLKtMoxxQuffmLSto187DYDGTEFLzUy9XmzTQuAwYvzD6bFhTlBEAQFs2cissHCE+nSrZnl3wU=
+	t=1757123284; cv=none; b=QXQR9YcDKz4GFwtssUuZzBZyTsfwc7+o57YL4rZBXwNeoNp3++q+ZovffVffsIOy6WibAZx4lCASpa1ZkcBnrYuTVMHgBNAuKDShVDGzuOHXn4zrgNZ3dvjR/iWsMFPmAyRDSwqbXACCh0JP4tiKxd5IEP0G4tOMUibgWwv3x/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757123227; c=relaxed/simple;
-	bh=jqOyWvf19hwcssGfnEv2R3bI3eGkV4DbfS3igJePDmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JxpUDKogcrQO41zctnOpBcoRmucWPIt0K1SiTk46ej9ywffpS1b7osfIDur7LtP26T5QuHL2I75o5QAYPpsGkHzR4QgV82CcWjurZmKunoLj5/QFVwfj16mYMgz80sltCLvaAVGP3X2GadQEt9H5HNZztJHq9PAXPLtEWHZScuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.105] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowAC3B4J2krtoUhLyAA--.63050S2;
-	Sat, 06 Sep 2025 09:46:31 +0800 (CST)
-Message-ID: <19279021-e89e-458a-8bf1-62ad2f76a0ba@iscas.ac.cn>
-Date: Sat, 6 Sep 2025 09:46:31 +0800
+	s=arc-20240116; t=1757123284; c=relaxed/simple;
+	bh=A2D2aSftdcMZeG+xPlUYbYdg82HvTTXUJvhglE5jKag=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q07W/N2mnofBl8MlopJ4QnQpWZS7MeMn/tCCagUGNBgBlnqMDuIwNa2WY45zR2Tqm7UQEkOfuVVQAG1DPH/VwG9QHaaJCr6UHwzeoqLp/49MPu99aW4oluiA1URKueuTTHha/Dxs8qLd83vmZRSF37MAjdXMlb6rjFuWzhNWjXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aMPgdkMy; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5861lplt3440581;
+	Fri, 5 Sep 2025 20:47:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757123271;
+	bh=L7F0n7D432kI/8TDM2zzfMQeAXcSFxDGIcCb60S29Ag=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=aMPgdkMyU0tQsAXg6Z67kzB+8r9scFyKT3o5TgOgy+IJrss8I7NQAhNyKI/MWV8vt
+	 licxwf4EraFKp2U2gpVfNpe7cAhm/8w4RWzyZsTVqHYGHC1AWqA61xaWzIXMtAef78
+	 SPKmKULN0QmAOJ2JKPUMkCzqH6Wj24BMCBoDRzSk=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5861lpko2051501
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 5 Sep 2025 20:47:51 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 5
+ Sep 2025 20:47:51 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 5 Sep 2025 20:47:51 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5861lnUb1300100;
+	Fri, 5 Sep 2025 20:47:50 -0500
+Date: Sat, 6 Sep 2025 07:17:49 +0530
+From: s-vadapalli <s-vadapalli@ti.com>
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+CC: <vigneshr@ti.com>, <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <linux-omap@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: j721e: Fix incorrect error message in probe
+Message-ID: <22e63c06-ec7f-4afe-8fc2-f90d49004ce9@ti.com>
+References: <20250905211436.3048282-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 2/5] net: spacemit: Add K1 Ethernet MAC
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, Vivian Wang <uwu@dram.page>
-References: <20250905-net-k1-emac-v9-0-f1649b98a19c@iscas.ac.cn>
- <20250905-net-k1-emac-v9-2-f1649b98a19c@iscas.ac.cn>
- <20250905153500.GH553991@horms.kernel.org>
- <0605f176-5cdb-4f5b-9a6b-afa139c96732@iscas.ac.cn>
- <20250905160158.GI553991@horms.kernel.org>
- <45053235-3b01-42d8-98aa-042681104d11@iscas.ac.cn>
- <20250905165908.69548ce0@kernel.org>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250905165908.69548ce0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:rQCowAC3B4J2krtoUhLyAA--.63050S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFyDKF1DKr48Kr1UJF17trb_yoW3WFXEgr
-	Wq9Fs2krs8WF1qga13Ja1Ygr4DAa42gFyUXryS9w1qv3sxXFyFgF4DWr4qvw18W3yagrnI
-	qr4rZrn7u34jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-	MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IUn1v3UUUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250905211436.3048282-1-alok.a.tiwari@oracle.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On Fri, Sep 05, 2025 at 02:14:34PM -0700, Alok Tiwari wrote:
+> The probe function printed "pm_runtime_get_sync failed" when
+> j721e_pcie_ctrl_init() returned an error. This is misleading since
+> the failure was not from pm_runtime but from the controller init
+> routine. Update the error message to correctly reflect the source.
+> 
+> No functional changes.
+> 
+> Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+> Not sure if a Fixes tag is required here
+> ---
+>  drivers/pci/controller/cadence/pci-j721e.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 6c93f39d0288..5e445a7bda33 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -549,7 +549,7 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+>  
+>  	ret = j721e_pcie_ctrl_init(pcie);
+>  	if (ret < 0) {
+> -		dev_err_probe(dev, ret, "pm_runtime_get_sync failed\n");
+> +		dev_err_probe(dev, ret, "j721e_pcie_ctrl_init failed\n");
+>  		goto err_get_sync;
+>  	}
 
-On 9/6/25 07:59, Jakub Kicinski wrote:
-> On Sat, 6 Sep 2025 00:35:37 +0800 Vivian Wang wrote:
->>>> On a closer look, these counters in ndev->stats seems to be redundant
->>>> with the hardware-tracked statistics, so maybe I should just not bother
->>>> with updating ndev->stats. Does that make sense?  
->>> For rx/tx packets/bytes I think that makes sense.
->>> But what about rx/tx drops?  
->> Right... but tstats doesn't have *_dropped. It seems that tx_dropped and
->> rx_dropped are considered "slow path" for real devices. It makes sense
->> to me that those should be very rare.
-> Pretty sure Simon meant the per-cpu netdev stats in general.
-> There are three types of them, if you need drops I think you
-> probably want dstats. Take a look.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-Thank you, I will look into this.
-
+Regards,
+Siddharth.
 
