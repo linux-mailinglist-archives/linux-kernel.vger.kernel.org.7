@@ -1,192 +1,261 @@
-Return-Path: <linux-kernel+bounces-804081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B12B469AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A5AB469AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D386B1CC6509
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:58:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7064F1CC79C7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A282D0636;
-	Sat,  6 Sep 2025 06:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TNH2RsmK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06EA286D49;
+	Sat,  6 Sep 2025 07:00:34 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6687C2165EA
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 06:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7785B22D780
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 07:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757141872; cv=none; b=rWY2HqwEarEgWxfeN6GObrQTAUS3bO+A3zIFzgOt3VmzEAOatojeXji0AyJ65iLwR4CV6s+AcCYTPnUJ5m3z2BucxK9gJIGcB08CRdwED5ekm6XAYxDIsisQKHOBiqFixNHUDl9zBlVttxw9WI8Xu3QqJc0GndiIqE+cHe32v2o=
+	t=1757142034; cv=none; b=T9NohZahEbtHWF5u269IffEzj4OW2dOVeRgY2pq1MjHFegFM1h+cfNI1hJWScmsYkh4YksVHhJFJcK5V7VPl/e76ZaRvRvI3tUOZRsX3Zl7Ai5FH7b+wjAbo7n+OOxeBI+fx1yb9j7mPHjgdkHDZf/GqRBJnAh7q+VItmZmfmt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757141872; c=relaxed/simple;
-	bh=ZdjKkfJoHiNakSwH8vDlKRd1pmuPHtWQLHwJ3ze4QIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fGVitzwqBPgH0QHzj0hNfx4Klreo9FnlClaWvBFRjjOyUWloqMsh63DxSH5/F+8XQBxNWoadTN6+n+DOOEJoB++KMntTE+6+aWwvAGzxdVtuf0frL/E8sdDyZJ2WBi9iWqFyAyUHQI+WF/HeonU9I6Uv4CfASmIzZvlEhnM52Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TNH2RsmK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757141869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AMjDlR0sGCSb1S5XkqRhY0gCtJvKgV/eSaD7F6oVPO0=;
-	b=TNH2RsmKgnzQCBCzyRMlSz2yuk10Gp38IAmW4PpmhMn5L+4bTOcXPqNkrDrVPDxZWO4Nwl
-	Izq9xCsb71CKzpiAg9e9vAD6k4k5yWT9P25Pks+h/Ro7cs8rgK5rYfJTE16fr7Y7W62TUg
-	YDIz4620DUM1XciffpRuA0zhguURnKM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-301-DJjOIiObODGWwQ0SudJ6NQ-1; Sat,
- 06 Sep 2025 02:57:46 -0400
-X-MC-Unique: DJjOIiObODGWwQ0SudJ6NQ-1
-X-Mimecast-MFC-AGG-ID: DJjOIiObODGWwQ0SudJ6NQ_1757141864
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B57119560B2;
-	Sat,  6 Sep 2025 06:57:43 +0000 (UTC)
-Received: from [10.45.224.31] (unknown [10.45.224.31])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 630641955F24;
-	Sat,  6 Sep 2025 06:57:39 +0000 (UTC)
-Message-ID: <2948c2d9-1600-444d-89c9-c129ddfba109@redhat.com>
-Date: Sat, 6 Sep 2025 08:57:37 +0200
+	s=arc-20240116; t=1757142034; c=relaxed/simple;
+	bh=SHgws0gGg+fNmvImD3TlMbp4DWJ4s0janFF8hqa/3E0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MH9ALWqtLgCWJ1l0nUJ18TPyukKF0sIyY4+pYX55d+xit87mvzfAjNbJd+7iNxSPP3CowrMJ4lsKMmF3tEgP68qJIiRZQ8lzNpM9W7gy0eTIin4SHd35cmb9AI2hGZ5cfOlIRitTcAox3w9gGH5bot7L5aXCWr9nnCbG6IEpBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8875735aecfso931268539f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 00:00:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757142031; x=1757746831;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RGAIqqn4Kt7ezAKc89NxtvJYNMUZppmyY5pMx+h0tU0=;
+        b=El4jltVjGGJ960nsMMwpKRV1AXYITaOyKmSqu0kKRnPdF9FShHvxZE/CG4Sy72mENQ
+         8GWi3LMtuPIZYiAmDY3YXLBOjQeHqyO1wECM1PqGLpVdRhtWrMqJm9WmMRngQ6ItZNnz
+         vwnrTBvvYqZTl/KOAf6iAfhohu307fHH1zCWsDCyM8lssvQkv230IhNL7YKDm3DZY8CE
+         ap6VhWaa+xCA1QLeM+OfcxcXOf5e1+KLbvShbM0Sg6SPVQLVhj1R/j1URuTzG0QZRLOw
+         +YczjhhVMzhLlEIj035AFJST2dIrJ34tJQ3o/nVYr61G5DiJbthasB88uE+I5HjR0hfp
+         tJsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrwnGqpKzMwuKJ6VUtNxPkFIPtDcyAAw7qjRV7baSL35C2xkWGuFtRSTx2vM0AAnBNi8i2POXtuXL0Zqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy66R2ovODXj+F14Mn7MqiCkEXSd+lSGQdU+ljbsN8sNNnUoxF+
+	tfHOh7NIG0S/mavzuZz7idm/4UPcvImwrNwbP7aIdcgRjHedFCZC3jaEVIL5II1nG53BZBL3gHI
+	d8WtqTLe39bSV9RxzfPfXv+J6DnZweWvKbt8HB115ECZdXZb0R4lpyJbd5C8=
+X-Google-Smtp-Source: AGHT+IG8nHuA8pmAHNIA/FYPwzRZiOvyNflxHsXtuDaueyNrEoqa2R+ztHL0GVKM2/FJquFf+QVietDwRwUjaNfMnrVpexr1e6qQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 2/5] dpll: zl3073x: Add low-level flash
- functions
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20250903100900.8470-1-ivecera@redhat.com>
- <20250903100900.8470-3-ivecera@redhat.com>
- <20250905191905.05476586@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250905191905.05476586@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6602:6d11:b0:883:ee95:7266 with SMTP id
+ ca18e2360f4ac-8877768cf57mr198023439f.9.1757142031570; Sat, 06 Sep 2025
+ 00:00:31 -0700 (PDT)
+Date: Sat, 06 Sep 2025 00:00:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bbdc0f.050a0220.192772.01a8.GAE@google.com>
+Subject: [syzbot] [serial?] KASAN: slab-out-of-bounds Write in do_con_write (2)
+From: syzbot <syzbot+1046ca04f5ba70aa8206@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    c8ed9b5c02a5 Merge tag 'drm-fixes-2025-09-05' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110ca962580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fecbb496f75d3d61
+dashboard link: https://syzkaller.appspot.com/bug?extid=1046ca04f5ba70aa8206
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4da8d56aff3a/disk-c8ed9b5c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1366baa37dbc/vmlinux-c8ed9b5c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0674b31d870d/bzImage-c8ed9b5c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1046ca04f5ba70aa8206@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in vc_con_write_normal drivers/tty/vt/vt.c:3086 [inline]
+BUG: KASAN: slab-out-of-bounds in do_con_write+0x3839/0x8280 drivers/tty/vt/vt.c:3178
+Write of size 2 at addr ffff88803467ff96 by task syz.3.1321/12594
+
+CPU: 0 UID: 0 PID: 12594 Comm: syz.3.1321 Tainted: G     U              syzkaller #0 PREEMPT(full) 
+Tainted: [U]=USER
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ vc_con_write_normal drivers/tty/vt/vt.c:3086 [inline]
+ do_con_write+0x3839/0x8280 drivers/tty/vt/vt.c:3178
+ con_write+0x23/0xb0 drivers/tty/vt/vt.c:3516
+ process_output_block drivers/tty/n_tty.c:561 [inline]
+ n_tty_write+0x41c/0x11e0 drivers/tty/n_tty.c:2377
+ iterate_tty_write drivers/tty/tty_io.c:1006 [inline]
+ file_tty_write.constprop.0+0x504/0x9b0 drivers/tty/tty_io.c:1081
+ tty_write drivers/tty/tty_io.c:1102 [inline]
+ redirected_tty_write drivers/tty/tty_io.c:1125 [inline]
+ redirected_tty_write+0xd4/0x150 drivers/tty/tty_io.c:1105
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x7d3/0x11d0 fs/read_write.c:686
+ ksys_write+0x12a/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efc5798ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efc58815038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007efc57bc5fa0 RCX: 00007efc5798ebe9
+RDX: 0000000000000028 RSI: 00002000000005c0 RDI: 0000000000000003
+RBP: 00007efc57a11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007efc57bc6038 R14: 00007efc57bc5fa0 R15: 00007ffe3160a858
+ </TASK>
+
+Allocated by task 5865:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4376 [inline]
+ __kvmalloc_node_noprof+0x27b/0x620 mm/slub.c:5067
+ netif_alloc_rx_queues net/core/dev.c:10936 [inline]
+ alloc_netdev_mqs+0xc82/0x1530 net/core/dev.c:11882
+ rtnl_create_link+0xc08/0xf90 net/core/rtnetlink.c:3633
+ rtnl_newlink_create net/core/rtnetlink.c:3815 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3942 [inline]
+ rtnl_newlink+0xb69/0x2000 net/core/rtnetlink.c:4057
+ rtnetlink_rcv_msg+0x95e/0xe90 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg net/socket.c:729 [inline]
+ __sys_sendto+0x4a0/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88803467e000
+ which belongs to the cache kmalloc-cg-4k of size 4096
+The buggy address is located 3990 bytes to the right of
+ allocated 4096-byte region [ffff88803467e000, ffff88803467f000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x34678
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b84b500 0000000000000000 0000000000000001
+raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b84b500 0000000000000000 0000000000000001
+head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000d19e01 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5239, tgid 5239 (udevd), ts 58016202013, free_ts 57921496167
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab mm/slub.c:2660 [inline]
+ new_slab+0x247/0x330 mm/slub.c:2714
+ ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kvmalloc_node_noprof+0x3b1/0x620 mm/slub.c:5067
+ seq_buf_alloc fs/seq_file.c:38 [inline]
+ seq_read_iter+0x826/0x12c0 fs/seq_file.c:210
+ kernfs_fop_read_iter+0x40f/0x5a0 fs/kernfs/file.c:279
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x8bf/0xcf0 fs/read_write.c:572
+ ksys_read+0x12a/0x250 fs/read_write.c:715
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5242 tgid 5242 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
+ discard_slab mm/slub.c:2758 [inline]
+ __put_partials+0x165/0x1c0 mm/slub.c:3223
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4191 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ __do_kmalloc_node mm/slub.c:4375 [inline]
+ __kmalloc_noprof+0x1d4/0x510 mm/slub.c:4388
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ tomoyo_realpath_from_path+0xc2/0x6e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x274/0x460 security/tomoyo/file.c:822
+ security_inode_getattr+0x116/0x290 security/security.c:2377
+ vfs_getattr fs/stat.c:259 [inline]
+ vfs_statx_path fs/stat.c:299 [inline]
+ vfs_statx+0x121/0x3f0 fs/stat.c:356
+ vfs_fstatat+0x7b/0xf0 fs/stat.c:375
+ __do_sys_newfstatat+0x97/0x120 fs/stat.c:542
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88803467fe80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88803467ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88803467ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff888034680000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888034680080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 06. 09. 25 4:19 dop., Jakub Kicinski wrote:
-> On Wed,  3 Sep 2025 12:08:57 +0200 Ivan Vecera wrote:
->> +/**
->> + * zl3073x_flash_download_block - Download image block to device memory
->> + * @zldev: zl3073x device structure
->> + * @image: image to be downloaded
->> + * @start: start position (in 32-bit words)
->> + * @size: size to download (in 32-bit words)
->> + * @extack: netlink extack pointer to report errors
->> + *
->> + * Returns 0 in case of success or negative value otherwise.
->> + */
->> +static int
->> +zl3073x_flash_download(struct zl3073x_dev *zldev, const char *component,
->> +		       u32 addr, const void *data, size_t size,
->> +		       struct netlink_ext_ack *extack)
-> 
-> function name doesn't match kdoc, and "Returns" -> "Return:"
-> 
-> No idea why the kernel-doc script doesn't catch this..
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Will fix...
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->> +		rc = zl3073x_write_hwreg(zldev, addr, *(const u32 *)ptr);
-> 
-> you're sure data is 4B aligned? Otherwise get_unaligned()
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Yes, this should be always aligned but you are right, using
-get_unaligned() here is the safest.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->> +		if (time_after(jiffies, timeout)) {
-> 
-> time_after_jiffies() ?
-
-I miss that macros, thanks for pointing out.
-
-Anyway:
-time_after(jiffies,...) -> time_is_before_jiffies(...)
-
-Will use.
-
->> +			if (signal_pending(current)) {
->> +				ZL_FLASH_ERR_MSG(extack,
->> +						 "Flashing interrupted");
->> +				return -EINTR;
->> +			}
-> 
-> Is the flash dual-banked? Normally random signals interrupting flashing
-> is recipe for bricked parts.
-
-The download is safe operation... During this the driver downloads
-block from host memory to device memory (RAM) and it is safe to break
-this operation. (What should not be interrupted is flash itself (device
-memory to internal flash memory).
-
-> A little odd to use "timeout" for periodic check. check_time?
-
-Will rename.
-
->> +	/* Return if no error occurred */
->> +	if (!count)
->> +		return 0;
-> 
-> Did I already accus^W ask you if AI helped you write this ? :D
-> This level of commenting makes me think of code generators :)
-
-:-D no, I didn't really use AI for code generation :-D
-
-As the zl3073x is the first standalone DPLL driver I tried from the
-start to write well commented code :-) But maybe I overdid it a bit :-)
-
-> +	/* Enable host control */
-> +	rc = zl3073x_flash_host_ctrl_enable(zldev);
-> +	if (rc) {
-> +		ZL_FLASH_ERR_MSG(extack, "cannot enable host control");
-> +		goto error;
-> +	}
-> +
-> +	zl3073x_devlink_flash_notify(zldev, "Flash mode enabled", "utility",
-> +				     0, 0);
-> +
-> +	return 0;
-> +
-> +error:
-> +	rc = zl3073x_flash_mode_leave(zldev, extack);
-> +	if (rc)
-> +		ZL_FLASH_ERR_MSG(extack,
-> +				 "failed to switch back to normal mode");
-> +
-> +	return rc;
-> 
-> Should we be overriding rc here if there was an error on entering
-> but we cleanly left? If so that _is_ worth commenting on..
-
-Oops, this is an error, we should not override final rc here... Instead
-of this the driver should make its best to revert back to normal mode.
-
-Will fix this.
-
-Thanks for the review,
-Ivan
-
+If you want to undo deduplication, reply with:
+#syz undup
 
