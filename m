@@ -1,198 +1,230 @@
-Return-Path: <linux-kernel+bounces-804392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DEDBB475CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:22:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBDEB475D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D171BA01DCD
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697647C5B0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC7126B77D;
-	Sat,  6 Sep 2025 17:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0012EDD6C;
+	Sat,  6 Sep 2025 17:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njJ4kGuJ"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A50266EEA;
-	Sat,  6 Sep 2025 17:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gUtA0tcB"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49A1F94A;
+	Sat,  6 Sep 2025 17:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757179347; cv=none; b=DnevCofxN5YnPt2luHX2Hwh7t+MM0J5nu9JpeUx/spgHPzpHwSmi8vjQ7oDcAet03CMMgp+piJASnJROCW6ZsBw4e1HC3dfJlX7f3nO4jMDWLInYMepr/eSofjb0yCROvdJb/VBVNVfUVHb3GssTMMM6I6adwMzuCw4AdQQLpL0=
+	t=1757179848; cv=none; b=XWFdCqAX/TCZiFv5fkoX1lmmUrcaKrJ3GC9ZFfjWv5wox0ruy6fuQUtWTYYwGSBf9Tn97ME1kdRrEuSCyT7fdQk+4QL0aUHDo4gOUViyLwpoA0J1lNsXBdV+MpW4QJmxX7dICfs6ZfGJDSodZqxlFrJiO7BGpIsAq3uo9NCd4I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757179347; c=relaxed/simple;
-	bh=MJPdRrONakWXxOxEQWgsQYVE/bfwQLRKAPlHNaeeTlw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8yJzD59d15wTsdsi80NxA/nk7l6uZe/z3qo+UBpS15ouhe5qwd2edNl4N3m0PQFjr+cF9dLp3WR2tGA7obq7oJI15GuZXZU+IgSov9U+vYRrMD1ZHqtsonDvey5xbv1znyMJk8Vtfp1jCKohwIE5JE4VxVZjsQTDP74zD6kCc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=njJ4kGuJ; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b04b869abb9so62792866b.1;
-        Sat, 06 Sep 2025 10:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757179343; x=1757784143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/hMIupBscvuO4EPQ/Tt0MsH4XbYqSn2Fhm3xvRpI+s=;
-        b=njJ4kGuJmZtNI/Vo7pyQPqP1fopcQ13SCBZEkGxNkgxnT5SWblmxbwrzt+hJgBe8jH
-         Wo+Gp5ZT3mGu/jIMb7rZwhi1I0AFcrNyFC0xaHHT8OANboPnANxZSJNHQMpn1FmBzmT7
-         4MYfqCgWwFyvBcJIB2G5n+ixaOOOkdXL7HNHhRX7reThmbPnKxz+U0I1PVpBqFZ/ISLs
-         JtsQVFk6UnWw4Qz9TZ5YJxwg2iH0vRSaaT9NqHB404g/kZ7nDanAQbkmmgHw97TelpJH
-         MFZCpvFV8f7iLyvaE97elUDxHV8Sb48P6S4HjmkO8hVK3k1uWuoPOnE/aeQVrA2itzVM
-         axjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757179343; x=1757784143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/hMIupBscvuO4EPQ/Tt0MsH4XbYqSn2Fhm3xvRpI+s=;
-        b=QzEBnFhR8CLOEbh8tfBf4DxvCaNs41w/zJG74atC2c2lTjvLje4R7aGo7d/zgEyxDR
-         7sXuzkX8XxAmjCMCkaF8xkKKRTG/JCPZDbVM/iFN9ojVyuUKUCRae0h0x/z56dft2Fx9
-         UjtOJ+r50OjfQH0p6NwwXA3zsL3zVDNkl/6123DDi8JLcrq/eIulBquIILEt1Zc6z8Ai
-         cO0suOrsnd8KiOcxFrSmylXLeVWsLqPL/xsK3Wnc3Kb2iWJxwx3rEcSIkoryYlJtulqI
-         YWaNeMnpqu2ndasf/eVr1Tf0LvW5mXtQMFY+dtxgSNv6tHLxdQk73CpV5nfKcJSJKuXV
-         ssoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcxnkhCpSi1CZBL6jeTrE6VK43U6bOhjMIbkqBg4Gz8GCSwLfd3qxXc9vvGPWMzzw/MlHLYL7UwMRyZK4=@vger.kernel.org, AJvYcCWhTS4iOeuTZLWXg/Pq8S0sCB1I5EUPrrCT3W0qQyiOYmVXTkMR82Up78ZwZ5X7GD/72rr1pfUf0Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeYDsn0MZ2oQ0gicKnqfeSivKrYqMP1x2kQM+GDCAGrWv76Yw2
-	hLnToPxowDLYGo3F3M9wTn5bK2+jBnnbMOX1PPvtEoy/DBfNxivLGqATGoFdDbnIeFj5JMnthtz
-	W32QwjreiHmUIF4TYmIopkesiOZ+aIpA=
-X-Gm-Gg: ASbGncuN/NZHnIofffKJy9CVlI6ziGN99Ij6iteeenm8t2bvWaTW7rjbiAaG4ynGfDn
-	ssGPiPZ0HGGHFOvCbE4Ph6mSZXZAXf7UxLDH1oC5vFgWyFGE0JuVQQljQqqarg5KIuaLcWbIdFy
-	Hi132NoAnUFKqT6DrrfbRexKwfKcuaTwjbEVVgYctzgSYEJQ8k5OM1yLhLrld+iWJQsZ5zxjIe1
-	iZSxeEpWDE+PzeENEbpQBe3McENOQVffZ5rI0fOC2a6IaiRiQ==
-X-Google-Smtp-Source: AGHT+IHPrzgQMbrXWR06J3+2IY2pmoNozG9f+sOFa1muRT0XJT0J6CNFJbzQzFAMI7vcEmflXtRpDCuqd7TNeACKbpI=
-X-Received: by 2002:a17:907:9410:b0:b04:ac31:cd31 with SMTP id
- a640c23a62f3a-b04b1451f7fmr257815766b.18.1757179343315; Sat, 06 Sep 2025
- 10:22:23 -0700 (PDT)
+	s=arc-20240116; t=1757179848; c=relaxed/simple;
+	bh=lY+DS6mHFzi2pKRJxntO5cz7uawoXIrIP5TwnkX3LBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QEzk8LQoNNlLB3Bps/t5XT2BI5+sNtS7DV+PuEVJwRgae+cXju/sq6urkU6/8dsaiaNtSW/V726rSStaTj3J0h/ZM6NePc6PvzZ07n1grZCL2m1DchZvf8ymjjTjaP7VqDFmSy0eXXK6ME1Ch0R4qJLPHaDFQXffM+XfFctkdDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gUtA0tcB; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=MJ
+	u/9PoCR1OEbESlMnG9vVMb2l31pESeJiucrrwNtZ4=; b=gUtA0tcBY2Frv/yInx
+	KFoEMVl+08PXomhK1DqEebYwFiCnVk7zblc/qNw7gX7m/yS//jqbX+/Kn9XV+dDB
+	kwzfuKpc25+a2/+G+2rYieYbztSR6R2Lp93UeGJ2T7px0N3f7w3mx11wG3xmkagG
+	GfHHoc50OuaBHWuedeB/4pJ74=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3f+Wbb7xoubfqGQ--.36512S2;
+	Sun, 07 Sep 2025 01:30:04 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	kerneljasonxing@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xin Zhao <jackzxcui1989@163.com>
+Subject: [PATCH net-next v11 0/2] net: af_packet: optimize retire operation
+Date: Sun,  7 Sep 2025 01:29:59 +0800
+Message-Id: <20250906173001.3656356-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825185807.57668-1-vivekyadav1207731111@gmail.com>
- <CAJZ5v0gfrTvLgs=PdmRbRRN05GE4Bk8Q7hJdtQfyk3VqaOz7FQ@mail.gmail.com>
- <CABPSWR5cG=xTA72BHayYQTb=24VS3N+=dbsiMcU+gyqTKvNXAQ@mail.gmail.com>
- <2fb11c0970da307cf8cf4f35d35c49f78f82ee72.camel@perches.com>
- <CAJZ5v0iAfgE4RkVXH7GaG9SqvGa0VfVuFi_cLd0utC8oPY0Fkg@mail.gmail.com> <99c1c03a9f7fe55b8f73e5574612dc3e1cd1af55.camel@perches.com>
-In-Reply-To: <99c1c03a9f7fe55b8f73e5574612dc3e1cd1af55.camel@perches.com>
-From: vivek yadav <vivekyadav1207731111@gmail.com>
-Date: Sat, 6 Sep 2025 22:52:11 +0530
-X-Gm-Features: AS18NWATrau_XSgNpQXKBMdEXPkIlXn_qvi-65LrRfyCeYLtq6uJjOq-XKj3GvA
-Message-ID: <CABPSWR6uKR0fz1-jJcJ1_JCsBbXhHioUe3o02DMSP8T18y1T1Q@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: sysfs: Use sysfs_emit/sysfs_emit_at instead of sprintf/scnprintf
-To: Joe Perches <joe@perches.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, daniel.lezcano@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f+Wbb7xoubfqGQ--.36512S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKw43ZFyDKrWUJw4DAFWxCrg_yoWfXF4fpa
+	yUu34xGw4DZ342gw4xZan7ZFyrZw43Jr1UGrs3J3yFyan8CFy8AFW2934SqFZ7ta95Kwn7
+	Zr48XF13A3Z8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi8hL5UUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgXACmi8bb4vIgAAsr
 
->On Fri, Sep 5, 2025 at 8:22=E2=80=AFPM Joe Perches <joe@perches.com> wrote=
-:
->>
->> On Fri, 2025-09-05 at 22:57 +0530, vivek yadav wrote:
->> > On Mon, Aug 25, 2025 at 8:58=E2=80=AFPM <vivekyadav1207731111@gmail.co=
-m> wrote:
->> > > >
->> > > > From: Vivek Yadav <vivekyadav1207731111@gmail.com>
->> > > >
->> > > > The ->show() callbacks in sysfs should use sysfs_emit() or
->> > > > sysfs_emit_at()
->> []
->> > > > diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
->> []
->> > > > @@ -22,21 +22,21 @@ static ssize_t show_available_governors(struct=
- device *dev,
->> > > >                                         struct device_attribute *a=
-ttr,
->> > > >                                         char *buf)
->> > > >  {
->> > > > -       ssize_t i =3D 0;
->> > > > +       ssize_t len =3D 0;
->> > >
->> > > The variable rename is not necessary or even useful AFAICS ->
->> >
->> > There is no harm if we leave the variable name as 'i' but it would be =
-better
->> > if we give it a suitable name like 'offset'. It will definitely improv=
-e
->> > readability.
->>
->> size and len are most commonly used.
->> I prefer len.
->
->Fine, in new code, use whatever you like, but what really is the
->reason for doing a rename in code that has been almost unchanged since
->2.6.22?
+In a system with high real-time requirements, the timeout mechanism of
+ordinary timers with jiffies granularity is insufficient to meet the
+demands for real-time performance. Meanwhile, the optimization of CPU
+usage with af_packet is quite significant. Use hrtimer instead of timer
+to help compensate for the shortcomings in real-time performance.
+In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+This is unacceptable in some high real-time systems that require timely
+processing of network packets. By replacing it with hrtimer, if a timeout
+of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+3 ms.
 
-Hi Rafael,
+---
+Changes in v11:
+- Modify the commit message of PATCH 1/2 to explain the changes clearly
+  as suggested by Jason Xing.
+- structure tpacket_kbdq_core needs a new organization
+  as suggested by Jason Xing.
+- Change the comments of prb_retire_rx_blk_timer_expired and prb_open_block
+  as suggested by Jason Xing.
 
-You are correct that the variable name =E2=80=98i=E2=80=99 has remained unc=
-hanged
-since v2.6.22. Its long-standing presence is understandable, but it
-doesn=E2=80=99t necessarily mean it can=E2=80=99t be updated in the future =
-if needed.
+Changes in v10:
+- kactive_blk_num (K) is incremented on block close. last_kactive_blk_num (L)
+  is set to match K on block open and each timer. So the only time that they
+  differ is if a block is closed in tpacket_rcv and no new block could be
+  opened. So the origin check L==K in timer callback only skip the case 'no
+  new block to open'. If we remove L==K check, it will make prb_curr_blk_in_use
+  check earlier, which will not cause any side effect
+  as suggested by Willem de Bruijn.
+- Submit a precursor patch that removes last_kactive_blk_num
+  as suggested by Willem de Bruijn.
+- Link to v10: https://lore.kernel.org/all/20250831100822.1238795-1-jackzxcui1989@163.com/
 
-As @Joe pointed out, statistics show that most developers prefer using
-more descriptive names such as =E2=80=98len=E2=80=99 or =E2=80=98size=E2=80=
-=99 when possible.
+Changes in v9:
+- Remove the function prb_setup_retire_blk_timer and move hrtimer setup and start
+  logic into function init_prb_bdqc
+  as suggested by Willem de Bruijn.
+- Always update last_kactive_blk_num before hrtimer callback return as the origin
+  logic does, as suggested by Willem de Bruijn.
+  In tpacket_rcv, it may call prb_close_block but do not call prb_open_block in
+  prb_dispatch_next_block, leading to inconsistency between last_kactive_blk_num
+  and kactive_blk_num. In hrtimer callback, we should update last_kactive_blk_num
+  in this case.
+- Remove 'refresh_timer:' label which is not needed while I change goto logic to
+  if-else implementation.
+- Link to v9: https://lore.kernel.org/all/20250828155127.3076551-1-jackzxcui1989@163.com/
 
-With this in mind, I believe it=E2=80=99s time to bring this discussion to =
-a
-conclusion. Shall we move forward with this change in variable naming
-=E2=80=94 YES or NO?
+Changes in v8:
+- Delete delete_blk_timer field, as suggested by Willem de Bruijn,
+  hrtimer_cancel will check and wait until the timer callback return and ensure
+  enter enter callback again;
+- Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
+  Currently timer callback just restarts itself unconditionally, so delete the
+ 'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
+  directly and always return HRTIMER_RESTART. The only special case is when
+  prb_open_block is called from tpacket_rcv. That would set the timeout further
+  into the future than the already queued timer. An earlier timeout is not
+  problematic. No need to add complexity to avoid that.
+- Link to v8: https://lore.kernel.org/all/20250827150131.2193485-1-jackzxcui1989@163.com/
 
-Looking forward to your input.
+Changes in v7:
+- Only update the hrtimer expire time within the hrtimer callback.
+  When the callback return, without sk_buff_head lock protection, __run_hrtimer will
+  enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
+  enqueuing a timer may cause chaos in the hrtimer red-black tree.
+  The setting expire time is monotonic, so if we do not update the expire time to the
+  retire_blk_timer when it is not in callback, it will not cause problem if we skip
+  the timeout event and update it when find out that expire_ktime is bigger than the
+  expire time of retire_blk_timer.
+- Use hrtimer_set_expires instead of hrtimer_forward_now.
+  The end time for retiring each block is not fixed because when network packets are
+  received quickly, blocks are retired rapidly, and the new block retire time needs
+  to be recalculated. However, hrtimer_forward_now increments the previous timeout
+  by an interval, which is not correct.
+- The expire time is monotonic, so if we do not update the expire time to the
+  retire_blk_timer when it is not in callback, it will not cause problem if we skip
+  the timeout event and update it when find out that expire_ktime is bigger than the
+  expire time of retire_blk_timer.
+- Adding the 'bool callback' parameter back is intended to more accurately determine
+  whether we are inside the hrtimer callback when executing
+  _prb_refresh_rx_retire_blk_timer. This ensures that we only update the hrtimer's
+  timeout value within the hrtimer callback.
+- Link to v7: https://lore.kernel.org/all/20250822132051.266787-1-jackzxcui1989@163.com/
 
-Best regards,
-Vivek
+Changes in v6:
+- Use hrtimer_is_queued instead to check whether it is within the callback function.
+  So do not need to add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer
+  as suggested by Willem de Bruijn;
+- Do not need local_irq_save and local_irq_restore to protect the race of the timer
+  callback running in softirq context or the open_block from tpacket_rcv in process
+  context
+  as suggested by Willem de Bruijn;
+- Link to v6: https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
 
-On Sat, Sep 6, 2025 at 12:43=E2=80=AFPM Joe Perches <joe@perches.com> wrote=
-:
->
-> On Fri, 2025-09-05 at 20:34 +0200, Rafael J. Wysocki wrote:
-> > On Fri, Sep 5, 2025 at 8:22=E2=80=AFPM Joe Perches <joe@perches.com> wr=
-ote:
-> > >
-> > > On Fri, 2025-09-05 at 22:57 +0530, vivek yadav wrote:
-> > > > On Mon, Aug 25, 2025 at 8:58=E2=80=AFPM <vivekyadav1207731111@gmail=
-.com> wrote:
-> > > > > >
-> > > > > > From: Vivek Yadav <vivekyadav1207731111@gmail.com>
-> > > > > >
-> > > > > > The ->show() callbacks in sysfs should use sysfs_emit() or
-> > > > > > sysfs_emit_at()
-> > > []
-> > > > > > diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
-> > > []
-> > > > > > @@ -22,21 +22,21 @@ static ssize_t show_available_governors(str=
-uct device *dev,
-> > > > > >                                         struct device_attribute=
- *attr,
-> > > > > >                                         char *buf)
-> > > > > >  {
-> > > > > > -       ssize_t i =3D 0;
-> > > > > > +       ssize_t len =3D 0;
-> > > > >
-> > > > > The variable rename is not necessary or even useful AFAICS ->
-> > > >
-> > > > There is no harm if we leave the variable name as 'i' but it would =
-be better
-> > > > if we give it a suitable name like 'offset'. It will definitely imp=
-rove
-> > > > readability.
-> > >
-> > > size and len are most commonly used.
-> > > I prefer len.
-> >
-> > Fine, in new code, use whatever you like, but what really is the
-> > reason for doing a rename in code that has been almost unchanged since
-> > 2.6.22?
->
-> If a sprintf -> sysfs_emit conversion is done, it's IMO better
-> style to be consistent with the typical sysfs_emit uses.
+Changes in v5:
+- Remove the unnecessary comments at the top of the _prb_refresh_rx_retire_blk_timer,
+  branch is self-explanatory enough
+  as suggested by Willem de Bruijn;
+- Indentation of _prb_refresh_rx_retire_blk_timer, align with first argument on
+  previous line
+  as suggested by Willem de Bruijn;
+- Do not call hrtimer_start within the hrtimer callback
+  as suggested by Willem de Bruijn
+  So add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer to indicate
+  whether it is within the callback function. Use hrtimer_forward_now instead of
+  hrtimer_start when it is in the callback function and is doing prb_open_block.
+- Link to v5: https://lore.kernel.org/all/20250819091447.1199980-1-jackzxcui1989@163.com/
+
+Changes in v4:
+- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
+  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
+  (re)start the hrtimer; otherwise, use hrtimer_forward_now to set the expiration
+  time as it is more commonly used compared to hrtimer_set_expires.
+  as suggested by Willem de Bruijn;
+- Delete the comments to explain why hrtimer_set_expires(not hrtimer_forward_now)
+  is used, as we do not use hrtimer_set_expires any more;
+- Link to v4: https://lore.kernel.org/all/20250818050233.155344-1-jackzxcui1989@163.com/
+
+Changes in v3:
+- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
+  as suggested by Willem de Bruijn;
+- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
+  as suggested by Willem de Bruijn;
+- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
+  _prb_refresh_rx_retire_blk_timer
+  as suggested by Willem de Bruijn;
+- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
+
+Changes in v2:
+- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
+  as suggested by Willem de Bruijn;
+- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
+
+Changes in v1:
+- Do not add another config for the current changes
+  as suggested by Eric Dumazet;
+- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
+  as suggested by Eric Dumazet;
+- Add some performance details to the changelog
+  as suggested by Ferenc Fejes;
+- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
+  as suggested by Willem de Bruijn;
+- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
+  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
+- Just return HRTIMER_RESTART directly as all cases return the same value
+  as suggested by Willem de Bruijn;
+- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
+- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
+
+Xin Zhao (2):
+  net: af_packet: remove last_kactive_blk_num field
+  net: af_packet: Use hrtimer to do the retire operation
+
+ net/packet/af_packet.c | 136 +++++++++++++----------------------------
+ net/packet/diag.c      |   2 +-
+ net/packet/internal.h  |  14 ++---
+ 3 files changed, 49 insertions(+), 103 deletions(-)
+
+-- 
+2.34.1
+
 
