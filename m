@@ -1,147 +1,182 @@
-Return-Path: <linux-kernel+bounces-803956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B6AB467D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9436BB467E7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FA771CC20CA
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D6E1CC22E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2961E2312;
-	Sat,  6 Sep 2025 01:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58391B0F1E;
+	Sat,  6 Sep 2025 01:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BX9NEf/X"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9286B145B16;
-	Sat,  6 Sep 2025 01:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc85nQdR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121E6DF49;
+	Sat,  6 Sep 2025 01:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757121008; cv=none; b=es+VMxo9rCetYxd+Pc2rs7SKCS2p0zwvjPG+KmOf9lT+A3vOmdoJ/u82U8vztLC/+gckNTP2Y35cC7Sedkyu/wIqesAcY9ko/aczLfceQdXSi1ug8aFojWb8twg8z6Sd3/rRTxRKzIZ/jFyKg2S/myoZqZQ/97Fl6V1xkHkBW+U=
+	t=1757121149; cv=none; b=G60F/N3B3/O5nJaN/HBdNqa05uPRd23S4KkKwEbWnaGJT3gWkKTJZG/Z1DjR8A+6QUAK3rBeCMiI/j0RU2XRdNDgnFALIfRqe7EF5cEdvBUsN4eo7PTA9OwqOueBQaz1pbWz88picnU6bkM3b7vYfUUEWLNrvmFR3DXNe3ACeXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757121008; c=relaxed/simple;
-	bh=D3d4EEm9KfZVZrOZRrxKFOPjUiMwSN5Ik0Y3pM8gFgg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hTu2qd7RthnHw2dMcQaTHwGa9iEbxCp2wtHY1mFbiOCYocZmqJB/X8lzAfIjCFQXILdBkvw2bs9ivj8WyHVj+14Krff5yyZOe4q8b18E2iOu+hyUfRDf4e0uA+EQgG3ncE2IPE4OtUitG4cOgYeFptZ+umL2Wr1PVMxCgTD4otw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BX9NEf/X; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id CA22720171A1;
-	Fri,  5 Sep 2025 18:10:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CA22720171A1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757121005;
-	bh=+CCS9We1Ij6uOlVmGq9+uq+1zOrHP0OdRaRPzrFp1GA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BX9NEf/X1VneNtjEYWoIbC4svFLWsPr6TE+eGFC7ATnibEAF5CZhHO4BkQA3huB1H
-	 G+vqfIWfbg5hEOs2bwIui5RjjStP2xdsiq/mMkkajOrdNM34AIT7Bqid50NJZSBjcZ
-	 DoYg+VV6O+/ka1HcE7xVbEhJmP4lFjkaKOTv7a2k=
-From: Mukesh Rathor <mrathor@linux.microsoft.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	virtualization@lists.linux.dev
-Cc: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	dmitry.torokhov@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	bhelgaas@google.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	gregkh@linuxfoundation.org,
-	deller@gmx.de,
-	arnd@arndb.de,
-	sgarzare@redhat.com,
-	horms@kernel.org
-Subject: [PATCH v1 2/2] Drivers: hv: Make CONFIG_HYPERV bool
-Date: Fri,  5 Sep 2025 18:09:52 -0700
-Message-Id: <20250906010952.2145389-3-mrathor@linux.microsoft.com>
-X-Mailer: git-send-email 2.36.1.vfs.0.0
-In-Reply-To: <20250906010952.2145389-1-mrathor@linux.microsoft.com>
-References: <20250906010952.2145389-1-mrathor@linux.microsoft.com>
+	s=arc-20240116; t=1757121149; c=relaxed/simple;
+	bh=hWDMBBurSQ1kFU0x8+MG6LMQbMWAEOJcNOkBoQiLmWw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=f38/Lu4+hLl+EusCJVLTa3WJlDS7kg14FDbJq2CUMONB6PHlhvLS7ZWvGnPDfs91YP1/wd3cNqQCiStBXY3kusDCd1LlIffQi21QzNCPoxTYTwrpjngSjD9Sp0rasMDWYeKpgnJkgO4ADDUWZdoltcWnyknJnibgv3pc3VQAZ7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc85nQdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F33C4AF0B;
+	Sat,  6 Sep 2025 01:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757121148;
+	bh=hWDMBBurSQ1kFU0x8+MG6LMQbMWAEOJcNOkBoQiLmWw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jc85nQdRTQIn73jG/WMycs8nt4O8pLhfsj8Y3jHGRGSj717lhwRw8CUgbmZZc3XMd
+	 jW+e/cjeQZSWidsO4Vs2KpEhQEZa1SdgeiHV1EOK1b+LEZIjfDPWHBx5ooRujq2cDX
+	 yLdFeg9GGkXmX7aeaUOKbXGyoh5UUBM7PloB6xaYON4620F5nnFZf3FZ/QwCiRbzY2
+	 GtOnc9OtUl9e2emUrRs1c4oVyUIJdYSRlolMSM1wG0PE7I9o678yFT13tJKi7I97Mh
+	 8e+08SunCPTmQ5XedYGRtirxnAhuxAVjsv/iunJa0cEcJieXpDf51g+7vmKOT3PjNw
+	 W/FoWVcYOm1wg==
+Received: by venus (Postfix, from userid 1000)
+	id 67162180B10; Sat, 06 Sep 2025 03:12:26 +0200 (CEST)
+From: Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH v3 0/3] platform: arm64: thinkpad-t14s-ec: new driver
+Date: Sat, 06 Sep 2025 03:12:02 +0200
+Message-Id: <20250906-thinkpad-t14s-ec-v3-0-3ce6ec21ae89@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGOKu2gC/33NTQrCMBCG4auUrI2kSX/UlfcQF5PMxAZrU5ISl
+ NK7m3YjiLh8P5hnZhYpOIrsVMwsUHLR+SGH2hXMdDDciDvMzaSQtTiokk+dG+4jIJ/KKnIyHJG
+ 0VKgRrGb5bAxk3XMjL9fcnYuTD6/tQyrX9Q+WSi54Q6IB0YIlYc/G9z1oH2Bv/IOtYJIf5CjqH
+ 4jMSItQYysAKqm+kWVZ3krKjdP5AAAA
+X-Change-ID: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4467;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=hWDMBBurSQ1kFU0x8+MG6LMQbMWAEOJcNOkBoQiLmWw=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBou4p4NEg2YI2IuvcxnfJMfcL1M7t21H2m5UjS4
+ jw2e+lUXCKJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaLuKeAAKCRDY7tfzyDv6
+ mseZEACkSPadcqjZefa9PQ5tx24NPdJZSCEjtFopiOCJLMCGiewVu5B03RVU9KsWdQZ5vVLoOMU
+ psg59eDy0vxZMzA+/6QTE1rXxpvw3yiWOjZV1FpJugVdqaWi8oTMf0cLCeFNSYnAD55Et7UbLKq
+ xWmEN0h23N81udDAh2s1dNg1uvrvELXqRo7mdsMVKTuVAn767ksRqzuf0B61SWo+tsUo3hJyh+G
+ Y40Q/DUq4i6eoSdsY6CE4oTkfalIVbG096b7PykkaCQEp8rL1yaCgq7znr5PKJrd/8iVAjijnu2
+ 8T1/+dW3QZ38JkP550GvwwfopkRFh9uluUtNjbLg13XU8wHMsy1wi1Zks7KxNOi2puGfFzXS8Yh
+ yj8oIyVt2J01K3fL2ba1eoz3T4uUgo73vR6qtTtQj3DIG48Qg6wcVkQ9EbqCp7s86ZIoCb3AMdR
+ xpWY8CpNqWWus613wfRbJLg6gFZ8ex7K061K+aoXRn5dZEt7CRurzzdL0Vx57li1rmpYNHGldTc
+ SLzojZusHJ+oaltvB11vX4Z8eN6LRtNljwYnW2kepJpbI8pOnZCzM2DSQlgJdal6JzRzXvlbkuc
+ fXUn472nwvhNNlF4uIfI15P33QJc6rsrjCjgVKrXipTcCglBbSiYXs8PsbjroYArjtV67ljCTRn
+ HettiJ12mp27Bmg==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-With CONFIG_HYPERV and CONFIG_HYPERV_VMBUS separated, change CONFIG_HYPERV
-to bool from tristate. CONFIG_HYPERV now becomes the core Hyper-V
-hypervisor support, such as hypercalls, clocks/timers, Confidential
-Computing setup, PCI passthru, etc. that doesn't involve VMBus or VMBus
-devices.
+Introduce driver for the ThinkPad T14s Gen6 Snapdragon EC. In theory
+it seems to be compatible with the ThinkPad ACPI driver, but these
+devices are booted with device tree. As the name implies, the existing
+ThinkPad ACPI driver only supports the ACPI interface. Looking at
+the implementation, the ACPI DSDT contains many mapping functions
+to translate the low level I2C messages into the interface used by
+the ThinkPad ACPI driver. Adding DT support to the ThinkPad ACPI driver
+would require adding all those translation functions, which would add
+more or less the same amount of code as writing a separate driver using
+the low level interface directly. I don't think it's sensible to make
+the existing ACPI driver even more complicated, so I went for a separate
+driver.
 
-Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+I managed to get system LEDs, audio LEDs, extra keys and the keyboard
+backlight control working. The EC also seems to be used for some thermal
+bits, which I haven't looked into deeply. As far as I understand most
+thermal and fan control is handled by a different controller
+(0x36@i2c5) anyways.
+
+Apart from that the EC is involved in proper system suspend, which
+is something I do not yet understand (I don't have any documentation
+apart from the dis-assembled DSDT and existing ACPI driver). Right
+now I disabled wake capabilities for the IRQ, since it would wake
+up the system when closing the LID. Hopefully a way to mask specific
+events will be found in the future.
+
+Changes in v3:
+- Link to v2: https://lore.kernel.org/r/20250905-thinkpad-t14s-ec-v2-0-7da5d70aa423@collabora.com
+- Add <linux/container_of.h> include (Ilpo Järvinen)
+- Add <linux/dev_printk.h> include (Ilpo Järvinen)
+- Add <linux/interrupt.h> include (Ilpo Järvinen)
+- Align CMD defines (Ilpo Järvinen)
+- Rename thinkpad_t14s_led_set() to thinkpad_t14s_led_brightness_set() (Ilpo Järvinen)
+- Replace && with & in thinkpad_t14s_audio_led_get(); good catch! (Konrad Dybcio)
+- Use regmap_assign_bits in thinkpad_t14s_audio_led_set (Konrad Dybcio)
+- Directly return input_register_device() at the end of
+  thinkpad_t14s_input_probe (Konrad Dybcio)
+- Remove THINKPAD_ prefix (Konrad Dybcio)
+- Also use T14S_EC_ prefix for LEDs states (myself)
+- Collect Reviewed-by tags
+
+Changes in v2:
+- Link to v1: https://lore.kernel.org/r/20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com
+- Apply Reviewed-by tags from Bryan O'Donoghue
+- Apply Tested-by tags from Neil Armstrong
+- Update DT binding description, location and examples (Krzysztof Kozlowski)
+- Add missing wakeup-source to DT binding (Rob Herring Bot)
+- Update DTS newlines, pinctrl order, nodename (Konrad Dybcio)
+- Updates to EC driver
+  - Add bits.h and bitfield.h include (Ilpo Järvinen)
+  - Drop mutex.h (myself, leftover from development)
+  - Drop DEBUG define (Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_BLINK_RATE_ON_OFF_MS (Bryan O'Donoghue, Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_KEY_EVT_OFFSET (Ilpo Järvinen)
+  - Add THINKPAD_T14S_EC_KEY_ENTRY (myself, to keep line length sane
+    after THINKPAD_T14S_EC_KEY_EVT_OFFSET)
+  - Align values of thinkpad_t14s_ec_led_status_t (Ilpo Järvinen)
+  - Use u8 instead of char for I2C command buffers (Ilpo Järvinen)
+  - Add some more newlines after goto/return (Bryan O'Donoghue)
+  - Use FIELD_PREP/FIELD_GET instead of _SHIFT (Ilpo Järvinen)
+  - Explicitly map to LED_ON/LED_OFF in audio_led_get (Ilpo Järvinen)
+  - Add missing , after .driver.of_match_table (Ilpo Järvinen)
+  - Change from KEY_MODE to KEY_PERFORMANCE (myself after seeing a patch
+    for HID lenovo being sent to the list)
+
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
 ---
- drivers/Makefile    | 2 +-
- drivers/hv/Kconfig  | 2 +-
- drivers/hv/Makefile | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Sebastian Reichel (3):
+      dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+      platform: arm64: thinkpad-t14s-ec: new driver
+      arm64: dts: qcom: x1e80100-t14s: add EC
 
-diff --git a/drivers/Makefile b/drivers/Makefile
-index b5749cf67044..7ad5744db0b6 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -161,7 +161,7 @@ obj-$(CONFIG_SOUNDWIRE)		+= soundwire/
- 
- # Virtualization drivers
- obj-$(CONFIG_VIRT_DRIVERS)	+= virt/
--obj-$(subst m,y,$(CONFIG_HYPERV))	+= hv/
-+obj-$(CONFIG_HYPERV)		+= hv/
- 
- obj-$(CONFIG_PM_DEVFREQ)	+= devfreq/
- obj-$(CONFIG_EXTCON)		+= extcon/
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index fe29f8dca2b5..7e56c51c5080 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -3,7 +3,7 @@
- menu "Microsoft Hyper-V guest support"
- 
- config HYPERV
--	tristate "Microsoft Hyper-V client drivers"
-+	bool "Microsoft Hyper-V core hypervisor support"
- 	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
- 		|| (ARM64 && !CPU_BIG_ENDIAN)
- 	select PARAVIRT
-diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-index 050517756a82..8b04a33e4dd8 100644
---- a/drivers/hv/Makefile
-+++ b/drivers/hv/Makefile
-@@ -18,7 +18,7 @@ mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o mshv_irq.o \
- mshv_vtl-y := mshv_vtl_main.o
- 
- # Code that must be built-in
--obj-$(subst m,y,$(CONFIG_HYPERV)) += hv_common.o
-+obj-$(CONFIG_HYPERV) += hv_common.o
- obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o
- ifneq ($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
-     obj-y += mshv_common.o
+ .../lenovo,thinkpad-t14s-ec.yaml                   |  50 ++
+ MAINTAINERS                                        |   6 +
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  24 +
+ drivers/platform/arm64/Kconfig                     |  20 +
+ drivers/platform/arm64/Makefile                    |   1 +
+ drivers/platform/arm64/lenovo-thinkpad-t14s.c      | 607 +++++++++++++++++++++
+ 6 files changed, 708 insertions(+)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+
+Best regards,
 -- 
-2.36.1.vfs.0.0
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
