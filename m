@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-804461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD795B47766
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F831B47771
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9FEA04329
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606D67C390F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DB328725B;
-	Sat,  6 Sep 2025 21:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7593D29E0F6;
+	Sat,  6 Sep 2025 21:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bX1AT7m0"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHHLlguO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F66D315D45;
-	Sat,  6 Sep 2025 21:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321B4279DB2;
+	Sat,  6 Sep 2025 21:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757193883; cv=none; b=W6jy+MckJFwCzlo8UF6vmZIFzeFXH1+lqHsHycxPpUpq/qo24b72iFBzX15i/4P1G4pRQAIqeH2PeUf124B+bSYeiC/aMepaFqqxTFlowjoN39GFYFkX9ukpUREL++R/45GufuHDaiQyIDqhDo8Ipc07zdyw1Qtd4fpjr9MfgAs=
+	t=1757193993; cv=none; b=B3Jogy5Gz4SK68zu9WLd8fZu08gx1FSsvokBGr3b5lDo94ZO4yARd0ZmFzFq3jqh7xv2MM6b8Y5rWVslOLQod8ejn4FvXcHqYFBBBJOMjeXz5ZJeOMgdnW65E1woPFMeesQJDtEbR7Bd1HLTjpB2CVl0NdR994XaXESEnFolEQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757193883; c=relaxed/simple;
-	bh=Uzep+sEhdcrqXEih+4tJ0b4qh2zPVvLsdqO+7+9M4U8=;
+	s=arc-20240116; t=1757193993; c=relaxed/simple;
+	bh=CMGs8i3Y8nSpfA6lMpvHldw8w4ip7mYjXqWISfeH/PM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8aQm4NzUhcVNZU1B7oFUnBVtlgQ4heHbyNqzss+qnNeP2j//sBvyBS2HjHtK31oUGWQwKK+igzvv7JBQMq8mfB35wGjbCFzqYRcs08PoOJnAZnH/dI151Lb9GKEW+GGljwB24sZcHrvORlHRZHiNYZmkCWJBuLZ/Vf7PEGp4KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bX1AT7m0; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32b863ed6b6so2584126a91.2;
-        Sat, 06 Sep 2025 14:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757193880; x=1757798680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MgymOrrr0bGTZvGqTZf+3QddI3vxZ0SjLKPTQFYb9lU=;
-        b=bX1AT7m0Fsjoad0tuCghyz6/50+GpZd5WIcdrVv5jovd3sBdtfA96w+uCZGkYBdYgS
-         sQpXAac5YOaOuldu92vHpxjv7HBdmkq+RWGfQqW5z9D/y2Jh7LmI/UKmdpvPK1KMrV3Q
-         I7tjHJqhdhr7RSszjcQk0W8uo9XwSV0y/Zd0KGy7bQMRbmDS0GZJaSXhssgUSzV4yr/K
-         WUJ/QWxrQzcDPKppjtsYIhLzUE8pB7ClKfOCHFRLIk2F9c/oOgizOFf+VwJt/p9DQT8e
-         xKeslVMIjbDvg5nBGpPilcMLOtAkBYRUPDu/DMcupvaBYNREaUuj1tHT7DKQpGlcv+g3
-         2u8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757193880; x=1757798680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MgymOrrr0bGTZvGqTZf+3QddI3vxZ0SjLKPTQFYb9lU=;
-        b=oalMZy/YszZzZ1dfTqZt4EHdpVc/Taow2OYiJNC9V6WluuAtBTKQ2khAzijmVfrfY5
-         umxbKhsYCTzhYD4pRPZi+j9i1fPUktD1xXwnpxquQzrEofjcA4+sXihtS+VurfPTVwP+
-         ut4eiifH2vxLBLFk/ohSp4ehLMmvp3p18Cq17d3ap53UUuIM1oT/wDD76i6Dxyq2+AAT
-         FNjBpMjh08BSWmue6Uqk+uXO5wfsBGj2s133mjkD5SNjhcd++H5AeTT86E0mmpZ6mkvr
-         kTpYIRLf/TwYWgswR+HJNQmePpp66kt6DmZx11J4o8uteR+WFK/lfzy73FB0FOrDqP1Z
-         uKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDcuJEp4+ppqavLV6RlydfCvMomqxx2TD6ld0ZeKDC6goGa11A0bDL61wGt2m8rRKPdya+qDjwCfxxhPEx@vger.kernel.org, AJvYcCWQcDTCQeX2sDVomnBQ+oEVVsXqzgzFBWr/UTgG7UmJ5HnN03qkOEkPq/k2JTuzRt8N2Mj+LQJRpcw=@vger.kernel.org, AJvYcCWw0CFElqynPQOUZjMCbbVs/1SVXR4wCg4S1MNS9iHkGYoRNgo4SdEf/zK0YCWq5d+HjnxPAEHi+KGmogQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/QlRzpY7qBWyvnhRskQOFRhpN36DIwrfZP8T0tCvM4uFOyjwm
-	OPXWwOluy/d0Hhhrhom9VhexyCTVF9YuGY6ddjoy0dBI7f+HzUMMLYa2LKLO9fvL
-X-Gm-Gg: ASbGncsdCmwNmQbCzkjGAI2MW0McinuTk5DUKvrHo4Tc+JhQWSsbkPF/AkGWpreirQK
-	UyMDEHmAznmyeWr6epnx1b2pOyIuiXZ8YIi6Qb+hbJwyg5u28OsE1Jy15afCvYE8ii7hhO7rgSx
-	NslNiaaB2krpZ3Y22tW856JwhaeeRdq9fmJcYtrk5wBiQrmhgONNFy0tAtrNS3LtCALdRc5BMXU
-	OI2MocV9EC5Xm/kWS0puy7XjhAL72669OVzEbzZldytDrCXAUmxmP7PrVnqTB3FUHIMmNW1JDJ0
-	a+SmhFc2sn/f8Qq6SxnNkPhQ7PIn/sNlHkGFeG+wGcW64/gsWDr4YbI8DH1mhEFZD+aHjuxRvOn
-	PXWXp34zeDU6d7O34mUW0Aki1P1ckEmmA02I=
-X-Google-Smtp-Source: AGHT+IEpR+RBpTyqR6TfOLyQ+MXiE4BMA0NRrZ9RojS4mQx65csPHnYHO0FJIAc3cgJGTgMUCvc6Pw==
-X-Received: by 2002:a17:90b:3b48:b0:32b:b26e:1570 with SMTP id 98e67ed59e1d1-32d43fb9294mr4061600a91.34.1757193880354;
-        Sat, 06 Sep 2025 14:24:40 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2a0485sm24720097b3a.25.2025.09.06.14.24.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 14:24:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 6 Sep 2025 14:24:38 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Eugene Shalygin <eugene.shalygin@gmail.com>
-Cc: Maciej Zonski <me@zonni.pl>, Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (asus-ec-sensors) add ROG STRIX X870-I GAMING WIFI
-Message-ID: <825cfba9-f48e-4d46-a32c-26db1bad7285@roeck-us.net>
-References: <20250906161748.219567-1-eugene.shalygin@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IW7e5oQDwGxFMmULPtpXxjY9lnBShrYEe+b/c8jbIAHO40ZolXbrGHQX0DCgcOS9yKrRQIfShVw3vAdnkW6NmX04IEdqnt3kIx+DlYsQY+EZnxJYY2u1mZi814d43Pn0SNZu0t/d7CeBrtBp5H665ieHlcnzfd11F9zfmtOK5bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHHLlguO; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757193992; x=1788729992;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CMGs8i3Y8nSpfA6lMpvHldw8w4ip7mYjXqWISfeH/PM=;
+  b=FHHLlguOvTUFaFEFxHHGj6zrRc9v7uDyNSvZRDDv3sPWNE3ua4cocI/2
+   VaNoPqSMw1xdVmP3d6Zs2t9Zj0UBIcx+EWeaxKkAFHDlsGgn7xXYhg5zY
+   EwMoE4lwixPVx5w33GojPVp+jSoZMMnzHK0uhCapv3Ul8bzNSF7ZeTUWz
+   htLfv8oy2m/6oEcdPHY4TMEpjGO4+3DOG3kViZsJCzQPFQXl5ZdjcGGUr
+   4OpcukyZgxjXGn0gHVq1PybbtM8DeofCn7eQPBO8lJUZyYnUpMtm3BZNG
+   MiizuJ8f2cISeP9RGqnTKVdNnIRvkMSB6BzdTqqD6ykAEX2qThy5tHRRP
+   A==;
+X-CSE-ConnectionGUID: zrORHN8sTo2EPmldWSOGtQ==
+X-CSE-MsgGUID: 7zj8z33HRT+2H3ddFzIkmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="58715851"
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="58715851"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 14:26:31 -0700
+X-CSE-ConnectionGUID: VbX9FkwRSrCKGheZZSUk1w==
+X-CSE-MsgGUID: XHIZwNXBQuyDKp8oVdJh6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="172009225"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 06 Sep 2025 14:26:27 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uv0QT-0001np-1W;
+	Sat, 06 Sep 2025 21:26:25 +0000
+Date: Sun, 7 Sep 2025 05:26:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Lee Jones <lee@kernel.org>, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU
+ interrupt controllers
+Message-ID: <202509070538.5HcCJf2T-lkp@intel.com>
+References: <20250906014846.861368-5-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,18 +85,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250906161748.219567-1-eugene.shalygin@gmail.com>
+In-Reply-To: <20250906014846.861368-5-ryan_chen@aspeedtech.com>
 
-On Sat, Sep 06, 2025 at 06:17:37PM +0200, Eugene Shalygin wrote:
-> From: Maciej Zonski <me@zonni.pl>
-> 
-> Add support for ROG STRIX X870-I GAMING WIFI
-> 
-> Signed-off-by: Maciej Zonski <me@zonni.pl>
-> Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
+Hi Ryan,
 
-Applied.
+kernel test robot noticed the following build warnings:
 
-Thanks,
-Guenter
+[auto build test WARNING on tip/irq/core]
+[also build test WARNING on robh/for-next lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/irqchip-aspeed-scu-ic-Refactor-driver-to-support-variant-based-initialization/20250906-095043
+base:   tip/irq/core
+patch link:    https://lore.kernel.org/r/20250906014846.861368-5-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v3 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU interrupt controllers
+config: arm-randconfig-001-20250906 (https://download.01.org/0day-ci/archive/20250907/202509070538.5HcCJf2T-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7fb1dc08d2f025aad5777bb779dfac1197e9ef87)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070538.5HcCJf2T-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509070538.5HcCJf2T-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/irqchip/irq-aspeed-scu-ic.c:93:34: warning: variable 'mask' is uninitialized when used here [-Wuninitialized]
+      93 |                 writel((readl(scu_ic->base) & ~mask) |
+         |                                                ^~~~
+   drivers/irqchip/irq-aspeed-scu-ic.c:69:24: note: initialize the variable 'mask' to silence this warning
+      69 |         unsigned int sts, mask;
+         |                               ^
+         |                                = 0
+>> drivers/irqchip/irq-aspeed-scu-ic.c:106:20: warning: variable 'mask' set but not used [-Wunused-but-set-variable]
+     106 |         unsigned int sts, mask;
+         |                           ^
+   2 warnings generated.
+
+
+vim +/mask +106 drivers/irqchip/irq-aspeed-scu-ic.c
+
+   100	
+   101	static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc)
+   102	{
+   103		struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
+   104		struct irq_chip *chip = irq_desc_get_chip(desc);
+   105		unsigned long bit, enabled, max, status;
+ > 106		unsigned int sts, mask;
+   107	
+   108		chained_irq_enter(chip, desc);
+   109	
+   110		mask = scu_ic->irq_enable;
+   111		sts = readl(scu_ic->base + scu_ic->isr);
+   112		enabled = sts & scu_ic->irq_enable;
+   113		sts = readl(scu_ic->base + scu_ic->isr);
+   114		status = sts & enabled;
+   115	
+   116		bit = scu_ic->irq_shift;
+   117		max = scu_ic->num_irqs + bit;
+   118	
+   119		for_each_set_bit_from(bit, &status, max) {
+   120			generic_handle_domain_irq(scu_ic->irq_domain, bit - scu_ic->irq_shift);
+   121			writel(BIT(bit), scu_ic->base + scu_ic->isr); // clear interrupt
+   122		}
+   123	
+   124		chained_irq_exit(chip, desc);
+   125	}
+   126	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
