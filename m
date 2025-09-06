@@ -1,136 +1,184 @@
-Return-Path: <linux-kernel+bounces-804191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE676B46C5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:06:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C12B46C67
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952E17C5D3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6F0188D452
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D37286D7C;
-	Sat,  6 Sep 2025 12:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE842857DE;
+	Sat,  6 Sep 2025 12:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIpit8Sh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShSjTWcH"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D370BA4A;
-	Sat,  6 Sep 2025 12:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004D11C6FF6;
+	Sat,  6 Sep 2025 12:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757160356; cv=none; b=StD60V24NkOd8/v3mcFIy/VwSWcUwDDvmE2REhn5K3pKPIfIbhxSs2TNx4jzTbiZ4Xec+zlp3WFWhbHRgfSE3kARTjdgAi2a0BD2VVsKmGqabphNJmfZ8R8C+mB7IaTcwGwu+P3q9iLflGEwI+rULLVXu8G5mHtvOYI8m9s5fYI=
+	t=1757160499; cv=none; b=edWiwmteVVoVNC3+ul0oZwtDDbnNdy92ZdT9MaAHsYBcxF0qObp41iVEjZ/LZPM1GjlMLjB7b2pxHnpNf0P8LZFPp9yfrwEJ9gmSejocnu1MiS8Q3bD7h6QG4dCg/D0CwAxfjSyYcpfWwhNIhBy3tOYzYe9g+RVWtti0Yj0Ji9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757160356; c=relaxed/simple;
-	bh=MMBOJfs68xGaCYdH1zeRaD61flhQMDRGdp6pvXusXas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9MU78nYEnzGCfsX1UpfVHiFdZWWfbrJYSWBymbdKBgOXyH1jGnh2ShHNwzAxRj86tDpmsoF+/xDwfeUWenWsB7dibSdS8clm4O+k0TaqTjim0Od0+8zUcT9s98ZFLG1G4cCAno8xbQrjCvMEcs8JfFYjsWt2/PZFP93WHXmQN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIpit8Sh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B90C4CEE7;
-	Sat,  6 Sep 2025 12:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757160356;
-	bh=MMBOJfs68xGaCYdH1zeRaD61flhQMDRGdp6pvXusXas=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RIpit8ShleSdOcRjrgtbMXLoN+2MSg5APLeyBoh6uGM0YMxVfirKfOLtqwkt8dSAP
-	 pp0HNYYfEF+i/8hreGzgVMdyQOFqmcAEFN2qHpVB/mJ+eB9Ie0Q5QyPkxIH5+WB49j
-	 gEmeSfJMxVDUHN4ZDsnO55gAuaR2dcRY9lQhIV9zvxgrTYg+LVASzx2xeM2XwT4U7s
-	 s+UEwYQgsPgpDNuis2cplmpZDHiTiJ2tb+Ex03qOVQZBABXQ/ys2urCgj5/KKbuMdm
-	 1yiM5vM+RLsLmZBo/hnVCl/jnpoDNEyrlaP9We6UmaJQbZGsK/lDbTH4qodo2gozw3
-	 fhscmLlbBnGtw==
-Message-ID: <e71e6f3d-af02-4910-91ae-acf41692ac5b@kernel.org>
-Date: Sat, 6 Sep 2025 14:05:50 +0200
+	s=arc-20240116; t=1757160499; c=relaxed/simple;
+	bh=T0uCk3whM4TQLPmUloGoHnhyxENgGtgovJSMe4EuYTY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uC0qdR6fV2CWXChfIyFmjX5naP1JRHyJSIoGfFjXUjYxXkn8JCd5bxMWznnwO1OThI2F86ep2oXNYQplW/Q86/veX2mufFYP+NqNqhM4m5NcLO667paO4Z4z3Yo36FlAVuIrjaTqbh64wMTl1sSJg5YNEDF6M8Y9iJQJ9izCx8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShSjTWcH; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45de221da9cso98345e9.0;
+        Sat, 06 Sep 2025 05:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757160496; x=1757765296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D8Mr/6zv4AcMMEkuwvT+ySaDwWnup/zkHcnhD+HTewc=;
+        b=ShSjTWcHMrMkU4a061tk0vQTST5XFICOn+wY1mfF4ObpOJ0qbppSUsQRbNapSRqz1k
+         lMVEnrf4s9AHE+ldN/WXDTLdtcDjkzqq1glRDIRqqDYmcHpvW7vef0qde+KtTNYF6x6J
+         53uXHFbQ9Yvm0TDPWgTN6hZIXhcWm9LjFZBRmjzTW164fyQGlkN+qygOZOJPENszntxe
+         zLHV3U64SWFOXJ3R0LQhmk/1HfIwKVxzoxxEyxmubgGk9X2T33z49QlV4bJKlt7YXHyW
+         b/Injc/kK1bjb5I7OWhqN6BPBZ1ZoySxnIsNZPCx79qc0U4MqFdcisu7oay4DbjmU1tS
+         OHYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757160496; x=1757765296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D8Mr/6zv4AcMMEkuwvT+ySaDwWnup/zkHcnhD+HTewc=;
+        b=QEuzy8VlSC7QIHv/I6Ohte7Q5zrB5qYnE5QsAE/8b0WzB4W7OCH82iIQCk70fMW1PC
+         /jbFjFpggP+MpJI/sEwGE877Vrx7qxgFPXWXbVR4xFJtVYbLrUVsIL6d55cwPBL/fJN8
+         Um8PMm9x2fxPCnLx6DBCqCBH7qqsGkD2pXD62bQC9y/5eLRaRiyOjv3ju5dqxRSa5Ik4
+         LFU2rkl5fxJBthb6nTC9/n13ysZV7Kyf7jaRDWfNePIj+j+nTfQrJaow6/0AoVvcZLyM
+         KVFThUkuoTpjWeDIvP57Ceq/r2+tiwGMpWLhBpq3MYFBKDDDiIi2SwAQA0qrzpspESWk
+         R/6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVMZfVxdEAqE+OKlanvuQPfycmxGRncwTqfMU08oCSrHN+a1USyoA5NmLFN8MxGmbTqpDCpjNsT5B5gF059@vger.kernel.org, AJvYcCVS7pvNrV+2hqokTK7XZNSE123gKWnRJW6kVJ34khbrJ0mUsOMzQ8k7Ft3vrs/Zd1KjNVCUgOQOy5Mo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEC8Fh/UKYHt7wBEwusvtbp3yWLNwYdVGlFGzkrWmn9B1eTIo6
+	xozE6xJsHo4N7cxX74ZpoY4V3zK8Zm3gtiPM6ne9HrH+RdAHaRE7lsyl
+X-Gm-Gg: ASbGncuhiAlo4RIRiB5v6MnI0CdgZgo0bveqsHCmE8XOaC4/EIokK5aiMv9RSmgWqBz
+	Ho1OTfTuKf/Xd9FwogrlOB/f4sl4csswREz32dTWFzLYAB2RKHD7thQ1aXlP4IqnZR0ox53VAUw
+	4NuYmWi/6Sb/Dsx/1gN+SbxzRN0H1YoTx9lIydnAx/9GB8L17vBJduav65wixx5skXhUCM7Kwid
+	2pZWyq1Xaex9FwE7AefnCl7RLBe6BZfe2CMyE1QHQiztE4pCBJferdUlsrRaL30piRdOgc1FleO
+	u3nk4lJ95Px+qmAPQ0rhnIYKTl66brOAqCQmlwvoOw9b6Bc9Dll+5qjjgZFOzEofDMgVsSVBd9S
+	71rRX+B4k8QeSaknCoo4OFFzyHnq4yLxenwLyjg==
+X-Google-Smtp-Source: AGHT+IEGnMuR1OcLq5hi6KejZJYg5UBBpTJ9CwU7pKvWahTivnfLTRqyzm4V0K2QWcSXvSQ2S/JUpw==
+X-Received: by 2002:a05:600c:8b71:b0:45d:d903:beea with SMTP id 5b1f17b1804b1-45dde034574mr20619905e9.30.1757160496089;
+        Sat, 06 Sep 2025 05:08:16 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd058ed5esm60978455e9.1.2025.09.06.05.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 05:08:15 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v3 1/2] arm64: dts: rockchip: add GPU powerdomain, opps, and cooling to rk3328
+Date: Sat,  6 Sep 2025 12:08:09 +0000
+Message-Id: <20250906120810.1833016-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: samsung: Add tmu-name and
- sensor-index-ranges properties
-To: Shin Son <shin.son@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250903073634.1898865-1-shin.son@samsung.com>
- <CGME20250903073653epcas2p4cb25058c97aab9a30c7e68ef5f10fb91@epcas2p4.samsung.com>
- <20250903073634.1898865-2-shin.son@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250903073634.1898865-2-shin.son@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 09:36, Shin Son wrote:
->  > +  samsung,hw-sensor-indices:
-> +    description: |
-> +      List of hardware sensor indices that are physically present and usable
-> +      in this TMU instance. Indices not listed are either unmapped or unused.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 16
-> +    uniqueItems: true
+From: Alex Bee <knaerzche@gmail.com>
 
+Add GPU powerdomain, opp-table, and cooling map nodes for the Mali
+GPU on the RK3328 SoC. Opp-table frequencies are sourced from the
+Rockchip Linux v4.4 vendor kernel while voltages have been derived
+from practical use and support work: keeping voltage above 1075mV
+and disabling the 500MHz opp-point avoids instability and crashes.
 
-For v3 you also need:
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+Changes since v2:
+- Revert to gpu_opp_table but retain opp-table-gpu $nodename
+Changes since v1:
+- Use opp_table_gpu not gpu_opp_table to fix dtb schema warnings
 
-  items:
-    maximum: 16
-(or whatever values are actually correct)
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 39 +++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index 6438c969f9d7..610c1c27b798 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -331,6 +331,11 @@ power: power-controller {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 
++			power-domain@RK3328_PD_GPU {
++				reg = <RK3328_PD_GPU>;
++				clocks = <&cru ACLK_GPU>;
++				#power-domain-cells = <0>;
++			};
+ 			power-domain@RK3328_PD_HEVC {
+ 				reg = <RK3328_PD_HEVC>;
+ 				clocks = <&cru SCLK_VENC_CORE>;
+@@ -570,9 +575,13 @@ map0 {
+ 							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 					contribution = <4096>;
+ 				};
++				map1 {
++					trip = <&target>;
++					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++					contribution = <4096>;
++				};
+ 			};
+ 		};
+-
+ 	};
+ 
+ 	tsadc: tsadc@ff250000 {
+@@ -651,7 +660,35 @@ gpu: gpu@ff300000 {
+ 				  "ppmmu1";
+ 		clocks = <&cru ACLK_GPU>, <&cru ACLK_GPU>;
+ 		clock-names = "bus", "core";
++		operating-points-v2 = <&gpu_opp_table>;
++		power-domains = <&power RK3328_PD_GPU>;
+ 		resets = <&cru SRST_GPU_A>;
++		#cooling-cells = <2>;
++	};
++
++	gpu_opp_table: opp-table-gpu {
++		compatible = "operating-points-v2";
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-500000000 {
++			/* causes stability issues */
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <1150000>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	h265e_mmu: iommu@ff330200 {
+-- 
+2.34.1
 
-
-Best regards,
-Krzysztof
 
