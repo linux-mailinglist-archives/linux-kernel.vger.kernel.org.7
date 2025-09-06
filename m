@@ -1,153 +1,70 @@
-Return-Path: <linux-kernel+bounces-804204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B14B46CC8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444A7B46CCB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2478F18984C1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29BD3AFF81
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B456828CF41;
-	Sat,  6 Sep 2025 12:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F90528935C;
+	Sat,  6 Sep 2025 12:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6VuJrOH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TSOSGTiv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECB51C8630;
-	Sat,  6 Sep 2025 12:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE43283151;
+	Sat,  6 Sep 2025 12:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161310; cv=none; b=roOSkJZuvLl7pI4AIo33NH73TIdRL8ZZlR8Zu6FrLyLNX8RWEHsRGlwWyQVtNb3o5ov/aP9iZNpF21sRVyQs7N+MrSEuzkV6wsRxDlxAUNNSL+sUoWCb5Bt634h5z2Q1gCle/OPpE+rMwG91tJX1rTZJ+VESUW9w+t9nQwP3HA4=
+	t=1757161331; cv=none; b=DcxXsrTCUOsB9+d6E2KNpeteSxjf7nhCCMBd/ZZN7eOqtEgX7jARFr9lfEIanXJfkHOErwq1erXWx7azcasa4CLKIlLwutyjFGpHziI9zrw66s0mALGM2SisTcgyr6bFwU9HB9n7t6CUU/lZwcwqwBQnmHi9sFpDdRAgATOoPMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161310; c=relaxed/simple;
-	bh=LVu9YGaoVJEQyJmb9+Y1eQq40J+xELbQe/ERu9Ttj1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8Xk8OMr+gBPtKZzumdd1JDd68/Ag6fOU3/c4pu1R5/R4XvIYEDImtu/pUjYDdh7fjkdMHaHpKzzXnt5mqq7yDe1siXi7mBWsR11JTSveH898e/L6h6qicH2vvZJXpF5aj13rEsx9yVTrTzgJX/v6xgpRHUJAdQZ6oXDl0hG+qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6VuJrOH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20675C4CEE7;
-	Sat,  6 Sep 2025 12:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757161309;
-	bh=LVu9YGaoVJEQyJmb9+Y1eQq40J+xELbQe/ERu9Ttj1U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=b6VuJrOHxWrSx78dLuxdqqsO5WWb/G+Ha+Z50ssFPL3lCO5frxpuFTO5CwPBsZTm4
-	 zviy6iYPZ1oaWEUBE2XtIhnZlkFNA0vVvBcisrWK5uK5Ixc4eJPf/0LGwyJ34B+5JE
-	 Ipj/OsY3T/9+jM07gm1hXxyjiCtq2hu2KmkPVtFlgLSF+erafFgoCli616kjfGa91m
-	 uMfLT3+4YJH54JQ9BASdonkbOYJMlRE5NHPscOFhZXFP5dWIO5lRHrTGEaRc/EMJeR
-	 REMcnK0C2RXskZdPBVx6QbOrJBFyyPIreZIzpaLYo/HkAiVit+8Sff0QTlRGlhKtjw
-	 1+0nCjOiZqXag==
-From: Borislav Petkov <bp@kernel.org>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-crypto@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	stable@kernel.org
-Subject: [PATCH] crypto: ccp - Always pass in an error pointer to __sev_platform_shutdown_locked()
-Date: Sat,  6 Sep 2025 14:21:45 +0200
-Message-ID: <20250906122145.29784-1-bp@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757161331; c=relaxed/simple;
+	bh=QghVgoooT3vAbgN3SCdxZapnJcWvzLkPCesfCb7cHoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CgR/Ts+TiI0F82ry/0z40fZvxWxxvbpUti2qlwE51GtMHe2tkvCGQpA8GoNZA60wo1rt7iT1Ymq3BeaUXhTyc0T8hMhHYe9ZB64QJXd9MTs4Jix7idvCJrLS+P+CiKbh+cPK5GDs0wiD1PTIckv8wHCkJcqVY1XVi6kdxYMzpzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TSOSGTiv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C18AAC4CEE7;
+	Sat,  6 Sep 2025 12:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757161331;
+	bh=QghVgoooT3vAbgN3SCdxZapnJcWvzLkPCesfCb7cHoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TSOSGTiv9lsmKqOrU8KDHLPnNfISkQ3z+tOrHO5H6JCwjr80iQ4CHg2nlQH8GVZYH
+	 zTxYWPdTu3bF0mGt0osEBDlB04uR6m9seb4pAYawpvxSj+EhBZOvMtAOdb690baBxA
+	 fswjwD/AYWJGVU1I0aUv9dBtVut9ZJISdoyDSOQY=
+Date: Sat, 6 Sep 2025 14:22:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Srikanth Chary Chennoju <srikanth.chary-chennoju@amd.com>
+Cc: Thinh.Nguyen@synopsys.com, m.grzeschik@pengutronix.de,
+	Chris.Wulff@biamp.com, tiwai@suse.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, punnaiah.choudary.kalluri@amd.com
+Subject: Re: [PATCH v2 1/3] usb:gadget:zero: support for super speed plus
+Message-ID: <2025090634-antibody-maverick-b2ee@gregkh>
+References: <20250828112944.2042343-1-srikanth.chary-chennoju@amd.com>
+ <20250828112944.2042343-2-srikanth.chary-chennoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828112944.2042343-2-srikanth.chary-chennoju@amd.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Thu, Aug 28, 2025 at 04:59:42PM +0530, Srikanth Chary Chennoju wrote:
+> This patch is applicable for Bulk as well as Isochronous transfers.
 
-When
+Please look at the kernel documentation for how to write a good
+changelog text.  I can't really understand what you are wanting to
+convey here at all, sorry.
 
-  9770b428b1a2 ("crypto: ccp - Move dev_info/err messages for SEV/SNP init and shutdown")
+thanks,
 
-moved the error messages dumping so that they don't need to be issued by
-the callers, it missed the case where __sev_firmware_shutdown() calls
-__sev_platform_shutdown_locked() with a NULL argument which leads to
-a NULL ptr deref on the shutdown path, during suspend to disk:
-
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 0 P4D 0
-  Oops: Oops: 0000 [#1] SMP NOPTI
-  CPU: 0 UID: 0 PID: 983 Comm: hib.sh Not tainted 6.17.0-rc4+ #1 PREEMPT(voluntary)
-  Hardware name: Supermicro Super Server/H12SSL-i, BIOS 2.5 09/08/2022
-  RIP: 0010:__sev_platform_shutdown_locked.cold+0x0/0x21 [ccp]
-
-That rIP is:
-
-  00000000000006fd <__sev_platform_shutdown_locked.cold>:
-   6fd:   8b 13                   mov    (%rbx),%edx
-   6ff:   48 8b 7d 00             mov    0x0(%rbp),%rdi
-   703:   89 c1                   mov    %eax,%ecx
-
-  Code: 74 05 31 ff 41 89 3f 49 8b 3e 89 ea 48 c7 c6 a0 8e 54 a0 41 bf 92 ff ff ff e8 e5 2e 09 e1 c6 05 2a d4 38 00 01 e9 26 af ff ff <8b> 13 48 8b 7d 00 89 c1 48 c7 c6 18 90 54 a0 89 44 24 04 e8 c1 2e
-  RSP: 0018:ffffc90005467d00 EFLAGS: 00010282
-  RAX: 00000000ffffff92 RBX: 0000000000000000 RCX: 0000000000000000
-  			     ^^^^^^^^^^^^^^^^
-and %rbx is nice and clean.
-
-  Call Trace:
-   <TASK>
-   __sev_firmware_shutdown.isra.0
-   sev_dev_destroy
-   psp_dev_destroy
-   sp_destroy
-   pci_device_shutdown
-   device_shutdown
-   kernel_power_off
-   hibernate.cold
-   state_store
-   kernfs_fop_write_iter
-   vfs_write
-   ksys_write
-   do_syscall_64
-   entry_SYSCALL_64_after_hwframe
-
-Pass in a pointer to the function-local error var in the caller.
-
-With that addressed, suspending the ccp shows the error properly at
-least:
-
-  ccp 0000:47:00.1: sev command 0x2 timed out, disabling PSP
-  ccp 0000:47:00.1: SEV: failed to SHUTDOWN error 0x0, rc -110
-  SEV-SNP: Leaking PFN range 0x146800-0x146a00
-  SEV-SNP: PFN 0x146800 unassigned, dumping non-zero entries in 2M PFN region: [0x146800 - 0x146a00]
-  ...
-  ccp 0000:47:00.1: SEV-SNP firmware shutdown failed, rc -16, error 0x0
-  ACPI: PM: Preparing to enter system sleep state S5
-  kvm: exiting hardware virtualization
-  reboot: Power down
-
-Btw, this driver is crying to be cleaned up to pass in a proper I/O
-struct which can be used to store information between the different
-functions, otherwise stuff like that will happen in the future again.
-
-Fixes: 9770b428b1a2 ("crypto: ccp - Move dev_info/err messages for SEV/SNP init and shutdown")
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: <stable@kernel.org>
----
- drivers/crypto/ccp/sev-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-index e058ba027792..9f5ccc1720cb 100644
---- a/drivers/crypto/ccp/sev-dev.c
-+++ b/drivers/crypto/ccp/sev-dev.c
-@@ -2430,7 +2430,7 @@ static void __sev_firmware_shutdown(struct sev_device *sev, bool panic)
- {
- 	int error;
- 
--	__sev_platform_shutdown_locked(NULL);
-+	__sev_platform_shutdown_locked(&error);
- 
- 	if (sev_es_tmr) {
- 		/*
--- 
-2.51.0
-
+greg k-h
 
