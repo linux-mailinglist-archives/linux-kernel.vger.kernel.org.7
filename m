@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6048B469E5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE29DB469EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77646585539
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:21:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D88958736F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23D72C08D7;
-	Sat,  6 Sep 2025 07:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F2F2C1583;
+	Sat,  6 Sep 2025 07:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVwnbvQ0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPtF5NVa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4D1E1C36;
-	Sat,  6 Sep 2025 07:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848291E1C36;
+	Sat,  6 Sep 2025 07:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757143295; cv=none; b=J2Zq4ndjqLU5kG79DDXnLym5l5GcZtp75kuw8LKBJarHvmffveVCTZ6COU8NDpzIZ1SXpbvfUHnxZUHgEhSsdubYuAmedmG78fR+tjx2HZ3EhtNVra53q6KrU4w3Gp7Yhtsjj3Cu5mq5aFnbit/l5mgIUTJLh0WcFTGNjJwUCCc=
+	t=1757143776; cv=none; b=oRr1Mq9Kj7mAzuSKce1zDYwmuMrpbQH6osdJf4ByO6Or7IeF5z8Jsde4q4xQwuPkiAa/+VhEvG4QRyhxf9U4UYVZ3WYjvlihSfSGPe+aouIA8o75rd5gdZivQp0nYcgEdZBxxwJGmxosZkizby6aufY5FhgSekDAFy0rourDOP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757143295; c=relaxed/simple;
-	bh=1vf2uE44kUXhBmJjEDqAjCxyn0j1zb8VmMho+cmnE3Q=;
+	s=arc-20240116; t=1757143776; c=relaxed/simple;
+	bh=czh64jB6XHUQ8fFac0kwfS34q6UgchjrBZa0/fTBu4c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVoD3Ez4begVeZ/GBLg7SjrgyVvbHHGUt8/SqJMcqQD5ZbwDn0TeY+bugiZF2NTe5zVT5meMWLVD7kl7Gun64iNx1kKAs3glLS/6chodYCu0sJGg50/YJJOx+zu4qfmtZxiB0v/xPTSZ8NUfZA0BV8ERPwuv8uojW+xa4XjUm90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVwnbvQ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEBCC4CEE7;
-	Sat,  6 Sep 2025 07:21:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QBOYBn57OPWsY74rALPG6uHFx7PGl4OVBah5sZ8E0B9sw4V0dMI9rknAX1ZKsWgtbx1Lk//LFbJlBn5hQNFUmZwLhN6nxgMqu0RSb+KM5seZ8EA+RPJ4vbPzGQbn/arsbooSe57VQ4eLCvQcpp2e+JNr0Fkav/COKSq2XQH2v6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPtF5NVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8F6C4CEE7;
+	Sat,  6 Sep 2025 07:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757143295;
-	bh=1vf2uE44kUXhBmJjEDqAjCxyn0j1zb8VmMho+cmnE3Q=;
+	s=k20201202; t=1757143776;
+	bh=czh64jB6XHUQ8fFac0kwfS34q6UgchjrBZa0/fTBu4c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hVwnbvQ0GyGsk9CV7Y/bDk88/07Z/1RInKhzz/lVezZPebsoSNm6PNjbskRTi2OC3
-	 MZ/tqBGzbWdQRATDynJweGlEm1U9SFFWSuLRLYqHP3MNh/bVQ7VUhts4ClE6UVmu0b
-	 ROKtXp8uXzl9BR5uCjV7UXut4nz+W6a8XyhCy1k1MYL9Ur+hq35CkapZ5uHaqhEJFM
-	 9pERv8RjCy8kNFl0i9jZNCb8GPgE1rWW6fDH4cKr2CJliRR16cboPbEONNlngPowBI
-	 Xt1SPjaIWcdpWd4TgwyA+BIWScba9iUqAUSAMDtYP85o2b7rkX0tAUiNTCMwGVwbAb
-	 EQ/GfDQvGH74w==
-Message-ID: <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
-Date: Sat, 6 Sep 2025 09:21:30 +0200
+	b=dPtF5NVaY/X+76l3gxZp7lAHEJvHeHatNhXmA2ziNlwYWAJTavFZ6dKMjanW34EfS
+	 1icRiqU/+3rfQA8rFtYbXQeHZCuKcSCqTJH4IrerbK9rsR+bWND/PYIOEwucVcvGOz
+	 MVjuiDNRYMR4zXianBM8EosQZJF+syiMhHjt4gHY84NmoZzIqr+695A5XmAx8THvK8
+	 iySvEY6t6kvWBk9uR2U3FYboeyjcq14C6u7bCNnsBxUd02jy0T6ystozfIuDYwfwLe
+	 prTFe31IIoWtzkmyMHV22ECQMw7qmrC0s/DiG3r9M4Vt211H4i7ARUbc6SFiGSmNbI
+	 82FBrpE+3TCOw==
+Message-ID: <db84ac3a-9cd4-48ba-8da5-fb972262e044@kernel.org>
+Date: Sat, 6 Sep 2025 09:29:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
- and CLK_I2S_8CH_FRAC
-To: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250905132328.9859-1-cn.liweihao@gmail.com>
- <20250905132328.9859-3-cn.liweihao@gmail.com>
- <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
- <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add the NXP SAR ADC for
+ s32g2/3 platforms
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, jic23@kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, krzk+dt@kernel.org
+Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+ <20250903102756.1748596-2-daniel.lezcano@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,47 +104,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+In-Reply-To: <20250903102756.1748596-2-daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 06/09/2025 03:34, 李维豪 wrote:
-> Hi,
-> 
-> Krzysztof Kozlowski <krzk@kernel.org> 于2025年9月5日周五 22:13写道：
->>
->> On 05/09/2025 15:23, WeiHao Li wrote:
->>> We need a clock id to assign clock parent when use i2s 8ch as audio
->>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can get
->>> frequency we want.
->>>
->>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
->>> ---
->>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
->>> index b951e29069..795e721957 100644
->>> --- a/include/dt-bindings/clock/rk3368-cru.h
->>> +++ b/include/dt-bindings/clock/rk3368-cru.h
->>> @@ -183,6 +183,9 @@
->>>  #define HCLK_BUS             477
->>>  #define HCLK_PERI            478
->>>
->>> +#define CLK_I2S_8CH_PRE              500
->>
->> 479
->>
->>> +#define CLK_I2S_8CH_FRAC     501
->>
->> 480, no?
->>
-> 
-> Neither of these clocks belong to the previous grouping in terms of
-> type, so I chose to start with a new integer id here.
+On 03/09/2025 12:27, Daniel Lezcano wrote:
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nxp,s32g2-sar-adc
+> +      - items:
+> +          - const: nxp,s32g3-sar-adc
+> +          - const: nxp,s32g2-sar-adc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
 
-I don't know what is "previous grouping" here, but IDs are abstract and
-are incremented by 1.
+Wrong constraint, look at other properties here. maxItems
+
+> +
+> +  clock-names:
+> +    minItems: 1
+
+Missing constraints, just drop entire clock-names.
+
+> +
+> +  dmas:
+> +    minItems: 1
+
+Also needs fixes.
+
+> +
+> +  dma-names:
+> +    const: rx
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - dmas
+> +  - dma-names
+
+
 
 Best regards,
 Krzysztof
