@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD114B46C29
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:00:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCCDB46C2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F4C1683EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1578E1C22543
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE495238C19;
-	Sat,  6 Sep 2025 12:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDDF2727FC;
+	Sat,  6 Sep 2025 12:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/YZB6yG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/nh5H6c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B721EA7CF;
-	Sat,  6 Sep 2025 12:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467D7BA4A;
+	Sat,  6 Sep 2025 12:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757160032; cv=none; b=fIgIo2fJf5cldkIKdUxmInh+xNJ/nODwMQoZ5MXEWT1RwKWN3PedBWcBXoYj8T8ZzrR2NP6BvW3xAJdFN4QgBxoEnEDvW8Z45b5+5jhO6wqabop1JPWU8ymQ7SIds5kRJUM8nqAnZ31Q/21E1OzafpkAVvxDT1xYK6c1n1PCNY8=
+	t=1757160091; cv=none; b=tqK2eyURAxE0G4MmLdliKsnVZ58P1RFf/s/IDH+RENDh2wQgqyiSTSy9X4e6zV1tFWkSzs9iFdOw18nvqpU4IkCrDbbB/0WkC8R9QXA1U2gKVjkWepA0y42gY2Ef+4tyEuhcLZMaaxeYkH8p1TECaHtu3kUWwloVe04thy9/rfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757160032; c=relaxed/simple;
-	bh=OzklBt5CTDlY1zRdiTWF6kN7WMM5C1PFN1ArN7TSWIU=;
+	s=arc-20240116; t=1757160091; c=relaxed/simple;
+	bh=H+js8WLuHfcNY6HqZd4U4ex2F4rnKaf6udYX1HgmcR8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eihbRyUrMLiCxfJWEjT0hfhliQliVMH3DNtThawRmjV2rX80jIXstje9RsK4dBllnEkLgvkkNEyliIjcT2RUepGr/4Es7pAPGM2E/1YQKZdgCEMLA+JpVUeAicw2aEuBXseJC21MSO6FDNbwLUbIW6D/C5W1UeTfesMMdy22ag0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/YZB6yG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC75C4CEE7;
-	Sat,  6 Sep 2025 12:00:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=o9CQLyBYnSSeV3nr8tZDbk/wOR5w4nYVp48HClPEMIs8ZHgfnrDl6gvz8Aio0mL4a/O6bRfxjEVfO3JgtHGHYO4nAjrjmNxI7+FXmA4nd16snFOATkX4lKlt1UZ4R9SXgRa/s4TVXixMdayw3ogCTVv7o+0dyDpWhaAKjxsPVsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/nh5H6c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398BAC4CEE7;
+	Sat,  6 Sep 2025 12:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757160031;
-	bh=OzklBt5CTDlY1zRdiTWF6kN7WMM5C1PFN1ArN7TSWIU=;
+	s=k20201202; t=1757160090;
+	bh=H+js8WLuHfcNY6HqZd4U4ex2F4rnKaf6udYX1HgmcR8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L/YZB6yGhatXPH0ADAS2DV/aJPRNbxIgd4iXjBf2hEI4V7ZIx5+u+sJ3yE08dzoLZ
-	 bHjKGK8LPCo46tffU/Sqv+Zk0w/CF3zyNqwKbcyiYPBG1Ab7tkjaaqODYPDp3wCIbP
-	 vak2DYG3f45URFnMC1/Ij6CHlleL7ww8tOQpnesyhSfgmcaOmwKFm0TDdlaiBCwjuB
-	 JwcStg7zWexrkTbZTbm+j6dLOI/xxW/pOs9TQ70t0a6YUz2l9o9OxkrHeyKVKkI/Yg
-	 gHX1SFXCtiobNQORMQp+Gz2K+LabiwKJdwbA0oVS4uxDZCnSnlR2LdUKbOuJDP3smk
-	 soFXjDqLebLNQ==
-Message-ID: <96e6578e-b21f-498e-82f6-eeee3ee81e20@kernel.org>
-Date: Sat, 6 Sep 2025 14:00:27 +0200
+	b=B/nh5H6cH553rNiW29Irs3iF8FIzSwYwUTFzChtrFU844vMa4Blyo4p8yAY+paCSB
+	 mITb5bEq0L8PfbgltOq3dh/BvXfv9dNhtijWRKYn7VinqIQaEldSiHoTX2ndPwCOgj
+	 Xmlr5rkkt1sYRsIqYvnQU307H4qsYN5IjbIX6JbEwktOAhKtf88kQYpajVy4JdogAQ
+	 8v6gZF5lMKcedaoQw3lZtrpQLixX2P7vFgoUFCsw0Bckdw4kmiZJy1NF8hGxKLjVfq
+	 xRA1BPB9eZqVhAE77HqgscgvMr03L2qypXF+rWYvwf42bQj3TXBHDpxvfaf8WB7pb/
+	 SlRVgUQOplGFQ==
+Message-ID: <288f0cf1-1ee4-4eba-b059-641120bb93f3@kernel.org>
+Date: Sat, 6 Sep 2025 14:01:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
- the documentation by replacing "abd" with the correct word "and". This
- improves readability and avoids confusion in the description.
-To: Nick Huang <sef1548@gmail.com>
-Cc: Johnsodn Huang <kusogame68@gmail.com>, Lee Jones <lee@kernel.org>,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250902142749.13724-1-kusogame68@gmail.com>
- <20250903074205.GB2163762@google.com>
- <28c1ff61-8510-4fd4-9cd2-0e3ff4fe3a02@kernel.org>
- <CABZAGRE=6Dg1npRx-jmcycnGMkbtmY6A7E=upffeQ+KANTqcLA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: sy7636a: Add missing gpio pins and
+ supply
+To: Andreas Kemnade <akemnade@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alistair Francis
+ <alistair@alistair23.me>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
+ <20250906-sy7636-rsrc-v1-1-e2886a9763a7@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,38 +108,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CABZAGRE=6Dg1npRx-jmcycnGMkbtmY6A7E=upffeQ+KANTqcLA@mail.gmail.com>
+In-Reply-To: <20250906-sy7636-rsrc-v1-1-e2886a9763a7@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 06/09/2025 11:13, Nick Huang wrote:
-> Krzysztof Kozlowski <krzk@kernel.org> 於 2025年9月6日 週六 下午3:38寫道：
->>
->> On 03/09/2025 09:42, Lee Jones wrote:
->>> Looks like you corrupted the subject line with the commit message.
->>>
->>> Please resubmit.
->>>
->>>> From: Johnson Huang <kusogame68@gmail.com>
->>>
->>> Use `git format-patch` and `git send-email` instead.
->>>
->>>> Co-developed-by: Nick Huang <sef1548@gmail.com>
->>>> Signed-off-by: Nick Huang <sef1548@gmail.com>
->>>> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
->>>
->>> It took two of you to correct the word "and"?
->>
->> Can you respond to the comment instead of ignoring it and sending the same?
->>
->> Best regards,
->> Krzysztof
+On 06/09/2025 11:09, Andreas Kemnade wrote:
+> To be able to fully describe how the SY7636A is connected to the system,
+> add properties for the EN and VCOM_EN pins. To squeeze out every bit
+> of unused current, in many devices it is possible to power off the
+> complete chip. Add an input regulator to allow that.
 > 
-> Hi Krzysztof,
+> Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
+> ---
+>  .../devicetree/bindings/mfd/silergy,sy7636a.yaml         | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> Sure, at the moment this commit only addresses the typo in the word 'and'.
+> diff --git a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> index ee0be32ac0204..08ad593e237f1 100644
+> --- a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+> @@ -32,6 +32,22 @@ properties:
+>        Specifying the power good GPIOs.
+>      maxItems: 1
+>  
+> +  en-gpios:
 
-Did you read the question?
+enable-gpios, unless it is something else, but then please explain in
+the description.
+
+> +    description:
+> +      If EN pin is not hardwired, specify it here to have it set up.
+> +    maxItems: 1
+
 
 Best regards,
 Krzysztof
