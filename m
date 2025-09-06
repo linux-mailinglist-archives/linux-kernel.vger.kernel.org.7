@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14186B469D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:16:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01D5B469DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64DFA07D3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7398C5C15AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9912BEFEA;
-	Sat,  6 Sep 2025 07:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A04286415;
+	Sat,  6 Sep 2025 07:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3i8BBq8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcT9THpj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A157C1CA84;
-	Sat,  6 Sep 2025 07:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2771CA84
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 07:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757142960; cv=none; b=LWo4q+rfUZfTCF4Lx6aQQIbi5qGcCMExP9i9K4g12AQNusykvmriQ+t11P2qjY43f1Q6C35j0uhnfJHN0gdZnq7Kd1IwWVb93e+m6T3F/Wp8DRT5QGSDLXf1ckznMCyvx6XRj1MMFypIV3rblHo5DR6ZlKI2BIgtAMsQrioSWC8=
+	t=1757143069; cv=none; b=YM6BzUkOpojtcB0ScNYlnY+YsWBwqJO6Gueun+WxUq5PgnfBXARlbAOJfi44C7eVPmOpVCVjERjaQjh7sxgSElZbQurafFdGLc3ZnDEtNKiWxIHhBiMR5hn0DfhuwpOsLNlYcrnBZNk7rgfNyBgOAaAQy4hUCMx1giPjED2U8dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757142960; c=relaxed/simple;
-	bh=48WfLyxBdPPFUaU6BIhe6s3CGo0PCs0tkHoG79/gQJs=;
+	s=arc-20240116; t=1757143069; c=relaxed/simple;
+	bh=WD1SCm1h/9co/9j2fUcEOmqoTWpTrcwV/TeaLWJsl74=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hzODq/2HPJPXDcf+keNVv+REt/HFpXWg86FvIl3BpMKCVDp9fJcKDRhv8dGAuQ0gJd8qS+rhRNqEmFhLmXhS8wGYhPXOEdrbtu7KwI9eC69CrGpyDHIaEFVJNGmQo5D3DK8IpOvkTQ1FApG6hxVvcHWPnXj/LPuI4XiBFHEC/jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3i8BBq8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D94FC4CEE7;
-	Sat,  6 Sep 2025 07:15:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=GVOhdb11b752H6QPcCQ2oeaWHa52DHgdpGpaYtC9taeylzV4czmh3dwFZMZp2AoJ+UCSjJDNFa8uQLNUOKQjsSe2c2ePad7kTBObr1ekhwvrWjAGsn4m4op8MlQ0+bYpRPjhrnyjlN48XjvUdzOWBdVqoOhVnIwK+gURWAwi6Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcT9THpj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03A7C4CEE7;
+	Sat,  6 Sep 2025 07:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757142960;
-	bh=48WfLyxBdPPFUaU6BIhe6s3CGo0PCs0tkHoG79/gQJs=;
+	s=k20201202; t=1757143067;
+	bh=WD1SCm1h/9co/9j2fUcEOmqoTWpTrcwV/TeaLWJsl74=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m3i8BBq8I4ts5m9rIz8i55qkpsq58G++OTNRGZq0B92v0eHlma/mt7FpeKcTzSXyy
-	 knaFXDGC7xppE8dw35LEkZUPMWFg9FFCxSamFtWUkyaQ51BaPcW3XXM5CtiAKwr/cT
-	 uflS1OqCavMKXzYEZn/ZvbYLyJAHHfSsCo4x+lwdLEbIA0uFqE4HGQKanZhR2GiijI
-	 +gHkbFo9Yfy64AnEMuyjF4brs9coEi1fJnCXAwETLuOWKnOfRPqS8sE7d1hlr9ksmW
-	 jBggg/FHsZtwKEQR8dsOUG7dH0a7pDURobDKb2Eu+KNG+UIi2I7Z4X5s8doXTnGNfU
-	 51CzC5TJTMA+Q==
-Message-ID: <12269301-f7e1-4eb6-afa3-a301453c50f6@kernel.org>
-Date: Sat, 6 Sep 2025 09:15:54 +0200
+	b=LcT9THpjZIAKI+QWVTZion1aeXWWlDNeyalSNBVUe+KrVUa85FySLPGtbNuld9gLY
+	 dBK49iC87vaMoiS2J/LQXztQLJkk24WJi3QJG/X9Jj6rrhbvk65dq/BCPIaLZA7SGJ
+	 D4eW1PN3dCgdJEedAWuk6r1MK6+h+ciQbm/XKHhvhnMa9EyQMESFnsX5kW8DcVq8EC
+	 DyRi9taH42nkyLMXRKyJH2KmiFGAoKftaBq46P8tSe3eDo23DmN3H9QUzUnusenH7T
+	 gSbeO2qzOGSCEZOYtIEz0bsAK/yVD0hig3s8br3Hhxy9ROQNGDxQOn1LSeBX9R5dKd
+	 dyrvxq8OwKW8Q==
+Message-ID: <b78803e6-1840-40fe-87a1-aea36a34c86a@kernel.org>
+Date: Sat, 6 Sep 2025 09:17:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] dt-bindings: net: mediatek,mt7925-bluetooth.yaml
-To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>,
- Marcel Holtmann <marcel@holtmann.org>, Luiz Von Dentz
- <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
- Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
- Hao Qin <Hao.qin@mediatek.com>,
- linux-bluetooth <linux-bluetooth@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-mediatek <linux-mediatek@lists.infradead.org>,
- devicetree <devicetree@vger.kernel.org>
-References: <20250905084433.26999-1-ot_zhangchao.zhang@mediatek.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: rohm,bd71847-pmic: Fix typo in
+ documentation
+To: Nick Huang <sef1548@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Johnson Huang <kusogame68@gmail.com>
+References: <20250906032123.21534-1-sef1548@gmail.com>
+ <20250906032123.21534-2-sef1548@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,29 +100,40 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250905084433.26999-1-ot_zhangchao.zhang@mediatek.com>
+In-Reply-To: <20250906032123.21534-2-sef1548@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/09/2025 10:44, Zhangchao Zhang wrote:
-> Reset BT via BT_KILL_1V2_L hardware pin.
+On 06/09/2025 05:21, Nick Huang wrote:
+> Correct a typo in the documentation by replacing "abd" with the correct word "and".
+> This improves readability and avoids confusion in the description.
 > 
-> On the M.2 standard hardware pin interface, the MTK chip
-> has a pin called BT_KILL_1V2_L or W_DISABLE#2, it uses
-> function-level device reset (FLDR) to reset Bluetooth.
-> When it is pulled low, it can external shut down the BT
-> function, it is defined as 5 on the MT7925 chip, and is
-> defined as 248 on the device tree pio controller.
-> 
-> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> ---
->  .../bluetooth/mediatek,mt7925-bluetooth.yaml  | 47 +++++++++++++++++++
+> Co-developed-by: Nick Huang <sef1548@gmail.com>
+> Signed-off-by: Nick Huang <sef1548@gmail.com>
+> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
 
+Two people developed a typo patch? No. They did not...
 
-You need to finally read submitting patches document.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-You already got comments before, multiple times, but you still ignoring
-them.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
 
 Best regards,
 Krzysztof
