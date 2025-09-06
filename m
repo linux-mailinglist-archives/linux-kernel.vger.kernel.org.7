@@ -1,81 +1,168 @@
-Return-Path: <linux-kernel+bounces-804427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A971DB476A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEB4B476C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A53A05798
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315BBA01360
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E648626D4D9;
-	Sat,  6 Sep 2025 19:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D1285CAC;
+	Sat,  6 Sep 2025 19:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NocqwHjw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+mFAiR0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FA014A8E;
-	Sat,  6 Sep 2025 19:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DBF1C84B8;
+	Sat,  6 Sep 2025 19:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757185330; cv=none; b=EMhCUFZyd4HJwkH2+tO9OD8oe9oXmv6Qvbtev2Ih+JkyPImt3KGSvn0BRXDlGoFZRUnF836IJoSkfRL5EAlnqFdenXJh0qi+MtEuuZC5ymcISolxmuY3pK0tCG5PQ0p9BXFUrcVZS/FtPuH4ZZ9Ko/0PQNsTPqT1lVYZnq7aalY=
+	t=1757185676; cv=none; b=qC/gtDcM89xeadWgBVGkHfRCMXJMYu629hDFgp7uFn2hXnH4xm3SJffHsCoZFzKl+HVovmI9Fmma6lVTH3chhqoRZwk2al0bPdWERImAK2VDrLObNRuW3i/p5ZAhNSAEb9vr2t2FpbdxSh4gkMqpkwxOVpZBPcCdOL1D2YOhxRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757185330; c=relaxed/simple;
-	bh=AcPPmlA+JFLya7tpl9ybxpQdmK8HSFENwjrLPX3j1g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmxsHThIn3OzxgUsuoSaGNbQdDF0Vm1t9YJ6aS9Af0v9nPvmoZmkDnD0yBaN5pFr7yPX6cv8UgjNjb+59VNY33djrN4dXekM/JD/hNKA9FbA3Sh36KVz3xNTNmU3AwwcDPaXGx4VMnp9DdGXLjUTmHRIg0udvqmHXdhw5RwoHGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NocqwHjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB40C4CEE7;
-	Sat,  6 Sep 2025 19:02:09 +0000 (UTC)
+	s=arc-20240116; t=1757185676; c=relaxed/simple;
+	bh=gVQxgJDG/hVQtG1HjsZygJpYDl5EUtgtz/PBvFVrOyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axNzgzVpxewtcePplsFbF/xXdnpWOGhmZw5VM6YqGtzTJUyrmbFRyhz9ts5FIdo09eoWf8fR2olbvBryW7SipWBrVKDLOIR2r5rO3a2LqWq19sE1NQjacpxI2u7U/3Z+yF9vEMmvfJMm0sVZU9UhQT5G9IggvWbG5KF7fiL3N8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+mFAiR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB1BC4CEE7;
+	Sat,  6 Sep 2025 19:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757185329;
-	bh=AcPPmlA+JFLya7tpl9ybxpQdmK8HSFENwjrLPX3j1g4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NocqwHjw07cmuVw+SD71MT2uaV9ZVNsUzR2lPnz40eJS6ZxIRGVC7NYB+zYJGxfyY
-	 mugBwULbbTmm8LUPmLsLx8FQzcWlxzbmsg6O6sdXbbEbC7HWxNZYr9h92siC6Dekrc
-	 2DZf8PugnAsDxwpWNGgF/VsUIdxjCuohKrbGIAsXZ8FYiluZgY+2t1TEh7hc7G3F3w
-	 G1uBFP8N/e0GD5/bLAIsVtqGYFvnmMPHutJiDjaM9RidRcxanxuPPUax4sczIruYVx
-	 GBc8ylUjtFETiZpNU82TiV6cZN+Q9fAQE7kAAukbzYmfB0mwrrwORK095L7a022uZm
-	 hUMyCTdK/F63Q==
-Date: Sat, 6 Sep 2025 14:02:09 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 1/1] bindings: siox: convert eckelmann,siox-gpio.txt
- to yaml format
-Message-ID: <175718532835.1623882.13775387740774045796.robh@kernel.org>
-References: <20250905164200.599448-1-Frank.Li@nxp.com>
+	s=k20201202; t=1757185676;
+	bh=gVQxgJDG/hVQtG1HjsZygJpYDl5EUtgtz/PBvFVrOyU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q+mFAiR08SBlMO52nyQV5x8Ckzaq209dYKqIE6BDTNYGo3M7mJTD5DTq7f7tdRNdh
+	 4kGgqnMI5MBeFAAsmP4W4LsYh1UUCVxREseZoKaO724QS262NxkU6LNt/Cm64QWDsN
+	 Ukjk623XcVlXyEURrRa/hJkjyYVrqH5QYqze0b8sBWf7DPdybfB/4UskmIwJXPFQcY
+	 FfQsyS5Dh3N2bWn/AICiDZQuYvU3TwGB1MVmsmtFb+BgXHgtwUgcXgfxzq+9wiYJ/g
+	 RCkVuMdtfNP/q0QeJ1a/DLREycy5IBpXh1eb4AEM3PSSRmbpiwnKIssXMY0U49cBl+
+	 wF23214GL5o9A==
+Date: Sat, 6 Sep 2025 12:07:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
+ <ast@fiberby.net>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Simon Horman
+ <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 05/11] tools: ynl-gen: define nlattr *array in
+ a block scope
+Message-ID: <20250906120754.7b90c718@kernel.org>
+In-Reply-To: <4eda9c57-bde0-43c3-b8a0-3e45f2e672ac@fiberby.net>
+References: <20250904-wg-ynl-prep@fiberby.net>
+	<20250904220156.1006541-5-ast@fiberby.net>
+	<20250905171809.694562c6@kernel.org>
+	<4eda9c57-bde0-43c3-b8a0-3e45f2e672ac@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905164200.599448-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, 6 Sep 2025 13:13:29 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
+> In patch 4, it is about a variable used by multiple Type classes having
+> presence_type() =3D 'count', which is currently 3 classes:
+> - TypeBinaryScalarArray
+> - TypeMultiAttr
+> - TypeArrayNest (later renamed to TypeIndexedArray)
+>=20
+> In patch 5, I move code for a special variable used by one Type class,
+> to be contained within that class. It makes it easier to ensure that the
+> variable is only defined, when used, and vice versa. This comes at the
+> cost of the generated code looking generated.
 
-On Fri, 05 Sep 2025 12:41:57 -0400, Frank Li wrote:
-> Convert eckelmann,siox-gpio.txt to yaml format.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v2
-> - add missed additionalProperties: false
-> ---
->  .../bindings/siox/eckelmann,siox-gpio.txt     | 19 --------
->  .../bindings/siox/eckelmann,siox-gpio.yaml    | 48 +++++++++++++++++++
->  2 files changed, 48 insertions(+), 19 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/siox/eckelmann,siox-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/siox/eckelmann,siox-gpio.yaml
-> 
+So you're agreeing?
 
-Applied, thanks!
+> If we should make the generated code look like it was written by humans,
+> then I would move the definition of these local variables into a class
+> method, so `i` can be generated by the generic implementation, and `array`
+> can be implemented in it's class. I will take a stab at this, but it might
+> be too much refactoring for this series, eg. `len` is also defined local
+> to conditional blocks multiple branches in a row.
+>=20
+> tools/net/ynl/generated/nl80211-user.c:
+> nl80211_iftype_data_attrs_parse(..) {
+>    [..]
+>    ynl_attr_for_each_nested(attr, nested) {
+>      unsigned int type =3D ynl_attr_type(attr);
+>=20
+>      if (type =3D=3D NL80211_BAND_IFTYPE_ATTR_IFTYPES) {
+>        unsigned int len;
+>        [..]
+>      } else if (type =3D=3D NL80211_BAND_IFTYPE_ATTR_HE_CAP_MAC) {
+>        unsigned int len;
+>        [..]
+>      [same pattern 8 times, so 11 times in total]
+>      } else if (type =3D=3D NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PPE) {
+>        unsigned int len;
+>        [..]
+>      }
+>    }
+>    return 0;
+> }
 
+It's pretty easily doable, I already gave up on not calling _attr_get()
+for sub-messages.
+
+> That looks very generated, I would have `len` defined together with `type=
+`,
+> and a switch statement would also look a lot more natural, but maybe leave
+> the if->switch conversion for the compiler to detect.
+
+diff --git a/tools/net/ynl/pyynl/ynl_gen_c.py b/tools/net/ynl/pyynl/ynl_gen=
+_c.py
+index fb7e03805a11..8a1f8a477566 100755
+--- a/tools/net/ynl/pyynl/ynl_gen_c.py
++++ b/tools/net/ynl/pyynl/ynl_gen_c.py
+@@ -243,7 +243,7 @@ from lib import SpecSubMessage, SpecSubMessageFormat
+         raise Exception(f"Attr get not implemented for class type {self.ty=
+pe}")
+=20
+     def attr_get(self, ri, var, first):
+-        lines, init_lines, local_vars =3D self._attr_get(ri, var)
++        lines, init_lines, _ =3D self._attr_get(ri, var)
+         if type(lines) is str:
+             lines =3D [lines]
+         if type(init_lines) is str:
+@@ -251,10 +251,6 @@ from lib import SpecSubMessage, SpecSubMessageFormat
+=20
+         kw =3D 'if' if first else 'else if'
+         ri.cw.block_start(line=3Df"{kw} (type =3D=3D {self.enum_name})")
+-        if local_vars:
+-            for local in local_vars:
+-                ri.cw.p(local)
+-            ri.cw.nl()
+=20
+         if not self.is_multi_val():
+             ri.cw.p("if (ynl_attr_validate(yarg, attr))")
+@@ -2101,6 +2097,7 @@ _C_KW =3D {
+             else:
+                 raise Exception(f"Per-op fixed header not supported, yet")
+=20
++    var_set =3D set()
+     array_nests =3D set()
+     multi_attrs =3D set()
+     needs_parg =3D False
+@@ -2118,6 +2115,13 @@ _C_KW =3D {
+             multi_attrs.add(arg)
+         needs_parg |=3D 'nested-attributes' in aspec
+         needs_parg |=3D 'sub-message' in aspec
++
++        try:
++            _, _, l_vars =3D aspec._attr_get(ri, '')
++            var_set |=3D set(l_vars) if l_vars else set()
++        except:
++            pass  # _attr_get() not implemented by simple types, ignore
++    local_vars +=3D list(var_set)
+     if array_nests or multi_attrs:
+         local_vars.append('int i;')
+     if needs_parg:
 
