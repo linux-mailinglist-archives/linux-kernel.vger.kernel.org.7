@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-804367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC16B473E2
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7501EB473E8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B26A45216
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3587D188AAA6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B095F24111D;
-	Sat,  6 Sep 2025 16:14:41 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E942417FB;
+	Sat,  6 Sep 2025 16:15:04 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF041DDE9;
-	Sat,  6 Sep 2025 16:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC2C241CB7;
+	Sat,  6 Sep 2025 16:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757175281; cv=none; b=Okt23ikyQyiBgcMZJm9nYf10lM9C9TzUGOE1Ziy+SVGdAjTEBpLXwr+m1dEiTOLV5Urd0v8JG5TMKwE8E3dKapFzfzhuCO0plO+06E/Q7a5ZrzJbj6yaO+rZGAini1SEKew36LU24UXyR5Te6jkceRAYj6lJlQKYqm/ag1u2ANE=
+	t=1757175303; cv=none; b=hzMXybNwEGS4IWbpkijHuK1aQDVXtFbe5qLLCxg+WZUyKh9L6Zh0lLcX9UIfui6ZEqBEB96LV/VWBMAopnEUZLpscGaeKHpoRdEMfQOzKZKoZhiOTiFHoR15RVaFJP+lnMqEWpEz2aeIQk+wi95NM0eYIW5XHPyTvU0G+1NxqSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757175281; c=relaxed/simple;
-	bh=gYjed6G+nWlzA/HwYJOGqC15hyaQB/MDxR31cpFhYg4=;
+	s=arc-20240116; t=1757175303; c=relaxed/simple;
+	bh=TYB/E2tIkzgU/+Rq74o3mefWv478pIKXjHznT5IMLJc=;
 	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=jFe8pXoB+Gg9+ZWLICiF8xTd3rwG4Y1ULOhBRrVUctwq/IUxWi9MOnoapMs71uh0wddh8cJ1q4Cl7vIfpEpAKgL5Ck9GEdruc/zi3X2dIg52RQTYV+OUaoQ/2q7Mw4qW2+7BOQAvJEtoY3ZHAhPsO2in8El2bZvmSy8CYM1VMW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+	 Subject:Content-Type; b=GS3IeLj/xuiYWCdWNrx3/C9m/YRjzRa7mPl+RBKpIe01B6Dmqpblo28/jRG2pNYy+F8QOCRz/gXFq4eua6WXe56GdIrqupircMBHYd/bhYtgsswTSfU6GrJihwsF/Sqe1yEGkFoYlyx2nOUVhlPGP0UM5Ow/nb1QlaSekun/tjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
 Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cJyw800xBz8Xs6w;
-	Sun, 07 Sep 2025 00:14:32 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 586GEDBJ035044;
-	Sun, 7 Sep 2025 00:14:13 +0800 (+08)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cJywg6Y88z5PM32;
+	Sun, 07 Sep 2025 00:14:59 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl1.zte.com.cn with SMTP id 586GEtTv035356;
+	Sun, 7 Sep 2025 00:14:55 +0800 (+08)
 	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp05[null])
+Received: from mapi (xaxapp02[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Sun, 7 Sep 2025 00:14:17 +0800 (CST)
-Date: Sun, 7 Sep 2025 00:14:17 +0800 (CST)
-X-Zmail-TransId: 2afc68bc5dd9d62-30d7d
+	Sun, 7 Sep 2025 00:14:57 +0800 (CST)
+Date: Sun, 7 Sep 2025 00:14:57 +0800 (CST)
+X-Zmail-TransId: 2afa68bc5e01e95-41e9f
 X-Mailer: Zmail v1.0
-Message-ID: <20250907001417537vSx6nUsb3ILqI0iQ-WnGp@zte.com.cn>
+Message-ID: <20250907001457696qAqUGGkV1VfEO6OkVMovW@zte.com.cn>
 In-Reply-To: <20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn>
 References: 20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn
 Precedence: bulk
@@ -57,332 +57,142 @@ From: <fan.yu9@zte.com.cn>
 To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>, <corbet@lwn.net>
 Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIdjIgbGludXgtbmV4dCA0LzVdIHRvb2xzL2RlbGF5dG9wOiBJbXByb3ZlIGVycm9yIGhhbmRsaW5nIGZvciBtaXNzaW5nIFBTSSBzdXBwb3J0?=
+Subject: =?UTF-8?B?W1BBVENIdjIgbGludXgtbmV4dCA1LzVdIGRvY3M6IHVwZGF0ZSBkZWxheXRvcCBkb2N1bWVudGF0aW9uIGZvciBuZXcgaW50ZXJhY3RpdmUgZmVhdHVyZXM=?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 586GEDBJ035044
+X-MAIL:mse-fl1.zte.com.cn 586GEtTv035356
 X-TLS: YES
 X-SPF-DOMAIN: zte.com.cn
 X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
 X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Sun, 07 Sep 2025 00:14:32 +0800
+X-SOURCE-IP: 10.5.228.132 unknown Sun, 07 Sep 2025 00:14:59 +0800
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68BC5DE7.001/4cJyw800xBz8Xs6w
+X-Fangmail-MID-QID: 68BC5E03.000/4cJywg6Y88z5PM32
 
 From: Fan Yu <fan.yu9@zte.com.cn>
 
-Enhanced display logic to conditionally show PSI information only
-when successfully read, with helpful guidance for users to enable
-PSI support (psi=1 cmdline parameter).
+This commit updates the delaytop documentation to reflect the newly
+added features:
+1) Added comprehensive description of interactive keyboard controls
+2) Documented all available sort fields
+3) Added examples for advanced usage scenarios
+4) Included PSI availability note
 
 Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
 ---
- tools/accounting/delaytop.c | 182 +++++++++++++++++++++++-------------
- 1 file changed, 116 insertions(+), 66 deletions(-)
+ Documentation/accounting/delay-accounting.rst | 91 ++++++++++++-------
+ 1 file changed, 58 insertions(+), 33 deletions(-)
 
-diff --git a/tools/accounting/delaytop.c b/tools/accounting/delaytop.c
-index 7bd1a1eeb354..72cc500b44b1 100644
---- a/tools/accounting/delaytop.c
-+++ b/tools/accounting/delaytop.c
-@@ -44,13 +44,11 @@
- #include <linux/cgroupstats.h>
- #include <stddef.h>
+diff --git a/Documentation/accounting/delay-accounting.rst b/Documentation/accounting/delay-accounting.rst
+index 8ccc5af5ea1e..7cca536d2c4c 100644
+--- a/Documentation/accounting/delay-accounting.rst
++++ b/Documentation/accounting/delay-accounting.rst
+@@ -134,47 +134,72 @@ The above command can be used with -v to get more debug information.
 
--#define PSI_CPU_SOME "/proc/pressure/cpu"
--#define PSI_CPU_FULL	"/proc/pressure/cpu"
--#define PSI_MEMORY_SOME "/proc/pressure/memory"
--#define PSI_MEMORY_FULL "/proc/pressure/memory"
--#define PSI_IO_SOME "/proc/pressure/io"
--#define PSI_IO_FULL "/proc/pressure/io"
--#define PSI_IRQ_FULL	"/proc/pressure/irq"
-+#define PSI_PATH	"/proc/pressure"
-+#define PSI_CPU_PATH	"/proc/pressure/cpu"
-+#define PSI_MEMORY_PATH	"/proc/pressure/memory"
-+#define PSI_IO_PATH	"/proc/pressure/io"
-+#define PSI_IRQ_PATH	"/proc/pressure/irq"
+ After the system starts, use `delaytop` to get the system-wide delay information,
+ which includes system-wide PSI information and Top-N high-latency tasks.
++Note: PSI support requires `CONFIG_PSI=y` and `psi=1` for full functionality.
 
- #define NLA_NEXT(na)			((struct nlattr *)((char *)(na) + NLA_ALIGN((na)->nla_len)))
- #define NLA_DATA(na)			((void *)((char *)(na) + NLA_HDRLEN))
-@@ -499,87 +497,134 @@ static int get_family_id(int sd)
- 	return id;
- }
+-`delaytop` supports sorting by CPU latency in descending order by default,
+-displays the top 20 high-latency tasks by default, and refreshes the latency
+-data every 2 seconds by default.
++`delaytop` is an interactive tool for monitoring system pressure and task delays.
++It supports multiple sorting options, display modes, and real-time keyboard controls.
 
--static void read_psi_stats(void)
-+static int read_psi_stats(void)
- {
- 	FILE *fp;
- 	char line[256];
- 	int ret = 0;
-+	int error_count = 0;
+-Get PSI information and Top-N tasks delay, since system boot::
++Basic usage with default settings (sorts by CPU delay, shows top 20 tasks, refreshes every 2 seconds)::
+
+ 	bash# ./delaytop
+-	System Pressure Information: (avg10/avg60/avg300/total)
+-	CPU some:       0.0%/   0.0%/   0.0%/     345(ms)
++	System Pressure Information: (avg10/avg60vg300/total)
++	CPU some:       0.0%/   0.0%/   0.0%/  106137(ms)
+ 	CPU full:       0.0%/   0.0%/   0.0%/       0(ms)
+ 	Memory full:    0.0%/   0.0%/   0.0%/       0(ms)
+ 	Memory some:    0.0%/   0.0%/   0.0%/       0(ms)
+-	IO full:        0.0%/   0.0%/   0.0%/      65(ms)
+-	IO some:        0.0%/   0.0%/   0.0%/      79(ms)
++	IO full:        0.0%/   0.0%/   0.0%/    2240(ms)
++	IO some:        0.0%/   0.0%/   0.0%/    2783(ms)
+ 	IRQ full:       0.0%/   0.0%/   0.0%/       0(ms)
+-	Top 20 processes (sorted by CPU delay):
+-	  PID   TGID  COMMAND          CPU(ms)  IO(ms) SWAP(ms) RCL(ms) THR(ms) CMP(ms)  WP(ms) IRQ(ms)
+-	----------------------------------------------------------------------------------------------
+-	  161    161  zombie_memcg_re   1.40    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  130    130  blkcg_punt_bio    1.37    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  444    444  scsi_tmf_0        0.73    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1280   1280  rsyslogd          0.53    0.04    0.00    0.00    0.00    0.00    0.00    0.00
+-	   12     12  ksoftirqd/0       0.47    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1277   1277  nbd-server        0.44    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  308    308  kworker/2:2-sys   0.41    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	   55     55  netns             0.36    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1187   1187  acpid             0.31    0.03    0.00    0.00    0.00    0.00    0.00    0.00
+-	 6184   6184  kworker/1:2-sys   0.24    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  186    186  kaluad            0.24    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	   18     18  ksoftirqd/1       0.24    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  185    185  kmpath_rdacd      0.23    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	  190    190  kstrp             0.23    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 2759   2759  agetty            0.20    0.03    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1190   1190  kworker/0:3-sys   0.19    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1272   1272  sshd              0.15    0.04    0.00    0.00    0.00    0.00    0.00    0.00
+-	 1156   1156  license           0.15    0.11    0.00    0.00    0.00    0.00    0.00    0.00
+-	  134    134  md                0.13    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-	 6142   6142  kworker/3:2-xfs   0.13    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+-
+-Dynamic interactive interface of delaytop::
++	[o]sort [M]memverbose [q]quit
++	Top 20 processes (sorted by cpu delay):
++		PID      TGID  COMMAND           CPU(ms)   IO(ms)  IRQ(ms)  MEM(ms)
++	------------------------------------------------------------------------
++		110       110  kworker/15:0H-s   27.91     0.00     0.00     0.00
++		57        57  cpuhp/7            3.18     0.00     0.00     0.00
++		99        99  cpuhp/14           2.97     0.00     0.00     0.00
++		51        51  cpuhp/6            0.90     0.00     0.00     0.00
++		44        44  kworker/4:0H-sy    0.80     0.00     0.00     0.00
++		60        60  ksoftirqd/7        0.74     0.00     0.00     0.00
++		76        76  idle_inject/10     0.31     0.00     0.00     0.00
++		100       100  idle_inject/14     0.30     0.00     0.00     0.00
++		1309      1309  systemsettings     0.29     0.00     0.00     0.00
++		45        45  cpuhp/5            0.22     0.00     0.00     0.00
++		63        63  cpuhp/8            0.20     0.00     0.00     0.00
++		87        87  cpuhp/12           0.18     0.00     0.00     0.00
++		93        93  cpuhp/13           0.17     0.00     0.00     0.00
++		1265      1265  acpid              0.17     0.00     0.00     0.00
++		1552      1552  sshd               0.17     0.00     0.00     0.00
++		2584      2584  sddm-helper        0.16     0.00     0.00     0.00
++		1284      1284  rtkit-daemon       0.15     0.00     0.00     0.00
++		1326      1326  nde-netfilter      0.14     0.00     0.00     0.00
++		27        27  cpuhp/2            0.13     0.00     0.00     0.00
++		631       631  kworker/11:2-rc    0.11     0.00     0.00     0.00
 +
-+	/* Check if PSI path exists */
-+	if (access(PSI_PATH, F_OK) != 0) {
-+		fprintf(stderr, "Error: PSI interface not found at %s\n", PSI_PATH);
-+		fprintf(stderr, "Please ensure your kernel supports PSI (Pressure Stall Information)\n");
-+		return -1;
-+	}
++Interactive keyboard controls during runtime::
 +
- 	/* Zero all fields */
- 	memset(&psi, 0, sizeof(psi));
++	o - Select sort field (CPU, IO, IRQ, Memory, etc.)
++	M - Toggle display mode (Default/Memory Verbose)
++	q - Quit
 +
- 	/* CPU pressure */
--	fp = fopen(PSI_CPU_SOME, "r");
-+	fp = fopen(PSI_CPU_PATH, "r");
- 	if (fp) {
- 		while (fgets(line, sizeof(line), fp)) {
- 			if (strncmp(line, "some", 4) == 0) {
- 				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 							&psi.cpu_some_avg10, &psi.cpu_some_avg60,
- 							&psi.cpu_some_avg300, &psi.cpu_some_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse CPU some PSI data\n");
-+					error_count++;
-+				}
- 			} else if (strncmp(line, "full", 4) == 0) {
- 				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.cpu_full_avg10, &psi.cpu_full_avg60,
- 						&psi.cpu_full_avg300, &psi.cpu_full_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse CPU full PSI data\n");
-+					error_count++;
-+				}
- 			}
- 		}
- 		fclose(fp);
-+	} else {
-+		fprintf(stderr, "Warning: Failed to open %s\n", PSI_CPU_PATH);
-+		error_count++;
- 	}
++Available sort fields(use -s/--sort or interactive command)::
 +
- 	/* Memory pressure */
--	fp = fopen(PSI_MEMORY_SOME, "r");
-+	fp = fopen(PSI_MEMORY_PATH, "r");
- 	if (fp) {
- 		while (fgets(line, sizeof(line), fp)) {
- 			if (strncmp(line, "some", 4) == 0) {
- 				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.memory_some_avg10, &psi.memory_some_avg60,
- 						&psi.memory_some_avg300, &psi.memory_some_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse Memory some PSI data\n");
-+					error_count++;
-+				}
- 			} else if (strncmp(line, "full", 4) == 0) {
- 				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.memory_full_avg10, &psi.memory_full_avg60,
- 						&psi.memory_full_avg300, &psi.memory_full_total);
--			}
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse Memory full PSI data\n");
-+					error_count++;
-+				}
-+			}
- 		}
- 		fclose(fp);
-+	} else {
-+		fprintf(stderr, "Warning: Failed to open %s\n", PSI_MEMORY_PATH);
-+		error_count++;
- 	}
++	cpu(c)       - CPU delay
++	blkio(i)     - I/O delay 
++	irq(q)       - IRQ delay
++	mem(m)       - Total memory delay
++	swapin(s)    - Swapin delay (memory verbose mode only)
++	freepages(r) - Freepages reclaim delay (memory verbose mode only)
++	thrashing(t) - Thrashing delay (memory verbose mode only)
++	compact(p)   - Compaction delay (memory verbose mode only)
++	wpcopy(w)    - Write page copy delay (memory verbose mode only)
 +
- 	/* IO pressure */
--	fp = fopen(PSI_IO_SOME, "r");
-+	fp = fopen(PSI_IO_PATH, "r");
- 	if (fp) {
- 		while (fgets(line, sizeof(line), fp)) {
- 			if (strncmp(line, "some", 4) == 0) {
- 				ret = sscanf(line, "some avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.io_some_avg10, &psi.io_some_avg60,
- 						&psi.io_some_avg300, &psi.io_some_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse IO some PSI data\n");
-+					error_count++;
-+				}
- 			} else if (strncmp(line, "full", 4) == 0) {
- 				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.io_full_avg10, &psi.io_full_avg60,
- 						&psi.io_full_avg300, &psi.io_full_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse IO full PSI data\n");
-+					error_count++;
-+				}
- 			}
- 		}
- 		fclose(fp);
-+	} else {
-+		fprintf(stderr, "Warning: Failed to open %s\n", PSI_IO_PATH);
-+		error_count++;
- 	}
++Advanced usage examples::
 +
- 	/* IRQ pressure (only full) */
--	fp = fopen(PSI_IRQ_FULL, "r");
-+	fp = fopen(PSI_IRQ_PATH, "r");
- 	if (fp) {
- 		while (fgets(line, sizeof(line), fp)) {
- 			if (strncmp(line, "full", 4) == 0) {
- 				ret = sscanf(line, "full avg10=%lf avg60=%lf avg300=%lf total=%llu",
- 						&psi.irq_full_avg10, &psi.irq_full_avg60,
- 						&psi.irq_full_avg300, &psi.irq_full_total);
--				if (ret != 4)
-+				if (ret != 4) {
- 					fprintf(stderr, "Failed to parse IRQ full PSI data\n");
-+					error_count++;
-+				}
- 			}
- 		}
- 		fclose(fp);
-+	} else {
-+		fprintf(stderr, "Warning: Failed to open %s\n", PSI_IRQ_PATH);
-+		error_count++;
- 	}
++	# ./delaytop -s blkio
++	Sorted by IO delay
 +
-+	/* Return error count: 0 means success, >0 means warnings, -1 means fatal error */
-+	if (error_count > 0) {
-+		fprintf(stderr, "PSI stats reading completed with %d warnings\n", error_count);
-+		return error_count;
-+	}
-+
-+	return 0;
- }
++	# ./delaytop -s mem -M
++	Sorted by memory delay in memory verbose mode
 
- static int read_comm(int pid, char *comm_buf, size_t buf_size)
-@@ -820,7 +865,7 @@ static void get_container_stats(void)
- }
-
- /* Display results to stdout or log file */
--static void display_results(void)
-+static void display_results(int psi_ret)
- {
- 	time_t now = time(NULL);
- 	struct tm *tm_now = localtime(&now);
-@@ -833,49 +878,53 @@ static void display_results(void)
- 	suc &= BOOL_FPRINT(out, "\033[H\033[J");
-
- 	/* PSI output (one-line, no cat style) */
--	suc &= BOOL_FPRINT(out, "System Pressure Information: (avg10/avg60/avg300/total)\n");
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"CPU some:",
--		psi.cpu_some_avg10,
--		psi.cpu_some_avg60,
--		psi.cpu_some_avg300,
--		psi.cpu_some_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"CPU full:",
--		psi.cpu_full_avg10,
--		psi.cpu_full_avg60,
--		psi.cpu_full_avg300,
--		psi.cpu_full_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"Memory full:",
--		psi.memory_full_avg10,
--		psi.memory_full_avg60,
--		psi.memory_full_avg300,
--		psi.memory_full_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"Memory some:",
--		psi.memory_some_avg10,
--		psi.memory_some_avg60,
--		psi.memory_some_avg300,
--		psi.memory_some_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"IO full:",
--		psi.io_full_avg10,
--		psi.io_full_avg60,
--		psi.io_full_avg300,
--		psi.io_full_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"IO some:",
--		psi.io_some_avg10,
--		psi.io_some_avg60,
--		psi.io_some_avg300,
--		psi.io_some_total / 1000);
--	suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
--		"IRQ full:",
--		psi.irq_full_avg10,
--		psi.irq_full_avg60,
--		psi.irq_full_avg300,
--		psi.irq_full_total / 1000);
-+	suc &= BOOL_FPRINT(out, "System Pressure Information: (avg10/avg60vg300/total)\n");
-+	if (psi_ret) {
-+		suc &= BOOL_FPRINT(out, "  PSI not found: check if psi=1 enabled in cmdline\n");
-+	} else {
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"CPU some:",
-+			psi.cpu_some_avg10,
-+			psi.cpu_some_avg60,
-+			psi.cpu_some_avg300,
-+			psi.cpu_some_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"CPU full:",
-+			psi.cpu_full_avg10,
-+			psi.cpu_full_avg60,
-+			psi.cpu_full_avg300,
-+			psi.cpu_full_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"Memory full:",
-+			psi.memory_full_avg10,
-+			psi.memory_full_avg60,
-+			psi.memory_full_avg300,
-+			psi.memory_full_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"Memory some:",
-+			psi.memory_some_avg10,
-+			psi.memory_some_avg60,
-+			psi.memory_some_avg300,
-+			psi.memory_some_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"IO full:",
-+			psi.io_full_avg10,
-+			psi.io_full_avg60,
-+			psi.io_full_avg300,
-+			psi.io_full_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"IO some:",
-+			psi.io_some_avg10,
-+			psi.io_some_avg60,
-+			psi.io_some_avg300,
-+			psi.io_some_total / 1000);
-+		suc &= BOOL_FPRINT(out, PSI_LINE_FORMAT,
-+			"IRQ full:",
-+			psi.irq_full_avg10,
-+			psi.irq_full_avg60,
-+			psi.irq_full_avg300,
-+			psi.irq_full_total / 1000);
-+	}
-
- 	if (cfg.container_path) {
- 		suc &= BOOL_FPRINT(out, "Container Information (%s):\n", cfg.container_path);
-@@ -1017,6 +1066,7 @@ int main(int argc, char **argv)
- {
- 	const struct field_desc *field;
- 	int iterations = 0;
-+	int psi_ret = 0;
- 	char keypress;
-
- 	/* Parse command line arguments */
-@@ -1054,7 +1104,7 @@ int main(int argc, char **argv)
- 		}
-
- 		/* Read PSI statistics */
--		read_psi_stats();
-+		psi_ret = read_psi_stats();
-
- 		/* Get container stats if container path provided */
- 		if (cfg.container_path)
-@@ -1067,7 +1117,7 @@ int main(int argc, char **argv)
- 		sort_tasks();
-
- 		/* Display results to stdout or log file */
--		display_results();
-+		display_results(psi_ret);
-
- 		/* Check for iterations */
- 		if (cfg.iterations > 0 && ++iterations >= cfg.iterations)
+ 	# ./delaytop -p pid
+ 	Print delayacct stats
 -- 
 2.25.1
 
