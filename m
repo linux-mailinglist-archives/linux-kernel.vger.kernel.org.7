@@ -1,190 +1,104 @@
-Return-Path: <linux-kernel+bounces-804054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E800B4694A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16F8B46948
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48BF61C82286
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:28:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2636F582DC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C78A27A103;
-	Sat,  6 Sep 2025 05:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D937265281;
+	Sat,  6 Sep 2025 05:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdPTDbBK"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PzfcPqs8"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D21367;
-	Sat,  6 Sep 2025 05:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176661367
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 05:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757136459; cv=none; b=l9+iALC/bvxVCfEwu3+gqy+M+l6+d8M21vwMobd26VM2DJqmely+Q8RmlpF5MFVpSAAipz6a3ZOL8kXoY1g7zxuIQa9NMWvaaYGuvMrGGu2uznqk/RWiiHIUPQoO8zxx71uBkFfjjrfDC0iakef8CBem8d6IcMnH/ymhaEhXPdM=
+	t=1757136307; cv=none; b=KMQeiZqo/P2nWuso2rNVMMTSUyTbFioA25yvSNhNfBEIDiPig1Su9aKKM1VftQZlziM9geWnJeFmNLyMJaFVQpwQMfyvkGZSo9Ozf7NxSVCY4CS2pWAm/xiGbsiy5oipKTadt5VMmG2rCoBX09sBNdpej7MIAriXdSmIW7mqE1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757136459; c=relaxed/simple;
-	bh=ILx/IqUEAf5dNfgv1RCPobsMBAq478CLLLrBl/sSiig=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqeR1XZV1BpToVAu4Ss9Zqi4r8c+os0zY3QNdFwOL5pS12tF/akmcrY2aR5JvsY9PLhg9Mnv75GczQACoFgnxzodT7yFaoJUJjWPxIyxxNCyrmiZscU6r8samrC99lQDPo2fTvACe/kWhQlPGcWP8T/18ChaG0uEt9Q3bZzIu0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdPTDbBK; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-544acb1f41dso1220266e0c.2;
-        Fri, 05 Sep 2025 22:27:37 -0700 (PDT)
+	s=arc-20240116; t=1757136307; c=relaxed/simple;
+	bh=e1WhUKTBxcgVfgvRyMM4JxOt23VvOa871eMQHq2RQlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njqRWwS4/sYDt0jrWaBYcGE9r0cdLxYzJ9sffwBs8Kz0vg9aJsfUk0aH0xJICejJLOyfBjlrNkEnQMoUaeAMssyvzgnh23eE5GRaaUP3TLum1843+UHagCUVHlTErTaaP1awqXrNG2e1oEarq47w16iAPC9C5O/N7/HsqY+JHjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PzfcPqs8; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24884d9e54bso29081915ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 22:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757136457; x=1757741257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQdhQjCLnbttw1C2tIoR+bnhZgK38rRIuMpPdmFaKlg=;
-        b=QdPTDbBK1OBczpcAVRj1kA1pV/TOzY6wPJcRqZgDhdUXkhVRu8c87OCiHt3lu1SE+g
-         wwQN6Jszn4SoB/BpIijPKLmwuY+zGbSk/4MGEXs41bE+eYPfIkqOydzI4RU1LShmYBSa
-         ozuu6w2w/jd5odHEgSvQMA6aClQYECpwGYvWlP20ldoPcMZEwq6tLf+/tWN+YFapwFqW
-         wRtrcUzjx9L9RXe/cl7vmNLTvXo22BDuNiFzP10jAYH3FJJC5Xa9aiauBle2+CuEiHb8
-         knMI3BQ2SrT88reTUbT0VF1IqJCCQ6VFI6KWkByxZ4rjdQIMxIEftnQ/izU+WYU7WCzU
-         4YSg==
+        d=chromium.org; s=google; t=1757136305; x=1757741105; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZZGo+T7amOY1lETbh1kJa9AjOv0PBB9f7/HBJ+WiqwM=;
+        b=PzfcPqs8EkiZ1nWQyM5Z7sqC1KmX00IskGai70RUAVEEoBIeLb468R1YG9AjGFRKXz
+         B1PsK6s8z//mfdp4qOQhFzyW7zkBnRI8nX4KZV8k3B/xjYdc95Z8usTvNIcRFLPQCydC
+         8o8y26IeFvlLbE+RzpzhZ6Av853MkeMk90NKk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757136457; x=1757741257;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tQdhQjCLnbttw1C2tIoR+bnhZgK38rRIuMpPdmFaKlg=;
-        b=W/NaKKJw8+UhO0p5O+W2SyEmCEReA5JAENp95tayq7BwPei8YfsC9Kt7gUQO8XtmJI
-         GuV8+XoE1klpdLDPB17Mo8TL6ZAdwR4irznSUapIhEPrDLCVWrCaXMqHFgg/N2wuwxPu
-         yQzayXPKEkb2umlvuYTscvFne4NWlDKFBT0pJdoMXGiO0nFAuvXobK9SYHiLA0Qy54hO
-         EtmSNc5Ef2v/Oob9N7VfOiQz1heCosxr4ljmegWe+OUWr8wE11paTnHgScmzSGaOoDzK
-         nHV6eVI8lrfxKMbzll/Tb312DqCKEkfwV4XfW3Ng4plYajlA4+65BgOUGmWjYf2Kx5OX
-         0vMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9yLhrI5FrnVQnHTxQoVe/Gfxk41kLTjmZmYCX0RU8KtHW/GoHYxsAWyzvOZznjxFXQmu5mo/Gfl3evTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgASKuGfNM8koEAjv5BX09h2M+N08dsSxr8MrSzd0Tcqoasioz
-	p8Jg2PvX9gDvlzwQizC86y1sTb8X9ebYn6yGUlipL38M2qKk6dkE7STSblJg4tA/
-X-Gm-Gg: ASbGncugrKpLyrUK/gcCGtG6Tpd4fVk5Rd4la2XT3mCqt5UvWMpKhstJFLjFe96BB/6
-	2oWmyJQaONpsSA8fqNieLqDkzVgNZCQFEXd5i5gCXACH7GYMooQjmBRJaGBKpr2wHPLCJ+IcmUU
-	nvfaJJiN6wjw/qjtWmsPXxJoKdygqccSV5WC25YBvzVYqcYXCaJqpwxGK96V5egi4cCtuqoklBI
-	+vROjigS32aVK3/067Nqyp1gsKq6mIDCcrxRiVkIICO8e6Hgu3wNoaaPGTWtlFSJ8yR73cwPfpK
-	U3E7u2SLtOcJI7s0HD9+dp5fKdIjZ9qBncWAUh5ZH2xYdHBQJzflmz3xg/pcqWwMUb706SZSYTx
-	GvBvGpKrSjEhtseFVoISMqa29YHenV3V8oTtH
-X-Google-Smtp-Source: AGHT+IFnLfCtooVCkNri1sHLTys6A8NIDo6CEVuTcuHXJ+a+CVUdg0e4kqKxuKx5jEUnuUguy/d4pQ==
-X-Received: by 2002:a05:6122:7c9:b0:539:33b1:5571 with SMTP id 71dfb90a1353d-5473aac04c1mr375378e0c.4.1757136456668;
-        Fri, 05 Sep 2025 22:27:36 -0700 (PDT)
-Received: from ryzoh.. ([2804:14c:5fc8:8033:2f8:6aa5:de03:ccda])
-        by smtp.googlemail.com with ESMTPSA id 71dfb90a1353d-544912eef59sm10643006e0c.8.2025.09.05.22.27.34
+        d=1e100.net; s=20230601; t=1757136305; x=1757741105;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZZGo+T7amOY1lETbh1kJa9AjOv0PBB9f7/HBJ+WiqwM=;
+        b=UJoQdJmiy1xMdYSx3sgrser21kDU3QwL1WYxhwBzGwmHexcUXakW4S2Nt8TpQLgy15
+         Ox7Mt2vY1ViuKKI3quxJW2dOcAugLO9/1UbSPVW++xfoiu9J9+l/rkfS4aTgXAn9MI6H
+         0E5yYWd43zexr/YU/I7kAZRmzgqQdKP4m3MG5ReJZXxLSxCzsGL3RpymRa/gwPgNd8KF
+         dQO7H+NzlhL9EToXcDvOuaeBogT5jB5c2y/BF3S5U7ns/8rod5UpOhy3FGqbIMCT7lFn
+         Uzzse7hmusE+oIhjZHiNwD0EbojuPpkicVXW/kUhNnpoYTBHoS7ZBzM5h7NKTfb8n4Iz
+         J7qA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDUlKNcLzYqsJrv2N1ySSwbPRvFU6wjTPt8WSD0exUjfa311LXMbyp8VK9LqGsKU0LTekHXp2e3MOYVM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykHsGBvAj1UHsY1/ifOjt+tefgb1uU+P1i4L5ySYQqlMF9vEh/
+	+2hrmSX61HyrrtwrRzUGF1GfJA0fvC34EhB0o5MDjvZEA44jlbTRentDE4ndEgpbGQ==
+X-Gm-Gg: ASbGncu9bf9LJ+1hwf3G5Cqo5MfwKUQZDKtHnbjy0grk88JI13vNAS7yDftnEYy91El
+	2n7FUiAptAc+fkTqGrtjcPUH8/qngdecqOkShuugWBAZPWzSfQYCEzOH9cC5blSGTf1FLkrWVUM
+	HB0cLpYj3ZbjZ5khdsNUXEh52ZilFCQlLIy7Ya6skKzuWY0g0jr8ovYIMEB+3dFZaTM1j3BmGWz
+	5Ik2YiAiJvcn7Si19d1/uOL2mBApQTNdV1xROaBW90ErGEk7yFc8zgWLTpOp+LwnKRQZXfnOBgZ
+	ABOZCD5+kYfy5boO5NlAUmgHWwd1vjwWBo0tQyVh5f7VeyPZ2dSZ5MFem+z8V317vPGS66vKNB+
+	pdgy2WzQu9JxvOgUuonyuOWjFFGONONnTVbk=
+X-Google-Smtp-Source: AGHT+IEoDHKsfNZjYJYHiPgDcwHYSGs1lR2jb/L8ZEYHKch3JPG8uNbquge4NeIL4yWvY+k0jKXftA==
+X-Received: by 2002:a17:902:da92:b0:24c:cc7c:daa7 with SMTP id d9443c01a7336-251736dedf9mr17725615ad.38.1757136305265;
+        Fri, 05 Sep 2025 22:25:05 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:788:b55a:785c:1e68])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9e39094dsm82041125ad.84.2025.09.05.22.25.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 22:27:36 -0700 (PDT)
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Subject: [PATCH v2] scsi: mpi3mr: Replace one-element arrays with flexible-array members
-Date: Sat,  6 Sep 2025 02:20:41 -0300
-Message-Id: <20250906052041.242671-1-pedrodemargomes@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Fri, 05 Sep 2025 22:25:04 -0700 (PDT)
+Date: Sat, 6 Sep 2025 14:25:00 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Vlastimil Babka <vbabka@suse.cz>, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH 0/3] mm: remove zpool
+Message-ID: <dh74mr7bjtpzk7frviv6iqqno2u2b27p7jiagp2dtnsz2wrfhr@wlb5vqg4majs>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
+ <20250904093325.2768507-1-vitaly.wool@konsulko.se>
+ <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
+ <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
+ <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
 
-One-element arrays are deprecated, and we are replacing them with flexible
-array members instead. So, replace one-element arrays with flexible-array
-members in multiple structures.
----
-Change in v2:
-- Use struct_size
----
- drivers/scsi/mpi3mr/mpi3mr_app.c    | 11 +++--------
- include/uapi/scsi/scsi_bsg_mpi3mr.h | 10 +++++-----
- 2 files changed, 8 insertions(+), 13 deletions(-)
+On (25/09/05 19:57), Yosry Ahmed wrote:
+> I think Android uses zram+zsmalloc with 16K pages. Perhaps Sergey could
+> confirm.
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_app.c b/drivers/scsi/mpi3mr/mpi3mr_app.c
-index 0e5478d62580..cdcdecb21b37 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_app.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_app.c
-@@ -1241,10 +1241,7 @@ static long mpi3mr_bsg_query_hdb(struct mpi3mr_ioc *mrioc,
- 	uint32_t data_in_sz = 0;
- 
- 	data_in_sz = job->request_payload.payload_len;
--
--	length = (sizeof(*hbd_status) + ((MPI3MR_MAX_NUM_HDB - 1) *
--		    sizeof(*hbd_status_entry)));
--	hbd_status = kmalloc(length, GFP_KERNEL);
-+	hbd_status = kmalloc(struct_size(hbd_status, entry, MPI3MR_MAX_NUM_HDB), GFP_KERNEL);
- 	if (!hbd_status)
- 		return -ENOMEM;
- 	hbd_status_entry = &hbd_status->entry[0];
-@@ -1466,7 +1463,7 @@ static long mpi3mr_bsg_pel_enable(struct mpi3mr_ioc *mrioc,
- static long mpi3mr_get_all_tgt_info(struct mpi3mr_ioc *mrioc,
- 	struct bsg_job *job)
- {
--	u16 num_devices = 0, i = 0, size;
-+	u16 num_devices = 0, i = 0;
- 	unsigned long flags;
- 	struct mpi3mr_tgt_dev *tgtdev;
- 	struct mpi3mr_device_map_info *devmap_info = NULL;
-@@ -1492,9 +1489,7 @@ static long mpi3mr_get_all_tgt_info(struct mpi3mr_ioc *mrioc,
- 		return 0;
- 	}
- 
--	kern_entrylen = num_devices * sizeof(*devmap_info);
--	size = sizeof(u64) + kern_entrylen;
--	alltgt_info = kzalloc(size, GFP_KERNEL);
-+	alltgt_info = kzalloc(struct_size(alltgt_info, dmi, num_devices), GFP_KERNEL);
- 	if (!alltgt_info)
- 		return -ENOMEM;
- 
-diff --git a/include/uapi/scsi/scsi_bsg_mpi3mr.h b/include/uapi/scsi/scsi_bsg_mpi3mr.h
-index f5ea1db92339..9e5b6ced53ab 100644
---- a/include/uapi/scsi/scsi_bsg_mpi3mr.h
-+++ b/include/uapi/scsi/scsi_bsg_mpi3mr.h
-@@ -205,7 +205,7 @@ struct mpi3mr_all_tgt_info {
- 	__u16	num_devices;
- 	__u16	rsvd1;
- 	__u32	rsvd2;
--	struct mpi3mr_device_map_info dmi[1];
-+	struct mpi3mr_device_map_info dmi[];
- };
- 
- /**
-@@ -248,7 +248,7 @@ struct mpi3mr_logdata_entry {
- 	__u8	valid_entry;
- 	__u8	rsvd1;
- 	__u16	rsvd2;
--	__u8	data[1]; /* Variable length Array */
-+	__u8	data[]; /* Variable length Array */
- };
- 
- /**
-@@ -259,7 +259,7 @@ struct mpi3mr_logdata_entry {
-  * @entry: Variable length Log data entry array
-  */
- struct mpi3mr_bsg_in_log_data {
--	struct mpi3mr_logdata_entry entry[1];
-+	__DECLARE_FLEX_ARRAY(struct mpi3mr_logdata_entry, entry);
- };
- 
- /**
-@@ -307,7 +307,7 @@ struct mpi3mr_bsg_in_hdb_status {
- 	__u8    element_trigger_format;
- 	__u16	rsvd2;
- 	__u32	rsvd3;
--	struct mpi3mr_hdb_entry entry[1];
-+	struct mpi3mr_hdb_entry entry[];
- };
- 
- /**
-@@ -416,7 +416,7 @@ struct mpi3mr_buf_entry_list {
- 	__u8	rsvd1;
- 	__u16	rsvd2;
- 	__u32	rsvd3;
--	struct mpi3mr_buf_entry buf_entry[1];
-+	struct mpi3mr_buf_entry buf_entry[];
- };
- /**
-  * struct mpi3mr_bsg_mptcmd -  Generic bsg data
--- 
-2.39.5
+I'm not working on android directly,
 
+I can confirm that android uses zram+zsmalloc.  As of 16K pages, there
+was a way to toggle 16k pages on android (via system settings), I don't
+know if this is the default now.
 
