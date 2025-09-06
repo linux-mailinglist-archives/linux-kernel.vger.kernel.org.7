@@ -1,247 +1,124 @@
-Return-Path: <linux-kernel+bounces-804136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36867B46A86
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:11:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039FDB46AA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA6A1C239B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B8D3AB8B5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825812D0615;
-	Sat,  6 Sep 2025 09:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B232D5C95;
+	Sat,  6 Sep 2025 09:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9tJUrFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLamOT5N"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22A92989B0;
-	Sat,  6 Sep 2025 09:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D202D73A7;
+	Sat,  6 Sep 2025 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757149810; cv=none; b=hwpbom2dMVBSPMm+iA/xVmg7u3p/Sh8QaYp6troUNUWb5x6SolDhrI3c5hdfBvgqk/airbMMmTgle8kvSA775tPWJlBQFsPpw0bzgAzpbTNwliIzx1zYTzXTbLP+uD8zRDrqEp2ODg8IWe5d+SlxYlcQ9uB1q4ZUicM87qcG0SA=
+	t=1757150033; cv=none; b=T4ajEg8kuvQp+eAXqMxNFDpk6pnMVZC6RuYXaSBBjOWyIzKxKsxuI8xErkdI3yI7Oa3OjF4DS/I1+D3f4/dT/it7r/nV5utco8nYG3CAAqVK4kGoF8kHvs3gj7F7JQpR5CLpfOnkAZHVZgsLHTPyxG2r1ldC4wxvBbBr/2x0hYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757149810; c=relaxed/simple;
-	bh=n7BaLx5oCoMZmaq4FFR+ACT0mdO1lnO5qbl1jAWEp2Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EotYBZ54KrpgDNHpojpscRMhptzvQHoGtfWnq3cgZMKg+SKKaMs1PUa7+3rC5k4BxSsl/ayQ9GM4kU2v/LVl8FHyrPpE729xIMjCMq23dPXmj0nBWRDsBU4Zh3OvOotDb48yb05M0EEpmygNQiHzdomWKBCBKLI+2qkWGjbTnAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9tJUrFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED41C4CEF4;
-	Sat,  6 Sep 2025 09:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757149810;
-	bh=n7BaLx5oCoMZmaq4FFR+ACT0mdO1lnO5qbl1jAWEp2Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=a9tJUrFAagBKbyPjXV3/d0t7wE/INc6tjYGqLwaErDO7RyA0or12RCNquhWJQNMu5
-	 aDCj9uq4lFaLQ2TPqkPu7nrcNINxuuqn+7eTqPycG5mS07dc8u5yo7oTq0R0fqNCR9
-	 LfKOirgyJEhD9vBcZThVsZVmMee3ohCUnyMQFNi1yzvgsAU8LGVDa/XeXHnHXhG4zs
-	 +9khMFURFcJrKao8oz/49o2t92XVEc/mn80eSw916Qvke5dYGiMdXrSYshJsiiUat7
-	 Zog31XG0fO7LcJRYkP/CDxwu7QGoQUTvA7CrvxrVRCJuiWTvSGe0gNBpuE7qUWAPLU
-	 BNE1IpKOe+0dw==
-From: Andreas Kemnade <akemnade@kernel.org>
-Date: Sat, 06 Sep 2025 11:09:15 +0200
-Subject: [PATCH 4/4] ARM: dts: imx: e70k02: add sy7636
+	s=arc-20240116; t=1757150033; c=relaxed/simple;
+	bh=pEaxKZiGIzaKXy7ev8IeQNkQBCqan6oqOpgWyWdmFg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BW+OxlD3KpFvUDTZpUBfgxl3xgroLt4D4vCVQCMolRjl+RpWLrp9pXYvacp3LT73FeDBpBbs2JQ19B6dcCGhy7aZwjei8CVaA+ucTZpGHpySZjcKd3Q5JPTIloMr+7WIuQKO421T2wwbTpCmYMlIIDZRglyV5nqoKf4rjIWlYAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLamOT5N; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-4381cdb6100so313055b6e.0;
+        Sat, 06 Sep 2025 02:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757150031; x=1757754831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pEaxKZiGIzaKXy7ev8IeQNkQBCqan6oqOpgWyWdmFg8=;
+        b=JLamOT5NlLXvsEmWiWb4E4RXcBTO13/0ZNyH1UG1/Ig1ISfO4AzviwB1ps96+4xDbG
+         LGabqjhS8wKrZHHANw4h9a5sikOq39HMLqZqoB6JqfGpiY2dq6BkGCxfOiskr9H5KMRI
+         YGrZBYXf6GuzFUQUEM5vYJBYD9JYDPqKXpj04i7n9Ufdxb3iBiPOhEU6yUaW47ldgJ4c
+         D1DWK5x77c4zIZ6WQSsdSxjRZd6/Lzqed5rEwe6cyOuLaxc2Zje/bpt5qWYocbQycaKo
+         vVEjaIewiRHgHiQlIbJrj1xB8dCXEeYQ+iEOMELdF2KDPfQUlwCZVQIVwdfLX9ZDq91u
+         ATdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757150031; x=1757754831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pEaxKZiGIzaKXy7ev8IeQNkQBCqan6oqOpgWyWdmFg8=;
+        b=WKHYagaMBM/D00czgNSEqgIorE9yhju1FCgsjmpJtLtZnTV8n5idxs2cNkBOSe9XGx
+         d9SgzfF7zD84NiUSfzfI2uIl0njesJA4tATzWAkBKthrnxZZ2ul8O3YDC4Gsc0kWZtSA
+         3+vxp9R3ZnwSBwy0FBEphLDVVbWTlNfgB/TkH18ynnod2LCgUS0hWj4j2NfZfuBvcRu0
+         SASgqXvlfw+2OIX6beQdMqcyV7iVsNqir8EYjFOWWFUVWarKZTYjxRM1je/3OH/aNltj
+         nt6JT9cpIpZBrp8iW5/vH3LkUdge9DZ1xIjsT/jm24AT0tu1rIHNBDI/ne5YAudputl+
+         fuXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUea15V8+2kTZcItJDNT+RSd+V2D2MVKtRhQdJUsmlPxfwWNUVZ9BuakbeSfCQ5E0cjJM4idxGvCiLj@vger.kernel.org, AJvYcCV2H9pZX5v/i5cg11u4o9Yd9wfSBiM4aTqdXDblNS+HN877LExJ0JxgO1VXpudlChCoVi8JnMHetcS4gfJj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhWIWyCqMA2ISI90YJmEO26ScQTawIoDUV4uH8XfOEhxR2w5mu
+	zeLQCHsU1USsLs56ZJrrQ3H4wbOHVcFbK8bZwl7uF1M4wLXu7mnhnxxpR4NBExRRiDOk25509eK
+	UVZEAytgXZSr/x66delpUCINpOF30gCs=
+X-Gm-Gg: ASbGncsEi8pUQcUcreZIAN8qYT13GCTAPW/JcK1JEHEpU+eQHaIsy2FoJv6596eHbwl
+	qHVpchBZ8ZOAjn+qr5lc805JhN1wMe/k6hYKomGDxatN6ww3Rs7KOYLMtKSYh2sXjMaQ1t0EI2a
+	ZEvAxYXFL1VPcDZ0yBiKpMeV2zXptkuWTZLr7MZFGx+JafnrVRlf2cASBBTd+ayCbVjvD2QOh48
+	ENahBvO8NNBsDGoaw==
+X-Google-Smtp-Source: AGHT+IFsF96eoSj4k+lbood33wsR+iAjs63neUVdknxMDm5hwOGW73MKSx+gNkoPB5kasZ0CDicLEFrEssaeogXJ/5k=
+X-Received: by 2002:a05:6808:1804:b0:433:fe80:5404 with SMTP id
+ 5614622812f47-43b299dbd54mr801049b6e.5.1757150031169; Sat, 06 Sep 2025
+ 02:13:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250906-sy7636-rsrc-v1-4-e2886a9763a7@kernel.org>
-References: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
-In-Reply-To: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alistair Francis <alistair@alistair23.me>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Andreas Kemnade <akemnade@kernel.org>
-X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4828; i=akemnade@kernel.org;
- h=from:subject:message-id; bh=n7BaLx5oCoMZmaq4FFR+ACT0mdO1lnO5qbl1jAWEp2Q=;
- b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBm7fyXICnhyTshu6ZCy+OtrE1nseop3kkeQQVHVk6fa+
- y/fti7qKGVhEONgkBVTZPllreD2SeVZbvDUCHuYOaxMIEMYuDgFYCInsxgZjok4yEzkD5Ir5pz0
- aJfoifSEr6aL/Pb2H++Mfl+7SGptMMP/TM4MY8O7Vz+3qhWbtvJyH/pZ6Rxx+cSV1uBDd3Iez+F
- gBAA=
-X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+References: <20250902142749.13724-1-kusogame68@gmail.com> <20250903074205.GB2163762@google.com>
+ <28c1ff61-8510-4fd4-9cd2-0e3ff4fe3a02@kernel.org>
+In-Reply-To: <28c1ff61-8510-4fd4-9cd2-0e3ff4fe3a02@kernel.org>
+From: Nick Huang <sef1548@gmail.com>
+Date: Sat, 6 Sep 2025 17:13:39 +0800
+X-Gm-Features: Ac12FXwdOyl87NwPd24rV5zrWXvoiMbEGwDue7ElzfeenKKWlvHLA41-lwqdGaY
+Message-ID: <CABZAGRE=6Dg1npRx-jmcycnGMkbtmY6A7E=upffeQ+KANTqcLA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Johnsodn Huang <kusogame68@gmail.com>, Lee Jones <lee@kernel.org>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the EPD PMIC for the e70k02 based devices as a step towards full EPD
-support.
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=886=E6=
+=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=883:38=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On 03/09/2025 09:42, Lee Jones wrote:
+> > Looks like you corrupted the subject line with the commit message.
+> >
+> > Please resubmit.
+> >
+> >> From: Johnson Huang <kusogame68@gmail.com>
+> >
+> > Use `git format-patch` and `git send-email` instead.
+> >
+> >> Co-developed-by: Nick Huang <sef1548@gmail.com>
+> >> Signed-off-by: Nick Huang <sef1548@gmail.com>
+> >> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
+> >
+> > It took two of you to correct the word "and"?
+>
+> Can you respond to the comment instead of ignoring it and sending the sam=
+e?
+>
+> Best regards,
+> Krzysztof
 
-Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
----
- arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++++-
- .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++++
- .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++++
- 3 files changed, 72 insertions(+), 1 deletion(-)
+Hi Krzysztof,
 
-diff --git a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-index dcc3c9d488a88..5f6b7545a0c0c 100644
---- a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-@@ -69,6 +69,14 @@ memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
-+	epd_pmic_supply: regulator-epd-pmic-in {
-+		compatible = "regulator-fixed";
-+		regulator-name = "epd_pmic_supply";
-+		gpio = <&gpio2 14 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <20000>;
-+		enable-active-high;
-+	};
-+
- 	reg_wifi: regulator-wifi {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SD3_SPWR";
-@@ -133,7 +141,22 @@ touchscreen@24 {
- 		vdd-supply = <&ldo5_reg>;
- 	};
- 
--	/* TODO: SY7636 PMIC for E Ink at 0x62 */
-+	sy7636: pmic@62 {
-+		compatible = "silergy,sy7636a";
-+		reg = <0x62>;
-+		en-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-+		vcom-en-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+		epd-pwr-good-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&epd_pmic_supply>;
-+
-+		#thermal-sensor-cells = <0>;
-+
-+		regulators {
-+			reg_epdpmic: vcom {
-+				regulator-name = "vcom";
-+			};
-+		};
-+	};
- 
- };
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-index a2534c422a522..f8709a9524093 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-@@ -26,6 +26,11 @@ / {
- 	compatible = "kobo,tolino-vision5", "fsl,imx6sl";
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -59,6 +64,12 @@ MX6SL_PAD_FEC_RXD1__GPIO4_IO18          0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_PWRWAKEUP__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SL_PAD_FEC_CRS_DV__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -159,6 +170,14 @@ MX6SL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_VCOM0__GPIO2_IO03        0x40010059 /* VCOM_CTRL */
-+			MX6SL_PAD_EPDC_PWRCTRL1__GPIO2_IO08     0x40010059 /* EN */
-+			MX6SL_PAD_EPDC_PWRSTAT__GPIO2_IO13      0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
-@@ -329,6 +348,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-index 660620d226f71..19bbe60331b36 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-@@ -36,6 +36,11 @@ &cpu0 {
- 	soc-supply = <&dcdc1_reg>;
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -69,6 +74,12 @@ MX6SLL_PAD_GPIO4_IO18__GPIO4_IO18	0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SLL_PAD_GPIO4_IO25__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -169,6 +180,14 @@ MX6SLL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03       0x40010059 /* VCOM_CTRL */
-+			MX6SLL_PAD_EPDC_PWR_CTRL1__GPIO2_IO08   0x40010059 /* EN */
-+			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13    0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-@@ -319,6 +338,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
+Sure, at the moment this commit only addresses the typo in the word 'and'.
 
--- 
-2.39.5
-
+Best regards,
+Nick
 
