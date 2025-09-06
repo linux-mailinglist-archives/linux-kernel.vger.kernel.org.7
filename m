@@ -1,337 +1,174 @@
-Return-Path: <linux-kernel+bounces-804352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D07B472F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:54:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A181B4730B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD643ADAF5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C963B2484
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D5D223DD5;
-	Sat,  6 Sep 2025 15:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E602248A5;
+	Sat,  6 Sep 2025 15:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCXUq2LL"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QqpNP19G"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86594AD2C;
-	Sat,  6 Sep 2025 15:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DCA139D1B;
+	Sat,  6 Sep 2025 15:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757174036; cv=none; b=VC4bW5NHaI/GM6gw0npGneUkNtVa6fD7RLR0+c33nPugduDMFe4F/52dASlkP2xyjNdXHsRyaG2tdjwpW5o8D5/qxdZORqJU/3yK2cY1IBo/fwAQ1d6EgwoVLj4WLiLM4hg9lGiq3a32q16oyKSQ/fD4veuEo9/yVenC9rA0G/Y=
+	t=1757174121; cv=none; b=P9ctJOsYoFpzy02hzJhsRgm+nnRFsxhxygWzRDoAFAS2J/7JSVGr92cJ/FZ8R/SudniIteMpobQnrI4qVO6I5ixL4TopoS2Uutb5GsxCyHrajFJXT1K3Sa0lLhH6416Uob5lHUjNLi3RiK3oZF9BpFYPosrO0VJjNyeE7Ra8Xrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757174036; c=relaxed/simple;
-	bh=lDqw/L1siIY6OZRQjUxyCT52dQ1L5dPyRjetQ0ow7UE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p+zIVLez8ytQPtTzQw9ElFGPsLG6p9gLqaJ8hourNZaZrtAK6kU7z2z9zt2ueTsAkn/BF5gcyelolqizzoB0KYGsuYl3wurN0xsKhA0GIl2EzISlsYQN9Kyxz48p4L1xJimiN5VaVOFjO7anxFDfXagBTbcXQKOff9wq9sLHmYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCXUq2LL; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3f669e78eadso17313175ab.1;
-        Sat, 06 Sep 2025 08:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757174033; x=1757778833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PNvdBeulXNxjicC6i7MFDiApXAdJhsSeWWtnDSi2t6E=;
-        b=WCXUq2LLhbuldFSxJ7bkzbTa3B75VXaFs1Kgvh1oqZ3ZKpdWHlpobETEgm1hMMYUOk
-         z2UfMvfhUPpWMX86ukiEH059ZWt3kQ0z/DSSNNCxiVT69O6U/VRQVaNwA1L7ReVta901
-         BbRohZN98H15KBLa6BbrdDozrcXQ1c89iDJeTQmqnOWyhOg+OLF/v1W6/Uy3m7oT8zr2
-         4CTtP7cCoCPHnlQfS7A7DLgry/kooAnZZumYVTv7RICcm2Ic7GpLMKPPJ6tWYHcUScJ1
-         Y062bmZTC4yX3rT58tvF/P68WgoUg9di1I1rvkecP8d07wltwADc6msiS6lNfEJDCrzF
-         /LNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757174033; x=1757778833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PNvdBeulXNxjicC6i7MFDiApXAdJhsSeWWtnDSi2t6E=;
-        b=BqULIVypMnq0vZRNDGCeg0/rmQh2RoX2NIiVItZWphxN2+QKULnxu3mkGEUyceEqBo
-         JvDBysFQd1MUWyYevbxVDiCpLO8nhNPe4rQknIlGx4k+W9kmuOlWchQMx1N07H4ud6Gf
-         4DdmBMB28GjbmXLBybeCPXGIGngTOEDKLPDnvHv6/f302tHRslUsbjqzN61EC0OH7BX5
-         37+lLR0ly9SwVAXujFYLqhd/Qjts9WVZvNdL5SA72RMqIqSDd4pwaiMxdXiYKehOzfhn
-         ft/DSgK4lq0jL9tWOEb/nvKv4t1VVd89dm2avK3qqct2dkx7x8IfRTlfstX86gtNuQju
-         iYnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZf2Bqe2RoyBq+Vc3bQt3To6rWJ7xivRv3SFV5JAqUyKw9pl+9SbyJfjfqqGgTDLMgja6Vjr3+ikhNbbw=@vger.kernel.org, AJvYcCXntJwTiFVD6P12fL/9xFrFm3LnVS4NAavgQ1JH3ZfLZ9m+xZN0mRLM5VxQMvEhhuaQmkD+UlFa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7cI18/0VIohPV5PLrplYJX/FFB46/I0eclSZkXqkkUZipgZ72
-	G80IZhhsEucIKbrUJUoKD5LBpBg7EgBrZxLzei3xrIzAul/wKwvvO8vBdJAGzWYSMLPgEIYDDM0
-	6G3smKnZI+EEIzCLM6ulXbBjqeV0fs6Y=
-X-Gm-Gg: ASbGncs5wM9ast9VDo1xF/RLrCR/5840aie3YTMcpMZmZdBUR/6WWelLjT3fkltizzD
-	A9YzqOz3hMK+nrnDD3COLMngTscJ4ibIsu6JyGV6zkT91ewXQiDb3r2P2DntxBylD2yYWEnxssS
-	vONAhUGgGm3XM2rBP+Ci/sVm0pmLl9stZB0vL2CmHRZEcH/FO79gV944Rw5V/cncOvSvp19LIJK
-	dNnLhuJOzp6SzSt2hA2
-X-Google-Smtp-Source: AGHT+IF+XSMSKQnJkMLPtBg9/xIgVukPumwXHUholQ5OYnsVbpfU7B+e3D9d9dgnErjkF2O536rDu1szAUQp60uxHUw=
-X-Received: by 2002:a05:6e02:3bc7:b0:3f1:b54f:5cf7 with SMTP id
- e9e14a558f8ab-3fe02f55292mr26884465ab.9.1757174033424; Sat, 06 Sep 2025
- 08:53:53 -0700 (PDT)
+	s=arc-20240116; t=1757174121; c=relaxed/simple;
+	bh=pusvaT4QnUqNhVU+yqfcfBY4XHjlaraKrUBkz5GMbqg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZPEXC6tyPL6u3di4fGjMsU6kh+Yc+N4gPZ84h5ZKl9bSfmPpqXFwmA53KSfoeT709kFEhXMjNqOYv3WSfGAOoAAO74mqQYJN+O0dYKE2HFBn+OFCJX1BnIiSEMAYfYWPTJVsWblUFkyuKq1KgZ0oVaES1Po5vT3W8UiU3vmkvU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QqpNP19G; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757174108; x=1757778908; i=markus.elfring@web.de;
+	bh=OExIo3lRBS9A0say9BJwiBOH0gdAkPVvGA4CL/eJVHw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QqpNP19GFMaA5SeAxWo8nNXGolhOTubTDdYDNzVg84VcM1jnTPEqJsMAihMXmFpM
+	 ZD6Mj8eOjh6E2RzmyquQUc2AC1m/dBbENhZKRQXpAxJzNt3WZV5YhZiPnLWvFOTIm
+	 MBEwUwPcpiUvbo42UQE9Poi+el24rUKyeLJsjbFKecMhplhccJtI6U/f2mT0hHiCS
+	 HwZcbUF09scZw/fLAYzNp4QluaTe+E5FMCevjDFq7CcZ0mkFCrc0SiYHKGWgmeAeh
+	 yEL0+uPU2cnKbXSIQTWlnUmIv1Fa77jRB/Z+JlAy8E6dywY7brj105JgMmhkPGwEq
+	 lAowedZoNjmaI8Czzw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.215]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUU6E-1v3ggF3uZU-00S4Uv; Sat, 06
+ Sep 2025 17:55:07 +0200
+Message-ID: <08543dfc-85e3-4f21-bf30-de612a47504e@web.de>
+Date: Sat, 6 Sep 2025 17:55:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905040021.1893488-1-jackzxcui1989@163.com>
- <CAL+tcoDxyfAWOWT9gWC7wvcEy8tNYM7pF8suJhwUpdz+MWdxhw@mail.gmail.com>
- <CAL+tcoDYfbu7oCWgnWdb2rLee0AtdC9xS9ix9yJ4RQ3TVa6u4g@mail.gmail.com>
- <willemdebruijn.kernel.6a80e2e45f24@gmail.com> <CAL+tcoBX4URyxxxuCT3XdzJ7R2zS-DjobdKfMjwc-R7h=ptFCg@mail.gmail.com>
- <willemdebruijn.kernel.1a11cce73202f@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.1a11cce73202f@gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sat, 6 Sep 2025 23:53:17 +0800
-X-Gm-Features: Ac12FXzMr3LvxGeLsXIpPDoGW-XEOVsQcziD6ZME3mBFxDLF_tTsx0lN25ANDMw
-Message-ID: <CAL+tcoBo7ixXKkiy=ywG0UFbcqhSdN==uNg3ykeQo+w6yZ-F6w@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Xin Zhao <jackzxcui1989@163.com>, edumazet@google.com, ferenc@fejes.dev, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Fidal palamparambil <rootuserhere@gmail.com>,
+ linux-modules@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>
+References: <20250906131559.200-1-rootuserhere@gmail.com>
+Subject: Re: [PATCH] kprobe_event_gen_test : Fix error handling and resource
+ cleanup
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250906131559.200-1-rootuserhere@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PaGBkMOBmCChbifVnWm+1zPmg4z/+1YJnH6Fp2XBPYenQ+pTemC
+ /8qrzVNmrIbwnuSO/YE+aph3/docgwDx0tWFKC7svfQfwDQcyi6v8v+S36q7kWDL/FMrTHs
+ /dk3t9jEsUV3AxNknVotudKTqo6Jfl3mwqwOr5xW5NQoK7dK7LnNMVJxpfooXtP1ah7NH/P
+ 6Zv8QSc0Y10ano2o6g8bw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hFr4JUcTzfo=;zaan9W8smddar4Z71UWYpai/HZn
+ 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
 
-On Sat, Sep 6, 2025 at 11:25=E2=80=AFPM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> Jason Xing wrote:
-> > On Sat, Sep 6, 2025 at 12:16=E2=80=AFAM Willem de Bruijn
-> > <willemdebruijn.kernel@gmail.com> wrote:
-> > >
-> > > Jason Xing wrote:
-> > > > On Fri, Sep 5, 2025 at 2:03=E2=80=AFPM Jason Xing <kerneljasonxing@=
-gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Sep 5, 2025 at 12:01=E2=80=AFPM Xin Zhao <jackzxcui1989@1=
-63.com> wrote:
-> > > > > >
-> > > > > > On Thu, Sep 4, 2025 at 11:26=E2=80=AF+0800 Jason Xing <kernelja=
-sonxing@gmail.com> wrote:
-> > > > > >
-> > > > > > > > In the description of [PATCH net-next v10 0/2] net: af_pack=
-et: optimize retire operation:
-> > > > > > > >
-> > > > > > > > Changes in v8:
-> > > > > > > > - Delete delete_blk_timer field, as suggested by Willem de =
-Bruijn,
-> > > > > > > >   hrtimer_cancel will check and wait until the timer callba=
-ck return and ensure
-> > > > > > > >   enter enter callback again;
-> > > > > > >
-> > > > > > > I see the reason now :)
-> > > > > > >
-> > > > > > > Please know that the history changes through versions will fi=
-nally be
-> > > > > > > removed, only the official message that will be kept in the g=
-it. So
-> > > > > > > this kind of change, I think, should be clarified officially =
-since
-> > > > > > > you're removing a structure member. Adding more descriptions =
-will be
-> > > > > > > helpful to readers in the future. Thank you.
-> > > > > >
-> > > > > > I will add some more information to the commit message of this =
-2/2 PATCH.
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > > > Consider the following timing sequence:
-> > > > > > > > timer   cpu0 (softirq context, hrtimer timeout)            =
-    cpu1 (process context)
-> > > > > > > > 0       hrtimer_run_softirq
-> > > > > > > > 1         __hrtimer_run_queues
-> > > > > > > > 2           __run_hrtimer
-> > > > > > > > 3             prb_retire_rx_blk_timer_expired
-> > > > > > > > 4               spin_lock(&po->sk.sk_receive_queue.lock);
-> > > > > > > > 5               _prb_refresh_rx_retire_blk_timer
-> > > > > > > > 6                 hrtimer_forward_now
-> > > > > > > > 7               spin_unlock(&po->sk.sk_receive_queue.lock)
-> > > > > > > > 8             raw_spin_lock_irq(&cpu_base->lock);          =
-    tpacket_rcv
-> > > > > > > > 9             enqueue_hrtimer                              =
-      spin_lock(&sk->sk_receive_queue.lock);
-> > > > > > > > 10                                                         =
-      packet_current_rx_frame
-> > > > > > > > 11                                                         =
-        __packet_lookup_frame_in_block
-> > > > > > > > 12            finish enqueue_hrtimer                       =
-          prb_open_block
-> > > > > > > > 13                                                         =
-            _prb_refresh_rx_retire_blk_timer
-> > > > > > > > 14                                                         =
-              hrtimer_is_queued(&pkc->retire_blk_timer) =3D=3D true
-> > > > > > > > 15                                                         =
-              hrtimer_forward_now
-> > > > > > > > 16                                                         =
-                WARN_ON
-> > > > > > > > On cpu0 in the timing sequence above, enqueue_hrtimer is no=
-t protected by sk_receive_queue.lock,
-> > > > > > > > while the hrtimer_forward_now is not protected by raw_spin_=
-lock_irq(&cpu_base->lock).
-> > > > > > > >
-> > > > > > > > In my previous email, I provided an explanation. As a suppl=
-ement, I would
-> > > > > > > > like to reiterate a paragraph from my earlier response to W=
-illem.
-> > > > > > > > The point is that when the hrtimer is in the enqueued state=
-, you cannot
-> > > > > > >
-> > > > > > > How about tring hrtimer_is_queued() beforehand?
-> > > > > > >
-> > > > > > > IIUC, with this patch applied, we will lose the opportunity t=
-o refresh
-> > > > > > > the timer when the lookup function (in the above path I menti=
-oned)
-> > > > > > > gets called compared to before. If the packet socket tries to=
- look up
-> > > > > > > a new block and it doesn't update its expiry time, the timer =
-will soon
-> > > > > > > wake up. Does it sound unreasonable?
-> > > > > >
-> > > > > >
-> > > > > > I actually pointed out the issue with the timeout setting in a =
-previous email:
-> > > > > > https://lore.kernel.org/netdev/20250826030328.878001-1-jackzxcu=
-i1989@163.com/.
-> > > > > >
-> > > > > > Regarding the method you mentioned, using hrtimer_is_queued to =
-assist in judgment, I had
-> > > > > > discussed this extensively with Willem in previous emails, and =
-the conclusion was that
-> > > > > > it is not feasible. The reason is that in our scenario, the hrt=
-imer always returns
-> > > > > > HRTIMER_RESTART, unlike the places you pointed out, such as tcp=
-_pacing_check, where the
-> > > > > > corresponding hrtimer callbacks all return HRTIMER_NORESTART. S=
-ince our scenario returns
-> > > > > > HRTIMER_RESTART, this can lead to many troublesome issues. The =
-fundamental reason is that
-> > > > > > if HRTIMER_RESTART is returned, the hrtimer module will enqueue=
- the hrtimer after the
-> > > > > > callback returns, which leads to exiting the protection of our =
-sk_receive_queue lock.
-> > > > > >
-> > > > > > Returning to the functionality here, if we really want to updat=
-e the hrtimer's timeout
-> > > > > > outside of the timer callback, there are two key points to note=
-:
-> > > > > >
-> > > > > > 1. Accurately knowing whether the current context is a timer ca=
-llback or tpacket_rcv.
-> > > > > > 2. How to update the hrtimer's timeout in a non-timer callback =
-scenario.
-> > > > > >
-> > > > > > To start with the first point, it has already been explained in=
- previous emails that
-> > > > > > executing hrtimer_forward outside of a timer callback is not al=
-lowed. Therefore, we
-> > > > > > must accurately determine whether we are in a timer callback; o=
-nly in that context can
-> > > > > > we use the hrtimer_forward function to update.
-> > > > > > In the original code, since the same _prb_refresh_rx_retire_blk=
-_timer function was called,
-> > > > > > distinguishing between contexts required code restructuring. No=
-w that this patch removes
-> > > > > > the _prb_refresh_rx_retire_blk_timer function, achieving this a=
-ccurate distinction is not
-> > > > > > too difficult.
-> > > > > > The key issue is the second point. If we are not inside the hrt=
-imer's callback, we cannot
-> > > > > > use hrtimer_forward to update the timeout.
-> > > > > > So what other interface can we use? You might
-> > > > > > suggest using hrtimer_start, but fundamentally, hrtimer_start c=
-annot be called if it has
-> > > > > > already been started previously. Therefore, wouldn=E2=80=99t yo=
-u need to add hrtimer_cancel to
-> > > > > > confirm that the hrtimer has been canceled? Once hrtimer_cancel=
- is added, there will also
-> > > > > > be scenarios where it is restarted, which means we need to cons=
-ider the concurrent
-> > > > > > scenario when the socket exits and also calls hrtimer_cancel. T=
-his might require adding
-> > > > > > logic for that concurrency scenario, and you might even need to=
- reintroduce the
-> > > > > > delete_blk_timer variable to indicate whether the packet_releas=
-e operation has been
-> > > > > > triggered so that the hrtimer does not restart in the tpacket_r=
-cv scenario.
-> > > > > >
-> > > > > > In fact, in a previous v7 version, I proposed a change that I p=
-ersonally thought was
-> > > > > > quite good, which can be seen here:
-> > > > > > https://lore.kernel.org/netdev/20250822132051.266787-1-jackzxcu=
-i1989@163.com/. However,
-> > > > > > this change introduced an additional variable and more logic. W=
-illem also pointed out
-> > > > > > that the added complexity to avoid a non-problematic issue was =
-unnecessary.
-> > > > >
-> > > > > Admittedly it's a bit complex.
-> > > > >
-> > > > > >
-> > > > > > As mentioned in Changes in v8:
-> > > > > >   The only special case is when prb_open_block is called from t=
-packet_rcv.
-> > > > > >   That would set the timeout further into the future than the a=
-lready queued
-> > > > > >   timer. An earlier timeout is not problematic. No need to add =
-complexity to
-> > > > > >   avoid that.
-> > > > >
-> > > > > It'd be better to highlight this in the commit message as well to
-> > > > > avoid further repeat questions from others. It's an obvious chang=
-e in
-> > > > > this patch :)
-> > > >
-> > > > BTW, I have to emphasize that after this patch, the hrtimer will ru=
-n
-> > > > periodically and unconditionally. As far as I know, it's not possib=
-le
-> > > > to run hundreds and thousands packet sockets in production, so it
-> > > > might not be a huge problem.
-> > >
-> > > In tcp each sk has its own hrtimers (tcp_init_xmit_timers).
-> >
-> > Right, but they don't get woken up so frequently in normal cases. I'm
-> > worried because in production I saw a huge impact caused by the 1ms
-> > timer from numerous sockets:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/?id=3De4dd0d3a2f64b8bd8029ec70f52bdbebd0644408
-> > But AFAIK I don't see a real use case where people use so many packet
-> > sockets. If it happens, in the future we might get complaints. We'll
-> > see:)
->
-> Hrtimers share an interrupt.
->
-> The worst case additional overhead is if timer expiration is a little
-> bit slower than packet arrival rate (and thus tpacket_rcv event rate).
->
-> Because the higher the tpacket_rcv rate relatively, the smaller the
-> timer callback overhead is. And if timeout frequency is higher than
-> tpacket_rcv, it would fire anyway.
+> This commit addresses several issues =E2=80=A6
 
-That's true.
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc4#n94
 
->
-> So worst case the overhead is a doubling of block management calls?
 
-Maybe. I dunno.
+=E2=80=A6
+> +++ b/kernel/trace/kprobe_event_gen_test.c
+> @@ -129,6 +129,7 @@ static int __init test_gen_kprobe_cmd(void)
+>  					       "gen_kprobe_test");
+>  	if (IS_ERR(gen_kprobe_test)) {
+>  		ret =3D PTR_ERR(gen_kprobe_test);
+> +		gen_kprobe_test =3D NULL;
 
->
-> I don't have hard numbers but the cost of removing a timer and
-> reprogramming from inside tpacket_rcv just to defer seems higher than
-> accepting this bounded (relative to other operations) cost of
-> spurious wakeups.
+May the repetition be reduced for this assignment statement?
 
-A few months ago, I saw that one of the applications had a bug and
-created more than one thousand packet sockets, which slowed down the
-overall performance. At least, the primary reason for not introducing
-big changes from my side is I can't come up with a case that needs so
-many packet sockets in production. Hence I align with your perspective
-so far :)
 
-Thanks,
-Jason
+>  		goto delete;
+
+How do you think about to use an additional label?
+
+
+>  	}
+=E2=80=A6
+
+Regards,
+Markus
 
