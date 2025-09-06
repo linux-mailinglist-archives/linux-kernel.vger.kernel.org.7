@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-803960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB07DB467E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:13:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DDFB467EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5BB174199
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC55F1CC2234
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B371C4A0A;
-	Sat,  6 Sep 2025 01:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7774278F36;
+	Sat,  6 Sep 2025 01:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZShj5x0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TktMtN4Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4E719F137;
-	Sat,  6 Sep 2025 01:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0661DA3D;
+	Sat,  6 Sep 2025 01:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757121149; cv=none; b=Z7nC1jwsTJIurbiqDTWp+1h1cmjqUDPhENar4t1iBOOY3rmMvkPplifmD/3cX0tnhOTugnoq9WdeplTDXET+znvIbnlJLeHvCjuX/GD1vMXqWO+VMtxyjOIrmMYzm3sNlLlSs+ZIq1N1dysUrhX5W8sxIfVoNLuWmA34lMuNSA4=
+	t=1757121510; cv=none; b=rPnyo+sk6DZ+1Dphx3V6gxnEQTmWU3O1ysCAg/TjCkCXUtlLYsQu8C4zw0+8j1a/9GWKG3a7izq4ZMc1F4jNLHifnDfSM/A5/ddQhhHPeDOTUTmdfCeXDTnIxdvI9BbUQlY0D1ZSNQiX8qsZSVmA9/dZaUKpRy34+OfGXY3ALLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757121149; c=relaxed/simple;
-	bh=jQNO+DAmCip4vesEFMc3Tv1y6ysB3R992Cyyu+ChrEI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WPo4D/GvbG8g59mNZ2M6TqHlhjPlaoYcJgtHjlyAd8On9hYzrUsFTtNQ73pCxTwgzlnHduUvkrVhinWZ4VWhaII2xs+37A5YjBIJCWiiT6nmDt3jGDZchahYpMZYCBAOPYZad7cZBWd/JahzKt4zaGZblAFUUhQ00C3miQWXe2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZShj5x0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD77C4CEFB;
-	Sat,  6 Sep 2025 01:12:29 +0000 (UTC)
+	s=arc-20240116; t=1757121510; c=relaxed/simple;
+	bh=Ue4tdgnLgQFNcjHwN2e3kayUJ6DRnqkcVpIJuTa72q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ssEllVq/+K8mnYL8CTbQV2UyWFVLlXRep3Wn5erdPaXaqoshuK73L98rBvUp0MvIC0CkhSdM1T3xuWVtUBjueG93nXVfSpMeHiY4GU/uYPknByx42IjJiYMiiI/UTusYd0toSVXokPGzPP/bn8q06aKk/8sztre+AdYI2SSg/bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TktMtN4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9842C4CEF1;
+	Sat,  6 Sep 2025 01:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757121149;
-	bh=jQNO+DAmCip4vesEFMc3Tv1y6ysB3R992Cyyu+ChrEI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HZShj5x0BseaSy/k1VmuOiKf9EwmaZ5aCMPb5IkGVbdXiQ2JmtfqyDbO0GjY8L7oc
-	 spH2Kj3aeXI1XMRy3BcHmwqcFx+PmzZKaDjAROTSWCT6m5LuhitiPF5nfa7ZORMs6l
-	 EDxJleV/8Zgm/lUZhASIZD7S/9f/OMvamT1OiVBgTlfheU1uh7m5WDxgj1o+a+9fd7
-	 8YsrYngGLjER+wph+imN20lwYjcqCsRCNRn6ThIu99x9H2yh4sHnq2LRVEd3pmARcw
-	 RDjDjnk7G+1Kb02JoGCSsAyH7/u3wCWMn2ICQ8Dzgi4MHwdToo0zGOdmLjF9UfvV7f
-	 OwFJO2n9XtKYA==
-Received: by venus (Postfix, from userid 1000)
-	id 6B145180B21; Sat, 06 Sep 2025 03:12:26 +0200 (CEST)
-From: Sebastian Reichel <sre@kernel.org>
-Date: Sat, 06 Sep 2025 03:12:05 +0200
-Subject: [PATCH v3 3/3] arm64: dts: qcom: x1e80100-t14s: add EC
+	s=k20201202; t=1757121510;
+	bh=Ue4tdgnLgQFNcjHwN2e3kayUJ6DRnqkcVpIJuTa72q8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TktMtN4QA7PTP1Qm2ZhIlCoRJv/9/BDPDiAumjbCLaGvdVnYQLl+1g5XL7xLf156f
+	 93iLwETI9a1KhRqJ9XWE9XKQaxnR1CIk86jS46HiKnIS6IxHXeS8N8TOyKO2SuTsCn
+	 qaTonOBSnR1IDjystmv0uJW9hhmh8ubpmoKZetzn7JkzcS6yFKMMsR8mq4+3zrnvSG
+	 rinHyllP0ENmtOuxxl0y65pmdg9uPIKFV91CdmmruzIDVlxD+GUQpiRhOtdcBszeOy
+	 pj7f+KafA1t74rIP9dx8VRHT9wvH1/pMGlXiwEAHceossJkA8383B8mQ4c9417EQ+0
+	 E+cFlTvXfDc7Q==
+Date: Sat, 6 Sep 2025 03:18:24 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.17-rc5
+Message-ID: <wrui7mvzr6r6qmzh3y24zehmv3yx3geth3b7llsn6sqdlt26gv@5tpp7hr2266p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250906-thinkpad-t14s-ec-v3-3-3ce6ec21ae89@collabora.com>
-References: <20250906-thinkpad-t14s-ec-v3-0-3ce6ec21ae89@collabora.com>
-In-Reply-To: <20250906-thinkpad-t14s-ec-v3-0-3ce6ec21ae89@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
- Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1616;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=jQNO+DAmCip4vesEFMc3Tv1y6ysB3R992Cyyu+ChrEI=;
- b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBou4p6xtC8/RqdZxC9m/5OEDCvRd5Y0e2VywFKc
- /YXpbfA40OJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaLuKegAKCRDY7tfzyDv6
- mkCiD/9tK9+B2LucYhz4FFgz6rtaNG7aPeA4/zvDAnN3U1TSinvjjBOZKEeSMIpK0zEY/IxNj/N
- NoV1Dib8BIVpta14jWpMbHEOD5VN0QKqBm3Bg3WgDqwEw7lkmzthMv3lYlppNz7IQV9syBdIPF2
- wY2V2iAH2sOFlFVPc3ahlKctL1Hc8YTH5aaL5oaMHyK+xMum28xFKM/xLUZgbaA3EbVFz936ty0
- 580UbLauwwxdDl7Jjsm1zN44dZDccS7q6c55kxaWsE0uBOvibko7ftugbEkqXaC2YBDsL9sjsiq
- 4UhiCjCHYQ1VyFON8yJ64vaa9I2pngUbKoq4ktlimkCe6LiVfiyDMSYuTa3DmR95m0e5d70fl7d
- NNNGm8FbzrreondOWnkJRaVXcOhSnTHiZ1dFq4XtmBwI53swEMvIbKKq1u/yanpP3idTocRGah9
- UBZ/pbBPnt29/FfD6nxrffJqGhsNJ5GehXZCY1Z3PwnsEN1DVP/Vb5u2oly7bc/e24mW4rHC0NM
- 9X/MR2GhckRU1ectnQ8L0fe6i3aXBTqoxxrW7UcGS5osg1yOgAeP0QTetNQsqpeyYncL6D1jZBw
- AYjoSHlPFNPAzcOu51u3rCHK4Z17ocuCL4GMowdpY+4VqAL4SUmA6qann4qBSE7Al/7lRVjVeYW
- ocrawVLCirSx1/w==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Describe ThinkPad Embedded Controller in the T14s device tree,
-which adds LED and special key support.
+Hi Wolfram,
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Sebastian Reichel <sre@kernel.org>
----
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Here is this week's pull request: four patches affecting two
+drivers, i801 and rtl9300. The rtl9300 patches are a
+prerequisite for others that will be merged into i2c-host.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index ac1dddf27da30e6a9f7e1d1ecbd5192bf2d0671e..f70489aba870289edbcf84ec22fdb004e010868b 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -887,6 +887,24 @@ eusb6_repeater: redriver@4f {
- 	};
- };
- 
-+&i2c6 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	embedded-controller@28 {
-+		compatible = "lenovo,thinkpad-t14s-ec";
-+		reg = <0x28>;
-+
-+		interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ec_int_n_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
- &i2c7 {
- 	clock-frequency = <400000>;
- 
-@@ -1267,6 +1285,12 @@ &tlmm {
- 			       <72 2>, /* Secure EC I2C connection (?) */
- 			       <238 1>; /* UFS Reset */
- 
-+	ec_int_n_default: ec-int-n-state {
-+		pins = "gpio66";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
- 	eusb3_reset_n: eusb3-reset-n-state {
- 		pins = "gpio6";
- 		function = "gpio";
+Have a good weekend,
+Andi
 
--- 
-2.50.1
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.17-rc5
+
+for you to fetch changes up to ede965fd555ac2536cf651893a998dbfd8e57b86:
+
+  i2c: rtl9300: remove broken SMBus Quick operation support (2025-09-04 00:31:34 +0200)
+
+----------------------------------------------------------------
+i2c-host-fixes for v6.17-rc5
+
+- i801: fix device IDs
+- in rtl9300:
+  - fix channel number check in probe
+  - check data length boundaries in xfer
+  - drop unsupported SMBus quick operation
+
+----------------------------------------------------------------
+Chiasheng Lee (1):
+      i2c: i801: Hide Intel Birch Stream SoC TCO WDT
+
+Jonas Jelonek (3):
+      i2c: rtl9300: fix channel number bound check
+      i2c: rtl9300: ensure data length is within supported range
+      i2c: rtl9300: remove broken SMBus Quick operation support
+
+ drivers/i2c/busses/i2c-i801.c    |  2 +-
+ drivers/i2c/busses/i2c-rtl9300.c | 22 ++++++++--------------
+ 2 files changed, 9 insertions(+), 15 deletions(-)
 
