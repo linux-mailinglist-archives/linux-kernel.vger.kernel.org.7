@@ -1,86 +1,75 @@
-Return-Path: <linux-kernel+bounces-804005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09A6B46898
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:20:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF81B4689B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4071893D81
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7A57BEABE
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836D23CEF9;
-	Sat,  6 Sep 2025 03:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA523183F;
+	Sat,  6 Sep 2025 03:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHzbtpuZ"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="nPOx88R7"
+Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A62238C0F
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 03:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348261DF254;
+	Sat,  6 Sep 2025 03:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757128829; cv=none; b=Ht1Yq6V/foAj9o6l+F/Skjle/bPl6OZgxxdOErdrOzBBk4xPfZXjFXPq0RSUFl49gxA0AlkY4VigV0WZ/xhxPQ16h9uTqqg0MrDey11oSmessKerKzueh63Shj3hcfEPyrxfKpBQrgA9JFi+t+B07FatQIwqIltoRqyBm3DSV/4=
+	t=1757128893; cv=none; b=QTESUo+f3c+t5x++qYs+uFcszV8N/+V4+roq6a48aY4GYE8DEj9OVjmlaoF4owJPxYnVTXRpp7cIXcvRdoRdyBEkmfs7z3jLTeHEtW8vuBMQQvj+UH5KyBmwlfxHxLuEM6qPgezZLIjY04y6xyRFAnd8edgkHdRv7fFR36F2k6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757128829; c=relaxed/simple;
-	bh=4nntbxd9QhxEvmQibcuTIkC0BAC5Ve0dSQ5OC0TBN9M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T2tUXKTemd46PHU46aUto/7O+E38nsyfRNAIS+hDmfWJbM8i+tybfK/qfW2GbEfR5no3YsohOjYcxsXGlGw5XcuvV/u0RzGpsiIFKTN4YsMBSka/E9++01moyelnpLYwEch3Qe5s6XY3lctb+s4O6mBCtIa4ZrTk6qvmw2mq7wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHzbtpuZ; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2509519b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 20:20:27 -0700 (PDT)
+	s=arc-20240116; t=1757128893; c=relaxed/simple;
+	bh=s4izz7yW2A8+7kei3XaTuO0t+LSTxvUOtCOyHgmNYuE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MOWBN+KE5NmNM2rGPUR385XlWv9xEVd3t1YWi9z2lSTVufVOBtdHrPSuzQvvYwZF9TM7uaaSsbIFShVvL+tt4jZ0rYH34su8faf8282LYa/l+lY8+07JxkLKcIKCDWExAcDhTxn1oGzPI5FrOlf6lfophNzN12Sluz17Tjghv6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=nPOx88R7; arc=none smtp.client-ip=44.246.77.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757128827; x=1757733627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OkyhEF1uSyF+/KrhAZe6tTEv+I/fUAI0IzZh62oGhRI=;
-        b=dHzbtpuZ7W1z5SBcxodd4WHx+irDl8bDzeyeTpi3HbpFEHrM+0jg+yPyVKPPnSh8me
-         iGxGv+bgGEKuYVI/0kNiv0J5l58IPO6VTg7wpWDed/Oxl4RaakpvNlb3PqGJkmyPQ3cr
-         4W/Vf60NIGy9m1snpwruhzH3PnG1Y4ADTEY4OMTCMzrXwtcNkfln/RVQLwsUT5I3D2bl
-         Ry3MMODoKoBj/ewGjV7yrt0R5ZOvHMGJt/wPd0b7PSQ5fzOfCduqDh8YyQql/ShkEOrb
-         s/UOTdsOkRkHafx3WKXV4PkWvNtDn6IeOL24TNg9JFs/1K8Tx0yNbHJPPDzd3hEMtjhT
-         gbIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757128827; x=1757733627;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OkyhEF1uSyF+/KrhAZe6tTEv+I/fUAI0IzZh62oGhRI=;
-        b=kKgHJszzTGuOIaE5EeXhhmYD6t9bCf5fBJlHzkyBgVERXHiwtucE2vVHXSIhfe4IrA
-         xZPEAtsF2dSRxAOUJ6vRQXKOhz2AdsndnvDWmDMV6BTDrH85HpE8wMRIWb9cBGmmD10m
-         nJ2iJLbfydXBz8/r/d5ROu2lTC7FzKDHw/Dobeqyl3WcmSn1v0u/HeQ1JLUZ+GwZ7zdu
-         DEGCwHl2C9ld1hDMje5dSqeoo5GPUgyKUKDlkSBTlbzJL7N2dfoZH1uopVz8u/ze3EdH
-         L5HcSgDNZoPCZn9m561lzSLPuBiLYYxOHXe75MZX2ms+ecywBIKZ3Tu0uHIbQwc2scic
-         yNwg==
-X-Gm-Message-State: AOJu0YwxNEKZmszbLucFiZ/ysHzJ1PK6qU0JM5Tj/4vav8pUQqp5R/1R
-	b4eaKg6tUSnn3IFMMY5+CDpkASJ9P9IYK19uMuR+ozCqLsAQ587lemWvAZp1uQ==
-X-Gm-Gg: ASbGncvPPjPvqRL3ImVO7K7mrg0YUIVBeJTclYlCsL42a6IWZvkU/8BS6xEsIKt0Afx
-	UywwL0Zb2uHMv8z3FFs5zEMAtphXzr7BFwq3va+xy5XnWD43LY/N97A7yMGQ7hF8DMLdfJnOySI
-	BkQXA3t4ivDD26AtcN7QcgWEIOVMTD/EVukjxsgQOXlVwBvG9UBAi/HnniM7JCe8pbBF7RDpzQK
-	E5p9U5raiWoiJUxx6zbOW5Ul8TMuM+AhjnmyCE9wEJuTvLTbduIKzpM3hVHwB3pg9qNbq7Gv0X6
-	V3+FzgWDqUZ85GIRXWPT5hbA2bGo3AUgg2hPby+67vbmssGC4hKlSuBLwtkTvRJ+GzY/7r2HGlO
-	VES/ISPWehLZpniqmc/8iLSLrBrhZ75mwm7/kSBtKKrg6wn4g793S5Hm4D1Yra3hattaN
-X-Google-Smtp-Source: AGHT+IGJKaTuisA/PevSrhEJ1uewTsFYjs8bLWJToNuJxXcj/bCdRo/jljKaUVEWXC+M45ju99hKHw==
-X-Received: by 2002:a05:6a00:9162:b0:76e:7ab9:a238 with SMTP id d2e1a72fcca58-7741bf66911mr6337232b3a.15.1757128826579;
-        Fri, 05 Sep 2025 20:20:26 -0700 (PDT)
-Received: from localhost.localdomain (36-231-187-52.dynamic-ip.hinet.net. [36.231.187.52])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a090c77sm23093074b3a.0.2025.09.05.20.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 20:20:26 -0700 (PDT)
-From: Nick Huang <sef1548@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: maintainers-if-needed@example.com,
-	Nick Huang <sef1548@gmail.com>
-Subject: [PATCH v2 3/3] dt-bindings: mfd: nxp,bbnsm: Fix typo in documentation
-Date: Sat,  6 Sep 2025 11:19:55 +0800
-Message-ID: <20250906031955.21338-4-sef1548@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250906031955.21338-1-sef1548@gmail.com>
-References: <20250906031955.21338-1-sef1548@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1757128892; x=1788664892;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ukV1P46xm4LSs6P9dPGvdjimOnGmu5wrUw+EGUHyxAE=;
+  b=nPOx88R7xmye1MYC0TOlNT739TuYt6I8gknMHVpGtGGQYErQsm9Wwl5V
+   3rSW1nh4QPynrILpQp1MmBf5MRX7yF/yc0p35xMG1HwRKEzVHff3GczlX
+   9E2wxWUgW1fDaOU2sDUm2obS7XJcupyy9GQxQbC4NPxknzxhYseRgL7Ae
+   uLvuZonEZGqAQf1LbJAEwZbykCswU4uBTeGv8t1RkqTcQ2ajMor/pDksp
+   CJ4cvR+JfTdxOo7E0D9ZxcoSnz15oHzFgdFYN7n5/kLR5nkr1UGUEITnM
+   0irbee8/nFtls8/MSjougIsMDbA3drCBOCeNTqhbj3mZ46IQzowG2RXaI
+   A==;
+X-CSE-ConnectionGUID: 0UUPTMG0Q8e/TgRO3JA41g==
+X-CSE-MsgGUID: zGTnETyJT0+2svpF8rOm2Q==
+X-IronPort-AV: E=Sophos;i="6.18,243,1751241600"; 
+   d="scan'208";a="2522412"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 03:21:31 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:28382]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.63.19:2525] with esmtp (Farcaster)
+ id ff3684f7-82cf-4557-bb86-378b3641385d; Sat, 6 Sep 2025 03:21:31 +0000 (UTC)
+X-Farcaster-Flow-ID: ff3684f7-82cf-4557-bb86-378b3641385d
+Received: from EX19D032UWA001.ant.amazon.com (10.13.139.62) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Sat, 6 Sep 2025 03:21:31 +0000
+Received: from dev-dsk-ajgja-2a-6a9b5603.us-west-2.amazon.com (172.22.68.79)
+ by EX19D032UWA001.ant.amazon.com (10.13.139.62) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Sat, 6 Sep 2025 03:21:30 +0000
+From: Andrew Guerrero <ajgja@amazon.com>
+To: <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <hannes@cmpxchg.org>, <mhocko@kernel.org>, <vdavydov.dev@gmail.com>,
+	<akpm@linux-foundation.org>, <shakeelb@google.com>, <guro@fb.com>,
+	<gunnarku@amazon.com>, <stable@vger.kernel.org>
+Subject: [PATCH] mm: memcontrol: fix memcg accounting during cpu hotplug
+Date: Sat, 6 Sep 2025 03:21:08 +0000
+Message-ID: <20250906032108.30539-1-ajgja@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,28 +77,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D037UWC004.ant.amazon.com (10.13.139.254) To
+ EX19D032UWA001.ant.amazon.com (10.13.139.62)
 
-Correct the spelling of "Intergrates" -> "integrates" in documentation
+A filesystem writeback performance issue was discovered by repeatedly
+running CPU hotplug operations while a process in a cgroup with memory
+and io controllers enabled wrote to an ext4 file in a loop.
 
-Signed-off-by: Nick Huang <sef1548@gmail.com>
+When a CPU is offlined, the memcg_hotplug_cpu_dead() callback function
+flushes per-cpu vmstats counters. However, instead of applying a per-cpu
+counter once to each cgroup in the heirarchy, the per-cpu counter is
+applied repeatedly just to the nested cgroup. Under certain conditions,
+the per-cpu NR_FILE_DIRTY counter is routinely positive during hotplug
+events and the dirty file count artifically inflates. Once the dirty
+file count grows past the dirty_freerun_ceiling(), balance_dirty_pages()
+starts a backgroup writeback each time a file page is marked dirty
+within the nested cgroup.
+
+This change fixes memcg_hotplug_cpu_dead() so that the per-cpu vmstats
+and vmevents counters are applied once to each cgroup in the heirarchy,
+similar to __mod_memcg_state() and __count_memcg_events().
+
+Fixes: 42a300353577 ("mm: memcontrol: fix recursive statistics correctness & scalabilty")
+Signed-off-by: Andrew Guerrero <ajgja@amazon.com>
+Reviewed-by: Gunnar Kudrjavets <gunnarku@amazon.com>
 ---
- Documentation/devicetree/bindings/mfd/nxp,bbnsm.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hey all,
 
-diff --git a/Documentation/devicetree/bindings/mfd/nxp,bbnsm.yaml b/Documentation/devicetree/bindings/mfd/nxp,bbnsm.yaml
-index b1ade64a15..1705812f2d 100644
---- a/Documentation/devicetree/bindings/mfd/nxp,bbnsm.yaml
-+++ b/Documentation/devicetree/bindings/mfd/nxp,bbnsm.yaml
-@@ -11,7 +11,7 @@ maintainers:
+This patch is intended for the 5.10 longterm release branch. It will not apply
+cleanly to mainline and is inadvertantly fixed by a larger series of changes in 
+later release branches:
+a3d4c05a4474 ("mm: memcontrol: fix cpuhotplug statistics flushing").
+
+In 5.15, the counter flushing code is completely removed. This may be another
+viable option here too, though it's a larger change.
+
+Thanks!
+---
+ mm/memcontrol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 142b4d5e08fe..8e085a4f45b7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2394,7 +2394,7 @@ static int memcg_hotplug_cpu_dead(unsigned int cpu)
+ 			x = this_cpu_xchg(memcg->vmstats_percpu->stat[i], 0);
+ 			if (x)
+ 				for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
+-					atomic_long_add(x, &memcg->vmstats[i]);
++					atomic_long_add(x, &mi->vmstats[i]);
  
- description: |
-   NXP BBNSM serves as non-volatile logic and storage for the system.
--  it Intergrates RTC & ON/OFF control.
-+  It integrates RTC & ON/OFF control.
-   The RTC can retain its state and continues counting even when the
-   main chip is power down. A time alarm is generated once the most
-   significant 32 bits of the real-time counter match the value in the
+ 			if (i >= NR_VM_NODE_STAT_ITEMS)
+ 				continue;
+@@ -2417,7 +2417,7 @@ static int memcg_hotplug_cpu_dead(unsigned int cpu)
+ 			x = this_cpu_xchg(memcg->vmstats_percpu->events[i], 0);
+ 			if (x)
+ 				for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
+-					atomic_long_add(x, &memcg->vmevents[i]);
++					atomic_long_add(x, &mi->vmevents[i]);
+ 		}
+ 	}
+ 
+
+base-commit: c30b4019ea89633d790f0bfcbb03234f0d006f87
 -- 
-2.48.1
+2.47.3
 
 
