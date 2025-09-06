@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-804478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2254BB477A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB39BB477AC
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C2DA083A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE53189AD70
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3AE2D2385;
-	Sat,  6 Sep 2025 21:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437872949E0;
+	Sat,  6 Sep 2025 21:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIjnKxH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fzjKh0bS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475A42D130A;
-	Sat,  6 Sep 2025 21:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91D32773F6;
+	Sat,  6 Sep 2025 21:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757194628; cv=none; b=hOF/0KhpbHT1xZqE6UdbNj1vhNRW9FWwCzt5ICsY1r6R+Enq5tztFMNkBQHR62+6zaLtZLx5URMzGpcAlXM7uFLkewPVBkAr5UOhtvnZ3645SUrP17u1FsmljvA3H6FohCsSYULQsQEZ5EYr5GjWIDsu2ugZey8X6OJ/QR8YmV8=
+	t=1757194715; cv=none; b=gqqsNsHKZsKQTQOP+KyfRw2TYA/HQUvd1heWjB9hhx635i6i0zzZBHaLnFSkvX2edPtOx4g/xEm+GHZ8q4UX8+ZY6+w237gpeu1+6xf6CljPsPMQjQBFpi300VgSxj++Qo7naSomMf/5Ni4+RyFcWlNpYFzQ/NuGFYuQTlTKlEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757194628; c=relaxed/simple;
-	bh=JTwVCxO7VQKt0pRSCgeHeHvmX5quhsNXXzZV2f26Bs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=soG70zQYBtjrnTbPRgmDCCBjRNHJbnsHWTQkW3J12Xiuu1c4EZHM5n8j/WAbM+/8Y8A1T3ZkMpcFFTt37Nck8gtFro9CHuSxLHJEQlsdAeZoTFpraCRBqi3mQe33U0DKwXxBy9R6DpG+L2uvBzKorJ5YcWhiKiEH++CJdAB/9dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIjnKxH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D6FC4CEE7;
-	Sat,  6 Sep 2025 21:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757194628;
-	bh=JTwVCxO7VQKt0pRSCgeHeHvmX5quhsNXXzZV2f26Bs0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eIjnKxH09OTN1s3TO5OkyZTYLxVqeC7VxU8nQKQBpGN/Fp3rPUrW0n+2bbZB8zzHO
-	 AM3Jbi3sTFeW+TtxRT/DDlpUtp2nU3AsNxgqi3J9QOr95cH4ApNZisj4U8uyWcTX9J
-	 oIUv1b9OFpCv+lF6lcDbX7MRLUeU9QQQf3jMAwVmuUuVNZ4nBBi2E9UrIgfPoWqKks
-	 rp25asjGBdt0WoQPVjykGqKwMURs6fc94N8vFJE6fVqLvc6WjT4BBmwHtxgcDe8YcQ
-	 6/frNrko95cghzRkUomIuPn5fGIpDZcwvymzk8m+EMawZ4vDT4WQb8PO0vmvXDURHL
-	 twswbfGWpHfKw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Zhiqi Song <songzhiqi1@huawei.com>,
-	Longfang Liu <liulongfang@huawei.com>,
-	x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 12/12] wireguard: kconfig: Simplify crypto kconfig selections
-Date: Sat,  6 Sep 2025 14:35:23 -0700
-Message-ID: <20250906213523.84915-13-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250906213523.84915-1-ebiggers@kernel.org>
-References: <20250906213523.84915-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1757194715; c=relaxed/simple;
+	bh=JXEOk2QzWC9682vZw1qqeUMm3THVRhXOl6giQNpWULQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugW42B3j6XiSLs16PXgjUhTvZxtzbnZjgzj0slQqkbjxEekw4LlueUaNZV6XVTf0VxEKlRWmL+5I/CLzKBfvaRzutGwmwn9103QT8wrRlr4xB/6rOvEB+QZEtI5VkU3vUxfvLxPuVW6JIu65U2KziKO7eBE3J5TAyP6GO+BTNnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fzjKh0bS; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757194714; x=1788730714;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JXEOk2QzWC9682vZw1qqeUMm3THVRhXOl6giQNpWULQ=;
+  b=fzjKh0bSM13orfS6/GIJnNUVKpy92nBVVPsO2ZwPYRNsxjxlctxBQAsF
+   aykjUPQRf6KrMp6Mw3o8wCdwWIjVwzc4mt8Ubel0MByaouXoxWwxKGc04
+   9DlUmVd/O5gKCEPu1tFLPdALDjK8ZDSHMAxIqcEF7IkyeeYCbKm1FRWh5
+   Wn3Brk5etGiUTvoHi7HJTGQySDOzPSqbcRzKMSFJihCJAqK96khk2wE36
+   ALaL97jAkroGJLeTm5snI79r+4ZomISZfcBK4R+1PFeMRZ5brDeCB/c5c
+   O8bnboewPZf9f7TRUlCCtgO9G/R4rlTXBxZYkZ7x8sLU06TwIWyPeKT7q
+   A==;
+X-CSE-ConnectionGUID: W5NwU2UtRxK/GbG6tZs7Eg==
+X-CSE-MsgGUID: jj78UmwxTP2i2TK6DVmuhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="70932755"
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="70932755"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 14:38:34 -0700
+X-CSE-ConnectionGUID: 4tTalin+TdCn15mJRkFqKg==
+X-CSE-MsgGUID: RkmorfaWR/aVxvOOQ20rTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
+   d="scan'208";a="176792664"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 06 Sep 2025 14:38:28 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uv0c6-0001oR-1W;
+	Sat, 06 Sep 2025 21:38:26 +0000
+Date: Sun, 7 Sep 2025 05:37:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, fan.ni@samsung.com,
+	quic_wenbyao@quicinc.com, namcao@linutronix.de,
+	mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com,
+	quic_schintav@quicinc.com, shradha.t@samsung.com,
+	inochiama@gmail.com, cassel@kernel.org, kishon@kernel.org,
+	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	s-vadapalli@ti.com
+Subject: Re: [PATCH 11/11] PCI: keystone: Add support to build as a loadable
+ module
+Message-ID: <202509070521.fQTJ7ygm-lkp@intel.com>
+References: <20250903124505.365913-12-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903124505.365913-12-s-vadapalli@ti.com>
 
-Simplify the kconfig entry for WIREGUARD:
+Hi Siddharth,
 
-- Drop the selections of the arch-optimized ChaCha20, Poly1305, BLAKE2s,
-  and Curve25519 code.  These options no longer exist, as lib/crypto/
-  now enables the arch-optimized code automatically.
+kernel test robot noticed the following build warnings:
 
-- Drop the selection of CRYPTO.  This was needed only to make the
-  arch-optimized options visible.  lib/crypto/ now handles these options
-  internally, without any dependency on CRYPTO.
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-- Drop the dependency on !KMSAN.  This was needed only to avoid
-  selecting arch-optimized code that isn't compatible with KMSAN.
-  lib/crypto/ now handles the !KMSAN dependencies internally.
+url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Vadapalli/PCI-Export-pci_get_host_bridge_device-for-use-by-pci-keystone/20250903-204848
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250903124505.365913-12-s-vadapalli%40ti.com
+patch subject: [PATCH 11/11] PCI: keystone: Add support to build as a loadable module
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20250907/202509070521.fQTJ7ygm-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7fb1dc08d2f025aad5777bb779dfac1197e9ef87)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070521.fQTJ7ygm-lkp@intel.com/reproduce)
 
-- Add a selection of CRYPTO_LIB_UTILS, since WireGuard directly calls
-  crypto_memneq().  This gets selected indirectly by
-  CRYPTO_LIB_CURVE25519 and CRYPTO_LIB_CHACHA20POLY1305 anyway, but it's
-  best to make this dependency explicit.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509070521.fQTJ7ygm-lkp@intel.com/
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- drivers/net/Kconfig | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index b29628d46be9b..ac12eaf11755d 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -74,28 +74,15 @@ config DUMMY
- 
- config WIREGUARD
- 	tristate "WireGuard secure network tunnel"
- 	depends on NET && INET
- 	depends on IPV6 || !IPV6
--	depends on !KMSAN # KMSAN doesn't support the crypto configs below
- 	select NET_UDP_TUNNEL
- 	select DST_CACHE
--	select CRYPTO
- 	select CRYPTO_LIB_CURVE25519
- 	select CRYPTO_LIB_CHACHA20POLY1305
--	select CRYPTO_CHACHA20_X86_64 if X86 && 64BIT
--	select CRYPTO_POLY1305_X86_64 if X86 && 64BIT
--	select CRYPTO_BLAKE2S_X86 if X86 && 64BIT
--	select CRYPTO_CURVE25519_X86 if X86 && 64BIT
--	select CRYPTO_CHACHA20_NEON if ARM || (ARM64 && KERNEL_MODE_NEON)
--	select CRYPTO_POLY1305_NEON if ARM64 && KERNEL_MODE_NEON
--	select CRYPTO_POLY1305_ARM if ARM
--	select CRYPTO_BLAKE2S_ARM if ARM
--	select CRYPTO_CURVE25519_NEON if ARM && KERNEL_MODE_NEON
--	select CRYPTO_CHACHA_MIPS if CPU_MIPS32_R2
--	select CRYPTO_POLY1305_MIPS if MIPS
--	select CRYPTO_CHACHA_S390 if S390
-+	select CRYPTO_LIB_UTILS
- 	help
- 	  WireGuard is a secure, fast, and easy to use replacement for IPSec
- 	  that uses modern cryptography and clever networking tricks. It's
- 	  designed to be fairly general purpose and abstract enough to fit most
- 	  use cases, while at the same time remaining extremely simple to
+>> WARNING: modpost: vmlinux: section mismatch in reference: ks_pcie_host_init+0x594 (section: .text) -> hook_fault_code (section: .init.text)
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
