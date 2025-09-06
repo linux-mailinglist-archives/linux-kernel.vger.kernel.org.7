@@ -1,130 +1,242 @@
-Return-Path: <linux-kernel+bounces-804152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3278FB46ACC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC6AB46AD5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAFB45C01A1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0695A04BE8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9928C03E;
-	Sat,  6 Sep 2025 10:24:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758832EAD0C;
+	Sat,  6 Sep 2025 10:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gXql3rHR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3D217704
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 10:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE81FF5F9;
+	Sat,  6 Sep 2025 10:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757154246; cv=none; b=hvWEZO64h5wCK2y6X9JCJQ+OAnU8GRVNEIoNtPDWDy7KbBhE3tbJz+ovxemY5xyLlGnvj5WRdj9Pb7Xqo+ag/k+d7n0cEysK3ajnm5YoSiPi5uVM2iohTwiOsJl+phdSprbrGxJhhQbbXcUGAMjdyOC4Zr5ykM8OUPpcK2ct+MA=
+	t=1757154945; cv=none; b=XxFfqzyF61stFELP0wwuotkfqnq/lHTK5qPx9hg4ZWUyko7I+67K/40rKKC4PV/fT4ixqMwqO9Obn8SUY2EIibtRtNRqMVGdm5fkWKepVtViH9pmW9KC1osxwPX1jRL+5Vjcyr7cm9rw/qHVp3kK+JYBx1RB1hhWKX2KQyugI20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757154246; c=relaxed/simple;
-	bh=PnPj4lgAf8sQLQh6W3X0Dm0o0seN+WZKd5ecozOohk0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Psa47IG11Zpv6+BZYhfX/vmUfhJ917ksID4aMlGQN23oBEjuC5kYQykmDYAEgEMz+8oH3qVqhfkT5gH2eeDubp0xTjxRAwZBiPDdsSG2VYssUCNiWg9zoBOii7qoTdHxrFBJ1JHZVlpwddpPc+NJo5qkvyDgxg5vGuU11+hT9u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-40194dd544eso364455ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 03:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757154243; x=1757759043;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bqVxasFx0f2YshXKgDEHGIEPl6nT+Omnjx6a/pDg4og=;
-        b=Q1qz56FUO9sfvdYMyyaEa/+GAD6XJGqgh5gdqnXwCMyZx8feG+yeK30cOel1Vdt2ye
-         W2B3AlNRBmKeY+LsV3364+l+TyEVRZ6nWWDCCtzaCIyWEqLx0PruTv462lJwuQv2y/JV
-         B71/ZpwlNbNnPK+kyxbmiRL+jatGcSg0CKYtg1zssHR533hD7hO11dXy+jbIXQD9KvLL
-         qRujWFf0w9gxsIH69bzeVDYwjnmyYv4FlPYuZoeQmb2QCF7AQVVOgzohRxeTKPW8ziJp
-         MBx7xy3ENJFn/rfzKmxd2KR9shQM3J9TGSNQ2M8LZwUc/KYXKJ92vpMUDbBT8IVkPdUE
-         OW9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWEKawZZiHkmILa8Av+BTQDemxiu2HdJJSuD0qd5iUwcujbEN6iQklPcoZ7oQ7EeVCfVX6joIu27JZqjdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRWHwyNWot+8uMCBkmZLJYkWYYKZ6PcsdlwzOMfSf1y/dtM64p
-	pZaBCl6MGvTBZAtPYQYk5OozfaaqOdB0wW1QoZdC5/zXaVWk9bV9H8iJsV2nFn8o75RUe2FNYmG
-	YkQo2Ji7zBJhWgKLLoMZA4TvmQ+OQ3XWo2kMlscOX0mNL/yNf//K8aXyfO0c=
-X-Google-Smtp-Source: AGHT+IEsAR1UUovtyYMLH3RRr9c/d4fmemFfDKRJI2IHVRnNdVD6Kr2DqDpU0cpZTxFFKRa4TcP/r5TCbnU/gYQEZkmpHcBd6b9a
+	s=arc-20240116; t=1757154945; c=relaxed/simple;
+	bh=8vFTziuMUXf1btIls/GWESxtGi87Fv1ZcDwGDGPGAS0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5P00mOzY05ZOVA95S103DZKjUVOujzi/BB4QgblDYzw3anygSWwb0dFEwlxjZ8cZ5IKZQgua2Hi0qaE1jbiPwE7oCaPwKE5234z2c80Hb82Qfy5NeZVzkaployhAVbgIeM2EGQtvEEKbqXAnjl4NGfOYQryYZkv5cEfTEG/HcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gXql3rHR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5863UKCW017416;
+	Sat, 6 Sep 2025 10:35:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jw8kmorJ0/qwUgGkTKElEhslFkViZNLZD0KyvsPihag=; b=gXql3rHREMBHx37T
+	SrtS0UoyG5cEC8WteGlmN9f+WknoN294O5gGmxiDwQg8clacwQoT8cywTSHXIeZo
+	wu/yxO30ikO2WE/H84rdtaosI21rOFUllhFh89ZEQPhXsTcZ/eperSAHXeukXXLD
+	7lHgB6aqphpzYnkjqXt09w/9LmZJK+NzkmAjMpxvagOwUb1jVO0vv7G/HEenesAX
+	VqmePrE9Sxf+zP1Gs5LY55PNAAHuMKSfwcSIiz1GWXHQI/y1FQMA6I4tEMivjUci
+	CvNWRbesuX1Uvc+Z6Wjrm4oo2IMMDVWcQPS8lWUyRXZDfeiEZQcs8cOvS72kXbt1
+	UO26kQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490anf8q7q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 06 Sep 2025 10:35:32 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 586AZV37018165
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 6 Sep 2025 10:35:31 GMT
+Received: from hu-mchunara-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Sat, 6 Sep 2025 03:35:27 -0700
+Date: Sat, 6 Sep 2025 16:05:16 +0530
+From: Monish Chunara <quic_mchunara@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+CC: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Wasim Nazir
+	<wasim.nazir@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>, <kernel@oss.qualcomm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and
+ SDC pin configuration
+Message-ID: <aLwOZMgfRrvQJzPu@hu-mchunara-hyd.qualcomm.com>
+References: <c82d44af-d107-4e84-b5ae-eeb624bc03af@oss.qualcomm.com>
+ <aLhssUQa7tvUfu2j@hu-wasimn-hyd.qualcomm.com>
+ <tqm4sxoya3hue7mof3uqo4nu2b77ionmxi65ewfxtjouvn5xlt@d6ala2j2msbn>
+ <3b691f3a-633c-4a7f-bc38-a9c464d83fe1@oss.qualcomm.com>
+ <zofmya5h3yrz7wfcl4gozsmfjdeaixoir3zrk5kqpymbz5mkha@qxhj26jow5eh>
+ <57ae28ea-85fd-4f8b-8e74-1efba33f0cd2@oss.qualcomm.com>
+ <xausmwmh6ze5374eukv6pcmwe3lv4qun73pcszd3aqgjwm75u6@h3exsqf4dsfv>
+ <53aac104-76fb-42b8-9e0d-0e8a3f59b2da@oss.qualcomm.com>
+ <zw6o6nxczrzz3dkreq2nuxalbrlv7jmra2hs3pljew7xnbuepo@b6rs47vnnctx>
+ <d3e96be4-8c78-4938-8072-abdb0f0e8f05@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9d:b0:3f6:80ec:bae with SMTP id
- e9e14a558f8ab-3fd853158bamr23643845ab.21.1757154243427; Sat, 06 Sep 2025
- 03:24:03 -0700 (PDT)
-Date: Sat, 06 Sep 2025 03:24:03 -0700
-In-Reply-To: <20250906100415.80589-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68bc0bc3.050a0220.192772.01aa.GAE@google.com>
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3e96be4-8c78-4938-8072-abdb0f0e8f05@oss.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wo8qEMHwPp8nK8HAoRaGs2-BQ7c28M5g
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwNCBTYWx0ZWRfX38zelVu8tA0t
+ J/V//XuPDhFnR8ob789BhaeY/2qB/Ila1PVzFd/oZ5lnqWS5egVMolY6wljHEVYfF12zpCyKZhQ
+ l/RbaoFiqifh5vABzgFErJwloRzTp9I7FLNrcVoflCjH0flzmg+F1ZRlI/5ksup12H9bWPEvQ03
+ grkof3mIOjuqEWh6uu+g+nT87xS2q+Dk+d1xNeP7oSG5aGrfG3eR7to9DZ4AIoUzcmlzTWgQ6es
+ fDIBwEOnsBtfgt47GTvJishrGwh99/7Ht04ZlfVW10Zn+LpPSAYZelJ8/V6+4iIM6hvdU9aQWkH
+ /0R3uBBQkqJO+wF3yfcFyUsOreHkMODk2Cl4PwkUvMZIeow3iIMVI/AXycr9NMiFAQesg7HPTJe
+ h5/7A+IR
+X-Proofpoint-GUID: wo8qEMHwPp8nK8HAoRaGs2-BQ7c28M5g
+X-Authority-Analysis: v=2.4 cv=CaoI5Krl c=1 sm=1 tr=0 ts=68bc0e74 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=jXrvpXCBLM6H2ZY3dOMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-06_03,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060004
 
-Hello,
+On Sat, Sep 06, 2025 at 10:28:47AM +0200, Konrad Dybcio wrote:
+> On 9/5/25 3:44 PM, Dmitry Baryshkov wrote:
+> > On Fri, Sep 05, 2025 at 02:04:47PM +0200, Konrad Dybcio wrote:
+> >> On 9/5/25 1:45 PM, Dmitry Baryshkov wrote:
+> >>> On Fri, Sep 05, 2025 at 01:14:29PM +0200, Konrad Dybcio wrote:
+> >>>> On 9/4/25 7:32 PM, Dmitry Baryshkov wrote:
+> >>>>> On Thu, Sep 04, 2025 at 04:34:05PM +0200, Konrad Dybcio wrote:
+> >>>>>> On 9/4/25 3:35 PM, Dmitry Baryshkov wrote:
+> >>>>>>> On Wed, Sep 03, 2025 at 09:58:33PM +0530, Wasim Nazir wrote:
+> >>>>>>>> On Wed, Sep 03, 2025 at 06:12:59PM +0200, Konrad Dybcio wrote:
+> >>>>>>>>> On 8/27/25 3:20 AM, Dmitry Baryshkov wrote:
+> >>>>>>>>>> On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
+> >>>>>>>>>>> From: Monish Chunara <quic_mchunara@quicinc.com>
+> >>>>>>>>>>>
+> >>>>>>>>>>> Introduce the SDHC v5 controller node for the Lemans platform.
+> >>>>>>>>>>> This controller supports either eMMC or SD-card, but only one
+> >>>>>>>>>>> can be active at a time. SD-card is the preferred configuration
+> >>>>>>>>>>> on Lemans targets, so describe this controller.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Define the SDC interface pins including clk, cmd, and data lines
+> >>>>>>>>>>> to enable proper communication with the SDHC controller.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> >>>>>>>>>>> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> >>>>>>>>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> >>>>>>>>>>> ---
+> >>>>>>>>>>>  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
+> >>>>>>>>>>>  1 file changed, 70 insertions(+)
+> >>>>>>>>>>>
+> >>>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>>>>>>>> index 99a566b42ef2..a5a3cdba47f3 100644
+> >>>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+> >>>>>>>>>>> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
+> >>>>>>>>>>>  			};
+> >>>>>>>>>>>  		};
+> >>>>>>>>>>>  
+> >>>>>>>>>>> +		sdhc: mmc@87c4000 {
+> >>>>>>>>>>> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
+> >>>>>>>>>>> +			reg = <0x0 0x087c4000 0x0 0x1000>;
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
+> >>>>>>>>>>> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
+> >>>>>>>>>>> +			interrupt-names = "hc_irq", "pwr_irq";
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> >>>>>>>>>>> +				 <&gcc GCC_SDCC1_APPS_CLK>;
+> >>>>>>>>>>> +			clock-names = "iface", "core";
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
+> >>>>>>>>>>> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
+> >>>>>>>>>>> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			iommus = <&apps_smmu 0x0 0x0>;
+> >>>>>>>>>>> +			dma-coherent;
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			resets = <&gcc GCC_SDCC1_BCR>;
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +			no-sdio;
+> >>>>>>>>>>> +			no-mmc;
+> >>>>>>>>>>> +			bus-width = <4>;
+> >>>>>>>>>>
+> >>>>>>>>>> This is the board configuration, it should be defined in the EVK DTS.
+> >>>>>>>>>
+> >>>>>>>>> Unless the controller is actually incapable of doing non-SDCards
+> >>>>>>>>>
+> >>>>>>>>> But from the limited information I can find, this one should be able
+> >>>>>>>>> to do both
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> It’s doable, but the bus width differs when this controller is used for
+> >>>>>>>> eMMC, which is supported on the Mezz board. So, it’s cleaner to define
+> >>>>>>>> only what’s needed for each specific usecase on the board.
+> >>>>>>>
+> >>>>>>> `git grep no-sdio arch/arm64/boot/dts/qcom/` shows that we have those
+> >>>>>>> properties inside the board DT. I don't see a reason to deviate.
+> >>>>>>
+> >>>>>> Just to make sure we're clear
+> >>>>>>
+> >>>>>> I want the author to keep bus-width in SoC dt and move the other
+> >>>>>> properties to the board dt
+> >>>>>
+> >>>>> I think bus-width is also a property of the board. In the end, it's a
+> >>>>> question of schematics whether we route 1 wire or all 4 wires. git-log
+> >>>>> shows that bus-width is being sent in both files (and probalby we should
+> >>>>> sort that out).
+> >>>>
+> >>>> Actually this is the controller capability, so if it can do 8, it should
+> >>>> be 8 and the MMC core will do whatever it pleases (the not-super-sure
+> >>>> docs that I have say 8 for this platform)
+> >>>
+> >>> Isn't it a physical width of the bus between the controller and the slot
+> >>> or eMMC chip?
+> >>
+> >> No, that's matched against reported (sd/mmc) card capabilities IIUC
+> > 
+> > What if both host and the card support 4 bits bus (normal SD card), but
+> > board has only one data wire?
+> 
+> Ohhh, touche.. I assumed it's "smart" like PCIe, but it's (probably)
+> not.
+> 
+> Sorry for the trouble, Wasim. Let's keep 4 for now and get this patch
+> merged.
+> 
+> Konrad>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in az6007_i2c_xfer
+Thanks for the discussion Dmitry and Konrad. This has been confirmed with
+hardware team as well that only 4 lines have been routed from the controller to
+the SD card slot on the board, as per the card specifications.
 
-az6007: tried to read 4109 bytes, but I2C max size is 4096 bytes
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
-WARNING: CPU: 0 PID: 6849 at kernel/locking/mutex.c:933 __mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Modules linked in:
-CPU: 0 UID: 0 PID: 6849 Comm: syz.4.34 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__mutex_unlock_slowpath+0x528/0x7b0 kernel/locking/mutex.c:933
-Code: 08 84 c9 0f 85 78 02 00 00 44 8b 15 f2 ba 1a 05 45 85 d2 75 19 90 48 c7 c6 a0 5a ad 8b 48 c7 c7 60 56 ad 8b e8 79 39 ea f5 90 <0f> 0b 90 90 90 48 c7 c1 80 60 e3 9a 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc9000423f928 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88802ada2440 RCX: ffffffff817a2388
-RDX: ffff888031ee8000 RSI: ffffffff817a2395 RDI: 0000000000000001
-RBP: 1ffff92000847f2a R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 284e4f5f4e524157 R12: 0000000000000003
-R13: fffffbfff35c6c10 R14: ffffc9000423f9b0 R15: ffff88803569c000
-FS:  00007f0c02ffb6c0(0000) GS:ffff8881246e1000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005652c153a008 CR3: 000000005260a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- az6007_i2c_xfer+0x619/0xb30 drivers/media/usb/dvb-usb-v2/az6007.c:851
- __i2c_transfer+0x6b6/0x2190 drivers/i2c/i2c-core-base.c:2264
- i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
- i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
- i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
- i2c_master_recv include/linux/i2c.h:79 [inline]
- i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
- do_loop_readv_writev fs/read_write.c:847 [inline]
- do_loop_readv_writev fs/read_write.c:835 [inline]
- vfs_readv+0x5c1/0x8b0 fs/read_write.c:1020
- do_preadv+0x1a6/0x270 fs/read_write.c:1132
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0c0218e169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0c02ffb038 EFLAGS: 00000246
- ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00007f0c023b5fa0 RCX: 00007f0c0218e169
-RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
-RBP: 00007f0c02210a68 R08: 000000000000007e R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0c023b5fa0 R15: 00007ffc233dccf8
- </TASK>
+We'll keep the value 4 in the board DTS as per the discussion.
 
-
-Tested on:
-
-commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1351a962580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1341a962580000
+Best Regards,
+Monish
 
 
