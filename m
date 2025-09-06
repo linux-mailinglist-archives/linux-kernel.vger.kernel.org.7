@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-804053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16F8B46948
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:25:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D285CB4694D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2636F582DC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EFD3ABC74
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D937265281;
-	Sat,  6 Sep 2025 05:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E58227AC5C;
+	Sat,  6 Sep 2025 05:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PzfcPqs8"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yzNB6tsm"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176661367
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 05:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606C279DB2;
+	Sat,  6 Sep 2025 05:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757136307; cv=none; b=KMQeiZqo/P2nWuso2rNVMMTSUyTbFioA25yvSNhNfBEIDiPig1Su9aKKM1VftQZlziM9geWnJeFmNLyMJaFVQpwQMfyvkGZSo9Ozf7NxSVCY4CS2pWAm/xiGbsiy5oipKTadt5VMmG2rCoBX09sBNdpej7MIAriXdSmIW7mqE1k=
+	t=1757136485; cv=none; b=ofE0/t6tghO1CgqOUbyzJX3BNNeUzo/pGsNPAV1gJ+JABnidPBct0uy5klDoZhox0djoSXz/RN1P+YbL58mj/FdP4Sjuw40QL68x+NKltTUrVZmkFZlGTA0ZPe6kQiCPXkMPFYCCJljKhv7pBT68BVxU+2KYThw8OMjM2UMCApI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757136307; c=relaxed/simple;
-	bh=e1WhUKTBxcgVfgvRyMM4JxOt23VvOa871eMQHq2RQlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njqRWwS4/sYDt0jrWaBYcGE9r0cdLxYzJ9sffwBs8Kz0vg9aJsfUk0aH0xJICejJLOyfBjlrNkEnQMoUaeAMssyvzgnh23eE5GRaaUP3TLum1843+UHagCUVHlTErTaaP1awqXrNG2e1oEarq47w16iAPC9C5O/N7/HsqY+JHjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PzfcPqs8; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24884d9e54bso29081915ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 22:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757136305; x=1757741105; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZGo+T7amOY1lETbh1kJa9AjOv0PBB9f7/HBJ+WiqwM=;
-        b=PzfcPqs8EkiZ1nWQyM5Z7sqC1KmX00IskGai70RUAVEEoBIeLb468R1YG9AjGFRKXz
-         B1PsK6s8z//mfdp4qOQhFzyW7zkBnRI8nX4KZV8k3B/xjYdc95Z8usTvNIcRFLPQCydC
-         8o8y26IeFvlLbE+RzpzhZ6Av853MkeMk90NKk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757136305; x=1757741105;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZZGo+T7amOY1lETbh1kJa9AjOv0PBB9f7/HBJ+WiqwM=;
-        b=UJoQdJmiy1xMdYSx3sgrser21kDU3QwL1WYxhwBzGwmHexcUXakW4S2Nt8TpQLgy15
-         Ox7Mt2vY1ViuKKI3quxJW2dOcAugLO9/1UbSPVW++xfoiu9J9+l/rkfS4aTgXAn9MI6H
-         0E5yYWd43zexr/YU/I7kAZRmzgqQdKP4m3MG5ReJZXxLSxCzsGL3RpymRa/gwPgNd8KF
-         dQO7H+NzlhL9EToXcDvOuaeBogT5jB5c2y/BF3S5U7ns/8rod5UpOhy3FGqbIMCT7lFn
-         Uzzse7hmusE+oIhjZHiNwD0EbojuPpkicVXW/kUhNnpoYTBHoS7ZBzM5h7NKTfb8n4Iz
-         J7qA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDUlKNcLzYqsJrv2N1ySSwbPRvFU6wjTPt8WSD0exUjfa311LXMbyp8VK9LqGsKU0LTekHXp2e3MOYVM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykHsGBvAj1UHsY1/ifOjt+tefgb1uU+P1i4L5ySYQqlMF9vEh/
-	+2hrmSX61HyrrtwrRzUGF1GfJA0fvC34EhB0o5MDjvZEA44jlbTRentDE4ndEgpbGQ==
-X-Gm-Gg: ASbGncu9bf9LJ+1hwf3G5Cqo5MfwKUQZDKtHnbjy0grk88JI13vNAS7yDftnEYy91El
-	2n7FUiAptAc+fkTqGrtjcPUH8/qngdecqOkShuugWBAZPWzSfQYCEzOH9cC5blSGTf1FLkrWVUM
-	HB0cLpYj3ZbjZ5khdsNUXEh52ZilFCQlLIy7Ya6skKzuWY0g0jr8ovYIMEB+3dFZaTM1j3BmGWz
-	5Ik2YiAiJvcn7Si19d1/uOL2mBApQTNdV1xROaBW90ErGEk7yFc8zgWLTpOp+LwnKRQZXfnOBgZ
-	ABOZCD5+kYfy5boO5NlAUmgHWwd1vjwWBo0tQyVh5f7VeyPZ2dSZ5MFem+z8V317vPGS66vKNB+
-	pdgy2WzQu9JxvOgUuonyuOWjFFGONONnTVbk=
-X-Google-Smtp-Source: AGHT+IEoDHKsfNZjYJYHiPgDcwHYSGs1lR2jb/L8ZEYHKch3JPG8uNbquge4NeIL4yWvY+k0jKXftA==
-X-Received: by 2002:a17:902:da92:b0:24c:cc7c:daa7 with SMTP id d9443c01a7336-251736dedf9mr17725615ad.38.1757136305265;
-        Fri, 05 Sep 2025 22:25:05 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:788:b55a:785c:1e68])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c9e39094dsm82041125ad.84.2025.09.05.22.25.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 22:25:04 -0700 (PDT)
-Date: Sat, 6 Sep 2025 14:25:00 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Vitaly Wool <vitaly.wool@konsulko.se>, 
-	Vlastimil Babka <vbabka@suse.cz>, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH 0/3] mm: remove zpool
-Message-ID: <dh74mr7bjtpzk7frviv6iqqno2u2b27p7jiagp2dtnsz2wrfhr@wlb5vqg4majs>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
- <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
- <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
+	s=arc-20240116; t=1757136485; c=relaxed/simple;
+	bh=CrT8JEHCyXG6YV6cFp3hT9XCGY1QGmIppEZH2vzoCUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cz0r2EEPUW63AoMaGyugYXYhQ4ne8b5/TcVz4nBfS7/Ql6r0CdKgFupJ4xk6tEo6RxK8jZ+XQE7hWs9F4pXOvUwB+taaTjzIsfusyCZblEdqwVbK3lR0gW6ZA4xy+NTUU7zJto0NH7mb7SVph8hrHfKW2ccdTMD5oaJ8ThJeX+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yzNB6tsm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=iqj54Cn31NsbsQ65ZPACX2iqR+ISlTVVxWRV3yEQ1jM=; b=yzNB6tsmSyqGh0q+E9N4mc5IsM
+	8+vG39NnPBi2RvqCxI54wfyUMP0JhzBfNJS7HEmU3wWqnsHM+1uY4ABtjcKci4oeIwaPaNk70ewSa
+	UBnPyxpHiyeo6LSw+3ln3acHP6aV8MnTeouX0Gm3KeV/wkRN/a9E5qRD4ld/+MBfoxYS/jU1XA9oI
+	6fkjlEcO67gblYv9Mwbg5Yn8D2Zw2kJMEb3Q3M24iZjl3qbU3EH+0VWbsnb0o/8uWdG632frNvnhT
+	IbWy0dTbbtWTXUkiKJxGW1tEzfZRDF0wkoQX1qdvEuU1jLEAQtkbppUrcb/5yW5FD5e/0ZfPJx2Qx
+	xyaO5mWg==;
+Received: from [50.53.25.54] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uulSx-00000006oaW-3Gao;
+	Sat, 06 Sep 2025 05:27:59 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	linux-pm@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	linux-doc@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v5] kernel.h: add comments for enum system_states
+Date: Fri,  5 Sep 2025 22:27:58 -0700
+Message-ID: <20250906052758.2767832-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
+Content-Transfer-Encoding: 8bit
 
-On (25/09/05 19:57), Yosry Ahmed wrote:
-> I think Android uses zram+zsmalloc with 16K pages. Perhaps Sergey could
-> confirm.
+Provide some basic comments about the system_states and what they imply.
+Also convert the comments to kernel-doc format.
 
-I'm not working on android directly,
+Split the enum declaration from the definition of the system_state
+variable so that kernel-doc notation works cleanly with it.
+This is picked up by Documentation/driver-api/basics.rst so it
+does not need further inclusion in the kernel docbooks.
 
-I can confirm that android uses zram+zsmalloc.  As of 16K pages, there
-was a way to toggle 16k pages on android (via system settings), I don't
-know if this is the default now.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+---
+v2: add Rafael's Ack.
+v3: add Andrew
+v4: add DOC: so that this DOC: block can be used in Documentation/
+    add Greg K-H
+    add Jon Corbet, Mauro Chehab, & linux-doc
+v5: split enum declaration and definition (Jani Nikula)
+    drop the DOC: block since it is no longer needed
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Len Brown <len.brown@intel.com>
+Cc: linux-pm@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+---
+ include/linux/kernel.h |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+--- linux-next-20250819.orig/include/linux/kernel.h
++++ linux-next-20250819/include/linux/kernel.h
+@@ -164,11 +164,23 @@ extern int root_mountflags;
+ 
+ extern bool early_boot_irqs_disabled;
+ 
+-/*
+- * Values used for system_state. Ordering of the states must not be changed
++/**
++ * enum system_states - Values used for system_state.
++ *
++ * * @SYSTEM_BOOTING:	%0, no init needed
++ * * @SYSTEM_SCHEDULING: system is ready for scheduling; OK to use RCU
++ * * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
++ * * @SYSTEM_RUNNING:	system is up and running
++ * * @SYSTEM_HALT:	system entered clean system halt state
++ * * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
++ * * @SYSTEM_RESTART:	system entered emergency power off or normal restart
++ * * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
++ *
++ * Note:
++ * Ordering of the states must not be changed
+  * as code checks for <, <=, >, >= STATE.
+  */
+-extern enum system_states {
++enum system_states {
+ 	SYSTEM_BOOTING,
+ 	SYSTEM_SCHEDULING,
+ 	SYSTEM_FREEING_INITMEM,
+@@ -177,7 +189,8 @@ extern enum system_states {
+ 	SYSTEM_POWER_OFF,
+ 	SYSTEM_RESTART,
+ 	SYSTEM_SUSPEND,
+-} system_state;
++};
++extern enum system_states system_state;
+ 
+ /*
+  * General tracing related utility functions - trace_printk(),
 
