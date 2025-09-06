@@ -1,119 +1,154 @@
-Return-Path: <linux-kernel+bounces-804241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B88B46E0C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2A8B46E16
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBDD617FB4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5F3580DD4
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4972EDD7D;
-	Sat,  6 Sep 2025 13:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAE22F0C56;
+	Sat,  6 Sep 2025 13:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXdQ6EEg"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/24qotB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763F414A0B5
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 13:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00D414A0B5;
+	Sat,  6 Sep 2025 13:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757165130; cv=none; b=fpPXA7TNO1Nyyi6dnmFM+3CPn0ZlNSr1+6YtjIj5eaEuHuLxmj+/FieKLWxMH9xY7EvXERPRHYGdCTTSVUebDjJW0n60y+XZqS3LgHdpmk866Ml9PmLM1DCazsHkw7RufIyyRGqTs7yoyje+uQhygbxhhnI+fQzi3CaR0L/11l4=
+	t=1757165187; cv=none; b=ZFWE0S57d1GpGxP9ItmTz2sK9I0eWkurRts+B/wjHf/4GjC2Lkqlzdu6K9sRr1y4Pv1xbDlqinxPJzOrAdApUVTqLQW50sqIZKeZncHpcLC/dQj0XJfvnNUhuvdyCEgXeRD2zJFz98ka8/cguD/vU6dwhXrgEA/FdcgizPERMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757165130; c=relaxed/simple;
-	bh=VE+Mx/TU7aQIVb363hbvW+WQvMnqT6BMcQeprM6OFYE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gw2vNaQmmMJQIzyDIi1Tu94HRzwtblm/7FC0B6EjO8geCisR9WeWacHpgWmlXqW9jJc3OrwO2k5RFWEfHLcSM17/3qnUet4SHpO7zrBvC9lwzFi34iWBr+dp4mAYbsUTbxE1rx9BEqfMTbOseP4/zwoyFJwDuHFPvSdjCaPzFJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXdQ6EEg; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dd505a1dfso15204465e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 06:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757165127; x=1757769927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VE+Mx/TU7aQIVb363hbvW+WQvMnqT6BMcQeprM6OFYE=;
-        b=nXdQ6EEggrNa6JOqEK2oc1a4zrpHLY7DzgP8twE5XS7aohnwoF8Yjl5905Oplmzvpp
-         9Xkeifay41iQ7SgxuI2Wdk0MR8Ei00Cao4jVJ3PbOVN94kbaToEweXc88m9vC5lLkUeN
-         P8vx2J7g93cS6ItYYSD9xTm9GYjZ33EXW/ptJd1y1ITQdhk3AMdGNC7TNC9jYTOTW5KB
-         i4aLXeMvQ0PDMlP/s/m75uZgdlXoVRpSUHK4zPo5XJSQWgmbjOTwekXcOEc6u85TVNgQ
-         +ZzTHGhfnLVL9j4K+Bp2Qnj+6NG87/hU/SRti15+aDb/NM6pUboC79Q81XEH+Hpb+CTh
-         +vWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757165127; x=1757769927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VE+Mx/TU7aQIVb363hbvW+WQvMnqT6BMcQeprM6OFYE=;
-        b=taOr+aOnwUv+YfoSRS9NNF/5r0uP6vg8q3ACc54IzXeQQzS9oCoRwXbTOwUqaGQ0PP
-         0mARc4/xZ1XzQugkAdQ978B1bbxA5b1hfmCHld3HjUH33yw1o8LknrL2Jv3JQe0js0zq
-         g+No36R3FsP4IWVEAvm7FMzXd7ftRmlJURogPTHfAIRtlgVFiL+BrFVI1ejvCJ4iNPxi
-         QRjqHV1dIoYaaAhM3JYjCmDOsn2QJqJNgoMeOgev21xC6ChjjxxWhbpoGjT+uNEriyLv
-         Z1VkDbKcTQtoWb41kToy6xxGJVPKKTsp43adRsy2eUUD0k++V4DXgOcuy5PJ9Asg3hXB
-         3y5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVhdDjleMDBmABUvswf4t0wrUIOper+9f2HTPEc91PdG8ZlYp/MeVudYJUhpGcu1e9aE6BFQMofaglTz+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqCHP05ho6x5DXQE0++DOrSaOFCa8kAWE8CE54lhfOmf0uHRew
-	gHctmObat2pIoKccTTuJwEt9EOsb32SpVNGy6bZtTL2zyc/VLx5r34IG52dVXFyDxdAKn0Rrdi0
-	1+4POMckz3xJCOPyff1W8vEvr/G3Dfwg=
-X-Gm-Gg: ASbGncu1iMhIyUeNSPLeDyA6icGuGlWGD0D7PrqMHKkbtgsNdN2ydBKX1FgcNudRuT4
-	SlQCGK9YCJFEfaSTl3EisYV6jXrx4B/wg2EQVfn0/3aqSUlF+7JJdX3VMBoV4VO+pmMr+nJekbO
-	WH6zVq+lVYvPClpa5rTUv5kr7Z016Db6hX2pHd9jjLjIc+IjkMIfs5dsKQP1YVPmKKxNr6SYIly
-	5Nahke4
-X-Google-Smtp-Source: AGHT+IH7xxFltspr8zCiYexkZxI5yiQn/I8vOs80sqSulDOmiRjBylXmYFVNrCaFsedsn3UnPzIuoip5fBxmKpv09wE=
-X-Received: by 2002:a5d:5887:0:b0:3d1:6d7a:ab24 with SMTP id
- ffacd0b85a97d-3e641a6095cmr1198571f8f.17.1757165126529; Sat, 06 Sep 2025
- 06:25:26 -0700 (PDT)
+	s=arc-20240116; t=1757165187; c=relaxed/simple;
+	bh=KrsqLP75fjTSQuxH9MYCwhh9T8LNrNFu1KfyBXwrQJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHD2OCZv3NRo4NFTi+6lTWyDobZgkEiEKPG1DgJYk6GqkX/A3MeAcaDDfups9kSCrB2qcpMw+eck0IUfhcIK8AaEH9Q5eV+mIgkKth1GS3obh3Eck9t7tgc2IQh/KCIwgERjy8gUadK/C8DF6YTaImkL7LbOfjvpqfgO8XkrO6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/24qotB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7051EC4CEE7;
+	Sat,  6 Sep 2025 13:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757165186;
+	bh=KrsqLP75fjTSQuxH9MYCwhh9T8LNrNFu1KfyBXwrQJg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N/24qotBiUUiNc8CNgb4AtFv0+/smr42/eghiBNtOly429j8oHFDiEOYUFeyE5gYY
+	 TVPfw6JaAUPo8mjUsuc0FEWbaLSRmT9EuecFBVw7bOte5zK5P++/HCncATslysDkR0
+	 LV+VcP4QLSEUaVjpHKfDl5ibekp5TQOzCYR88LE5kE3yOBIKMY1V2ie9OhuWjpUuKj
+	 KbMYjaEgQCwK/7nzEY39XIcWJSGFAN064wz81/eyTFv4bq2X3RnpvnI5lamVy1DvLa
+	 Yls3jmWm8om/MGylaEv9/Mko7xPQ01ISxV5WKt6F3I42kwyZZLW2ImVGxf55h779/5
+	 ZI2eHHJuTk9Gw==
+Message-ID: <ab6ff5d8-2ef1-44de-b6db-8174795028a1@kernel.org>
+Date: Sat, 6 Sep 2025 15:26:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820053459.164825-1-bhe@redhat.com> <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
- <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv> <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
- <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com> <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
-In-Reply-To: <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Sat, 6 Sep 2025 15:25:15 +0200
-X-Gm-Features: AS18NWDtWolEoXZVKCJMBulXUlUwGez_rwjXq9tKdDHHBjrrgE8FIXbdfmCaUgk
-Message-ID: <CA+fCnZf0z526E31AN_NUM-ioaGm+YF2kn02NwGU6-fmki-tkCg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three modes
-To: Baoquan He <bhe@redhat.com>
-Cc: glider@google.com, dvyukov@google.com, elver@google.com, 
-	linux-mm@kvack.org, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	kexec@lists.infradead.org, sj@kernel.org, lorenzo.stoakes@oracle.com, 
-	christophe.leroy@csgroup.eu, Andrey Ryabinin <ryabinin.a.a@gmail.com>, snovitoll@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH mptcp] mptcp: sockopt: make sync_socket_options propagate
+ SOCK_KEEPOPEN
+Content-Language: en-GB, fr-BE
+To: Krister Johansen <kjlx@templeofstupid.com>,
+ Mat Martineau <martineau@kernel.org>
+Cc: Geliang Tang <geliang@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+ David Reaver <me@davidreaver.com>
+References: <aLuDmBsgC7wVNV1J@templeofstupid.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <aLuDmBsgC7wVNV1J@templeofstupid.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 5, 2025 at 10:34=E2=80=AFPM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
->
-> Baoquan, I'd be in favor of implementing kasan.vmalloc=3Doff instead of
-> kasan=3Doff. This seems to both (almost) solve the RAM overhead problem
-> you're having (AFAIU) and also seems like a useful feature on its own
-> (similar to CONFIG_KASAN_VMALLOC=3Dn but via command-line). The patches
-> to support kasan.vmalloc=3Doff should also be orthogonal to the
-> Sabyrzhan's series.
->
-> If you feel strongly that the ~1/8th RAM overhead (coming from the
-> physmap shadow and the slab redzones) is still unacceptable for your
-> use case (noting that the performance overhead (and the constant
-> silent detection of false-positive bugs) would still be there), I
-> think you can proceed with your series (unless someone else is
-> against).
+Hi Krister,
 
-Hm, just realized that kasan.vmalloc=3Doff would probably break if
-CONFIG_VMAP_STACK is enabled: read-only shadow for vmalloc =3D>
-read-only shadow for stacks =3D> stack instrumentation will try writing
-into read-only shadow and crash.
+On 06/09/2025 02:43, Krister Johansen wrote:
+> Users reported a scenario where MPTCP connections that were configured
+> with SO_KEEPALIVE prior to connect would fail to enable their keepalives
+> if MTPCP fell back to TCP mode.
+> 
+> After investigating, this affects keepalives for any connection where
+> sync_socket_options is called on a socket that is in the closed or
+> listening state.  Joins are handled properly. For connects,
+> sync_socket_options is called when the socket is still in the closed
+> state.  The tcp_set_keepalive() function does not act on sockets that
+> are closed or listening, hence keepalive is not immediately enabled.
+> Since the SO_KEEPOPEN flag is absent, it is not enabled later in the
+> connect sequence via tcp_finish_connect.  Setting the keepalive via
+> sockopt after connect does work, but would not address any subsequently
+> created flows.
+> 
+> Fortunately, the fix here is straight-forward: set SOCK_KEEPOPEN on the
+> subflow when calling sync_socket_options.
+> 
+> The fix was valdidated both by using tcpdump to observe keeplaive
+> packets not being sent before the fix, and being sent after the fix.  It
+> was also possible to observe via ss that the keepalive timer was not
+> enabled on these sockets before the fix, but was enabled afterwards.
 
-So I wonder if there's a way to avoid the lazy vmap freeing to deal
-with the RAM overhead.
+
+Thank you for the fix! Indeed, the SOCK_KEEPOPEN flag was missing! This
+patch looks good to me as well:
+
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
+
+@Netdev Maintainers: please apply this patch in 'net' directly. But I
+can always re-send it later if preferred.
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
