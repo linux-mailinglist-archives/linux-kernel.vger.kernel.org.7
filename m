@@ -1,79 +1,127 @@
-Return-Path: <linux-kernel+bounces-803930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7454B46768
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D52B4676B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241AF1C26505
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5319F3B1EFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 00:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C74CA4E;
-	Sat,  6 Sep 2025 00:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1476CA6B;
+	Sat,  6 Sep 2025 00:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h62Efr5q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktgG1gFt"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF904C97;
-	Sat,  6 Sep 2025 00:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D168747F;
+	Sat,  6 Sep 2025 00:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757117527; cv=none; b=a3IKQsOLTPUp/LGr6EnLGWPydx7RQzGz1S5pHFX+ijEummzJhmVSx74ETNML2i0UgSkLcSA4W4ZTC9aEoBTNE7SC8bUfMJy4Gf8NKr9LWiHea/6Gy7jkwr1/mmt9iTk8/BMHlr0eAFUT/XFMTjusPfuQk+H4whJfmoe+vr0FLOw=
+	t=1757117544; cv=none; b=SsZsia5/QsX/dGGpwPZKGZmwW/8aTtYKP7tTA5uVKyhOmAE1gywY+PbrVbFNX4zxHXuOEj9eqGcXzElm8aM439J8EXXK0OrF6cd2ZpekhtIwSlIEJAXbW8Ryj3Oa/JjRMwAriPc66AJ6hNOs1kZoYUymoYKFT2QCjJti4dxn3kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757117527; c=relaxed/simple;
-	bh=FPIcx5ZD9itca0Z0lBkQaxYvEdw750jRqVZ4wjT495k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kdndOnGRwoNSnMsnFDy5+VpaJXmAekwctlPD0yoIQb71PczD0e9qFTyU5ltPqgBxnislWwjbpVYWSc3jSBN6nxv71SKiUWLDhPETNw8YcRVunkJmjBW1sXVfT+K1nvFrbQd4gnMDWQyyxx4cWyqIHcNugoVAFaJQ3ptXVa/ARtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h62Efr5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1109C4CEF1;
-	Sat,  6 Sep 2025 00:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757117526;
-	bh=FPIcx5ZD9itca0Z0lBkQaxYvEdw750jRqVZ4wjT495k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h62Efr5qLZgARqjyjaFXl2uvoWkqdjnsZQ2lCHbkpg7YscQ91b7sSZ0Nma9RWLQ+8
-	 +7IoCLnrUtJxdbbAGPIPvrrk9xPw7w73OUpUxZIaw0QnuQdXZy8YBGEMR0NSPv4c2h
-	 RWU4XYyFdXCiudxShp4qneMrIdYsWfp6U7gEwwbJy2gycV2U9WpKdaRogO3QYfnYJd
-	 eDzJfStQWOutWPwMB3xxjmXo4Xx+5sELLxjYWFxsFLuzU1N/A8NfQTRoryacWEzlL2
-	 HcoryIlK+LDpNy2lcDPQTRTvxPraiGue+l+2kez9HC3yhAHLb/ODeyAQQEKNTkjTTs
-	 YKemlqy5FEovQ==
-Date: Fri, 5 Sep 2025 17:12:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 03/11] tools: ynl-gen: add sub-type check
-Message-ID: <20250905171204.483b5f4f@kernel.org>
-In-Reply-To: <20250904220156.1006541-3-ast@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-3-ast@fiberby.net>
+	s=arc-20240116; t=1757117544; c=relaxed/simple;
+	bh=AFSDmgyRCMgif3cCKHdHPQq1WRLZ7cvhYkBKPGoQZII=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ds9j/SkAFM6yJGI1VUJV+UqK6f5ZYSSSjhCAob6azBFLmpLS7YYzIrKch88iM6flvQNZFwUpg8yzduXVqmKJl57amcPihnRMV/qD7NOVdq9pf+Odb7oThduTRHEWuX+Ta2pL38u8nyGE+siTcozBLMsp164IzpqTQz6W+wycREg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktgG1gFt; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f7cd8ec2cso3442966e87.2;
+        Fri, 05 Sep 2025 17:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757117540; x=1757722340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PBeF4QRURRds6ri2MTG6TWWH1ciD0HDW01AQn3fRgRc=;
+        b=ktgG1gFtWweRag8dH15+SUY6VFLs07/U/a9iJMmTt4pgRre3GTF06RGsycQgg3pHUj
+         WViSojGpCkui+DPQB0JYMGbqUjSU24f0w3tKpuX3giWzFfg2IzFHC5VnYl/8e4UXAVx0
+         W1IzDxHidS4lsKfhuCEwX6GWetXFedwy6NecBc4R/7aiWWeiBH2QBGBgo8QeX6Jvurty
+         MqYT0u/ey6jpRkPPMu6RrJa99MCiHJE6atK3DHKEx1JLnvqme2ynXynpe8Cx+eR19tuu
+         n5x5Yy+yjtYMchnrM/yU0Ji56MLTvVjvjEZIgS6mrXmdppk9HPZl0rVA9rz6asruhKqJ
+         +0KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757117540; x=1757722340;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PBeF4QRURRds6ri2MTG6TWWH1ciD0HDW01AQn3fRgRc=;
+        b=Q54D5A913gRgv8b6r44l+XDxvE+LPjUeD0FaVbefz47RBFd9A7ObOW/Ljmh1E5+I9c
+         T19Yfjk1sDB9i5UiUzQebITT1A8lX31keBwULgOMv0lLdAskguV18kppHQIj8RDVzIk3
+         PfHWJjXy8qFIEPF8f6st+6GMB6hl3ktYtW90U3umCK5X28JVkSRvm7u5o+E8JYxlgOZa
+         qQbXUP3GZMa84ggrYwJeH9DzqjgJQKWSX51APxIvsUfqLgAnx2AirSb2VBxyA0mrbg6y
+         py9b7/S5o/jWdDJEGVdBSg6Q4w4XJJmL2rY4CgUE19128TBtIe/5vGH+riG8zcNt3kFZ
+         wN7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUULpYCQ7oOWCeu6F5CVTilc5u1BXJ2F08oe2LH6G14nOnDikU658uVaddJj5O3/JP2PcySOiO9pY=@vger.kernel.org, AJvYcCWZRbtTvwFXsQ8GtRa3trYDlatgpDuYKHlfdl9cXraaMIc7l7V0cvEqdwIA5k7O6q9ybrtGhYmjVT7WsOUE@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxlMx2WXPT4MEFM/FBrcXk4gcORNr0ZqxnUoufYdl1vEk+XIEk
+	dg4ghDO9kF9kl3dL4vAfhthIOIbcoSOTxTu9SrzZLskwVYbjy1G68N0wVSLYFnP3THM=
+X-Gm-Gg: ASbGncuuMk0JtCHYlIc4iu5QT6EQrjl75WBzmhkXIWQoUN0Ddxbyx/OqMr9MQnvWQVA
+	6FRWPnOFYZLNKyY+WqE8UHml7LMbbjGLS+FFF3jGx2SpajiAeRtpnEG2JMhs49CCnB9G0VLuWmk
+	efzbsq6GHmPU6p/wz+N8b7s0Al11HAu83923zYy7nV1UlHfq3Gn0Rnmnc4BXXfYArjZ8Ltr2WUv
+	At7NfPx8JX9H+M9rU2i7rkyaI+M1OiMO1n3Rvg0GxcnwXKLzbOxjF0TImvBcR7Rs4s4vMPnYK4t
+	WwHma59vyFaWoyX4wAk2QsEpB2HReKmQNT0kYYE3lVlnx2KygpNeMqhYzyvSafQGMHdH5jpe/T4
+	frMtfQwMID8fu0X6CKmVX09JonT1cmbgFyC1c/nc05FeuHcQA/oE=
+X-Google-Smtp-Source: AGHT+IEWKaLVpaQspENCbERkgcADaunfG7HcDOCyUZ9qoigjTBjNQVzMakv4kdnAixwEGJiAVOJvkg==
+X-Received: by 2002:a05:6512:3d23:b0:55f:44d5:e517 with SMTP id 2adb3069b0e04-562618e16f2mr154264e87.43.1757117539569;
+        Fri, 05 Sep 2025 17:12:19 -0700 (PDT)
+Received: from NB-6746.corp.yadro.com ([88.201.206.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ace9c65sm2033530e87.85.2025.09.05.17.12.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 17:12:19 -0700 (PDT)
+From: Artem Shimko <artyom.shimko@gmail.com>
+To: 
+Cc: Artem Shimko <artyom.shimko@gmail.com>,
+	Elie Morisse <syniurge@gmail.com>,
+	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] i2c: amd-mp2-pci: Simplify PM code using DEFINE_RUNTIME_DEV_PM_OPS
+Date: Sat,  6 Sep 2025 03:12:07 +0300
+Message-ID: <20250906001217.3792723-1-artyom.shimko@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <y>
+References: <y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu,  4 Sep 2025 22:01:26 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> Add a check to verify that the sub-type is "nest", and throw an
-> exception if no policy could be generated, as a guard to prevent
-> against generating a bad policy.
->=20
-> This is a trivial patch with no behavioural changes intended.
+Hello maintainers and reviewers,
 
-I _think_ the expectation was that one of the other methods which
-validate the types more thoroughly has to be called if this one is.
-But either way:
+This patch series cleans up the power management code in the AMD MP2 PCI
+I2C driver by modernizing the PM infrastructure.
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+The main changes include:
+- Replacing UNIVERSAL_DEV_PM_OPS with DEFINE_RUNTIME_DEV_PM_OPS()
+- Removing redundant CONFIG_PM preprocessor guards
+- Using pm_sleep_ptr() for better code elimination
+
+These changes simplify the codebase while maintaining full functionality.
+The DEFINE_RUNTIME_DEV_PM_OPS macro automatically handles the necessary
+config dependencies, making the manual #ifdef guards unnecessary.
+
+The patch maintains backward compatibility.
+
+Thank you for your consideration.
+
+Best regards,
+Artem Shimko
+
+Artem Shimko (1):
+  i2c: amd-mp2-pci: Simplify PM code using DEFINE_RUNTIME_DEV_PM_OPS
+
+ drivers/i2c/busses/i2c-amd-mp2-pci.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+-- 
+2.43.0
+
 
