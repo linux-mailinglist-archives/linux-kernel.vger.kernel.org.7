@@ -1,81 +1,103 @@
-Return-Path: <linux-kernel+bounces-804435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703A7B476E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAF5B476E2
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC54E7A5591
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB15C585E8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3300289358;
-	Sat,  6 Sep 2025 19:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91637288525;
+	Sat,  6 Sep 2025 19:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PMP6Bquu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DdPwKsIY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DC62550A4;
-	Sat,  6 Sep 2025 19:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6B21A76B1
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 19:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757186543; cv=none; b=Gc8ZxyGCQETJqQlq43sEXAMFIuhNk9FjD4kTrFQGg8QnqmlwlMuINgPdkGIjX/6nr7p0zypfbjcU5JUxez2komEWHiCH+lEmSao2xMyTL0tgKJmMwBUR917wc7Lg6ubYILZBY1KpN7mNaT4OOmqWQfY3RyX1F8jAeClIyjznr14=
+	t=1757186701; cv=none; b=beEhHDr8pjAb86iAxngSt9To8cESuWnv97AOocvh8qdXWDKYXu0+STspQt+IdBWGCln1o5QCNeo7g5gU6fQ5WSW9MpvQV2XjgANi6pn+noXFYoW60LQXVlNEsbyxcx2wUOAtimcVPoARMGC2AoeCt1RAto+dDQ0U2qimMUl2ni8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757186543; c=relaxed/simple;
-	bh=PG93cAu1Xu9wl1cfjEqbuP7XLKHbpHXEiceV7SE9Rww=;
+	s=arc-20240116; t=1757186701; c=relaxed/simple;
+	bh=TO9sUdIq0PpuxZrYE9cAwhgg0k63LhZG8aXeiXUCBZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjqEGbvoUZGP86CnSeRMXBh4dQkzjGe5jJdTfSnryQ2RHHQgFX2ogm7r/6dsTXPubA9YAwBIWuLCs6DpMg4s/CcjFtpKEm5E6xu20zjYUoePvJMkCm6KebgxU+ZtOEf0RlmE/RLKb3WWzBrWlaDShWG5SJPQXUDENMLf0Z9p8qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PMP6Bquu; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757186541; x=1788722541;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PG93cAu1Xu9wl1cfjEqbuP7XLKHbpHXEiceV7SE9Rww=;
-  b=PMP6BquuEU7aP5pBrG8g1S/uAdqPqJ82g17MEutacbHue82sqYpKuIXi
-   wRVnBntvFNOvFfFUoAlITg7tyIFQ3oourMMTcwvQk/XzZ0e6dah1hJ9tZ
-   VKvyLHXbiX3vD/8eh+JWYnJdOJnRU7Xwof/UEzVfZQQq7WMQwup4CqwbZ
-   CX05Ew0Uhca5YhZsiJrhD1q/lqnNfFA5ro16n2cHe4lKADjo/6469snt1
-   +4Pl3XtykLttCQbbS9zDlhe+6/9BENe1b1gmobSHzmB1Dz1Rht7E+0P2q
-   vPUGEjnQvkGjU6sYbTpsOwveSj1XeROupf87d1PgIE195rYPE0YpwP1mN
-   A==;
-X-CSE-ConnectionGUID: R1MpYRzATiiQQM6nafVB9g==
-X-CSE-MsgGUID: dKHaX/AiSKSYx794eJIoFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="77115273"
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="77115273"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 12:22:20 -0700
-X-CSE-ConnectionGUID: wWzejtnrRHipVevferClww==
-X-CSE-MsgGUID: e1d9xfwOTeSfjAI16doFWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="196090478"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 06 Sep 2025 12:22:17 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuyUJ-0001l1-0m;
-	Sat, 06 Sep 2025 19:22:15 +0000
-Date: Sun, 7 Sep 2025 03:21:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, Kamlesh Gurudasani <kamlesh@ti.com>,
-	Manorit Chawdhry <m-chawdhry@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Vishal Mahaveer <vishalm@ti.com>,
-	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
-Message-ID: <202509070251.7MfOWGUB-lkp@intel.com>
-References: <20250905133504.2348972-8-t-pratham@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABEBnjtatzYYgQQ53Fpz3C16DGKne51zu5d67WS2lY4ywUlVJV5MZg8S1/nTYcfGQK30Mw2dCiYubZjEq8FVKQMQszeF9dyGhgHJSwImsUBIlmZwsNFhcC+RAXjlw2LFzcEJQEOvUKAqLckKBihZZs5/B70mVxB7sOU9YM5Retk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DdPwKsIY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 586HPPOd016843
+	for <linux-kernel@vger.kernel.org>; Sat, 6 Sep 2025 19:24:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=MTEK0pkDHJjciIVxHN9OmhQI
+	NcjLjs9n3rxGq729tTE=; b=DdPwKsIYMWvg8x8N76/OFmxu4st7+i6Xm7nNHoSw
+	xxhOS07Bd2FmXKrePMmNQYdbHYKjQoPCG3umm6WMnxbKVxSwvf75vSmEh/gnQgDt
+	cGcN5iQf5KAl/fIsxs+Bt54Nv5Fn4wB/CCns3U9e7jfMq1WvIsOOADJz1WBk6T+a
+	tdm3OwCm3rhaL1SMvkjAEhPrSdyXbEsmgn/ug47MTLMBZ4magi4oHWuETK7yLL4k
+	uibp/5MTko3mD+NBYFBhLiONtePX0VgTV/nrDBHST/kZ4USRH1LLyJoutVDJe97V
+	HrcemKRKeA56msJcbfWqZ4SC6mdRryL5cWZJr+AOOnkc5Q==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db892vy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 19:24:58 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-72631c2c2f7so69400086d6.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 12:24:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757186698; x=1757791498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MTEK0pkDHJjciIVxHN9OmhQINcjLjs9n3rxGq729tTE=;
+        b=I25lKvwctkYv/X9Te0e2MK4FkCWJZ1sC5XVf25NyQHLhscd7jTCyqmjn0prtxEO4e5
+         Jqq8QcI/4bRSM/1RSFrzQQMKHDYkB/RTVVbeN8Wfqz651cP7vv49xopJo/TAa9BxmpBx
+         nySKgFJ//D3OaFllZ0J8SOP5FVoc4uBtfUr//LbaZ5/x3W706BQDNduFhdEeQCDd/J3H
+         B2chlLInov4WpJPP3/5l59ylFrxVioMloBAbN/gS5vaLChQ9qExo4AXK3QC4Di5Bx7ue
+         jPnOw1lulgBVxrEUWcjWFaGzlBoYrAQDfFNs+Pz7D0TcvI8esN6xnmlR0Z7uXehqG+lu
+         OSzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTNXxSHYLVgQyB6ZaRuZTgi4eVKJ0Ze0XcjfR6EHDgAVG9vOBWm+IH3HwOzXsOZhhrXF0e/addhWqQRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6X0/33bOn/i1UAuXuu8Ksfb6DuBqhdJZrmtp+bCGDynCHqkvp
+	c2SoOQxMg/CzlSPjjhn1jCzOx2lpLQRFdjkkYS0dgCASz6AinscyuZHZSkYnRi1X3QiI9dTgNwa
+	d+lJTzj8fmr3CnO0aOjLsJ/0lPNWVuinFAJwa9EzRR9FRSVr2sc86vpr7pCCmxHCgldQ=
+X-Gm-Gg: ASbGncuHjaZsF3XVmyumMjImMHkIJ/hzAp90EtORjNd8hYhcnN7Jcz9LvubXmMv0Nx3
+	u+UhTvolCoEJBrxZ7GWrMnWGxOnOPSy51qgEY/hGDe2tpjk6Ox4M+D3qZndmRzWASAR3r4XP5Vx
+	v/8MLHjRfTBTWH0T31cPwVcSdWhCrOoufJNdb2B1VUnHWn8BZzYpQa32XW2vMGVGF/dtJqFdaBy
+	k0PuEuF9/umTCUpAyDGb2d3WIp8ffp7SCHeGn6EqB+mcm6d3zRkwBw1fO0/GZVQub9KbQBfy6IL
+	yu5rG74bVf9tGC2bkJYtqYzSALOj1sXaCwcVvax5FbPBNxvcZNIW/2cUNEadyenJSLnLmTmOQuA
+	R3IK+IKk1WReF6exW/mvoduRyHY8kXqUOdpbQbTamnIrAQN0R4/7e
+X-Received: by 2002:ad4:5f07:0:b0:728:4af1:e4f9 with SMTP id 6a1803df08f44-739435cf288mr38553336d6.47.1757186698197;
+        Sat, 06 Sep 2025 12:24:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrz7N2428ImzsvEUQElMBkqhCweROuKesIV1+3pYGl1R0oId7O3XdYr9aAYzNEBMgDXflUUA==
+X-Received: by 2002:ad4:5f07:0:b0:728:4af1:e4f9 with SMTP id 6a1803df08f44-739435cf288mr38553016d6.47.1757186697694;
+        Sat, 06 Sep 2025 12:24:57 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acfd2ffsm2500187e87.107.2025.09.06.12.24.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 12:24:56 -0700 (PDT)
+Date: Sat, 6 Sep 2025 22:24:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        Zhang Yubing <yubing.zhang@rock-chips.com>,
+        Andy Yan <andyshrk@163.com>,
+        Maud Spierings <maud_spierings@hotmail.com>,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] dt-bindings: phy: rockchip-usbdp: add improved
+ ports scheme
+Message-ID: <aLyKhngeksG2SKdq@umbar.lan>
+References: <20250904-rock5b-dp-alt-mode-v1-0-23df726b31ce@collabora.com>
+ <20250904-rock5b-dp-alt-mode-v1-1-23df726b31ce@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,106 +106,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905133504.2348972-8-t-pratham@ti.com>
+In-Reply-To: <20250904-rock5b-dp-alt-mode-v1-1-23df726b31ce@collabora.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX0lNwL6Z0DyN4
+ 3UlJE3PF93qx6PtZetHA0vyRagV5dDjFEudVEYHbc7LsMHHZI/cx/zuHyBzVXi2CpW5sF0q6phQ
+ XFhvG/5edjwack8EusIl+YwJPZMMBbTEU3OCMWKhTZxQRCMp4FlFGTV+lK4lHZxD4DLhlapl7B2
+ HJtL5dmAhahax02UuUd1Z65/OT66f81sKhX4Y+zgW9CGVcbgeEb+VVztVZf9r94aJMEXA3vhK52
+ VkiGCdFauRibYj85I4dPyQ4I4N918qPHBD16S2hPOBy4nG5KNUkDzfOCdW+l0TeU38T93NLt7KM
+ A0786zIM+9BTwztQ8TTYrwmA4gZ3T84d+RullZpampf3yGNXtrOvBnTWKKC9y/a4IwQrQojYqWU
+ zec8Zuvi
+X-Proofpoint-ORIG-GUID: 0cejpn5SObRV5_A-oVY3ies9vCpplP0n
+X-Proofpoint-GUID: 0cejpn5SObRV5_A-oVY3ies9vCpplP0n
+X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68bc8a8a cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=JfrnYn6hAAAA:8 a=QX4gbG5DAAAA:8 a=OfM26ny4dbP1suOavW4A:9
+ a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=1CNFftbPRP8L7MoqJWF3:22
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-06_07,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
 
-Hi Pratham,
+On Thu, Sep 04, 2025 at 08:26:02PM +0200, Sebastian Reichel wrote:
+> Currently the Rockchip USBDP PHY as a very simply port scheme: It just
+> offers a single port, which is supposed to point towards the connector.
+> Usually with 2 endpoints, one for the USB-C superspeed port and one for
+> the USB-C SBU port.
+> 
+> This scheme is not good enough to properly handle DP AltMode, so add
+> a new scheme, which has separate ports for everything. This has been
+> modelled after the Qualcomm QMP USB4-USB3-DP PHY controller binding
+> with a slight difference that there is an additional port for the
+> USB-C SBU port as the Rockchip USB-DP PHY also contains the mux.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  .../bindings/phy/phy-rockchip-usbdp.yaml           | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> index 8b7059d5b1826fdec5170cf78d6e27f2bd6766bb..f728acf057e4046a4d254ee687af3451f17bcd01 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
+> @@ -114,6 +114,29 @@ properties:
+>        A port node to link the PHY to a TypeC controller for the purpose of
+>        handling orientation switching.
+>  
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Output endpoint of the PHY for USB (or DP when configured into 4 lane
+> +          mode), which should point to the superspeed port of a USB connector.
 
-kernel test robot noticed the following build warnings:
+What abourt USB+DP mode, where each one gets 2 lanes?
 
-[auto build test WARNING on herbert-cryptodev-2.6/master]
-[also build test WARNING on next-20250905]
-[cannot apply to herbert-crypto-2.6/master linus/master v6.17-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Incoming endpoint from the USB controller
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Incoming endpoint from the DisplayPort controller
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          Output endpoint of the PHY for DP, which should either point to the
+> +          SBU port of a USB-C connector or a DisplayPort connector input port.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/T-Pratham/crypto-ti-Add-support-for-AES-XTS-in-DTHEv2-driver/20250905-214245
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20250905133504.2348972-8-t-pratham%40ti.com
-patch subject: [PATCH 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250907/202509070251.7MfOWGUB-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070251.7MfOWGUB-lkp@intel.com/reproduce)
+I would suggest describing this port as 'DisplayPort AUX signals to be
+connected to the SBU port of a USB-C connector (maybe through the
+additinal mux, switch or retimer)'. It should not be confused with the
+actual DisplayPort signals (as those go through the port@0).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509070251.7MfOWGUB-lkp@intel.com/
+In the Qualcomm world we currently do not describe this link from the
+PHY to the gpio-mux or retimer, but I think we will have to do that
+soon.
 
-All warnings (new ones prefixed by >>):
-
-   drivers/crypto/ti/dthev2-aes.c:818:7: warning: variable 'unpadded_cryptlen' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     818 |                 if (!dst) {
-         |                     ^~~~
-   drivers/crypto/ti/dthev2-aes.c:962:6: note: uninitialized use occurs here
-     962 |         if (unpadded_cryptlen % AES_BLOCK_SIZE)
-         |             ^~~~~~~~~~~~~~~~~
-   drivers/crypto/ti/dthev2-aes.c:818:3: note: remove the 'if' if its condition is always false
-     818 |                 if (!dst) {
-         |                 ^~~~~~~~~~~
-     819 |                         ret = -ENOMEM;
-         |                         ~~~~~~~~~~~~~~
-     820 |                         goto aead_prep_dst_err;
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~
-     821 |                 }
-         |                 ~
-   drivers/crypto/ti/dthev2-aes.c:779:32: note: initialize the variable 'unpadded_cryptlen' to silence this warning
-     779 |         unsigned int unpadded_cryptlen;
-         |                                       ^
-         |                                        = 0
->> drivers/crypto/ti/dthev2-aes.c:995:49: warning: result of comparison of constant 2305843009213693951 with expression of type 'unsigned int' is always false [-Wtautological-constant-out-of-range-compare]
-     995 |             (ctx->aes_mode == DTHE_AES_CCM && cryptlen > DTHE_AES_CCM_CRYPT_MAXLEN)) {
-         |                                               ~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 warnings generated.
-
-
-vim +995 drivers/crypto/ti/dthev2-aes.c
-
-   973	
-   974	static int dthe_aead_crypt(struct aead_request *req)
-   975	{
-   976		struct dthe_tfm_ctx *ctx = crypto_aead_ctx(crypto_aead_reqtfm(req));
-   977		struct dthe_aes_req_ctx *rctx = aead_request_ctx(req);
-   978		struct dthe_data *dev_data = dthe_get_dev(ctx);
-   979		struct crypto_engine *engine;
-   980		unsigned int cryptlen = req->cryptlen;
-   981	
-   982		// In decryption, last authsize bytes are the TAG
-   983		if (!rctx->enc)
-   984			cryptlen -= ctx->authsize;
-   985	
-   986		/* Need to fallback to software in the following cases due to HW restrictions:
-   987		 * - Both AAD and plaintext/ciphertext are zero length
-   988		 * - For AES-GCM, AAD length is more than 2^32 - 1 bytes
-   989		 * - For AES-CCM, AAD length is more than 2^16 - 2^8 bytes
-   990		 * - For AES-CCM, ciphertext length is more than 2^61 - 1 bytes
-   991		 */
-   992		if ((req->assoclen == 0 && cryptlen == 0) ||
-   993		    (ctx->aes_mode == DTHE_AES_GCM && req->assoclen > DTHE_AES_GCM_AAD_MAXLEN) ||
-   994		    (ctx->aes_mode == DTHE_AES_CCM && req->assoclen > DTHE_AES_CCM_AAD_MAXLEN) ||
- > 995		    (ctx->aes_mode == DTHE_AES_CCM && cryptlen > DTHE_AES_CCM_CRYPT_MAXLEN)) {
-   996			struct aead_request *subreq = &rctx->fb_req;
-   997			int ret;
-   998	
-   999			aead_request_set_tfm(subreq, ctx->aead_fb);
-  1000			aead_request_set_callback(subreq, req->base.flags,
-  1001						  req->base.complete, req->base.data);
-  1002			aead_request_set_crypt(subreq, req->src, req->dst,
-  1003					       req->cryptlen, req->iv);
-  1004			aead_request_set_ad(subreq, req->assoclen);
-  1005	
-  1006			ret = rctx->enc ? crypto_aead_encrypt(subreq) :
-  1007				crypto_aead_decrypt(subreq);
-  1008	
-  1009			return ret;
-  1010		}
-  1011	
-  1012		engine = dev_data->engine;
-  1013		return crypto_transfer_aead_request_to_engine(engine, req);
-  1014	}
-  1015	
+> +
+>  required:
+>    - compatible
+>    - reg
+> 
+> -- 
+> 2.50.1
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
