@@ -1,330 +1,224 @@
-Return-Path: <linux-kernel+bounces-804111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9742B46A19
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D780B46A1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998ECA059D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1071BC3616
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A98027A445;
-	Sat,  6 Sep 2025 08:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3974B2C234F;
+	Sat,  6 Sep 2025 08:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r4jU/H7/"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lh31fXBl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FE1261B91
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 08:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757146663; cv=fail; b=agafH2/akm6Gyhd0HakmFf5zKHyPuEtG0FFs39GyNW++jtBDkzAF1mnDOt2XKJ+VxeEqRPmuvY4/ACJeAmRzdvTvS9RhCP89dnLui9CvLbgwScEhh+GIoqtaYJ3ehE4i085MegM/tOyuNZ1T9WZSfZ7L3+0TZ6kaGORx/+wuW7E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757146663; c=relaxed/simple;
-	bh=qyx9oNCVx7I6w0KjgJlaObRg5DZBLgcWhI6R2PgnmlA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4C26cSTnbjF61K6D052ORiGk5DX8q4RBoJNbrFkC8c3SVqrExGQDoOaUuU3ryFzAk9t/P6gvvf3zhrSyQyiUBRBVsVk90BYyaiScYAP+iMXJdZXHVBnjxThG3tBJ5QOpOdqxdqH2uo/cklKZbKfuc1+NL5U/y6GnRVLvGhl2K8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r4jU/H7/; arc=fail smtp.client-ip=40.107.237.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=APgtWYOP+Z+TiGv5dAHhVWr6x/30EeL9f303rayEFzRE2UvX2hxken8XXku6uw264N6UCrpqXaNJz13Z+q/oJ5YyvIrGFcmvqaqo592ys4nJs5B/AYueCY+X3k+L3sp7ENTxhyJHm5tyMp2F8BNG/mWMeJhOcTMzm5QwRa/yWE5GgYldBMO0RdXKy6zOx6mUZ2J2PHvGP4rwGz14u2jS7ffeGOYFCSir+Vcwr68qomQd2r1ZJrBr4hzY741lMH4hlYb+b5fVapWp9vahvb4a9meoWVkUcrCDAUUJpnjs/SQjkyzCSAKCJfdN9UYoY1rU7wFD3kLhiBAL76Z1DGl5dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jOxoHni5ELv0dgArPYosW7kv4f5uarOfU/4lnmYOo78=;
- b=DLI/6la3sx+JFYwxhmc+rVg4au8GQBmmUf43zQ0iC+t1z//gHd69uAu/6C8uVIhPS6T0po85f5mJhOb5QYzA9vOC9PpoYcFjxzhirOf8oP2SIHBBP5tbjU9dBOkTrdghqETlWWRKDBk21nRNYkVlqJUvNDzaU63Fcur+JIOmImpIIs/jf7JwWOair5hhvBFIbed0ofYCMDiRomAAfSrjAbRoyOUw5WVbpykvRezq+Et5LsUIgdjSnJrqPtTJRJuXFilfPRrxn+P4n/4r0t6RL1QVeL8QbXNpI5A9G9jR4uTqU/+QBUzmGUQljMgpcus+iSlXSIEuesewD8v7lFPPfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jOxoHni5ELv0dgArPYosW7kv4f5uarOfU/4lnmYOo78=;
- b=r4jU/H7/GMHXhI9+q1dSXzBvUPuzEPTTL3kdKlSMFslcOyCI6+VhK4TjbX4vJQVRWkoR9KjAHVCj9RitrwiDm3wtLttebk+wB4kBXRF9o7M3M+G8tOPs8CHyyzyKnyZ0Tpl9MNQsoy3aeCR4xq8x6yImpAg0bcF+dvflaWVEpkjbe2JdJX2oFBSxQEk5XUooFDb/45zZ8P5z1h4b+bl0UGxF8+h79nLI62Emd2bPR0vTCY/KBQHZbm1KJYoINO50HjV8GhDSmsRlOVIpwoMLh36XBKrHwQTEy2F2ifFgdRo8kccDEyf8weaueVBbw14LikKVafeb9R8cxdK1D2c/MA==
-Received: from SA9PR13CA0055.namprd13.prod.outlook.com (2603:10b6:806:22::30)
- by PH7PR12MB6980.namprd12.prod.outlook.com (2603:10b6:510:1ba::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.29; Sat, 6 Sep
- 2025 08:17:35 +0000
-Received: from SN1PEPF00036F41.namprd05.prod.outlook.com
- (2603:10b6:806:22:cafe::86) by SA9PR13CA0055.outlook.office365.com
- (2603:10b6:806:22::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.10 via Frontend Transport; Sat,
- 6 Sep 2025 08:17:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF00036F41.mail.protection.outlook.com (10.167.248.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.14 via Frontend Transport; Sat, 6 Sep 2025 08:17:34 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 6 Sep
- 2025 01:17:17 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 6 Sep
- 2025 01:17:16 -0700
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.129.68.7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Sat, 6 Sep 2025 01:16:55 -0700
-Date: Sat, 6 Sep 2025 01:16:45 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jean-philippe@linaro.org>, <miko.lenczewski@arm.com>, <balbirs@nvidia.com>,
-	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
-	<praan@google.com>, <zhangzekun11@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH rfcv1 4/8] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <aLvt7WBgvVsAD7wC@nvidia.com>
-References: <cover.1755131672.git.nicolinc@nvidia.com>
- <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
- <20250827200002.GD2206304@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE169279DC9;
+	Sat,  6 Sep 2025 08:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757146819; cv=none; b=pYUw0W0OhAAPya07nGWwp/dUhedck6Z7OlkbAzRYwjfpdTosygjgMnJnnJise0t6XnCrJ/aSEkmES69679tw3wM3raojYIXAeDgihfJ8ew1yKjT/rynEiPuiW/XCtufG3KzBbqDxBy0Zs3I49xVmHZ0uBnWITpy7zC0lmaclDIo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757146819; c=relaxed/simple;
+	bh=65fgzL9aHcehB8e5Ro0jhg/HmeW0MW9yg6xKlGR8tkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBRqwrjOxmaqfIHp2ug8zTz1q6w4O7JYhcuftM+hihWToqAamBiQfhgDdO1fVpvIT6cXKmwk55297i1XAgm+VakasdbcSPwkHeg5wdsqAYdxsUMYspEsBIJ/YlffX1hoQwyING1gxJTJO5vXgbVEPFxVEJ6RMpn9ZjV9c3s6Zsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lh31fXBl; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757146817; x=1788682817;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=65fgzL9aHcehB8e5Ro0jhg/HmeW0MW9yg6xKlGR8tkQ=;
+  b=lh31fXBlsZdsWDz3ySDJ6a2z77gZvg04GnjGPIC8Y1O10A79b7GdVCQN
+   xmDADsOnPvBmtLOyCLF+Idh92gkpvTTcWE/16ADz9r1yBO1YsCKnSRg6A
+   g7ffA/qY+Yr47W0KHcTLQPsj9/L6BSu+D48WEzmmbKA6BcK277rwVEcx8
+   9CnRka9SAEHroNPzRJMR5f41oon16SguTefe3xAISBiJKVehQM0YtAHXs
+   2MddytSFZCTsAH5erHaaAhdDgpN4yf4TqeghU4Y3FNFENnRrlMzn+CGj0
+   VbEnog0hspUHX5FByB79EPYOtbZqeTwQG1LbnTCQNeTfl3H5u5sySiiXR
+   w==;
+X-CSE-ConnectionGUID: rbaJTDt0SRSMxB8QpR1gYw==
+X-CSE-MsgGUID: 61VXh3izRNGJZH7yUK1uxQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="69742522"
+X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
+   d="scan'208";a="69742522"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 01:20:16 -0700
+X-CSE-ConnectionGUID: qteZDaMqTdO2363FcPHQyg==
+X-CSE-MsgGUID: 3lvupHIER/qUGBAs2Rx60w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,243,1751266800"; 
+   d="scan'208";a="176671344"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 06 Sep 2025 01:20:12 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuo9a-0001J1-1Q;
+	Sat, 06 Sep 2025 08:20:10 +0000
+Date: Sat, 6 Sep 2025 16:19:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 3/3] net: dsa: yt921x: Add support for
+ Motorcomm YT921x
+Message-ID: <202509061559.nSYmNbyV-lkp@intel.com>
+References: <20250905181728.3169479-4-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250827200002.GD2206304@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F41:EE_|PH7PR12MB6980:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23c2698a-07e9-4589-0839-08dded1dd58a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KgSIbp/MLcCPh73q7ReWrrZfwjx3OfblENInqcrSbFGeJVgn6wHA1PFTawXe?=
- =?us-ascii?Q?wh4oU/ksHTU/dV/fMtZBLy9Drzh7843oqTjtlN1tUpp6NL8EkfbZbCgjVWY9?=
- =?us-ascii?Q?ZY3BeJqSdYXG0m20+M5/oKWLNx8EFYScxJ/kRkVuF6n3iqJ1FUhd2vZuWRsD?=
- =?us-ascii?Q?XLqh5s9GgVK0tnlcwb3a5s7toJ/ww2TYg8vis1dq9XrbDhiEo5KAJ538Cd+6?=
- =?us-ascii?Q?u7XIBvwCn9qXES5h/yID4jBmo4WEykbG0oXgpi9MOdBxc3bSY04dtB93ttfY?=
- =?us-ascii?Q?5C+uGva/vAf9Ltu2zVvbSFalbfkqcv46wsonqQorziHQi+slstmPRFGQRbVv?=
- =?us-ascii?Q?Qt5N3fdl3rciFn/xS6wuzQ3DVLgCztfhoNMIeGD9GSTE1Z1lLZUzze4SbGFc?=
- =?us-ascii?Q?H3lz+r/c6RyKLTNQ9DV1SH9XIFLkcJSan9YdcCQYKZA63UULAMVZGCqr+Kek?=
- =?us-ascii?Q?oJtI3o15nMsNMxer1gD07lYa45USr6gV7Izv4yF9ptN5opjkMQgk9P6tGwRE?=
- =?us-ascii?Q?eTGBV3KY6hyC2JuthBCigpdVbYddpi/pfZkBTxaiaXQ0kQJSQlglysXcv410?=
- =?us-ascii?Q?NJGnnN/GyQKfsCZmHwLP03I0AM94Mu/ivc0bNb9rzQV25wJUS9/c69hW0sdC?=
- =?us-ascii?Q?7VrIpU14GbNminrQzsFlb50pvYTb9fRrwhO0tcPlZV0nT2DzA1Gwfq3ioEnI?=
- =?us-ascii?Q?sXdSynFPh6g5hfyRxeeNkHZC69g6PEZfS1l04SN/1+bkobG0LZTeNFt8Nc/l?=
- =?us-ascii?Q?NYV1IRjiMze23zimZn8LxmviZ+otrPXgZUUhhiF5HHUXiE69DRFyHEzIjCme?=
- =?us-ascii?Q?v0afzApixuelcUF2c0rO7qkDtrhUnrNEqXwPbhi27/nseVVyuBdDX8rCl8s0?=
- =?us-ascii?Q?ge5hW3F+dQHZbcluIawZDEcB02uGOcsMLDvnk/oJTahHEq5npWGLO7+ePQMj?=
- =?us-ascii?Q?T4+eWZQg1XnAD0c8K5ScnJQXFY5P82rf9j7fWb41uI7e2ngaLqTfsQqS1IFW?=
- =?us-ascii?Q?/yRxJzl9qF2dUXmokbNuHW2Zvt2BFlMm7dGxWW3sDKlappcWV2zWBjFRnhav?=
- =?us-ascii?Q?BlB2wWjORyeToOfdEyUxyS0gidwyrOK0ArDXs/efqqC14FzxIFWG9I7Q/gpl?=
- =?us-ascii?Q?OOqIHs4obb8MVdS8HCa9bwM9BpcPQaxb16ijWB/k8/0t68ylMX02vbPPUUnP?=
- =?us-ascii?Q?LfVtCMp/Db3EDRu491rI4aDDD1pBeIloTtigaQQKpA4DCS+qQUYnEMU6S76g?=
- =?us-ascii?Q?ETn/S3KDBsTl4PRPr5Lvb/WQNbTEKz1vrMPpKbWcWVfvYOjX7uawwAwk+NSi?=
- =?us-ascii?Q?GmoydTIll1JgPeioWpQssrdQwxvN6MuEt1U3P4A7c0x9nUykDWgDItZh9o5y?=
- =?us-ascii?Q?OUPFeqYyGKK0DF8tfyZa/Uip+lc1+t1tOgnVU8AtYe2KNAdZKl+zNtxxVMEj?=
- =?us-ascii?Q?GMbKPOCt9ZNR5Qjih91CNpPqclS6PgDXT+/4H64RJ3cbOzfSHIUxc+oMJBK0?=
- =?us-ascii?Q?YIoOKNSQbAPQA2QT36cpTiEJo62b+X2sGYdp?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2025 08:17:34.7555
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23c2698a-07e9-4589-0839-08dded1dd58a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F41.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6980
+In-Reply-To: <20250905181728.3169479-4-mmyangfl@gmail.com>
 
-On Wed, Aug 27, 2025 at 05:00:02PM -0300, Jason Gunthorpe wrote:
-> On Wed, Aug 13, 2025 at 06:25:35PM -0700, Nicolin Chen wrote:
-> > +struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *old_invs,
-> > +					struct arm_smmu_invs *add_invs)
-> > +{
-> 
-> It turns out it is fairly easy and cheap to sort add_invs by sorting
-> the ids during probe:
+Hi David,
 
-I have integrated this and also renamed these three helpers:
+kernel test robot noticed the following build warnings:
 
-+struct arm_smmu_invs *arm_smmu_invs_merge(struct arm_smmu_invs *invs,
-+					  struct arm_smmu_invs *to_merge);
-+size_t arm_smmu_invs_unref(struct arm_smmu_invs *invs,
-+			   struct arm_smmu_invs *to_unref);
-+struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
-+					  size_t num_dels);
+[auto build test WARNING on net/main]
+[also build test WARNING on linus/master v6.17-rc4 next-20250905]
+[cannot apply to net-next/main horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks!
-Nicolin
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Yang/dt-bindings-net-dsa-yt921x-Add-Motorcomm-YT921x-switch-support/20250906-021942
+base:   net/main
+patch link:    https://lore.kernel.org/r/20250905181728.3169479-4-mmyangfl%40gmail.com
+patch subject: [PATCH net-next v7 3/3] net: dsa: yt921x: Add support for Motorcomm YT921x
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250906/202509061559.nSYmNbyV-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250906/202509061559.nSYmNbyV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509061559.nSYmNbyV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/net/dsa/yt921x.c: In function 'yt921x_set_eee':
+>> drivers/net/dsa/yt921x.c:1045:24: warning: unused variable 'dev' [-Wunused-variable]
+    1045 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_change_mtu':
+   drivers/net/dsa/yt921x.c:1110:24: warning: unused variable 'dev' [-Wunused-variable]
+    1110 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_mirror_add':
+   drivers/net/dsa/yt921x.c:1161:24: warning: unused variable 'dev' [-Wunused-variable]
+    1161 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_fdb_dump':
+   drivers/net/dsa/yt921x.c:1579:24: warning: unused variable 'dev' [-Wunused-variable]
+    1579 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_set_ageing_time':
+   drivers/net/dsa/yt921x.c:1611:24: warning: unused variable 'dev' [-Wunused-variable]
+    1611 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_fdb_del':
+   drivers/net/dsa/yt921x.c:1636:24: warning: unused variable 'dev' [-Wunused-variable]
+    1636 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_fdb_add':
+   drivers/net/dsa/yt921x.c:1651:24: warning: unused variable 'dev' [-Wunused-variable]
+    1651 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_mdb_del':
+   drivers/net/dsa/yt921x.c:1668:24: warning: unused variable 'dev' [-Wunused-variable]
+    1668 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_mdb_add':
+   drivers/net/dsa/yt921x.c:1686:24: warning: unused variable 'dev' [-Wunused-variable]
+    1686 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_vlan_filtering':
+   drivers/net/dsa/yt921x.c:1849:24: warning: unused variable 'dev' [-Wunused-variable]
+    1849 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_vlan_del':
+   drivers/net/dsa/yt921x.c:1867:24: warning: unused variable 'dev' [-Wunused-variable]
+    1867 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_vlan_add':
+   drivers/net/dsa/yt921x.c:1900:24: warning: unused variable 'dev' [-Wunused-variable]
+    1900 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_bridge_flags':
+   drivers/net/dsa/yt921x.c:2148:24: warning: unused variable 'dev' [-Wunused-variable]
+    2148 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_bridge_join':
+   drivers/net/dsa/yt921x.c:2187:24: warning: unused variable 'dev' [-Wunused-variable]
+    2187 |         struct device *dev = to_device(priv);
+         |                        ^~~
+   drivers/net/dsa/yt921x.c: In function 'yt921x_dsa_port_setup':
+   drivers/net/dsa/yt921x.c:2557:24: warning: unused variable 'dev' [-Wunused-variable]
+    2557 |         struct device *dev = to_device(priv);
+         |                        ^~~
 
 
-> @@ -3983,6 +3989,14 @@ static int arm_smmu_init_sid_strtab(struct arm_smmu_device *smmu, u32 sid)
->         return 0;
->  }
->  
-> +static int arm_smmu_ids_cmp(const void *_l, const void *_r)
-> +{
-> +       const typeof_member(struct iommu_fwspec, ids[0]) *l = _l;
-> +       const typeof_member(struct iommu_fwspec, ids[0]) *r = _r;
-> +
-> +       return cmp_int(*l, *r);
-> +}
-> +
->  static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
->                                   struct arm_smmu_master *master)
->  {
-> @@ -4011,6 +4025,13 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
->                 return PTR_ERR(master->invs);
->         }
->  
-> +       /*
-> +        * Put the ids into order so that arm_smmu_build_invs() can trivially
-> +        * generate sorted lists.
-> +        */
-> +       sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
-> +                      arm_smmu_ids_cmp, NULL);
-> +
->         mutex_lock(&smmu->streams_mutex);
->         for (i = 0; i < fwspec->num_ids; i++) {
->                 struct arm_smmu_stream *new_stream = &master->streams[i];
-> 
-> Then arm_smmu_build_invs() trivially makes sorted lists.
-> 
-> So if old_invs and add_invs are both sorted list we can use variations
-> on a merge algorithm for sorted lists which is both simpler to
-> understand and runs faster:
-> 
-> /*
->  * Compare used for merging two sorted lists. Merge compare of two sorted list
->  * items. If one side is past the end of the list then return the other side to
->  * let it run out the iteration.
->  */
-> static inline int arm_smmu_invs_merge_cmp(const struct arm_smmu_invs *lhs,
-> 					  size_t lhs_idx,
-> 					  const struct arm_smmu_invs *rhs,
-> 					  size_t rhs_idx)
-> {
-> 	if (lhs_idx != lhs->num_invs && rhs_idx != rhs->num_invs)
-> 		return arm_smmu_invs_cmp(&lhs->inv[lhs_idx],
-> 					 &rhs->inv[rhs_idx]);
-> 	if (lhs_idx != lhs->num_invs)
-> 		return -1;
-> 	return 1;
-> }
-> 
-> struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *invs,
-> 					struct arm_smmu_invs *add_invs)
-> {
-> 	struct arm_smmu_invs *new_invs;
-> 	struct arm_smmu_inv *new;
-> 	size_t to_add = 0;
-> 	size_t to_del = 0;
-> 	size_t i, j;
-> 
-> 	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
-> 		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
-> 
-> 		if (cmp < 0) {
-> 			/* not found in add_invs, leave alone */
-> 			if (refcount_read(&invs->inv[i].users))
-> 				i++;
-> 			else
-> 				to_del++;
-> 		} else if (cmp == 0) {
-> 			/* same item */
-> 			i++;
-> 			j++;
-> 		} else {
-> 			/* unique to add_invs */
-> 			to_add++;
-> 			j++;
-> 		}
-> 	}
-> 
-> 	new_invs = arm_smmu_invs_alloc(invs->num_invs + to_add - to_del);
-> 	if (IS_ERR(new_invs))
-> 		return new_invs;
-> 
-> 	new = new_invs->inv;
-> 	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
-> 		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
-> 
-> 		if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-> 			i++;
-> 			continue;
-> 		}
-> 
-> 		if (cmp < 0) {
-> 			*new = invs->inv[i];
-> 			i++;
-> 		} else if (cmp == 0) {
-> 			*new = invs->inv[i];
-> 			refcount_inc(&new->users);
-> 			i++;
-> 			j++;
-> 		} else {
-> 			*new = add_invs->inv[j];
-> 			refcount_set(&new->users, 1);
-> 			j++;
-> 		}
-> 		if (arm_smmu_inv_is_ats(new))
-> 			new_invs->has_ats = true;
-> 		new++;
-> 	}
-> 
-> 	WARN_ON(new != new_invs->inv + new_invs->num_invs);
-> 
-> 	/*
-> 	 * A sorted array allows batching invalidations together for fewer SYNCs.
-> 	 * Also, ATS must follow the ASID/VMID invalidation SYNC.
-> 	 */
-> 	sort_nonatomic(new_invs->inv, new_invs->num_invs,
-> 		       sizeof(add_invs->inv[0]), arm_smmu_invs_cmp, NULL);
-> 	return new_invs;
-> }
-> 
-> size_t arm_smmu_invs_dec(struct arm_smmu_invs *invs,
-> 			 struct arm_smmu_invs *dec_invs)
-> {
-> 	size_t to_del = 0;
-> 	size_t i, j;
-> 
-> 	for (i = 0, j = 0; i != invs->num_invs || j != dec_invs->num_invs;) {
-> 		int cmp = arm_smmu_invs_merge_cmp(invs, i, dec_invs, j);
-> 
-> 		if (cmp < 0) {
-> 			/* not found in dec_invs, leave alone */
-> 			i++;
-> 		} else if (cmp == 0) {
-> 			/* same item */
-> 			if (refcount_dec_and_test(&invs->inv[i].users)) {
-> 				dec_invs->inv[j].todel = true;
-> 				to_del++;
-> 			}
-> 			i++;
-> 			j++;
-> 		} else {
-> 			/* item in dec_invs is not in invs? */
-> 			WARN_ON(true);
-> 			j++;
-> 		}
-> 	}
-> 	return to_del;
-> }
+vim +/dev +1045 drivers/net/dsa/yt921x.c
+
+  1041	
+  1042	static int
+  1043	yt921x_set_eee(struct yt921x_priv *priv, int port, struct ethtool_keee *e)
+  1044	{
+> 1045		struct device *dev = to_device(priv);
+  1046		bool enable = e->eee_enabled;
+  1047		u16 new_mask;
+  1048		int res;
+  1049	
+  1050		/* Enable / disable global EEE */
+  1051		new_mask = priv->eee_ports_mask;
+  1052		new_mask &= ~BIT(port);
+  1053		new_mask |= !enable ? 0 : BIT(port);
+  1054	
+  1055		if (!!new_mask != !!priv->eee_ports_mask) {
+  1056			res = yt921x_reg_toggle_bits(priv, YT921X_PON_STRAP_FUNC,
+  1057						     YT921X_PON_STRAP_EEE, !!new_mask);
+  1058			if (res)
+  1059				return res;
+  1060			res = yt921x_reg_toggle_bits(priv, YT921X_PON_STRAP_VAL,
+  1061						     YT921X_PON_STRAP_EEE, !!new_mask);
+  1062			if (res)
+  1063				return res;
+  1064		}
+  1065	
+  1066		priv->eee_ports_mask = new_mask;
+  1067	
+  1068		/* Enable / disable port EEE */
+  1069		res = yt921x_reg_toggle_bits(priv, YT921X_EEE_CTRL,
+  1070					     YT921X_EEE_CTRL_ENn(port), enable);
+  1071		if (res)
+  1072			return res;
+  1073		res = yt921x_reg_toggle_bits(priv, YT921X_EEEn_VAL(port),
+  1074					     YT921X_EEE_VAL_DATA, enable);
+  1075		if (res)
+  1076			return res;
+  1077	
+  1078		return 0;
+  1079	}
+  1080	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
