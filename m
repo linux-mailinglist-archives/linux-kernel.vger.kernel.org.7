@@ -1,120 +1,153 @@
-Return-Path: <linux-kernel+bounces-804203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E61B46CC5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B14B46CC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382861896C60
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2478F18984C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7A7288CBF;
-	Sat,  6 Sep 2025 12:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B456828CF41;
+	Sat,  6 Sep 2025 12:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uAs8j8qB"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6VuJrOH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC491C8630;
-	Sat,  6 Sep 2025 12:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECB51C8630;
+	Sat,  6 Sep 2025 12:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161305; cv=none; b=BfnqdzAF7PdRc7X90zVwDTS1p+BmkKbYCDpIlLr3rUT/hROL8h+vbaB4ViUPlQKif97SECcToMnUpjIRJS+vPsu2ZEmdlpUU6WPwTBXbZktOZT3o3NOmSHPTq7++iV68H1kl/OIBYt9p6fDDV6K8rXoGYm94HWA2Y/NTbs+UppE=
+	t=1757161310; cv=none; b=roOSkJZuvLl7pI4AIo33NH73TIdRL8ZZlR8Zu6FrLyLNX8RWEHsRGlwWyQVtNb3o5ov/aP9iZNpF21sRVyQs7N+MrSEuzkV6wsRxDlxAUNNSL+sUoWCb5Bt634h5z2Q1gCle/OPpE+rMwG91tJX1rTZJ+VESUW9w+t9nQwP3HA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161305; c=relaxed/simple;
-	bh=Du2EiDVhjks2InfB/ibkVU9ES6HD4SRzAVCwbyrBSmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MlnSHR3UHyyO4WbjDDS59H6n+yIJISAVM08lDK70WSgwrznoZZTiwjudqJ0aFeobX95Nk4PGndHk6eSQCvIUi3KTHWVa4Z12q9rT/jkdqyXlabmvrXZnhqsIYlqrwUIwV4SZ1rYjt5t3e+s5HuFt88A9f+zUWaDZZ/abBvUlyRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uAs8j8qB; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=jJISYZ9NEMqNgtPEeFx7VvEBRUrxQUx5HJSJjwIbpD8=; b=uAs8j8qBmeMmHKpU2fur/lfZTw
-	5dLMqNxoV0/nLhdEyknYecWk6JBTU11HWm2PDAG22lfqo1jd6m7/frS5cK1tGutag+KLre0/8LsQL
-	k91poOxdUHuXKKTH7DyMe/nh13MAv7fcq+g5FYg0z3Mn5vbRu+wJM3nqyNEQz7aezJJ3R09Q6cYem
-	4a3Yu1v7gWGSnEgp1Y+SDnJZ5EVlwq9BHon7frWW46mnuZTwO5GWtEyq1TbXRzFVi1qJffdNNACx7
-	CcWCnuy+OezLU4jzfIKUAst+x9eL19STiuIdY+QETs6AqtumRTgquV/exgUIY+9LKBoANidK67Px9
-	rZINaC6w==;
-Received: from i53875a53.versanet.de ([83.135.90.83] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uurv1-0005FU-Ag; Sat, 06 Sep 2025 14:21:23 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Diederik de Haas <didi.debian@cknow.org>,
- Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject:
- Re: [PATCH] arm64: dts: rockchip: Make RK3588 GPU OPP table naming uniform
-Date: Sat, 06 Sep 2025 14:21:21 +0200
-Message-ID: <3169011.CbtlEUcBR6@diego>
-In-Reply-To: <47cf50f2f497108a923815c12b1f8c9b@manjaro.org>
-References:
- <355c16ab070688fc6285e0d4419eb54a3f699eee.1757152740.git.dsimic@manjaro.org>
- <DCLOTR9Y380M.22GZYL11XXZM2@cknow.org>
- <47cf50f2f497108a923815c12b1f8c9b@manjaro.org>
+	s=arc-20240116; t=1757161310; c=relaxed/simple;
+	bh=LVu9YGaoVJEQyJmb9+Y1eQq40J+xELbQe/ERu9Ttj1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8Xk8OMr+gBPtKZzumdd1JDd68/Ag6fOU3/c4pu1R5/R4XvIYEDImtu/pUjYDdh7fjkdMHaHpKzzXnt5mqq7yDe1siXi7mBWsR11JTSveH898e/L6h6qicH2vvZJXpF5aj13rEsx9yVTrTzgJX/v6xgpRHUJAdQZ6oXDl0hG+qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6VuJrOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20675C4CEE7;
+	Sat,  6 Sep 2025 12:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757161309;
+	bh=LVu9YGaoVJEQyJmb9+Y1eQq40J+xELbQe/ERu9Ttj1U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b6VuJrOHxWrSx78dLuxdqqsO5WWb/G+Ha+Z50ssFPL3lCO5frxpuFTO5CwPBsZTm4
+	 zviy6iYPZ1oaWEUBE2XtIhnZlkFNA0vVvBcisrWK5uK5Ixc4eJPf/0LGwyJ34B+5JE
+	 Ipj/OsY3T/9+jM07gm1hXxyjiCtq2hu2KmkPVtFlgLSF+erafFgoCli616kjfGa91m
+	 uMfLT3+4YJH54JQ9BASdonkbOYJMlRE5NHPscOFhZXFP5dWIO5lRHrTGEaRc/EMJeR
+	 REMcnK0C2RXskZdPBVx6QbOrJBFyyPIreZIzpaLYo/HkAiVit+8Sff0QTlRGlhKtjw
+	 1+0nCjOiZqXag==
+From: Borislav Petkov <bp@kernel.org>
+To: Ashish Kalra <ashish.kalra@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	stable@kernel.org
+Subject: [PATCH] crypto: ccp - Always pass in an error pointer to __sev_platform_shutdown_locked()
+Date: Sat,  6 Sep 2025 14:21:45 +0200
+Message-ID: <20250906122145.29784-1-bp@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Samstag, 6. September 2025, 14:10:22 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Dragan Simic:
-> Hello Diederik,
->=20
-> On 2025-09-06 13:40, Diederik de Haas wrote:
-> > On Sat Sep 6, 2025 at 12:01 PM CEST, Dragan Simic wrote:
-> >> Unify the naming of the existing GPU OPP table nodes found in the=20
-> >> RK3588
-> >> and RK3588J SoC dtsi files with the other SoC's GPU OPP nodes,=20
-> >> following
-> >> the more "modern" node naming scheme.
-> >=20
-> > Like we discussed in private (without an agreement), I think it would=20
-> > be
-> > beneficial if the (gpu) opp naming would be made consistent across SoC
-> > series as right now there are several different naming schemes applied.
-> > They're all valid, but inconsistent. And if consistency is improved,
-> > which I like, then let's go 'all the way'?
->=20
-> As we discussed it already in private, I fully agree about performing
-> the "opp-table-X =3D> opp-table-{clusterX,gpu}" naming cleanup=20
-> consistently
-> for all Rockchip SoCs, but I'm afraid it would be seen as an unnecessary
-> "code churn" at this point, especially because my upcoming Rockchip SoC
-> binning patch series is a good candidate for such a cleanup.
->=20
-> On top of that, I'd be a bit weary about performing at least some of the
-> testing associated with such a platform-wide cleanup, despite actually
-> performing no functional changes and being a safe change.  On the other
-> hand, "bundling" such a cleanup with the Rockchip SoC binning patches
-> would get us detailed testing for free, so to speak.
->=20
-> Of course, if the maintainers see this as a good opportunity to perform
-> a platform-wide cleanup at this point, instead of seeing it as a "code
-> churn", I'll still be happy to extend this small patch into a platform-
-> wide naming cleanup of the "opp-table-X" nodes.  On the other hand, if
-> this patch remains as-is, it may hit a good balance between resolving
-> the currently present naming ambiguity and the amount of introduced
-> changes.
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Personally I'm always for the "we strive to get there eventually" thing.
-If there is an established goal to reach, steps can be incremental :-) .
+When
 
-And also short and scope-limited patches are easier to review anyway.
+  9770b428b1a2 ("crypto: ccp - Move dev_info/err messages for SEV/SNP init and shutdown")
 
-Heiko
+moved the error messages dumping so that they don't need to be issued by
+the callers, it missed the case where __sev_firmware_shutdown() calls
+__sev_platform_shutdown_locked() with a NULL argument which leads to
+a NULL ptr deref on the shutdown path, during suspend to disk:
 
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 0 P4D 0
+  Oops: Oops: 0000 [#1] SMP NOPTI
+  CPU: 0 UID: 0 PID: 983 Comm: hib.sh Not tainted 6.17.0-rc4+ #1 PREEMPT(voluntary)
+  Hardware name: Supermicro Super Server/H12SSL-i, BIOS 2.5 09/08/2022
+  RIP: 0010:__sev_platform_shutdown_locked.cold+0x0/0x21 [ccp]
 
+That rIP is:
+
+  00000000000006fd <__sev_platform_shutdown_locked.cold>:
+   6fd:   8b 13                   mov    (%rbx),%edx
+   6ff:   48 8b 7d 00             mov    0x0(%rbp),%rdi
+   703:   89 c1                   mov    %eax,%ecx
+
+  Code: 74 05 31 ff 41 89 3f 49 8b 3e 89 ea 48 c7 c6 a0 8e 54 a0 41 bf 92 ff ff ff e8 e5 2e 09 e1 c6 05 2a d4 38 00 01 e9 26 af ff ff <8b> 13 48 8b 7d 00 89 c1 48 c7 c6 18 90 54 a0 89 44 24 04 e8 c1 2e
+  RSP: 0018:ffffc90005467d00 EFLAGS: 00010282
+  RAX: 00000000ffffff92 RBX: 0000000000000000 RCX: 0000000000000000
+  			     ^^^^^^^^^^^^^^^^
+and %rbx is nice and clean.
+
+  Call Trace:
+   <TASK>
+   __sev_firmware_shutdown.isra.0
+   sev_dev_destroy
+   psp_dev_destroy
+   sp_destroy
+   pci_device_shutdown
+   device_shutdown
+   kernel_power_off
+   hibernate.cold
+   state_store
+   kernfs_fop_write_iter
+   vfs_write
+   ksys_write
+   do_syscall_64
+   entry_SYSCALL_64_after_hwframe
+
+Pass in a pointer to the function-local error var in the caller.
+
+With that addressed, suspending the ccp shows the error properly at
+least:
+
+  ccp 0000:47:00.1: sev command 0x2 timed out, disabling PSP
+  ccp 0000:47:00.1: SEV: failed to SHUTDOWN error 0x0, rc -110
+  SEV-SNP: Leaking PFN range 0x146800-0x146a00
+  SEV-SNP: PFN 0x146800 unassigned, dumping non-zero entries in 2M PFN region: [0x146800 - 0x146a00]
+  ...
+  ccp 0000:47:00.1: SEV-SNP firmware shutdown failed, rc -16, error 0x0
+  ACPI: PM: Preparing to enter system sleep state S5
+  kvm: exiting hardware virtualization
+  reboot: Power down
+
+Btw, this driver is crying to be cleaned up to pass in a proper I/O
+struct which can be used to store information between the different
+functions, otherwise stuff like that will happen in the future again.
+
+Fixes: 9770b428b1a2 ("crypto: ccp - Move dev_info/err messages for SEV/SNP init and shutdown")
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: <stable@kernel.org>
+---
+ drivers/crypto/ccp/sev-dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+index e058ba027792..9f5ccc1720cb 100644
+--- a/drivers/crypto/ccp/sev-dev.c
++++ b/drivers/crypto/ccp/sev-dev.c
+@@ -2430,7 +2430,7 @@ static void __sev_firmware_shutdown(struct sev_device *sev, bool panic)
+ {
+ 	int error;
+ 
+-	__sev_platform_shutdown_locked(NULL);
++	__sev_platform_shutdown_locked(&error);
+ 
+ 	if (sev_es_tmr) {
+ 		/*
+-- 
+2.51.0
 
 
