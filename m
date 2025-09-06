@@ -1,140 +1,166 @@
-Return-Path: <linux-kernel+bounces-804215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86ACB46CF8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F21B46CFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C76A46777
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:42:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D66637AD6C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965D62E9EC1;
-	Sat,  6 Sep 2025 12:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A09E2EA46B;
+	Sat,  6 Sep 2025 12:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ktQDE/DP"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="PBOyjgc7"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35334289E07;
-	Sat,  6 Sep 2025 12:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757162513; cv=pass; b=nLuoQ8GlImy9K0z+Tmfi/mQntbWOwh6RNw+swGjurTlO/N1pczvzm2/sqLLA2ilTJtNTxJAb8AOa+lk43JWn8ytBY1jBIUx9aU7+oERz2j4+W9KakXmeR9vf7SDtR8GkWnB+PWOLDujPN3GHEjwDW+RP/5rFgSSNjpL4faNQosU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757162513; c=relaxed/simple;
-	bh=+eqeUrynzQyETIKqPK5kWdB5I+zyHoqmenioXoReh5U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=cp0kwl0PcczPeECAstCjloi2qksosTYksNbEf5UUcHmU1l10eMiOZ8z6WTRVdRe60rRwLtzsRrtE87+Zy+o+Cu2Azoph7V+YMYZ3WgshUdgiah+DZMLScf+jAgamQ5TgjjtsOsZmqbA2SF6bqpODW5+0tObthCiSijEzWvi3E+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ktQDE/DP; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757162494; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QOnfWk4m4j7fpjBWdqk0hMHsSHbVAlxZu1w7RVdhw6lt6oY0+BmBvJHwV+m3GL2+Y+w7i9CUm5CrviDIFj3S999aETwDWarETnLxA9sXNXQc2ZguWv/iutv093jKcBwHXPDLlsApc5VhBROGnuzzDs4jx3Dw9iK2NuOraa0j0kE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757162494; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vb8MLbau1tNKQMfwbKPgSSgl5gQ2XVqDf0CiTm+vxpA=; 
-	b=NSjHh3RGtNul/0g7fkyh4fdMw18+UQo//Qak3ELI9OKoRuoGoxtyAPLTIrtgHJ7N7ApheFYWhRrcEHuPHWV/8xhqXulgCKCw23aqnh5aWzNNq92iGNR9SdsEzv8UKgHVB2c0Va+EVewKeo7okJKSmajjDuZhPyrIKuiPf/QzNv0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757162494;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=vb8MLbau1tNKQMfwbKPgSSgl5gQ2XVqDf0CiTm+vxpA=;
-	b=ktQDE/DP8rnsRJQbqtCtTlK+WiT3gPXETnFSIFS4sqDG73Ebr3wz/QWUP30piBpO
-	xjfY4A0nJ8cp+ODUh/wt6B+l68enxTdfzAr5v3NIrUmtbJ0itWPCSc3iOqLtB6pWAP6
-	rV0j9cEE7L0cSCEp01ukCIYGTtbee61TLxN1UFGI=
-Received: by mx.zohomail.com with SMTPS id 1757162492631331.60289813179213;
-	Sat, 6 Sep 2025 05:41:32 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CDC288CB5;
+	Sat,  6 Sep 2025 12:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757162543; cv=none; b=k+wh2Dw0xGYt3BsXJDFAj9mGLHkHPMrScgvXHek0mKnCZderNLNySIhv+gIZIXf6RVzYjo5WbFb1svumoRXl0j6BuvLN4eFnX4zCLYxv6ow6fKdym4griacsiOXnH3VlYSZs13yX2RQzOFXtLXUXt9P+8qbLV1xWSUhLX874kW8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757162543; c=relaxed/simple;
+	bh=Hm+GKKIWpg7dScyTlBsTiigjsE8UtZG9+Pr/DPZd9D8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
+	 References:In-Reply-To; b=qlVCS7DIXnEHsZx7/XweVeXwJOVFcnq/pnDVVi2cIXhhNX3XuvJeJ5PbYHrJZss6G8siHM7oq9QJyZzfvEk6kDxCoRDfn4erqa3m/Qiatl3t+j4pL5QBil34oF0BcEZsjs0uv0DJq9k6vFu2kThEhEMNhyntsP30CZACXRLI8UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=PBOyjgc7; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1757162486; x=1758462486;
+	bh=v5ScnZ66jzFrHMw7Qn6lJeXlTaGjvDkyhTW+naUdbVU=; h=From;
+	b=PBOyjgc7eBDCwad7MZRGBSbnX5lnoC5TWsEecCuJ9TT5sxH9IR7WvZjA31Z6opVzk
+	 EwgbZkYodj21gps4eF62vqAXLDNnac4dvVAHjuh85dE0any8k8uFWZBmSoeVuilojA
+	 3WucvzgNqewIG3xZhRDwxS4/902OTn2yUNOgrXURk75bAk39PTkEuPyLVpucmxUD2B
+	 9RsbZP7XtS54/WzNBbkvy8exntCo963iGDCJz4tj9Ukp3IJGWd2g+gVHhh4UaCpBUL
+	 sFFlhumE4mHhjQ3alSa0ZkXJAhrNHZh5xl1Jv4+mmonQi0+BEzX+heHtN0qfmVaiMG
+	 WEwPP/ZxyA14Q==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 586CfHUQ082029
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Sat, 6 Sep 2025 14:41:26 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <2025090601-iron-glitter-c77d@gregkh>
-Date: Sat, 6 Sep 2025 09:41:16 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-usb@vger.kernel.org
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
-References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
- <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
- <2025090618-smudgy-cringing-a7a4@gregkh>
- <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
- <2025090601-iron-glitter-c77d@gregkh>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 06 Sep 2025 14:41:17 +0200
+Message-Id: <DCLQ427JYUS9.3EKILJ8O80RU1@matfyz.cz>
+Cc: "David Wronek" <david@mainlining.org>, <phone-devel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] iio: adc: Add driver for Marvell 88PM886 PMIC
+ ADC
+To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+        "Jonathan
+ Cameron" <jic23@kernel.org>,
+        "David Lechner" <dlechner@baylibre.com>,
+        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        "Andy Shevchenko"
+ <andy@kernel.org>, "Lee Jones" <lee@kernel.org>,
+        "Rob Herring"
+ <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>
+From: "Karel Balej" <balejk@matfyz.cz>
+References: <20250905-88pm886-gpadc-v3-0-4601ad9ccb51@dujemihanovic.xyz>
+ <20250905-88pm886-gpadc-v3-2-4601ad9ccb51@dujemihanovic.xyz>
+In-Reply-To: <20250905-88pm886-gpadc-v3-2-4601ad9ccb51@dujemihanovic.xyz>
 
+Duje Mihanovi=C4=87, 2025-09-05T13:00:55+02:00:
+> diff --git a/include/linux/mfd/88pm886.h b/include/linux/mfd/88pm886.h
+> index 85eca44f39ab58ba4cb9ec4216118ee9604d021f..38892ba7b8a42bbecb53621a8=
+91a52a2fd70fd43 100644
+> --- a/include/linux/mfd/88pm886.h
+> +++ b/include/linux/mfd/88pm886.h
+> @@ -10,6 +10,7 @@
+>  #define PM886_IRQ_ONKEY			0
+> =20
+>  #define PM886_PAGE_OFFSET_REGULATORS	1
+> +#define PM886_PAGE_OFFSET_GPADC		2
+> =20
+>  #define PM886_REG_ID			0x00
+> =20
+> @@ -70,6 +71,63 @@
+>  #define PM886_LDO_VSEL_MASK		0x0f
+>  #define PM886_BUCK_VSEL_MASK		0x7f
+> =20
+> +/* GPADC enable/disable registers */
+> +#define PM886_REG_GPADC_CONFIG(n)	(n)
+> +
+> +#define PM886_GPADC_VSC_EN		BIT(0)
+> +#define PM886_GPADC_VBAT_EN		BIT(1)
+> +#define PM886_GPADC_GNDDET1_EN		BIT(3)
+> +#define PM886_GPADC_VBUS_EN		BIT(4)
+> +#define PM886_GPADC_VCHG_PWR_EN		BIT(5)
+> +#define PM886_GPADC_VCF_OUT_EN		BIT(6)
+> +#define PM886_GPADC_CONFIG1_EN_ALL	\
+> +	(PM886_GPADC_VSC_EN |		\
+> +	 PM886_GPADC_VBAT_EN |		\
+> +	 PM886_GPADC_GNDDET1_EN |	\
+> +	 PM886_GPADC_VBUS_EN |		\
+> +	 PM886_GPADC_VCHG_PWR_EN |	\
+> +	 PM886_GPADC_VCF_OUT_EN)
+> +
+> +#define PM886_GPADC_TINT_EN		BIT(0)
+> +#define PM886_GPADC_PMODE_EN		BIT(1)
+> +#define PM886_GPADC_GPADC0_EN		BIT(2)
+> +#define PM886_GPADC_GPADC1_EN		BIT(3)
+> +#define PM886_GPADC_GPADC2_EN		BIT(4)
+> +#define PM886_GPADC_GPADC3_EN		BIT(5)
+> +#define PM886_GPADC_MIC_DET_EN		BIT(6)
+> +#define PM886_GPADC_CONFIG2_EN_ALL	\
+> +	(PM886_GPADC_TINT_EN |		\
+> +	 PM886_GPADC_GPADC0_EN |	\
+> +	 PM886_GPADC_GPADC1_EN |	\
+> +	 PM886_GPADC_GPADC2_EN |	\
+> +	 PM886_GPADC_GPADC3_EN |	\
+> +	 PM886_GPADC_MIC_DET_EN)
+> +
+> +/* No CONFIG3_EN_ALL because this is the only bit there. */
+> +#define PM886_GPADC_GND_DET2_EN		BIT(0)
+> +
+> +/* GPADC channel registers */
+> +#define PM886_REG_GPADC_VSC		0x40
+> +#define PM886_REG_GPADC_VCHG_PWR	0x4c
+> +#define PM886_REG_GPADC_VCF_OUT		0x4e
+> +#define PM886_REG_GPADC_TINT		0x50
+> +#define PM886_REG_GPADC_GPADC0		0x54
+> +#define PM886_REG_GPADC_GPADC1		0x56
+> +#define PM886_REG_GPADC_GPADC2		0x58
+> +#define PM886_REG_GPADC_VBAT		0xa0
+> +#define PM886_REG_GPADC_GND_DET1	0xa4
+> +#define PM886_REG_GPADC_GND_DET2	0xa6
+> +#define PM886_REG_GPADC_VBUS		0xa8
+> +#define PM886_REG_GPADC_GPADC3		0xaa
+> +#define PM886_REG_GPADC_MIC_DET		0xac
+> +#define PM886_REG_GPADC_VBAT_SLP	0xb0
+> +
+> +/* VBAT_SLP is the last register and is 2 bytes wide like other channels=
+. */
+> +#define PM886_GPADC_MAX_REGISTER	(PM886_REG_GPADC_VBAT_SLP + 1)
+> +
+> +#define PM886_GPADC_BIAS_LEVELS		16
+> +#define PM886_GPADC_INDEX_TO_BIAS_uA(i)	(1 + (i) * 5)
+> +
+>  struct pm886_chip {
+>  	struct i2c_client *client;
+>  	unsigned int chip_id;
 
-
->>=20
->> I thought that an iterative approach would work here, i.e.: merge =
-this, then
->> URBs, then more stuff, etc.
->=20
-> Ah, that makes sense, I didn't realize you want that here.  What USB
-> device do you want to write a rust driver for?  Are you going to need
-> bindings to the usb major number, or is it going to talk to some other
-> subsystem instead?
->=20
-> Right now, these bindings don't really do anything USB specific at all
-> except allow a driver to bind to a device.
->=20
-> thanks,
->=20
-> greg k-h
-
-To be honest, I'm trying to pave the way for others.
-
-I often hear people saying that they would look into Rust drivers if =
-only they
-did not have to write all the surrounding infrastructure themselves. On =
-the
-other hand, there is no infrastructure because there are no drivers. =
-It's a
-chicken and egg problem that I am trying to solve.
-
-It's also a cool opportunity to learn about USB, but I don't have any =
-plans
-for a driver at the moment other than a instructional sample driver in =
-Rust.
-
-Give me a few more weeks and I'll come up with the code for the other =
-things
-you've pointed out.
-
-By the way, I wonder how testing would work. I tested this by plugging =
-in my
-mouse and fiddling around with =
-/sys/bus/usb/drivers/rust_driver_usb/new_id. I
-am not sure how this is going to work once I start looking into data =
-transfer
-and etc. Perhaps there's a simple device out there that I should target? =
-Or
-maybe there's a way to "fake" a USB device that would work with the =
-sample
-driver for demonstration purposes.
-
--- Daniel=
+Acked-by: Karel Balej <balejk@matfyz.cz> # for the PMIC
 
