@@ -1,131 +1,209 @@
-Return-Path: <linux-kernel+bounces-804360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB5DB473AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A96B473C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7AAE5870E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD971665DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B22023F421;
-	Sat,  6 Sep 2025 16:09:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97FB2405E7;
+	Sat,  6 Sep 2025 16:11:30 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9A722AE7F;
-	Sat,  6 Sep 2025 16:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA83D1C5F10;
+	Sat,  6 Sep 2025 16:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757174973; cv=none; b=PMTVXbUjgb4ZpRji3urvWzXxpGPRY6vAyQRX0XzijDWs69mPn4JnZWzmB7GCPknX3lH/0MHuK23Fl464SP+n7H9fpY72MBzCBahd7a7li89uhoAk6p0iJyd0SfP3vlcpbVU0wHC1DA3Lvy7mG2A2o5e0FXYmgDELbG5FrWvvg2w=
+	t=1757175090; cv=none; b=Y9+pjstGB7lA12h+WaGGmxmdSs/3bL1DfFnfGmf08vHuGvjxBsGNEtOWshOmF6mHJy19kGmhHRMuhn3y0F37yri331lGiu8ccD0J8PsqFKhD/jE97NtH+yS2tTSYLJ+oU1SVeQaX493ugkzq9lvG+DO2pIo3j+rkUBCxewFeXKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757174973; c=relaxed/simple;
-	bh=ZVMnFSiSfId55V+CDp45AtQsnYf+aWQvUGnkZ+tpdUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lq5lDzp9VHIEyP3YH98eZzlnqF6cKcWinNTtzamVgpEyvGchWUvDJmmi28I7qRZN0sxLIe7V/aRb8zMDSzMNn2ZhrRQGvSWbF6aZh1KEb/B9IXI4Pc7n6nZbsJj83puYj+z63TTGpwOxbNhModXfBIflVL+S5GMOT4u4SmVB+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id CCFA81DEB15;
-	Sat,  6 Sep 2025 16:09:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id E16B92000D;
-	Sat,  6 Sep 2025 16:09:26 +0000 (UTC)
-Date: Sat, 6 Sep 2025 12:10:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
- <tglozar@redhat.com>, <yuehaibing@huawei.com>,
- <zhangchangzhong@huawei.com>, <linux-trace-kernel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tracing/osnoise: Fix null-ptr-deref in
- bitmap_parselist()
-Message-ID: <20250906121007.5ceb3436@gandalf.local.home>
-In-Reply-To: <20250906035610.3880282-1-wangliang74@huawei.com>
-References: <20250906035610.3880282-1-wangliang74@huawei.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757175090; c=relaxed/simple;
+	bh=Hoe93HOntX7QH7qqyJ291jeFOmpzeJk0DKOBWCOd1XE=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Ui3EShTOgs9JSniA3V9WjhcsRK/kJRK//yWmBnfRMJ4I/Ep/UHxBjMC/8Ex5H7lI6xfM4DsUXOusmMoAI+5+1YplMCHE1r46vy8onHXbMnAaVYGxkESueiAaAWd2pYkviq8enPdXhMARQugx1bO7ypkhTqZS3Ki3E+2dWeGoPzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cJyrH3rc7z59trL;
+	Sun, 07 Sep 2025 00:11:11 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl1.zte.com.cn with SMTP id 586GAwUY034174;
+	Sun, 7 Sep 2025 00:10:58 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sun, 7 Sep 2025 00:11:01 +0800 (CST)
+Date: Sun, 7 Sep 2025 00:11:01 +0800 (CST)
+X-Zmail-TransId: 2af968bc5d153d2-433da
+X-Mailer: Zmail v1.0
+Message-ID: <20250907001101305vrTGnXaRNvtmsGkp-Ljk_@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 1wkxw71sn6a7x1od7ec9zyyxscasf8nt
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: E16B92000D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18s3X8X1w8plByCinU/NOmjwVSy8nGncNk=
-X-HE-Tag: 1757174966-487100
-X-HE-Meta: U2FsdGVkX1/k2vEet8ITzYIMZSz2CbnnnDo5IHtKNKv+JJ+vbWfowAYjjsVjkcE5SqQaTUNzZ28wsPtZtOTc6eZzIiP6ElQauKGb08HCYcsKs47i723FVegAE9uRM1JJWdAH/PGzAeOvc9to/y/tYsSaD5MVVrNQPDCvelUW4dEkPYWS3fpSDsagAayH0aylUigDMXYoSvO5EB1v0UHoAFO6Fqxy+f8VYR4AByzOLGllECeZxwmro4HoLxwzwXd7cEv8p7KIYfaBpiKtGxDiyxxMi00jG7qh1ZmfrLFOP8ZmiRJ3/rFjWLV2DkPWCQluLmOA/5vt13czUr+TxqntmaJ0xaE3drigyIcIAldv1a1o8hOwwLTgoA==
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>, <corbet@lwn.net>
+Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <fan.yu9@zte.com.cn>, <wang.yaxin@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIdjIgbGludXgtbmV4dCAwLzVdIHRvb2xzL2RlbGF5dG9wOiBpbXBsZW1lbnQgcmVhbC10aW1lIGtleWJvYXJkIGludGVyYWN0aW9uIHN1cHBvcnQ=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 586GAwUY034174
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Sun, 07 Sep 2025 00:11:11 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68BC5D1F.000/4cJyrH3rc7z59trL
 
-On Sat, 6 Sep 2025 11:56:10 +0800
-Wang Liang <wangliang74@huawei.com> wrote:
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-> A crash was observed with the following output:
-> 
-> BUG: kernel NULL pointer dereference, address: 0000000000000010
-> Oops: Oops: 0000 [#1] SMP NOPTI
-> CPU: 2 UID: 0 PID: 92 Comm: osnoise_cpus Not tainted 6.17.0-rc4-00201-gd69eb204c255 #138 PREEMPT(voluntary)
-> RIP: 0010:bitmap_parselist+0x53/0x3e0
-> Call Trace:
->  <TASK>
->  osnoise_cpus_write+0x7a/0x190
->  vfs_write+0xf8/0x410
->  ? do_sys_openat2+0x88/0xd0
->  ksys_write+0x60/0xd0
->  do_syscall_64+0xa4/0x260
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->  </TASK>
-> 
-> This issue can be reproduced by below code:
-> 
-> fd=open("/sys/kernel/debug/tracing/osnoise/cpus", O_WRONLY);
-> write(fd, "0-2", 0);
-> 
-> When user pass 'count=0' to osnoise_cpus_write(), kmalloc() will return
-> ZERO_SIZE_PTR (16) and cpulist_parse() treat it as a normal value, which
-> trigger the null pointer dereference. Add check for the parameter 'count'.
-> 
-> Link: https://lore.kernel.org/all/20250905032544.231962-1-wangliang74@huawei.com/
-> Fixes: 17f89102fe23 ("tracing/osnoise: Allow arbitrarily long CPU string")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
-> v2: return 0 when sending a count of 0.
+Current Limitations
+===================
+The current delaytop implementation has two main limitations:
+1) Static sorting only by CPU delay
+Forcing users to restart with different parameters to analyze
+other resource bottlenecks.
+2) Memory delay information is always expanded
+Causing information overload when only high-level memory pressure
+monitoring is needed.
 
-FYI, I usually have this say:
+Improvements
+============
+1) Implemented dynamic sorting capability
+- Interactive key 'o' triggers sort mode.
+- Supports sorting by CPU/IO/Memory/IRQ delays.
+- Memory subcategories available in verbose mode.
+ * c - CPU delay (default)
+ * i - IO delay
+ * m - Total memory delay
+ * q - IRQ delay
+ * s/r/t/p/w - Memory subcategories (in verbose mode)
+2) Added memory display modes
+- Compact view (default): shows aggregated memory delays.
+- Verbose view ('M' key): breaks down into memory sub-delays.
+ * SWAP - swapin delays
+ * RCL - freepages reclaim delays
+ * THR - thrashing delays
+ * CMP - compaction delays
+ * WP - write-protect copy delays
 
-Changes since v2: https://lore.kernel.org/all/20250905032544.231962-1-wangliang74@huawei.com/
+Practical benefits
+==================
+1) Dynamic Sorting for Real-Time Bottleneck Detection
+System administrators can now dynamically change sorting to identify
+different types of resource bottlenecks without restarting.
 
-and list the rest.
+2) Enhanced Usability with On-Screen Keybindings
+More intuitive interactive usage with on-screen keybindings help.
+Reduced screen clutter when only memory overview is needed.
 
-I know Linus doesn't like links to the patch, but I find them useful, and
-even more useful when the patch has a link to previous versions. ;-)
+Use Case
+========
+# ./delaytop
+System Pressure Information: (avg10/avg60vg300/total)
+CPU some:       0.0%/   0.0%/   0.0%/  106817(ms)
+CPU full:       0.0%/   0.0%/   0.0%/       0(ms)
+Memory full:    0.0%/   0.0%/   0.0%/       0(ms)
+Memory some:    0.0%/   0.0%/   0.0%/       0(ms)
+IO full:        0.0%/   0.0%/   0.0%/    2245(ms)
+IO some:        0.0%/   0.0%/   0.0%/    2791(ms)
+IRQ full:       0.0%/   0.0%/   0.0%/       0(ms)
+[o]sort [M]memverbose [q]quit
+Top 20 processes (sorted by cpu delay):
+     PID      TGID  COMMAND           CPU(ms)   IO(ms)  IRQ(ms)  MEM(ms)
+------------------------------------------------------------------------
+     110       110  kworker/15:0H-s   27.91     0.00     0.00     0.00
+      57        57  cpuhp/7            3.18     0.00     0.00     0.00
+      99        99  cpuhp/14           2.97     0.00     0.00     0.00
+      51        51  cpuhp/6            0.90     0.00     0.00     0.00
+      44        44  kworker/4:0H-sy    0.80     0.00     0.00     0.00
+      76        76  idle_inject/10     0.31     0.00     0.00     0.00
+     100       100  idle_inject/14     0.30     0.00     0.00     0.00
+    1309      1309  systemsettings     0.29     0.00     0.00     0.00
+      60        60  ksoftirqd/7        0.28     0.00     0.00     0.00
+      45        45  cpuhp/5            0.22     0.00     0.00     0.00
+      63        63  cpuhp/8            0.20     0.00     0.00     0.00
+      87        87  cpuhp/12           0.18     0.00     0.00     0.00
+      93        93  cpuhp/13           0.17     0.00     0.00     0.00
+    1265      1265  acpid              0.17     0.00     0.00     0.00
+    1552      1552  sshd               0.17     0.00     0.00     0.00
+    2584      2584  sddm-helper        0.16     0.00     0.00     0.00
+    1284      1284  rtkit-daemon       0.15     0.00     0.00     0.00
+    1326      1326  nde-netfilter      0.14     0.00     0.00     0.00
+      27        27  cpuhp/2            0.13     0.00     0.00     0.00
+     631       631  kworker/11:2-rc    0.11     0.00     0.00     0.00
 
-I see that you did add it to the "link" above, which is probably fine too.
+# ./delaytop -M
+System Pressure Information: (avg10/avg60vg300/total)
+CPU some:       0.0%/   0.0%/   0.0%/  106827(ms)
+CPU full:       0.0%/   0.0%/   0.0%/       0(ms)
+Memory full:    0.0%/   0.0%/   0.0%/       0(ms)
+Memory some:    0.0%/   0.0%/   0.0%/       0(ms)
+IO full:        0.0%/   0.0%/   0.0%/    2245(ms)
+IO some:        0.0%/   0.0%/   0.0%/    2791(ms)
+IRQ full:       0.0%/   0.0%/   0.0%/       0(ms)
+[o]sort [M]memverbose [q]quit
+Top 20 processes (sorted by mem delay):
+     PID      TGID  COMMAND           MEM(ms) SWAP(ms)  RCL(ms)  THR(ms)  CMP(ms)   WP(ms)
+------------------------------------------------------------------------------------------
+  121732    121732  delaytop           0.01     0.00     0.00     0.00     0.00     0.01
+   95876     95876  top                0.00     0.00     0.00     0.00     0.00     0.00
+  121641    121641  systemd-userwor    0.00     0.00     0.00     0.00     0.00     0.00
+  121693    121693  systemd-userwor    0.00     0.00     0.00     0.00     0.00     0.00
+  121661    121661  systemd-userwor    0.00     0.00     0.00     0.00     0.00     0.00
+       1         1  systemd            0.00     0.00     0.00     0.00     0.00     0.00
+       2         2  kthreadd           0.00     0.00     0.00     0.00     0.00     0.00
+       3         3  pool_workqueue_    0.00     0.00     0.00     0.00     0.00     0.00
+       4         4  kworker/R-rcu_g    0.00     0.00     0.00     0.00     0.00     0.00
+       5         5  kworker/R-rcu_p    0.00     0.00     0.00     0.00     0.00     0.00
+       6         6  kworker/R-slub_    0.00     0.00     0.00     0.00     0.00     0.00
+       7         7  kworker/R-netns    0.00     0.00     0.00     0.00     0.00     0.00
+       9         9  kworker/0:0H-sy    0.00     0.00     0.00     0.00     0.00     0.00
+      11        11  kworker/u32:0-n    0.00     0.00     0.00     0.00     0.00     0.00
+      12        12  kworker/R-mm_pe    0.00     0.00     0.00     0.00     0.00     0.00
+      13        13  rcu_tasks_kthre    0.00     0.00     0.00     0.00     0.00     0.00
+      14        14  rcu_tasks_rude_    0.00     0.00     0.00     0.00     0.00     0.00
+      15        15  rcu_tasks_trace    0.00     0.00     0.00     0.00     0.00     0.00
+      16        16  ksoftirqd/0        0.00     0.00     0.00     0.00     0.00     0.00
+      17        17  rcu_preempt        0.00     0.00     0.00     0.00     0.00     0.00
 
--- Steve
+When psi is not enabled:
+# ./delaytop
+System Pressure Information: (avg10/avg60vg300/total)
+  PSI not found: check if psi=1 enabled in cmdline
 
-> ---
->  kernel/trace/trace_osnoise.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-> index fd259da0aa64..337bc0eb5d71 100644
-> --- a/kernel/trace/trace_osnoise.c
-> +++ b/kernel/trace/trace_osnoise.c
-> @@ -2322,6 +2322,9 @@ osnoise_cpus_write(struct file *filp, const char
-> __user *ubuf, size_t count, int running, err;
->  	char *buf __free(kfree) = NULL;
->  
-> +	if (count < 1)
-> +		return 0;
-> +
->  	buf = kmalloc(count, GFP_KERNEL);
->  	if (!buf)
->  		return -ENOMEM;
+v2->v1:
+Some fixes according to:
+https://lore.kernel.org/all/202509021454480003xS5M8WmAIQT2F_IiSd3p@zte.com.cn/
+https://lore.kernel.org/all/202509021138097501cXkw4xiXiYSWRs8thevi@zte.com.cn/
+1. Refactored delay sorting and view display logic for better extensibility
+2. Optimized memory delay verbose view (exclude CPU/IRQ/IO delays) 
+3. Added user notice for PSI configuration when not enabled
+4. Updated documentation covering all new interactive features
 
+Fan Yu (5):
+  tools/delaytop: add flexible sorting by delay field
+  tools/delaytop: add memory verbose mode support
+  tools/delaytop: add interactive mode with keyboard controls
+  tools/delaytop: Improve error handling for missing PSI support
+  docs: update delaytop documentation for new interactive features
+
+ Documentation/accounting/delay-accounting.rst |  91 ++-
+ tools/accounting/delaytop.c                   | 571 +++++++++++++-----
+ 2 files changed, 485 insertions(+), 177 deletions(-)
+
+-- 
+2.25.1
 
