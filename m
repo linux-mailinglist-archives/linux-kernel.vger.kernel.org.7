@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-804311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD31B471C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F17BB471C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0C4A01CE6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108DB1B20AB0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B746E21018A;
-	Sat,  6 Sep 2025 15:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97A011187;
+	Sat,  6 Sep 2025 15:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="DgQxAKLf"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmT18Oa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E9F1C860B
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 15:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3822367D5;
+	Sat,  6 Sep 2025 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757171655; cv=none; b=GCLNYZoIQ6GiPj1r3e5fJYjNXgodoSWn6tZWCXyBaLqcPwddZRx77XPJrRfE4mMorraIS4bYfA5w2ood6RB95m2oIJyqM8vQ5VldRKAwlIDb/DD88gMQG/rmC00CSI8u1u8jtMAALjCh1Hbb54jTw26UNuv/8Cy1jF5EHt5qDzc=
+	t=1757171708; cv=none; b=pgzsWQQnPSdbP//xa38pGxxC/LluKrxvC0Qf/vpyGroBBmLaSKjG5D3wBK7Ww871oiuVz2Js+Pi6nzPAuvzaGokASUWKw8EoibUP29x7fxcsT3VUgLYflWQYXF+gfC0aGqzuZ7lwLHhiscxhcJnifHrMSz+z2/BOY99xGKS/ANE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757171655; c=relaxed/simple;
-	bh=wmUfztRX5nD3fOdPlKxX4nL8xn68x2d6zm4zTl6Fhqs=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BykEihbQpwShC/9jxm0uAkDaF6oauhQesVbQpeN4QKS7/3qIh7tYpLfoR5qKFnh/jGwNQHacVaNT4QM/gPJcZO1ocpFYOUTqdH/tqIXS6tHs3x9vvMmNCieIo4aeZbxo/UpZptlG82smbryZS3x4zE0TafUms6HLyO4GgId/USk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=DgQxAKLf; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1757171642;
-	bh=wmUfztRX5nD3fOdPlKxX4nL8xn68x2d6zm4zTl6Fhqs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=DgQxAKLfFEUUmoaJIwrfJ7Jo59GnS2g905k4FbGOOM/aVw5wEi385JapxQ8bPYnKG
-	 QytheVy+XXtwlUlPgwSS5uNyoUPRnOaBcSdRRDuZ908cbRIsUAEbMKmCrnUwsbz79O
-	 Qls5ClGRZ3uWYVPG/Q43MfNXFQL3eCVGqGs6CNVM=
-Received: from zm.. ([2408:8340:a2e:f9b0:20c:29ff:fe69:94c7])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 3809F0EF; Sat, 06 Sep 2025 23:14:00 +0800
-X-QQ-mid: xmsmtpt1757171640tfgg6490c
-Message-ID: <tencent_663B255BAD2BF224E8B5195BCF1F4A4BEC07@qq.com>
-X-QQ-XMAILINFO: MwP4Bu21pARcKqVk3VrIPiTRO9UHcDi7G2232LhBM6+V319dkLRGggADrn5tBJ
-	 Qk97gZ+Naa6p4hoXxLb8r++EL/ZHF27trB0ms5ivR/uvEJ1Cib1bhzjmTgt+WSEKHrI8U3l4cv7P
-	 X/Jh3jQf7LlF2s2PkZQD6EtyPPm17LSUe6LaFd8Hu+o3yo+R4LxotQ/FZwXrmkG22gpn6AUqvzgh
-	 PMYJEXqUmqhKcwE5Vq9JzPm2lLGarlvzQUyl0O8QOZiCI3KA4qSdqQ2oPPMJCT0CitwZLbKNU4VE
-	 RTOn1K7SCcXvLDlhZwV14kWemAG0EZYrni9ee/0mXcH3CecGBAHXbEMR9Cf0BWZlWGUjlV/VqSdt
-	 029EBDtU9JAHWxrizB+YQn4ASW7FP6xv+l3VBmA7E1U7HyzG0mJPnJi4xQtEBy8p4I9jXbsfjvwt
-	 Z9Ls7bHcerlB3Zhbyw6yWUTZQkRtGsSVQfxH0gqRtoOrWMDN2bhgdQv8LGMNmUMAiISdfPImFvbc
-	 NRr+wNUTd6DxIbX6J/3fAT98CXlK8r5keZ/V6IslfX5TCQhexkl0HCj2S2BMsyo4JHgc1zGkbZrF
-	 mV+iSdQg/BVnkARnHBvPVj/perPuVrkOfVwO+Cwb255Xv48FL52U+GTMH68nK2f+QwTrK9iPmYxJ
-	 M4OWf+tuKxvMgOeSLX6KzYRgzOcK1KcURkCu7tyVt25ciQ5izW3mY5a4iXOaXhHhIpsEvWvTtChj
-	 T0b3Zqigwk9jPJJDLXLZNi1RecQnBH1kbuEOSE4tVixsXs++TLHRzg61YNGyKYnvqJbxNQXg8dlK
-	 X6RfKgUz8j200dQMsJ9MPfm3G/Bx1mlvcbqGy/pknWc4O88Tee1jdRNM4odWTwojwspqwqVyKbD5
-	 vlTRAi7jHMY/h0D95FUaBrEnq1tOYWdsxUAgnpMwyrcQik1F0x9+7hbnF6zAEDH3Zw7VuRqL9lL3
-	 x5n2a+ykhnxumQ4D8HMHEEdaA0ZZzboxtBx0HU9LX6eRUA1EW1vpXzVlAnWHRQlt2B7vN2cHcBnL
-	 BzREKhADSdahwmnN3SMQDMvrmNLHyHeEdIGUcfJt2seic8wnBzrVfM86JNeTVr4Gv1UA2bZkyw/9
-	 quvC+dyXIC397rlk5qCfT+Tnz1sw==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: zhoumin <teczm@foxmail.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-kernel@vger.kernel.org,
-	teczm@foxmail.com
-Subject: Re: [RFC PATCH] vfat:avoid unnecessary check
-Date: Sat,  6 Sep 2025 23:13:49 +0800
-X-OQ-MSGID: <20250906151400.1913598-1-teczm@foxmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <87plc4n9e5.fsf@mail.parknet.co.jp>
-References: <87plc4n9e5.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1757171708; c=relaxed/simple;
+	bh=V5VmoIRnbNArlBQcQV7ik20GPooqfqzAyxhtR9pDKqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CKv7+2t/RRNcTvhQoR464Opmd1/7Orlh2UQN+FOoCHcnn3QGjzRdqGTQu0P63dmddIBN+fZhbsaUQB0Kb5eogvWkkXKqIZKjO0WpHTuGE1Clo+6J2SyJtCQ0F3rJD0/l8MwpHmpwvL7JtjenoRRIwGENMJM5cD2M4Tyi6uIo4b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmT18Oa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8358C4CEF7;
+	Sat,  6 Sep 2025 15:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757171707;
+	bh=V5VmoIRnbNArlBQcQV7ik20GPooqfqzAyxhtR9pDKqo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SmT18Oa1d2twPn5m2avid3JvaHisblr9DQq8UMpUE7eIs5GkMpgHoEZT+4oLLYVjn
+	 QlKkV9rC+0HYInYjRhOd7MsFVBHBNbFHd19S3nZWOn2yybCeQoCBReufz+6xFxYJzJ
+	 897GDoUqakWe0gSXjdO/xV+UVdheYvnH01DW74yAe1hw6dGNrEF4JChEDGQbyk6ka9
+	 VatHzO6G5OXPKTg5dtw4e3WTI8Uq37Qfqt+SLqu9NfOQ8AzY9Sb7O62+p4ZXl+5gF5
+	 eVzu79k6SaKmQiLM8MkWtseWBkLCvTekIDxzcdeKU5+6ldjdbo4FHoYQbn45tG/ylg
+	 qWvquajl+Imnw==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-746dae5ff93so1917744a34.0;
+        Sat, 06 Sep 2025 08:15:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpcw/jsIREpvasFCWC0ouC+C+RUkIHodVaV5EChn+TlVC8j61KeOs9Juhm1XcH7UJKwJ8n5K7dbSM=@vger.kernel.org, AJvYcCWaG3pMLgHxeiSzV1cqWMw0mRl1/qJ7LSinYgf5xmJuWA6KkJ0Y5ravSO6tCVrnhNrme7yP8cFBB+f4iHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi++906ifU518DExGvBh7ft8QFpfDEIT5IKRkK87KNTYCp4jHK
+	jd/ykXzOlhIZ/OAN2pmEumpFUgeTZgcoQsCjGUi5G66QzSxSnR2CXxvprQFVN+NjWsNpQcapo1C
+	Zx8kKFZmFR1PWFiYMaix0gq9qLp156ac=
+X-Google-Smtp-Source: AGHT+IGdyYZhwu8BpYyLbNc4bt5eZeyZy46pY08sYjpDYaOcudSjwedT7KRLhXVNTCPfylS0X1oxQfyXuYFi2XZS3hk=
+X-Received: by 2002:a05:6830:2906:b0:73f:f3a2:212b with SMTP id
+ 46e09a7af769-74c6ffce840mr904633a34.5.1757171707091; Sat, 06 Sep 2025
+ 08:15:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+References: <12749467.O9o76ZdvQC@rafael.j.wysocki> <2025082851-progress-unsliced-ade4@gregkh>
+ <CAJZ5v0hn9NXvHPy6zV4R4y0AHtN2BfN41wjd5s7dos0wx6ih0Q@mail.gmail.com>
+ <CAJZ5v0gj33W-2FOswYoBLQQyTj0wr_EuMUdLiL_tdt4t=ss-jg@mail.gmail.com>
+ <CAJZ5v0ifvwbPs1VKBMpWdanBKUdHSZuNandbF9=uhec56DynNw@mail.gmail.com>
+ <2025090658-cucumber-velvet-ae53@gregkh> <2025090638-arson-scrawny-ceb5@gregkh>
+In-Reply-To: <2025090638-arson-scrawny-ceb5@gregkh>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 6 Sep 2025 17:14:54 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jvo4U0zGPZj0bu62qSCJh248JsmiO0E3ie3VPzFJ9FTg@mail.gmail.com>
+X-Gm-Features: Ac12FXxrDU4kO3Id7Z6wGxJfeP_mVHH3Vx9ccNz4Byyul4wr7qgfvfg5attRSfE
+Message-ID: <CAJZ5v0jvo4U0zGPZj0bu62qSCJh248JsmiO0E3ie3VPzFJ9FTg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] driver core/PM: Two updates related to power.no_pm
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Danilo Krummrich <dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hirofumi
+On Sat, Sep 6, 2025 at 1:54=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sat, Sep 06, 2025 at 01:53:11PM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Sep 03, 2025 at 01:33:18PM +0200, Rafael J. Wysocki wrote:
+> > > On Fri, Aug 29, 2025 at 9:09=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> > > >
+> > > > On Thu, Aug 28, 2025 at 1:20=E2=80=AFPM Rafael J. Wysocki <rafael@k=
+ernel.org> wrote:
+> > > > >
+> > > > > On Thu, Aug 28, 2025 at 1:07=E2=80=AFPM Greg Kroah-Hartman
+> > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > On Thu, Aug 28, 2025 at 12:55:50PM +0200, Rafael J. Wysocki wro=
+te:
+> > > > > > > Hi All,
+> > > > > > >
+> > > > > > > Applying this series will cause power.no_pm to be set for fau=
+x devices (so they
+> > > > > > > don't get processed unnecessarily during system-wide suspend/=
+resume transitions)
+> > > > > > > and power.no_callbacks to be set along with power.no_pm (for =
+consistency).
+> > > > > >
+> > > > > > Oh, nice!  I forgot about that entirely.  Should these be backp=
+orted to
+> > > > > > older kernels as well?
+> > > >
+> > > > So do you want me to resend these patches with suitable Cc: stable =
+tags?
+> > > >
+> > > > Alternatively, I can just apply them with the tags and route them
+> > > > through my tree, whatever you prefer.
+> > >
+> > > In the absence of more feedback, this is what I'm going to do.
+> >
+> > Thanks, sorry for the delay, been swamped with conferences and travel :=
+(
 
-> Hm, IS_FREE() checks 0 and DELETED_FLAG, isn't it?
+No worries.
 
-Yes, you're absolutely right. That was my mistake—sorry about that. Please
-disregard that part.
+> Wait, I can take them right now, no need to resend them.
 
-> OK, thanks. I got the reason.
-
-> However I would prefer to keep the current code, for readability and
-> future changes, and explicitly check those time flags if there is no
-> measurable improvement.
-
-I understand your preference. That said, since fat_truncate_time already checks
-the flags and handles them appropriately, I still feel the double-check might be
-redundant. That said, I respect your decision and am okay with keeping it as is.
-
-
-Thanks,
-
-zhoumin
-
+Cool, thanks!
 
