@@ -1,95 +1,119 @@
-Return-Path: <linux-kernel+bounces-804064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D46B4696A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F22BB4696F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208B2A45B3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81166189619C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9032C0289;
-	Sat,  6 Sep 2025 06:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAEF2C0286;
+	Sat,  6 Sep 2025 06:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="a8cK6Jce"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlZFEC/m"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79B221ABD5
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 06:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C126317E4;
+	Sat,  6 Sep 2025 06:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757140105; cv=none; b=Uzt1wZdSPOt6NQ2bIubpa4Yof6msjPxD51o8P6H2viD7KzaofST2FbyTor1Imn02XkPkYrHxKPd+gBO0kz+yOHVjnHyLnFyuGVwpVScANgZo8UwLaWeme7y7O1N/HCmnPRspMtqldGsMt9KDuJcvovAFFLGCFyHCGw/5E8k8LO4=
+	t=1757140195; cv=none; b=EozUPGt31z4dQiBoctbA08RNHZh1iOXGSzOr37XkYzZhcUpQ+c+IX+U9xVDa2LwxAuLKzg9FPqWUNMrg5oUYpENgjZsyxzue2CP0VJZ5AEcBOz9vkJHjlKsyHgIydBnTAQ2RdUY5AvcdqisTsj81bLXd4gUOWvWlgf+8d42Oxzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757140105; c=relaxed/simple;
-	bh=6yeju41LRBTjYcYvYrUPJAx5rR6fSfSV/7wVhV6FX+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Do2tq4ilPzOKpwQCV/HEvMArnHAIZ5B+itejkuMqiYvf9QIss90rtdvt7v3RPv3T3wCB3D3t2Gbcrg8CRtkhsXV0wgZ4KCti8CbwcB59zJLAsYHrxTMu2GIXQ7kbapEIKPHWjZ916lO9Pxqv6W5uWJ5Zbiwb15WhrRg1QlrsOTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=a8cK6Jce; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=seGORosSvkh1VOib08ZYZZHEfmAEdmOoIa3OMqy1vbA=; b=a8cK6JceVSxmQID+OwTyYUZ05d
-	OPWB2RDB1po1k1j4vIlxlzxiMov2Cj7xDudAQgm0R9DniTFjy73+3DbsP298pnZS20UgJLjaJwZNf
-	1p91kYa5+W6jw8Yu0B64eCa0K+34rjkmJfoSyvXAB1+9WSegzDhn3WSsBwH1f19Z70HjPOvAM9uMx
-	KpGA04zc/K0FtYndWNU59+tF9CLEg5S9QYeW5SE6Asl+XPtwYmq6PCJPxXH4xjD8dC6KGf0o9+tRk
-	fO8tbIp9OGvYBYXfPwrE1xiMAiBFEQIzLn96fW6ORRGl2CmNLxr9zSOMU9Z+M/H/e9+ACdOGMHE+L
-	kaymDQWg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uumPL-0000000G7eO-2S1X;
-	Sat, 06 Sep 2025 06:28:19 +0000
-Date: Sat, 6 Sep 2025 07:28:19 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: Phillip Potter <phil@philpotter.co.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cdrom: add parentheses around macro arguments
-Message-ID: <20250906062819.GU39973@ZenIV>
-References: <13378f5c9cafc29425b6e420cad8b513f4a9f1e1.1757095005.git.joeypabalinas@gmail.com>
+	s=arc-20240116; t=1757140195; c=relaxed/simple;
+	bh=xNjwqIhiJgduAnJeM3sgzEDOGHO4ZeHCQP4TwyE6qvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLTdequKkOgZs8OfroDI8aVbtAnTPC4WDX8oi+A8+K3RJnHP0315apJ/cWIVkuI0uWON9zcLYz1MO8qfEj6nvIjMFZvUPc3s6/r+m3aPJtae6dCNAUC0ukrdSFuESlVvPFSNhOUjL94KpN6ElAPqjYvMITXKi/6W276YXG83pBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlZFEC/m; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7ad815ceso3129731e87.3;
+        Fri, 05 Sep 2025 23:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757140192; x=1757744992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDM4l0XQr6gpl/CwK5RQ/t9x2ic7b6u6nG+2cUDQpm8=;
+        b=GlZFEC/mEwyTBRf1/ZjVhSe3QYlhjvIBYID9GAx+uFrUUPG3ygM6r6LQtdupEn2M/k
+         TiNx8uHDfQa+gQ/B+Ac5QV/KWEjJPfgJnhTunFa3D33wAJf+BRrwIvXpvEHqBx+XXsgA
+         Fd0EGxIwMzpJ56LF08Saw5QfreqL6558ZGrciA4oZLixg5PzAWw+76aLK962QUbyb9Vc
+         3DVqzmBGsbceONbvgukiegg6I1oKgRpn7JXdI3dLzAL7+JQtdHiSEpK2Bj8GIkoCGwYk
+         +xsw1DnfgOxaK+d+wIDp6y+3XXtVq07M/L+UssLPLddpJrvtUfYBzfPH35CJYKMmJQ+H
+         rT5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757140192; x=1757744992;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DDM4l0XQr6gpl/CwK5RQ/t9x2ic7b6u6nG+2cUDQpm8=;
+        b=cV9LatB4l4VNFVhdSo9umF5Oy7dmgD8aY5SNlVByItqspZVG9hF0meHqS2aNIX98ph
+         aZYmoAb5pbIiPme1T3sn5wuqnybwr/iuC5cBF2E70TeNcRwOJAzfK03KqfbkULKZfQUJ
+         a1EUE1RWawAqS85QqSkbHYrnKQjGaJuR92488EyRNK9B5EBxvZIszoUsH9zgXzjxK4Gz
+         2NG5Wkv31IYj+XsokD/EmQSOhWtvPvzjI9bN5xdQqubjy11cqWquDybHQnKjyhuC6JMR
+         pR6tdgZvavc2mNc5k9arZoMn4MC/9tqC7F4tKkoTJ4TP7OT+6OK4lzifyvv+xbX3+kYY
+         p4CA==
+X-Forwarded-Encrypted: i=1; AJvYcCWp/3w/hSBGWRY3AtUo4NB4zj4efmnwGMnssLBwgN4Uc+hSaSmcsIkCNKxH7+MblpkqTMlxsfng15MnFf8=@vger.kernel.org, AJvYcCXwQohr3T8s+hzUyzfMtzz7LF8hoXkI3UKjlVZvCC9Vynr5mVvnG7wzRCyakE+RR89yp83Ez7V1z0Amj6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH0R27HdabxzZz0ghCgwO5K5ZYqgqrj9U079p3l9i1z9/CDN9O
+	hu05rtrC9h1go4P78mUvJtVUCzP+j4Si0lzN4AcA6y0oJEBy/FXSlACdr2y4eA==
+X-Gm-Gg: ASbGncuVn+pClntOSLYBk5+bw8do1Y1X79Su9Tbn8OVhL+iqRbMFiCGQhCUyDf79Gv9
+	KSGLPOcR6NWxmM9nlf0s6+tGnb/1ErC0nh2Qu4xaTLtjm/le8b2G/X5HO1ycQnsfCnS7K9ce2QB
+	zmOTqlNPJlXeWy1LPc5kvjD2OY/5Nll7MVR8jzy4XrMp2QpIG9hzjNlVe+PkS/QOr5mLzqAVqjq
+	yabhT87Au5ZEJySbHcl2NEhdflLn1e0uzS5hPbCPLxVRkOBn74VSmD2jZ1Bm1w3lOhIR9ENeC3W
+	K0EtpyAVPk4dFvL6Ueq11nuOqTunumNo72TV4pkLIXUyyZPE0hA/R5avWWi42eWnnaluge6cZdP
+	ORX3cMnEum1ITfy6GCJymQiAF
+X-Google-Smtp-Source: AGHT+IHx5SUOLz4xxIxdvTMv2D9c5CCtCCVe8BTkyCUM7MimJD0op3PpYt4TOpsdiqkxga2JDcoskg==
+X-Received: by 2002:a05:6512:3b9e:b0:55f:4d51:7ef4 with SMTP id 2adb3069b0e04-562603a2244mr405799e87.24.1757140191487;
+        Fri, 05 Sep 2025 23:29:51 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608abb7c74sm2178737e87.54.2025.09.05.23.29.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 23:29:51 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>,
+	Ion Agorria <ion@agorria.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] ARM: tegra: add support for ASUS Eee Pad Slider SL101
+Date: Sat,  6 Sep 2025 09:29:30 +0300
+Message-ID: <20250906062934.6637-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13378f5c9cafc29425b6e420cad8b513f4a9f1e1.1757095005.git.joeypabalinas@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 05, 2025 at 07:59:40AM -1000, Joey Pabalinas wrote:
-> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-> ---
->  drivers/cdrom/cdrom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index 31ba1f8c1f7865dc99..462ee74621da6f32da 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -408,11 +408,11 @@ static int cdrom_get_disc_info(struct cdrom_device_info *cdi,
->   * hack to have the capability flags defined const, while we can still
->   * change it here without gcc complaining at every line.
->   */
->  #define ENSURE(cdo, call, bits)					\
->  do {								\
-> -	if (cdo->call == NULL)					\
-> +	if ((cdo)->(call) == NULL)				\
+Add support for ASUS Eee Pad Slider SL101 along with a few device tree
+adjustments for Tegra20 based ASUS Transformers.
 
-You do realize that the right-hand argument of . and -> is *not* an
-expression, right?  How would anything other than identifier work, anyway?
-Note, BTW, that such identifier would not work as a standalone expression -
-its meaning depends upon the structure of union you are dealing with...
+Svyatoslav Ryhel (4):
+  ARM: tegra: transformer-20: add missing magnetometer interrupt
+  ARM: tegra: transformer-20: fix audio-codec interrupt
+  dt-bindings: arm: tegra: Add ASUS TF101G and SL101
+  ARM: tegra: add support for ASUS Eee Pad Slider SL101
 
-General advise, from painful personal experience: before posting a patch,
-make sure that you have
-	* got enough caffeine in your bloodstream
-	* looked through the patch
-	* tried to compile the results
-The order of the last two may vary, but the first one really needs to go
-before anything else.
+ .../devicetree/bindings/arm/tegra.yaml        |    8 +-
+ arch/arm/boot/dts/nvidia/Makefile             |    1 +
+ .../boot/dts/nvidia/tegra20-asus-sl101.dts    |   61 +
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    | 1251 +---------------
+ .../tegra20-asus-transformer-common.dtsi      | 1268 +++++++++++++++++
+ 5 files changed, 1339 insertions(+), 1250 deletions(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
+
+-- 
+2.48.1
+
 
