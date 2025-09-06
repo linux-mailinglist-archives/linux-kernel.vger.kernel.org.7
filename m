@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-804063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A46B46968
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:21:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB3BB46A43
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15ABC17F058
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5FB7C38D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD732BEC2F;
-	Sat,  6 Sep 2025 06:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAE027F00A;
+	Sat,  6 Sep 2025 08:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NcI8f4eA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gbA4zXaK"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XeollWZr"
+Received: from mail-m3271.qiye.163.com (mail-m3271.qiye.163.com [220.197.32.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D551E520F;
-	Sat,  6 Sep 2025 06:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DB736B;
+	Sat,  6 Sep 2025 08:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757139690; cv=none; b=Ao7ENFQOOSmftUkKk0K6YT+BWXNUroyOokoJkZilM58G5iwS5p/lBX+O6MEfA+7kxjh7xyE3zLFkwetI3ub3f/R1zPmkN9UrPXGZmYtkYuBr7kAuLiP/1Fj+BguGhHhKhIwcj7L5XuUOFtPYobopw3v1ldUdoppgZVErdhnGwk4=
+	t=1757148546; cv=none; b=lZYbXnC7u9OHSGqXJ0ODdGU2kTMUTAkO1F0hhiLpMazVHknCcAzkmJPlNoYgm7xsKtz0X7dkfmDCRMjVHR7vPwXhcO5OguojZyycJ8fwMKu1Vxynfhf0d9HGnMqCC/TvZFXreOg0Q15+GOcC2oOkXelEOm3cRn+G5LpkLsI60ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757139690; c=relaxed/simple;
-	bh=OhFYpdo+ki2jBw7vWea33uPUPRVGPuYU47AqLGZ5TEo=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=YRHzYnfEoI3AF0xMIiMCQ4+Z5wI5c5Wh8b9us5p+tdq3KmC7VVHYfn0C8AerczhI7U82IGtGoiL0fYQynKf7IMiAivJkPxvhOuIdGbDhpDLD0aOyN1V0QAAcoLnj2hTv73sH7jONvIO+/4qtVVH0VLSCgm2cFRpqjZDub4ghbR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NcI8f4eA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gbA4zXaK; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1A79FEC00E0;
-	Sat,  6 Sep 2025 02:21:26 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Sat, 06 Sep 2025 02:21:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757139686;
-	 x=1757226086; bh=C/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=
-	NcI8f4eA6+xfI+2FZ3v0vxGpjNfnklewK7IIeASRWtoQDVgOefMZ6ZUovqGqgbpY
-	rv+cqMSYbYJ19cfSmfvC5mbWFCxobGt5njpVjEWHHODiA3sNCzT5mJvl93o7+xER
-	ZV3yGZmSl49yKYjfDmJewZXCtta8BmtPC2oZobwfiE8WPfEFI0a8lRgfVPFzUUZ0
-	1pgrcnhdc9qdGbORsgnMbVN9xm2omraRoh2jE5UaOMYTwt019Cp49cRuwEYRDzvE
-	YnCe1OLinSxSp5v6kd8yieLO7BO91D0Xi9p3ik6/IvDB5nscZ5GOVFxqGANPcCbd
-	TOlzG5o1e4bsxXtnwh+5aA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757139686; x=1757226086; bh=C
-	/Qx8gn1aEPxWdZanYl378oDEkan1w0vCyVmbQR1Sik=; b=gbA4zXaK4C7Y9/vsd
-	FpYF1zaJP4tTIhPgsRLgPhk5hzXehE3nNhn7xYf4BdLn29Y8quFwWguQBYJCEFu8
-	EVeH91A24uHbt9THCOL+wdQdB3/O5bxnd6D8GJRZ5835sWG07pgKl0MoIeLxcOmU
-	mu+bUTkQai8xnnxHrsBcSzR7vftDSuRZSRQ8jdO2SjEHw4MzBq3dmdC272eDbKra
-	FCpv2h7KcKk4/MyugqVZfE7zdoxwYLHgGjr7LTlHxyTD+A0MxYgJ6tS0OtExYaBW
-	QbsHjnzNoXZId/vzMMxqHhFxmLyfGXsk/acbzOIafdLv72k2BhlBzdvc1gHLmEri
-	2exgA==
-X-ME-Sender: <xms:5dK7aHc4ThQG4kYV4-fOOrYUFMmhoSETr_6yaHFZzEx5EDP1ALP8WA>
-    <xme:5dK7aNMQs3Pv5tJWEfFPmF0Mnqu0nKkVUwKoQgcTBKAq0V9MVq4q7-N_Zbbe01ldB
-    DoQcepS0_TXn-i4CX8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduuddtfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    epiedtfedufeejheevlefffedvkeegleelkeehuddvjefgtddtheeigfeitdegffejnecu
-    ffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpdhkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepshhlrghvrgesughusggvhihkohdrtghomhdprhgtphht
-    thhopeihvghpvghilhhinhdrtghssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshihii
-    hkrghllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthho
-    pegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrh
-    hogigvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhr
-    ohhnihigrdguvgdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtih
-    honhdrohhrghdprhgtphhtthhopehkshhtvgifrghrtheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehpohhmsghrvggurghnnhgvsehnvgigsgdrtghomh
-X-ME-Proxy: <xmx:5dK7aFSQAP437V0tX7uUcxgtGrgb-XsdxBbZsDD-q_Nxd8YwztNhVQ>
-    <xmx:5dK7aKmLHzr7YNbIZt2Fqsl-m2CHHyGcoEAnWTR8eXUavxayDfMeZw>
-    <xmx:5dK7aBRxG4BinL4kEveCMI60YtcLC6xYDqTOzUVPSlAA46G_sSajyg>
-    <xmx:5dK7aJsi4l1wF_goKub4DYVFCxNAtEelK1xbO-e3qc82n9jB6JHt_Q>
-    <xmx:5tK7aICrCqDKYGUvVsynEgeMmLVY_xewpS_mWdAFLm_gT8Nw1EwhFAG6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0394C700065; Sat,  6 Sep 2025 02:21:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757148546; c=relaxed/simple;
+	bh=KQSgrx87mA7b5NmZQfBcbr/+bLWuPewIo/h3wQhzTYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r9aMX4socstzJYfnah4wTlJhz6WQh6ZAG37NyXrLSKNDSLHbyivvqU3PhY7UGntdrt9ohfCfNAdvU09DOVc9zdBQ2y0uoyJDvrUNLEYK8I1X61trmu2F6yK54KT1py0lK5hACr6p6PtQbsfGeGEak4tydptMZTtLqgsFKCFxico=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XeollWZr; arc=none smtp.client-ip=220.197.32.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 21e46c877;
+	Sat, 6 Sep 2025 14:26:31 +0800 (GMT+08:00)
+Message-ID: <5d691f5b-460e-46cb-9658-9c391058342f@rock-chips.com>
+Date: Sat, 6 Sep 2025 14:26:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AxX0oEVx0u-k
-Date: Sat, 06 Sep 2025 08:21:04 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Christian Brauner" <brauner@kernel.org>, "Yangtao Li" <frank.li@vivo.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- kstewart@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "'pombredanne@nexb.com'" <pombredanne@nexb.com>,
- "Viacheslav Dubeyko" <slava@dubeyko.com>, syzkaller-bugs@googlegroups.com,
- "Thomas Gleixner" <tglx@linutronix.de>, yepeilin.cs@gmail.com
-Message-Id: <66114372-5bd8-4f1b-8aea-1f6c4ec91bda@app.fastmail.com>
-In-Reply-To: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
-References: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] general protection fault in hfs_find_init
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't contain
+ invalid address
+To: Yao Zi <ziyao@disroot.org>, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250904031222.40953-3-ziyao@disroot.org>
+ <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
+ <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
+ <aLlyb6WvoBiBfUx3@shell.armlinux.org.uk>
+ <aLly7lJ05xQjqCWn@shell.armlinux.org.uk> <aLvIbPfWWNa6TwNv@pie>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <aLvIbPfWWNa6TwNv@pie>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a991db47afa03abkunm6f5b97526997b6
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlJTVZKTxpPTU4fTB1JQ05WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=XeollWZr90ZLf9L7AdJ3LQbsRm2o9/RlO6fnKUc1fCiUZVidPuq4AywnynalP0/pupRK5Fn/V141DZqMKg6Or8cwAa9y0ysjWi/3FI7BGU/AW4bcdOEc5Y30uM5F1jnwWVDYZe3IbI/KYC9P81XZ7KUdvA0qDfkfDWwVrYpGR48=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=iAEkg+oPP2b/JZz9myImwCnXMGQd4xA94/pfnmR4uF0=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Sep 6, 2025, at 07:56, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
->
-> commit 42b0ef01e6b5e9c77b383d32c25a0ec2a735d08a
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Fri Jul 11 08:46:51 2025 +0000
->
->     block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c0d312580000
-> start commit:   ee88bddf7f2f Merge tag 'bpf-fixes' of git://git.kernel.org..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28cc6f051378bb16
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1026b182580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159e0f0c580000
+On 9/6/2025 1:36 PM, Yao Zi wrote:
 
-I took a look and concluded that my patch is unlikely to have
-fixed the issue, because:
+> On Thu, Sep 04, 2025 at 12:07:26PM +0100, Russell King (Oracle) wrote:
+>> On Thu, Sep 04, 2025 at 12:05:19PM +0100, Russell King (Oracle) wrote:
+>>> On Thu, Sep 04, 2025 at 07:03:10PM +0800, Chaoyi Chen wrote:
+>>>> On 9/4/2025 6:58 PM, Russell King (Oracle) wrote:
+>>>>> On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+>>>>>>    	if (plat->phy_node) {
+>>>>>>    		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>>>>>>    		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+>>>>>> -		/* If it is not integrated_phy, clk_phy is optional */
+>>>>>> +		/*
+>>>>>> +		 * If it is not integrated_phy, clk_phy is optional. But we must
+>>>>>> +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
+>>>>>> +		 * the error code could be wrongly taken as an invalid pointer.
+>>>>>> +		 */
+>>>>> I'm concerned by this. This code is getting the first clock from the DT
+>>>>> description of the PHY. We don't know what type of PHY it is, or what
+>>>>> the DT description of that PHY might suggest that the first clock would
+>>>>> be.
+>>>>>
+>>>>> However, we're geting it and setting it to 50MHz. What if the clock is
+>>>>> not what we think it is?
+>>>> We only set integrated_phy to 50M, which are all known targets. For external PHYs, we do not perform frequency settings.
+>>> Same question concerning enabling and disabling another device's clock
+>>> that the other device should be handling.
+>> Let me be absolutely clear: I consider *everything* that is going on
+>> with clk_phy here to be a dirty hack.
+>>
+>> Resources used by a device that has its own driver should be managed
+>> by _that_ driver alone, not by some other random driver.
+> Agree on this. Should we drop the patch, or fix it up for now to at
+> least prevent the oops? Chaoyi, I guess there's no user of the feature
+> for now, is it?
 
- - my patch was wrong and needed another fixup on top
- - the reproducer and kernel log show no reference to ioctl() calls,
-   so they do not directly interact with the code I changed.
+This at least needs fixing. Sorry, I have no idea how to implement this in the PHY.
 
-It is possible that my patch is hiding the root cause for the problem,
-if part of the reproducer relies on a prior call to ioctl() on a block
-device and this ioctl was broken by my patch. This still sounds like a
-long shot though, and my first guess would be that the bisection
-went wrong, possibly by running into more than one issue, or an
-unreliable reproducer.
-
-     Arnd
 
