@@ -1,186 +1,95 @@
-Return-Path: <linux-kernel+bounces-804213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE93B46CED
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80569B46CF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75DA7AD769
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9744A0180F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D230284684;
-	Sat,  6 Sep 2025 12:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YjPZWNQ2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE8129E11C;
+	Sat,  6 Sep 2025 12:41:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911BF260586
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B25543147
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757162200; cv=none; b=BoGdp/mtaM1HyVripe3p54a9xSsa234leeT+/DpVwdpiT4JMk8xoJKxq62jxCiW7AJhydWnk9BDcQxTLNMpFu1VPGIqvm2GQ3CB0YqIuB6gj7Kpzo1iOqfjvxQn26bkk8YEdouKKzFTKqU6Y8UrNNG9MOP28hXIIdvilxe63dvk=
+	t=1757162465; cv=none; b=TnUhgw8o1IaYQrtaNhsjxwdKkj97GBtIilEzFOwlQigzxw02SaPzkCqQtpyiVbrYEFF5CQUkRUHqdFBzgtS70HGpPBosluFCkR4nf+hM0tkiqNLbSto0NSEiZVEMJbzLvXUDzRk0BFNBOvPoQvXpdclompBmdnwreIE/P88ZtWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757162200; c=relaxed/simple;
-	bh=25ZvFT4Moom+hj2yyZcKKqF4hUebNYa+BZr0/hwv/Zw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=i3Aq+yCP7KguhNnH7fP8QLHtljkf66nLQzj7IkS+7G3DIb0n/YaBvHRjtn4z/FCsJWAQM6HmV63iUErH27YURuqjmtVoAPDvyT8XNh2iY/s3OvEmUz2d+6MQg8aR0MTfo/D74e1CP6LXXNRofzYmIxgePdj3ymfYc7ibRkyZv6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YjPZWNQ2; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757162199; x=1788698199;
-  h=date:from:to:cc:subject:message-id;
-  bh=25ZvFT4Moom+hj2yyZcKKqF4hUebNYa+BZr0/hwv/Zw=;
-  b=YjPZWNQ2S50j1WhlyfuRhdcxY6ArQH3fZLG6JmG+/N2HuC5RApy1v86Q
-   eGHODYuaUhhT9x1f/a6yvRAcXjh8JDdBcqqwvsh/Wf+snlRzoHg/mWH6X
-   foSztlVQH6T6Jm78/GZ5RRUQjhzp+I3JFzK52E+RcsIdkrdaqF3LD2PnM
-   8X+YNgtBqbF4Vfo8Y1Wc4XOyHBVyhG01xlwMhOx4L7TaKgOLxug6W1nZ+
-   4Oq5rOZes1+xp619FGKiwgv9HlhDsrZB7Z6Rzus9E3l1blgoL/h4fKjEc
-   cV4f9i8OwRGZ/bmRR8G/Oq64k7zzi+dd51qdPvw6fVaZOc6p3qBTB77zs
-   g==;
-X-CSE-ConnectionGUID: t9snmqjCRyCRHoVoYlNDZw==
-X-CSE-MsgGUID: 9NVECfWXSq66/vmTAk0V5A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11544"; a="59637016"
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="59637016"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 05:36:39 -0700
-X-CSE-ConnectionGUID: F1BOJz6OQVGwCEQvS1gQFA==
-X-CSE-MsgGUID: fEhDuVLqQyWxqOTkMgIfkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="196040257"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 06 Sep 2025 05:36:37 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uus9j-0001Rn-0C;
-	Sat, 06 Sep 2025 12:36:35 +0000
-Date: Sat, 06 Sep 2025 20:36:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:ras/core] BUILD SUCCESS
- 9f34032ec0deef58bd0eb7475f1981adfa998648
-Message-ID: <202509062059.1PPR9Q86-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1757162465; c=relaxed/simple;
+	bh=U7G7G+aVkZB2v3V/zUCuzgGGvDKqhdtnY8WhOjRRook=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tAbCyjU++whlohI4/2GdLVXqSiU/fwlgVXK/HIVznl45JGfY5IUx6QTxvVjN6nJPjDx3g7AUw7qPZSK5uqPKeoFnQmz2RGcHNCCPIyCunqAwK6CRLPFoDVowMQQ1XyCYrtpsWEOBT1amT6s5nBqCmpNgeFKx9A4ilX+7YioRAJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3f761116867so61736815ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 05:41:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757162463; x=1757767263;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iEKjptd+e9tTMEG8g0kTtT0/no/OlP4s8sHfIK6Y4+Y=;
+        b=w1+G9rI7cm4BSeAmfPztlm+KaawXRkfpWj0er22R8X3vkZLWpI9r+EVkgAo/w6yjsm
+         kH/JptS1vrVRWM122Z9QB53L/0c8ou8Y+atJItfYfHYfQkBhCzrhV62iqi1d10csUjV/
+         1+clw86AozBaIQsYWR3ccHmvAvDTq+FNcLD15WZkBi3bnDEsL8WhHsc9SySuDQKOW25v
+         G8D1t3H6iJ8ospAlJO6yB076+B9K26VA+vxftEg6ZCVRNbWpAXZWyCSeV1+4pQkiifZa
+         M1xSkEYsLoAuEFI6v27+5tUspbyzJVdmkx7DlVNwAYc8zxp1i7TZRVQ0rdvv7nHCYWSg
+         FoPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR93PyuHxM1AJsJN/w8+wvmPajgc4RbavXqV914bMuB+kNzPkmgbTWE0WLYrXLyIqRozIINZ78sQraHbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS9uluSGhXBCDxy4b7sVV6NG76SQUSeaDwWg0WHv0r3+X9PNjj
+	LzEJJyfTwK3qvPRUhh6HQLNFBLWjiYW/NM5rp7zHsP4ATyZonsmTzVpgqULHNhS+xTpl1gI7CC3
+	pXRYbypGDBi4S38TAzVta3ZfKd7MdSWdCktQNqZitFuUdmpkOB3I9KoeZwxs=
+X-Google-Smtp-Source: AGHT+IHxNVzyRSZvKDEdGlmnC8rBo6tj0A527j9A7QqwnVmZRh2c1L2jvTp4bM80v+o6jg5YbDExuc8bKDS+cnBSnKi+t5QY9sHX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:451a:b0:3fe:f1f4:77b2 with SMTP id
+ e9e14a558f8ab-3fef1f4788emr15491265ab.5.1757162463379; Sat, 06 Sep 2025
+ 05:41:03 -0700 (PDT)
+Date: Sat, 06 Sep 2025 05:41:03 -0700
+In-Reply-To: <683d677f.a00a0220.d8eae.004b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bc2bdf.050a0220.192772.01ac.GAE@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in __netdev_update_features
+From: syzbot <syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
+	ecree.xilinx@gmail.com, edumazet@google.com, gal@nvidia.com, horms@kernel.org, 
+	jiri@resnulli.us, kuba@kernel.org, kuniyu@amazon.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me, shuah@kernel.org, 
+	stfomichev@gmail.com, syzkaller-bugs@googlegroups.com, tariqt@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras/core
-branch HEAD: 9f34032ec0deef58bd0eb7475f1981adfa998648  x86/mce: Remove __mcheck_cpu_init_early()
+syzbot has bisected this issue to:
 
-elapsed time: 1452m
+commit f792709e0baad67224180d73d51c2f090003adde
+Author: Stanislav Fomichev <stfomichev@gmail.com>
+Date:   Fri May 16 23:22:05 2025 +0000
 
-configs tested: 94
-configs skipped: 127
+    selftests: net: validate team flags propagation
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16a3ba42580000
+start commit:   d69eb204c255 Merge tag 'net-6.17-rc5' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15a3ba42580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a3ba42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c302bcfb26a48af
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e0f89fb6cae5d002de0
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12942962580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16942962580000
 
-tested configs:
-arc                       axs101_defconfig    clang-22
-arc                randconfig-001-20250906    gcc-8.5.0
-arc                randconfig-002-20250906    gcc-8.5.0
-arm                randconfig-001-20250906    gcc-8.5.0
-arm                randconfig-002-20250906    gcc-8.5.0
-arm                randconfig-003-20250906    gcc-8.5.0
-arm                randconfig-004-20250906    gcc-8.5.0
-arm                     spear6xx_defconfig    clang-22
-arm64              randconfig-001-20250906    gcc-8.5.0
-arm64              randconfig-002-20250906    gcc-8.5.0
-arm64              randconfig-003-20250906    gcc-8.5.0
-arm64              randconfig-004-20250906    gcc-8.5.0
-i386     buildonly-randconfig-001-20250905    clang-20
-i386     buildonly-randconfig-001-20250906    clang-20
-i386     buildonly-randconfig-002-20250905    clang-20
-i386     buildonly-randconfig-002-20250906    clang-20
-i386     buildonly-randconfig-003-20250905    clang-20
-i386     buildonly-randconfig-003-20250906    clang-20
-i386     buildonly-randconfig-004-20250905    gcc-13
-i386     buildonly-randconfig-004-20250906    clang-20
-i386     buildonly-randconfig-005-20250905    clang-20
-i386     buildonly-randconfig-005-20250906    clang-20
-i386     buildonly-randconfig-006-20250905    clang-20
-i386     buildonly-randconfig-006-20250906    clang-20
-i386               randconfig-001-20250906    gcc-13
-i386               randconfig-002-20250906    gcc-13
-i386               randconfig-003-20250906    gcc-13
-i386               randconfig-004-20250906    gcc-13
-i386               randconfig-005-20250906    gcc-13
-i386               randconfig-006-20250906    gcc-13
-i386               randconfig-007-20250906    gcc-13
-i386               randconfig-011-20250906    clang-20
-i386               randconfig-012-20250906    clang-20
-i386               randconfig-013-20250906    clang-20
-i386               randconfig-014-20250906    clang-20
-i386               randconfig-015-20250906    clang-20
-i386               randconfig-016-20250906    clang-20
-i386               randconfig-017-20250906    clang-20
-powerpc                 mvme5100_defconfig    clang-22
-powerpc                  tqm5200_defconfig    clang-22
-powerpc                  tqm8541_defconfig    clang-22
-powerpc                  tqm8548_defconfig    clang-22
-riscv              randconfig-001-20250906    gcc-15.1.0
-riscv              randconfig-002-20250906    gcc-15.1.0
-s390                          allmodconfig    gcc-15.1.0
-s390                          allyesconfig    gcc-15.1.0
-s390               randconfig-001-20250906    gcc-15.1.0
-s390               randconfig-002-20250906    gcc-15.1.0
-sh                            allmodconfig    gcc-15.1.0
-sh                            allyesconfig    gcc-15.1.0
-sh                 randconfig-001-20250906    gcc-15.1.0
-sh                 randconfig-002-20250906    gcc-15.1.0
-sh                       rsk7203_defconfig    clang-22
-sparc                         allmodconfig    gcc-15.1.0
-sparc              randconfig-001-20250906    gcc-15.1.0
-sparc              randconfig-002-20250906    gcc-15.1.0
-sparc64            randconfig-001-20250906    gcc-15.1.0
-sparc64            randconfig-002-20250906    gcc-15.1.0
-um                 randconfig-001-20250906    gcc-15.1.0
-um                 randconfig-002-20250906    gcc-15.1.0
-x86_64   buildonly-randconfig-001-20250905    clang-20
-x86_64   buildonly-randconfig-001-20250906    gcc-13
-x86_64   buildonly-randconfig-002-20250905    clang-20
-x86_64   buildonly-randconfig-002-20250906    gcc-13
-x86_64   buildonly-randconfig-003-20250905    gcc-13
-x86_64   buildonly-randconfig-003-20250906    gcc-13
-x86_64   buildonly-randconfig-004-20250905    clang-20
-x86_64   buildonly-randconfig-004-20250906    gcc-13
-x86_64   buildonly-randconfig-005-20250905    clang-20
-x86_64   buildonly-randconfig-005-20250906    gcc-13
-x86_64   buildonly-randconfig-006-20250905    gcc-13
-x86_64   buildonly-randconfig-006-20250906    gcc-13
-x86_64                               kexec    clang-20
-x86_64             randconfig-001-20250906    gcc-13
-x86_64             randconfig-002-20250906    gcc-13
-x86_64             randconfig-003-20250906    gcc-13
-x86_64             randconfig-004-20250906    gcc-13
-x86_64             randconfig-005-20250906    gcc-13
-x86_64             randconfig-006-20250906    gcc-13
-x86_64             randconfig-007-20250906    gcc-13
-x86_64             randconfig-008-20250906    gcc-13
-x86_64             randconfig-071-20250906    clang-20
-x86_64             randconfig-072-20250906    clang-20
-x86_64             randconfig-073-20250906    clang-20
-x86_64             randconfig-074-20250906    clang-20
-x86_64             randconfig-075-20250906    clang-20
-x86_64             randconfig-076-20250906    clang-20
-x86_64             randconfig-077-20250906    clang-20
-x86_64             randconfig-078-20250906    clang-20
-x86_64                            rhel-9.4    clang-20
-x86_64                       rhel-9.4-func    clang-20
-x86_64                 rhel-9.4-kselftests    clang-20
-xtensa             randconfig-001-20250906    gcc-15.1.0
-xtensa             randconfig-002-20250906    gcc-15.1.0
+Reported-by: syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com
+Fixes: f792709e0baa ("selftests: net: validate team flags propagation")
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
