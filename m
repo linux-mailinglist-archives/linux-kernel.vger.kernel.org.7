@@ -1,135 +1,191 @@
-Return-Path: <linux-kernel+bounces-804015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BEFB468B3
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 05:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB8AB468CA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD8017B7272
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BB31BC8051
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DABC24DCE5;
-	Sat,  6 Sep 2025 03:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA00D23D7F4;
+	Sat,  6 Sep 2025 04:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vumd4dJK"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bJhKJKY3"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6557217F36;
-	Sat,  6 Sep 2025 03:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCE429A2
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 04:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757130603; cv=none; b=OuMmrMPhUu4R/4yWREml+5hW+G3+gwPWv8L+RVqdwYTYgW8BGvsGLMgB+Z4JhcgLVEmdZML4yMYoCzMOibtOMHMUDEGMHcs9BaE5IYtq+osimYSixKT+JGDDagUhdtdTEoLyZMZ/n3byWqOolH0OY4v/1UzHo6sT0CgYm3p1aQU=
+	t=1757131901; cv=none; b=D8MGr0o1fD23QaKicd+MTAIg5LTckq7FACbdl+uIn0OQ0cdoz/1UxWaEA/9tMMUw9EELa4By9sjjp8tbFeI0GDDpBdpVe32EPjYVSjiXADWvxJprWO1zWUsCO87jvKdaZzBtyZyDLB0YKwhXOzHcDZeYWfmN7K9bkS97BpdYduA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757130603; c=relaxed/simple;
-	bh=DmHeofOFv2vNUo15zHzaeDgoMr+j1v8wbIXWszn8fjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BIvgU0Vsw4fibtPi62Pq77TPd16G3FlM+ToZ+5YxcvNwEsEE9939DPVjoCwRm2VPxELIgIBSY9ommENDM02Wdtsv7SXw1HBM2cAKI2suxtNsDB/F8WJkcrfKjwXqTH26eHgxc79ZGaZDULc5v0q3HNQJm8enHwlqH03a3CFGZH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vumd4dJK; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-336d3e4df3eso23302501fa.0;
-        Fri, 05 Sep 2025 20:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757130600; x=1757735400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Oo8HVHuI2PqmiKWjB21zsWTxJ4rnJdThwLFkwBUC6w=;
-        b=Vumd4dJKsvayRYXT3RbFirUXIzTB//riU5sqd/0KBVSbVi+zLPChgZhNDMI/VeRxrd
-         m0rJU97McfL0j8Nl+cGoYB03V1JJVTBP7lhDbNY4nwc0e+M0c/SKNQwKK85UGKSC2gi4
-         njQyQb9Vhz6QoXLVqB6gqDVlMGtklmq8u3vkE75OIq88kRBzheUVjTG/WR5JnSVMNVeb
-         zlm25DXaiAX5O4VvutyfqStTy3c1q7VOWhfyciKkagx1i8Fb9EvCAs2+cjl7DmFOsFPo
-         iPF1skIAZg5XYHdVnKO53ifWUyI3AZ7PvbAEAdZyIpsIlT8giif3I1d4Hvbr8s+/Kvku
-         n/9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757130600; x=1757735400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Oo8HVHuI2PqmiKWjB21zsWTxJ4rnJdThwLFkwBUC6w=;
-        b=ZOPogH+Dv+wBdCaRPkumx71OiqMTXCvsa5dv/zVp11KfHoNs1GonJQ0Nw9lqf1MdUg
-         fJPwUw/fvmg8633O58kEPq5JJ3HnTWWWP5AcfoGdR/hy6hsJMpOAafPocA+EnJI2u9RW
-         J0JxB+U/ztMWzc6oIXGApuqAkKqQPqEGqKrMkhTMn8jEka17IyZX6aJIWCHDuGwn96So
-         kYKkFYdmj0kqR4mog5WECk9AvsHGiYsVeGTWRxpi4abTm7DXK6DSA3FtcugFAVs9B8e+
-         QtKBBIaIZyOxs3TpabhEgLmoGg+8Uiar2FXCyw0WR83fYHqg8rNqxiH9BsyeD04j5grP
-         oNbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQkbqd8SDBEBcMkTgxB1+vG/cPAesewj/YCeFbMS+B5HJoDF4XWaacGdwMyyPXRvADqplH4yys0ZSRjHCB@vger.kernel.org, AJvYcCVxFEnwCnTINJXZP3Oo5LV5IXJNB7AT6sohV94u59eXm9ShRu+IKcD6mM/zxc026sW6gG3jLyt02bSBjrw=@vger.kernel.org, AJvYcCW5E8HvDSLaqyEw0SFq4jaisbg2CY8LvJXC2CIAdGDGvSdONkCKCDHW0gqFHdTMDm4IKn1BB0LW8Ovasgyr99g=@vger.kernel.org, AJvYcCX1CBpv4Sl8uY0K35/MYV6E+Gx0ipZmvwljqoz3Kg74KDP+DA+MuM5XoSRMDH16TzqcB1FP9e6k@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQi8EMc1OIW3no38y2q27OzwY+IohYG0BwF+VF/T98Gvi5CTxH
-	i5eRgIxx1cpI0X1c7O32/jAsOIEim7ZDexBsxkSK/E3r1psNk7NVxPxrjF1wKCHs0SRmKcV/YLL
-	SiOJuibPt3b01oV2tk33rUQkEbhsMsfOmD+VO
-X-Gm-Gg: ASbGncuBMYKuSVPXSmVvb+3NukshEtHPEwnC+sIrEyrogRXI4c1QdtQbeazkv01Hstu
-	qGXBFUoOxUJTsWUUqVPSdPk1rxfC7yUQJksDp+VFujSXKM5gm9oG0gvmZpHcUt6Q51Xiohwc+23
-	8IfEE/Gq6Y/K+JHOW0/QTu2UOmNxqBm9daoZw2M8xuH+tPvRzzWHaksTFu/p+Ge9nQN+kDWPBMl
-	PFyXqv6mPbAg2dcicwVrfbNqmx6HL0VI+Bq5o5IMxJwUkaxhAcP
-X-Google-Smtp-Source: AGHT+IGv3mg3LOleQQylXEPOl8dYwHGenSFtPk9Ea+lEqbUL34A0D2Ibt4j4fqLukOPpU1Pw4yNptTi51hIXRCY68wE=
-X-Received: by 2002:a2e:be0e:0:b0:337:f57a:6844 with SMTP id
- 38308e7fff4ca-33b5a3fdaa8mr2442911fa.43.1757130599548; Fri, 05 Sep 2025
- 20:49:59 -0700 (PDT)
+	s=arc-20240116; t=1757131901; c=relaxed/simple;
+	bh=hEx1NKkKUlIrOaELPbvEtcnBzHNEalLmCs6R4U9+pTc=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Tb8QXvP/2qqdQy4Ih/HmVPvp+XLkqqwgfYpHsQ5LF2dwIgdiN5NGHOIFEytYcQsOxdTxVY1EjxZLkd4zHcVjW9WLLaBN6SR9T5gajNMOgqNJgG/dGWPhK+qTx+UuEie6lYxs1PYytCgC3P5OB2N6npvkhfy/i+4YzjhcgJePOqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bJhKJKY3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5862wBNs014242;
+	Sat, 6 Sep 2025 04:10:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:date:from:in-reply-to:message-id:references:subject:to; s=pp1;
+	 bh=/XrWDlMSknBUdI+P/nmBO66b2axhhLzm5K67zB4bETQ=; b=bJhKJKY3GTZ6
+	ZfBnjHiHrRNTHRONw+rlCI97PyrMPiADjl52pdYNzRhGono/R4qOmEmf6J/VWUiZ
+	tgMvWO5Yo+6kIYQaDBa7hkSr8CincgRV6egUrdXktbA7IZVdhRHeI/LB7bs1yx3U
+	KLr1cVeSS56D5dpCtmgWKsfvtLkvCNXKVBSne0Jjq8EvdTZOTNOWU63gn4B+MxQz
+	U9UqRAO2vYxiEBshfYItKOc1Ww0mmAi0dTXd9dxv8WTSOQNNF6U3zQ2uhMcz9x7d
+	K0v3n2IHMynGnC5oIAMy5aG4PIe8d4OOJa4TIuMK3y1/bws+b133X1N5yzVbjnDB
+	tBH1dCdJAA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmw85dg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 06 Sep 2025 04:10:59 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5864Am07010706;
+	Sat, 6 Sep 2025 04:10:58 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmw85de-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 06 Sep 2025 04:10:58 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5861EI5v017222;
+	Sat, 6 Sep 2025 04:10:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vc114mc8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 06 Sep 2025 04:10:57 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5864ArSW50790870
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 6 Sep 2025 04:10:53 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A33B20043;
+	Sat,  6 Sep 2025 04:10:53 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1011820040;
+	Sat,  6 Sep 2025 04:10:49 +0000 (GMT)
+Received: from dw-tp (unknown [9.36.11.250])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat,  6 Sep 2025 04:10:48 +0000 (GMT)
+From: Ritesh Harjani (IBM) <riteshh@linux.ibm.com>
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        christophe.leroy@csgroup.eu, peterz@infradead.org, jpoimboe@kernel.org,
+        jbaron@akamai.com
+Cc: npiggin@gmail.com, rostedt@goodmis.org, ardb@kernel.org,
+        Erhard Furtner <erhard_f@mailbox.org>
+Subject: Re: [PATCH RFC] powerpc: Panic on jump label code patching failure
+In-Reply-To: <20250905061135.1451362-1-ajd@linux.ibm.com>
+Date: Sat, 06 Sep 2025 09:22:04 +0530
+Message-ID: <87qzwki6fv.fsf@ritesh.list@gmail.com>
+References: <20250905061135.1451362-1-ajd@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: PVMDvjw-tL3NZRtUaiBXxzMfAvigclEn
+X-Proofpoint-ORIG-GUID: cbeOG78TMkQe-VMJ3z_O--cBwR6-zolj
+X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68bbb453 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=yJojWOMRYYMA:10 a=voM4FWlXAAAA:8 a=1UX6Do5GAAAA:8 a=VnNF1IyMAAAA:8
+ a=b3CbU_ItAAAA:8 a=iqv5_9DZO53ucXEhF-8A:9 a=IC2XNlieTeVoXbcui8wp:22
+ a=Et2XPkok5AAZYJIKzHr1:22 a=Rv2g8BkzVjQTVhhssdqe:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX/sPPXWdUt8iA
+ cDIg8JcAgGeV/LWC8gxJlwyS8uepFEh2etmVIgLRPiW4uFxdN7IgpLf6UcpemvESv3K951sI8py
+ Ax0ClkRQ9JJjoBKb9tyRi+znKHDCHCL3kz9pgQz+gj6KlKQt5TWn3QpGdbEArL0+7VyVUYozjfb
+ +gfBjzvNqxJwizwgvoNtShktjhDsliOw4V2V9ne1Wow9Ei3Mbu/JwBbkvsdDDGa1210Vjftdg8H
+ MM+ZEMKPN4M7FV9iDgzq2HrcT3XMaxss+lCq6XJTqF9D1sbf3NsyyN6AKpfYcYUcfdWeaIkkW8m
+ MCfH378QQAFfANXMeJD7jkhC8Ri0aabeq+B0pbUcv5YGjcvshpSVrCIlTlzPY6pkR0LkVaYIQtd
+ QYKcGa/O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-05_09,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250905-nilfs2-fix-features-cfi-violation-v1-1-b5d35136d813@kernel.org>
-In-Reply-To: <20250905-nilfs2-fix-features-cfi-violation-v1-1-b5d35136d813@kernel.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sat, 6 Sep 2025 12:49:43 +0900
-X-Gm-Features: Ac12FXz41hyPQuTqHh8UYKbYNa8YEVObnzXSy-4dOBDFQvzoMzz00zjhhbK6qZ8
-Message-ID: <CAKFNMo=yfPPn0bc+vGv4f3yhyOQy33+ZHJJGURyY9NaHaRtToQ@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: fix CFI failure when accessing /sys/fs/nilfs2/features/*
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, linux-nilfs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 6, 2025 at 4:24=E2=80=AFAM Nathan Chancellor wrote:
->
-> When accessing one of the files under /sys/fs/nilfs2/features when
-> CONFIG_CFI_CLANG is enabled, there is a CFI violation:
->
->   CFI failure at kobj_attr_show+0x59/0x80 (target: nilfs_feature_revision=
-_show+0x0/0x30; expected type: 0xfc392c4d)
->   ...
->   Call Trace:
->    <TASK>
->    sysfs_kf_seq_show+0x2a6/0x390
->    ? __cfi_kobj_attr_show+0x10/0x10
->    kernfs_seq_show+0x104/0x15b
->    seq_read_iter+0x580/0xe2b
->   ...
->
-> When the kobject of the kset for /sys/fs/nilfs2 is initialized, its
-> ktype is set to kset_ktype, which has a ->sysfs_ops of kobj_sysfs_ops.
-> When nilfs_feature_attr_group is added to that kobject via
-> sysfs_create_group(), the kernfs_ops of each files is
-> sysfs_file_kfops_rw, which will call sysfs_kf_seq_show() when
-> ->seq_show() is called. sysfs_kf_seq_show() in turn calls
-> kobj_attr_show() through ->sysfs_ops->show(). kobj_attr_show() casts the
-> provided attribute out to a 'struct kobj_attribute' via container_of()
-> and calls ->show(), resulting in the CFI violation since neither
-> nilfs_feature_revision_show() nor nilfs_feature_README_show() match the
-> prototype of ->show() in 'struct kobj_attribute'.
->
-> Resolve the CFI violation by adjusting the second parameter in
-> nilfs_feature_{revision,README}_show() from 'struct attribute' to
-> 'struct kobj_attribute' to match the expected prototype.
->
-> Cc: stable@vger.kernel.org
-> Fixes: aebe17f68444 ("nilfs2: add /sys/fs/nilfs2/features group")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202509021646.bc78d9ef-lkp@intel.co=
-m/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Andrew Donnellan <ajd@linux.ibm.com> writes:
 
-Thanks again!
-I'll send this upstream.
+> If patch_branch() or patch_instruction() fails while updating a jump
+> label, we presently fail silently, leading to unpredictable behaviour
+> later on.
+>
+> Change arch_jump_label_transform() to panic on a code patching failure,
+> matching the existing behaviour of arch_static_call_transform().
+>
+> Reported-by: Erhard Furtner <erhard_f@mailbox.org>
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+>
+> ---
+>
+> Ran into this while debugging an issue that Erhard reported to me about my
+> PAGE_TABLE_CHECK series on a G4, where updating a static key failed
+> silently, but only for one call site, leading to an incorrect reference
+> count later on. This looks to be due to the issue fixed in [0]. A loud
+> failure would have saved us all considerable debugging time.
+>
+> Should I change the return type of arch_jump_label_transform() and handle
+> this in an arch-independent way? Are there other users of code patching
+> in powerpc that ought to be hardened?
+>
+> Or is this excessive?
+>
+> [0] https://patchwork.ozlabs.org/project/linuxppc-dev/patch/4b5e6eb281d7b1ea77619bee17095f905a125168.1757003584.git.christophe.leroy@csgroup.eu/
+> ---
+>  arch/powerpc/kernel/jump_label.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/jump_label.c b/arch/powerpc/kernel/jump_label.c
+> index 2659e1ac8604..80d41ed7ac50 100644
+> --- a/arch/powerpc/kernel/jump_label.c
+> +++ b/arch/powerpc/kernel/jump_label.c
+> @@ -12,9 +12,14 @@ void arch_jump_label_transform(struct jump_entry *entry,
+>  			       enum jump_label_type type)
+>  {
+>  	u32 *addr = (u32 *)jump_entry_code(entry);
+> +	int err;
+>  
+>  	if (type == JUMP_LABEL_JMP)
+> -		patch_branch(addr, jump_entry_target(entry), 0);
+> +		err = patch_branch(addr, jump_entry_target(entry), 0);
+>  	else
+> -		patch_instruction(addr, ppc_inst(PPC_RAW_NOP()));
+> +		err = patch_instruction(addr, ppc_inst(PPC_RAW_NOP()));
+> +
+> +	if (err)
+> +		panic("%s: patching failed, err %d, type %d, addr %pS, target %pS\n",
+> +		      __func__, err, type, addr, (void *)jump_entry_target(entry));
+>  }
 
-Regards,
-Ryusuke Konishi
+arch_jump_label_transform() is mainly getting called from
+__jump_level_update() and it's used for enabling or updating static keys / branch.
+
+But static keys can also be used by drivers / module subsystem whose
+initialization happens late. Although I understand that if the above
+fails, it might fail much before, from the arch setup code itself, but
+panic() still feels like a big hammer.
+
+Would pr_err() print with WARN_ON_ONCE(1) would suffice in case of an
+err?
+
+Also you said you ran into a problem at just one call site where above
+was silently failing. With the above change are you able to hit the
+panic() now? Because from what I see in patch_instruction(), it mainly
+will boil down to calling __patch_mem() which always returns 0.
+Although there are other places where there can be an error returned,
+so I was wondering if that is what you were hitting or something else?
+
+-ritesh
+
+> -- 
+> 2.51.0
 
