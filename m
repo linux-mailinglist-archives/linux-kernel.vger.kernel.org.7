@@ -1,127 +1,189 @@
-Return-Path: <linux-kernel+bounces-804434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB041B476D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:18:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703A7B476E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE731BC6760
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:18:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC54E7A5591
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42303285C96;
-	Sat,  6 Sep 2025 19:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3300289358;
+	Sat,  6 Sep 2025 19:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRmMeziJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PMP6Bquu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EA825B1C5;
-	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DC62550A4;
+	Sat,  6 Sep 2025 19:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757186268; cv=none; b=QLAZwZzc8XTNWwtB00FZAIBlcFA6ZFLOL3WKCo/u1yQz5sZUZUUVBM2rfSxJhr+fu9P8be/BhAjJPxSdSakI6U1UalJfhVBzDZUfDTHEzjaqjnYrDskIFq2gdPvDHjdEbZjmvnGg526heDwY46peQbe996zB9rULxAQ6p58J+eM=
+	t=1757186543; cv=none; b=Gc8ZxyGCQETJqQlq43sEXAMFIuhNk9FjD4kTrFQGg8QnqmlwlMuINgPdkGIjX/6nr7p0zypfbjcU5JUxez2komEWHiCH+lEmSao2xMyTL0tgKJmMwBUR917wc7Lg6ubYILZBY1KpN7mNaT4OOmqWQfY3RyX1F8jAeClIyjznr14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757186268; c=relaxed/simple;
-	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=kFtM5W8XU4lMmyp4ADCVVaQya+ze6TJWx7I4iWKdBe3G25i8CaYbLbcrK9thdfq6+3JiyDK276yj//aDJW7ZD40fCC3MwRFQOo2uz3spdnQZ0khgSQtqmaGEpEJ+YgAabWuFibbtBLWKms2dHFazVUZb0SkVEDcWzUoMTYjrrtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRmMeziJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C21C4CEE7;
-	Sat,  6 Sep 2025 19:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757186268;
-	bh=PKtVETpt3iAueUyOAHaFirlCACUUZHxID9Y/hmP47vQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PRmMeziJu1HlJ53s8cvAtqN3495uZxs/Jtw+3b/wl/tpByw8ltRq0GtkKT5oNdf+C
-	 TAPPZz4RcsGIf/NRUAbhLQ1RSKhHGo5C/s6RGcWQE/PKHndd2wjq1zei3fsjuYZt5+
-	 /FxHE04rv5z6gL73pOHTaHTdlXmCUpjihD9LfZFQMUecsAMq/3zSKISSdOJQxTCN3f
-	 4Gw5xhCv7blWlgh30jQ+SKks6wMMmRv7JcZkwuBNy6dCHZBlWltomYuPA1N4Xy687k
-	 lv4lhcd9mWTWgfRbJ0jk8MKkaJeRUwkodnUSY+8hO/LuGvKxnmLYLtAH8FJfzD1M7P
-	 mYZfDluqIseqQ==
-Date: Sat, 06 Sep 2025 14:17:47 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1757186543; c=relaxed/simple;
+	bh=PG93cAu1Xu9wl1cfjEqbuP7XLKHbpHXEiceV7SE9Rww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjqEGbvoUZGP86CnSeRMXBh4dQkzjGe5jJdTfSnryQ2RHHQgFX2ogm7r/6dsTXPubA9YAwBIWuLCs6DpMg4s/CcjFtpKEm5E6xu20zjYUoePvJMkCm6KebgxU+ZtOEf0RlmE/RLKb3WWzBrWlaDShWG5SJPQXUDENMLf0Z9p8qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PMP6Bquu; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757186541; x=1788722541;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PG93cAu1Xu9wl1cfjEqbuP7XLKHbpHXEiceV7SE9Rww=;
+  b=PMP6BquuEU7aP5pBrG8g1S/uAdqPqJ82g17MEutacbHue82sqYpKuIXi
+   wRVnBntvFNOvFfFUoAlITg7tyIFQ3oourMMTcwvQk/XzZ0e6dah1hJ9tZ
+   VKvyLHXbiX3vD/8eh+JWYnJdOJnRU7Xwof/UEzVfZQQq7WMQwup4CqwbZ
+   CX05Ew0Uhca5YhZsiJrhD1q/lqnNfFA5ro16n2cHe4lKADjo/6469snt1
+   +4Pl3XtykLttCQbbS9zDlhe+6/9BENe1b1gmobSHzmB1Dz1Rht7E+0P2q
+   vPUGEjnQvkGjU6sYbTpsOwveSj1XeROupf87d1PgIE195rYPE0YpwP1mN
+   A==;
+X-CSE-ConnectionGUID: R1MpYRzATiiQQM6nafVB9g==
+X-CSE-MsgGUID: dKHaX/AiSKSYx794eJIoFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="77115273"
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="77115273"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 12:22:20 -0700
+X-CSE-ConnectionGUID: wWzejtnrRHipVevferClww==
+X-CSE-MsgGUID: e1d9xfwOTeSfjAI16doFWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="196090478"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 06 Sep 2025 12:22:17 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuyUJ-0001l1-0m;
+	Sat, 06 Sep 2025 19:22:15 +0000
+Date: Sun, 7 Sep 2025 03:21:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Kamlesh Gurudasani <kamlesh@ti.com>,
+	Manorit Chawdhry <m-chawdhry@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Vishal Mahaveer <vishalm@ti.com>,
+	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
+Message-ID: <202509070251.7MfOWGUB-lkp@intel.com>
+References: <20250905133504.2348972-8-t-pratham@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Charan Pedumuru <charan.pedumuru@gmail.com>, 
- =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
- Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, 
- Thierry Reding <treding@nvidia.com>, linux-clk@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Dmitry Osipenko <digetx@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250906135345.241229-5-clamor95@gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
- <20250906135345.241229-5-clamor95@gmail.com>
-Message-Id: <175718505408.1618397.11958757465445078243.robh@kernel.org>
-Subject: Re: [PATCH v2 04/23] dt-bindings: display: tegra: document Tegra30
- VI and VIP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905133504.2348972-8-t-pratham@ti.com>
+
+Hi Pratham,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on herbert-cryptodev-2.6/master]
+[also build test WARNING on next-20250905]
+[cannot apply to herbert-crypto-2.6/master linus/master v6.17-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/T-Pratham/crypto-ti-Add-support-for-AES-XTS-in-DTHEv2-driver/20250905-214245
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20250905133504.2348972-8-t-pratham%40ti.com
+patch subject: [PATCH 4/4] crypto: ti: Add support for AES-CCM in DTHEv2 driver
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250907/202509070251.7MfOWGUB-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070251.7MfOWGUB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509070251.7MfOWGUB-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/crypto/ti/dthev2-aes.c:818:7: warning: variable 'unpadded_cryptlen' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     818 |                 if (!dst) {
+         |                     ^~~~
+   drivers/crypto/ti/dthev2-aes.c:962:6: note: uninitialized use occurs here
+     962 |         if (unpadded_cryptlen % AES_BLOCK_SIZE)
+         |             ^~~~~~~~~~~~~~~~~
+   drivers/crypto/ti/dthev2-aes.c:818:3: note: remove the 'if' if its condition is always false
+     818 |                 if (!dst) {
+         |                 ^~~~~~~~~~~
+     819 |                         ret = -ENOMEM;
+         |                         ~~~~~~~~~~~~~~
+     820 |                         goto aead_prep_dst_err;
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~
+     821 |                 }
+         |                 ~
+   drivers/crypto/ti/dthev2-aes.c:779:32: note: initialize the variable 'unpadded_cryptlen' to silence this warning
+     779 |         unsigned int unpadded_cryptlen;
+         |                                       ^
+         |                                        = 0
+>> drivers/crypto/ti/dthev2-aes.c:995:49: warning: result of comparison of constant 2305843009213693951 with expression of type 'unsigned int' is always false [-Wtautological-constant-out-of-range-compare]
+     995 |             (ctx->aes_mode == DTHE_AES_CCM && cryptlen > DTHE_AES_CCM_CRYPT_MAXLEN)) {
+         |                                               ~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
 
-On Sat, 06 Sep 2025 16:53:25 +0300, Svyatoslav Ryhel wrote:
-> Existing Parallel VI interface schema for Tegra20 is fully compatible with
-> Tegra30; hence, lets reuse it by setting fallback for Tegra30.
-> 
-> Adjust existing VI schema to reflect that Tegra20 VI is compatible with
-> Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
-> an enum instead of list of const.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
->  .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
->  2 files changed, 19 insertions(+), 9 deletions(-)
-> 
+vim +995 drivers/crypto/ti/dthev2-aes.c
 
-My bot found errors running 'make dt_binding_check' on your patch:
+   973	
+   974	static int dthe_aead_crypt(struct aead_request *req)
+   975	{
+   976		struct dthe_tfm_ctx *ctx = crypto_aead_ctx(crypto_aead_reqtfm(req));
+   977		struct dthe_aes_req_ctx *rctx = aead_request_ctx(req);
+   978		struct dthe_data *dev_data = dthe_get_dev(ctx);
+   979		struct crypto_engine *engine;
+   980		unsigned int cryptlen = req->cryptlen;
+   981	
+   982		// In decryption, last authsize bytes are the TAG
+   983		if (!rctx->enc)
+   984			cryptlen -= ctx->authsize;
+   985	
+   986		/* Need to fallback to software in the following cases due to HW restrictions:
+   987		 * - Both AAD and plaintext/ciphertext are zero length
+   988		 * - For AES-GCM, AAD length is more than 2^32 - 1 bytes
+   989		 * - For AES-CCM, AAD length is more than 2^16 - 2^8 bytes
+   990		 * - For AES-CCM, ciphertext length is more than 2^61 - 1 bytes
+   991		 */
+   992		if ((req->assoclen == 0 && cryptlen == 0) ||
+   993		    (ctx->aes_mode == DTHE_AES_GCM && req->assoclen > DTHE_AES_GCM_AAD_MAXLEN) ||
+   994		    (ctx->aes_mode == DTHE_AES_CCM && req->assoclen > DTHE_AES_CCM_AAD_MAXLEN) ||
+ > 995		    (ctx->aes_mode == DTHE_AES_CCM && cryptlen > DTHE_AES_CCM_CRYPT_MAXLEN)) {
+   996			struct aead_request *subreq = &rctx->fb_req;
+   997			int ret;
+   998	
+   999			aead_request_set_tfm(subreq, ctx->aead_fb);
+  1000			aead_request_set_callback(subreq, req->base.flags,
+  1001						  req->base.complete, req->base.data);
+  1002			aead_request_set_crypt(subreq, req->src, req->dst,
+  1003					       req->cryptlen, req->iv);
+  1004			aead_request_set_ad(subreq, req->assoclen);
+  1005	
+  1006			ret = rctx->enc ? crypto_aead_encrypt(subreq) :
+  1007				crypto_aead_decrypt(subreq);
+  1008	
+  1009			return ret;
+  1010		}
+  1011	
+  1012		engine = dev_data->engine;
+  1013		return crypto_transfer_aead_request_to_engine(engine, req);
+  1014	}
+  1015	
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
-	'one0f' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
-	'type' was expected
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml: properties:compatible: Additional properties are not allowed ('one0f' was unexpected)
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250906135345.241229-5-clamor95@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
