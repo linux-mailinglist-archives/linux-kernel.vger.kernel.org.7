@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-804227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9E7B46D94
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19115B46D96
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BAA11C2198E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E28A7C6881
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41742EFD88;
-	Sat,  6 Sep 2025 13:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594112EFD88;
+	Sat,  6 Sep 2025 13:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BbOAxFw2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="OgLxGL9P"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AB62701BD;
-	Sat,  6 Sep 2025 13:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B2527FD52;
+	Sat,  6 Sep 2025 13:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757164395; cv=none; b=WOIDYslcxE/FlEz3MHjgw6UVwiRQdSM9HfnXgN9vlfzg7BJ3wBt/GmKkHVxhgCrc+As9R6g/XxY/BJrLWNjtlIGxHdgNL9u2UNDE8lI/sHJ6vdNq4A+HflhwSptGKFiokynufZ7s8WYIWRUYNZA2yVkpB3ki6Hr+6vuMrs7siEI=
+	t=1757164431; cv=none; b=HPhfgADvxkGlh5g79PEfwpDYu3YMbQ4+YHFOiIvyEBeUQGR60lHyrU7xi9TheM9aDj6bv99+kfSLA9hrE+hSKjUcJwZKlaQ/3FPZ6ejFEdI50s5sbc/5ECEXLmtOekz+Rk+M56FnedCSSApLKP+Re7Qj9obe6HUzxPoH1GeWxbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757164395; c=relaxed/simple;
-	bh=DEcm+7zFwIRgV12nXW0jApJsCHVEQfgXXb/sxTjUq7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJmPEG2D2Lp25UnjjxGmBp3NO4sFJym9WT5+6mxq5ZSvPGdUM+xFYDhSjWgV+LSdNv920cCSHzdyWO5ETD2r5dBvePfE++hjjorrslq29iz8+BWllHkI6FMqHca5Rr3CkdqlpcFojdy7FiVm1sOW1deXAeTidkPizVkrKzdW6Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BbOAxFw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DB1C4CEE7;
-	Sat,  6 Sep 2025 13:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757164394;
-	bh=DEcm+7zFwIRgV12nXW0jApJsCHVEQfgXXb/sxTjUq7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BbOAxFw2tbcbYCOyVHbRuq0PqvFy2v9XxXOrzIJ/Jqx9ANQCABK0VA9XiEuIIhQtp
-	 Qfmu00GhQsC7lOcb77Ppv90uqM0lXhmesbxF5UGGIwVyhHh0hgob9/WBQiKF6SyI7Q
-	 yO6dYv3S9mDZzR7MItcQsL8PkQ09PYPFDkWqs7KQ=
-Date: Sat, 6 Sep 2025 15:13:12 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Guan-Yu Lin <guanyulin@google.com>
-Cc: mathias.nyman@intel.com, hannelotta@gmail.com,
-	zijun.hu@oss.qualcomm.com, xu.yang_2@nxp.com,
-	stern@rowland.harvard.edu, andriy.shevchenko@linux.intel.com,
-	ben@decadent.org.uk, quic_wcheng@quicinc.com,
-	krzysztof.kozlowski@linaro.org, dh10.jung@samsung.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 2/4] usb: offload: add apis for offload usage tracking
-Message-ID: <2025090650-decal-canary-8e34@gregkh>
-References: <20250801034004.3314737-1-guanyulin@google.com>
- <20250801034004.3314737-3-guanyulin@google.com>
- <2025081326-guileless-lego-ec59@gregkh>
- <CAOuDEK3KZHgY7Z2mBOuEhuUn8eLfjS5BPcx3kaMqVYLUhOavWA@mail.gmail.com>
+	s=arc-20240116; t=1757164431; c=relaxed/simple;
+	bh=U6Wn//k2dt+WlP5FxdkKg0o/lsaAgnjgIxpLlAHFjRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GBxJx2RiFI5eLQY7GK2G662NFAV0W+3Xs+TtKoLJG7nGQL7V0q7mIf3WEeyqCU/sAZrJx1SEsvDuyudg5gaPvwth5eLEXI0Y9tcoIUR2It/4spypMAJGvvHOM75cUmfgxG3Ov0Yl5K585I9NVNfdmUQxAWAKiC0MIleDnrh0ih8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=OgLxGL9P; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757164418;
+	bh=U6Wn//k2dt+WlP5FxdkKg0o/lsaAgnjgIxpLlAHFjRQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OgLxGL9PmY2hDenIKO9MTOuA3hj3rjjLAE6gjC9/ut3CTDj/0n6d/ADaLV5sS/pre
+	 qdp9FbPirBIExy5Mm6og2meB1/orgHoCFAjd1mkFfN6LpqT5tDkT+pt1SvnX6v4Rr3
+	 S+dUj2BvE4zyk7sJXMzhEK+TNEpx0jSsvlRlZlz1sGzjD4U7Pbw7Lc9JjP0N1JkP6X
+	 aJBoU8dj0tx2HIbz7+5uGBtNJa4Rd/kls/Gn4E9QNFJgn/AewqUzY9R7NJduTXFdld
+	 zISErTvpey3eCskU22l+eQ26xZTtEPZOgNdeKHDXVD3NPo5/0eVwBL78KMSspEUwe4
+	 9UiA8dfLBbK1A==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 5E7046000C;
+	Sat,  6 Sep 2025 13:13:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id E9D4C200438;
+	Sat, 06 Sep 2025 13:13:29 +0000 (UTC)
+Message-ID: <4eda9c57-bde0-43c3-b8a0-3e45f2e672ac@fiberby.net>
+Date: Sat, 6 Sep 2025 13:13:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 05/11] tools: ynl-gen: define nlattr *array in a
+ block scope
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-wg-ynl-prep@fiberby.net>
+ <20250904220156.1006541-5-ast@fiberby.net>
+ <20250905171809.694562c6@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20250905171809.694562c6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOuDEK3KZHgY7Z2mBOuEhuUn8eLfjS5BPcx3kaMqVYLUhOavWA@mail.gmail.com>
 
-On Tue, Aug 26, 2025 at 11:59:00AM +0800, Guan-Yu Lin wrote:
-> On Wed, Aug 13, 2025 at 10:50 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Aug 01, 2025 at 03:39:31AM +0000, Guan-Yu Lin wrote:
-> > > +
-> > > +config USB_OFFLOAD
-> > > +     bool "Enable USB offload feature"
-> >
-> > I'm confused, we already have a "USB offload feature" that went into the
-> > last kernel release, why do we need a separate config option for this as
-> > well?  Shouldn't this code only get built if the drivers that need it
-> > select it automatically?  Forcing distros to configure this isn't
-> > generally a good idea if at all possible.
-> >
+On 9/6/25 12:18 AM, Jakub Kicinski wrote:
+> On Thu,  4 Sep 2025 22:01:28 +0000 Asbjørn Sloth Tønnesen wrote:
+>> Instead of trying to define "struct nlattr *array;" in the all
+>> the right places, then simply define it in a block scope,
+>> as it's only used here.
+>>
+>> Before this patch it was generated for attribute set _put()
+>> functions, like wireguard_wgpeer_put(), but missing and caused a
+>> compile error for the command function wireguard_set_device().
+>>
+>> $ make -C tools/net/ynl/generated wireguard-user.o
+>> -e      CC wireguard-user.o
+>> wireguard-user.c: In function ‘wireguard_set_device’:
+>> wireguard-user.c:548:9: error: ‘array’ undeclared (first use in ..)
+>>    548 |         array = ynl_attr_nest_start(nlh, WGDEVICE_A_PEERS);
+>>        |         ^~~~~
 > 
-> Based on the discussion in v13, a new, separate USB configuration
-> option is required to avoid core USB functions being enabled or
-> disabled via an xhci-specific option. The USB offload feature involves
-> a sideband entity that can access xhci resources, which, from the USB
-> driver's viewpoint, means USB transfers are offloaded to this other
-> entity. Therefore, the name "USB_OFFLOAD" was chosen to reflect this
-> functionality.
+> Dunno about this one. In patch 4 you basically add another instance of
+> the "let's declare local vars at function level" approach. And here
+> you're going the other way. This patch will certainly work, but I felt
+> like I wouldn't have written it this way if I was typing in the parsers
+> by hand.
 
-Again, you are increasing the number of config options here, which does
-not make sense.  Why would anyone only want a subset, and not just the
-whole thing?
+Thanks for the reviews.
 
-Yes, USB_OFFLOAD only works today on xhci, and that's fine, so let's
-just keep it that way.
+In patch 4, it is about a variable used by multiple Type classes having
+presence_type() = 'count', which is currently 3 classes:
+- TypeBinaryScalarArray
+- TypeMultiAttr
+- TypeArrayNest (later renamed to TypeIndexedArray)
 
-> > > +     depends on USB
-> > > +     depends on USB_XHCI_SIDEBAND_SUSPEND
-> >
-> > Especially because all "desktops" do not want this code selected, so
-> > having it in all distros feels like a waste to me.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> For the config keywords, we could automatically select USB_OFFLOAD
-> once USB_XHCI_SIDEBAND_SUSPEND is selected to reduce configuration
-> efforts.
+In patch 5, I move code for a special variable used by one Type class,
+to be contained within that class. It makes it easier to ensure that the
+variable is only defined, when used, and vice versa. This comes at the
+cost of the generated code looking generated.
 
-select is a nightmare to maintain and understand.  Please just reduce
-configuration efforts by not adding new options at all :)
+If we should make the generated code look like it was written by humans,
+then I would move the definition of these local variables into a class
+method, so `i` can be generated by the generic implementation, and `array`
+can be implemented in it's class. I will take a stab at this, but it might
+be too much refactoring for this series, eg. `len` is also defined local
+to conditional blocks multiple branches in a row.
 
-thanks,
+tools/net/ynl/generated/nl80211-user.c:
+nl80211_iftype_data_attrs_parse(..) {
+   [..]
+   ynl_attr_for_each_nested(attr, nested) {
+     unsigned int type = ynl_attr_type(attr);
 
-greg k-h
+     if (type == NL80211_BAND_IFTYPE_ATTR_IFTYPES) {
+       unsigned int len;
+       [..]
+     } else if (type == NL80211_BAND_IFTYPE_ATTR_HE_CAP_MAC) {
+       unsigned int len;
+       [..]
+     [same pattern 8 times, so 11 times in total]
+     } else if (type == NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PPE) {
+       unsigned int len;
+       [..]
+     }
+   }
+   return 0;
+}
+
+(I didn't have to search for this, I saw the pattern in wireguard-user.c,
+looked for it in nl80211-user.c and this was the first `len` usage there.)
+
+That looks very generated, I would have `len` defined together with `type`,
+and a switch statement would also look a lot more natural, but maybe leave
+the if->switch conversion for the compiler to detect.
 
