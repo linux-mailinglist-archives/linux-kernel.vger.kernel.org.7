@@ -1,181 +1,634 @@
-Return-Path: <linux-kernel+bounces-804207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92455B46CD2
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DB9B46CDB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB151891264
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 283263A66FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7A928B3E2;
-	Sat,  6 Sep 2025 12:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372CC28B3E2;
+	Sat,  6 Sep 2025 12:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gygq9he6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBUUUJBm"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AC4283151;
-	Sat,  6 Sep 2025 12:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30371A8F84;
+	Sat,  6 Sep 2025 12:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757161491; cv=none; b=VSHPB4ApReTGgNl14JMH8x2Lko8xhe4pt0Con675TjX9oUnK4U8ZskouZoxOCZjqx7Htrf6FmADi3wQPHad9k6mSMeTSmuPuLvkeIZG7TF3x1cndMsax/TrG2scLGcLrhCxzwR9jfIDoHeqEvJv5JwgKyl+piX5rwlv9XaMDMsM=
+	t=1757161665; cv=none; b=RxaylPeh6jBsbMxAysDja/FbcHA5B4xQOlvqR3213bhyFlMzCg/fdwUhIKQMnoM1/PHfbkCfG+z9qk10KcTxddGu0d3QQvpRZsUTfjHVPJ5CIyGMGJjObpS3YFDaX76ZcqlN9CZpupkT4G9S3ZTEs4TC1ezb3hTBJjEPoTFzJF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757161491; c=relaxed/simple;
-	bh=gJXU2U5xy0/jjw5rCnpX1JJEexVKVcos6FHRn+Gwj+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jA13R2xCfV6QTnhc3Tdgtny0UBIvXOVC282azU0TOcLO5evbKjWmmHud1ItOV72o1QnhoY8rLjrqGotGOvxRIv5n546j2Gl6pmtjs1/MkpBNg/aq+Q180WYM5CSkw+h7aimzuGOFy5/vymskL7P856InUYCMsSHZlMTElvxpvdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gygq9he6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685FEC4CEF4;
-	Sat,  6 Sep 2025 12:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757161490;
-	bh=gJXU2U5xy0/jjw5rCnpX1JJEexVKVcos6FHRn+Gwj+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gygq9he6QH9d+LK/Z9k8fQWs7bfcFjso2fliKwcuY69Vefj+3cnIrdkbdgI7GF4RM
-	 AmaO+6oQ57AuAhMw1GHTkL++PJDMtiffDaNabbOCLlomJdwOmD9OAekYZX46/g2qa2
-	 4HSbul4Gt7geP/p52akGIdctjs1ptE8xQDEs6GuEYJI5/2XaTNqS8tqU0sqjUUuChP
-	 bNEN28/3tyzxhGMXRkmFrfS3Tf4zJFZZ+2sPVa/H0d5B9+YWXIrfogAdZsxpJvRo+7
-	 FPFuwWKnfz8wg90RawQsm6uUolA8j+OANes0GyDW/npcIvzH60B8T2FxZOTomLYDdt
-	 wb5Jx5zCsSIow==
-Message-ID: <f49b5db9-88b7-4419-90ab-647c048c9ddb@kernel.org>
-Date: Sat, 6 Sep 2025 21:24:44 +0900
+	s=arc-20240116; t=1757161665; c=relaxed/simple;
+	bh=PbFJYnlmCw87IIi8fkk0XAehdW/sVfzTc0fupsX4dxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pOgn1eW9LLfc90of2ZQF1HyTKUfEeJrewjhVdBdmN/R18qlHkG+f+uoR8rdxgU1F19rBuM1kpCrasfZy3ikPfZqvH2dVg1TgMP6YjY6eW+MJJ0/B4GFTm/wrcA5ziE/dUrzI2Q9TT6dSUkMJ/9qsWstp+rYSnfFtJpjijEO339M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBUUUJBm; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso1894240f8f.2;
+        Sat, 06 Sep 2025 05:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757161661; x=1757766461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtIxLE7ZwWG4ZdWr9IpjFIHAP3cNcYJIs5BxYc7YsaU=;
+        b=eBUUUJBmJDoQ7XKVX6uO+pPz8r+ucprLx6hwxsUqC7XSQ80oNBXXQ1kWlNHR2hwkqZ
+         lSEQPE2W5TmGfxG1i9E3pDG0N2/tDjs9TxpISF+PRWD8MeH+AWWPagBu4gIALNJ69Bls
+         UsfjMrfzbDLR98DtdBYrsWMzaqOqDZ60d/59EXigJkjkuG5QXGJMpgKBCPggia9tq7uF
+         bfFRMEsgmCPjbCvaU+Lexk13SvFMCdTApKe/k/BYJ4SjKmOvKLXB7WHQG24mmlxcXP8O
+         EAYstj3xmuVTiFlQB2xu6vIBDLghMvDDObGLeXdHnf0RjsbI2++z1tpewtRTI94FrlGR
+         GcxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757161661; x=1757766461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FtIxLE7ZwWG4ZdWr9IpjFIHAP3cNcYJIs5BxYc7YsaU=;
+        b=OmNKBhAwANXd1Xt80F96IL/tKsSn00qTTttsMRSCEhW4omhTUQ1fYnd6cZkvPwzadx
+         Y+62RdVBRuS8kfDateIIIi2jzG9+yC1apJkhXesSbRD9N0Kzc/sKL99AszvmCebZjVS8
+         zb4O+GYH7turC/Y9dXGHKjpOPYZeq2R3mF6P1suw+V/oL/Bhl6d+K4ZQhY3XXrjz98ti
+         dI8x4SJPMCD6XeCheZ0HJUSy/h8z3x4wSKqw2peCFGbK6mOcgDJW1EM/Sfy7XbR+CGDC
+         gngl/OA582cmV9CKm3TeFiqcfkKgO7sOhmI1D/gC3AsgruOoZ2mPLJ7R4oorPbpd9Q+M
+         tU1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWn4BVou9i/LXguK2CpJIMhzuXb8DrCXb2Wuy2RsqXR4h9aZ5ts5PPO5xbtN3EV8/HMfZZQ/L0Ww0oGLJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyBvTc0m/8fhpZl2R8O+kRUVZ76JYJ1ff+SWrxBGLvC2YYG2nJ
+	TtDa4EkkTtwcxzjZU2vpGawd8KiBi9RhiOO+parNwzFYvdpaj/8xeldSJOJo4A==
+X-Gm-Gg: ASbGnct/AM7dgIsrvO8ZpiqptcD7qJg5BpbOrPyfDWHDD1nd3CGAR6dwaJ4f61I5542
+	8DlmCBo43zY+RJwRFoEzfZ7AtlgujMni8Km+TVrOj7Vbe31qajs5/alw8qq0FzJLUT5rV/B1Xui
+	jBlY2Cm3tZegPtpFREFcaUxcouHk79ijDaAvwiuRawVTQtgyqW963NPUjVcgL4hMd2q5AIVneYl
+	90vS0E0nQ1izVqsHwRdMPDqQQJYKQTeyorFd6cun30DWwZUsHaUvQH7hHMoA27pTe5IjnKOCBPm
+	jGV82sYIPCcK+aJblvYwfkwbLwnA5zQJtKU40kTgkK+YYJL0aI97OqyAKfR/fbKwUSqL2eWPsIL
+	vA+N3qLWxzl2PHwvFGucnqGhk+qwROWJF86+mBXQCLhmvFciT
+X-Google-Smtp-Source: AGHT+IGqdssGcgDuLRqlRIFo8v9Ppl3a5NLTvjvDEiRfylawgRWaBLuFz5WSgvAlwrbRLLkbURqNEg==
+X-Received: by 2002:a05:6000:40c9:b0:3e5:2082:8943 with SMTP id ffacd0b85a97d-3e64c1c2e40mr1211942f8f.46.1757161660803;
+        Sat, 06 Sep 2025 05:27:40 -0700 (PDT)
+Received: from Al-Qamar ([2a00:f29:258:2ea4:8502:df64:bca:486e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3dedea839c1sm13134061f8f.63.2025.09.06.05.27.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 05:27:40 -0700 (PDT)
+From: Fidal Palamparambil <rootuserhere@gmail.com>
+To: linux-modules@vger.kernel.org
+Cc: mcgrof@kernel.org,
+	petr.pavlu@suse.com,
+	da.gomez@kernel.org,
+	samitolvanen@google.com,
+	linux-kernel@vger.kernel.org,
+	Fidal palamparambil <rootuserhere@gmail.com>
+Subject: [PATCH] arm64/acpi: Fix multiple issues in ACPI boot support code
+Date: Sat,  6 Sep 2025 16:27:30 +0400
+Message-ID: <20250906122731.946-1-rootuserhere@gmail.com>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: extcon: rt8973a: Convert DT bindings to YAML
-To: Artur Weber <aweber.kernel@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250817-rt8973a-dt-bindings-yaml-v1-1-150eb4599dc9@gmail.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250817-rt8973a-dt-bindings-yaml-v1-1-150eb4599dc9@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Fidal palamparambil <rootuserhere@gmail.com>
 
-Applied it. Thanks
+- Fixed memory leak in acpi_fadt_sanity_check() by ensuring acpi_put_table()
+  is called in all error paths
+- Corrected error handling in parse_acpi() by removing incorrect snprintf() usage
+- Added missing compiler_attributes.h include for fallthrough support
+- Verified proper NULL pointer checks in acpi_os_ioremap()
 
+These fixes address potential memory leaks, compilation warnings, and
+improper error handling in the ARM64 ACPI boot support code.
 
-25. 8. 17. 17:52에 Artur Weber 이(가) 쓴 글:
-> Convert the device tree bindings for Richtek RT8973A MUIC to the YAML
-> format. No functional changes.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> I've added Chanwoo Choi as the binding maintainer as he is listed
-> as the author of the driver for this device; I can change this if
-> needed.
-> ---
->  .../devicetree/bindings/extcon/extcon-rt8973a.txt  | 23 ----------
->  .../bindings/extcon/richtek,rt8973a-muic.yaml      | 49 ++++++++++++++++++++++
->  2 files changed, 49 insertions(+), 23 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt b/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt
-> deleted file mode 100644
-> index cfcf455ad4deffc1e4819934e6dc6fb3f95a54a5..0000000000000000000000000000000000000000
-> --- a/Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt
-> +++ /dev/null
-> @@ -1,23 +0,0 @@
-> -
-> -* Richtek RT8973A - Micro USB Switch device
-> -
-> -The Richtek RT8973A is Micro USB Switch with OVP and I2C interface. The RT8973A
-> -is a USB port accessory detector and switch that is optimized to protect low
-> -voltage system from abnormal high input voltage (up to 28V) and supports high
-> -speed USB operation. Also, RT8973A support 'auto-configuration' mode.
-> -If auto-configuration mode is enabled, RT8973A would control internal h/w patch
-> -for USB D-/D+ switching.
-> -
-> -Required properties:
-> -- compatible: Should be "richtek,rt8973a-muic"
-> -- reg: Specifies the I2C slave address of the MUIC block. It should be 0x14
-> -- interrupts: Interrupt specifiers for detection interrupt sources.
-> -
-> -Example:
-> -
-> -	rt8973a@14 {
-> -		compatible = "richtek,rt8973a-muic";
-> -		interrupt-parent = <&gpx1>;
-> -		interrupts = <5 0>;
-> -		reg = <0x14>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml b/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f9e0d816c025957e8b96b15bdf478e589e653e90
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/extcon/richtek,rt8973a-muic.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Richtek RT8973A MUIC
-> +
-> +maintainers:
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +
-> +description:
-> +  The Richtek RT8973A is Micro USB Switch with OVP and I2C interface. The RT8973A
-> +  is a USB port accessory detector and switch that is optimized to protect low
-> +  voltage system from abnormal high input voltage (up to 28V) and supports high
-> +  speed USB operation. Also, RT8973A support 'auto-configuration' mode.
-> +  If auto-configuration mode is enabled, RT8973A would control internal h/w patch
-> +  for USB D-/D+ switching.
-> +
-> +properties:
-> +  compatible:
-> +    const: richtek,rt8973a-muic
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        usb-switch@14 {
-> +          compatible = "richtek,rt8973a-muic";
-> +          reg = <0x14>;
-> +          interrupt-parent = <&gpio>;
-> +          interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-> 
-> ---
-> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> change-id: 20250817-rt8973a-dt-bindings-yaml-46c26fc14ac0
-> 
-> Best regards,
+Signed-off-by: Fidal palamparambil <rootuserhere@gmail.com>
+---
+ arch/arm64/kernel/acpi.c    |  17 +-
+ arch/arm64/kernel/acpi.orig | 466 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 480 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/kernel/acpi.orig
 
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 4d529ff7ba51..218f39e5ae0f 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/acpi.h>
+ #include <linux/arm-smccc.h>
++#include <linux/compiler_attributes.h>
+ #include <linux/cpumask.h>
+ #include <linux/efi.h>
+ #include <linux/efi-bgrt.h>
+@@ -55,16 +56,26 @@ static int __init parse_acpi(char *arg)
+ 
+ 	/* "acpi=off" disables both ACPI table parsing and interpreter */
+ 	if (strcmp(arg, "off") == 0)
++	{
+ 		param_acpi_off = true;
++	}
+ 	else if (strcmp(arg, "on") == 0) /* prefer ACPI over DT */
++	{
+ 		param_acpi_on = true;
++	}
+ 	else if (strcmp(arg, "force") == 0) /* force ACPI to be enabled */
++	{
+ 		param_acpi_force = true;
++	}
+ 	else if (strcmp(arg, "nospcr") == 0) /* disable SPCR as default console */
++	{
+ 		param_acpi_nospcr = true;
++	}
+ 	else
+-		return -EINVAL;	/* Core will print when we return error */
+-
++	{
++		pr_err("ACPI: Invalid option '%s'\n", arg);
++		return -EINVAL;
++	}
+ 	return 0;
+ }
+ early_param("acpi", parse_acpi);
+@@ -463,4 +474,4 @@ int acpi_unmap_cpu(int cpu)
+ 	return 0;
+ }
+ EXPORT_SYMBOL(acpi_unmap_cpu);
+-#endif /* CONFIG_ACPI_HOTPLUG_CPU */
++#endif /* CONFIG_ACPI_HOTPLUG_CPU */
+\ No newline at end of file
+diff --git a/arch/arm64/kernel/acpi.orig b/arch/arm64/kernel/acpi.orig
+new file mode 100644
+index 000000000000..4d529ff7ba51
+--- /dev/null
++++ b/arch/arm64/kernel/acpi.orig
+@@ -0,0 +1,466 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ *  ARM64 Specific Low-Level ACPI Boot Support
++ *
++ *  Copyright (C) 2013-2014, Linaro Ltd.
++ *	Author: Al Stone <al.stone@linaro.org>
++ *	Author: Graeme Gregory <graeme.gregory@linaro.org>
++ *	Author: Hanjun Guo <hanjun.guo@linaro.org>
++ *	Author: Tomasz Nowicki <tomasz.nowicki@linaro.org>
++ *	Author: Naresh Bhat <naresh.bhat@linaro.org>
++ */
++
++#define pr_fmt(fmt) "ACPI: " fmt
++
++#include <linux/acpi.h>
++#include <linux/arm-smccc.h>
++#include <linux/cpumask.h>
++#include <linux/efi.h>
++#include <linux/efi-bgrt.h>
++#include <linux/init.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/irq_work.h>
++#include <linux/memblock.h>
++#include <linux/of_fdt.h>
++#include <linux/libfdt.h>
++#include <linux/smp.h>
++#include <linux/serial_core.h>
++#include <linux/suspend.h>
++#include <linux/pgtable.h>
++
++#include <acpi/ghes.h>
++#include <acpi/processor.h>
++#include <asm/cputype.h>
++#include <asm/cpu_ops.h>
++#include <asm/daifflags.h>
++#include <asm/smp_plat.h>
++
++int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
++int acpi_disabled = 1;
++EXPORT_SYMBOL(acpi_disabled);
++
++int acpi_pci_disabled = 1;	/* skip ACPI PCI scan and IRQ initialization */
++EXPORT_SYMBOL(acpi_pci_disabled);
++
++static bool param_acpi_off __initdata;
++static bool param_acpi_on __initdata;
++static bool param_acpi_force __initdata;
++static bool param_acpi_nospcr __initdata;
++
++static int __init parse_acpi(char *arg)
++{
++	if (!arg)
++		return -EINVAL;
++
++	/* "acpi=off" disables both ACPI table parsing and interpreter */
++	if (strcmp(arg, "off") == 0)
++		param_acpi_off = true;
++	else if (strcmp(arg, "on") == 0) /* prefer ACPI over DT */
++		param_acpi_on = true;
++	else if (strcmp(arg, "force") == 0) /* force ACPI to be enabled */
++		param_acpi_force = true;
++	else if (strcmp(arg, "nospcr") == 0) /* disable SPCR as default console */
++		param_acpi_nospcr = true;
++	else
++		return -EINVAL;	/* Core will print when we return error */
++
++	return 0;
++}
++early_param("acpi", parse_acpi);
++
++static bool __init dt_is_stub(void)
++{
++	int node;
++
++	fdt_for_each_subnode(node, initial_boot_params, 0) {
++		const char *name = fdt_get_name(initial_boot_params, node, NULL);
++		if (strcmp(name, "chosen") == 0)
++			continue;
++		if (strcmp(name, "hypervisor") == 0 &&
++		    of_flat_dt_is_compatible(node, "xen,xen"))
++			continue;
++
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * __acpi_map_table() will be called before page_init(), so early_ioremap()
++ * or early_memremap() should be called here to for ACPI table mapping.
++ */
++void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
++{
++	if (!size)
++		return NULL;
++
++	return early_memremap(phys, size);
++}
++
++void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
++{
++	if (!map || !size)
++		return;
++
++	early_memunmap(map, size);
++}
++
++bool __init acpi_psci_present(void)
++{
++	return acpi_gbl_FADT.arm_boot_flags & ACPI_FADT_PSCI_COMPLIANT;
++}
++
++/* Whether HVC must be used instead of SMC as the PSCI conduit */
++bool acpi_psci_use_hvc(void)
++{
++	return acpi_gbl_FADT.arm_boot_flags & ACPI_FADT_PSCI_USE_HVC;
++}
++
++/*
++ * acpi_fadt_sanity_check() - Check FADT presence and carry out sanity
++ *			      checks on it
++ *
++ * Return 0 on success,  <0 on failure
++ */
++static int __init acpi_fadt_sanity_check(void)
++{
++	struct acpi_table_header *table;
++	struct acpi_table_fadt *fadt;
++	acpi_status status;
++	int ret = 0;
++
++	/*
++	 * FADT is required on arm64; retrieve it to check its presence
++	 * and carry out revision and ACPI HW reduced compliancy tests
++	 */
++	status = acpi_get_table(ACPI_SIG_FADT, 0, &table);
++	if (ACPI_FAILURE(status)) {
++		const char *msg = acpi_format_exception(status);
++
++		pr_err("Failed to get FADT table, %s\n", msg);
++		return -ENODEV;
++	}
++
++	fadt = (struct acpi_table_fadt *)table;
++
++	/*
++	 * Revision in table header is the FADT Major revision, and there
++	 * is a minor revision of FADT which was introduced by ACPI 5.1,
++	 * we only deal with ACPI 5.1 or newer revision to get GIC and SMP
++	 * boot protocol configuration data.
++	 */
++	if (table->revision < 5 ||
++	   (table->revision == 5 && fadt->minor_revision < 1)) {
++		pr_err(FW_BUG "Unsupported FADT revision %d.%d, should be 5.1+\n",
++		       table->revision, fadt->minor_revision);
++
++		if (!fadt->arm_boot_flags) {
++			ret = -EINVAL;
++			goto out;
++		}
++		pr_err("FADT has ARM boot flags set, assuming 5.1\n");
++	}
++
++	if (!(fadt->flags & ACPI_FADT_HW_REDUCED)) {
++		pr_err("FADT not ACPI hardware reduced compliant\n");
++		ret = -EINVAL;
++	}
++
++out:
++	/*
++	 * acpi_get_table() creates FADT table mapping that
++	 * should be released after parsing and before resuming boot
++	 */
++	acpi_put_table(table);
++	return ret;
++}
++
++/*
++ * acpi_boot_table_init() called from setup_arch(), always.
++ *	1. find RSDP and get its address, and then find XSDT
++ *	2. extract all tables and checksums them all
++ *	3. check ACPI FADT revision
++ *	4. check ACPI FADT HW reduced flag
++ *
++ * We can parse ACPI boot-time tables such as MADT after
++ * this function is called.
++ *
++ * On return ACPI is enabled if either:
++ *
++ * - ACPI tables are initialized and sanity checks passed
++ * - acpi=force was passed in the command line and ACPI was not disabled
++ *   explicitly through acpi=off command line parameter
++ *
++ * ACPI is disabled on function return otherwise
++ */
++void __init acpi_boot_table_init(void)
++{
++	int ret;
++
++	/*
++	 * Enable ACPI instead of device tree unless
++	 * - ACPI has been disabled explicitly (acpi=off), or
++	 * - the device tree is not empty (it has more than just a /chosen node,
++	 *   and a /hypervisor node when running on Xen)
++	 *   and ACPI has not been [force] enabled (acpi=on|force)
++	 */
++	if (param_acpi_off ||
++	    (!param_acpi_on && !param_acpi_force && !dt_is_stub()))
++		goto done;
++
++	/*
++	 * ACPI is disabled at this point. Enable it in order to parse
++	 * the ACPI tables and carry out sanity checks
++	 */
++	enable_acpi();
++
++	/*
++	 * If ACPI tables are initialized and FADT sanity checks passed,
++	 * leave ACPI enabled and carry on booting; otherwise disable ACPI
++	 * on initialization error.
++	 * If acpi=force was passed on the command line it forces ACPI
++	 * to be enabled even if its initialization failed.
++	 */
++	if (acpi_table_init() || acpi_fadt_sanity_check()) {
++		pr_err("Failed to init ACPI tables\n");
++		if (!param_acpi_force)
++			disable_acpi();
++	}
++
++done:
++	if (acpi_disabled) {
++		if (earlycon_acpi_spcr_enable)
++			early_init_dt_scan_chosen_stdout();
++	} else {
++#ifdef CONFIG_HIBERNATION
++		struct acpi_table_header *facs = NULL;
++		acpi_get_table(ACPI_SIG_FACS, 1, &facs);
++		if (facs) {
++			swsusp_hardware_signature =
++				((struct acpi_table_facs *)facs)->hardware_signature;
++			acpi_put_table(facs);
++		}
++#endif
++
++		/*
++		 * For varying privacy and security reasons, sometimes need
++		 * to completely silence the serial console output, and only
++		 * enable it when needed.
++		 * But there are many existing systems that depend on this
++		 * behaviour, use acpi=nospcr to disable console in ACPI SPCR
++		 * table as default serial console.
++		 */
++		ret = acpi_parse_spcr(earlycon_acpi_spcr_enable,
++			!param_acpi_nospcr);
++		if (!ret || param_acpi_nospcr || !IS_ENABLED(CONFIG_ACPI_SPCR_TABLE))
++			pr_info("Use ACPI SPCR as default console: No\n");
++		else
++			pr_info("Use ACPI SPCR as default console: Yes\n");
++
++		if (IS_ENABLED(CONFIG_ACPI_BGRT))
++			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
++	}
++}
++
++static pgprot_t __acpi_get_writethrough_mem_attribute(void)
++{
++	/*
++	 * Although UEFI specifies the use of Normal Write-through for
++	 * EFI_MEMORY_WT, it is seldom used in practice and not implemented
++	 * by most (all?) CPUs. Rather than allocate a MAIR just for this
++	 * purpose, emit a warning and use Normal Non-cacheable instead.
++	 */
++	pr_warn_once("No MAIR allocation for EFI_MEMORY_WT; treating as Normal Non-cacheable\n");
++	return __pgprot(PROT_NORMAL_NC);
++}
++
++pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
++{
++	/*
++	 * According to "Table 8 Map: EFI memory types to AArch64 memory
++	 * types" of UEFI 2.5 section 2.3.6.1, each EFI memory type is
++	 * mapped to a corresponding MAIR attribute encoding.
++	 * The EFI memory attribute advises all possible capabilities
++	 * of a memory region.
++	 */
++
++	u64 attr;
++
++	attr = efi_mem_attributes(addr);
++	if (attr & EFI_MEMORY_WB)
++		return PAGE_KERNEL;
++	if (attr & EFI_MEMORY_WC)
++		return __pgprot(PROT_NORMAL_NC);
++	if (attr & EFI_MEMORY_WT)
++		return __acpi_get_writethrough_mem_attribute();
++	return __pgprot(PROT_DEVICE_nGnRnE);
++}
++
++void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
++{
++	efi_memory_desc_t *md, *region = NULL;
++	pgprot_t prot;
++
++	if (WARN_ON_ONCE(!efi_enabled(EFI_MEMMAP)))
++		return NULL;
++
++	for_each_efi_memory_desc(md) {
++		u64 end = md->phys_addr + (md->num_pages << EFI_PAGE_SHIFT);
++
++		if (phys < md->phys_addr || phys >= end)
++			continue;
++
++		if (phys + size > end) {
++			pr_warn(FW_BUG "requested region covers multiple EFI memory regions\n");
++			return NULL;
++		}
++		region = md;
++		break;
++	}
++
++	/*
++	 * It is fine for AML to remap regions that are not represented in the
++	 * EFI memory map at all, as it only describes normal memory, and MMIO
++	 * regions that require a virtual mapping to make them accessible to
++	 * the EFI runtime services.
++	 */
++	prot = __pgprot(PROT_DEVICE_nGnRnE);
++	if (region) {
++		switch (region->type) {
++		case EFI_LOADER_CODE:
++		case EFI_LOADER_DATA:
++		case EFI_BOOT_SERVICES_CODE:
++		case EFI_BOOT_SERVICES_DATA:
++		case EFI_CONVENTIONAL_MEMORY:
++		case EFI_PERSISTENT_MEMORY:
++			if (memblock_is_map_memory(phys) ||
++			    !memblock_is_region_memory(phys, size)) {
++				pr_warn(FW_BUG "requested region covers kernel memory @ %pa\n", &phys);
++				return NULL;
++			}
++			/*
++			 * Mapping kernel memory is permitted if the region in
++			 * question is covered by a single memblock with the
++			 * NOMAP attribute set: this enables the use of ACPI
++			 * table overrides passed via initramfs, which are
++			 * reserved in memory using arch_reserve_mem_area()
++			 * below. As this particular use case only requires
++			 * read access, fall through to the R/O mapping case.
++			 */
++			fallthrough;
++
++		case EFI_RUNTIME_SERVICES_CODE:
++			/*
++			 * This would be unusual, but not problematic per se,
++			 * as long as we take care not to create a writable
++			 * mapping for executable code.
++			 */
++			prot = PAGE_KERNEL_RO;
++			break;
++
++		case EFI_ACPI_RECLAIM_MEMORY:
++			/*
++			 * ACPI reclaim memory is used to pass firmware tables
++			 * and other data that is intended for consumption by
++			 * the OS only, which may decide it wants to reclaim
++			 * that memory and use it for something else. We never
++			 * do that, but we usually add it to the linear map
++			 * anyway, in which case we should use the existing
++			 * mapping.
++			 */
++			if (memblock_is_map_memory(phys))
++				return (void __iomem *)__phys_to_virt(phys);
++			fallthrough;
++
++		default:
++			if (region->attribute & EFI_MEMORY_WB)
++				prot = PAGE_KERNEL;
++			else if (region->attribute & EFI_MEMORY_WC)
++				prot = __pgprot(PROT_NORMAL_NC);
++			else if (region->attribute & EFI_MEMORY_WT)
++				prot = __acpi_get_writethrough_mem_attribute();
++		}
++	}
++	return ioremap_prot(phys, size, prot);
++}
++
++/*
++ * Claim Synchronous External Aborts as a firmware first notification.
++ *
++ * Used by KVM and the arch do_sea handler.
++ * @regs may be NULL when called from process context.
++ */
++int apei_claim_sea(struct pt_regs *regs)
++{
++	int err = -ENOENT;
++	bool return_to_irqs_enabled;
++	unsigned long current_flags;
++
++	if (!IS_ENABLED(CONFIG_ACPI_APEI_GHES))
++		return err;
++
++	current_flags = local_daif_save_flags();
++
++	/* current_flags isn't useful here as daif doesn't tell us about pNMI */
++	return_to_irqs_enabled = !irqs_disabled_flags(arch_local_save_flags());
++
++	if (regs)
++		return_to_irqs_enabled = interrupts_enabled(regs);
++
++	/*
++	 * SEA can interrupt SError, mask it and describe this as an NMI so
++	 * that APEI defers the handling.
++	 */
++	local_daif_restore(DAIF_ERRCTX);
++	nmi_enter();
++	err = ghes_notify_sea();
++	nmi_exit();
++
++	/*
++	 * APEI NMI-like notifications are deferred to irq_work. Unless
++	 * we interrupted irqs-masked code, we can do that now.
++	 */
++	if (!err) {
++		if (return_to_irqs_enabled) {
++			local_daif_restore(DAIF_PROCCTX_NOIRQ);
++			__irq_enter();
++			irq_work_run();
++			__irq_exit();
++		} else {
++			pr_warn_ratelimited("APEI work queued but not completed");
++			err = -EINPROGRESS;
++		}
++	}
++
++	local_daif_restore(current_flags);
++
++	return err;
++}
++
++void arch_reserve_mem_area(acpi_physical_address addr, size_t size)
++{
++	memblock_mark_nomap(addr, size);
++}
++
++#ifdef CONFIG_ACPI_HOTPLUG_CPU
++int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 apci_id,
++		 int *pcpu)
++{
++	/* If an error code is passed in this stub can't fix it */
++	if (*pcpu < 0) {
++		pr_warn_once("Unable to map CPU to valid ID\n");
++		return *pcpu;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(acpi_map_cpu);
++
++int acpi_unmap_cpu(int cpu)
++{
++	return 0;
++}
++EXPORT_SYMBOL(acpi_unmap_cpu);
++#endif /* CONFIG_ACPI_HOTPLUG_CPU */
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.50.1.windows.1
 
 
