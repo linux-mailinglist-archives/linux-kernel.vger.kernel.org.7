@@ -1,1170 +1,662 @@
-Return-Path: <linux-kernel+bounces-804347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE8CB4729F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530B6B472A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8DD7BD51A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:47:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC898585A32
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CD1303A3D;
-	Sat,  6 Sep 2025 15:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61B81E51F6;
+	Sat,  6 Sep 2025 15:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGf0OvnR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTXhY+Ja"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2352F7441;
-	Sat,  6 Sep 2025 15:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5C717BB21
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 15:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757173421; cv=none; b=PSCK2uppyO7YhHLdJIFc5HMj9RxSefUVLQ4rwt72UeCiCi0W1jExXdFG/l287cMvLq8ZZs8/P5ku+Hoy1bgOhwNdiD3dcjTzaENKOgXwkqSr9qOZ7z5or+EgDIRUMBGfgmtZaF6wo0H8BslhbZ/u2UJ/c6XTijFGW1oS0O8ZSvk=
+	t=1757173572; cv=none; b=D9ZIAagYZyBP/pElRmi9kTHWrsOKWW4XWuxnRDor0UDcOQh8iGM+IDe9L0vlF1gsqG8Q4KsJXw4BLqTcebAtg1o5ziXRDe/xQ2C/Fulivly46+ouajZCA+NeHAYIHaQPOSyhKMHYKum6hjP8p+IkzcGnrkZpj9FdmWEVJK7FUs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757173421; c=relaxed/simple;
-	bh=KTAyeqUKBXSRXTrOzHfCOiEQdd5Glj7VWy4aaK3uSPI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K1T9vXuYd36MwGHZtf7kBRDyV1VsB5cO5Iirfp7X+3LcC39W11u63F6Da2+8W5Umy3hI7J3BzlDf+wRGVXW8m3OPbtoI+k84Yhit7rdPH8vPnSf3x5Ul2pzwzJL76UtsrYx2diU6YO0O5L8EEDU/m0mislUM+d+MhhNDFFe9QgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGf0OvnR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B9C68C4CEFB;
-	Sat,  6 Sep 2025 15:43:40 +0000 (UTC)
+	s=arc-20240116; t=1757173572; c=relaxed/simple;
+	bh=pSyIDU2hLY3qQptgMaAePd4jge78L56qK1Uy5LiYg2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bbdluJo8RPcQBQ8rI2Ux0igH6Ppbf61u5gtbQBdYWkK/CHhAJRKyVU3iciWlxqy+rxI/9bRN+ccSuxoMDDEbfl3fn+9eGFCzBYh2RJmkii0SuhanJZrvr3DpI7k1dUNjX0iQ8/0W9EPeu0ZpzGjPh92qiB55HyK1lmKnG79s9f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTXhY+Ja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B19C4CEE7
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 15:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757173420;
-	bh=KTAyeqUKBXSRXTrOzHfCOiEQdd5Glj7VWy4aaK3uSPI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OGf0OvnRpnZKswhahXWJhN0m/rfuq9MM1u+MJt6rRonM2fEsuNvdj5na2wOHufv+H
-	 ReswnIBbmDc6S/yQz4YFNWQ0ykA/xDnzgGBa6N5hywwVGVm0dIvoGKPkD4TjfZAfQN
-	 mvTucRbpWmlr7tzhDlvsFHo/DDrMyeBtAPHbj8QslWlkNvNonfOzQ7onPUztmIaS0R
-	 A1NWsSFfm44G15oP11rlP6PDDR4ZGsc1ttTEffhYYwljYp22QxvNa3yEaUysrrSsc7
-	 PMEKmCeZtlyfn59k3Ewnk5RsotFRpCIFBVDpF061xReeOcPFc3AtXjVvIym866z7LM
-	 l7Mb7AAHx5ZPA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B61CAC583;
-	Sat,  6 Sep 2025 15:43:40 +0000 (UTC)
-From: Sven Peter <sven@kernel.org>
-Date: Sat, 06 Sep 2025 15:43:35 +0000
-Subject: [PATCH v2 22/22] arm64: dts: apple: t600x: Add Apple Type-C PHY
- and dwc3 nodes
+	s=k20201202; t=1757173571;
+	bh=pSyIDU2hLY3qQptgMaAePd4jge78L56qK1Uy5LiYg2c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aTXhY+JaOnd6pny4umxx1Vp4cyPwsDegs5T5m8iyNkr94TzfMSevU9G5Nxw1e1XWx
+	 RHtUIAqDM5y257qlpUL8UCKxqGhGYl8z/bKvCa7QgpD5SeTbce2RxlKfvjwSeNluvi
+	 pOcijq9Fo9LzBznlxJIbHd+lyzqnR7NBuhUYuPYBYC7oqeLvOtffoCGE4dR7r+LqLi
+	 bX9+y9yNVgpaQsdpyKn/EX6Yecd8nMQjyKOKnQ55Qt56wlFM2OA/ttFV3QQUIzYPAl
+	 q/Ce+vPdKZ89Iu16Lm2ArRBuR5yjVG3/x3ooeGK+5wlZWaKxzSAbFo41+zWWPQY7Uf
+	 8lWWhxM92XNxQ==
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b886f92ccso58995e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 08:46:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCOLI+vCZvuithxEg2+GStbZtsjmM+XnnDGwcvKHfiT0CRuxC1uDT8lG8spb1HYruA3PtV15aU4hVyuO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzUQgfyhmUVCka+Z4GmJEtO9JfLBDge9LUksSTuApO+mg8Eziz
+	zi5U9bt2vE6i+17Ru584DGilH2SFIoNc+AnEPr87I4MaXhlQPnM2XX8o5S+gVRnyWLVm29ALLoe
+	F5CMxjr+VP4IRnz28dligpf2BBkj/NAkQoPUfPo1N
+X-Google-Smtp-Source: AGHT+IGIIiVfqvRlAU81nYDAUqzZauORFqvQc6LSmK7H89Jxg6D/UxeUiXkoTM1y8xYjxRi0GTe5livqVZWKXmKVOl8=
+X-Received: by 2002:a05:600c:a406:b0:45b:74f7:9d30 with SMTP id
+ 5b1f17b1804b1-45dde17196dmr826615e9.1.1757173569390; Sat, 06 Sep 2025
+ 08:46:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250906-atcphy-6-17-v2-22-52c348623ef6@kernel.org>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
-In-Reply-To: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
- Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
- Sven Peter <sven@kernel.org>, R <rqou@berkeley.edu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=25022; i=sven@kernel.org;
- h=from:subject:message-id;
- bh=Gz8VC2GdnmHU+sqgZZgFGx+yLwOX3aB1YhMwtYgCrWg=;
- b=owGbwMvMwCHmIlirolUq95LxtFoSQ8aesOV8orkmE2t2HE7M8xBvEu478k182/Knem5MGhkvr
- 7rdbNnRUcrCIMbBICumyLJ9v73pk4dvBJduuvQeZg4rE8gQBi5OAZiIUhDDX/Fkh1sfTK6sumib
- eSKbJfRWxEPx2kNsjZwPZ0T5n95wxIGRYXNSbkvk+n39PX9z7v3c73swROyvxsN8xpd75Ew7xTf
- /YwMA
-X-Developer-Key: i=sven@kernel.org; a=openpgp;
- fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
-X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
- auth_id=407
+References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-15-ryncsn@gmail.com>
+In-Reply-To: <20250905191357.78298-15-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Sat, 6 Sep 2025 08:45:58 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuO31q0nZmZwxeMZDq--wH=zeXwsZ8YK2M_7CyYmbsOouw@mail.gmail.com>
+X-Gm-Features: AS18NWBcP6A5y1khhA7NyClG4UyDuZUKf2c98kWsPhAUNdB4LDDBZB9aX271Afc
+Message-ID: <CAF8kJuO31q0nZmZwxeMZDq--wH=zeXwsZ8YK2M_7CyYmbsOouw@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] mm, swap: implement dynamic allocation of swap table
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Janne Grunau <j@jannau.net>
+Hi Kairui,
 
-Add all nodes and connections required to make USB3 work on M1 Pro, Max
-and Ultra based Apple machines.
+Acked-by: Chris Li <chrisl@kernel.org>
 
-Co-developed-by: R <rqou@berkeley.edu>
-Signed-off-by: R <rqou@berkeley.edu>
-Signed-off-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Sven Peter <sven@kernel.org>
----
- arch/arm64/boot/dts/apple/t6001.dtsi           |   1 +
- arch/arm64/boot/dts/apple/t6002-j375d.dts      | 197 +++++++++++++++++-
- arch/arm64/boot/dts/apple/t6002.dtsi           |   1 +
- arch/arm64/boot/dts/apple/t600x-dieX.dtsi      | 212 +++++++++++++++++++
- arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi | 236 +++++++++++++++++++++
- arch/arm64/boot/dts/apple/t600x-j375.dtsi      | 275 +++++++++++++++++++++++++
- 6 files changed, 916 insertions(+), 6 deletions(-)
+BTW, if you made some changes after my last ack, please drop my ack
+tag on the new version or clarify ack was on the older version so I
+know this version has new changes.
 
-diff --git a/arch/arm64/boot/dts/apple/t6001.dtsi b/arch/arm64/boot/dts/apple/t6001.dtsi
-index ffbe823b71bc8d9c0975524aa04efa9bf520a89e..6dcb71a1d65a8da82a512653a34ce6af3df8aee0 100644
---- a/arch/arm64/boot/dts/apple/t6001.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6001.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/interrupt-controller/apple-aic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/pinctrl/apple.h>
-+#include <dt-bindings/phy/phy.h>
- #include <dt-bindings/spmi/spmi.h>
- 
- #include "multi-die-cpp.h"
-diff --git a/arch/arm64/boot/dts/apple/t6002-j375d.dts b/arch/arm64/boot/dts/apple/t6002-j375d.dts
-index 3365429bdc8be90b63c8051822243d897854ab27..3b4715d5754c12848d418a71124b443c034af3e7 100644
---- a/arch/arm64/boot/dts/apple/t6002-j375d.dts
-+++ b/arch/arm64/boot/dts/apple/t6002-j375d.dts
-@@ -15,6 +15,11 @@
- / {
- 	compatible = "apple,j375d", "apple,t6002", "apple,arm-platform";
- 	model = "Apple Mac Studio (M1 Ultra, 2022)";
-+
-+	aliases {
-+		atcphy4 = &atcphy0_die1;
-+		atcphy5 = &atcphy1_die1;
-+	};
- };
- 
- /* USB Type C */
-@@ -26,6 +31,30 @@ hpm4: usb-pd@39 {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec4: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Front Right";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					typec4_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_0_die1_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec4_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy0_die1_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	/* front-left */
-@@ -35,16 +64,172 @@ hpm5: usb-pd@3a {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec5: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Front Left";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					typec5_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_1_die1_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec5_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy1_die1_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- };
- 
-+/* USB controllers on die 1 */
-+&dwc3_0_die1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_0_die1_hs: endpoint {
-+				remote-endpoint = <&typec4_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_0_die1_ss: endpoint {
-+				remote-endpoint = <&atcphy0_die1_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+&dwc3_1_die1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_1_die1_hs: endpoint {
-+				remote-endpoint = <&typec5_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_1_die1_ss: endpoint {
-+				remote-endpoint = <&atcphy1_die1_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+/* Type-C PHYs */
-+&atcphy0_die1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy0_die1_typec_lanes: endpoint {
-+				remote-endpoint = <&typec4_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy0_die1_usb3: endpoint {
-+				remote-endpoint = <&dwc3_0_die1_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy1_die1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy1_die1_typec_lanes: endpoint {
-+				remote-endpoint = <&typec5_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy1_die1_usb3: endpoint {
-+				remote-endpoint = <&dwc3_1_die1_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+
-+/* Disable unused dwc3 instandes on the second die. */
-+&dwc3_2_dart_0_die1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_2_dart_1_die1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_2_die1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_3_dart_0_die1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_3_dart_1_die1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_3_die1 {
-+	status = "disabled";
-+};
-+
-+/* Disable unused ATC phy instandes on the second die. */
-+&atcphy2_die1 {
-+	status = "disabled";
-+};
-+
-+&atcphy3_die1 {
-+	status = "disabled";
-+};
-+
-+/* Disable unused USB power-domains on the second die. */
-+&ps_atc2_usb_aon_die1 {
-+	status = "disabled";
-+};
-+
-+&ps_atc2_usb_die1 {
-+	status = "disabled";
-+};
-+
-+&ps_atc3_usb_aon_die1 {
-+	status = "disabled";
-+};
-+
-+&ps_atc3_usb_die1 {
-+	status = "disabled";
-+};
-+
- /* delete unused always-on power-domains on die 1 */
- 
--/delete-node/ &ps_atc2_usb_aon_die1;
--/delete-node/ &ps_atc2_usb_die1;
--
--/delete-node/ &ps_atc3_usb_aon_die1;
--/delete-node/ &ps_atc3_usb_die1;
--
- /delete-node/ &ps_disp0_cpu0_die1;
- /delete-node/ &ps_disp0_fe_die1;
-diff --git a/arch/arm64/boot/dts/apple/t6002.dtsi b/arch/arm64/boot/dts/apple/t6002.dtsi
-index 8fb648836b538bbd9efdccd6cec5d08d868a0d39..a532e5401c4ec430d8ff649a92459c80e9b6bb2b 100644
---- a/arch/arm64/boot/dts/apple/t6002.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6002.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/interrupt-controller/apple-aic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/pinctrl/apple.h>
-+#include <dt-bindings/phy/phy.h>
- #include <dt-bindings/spmi/spmi.h>
- 
- #include "multi-die-cpp.h"
-diff --git a/arch/arm64/boot/dts/apple/t600x-dieX.dtsi b/arch/arm64/boot/dts/apple/t600x-dieX.dtsi
-index a32ff0c9d7b0c2ec720e9d4cf8e769da6431fbba..a282029475af874db7bf760017e1345ca982d94e 100644
---- a/arch/arm64/boot/dts/apple/t600x-dieX.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-dieX.dtsi
-@@ -119,3 +119,215 @@ DIE_NODE(pinctrl_ap): pinctrl@39b028000 {
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
-+
-+	DIE_NODE(dwc3_0_dart_0): iommu@702f00000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0x7 0x02f00000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1194 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc0_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_0_dart_1): iommu@702f80000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0x7 0x02f80000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1194 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc0_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_0): usb@702280000 {
-+		compatible = "apple,t6000-dwc3", "apple,t8103-dwc3";
-+		reg = <0x7 0x02280000 0x0 0xcd00>, <0x7 0x0228cd00 0x0 0x3200>;
-+		reg-names = "dwc3-core", "dwc3-apple";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1190 IRQ_TYPE_LEVEL_HIGH>;
-+		dr_mode = "otg";
-+		usb-role-switch;
-+		role-switch-default-mode = "host";
-+		iommus = <&DIE_NODE(dwc3_0_dart_0) 0>,
-+			<&DIE_NODE(dwc3_0_dart_1) 1>;
-+		power-domains = <&DIE_NODE(ps_atc0_usb)>;
-+		resets = <&DIE_NODE(atcphy0)>;
-+		phys = <&DIE_NODE(atcphy0) PHY_TYPE_USB2>, <&DIE_NODE(atcphy0) PHY_TYPE_USB3>;
-+		phy-names = "usb2-phy", "usb3-phy";
-+	};
-+
-+	DIE_NODE(atcphy0): phy@703000000 {
-+		compatible = "apple,t6000-atcphy", "apple,t8103-atcphy";
-+		reg = <0x7 0x03000000 0x0 0x4c000>,
-+			<0x7 0x03050000 0x0 0x8000>,
-+			<0x7 0x00000000 0x0 0x4000>,
-+			<0x7 0x02a90000 0x0 0x4000>,
-+			<0x7 0x02a84000 0x0 0x4000>;
-+		reg-names = "core", "lpdptx", "axi2af", "usb2phy",
-+			"pipehandler";
-+
-+		#phy-cells = <1>;
-+		#reset-cells = <0>;
-+
-+		orientation-switch;
-+		mode-switch;
-+		power-domains = <&DIE_NODE(ps_atc0_usb)>;
-+	};
-+
-+	DIE_NODE(dwc3_1_dart_0): iommu@b02f00000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0xb 0x02f00000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1211 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc1_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_1_dart_1): iommu@b02f80000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0xb 0x02f80000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1211 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc1_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_1): usb@b02280000 {
-+		compatible = "apple,t6000-dwc3", "apple,t8103-dwc3";
-+		reg = <0xb 0x02280000 0x0 0xcd00>, <0xb 0x0228cd00 0x0 0x3200>;
-+		reg-names = "dwc3-core", "dwc3-apple";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1207 IRQ_TYPE_LEVEL_HIGH>;
-+		dr_mode = "otg";
-+		usb-role-switch;
-+		role-switch-default-mode = "host";
-+		iommus = <&DIE_NODE(dwc3_1_dart_0) 0>,
-+			<&DIE_NODE(dwc3_1_dart_1) 1>;
-+		power-domains = <&DIE_NODE(ps_atc1_usb)>;
-+		resets = <&DIE_NODE(atcphy1)>;
-+		phys = <&DIE_NODE(atcphy1) PHY_TYPE_USB2>, <&DIE_NODE(atcphy1) PHY_TYPE_USB3>;
-+		phy-names = "usb2-phy", "usb3-phy";
-+	};
-+
-+	DIE_NODE(atcphy1): phy@b03000000 {
-+		compatible = "apple,t6000-atcphy", "apple,t8103-atcphy";
-+		reg = <0xb 0x03000000 0x0 0x4c000>,
-+			<0xb 0x03050000 0x0 0x8000>,
-+			<0xb 0x00000000 0x0 0x4000>,
-+			<0xb 0x02a90000 0x0 0x4000>,
-+			<0xb 0x02a84000 0x0 0x4000>;
-+		reg-names = "core", "lpdptx", "axi2af", "usb2phy",
-+			"pipehandler";
-+
-+		#phy-cells = <1>;
-+		#reset-cells = <0>;
-+
-+		orientation-switch;
-+		mode-switch;
-+		power-domains = <&DIE_NODE(ps_atc1_usb)>;
-+	};
-+
-+	DIE_NODE(dwc3_2_dart_0): iommu@f02f00000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0xf 0x02f00000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1228 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc2_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_2_dart_1): iommu@f02f80000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0xf 0x02f80000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1228 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc2_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_2): usb@f02280000 {
-+		compatible = "apple,t6000-dwc3", "apple,t8103-dwc3";
-+		reg = <0xf 0x02280000 0x0 0xcd00>, <0xf 0x0228cd00 0x0 0x3c00>;
-+		reg-names = "dwc3-core", "dwc3-apple";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1224 IRQ_TYPE_LEVEL_HIGH>;
-+		dr_mode = "otg";
-+		usb-role-switch;
-+		role-switch-default-mode = "host";
-+		iommus = <&DIE_NODE(dwc3_2_dart_0) 0>,
-+			<&DIE_NODE(dwc3_2_dart_1) 1>;
-+		power-domains = <&DIE_NODE(ps_atc2_usb)>;
-+		resets = <&DIE_NODE(atcphy2)>;
-+		phys = <&DIE_NODE(atcphy2) PHY_TYPE_USB2>, <&DIE_NODE(atcphy2) PHY_TYPE_USB3>;
-+		phy-names = "usb2-phy", "usb3-phy";
-+	};
-+
-+	DIE_NODE(atcphy2): phy@f03000000 {
-+		compatible = "apple,t6000-atcphy", "apple,t8103-atcphy";
-+		reg = <0xf 0x03000000 0x0 0x4c000>,
-+			<0xf 0x03050000 0x0 0x8000>,
-+			<0xf 0x00000000 0x0 0x4000>,
-+			<0xf 0x02a90000 0x0 0x4000>,
-+			<0xf 0x02a84000 0x0 0x4000>;
-+		reg-names = "core", "lpdptx", "axi2af", "usb2phy",
-+			"pipehandler";
-+
-+		#phy-cells = <1>;
-+		#reset-cells = <0>;
-+
-+		orientation-switch;
-+		mode-switch;
-+		power-domains = <&DIE_NODE(ps_atc2_usb)>;
-+	};
-+
-+	DIE_NODE(dwc3_3_dart_0): iommu@1302f00000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0x13 0x02f00000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1245 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc3_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_3_dart_1): iommu@1302f80000 {
-+		compatible = "apple,t6000-dart";
-+		reg = <0x13 0x02f80000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1245 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&DIE_NODE(ps_atc3_usb)>;
-+		#iommu-cells = <1>;
-+	};
-+
-+	DIE_NODE(dwc3_3): usb@1302280000 {
-+		compatible = "apple,t6000-dwc3", "apple,t8103-dwc3";
-+		reg = <0x13 0x02280000 0x0 0xcd00>, <0x13 0x0228cd00 0x0 0x3200>;
-+		reg-names = "dwc3-core", "dwc3-apple";
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ DIE_NO 1241 IRQ_TYPE_LEVEL_HIGH>;
-+		dr_mode = "otg";
-+		usb-role-switch;
-+		role-switch-default-mode = "host";
-+		iommus = <&DIE_NODE(dwc3_3_dart_0) 0>,
-+			<&DIE_NODE(dwc3_3_dart_1) 1>;
-+		power-domains = <&DIE_NODE(ps_atc3_usb)>;
-+		resets = <&DIE_NODE(atcphy3)>;
-+		phys = <&DIE_NODE(atcphy3) PHY_TYPE_USB2>, <&DIE_NODE(atcphy3) PHY_TYPE_USB3>;
-+		phy-names = "usb2-phy", "usb3-phy";
-+	};
-+
-+	DIE_NODE(atcphy3): phy@1303000000 {
-+		compatible = "apple,t6000-atcphy", "apple,t8103-atcphy";
-+		reg = <0x13 0x03000000 0x0 0x4c000>,
-+			<0x13 0x03050000 0x0 0x8000>,
-+			<0x13 0x00000000 0x0 0x4000>,
-+			<0x13 0x02a90000 0x0 0x4000>,
-+			<0x13 0x02a84000 0x0 0x4000>;
-+		reg-names = "core", "lpdptx", "axi2af", "usb2phy",
-+			"pipehandler";
-+
-+		#phy-cells = <1>;
-+		#reset-cells = <0>;
-+
-+		orientation-switch;
-+		mode-switch;
-+		power-domains = <&DIE_NODE(ps_atc3_usb)>;
-+	};
-diff --git a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-index 22ebc78e120bf8f0f71fd532e9dce4dcd117bbc6..13e654849eb3d637ac21479a3def8f8ddd731dd6 100644
---- a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-@@ -13,6 +13,10 @@
- 
- / {
- 	aliases {
-+		atcphy0 = &atcphy0;
-+		atcphy1 = &atcphy1;
-+		atcphy2 = &atcphy2;
-+		atcphy3 = &atcphy3;
- 		serial0 = &serial0;
- 		wifi0 = &wifi0;
- 	};
-@@ -62,6 +66,31 @@ hpm0: usb-pd@38 {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec0: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Left Rear";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec0_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_0_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec0_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy0_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	hpm1: usb-pd@3f {
-@@ -70,6 +99,31 @@ hpm1: usb-pd@3f {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec1: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Left Front";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec1_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_1_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec1_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy1_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	hpm2: usb-pd@3b {
-@@ -78,6 +132,31 @@ hpm2: usb-pd@3b {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec2: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Right";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec2_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_2_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec2_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy2_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	/* MagSafe port */
-@@ -90,6 +169,163 @@ hpm5: usb-pd@3a {
- 	};
- };
- 
-+/* USB controllers */
-+&dwc3_0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_0_hs: endpoint {
-+				remote-endpoint = <&typec0_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_0_ss: endpoint {
-+				remote-endpoint = <&atcphy0_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+&dwc3_1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_1_hs: endpoint {
-+				remote-endpoint = <&typec1_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_1_ss: endpoint {
-+				remote-endpoint = <&atcphy1_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+/* USB controllers */
-+&dwc3_2 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_2_hs: endpoint {
-+				remote-endpoint = <&typec2_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_2_ss: endpoint {
-+				remote-endpoint = <&atcphy2_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+/* The 4th ATC Phy is connected to an internal DP to HDMI converter. */
-+&dwc3_3_dart_0 {
-+	status = "disabled";
-+};
-+
-+&dwc3_3_dart_1 {
-+	status = "disabled";
-+};
-+
-+&dwc3_3 {
-+	status = "disabled";
-+};
-+
-+/* Type-C PHYs */
-+&atcphy0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy0_typec_lanes: endpoint {
-+				remote-endpoint = <&typec0_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy0_usb3: endpoint {
-+				remote-endpoint = <&dwc3_0_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy1_typec_lanes: endpoint {
-+				remote-endpoint = <&typec1_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy1_usb3: endpoint {
-+				remote-endpoint = <&dwc3_1_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy2 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy2_typec_lanes: endpoint {
-+				remote-endpoint = <&typec2_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy2_usb3: endpoint {
-+				remote-endpoint = <&dwc3_2_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy3 {
-+	/* Disable atcphy3 as long as DisplayPort is not supported. */
-+	status = "disabled";
-+};
-+
-+/*
-+ * The ps_atcN_usb_aon power-domains are always-on to avoid resetting dwc3
-+ * which reverts initialisation done by firmware.
-+ * atc3 is used exclusively for the DP-to-HDMI converter so this is not
-+ * necessary.
-+ */
-+&ps_atc3_usb_aon {
-+	/delete-property/ apple,always-on;
-+};
-+
- &nco_clkref {
- 	clock-frequency = <1068000000>;
- };
-diff --git a/arch/arm64/boot/dts/apple/t600x-j375.dtsi b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-index d5b985ad567936111ee5cccc9ca9fc23d01d9edf..ab49ad9e32f2798bd126d0794917c8f434f222de 100644
---- a/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-@@ -11,6 +11,10 @@
- 
- / {
- 	aliases {
-+		atcphy0 = &atcphy0;
-+		atcphy1 = &atcphy1;
-+		atcphy2 = &atcphy2;
-+		atcphy3 = &atcphy3;
- 		serial0 = &serial0;
- 		wifi0 = &wifi0;
- 	};
-@@ -48,6 +52,31 @@ hpm0: usb-pd@38 {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec0: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Back Left";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec0_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_0_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec0_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy0_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	hpm1: usb-pd@3f {
-@@ -56,6 +85,31 @@ hpm1: usb-pd@3f {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec1: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Back Left Middle";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec1_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_1_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec1_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy1_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	hpm2: usb-pd@3b {
-@@ -64,6 +118,31 @@ hpm2: usb-pd@3b {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec2: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Back Right Middle";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec2_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_2_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec2_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy2_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	hpm3: usb-pd@3c {
-@@ -72,6 +151,202 @@ hpm3: usb-pd@3c {
- 		interrupt-parent = <&pinctrl_ap>;
- 		interrupts = <174 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-names = "irq";
-+
-+		typec3: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C Back Right";
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					typec3_connector_hs: endpoint {
-+						remote-endpoint = <&dwc3_3_hs>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					typec3_connector_ss: endpoint {
-+						remote-endpoint = <&atcphy3_typec_lanes>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+/* USB controllers */
-+&dwc3_0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_0_hs: endpoint {
-+				remote-endpoint = <&typec0_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_0_ss: endpoint {
-+				remote-endpoint = <&atcphy0_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+&dwc3_1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_1_hs: endpoint {
-+				remote-endpoint = <&typec1_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_1_ss: endpoint {
-+				remote-endpoint = <&atcphy1_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+/* USB controllers */
-+&dwc3_2 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_2_hs: endpoint {
-+				remote-endpoint = <&typec2_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_2_ss: endpoint {
-+				remote-endpoint = <&atcphy2_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+&dwc3_3 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dwc3_3_hs: endpoint {
-+				remote-endpoint = <&typec3_connector_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dwc3_3_ss: endpoint {
-+				remote-endpoint = <&atcphy3_usb3>;
-+			};
-+		};
-+	};
-+};
-+
-+/* Type-C PHYs */
-+&atcphy0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy0_typec_lanes: endpoint {
-+				remote-endpoint = <&typec0_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy0_usb3: endpoint {
-+				remote-endpoint = <&dwc3_0_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy1 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy1_typec_lanes: endpoint {
-+				remote-endpoint = <&typec1_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy1_usb3: endpoint {
-+				remote-endpoint = <&dwc3_1_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy2 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy2_typec_lanes: endpoint {
-+				remote-endpoint = <&typec2_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy2_usb3: endpoint {
-+				remote-endpoint = <&dwc3_2_ss>;
-+			};
-+		};
-+	};
-+};
-+
-+&atcphy3 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			atcphy3_typec_lanes: endpoint {
-+				remote-endpoint = <&typec3_connector_ss>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			atcphy3_usb3: endpoint {
-+				remote-endpoint = <&dwc3_3_ss>;
-+			};
-+		};
- 	};
- };
- 
+Chris
 
--- 
-2.34.1
-
-
+On Fri, Sep 5, 2025 at 12:15=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> Now swap table is cluster based, which means free clusters can free its
+> table since no one should modify it.
+>
+> There could be speculative readers, like swap cache look up, protect
+> them by making them RCU protected. All swap table should be filled with
+> null entries before free, so such readers will either see a NULL pointer
+> or a null filled table being lazy freed.
+>
+> On allocation, allocate the table when a cluster is used by any order.
+>
+> This way, we can reduce the memory usage of large swap device
+> significantly.
+>
+> This idea to dynamically release unused swap cluster data was initially
+> suggested by Chris Li while proposing the cluster swap allocator and
+> it suits the swap table idea very well.
+>
+> Co-developed-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Acked-by: Chris Li <chrisl@kernel.org>
+> ---
+>  mm/swap.h       |   2 +-
+>  mm/swap_state.c |   9 +--
+>  mm/swap_table.h |  37 ++++++++-
+>  mm/swapfile.c   | 202 ++++++++++++++++++++++++++++++++++++++----------
+>  4 files changed, 199 insertions(+), 51 deletions(-)
+>
+> diff --git a/mm/swap.h b/mm/swap.h
+> index c4fb28845d77..caff4fe30fc5 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -36,7 +36,7 @@ struct swap_cluster_info {
+>         u16 count;
+>         u8 flags;
+>         u8 order;
+> -       atomic_long_t *table;   /* Swap table entries, see mm/swap_table.=
+h */
+> +       atomic_long_t __rcu *table;     /* Swap table entries, see mm/swa=
+p_table.h */
+>         struct list_head list;
+>  };
+>
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 209d5e9e8d90..dfe8f42fc309 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -92,8 +92,8 @@ struct folio *swap_cache_get_folio(swp_entry_t entry)
+>         struct folio *folio;
+>
+>         for (;;) {
+> -               swp_tb =3D __swap_table_get(__swap_entry_to_cluster(entry=
+),
+> -                                         swp_cluster_offset(entry));
+> +               swp_tb =3D swap_table_get(__swap_entry_to_cluster(entry),
+> +                                       swp_cluster_offset(entry));
+>                 if (!swp_tb_is_folio(swp_tb))
+>                         return NULL;
+>                 folio =3D swp_tb_to_folio(swp_tb);
+> @@ -116,11 +116,10 @@ void *swap_cache_get_shadow(swp_entry_t entry)
+>  {
+>         unsigned long swp_tb;
+>
+> -       swp_tb =3D __swap_table_get(__swap_entry_to_cluster(entry),
+> -                                 swp_cluster_offset(entry));
+> +       swp_tb =3D swap_table_get(__swap_entry_to_cluster(entry),
+> +                               swp_cluster_offset(entry));
+>         if (swp_tb_is_shadow(swp_tb))
+>                 return swp_tb_to_shadow(swp_tb);
+> -
+>         return NULL;
+>  }
+>
+> diff --git a/mm/swap_table.h b/mm/swap_table.h
+> index e1f7cc009701..52254e455304 100644
+> --- a/mm/swap_table.h
+> +++ b/mm/swap_table.h
+> @@ -2,8 +2,15 @@
+>  #ifndef _MM_SWAP_TABLE_H
+>  #define _MM_SWAP_TABLE_H
+>
+> +#include <linux/rcupdate.h>
+> +#include <linux/atomic.h>
+>  #include "swap.h"
+>
+> +/* A typical flat array in each cluster as swap table */
+> +struct swap_table {
+> +       atomic_long_t entries[SWAPFILE_CLUSTER];
+> +};
+> +
+>  /*
+>   * A swap table entry represents the status of a swap slot on a swap
+>   * (physical or virtual) device. The swap table in each cluster is a
+> @@ -76,22 +83,46 @@ static inline void *swp_tb_to_shadow(unsigned long sw=
+p_tb)
+>  static inline void __swap_table_set(struct swap_cluster_info *ci,
+>                                     unsigned int off, unsigned long swp_t=
+b)
+>  {
+> +       atomic_long_t *table =3D rcu_dereference_protected(ci->table, tru=
+e);
+> +
+> +       lockdep_assert_held(&ci->lock);
+>         VM_WARN_ON_ONCE(off >=3D SWAPFILE_CLUSTER);
+> -       atomic_long_set(&ci->table[off], swp_tb);
+> +       atomic_long_set(&table[off], swp_tb);
+>  }
+>
+>  static inline unsigned long __swap_table_xchg(struct swap_cluster_info *=
+ci,
+>                                               unsigned int off, unsigned =
+long swp_tb)
+>  {
+> +       atomic_long_t *table =3D rcu_dereference_protected(ci->table, tru=
+e);
+> +
+> +       lockdep_assert_held(&ci->lock);
+>         VM_WARN_ON_ONCE(off >=3D SWAPFILE_CLUSTER);
+>         /* Ordering is guaranteed by cluster lock, relax */
+> -       return atomic_long_xchg_relaxed(&ci->table[off], swp_tb);
+> +       return atomic_long_xchg_relaxed(&table[off], swp_tb);
+>  }
+>
+>  static inline unsigned long __swap_table_get(struct swap_cluster_info *c=
+i,
+>                                              unsigned int off)
+>  {
+> +       atomic_long_t *table;
+> +
+>         VM_WARN_ON_ONCE(off >=3D SWAPFILE_CLUSTER);
+> -       return atomic_long_read(&ci->table[off]);
+> +       table =3D rcu_dereference_check(ci->table, lockdep_is_held(&ci->l=
+ock));
+> +
+> +       return atomic_long_read(&table[off]);
+> +}
+> +
+> +static inline unsigned long swap_table_get(struct swap_cluster_info *ci,
+> +                                       unsigned int off)
+> +{
+> +       atomic_long_t *table;
+> +       unsigned long swp_tb;
+> +
+> +       rcu_read_lock();
+> +       table =3D rcu_dereference(ci->table);
+> +       swp_tb =3D table ? atomic_long_read(&table[off]) : null_to_swp_tb=
+();
+> +       rcu_read_unlock();
+> +
+> +       return swp_tb;
+>  }
+>  #endif
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 6b3b35a7ddd9..49f93069faef 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -105,6 +105,8 @@ static DEFINE_SPINLOCK(swap_avail_lock);
+>
+>  struct swap_info_struct *swap_info[MAX_SWAPFILES];
+>
+> +static struct kmem_cache *swap_table_cachep;
+> +
+>  static DEFINE_MUTEX(swapon_mutex);
+>
+>  static DECLARE_WAIT_QUEUE_HEAD(proc_poll_wait);
+> @@ -400,10 +402,17 @@ static inline bool cluster_is_discard(struct swap_c=
+luster_info *info)
+>         return info->flags =3D=3D CLUSTER_FLAG_DISCARD;
+>  }
+>
+> +static inline bool cluster_table_is_alloced(struct swap_cluster_info *ci=
+)
+> +{
+> +       return rcu_dereference_protected(ci->table, lockdep_is_held(&ci->=
+lock));
+> +}
+> +
+>  static inline bool cluster_is_usable(struct swap_cluster_info *ci, int o=
+rder)
+>  {
+>         if (unlikely(ci->flags > CLUSTER_FLAG_USABLE))
+>                 return false;
+> +       if (!cluster_table_is_alloced(ci))
+> +               return false;
+>         if (!order)
+>                 return true;
+>         return cluster_is_empty(ci) || order =3D=3D ci->order;
+> @@ -421,32 +430,98 @@ static inline unsigned int cluster_offset(struct sw=
+ap_info_struct *si,
+>         return cluster_index(si, ci) * SWAPFILE_CLUSTER;
+>  }
+>
+> -static int swap_table_alloc_table(struct swap_cluster_info *ci)
+> +static void swap_cluster_free_table(struct swap_cluster_info *ci)
+>  {
+> -       WARN_ON(ci->table);
+> -       ci->table =3D kzalloc(sizeof(unsigned long) * SWAPFILE_CLUSTER, G=
+FP_KERNEL);
+> -       if (!ci->table)
+> -               return -ENOMEM;
+> -       return 0;
+> +       unsigned int ci_off;
+> +       struct swap_table *table;
+> +
+> +       /* Only empty cluster's table is allow to be freed  */
+> +       lockdep_assert_held(&ci->lock);
+> +       VM_WARN_ON_ONCE(!cluster_is_empty(ci));
+> +       for (ci_off =3D 0; ci_off < SWAPFILE_CLUSTER; ci_off++)
+> +               VM_WARN_ON_ONCE(!swp_tb_is_null(__swap_table_get(ci, ci_o=
+ff)));
+> +       table =3D (void *)rcu_dereference_protected(ci->table, true);
+> +       rcu_assign_pointer(ci->table, NULL);
+> +
+> +       kmem_cache_free(swap_table_cachep, table);
+>  }
+>
+> -static void swap_cluster_free_table(struct swap_cluster_info *ci)
+> +/*
+> + * Allocate a swap table may need to sleep, which leads to migration,
+> + * so attempt an atomic allocation first then fallback and handle
+> + * potential race.
+> + */
+> +static struct swap_cluster_info *
+> +swap_cluster_alloc_table(struct swap_info_struct *si,
+> +                        struct swap_cluster_info *ci,
+> +                        int order)
+>  {
+> -       unsigned int ci_off;
+> -       unsigned long swp_tb;
+> +       struct swap_cluster_info *pcp_ci;
+> +       struct swap_table *table;
+> +       unsigned long offset;
+>
+> -       if (!ci->table)
+> -               return;
+> +       /*
+> +        * Only cluster isolation from the allocator does table allocatio=
+n.
+> +        * Swap allocator uses a percpu cluster and holds the local lock.
+> +        */
+> +       lockdep_assert_held(&ci->lock);
+> +       lockdep_assert_held(&this_cpu_ptr(&percpu_swap_cluster)->lock);
+> +
+> +       table =3D kmem_cache_zalloc(swap_table_cachep,
+> +                                 __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_N=
+OWARN);
+> +       if (table) {
+> +               rcu_assign_pointer(ci->table, table);
+> +               return ci;
+> +       }
+> +
+> +       /*
+> +        * Try a sleep allocation. Each isolated free cluster may cause
+> +        * a sleep allocation, but there is a limited number of them, so
+> +        * the potential recursive allocation should be limited.
+> +        */
+> +       spin_unlock(&ci->lock);
+> +       if (!(si->flags & SWP_SOLIDSTATE))
+> +               spin_unlock(&si->global_cluster_lock);
+> +       local_unlock(&percpu_swap_cluster.lock);
+> +       table =3D kmem_cache_zalloc(swap_table_cachep, __GFP_HIGH | GFP_K=
+ERNEL);
+>
+> -       for (ci_off =3D 0; ci_off < SWAPFILE_CLUSTER; ci_off++) {
+> -               swp_tb =3D __swap_table_get(ci, ci_off);
+> -               if (!swp_tb_is_null(swp_tb))
+> -                       pr_err_once("swap: unclean swap space on swapoff:=
+ 0x%lx",
+> -                                   swp_tb);
+> +       local_lock(&percpu_swap_cluster.lock);
+> +       if (!(si->flags & SWP_SOLIDSTATE))
+> +               spin_lock(&si->global_cluster_lock);
+> +       /*
+> +        * Back to atomic context. First, check if we migrated to a new
+> +        * CPU with a usable percpu cluster. If so, try using that instea=
+d.
+> +        * No need to check it for the spinning device, as swap is
+> +        * serialized by the global lock on them.
+> +        *
+> +        * The is_usable check is a bit rough, but ensures order 0 succes=
+s.
+> +        */
+> +       offset =3D this_cpu_read(percpu_swap_cluster.offset[order]);
+> +       if ((si->flags & SWP_SOLIDSTATE) && offset) {
+> +               pcp_ci =3D swap_cluster_lock(si, offset);
+> +               if (cluster_is_usable(pcp_ci, order) &&
+> +                   pcp_ci->count < SWAPFILE_CLUSTER) {
+> +                       ci =3D pcp_ci;
+> +                       goto free_table;
+> +               }
+> +               swap_cluster_unlock(pcp_ci);
+>         }
+>
+> -       kfree(ci->table);
+> -       ci->table =3D NULL;
+> +       if (!table)
+> +               return NULL;
+> +
+> +       spin_lock(&ci->lock);
+> +       /* Nothing should have touched the dangling empty cluster. */
+> +       if (WARN_ON_ONCE(cluster_table_is_alloced(ci)))
+> +               goto free_table;
+> +
+> +       rcu_assign_pointer(ci->table, table);
+> +       return ci;
+> +
+> +free_table:
+> +       if (table)
+> +               kmem_cache_free(swap_table_cachep, table);
+> +       return ci;
+>  }
+>
+>  static void move_cluster(struct swap_info_struct *si,
+> @@ -478,7 +553,7 @@ static void swap_cluster_schedule_discard(struct swap=
+_info_struct *si,
+>
+>  static void __free_cluster(struct swap_info_struct *si, struct swap_clus=
+ter_info *ci)
+>  {
+> -       lockdep_assert_held(&ci->lock);
+> +       swap_cluster_free_table(ci);
+>         move_cluster(si, ci, &si->free_clusters, CLUSTER_FLAG_FREE);
+>         ci->order =3D 0;
+>  }
+> @@ -493,15 +568,11 @@ static void __free_cluster(struct swap_info_struct =
+*si, struct swap_cluster_info
+>   * this returns NULL for an non-empty list.
+>   */
+>  static struct swap_cluster_info *isolate_lock_cluster(
+> -               struct swap_info_struct *si, struct list_head *list)
+> +               struct swap_info_struct *si, struct list_head *list, int =
+order)
+>  {
+> -       struct swap_cluster_info *ci, *ret =3D NULL;
+> +       struct swap_cluster_info *ci, *found =3D NULL;
+>
+>         spin_lock(&si->lock);
+> -
+> -       if (unlikely(!(si->flags & SWP_WRITEOK)))
+> -               goto out;
+> -
+>         list_for_each_entry(ci, list, list) {
+>                 if (!spin_trylock(&ci->lock))
+>                         continue;
+> @@ -513,13 +584,19 @@ static struct swap_cluster_info *isolate_lock_clust=
+er(
+>
+>                 list_del(&ci->list);
+>                 ci->flags =3D CLUSTER_FLAG_NONE;
+> -               ret =3D ci;
+> +               found =3D ci;
+>                 break;
+>         }
+> -out:
+>         spin_unlock(&si->lock);
+>
+> -       return ret;
+> +       if (found && !cluster_table_is_alloced(found)) {
+> +               /* Only an empty free cluster's swap table can be freed. =
+*/
+> +               VM_WARN_ON_ONCE(list !=3D &si->free_clusters);
+> +               VM_WARN_ON_ONCE(!cluster_is_empty(found));
+> +               return swap_cluster_alloc_table(si, found, order);
+> +       }
+> +
+> +       return found;
+>  }
+>
+>  /*
+> @@ -652,17 +729,27 @@ static void relocate_cluster(struct swap_info_struc=
+t *si,
+>   * added to free cluster list and its usage counter will be increased by=
+ 1.
+>   * Only used for initialization.
+>   */
+> -static void inc_cluster_info_page(struct swap_info_struct *si,
+> +static int inc_cluster_info_page(struct swap_info_struct *si,
+>         struct swap_cluster_info *cluster_info, unsigned long page_nr)
+>  {
+>         unsigned long idx =3D page_nr / SWAPFILE_CLUSTER;
+> +       struct swap_table *table;
+>         struct swap_cluster_info *ci;
+>
+>         ci =3D cluster_info + idx;
+> +       if (!ci->table) {
+> +               table =3D kmem_cache_zalloc(swap_table_cachep, GFP_KERNEL=
+);
+> +               if (!table)
+> +                       return -ENOMEM;
+> +               rcu_assign_pointer(ci->table, table);
+> +       }
+> +
+>         ci->count++;
+>
+>         VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
+>         VM_BUG_ON(ci->flags);
+> +
+> +       return 0;
+>  }
+>
+>  static bool cluster_reclaim_range(struct swap_info_struct *si,
+> @@ -844,7 +931,7 @@ static unsigned int alloc_swap_scan_list(struct swap_=
+info_struct *si,
+>         unsigned int found =3D SWAP_ENTRY_INVALID;
+>
+>         do {
+> -               struct swap_cluster_info *ci =3D isolate_lock_cluster(si,=
+ list);
+> +               struct swap_cluster_info *ci =3D isolate_lock_cluster(si,=
+ list, order);
+>                 unsigned long offset;
+>
+>                 if (!ci)
+> @@ -869,7 +956,7 @@ static void swap_reclaim_full_clusters(struct swap_in=
+fo_struct *si, bool force)
+>         if (force)
+>                 to_scan =3D swap_usage_in_pages(si) / SWAPFILE_CLUSTER;
+>
+> -       while ((ci =3D isolate_lock_cluster(si, &si->full_clusters))) {
+> +       while ((ci =3D isolate_lock_cluster(si, &si->full_clusters, 0))) =
+{
+>                 offset =3D cluster_offset(si, ci);
+>                 end =3D min(si->max, offset + SWAPFILE_CLUSTER);
+>                 to_scan--;
+> @@ -1017,6 +1104,7 @@ static unsigned long cluster_alloc_swap_entry(struc=
+t swap_info_struct *si, int o
+>  done:
+>         if (!(si->flags & SWP_SOLIDSTATE))
+>                 spin_unlock(&si->global_cluster_lock);
+> +
+>         return found;
+>  }
+>
+> @@ -1884,7 +1972,13 @@ swp_entry_t get_swap_page_of_type(int type)
+>         /* This is called for allocating swap entry, not cache */
+>         if (get_swap_device_info(si)) {
+>                 if (si->flags & SWP_WRITEOK) {
+> +                       /*
+> +                        * Grab the local lock to be complaint
+> +                        * with swap table allocation.
+> +                        */
+> +                       local_lock(&percpu_swap_cluster.lock);
+>                         offset =3D cluster_alloc_swap_entry(si, 0, 1);
+> +                       local_unlock(&percpu_swap_cluster.lock);
+>                         if (offset) {
+>                                 entry =3D swp_entry(si->type, offset);
+>                                 atomic_long_dec(&nr_swap_pages);
+> @@ -2677,12 +2771,21 @@ static void wait_for_allocation(struct swap_info_=
+struct *si)
+>  static void free_cluster_info(struct swap_cluster_info *cluster_info,
+>                               unsigned long maxpages)
+>  {
+> +       struct swap_cluster_info *ci;
+>         int i, nr_clusters =3D DIV_ROUND_UP(maxpages, SWAPFILE_CLUSTER);
+>
+>         if (!cluster_info)
+>                 return;
+> -       for (i =3D 0; i < nr_clusters; i++)
+> -               swap_cluster_free_table(&cluster_info[i]);
+> +       for (i =3D 0; i < nr_clusters; i++) {
+> +               ci =3D cluster_info + i;
+> +               /* Cluster with bad marks count will have a remaining tab=
+le */
+> +               spin_lock(&ci->lock);
+> +               if (rcu_dereference_protected(ci->table, true)) {
+> +                       ci->count =3D 0;
+> +                       swap_cluster_free_table(ci);
+> +               }
+> +               spin_unlock(&ci->lock);
+> +       }
+>         kvfree(cluster_info);
+>  }
+>
+> @@ -2718,6 +2821,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
+alfile)
+>         struct address_space *mapping;
+>         struct inode *inode;
+>         struct filename *pathname;
+> +       unsigned int maxpages;
+>         int err, found =3D 0;
+>
+>         if (!capable(CAP_SYS_ADMIN))
+> @@ -2824,8 +2928,8 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
+alfile)
+>         p->swap_map =3D NULL;
+>         zeromap =3D p->zeromap;
+>         p->zeromap =3D NULL;
+> +       maxpages =3D p->max;
+>         cluster_info =3D p->cluster_info;
+> -       free_cluster_info(cluster_info, p->max);
+>         p->max =3D 0;
+>         p->cluster_info =3D NULL;
+>         spin_unlock(&p->lock);
+> @@ -2837,6 +2941,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
+alfile)
+>         p->global_cluster =3D NULL;
+>         vfree(swap_map);
+>         kvfree(zeromap);
+> +       free_cluster_info(cluster_info, maxpages);
+>         /* Destroy swap account information */
+>         swap_cgroup_swapoff(p->type);
+>
+> @@ -3215,11 +3320,8 @@ static struct swap_cluster_info *setup_clusters(st=
+ruct swap_info_struct *si,
+>         if (!cluster_info)
+>                 goto err;
+>
+> -       for (i =3D 0; i < nr_clusters; i++) {
+> +       for (i =3D 0; i < nr_clusters; i++)
+>                 spin_lock_init(&cluster_info[i].lock);
+> -               if (swap_table_alloc_table(&cluster_info[i]))
+> -                       goto err_free;
+> -       }
+>
+>         if (!(si->flags & SWP_SOLIDSTATE)) {
+>                 si->global_cluster =3D kmalloc(sizeof(*si->global_cluster=
+),
+> @@ -3238,16 +3340,23 @@ static struct swap_cluster_info *setup_clusters(s=
+truct swap_info_struct *si,
+>          * See setup_swap_map(): header page, bad pages,
+>          * and the EOF part of the last cluster.
+>          */
+> -       inc_cluster_info_page(si, cluster_info, 0);
+> +       err =3D inc_cluster_info_page(si, cluster_info, 0);
+> +       if (err)
+> +               goto err;
+>         for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
+>                 unsigned int page_nr =3D swap_header->info.badpages[i];
+>
+>                 if (page_nr >=3D maxpages)
+>                         continue;
+> -               inc_cluster_info_page(si, cluster_info, page_nr);
+> +               err =3D inc_cluster_info_page(si, cluster_info, page_nr);
+> +               if (err)
+> +                       goto err;
+> +       }
+> +       for (i =3D maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i+=
++) {
+> +               err =3D inc_cluster_info_page(si, cluster_info, i);
+> +               if (err)
+> +                       goto err;
+>         }
+> -       for (i =3D maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i+=
++)
+> -               inc_cluster_info_page(si, cluster_info, i);
+>
+>         INIT_LIST_HEAD(&si->free_clusters);
+>         INIT_LIST_HEAD(&si->full_clusters);
+> @@ -3961,6 +4070,15 @@ static int __init swapfile_init(void)
+>
+>         swapfile_maximum_size =3D arch_max_swapfile_size();
+>
+> +       /*
+> +        * Once a cluster is freed, it's swap table content is read
+> +        * only, and all swap cache readers (swap_cache_*) verifies
+> +        * the content before use. So it's safe to use RCU slab here.
+> +        */
+> +       swap_table_cachep =3D kmem_cache_create("swap_table",
+> +                           sizeof(struct swap_table),
+> +                           0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
+> +
+>  #ifdef CONFIG_MIGRATION
+>         if (swapfile_maximum_size >=3D (1UL << SWP_MIG_TOTAL_BITS))
+>                 swap_migration_ad_supported =3D true;
+> --
+> 2.51.0
+>
+>
 
