@@ -1,139 +1,188 @@
-Return-Path: <linux-kernel+bounces-804418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F476B47643
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:44:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDFAB47646
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CB81C2228E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:44:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D29797AD980
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14BA27F178;
-	Sat,  6 Sep 2025 18:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A63D225A3B;
+	Sat,  6 Sep 2025 18:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqNb8pV9"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZqWQuqRk"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF96315D2B;
-	Sat,  6 Sep 2025 18:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603271C6FFA
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 18:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757184231; cv=none; b=QnQhxRt1oMH59cPMShMfl9KTLkb7/58Mqi3d7H4byggrtfrJVJCvUH01RDb5KBQlFmQ1Ep1PHEm7vztold+xU5teiF4KOWEtPkvfJ52nOKLybH4w71NFycd8DaGC826JCOV2lyCB9OX1NHed4zSOid1TvMXJT3jFzoKOKAsaRmY=
+	t=1757184416; cv=none; b=dxIvs7S6jgzDNB45fa2Q3PklexlF6XHmIKjGvhrp9tsZ1KS7wCBVYVhaxeXEjaWQSxgB+Jv9sReqkh2hMY/ANC3JCvoZdRqjg6iyaiXOrRDDbT1HQ0gsZbWVkUCP9KzGCBIyH76UFPtLftNzOd19YO24wVf1H5UCfCrglfoTHKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757184231; c=relaxed/simple;
-	bh=A2SfHCO2en4ZibxLIFm+2RXjb315oSn5JIZ9vIAmY8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vg6fNb1kSgBO3Id6SghTbGls3OijS4sQKDhC912DKokvc6qI7wQIKeKb4Hfuq5F+0ocwlwFb6u7J1OTfsImNmd1/xvQV99hjkv8i0uTMrtNq6dtUigpY01ZQ35huTS5wyJYzoVN0lpp5oh3+V5pGvyzkxFRWjhWf5qn8ejE5j/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqNb8pV9; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b02c719a117so572925466b.1;
-        Sat, 06 Sep 2025 11:43:48 -0700 (PDT)
+	s=arc-20240116; t=1757184416; c=relaxed/simple;
+	bh=0AuUmYDGUgWr6NLQHAXspt1nlUrnwqxucWAtvtA4Wi4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eYnDQU7eWGsm5PKfVZlPyN2ygi0lftpo0tl+DMKG+iiuXMbCnx44IhXbyrl/7WuKnnjQ2NG+xcySOhXapLD6bf4uwU0GUERxPh2m2TB3r0Zl+WGst6C6rz9ibaelfH7RnkMSDO5durvnAuQLNaFq2xBiS3cz+DA/55GL4dRsSNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZqWQuqRk; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45de1084868so1650675e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 11:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757184227; x=1757789027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GPAi90Hux0mu62Ys4IXO2Pj4eDbqG6EQAkVC5R4v2uU=;
-        b=WqNb8pV91L9rJE3R0wpitjxd/17CVV1XLyhnrL4u7DR98CXLuj2avNnmGtgL2YM1r5
-         ZkKpC45jw6JpxjEwaGjd9XljXFb1EK//W92bjMT/eIEgaRBc4K+N6vslXxYAPtHMXTUu
-         BZlyomsbVCktzOoAqKXfXPmipmcLyABXiF8Z6UuIWtrAxWBvI7GPDMx9zk8fnOJV5XVv
-         SjO6HxqmCO+BqbQj2C5J/VisTZkR+0OcRhDHg8W9w4CVReA2ZDq9DFCJv9tcKXLb5B9X
-         954FGapAKOC0tzdseYvPaB0xTnUfHixtBtTHyPnAQR5/fQmp2ydj+za4AZaQhMkJpwFC
-         Zg+Q==
+        d=tuxon.dev; s=google; t=1757184412; x=1757789212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iXIBvGz2QRYZ2c6J6+fuJIBALqm9W64iJQz3FvyRluM=;
+        b=ZqWQuqRkKpxRazFqonBdLMgsNt/Br9wtPuEPo9UY+uy1sKx/UVbYhu8mtdWA8nq8vQ
+         jWRhnL1BVXgsAEc3+13nlaFESKz4eNi+yxG8W/KQw+dgJ0VHS/vlLD8xoBdQKV2P+748
+         8na+T6SiB7NwjLFBw+uqpXE/Dhpi6v2eKBZ3JnHLXdtVqLdlXxxhDTB5JOImAaDv/i9B
+         jwUCHVh7HmijfCjx+vRhRe7XtArQWvHD743CwRgCB/Ax/ek962Krl2RlTVEo2L/0Zs0u
+         4Bi8QLuY/oC+8QBjJSL5755glRCgfy/0SzKf3BDdTxzAr4gm264O1W8812b7Y15jww9l
+         OFfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757184227; x=1757789027;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GPAi90Hux0mu62Ys4IXO2Pj4eDbqG6EQAkVC5R4v2uU=;
-        b=KRULYuz/90Ywev2lATMxwv2N9BToghvikdw7gxTWRk5QrTFo1vn4r2U17MXa/0tJVV
-         IRMR+6vGxNc+ZYELr2tGCseg0hf8FM6yP0KI6gg40gIrtCWjBkjK27ZR0vxkEOW9i+Vw
-         UqvH66QWZfZz/9g7/zEhNlBpl6ZFFFbvhb9y2IF7su8wz0jyKJAfG7rDJAeGpt3B19Tb
-         KZc/+QR84QcrMag2ncOGyMg0o45MROVZtv4YBw8S4rvtEfL2Yk4+aYFFXVMaPgSprWY3
-         5I3BbgYkfJkVI0ptzox73YRkb0kAQ79UO9ZSixyAdQU8/xG1YkNtb+isZ4DGpElZwx+v
-         nF2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAW0HlVRRSFpEwhUnUCgMNb/MkrpvaF0xpWi9blLB9RcZB6ERXpIim6azcOk1ywyfzYt8Fd5wtZ1flKJKv@vger.kernel.org, AJvYcCVgFrYMeWC9T7oDke4aejmJB3a+EjnxvGthCo3DEzCDaCKwv2tW+4iUvjPS8kXi3+X0uuY=@vger.kernel.org, AJvYcCWHfmX8I4rxz3RU+SMIqjFRvjm/ISU8F+qRZ7jJ3iH+vGDAvSSYjF8/6BeLJ+ti87+4M7ke9WiNx1Twkl7sP3gC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkjJPWb47SAiKVjDiknKG3rij3knHMAu7jmGEqoOHnYsEUJuko
-	VEUcwBBrUuOhBB5x5EFY41ebXoibB7bgf1seD8X4g7FMZgMzoeOCRan6
-X-Gm-Gg: ASbGncsPRkKLHFPuXS32oYZnNVYchxi4LpcwU82OgXcyD6HO0sFC8zfwkknvsEVopPE
-	POt3wrfsXvWm/G5kSXIgF5RuwGY2xobZowhFvw5UgqrGQLUJCtElEGdCO3p8MTCIdNm1KDXP7Oz
-	3Bbk3bQaEzfiNnftrbdiOG3LTpN43GZO3wTProluxLlQdDe/N/Q3aCF7ImtspBbXOuxxMluXf1n
-	NTBTjfKsCcfl79rn1NS4BvHauwbzz5KOIdnOuiIMUWXWnqrpxyGX6VARHPqTysezfWcH+HmCI3I
-	yt0KaxvrafD+6J0P0+p1qR6Z/oo6bieyX/9Uc7TWF/bN3NWUzyLRX1wCJ7oquUVmRt+rV28zEHf
-	MSwU8IN9pq6SJC80=
-X-Google-Smtp-Source: AGHT+IHE2NZIt0wrvI86xs9hDbwS5+mTK6rKNdU1UL89vVA8Qvv/fkz3LiQ4We8x5UFPjNvHXXIAog==
-X-Received: by 2002:a17:907:6d05:b0:b04:3c66:ee5a with SMTP id a640c23a62f3a-b04b147d878mr264654366b.23.1757184226681;
-        Sat, 06 Sep 2025 11:43:46 -0700 (PDT)
-Received: from hsukr3.. ([141.70.88.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047b61cf00sm700359666b.15.2025.09.06.11.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 11:43:46 -0700 (PDT)
-From: Sukrut Heroorkar <hsukrut3@gmail.com>
-To: 
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Sukrut Heroorkar <hsukrut3@gmail.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] selftests/kvm: Use vcpus count instead of hardcoded 0xff in test_icr
-Date: Sat,  6 Sep 2025 20:43:20 +0200
-Message-ID: <20250906184324.89974-1-hsukrut3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1757184412; x=1757789212;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXIBvGz2QRYZ2c6J6+fuJIBALqm9W64iJQz3FvyRluM=;
+        b=oqW/+KYU2w2YUSE7Me1iPWCHKzgzOeCQlk2Xx+/u73tUYTMUUmsPBw2oYGpH9wRyDT
+         yHKobfqLgN7pZsjDPsKH4p+J1flGpIai6qcnqkMLTQPdSdhkwlog8XCYalanA8NsPCqc
+         3dI6HArlF2NLRqeaaQ0Mp+fNHe6l8fqKjL3YoOcBjV2NtjMRv7U0Fe5fppP7Xflgec8W
+         scAbcV8Veh63m6BJR7XY0mrs3JYPZUrFxg4MpCKnf44R1tZKT4UZuuAC3kyQWtHAGve8
+         b7jns/fBcOg+traF3L33xcgGOyaozqkW1tS+kuPNw4KKvVFG5yM3tFP8RNfusrQ2Vdx0
+         MLuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4nX+I5E72K96uLoveqwOtGu2b33gOfmQzo+UBp71rHCWu27ruDUMV18+g8jH3iwVPsfSN+ROi0QXM/aI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu7U1i9x9zfja5IZSiXJA8ZmCgW6yB5gC+g1BOUq+YCXxXfOyu
+	OZmMZL+xR3QJjpXc4JS6YSWIn3/v6dNw6aRIjjMETOekLCnWiPshKqsLlb0k5sgpaEaF8/H5S0j
+	eYYri
+X-Gm-Gg: ASbGncsLQZUJ4NJUODOf6YpoKQ7HZHfWzGDr2JIPvF3zUIlWESx04nLZdlDz4rrVKCZ
+	k+v1ZZCZKsxt56tBXhpVfsgougRifo5Tx18mKdlb5vOsP6rNJWf1bBiDpNndfN4/nLatPd0TAum
+	9OTbdAKIIVLoQWCV39mnpUWMb8xmrn+zegFcNPJFyvaSAQIBc5V8JFzJQo1PP4Th0JZ2pfQJWAd
+	n+Nc7xvgQT7XtQYSkNOPNnODNo12X2rD8Fa7sJGzvjohy1rzIOnJlUzwZ/jyaTDKysyJgUYd0gN
+	06ib75gj/gH1CoTqbV3pcGiuCxJaWCUSzjw5AmkT5fNvlVlylVcB7jelJtiGZI76pmS/+kX/6Uj
+	UTL0UaM9dUJxOEaUJlVLHdIX1nBmnQaQ=
+X-Google-Smtp-Source: AGHT+IELO4WCYtXnWgGHZ+m3e/fCm3/0gRjeizrA1xDQ2eHBYPWbZicD4ZFELLra/Cwi94VouYjN2Q==
+X-Received: by 2002:a05:600c:8b22:b0:458:be62:dcd3 with SMTP id 5b1f17b1804b1-45dddec82fdmr28142265e9.17.1757184411619;
+        Sat, 06 Sep 2025 11:46:51 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98e77231sm202054845e9.12.2025.09.06.11.46.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Sep 2025 11:46:51 -0700 (PDT)
+Message-ID: <4754b656-6168-417e-8fc8-450d1b0a3293@tuxon.dev>
+Date: Sat, 6 Sep 2025 21:46:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v3 22/32] clk: at91: sam9x60: switch to parent_hw and
+ parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <7f90312300d24617c51f63aa0a1c7bbb4a0212cc.1752176711.git.Ryan.Wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <7f90312300d24617c51f63aa0a1c7bbb4a0212cc.1752176711.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace the hardcoded 0xff in test_icr() with the actual number of vcpus
-created for the vm. This address the existing TODO and keeps the test
-correct if it is ever run with multiple vcpus.
+Hi, Ryan,
 
-Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
----
- tools/testing/selftests/kvm/x86/xapic_state_test.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+On 7/10/25 23:07, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> 
+> Switch SAM9X60 clocks to use modern parent_hw and parent_data.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>   drivers/clk/at91/sam9x60.c | 109 +++++++++++++++++--------------------
+>   1 file changed, 51 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+> index eb38da77d69a..b2e86e600a9f 100644
+> --- a/drivers/clk/at91/sam9x60.c
+> +++ b/drivers/clk/at91/sam9x60.c
+> @@ -79,9 +79,9 @@ static const struct clk_pcr_layout sam9x60_pcr_layout = {
+>   	.pid_mask = GENMASK(6, 0),
+>   };
+>   
+> -static const struct {
+> +static struct {
+>   	char *n;
+> -	char *p;
+> +	struct clk_hw *parent_hw;
+>   	unsigned long flags;
+>   	u8 id;
+>   } sam9x60_systemck[] = {
+> @@ -89,11 +89,11 @@ static const struct {
+>   	 * ddrck feeds DDR controller and is enabled by bootloader thus we need
+>   	 * to keep it enabled in case there is no Linux consumer for it.
+>   	 */
+> -	{ .n = "ddrck",  .p = "masterck_div", .id = 2, .flags = CLK_IS_CRITICAL },
+> -	{ .n = "uhpck",  .p = "usbck",    .id = 6 },
+> -	{ .n = "pck0",   .p = "prog0",    .id = 8 },
+> -	{ .n = "pck1",   .p = "prog1",    .id = 9 },
+> -	{ .n = "qspick", .p = "masterck_div", .id = 19 },
+> +	{ .n = "ddrck",  .id = 2, .flags = CLK_IS_CRITICAL },
+> +	{ .n = "uhpck",  .id = 6 },
+> +	{ .n = "pck0",   .id = 8 },
+> +	{ .n = "pck1",   .id = 9 },
+> +	{ .n = "qspick", .id = 19 },
+>   };
+>   
+>   static const struct {
+> @@ -184,32 +184,17 @@ static const struct {
+>   
+>   static void __init sam9x60_pmc_setup(struct device_node *np)
+>   {
+> +	const char *td_slck_name = "td_slck", *md_slck_name = "md_slck";
+> +	u8 td_slck_index = 0, md_slck_index = 1, main_xtal_index = 2;
+> +	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
+> +	const char *main_xtal_name = "main_xtal";
+>   	struct clk_range range = CLK_RANGE(0, 0);
+> -	const char *td_slck_name, *md_slck_name, *mainxtal_name;
+> +	struct clk_parent_data parent_data[6];
+>   	struct pmc_data *sam9x60_pmc;
+> -	const char *parent_names[6];
+> -	struct clk_hw *main_osc_hw;
+> +	struct clk_hw *usbck_hw;
+>   	struct regmap *regmap;
+> -	struct clk_hw *hw;
+>   	int i;
+>   
 
-diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-index fdebff1165c7..4af36682503e 100644
---- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
-+++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-@@ -56,6 +56,17 @@ static void x2apic_guest_code(void)
- 	} while (1);
- }
- 
-+static unsigned int vm_nr_vcpus(struct kvm_vm *vm)
-+{
-+	struct kvm_vcpu *vcpu;
-+	unsigned int count = 0;
-+
-+	list_for_each_entry(vcpu, &vm->vcpus, list)
-+		count++;
-+
-+	return count;
-+}
-+
- static void ____test_icr(struct xapic_vcpu *x, uint64_t val)
- {
- 	struct kvm_vcpu *vcpu = x->vcpu;
-@@ -124,7 +135,7 @@ static void test_icr(struct xapic_vcpu *x)
- 	 * vCPUs, not vcpu.id + 1.  Arbitrarily use vector 0xff.
- 	 */
- 	icr = APIC_INT_ASSERT | 0xff;
--	for (i = 0; i < 0xff; i++) {
-+	for (i = 0; i < vm_nr_vcpus(vcpu->vm); i++) {
- 		if (i == vcpu->id)
- 			continue;
- 		for (j = 0; j < 8; j++)
--- 
-2.43.0
+Please keep this starting here:
+
+> -	i = of_property_match_string(np, "clock-names", "td_slck");
+> -	if (i < 0)
+> -		return;
+> -
+> -	td_slck_name = of_clk_get_parent_name(np, i);
+> -
+> -	i = of_property_match_string(np, "clock-names", "md_slck");
+> -	if (i < 0)
+> -		return;
+> -
+> -	md_slck_name = of_clk_get_parent_name(np, i);
+> -
+> -	i = of_property_match_string(np, "clock-names", "main_xtal");
+> -	if (i < 0)
+> -		return;
+> -	mainxtal_name = of_clk_get_parent_name(np, i);
+> -
+
+ending here and use the retrieved name with AT91_CLK_PD_NAME()
 
 
