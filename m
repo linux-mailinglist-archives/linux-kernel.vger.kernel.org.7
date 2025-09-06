@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-804138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F49B46AA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:17:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9707B46AA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C95D566D56
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957023A6C88
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD596280024;
-	Sat,  6 Sep 2025 09:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF9727F4CA;
+	Sat,  6 Sep 2025 09:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uo4szKVP"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXSaiG4b"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11AA24337B
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 09:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F2E23FC66;
+	Sat,  6 Sep 2025 09:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757150232; cv=none; b=V4QwbE9YcSFRkq4cDJ+u4ApsD++5eS1dGwSkllCxUm6AlhfLS8MCQnwuHSgqbwV2FhOfYL672Rv/BSe6KonpbWFugiRp4ryFIFQR8O9OiD5RZjPsBL/WYkCNJiPpyOLTpzXBCTjCOR9/iyKzI3C4wPOIZJtGM/sNPNhyUvjJn74=
+	t=1757150273; cv=none; b=PzKFCAMqYIrfXwF+HAkYgYKz0U7Ouol9yxJnpM1RSoD/Zg5Qw4cdtsMoZs1kHCTWxRFUk2vAjm3D0cW2WlltRvA9nXMnf64zY89lIniP7WFFg41GHrxQp1UcS/3lAioa1o0dpym1fcHKDGPfz9Q4Mer+xQGjVscPdg+QVqeuVy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757150232; c=relaxed/simple;
-	bh=4tcf+x1bAGP5gLbbX2/0mJXn6QiSKzTB0gWtNPgyCvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YGneC3sKPl3QKIek5nHDMv1J9d9ytsgbJdKUcMrH2UJnWMe87YQmvHX4L1sdBEiAVUQCr5a2L/JfX2sLJBIV3ThKTt7nUwlIExb9CofUx3XMm6efJkym+PMT1sqgk1IHEWwn+DE1IA2ID35hwGPuFUNqxf2vuAaNw9CTPyDGioI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uo4szKVP; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-811ab6189cfso125008385a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 02:17:10 -0700 (PDT)
+	s=arc-20240116; t=1757150273; c=relaxed/simple;
+	bh=KngI5sX69UHl6zztwuTODeaqfXt/Wi1K6usTJRVh3Qw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ltDKHwWXhUmvWspxXi7jriWHSlvidovvaMdGPVO0ePtYn1wYBKc4vCEh/TsbR8l7Rqb17eqBziHiTO7ZagrRZ+IqhsvR2vZ/pZtDgT+a6AUN16pAyLHsbinifi1nsUFnVk+sXIBBMDUcIzffElP8SAwyHEBjAz3OWyFxdEg1i9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXSaiG4b; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24456ce0b96so30468055ad.0;
+        Sat, 06 Sep 2025 02:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757150229; x=1757755029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jyTsTWBfEVvg2d8Q116wig3LF6X3zwSWXkw8iB2bvBY=;
-        b=Uo4szKVPKNwugn/xYEwclUxWlsz/wfzT0y9wtG3my9pHhhcL8wsOsbrRJZDfUE+9Vd
-         qvkuh+VnfzmX76DBCPWCv1gaIuMdie+q6XRHbVKvwhgAe8WqTMih8rf3oXo7MtKzOqzv
-         zAst9Dxnbkk5NC16gEv0aSMfZ3MJDI0sFkA9l8xteaGy0z0HpvS0fLcq95u0c7ypFFNQ
-         j8dNe66mdVCav+vJOz/byabyP+13IqJQ3Uz4R8+GqF7Stt0cbNPrzcKvjbGXyQkw8ttk
-         XjEfxfTytfyVaULVheLtxif9fxFABEp5m+r671ggybaYPoo5GD/jplvX+UVy0Jn/Pn/v
-         C+lA==
+        d=gmail.com; s=20230601; t=1757150271; x=1757755071; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ve8nBlpidfX7Xlj9Re0PkPjW3YfTqNWsYR7YDLtDimA=;
+        b=cXSaiG4b7Kjq/DEC5ZP3QAwiyvDdqMbFH2s3aPwRCemEqPwD2bBBR9A5nmkO/Vp/fy
+         HrxFXGrYuAOLBjKS8siVMRDYw+wVboJkcDtUnuOoeajQKgxvZirH4S8pSkQ5qctWcKfT
+         J/3UPfjqRydumDgk81EExLw7AitK/5NF5qcqryt9vs2gbFjFMGrguIRm3C2t0F4Apxrx
+         Yq68RT1vk/bXvASsYAfwm5+vDdezOjPyVQZkHqO08C+KhxGbIn60XWiqG54ELW5Y9N94
+         mdXQYgT1z2Xwgz4lBhlUdmuxo8hwIrZjCUlLwqghwZJiOGA8XBJN5OkguoRh2QGElYJR
+         RPHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757150229; x=1757755029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jyTsTWBfEVvg2d8Q116wig3LF6X3zwSWXkw8iB2bvBY=;
-        b=RFTSxzajVwiFqX9VlqzLKrxCRG54EsGWBUbERFOXNKL9yGjkmI8R68M/sTwMY1yCEU
-         HC41L6xLz00c7kfvYwbXf1qJTMu+JHHwsVfIFhixK723VwPd6GFNTUuiLKmlWuX8iDkY
-         CkckmHQTU0W1Vo6m90PdpVqDxVy/MCgZ+rjm7Q79Kqh2LhCWk9TIqoVJ6lw8cJLgxfac
-         K3YOAguNvhtC98x8cP5+5dB0cpj2I3zZg1Lg8P8ahsqv0BAagldxFmJGV5uuyqgz8+VH
-         ge/rwWb3g1uWzlSMnpwDX0q2XAmlAIo8+qxr5Uo9fdvdUGQjF1AwoPlXaoVrA/lfjCWm
-         ZHaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn87AHq7QKStzyCp+lfWuxk7M8BdFQBce/mLOtRfhvRj5/H0N89v89pmvpYn1ouJQL6XkQXnr1DKXiErA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0hFWx5w4gYfuQfmU/plC9BAR4gszamO7eP6L6OvDt0NH20JAr
-	sHcyJhY1RnSYSR5hMQ48mJGN6WoPnea5YwH6U5aJB7+jV5LoWO5CmicO/nmK4u2A067/ChYW+Ou
-	5pQgl4h5IU2Qps++I59k4SCM2xvUDI9J6GPzQHs9H
-X-Gm-Gg: ASbGncvVrvohTdgN2EJZD7jQk1J/V0VbUE9N4a65StPLWAlpJQNQfFVijwpUXcdlM47
-	cDtPVJnhmXsa+Bt7p0T5NcNYIglbqSTZAjs+nreSfSwb31EtitMYcThm3xKifITGsR3HUSrmWft
-	6617GqZTRdNiX+J5tatbxGlemVK/j/l9COquca0ilzcumKrXhGhw7S3UPba0VKrgaKNnGVTERzY
-	ghqqZGQKoVf27HTj3GzSz8=
-X-Google-Smtp-Source: AGHT+IFNHk3o12uxwbf6OpMNI0I53ugLfIK2NXUHGthDfhTNjq2NSap4D+GDM5PavZ580+AiwTooTru70iUwX14qHME=
-X-Received: by 2002:a05:620a:440f:b0:806:7c82:fd2f with SMTP id
- af79cd13be357-813c33dbd99mr153395285a.75.1757150229022; Sat, 06 Sep 2025
- 02:17:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757150271; x=1757755071;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ve8nBlpidfX7Xlj9Re0PkPjW3YfTqNWsYR7YDLtDimA=;
+        b=SkFm7N/Me8/1E1H71j/q/QhrIvZPMYSvJtWsco4yEIrg7WvKmmxoObEgNYdZJdUihq
+         YHsOjb67S7fGd4VVXGfzI22cv3S2Ykgm23QA9d2zJy8xPwm6Se1jvzHaGt0lxC9fPEWB
+         Op9JLSTKHxGqLyvaPwerCREanPy0ap88ndlp4G7vAKX+QyDZJ7jqqQeRX6lAoRyR02lS
+         nWwpdldyb4HtckNUHg3ZFtjSD/ZqUVS5N0qPLphGrnJkMigkxQH+d3YLIu7Fbr824ukJ
+         oxSkgwe6Kxl1/iq+N1j454EiILD+JbmW4eGMBUxXtOWTnQW00TJvpdZl8gvnAkA0Vz/w
+         OaoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjlkKnLYRQhzWeQG+kX0W5ZQnK+fC9nwjxqP/d/X0+a6+zdTqq8ODdBQrmPfwgtxdCj7U88WoIBumaKIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPQ/BK2nJX29ZG+TUxZNOslL30HYQ5d7Ja/BjcpWzNUwWy1ddu
+	pRAaYrSOvugjv0ZUeBvSeAYNNX/EKb3Ym++s2BKgjKJ5SKPh3oKV9IQA
+X-Gm-Gg: ASbGncv/VfyfIO1LQ4pVU2fxW3Hwy6ptN1iClGusWm+pjwnK9TcqiPTC4aj6VpKUDsH
+	Mk4O7JApE9SkNlfUUwCqE4ZOSpkUaHYblyW3nreVyHIQwc1ocKPC36pJq0YvCi7awMMV0CmQCg9
+	otuL/+rR3dL3QK/vOixuMNCOo1pPI/dwXkIiBd1WVHNT6swL4jZ1cQs87nozokGDC8HSRN+qfZv
+	jW7VIJzO3laETmP9cPfgq+WSCSjI9k3K0SrWJ5jCvr6jzmAywld8WGKMz66dVEaFbvQB02PPzUU
+	VHwJiQHS3MFtWaT0y8ntWXM2i2QT6hJafMZz33owGHNtsUppkUKZUwx2serDqcOgf75nIDld4y9
+	AYxwlLvzLAE6NqDK8tTfrrGA6rqp4g4RxJGbsX//Dxg==
+X-Google-Smtp-Source: AGHT+IEkxVuvzarp/05AlrmO88wiQ2u5cuKTrx2x6qjWyE58uQQHAUI51bWekueB+rniwhuLeLNaqg==
+X-Received: by 2002:a17:902:e944:b0:24c:c013:5098 with SMTP id d9443c01a7336-251751e83e0mr17043815ad.8.1757150270830;
+        Sat, 06 Sep 2025 02:17:50 -0700 (PDT)
+Received: from [127.0.1.1] ([2401:4900:1c44:6dc9:9ee4:9664:de3c:82ef])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24cc55c4616sm63727555ad.137.2025.09.06.02.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 02:17:50 -0700 (PDT)
+From: Dixit Parmar <dixitparmar19@gmail.com>
+Date: Sat, 06 Sep 2025 14:47:45 +0530
+Subject: [PATCH] docs: dt: submitting-patches: Fix typo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68bb4160.050a0220.192772.0198.GAE@google.com> <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
-In-Reply-To: <CANn89iLNFHBMTF2Pb6hHERYpuih9eQZb6A12+ndzBcQs_kZoBA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sat, 6 Sep 2025 02:16:58 -0700
-X-Gm-Features: Ac12FXxOqkfzxU_8v9kW7s_ChUAwPmKMRLy0TrO1zWLZ0WwxfLDIRZs52c2CrbU
-Message-ID: <CANn89iJaY+MJPUJgtowZOPwHaf8ToNVxEyFN9U+Csw9+eB7YHg@mail.gmail.com>
-Subject: Re: [syzbot] [net?] possible deadlock in inet_shutdown
-To: syzbot <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
-Cc: davem@davemloft.net, dsahern@kernel.org, horms@kernel.org, kuba@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ming.lei@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250906-doc-typo-fix-v1-1-74a427d3386f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADn8u2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwMz3ZT8ZN2SyoJ83bTMCt00E2MDCyMTEyPztCQloJaColSgMNi46Nj
+ aWgDy+G0vXgAAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dixit Parmar <dixitparmar19@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757150268; l=1337;
+ i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
+ bh=KngI5sX69UHl6zztwuTODeaqfXt/Wi1K6usTJRVh3Qw=;
+ b=BubnzhP6ISTpTyPF+8TTu0b2Ou63lIsMqmD0yIC1l+/0Ve5Y5LpLd4ZRbWz6rUcO8XAd8+bfF
+ X+kcMnQdw3PDNY+sgdj4/jkAplTZs4xKQdB/QEjSZ7jGyyr98RVVsLa
+X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
+ pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
 
-On Fri, Sep 5, 2025 at 1:03=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Fri, Sep 5, 2025 at 1:00=E2=80=AFPM syzbot
-> <syzbot+e1cd6bd8493060bd701d@syzkaller.appspotmail.com> wrote:
+Fix trivial typo "serie" to "series".
 
-Note to NBD maintainers : I held about  20 syzbot reports all pointing
-to NBD accepting various sockets, I  can release them if needed, if you pre=
-fer
-to triage them.
+Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+---
+Fix trivial typo "serie" to "series" in submitting-patches.rst.
+---
+ Documentation/devicetree/bindings/submitting-patches.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Question to NBD maintainers.
->
-> What socket types are supposed to be supported by NBD ?
->
-> I was thinking adding a list of supported ones, assuming TCP and
-> stream unix are the only ones:
->
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 6463d0e8d0ce..87b0b78249da 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -1217,6 +1217,14 @@ static struct socket *nbd_get_socket(struct
-> nbd_device *nbd, unsigned long fd,
->         if (!sock)
->                 return NULL;
->
-> +       if (!sk_is_tcp(sock->sk) &&
-> +           !sk_is_stream_unix(sock->sk)) {
-> +               dev_err(disk_to_dev(nbd->disk), "Unsupported socket:
-> should be TCP or UNIX.\n");
-> +               *err =3D -EINVAL;
-> +               sockfd_put(sock);
-> +               return NULL;
-> +       }
-> +
->         if (sock->ops->shutdown =3D=3D sock_no_shutdown) {
->                 dev_err(disk_to_dev(nbd->disk), "Unsupported socket:
-> shutdown callout must be supported.\n");
->                 *err =3D -EINVAL;
+diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
+index f3e23e69a638..97ae4f92d3dd 100644
+--- a/Documentation/devicetree/bindings/submitting-patches.rst
++++ b/Documentation/devicetree/bindings/submitting-patches.rst
+@@ -58,7 +58,7 @@ I. For patch submitters
+      any DTS patches, regardless whether using existing or new bindings, should
+      be placed at the end of patchset to indicate no dependency of drivers on
+      the DTS.  DTS will be anyway applied through separate tree or branch, so
+-     different order would indicate the serie is non-bisectable.
++     different order would indicate the series is non-bisectable.
+ 
+      If a driver subsystem maintainer prefers to apply entire set, instead of
+      their relevant portion of patchset, please split the DTS patches into
+
+---
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+change-id: 20250906-doc-typo-fix-f430824427fb
+
+Best regards,
+-- 
+Dixit Parmar <dixitparmar19@gmail.com>
+
 
