@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-804378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211BCB4752A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00251B47527
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D5316A734
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41CE3BFB9D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C08D24729D;
-	Sat,  6 Sep 2025 17:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EF224A049;
+	Sat,  6 Sep 2025 17:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rl8jO7pj"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IR+fer14"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2949B230D1E;
-	Sat,  6 Sep 2025 17:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84151B87C9
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 17:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757178372; cv=none; b=Pmm0G9iHtUNxuDXOkQ73Nt06wix/Qyx6Zb3OBDxZ4rS6Qr8Cd0p++oKHlZ2Iiw1goYK6oIPnpuIr8sItBFTG2ZWukEVG9ch5ddBcruUniZoWQBShpvEY51duNW3Od6KcqWjahfaQZ0oYTanwLmXNvyLuJc0/kzxKtNwvlE7bT4U=
+	t=1757178358; cv=none; b=LQUpQ7doYHm3wuaVHMtuSvj9DfXo9gkTACxI6hJYkUe8X2d6UfShGXxWQ8G07Tbt0no0HqoGjpY+NKpSKQgIRrF0PQ1IM/kU0DcEI0AIiKyfaz9ZbWb8S7ac3CUkl9KrBdOJxvgHVwkIXdF3wAJTJTaZStHmNW8fOmpqBrxh2BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757178372; c=relaxed/simple;
-	bh=gNe658zkedWTxcHey0RUxlL5lXlLk2mJUPOFW90lPn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J83FrACeZfrGs8sdS8zdO1A7nMX9qmqV32HENeFvSq3A/iNWqw21Pi1f3O7uv+iIgvGXjK91YNew/ZmfH5byG4lgYPHXJ5HZ53uvpZgl6uNGs/WWByKnhxoJtJ9EWsCfuckkom1w2wzhJ7X8cPqXj++KrdIFS6t0GbuH/gEJ5mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rl8jO7pj; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b21006804so31584495ad.3;
-        Sat, 06 Sep 2025 10:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757178366; x=1757783166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zL/3mHjs4OffbkfGtZq2N+t7wr9CODRxq48gGs+X2Ps=;
-        b=Rl8jO7pjT9dMYlMEBwpcgNofbUXOVUtEeYTI/Jf8aOvTmtXLni3dcy0BOXTX4aauN1
-         f3AioEFBx8BHMy7C47Uje2L6vDMlkfHHL++t780CEbplqG29ElAhT8iICH7m6gxLyj1G
-         UD5eeZ/SERajGaFtFqqt/ejH4u2/MWLRNaORjugxqmzCU/aTr/P2hKHqL46Q4r0tFhY0
-         1GXccIx1pw1M5LkixKoEgBFx0s+0Qzx8cop9icubFwgQSPoITQAU7h2TQR4H8hnXjgwt
-         Ru1sBksfZDbLWDOD2QZcmsgL0hHEd2nMkUTp4rqTtMWLRChTpTUwiuHul0jas4smTBgP
-         fQEA==
+	s=arc-20240116; t=1757178358; c=relaxed/simple;
+	bh=K9wvqB92TCZy9DPsjwAUqp/0aQiUtlEb1xlYjoZxzS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eLBKVf3cgO7bxAdN91kzEeLPOv6BDcquuAEfJcCNKCRMANaodQcbFhZLCzm933hfZHhjxgI/ArzvCRTkSdncdnS8WOvDTj2En+ChufXySUIvw2F9rPXpTU+HJHH4SuIhtAw6DZYfu2aeIKu9XVaUibcRfN7hxfz4X1hV1tSBo1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IR+fer14; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 586Gwab8003065
+	for <linux-kernel@vger.kernel.org>; Sat, 6 Sep 2025 17:05:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Eq/ugOzPzZDWo21YZh0+MpdMusnbPy3yOVD
+	//rcXzoQ=; b=IR+fer14v9yDBtJPkRBESiMwKjgF9NMuf2yjK+iuG1xnVzlAGaT
+	6rni4xO7aZ69OOed2mhSFasEaMbhQCLutdDAsyvUvi+7fa5EY1FO53ygaCRUY84g
+	qpZmdUqiKykeV4J4fTiiIOc4+cyj8p6hOCGtwmGWih5TXAAOsOCPYv13panPwH4r
+	F05U+aVGek+wgk9n0oY3Cr2PCIzfgoO6FUgTXaB81HBP+t6/UsluUR4SmybI7T0F
+	F3KlE4ovHpeP8O95tQZXB1i5RBKSDXjWN6IxjnfaLzcFUmq1GsKRAJJqVFoMTkkT
+	gtl+l2l9OiBvLpMfcXdgIJFv2BVWFlfXa7Q==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490anf954x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 17:05:51 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-325b2959306so6429265a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 10:05:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757178366; x=1757783166;
+        d=1e100.net; s=20230601; t=1757178351; x=1757783151;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zL/3mHjs4OffbkfGtZq2N+t7wr9CODRxq48gGs+X2Ps=;
-        b=k+nBFSG3YljiO5LzEFF9pJMlLnIJwkDXSI10kDDz7sLhngHcxRMSPh3BMQv9bjItm5
-         70yEc+J0leWiZRF+rFxWeI8UT1yuhghMEJjVyonR6t50jk64r4dV/ZciZCK6LE0hC0w5
-         0c+KLQKwKx1PvzpSslMi2s9gXUqt5+yowDfV0vqiWKZHTuX01SXQlZhQsS09aUADs+Wf
-         Gmig/yLsVNyD7HR6dRzoOeYic8R4EGU0KmjH30iemWe5i1jM317UAUgls6CiY6P9fvWl
-         GiSo1KLM46dGSO9PyWm+OUA82DtZ7aC7eVggbGYdlZgNKrXkxgehSvOv6mLEqZF9w2zS
-         y2UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxRMPBbaqyOghNd3Mtkmyge9c7fIZeeO2BqkEmQUl0tqSAhJoTU7sQ772PsVGeayEOSQJjAvAfJeqHO8U=@vger.kernel.org, AJvYcCW5L/GBKLu6UVZFLUEBA6gsvOVCQ77ab2o16QMHPejeSCaKCWzM/32cY96Yubr/4jChKnOFQNgVeG3F/g6+uTKo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJfIQPAWmpUqvfUw+HloMKFbSGEBCmyH9Yn6TJuqzyPKGZtBfR
-	NwsGrkCELZHJTAb1+IETOOYvldDbtKMxJgMXHBitGxxAZeRkvGAwtCxeaZ3N+ycG0Ods1Q==
-X-Gm-Gg: ASbGncsgJB0tnO8WOPY4nmCO3e06iqQ6J/ETGdKiXtL5fEAbTinHlIoB1haDmnNKR7w
-	paSMONhnN1tGTvvjY8+XA1KwhtFllJ5mHhsYNBBphh6CKu6elUctk83qRM0CMgu3yTuynLPiNtX
-	L/p9FJFcY6L0z4FcEltncz2NWrAXUyjoynJm57pHin0ukcF1b9IIBrpe4oZ0/GHaV6DgxtbCbey
-	eluREg5lIhvyFinduK0Lm2l2ByTqlwaE/ay1vxvkkZgB+JGT0svWc1dEpGxgxlazZPpMVFLkhw7
-	T2SNN/RMoTEE9HMl35YU9rtIHh5RPxAZQO5VSinzlvRe2BWhiYa5T6je8Qw7iGG4IKE4bYr7rEq
-	p5HbjHVDakcvZPCWD3lqZ23HA33xDyBn1WFdoTA9r
-X-Google-Smtp-Source: AGHT+IFnu5rCAlGEomcNsss83z+VumyhPZLe5HbSmjsdMet283BMI26P66s5n4uDhqGDFuJd2mRWyg==
-X-Received: by 2002:a17:903:2447:b0:249:1f5f:f9a2 with SMTP id d9443c01a7336-2516906b170mr33304745ad.0.1757178364200;
-        Sat, 06 Sep 2025 10:06:04 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([45.32.227.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037022d9sm244003605ad.23.2025.09.06.10.05.58
+        bh=Eq/ugOzPzZDWo21YZh0+MpdMusnbPy3yOVD//rcXzoQ=;
+        b=VTYeNCaiWF4N1DPyfWOpo9RjmobQN9J/6vMB1Juf9YRSGkxThiaAu4xmWqJf8bAVuR
+         UYn8JCybawyCpJvCySvg/9lcapUZn9DdteV0DAO+TqNJklGV2s5vZYgmgJiyhRVneIE2
+         IAZGkq7BCXIAsfxKS3thLH/pWZcQ7UP/5zS2iHq861yYer0fzE1JGjkir66Ncdh7AOrm
+         mdtCJqSyYPKY4czyvNR+MsbCqSdp0KlP2ANjOW4fUExbsk3EW6qVTA7ocuZiv6UFY7Lb
+         7OyQHwtrOPwZ49jD9nOM1blCUb1zslbbt2feoy2ldHhHTueMAET6VD+PcAP7KFYiwdfm
+         /Ceg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxPa9WRyU2TI7uuHNd88SqwjBIURMupDRbVWKp2wrb6/CWPj84hrn/BjYYkNXLYUGkFqD9+Fer9DzpizI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa80099lyTM+y/1k1N3YGGdY9jWORJa8BE/FGRjcjNgCPDmvv7
+	vdS0iDt+SLAeEr0TqTSvZGFb8bPTNkyqQ3NlO24iLo3Bh3NWj3JELwzr6mpzWbiN10JeN2+KF1w
+	YHN/UI2Td2TtGe8RILoDBCtibMuxXC+au/DjOPTgTjbBwxn1nrSQal70Wzrq7PYiHrQY=
+X-Gm-Gg: ASbGncsgSxZE87fDZ+J3enE5404fu3JQi1uepWPVMBMmdB39ablascDm1EqRtc/dWoN
+	8fJbwKn+R1GoSVdG0bweBUpFAfDG7FyGOVRrcAh1dZKKNxNa6lvOhHGy04S3y4rEBjLIz4OOpNP
+	OtHQbj6QnilXSN8MYN01rgcvHu/OR6g98Y0AqmV9Yr47/ozOeU8ewan+qfmZpWtY//8Ay2EtY3a
+	kHlFh+BkCEoGGZZ4t8eRptFbjmAWqz+Jldp7+2loE8pG0JSMDJjhdK2yUK9B/vGlqHP6zeNGQou
+	0hXmqmK+6Hp1rzvxwhVguuYx5AisLUEnQneYB6puIEYhIzC/Bts=
+X-Received: by 2002:a17:90a:da87:b0:31e:cc6b:320f with SMTP id 98e67ed59e1d1-32d43ef6e0bmr3580910a91.5.1757178349625;
+        Sat, 06 Sep 2025 10:05:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrvIfMfZonfN1ZU+B4a3QJoJKxHtxgLEYO4kvY8id22xtLCayVfvdRWRYxNnB5/bTigt0Wjg==
+X-Received: by 2002:a17:90a:da87:b0:31e:cc6b:320f with SMTP id 98e67ed59e1d1-32d43ef6e0bmr3580874a91.5.1757178348893;
+        Sat, 06 Sep 2025 10:05:48 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e6d6d4b2sm13732271a91.0.2025.09.06.10.05.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 10:06:03 -0700 (PDT)
-From: David Yang <mmyangfl@gmail.com>
-To: netdev@vger.kernel.org
-Cc: David Yang <mmyangfl@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Andy Roulin <aroulin@nvidia.com>,
-	Yong Wang <yongwang@nvidia.com>,
-	Petr Machata <petrm@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Amit Cohen <amcohen@nvidia.com>,
-	Li Shuang <shuali@redhat.com>,
-	Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] selftests: forwarding: Reorder arguments to obey POSIX getopt
-Date: Sun,  7 Sep 2025 01:04:35 +0800
-Message-ID: <20250906170440.3513399-1-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Sat, 06 Sep 2025 10:05:48 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Karmjit Mahil <karmjit.mahil@igalia.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm: Sync GPU registers from mesa
+Date: Sat,  6 Sep 2025 10:05:40 -0700
+Message-ID: <20250906170542.481588-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,2836 +100,1903 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: EE5GW4kxyUyM89xoIpHEnQFEqvabgYoj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwNCBTYWx0ZWRfXwHMEYQmmS+bt
+ pNqB7CiU274L+LLC27Qamfkf2c0PZSjycSYA2TwDCtfxcd6LNvGu4Ng9soLabAGxQnL9G5dvT7m
+ zJDI40XpzPSmavbkUFsqIdaR09V0+6OkIv5qzapAeH7vQBZEQ7Bd6B3LgL8ECtdPltodzQQlj0v
+ tEONnob3wkvqce9koGvKXxN1OWkcRr93siSfsCXTJcNppuuZMtEhmA0ysNz36a0G9bkTGzaQy8s
+ 3hAOjaLI7cEDuqTIo6ynJhoXrvz+15kzNdhwwLXVybwfBWvbfO+Qx7feld0/au9Obj9TWnxwe4A
+ 9r6kmoZRqVuI5f+qyZMrmOMauJ6j+9coEEo/sjzyBWWYYCYa2GNzdC8anxdoYZ2dbWjqST+Zr0c
+ NF1hfZim
+X-Proofpoint-GUID: EE5GW4kxyUyM89xoIpHEnQFEqvabgYoj
+X-Authority-Analysis: v=2.4 cv=CaoI5Krl c=1 sm=1 tr=0 ts=68bc69ef cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
+ a=e5mUnYsNAAAA:8 a=V2sgnzSHAAAA:8 a=EUspDBNiAAAA:8 a=vBIW4VKGqXjrlvqYCsUA:9
+ a=7evNujvXw5NmUzgR:21 a=rl5im9kqc5Lf4LNbBjHf:22 a=Vxmtnl_E_bksehYqCbjh:22
+ a=Z31ocT7rh6aUJxSkT1EX:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-06_06,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060004
 
-Quoted from musl wiki:
+In particular, to pull in a SP_READ_SEL_LOCATION bitfield size fix to
+fix a7xx GPU snapshot.
 
-  GNU getopt permutes argv to pull options to the front, ahead of
-  non-option arguments. musl and the POSIX standard getopt stop
-  processing options at the first non-option argument with no
-  permutation.
+Sync from mesa commit 76fece61c6ff ("freedreno/registers: Add A7XX_CX_DBGC")
 
-Thus these scripts stop working on musl since non-option arguments do
-not always come last. Fix it by reordering arguments.
-
-Signed-off-by: David Yang <mmyangfl@gmail.com>
-
-v1: https://lore.kernel.org/r/20250905173947.3164807-1-mmyangfl@gmail.com
-  - fix CI errors
+Cc: Karmjit Mahil <karmjit.mahil@igalia.com>
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 ---
- .../selftests/net/forwarding/bridge_igmp.sh   |  26 ++---
- .../net/forwarding/bridge_locked_port.sh      |  10 +-
- .../selftests/net/forwarding/bridge_mdb.sh    |  54 ++++-----
- .../net/forwarding/bridge_mdb_max.sh          |  16 +--
- .../selftests/net/forwarding/bridge_mld.sh    |  26 ++---
- .../net/forwarding/bridge_sticky_fdb.sh       |   2 +-
- .../net/forwarding/bridge_vlan_aware.sh       |   8 +-
- .../net/forwarding/bridge_vlan_mcast.sh       |   4 +-
- .../net/forwarding/custom_multipath_hash.sh   |  34 +++---
- .../forwarding/gre_custom_multipath_hash.sh   |  34 +++---
- .../net/forwarding/gre_inner_v4_multipath.sh  |   4 +-
- .../net/forwarding/gre_inner_v6_multipath.sh  |   4 +-
- .../selftests/net/forwarding/gre_multipath.sh |   4 +-
- .../net/forwarding/gre_multipath_nh.sh        |   8 +-
- .../net/forwarding/gre_multipath_nh_res.sh    |   8 +-
- .../net/forwarding/ip6_forward_instats_vrf.sh |   6 +-
- .../ip6gre_custom_multipath_hash.sh           |  34 +++---
- .../forwarding/ip6gre_inner_v4_multipath.sh   |   4 +-
- .../forwarding/ip6gre_inner_v6_multipath.sh   |   4 +-
- .../selftests/net/forwarding/ip6gre_lib.sh    |   8 +-
- tools/testing/selftests/net/forwarding/lib.sh |  24 ++--
- .../forwarding/mirror_gre_bridge_1q_lag.sh    |   2 +-
- .../forwarding/mirror_gre_vlan_bridge_1q.sh   |   4 +-
- .../selftests/net/forwarding/mirror_lib.sh    |  11 +-
- .../selftests/net/forwarding/pedit_dsfield.sh |   4 +-
- .../selftests/net/forwarding/pedit_ip.sh      |   2 +-
- .../selftests/net/forwarding/pedit_l4port.sh  |   4 +-
- .../selftests/net/forwarding/router.sh        |  18 +--
- .../net/forwarding/router_broadcast.sh        |   2 +-
- .../net/forwarding/router_mpath_nh.sh         |   8 +-
- .../net/forwarding/router_mpath_nh_lib.sh     |   4 +-
- .../net/forwarding/router_mpath_nh_res.sh     |   8 +-
- .../net/forwarding/router_mpath_seed.sh       |  16 +--
- .../net/forwarding/router_multicast.sh        |  48 ++++----
- .../net/forwarding/router_multipath.sh        |   8 +-
- .../selftests/net/forwarding/sch_red.sh       |  22 ++--
- .../net/forwarding/skbedit_priority.sh        |   4 +-
- .../selftests/net/forwarding/tc_actions.sh    |  40 +++----
- .../selftests/net/forwarding/tc_chains.sh     |   8 +-
- .../selftests/net/forwarding/tc_flower.sh     | 108 +++++++++---------
- .../selftests/net/forwarding/tc_flower_cfm.sh |  22 ++--
- .../net/forwarding/tc_flower_l2_miss.sh       |  16 +--
- .../net/forwarding/tc_flower_port_range.sh    |  52 ++++-----
- .../net/forwarding/tc_flower_router.sh        |   8 +-
- .../selftests/net/forwarding/tc_police.sh     |  24 ++--
- .../selftests/net/forwarding/tc_shblocks.sh   |  16 +--
- .../selftests/net/forwarding/tc_tunnel_key.sh |   6 +-
- .../net/forwarding/vxlan_bridge_1d.sh         |  24 ++--
- .../net/forwarding/vxlan_bridge_1d_ipv6.sh    |   6 +-
- .../net/forwarding/vxlan_bridge_1q.sh         |  18 +--
- .../net/forwarding/vxlan_bridge_1q_ipv6.sh    |   2 +-
- .../net/forwarding/vxlan_bridge_1q_mc_ul.sh   |   8 +-
- .../net/forwarding/vxlan_reserved.sh          |   4 +-
- 53 files changed, 426 insertions(+), 423 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c     |  10 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |  19 +-
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c     |   5 +-
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 718 ++++++++++--------
+ .../msm/registers/adreno/a6xx_descriptors.xml |  40 -
+ .../drm/msm/registers/adreno/a6xx_enums.xml   |  50 +-
+ .../drm/msm/registers/adreno/adreno_pm4.xml   | 179 ++---
+ 7 files changed, 524 insertions(+), 497 deletions(-)
 
-diff --git a/tools/testing/selftests/net/forwarding/bridge_igmp.sh b/tools/testing/selftests/net/forwarding/bridge_igmp.sh
-index d4e7dd659354..dd2e46488c51 100755
---- a/tools/testing/selftests/net/forwarding/bridge_igmp.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_igmp.sh
-@@ -158,7 +158,7 @@ v3include_prepare()
- 	ip link set dev br0 type bridge mcast_igmp_version 3
- 	check_err $? "Could not change bridge IGMP version to 3"
- 
--	$MZ $host1_if -b $mac -c 1 -B $group -t ip "proto=2,p=$MZPKT_IS_INC" -q
-+	$MZ -b $mac -c 1 -B $group -t ip -q $host1_if "proto=2,p=$MZPKT_IS_INC"
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -183,7 +183,7 @@ v3exclude_prepare()
- 
- 	v3include_prepare $host1_if $mac $group
- 
--	$MZ $host1_if -c 1 -b $mac -B $group -t ip "proto=2,p=$MZPKT_IS_EXC" -q
-+	$MZ -c 1 -b $mac -B $group -t ip -q $host1_if "proto=2,p=$MZPKT_IS_EXC"
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -237,7 +237,7 @@ v3inc_allow_test()
- 
- 	v3include_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_ALLOW" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_ALLOW"
- 	sleep 1
- 	brmcast_check_sg_entries "allow" "${X[@]}"
- 
-@@ -258,7 +258,7 @@ v3inc_is_include_test()
- 
- 	v3include_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_IS_INC2" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_IS_INC2"
- 	sleep 1
- 	brmcast_check_sg_entries "is_include" "${X[@]}"
- 
-@@ -297,7 +297,7 @@ v3inc_to_exclude_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_TO_EXC" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_TO_EXC"
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -341,7 +341,7 @@ v3exc_allow_test()
- 
- 	v3exclude_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_ALLOW2" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_ALLOW2"
- 	sleep 1
- 	brmcast_check_sg_entries "allow" "${X[@]}" "${Y[@]}"
- 
-@@ -364,7 +364,7 @@ v3exc_is_include_test()
- 
- 	v3exclude_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_IS_INC3" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_IS_INC3"
- 	sleep 1
- 	brmcast_check_sg_entries "is_include" "${X[@]}" "${Y[@]}"
- 
-@@ -387,7 +387,7 @@ v3exc_is_exclude_test()
- 
- 	v3exclude_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_IS_EXC2" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_IS_EXC2"
- 	sleep 1
- 	brmcast_check_sg_entries "is_exclude" "${X[@]}" "${Y[@]}"
- 
-@@ -413,7 +413,7 @@ v3exc_to_exclude_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_TO_EXC" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_TO_EXC"
- 	sleep 1
- 	brmcast_check_sg_entries "to_exclude" "${X[@]}" "${Y[@]}"
- 
-@@ -437,7 +437,7 @@ v3inc_block_test()
- 
- 	v3include_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_BLOCK" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_BLOCK"
- 	# make sure the lowered timers have expired (by default 2 seconds)
- 	sleep 3
- 	brmcast_check_sg_entries "block" "${X[@]}"
-@@ -470,7 +470,7 @@ v3exc_block_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_BLOCK" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_BLOCK"
- 	sleep 1
- 	brmcast_check_sg_entries "block" "${X[@]}" "${Y[@]}"
- 
-@@ -502,7 +502,7 @@ v3exc_timeout_test()
- 					mcast_query_response_interval 500 \
- 					mcast_membership_interval 1500
- 
--	$MZ $h1 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_ALLOW2" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h1 "proto=2,p=$MZPKT_ALLOW2"
- 	sleep 5
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -545,7 +545,7 @@ v3star_ex_auto_add_test()
- 
- 	v3exclude_prepare $h1 $ALL_MAC $ALL_GROUP
- 
--	$MZ $h2 -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip "proto=2,p=$MZPKT_IS_INC" -q
-+	$MZ -c 1 -b $ALL_MAC -B $ALL_GROUP -t ip -q $h2 "proto=2,p=$MZPKT_IS_INC"
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-diff --git a/tools/testing/selftests/net/forwarding/bridge_locked_port.sh b/tools/testing/selftests/net/forwarding/bridge_locked_port.sh
-index c62331b2e006..93d2261be6e3 100755
---- a/tools/testing/selftests/net/forwarding/bridge_locked_port.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_locked_port.sh
-@@ -225,18 +225,18 @@ locked_port_mab_roam()
- 
- 	bridge link set dev $swp1 learning on locked on mab on
- 
--	$MZ $h1 -q -c 5 -d 100msec -t udp -a $mac -b rand
-+	$MZ -q -c 5 -d 100msec -t udp -a $mac -b rand $h1
- 	bridge fdb get $mac br br0 vlan 1 | grep "dev $swp1" | grep -q "locked"
- 	check_err $? "No locked entry on first injection"
- 
--	$MZ $h2 -q -c 5 -d 100msec -t udp -a $mac -b rand
-+	$MZ -q -c 5 -d 100msec -t udp -a $mac -b rand $h2
- 	bridge fdb get $mac br br0 vlan 1 | grep -q "dev $swp2"
- 	check_err $? "Entry did not roam to an unlocked port"
- 
- 	bridge fdb get $mac br br0 vlan 1 | grep -q "locked"
- 	check_fail $? "Entry roamed with locked flag on"
- 
--	$MZ $h1 -q -c 5 -d 100msec -t udp -a $mac -b rand
-+	$MZ -q -c 5 -d 100msec -t udp -a $mac -b rand $h1
- 	bridge fdb get $mac br br0 vlan 1 | grep -q "dev $swp1"
- 	check_fail $? "Entry roamed back to locked port"
- 
-@@ -285,12 +285,12 @@ locked_port_mab_flush()
- 	bridge fdb add $unlocked_mac1 dev $swp1 vlan 1 master static
- 	bridge fdb add $unlocked_mac2 dev $swp2 vlan 1 master static
- 
--	$MZ $h1 -q -c 5 -d 100msec -t udp -a $locked_mac1 -b rand
-+	$MZ -q -c 5 -d 100msec -t udp -a $locked_mac1 -b rand $h1
- 	bridge fdb get $locked_mac1 br br0 vlan 1 | grep "dev $swp1" | \
- 		grep -q "locked"
- 	check_err $? "Failed to create locked FDB entry on first port"
- 
--	$MZ $h2 -q -c 5 -d 100msec -t udp -a $locked_mac2 -b rand
-+	$MZ -q -c 5 -d 100msec -t udp -a $locked_mac2 -b rand $h2
- 	bridge fdb get $locked_mac2 br br0 vlan 1 | grep "dev $swp2" | \
- 		grep -q "locked"
- 	check_err $? "Failed to create locked FDB entry on second port"
-diff --git a/tools/testing/selftests/net/forwarding/bridge_mdb.sh b/tools/testing/selftests/net/forwarding/bridge_mdb.sh
-index 8c1597ebc2d3..3218cf1ffae1 100755
---- a/tools/testing/selftests/net/forwarding/bridge_mdb.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_mdb.sh
-@@ -1023,27 +1023,27 @@ __fwd_test_host_ip()
- 	# Packet should only be flooded to multicast router ports when there is
- 	# no matching MDB entry. The bridge is not configured as a multicast
- 	# router port.
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 0
- 	check_err $? "Packet locally received after flood"
- 
- 	# Install a regular port group entry and expect the packet to not be
- 	# locally received.
- 	bridge mdb add dev br0 port $swp2 grp $grp temp vid 10
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 0
- 	check_err $? "Packet locally received after installing a regular entry"
- 
- 	# Add a host entry and expect the packet to be locally received.
- 	bridge mdb add dev br0 port br0 grp $grp temp vid 10
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 1
- 	check_err $? "Packet not locally received after adding a host entry"
- 
- 	# Remove the host entry and expect the packet to not be locally
- 	# received.
- 	bridge mdb del dev br0 port br0 grp $grp vid 10
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 1
- 	check_err $? "Packet locally received after removing a host entry"
- 
-@@ -1071,27 +1071,27 @@ fwd_test_host_l2()
- 
- 	# Packet should be flooded and locally received when there is no
- 	# matching MDB entry.
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 1
- 	check_err $? "Packet not locally received after flood"
- 
- 	# Install a regular port group entry and expect the packet to not be
- 	# locally received.
- 	bridge mdb add dev br0 port $swp2 grp $dmac permanent vid 10
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 1
- 	check_err $? "Packet locally received after installing a regular entry"
- 
- 	# Add a host entry and expect the packet to be locally received.
- 	bridge mdb add dev br0 port br0 grp $dmac permanent vid 10
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 2
- 	check_err $? "Packet not locally received after adding a host entry"
- 
- 	# Remove the host entry and expect the packet to not be locally
- 	# received.
- 	bridge mdb del dev br0 port br0 grp $dmac permanent vid 10
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev br0 ingress" 1 2
- 	check_err $? "Packet locally received after removing a host entry"
- 
-@@ -1151,43 +1151,43 @@ __fwd_test_port_ip()
- 		vlan_ethtype $eth_type vlan_id 10 dst_ip $grp \
- 		src_ip $invalid_src action drop
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 0
- 	check_err $? "Packet from valid source received on H2 before adding entry"
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 2 0
- 	check_err $? "Packet from invalid source received on H2 before adding entry"
- 
- 	bridge mdb add dev br0 port $swp2 grp $grp vid 10 \
- 		filter_mode $filter_mode source_list $src_list
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 1
- 	check_err $? "Packet from valid source not received on H2 after adding entry"
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 2 0
- 	check_err $? "Packet from invalid source received on H2 after adding entry"
- 
- 	bridge mdb replace dev br0 port $swp2 grp $grp vid 10 \
- 		filter_mode exclude
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 2
- 	check_err $? "Packet from valid source not received on H2 after allowing all sources"
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 2 1
- 	check_err $? "Packet from invalid source not received on H2 after allowing all sources"
- 
- 	bridge mdb del dev br0 port $swp2 grp $grp vid 10
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $valid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 2
- 	check_err $? "Packet from valid source received on H2 after deleting entry"
- 
--	$MZ $mode $h1.10 -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q
-+	$MZ $mode -a own -b $dmac -c 1 -p 128 -A $invalid_src -B $grp -t udp -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 2 1
- 	check_err $? "Packet from invalid source received on H2 after deleting entry"
- 
-@@ -1216,17 +1216,17 @@ fwd_test_port_l2()
- 	tc filter add dev $h2 ingress protocol all pref 1 handle 1 flower \
- 		dst_mac $dmac action drop
- 
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 0
- 	check_err $? "Packet received on H2 before adding entry"
- 
- 	bridge mdb add dev br0 port $swp2 grp $dmac permanent vid 10
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 1
- 	check_err $? "Packet not received on H2 after adding entry"
- 
- 	bridge mdb del dev br0 port $swp2 grp $dmac permanent vid 10
--	$MZ $h1.10 -c 1 -p 128 -a own -b $dmac -q
-+	$MZ -c 1 -p 128 -a own -b $dmac -q $h1.10
- 	tc_check_packets "dev $h2 ingress" 1 1
- 	check_err $? "Packet received on H2 after deleting entry"
- 
-@@ -1283,8 +1283,8 @@ ctrl_igmpv3_is_in_test()
- 		filter_mode include source_list 192.0.2.1
- 
- 	# IS_IN ( 192.0.2.2 )
--	$MZ $h1.10 -c 1 -a own -b 01:00:5e:01:01:01 -A 192.0.2.1 -B 239.1.1.1 \
--		-t ip proto=2,p=$(igmpv3_is_in_get 239.1.1.1 192.0.2.2) -q
-+	$MZ -c 1 -a own -b 01:00:5e:01:01:01 -A 192.0.2.1 -B 239.1.1.1 \
-+		-t ip -q $h1.10 proto=2,p=$(igmpv3_is_in_get 239.1.1.1 192.0.2.2)
- 
- 	bridge mdb get dev br0 grp 239.1.1.1 src 192.0.2.2 vid 10 &> /dev/null
- 	check_fail $? "Permanent entry affected by IGMP packet"
-@@ -1296,8 +1296,8 @@ ctrl_igmpv3_is_in_test()
- 		filter_mode include source_list 192.0.2.1
- 
- 	# IS_IN ( 192.0.2.2 )
--	$MZ $h1.10 -a own -b 01:00:5e:01:01:01 -c 1 -A 192.0.2.1 -B 239.1.1.1 \
--		-t ip proto=2,p=$(igmpv3_is_in_get 239.1.1.1 192.0.2.2) -q
-+	$MZ -a own -b 01:00:5e:01:01:01 -c 1 -A 192.0.2.1 -B 239.1.1.1 \
-+		-t ip -q $h1.10 proto=2,p=$(igmpv3_is_in_get 239.1.1.1 192.0.2.2)
- 
- 	bridge -d mdb get dev br0 grp 239.1.1.1 vid 10 | grep -q 192.0.2.2
- 	check_err $? "Source not add to source list"
-@@ -1321,8 +1321,8 @@ ctrl_mldv2_is_in_test()
- 
- 	# IS_IN ( 2001:db8:1::2 )
- 	local p=$(mldv2_is_in_get fe80::1 ff0e::1 2001:db8:1::2)
--	$MZ -6 $h1.10 -a own -b 33:33:00:00:00:01 -c 1 -A fe80::1 -B ff0e::1 \
--		-t ip hop=1,next=0,p="$p" -q
-+	$MZ -6 -a own -b 33:33:00:00:00:01 -c 1 -A fe80::1 -B ff0e::1 \
-+		-t ip -q $h1.10 hop=1,next=0,p="$p"
- 
- 	bridge mdb get dev br0 grp ff0e::1 src 2001:db8:1::2 vid 10 &> /dev/null
- 	check_fail $? "Permanent entry affected by MLD packet"
-@@ -1334,8 +1334,8 @@ ctrl_mldv2_is_in_test()
- 		filter_mode include source_list 2001:db8:1::1
- 
- 	# IS_IN ( 2001:db8:1::2 )
--	$MZ -6 $h1.10 -a own -b 33:33:00:00:00:01 -c 1 -A fe80::1 -B ff0e::1 \
--		-t ip hop=1,next=0,p="$p" -q
-+	$MZ -6 -a own -b 33:33:00:00:00:01 -c 1 -A fe80::1 -B ff0e::1 \
-+		-t ip -q $h1.10 hop=1,next=0,p="$p"
- 
- 	bridge -d mdb get dev br0 grp ff0e::1 vid 10 | grep -q 2001:db8:1::2
- 	check_err $? "Source not add to source list"
-diff --git a/tools/testing/selftests/net/forwarding/bridge_mdb_max.sh b/tools/testing/selftests/net/forwarding/bridge_mdb_max.sh
-index 3da9d93ab36f..efe24eadc2c6 100755
---- a/tools/testing/selftests/net/forwarding/bridge_mdb_max.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_mdb_max.sh
-@@ -253,8 +253,8 @@ ctl4_entries_add()
- 	local peer=$(locus_dev_peer $locus)
- 	local GRP=239.1.1.${grp}
- 	local dmac=01:00:5e:01:01:$(printf "%02x" $grp)
--	$MZ $peer -a own -b $dmac -c 1 -A 192.0.2.1 -B $GRP \
--		-t ip proto=2,p=$(igmpv3_is_in_get $GRP $IPs) -q
-+	$MZ -a own -b $dmac -c 1 -A 192.0.2.1 -B $GRP \
-+		-t ip -q $peer proto=2,p=$(igmpv3_is_in_get $GRP $IPs)
- 	sleep 1
- 
- 	local nn=$(bridge mdb show dev br0 | grep $GRP | wc -l)
-@@ -274,8 +274,8 @@ ctl4_entries_del()
- 	local peer=$(locus_dev_peer $locus)
- 	local GRP=239.1.1.${grp}
- 	local dmac=01:00:5e:00:00:02
--	$MZ $peer -a own -b $dmac -c 1 -A 192.0.2.1 -B 224.0.0.2 \
--		-t ip proto=2,p=$(igmpv2_leave_get $GRP) -q
-+	$MZ -a own -b $dmac -c 1 -A 192.0.2.1 -B 224.0.0.2 \
-+		-t ip -q $peer proto=2,p=$(igmpv2_leave_get $GRP)
- 	sleep 1
- 	! bridge mdb show dev br0 | grep -q $GRP
- }
-@@ -293,8 +293,8 @@ ctl6_entries_add()
- 	local GRP=ff0e::${grp}
- 	local dmac=33:33:00:00:00:$(printf "%02x" $grp)
- 	local p=$(mldv2_is_in_get $SIP $GRP $IPs)
--	$MZ -6 $peer -a own -b $dmac -c 1 -A $SIP -B $GRP \
--		-t ip hop=1,next=0,p="$p" -q
-+	$MZ -6 -a own -b $dmac -c 1 -A $SIP -B $GRP \
-+		-t ip -q $peer hop=1,next=0,p="$p"
- 	sleep 1
- 
- 	local nn=$(bridge mdb show dev br0 | grep $GRP | wc -l)
-@@ -316,8 +316,8 @@ ctl6_entries_del()
- 	local GRP=ff0e::${grp}
- 	local dmac=33:33:00:00:00:$(printf "%02x" $grp)
- 	local p=$(mldv1_done_get $SIP $GRP)
--	$MZ -6 $peer -a own -b $dmac -c 1 -A $SIP -B $GRP \
--		-t ip hop=1,next=0,p="$p" -q
-+	$MZ -6 -a own -b $dmac -c 1 -A $SIP -B $GRP \
-+		-t ip -q $peer hop=1,next=0,p="$p"
- 	sleep 1
- 	! bridge mdb show dev br0 | grep -q $GRP
- }
-diff --git a/tools/testing/selftests/net/forwarding/bridge_mld.sh b/tools/testing/selftests/net/forwarding/bridge_mld.sh
-index 4cacef5a813a..b4f6a81e8bf0 100755
---- a/tools/testing/selftests/net/forwarding/bridge_mld.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_mld.sh
-@@ -158,7 +158,7 @@ mldv2include_prepare()
- 	ip link set dev br0 type bridge mcast_mld_version 2
- 	check_err $? "Could not change bridge MLD version to 2"
- 
--	$MZ $host1_if $MZPKT_IS_INC -q
-+	$MZ -q $host1_if $MZPKT_IS_INC
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -183,7 +183,7 @@ mldv2exclude_prepare()
- 
- 	mldv2include_prepare $h1
- 
--	$MZ $host1_if -c 1 $MZPKT_IS_EXC -q
-+	$MZ -c 1 -q $host1_if $MZPKT_IS_EXC
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -236,7 +236,7 @@ mldv2inc_allow_test()
- 
- 	mldv2include_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_ALLOW -q
-+	$MZ -c 1 -q $h1 $MZPKT_ALLOW
- 	sleep 1
- 	brmcast_check_sg_entries "allow" "${X[@]}"
- 
-@@ -257,7 +257,7 @@ mldv2inc_is_include_test()
- 
- 	mldv2include_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_IS_INC2 -q
-+	$MZ -c 1 -q $h1 $MZPKT_IS_INC2
- 	sleep 1
- 	brmcast_check_sg_entries "is_include" "${X[@]}"
- 
-@@ -296,7 +296,7 @@ mldv2inc_to_exclude_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 $MZPKT_TO_EXC -q
-+	$MZ -c 1 -q $h1 $MZPKT_TO_EXC
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -340,7 +340,7 @@ mldv2exc_allow_test()
- 
- 	mldv2exclude_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_ALLOW2 -q
-+	$MZ -c 1 -q $h1 $MZPKT_ALLOW2
- 	sleep 1
- 	brmcast_check_sg_entries "allow" "${X[@]}" "${Y[@]}"
- 
-@@ -363,7 +363,7 @@ mldv2exc_is_include_test()
- 
- 	mldv2exclude_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_IS_INC3 -q
-+	$MZ -c 1 -q $h1 $MZPKT_IS_INC3
- 	sleep 1
- 	brmcast_check_sg_entries "is_include" "${X[@]}" "${Y[@]}"
- 
-@@ -386,7 +386,7 @@ mldv2exc_is_exclude_test()
- 
- 	mldv2exclude_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_IS_EXC2 -q
-+	$MZ -c 1 -q $h1 $MZPKT_IS_EXC2
- 	sleep 1
- 	brmcast_check_sg_entries "is_exclude" "${X[@]}" "${Y[@]}"
- 
-@@ -412,7 +412,7 @@ mldv2exc_to_exclude_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 $MZPKT_TO_EXC -q
-+	$MZ -c 1 -q $h1 $MZPKT_TO_EXC
- 	sleep 1
- 	brmcast_check_sg_entries "to_exclude" "${X[@]}" "${Y[@]}"
- 
-@@ -436,7 +436,7 @@ mldv2inc_block_test()
- 
- 	mldv2include_prepare $h1
- 
--	$MZ $h1 -c 1 $MZPKT_BLOCK -q
-+	$MZ -c 1 -q $h1 $MZPKT_BLOCK
- 	# make sure the lowered timers have expired (by default 2 seconds)
- 	sleep 3
- 	brmcast_check_sg_entries "block" "${X[@]}"
-@@ -469,7 +469,7 @@ mldv2exc_block_test()
- 	ip link set dev br0 type bridge mcast_last_member_interval 500
- 	check_err $? "Could not change mcast_last_member_interval to 5s"
- 
--	$MZ $h1 -c 1 $MZPKT_BLOCK -q
-+	$MZ -c 1 -q $h1 $MZPKT_BLOCK
- 	sleep 1
- 	brmcast_check_sg_entries "block" "${X[@]}" "${Y[@]}"
- 
-@@ -501,7 +501,7 @@ mldv2exc_timeout_test()
- 					mcast_query_response_interval 500 \
- 					mcast_membership_interval 1500
- 
--	$MZ $h1 -c 1 $MZPKT_ALLOW2 -q
-+	$MZ -c 1 -q $h1 $MZPKT_ALLOW2
- 	sleep 5
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-@@ -544,7 +544,7 @@ mldv2star_ex_auto_add_test()
- 
- 	mldv2exclude_prepare $h1
- 
--	$MZ $h2 -c 1 $MZPKT_IS_INC -q
-+	$MZ -c 1 -q $h2 $MZPKT_IS_INC
- 	sleep 1
- 	bridge -j -d -s mdb show dev br0 \
- 		| jq -e ".[].mdb[] | \
-diff --git a/tools/testing/selftests/net/forwarding/bridge_sticky_fdb.sh b/tools/testing/selftests/net/forwarding/bridge_sticky_fdb.sh
-index 1f8ef0eff862..cbc9a9f3c6de 100755
---- a/tools/testing/selftests/net/forwarding/bridge_sticky_fdb.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_sticky_fdb.sh
-@@ -51,7 +51,7 @@ sticky()
- 	bridge fdb add $TEST_MAC dev $swp1 master static sticky
- 	check_err $? "Could not add fdb entry"
- 	bridge fdb del $TEST_MAC dev $swp1 vlan 1 master static sticky
--	$MZ $h2 -c 1 -a $TEST_MAC -t arp "request" -q
-+	$MZ -c 1 -a $TEST_MAC -t arp -q $h2 "request"
- 	bridge -j fdb show br br0 brport $swp1\
- 		| jq -e ".[] | select(.mac == \"$TEST_MAC\")" &> /dev/null
- 	check_err $? "Did not find FDB record when should"
-diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-index e59fba366a0a..88525294e410 100755
---- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-@@ -131,7 +131,7 @@ extern_learn()
- 	bridge fdb show brport $swp1 | grep -q de:ad:be:ef:13:37
- 	check_err $? "FDB entry was aged out when should not"
- 
--	$MZ $h2 -c 1 -p 64 -a $mac -t ip -q
-+	$MZ -c 1 -p 64 -a $mac -t ip -q $h2
- 
- 	bridge fdb show brport $swp2 | grep -q de:ad:be:ef:13:37
- 	check_err $? "FDB entry did not roam when should"
-@@ -158,7 +158,7 @@ other_tpid()
- 	ip link set $h2 promisc on
- 	ethtool -K $h2 rx-vlan-filter off rx-vlan-stag-filter off
- 
--	$MZ -q $h1 -c 1 -b $mac -a own "88:a8 00:03 81:00 00:05 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
-+	$MZ -q -c 1 -b $mac -a own $h1 "88:a8 00:03 81:00 00:05 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
- 	sleep 1
- 
- 	# Match on 'self' addresses as well, for those drivers which
-@@ -179,7 +179,7 @@ other_tpid()
- 
- 	bridge vlan del dev $swp1 vid 1
- 
--	$MZ -q $h1 -c 1 -b $mac -a own "88:a8 00:03 81:00 00:05 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
-+	$MZ -q -c 1 -b $mac -a own $h1 "88:a8 00:03 81:00 00:05 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
- 	sleep 1
- 
- 	RET=0
-@@ -202,7 +202,7 @@ other_tpid()
- 	tc filter add dev $h2 ingress protocol all pref 1 handle 101 \
- 		flower dst_mac $mac action drop
- 
--	$MZ -q $h1 -c 1 -b $mac -a own "81:00 00:00 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
-+	$MZ -q -c 1 -b $mac -a own $h1 "81:00 00:00 08:00 aa-aa-aa-aa-aa-aa-aa-aa-aa"
- 	sleep 1
- 
- 	tc -j -s filter show dev $h2 ingress \
-diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_mcast.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_mcast.sh
-index 72dfbeaf56b9..9efff89b3bfd 100755
---- a/tools/testing/selftests/net/forwarding/bridge_vlan_mcast.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_vlan_mcast.sh
-@@ -508,8 +508,8 @@ vlmc_router_port_test()
- 					      mcast_query_response_interval 0
- 	bridge vlan add vid 10 dev br0 self
- 	sleep 1
--	mausezahn br0 -Q 10 -c 10 -p 128 -b 01:00:5e:01:01:01 -B 239.1.1.1 \
--			-t udp "dp=1024" &>/dev/null
-+	$MZ -Q 10 -c 10 -p 128 -b 01:00:5e:01:01:01 -B 239.1.1.1 \
-+			-t udp br0 "dp=1024" &>/dev/null
- 	local swp1_tcstats=$(tc_rule_stats_get $swp1 10 egress)
- 	if [[ $swp1_tcstats != 10 ]]; then
- 		check_err 1 "Wrong number of vlan 10 multicast packets flooded"
-diff --git a/tools/testing/selftests/net/forwarding/custom_multipath_hash.sh b/tools/testing/selftests/net/forwarding/custom_multipath_hash.sh
-index 7d531f7091e6..de9086f4c724 100755
---- a/tools/testing/selftests/net/forwarding/custom_multipath_hash.sh
-+++ b/tools/testing/selftests/net/forwarding/custom_multipath_hash.sh
-@@ -181,44 +181,44 @@ ping_ipv6()
- 
- send_src_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A "198.51.100.2-198.51.100.253" -B 203.0.113.2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B "203.0.113.2-203.0.113.253" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_src_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- send_src_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A "2001:db8:1::2-2001:db8:1::fd" -B 2001:db8:4::2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B "2001:db8:4::2-2001:db8:4::fd" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_flowlabel()
-@@ -226,22 +226,22 @@ send_flowlabel()
- 	# Generate 16384 echo requests, each with a random flow label.
- 	ip vrf exec v$h1 sh -c \
- 		"for _ in {1..16384}; do \
--			$PING6 2001:db8:4::2 -F 0 -c 1 -q >/dev/null 2>&1; \
-+			$PING6 -F 0 -c 1 -q 2001:db8:4::2 >/dev/null 2>&1; \
- 		done"
- }
- 
- send_src_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:4::2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:4::2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- custom_hash_test()
-diff --git a/tools/testing/selftests/net/forwarding/gre_custom_multipath_hash.sh b/tools/testing/selftests/net/forwarding/gre_custom_multipath_hash.sh
-index dda11a4a9450..24e74fa35392 100755
---- a/tools/testing/selftests/net/forwarding/gre_custom_multipath_hash.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_custom_multipath_hash.sh
-@@ -276,44 +276,44 @@ ping_ipv6()
- 
- send_src_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A "198.51.100.2-198.51.100.253" -B 203.0.113.2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B "203.0.113.2-203.0.113.253" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_src_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- send_src_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A "2001:db8:1::2-2001:db8:1::fd" -B 2001:db8:2::2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B "2001:db8:2::2-2001:db8:2::fd" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_flowlabel()
-@@ -321,22 +321,22 @@ send_flowlabel()
- 	# Generate 16384 echo requests, each with a random flow label.
- 	ip vrf exec v$h1 sh -c \
- 		"for _ in {1..16384}; do \
--			$PING6 2001:db8:2::2 -F 0 -c 1 -q >/dev/null 2>&1; \
-+			$PING6 -F 0 -c 1 -q 2001:db8:2::2 >/dev/null 2>&1; \
- 		done"
- }
- 
- send_src_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- custom_hash_test()
-diff --git a/tools/testing/selftests/net/forwarding/gre_inner_v4_multipath.sh b/tools/testing/selftests/net/forwarding/gre_inner_v4_multipath.sh
-index efca6114a3ce..3e1694c9773b 100755
---- a/tools/testing/selftests/net/forwarding/gre_inner_v4_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_inner_v4_multipath.sh
-@@ -266,8 +266,8 @@ multipath4_test()
- 	local t0_222=$(tc_rule_stats_get $ul32 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -q -p 64 -A "192.0.3.2-192.0.3.62" -B "192.0.4.2-192.0.4.62" \
--	       -d $MZ_DELAY -c 50 -t udp "sp=1024,dp=1024"
-+	   $MZ -q -p 64 -A "192.0.3.2-192.0.3.62" -B "192.0.4.2-192.0.4.62" \
-+	       -d $MZ_DELAY -c 50 -t udp $h1 "sp=1024,dp=1024"
- 	sleep 1
- 
- 	local t1_111=$(tc_rule_stats_get $ul32 111 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/gre_inner_v6_multipath.sh b/tools/testing/selftests/net/forwarding/gre_inner_v6_multipath.sh
-index a71ad39fc0c3..fb2707a97f59 100755
---- a/tools/testing/selftests/net/forwarding/gre_inner_v6_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_inner_v6_multipath.sh
-@@ -266,9 +266,9 @@ multipath6_test()
- 	local t0_222=$(tc_rule_stats_get $ul32 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -6 -q -p 64 -A "2001:db8:1::2-2001:db8:1::3e" \
-+	   $MZ -6 -q -p 64 -A "2001:db8:1::2-2001:db8:1::3e" \
- 	       -B "2001:db8:2::2-2001:db8:2::3e" \
--	       -d $MZ_DELAY -c 50 -t udp "sp=1024,dp=1024"
-+	       -d $MZ_DELAY -c 50 -t udp $h1 "sp=1024,dp=1024"
- 	sleep 1
- 
- 	local t1_111=$(tc_rule_stats_get $ul32 111 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/gre_multipath.sh b/tools/testing/selftests/net/forwarding/gre_multipath.sh
-index 57531c1d884d..6ed8b8f1ac22 100755
---- a/tools/testing/selftests/net/forwarding/gre_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_multipath.sh
-@@ -219,8 +219,8 @@ multipath4_test()
- 	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
--	       -d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+	   $MZ -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
-+	       -d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
- 
- 	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
- 	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/gre_multipath_nh.sh b/tools/testing/selftests/net/forwarding/gre_multipath_nh.sh
-index 7d5b2b9cc133..d207b5518843 100755
---- a/tools/testing/selftests/net/forwarding/gre_multipath_nh.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_multipath_nh.sh
-@@ -243,8 +243,8 @@ multipath4_test()
- 	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
--	       -d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+	   $MZ -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
-+	       -d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
- 
- 	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
- 	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
-@@ -270,8 +270,8 @@ multipath6_test()
- 	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
--		$MZ $h1 -6 -q -p 64 -A 2001:db8:1::1 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+		$MZ -6 -q -p 64 -A 2001:db8:1::1 -B 2001:db8:2::2 \
-+		-d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
- 
- 	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
- 	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/gre_multipath_nh_res.sh b/tools/testing/selftests/net/forwarding/gre_multipath_nh_res.sh
-index 370f9925302d..f1d8a6b17d6f 100755
---- a/tools/testing/selftests/net/forwarding/gre_multipath_nh_res.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_multipath_nh_res.sh
-@@ -246,8 +246,8 @@ multipath4_test()
- 	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
--	       -d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+	   $MZ -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
-+	       -d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
- 
- 	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
- 	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
-@@ -274,8 +274,8 @@ multipath6_test()
- 	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
--		$MZ $h1 -6 -q -p 64 -A 2001:db8:1::1 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+		$MZ -6 -q -p 64 -A 2001:db8:1::1 -B 2001:db8:2::2 \
-+		-d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
- 
- 	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
- 	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/ip6_forward_instats_vrf.sh b/tools/testing/selftests/net/forwarding/ip6_forward_instats_vrf.sh
-index 49fa94b53a1c..25036e38043c 100755
---- a/tools/testing/selftests/net/forwarding/ip6_forward_instats_vrf.sh
-+++ b/tools/testing/selftests/net/forwarding/ip6_forward_instats_vrf.sh
-@@ -95,7 +95,7 @@ ipv6_in_too_big_err()
- 
- 	# Send too big packets
- 	ip vrf exec $vrf_name \
--		$PING6 -s 1300 2001:1:2::2 -c 1 -w $PING_TIMEOUT &> /dev/null
-+		$PING6 -s 1300 -c 1 -w $PING_TIMEOUT 2001:1:2::2 &> /dev/null
- 
- 	local t1=$(ipv6_stats_get $rtr1 Ip6InTooBigErrors)
- 	test "$((t1 - t0))" -ne 0
-@@ -131,7 +131,7 @@ ipv6_in_addr_err()
- 	# Disable forwarding temporary while sending the packet
- 	sysctl -qw net.ipv6.conf.all.forwarding=0
- 	ip vrf exec $vrf_name \
--		$PING6 2001:1:2::2 -c 1 -w $PING_TIMEOUT &> /dev/null
-+		$PING6 -c 1 -w $PING_TIMEOUT 2001:1:2::2 &> /dev/null
- 	sysctl -qw net.ipv6.conf.all.forwarding=1
- 
- 	local t1=$(ipv6_stats_get $rtr1 Ip6InAddrErrors)
-@@ -150,7 +150,7 @@ ipv6_in_discard()
- 	# Add a policy to discard
- 	ip xfrm policy add dst 2001:1:2::2/128 dir fwd action block
- 	ip vrf exec $vrf_name \
--		$PING6 2001:1:2::2 -c 1 -w $PING_TIMEOUT &> /dev/null
-+		$PING6 -c 1 -w $PING_TIMEOUT 2001:1:2::2 &> /dev/null
- 	ip xfrm policy del dst 2001:1:2::2/128 dir fwd
- 
- 	local t1=$(ipv6_stats_get $rtr1 Ip6InDiscards)
-diff --git a/tools/testing/selftests/net/forwarding/ip6gre_custom_multipath_hash.sh b/tools/testing/selftests/net/forwarding/ip6gre_custom_multipath_hash.sh
-index e28b4a079e52..38cf24158929 100755
---- a/tools/testing/selftests/net/forwarding/ip6gre_custom_multipath_hash.sh
-+++ b/tools/testing/selftests/net/forwarding/ip6gre_custom_multipath_hash.sh
-@@ -278,44 +278,44 @@ ping_ipv6()
- 
- send_src_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A "198.51.100.2-198.51.100.253" -B 203.0.113.2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B "203.0.113.2-203.0.113.253" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_src_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp4()
- {
--	ip vrf exec v$h1 $MZ $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -q -p 64 \
- 		-A 198.51.100.2 -B 203.0.113.2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- send_src_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A "2001:db8:1::2-2001:db8:1::fd" -B 2001:db8:2::2 \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_dst_ipv6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B "2001:db8:2::2-2001:db8:2::fd" \
--		-d $MZ_DELAY -c 50 -t udp "sp=20000,dp=30000"
-+		-d $MZ_DELAY -c 50 -t udp $h1 "sp=20000,dp=30000"
- }
- 
- send_flowlabel()
-@@ -323,22 +323,22 @@ send_flowlabel()
- 	# Generate 16384 echo requests, each with a random flow label.
- 	ip vrf exec v$h1 sh -c \
- 		"for _ in {1..16384}; do \
--			$PING6 2001:db8:2::2 -F 0 -c 1 -q >/dev/null 2>&1; \
-+			$PING6 -F 0 -c 1 -q 2001:db8:2::2 >/dev/null 2>&1; \
- 		done"
- }
- 
- send_src_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=0-32768,dp=30000"
-+		-d $MZ_DELAY -t udp $h1 "sp=0-32768,dp=30000"
- }
- 
- send_dst_udp6()
- {
--	ip vrf exec v$h1 $MZ -6 $h1 -q -p 64 \
-+	ip vrf exec v$h1 $MZ -6 -q -p 64 \
- 		-A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "sp=20000,dp=0-32768"
-+		-d $MZ_DELAY -t udp $h1 "sp=20000,dp=0-32768"
- }
- 
- custom_hash_test()
-diff --git a/tools/testing/selftests/net/forwarding/ip6gre_inner_v4_multipath.sh b/tools/testing/selftests/net/forwarding/ip6gre_inner_v4_multipath.sh
-index 32d1461f37b7..21a2deb577ef 100755
---- a/tools/testing/selftests/net/forwarding/ip6gre_inner_v4_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/ip6gre_inner_v4_multipath.sh
-@@ -265,8 +265,8 @@ multipath4_test()
- 	local t0_222=$(tc_rule_stats_get $ul32 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -q -p 64 -A "192.0.3.2-192.0.3.62" -B "192.0.4.2-192.0.4.62" \
--	       -d $MZ_DELAY -c 50 -t udp "sp=1024,dp=1024"
-+	   $MZ -q -p 64 -A "192.0.3.2-192.0.3.62" -B "192.0.4.2-192.0.4.62" \
-+	       -d $MZ_DELAY -c 50 -t udp $h1 "sp=1024,dp=1024"
- 	sleep 1
- 
- 	local t1_111=$(tc_rule_stats_get $ul32 111 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/ip6gre_inner_v6_multipath.sh b/tools/testing/selftests/net/forwarding/ip6gre_inner_v6_multipath.sh
-index e1a4b50505f5..f2fd82017f21 100755
---- a/tools/testing/selftests/net/forwarding/ip6gre_inner_v6_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/ip6gre_inner_v6_multipath.sh
-@@ -265,9 +265,9 @@ multipath6_test()
- 	local t0_222=$(tc_rule_stats_get $ul32 222 ingress)
- 
- 	ip vrf exec v$h1 \
--	   $MZ $h1 -6 -q -p 64 -A "2001:db8:1::2-2001:db8:1::3e" \
-+	   $MZ -6 -q -p 64 -A "2001:db8:1::2-2001:db8:1::3e" \
- 	       -B "2001:db8:2::2-2001:db8:2::3e" \
--	       -d $MZ_DELAY -c 50 -t udp "sp=1024,dp=1024"
-+	       -d $MZ_DELAY -c 50 -t udp $h1 "sp=1024,dp=1024"
- 	sleep 1
- 
- 	local t1_111=$(tc_rule_stats_get $ul32 111 ingress)
-diff --git a/tools/testing/selftests/net/forwarding/ip6gre_lib.sh b/tools/testing/selftests/net/forwarding/ip6gre_lib.sh
-index 2d91281dc5b7..4ebb8a1c758a 100644
---- a/tools/testing/selftests/net/forwarding/ip6gre_lib.sh
-+++ b/tools/testing/selftests/net/forwarding/ip6gre_lib.sh
-@@ -355,8 +355,8 @@ test_traffic_ip4ip6()
- 	tc filter add dev $ol2 egress protocol ipv4 pref 1 handle 101 \
- 		flower $TC_FLAG dst_ip 203.0.113.1 action pass
- 
--	$MZ $h1 -c 1000 -p 64 -a $h1mac -b $ol1mac -A 198.51.100.1 \
--		-B 203.0.113.1 -t ip -q -d $MZ_DELAY
-+	$MZ -c 1000 -p 64 -a $h1mac -b $ol1mac -A 198.51.100.1 \
-+		-B 203.0.113.1 -t ip -q -d $MZ_DELAY $h1
- 
- 	# Check ports after encap and after decap.
- 	tc_check_at_least_x_packets "dev $ul1 egress" 101 1000
-@@ -388,8 +388,8 @@ test_traffic_ip6ip6()
- 	tc filter add dev $ol2 egress protocol ipv6 pref 1 handle 101 \
- 		flower $TC_FLAG dst_ip 2001:db8:2::1 action pass
- 
--	$MZ -6 $h1 -c 1000 -p 64 -a $h1mac -b $ol1mac -A 2001:db8:1::1 \
--		-B 2001:db8:2::1 -t ip -q -d $MZ_DELAY
-+	$MZ -6 -c 1000 -p 64 -a $h1mac -b $ol1mac -A 2001:db8:1::1 \
-+		-B 2001:db8:2::1 -t ip -q -d $MZ_DELAY $h1
- 
- 	# Check ports after encap and after decap.
- 	tc_check_at_least_x_packets "dev $ul1 egress" 101 1000
-diff --git a/tools/testing/selftests/net/forwarding/lib.sh b/tools/testing/selftests/net/forwarding/lib.sh
-index 890b3374dacd..d1a06dbfe2ae 100644
---- a/tools/testing/selftests/net/forwarding/lib.sh
-+++ b/tools/testing/selftests/net/forwarding/lib.sh
-@@ -1291,8 +1291,8 @@ ping_do()
- 
- 	vrf_name=$(master_name_get $if_name)
- 	ip vrf exec $vrf_name \
--		$PING $args $dip -c $PING_COUNT -i 0.1 \
--		-w $PING_TIMEOUT &> /dev/null
-+		$PING $args -c $PING_COUNT -i 0.1 \
-+		-w $PING_TIMEOUT $dip &> /dev/null
- }
- 
- ping_test()
-@@ -1322,8 +1322,8 @@ ping6_do()
- 
- 	vrf_name=$(master_name_get $if_name)
- 	ip vrf exec $vrf_name \
--		$PING6 $args $dip -c $PING_COUNT -i 0.1 \
--		-w $PING_TIMEOUT &> /dev/null
-+		$PING6 $args -c $PING_COUNT -i 0.1 \
-+		-w $PING_TIMEOUT $dip &> /dev/null
- }
- 
- ping6_test()
-@@ -1369,7 +1369,7 @@ learning_test()
- 	tc filter add dev $host1_if ingress protocol ip pref 1 handle 101 \
- 		flower dst_mac $mac action drop
- 
--	$MZ $host2_if -c 1 -p 64 -b $mac -t ip -q
-+	$MZ -c 1 -p 64 -b $mac -t ip -q $host2_if
- 	sleep 1
- 
- 	tc -j -s filter show dev $host1_if ingress \
-@@ -1377,14 +1377,14 @@ learning_test()
- 		| select(.options.actions[0].stats.packets == 1)" &> /dev/null
- 	check_fail $? "Packet reached first host when should not"
- 
--	$MZ $host1_if -c 1 -p 64 -a $mac -t ip -q
-+	$MZ -c 1 -p 64 -a $mac -t ip -q $host1_if
- 	sleep 1
- 
- 	bridge -j fdb show br $bridge brport $br_port1 \
- 		| jq -e ".[] | select(.mac == \"$mac\")" &> /dev/null
- 	check_err $? "Did not find FDB record when should"
- 
--	$MZ $host2_if -c 1 -p 64 -b $mac -t ip -q
-+	$MZ -c 1 -p 64 -b $mac -t ip -q $host2_if
- 	sleep 1
- 
- 	tc -j -s filter show dev $host1_if ingress \
-@@ -1403,7 +1403,7 @@ learning_test()
- 
- 	bridge link set dev $br_port1 learning off
- 
--	$MZ $host1_if -c 1 -p 64 -a $mac -t ip -q
-+	$MZ -c 1 -p 64 -a $mac -t ip -q $host1_if
- 	sleep 1
- 
- 	bridge -j fdb show br $bridge brport $br_port1 \
-@@ -1437,7 +1437,7 @@ flood_test_do()
- 	tc filter add dev $host2_if ingress protocol ip pref 1 handle 101 \
- 		flower dst_mac $mac action drop
- 
--	$MZ $host1_if -c 1 -p 64 -b $mac -B $ip -t ip -q
-+	$MZ -c 1 -p 64 -b $mac -B $ip -t ip -q $host1_if
- 	sleep 1
- 
- 	tc -j -s filter show dev $host2_if ingress \
-@@ -1522,8 +1522,8 @@ __start_traffic()
- 	local dmac=$1; shift
- 	local -a mz_args=("$@")
- 
--	$MZ $h_in -p $pktsize -A $sip -B $dip -c 0 \
--		-a own -b $dmac -t "$proto" -q "${mz_args[@]}" &
-+	$MZ -p $pktsize -A $sip -B $dip -c 0 \
-+		-a own -b $dmac -t "$proto" -q $h_in "${mz_args[@]}" &
- 	sleep 1
- }
- 
-@@ -1663,7 +1663,7 @@ mcast_packet_test()
- 	tc filter add dev $host2_if ingress protocol $tc_proto pref 1 handle 101 \
- 		flower ip_proto udp dst_mac $mac action drop
- 
--	$MZ $host1_if $mz_v6arg -c 1 -p 64 -b $mac -A $src_ip -B $ip -t udp "dp=4096,sp=2048" -q
-+	$MZ $mz_v6arg -c 1 -p 64 -b $mac -A $src_ip -B $ip -t udp -q $host1_if "dp=4096,sp=2048"
- 	sleep 1
- 
- 	tc -j -s filter show dev $host2_if ingress \
-diff --git a/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1q_lag.sh b/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1q_lag.sh
-index a20d22d1df36..8d4ae6c952a1 100755
---- a/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1q_lag.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_gre_bridge_1q_lag.sh
-@@ -238,7 +238,7 @@ test_lag_slave()
- 	ip neigh flush dev br1
- 	setup_wait_dev $up_dev
- 	setup_wait_dev $host_dev
--	$ARPING -I br1 192.0.2.130 -qfc 1
-+	$ARPING -I br1 -qfc 1 192.0.2.130
- 	sleep 2
- 	mirror_test vrf-h1 192.0.2.1 192.0.2.18 $host_dev 1 ">= 10"
- 
-diff --git a/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh b/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh
-index 1b902cc579f6..a21c771908b3 100755
---- a/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_gre_vlan_bridge_1q.sh
-@@ -196,7 +196,7 @@ test_span_gre_forbidden_egress()
- 
- 	bridge vlan add dev $swp3 vid 555
- 	# Re-prime FDB
--	$ARPING -I br1.555 192.0.2.130 -fqc 1
-+	$ARPING -I br1.555 -fqc 1 192.0.2.130
- 	sleep 1
- 	quick_test_span_gre_dir $tundev
- 
-@@ -290,7 +290,7 @@ test_span_gre_fdb_roaming()
- 
- 	bridge fdb del dev $swp2 $h3mac vlan 555 master 2>/dev/null
- 	# Re-prime FDB
--	$ARPING -I br1.555 192.0.2.130 -fqc 1
-+	$ARPING -I br1.555 -fqc 1 192.0.2.130
- 	sleep 1
- 	quick_test_span_gre_dir $tundev
- 
-diff --git a/tools/testing/selftests/net/forwarding/mirror_lib.sh b/tools/testing/selftests/net/forwarding/mirror_lib.sh
-index 6bf9d5ae933c..9a538b1391ed 100644
---- a/tools/testing/selftests/net/forwarding/mirror_lib.sh
-+++ b/tools/testing/selftests/net/forwarding/mirror_lib.sh
-@@ -36,12 +36,15 @@ mirror_test()
- 	local pref=$1; shift
- 	local expect=$1; shift
- 
-+	# getopt permutation is a non-POSIX GNU extension
- 	if is_ipv6 $dip; then
- 		local proto=-6
--		local type="icmp6 type=128" # Echo request.
-+		local type="icmp6"
-+		local typespec="type=128" # Echo request.
- 	else
- 		local proto=
--		local type="icmp echoreq"
-+		local type="icmp"
-+		local typespec="echoreq"
- 	fi
- 
- 	if [[ -z ${expect//[[:digit:]]/} ]]; then
-@@ -49,8 +52,8 @@ mirror_test()
- 	fi
- 
- 	local t0=$(tc_rule_stats_get $dev $pref)
--	$MZ $proto $vrf_name ${sip:+-A $sip} -B $dip -a own -b bc -q \
--	    -c 10 -d 100msec -t $type
-+	$MZ $proto ${sip:+-A $sip} -B $dip -a own -b bc -q \
-+	    -c 10 -d 100msec -t $type $vrf_name $typespec
- 	sleep 0.5
- 	local t1=$(tc_rule_stats_get $dev $pref)
- 	local delta=$((t1 - t0))
-diff --git a/tools/testing/selftests/net/forwarding/pedit_dsfield.sh b/tools/testing/selftests/net/forwarding/pedit_dsfield.sh
-index af008fbf2725..3e8804ccb721 100755
---- a/tools/testing/selftests/net/forwarding/pedit_dsfield.sh
-+++ b/tools/testing/selftests/net/forwarding/pedit_dsfield.sh
-@@ -130,8 +130,8 @@ do_test_pedit_dsfield_common()
- 
- 	# TOS 125: DSCP 31, ECN 1. Used for testing that the relevant part is
- 	# overwritten when zero is selected.
--	$MZ $mz_flags $h1 -c 10 -d 20msec -p 100 \
--	    -a own -b $h2mac -q -t tcp tos=0x7d,sp=54321,dp=12345
-+	$MZ $mz_flags -c 10 -d 20msec -p 100 \
-+	    -a own -b $h2mac -q -t tcp $h1 tos=0x7d,sp=54321,dp=12345
- 
- 	local pkts
- 	pkts=$(busywait "$TC_HIT_TIMEOUT" until_counter_is ">= 10" \
-diff --git a/tools/testing/selftests/net/forwarding/pedit_ip.sh b/tools/testing/selftests/net/forwarding/pedit_ip.sh
-index d14efb2d23b2..48aab7f4cc49 100755
---- a/tools/testing/selftests/net/forwarding/pedit_ip.sh
-+++ b/tools/testing/selftests/net/forwarding/pedit_ip.sh
-@@ -128,7 +128,7 @@ do_test_pedit_ip()
- 
- 	RET=0
- 
--	$MZ $mz_flags $h1 -c 10 -d 20msec -p 100 -a own -b $h2mac -q -t ip
-+	$MZ $mz_flags -c 10 -d 20msec -p 100 -a own -b $h2mac -q -t ip $h1
- 
- 	local pkts
- 	pkts=$(busywait "$TC_HIT_TIMEOUT" until_counter_is ">= 10" \
-diff --git a/tools/testing/selftests/net/forwarding/pedit_l4port.sh b/tools/testing/selftests/net/forwarding/pedit_l4port.sh
-index 10e594c55117..d9846703d6cc 100755
---- a/tools/testing/selftests/net/forwarding/pedit_l4port.sh
-+++ b/tools/testing/selftests/net/forwarding/pedit_l4port.sh
-@@ -132,8 +132,8 @@ do_test_pedit_l4port_one()
- 
- 	RET=0
- 
--	$MZ $mz_flags $h1 -c 10 -d 20msec -p 100 \
--	    -a own -b $h2mac -q -t $pedit_prot sp=54321,dp=12345
-+	$MZ $mz_flags -c 10 -d 20msec -p 100 \
-+	    -a own -b $h2mac -q -t $pedit_prot $h1 sp=54321,dp=12345
- 
- 	local pkts
- 	pkts=$(busywait "$TC_HIT_TIMEOUT" until_counter_is ">= 10" \
-diff --git a/tools/testing/selftests/net/forwarding/router.sh b/tools/testing/selftests/net/forwarding/router.sh
-index b98ea9449b8b..2560ad760a66 100755
---- a/tools/testing/selftests/net/forwarding/router.sh
-+++ b/tools/testing/selftests/net/forwarding/router.sh
-@@ -197,8 +197,8 @@ sip_in_class_e()
- 	tc filter add dev $rp2 egress protocol ip pref 1 handle 101 \
- 		flower src_ip 240.0.0.1 ip_proto udp action pass
- 
--	$MZ $h1 -t udp "sp=54321,dp=12345" -c 5 -d 1msec \
--		-A 240.0.0.1 -b $rp1mac -B 198.51.100.2 -q
-+	$MZ -t udp -c 5 -d 1msec \
-+		-A 240.0.0.1 -b $rp1mac -B 198.51.100.2 -q $h1 "sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $rp2 egress" 101 5
- 	check_err $? "Packets were dropped"
-@@ -246,8 +246,8 @@ __mc_mac_mismatch()
- 
- 	create_mcast_sg $rp1 $sip $dip $rp2
- 
--	$MZ $flags $h1 -t udp "sp=54321,dp=12345" -c 5 -d 1msec -b $dmac \
--		-B $dip -q
-+	$MZ $flags -t udp -c 5 -d 1msec -b $dmac \
-+		-B $dip -q $h1 "sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $rp2 egress" 101 5
- 	check_err $? "Packets were dropped"
-@@ -275,8 +275,8 @@ ipv4_sip_equal_dip()
- 	tc filter add dev $rp2 egress protocol ip pref 1 handle 101 \
- 		flower src_ip 198.51.100.2  action pass
- 
--	$MZ $h1 -t udp "sp=54321,dp=12345" -c 5 -d 1msec \
--		-A 198.51.100.2 -b $rp1mac -B 198.51.100.2 -q
-+	$MZ -t udp -c 5 -d 1msec \
-+		-A 198.51.100.2 -b $rp1mac -B 198.51.100.2 -q $h1 "sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $rp2 egress" 101 5
- 	check_err $? "Packets were dropped"
-@@ -295,8 +295,8 @@ ipv6_sip_equal_dip()
- 	tc filter add dev $rp2 egress protocol ipv6 pref 1 handle 101 \
- 		flower src_ip 2001:db8:2::2 action pass
- 
--	$MZ -6 $h1 -t udp "sp=54321,dp=12345" -c 5 -d 1msec \
--		-A 2001:db8:2::2 -b $rp1mac -B 2001:db8:2::2 -q
-+	$MZ -6 -t udp -c 5 -d 1msec \
-+		-A 2001:db8:2::2 -b $rp1mac -B 2001:db8:2::2 -q $h1 "sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $rp2 egress" 101 5
- 	check_err $? "Packets were dropped"
-@@ -318,7 +318,7 @@ ipv4_dip_link_local()
- 	ip neigh add 169.254.1.1 lladdr 00:11:22:33:44:55 dev $rp2
- 	ip route add 169.254.1.0/24 dev $rp2
- 
--	$MZ $h1 -t udp "sp=54321,dp=12345" -c 5 -d 1msec -b $rp1mac -B $dip -q
-+	$MZ -t udp -c 5 -d 1msec -b $rp1mac -B $dip -q $h1 "sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $rp2 egress" 101 5
- 	check_err $? "Packets were dropped"
-diff --git a/tools/testing/selftests/net/forwarding/router_broadcast.sh b/tools/testing/selftests/net/forwarding/router_broadcast.sh
-index 4eac0a06f451..e13569d96cd7 100755
---- a/tools/testing/selftests/net/forwarding/router_broadcast.sh
-+++ b/tools/testing/selftests/net/forwarding/router_broadcast.sh
-@@ -173,7 +173,7 @@ ping_test_from()
- 
- 	log_info "ping $dip, expected reply from $from"
- 	ip vrf exec $(master_name_get $oif) \
--		$PING -I $oif $dip -c 10 -i 0.1 -w $PING_TIMEOUT -b 2>&1 \
-+		$PING -I $oif -c 10 -i 0.1 -w $PING_TIMEOUT -b $dip 2>&1 \
- 		| grep "bytes from $from" > /dev/null
- 	check_err_fail $fail $?
- }
-diff --git a/tools/testing/selftests/net/forwarding/router_mpath_nh.sh b/tools/testing/selftests/net/forwarding/router_mpath_nh.sh
-index a7d8399c8d4f..f0cded6b7bcf 100755
---- a/tools/testing/selftests/net/forwarding/router_mpath_nh.sh
-+++ b/tools/testing/selftests/net/forwarding/router_mpath_nh.sh
-@@ -244,8 +244,8 @@ multipath4_test()
- 	t0_rp12=$(link_stats_tx_packets_get $rp12)
- 	t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--	ip vrf exec vrf-h1 $MZ $h1 -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
--		-d $MZ_DELAY -t udp "$ports"
-+	ip vrf exec vrf-h1 $MZ -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
-+		-d $MZ_DELAY -t udp $h1 "$ports"
- 	sleep 1
- 
- 	t1_rp12=$(link_stats_tx_packets_get $rp12)
-@@ -280,8 +280,8 @@ multipath6_test()
- 	t0_rp12=$(link_stats_tx_packets_get $rp12)
- 	t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--	$MZ $h1 -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "$ports"
-+	$MZ -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
-+		-d $MZ_DELAY -t udp $h1 "$ports"
- 	sleep 1
- 
- 	t1_rp12=$(link_stats_tx_packets_get $rp12)
-diff --git a/tools/testing/selftests/net/forwarding/router_mpath_nh_lib.sh b/tools/testing/selftests/net/forwarding/router_mpath_nh_lib.sh
-index 507b2852dabe..d8ba304ec9ff 100644
---- a/tools/testing/selftests/net/forwarding/router_mpath_nh_lib.sh
-+++ b/tools/testing/selftests/net/forwarding/router_mpath_nh_lib.sh
-@@ -104,7 +104,7 @@ __nh_stats_test_v4()
- 
- 	sysctl_set net.ipv4.fib_multipath_hash_policy 1
- 	nh_stats_test_dispatch $nhgtype "IPv4" 101 102 103 \
--			       $MZ $h1 -A 192.0.2.2 -B 198.51.100.2
-+			       $MZ -A 192.0.2.2 -B 198.51.100.2 $h1
- 	sysctl_restore net.ipv4.fib_multipath_hash_policy
- }
- 
-@@ -114,7 +114,7 @@ __nh_stats_test_v6()
- 
- 	sysctl_set net.ipv6.fib_multipath_hash_policy 1
- 	nh_stats_test_dispatch $nhgtype "IPv6" 104 105 106 \
--			       $MZ -6 $h1 -A 2001:db8:1::2 -B 2001:db8:2::2
-+			       $MZ -6 -A 2001:db8:1::2 -B 2001:db8:2::2 $h1
- 	sysctl_restore net.ipv6.fib_multipath_hash_policy
- }
- 
-diff --git a/tools/testing/selftests/net/forwarding/router_mpath_nh_res.sh b/tools/testing/selftests/net/forwarding/router_mpath_nh_res.sh
-index 88ddae05b39d..1db64b8beab2 100755
---- a/tools/testing/selftests/net/forwarding/router_mpath_nh_res.sh
-+++ b/tools/testing/selftests/net/forwarding/router_mpath_nh_res.sh
-@@ -245,8 +245,8 @@ multipath4_test()
- 	t0_rp12=$(link_stats_tx_packets_get $rp12)
- 	t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--	ip vrf exec vrf-h1 $MZ $h1 -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
--		-d $MZ_DELAY -t udp "$ports"
-+	ip vrf exec vrf-h1 $MZ -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
-+		-d $MZ_DELAY -t udp $h1 "$ports"
- 	sleep 1
- 
- 	t1_rp12=$(link_stats_tx_packets_get $rp12)
-@@ -278,8 +278,8 @@ multipath6_l4_test()
- 	t0_rp12=$(link_stats_tx_packets_get $rp12)
- 	t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--	$MZ $h1 -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
--		-d $MZ_DELAY -t udp "$ports"
-+	$MZ -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
-+		-d $MZ_DELAY -t udp $h1 "$ports"
- 	sleep 1
- 
- 	t1_rp12=$(link_stats_tx_packets_get $rp12)
-diff --git a/tools/testing/selftests/net/forwarding/router_mpath_seed.sh b/tools/testing/selftests/net/forwarding/router_mpath_seed.sh
-index 314cb906c1eb..d6a2a24da423 100755
---- a/tools/testing/selftests/net/forwarding/router_mpath_seed.sh
-+++ b/tools/testing/selftests/net/forwarding/router_mpath_seed.sh
-@@ -255,15 +255,15 @@ test_mpath_seed()
- test_mpath_seed_ipv4()
- {
- 	test_mpath_seed 1000 IPv4 \
--		$MZ $h1 -A 192.0.2.1 -B 192.0.2.34 -q \
--			-p 64 -d 0 -c 10 -t udp
-+		$MZ -A 192.0.2.1 -B 192.0.2.34 -q \
-+			-p 64 -d 0 -c 10 -t udp $h1
- }
- 
- test_mpath_seed_ipv6()
- {
- 	test_mpath_seed 2000 IPv6 \
--		$MZ -6 $h1 -A 2001:db8:1::1 -B 2001:db8:3::2 -q \
--			-p 64 -d 0 -c 10 -t udp
-+		$MZ -6 -A 2001:db8:1::1 -B 2001:db8:3::2 -q \
-+			-p 64 -d 0 -c 10 -t udp $h1
- }
- 
- check_mpath_seed_stability()
-@@ -311,15 +311,15 @@ test_mpath_seed_stability()
- test_mpath_seed_stability_ipv4()
- {
- 	test_mpath_seed_stability 1000 IPv4 \
--		$MZ $h1 -A 192.0.2.1 -B 192.0.2.34 -q \
--			-p 64 -d 0 -c 10 -t udp
-+		$MZ -A 192.0.2.1 -B 192.0.2.34 -q \
-+			-p 64 -d 0 -c 10 -t udp $h1
- }
- 
- test_mpath_seed_stability_ipv6()
- {
- 	test_mpath_seed_stability 2000 IPv6 \
--		$MZ -6 $h1 -A 2001:db8:1::1 -B 2001:db8:3::2 -q \
--			-p 64 -d 0 -c 10 -t udp
-+		$MZ -6 -A 2001:db8:1::1 -B 2001:db8:3::2 -q \
-+			-p 64 -d 0 -c 10 -t udp $h1
- }
- 
- trap cleanup EXIT
-diff --git a/tools/testing/selftests/net/forwarding/router_multicast.sh b/tools/testing/selftests/net/forwarding/router_multicast.sh
-index 83e52abdbc2e..c30b176ac954 100755
---- a/tools/testing/selftests/net/forwarding/router_multicast.sh
-+++ b/tools/testing/selftests/net/forwarding/router_multicast.sh
-@@ -222,8 +222,8 @@ mcast_v4()
- 	create_mcast_sg $rp1 198.51.100.2 225.1.2.3 $rp2 $rp3
- 
- 	# Send frames with the corresponding L2 destination address.
--	$MZ $h1 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+	$MZ -c 5 -p 128 -t udp -a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 122 5
- 	check_err $? "Multicast not received on first host"
-@@ -232,8 +232,8 @@ mcast_v4()
- 
- 	delete_mcast_sg $rp1 198.51.100.2 225.1.2.3 $rp2 $rp3
- 
--	$MZ $h1 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+	$MZ -c 5 -p 128 -t udp -a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 122 5
- 	check_err $? "Multicast received on host although deleted"
-@@ -262,8 +262,8 @@ mcast_v6()
- 	create_mcast_sg $rp1 2001:db8:1::2 ff0e::3 $rp2 $rp3
- 
- 	# Send frames with the corresponding L2 destination address.
--	$MZ $h1 -6 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 \
--		-b 33:33:00:00:00:03 -A 2001:db8:1::2 -B ff0e::3 -q
-+	$MZ -6 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 \
-+		-b 33:33:00:00:00:03 -A 2001:db8:1::2 -B ff0e::3 -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 122 5
- 	check_err $? "Multicast not received on first host"
-@@ -272,8 +272,8 @@ mcast_v6()
- 
- 	delete_mcast_sg $rp1 2001:db8:1::2 ff0e::3 $rp2 $rp3
- 
--	$MZ $h1 -6 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 \
--		-b 33:33:00:00:00:03 -A 2001:db8:1::2 -B ff0e::3 -q
-+	$MZ -6 -c 5 -p 128 -t udp -a 00:11:22:33:44:55 \
-+		-b 33:33:00:00:00:03 -A 2001:db8:1::2 -B ff0e::3 -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 122 5
- 	check_err $? "Multicast received on first host although deleted"
-@@ -308,18 +308,18 @@ rpf_v4()
- 
- 	create_mcast_sg $rp1 198.51.100.2 225.1.2.3 $rp2 $rp3
- 
--	$MZ $h1 -c 5 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -c 5 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 5
- 	check_err $? "Multicast not received on first host"
- 	tc_check_packets "dev $h3 ingress" 1 5
- 	check_err $? "Multicast not received on second host"
- 
--	$MZ $h3 -c 5 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -c 5 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h3 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h1 ingress" 1 0
- 	check_err $? "Multicast received on first host when should not"
-@@ -353,18 +353,18 @@ rpf_v6()
- 
- 	create_mcast_sg $rp1 2001:db8:1::2 ff0e::3 $rp2 $rp3
- 
--	$MZ $h1 -6 -c 5 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -6 -c 5 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 33:33:00:00:00:03 \
--		-A 2001:db8:1::2 -B ff0e::3 -q
-+		-A 2001:db8:1::2 -B ff0e::3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 5
- 	check_err $? "Multicast not received on first host"
- 	tc_check_packets "dev $h3 ingress" 1 5
- 	check_err $? "Multicast not received on second host"
- 
--	$MZ $h3 -6 -c 5 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -6 -c 5 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 33:33:00:00:00:03 \
--		-A 2001:db8:1::2 -B ff0e::3 -q
-+		-A 2001:db8:1::2 -B ff0e::3 -q $h3 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h1 ingress" 1 0
- 	check_err $? "Multicast received on first host when should not"
-@@ -399,9 +399,9 @@ unres_v4()
- 		dst_ip 225.1.2.3 ip_proto udp dst_port 12345 action drop
- 
- 	# Forwarding should fail before installing a matching (*, G).
--	$MZ $h1 -c 1 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -c 1 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 0
- 	check_err $? "Multicast received on first host when should not"
-@@ -411,9 +411,9 @@ unres_v4()
- 	# Create (*, G). Will not be installed in the kernel.
- 	create_mcast_sg $rp1 0.0.0.0 225.1.2.3 $rp2 $rp3
- 
--	$MZ $h1 -c 1 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -c 1 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 01:00:5e:01:02:03 \
--		-A 198.51.100.2 -B 225.1.2.3 -q
-+		-A 198.51.100.2 -B 225.1.2.3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 1
- 	check_err $? "Multicast not received on first host"
-@@ -444,9 +444,9 @@ unres_v6()
- 		dst_ip ff0e::3 ip_proto udp dst_port 12345 action drop
- 
- 	# Forwarding should fail before installing a matching (*, G).
--	$MZ $h1 -6 -c 1 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -6 -c 1 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 33:33:00:00:00:03 \
--		-A 2001:db8:1::2 -B ff0e::3 -q
-+		-A 2001:db8:1::2 -B ff0e::3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 0
- 	check_err $? "Multicast received on first host when should not"
-@@ -456,9 +456,9 @@ unres_v6()
- 	# Create (*, G). Will not be installed in the kernel.
- 	create_mcast_sg $rp1 :: ff0e::3 $rp2 $rp3
- 
--	$MZ $h1 -6 -c 1 -p 128 -t udp "ttl=10,sp=54321,dp=12345" \
-+	$MZ -6 -c 1 -p 128 -t udp \
- 		-a 00:11:22:33:44:55 -b 33:33:00:00:00:03 \
--		-A 2001:db8:1::2 -B ff0e::3 -q
-+		-A 2001:db8:1::2 -B ff0e::3 -q $h1 "ttl=10,sp=54321,dp=12345"
- 
- 	tc_check_packets "dev $h2 ingress" 1 1
- 	check_err $? "Multicast not received on first host"
-diff --git a/tools/testing/selftests/net/forwarding/router_multipath.sh b/tools/testing/selftests/net/forwarding/router_multipath.sh
-index 46f365b557b7..e71f09e7827e 100755
---- a/tools/testing/selftests/net/forwarding/router_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/router_multipath.sh
-@@ -178,8 +178,8 @@ multipath4_test()
-        t0_rp12=$(link_stats_tx_packets_get $rp12)
-        t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--       ip vrf exec vrf-h1 $MZ $h1 -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
--	       -d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+       ip vrf exec vrf-h1 $MZ -q -p 64 -A 192.0.2.2 -B 198.51.100.2 \
-+	       -d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
-        sleep 1
- 
-        t1_rp12=$(link_stats_tx_packets_get $rp12)
-@@ -216,8 +216,8 @@ multipath6_test()
-        t0_rp12=$(link_stats_tx_packets_get $rp12)
-        t0_rp13=$(link_stats_tx_packets_get $rp13)
- 
--       $MZ $h1 -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
--	       -d $MZ_DELAY -t udp "sp=1024,dp=0-32768"
-+       $MZ -6 -q -p 64 -A 2001:db8:1::2 -B 2001:db8:2::2 \
-+	       -d $MZ_DELAY -t udp $h1 "sp=1024,dp=0-32768"
-        sleep 1
- 
-        t1_rp12=$(link_stats_tx_packets_get $rp12)
-diff --git a/tools/testing/selftests/net/forwarding/sch_red.sh b/tools/testing/selftests/net/forwarding/sch_red.sh
-index af166662b78a..934ff436889e 100755
---- a/tools/testing/selftests/net/forwarding/sch_red.sh
-+++ b/tools/testing/selftests/net/forwarding/sch_red.sh
-@@ -165,7 +165,7 @@ send_packets()
- 	local proto=$1; shift
- 	local pkts=$1; shift
- 
--	$MZ $h2 -p $PKTSZ -a own -b $h3_mac -A 192.0.2.2 -B 192.0.2.3 -t $proto -q -c $pkts "$@"
-+	$MZ -p $PKTSZ -a own -b $h3_mac -A 192.0.2.2 -B 192.0.2.3 -t $proto -q -c $pkts $h2 "$@"
- }
- 
- # This sends traffic in an attempt to build a backlog of $size. Returns 0 on
-@@ -266,8 +266,8 @@ do_ecn_test()
- 	local limit=$1; shift
- 	local name=ECN
- 
--	$MZ $h1 -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
--		-a own -b $h3_mac -t tcp -q tos=0x01 &
-+	$MZ -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
-+		-a own -b $h3_mac -t tcp -q $h1 tos=0x01 &
- 	defer stop_traffic $!
- 	sleep 1
- 
-@@ -287,8 +287,8 @@ do_ecn_nodrop_test()
- 	local limit=$1; shift
- 	local name="ECN nodrop"
- 
--	$MZ $h1 -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
--		-a own -b $h3_mac -t tcp -q tos=0x01 &
-+	$MZ -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
-+		-a own -b $h3_mac -t tcp -q $h1 tos=0x01 &
- 	defer stop_traffic $!
- 	sleep 1
- 
-@@ -311,8 +311,8 @@ do_red_test()
- 
- 	# Use ECN-capable TCP to verify there's no marking even though the queue
- 	# is above limit.
--	$MZ $h1 -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
--		-a own -b $h3_mac -t tcp -q tos=0x01 &
-+	$MZ -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
-+		-a own -b $h3_mac -t tcp -q $h1 tos=0x01 &
- 	defer stop_traffic $!
- 
- 	# Pushing below the queue limit should work.
-@@ -342,8 +342,8 @@ do_red_qevent_test()
- 
- 	RET=0
- 
--	$MZ $h1 -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
--		-a own -b $h3_mac -t udp -q &
-+	$MZ -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
-+		-a own -b $h3_mac -t udp -q $h1 &
- 	defer stop_traffic $!
- 	sleep 1
- 
-@@ -381,8 +381,8 @@ do_ecn_qevent_test()
- 
- 	RET=0
- 
--	$MZ $h1 -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
--		-a own -b $h3_mac -t tcp -q tos=0x01 &
-+	$MZ -p $PKTSZ -A 192.0.2.1 -B 192.0.2.3 -c 0 \
-+		-a own -b $h3_mac -t tcp -q $h1 tos=0x01 &
- 	defer stop_traffic $!
- 	sleep 1
- 
-diff --git a/tools/testing/selftests/net/forwarding/skbedit_priority.sh b/tools/testing/selftests/net/forwarding/skbedit_priority.sh
-index 3dd5fcbd3eaa..06e8b9e21b94 100755
---- a/tools/testing/selftests/net/forwarding/skbedit_priority.sh
-+++ b/tools/testing/selftests/net/forwarding/skbedit_priority.sh
-@@ -125,8 +125,8 @@ test_skbedit_priority_one()
- 
- 	local pkt0=$(qdisc_parent_stats_get $swp2 $classid .packets)
- 	local pkt2=$(tc_rule_handle_stats_get "$locus" 101)
--	$MZ $h1 -t udp "sp=54321,dp=12345" -c 10 -d 20msec -p 100 \
--	    -a own -b $h2mac -A 192.0.2.1 -B 192.0.2.2 -q
-+	$MZ -t udp -c 10 -d 20msec -p 100 \
-+	    -a own -b $h2mac -A 192.0.2.1 -B 192.0.2.2 -q $h1 "sp=54321,dp=12345"
- 
- 	local pkt1
- 	pkt1=$(busywait "$HIT_TIMEOUT" until_counter_is ">= $((pkt0 + 10))" \
-diff --git a/tools/testing/selftests/net/forwarding/tc_actions.sh b/tools/testing/selftests/net/forwarding/tc_actions.sh
-index ea89e558672d..580aaa42ed31 100755
---- a/tools/testing/selftests/net/forwarding/tc_actions.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_actions.sh
-@@ -66,8 +66,8 @@ mirred_egress_test()
- 	tc filter add dev $h2 ingress protocol ip pref 1 handle 101 flower \
- 		dst_ip 192.0.2.2 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched without redirect rule inserted"
-@@ -76,8 +76,8 @@ mirred_egress_test()
- 		$classifier $tcflags $classifier_args \
- 		action mirred egress $action dev $swp2
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Did not match incoming $action packet"
-@@ -96,8 +96,8 @@ gact_drop_and_ok_test()
- 	tc filter add dev $swp1 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags dst_ip 192.0.2.2 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $swp1 ingress" 102 1
- 	check_err $? "Packet was not dropped"
-@@ -105,8 +105,8 @@ gact_drop_and_ok_test()
- 	tc filter add dev $swp1 ingress protocol ip pref 1 handle 101 flower \
- 		$tcflags dst_ip 192.0.2.2 action ok
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $swp1 ingress" 101 1
- 	check_err $? "Did not see passed packet"
-@@ -134,8 +134,8 @@ gact_trap_test()
- 		$tcflags dst_ip 192.0.2.2 action mirred egress redirect \
- 		dev $swp2
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $swp1 ingress" 101 1
- 	check_fail $? "Saw packet without trap rule inserted"
-@@ -143,8 +143,8 @@ gact_trap_test()
- 	tc filter add dev $swp1 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags dst_ip 192.0.2.2 action trap
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $swp1 ingress" 102 1
- 	check_err $? "Packet was not trapped"
-@@ -175,8 +175,8 @@ mirred_egress_to_ingress_test()
- 	tc filter add dev $swp1 protocol ip pref 12 handle 112 ingress flower \
- 		ip_proto icmp src_ip 192.0.2.1 dst_ip 192.0.2.2 type 0 action pass
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t icmp "ping,id=42,seq=10" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t icmp -q $h1 "ping,id=42,seq=10"
- 
- 	tc_check_packets "dev $h1 egress" 100 1
- 	check_err $? "didn't mirror first packet"
-@@ -230,8 +230,8 @@ mirred_egress_to_ingress_tcp_test()
- 	cmp -s $mirred_e2i_tf1 $mirred_e2i_tf2
- 	check_err $? "server output check failed"
- 
--	$MZ $h1 -c 10 -p 64 -a $h1mac -b $h1mac -A 192.0.2.1 -B 192.0.2.1 \
--		-t icmp "ping,id=42,seq=5" -q
-+	$MZ -c 10 -p 64 -a $h1mac -b $h1mac -A 192.0.2.1 -B 192.0.2.1 \
-+		-t icmp -q $h1 "ping,id=42,seq=5"
- 	tc_check_packets "dev $h1 egress" 101 10
- 	check_err $? "didn't mirred redirect ICMP"
- 	tc_check_packets "dev $h1 ingress" 102 10
-@@ -254,8 +254,8 @@ ingress_2nd_vlan_push()
- 		$tcflags num_of_vlans 2 \
- 		cvlan_ethtype 0x800 action pass
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -Q 10 -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -Q 10 -q $h1
- 
- 	tc_check_packets "dev $swp1 ingress" 30 1
- 	check_err $? "No double-vlan packets received"
-@@ -276,8 +276,8 @@ egress_2nd_vlan_push()
- 		$tcflags num_of_vlans 2 \
- 		cvlan_ethtype 0x800 action pass
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h1 egress" 30 1
- 	check_err $? "No double-vlan packets received"
-diff --git a/tools/testing/selftests/net/forwarding/tc_chains.sh b/tools/testing/selftests/net/forwarding/tc_chains.sh
-index b95de0463ebd..95b194b5e092 100755
---- a/tools/testing/selftests/net/forwarding/tc_chains.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_chains.sh
-@@ -38,8 +38,8 @@ unreachable_chain_test()
- 	tc filter add dev $h2 ingress chain 1 protocol ip pref 1 handle 1101 \
- 		flower $tcflags dst_mac $h2mac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 1101 1
- 	check_fail $? "matched on filter in unreachable chain"
-@@ -61,8 +61,8 @@ gact_goto_chain_test()
- 	tc filter add dev $h2 ingress protocol ip pref 1 handle 101 flower \
- 		$tcflags dst_mac $h2mac action goto chain 1
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 102 1
- 	check_fail $? "Matched on a wrong filter"
-diff --git a/tools/testing/selftests/net/forwarding/tc_flower.sh b/tools/testing/selftests/net/forwarding/tc_flower.sh
-index b58909a93112..2b327b46be55 100755
---- a/tools/testing/selftests/net/forwarding/tc_flower.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_flower.sh
-@@ -46,8 +46,8 @@ match_dst_mac_test()
- 	tc filter add dev $h2 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags dst_mac $h2mac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -72,8 +72,8 @@ match_src_mac_test()
- 	tc filter add dev $h2 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags src_mac $h1mac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -98,8 +98,8 @@ match_dst_ip_test()
- 	tc filter add dev $h2 ingress protocol ip pref 3 handle 103 flower \
- 		$tcflags dst_ip 192.0.2.0/24 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -109,8 +109,8 @@ match_dst_ip_test()
- 
- 	tc filter del dev $h2 ingress protocol ip pref 2 handle 102 flower
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 103 1
- 	check_err $? "Did not match on correct filter with mask"
-@@ -132,8 +132,8 @@ match_src_ip_test()
- 	tc filter add dev $h2 ingress protocol ip pref 3 handle 103 flower \
- 		$tcflags src_ip 192.0.2.0/24 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -143,8 +143,8 @@ match_src_ip_test()
- 
- 	tc filter del dev $h2 ingress protocol ip pref 2 handle 102 flower
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 103 1
- 	check_err $? "Did not match on correct filter with mask"
-@@ -168,8 +168,8 @@ match_ip_flags_test()
- 	tc filter add dev $h2 ingress protocol ip pref 4 handle 104 flower \
- 		$tcflags ip_flags nofrag action drop
- 
--	$MZ $h1 -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "frag=0" -q
-+	$MZ -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "frag=0"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on wrong frag filter (nofrag)"
-@@ -183,8 +183,8 @@ match_ip_flags_test()
- 	tc_check_packets "dev $h2 ingress" 104 1
- 	check_err $? "Did not match on nofrag filter (nofrag)"
- 
--	$MZ $h1 -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "frag=0,mf" -q
-+	$MZ -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "frag=0,mf"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Did not match on frag filter (1stfrag)"
-@@ -198,10 +198,10 @@ match_ip_flags_test()
- 	tc_check_packets "dev $h2 ingress" 104 1
- 	check_err $? "Match on wrong nofrag filter (1stfrag)"
- 
--	$MZ $h1 -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "frag=256,mf" -q
--	$MZ $h1 -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "frag=256" -q
-+	$MZ -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "frag=256,mf"
-+	$MZ -c 1 -p 1000 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "frag=256"
- 
- 	tc_check_packets "dev $h2 ingress" 101 3
- 	check_err $? "Did not match on frag filter (no1stfrag)"
-@@ -234,8 +234,8 @@ match_pcp_test()
- 	tc filter add dev $h2 ingress protocol 802.1q pref 2 handle 102 \
- 		flower vlan_prio 7 $tcflags dst_mac $h2mac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 7:85 -t ip -q
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 0:85 -t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 7:85 -t ip -q $h1
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 0:85 -t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 0
- 	check_err $? "Matched on specified PCP when should not"
-@@ -263,7 +263,7 @@ match_vlan_test()
- 	tc filter add dev $h2 ingress protocol 802.1q pref 2 handle 102 \
- 		flower vlan_id 85 $tcflags action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 0:85 -t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -B 192.0.2.11 -Q 0:85 -t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 0
- 	check_err $? "Matched on specified VLAN when should not"
-@@ -289,8 +289,8 @@ match_ip_tos_test()
- 	tc filter add dev $h2 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags dst_ip 192.0.2.2 ip_tos 0x18 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip tos=18 -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 tos=18
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter (0x18)"
-@@ -298,8 +298,8 @@ match_ip_tos_test()
- 	tc_check_packets "dev $h2 ingress" 102 1
- 	check_err $? "Did not match on correct filter (0x18)"
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip tos=20 -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 tos=20
- 
- 	tc_check_packets "dev $h2 ingress" 102 2
- 	check_fail $? "Matched on a wrong filter (0x20)"
-@@ -322,11 +322,11 @@ match_ip_ttl_test()
- 	tc filter add dev $h2 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags dst_ip 192.0.2.2 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "ttl=63" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "ttl=63"
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "ttl=63,mf,frag=256" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "ttl=63,mf,frag=256"
- 
- 	tc_check_packets "dev $h2 ingress" 102 1
- 	check_fail $? "Matched on the wrong filter (no check on ttl)"
-@@ -334,8 +334,8 @@ match_ip_ttl_test()
- 	tc_check_packets "dev $h2 ingress" 101 2
- 	check_err $? "Did not match on correct filter (ttl=63)"
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip "ttl=255" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1 "ttl=255"
- 
- 	tc_check_packets "dev $h2 ingress" 101 3
- 	check_fail $? "Matched on a wrong filter (ttl=63)"
-@@ -358,8 +358,8 @@ match_indev_test()
- 	tc filter add dev $h2 ingress protocol ip pref 2 handle 102 flower \
- 		$tcflags indev $h2 dst_mac $h2mac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -404,7 +404,7 @@ match_mpls_label_test()
- 		flower $tcflags mpls_label 1048575 action drop
- 
- 	pkt="$ethtype $(mpls_lse 1048575 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter (1048575)"
-@@ -413,7 +413,7 @@ match_mpls_label_test()
- 	check_err $? "Did not match on correct filter (1048575)"
- 
- 	pkt="$ethtype $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 102 2
- 	check_fail $? "Matched on a wrong filter (0)"
-@@ -442,7 +442,7 @@ match_mpls_tc_test()
- 		flower $tcflags mpls_tc 7 action drop
- 
- 	pkt="$ethtype $(mpls_lse 0 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter (7)"
-@@ -451,7 +451,7 @@ match_mpls_tc_test()
- 	check_err $? "Did not match on correct filter (7)"
- 
- 	pkt="$ethtype $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 102 2
- 	check_fail $? "Matched on a wrong filter (0)"
-@@ -480,7 +480,7 @@ match_mpls_bos_test()
- 		flower $tcflags mpls_bos 1 action drop
- 
- 	pkt="$ethtype $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter (1)"
-@@ -490,7 +490,7 @@ match_mpls_bos_test()
- 
- 	# Need to add a second label to properly mark the Bottom of Stack
- 	pkt="$ethtype $(mpls_lse 0 0 0 255) $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 102 2
- 	check_fail $? "Matched on a wrong filter (0)"
-@@ -519,7 +519,7 @@ match_mpls_ttl_test()
- 		flower $tcflags mpls_ttl 255 action drop
- 
- 	pkt="$ethtype $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_fail $? "Matched on a wrong filter (255)"
-@@ -528,7 +528,7 @@ match_mpls_ttl_test()
- 	check_err $? "Did not match on correct filter (255)"
- 
- 	pkt="$ethtype $(mpls_lse 0 0 1 0)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 102 2
- 	check_fail $? "Matched on a wrong filter (0)"
-@@ -581,45 +581,45 @@ match_mpls_lse_test()
- 
- 	# Base packet, matched by all filters (except for stack depth 3)
- 	pkt="$ethtype $(mpls_lse 0 0 0 0) $(mpls_lse 1048575 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Make a variant of the above packet, with a non-matching value
- 	# for each LSE field
- 
- 	# Wrong label at depth 1
- 	pkt="$ethtype $(mpls_lse 1 0 0 0) $(mpls_lse 1048575 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong TC at depth 1
- 	pkt="$ethtype $(mpls_lse 0 1 0 0) $(mpls_lse 1048575 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong BOS at depth 1 (not adding a second LSE here since BOS is set
- 	# in the first label, so anything that'd follow wouldn't be considered)
- 	pkt="$ethtype $(mpls_lse 0 0 1 0)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong TTL at depth 1
- 	pkt="$ethtype $(mpls_lse 0 0 0 1) $(mpls_lse 1048575 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong label at depth 2
- 	pkt="$ethtype $(mpls_lse 0 0 0 0) $(mpls_lse 1048574 7 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong TC at depth 2
- 	pkt="$ethtype $(mpls_lse 0 0 0 0) $(mpls_lse 1048575 6 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong BOS at depth 2 (adding a third LSE here since BOS isn't set in
- 	# the second label)
- 	pkt="$ethtype $(mpls_lse 0 0 0 0) $(mpls_lse 1048575 7 0 255)"
- 	pkt="$pkt $(mpls_lse 0 0 1 255)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Wrong TTL at depth 2
- 	pkt="$ethtype $(mpls_lse 0 0 0 0) $(mpls_lse 1048575 7 1 254)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	# Filters working at depth 1 should match all packets but one
- 
-@@ -707,12 +707,12 @@ match_erspan_opts_test()
- 		enc_key_id 1002 erspan_opts 2:0:1:63 action drop
- 
- 	ep1mac=$(mac_get erspan1)
--	$MZ erspan1 -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q
-+	$MZ -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q erspan1
- 	tc_check_packets "dev ep-ex ingress" 101 1
- 	check_err $? "ERSPAN Type II"
- 
- 	ep2mac=$(mac_get erspan2)
--	$MZ erspan2 -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q
-+	$MZ -c 1 -p 64 -a $ep1mac -b $h2mac -t ip -q erspan2
- 	tc_check_packets "dev ep-ex ingress" 102 1
- 	check_err $? "ERSPAN Type III"
- 
-diff --git a/tools/testing/selftests/net/forwarding/tc_flower_cfm.sh b/tools/testing/selftests/net/forwarding/tc_flower_cfm.sh
-index 3ca20df952eb..e2988d3b855f 100755
---- a/tools/testing/selftests/net/forwarding/tc_flower_cfm.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_flower_cfm.sh
-@@ -63,9 +63,9 @@ match_cfm_opcode()
- 	   flower cfm op 43 action drop
- 
- 	pkt="$ethtype $(generate_cfm_hdr 7 47 0 32)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 	pkt="$ethtype $(generate_cfm_hdr 6 5 0 4)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Did not match on correct opcode"
-@@ -74,7 +74,7 @@ match_cfm_opcode()
- 	check_err $? "Matched on the wrong opcode"
- 
- 	pkt="$ethtype $(generate_cfm_hdr 0 43 0 12)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Matched on the wrong opcode"
-@@ -101,11 +101,11 @@ match_cfm_level()
- 	   flower cfm mdl 0 action drop
- 
- 	pkt="$ethtype $(generate_cfm_hdr 5 42 0 12)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 	pkt="$ethtype $(generate_cfm_hdr 6 1 0 70)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 	pkt="$ethtype $(generate_cfm_hdr 0 1 0 70)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Did not match on correct level"
-@@ -117,7 +117,7 @@ match_cfm_level()
- 	check_err $? "Did not match on correct level"
- 
- 	pkt="$ethtype $(generate_cfm_hdr 3 0 0 4)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Matched on the wrong level"
-@@ -146,11 +146,11 @@ match_cfm_level_and_opcode()
- 	   flower cfm mdl 7 op 42 action drop
- 
- 	pkt="$ethtype $(generate_cfm_hdr 5 41 0 4)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 	pkt="$ethtype $(generate_cfm_hdr 7 3 0 4)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 	pkt="$ethtype $(generate_cfm_hdr 3 42 0 12)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Did not match on correct level and opcode"
-@@ -159,7 +159,7 @@ match_cfm_level_and_opcode()
- 	check_err $? "Matched on the wrong level and opcode"
- 
- 	pkt="$ethtype $(generate_cfm_hdr 7 42 0 12)"
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $h2mac "$pkt" -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $h2mac -q $h1 "$pkt"
- 
- 	tc_check_packets "dev $h2 ingress" 101 1
- 	check_err $? "Matched on the wrong level and opcode"
-diff --git a/tools/testing/selftests/net/forwarding/tc_flower_l2_miss.sh b/tools/testing/selftests/net/forwarding/tc_flower_l2_miss.sh
-index c2420bb72c12..73ceb27a4d5a 100755
---- a/tools/testing/selftests/net/forwarding/tc_flower_l2_miss.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_flower_l2_miss.sh
-@@ -86,7 +86,7 @@ test_l2_miss_unicast()
- 	   dst_ip $dip action pass
- 
- 	# Before adding FDB entry.
--	$MZ $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Unknown unicast filter was not hit before adding FDB entry"
-@@ -97,7 +97,7 @@ test_l2_miss_unicast()
- 	# Adding FDB entry.
- 	bridge fdb replace $dmac dev $swp2 master static
- 
--	$MZ $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Unknown unicast filter was hit after adding FDB entry"
-@@ -108,7 +108,7 @@ test_l2_miss_unicast()
- 	# Deleting FDB entry.
- 	bridge fdb del $dmac dev $swp2 master static
- 
--	$MZ $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 2
- 	check_err $? "Unknown unicast filter was not hit after deleting FDB entry"
-@@ -143,7 +143,7 @@ test_l2_miss_multicast_common()
- 	   action pass
- 
- 	# Before adding MDB entry.
--	$MZ $mode $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ $mode -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Unregistered multicast filter was not hit before adding MDB entry"
-@@ -154,7 +154,7 @@ test_l2_miss_multicast_common()
- 	# Adding MDB entry.
- 	bridge mdb replace dev br1 port $swp2 grp $dip permanent
- 
--	$MZ $mode $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ $mode -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Unregistered multicast filter was hit after adding MDB entry"
-@@ -165,7 +165,7 @@ test_l2_miss_multicast_common()
- 	# Deleting MDB entry.
- 	bridge mdb del dev br1 port $swp2 grp $dip
- 
--	$MZ $mode $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ $mode -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 2
- 	check_err $? "Unregistered multicast filter was not hit after deleting MDB entry"
-@@ -255,7 +255,7 @@ test_l2_miss_ll_multicast_common()
- 	   flower indev $swp1 l2_miss 1 dst_mac $dmac src_ip $sip \
- 	   dst_ip $dip action pass
- 
--	$MZ $mode $h1 -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q
-+	$MZ $mode -a own -b $dmac -t ip -A $sip -B $dip -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Filter was not hit"
-@@ -309,7 +309,7 @@ test_l2_miss_broadcast()
- 	   flower l2_miss 0 dst_mac $dmac src_mac $smac \
- 	   action pass
- 
--	$MZ $h1 -a $smac -b $dmac -c 1 -p 100 -q
-+	$MZ -a $smac -b $dmac -c 1 -p 100 -q $h1
- 
- 	tc_check_packets "dev $swp2 egress" 101 0
- 	check_err $? "L2 miss filter was hit when should not"
-diff --git a/tools/testing/selftests/net/forwarding/tc_flower_port_range.sh b/tools/testing/selftests/net/forwarding/tc_flower_port_range.sh
-index baed5e380dae..6323567ca2fb 100755
---- a/tools/testing/selftests/net/forwarding/tc_flower_port_range.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_flower_port_range.sh
-@@ -103,22 +103,22 @@ __test_port_range()
- 		dst_port $dport_min-$dport_max \
- 		action drop
- 
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_min,dp=$dport_min"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_min,dp=$dport_min"
- 	tc_check_packets "dev $swp1 ingress" 101 1
- 	check_err $? "Ingress filter not hit with minimum ports"
- 	tc_check_packets "dev $swp2 egress" 101 1
- 	check_err $? "Egress filter not hit with minimum ports"
- 
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_mid,dp=$dport_mid"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_mid,dp=$dport_mid"
- 	tc_check_packets "dev $swp1 ingress" 101 2
- 	check_err $? "Ingress filter not hit with middle ports"
- 	tc_check_packets "dev $swp2 egress" 101 2
- 	check_err $? "Egress filter not hit with middle ports"
- 
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_max,dp=$dport_max"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_max,dp=$dport_max"
- 	tc_check_packets "dev $swp1 ingress" 101 3
- 	check_err $? "Ingress filter not hit with maximum ports"
- 	tc_check_packets "dev $swp2 egress" 101 3
-@@ -126,16 +126,16 @@ __test_port_range()
- 
- 	# Send traffic when both ports are out of range and when only one port
- 	# is out of range.
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$((sport_min - 1)),dp=$dport_min"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$((sport_max + 1)),dp=$dport_min"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_min,dp=$((dport_min - 1))"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_min,dp=$((dport_max + 1))"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$((sport_max + 1)),dp=$((dport_max + 1))"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$((sport_min - 1)),dp=$dport_min"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$((sport_max + 1)),dp=$dport_min"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_min,dp=$((dport_min - 1))"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_min,dp=$((dport_max + 1))"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$((sport_max + 1)),dp=$((dport_max + 1))"
- 	tc_check_packets "dev $swp1 ingress" 101 3
- 	check_err $? "Ingress filter was hit when should not"
- 	tc_check_packets "dev $swp2 egress" 101 3
-@@ -219,18 +219,18 @@ test_port_range_ipv4_udp_drop()
- 		action drop
- 
- 	# Test ports outside range - should pass
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$((sport_min - 1)),dp=$dport"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$((sport_max + 1)),dp=$dport"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$((sport_min - 1)),dp=$dport"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$((sport_max + 1)),dp=$dport"
- 
- 	# Test ports inside range - should be dropped
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_min,dp=$dport"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_mid,dp=$dport"
--	$MZ $mode $h1 -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
--		-t $ip_proto "sp=$sport_max,dp=$dport"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_min,dp=$dport"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_mid,dp=$dport"
-+	$MZ $mode -c 1 -q -p 100 -a $smac -b $dmac -A $sip -B $dip \
-+		-t $ip_proto $h1 "sp=$sport_max,dp=$dport"
- 
- 	tc_check_packets "dev $swp1 ingress" 101 3
- 	check_err $? "Filter did not drop the expected number of packets"
-diff --git a/tools/testing/selftests/net/forwarding/tc_flower_router.sh b/tools/testing/selftests/net/forwarding/tc_flower_router.sh
-index 4aee9c9e69f6..e0af18844581 100755
---- a/tools/testing/selftests/net/forwarding/tc_flower_router.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_flower_router.sh
-@@ -90,8 +90,8 @@ match_indev_egress_test()
- 	tc filter add dev $rp3 egress protocol ip pref 2 handle 102 flower \
- 		$tcflags indev $rp2 dst_ip 192.0.3.1 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $rp1mac -A 192.0.1.1 -B 192.0.3.1 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $rp1mac -A 192.0.1.1 -B 192.0.3.1 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "dev $rp3 egress" 102 1
- 	check_fail $? "Matched on a wrong filter"
-@@ -99,8 +99,8 @@ match_indev_egress_test()
- 	tc_check_packets "dev $rp3 egress" 101 1
- 	check_err $? "Did not match on correct filter"
- 
--	$MZ $h2 -c 1 -p 64 -a $h2mac -b $rp2mac -A 192.0.2.1 -B 192.0.3.1 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h2mac -b $rp2mac -A 192.0.2.1 -B 192.0.3.1 \
-+		-t ip -q $h2
- 
- 	tc_check_packets "dev $rp3 egress" 101 2
- 	check_fail $? "Matched on a wrong filter"
-diff --git a/tools/testing/selftests/net/forwarding/tc_police.sh b/tools/testing/selftests/net/forwarding/tc_police.sh
-index 509fdedfcfa1..5a5b13e0fc9e 100755
---- a/tools/testing/selftests/net/forwarding/tc_police.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_police.sh
-@@ -133,8 +133,8 @@ police_common_test()
- 		dst_ip 198.51.100.1 ip_proto udp dst_port 54321 \
- 		action drop
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=54321 -p 1000 -c 0 -q &
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1000 -c 0 -q $h1 sp=12345,dp=54321 &
- 
- 	local t0=$(tc_rule_stats_get $h2 1 ingress .bytes)
- 	sleep 10
-@@ -183,8 +183,8 @@ police_shared_common_test()
- 
- 	RET=0
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=$dport -p 1000 -c 0 -q &
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1000 -c 0 -q $h1 sp=12345,dp=$dport &
- 
- 	local t0=$(tc_rule_stats_get $h2 1 ingress .bytes)
- 	sleep 10
-@@ -253,8 +253,8 @@ police_mirror_common_test()
- 		action police rate 10mbit burst 16k conform-exceed drop/pipe \
- 		action mirred egress mirror dev $rp3
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=54321 -p 1000 -c 0 -q &
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1000 -c 0 -q $h1 sp=12345,dp=54321 &
- 
- 	local t0=$(tc_rule_stats_get $h2 1 ingress .bytes)
- 	sleep 10
-@@ -305,8 +305,8 @@ police_pps_common_test()
- 		dst_ip 198.51.100.1 ip_proto udp dst_port 54321 \
- 		action drop
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=54321 -p 1000 -c 0 -q &
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1000 -c 0 -q $h1 sp=12345,dp=54321 &
- 
- 	local t0=$(tc_rule_stats_get $h2 1 ingress .packets)
- 	sleep 10
-@@ -364,11 +364,11 @@ police_mtu_common_test() {
- 		dst_ip 198.51.100.1 ip_proto udp dst_port 54321 \
- 		action drop
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=54321 -p 1001 -c 10 -q
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1001 -c 10 -q $h1 sp=12345,dp=54321
- 
--	mausezahn $h1 -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
--		-t udp sp=12345,dp=54321 -p 1000 -c 3 -q
-+	$MZ -a own -b $(mac_get $rp1) -A 192.0.2.1 -B 198.51.100.1 \
-+		-t udp -p 1000 -c 3 -q $h1 sp=12345,dp=54321
- 
- 	tc_check_packets "dev $dev $direction" 101 13
- 	check_err $? "wrong packet counter"
-diff --git a/tools/testing/selftests/net/forwarding/tc_shblocks.sh b/tools/testing/selftests/net/forwarding/tc_shblocks.sh
-index 772e00ac3230..37517e4b5df6 100755
---- a/tools/testing/selftests/net/forwarding/tc_shblocks.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_shblocks.sh
-@@ -53,14 +53,14 @@ shared_block_test()
- 	tc filter add block 22 protocol ip pref 1 handle 101 flower \
- 		$tcflags dst_ip 192.0.2.2 action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "block 22" 101 1
- 	check_err $? "Did not match first incoming packet on a block"
- 
--	$MZ $h2 -c 1 -p 64 -a $h2mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h2mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h2
- 
- 	tc_check_packets "block 22" 101 2
- 	check_err $? "Did not match second incoming packet on a block"
-@@ -79,14 +79,14 @@ match_indev_test()
- 	tc filter add block 22 protocol ip pref 2 handle 102 flower \
- 		$tcflags indev $swp2 dst_mac $swmac action drop
- 
--	$MZ $h1 -c 1 -p 64 -a $h1mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h1mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h1
- 
- 	tc_check_packets "block 22" 101 1
- 	check_err $? "Did not match first incoming packet on a block"
- 
--	$MZ $h2 -c 1 -p 64 -a $h2mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
--		-t ip -q
-+	$MZ -c 1 -p 64 -a $h2mac -b $swmac -A 192.0.2.1 -B 192.0.2.2 \
-+		-t ip -q $h2
- 
- 	tc_check_packets "block 22" 102 1
- 	check_err $? "Did not match second incoming packet on a block"
-diff --git a/tools/testing/selftests/net/forwarding/tc_tunnel_key.sh b/tools/testing/selftests/net/forwarding/tc_tunnel_key.sh
-index 79775b10b99f..8c5205502827 100755
---- a/tools/testing/selftests/net/forwarding/tc_tunnel_key.sh
-+++ b/tools/testing/selftests/net/forwarding/tc_tunnel_key.sh
-@@ -114,11 +114,11 @@ tunnel_key_nofrag_test()
- 	# test 'nofrag' set
- 	tc filter add dev h1-et egress protocol all pref 1 handle 1 matchall $tcflags \
- 		action tunnel_key set src_ip 192.0.2.1 dst_ip 192.0.2.2 id 42 nofrag index 10
--	$MZ h1-et -c 1 -p 930 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q
-+	$MZ -c 1 -p 930 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q h1-et
- 	tc_check_packets "dev $swp1 ingress" 100 1
- 	check_err $? "packet smaller than MTU was not tunneled"
- 
--	$MZ h1-et -c 1 -p 931 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q
-+	$MZ -c 1 -p 931 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q h1-et
- 	tc_check_packets "dev $swp1 ingress" 100 1
- 	check_err $? "packet bigger than MTU matched nofrag (nofrag was set)"
- 	tc_check_packets "dev $swp1 ingress" 101 0
-@@ -128,7 +128,7 @@ tunnel_key_nofrag_test()
- 
- 	# test 'nofrag' cleared
- 	tc actions change action tunnel_key set src_ip 192.0.2.1 dst_ip 192.0.2.2 id 42 index 10
--	$MZ h1-et -c 1 -p 931 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q
-+	$MZ -c 1 -p 931 -a 00:aa:bb:cc:dd:ee -b 00:ee:dd:cc:bb:aa -t ip -q h1-et
- 	tc_check_packets "dev $swp1  ingress" 100 1
- 	check_err $? "packet bigger than MTU matched nofrag (nofrag was unset)"
- 	tc_check_packets "dev $swp1  ingress" 101 1
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_bridge_1d.sh b/tools/testing/selftests/net/forwarding/vxlan_bridge_1d.sh
-index b43816dd998c..6913c0185262 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_bridge_1d.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_bridge_1d.sh
-@@ -395,7 +395,7 @@ vxlan_flood_test()
- 	done
- 
- 	local -a t0s=($(flood_fetch_stats "${counters[@]}"))
--	$MZ $h1 -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp -q
-+	$MZ -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp -q $h1
- 	sleep 1
- 	local -a t1s=($(flood_fetch_stats "${counters[@]}"))
- 
-@@ -567,9 +567,9 @@ vxlan_encapped_ping_do()
- 	local inner_tos=$1; shift
- 	local outer_tos=$1; shift
- 
--	$MZ $dev -c $count -d 100msec -q \
-+	$MZ -c $count -d 100msec -q \
- 		-b $next_hop_mac -B $dest_ip \
--		-t udp tos=$outer_tos,sp=23456,dp=$VXPORT,p=$(:
-+		-t udp $dev tos=$outer_tos,sp=23456,dp=$VXPORT,p=$(:
- 		    )"08:"$(                      : VXLAN flags
- 		    )"00:00:00:"$(                : VXLAN reserved
- 		    )"00:03:e8:"$(                : VXLAN VNI
-@@ -705,8 +705,8 @@ test_learning()
- 	# a corresponding entry is created in VxLAN device vx1
- 	RET=0
- 
--	in_ns ns1 $MZ w2 -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
--		-t icmp -q
-+	in_ns ns1 $MZ -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
-+		-t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport vx1 | grep $mac | grep -q self
-@@ -737,8 +737,8 @@ test_learning()
- 	# Re-learn the first FDB entry and check that it is correctly aged-out
- 	RET=0
- 
--	in_ns ns1 $MZ w2 -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
--		-t icmp -q
-+	in_ns ns1 $MZ -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
-+		-t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport vx1 | grep $mac | grep -q self
-@@ -749,7 +749,7 @@ test_learning()
- 	vxlan_flood_test $mac $dst 0 10 0
- 
- 	# The entry should age out when it only forwards traffic
--	$MZ $h1 -c 50 -d 1sec -p 64 -b $mac -B $dst -t icmp -q &
-+	$MZ -c 50 -d 1sec -p 64 -b $mac -B $dst -t icmp -q $h1 &
- 	sleep 60
- 
- 	bridge fdb show brport vx1 | grep $mac | grep -q self
-@@ -767,8 +767,8 @@ test_learning()
- 
- 	ip link set dev vx1 type bridge_slave learning off
- 
--	in_ns ns1 $MZ w2 -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
--		-t icmp -q
-+	in_ns ns1 $MZ -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
-+		-t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport vx1 | grep $mac | grep -q -v self
-@@ -776,8 +776,8 @@ test_learning()
- 
- 	ip link set dev vx1 type bridge_slave learning on
- 
--	in_ns ns1 $MZ w2 -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
--		-t icmp -q
-+	in_ns ns1 $MZ -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff -B $dst \
-+		-t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport vx1 | grep $mac | grep -q -v self
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_bridge_1d_ipv6.sh b/tools/testing/selftests/net/forwarding/vxlan_bridge_1d_ipv6.sh
-index a603f7b0a08f..988b13fe0355 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_bridge_1d_ipv6.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_bridge_1d_ipv6.sh
-@@ -516,7 +516,7 @@ vxlan_flood_test()
- 	done
- 
- 	local -a t0s=($(flood_fetch_stats "${counters[@]}"))
--	$MZ -6 $h1 -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp6 type=128 -q
-+	$MZ -6 -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp6 -q $h1 type=128
- 	sleep 1
- 	local -a t1s=($(flood_fetch_stats "${counters[@]}"))
- 
-@@ -682,9 +682,9 @@ vxlan_encapped_ping_do()
- 	local saddr="20:01:0d:b8:00:01:00:00:00:00:00:00:00:00:00:03"
- 	local daddr="20:01:0d:b8:00:01:00:00:00:00:00:00:00:00:00:01"
- 
--	$MZ -6 $dev -c $count -d 100msec -q \
-+	$MZ -6 -c $count -d 100msec -q \
- 		-b $next_hop_mac -B $dest_ip \
--		-t udp tos=$outer_tos,sp=23456,dp=$VXPORT,p=$(:
-+		-t udp $dev tos=$outer_tos,sp=23456,dp=$VXPORT,p=$(:
- 		    )"08:"$(                      : VXLAN flags
- 		    )"00:00:00:"$(                : VXLAN reserved
- 		    )"00:03:e8:"$(                : VXLAN VNI
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q.sh b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q.sh
-index afc65647f673..17333e5ad94a 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q.sh
-@@ -500,7 +500,7 @@ vxlan_flood_test()
- 	done
- 
- 	local -a t0s=($(flood_fetch_stats "${counters[@]}"))
--	$MZ $h1 -Q $vid -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp -q
-+	$MZ -Q $vid -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp -q $h1
- 	sleep 1
- 	local -a t1s=($(flood_fetch_stats "${counters[@]}"))
- 
-@@ -717,8 +717,8 @@ __test_learning()
- 	# a corresponding entry is created in the VxLAN device
- 	RET=0
- 
--	in_ns ns1 $MZ w2 -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
--		-B $dst -t icmp -q
-+	in_ns ns1 $MZ -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
-+		-B $dst -t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport $vx | grep $mac | grep -q self
-@@ -752,8 +752,8 @@ __test_learning()
- 	# Re-learn the first FDB entry and check that it is correctly aged-out
- 	RET=0
- 
--	in_ns ns1 $MZ w2 -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
--		-B $dst -t icmp -q
-+	in_ns ns1 $MZ -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
-+		-B $dst -t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport $vx | grep $mac | grep -q self
-@@ -784,8 +784,8 @@ __test_learning()
- 
- 	ip link set dev $vx type bridge_slave learning off
- 
--	in_ns ns1 $MZ w2 -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
--		-B $dst -t icmp -q
-+	in_ns ns1 $MZ -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
-+		-B $dst -t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport $vx | grep $mac | grep "vlan $vid" \
-@@ -794,8 +794,8 @@ __test_learning()
- 
- 	ip link set dev $vx type bridge_slave learning on
- 
--	in_ns ns1 $MZ w2 -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
--		-B $dst -t icmp -q
-+	in_ns ns1 $MZ -Q $vid -c 1 -p 64 -a $mac -b ff:ff:ff:ff:ff:ff \
-+		-B $dst -t icmp -q w2
- 	sleep 1
- 
- 	bridge fdb show brport $vx | grep $mac | grep "vlan $vid" \
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_ipv6.sh b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_ipv6.sh
-index e83fde79f40d..5af514884e2c 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_ipv6.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_ipv6.sh
-@@ -642,7 +642,7 @@ vxlan_flood_test()
- 	done
- 
- 	local -a t0s=($(flood_fetch_stats "${counters[@]}"))
--	$MZ -6 $h1 -Q $vid -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp6 type=128 -q
-+	$MZ -6 -Q $vid -c 10 -d 100msec -p 64 -b $mac -B $dst -t icmp6 -q $h1 type=128
- 	sleep 1
- 	local -a t1s=($(flood_fetch_stats "${counters[@]}"))
- 
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_mc_ul.sh b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_mc_ul.sh
-index 462db0b603e7..5cc2a7f090e3 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_mc_ul.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_bridge_1q_mc_ul.sh
-@@ -471,8 +471,8 @@ do_packets_v4()
- 	local mac
- 
- 	mac=$(mac_get "$h2")
--	"$MZ" "$h1" -Q 10 -c 10 -d 100msec -p 64 -a own -b "$mac" \
--	    -A 192.0.2.1 -B 192.0.2.2 -t udp sp=1234,dp=2345 -q
-+	"$MZ" -Q 10 -c 10 -d 100msec -p 64 -a own -b "$mac" \
-+	    -A 192.0.2.1 -B 192.0.2.2 -t udp -q "$h1" sp=1234,dp=2345
- }
- 
- do_packets_v6()
-@@ -480,8 +480,8 @@ do_packets_v6()
- 	local mac
- 
- 	mac=$(mac_get "$h2")
--	"$MZ" -6 "$h1" -Q 20 -c 10 -d 100msec -p 64 -a own -b "$mac" \
--	    -A 2001:db8:1::1 -B 2001:db8:1::2 -t udp sp=1234,dp=2345 -q
-+	"$MZ" -6 -Q 20 -c 10 -d 100msec -p 64 -a own -b "$mac" \
-+	    -A 2001:db8:1::1 -B 2001:db8:1::2 -t udp -q "$h1" sp=1234,dp=2345
- }
- 
- do_test()
-diff --git a/tools/testing/selftests/net/forwarding/vxlan_reserved.sh b/tools/testing/selftests/net/forwarding/vxlan_reserved.sh
-index 46c31794b91b..6713468bc170 100755
---- a/tools/testing/selftests/net/forwarding/vxlan_reserved.sh
-+++ b/tools/testing/selftests/net/forwarding/vxlan_reserved.sh
-@@ -167,9 +167,9 @@ vxlan_ping_do()
- 
- 	local vxlan_header=$(vxlan_header_bytes $vni $reserved_bits)
- 
--	$MZ $dev -c $count -d 100msec -q \
-+	$MZ -c $count -d 100msec -q \
- 		-b $next_hop_mac -B $dest_ip \
--		-t udp sp=23456,dp=$VXPORT,p=$(:
-+		-t udp $dev sp=23456,dp=$VXPORT,p=$(:
- 		    )"$vxlan_header:"$(              : VXLAN
- 		    )"$dest_mac:"$(                  : ETH daddr
- 		    )"00:11:22:33:44:55:"$(          : ETH saddr
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index d8d1ba379c9b..e54cdb9399f7 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1345,11 +1345,11 @@ DECLARE_ADRENO_REGLIST_LIST(a7xx_pwrup_reglist);
+ 
+ /* Applicable for X185, A750 */
+ static const u32 a750_ifpc_reglist_regs[] = {
+-	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0,
+-	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
+-	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_2,
+-	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_3,
+-	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_4,
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(0),
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(1),
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(2),
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(3),
++	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(4),
+ 	REG_A6XX_TPL1_NC_MODE_CNTL,
+ 	REG_A6XX_SP_NC_MODE_CNTL,
+ 	REG_A6XX_CP_DBG_ECO_CNTL,
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index 2e2090f52e26..3f5c4bcf32cc 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -247,8 +247,8 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
+ 	 * Needed for preemption
+ 	 */
+ 	OUT_PKT7(ring, CP_MEM_WRITE, 5);
+-	OUT_RING(ring, CP_MEM_WRITE_0_ADDR_LO(lower_32_bits(memptr)));
+-	OUT_RING(ring, CP_MEM_WRITE_1_ADDR_HI(upper_32_bits(memptr)));
++	OUT_RING(ring, lower_32_bits(memptr));
++	OUT_RING(ring, upper_32_bits(memptr));
+ 	OUT_RING(ring, lower_32_bits(ttbr));
+ 	OUT_RING(ring, upper_32_bits(ttbr));
+ 	OUT_RING(ring, ctx->seqno);
+@@ -278,9 +278,8 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
+ 		 */
+ 		OUT_PKT7(ring, CP_WAIT_REG_MEM, 6);
+ 		OUT_RING(ring, CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ));
+-		OUT_RING(ring, CP_WAIT_REG_MEM_1_POLL_ADDR_LO(
+-				REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS));
+-		OUT_RING(ring, CP_WAIT_REG_MEM_2_POLL_ADDR_HI(0));
++		OUT_RING(ring, REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS);
++		OUT_RING(ring, 0);
+ 		OUT_RING(ring, CP_WAIT_REG_MEM_3_REF(0x1));
+ 		OUT_RING(ring, CP_WAIT_REG_MEM_4_MASK(0x1));
+ 		OUT_RING(ring, CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0));
+@@ -1320,14 +1319,14 @@ static int hw_init(struct msm_gpu *gpu)
+ 
+ 	/* Set weights for bicubic filtering */
+ 	if (adreno_is_a650_family(adreno_gpu) || adreno_is_x185(adreno_gpu)) {
+-		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0, 0);
+-		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
++		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(0), 0);
++		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(1),
+ 			0x3fe05ff4);
+-		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_2,
++		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(2),
+ 			0x3fa0ebee);
+-		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_3,
++		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(3),
+ 			0x3f5193ed);
+-		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_4,
++		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE(4),
+ 			0x3f0243f0);
+ 	}
+ 
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+index 796be5cd5cc0..585fc1b772e1 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+@@ -111,9 +111,8 @@ static void preempt_prepare_postamble(struct a6xx_gpu *a6xx_gpu)
+ 
+ 	postamble[count++] = PKT7(CP_WAIT_REG_MEM, 6);
+ 	postamble[count++] = CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ);
+-	postamble[count++] = CP_WAIT_REG_MEM_1_POLL_ADDR_LO(
+-				REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS);
+-	postamble[count++] = CP_WAIT_REG_MEM_2_POLL_ADDR_HI(0);
++	postamble[count++] = REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS;
++	postamble[count++] = 0;
+ 	postamble[count++] = CP_WAIT_REG_MEM_3_REF(0x1);
+ 	postamble[count++] = CP_WAIT_REG_MEM_4_MASK(0x1);
+ 	postamble[count++] = CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0);
+diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+index 86fab2750ba7..9459b6038217 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+@@ -814,7 +814,7 @@ by a particular renderpass/blit.
+ 		<bitfield name="Y" low="16" high="29" type="uint"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x8000" name="GRAS_CL_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_cl_cntl" inline="yes">
+ 		<bitfield name="CLIP_DISABLE" pos="0" type="boolean"/>
+ 		<bitfield name="ZNEAR_CLIP_DISABLE" pos="1" type="boolean"/>
+ 		<bitfield name="ZFAR_CLIP_DISABLE" pos="2" type="boolean"/>
+@@ -826,18 +826,20 @@ by a particular renderpass/blit.
+ 		<bitfield name="VP_CLIP_CODE_IGNORE" pos="7" type="boolean"/>
+ 		<bitfield name="VP_XFORM_DISABLE" pos="8" type="boolean"/>
+ 		<bitfield name="PERSP_DIVISION_DISABLE" pos="9" type="boolean"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8000" name="GRAS_CL_CNTL" type="a6xx_gras_cl_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<bitset name="a6xx_gras_xs_clip_cull_distance" inline="yes">
+ 		<bitfield name="CLIP_MASK" low="0" high="7"/>
+ 		<bitfield name="CULL_MASK" low="8" high="15"/>
+ 	</bitset>
+-	<reg32 offset="0x8001" name="GRAS_CL_VS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit"/>
+-	<reg32 offset="0x8002" name="GRAS_CL_DS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit"/>
+-	<reg32 offset="0x8003" name="GRAS_CL_GS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit"/>
+-	<reg32 offset="0x8004" name="GRAS_CL_ARRAY_SIZE" low="0" high="10" type="uint" usage="rp_blit"/>
++	<reg32 offset="0x8001" name="GRAS_CL_VS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit" variants="A6XX-A7XX" />
++	<reg32 offset="0x8002" name="GRAS_CL_DS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit" variants="A6XX-A7XX" />
++	<reg32 offset="0x8003" name="GRAS_CL_GS_CLIP_CULL_DISTANCE" type="a6xx_gras_xs_clip_cull_distance" usage="rp_blit" variants="A6XX-A7XX" />
++	<reg32 offset="0x8004" name="GRAS_CL_ARRAY_SIZE" low="0" high="10" type="uint" usage="rp_blit" variants="A6XX-A7XX" />
+ 
+-	<reg32 offset="0x8005" name="GRAS_CL_INTERP_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_cl_interp_cntl" inline="yes">
+ 		<!-- see also RB_INTERP_CNTL -->
+ 		<bitfield name="IJ_PERSP_PIXEL" pos="0" type="boolean"/>
+ 		<bitfield name="IJ_PERSP_CENTROID" pos="1" type="boolean"/>
+@@ -848,26 +850,69 @@ by a particular renderpass/blit.
+ 		<bitfield name="COORD_MASK" low="6" high="9" type="hex"/>
+ 		<bitfield name="UNK10" pos="10" type="boolean" variants="A7XX-"/>
+ 		<bitfield name="UNK11" pos="11" type="boolean" variants="A7XX-"/>
+-	</reg32>
+-	<reg32 offset="0x8006" name="GRAS_CL_GUARDBAND_CLIP_ADJ" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x8005" name="GRAS_CL_INTERP_CNTL" type="a6xx_gras_cl_interp_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_cl_guardband_clip_adj" inline="true">
+ 		<bitfield name="HORZ" low="0" high="8" type="uint"/>
+ 		<bitfield name="VERT" low="10" high="18" type="uint"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8006" name="GRAS_CL_GUARDBAND_CLIP_ADJ" type="a6xx_gras_cl_guardband_clip_adj" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<!-- Something connected to depth-stencil attachment size -->
+ 	<reg32 offset="0x8007" name="GRAS_UNKNOWN_8007" variants="A7XX-" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x8008" name="GRAS_UNKNOWN_8008" variants="A7XX-" usage="cmd"/>
++	<!-- the scale/offset is per view, with up to 6 views -->
++	<bitset name="a6xx_gras_bin_foveat" inline="yes">
++		<bitfield name="BINSCALEEN" pos="6" type="boolean"/>
++		<enum name="a7xx_bin_scale">
++			<value value="0" name="NOSCALE"/>
++			<value value="1" name="SCALE2X"/>
++			<value value="2" name="SCALE4X"/>
++		</enum>
++		<bitfield name="XSCALE_0" low="8" high="9" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_0" low="10" high="11" type="a7xx_bin_scale"/>
++		<bitfield name="XSCALE_1" low="12" high="13" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_1" low="14" high="15" type="a7xx_bin_scale"/>
++		<bitfield name="XSCALE_2" low="16" high="17" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_2" low="18" high="19" type="a7xx_bin_scale"/>
++		<bitfield name="XSCALE_3" low="20" high="21" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_3" low="22" high="23" type="a7xx_bin_scale"/>
++		<bitfield name="XSCALE_4" low="24" high="25" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_4" low="26" high="27" type="a7xx_bin_scale"/>
++		<bitfield name="XSCALE_5" low="28" high="29" type="a7xx_bin_scale"/>
++		<bitfield name="YSCALE_5" low="30" high="31" type="a7xx_bin_scale"/>
++	</bitset>
+ 
+-	<reg32 offset="0x8009" name="GRAS_UNKNOWN_8009" variants="A7XX-" usage="cmd"/>
+-	<reg32 offset="0x800a" name="GRAS_UNKNOWN_800A" variants="A7XX-" usage="cmd"/>
+-	<reg32 offset="0x800b" name="GRAS_UNKNOWN_800B" variants="A7XX-" usage="cmd"/>
+-	<reg32 offset="0x800c" name="GRAS_UNKNOWN_800C" variants="A7XX-" usage="cmd"/>
++	<reg32 offset="0x8008" name="GRAS_BIN_FOVEAT" type="a6xx_gras_bin_foveat" variants="A7XX" usage="cmd"/>
++
++	<reg32 offset="0x8009" name="GRAS_BIN_FOVEAT_OFFSET_0" variants="A7XX-" usage="cmd">
++		<bitfield name="XOFFSET_0" low="0" high="9" shr="2" type="uint"/>
++		<bitfield name="XOFFSET_1" low="10" high="19" shr="2" type="uint"/>
++		<bitfield name="XOFFSET_2" low="20" high="29" shr="2" type="uint"/>
++	</reg32>
++	<reg32 offset="0x800a" name="GRAS_BIN_FOVEAT_OFFSET_1" variants="A7XX-" usage="cmd">
++		<bitfield name="XOFFSET_3" low="0" high="9" shr="2" type="uint"/>
++		<bitfield name="XOFFSET_4" low="10" high="19" shr="2" type="uint"/>
++		<bitfield name="XOFFSET_5" low="20" high="29" shr="2" type="uint"/>
++	</reg32>
++	<reg32 offset="0x800b" name="GRAS_BIN_FOVEAT_OFFSET_2" variants="A7XX-" usage="cmd">
++		<bitfield name="YOFFSET_0" low="0" high="9" shr="2" type="uint"/>
++		<bitfield name="YOFFSET_1" low="10" high="19" shr="2" type="uint"/>
++		<bitfield name="YOFFSET_2" low="20" high="29" shr="2" type="uint"/>
++	</reg32>
++	<reg32 offset="0x800c" name="GRAS_BIN_FOVEAT_OFFSET_3" variants="A7XX-" usage="cmd">
++		<bitfield name="YOFFSET_3" low="0" high="9" shr="2" type="uint"/>
++		<bitfield name="YOFFSET_4" low="10" high="19" shr="2" type="uint"/>
++		<bitfield name="YOFFSET_5" low="20" high="29" shr="2" type="uint"/>
++	</reg32>
+ 
+ 	<!-- <reg32 offset="0x80f0" name="GRAS_UNKNOWN_80F0" type="a6xx_reg_xy"/> -->
+ 
+ 	<!-- 0x8006-0x800f invalid -->
+-	<array offset="0x8010" name="GRAS_CL_VIEWPORT" stride="6" length="16" usage="rp_blit">
++	<array offset="0x8010" name="GRAS_CL_VIEWPORT" stride="6" length="16" variants="A6XX-A7XX" usage="rp_blit">
+ 		<reg32 offset="0" name="XOFFSET" type="float"/>
+ 		<reg32 offset="1" name="XSCALE" type="float"/>
+ 		<reg32 offset="2" name="YOFFSET" type="float"/>
+@@ -875,12 +920,13 @@ by a particular renderpass/blit.
+ 		<reg32 offset="4" name="ZOFFSET" type="float"/>
+ 		<reg32 offset="5" name="ZSCALE" type="float"/>
+ 	</array>
+-	<array offset="0x8070" name="GRAS_CL_VIEWPORT_ZCLAMP" stride="2" length="16" usage="rp_blit">
++
++	<array offset="0x8070" name="GRAS_CL_VIEWPORT_ZCLAMP" stride="2" length="16" variants="A6XX-A7XX" usage="rp_blit">
+ 		<reg32 offset="0" name="MIN" type="float"/>
+ 		<reg32 offset="1" name="MAX" type="float"/>
+ 	</array>
+ 
+-	<reg32 offset="0x8090" name="GRAS_SU_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_su_cntl" varset="chip">
+ 		<bitfield name="CULL_FRONT" pos="0" type="boolean"/>
+ 		<bitfield name="CULL_BACK" pos="1" type="boolean"/>
+ 		<bitfield name="FRONT_CW" pos="2" type="boolean"/>
+@@ -890,39 +936,66 @@ by a particular renderpass/blit.
+ 		<bitfield name="LINE_MODE" pos="13" type="a5xx_line_mode"/>
+ 		<bitfield name="UNK15" low="15" high="16"/>
+ 		<!--
+-                        On gen1 only MULTIVIEW_ENABLE exists. On gen3 we have
+-                        the ability to add the view index to either the RT array
+-                        index or the viewport index, and it seems that
+-                        MULTIVIEW_ENABLE doesn't do anything, instead we need to
+-                        set at least one of RENDERTARGETINDEXINCR or
+-                        VIEWPORTINDEXINCR to enable multiview. The blob still
+-                        sets MULTIVIEW_ENABLE regardless.
+-                        TODO: what about gen2 (a640)?
++			On gen1 only MULTIVIEW_ENABLE exists. On gen3 we have
++			the ability to add the view index to either the RT array
++			index or the viewport index, and it seems that
++			MULTIVIEW_ENABLE doesn't do anything, instead we need to
++			set at least one of RENDERTARGETINDEXINCR or
++			VIEWPORTINDEXINCR to enable multiview. The blob still
++			sets MULTIVIEW_ENABLE regardless.
++			TODO: what about gen2 (a640)?
+ 		-->
+ 		<bitfield name="MULTIVIEW_ENABLE" pos="17" type="boolean"/>
+-		<bitfield name="RENDERTARGETINDEXINCR" pos="18" type="boolean"/>
+-		<bitfield name="VIEWPORTINDEXINCR" pos="19" type="boolean"/>
+-		<bitfield name="UNK20" low="20" high="22"/>
+-	</reg32>
+-	<reg32 offset="0x8091" name="GRAS_SU_POINT_MINMAX" usage="rp_blit">
++		<bitfield name="RENDERTARGETINDEXINCR" pos="18" type="boolean" variants="A6XX-A7XX"/>
++		<bitfield name="VIEWPORTINDEXINCR" pos="19" type="boolean" variants="A6XX-A7XX"/>
++		<bitfield name="UNK20" low="20" high="22" variants="A6XX-A7XX"/>
++	</bitset>
++	<reg32 offset="0x8090" name="GRAS_SU_CNTL" type="a6xx_gras_su_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_su_point_minmax" inline="yes">
+ 		<bitfield name="MIN" low="0" high="15" type="ufixed" radix="4"/>
+ 		<bitfield name="MAX" low="16" high="31" type="ufixed" radix="4"/>
+-	</reg32>
+-	<reg32 offset="0x8092" name="GRAS_SU_POINT_SIZE" low="0" high="15" type="fixed" radix="4" usage="rp_blit"/>
++	</bitset>
++
++	<reg32 offset="0x8091" name="GRAS_SU_POINT_MINMAX" type="a6xx_gras_su_point_minmax" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8092" name="GRAS_SU_POINT_SIZE" low="0" high="15" type="fixed" radix="4" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_su_depth_cntl" inline="yes">
++		<bitfield name="Z_TEST_ENABLE" pos="0" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x8114" name="GRAS_SU_DEPTH_CNTL" variants="A6XX-A7XX" type="a6xx_gras_su_depth_cntl" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_su_stencil_cntl" inline="yes">
++		<bitfield name="STENCIL_ENABLE" pos="0" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x8115" name="GRAS_SU_STENCIL_CNTL" type="a6xx_gras_su_stencil_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_su_render_cntl" inline="yes">
++		<bitfield name="FS_DISABLE" pos="7" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x8116" name="GRAS_SU_RENDER_CNTL" type="a6xx_gras_su_render_cntl" variants="A7XX" usage="rp_blit"/>
++
+ 	<!-- 0x8093 invalid -->
+-	<reg32 offset="0x8094" name="GRAS_SU_DEPTH_PLANE_CNTL" usage="rp_blit">
++	<bitset name="a6xx_depth_plane_cntl" inline="yes">
+ 		<bitfield name="Z_MODE" low="0" high="1" type="a6xx_ztest_mode"/>
+-	</reg32>
+-	<reg32 offset="0x8095" name="GRAS_SU_POLY_OFFSET_SCALE" type="float" usage="rp_blit"/>
+-	<reg32 offset="0x8096" name="GRAS_SU_POLY_OFFSET_OFFSET" type="float" usage="rp_blit"/>
+-	<reg32 offset="0x8097" name="GRAS_SU_POLY_OFFSET_OFFSET_CLAMP" type="float" usage="rp_blit"/>
+-	<!-- duplicates RB_DEPTH_BUFFER_INFO: -->
+-	<reg32 offset="0x8098" name="GRAS_SU_DEPTH_BUFFER_INFO" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x8094" name="GRAS_SU_DEPTH_PLANE_CNTL" type="a6xx_depth_plane_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8095" name="GRAS_SU_POLY_OFFSET_SCALE" type="float" variants="A6XX-A7XX"  usage="rp_blit"/>
++	<reg32 offset="0x8096" name="GRAS_SU_POLY_OFFSET_OFFSET" type="float" variants="A6XX-A7XX"  usage="rp_blit"/>
++	<reg32 offset="0x8097" name="GRAS_SU_POLY_OFFSET_OFFSET_CLAMP" type="float" variants="A6XX-A7XX" usage="rp_blit"/>
++	<bitset name="a6xx_depth_buffer_info" inline="yes">
+ 		<bitfield name="DEPTH_FORMAT" low="0" high="2" type="a6xx_depth_format"/>
+ 		<bitfield name="UNK3" pos="3"/>
+-	</reg32>
++	</bitset>
+ 
+-	<reg32 offset="0x8099" name="GRAS_SU_CONSERVATIVE_RAS_CNTL" usage="cmd">
++	<!-- duplicates RB_DEPTH_BUFFER_INFO: -->
++	<reg32 offset="0x8098" name="GRAS_SU_DEPTH_BUFFER_INFO" type="a6xx_depth_buffer_info" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_su_conservative_ras_cntl" inline="yes">
+ 		<bitfield name="CONSERVATIVERASEN" pos="0" type="boolean"/>
+ 		<enum name="a6xx_shift_amount">
+ 			<value value="0" name="NO_SHIFT"/>
+@@ -932,7 +1005,10 @@ by a particular renderpass/blit.
+ 		<bitfield name="SHIFTAMOUNT" low="1" high="2" type="a6xx_shift_amount"/>
+ 		<bitfield name="INNERCONSERVATIVERASEN" pos="3" type="boolean"/>
+ 		<bitfield name="UNK4" low="4" high="5"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8099" name="GRAS_SU_CONSERVATIVE_RAS_CNTL" type="a6xx_gras_su_conservative_ras_cntl" variants="A6XX-A7XX" usage="cmd"/>
++
+ 	<reg32 offset="0x809a" name="GRAS_SU_PATH_RENDERING_CNTL">
+ 		<bitfield name="UNK0" pos="0" type="boolean"/>
+ 		<bitfield name="LINELENGTHEN" pos="1" type="boolean"/>
+@@ -942,10 +1018,13 @@ by a particular renderpass/blit.
+ 		<bitfield name="WRITES_LAYER" pos="0" type="boolean"/>
+ 		<bitfield name="WRITES_VIEW" pos="1" type="boolean"/>
+ 	</bitset>
+-	<reg32 offset="0x809b" name="GRAS_SU_VS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x809c" name="GRAS_SU_GS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x809d" name="GRAS_SU_DS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" usage="rp_blit"/>
+-	<!-- 0x809e/0x809f invalid -->
++	<reg32 offset="0x809b" name="GRAS_SU_VS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x809c" name="GRAS_SU_GS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x809d" name="GRAS_SU_DS_SIV_CNTL" type="a6xx_gras_us_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_rast_cntl" inline="yes">
++		<bitfield name="MODE" low="0" high="1" type="a6xx_polygon_mode"/>
++	</bitset>
+ 
+ 	<enum name="a6xx_sequenced_thread_dist">
+ 		<value value="0x0" name="DIST_SCREEN_COORD"/>
+@@ -993,7 +1072,7 @@ by a particular renderpass/blit.
+ 		<value value="0x3" name="RB_BT"/>
+ 	</enum>
+ 
+-	<reg32 offset="0x80a0" name="GRAS_SC_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_sc_cntl" inline="yes">
+ 		<bitfield name="CCUSINGLECACHELINESIZE" low="0" high="2"/>
+ 		<bitfield name="SINGLE_PRIM_MODE" low="3" high="4" type="a6xx_single_prim_mode"/>
+ 		<bitfield name="RASTER_MODE" pos="5" type="a6xx_raster_mode"/>
+@@ -1003,7 +1082,9 @@ by a particular renderpass/blit.
+ 		<bitfield name="UNK9" pos="9" type="boolean"/>
+ 		<bitfield name="ROTATION" low="10" high="11" type="uint"/>
+ 		<bitfield name="EARLYVIZOUTEN" pos="12" type="boolean"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x80a0" name="GRAS_SC_CNTL" type="a6xx_gras_sc_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<enum name="a6xx_render_mode">
+ 		<value value="0x0" name="RENDERING_PASS"/>
+@@ -1024,7 +1105,7 @@ by a particular renderpass/blit.
+ 		<value value="0x4" name="LRZ_FEEDBACK_LATE_Z"/>
+ 	</enum>
+ 
+-	<reg32 offset="0x80a1" name="GRAS_SC_BIN_CNTL" usage="rp_blit">
++	<bitset name="a6xx_bin_cntl" inline="yes">
+ 		<bitfield name="BINW" low="0" high="5" shr="5" type="uint"/>
+ 		<bitfield name="BINH" low="8" high="14" shr="4" type="uint"/>
+ 		<bitfield name="RENDER_MODE" low="18" high="20" type="a6xx_render_mode"/>
+@@ -1037,18 +1118,25 @@ by a particular renderpass/blit.
+ 			In sysmem mode GRAS_LRZ_CNTL.LRZ_WRITE is not considered.
+ 		</doc>
+ 		<bitfield name="LRZ_FEEDBACK_ZMODE_MASK" low="24" high="26" type="a6xx_lrz_feedback_mask"/>
+-		<bitfield name="UNK27" pos="27"/>
+-	</reg32>
++		<bitfield name="FORCE_LRZ_DIS" pos="27" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x80a1" name="GRAS_SC_BIN_CNTL" type="a6xx_bin_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x80a2" name="GRAS_SC_RAS_MSAA_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_sc_ras_msaa_cntl" inline="yes">
+ 		<bitfield name="SAMPLES" low="0" high="1" type="a3xx_msaa_samples"/>
+ 		<bitfield name="UNK2" pos="2"/>
+ 		<bitfield name="UNK3" pos="3"/>
+-	</reg32>
+-	<reg32 offset="0x80a3" name="GRAS_SC_DEST_MSAA_CNTL" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x80a2" name="GRAS_SC_RAS_MSAA_CNTL" type="a6xx_gras_sc_ras_msaa_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_sc_dest_msaa_cntl" inline="yes">
+ 		<bitfield name="SAMPLES" low="0" high="1" type="a3xx_msaa_samples"/>
+ 		<bitfield name="MSAA_DISABLE" pos="2" type="boolean"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x80a3" name="GRAS_SC_DEST_MSAA_CNTL" type="a6xx_gras_sc_dest_msaa_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<bitset name="a6xx_msaa_sample_pos_cntl" inline="yes">
+ 		<bitfield name="UNK0" pos="0"/>
+@@ -1066,30 +1154,35 @@ by a particular renderpass/blit.
+ 		<bitfield name="SAMPLE_3_Y" low="28" high="31" radix="4" type="fixed"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x80a4" name="GRAS_SC_MSAA_SAMPLE_POS_CNTL" type="a6xx_msaa_sample_pos_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x80a5" name="GRAS_SC_PROGRAMMABLE_MSAA_POS_0" type="a6xx_programmable_msaa_pos" usage="rp_blit"/>
+-	<reg32 offset="0x80a6" name="GRAS_SC_PROGRAMMABLE_MSAA_POS_1" type="a6xx_programmable_msaa_pos" usage="rp_blit"/>
++	<reg32 offset="0x80a4" name="GRAS_SC_MSAA_SAMPLE_POS_CNTL" type="a6xx_msaa_sample_pos_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x80a5" name="GRAS_SC_PROGRAMMABLE_MSAA_POS_0" type="a6xx_programmable_msaa_pos" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x80a6" name="GRAS_SC_PROGRAMMABLE_MSAA_POS_1" type="a6xx_programmable_msaa_pos" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x80a7" name="GRAS_UNKNOWN_80A7" variants="A7XX-" usage="cmd"/>
++	<reg32 offset="0x80a7" name="GRAS_ROTATION_CNTL" variants="A7XX" usage="cmd"/>
+ 
+-	<!-- 0x80a7-0x80ae invalid -->
+-	<reg32 offset="0x80af" name="GRAS_UNKNOWN_80AF" pos="0" usage="cmd"/>
++	<bitset name="a6xx_screen_scissor_cntl" inline="yes">
++		<bitfield name="SCISSOR_DISABLE" pos="0" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x80af" name="GRAS_SC_SCREEN_SCISSOR_CNTL" type="a6xx_screen_scissor_cntl" variants="A6XX-A7XX" pos="0" usage="cmd"/>
+ 
+ 	<bitset name="a6xx_scissor_xy" inline="yes">
+ 		<bitfield name="X" low="0" high="15" type="uint"/>
+ 		<bitfield name="Y" low="16" high="31" type="uint"/>
+ 	</bitset>
+-	<array offset="0x80b0" name="GRAS_SC_SCREEN_SCISSOR" stride="2" length="16" usage="rp_blit">
++
++	<array offset="0x80b0" name="GRAS_SC_SCREEN_SCISSOR" stride="2" length="16" variants="A6XX-A7XX" usage="rp_blit">
+ 		<reg32 offset="0" name="TL" type="a6xx_scissor_xy"/>
+ 		<reg32 offset="1" name="BR" type="a6xx_scissor_xy"/>
+ 	</array>
+-	<array offset="0x80d0" name="GRAS_SC_VIEWPORT_SCISSOR" stride="2" length="16" usage="rp_blit">
++
++	<array offset="0x80d0" name="GRAS_SC_VIEWPORT_SCISSOR" stride="2" length="16" variants="A6XX-A7XX" usage="rp_blit">
+ 		<reg32 offset="0" name="TL" type="a6xx_scissor_xy"/>
+ 		<reg32 offset="1" name="BR" type="a6xx_scissor_xy"/>
+ 	</array>
+ 
+-	<reg32 offset="0x80f0" name="GRAS_SC_WINDOW_SCISSOR_TL" type="a6xx_reg_xy" usage="rp_blit"/>
+-	<reg32 offset="0x80f1" name="GRAS_SC_WINDOW_SCISSOR_BR" type="a6xx_reg_xy" usage="rp_blit"/>
++	<reg32 offset="0x80f0" name="GRAS_SC_WINDOW_SCISSOR_TL" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x80f1" name="GRAS_SC_WINDOW_SCISSOR_BR" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<enum name="a6xx_fsr_combiner">
+ 		<value value="0" name="FSR_COMBINER_OP_KEEP"/>
+@@ -1099,7 +1192,7 @@ by a particular renderpass/blit.
+ 		<value value="4" name="FSR_COMBINER_OP_MUL"/>
+ 	</enum>
+ 
+-	<reg32 offset="0x80f4" name="GRAS_VRS_CONFIG" variants="A7XX-" usage="rp_blit">
++	<bitset name="a6xx_gras_vrs_config">
+ 		<bitfield name="PIPELINE_FSR_ENABLE" pos="0" type="boolean"/>
+ 		<bitfield name="FRAG_SIZE_X" low="1" high="2" type="uint"/>
+ 		<bitfield name="FRAG_SIZE_Y" low="3" high="4" type="uint"/>
+@@ -1107,20 +1200,32 @@ by a particular renderpass/blit.
+ 		<bitfield name="COMBINER_OP_2" low="8" high="10" type="a6xx_fsr_combiner"/>
+ 		<bitfield name="ATTACHMENT_FSR_ENABLE" pos="13" type="boolean"/>
+ 		<bitfield name="PRIMITIVE_FSR_ENABLE" pos="20" type="boolean"/>
+-	</reg32>
+-	<reg32 offset="0x80f5" name="GRAS_QUALITY_BUFFER_INFO" variants="A7XX-" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x80f4" name="GRAS_VRS_CONFIG" type="a6xx_gras_vrs_config" variants="A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_quality_buffer_info" inline="yes">
+ 		<bitfield name="LAYERED" pos="0" type="boolean"/>
+ 		<bitfield name="TILE_MODE" low="1" high="2" type="a6xx_tile_mode"/>
+-	</reg32>
+-	<reg32 offset="0x80f6" name="GRAS_QUALITY_BUFFER_DIMENSION" variants="A7XX-" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x80f5" name="GRAS_QUALITY_BUFFER_INFO" type="a6xx_gras_quality_buffer_info" variants="A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_quality_buffer_dimension" inline="yes">
+ 		<bitfield name="WIDTH" low="0" high="15" type="uint"/>
+ 		<bitfield name="HEIGHT" low="16" high="31" type="uint"/>
+-	</reg32>
+-	<reg64 offset="0x80f8" name="GRAS_QUALITY_BUFFER_BASE" variants="A7XX-" type="waddress" usage="rp_blit"/>
+-	<reg32 offset="0x80fa" name="GRAS_QUALITY_BUFFER_PITCH" variants="A7XX-" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x80f6" name="GRAS_QUALITY_BUFFER_DIMENSION" type="a6xx_gras_quality_buffer_dimension" variants="A7XX" usage="rp_blit"/>
++
++	<reg64 offset="0x80f8" name="GRAS_QUALITY_BUFFER_BASE" variants="A7XX" type="waddress" usage="rp_blit"/>
++
++	<bitset name="a6xx_gras_quality_buffer_pitch" inline="yes">
+ 		<bitfield name="PITCH" shr="6" low="0" high="7" type="uint"/>
+ 		<bitfield name="ARRAY_PITCH" shr="6" low="10" high="28" type="uint"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x80fa" name="GRAS_QUALITY_BUFFER_PITCH" type="a6xx_gras_quality_buffer_pitch" variants="A7XX" usage="rp_blit"/>
+ 
+ 	<enum name="a6xx_lrz_dir_status">
+ 		<value value="0x1" name="LRZ_DIR_LE"/>
+@@ -1128,7 +1233,7 @@ by a particular renderpass/blit.
+ 		<value value="0x3" name="LRZ_DIR_INVALID"/>
+ 	</enum>
+ 
+-	<reg32 offset="0x8100" name="GRAS_LRZ_CNTL" usage="rp_blit">
++	<bitset name="a6xx_gras_lrz_cntl" inline="yes">
+ 		<bitfield name="ENABLE" pos="0" type="boolean"/>
+ 		<doc>LRZ write also disabled for blend/etc.</doc>
+ 		<bitfield name="LRZ_WRITE" pos="1" type="boolean"/>
+@@ -1155,26 +1260,36 @@ by a particular renderpass/blit.
+ 		</doc>
+ 		<bitfield name="DISABLE_ON_WRONG_DIR" pos="9" type="boolean" variants="A6XX"/>
+ 		<bitfield name="Z_FUNC" low="11" high="13" type="adreno_compare_func" variants="A7XX-"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8100" name="GRAS_LRZ_CNTL" type="a6xx_gras_lrz_cntl" usage="rp_blit" variants="A6XX-A7XX"/>
+ 
+ 	<enum name="a6xx_fragcoord_sample_mode">
+ 		<value value="0" name="FRAGCOORD_CENTER"/>
+ 		<value value="3" name="FRAGCOORD_SAMPLE"/>
+ 	</enum>
+ 
+-	<reg32 offset="0x8101" name="GRAS_LRZ_PS_INPUT_CNTL" low="0" high="2" usage="rp_blit">
++	<bitset name="a6xx_gras_lrz_ps_input_cntl" inline="yes">
+ 		<bitfield name="SAMPLEID" pos="0" type="boolean"/>
+ 		<bitfield name="FRAGCOORDSAMPLEMODE" low="1" high="2" type="a6xx_fragcoord_sample_mode"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8101" name="GRAS_LRZ_PS_INPUT_CNTL" type="a6xx_gras_lrz_ps_input_cntl" usage="rp_blit" variants="A6XX-A7XX"/>
+ 
+-	<reg32 offset="0x8102" name="GRAS_LRZ_MRT_BUFFER_INFO_0" usage="rp_blit">
++	<bitset name="a6xx_gras_lrz_mrt_buffer_info_0" inline="yes">
+ 		<bitfield name="COLOR_FORMAT" low="0" high="7" type="a6xx_format"/>
+-	</reg32>
+-	<reg64 offset="0x8103" name="GRAS_LRZ_BUFFER_BASE" align="256" type="waddress" usage="rp_blit"/>
+-	<reg32 offset="0x8105" name="GRAS_LRZ_BUFFER_PITCH" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x8102" name="GRAS_LRZ_MRT_BUFFER_INFO_0" type="a6xx_gras_lrz_mrt_buffer_info_0" usage="rp_blit" variants="A6XX-A7XX"/>
++
++	<reg64 offset="0x8103" name="GRAS_LRZ_BUFFER_BASE" align="256" type="waddress" usage="rp_blit" variants="A6XX-A7XX"/>
++
++	<bitset name="a6xx_gras_lrz_buffer_pitch" inline="yes">
+ 		<bitfield name="PITCH" low="0" high="7" shr="5" type="uint"/>
+ 		<bitfield name="ARRAY_PITCH" low="10" high="28" shr="8" type="uint"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8105" name="GRAS_LRZ_BUFFER_PITCH" type="a6xx_gras_lrz_buffer_pitch" usage="rp_blit" variants="A6XX-A7XX"/>
+ 
+ 	<!--
+ 	The LRZ "fast clear" buffer is initialized to zero's by blob, and
+@@ -1207,7 +1322,6 @@ by a particular renderpass/blit.
+ 	not.
+ 	 -->
+ 	<reg64 offset="0x8106" name="GRAS_LRZ_FAST_CLEAR_BUFFER_BASE" align="64" type="waddress" usage="rp_blit"/>
+-	<!-- 0x8108 invalid -->
+ 	<reg32 offset="0x8109" name="GRAS_LRZ_PS_SAMPLEFREQ_CNTL" usage="rp_blit">
+ 		<bitfield name="PER_SAMP_MODE" pos="0" type="boolean"/>
+ 	</reg32>
+@@ -1232,19 +1346,20 @@ by a particular renderpass/blit.
+ 
+ 	<!-- 0x810c-0x810f invalid -->
+ 
+-	<reg32 offset="0x8110" name="GRAS_UNKNOWN_8110" low="0" high="1" usage="cmd"/>
++	<reg32 offset="0x8110" name="GRAS_MODE_CNTL" low="0" high="1" variants="A6XX-A7XX" usage="cmd"/>
+ 
+ 	<!-- A bit tentative but it's a color and it is followed by LRZ_CLEAR -->
+-	<reg32 offset="0x8111" name="GRAS_LRZ_DEPTH_CLEAR" type="float" variants="A7XX-"/>
++	<reg32 offset="0x8111" name="GRAS_LRZ_DEPTH_CLEAR" type="float" variants="A7XX"/>
+ 
+-	<reg32 offset="0x8113" name="GRAS_LRZ_DEPTH_BUFFER_INFO" variants="A7XX-" usage="rp_blit">
++	<bitset name="a6xx_gras_lrz_depth_buffer_info" inline="yes">
+ 		<bitfield name="DEPTH_FORMAT" low="0" high="2" type="a6xx_depth_format"/>
+ 		<bitfield name="UNK3" pos="3"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x8113" name="GRAS_LRZ_DEPTH_BUFFER_INFO" type="a6xx_gras_lrz_depth_buffer_info" variants="A7XX" usage="rp_blit"/>
+ 
+-	<!-- Always written together and always equal 09510840 00000a62 -->
+-	<reg32 offset="0x8120" name="GRAS_UNKNOWN_8120" variants="A7XX-" usage="cmd"/>
+-	<reg32 offset="0x8121" name="GRAS_UNKNOWN_8121" variants="A7XX-" usage="cmd"/>
++	<doc>LUT used to convert quality buffer values to HW shading rate values. An array of 4-bit values.</doc>
++	<array offset="0x8120" name="GRAS_LRZ_QUALITY_LOOKUP_TABLE" variants="A7XX-" stride="1" length="2"/>
+ 
+ 	<!-- 0x8112-0x83ff invalid -->
+ 
+@@ -1269,28 +1384,29 @@ by a particular renderpass/blit.
+ 		<bitfield name="D24S8" pos="19" type="boolean"/>
+ 		<!-- some sort of channel mask, disabled channels are set to zero ? -->
+ 		<bitfield name="MASK" low="20" high="23"/>
+-		<bitfield name="IFMT" low="24" high="28" type="a6xx_2d_ifmt"/>
++		<bitfield name="IFMT" low="24" high="26" type="a6xx_2d_ifmt"/>
++		<bitfield name="UNK27" pos="27" type="boolean"/>
++		<bitfield name="UNK28" pos="28" type="boolean"/>
+ 		<bitfield name="RASTER_MODE" pos="29" type="a6xx_raster_mode"/>
+-		<bitfield name="UNK30" pos="30" type="boolean" variants="A7XX-"/>
++		<bitfield name="COPY" pos="30" type="boolean" variants="A7XX-"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x8400" name="GRAS_A2D_BLT_CNTL" type="a6xx_a2d_bit_cntl" usage="rp_blit"/>
++	<reg32 offset="0x8400" name="GRAS_A2D_BLT_CNTL" type="a6xx_a2d_bit_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<!-- note: the low 8 bits for src coords are valid, probably fixed point
+ 	     it would be a bit weird though, since we subtract 1 from BR coords
+ 	     apparently signed, gallium driver uses negative coords and it works?
+ 	 -->
+-	<reg32 offset="0x8401" name="GRAS_A2D_SRC_XMIN" low="8" high="24" type="int" usage="rp_blit"/>
+-	<reg32 offset="0x8402" name="GRAS_A2D_SRC_XMAX" low="8" high="24" type="int" usage="rp_blit"/>
+-	<reg32 offset="0x8403" name="GRAS_A2D_SRC_YMIN" low="8" high="24" type="int" usage="rp_blit"/>
+-	<reg32 offset="0x8404" name="GRAS_A2D_SRC_YMAX" low="8" high="24" type="int" usage="rp_blit"/>
+-	<reg32 offset="0x8405" name="GRAS_A2D_DEST_TL" type="a6xx_reg_xy" usage="rp_blit"/>
+-	<reg32 offset="0x8406" name="GRAS_A2D_DEST_BR" type="a6xx_reg_xy" usage="rp_blit"/>
++	<reg32 offset="0x8401" name="GRAS_A2D_SRC_XMIN" low="8" high="24" type="int" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8402" name="GRAS_A2D_SRC_XMAX" low="8" high="24" type="int" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8403" name="GRAS_A2D_SRC_YMIN" low="8" high="24" type="int" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8404" name="GRAS_A2D_SRC_YMAX" low="8" high="24" type="int" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8405" name="GRAS_A2D_DEST_TL" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x8406" name="GRAS_A2D_DEST_BR" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<reg32 offset="0x8407" name="GRAS_2D_UNKNOWN_8407" low="0" high="31"/>
+ 	<reg32 offset="0x8408" name="GRAS_2D_UNKNOWN_8408" low="0" high="31"/>
+ 	<reg32 offset="0x8409" name="GRAS_2D_UNKNOWN_8409" low="0" high="31"/>
+-	<reg32 offset="0x840a" name="GRAS_A2D_SCISSOR_TL" type="a6xx_reg_xy" usage="rp_blit"/>
+-	<reg32 offset="0x840b" name="GRAS_A2D_SCISSOR_BR" type="a6xx_reg_xy" usage="rp_blit"/>
+-	<!-- 0x840c-0x85ff invalid -->
++	<reg32 offset="0x840a" name="GRAS_A2D_SCISSOR_TL" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x840b" name="GRAS_A2D_SCISSOR_BR" type="a6xx_reg_xy" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<!-- always 0x880 ? (and 0 in a640/a650 traces?) -->
+ 	<reg32 offset="0x8600" name="GRAS_DBG_ECO_CNTL" usage="cmd">
+@@ -1308,22 +1424,7 @@ by a particular renderpass/blit.
+ 	-->
+ 
+ 	<!-- same as GRAS_BIN_CONTROL, but without bit 27: -->
+-	<reg32 offset="0x8800" name="RB_CNTL" variants="A6XX" usage="rp_blit">
+-		<bitfield name="BINW" low="0" high="5" shr="5" type="uint"/>
+-		<bitfield name="BINH" low="8" high="14" shr="4" type="uint"/>
+-		<bitfield name="RENDER_MODE" low="18" high="20" type="a6xx_render_mode"/>
+-		<bitfield name="FORCE_LRZ_WRITE_DIS" pos="21" type="boolean"/>
+-		<bitfield name="BUFFERS_LOCATION" low="22" high="23" type="a6xx_buffers_location"/>
+-		<bitfield name="LRZ_FEEDBACK_ZMODE_MASK" low="24" high="26" type="a6xx_lrz_feedback_mask"/>
+-	</reg32>
+-
+-	<reg32 offset="0x8800" name="RB_CNTL" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="BINW" low="0" high="5" shr="5" type="uint"/>
+-		<bitfield name="BINH" low="8" high="14" shr="4" type="uint"/>
+-		<bitfield name="RENDER_MODE" low="18" high="20" type="a6xx_render_mode"/>
+-		<bitfield name="FORCE_LRZ_WRITE_DIS" pos="21" type="boolean"/>
+-		<bitfield name="LRZ_FEEDBACK_ZMODE_MASK" low="24" high="26" type="a6xx_lrz_feedback_mask"/>
+-	</reg32>
++	<reg32 offset="0x8800" name="RB_CNTL" variants="A6XX-A7XX" type="a6xx_bin_cntl" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x8801" name="RB_RENDER_CNTL" variants="A6XX" usage="rp_blit">
+ 		<bitfield name="CCUSINGLECACHELINESIZE" low="3" high="5"/>
+@@ -1347,9 +1448,6 @@ by a particular renderpass/blit.
+ 		<bitfield name="CONSERVATIVERASEN" pos="11" type="boolean"/>
+ 		<bitfield name="INNERCONSERVATIVERASEN" pos="12" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="0x8116" name="GRAS_SU_RENDER_CNTL" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="FS_DISABLE" pos="7" type="boolean"/>
+-	</reg32>
+ 
+ 	<reg32 offset="0x8802" name="RB_RAS_MSAA_CNTL" usage="rp_blit">
+ 		<bitfield name="SAMPLES" low="0" high="1" type="a3xx_msaa_samples"/>
+@@ -1516,9 +1614,7 @@ by a particular renderpass/blit.
+ 		<bitfield name="SAMPLE_MASK" low="16" high="31"/>
+ 	</reg32>
+ 	<!-- 0x8866-0x886f invalid -->
+-	<reg32 offset="0x8870" name="RB_DEPTH_PLANE_CNTL" usage="rp_blit">
+-		<bitfield name="Z_MODE" low="0" high="1" type="a6xx_ztest_mode"/>
+-	</reg32>
++	<reg32 offset="0x8870" name="RB_DEPTH_PLANE_CNTL" type="a6xx_depth_plane_cntl" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x8871" name="RB_DEPTH_CNTL" usage="rp_blit">
+ 		<bitfield name="Z_TEST_ENABLE" pos="0" type="boolean"/>
+@@ -1532,14 +1628,9 @@ by a particular renderpass/blit.
+ 		<bitfield name="Z_READ_ENABLE" pos="6" type="boolean"/>
+ 		<bitfield name="Z_BOUNDS_ENABLE" pos="7" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="0x8114" name="GRAS_SU_DEPTH_CNTL" usage="rp_blit">
+-		<bitfield name="Z_TEST_ENABLE" pos="0" type="boolean"/>
+-	</reg32>
++
+ 	<!-- duplicates GRAS_SU_DEPTH_BUFFER_INFO: -->
+-	<reg32 offset="0x8872" name="RB_DEPTH_BUFFER_INFO" variants="A6XX" usage="rp_blit">
+-		<bitfield name="DEPTH_FORMAT" low="0" high="2" type="a6xx_depth_format"/>
+-		<bitfield name="UNK3" low="3" high="4"/>
+-	</reg32>
++	<reg32 offset="0x8872" name="RB_DEPTH_BUFFER_INFO" variants="A6XX" type="a6xx_depth_buffer_info" usage="rp_blit"/>
+ 	<!-- first 4 bits duplicates GRAS_SU_DEPTH_BUFFER_INFO -->
+ 	<reg32 offset="0x8872" name="RB_DEPTH_BUFFER_INFO" variants="A7XX-" usage="rp_blit">
+ 		<bitfield name="DEPTH_FORMAT" low="0" high="2" type="a6xx_depth_format"/>
+@@ -1575,9 +1666,7 @@ by a particular renderpass/blit.
+ 		<bitfield name="ZPASS_BF" low="26" high="28" type="adreno_stencil_op"/>
+ 		<bitfield name="ZFAIL_BF" low="29" high="31" type="adreno_stencil_op"/>
+ 	</reg32>
+-	<reg32 offset="0x8115" name="GRAS_SU_STENCIL_CNTL" usage="rp_blit">
+-		<bitfield name="STENCIL_ENABLE" pos="0" type="boolean"/>
+-	</reg32>
++
+ 	<reg32 offset="0x8881" name="RB_STENCIL_BUFFER_INFO" variants="A6XX" usage="rp_blit">
+ 		<bitfield name="SEPARATE_STENCIL" pos="0" type="boolean"/>
+ 		<bitfield name="UNK1" pos="1" type="boolean"/>
+@@ -1616,8 +1705,9 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0x8899" name="RB_UNKNOWN_8899" variants="A7XX-" usage="cmd"/>
+ 	<!-- 0x8899-0x88bf invalid -->
+ 	<!-- clamps depth value for depth test/write -->
+-	<reg32 offset="0x88c0" name="RB_VIEWPORT_ZCLAMP_MIN" type="float" usage="rp_blit"/>
+-	<reg32 offset="0x88c1" name="RB_VIEWPORT_ZCLAMP_MAX" type="float" usage="rp_blit"/>
++	<reg32 offset="0x88c0" name="RB_VIEWPORT_ZCLAMP_MIN" type="float" usage="rp_blit" variants="A6XX-A7XX"/>
++	<reg32 offset="0x88c1" name="RB_VIEWPORT_ZCLAMP_MAX" type="float" usage="rp_blit" variants="A6XX-A7XX"/>
++
+ 	<!-- 0x88c2-0x88cf invalid-->
+ 	<reg32 offset="0x88d0" name="RB_RESOLVE_CNTL_0" usage="rp_blit">
+ 		<bitfield name="UNK0" low="0" high="12"/>
+@@ -1626,7 +1716,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0x88d1" name="RB_RESOLVE_CNTL_1" type="a6xx_reg_xy" usage="rp_blit"/>
+ 	<reg32 offset="0x88d2" name="RB_RESOLVE_CNTL_2" type="a6xx_reg_xy" usage="rp_blit"/>
+ 	<!-- weird to duplicate other regs from same block?? -->
+-	<reg32 offset="0x88d3" name="RB_RESOLVE_CNTL_3" usage="rp_blit">
++	<reg32 offset="0x88d3" name="RB_RESOLVE_CNTL_3" variants="A6XX-A7XX" usage="rp_blit">
+ 		<bitfield name="BINW" low="0" high="5" shr="5" type="uint"/>
+ 		<bitfield name="BINH" low="8" high="14" shr="4" type="uint"/>
+ 	</reg32>
+@@ -1650,10 +1740,13 @@ by a particular renderpass/blit.
+ 	<!-- array-pitch is size of layer -->
+ 	<reg32 offset="0x88db" name="RB_RESOLVE_SYSTEM_BUFFER_ARRAY_PITCH" low="0" high="28" shr="6" type="uint" usage="rp_blit"/>
+ 	<reg64 offset="0x88dc" name="RB_RESOLVE_SYSTEM_FLAG_BUFFER_BASE" type="waddress" align="64" usage="rp_blit"/>
+-	<reg32 offset="0x88de" name="RB_RESOLVE_SYSTEM_FLAG_BUFFER_PITCH" usage="rp_blit">
++
++	<bitset name="a6xx_flag_buffer_pitch" inline="yes">
+ 		<bitfield name="PITCH" low="0" high="10" shr="6" type="uint"/>
+-		<bitfield name="ARRAY_PITCH" low="11" high="27" shr="7" type="uint"/>
+-	</reg32>
++		<bitfield name="ARRAY_PITCH" low="11" high="28" shr="7" type="uint"/>
++	</bitset>
++
++	<reg32 offset="0x88de" name="RB_RESOLVE_SYSTEM_FLAG_BUFFER_PITCH" type="a6xx_flag_buffer_pitch" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x88df" name="RB_RESOLVE_CLEAR_COLOR_DW0" usage="rp_blit"/>
+ 	<reg32 offset="0x88e0" name="RB_RESOLVE_CLEAR_COLOR_DW1" usage="rp_blit"/>
+@@ -1726,10 +1819,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0x88f0" name="RB_UNKNOWN_88F0" low="0" high="11" usage="cmd"/>
+ 	<!-- could be for separate stencil? (or may not be a flag buffer at all) -->
+ 	<reg64 offset="0x88f1" name="RB_UNK_FLAG_BUFFER_BASE" type="waddress" align="64"/>
+-	<reg32 offset="0x88f3" name="RB_UNK_FLAG_BUFFER_PITCH">
+-		<bitfield name="PITCH" low="0" high="10" shr="6" type="uint"/>
+-		<bitfield name="ARRAY_PITCH" low="11" high="23" shr="7" type="uint"/>
+-	</reg32>
++	<reg32 offset="0x88f3" name="RB_UNK_FLAG_BUFFER_PITCH" type="a6xx_flag_buffer_pitch"/>
+ 
+ 	<reg32 offset="0x88f4" name="RB_VRS_CONFIG" usage="rp_blit">
+ 		<bitfield name="UNK2" pos="2" type="boolean"/>
+@@ -1737,8 +1827,9 @@ by a particular renderpass/blit.
+ 		<bitfield name="ATTACHMENT_FSR_ENABLE" pos="5" type="boolean"/>
+ 		<bitfield name="PRIMITIVE_FSR_ENABLE" pos="18" type="boolean"/>
+ 	</reg32>
+-	<!-- Connected to VK_EXT_fragment_density_map? -->
+-	<reg32 offset="0x88f5" name="RB_UNKNOWN_88F5" variants="A7XX-"/>
++	<reg32 offset="0x88f5" name="RB_BIN_FOVEAT" variants="A7XX-" usage="cmd">
++		<bitfield name="BINSCALEEN" pos="6" type="boolean"/>
++	</reg32>
+ 	<!-- 0x88f6-0x88ff invalid -->
+ 	<reg64 offset="0x8900" name="RB_DEPTH_FLAG_BUFFER_BASE" type="waddress" align="64" usage="rp_blit"/>
+ 	<reg32 offset="0x8902" name="RB_DEPTH_FLAG_BUFFER_PITCH" usage="rp_blit">
+@@ -1747,12 +1838,10 @@ by a particular renderpass/blit.
+ 		<bitfield name="UNK8" low="8" high="10"/>
+ 		<bitfield name="ARRAY_PITCH" low="11" high="27" shr="7" type="uint"/>
+ 	</reg32>
++
+ 	<array offset="0x8903" name="RB_COLOR_FLAG_BUFFER" stride="3" length="8" usage="rp_blit">
+ 		<reg64 offset="0" name="ADDR" type="waddress" align="64"/>
+-		<reg32 offset="2" name="PITCH">
+-			<bitfield name="PITCH" low="0" high="10" shr="6" type="uint"/>
+-			<bitfield name="ARRAY_PITCH" low="11" high="28" shr="7" type="uint"/>
+-		</reg32>
++		<reg32 offset="2" name="PITCH" type="a6xx_flag_buffer_pitch"/>
+ 	</array>
+ 	<!-- 0x891b-0x8926 invalid -->
+ 	<doc>
+@@ -1815,7 +1904,7 @@ by a particular renderpass/blit.
+ 	<reg64 offset="0x8c1e" name="RB_A2D_DEST_BUFFER_BASE_2" type="waddress" align="64" usage="rp_blit"/>
+ 
+ 	<reg64 offset="0x8c20" name="RB_A2D_DEST_FLAG_BUFFER_BASE" type="waddress" align="64" usage="rp_blit"/>
+-	<reg32 offset="0x8c22" name="RB_A2D_DEST_FLAG_BUFFER_PITCH" low="0" high="7" shr="6" type="uint" usage="rp_blit"/>
++	<reg32 offset="0x8c22" name="RB_A2D_DEST_FLAG_BUFFER_PITCH" type="a6xx_flag_buffer_pitch" usage="rp_blit"/>
+ 	<!-- this is a guess but seems likely (for NV12 with UBWC): -->
+ 	<reg64 offset="0x8c23" name="RB_A2D_DEST_FLAG_BUFFER_BASE_1" type="waddress" align="64" usage="rp_blit"/>
+ 	<reg32 offset="0x8c25" name="RB_A2D_DEST_FLAG_BUFFER_PITCH_1" low="0" high="7" shr="6" type="uint" usage="rp_blit"/>
+@@ -1921,13 +2010,13 @@ by a particular renderpass/blit.
+ 		<bitfield name="CLIP_DIST_03_LOC" low="8" high="15" type="uint"/>
+ 		<bitfield name="CLIP_DIST_47_LOC" low="16" high="23" type="uint"/>
+ 	</bitset>
+-	<reg32 offset="0x9101" name="VPC_VS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9102" name="VPC_GS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9103" name="VPC_DS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9101" name="VPC_VS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9102" name="VPC_GS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9103" name="VPC_DS_CLIP_CULL_CNTL" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9311" name="VPC_VS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9312" name="VPC_GS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9313" name="VPC_DS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9311" name="VPC_VS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9312" name="VPC_GS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9313" name="VPC_DS_CLIP_CULL_CNTL_V2" type="a6xx_vpc_xs_clip_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<bitset name="a6xx_vpc_xs_siv_cntl" inline="yes">
+ 		<bitfield name="LAYERLOC" low="0" high="7" type="uint"/>
+@@ -1935,23 +2024,33 @@ by a particular renderpass/blit.
+ 		<bitfield name="SHADINGRATELOC" low="16" high="23" type="uint" variants="A7XX-"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x9104" name="VPC_VS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9105" name="VPC_GS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9106" name="VPC_DS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9104" name="VPC_VS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9105" name="VPC_GS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9106" name="VPC_DS_SIV_CNTL" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
+ 
+-	<reg32 offset="0x9314" name="VPC_VS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9315" name="VPC_GS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9316" name="VPC_DS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9314" name="VPC_VS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9315" name="VPC_GS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9316" name="VPC_DS_SIV_CNTL_V2" type="a6xx_vpc_xs_siv_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_vpc_rast_stream_cntl" inline="yes">
++		<!-- which stream to send to GRAS -->
++		<bitfield name="STREAM" low="0" high="1" type="uint"/>
++		<!-- discard primitives before rasterization -->
++		<bitfield name="DISCARD" pos="2" type="boolean"/>
++	</bitset>
++
++	<reg32 offset="0x9980" name="VPC_RAST_STREAM_CNTL" type="a6xx_vpc_rast_stream_cntl" variants="A6XX" usage="rp_blit"/>
++	<reg32 offset="0x9107" name="VPC_RAST_STREAM_CNTL" type="a6xx_vpc_rast_stream_cntl" variants="A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9317" name="VPC_RAST_STREAM_CNTL_V2" type="a6xx_vpc_rast_stream_cntl" variants="A7XX" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x9107" name="VPC_UNKNOWN_9107" variants="A6XX" usage="rp_blit">
+ 		<!-- this mirrors VPC_RAST_STREAM_CNTL::DISCARD, although it seems it's unused -->
+ 		<bitfield name="RASTER_DISCARD" pos="0" type="boolean"/>
+ 		<bitfield name="UNK2" pos="2" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="0x9108" name="VPC_RAST_CNTL" usage="rp_blit">
+-		<bitfield name="MODE" low="0" high="1" type="a6xx_polygon_mode"/>
+-	</reg32>
+ 
++	<reg32 offset="0x9108" name="VPC_RAST_CNTL" type="a6xx_rast_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<bitset name="a6xx_pc_cntl" inline="yes">
+ 		<bitfield name="PRIMITIVE_RESTART" pos="0" type="boolean"/>
+ 		<bitfield name="PROVOKING_VTX_LAST" pos="1" type="boolean"/>
+@@ -1991,10 +2090,10 @@ by a particular renderpass/blit.
+ 		<bitfield name="VIEWS" low="2" high="6" type="uint"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x9109" name="VPC_PC_CNTL" type="a6xx_pc_cntl" variants="A7XX-" usage="rp_blit"/>
+-	<reg32 offset="0x910a" name="VPC_GS_PARAM_0" type="a6xx_gs_param_0" variants="A7XX-" usage="rp_blit"/>
+-	<reg32 offset="0x910b" name="VPC_STEREO_RENDERING_VIEWMASK" type="hex" low="0" high="15" variants="A7XX-" usage="rp_blit"/>
+-	<reg32 offset="0x910c" name="VPC_STEREO_RENDERING_CNTL" type="a6xx_stereo_rendering_cntl" variants="A7XX-" usage="rp_blit"/>
++	<reg32 offset="0x9109" name="VPC_PC_CNTL" type="a6xx_pc_cntl" variants="A7XX" usage="rp_blit"/>
++	<reg32 offset="0x910a" name="VPC_GS_PARAM_0" type="a6xx_gs_param_0" variants="A7XX" usage="rp_blit"/>
++	<reg32 offset="0x910b" name="VPC_STEREO_RENDERING_VIEWMASK" type="hex" low="0" high="15" variants="A7XX" usage="rp_blit"/>
++	<reg32 offset="0x910c" name="VPC_STEREO_RENDERING_CNTL" type="a6xx_stereo_rendering_cntl" variants="A7XX" usage="rp_blit"/>
+ 
+ 	<enum name="a6xx_varying_interp_mode">
+ 		<value value="0" name="INTERP_SMOOTH"/>
+@@ -2011,11 +2110,11 @@ by a particular renderpass/blit.
+ 	</enum>
+ 
+ 	<!-- 0x9109-0x91ff invalid -->
+-	<array offset="0x9200" name="VPC_VARYING_INTERP_MODE" stride="1" length="8" usage="rp_blit">
++	<array offset="0x9200" name="VPC_VARYING_INTERP_MODE" stride="1" length="8" variants="A6XX-A7XX" usage="rp_blit">
+ 		<doc>Packed array of a6xx_varying_interp_mode</doc>
+ 		<reg32 offset="0x0" name="MODE"/>
+ 	</array>
+-	<array offset="0x9208" name="VPC_VARYING_REPLACE_MODE_0" stride="1" length="8" usage="rp_blit">
++	<array offset="0x9208" name="VPC_VARYING_REPLACE_MODE" stride="1" length="8" variants="A6XX-A7XX" usage="rp_blit">
+ 		<doc>Packed array of a6xx_varying_ps_repl_mode</doc>
+ 		<reg32 offset="0x0" name="MODE"/>
+ 	</array>
+@@ -2024,12 +2123,12 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0x9210" name="VPC_UNKNOWN_9210" low="0" high="31" variants="A6XX" usage="cmd"/>
+ 	<reg32 offset="0x9211" name="VPC_UNKNOWN_9211" low="0" high="31" variants="A6XX" usage="cmd"/>
+ 
+-	<array offset="0x9212" name="VPC_VARYING_LM_TRANSFER_CNTL_0" stride="1" length="4" usage="rp_blit">
++	<array offset="0x9212" name="VPC_VARYING_LM_TRANSFER_CNTL" stride="1" length="4" variants="A6XX-A7XX" usage="rp_blit">
+ 		<!-- one bit per varying component: -->
+ 		<reg32 offset="0" name="DISABLE"/>
+ 	</array>
+ 
+-	<reg32 offset="0x9216" name="VPC_SO_MAPPING_WPTR" usage="rp_blit">
++	<bitset name="a6xx_vpc_so_mapping_wptr" inline="yes">
+ 		<!--
+ 			Choose which DWORD to write to. There is an array of
+ 			(4 * 64) DWORD's, dumped in the devcoredump at
+@@ -2056,20 +2155,25 @@ by a particular renderpass/blit.
+ 		<bitfield name="ADDR" low="0" high="7" type="hex"/>
+ 		<!-- clear all A_EN and B_EN bits for all DWORD's -->
+ 		<bitfield name="RESET" pos="16" type="boolean"/>
+-	</reg32>
+-	<!-- special register, write multiple times to load SO program (not readable) -->
+-	<reg32 offset="0x9217" name="VPC_SO_MAPPING_PORT" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x9216" name="VPC_SO_MAPPING_WPTR" type="a6xx_vpc_so_mapping_wptr" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_vpc_so_mapping_port" inline="yes">
+ 		<bitfield name="A_BUF" low="0" high="1" type="uint"/>
+ 		<bitfield name="A_OFF" low="2" high="10" shr="2" type="uint"/>
+ 		<bitfield name="A_EN" pos="11" type="boolean"/>
+ 		<bitfield name="B_BUF" low="12" high="13" type="uint"/>
+ 		<bitfield name="B_OFF" low="14" high="22" shr="2" type="uint"/>
+ 		<bitfield name="B_EN" pos="23" type="boolean"/>
+-	</reg32>
++	</bitset>
++
++	<!-- special register, write multiple times to load SO program (not readable) -->
++	<reg32 offset="0x9217" name="VPC_SO_MAPPING_PORT" type="a6xx_vpc_so_mapping_port" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg64 offset="0x9218" name="VPC_SO_QUERY_BASE" type="waddress" align="32" usage="cmd"/>
++	<reg64 offset="0x9218" name="VPC_SO_QUERY_BASE" type="waddress" align="32" variants="A6XX-A7XX" usage="cmd"/>
+ 
+-	<array offset="0x921a" name="VPC_SO" stride="7" length="4" usage="cmd">
++	<array offset="0x921a" name="VPC_SO" stride="7" length="4" variants="A6XX-A7XX" usage="cmd">
+ 		<reg64 offset="0" name="BUFFER_BASE" type="waddress" align="32"/>
+ 		<reg32 offset="2" name="BUFFER_SIZE" low="2" high="31" shr="2"/>
+ 		<reg32 offset="3" name="BUFFER_STRIDE" low="0" high="9" shr="2"/>
+@@ -2077,12 +2181,13 @@ by a particular renderpass/blit.
+ 		<reg64 offset="5" name="FLUSH_BASE" type="waddress" align="32"/>
+ 	</array>
+ 
+-	<reg32 offset="0x9236" name="VPC_REPLACE_MODE_CNTL" usage="cmd">
++	<bitset name="a6xx_vpc_replace_mode_cntl" inline="yes">
+ 		<bitfield name="INVERT" pos="0" type="boolean"/>
+-	</reg32>
+-	<!-- 0x9237-0x92ff invalid -->
+-	<!-- always 0x0 ? -->
+-	<reg32 offset="0x9300" name="VPC_UNKNOWN_9300" low="0" high="2" usage="cmd"/>
++	</bitset>
++
++	<reg32 offset="0x9236" name="VPC_REPLACE_MODE_CNTL" type="a6xx_vpc_replace_mode_cntl" variants="A6XX-A7XX" usage="cmd"/>
++
++	<reg32 offset="0x9300" name="VPC_ROTATION_CNTL" low="0" high="2" variants="A6XX-A7XX" usage="cmd"/>
+ 
+ 	<bitset name="a6xx_vpc_xs_cntl" inline="yes">
+ 		<doc>
+@@ -2101,11 +2206,12 @@ by a particular renderpass/blit.
+ 			</doc>
+ 		</bitfield>
+ 	</bitset>
+-	<reg32 offset="0x9301" name="VPC_VS_CNTL" type="a6xx_vpc_xs_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9302" name="VPC_GS_CNTL" type="a6xx_vpc_xs_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9303" name="VPC_DS_CNTL" type="a6xx_vpc_xs_cntl" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9304" name="VPC_PS_CNTL" usage="rp_blit">
++	<reg32 offset="0x9301" name="VPC_VS_CNTL" type="a6xx_vpc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9302" name="VPC_GS_CNTL" type="a6xx_vpc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9303" name="VPC_DS_CNTL" type="a6xx_vpc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_vpc_ps_cntl" inline="yes">
+ 		<bitfield name="NUMNONPOSVAR" low="0" high="7" type="uint"/>
+ 		<!-- for fixed-function (i.e. no GS) gl_PrimitiveID in FS -->
+ 		<bitfield name="PRIMIDLOC" low="8" high="15" type="uint"/>
+@@ -2122,9 +2228,11 @@ by a particular renderpass/blit.
+ 				ViewID through the VS.
+ 			</doc>
+ 		</bitfield>
+-	</reg32>
++	</bitset>
+ 
+-	<reg32 offset="0x9305" name="VPC_SO_CNTL" usage="rp_blit">
++	<reg32 offset="0x9304" name="VPC_PS_CNTL" type="a6xx_vpc_ps_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_vpc_so_cntl" inline="yes">
+ 		<!--
+ 		It's offset by 1, and 0 means "disabled"
+ 		-->
+@@ -2133,22 +2241,28 @@ by a particular renderpass/blit.
+ 		<bitfield name="BUF2_STREAM" low="6" high="8" type="uint"/>
+ 		<bitfield name="BUF3_STREAM" low="9" high="11" type="uint"/>
+ 		<bitfield name="STREAM_ENABLE" low="15" high="18" type="hex"/>
+-	</reg32>
+-	<reg32 offset="0x9306" name="VPC_SO_OVERRIDE" usage="rp_blit">
++	</bitset>
++
++	<reg32 offset="0x9305" name="VPC_SO_CNTL" type="a6xx_vpc_so_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_so_override" inline="yes">
+ 		<bitfield name="DISABLE" pos="0" type="boolean"/>
+-	</reg32>
+-	<reg32 offset="0x9307" name="VPC_PS_RAST_CNTL" variants="A6XX-" usage="rp_blit"> <!-- A702 + A7xx -->
+-		<bitfield name="MODE" low="0" high="1" type="a6xx_polygon_mode"/>
+-	</reg32>
+-	<reg32 offset="0x9308" name="VPC_ATTR_BUF_GMEM_SIZE" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="SIZE_GMEM" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="0x9309" name="VPC_ATTR_BUF_GMEM_BASE" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="BASE_GMEM" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="0x9b09" name="PC_ATTR_BUF_GMEM_SIZE" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="SIZE_GMEM" low="0" high="31"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x9306" name="VPC_SO_OVERRIDE" type="a6xx_so_override" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<reg32 offset="0x9807" name="PC_DGEN_SO_OVERRIDE" type="a6xx_so_override" variants="A7XX" usage="rp_blit"/>
++
++	<reg32 offset="0x9307" name="VPC_PS_RAST_CNTL" type="a6xx_rast_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<reg32 offset="0x9308" name="VPC_ATTR_BUF_GMEM_SIZE" variants="A7XX" type="uint" usage="rp_blit"/>
++	<reg32 offset="0x9309" name="VPC_ATTR_BUF_GMEM_BASE" variants="A7XX" type="uint" usage="rp_blit"/>
++
++	<reg32 offset="0x9b09" name="PC_ATTR_BUF_GMEM_SIZE" variants="A7XX" type="uint" usage="rp_blit"/>
++
++	<reg32 offset="0x930a" name="VPC_UNKNOWN_930A" variants="A7XX"/>
++
++	<reg32 offset="0x960a" name="VPC_FLATSHADE_MODE_CNTL" variants="A7XX"/>
+ 
+ 	<!-- 0x9307-0x95ff invalid -->
+ 
+@@ -2163,52 +2277,62 @@ by a particular renderpass/blit.
+ 	<!-- TODO: regs from 0x9624-0x963a -->
+ 	<!-- 0x963b-0x97ff invalid -->
+ 
+-	<reg32 offset="0x9800" name="PC_HS_PARAM_0" low="0" high="5" type="uint" usage="rp_blit"/>
++	<reg32 offset="0x9800" name="PC_HS_PARAM_0" low="0" high="5" type="uint" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<!-- always 0x0 ? -->
+-	<reg32 offset="0x9801" name="PC_HS_PARAM_1" usage="rp_blit">
++	<bitset name="a6xx_pc_hs_param_1" inline="yes">
+ 		<bitfield name="SIZE" low="0" high="10" type="uint"/>
+ 		<bitfield name="UNK13" pos="13"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x9801" name="PC_HS_PARAM_1" type="a6xx_pc_hs_param_1" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9802" name="PC_DS_PARAM" usage="rp_blit">
++	<bitset name="a6xx_pc_ds_param" inline="yes">
+ 		<bitfield name="SPACING" low="0" high="1" type="a6xx_tess_spacing"/>
+ 		<bitfield name="OUTPUT" low="2" high="3" type="a6xx_tess_output"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x9802" name="PC_DS_PARAM" type="a6xx_pc_ds_param" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<reg32 offset="0x9803" name="PC_RESTART_INDEX" low="0" high="31" type="uint" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9803" name="PC_RESTART_INDEX" low="0" high="31" type="uint" usage="rp_blit"/>
+-	<reg32 offset="0x9804" name="PC_MODE_CNTL" low="0" high="7" usage="rp_blit"/>
++	<reg32 offset="0x9804" name="PC_MODE_CNTL" low="0" high="7" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x9805" name="PC_POWER_CNTL" low="0" high="2" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9806" name="PC_PS_CNTL" usage="rp_blit">
++	<bitset name="a6xx_pc_ps_cntl" inline="yes">
+ 		<bitfield name="PRIMITIVEIDEN" pos="0" type="boolean"/>
+-	</reg32>
++	</bitset>
+ 
+-	<!-- New in a6xx gen3+ -->
+-	<reg32 offset="0x9808" name="PC_DGEN_SO_CNTL" usage="rp_blit">
++	<reg32 offset="0x9806" name="PC_PS_CNTL" type="a6xx_pc_ps_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++
++	<bitset name="a6xx_pc_dgen_so_cntl" inline="yes">
+ 		<bitfield name="STREAM_ENABLE" low="15" high="18" type="hex"/>
+-	</reg32>
++	</bitset>
++
++	<!-- New in a6xx gen3+ -->
++	<reg32 offset="0x9808" name="PC_DGEN_SO_CNTL" type="a6xx_pc_dgen_so_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x980a" name="PC_DGEN_SU_CONSERVATIVE_RAS_CNTL">
++	<bitset name="a6xx_pc_dgen_su_conservative_ras_cntl" inline="yes">
+ 		<bitfield name="CONSERVATIVERASEN" pos="0" type="boolean"/>
+-	</reg32>
+-	<!-- 0x980b-0x983f invalid -->
++	</bitset>
++
++	<reg32 offset="0x980a" name="PC_DGEN_SU_CONSERVATIVE_RAS_CNTL" type="a6xx_pc_dgen_su_conservative_ras_cntl" variants="A6XX-A7XX"/>
+ 
+ 	<!-- 0x9840 - 0x9842 are not readable -->
+-	<reg32 offset="0x9840" name="PC_DRAW_INITIATOR">
++	<bitset name="a6xx_draw_initiator" inline="yes">
+ 		<bitfield name="STATE_ID" low="0" high="7"/>
+-	</reg32>
++	</bitset>
+ 
+-	<reg32 offset="0x9841" name="PC_KERNEL_INITIATOR">
+-		<bitfield name="STATE_ID" low="0" high="7"/>
+-	</reg32>
++	<reg32 offset="0x9840" name="PC_DRAW_INITIATOR" type="a6xx_draw_initiator" variants="A6XX-A7XX"/>
++	<reg32 offset="0x9841" name="PC_KERNEL_INITIATOR" type="a6xx_draw_initiator" variants="A6XX-A7XX"/>
+ 
+-	<reg32 offset="0x9842" name="PC_EVENT_INITIATOR">
++	<bitset name="a6xx_event_initiator" inline="yes">
+ 		<!-- I think only the low bit is actually used? -->
+ 		<bitfield name="STATE_ID" low="16" high="23"/>
+ 		<bitfield name="EVENT" low="0" high="6" type="vgt_event_type"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x9842" name="PC_EVENT_INITIATOR" type="a6xx_event_initiator" variants="A6XX-A7XX"/>
+ 
+ 	<!--
+ 		0x9880 written in a lot of places by SQE, same value gets written
+@@ -2219,45 +2343,21 @@ by a particular renderpass/blit.
+ 
+ 	<!-- 0x9843-0x997f invalid -->
+ 
+-	<reg32 offset="0x9981" name="PC_DGEN_RAST_CNTL" variants="A6XX" usage="rp_blit">
+-		<bitfield name="MODE" low="0" high="1" type="a6xx_polygon_mode"/>
+-	</reg32>
+-	<reg32 offset="0x9809" name="PC_DGEN_RAST_CNTL" variants="A7XX-" usage="rp_blit">
+-		<bitfield name="MODE" low="0" high="1" type="a6xx_polygon_mode"/>
+-	</reg32>
+-
+-	<reg32 offset="0x9980" name="VPC_RAST_STREAM_CNTL" variants="A6XX" usage="rp_blit">
+-		<!-- which stream to send to GRAS -->
+-		<bitfield name="STREAM" low="0" high="1" type="uint"/>
+-		<!-- discard primitives before rasterization -->
+-		<bitfield name="DISCARD" pos="2" type="boolean"/>
+-	</reg32>
+-	<!-- VPC_RAST_STREAM_CNTL -->
+-	<reg32 offset="0x9107" name="VPC_RAST_STREAM_CNTL" variants="A7XX-" usage="rp_blit">
+-		<!-- which stream to send to GRAS -->
+-		<bitfield name="STREAM" low="0" high="1" type="uint"/>
+-		<!-- discard primitives before rasterization -->
+-		<bitfield name="DISCARD" pos="2" type="boolean"/>
+-	</reg32>
+-	<reg32 offset="0x9317" name="VPC_RAST_STREAM_CNTL_V2" variants="A7XX-" usage="rp_blit">
+-		<!-- which stream to send to GRAS -->
+-		<bitfield name="STREAM" low="0" high="1" type="uint"/>
+-		<!-- discard primitives before rasterization -->
+-		<bitfield name="DISCARD" pos="2" type="boolean"/>
+-	</reg32>
++	<reg32 offset="0x9981" name="PC_DGEN_RAST_CNTL" type="a6xx_rast_cntl" variants="A6XX" usage="rp_blit"/>
++	<reg32 offset="0x9809" name="PC_DGEN_RAST_CNTL" type="a6xx_rast_cntl" variants="A7XX" usage="rp_blit"/>
+ 
+ 	<!-- Both are a750+.
+ 	     Probably needed to correctly overlap execution of several draws.
+ 	-->
+-	<reg32 offset="0x9885" name="PC_HS_BUFFER_SIZE" variants="A7XX-" usage="cmd"/>
++	<reg32 offset="0x9885" name="PC_HS_BUFFER_SIZE" variants="A7XX" usage="cmd"/>
+ 	<!-- Blob adds a bit more space {0x10, 0x20, 0x30, 0x40} bytes, but the meaning of
+ 	     this additional space is not known.
+ 	-->
+-	<reg32 offset="0x9886" name="PC_TF_BUFFER_SIZE" variants="A7XX-" usage="cmd"/>
++	<reg32 offset="0x9886" name="PC_TF_BUFFER_SIZE" variants="A7XX" usage="cmd"/>
+ 
+ 	<!-- 0x9982-0x9aff invalid -->
+ 
+-	<reg32 offset="0x9b00" name="PC_CNTL" type="a6xx_pc_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9b00" name="PC_CNTL" type="a6xx_pc_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<bitset name="a6xx_pc_xs_cntl" inline="yes">
+ 		<doc>
+@@ -2270,18 +2370,18 @@ by a particular renderpass/blit.
+ 		<bitfield name="LAYER" pos="9" type="boolean"/>
+ 		<bitfield name="VIEW" pos="10" type="boolean"/>
+ 		<!-- note: PC_VS_CNTL doesn't have the PRIMITIVE_ID bit -->
++		<!-- since HS can't output anything, only PRIMITIVE_ID is valid -->
+ 		<bitfield name="PRIMITIVE_ID" pos="11" type="boolean"/>
+ 		<bitfield name="CLIP_MASK" low="16" high="23" type="uint"/>
+ 		<bitfield name="SHADINGRATE" pos="24" type="boolean" variants="A7XX-"/>
+ 	</bitset>
+ 
+-	<reg32 offset="0x9b01" name="PC_VS_CNTL" type="a6xx_pc_xs_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9b02" name="PC_GS_CNTL" type="a6xx_pc_xs_cntl" usage="rp_blit"/>
+-	<!-- since HS can't output anything, only PRIMITIVE_ID is valid -->
+-	<reg32 offset="0x9b03" name="PC_HS_CNTL" type="a6xx_pc_xs_cntl" usage="rp_blit"/>
+-	<reg32 offset="0x9b04" name="PC_DS_CNTL" type="a6xx_pc_xs_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9b01" name="PC_VS_CNTL" type="a6xx_pc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9b02" name="PC_GS_CNTL" type="a6xx_pc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9b03" name="PC_HS_CNTL" type="a6xx_pc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
++	<reg32 offset="0x9b04" name="PC_DS_CNTL" type="a6xx_pc_xs_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+-	<reg32 offset="0x9b05" name="PC_GS_PARAM_0" type="a6xx_gs_param_0" usage="rp_blit"/>
++	<reg32 offset="0x9b05" name="PC_GS_PARAM_0" type="a6xx_gs_param_0" variants="A6XX-A7XX" usage="rp_blit"/>
+ 
+ 	<reg32 offset="0x9b06" name="PC_PRIMITIVE_CNTL_6" variants="A6XX" usage="rp_blit">
+ 		<doc>
+@@ -2290,9 +2390,9 @@ by a particular renderpass/blit.
+ 		<bitfield name="STRIDE_IN_VPC" low="0" high="10" type="uint"/>
+ 	</reg32>
+ 
+-	<reg32 offset="0x9b07" name="PC_STEREO_RENDERING_CNTL" type="a6xx_stereo_rendering_cntl" usage="rp_blit"/>
++	<reg32 offset="0x9b07" name="PC_STEREO_RENDERING_CNTL" type="a6xx_stereo_rendering_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<!-- mask of enabled views, doesn't exist on A630 -->
+-	<reg32 offset="0x9b08" name="PC_STEREO_RENDERING_VIEWMASK" type="hex" low="0" high="15" usage="rp_blit"/>
++	<reg32 offset="0x9b08" name="PC_STEREO_RENDERING_VIEWMASK" type="hex" low="0" high="15" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<!-- 0x9b09-0x9bff invalid -->
+ 	<reg32 offset="0x9c00" name="PC_2D_EVENT_CMD">
+ 		<!-- special register (but note first 8 bits can be written/read) -->
+@@ -2303,34 +2403,39 @@ by a particular renderpass/blit.
+ 	<!-- TODO: 0x9e00-0xa000 range incomplete -->
+ 	<reg32 offset="0x9e00" name="PC_DBG_ECO_CNTL"/>
+ 	<reg32 offset="0x9e01" name="PC_ADDR_MODE_CNTL" type="a5xx_address_mode"/>
+-	<reg64 offset="0x9e04" name="PC_DMA_BASE"/>
+-	<reg32 offset="0x9e06" name="PC_DMA_OFFSET" type="uint"/>
+-	<reg32 offset="0x9e07" name="PC_DMA_SIZE" type="uint"/>
++	<reg64 offset="0x9e04" name="PC_DMA_BASE" type="address" variants="A6XX-A7XX"/>
++	<reg32 offset="0x9e06" name="PC_DMA_OFFSET" type="uint" variants="A6XX-A7XX"/>
++	<reg32 offset="0x9e07" name="PC_DMA_SIZE" type="uint" variants="A6XX-A7XX"/>
++
+ 	<reg64 offset="0x9e08" name="PC_TESS_BASE" variants="A6XX" type="waddress" align="32" usage="cmd"/>
+-	<reg64 offset="0x9810" name="PC_TESS_BASE" variants="A7XX-" type="waddress" align="32" usage="cmd"/>
++	<reg64 offset="0x9810" name="PC_TESS_BASE" variants="A7XX" type="waddress" align="32" usage="cmd"/>
+ 
+-	<reg32 offset="0x9e0b" name="PC_DRAWCALL_CNTL" type="vgt_draw_initiator_a4xx">
++	<reg32 offset="0x9e0b" name="PC_DRAWCALL_CNTL" type="vgt_draw_initiator_a4xx" variants="A6XX-A7XX">
+ 		<doc>
+ 			Possibly not really "initiating" the draw but the layout is similar
+ 			to VGT_DRAW_INITIATOR on older gens
+ 		</doc>
+ 	</reg32>
+-	<reg32 offset="0x9e0c" name="PC_DRAWCALL_INSTANCE_NUM" type="uint"/>
+-	<reg32 offset="0x9e0d" name="PC_DRAWCALL_SIZE" type="uint"/>
++	<reg32 offset="0x9e0c" name="PC_DRAWCALL_INSTANCE_NUM" type="uint" variants="A6XX-A7XX"/>
++	<reg32 offset="0x9e0d" name="PC_DRAWCALL_SIZE" type="uint" variants="A6XX-A7XX"/>
+ 
+ 	<!-- These match the contents of CP_SET_BIN_DATA (not written directly) -->
+-	<reg32 offset="0x9e11" name="PC_VIS_STREAM_CNTL">
++	<bitset name="a6xx_pc_vis_stream_cntl" inline="yes">
+ 		<bitfield name="UNK0" low="0" high="15"/>
+ 		<bitfield name="VSC_SIZE" low="16" high="21" type="uint"/>
+ 		<bitfield name="VSC_N" low="22" high="26" type="uint"/>
+-	</reg32>
+-	<reg64 offset="0x9e12" name="PC_PVIS_STREAM_BIN_BASE" type="waddress" align="32"/>
+-	<reg64 offset="0x9e14" name="PC_DVIS_STREAM_BIN_BASE" type="waddress" align="32"/>
++	</bitset>
++
++	<reg32 offset="0x9e11" name="PC_VIS_STREAM_CNTL" type="a6xx_pc_vis_stream_cntl" variants="A6XX-A7XX"/>
++	<reg64 offset="0x9e12" name="PC_PVIS_STREAM_BIN_BASE" type="waddress" align="32" variants="A6XX-A7XX"/>
++	<reg64 offset="0x9e14" name="PC_DVIS_STREAM_BIN_BASE" type="waddress" align="32" variants="A6XX-A7XX"/>
+ 
+-	<reg32 offset="0x9e1c" name="PC_DRAWCALL_CNTL_OVERRIDE">
++	<bitset name="a6xx_pc_drawcall_cntl_override" inline="yes">
+ 		<doc>Written by CP_SET_VISIBILITY_OVERRIDE handler</doc>
+ 		<bitfield name="OVERRIDE" pos="0" type="boolean"/>
+-	</reg32>
++	</bitset>
++
++	<reg32 offset="0x9e1c" name="PC_DRAWCALL_CNTL_OVERRIDE" type="a6xx_pc_drawcall_cntl_override" variants="A6XX-A7XX"/>
+ 
+ 	<reg32 offset="0x9e24" name="PC_UNKNOWN_9E24" variants="A7XX-" usage="cmd"/>
+ 
+@@ -2936,7 +3041,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0xa9b3" name="SP_CS_PROGRAM_COUNTER_OFFSET" type="uint" usage="cmd"/>
+ 	<reg64 offset="0xa9b4" name="SP_CS_BASE" type="address" align="32" usage="cmd"/>
+ 	<reg32 offset="0xa9b6" name="SP_CS_PVT_MEM_PARAM" type="a6xx_sp_xs_pvt_mem_param" usage="cmd"/>
+-	<reg64 offset="0xa9b7" name="SP_CS_PVT_MEM_BASE" align="32" usage="cmd"/>
++	<reg64 offset="0xa9b7" name="SP_CS_PVT_MEM_BASE" type="waddress" align="32" usage="cmd"/>
+ 	<reg32 offset="0xa9b9" name="SP_CS_PVT_MEM_SIZE" type="a6xx_sp_xs_pvt_mem_size" usage="cmd"/>
+ 	<reg32 offset="0xa9ba" name="SP_CS_TSIZE" low="0" high="7" type="uint" usage="cmd"/>
+ 	<reg32 offset="0xa9bb" name="SP_CS_CONFIG" type="a6xx_sp_xs_config" usage="cmd"/>
+@@ -3021,7 +3126,7 @@ by a particular renderpass/blit.
+ 	UAV state for compute shader:
+ 	 -->
+ 	<reg64 offset="0xa9f2" name="SP_CS_UAV_BASE" type="address" align="16" variants="A6XX"/>
+-	<reg64 offset="0xa9f8" name="SP_CS_UAV_BASE" type="address" align="16" variants="A7XX"/>
++	<reg64 offset="0xa9f8" name="SP_CS_UAV_BASE" type="address" align="16" variants="A7XX-"/>
+ 	<reg32 offset="0xaa00" name="SP_CS_USIZE" low="0" high="6" type="uint"/>
+ 
+ 	<!-- Correlated with avgs/uvgs usage in FS -->
+@@ -3104,14 +3209,19 @@ by a particular renderpass/blit.
+ 	instructions VS/HS/DS/GS/FS.  See SP_CS_UAV_BASE_* for compute shaders.
+ 	 -->
+ 	<reg64 offset="0xab1a" name="SP_GFX_UAV_BASE" type="address" align="16" usage="cmd"/>
+-	<reg32 offset="0xab20" name="SP_GFX_USIZE" low="0" high="6" type="uint" usage="cmd"/>
++	<reg32 offset="0xab20" name="SP_GFX_USIZE" low="0" high="6" type="uint" variants="A6XX-A7XX" usage="cmd"/>
+ 
+-	<reg32 offset="0xab22" name="SP_UNKNOWN_AB22" variants="A7XX-" usage="cmd"/>
++	<reg32 offset="0xab22" name="SP_UNKNOWN_AB22" variants="A7XX" usage="cmd"/>
++
++	<enum name="a6xx_sp_a2d_output_ifmt_type">
++		<value name="OUTPUT_IFMT_2D_FLOAT" value="0"/>
++		<value name="OUTPUT_IFMT_2D_SINT" value="1"/>
++		<value name="OUTPUT_IFMT_2D_UINT" value="2"/>
++	</enum>
+ 
+ 	<bitset name="a6xx_sp_a2d_output_info" inline="yes">
+-		<bitfield name="NORM" pos="0" type="boolean"/>
+-		<bitfield name="SINT" pos="1" type="boolean"/>
+-		<bitfield name="UINT" pos="2" type="boolean"/>
++		<bitfield name="HALF_PRECISION" pos="0" type="boolean"/>
++		<bitfield name="IFMT_TYPE" low="1" high="2" type="a6xx_sp_a2d_output_ifmt_type"/>
+ 		<!-- looks like HW only cares about the base type of this format,
+ 		     which matches the ifmt? -->
+ 		<bitfield name="COLOR_FORMAT" low="3" high="10" type="a6xx_format"/>
+@@ -3156,7 +3266,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0xae6b" name="SP_UNKNOWN_AE6B" variants="A7XX-" usage="cmd"/>
+ 	<reg32 offset="0xae6c" name="SP_HLSQ_DBG_ECO_CNTL" variants="A7XX-" usage="cmd"/>
+ 	<reg32 offset="0xae6d" name="SP_READ_SEL" variants="A7XX-">
+-		<bitfield name="LOCATION" low="18" high="19" type="a7xx_state_location"/>
++		<bitfield name="LOCATION" low="18" high="20" type="a7xx_state_location"/>
+ 		<bitfield name="PIPE" low="16" high="17" type="a7xx_pipe"/>
+ 		<bitfield name="STATETYPE" low="8" high="15" type="a7xx_statetype_id"/>
+ 		<bitfield name="USPTP" low="4" high="7"/>
+@@ -3192,7 +3302,7 @@ by a particular renderpass/blit.
+ 
+ 	<!-- looks to work in the same way as a5xx: -->
+ 	<reg64 offset="0xb302" name="TPL1_GFX_BORDER_COLOR_BASE" type="address" align="128" usage="cmd"/>
+-	<reg32 offset="0xb304" name="TPL1_MSAA_SAMPLE_POS_CNTL" type="a6xx_msaa_sample_pos_cntl" usage="rp_blit"/>
++	<reg32 offset="0xb304" name="TPL1_MSAA_SAMPLE_POS_CNTL" type="a6xx_msaa_sample_pos_cntl" variants="A6XX-A7XX" usage="rp_blit"/>
+ 	<reg32 offset="0xb305" name="TPL1_PROGRAMMABLE_MSAA_POS_0" type="a6xx_programmable_msaa_pos" usage="rp_blit"/>
+ 	<reg32 offset="0xb306" name="TPL1_PROGRAMMABLE_MSAA_POS_1" type="a6xx_programmable_msaa_pos" usage="rp_blit"/>
+ 	<reg32 offset="0xb307" name="TPL1_WINDOW_OFFSET" type="a6xx_reg_xy" usage="rp_blit"/>
+@@ -3232,12 +3342,12 @@ by a particular renderpass/blit.
+ 	</reg32>
+ 
+ 	<reg32 offset="0xb2c0" name="TPL1_A2D_SRC_TEXTURE_INFO" type="a6xx_a2d_src_texture_info" variants="A7XX-" usage="rp_blit"/>
+-	<reg32 offset="0xb2c1" name="TPL1_A2D_SRC_TEXTURE_SIZE" variants="A7XX">
++	<reg32 offset="0xb2c1" name="TPL1_A2D_SRC_TEXTURE_SIZE" variants="A7XX-">
+ 		<bitfield name="WIDTH" low="0" high="14" type="uint"/>
+ 		<bitfield name="HEIGHT" low="15" high="29" type="uint"/>
+ 	</reg32>
+ 	<reg64 offset="0xb2c2" name="TPL1_A2D_SRC_TEXTURE_BASE" type="address" align="16" variants="A7XX-" usage="rp_blit"/>
+-	<reg32 offset="0xb2c4" name="TPL1_A2D_SRC_TEXTURE_PITCH" variants="A7XX">
++	<reg32 offset="0xb2c4" name="TPL1_A2D_SRC_TEXTURE_PITCH" variants="A7XX-">
+ 		<!--
+ 		Bits from 3..9 must be zero unless 'TPL1_A2D_BLT_CNTL::TYPE'
+ 		is A6XX_TEX_IMG_BUFFER, which allows for lower alignment.
+@@ -3270,13 +3380,13 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0xb2ce" name="SP_PS_UNKNOWN_B4CE" low="0" high="31" variants="A7XX"/>
+ 	<reg32 offset="0xb2cf" name="SP_PS_UNKNOWN_B4CF" low="0" high="30" variants="A7XX"/>
+ 	<reg32 offset="0xb2d0" name="SP_PS_UNKNOWN_B4D0" low="0" high="29" variants="A7XX"/>
+-	<reg32 offset="0xb2d1" name="TPL1_A2D_WINDOW_OFFSET" type="a6xx_reg_xy" variants="A7XX"/>
++	<reg32 offset="0xb2d1" name="TPL1_A2D_WINDOW_OFFSET" type="a6xx_reg_xy" variants="A7XX-"/>
+ 	<reg32 offset="0xb2d2" name="TPL1_A2D_BLT_CNTL" variants="A7XX-" usage="rp_blit">
+ 		<bitfield name="RAW_COPY" pos="0" type="boolean"/>
+ 		<bitfield name="START_OFFSET_TEXELS" low="16" high="21"/>
+ 		<bitfield name="TYPE" low="29" high="31" type="a6xx_tex_type"/>
+ 	</reg32>
+-	<reg32 offset="0xab21" name="SP_WINDOW_OFFSET" type="a6xx_reg_xy" variants="A7XX-" usage="rp_blit"/>
++	<reg32 offset="0xab21" name="SP_WINDOW_OFFSET" type="a6xx_reg_xy" variants="A7XX" usage="rp_blit"/>
+ 
+ 	<!-- always 0x100000 or 0x1000000? -->
+ 	<reg32 offset="0xb600" name="TPL1_DBG_ECO_CNTL" low="0" high="25" usage="cmd"/>
+@@ -3296,17 +3406,13 @@ by a particular renderpass/blit.
+ 	</reg32>
+ 	<reg32 offset="0xb605" name="TPL1_UNKNOWN_B605" low="0" high="7" type="uint" variants="A6XX" usage="cmd"/> <!-- always 0x0 or 0x44 ? -->
+ 
+-	<reg32 offset="0xb608" name="TPL1_BICUBIC_WEIGHTS_TABLE_0" low="0" high="29" variants="A6XX"/>
+-	<reg32 offset="0xb609" name="TPL1_BICUBIC_WEIGHTS_TABLE_1" low="0" high="29" variants="A6XX"/>
+-	<reg32 offset="0xb60a" name="TPL1_BICUBIC_WEIGHTS_TABLE_2" low="0" high="29" variants="A6XX"/>
+-	<reg32 offset="0xb60b" name="TPL1_BICUBIC_WEIGHTS_TABLE_3" low="0" high="29" variants="A6XX"/>
+-	<reg32 offset="0xb60c" name="TPL1_BICUBIC_WEIGHTS_TABLE_4" low="0" high="29" variants="A6XX"/>
++	<array offset="0xb608" name="TPL1_BICUBIC_WEIGHTS_TABLE" stride="1" length="5" variants="A6XX">
++		<reg32 offset="0" name="REG" low="0" high="29"/>
++	</array>
+ 
+-	<reg32 offset="0xb608" name="TPL1_BICUBIC_WEIGHTS_TABLE_0" low="0" high="29" variants="A7XX" usage="cmd"/>
+-	<reg32 offset="0xb609" name="TPL1_BICUBIC_WEIGHTS_TABLE_1" low="0" high="29" variants="A7XX" usage="cmd"/>
+-	<reg32 offset="0xb60a" name="TPL1_BICUBIC_WEIGHTS_TABLE_2" low="0" high="29" variants="A7XX" usage="cmd"/>
+-	<reg32 offset="0xb60b" name="TPL1_BICUBIC_WEIGHTS_TABLE_3" low="0" high="29" variants="A7XX" usage="cmd"/>
+-	<reg32 offset="0xb60c" name="TPL1_BICUBIC_WEIGHTS_TABLE_4" low="0" high="29" variants="A7XX" usage="cmd"/>
++	<array offset="0xb608" name="TPL1_BICUBIC_WEIGHTS_TABLE" stride="1" length="5" variants="A7XX">
++		<reg32 offset="0" name="REG" low="0" high="29" usage="cmd"/>
++	</array>
+ 
+ 	<array offset="0xb610" name="TPL1_PERFCTR_TP_SEL" stride="1" length="12" variants="A6XX"/>
+ 	<array offset="0xb610" name="TPL1_PERFCTR_TP_SEL" stride="1" length="18" variants="A7XX"/>
+@@ -3638,7 +3744,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0xbb10" name="SP_PS_CONST_CONFIG" type="a6xx_xs_const_config" variants="A6XX" usage="rp_blit"/>
+ 	<reg32 offset="0xab03" name="SP_PS_CONST_CONFIG" type="a6xx_xs_const_config" variants="A7XX-" usage="rp_blit"/>
+ 
+-	<array offset="0xab40" name="SP_SHARED_CONSTANT_GFX_0" stride="1" length="64" variants="A7XX-"/>
++	<array offset="0xab40" name="SP_SHARED_CONSTANT_GFX" stride="1" length="64" variants="A7XX"/>
+ 
+ 	<reg32 offset="0xbb11" name="HLSQ_SHARED_CONSTS" variants="A6XX" usage="cmd">
+ 		<doc>
+@@ -3800,7 +3906,7 @@ by a particular renderpass/blit.
+ 	<reg32 offset="0x0030" name="CFG_DBGBUS_TRACE_BUF2"/>
+ </domain>
+ 
+-<domain name="A7XX_CX_DBGC" width="32">
++<domain name="A7XX_CX_DBGC" width="32" varset="chip">
+ 	<!-- Bitfields shifted, but otherwise the same: -->
+ 	<reg32 offset="0x0000" name="CFG_DBGBUS_SEL_A" variants="A7XX-">
+ 		<bitfield high="7" low="0" name="PING_INDEX"/>
+diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx_descriptors.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx_descriptors.xml
+index 307d43dda8a2..56cfaff614a4 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/a6xx_descriptors.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/a6xx_descriptors.xml
+@@ -9,38 +9,6 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 
+ <domain name="A6XX_TEX_SAMP" width="32">
+ 	<doc>Texture sampler dwords</doc>
+-	<enum name="a6xx_tex_filter"> <!-- same as a4xx? -->
+-		<value name="A6XX_TEX_NEAREST" value="0"/>
+-		<value name="A6XX_TEX_LINEAR" value="1"/>
+-		<value name="A6XX_TEX_ANISO" value="2"/>
+-		<value name="A6XX_TEX_CUBIC" value="3"/> <!-- a650 only -->
+-	</enum>
+-	<enum name="a6xx_tex_clamp"> <!-- same as a4xx? -->
+-		<value name="A6XX_TEX_REPEAT" value="0"/>
+-		<value name="A6XX_TEX_CLAMP_TO_EDGE" value="1"/>
+-		<value name="A6XX_TEX_MIRROR_REPEAT" value="2"/>
+-		<value name="A6XX_TEX_CLAMP_TO_BORDER" value="3"/>
+-		<value name="A6XX_TEX_MIRROR_CLAMP" value="4"/>
+-	</enum>
+-	<enum name="a6xx_tex_aniso"> <!-- same as a4xx? -->
+-		<value name="A6XX_TEX_ANISO_1" value="0"/>
+-		<value name="A6XX_TEX_ANISO_2" value="1"/>
+-		<value name="A6XX_TEX_ANISO_4" value="2"/>
+-		<value name="A6XX_TEX_ANISO_8" value="3"/>
+-		<value name="A6XX_TEX_ANISO_16" value="4"/>
+-	</enum>
+-	<enum name="a6xx_reduction_mode">
+-		<value name="A6XX_REDUCTION_MODE_AVERAGE" value="0"/>
+-		<value name="A6XX_REDUCTION_MODE_MIN" value="1"/>
+-		<value name="A6XX_REDUCTION_MODE_MAX" value="2"/>
+-	</enum>
+-	<enum name="a6xx_fast_border_color">
+-		<!--                           R B G A -->
+-		<value name="A6XX_BORDER_COLOR_0_0_0_0" value="0"/>
+-		<value name="A6XX_BORDER_COLOR_0_0_0_1" value="1"/>
+-		<value name="A6XX_BORDER_COLOR_1_1_1_0" value="2"/>
+-		<value name="A6XX_BORDER_COLOR_1_1_1_1" value="3"/>
+-	</enum>
+ 
+ 	<reg32 offset="0" name="0">
+ 		<bitfield name="MIPFILTER_LINEAR_NEAR" pos="0" type="boolean"/>
+@@ -79,14 +47,6 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 
+ <domain name="A6XX_TEX_CONST" width="32" varset="chip">
+ 	<doc>Texture constant dwords</doc>
+-	<enum name="a6xx_tex_swiz"> <!-- same as a4xx? -->
+-		<value name="A6XX_TEX_X" value="0"/>
+-		<value name="A6XX_TEX_Y" value="1"/>
+-		<value name="A6XX_TEX_Z" value="2"/>
+-		<value name="A6XX_TEX_W" value="3"/>
+-		<value name="A6XX_TEX_ZERO" value="4"/>
+-		<value name="A6XX_TEX_ONE" value="5"/>
+-	</enum>
+ 	<reg32 offset="0" name="0">
+ 		<bitfield name="TILE_MODE" low="0" high="1" type="a6xx_tile_mode"/>
+ 		<bitfield name="SRGB" pos="2" type="boolean"/>
+diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx_enums.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx_enums.xml
+index 665539b098c6..4e42f055b85f 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/a6xx_enums.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/a6xx_enums.xml
+@@ -320,14 +320,14 @@ to upconvert to 32b float internally?
+ 16b float:   3
+  -->
+ <enum name="a6xx_2d_ifmt">
+-	<value value="0x10" name="R2D_UNORM8"/>
+ 	<value value="0x7"  name="R2D_INT32"/>
+ 	<value value="0x6"  name="R2D_INT16"/>
+ 	<value value="0x5"  name="R2D_INT8"/>
+ 	<value value="0x4"  name="R2D_FLOAT32"/>
+ 	<value value="0x3"  name="R2D_FLOAT16"/>
++	<value value="0x2"  name="R2D_SNORM8"/>
+ 	<value value="0x1"  name="R2D_UNORM8_SRGB"/>
+-	<value value="0x0"  name="R2D_RAW"/>
++	<value value="0x0"  name="R2D_UNORM8"/>
+ </enum>
+ 
+ <enum name="a6xx_tex_type">
+@@ -380,4 +380,50 @@ to upconvert to 32b float internally?
+ 	<value value="0x3" name="TESS_CCW_TRIS"/>
+ </enum>
+ 
++<enum name="a6xx_tex_filter"> <!-- same as a4xx? -->
++	<value name="A6XX_TEX_NEAREST" value="0"/>
++	<value name="A6XX_TEX_LINEAR" value="1"/>
++	<value name="A6XX_TEX_ANISO" value="2"/>
++	<value name="A6XX_TEX_CUBIC" value="3"/> <!-- a650 only -->
++</enum>
++
++<enum name="a6xx_tex_clamp"> <!-- same as a4xx? -->
++	<value name="A6XX_TEX_REPEAT" value="0"/>
++	<value name="A6XX_TEX_CLAMP_TO_EDGE" value="1"/>
++	<value name="A6XX_TEX_MIRROR_REPEAT" value="2"/>
++	<value name="A6XX_TEX_CLAMP_TO_BORDER" value="3"/>
++	<value name="A6XX_TEX_MIRROR_CLAMP" value="4"/>
++</enum>
++
++<enum name="a6xx_tex_aniso"> <!-- same as a4xx? -->
++	<value name="A6XX_TEX_ANISO_1" value="0"/>
++	<value name="A6XX_TEX_ANISO_2" value="1"/>
++	<value name="A6XX_TEX_ANISO_4" value="2"/>
++	<value name="A6XX_TEX_ANISO_8" value="3"/>
++	<value name="A6XX_TEX_ANISO_16" value="4"/>
++</enum>
++
++<enum name="a6xx_reduction_mode">
++	<value name="A6XX_REDUCTION_MODE_AVERAGE" value="0"/>
++	<value name="A6XX_REDUCTION_MODE_MIN" value="1"/>
++	<value name="A6XX_REDUCTION_MODE_MAX" value="2"/>
++</enum>
++
++<enum name="a6xx_fast_border_color">
++	<!--                           R B G A -->
++	<value name="A6XX_BORDER_COLOR_0_0_0_0" value="0"/>
++	<value name="A6XX_BORDER_COLOR_0_0_0_1" value="1"/>
++	<value name="A6XX_BORDER_COLOR_1_1_1_0" value="2"/>
++	<value name="A6XX_BORDER_COLOR_1_1_1_1" value="3"/>
++</enum>
++
++<enum name="a6xx_tex_swiz"> <!-- same as a4xx? -->
++	<value name="A6XX_TEX_X" value="0"/>
++	<value name="A6XX_TEX_Y" value="1"/>
++	<value name="A6XX_TEX_Z" value="2"/>
++	<value name="A6XX_TEX_W" value="3"/>
++	<value name="A6XX_TEX_ZERO" value="4"/>
++	<value name="A6XX_TEX_ONE" value="5"/>
++</enum>
++
+ </database>
+diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+index 7abc08635495..0e10e1c6d263 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+@@ -120,12 +120,12 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 	<value name="LRZ_FLUSH" value="38" variants="A5XX-"/>
+ 	<value name="BLIT_OP_FILL_2D" value="39" variants="A5XX-"/>
+ 	<value name="BLIT_OP_COPY_2D" value="40" variants="A5XX-A6XX"/>
+-	<value name="UNK_40" value="40" variants="A7XX"/>
++	<value name="LRZ_CACHE_INVALIDATE" value="40" variants="A7XX"/>
+ 	<value name="LRZ_Q_CACHE_INVALIDATE" value="41" variants="A7XX"/>
+ 	<value name="BLIT_OP_SCALE_2D" value="42" variants="A5XX-"/>
+ 	<value name="CONTEXT_DONE_2D" value="43" variants="A5XX-"/>
+-	<value name="UNK_2C" value="44" variants="A5XX-"/>
+-	<value name="UNK_2D" value="45" variants="A5XX-"/>
++	<value name="VSC_BINNING_START" value="44" variants="A5XX-"/>
++	<value name="VSC_BINNING_END" value="45" variants="A5XX-"/>
+ 
+ 	<!-- a6xx events -->
+ 	<doc>
+@@ -523,7 +523,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 	<!--
+ 	Seems to set the mode flags which control which CP_SET_DRAW_STATE
+ 	packets are executed, based on their ENABLE_MASK values
+-	
++
+ 	CP_SET_MODE w/ payload of 0x1 seems to cause CP_SET_DRAW_STATE
+ 	packets w/ ENABLE_MASK & 0x6 to execute immediately
+ 	 -->
+@@ -640,8 +640,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+ 	<value name="CP_BV_BR_COUNT_OPS" value="0x1b" variants="A7XX-"/>
+ 	<doc> Clears, adds to local, or adds to global timestamp </doc>
+ 	<value name="CP_MODIFY_TIMESTAMP" value="0x1c" variants="A7XX-"/>
+-	<!-- similar to CP_CONTEXT_REG_BUNCH, but discards first two dwords?? -->
+-	<value name="CP_CONTEXT_REG_BUNCH2" value="0x5d" variants="A7XX-"/>
++	<value name="CP_NON_CONTEXT_REG_BUNCH" value="0x5d" variants="A7XX-"/>
+ 	<doc>
+ 		Write to a scratch memory that is read by CP_REG_TEST with
+ 		SOURCE_SCRATCH_MEM set. It's not the same scratch as scratch registers.
+@@ -918,12 +917,6 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ 
+ 	<stripe varset="chip" variants="A5XX-">
+-		<reg32 offset="4" name="4">
+-			<bitfield name="INDX_BASE_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="5" name="5">
+-			<bitfield name="INDX_BASE_HI" low="0" high="31"/>
+-		</reg32>
+ 		<reg64 offset="4" name="INDX_BASE" type="address"/>
+ 		<reg32 offset="6" name="6">
+ 			<!-- max # of elements in index buffer -->
+@@ -1099,8 +1092,10 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 			<bitfield name="BINNING" pos="20" varset="chip" variants="A6XX-" type="boolean"/>
+ 			<bitfield name="GMEM" pos="21" varset="chip" variants="A6XX-" type="boolean"/>
+ 			<bitfield name="SYSMEM" pos="22" varset="chip" variants="A6XX-" type="boolean"/>
+-			<bitfield name="GROUP_ID" low="24" high="28" type="uint"/>
++			<!-- high bit is 28 until a750: -->
++			<bitfield name="GROUP_ID" low="24" high="29" type="uint"/>
+ 		</reg32>
++		<reg64 offset="1" name="ADDR" type="address"/>
+ 		<reg32 offset="1" name="1">
+ 			<bitfield name="ADDR_LO" low="0" high="31" type="hex"/>
+ 		</reg32>
+@@ -1166,26 +1161,11 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ 	<stripe varset="a7xx_abs_mask_mode" variants="NO_ABS_MASK">
+ 		<!-- BIN_DATA_ADDR -> VSC_PIPE[p].DATA_ADDRESS -->
+-		<reg32 offset="1" name="1">
+-			<bitfield name="BIN_DATA_ADDR_LO" low="0" high="31" type="hex"/>
+-		</reg32>
+-		<reg32 offset="2" name="2">
+-			<bitfield name="BIN_DATA_ADDR_HI" low="0" high="31" type="hex"/>
+-		</reg32>
++		<reg64 offset="1" name="BIN_DATA_ADDR" type="address"/>
+ 		<!-- BIN_SIZE_ADDRESS -> VSC_SIZE_ADDRESS + (p * 4)-->
+-		<reg32 offset="3" name="3">
+-			<bitfield name="BIN_SIZE_ADDRESS_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="4" name="4">
+-			<bitfield name="BIN_SIZE_ADDRESS_HI" low="0" high="31"/>
+-		</reg32>
++		<reg64 offset="3" name="BIN_SIZE_ADDR" type="address"/>
+ 		<!-- new on a6xx, where BIN_DATA_ADDR is the DRAW_STRM: -->
+-		<reg32 offset="5" name="5">
+-			<bitfield name="BIN_PRIM_STRM_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="6" name="6">
+-			<bitfield name="BIN_PRIM_STRM_HI" low="0" high="31"/>
+-		</reg32>
++		<reg64 offset="5" name="BIN_PRIM_STRM" type="address"/>
+ 		<!--
+ 			a7xx adds a few more addresses to the end of the pkt
+ 		 -->
+@@ -1195,26 +1175,11 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	<stripe varset="a7xx_abs_mask_mode" variants="ABS_MASK">
+ 		<reg32 offset="1" name="ABS_MASK"/>
+ 		<!-- BIN_DATA_ADDR -> VSC_PIPE[p].DATA_ADDRESS -->
+-		<reg32 offset="2" name="2">
+-			<bitfield name="BIN_DATA_ADDR_LO" low="0" high="31" type="hex"/>
+-		</reg32>
+-		<reg32 offset="3" name="3">
+-			<bitfield name="BIN_DATA_ADDR_HI" low="0" high="31" type="hex"/>
+-		</reg32>
++		<reg64 offset="2" name="BIN_DATA_ADDR" type="address"/>
+ 		<!-- BIN_SIZE_ADDRESS -> VSC_SIZE_ADDRESS + (p * 4)-->
+-		<reg32 offset="4" name="4">
+-			<bitfield name="BIN_SIZE_ADDRESS_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="5" name="5">
+-			<bitfield name="BIN_SIZE_ADDRESS_HI" low="0" high="31"/>
+-		</reg32>
++		<reg64 offset="4" name="BIN_SIZE_ADDR" type="address"/>
+ 		<!-- new on a6xx, where BIN_DATA_ADDR is the DRAW_STRM: -->
+-		<reg32 offset="6" name="6">
+-			<bitfield name="BIN_PRIM_STRM_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="7" name="7">
+-			<bitfield name="BIN_PRIM_STRM_HI" low="0" high="31"/>
+-		</reg32>
++		<reg64 offset="6" name="BIN_PRIM_STRM" type="address"/>
+ 		<!--
+ 			a7xx adds a few more addresses to the end of the pkt
+ 		 -->
+@@ -1300,7 +1265,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ </domain>
+ 
+-<domain name="CP_REG_TO_MEM" width="32">
++<domain name="CP_REG_TO_MEM" width="32" prefix="chip">
+ 	<reg32 offset="0" name="0">
+ 		<bitfield name="REG" low="0" high="17" type="hex"/>
+ 		<!-- number of registers/dwords copied is max(CNT, 1). -->
+@@ -1308,12 +1273,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<bitfield name="64B" pos="30" type="boolean"/>
+ 		<bitfield name="ACCUMULATE" pos="31" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="DEST" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="2" name="2" varset="chip" variants="A5XX-">
+-		<bitfield name="DEST_HI" low="0" high="31"/>
+-	</reg32>
++	<stripe varset="chip" variants="A2XX-A4XX">
++		<reg32 offset="1" name="DEST" type="address"/>
++	</stripe>
++	<stripe varset="chip" variants="A5XX-">
++		<reg64 offset="1" name="DEST" type="address"/>
++	</stripe>
+ </domain>
+ 
+ <domain name="CP_REG_TO_MEM_OFFSET_REG" width="32">
+@@ -1329,12 +1294,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<bitfield name="64B" pos="30" type="boolean"/>
+ 		<bitfield name="ACCUMULATE" pos="31" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="DEST" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="2" name="2" varset="chip" variants="A5XX-">
+-		<bitfield name="DEST_HI" low="0" high="31"/>
+-	</reg32>
++	<reg64 offset="1" name="DEST" type="waddress"/>
+ 	<reg32 offset="3" name="3">
+ 		<bitfield name="OFFSET0" low="0" high="17" type="hex"/>
+ 		<bitfield name="OFFSET0_SCRATCH" pos="19" type="boolean"/>
+@@ -1354,18 +1314,8 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<bitfield name="64B" pos="30" type="boolean"/>
+ 		<bitfield name="ACCUMULATE" pos="31" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="DEST" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="2" name="2" varset="chip" variants="A5XX-">
+-		<bitfield name="DEST_HI" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="3" name="3">
+-		<bitfield name="OFFSET_LO" low="0" high="31" type="hex"/>
+-	</reg32>
+-	<reg32 offset="4" name="4">
+-		<bitfield name="OFFSET_HI" low="0" high="31" type="hex"/>
+-	</reg32>
++	<reg64 offset="1" name="DEST" type="waddress"/>
++	<reg64 offset="3" name="OFFSET" type="waddress"/>
+ </domain>
+ 
+ <domain name="CP_MEM_TO_REG" width="32">
+@@ -1378,12 +1328,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<!-- does the same thing as CP_MEM_TO_MEM::UNK31 -->
+ 		<bitfield name="UNK31" pos="31" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="SRC" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="2" name="2" varset="chip" variants="A5XX-">
+-		<bitfield name="SRC_HI" low="0" high="31"/>
+-	</reg32>
++	<stripe varset="chip" variants="A2XX-A4XX">
++		<reg32 offset="1" name="SRC" type="address"/>
++	</stripe>
++	<stripe varset="chip" variants="A5XX-">
++		<reg64 offset="1" name="SRC" type="address"/>
++	</stripe>
+ </domain>
+ 
+ <domain name="CP_MEM_TO_MEM" width="32">
+@@ -1403,6 +1353,10 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<!-- some other kind of wait -->
+ 		<bitfield name="UNK31" pos="31" type="boolean"/>
+ 	</reg32>
++	<reg64 offset="1" name="DST" type="waddress"/>
++	<reg64 offset="3" name="SRC_A" type="address"/>
++	<reg64 offset="5" name="SRC_B" type="address"/>
++	<reg64 offset="7" name="SRC_C" type="address"/>
+ 	<!--
+ 	followed by sequence of addresses.. the first is the
+ 	destination and the rest are N src addresses which are
+@@ -1461,12 +1415,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ </domain>
+ 
+ <domain name="CP_MEM_WRITE" width="32">
+-	<reg32 offset="0" name="0">
+-		<bitfield name="ADDR_LO" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="ADDR_HI" low="0" high="31"/>
+-	</reg32>
++	<stripe varset="chip" variants="A2XX-A4XX">
++		<reg32 offset="0" name="ADDR" type="address"/>
++	</stripe>
++	<stripe varset="chip" variants="A5XX-">
++		<reg64 offset="0" name="ADDR" type="address"/>
++	</stripe>
+ 	<!-- followed by the DWORDs to write -->
+ </domain>
+ 
+@@ -1518,24 +1472,14 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<bitfield name="POLL" low="4" high="5" type="poll_memory_type"/>
+ 		<bitfield name="WRITE_MEMORY" pos="8" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="POLL_ADDR_LO" low="0" high="31" type="hex"/>
+-	</reg32>
+-	<reg32 offset="2" name="2">
+-		<bitfield name="POLL_ADDR_HI" low="0" high="31" type="hex"/>
+-	</reg32>
++	<reg64 offset="1" name="POLL_ADDR" type="address"/>
+ 	<reg32 offset="3" name="3">
+ 		<bitfield name="REF" low="0" high="31"/>
+ 	</reg32>
+ 	<reg32 offset="4" name="4">
+ 		<bitfield name="MASK" low="0" high="31"/>
+ 	</reg32>
+-	<reg32 offset="5" name="5">
+-		<bitfield name="WRITE_ADDR_LO" low="0" high="31" type="hex"/>
+-	</reg32>
+-	<reg32 offset="6" name="6">
+-		<bitfield name="WRITE_ADDR_HI" low="0" high="31" type="hex"/>
+-	</reg32>
++	<reg64 offset="5" name="WRITE_ADDR" type="waddress"/>
+ 	<reg32 offset="7" name="7">
+ 		<bitfield name="WRITE_DATA" low="0" high="31"/>
+ 	</reg32>
+@@ -1550,12 +1494,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<!-- Reserved for flags, presumably? Unused in FW -->
+ 		<bitfield name="RESERVED" low="0" high="31" type="hex"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="POLL_ADDR_LO" low="0" high="31" type="hex"/>
+-	</reg32>
+-	<reg32 offset="2" name="2">
+-		<bitfield name="POLL_ADDR_HI" low="0" high="31" type="hex"/>
+-	</reg32>
++	<reg64 offset="1" name="POLL_ADDR" type="address"/>
+ 	<reg32 offset="3" name="3">
+ 		<bitfield name="REF" low="0" high="31"/>
+ 	</reg32>
+@@ -1573,12 +1512,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		<bitfield name="POLL" low="4" high="5" type="poll_memory_type"/>
+ 		<bitfield name="WRITE_MEMORY" pos="8" type="boolean"/>
+ 	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="POLL_ADDR_LO" low="0" high="31" type="hex"/>
+-	</reg32>
+-	<reg32 offset="2" name="2">
+-		<bitfield name="POLL_ADDR_HI" low="0" high="31" type="hex"/>
+-	</reg32>
++	<reg64 offset="1" name="POLL_ADDR" type="address"/>
+ 	<reg32 offset="3" name="3">
+ 		<bitfield name="REF" low="0" high="31"/>
+ 	</reg32>
+@@ -1712,12 +1646,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	TODO what is gpuaddr for, seems to be all 0's.. maybe needed for
+ 	context switch?
+ 	 -->
+-	<reg32 offset="1" name="1">
+-		<bitfield name="ADDR_0_LO" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="2" name="2">
+-		<bitfield name="ADDR_0_HI" low="0" high="31"/>
+-	</reg32>
++	<reg64 offset="1" name="ADDR" type="waddress"/>
+ 	<reg32 offset="3" name="3">
+ 		<!-- ??? -->
+ 	</reg32>
+@@ -1832,9 +1761,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	<reg32 offset="0" name="0">
+ 	</reg32>
+ 	<stripe varset="chip" variants="A4XX">
+-		<reg32 offset="1" name="1">
+-			<bitfield name="ADDR" low="0" high="31"/>
+-		</reg32>
++		<reg32 offset="1" name="ADDR" type="address"/>
+ 		<reg32 offset="2" name="2">
+ 			<!-- localsize is value minus one: -->
+ 			<bitfield name="LOCALSIZEX" low="2" high="11" type="uint"/>
+@@ -1843,12 +1770,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 		</reg32>
+ 	</stripe>
+ 	<stripe varset="chip" variants="A5XX-">
+-		<reg32 offset="1" name="1">
+-			<bitfield name="ADDR_LO" low="0" high="31"/>
+-		</reg32>
+-		<reg32 offset="2" name="2">
+-			<bitfield name="ADDR_HI" low="0" high="31"/>
+-		</reg32>
++		<reg64 offset="1" name="ADDR" type="address"/>
+ 		<reg32 offset="3" name="3">
+ 			<!-- localsize is value minus one: -->
+ 			<bitfield name="LOCALSIZEX" low="2" high="11" type="uint"/>
+@@ -2161,12 +2083,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 			</doc>
+ 		</value>
+ 	</enum>
+-	<reg32 offset="0" name="0">
+-		<bitfield name="ADDR_LO" low="0" high="31"/>
+-	</reg32>
+-	<reg32 offset="1" name="1">
+-		<bitfield name="ADDR_HI" low="0" high="31"/>
+-	</reg32>
++	<reg64 offset="0" name="ADDR" type="address"/>
+ 	<reg32 offset="2" name="2">
+ 		<bitfield name="DWORDS" low="0" high="19" type="uint"/>
+ 		<bitfield name="TYPE" low="20" high="21" type="amble_type"/>
 -- 
-2.50.1
+2.51.0
 
 
