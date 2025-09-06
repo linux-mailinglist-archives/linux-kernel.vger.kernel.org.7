@@ -1,166 +1,248 @@
-Return-Path: <linux-kernel+bounces-804356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B276FB47347
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F131DB4734B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964BD3B499F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80AEA3ABC21
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7713F226D1E;
-	Sat,  6 Sep 2025 15:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138F8218E97;
+	Sat,  6 Sep 2025 16:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Si/Qnn3F"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2ntx3js"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609A422541B;
-	Sat,  6 Sep 2025 15:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230342264D6;
+	Sat,  6 Sep 2025 16:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757174388; cv=none; b=qlZvSqGnTM1Pw54XqZXVvFQrGv4NveokGuFrO/4+oOMh3ZRqpN3xuDQ+2qoNMU0XU5SY7kdl/AA4S3N24N9tnhiEvhEIto2aoGwdcdcrhkJBkYsfsxBer8S4U9kAJFdoa2ZaQF2f7wG3al224o3xhcwbZXEQj+Q7Wrswn28sfGg=
+	t=1757174406; cv=none; b=tbQ5MVcVUuFtq1JHKzDMYcwSpb3ljEUNWLmegQDq5dDr7mbKHnfcpE5b+cMuyEKW0Jcx9cg4rAqFeuBG9WBGPMLwkpgdXognJgcznK1ly8rX0vgopctTyxutTpI8mo/VMlcMSJbsX7Z6k635Eq+J4gsdCTH/9avlmf3UEmVggqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757174388; c=relaxed/simple;
-	bh=h4wiwBgaByzT8nTZ1ZqpoQOXMs896bVUy0Kfjd3++Q0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OHhAXn3b9pHhxqfQzqqlPqUFPA7xWLI7gxRmlFAeiIDRtuQ81a7yKQ22QXihnUUtOfAcHPTdpuUnOqYYTbwKWugg2vbMKAxzrh4l8II3AwtZo0vjEwOCeqQanv1faizqe4e39kMRM0RI11C22ceK85WqgSu491+IfN6enpTlRKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Si/Qnn3F; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2715881b3a.1;
-        Sat, 06 Sep 2025 08:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757174387; x=1757779187; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrIFwtSt9A6lyVVU3dEeMrt9dG3SP7YLN7A/4OIq3Uc=;
-        b=Si/Qnn3FUJ7ggnRygw+Rmo8TxUHUCcu2TGnl3aCDkAuMhSV2CvH1v81QK+/Zi7We3o
-         Cn7KWuPbEBIGNmx1TKaxZeCqTPXmeozbRmcbrjXtukK7JIQLjU3xHDJ+Ylq9Jd9Aho2r
-         Bnz9cHYtWI0iatbf5/Oi1kCisr/RIEvfJ0nmGkNIFzH0BMkiKwvssPMdgTquPqCjQBmm
-         IzC1Hc7w+W7ysoaPReN/7/p7lmgbzjbozlU9B//OechzqMqCqTyM1IObsb/3DbyaoaJL
-         jUnWAlJs6UG0GKAIC0nXV2KoTWrGzYtWMUjw2N6VzYaM//adUarSMlWXEllwGPTtR10A
-         P+2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757174387; x=1757779187;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XrIFwtSt9A6lyVVU3dEeMrt9dG3SP7YLN7A/4OIq3Uc=;
-        b=YZsjeJQ0nqpH4FBU1OAYN7hvwgWniFXEMCBjQlGT+odRptPgyMEFRHg2dQsxLnVx9V
-         KVpg4EO85b7hOfgb2Zjs+iHwFtbPDVjvtm02/z9pMrDH6a0sUhgbTIQuXi0Hd3+r/kCD
-         xCoQW2Q3BSYOqovshDJ5dn10W82hMlRI8PVupg0S8W0vYF480YEfJeS2EO2OhdKjLwFW
-         cJHqUs/oSLl331nHL+f797R+pVbYwoQfpTvwC0p24X2YyJ4B2B2jQ/KHvLanmYcgxxkh
-         xkBl5BYXCh6Ttq1+r0ekw4Ni//ICQYYSJ88rIvxfsReWgnUrzQcQK3J8/ClzgILur7th
-         TOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMdbQ8M96wSjcA3wN2UsIQef7EF9uNGD6QqEddO6cbbrkejVPMiQ8TvKNIprLQb4wGLXhk5AAdvrUw1seO6LZy@vger.kernel.org, AJvYcCV/rQuP/tD8KxNo8XzC86ln+nFQaAwQPPRr5wEUviRJ96tNzgk7ElaLT7J4ExBYfYyajiQEHRCm7Nmuajw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFL+Ao+Hg22XzpWexljCf1NQV5i4M6ul37FEr37EV99W0l8LmD
-	2Kuth5+YhjewBWOhBhkq1c4hNJK/JQj/Sd77FRfhi5vYa9j97VXpdj/V
-X-Gm-Gg: ASbGncvaHfJ6eJ0VSh1+9OubJ1SmTlOWbRq44G54DXGOI4dJnCUa9Pf0on3GYbU2RXf
-	HgZP3ZTTkyJtgr1G8HGHhzt3miJPnkbiRWmAHmtaA7YAlW/fzr4rs2o43BTz8/FJV4813eBFqFN
-	8Dt9gQKro7n+OtqWZS4Mkleyk0wS7o//GJ87RepTY+DeyoMxXa9iL6bZ5oRyEJ6J33nnLokIpq9
-	EFyCntQQOltBHNU2gYn6q0G7Eu1fRGxTuKj84K0blEnIhg58O7FMiabA3nkwYpvir51Qhywaqeh
-	NQZrtoxoFv41/SL5dbs5ikoj9nJbKf1ZcsBacnt6ZKJN9VdQcwZDP9O6arI4v6VECS9JrRZgXXk
-	RlaegRm7hgM/p6PatSvKRxBkiGyspS1g=
-X-Google-Smtp-Source: AGHT+IHJkBfbaRZTfiawC3YBCWrAP6hCVu4FwytpXR+uUzJyLvZ6bKq0SL4BUl4mZxqTv0swGQezkw==
-X-Received: by 2002:a05:6a00:9162:b0:76e:7ab9:a238 with SMTP id d2e1a72fcca58-7741bf66911mr8160961b3a.15.1757174386587;
-        Sat, 06 Sep 2025 08:59:46 -0700 (PDT)
-Received: from localhost ([159.117.70.219])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7722a26abdesm24451555b3a.1.2025.09.06.08.59.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 08:59:46 -0700 (PDT)
-From: Nai-Chen Cheng <bleach1827@gmail.com>
-Date: Sat, 06 Sep 2025 23:59:28 +0800
-Subject: [PATCH] selftests/net: fix unused return value warnings in ksft.h
+	s=arc-20240116; t=1757174406; c=relaxed/simple;
+	bh=WUhsfst+t0XA7eALQAuAAQ1QqyE/1cJqSc+0vKr5M+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xm4lNKQh9K39WbgfA4FvPE+TnlmgWJ12aVfsI9nA+iHiOTy3FmhM1+llVrf5VMcln2Yjiehtteay0fua5N4C7Bqgk6c3ZbN/AZcVnl9O8hxC3yF60jT4RmukmVQ8TZPupOsAPScRnYUvFGmcYjCUkiE0yNWFhSonv4Vuijr4Pmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2ntx3js; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757174404; x=1788710404;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WUhsfst+t0XA7eALQAuAAQ1QqyE/1cJqSc+0vKr5M+8=;
+  b=I2ntx3js75/Qk1Bu41HaWodYEUpCoDemF71qRcx83bKErOkuePJkEE4Y
+   PNaTfvdWGuipcWMLgGKBj7As+SCMEkwLTwVQP506VsjbjtmdhJT5fmCmE
+   XIxKlF8Iv7YjPcPEEuDpEbFWtR2uhfFcLvZ9YwOCnqNyVm/MJDWHUzJ1Y
+   ujfYK25NXAJ30SKhwKhB9ABspkBFvk8lUQsL380Q2JjzZIBWvUqFXSOaI
+   kYvFsjyfW7+DzhYC1wewAP8Hfb/A3rjHokbA/0RSsE9oAEdok4R06oxvt
+   ajSMBTnByui3+dt9U6y91wt9IkfP0MIe+xp5NJCfucFv9Tn0Z2FLsrZPu
+   A==;
+X-CSE-ConnectionGUID: rMFKnipaQFWviunRXFMkzw==
+X-CSE-MsgGUID: 17WONNIgQwefNS4MOamrOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="63135057"
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="63135057"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 09:00:04 -0700
+X-CSE-ConnectionGUID: /80grLjnS9W6VoqG2YW13A==
+X-CSE-MsgGUID: gvZKXpPfS72uzbhb/gOiQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="172513740"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 06 Sep 2025 08:59:59 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuvKW-0001bD-0V;
+	Sat, 06 Sep 2025 15:59:56 +0000
+Date: Sat, 6 Sep 2025 23:59:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, linus.walleij@linaro.org,
+	brgl@bgdev.pl, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 3/4] pinctrl: aspeed: Add AST2700 pinmux support
+Message-ID: <202509062340.wX64fW0j-lkp@intel.com>
+References: <20250904103401.88287-4-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250906-selftests-net-ksft-v1-1-f1577cea3f68@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAF9avGgC/x3MSwqAMAwA0atI1gZqqxW9irjwk2pQqjRFBPHuF
- pdvMfOAUGASaLMHAl0sfPiEIs9gWge/EPKcDFrpSjXKotDuIkkU9BRxExfR1NraxtTjVM6QwjO
- Q4/ufdv37fk3QvfpkAAAA
-X-Change-ID: 20250906-selftests-net-ksft-37266937bc4d
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
- Nai-Chen Cheng <bleach1827@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757174379; l=1664;
- i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
- bh=h4wiwBgaByzT8nTZ1ZqpoQOXMs896bVUy0Kfjd3++Q0=;
- b=doHOCBxnaG5mpY+1/18TuD7d+TAkG2uLQIUjLXuWgnXjJqEMnp8qGuPA1VO2R5Gi3UhOoJ2Gb
- LZoWaVMySTBBc8DNJv13kgiS7zFebHmdowBV1UgYRBbP4MjMtupYCNE
-X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
- pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250904103401.88287-4-billy_tsai@aspeedtech.com>
 
-The write() and read() system calls in ksft_ready() and ksft_wait()
-functions return values that were not being checked, causing complier
-warnings with GCC.
+Hi Billy,
 
-Fix the warnings by casting the return values to void to indicate that
-ignoring them is intentional.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
----
- tools/testing/selftests/net/lib/ksft.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+[auto build test WARNING on linusw-pinctrl/devel]
+[also build test WARNING on linusw-pinctrl/for-next robh/for-next lee-leds/for-leds-next linus/master v6.17-rc4 next-20250905]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/tools/testing/selftests/net/lib/ksft.h b/tools/testing/selftests/net/lib/ksft.h
-index 17dc34a612c64e549f634e82a23f317b2ff6a282..0ca2cb408c643bc76c0aaea684f0e7e28e6b05a6 100644
---- a/tools/testing/selftests/net/lib/ksft.h
-+++ b/tools/testing/selftests/net/lib/ksft.h
-@@ -10,6 +10,7 @@ static inline void ksft_ready(void)
- {
- 	const char msg[7] = "ready\n";
- 	char *env_str;
-+	ssize_t ret;
- 	int fd;
- 
- 	env_str = getenv("KSFT_READY_FD");
-@@ -24,7 +25,8 @@ static inline void ksft_ready(void)
- 		fd = STDOUT_FILENO;
- 	}
- 
--	write(fd, msg, sizeof(msg));
-+	ret = write(fd, msg, sizeof(msg));
-+	(void)ret;
- 	if (fd != STDOUT_FILENO)
- 		close(fd);
- }
-@@ -33,6 +35,7 @@ static inline void ksft_wait(void)
- {
- 	char *env_str;
- 	char byte;
-+	ssize_t ret;
- 	int fd;
- 
- 	env_str = getenv("KSFT_WAIT_FD");
-@@ -48,7 +51,8 @@ static inline void ksft_wait(void)
- 		fd = STDIN_FILENO;
- 	}
- 
--	read(fd, &byte, sizeof(byte));
-+	ret = read(fd, &byte, sizeof(byte));
-+	(void)ret;
- 	if (fd != STDIN_FILENO)
- 		close(fd);
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-mfd-aspeed-ast2x00-scu-Support-ast2700-pinctrl/20250904-184115
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20250904103401.88287-4-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v2 3/4] pinctrl: aspeed: Add AST2700 pinmux support
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20250906/202509062340.wX64fW0j-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250906/202509062340.wX64fW0j-lkp@intel.com/reproduce)
 
----
-base-commit: d1d10cea0895264cc3769e4d9719baa94f4b250b
-change-id: 20250906-selftests-net-ksft-37266937bc4d
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509062340.wX64fW0j-lkp@intel.com/
 
-Best regards,
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/pinctrl/aspeed/pinctrl-aspeed.h:15,
+                    from drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c:18:
+>> drivers/pinctrl/aspeed/pinmux-aspeed.h:741:26: warning: 'group_pins_LTPI_I2C3' defined but not used [-Wunused-const-variable=]
+     741 | #define GROUP_SYM(group) group_pins_ ## group
+         |                          ^~~~~~~~~~~
+   drivers/pinctrl/aspeed/pinmux-aspeed.h:743:26: note: in expansion of macro 'GROUP_SYM'
+     743 |         static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+         |                          ^~~~~~~~~
+   drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c:479:1: note: in expansion of macro 'GROUP_DECL'
+     479 | GROUP_DECL(LTPI_I2C3, J9, J10);
+         | ^~~~~~~~~~
+>> drivers/pinctrl/aspeed/pinmux-aspeed.h:741:26: warning: 'group_pins_LTPI_I2C2' defined but not used [-Wunused-const-variable=]
+     741 | #define GROUP_SYM(group) group_pins_ ## group
+         |                          ^~~~~~~~~~~
+   drivers/pinctrl/aspeed/pinmux-aspeed.h:743:26: note: in expansion of macro 'GROUP_SYM'
+     743 |         static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+         |                          ^~~~~~~~~
+   drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c:478:1: note: in expansion of macro 'GROUP_DECL'
+     478 | GROUP_DECL(LTPI_I2C2, H10, H11);
+         | ^~~~~~~~~~
+>> drivers/pinctrl/aspeed/pinmux-aspeed.h:741:26: warning: 'group_pins_LTPI_I2C1' defined but not used [-Wunused-const-variable=]
+     741 | #define GROUP_SYM(group) group_pins_ ## group
+         |                          ^~~~~~~~~~~
+   drivers/pinctrl/aspeed/pinmux-aspeed.h:743:26: note: in expansion of macro 'GROUP_SYM'
+     743 |         static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+         |                          ^~~~~~~~~
+   drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c:477:1: note: in expansion of macro 'GROUP_DECL'
+     477 | GROUP_DECL(LTPI_I2C1, H8, H9);
+         | ^~~~~~~~~~
+>> drivers/pinctrl/aspeed/pinmux-aspeed.h:741:26: warning: 'group_pins_LTPI_I2C0' defined but not used [-Wunused-const-variable=]
+     741 | #define GROUP_SYM(group) group_pins_ ## group
+         |                          ^~~~~~~~~~~
+   drivers/pinctrl/aspeed/pinmux-aspeed.h:743:26: note: in expansion of macro 'GROUP_SYM'
+     743 |         static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+         |                          ^~~~~~~~~
+   drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c:476:1: note: in expansion of macro 'GROUP_DECL'
+     476 | GROUP_DECL(LTPI_I2C0, G11, H7);
+         | ^~~~~~~~~~
+
+
+vim +/group_pins_LTPI_I2C3 +741 drivers/pinctrl/aspeed/pinmux-aspeed.h
+
+efa5623981b72f Andrew Jeffery 2019-06-28  655  
+7b388970816665 Andrew Jeffery 2019-07-29  656  #define PIN_DECL_(pin, ...) \
+efa5623981b72f Andrew Jeffery 2019-06-28  657  	static const struct aspeed_sig_expr **PIN_EXPRS_SYM(pin)[] = \
+efa5623981b72f Andrew Jeffery 2019-06-28  658  		{ __VA_ARGS__, NULL }; \
+efa5623981b72f Andrew Jeffery 2019-06-28  659  	static const struct aspeed_pin_desc PIN_SYM(pin) = \
+efa5623981b72f Andrew Jeffery 2019-06-28  660  		{ #pin, PIN_EXPRS_PTR(pin) }
+efa5623981b72f Andrew Jeffery 2019-06-28  661  
+efa5623981b72f Andrew Jeffery 2019-06-28  662  /**
+efa5623981b72f Andrew Jeffery 2019-06-28  663   * Declare a single signal pin
+efa5623981b72f Andrew Jeffery 2019-06-28  664   *
+efa5623981b72f Andrew Jeffery 2019-06-28  665   * @pin: The pin number
+efa5623981b72f Andrew Jeffery 2019-06-28  666   * @other: Macro name for "other" functionality (subjected to stringification)
+efa5623981b72f Andrew Jeffery 2019-06-28  667   * @sig: Macro name for the signal (subjected to stringification)
+efa5623981b72f Andrew Jeffery 2019-06-28  668   *
+efa5623981b72f Andrew Jeffery 2019-06-28  669   * For example:
+efa5623981b72f Andrew Jeffery 2019-06-28  670   *
+efa5623981b72f Andrew Jeffery 2019-06-28  671   *     #define E3 80
+efa5623981b72f Andrew Jeffery 2019-06-28  672   *     SIG_EXPR_LIST_DECL_SINGLE(SCL5, I2C5, I2C5_DESC);
+7b388970816665 Andrew Jeffery 2019-07-29  673   *     PIN_DECL_1(E3, GPIOK0, SCL5);
+efa5623981b72f Andrew Jeffery 2019-06-28  674   */
+7b388970816665 Andrew Jeffery 2019-07-29  675  #define PIN_DECL_1(pin, other, sig) \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  676  	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  677  	PIN_DECL_(pin, SIG_EXPR_LIST_PTR(pin, sig), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  678  		  SIG_EXPR_LIST_PTR(pin, other))
+efa5623981b72f Andrew Jeffery 2019-06-28  679  
+efa5623981b72f Andrew Jeffery 2019-06-28  680  /**
+efa5623981b72f Andrew Jeffery 2019-06-28  681   * Single signal, single function pin declaration
+efa5623981b72f Andrew Jeffery 2019-06-28  682   *
+efa5623981b72f Andrew Jeffery 2019-06-28  683   * @pin: The pin number
+efa5623981b72f Andrew Jeffery 2019-06-28  684   * @other: Macro name for "other" functionality (subjected to stringification)
+efa5623981b72f Andrew Jeffery 2019-06-28  685   * @sig: Macro name for the signal (subjected to stringification)
+efa5623981b72f Andrew Jeffery 2019-06-28  686   * @...: Signal descriptors that define the function expression
+efa5623981b72f Andrew Jeffery 2019-06-28  687   *
+efa5623981b72f Andrew Jeffery 2019-06-28  688   * For example:
+efa5623981b72f Andrew Jeffery 2019-06-28  689   *
+efa5623981b72f Andrew Jeffery 2019-06-28  690   *    SSSF_PIN_DECL(A4, GPIOA2, TIMER3, SIG_DESC_SET(SCU80, 2));
+efa5623981b72f Andrew Jeffery 2019-06-28  691   */
+efa5623981b72f Andrew Jeffery 2019-06-28  692  #define SSSF_PIN_DECL(pin, other, sig, ...) \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  693  	SIG_EXPR_LIST_DECL_SESG(pin, sig, sig, __VA_ARGS__); \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  694  	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  695  	PIN_DECL_(pin, SIG_EXPR_LIST_PTR(pin, sig), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  696  		  SIG_EXPR_LIST_PTR(pin, other)); \
+efa5623981b72f Andrew Jeffery 2019-06-28  697  	FUNC_GROUP_DECL(sig, pin)
+27d1f73670774e Andrew Jeffery 2019-07-29  698  /**
+27d1f73670774e Andrew Jeffery 2019-07-29  699   * Declare a two-signal pin
+27d1f73670774e Andrew Jeffery 2019-07-29  700   *
+27d1f73670774e Andrew Jeffery 2019-07-29  701   * @pin: The pin number
+27d1f73670774e Andrew Jeffery 2019-07-29  702   * @other: Macro name for "other" functionality (subjected to stringification)
+27d1f73670774e Andrew Jeffery 2019-07-29  703   * @high: Macro name for the highest priority signal functions
+27d1f73670774e Andrew Jeffery 2019-07-29  704   * @low: Macro name for the low signal functions
+27d1f73670774e Andrew Jeffery 2019-07-29  705   *
+27d1f73670774e Andrew Jeffery 2019-07-29  706   * For example:
+27d1f73670774e Andrew Jeffery 2019-07-29  707   *
+27d1f73670774e Andrew Jeffery 2019-07-29  708   *     #define A8 56
+27d1f73670774e Andrew Jeffery 2019-07-29  709   *     SIG_EXPR_DECL(ROMD8, ROM16, SIG_DESC_SET(SCU90, 6));
+27d1f73670774e Andrew Jeffery 2019-07-29  710   *     SIG_EXPR_DECL(ROMD8, ROM16S, SIG_DESC_SET(HW_STRAP1, 4),
+27d1f73670774e Andrew Jeffery 2019-07-29  711   *              { HW_STRAP1, GENMASK(1, 0), 0, 0 });
+27d1f73670774e Andrew Jeffery 2019-07-29  712   *     SIG_EXPR_LIST_DECL(ROMD8, SIG_EXPR_PTR(ROMD8, ROM16),
+27d1f73670774e Andrew Jeffery 2019-07-29  713   *              SIG_EXPR_PTR(ROMD8, ROM16S));
+27d1f73670774e Andrew Jeffery 2019-07-29  714   *     SIG_EXPR_LIST_DECL_SINGLE(NCTS6, NCTS6, SIG_DESC_SET(SCU90, 7));
+27d1f73670774e Andrew Jeffery 2019-07-29  715   *     PIN_DECL_2(A8, GPIOH0, ROMD8, NCTS6);
+27d1f73670774e Andrew Jeffery 2019-07-29  716   */
+27d1f73670774e Andrew Jeffery 2019-07-29  717  #define PIN_DECL_2(pin, other, high, low) \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  718  	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
+27d1f73670774e Andrew Jeffery 2019-07-29  719  	PIN_DECL_(pin, \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  720  			SIG_EXPR_LIST_PTR(pin, high), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  721  			SIG_EXPR_LIST_PTR(pin, low), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  722  			SIG_EXPR_LIST_PTR(pin, other))
+27d1f73670774e Andrew Jeffery 2019-07-29  723  
+27d1f73670774e Andrew Jeffery 2019-07-29  724  #define PIN_DECL_3(pin, other, high, medium, low) \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  725  	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
+27d1f73670774e Andrew Jeffery 2019-07-29  726  	PIN_DECL_(pin, \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  727  			SIG_EXPR_LIST_PTR(pin, high), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  728  			SIG_EXPR_LIST_PTR(pin, medium), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  729  			SIG_EXPR_LIST_PTR(pin, low), \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  730  			SIG_EXPR_LIST_PTR(pin, other))
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  731  
+0b9714845935ae Steven Lee     2021-05-25  732  #define PIN_DECL_4(pin, other, prio1, prio2, prio3, prio4) \
+0b9714845935ae Steven Lee     2021-05-25  733  	SIG_EXPR_LIST_DECL_SESG(pin, other, other); \
+0b9714845935ae Steven Lee     2021-05-25  734  	PIN_DECL_(pin, \
+0b9714845935ae Steven Lee     2021-05-25  735  			SIG_EXPR_LIST_PTR(pin, prio1), \
+0b9714845935ae Steven Lee     2021-05-25  736  			SIG_EXPR_LIST_PTR(pin, prio2), \
+0b9714845935ae Steven Lee     2021-05-25  737  			SIG_EXPR_LIST_PTR(pin, prio3), \
+0b9714845935ae Steven Lee     2021-05-25  738  			SIG_EXPR_LIST_PTR(pin, prio4), \
+0b9714845935ae Steven Lee     2021-05-25  739  			SIG_EXPR_LIST_PTR(pin, other))
+0b9714845935ae Steven Lee     2021-05-25  740  
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29 @741  #define GROUP_SYM(group) group_pins_ ## group
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  742  #define GROUP_DECL(group, ...) \
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  743  	static const int GROUP_SYM(group)[] = { __VA_ARGS__ }
+e7a96b0b7d1669 Andrew Jeffery 2019-07-29  744  
+
 -- 
-Nai-Chen Cheng <bleach1827@gmail.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
