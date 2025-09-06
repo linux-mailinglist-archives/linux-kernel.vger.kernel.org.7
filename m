@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-804219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273D0B46D12
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CC8B46D15
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78B258451A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1A6189822E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6A62ED84F;
-	Sat,  6 Sep 2025 12:54:04 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5123F2ED15A;
+	Sat,  6 Sep 2025 12:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRTwZDmW"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4282ECEAE;
-	Sat,  6 Sep 2025 12:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F922EC561
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757163243; cv=none; b=SfDTy1T2+BHD26rOoHAwLPeqBQlLVCHMw04QPRo0qoZbVE6aJUkAEne9209wzphJr4A53CfFTIFKQ3JL7H46sZKzNMNyqljHYUKIZUcc1yB53xpxWbtDRt8yYQAfAAR4OZH+korT6T1ZsPIxBhhnHFq52bkXzDfkj/8kV+HmtpE=
+	t=1757163298; cv=none; b=QAICfnyCNeFbnnWrD5kI2wfU+Q0irAhhEHcV2guhk1x7owfEHq9dIIZhp/7Q9IKdtb9MoIFNejRc5u4aqlqP4wA35pUMLzpVfIMrd5BuEiUs+8fpHI1WAJhRIOfdV/2eoP6VhJgrAnXVn6Pwr8Apy8tJ4AZn2rZHNGoIoUHV7ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757163243; c=relaxed/simple;
-	bh=bMWnIdPIuLs8f+AwFZer1aNYdwbjKwIKbxoEOyaxKpE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KT/5pmBrmDAg2Nq7bBTGysHVGPW9uD+vLnvdqy4+8fsHvZu40h/Lj8lB0ZEdj7Ga6EOTHDgvRhDweGwgvHHq7CtkLG3wwHn3yNt4jQVbAwLk3jM9D20vo4KN/DYjwiG2+F9OL9mxGAtpwMhmL0c5BsurCtRuuiLWd0cGsnkLbLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+	s=arc-20240116; t=1757163298; c=relaxed/simple;
+	bh=aVwVRRwKFyUNFGgvpjosr9jg2Uh5JoehBnFt4mVeH8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QA9XcDHVaJF7E2dwIz8UBTCnJMC3ivWb6awOGyFDXgt50svdH73uUNAKOPTWWD6KnlBeI1rRoCaSxfTmG8pV4+thpY12chAJplDbYBlZ7a+BEEHTIhPJlZltFVUHWTMJ6DH6VXG0Ei6LU7WXZfsmrmkVMbdz4xsat5FFOjsNJqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRTwZDmW; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24b132bd90dso5710705ad.0;
-        Sat, 06 Sep 2025 05:54:02 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b043a33b060so479233266b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 05:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757163295; x=1757768095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UE2E1w8rpI/Rz1G+l/mrlTW7yKFl3iA8f0ZeFg6IUiY=;
+        b=BRTwZDmWPVCKBGNfg1gg2hPNSCEOdXfjLPwzir/RTYm7qL9N7mbhTatbCbebkVkBcA
+         ko3s8nKX2yIpFQx2m3QaFQnHihDJcxvuakHkNw5r83rwow2PYuezfVj6SeHV0LH8q8HT
+         CLA6S87pV2O9O9C9a1FAsLYmBoqRuy6tOtNWLAUhCNiy1wpNWCldQJVl7gUTrov4mlsH
+         c7In/7md9dxfGELbWPFxLlTn/4WRBkeRY1Iwd7oJTnslhCr9VBgIleDSix2CLWlfxRHk
+         IHgFkEgVbbrItKTQFoohqJ55eJ/o48XCLazuvvzxCs9sevS0epio64Af6/KxfZE1cBNy
+         IhXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757163242; x=1757768042;
-        h=content-transfer-encoding:organization:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0a77094FEb9GuihsWwkaplZsNtpOCd+IdcCOf8V6GQ=;
-        b=fGn3ZZ+eZ74jOBAEOpG3lqjean6B0Z+S4y2/S4Nl3yNiQ+50HcTLxQW7Gun6vx1E00
-         /OM4+sBhWFBErH29Ew9/LdGkXGr8Gry5cL6lDay1I9P2KEm5k+cZj6RfnL//kgRKHa2a
-         naIjyMduq3nwg/O0sNytsgAi3S9S+rIGO6YXCjbeWQl9PzWTYRKFFFSpQXP5suvZ28ZN
-         kvkMUh0vpJuZ2v1S6M/Q7mu4YP8KH16XtWHFRyUK7Yn3fKb04mTgLIK/qnwkbmZjUdS/
-         TTOo9osDB8xHCQ8IlWu2encdnZaQeusQmUgKG0PhZQ+VriLMR8SRxhz5j8MDaxLm9npv
-         PTag==
-X-Forwarded-Encrypted: i=1; AJvYcCUywPt60nUBhtuQfvM4lSBOw+q0BEwF7SIJWpxvBC3fkteVPxZ7X+YDT1Duxuf05XTiKF3zfAKUmp3UWWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Fxmgttbf/4wEOTAeIMx7yzeDHMD+pgjXIxysQxcNdJvvDF4b
-	lwt6pjj98lkfd/rxeVBfHm2+cc9bpc078Zkne8WJkZxuuMrUPcyOY/SD72HHMQ==
-X-Gm-Gg: ASbGncslEP/ZHLpyfGTtWz+4QFxshWjRhKL33NsaIJ4NpFre5xLoVCh3wqE9riGic5a
-	ZtdDjawUsNRuwWMFT8qeg4PhEbTKGhb+dIM8mwEQF1GuL19uBS+CBw14s91bSOWzhSIhZy3yPFu
-	+szbed9JS2prhbTjFHQdC6vrOkLYboijDra4cNygbO//BPitTc+wLStiXX4zeJGUzdVXE3+Deus
-	0hPEBCfVoEgYg3pPszHtAUq6GFx8aIBnm/NiUwPTZIHoQYcjz9x04kwUUmzz9BiHOv5JvnCZEDf
-	+3AA4MpMxonA2Gf2lrWYOgnKFdEYknT63oP4kJTL08fUik87FbesDXMKuSaOei1kKpPvjgvRfc/
-	47a3XbFETQ0sqCIWyVtt5l+fVaV1dmHMT5yMLyrTFewBI6+qTTsMx8ZJtLj6lTt9iYnRZmRe3cX
-	zQm0pfq7iO3fEWB+DsAegZHncS6VlD
-X-Google-Smtp-Source: AGHT+IFGwSZz0peeD54EP712jVZpITKjp33SOOjG9lEoVNMZoDPVwbepYGSheS//hzxTlrhv9PHwZQ==
-X-Received: by 2002:a05:6a20:938c:b0:250:d384:e5aa with SMTP id adf61e73a8af0-2533e47d8e7mr1732567637.1.1757163241494;
-        Sat, 06 Sep 2025 05:54:01 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4e5684da06sm18491830a12.17.2025.09.06.05.53.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 05:54:01 -0700 (PDT)
-Message-ID: <aaa302bb-b80f-4409-b274-e857d91f944a@kzalloc.com>
-Date: Sat, 6 Sep 2025 21:53:57 +0900
+        d=1e100.net; s=20230601; t=1757163295; x=1757768095;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UE2E1w8rpI/Rz1G+l/mrlTW7yKFl3iA8f0ZeFg6IUiY=;
+        b=mnHoaItBaY31//pVqxiHfG4C+ummkIYL9dWtFCGDHD7y4dCZB+oNKZwWh8qvBwwJ4H
+         QkPkYuKSn1/I0WfVoAsdRoaslW/rfAfeedJ2/xV/MhBY5PQJuUCQhyeKM0Wc5MUQLGEA
+         6veJIyy1svXtU2byitJF2DDNbEW2+GxqGrzumY0OEWlrwTjfne+e7Hj+El+pmowBG4PN
+         XGXMKOhu8j91nCNbft2EB+IfQuPVA4mx3ox7vuoV5BJw9DzuoqUsMFuJ8d/UI8PiXk49
+         aFaVUxMYZ6JVj2kA5qwu6/wXTf3pfR9/65gDL/u0PMVAXH82Hdn4CIZiylfVz40NlbnK
+         Z3Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8UieUFtUXUZxWbvEtRhjy7if2XsR/FN7vb4CToJ826lSPYaBiWHJRbR5Yjq/8xk8mzdDVXXFzhc8Bcg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMJt5nJZQngSAvE5GiuqklaKUIq5YeC1HJTHXygIK9PijH46LF
+	r0Kb8Db2dI9oERHgAVqWbbHn48QO4Pw7TTDtyeu5xkyx3w6DeQcf96Dh
+X-Gm-Gg: ASbGncuZL2PXDzXpVGCr3jzeLyM1Qi+nnwbhoSVhD3PUARgyxnL0JerR952T77rUhlL
+	gtN+9OOTJT3vP1c0MYwUlKEbpMoY/YOJqfRCqPDyJMp+m75CtiUGYFnelDjHqI7Nw7oM3hxcnYr
+	pNoaK/37JSqJga9srYuYr6SEIatxgkfu+e7YFF6CS9uBkcyfFPVSI1+mRP334PHzRF4/u+zDOBG
+	fX2n5y1SbprFmKG+kNUSDx6r22hodl2odbpNuixxShUrmFQDmzeMPhm0e/sL1sHrKTCRBFJNdcp
+	p4KJEWLO+hRjy/vsduAmObkrYnnTjftQWqv3UgK7IQEcDbUZsD6yDUPytLn5XqrrLpgxQVU0y2d
+	rX8ikjjSl0XARNRnyGzAnfsQouEiWXfSwpZHl0CLvDbZ/ysZSA7Oo3lmbSdvL8erMuQFlsVvzwl
+	jI/KZilkQEwhYhINC8C2+HfoLqfDJMeodyIYlQ6ewDhO4Vbzv7j5Enl04+mX75
+X-Google-Smtp-Source: AGHT+IH+7BOI358ylmKp8atw8bsdyRj/71mHyL9dUszzoXcWqukq4MMj2v7GgMWLJqT+/pR3VfCtNQ==
+X-Received: by 2002:a17:907:2d1f:b0:b04:3fe2:23c4 with SMTP id a640c23a62f3a-b04b1437f92mr198976866b.19.1757163295028;
+        Sat, 06 Sep 2025 05:54:55 -0700 (PDT)
+Received: from local.station (net-93-148-93-71.cust.vodafonedsl.it. [93.148.93.71])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b046b783722sm838883666b.97.2025.09.06.05.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 05:54:54 -0700 (PDT)
+From: Alessio Attilio <alessio.attilio.dev@gmail.com>
+To: alessio.attilio.dev@gmail.com
+Cc: aahringo@redhat.com,
+	gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	teigland@redhat.com
+Subject: [PATCH] fix: delete del_proc_lock
+Date: Sat,  6 Sep 2025 14:54:51 +0200
+Message-ID: <20250906125451.19206-1-alessio.attilio.dev@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250905160552.496879-1-alessio.attilio.dev@gmail.com>
+References: <20250905160552.496879-1-alessio.attilio.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Yunseong Kim <ysk@kzalloc.com>
-Subject: [Question] __u32 rangehigh in struct v4l2_frequency_band to a higher
- frequencies value
-Organization: kzalloc
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hello Mauro,
+The del_proc_lock function was originally retained for testing purposes during development of the Distributed Lock Manager (DLM).
+With testing now complete and the function no longer serving a runtime role, it is safe to remove.
 
-I have a question regarding the data type used in struct v4l2_frequency_band,
-Current definition:
+Reason for Removal: The function is unused in production code and was only kept temporarily for debugging and validation.
+Its presence is no longer necessary and may cause confusion or clutter.
 
-struct v4l2_frequency_band {
-    ...
-    __u32 rangehigh;
-    ...
-};
+Impact: This change simplifies the codebase and improves maintainability without affecting functionality or stability.
 
-According to the official HackRF One documentation, frequency ranges up to 6 GHz
-are supported. However, the rangehigh field is currently defined as __u32.
-This means values above present 4294967294LL cannot be represented:
- https://elixir.bootlin.com/linux/v6.17-rc4/source/drivers/media/usb/hackrf/hackrf.c#L67
+Signed-off-by: Alessio Attilio <alessio.attilio.dev@gmail.com>
+---
+ fs/dlm/lock.c | 30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
-For example, the HackRF hardware itself can go over 6 GHz, even though the
-officially provided ANT700 antenna only supports up to 1.1 GHz:
- https://greatscottgadgets.com/ant700/
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 9d74b78d3544..9170b5c09823 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -6146,35 +6146,9 @@ static int unlock_proc_lock(struct dlm_ls *ls, struct dlm_lkb *lkb)
+ 	return error;
+ }
+ 
+-/* We have to release clear_proc_locks mutex before calling unlock_proc_lock()
+-   (which does lock_rsb) due to deadlock with receiving a message that does
+-   lock_rsb followed by dlm_user_add_cb() */
+-
+-static struct dlm_lkb *del_proc_lock(struct dlm_ls *ls,
+-				     struct dlm_user_proc *proc)
++static void clean_proc_locks(struct dlm_ls *ls, struct dlm_user_proc *proc)
+ {
+-	struct dlm_lkb *lkb = NULL;
+-
+-	spin_lock_bh(&ls->ls_clear_proc_locks);
+-	if (list_empty(&proc->locks))
+-		goto out;
+-
+-	lkb = list_entry(proc->locks.next, struct dlm_lkb, lkb_ownqueue);
+-	list_del_init(&lkb->lkb_ownqueue);
+-
+-	if (lkb->lkb_exflags & DLM_LKF_PERSISTENT)
+-		set_bit(DLM_DFL_ORPHAN_BIT, &lkb->lkb_dflags);
+-	else
+-		set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
+- out:
+-	spin_unlock_bh(&ls->ls_clear_proc_locks);
+-	return lkb;
+-}
+-
+-void dlm_clear_proc_locks(struct dlm_ls *ls, struct dlm_user_proc *proc)
+-{
+-	struct dlm_callback *cb, *cb_safe;
+-	struct dlm_lkb *lkb, *safe;
++	struct dlm_lkb *lkb;
+ 
+ 	dlm_lock_recovery(ls);
+ 
+-- 
+2.48.1
 
-With a different antenna, it seems feasible to use HackRF at 5.8 GHz related
-discussion:
- https://github.com/greatscottgadgets/hackrf/issues/1274
-
-Would it make sense to extend struct v4l2_frequency_band to allow rangehigh
-values up to at least 6000000000ULL? Or has there already been any discussion
-about changing this field to a wider type for SDR devices that support
-higher frequencies?
-
-I tried searching the mailing list archives for discussions on
-v4l2_frequency_band rangehigh but couldn’t find anything relevant:
- https://www.mail-archive.com/search?a=1&l=linux-media%40vger.kernel.org&haswords=v4l2_frequency_band+rangehigh&x=0&y=0&from=&subject=&datewithin=1d&date=&notwords=&o=relevance
-
-Examples in drivers:
-
-.rangehigh  = 4294967294LL, /* max u32, hw goes over 7GHz */
-
-Possible adjustment:
-
-struct v4l2_frequency_band {
-    ...
-    __u64 rangehigh;
-    ...
-};
-
-.rangehigh  = 6000000000ULL, /* 1 Hz to 6 GHz */
-
-I’d appreciate your advice on whether extending this field (e.g., to __u64)
-would be the right direction, or if there are other considerations in
-the V4L2 framework.
-
-Thank you very much for your time.
-
-Best regards,
-Yunseong Kim
 
