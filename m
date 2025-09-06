@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-804128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA60CB46A4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 10:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15F8B46A50
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1193B1078
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 08:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B84A44F6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CA42C326B;
-	Sat,  6 Sep 2025 08:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59206273816;
+	Sat,  6 Sep 2025 09:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/V7t4+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F2XEgIu9"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF242405EC;
-	Sat,  6 Sep 2025 08:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48C2270555
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 09:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757149138; cv=none; b=Wx+cju5hKWc7ObDqcUIzDsiV7G5PSfvMIYFYxYaKysKbBRD8jhI9Y+gLUaCzXsmkjANUMFUIV7SQRTe7P2vCLUncZPLFlv2B2jgZ3XUylCYJTGWw+3Zi+jwmRW4YZS1y6AsJWzxtAddo62JIyNB926m3sj06uFkcKwp2WYn+6qE=
+	t=1757149540; cv=none; b=vF+FI+OE5gAdEX88ZLq8A+vTIwogtOJmuWiUcWOM/KsC+wQaQzntDS6Mc3W3RMCwNuLMvfKsaeJRmYIncMt+VUDH5By4hi8/oI+agtEfKU/B9iKNMDOHKlrlv34g3AeG6kMWP/8dKnVqnR7YXQp9XPTwr9p1lG3IjCX5xSABWv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757149138; c=relaxed/simple;
-	bh=S6l82ubjGQ2QK0QX4FzJH8TH/F2OpmVSYr6x9ZyGaHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XWgkgCuJKoPI93WIE2B9xkwqwLbSa1tUz0FI86PmP+2er0k+Ozw13Hb/NHcs3/aCChSOeFNGtKp293yndW4X6/D+QfvAx+Ite46yzFuXS7EPdwrzLOH26j1zV5dk1hQ70qeklGEFujyi6+wtZXynl5iPtZWVSXGGuhdXPOwkVi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/V7t4+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB2C6C4CEE7;
-	Sat,  6 Sep 2025 08:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757149137;
-	bh=S6l82ubjGQ2QK0QX4FzJH8TH/F2OpmVSYr6x9ZyGaHw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i/V7t4+wqW/sqTOvx8PGGNPWLcnRoN3LhP7vRqojtAlrjfvYRiRFhY1Eu3bwFJUNt
-	 SLYKSEjPEda5iFVeRfQ5Fe0lPjve6I4ULgX6Hf8Ngoy/UznpEx7r/i2eirEbXc3UDJ
-	 qMy7mPDINHhMyySj9Fgc7vVbU6R8y8la/1KgQGlWns9toGRUf9Nkljil/u7rbkSNyq
-	 3Lc2iLFvxRAwxD+/5v9ffrs/dTjD/tr+0+E3hvEm40lHZwHP1MGLWjYMKqqMBO3YGv
-	 CLS4j5WzqdtlDp+CRFM+CPGUHiGLucrWV8W5auispExp2mT3hd7etiU2w6IYXIOLx6
-	 9J/iB+pAfzm6Q==
-Date: Sat, 6 Sep 2025 10:58:51 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
- <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Jani Nikula <jani.nikula@linux.intel.com>,
- linux-doc@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Subject: Re: [PATCH v5] kernel.h: add comments for enum system_states
-Message-ID: <20250906105851.7c28416c@foz.lan>
-In-Reply-To: <20250906052758.2767832-1-rdunlap@infradead.org>
-References: <20250906052758.2767832-1-rdunlap@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757149540; c=relaxed/simple;
+	bh=3iQcrJcqfq++ZTQeqS1T6YrLPIp3lL5wLcHB28bWo/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGnJX3JwZXT9UCwRbQHix0prRTIrVuUTM6abUkPMBrgnREJpJKrjBdKX/dvDV5KuxDWrHPMK9aGIURQ4lYgzDSLtW3B05O9XPmK3mAMhhVkfdz/lpKmY/nUVKLK42S5+2bX1TMm9skFYStMMnrhQF02p1CHRZtVMGk9STEiwwWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F2XEgIu9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e3aafe06a7so1041510f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 02:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757149537; x=1757754337; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hki8HdhvXHfU2F+7OeXOSp1xyhvTQ6nvom6Fvz3c+mw=;
+        b=F2XEgIu9MzE/3fAFKvS77wTQGN9yWWe192O0RjSu+oLz+iEm2JKeatNUKOwCi9JAHl
+         35JjnqLADAAt35gXBMNPk0BAHRMuRPyAiQD0LChmZHYyjYqoqq5f+FpLszNZEXl+o5gT
+         /XtmvN/gu7eMjeWvB/T/JKOmaQY+HTK8tYB4IiDE1KghjIRZtVXOHsBZysfdLNV40dxc
+         1eYYgUfHGBmUvCgL9qj196c4GxG+G9XBuhwwa2kJqritAdnt2scM3uGEL77W9ZTtXMCA
+         Hy8JTKBXn0njjsCDXMtLC7n1L25uheu5GktVPv/GoacDP5N1JgtpSJk0oX6X/QurDWMS
+         KuPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757149537; x=1757754337;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hki8HdhvXHfU2F+7OeXOSp1xyhvTQ6nvom6Fvz3c+mw=;
+        b=OzrWTqDKyiex7ENaWnzRpQizIAfpbVDN5cn9C4VdwZrJchPW5dqLBPnwqB0p4qRWSb
+         z/mb0a/yhUCiTjE2ySF2Ym/VJNKl1doYUW9j+RpEToL2Gs2XuNs911fbZ0nhTUL/+6BV
+         ORAEjQL+Lo256KGUpf0AuVAkBz15mzusKXKHo7EvjTPWzTog1sniY14mnn++BxoRBvsb
+         +Hd7STAgj2w09Jpdh7qL6vcMit6/QfcfJCkW5EgND+pUZOaT+ym1QoKgZODK17D78ri8
+         jDMlkAZQ4sN0OjXR927pKwsoJGxKFYXIVRlxsNad/OFbeMqoQBWc7CDK/aGRXhas6YGd
+         rm7w==
+X-Forwarded-Encrypted: i=1; AJvYcCU78CS5orq9+jA3IvSBip0il3T51rHAX3nOqgjzWVCmav25Sui6/l8KPhucFldik091EUN6j5stx3HwI5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0SdX58ZYrpcB7LZVwmz8ZeApLXSvqd02pOw74Hv5GlH1QhQmF
+	7HV3bkzl5ipGGJhY54JHSBIJ9GM9SPaK+bkE9j2EX8lD0o0TXwJSsqLrOTfq2+/iCaA=
+X-Gm-Gg: ASbGnctWbvnunDF6U1URbZGX3knGZYdvOLxnmEb11JWWksgwriug5RGJqMJpEPnXhf2
+	RcXiOXaiBj4H04z8uDITrR5UGZn9D6riE0V9F0uWUHok5t9yILwa5j3OvgxWJPbZvWRLSVUxPWR
+	klqAfmE9PM3NiA7J3UD8WL+PwkwjvEcIyk/qiVa7FirEMZmP/7esVRh6Qp3SY+QymPGDC++WGqW
+	xde60i/ABx6t8rgPx6fHgL8D4eDPZysAvMaH7jY+hKoKiV9jcrOABYLkQKR8n0ZKdIFmAk3iDCX
+	a3Ge491ksAbXfIyQJ7/TdD0rH70rUMNCDlQzl2h0nG9iaK/7UOkrMUc9PPAyMALVpDfjrGrtDtt
+	RGG7zqKSn7uUgV2cp/3bV5Y0iphAcha7JKvlD+g==
+X-Google-Smtp-Source: AGHT+IHOiFBNtbdh+ZPHcW0eh5OTeyAVCftx5e6W3o7t6l/2O0QB2mqkLdjfjU9NIQo/lpGZbryoNw==
+X-Received: by 2002:a5d:588d:0:b0:3d6:4596:8a29 with SMTP id ffacd0b85a97d-3e643e0a48emr1185814f8f.44.1757149537170;
+        Sat, 06 Sep 2025 02:05:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3df4fd372ccsm12287698f8f.32.2025.09.06.02.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 02:05:36 -0700 (PDT)
+Date: Sat, 6 Sep 2025 12:05:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Carlos LLama <cmllamas@google.com>,
+	Pekka Ristola <pekkarr@protonmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v15 0/5] rust: adds Bitmap API, ID pool and bindings
+Message-ID: <aLv5Xce6R4ofalnf@stanley.mountain>
+References: <20250904165015.3791895-1-bqe@google.com>
+ <aLnURXW_ZiX2iJd_@yury>
+ <CANiq72==48=69hYiDo1321pCzgn_n1_jg=ez5UYXX91c+g5JVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72==48=69hYiDo1321pCzgn_n1_jg=ez5UYXX91c+g5JVQ@mail.gmail.com>
 
-Em Fri,  5 Sep 2025 22:27:58 -0700
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+Here is the patch so people who want to build linux-next can just apply
+it instead of needing to cut and paste and then %s/    // or whatever...
+Hopefully, people aren't building kernels over the weekend and it's fixed
+on Monday.  But just in case.
 
-> Provide some basic comments about the system_states and what they imply.
-> Also convert the comments to kernel-doc format.
-> 
-> Split the enum declaration from the definition of the system_state
-> variable so that kernel-doc notation works cleanly with it.
-> This is picked up by Documentation/driver-api/basics.rst so it
-> does not need further inclusion in the kernel docbooks.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
-> ---
-> v2: add Rafael's Ack.
-> v3: add Andrew
-> v4: add DOC: so that this DOC: block can be used in Documentation/
->     add Greg K-H
->     add Jon Corbet, Mauro Chehab, & linux-doc
-> v5: split enum declaration and definition (Jani Nikula)
->     drop the DOC: block since it is no longer needed
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: linux-pm@vger.kernel.org
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> ---
->  include/linux/kernel.h |   21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
-> 
-> --- linux-next-20250819.orig/include/linux/kernel.h
-> +++ linux-next-20250819/include/linux/kernel.h
-> @@ -164,11 +164,23 @@ extern int root_mountflags;
->  
->  extern bool early_boot_irqs_disabled;
->  
-> -/*
-> - * Values used for system_state. Ordering of the states must not be changed
-> +/**
-> + * enum system_states - Values used for system_state.
-> + *
+regards,
+dan carpenter
 
-> + * * @SYSTEM_BOOTING:	%0, no init needed
-> + * * @SYSTEM_SCHEDULING: system is ready for scheduling; OK to use RCU
-> + * * @SYSTEM_FREEING_INITMEM: system is freeing all of initmem; almost running
-> + * * @SYSTEM_RUNNING:	system is up and running
-> + * * @SYSTEM_HALT:	system entered clean system halt state
-> + * * @SYSTEM_POWER_OFF:	system entered shutdown/clean power off state
-> + * * @SYSTEM_RESTART:	system entered emergency power off or normal restart
-> + * * @SYSTEM_SUSPEND:	system entered suspend or hibernate state
+diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
+index 6e0824579781..2f00e91e9c35 100644
+--- a/rust/kernel/bitmap.rs
++++ b/rust/kernel/bitmap.rs
+@@ -551,18 +551,21 @@ fn bitmap_set_clear_find() -> Result<(), AllocError> {
+         Ok(())
+     }
+ 
+-    #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
+     #[test]
+     fn owned_bitmap_out_of_bounds() -> Result<(), AllocError> {
+-        let mut b = BitmapVec::new(128, GFP_KERNEL)?;
++        #[cfg(not(CONFIG_RUST_BITMAP_HARDENED))]
++        {
++            let mut b = BitmapVec::new(128, GFP_KERNEL)?;
++
++            b.set_bit(2048);
++            b.set_bit_atomic(2048);
++            b.clear_bit(2048);
++            b.clear_bit_atomic(2048);
++            assert_eq!(None, b.next_bit(2048));
++            assert_eq!(None, b.next_zero_bit(2048));
++            assert_eq!(None, b.last_bit());
 
-You forgot to drop the extra asterisk at the above. definitions.
+-        b.set_bit(2048);
+-        b.set_bit_atomic(2048);
+-        b.clear_bit(2048);
+-        b.clear_bit_atomic(2048);
+-        assert_eq!(None, b.next_bit(2048));
+-        assert_eq!(None, b.next_zero_bit(2048));
+-        assert_eq!(None, b.last_bit());
+         Ok(())
+     }
 
-Fixing it, feel free to add:
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-> + *
-> + * Note:
-> + * Ordering of the states must not be changed
->   * as code checks for <, <=, >, >= STATE.
->   */
-> -extern enum system_states {
-> +enum system_states {
->  	SYSTEM_BOOTING,
->  	SYSTEM_SCHEDULING,
->  	SYSTEM_FREEING_INITMEM,
-> @@ -177,7 +189,8 @@ extern enum system_states {
->  	SYSTEM_POWER_OFF,
->  	SYSTEM_RESTART,
->  	SYSTEM_SUSPEND,
-> -} system_state;
-> +};
-> +extern enum system_states system_state;
->  
->  /*
->   * General tracing related utility functions - trace_printk(),
-
-
-
-Thanks,
-Mauro
 
