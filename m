@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AE5B469F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BE5B469FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E55F1C25D9A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:37:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C66582324
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D869928314A;
-	Sat,  6 Sep 2025 07:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CFB2C08A2;
+	Sat,  6 Sep 2025 07:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVDOj9SO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rppxDBD1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE151367;
-	Sat,  6 Sep 2025 07:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BB01367;
+	Sat,  6 Sep 2025 07:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757144250; cv=none; b=akWOForZXjNd3qFlUe5YGPGEF1sMXif/ddHE3ggwMWgQrziYPue+Nu0n9fL4RNdKDgotOC9t97myiB/asEpLNu3FKuQaUSjK+ZXTS/irKhGTuGMG5EulgzZCBaKa9rFWCx1SrhiuBXILa6kVlkNLihXWBwH90xu7dTuwFXbTkuE=
+	t=1757144263; cv=none; b=VsyyDwj+UeMMe+Y5jnoswykTG9iFhttz/437bHe8p7jKbbTHcX7oc2qH+xMlOxBYJi+PFPDIcLgUgiCBEhGXetzlJAP2scYaF4xQ7B+iNbzf0KxGqLltzKYR2jlN+R+enfDibMTI8yD+puKoUJSg47x7MfZOEygatNOU1PwhXI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757144250; c=relaxed/simple;
-	bh=4OsNX2sMF7W1e5q3jcihc+WCvwRQ1SL88U2idTix5eU=;
+	s=arc-20240116; t=1757144263; c=relaxed/simple;
+	bh=ue2j2doTCFQdJzpCR9X2DocvL9UNcKjper6kC9UNSA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dzlYAtak6yDErL56Mt2bJxBRz88Kr9rTK515x05yMX82BNxQRcs8IYS0MzhWppCz1eBsPoErSAJkWf/5IDJDu8tLj+1Al9bGIPQ21dGmdIeLhGSddRCr6adRozGHKzUbTaRUK1NplKV/VQ4UcaQscIk11090rCJFbOK7HXlaZeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVDOj9SO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F99C4CEE7;
-	Sat,  6 Sep 2025 07:37:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MS0382Ly8vk5AiGXndGZ7IlKgU/R3+NDT2Km3rcsvR/NlThVMxCrcY8ZUZjj8ZIlr5EbjqqM4OmJXp9jEZbBbwQ6tOmBbAcsE/lP487za1+jKVtJV4VM+evHQ67z68W7+HwKpr03RTYzNt8w70H/pMjZJb/9Vu+6S0Ok6wNfeOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rppxDBD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48946C4CEE7;
+	Sat,  6 Sep 2025 07:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757144249;
-	bh=4OsNX2sMF7W1e5q3jcihc+WCvwRQ1SL88U2idTix5eU=;
+	s=k20201202; t=1757144262;
+	bh=ue2j2doTCFQdJzpCR9X2DocvL9UNcKjper6kC9UNSA0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IVDOj9SOjFEduxys4NWuqWiuhpAMOW+LSeKCPoMw0jTi+vdO7VA/ExUqwYudXiw/E
-	 SFXN/MEHTCEg/ZrGMI0AZhSc7Vxmvt5yzUnAINeXCZW3r8cK7wXpK2esNWlAX4/mlG
-	 gAAiInilwY4eg4IBxqxuydKfL6O/riquAg9P3kqwDvKkHMmpPTP4PDiUG8qoZ9AoUf
-	 UBzPv8Vdetyy2XdWdPJMfMWQUPTWHIxbxycPB8BqA/29hliGy1DD+XRbGC67Qbchxm
-	 ZkoBjouoDf1F2C+ozlWqoFLy85W30Ap7Lg7JoQ5LjbiVBPFaSHv4NtJjLCGmbBOK/y
-	 fhObTpo0ELcng==
-Message-ID: <5064fa0c-c807-4c1e-bc55-7b814cc72b38@kernel.org>
-Date: Sat, 6 Sep 2025 09:37:24 +0200
+	b=rppxDBD10GqDIUS/1X+z1a8L7CJtBmeh14O0UKfUU2inHcpzqkpbjNKRsKxUHI2xh
+	 h1wjL5SCvwZVlxNEZOWA7WGML+doFP/Izv9WgvU/Q8amIufoz+G1HDwDuNhPHJ+ID7
+	 c6cLcAUr/EKoWL3C1JGBM9ertmM6msW4YqYyxBWqNeqjyx041NJBAxD5u60xacsQNP
+	 067i7fHe9OEeY1iuGhpCMQB4Cb/fdPIABKN9KyUhfmDjh4ijfj052tgsUE07ksbCFY
+	 5VkLqaY075d4ezoGWO3doQfOw3RoTv+NU3AQXLFUoL5/fTTh6x+muNFxy08HhX3gp6
+	 m+zjtfE2AeaFA==
+Message-ID: <0dc8df6f-9197-4d14-9bd0-11712f04adb5@kernel.org>
+Date: Sat, 6 Sep 2025 09:37:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: rohm,bd71847-pmic: Fix typo in
+Subject: Re: [PATCH v2 2/3] dt-bindings: mfd: rohm,bd96802-pmic: Fix typo in
  documentation
 To: Nick Huang <sef1548@gmail.com>, lee@kernel.org, robh@kernel.org,
  krzk+dt@kernel.org
 Cc: kusogame68@gmail.com, pumeining@gmail.com, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, n1136402@ntub.edu.tw, good@ntub.edu.tw
 References: <20250906051040.22944-1-sef1548@gmail.com>
- <20250906051040.22944-2-sef1548@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250906051040.22944-3-sef1548@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -102,21 +102,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250906051040.22944-2-sef1548@gmail.com>
+In-Reply-To: <20250906051040.22944-3-sef1548@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/09/2025 07:10, Nick Huang wrote:
-> Correct a typo in the documentation by replacing "abd" with the correct word "and".
-> This improves readability and avoids confusion in the description.
+> Correct a misspelling in comment: "contolling" should be "controlling"
+> which refers to shutting down the SOC and controlling the PMIC
 > 
-> Co-developed-by: Nick Huang <sef1548@gmail.com>
 > Signed-off-by: Nick Huang <sef1548@gmail.com>
-> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml | 2 +-
 
-Three EXACTLY same patchsets within three hours. That's two too much.
-
-Slow down, read previous feedback.
+I already commented on this.
 
 Best regards,
 Krzysztof
