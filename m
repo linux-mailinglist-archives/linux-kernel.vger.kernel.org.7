@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-804487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E717B477BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:46:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7395B477B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF3B3BCC2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E56AF7AE972
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743E2299AB3;
-	Sat,  6 Sep 2025 21:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA95C29BDB6;
+	Sat,  6 Sep 2025 21:45:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9829D297;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB5F2949E0;
 	Sat,  6 Sep 2025 21:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757195111; cv=none; b=fEQIPrqdbIKKmuUJpk/tlnTBQj0CBFMPsWrdcehSIv2U2KF6rBf3fHy1ih4c7w/gFADcksV/+ncd2ydWv5k+rSjEkL0ArQzIv25ImvvYW0LfzGLKS5iZQ6Kt3TeXs176IDsqCN7q6+xoi6qmQtyZou6fAyBWtjNR8VWN77gX0Pw=
+	t=1757195110; cv=none; b=HYNxwjFFwA6ZZZ3MkJFbMdXcwHVJKFSo7jM3XN07NVmyUJ6S6LlJv0SyEEoxUpnkC3/GmP6nb5vPNdS9GS9e/68atqsuSsvnrksQthGo2Yh8NMl3FXmEwcP3D8jjnFwzT4//0GKWZfegdRz5C93FwDu4z2Q9DpHZRLWoPwGVXpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757195111; c=relaxed/simple;
-	bh=CkWfFx///imCZ4ylARdnUZRuL4uo4svqlC6355p4Q+4=;
+	s=arc-20240116; t=1757195110; c=relaxed/simple;
+	bh=Om2wsWKzfBTumU1uMrWiRYO/VKpdX3KrMlYogK6co3I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CmC6GL9GRk5tI9LxZH6X9Zve/UXFeYR1CrMUn6F2jTokDRd0Ldoa+n3IDdeXURpuQmzid2obydCY3973hvcCqYzbeelflaThQljeszg3IAHinQLkeGv0HirV7/PYGGq0usjl9fRI0E3xwMibboWmz1oHn2pavn9/4Z7TanqmNyA=
+	 MIME-Version:Content-Type; b=F2b3ExVg/BRw3V+BKI0ZZdoG48JBEQB+U01VJLY4w8Nhp95kqO9I5UMpw7JjNZGuC6YMITK1LYfbX2iMV6KlJmgdKAsQZ8tGlRhyV3nbvOdNCX3hg3kvnDUdtuQcpVEK5OXfEC/18K7PdtsEjartflfW26pD3ZMIGfRtnX6kHm4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7860AC4CEF8;
-	Sat,  6 Sep 2025 21:45:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D20C4CEF5;
+	Sat,  6 Sep 2025 21:45:09 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id C88E1180B26; Sat, 06 Sep 2025 23:45:07 +0200 (CEST)
+	id CB4F2180B28; Sat, 06 Sep 2025 23:45:07 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Waqar Hameed <waqar.hameed@axis.com>
-Cc: kernel@axis.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <pndzfcekt8w.a.out@axis.com>
-References: <pndzfcekt8w.a.out@axis.com>
-Subject: Re: [PATCH v2] power: supply: Remove error prints for
- devm_add_action_or_reset()
-Message-Id: <175719510781.45380.7018471850966283088.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250807121349.460862-1-colin.i.king@gmail.com>
+References: <20250807121349.460862-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] power: supply: 88pm860x: make fsm_state array
+ static const, simplify usage
+Message-Id: <175719510782.45380.3925400276927678009.b4-ty@collabora.com>
 Date: Sat, 06 Sep 2025 23:45:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,20 +51,23 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 05 Aug 2025 11:33:35 +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+On Thu, 07 Aug 2025 13:13:49 +0100, Colin Ian King wrote:
+> Don't populate the read-only array fsm_state on the stack at run time,
+> instead make it static const, this reduces the object code size as
+> the data is placed on the data segment and this removes the need to
+> have code to set the array up on each call.
 > 
+> Note that making the size of the strings to a more optimal 11 bytes long
+> does not seem to reduce the overall size. Making the array an array of
+> pointers to the strings increases the code size due to the dereferencing
+> overhead.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] power: supply: Remove error prints for devm_add_action_or_reset()
-      commit: 32f350d58544e2529dc8798275684e97f0a2df6f
+[1/1] power: supply: 88pm860x: make fsm_state array static const, simplify usage
+      commit: cb03556acf83b235dfb2e9f86e14f5e5b8a5f1e7
 
 Best regards,
 -- 
