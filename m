@@ -1,132 +1,161 @@
-Return-Path: <linux-kernel+bounces-803966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D98B46807
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF8FB46809
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD1A7C05E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF0FA4440B
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D69B1A316E;
-	Sat,  6 Sep 2025 01:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C6D1A9F86;
+	Sat,  6 Sep 2025 01:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeGEp8jM"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaVgRrDJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E70A55;
-	Sat,  6 Sep 2025 01:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF8718BC3D;
+	Sat,  6 Sep 2025 01:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757122510; cv=none; b=SvOQhs3T55XCjJRCcyRhBFWE/08Ym2IPS22KqRyWwcgUa+2Ca+F8GQuplpgJDO3ukiyhC7/rZ8B3Vm4OmJeyHtaIGbK4/r7DnYrMJ2hrfZOwXTdh7i3X69/g90P3w4xIHKnAPKK/fvT84l/y1ZA7C8Tlc/Ll7ui87G3I8xyOv9I=
+	t=1757122829; cv=none; b=i980qwZXmRXM6hEfnCUhW5YF+KyxXx/LHJGSwLxLrGJ1hqTn/OKpeSwu/Djm1kJjjBIkzeEEOUmtiA295YJMbCFivIkEGJnsl8hIG35kVq43nPiEJT6KbhXWuJWzpkMP9BMEJmHSSaqSnKzQroE99gruXQkupBw96woz1oyeezo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757122510; c=relaxed/simple;
-	bh=yuxno6aCRHrUWvFqeYUtAlBYHeeI/Dg5Qu4SNRdlRG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=elRdrBCKQmlP0NvK2PgmrnEYta8qXJ1UGV6yfauX2qF5HAR0tdnHyxlIReICqou04j0ZvnmmGx9c5o0pQ1q8S9J3gQ7ZXMPy0YhrEMBjdH1hDPajgLpzsh+g+85wL00mKWR0TUsotZdscOaNi+KbNZwTkniZirffoFkRCcwOuZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeGEp8jM; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cebce2f78so3295808a12.1;
-        Fri, 05 Sep 2025 18:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757122507; x=1757727307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CqNxXQ4nHpsF+qXR4Dx8odJeFWSsZU+70lFnX5QCDhY=;
-        b=jeGEp8jMxr/onFev5Fc6AmzIF/fLFNxmCkJgXbo5o4XdKkSZA5HMxTTLwYMAWuLvDH
-         PxqYd5VTSNAzwulzmLBkSFc2Q46JLg/+DPxh717qiBXLTrpMbX0mF3QlGXvbsOHg0o4/
-         7ZOO2zhOn42LYFCA+gxJw6+iKAguZmPsa/J9Fma4N2qo7TUUUfO5hTxTDSxt70oXl/CJ
-         m0ApOYioNVzsfBZADIL7fcPjJ8h8hQmJsIUnMeO4BLfkdsqjDHjjNH0PXeB8XwyP0piS
-         wrrBYzZaYqCDDZNHgxE5wD7mTbnhC7VQ3nNsFoBX+gp8F+yv1z9r+tsIq8B+O0ZT5RBh
-         gHAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757122507; x=1757727307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CqNxXQ4nHpsF+qXR4Dx8odJeFWSsZU+70lFnX5QCDhY=;
-        b=O52ivj/4oZLbdVd6YIdyVJkVadzg77kfdrPi302wukxhz2nSCovJh/OjR2WB9y+RQx
-         UXehByEXmJeCUqETOJvLUVUvjsQqZzuwuYNRBD1XJz1F/7b5YOd0aIpK325MMZ17Zpaw
-         3etIksbhxpoyi8nkmMCPTNcc2NQhE0Hgnl73fKkupbhJjKfZ7zNJk+OyHtZW9lpnWlxz
-         aMuooSTDOVrA6ZzPVeLy9TYMkI1x2mT35diWbwqdqXkYj7MF1gJ7443HKx3ImDvP01Xf
-         D2XpF04SRIj8vOXSrwByEQ6Iv6ciK4tShYjJAjP8i0Vl3x302vqeyPOHASsM8a9gUyc/
-         2RrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmCkZn/VHbRAeWvNu+W+kAvTvYX6AfrvtRYHVVJF8U/dVFKGxpM+hrKxfr2iHWDpyiBvPfsTLWdoMlYhBJ@vger.kernel.org, AJvYcCWNZFAbh0dX+ndzghR7ycrT2hrI7bokU6mxbSahd1fXQH3hLE1B90kq1Ui2s0qFACDRSRelbzHtK3DA@vger.kernel.org, AJvYcCX9bqhHwH4asXug3vulYII1rn1+IauhfmxOV+9o4UOaQ4i2eGPuBEPNToY8byErOioojyCi89Z+FHr3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwXqQ2YYY21M6YU5pYNS8TT7RZuhVP7FnZj/yxw17WG0sPXTGd
-	SiIKt0NHtvskCyDZwEYNuGHeFOLNaNNf6tsfyU6FsiIoz02Fch5/kfXy0MPJ+E2/UNJgz8z/YQH
-	H9MR8YwHY8O7R+vxljsSW0Eg8lIINF998xYqaPX5xWUqw
-X-Gm-Gg: ASbGncsXi3R+CHUOkXIu3TeLQ8qlHL9xkoLskPeFTiJWvmGAhtwgRJI8Q16j4U86Jlt
-	veqqNaapvE1kPSsQ7KXtJjf81GNaAMD+76fMj9fQnpieIimc/ELFb+e/YAn7ksmzSqFZuEtQlcF
-	VFst1u45MalIQz02wAy1pDM+tQvWA/9A2zjyrOix3ZcawNwrP2T00S2Ok6xoaGn8B1RUoWorG2u
-	0fwS+RVDxN6w9vXIg==
-X-Google-Smtp-Source: AGHT+IHUk2XfEP3oZ1qlnnJyiPfNm42Q4P5RUupaRScX2mRrTgQl+/WpyWfrV8JDjZaSVCFI462i2vBCUsBzJ3JREIg=
-X-Received: by 2002:a05:6402:370d:b0:61c:5cac:2963 with SMTP id
- 4fb4d7f45d1cf-6237f944ec1mr747810a12.29.1757122507114; Fri, 05 Sep 2025
- 18:35:07 -0700 (PDT)
+	s=arc-20240116; t=1757122829; c=relaxed/simple;
+	bh=qBPngzmvEW0XrVGmLUiiqF/SwPlUqkzMiy9zfS+M2w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FWCljz5HuAEJtcrc+I5kymy0Fo8W5eN5mzyGzvlIwhGn3GbqsdNT9X+SH1yJFqFyuj64iRR0oqHko94t6dz90hXG7sRqn/re8f0aRyVBNFw5aGRxm9X3GtJjtHAQ+BzYS9ex8cfFlsLFalwijwTZYAVfYd/onEjR5GGX1MAC7jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FaVgRrDJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181FDC4CEF1;
+	Sat,  6 Sep 2025 01:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757122828;
+	bh=qBPngzmvEW0XrVGmLUiiqF/SwPlUqkzMiy9zfS+M2w8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FaVgRrDJzOgLo9cwMZQPVbZgS7vsp9jMWCOj3SThhK21a6LmJrhA4UCAXmQUaGpJ4
+	 82RFqfG7PA4RqkOr2pDcQLLres22YANrAzp9DbDjvV9MtcDRHcwTmrEvj9QGtHIUv6
+	 3Vv2AyWFuj6cFNzW0v74CmozWEKtGFi0n7MIV4/uA0MkpfogOqLxZdfZECpswI54UE
+	 vu7cMpI96VMdZtPWT7avo1vpLidTR02aqo344jAPw1i0WlfziaQdEygD/zbHvCwfd5
+	 biRZJnm9/IGPZjLoxASKyVXDqk0G9xLl42nUYfDwGNLm+wrvV6pN5ZIyuMhJNF3YVz
+	 AdIMs+JmXzRFA==
+Date: Fri, 5 Sep 2025 18:40:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: <netdev@vger.kernel.org>, <andrew+netdev@lunn.ch>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH net-next v4] amd-xgbe: Add PPS periodic output support
+Message-ID: <20250905184027.0b36d81b@kernel.org>
+In-Reply-To: <20250903174953.3639692-1-Raju.Rangoju@amd.com>
+References: <20250903174953.3639692-1-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905132328.9859-1-cn.liweihao@gmail.com> <20250905132328.9859-3-cn.liweihao@gmail.com>
- <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
-In-Reply-To: <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
-From: =?UTF-8?B?5p2O57u06LGq?= <cn.liweihao@gmail.com>
-Date: Sat, 6 Sep 2025 09:34:51 +0800
-X-Gm-Features: Ac12FXz_ebvQ7hvtXykd69gMxtD2syeHiyJATPrpJ61FnCFXWiMfi64X3YV7b4Q
-Message-ID: <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
- and CLK_I2S_8CH_FRAC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Wed, 3 Sep 2025 23:19:53 +0530 Raju Rangoju wrote:
+> -		 xgbe-hwtstamp.o xgbe-ptp.o \
+> +		 xgbe-hwtstamp.o xgbe-ptp.o xgbe-pps.o\
 
-Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=885=E6=
-=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 05/09/2025 15:23, WeiHao Li wrote:
-> > We need a clock id to assign clock parent when use i2s 8ch as audio
-> > device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can get
-> > frequency we want.
-> >
-> > Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
-> > ---
-> >  include/dt-bindings/clock/rk3368-cru.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindin=
-gs/clock/rk3368-cru.h
-> > index b951e29069..795e721957 100644
-> > --- a/include/dt-bindings/clock/rk3368-cru.h
-> > +++ b/include/dt-bindings/clock/rk3368-cru.h
-> > @@ -183,6 +183,9 @@
-> >  #define HCLK_BUS             477
-> >  #define HCLK_PERI            478
-> >
-> > +#define CLK_I2S_8CH_PRE              500
->
-> 479
->
-> > +#define CLK_I2S_8CH_FRAC     501
->
-> 480, no?
->
+nit: missing space before the backslash?
 
-Neither of these clocks belong to the previous grouping in terms of
-type, so I chose to start with a new integer id here.
+>  		 xgbe-i2c.o xgbe-phy-v1.o xgbe-phy-v2.o \
+>  		 xgbe-platform.o
+>  
+> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-common.h b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+> index 009fbc9b11ce..c8447825c2f6 100644
+> --- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
 
-Yours,
-WeiHao
+>  /* MAC register entry bit positions and sizes */
+>  #define MAC_HWF0R_ADDMACADRSEL_INDEX	18
+>  #define MAC_HWF0R_ADDMACADRSEL_WIDTH	5
+> @@ -460,8 +476,26 @@
+>  #define MAC_TSCR_TXTSSTSM_WIDTH		1
+>  #define MAC_TSSR_TXTSC_INDEX		15
+>  #define MAC_TSSR_TXTSC_WIDTH		1
+> +#define MAC_TSSR_ATSSTN_INDEX		16
+> +#define MAC_TSSR_ATSSTN_WIDTH		4
+> +#define MAC_TSSR_ATSNS_INDEX		25
+> +#define MAC_TSSR_ATSNS_WIDTH		5
+> +#define MAC_TSSR_ATSSTM_INDEX		24
+> +#define MAC_TSSR_ATSSTM_WIDTH		1
+> +#define MAC_TSSR_ATSSTN_INDEX		16
+> +#define MAC_TSSR_ATSSTN_WIDTH		4
+> +#define MAC_TSSR_AUXTSTRIG_INDEX	2
+> +#define MAC_TSSR_AUXTSTRIG_WIDTH	1
+>  #define MAC_TXSNR_TXTSSTSMIS_INDEX	31
+>  #define MAC_TXSNR_TXTSSTSMIS_WIDTH	1
+> +#define MAC_AUXCR_ATSEN3_INDEX		7
+> +#define MAC_AUXCR_ATSEN3_WIDTH		1
+> +#define MAC_AUXCR_ATSEN2_INDEX		6
+> +#define MAC_AUXCR_ATSEN2_WIDTH		1
+> +#define MAC_AUXCR_ATSEN1_INDEX		5
+> +#define MAC_AUXCR_ATSEN1_WIDTH		1
+> +#define MAC_AUXCR_ATSEN0_INDEX		4
+> +#define MAC_AUXCR_ATSEN0_WIDTH		1
+
+We have a lot of completely unused defines here....
+
+>  #define MAC_TICSNR_TSICSNS_INDEX	8
+>  #define MAC_TICSNR_TSICSNS_WIDTH	8
+>  #define MAC_TECSNR_TSECSNS_INDEX	8
+
+> +int xgbe_pps_config(struct xgbe_prv_data *pdata,
+> +		    struct xgbe_pps_config *cfg, int index, bool on)
+> +{
+> +	unsigned int value = 0;
+> +	unsigned int tnsec;
+> +	u64 period;
+> +
+> +	tnsec = XGMAC_IOREAD(pdata, MAC_PPSx_TTNSR(index));
+> +	if (XGMAC_GET_BITS(tnsec, MAC_PPSx_TTNSR, TRGTBUSY0))
+> +		return -EBUSY;
+> +
+> +	value = XGMAC_IOREAD(pdata, MAC_PPSCR);
+> +	value &= ~get_pps_mask(index);
+> +
+> +	if (!on) {
+> +		value |= get_pps_cmd(index, 0x5);
+
+..and yet there are constants in the code which do not have a define.
+
+
+> +		value |= PPSEN0;
+> +		XGMAC_IOWRITE(pdata, MAC_PPSCR, value);
+> +
+> +		return 0;
+> +	}
+> +
+> +	XGMAC_IOWRITE(pdata, MAC_PPSx_TTSR(index), cfg->start.tv_sec);
+> +	XGMAC_IOWRITE(pdata, MAC_PPSx_TTNSR(index), cfg->start.tv_nsec);
+> +
+> +	period = cfg->period.tv_sec * NSEC_PER_SEC;
+> +	period += cfg->period.tv_nsec;
+> +	do_div(period, XGBE_V2_TSTAMP_SSINC);
+> +
+> +	if (period <= 1)
+> +		return -EINVAL;
+> +
+> +	XGMAC_IOWRITE(pdata, MAC_PPSx_INTERVAL(index), period - 1);
+> +	period >>= 1;
+> +	if (period <= 1)
+> +		return -EINVAL;
+
+I presume that the writes don't matter until we set PPSCR, so returning
+an error after performing some writes already is not a bug. But still
+it looks s little odd. Especially checking period twice. Why not
+calculate the period first, check that it's not <= 3, and then write
+out the entire config only once we know that?
+
+Thanks for redoing the mask helpers BTW I think this is much cleaner.
+-- 
+pw-bot: cr
 
