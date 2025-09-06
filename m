@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-804501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1212DB477FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 00:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4565B47810
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 00:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C57B97AE39B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47786A048BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4CE1D7E41;
-	Sat,  6 Sep 2025 22:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB35021B19D;
+	Sat,  6 Sep 2025 22:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WD3MTiEV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdUqjPcC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DF323BF9B;
-	Sat,  6 Sep 2025 22:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEE8AD4B;
+	Sat,  6 Sep 2025 22:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757197564; cv=none; b=BTkvBzo6MS0eUS6HTPEaLz8/0WCNSxuvUZ3lqHOmoNu2vkh+ObHD/rr67mIiu3L9xFps3kq9iYABy5dvIOe6SDtX2Co71PRHSPsKdhAMlywbXs7mUuR8vX+0rx8K/xh+Abftr/vWxDDus8leQgK5cbRMDzLmJv3xLx7qke4/tBc=
+	t=1757198851; cv=none; b=UWFtvpowcB9kzzMf/UiUPuIr5MjN1mJsYdLnMxZE0VD+cykwA8GZVnpUtjsXuSZqLFDM9xJvhoOdP6OBzh9cMS9DzDn3T9OHf8m3lFSZLGkN2WqBETZW5wZSxyW8e9yYFsQSV/ISAVdFlvv1TuK+O0kLiR8Wl3hxyjaMgaCsXvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757197564; c=relaxed/simple;
-	bh=JqldWRPERw4IKoFvl0pMtg74CW2Zzkauedrn/ZTVcd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFb0/aG4Rnzw6vFp9t4CJFu4PqYjDidWypnPHgjI2B6xOW1yzIjOdn6blPBFn1VBt5G+2or09dp5DsXlz4jQacOl+CCoQC6Y3PiYoTQ89wEPEw1+Qxtlkom/88+f4BbbM6GpaZ5TKkZMu7IWa6zMUC3Jw13Rc9QJ96AlXREqNJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WD3MTiEV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 731A340E0173;
-	Sat,  6 Sep 2025 22:25:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Czw7wzyQ6SdZ; Sat,  6 Sep 2025 22:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757197550; bh=+xt7zC4IHQ+iWsE/ZnrUTR3tvhZamW/XzIhStal409Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WD3MTiEV8OF4augBQVbQgNGLghdqY3TGMGBKaP04329b5L0DfzUVoj6QisowlNw4q
-	 /IMj/MOBJpym9nNPw614ZhpVoMP5w1yuQF5kPartCXJqMa8Y8XYxvSfck0Q/01W3B3
-	 nn8KSHr9Gl9zpWcYyX9FfXtO6rv8Acj0x8J7cOCKSj7mneCH1pBnU4tALMr//aSRiV
-	 JsarJg70bFFzngYonXdqFYcd12mk/nnjOgMSn6aBM+bE/OriCnRs6R4Hulgb2qz6O/
-	 VW7Lr/J5fCtr7CVUTwUERpePji+KXecc2VZ6m6Qvyhs18CQK1KPjx4x8gXZ046Pk5J
-	 3ue3KUJaHHsifVJ3uZy3f1QgGhX0OBZHyL7GvLXsHTTNOuD9O4weesISUfuLDcM5K1
-	 OqlaKTYRVzaGe4EITMImM1OnWIUj6FuCaK98tfb5WxnD2Z7ieoNWkgThfI0dvol3Vq
-	 YlxqNXWxHfq2LA3HPkRSY65mcoR7Eh6E0HB4bJWEmt5xWen+K9E4umS1F/OD92hhGH
-	 x/tsRl/3VkdOQ6cX5+jIkYx3cXzNLyCOeR/mpL4kDIhRgHxR4HfeXCIvAIa8Hi2rTU
-	 w+8vl+o4wHFs8OKdpAX5CGtYq90mFZUnHa2qU7Zed/GPtfOzClrq8bmmTPkBK70yan
-	 XdV58lIASbpHeb2xhWiQxkN8=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id AA3B540E00DD;
-	Sat,  6 Sep 2025 22:24:29 +0000 (UTC)
-Date: Sun, 7 Sep 2025 00:24:20 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: sohil.mehta@intel.com, baohua@kernel.org, david@redhat.com,
-	kbingham@kernel.org, weixugc@google.com, Liam.Howlett@oracle.com,
-	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com,
-	trintaeoitogc@gmail.com, axelrasmussen@google.com,
-	yuanchu@google.com, joey.gouly@arm.com, samitolvanen@google.com,
-	joel.granados@kernel.org, graf@amazon.com,
-	vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org,
-	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com,
-	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com,
-	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz,
-	kaleshsingh@google.com, justinstitt@google.com,
-	catalin.marinas@arm.com, alexander.shishkin@linux.intel.com,
-	samuel.holland@sifive.com, dave.hansen@linux.intel.com,
-	corbet@lwn.net, xin@zytor.com, dvyukov@google.com,
-	tglx@linutronix.de, scott@os.amperecomputing.com,
-	jason.andryuk@amd.com, morbo@google.com, nathan@kernel.org,
-	lorenzo.stoakes@oracle.com, mingo@redhat.com, brgerst@gmail.com,
-	kristina.martsenko@arm.com, bigeasy@linutronix.de, luto@kernel.org,
-	jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com,
-	mhocko@suse.com, ada.coupriediaz@arm.com, hpa@zytor.com,
-	leitao@debian.org, peterz@infradead.org, wangkefeng.wang@huawei.com,
-	surenb@google.com, ziy@nvidia.com, smostafa@google.com,
-	ryabinin.a.a@gmail.com, ubizjak@gmail.com, jbohac@suse.cz,
-	broonie@kernel.org, akpm@linux-foundation.org,
-	guoweikang.kernel@gmail.com, rppt@kernel.org, pcc@google.com,
-	jan.kiszka@siemens.com, nicolas.schier@linux.dev, will@kernel.org,
-	andreyknvl@gmail.com, jhubbard@nvidia.com, x86@kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 11/19] x86: LAM initialization
-Message-ID: <20250906222420.GBaLy0lL5lHcVlYU0C@fat_crate.local>
-References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
- <ffd8c5ee9bfc5acbf068a01ef45d3bf506c191a3.1756151769.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1757198851; c=relaxed/simple;
+	bh=M7YBY+PlDsud3ulKo1KwxdTk5HjWLgupena6NkeHIHw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OElcDoK2UczCJRLZ5NqwWNdN+EfEBsxyjKl/k3voDpybsCBb+vBS6WferU2kWP4GAZD6ArO6rxSUXhyooC4+IQDD9YuSu6VJ3+aaxAdPEp9zCLOYXVuVtlp8FyrZ50IETloabeK6HV4n5rLpXQEY38h3QpeZvfsWGUPzKK7LjII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdUqjPcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5ACC4CEF5;
+	Sat,  6 Sep 2025 22:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757198848;
+	bh=M7YBY+PlDsud3ulKo1KwxdTk5HjWLgupena6NkeHIHw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZdUqjPcCFBZU+8Sntt/qoKCyGcPgXjIZ2nTgx/DSehkzWZ2IwIiXNiCIbXnKUupbc
+	 3mlL4BU8Cwe2G4TRNuVG1Z7DXnsT3XXTY4c1XLiUQ5jRLrHsFOEyLNAgblpxoP+d22
+	 crQuz6CGyFEcVfB3VslIAJ4yN0IlAe1pRjUe+ZLTPSVnc7lM7j0yxoJzpnpV7pk4QN
+	 +7YcDnq0xMqdggvftm7sNM8YX5YbgoZznKbEiubiT4a51Nv2TYAqNLYtSuPxM4D8qZ
+	 YZJ3S3yDLOTghMAKTp2Ezq9kI1ns0tScHi1rYFwB37MwGhwsZaXPlMkkZof3KhGV8r
+	 RR8ja7xVL8+1g==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30cce5be7d0so1678577fac.0;
+        Sat, 06 Sep 2025 15:47:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMg6PGozZbfj9ZWAN6QGZSn18HPHF0kDzACXoRLllgmwKLybATD70hZ2KWcZXUEs6bd+zgFi0Jde4lArY=@vger.kernel.org, AJvYcCXB0b9GezmdYzlZPFxGtCLWZ5zywmjY0aWdqlIe06bccFLvdSAuWOUtUoNE5L9ffgt0Q0qLgdiVYC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb0+ujRzlH6x/OnH1VXze1O51PRehsxd8cTmjBnP5/LvjZ7kdF
+	/60LlpAi68A4tBC+dmgyu/eRgqXEsdNnPCCRiAqZ+FYAwOadXGDbua9EB2QPFulTKyGsdbzke2y
+	7MFJP21a2WG01RRcKbmkm/xanFneTjMg=
+X-Google-Smtp-Source: AGHT+IHBlQQx0DcSn8WrGT4miIP8Bx5UtUX4jRnhfFKte1qQJwWT9s2fgjzoWbt6eQoAFyWjweW4FuIn9+Y2+ALRETo=
+X-Received: by 2002:a05:6820:2222:b0:61e:2938:640f with SMTP id
+ 006d021491bc7-62178ab6dd7mr1273240eaf.8.1757198848123; Sat, 06 Sep 2025
+ 15:47:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ffd8c5ee9bfc5acbf068a01ef45d3bf506c191a3.1756151769.git.maciej.wieczor-retman@intel.com>
+References: <20250530-rk3588-dfi-improvements-v1-0-6e077c243a95@collabora.com>
+ <20250530-rk3588-dfi-improvements-v1-2-6e077c243a95@collabora.com>
+ <CAGTfZH1DzC9odJVDfYCYw4+Ph5_1CjmrpqR_NUFh1SsVVVLM0g@mail.gmail.com> <24752023.ouqheUzb2q@diego>
+In-Reply-To: <24752023.ouqheUzb2q@diego>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Sun, 7 Sep 2025 07:46:50 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH3RikS1XRkxjs6vU3yvw4kayRK2u17_zpqodioKJF5mNA@mail.gmail.com>
+X-Gm-Features: Ac12FXxhJBnicQpzbdTVw-Dc0dR90IgnZqqaWnW_MXUfhdwqDh4MQlNQ-InNBH0
+Message-ID: <CAGTfZH3RikS1XRkxjs6vU3yvw4kayRK2u17_zpqodioKJF5mNA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PM / devfreq: rockchip-dfi: add support for LPDDR5
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 10:24:36PM +0200, Maciej Wieczor-Retman wrote:
-> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-> index bb57e93b4caf..756bd96c3b8b 100644
-> --- a/arch/x86/mm/init.c
-> +++ b/arch/x86/mm/init.c
-> @@ -763,6 +763,9 @@ void __init init_mem_mapping(void)
->  	probe_page_size_mask();
->  	setup_pcid();
->  
-> +	if (boot_cpu_has(X86_FEATURE_LAM) && IS_ENABLED(CONFIG_KASAN_SW_TAGS))
+Hi,
 
-cpu_feature_enabled()
+On Sun, Sep 7, 2025 at 3:38=E2=80=AFAM Heiko St=C3=BCbner <heiko@sntech.de>=
+ wrote:
+>
+> Hi,
+>
+> Am Samstag, 6. September 2025, 18:09:53 Mitteleurop=C3=A4ische Sommerzeit=
+ schrieb Chanwoo Choi:
+> > I'm sorry for late reply.
+> >
+> > Looks good to me. But, this patch contains the change of following head=
+er.
+> > If there are ACK about change in include/soc/rockchip, I'll merge this =
+series.
+> >
+> > include/soc/rockchip/rk3588_grf.h    |  8 +++-
+> > include/soc/rockchip/rockchip_grf.h  |  1 +
+>
+> done :-)
 
-> +		cr4_set_bits_and_update_boot(X86_CR4_LAM_SUP);
-> +
->  #ifdef CONFIG_X86_64
->  	end = max_pfn << PAGE_SHIFT;
->  #else
-> -- 
+Thanks.
 
-Also, for all your patches' subjects and text:
+Applied it.
 
-Pls read
+(snip)
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-subject
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
-
-and fixup.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
