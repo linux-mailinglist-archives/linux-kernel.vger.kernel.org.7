@@ -1,144 +1,299 @@
-Return-Path: <linux-kernel+bounces-804325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75631B47218
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FA9B47245
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3CE1BC51C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824A8A07B1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E2C27FD68;
-	Sat,  6 Sep 2025 15:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD922F3C30;
+	Sat,  6 Sep 2025 15:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKYW6YY4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6MZJCsO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED5C139D1B;
-	Sat,  6 Sep 2025 15:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E542AE84;
+	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757173074; cv=none; b=nHZ7AXT9GKtETbu0qGPjSo0hwHKv6FQpSF7AFrYZI7h3FtkC0M8VMyYwCzvkMJK4bwrxJssmaY66NKWBJFH3cgUfh+lwnnK6dK5h0gqV/A8wCDwyNSwrCk10kqCtqcnbfB9DBcumEDlHkZHHC9XM2RzHXh7ia7MdKo9mOIPGDEM=
+	t=1757173419; cv=none; b=g9H9F/wAFnboVrPgGjgvZP0SCYSonl60eOwEID/E1U/w4onkp9TiTaKf82XDNd2zbPCnQSVqZXobzSoFoN+AAQdpeq2cG28p5d0JC/lpe3wxM73uCFTkkmw/klr9mUqpk+NwG5XE7QeFFU5DpWxW8osVtzkXAyXDTMs2dyya7MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757173074; c=relaxed/simple;
-	bh=eXqndn9A8d2Q3IcwKZULqQ6qeZg1mGIiF7oNPpimTcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ha1wdfJ6g4mqEpx+YsEzt7AdhR86UJQMFCCMWb2aZWoLO1KePEC5gWohv63liQWlAL6un/95jaEgw+PRTTXQF4NQa+0MeN//RNsVc7cmg1LYbINnEQ0Mdbt89DOonGKrehnp3nJ6gMsNNQAKQzgwFEYc+TJ/HiBG4kxwKP2q7FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKYW6YY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A68CC4CEE7;
-	Sat,  6 Sep 2025 15:37:47 +0000 (UTC)
+	s=arc-20240116; t=1757173419; c=relaxed/simple;
+	bh=B2PmqO8jFsYcp9IfYjXmvUC+hdyx9Na0xGIpQfiCq3E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RmGN/BT4qHhRfKFXyKxdof2XMCoLjuZLqDYn0c26cxnUWcTBIkpLA/v8F5Oh/z27FCk1vg9r3MqEdA+ofjFAKA9xtIiREJTPPJbtHVZ/p9fPwjAOyDJsVoohBxj2F3yEFhJ1Iq9oA6k0x7l9Nd0+CrY1jc2bFUgUYFzplzW4eIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6MZJCsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F90FC4CEE7;
+	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757173074;
-	bh=eXqndn9A8d2Q3IcwKZULqQ6qeZg1mGIiF7oNPpimTcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKYW6YY4tPWJv/ZQnUeI7fcMKU9JzBDQphos9U2d7sKnANJLDyHq1ldi0w9Sjku4e
-	 Fz2M1qvzLf/EtldVTmcS/gO521zho7kqkI8nmM05fkADBS3yqKloP687Nfn+FFs4tm
-	 YqQcQbRcNiObYnSfl7OzCPDmmGgl/FWo+9KNXB29m9GpEOkCWLbkA93+t6471MbOSO
-	 Op7z7I+xx8muUcjETfDWg+qSseX9cMYIBraD6Q1C52jHzbYzF3l4nqhw8cWYnM6A//
-	 cp2+xaeBLuh1ozk1JXv/5knstboMxTQKUkAzEEOAl+5w3CsrB9uDv/GJmIHzrOFeIE
-	 ruveltpRtbCtg==
-Date: Sat, 6 Sep 2025 21:07:41 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: David Box <david.e.box@linux.intel.com>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	ath12k@lists.infradead.org, ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 2/8] PCI/ASPM: Fix the behavior of
- pci_enable_link_state*() APIs
-Message-ID: <rci6ku374tvbco2leey3ccyjf4r6bfa6mdksasn2c26v2a5ydc@xqbccsco3x5o>
-References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
- <20250825-ath-aspm-fix-v2-2-61b2f2db7d89@oss.qualcomm.com>
- <f644fc83-31cc-1f0e-58cf-7c007e6173e4@linux.intel.com>
- <qfw7nv53hmy6whxnf4zqfdtvjzkdxkvxn7eghuxzuuojmvxl34@sxw2jvxze4wm>
+	s=k20201202; t=1757173419;
+	bh=B2PmqO8jFsYcp9IfYjXmvUC+hdyx9Na0xGIpQfiCq3E=;
+	h=From:Subject:Date:To:Cc:From;
+	b=h6MZJCsO3bY+g0PaDB3Jo/YumM41bXU4GFkK8br8wcMHwX2ucGQMQ1teTnlpgK2Nx
+	 DtiHEndmhKIC5WkvLNktB/ngDwqwgemSW7mrVBCqLaLVZhEj8T3lYjuZxY/nWMu6b8
+	 HM2TRzxAhODw+oYIW4KbuepEjmmabms12hDkESOtG+4KGgPh+cQMLCuzh5oKqS2Utt
+	 LQy9MKm8Ffx/Rst4euC55clR10WEogAo1tje25DL9Rx77qAI+RlDN+BI0BbPPGBmHp
+	 Y/m2j0WZFe+0n2hSjcJCghGvX6Ew7nJww+w374mUQOras5mecxTfT5GdwvyIjiFUEK
+	 MP68H778hDStg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EB6CA0FED;
+	Sat,  6 Sep 2025 15:43:39 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Subject: [PATCH v2 00/22] Apple Silicon USB3 support
+Date: Sat, 06 Sep 2025 15:43:13 +0000
+Message-Id: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <qfw7nv53hmy6whxnf4zqfdtvjzkdxkvxn7eghuxzuuojmvxl34@sxw2jvxze4wm>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJJWvGgC/1XMQQrDIBCF4auEWdeiU1qlq94jZKFmEqVFgwZpC
+ N69NtBFV8M/8L4dMiVPGe7dDomKzz6GFnjqwDodZmJ+bA3I8coVcqZXu7iN3ZiQzEjSE14MCWm
+ hLZZEk38fWj+0dj6vMW0HXsT3+3PEn1ME4+2ioVELhUY9npQCvc4xzTDUWj/mE1lwpwAAAA==
+X-Change-ID: 20250820-atcphy-6-17-b7eaf23be17c
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+ Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
+ Sven Peter <sven@kernel.org>, stable@kernel.org, 
+ Hector Martin <marcan@marcan.st>, R <rqou@berkeley.edu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10497; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=B2PmqO8jFsYcp9IfYjXmvUC+hdyx9Na0xGIpQfiCq3E=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8aesMlmluHV2zTUZB173myaePexf/uspYEqlw47XHrSw
+ vPrRlxYRykLgxgHg6yYIsv2/famTx6+EVy66dJ7mDmsTCBDGLg4BWAiCVwM/3OWcm7WeaoboSbN
+ OKvVIqXK+lNLnl6WXW/gfKs1EQeXXWb4w98TGXD49Mbirn5d2ecfD34x2D5z6zr52RvXl0qmxlo
+ kMwAA
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-On Tue, Aug 26, 2025 at 02:24:05PM GMT, David Box wrote:
-> On Tue, Aug 26, 2025 at 03:55:42PM +0300, Ilpo Järvinen wrote:
-> > +David
-> > 
-> > On Mon, 25 Aug 2025, Manivannan Sadhasivam via B4 Relay wrote:
-> > 
-> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > 
-> > > pci_enable_link_state() and pci_enable_link_state_locked() APIs are
-> > > supposed to be symmectric with pci_disable_link_state() and
-> > > pci_disable_link_state_locked() APIs.
-> > > 
-> > > But unfortunately, they are not symmetric. This behavior was mentioned in
-> > > the kernel-doc of these APIs:
-> > > 
-> > > " Clear and set the default device link state..."
-> > > 
-> > > and
-> > > 
-> > > "Also note that this does not enable states disabled by
-> > > pci_disable_link_state()"
-> > > 
-> > > These APIs won't enable all the states specified by the 'state' parameter,
-> > > but only enable the ones not previously disabled by the
-> > > pci_disable_link_state*() APIs. But this behavior doesn't align with the
-> > > naming of these APIs, as they give the impression that these APIs will
-> > > enable all the specified states.
-> > > 
-> > > To resolve this ambiguity, allow these APIs to enable the specified states,
-> > > regardeless of whether they were previously disabled or not. This is
-> > > accomplished by clearing the previously disabled states from the
-> > > 'link::aspm_disable' parameter in __pci_enable_link_state() helper. Also,
-> > > reword the kernel-doc to reflect this behavior.
-> > > 
-> > > The current callers of pci_enable_link_state_locked() APIs (vmd and
-> > > pcie-qcom) did not disable the ASPM states before calling this API. So it
-> > > is evident that they do not depend on the previous behavior of this API and
-> > > intend to enable all the specified states.
-> > 
-> > While it might be "safe" in the sense that ->aspm_disable is not set by 
-> > anything, I'm still not sure if overloading this function for two 
-> > different use cases is a good idea.
-> > 
-> > I'd like to hear David's opinion on this as he grasps the ->aspm_default 
-> > vs ->aspm_disable thing much better than I do.
-> 
-> The concern I see is that this would override the init-time blacklist which is
-> set in pcie_aspm_sanity_check() and only consulted during initialization.
-> __pci_disable_link_state() doesn't do this. It ORs in bits to aspm_disable.  By
-> contrast, this change would clear bits from aspm_disable in the enable path,
-> which allows ASPM to be enabled on links that pcie_aspm_sanity_check()
-> determined should be disabled.
-> 
-> But I noticed the sysfs path, aspm_attr_store_common(), already permits this
-> override. That may be unintentional though since the comment in
-> pcie_aspm_sanity_check() implies the blacklist can only be overridden with
-> pcie_aspm=force. At minimum, that needs to be clarified.
-> 
+Hi,
 
-Thanks for pointing out the blacklist devices issue. I have no concerns with
-pcie-qcom as we are going to drop the pci_enable_link_state_locked() API anyway
-from it. But I'm not sure about VMD as one may still connect pre 1.1 device to
-it and observe issues.
+With the dwc3 glue approach this is starting to look reasonable to me.
 
-So I'll create a separate API for this new behavior and use it with ath drivers
-only since they know what kind of devices they are dealing with and since they
-were changing the LNKCTL manually, there shouldn't be any issue.
+There's still one issue (SuperSpeed devices have a 5 second delay before
+they come up; This has been known for ages and we haven't been able to
+identify the root cause) but otherwise both host and device mode have
+been working quite well across a number of different devices (usb3 only,
+usb3+dp, dp-only, usb4, and the first two combined with a broken c-to-a
+adapter that can trigger a lot of quick plug/unplug events ;)) for me.
 
-- Mani
+With the dwc3 glue driver this series can now also be merged independently
+once it's ready: Patches 1-4 can go through the dwc3 tree, 5-15 through
+tipd, 16-18 should go together through the phy tree, and I'll take the
+DTS changes through my tree. If everyone's happy with the overall
+approach here I can also just send these as individual series.
 
+A tree for testing is again available as apple-usb3-v2 at [5]. 
+
+Changes in v2:
+- Link to v1: https://lore.kernel.org/r/20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org
+- Fixed dt-binding warnings
+- Extended the glue layer to allow control over mode switching
+- Removed quirks added to dwc3 and implemented them as a glue
+  driver instead as suggested by Thinh
+- Dropped snps,dwc3 fallback compatible since this is neither compatible
+  with the glue driver approach nor is this hardware truly compatible
+  with snps,dwc3 unless the bootloader did a lot of heavy-lifting and
+  left everything in just the right state
+- Dropped atcphy dp-only compatible since this can be detected in other
+  ways or just be driven from the dp controller once we upstream that
+- Fixed duplicate #define in TIPD
+- Use ioremap_np when required instead of just skipping
+  dwc3_power_off_all_roothub_ports
+- Dropped the change that added the USB role to typec_mux_state since
+  the new glue driver approach no longer requires this.
+- Cleaned up some leftover TODOs in atcphy and ran clang-format
+- Reworked tunables.c to use a variable sized member and alloc the
+  entire struct directly
+- Shortened debug messages in atcphy
+- Added DTS changes for t8112 and t600x
+- Call typec_unregister_altmode unconditionally as it's NULL-safe
+- Fixed arre -> arr typo in commit message
+- Drop __func__ from cd321x_interrupt debug print
+- Picked up Heikki's r-b tags
+
+Original cover letter:
+
+This series includes changes to dwc3, tipd and a new phy driver to enable
+USB3 on these machines. There's also some preparations to eventually enable
+DisplayPort AltMode and Thunderbolt but those need future work.
+Overall, this entire setup is quite a mess and we've tried to make it work
+for quite a while now and finally came up with this solution here.
+
+The USB3 controller is a very special kind of broken: It never sees any port
+plug/unplug events that should normally arrive directly at dwc3.
+Additionally, it needs to go through a full hard reset for every new connection
+and most mode change. Details on why this is required are in the commit
+description.
+
+On top of that we need to keep the Type-C PHY bringup and dwc3 bringup tightly
+synchronized. If there's a race between the two systems at best the port stops
+working until a system reboot and at worst there's a watchdog somewhere that
+forcefully resets the entire SoC after ~5 seconds. I've only seen the latter
+when bringing up thunderbolt so far but wouldn't be surprised if it happens
+with just usb3 as well.
+
+The entire bringup/bringup is orchestrated by a TIPD variant called CD321x
+found on these machines. Unlike the original chips we however get no control
+over which mode is negotiated or are even able to see the PDOs or VDOs. We only
+get to know once the mode has been negotiated and have to act accordingly. I
+even went as far as dumping the firmware from the chip to confirm this [1][2].
+
+Hector wrote another summary of this early in January as well [3] and this
+series is the only way we've been able to bring these ports up reliably.
+It's not pretty in some places but I have no other idea how to implement this,
+hence the RFC tag. Happy to discuss other approaches as well.
+
+Both the PHY and the TIPD driver already include changes for DisplayPort
+AltMode and USB4/Thunderbolt. These need additional work though but
+since we can't control the mode devices end up in we can already merge
+them now.
+
+I used phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml as a template for the dt-binding
+for atcphy (especially the ports). That was the most recent binding I found for
+a PHY with similar features.
+
+In order to test this you need to run the latest m1n1 master [4] because the
+1.5.0 release does not include the code that lifts the tunables from Apple's
+device tree. A kernel tree for testing is also tagged as apple-usb3-v1 at [5].
+
+If the overall approach here is fine and no one can think of a better way to
+support this SoC I'll drop the RFC and include the dts changes for the other
+M1 and M2 machines as well.
+
+Best,
+
+Sven
+
+[1] https://social.treehouse.systems/@sven/111092587315536174
+[2] https://social.treehouse.systems/@sven/111096589846468888
+[3] https://lore.kernel.org/all/fda8b831-1ffc-4087-8e7b-d97779b3ecc5@marcan.st/
+[4] https://github.com/AsahiLinux/m1n1
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux.git
+
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+To: Sven Peter <sven@kernel.org>
+To: Janne Grunau <j@jannau.net>
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Neal Gompa <neal@gompa.dev>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To: Frank Li <Frank.Li@nxp.com>
+To: Ran Wang <ran.wang_1@nxp.com>
+To: Peter Chen <peter.chen@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: asahi@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-usb@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+
+---
+Hector Martin (5):
+      usb: typec: tipd: Update partner identity when power status was updated
+      usb: typec: tipd: Use read_power_status function in probe
+      usb: typec: tipd: Read data status in probe and cache its value
+      usb: typec: tipd: Handle mode transitions for CD321x
+      arm64: dts: apple: t8103: Mark ATC USB AON domains as always-on
+
+Janne Grunau (2):
+      arm64: dts: apple: t8112: Add Apple Type-C PHY and dwc3 nodes
+      arm64: dts: apple: t600x: Add Apple Type-C PHY and dwc3 nodes
+
+Sven Peter (15):
+      dt-bindings: usb: Add Apple dwc3
+      usb: dwc3: dwc3_power_off_all_roothub_ports: Use ioremap_np when required
+      usb: dwc3: glue: Allow more fine grained control over mode switches
+      usb: dwc3: Add Apple Silicon DWC3 glue layer driver
+      usb: typec: tipd: Clear interrupts first
+      usb: typec: tipd: Move initial irq mask to tipd_data
+      usb: typec: tipd: Move switch_power_state to tipd_data
+      usb: typec: tipd: Trace data status for CD321x correctly
+      usb: typec: tipd: Add cd321x struct with separate size
+      usb: typec: tipd: Read USB4, Thunderbolt and DisplayPort status for cd321x
+      usb: typec: tipd: Register DisplayPort and Thunderbolt altmodes for cd321x
+      dt-bindings: phy: Add Apple Type-C PHY
+      soc: apple: Add hardware tunable support
+      phy: apple: Add Apple Type-C PHY
+      arm64: dts: apple: t8103: Add Apple Type-C PHY and dwc3 nodes
+
+ .../devicetree/bindings/phy/apple,atcphy.yaml      |  213 ++
+ .../devicetree/bindings/usb/apple,dwc3.yaml        |   80 +
+ MAINTAINERS                                        |    4 +
+ arch/arm64/boot/dts/apple/t6001.dtsi               |    1 +
+ arch/arm64/boot/dts/apple/t6002-j375d.dts          |  197 +-
+ arch/arm64/boot/dts/apple/t6002.dtsi               |    1 +
+ arch/arm64/boot/dts/apple/t600x-dieX.dtsi          |  212 ++
+ arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi     |  236 +++
+ arch/arm64/boot/dts/apple/t600x-j375.dtsi          |  275 +++
+ arch/arm64/boot/dts/apple/t8103-j274.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j293.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j313.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j456.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-j457.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8103-jxxx.dtsi          |  137 ++
+ arch/arm64/boot/dts/apple/t8103-pmgr.dtsi          |    2 +
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  105 +
+ arch/arm64/boot/dts/apple/t8112-j413.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8112-j473.dts           |   11 +
+ arch/arm64/boot/dts/apple/t8112-j493.dts           |   12 +
+ arch/arm64/boot/dts/apple/t8112-jxxx.dtsi          |  137 ++
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  105 +
+ drivers/phy/Kconfig                                |    1 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/apple/Kconfig                          |   14 +
+ drivers/phy/apple/Makefile                         |    4 +
+ drivers/phy/apple/atc.c                            | 2214 ++++++++++++++++++++
+ drivers/soc/apple/Kconfig                          |    4 +
+ drivers/soc/apple/Makefile                         |    3 +
+ drivers/soc/apple/tunable.c                        |   71 +
+ drivers/usb/dwc3/Kconfig                           |   11 +
+ drivers/usb/dwc3/Makefile                          |    1 +
+ drivers/usb/dwc3/core.c                            |   16 +-
+ drivers/usb/dwc3/dwc3-apple.c                      |  425 ++++
+ drivers/usb/dwc3/gadget.c                          |    2 +
+ drivers/usb/dwc3/glue.h                            |   14 +
+ drivers/usb/dwc3/host.c                            |    7 +-
+ drivers/usb/typec/tipd/core.c                      |  564 ++++-
+ drivers/usb/typec/tipd/tps6598x.h                  |    5 +
+ drivers/usb/typec/tipd/trace.h                     |   39 +
+ include/linux/soc/apple/tunable.h                  |   60 +
+ 41 files changed, 5192 insertions(+), 64 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250820-atcphy-6-17-b7eaf23be17c
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Sven Peter <sven@kernel.org>
+
+
 
