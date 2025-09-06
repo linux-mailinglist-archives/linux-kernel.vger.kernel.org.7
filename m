@@ -1,89 +1,135 @@
-Return-Path: <linux-kernel+bounces-804166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664CBB46AFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D351B46B04
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013EB3B7D56
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C68F5A5879
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C988227CB35;
-	Sat,  6 Sep 2025 11:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2997A27F732;
+	Sat,  6 Sep 2025 11:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SxdClgEZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgiDmqmX"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3EA18DF8D;
-	Sat,  6 Sep 2025 11:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC325A326;
+	Sat,  6 Sep 2025 11:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757157788; cv=none; b=q+0NtYr4PDO1jeHNPNaYNrbhj6qhFJ7AnTEUFucWqNLLQ8IsYJ/qWH76W0yiJdLAFI0TzpN1s9dF6HqDg3Yz6NQMT84iCE77ObNo2+ddy44CMf+k3VtgOLAcscd6rPlXioDbaYJmmBFV1R2/MjEjeGn6Ia1BT3kDbo6jZhGOkxU=
+	t=1757157903; cv=none; b=WMWYvYPGf6W6WwDimFEtt47wnosPGWgub1nv1pBGUkKhXUJJsEyMOeoHBeY2/3HoaVaCCeAdOco3gCctf7+GqRFtDGN8PSdhSwBP+NBrHkyMGkNLCZEcQRK6x6TIfWjocXCOdAVFPPsEqjryChDDm8/COczBXz28i9ZPqAAwZ9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757157788; c=relaxed/simple;
-	bh=L9+2WEni2nbXwFjfdFAMVWEbqbdgloEAYqjQNq8sd6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZsVzTXbVB2AodATLqICVwc4mkeTa1Q/vdzTnSooAufq+FT8zsycEDfHH8BhhUmf/A958cfjd8356C7OjnpWrUCtrXNPa+RuzmF4SMDZl70naVf9wyDbVNcUFjZd8vKC9kTTxnpD3oOB0bC4YUYJXnXAyoHDSHw2JK3cIs0YAcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SxdClgEZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BA2C4CEE7;
-	Sat,  6 Sep 2025 11:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757157787;
-	bh=L9+2WEni2nbXwFjfdFAMVWEbqbdgloEAYqjQNq8sd6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SxdClgEZa/fMc3yIgcPtqO5hcFl4BNtsjygFVS9EUP43p8uJs6Op1pVLPEZkqHsfn
-	 R5zULYIHCyXSx9ZVz9iKJkvTOtjHIvRnNDa9rMQri9MIstb9XpxJaNOtcMV6SfNT7R
-	 P6LdYE8waoC25NvuemHvNFjAhHhnQ6zsn5OrbJOg=
-Date: Sat, 6 Sep 2025 13:23:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Benno Lossin <lossin@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 0/5] Rust support for `struct iov_iter`
-Message-ID: <2025090657-laboring-entrap-e323@gregkh>
-References: <20250822-iov-iter-v5-0-6ce4819c2977@google.com>
+	s=arc-20240116; t=1757157903; c=relaxed/simple;
+	bh=ct/jNV3YJ6fvjezU8Fzw6M5BNMVQuB9YpzbFHkRJbLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BpOBscvGG9ADuZnhyLKvKiXGcGjwUZZyiI+EadhVmcQ79bzcBnwbCotDedGwO1NvF033TYrSqB0jJQIeUi9/ELUIyes17qBthu03tPkwDEGNhvxmlOM7fWLTbKWhVR1tktVGiMMUfu1YSeFzRCJKNd/yVszmPOjcreweujWnDk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgiDmqmX; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso19861105e9.3;
+        Sat, 06 Sep 2025 04:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757157900; x=1757762700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBOanA6zalGLYYyu9YMahK79U0EvwFc1g3mic7A2XsE=;
+        b=RgiDmqmXLa8FNDPMfXknAcGXchwWe3Qki7YVFJhQ5BkxXPtEbmKjJU6E7f2sdxU3cP
+         tQui810PnIpvCr0l4L4dGtrpvLAm9lFqX6n0vIdqwsWiR2n1fm0bFh79oN3x7iqhWSs0
+         6YdZwTLHSGa4UvCIZTZv/VO4xbXKfxNl32eg7LaF7KSa2mGPgDma+67JbDbviVPbHu4B
+         am2IPezd6SoP+8iBzGpHVI51UNkDVH9WrGnveHIyxqcdzesBVYxrwRvGWsSpKiHtN9eA
+         e5wBswpSfMaXhrYznOpZcfR1BdZ/qsc6ew36mprrs7VZA6LrSVt5Dt0xovkKfjOBFLS4
+         5CiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757157900; x=1757762700;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gBOanA6zalGLYYyu9YMahK79U0EvwFc1g3mic7A2XsE=;
+        b=eZ/+mbpc0oJRUhdnM0IQ892XuW/0S6o2L9h7a1Fq78i0kqHkX2zd0ACSPKRTsGgEU7
+         Fcf/d6st//zTSt2ssr/Bhofd/GfnorO8CdPeTEsjAgR8ipeCvSdog1uOfCyBIrgIrG5o
+         dQxmA1HyrSsOH6kxjBdXmnUkL0JZuudlpVrrDXG5v+Vwg8nhI+55cbtnGhNH3qGsyuGG
+         axcuedmU48/+iLbCdkDg+ul8xSq5hOxMP1wKiyx2Kx9HpNSBMxRXQZ9fJ7edhdWVOcsE
+         BPlqyp54R3ZBKa4IuYrgFvzPiSQCkUsYKK80bu2oXzjFcHz3csFdhG9Li5mTQRDQZkKl
+         /Rcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5W94bRWkUBW5BGiE6kKfFrfRvhKm5TjGIwIUzgVyF3oiNQxBDfRwCuBnWMTIztuUayqrIyxaRomxftg==@vger.kernel.org, AJvYcCXYa/QeuY4D+7EbeGCIaxL+vbZlxefRBlxfcatHQEKzu2GHdGihCCRv4tJGL36tYQ7vTD1rPnjlmh51shxz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyeg1Ih2XwiXkIozCLjq7hmGwBgRWeXr5bGK42pIxxZfDek6OwN
+	Jv+8JGWbhiFWtOXND4hx+FcdLvf3ubQYE00szLzP6GSZdWOUajkm5rg6tPKNJg==
+X-Gm-Gg: ASbGncvJqv/CxOpKMfINOwkHTiyUh5hNmk4ZTW1FHwdKiCrQhwD4Ttd+J1ZPVGnY6gM
+	nUUrIZ+nygdukASTkJRkxZkC5Ktqsg8RVKOaYvHFsmNF43KVmcMyAC3YrWSyGBja5GewK4GKTC9
+	y8RTOp6Skju3DgSbsZeCm4Xe1VNEjcyGbUzB1xVym350YRha62g26UloQeQiR5ZpcFS40l4pFOq
+	jZtWMyhBHnacpSRwMaix7tJbRG2q13U765/CagNSBzBA87bwjn7+eHnASK2VsCQgKdwx/xFLK3K
+	0Uath65NXNB2X531hjItJ1zND+NXohntTTZgKB1XTSVGWCv4rJKSf+24OvPPyc6lfLQ+6a6chYo
+	loCIY4RtrTJCCoIO2pZQDTIcLl8/meENGvcRqdeSOcBtTZwFp49AwnqlKMWUeyxoRnxRRrfV9v1
+	c=
+X-Google-Smtp-Source: AGHT+IEqq/gP7GihJJE1vvhH8bWCtf+vjl7jrPTkrkQWlh2B1MBEzuH1ShRPD8Quxer/3nx3fqFFNw==
+X-Received: by 2002:a05:600c:1d07:b0:45b:9c93:d236 with SMTP id 5b1f17b1804b1-45ddded246cmr15000855e9.27.1757157899968;
+        Sat, 06 Sep 2025 04:24:59 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dda597641sm25599355e9.11.2025.09.06.04.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 04:24:59 -0700 (PDT)
+Date: Sat, 6 Sep 2025 12:24:58 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David
+ Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: scrub: replace max_t()/min_t() with clamp_t() in
+ scrub_throttle_dev_io()
+Message-ID: <20250906122458.75dfc8f0@pumpkin>
+In-Reply-To: <20250901150144.227149-2-thorsten.blum@linux.dev>
+References: <20250901150144.227149-2-thorsten.blum@linux.dev>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822-iov-iter-v5-0-6ce4819c2977@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 08:42:31AM +0000, Alice Ryhl wrote:
-> This series adds support for the `struct iov_iter` type. This type
-> represents an IO buffer for reading or writing, and can be configured
-> for either direction of communication.
+On Mon,  1 Sep 2025 17:01:44 +0200
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
+
+> Replace max_t() followed by min_t() with a single clamp_t(). Manually
+> casting 'bwlimit / (16 * 1024 * 1024)' to u32 is also redundant when
+> using max_t(u32,,) or clamp_t(u32,,) and can be removed.
 > 
-> In Rust, we define separate types for reading and writing. This will
-> ensure that you cannot mix them up and e.g. call copy_from_iter in a
-> read_iter syscall.
+> No functional changes intended.
 > 
-> To use the new abstractions, miscdevices are given new methods read_iter
-> and write_iter that can be used to implement the read/write syscalls on
-> a miscdevice. The miscdevice sample is updated to provide read/write
-> operations.
-> 
-> Intended for Greg's miscdevice tree.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
+>  fs/btrfs/scrub.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+> index 6776e6ab8d10..ebfde24c0e42 100644
+> --- a/fs/btrfs/scrub.c
+> +++ b/fs/btrfs/scrub.c
+> @@ -1369,8 +1369,7 @@ static void scrub_throttle_dev_io(struct scrub_ctx *sctx, struct btrfs_device *d
+>  	 * Slice is divided into intervals when the IO is submitted, adjust by
+>  	 * bwlimit and maximum of 64 intervals.
+>  	 */
+> -	div = max_t(u32, 1, (u32)(bwlimit / (16 * 1024 * 1024)));
+> -	div = min_t(u32, 64, div);
+> +	div = clamp_t(u32, bwlimit / (16 * 1024 * 1024), 1, 64);
 
-Now queued up, thanks.
+That probably ought to have a nack... although it isn't different.
+bwlimit is 64bit, if very big dividing by 16M will still be over 32 bits.
+and significant bits will be lost.
 
-greg k-h
+Just use clamp() without all the extra (bug introducing) (u32) casts.
+
+	David
+
+>  
+>  	/* Start new epoch, set deadline */
+>  	now = ktime_get();
+
 
