@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-804354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F16B4733C
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:58:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77540B4733F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7073B317F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074D81C201F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47A62264D6;
-	Sat,  6 Sep 2025 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1B12264A0;
+	Sat,  6 Sep 2025 15:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUdzXkMf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="BhKe6DCS"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA0F1F0E53;
-	Sat,  6 Sep 2025 15:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F3C221264;
+	Sat,  6 Sep 2025 15:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757174323; cv=none; b=eCiKzVq8Gewac3NgwZhz/HZXx6sJ4ejaXAPrctD2Y+TUuVBjjI+ldovyaGlht9wcoc5mcaAmpTYOeB8dgVhF0L2DhLs3sH2xfsqyUmjdbSb3ZmKRJNTTTF8QchiLBtbjmHHQHkMncO2PzrToxYA6v0Qfw7IsRZ9ouXD+5wXaYjQ=
+	t=1757174357; cv=none; b=Nel7CD/WdQ9/JqhXQBmpezm8jiVBURs2cN/I7dd2XU7//XGy///UIpoUu+C/NO1r0fR6eJMcFO1X4QBVe6F08T7dm6oTr9Xf1aiF/elcLCJj01qpgeOlg5lG9edvU+3xU4PF+/r5Slx9afKpqu9oE/BeAv2UNrqtJYwh5jckXHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757174323; c=relaxed/simple;
-	bh=kOu2V13DpP0DgkH5FMlVknsj28v5htctw0amrZKKUhU=;
+	s=arc-20240116; t=1757174357; c=relaxed/simple;
+	bh=XzuoT0WSkJbb6iiSwS7U92Qd0e3ls3F0BkGucQXz1Wk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qc9CKvFmOj/0/p/l0+XceFBRLt0/Rd2o5qfZ/Ta3zsh21AiOg5QhM9RAAhPxbe+03s7Xz/2AkphtyaiZL0MDROSkyHL4xMIxejgKvLOC6czuAsESsqbJZVXqhysUQCZk0gdOcnFxmqclCYa1lUgRSLedEpsW8KN9a+e/1uObPPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUdzXkMf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5F2C4CEE7;
-	Sat,  6 Sep 2025 15:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757174322;
-	bh=kOu2V13DpP0DgkH5FMlVknsj28v5htctw0amrZKKUhU=;
+	 In-Reply-To:Content-Type; b=P1qGYXtikYF60N6ropv73Ql9Ur7sZVbn0IpmCqNnQqPcoBsCyvGLtEdlm/nvfgVbD8aLCR3YUS1KU0EHontldV/XJRl0fPQP8TrOkxuPXvic19fOZ3OeF2VfOY8AZvS7BYApfb4lvpxaezRhqnaRi1lUClE6OakP+BrilIu8X5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=BhKe6DCS; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757174351;
+	bh=XzuoT0WSkJbb6iiSwS7U92Qd0e3ls3F0BkGucQXz1Wk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hUdzXkMfwnEQXFM/mH6V1ySgKTmwP0LD+uBz4vmTdWaeYGFTE4sg2vQ/OjHxAJBYi
-	 KEAvoDi0+6aqRmiNh8HEfaLEg3eBWzpVcKhkAaMCT5ODInliDYe+vZKuEdXagoyIqO
-	 U7DsmBXwLpuInj/9k/eLnIY5lYRgCpYMjX02mAJexNJv1PKNu6DhSC3t8cGMLOcHpw
-	 64cP4Ado+OMcyCfdip01FweywhraRtoESZDHAQ9dS3xI5O7+/TRpvNcz7S32RHpM7J
-	 7woRX2GQBr6HLf+jyhgEujycaQH11Z8zW8Nf6SmC3GYaVjibvyr9GLMIUvSioSIRIw
-	 2uLkIPvGmQfdg==
-Message-ID: <73c0a4e6-3153-45c4-a471-2af46792a032@kernel.org>
-Date: Sun, 7 Sep 2025 00:58:37 +0900
+	b=BhKe6DCS6msxct+OYYzo3wFMOUo2t7DP8KsaQkhrTgjY9mmBggADOXmB2wSJcsihs
+	 s+3HZqDxnYYhcwDdRovP9TEfAdjl1fpnPHKVIbIqO/VtMcsUzLvBb80gCoL+SBI259
+	 P8P3k/KVlTRw9nsBsK0ApOTbojRG8B4h4ii/Yua4vXHQUPDSHaPff3XUn0sFfexFxm
+	 uvyaUStaEWqgg6Fo5tx5T2Z5IEismxmGDI93gsqFs46UQuE6T92RuKiT9f7Bwn/A8j
+	 06Cq2n9Nj7DQzaekOe5O9MERpSC6mkSbFpaqLRF0nSozEB0lI/+xERcNkCgIVJcQ5B
+	 60icJeU/6N8KQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id BE8416000C;
+	Sat,  6 Sep 2025 15:59:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 5FD50201DC8;
+	Sat, 06 Sep 2025 15:59:07 +0000 (UTC)
+Message-ID: <228eae2b-5a52-48c0-a3a2-afbd3e45adf2@fiberby.net>
+Date: Sat, 6 Sep 2025 15:59:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,70 +55,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: devfreq: tegra30-actmon: Add Tegra124
- fallback for Tegra210
-To: webgeek1234@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250903-t210-actmon-v2-0-e0d534d4f8ea@gmail.com>
- <20250903-t210-actmon-v2-2-e0d534d4f8ea@gmail.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
+Subject: Re: [PATCH net-next 11/11] tools: ynl: add ipv4-or-v6 display hint
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-wg-ynl-prep@fiberby.net>
+ <20250904220156.1006541-11-ast@fiberby.net> <m2cy85xj9h.fsf@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20250903-t210-actmon-v2-2-e0d534d4f8ea@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <m2cy85xj9h.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
-
-25. 9. 4. 04:50에 Aaron Kling via B4 Relay 이(가) 쓴 글:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On 9/5/25 10:53 AM, Donald Hunter wrote:
+> Asbjørn Sloth Tønnesen <ast@fiberby.net> writes:
+>> The attribute WGALLOWEDIP_A_IPADDR can contain either an IPv4
+>> or an IPv6 address depending on WGALLOWEDIP_A_FAMILY, however
+>> in practice it is enough to look at the attribute length.
+>>
+>> This patch implements an ipv4-or-v6 display hint, that can
+>> deal with this kind of attribute.
+>>
+>> It only implements this display hint for genetlink-legacy, it
+>> can be added to other protocol variants if needed, but we don't
+>> want to encourage it's use.
+>>
+>> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
 > 
-> The Tegra210 actmon is compatible with the existing Tegra124 driver.
-> Describe the compatibles as such.
+> Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  .../devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml  | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml b/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> index e3379d1067283e36d1bee303187c0205b410f610..ea1dc86bc31f635f91a0e36f908f5c0c4f9a804c 100644
-> --- a/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> +++ b/Documentation/devicetree/bindings/devfreq/nvidia,tegra30-actmon.yaml
-> @@ -19,11 +19,14 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - nvidia,tegra30-actmon
-> -      - nvidia,tegra114-actmon
-> -      - nvidia,tegra124-actmon
-> -      - nvidia,tegra210-actmon
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra30-actmon
-> +          - nvidia,tegra114-actmon
-> +          - nvidia,tegra124-actmon
-> +      - items:
-> +          - const: nvidia,tegra210-actmon
-> +          - const: nvidia,tegra124-actmon
->  
->    reg:
->      maxItems: 1
-> 
+> I suspect there are occurrences of ipv4 or ipv6 in the existing specs
+> that really should be ipv4-or-ipv6 but the python code doesn't care.
 
-Acked-by: Chanwoo Choi <cw00c.choi@samsung.com>
+I haven't been able to find any, containing 'ip' or 'addr'.
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Speaking of display hints, then WGPEER_A_ENDPOINT is another interesting
+case, it is struct sockaddr_in or struct sockaddr_in6, I have left that
+as a plain binary for now, but maybe that could be a struct map, based
+on struct length.
 
+attribute-sets:
+   -
+     name: wgpeer
+     [..]
+     attributes:
+       [..]
+       -
+         name: endpoint
+         type: binary
+         struct-map:
+           - sockaddr_in
+           - sockaddr_in6
+
+With the requirement being, that all structs must have a unique length.
 
