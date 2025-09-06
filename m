@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-804017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42858B468C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 158D7B468CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 06:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D63C1C80D5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E5F1BC810E
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE75238C0F;
-	Sat,  6 Sep 2025 04:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sswd.pw header.i=@sswd.pw header.b="qMKSDCw1"
-Received: from outbound.pv.icloud.com (p-west1-cluster5-host9-snip4-8.eps.apple.com [57.103.66.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8192248F7C;
+	Sat,  6 Sep 2025 04:12:07 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4E1221DAC
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 04:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4118238C0F
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 04:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757131710; cv=none; b=kGK+7e/8xhoFh+J1XmfyL34v+kCFykvf5bnHd/u1aQy4R09GFoudrv8G3xp2feGII4kg7DyogyosP/ZTjhNo4WUuWyvMwAXeqwR05bS1LatSjcmpj3LylvQpE6qOp06FYD07yUCK4Sao07dPWVn0P4EExjGzXLWfj2Imy56Es70=
+	t=1757131927; cv=none; b=gxk1CujyT3rq2+d+jXEbz4YVv7gZhtwdDkYYh+aoNANZGCYJB2/q3nzTBd/9LoQLFtO/LwKyjScrMFjXsmyZSOibyPjOahhuZDAvyKb8F/u+XOsTT1zQ27SRfIQiVJDoDo46E61rZRrPP05f2p+gk5FKad1ILNUe5hIRIkc5qho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757131710; c=relaxed/simple;
-	bh=W0ZMlZxfmxu4/88SlRs9V8COyNV6kyVciBn9lA69rFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PbQQN6rJeGnpGbeIpT6GG4mh3hRTK+X9mR2Qgj2TNCawumX9bAMMhGap5QE5Zb/0BoTQ9yHCbaasTKKrTr6hSQ4NyFY2CViwTfqIwibYVgt5YDuSgdMajCECJdUcuvrVlDlNfeMbwSbxJUXRn5C2CkhlTwIF5h5qugWd5Wq7HZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sswd.pw; spf=pass smtp.mailfrom=sswd.pw; dkim=pass (2048-bit key) header.d=sswd.pw header.i=@sswd.pw header.b=qMKSDCw1; arc=none smtp.client-ip=57.103.66.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sswd.pw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sswd.pw
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-1a-10-percent-0 (Postfix) with ESMTPS id 59B9E180011B;
-	Sat,  6 Sep 2025 04:08:23 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sswd.pw; s=sig1; bh=Rgj00ZQJ6YXpmj/Fkl8OSXbBHLLgoWXgDDmBKRr58+k=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=qMKSDCw1cdIj3DK2yvZ++TbDoBlx8E+r7bG3YQzzyzKEMXHV0lqNhfDmgasQIh2b5q814XJWqVgNnlADr7tlTho3V3ihCmkLNpl63m0TP9SeePSEu6HgG3BI9eJWvzDjhv5GAPnFMbR7Zqy8iBObZynQ57h9Z2yAFtlBiCPylfCWNpGBShN/yyYIPy8YdrjDXLld9AtzjyORftHYnTVJX5C1sZDWPkqicvfpxjVhB1oiCfA5TeMBzkuF+u+K/WIQTXbmvP9RyK6+n4LijaWMM7PWIXJ8aC468RyDUs4FSKlxYpP0BWaGmzfdq6OPNN85J9oAyAEhI8y5qABQeGYUTw==
-mail-alias-created-date: 1750314795890
-Received: from localhost.localdomain (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by p00-icloudmta-asmtp-us-west-1a-10-percent-0 (Postfix) with ESMTPSA id A7B551800102;
-	Sat,  6 Sep 2025 04:08:20 +0000 (UTC)
-From: p@sswd.pw
-To: kvmarm@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	Dongha Lee <p@sswd.pw>
-Subject: [PATCH v3] KVM: arm64: nv: Fix incorrect VNCR invalidation range calculation
-Date: Sat,  6 Sep 2025 13:07:24 +0900
-Message-ID: <20250906040724.72960-1-p@sswd.pw>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757131927; c=relaxed/simple;
+	bh=eB/W4tkBPmMu6oLwf+rZqG2eTOgPjVzFf5ptCUd4s9g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hK+u0DwCQejuqFdn5HaH65trcYxlBwiK3gxRO0Y170hXmbnce3H4feqCdxDHacT/DOJT5CH+2R9Uo8VwcSETHLNzEPQE+dPR/3tPst9f1Pujg/WOgnC2bcicschWjtv53igMQ/KGl4YtHtn13RQZ0sWkGFmUQkrs8+Mv4Id77rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8876a952eccso168027339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 21:12:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757131925; x=1757736725;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfVZwPpTXhA3cwKje3bqf6wp+5ohNduT+A4cbC0mZws=;
+        b=fHfJR03vutSYdvf1TweNEUubBr8Qw2R2TCa52/9RyOshETH19m3J/qIg8x5xlSPVNu
+         r2+yIiEBIOQJCW4Oa333Q65kyBdQBXFtTK6st/nXo50CbiMx1baM73/OoZ94y7tFX9kc
+         cdaLdpVD8yBbPSlycYFTLZ/Fis9IwiSz0NoNzeDpXBhLR91LHqfBg0dSHolJP4/UvoX1
+         mQ24K4cjhp/wPNsuk1rSR0zmKo0w28oug4gYEfMmqIOcDcbFcicyQIy3J09pruGXcv03
+         SKGHb/nzhV5LvBUMoB1xl8q0MHBD6bPfk3AKjAODM7ULdt7RAKrt/oIK5SFfLUzCvZqN
+         u5cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVB0a7/1rvwP3biPjxvVLgHSGJ90wUsbNP+xgKxSLfvq5p3SXiT5X10ic1bYrdSOONYkJAGpnxwltavIf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm/pJzmTVc1nijkV+e54lkkQwLMN7++CwLgo9MlaBnl1SZ9oTv
+	Kh1MOg/0RzrCVPGWmmCUfC7uVFu+9eZpFaaEJ1ODHsSyh6zSfV0GROIt357f/GqmDNfPzlU62Oj
+	S6GTDB4onjVQUIb4KHWo4e+1T9Mx1cGYy71UIK7QXKUUed/gyIH/3ruZDINU=
+X-Google-Smtp-Source: AGHT+IEyaGe0a58R/IDOnxbT8+kDg+CcWtYIp9YCqp2hX7eRFUMF+uXghjcVlc/LOYQeM1uaenQU5lx1pDVfKdEJf7TUl5dlkyk/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: CqaMxTFjajy8dA-UyRm0ZEXba6kx_oHN
-X-Proofpoint-GUID: CqaMxTFjajy8dA-UyRm0ZEXba6kx_oHN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNCBTYWx0ZWRfX9PZK9Wz6rt0n
- CE09kUIpMHLBa7OozCr9w46ADwN5eDD3MC05FwNijOOzeqch9TcEd1ryPhDeZ3STgZwdArsVIE+
- i7V9VaZ+1xet7G3gfR4t4J6RKM+GZTrv7BjkynuvbG6waWsaN5Kxrh2xHXo13cwjAfeBm2+HX1Q
- OUhb4J+WUlcTpObtt+c1cp8GhING1FpbvIkR78VChyeQrqsrKPDn6kGgPl+dvPGShIGAy56yD/L
- lDPrlHrRlQw1QCMGAUYaE0+4mMoiTRl6pJsFsm/X9EDiu3sTbZ5YgUMhPvh4+VcMMJc8KYSD8=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-05_09,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
- bulkscore=0 clxscore=1030 spamscore=0 adultscore=0 mlxlogscore=950
- suspectscore=0 phishscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.22.0-2506270000 definitions=main-2509060034
-X-JNJ: AAAAAAAByC4YvtSmVYqoO4If7rP+IrxCnQ7wtVXyGE65JkouCZYcHsuqwvg2gFZBkntax+8sgc45lKq7V+tQv7+SMx02IVytv3h4/O7jm0b3oM0SX0hhiC4/M5BO2rCX2VIv89Z6CPeINH5V+iub+mnauRU1Y5p96dWh5vdKW1Jhqx98lEJinxs7j6jqosgNFonmAQQMfq0s/EfpGa29I9xEtXw+d2b2QMIW602T8y8sijbvRwlrI+eL9sZiHDIGEt7iLrr6obY2dpNMvYl5Oy/jfeKRJYR1B5tCMZw2T55sKSzJLHU5lmCkiNX/LB32/8a35gP1L+A1vg5qlIE4ZalqILtSR9YAJ2CoX7yFv4bva5BbdwLlIovFiq82rJCt6Ig68wdDa0nxROeq2PCSJ4l+c9b208YkOrKXb78Aog3UdcjJn9fyEnDyzL9I+V0G4EWsGGTpYFGgdKyRBlbyNj4bx5XB3ZqhjtnAIkhzOH0H4zXB5qvzkzDeTA0zcB876crugnlEtZ9VlOliULiWT9N+wbADtmk/n8JLVzEZN7kqKN2BE+a8+TDX5+vRx569oW9DIwFvIbzOsQpeVvyfWpnt8HAwMMzsj7oBJirrVzBOet7Ux0hI8VS8KQiA7JSwxC9Tt9wrcuuTqTTbVmm64S879DZ93NEN2WSRUvDvgs+VBvyY6b8KoE2Um3wLkWI1rQtRrMcTJ3M71Iky/tatX4s1AcKrjsM7HonhQE4Lwg==
+X-Received: by 2002:a05:6e02:1a41:b0:3f6:5688:a088 with SMTP id
+ e9e14a558f8ab-3fd7fc2166fmr19874445ab.10.1757131924883; Fri, 05 Sep 2025
+ 21:12:04 -0700 (PDT)
+Date: Fri, 05 Sep 2025 21:12:04 -0700
+In-Reply-To: <20250906033247.31888-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68bbb494.a00a0220.eb3d.001c.GAE@google.com>
+Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
+From: syzbot <syzbot+0192952caa411a3be209@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Dongha Lee <p@sswd.pw>
+Hello,
 
-The code for invalidating VNCR entries in both kvm_invalidate_vncr_ipa()
-and invalidate_vncr_va() incorrectly uses a bitwise AND with `(size - 1)`
-instead of `~(size - 1)` to align the start address. This results
-in masking the address bits instead of aligning them down to the start
-of the block.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: array-index-out-of-bounds in az6007_i2c_xfer
 
-This bug may cause stale VNCR TLB entries to remain valid even after a
-TLBI or MMU notifier, leading to incorrect memory translation and
-unexpected guest behavior.
+usb read operation failed. (-71)
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in drivers/media/usb/dvb-usb-v2/az6007.c:821:30
+index 4096 is out of range for type 'unsigned char [4096]'
+CPU: 1 UID: 0 PID: 6553 Comm: syz.1.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:233 [inline]
+ __ubsan_handle_out_of_bounds+0x11c/0x160 lib/ubsan.c:455
+ az6007_i2c_xfer+0x549/0xc30 drivers/media/usb/dvb-usb-v2/az6007.c:821
+ __i2c_transfer+0x6b6/0x2190 drivers/i2c/i2c-core-base.c:2264
+ i2c_transfer drivers/i2c/i2c-core-base.c:2320 [inline]
+ i2c_transfer+0x1da/0x380 drivers/i2c/i2c-core-base.c:2296
+ i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2348
+ i2c_master_recv include/linux/i2c.h:79 [inline]
+ i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
+ do_loop_readv_writev fs/read_write.c:847 [inline]
+ do_loop_readv_writev fs/read_write.c:835 [inline]
+ vfs_readv+0x5c1/0x8b0 fs/read_write.c:1020
+ do_preadv+0x1a6/0x270 fs/read_write.c:1132
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faff858e169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faff9313038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007faff87b5fa0 RCX: 00007faff858e169
+RDX: 0000000000000001 RSI: 00002000000025c0 RDI: 0000000000000004
+RBP: 00007faff8610a68 R08: 000000000000007e R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007faff87b5fa0 R15: 00007ffe8b6c0b08
+ </TASK>
+---[ end trace ]---
 
-Credit
-Team 0xB6 in bob14:
-DongHa Lee (@GAP-dev)
-Gyujeong Jin (@gyutrange)
-Daehyeon Ko (@4ncienth)
-Geonha Lee (@leegn4a)
-Hyungyu Oh (@ohhyungyu)
-Jaewon Yang (@R4mbb)
 
-Link: https://lore.kernel.org/r/20250903123949.24858-1-p@sswd.pw
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Dongha Lee <p@sswd.pw>
----
- arch/arm64/kvm/nested.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tested on:
 
-diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-index 77db81bae86f..d0ddce877b5d 100644
---- a/arch/arm64/kvm/nested.c
-+++ b/arch/arm64/kvm/nested.c
-@@ -847,7 +847,7 @@ static void kvm_invalidate_vncr_ipa(struct kvm *kvm, u64 start, u64 end)
- 
- 		ipa_size = ttl_to_size(pgshift_level_to_ttl(vt->wi.pgshift,
- 							    vt->wr.level));
--		ipa_start = vt->wr.pa & (ipa_size - 1);
-+		ipa_start = vt->wr.pa & ~(ipa_size - 1);
- 		ipa_end = ipa_start + ipa_size;
- 
- 		if (ipa_end <= start || ipa_start >= end)
-@@ -887,7 +887,7 @@ static void invalidate_vncr_va(struct kvm *kvm,
- 
- 		va_size = ttl_to_size(pgshift_level_to_ttl(vt->wi.pgshift,
- 							   vt->wr.level));
--		va_start = vt->gva & (va_size - 1);
-+		va_start = vt->gva & ~(va_size - 1);
- 		va_end = va_start + va_size;
- 
- 		switch (scope->type) {
--- 
-2.43.0
+commit:         d1d10cea Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c5e134580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bce5d4c1cf285a6c
+dashboard link: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
+Note: no patches were applied.
 
