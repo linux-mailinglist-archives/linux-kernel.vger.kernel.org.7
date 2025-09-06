@@ -1,494 +1,332 @@
-Return-Path: <linux-kernel+bounces-804319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92E6B47204
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3F8B47207
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA951BC65D1
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D513AF8C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5878C220F2A;
-	Sat,  6 Sep 2025 15:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851C0221DA5;
+	Sat,  6 Sep 2025 15:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWlDNMy7"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZ1ZsdmZ"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A2A1E376C
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 15:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95AD17BB21;
+	Sat,  6 Sep 2025 15:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757172266; cv=none; b=LUsMs7hDHxGi6udosre9rxtGt5MzDXBvwWRi6Vuc/VcdzKwEeGI1M3b5uuFvaTVzViHNCzqDHhvVbf0PSEYZnt8M2UM4zZbuGDsvM0lvHZOBEzAX8oVz1fGVE8KD0sS11wxI86DrsBOYxp3Jq6XFwdNI+Oe0acRMCF/Pc4nN+W8=
+	t=1757172330; cv=none; b=JO9X9rIyHwX0d9ULhPf3NfXY3l6IO3S13ecD+F5AccQaT1UyS1YEQNM7FeSK8TAhADqTGev2VXExegLOWyIZAzsZGNUwZGfCkhbCXWzeva+zsVx74+ZXclgzBBP7Kuw0v3wFehgMRuRIecan307ZWRablXvHG+PlsaA7HZUIU54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757172266; c=relaxed/simple;
-	bh=PCKM938jrsJGCfm0+OSh65DaQKjbaMs7iEVHEilCfDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J931qMo6eMJQ3cvoj4OGIigosrX5ZiPYjfAXb+47hOBP6cFjwwORMLsXEc9WFVbY76vSLUHRJqnHip6sQlTk3i+fft/3QzhhfnMos244ZwB8XEyMtWQDziIK3PKQLNReuj1FEWVfU7LQNvggR9NP/6MYQKs+DXgWi8fjgAhk7h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWlDNMy7; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1757172330; c=relaxed/simple;
+	bh=f30de0FQaoXycZpV1SFeYk2Wl9zmlvEQoCgvr4NeKhk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=o2+FCaL8wJt4EZvI3RmlqyzgEQMmAsEc+QlWcLvOhCO25/ybx2yGxfwb58mN55xF3E1djI0NMVqf+hcYa731llKKJNBzLOxYtaHrJ2nZc4D6z4NFDj453EYlP0y5ZFcBVq9hrwOS+hx7xb+rdEWC92UafQvW0x16VQ7483IZUeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZ1ZsdmZ; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-772488c78bcso3021645b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 08:24:24 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-722d5d8fa11so26583666d6.3;
+        Sat, 06 Sep 2025 08:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757172264; x=1757777064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757172327; x=1757777127; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GZ6k/i+iIWRU7K4HjEPXOOzSQFkXLEXGR/6JUAXaNxY=;
-        b=eWlDNMy7T+CF+VzDtX50qD2JDfULOAuo5wHFz2r2gMYDjd0R60nhOZy743w73hrNer
-         Vduc/Zwln60K+sBr8mZfbrGJQrU9ZaDjUva7RY1sY6q/wSwR8Ko8y6P+Ikzkn1ZQxKbm
-         IYsPBR+YpMVItEpNmFc+huEFPdRM7ryiEWxYJ1m2gShwu1IxjUUyT7yFpbfI7Fuxr57v
-         ZVQuXHT1rZ1ffZ9B9MfLMjMU3TAvnwkx9PVB0SEA796mZpY2cN/pGZ5l9yaOiDST6e1i
-         rJ6XZ1EM43p9JirY8yUU2/sTXPqpgrBIsomlOBoX3hi4t10GJ5aD084faVfq3a62Xat2
-         NyAw==
+        bh=zKM9Z1IohGYjxaAPMF47eTayyL7R4dz2679H6xNeWFI=;
+        b=HZ1ZsdmZ4t69lTH0BqMaG+AztArWOYxZEEJhMD9s1TUattA464sj7lhxkvWXd+2+9i
+         zuQrQn9LQs0l6oHhAMcouT9wmO68vlpxiSoqKJAFJJd3MKQxqLnIeGJUksuPi4i/j2K2
+         5gFPiAj5UwmL4P9GZQiRCy6KX6HMUWiFim4Jjz5gwX+qEPz9Tu0efrb4fO9shBI/E1Lv
+         DEjdJSfqhafyZfJN4BfPjwB+EfXselMr0UQ1tI5MJKfhTZUBX9mfuJWCw4hITrw0e7Jv
+         6Qd1HXoDLZeAJbIVvHTHDrf2urc4EDfnxfY0scbVgPyJRauh/tZRscKSVG1robHijJie
+         NLSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757172264; x=1757777064;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZ6k/i+iIWRU7K4HjEPXOOzSQFkXLEXGR/6JUAXaNxY=;
-        b=NeodcXJ9fiNekfj1Gxv+Ues/G2bIVk2zG9Awn+1oNFW6rVUXS3ITvWddyeiJEvT8J1
-         xWb7iCQz+qcRVKDnoE/0hs4dmkSLLFWU21qRhWY3EmpunWxc/sj4CHPRrRgM/o+QMMaG
-         GxL3iUq7vY+6iwge+mA2arP7RYtmlvrjtoKws4iXHaR7aJ/8csLAFHZSsOpAX1RJ0vpZ
-         mGckN6o6cqMpPFnY67Zg4oGZLxY+M0AMac0VQpO6ugzq1iJY4Qg6B0KSNXUBpysA3bAv
-         RG7tG09H5sl1U61K181FFRZvF74Qlq2eKchMDlmSPtmydOwVBb+PcMqR3tBRnZYqDXDB
-         Gsdw==
-X-Gm-Message-State: AOJu0YybukxToW5Ofa7Qe6V18MfLUoOl22v1yt2eRkx9pZUbInQ5E9Yy
-	sRm+15wGYye1fOgIfwjEzhhAmbccQZgtWweHlLDlNaB24T4JqO6aAtAEy8oF0n9l
-X-Gm-Gg: ASbGncvSeQsH25rOzGmMY2QAffkRldLp/wKkZaeDEmhrkVTjYhXBPIi+AhD+W+R7Yyv
-	lRzOE/uSgQSBJ1hQUMT5yPh4yzV0jJJl5Z7vg2/Q0NRJRStMVN8GFGFNWhD38cGtduAOKGrjJKI
-	7f+rF3V1DIij/pGw3VXj8sMGOJCc+Z+5eLdijKadoZIVLsyePuqWH7vBAbJKNAIC9RL2pHRzdch
-	CoXQ9nbHYrXAMyc4E2A4MHt94JdhAa8ZV8JR+1R+trq5ZDE3fEe2yIjxFcu5fldYnjQxCYk4bZb
-	P88p9VWD6uCOPgkavYS/YwTzgg/xEoTyU+YmW1dWnSa8fAO5C9KMmZGqRd4s97c4f5I1zk3On7Q
-	1qSJsC0L1yZOMNyrW2b7dyDRxctgrFqgD1GwJ30N4nGil0896Aw==
-X-Google-Smtp-Source: AGHT+IFOZziW5x/OD0CEHgylY69NyOlbcqAntFXOiVdLs5yPYSs5qFpiVqML78gVoUXVBnb/VnPx7g==
-X-Received: by 2002:a05:6a20:3c90:b0:251:7f83:11d0 with SMTP id adf61e73a8af0-2533e5732e2mr3858737637.5.1757172263825;
-        Sat, 06 Sep 2025 08:24:23 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4d6cde2f0fsm21173540a12.13.2025.09.06.08.24.22
+        d=1e100.net; s=20230601; t=1757172327; x=1757777127;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zKM9Z1IohGYjxaAPMF47eTayyL7R4dz2679H6xNeWFI=;
+        b=A07tPNEM8w0MPiJ83QxAc0hShBkOETv58luH+gDk7Q8SMdHasgkMpOiYTtfYBxncor
+         XKB9F+h5/U/RW6T+kOAi3ksRRGBJAgur8pVsaTdGUvHat2YwsVPHzj1sPNJYoYtxxdUR
+         KyKQ0vEBZ21nMnnMd99yLZ5xsHU6zjNvT5uI/15JL4lkALsac0e2Ehzmr9/J3IVN3/D9
+         YRsYYiKxWulYzd3We6sjF4/qhzyQ9h+B7nmpuQrpnk9Ws1r6NnZo+MX4QYh+gaqr+Vrv
+         ueYZUuy0mus0Jlzi9d0xDv2n2wmOripL/kN4E6lX6WAAYFSEUDR2CnFbsSXBMgbtnkho
+         f5NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO+FJYkYewwneZWVlgqtvO+NRO4zNWbfOJXcOF+h3sKNq7/2V+1NSfuAaBiiUb9APA+ZZMjo1l@vger.kernel.org, AJvYcCXcocuLsgk6LiW5szevDAWuLadxx5SUdbFx/ltLAESZOgSO9cV9rUl3lv/0ln4YltFqd2xhMXbNuJpfS20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8gKnknaAP+pVoUXCOQtgrMDthRdfU4+czfNztPFgGB3A91g2h
+	ifnaKRK/ez4e8OjWKFXPgcW1oVaHhSaXdOvnqBE0IENadDqS9S/WaLvv
+X-Gm-Gg: ASbGnctRCLG9HXqZEjNe6E/XNPps+5ornHk4GqH3rDLcQibmU+NGSao9MSWoyFp3Tq8
+	kFxH8Wdw5gDFYS5/5kYwqRRBDEPlFoKFOpeo+fkc85ARPgPZ8QvlkyIN+wqWDlBpf53eeqiRA5P
+	YtiJhbNQDB0HAgWcqk1Sl0HwAelWqrKPrAR3CqrWtT2QZYoGvtEpGA2v9tEe+6RWtxu9yo3T7Tp
+	N1fX8Utv01r09NxIxnyWPpyun95BQJ5CWrbbEiofuJ+ou1qntl/Wm4YWAyFC8+UOd87gpDmY0po
+	+gW3SRvfBt+iZdP+/pcqGOvWd8eTCWFBZL+AE8Nsju1cgNOq14cTJW7yw8vWtn6GDmwuNGNVww6
+	RAYT9K0maC02KJFNJrcHzmPml7+IBCRNP2vXlbR2os3SC4edk9L0Vv3XgblYwxIpvbK+n42fgKR
+	PNRIhrW0deiVrR
+X-Google-Smtp-Source: AGHT+IGtoXCaDnFBYf6mkf1yk5zbRicQdconvYCbxg05Frl857tH9lYFNqY3ofy1XT4Ysp9v4pl8qg==
+X-Received: by 2002:a05:6214:2689:b0:725:ddc0:e807 with SMTP id 6a1803df08f44-7393ec178bemr26400246d6.56.1757172327404;
+        Sat, 06 Sep 2025 08:25:27 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-72f9ad0acedsm29306256d6.14.2025.09.06.08.25.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 08:24:23 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	aha310510@gmail.com
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-Date: Sun,  7 Sep 2025 00:24:20 +0900
-Message-Id: <20250906152420.141374-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6805a24c.050a0220.4e547.000b.GAE@google.com>
-References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+        Sat, 06 Sep 2025 08:25:26 -0700 (PDT)
+Date: Sat, 06 Sep 2025 11:25:26 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Jason Xing <kerneljasonxing@gmail.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Xin Zhao <jackzxcui1989@163.com>, 
+ edumazet@google.com, 
+ ferenc@fejes.dev, 
+ davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <willemdebruijn.kernel.1a11cce73202f@gmail.com>
+In-Reply-To: <CAL+tcoBX4URyxxxuCT3XdzJ7R2zS-DjobdKfMjwc-R7h=ptFCg@mail.gmail.com>
+References: <20250905040021.1893488-1-jackzxcui1989@163.com>
+ <CAL+tcoDxyfAWOWT9gWC7wvcEy8tNYM7pF8suJhwUpdz+MWdxhw@mail.gmail.com>
+ <CAL+tcoDYfbu7oCWgnWdb2rLee0AtdC9xS9ix9yJ4RQ3TVa6u4g@mail.gmail.com>
+ <willemdebruijn.kernel.6a80e2e45f24@gmail.com>
+ <CAL+tcoBX4URyxxxuCT3XdzJ7R2zS-DjobdKfMjwc-R7h=ptFCg@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
+ retire operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Jason Xing wrote:
+> On Sat, Sep 6, 2025 at 12:16=E2=80=AFAM Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+> >
+> > Jason Xing wrote:
+> > > On Fri, Sep 5, 2025 at 2:03=E2=80=AFPM Jason Xing <kerneljasonxing@=
+gmail.com> wrote:
+> > > >
+> > > > On Fri, Sep 5, 2025 at 12:01=E2=80=AFPM Xin Zhao <jackzxcui1989@1=
+63.com> wrote:
+> > > > >
+> > > > > On Thu, Sep 4, 2025 at 11:26=E2=80=AF+0800 Jason Xing <kernelja=
+sonxing@gmail.com> wrote:
+> > > > >
+> > > > > > > In the description of [PATCH net-next v10 0/2] net: af_pack=
+et: optimize retire operation:
+> > > > > > >
+> > > > > > > Changes in v8:
+> > > > > > > - Delete delete_blk_timer field, as suggested by Willem de =
+Bruijn,
+> > > > > > >   hrtimer_cancel will check and wait until the timer callba=
+ck return and ensure
+> > > > > > >   enter enter callback again;
+> > > > > >
+> > > > > > I see the reason now :)
+> > > > > >
+> > > > > > Please know that the history changes through versions will fi=
+nally be
+> > > > > > removed, only the official message that will be kept in the g=
+it. So
+> > > > > > this kind of change, I think, should be clarified officially =
+since
+> > > > > > you're removing a structure member. Adding more descriptions =
+will be
+> > > > > > helpful to readers in the future. Thank you.
+> > > > >
+> > > > > I will add some more information to the commit message of this =
+2/2 PATCH.
+> > > > >
+> > > > >
+> > > > >
+> > > > > > > Consider the following timing sequence:
+> > > > > > > timer   cpu0 (softirq context, hrtimer timeout)            =
+    cpu1 (process context)
+> > > > > > > 0       hrtimer_run_softirq
+> > > > > > > 1         __hrtimer_run_queues
+> > > > > > > 2           __run_hrtimer
+> > > > > > > 3             prb_retire_rx_blk_timer_expired
+> > > > > > > 4               spin_lock(&po->sk.sk_receive_queue.lock);
+> > > > > > > 5               _prb_refresh_rx_retire_blk_timer
+> > > > > > > 6                 hrtimer_forward_now
+> > > > > > > 7               spin_unlock(&po->sk.sk_receive_queue.lock)
+> > > > > > > 8             raw_spin_lock_irq(&cpu_base->lock);          =
+    tpacket_rcv
+> > > > > > > 9             enqueue_hrtimer                              =
+      spin_lock(&sk->sk_receive_queue.lock);
+> > > > > > > 10                                                         =
+      packet_current_rx_frame
+> > > > > > > 11                                                         =
+        __packet_lookup_frame_in_block
+> > > > > > > 12            finish enqueue_hrtimer                       =
+          prb_open_block
+> > > > > > > 13                                                         =
+            _prb_refresh_rx_retire_blk_timer
+> > > > > > > 14                                                         =
+              hrtimer_is_queued(&pkc->retire_blk_timer) =3D=3D true
+> > > > > > > 15                                                         =
+              hrtimer_forward_now
+> > > > > > > 16                                                         =
+                WARN_ON
+> > > > > > > On cpu0 in the timing sequence above, enqueue_hrtimer is no=
+t protected by sk_receive_queue.lock,
+> > > > > > > while the hrtimer_forward_now is not protected by raw_spin_=
+lock_irq(&cpu_base->lock).
+> > > > > > >
+> > > > > > > In my previous email, I provided an explanation. As a suppl=
+ement, I would
+> > > > > > > like to reiterate a paragraph from my earlier response to W=
+illem.
+> > > > > > > The point is that when the hrtimer is in the enqueued state=
+, you cannot
+> > > > > >
+> > > > > > How about tring hrtimer_is_queued() beforehand?
+> > > > > >
+> > > > > > IIUC, with this patch applied, we will lose the opportunity t=
+o refresh
+> > > > > > the timer when the lookup function (in the above path I menti=
+oned)
+> > > > > > gets called compared to before. If the packet socket tries to=
+ look up
+> > > > > > a new block and it doesn't update its expiry time, the timer =
+will soon
+> > > > > > wake up. Does it sound unreasonable?
+> > > > >
+> > > > >
+> > > > > I actually pointed out the issue with the timeout setting in a =
+previous email:
+> > > > > https://lore.kernel.org/netdev/20250826030328.878001-1-jackzxcu=
+i1989@163.com/.
+> > > > >
+> > > > > Regarding the method you mentioned, using hrtimer_is_queued to =
+assist in judgment, I had
+> > > > > discussed this extensively with Willem in previous emails, and =
+the conclusion was that
+> > > > > it is not feasible. The reason is that in our scenario, the hrt=
+imer always returns
+> > > > > HRTIMER_RESTART, unlike the places you pointed out, such as tcp=
+_pacing_check, where the
+> > > > > corresponding hrtimer callbacks all return HRTIMER_NORESTART. S=
+ince our scenario returns
+> > > > > HRTIMER_RESTART, this can lead to many troublesome issues. The =
+fundamental reason is that
+> > > > > if HRTIMER_RESTART is returned, the hrtimer module will enqueue=
+ the hrtimer after the
+> > > > > callback returns, which leads to exiting the protection of our =
+sk_receive_queue lock.
+> > > > >
+> > > > > Returning to the functionality here, if we really want to updat=
+e the hrtimer's timeout
+> > > > > outside of the timer callback, there are two key points to note=
+:
+> > > > >
+> > > > > 1. Accurately knowing whether the current context is a timer ca=
+llback or tpacket_rcv.
+> > > > > 2. How to update the hrtimer's timeout in a non-timer callback =
+scenario.
+> > > > >
+> > > > > To start with the first point, it has already been explained in=
+ previous emails that
+> > > > > executing hrtimer_forward outside of a timer callback is not al=
+lowed. Therefore, we
+> > > > > must accurately determine whether we are in a timer callback; o=
+nly in that context can
+> > > > > we use the hrtimer_forward function to update.
+> > > > > In the original code, since the same _prb_refresh_rx_retire_blk=
+_timer function was called,
+> > > > > distinguishing between contexts required code restructuring. No=
+w that this patch removes
+> > > > > the _prb_refresh_rx_retire_blk_timer function, achieving this a=
+ccurate distinction is not
+> > > > > too difficult.
+> > > > > The key issue is the second point. If we are not inside the hrt=
+imer's callback, we cannot
+> > > > > use hrtimer_forward to update the timeout.
+> > > > > So what other interface can we use? You might
+> > > > > suggest using hrtimer_start, but fundamentally, hrtimer_start c=
+annot be called if it has
+> > > > > already been started previously. Therefore, wouldn=E2=80=99t yo=
+u need to add hrtimer_cancel to
+> > > > > confirm that the hrtimer has been canceled? Once hrtimer_cancel=
+ is added, there will also
+> > > > > be scenarios where it is restarted, which means we need to cons=
+ider the concurrent
+> > > > > scenario when the socket exits and also calls hrtimer_cancel. T=
+his might require adding
+> > > > > logic for that concurrency scenario, and you might even need to=
+ reintroduce the
+> > > > > delete_blk_timer variable to indicate whether the packet_releas=
+e operation has been
+> > > > > triggered so that the hrtimer does not restart in the tpacket_r=
+cv scenario.
+> > > > >
+> > > > > In fact, in a previous v7 version, I proposed a change that I p=
+ersonally thought was
+> > > > > quite good, which can be seen here:
+> > > > > https://lore.kernel.org/netdev/20250822132051.266787-1-jackzxcu=
+i1989@163.com/. However,
+> > > > > this change introduced an additional variable and more logic. W=
+illem also pointed out
+> > > > > that the added complexity to avoid a non-problematic issue was =
+unnecessary.
+> > > >
+> > > > Admittedly it's a bit complex.
+> > > >
+> > > > >
+> > > > > As mentioned in Changes in v8:
+> > > > >   The only special case is when prb_open_block is called from t=
+packet_rcv.
+> > > > >   That would set the timeout further into the future than the a=
+lready queued
+> > > > >   timer. An earlier timeout is not problematic. No need to add =
+complexity to
+> > > > >   avoid that.
+> > > >
+> > > > It'd be better to highlight this in the commit message as well to=
 
----
- drivers/media/usb/dvb-usb-v2/az6007.c | 184 ++++++++++++++------------
- 1 file changed, 103 insertions(+), 81 deletions(-)
+> > > > avoid further repeat questions from others. It's an obvious chang=
+e in
+> > > > this patch :)
+> > >
+> > > BTW, I have to emphasize that after this patch, the hrtimer will ru=
+n
+> > > periodically and unconditionally. As far as I know, it's not possib=
+le
+> > > to run hundreds and thousands packet sockets in production, so it
+> > > might not be a huge problem.
+> >
+> > In tcp each sk has its own hrtimers (tcp_init_xmit_timers).
+> =
 
-diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-index 65ef045b74ca..69489cd3a0c4 100644
---- a/drivers/media/usb/dvb-usb-v2/az6007.c
-+++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-@@ -43,6 +43,7 @@ struct az6007_device_state {
- 	struct mutex		ca_mutex;
- 	struct dvb_ca_en50221	ca;
- 	unsigned		warm:1;
-+	unsigned		ci_attached:1;
- 	int			(*gate_ctrl) (struct dvb_frontend *, int);
- 	unsigned char		data[4096];
- };
-@@ -97,19 +98,30 @@ static struct mt2063_config az6007_mt2063_config = {
- 	.refclock = 36125000,
- };
- 
--static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
--			    u16 index, u8 *b, int blen)
-+static int __az6007_read(struct dvb_usb_device *d, struct az6007_device_state *st,
-+			    u8 req, u16 value, u16 index, u8 *b, int blen)
- {
- 	int ret;
- 
--	ret = usb_control_msg(udev,
--			      usb_rcvctrlpipe(udev, 0),
-+	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-+		return -EAGAIN;
-+
-+	if (blen > sizeof(st->data)) {
-+		pr_err("az6007: tried to read %d bytes, but I2C max size is %lu bytes\n",
-+		       blen, sizeof(st->data));
-+		ret = -EOPNOTSUPP;
-+		goto end_unlock;
-+	}
-+
-+	ret = usb_control_msg(d->udev,
-+			      usb_rcvctrlpipe(d->udev, 0),
- 			      req,
- 			      USB_TYPE_VENDOR | USB_DIR_IN,
- 			      value, index, b, blen, 5000);
- 	if (ret < 0) {
- 		pr_warn("usb read operation failed. (%d)\n", ret);
--		return -EIO;
-+		ret = -EIO;
-+		goto end_unlock;
- 	}
- 
- 	if (az6007_xfer_debug) {
-@@ -119,30 +131,42 @@ static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
- 				     DUMP_PREFIX_NONE, b, blen);
- 	}
- 
-+end_unlock:
-+	mutex_unlock(&d->usb_mutex);
- 	return ret;
- }
- 
- static int az6007_read(struct dvb_usb_device *d, u8 req, u16 value,
- 			    u16 index, u8 *b, int blen)
- {
--	struct az6007_device_state *st = d->priv;
-+	struct az6007_device_state *st = d_to_priv(d);
- 	int ret;
- 
- 	if (mutex_lock_interruptible(&st->mutex) < 0)
- 		return -EAGAIN;
- 
--	ret = __az6007_read(d->udev, req, value, index, b, blen);
-+	ret = __az6007_read(d, st, req, value, index, b, blen);
- 
- 	mutex_unlock(&st->mutex);
- 
- 	return ret;
- }
- 
--static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
--			     u16 index, u8 *b, int blen)
-+static int __az6007_write(struct dvb_usb_device *d, struct az6007_device_state *st,
-+			    u8 req, u16 value, u16 index, u8 *b, int blen)
- {
- 	int ret;
- 
-+	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-+		return -EAGAIN;
-+
-+	if (blen > sizeof(st->data) - 1) {
-+		pr_err("az6007: tried to write %d bytes, but I2C max size is %lu bytes\n",
-+		       blen, sizeof(st->data));
-+		ret = -EOPNOTSUPP;
-+		goto end_unlock;
-+	}
-+
- 	if (az6007_xfer_debug) {
- 		printk(KERN_DEBUG "az6007: OUT req: %02x, value: %04x, index: %04x\n",
- 		       req, value, index);
-@@ -150,35 +174,33 @@ static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
- 				     DUMP_PREFIX_NONE, b, blen);
- 	}
- 
--	if (blen > 64) {
--		pr_err("az6007: tried to write %d bytes, but I2C max size is 64 bytes\n",
--		       blen);
--		return -EOPNOTSUPP;
--	}
--
--	ret = usb_control_msg(udev,
--			      usb_sndctrlpipe(udev, 0),
-+	ret = usb_control_msg(d->udev,
-+			      usb_sndctrlpipe(d->udev, 0),
- 			      req,
- 			      USB_TYPE_VENDOR | USB_DIR_OUT,
- 			      value, index, b, blen, 5000);
- 	if (ret != blen) {
- 		pr_err("usb write operation failed. (%d)\n", ret);
--		return -EIO;
-+		ret = -EIO;
-+		goto end_unlock;
- 	}
- 
--	return 0;
-+	ret = 0;
-+end_unlock:
-+	mutex_unlock(&d->usb_mutex);
-+	return ret;
- }
- 
- static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
- 			    u16 index, u8 *b, int blen)
- {
--	struct az6007_device_state *st = d->priv;
-+	struct az6007_device_state *st = d_to_priv(d);
- 	int ret;
- 
- 	if (mutex_lock_interruptible(&st->mutex) < 0)
- 		return -EAGAIN;
- 
--	ret = __az6007_write(d->udev, req, value, index, b, blen);
-+	ret = __az6007_write(d, st, req, value, index, b, blen);
- 
- 	mutex_unlock(&st->mutex);
- 
-@@ -574,10 +596,9 @@ static void az6007_ci_uninit(struct dvb_usb_device *d)
- }
- 
- 
--static int az6007_ci_init(struct dvb_usb_adapter *adap)
-+static int az6007_ci_init(struct dvb_usb_device *d)
- {
--	struct dvb_usb_device *d = adap_to_d(adap);
--	struct az6007_device_state *state = adap_to_priv(adap);
-+	struct az6007_device_state *state = d_to_priv(d);
- 	int ret;
- 
- 	pr_debug("%s()\n", __func__);
-@@ -594,7 +615,7 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
- 	state->ca.poll_slot_status	= az6007_ci_poll_slot_status;
- 	state->ca.data			= d;
- 
--	ret = dvb_ca_en50221_init(&adap->dvb_adap,
-+	ret = dvb_ca_en50221_init(&d->adapter[0].dvb_adap,
- 				  &state->ca,
- 				  0, /* flags */
- 				  1);/* n_slots */
-@@ -604,6 +625,8 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
- 		return ret;
- 	}
- 
-+	state->ci_attached = true;
-+
- 	pr_debug("CI initialized.\n");
- 
- 	return 0;
-@@ -640,8 +663,6 @@ static int az6007_frontend_attach(struct dvb_usb_adapter *adap)
- 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
- 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
- 
--	az6007_ci_init(adap);
--
- 	return 0;
- }
- 
-@@ -661,8 +682,6 @@ static int az6007_cablestar_hdci_frontend_attach(struct dvb_usb_adapter *adap)
- 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
- 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
- 
--	az6007_ci_init(adap);
--
- 	return 0;
- }
- 
-@@ -752,8 +771,13 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	int length;
- 	u8 req, addr;
- 
--	if (mutex_lock_interruptible(&st->mutex) < 0)
-+	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
-+		return -EAGAIN;
-+	if (mutex_lock_interruptible(&st->mutex) < 0) {
-+		mutex_unlock(&d->i2c_mutex);
- 		return -EAGAIN;
-+	}
-+	printk(KERN_INFO "az6007_i2c_xfer 1 : %lx", atomic_long_read(&st->mutex.owner));
- 
- 	for (i = 0; i < num; i++) {
- 		addr = msgs[i].addr << 1;
-@@ -775,13 +799,14 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr | (1 << 8);
- 			length = 6 + msgs[i + 1].len;
- 			len = msgs[i + 1].len;
--			ret = __az6007_read(d->udev, req, value, index,
-+			printk(KERN_INFO "az6007_i2c_xfer 2 : %lx", atomic_long_read(&st->mutex.owner));
-+			ret = __az6007_read(d, st, req, value, index,
- 					    st->data, length);
--			if (ret >= len) {
-+			printk(KERN_INFO "az6007_i2c_xfer 3 : %lx", atomic_long_read(&st->mutex.owner));
-+			if (ret >= len + 5) {
- 				for (j = 0; j < len; j++)
- 					msgs[i + 1].buf[j] = st->data[j + 5];
--			} else
--				ret = -EIO;
-+			}
- 			i++;
- 		} else if (!(msgs[i].flags & I2C_M_RD)) {
- 			/* write bytes */
-@@ -797,10 +822,10 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr | (1 << 8);
- 			length = msgs[i].len - 1;
- 			len = msgs[i].len - 1;
--			for (j = 0; j < len; j++)
--				st->data[j] = msgs[i].buf[j + 1];
--			ret =  __az6007_write(d->udev, req, value, index,
--					      st->data, length);
-+			printk(KERN_INFO "az6007_i2c_xfer 4 : %lx", atomic_long_read(&st->mutex.owner));
-+			ret = __az6007_write(d, st, req, value, index,
-+					      &msgs[i].buf[1], length);
-+			printk(KERN_INFO "az6007_i2c_xfer 5 : %lx", atomic_long_read(&st->mutex.owner));
- 		} else {
- 			/* read bytes */
- 			if (az6007_xfer_debug)
-@@ -815,16 +840,22 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr;
- 			length = msgs[i].len + 6;
- 			len = msgs[i].len;
--			ret = __az6007_read(d->udev, req, value, index,
-+			printk(KERN_INFO "az6007_i2c_xfer 6 : %lx", atomic_long_read(&st->mutex.owner));
-+			ret = __az6007_read(d, st, req, value, index,
- 					    st->data, length);
--			for (j = 0; j < len; j++)
--				msgs[i].buf[j] = st->data[j + 5];
-+			printk(KERN_INFO "az6007_i2c_xfer 7 : %lx", atomic_long_read(&st->mutex.owner));
-+			if (ret >= len + 5) {
-+				for (j = 0; j < len; j++)
-+					msgs[i].buf[j] = st->data[j + 5];
-+			}
- 		}
- 		if (ret < 0)
- 			goto err;
- 	}
- err:
-+	printk(KERN_INFO "az6007_i2c_xfer 8 : %lx", atomic_long_read(&st->mutex.owner));
- 	mutex_unlock(&st->mutex);
-+	mutex_unlock(&d->i2c_mutex);
- 
- 	if (ret < 0) {
- 		pr_info("%s ERROR: %i\n", __func__, ret);
-@@ -845,6 +876,7 @@ static const struct i2c_algorithm az6007_i2c_algo = {
- 
- static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- {
-+	struct az6007_device_state *state = d_to_priv(d);
- 	int ret;
- 	u8 *mac;
- 
-@@ -855,7 +887,7 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 		return -ENOMEM;
- 
- 	/* Try to read the mac address */
--	ret = __az6007_read(d->udev, AZ6007_READ_DATA, 6, 0, mac, 6);
-+	ret = __az6007_read(d, state, AZ6007_READ_DATA, 6, 0, mac, 6);
- 	if (ret == 6)
- 		ret = WARM;
- 	else
-@@ -864,9 +896,9 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 	kfree(mac);
- 
- 	if (ret == COLD) {
--		__az6007_write(d->udev, 0x09, 1, 0, NULL, 0);
--		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
--		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
-+		__az6007_write(d, state, 0x09, 1, 0, NULL, 0);
-+		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
-+		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
- 	}
- 
- 	pr_debug("Device is on %s state\n",
-@@ -874,13 +906,6 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 	return ret;
- }
- 
--static void az6007_usb_disconnect(struct usb_interface *intf)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--	az6007_ci_uninit(d);
--	dvb_usbv2_disconnect(intf);
--}
--
- static int az6007_download_firmware(struct dvb_usb_device *d,
- 	const struct firmware *fw)
- {
-@@ -889,6 +914,19 @@ static int az6007_download_firmware(struct dvb_usb_device *d,
- 	return cypress_load_firmware(d->udev, fw, CYPRESS_FX2);
- }
- 
-+static int az6007_init(struct dvb_usb_device *d)
-+{
-+	return az6007_ci_init(d);
-+}
-+
-+static void az6007_exit(struct dvb_usb_device *d)
-+{
-+	struct az6007_device_state *state = d_to_priv(d);
-+
-+	if (state->ci_attached)
-+		az6007_ci_uninit(d);
-+}
-+
- /* DVB USB Driver stuff */
- static struct dvb_usb_device_properties az6007_props = {
- 	.driver_name         = KBUILD_MODNAME,
-@@ -906,6 +944,8 @@ static struct dvb_usb_device_properties az6007_props = {
- 	.download_firmware   = az6007_download_firmware,
- 	.identify_state	     = az6007_identify_state,
- 	.power_ctrl          = az6007_power_ctrl,
-+	.init                = az6007_init,
-+	.exit                = az6007_exit,
- 	.num_adapters        = 1,
- 	.adapter             = {
- 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-@@ -929,6 +969,8 @@ static struct dvb_usb_device_properties az6007_cablestar_hdci_props = {
- 	.download_firmware   = az6007_download_firmware,
- 	.identify_state	     = az6007_identify_state,
- 	.power_ctrl          = az6007_power_ctrl,
-+	.init                = az6007_init,
-+	.exit                = az6007_exit,
- 	.num_adapters        = 1,
- 	.adapter             = {
- 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-@@ -949,37 +991,17 @@ static const struct usb_device_id az6007_usb_table[] = {
- 
- MODULE_DEVICE_TABLE(usb, az6007_usb_table);
- 
--static int az6007_suspend(struct usb_interface *intf, pm_message_t msg)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--
--	az6007_ci_uninit(d);
--	return dvb_usbv2_suspend(intf, msg);
--}
--
--static int az6007_resume(struct usb_interface *intf)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--	struct dvb_usb_adapter *adap = &d->adapter[0];
--
--	az6007_ci_init(adap);
--	return dvb_usbv2_resume(intf);
--}
--
- /* usb specific object needed to register this driver with the usb subsystem */
- static struct usb_driver az6007_usb_driver = {
--	.name		= KBUILD_MODNAME,
--	.id_table	= az6007_usb_table,
--	.probe		= dvb_usbv2_probe,
--	.disconnect	= az6007_usb_disconnect,
--	.no_dynamic_id	= 1,
--	.soft_unbind	= 1,
--	/*
--	 * FIXME: need to implement reset_resume, likely with
--	 * dvb-usb-v2 core support
--	 */
--	.suspend	= az6007_suspend,
--	.resume		= az6007_resume,
-+	.name = KBUILD_MODNAME,
-+	.id_table = az6007_usb_table,
-+	.probe = dvb_usbv2_probe,
-+	.disconnect = dvb_usbv2_disconnect,
-+	.suspend = dvb_usbv2_suspend,
-+	.resume = dvb_usbv2_resume,
-+	.reset_resume = dvb_usbv2_reset_resume,
-+	.no_dynamic_id = 1,
-+	.soft_unbind = 1,
- };
- 
- module_usb_driver(az6007_usb_driver);
---
+> Right, but they don't get woken up so frequently in normal cases. I'm
+> worried because in production I saw a huge impact caused by the 1ms
+> timer from numerous sockets:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3De4dd0d3a2f64b8bd8029ec70f52bdbebd0644408
+> But AFAIK I don't see a real use case where people use so many packet
+> sockets. If it happens, in the future we might get complaints. We'll
+> see:)
+
+Hrtimers share an interrupt.
+
+The worst case additional overhead is if timer expiration is a little
+bit slower than packet arrival rate (and thus tpacket_rcv event rate).
+
+Because the higher the tpacket_rcv rate relatively, the smaller the
+timer callback overhead is. And if timeout frequency is higher than
+tpacket_rcv, it would fire anyway.
+
+So worst case the overhead is a doubling of block management calls?
+
+I don't have hard numbers but the cost of removing a timer and
+reprogramming from inside tpacket_rcv just to defer seems higher than
+accepting this bounded (relative to other operations) cost of
+spurious wakeups.
 
