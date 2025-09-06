@@ -1,174 +1,153 @@
-Return-Path: <linux-kernel+bounces-804280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195ADB46FDF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:05:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4124EB46FD8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84E6189ABF2
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39A73BAB37
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2E61C4A2D;
-	Sat,  6 Sep 2025 14:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBFD2F1FF5;
+	Sat,  6 Sep 2025 13:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SbyR8zN9"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="F6w2aN5I"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E30D1ADFE4;
-	Sat,  6 Sep 2025 14:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6BD2F1FD5
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 13:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757167254; cv=none; b=QNdYu5ugdnkB6NZXK925Ef7vDP7qpx60VJx5Zo5bZEOXE5v0xCiYYZz3+6ZQGm/tyQz1njnxNf8F7I09RLoK+5/FVqZ95YcbMuHMLymxW7xvBpy8YDn9Z1dIRfkr6gFUXDfiHzCyFjKhan/+MQUlZZo1uFOJLYWo6y1dTX3UYSc=
+	t=1757167100; cv=none; b=RNlSJ9Uu/1WoDtC5ooS8E1mo1pfEnDwtPqkJ+gYErJQFyCr09o0sRpzZ2Maor6Zbz8qlT8LMqRj/02P7euB+m6IGk58QLcpTIzzMnJMYB2Lp/cpmcVyFUfVvNVici1caZKjRD3YC+rA6v+4Hf8OAj+q5uj3a6DHXeocLUdN28mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757167254; c=relaxed/simple;
-	bh=+Ya17OzYxOlefHPbeCWX1JoI/dsn59tFRDumYvwwP5I=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=lmPbFnU++AzhXEs8EcSoNYmjzxp8EHuJvplWhj0+ilkCBXd8SculZ6JEWUoktYrU6xHV8PAYRGW2QMtmCtWCViKVoYgnNzYp2JA3ZFAEC193o6Diy3H4B5AHgPtARfM0F68IRfUH6QSwlzKKC3z+YnwXNu8PpnGURSNyF7/myBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SbyR8zN9; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1757166943; bh=pDSqOj9LJo8QYj851dvKtVOYUfOR0D+2E/v7FdJbhbI=;
-	h=From:To:Cc:Subject:Date;
-	b=SbyR8zN9nUTF4QSxQHo6Ewnp056ydUrackxfW58XlYPoYAhCoSiry/Hh6UZamDRMZ
-	 7ZpeEJsLV4kfGQV11HdNrPYGq0b6ZvGhgjLSa1HQOg1dsTpdQcXtF99v/og81MfgYv
-	 LsbQviSFs2+h8Zi3Qw9sgsHlVw78oEwKXNRkjG4E=
-Received: from halo.lan ([240e:379:226f:5400:8647:9ff:fe5b:afa9])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id DE49F4B9; Sat, 06 Sep 2025 21:55:36 +0800
-X-QQ-mid: xmsmtpt1757166936t9f2gq3b8
-Message-ID: <tencent_E71C2F71D9631843941A5DF87204D1B5B509@qq.com>
-X-QQ-XMAILINFO: NDgMZBR9sMmagh4muckCaN++1s12C+dCKaiLD7DgR6R1WRgBi1pheW/NU31spd
-	 1CbHxqfK2DtRovwlHtvU0+nFkrV5aPT76YXo58Wq78LnpV85F9HSGeg5jkdKvg9FQ8pTcXBFCoeo
-	 1DvYkAKZvCNvfXqQpzYjGFWGgvDhtxjtucooNH8ijuad/IkMgUt8TKed9lzBxqAwrA6yJBmnmU5c
-	 hDaF+lEpcfUgIdilra5RC5Xqu6Zi/zZHtFXYwT4vLzVn5hZjEF7+U8eLrh/OCqdjcmJfWb8FrFC4
-	 WnQWFVpstUstsKdrIQzuokQa68W5yGOW1/AbI9mg3xur6kszVolAXuTr2lKtZ3d9USVEsdMBkf00
-	 pfBawfZS2nGCXqQkq7vXPROvgcVmDT3zUtAjviDoi+j6zOpXdK/Ng1l3PPRZJkZp4bDLjszzWhkU
-	 OLbE/acTenuTFen0buXO1mzc7WAr/MkVxvkT+aQa2DG8/GyCzNu2gRfxjuOf0vLw0Hs09b1eTBl0
-	 UB4fIgrD758X/kZqU/m3q7RkuGNjGGC9XkqgHKFISijzhHz6vAbBjHVAgq1pIATFexbxTsV7adUg
-	 RkfmiDkdSa4pD4vDc+uZ/S/vKU53eeT854X/CBRuiOjgHpOKB10go56sCEdrX+dvVbdSfIxN0MNq
-	 JqEn/iWauvowc+xS4g6NyStzUTa+D26fScjChVEd+KMABg6N+lbf4gPh3QnKr30VKJh96+ywYCT8
-	 yA9knGgxlkHjn9BU/Spu8NNUpmw6C0twiuAD8HcSscOUpvtaqGdNLJjl7asKoHiq61tkzAjMaoFr
-	 BjIw7pSiGCDo8jLx8nLxBGzXWXyFcChXCetRzunnwEZJ34V8bsAyeCiwOGfdSGqgEWvP3hkacF9U
-	 jITrrBIu8SY7QoS1EzX4CHPHkxSBpWVD26Y7+M1mVso4HnppQg+QdYEeuxkL46UwQrnjRlZUgdFD
-	 +40aM26S2AEPVW3wbrl9rFtD2At9jf7d1I4itkB9Urw+9RvXqmvaHYF9wV+hJ7wytyR2/ncLXiwQ
-	 qzlNAHj/lZOu7L4H8NApLxWBe7aSw=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Yangyu Chen <cyy@cyyself.name>
-To: netdev@vger.kernel.org
-Cc: Igor Russkikh <irusskikh@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH] net: atlantic: make RX page order tunable via module param
-Date: Sat,  6 Sep 2025 21:54:34 +0800
-X-OQ-MSGID: <20250906135434.32951-1-cyy@cyyself.name>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1757167100; c=relaxed/simple;
+	bh=EaZnNw6mPYoDqOyuo6IqF3m0V6XYT663XFf3xX/yYGM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=poAFSvvYqGuxhhBAGHKKI/05LAHAaVrv9goxgtc4I10/Oij+AbYc1C8JmQxiLxOp6r6v/m20xuRQsPIVqoYg54I0NPyDkFmmhPwcIid0WWyDxj59varhAulRsNLyf81uJXc4RpYdnG6NejFppdDCROVdBGJBX//aC9PE/sb1UGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=F6w2aN5I; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1757167085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+XL9HIJO3UGo5wyNjZG9W2dDyTd3zOWpByElnpm1c1Y=;
+	b=F6w2aN5IOUHo91/K1jt/wOXJfr/PMEdWIGwoITPTiw+jwqaCSgnBV9BQs6GyT7xLKcUuI7
+	yZGYXtSNBSFs62GiylNXChPHb6MWLG5KDSTsR6G5iWCfd0X5JGptu9qJ5ped+2wgKTgdZc
+	pysWSw0Nad9+HUTNutrywXHTEZy9MLEkyEsxuPWTxRQyQQUibV5pNyEReqaodtOo2HkOP9
+	1DmU/D8elEgK28LaxIt6XKh8gg8erTYt2Vp9wqXBQxt7CfowyKVjtApaBvwKAS5x4ysJ8v
+	fNupDxM6iHIR3RrCUO4rk6JJMknJfXLU+k4O3fwpJxwiSKxhkNnRs5++6nG1Mw==
+Content-Type: multipart/signed;
+ boundary=7bb96b1748a067e53456e99e209bf191ed42469d49852d8d3d12a1592bb7;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Sat, 06 Sep 2025 15:57:55 +0200
+Message-Id: <DCLRQQH0F49Q.2OUP59P4VV91O@cknow.org>
+Cc: <heiko@sntech.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: rk3368: add CLK_I2S_8CH_PRE
+ and CLK_I2S_8CH_FRAC
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: =?utf-8?q?=E6=9D=8E=E7=BB=B4=E8=B1=AA?= <cn.liweihao@gmail.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>
+References: <20250905132328.9859-1-cn.liweihao@gmail.com>
+ <20250905132328.9859-3-cn.liweihao@gmail.com>
+ <707aad1d-fcdb-4c66-8d96-41cf1a1b02ce@kernel.org>
+ <CAPEOAkRTVtKBsmiGTbKOCar0oNS-C3dRXqdpuowroRPH1bFS7g@mail.gmail.com>
+ <58b638c8-b27e-49a6-b79e-f078135c575b@kernel.org>
+ <CAPEOAkSpEzVtUqyUJQbDmbmPOjORnAfuehhvo1qqZgAAeY=ZVA@mail.gmail.com>
+In-Reply-To: <CAPEOAkSpEzVtUqyUJQbDmbmPOjORnAfuehhvo1qqZgAAeY=ZVA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On systems like AMD Strix Halo with Thunderbolt, RX map/unmap operations
-with IOMMU introduce significant performance overhead, making it difficult
-to achieve line rate with 10G NICs even with TCP over MTU 1500. Using
-higher order pages reduces this overhead, so this parameter is now
-configurable.
+--7bb96b1748a067e53456e99e209bf191ed42469d49852d8d3d12a1592bb7
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-After applying this patch and setting `rxpageorder=3`, testing with QNAP
-QNA-T310G1S on 10G Ethernet (MTU 1500) using `iperf3 -R` on IPv6 achieved
-9.28Gbps compared to only 2.26Gbps previously.
+On Sat Sep 6, 2025 at 3:34 PM CEST, =E6=9D=8E=E7=BB=B4=E8=B1=AA wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=886=
+=E6=97=A5=E5=91=A8=E5=85=AD 15:21=E5=86=99=E9=81=93=EF=BC=9A
+>> On 06/09/2025 03:34, =E6=9D=8E=E7=BB=B4=E8=B1=AA wrote:
+>> > Krzysztof Kozlowski <krzk@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=88=
+5=E6=97=A5=E5=91=A8=E4=BA=94 22:13=E5=86=99=E9=81=93=EF=BC=9A
+>> >> On 05/09/2025 15:23, WeiHao Li wrote:
+>> >>> We need a clock id to assign clock parent when use i2s 8ch as audio
+>> >>> device, CLK_I2S_8CH_FRAC should be CLK_I2S_8CH_PRE parent so we can =
+get
+>> >>> frequency we want.
+>> >>>
+>> >>> Signed-off-by: WeiHao Li <cn.liweihao@gmail.com>
+>> >>> ---
+>> >>>  include/dt-bindings/clock/rk3368-cru.h | 3 +++
+>> >>>  1 file changed, 3 insertions(+)
+>> >>>
+>> >>> diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bin=
+dings/clock/rk3368-cru.h
+>> >>> index b951e29069..795e721957 100644
+>> >>> --- a/include/dt-bindings/clock/rk3368-cru.h
+>> >>> +++ b/include/dt-bindings/clock/rk3368-cru.h
+>> >>> @@ -183,6 +183,9 @@
+>> >>>  #define HCLK_BUS             477
+>> >>>  #define HCLK_PERI            478
+>> >>>
+>> >>> +#define CLK_I2S_8CH_PRE              500
+>> >>
+>> >> 479
+>> >>
+>> >>> +#define CLK_I2S_8CH_FRAC     501
+>> >>
+>> >> 480, no?
+>> >>
+>> >
+>> > Neither of these clocks belong to the previous grouping in terms of
+>> > type, so I chose to start with a new integer id here.
+>>
+>> I don't know what is "previous grouping" here, but IDs are abstract and
+>> are incremented by 1.
+>
+> In the current kernel code, the RK3368 clock IDs are categorized by
+> SCLK, ACLK, PCLK, and HCLK.
 
-Signed-off-by: Yangyu Chen <cyy@cyyself.name>
----
-Should we also consider make default AQ_CFG_RX_PAGEORDER to 3?
+Maybe this helps understanding the discrepancy:
 
-Test result showing performance improvement:
-$ sudo insmod drivers/net/ethernet/aquantia/atlantic/atlantic.ko
-$ sudo ip link set enp99s0 up
-$ iperf3 -c fe80::3a63:bbff:fe2e:1a68%enp99s0 -R
-Connecting to host fe80::3a63:bbff:fe2e:1a68%enp99s0, port 5201
-Reverse mode, remote host fe80::3a63:bbff:fe2e:1a68%enp99s0 is sending
-[  5] local fe80::265e:beff:fe6a:4da1 port 39588 connected to fe80::3a63:bbff:fe2e:1a68 port 5201
-[ ID] Interval           Transfer     Bitrate
-[  5]   0.00-1.00   sec   271 MBytes  2.27 Gbits/sec                  
-[  5]   1.00-2.00   sec   270 MBytes  2.27 Gbits/sec                  
-[  5]   2.00-3.00   sec   268 MBytes  2.25 Gbits/sec                  
-[  5]   3.00-4.00   sec   270 MBytes  2.26 Gbits/sec                  
-[  5]   4.00-5.00   sec   268 MBytes  2.25 Gbits/sec                  
-[  5]   5.00-6.00   sec   269 MBytes  2.26 Gbits/sec                  
-[  5]   6.00-7.00   sec   268 MBytes  2.25 Gbits/sec                  
-[  5]   7.00-8.00   sec   268 MBytes  2.25 Gbits/sec                  
-[  5]   8.00-9.00   sec   268 MBytes  2.25 Gbits/sec                  
-[  5]   9.00-10.00  sec   268 MBytes  2.25 Gbits/sec                  
-- - - - - - - - - - - - - - - - - - - - - - - - -
-[ ID] Interval           Transfer     Bitrate         Retr
-[  5]   0.00-10.00  sec  2.63 GBytes  2.26 Gbits/sec    1            sender
-[  5]   0.00-10.00  sec  2.63 GBytes  2.26 Gbits/sec                  receiver
+Starting with the rk3588 series, clock IDs are in the 'clock' binding
+dir and named "rockchip,rk<SoC-id>-cru.h" and are numbered sequentially
+with no gaps. And the reset IDs are in the 'reset' binding dir with the
+same filename pattern.
 
-iperf Done.
-$ sudo rmmod atlantic
-$ sudo insmod drivers/net/ethernet/aquantia/atlantic/atlantic.ko rxpageorder=3
-$ sudo ip link set enp99s0 up
-$ iperf3 -c fe80::3a63:bbff:fe2e:1a68%enp99s0 -R
-Connecting to host fe80::3a63:bbff:fe2e:1a68%enp99s0, port 5201
-Reverse mode, remote host fe80::3a63:bbff:fe2e:1a68%enp99s0 is sending
-[  5] local fe80::265e:beff:fe6a:4da1 port 43356 connected to fe80::3a63:bbff:fe2e:1a68 port 5201
-[ ID] Interval           Transfer     Bitrate
-[  5]   0.00-1.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   1.00-2.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   2.00-3.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   3.00-4.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   4.00-5.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   5.00-6.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   6.00-7.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   7.00-8.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   8.00-9.00   sec  1.08 GBytes  9.28 Gbits/sec                  
-[  5]   9.00-10.00  sec  1.08 GBytes  9.28 Gbits/sec                  
-- - - - - - - - - - - - - - - - - - - - - - - - -
-[ ID] Interval           Transfer     Bitrate         Retr
-[  5]   0.00-10.00  sec  10.8 GBytes  9.28 Gbits/sec    0            sender
-[  5]   0.00-10.00  sec  10.8 GBytes  9.28 Gbits/sec                  receiver
+With older SoC series, including rk3568*, both the clock and reset IDs
+are in "clock/rk<SoC-id>-cru.h" where they are NOT sequentially
+numbered and thus jumps in the numbering is not out of place there.
 
-iperf Done.
----
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+HTH,
+  Diederik
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-index b24eaa5283fa..48f35fbf9a70 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -40,6 +40,10 @@ static unsigned int aq_itr_rx;
- module_param_named(aq_itr_rx, aq_itr_rx, uint, 0644);
- MODULE_PARM_DESC(aq_itr_rx, "RX interrupt throttle rate");
- 
-+static unsigned int rxpageorder = AQ_CFG_RX_PAGEORDER;
-+module_param_named(rxpageorder, rxpageorder, uint, 0644);
-+MODULE_PARM_DESC(rxpageorder, "RX page order");
-+
- static void aq_nic_update_ndev_stats(struct aq_nic_s *self);
- 
- static void aq_nic_rss_init(struct aq_nic_s *self, unsigned int num_rss_queues)
-@@ -106,7 +110,7 @@ void aq_nic_cfg_start(struct aq_nic_s *self)
- 	cfg->tx_itr = aq_itr_tx;
- 	cfg->rx_itr = aq_itr_rx;
- 
--	cfg->rxpageorder = AQ_CFG_RX_PAGEORDER;
-+	cfg->rxpageorder = rxpageorder;
- 	cfg->is_rss = AQ_CFG_IS_RSS_DEF;
- 	cfg->aq_rss.base_cpu_number = AQ_CFG_RSS_BASE_CPU_NUM_DEF;
- 	cfg->fc.req = AQ_CFG_FC_MODE;
--- 
-2.47.2
+*) I have a local commit which moves the reset IDs to
+"reset/rockchip,rk3568-cru.h", but I don't know how to do/fix the
+numbering, so I never submitted it.
 
+--7bb96b1748a067e53456e99e209bf191ed42469d49852d8d3d12a1592bb7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaLw95gAKCRDXblvOeH7b
+bvNkAP99WIABmRv9YSzmveKgHvYKLFoQLUV0tMVC03ofrDorHQEA2TFlad1NNFB5
+V10lG7EyfJsr5FC/E6J50SW4/JODEQs=
+=GF08
+-----END PGP SIGNATURE-----
+
+--7bb96b1748a067e53456e99e209bf191ed42469d49852d8d3d12a1592bb7--
 
