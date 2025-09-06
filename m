@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-803989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DEDB46863
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:20:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1643FB46873
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 04:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074EA3BCB41
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6302C1895AE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 02:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16F205E2F;
-	Sat,  6 Sep 2025 02:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THn72tLW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9975820B7EE;
+	Sat,  6 Sep 2025 02:29:56 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982781FDA94;
-	Sat,  6 Sep 2025 02:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30A315D3D;
+	Sat,  6 Sep 2025 02:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757125209; cv=none; b=r2HIdPRAFbGQpgcaig2l3hCnVTWCIYIGKUp3eSs7kDw6zbEefJpOH/QcDvK0+ZnkOrM9MS8+Q3ilcKjRYIUFRut3gmGCwcLlMbZIrnF01p2p5o3zKeL/qK0KTS5xK/ng4KvwMiyoGuHnRkAQQ0mAdnERosVcG1gSjsqFdH0gLBc=
+	t=1757125796; cv=none; b=Qfz1Jq9kPdE92TmXDbesn9Mb/heEA3QT9FW5uCCE0eNfB6FrqqjMAKWSGHTZ5EjcBDxlKFbwU/YmSKdb796HmGaYV8jxZliduLrFpLk47QUXPVLgU/AgQuBZEUgwzazWO54czmwUaijxCuoubhBhcMjkEUmct+qiLwboxLQ8x6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757125209; c=relaxed/simple;
-	bh=ccdbqjJD9TxJvvVk9iwqDWWe5yHoYeZm/dbKjaO7OIo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aJ6pkCZpv+UxgFwLo9CBCH30heRiETQRd6a1hqzW8wLEo8QuzZnLekY5uujC0lkGgVGtKx50e+TigHbIeqRmSa9xRi4hkA6W00CDImIoj8yNFOq+AqlnS4TDVzfQv75WUR+hGHfiiml2lcl+QnJxY9UCEutM0HeyeX3RTq71j3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THn72tLW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE80C4CEF7;
-	Sat,  6 Sep 2025 02:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757125209;
-	bh=ccdbqjJD9TxJvvVk9iwqDWWe5yHoYeZm/dbKjaO7OIo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=THn72tLWMa2ECtQv3Hre5Qh6Irt3R1VGUZNNupSmxl38z0fW5Ad+j53NRHRgk4OET
-	 /e88oDAaiYlrksQc4dAYvbO7a11ZU0uFcmoLiMPp3+spUAFHjKi0z8JLtkdKcNPxZX
-	 vtChjIWmwcpL1puP/y5Fagz7JAxriWHuZATOy1NoZZzjqK56dEl2fkc6auOb+zB0x0
-	 1DndaGvomEUOq5lmu/QMONuVmjvCExLTorY/PNrAgtvGO5GFF/adT56qnzFmnqoLU9
-	 pETiOkEYngF2Ewv4DTxPIjZXWt0bBw/CLoChNi8fxv4Iwpv/h6bbSN3e5nPRXFIq2a
-	 VhBkFaVAPMWgg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE2D383BF69;
-	Sat,  6 Sep 2025 02:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757125796; c=relaxed/simple;
+	bh=jYkwUCzSvRhyaQCuijQtXNsDWPerXcNfYRGwM+bAOz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uRwPaJCcAx+baEztjo01BMwsrJXYYtcWQrxUA1GTCEbGebJTOzBGrytZsvT8567FNtHEM+m8Qkuh/1LnD/lTGwvtvg4tpGToWkE3NfEsEpEvD1dOGNfQHiJmfNu9fNxeagVLSLrAUmUMNbbKPPB8KSB4k5G+kKSvVI46VnXkiA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id EACCB1603D8;
+	Sat,  6 Sep 2025 02:29:51 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 0B5CB20029;
+	Sat,  6 Sep 2025 02:29:49 +0000 (UTC)
+Date: Fri, 5 Sep 2025 22:30:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Ye Weihua <yeweihua4@huawei.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] trace/fgraph: Fix the warning caused by missing
+ unregister notifier
+Message-ID: <20250905223029.4fee615b@gandalf.local.home>
+In-Reply-To: <9d6ee97b-5b0a-48a7-850d-de18d3107bce@roeck-us.net>
+References: <20250818073332.3890629-1-yeweihua4@huawei.com>
+	<9d6ee97b-5b0a-48a7-850d-de18d3107bce@roeck-us.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/6] 10G-QXGMII for AQR412C,
- Felix DSA and Lynx PCS driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175712521350.2748352.11613393248327426471.git-patchwork-notify@kernel.org>
-Date: Sat, 06 Sep 2025 02:20:13 +0000
-References: <20250903130730.2836022-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20250903130730.2836022-1-vladimir.oltean@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, claudiu.manoil@nxp.com,
- alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ioana.ciornei@nxp.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
- daniel@makrotopia.org, quic_luoj@quicinc.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: cmd8qqo46ez37zaq5pkwx9g4jejw567p
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 0B5CB20029
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18WGejc4BSZISLCwjdV/lV+WIcA8UNYhMw=
+X-HE-Tag: 1757125789-94756
+X-HE-Meta: U2FsdGVkX1/KnVXTIKhxRwY8pYrrcD5VqtTQizjjzv7FrfEABC73iKILJ0jDPaPxtx99s8C7MQEaEzBkiwp5KkZRiR9dV8+6xbHHAcyH1wIpWBUSm5bNvGbxpbZYFBthWIL8zKCGxRc9UQrfqnr7GqTAejOEi0UuuTF/zPfTJyZVYrd1k0Hsy2NfuQG9XWsj33LGbOj0h0gWcPEFY+38TYpCtg1KZOtpwFcs7B/7rzOzpZUlmhMHC2zezBq4OOvGJ+2vzGIjjfm8eO0YHzOtw99cdBBS2danR5F6qp43qQSbvaqiESdMUbm/aGEJr7bIilguZOqnP6bXkqInDThwaCLViCtWV5kd61cB0kqB/b8P+YaINbT/YSDlws4ZYMBA
 
-Hello:
+On Fri, 5 Sep 2025 16:19:02 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed,  3 Sep 2025 16:07:24 +0300 you wrote:
-> Introduce the first user of the "10g-qxgmii" phy-mode, since its
-> introduction from commit 5dfabcdd76b1 ("dt-bindings: net:
-> ethernet-controller: add 10g-qxgmii mode").
+> > +++ b/kernel/trace/fgraph.c
+> > @@ -1391,10 +1391,11 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+> >  error:
+> >  	if (ret) {
+> >  		ftrace_graph_active--;
+> >  		gops->saved_func = NULL;
+> >  		fgraph_lru_release_index(i);
+> > +		unregister_pm_notifier(&ftrace_suspend_notifier);  
 > 
-> The arch/arm64/boot/dts/freescale/fsl-ls1028a-qds-13bb.dtso already
-> exists upstream, but has phy-mode = "usxgmii", which comes from the fact
-> that the AQR412(C) PHY does not distinguish between the two modes.
-> Yet, the distinction is crucial for the upcoming SerDes driver for the
-> LS1028A platform.
-> 
-> [...]
+> Is this really correct ? The pm notifier is only registered if
+> ftrace_graph_active==1, but not if it is larger than that.
+> The above code unregisters it unconditionally, even if
+> ftrace_graph_active > 1. I can see that the resulting double
+> unregistration in unregister_ftrace_graph() doesn't really
+> matter since the error return will be ignored, but is it really
+> irrelevant for the successful registered graphs no longer get the
+> benefit of the pm notifier callback ?
 
-Here is the summary with links:
-  - [net-next,1/6] net: pcs: lynx: support phy-mode = "10g-qxgmii"
-    https://git.kernel.org/netdev/net-next/c/76cd8a2ea98a
-  - [net-next,2/6] net: dsa: felix: support phy-mode = "10g-qxgmii"
-    https://git.kernel.org/netdev/net-next/c/6f616757dd30
-  - [net-next,3/6] net: phy: aquantia: print global syscfg registers
-    https://git.kernel.org/netdev/net-next/c/7b0376d0e063
-  - [net-next,4/6] net: phy: aquantia: report and configure in-band autoneg capabilities
-    https://git.kernel.org/netdev/net-next/c/5d59109d47c0
-  - [net-next,5/6] net: phy: aquantia: create and store a 64-bit firmware image fingerprint
-    https://git.kernel.org/netdev/net-next/c/dda916111e29
-  - [net-next,6/6] net: phy: aquantia: support phy-mode = "10g-qxgmii" on NXP SPF-30841 (AQR412C)
-    https://git.kernel.org/netdev/net-next/c/a76f26f7a81e
+Ah right, it should be:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+error:
+	if (ret) {
+		ftrace_graph_active--;
+		gops->saved_func = NULL;
+		fgraph_lru_release_index(i);
+		if (!ftrace_graph_active)
+			unregister_pm_notifier(&ftrace_suspend_notifier);
+	}
+	return ret;
 
+I missed that there's a:
 
+	ret = ftrace_startup_subops(&graph_ops, &gops->ops, command);
+	if (!ret)
+		fgraph_array[i] = gops;
+
+Just before the error label, so the goto error isn't the only path there
+that can affect the ret variable.
+
+I could add a patch or you could send one.
+
+-- Steve
 
