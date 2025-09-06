@@ -1,169 +1,159 @@
-Return-Path: <linux-kernel+bounces-804379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D710B47562
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8DDB47567
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CCD7C68C0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578741B218DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307EA25B1C5;
-	Sat,  6 Sep 2025 17:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8517E25B1C5;
+	Sat,  6 Sep 2025 17:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c64HC7VF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z2cA/dn9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D9424A049;
-	Sat,  6 Sep 2025 17:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A89A2571B9;
+	Sat,  6 Sep 2025 17:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757178792; cv=none; b=d19t6E5xwVL8PC8aKNZB7E2dX2wGZstM4is8jeaSckWIS8cjhg9ZRbwfPpJPNgU3gYcsYbof59n1v2Ai8u9CJctnP22b/rbEq7Buy7Zuwj4BrJVMOOnlE172qiE2QfRF3T5cSdcTmA/+rrobkoXg6ILQBcfq4jiMOhLGS1td7E0=
+	t=1757178809; cv=none; b=pP0zVkYzO4Q2nVu0Vz9sEtibb11K9k+hg4zCcxxfXNu920zDowM2RqQYYlaEBIc8958CTASgP227EW0jjBd80/P4WhpRhPlSu+cadPO5ik85MidyXIhZq9bO8v2aZNPg3oSBJ2rAk7H2lCjx/BFLc88bfR53/3K1You08i+fxPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757178792; c=relaxed/simple;
-	bh=Mv/Y3kvQFgparfIlQNQwNiMV1wrcDKs1S8/YH+Ac6po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2Art1nl4/XSDrilwf09ZXA30S81ci4oQqnini/JIuCdEt0gwDGcqL+EqiAbAIXf1AHs3C6FnQqL61FrU8+grOqGFfcMD7oTQkK5symEDwcgbnBk9YgmJehsBAcYxn8K9l1whbF4sVqAUzqSh7BwSqGDdNYDPBvJFHs03NdVj+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c64HC7VF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757178792; x=1788714792;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Mv/Y3kvQFgparfIlQNQwNiMV1wrcDKs1S8/YH+Ac6po=;
-  b=c64HC7VFkbMs19xmWFl3DQrWYw4FDvHGdDXKeciRltL2Q8KyxV0x7feb
-   ghGzA3git1lE1WH9lGsDuYJ6LjfdXeM39KoHoz0W4xK3kLLgSKLhQgmMf
-   rlgjgjDGBTwuujYwpNYr5cUOdHScbT6vdK8z6VI1U21+OoSCir1SeIQis
-   GaUsDoAqovVWthNHNgCLFQHuXy5EZwb+eoG0HU+frYbqtu91M5bl2fpdk
-   787YCJ6SYetncylGPjy6ZaGJDDKbsbKpcihEkU7PCfxiSCIDywLX8rLKJ
-   fIaEgXyyJxe+FI3SOEgRLgoi3hfxQ0acjM0nDaP5dLDPzjApIKxTXv0Ua
-   g==;
-X-CSE-ConnectionGUID: rX6/3BmfTGSPRTr+6gZwcg==
-X-CSE-MsgGUID: hCKiweDoQ6K7Qet/KI07Mw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="70926740"
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="70926740"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 10:13:11 -0700
-X-CSE-ConnectionGUID: 3WS+ZCjMTFaHD/3JOA6TTw==
-X-CSE-MsgGUID: 0iif958RTK6QdgJj0vJWIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
-   d="scan'208";a="172298134"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 06 Sep 2025 10:13:07 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uuwTI-0001g7-1o;
-	Sat, 06 Sep 2025 17:13:04 +0000
-Date: Sun, 7 Sep 2025 01:12:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Lee Jones <lee@kernel.org>, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 1/4] irqchip/aspeed-scu-ic: Refactor driver to support
- variant-based initialization
-Message-ID: <202509070058.3Z4AtICl-lkp@intel.com>
-References: <20250906014846.861368-2-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1757178809; c=relaxed/simple;
+	bh=jQk2+Ao1/8bkGI5Gh91oA7s6rgJE5/ZoIUtpvCEnlU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UAI1cbgbZPVnFNAiK8av3Nh1W6KTUbNyhyF7Od0nfwXb29H57IfVJrbd4TeO+yew9o4WGfvEZEelQlcFzgQrB0350ryQ+b+WQfnVpwZXwIoK/UpQlCBz80KL/S2Ac3jaiH0YnUitmCKhUngtVMXClQEsLgcKDdTx9Oo8xuqZx9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z2cA/dn9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=PiCYhf0GA5hlOqjF2YlJlELelLhPn3kZ/kkMz3bcAI4=; b=Z2cA/dn9Kj1xQuxkF1OAjSTIRl
+	C8FRhPM/pfWVO6/jzkL46HcsrL1O5mEOW327RY3HHtzpfBpDgWo0xbZoo7UdqKrgvagdsQC5Sk77B
+	pyiy56xyD4AlSxEVNPZegB1r3AWmeZahSwouay4NmDY+xQagbHkAxtlDMu7dLdD2TMfdo9jsywxyJ
+	HAX0FsGzKe9lhUSwJpJq1+R97GpalxNltcY9XkBwIqZL0d/Lbx5j1ppuyImr4pUniE3ps69IqPtCl
+	Jf18TJiCt85hz9R1AJcPU/VeLHnJMwkHhidK+YAxejbLJYws8GrH/cyXPf709BIyvIO7u7TGIs70l
+	WylgflEQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uuwTb-00000008Asq-31FF;
+	Sat, 06 Sep 2025 17:13:23 +0000
+Message-ID: <d815f5c3-6e15-4758-8bf4-601d5543cab9@infradead.org>
+Date: Sat, 6 Sep 2025 10:13:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250906014846.861368-2-ryan_chen@aspeedtech.com>
-
-Hi Ryan,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on tip/irq/core]
-[also build test WARNING on robh/for-next lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/irqchip-aspeed-scu-ic-Refactor-driver-to-support-variant-based-initialization/20250906-095043
-base:   tip/irq/core
-patch link:    https://lore.kernel.org/r/20250906014846.861368-2-ryan_chen%40aspeedtech.com
-patch subject: [PATCH v3 1/4] irqchip/aspeed-scu-ic: Refactor driver to support variant-based initialization
-config: arm-randconfig-001-20250906 (https://download.01.org/0day-ci/archive/20250907/202509070058.3Z4AtICl-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7fb1dc08d2f025aad5777bb779dfac1197e9ef87)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070058.3Z4AtICl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509070058.3Z4AtICl-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/irqchip/irq-aspeed-scu-ic.c:79:34: warning: variable 'mask' is uninitialized when used here [-Wuninitialized]
-      79 |                 writel((readl(scu_ic->base) & ~mask) |
-         |                                                ^~~~
-   drivers/irqchip/irq-aspeed-scu-ic.c:55:24: note: initialize the variable 'mask' to silence this warning
-      55 |         unsigned int sts, mask;
-         |                               ^
-         |                                = 0
-   1 warning generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] kernel.h: add comments for system_states
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pavel Machek
+ <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>
+References: <20250904063631.2364995-1-rdunlap@infradead.org>
+ <6089e22ddfdc135040cdeb69329d817846026728@intel.com>
+ <20250905140104.42418fba@foz.lan>
+ <34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
+ <atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
+ <2aad4540-ccdd-4519-9bed-7d8c7ccd009d@infradead.org>
+ <20250906105627.2c0cd0d9@foz.lan>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250906105627.2c0cd0d9@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +/mask +79 drivers/irqchip/irq-aspeed-scu-ic.c
 
-    49	
-    50	static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
-    51	{
-    52		struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
-    53		struct irq_chip *chip = irq_desc_get_chip(desc);
-    54		unsigned long bit, enabled, max, status;
-    55		unsigned int sts, mask;
-    56	
-    57		chained_irq_enter(chip, desc);
-    58	
-    59		/*
-    60		 * The SCU IC has just one register to control its operation and read
-    61		 * status. The interrupt enable bits occupy the lower 16 bits of the
-    62		 * register, while the interrupt status bits occupy the upper 16 bits.
-    63		 * The status bit for a given interrupt is always 16 bits shifted from
-    64		 * the enable bit for the same interrupt.
-    65		 * Therefore, perform the IRQ operations in the enable bit space by
-    66		 * shifting the status down to get the mapping and then back up to
-    67		 * clear the bit.
-    68		 */
-    69		sts = readl(scu_ic->base);
-    70		enabled = sts & scu_ic->irq_enable;
-    71		status = (sts >> ASPEED_SCU_IC_STATUS_SHIFT) & enabled;
-    72	
-    73		bit = scu_ic->irq_shift;
-    74		max = scu_ic->num_irqs + bit;
-    75	
-    76		for_each_set_bit_from(bit, &status, max) {
-    77			generic_handle_domain_irq(scu_ic->irq_domain,
-    78						  bit - scu_ic->irq_shift);
-  > 79			writel((readl(scu_ic->base) & ~mask) |
-    80			       BIT(bit + ASPEED_SCU_IC_STATUS_SHIFT),
-    81			       scu_ic->base);
-    82		}
-    83	
-    84		chained_irq_exit(chip, desc);
-    85	}
-    86	
+On 9/6/25 1:56 AM, Mauro Carvalho Chehab wrote:
+> Em Fri, 5 Sep 2025 15:07:31 -0700
+> Randy Dunlap <rdunlap@infradead.org> escreveu:
+> 
+>> Hi,
+>>
+>> On 9/5/25 6:38 AM, Mauro Carvalho Chehab wrote:
+>>> On Fri, Sep 05, 2025 at 04:06:31PM +0300, Jani Nikula wrote:  
+>>>> On Fri, 05 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:  
+>>>>> Em Fri, 05 Sep 2025 12:02:37 +0300
+>>>>> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+>>>>>  
+>>>>>> On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:  
+>>>>>>> Provide some basic comments about the system_states and what they imply.
+>>>>>>> Also convert the comments to kernel-doc format.
+>>>>>>>
+>>>>>>> However, kernel-doc does not support kernel-doc notation on extern
+>>>>>>> struct/union/typedef/enum/etc. So I made this a DOC: block so that
+>>>>>>> I can use (insert) it into a Documentation (.rst) file and have it
+>>>>>>> look decent.    
+>>>>>>
+>>>>>> The simple workaround is to separate the enum type and the variable:
+>>>>>>
+>>>>>> /**
+>>>>>>  * kernel-doc for the enum
+>>>>>>  */
+>>>>>> enum system_states {
+>>>>>> 	...
+>>>>>> };
+>>>>>>
+>>>>>> /**
+>>>>>>  * kernel-doc for the variable
+>>>>>>  */
+>>>>>> extern enum system_states system_state;
+>>>>>>
+>>>>>> BR,
+>>>>>> Jani.
+>>>>>>  
+>>>>>>>
+>>>>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>>>>>> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+>>>>>>> ---  
+>>
+>> [snip]
+>>>>> If the problem is with "extern" before enum, fixing kdoc be
+>>>>> fairly trivial.  
+>>>>
+>>>> The non-trivial part is deciding whether you're documenting the enum
+>>>> type or the variable. Both are equally valid options.  
+>>>
+>>> True.
+>>>
+>>> I'd say that, if the variable is under EXPORT_SYMBOL macros, it
+>>> should be documented.  
+>>
+>> Do you mean documented with kernel-doc? How do we do that?
+>> I was under the impression that we don't currently have a way to
+>> use kernel-doc for variables (definitions, only for declarations).
+> 
+> No, but it shouldn't be hard to add something like:
+> 
+> 	/**
+> 	 * global system_state - stores system state
+> 	 * <some description>
+> 	 */
+> 	extern enum system_states system_state;  
+> 
+> and place a dump_global() function at kdoc parser. Ok, one might use
+> DOC:, but IMHO the best is to have a proper handler for it that would
+> automatically pick the type.
 
+Nitpick, I would s/global/var/. But I won't complain about "global".
+
+More importantly, I have seen several patches where people try to document a
+variable, so it seems like something that we should support at some point.
+
+thanks.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Randy
+
 
