@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88149B469DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E163CB469E2
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FCBD1BC55EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929C51BC5CD0
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A551D2BE7B1;
-	Sat,  6 Sep 2025 07:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9D92C0F8A;
+	Sat,  6 Sep 2025 07:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WakuaaB7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+TC99zl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318022B8B0
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 07:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9298B22B8B0;
+	Sat,  6 Sep 2025 07:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757143129; cv=none; b=sj1jUJcW64uM1Zdqlu9uzILYu4YP00XQgqazOvu03kDhEQjepP1pXFc19gJgM8/LGOQtoUAQX6AEoOr9pMfX4A4SXrVWn7YnZge5M7q8nWw7HoPwlkAk7gTNm+OKhV/+VtyVMtHJN14hKhKe+2/7fGfLXmcgbQyq/QxVwvJckSE=
+	t=1757143194; cv=none; b=dUVe04DeD8+iK4Vn549jE1zJjCk9vOVRLMQ2eervRl722L50ZLSkN4DnKxTqQS4dUYg8FOaTnMDx1Sh6qMKONUfVGSUz3Cy16Q+BwV6pjuZVUhHc7ayfIfhZ3mpHNWxgCAwcZtcuWBz25uSlpsU83NHWLhpjAcG+1KLkY5KN92k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757143129; c=relaxed/simple;
-	bh=iOWPTIYcq9EVBWeYb8vaBaeiAf5XHYc1WIFBBlJtG3o=;
+	s=arc-20240116; t=1757143194; c=relaxed/simple;
+	bh=HccljbpU2NVHcTWDgc09fwSCBkehFNV5TwHj8ILtago=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8RC+wxFdj5djAQhF5bWbbJ/AigABcZEr3AjvrqQC8L5ppxoIWwdFBd4XlfITwTsVrH4oD+TbRAHtsWpm3rphRfhlF/JM4L7BRChUisRFDsvThbJQ15gQdQW9XG1gb7GvGXlzfCVY4WZO3SJH2oewWFunb6M8m/k1A6EFdFSeDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WakuaaB7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B04C4CEE7;
-	Sat,  6 Sep 2025 07:18:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=aqljUxy8UXQTFzVsb+OCju1oUmt3gSNx3OSPSlEHbLnBAv/S45Yy4zXjfk/1TkU0eTnGm4figY2ZhUbl99yNdekhHINkiVrLa0vgEadSpbsCs5oTfLQSB/SxkZwbfxvhAuDxO+McKp/G36ZGP9SbR1QxmDxLZX/aHEmlkRcRJhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+TC99zl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0E8C4CEE7;
+	Sat,  6 Sep 2025 07:19:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757143128;
-	bh=iOWPTIYcq9EVBWeYb8vaBaeiAf5XHYc1WIFBBlJtG3o=;
+	s=k20201202; t=1757143194;
+	bh=HccljbpU2NVHcTWDgc09fwSCBkehFNV5TwHj8ILtago=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WakuaaB7MMwXh0rHOSzTGKFMpHpk6BVOj7vHGzqCZ0rUAFWCnE6HUsdyOj7DLwC+S
-	 wxwoWstRcvlWHPKE9Uod5vaujOm2UT0KBgywSqZzvF9hQ4HvNRM9QagyP30KN1Nlyg
-	 82bnNMM3i677HcojYI7eXnkIKa1rllKX1QHH2ERzT+ZR342Hq/DfaUcD+bcdWES3pA
-	 lcJE/TacmOJK9XZ0MFRcBjnJxTLMJGF5yu2tTq/dgDZUP5pRomkCrKNe09fPF/ftuj
-	 2mYHBb0c84hINm/oGo1jXa5ldZh3Pfu55l9oZhYM5sNkIkLHvdQZZfl0fnkWUNEfjz
-	 dExrYK74wUUQw==
-Message-ID: <e808c81d-0bab-459a-af9d-be9f84daef57@kernel.org>
-Date: Sat, 6 Sep 2025 09:18:45 +0200
+	b=q+TC99zlVzC80Oo+AtTyznQz/5lto9JjYOcbjgEfFjhV0Gf9wcJks0KD53RqaXD3w
+	 CNbRe4zo2rW0A4ZsVdpiJulN77hNpzdrGyTOnei+c/Bu5sfN8h0NytQPE4EqCdCgZc
+	 ZNQRg56vU4KkM/5157Il1vMffo8AFohQp1JTyLbdadUED/045uH10Mv+QyexFKP/jo
+	 0zAKhp71+zSIU4OaZ0m8XAjrHzM73yUn/LDAt6WBT7+jCRCHhHoFkaJWE4U7oLkYIr
+	 mn7x3vy5szW8bE6+bLlQKLsesp6FLQb64bnpRTU5tMaKmda5fvy80hjCFO2tRGtmhK
+	 zzDLVOSfifdOA==
+Message-ID: <9bd7beeb-0c11-4502-9d45-c85a0744ec82@kernel.org>
+Date: Sat, 6 Sep 2025 09:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] dt-bindings: mfd: Fix typos in PMIC/BBNSM
- documentation
-To: Nick Huang <sef1548@gmail.com>, linux-kernel@vger.kernel.org
-Cc: maintainers-if-needed@example.com
-References: <20250906031955.21338-1-sef1548@gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: update TI TPS23861 with
+ per-port schema
+To: Gregory Fuchedgi <gfuchedgi@gmail.com>
+Cc: Robert Marko <robert.marko@sartura.hr>,
+ Luka Perkov <luka.perkov@sartura.hr>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250904-hwmon-tps23861-add-class-restrictions-v3-0-b4e33e6d066c@gmail.com>
+ <20250904-hwmon-tps23861-add-class-restrictions-v3-1-b4e33e6d066c@gmail.com>
+ <20250905-deft-porcelain-teal-a3bdbf@kuoka>
+ <CAAcybutsMdXmqrA6kG9L5OTP9ZPyLzYrXTGUGLAkWs5+MH9ifA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,38 +108,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250906031955.21338-1-sef1548@gmail.com>
+In-Reply-To: <CAAcybutsMdXmqrA6kG9L5OTP9ZPyLzYrXTGUGLAkWs5+MH9ifA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/09/2025 05:19, Nick Huang wrote:
-> This patch series contains minor typo fixes in the Device Tree bindings
-> documentation for MFD nodes, including PMIC and BBNSM descriptions. These
-> corrections improve readability and ensure consistent documentation for
-> developers using these bindings.
-> 
-> This series builds upon and complements the previous v1 patch:
-> https://lore.kernel.org/all/20250902142749.13724-1-kusogame68@gmail.com/
-> 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+On 05/09/2025 19:22, Gregory Fuchedgi wrote:
+> On Fri, Sep 5, 2025 at 1:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Thu, Sep 04, 2025 at 10:33:44AM -0700, Gregory Fuchedgi wrote:
+>> What's the meaning of values? There are no other generic properties like
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Where is context here? To which part was I replying / commenting on?
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+You are not making the process easy. I receive a lot of emails and have
+no clue what this refers to.
 
 Best regards,
 Krzysztof
