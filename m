@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-804132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52F8B46A5B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DACEAB46A5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 11:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 687827BBAB5
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4576B1894E0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7410F288C2B;
-	Sat,  6 Sep 2025 09:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B68E29E0E9;
+	Sat,  6 Sep 2025 09:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTzLPc+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAHSwb6+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BC826C391;
-	Sat,  6 Sep 2025 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD27D26C391;
+	Sat,  6 Sep 2025 09:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757149796; cv=none; b=dw42VzDQZ5bfQ2s8CPY1QakUdpDfK/kjlv4ga8ETgUEAWin/IbsuorsV6FqMXHPv3kFqSxg0iu1HT/4hCWEaNlmKL+C2fafzXuqWvj5vqw2WNVmO424DMGPdnyFL2ZaU0AUJTPAyGCKeRqi9CqzGaX8TG9D9dnQUL8FNVSiprvs=
+	t=1757149800; cv=none; b=om/KNePq8xy9Mw0oxJCT4AqKKxQXPWYKow5NfPUrLozQdZd8r0SdeXK4A//Vxp9DZAfdonInHYPPT6TSHWpl2tv+I1sxp6a35qB/MIY2WGEzL1+L/3GW4Ww1ybaLrCX1f2CqIcX4XapezBgJ8Yb4HC//P1BcceIJX2YYQqpyRV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757149796; c=relaxed/simple;
-	bh=oUpwW1ukVVMWcU3O8pfRmoB6AzDVF2v4yYJ6GaL05Uw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=faRK0MqlVawrpl3RKQfp0fYP+G3eej9bFCcwVz0Q7lCOqFiP4P47pEhE11wdtXsWkIjOvNTJ34XYJCCLNtnJAf0016Kvzv4JTMGx/cxzYmgQULhet4eW0iNGggv7WUPlZKTJE/HLnKVZLqIrwsbWfqpB9Q3NBdctyqDPPydGmfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTzLPc+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AC4C4CEE7;
-	Sat,  6 Sep 2025 09:09:52 +0000 (UTC)
+	s=arc-20240116; t=1757149800; c=relaxed/simple;
+	bh=CKaMxVjr2jWFkmaLip35qyMUvXrsM1VU1NB2L1dKWEQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rNn3UIwTmLlfZZzDWdNgaA7IZABtwa27/XRXDjAMIXa23/NuEz2S0X0wl7/wNCx8otO6Sgr03y7NXsi+EjQDMMFwrC8/deGyhux1ExkA9rpJl/cmn9g/0eeKfWzmtv5DzFTRuLvyFF90ilRwqu4ZTZRPKCa4vHSQP9DvywlQaow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAHSwb6+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9439C4CEF4;
+	Sat,  6 Sep 2025 09:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757149796;
-	bh=oUpwW1ukVVMWcU3O8pfRmoB6AzDVF2v4yYJ6GaL05Uw=;
-	h=From:Subject:Date:To:Cc:From;
-	b=OTzLPc+WVYmA1rfUZ5A3YXIpvrvHpSjY5VPYXb55h+sTCVxk2zyhWNq+qeKJUUNLA
-	 k/YSpGU/li2N+YSWsqK+g3Yr9jkkGBkV0zLFLnatNATbK3WiIv3075EGSt0YvJGJAV
-	 RS/8fLMKTqVV1YilXZHTOqJIVOaLv4DixBc5zCqS3rXccN9C8+35ruw/OVzuM0Uckj
-	 3QM+U0z+NCNMBirgmxKpCiCyTqhYeEUg9qOVfZxzddCHaHkXdnrBZ7LoqYSIqOaCHi
-	 wh6eUGHU3IludvLeEAlkrayk/ypmcoL0DMOqVZ9oUnexLZQF9udz/hB9qtmfB+YdE3
-	 KmLLEPjBT+gew==
+	s=k20201202; t=1757149799;
+	bh=CKaMxVjr2jWFkmaLip35qyMUvXrsM1VU1NB2L1dKWEQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=SAHSwb6+5FMtTO2rsGdBGumNvDHdj7GS7PyaP6UEEIjQapAB4Y1FazsW02ps3qxb3
+	 ognqgZA5+nqu2Kz/TeMZ03Iij2Mmxsgy7ED+QHlUO0vtJm1Opb3Yob6WOgxpfpktfD
+	 d5n7oMid81tHG6hR8CEZvW83JN6nfXGt3QcA7GnNg7BrYz+lH6IWnfQUBQMny6EHbV
+	 8D8fiAQ/Mg7Q5eikqBJlml+lCFyapnMDGNqbk41GnIEfJUbGl6npyy15tUIXoi/tzx
+	 X13Is9+7djfdQ5qJO11sowFxi9hNa9gBsfCe9Yaz9wfYjxFF/d61PD3q3wr06Q5X3L
+	 BDAvDPQ49KXDg==
 From: Andreas Kemnade <akemnade@kernel.org>
-Subject: [PATCH 0/4] regulator: sy7636a: define and init all resources
- needed
-Date: Sat, 06 Sep 2025 11:09:11 +0200
-Message-Id: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
+Date: Sat, 06 Sep 2025 11:09:12 +0200
+Subject: [PATCH 1/4] dt-bindings: mfd: sy7636a: Add missing gpio pins and
+ supply
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,10 +52,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADj6u2gC/x3MQQ5AMBBA0as0s9akigpXEYtRg9kgM4mQxt01l
- m/xfwIlYVLoTQKhi5WPPaMsDMQN95Usz9ngnW9c54LVpw1VsKISbfQOMUyIPtaQi1No4fu/DeP
- 7fuDWrjRdAAAA
-X-Change-ID: 20250906-sy7636-rsrc-c20aa6baa2c4
+Message-Id: <20250906-sy7636-rsrc-v1-1-e2886a9763a7@kernel.org>
+References: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
+In-Reply-To: <20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -68,47 +67,54 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  Andreas Kemnade <akemnade@kernel.org>
 X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1563; i=akemnade@kernel.org;
- h=from:subject:message-id; bh=oUpwW1ukVVMWcU3O8pfRmoB6AzDVF2v4yYJ6GaL05Uw=;
- b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBm7fznmaR6y7Oc9/ffw/+iZ5/59lei0iXD3OTnje/hF7
- ZeB5rqvO0pZGMQ4GGTFFFl+WSu4fVJ5lhs8NcIeZg4rE8gQBi5OAZjIyi0Mf3h/cGwWfpHx7d+P
- 7zN8JBbPvBrJ2dovHCF7THnZ9L2SiTsY/icaOPTsXV6ePi+seqXBVGPj7M1aMh9juQSWPMw7fHT
- Pfh4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1407; i=akemnade@kernel.org;
+ h=from:subject:message-id; bh=CKaMxVjr2jWFkmaLip35qyMUvXrsM1VU1NB2L1dKWEQ=;
+ b=owGbwMvMwCEm/rzkS6lq2x3G02pJDBm7fwVY2l80u7DcT/GRy07WRQYZ/9nvBn2cvvOc8oUJ3
+ Ffydm+M6ChlYRDjYJAVU2T5Za3g9knlWW7w1Ah7mDmsTCBDGLg4BWAi0msYGZ6FiL2exPV/iX1L
+ dtO+P8+sfj1pKFUwbL9949K/1JMbV3gxMnz/cuqHprc7m+sGic9pPBb1mz4vzIuR+Oz82oXlmEj
+ tD34A
 X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
  fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-The SY7636A has some pins which can be hardwired or used to have more
-more advanced power management available. As several devices containing
-this regulator have these pins not hardwired, but instead connected to some
-GPIO, enhance the driver to have them defined and initialized.
-Also add the ability to power off the chip completely by defining some
-input power supply.
-
-Actually implementing better power management is planned to be
-implemented as a second step. The regulators in the SY7636A should only
-be on for a short time during display refresh, but currently they are
-unconditionally forcefully enabled by the hwmon part of this chip.
+To be able to fully describe how the SY7636A is connected to the system,
+add properties for the EN and VCOM_EN pins. To squeeze out every bit
+of unused current, in many devices it is possible to power off the
+complete chip. Add an input regulator to allow that.
 
 Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
 ---
-Andreas Kemnade (4):
-      dt-bindings: mfd: sy7636a: Add missing gpio pins and supply
-      regulator: sy7636a: fix lifecycle of power good gpio
-      regulator: sy7636a: add gpios and input regulator
-      ARM: dts: imx: e70k02: add sy7636
+ .../devicetree/bindings/mfd/silergy,sy7636a.yaml         | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- .../devicetree/bindings/mfd/silergy,sy7636a.yaml   | 16 +++++++++++
- arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++-
- .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 ++++++++++++++++
- .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 ++++++++++++++++
- drivers/regulator/sy7636a-regulator.c              | 33 ++++++++++++++++++++--
- 5 files changed, 118 insertions(+), 4 deletions(-)
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250906-sy7636-rsrc-c20aa6baa2c4
+diff --git a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+index ee0be32ac0204..08ad593e237f1 100644
+--- a/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
++++ b/Documentation/devicetree/bindings/mfd/silergy,sy7636a.yaml
+@@ -32,6 +32,22 @@ properties:
+       Specifying the power good GPIOs.
+     maxItems: 1
+ 
++  en-gpios:
++    description:
++      If EN pin is not hardwired, specify it here to have it set up.
++    maxItems: 1
++
++  vcom-en-gpios:
++    description:
++      If VCOM_EN pin is not hardwired, specify it here to have it set up.
++    maxItems: 1
++
++  vin-supply:
++    description:
++      Supply for the chip. Some vendor kernels and devicetrees declare this
++      as a GPIO named "pwrall" which does not exist in the datasheet,
++      disabling it makes the chip disappear on the bus.
++
+   regulators:
+     type: object
+ 
 
-Best regards,
---  
-Andreas Kemnade <akemnade@kernel.org>
+-- 
+2.39.5
 
 
