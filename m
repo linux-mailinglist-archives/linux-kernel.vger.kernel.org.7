@@ -1,407 +1,206 @@
-Return-Path: <linux-kernel+bounces-804299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD995B47170
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92635B4717F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1055A5454
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9961C23A23
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14E51E1E0B;
-	Sat,  6 Sep 2025 14:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071BF1EF397;
+	Sat,  6 Sep 2025 14:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YdCAu5ID"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ijuxr2VC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89933DF49
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 14:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757170224; cv=none; b=rW7wsI2bgEiQ7NBfvzsqopD/mGheEjfa+m9Txw/+hgMIOyOvoVLRAOVjG/m19ECVre37dtnED2uEKMStE3l9dpAwu6/u6Sb2yXinrPhjKhrRC5U8K7MAlN0rpV6A1q6lHLMFp6p1IiMhbVcnVIRQoQSet7gRaMQY3ccjqLh5FHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757170224; c=relaxed/simple;
-	bh=aHmqBSoIpU/EzAYMgOPd9azQQt5AWWSUheOENOEHPWs=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=FnnypYpjZpNX1v5e68op/cnpVg0kt9I5fyRowsn+qxnkoD/XCLu+SGwSat8Ql7WxgGVximoNz9mDGUMY/tKj+4rM6j7HU0HLXnPR2KW+2qYaa72+UthWV4t+9sMlapBQy4E8xXtvKspprPc9Tf4ZVXIYuRicp6UPhYIlF/ULNb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YdCAu5ID; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E13FBB3;
+	Sat,  6 Sep 2025 14:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757170286; cv=pass; b=BQuSWNf+MKLFJWuKjynUijxU+MMM/ouMzRGGCSchO86op2PPLfALABLWYIhejjrI//7+24DuZmK9et34mrFVCdnRgdVDo6qMPTe0526ZX0EOEjBCaE+Tjf9o53VHpkOUr4t9oovhqSp11/218dH0hL8MYF177fdHzxeWrGUksEM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757170286; c=relaxed/simple;
+	bh=vtt3+yku9UVk04Ss05FrOniUhbb4snsL5iJsqiVvet8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RKqfYkaWeuMWy33Fg2bvNcZl4C91Zy7Qebtit1vmGZmbREIcOBXAxEr1i0t9GSAQnhgaIYKgatsvRWwugywAg3+xr28TJmjQ1ighP4AUNWRzio2s+Z+KKvBt8ZjHmbR9AtNj5ZYTqZmbH7zWMOIJKAyuAao95Q21/lr/iQfAk1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ijuxr2VC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757170269; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UvRrrLYnoNaE3nwa0VE0ebLyiuvCwRAODWnYkfBadqsowGFJQ5WA3oYQNGKoxVY4Y1D0xq+QJbNcIfPuZrawF5uJ69zVrtgVIq9nmCYZrnhQSP7pwTBwFcqI1JQmeyDABC456ng/oK0B1KytxpdCNv2OsCUV8O3d6me1GXBiZog=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757170269; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VGqQTPS0dGyDSq3uWQWj0ODgui49CmJ1bsZcGVpP9Qg=; 
+	b=B2QMAAgvor0/zUlLTlBxJzTbedZoZ1B9iQGJwN8Xm/VbgUyNSpuOhy8km2+yuTdKkzTwusps10XH2liR3uMn/ljhdQWIvqVLhcehJ3IkYb5k2qxPY0KO2su+FS5g/+41e7/7K+DBoeUXdj3d4GcqmkXDmNRCI2HDFQ8RbDWN0PM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757170269;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=VGqQTPS0dGyDSq3uWQWj0ODgui49CmJ1bsZcGVpP9Qg=;
+	b=Ijuxr2VC3yPNSyXKEbBPgG0Ks9Ihqz7pxDt2gjQM78jiYByQQSgd1xrY8vq/v7Gq
+	tfi5MeLt+GiDbDN5AVRBXraIiKWSb+AW/JIs9cwvtZZ7ewUU5FC8jmpTuj+S+QempqQ
+	Ck+a4HHMT+q3c0e9qw7u+Bx4h2QJak+T4Z4Qs7Q4=
+Received: by mx.zohomail.com with SMTPS id 1757170267380100.64996508403033;
+	Sat, 6 Sep 2025 07:51:07 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757170219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Lrv+sHhSx9IhB2Mvksz3YeztAf/sFlnmhfbQojpIKI=;
-	b=YdCAu5ID/S4OoTu66vju8cL4JPzfhv4Isi7CgyVnZYk0pVCkleNJewHEr6LZZHZyhRRCmk
-	vtNj0xEMHLKCTnP+987/ZGaKhODKWMixGX2JgP3/sBVP5TP+1EuQ1yIiZWQWkm/HRXUuHi
-	q97xT+Vs42eRpT3qRWnmMEe5RCdJ+9o=
-Date: Sat, 06 Sep 2025 14:50:17 +0000
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH 2/2] samples: rust: add a USB driver sample
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
+Date: Sat, 6 Sep 2025 11:50:50 -0300
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-usb@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yajun Deng" <yajun.deng@linux.dev>
-Message-ID: <71a4ba4d4bdf8cb1803b3907f812821792d86391@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] mm/rmap: make num_children and num_active_vmas update in
- internally
-To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, riel@surriel.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-In-Reply-To: <7c0101ac-afac-4601-8be9-24587877a5e3@lucifer.local>
-References: <20250905132019.18915-1-yajun.deng@linux.dev>
- <7c0101ac-afac-4601-8be9-24587877a5e3@lucifer.local>
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <9657C897-087E-4544-849B-964E99D95A50@collabora.com>
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <20250825-b4-usb-v1-2-7aa024de7ae8@collabora.com>
+ <2025090618-smudgy-cringing-a7a4@gregkh>
+ <D8EAF874-4FED-42EE-8FD8-E89B6CB0086A@collabora.com>
+ <2025090601-iron-glitter-c77d@gregkh>
+ <831C4AE2-6964-4699-9E74-E4B721B87B17@collabora.com>
+ <DCLQZZHU42HN.4Y4PP0PPR10O@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-September 5, 2025 at 10:58 PM, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.=
-com mailto:lorenzo.stoakes@oracle.com?to=3D%22Lorenzo%20Stoakes%22%20%3Cl=
-orenzo.stoakes%40oracle.com%3E > wrote:
+Hi Danilo,
 
+> On 6 Sep 2025, at 10:22, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Sat Sep 6, 2025 at 2:41 PM CEST, Daniel Almeida wrote:
+>>>>=20
+>>>> I thought that an iterative approach would work here, i.e.: merge =
+this, then
+>>>> URBs, then more stuff, etc.
+>>>=20
+>>> Ah, that makes sense, I didn't realize you want that here.  What USB
+>>> device do you want to write a rust driver for?  Are you going to =
+need
+>>> bindings to the usb major number, or is it going to talk to some =
+other
+>>> subsystem instead?
+>>>=20
+>>> Right now, these bindings don't really do anything USB specific at =
+all
+>>> except allow a driver to bind to a device.
+>>>=20
+>>> thanks,
+>>>=20
+>>> greg k-h
+>>=20
+>> To be honest, I'm trying to pave the way for others.
+>>=20
+>> I often hear people saying that they would look into Rust drivers if =
+only they
+>> did not have to write all the surrounding infrastructure themselves. =
+On the
+>> other hand, there is no infrastructure because there are no drivers.
+>=20
+> I think saying that there is no infrastructure for writing Rust =
+drivers is not
+> accurate:
+>=20
+> We already have lots of infrastructure in place, such as device / =
+driver core
+> infrastructure, PCI, platform (with OF and ACPI), faux and auxilirary =
+bus
+> infrastructure, I/O, workqueues, timekeeping, cpufreq, firmware, DMA =
+and a lot
+> more.
+>=20
+> Not to forget the absolute core primitives, such as kernel allocators, =
+xarray,
+> locking infrastructure or very recently maple tree and LKMM atomics.
+>=20
+> Besides that we also have a lot of infrastructure that we do not have =
+in C
+> because it's simply not possible or applicable.
+>=20
+> However, it is in fact true that there is no USB infrastructure yet.
+
+Ah yes, of course there=E2=80=99s plenty of things but this is =
+specifically about
+USB. I worked on a few of those so I'm not denying them, I guess I =
+should have
+written this more clearly :)
+
+I=E2=80=99ve also been told the same about media drivers. For example, =
+someone
+trying to write a USB media driver stares at work needed to just _start_ =
+doing
+what they had initially planned and simply gives up. It creates a =
+scenario
+where people continuously wait on each other to do the "heavy work", =
+i.e.: to
+come up with the common code/abstractions.
+
+So far I see a pattern where sample drivers count as users. This has =
+been the
+case, for example, for rust_dma.rs. I was under the impression that the =
+same
+would apply here. Although I do realize that there were plans for dma =
+code
+other than rust_dma.rs, of course.
 
 >=20
->=20On Fri, Sep 05, 2025 at 01:20:19PM +0000, Yajun Deng wrote:
+>> It's a chicken and egg problem that I am trying to solve.
 >=20
->=20>=20
->=20> If the anon_vma_alloc() is called, the num_children of the parent o=
-f
-> >  the anon_vma will be updated. But this operation occurs outside of
-> >  anon_vma_alloc().
-> >=20
->=20I don't like that what is supposed to be an allocation function is no=
-w also
-> doing additional work.
+> This is exactly why we develop Nova in-tree, such that we have a =
+justification
+> for adding all this infrastructure.
 >=20
->=20And there's literally only one place where this matters, since
-> __anon_vma_prepare() doesn't have a parent, it's ltierally only anon_vm=
-a_fork().
+> Lot's of the stuff I listed above originates from that and I think the =
+Nova
+> project has proven that we can break this chicken and egg problem. I =
+think
+> one proof for that is that Tyr follows the approach.
 >=20
->=20And there are only 2 callers, so I don't see the purpose in doing thi=
-s?
->=20
+> However, I agree that it still remains that someone (i.e. some driver) =
+has to
+> take the burden of doing the "heavy lifting" for a particular =
+subsystem.
 
-Yes,=20it is an allocation function. Some code doing like it.
-alloc_fair_sched_group() and alloc_rt_sched_group() are allocation functi=
-ons.
-They are also pass the parent parameter to them.
+As for Nova and Tyr, these are projects with a lot of big companies =
+involved.
 
-The purpose of this is to unify the code. They are essentially the same.
-One has itself as its parent, while another has a real parent.
+They were able to break this chicken and egg situation in part due to =
+that,
+because companies were willing to allocate engineers for both the =
+drivers _and_
+the required infrastructure. Unless the same can be said for USB, media =
+or any
+other subsystems, I don't see it happening. Also, even if there is a =
+company
+interested, smaller ones are not willing to work on the infrastructure =
+either,
+only on the actual end results (i.e.: drivers).
 
-> >=20
->=20> The num_active_vmas are also updated outside of anon_vma.
-> >=20
->=20I don't know what 'outside of anon_vma' means?
->=20
-It=20means num_active_vmas should be updated in a function.
+That's just my humble opinion, of course.
 
-> >=20
->=20> Pass the parent of anon_vma to the anon_vma_alloc() and update the
-> >  num_children inside it.
-> >=20
->=20>  Introduce anon_vma_attach() and anon_vma_detach() to update
-> >  num_active_vmas with the anon_vma.
-> >=20
->=20I really dislike this naming - VMA detachment means something entirel=
-y
-> different, you're not really 'attaching' or 'detaching' anything you're=
- just
-> changing a single stat of the ones you'd need to change were you truly =
-doing so
-> etc. etc.
->=20
->=20It's misleading.
->=20
 
-I=20will use vma_attach_anon() and vma_detach_anon().
-
-> > Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> >=20
->=20Did you test this at all? It causes an immediate kernel panic for me =
-when I run
-> it in a VM:
->=20
->=20In exit_mmap() -> free->pgtables() -> unlink_anon_vmas()
->=20
->=20I haven't really dug into why but yeah, this is broken.
->=20
-
-I=20will fix it.
-
-> >=20
->=20> ---
-> >  mm/rmap.c | 63 ++++++++++++++++++++++++++++-------------------------=
---
-> >  1 file changed, 32 insertions(+), 31 deletions(-)
-> >=20
->=20>  diff --git a/mm/rmap.c b/mm/rmap.c
-> >  index 34333ae3bd80..2a28edfa5734 100644
-> >  --- a/mm/rmap.c
-> >  +++ b/mm/rmap.c
-> >  @@ -86,15 +86,21 @@
-> >  static struct kmem_cache *anon_vma_cachep;
-> >  static struct kmem_cache *anon_vma_chain_cachep;
-> >=20
->=20>  -static inline struct anon_vma *anon_vma_alloc(void)
-> >  +static inline struct anon_vma *anon_vma_alloc(struct anon_vma *pare=
-nt)
-> >=20
->=20I really dislike this, we only allocate with a parent in the fork cas=
-e, this is
-> just not a win imo + adds confusion.
->
-
-I will add a wapper function.
-=20
->=20>=20
->=20> {
-> >  struct anon_vma *anon_vma;
-> >=20
->=20>  anon_vma =3D kmem_cache_alloc(anon_vma_cachep, GFP_KERNEL);
-> >  - if (anon_vma) {
-> >  - atomic_set(&anon_vma->refcount, 1);
-> >  - anon_vma->num_children =3D 0;
-> >  - anon_vma->num_active_vmas =3D 0;
-> >  + if (!anon_vma)
-> >  + return NULL;
-> >  +
-> >  + atomic_set(&anon_vma->refcount, 1);
-> >  + anon_vma->num_children =3D 0;
-> >  + anon_vma->num_active_vmas =3D 0;
-> >  + if (parent) {
-> >  + anon_vma->parent =3D parent;
-> >  + anon_vma->root =3D parent->root;
-> >=20
->=20You are accessing parent fields without a lock. This is not good.
->=20
->=20>=20
->=20> + } else {
-> >  anon_vma->parent =3D anon_vma;
-> >  /*
-> >  * Initialise the anon_vma root to point to itself. If called
-> >  @@ -102,6 +108,7 @@ static inline struct anon_vma *anon_vma_alloc(vo=
-id)
-> >  */
-> >  anon_vma->root =3D anon_vma;
-> >  }
-> >  + anon_vma->parent->num_children++;
-> >=20
->=20This is even even even more not good, because you're accessing the pa=
-rent
-> without a lock, which is just completely broken.
->=20
->=20I note below where you're doing this.
->=20
-
-I=20will add anon_vma_lock_write() and anon_vma_unlock_write().
-> >=20
->=20> return anon_vma;
-> >  }
-> >  @@ -146,6 +153,19 @@ static void anon_vma_chain_free(struct anon_vma=
-_chain *anon_vma_chain)
-> >  kmem_cache_free(anon_vma_chain_cachep, anon_vma_chain);
-> >  }
-> >=20
->=20>  +static inline void anon_vma_attach(struct vm_area_struct *vma,
-> >  + struct anon_vma *anon_vma)
-> >  +{
-> >  + vma->anon_vma =3D anon_vma;
-> >  + vma->anon_vma->num_active_vmas++;
-> >  +}
-> >=20
->=20Yeah I hate the naming, you should have lock asserts here, I don't lo=
-ve that
-> we're pairing the vma and anon_vma like this, and again I just really q=
-uestion
-> the value of this.
->=20
-anon_vma_chain_link()=20also didn't have lock assert.
-
-> >=20
->=20> +
-> >  +static inline void anon_vma_detach(struct vm_area_struct *vma)
-> >  +{
-> >  + vma->anon_vma->num_active_vmas--;
-> >  + vma->anon_vma =3D NULL;
-> >  +}
-> >  +
-> >  static void anon_vma_chain_link(struct vm_area_struct *vma,
-> >  struct anon_vma_chain *avc,
-> >  struct anon_vma *anon_vma)
-> >  @@ -198,10 +218,9 @@ int __anon_vma_prepare(struct vm_area_struct *v=
-ma)
-> >  anon_vma =3D find_mergeable_anon_vma(vma);
-> >  allocated =3D NULL;
-> >  if (!anon_vma) {
-> >  - anon_vma =3D anon_vma_alloc();
-> >  + anon_vma =3D anon_vma_alloc(NULL);
-> >=20
->=20This 'arbitrary parameter which is NULL' is also pretty horrible.
->=20
-
-I=20will add a wapper function.
-
-> >=20
->=20> if (unlikely(!anon_vma))
-> >  goto out_enomem_free_avc;
-> >  - anon_vma->num_children++; /* self-parent link for new root */
-> >  allocated =3D anon_vma;
-> >  }
-> >=20
->=20>  @@ -209,9 +228,8 @@ int __anon_vma_prepare(struct vm_area_struct *=
-vma)
-> >  /* page_table_lock to protect against threads */
-> >  spin_lock(&mm->page_table_lock);
-> >  if (likely(!vma->anon_vma)) {
-> >  - vma->anon_vma =3D anon_vma;
-> >  + anon_vma_attach(vma, anon_vma);
-> >  anon_vma_chain_link(vma, avc, anon_vma);
-> >  - anon_vma->num_active_vmas++;
-> >  allocated =3D NULL;
-> >  avc =3D NULL;
-> >  }
-> >  @@ -306,10 +324,8 @@ int anon_vma_clone(struct vm_area_struct *dst, =
-struct vm_area_struct *src)
-> >  if (!dst->anon_vma && src->anon_vma &&
-> >  anon_vma->num_children < 2 &&
-> >  anon_vma->num_active_vmas =3D=3D 0)
-> >  - dst->anon_vma =3D anon_vma;
-> >  + anon_vma_attach(dst, anon_vma);
-> >  }
-> >  - if (dst->anon_vma)
-> >  - dst->anon_vma->num_active_vmas++;
-> >=20
->=20You're now losing the cases where we didn't reuse an anon_vma but dst=
-->anon_vma
-> !=3D NULL? This is just broken isn't it?
->=20
-
-Yes,=20it is.
-> >=20
->=20> unlock_anon_vma_root(root);
-> >  return 0;
-> >=20
->=20>  @@ -356,31 +372,22 @@ int anon_vma_fork(struct vm_area_struct *vma=
-, struct vm_area_struct *pvma)
-> >  return 0;
-> >=20
->=20>  /* Then add our own anon_vma. */
-> >  - anon_vma =3D anon_vma_alloc();
-> >  + anon_vma =3D anon_vma_alloc(pvma->anon_vma);
-> >  if (!anon_vma)
-> >  goto out_error;
-> >  - anon_vma->num_active_vmas++;
-> >  avc =3D anon_vma_chain_alloc(GFP_KERNEL);
-> >  if (!avc)
-> >  goto out_error_free_anon_vma;
-> >=20
->=20>  - /*
-> >  - * The root anon_vma's rwsem is the lock actually used when we
-> >  - * lock any of the anon_vmas in this anon_vma tree.
-> >  - */
-> >=20
->=20Please please PLEASE do not delete comments like this.
->=20
-
-Okay.
->=20>=20
->=20> - anon_vma->root =3D pvma->anon_vma->root;
-> >  - anon_vma->parent =3D pvma->anon_vma;
-> >=20
->=20Yeah this is just not worth it in my opinion. You're putting code spe=
-cific to
-> forking in anon_vma_alloc(), which means you've made the code harder to
-> understand.
->=20
-
-This=20won't make the code harder to understand=EF=BC=8Cthey are essentia=
-lly the same.
-One has itself as its parent, while another has a real parent.
-
-> >=20
->=20> /*
-> >  * With refcounts, an anon_vma can stay around longer than the
-> >  * process it belongs to. The root anon_vma needs to be pinned until
-> >  * this anon_vma is freed, because the lock lives in the root.
-> >  */
-> >  get_anon_vma(anon_vma->root);
-> >  - /* Mark this anon_vma as the one where our new (COWed) pages go. *=
-/
-> >=20
->=20Again, please do not remove comments like this.
->=20
-
-Okay.
->=20>=20
->=20> - vma->anon_vma =3D anon_vma;
-> >  + anon_vma_attach(vma, anon_vma);
-> >  anon_vma_lock_write(anon_vma);
-> >  anon_vma_chain_link(vma, avc, anon_vma);
-> >  - anon_vma->parent->num_children++;
-> >=20
->=20So now we're updating things not under the lock?... this is extremely=
- broken.
->=20
-
-Yes,=20it's a mistake.
-> >=20
->=20> anon_vma_unlock_write(anon_vma);
-> >=20
->=20>  return 0;
-> >  @@ -419,15 +426,9 @@ void unlink_anon_vmas(struct vm_area_struct *vm=
-a)
-> >  list_del(&avc->same_vma);
-> >  anon_vma_chain_free(avc);
-> >  }
-> >  - if (vma->anon_vma) {
-> >  - vma->anon_vma->num_active_vmas--;
-> >  + if (vma->anon_vma)
-> >  + anon_vma_detach(vma);
-> >=20
->=20>  - /*
-> >  - * vma would still be needed after unlink, and anon_vma will be pre=
-pared
-> >  - * when handle fault.
-> >  - */
-> >=20
->=20You are removing key documentation of behaviour, please do not do tha=
-t.
->=20
-
-Okay.
->=20>=20
->=20> - vma->anon_vma =3D NULL;
-> >  - }
-> >  unlock_anon_vma_root(root);
-> >=20
->=20>  /*
-> >  --
-> >  2.25.1
-> >=20
->=20Overall this patch is really quite broken, but I don't think the gene=
-ral concept
-> _as implemented here_ really gives much value.
->=20
->=20I _like_ the idea of pairing adjustment of these kinds of anon_vma fi=
-elds like
-> num_children, num_active_vmas etc. with operations, but I think there's=
- probably
-> too many fiddly cases + a need for hellish lock stuff for there to be r=
-eally
-> anything too viable here.
->=20
-
-Sorry=20for the V1, I will send V2.=20
->=20Cheers, Lorenzo
->
 
