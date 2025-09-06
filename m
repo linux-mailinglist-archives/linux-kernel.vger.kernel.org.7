@@ -1,201 +1,212 @@
-Return-Path: <linux-kernel+bounces-804454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C149B47728
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:43:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1061DB47731
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C4D616E910
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A33A7A846F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3612877FE;
-	Sat,  6 Sep 2025 20:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881CB288525;
+	Sat,  6 Sep 2025 20:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="CMcAQhBB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pouNVh+O"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A0E1DDE9;
-	Sat,  6 Sep 2025 20:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757191378; cv=pass; b=aLmUOj7z/RpXv7q270LSiXfFiVoIzxE63muzQ5wSxwnQOnNtJZC1JVs3xs+D9i6R6h103R0TvJG9N75NI2CCvuDaOuV0ux79JACO4aXba6NOV/CY/ulfuy0ncYKvdAGgQWMI3jg8d5MnjhWWkRq2nAzubIWmByAwl7Hgr+SQDYc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757191378; c=relaxed/simple;
-	bh=X6t1E2D0/6KHu5iBbeTZ1Y7NMderIv12Kx55z/B5+5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+x+4TDeiynMHAwig4vCUTikTUjOGzKbck2gDYQ0Ztowe6wWVBrOj1MTXbqQu52yjQ8YS3xtVVUCucniCwzoy3O/CD2Xdz/OL5YhBcub72GMU6R8S79KooWF/K7XJFUmkJdG3cAav0IEwa/uXGA/SCh30esWAlbbWtTJ4xFz3N8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=CMcAQhBB; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757191350; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Zbd9iwG6mTUDZ3DTU84xNdmxTThRitQtbxALstaaBg9oV93fT7Wbj35qSpvN3g7f3jTbx23pXoVbQcM3VEzvEFD2EFHcj44DIH+DcIx2dzSkoHv2hbKKii3nLntmSZAsN+fT8sSpIG/FAW4K2LQe67t1EwTnL8IOuTt1S7BV5IE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757191350; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+oFXcBgyosrk9K4YUWT5K05A3DKE5mpt+Bn52MygQGQ=; 
-	b=PIHCe1+nkF/XtzXqI4f8NjMdux9t/OE7taqDrSHGTaM6Ho2SUfVwUxIcoUzkkAiEMM+E1ETW1hg6XCeAVzInM8UpEBiF6NHtw/5NnEKSm5/CN3kIWJ/EG12a8OHA8ym/8R5eywXQvoNnH92Ndhc1MjAK1DInTMh4xyNrhrQWhXE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757191350;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=+oFXcBgyosrk9K4YUWT5K05A3DKE5mpt+Bn52MygQGQ=;
-	b=CMcAQhBBoIxelRD/KecsQSv16a7q+RMB6cKDuICGl2QAYHiuboWYrY8tL6Xb6Zo0
-	CLMSevOne9pVsdB/wg4M0a0wlDwl5ElyMYXG4FCJ/bKU6lOKFrvmMn+7DwW0n6X8NGo
-	t9m6DzaOMf5fOtG3/BxNlDGPKh5uIHv5EmF4niF4=
-Received: by mx.zohomail.com with SMTPS id 1757191347397764.5469931961694;
-	Sat, 6 Sep 2025 13:42:27 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 3B96E180B18; Sat, 06 Sep 2025 22:42:22 +0200 (CEST)
-Date: Sat, 6 Sep 2025 22:42:22 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Frank Wang <frank.wang@rock-chips.com>, 
-	Zhang Yubing <yubing.zhang@rock-chips.com>, Andy Yan <andyshrk@163.com>, 
-	Maud Spierings <maud_spierings@hotmail.com>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] dt-bindings: phy: rockchip-usbdp: add improved
- ports scheme
-Message-ID: <jzooq6qg3y7nee2nz6lujustdf4z7vtn6t2slikw43dann5sbk@2telraae26tl>
-References: <20250904-rock5b-dp-alt-mode-v1-0-23df726b31ce@collabora.com>
- <20250904-rock5b-dp-alt-mode-v1-1-23df726b31ce@collabora.com>
- <aLyKhngeksG2SKdq@umbar.lan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807EB255F39
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 20:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757192183; cv=none; b=od7DHhVWDQyoVtG13wW2CMiLFIIWJf7GOxXT8zKVeCiLrwIUl7AAopItEibrzsX1yBax+NepUSjVAdKhAR65peVvKpVC8KqsAAsY8W4ow3nEnIC5fNHQMzEJVG1zpj8/wxAKXsd7GLaUY740K+ZQLEz1i7hJfWhpNZJhZwudQmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757192183; c=relaxed/simple;
+	bh=zkHlighMIa4YKyBr9JmsyBrsqO6Nvqpv/Ln7wMiLZSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gk24NByJYvZKDkfoLSw4O6G+WjAxd0x9sGi99juAiKC/zPNBas4KGD/1756JOrmxEoKMMrg6QzEwfTPaR4niD8Lo9wj4735peJMeyiuPnJ36kUOJuqwSRygFx754RPxwKThyo18aAYSlbrrcuAeQUtL0MQFSEchhJgxaOpG25dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pouNVh+O; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 586In3BW025601
+	for <linux-kernel@vger.kernel.org>; Sat, 6 Sep 2025 20:56:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KWeNW4vApSp5Fjhfu882/TynnsrQdubrSOZdGp7Z6M4=; b=pouNVh+OGEzOITO/
+	C2+htmLJcDpkMljryRhFF3jCT11A6chBEAfC9wZfCWBMpTotzZxpxo8cPQS4Mutg
+	ua9xM/VsgUoHsKmmgjFtDNvdzSagwf4CStdvmYUj2rKHh3yYfBiA5ks1QCwhoo8A
+	/XXGcbqspmUAxyS/wfi/NDfc8ubPhbaZMRmjUWc2C/YCA57mq4DPpHGMlVeLg4Vy
+	pNbOeoPM7lyzIEqMXrpwc3E/uhVo2yV7LC82Iyn3ZyTbG8+rVNUhwiKoqZaHE/QF
+	9vPAod/us/XXjjhgjpfKhKixXDPD/PFBA8j7rJcWEp+j3M5QBO90shOY2fff909D
+	qWI7gA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490d1v96jq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 20:56:20 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b522037281bso566346a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 13:56:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757192179; x=1757796979;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KWeNW4vApSp5Fjhfu882/TynnsrQdubrSOZdGp7Z6M4=;
+        b=SkYk4BsdsZ/9TYmHr5F6t33JbZFJBjxP4o3GX7fSiXZmuL6K4XCdvQk6cbFBdhqPjC
+         UkiVgbIern01y1ynCftK6cO34fvQoy5Jc8iGfwyM7+41sLia3hQ3o9mKt24owpg0Kwm6
+         cVJegotelzGA5isQ6fKNk3z8z+PhAV4pkiTn8ueI4oIM+e3ki7l6wGnTUd1zP6lG6lv7
+         pQ34ftq0z3ZfGzgs+Pe8oROy4qrVnbuNY8hHe+rHXo4zJ9CRHZPFV01hF31EsOHuyAVB
+         DE5NbgpGBd8+vcvFXbhg9TSjZb2Wy5lRb823wR9OupYFp3N5fJBWClep64r5/+fJDgfK
+         lRTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJbgplbGiYWQ5o4sn6sXszTIt8ouVpKL4VvGxtFMKfKgqP6Mp9mHknF4pJ1Kt68wr49LpwO430wCvoVQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSwCIGF0GYYCzo5lltkDETifoESpUbnGvIaCDAzA4+B4sT5Ph9
+	AguN55OJM6OVaY17fXzsnBSIqj3CCQKe440mqfcQ4hDDAi1yz8Eg5Aj/1iG4TXfdFqruKn67tGr
+	vTsNxSl2xj4B++aD6Q8r4Z5dKvWKMOI86E02s0ysZNehiZZbrozPlcrz+9/YcaYBNNLw=
+X-Gm-Gg: ASbGncuq5H1rws8tw3Pcr44965r3V6EO+AR//1FhXBZX2BEHjbzpQFvauQ4nyILjeLs
+	2SU1aN6oNrteQ2DIkeq0Ov+igdg+i+pOj1kZ/TeuGn3s3adTH/7gks7hd51NPtUqBnPVH1DUySu
+	a3iRCThzc38ilkpCvXUfds4ehRnxb3fTI7le2WL42CIR7tITNS12TGnXvZKF/r5nPREnPJAVLsE
+	96qktucPlMESjWFUAm935wLQmZJwKmeyDxwVZ1tqOrKixMn1G1vNmU/syMpNO1I8zFbU5kdiNhF
+	QFWoUp7uBb/pGMN89hmG7lWAU4Lk43luWCrDIl0yErU/RSTh4jjgeTX1rs/ZMDFL
+X-Received: by 2002:a05:6a20:734c:b0:24a:69c5:e9d9 with SMTP id adf61e73a8af0-2534557a858mr4403398637.39.1757192179048;
+        Sat, 06 Sep 2025 13:56:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSFjvOo/qTGxHXp3wiVQKj7HoGwmGtWzfJpDenuCSbN2DKNJDPXY8f/qc5OOKz5fQQXodCEg==
+X-Received: by 2002:a05:6a20:734c:b0:24a:69c5:e9d9 with SMTP id adf61e73a8af0-2534557a858mr4403357637.39.1757192178483;
+        Sat, 06 Sep 2025 13:56:18 -0700 (PDT)
+Received: from [192.168.1.5] ([106.222.231.120])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7727822817asm12558174b3a.98.2025.09.06.13.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Sep 2025 13:56:18 -0700 (PDT)
+Message-ID: <14b5db9f-8b31-4baa-a03d-12112425fbbe@oss.qualcomm.com>
+Date: Sun, 7 Sep 2025 02:26:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bmdy2izrmfeuuc2r"
-Content-Disposition: inline
-In-Reply-To: <aLyKhngeksG2SKdq@umbar.lan>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/257.176.7
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Gaurav Kohli <quic_gkohli@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+References: <20250822-a663-gpu-support-v4-0-97d26bb2144e@oss.qualcomm.com>
+ <20250822-a663-gpu-support-v4-3-97d26bb2144e@oss.qualcomm.com>
+ <f11b778d-eba1-4712-81c7-b83f2cb38b46@oss.qualcomm.com>
+ <exkrgx6rdotfrrsnklsd7zk4ydehsk5vaoevibpqisyq2dwbd4@sa4kgnuexlna>
+ <f169be5a-faa5-4824-861e-27bd2083b9cf@oss.qualcomm.com>
+ <t5pxum74q3fwf6wgcbaeaginjvtjfn357pkfswvafsggtmvxfv@jl5qjfhpmmow>
+ <c3de911c-e80a-429d-8a5c-c693546d4abf@oss.qualcomm.com>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <c3de911c-e80a-429d-8a5c-c693546d4abf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: XIzWqyC9-p7kym154zXuRhNr5pjxMGkV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNyBTYWx0ZWRfX+8mC4+z2iNgh
+ TzgaO1hfcNxzI3VLR6AcLC5Rcqn0Jm35OaVRUbpwkLVHw1cTMrD21K6XJnwGZFseFB7mgrqXLWE
+ FaOV5Weev8SPLkGJFlUegPyyUIRv1FikIXNzZ/65F49dY0TcRw+gpzQQ3nsD0PsNWJALVZXm2pN
+ Pm+H2lzFc207z2ZP2xHACCKFYBM4Qh3Z7qJeWPLWmvXlAiAxcsWczp/y7xZuyFXN4ljjB3kdFqA
+ nBpsrqnrSOT4XCjYdCWJdCohFn26n5Oqo59bHJcDqcbrvZBTdXu7iL4NLQshkFkecvbHb+uCN9N
+ 22/Ui3JM+oMDWNqaTPOwq/DNybGxnaGI0YalVlvbfdlJXDYUf0PfygRTf8GeLLG8/zOzHXygcsz
+ tXcqdJH5
+X-Authority-Analysis: v=2.4 cv=cYXSrmDM c=1 sm=1 tr=0 ts=68bc9ff4 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=LaKoERy2ZarllCCVqnwusw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=fXDYdZQTyQKxOPRIeewA:9 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: XIzWqyC9-p7kym154zXuRhNr5pjxMGkV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-06_07,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060027
 
+On 9/3/2025 8:44 PM, Konrad Dybcio wrote:
+> On 9/3/25 4:00 PM, Dmitry Baryshkov wrote:
+>> On Wed, Sep 03, 2025 at 03:36:34PM +0200, Konrad Dybcio wrote:
+>>> On 9/3/25 2:39 PM, Dmitry Baryshkov wrote:
+>>>> On Wed, Sep 03, 2025 at 02:26:30PM +0200, Konrad Dybcio wrote:
+>>>>> On 8/21/25 8:55 PM, Akhil P Oommen wrote:
+>>>>>> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+>>>>>>
+>>>>>> Add gpu and gmu nodes for sa8775p chipset. As of now all
+>>>>>> SKUs have the same GPU fmax, so there is no requirement of
+>>>>>> speed bin support.
+>>>>>>
+>>>>>> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+>>>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>> ---
+>>>>>>  arch/arm64/boot/dts/qcom/lemans.dtsi | 116 +++++++++++++++++++++++++++++++++++
+>>>>>>  1 file changed, 116 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>>>>>> index 8ceb59742a9fc6562b2c38731ddabe3a549f7f35..8eac8d4719db9230105ad93ac22287850b6b007c 100644
+>>>>>> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+>>>>>> @@ -1097,6 +1097,18 @@ ipcc: mailbox@408000 {
+>>>>>>  			#mbox-cells = <2>;
+>>>>>>  		};
+>>>>>>  
+>>>>>> +		qfprom: efuse@784000 {
+>>>>>> +			compatible = "qcom,sa8775p-qfprom", "qcom,qfprom";
+>>>>>> +			reg = <0x0 0x00784000 0x0 0x2410>;
+>>>>>
+>>>>> len = 0x3000
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> +		gmu: gmu@3d6a000 {
+>>>>>> +			compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
+>>>>>> +			reg = <0x0 0x03d6a000 0x0 0x34000>,
+>>>>>
+>>>>> This bleeds into GPU_CC, len should be 0x26000
+>>>>
+>>>> gpucc is in the middle of GMU, see other platforms.
+>>>
+>>> This is not the case here
+>>
+>> Why? I think GPU CC is a part of the GMU by design: GMU accesses GPU CC
+>> registers directly from the firmware.
+> 
+> Correct, however this is only a similarly sounding argument - the DT
+> describes the hardware from the main Arm cluster POV. The GMU Cortex-M
+> core has its own address map etc.
 
---bmdy2izrmfeuuc2r
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 1/2] dt-bindings: phy: rockchip-usbdp: add improved
- ports scheme
-MIME-Version: 1.0
+We have been keeping GPUCC region in the GMU's reg range in all chipsets
+for the purpose of coredump.
 
-Hi,
+Can we leave this as is until we have a mechanism to dump these into gpu
+coredump (via gpucc driver??)? I recall you proposed something similar
+sometime back.
 
-On Sat, Sep 06, 2025 at 10:24:54PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Sep 04, 2025 at 08:26:02PM +0200, Sebastian Reichel wrote:
-> > Currently the Rockchip USBDP PHY as a very simply port scheme: It just
-> > offers a single port, which is supposed to point towards the connector.
-> > Usually with 2 endpoints, one for the USB-C superspeed port and one for
-> > the USB-C SBU port.
-> >=20
-> > This scheme is not good enough to properly handle DP AltMode, so add
-> > a new scheme, which has separate ports for everything. This has been
-> > modelled after the Qualcomm QMP USB4-USB3-DP PHY controller binding
-> > with a slight difference that there is an additional port for the
-> > USB-C SBU port as the Rockchip USB-DP PHY also contains the mux.
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  .../bindings/phy/phy-rockchip-usbdp.yaml           | 23 ++++++++++++++=
-++++++++
-> >  1 file changed, 23 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.y=
-aml b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> > index 8b7059d5b1826fdec5170cf78d6e27f2bd6766bb..f728acf057e4046a4d254ee=
-687af3451f17bcd01 100644
-> > --- a/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> > +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-usbdp.yaml
-> > @@ -114,6 +114,29 @@ properties:
-> >        A port node to link the PHY to a TypeC controller for the purpos=
-e of
-> >        handling orientation switching.
-> > =20
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          Output endpoint of the PHY for USB (or DP when configured in=
-to 4 lane
-> > +          mode), which should point to the superspeed port of a USB co=
-nnector.
->=20
-> What abourt USB+DP mode, where each one gets 2 lanes?
+-Akhil
 
-Right, I guess we would need one port more and have one port for
-lane 0 + 1 and one port for 1 + 2. For USB-C both ports are
-connected to the USB-C superspeed port. For DP 4-lane mode the
-same is done for the input port of the connector. Last but not
-least for 2 lanes USB + 2 lanes DP, one port can be connected
-to the USB connector and one port can be connected to the DP
-connector.
+> 
+> Konrad
 
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: Incoming endpoint from the USB controller
-> > +
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: Incoming endpoint from the DisplayPort controller
-> > +
-> > +      port@3:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          Output endpoint of the PHY for DP, which should either point=
- to the
-> > +          SBU port of a USB-C connector or a DisplayPort connector inp=
-ut port.
->=20
-> I would suggest describing this port as 'DisplayPort AUX signals to be
-> connected to the SBU port of a USB-C connector (maybe through the
-> additinal mux, switch or retimer)'. It should not be confused with the
-> actual DisplayPort signals (as those go through the port@0).
->=20
-> In the Qualcomm world we currently do not describe this link from the
-> PHY to the gpio-mux or retimer, but I think we will have to do that
-> soon.
-
-It does looks like no upstream platform does a proper description of
-USB-C setups :(
-
-Thanks for having a look,
-
--- Sebastian
-
---bmdy2izrmfeuuc2r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi8nKMACgkQ2O7X88g7
-+ppvtBAAkju2QlVThUn/QreP/COXvVvECT9h6rv0jRB3ZdKfg79oPBzrQVuyCAxq
-f7M/ZeJcfD2ioqbs67rVJWB7Q5DRJxvoKjPqCoIW5Gc6yxxKdZ3OAe8b3u94Go48
-gBKVWjaeQtRspHln9v+ZEo5TFTl2QsKecOBh4cavkk6ZudydZfnm2vDD2FsFZU6Z
-PGFCm1XlDvuz09EVc9OqiLKQAgN7vyMctOelIC/euP5+7rITHP2Oc/toqjTZetCu
-hqdTs2Of5NxYF7kIlMxM0GKTQ9d2KEw0IrS2zq0fyNcxlIaRUzj72didiBONiVH7
-2JzMpqcua6OV2hpUWggNDpcV+OF3a/aHy2byoaN3KP2w4jXOIDNmpURjiOZy/juv
-iyWM0bJa/aows83PdjrRjyIg0/RnLPtqaknp9jYiVUIRN2lhJ+QSaLyY/azjLLhe
-av3RngWLeY2CNYZXRLGI52F/oKn1yScd+fw7oR+yUIEMEwOFgFom6w23BWFTcqIe
-V2M/FWe62ZzgMXrxt5ue7KH54WtuvQyHcdu7sMVZCbMAz+XIaskVWvGUhkVWi0/u
-3Hmw7n4GUEQQbJMn84IG2lXeHmAtkV9d7lmTTycQdCytwXRQRxrWMY16W0XLGBjM
-NTp/t4Ae4vNfEvSBXsaXlrT1VpSQYUHr3IqTpENU20LxnhDYEQ4=
-=gYv+
------END PGP SIGNATURE-----
-
---bmdy2izrmfeuuc2r--
 
