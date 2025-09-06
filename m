@@ -1,179 +1,228 @@
-Return-Path: <linux-kernel+bounces-804462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193ABB4776E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:26:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F24B47774
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 23:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD32D1B25F31
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75C81BC4FF5
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75662949E0;
-	Sat,  6 Sep 2025 21:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6192494FE;
+	Sat,  6 Sep 2025 21:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EODzUgJS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRUlHDeD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912F4315D45;
-	Sat,  6 Sep 2025 21:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71502315D43;
+	Sat,  6 Sep 2025 21:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757193992; cv=none; b=lm17LC6epfAzem4VJ8WvnHlUl+lwK3neOpKuO+mWhMipzp0X60bKa9NhalAnIsVnicsU8u0mF/tSaUiFAZW5QVPYhoqHI1IG4r9h+9Wy2NTMAKiJkfilKwqKQmH1u78/RKpg1lZIGVsn9iO8sjl31Hyi6tm3n0Hskp3OjcEvnqg=
+	t=1757194234; cv=none; b=cfdxo2sDu9pOWtlUH+jeJZLM7Qh0BS0OwP9Z5r3CLdPJwpxu7ffzMKMqHTZN3Ux3qogypj9GALsO8EJX0JCFiU1d2IKfiv2Hckhn2aNKuKzkcx1XMQv63Go3Wtbzd2ltk/rDx7pORAuOAw99+zZctmM19cCh6VVIrznQFHBhBic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757193992; c=relaxed/simple;
-	bh=ke5wqDSXDzWZTjT1VQKkoHsP52zTCyKOa1jrumfRM+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzU/xDEc8zbx8sw65dgiQr0dD3NLEwfIG/B5vIKbjZdKLun+VK73dCLy6f5pg35XsBrhgtrCAQhnKAP3ZgLToo9vKz+Ak4zufeuwjM7Pw7QJd2ERvp6iHvcVbD/D8HsK5eO21XBU8dI4mgZSKrT5C2P6jg7XCPhx1laOilc+Q0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EODzUgJS; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757193991; x=1788729991;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ke5wqDSXDzWZTjT1VQKkoHsP52zTCyKOa1jrumfRM+w=;
-  b=EODzUgJSQ/o/vvSNxkUHH1kkADmk9UFARthRcm9430v/7b19NmQ+8VQr
-   iPmG6Q50BCFkLFb4a45sBJsuqig8xsIvrolJP9ZyJ0PF1AqpM7CO/5JoG
-   GmO9nZFGUqWxo+bV+prx3m5a2KI4y2RKdcN8hKOfObYNyrT1a+4Op9g0a
-   SBgCAdGwXZBdZBuN2TxWM+dWR600HME+PvN6j8P1hhyflxuj+0QJWNxCg
-   e3tQego4cygoBXlVE9lIHJ9/p/LcTEJ6fVmPzUCTOtz+wivnrzZZadkYR
-   oaykQw7AIAR4AGUx7sh0XU51OePyBKCYatihtsqItLW0bugQ9+GkVXfOH
-   Q==;
-X-CSE-ConnectionGUID: D6UeHcmsT763W1NsElRIig==
-X-CSE-MsgGUID: 1eT+arxmSVOiQKa3ERAkMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="70601572"
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="70601572"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 14:26:31 -0700
-X-CSE-ConnectionGUID: vwB5n0t6RZeSc2w0Q4NDyA==
-X-CSE-MsgGUID: E6u5wxe3R8ipXlHmzbaKhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,245,1751266800"; 
-   d="scan'208";a="176766876"
-Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 06 Sep 2025 14:26:28 -0700
-Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uv0QT-0001nn-1R;
-	Sat, 06 Sep 2025 21:26:25 +0000
-Date: Sun, 7 Sep 2025 05:26:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Artem Shimko <artyom.shimko@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Artem Shimko <artyom.shimko@gmail.com>,
-	Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] i2c: amd-mp2-pci: Simplify PM code using
- DEFINE_RUNTIME_DEV_PM_OPS
-Message-ID: <202509070541.ilqlMkml-lkp@intel.com>
-References: <20250906001217.3792723-2-artyom.shimko@gmail.com>
+	s=arc-20240116; t=1757194234; c=relaxed/simple;
+	bh=dR+HFN4RItes6cFLf8dFGdaPc8wtAZj68FPV+CJdYZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lA9t/Nk/vMenZmL5E456d9h6Qx3NSIGdGX0w0DcRkTLHzeR/dwfiM5AYKU+tqphQjzikFK3N8biQtFchBIiL9MuNPYMaKXVbMj7KP4b+uBc71l4YZCDvNIWJIbH6ap2RsiuMhH7I/+tauHEQ6L6QXtwfxcFjIcbyJ5GOtr7FadY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRUlHDeD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1824C4CEE7;
+	Sat,  6 Sep 2025 21:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757194234;
+	bh=dR+HFN4RItes6cFLf8dFGdaPc8wtAZj68FPV+CJdYZw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nRUlHDeDO85y8yiubgdJjtfmbfPyD03yJqpqNBaJy//z5MYR5sNlkxX7RVLEsL/Lc
+	 yELp57LPa1P3fgLl8JZSB7uDH3nDYdBOgMs22Wc/NhnmxgZDKPpBxq+fwtj+G+7HfX
+	 wPpNff9nEZlbyha6DV7yTEH43me5Iay7OIDoKxnak+7goZCV4+O4hp8grftjAgyDtQ
+	 RrUglOq708jwG96CGeCddVVkgVhd1Ys1XwIUOSUoYyumhGUKB6kEu4XXeOdyTzHiHQ
+	 7d7dPRFHEj16hvV66b4LQycVTLSQjmD+4ndmoFS6j88ngz2Cg3C1KS+kHL9tu9jmv6
+	 IjmmvdRgaBU/A==
+Date: Sat, 6 Sep 2025 23:30:28 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Pavel Machek <pavel@ucw.cz>, Len Brown
+ <len.brown@intel.com>, linux-pm@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>
+Subject: Re: [PATCH v4] kernel.h: add comments for system_states
+Message-ID: <20250906233028.56573fd6@foz.lan>
+In-Reply-To: <d815f5c3-6e15-4758-8bf4-601d5543cab9@infradead.org>
+References: <20250904063631.2364995-1-rdunlap@infradead.org>
+	<6089e22ddfdc135040cdeb69329d817846026728@intel.com>
+	<20250905140104.42418fba@foz.lan>
+	<34fb6a27a2c17c22c0ac93bebb0bbfd1a04d1833@intel.com>
+	<atj2koasbiuf67rzr7bbdwpu4kcgkdsqt6rhz5vwpbryfqxm7z@mfmts3tnsasf>
+	<2aad4540-ccdd-4519-9bed-7d8c7ccd009d@infradead.org>
+	<20250906105627.2c0cd0d9@foz.lan>
+	<d815f5c3-6e15-4758-8bf4-601d5543cab9@infradead.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250906001217.3792723-2-artyom.shimko@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Artem,
+Em Sat, 6 Sep 2025 10:13:23 -0700
+Randy Dunlap <rdunlap@infradead.org> escreveu:
 
-kernel test robot noticed the following build errors:
+> On 9/6/25 1:56 AM, Mauro Carvalho Chehab wrote:
+> > Em Fri, 5 Sep 2025 15:07:31 -0700
+> > Randy Dunlap <rdunlap@infradead.org> escreveu:
+> >   
+> >> Hi,
+> >>
+> >> On 9/5/25 6:38 AM, Mauro Carvalho Chehab wrote:  
+> >>> On Fri, Sep 05, 2025 at 04:06:31PM +0300, Jani Nikula wrote:    
+> >>>> On Fri, 05 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:    
+> >>>>> Em Fri, 05 Sep 2025 12:02:37 +0300
+> >>>>> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+> >>>>>    
+> >>>>>> On Wed, 03 Sep 2025, Randy Dunlap <rdunlap@infradead.org> wrote:    
+> >>>>>>> Provide some basic comments about the system_states and what they imply.
+> >>>>>>> Also convert the comments to kernel-doc format.
+> >>>>>>>
+> >>>>>>> However, kernel-doc does not support kernel-doc notation on extern
+> >>>>>>> struct/union/typedef/enum/etc. So I made this a DOC: block so that
+> >>>>>>> I can use (insert) it into a Documentation (.rst) file and have it
+> >>>>>>> look decent.      
+> >>>>>>
+> >>>>>> The simple workaround is to separate the enum type and the variable:
+> >>>>>>
+> >>>>>> /**
+> >>>>>>  * kernel-doc for the enum
+> >>>>>>  */
+> >>>>>> enum system_states {
+> >>>>>> 	...
+> >>>>>> };
+> >>>>>>
+> >>>>>> /**
+> >>>>>>  * kernel-doc for the variable
+> >>>>>>  */
+> >>>>>> extern enum system_states system_state;
+> >>>>>>
+> >>>>>> BR,
+> >>>>>> Jani.
+> >>>>>>    
+> >>>>>>>
+> >>>>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> >>>>>>> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # v1
+> >>>>>>> ---    
+> >>
+> >> [snip]  
+> >>>>> If the problem is with "extern" before enum, fixing kdoc be
+> >>>>> fairly trivial.    
+> >>>>
+> >>>> The non-trivial part is deciding whether you're documenting the enum
+> >>>> type or the variable. Both are equally valid options.    
+> >>>
+> >>> True.
+> >>>
+> >>> I'd say that, if the variable is under EXPORT_SYMBOL macros, it
+> >>> should be documented.    
+> >>
+> >> Do you mean documented with kernel-doc? How do we do that?
+> >> I was under the impression that we don't currently have a way to
+> >> use kernel-doc for variables (definitions, only for declarations).  
+> > 
+> > No, but it shouldn't be hard to add something like:
+> > 
+> > 	/**
+> > 	 * global system_state - stores system state
+> > 	 * <some description>
+> > 	 */
+> > 	extern enum system_states system_state;  
+> > 
+> > and place a dump_global() function at kdoc parser. Ok, one might use
+> > DOC:, but IMHO the best is to have a proper handler for it that would
+> > automatically pick the type.  
+> 
+> Nitpick, I would s/global/var/. But I won't complain about "global".
 
-[auto build test ERROR on andi-shyti/i2c/i2c-host]
-[also build test ERROR on linus/master v6.17-rc4 next-20250905]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Either way works for me. Yet, I would expect it to be used only for
+global variables, as documenting local ones using kernel-doc is
+probably not what we expect inside Kernel documentation. So, naming it
+"global" may help.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Artem-Shimko/i2c-amd-mp2-pci-Simplify-PM-code-using-DEFINE_RUNTIME_DEV_PM_OPS/20250906-081304
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20250906001217.3792723-2-artyom.shimko%40gmail.com
-patch subject: [PATCH 1/1] i2c: amd-mp2-pci: Simplify PM code using DEFINE_RUNTIME_DEV_PM_OPS
-config: x86_64-buildonly-randconfig-002-20250907 (https://download.01.org/0day-ci/archive/20250907/202509070541.ilqlMkml-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250907/202509070541.ilqlMkml-lkp@intel.com/reproduce)
+> More importantly, I have seen several patches where people try to document a
+> variable, so it seems like something that we should support at some point.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509070541.ilqlMkml-lkp@intel.com/
+Agreed.
 
-All errors (new ones prefixed by >>):
+Adding a parsing rule for the variable doesn't sound hard, as they follow,
+in principle, this regex(*):
 
->> drivers/i2c/busses/i2c-amd-mp2-pci.c:393:16: error: no member named 'suspend' in 'struct amd_i2c_common'
-     393 |                         i2c_common->suspend(i2c_common);
-         |                         ~~~~~~~~~~  ^
->> drivers/i2c/busses/i2c-amd-mp2-pci.c:424:22: error: no member named 'resume' in 'struct amd_i2c_common'
-     424 |                         ret = i2c_common->resume(i2c_common);
-         |                               ~~~~~~~~~~  ^
-   2 errors generated.
+	OPTIONAL_ATTRIBS = ["
+	    "extern"
+	]
 
+	optional = "|".join(OPTIONAL_ATTRIBS)
 
-vim +393 drivers/i2c/busses/i2c-amd-mp2-pci.c
+	"^(?:extern\s+)?(\w.*)\s+([\w\_]+)(?:#.*)$"
 
-529766e0a01144 Elie Morisse    2019-03-05  381  
-529766e0a01144 Elie Morisse    2019-03-05  382  static int amd_mp2_pci_suspend(struct device *dev)
-529766e0a01144 Elie Morisse    2019-03-05  383  {
-529766e0a01144 Elie Morisse    2019-03-05  384  	struct pci_dev *pci_dev = to_pci_dev(dev);
-529766e0a01144 Elie Morisse    2019-03-05  385  	struct amd_mp2_dev *privdata = pci_get_drvdata(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  386  	struct amd_i2c_common *i2c_common;
-529766e0a01144 Elie Morisse    2019-03-05  387  	unsigned int bus_id;
-529766e0a01144 Elie Morisse    2019-03-05  388  	int ret = 0;
-529766e0a01144 Elie Morisse    2019-03-05  389  
-529766e0a01144 Elie Morisse    2019-03-05  390  	for (bus_id = 0; bus_id < 2; bus_id++) {
-529766e0a01144 Elie Morisse    2019-03-05  391  		i2c_common = privdata->busses[bus_id];
-529766e0a01144 Elie Morisse    2019-03-05  392  		if (i2c_common)
-529766e0a01144 Elie Morisse    2019-03-05 @393  			i2c_common->suspend(i2c_common);
-529766e0a01144 Elie Morisse    2019-03-05  394  	}
-529766e0a01144 Elie Morisse    2019-03-05  395  
-529766e0a01144 Elie Morisse    2019-03-05  396  	ret = pci_save_state(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  397  	if (ret) {
-267e82b9592d0d Richard Neumann 2021-02-01  398  		pci_err(pci_dev, "pci_save_state failed = %d\n", ret);
-529766e0a01144 Elie Morisse    2019-03-05  399  		return ret;
-529766e0a01144 Elie Morisse    2019-03-05  400  	}
-529766e0a01144 Elie Morisse    2019-03-05  401  
-529766e0a01144 Elie Morisse    2019-03-05  402  	pci_disable_device(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  403  	return ret;
-529766e0a01144 Elie Morisse    2019-03-05  404  }
-529766e0a01144 Elie Morisse    2019-03-05  405  
-529766e0a01144 Elie Morisse    2019-03-05  406  static int amd_mp2_pci_resume(struct device *dev)
-529766e0a01144 Elie Morisse    2019-03-05  407  {
-529766e0a01144 Elie Morisse    2019-03-05  408  	struct pci_dev *pci_dev = to_pci_dev(dev);
-529766e0a01144 Elie Morisse    2019-03-05  409  	struct amd_mp2_dev *privdata = pci_get_drvdata(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  410  	struct amd_i2c_common *i2c_common;
-529766e0a01144 Elie Morisse    2019-03-05  411  	unsigned int bus_id;
-529766e0a01144 Elie Morisse    2019-03-05  412  	int ret = 0;
-529766e0a01144 Elie Morisse    2019-03-05  413  
-529766e0a01144 Elie Morisse    2019-03-05  414  	pci_restore_state(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  415  	ret = pci_enable_device(pci_dev);
-529766e0a01144 Elie Morisse    2019-03-05  416  	if (ret < 0) {
-267e82b9592d0d Richard Neumann 2021-02-01  417  		pci_err(pci_dev, "pci_enable_device failed = %d\n", ret);
-529766e0a01144 Elie Morisse    2019-03-05  418  		return ret;
-529766e0a01144 Elie Morisse    2019-03-05  419  	}
-529766e0a01144 Elie Morisse    2019-03-05  420  
-529766e0a01144 Elie Morisse    2019-03-05  421  	for (bus_id = 0; bus_id < 2; bus_id++) {
-529766e0a01144 Elie Morisse    2019-03-05  422  		i2c_common = privdata->busses[bus_id];
-529766e0a01144 Elie Morisse    2019-03-05  423  		if (i2c_common) {
-529766e0a01144 Elie Morisse    2019-03-05 @424  			ret = i2c_common->resume(i2c_common);
-529766e0a01144 Elie Morisse    2019-03-05  425  			if (ret < 0)
-529766e0a01144 Elie Morisse    2019-03-05  426  				return ret;
-529766e0a01144 Elie Morisse    2019-03-05  427  		}
-529766e0a01144 Elie Morisse    2019-03-05  428  	}
-529766e0a01144 Elie Morisse    2019-03-05  429  
-529766e0a01144 Elie Morisse    2019-03-05  430  	return ret;
-529766e0a01144 Elie Morisse    2019-03-05  431  }
-529766e0a01144 Elie Morisse    2019-03-05  432  
+(*) eventually, some might have extra attributes, but we can
+    start with a simpler regex, adding a more complex parser if/when
+    needed.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I added at the end a one-minute hacky prototype I wrote, completely
+untested and incomplete.
+
+Thanks,
+Mauro
+
+The following code snippet is incomplete, not tested, and requires more
+work, like placing global vars at the beginning. Feel free
+to pick it and use it to produce a GPL code to the Kernel.
+
+Note that this is just the parsing part. for it to work, you also
+need to modify scripts/lib/kdoc/kdoc_output.py, which contains how
+this will be output at rst and man formats.
+
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index 574972e1f741..b3ffaa541e9d 100644
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -886,6 +886,25 @@ class KernelDoc:
+         self.output_declaration('enum', declaration_name,
+                                 purpose=self.entry.declaration_purpose)
+ 
++   def dump_global(self, ln, proto):
++        # TODO: move this to the beginning of this file
++        VAR_ATTRIBS = [
++            "extern",
++        ]
++        OPTIONAL_VAR_ATTR = "^(?:" + "|".join(VAR_ATTRIBS) + ")?"
++
++        type_var = KernRe(OPTIONAL_VAR_ATTR + r"(\w.*)\s+([\w_]+)(?:#.*)?$")
++
++        # function logic starts here:
++
++        if type_var.match(proto):
++                declaration_name = r.group(2)
++                var_type = r.group(1)
++
++        self.output_declaration('global', declaration_name,
++                                var_type=var_type,
++                                purpose=self.entry.declaration_purpose)
++
+     def dump_declaration(self, ln, prototype):
+         """
+         Stores a data declaration inside self.entries array.
+@@ -897,6 +916,8 @@ class KernelDoc:
+             self.dump_typedef(ln, prototype)
+         elif self.entry.decl_type in ["union", "struct"]:
+             self.dump_struct(ln, prototype)
++        elif self.entry.decl_type == "global"]:
++            self.dump_global(ln, prototype)
+         else:
+             # This would be a bug
+             self.emit_message(ln, f'Unknown declaration type: {self.entry.decl_type}')
+
 
