@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-804452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD2DB47722
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:26:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D466FB47724
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 22:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2051BC6100
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:26:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8850917F7A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256FC29B224;
-	Sat,  6 Sep 2025 20:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67982287244;
+	Sat,  6 Sep 2025 20:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="cJVc4Zpm"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c0IchnUX"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3012515853B;
-	Sat,  6 Sep 2025 20:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757190371; cv=pass; b=ryHplZHKfAhGYRC85Sib9H3zy6qCMGkXtmKwXsZF/RtFAKSuJC7NEmwkox5+6oiQU6vN7cHRI178SmQz8WyEZmMMe26eVKzSOslE7ZEmvcwFlBQeniFgN7EzKviULvhkpMavGeMtq3mv4hwT6WKuPBQKIbuW37XXJBZaYm0bt+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757190371; c=relaxed/simple;
-	bh=Dba0VwlgwTl/0lxoZNPwJbwMeUyMEhy+W9+MLvg4jAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofVVEnLPfExIK5fpEJtRt5tU7fdrAN2rjPiDAgw9FIqy1cyKYwc6MsvUDh93SJlZFK6ox+hHbHS2CiMqGzTevc/vTBpbKq2fFvTkPAKvzBcanK51nXu1H4uBdwFzRPrBlE31DtT09of94p29jbKn3fh4phM2VrFEUnB+/R/SKGQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=cJVc4Zpm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757190330; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AIJzMu/ZRJXDGonBMSOiXh0RNaH/kR5wwozxFNW5ko/qSgZ+3JfO5njNY2dHaDp4LRUhilC7Q15M6zJBmrJKy29LIy73sRpBBBPFYKhnkwuBtZMRCu3ZeaVYV2l3XLRIFI9N1Bdx5K8IrJdZybA2T0YiCl9ZLWXk3+rXYOr8hWc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757190330; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=gaueM132UXDRu16dNJaiRHmHlASjwQR0RfI2PxcL64g=; 
-	b=CdVDiyJlzEQixCLxnf9+h6LmfnlzvvqXyXrKmrbl8+aD6pNzwHSv0iZx04Wl61XOvVucl/GGgCZQFG4c9cCOfDIY32CEjEpQD/3qNCrL6//emlX33zOthl/vFfQIeMklMnBIKbSLFiHJ9IB0gAlUT8e2NFvORCJU+Pvm5lCqxUU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757190330;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=gaueM132UXDRu16dNJaiRHmHlASjwQR0RfI2PxcL64g=;
-	b=cJVc4ZpmICLZ3Rn0dxvIMumpZwhP+wuCBDR2ZrLy7dhJZXc8vTbhFcTF9V+E4Xmm
-	3dzIfiYaogrkXjsNO+R7zL/LrKY9/kMwY0Lr5wRxbOib7vc8cyQeNs6kVzzjDq3qhKM
-	PTmIIYhIPPCSPdOpHDyKo6OzeHCw0BkgpfeQ0Nz0=
-Received: by mx.zohomail.com with SMTPS id 1757190327049402.40879686448466;
-	Sat, 6 Sep 2025 13:25:27 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id A89F6180B18; Sat, 06 Sep 2025 22:25:20 +0200 (CEST)
-Date: Sat, 6 Sep 2025 22:25:20 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Yao Zi <ziyao@disroot.org>, 
-	"Russell King (Oracle)" <linux@armlinux.org.uk>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	David Wu <david.wu@rock-chips.com>, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-Message-ID: <wgau7accvif4pcblnkpppyve4isstvmxyljlojt2yu4cwnyqvf@od4zasgpwdjr>
-References: <20250904031222.40953-3-ziyao@disroot.org>
- <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
- <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
- <aLlyb6WvoBiBfUx3@shell.armlinux.org.uk>
- <aLly7lJ05xQjqCWn@shell.armlinux.org.uk>
- <aLvIbPfWWNa6TwNv@pie>
- <5d691f5b-460e-46cb-9658-9c391058342f@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3839B2472B6;
+	Sat,  6 Sep 2025 20:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757191019; cv=none; b=MaKFV0xgDoxG8l+wsL32D3GjOOHxWIur743wZEufT+PGDNEdXISlWet+VSHaFxonmT6qYyNpzNLaemK0KvifGholeFKT9yNkR80xofa4HgpEMB3WMrdTNpWfrPgh2raHpusWE675uBwxONHxOLtGNbucm4I5AwhDC5E/deuLyFc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757191019; c=relaxed/simple;
+	bh=ZMePIJxuRSyJ23Be1RKExOF9BYnRp024ORsGCfGtQdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jzq9r9YK28tMLus+4Llm0wJHpKCVzVvvmCB+WGoQMH4PYDk79xtv7Lx89oHqr4ICpfiqQkEzcnY4ZJAWuNATiAu9LgVhogDS4tflXCS36QlNRdprNp8fuiLHMVpA1tEKNAK2x+rGiQ/cZz3mh45bR+6T0E36h4wzbT3sXCQJuBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=c0IchnUX; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 586KFrYD020386;
+	Sat, 6 Sep 2025 20:36:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=PVQ8nas6Q7US5DZcPsLyNsL7w7XWy
+	2uTCHh1GfyXG1Q=; b=c0IchnUXo+Bn/U1YqCgyZOtrowdvFRozNjbqikciyCVru
+	C0DGES/0S/foRFtX/AUZJV1f6MBuhkuHPOIiYyB6VlHQ+rDxCHrlA1I1Cj21z0cg
+	KwtqKUiVU/whGPGbBpH15Bda9N3gZprIZAhHL6+B8bSj18FYljP4izO/tHMDlEQt
+	vNQC+jz1+6o9q+4yj64rSsYaeHKCWseMT66ktUKP5YCwVj5V1MRFfDlfiDePfvMF
+	CFSCNygNBTKQBRITGCgDyqib2G4wbDNuwHusW6FzWgV/p0lxF46nE8xdJD7hLZOu
+	N4Z0aIOpKYDeL7+jiSTcpuOIZ9AEuBumVWmTDLGiw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 490urar0ay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 06 Sep 2025 20:36:41 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 586FXkgg002759;
+	Sat, 6 Sep 2025 20:36:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdd9j2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 06 Sep 2025 20:36:40 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 586KadT1017849;
+	Sat, 6 Sep 2025 20:36:40 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 490bdd9j2r-1;
+	Sat, 06 Sep 2025 20:36:39 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: mani@kernel.org, quic_cang@quicinc.com, quic_asutoshd@quicinc.com,
+        peter.wang@mediatek.com, martin.petersen@oracle.com,
+        alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: ufs: mcq: Fix memory allocation checks for SQE and CQE
+Date: Sat,  6 Sep 2025 13:36:18 -0700
+Message-ID: <20250906203636.3103586-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h6lnwepm5yz4el3j"
-Content-Disposition: inline
-In-Reply-To: <5d691f5b-460e-46cb-9658-9c391058342f@rock-chips.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/257.176.7
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-06_07,2025-09-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=854 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509060202
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5OCBTYWx0ZWRfXyGKSyXTf83dj
+ xbeGIiiC7FFok3tdQuyemoTojpuA6Gc9JBro+/zf11OWiLpI2t9FlTIZKsLuF3GZhFZzw7VL/9b
+ zccnp6shncuKxepFBPpoOnuzuum45TW2jLQfWj+a6mTlGKY5usFX4d/1ddrn2OzUOBH/p5XOpEZ
+ P4d3zJqoyi0naaGwZKc/hrw4uefEYio9Abghi6cVqst5AGZZ158I2XVIWyxS0vxCTqU4tNcTlfS
+ 4ZSu1AWG0k5x3luIytlw/DjIVSCy+433Qd3tnGYPN9FBHfR7syJak60HSCWHm10LjaBxW8YxUNR
+ CRVGfrPmAyp/XT6Z9/siZRatzDMm3ZQ4le6YIymBIn8k0XmFuwjKxtNn8w6/UHx74c4O3iz55LQ
+ hq9KdMTD4g/VTI3JlkJ78Gd/asnENQ==
+X-Authority-Analysis: v=2.4 cv=T5GMT+KQ c=1 sm=1 tr=0 ts=68bc9b59 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=GesvECoXrJs119_16ZgA:9 cc=ntf
+ awl=host:12069
+X-Proofpoint-GUID: UBeI1EY29MpyxKejynzB5tV4EePlJDDS
+X-Proofpoint-ORIG-GUID: UBeI1EY29MpyxKejynzB5tV4EePlJDDS
 
+The previous checks incorrectly tested the DMA addresses returned
+by dmam_alloc_coherent instead of the returned virtual addresses.
+This could cause allocation failures to go unnoticed.
 
---h6lnwepm5yz4el3j
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't
- contain invalid address
-MIME-Version: 1.0
+dmam_alloc_coherent returns the CPU address, not the DMA address.
+Using DMA pointer for NULL check is incorrect.
 
-Hi,
+Change checks to verify sqe_base_addr and cqe_base_addr instead of
+sqe_dma_addr and cqe_dma_addr
 
-On Sat, Sep 06, 2025 at 02:26:31PM +0800, Chaoyi Chen wrote:
-> On 9/6/2025 1:36 PM, Yao Zi wrote:
->=20
-> > On Thu, Sep 04, 2025 at 12:07:26PM +0100, Russell King (Oracle) wrote:
-> > > On Thu, Sep 04, 2025 at 12:05:19PM +0100, Russell King (Oracle) wrote:
-> > > > On Thu, Sep 04, 2025 at 07:03:10PM +0800, Chaoyi Chen wrote:
-> > > > > On 9/4/2025 6:58 PM, Russell King (Oracle) wrote:
-> > > > > > On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
-> > > > > > >    	if (plat->phy_node) {
-> > > > > > >    		bsp_priv->clk_phy =3D of_clk_get(plat->phy_node, 0);
-> > > > > > >    		ret =3D PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> > > > > > > -		/* If it is not integrated_phy, clk_phy is optional */
-> > > > > > > +		/*
-> > > > > > > +		 * If it is not integrated_phy, clk_phy is optional. But w=
-e must
-> > > > > > > +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded=
-, or
-> > > > > > > +		 * the error code could be wrongly taken as an invalid poi=
-nter.
-> > > > > > > +		 */
-> > > > > > I'm concerned by this. This code is getting the first clock fro=
-m the DT
-> > > > > > description of the PHY. We don't know what type of PHY it is, o=
-r what
-> > > > > > the DT description of that PHY might suggest that the first clo=
-ck would
-> > > > > > be.
-> > > > > >=20
-> > > > > > However, we're geting it and setting it to 50MHz. What if the c=
-lock is
-> > > > > > not what we think it is?
-> > > > > We only set integrated_phy to 50M, which are all known targets. F=
-or external PHYs, we do not perform frequency settings.
-> > > > Same question concerning enabling and disabling another device's cl=
-ock
-> > > > that the other device should be handling.
-> > > Let me be absolutely clear: I consider *everything* that is going on
-> > > with clk_phy here to be a dirty hack.
-> > >=20
-> > > Resources used by a device that has its own driver should be managed
-> > > by _that_ driver alone, not by some other random driver.
-> > Agree on this. Should we drop the patch, or fix it up for now to at
-> > least prevent the oops? Chaoyi, I guess there's no user of the feature
-> > for now, is it?
->=20
-> This at least needs fixing. Sorry, I have no idea how to implement
-> this in the PHY.
+Fixes: 4682abfae2eb ("scsi: ufs: core: mcq: Allocate memory for MCQ mode")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/ufs/core/ufs-mcq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think the proper fix is to revert da114122b8314 ("net: ethernet:
-stmmac: dwmac-rk: Make the clk_phy could be used for external phy"),
-which has only recently been merged. External PHYs should reference
-their clocks themself instead of the MAC doing it.
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 1e50675772fe..cc88aaa106da 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -243,7 +243,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
+ 		hwq->sqe_base_addr = dmam_alloc_coherent(hba->dev, utrdl_size,
+ 							 &hwq->sqe_dma_addr,
+ 							 GFP_KERNEL);
+-		if (!hwq->sqe_dma_addr) {
++		if (!hwq->sqe_base_addr) {
+ 			dev_err(hba->dev, "SQE allocation failed\n");
+ 			return -ENOMEM;
+ 		}
+@@ -252,7 +252,7 @@ int ufshcd_mcq_memory_alloc(struct ufs_hba *hba)
+ 		hwq->cqe_base_addr = dmam_alloc_coherent(hba->dev, cqe_size,
+ 							 &hwq->cqe_dma_addr,
+ 							 GFP_KERNEL);
+-		if (!hwq->cqe_dma_addr) {
++		if (!hwq->cqe_base_addr) {
+ 			dev_err(hba->dev, "CQE allocation failed\n");
+ 			return -ENOMEM;
+ 		}
+-- 
+2.50.1
 
-Chaoyi Chen: Have a look at the ROCK 4D devicetree:
-
-&mdio0 {
-	rgmii_phy0: ethernet-phy@1 {
-		compatible =3D "ethernet-phy-id001c.c916";
-		reg =3D <0x1>;
-		clocks =3D <&cru REFCLKO25M_GMAC0_OUT>;
-		assigned-clocks =3D <&cru REFCLKO25M_GMAC0_OUT>;
-		assigned-clock-rates =3D <25000000>;
-        ...
-    };
-};
-
-The clock is enabled by the RTL8211F PHY driver (check for
-devm_clk_get_optional_enabled in drivers/net/phy/realtek/realtek_main.c),
-as the PHY is the one needing the clock and not the Rockchip MAC. For
-this to work it is important to set the right compatible string, so
-that the kernel can probe the right driver without needing to read the
-identification registers (as that would require the clock to be already
-configured before the driver is being probed).
-
-Greetings,
-
--- Sebastian
-
---h6lnwepm5yz4el3j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmi8mKwACgkQ2O7X88g7
-+ppSnA/+Ms1Z3gR5BjMQO2fm9plU7SLZz3gyjXx/ZSEY3eFXQD1CAWUJxwvs744K
-T+KWiaF3oAMez0hYw2TqEnAg0dr84oUocN20+TBw34vhLes8+el1sHWEggUlIMek
-pnDi7A51K56YtqMhI1sJttSKi2i54oupF8NU861kZtdCQ28YYgwoY6Nd1TkxUXkX
-yajonEzmjcnFZr40V5/VE6QQaG+P+tXwN/tIuRG/9sAVurIzEse8tWYz/vLuL0wf
-QIyJy3OqP4X/HERft8xN0x9NYbEoyw+RfajAAs7/OBER7SGHwViFdTXMNZ6CahHO
-ROn0kIuEWz4DEoy05m7bTlXlYSBYl7RTs52H4GaX6ClP9UV2EHhli/YxfNGt7cQr
-h+lABlRV9wt6RoZJVuoUOlRVgf8d76c/kbKNCV475IJ7luQTF4GXruX+EQDUE45O
-gEpz2hvmwFXg1UhcaPlNNlL7uT3zxALR7tcfEXIZriXOmyL+1+pGGR0fflFkoaSr
-cipZsP/fgzgvZl3pL6ZKjPdm0ygIgfqu3aOpg4AwdLdGG6B+pRMe5uBkvUdaiiKq
-qtEAHlFSX02ZgFgZrTkgsgOlA8x/k49ODMIkY5O12QUVKJy+/9z5QkllvMTb9nJs
-ZOqsndKePDI4p+WkZY+xB4nZsmtZjoYc89PK8MgZ4Tcmqaw9g+E=
-=fhP2
------END PGP SIGNATURE-----
-
---h6lnwepm5yz4el3j--
 
