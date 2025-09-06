@@ -1,102 +1,79 @@
-Return-Path: <linux-kernel+bounces-804431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5D4B476CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:15:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB124B476D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 21:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132755A4114
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A42B174691
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB5F23A9A0;
-	Sat,  6 Sep 2025 19:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817E52797B7;
+	Sat,  6 Sep 2025 19:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaTRfP0k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mi6iQuEh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBE219924D;
-	Sat,  6 Sep 2025 19:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BBC19924D;
+	Sat,  6 Sep 2025 19:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757186144; cv=none; b=BtE3EX1nWZwjhZuLqOBgoSJgaZQHgrQ0V6ybvoxKwsu/A4yrrVLkH6SIJg1R04ADQj+ocNzsAsPtlpC5cCZU/Fo662vDbKJGBAR089FT23fDuK7p+TrIBgnGVNmf+aVVVtGOFPsDVBi7eqcfftxhJhC6qWg6R/c7WMU/eT1BvQU=
+	t=1757186200; cv=none; b=hPsxNYIsTuXId+1R1XKiDU3xcV8Df1ff4L5nHhkS8GGCIVyH6vi4a7TRDIrGR2KIVIqYEQ4erM4rZavEJKCl0W89YnvgPOr+GWoGAsPnhOxnRqi5Kc1E6HmEO50RzievXVADX+zOlIgItH55TnEzgzR/Opa4PfP+mI094kovHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757186144; c=relaxed/simple;
-	bh=XOwKVqtcDN9k49oRYkZUzZnxSFvtc1z2zGDKWcxVwjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=L4/8bbHK7u44gPLyOIUVaf+u28SzEKdm56p17m5WvzKcaspJHHSo3uCsIu7k5nmle1E0mq7GnN2uwBgxnyzc38oxJ53hjTaE+uqcro1OYjsSJT68ivvitA93ps4wE+bqY6Z5VN7TTCpe5HamM74ODlVYiwhcD369PanuGkVuJZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaTRfP0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD96C4CEE7;
-	Sat,  6 Sep 2025 19:15:43 +0000 (UTC)
+	s=arc-20240116; t=1757186200; c=relaxed/simple;
+	bh=uIDKj7ZXFbKOs9ax3//A63tNRR3uLcMYrOEG5/rAKkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1qCoMr5H2Q1KzRHBDMxhuBgzRV4zo5VsA2Rg94K6Ycv5IhfFY5FAXxNto1Wavysr2ujD5MjL3puOJRM4dTSwMoqouFLjt2fpnAP7Q91cBPI0DEIUBQp1WyiKQFnnllNKnBGZcGN480nAot6nGObbQY/T1ggZNrKrAErELOB3Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mi6iQuEh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C60C4CEE7;
+	Sat,  6 Sep 2025 19:16:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757186143;
-	bh=XOwKVqtcDN9k49oRYkZUzZnxSFvtc1z2zGDKWcxVwjM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HaTRfP0kXVAUlsc6FZ3zqW7nlDOh7zgiy4DkAhm44KE91VFS0XCE9ZvNhotvxwcKv
-	 Vw4AKa5gX3wKmS/s0BKSaINpc7bVFO+qbVDgm4R6JelSOuWXKevQb2h8aFUL55bSl7
-	 +cZ5B04PB3nAQqwTDPC6glf8tZQKpmyJqBybjuVaG7kv7SpNwOuG/A+7uhwk6wgvJa
-	 GGxmU+GO2ccDmW9KNMCDhOfUaOvBSP0mZ+l3X/2o+iWpf/O2aFX85nMBVjNEvW1FM6
-	 IQyo7V/ux7ZI/vxr3UyyVtCF9yjEX5gVcWo0cYU5X4nwRIZpl1k9ynzzqgOH+oXhil
-	 DrYytDbQi5uIw==
-Date: Sat, 6 Sep 2025 12:15:41 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: soc@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Jisheng Zhang <jszhang@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V T-HEAD Devicetrees for v6.18
-Message-ID: <aLyIXR1G9DUzwGWc@x1>
+	s=k20201202; t=1757186200;
+	bh=uIDKj7ZXFbKOs9ax3//A63tNRR3uLcMYrOEG5/rAKkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mi6iQuEhgnp5tOmxJ3oM9cYaw3FAxxc9SikcLPTGy1PskwNcVE0bxvSYQNFM7xRzj
+	 tYi5Cq6/K9Un2+exi59cpu/7GBNPoL8YKkwPFEyviQpXwTTkL7/cU6nO3U3dp87nOA
+	 OCXuo1X3BypFInFYVbZD7RDyNY3B1jEO37uMG0QArQSuipIx8NGRLC9zS4SKzdeyiN
+	 z6C8IRP9qQKC7LfjDb2/Jo8Kjw0C18GkV1QhchFMPnEOTwhGTH1ObjyFBuHRYvxZAj
+	 BPNWQbVEOple9+sbhzm/uYoMwC+cQVpwJQvuC6vSIN4O8NzFqddsYkO+OhOr+Rd9L2
+	 plLAARE/wxZ0Q==
+Date: Sat, 6 Sep 2025 14:16:39 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Eric =?iso-8859-1?Q?Gon=E7alves?= <ghatto404@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v1 2/3] dt-bindings: arm: qcom: document x1q board binding
+Message-ID: <175718619242.1639538.7036385000984278430.robh@kernel.org>
+References: <20250905190931.27481-1-ghatto404@gmail.com>
+ <20250905190931.27481-3-ghatto404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250905190931.27481-3-ghatto404@gmail.com>
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+On Fri, 05 Sep 2025 19:09:30 +0000, Eric Gonçalves wrote:
+> Add binding for the Samsung Galaxy S20 board, codenamed X1Q,
+> which is based on the Qualcomm Snapdragon 865 SoC.
+> 
+> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-are available in the Git repository at:
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/thead-dt-for-v6.18
-
-for you to fetch changes up to dfa743da83ab7ba51ec5692d5939ba1bab4b78c1:
-
-  MAINTAINERS: Add RISC-V T-HEAD SoC patchwork (2025-09-06 11:05:03 -0700)
-
-----------------------------------------------------------------
-T-HEAD Devicetrees for v6.18
-
-Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
-TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
-the GPU using the drm/imagination driver.
-
-By adding this node, the kernel can recognize and initialize the GPU,
-providing graphics acceleration capabilities on the Lichee Pi 4A and
-other boards based on the TH1520 SoC. The display controller and HDMI
-output are still a work in progress.
-
-Also included is a MAINTAINERS patch that adds an entry for the T-Head
-SoC patchwork.
-
-Signed-off-by: Drew Fustini <fustini@kernel.org>
-
-----------------------------------------------------------------
-Drew Fustini (1):
-      MAINTAINERS: Add RISC-V T-HEAD SoC patchwork
-
-Michal Wilczynski (1):
-      riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node
-
- MAINTAINERS                           |  1 +
- arch/riscv/boot/dts/thead/th1520.dtsi | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
 
