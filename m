@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-804098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC41B469F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:34:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AE5B469F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 163413B5FFD
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:34:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E55F1C25D9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29E02C08A2;
-	Sat,  6 Sep 2025 07:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D869928314A;
+	Sat,  6 Sep 2025 07:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9QE71hT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVDOj9SO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDB81367;
-	Sat,  6 Sep 2025 07:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE151367;
+	Sat,  6 Sep 2025 07:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757144057; cv=none; b=MR7itq4oqcZPBTcM5r61EPO2NiZm2rM8D/GqC5P9M9wJEjlbRz55JYFa1tfLanwoqU5kQ0ia6I9Yy7gERbPSkSaMvM460jHHV2KHRY+aEl+n/KnWkbFExyfUB/xF3xik8fzcjDu1OsrvMsQIz0oDHa6WVts6IIGPcKg3fdxiowI=
+	t=1757144250; cv=none; b=akWOForZXjNd3qFlUe5YGPGEF1sMXif/ddHE3ggwMWgQrziYPue+Nu0n9fL4RNdKDgotOC9t97myiB/asEpLNu3FKuQaUSjK+ZXTS/irKhGTuGMG5EulgzZCBaKa9rFWCx1SrhiuBXILa6kVlkNLihXWBwH90xu7dTuwFXbTkuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757144057; c=relaxed/simple;
-	bh=CzrINzb1gVzemPgQBp2NTYknWIGfYfK3mWOn6E7JOss=;
+	s=arc-20240116; t=1757144250; c=relaxed/simple;
+	bh=4OsNX2sMF7W1e5q3jcihc+WCvwRQ1SL88U2idTix5eU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JYDCkEnQE34Rt4g8+KBOccSvwEI2f+TDm2dd1R3rw2CICF+bPs1pQiPMulnz01Z6B0n+K/GuNgODN3axe+s0DGvhu+Or6TY5TJFqasGUZfg+I6Y4xRYJ6AtQLm9Ax+8VstUDt/4+rak1rZ7HvyRrNjF4w0AAVG7m+862DNaLB2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9QE71hT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35FB3C4CEE7;
-	Sat,  6 Sep 2025 07:34:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=dzlYAtak6yDErL56Mt2bJxBRz88Kr9rTK515x05yMX82BNxQRcs8IYS0MzhWppCz1eBsPoErSAJkWf/5IDJDu8tLj+1Al9bGIPQ21dGmdIeLhGSddRCr6adRozGHKzUbTaRUK1NplKV/VQ4UcaQscIk11090rCJFbOK7HXlaZeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVDOj9SO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F99C4CEE7;
+	Sat,  6 Sep 2025 07:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757144056;
-	bh=CzrINzb1gVzemPgQBp2NTYknWIGfYfK3mWOn6E7JOss=;
+	s=k20201202; t=1757144249;
+	bh=4OsNX2sMF7W1e5q3jcihc+WCvwRQ1SL88U2idTix5eU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l9QE71hTXsPeIbt91YKvGQboXbWAIeQNHC/ElefCF2EhSVnx3ZxrB7cOvoZE5pfqt
-	 fOwDqO8hK9+TjfsNMF0PBKCJghdB4djMYNgfUvdVho+QeVauC1D28E8HAOueEh3r1t
-	 PPI9DZyguyldN3rvLKCL3ENWPdIlP82R72l9ojCcpdQh+VyUhev5KUvMOSr0tbj4+Z
-	 EHf3W2TI6uq2S8ErI+g54HO+F/0NEA/8tKDOJu5mPQSv7qleyyfORr5fmwLb/Xzkcx
-	 nm+mHneGurIV2nP0Aj4YDoWlp1i5mDmJEJRyJu2hiWK11mB0JQ299xiTeMZtZuyBt3
-	 1W6LBa56FO+1g==
-Message-ID: <6988c5d0-796a-4ab0-88d5-7051c80b5bba@kernel.org>
-Date: Sat, 6 Sep 2025 09:34:11 +0200
+	b=IVDOj9SOjFEduxys4NWuqWiuhpAMOW+LSeKCPoMw0jTi+vdO7VA/ExUqwYudXiw/E
+	 SFXN/MEHTCEg/ZrGMI0AZhSc7Vxmvt5yzUnAINeXCZW3r8cK7wXpK2esNWlAX4/mlG
+	 gAAiInilwY4eg4IBxqxuydKfL6O/riquAg9P3kqwDvKkHMmpPTP4PDiUG8qoZ9AoUf
+	 UBzPv8Vdetyy2XdWdPJMfMWQUPTWHIxbxycPB8BqA/29hliGy1DD+XRbGC67Qbchxm
+	 ZkoBjouoDf1F2C+ozlWqoFLy85W30Ap7Lg7JoQ5LjbiVBPFaSHv4NtJjLCGmbBOK/y
+	 fhObTpo0ELcng==
+Message-ID: <5064fa0c-c807-4c1e-bc55-7b814cc72b38@kernel.org>
+Date: Sat, 6 Sep 2025 09:37:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org
-Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
- <20250903102756.1748596-3-daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: rohm,bd71847-pmic: Fix typo in
+ documentation
+To: Nick Huang <sef1548@gmail.com>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org
+Cc: kusogame68@gmail.com, pumeining@gmail.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, n1136402@ntub.edu.tw, good@ntub.edu.tw
+References: <20250906051040.22944-1-sef1548@gmail.com>
+ <20250906051040.22944-2-sef1548@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,96 +102,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250903102756.1748596-3-daniel.lezcano@linaro.org>
+In-Reply-To: <20250906051040.22944-2-sef1548@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/09/2025 12:27, Daniel Lezcano wrote:
-> +#include <linux/dmaengine.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/of_irq.h>
+On 06/09/2025 07:10, Nick Huang wrote:
+> Correct a typo in the documentation by replacing "abd" with the correct word "and".
+> This improves readability and avoids confusion in the description.
+> 
+> Co-developed-by: Nick Huang <sef1548@gmail.com>
+> Signed-off-by: Nick Huang <sef1548@gmail.com>
+> Signed-off-by: Johnson Huang <kusogame68@gmail.com>
 
-Unused header
+Three EXACTLY same patchsets within three hours. That's two too much.
 
-> +#include <linux/of_platform.h>
-
-This as well. OTOH, you actually miss the header you use - of.h.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/triggered_buffer.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +
-> +/* This will be the driver name the kernel reports */
-> +#define DRIVER_NAME "nxp-sar-adc"
-> +
-> +/* SAR ADC registers */
-> +#define REG_ADC_CDR(__base, __channel)	(((__base) + 0x100) + ((__channel) * 0x4))
-> +
-> +#define REG_ADC_CDR_CDATA_MASK		GENMASK(11, 0)
-> +#define REG_ADC_CDR_VALID		BIT(19)
-> +
-> +/* Main Configuration Register */
-> +#define REG_ADC_MCR(__base)		(__base)
-> +
-
-...
-
-> +	indio_dev->name = dev_name(dev);
-> +	indio_dev->info = &nxp_sar_adc_iio_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
-> +	indio_dev->channels = nxp_sar_adc_iio_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(nxp_sar_adc_iio_channels);
-> +
-> +	nxp_sar_adc_set_default_values(info);
-> +
-> +	ret = nxp_sar_adc_calibration(info);
-> +	if (ret) {
-> +		dev_err(dev, "Calibration failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = nxp_sar_adc_dma_probe(dev, info);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize the dma\n");
-
-return dev_err_probe
-
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +					      &iio_pollfunc_store_time,
-> +					      &nxp_sar_adc_trigger_handler,
-> +					      &iio_triggered_buffer_setup_ops);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Couldn't initialise the buffer\n");
-> +		return ret;
-
-return dev_err_probe. No need to print ENOMEM errors.
-
-
-> +	}
-> +
-> +	ret = devm_iio_device_register(dev, indio_dev);
-> +	if (ret) {
-> +		dev_err(dev, "Couldn't register the device.\n");
-
-return dev_err_probe
-
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "Device initialized successfully.\n");
-
-Drivers should be silent on success and kernel already gives you
-information that device probed (or did not).
-
-Drop.
+Slow down, read previous feedback.
 
 Best regards,
 Krzysztof
