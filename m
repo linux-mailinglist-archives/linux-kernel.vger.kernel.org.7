@@ -1,347 +1,181 @@
-Return-Path: <linux-kernel+bounces-804415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EDBB47630
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:38:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DA4B47637
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D6E1C20B09
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3457018834B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610E127E7DD;
-	Sat,  6 Sep 2025 18:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C327E05A;
+	Sat,  6 Sep 2025 18:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="nWYjEPye"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Zhsocsv6"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476331F4CAF;
-	Sat,  6 Sep 2025 18:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2591E5B88
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 18:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757183902; cv=none; b=p8P6NXH6q2Ots1MPsPDVkFPLuprQfENOj3J/lFzNUA66xw7BCs8RuY9zN6VCYEofdGBcSAPyzbqNo2jahDWE6thkwQDQZTpnY/8qgtfGYONn9ySzkEUjomL2PwPJsVAuADX/HNbDCDlTeaYD91s0oWASF8dzAMMeeS4S3PkWuPU=
+	t=1757183985; cv=none; b=qZNGsBhhB1Ok8Yj8mPkXSyYJODzaLFthrgQP9v3ByU6elwtvHUSg3O6x4f3vGKT0ufYqLs2WfSiGhzrREFBNAvsrVlleFnnfUnrZAIOSDuV57BNPo1kMiBHzXQkb8Nnw1rG3QuWjWeMg3o0MxfXib9D6ntpLaSZyt3bSl1F3CA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757183902; c=relaxed/simple;
-	bh=OObxeO7Tt74+dJfYU+9EwUhQrl99WHEBP608P0fDjWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dw3CvBKxHe9sma44FJdRq7LgITLJhxEPwbFK4tHlLXxdpqFr9ap+seFax6OrWKBxIlq+4y2fvavQo1mQkDyA/QHLjUXqCObQ3rv8lh4vdohfsMYy53E4b3C7GuaUVBfAXaKO5Bvbt6PXvPCdojEApG0V/eYJ+wP8aE6W3OHxwzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=nWYjEPye; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=g+g0XX9J8t8Nqb+uRU32vvhFxMEa0z6b7cNxVe9VKeo=; b=nWYjEPyeVmOOKhYOXkH2Wm+4xK
-	Lsofo0YkbSTFpL34whsCZ1ncc/Wr5VHDHc4DV2TH03/iXMzXyjnKXIUA+ev2CRQ9FmwiYotp55gi6
-	NZ+4QC3iHyLsWtP6fedoAPMwxvxDw4124kRLj724Nkcs5VIN9OBTZ0TISD3ETQcXL53/94PLuxwee
-	ejLvW1iye+oQljoJXH9cU9ssBTuh3BCmwyHOp1C8gWCBG2/RuthsfBSi6MJiB+lA+0v6PROVlBA26
-	sQ/R+O0CGdRJ/kL7WdHwt8KBpKvIZcxLXk90b36G2hCa67ZFcxFlU2NPk7krBTh7rJV0W2miV5FVQ
-	lntim3VQ==;
-Received: from i53875a53.versanet.de ([83.135.90.83] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uuxnc-0006tH-5x; Sat, 06 Sep 2025 20:38:08 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Chanwoo Choi <chanwoo@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PM / devfreq: rockchip-dfi: add support for LPDDR5
-Date: Sat, 06 Sep 2025 20:38:07 +0200
-Message-ID: <24752023.ouqheUzb2q@diego>
-In-Reply-To:
- <CAGTfZH1DzC9odJVDfYCYw4+Ph5_1CjmrpqR_NUFh1SsVVVLM0g@mail.gmail.com>
-References:
- <20250530-rk3588-dfi-improvements-v1-0-6e077c243a95@collabora.com>
- <20250530-rk3588-dfi-improvements-v1-2-6e077c243a95@collabora.com>
- <CAGTfZH1DzC9odJVDfYCYw4+Ph5_1CjmrpqR_NUFh1SsVVVLM0g@mail.gmail.com>
+	s=arc-20240116; t=1757183985; c=relaxed/simple;
+	bh=mqKzqDN5pv56Hlr8iaat2mwZNL44CqNS4/HxIZpY2wo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WFgkcpxpPC5nsx5uK5nHbAr9c5YsFChdFaEGlyTnC0VfGHJPTogZvNhezueMEyZkDSuL1pEDXpx2s5DfMgQ7MOb/zveZIVqfQjwnfh5ECS4PYBscG+QhY0hfdMgElJ2ioJ3v08uxuKvi5c8KU+NY/tWZlDW0Bze7ztcH0Hspc1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Zhsocsv6; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so7301625e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 11:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1757183982; x=1757788782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FzYoPBV1TwgFlHltcxFw4KPza8jbsfJi3V/Uo8JU8Kc=;
+        b=Zhsocsv6NX6c+sMLbV4dUBjyRObeKbJmc+CVLlkMm3SdAYDj340AMf2kpP83YoL1m2
+         ciRXxY4GcsbobnwCfojKLu+mVZ5DIEM2wxtYAJf50j04W0sYG+HjLK/LvY1W7f6ZLeJG
+         K5G97GbNHtLmwT3nAHEkiLK/6r2yzLvaucQZRMbQM6LPKug6kucOBDO+lsaWMZOA7tcb
+         r9uHuTcYghUypGLXfknq0WbyGKgSDeGBLjc+VhFrjBGUi031Xrgd88IyhSx6VNXAV60p
+         YqWSVXCQBFqDURpP0uC5v/4UJt1EQanATjhGMqfDknWf3tnhIotIHPc2XUGn6zfSHRJ9
+         zDWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757183982; x=1757788782;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzYoPBV1TwgFlHltcxFw4KPza8jbsfJi3V/Uo8JU8Kc=;
+        b=RAdeVf46HRDQelwcbr3dhaLOOHa9a94WMyzlzDK2B5agUPIsUa1bizLvSyET/bI+es
+         FrzcULkR4al/Zu99Jw74xw9mDRnQNeHfZbZ6qapr7kvn3aG2oRB22RAvz4h20kNNdXR9
+         ElLhUPr+43uNFOl/riDB+q3kxrkCyz+YWXich2aEOYmgv6zFINF01tF0kst2Azqty94M
+         rdOUfrka0fN0KpKmY+HJe9bMtK8rzSt1BT8ZZxXnXzXhipYbNR9mO5ENlYZiLS3vQ/Sq
+         5zJDiHMEDmWVqs4QAELCxS8Qby5CyPZ1fUPaDKwmZwW16u1STpMvNq9uCcfy54mtsrcQ
+         5ILw==
+X-Forwarded-Encrypted: i=1; AJvYcCX22/qbSOZ0oByjlkwptoJg57qd0QN+5xZh53KvLG1HAi+TQl0wmq6lb5650YyPfXX/x+ESAdOfLSVLP7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7RANzxR7PnFkgNpHFyxDZVARpMNyMdiePdNsZf11Il2nRJwnm
+	j6xTmwvfMCeLtskyAIBi70wqMw+W1o8pCF1WdsXwnncAMqgp/VM0+B4awL7BnIaPMmE=
+X-Gm-Gg: ASbGncthe0bjacrImSAM9U7fKo57adZVOb04lx4+MMthBMrARJNdO9sw7CyiIGqV9w7
+	+Q2SQ68xJskpddN5ccLwSL9xyvMmIC77V2gz19201jRk5CBRuhsZrVDTX2EQoVTvzEXzT98dpc+
+	hcLkKJdFJZSVeTqhR4XTtsKEzl0vFyihcF8cQzwfBHsgBxppVgAkuBeg53gRhpBqk86lItHn2xi
+	WsXwN31yq6yjkrQ8Mfod3tUFl8m6lr4ZO3mu3FVPhfUEc/U/ShtERPMpzOZzeDAiVjhthhfzUjP
+	HQdekpqo/gSKwdF33VLS0vKYxcUQ4AhVHVEipghgABgGFO0+myzWAHENJSopaxrVKblKXTkUqL+
+	TrTBVQe1Yqw94nB8TPn0gjardtKWIR/4=
+X-Google-Smtp-Source: AGHT+IEok3JkRuMAdY7AX3j0CwwrHcGk5yIN66Gyo2mCztRV7/vmj7BLBPHvxLpcqnHCDGsjiMhyVg==
+X-Received: by 2002:a05:600c:1d07:b0:45d:d609:1199 with SMTP id 5b1f17b1804b1-45ddded6ef0mr31784415e9.30.1757183981627;
+        Sat, 06 Sep 2025 11:39:41 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab832sm373687575e9.23.2025.09.06.11.39.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Sep 2025 11:39:41 -0700 (PDT)
+Message-ID: <2377eaff-6142-45ef-a966-0176c147c094@tuxon.dev>
+Date: Sat, 6 Sep 2025 21:39:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Hi,
-
-Am Samstag, 6. September 2025, 18:09:53 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Chanwoo Choi:
-> I'm sorry for late reply.
->=20
-> Looks good to me. But, this patch contains the change of following header.
-> If there are ACK about change in include/soc/rockchip, I'll merge this se=
-ries.
->=20
-> include/soc/rockchip/rk3588_grf.h    |  8 +++-
-> include/soc/rockchip/rockchip_grf.h  |  1 +
-
-done :-)
-
-Thanks
-Heiko
-
-
-> On Fri, May 30, 2025 at 10:39=E2=80=AFPM Nicolas Frattaroli
-> <nicolas.frattaroli@collabora.com> wrote:
-> >
-> > The Rockchip RK3588 SoC can also support LPDDR5 memory. This type of
-> > memory needs some special case handling in the rockchip-dfi driver.
-> >
-> > Add support for it in rockchip-dfi, as well as the needed GRF register
-> > definitions.
-> >
-> > This has been tested as returning both the right cycle count and
-> > bandwidth on a LPDDR5 board where the CKR bit is 1. I couldn't test
-> > whether the values are correct on a system where CKR is 0, as I'm not
-> > savvy enough with the Rockchip tooling to know whether this can be set
-> > in the DDR init blob.
-> >
-> > Downstream has some special case handling for a hardware version where
-> > not just the control bits differ, but also the register. Since I don't
-> > know whether that hardware version is in any production silicon, it's
-> > left unimplemented for now, with an error message urging users to report
-> > if they have such a system.
-> >
-> > There is a slight change of behaviour for non-LPDDR5 systems: instead of
-> > writing 0 as the control flags to the control register and pretending
-> > everything is alright if the memory type is unknown, we now explicitly
-> > return an error.
-> >
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> >  drivers/devfreq/event/rockchip-dfi.c | 84 ++++++++++++++++++++++++++++=
-=2D-------
-> >  include/soc/rockchip/rk3588_grf.h    |  8 +++-
-> >  include/soc/rockchip/rockchip_grf.h  |  1 +
-> >  3 files changed, 73 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/eve=
-nt/rockchip-dfi.c
-> > index 54effb63519653d20b40eed88681330983399a77..5a2c9badcc64c552303c2f5=
-5c52e5420dec5ffc1 100644
-> > --- a/drivers/devfreq/event/rockchip-dfi.c
-> > +++ b/drivers/devfreq/event/rockchip-dfi.c
-> > @@ -34,15 +34,18 @@
-> >
-> >  /* DDRMON_CTRL */
-> >  #define DDRMON_CTRL    0x04
-> > +#define DDRMON_CTRL_LPDDR5             BIT(6)
-> >  #define DDRMON_CTRL_DDR4               BIT(5)
-> >  #define DDRMON_CTRL_LPDDR4             BIT(4)
-> >  #define DDRMON_CTRL_HARDWARE_EN                BIT(3)
-> >  #define DDRMON_CTRL_LPDDR23            BIT(2)
-> >  #define DDRMON_CTRL_SOFTWARE_EN                BIT(1)
-> >  #define DDRMON_CTRL_TIMER_CNT_EN       BIT(0)
-> > -#define DDRMON_CTRL_DDR_TYPE_MASK      (DDRMON_CTRL_DDR4 | \
-> > +#define DDRMON_CTRL_DDR_TYPE_MASK      (DDRMON_CTRL_LPDDR5 | \
-> > +                                        DDRMON_CTRL_DDR4 | \
-> >                                          DDRMON_CTRL_LPDDR4 | \
-> >                                          DDRMON_CTRL_LPDDR23)
-> > +#define DDRMON_CTRL_LP5_BANK_MODE_MASK GENMASK(8, 7)
-> >
-> >  #define DDRMON_CH0_WR_NUM              0x20
-> >  #define DDRMON_CH0_RD_NUM              0x24
-> > @@ -116,13 +119,60 @@ struct rockchip_dfi {
-> >         int buswidth[DMC_MAX_CHANNELS];
-> >         int ddrmon_stride;
-> >         bool ddrmon_ctrl_single;
-> > +       u32 lp5_bank_mode;
-> > +       bool lp5_ckr;   /* true if in 4:1 command-to-data clock ratio m=
-ode */
-> >         unsigned int count_multiplier;  /* number of data clocks per co=
-unt */
-> >  };
-> >
-> > +static int rockchip_dfi_ddrtype_to_ctrl(struct rockchip_dfi *dfi, u32 =
-*ctrl,
-> > +                                       u32 *mask)
-> > +{
-> > +       u32 ddrmon_ver;
-> > +
-> > +       *mask =3D DDRMON_CTRL_DDR_TYPE_MASK;
-> > +
-> > +       switch (dfi->ddr_type) {
-> > +       case ROCKCHIP_DDRTYPE_LPDDR2:
-> > +       case ROCKCHIP_DDRTYPE_LPDDR3:
-> > +               *ctrl =3D DDRMON_CTRL_LPDDR23;
-> > +               break;
-> > +       case ROCKCHIP_DDRTYPE_LPDDR4:
-> > +       case ROCKCHIP_DDRTYPE_LPDDR4X:
-> > +               *ctrl =3D DDRMON_CTRL_LPDDR4;
-> > +               break;
-> > +       case ROCKCHIP_DDRTYPE_LPDDR5:
-> > +               ddrmon_ver =3D readl_relaxed(dfi->regs);
-> > +               if (ddrmon_ver < 0x40) {
-> > +                       *ctrl =3D DDRMON_CTRL_LPDDR5 | dfi->lp5_bank_mo=
-de;
-> > +                       *mask |=3D DDRMON_CTRL_LP5_BANK_MODE_MASK;
-> > +                       break;
-> > +               }
-> > +
-> > +               /*
-> > +                * As it is unknown whether the unpleasant special case
-> > +                * behaviour used by the vendor kernel is needed for any
-> > +                * shipping hardware, ask users to report if they have
-> > +                * some of that hardware.
-> > +                */
-> > +               dev_err(&dfi->edev->dev,
-> > +                       "unsupported DDRMON version 0x%04X, please let =
-linux-rockchip know!\n",
-> > +                       ddrmon_ver);
-> > +               return -EOPNOTSUPP;
-> > +       default:
-> > +               dev_err(&dfi->edev->dev, "unsupported memory type 0x%X\=
-n",
-> > +                       dfi->ddr_type);
-> > +               return -EOPNOTSUPP;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static int rockchip_dfi_enable(struct rockchip_dfi *dfi)
-> >  {
-> >         void __iomem *dfi_regs =3D dfi->regs;
-> >         int i, ret =3D 0;
-> > +       u32 ctrl;
-> > +       u32 ctrl_mask;
-> >
-> >         mutex_lock(&dfi->mutex);
-> >
-> > @@ -136,8 +186,11 @@ static int rockchip_dfi_enable(struct rockchip_dfi=
- *dfi)
-> >                 goto out;
-> >         }
-> >
-> > +       ret =3D rockchip_dfi_ddrtype_to_ctrl(dfi, &ctrl, &ctrl_mask);
-> > +       if (ret)
-> > +               goto out;
-> > +
-> >         for (i =3D 0; i < dfi->max_channels; i++) {
-> > -               u32 ctrl =3D 0;
-> >
-> >                 if (!(dfi->channel_mask & BIT(i)))
-> >                         continue;
-> > @@ -147,21 +200,7 @@ static int rockchip_dfi_enable(struct rockchip_dfi=
- *dfi)
-> >                                DDRMON_CTRL_SOFTWARE_EN | DDRMON_CTRL_HA=
-RDWARE_EN),
-> >                                dfi_regs + i * dfi->ddrmon_stride + DDRM=
-ON_CTRL);
-> >
-> > -               /* set ddr type to dfi */
-> > -               switch (dfi->ddr_type) {
-> > -               case ROCKCHIP_DDRTYPE_LPDDR2:
-> > -               case ROCKCHIP_DDRTYPE_LPDDR3:
-> > -                       ctrl =3D DDRMON_CTRL_LPDDR23;
-> > -                       break;
-> > -               case ROCKCHIP_DDRTYPE_LPDDR4:
-> > -               case ROCKCHIP_DDRTYPE_LPDDR4X:
-> > -                       ctrl =3D DDRMON_CTRL_LPDDR4;
-> > -                       break;
-> > -               default:
-> > -                       break;
-> > -               }
-> > -
-> > -               writel_relaxed(HIWORD_UPDATE(ctrl, DDRMON_CTRL_DDR_TYPE=
-_MASK),
-> > +               writel_relaxed(HIWORD_UPDATE(ctrl, ctrl_mask),
-> >                                dfi_regs + i * dfi->ddrmon_stride + DDRM=
-ON_CTRL);
-> >
-> >                 /* enable count, use software mode */
-> > @@ -652,6 +691,7 @@ static int rockchip_ddr_perf_init(struct rockchip_d=
-fi *dfi)
-> >                 break;
-> >         case ROCKCHIP_DDRTYPE_LPDDR4:
-> >         case ROCKCHIP_DDRTYPE_LPDDR4X:
-> > +       case ROCKCHIP_DDRTYPE_LPDDR5:
-> >                 dfi->burst_len =3D 16;
-> >                 break;
-> >         }
-> > @@ -730,7 +770,7 @@ static int rk3568_dfi_init(struct rockchip_dfi *dfi)
-> >  static int rk3588_dfi_init(struct rockchip_dfi *dfi)
-> >  {
-> >         struct regmap *regmap_pmu =3D dfi->regmap_pmu;
-> > -       u32 reg2, reg3, reg4;
-> > +       u32 reg2, reg3, reg4, reg6;
-> >
-> >         regmap_read(regmap_pmu, RK3588_PMUGRF_OS_REG2, &reg2);
-> >         regmap_read(regmap_pmu, RK3588_PMUGRF_OS_REG3, &reg3);
-> > @@ -757,6 +797,14 @@ static int rk3588_dfi_init(struct rockchip_dfi *df=
-i)
-> >         dfi->ddrmon_stride =3D 0x4000;
-> >         dfi->count_multiplier =3D 2;
-> >
-> > +       if (dfi->ddr_type =3D=3D ROCKCHIP_DDRTYPE_LPDDR5) {
-> > +               regmap_read(regmap_pmu, RK3588_PMUGRF_OS_REG6, &reg6);
-> > +               dfi->lp5_bank_mode =3D FIELD_GET(RK3588_PMUGRF_OS_REG6_=
-LP5_BANK_MODE, reg6) << 7;
-> > +               dfi->lp5_ckr =3D FIELD_GET(RK3588_PMUGRF_OS_REG6_LP5_CK=
-R, reg6);
-> > +               if (dfi->lp5_ckr)
-> > +                       dfi->count_multiplier *=3D 2;
-> > +       }
-> > +
-> >         return 0;
-> >  };
-> >
-> > diff --git a/include/soc/rockchip/rk3588_grf.h b/include/soc/rockchip/r=
-k3588_grf.h
-> > index 630b35a550640e57f1b5a50dfbe362653a7cbcc1..02a7b2432d9942e15a77424=
-c44fefec189faaa33 100644
-> > --- a/include/soc/rockchip/rk3588_grf.h
-> > +++ b/include/soc/rockchip/rk3588_grf.h
-> > @@ -12,7 +12,11 @@
-> >  #define RK3588_PMUGRF_OS_REG3_DRAMTYPE_INFO_V3         GENMASK(13, 12)
-> >  #define RK3588_PMUGRF_OS_REG3_SYSREG_VERSION           GENMASK(31, 28)
-> >
-> > -#define RK3588_PMUGRF_OS_REG4           0x210
-> > -#define RK3588_PMUGRF_OS_REG5           0x214
-> > +#define RK3588_PMUGRF_OS_REG4                          0x210
-> > +#define RK3588_PMUGRF_OS_REG5                          0x214
-> > +#define RK3588_PMUGRF_OS_REG6                          0x218
-> > +#define RK3588_PMUGRF_OS_REG6_LP5_BANK_MODE            GENMASK(2, 1)
-> > +/* Whether the LPDDR5 is in 2:1 (=3D 0) or 4:1 (=3D 1) CKR a.k.a. DQS =
-mode */
-> > +#define RK3588_PMUGRF_OS_REG6_LP5_CKR                  BIT(0)
-> >
-> >  #endif /* __SOC_RK3588_GRF_H */
-> > diff --git a/include/soc/rockchip/rockchip_grf.h b/include/soc/rockchip=
-/rockchip_grf.h
-> > index e46fd72aea8d1f649768a3269b85176dacceef0e..41c7bb26fd5387df85e5b58=
-186b67bf74706f360 100644
-> > --- a/include/soc/rockchip/rockchip_grf.h
-> > +++ b/include/soc/rockchip/rockchip_grf.h
-> > @@ -13,6 +13,7 @@ enum {
-> >         ROCKCHIP_DDRTYPE_LPDDR3 =3D 6,
-> >         ROCKCHIP_DDRTYPE_LPDDR4 =3D 7,
-> >         ROCKCHIP_DDRTYPE_LPDDR4X =3D 8,
-> > +       ROCKCHIP_DDRTYPE_LPDDR5 =3D 9,
-> >  };
-> >
-> >  #endif /* __SOC_ROCKCHIP_GRF_H */
-> >
-> > --
-> > 2.49.0
-> >
-> >
->=20
->=20
->=20
+User-Agent: Mozilla Thunderbird
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v3 13/32] clk: at91: sama7d65: switch to parent_hw and
+ parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <676e618850df0db8dd880c36cd9b6dcef7b17b8b.1752176711.git.Ryan.Wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <676e618850df0db8dd880c36cd9b6dcef7b17b8b.1752176711.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
+On 7/10/25 23:07, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Switch the system clocks to use parent_hw and parent_data. Having this
+> allows the driver to conform to the new clk-system API.
+> 
+> The parent registration is after the USBCK registration due to one of
+> the system clocks being dependent on USBCK.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>   drivers/clk/at91/sama7d65.c | 37 +++++++++++++++++++++++--------------
+>   1 file changed, 23 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+> index f10faabc7ffe..1553dc3152a4 100644
+> --- a/drivers/clk/at91/sama7d65.c
+> +++ b/drivers/clk/at91/sama7d65.c
+> @@ -533,23 +533,23 @@ static struct {
+>   /*
+>    * System clock description
+>    * @n:	clock name
+> - * @p:	clock parent name
+> + * @p:	clock parent hw
+>    * @id: clock id
+>    */
+> -static const struct {
+> +static struct {
+>   	const char *n;
+> -	const char *p;
+> +	struct clk_hw *parent_hw;
+>   	u8 id;
+>   } sama7d65_systemck[] = {
+> -	{ .n = "uhpck",		.p = "usbck", .id = 6 },
+> -	{ .n = "pck0",		.p = "prog0", .id = 8, },
+> -	{ .n = "pck1",		.p = "prog1", .id = 9, },
+> -	{ .n = "pck2",		.p = "prog2", .id = 10, },
+> -	{ .n = "pck3",		.p = "prog3", .id = 11, },
+> -	{ .n = "pck4",		.p = "prog4", .id = 12, },
+> -	{ .n = "pck5",		.p = "prog5", .id = 13, },
+> -	{ .n = "pck6",		.p = "prog6", .id = 14, },
+> -	{ .n = "pck7",		.p = "prog7", .id = 15, },
+> +	{ .n = "uhpck",		.id = 6 },
+> +	{ .n = "pck0",		.id = 8, },
+> +	{ .n = "pck1",		.id = 9, },
+> +	{ .n = "pck2",		.id = 10, },
+> +	{ .n = "pck3",		.id = 11, },
+> +	{ .n = "pck4",		.id = 12, },
+> +	{ .n = "pck5",		.id = 13, },
+> +	{ .n = "pck6",		.id = 14, },
+> +	{ .n = "pck7",		.id = 15, },
+>   };
+>   
+>   /* Mux table for programmable clocks. */
+> @@ -1283,10 +1283,19 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>   
+>   		sama7d65_pmc->pchws[i] = hw;
+>   	}
+> -
+
+Worth keeping this blank line.
+
+> +	/* Set systemck parent hws. */
+> +	sama7d65_systemck[0].parent_hw = usbck_hw;
+> +	sama7d65_systemck[1].parent_hw = sama7d65_pmc->pchws[0];
+> +	sama7d65_systemck[2].parent_hw = sama7d65_pmc->pchws[1];
+> +	sama7d65_systemck[3].parent_hw = sama7d65_pmc->pchws[2];
+> +	sama7d65_systemck[4].parent_hw = sama7d65_pmc->pchws[3];
+> +	sama7d65_systemck[5].parent_hw = sama7d65_pmc->pchws[4];
+> +	sama7d65_systemck[6].parent_hw = sama7d65_pmc->pchws[5];
+> +	sama7d65_systemck[7].parent_hw = sama7d65_pmc->pchws[6];
+> +	sama7d65_systemck[8].parent_hw = sama7d65_pmc->pchws[7];
+>   	for (i = 0; i < ARRAY_SIZE(sama7d65_systemck); i++) {
+>   		hw = at91_clk_register_system(regmap, sama7d65_systemck[i].n,
+> -					      sama7d65_systemck[i].p, NULL,
+> +					      NULL, &AT91_CLK_PD_HW(sama7d65_systemck[i].parent_hw),
+>   					      sama7d65_systemck[i].id, 0);
+>   		if (IS_ERR(hw))
+>   			goto err_free;
 
 
