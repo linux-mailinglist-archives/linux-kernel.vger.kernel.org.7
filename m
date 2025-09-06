@@ -1,82 +1,45 @@
-Return-Path: <linux-kernel+bounces-804243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9356FB46E1A
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88714B46E30
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2E781C2508E
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6C9567D21
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077BE2F0C44;
-	Sat,  6 Sep 2025 13:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzVqOoIP"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9659B2F1FFB;
+	Sat,  6 Sep 2025 13:32:05 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F46A14A0B5;
-	Sat,  6 Sep 2025 13:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D10286D7C;
+	Sat,  6 Sep 2025 13:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757165287; cv=none; b=gYq96gtwzo8adWiiSFmU8YZSHpoiZ1b4w/U5xCmcZzZD6YcSyLBs88QmCyvu5QrcVpnPGMYpg4JTcxOl6R6kSpP18NLtHKPw1JGt1tPD7U1jZYgw1jfVT3P0gF0Uw+z3CzeRIbRhOmXO6/K4m7BCcKS3IdKhN9v/tzCrHgmMdvY=
+	t=1757165525; cv=none; b=Je1WY4iZs6HlO1bttit2SyyHX+VMy/pwacyeAtG1BUGHCPbjEN/gNU5pD4PMeBBmGNARVDYGqvXjwfwclVIhmplHVgyWkUNiIdPkaXW+r2p0ePul3Vy4QL1Na8ldxgjCa07egiKu3UhpDcQVo99hAJpibR4umgY7coxucMo/6rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757165287; c=relaxed/simple;
-	bh=tWWgkxzjjDxrHp+7hWZd5QtL3pvHOBVwSvdOHkvH86k=;
+	s=arc-20240116; t=1757165525; c=relaxed/simple;
+	bh=nrHwt+sfW3m3rjuEacOQDG1CQbYgvI4yMSgcHGAZdNQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UjEkg8kyW5oN0MS2LEj/DskPI80dopd5n/EDAdgqes5GzOBTIpRmHVJyQb42bevKx9a1VEknW215d5399Sarw/HCV5cIa27Xm6HTiMvPUreHMYKWlkzjbEjpuOFMdk65eS6XYXqQIENwm1OBJfPjwYW6/w69XxqDyqlL0IQCVKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzVqOoIP; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-772679eb358so2803936b3a.1;
-        Sat, 06 Sep 2025 06:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757165284; x=1757770084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lhR8DFhserIpo0K3degliX7Gw6DGQOQ2PCb0uNrjOM=;
-        b=kzVqOoIPqiPbfwE6SfiDMqYBsXQroOEGtXVuJHhnz63OM2U1rtN9eaOmckAlvyb7vQ
-         FjuXdmoBLuf18DTXJqAv+kCycVuPJKkpJVLDDpUCiRxFUu/bWnSnxFHpNWwbzm+hjvOa
-         6UtoyfHSgYUGAAAhXmBp/BgSiRlLWV6ZARRg/1nas5FsS1XOTcvUAUBgDWazEzuRQden
-         SBlRjuuab5O2W6LysV7T5lnb3HE2oFpcqSvAV3z9ScQrJ2QPpMHxFmESOtKhFApuAX3f
-         u/lEs+fIiuPxBuz/AxA02iG5TvQBXSGcDf7WDhUxWM3zr7Ndc0wizILjUUcFKO8XOpBK
-         FOBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757165284; x=1757770084;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4lhR8DFhserIpo0K3degliX7Gw6DGQOQ2PCb0uNrjOM=;
-        b=CWX2XpKbK4WCeh0+Hu2+XUSwHmFWAqWrDrBGyNCopv53pYnMI+5u5nlba48c8ufCZZ
-         ZSrIwxpRLD4WS7U27lV2cZwkPCj6IRHmb7ei53cQaitdF5XAN4BxrHvPqDeSCFc8nVLk
-         kMuCxsG/OmnAhNFfM8y2PtNkKwl/OmUg5DBQymcDf9ZrZkrX3o4U5evCIkZ25Q+tBSbE
-         lV877jMM0EPrThqlWT9KUgi+36vFaMN6QWJTaQ1sIhApLQMWh3ksFMXbZN9ostjmew6f
-         VJVcMz42RxSiKybmcUJYH7ad/OVIZUs/6vPwSCu/s2FUkGHi0laQ/ppH8L+5VrPnxVcF
-         OgtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2i00fxA7QUyMXqdvtdUFeZ40nXd7ZEH/gD9MRjr0b0R+qdMALNUF/SqVu2JJQlbO3HNSq+ZNl8x8rCg==@vger.kernel.org, AJvYcCVBY5SyDRhplZw1Bh8pKhXdi0zgt0+V2loLQt1UQXgYno/6b8g12D2Pau18FxIsKVYEfcf4fa0XWmRA6Qz5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNdJiZ8P7HmwwumW83d7Y+MZ7VwdmCFqQ+Mq39N7VUE/N4oYYP
-	4ATWO461/NF6fWeNGcYBWoaYEWtK99EhafwW/X1xa3mI8Refj2F9Kz34
-X-Gm-Gg: ASbGnctj5fhJSQ8joM+NpMnfN07wNQFlXLE2q278zr1GLwhzlSDTrD73tZysc6oJL6w
-	eXzaQS1fU+rPjzaFWVwJVL4NatmwK3e5eXdmXpnfWnPzQAXXRCMhjGnxMXz1Vq75qxS3qZUDhqw
-	NjTwqnEEfYy2jAYx1qPzZ/KiefmhKKpsQlgsQJqThRvhwo36f2oB2QQNITR5MqitD9aGCEXCwun
-	piAZ1iEDi49JB4o0EifF1jNmtuekCQ9aBtPaCWycV6ppUgjQgLF9ojvlEOmoZT2ucTHSTD8Keno
-	TB1yfHdy0Us/WCqBXuGgv1BYfNJzt02NVmuX3s5jQtcEHkRIy+FSGn+s+fOZON0CvSSFkTLWKiy
-	NQBijNwfy/ra3iANLYUx9mkOM2uMd0z6vf1+epIJ5mT3+wh2jvGF10lpOSHJ4ibdfSTRmEr7i2k
-	XaTt+iTg==
-X-Google-Smtp-Source: AGHT+IEDj+uNuXSaEPwNs/atNgjZd8fNN5GdmsrDEoufJ3GtdAkZ59ShPEcwtqAhVfSb524ZVSR1/w==
-X-Received: by 2002:a05:6a20:7d9f:b0:243:c274:1a7f with SMTP id adf61e73a8af0-25344eb94f3mr3378216637.46.1757165284422;
-        Sat, 06 Sep 2025 06:28:04 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b555b9d83sm11223268a91.17.2025.09.06.06.28.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 06:28:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <4b402929-f637-426f-8d18-634a29b95b42@roeck-us.net>
-Date: Sat, 6 Sep 2025 06:28:02 -0700
+	 In-Reply-To:Content-Type; b=MK+OrU7UFy8Iy5bayKyYs6C+yspgzab7OaxL5ejRDDpdfW4mBAVG2bSgK0MQ9pmCQEQmKke5E/eKEeqaIfC+65xOiCUBEKSOKEIkYe+FvWfvppSrZpfGLoeN5R1Iak8P6O0ouxZDZzX4E0hQ/jliQPb0A3e9Q3LmrBCKUyJ1O4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 586DUZVP092719;
+	Sat, 6 Sep 2025 22:30:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 586DUZ8m092716
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 6 Sep 2025 22:30:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <fa7b2e99-f91d-4126-9d0a-1b0330023394@I-love.SAKURA.ne.jp>
+Date: Sat, 6 Sep 2025 22:30:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,105 +47,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: sy7636a: add aliases
-To: Andreas Kemnade <andreas@kemnade.info>, jdelvare@suse.com,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250906094308.11129-1-andreas@kemnade.info>
+Subject: Re: [syzbot] [hfs?] INFO: task hung in deactivate_super (3)
+To: syzbot <syzbot+cba6270878c89ed64a2d@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, brauner@kernel.org, frank.li@vivo.com,
+        glaubitz@physik.fu-berlin.de, jack@suse.cz,
+        jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
+        shaggy@kernel.org, slava@dubeyko.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+References: <00000000000091e466061cee5be7@google.com>
+ <68b55245.050a0220.3db4df.01bc.GAE@google.com>
+ <20250902144655.5em4trxkeks7nwgx@offworld>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250906094308.11129-1-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250902144655.5em4trxkeks7nwgx@offworld>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On 9/6/25 02:43, Andreas Kemnade wrote:
-> Add module aliases via module devicetable to have it autoloaded.
+On 2025/09/02 23:46, Davidlohr Bueso wrote:
+> On Mon, 01 Sep 2025, syzbot wrote:
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->   drivers/hwmon/sy7636a-hwmon.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
+>> syzbot has bisected this issue to:
+>>
+>> commit 5b67d43976828dea2394eae2556b369bb7a61f64
+>> Author: Davidlohr Bueso <dave@stgolabs.net>
+>> Date:   Fri Apr 18 01:59:17 2025 +0000
+>>
+>>    fs/buffer: use sleeping version of __find_get_block()
 > 
-> diff --git a/drivers/hwmon/sy7636a-hwmon.c b/drivers/hwmon/sy7636a-hwmon.c
-> index ed110884786b4..74ee0e756ffdc 100644
-> --- a/drivers/hwmon/sy7636a-hwmon.c
-> +++ b/drivers/hwmon/sy7636a-hwmon.c
-> @@ -12,6 +12,7 @@
->   #include <linux/hwmon.h>
->   #include <linux/init.h>
->   #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->   #include <linux/platform_device.h>
->   #include <linux/regmap.h>
->   #include <linux/regulator/machine.h>
-> @@ -94,11 +95,18 @@ static int sy7636a_sensor_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> +static const struct platform_device_id sy7636a_sensor_idtable[] = {
-> +	{ "sy7636a-temperature" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, sy7636a_sensor_idtable);
-> +
->   static struct platform_driver sy7636a_sensor_driver = {
->   	.probe = sy7636a_sensor_probe,
->   	.driver = {
->   		.name = "sy7636a-temperature",
->   	},
-> +	.id_table = sy7636a_sensor_idtable,
->   };
->   module_platform_driver(sy7636a_sensor_driver);
->   
+> I don't think this bisection is right, considering this issue was first
+> triggered last year (per the dashboard).
 
-I would suggest to just add
+I think this bisection is not bogus; at least that commit made this problem
+easily triggerable enough to find a reproducer...
 
-MODULE_ALIAS("platform:sy7636a-temperature");
+What is common to this report is that deactivate_super() is blocked waiting
+for hfs_sync_fs() to complete and release sb->s_umount lock.
 
-instead.
+Current sample crash report (shown below) tells us that PID = 5962 (who is trying
+to hold for write) is blocked inside deactivate_super() waiting for PID = 6254
+(who is already holding for read) to release sb->s_umount lock. But since PID = 6254
+is blocked at io_schedule(), PID = 6254 can't release sb->s_umount lock.
 
-Guenter
+The question is why PID = 6254 is blocked for two minutes waiting for io_schedule()
+to complete. I suspect that commit 5b67d4397682 is relevant, for that commit has
+changed the behavior of bdev_getblk() which PID = 6254 is blocked. Some method for
+reporting what is happening (e.g. report details when folio_lock() is blocked for
+more than 10 seconds) is wanted. Of course, it is possible that a corrupted hfs
+filesystem image is leading to an infinite loop...
+
+
+
+INFO: task syz-executor:5962 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21832 pid:5962  tgid:5962  ppid:1      task_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+ rwbase_write_lock+0x3dd/0x750 kernel/locking/rwbase_rt.c:272
+ __super_lock fs/super.c:57 [inline]
+ __super_lock_excl fs/super.c:72 [inline]
+ deactivate_super+0xa9/0xe0 fs/super.c:506
+ cleanup_mnt+0x425/0x4c0 fs/namespace.c:1375
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ exit_to_user_mode_loop+0[  309.321754][   T38]  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0[  309.321754][   T38]  exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff4a4aaff17
+RSP: 002b:00007ffe8b16a008 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007ff4a4b31c05 RCX: 00007ff4a4aaff17
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe8b16a0c0
+RBP: 00007ffe8b16a0c0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe8b16b150
+R13: 00007ff4a4b31c05 R14: 00000000000257d4 R15: 00007ffe8b16b190
+ </TASK>
+1 lock held by syz-executor/5962:
+ #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:506
+
+INFO: task syz.4.168:6254 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.4.168       state:D stack:25800 pid:6254  tgid:6254  ppid:5967   task_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ io_schedule+0x81/0xe0 kernel/sched/core.c:7903
+ folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
+ folio_lock include/linux/pagemap.h:1133 [inline]
+ __find_get_block_slow fs/buffer.c:205 [inline]
+ find_get_block_common+0x2e6/0xfc0 fs/buffer.c:1408
+ bdev_getblk+0x4b/0x660 fs/buffer.c:-1
+ __bread_gfp+0x89/0x3c0 fs/buffer.c:1515
+ sb_bread include/linux/buffer_head.h:346 [inline]
+ hfs_mdb_commit+0xa42/0x1160 fs/hfs/mdb.c:318
+ hfs_sync_fs+0x15/0x20 fs/hfs/super.c:37
+ __iterate_supers+0x13a/0x290 fs/super.c:924
+ ksys_sync+0xa3/0x150 fs/sync.c:103
+ __ia32_sys_sync+0xe/0x20 fs/sync.c:113
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f35c0abebe9
+RSP: 002b:00007fff821c57b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a2
+RAX: ffffffffffffffda RBX: 00007f35c0cf5fa0 RCX: 00007f35c0abebe9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f35c0cf5fa0 R14: 00007f35c0cf5fa0 R15: 0000000000000000
+ </TASK>
+1 lock held by syz.4.168/6254:
+ #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: __super_lock fs/super.c:59 [inline]
+ #0: ffff88803976c0d0 (&type->s_umount_key#72){++++}-{4:4}, at: super_lock+0x2a9/0x3b0 fs/super.c:121
 
 
