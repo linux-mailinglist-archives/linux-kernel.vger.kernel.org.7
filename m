@@ -1,177 +1,246 @@
-Return-Path: <linux-kernel+bounces-804288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1512AB4706D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1B0B47070
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C7F7A6F5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F61517C941
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFC21C84B8;
-	Sat,  6 Sep 2025 14:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512591DF987;
+	Sat,  6 Sep 2025 14:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="IuT0rEO/"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJQiuNGu"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728981C5D44
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 14:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57D12905;
+	Sat,  6 Sep 2025 14:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757168909; cv=none; b=pMAMEEnmrk65tPbpvhRNQlEZ1I8gnPjcUW7iAeVt922EzlinTO9VHncyXO+qg4Hx2nvpCgfWZ1rDay1RbT57R6/YaksUSBGxh5Yv2nKDlS5hyRSkzHRWlzUPKTXS4FbNb9VYTe/oJyAw78KIHwHkowe3fe3sDeBjwIp0p9uB83E=
+	t=1757169097; cv=none; b=tPc8vA/UCTB+Gq60qz6049+iJEsrDY0fxS9ca9opO1xAiAakQvWNHCxMjNCIQgLPe+1u6ljg8eNUuL4GjejL7kxKhlNaDyUPMY7AQTCM6E+m2zcYgfBpUTaH4rROxg69ORWO9fLOXLm1Gq0beXhf7FWhTOmcCl6epgSZniwlw5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757168909; c=relaxed/simple;
-	bh=cvVBltQY58106jEKVaMVmlSsZ0cpbuUvV04KfTiNAlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBPgsPB22L5Igcrkiy57gmzmCmwLu4mnyI1iwKPEG1Zdg9fteRIAWQ2pE51keN/YRlJSrgFkGvkuSdlnwVvvvVFfjBvaUKG/zCZAmBUIohjmYZPzCLbQIIGyV1BohQeYBLh8MUVVtVf2eQdcNAEpxGY6Y1afEEv/xiz6hY6Mf3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=IuT0rEO/; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7723bf02181so2436948b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 07:28:28 -0700 (PDT)
+	s=arc-20240116; t=1757169097; c=relaxed/simple;
+	bh=n/iA2xiAiBGKptR76JM4k2hDpLRNGplYgkSh/8Ar3ak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YVpsiHUNteUdX9iMY2jcP3cUZQWj0bauj5ryJo5gijrPo/vBeqdRzpMY7+/mssFGHxUcRCbYJDT8qzHEqu8iF+I2ODYkAxmDwAxAZb3Ptnqx2kp2WzStROSluYMjyNdzwUkHlxvtOv4YO5pWilki2HZVw0nVAeQyFDco19OfMqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJQiuNGu; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e014bf8ec1so2135380f8f.1;
+        Sat, 06 Sep 2025 07:31:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1757168908; x=1757773708; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JRPXYbXfQcwsmqT/wZayRjzM8sUGrjVUjaV4P6FgvK8=;
-        b=IuT0rEO/UKijQpWlCNMILjxVAdHPoY1VglOsgwg2umcU9sfbrNZ20k2MnaEpJeVMFR
-         NMsAnAGi6gqZMKm8A1ckKQSqx75SBFhXS5h+XdF5xsaj2tnAQa/ACLbrX293GzrVHkox
-         bckW5HnAVhIkySH6Le0uxPD/xsodvWaXhMx44=
+        d=gmail.com; s=20230601; t=1757169094; x=1757773894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cKzQLWd8BNWxJCnVQxm3ZTSbkLGLSJ4oh/POdD4UaBw=;
+        b=PJQiuNGugeVfoi9ywuM9TluDHjZVbHncLuYQwKYw39F0I242RHO9f+9NAtKjtz7Kvi
+         1FKV9QSeaWaUzDUxiKqgyINbQg4FG1+bYLYeQtpJ4J0UMpyzRyteLV52nCRz2pk2kyDp
+         eE+59I+yNY+4dgQKN5gse/W9J4pgWGrF+/Z9Vjh++CmZvxDcMBZ67VsC1WPK0XNdLtL3
+         IobUKLX87Qz2Gqqw7CrR4TeG86pEZPw5s+j23oLNgIl7j+/nEU0TIOBOBsKJ+OwLvmDB
+         oBcF3yLB3EghrY6ax88/D7yyTz6E+//5KDHquSA+0wadkN8xHkq/2EIdHTCW6weXa8tt
+         BjAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757168908; x=1757773708;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JRPXYbXfQcwsmqT/wZayRjzM8sUGrjVUjaV4P6FgvK8=;
-        b=doFjRDt6XrOO1esCDfQ0Tm1pshI8D+t9SgxlK5Vv0imFQ4TDRzCbYXWYXJwtOu14OB
-         rY3eSmnCG2i0tL7zY3DXjKbC6Pqh8TukoXVmjvwQ5NQKGVqrMmDtFEYgn3p50TTrWSA0
-         pMHDrGdRAyJ52nUyXw5/tcaoA3hpQT6TbcczKLOzzBYbEqROxxg0LRYm7xfacNxLrbff
-         pAqPWWjF1vxDZ4FGo5hp6IhBjOT/0qRpHfptCD0HKmjazpTA7Gqtpj/xA8DoCYDRtFkM
-         LOo7jX/O99AifC0Jb9Rc51Z14srwyoZOcM0j0vCfWrGK5z0F+mwHescBoqz+ZKUPqj6M
-         ZMdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGx2XdOk9cstV7nX5KSaTIfCGDWsDInfkvSV9Xz64GY2hZ8oLH0yPlDJzbu6EV1IGyvpZe/5UV67IyNBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBF0EVYaNVkp2GJ2HUuKxnHAlkVHhgqF9Xrd/UeoXYsvt5OmKz
-	jQNEQ9EpWvHnZz3MrszWCUr2nsZKhtcyK6x5S9Bt+oqbKPxt9lnZMnv7IaWciAxhZho=
-X-Gm-Gg: ASbGncsjrUx4KqrdrQt3Z1ZsvussJyUBzC62ivVf6unIleCYCZx4zKo8JKStm5IYChJ
-	AaHF3m5izc2jWcyGyYM6FObiTsA1Kj3ndmfvLfMqCEGYKEg/ukgmiXuXJLKTkRDE5NMkozcmanN
-	Go3L54ESNeZk9XMh/Xa25aHQgyOPBrJYCzuV2frvAIN+zw6u4I3cv2jQVmWDj98eAcBV/ESLfx4
-	wmBxmtZJqAA3sKmL3r+bMjGxDCV7HCDQa1r1a2ViW1fvtdA62u67ylb83spb1dOUHqMkS20VwBq
-	OEM1IW02mMPwVMoHH6IybYCV99AyX/dQNSxbgxIZufCPqU9MstPAaIt1uhbg1/PkQ1I2MJsjkhi
-	j/VG1rDxAvkvjCBnTQn2TelyFvoLkLcLjW9AzTSbdjEbi45UUGe9AM7MIfmyX7rgY6+zmUSg8Gb
-	Y=
-X-Google-Smtp-Source: AGHT+IEKlnZ2gDV6Cf7vzckuTfU2tI51NA7SFZfkMS2CWcnbSL2aSdEew+cS5mnzCI48399CQ9rm8g==
-X-Received: by 2002:a05:6a20:2589:b0:249:9c7a:7702 with SMTP id adf61e73a8af0-253444130a3mr3464477637.36.1757168907718;
-        Sat, 06 Sep 2025 07:28:27 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4fa1a29cedsm9763439a12.46.2025.09.06.07.28.24
+        d=1e100.net; s=20230601; t=1757169094; x=1757773894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cKzQLWd8BNWxJCnVQxm3ZTSbkLGLSJ4oh/POdD4UaBw=;
+        b=UJL4i/CltODYljDKKwcvhJq9QaS9CtKaCCEDmEWad92F+dZejGdNVNOXrKUu6MKz4Z
+         SY0yvEovq5JNi49Ib/IiaUnEQZlrWdlVhCaCRQk1REqA+m4M0MO6d/isE5WKugMFucnb
+         Ol5nqo+pYJT7M2Lp6osWCVTiOFfP08l/pVdpqAjJ+QlcsDrh7MbzxCi489Y4lCHYSSVk
+         /8CVB0c2mP249rin8/4nN5KOo7PJrlJQpdhNi+hgCqzBwW8IsrpWFlurQnKfO+eoIiVu
+         P1/+1bnHqEdrDFExD+PE0lvU80cJnEQZtT0Wszn9COohEODeI4c+v7JWD4fqlRe+qGFm
+         g4/g==
+X-Forwarded-Encrypted: i=1; AJvYcCULYC9RG19Skc6vzWPqyPG6hQMkbDFSZPrw7iZw9HabQdIO3nkzUk6h+wBTDsM/rB/jKhAT5fhSgmYMLf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiIg+mkwULLGkhouubYuLpnZaFD9p8+vayCs+IsPeySa5MMmYR
+	BboAh6xms3GxIxs8olOMuvb8DMIOK4TAgK8c4MPDT0gicxuAcpV/HqCq
+X-Gm-Gg: ASbGnctpQ5jf8ckSN1V7ptlAK6lobt192XmUKd0jULFfZ3O0Y1JSmcFTJXya9TYicab
+	sItBe3VO6uXDuK0x7aNSbOXbJkR63okm8hHn5XeX79vt5BBdT1opCaTxCnrCzVgRvx9Qrc/LEBB
+	dkJpG4ljTiWJUIlLCYeVGbSMuX5VWFpr4xecRgvr0AhXm0GSSNjXOoL+xH8TNAgUVPm2MKUl+6j
+	cocxgva8yt5AT/h2cI7TveJuhlCveMMu8V7t3qokguq14XZpeypFv1u6bThqLft/SDtGj4l22AJ
+	xXJhqjITf/4jYL45AfE1B4ygPXjFaJCfvrk+trV9VpMcIOOEwe9wLmHmNCl6twjIU4muiZzF417
+	Tx+cJlHhBwalJmGAVf99pvQEMbWft3Q==
+X-Google-Smtp-Source: AGHT+IFWve5lrZrXBMD2zEzmOPD3JBhdabzeORQlc+82/3ZASLV7zXyPS+LYWrnJUm2zRKUDurygiA==
+X-Received: by 2002:a5d:5f96:0:b0:3dd:8b62:5fe7 with SMTP id ffacd0b85a97d-3e64355634amr1368733f8f.49.1757169093693;
+        Sat, 06 Sep 2025 07:31:33 -0700 (PDT)
+Received: from hangmanPC.. ([86.124.200.102])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fbd01sm35536943f8f.13.2025.09.06.07.31.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 07:28:27 -0700 (PDT)
-Date: Sat, 6 Sep 2025 23:28:17 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-Message-ID: <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
- <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
- <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
+        Sat, 06 Sep 2025 07:31:33 -0700 (PDT)
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: wsa+renesas@sang-engineering.com
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cezar Chiru <chiru.cezar.89@gmail.com>
+Subject: [PATCH] i2c: i2c-dev: Fixed warnings generated by checkpatch tool
+Date: Sat,  6 Sep 2025 17:31:19 +0300
+Message-ID: <20250906143119.21803-1-chiru.cezar.89@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
 
-On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> On Tue, Sep 2, 2025 at 3:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > > On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > >
-> > > > The pdu field in io_uring_cmd may contain stale data when a request
-> > > > object is recycled from the slab cache. Accessing uninitialized or
-> > > > garbage memory can lead to undefined behavior in users of the pdu.
-> > > >
-> > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
-> > > > each command starts from a well-defined state. This avoids exposing
-> > > > uninitialized memory and prevents potential misinterpretation of data
-> > > > from previous requests.
-> > > >
-> > > > No functional change is intended other than guaranteeing that pdu is
-> > > > always zero-initialized before use.
-> > > >
-> > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > ---
-> > > >  io_uring/uring_cmd.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > --- a/io_uring/uring_cmd.c
-> > > > +++ b/io_uring/uring_cmd.c
-> > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > >         if (!ac)
-> > > >                 return -ENOMEM;
-> > > >         ioucmd->sqe = sqe;
-> > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > >
-> > > Adding this overhead to every existing uring_cmd() implementation is
-> > > unfortunate. Could we instead track the initialized/uninitialized
-> > > state by using different types on the Rust side? The io_uring_cmd
-> > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
-> > > PDU has been initialized.
-> >
-> > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> > the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
-> > But I don't know that we could call T::default() in miscdevice. If we
-> > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> >
-> > How about assign a byte in pdu for checking initialized? In uring_cmd(),
-> > We could set a byte flag that it's not initialized. And we could return
-> > error that it's not initialized in read_pdu().
-> 
-> Could we do the zero-initialization (or T::default()) in
-> MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> isn't set (i.e. on the initial issue)? That way, we avoid any
-> performance penalty for the existing C uring_cmd() implementations.
-> I'm not quite sure what you mean by "assign a byte in pdu for checking
-> initialized".
+Fixed all warnings in i2c-dev.c file in drivers/i2c/ folder
+The errors were: missing '*' from multiple line comment blocks,
+missing new blank line after declarations and found 'unsigned'
+instead of 'unsigned int'.
+My motivation was to fix all possible warnings and errors from
+/drivers/i2c/ subsystem. I will skip false positives.
+Testing:
+   * Built kernel with I2C_CHARDEV=y + my patch on and it succeeded.
+   Date of last git pull: 06-September-2025 around 12:00 UTC + 03:00
+   Latest commit SHA: d1d10cea0895
+   Build succeeded
+   * Installed kernel and external modules on my laptop with Ubuntu 24
+   * Checked dmesg for i2c-dev using grep and checked for errors or
+     success. Found 1 line related to i2c_dev:
+     [    0.662406] i2c_dev: i2c /dev entries driver
 
-Sure, we could fill zero when it's the first time uring_cmd called with
-checking the flag. I would remove this commit for next version. I also
-suggests that we would provide the method that read_pdu() and write_pdu().
-In read_pdu() I want to check write_pdu() is called before. So along the
-20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-initialized?
+Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+---
+ drivers/i2c/i2c-dev.c | 51 +++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 19 deletions(-)
 
-But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> and
-issue_flags. How about some additional field for pdu is initialized like below?
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index e9577f920286..0902b7b9cca6 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -1,16 +1,18 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+-    i2c-dev.c - i2c-bus driver, char device interface
+-
+-    Copyright (C) 1995-97 Simon G. Vogl
+-    Copyright (C) 1998-99 Frodo Looijaard <frodol@dds.nl>
+-    Copyright (C) 2003 Greg Kroah-Hartman <greg@kroah.com>
+-
+-*/
++ *   i2c-dev.c - i2c-bus driver, char device interface
++ *
++ *   Copyright (C) 1995-97 Simon G. Vogl
++ *   Copyright (C) 1998-99 Frodo Looijaard <frodol@dds.nl>
++ *   Copyright (C) 2003 Greg Kroah-Hartman <greg@kroah.com>
++ *
++ */
+ 
+-/* Note that this is a complete rewrite of Simon Vogl's i2c-dev module.
+-   But I have used so much of his original code and ideas that it seems
+-   only fair to recognize him as co-author -- Frodo */
++/*
++ * Note that this is a complete rewrite of Simon Vogl's i2c-dev module.
++ *  But I have used so much of his original code and ideas that it seems
++ *  only fair to recognize him as co-author -- Frodo
++ */
+ 
+ /* The I2C_RDWR ioctl code is written by Kolja Waschk <waschk@telos.de> */
+ 
+@@ -50,7 +52,7 @@ struct i2c_dev {
+ static LIST_HEAD(i2c_dev_list);
+ static DEFINE_SPINLOCK(i2c_dev_list_lock);
+ 
+-static struct i2c_dev *i2c_dev_get_by_minor(unsigned index)
++static struct i2c_dev *i2c_dev_get_by_minor(unsigned int index)
+ {
+ 	struct i2c_dev *i2c_dev;
+ 
+@@ -222,9 +224,11 @@ static int i2cdev_check_mux_children(struct device *dev, void *addrp)
+ 	return result;
+ }
+ 
+-/* This address checking function differs from the one in i2c-core
+-   in that it considers an address with a registered device, but no
+-   driver bound to it, as NOT busy. */
++/*
++ * This address checking function differs from the one in i2c-core
++ *  in that it considers an address with a registered device, but no
++ *  driver bound to it, as NOT busy.
++ */
+ static int i2cdev_check_addr(struct i2c_adapter *adapter, unsigned int addr)
+ {
+ 	struct i2c_adapter *parent = i2c_parent_is_i2c_adapter(adapter);
+@@ -241,7 +245,7 @@ static int i2cdev_check_addr(struct i2c_adapter *adapter, unsigned int addr)
+ }
+ 
+ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+-		unsigned nmsgs, struct i2c_msg *msgs)
++		unsigned int nmsgs, struct i2c_msg *msgs)
+ {
+ 	u8 __user **data_ptrs;
+ 	int i, res;
+@@ -297,6 +301,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 	}
+ 	if (res < 0) {
+ 		int j;
++
+ 		for (j = 0; j < i; ++j)
+ 			kfree(msgs[j].buf);
+ 		kfree(data_ptrs);
+@@ -337,8 +342,10 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
+ 			size);
+ 		return -EINVAL;
+ 	}
+-	/* Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1,
+-	   so the check is valid if size==I2C_SMBUS_QUICK too. */
++	/*
++	 * Note that I2C_SMBUS_READ and I2C_SMBUS_WRITE are 0 and 1,
++	 * so the check is valid if size==I2C_SMBUS_QUICK too.
++	 */
+ 	if ((read_write != I2C_SMBUS_READ) &&
+ 	    (read_write != I2C_SMBUS_WRITE)) {
+ 		dev_dbg(&client->adapter->dev,
+@@ -380,8 +387,10 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
+ 			return -EFAULT;
+ 	}
+ 	if (size == I2C_SMBUS_I2C_BLOCK_BROKEN) {
+-		/* Convert old I2C block commands to the new
+-		   convention. This preserves binary compatibility. */
++		/*
++		 * Convert old I2C block commands to the new
++		 * convention. This preserves binary compatibility.
++		 */
+ 		size = I2C_SMBUS_I2C_BLOCK_DATA;
+ 		if (read_write == I2C_SMBUS_READ)
+ 			temp.block[0] = I2C_SMBUS_BLOCK_MAX;
+@@ -471,6 +480,7 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	case I2C_SMBUS: {
+ 		struct i2c_smbus_ioctl_data data_arg;
++
+ 		if (copy_from_user(&data_arg,
+ 				   (struct i2c_smbus_ioctl_data __user *) arg,
+ 				   sizeof(struct i2c_smbus_ioctl_data)))
+@@ -531,6 +541,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ {
+ 	struct i2c_client *client = file->private_data;
+ 	unsigned long funcs;
++
+ 	switch (cmd) {
+ 	case I2C_FUNCS:
+ 		funcs = i2c_get_functionality(client->adapter);
+@@ -560,6 +571,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ 		p = compat_ptr(rdwr_arg.msgs);
+ 		for (i = 0; i < rdwr_arg.nmsgs; i++) {
+ 			struct i2c_msg32 umsg;
++
+ 			if (copy_from_user(&umsg, p + i, sizeof(umsg))) {
+ 				kfree(rdwr_pa);
+ 				return -EFAULT;
+@@ -578,6 +590,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
+ 	}
+ 	case I2C_SMBUS: {
+ 		struct i2c_smbus_ioctl_data32	data32;
++
+ 		if (copy_from_user(&data32,
+ 				   (void __user *) arg,
+ 				   sizeof(data32)))
+-- 
+2.43.0
 
-struct IoUringCmdArgs {
-  ioucmd: Pin<&mut IoUringCmd>,
-  issue_flags: u32,
-  pdu_initialized: bool,
-}
-
-> 
-> Best,
-> Caleb
 
