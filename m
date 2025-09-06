@@ -1,204 +1,162 @@
-Return-Path: <linux-kernel+bounces-803976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-803977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95256B46829
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:50:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA871B4682C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 03:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E573BD251
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D31A561A1C
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 01:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5061C3C08;
-	Sat,  6 Sep 2025 01:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9141B3937;
+	Sat,  6 Sep 2025 01:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SK9BoNxT"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="estJMMTy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123511AF0A4;
-	Sat,  6 Sep 2025 01:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A4D1CD2C
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 01:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757123419; cv=none; b=Ps1ooC3Lsn5IW6o3v27scQMJbiCCCulcmEAh/Ku+4zdgj0Rnbmrd+nTl+83l255speRmwdh/SKXXA24nqwUUrBUqr1WnB0geaefMJmVkm/BYtNZQNVguUb3mv69zQ21caLnaAh07K8WcKWESCDjVHLrFs4lBWgU7iBfOSZkJD8g=
+	t=1757123528; cv=none; b=IAU1+dr+MQRaC3JtYTI9jSYm0qUzB6jzhi7WT79H16s8DWNXJBrFh+BuB/KKSKunW1iVFVI9mTH4qwsmIEq8HVE2fA+9v37xvWZpTBzJfjoR6Oyzq/QypHSC1eFXMcwsKyuBAdUAdXPLgVCXWYFjCsVhshTTAKt49Z65vax6dwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757123419; c=relaxed/simple;
-	bh=iXRq99HWmzLJTx11IPN0Cm6k5Z1XvCKIC4V0rqrUCIs=;
+	s=arc-20240116; t=1757123528; c=relaxed/simple;
+	bh=ZLbf025TbCAVDMDw7jHKU6+3GLV2AL3hEjSNyCSVYUc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHQLgZlPtXUuEjJe9nomekoRqKqH+r3AJRIc8rpvX/xGMWIMTd7Mq8vCkrcuWHiCBd7hYxq0qgHDVF0EkGn3GrKDG9Zasvfn6nO6W9pyb+SEtl+V4w2zlYofod5K+tYqDNRz0TBYMNmjzHKmE7KjkMoBw+rS953aluic2JcXXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SK9BoNxT; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3df15fdf0caso2181013f8f.0;
-        Fri, 05 Sep 2025 18:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757123416; x=1757728216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9T8mhgY9nX4b1GTDoanzs4NGx5M5/HhR9wB18Kbszzk=;
-        b=SK9BoNxT/6eyFVJg4r0ka45qeXMyT4cbm08E0tW92dWRSO2F4oa7rhKOGCp5oVBNgR
-         Wh/cl+FIJ6M/KN56Hz58dlHZtVjaBLhS6iCDZ5hTqMBJioSrA7doUks9zB8vnC+0EdLO
-         MWLn+McM0r2eO8SAzpatTNCYrZ1bvIISbggir3jjj2Sj3E6qeYBL/pKABXPEsMxSocfn
-         rH8CdCSK9Z2CXah2eUPyzVfVirGeykU1AfRplVKb3tpUBz9hazGd8ac+UtJ7XRZeTldI
-         tyiUlTtZtckHkwkI51GAb0IYfeOCFcUS1Pbj/i2F8juqvMRw2VidCVSzcZZsYtyMkOH+
-         n9Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757123416; x=1757728216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9T8mhgY9nX4b1GTDoanzs4NGx5M5/HhR9wB18Kbszzk=;
-        b=lrlIbYGBsnWygnAb2/SIWgSXhjBKxEOg6SKHopVnWYsL9uD2qjoUC1HWplbfKtMY8E
-         iaPBUCsT1GLhL3HruJOizB/0s854PfBqFo5P9+0rHzB6zGWY5iankVK8bjRRbIRixc/6
-         zGyWpn8ogNxCLTu2Tlaa0P9sXjb9qp7/3LyxgCNzFzRd1CqmoOHkR84DnectDUL1CgmH
-         pyaS8e9D4Pk0kOYiWckPjhMcZG8TD7Rnha8YJgWUXr2OIcWf0b7n5KNczKGR2+4Yq2gX
-         rFgjRRPGh7L9tSRxdtNuhken5jwUO3Dz7QUcJRK5rAawtjUhewC+Os+777MVQRYTTE4c
-         EDYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUngxz2jZuyQub7q3/BHlZyFeV3jF6DE6YYCZB7Q1B4dSO6g/i2Ct3elxHRuNOSHsizxycLN5ug1vauM+R3@vger.kernel.org, AJvYcCVQPhOncL5jLYVqm7NX9lFof6CZeJUnjIWwmRb+Zn1QDM5Rzcw5aIfCFOBbOm3H//hAAgw7Y4bRoxCt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxexlo1EfLRk0oe1WJazinZhNrQTtHj7GCqfr+x1HaiJxpsNwYn
-	XYjlgtuKpR+84KMikj8Ze9pznPT/d3HFPpO/yzDSHfG9dlq3WkelCLH/Ih3oS2gEOeSnt3GX7PB
-	JYTeeV8EhQ0T9x/91oleVSs8sWBszStg=
-X-Gm-Gg: ASbGncsKbD22UkgreW6VpfC0J3ELWuXb41msZyJg/FRHod0UQ43NmHsmabUwXtspb1D
-	dKgBDiTKFalug5oQTo3puw+hreoB+c+TojP7wxzWXxvI4Uo/oaJUexAtp9dCooqi5CV1sqB1NSN
-	b2TWPPE6KN23GxeDYPzorBOvdxjx1puutlyrLoclBW8hpxrUfKE2VaAPvoS03uI/qCRuMV3Kk22
-	ZqnMVltHt8ddnWz8T7j8gf67sXcl3Vqan2NVSQpXcHQlFI=
-X-Google-Smtp-Source: AGHT+IG6oix8mLMZHDuSE3WNnpjGJG/3AhhOv3u2JxvodBrLWsljciM9kQJmzeRwfNEpuDP8Q7Dg/c797dvznUQWxEc=
-X-Received: by 2002:a05:6000:2883:b0:3e3:f332:73f0 with SMTP id
- ffacd0b85a97d-3e64c693923mr284627f8f.49.1757123415784; Fri, 05 Sep 2025
- 18:50:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=Jv+fb8wSM/gmQolxNGo5T3SCexStu9mLuHvWf44G6AlirYaWXfYCi0a0x4rLSYQMa4Zx5yOh9jwc1jMuEhEb12dWlHotRJsOdCZNonAxzOzjq1drilC8nDpJy9hiQhyXtm2rtrORPMLaC9Rh2aZ7AML5N19DbFJxLSoDoDy54ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=estJMMTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59A6AC4CEFD
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 01:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757123528;
+	bh=ZLbf025TbCAVDMDw7jHKU6+3GLV2AL3hEjSNyCSVYUc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=estJMMTyTXmL1nm+XsscuMIpFgsVOr3n/GrHcTm3dR23L622KfMZdYNyZUqj0TU7q
+	 q8MH9tKjcA8q84vBddmA3U+INxKJw3RhZgZ99uwdXFS6iyr9W/+z4Te30IdSMV+X5T
+	 n7T+91najnbQuYqoy1rYeJjbMtyhVfDiFawWHxc/J/cFabsVRaxMPhp/CpIdAqSHzf
+	 kVeVzbWdUnOvuic9jziQwWFOj9puVuqOroYwxLmZlkkomuKRSArnxQorETHUmTn1yB
+	 SqqRmGmPQ8tO1OvnKovcDp/HhFicaqGAhtkHK1uDW4pAF4GLCz/UaSlIWhO5X2JsW0
+	 rMwxq4mKoiryA==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b72f7f606so11965e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 05 Sep 2025 18:52:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcwXwDr9Ul26rdkSVzsCVtHgFN+rKzUu+wYvjGLS0DbiqZyhnkUaRofaYBmQvRf1yBbLkeJw8bJLVY/w0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC8YPyenpewQX3EqzD16zqD9MWWPZbmgj1zeASkOakDxHiCavu
+	xxUrt1p8dwUFPTk4RggBaDzEAnJIkVzDZVc8J74E/UKEM43mdr/moomqoL9EI3QnEGOhaLhAgr+
+	SA/w+RWOl1GB71vkzbHwgo9FoO+vYfZTzdEhkKchj
+X-Google-Smtp-Source: AGHT+IGjhaMGuFmKSOq65rNSbqau2mH4/CE4IKPEkkUp0bWy0sfHbOKtsF7sr8Su4snCzHDeblXqp/kDF3PezcaZFSo=
+X-Received: by 2002:a05:600c:a406:b0:45b:74f7:9d30 with SMTP id
+ 5b1f17b1804b1-45dde17196dmr303035e9.1.1757123527039; Fri, 05 Sep 2025
+ 18:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090115.718622-1-dkx@t-chip.com.cn>
-In-Reply-To: <20250905090115.718622-1-dkx@t-chip.com.cn>
-From: Jimmy Hon <honyuenkwun@gmail.com>
-Date: Fri, 5 Sep 2025 20:50:04 -0500
-X-Gm-Features: Ac12FXwbiLHfVMuDhY7SOkXke4RxqgSQCIhrk8FrjSiEnCfjNXAuJcrVNoPzTFc
-Message-ID: <CALWfF7+6dTqLRHYKHL1iBf9YknLQ5yTrwPur8VySmjiy3mzh0Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the ROC-RK3588-RT
-To: Kaison Deng <dkx@t-chip.com.cn>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Wayne Chou <zxf@t-chip.com.cn>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Dragan Simic <dsimic@manjaro.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, FUKAUMI Naoki <naoki@radxa.com>, Peter Robinson <pbrobinson@gmail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250905191357.78298-1-ryncsn@gmail.com> <20250905191357.78298-4-ryncsn@gmail.com>
+In-Reply-To: <20250905191357.78298-4-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 5 Sep 2025 18:51:55 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNhLDovRO+8Y25ArdMBVFjXnYBVjmASzMBtdsdZkQ0NLQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyor9jYrHazaQfXv_bf0RLrytfgAReOG_V6sM-QISnVMBGJCjjC0Py78a8
+Message-ID: <CAF8kJuNhLDovRO+8Y25ArdMBVFjXnYBVjmASzMBtdsdZkQ0NLQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/15] mm, swap: fix swap cahe index error when
+ retrying reclaim
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 5, 2025 at 9:32=E2=80=AFAM Kaison Deng <dkx@t-chip.com.cn> wrot=
+Hi Kairui,
+
+The patch looks obviously correct to me with some very minor nitpicks follo=
+wing.
+
+Acked-by: Chris Li <chrisl@kernel.org>
+
+On Fri, Sep 5, 2025 at 12:14=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
 e:
 >
-> The Firefly ROC-RK3588-RT is RK3588 based SBC featuring:
+> From: Kairui Song <kasong@tencent.com>
 >
-> - TF card slot
-> - NVME 2242 socket
-Could you update the commit description to match device tree. It looks
-like the M.2 2242 socket is configured as a SATA (i.e. "sata2")
-instead of NVME.
-
-Is the M.2 slot also wired for NVME operation? If so, will you be
-providing a DT overlay to use it in that mode?
-
-https://wiki.t-firefly.com/en/ROC-RK3588-RT/usage_sata.html#software-config=
-uration
-
-> - 1x USB 3.0 Port, 1x USB 2.0 Port, 1x Typec Port
-> - 1x HDMI 2.1 out, 1x HDMI 2.0 out
-> - 2x Gigabit Ethernet, 1x 2.5G Ethernet
-> - M.2 E-KEY for Extended WiFI and Bluetoolh
-> - ES8388 on-board sound codec - jack in/out
-> - RTC
-> - LED: WORK, DIY
-> - BTB connector for PCie, UART, USB, CAN, SARADC, GPIO
+> The allocator will reclaim cached slots while scanning. Currently, it
+> will try again if the reclaim found a folio that is already removed from
+> the swap cache due to a race. But the following lookup will be using the
+> wrong index. It won't cause any OOB issue since the swap cache index is
+> truncated upon lookup, but it may lead to reclaiming of an irrelevant
+> folio.
 >
-> Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
+> This should not cause a measurable issue, but we should fix it.
+>
+> Fixes: fae8595505313 ("mm, swap: avoid reclaiming irrelevant swap cache")
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 > ---
->  arch/arm64/boot/dts/rockchip/Makefile         |    1 +
->  .../arm64/boot/dts/rockchip/rk3588-roc-rt.dts | 1120 +++++++++++++++++
->  2 files changed, 1121 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+>  mm/swapfile.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/=
-rockchip/Makefile
-> index 9d56d4146b20..ad684e3831bc 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -181,6 +181,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-orangepi-5-ma=
-x.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-orangepi-5-plus.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-orangepi-5-ultra.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-quartzpro64.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-roc-rt.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-rock-5-itx.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-rock-5b.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) +=3D rk3588-rock-5b-pcie-ep.dtbo
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts b/arch/arm64/=
-boot/dts/rockchip/rk3588-roc-rt.dts
-> new file mode 100644
-> index 000000000000..1d50009d3153
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-roc-rt.dts
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 4b8ab2cb49ca..4c63fc62f4cb 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -240,13 +240,13 @@ static int __try_to_reclaim_swap(struct swap_info_s=
+truct *si,
+>          * Offset could point to the middle of a large folio, or folio
+>          * may no longer point to the expected offset before it's locked.
+>          */
+> -       entry =3D folio->swap;
+Nitpick:
+This and the following reuse the folio->swap dereference and
+swp_offset() many times.
+You can use some local variables to cache the value into a register
+and less function calls. I haven't looked into if the compiler will do
+the same expression elimination on this, a good compiler should. The
+following looks less busy and doesn't need the compiler to optimize it
+for you.
 
-[snip]
+           fe =3D folio->swap;
+           eoffset =3D swp_offset(fe);
+           if (offset < eoffset ) || offset >=3D eoffset + nr_pages) {
+...
+           }
+           offset =3D eoffset;
 
-> +
-> +&hdmi0 {
-> +       status =3D "okay";
-> +};
-> +
-> +&hdmi0_in {
-> +       hdmi0_in_vp0: endpoint {
-> +               remote-endpoint =3D <&vp0_out_hdmi0>;
-> +       };
-> +};
-> +
-> +&hdmi0_out {
-> +       hdmi0_out_con: endpoint {
-> +               remote-endpoint =3D <&hdmi0_con_in>;
-> +       };
-> +};
-Does the board support hdmi0_sound and hdmi1_sound (and the
-corresponding i2s5_8ch and i2s6_8ch)?
+This might generate better code due to less function code. If the
+compiler does the perfect jobs the original code can generate the same
+optimized code as well.
 
-> +
-> +&hdmi1 {
-> +       status =3D "okay";
-> +};
+> -       if (offset < swp_offset(entry) || offset >=3D swp_offset(entry) +=
+ nr_pages) {
+> +       if (offset < swp_offset(folio->swap) ||
+> +           offset >=3D swp_offset(folio->swap) + nr_pages) {
+>                 folio_unlock(folio);
+>                 folio_put(folio);
+>                 goto again;
+>         }
+> -       offset =3D swp_offset(entry);
+> +       offset =3D swp_offset(folio->swap);
 
-[snip]
+So the first entry is only assigned once in the function and never changed?
 
-> +
-> +&sdhci {
-> +       bus-width =3D <8>;
-> +       no-sdio;
-> +       no-sd;
-> +       non-removable;
-> +       max-frequency =3D <200000000>;
-> +       mmc-hs400-1_8v;
-> +       mmc-hs400-enhanced-strobe;
-These properties should be in alphabetical order.
+You can use const to declare it.
 
-> +       status =3D "okay";
-> +};
-> +
-> +&sdmmc {
-> +       bus-width =3D <4>;
-> +       cap-sd-highspeed;
-> +       disable-wp;
-> +       max-frequency =3D <150000000>;
-> +       no-sdio;
-> +       no-mmc;
-> +       sd-uhs-sdr104;
-> +       vmmc-supply =3D <&vcc3v3_sd_s0>;
-> +       vqmmc-supply =3D <&vccio_sd_s0>;
-> +       status =3D "okay";
-> +};
+Chris
 
-Jimmy
+>
+>         need_reclaim =3D ((flags & TTRS_ANYWAY) ||
+>                         ((flags & TTRS_UNMAPPED) && !folio_mapped(folio))=
+ ||
+> --
+> 2.51.0
+>
+>
 
