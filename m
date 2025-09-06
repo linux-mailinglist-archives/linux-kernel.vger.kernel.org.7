@@ -1,91 +1,141 @@
-Return-Path: <linux-kernel+bounces-804230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C71B46DA6
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C03B46DB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF91E1C21EFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E501C21F3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6522EFDBD;
-	Sat,  6 Sep 2025 13:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D4C2F069F;
+	Sat,  6 Sep 2025 13:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Txih4u6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/kI9R8o"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4742258EF3;
-	Sat,  6 Sep 2025 13:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9D2877EA;
+	Sat,  6 Sep 2025 13:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757164610; cv=none; b=lKJgfuENSZQVGJcnJzsXLr/X/gnQatiktKoOgGnLB31NHDZ+r1GxOGpr4giqlZ/XJ8DbAUcRPi2SeAOovR5P4K6mLLFeNUJN4Q902UCckjN/TVzlRPViaBxibqMUi3lNESQh8NyFoRwkvltb5Nwrt0+tYBhNDe5Tgd+kM+hpgk8=
+	t=1757164638; cv=none; b=q6NuLzASw0FER+NjATGSw/Z3XxWUeMQFkBRAV9oHAuMc6ETi+KMU/+j0tF0Gx9zc9kNf2LWfcdZN56bS5XwxWO1cTly706BKUf7nWee6Bu3U/hIm0q1SFq1OLB76VhEDjOXPBz7H04sYictqWQ6mogE3oTpLPtaEYcwT2UgL0gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757164610; c=relaxed/simple;
-	bh=vPgCbmP/DGlsw1rAlcsgGu706SXF9RmpPE5Xl39OipM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cIAD5vo3i1LBxRaz0nfoej88DS7wY5WKTbpo2LAX3PHkSeDANpkeG0v0wwQuIulA1UDsVLxejGBefn6Krq7dEL26kkoHA8vBERzXpeAMLI76RnDAEAE6nOkD6YIssyyJVaB8oAmS1llY3fqKtX4cUdc5S7U1qaPaOfg4nU1LLXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Txih4u6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F358AC4CEE7;
-	Sat,  6 Sep 2025 13:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757164610;
-	bh=vPgCbmP/DGlsw1rAlcsgGu706SXF9RmpPE5Xl39OipM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Txih4u6HNNYuGDLOyRmfAmaEaJhkWoGYoukEpURCBU3vGloN8e735ymIXPKPXfTBm
-	 6TiFCJA2gDmUfuvz3UlisaWNXFVoElI9iwdEbSZd69IZmDHrEHbLTGmXqp3Hd6h1UE
-	 YgUnFdQGYEeRPkcH/UvcRD6L76NY+wIJkOTLFUXw=
-Date: Sat, 6 Sep 2025 15:16:47 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kuen-Han Tsai <khtsai@google.com>
-Cc: royluo@google.com, jkeeping@inmusicbrands.com,
-	stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: udc: Add trace event for usb_gadget_set_state
-Message-ID: <2025090657-unpinned-unnatural-2ccd@gregkh>
-References: <20250818082722.2952867-1-khtsai@google.com>
+	s=arc-20240116; t=1757164638; c=relaxed/simple;
+	bh=o9IcrFnimv7ibOLrNRYV7WuA4rm8uS1dfW5VR+qdcDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PMToz+lSdmZ3LBeAX6d3V2ee5zOxYPSdskzVRC7SzIhuwOO2l4RwWDigkvx4VUT+pkulac9FN10pGTiqIyiAg3bn5VgUVBx1aQEWcyGy0o/X9Ew/+0V+jnEtTxi+++5BXF/d70XfoAIywXndgj2RjAHcZ4tWXYG3mIfWVMGJxiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/kI9R8o; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5608bfae95eso3355361e87.1;
+        Sat, 06 Sep 2025 06:17:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757164634; x=1757769434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=e/kI9R8oBRSh2GAcbDQBRtuqa1ofI89Lb14GlNrfgTEQ1tL5zBU/Ts+t03ohPzMPkj
+         6dScjHsUhAQ+BHLt1tKak1ccTkbqo+Wis3T3OfBidXkfVjwqXTs8kiH0YDGZtHOFsyo1
+         cIL9BFyZmLuoy4Li2jVn1dHlNfZNR3fvWWZLIQ1Fr4Jy8kd0WdnP+EQYwi3hUEOASUtS
+         6PzTqrSl86CikswjcvOwPn5xyj5H4jKYl9eq05Mm5UWUyQAqLchGlBJgFBmd4dAjoGGJ
+         DTGnhWFEoCKVFcqoEUBeW7guDICC10kZshSNrpC+xtTqkj89LXkcjReK0GhGBk5KSMUv
+         a1xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757164634; x=1757769434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=Jr+5tnfujSuIQJzSOyfJMo72Xx5dJ3LWZHEBPMHATj8smzxg6GWTGDIYhgA1xvlYYL
+         O34KFDB2oKDhtGZYxq5nK10csSZgtwGo8/U4IMCo8HcGoIqclb712QXjrLxkMlQg1TYp
+         MneH2VQBmPoqyyj/JHWGk5dZjSDjp06x1JeltQu8itmDN7rWjqP6x2m8Y4Rsh59XqIaE
+         jQIA+8EbmvlL95efNxjGMzpIOK5GZWZe28YszUCyuJulFgJCO1TSw+87IsilUMtf5+P3
+         06OWHQw3uffDFyQojWzTkfKp/tppVctCmPgICQ67xESA0symyYidFYJvf543mafPZPyo
+         5e/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbAGXUUD873yToQVa2V4ZQMBzzLZP4JKx5S/lgXlzmYsEiw6gQI1rz2C00mhZyh/bebIqgQP5+H4w=@vger.kernel.org, AJvYcCXrKORT5jFKyazkPfPusz/RR42+7UmzgJpllJuGF28ti7aux0UaUBxUJh2EunZ/CLaNv3oZncCIOIvHhR/Q@vger.kernel.org, AJvYcCXuax2z6Gu2khUH/pwglMj0KHD19Ys+f2LZH7cbO90BGpF/Pz+lJ/jclP2w+Vt2YeneokK9Qf9kPIx2mTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6W0OORc0lr/pWj0TXR7ZE++EhpQUsWLQ//DAqn7ZU+pHybB/k
+	CR2RpS58o/ie35OqX8gcic3e/zCM5GTAv4cN3yLpIlwQ0RHs04arAvpI
+X-Gm-Gg: ASbGncsmKS/5Oj9ZKYjXV1DQktYovV4XzU13AzMQWSmm3q6RmuIjprp7B/mXEK4Xm3R
+	XZJ6FLxadJlH0x1QQvyBEpCZVRrgCpPTtJLEOCQqSF07lBqY+Y1W+yAbKCjPFqFdR/IiTC8S53h
+	/XnE5T6dLZo0QVygBqv3T+JuwYhjDf+RRFOSdR658bnyB+hP20UED3YfRq7jDC7eT5N3ZtgVl1w
+	n0a2TH0ZsveT2b+uXLpvfk/rvz2/lkVYCxwLPZC+bosvGUwGYVMnHL/XNrIIaUQLC0TQr3jTOlY
+	iE5kZupVXv6OgBo9CdwM9EhXApHKRqoTnvemMc0rwAznQBy7D7iXYxO8IxcDwNgSbTrKZYUacFg
+	8iDPJiqgaJSn+5zh5FE1FP9NH
+X-Google-Smtp-Source: AGHT+IGemkowJ9DUUuzY2mYnlqSwBPTYFfnUHammCbEHEEG+j0HPGbQknwWy53AHiTbfVkzNhph45A==
+X-Received: by 2002:ac2:51ca:0:b0:560:8b86:75ba with SMTP id 2adb3069b0e04-56261db5e31mr599542e87.52.1757164634145;
+        Sat, 06 Sep 2025 06:17:14 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608ad44f8fsm2312647e87.137.2025.09.06.06.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Sep 2025 06:17:13 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/4] gpu/drm: tegra: add DSI support for Tegra20/Tegra30
+Date: Sat,  6 Sep 2025 16:16:51 +0300
+Message-ID: <20250906131655.239340-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818082722.2952867-1-khtsai@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 04:27:19PM +0800, Kuen-Han Tsai wrote:
-> While the userspace program can be notified of gadget state changes,
-> timing issue can lead to missed transitions when reading the state
-> value.
-> 
-> Introduce a trace event for usb_gadget_set_state to reliably track state
-> transitions.
-> 
-> Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> ---
->  drivers/usb/gadget/udc/core.c  | 1 +
->  drivers/usb/gadget/udc/trace.h | 5 +++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> index d709e24c1fd4..e28fea614496 100644
-> --- a/drivers/usb/gadget/udc/core.c
-> +++ b/drivers/usb/gadget/udc/core.c
-> @@ -1125,6 +1125,7 @@ void usb_gadget_set_state(struct usb_gadget *gadget,
->  {
->  	gadget->state = state;
->  	schedule_work(&gadget->work);
-> +	trace_usb_gadget_set_state(gadget, 0);
+Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+logic and clocks. With a few minor tweaks, existing tegra DSI driver
+should work on Tegra20/Tegra30 devices just fine. Tested on
+Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
 
-Will this show the state the gadget has been set to?  And why not just
-do that in the work callback, as that is when it really happens.
+This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+MIPI calibration logic. Ideally these patches should be picked after
+CSI bringup but they will not break anything even if picked before
+CSI patches.
 
-What is the output of this trace line?
+---
+Changes in v2:
+- removed all MIPI calibration, it is handled within CSI bringup
+- added per-soc structures into of_match
+- added fix for hang caused by register access with uninited hw
+---
 
-thanks,
+Svyatoslav Ryhel (4):
+  clk: tegra20: reparent dsi clock to pll_d_out0
+  gpu/drm: tegra: dsi: move prepare function at the top of encoder
+    enable
+  gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
+  ARM: tegra: adjust DSI nodes for Tegra20/Tegra30
 
-greg k-h
+ arch/arm/boot/dts/nvidia/tegra20.dtsi |   4 ++
+ arch/arm/boot/dts/nvidia/tegra30.dtsi |   8 +++
+ drivers/clk/tegra/clk-tegra20.c       |   6 +-
+ drivers/gpu/drm/tegra/drm.c           |   2 +
+ drivers/gpu/drm/tegra/dsi.c           | 100 ++++++++++++++++----------
+ drivers/gpu/drm/tegra/dsi.h           |  15 ++++
+ 6 files changed, 95 insertions(+), 40 deletions(-)
+
+-- 
+2.48.1
+
 
