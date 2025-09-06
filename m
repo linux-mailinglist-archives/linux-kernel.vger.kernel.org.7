@@ -1,249 +1,188 @@
-Return-Path: <linux-kernel+bounces-804406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC85B4761D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:34:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52482B47622
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 20:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F6CA42166
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABDC16DA81
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 18:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386125E834;
-	Sat,  6 Sep 2025 18:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9C827CCE0;
+	Sat,  6 Sep 2025 18:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="D6bnonCn"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/+m8p6B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EDE27AC41
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 18:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751F194A59
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 18:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757183688; cv=none; b=KsNIXAo347dQGr72yKvxiLiOdoZ1clWToj8ZfzwwAwfGqFa1CYcIZ3QguR/Spp4LPI39f9xO+Q6zb1wOQ3T/6B/AFSEqfsdAtVBTqMPc6meq8q3fk300wsGzGvdrxXssAkajJCQKcbew986jOUz+i19F7Vi+riz/ZkhdbtrD2ZU=
+	t=1757183779; cv=none; b=BLiL+neDK1ewsssVO4AJkQUe4tN1WJQy278QCMPAsk+fVp7HFBRLlDg5yxUQUmzTvbKEWjRvd+qwvwgB0EOs8nZMOI94KfFDG2u0nEh2iNStbomf8/bIwxR8siGsPA/rcZ4O9mX4/yGxLywz8HTQQrzDUaFSOarNsLQSKYfMEWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757183688; c=relaxed/simple;
-	bh=Kkrp4Wv1v/M1RmFI3yiMxghk8W27Ki+YUXdi7Wn8+6s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hn1pJZAcqour2xedE5SYk5skxTDaFgc9IIcZo5s+hr+jZ50VxsQ9oq5mk3ILhCLIt/adMoSqNQiWvhSrW+In4fidFIBINPprLzFTgMMtvBoOVBvapPu/ZCLGosWLdkmQqqthB7RFkp5xIP6pliaKLnQtQKXznXite1dGuNpF7r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=D6bnonCn; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3df3be0e098so1658162f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 11:34:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757183684; x=1757788484; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Qnerf/c2JmfLDaWdwE5/5ZjM5iHDZF/Oj+pWXPinn3Y=;
-        b=D6bnonCns3tQkXf9YWAEBfLZlzrFSTJNavY5C/w5Pjr9eVuTcv8fOQ6+kLn5a+4ZYg
-         O6REoQHaDE0LjIk9aUz3OKWqhnV78mQuw/oiAmarmEEXlTYs+qztIqAMRXnqBbt90iOV
-         BPu5uuKqVIZNNfMt68Oht4bB0y5v3m56g85sZ8u/ihiC8F2+Dav766StrogA88SIsLBY
-         wanow9tXrdEStFOYdnzZ35HPVOL5CyiYJk/PtQc+lCurSYFYAUuH82RpewweRWeUq/Fn
-         uChyp0d8vW5bYHOXonpGl4gHrL+q4o4oNHmqbWJYN7wsSMeZ4SwRcBfr/nZvphtJyZ/m
-         NBmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757183684; x=1757788484;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qnerf/c2JmfLDaWdwE5/5ZjM5iHDZF/Oj+pWXPinn3Y=;
-        b=hwQHBbJQoJEKR0r2HAbwGX78AOoox+BSHUCy6cxz4pvmCJMzisjcS9JPvrd6KQd3jk
-         z8EKpsV+VbdpW8VS6wpKSwPngfwPvP6KwV8n+W0iYmmMTmHXFCEATpsxMQVB+yEYoHaQ
-         t6CttlVQlVIgmFCNENmBswNgNqlb7XYF8hM5zo8z3XpGD2hfeJYgD+//RWBpMoV0QdCh
-         Cajx76nUdbVDmclVwqpeXx1TMvlIA5qUYIJYx2O3wJgMPYWYwKDMaiucrbFpDVASzJ0B
-         UaFlKh2SpuVqqUKOp+E4AIuyMBKWrohswQnV8bQX7a/8emeFiOUFiSGUII+teyoBnZNV
-         HYAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo2RXE7qqtv5Y46D9+8J9TwnLxbOIyBAv4olworGa0QMNllAhtPL/MN5ezrNVFGEEWwsFYpF5ZA+B48AM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfIKITL0szd4VpdwoiVLpEZmZVh6vvIvRefjoPBvQoM0iasz7Q
-	iRlfj7biQf5xvOyyju7hWRlFv3ehsXBpUfFEZB5kFvW9lICk568PQNJn4ETKjTdgDyk=
-X-Gm-Gg: ASbGncsLG6TFsEyWKETYrJcR8mB8cUF3003tMAenFZv5GaptFSr+8stm3Ax1PTTdcbG
-	T/o+DDzygE0ekGzEgIbBeW2sXFxRYGHLH/+wGCApkp8Iabf69SVuWgw6qdRuDgnUAHIaiCEYRFw
-	GMQfUrSI32KZNjLlZJFyGnqCsVddHIAyjGnafmO4tvUfkU87VS6TyPBQcsFWlHMK6pZKAVmF7Ux
-	Wb5yAEVacGsNMHroxtBmcTAPWEeL0lXFg/y/Xl7nYOmmnJPJhzkzB3yrpIptwaC6siVqv941kek
-	C7JkPjUXetwMX/aNUBSWFUdY25ZvVf9cKwtEsETu+kKEG9Bu+Yd3zA7Eo29tFEfzvcru4Fx9K5D
-	ICh6UnaysHxweqS45aBVLX6L8v6DDaP4=
-X-Google-Smtp-Source: AGHT+IGm0fa7QgRHF7b6Hmgbln8RYhjeirstMPYGWUhdpZoD+rT+0Ec/cadTeuSZa533WVVHZ2EoIA==
-X-Received: by 2002:a5d:5f88:0:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3e6440eef4emr1810219f8f.39.1757183684539;
-        Sat, 06 Sep 2025 11:34:44 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3df4fd372c1sm13719925f8f.29.2025.09.06.11.34.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Sep 2025 11:34:44 -0700 (PDT)
-Message-ID: <ad360a5f-6fff-4438-ace1-07632ea48156@tuxon.dev>
-Date: Sat, 6 Sep 2025 21:34:42 +0300
+	s=arc-20240116; t=1757183779; c=relaxed/simple;
+	bh=wRgps96Y5zYf9p1GtqOglnpm8xMdon3sS1hohFn6hzc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=qUlO04eJzRxTodACC8DMdKsiOtK2KYZCAyz+X1ykIOTZ3LLgdVzr5vRxN8llvSIOJB8hsdp4+hXMUYWzVP1pgt+063lEl4HUzfkmMf00Q+7vVmJ+M0agyBj6pLKK0LcOJjrScilPAmRjTnGkchuYdGS3JLPdxyu+bKFQ9fa9XEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/+m8p6B; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757183777; x=1788719777;
+  h=date:from:to:cc:subject:message-id;
+  bh=wRgps96Y5zYf9p1GtqOglnpm8xMdon3sS1hohFn6hzc=;
+  b=Y/+m8p6BFeIvfJV353NzTlUcqikPS2tQdoWU/aArVN0ox17m7lTXjTeo
+   bf81OskMgZTz7lMOuJDAwYhycpPEMFVg84Ii8IbPaXN3e/lXjeBn0INDX
+   Wfq3Zo/eDSsR8Tlzl3ko0ImWqB70R5asyYpnD8L+hwsZnneDfpC9PgQkm
+   971XrIYjp39FC2ktsKLQDEiBv0K41vpHmzqz0Xm13YeTslhGt/8BqvtDs
+   CT/IGJtdcwJFGTZl/fChRzt4qbLHPm3qdyiiSQwdW7Ht1q8B5JPWjydCi
+   cHGv26AFANUFiAvtK8VIYgn//X+wMVM+mvP2/WPSIOiwr9FGGwUH1OD+8
+   A==;
+X-CSE-ConnectionGUID: at5t+ZpRSGWWwYJm1AAuPQ==
+X-CSE-MsgGUID: aHGAxr4ISk+XHjvxBHYhiA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11545"; a="70118145"
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="70118145"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2025 11:36:14 -0700
+X-CSE-ConnectionGUID: BHHwksQgSpWjimGnaHhk9w==
+X-CSE-MsgGUID: MA7rIsViTBuRkDj3LH5oLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,244,1751266800"; 
+   d="scan'208";a="171978901"
+Received: from lkp-server01.sh.intel.com (HELO 114d98da2b6c) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 06 Sep 2025 11:36:14 -0700
+Received: from kbuild by 114d98da2b6c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uuxlj-0001jv-2B;
+	Sat, 06 Sep 2025 18:36:11 +0000
+Date: Sun, 07 Sep 2025 02:35:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ 0ca77f8d33e8136b8926775380506f78a8d04811
+Message-ID: <202509070227.dm9geE6d-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v3 05/32] clk: at91: clk-peripheral: switch to
- clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
-Cc: varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- robh@kernel.org
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
- <657143d460ed5f2f726413385895c0c80ddddef9.1752176711.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <657143d460ed5f2f726413385895c0c80ddddef9.1752176711.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi, Ryan,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: 0ca77f8d33e8136b8926775380506f78a8d04811  Merge branch 'x86/apic' into x86/sev, to resolve conflict
 
-On 7/10/25 23:06, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Use struct clk_parent_data instead of parent_hw for peripheral clocks.
+elapsed time: 2103m
 
-I would prefer a description as provided for other conversions:
+configs tested: 96
+configs skipped: 5
 
-Use struct clk_parent_data instead of struct parent_hw as this leads
-to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-conversion of existing SoC specific clock drivers from parent_names to
-modern clk_parent_data structures.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250905    gcc-11.5.0
+arc                   randconfig-002-20250905    gcc-13.4.0
+arm                               allnoconfig    clang-22
+arm                   randconfig-001-20250905    clang-22
+arm                   randconfig-002-20250905    clang-22
+arm                   randconfig-003-20250905    clang-16
+arm                   randconfig-004-20250905    gcc-14.3.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250905    clang-22
+arm64                 randconfig-002-20250905    clang-17
+arm64                 randconfig-003-20250905    clang-17
+arm64                 randconfig-004-20250905    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250905    gcc-15.1.0
+csky                  randconfig-002-20250905    gcc-13.4.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250905    clang-22
+hexagon               randconfig-002-20250905    clang-22
+i386                             allmodconfig    gcc-13
+i386                              allnoconfig    gcc-13
+i386                             allyesconfig    gcc-13
+i386        buildonly-randconfig-001-20250905    clang-20
+i386        buildonly-randconfig-002-20250905    clang-20
+i386        buildonly-randconfig-003-20250905    clang-20
+i386        buildonly-randconfig-004-20250905    gcc-13
+i386        buildonly-randconfig-005-20250905    clang-20
+i386        buildonly-randconfig-006-20250905    clang-20
+i386                                defconfig    clang-20
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250905    clang-18
+loongarch             randconfig-002-20250905    clang-18
+m68k                              allnoconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                           gcw0_defconfig    clang-22
+mips                           jazz_defconfig    clang-17
+nios2                             allnoconfig    gcc-11.5.0
+nios2                 randconfig-001-20250905    gcc-10.5.0
+nios2                 randconfig-002-20250905    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                    or1ksim_defconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                randconfig-001-20250905    gcc-15.1.0
+parisc                randconfig-002-20250905    gcc-8.5.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                      mgcoge_defconfig    clang-22
+powerpc               randconfig-001-20250905    gcc-8.5.0
+powerpc               randconfig-002-20250905    clang-22
+powerpc               randconfig-003-20250905    gcc-8.5.0
+powerpc                     tqm8548_defconfig    clang-22
+powerpc64             randconfig-001-20250905    clang-22
+powerpc64             randconfig-002-20250905    clang-22
+powerpc64             randconfig-003-20250905    gcc-14.3.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250905    gcc-14.3.0
+riscv                 randconfig-002-20250905    clang-22
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250905    gcc-9.5.0
+s390                  randconfig-002-20250905    clang-22
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250905    gcc-15.1.0
+sh                    randconfig-002-20250905    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20250905    gcc-8.5.0
+sparc                 randconfig-002-20250905    gcc-15.1.0
+sparc64               randconfig-001-20250905    gcc-8.5.0
+sparc64               randconfig-002-20250905    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-13
+um                    randconfig-001-20250905    clang-22
+um                    randconfig-002-20250905    gcc-13
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250905    clang-20
+x86_64      buildonly-randconfig-002-20250905    clang-20
+x86_64      buildonly-randconfig-003-20250905    gcc-13
+x86_64      buildonly-randconfig-004-20250905    clang-20
+x86_64      buildonly-randconfig-005-20250905    clang-20
+x86_64      buildonly-randconfig-006-20250905    gcc-13
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                  audio_kc705_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20250905    gcc-8.5.0
+xtensa                randconfig-002-20250905    gcc-8.5.0
 
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Add SAMA7D65 and SAM9X7 SoCs to the use the
-> structs.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->   drivers/clk/at91/clk-peripheral.c | 16 ++++++++--------
->   drivers/clk/at91/pmc.h            |  4 ++--
->   drivers/clk/at91/sam9x7.c         |  2 +-
->   drivers/clk/at91/sama7d65.c       |  2 +-
->   drivers/clk/at91/sama7g5.c        |  2 +-
->   5 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-> index c173a44c800a..ed97b3c0a66b 100644
-> --- a/drivers/clk/at91/clk-peripheral.c
-> +++ b/drivers/clk/at91/clk-peripheral.c
-> @@ -97,7 +97,7 @@ static const struct clk_ops peripheral_ops = {
->   
->   struct clk_hw * __init
->   at91_clk_register_peripheral(struct regmap *regmap, const char *name,
-> -			     const char *parent_name, struct clk_hw *parent_hw,
-> +			     const char *parent_name, struct clk_parent_data *parent_data,
->   			     u32 id)
->   {
->   	struct clk_peripheral *periph;
-> @@ -105,7 +105,7 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
->   	struct clk_hw *hw;
->   	int ret;
->   
-> -	if (!name || !(parent_name || parent_hw) || id > PERIPHERAL_ID_MAX)
-> +	if (!name || !(parent_name || parent_data) || id > PERIPHERAL_ID_MAX)
->   		return ERR_PTR(-EINVAL);
->   
->   	periph = kzalloc(sizeof(*periph), GFP_KERNEL);
-> @@ -114,8 +114,8 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
->   
->   	init.name = name;
->   	init.ops = &peripheral_ops;
-> -	if (parent_hw)
-> -		init.parent_hws = (const struct clk_hw **)&parent_hw;
-> +	if (parent_data)
-> +		init.parent_data = (const struct clk_parent_data *)parent_data;
->   	else
->   		init.parent_names = &parent_name;
->   	init.num_parents = 1;
-> @@ -448,7 +448,7 @@ struct clk_hw * __init
->   at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
->   				    const struct clk_pcr_layout *layout,
->   				    const char *name, const char *parent_name,
-> -				    struct clk_hw *parent_hw,
-> +				    struct clk_parent_data *parent_data,
->   				    u32 id, const struct clk_range *range,
->   				    int chg_pid, unsigned long flags)
->   {
-> @@ -457,7 +457,7 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
->   	struct clk_hw *hw;
->   	int ret;
->   
-> -	if (!name || !(parent_name || parent_hw))
-> +	if (!name || !(parent_name || parent_data))
->   		return ERR_PTR(-EINVAL);
->   
->   	periph = kzalloc(sizeof(*periph), GFP_KERNEL);
-> @@ -465,8 +465,8 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
->   		return ERR_PTR(-ENOMEM);
->   
->   	init.name = name;
-> -	if (parent_hw)
-> -		init.parent_hws = (const struct clk_hw **)&parent_hw;
-> +	if (parent_data)
-> +		init.parent_data = (const struct clk_parent_data *)parent_data;
->   	else
->   		init.parent_names = &parent_name;
->   	init.num_parents = 1;
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index b43f6652417f..b6f2aca1e1fd 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -226,13 +226,13 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
->   
->   struct clk_hw * __init
->   at91_clk_register_peripheral(struct regmap *regmap, const char *name,
-> -			     const char *parent_name, struct clk_hw *parent_hw,
-> +			     const char *parent_name, struct clk_parent_data *parent_data,
->   			     u32 id);
->   struct clk_hw * __init
->   at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
->   				    const struct clk_pcr_layout *layout,
->   				    const char *name, const char *parent_name,
-> -				    struct clk_hw *parent_hw,
-> +				    struct clk_parent_data *parent_data,
->   				    u32 id, const struct clk_range *range,
->   				    int chg_pid, unsigned long flags);
->   
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index edd5fd3a1fa5..d7dc5f381ebe 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -922,7 +922,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
->   		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
->   							 &sam9x7_pcr_layout,
->   							 sam9x7_periphck[i].n,
-> -							 NULL, sam9x7_pmc->chws[PMC_MCK],
-> +							 NULL, &AT91_CLK_PD_HW(sam9x7_pmc->chws[PMC_MCK]),
->   							 sam9x7_periphck[i].id,
->   							 &range, INT_MIN,
->   							 sam9x7_periphck[i].f);
-> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-> index 17725c175d3b..372e530f4107 100644
-> --- a/drivers/clk/at91/sama7d65.c
-> +++ b/drivers/clk/at91/sama7d65.c
-> @@ -1306,7 +1306,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
->   							 &sama7d65_pcr_layout,
->   							 sama7d65_periphck[i].n,
->   							 NULL,
-> -							 sama7d65_mckx[sama7d65_periphck[i].p].hw,
-> +							 &AT91_CLK_PD_HW(sama7d65_mckx[sama7d65_periphck[i].p].hw),
->   							 sama7d65_periphck[i].id,
->   							 &sama7d65_periphck[i].r,
->   							 sama7d65_periphck[i].chgp ? 0 :
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index 733e4fc6a515..f28fe419ae5e 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -1181,7 +1181,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->   						&sama7g5_pcr_layout,
->   						sama7g5_periphck[i].n,
->   						NULL,
-> -						sama7g5_mckx[sama7g5_periphck[i].p].hw,
-> +						&AT91_CLK_PD_HW(sama7g5_mckx[sama7g5_periphck[i].p].hw),
->   						sama7g5_periphck[i].id,
->   						&sama7g5_periphck[i].r,
->   						sama7g5_periphck[i].chgp ? 0 :
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
