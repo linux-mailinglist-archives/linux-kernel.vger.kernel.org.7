@@ -1,183 +1,112 @@
-Return-Path: <linux-kernel+bounces-804397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E264B475E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED271B475F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 19:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBFE41622AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6535D583927
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730AB2BE7AD;
-	Sat,  6 Sep 2025 17:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F252F0C6B;
+	Sat,  6 Sep 2025 17:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwBY1zmM"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKz9TubJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7181E221264;
-	Sat,  6 Sep 2025 17:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFDA84E07;
+	Sat,  6 Sep 2025 17:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757180119; cv=none; b=EG3WQQh/eB99fDWsQzbafeFUgFpqvuqyGIt63EXYpqDWt5MrU3ABPm52F+jkbF4iaN8o9bpZ991UXV6m8vQKBRFSxmkKHa9E77yv086HJqOI0z964H89/qd7pGC/ZHqR3KKDBHcqWddDNHbhtz1bXFdBMaT3UgPX1r1P7R9VXX0=
+	t=1757180961; cv=none; b=PBXxP7CHgJXsdD50EOsv/nzVqitik3fSbuddpZqtNivIkALZVxqqJ3Ydicz4ut5Hp2+kxHi3KEJxg7zTPWikYY1o9ETfuR4Q2cVzD2ygE1i5ZMotGPHmirXvBZ1VgsP7QDC6+Q9v5mB5+ZiNhJUfD6C+CU94n96dJgIdzrtYZL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757180119; c=relaxed/simple;
-	bh=RU8Bt/rlHmJM3S55eOvRYSiB/XQLgaFrE5yusatrGmo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nSy6SjeTWeHdTY5/wUMMSFuz9ZiQAX8aliRPlkfLvapNQm42i73XkN6R3OJRbxEyaEYrziiTDU3Kf0mMY5wcTMeoOZUQx4ii7Z4wmyOg78fryKRV7fLUDymaEdIU5e58Qxxc0yckW8vxwHD+5fTvUyg9o25fypEutHfaTSD59vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwBY1zmM; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32b863ed6b6so2513604a91.2;
-        Sat, 06 Sep 2025 10:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757180118; x=1757784918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZS2trNMG7XChbOGA2TYJNbZdcXZfxnFPyfuldcejaY=;
-        b=MwBY1zmM/g0HaG0RxrZq4Q44EIo2OeR7M2bHu3vr3gHeap4S3YJbSPwFB9oW21g2mt
-         bnHGn1VXflFynPXf07q9GRNXpyD+NleJ7piw3xRIUJv3OaQkHoF+n0rETEwIhE5z1Zti
-         ucPoP1S0w+pC5TTvURGVRFe52Et4o5QVG+imr0VjJLBnzO/zfDpCP3sUxUUrdk8S9SZS
-         bOIjfJ9RRyGdNN4VxSP7dfyd9FDBPIk0GEN317SzweHJQeR+2k9aawpz6GpjeVO8flfI
-         i9UuMB3Y9B+3G0uGAF/p621i+uRKUGsKqVapWYKHjxx6LzNRhR2wEkk2dZ7ZY5NFAiPx
-         nCTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757180118; x=1757784918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZS2trNMG7XChbOGA2TYJNbZdcXZfxnFPyfuldcejaY=;
-        b=OQmfNziZOaT5qiO8t5aIu07E2g04r1IBk/t2OrplQeSskFUwWkTaxmiBf2cKQyViKZ
-         ARncXizRJ8ZkbMIYcmSZE8ZJDsxLAXl7bZlAv/DA30N0fcs7B00CAb/ugbVAT7EVU6xE
-         A0bJ7zNUkqwv5yikpmZIK9A+qw0m/IzemxsflR/7JlaQkK3dtmA4IFwQBk32GiREzV6X
-         1/NBx/0ukUGAfJtNEkDyJfWvGS4CSjEhS7614NexJ9sedD2oNIE6MU3s2htbwxx03FQZ
-         iYSUgVHcQkt7lxHgUcFnudrqFWavVj8SB7OFZXGsiRU1MPeSsSAVWr9hRNucfTGNMT1r
-         /U8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wZFE2uHFrDLH04jMlsf9W7vfDXlxVhJ7kAsiQiB47p3CUqwBVuG/ewhVPFmzrtz68GDpECAXKi6kat0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFxzdfuLuWGjRkIjm4M/IBl3Dw2txR1bsQUzi5GvtCT4dtCynZ
-	ZQ5wF7f8SI1epmuUTEZ3bd1ZDoUyXPvoJoGlJEtHjwKrufh+9ROlop7NIQs71S35yaeXs5RYsAu
-	UgHm8opVXo3RwyHitTn6XHmv35+UE5fO0DSo/
-X-Gm-Gg: ASbGncuP8OZ9iXq5TKxDP6PRoUBISyw7oje0C6OyZk0ByHozn0OEURO271umOp4GEOS
-	xwK5dIT6jfq+RXLmXBK2Nh2Ywxmr7zfCRc9DvE+zF/FUTWAbezbmJNp/yxNsK/RrzAN/82O7/em
-	HNgO5BL+Q1Gi9ECo8ibCsLmmxzlmd/Lb5hZOiVchrL+YPQxykMnwyz5PYGxJ2vzFbJEYMktFNS7
-	pUmJyw66iVn97k=
-X-Google-Smtp-Source: AGHT+IEHKLHgXsvfLI8Fh4S3sa4UJkf0B3fvUzZJmAsTnAZpNhuGDBnHX4ZGCiCM8xi6LqgUAt/vwjo3QS3IPWarLSk=
-X-Received: by 2002:a17:90b:4c0c:b0:32b:958a:51d4 with SMTP id
- 98e67ed59e1d1-32d43f98fa1mr3371761a91.28.1757180117583; Sat, 06 Sep 2025
- 10:35:17 -0700 (PDT)
+	s=arc-20240116; t=1757180961; c=relaxed/simple;
+	bh=83wRe5Lt+eBDQM0fzG8eoc8FaWDaq9vHLIisNMS4MP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pTVClkCqXsixXXjg6EsAkJN/F2F/HLCqgRXf1PvArAmaW4KA5MTIw38NHxrzT/lZ5Dwk9IMZk4FzS4MLOH+bcdKOjuvxrPyTnTY0uBM0sT4CW28S6xPOwaHgM4oRnkL/bverfL9U7RNTfRL4J8BcgKAM4rtULkUVPCQV0rLnehw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKz9TubJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD33C4CEE7;
+	Sat,  6 Sep 2025 17:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757180960;
+	bh=83wRe5Lt+eBDQM0fzG8eoc8FaWDaq9vHLIisNMS4MP0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dKz9TubJ434H6+8ZBLDWbc7rKTItogRbcJ2eQLlkqOERJ4SnZuUOiBgxGyg8hVgMc
+	 RwP0uZVC2WQLE2X7fgJR/4CH0EM65dzsapj06qjfvwqfmYvDfTdsTvujiI1EA29O1M
+	 Vhr3oknr52KELbv1T2P6BSEDn8U5Fp2y8csQePx1ifaEOo8ZpBy0MN2CK2ykGgRGCz
+	 iiJx5MZmnpr+ang1JLjPFHe3Qzu9TdQ0WDBeQOeMuzNsyrPTNNTf6t0hF9gHCUi/wq
+	 XPQrvWG0vlIQB7saz1yHS6fo6a/DwTttDQkKVqU2hys2FgfG9FPHr65QyuoUTVraxo
+	 sMXgoMgaWwtDw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust fixes for 6.17 (2nd)
+Date: Sat,  6 Sep 2025 19:49:01 +0200
+Message-ID: <20250906174901.1244166-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1756428230-3599-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
-In-Reply-To: <1756428230-3599-5-git-send-email-nunodasneves@linux.microsoft.com>
-From: Tianyu Lan <ltykernel@gmail.com>
-Date: Sun, 7 Sep 2025 01:34:56 +0800
-X-Gm-Features: AS18NWCEm0DjaUBPwLug4DGhtdCumLyQfXai0Yi1JJSgPUqLCDdhj8aER26I2Xw
-Message-ID: <CAMvTesD0hOxh5NpqqELkWeKmwfZ0dSdiYSvXKFg4K50e0KtkOg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] mshv: Get the vmm capabilities offered by the hypervisor
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
-	mhklinux@outlook.com, decui@microsoft.com, paekkaladevi@linux.microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 8:44=E2=80=AFAM Nuno Das Neves
-<nunodasneves@linux.microsoft.com> wrote:
->
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->
-> Some newer hypervisor APIs are gated by feature bits in the so-called
-> "vmm capabilities" partition property. Store the capabilities on
-> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
->
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.micros=
-oft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
+Hi Linus,
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Please pull these two changes to prepare for the future Rust 1.91.0.
 
->  drivers/hv/mshv_root.h      |  1 +
->  drivers/hv/mshv_root_main.c | 28 ++++++++++++++++++++++++++++
->  2 files changed, 29 insertions(+)
->
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index 4aeb03bea6b6..0cb1e2589fe1 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -178,6 +178,7 @@ struct mshv_root {
->         struct hv_synic_pages __percpu *synic_pages;
->         spinlock_t pt_ht_lock;
->         DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
-> +       struct hv_partition_property_vmm_capabilities vmm_caps;
->  };
->
->  /*
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index 56ababab57ce..29f61ecc9771 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -2327,6 +2327,28 @@ static int __init mshv_root_partition_init(struct =
-device *dev)
->         return err;
->  }
->
-> +static int mshv_init_vmm_caps(struct device *dev)
-> +{
-> +       int ret;
-> +
-> +       memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
-> +       ret =3D hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
-> +                                               HV_PARTITION_PROPERTY_VMM=
-_CAPABILITIES,
-> +                                               0, &mshv_root.vmm_caps,
-> +                                               sizeof(mshv_root.vmm_caps=
-));
-> +
-> +       /*
-> +        * HV_PARTITION_PROPERTY_VMM_CAPABILITIES is not supported in
-> +        * older hyperv. Ignore the -EIO error code.
-> +        */
-> +       if (ret && ret !=3D -EIO)
-> +               return ret;
-> +
-> +       dev_dbg(dev, "vmm_caps=3D0x%llx\n", mshv_root.vmm_caps.as_uint64[=
-0]);
-> +
-> +       return 0;
-> +}
-> +
->  static int __init mshv_parent_partition_init(void)
->  {
->         int ret;
-> @@ -2377,6 +2399,12 @@ static int __init mshv_parent_partition_init(void)
->         if (ret)
->                 goto remove_cpu_state;
->
-> +       ret =3D mshv_init_vmm_caps(dev);
-> +       if (ret) {
-> +               dev_err(dev, "Failed to get VMM capabilities\n");
-> +               goto exit_partition;
-> +       }
-> +
->         ret =3D mshv_irqfd_wq_init();
->         if (ret)
->                 goto exit_partition;
-> --
-> 2.34.1
->
->
+All commits have been in linux-next during this week.
 
+No conflicts expected.
 
---=20
-Thanks
-Tianyu Lan
+Thanks!
+
+Cheers,
+Miguel
+
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.17-2
+
+for you to fetch changes up to 8851e27d2cb947ea8bbbe8e812068f7bf5cbd00b:
+
+  rust: support Rust >= 1.91.0 target spec (2025-08-31 23:34:34 +0200)
+
+----------------------------------------------------------------
+Rust fixes for v6.17 (2nd)
+
+Toolchain and infrastructure:
+
+ - Two changes to prepare for the future Rust 1.91.0 release (expected
+   2025-10-30, currently in nightly): a target specification format
+   change and a renamed, soon-to-be-stabilized 'core' function.
+
+----------------------------------------------------------------
+Alice Ryhl (1):
+      rust: use the new name Location::file_as_c_str() in Rust >= 1.91.0
+
+Miguel Ojeda (1):
+      rust: support Rust >= 1.91.0 target spec
+
+ init/Kconfig                    |  3 +++
+ rust/kernel/lib.rs              | 15 ++++++++++-----
+ scripts/generate_rust_target.rs | 12 ++++++++++--
+ 3 files changed, 23 insertions(+), 7 deletions(-)
 
