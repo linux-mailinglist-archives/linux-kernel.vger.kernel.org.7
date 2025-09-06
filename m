@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-804221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710A9B46D19
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F04B46D1F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59846189A16D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EDA3A9AA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4E02EB85A;
-	Sat,  6 Sep 2025 12:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCC22ED87C;
+	Sat,  6 Sep 2025 12:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HgAXVKHZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="XkpDbGiO"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CF284684
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0490B27FD48;
+	Sat,  6 Sep 2025 12:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757163419; cv=none; b=u0P+8QtaiKxo1VPINXZb29JvbyY23ghUrLZIEss+ciwRVIcUcroHykfUocpuCUQZxvwHbfP5w0L9iARzSlSC38B/JNaj0Z9bE3Lzk3LplMCpPzS7gZm5nEJBCRm7wnnBhlCF2dd52skAgONC4wXI2116iothSkM+02vSu/6Ckgo=
+	t=1757163480; cv=none; b=NJoiexpI0mt2vnZCvmw+O/ta/0fOTHL7A7YN7BOBzKyxOHhaDW5OXBwrgIGLvb/R4yYswyvuBs5S8i/+mWuHvp9ndxOH1ULe1ZTzcjkgti+r6FXIGNJ+MPKHGoXg7oAKlMI4ksD3v7KVNNDhe38NwTq1vemEx+Mmhyf1LI70fRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757163419; c=relaxed/simple;
-	bh=2+CbUHoB1zKzsjwROR9vhcpkdWtjxfGZ7lHc4QKUz2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OkApFlOvcTcw0Z2jQpmSrm0pwk9kYTFPz9w0r/xWWAbH53sn8MCMDYcusaDGWp5TBlGHU9OhB27WEztfa1g609NTNhp00OCaoEIwCGPmuVYX6YJo+h4BIRUbpqbXCAkllRJiPHQcYhgS5bsMZDA4Vi4DWAokzEZL1GBFVpb9zCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HgAXVKHZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B58C19424
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 12:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757163419;
-	bh=2+CbUHoB1zKzsjwROR9vhcpkdWtjxfGZ7lHc4QKUz2A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HgAXVKHZI2uQF5R5wdjGujNMhMGfRg2iGUWbfmM+FkTMVXbRJ4vsjRJ94XBuNJJzt
-	 jaZvmDbb9OAQxcLsrG+19FSXf+gAtVQzrc0+qUYDwew78EtlHNOXmLSeFQHHZLdfI+
-	 8PLrGgzZ0xibG6Zni2Xg4XgIOUTUdBdd4pgcHHRlV1GAcM5ZMW5OWDexMTvFtIHemX
-	 BdGPz0/MstRjr5mJFnOPBvH1CYURfKIBxbvSCindkzzGouVNxg54TiNaUEPF6ZzPBr
-	 LDAeFbRK+qQeQhY5Qa48ss9xtl6jlY7cP5uDMnhxCeygScKUeYDeF2j33g5ZYTWP4D
-	 IEXJfJDAovdSA==
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dd9d72f61so48215e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 05:56:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVfohni/aVoQ+G9/SPoPPqSq6dP4ZHHGVrCf3rwIBsumb7HcxnXVEQcomcyRwEdjbTlegSMwmqPKE9Wji0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW/I3bWAdoGxEG7HruE3dqAMfnAGN6fJoJlQRPb4qazTQtj0ez
-	c0l4YGFnNK5ANd/s7RhaYZIzli4Jt/lhA7lhKigui8NnBH8SOLL8agjqIa4s6f9LG9+STJ62aah
-	1yy+2URd3UQZ9VDPqBJ3WG6/6a++pIq4hWay1QSJu
-X-Google-Smtp-Source: AGHT+IEfNnKp45M5qcJUuL7/qRCjDosf5G04QAshQBHa3kDT57AM/PVPd+iJmcobbRI9DLXVVHkKzrE+E8Z9vBogcHs=
-X-Received: by 2002:a05:600c:4f50:b0:458:92d5:3070 with SMTP id
- 5b1f17b1804b1-45dddad796amr1216725e9.6.1757163417539; Sat, 06 Sep 2025
- 05:56:57 -0700 (PDT)
+	s=arc-20240116; t=1757163480; c=relaxed/simple;
+	bh=CRBvtOSYXzdy6nOSB7JyFY0zI0ccnfFCwTfe18suORA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=WSdb+HrtbQ7Eik53sK9gq2ar3j8TL6OMN1yLxKHM/Ou/qe5/G4/NRloc7nj6mzrbHsWjrgJRRNKijy4rfU+igQA1VLvyVDjU21t/nGxjjAXVMvPzexTdPNFReoCmSSQpY5o9xycFoKucSIHF0ijxPfeFXlBYV26K6C7p7/cICe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=XkpDbGiO; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330> <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330> <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330> <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330> <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
- <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330> <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
- <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330> <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
-In-Reply-To: <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Sat, 6 Sep 2025 05:56:46 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNW2kmxKYRE9t8WvSOad9JkLYt0WSAcFOQ9r9=2=XGc9Q@mail.gmail.com>
-X-Gm-Features: AS18NWCEh99GxS8T81OQ6NK4C2x78uuoL8QD9vp2Gdy4X-qQSM3YgnmgvY2sedw
-Message-ID: <CAF8kJuNW2kmxKYRE9t8WvSOad9JkLYt0WSAcFOQ9r9=2=XGc9Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
-	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
-	Wei Xu <weixugc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1757163476;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gBvknfRADrFTmcYESe6FCG/DDohCJeCBYoa6CBvKIBU=;
+	b=XkpDbGiOFHdQgB47WOPXPYIS3DTQy0c5jxkWEfob9EfgzYFSNRP9rSKd1v0AIi9ihAVPdx
+	aZjIX4ENRCw9Qb+7f9vDATzWkRvOPjT3RqdIZ9/LYiXqGBX7fl5d4aBQh7ANwssBHKcWkL
+	DzZQR3TYyHg0/PgBKf6mgXezWu2W4fPkYZlKZwbecZGYkWZEBi/NMhE8lcE1KAMN0f2M7W
+	DK8rTMFX8t0t3ZfY44BlmrlUwtBULe4ON2qDeWalDoKKQj4Hh1Lz2oshs8X0s1jEzHIyZA
+	KoMUppZZvNgrdQw9KCVfaqmHItrj6uqcIyPIBCSlTjgStWa0lLx0cKVZGml6kQ==
+Date: Sat, 06 Sep 2025 14:57:55 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Diederik de Haas <didi.debian@cknow.org>,
+ linux-rockchip@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Make RK3588 GPU OPP table naming
+ uniform
+In-Reply-To: <3169011.CbtlEUcBR6@diego>
+References: <355c16ab070688fc6285e0d4419eb54a3f699eee.1757152740.git.dsimic@manjaro.org>
+ <DCLOTR9Y380M.22GZYL11XXZM2@cknow.org>
+ <47cf50f2f497108a923815c12b1f8c9b@manjaro.org> <3169011.CbtlEUcBR6@diego>
+Message-ID: <f34b6fad7768dd88b40284fa330af4f2@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, Sep 5, 2025 at 4:45=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
-> >   - Mask computation: precompute at interface write-time vs runtime
-> >     recomputation. (TBD; preference?)
->
-> Let's start with runtime. We can have a runtime and cached with
-> generation numbers on the toplevel. Any change will reset the top
-> level general number then the next lookup will drop the cache value
-> and re-evaluate.
+Hello Heiko,
 
-Scratch that cache value idea. I found the run time evaluation can be
-very simple and elegant.
-Each memcg just needs to store the tier onoff value for the local
-swap.tiers operation. Also a mask to indicate which of those tiers
-present.
-e.g. bits 0-1: default, on bit 0 and off bit 1
-       bits 2-3: zswap, on bit 2 and off bit3
-       bits 4-6: first custom tier
-       ...
+On 2025-09-06 14:21, Heiko Stübner wrote:
+> Am Samstag, 6. September 2025, 14:10:22 Mitteleuropäische Sommerzeit
+> schrieb Dragan Simic:
+>> On 2025-09-06 13:40, Diederik de Haas wrote:
+>> > On Sat Sep 6, 2025 at 12:01 PM CEST, Dragan Simic wrote:
+>> >> Unify the naming of the existing GPU OPP table nodes found in the
+>> >> RK3588
+>> >> and RK3588J SoC dtsi files with the other SoC's GPU OPP nodes,
+>> >> following
+>> >> the more "modern" node naming scheme.
+>> >
+>> > Like we discussed in private (without an agreement), I think it would
+>> > be
+>> > beneficial if the (gpu) opp naming would be made consistent across SoC
+>> > series as right now there are several different naming schemes applied.
+>> > They're all valid, but inconsistent. And if consistency is improved,
+>> > which I like, then let's go 'all the way'?
+>> 
+>> As we discussed it already in private, I fully agree about performing
+>> the "opp-table-X => opp-table-{clusterX,gpu}" naming cleanup
+>> consistently
+>> for all Rockchip SoCs, but I'm afraid it would be seen as an 
+>> unnecessary
+>> "code churn" at this point, especially because my upcoming Rockchip 
+>> SoC
+>> binning patch series is a good candidate for such a cleanup.
+>> 
+>> On top of that, I'd be a bit weary about performing at least some of 
+>> the
+>> testing associated with such a platform-wide cleanup, despite actually
+>> performing no functional changes and being a safe change.  On the 
+>> other
+>> hand, "bundling" such a cleanup with the Rockchip SoC binning patches
+>> would get us detailed testing for free, so to speak.
+>> 
+>> Of course, if the maintainers see this as a good opportunity to 
+>> perform
+>> a platform-wide cleanup at this point, instead of seeing it as a "code
+>> churn", I'll still be happy to extend this small patch into a 
+>> platform-
+>> wide naming cleanup of the "opp-table-X" nodes.  On the other hand, if
+>> this patch remains as-is, it may hit a good balance between resolving
+>> the currently present naming ambiguity and the amount of introduced
+>> changes.
+> 
+> Personally I'm always for the "we strive to get there eventually" 
+> thing.
+> If there is an established goal to reach, steps can be incremental :-) 
+> .
+> 
+> And also short and scope-limited patches are easier to review anyway.
 
-The evaluation of the current tier "memcg" to the parent with the
-default tier shortcut can be:
-
-        onoff =3D memcg->tiers_onoff;
-        mask =3D memcg->tiers_mask;
-
-        for (p =3D memcg->parent; p && !has_default(onoff); p =3D p->parent=
-) {
-                merge =3D mask | p->tiers_mask;
-                new =3D merge ^ mask;
-                onoff |=3D p->tiers_onoff & new;
-                mask =3D merge;
-        }
-        if (onoff & DEFAULT_OFF) {
-                // default off, look for the on tiers to turn on
-        } else {
-                // default on, look for the off tiers to turn off
-        }
-
-It is an all bit operation that does not need caching at all. This can
-take advantage of the short cut of the default tier. If the default
-tier overwrite exists, no need to search the parent further.
-
-Chris
+I see.  After thinking a bit more about it, I'll turn this patch into
+a small series, in which this patch becomes the 1/2, and the 2/2 is
+a new, larger patch that extends the "opp-table-X" naming cleanup to
+the entire platform.  That way, the 1/2 kind of fixes something, while
+the 2/2 performs a cleanup, which may be helpful in the unlikely case
+that some regression is found down the road.
 
