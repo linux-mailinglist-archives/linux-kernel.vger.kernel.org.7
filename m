@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-804188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD58B46C2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:01:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87470B46C30
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4272C1C22610
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:02:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCD8A4E000F
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 12:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3252284684;
-	Sat,  6 Sep 2025 12:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D2C284684;
+	Sat,  6 Sep 2025 12:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kfjdZ+e3"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MbG58StW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28940BA4A;
-	Sat,  6 Sep 2025 12:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1776BA4A;
+	Sat,  6 Sep 2025 12:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757160109; cv=none; b=DikMr3N8ta6WVDeyD1iETD/7YkbTsgbiaUvpysmP6qfnCQpB3gzcbX9D9eH2+gC0rL6xrVQNlPUEpQVcJrplvmAGFnOyFtu+idHLx7JZ/AR4jyjoZOskCiKI2TWnT5vY6S6UD9uyRmXR0fP27G05XXftoB3021PcngBY+dMSwmk=
+	t=1757160232; cv=none; b=srFD4EjMkDMQ9WMd+pGg5uzhcVAQTzJ0EvPDnb/kZViMFYTS1Djh0Kkqo9StSvw9ur5UuR2eTFJoGQMzUxO+ZSIwCnGD7jXGfho1jvefNW2WJIiW+7ZhpuQ2DdK5SnOeRnMIWt47ynb5vWAQYO0PZg/5EEqchy9ukH6ffZ6qNX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757160109; c=relaxed/simple;
-	bh=4vRYrjH6J57tMx0VKrL3uOfNTnqiUf0AD8pUHQvVjV0=;
+	s=arc-20240116; t=1757160232; c=relaxed/simple;
+	bh=yYQTV6D3GGpRrEu0sZMiFOUTFVX0nYAZY2Hlbea5Ht0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiLX/tMZEDvpBb6cOBhHIW8lQ+KCs60aRkWcxoKiq7e/g1jKTY8e6ujrJH12nkW/GDHIhQqxWiKF3u8TDFW/KN6NMi7uSvmHE0v3eRuBFI3R+kG/C7RbKUAb7N6ITiNVOrPQUjeNe2MqMEXOeYbtNoT5Xra8fTziKvXEItBI0cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kfjdZ+e3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EA7C4CEE7;
-	Sat,  6 Sep 2025 12:01:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj+cZMpoPcHdPYy/dCQ0o8p6uLQffliDEf3CxvQRHJ+aUpmrrJWchnKBOwwO1PYtnvLzq+OJYwSvpZWPTwk9J5JUlJK03l5/MJPRyCqmIFOjX0MBCGBL2wKqljgPBtq8h025NKOkjNUBxl56U/f4WmJggH9YSDd+b61niOq2Uwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MbG58StW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F21C4CEE7;
+	Sat,  6 Sep 2025 12:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757160108;
-	bh=4vRYrjH6J57tMx0VKrL3uOfNTnqiUf0AD8pUHQvVjV0=;
+	s=korg; t=1757160231;
+	bh=yYQTV6D3GGpRrEu0sZMiFOUTFVX0nYAZY2Hlbea5Ht0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfjdZ+e3739FJLKfOOOLw+URQPmA7443jKMeYPYXmWE+iXqMs27s3yyLU/PW+eYdL
-	 vE5OaWYNTS2olHvV+EvPErpBgI/XwzLhClCYiP+nlyhB1N4YOLNHandKco3xB9aaY0
-	 1jzlQwK1SaSk8XCk9tTgWtMNk17aXBHroMzeZ5TE=
-Date: Sat, 6 Sep 2025 14:01:46 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH v1 0/2] PM: core: Updates related to device link lists
-Message-ID: <2025090641-reveal-swab-6e2b@gregkh>
-References: <6202205.lOV4Wx5bFT@rafael.j.wysocki>
+	b=MbG58StWpwFaWjc+a6xkmrMPnXlLaKhL2mCgu0zw2K8DTuS/5zFoYycxPNGTbr/co
+	 lYBD4R+S5Xc72ndACipmOt8UizDp4Tf8WRDHYBkdtUEd8WsJzVN6DYwXYdiFtErvs4
+	 pWk9SEo3yuLs2xQEVnxGzntx9rwLYAO2+3fij9dM=
+Date: Sat, 6 Sep 2025 14:03:48 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Chenghai Huang <huangchenghai2@huawei.com>, wangzhou1@hisilicon.com,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	linux-crypto@vger.kernel.org, fanghao11@huawei.com,
+	shenyang39@huawei.com, qianweili@huawei.com,
+	linwenkai6@hisilicon.com, liulongfang@huawei.com
+Subject: Re: [PATCH 3/4] uacce: implement mremap in uacce_vm_ops to return
+ -EPERM
+Message-ID: <2025090608-afloat-grumbling-e729@gregkh>
+References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
+ <20250822103904.3776304-4-huangchenghai2@huawei.com>
+ <2025082208-coauthor-pagan-e72c@gregkh>
+ <CABQgh9GEZSasZq5bDthQrTZnJ_Uo8G-swDsrM_gWCecWbtTKgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,28 +60,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6202205.lOV4Wx5bFT@rafael.j.wysocki>
+In-Reply-To: <CABQgh9GEZSasZq5bDthQrTZnJ_Uo8G-swDsrM_gWCecWbtTKgA@mail.gmail.com>
 
-On Tue, Sep 02, 2025 at 03:40:54PM +0200, Rafael J. Wysocki wrote:
-> Hi All,
+On Thu, Aug 28, 2025 at 01:59:48PM +0800, Zhangfei Gao wrote:
+> Hi, Greg
 > 
-> The changes in this series clean up the usage of _rcu list walks for
-> walking lists of a device's links to suppliers and consumers.
+> On Fri, 22 Aug 2025 at 19:46, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Aug 22, 2025 at 06:39:03PM +0800, Chenghai Huang wrote:
+> > > From: Yang Shen <shenyang39@huawei.com>
+> > >
+> > > The current uacce_vm_ops does not support the mremap operation of
+> > > vm_operations_struct. Implement .mremap to return -EPERM to remind
+> > > users
+> >
+> > Why is this needed?  If mremap is not set, what is the value returned?
 > 
-> The first patch changes the _rcu annotation of those list walks to
-> the _srcu one which is more appropriate because SRCU is used for
-> device link lists protection.
+> Did some debug locally.
 > 
-> The second patch (which is not expected to make any functional difference)
-> adds two macros for walking lists of a device's links to suppliers and
-> consumers and updates power management code walking those lists to use
-> the new macros for more clarity and protection against possible coding
-> mistakes.
+> By default, mremap is permitted.
 > 
-> Thanks!
+> With mremap, the original vma is released,
+> The vma_close is called and free resources, including q->qfr.
 > 
+> However, vma->vm_private_data (q) is copied to the new vma.
+> When the new vma is closed, vma_close will get q and q->qft=0.
 > 
+> So disable mremap here looks safer.
 > 
+> >
+> > And why is -EPERM the correct value to return here?  That's not what the
+> > man pages say is valid :(
+> 
+> if disable mremap, -1 is returned as MAP_FAILED.
+> The errno is decided by the return value, -EPERM (-1) or -EINVAL (-22).
+> man mremap only lists -EINVAL.
+> 
+> However, here the driver wants to disable mremap, looks -EPERM is more suitable.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Disabling mremap is not a permission issue, it's more of an invalid
+call?  I don't know, what do other drivers do?
+
+thanks,
+
+greg k-h
 
