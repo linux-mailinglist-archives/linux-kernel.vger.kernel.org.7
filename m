@@ -1,148 +1,165 @@
-Return-Path: <linux-kernel+bounces-804292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC459B47076
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E15B47078
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 16:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CD97C1910
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED5D7C18A1
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 14:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583C81F2B8D;
-	Sat,  6 Sep 2025 14:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED4D1EEA5D;
+	Sat,  6 Sep 2025 14:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdP/uN+w"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sAg20UTU"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468E4366;
-	Sat,  6 Sep 2025 14:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8809F366
+	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 14:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757169362; cv=none; b=EUZ478icgDLcedt0vYQrA6molMXjXec+fahI3LnvRkNXq3kSStUX41BRW3Qq0AlB7aBUD+ikdGNElwImryreLFdI6A68GYw91SaDGJ0/zTZQ96g7feB0YsLDLDbTAuRTALwUf9B3Qk0KF0FgkFV3X8oGaWYVFyLm57Svcg+FWtw=
+	t=1757169415; cv=none; b=QgFHE8ArvPgMjf+qHVXrspbDf/jrrrKyYckO3NbMSb9D3mE0OyWwaWDhRAVfVv+vD6C1BbQK3PgOVg4qqSn6IaKqRGwWFV1Aw2+g69ch38sKBx48c7BMu2U2jnwau/m6G9beYWd7KvGcdtyQVE+9b94cBEY+Zj3oAVjx4DsU8fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757169362; c=relaxed/simple;
-	bh=abhzJbQ6qYX7uXiJ2gfTUsrxYVWh8CcV04vHvTkfWmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1e2ot4n6c6hf2lPEsQvu23yslh6hR0SoUr0us3L0mKSXUq/aN3o2R/fhYkO/wIDLj8NohCA2GD9aQ8p2vOS488BQTEc8CH6MMB5p6VsJnqo1m3BSiCJ7JZccRwXIi7DxFHcCR+vrMCB802hiMe4frq1uoTw4Nm2YRE3Om+3smQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdP/uN+w; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6071dbcf3fcso142102d50.0;
-        Sat, 06 Sep 2025 07:36:00 -0700 (PDT)
+	s=arc-20240116; t=1757169415; c=relaxed/simple;
+	bh=T8hVLPv8a66ZfYKBxurm9B5KXEyOyaNJFkaLgFFNY2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTeuZ8DEbuCCrxzQ2zdvzKWMnEsZzaR7F3rFQSK2q72TLG3jboBLadiSkzzJ7BBEDJ39udzFvku4L2nW2WRtPer2yHr6I+vz1wghDx4aHKgLRVCfArg6L9EOGJvE8CZxFrhWS1OIFtDWXLUtbYcX4/UzqYQOf9d5w0YxTgr3DVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sAg20UTU; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30ccea94438so2489291fac.2
+        for <linux-kernel@vger.kernel.org>; Sat, 06 Sep 2025 07:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757169360; x=1757774160; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Egkm1U5iXlvfaFNf/qCSah5l26lLoj1n/U9N9etCIiM=;
-        b=DdP/uN+wnoO4J2yXxh6TSlWhjLt8i9Km6ubQOlu01bBRPdvhkZ1domX5YYkoDkm5Ph
-         CPumCtj9i+P9tSiztT2qW/fwzm7x7oLXnerAz6Ntli+RVN7aBaYRUZTrcGi/8ryBPyEZ
-         NxzLU3rqBE42QAAcxYO0mV1NpvCKbJ4C0c6dsAJ+XTRZicnV5eT+dZ3T9oq2ETPOJCOx
-         kblWv0Fh70vutv7fVcbIz7er4kPO+FaphsLG5nnWfzr36guEBzqUD9tKeSifBJ9bqtoS
-         WLM+TLdXSyh4eBB7ytj5GVxqigNF4qjEExJiXdZRDCXgKaIrXMSA4U6J22hQ+0btmNid
-         Hsxw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757169411; x=1757774211; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XtLElYfVHsBdUbwIob7VFK2chyf/oqDL2uLl4gsB7/E=;
+        b=sAg20UTU/F3awxm8TimBGd336vl83IMRLxZF6lYQ4Q86/jK+ZUiw+1Pe0bPidGdrSz
+         5rmYDmkWP/VMrkz29E9F3sf1GlOCm6sckuC4CGWTR9nQC4kXg2mXyVI/WGNOh+xLJf5N
+         qk7krAfOqbYEZBDYnyeMsXNXX1njFHwOyBzARFDoN8Ib/tWUw5dNV6iiK++dAVKlrRPb
+         WcnYpMkM1LfVJkqSfvI8uENACJ2Qi7aB19y8jJ1v6cmP7yu3opPS78/xWQHbUYgoDoWE
+         k3pTG8qHuLzl9Y6sW0kYMKt9fXCE1uiqmRGHsY83gTJgK059W1EJbpsY5PTGHl23X6FS
+         GwSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757169360; x=1757774160;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Egkm1U5iXlvfaFNf/qCSah5l26lLoj1n/U9N9etCIiM=;
-        b=HkXJVpN0TI7V74QD+STiPcvALCsZg/7IN9JDXLmzCbIJ8VV3eNK7NX419rPo4hOf1v
-         J5kbX0w2hBMgBVUaDMnPMGoK+I4FZ66TUsZTrjVy/AYunyA8kFcxhkhcauOw2OhJeDT9
-         7ON0n2Drgxx1aAbS3c71iO4pNhXn1gwMLofZu/HhFy1JzvMKHiykj3UBp9j3EE9BrQO9
-         nH81l/R3V5TKgfW7sU/fp2asptel54WLcrgNp/9tkD6FKLN3W5RmTI7p1uUbbSQPj2nY
-         6eMVw9J772CcZmkXgaKBY2FXEhCaCBWwR86VIztF5LIYREzRP1y7Oq0U6yLT/2mqOgo1
-         xZoA==
-X-Forwarded-Encrypted: i=1; AJvYcCU66ahED884Tjn+LEQpLYSI5muHQDho2nfJvJM+uloQtQOiI3vvj7SFV6veHd1j+z4Z3O0+388bPSh8CL4F1yiC2Q==@vger.kernel.org, AJvYcCV/jC09W76MUG6n6LP69ptbfrKM+vGU6TkuRNM7D/J/bJB4Uo7Xzy3KydG9pSi6jIm9PGM=@vger.kernel.org, AJvYcCWK3YlFMtjWpfOeYAjJ2FCtjGFChzM1U/+ExvYOjZp1ZsRfbmm6cRvba5iU/4w1iiHI2tI2tP7RQ7u+cnCz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGsz4YJzpQZq1Fv+CqMCTh7kEt9fTD7swb4g5T0DTw9Y5c0BFt
-	O5fm1SNm8YEx4t90lFm26rUXzliumNGZYmVLwO5kHOWF9OOHzBtOi9fe
-X-Gm-Gg: ASbGncuOZBrR6atxaDlleYoz74Jxy2pFwq1JxtfNH2q4FBIKTh1c9PXJQnNSZrCfaZW
-	bsO9HRUiJP0l/0LDvUTmfQflQPQT4bAZU/t9HxNyYpVU9aq6HEwUC0qvFZ0iQ1X4cwJBHEEJj9H
-	RBH8RDAsxShc9kwT2CGOI5MHfJKJ38fhYDTlAiNyhF69uiWOgVBQaCXFj5TyzaCiRSBoRqIMEn3
-	MYPOMWNq08qCtK9rzXeolhxGNY1mAsCfm9bYUKAu5Ngph7LoqaPROONdTd81TAW+giBb08kfj49
-	jUnQ04kKKaBuVQwvKj7Uka5Y32I9ziuYxEtSr2RoDUgYu3zmSON0Msk+sDhKrSTAL6Qy1pQL1T3
-	oJIxtgz7feU+OnrtIGVJLlG3wVRQyuqUDAxNJr1qB5G7Pfne5p+ehemdsEr13dp1IjnbZ
-X-Google-Smtp-Source: AGHT+IHT9Ph+Ih0Jgzv4pMXX0J0tMWWNJ2bI17+DrUP71bpXw7bkuvyvkzaxJpK5Nc+pCc1iRakrrQ==
-X-Received: by 2002:a53:d003:0:b0:5fd:2ec5:f34e with SMTP id 956f58d0204a3-6102277ad4cmr1326212d50.5.1757169360054;
-        Sat, 06 Sep 2025 07:36:00 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a8501f5fsm37998547b3.48.2025.09.06.07.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Sep 2025 07:35:59 -0700 (PDT)
-Date: Sat, 6 Sep 2025 10:35:58 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ido Schimmel <idosch@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Yuyang Huang <yuyanghuang@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Petr Machata <petrm@nvidia.com>,
-	Maurice Lambert <mauricelambert434@gmail.com>,
-	Jonas Gottlieb <jonas.gottlieb@stackit.cloud>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] tools bitmap: Add missing
- asm-generic/bitsperlong.h include
-Message-ID: <aLxGztswgpjxlt2l@yury>
-References: <20250905224708.2469021-1-irogers@google.com>
- <20250905224708.2469021-3-irogers@google.com>
+        d=1e100.net; s=20230601; t=1757169411; x=1757774211;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XtLElYfVHsBdUbwIob7VFK2chyf/oqDL2uLl4gsB7/E=;
+        b=usY1k57dfIStYSSQdqUSD6rItI+v/haOt5dCqu81BzUWDdHkj1UK6bksb6xaqhG+UE
+         i1iDgN5uHtHOKOCfJ3kLCPHcYC64cpqVkWO+8XziqKuhzRZzccNmwoa5Bvwihpexh/Qi
+         TN8/6utsXzGF4uQi2f9UjzzSQSXYbhCzKxEK/G19Z1pSvcGc1dc4IYLo5AF0WpxecDxZ
+         zMA+p18zlblM4xrY8okC32qm8/fEpVBTY9C0+/Rr86yiVtfLeYtyssf3PfjQ3u8tD3pp
+         eSbKbDZ+sTMkgXUA9ES/0RJXtmtGUBb+kc2WLOrBsQwVDAGwEY2r0j4B8dQGu+bTswxM
+         xsxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWG+klSrXgI7r/D6qrFKx8zNxOdBcNnNmG4tS4piGwDatjK4BGVEs2NnUZ6qHBG7ZuSOxIRzdaGY4OhwsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhvaX6l+IKaY0yHiNYujcGfKmOOfGBvN9bkyDsXxn3kQrtNpCr
+	RLRRQR1TsnAyh4ZTKjtbhaH3LZyLqEJVDg76QmVAxUZfLgXFl/I/czA2loPGfJpfiok=
+X-Gm-Gg: ASbGnctqUkcW9bExf9O9zmLfNt6ldLCj/roPnI+XoEIooTVI8pNLvnEapqdAuWcHAZO
+	Fm0dLAUSBKq4HjrqX3ltyYsuSBAhvDuVGzRUKwwb6gAVfkw9loc980oeZpmFMH8mBi6uBBIkkwd
+	JFMoqBgi1TxU12ljDVBo8N6zYib9OvtOnuf+wtTG23ksFt95AcLxP7n9XBKwf1x6isvYwX2HC7h
+	q2Jt8BT95ElrVpMrCGvKoymn2S+3om+fCv9FThKM7dxPA25vGlztuNrH90LHHUngZk/r2wu9PiF
+	NkS1Rr9MQpFxiVlRIxXqwALEQ5BzoIt8/3K00rdIwghkz49iH9g9erTUfcU6dJp98vY1sgUNplP
+	20d8LXFAH0BUN8uHJvPerllOas3LAnBYT+8rJrj0DlOzbdpIbyLQWOySSrBYCHQpn6ocNRxQtML
+	yEH+uwcwAS8Q==
+X-Google-Smtp-Source: AGHT+IEiv3n9VHh+VuBKKRi72gcGyLp1esNwaCKtfvPvYSSwdGwsfpST2/0yRi8JXxPJzVF+OWIADg==
+X-Received: by 2002:a05:6870:b61f:b0:315:9da9:aeed with SMTP id 586e51a60fabf-32265437b2cmr1190441fac.43.1757169411546;
+        Sat, 06 Sep 2025 07:36:51 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:172c:2a16:ed5f:cfcc? ([2600:8803:e7e4:1d00:172c:2a16:ed5f:cfcc])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7459a657c0csm3211065a34.5.2025.09.06.07.36.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Sep 2025 07:36:50 -0700 (PDT)
+Message-ID: <b4713092-62d1-433a-863a-e7c000797f39@baylibre.com>
+Date: Sat, 6 Sep 2025 09:36:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905224708.2469021-3-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] dt-bindings: iio: accel: bosch,BMA220 improvements
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Nuno S?? <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+ <20250901194742.11599-2-petre.rodan@subdimension.ro>
+ <210871b8-4967-40c9-bbaf-338d2d6d9c63@baylibre.com>
+ <aLugeZiJjJhTpwUO@sunspire>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aLugeZiJjJhTpwUO@sunspire>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 05, 2025 at 03:47:06PM -0700, Ian Rogers wrote:
-> small_const_nbits is defined in asm-generic/bitsperlong.h which
-> bitmap.h uses but doesn't include causing build failures in some build
-> systems. Add the missing #include.
+On 9/5/25 9:46 PM, Petre Rodan wrote:
 > 
-> Note the bitmap.h in tools has diverged from that of the kernel, so no
-> changes are made there.
+> Good morning.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> Thank you for your feedback.
+> 
+> On Fri, Sep 05, 2025 at 03:15:55PM -0500, David Lechner wrote:
+>> On 9/1/25 2:47 PM, Petre Rodan wrote:
+>>> diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma220.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma220.yaml
+> 
+> [..]
+> 
+>>> +  bosch,watchdog:
+>>> +    description:
+>>> +      In order to prevent the built-in I2C slave to lock-up the I2C bus, a
+>>> +      watchdog timer is introduced. The WDT observes internal I2C signals and
+>>> +      resets the I2C interface if the bus is locked-up by the BMA220.
+>>> +      0 - off
+>>> +      1 - 1ms
+>>> +      2 - 10ms
+>>> +    enum: [0, 1, 2]
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>
+>> Why should this depend on how the chip is wired up? Normally, we don't have this
+>> sort of control in devicetree.
+> 
+> I was also unsure on how it would be best to implement the feature, bellow is my thought process.
+> 
+> The feature itself is definitely required for the i2c implementation of this chip. I have witnessed it pull sda low for no good reason twice over a 100h period and this would render not only the chip but the entire bus unusable until a power cycle.
+> 
+> I think from a driver perspective ideally WDT should be set very early - within bma220_common_probe() would be ideal.
+> 
+>> E.g. if it is useful, why shouldn't drivers just always enable it?
+> 
+> The registers holding the watchdog are all zeroed out after power on which mean it's off. I think the driver should also default on this setting. In my first implementation I had it hard-wired to 1ms, but I felt this would impose my point of view on users and it would be nicer to give them control over it.
+> 
+> If you guys think that the devicetree is not the place where the WDT should be set that is fine by me, would you recommend something like module_param() instead?
 
-Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+I wish I had a good answer, but I don't have the right kind of
+experience with this sort of thing to know what works best.
 
-> ---
->  tools/include/linux/bitmap.h | 1 +
->  1 file changed, 1 insertion(+)
+We could start with just always enabling it and if we find it
+actually does cause some problem for someone, then we would have
+more information about that use case and could make a more
+informed decision on how to handle it at that point in time.
+
 > 
-> diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
-> index d4d300040d01..0d992245c600 100644
-> --- a/tools/include/linux/bitmap.h
-> +++ b/tools/include/linux/bitmap.h
-> @@ -3,6 +3,7 @@
->  #define _TOOLS_LINUX_BITMAP_H
->  
->  #include <string.h>
-> +#include <asm-generic/bitsperlong.h>
->  #include <linux/align.h>
->  #include <linux/bitops.h>
->  #include <linux/find.h>
-> -- 
-> 2.51.0.355.g5224444f11-goog
+>> If we can make the case that it belongs in the devicetree, it should use
+>> standard units, e.g. property should be watchdog-timeout-ms with enum: [1, 10].
+>> Maybe 0 for disabled is OK too - in that case should have default: 0.
+> 
+> Oh yes I can see it in bq256xx.yaml, to me this sounds absolutely perfect.
+> 
+> 
+> On a different note, from a reviewer's perspective would you prefer the next revision of this patch series to cover less ground? I was thinking about leaving everything event related for later since I might go past 15 separate patches if I split every modification into it's own separate entry.
+
+Yes, smaller series will get more thorough reviews so I'm always
+in favor of splitting things up like that.
+
+> 
+> thank you again,
+> peter
+> 
+
 
