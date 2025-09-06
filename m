@@ -1,195 +1,218 @@
-Return-Path: <linux-kernel+bounces-804103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E435FB46A02
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D6DB46A06
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 09:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890293BD05B
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6BC1C86319
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 07:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41082278E7B;
-	Sat,  6 Sep 2025 07:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA0827A92E;
+	Sat,  6 Sep 2025 07:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ClVs+Gu/"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDPgr7UR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89E533E7
-	for <linux-kernel@vger.kernel.org>; Sat,  6 Sep 2025 07:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757145173; cv=fail; b=udNvA7FPb4qhgSGrbe36fM6LX/Qg381P350fioQVfiIT4fbLVLjHhsqbJYCfKF5BaKyRy6nHIQinBi/vnA1Vb3KNG0kcj70rQkgl7MZTy28NNS/W+nBmCTteWCQlP46hQG1ZavsWOXWzOyrJzGQ9fVrDhQXceEiEl3pfbyv30KU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757145173; c=relaxed/simple;
-	bh=e0cOe0Xf9XXo1jwYznlpbvuFszDa8BaRUZ1aXLfuu98=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pv2Gyp1oZUSyvIVR08ZHkSB3ABkWAi+T6ht9I/yV9xeB5xNa2ABS73tbsDGiGczik7IDD4tKtJlc8eeN/hleCYpJhVJfGMzzBA2Qy/FvyalJRdMwXp7kYWdGNEElUAxIGXc/hrX/+nK0KVsV1DHeZFTgCsAqRMH06hUIezFd104=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ClVs+Gu/; arc=fail smtp.client-ip=40.107.223.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BlbnAVYDMtje54erlolXMDmpwGiZ/IyWgx/eRd5CjxLgknQNvvxPI5qI/EQyLvTzAXrNVBvb6X9ijyZZvVWjNLnXcSKVuklr17G06y+Nozenn9xBs5YbLkeTth4Z9elZhDPJfhTVfsiXCTnrag/fnylcag7kBsQPCql2Q+AthqJwJ1Sl8xs1g664LAgAbLtVSn/3CUccj50KSt8YQG6PU67dJQ5NP60v/fY+HoSL4TLB1tLuV/I56Wt9VTmyDbRKZyGV1hfbZFVj9eIg67MVYOG/s+k8yhRGiGXKK06Ui23nir5Fk9TJpWjS9Qbo7VJggkIRsf5xOmC7+b9+ml63fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ckwJ90Dk49QpKovOdEVuRxcMyYpVd+YVkHWTPjGk+lk=;
- b=ZFs/Slu/0LObY44dQ/8oTJz4RHURmbf8t9+T+g62+z4/QkGI5n72pt9E38Zgsc6Csxg/ADbVN8KGmj4wDxC3Xt+ZTtq1BpR+ZqAglShHXg6PPtP+80o4kIk0/lP26L2aF8T4JNNZxlsRKYOLihVsgjtpK/vMQhLpQMQqNM9sgmsdy5G+fLaSXLnGfYvKWnI5Ib3k9B0wJHpD/svZ3KbBQ34V66x6Lk7L5m30f+d2w5EaJIEtOisGcZZ/+7VP+WlmA7l/8SICyrSrNoLn10WY133JQvfkCAt0JsKbh7vox9EDcXAxRF0pf7UxkwlI+29rX0Xk1c/RkXCtpl8RrtzTOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ckwJ90Dk49QpKovOdEVuRxcMyYpVd+YVkHWTPjGk+lk=;
- b=ClVs+Gu/qnLwbhPIGtmR+XpBEm9jH0hMZtny2Rgr5JIrbeqDoq3ne1jcfGRZaPsmCrl9Yn8RNLfUKD+xVLglBokDS3Uz2URnJ3SHA8fP1bdzRDhZRxoMlmO+zaksqHzNFTQhBY7gmHR9irKYluV5PBDNfx2cpQa4krj+TQNPck9T0XsnbI5L+g2Cjvonn3iembW5ecVCciRsC8ZpN/QyxWvuMclk60aaA2GocnPJ+TqY/dXXFAkWo7+heRTiGkFEguO0JjwDaslv68/v0qIsvXQuEe/bY2dlu198nt1knI8AybwgngFGOuNn5JYqqXqLz5yuDJV8arvPp+gVw4aFSQ==
-Received: from DM6PR07CA0087.namprd07.prod.outlook.com (2603:10b6:5:337::20)
- by LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Sat, 6 Sep
- 2025 07:52:48 +0000
-Received: from CY4PEPF0000EDD2.namprd03.prod.outlook.com
- (2603:10b6:5:337:cafe::52) by DM6PR07CA0087.outlook.office365.com
- (2603:10b6:5:337::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.21 via Frontend Transport; Sat,
- 6 Sep 2025 07:52:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CY4PEPF0000EDD2.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.14 via Frontend Transport; Sat, 6 Sep 2025 07:52:47 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 6 Sep
- 2025 00:52:42 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Sat, 6 Sep 2025 00:52:42 -0700
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Sat, 6 Sep 2025 00:52:17 -0700
-Date: Sat, 6 Sep 2025 00:52:02 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jean-philippe@linaro.org>, <miko.lenczewski@arm.com>, <balbirs@nvidia.com>,
-	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
-	<praan@google.com>, <zhangzekun11@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH rfcv1 6/8] iommu/arm-smmu-v3: Populate smmu_domain->invs
- when attaching masters
-Message-ID: <aLvoIp8RNQtVrjV8@nvidia.com>
-References: <cover.1755131672.git.nicolinc@nvidia.com>
- <d4dca0a6288e4c15994d41aa6722fa7d66e3816c.1755131672.git.nicolinc@nvidia.com>
- <20250827182123.GB2206304@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DAF1C84A1;
+	Sat,  6 Sep 2025 07:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757145392; cv=none; b=NxG6yvbwd1L9/uFoJGlxz/DghvZJGFVqe3ntMmwk5+/XrBVeeyUitp98qOvtzVzIRevRAmqg1kGgW7a2mkD2aGpzoIBEFWkVnbL5s3KIAGAUPzpDg2TMR9dM9F35xVD9gSqSP+yXOou3dFBVkGFtBg72IHHQhgI2NJu0gofQ3t0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757145392; c=relaxed/simple;
+	bh=6MpzkwaTQMjmEYFnZViHjiIwAE3okFT2YcFGwEWrMu0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=fm/Mmk5kSUmRffXMOyrn7kvokR2O+bvyng9UoIuYQUIPf9LzsiG17ePdewH0C/SYgA63QX8UI6eKosROa6mFLbaaSymnswEgPOoAFx35G8ITPp+uKADtgQCk1JAawjUlbeqAnVw3/u9ofK9y41Z+JbRziYm0zCKgHXsRvfjAlDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDPgr7UR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1806C4CEE7;
+	Sat,  6 Sep 2025 07:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757145391;
+	bh=6MpzkwaTQMjmEYFnZViHjiIwAE3okFT2YcFGwEWrMu0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=JDPgr7URW8s7vw/k79cIlH8pPnGb6W1TRtu+NcgwNT+haAornpO/O5/b02eZY3tOw
+	 vvzGi9grirM0MP4Oky1dwoVR4tRHa9eQDEUCTyinM4bPPHCwxcB+oGtX8brxFP4K0N
+	 66cSVv1nOkSKtaW9mhxLnbkcWLyAVz0nkRXTmMY9+kaKmBxQjiRZOFdY7H5VNBURWz
+	 xgD39ulj6KwxWdYWKrfNm63CPXIjTJLFNOwmKgaLwFreHeLB1wbzERLMRGH6HORPgT
+	 MDZf/Yd+PsjNIB5vOkiWjf8fhc5o9GtXk5RcK9sxaHH+HPpsThbDaY6v41hpYnKIrl
+	 6pWiNQqdJv05A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250827182123.GB2206304@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD2:EE_|LV8PR12MB9207:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66ff5db8-1830-44e3-a803-08dded1a5f2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JhhFNa7TRYGBZt9LNPqGiAeNPK5PqLG0cwqquVyRCXOMcAKbZzvh6zma7QAI?=
- =?us-ascii?Q?KZqHu9gFKf+2KZlw0tgKjg53Ek6jOw99GqUR41lPKIX+0Io2FTd9N1RY26FO?=
- =?us-ascii?Q?cT2Df52dyho5KfwCjOLwC/JyxWSnruz6pNx9v4gjFTjhaMhYpSOl7wQmQ6q2?=
- =?us-ascii?Q?SHqASyJ5qwn/4Vwa6W1E9eqeQBHU8VcdruupyTCDY+oAbMs9DoedOyzYgTDF?=
- =?us-ascii?Q?WSRPq3oqeMV4cXSp59KSJLIfdvUMPesk3lAVjVsriAJuqcJAoOEUKQnsSIhc?=
- =?us-ascii?Q?N5zIKToiQfGf+9hRoGULha3qBfEXDQb/fkHbA2+EmeSv8MIFp0POVBqiWj2/?=
- =?us-ascii?Q?Q6/2QbBjnHmVTHbsKzRO0/tD63oAf7A0MMr1nRqCWiSibPqcqojbGJx7El+z?=
- =?us-ascii?Q?zrdw1+LAzPNs+guf1pEv2FnHg8P/lp7vyS3iXRUqrypxh+zA+hm1wk0Mru+u?=
- =?us-ascii?Q?44wC/O4NSalbBG4zynGR8z6PXqOd09ATA1HEpo9RiADxLv9BcPjaAKIzKe8A?=
- =?us-ascii?Q?IMQoKQ+7HLQxC/gl8NytXd0jBUgZxsk9cVjd3ZqNAIAdLsMSYaDwEsEsRC6n?=
- =?us-ascii?Q?XetPayUrye0n3v5ZY2YtSpVzKFvx9DqkhjdwNaZOStcYtMDjkWhCIX9pZtb6?=
- =?us-ascii?Q?EEGbN394+6XF+Gzym2kLyEhuWtEG0AnI7O76Jc2SZE9RX+SMJ/hffuT3Ewcl?=
- =?us-ascii?Q?v7P8FIEcim+bkZ+smOrKSzkdYYNJgEXmljlOPwFFapogAnm2f5r+jP3cLpDI?=
- =?us-ascii?Q?qM/hhqvMogreeeh4ZLqBgVf51U9qRAgOTShyYfwHIZAp4ip1KV7tCXzc+/I3?=
- =?us-ascii?Q?ksFMNMOEcjX2gKZ1EJDmYfjAi5OkQXL06mFQJaE5SEyxsDj0MdfX9v+w1+oX?=
- =?us-ascii?Q?7xqQo/dOlx+qPbVfYAztAW1GBZAvNcYkTxKiJG20DkehFiExFOnpSliL+pWq?=
- =?us-ascii?Q?8MvZG9arPn2SJtQzGXHoGuo6lZ+af5Nd2sJ+ZguUM12eX+y5hb3ZYZtsqiuz?=
- =?us-ascii?Q?WhUhMjfIjPcCLvF7spMB3owyqq5W18Hn2/ZgYVG6fSa4aTyaQf06dy5OD/O5?=
- =?us-ascii?Q?pyVBVL4e2EyUXc8Puaqx86JrHbhN7NYG8w+Bd8dIjJ5fku3tASAIYVSVucCa?=
- =?us-ascii?Q?OpexhpEYh/ab+kvBSh9m6xaGdo42cOmlTI9NJ+0m5yJGcZSTsmsEDZ6eznRy?=
- =?us-ascii?Q?W3t4djDhXi3z+FD5FHThIibdDI0xmuk2cwNmpnAuxYzL7PLFxvhhchBLu35w?=
- =?us-ascii?Q?CPS7Vkej0G+ADzWTlCdPFsKpsghgyHEalRWcKbQ/ztciV6XDAUm9LdCH1ZZu?=
- =?us-ascii?Q?PbFaRhUQ5ugktpuufd3su+pRrw45OXYrGleYzM4heaoMYjp+QgiZM2KkSTaJ?=
- =?us-ascii?Q?U7WcevL3Ec3N9tQ3NtZdQiv1rVqzEfofM1J8DGKZe3ltKWp7h6TSINAMYmzz?=
- =?us-ascii?Q?kixrkTjN21kIQPQCiUtckCymVFnM+Y8K4gJI8tpYQNGkkBSGijHCYU67Uf3Y?=
- =?us-ascii?Q?7VA7eJD2tGuHQ8P8qYd8H/px1s87WSlXTnMy?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2025 07:52:47.7075
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66ff5db8-1830-44e3-a803-08dded1a5f2c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9207
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 06 Sep 2025 09:56:25 +0200
+Message-Id: <DCLK1YG1L5TZ.1VMGX131LII9V@kernel.org>
+To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+Cc: "rust-for-linux" <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "Uladzislau Rezki" <urezki@gmail.com>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
+ Roy Baron" <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>, "Johannes
+ Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed" <yosry.ahmed@linux.dev>, "Nhat
+ Pham" <nphamcs@gmail.com>, <linux-mm@kvack.org>
+Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
+ <20250823130522.867263-1-vitaly.wool@konsulko.se>
+ <DCCIRTHGQFNX.1M8GXO4TYA7DF@kernel.org>
+ <DFA3B588-3650-42DA-8875-7AB7D20A2BCA@konsulko.se>
+ <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
+ <9c63dda1-0a4b-4131-a5e7-12ad2e88c6d6@konsulko.se>
+In-Reply-To: <9c63dda1-0a4b-4131-a5e7-12ad2e88c6d6@konsulko.se>
 
-On Wed, Aug 27, 2025 at 03:21:23PM -0300, Jason Gunthorpe wrote:
-> On Wed, Aug 13, 2025 at 06:25:37PM -0700, Nicolin Chen wrote:
-> > +static int arm_smmu_attach_prepare_invs(struct arm_smmu_attach_state *state,
-> > +					struct arm_smmu_domain *new_smmu_domain)
-> > +{
-> 
-> How about a comment:
-> 
-> /*
->  * During attachment the invalidation lists on the two domains are sequenced:
->  *  1. old domain is invalidating master
->  *  2. new and old domain are invalidating master
->  *  3. new domain is invalidating master
->  *
->  * This uses two updated invalidation lists, one with master added to new domain
->  * and one with master removed from old domain. Prepare these lists in advance
->  * of changing anything. arm_smmu_asid_lock ensures that the invalidation list
->  * in the domains doesn't change while we are sequencing to update it.
->  */
+On Thu Aug 28, 2025 at 9:22 AM CEST, Vitaly Wool wrote:
+>
+>
+> On 8/27/25 17:59, Benno Lossin wrote:
+>> On Wed Aug 27, 2025 at 4:24 PM CEST, Vitaly Wool wrote:
+>>>
+>>>
+>>>> On Aug 26, 2025, at 7:02 PM, Benno Lossin <lossin@kernel.org> wrote:
+>>>>
+>>>> On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
+>>>>> +pub trait ZpoolDriver {
+>>>>> +    /// Opaque Rust representation of `struct zpool`.
+>>>>> +    type Pool: ForeignOwnable;
+>>>>
+>>>> I think this is the same question that Danilo asked a few versions ago=
+,
+>>>> but why do we need this? Why can't we just use `Self` instead?
+>>>
+>>> It=E2=80=99s convenient to use it in the backend implementation, like i=
+n the toy example supplied in the documentation part:
+>>>
+>>> +/// struct MyZpool {
+>>> +///     name: &'static CStr,
+>>> +///     bytes_used: AtomicU64,
+>>> +/// }
+>>> =E2=80=A6
+>>> +/// impl ZpoolDriver for MyZpoolDriver {
+>>> +///     type Pool =3D KBox<MyZpool>;
+>>>
+>>> Does that make sense?
+>>=20
+>> No, why can't it just be like this:
+>>=20
+>>      struct MyZpool {
+>>          name: &'static CStr,
+>>          bytes_used: AtomicU64,
+>>      }
+>>     =20
+>>      struct MyZpoolDriver;
+>>     =20
+>>      impl ZpoolDriver for MyZpoolDriver {
+>>          type Error =3D Infallible;
+>>     =20
+>>          fn create(name: &'static CStr) -> impl PinInit<Self, Self::Erro=
+r> {
+>>              MyZpool { name, bytes_used: AtomicU64::new(0) }
+>>          }
+>>     =20
+>>          fn malloc(&mut self, size: usize, gfp: Flags, _nid: NumaNode) -=
+> Result<usize> {
+>>              let mut pow: usize =3D 0;
+>>              for n in 6..=3DPAGE_SHIFT {
+>>                  if size <=3D 1 << n {
+>>                      pow =3D n;
+>>                      break;
+>>                  }
+>>              }
+>>              match pow {
+>>                  0 =3D> Err(EINVAL),
+>>                  _ =3D> {
+>>                      let vec =3D KVec::<u64>::with_capacity(1 << (pow - =
+3), gfp)?;
+>>                      let (ptr, _len, _cap) =3D vec.into_raw_parts();
+>>                      self.bytes_used.fetch_add(1 << pow, Ordering::Relax=
+ed);
+>>                      Ok(ptr as usize | (pow - 6))
+>>                  }
+>>              }
+>>          }
+>>     =20
+>>          unsafe fn free(&self, handle: usize) {
+>>              let n =3D (handle & 0x3F) + 3;
+>>              let uptr =3D handle & !0x3F;
+>>     =20
+>>              // SAFETY:
+>>              // - uptr comes from handle which points to the KVec alloca=
+tion from `alloc`.
+>>              // - size =3D=3D capacity and is coming from the first 6 bi=
+ts of handle.
+>>              let vec =3D unsafe { KVec::<u64>::from_raw_parts(uptr as *m=
+ut u64, 1 << n, 1 << n) };
+>>              drop(vec);
+>>              self.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
+>>          }
+>>     =20
+>>          unsafe fn read_begin(&self, handle: usize) -> NonNull<u8> {
+>>              let uptr =3D handle & !0x3F;
+>>              // SAFETY: uptr points to a memory area allocated by KVec
+>>              unsafe { NonNull::new_unchecked(uptr as *mut u8) }
+>>          }
+>>     =20
+>>          unsafe fn read_end(&self, _handle: usize, _handle_mem: NonNull<=
+u8>) {}
+>>     =20
+>>          unsafe fn write(&self, handle: usize, handle_mem: NonNull<u8>, =
+mem_len: usize) {
+>>              let uptr =3D handle & !0x3F;
+>>              // SAFETY: handle_mem is a valid non-null pointer provided =
+by zpool, uptr points to
+>>              // a KVec allocated in `malloc` and is therefore also valid=
+.
+>>              unsafe {
+>>                  copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as=
+ *mut c_void, mem_len)
+>>              };
+>>          }
+>>     =20
+>>          fn total_pages(&self) -> u64 {
+>>              self.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
+>>          }
+>>      }
+>
+> It can indeed but then the ZpoolDriver trait will have to be extended=20
+> with functions like into_raw() and from_raw(), because zpool expects=20
+> *mut c_void, so on the Adapter side it will look like
+>
+>      extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void=
+ {
+>          // SAFETY: the memory pointed to by name is guaranteed by zpool=
+=20
+> to be a valid string
+>          let pool =3D unsafe { T::create(CStr::from_char_ptr(name),=20
+> Flags::from_raw(gfp)) };
+>          match pool {
+>              Err(_) =3D> null_mut(),
+>              Ok(p) =3D> T::into_raw(p).cast(),
+>          }
+>      }
+>
+> The question is, why does this make it better?
 
-Having addressed the other places following your remarks, I had
-a little trouble to understand that 1-2-3. But I think that can
-be elaborated with:
+No, thanks for sharing that function. Then the question becomes, do you
+really need `ForeignOwnable`? Or is `KBox` enough? Do you really want
+people to use `Arc<MyZPool>`? Because `BorrowedMut` of `Arc` is the same
+as it's `Borrowed` variant (it's read-only after all).
 
-+/*
-+ * During attachment, the updates of the two domain->invs arrays are sequenced:
-+ *  1. new domain updates its invs array, merging master->build_invs
-+ *  2. new domain starts to include the master during its invalidation
-+ *  3. master updates its STE switching from the old domain to the new domain
-+ *  4. old domain still includes the master during its invalidation
-+ *  5. old domain updates its invs array, unreferencing master->build_invs
-+ *
-+ * For 1 and 5, prepare the two updated arrays in advance, handling any changes
-+ * that can possibly failure. So the actual update of either 1 or 5 won't fail.
-+ * arm_smmu_asid_lock ensures that the old invs in the domains are intact while
-+ * we are sequencing to update them.
-+ */
+If you can get away with just `Box` (you might want people to choose
+their allocator, which is fine IMO), then I'd do so.
 
-Thanks
-Nicolin
+---
+Cheers,
+Benno
 
