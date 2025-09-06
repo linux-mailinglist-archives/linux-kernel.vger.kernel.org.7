@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-804312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F17BB471C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3FFDB471D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 17:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108DB1B20AB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B51C24726
+	for <lists+linux-kernel@lfdr.de>; Sat,  6 Sep 2025 15:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97A011187;
-	Sat,  6 Sep 2025 15:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D661B21CC7B;
+	Sat,  6 Sep 2025 15:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmT18Oa1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="CF5xJ0q/";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="QD0yosu0"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3822367D5;
-	Sat,  6 Sep 2025 15:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EE61DA4E;
+	Sat,  6 Sep 2025 15:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757171708; cv=none; b=pgzsWQQnPSdbP//xa38pGxxC/LluKrxvC0Qf/vpyGroBBmLaSKjG5D3wBK7Ww871oiuVz2Js+Pi6nzPAuvzaGokASUWKw8EoibUP29x7fxcsT3VUgLYflWQYXF+gfC0aGqzuZ7lwLHhiscxhcJnifHrMSz+z2/BOY99xGKS/ANE=
+	t=1757171913; cv=none; b=ZlOWg0qFDJ6tAs5ejjTZ1eK43VtkMQ2LlQ/FN5MCPs5geR3n9dUXdWnEPgD1PTWH0+qdRa6z5aDRpSidqIhstx4kgE6alNiDpepSxS12aKDW9jRne8tZqOtfm/lmOKBtd4lIWVd3loo9J4LlRUHNRP/K7j+7/VbUbcB6arBJ8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757171708; c=relaxed/simple;
-	bh=V5VmoIRnbNArlBQcQV7ik20GPooqfqzAyxhtR9pDKqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CKv7+2t/RRNcTvhQoR464Opmd1/7Orlh2UQN+FOoCHcnn3QGjzRdqGTQu0P63dmddIBN+fZhbsaUQB0Kb5eogvWkkXKqIZKjO0WpHTuGE1Clo+6J2SyJtCQ0F3rJD0/l8MwpHmpwvL7JtjenoRRIwGENMJM5cD2M4Tyi6uIo4b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmT18Oa1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8358C4CEF7;
-	Sat,  6 Sep 2025 15:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757171707;
-	bh=V5VmoIRnbNArlBQcQV7ik20GPooqfqzAyxhtR9pDKqo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SmT18Oa1d2twPn5m2avid3JvaHisblr9DQq8UMpUE7eIs5GkMpgHoEZT+4oLLYVjn
-	 QlKkV9rC+0HYInYjRhOd7MsFVBHBNbFHd19S3nZWOn2yybCeQoCBReufz+6xFxYJzJ
-	 897GDoUqakWe0gSXjdO/xV+UVdheYvnH01DW74yAe1hw6dGNrEF4JChEDGQbyk6ka9
-	 VatHzO6G5OXPKTg5dtw4e3WTI8Uq37Qfqt+SLqu9NfOQ8AzY9Sb7O62+p4ZXl+5gF5
-	 eVzu79k6SaKmQiLM8MkWtseWBkLCvTekIDxzcdeKU5+6ldjdbo4FHoYQbn45tG/ylg
-	 qWvquajl+Imnw==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-746dae5ff93so1917744a34.0;
-        Sat, 06 Sep 2025 08:15:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpcw/jsIREpvasFCWC0ouC+C+RUkIHodVaV5EChn+TlVC8j61KeOs9Juhm1XcH7UJKwJ8n5K7dbSM=@vger.kernel.org, AJvYcCWaG3pMLgHxeiSzV1cqWMw0mRl1/qJ7LSinYgf5xmJuWA6KkJ0Y5ravSO6tCVrnhNrme7yP8cFBB+f4iHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi++906ifU518DExGvBh7ft8QFpfDEIT5IKRkK87KNTYCp4jHK
-	jd/ykXzOlhIZ/OAN2pmEumpFUgeTZgcoQsCjGUi5G66QzSxSnR2CXxvprQFVN+NjWsNpQcapo1C
-	Zx8kKFZmFR1PWFiYMaix0gq9qLp156ac=
-X-Google-Smtp-Source: AGHT+IGdyYZhwu8BpYyLbNc4bt5eZeyZy46pY08sYjpDYaOcudSjwedT7KRLhXVNTCPfylS0X1oxQfyXuYFi2XZS3hk=
-X-Received: by 2002:a05:6830:2906:b0:73f:f3a2:212b with SMTP id
- 46e09a7af769-74c6ffce840mr904633a34.5.1757171707091; Sat, 06 Sep 2025
- 08:15:07 -0700 (PDT)
+	s=arc-20240116; t=1757171913; c=relaxed/simple;
+	bh=2NShP4uBgORUvxG5QGzRXtYvh7uD9S9t3XI9Ql28qFY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P0LbC4t4uZiqAmpJePPIM51XcEVYlsLuiF7dB9bRpF8K/6moZBM+pyyZbwxDEl05stasZ6fGkmKs7xGF3v+6iGK6jDf8yFEIPSCTh0tIZ1PFY9GASGMUbCefwRjTWFm36qLQMJaHusUot4HjmHip7ebvDpup0Qey1J32LSrvlkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=CF5xJ0q/; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=QD0yosu0; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757171900; bh=2NShP4uBgORUvxG5QGzRXtYvh7uD9S9t3XI9Ql28qFY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CF5xJ0q/+izVUqCxlLTHcTqCZ7AeHvbqVsjsn/vl83PxS0BzIW0Cqr+Nr+Y1pTtpu
+	 /StldoKefd6K5u5TBRBQm9MYxYgrnKQiYydhRjq90ivMq8T03vt3UoBhiqXuUhclNU
+	 /QPJNZlFkv6RRMOytkJXHoF1DUuBUo/kDt6F+WeFCJYsPezEWeDWo3KCrZcYlwC1Qu
+	 gSoezUSPtggkOZfmC1BWmit8xrqrS6A/P/YQjo8x3z6AlvGcO4dzXO8N/SJMuwc4sp
+	 flMyMT6e0c4IOv3C/woJYxCxfpsFaA7a7YA7YMYPDIXiDvfvQFFf2zWfBV564elF/S
+	 FQCrjsQkz7MFw==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 51829FB06;
+	Sat,  6 Sep 2025 17:18:20 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id gPxJSbNr_dvx; Sat,  6 Sep 2025 17:18:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1757171898; bh=2NShP4uBgORUvxG5QGzRXtYvh7uD9S9t3XI9Ql28qFY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=QD0yosu00PNYZvsHsE/30TcpMQSULUlY/oHTAE+BZqipSUW104KA6eZphc96kQgqs
+	 NiRoexNqYz2RFt9oP1up0HwHw71KDySt5Rc2rGBhX/flB8L6W0nmlRhjhJOEHJ1lUe
+	 f1QIH/3KU2Rvoa74sRsDjQ5eksqhTRuMB/1bL4AhX+8W9NAV4nluyqr93RlMEYsZNz
+	 NkbVgzT8iIBPNmw0JZlVDVBO/fXQCR7zFKs9UEIdO1VFmjHX4txX1AlxxGIxd7hT9X
+	 P19u1RsOWMOlYp+7ppYkXtocghr/zojnIjJ62XZfcbVdW5ShAL7QIE1QOiPAgwvUbD
+	 UNneVEosH4Kqw==
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Subject: [PATCH v2 0/3] drm/panel: visionox-rm69299: Add backlight support
+ and small fixes
+Date: Sat, 06 Sep 2025 17:17:24 +0200
+Message-Id: <20250906-shift6mq-panel-v2-0-aa5e585d8717@sigxcpu.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12749467.O9o76ZdvQC@rafael.j.wysocki> <2025082851-progress-unsliced-ade4@gregkh>
- <CAJZ5v0hn9NXvHPy6zV4R4y0AHtN2BfN41wjd5s7dos0wx6ih0Q@mail.gmail.com>
- <CAJZ5v0gj33W-2FOswYoBLQQyTj0wr_EuMUdLiL_tdt4t=ss-jg@mail.gmail.com>
- <CAJZ5v0ifvwbPs1VKBMpWdanBKUdHSZuNandbF9=uhec56DynNw@mail.gmail.com>
- <2025090658-cucumber-velvet-ae53@gregkh> <2025090638-arson-scrawny-ceb5@gregkh>
-In-Reply-To: <2025090638-arson-scrawny-ceb5@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 6 Sep 2025 17:14:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jvo4U0zGPZj0bu62qSCJh248JsmiO0E3ie3VPzFJ9FTg@mail.gmail.com>
-X-Gm-Features: Ac12FXxrDU4kO3Id7Z6wGxJfeP_mVHH3Vx9ccNz4Byyul4wr7qgfvfg5attRSfE
-Message-ID: <CAJZ5v0jvo4U0zGPZj0bu62qSCJh248JsmiO0E3ie3VPzFJ9FTg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] driver core/PM: Two updates related to power.no_pm
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIRQvGgC/3XMQQ7CIBCF4as0sxZDkap05T1MF9AOdBIFhNrUN
+ L272L3L/yXvWyFjIszQVisknClT8CXEoYJ+1N4ho6E0CC4arnjN8kh2Oj9fLGqPD6YaZU78esF
+ +EFBOMaGlZQfvXemR8hTSZ/fn+rf+peaacSalNFIbYzXqWya39PF9DMlBt23bF11O45WuAAAA
+X-Change-ID: 20250901-shift6mq-panel-959b3087ecd2
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1067; i=agx@sigxcpu.org;
+ h=from:subject:message-id; bh=2NShP4uBgORUvxG5QGzRXtYvh7uD9S9t3XI9Ql28qFY=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0VCYlFLUy9aQU5Bd0FJQVNXL2hsSksvT
+ UhqQWNzbVlnQm92RkNqWk9TOFAvb3Vzd2RwS01jV0ZhMkxjVGwzCjRiMXltS2Q1QXpuYi9vZGpo
+ ODZKQWpNRUFBRUlBQjBXSVFSajlzemZsaUtkQ1NocktzTWx2NFpTU3Z6QjR3VUMKYUx4UW93QUt
+ DUkFsdjRaU1N2ekI0N3llRC85UmZMZnhIeGpCOG4yL1BFSXovQ1JDelZNc1dLa1UySmpZTmMrOQ
+ pkMnhIakQ1bXJmYlVZM2tja3NRZ1dZL29GdTdCQjl4MmZqNFNacy9FLzBKT0JzdlBqM2tySlhVR
+ UtWYjg0d0lCCjlKZ2tmMUYzNjdNSndqaWViWmt5UUU0b0xTdXZnVnFGTWtpbS9GNzJFdHloUU5s
+ SllYSStrV1NvYU5vVzV3WWcKcHBCRy95OHZmOEEvVjdiRGYzK0oyT1AzT3JaMVFGTXpPK1RHQVE
+ 1UlBpV0QyQ3Ryb1REK2E3ejBUUTFWTVIwdQppdEV2M3VmM0VDbkhIQzU1d3ZOMnpRZ214R3lrL2
+ JxUUhXV2dZMkdkY1FwWlFnVEM5Tmd1akRHamFNVVZLZGw0CjlIVlN0b2hGMG1HbmZ3cHlScmxwN
+ GZxN2JOMjQ1V0cyWUk4NFlsT04rbkl0RlpqbVBpZlF2UGUzOHdSSmhLQkgKNUI1RkJQYVZhSXNy
+ ck15N1I5VTB4dEhhZWhkRE9YMllsVWZ5clc1T1ZrdlgvTk96UERhUVhoakNBc29mQ3RaZgpDajh
+ ZRkkza3F6WXVnek8yandTTTR5OXpNMzZCT3ZsN3RxV1VBR3puNEZ6UHp2QnBHUFF4S0gzT1ovSl
+ VPT1dTClJObnhrWEIyQlhMUVkzcWZVTEpCRjRNTll6a0g2OHFTMS9hQTA0d0pzMGhhU2dDS0ptN
+ Hl2dFFGR3B3Umo1elkKNW90ci90TFFOOVJad3VjS3Bmbi95WlBVbjRzV2QvZVN0MndVQXhGUjVG
+ VXFOR21UVUJRSWwydHNDekpnTWJRRApRZm9WQ1hhdWN5NUtqcWJoNXRUbmFDUGVSd3RrWGFRTlN
+ oTzZ6VGFMOURGVWVkK0Urd1VMMDE0dk5QU3ltWDgyCkg2QzE5Zz09Cj1GaWsyCi0tLS0tRU5EIF
+ BHUCBNRVNTQUdFLS0tLS0K
+X-Developer-Key: i=agx@sigxcpu.org; a=openpgp;
+ fpr=0DB3932762F78E592F6522AFBB5A2C77584122D3
 
-On Sat, Sep 6, 2025 at 1:54=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sat, Sep 06, 2025 at 01:53:11PM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Sep 03, 2025 at 01:33:18PM +0200, Rafael J. Wysocki wrote:
-> > > On Fri, Aug 29, 2025 at 9:09=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> > > >
-> > > > On Thu, Aug 28, 2025 at 1:20=E2=80=AFPM Rafael J. Wysocki <rafael@k=
-ernel.org> wrote:
-> > > > >
-> > > > > On Thu, Aug 28, 2025 at 1:07=E2=80=AFPM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Thu, Aug 28, 2025 at 12:55:50PM +0200, Rafael J. Wysocki wro=
-te:
-> > > > > > > Hi All,
-> > > > > > >
-> > > > > > > Applying this series will cause power.no_pm to be set for fau=
-x devices (so they
-> > > > > > > don't get processed unnecessarily during system-wide suspend/=
-resume transitions)
-> > > > > > > and power.no_callbacks to be set along with power.no_pm (for =
-consistency).
-> > > > > >
-> > > > > > Oh, nice!  I forgot about that entirely.  Should these be backp=
-orted to
-> > > > > > older kernels as well?
-> > > >
-> > > > So do you want me to resend these patches with suitable Cc: stable =
-tags?
-> > > >
-> > > > Alternatively, I can just apply them with the tags and route them
-> > > > through my tree, whatever you prefer.
-> > >
-> > > In the absence of more feedback, this is what I'm going to do.
-> >
-> > Thanks, sorry for the delay, been swamped with conferences and travel :=
-(
+This adds optional backlight support via DSI commands. If
+a max_brightness is set in the panel description the backlight
+is created.
 
-No worries.
+While at that we fold in the already sent out clock fix and
+a fix that prevents us from clearing all mode flags when we
+only want HS mode.
 
-> Wait, I can take them right now, no need to resend them.
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+---
+Changes in v2:
+- Add Fixes: to the first two commits to make backports simpler
+- Collect Reviewed-by:, thanks Neil!
+- Link to v1: https://lore.kernel.org/r/20250901-shift6mq-panel-v1-0-444b4abbfaea@sigxcpu.org
 
-Cool, thanks!
+---
+Guido Günther (3):
+      drm/panel: visionox-rm69299: Fix clock frequency for SHIFT6mq
+      drm/panel: visionox-rm69299: Don't clear all mode flags
+      drm/panel: visionox-rm69299: Add backlight support
+
+ drivers/gpu/drm/panel/panel-visionox-rm69299.c | 71 +++++++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 2 deletions(-)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250901-shift6mq-panel-959b3087ecd2
+
+Best regards,
+-- 
+Guido Günther <agx@sigxcpu.org>
+
 
