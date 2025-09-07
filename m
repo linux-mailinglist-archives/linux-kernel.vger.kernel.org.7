@@ -1,347 +1,265 @@
-Return-Path: <linux-kernel+bounces-804656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B433B47B24
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41318B47B2F
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 14:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77DC57B013F
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984EB1897E99
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 12:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940AD266576;
-	Sun,  7 Sep 2025 11:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787C6268C42;
+	Sun,  7 Sep 2025 12:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MDh6vUk7"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahM7+fKV"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5FF1F542E;
-	Sun,  7 Sep 2025 11:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A901C84A6;
+	Sun,  7 Sep 2025 12:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757246242; cv=none; b=nhAPwsKp11PvuA4ak2GA4CoSDamj7qB6vjcKvSC88wRYIQt1CS+JCRas2ZJNh4Z4HRwVLx4Ly2Z/mSS6bQ0tA1RcVcJ5anZrjZgFRo8Py8w7ie3NME1E24Jzl5AEimod/y0DZIuFYpudvadZYeA7XqwkIVDShwyWMPNLs8V5qS8=
+	t=1757246840; cv=none; b=eA/wnq0flwcOHpAMFoaSCG8ehSpppsWLyRCsK0t4jLWVbWie2tZfmqfLUp1Huigm6pR1w2g+zb8TiCxw9tB5UJVcGhdBmKO5TgeTpRTmAsfCnlNPqI/BjYqmfMsDWVmWMRIKVztMPZzHCoVbWFdpWf7ydoVWhyP699o7SdG2pSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757246242; c=relaxed/simple;
-	bh=RG4N7ZNEOSqERs6QrVwciW8Tyk7wLboDLnI6C/rRAkM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=E9Y5UGsrqaalYqfn1fWfbsmX1M2rc1Ffdjaj2izUp+A511vrIK0H/T6o6Pqilr7HHq0GVeTpXc680AVg3vw0ufBCDz6ruOCyHSR9rJSYncYp2v/laabmcXvGPycdNoTloMAZUlFhaGRH4XVooxP/6SP4tqFo0mp9CPERAKeYzRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MDh6vUk7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5879UMFu015272;
-	Sun, 7 Sep 2025 11:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=MCULcl
-	s5f8rxSp+Pf5xY5CUPcGY2H23aBtUdgGNoalc=; b=MDh6vUk7RqsZtbaJq6xtwJ
-	86W0zz7wvAkZUV86U7l0yGht8fjpmWrnk+s+t1RQWVwGSBJtcAaffq4gnyJrFY/7
-	Vku8D89L48wfrtJVS6P40973H83DZ4G3aHLYE4LI6zhtlOYY+/0nn7XVKMMITsRO
-	32cdap5lJQtKTarW2YOyb0kFfTFKPfxogre5c7nJykmDaJX0obBVFg7QoPvZu0hb
-	0oc3PzOpX5xWDWfuSXHafRuQyMTgsx/1qaNt5Y0Apa7+n2oVUZpPSdvRmO3RM/Z9
-	4yn6m10/pfnEZyx0DSzw3mTyeVSOy6z9tdsPmEgyXgjnruaEAEJp7wLwnw8ovHTQ
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmwckrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Sep 2025 11:57:16 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5877AeXF007912;
-	Sun, 7 Sep 2025 11:57:15 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109p9kar-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 07 Sep 2025 11:57:15 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 587BvEcH19006132
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 7 Sep 2025 11:57:14 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 390A958050;
-	Sun,  7 Sep 2025 11:57:14 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6514158045;
-	Sun,  7 Sep 2025 11:57:13 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.145.73])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  7 Sep 2025 11:57:13 +0000 (GMT)
-Message-ID: <e8fff5a1607ce2d98c5999d522202e1104f0a12d.camel@linux.ibm.com>
-Subject: Re: [PATCH] KEYS: encrypted: Use SHA-256 library instead of
- crypto_shash
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Eric Biggers <ebiggers@kernel.org>
-Cc: keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <aJIKH3-fRizRV8fi@kernel.org>
-References: <20250731184747.12335-1-ebiggers@kernel.org>
-	 <aJIKH3-fRizRV8fi@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 07 Sep 2025 07:57:12 -0400
+	s=arc-20240116; t=1757246840; c=relaxed/simple;
+	bh=IeaLlXwPyu2cNAS9zasxAo8Sro4IotddBqINAmWFbUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HcfKmowSJdgb/5t46G3NbZVObgAl3zOLNu0y6YqHGnucXtZMbszBA4Kufgkt3ZKLtm5hTBB+KVkC3mQ1H3ZLB6nVcTEcQJP7bOXaWNs4xql6zS3kkca+3bOMj7WaYXARQlpiKbgdJnm2kBNElYo+aSE1v0DlemqoAoZR0YuvTq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahM7+fKV; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45de6490e74so868225e9.2;
+        Sun, 07 Sep 2025 05:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757246837; x=1757851637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=msh1ZATcrXJ2GJuH9NWwag9G5icF2zxJPgSWKOuUf/c=;
+        b=ahM7+fKVjWz69RJ2qT4h98dd7p6XW7/fJIe8YYSwERa6kO74LlmO1tPhqbOJ8ZI+kd
+         Q6TbXW/8/tbsJTkkaYOXdaHsbdxV61rNk/jRe4dv3BevXEblBAJI11RlLrMAB2y/eow0
+         z7BXAVL8m79k5/bE3pF2zuS0ErGIQ5bbPbScV2U1vSyrHbK3jiQVRbiWmiw3DdZAXDe8
+         x6cjm89OFjBKj7B/9nSakyu+cVDy7AQW3s6yjXr3srxj3ZNbbtE65di1ZZ7ARIDtHb2s
+         u6iNlAHet58YDY44DlaytSYJlPn+jqhv/Z8jWOlyiskDSxQeDyhKFEPqLmaSXEqeZhcm
+         nZUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757246837; x=1757851637;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=msh1ZATcrXJ2GJuH9NWwag9G5icF2zxJPgSWKOuUf/c=;
+        b=WbZRw2lfbnNNI2OWCzbrPgH4Hfcli472IFfMLndlhNR5EPGBlCwy/V2oBtetgWguf+
+         Wc1+9fUeRM9Cyza7pa5wqEGvQ6EXnXa/unIIOO92HIZyiQkxCFE2y4vRW5NkI6zXtoAh
+         xaTZs6Tv281yTVfTq4kCbG1D+EnHE09/74WX/7iKS2Oa2ygP2q1YvtOsx0zocb0DNF9A
+         sodjFHocv4SqOqsSuB/FdJpqLeQK0btLMK5Xd5IDnhG1R4ggKxC7SvrSQTbPuiMlNWS5
+         43anRf+/qtlKlHW38luvMb0y21AEj1BGBmzYauLX9nz2evSjoP1sCes+SHo/6SjE5yqT
+         NwmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwv0RGo2AJl8yupd36zyNTE95fvwd28RpO6jnmOy7A42ZZwB72mJBwwRG5aRDM0LUBzrxlw0HII4z1AvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKz9v+znHK1fRCO93k2ebEz7Alk3IdZN4Ok86OIWXLGJIIz3Ut
+	B5qQ6//gvmHiqpupu2P2aC/w5+dgdSPM8uuSuz+/tKP2PomaBA32WH3Y
+X-Gm-Gg: ASbGnctlvL+vK2UXnLTMh3R3vISZRPpJABPZ6Zc0DOuaVJP1NrzpdDjlv7W1Pjk5Rbm
+	4COe7tHan9HkM2ofgMhTyncYFGVfBqD8FFdDkU6tEs9d5lXD/TY+cKkPgEBb4bWC2J/PMrd119F
+	l1khCTAdENOX3+ABLXxpGjMGKeDXDKkW1mTGhkNvU1NTr7trNNFY24RtWuH5QaDQqFZk6HdOu6p
+	k40UxxIhfavuBF3cPfNSNg5t0ULrNM+JBLMY9lXlMZAH9cthhkHjrTvzGn3kPlW4BLe8MsaJiRE
+	hQzNaBkyzfVpxVJ8Utvd9CkEKBnUlBt+m84n20U2ZhYiyVkuR+XTn+8+QFTque5kbtg5rYbfNQu
+	nUPjFrMnn6tqAsdq7BjSF0rcxFCg5dyJoYoaLk/oF
+X-Google-Smtp-Source: AGHT+IHtMNLhKqBq98pR0r9VX4J5t8KYLL789/mlm0sOdCDdz84iX6TX23evvfGrlLrOWSwhsQv7DA==
+X-Received: by 2002:a05:600c:a43:b0:45b:81ad:336 with SMTP id 5b1f17b1804b1-45dddea520dmr48320685e9.16.1757246836654;
+        Sun, 07 Sep 2025 05:07:16 -0700 (PDT)
+Received: from hangmanPC.. ([86.124.200.102])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45dd2df4c8dsm131354165e9.15.2025.09.07.05.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Sep 2025 05:07:16 -0700 (PDT)
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cezar Chiru <chiru.cezar.89@gmail.com>
+Subject: [PATCH v2] i2c : algos : i2c-algo-pcf.c : fixed errors shown by checkpatch
+Date: Sun,  7 Sep 2025 15:07:06 +0300
+Message-ID: <20250907120706.44114-1-chiru.cezar.89@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250907114557.15453-1-chiru.cezar.89@gmail.com>
+References: <20250907114557.15453-1-chiru.cezar.89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: s3QEORdrf-hAXNA_0bQrG8LWJQIqUBJe
-X-Proofpoint-ORIG-GUID: s3QEORdrf-hAXNA_0bQrG8LWJQIqUBJe
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68bd731c cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=kwrG7CGN9jUrtrt_hGMA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfXy8BvwuByCj2+
- OJDPxQwR+YN/uXvL6hLV0IeehbcJFagEiVLyh3HMh9IiwaxUn0pqTIKpr5TXRpSz/wTR/4V6Ebp
- cj8ObFblYq3tpDMOhFfWKmAawKmqgSP8tQqY2MEMaOMjhZszOx4lzz8qKWG2wwHIzPBen8qKANg
- TLnsE/Omvz6sI6oIqK/E601qZNLnejy8Kic7ar+86/OTd9v/L/V5U1CETTqDCvr5hMb2PiL4B0+
- i/Oxj3BCDh8r+ub+by5vlnmhJqljXJnfZ+JLW5t+ejFtANsOrr344O0CIxuhDo2cbhjrQ/lBayH
- 66E37t+ousMda+R1bgLT5kvkOaSNCYJR4r7qYTDQudZ7W9x/5SaeRjcsgRIzadG375aSfI2lUuH
- LjZZ4MSI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-07_04,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-08-05 at 16:41 +0300, Jarkko Sakkinen wrote:
-> On Thu, Jul 31, 2025 at 11:47:47AM -0700, Eric Biggers wrote:
-> > Instead of the "sha256" crypto_shash, just use sha256().  Similarly,
-> > instead of the "hmac(sha256)" crypto_shash, just use
-> > hmac_sha256_usingrawkey().  This is simpler and faster.
-> >=20
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
->=20
-> Yeah, fully agree.
->=20
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->=20
-> David, will you pick this?
->=20
+Fixed all 18 errors revealed using checkpatch.pl on i2c-algo-pcf.c
+file. Errors fixed were: macros starting with 'if' should be
+enclosed by do - while loop to avoid possible if/else logic defects,
+do not use assignment in if condition, spaces required around '=' ,
+';', '<' and ','.
+Motivation is to fix all errors and warnings i2c-algo-pcf kerenel
+module.
 
-Do you want this patch being upstreamed with "[PATCH 0/2] Convert lib/digsi=
-g.c
-to SHA-1 library" patch set?
+Testing:
+    * built kernel with my changes and I2C_ALGOPCF=m enabled
+    and it built successfully.
+    * installed kernel and external modules generated by build
+    * rebooted and loaded using modprobe i2c-algo-pcf kernel module
+    with param i2c_debug=3 and no message was found related to
+    module in dmesg. But also no error was generated.
 
-thanks,
+Checkpatch.pl warnings  on patch: on running checkpatch.pl on this
+patch 7 warnings were raised. Will be fixed on following warnings
+fixes patch.
 
-Mimi
+v2:
+    Fixed build errors generated by missing ; after do - while.
+    Missed to git add latest changes to patch. Build is ok.
 
->=20
-> > ---
-> >  security/keys/Kconfig                    |  3 +-
-> >  security/keys/encrypted-keys/encrypted.c | 63 ++++--------------------
-> >  2 files changed, 11 insertions(+), 55 deletions(-)
-> >=20
-> > diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-> > index d4f5fc1e72638..64477e2c4a212 100644
-> > --- a/security/keys/Kconfig
-> > +++ b/security/keys/Kconfig
-> > @@ -85,14 +85,13 @@ endif
-> > =20
-> >  config ENCRYPTED_KEYS
-> >  	tristate "ENCRYPTED KEYS"
-> >  	depends on KEYS
-> >  	select CRYPTO
-> > -	select CRYPTO_HMAC
-> >  	select CRYPTO_AES
-> >  	select CRYPTO_CBC
-> > -	select CRYPTO_SHA256
-> > +	select CRYPTO_LIB_SHA256
-> >  	select CRYPTO_RNG
-> >  	help
-> >  	  This option provides support for create/encrypting/decrypting keys
-> >  	  in the kernel.  Encrypted keys are instantiated using kernel
-> >  	  generated random numbers or provided decrypted data, and are
-> > diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/e=
-ncrypted-keys/encrypted.c
-> > index 831cb84fd75a1..513c09e2b01cf 100644
-> > --- a/security/keys/encrypted-keys/encrypted.c
-> > +++ b/security/keys/encrypted-keys/encrypted.c
-> > @@ -25,22 +25,19 @@
-> >  #include <linux/random.h>
-> >  #include <linux/rcupdate.h>
-> >  #include <linux/scatterlist.h>
-> >  #include <linux/ctype.h>
-> >  #include <crypto/aes.h>
-> > -#include <crypto/hash.h>
-> >  #include <crypto/sha2.h>
-> >  #include <crypto/skcipher.h>
-> >  #include <crypto/utils.h>
-> > =20
-> >  #include "encrypted.h"
-> >  #include "ecryptfs_format.h"
-> > =20
-> >  static const char KEY_TRUSTED_PREFIX[] =3D "trusted:";
-> >  static const char KEY_USER_PREFIX[] =3D "user:";
-> > -static const char hash_alg[] =3D "sha256";
-> > -static const char hmac_alg[] =3D "hmac(sha256)";
-> >  static const char blkcipher_alg[] =3D "cbc(aes)";
-> >  static const char key_format_default[] =3D "default";
-> >  static const char key_format_ecryptfs[] =3D "ecryptfs";
-> >  static const char key_format_enc32[] =3D "enc32";
-> >  static unsigned int ivsize;
-> > @@ -52,12 +49,10 @@ static int blksize;
-> >  #define HASH_SIZE SHA256_DIGEST_SIZE
-> >  #define MAX_DATA_SIZE 4096
-> >  #define MIN_DATA_SIZE  20
-> >  #define KEY_ENC32_PAYLOAD_LEN 32
-> > =20
-> > -static struct crypto_shash *hash_tfm;
-> > -
-> >  enum {
-> >  	Opt_new, Opt_load, Opt_update, Opt_err
-> >  };
-> > =20
-> >  enum {
-> > @@ -327,39 +322,18 @@ static struct key *request_user_key(const char *m=
-aster_desc, const u8 **master_k
-> >  	*master_keylen =3D upayload->datalen;
-> >  error:
-> >  	return ukey;
-> >  }
-> > =20
-> > -static int calc_hmac(u8 *digest, const u8 *key, unsigned int keylen,
-> > -		     const u8 *buf, unsigned int buflen)
-> > -{
-> > -	struct crypto_shash *tfm;
-> > -	int err;
-> > -
-> > -	tfm =3D crypto_alloc_shash(hmac_alg, 0, 0);
-> > -	if (IS_ERR(tfm)) {
-> > -		pr_err("encrypted_key: can't alloc %s transform: %ld\n",
-> > -		       hmac_alg, PTR_ERR(tfm));
-> > -		return PTR_ERR(tfm);
-> > -	}
-> > -
-> > -	err =3D crypto_shash_setkey(tfm, key, keylen);
-> > -	if (!err)
-> > -		err =3D crypto_shash_tfm_digest(tfm, buf, buflen, digest);
-> > -	crypto_free_shash(tfm);
-> > -	return err;
-> > -}
-> > -
-> >  enum derived_key_type { ENC_KEY, AUTH_KEY };
-> > =20
-> >  /* Derive authentication/encryption key from trusted key */
-> >  static int get_derived_key(u8 *derived_key, enum derived_key_type key_=
-type,
-> >  			   const u8 *master_key, size_t master_keylen)
-> >  {
-> >  	u8 *derived_buf;
-> >  	unsigned int derived_buf_len;
-> > -	int ret;
-> > =20
-> >  	derived_buf_len =3D strlen("AUTH_KEY") + 1 + master_keylen;
-> >  	if (derived_buf_len < HASH_SIZE)
-> >  		derived_buf_len =3D HASH_SIZE;
-> > =20
-> > @@ -372,14 +346,13 @@ static int get_derived_key(u8 *derived_key, enum =
-derived_key_type key_type,
-> >  	else
-> >  		strcpy(derived_buf, "ENC_KEY");
-> > =20
-> >  	memcpy(derived_buf + strlen(derived_buf) + 1, master_key,
-> >  	       master_keylen);
-> > -	ret =3D crypto_shash_tfm_digest(hash_tfm, derived_buf, derived_buf_le=
-n,
-> > -				      derived_key);
-> > +	sha256(derived_buf, derived_buf_len, derived_key);
-> >  	kfree_sensitive(derived_buf);
-> > -	return ret;
-> > +	return 0;
-> >  }
-> > =20
-> >  static struct skcipher_request *init_skcipher_req(const u8 *key,
-> >  						  unsigned int key_len)
-> >  {
-> > @@ -501,14 +474,14 @@ static int datablob_hmac_append(struct encrypted_=
-key_payload *epayload,
-> >  	ret =3D get_derived_key(derived_key, AUTH_KEY, master_key, master_key=
-len);
-> >  	if (ret < 0)
-> >  		goto out;
-> > =20
-> >  	digest =3D epayload->format + epayload->datablob_len;
-> > -	ret =3D calc_hmac(digest, derived_key, sizeof derived_key,
-> > -			epayload->format, epayload->datablob_len);
-> > -	if (!ret)
-> > -		dump_hmac(NULL, digest, HASH_SIZE);
-> > +	hmac_sha256_usingrawkey(derived_key, sizeof(derived_key),
-> > +				epayload->format, epayload->datablob_len,
-> > +				digest);
-> > +	dump_hmac(NULL, digest, HASH_SIZE);
-> >  out:
-> >  	memzero_explicit(derived_key, sizeof(derived_key));
-> >  	return ret;
-> >  }
-> > =20
-> > @@ -532,13 +505,12 @@ static int datablob_hmac_verify(struct encrypted_=
-key_payload *epayload,
-> >  		p =3D epayload->master_desc;
-> >  		len -=3D strlen(epayload->format) + 1;
-> >  	} else
-> >  		p =3D epayload->format;
-> > =20
-> > -	ret =3D calc_hmac(digest, derived_key, sizeof derived_key, p, len);
-> > -	if (ret < 0)
-> > -		goto out;
-> > +	hmac_sha256_usingrawkey(derived_key, sizeof(derived_key), p, len,
-> > +				digest);
-> >  	ret =3D crypto_memneq(digest, epayload->format + epayload->datablob_l=
-en,
-> >  			    sizeof(digest));
-> >  	if (ret) {
-> >  		ret =3D -EINVAL;
-> >  		dump_hmac("datablob",
-> > @@ -1009,33 +981,18 @@ EXPORT_SYMBOL_GPL(key_type_encrypted);
-> > =20
-> >  static int __init init_encrypted(void)
-> >  {
-> >  	int ret;
-> > =20
-> > -	hash_tfm =3D crypto_alloc_shash(hash_alg, 0, 0);
-> > -	if (IS_ERR(hash_tfm)) {
-> > -		pr_err("encrypted_key: can't allocate %s transform: %ld\n",
-> > -		       hash_alg, PTR_ERR(hash_tfm));
-> > -		return PTR_ERR(hash_tfm);
-> > -	}
-> > -
-> >  	ret =3D aes_get_sizes();
-> >  	if (ret < 0)
-> > -		goto out;
-> > -	ret =3D register_key_type(&key_type_encrypted);
-> > -	if (ret < 0)
-> > -		goto out;
-> > -	return 0;
-> > -out:
-> > -	crypto_free_shash(hash_tfm);
-> > -	return ret;
-> > -
-> > +		return ret;
-> > +	return register_key_type(&key_type_encrypted);
-> >  }
-> > =20
-> >  static void __exit cleanup_encrypted(void)
-> >  {
-> > -	crypto_free_shash(hash_tfm);
-> >  	unregister_key_type(&key_type_encrypted);
-> >  }
-> > =20
-> >  late_initcall(init_encrypted);
-> >  module_exit(cleanup_encrypted);
-> >=20
-> > base-commit: d6084bb815c453de27af8071a23163a711586a6c
-> > --=20
-> > 2.50.1
-> >=20
->=20
+Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+---
+ drivers/i2c/algos/i2c-algo-pcf.c | 42 +++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
+index fd563e845d4b..f5174f38d777 100644
+--- a/drivers/i2c/algos/i2c-algo-pcf.c
++++ b/drivers/i2c/algos/i2c-algo-pcf.c
+@@ -23,9 +23,10 @@
+ #include "i2c-algo-pcf.h"
+ 
+ 
+-#define DEB2(x) if (i2c_debug >= 2) x
+-#define DEB3(x) if (i2c_debug >= 3) x /* print several statistical values */
+-#define DEBPROTO(x) if (i2c_debug >= 9) x;
++#define DEB2(x) do { if (i2c_debug >= 2) x; } while (0);
++#define DEB3(x) do { if (i2c_debug >= 3) x; } while (0);
++	/* print several statistical values */
++#define DEBPROTO(x) do { if (i2c_debug >= 9) x; } while (0);
+ 	/* debug the protocol by showing transferred bits */
+ #define DEF_TIMEOUT 16
+ 
+@@ -160,7 +161,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
+ 	 * check to see S1 now used as R/W ctrl -
+ 	 * PCF8584 does that when ESO is zero
+ 	 */
+-	if (((temp = get_pcf(adap, 1)) & 0x7f) != (0)) {
++	temp = get_pcf(adap, 1);
++	if ((temp & 0x7f) != (0)) {
+ 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S0 (0x%02x).\n", temp));
+ 		return -ENXIO; /* definitely not PCF8584 */
+ 	}
+@@ -168,7 +170,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
+ 	/* load own address in S0, effective address is (own << 1) */
+ 	i2c_outb(adap, get_own(adap));
+ 	/* check it's really written */
+-	if ((temp = i2c_inb(adap)) != get_own(adap)) {
++	temp = i2c_inb(adap);
++	if (temp  != get_own(adap)) {
+ 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S0 (0x%02x).\n", temp));
+ 		return -ENXIO;
+ 	}
+@@ -176,7 +179,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
+ 	/* S1=0xA0, next byte in S2 */
+ 	set_pcf(adap, 1, I2C_PCF_PIN | I2C_PCF_ES1);
+ 	/* check to see S2 now selected */
+-	if (((temp = get_pcf(adap, 1)) & 0x7f) != I2C_PCF_ES1) {
++	temp = get_pcf(adap, 1);
++	if ((temp & 0x7f) != I2C_PCF_ES1) {
+ 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S2 (0x%02x).\n", temp));
+ 		return -ENXIO;
+ 	}
+@@ -184,7 +188,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
+ 	/* load clock register S2 */
+ 	i2c_outb(adap, get_clock(adap));
+ 	/* check it's really written, the only 5 lowest bits does matter */
+-	if (((temp = i2c_inb(adap)) & 0x1f) != get_clock(adap)) {
++	temp = i2c_inb(adap);
++	if ((temp & 0x1f) != get_clock(adap)) {
+ 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't set S2 (0x%02x).\n", temp));
+ 		return -ENXIO;
+ 	}
+@@ -193,7 +198,8 @@ static int pcf_init_8584 (struct i2c_algo_pcf_data *adap)
+ 	set_pcf(adap, 1, I2C_PCF_IDLE);
+ 
+ 	/* check to see PCF is really idled and we can access status register */
+-	if ((temp = get_pcf(adap, 1)) != (I2C_PCF_PIN | I2C_PCF_BB)) {
++	temp = get_pcf(adap, 1);
++	if (temp != (I2C_PCF_PIN | I2C_PCF_BB)) {
+ 		DEB2(printk(KERN_ERR "i2c-algo-pcf.o: PCF detection failed -- can't select S1` (0x%02x).\n", temp));
+ 		return -ENXIO;
+ 	}
+@@ -209,7 +215,7 @@ static int pcf_sendbytes(struct i2c_adapter *i2c_adap, const char *buf,
+ 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
+ 	int wrcount, status, timeout;
+ 
+-	for (wrcount=0; wrcount<count; ++wrcount) {
++	for (wrcount = 0; wrcount < count; ++wrcount) {
+ 		DEB2(dev_dbg(&i2c_adap->dev, "i2c_write: writing %2.2X\n",
+ 				buf[wrcount] & 0xff));
+ 		i2c_outb(adap, buf[wrcount]);
+@@ -246,7 +252,8 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
+ 	/* increment number of bytes to read by one -- read dummy byte */
+ 	for (i = 0; i <= count; i++) {
+ 
+-		if ((wfp = wait_for_pin(adap, &status))) {
++		wfp = wait_for_pin(adap, &status);
++		if (wfp) {
+ 			if (wfp == -EINTR)
+ 				return -EINTR; /* arbitration lost */
+ 
+@@ -299,7 +306,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
+ 	struct i2c_algo_pcf_data *adap = i2c_adap->algo_data;
+ 	struct i2c_msg *pmsg;
+ 	int i;
+-	int ret=0, timeout, status;
++	int ret = 0, timeout, status;
+ 
+ 	if (adap->xfer_begin)
+ 		adap->xfer_begin(adap->data);
+@@ -313,7 +320,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
+ 		goto out;
+ 	}
+ 
+-	for (i = 0;ret >= 0 && i < num; i++) {
++	for (i = 0; ret >= 0 && i < num; i++) {
+ 		pmsg = &msgs[i];
+ 
+ 		DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: Doing %s %d bytes to 0x%02x - %d of %d messages\n",
+@@ -358,9 +365,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
+ 
+ 			if (ret != pmsg->len) {
+ 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
+-					    "only read %d bytes.\n",ret));
++					    "only read %d bytes.\n", ret));
+ 			} else {
+-				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n",ret));
++				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: read %d bytes.\n", ret));
+ 			}
+ 		} else {
+ 			ret = pcf_sendbytes(i2c_adap, pmsg->buf, pmsg->len,
+@@ -368,9 +375,9 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
+ 
+ 			if (ret != pmsg->len) {
+ 				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: fail: "
+-					    "only wrote %d bytes.\n",ret));
++					    "only wrote %d bytes.\n", ret));
+ 			} else {
+-				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n",ret));
++				DEB2(printk(KERN_DEBUG "i2c-algo-pcf.o: wrote %d bytes.\n", ret));
+ 			}
+ 		}
+ 	}
+@@ -406,7 +413,8 @@ int i2c_pcf_add_bus(struct i2c_adapter *adap)
+ 	/* register new adapter to i2c module... */
+ 	adap->algo = &pcf_algo;
+ 
+-	if ((rval = pcf_init_8584(pcf_adap)))
++	rval = pcf_init_8584(pcf_adap);
++	if (rval)
+ 		return rval;
+ 
+ 	rval = i2c_add_adapter(adap);
+-- 
+2.43.0
 
 
