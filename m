@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-804646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B40B47B08
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F47B47B0D
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 13:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2153A5078
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C648D17B2F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 11:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28AB264A60;
-	Sun,  7 Sep 2025 11:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0530F265626;
+	Sun,  7 Sep 2025 11:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ax/MJz58"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbkKtJIa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750B41E5215
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 11:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E03223DF9;
+	Sun,  7 Sep 2025 11:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757245186; cv=none; b=Hv0gbGk/V+DQMq31qfNny26UhwNMnBMMKtsKTSyntY0aIFvlaCS1oYF8hcl0cIY0qPj/GwyVHbiDRHYVf/LWEshP/ykoupTu83pI3z8tGaEwjxkV/lyB8MtwQ2vweFEzxwtNGkSgWSNribq1i8ZqcxGDjD1mnuYpIGqsRvEy390=
+	t=1757245342; cv=none; b=BTCOALVV2Z/jccYGvrTFXO2XyMAeXmevh/eHtzecOWLv8nJ2+xGxooxCPItdNMduGLkDl9qRM2W9AD84ux0LxSO4zRc6dNQhrOk5NrkfzqQmz+czss4T5w9/QaeShPRbNEYnK42sNY9+RRjtCTVgITRgjePlQEryBz2/7xZ1sgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757245186; c=relaxed/simple;
-	bh=S3RWK01MgwhoESmldbnD23H0uI3OPDF9ufSHLa89zK4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iCWmKkzxDHKABduX9fvreLBaWdAwvqm5CyIIgqYVG17VSEJweXD+h/XM6Cj1eSoyjJCAAM/V6VWQLdR+gBquvkG425GIKvn10QEE9akL/8XkrrVFIVp8Fp1vbumimA+Zt7Ks7Z3lP6ZTqmjqGKviUoxII6KcKz47CKAIp4WBWMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ax/MJz58; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45dd66e1971so20667535e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 04:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757245183; x=1757849983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=76k1w/hZUONsc9kXw+6H44ujJP9uLKMcBhBot9MBRw0=;
-        b=ax/MJz58wNlpTCd69VxwWVtInqnN7pfKAZoy0HgwdzKimlpFf/5YJmX4MT+nk7sNbV
-         XKIZtF6D8k86aGj4gPo8NxUcufp03nd7Npf9qr+kAiF3tNqIaKBdDwF78GeTDX2ZUPNX
-         SFP84as727/Zy0SEuQkg/W21u/pdqqIPX2Wf4Hk5tXKwOf+pxfSp5GK0S3gLpMHZY3N3
-         zZcVRfxgEyn7aoQCbXmGQZIZUiXbCxauTRzOuxJnA4GGV8dpkX/Uwpn5grJegvTsSYi7
-         94rRIjRxz66gwR2c+hKzGIIaXe58yn68xeAenOtIutHo+iNvB2LL0a2ffxvrpHDqK53e
-         JnmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757245183; x=1757849983;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=76k1w/hZUONsc9kXw+6H44ujJP9uLKMcBhBot9MBRw0=;
-        b=Terp+jzSly/tZSaFlmdNfk2KKfDvItXiCsfckKaWXCXmPIJ48qHrIgSszmlUOPlqYM
-         TGE72XP9VzAoKIAmYB0IEMkh1HB2uNMbgMB3WLKT3p+FHJFLLSvVSvj1tyatUil7CdbT
-         nNrzKDKXgAMcK7yRtub7/nMd6ZaKwRQsG2wqoBTk3HvR0xaZB1TocnXCoQLOjK9sCX7l
-         Lmxj8IF0LBqzE5hhCTqKy/BlTgfKtvEO+2k3XyOO9Zh73p82RE3GTx7949YqrVbo3jGF
-         vU0AAd+EU6PG+PxHkiysC6P7TI8qwzOD+11cb5boH+LUziHC5hcYyuc4ZvR8Z5kZm+R/
-         /HZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPxUldedx2K64Eqqjfa9NR/TSoDYa/fgudp/SdqHqHeypr4Z7YTnyjjcjunJ2rgeydTYOQokdlyIZMXKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhzbi5jAele2xzUR06Kz/lx4x5YKjQsE0X681aJlxQJRrLSh5x
-	N5P7Qtb7R6j8Kmse1XLeJinLCQAcb1mPSxl5uKPSXTA2FBJwu7Ens8PuJvtCQCBfo/MKsWT2O7w
-	jNMIuxWgypfWNzOCd/w==
-X-Google-Smtp-Source: AGHT+IHoVcPYbe0iUJKGBmK7yYOxv27qbhfcAB9Hc59veTuVIOgoY0qC6MoiuHeagEO6EoOqKdzaexiDWmVsuiQ=
-X-Received: from wmbes11.prod.google.com ([2002:a05:600c:810b:b0:459:7c15:15b9])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1e8c:b0:45c:b6fa:352e with SMTP id 5b1f17b1804b1-45dddecf506mr42361025e9.18.1757245182810;
- Sun, 07 Sep 2025 04:39:42 -0700 (PDT)
-Date: Sun, 7 Sep 2025 11:39:41 +0000
-In-Reply-To: <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org>
+	s=arc-20240116; t=1757245342; c=relaxed/simple;
+	bh=D1pphOsaMdhq2bWMXgzDFH9Cssa9L/A8eW+GFydLUsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ghnssK6MnTTMZY8XBZFmtOhT4cihYV3BCm6f9iNujTYww1JQn7YHCwm7NOaClMKfiC2NZlJEDZ+oRZMOR7OqvgPARPhXsOMYJ1QIlqUEQJwa1mlDMi+J5swRQjlDmrIDwbqMEMepfxRMQ+rfmqNADmPMw1eEiIWkjkPNGxJs3mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbkKtJIa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E095C4CEF0;
+	Sun,  7 Sep 2025 11:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757245341;
+	bh=D1pphOsaMdhq2bWMXgzDFH9Cssa9L/A8eW+GFydLUsA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YbkKtJIaBwgZCAB/zJJ6OMsTMkKqKdde36YiaKxyZls1NTkiCtuKaVjfhpJAc6KHZ
+	 yNncNyi6NDOwiHIsYMXC+qJ3OmJ1bhdW+kr+dc+YR3plU7fiWIHah0OapKIScbYvfQ
+	 27qM+Y+c2WapzjJW5c380UuGoDzOlXXV3AOqj8HCZvv9QoIQ8xyhtxtLy2ffXbDYMB
+	 dNEg/cMEoYMGjikD5hNXBfXj0OAA0vjfAs9q6TZoHfi2n3DSHm1hPB9+Jk/RNi7bhy
+	 zRWD/0YUG/E9668WSo9werCIGGW+aOj10EY6pZJeIIhge9XByVihNdB3KDkvkGgBK5
+	 FQ1T72J+6Y6HQ==
+Date: Sun, 7 Sep 2025 12:42:07 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Tobias Sperling
+ <tobias.sperling@softing.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Esteban Blanc <eblanc@baylibre.com>, Ramona Alexandra Nechita
+ <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, Herve Codina
+ <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+Message-ID: <20250907124207.2fe64214@jic23-huawei>
+In-Reply-To: <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+References: <cover.1757053456.git.mazziesaccount@gmail.com>
+	<3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250905-vmbo-defer-v1-0-7ae1a382b674@google.com>
- <20250905-vmbo-defer-v1-1-7ae1a382b674@google.com> <20250905152505.005a610d@fedora>
- <CAH5fLghgqv0mNYf8r-rdeBaCGxYsdkBouqgo_ohx3DYHwpcZRQ@mail.gmail.com>
- <DCL8DQV23FIZ.KJ74UQ9YOFZV@kernel.org> <aL1pSFB9iBsfHFM_@google.com> <DCMJ6K06T63T.2UBTM1RL4YJ0A@kernel.org>
-Message-ID: <aL1u_YxOkuj1kIq6@google.com>
-Subject: Re: [PATCH 1/2] drm/gpuvm: add deferred vm_bo cleanup
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Matthew Brost <matthew.brost@intel.com>, 
-	"Thomas =?utf-8?Q?Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Price <steven.price@arm.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 07, 2025 at 01:28:05PM +0200, Danilo Krummrich wrote:
-> On Sun Sep 7, 2025 at 1:15 PM CEST, Alice Ryhl wrote:
-> > On Sat, Sep 06, 2025 at 12:47:36AM +0200, Danilo Krummrich wrote:
-> >> On Fri Sep 5, 2025 at 8:18 PM CEST, Alice Ryhl wrote:
-> >> > On Fri, Sep 5, 2025 at 3:25=E2=80=AFPM Boris Brezillon
-> >> > <boris.brezillon@collabora.com> wrote:
-> >> >> On Fri, 05 Sep 2025 12:11:28 +0000
-> >> >> Alice Ryhl <aliceryhl@google.com> wrote:
-> >> >> > +static bool
-> >> >> > +drm_gpuvm_bo_is_dead(struct drm_gpuvm_bo *vm_bo)
-> >> >> > +{
-> >> >> > +     return !kref_read(&vm_bo->kref);
-> >> >>
-> >> >> I'm not too sure I like the idea of [ab]using vm_bo::kref to defer =
-the
-> >> >> vm_bo release. I get why it's done like that, but I'm wondering why=
- we
-> >> >> don't defer the release of drm_gpuva objects instead (which is real=
-ly
-> >> >> what's being released in va_unlink()). I can imagine drivers wantin=
-g to
-> >> >> attach resources to the gpuva that can't be released in the
-> >> >> dma-signalling path in the future, and if we're doing that at the g=
-puva
-> >> >> level, we also get rid of this kref dance, since the va will hold a
-> >> >> vm_bo ref until it's destroyed.
-> >> >>
-> >> >> Any particular reason you went for vm_bo destruction deferral inste=
-ad
-> >> >> of gpuva?
-> >> >
-> >> > All of the things that were unsafe to release in the signalling path
-> >> > were tied to the vm_bo, so that is why I went for vm_bo cleanup.
-> >> > Another advantage is that it lets us use the same deferred logic for
-> >> > the vm_bo_put() call that drops the refcount from vm_bo_obtain().
-> >> >
-> >> > Of course if gpuvas might have resources that need deferred cleanup,
-> >> > that might change the situation somewhat.
-> >>=20
-> >> I think we want to track PT(E) allocations, or rather reference counts=
- of page
-> >> table structures carried by the drm_gpuva, but we don't need to releas=
-e them on
-> >> drm_gpuva_unlink(), which is where we drop the reference count of the =
-vm_bo.
-> >>=20
-> >> Deferring drm_gpuva_unlink() isn't really an option I think, the GEMs =
-list of
-> >> VM_BOs and the VM_BOs list of VAs is usually used in ttm_device_funcs:=
-:move to
-> >> map or unmap all VAs associated with a GEM object.
-> >>=20
-> >> I think PT(E) reference counts etc. should be rather released when the=
- drm_gpuva
-> >> is freed, i.e. page table allocations can be bound to the lifetime of =
-a
-> >> drm_gpuva. Given that, I think that eventually we'll need a cleanup li=
-st for
-> >> those as well, since once they're removed from the VM tree (in the fen=
-ce
-> >> signalling critical path), we loose access otherwise.
-> >
-> > Hmm. Another more conceptual issue with deferring gpuva is that
-> > "immediate mode" is defined as having the GPUVM match the GPU's actual
-> > address space at all times, which deferred gpuva cleanup would go
-> > against.
->=20
-> Depends on what "deferred gpuva cleanup" means.
->=20
-> What needs to happen in the run_job() is drm_gpuva_unlink() and
-> drm_gpuva_unmap(). Freeing the drm_gpuva, inluding releasing the assoicia=
-ted
-> driver specific resources, can be deferred.
+On Fri, 5 Sep 2025 09:42:31 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Yeah I guess we could have unlink remove the gpuva, but then allow the
-end-user to attach the gpuva to a list of gpuvas to kfree deferred. That
-way, the drm_gpuva_unlink() is not deferred but any resources it has can
-be.
+> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
+> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+> 
+> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
+> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+> 
+> The IC does also support CRC but it is not implemented in the driver.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Of course, this approach also makes deferred gpuva cleanup somewhat
-orthogonal to this patch.
+Hi Matti,
 
-One annoying part is that we don't have an gpuvm ops operation for
-freeing gpuva, and if we add one for this, it would *only* be used in
-this case as most drivers explicitly kfree gpuvas, which could be
-confusing for end-users.
+Just one trivial additional comment from me.
 
-Alice
+Jonathan
+
+> diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
+> new file mode 100644
+> index 000000000000..8acd1e5f105d
+> --- /dev/null
+> +++ b/drivers/iio/adc/rohm-bd79112.c
+
+
+
+
+
+> +
+> +/* ADC channels as named in the data-sheet */
+> +static const char * const bd79112_chan_names[] = {
+> +	"AGIO0A", "AGIO1A", "AGIO2A", "AGIO3A", "AGIO4A",	/* 0 - 4 */
+> +	"AGIO5A", "AGIO6A", "AGIO7A", "AGIO8A", "AGIO9A",	/* 5 - 9 */
+> +	"AGIO10A", "AGIO11A", "AGIO12A", "AGIO13A", "AGIO14A",	/* 10 - 14 */
+> +	"AGIO15A", "AGIO0B", "AGIO1B", "AGIO2B", "AGIO3B",	/* 15 - 19 */
+> +	"AGIO4B", "AGIO5B", "AGIO6B", "AGIO7B", "AGIO8B",	/* 20 - 24 */
+> +	"AGIO9B", "AGIO10B", "AGIO11B", "AGIO12B", "AGIO13B",	/* 25 - 29 */
+> +	"AGIO14B", "AGIO15B",					/* 30 - 31 */
+> +};
+
+> +	/* Let's assign data-sheet names to channels */
+Not seeing any value in this comment given the code that follows.
+Probably drop it
+
+> +	for (i = 0; i < iio_dev->num_channels; i++) {
+> +		unsigned int ch = cs[i].channel;
+> +
+> +		cs[i].datasheet_name = bd79112_chan_names[ch];
+> +	}
+
 
