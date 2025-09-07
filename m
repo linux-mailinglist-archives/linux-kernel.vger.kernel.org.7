@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-804806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E54B47EBB
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC966B48023
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 22:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0155217E7B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4789D162619
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 20:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC4D2765C8;
-	Sun,  7 Sep 2025 20:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368F227AC54;
+	Sun,  7 Sep 2025 20:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SDa86pr5"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB6JSZ9e"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0A11D88D0;
-	Sun,  7 Sep 2025 20:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9D414D29B;
+	Sun,  7 Sep 2025 20:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757276886; cv=none; b=XYvlGKNQ/9DsCy/XZIJUA6qOkIQ8TalF2DS/hU+18XYdXb4g1RQT6PStesaDJbLyhl7K/Dt2R38yxqZ9ntxf4NJR0gjxOW3SlX30dVG4Q8gyjAEpVKyk5UPd7Mi3kVuRDtndET5bNpYAERnNqUO65NWI9Bd9k0XjHNF849Jbkvk=
+	t=1757278575; cv=none; b=dDvz2tGosagUI2vk7G+pLZ9hXbR4yZXtm/if5vW4hlGsK4bQggxq45BRh4YRVFXmX6sTfo1Kk8sS+4gJkaWaoyL0G4hj1SVj0GNlhfl2hb5g7S12lLFikUhgCtPp/+eu2PJy9IuUIQfOemvFdZI2Cp20eEa58a7lUqLkMrGZWV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757276886; c=relaxed/simple;
-	bh=8TQkgCKty2YVfN+St0YaHga2YrJ1lTbBbncd93Mr0OA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ILn51lwf+V1iQ8qPQqpacVBSIllkOTyQd8wgYcXg1pYlqoq+8IdmYztwamf06TnyGGuQMGEqmr+O7/BZS/f5OQ9LGHodtYucxvaCNP2P3KC2OYwvbqNLIL1bjnkSMK7CBE376HZGrc8foV55N1z0PGeNLL+W563JvGEeaKHirAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SDa86pr5; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 587JQfDe002038;
-	Sun, 7 Sep 2025 20:27:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=nmDlQERdSOXnir4NGhI1dR5qcwx02
-	qQwlCj5SprR4PM=; b=SDa86pr5p08rwjFbqFrEiUUEBBMoeG8BEb744iL7RK99n
-	6DDpkFz3Dpd89nGiidlhlSginJuhssWO8qQg43FeIf/Qkn6ktRDbsJksT8AJYeNs
-	srBu0SgYq6badZ910cDVt3Ovkjz69UL9dSCAc7tlLJP118x4L11LAsfgQ4Vy0PGl
-	jlzz5+NFKcjdD+sD8/4+Notrh7K2adkakT1VUMG5HzYPQuzVg0pXojaeo678mSX3
-	aGRrhtYyPgqTrM7xIql+5FbE48HE8TksTtNJF2v+hzw3onxX9m9yKly+ty0E9nky
-	jXE6gTkGOCKlh6ORs5y/Wi4NkGV7IcqhvLE9WxP4A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 491fnug1nq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 07 Sep 2025 20:27:56 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 587H3mNL025916;
-	Sun, 7 Sep 2025 20:27:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bd7d581-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 07 Sep 2025 20:27:55 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 587KRtUA017327;
-	Sun, 7 Sep 2025 20:27:55 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 490bd7d57v-1;
-	Sun, 07 Sep 2025 20:27:55 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: alim.akhtar@samsung.com, krzk@kernel.org, peter.griffin@linaro.org,
-        martin.petersen@oracle.com, linux-samsung-soc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: ufs: exynos: correct sync pattern mask timing comment
-Date: Sun,  7 Sep 2025 13:27:49 -0700
-Message-ID: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757278575; c=relaxed/simple;
+	bh=6P0HgZbw4HXtenDT6y2xs8u/qk5v4ufWtF4mxqooHm8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JlCDlxMWsKncELd1pC7QEy615FUKjwuoXyCxR0uLR8Qk00gJV4VP4tdPT4KM3Mb47rccc1l+QFUUI+KMcBznqNYZIOr6BS/7uo5UCaFT54LJSfEV2JJTFmtiE0YGOooOK93oM9XOf659dEZ6VGdznNPo1RgFJ/caB6O8zZNhPB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB6JSZ9e; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso1875092a12.1;
+        Sun, 07 Sep 2025 13:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757278572; x=1757883372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0zZEheeM1rUpP8ZGVFjjiK4EdwdbE8pDt0S3/UybYHU=;
+        b=VB6JSZ9eQ4t9WzvTZXBRS9rDNEJMY7IltFagPHwk7oCnHf8vekUpYJDwoJ8BRqSo/b
+         8INrWT73CFI4uoOZ13hUzNpenn86re4XIkNfkj9a4ioIKVKY7RqmWfdnJofaaggmTFzN
+         DqBWKpjDOqc1b8hE+ua0YjE0eTmJhtQGuaKX5+ZCRuBAdkhF/wQMzCNt8pt2uVvPZ5Bo
+         rgGfI9e9H8dzOMwYDV5T4oRZg3WPtOSTGS3Gb7kSi9mfyQ7/Zapt0ZnHV5RFaEAa/nnG
+         EEb0YA9IiXbAbmq+Tz3TRGV7XkI0Mljt0Sm7+hHK/0elHv5wTYAXrGhjtKU9xQ9r/Qmp
+         qt5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757278572; x=1757883372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0zZEheeM1rUpP8ZGVFjjiK4EdwdbE8pDt0S3/UybYHU=;
+        b=HHDYgIA8ywBSyndyXzo7+MyGuLhrQtEL0ESerNLlXIvSuLJ/6Ibh6kl9P3MveDTp1M
+         J16bI6XT8nR4LgFylCgABk97D88pIOYsRdRvl2U5k3zFtwGvcp+Oo9hnudYpRKBTan0B
+         ZyTN8Lil9CYH+rwDQ9DZ7/JbxtxufVP3jALaRpsfoNpVGPSVs/M3ME1asYL+LmGbgoYE
+         KN6OHGE+YGplCkDBs+394t1KUMtOPqaEk3XWt9z+WveDjmoaJ33fCV5z/XAo9393X+eU
+         YE4+F0vzrt8s4z/n1Ffxy03WvpbJVhKGsOHPFofVuxtMbvX0voEBotzppvVQV57Zy/Ez
+         g38A==
+X-Forwarded-Encrypted: i=1; AJvYcCUyXq0uU/JaV6aHLLabbU+XQtkHAsrGlH7rLGIgKRFM0/+F6nP5BiEht+19YMCKlQ4kiZQ9xE5qu9Cr@vger.kernel.org, AJvYcCVYInka3IBUvSN1ZopzeaOSp2S0ckLOXE8HeJAyUKJ803cR7MYcJAYN01IrBfm2jPyXzk0JnBLBKG+4TC+V@vger.kernel.org, AJvYcCW4Lrdhvfa/Z70vDXzeC15+WK8ebxbD/QxPgHuK097Q+QE83LaeeUe5lTNq/vzqInQ1OW0SNx+2b9Dq@vger.kernel.org, AJvYcCXcdvv/qsZQwCDJEVcbV2YyWDX89DyzCJtQUEWfQYFcvwzhtNVxowazveXy2t4+mbjbq8yJw5sI6zMP8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdrTK8ZjjoI5Igg+peEXyKqfuTNSFfaG4uoWcLHQYwJS3NsLCY
+	yFe5S/4IYYiVKeBwKO4clcND65ZsTKsQwNBoBjpmga/k1M/A7voHgK6DlwZ8WI/qVHaaFhGtN87
+	t0NBy7HEYrb1jMw45j2+WSmamgzhdNjc=
+X-Gm-Gg: ASbGncubwwC+cAFMnK06ypAiVC1LYXYUzDFeINX4m0du0liQiZ/0Zea6TT8djJ+wvpv
+	shQJGaGdoAYTXOw5MXhEvPjEesvyuCMCYFYqcwEDt5RCtzB6HuZMnSXPo8XS0Ow02KCoAYln8Ah
+	133R6ZZ0GnQ3r55N/IL2OHvbdD0TfIiuTSYBx0BztykE4gdTwYpmBb/8vC15iaAT5M/j/CTYb5y
+	jatsLE/dNMrADYL2Q==
+X-Google-Smtp-Source: AGHT+IG2cAHaNzeA2PPUEo6E90wAox3EQpXy6vAMOvdMI6HFpRD5lFQmKjzj246bI+rwMmB4f+CnhxohPl4jX9hXxGE=
+X-Received: by 2002:a17:907:d94:b0:afe:db34:d769 with SMTP id
+ a640c23a62f3a-b04b140d092mr551593766b.18.1757278572085; Sun, 07 Sep 2025
+ 13:56:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-07_08,2025-09-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509070212
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA3MDE5NiBTYWx0ZWRfXwal4JroHskso
- IM9j+47Jpo4He0948KKf4t46KtJc66BNgZ0rtqIfB/XOxmEJWAvTO4cz1lIphAKfie5DXkXA3GS
- P5iLSH/eF89HYcnjwWNU1qZPmQd4d6ndeQbDQdr5SOwiu4RpRwMY1eVWNe3Z/lPq7O721itIu9w
- X4S/iwDavIbe398v4N2nj9aJhziBc49lzwPmoNRdL4JsFHGOz9f5j+58HyZCPWN0dHTDPj4rH0l
- sd7mAt7mDwpXefYQ2H+ZgEgokZbsNI34GL1Nmt10D6bVv+6q3Kb2iTNNKoK2sqeeC1xaFdmvkrm
- fO1z+fI2VyydGN3evUDhIzpf0EbKBh2UOVdfnU4Nw8R+rY74TufV5TIjn4lPJGSNvYdebwI1IDN
- JzqFz6j0r1QoVuh8bkeKh0lWQU7eLw==
-X-Proofpoint-GUID: h9X0dUTol4snrS75rdOUG_br4sshWGXU
-X-Proofpoint-ORIG-GUID: h9X0dUTol4snrS75rdOUG_br4sshWGXU
-X-Authority-Analysis: v=2.4 cv=LdI86ifi c=1 sm=1 tr=0 ts=68bdeacc b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=xlVCHxDqw-qt9YOnf0sA:9 cc=ntf
- awl=host:13602
+References: <cover.1757053456.git.mazziesaccount@gmail.com>
+ <3cc1faffcb4f71f0755b6192f193acecd36bea67.1757053456.git.mazziesaccount@gmail.com>
+ <20250907124207.2fe64214@jic23-huawei>
+In-Reply-To: <20250907124207.2fe64214@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 7 Sep 2025 23:55:35 +0300
+X-Gm-Features: Ac12FXxb44-QyBlIfiDXLWTvbl0eO5yLXHfNVS4oRrwPF2pu7aYj4Q6saPNfw5E
+Message-ID: <CAHp75VeaHFDDZDmc9xsbUxZbRgkipRtcSdXN=ZXL2+V2OvL=Mw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>, Hans de Goede <hansg@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Alisa-Dariana Roman <alisadariana@gmail.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix the comment for SYNC_LEN_G2 in exynos_ufs_config_sync_pattern_mask().
-The actual value is 40us, not 44us, matching the configured mask timing.
-This change improves code clarity and avoids potential confusion for
-readers and maintainers.
+On Sun, Sep 7, 2025 at 2:42=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+> On Fri, 5 Sep 2025 09:42:31 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-No functional changes.
+...
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/ufs/host/ufs-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +/* ADC channels as named in the data-sheet */
+> > +static const char * const bd79112_chan_names[] =3D {
+> > +     "AGIO0A", "AGIO1A", "AGIO2A", "AGIO3A", "AGIO4A",       /* 0 - 4 =
+*/
+> > +     "AGIO5A", "AGIO6A", "AGIO7A", "AGIO8A", "AGIO9A",       /* 5 - 9 =
+*/
+> > +     "AGIO10A", "AGIO11A", "AGIO12A", "AGIO13A", "AGIO14A",  /* 10 - 1=
+4 */
+> > +     "AGIO15A", "AGIO0B", "AGIO1B", "AGIO2B", "AGIO3B",      /* 15 - 1=
+9 */
+> > +     "AGIO4B", "AGIO5B", "AGIO6B", "AGIO7B", "AGIO8B",       /* 20 - 2=
+4 */
+> > +     "AGIO9B", "AGIO10B", "AGIO11B", "AGIO12B", "AGIO13B",   /* 25 - 2=
+9 */
+> > +     "AGIO14B", "AGIO15B",                                   /* 30 - 3=
+1 */
+> > +};
+>
+> > +     /* Let's assign data-sheet names to channels */
+> Not seeing any value in this comment given the code that follows.
+> Probably drop it
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 513cbcfa10ac..70d195179eba 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -776,7 +776,7 @@ static void exynos_ufs_config_sync_pattern_mask(struct exynos_ufs *ufs,
- 	u32 mask, sync_len;
- 	enum {
- 		SYNC_LEN_G1 = 80 * 1000, /* 80us */
--		SYNC_LEN_G2 = 40 * 1000, /* 44us */
-+		SYNC_LEN_G2 = 40 * 1000, /* 40us */
- 		SYNC_LEN_G3 = 20 * 1000, /* 20us */
- 	};
- 	int i;
--- 
-2.50.1
+It was my suggestion. I don't know if you noticed that the amount of
+the values is *not* power-of-two and it's harder to find a needed
+value in the list. Moreover, you can read the discussion back and find
+that actually it was a mistake in the list, which can be avoided (or
+chances of which will be minimized) in the first place if we see the
+comments.
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
