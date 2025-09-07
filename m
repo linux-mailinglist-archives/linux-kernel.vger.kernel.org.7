@@ -1,555 +1,115 @@
-Return-Path: <linux-kernel+bounces-804561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DFEB47997
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1DCB47999
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8831C17B101
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A053BA99E
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9783E21ABC1;
-	Sun,  7 Sep 2025 08:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE12421B9D2;
+	Sun,  7 Sep 2025 08:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDRKgybV"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlSpBZB7"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7D81E7C27
-	for <linux-kernel@vger.kernel.org>; Sun,  7 Sep 2025 08:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D743FC7;
+	Sun,  7 Sep 2025 08:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757233615; cv=none; b=JAzs6ZVBwB8M2it+4mnx6gttcjmGh9J/frAdjSc+WBMk4OZjV18ryHXcEhLFVlOmVU2ltjSwxM+B/9niDkpF8sjN1KkKYwaAmK0M1xZK9y1FsTs/YwTFKln8fM0cNlhwUCCGBzdB+irdV3WM/int/6tL907H/lacJZSH0DREqzc=
+	t=1757233757; cv=none; b=ftF1/rvUsB92eVFUf4g+tdPHdLQNmxbXOcvT9iP2e2/wk1S5fuJbNKAhUNOZgbFjA3CUqCLA0I58q/BAtGds5lpcrJSckKa28j59dG4rVerIHPXcj9NjV5HFci4ExxgTquC+k++gV83RZDksey/r3DPtAbuGcd+VgnmeubKmvOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757233615; c=relaxed/simple;
-	bh=crTOAckAX5aCm4LzJLx6CwjEDyizAl+CFryL5NxLhUY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=khkmxNLEQLr0NvXW8HPh874+Zo6wk93KJXplU97ibxAYm/LILtags4pL08+PRpoSXwro+utKMWKlBNhQVoP4feYmjAHeKOX3o3ySRh+J4M3JsPpdn7zSEkMdX2ITja9bIRo1suEigP7MT33+OPg2HymCkysGXdY1I8QLr3M5fVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDRKgybV; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1757233757; c=relaxed/simple;
+	bh=zHL5OUhPXjp6SZHcCKZnrqqQKzlZOLlAcjYf8xWBt5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvWwcvLv0xzqGfwjTrL71++J7dZLwRvK5DE3QcsoI71y4t3SIrH6adqMdIvlS9apIQmbW/4djWWJh/Wlo4cMUCrw5Z+5Y8DVtitpR8LvC3LkEifCLivwQxXq9NRuN1YVQIBjxsm05kBHsSpQh74Z3n6F0468voarbejbZzgDFy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlSpBZB7; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2518cf2fa90so6063385ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 07 Sep 2025 01:26:53 -0700 (PDT)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7459d088020so1779979a34.3;
+        Sun, 07 Sep 2025 01:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757233613; x=1757838413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757233755; x=1757838555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9mR52woDqlyWSSGeCjRqCGbguMzUoeB4aUD9U8e5AgY=;
-        b=UDRKgybVuvWVeHKHucho/PVKm2fKwuNHUpksp2qEsCgJWV+tTq7rSDkeZCxz7siS9P
-         cq3tUl2Soep0OlVzr6wC486d1zwPMqoYDxzGuMAurjuJ0yjSDK9sG4wXgFjLq9xdYq3n
-         EMX3Fl+T0LnnxOafDEaUnXWlRlkVtbQ9+ktitJ5Eamzlpe5IGrQ1+W0c+8aYnUXrBii7
-         CG/vDQur0jcIJD8Vi7iaeWzjhufVqSoONgYCnDwihS+TgVB7q9teVkbtJH/+WFPqqNRl
-         yfVldkpy8yx6cvlKTZOzmXG1iV01SS0/VWNxiYWn1VR3G0K9B/S0LIfy/ZUjeKrp79e2
-         OcKA==
+        bh=zHL5OUhPXjp6SZHcCKZnrqqQKzlZOLlAcjYf8xWBt5o=;
+        b=BlSpBZB7aSMinDqBUHZibzhRj3Ar2GdnjpFwz3RKZOq6wSTpE0vsqiqde84iqxJt3Z
+         3DxgNBdaRAa6hOPptIbLaK0CXHmkrfGHjBCDfq/z8lf3t3eZ0CSTaazsPd1rmuBAnFR7
+         WoNBVtRJvBuX/EBVpqV3sfsk7Bgtrb7CJi4smoynGYnUcvxi7f8RZRU5eUNmSUAlqEYT
+         Mu/I5fim+OVk9Npf7eefebc4EssEhzYxNRvxYJZIsrtCUDSTJpANzFdoOT78N2MVTlXV
+         0Qu+YimjTPXn/wtuGFLILl6xsGVRXf8O4eRnH8BE0F3KdjXPFml8cUnkLrUGyLMQTXsf
+         CIbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757233613; x=1757838413;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757233755; x=1757838555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9mR52woDqlyWSSGeCjRqCGbguMzUoeB4aUD9U8e5AgY=;
-        b=e2omt796TUeQtzzbHQ/T8yhrbkD7h2jNgmvbHlr9SRq25c137m1McZkJU1v51+205W
-         emszg0MMnByMD+GQQWlKdXg4wqOR38qjIcPEdFU44lVimUFPAJLwOl1aMqrss9uUUl4e
-         30SDZ6ydh9uHj28yFmzcCal3tOl8IBN7C+Ed9DaVeHqishZi33zIkbkfKjUoQgHS7YYX
-         J/+epD9qG/0DzuF0M3+XEwNDPcPaS4Q+PSNTUNpeytxqtAYMiGmyY5+Or/MgRLojlr8t
-         e1ZuzKbocGKFYGQ8trFhhUl62NiAJTos0frBGvaXdDpA8QPdrA7MuMF3z/cAfwsk79xX
-         zNUw==
-X-Gm-Message-State: AOJu0Yy+MfJ9bAlVxEK6BSwC84vL92Lsa5CYOrq2GipHtF+ZjI88dH6k
-	GJFKQBMt3Yh1tX+T64oL7Mn+4X5iskq7QRS2WAmbUCBg3NiGWNqNeQ29
-X-Gm-Gg: ASbGncuZbVvvaO6R77pf/tzOSjfjbi3KpXZmYXP7by4LvsipdjacVqtoknH3UT+53uC
-	k7Zk7PeZdjOTUUVACb4XAXeS6xVjeuJByV4+WtYr0IHJXEllyTlwVDv67i0kuuI6dl4lziPPBML
-	Mxxmv4pxpJ+TMX4uo4xskPHJ830xthltvG1oJLEICRpc7y7c7hazcXSFu18JwnB7sOiWKDgUOMq
-	pQywC5g/x0uyEsx5V+GoHpWokbgEGc/WU4qgzaF9pvCEaHkebYi+DJckLe/qQDEBJH7BFWIOx6b
-	04QQIwR1zxHMm+EW9RprxLOfvoEwT1GJc2QxsZwHicU2u7XXz9W88bPMgzT2mJ6v48Jjf9s2qY8
-	6e6MIZxD/Fv3gcCatX+8ljUJU2hb/fmFPolL89sGAsSMRn3My6w==
-X-Google-Smtp-Source: AGHT+IF5r2HG+KioOylATmMZ9jUTZntCwNCLrHWi1fPie8D4SRrQ4h6je1HLiFcbpJrLjV3/tsMHVw==
-X-Received: by 2002:a17:903:2ac5:b0:24e:3cf2:2450 with SMTP id d9443c01a7336-2516c895cc2mr53149615ad.2.1757233612953;
-        Sun, 07 Sep 2025 01:26:52 -0700 (PDT)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24d17d6b694sm59918675ad.136.2025.09.07.01.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 01:26:52 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	aha310510@gmail.com
-Subject: Re: [syzbot] [media?] BUG: corrupted list in az6007_i2c_xfer
-Date: Sun,  7 Sep 2025 17:26:49 +0900
-Message-Id: <20250907082649.263400-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6805a24c.050a0220.4e547.000b.GAE@google.com>
-References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+        bh=zHL5OUhPXjp6SZHcCKZnrqqQKzlZOLlAcjYf8xWBt5o=;
+        b=ZVRyKS3QV8dL1TeCHSg7gpgAI3XXqECkF317zrpkLLiQT2W62M+XSpWRgQd6EAza4X
+         37TgxHi6vAhmx3lcbCL2tR+d6vHg5MoM2oH5R96S+2Wxh/NonxnHEamTB+gXCsSCiwfg
+         l4Wi8Xq+gCXxsWKueLlwryMrFQ7yaADtRAL1yKyLlr+MaVRMO4ayZc3jvvunfLGjbFZD
+         DTkLvmiPPSztnYNIXddqkyozzUa/2gzwgUjD5PVCQlWA8NuzP3Yl/AdHmHb6qELmOshr
+         rEF5y3Q7ctQpjQ3UQ+EDkxydQNGnLatDkFj1z+0WSVorIyezjgxOjmS5ihZU2fLePEdo
+         +tGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB0TqVnRL1xp8OXUENvo378Xx8p07YewN9MkQ0NhmgA9+5gFrV9FV5mJidZIlWakI6GO56HQ12EnIwxI+9@vger.kernel.org, AJvYcCVQvbDhr+/yYPirVEEEQDGTcNuwF400uiRLQVeBDMoDhl4as0R4yq69wfl9yUzuzcJNtgSycdIE/HlO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPIg7/xXCvCgOaPWGOLxjhDfZJKf9ExoaGYDctjr/9UMrjFlXC
+	amaRVZb5yKygVmtKwTQk72yolAQC/tKyuG/k2icA9rxLboBqAEfW79Rnhed3XrNbEWVIy8bGx1b
+	EdUVg7XjRp5kaYZrbFcyfXtB1ntUnMMk=
+X-Gm-Gg: ASbGncuEZbYQd5iSMiV9M0Eh8MhIbRld1hgSHp+wuN+2RaMm1MtUE3jELKMdGtEZqDH
+	z8Z0gb6aN1aMKW0szpSvX85AwlsKqnSHgRgCLL65DYyedgUuxURovzU66RGVSRABRPf4q517NKH
+	sTsmxhoViWe0WWCUohmTVnw4IDTzJT4BHT4qhokW/vQdbH+LzF4pWlhACDknZ4hI2ELylSkX6uO
+	fpbjyA=
+X-Google-Smtp-Source: AGHT+IGyh8ld+6tQy/RCVtIqpvu3UGrTFhfuBz4MseUwlBWxJL0WjulAhzGeEX21wQaQ+OyTZiS6u29Qftewscegmms=
+X-Received: by 2002:a05:6808:4f27:b0:439:b9b4:2d86 with SMTP id
+ 5614622812f47-43b29b114abmr1874556b6e.11.1757233754995; Sun, 07 Sep 2025
+ 01:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250902142749.13724-1-kusogame68@gmail.com> <20250903074205.GB2163762@google.com>
+ <28c1ff61-8510-4fd4-9cd2-0e3ff4fe3a02@kernel.org> <CABZAGRE=6Dg1npRx-jmcycnGMkbtmY6A7E=upffeQ+KANTqcLA@mail.gmail.com>
+ <96e6578e-b21f-498e-82f6-eeee3ee81e20@kernel.org> <CABZAGRGof5e=mwpfmEgE7W+Pn5gS05ei7io8e7C4tPfkvz1=Gw@mail.gmail.com>
+ <ce631cd2-c00b-43b1-ac61-b38e1848b729@kernel.org>
+In-Reply-To: <ce631cd2-c00b-43b1-ac61-b38e1848b729@kernel.org>
+From: Nick Huang <sef1548@gmail.com>
+Date: Sun, 7 Sep 2025 16:29:04 +0800
+X-Gm-Features: Ac12FXzjWYhVSL6pLRke-nKO_o5nQ4XreN0pF_gxg52k8J1nJ-NqvWQoOORoo4o
+Message-ID: <CABZAGRGqWXgKWT5ReyK_tZXTfNWBn_hC4Ctx47gY5b2=K5YeUw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Johnsodn Huang <kusogame68@gmail.com>, Lee Jones <lee@kernel.org>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, weiyan huang <dory85109@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=887=E6=
+=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=884:17=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On 06/09/2025 15:09, Nick Huang wrote:
+> > Yes, I have read it. The subject and the content were mixed together,
+> > so I will reorganize and resend the patch.
+>
+> Please do not top-post.
+>
+> The question was not about subject and content. I just don't believe the
+> DCO chain here.
+>
+> Best regards,
+> Krzysztof
 
----
- drivers/media/usb/dvb-usb-v2/az6007.c | 213 +++++++++++++-------------
- 1 file changed, 108 insertions(+), 105 deletions(-)
+Can you tell me what=E2=80=99s wrong with the DCO chain?
 
-diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-index 65ef045b74ca..8365787d8c4a 100644
---- a/drivers/media/usb/dvb-usb-v2/az6007.c
-+++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-@@ -39,10 +39,10 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
- #define AZ6007_READ_IR		0xb4
- 
- struct az6007_device_state {
--	struct mutex		mutex;
- 	struct mutex		ca_mutex;
- 	struct dvb_ca_en50221	ca;
- 	unsigned		warm:1;
-+	unsigned		ci_attached:1;
- 	int			(*gate_ctrl) (struct dvb_frontend *, int);
- 	unsigned char		data[4096];
- };
-@@ -97,19 +97,30 @@ static struct mt2063_config az6007_mt2063_config = {
- 	.refclock = 36125000,
- };
- 
--static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
--			    u16 index, u8 *b, int blen)
-+static int __az6007_read(struct dvb_usb_device *d, struct az6007_device_state *st,
-+			    u8 req, u16 value, u16 index, u8 *b, int blen)
- {
- 	int ret;
- 
--	ret = usb_control_msg(udev,
--			      usb_rcvctrlpipe(udev, 0),
-+	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-+		return -EAGAIN;
-+
-+	if (blen > sizeof(st->data)) {
-+		pr_err("az6007: tried to read %d bytes, but I2C max size is %lu bytes\n",
-+		       blen, sizeof(st->data));
-+		ret = -EOPNOTSUPP;
-+		goto end_unlock;
-+	}
-+
-+	ret = usb_control_msg(d->udev,
-+			      usb_rcvctrlpipe(d->udev, 0),
- 			      req,
- 			      USB_TYPE_VENDOR | USB_DIR_IN,
- 			      value, index, b, blen, 5000);
- 	if (ret < 0) {
- 		pr_warn("usb read operation failed. (%d)\n", ret);
--		return -EIO;
-+		ret = -EIO;
-+		goto end_unlock;
- 	}
- 
- 	if (az6007_xfer_debug) {
-@@ -119,30 +130,37 @@ static int __az6007_read(struct usb_device *udev, u8 req, u16 value,
- 				     DUMP_PREFIX_NONE, b, blen);
- 	}
- 
-+end_unlock:
-+	mutex_unlock(&d->usb_mutex);
- 	return ret;
- }
- 
- static int az6007_read(struct dvb_usb_device *d, u8 req, u16 value,
- 			    u16 index, u8 *b, int blen)
- {
--	struct az6007_device_state *st = d->priv;
-+	struct az6007_device_state *st = d_to_priv(d);
- 	int ret;
- 
--	if (mutex_lock_interruptible(&st->mutex) < 0)
--		return -EAGAIN;
--
--	ret = __az6007_read(d->udev, req, value, index, b, blen);
--
--	mutex_unlock(&st->mutex);
-+	ret = __az6007_read(d, st, req, value, index, b, blen);
- 
- 	return ret;
- }
- 
--static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
--			     u16 index, u8 *b, int blen)
-+static int __az6007_write(struct dvb_usb_device *d, struct az6007_device_state *st,
-+			    u8 req, u16 value, u16 index, u8 *b, int blen)
- {
- 	int ret;
- 
-+	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-+		return -EAGAIN;
-+
-+	if (blen > sizeof(st->data) - 1) {
-+		pr_err("az6007: tried to write %d bytes, but I2C max size is %lu bytes\n",
-+		       blen, sizeof(st->data) - 1);
-+		ret = -EOPNOTSUPP;
-+		goto end_unlock;
-+	}
-+
- 	if (az6007_xfer_debug) {
- 		printk(KERN_DEBUG "az6007: OUT req: %02x, value: %04x, index: %04x\n",
- 		       req, value, index);
-@@ -150,37 +168,30 @@ static int __az6007_write(struct usb_device *udev, u8 req, u16 value,
- 				     DUMP_PREFIX_NONE, b, blen);
- 	}
- 
--	if (blen > 64) {
--		pr_err("az6007: tried to write %d bytes, but I2C max size is 64 bytes\n",
--		       blen);
--		return -EOPNOTSUPP;
--	}
--
--	ret = usb_control_msg(udev,
--			      usb_sndctrlpipe(udev, 0),
-+	ret = usb_control_msg(d->udev,
-+			      usb_sndctrlpipe(d->udev, 0),
- 			      req,
- 			      USB_TYPE_VENDOR | USB_DIR_OUT,
- 			      value, index, b, blen, 5000);
- 	if (ret != blen) {
- 		pr_err("usb write operation failed. (%d)\n", ret);
--		return -EIO;
-+		ret = -EIO;
-+		goto end_unlock;
- 	}
- 
--	return 0;
-+	ret = 0;
-+end_unlock:
-+	mutex_unlock(&d->usb_mutex);
-+	return ret;
- }
- 
- static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
- 			    u16 index, u8 *b, int blen)
- {
--	struct az6007_device_state *st = d->priv;
-+	struct az6007_device_state *st = d_to_priv(d);
- 	int ret;
- 
--	if (mutex_lock_interruptible(&st->mutex) < 0)
--		return -EAGAIN;
--
--	ret = __az6007_write(d->udev, req, value, index, b, blen);
--
--	mutex_unlock(&st->mutex);
-+	ret = __az6007_write(d, st, req, value, index, b, blen);
- 
- 	return ret;
- }
-@@ -574,10 +585,9 @@ static void az6007_ci_uninit(struct dvb_usb_device *d)
- }
- 
- 
--static int az6007_ci_init(struct dvb_usb_adapter *adap)
-+static int az6007_ci_init(struct dvb_usb_device *d)
- {
--	struct dvb_usb_device *d = adap_to_d(adap);
--	struct az6007_device_state *state = adap_to_priv(adap);
-+	struct az6007_device_state *state = d_to_priv(d);
- 	int ret;
- 
- 	pr_debug("%s()\n", __func__);
-@@ -594,7 +604,7 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
- 	state->ca.poll_slot_status	= az6007_ci_poll_slot_status;
- 	state->ca.data			= d;
- 
--	ret = dvb_ca_en50221_init(&adap->dvb_adap,
-+	ret = dvb_ca_en50221_init(&d->adapter[0].dvb_adap,
- 				  &state->ca,
- 				  0, /* flags */
- 				  1);/* n_slots */
-@@ -604,6 +614,8 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
- 		return ret;
- 	}
- 
-+	state->ci_attached = true;
-+
- 	pr_debug("CI initialized.\n");
- 
- 	return 0;
-@@ -640,8 +652,6 @@ static int az6007_frontend_attach(struct dvb_usb_adapter *adap)
- 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
- 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
- 
--	az6007_ci_init(adap);
--
- 	return 0;
- }
- 
-@@ -661,8 +671,6 @@ static int az6007_cablestar_hdci_frontend_attach(struct dvb_usb_adapter *adap)
- 	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
- 	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
- 
--	az6007_ci_init(adap);
--
- 	return 0;
- }
- 
-@@ -693,50 +701,55 @@ static int az6007_power_ctrl(struct dvb_usb_device *d, int onoff)
- 
- 	pr_debug("%s()\n", __func__);
- 
--	if (!state->warm) {
--		mutex_init(&state->mutex);
-+	mutex_lock(&d->i2c_mutex);
- 
-+	if (!state->warm) {
- 		ret = az6007_write(d, AZ6007_POWER, 0, 2, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 		msleep(60);
- 		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 		msleep(100);
- 		ret = az6007_write(d, AZ6007_POWER, 1, 3, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 		msleep(20);
- 		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 
- 		msleep(400);
- 		ret = az6007_write(d, FX2_SCON1, 0, 3, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 		msleep(150);
- 		ret = az6007_write(d, FX2_SCON1, 1, 3, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 		msleep(430);
- 		ret = az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
- 		if (ret < 0)
--			return ret;
-+			goto end_unlock;
- 
- 		state->warm = true;
- 
--		return 0;
-+		ret = 0;
-+		goto end_unlock;
- 	}
- 
-+	ret = 0;
-+
- 	if (!onoff)
--		return 0;
-+		goto end_unlock;
- 
- 	az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
- 	az6007_write(d, AZ6007_TS_THROUGH, 0, 0, NULL, 0);
- 
--	return 0;
-+end_unlock:
-+	mutex_unlock(&d->i2c_mutex);
-+	return ret;
- }
- 
- /* I2C */
-@@ -752,7 +765,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	int length;
- 	u8 req, addr;
- 
--	if (mutex_lock_interruptible(&st->mutex) < 0)
-+	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
- 		return -EAGAIN;
- 
- 	for (i = 0; i < num; i++) {
-@@ -775,13 +788,12 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr | (1 << 8);
- 			length = 6 + msgs[i + 1].len;
- 			len = msgs[i + 1].len;
--			ret = __az6007_read(d->udev, req, value, index,
-+			ret = __az6007_read(d, st, req, value, index,
- 					    st->data, length);
--			if (ret >= len) {
-+			if (ret >= len + 5) {
- 				for (j = 0; j < len; j++)
- 					msgs[i + 1].buf[j] = st->data[j + 5];
--			} else
--				ret = -EIO;
-+			}
- 			i++;
- 		} else if (!(msgs[i].flags & I2C_M_RD)) {
- 			/* write bytes */
-@@ -797,10 +809,8 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr | (1 << 8);
- 			length = msgs[i].len - 1;
- 			len = msgs[i].len - 1;
--			for (j = 0; j < len; j++)
--				st->data[j] = msgs[i].buf[j + 1];
--			ret =  __az6007_write(d->udev, req, value, index,
--					      st->data, length);
-+			ret = __az6007_write(d, st, req, value, index,
-+					      &msgs[i].buf[1], length);
- 		} else {
- 			/* read bytes */
- 			if (az6007_xfer_debug)
-@@ -815,16 +825,18 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 			value = addr;
- 			length = msgs[i].len + 6;
- 			len = msgs[i].len;
--			ret = __az6007_read(d->udev, req, value, index,
-+			ret = __az6007_read(d, st, req, value, index,
- 					    st->data, length);
--			for (j = 0; j < len; j++)
--				msgs[i].buf[j] = st->data[j + 5];
-+			if (ret >= len + 5) {
-+				for (j = 0; j < len; j++)
-+					msgs[i].buf[j] = st->data[j + 5];
-+			}
- 		}
- 		if (ret < 0)
- 			goto err;
- 	}
- err:
--	mutex_unlock(&st->mutex);
-+	mutex_unlock(&d->i2c_mutex);
- 
- 	if (ret < 0) {
- 		pr_info("%s ERROR: %i\n", __func__, ret);
-@@ -845,6 +857,7 @@ static const struct i2c_algorithm az6007_i2c_algo = {
- 
- static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- {
-+	struct az6007_device_state *state = d_to_priv(d);
- 	int ret;
- 	u8 *mac;
- 
-@@ -855,7 +868,7 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 		return -ENOMEM;
- 
- 	/* Try to read the mac address */
--	ret = __az6007_read(d->udev, AZ6007_READ_DATA, 6, 0, mac, 6);
-+	ret = __az6007_read(d, state, AZ6007_READ_DATA, 6, 0, mac, 6);
- 	if (ret == 6)
- 		ret = WARM;
- 	else
-@@ -864,9 +877,9 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 	kfree(mac);
- 
- 	if (ret == COLD) {
--		__az6007_write(d->udev, 0x09, 1, 0, NULL, 0);
--		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
--		__az6007_write(d->udev, 0x00, 0, 0, NULL, 0);
-+		__az6007_write(d, state, 0x09, 1, 0, NULL, 0);
-+		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
-+		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
- 	}
- 
- 	pr_debug("Device is on %s state\n",
-@@ -874,13 +887,6 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
- 	return ret;
- }
- 
--static void az6007_usb_disconnect(struct usb_interface *intf)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--	az6007_ci_uninit(d);
--	dvb_usbv2_disconnect(intf);
--}
--
- static int az6007_download_firmware(struct dvb_usb_device *d,
- 	const struct firmware *fw)
- {
-@@ -889,6 +895,19 @@ static int az6007_download_firmware(struct dvb_usb_device *d,
- 	return cypress_load_firmware(d->udev, fw, CYPRESS_FX2);
- }
- 
-+static int az6007_init(struct dvb_usb_device *d)
-+{
-+	return az6007_ci_init(d);
-+}
-+
-+static void az6007_exit(struct dvb_usb_device *d)
-+{
-+	struct az6007_device_state *state = d_to_priv(d);
-+
-+	if (state->ci_attached)
-+		az6007_ci_uninit(d);
-+}
-+
- /* DVB USB Driver stuff */
- static struct dvb_usb_device_properties az6007_props = {
- 	.driver_name         = KBUILD_MODNAME,
-@@ -906,6 +925,8 @@ static struct dvb_usb_device_properties az6007_props = {
- 	.download_firmware   = az6007_download_firmware,
- 	.identify_state	     = az6007_identify_state,
- 	.power_ctrl          = az6007_power_ctrl,
-+	.init                = az6007_init,
-+	.exit                = az6007_exit,
- 	.num_adapters        = 1,
- 	.adapter             = {
- 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-@@ -929,6 +950,8 @@ static struct dvb_usb_device_properties az6007_cablestar_hdci_props = {
- 	.download_firmware   = az6007_download_firmware,
- 	.identify_state	     = az6007_identify_state,
- 	.power_ctrl          = az6007_power_ctrl,
-+	.init                = az6007_init,
-+	.exit                = az6007_exit,
- 	.num_adapters        = 1,
- 	.adapter             = {
- 		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-@@ -949,37 +972,17 @@ static const struct usb_device_id az6007_usb_table[] = {
- 
- MODULE_DEVICE_TABLE(usb, az6007_usb_table);
- 
--static int az6007_suspend(struct usb_interface *intf, pm_message_t msg)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--
--	az6007_ci_uninit(d);
--	return dvb_usbv2_suspend(intf, msg);
--}
--
--static int az6007_resume(struct usb_interface *intf)
--{
--	struct dvb_usb_device *d = usb_get_intfdata(intf);
--	struct dvb_usb_adapter *adap = &d->adapter[0];
--
--	az6007_ci_init(adap);
--	return dvb_usbv2_resume(intf);
--}
--
- /* usb specific object needed to register this driver with the usb subsystem */
- static struct usb_driver az6007_usb_driver = {
--	.name		= KBUILD_MODNAME,
--	.id_table	= az6007_usb_table,
--	.probe		= dvb_usbv2_probe,
--	.disconnect	= az6007_usb_disconnect,
--	.no_dynamic_id	= 1,
--	.soft_unbind	= 1,
--	/*
--	 * FIXME: need to implement reset_resume, likely with
--	 * dvb-usb-v2 core support
--	 */
--	.suspend	= az6007_suspend,
--	.resume		= az6007_resume,
-+	.name = KBUILD_MODNAME,
-+	.id_table = az6007_usb_table,
-+	.probe = dvb_usbv2_probe,
-+	.disconnect = dvb_usbv2_disconnect,
-+	.suspend = dvb_usbv2_suspend,
-+	.resume = dvb_usbv2_resume,
-+	.reset_resume = dvb_usbv2_reset_resume,
-+	.no_dynamic_id = 1,
-+	.soft_unbind = 1,
- };
- 
- module_usb_driver(az6007_usb_driver);
---
+Best regards,
+Nick
 
