@@ -1,124 +1,126 @@
-Return-Path: <linux-kernel+bounces-804556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-804557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557E5B47985
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A75EB47990
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 10:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FCB3B5192
-	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9C553C19EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  7 Sep 2025 08:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EB521884B;
-	Sun,  7 Sep 2025 08:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09EF21171B;
+	Sun,  7 Sep 2025 08:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oYl23Knw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dy4Y2zHn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82538125B2;
-	Sun,  7 Sep 2025 08:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383467483;
+	Sun,  7 Sep 2025 08:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757232686; cv=none; b=Mpu7tkkt4TY5TC3sbhpFdujlKzX+egXKgKi2LGhv6eUJjpmn4oB64eCFVU7wcXirRrJEhXybZobYktudBsycTMmLp6Yibt8mZD8k3o2Cz6lOZP+Dw4bo0JlsNaJa3Hm3BtPgcz6qWDEcklUNO43AM0FkKRmImh6CxKXpBeP5LH4=
+	t=1757233065; cv=none; b=ZL/1ZVoWqMuvTmxPyvg1EbisZvLST90VdjZF4hJU+6ial2o7zSqYlUqlxupje07PaMRHEgBSwV2JvhOoz0hYuM8/XfBZ7V66q5B2uAJpKTK/+X+9dfSUxkR7IZicTrvqxYOtvGfjYUqjmDLHQjbgA91wqJo6ThAiwGRKNEN/NCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757232686; c=relaxed/simple;
-	bh=zrGrQjBqBEf0r4UgOEByi5j0mtKcNf4pavFsd9wVE9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGWuNN2+kLWd2KCPYDWxGQcJbQkq5jYHgqHfl3b8aN5ZC+OIYFmSUyIpMEFRyBmzBLmBiqcXNfEVaS6raJl5sOEGZLovOjBgWlmkMML1swkndg4QHVUAYwfoa5OC9L/Sj0Yx9t8mNg7rydRzCw3kbcHkw//e4sJrP4MQx41Kqn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oYl23Knw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CBEAC4CEF0;
-	Sun,  7 Sep 2025 08:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757232686;
-	bh=zrGrQjBqBEf0r4UgOEByi5j0mtKcNf4pavFsd9wVE9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oYl23Knwx6DzGqqWamFJpqv5puBx1CQmF13Fai/fVsJGJrio7p83F2XPkdt6Jg2xA
-	 ms04udyTvpc3Wl3VS0Yxxf9xpk5KntxlmJnjBDVjgbjvlcvkRTWzR5J1/dS5YRcRYZ
-	 /4NLg0Eqptbc3PnbvVIg3FoypBlgZRDcaC+qqco0=
-Date: Sun, 7 Sep 2025 10:11:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Mathias Nyman <mathias.nyman@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4 0/3] usb: dwc3: Modify role-switching QC drd usb
- controllers
-Message-ID: <2025090734-plentiful-untracked-b7ab@gregkh>
-References: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com>
- <8629515f-5b2b-4e97-a998-05cd6eaa47cf@oss.qualcomm.com>
+	s=arc-20240116; t=1757233065; c=relaxed/simple;
+	bh=lqNio2Vhvxyex3VhCU03IMjYKkPPZUAVhtv/Fsvo/80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPpfQme2PQpv/YC2r/YDvJWQAD/CPy/lJb9CEub1+cymsE8h+fPZa9q4AdMMvhOoOpg6GjQhpK7MXSsZHMBuSUBPt8BBcjJ2Uot00zpLlSb992oMd0q+9zoNPFq/S1Rg62t7RmLPnJaVDvZCD9vQtUdBfvQoZpdNPQcj1ef2S5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dy4Y2zHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C89C4CEF0;
+	Sun,  7 Sep 2025 08:17:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757233064;
+	bh=lqNio2Vhvxyex3VhCU03IMjYKkPPZUAVhtv/Fsvo/80=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Dy4Y2zHn/wyZb8XG6ZyespBzVmH3eDEsW2DndDTLl5JBkH4SJR00GvTmliyE4WM6r
+	 D1LIK/6d+6zczt5TTofWI3tuq2wEa2u2xX7Ol77Pkg4OBHhlFjgakICSsLy54vG+Ih
+	 VN7O7qNkODnyZqghxdty7ou/k4bnzRbwLSMPs/y3MnL+DC4c/gcNF+2SjER9dDmUlz
+	 9PHC6qDpGPwertAqjACmDtu6fFvpv2GorAZwpQAcqdqxttEHzAtY2j3jDPg8l3lblR
+	 sXkNjkUrAJfJ8fp27KgZWYZzu/zGOYtGVXlywY4zNXwcN86LHfYTObBsGciWSMvCPB
+	 mCIRltHtbA6rQ==
+Message-ID: <ce631cd2-c00b-43b1-ac61-b38e1848b729@kernel.org>
+Date: Sun, 7 Sep 2025 10:17:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8629515f-5b2b-4e97-a998-05cd6eaa47cf@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: fix typo in documentation Correct a typo in
+ the documentation by replacing "abd" with the correct word "and". This
+ improves readability and avoids confusion in the description.
+To: Nick Huang <sef1548@gmail.com>
+Cc: Johnsodn Huang <kusogame68@gmail.com>, Lee Jones <lee@kernel.org>,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ weiyan huang <dory85109@gmail.com>
+References: <20250902142749.13724-1-kusogame68@gmail.com>
+ <20250903074205.GB2163762@google.com>
+ <28c1ff61-8510-4fd4-9cd2-0e3ff4fe3a02@kernel.org>
+ <CABZAGRE=6Dg1npRx-jmcycnGMkbtmY6A7E=upffeQ+KANTqcLA@mail.gmail.com>
+ <96e6578e-b21f-498e-82f6-eeee3ee81e20@kernel.org>
+ <CABZAGRGof5e=mwpfmEgE7W+Pn5gS05ei7io8e7C4tPfkvz1=Gw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CABZAGRGof5e=mwpfmEgE7W+Pn5gS05ei7io8e7C4tPfkvz1=Gw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 07, 2025 at 01:18:51PM +0530, Krishna Kurapati PSSNV wrote:
-> 
-> 
-> On 8/12/2025 11:25 AM, Krishna Kurapati wrote:
-> > Currently on QC targets, the conndone/disconnect events in device mode are
-> > generated by controller when software writes to QSCRATCH registers in qcom
-> > glue layer rather than the vbus line being routed to dwc3 core IP for it
-> > to recognize and generate these events. We need to set UTMI_OTG_VBUS_VALID
-> > bit of QSCRATCH_HS_PHY_CTRL register to generate a connection done event
-> > and clear it to generate a disconnect event during cable removal or mode
-> > switch is done
-> > 
-> > When the disconnect is not generated upon cable removal, the "connected"
-> > flag of dwc3 is left marked as "true" and it blocks suspend routines and
-> > for that to happen upon cable removal, the cable disconnect notification
-> > from usb_role_switch to DWC3 core driver needs to reach DWC3 Qualcomm glue
-> > driver for it generate the event.
-> > 
-> > Currently, the way DWC3 core and Qualcomm glue driver is designed, there
-> > is no mechanism through which the DWC3 core can notify the Qualcomm glue
-> > layer of any role changes which it receives from usb_role_switch. To
-> > register these glue callbacks at probe time, for enabling core to notify
-> > glue layer, the legacy Qualcomm driver has no way to find out when the
-> > child driver probe was successful since it does not check for the same
-> > during of_platform_populate.
-> > 
-> > For flattened implementation of the glue driver, register callbacks for
-> > core to invoke and notify glue layer of role switch notifications.
-> > 
-> > Set-Role and Run_stop notifier callbacks have been added to inform glue
-> > of changes in role and any modifications UDC might be performing on the
-> > controller. These callbacks allow us to modify qscratch accordingly and
-> > generate disconnect/connect events to facilitate suspend entry and proper
-> > enumeration.
-> > 
-> > The series only allows autosuspend to be used but still relies on user
-> > enabling it from userspace (echo auto > a600000.usb/power/control).
-> > 
-> 
-> [...]
-> 
-> Hi Greg,
-> 
->  The first two patches of this series are Acked and are independent of the
-> third patch. The first two patches include glue callbacks and suspend resume
-> for device mode for QC SoCs. The third patch is to enable auto-suspend for
-> xhci plat and hence independent of dwc3 patches.
-> 
->  If it is fine, can you take in the first two patches and I will resend the
-> third one if necessary after receiving review comments from Mathias.
+On 06/09/2025 15:09, Nick Huang wrote:
+> Yes, I have read it. The subject and the content were mixed together,
+> so I will reorganize and resend the patch.
 
-Can you resend just the first two, as taking patches from a longer
-series is "hard" for my workflow, AND this series is not in my "to
-review" queue anymore due to the other comments on the patches that you
-don't want applied yet.
+Please do not top-post.
 
-thanks,
+The question was not about subject and content. I just don't believe the
+DCO chain here.
 
-greg k-h
+Best regards,
+Krzysztof
 
